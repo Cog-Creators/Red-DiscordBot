@@ -2,18 +2,18 @@
 #### *Fun bringer, admin helper and music bot*
 
 ### Cool title, but what does it do exactly?
-A bit of everything. It has the most common features of many chatbots (!flip, !8, stopwatch, etc.), custom commands (inspired by Twitch's [Nightbot](https://www.nightbot.tv/))... It features some games such as Trivia (well, it will as soon as I fix it up and find some decent questions lists), slot machine, rock paper scissors.  
-The audio part is quite fleshed out. Users can stream youtube videos, make or send playlists that everyone will be able to play and control (previous/next song, pause/resume, shuffle...).  
+A bit of everything. It has the [most common features](#general-commands) of many chatbots (!flip, !8, stopwatch, etc.), custom commands (inspired by Twitch's [Nightbot](https://www.nightbot.tv/)). It features some games such as Trivia (well, it will as soon as I fix it up and find some decent questions lists), rock paper scissors, [users can earn and play with credits](#economy-commands) in the slot machine.  
+[The audio part is quite fleshed out](#audio-commands). Users can stream youtube videos, make or send playlists that everyone will be able to play and control (previous/next song, pause/resume, shuffle...).  
 As for the moderation tools, it includes a powerful message filter with regular expression capabilities and mass messages cleanup.  
 [I'm planning to expand all this much more](#todo-list).  
 See the [command list](#general-commands) for an even better idea of what this bot can do.
 
 ### I don't even know what I'm looking at. How do I install this?
 Do not panic. Follow these steps:  
-Download the bot and unpack it.  
-[Install Python](https://www.python.org/downloads/). This bot needs 3.5.1 or superior.  
-[Install Git](https://git-scm.com/download/win), don't forget to check "Use Git from the Windows Command Prompt"  
-Open the start menu, type cmd, right click and open the command prompt as admin. Now, do:  
+- Download the bot and unpack it.  
+- [Install Python](https://www.python.org/downloads/). This bot needs 3.5.1 or superior.  
+- [Install Git](https://git-scm.com/download/win), don't forget to check "Use Git from the Windows Command Prompt"  
+- Open the start menu, type cmd, right click and open the command prompt as admin. Now, do:  
 ```
 pip install git+https://github.com/Rapptz/discord.py@async
 pip install requests
@@ -25,8 +25,10 @@ If for some reason pip install doesn't work do these commands with
 python -m pip install
 ```
 instead. Now, about the configuration.  
-Open config.json with a text editor and replace EMAILHERE and PASSWORDHERE with your bot's account details (make a dedicated discord account).  
-That's it. Run red.py and creare a role called "Transistor" in the server to be able to use the admin commands.  
+- Open config.json with a text editor and replace EMAILHERE and PASSWORDHERE with your bot's account details (make a dedicated discord account).  
+- Run red.py  
+
+That's it. Remember to make the bot join your server (login into its account through Discord and join it manually) and create a role called "Transistor" in the server to be able to use the admin commands.  
 Take a look at the command list and have fun.
 
 ### General commands
