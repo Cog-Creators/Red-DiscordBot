@@ -101,6 +101,7 @@ Take a look at the command list and have fun.
 | !balance    | Check your balance                   |
 | !slot [bid] | Play the slot machine                |
 | !slot help  | Slot machine explanation and payouts |
+| !payday     | Receive credits                      |
 
 ### FAQ
 >Does this bot work on multiple servers?  
