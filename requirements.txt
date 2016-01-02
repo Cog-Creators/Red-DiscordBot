@@ -1,0 +1,4 @@
+discord.py == 0.10.0a0
+requests == 2.9.1
+youtube_dl == 2015.12.23
+beautifulsoup4 == 4.4.1
