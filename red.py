@@ -249,6 +249,9 @@ async def on_message(message):
 async def on_ready():
 	logger.info(settings["NAME"] + " is online. (" + client.user.id + ")")
 	await gameSwitcher.changeGame(now=True)
+	if client.user.name != settings["NAME"]:
+		name = "." + settings["NAME"] + "()"
+		await client.edit_profile(settings["PASSWORD"], username=name)
 #	cns = threading.Thread(target=console, args=[])
 #	cns.start() # console, WIP
 

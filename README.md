@@ -11,7 +11,7 @@ See the [command list](#general-commands) for an even better idea of what this b
 ### I don't even know what I'm looking at. How do I install this?
 Do not panic. Follow these steps:  
 - Download the bot and unpack it.  
-- [Install Python](https://www.python.org/downloads/). This bot needs 3.5.1 or superior.  
+- [Install Python](https://www.python.org/downloads/). This bot needs 3.5.1 32bit or superior.  
 - [Install Git](https://git-scm.com/download/win), don't forget to check "Use Git from the Windows Command Prompt"  
 - Open the start menu, type cmd, right click and open the command prompt as admin. Now, do:  
 ```
