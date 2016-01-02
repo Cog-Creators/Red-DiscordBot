@@ -25,7 +25,7 @@ If for some reason pip install doesn't work do these commands with
 python -m pip install
 ```
 instead. Now, about the configuration.  
-- Open config.json with a text editor and replace EMAILHERE and PASSWORDHERE with your bot's account details (make a dedicated discord account).  
+- Open settings.json with a text editor and replace EMAILHERE and PASSWORDHERE with your bot's account details (make a dedicated discord account).  
 - Run red.py  
 
 That's it. Remember to make the bot join your server (login into its account through Discord and join it manually) and create a role called "Transistor" in the server to be able to use the admin commands.  
