@@ -28,7 +28,7 @@ python -m pip install
 ```
 instead. Now, about the configuration.  
 - Open settings.json with a text editor and replace EMAILHERE and PASSWORDHERE with your bot's account details (make a dedicated discord account).  
-- Run red.py  
+- Run startRed.bat  
 
 That's it. Remember to make the bot join your server (login into its account through Discord and join it manually) and create a role called "Transistor" in the server to be able to use the admin commands.  
 Take a look at the command list and have fun.
@@ -106,6 +106,11 @@ Take a look at the command list and have fun.
 | !payday     | Receive credits                      |
 
 ### FAQ
+>I've done everything the README asked me to and it still doesn't work! Were you drunk when you coded this?  
+
+You're probably missing something.  
+Feel free to join [my server](https://discord.gg/0k4npTwMvTpv9wrh) and head to #support to get some help! Oh, and my drinking habits are none of your business.  
+
 >Does this bot work on multiple servers?  
 
 Sure it does. Should you do it? Maybe. The permissions system is not that great at the moment but if you trust the people running the server it's ok. It's not advisable to send the bot in random servers at the moment.   
