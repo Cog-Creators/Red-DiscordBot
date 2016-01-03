@@ -727,7 +727,7 @@ async def checkVoice(message):
 	return True
 
 async def playVideo(message):
-	global musicPlayer
+	global musicPlayer, currentPlaylist
 	if await checkVoice(message):
 		pattern = "(?:youtube\.com\/watch\?v=)(.*)|(?:youtu.be/)(.*)"
 		rr = re.search(pattern, message.content, re.I | re.U)
@@ -742,11 +742,11 @@ async def playVideo(message):
 		if canDeleteMessages(message):
 			await client.send_message(message.channel, "`Playing youtube video {} requested by {}`".format(id, message.author.name))
 			await client.delete_message(message)
+		currentPlaylist = Playlist(singleSong=True)
+		currentPlaylist.playlist = ['https://www.youtube.com/watch?v=' + id]
 		musicPlayer = client.voice.create_ytdl_player('https://www.youtube.com/watch?v=' + id, options=youtube_dl_options)
 		musicPlayer.start()
 		#!addfavorite compatibility stuff
-		currentPlaylist = Playlist(singleSong=True)
-		currentPlaylist.playlist = ['https://www.youtube.com/watch?v=' + id]
 
 async def playPlaylist(message, sing=False):
 	global musicPlayer, currentPlaylist
