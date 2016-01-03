@@ -204,8 +204,10 @@ async def slotMachine(message, bid):
 	else:
 		await client.send_message(message.channel, "{}{} `Nothing! Lost bet.` ".format(display_reels, message.author.mention))
 		withdrawMoney(message.author.id, bid)
+		await client.send_message(message.channel, "`Credits left: {}`".format(str(checkBalance(message.author.id))))
 		return True
 	addMoney(message.author.id, bid)
+	await client.send_message(message.channel, "`Current credits: {}`".format(str(checkBalance(message.author.id))))
 
 #######################################
 

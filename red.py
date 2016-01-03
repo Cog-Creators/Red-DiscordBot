@@ -26,8 +26,6 @@ import youtubeparser
 
 from sys import modules
 
-settings = dataIO.fileIO("settings.json", "load")
-
 help = """**Commands list:**
 !flip - Flip a coin
 !rps [rock or paper o scissors] - Play rock paper scissors
@@ -112,12 +110,14 @@ async def on_message(message):
 			await talk(message)
 
 		if  message.channel.id not in shush_list:
-			if message.content.lower() == settings["NAME"].lower() + "?":
-				await client.send_message(message.channel, "`" + choice(greetings) + "`")
-			elif message.content == settings["NAME"].upper():
+			if message.content == client.user.name.upper() or message.content == client.user.name.upper() + "?":
 				await client.send_message(message.channel, "`" + choice(greetings_caps) + "`")
+			elif message.content.lower() == client.user.name.lower() + "?":
+				await client.send_message(message.channel, "`" + choice(greetings) + "`")
+			elif message.content == client.user.mention + " ?" or message.content == client.user.mention + "?":
+				await client.send_message(message.channel, "`" + choice(greetings) + "`")
 			elif message.content == "!flip":
-				await client.send_message(message.channel, "`" + settings["NAME"] + " flips a coin and... " + choice(["HEADS!`", "TAILS!`"]))
+				await client.send_message(message.channel, "*flips a coin and... " + choice(["HEADS!*", "TAILS!*"]))
 			elif message.content.startswith("!rps"):
 				await rpsgame(message)
 			elif message.content == "!proverb":
@@ -247,11 +247,8 @@ async def on_message(message):
 
 @client.async_event
 async def on_ready():
-	logger.info(settings["NAME"] + " is online. (" + client.user.id + ")")
+	logger.info("I'm online " + "(" + client.user.id + ")")
 	await gameSwitcher.changeGame(now=True)
-	if client.user.name != settings["NAME"]:
-		name = "." + settings["NAME"] + "()"
-		await client.edit_profile(settings["PASSWORD"], username=name)
 #	cns = threading.Thread(target=console, args=[])
 #	cns.start() # console, WIP
 
@@ -951,9 +948,13 @@ async def sendPlaylist(message):
 
 async def shutdown(message):
 	if isMemberAdmin(message):
-		await client.send_message(message.channel, "`" + settings["NAME"] + " shutting down... See you soon.` :hand:")
+		await client.send_message(message.channel, client.user.name + " shutting down... See you soon. :hand:")
 		await client.logout()
-		exit(1)
+		try:
+			exit(1)
+		except SystemExit: #clean exit
+			logger.info("Shutting down as requested by " + message.author.id + "...")
+			pass
 	else:
 		await client.send_message(message.channel, "`I don't take orders from you.`")
 
@@ -1041,13 +1042,9 @@ async def changeName(message):
 		msg = message.content.split()
 		if len(msg) == 2:
 			try:
-				name = "." + msg[1] + "()"
-				await client.edit_profile(settings["PASSWORD"], username=name)
-				settings["NAME"] = msg[1]
-				dataIO.fileIO("settings.json", "save", settings)
-				logger.info("Saved settings.")
-			except:
-				pass
+				await client.edit_profile(settings["PASSWORD"], username=msg[1])
+			except Exception as e:
+				print(e)
 		else:
 			await client.send_message(message.channel, "`!name [new name]`")
 	else:
@@ -1135,10 +1132,6 @@ def console():
 			traceback.print_exc()
 			print("\n")
 
-logger = loggerSetup()
-
-dataIO.logger = logger
-
 def loadDataFromFiles(loadsettings=False):
 	global proverbs, commands, trivia_questions, badwords, badwords_regex, shush_list
 
@@ -1152,7 +1145,7 @@ def loadDataFromFiles(loadsettings=False):
 #	logger.info("Loaded " + str(len(trivia_questions)) + " questions.")
 
 	badwords = dataIO.fileIO("filter.json", "load")
-	logger.info("Loaded " + str(len(badwords)) + " words.")
+	logger.info("Loaded " + str(len(badwords)) + " lists of filtered words.")
 
 	badwords_regex = dataIO.fileIO("regex_filter.json", "load")
 	logger.info("Loaded " + str(len(badwords_regex)) + " regex lists.")
@@ -1164,31 +1157,42 @@ def loadDataFromFiles(loadsettings=False):
 		global settings
 		settings = dataIO.fileIO("settings.json", "load")
 
+def main():
+	global ball, greetings, greetings_caps, stopwatches, trivia_sessions, message, gameSwitcher, uptime_timer, musicPlayer, currentPlaylist
+	global logger, settings
 
-loadDataFromFiles()
+	logger = loggerSetup()
+	dataIO.logger = logger
 
-ball = ["As I see it, yes", "It is certain", "It is decidedly so", "Most likely", "Outlook good",
- "Signs point to yes", "Without a doubt", "Yes", "Yes – definitely", "You may rely on it", "Reply hazy, try again",
- "Ask again later", "Better not tell you now", "Cannot predict now", "Concentrate and ask again",
- "Don't count on it", "My reply is no", "My sources say no", "Outlook not so good", "Very doubtful"]
+	settings = dataIO.loadAndCheckSettings()
 
-greetings = ["Hey.", "Yes?", "Hi.", "I'm listening.", "Hello.", "I'm here."]
-greetings_caps = ["DON'T SCREAM", "WHAT", "WHAT IS IT?!", "ì_ì", "NO CAPS LOCK"]
+	loadDataFromFiles()
 
-stopwatches = {}
+	ball = ["As I see it, yes", "It is certain", "It is decidedly so", "Most likely", "Outlook good",
+	 "Signs point to yes", "Without a doubt", "Yes", "Yes – definitely", "You may rely on it", "Reply hazy, try again",
+	 "Ask again later", "Better not tell you now", "Cannot predict now", "Concentrate and ask again",
+	 "Don't count on it", "My reply is no", "My sources say no", "Outlook not so good", "Very doubtful"]
 
-trivia_sessions = []
+	greetings = ["Hey.", "Yes?", "Hi.", "I'm listening.", "Hello.", "I'm here."]
+	greetings_caps = ["DON'T SCREAM", "WHAT", "WHAT IS IT?!", "ì_ì", "NO CAPS LOCK"]
 
-message = ""
+	stopwatches = {}
 
-gameSwitcher = botPlays()
+	trivia_sessions = []
 
-if "economy" in modules:
-	economy.initialize(client)
+	message = ""
 
-uptime_timer = int(time.perf_counter())
+	gameSwitcher = botPlays()
 
-musicPlayer = None
-currentPlaylist = None
+	if "economy" in modules:
+		economy.initialize(client)
 
-client.run(settings["EMAIL"], settings["PASSWORD"])
+	uptime_timer = int(time.perf_counter())
+
+	musicPlayer = None
+	currentPlaylist = None
+
+	client.run(settings["EMAIL"], settings["PASSWORD"])
+
+if __name__ == '__main__':
+	main()
