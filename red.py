@@ -668,9 +668,13 @@ async def checkFilter(message): #WIP
 	if message.server.id in badwords:
 		for word in badwords[message.server.id]:
 			if msg.find(word.lower()) != -1:
-				await client.delete_message(message)
-				logger.info("Message eliminated.")
-				return True
+				if canDeleteMessages(message):
+					await client.delete_message(message)
+					logger.info("Message eliminated.")
+					return True
+				else:
+					logger.info("Couldn't delete message. I need permissions.")
+					return False
 	return False
 
 async def checkRegex(message): #WIP
@@ -679,9 +683,13 @@ async def checkRegex(message): #WIP
 		for pattern in badwords_regex[message.server.id]:
 			rr = re.search(pattern, msg, re.I | re.U)
 			if rr != None:
-				await client.delete_message(message)
-				logger.info("Message eliminated. Regex: " + pattern)
-				return True
+				if canDeleteMessages(message):
+					await client.delete_message(message)
+					logger.info("Message eliminated. Regex: " + pattern)
+					return True
+				else:
+					logger.info("Couldn't delete message. I need permissions.")
+					return False
 	return False
 
 async def twitchCheck(message):
@@ -731,8 +739,9 @@ async def playVideo(message):
 			await client.send_message(message.channel, "{} `Invalid link.`".format(message.author.mention))
 			return False
 		stopMusic()
-		await client.send_message(message.channel, "`Playing youtube video {} requested by {}`".format(id, message.author.name))
-		await client.delete_message(message)
+		if canDeleteMessages(message):
+			await client.send_message(message.channel, "`Playing youtube video {} requested by {}`".format(id, message.author.name))
+			await client.delete_message(message)
 		musicPlayer = client.voice.create_ytdl_player('https://www.youtube.com/watch?v=' + id, options=youtube_dl_options)
 		musicPlayer.start()
 		#!addfavorite compatibility stuff
@@ -1081,16 +1090,19 @@ async def reloadSettings(message):
 
 async def cleanup(message):
 	if isMemberAdmin(message):
-		msg = message.content.split()
-		if len(msg) == 2:
-			if msg[1].isdigit():
-				n = int(msg[1])
-				for x in await client.logs_from(message.channel, limit=n+1):
-					await client.delete_message(x)
+		if canDeleteMessages(message):
+			msg = message.content.split()
+			if len(msg) == 2:
+				if msg[1].isdigit():
+					n = int(msg[1])
+					for x in await client.logs_from(message.channel, limit=n+1):
+						await client.delete_message(x)
+				else:
+					await client.send_message(message.channel, "`!cleanup [number]`")
 			else:
 				await client.send_message(message.channel, "`!cleanup [number]`")
 		else:
-			await client.send_message(message.channel, "`!cleanup [number]`")	
+			await client.send_message(message.channel, "`I need permissions to delete messages.`")
 	else:
 		await client.send_message(message.channel, "`I don't take orders from you.`")
 
@@ -1102,6 +1114,9 @@ def isMemberAdmin(message):
 			return False
 	else:
 		return False
+
+def canDeleteMessages(message):
+	return message.channel.permissions_for(message.server.me).can_manage_messages
 
 ################################################
 
