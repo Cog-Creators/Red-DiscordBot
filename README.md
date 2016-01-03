@@ -1,5 +1,7 @@
 # Red - A multifunction Discord bot
-#### *Fun bringer, admin helper and music bot*
+#### *Fun bringer, admin helper and music bot*  
+
+[**[Official Server - Announcements & Help]**](https://discord.gg/0k4npTwMvTpv9wrh)  
 
 ### Cool title, but what does it do exactly?
 A bit of everything. It has the [most common features](#general-commands) of many chatbots (!flip, !8, stopwatch, etc.), custom commands (inspired by Twitch's [Nightbot](https://www.nightbot.tv/)). It features some games such as Trivia (well, it will as soon as I fix it up and find some decent questions lists), rock paper scissors, [users can earn and play with credits](#economy-commands) in the slot machine.  
