@@ -155,11 +155,13 @@ async def on_message(message):
 				await gif(message)
 			elif message.content.startswith('!uptime'):
 				await uptime(message)
+			elif message.content.startswith('!avatar'):
+				await avatar(message)
+			################## music #######################
 			elif message.content == "!sing":
 				await playPlaylist(message, sing=True)
 			elif message.content.startswith('!youtube'):
 				await playVideo(message)
-			################## music #######################
 			elif message.content.startswith('!play '):
 				await playPlaylist(message)
 			elif message.content.startswith('!local '):
@@ -655,6 +657,22 @@ async def stopTriviabyChannel(channel):
 	for t in trivia_sessions:
 		if t.channel == channel:
 			await t.stopp()
+
+async def avatar(message):
+	if message.mentions:
+		m = message.mentions[0]
+		await client.send_message(message.channel, "{}'s avatar: {}".format(m.name, m.avatar_url))
+	else:
+		if len(message.content.split(" ")) >= 2:
+			name = message.content[8:]
+			member = discord.utils.get(message.server.members, name=name)
+			if member != None:
+				await client.send_message(message.channel, "{}'s avatar: {}".format(member.name, member.avatar_url))
+			else:
+				await client.send_message(message.channel, "`User not found.`")
+		else:
+			await client.send_message(message.channel, "`!avatar [name or mention]`")
+
 
 def getTriviabyChannel(channel):
 	for t in trivia_sessions:
