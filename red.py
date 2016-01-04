@@ -1119,7 +1119,7 @@ def isMemberAdmin(message):
 		return False
 
 def canDeleteMessages(message):
-	return message.channel.permissions_for(message.server.me).can_manage_messages
+	return message.channel.permissions_for(message.server.me).manage_messages
 
 ################################################
 
