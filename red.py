@@ -17,6 +17,7 @@ import re
 import youtube_dl
 import os
 import asyncio
+import glob
 from os import path
 from random import choice, randint, shuffle
 
@@ -71,11 +72,15 @@ audio_help = """
 
 **Playlist commands:**
 !play [playlist_name] - Play chosen playlist
-!playlists - Playlist's list
+!playlists - Playlists' list
 !shuffle - Mix music list
 !addplaylist [name] [link] - Add a youtube playlist. Link format example: https://www.youtube.com/playlist?list=PLe8jmEHFkvsaDOOWcREvkgFoj6MD0pXXX
 !delplaylist [name] - Delete a youtube playlist. Limited to author and admins.
 !getplaylist - Receive the current playlist through DM. This also works with favorites.
+
+**Local commands:**
+!local [playlist_name] - Play chosen local playlist
+!locallist or !local or !locals - Local playlists' list
 
 **Favorites:**
 !addfavorite - Add song to your favorites
@@ -157,6 +162,11 @@ async def on_message(message):
 			################## music #######################
 			elif message.content.startswith('!play '):
 				await playPlaylist(message)
+			elif message.content.startswith('!local '):
+				await playLocal(message)
+			elif message.content == "!local" or message.content == "!locallist" or message.content == "!locals":
+				await listLocal(message)
+				await client.send_message(message.channel, "{} `Check your DMs for the local playlists list.`".format(message.author.mention))
 			elif message.content == "!stop":
 				await leaveVoice()
 			elif message.content == "!playlist" or message.content == "!playlists":
@@ -374,6 +384,8 @@ class Playlist():
 				self.playlist = dataIO.fileIO("playlists/" + filename["filename"] + ".txt", "load")["playlist"]
 			elif filename["type"] == "favorites":
 				self.playlist = dataIO.fileIO("favorites/" + filename["filename"] + ".txt", "load")
+			elif filename["type"] == "local":
+				self.playlist = filename["filename"]
 			else:
 				raise("Invalid playlist call.")
 			self.nextSong(0)
@@ -384,10 +396,14 @@ class Playlist():
 			if musicPlayer: musicPlayer.stop()
 			self.lastAction = int(time.perf_counter())
 			try:
-				musicPlayer = client.voice.create_ytdl_player(self.playlist[nextTrack], options=youtube_dl_options)
-				musicPlayer.start()
-			except:
-				print("Something went wrong with track " + self.playlist[self.current])
+				if isPlaylistValid([self.playlist[nextTrack]]): #Checks if it's a valid youtube link
+					musicPlayer = client.voice.create_ytdl_player(self.playlist[nextTrack], options=youtube_dl_options)
+					musicPlayer.start()
+				else: # must be a local playlist then
+					musicPlayer = client.voice.create_ffmpeg_player(self.playlist[nextTrack])
+					musicPlayer.start()
+			except Exception as e:
+				logger.warning("Something went wrong with track " + self.playlist[self.current])
 				if not lastError: #prevents error loop
 					self.lastAction = 999
 				self.nextSong(self.getNextSong(), lastError=True)
@@ -774,6 +790,44 @@ async def playPlaylist(message, sing=False):
 			musicPlayer.start()
 			await client.send_message(message.channel, choice(msg))
 
+async def playLocal(message):
+	global currentPlaylist
+	msg = message.content.split(" ")
+	if await checkVoice(message):
+		if len(msg) == 2:
+			localplaylists = getLocalPlaylists()
+			if localplaylists and ("/" not in msg[1] and "\\" not in msg[1]):
+				if msg[1] in localplaylists:
+					files = []
+					if glob.glob("localtracks\\" + msg[1] + "\\*.mp3"):
+						files.extend(glob.glob("localtracks\\" + msg[1] + "\\*.mp3"))
+					if glob.glob("localtracks\\" + msg[1] + "\\*.flac"):
+						files.extend(glob.glob("localtracks\\" + msg[1] + "\\*.flac"))
+					stopMusic()
+					data = {"filename" : files, "type" : "local"}
+					currentPlaylist = Playlist(data)
+					await asyncio.sleep(2)
+					await currentPlaylist.songSwitcher()
+				else:
+					await client.send_message(message.channel, "`There is no local playlist called {}. !local or !locallist to receive the list.`".format(msg[1]))
+			else:
+				await client.send_message(message.channel, "`There are no valid playlists in the localtracks folder.`")
+		else:
+			await client.send_message(message.channel, "`!local [playlist]`")
+
+def getLocalPlaylists():
+	dirs = []
+	files = os.listdir("localtracks/")
+	for f in files:
+		if os.path.isdir("localtracks/" + f) and " " not in f:
+			if glob.glob("localtracks/" + f + "/*.mp3") != []:
+				dirs.append(f)
+			elif glob.glob("localtracks/" + f + "/*.flac") != []:
+				dirs.append(f)
+	if dirs != []:
+		return dirs
+	else:
+		return False
 
 async def leaveVoice():
 	if client.is_voice_connected():
@@ -783,27 +837,36 @@ async def leaveVoice():
 async def listPlaylists(message):
 	msg = "Available playlists: \n\n```"
 	files = os.listdir("playlists/")
-	for i, f in enumerate(files):
-		if f.endswith(".txt"):
+	if files:
+		for i, f in enumerate(files):
+			if f.endswith(".txt"):
+				if i % 4 == 0 and i != 0:
+					msg = msg + f.replace(".txt", "") + "\n"
+				else:
+					msg = msg + f.replace(".txt", "") + "\t"
+		msg += "```"
+		await client.send_message(message.author, msg)
+	else:
+		await client.send_message(message.author, "There are no playlists.")
+
+async def listLocal(message):
+	msg = "Available local playlists: \n\n```"
+	dirs = getLocalPlaylists()
+	if dirs:
+		for i, d in enumerate(dirs):
 			if i % 4 == 0 and i != 0:
-				msg = msg + f.replace(".txt", "") + "\n"
+				msg = msg + d + "\n"
 			else:
-				msg = msg + f.replace(".txt", "") + "\t"
-	msg += "```"
-	"""
-	files = os.listdir("playlists/")
-	for f in files:
-		if f.endswith(".txt"):
-			msg = msg + f.replace(".txt", "") + "\t"
-	msg += "`"
-	"""
-	await client.send_message(message.author, msg)
+				msg = msg + d + "\t"
+		msg += "```"
+		await client.send_message(message.author, msg)
+	else:
+		await client.send_message(message.author, "There are no local playlists.")
 
 
 def stopMusic():
 	global musicPlayer, currentPlaylist
 	if currentPlaylist != None:
-		print("Stopping playlist")
 		currentPlaylist.stop = True
 	if musicPlayer != None:
 		musicPlayer.stop()
@@ -969,7 +1032,7 @@ async def join(message):
 		if len(msg) > 1:
 			await client.accept_invite(msg[1])
 		else:
-			print("Join: missing parameters")
+			logger.warning("Join: missing parameters")
 	else:
 		await client.send_message(message.channel, "`I don't take orders from you.`")
 
