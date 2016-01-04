@@ -6,6 +6,7 @@
 ### Cool title, but what does it do exactly?
 A bit of everything. It has the [most common features](#general-commands) of many chatbots (!flip, !8, stopwatch, etc.), custom commands (inspired by Twitch's [Nightbot](https://www.nightbot.tv/)). It features some games such as Trivia (well, it will as soon as I fix it up and find some decent questions lists), rock paper scissors, [users can earn and play with credits](#economy-commands) in the slot machine.  
 [The audio part is quite fleshed out](#audio-commands). Users can stream youtube videos, make or send playlists that everyone will be able to play and control (previous/next song, pause/resume, shuffle...).  
+MP3 and flac files can also be streamed (see [FAQ](#faq) for details on local playlists)  
 As for the moderation tools, it includes a powerful message filter with regular expression capabilities and mass messages cleanup.  
 [I'm planning to expand all this much more](#todo-list).  
 See the [command list](#general-commands) for an even better idea of what this bot can do.
@@ -62,7 +63,7 @@ Take a look at the command list and have fun.
 | !youtube [link]            | Play a youtube video in a voice channel                             |
 | !sing                      | Make Red sing                                                       |
 | !stop                      | Stop any voice channel activity                                     |
-| !play [playlist name]      | Play chosen playlist                                                |
+| !play [playlist_name]      | Play chosen playlist                                                |
 | !playlists                 | Playlist's list                                                     |
 | !next or !skip             | Next song                                                           |
 | !prev                      | Previous song                                                       |
@@ -77,6 +78,8 @@ Take a look at the command list and have fun.
 | !addfavorite               | Add song to your favorites                                          |
 | !delfavorite               | Remove song from your favorites                                     |
 | !playfavorites             | Play your favorites                                                 |
+| !local [playlist_name]     | Play chosen local playlist                                          |
+| !local or !locallist       | Local playlists' list                                               |
 
 ### Admin commands
 
@@ -120,6 +123,11 @@ Custom commands only work in the server they were created in. Same for the messa
 
 Suggestions are always very welcome.
 
+>How do local playlists work?
+
+Make as many folders as you want inside the localtracks folder. Names must be without spaces. Every folder counts as a different playlist. Every playlist can contain mp3 and flac files. Users can stream them by doing !local [playlist_name] and see the full list
+with !local or !locallist. They can also add tracks to their favorites.
+
 >Why is this bot called Red and the admin role "Transistor"? What's the meaning of !sing?
 
 They're all references to [Transistor](https://www.supergiantgames.com/games/transistor/), a videogame by Supergiant Games.
@@ -131,4 +139,5 @@ They're all references to [Transistor](https://www.supergiantgames.com/games/tra
 - [ ] Make more admin commands
 - [ ] More fleshed out permissions system
 - [ ] Support more playlist link types
+- [x] Add streaming of local mp3/flac files
 - [ ]  ~~Bundle some malware and slowly build up a botnet for world domination~~
