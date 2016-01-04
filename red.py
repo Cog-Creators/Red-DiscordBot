@@ -230,7 +230,7 @@ async def on_message(message):
 			elif message.content == "!talk": #prevents !talk custom command
 				pass
 			elif message.content == "!reload":
-				reloadSettings(message)
+				await reloadSettings(message)
 			elif message.content.startswith("!name"):
 				await changeName(message)
 			elif message.content.startswith("!cleanup"):
@@ -941,8 +941,13 @@ async def sendPlaylist(message):
 		for track in currentPlaylist.playlist:
 			msg += track
 			msg += "\n"
-		msg += "```"
-		await client.send_message(message.author, msg)
+			if len(msg) >= 1900:
+				msg += "```"
+				await client.send_message(message.author, msg)
+				msg = "```"
+		if msg != "```":
+			msg += "```"
+			await client.send_message(message.author, msg)
 
 ############## ADMIN COMMANDS ###################
 
@@ -1082,6 +1087,7 @@ async def removeRegex(message):
 async def reloadSettings(message):
 	if isMemberAdmin(message):
 		loadDataFromFiles(True)
+		await client.send_message(message.channel, "`Settings and files reloaded.`")
 	else:
 		await client.send_message(message.channel, "`I don't take orders from you.`")
 
