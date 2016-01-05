@@ -34,6 +34,7 @@ help = """**Commands list:**
 !choose option1 or option2 or option3 (...) - Random choice
 !8 [question] - Ask 8 ball
 !sw - Start/stop the stopwatch
+!avatar [name or mention] - Shows user's avatar
 !trivia start - Start a trivia session
 !trivia stop - Stop a trivia session
 !twitch [stream] - Check if stream is online
@@ -56,7 +57,8 @@ youtube_dl_options = {
 	'nocheckcertificate': True,
 	'ignoreerrors': True,
 	'quiet': True,
-	'no_warnings': True}
+	'no_warnings': True,
+	'outtmpl': "cache/%(id)s"}
 
 audio_help = """
 **General audio help commands:**
@@ -69,6 +71,8 @@ audio_help = """
 !youtube [link] - Play a youtube video in a voice channel
 !sing - Make Red sing
 !stop - Stop any voice channel activity
+!volume [0-1] - Sets the volume
+!downloadmode - Disables/enables download mode (admin only)
 
 **Playlist commands:**
 !play [playlist_name] - Play chosen playlist
@@ -203,6 +207,10 @@ async def on_message(message):
 				await playFavorites(message)
 			elif message.content == "!getplaylist":
 				await sendPlaylist(message)
+			elif message.content.startswith("!volume"):
+				await setVolume(message)
+			elif message.content == "!downloadmode":
+				await downloadMode(message)
 			################################################
 			elif message.content == "!trivia start":
 				if checkAuth("Trivia", message, settings):
@@ -376,20 +384,25 @@ class botPlays():
 			await client.change_status(discord.Game(name=choice(self.games)))
 
 class Playlist():
-	def __init__(self, filename=None, singleSong=False): #a playlist with a single song is just there to make !addfavorite work with !youtube command
+	def __init__(self, filename=None): #a playlist with a single song is just there to make !addfavorite work with !youtube command
 		self.filename = filename
 		self.current = 0
 		self.stop = False
 		self.lastAction = 999
-		if not singleSong:
-			if filename["type"] == "playlist":
-				self.playlist = dataIO.fileIO("playlists/" + filename["filename"] + ".txt", "load")["playlist"]
-			elif filename["type"] == "favorites":
-				self.playlist = dataIO.fileIO("favorites/" + filename["filename"] + ".txt", "load")
-			elif filename["type"] == "local":
-				self.playlist = filename["filename"]
-			else:
-				raise("Invalid playlist call.")
+		self.currentTitle = ""
+		self.type = filename["type"]
+		if filename["type"] == "playlist":
+			self.playlist = dataIO.fileIO("playlists/" + filename["filename"] + ".txt", "load")["playlist"]
+		elif filename["type"] == "favorites":
+			self.playlist = dataIO.fileIO("favorites/" + filename["filename"] + ".txt", "load")
+		elif filename["type"] == "local":
+			self.playlist = filename["filename"]
+		elif filename["type"] == "singleSong":
+			self.playlist = [filename["filename"]]
+			self.playSingleSong(self.playlist[0])
+		else:
+			raise("Invalid playlist call.")
+		if filename["type"] != "singleSong":
 			self.nextSong(0)
 
 	def nextSong(self, nextTrack, lastError=False):
@@ -399,16 +412,58 @@ class Playlist():
 			self.lastAction = int(time.perf_counter())
 			try:
 				if isPlaylistValid([self.playlist[nextTrack]]): #Checks if it's a valid youtube link
-					musicPlayer = client.voice.create_ytdl_player(self.playlist[nextTrack], options=youtube_dl_options)
-					musicPlayer.start()
+					if settings["DOWNLOADMODE"]:
+						path = self.getVideo(self.playlist[nextTrack])
+						try:
+							logger.info("Starting track...")
+							musicPlayer = client.voice.create_ffmpeg_player("cache/" + path, options='''-filter:a "volume={}"'''.format(settings["VOLUME"]))
+							musicPlayer.start()
+						except:
+							logger.warning("Something went wrong with track " + self.playlist[self.current])
+							if not lastError: #prevents error loop
+								self.lastAction = 999
+							self.nextSong(self.getNextSong(), lastError=True)
+					else: #Stream mode. Buggy.
+						musicPlayer = client.voice.create_ytdl_player(self.playlist[nextTrack], options=youtube_dl_options)
+						musicPlayer.start()
 				else: # must be a local playlist then
-					musicPlayer = client.voice.create_ffmpeg_player(self.playlist[nextTrack])
+					musicPlayer = client.voice.create_ffmpeg_player(self.playlist[nextTrack], options='''-filter:a "volume={}"'''.format(settings["VOLUME"]))
 					musicPlayer.start()
 			except Exception as e:
 				logger.warning("Something went wrong with track " + self.playlist[self.current])
 				if not lastError: #prevents error loop
 					self.lastAction = 999
 				self.nextSong(self.getNextSong(), lastError=True)
+
+	def getVideo(self, url):
+		try:
+			yt = youtube_dl.YoutubeDL(youtube_dl_options)
+			v = yt.extract_info(url, download=False)
+			if not os.path.isfile("cache/" + v["id"]):
+				logger.info("Track not in cache, downloading...")
+				v = yt.extract_info(url, download=True)
+			self.currentTitle = v["title"]
+			return v["id"]
+		except Exception as e:
+			print(e)
+			return False
+
+	def playSingleSong(self, url):
+		global musicPlayer
+		if settings["DOWNLOADMODE"]:
+			v = self.getVideo(url)
+			if musicPlayer:
+				if musicPlayer.is_playing():
+					musicPlayer.stop()
+			if v:
+				musicPlayer = client.voice.create_ffmpeg_player("cache/" + v, options='''-filter:a "volume={}"'''.format(settings["VOLUME"]))
+				musicPlayer.start()
+		else:
+			if musicPlayer:
+				if musicPlayer.is_playing():
+					musicPlayer.stop()
+			musicPlayer = client.voice.create_ytdl_player(self.playlist[0], options=youtube_dl_options)
+			musicPlayer.start()
 
 	async def songSwitcher(self):
 		while not self.stop:
@@ -759,6 +814,7 @@ async def checkVoice(message):
 
 async def playVideo(message):
 	global musicPlayer, currentPlaylist
+	toDelete = None
 	if await checkVoice(message):
 		pattern = "(?:youtube\.com\/watch\?v=)(.*)|(?:youtu.be/)(.*)"
 		rr = re.search(pattern, message.content, re.I | re.U)
@@ -773,15 +829,21 @@ async def playVideo(message):
 		if canDeleteMessages(message):
 			await client.send_message(message.channel, "`Playing youtube video {} requested by {}`".format(id, message.author.name))
 			await client.delete_message(message)
-		currentPlaylist = Playlist(singleSong=True)
-		currentPlaylist.playlist = ['https://www.youtube.com/watch?v=' + id]
-		musicPlayer = client.voice.create_ytdl_player('https://www.youtube.com/watch?v=' + id, options=youtube_dl_options)
-		musicPlayer.start()
+		if settings["DOWNLOADMODE"]:
+			toDelete = await client.send_message(message.channel, "`I'm in download mode. It might take a bit for me to start. I'll delete this message as soon as I'm ready.`".format(id, message.author.name))
+		data = {"filename" : 'https://www.youtube.com/watch?v=' + id, "type" : "singleSong"}
+		currentPlaylist = Playlist(data)
+		if toDelete:
+			await client.delete_message(toDelete)
+#		currentPlaylist.playlist = ['https://www.youtube.com/watch?v=' + id]
+#		musicPlayer = client.voice.create_ytdl_player('https://www.youtube.com/watch?v=' + id, options=youtube_dl_options)
+#		musicPlayer.start()
 		#!addfavorite compatibility stuff
 
 async def playPlaylist(message, sing=False):
 	global musicPlayer, currentPlaylist
 	msg = message.content
+	toDelete = None
 	if not sing:
 		if msg != "!play" or msg != "play ":
 			if await checkVoice(message):
@@ -789,9 +851,13 @@ async def playPlaylist(message, sing=False):
 				if dataIO.fileIO("playlists/" + msg + ".txt", "check"):
 					stopMusic()
 					data = {"filename" : msg, "type" : "playlist"}
+					if settings["DOWNLOADMODE"]:
+						toDelete = await client.send_message(message.channel, "`I'm in download mode. It might take a bit for me to start and switch between tracks. I'll delete this message as soon as the current playlist stops.`".format(id, message.author.name))
 					currentPlaylist = Playlist(data)
 					await asyncio.sleep(2)
 					await currentPlaylist.songSwitcher()
+					if toDelete:
+						await client.delete_message(toDelete)
 				else:
 					await client.send_message(message.channel, "{} `That playlist doesn't exist.`".format(message.author.mention))
 	else:
@@ -802,10 +868,15 @@ async def playPlaylist(message, sing=False):
 						"https://www.youtube.com/watch?v=vFrjMq4aL-g", "https://www.youtube.com/watch?v=WROI5WYBU_A",
 						"https://www.youtube.com/watch?v=41tIUr_ex3g", "https://www.youtube.com/watch?v=f9O2Rjn1azc"]
 			song = choice(playlist)
-			currentPlaylist = Playlist(singleSong=True)
-			currentPlaylist.playlist = [song]
-			musicPlayer = client.voice.create_ytdl_player(song, options=youtube_dl_options)
-			musicPlayer.start()
+			data = {"filename" : song, "type" : "singleSong"}
+			if settings["DOWNLOADMODE"]:
+				toDelete = await client.send_message(message.channel, "`I'm in download mode. It might take a bit for me to start. I'll delete this message as soon as I'm ready.`".format(id, message.author.name))
+			currentPlaylist = Playlist(data)
+#			currentPlaylist.playlist = [song]
+#			musicPlayer = client.voice.create_ytdl_player(song, options=youtube_dl_options)
+#			musicPlayer.start()
+			if toDelete:
+				await client.delete_message(toDelete)
 			await client.send_message(message.channel, choice(msg))
 
 async def playLocal(message):
@@ -1030,6 +1101,36 @@ async def sendPlaylist(message):
 			msg += "```"
 			await client.send_message(message.author, msg)
 
+async def setVolume(message):
+	global settings
+	msg = message.content
+	if len(msg.split(" ")) == 2:
+		msg = msg.split(" ")
+		try:
+			vol = float(msg[1])
+			if vol >= 0 or vol <= 1:
+				settings["VOLUME"] = vol
+				await(client.send_message(message.channel, "Volume set. Next track will have the desired volume."))
+				dataIO.fileIO("settings.json", "save", settings)
+			else:
+				await(client.send_message(message.channel, "Volume must be between 0 and 1. Example: !volume 0.50"))
+		except:
+			await(client.send_message(message.channel, "Volume must be between 0 and 1. Example: !volume 0.15"))
+	else:
+		await(client.send_message(message.channel, "Volume must be between 0 and 1. Example: !volume 0.15"))
+
+async def downloadMode(message):
+	if isMemberAdmin(message):
+		if settings["DOWNLOADMODE"]:
+			settings["DOWNLOADMODE"] = False
+			await(client.send_message(message.channel, "`Download mode disabled. This mode is unstable and tracks might interrupt. Also, the volume settings will not have any effect.`"))
+		else:
+			settings["DOWNLOADMODE"] = True
+			await(client.send_message(message.channel, "`Download mode enabled.`"))
+		dataIO.fileIO("settings.json", "save", settings)
+	else:
+		await(client.send_message(message.channel, "`I don't take orders from you.`"))
+
 ############## ADMIN COMMANDS ###################
 
 async def shutdown(message):
@@ -1226,7 +1327,7 @@ def loadDataFromFiles(loadsettings=False):
 	logger.info("Loaded " + str(len(proverbs)) + " proverbs.")
 
 	commands = dataIO.fileIO("commands.json", "load")
-	logger.info("Loaded " + str(len(commands)) + " lists of commands.")
+	logger.info("Loaded " + str(len(commands)) + " lists of custom commands.")
 
 #	trivia_questions = dataIO.loadTrivia()
 #	logger.info("Loaded " + str(len(trivia_questions)) + " questions.")
@@ -1278,6 +1379,9 @@ def main():
 
 	musicPlayer = None
 	currentPlaylist = None
+
+	if not os.path.exists("cache/"): #Stores youtube audio for DOWNLOADMODE
+		os.makedirs("cache")
 
 	client.run(settings["EMAIL"], settings["PASSWORD"])
 
