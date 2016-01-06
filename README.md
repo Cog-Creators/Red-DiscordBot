@@ -72,6 +72,7 @@ Take a look at the command list and have fun.
 | !replay or !repeat         | Replay current song                                                 |
 | !title or !song            | Current song's title + link                                         |
 | !shuffle                   | Mix current playlist                                                |
+| !volume [0-1]              | Sets Red's output volume                                            |
 | !addplaylist [name] [link] | Add a youtube playlist                                              |
 | !delplaylist [name]        | Delete a youtube playlist. Limited to author and admins             |
 | !getplaylist               | Get the current playlist through DM. This also works with favorites |
@@ -97,6 +98,7 @@ Take a look at the command list and have fun.
 | !reload                                                   | Reload most files. Useful in case of manual edits |
 | !name [name]                                              | Change the bot's name                             |
 | !cleanup [number]                                         | Delete the last [number] messages                 |
+| !downloadmode                                             | Enables or disables download mode.                |
 
 ### Economy commands
 
@@ -127,6 +129,10 @@ Suggestions are always very welcome.
 
 Make as many folders as you want inside the localtracks folder. Names must be without spaces. Every folder counts as a different playlist. Every playlist can contain mp3 and flac files. Users can stream them by doing !local [playlist_name] and see the full list
 with !local or !locallist. They can also add tracks to their favorites.
+
+>What's download mode?
+
+Everytime you play the audio of a youtube video with download mode on the audio will be first downloaded and stored into the "cache" folder. It is recommended that you use this mode to avoid streaming problems. This is the default mode, you can switch between modes with !downloadmode.
 
 >Why is this bot called Red and the admin role "Transistor"? What's the meaning of !sing?
 
