@@ -635,14 +635,13 @@ async def rpsgame(message):
 		await client.send_message(message.channel, "`!rps [rock or paper or scissors]`")
 
 async def randomchoice(message):
-	frasi = ["Mmm... I think I'll choose ", "I choose ", "I prefer ", "This one is best: ", "This: "]
+	sentences = ["Mmm... I think I'll choose ", "I choose ", "I prefer ", "This one is best: ", "This: "]
 	msg = message.content[8:] # removes !choose
-	msg = message.content.split(" or ")
+	msg = msg.split(" or ")
 	if len(msg) == 1:
 		await client.send_message(message.channel, "`!choose option1 or option2 or option3 (...)`")
 	elif len(msg) >= 2:
-		msg.pop(0)
-		await client.send_message(message.channel, "`" + choice(frasi) + choice(msg) + "`")
+		await client.send_message(message.channel, "`" + choice(sentences) + choice(msg) + "`")
 	else:
 		await client.send_message(message.channel, "`The options must be at least two.`")
 
