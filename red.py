@@ -38,8 +38,11 @@ help = """**Commands list:**
 !trivia start - Start a trivia session
 !trivia stop - Stop a trivia session
 !twitch [stream] - Check if stream is online
+!twitchalert [stream] - Whenever the stream is online the bot will send an alert in the channel (admin only)
+!stoptwitchalert [stream] - Stop sending alerts about the specified stream in the channel (admin only)
 !roll [number] - Random number between 0 and [number]
 !gif [text] - GIF search
+!customcommands - Custom commands' list
 !addcom [command] [text] - Add a custom command
 !editcom [command] [text] - Edit a custom command
 !delcom [command] - Delete a custom command
@@ -146,10 +149,16 @@ async def on_message(message):
 				await editcom(message)
 			elif message.content.startswith('!delcom'):
 				await delcom(message)
+			elif message.content == "!customcommands":
+				await listCustomCommands(message)
 			elif message.content.startswith('!sw'):
 				await stopwatch(message)
 			elif message.content.startswith('!id'):
 				await client.send_message(message.channel, "{} `Your id is {}`".format(message.author.mention, message.author.id))
+			elif message.content.startswith('!twitchalert'):
+				await addTwitchAlert(message)
+			elif message.content.startswith('!stoptwitchalert'):
+				await removeTwitchAlert(message)
 			elif message.content.startswith('!twitch'):
 				await twitchCheck(message)
 			elif message.content.startswith('!image'):
@@ -445,7 +454,7 @@ class Playlist():
 			self.currentTitle = v["title"]
 			return v["id"]
 		except Exception as e:
-			print(e)
+			logger.error(e)
 			return False
 
 	def playSingleSong(self, url):
@@ -578,6 +587,20 @@ async def delcom(message):
 	else:
 		await client.send_message(message.channel, "`You don't have permissions to edit custom commands.`")
 
+async def listCustomCommands(message):
+	msg = "Custom commands: \n\n```"
+	cmds = commands[message.channel.server.id].keys()
+	if cmds:
+		for i, d in enumerate(cmds):
+			if i % 4 == 0 and i != 0:
+				msg = msg + d + "\n"
+			else:
+				msg = msg + d + "\t"
+		msg += "```"
+		await client.send_message(message.author, msg)
+	else:
+		await client.send_message(message.author, "There are no custom commands.")
+
 def checkAuth(cmd, message, settings): #checks if those settings are on. If they are, it checks if the user is a owner
 	if cmd == "ModifyCommands":
 		if settings["EDIT_CC_ADMIN_ONLY"]:
@@ -596,7 +619,7 @@ def checkAuth(cmd, message, settings): #checks if those settings are on. If they
 		else:
 			return True
 	else:
-		print("Invalid call to checkAuth")
+		logger.error("Invalid call to checkAuth")
 		return False
 
 
@@ -1077,14 +1100,15 @@ async def removeFromFavorites(message):
 
 async def playFavorites(message):
 	global musicPlayer, currentPlaylist
-	if dataIO.fileIO("favorites/" + message.author.id + ".txt", "check") and await checkVoice(message):
-		data = {"filename" : message.author.id, "type" : "favorites"}
-		stopMusic()
-		currentPlaylist = Playlist(data)
-		await asyncio.sleep(2)
-		await currentPlaylist.songSwitcher()
-	else:
-		await client.send_message(message.channel, "{} `You don't have any favorites yet. Start adding them with !addfavorite`".format(message.author.mention))
+	if await checkVoice(message):
+		if dataIO.fileIO("favorites/" + message.author.id + ".txt", "check"):
+			data = {"filename" : message.author.id, "type" : "favorites"}
+			stopMusic()
+			currentPlaylist = Playlist(data)
+			await asyncio.sleep(2)
+			await currentPlaylist.songSwitcher()
+		else:
+			await client.send_message(message.channel, "{} `You don't have any favorites yet. Start adding them with !addfavorite`".format(message.author.mention))
 
 async def sendPlaylist(message):
 	if currentPlaylist:
@@ -1109,14 +1133,14 @@ async def setVolume(message):
 			vol = float(msg[1])
 			if vol >= 0 or vol <= 1:
 				settings["VOLUME"] = vol
-				await(client.send_message(message.channel, "Volume set. Next track will have the desired volume."))
+				await(client.send_message(message.channel, "`Volume set. Next track will have the desired volume.`"))
 				dataIO.fileIO("settings.json", "save", settings)
 			else:
-				await(client.send_message(message.channel, "Volume must be between 0 and 1. Example: !volume 0.50"))
+				await(client.send_message(message.channel, "`Volume must be between 0 and 1. Example: !volume 0.50`"))
 		except:
-			await(client.send_message(message.channel, "Volume must be between 0 and 1. Example: !volume 0.15"))
+			await(client.send_message(message.channel, "`Volume must be between 0 and 1. Example: !volume 0.15`"))
 	else:
-		await(client.send_message(message.channel, "Volume must be between 0 and 1. Example: !volume 0.15"))
+		await(client.send_message(message.channel, "`Volume must be between 0 and 1. Example: !volume 0.15`"))
 
 async def downloadMode(message):
 	if isMemberAdmin(message):
@@ -1230,7 +1254,7 @@ async def changeName(message):
 			try:
 				await client.edit_profile(settings["PASSWORD"], username=msg[1])
 			except Exception as e:
-				print(e)
+				logger.error(e)
 		else:
 			await client.send_message(message.channel, "`!name [new name]`")
 	else:
@@ -1302,7 +1326,100 @@ def isMemberAdmin(message):
 def canDeleteMessages(message):
 	return message.channel.permissions_for(message.server.me).manage_messages
 
+async def addTwitchAlert(message):
+	global twitchStreams
+	added = False
+	if isMemberAdmin(message):
+		msg = message.content.split(" ")
+		if len(msg) == 2:
+			for i, stream in enumerate(twitchStreams):
+				if stream["NAME"] == msg[1] and message.channel.id in stream["CHANNELS"]:
+					await client.send_message(message.channel, "`I'm already monitoring that stream in this channel.`")
+					return False
+			for stream in twitchStreams:
+				if stream["NAME"] == msg[1] and message.channel.id not in stream["CHANNELS"]: # twitchAlert is already monitoring this streamer but not in this channel
+					twitchStreams[i]["CHANNELS"].append(message.channel.id)
+					added = True
+			if not added: # twitchAlert wasn't monitoring this streamer
+				twitchStreams.append({"CHANNELS" : [message.channel.id], "NAME" : msg[1], "ALREADY_ONLINE" : False})
+
+			dataIO.fileIO("twitch.json", "save", twitchStreams)
+			await client.send_message(message.channel, "`I will always send an alert in this channel whenever {}'s stream is online. Use !stoptwitchalert [name] to stop it.`".format(msg[1]))
+		else:
+			await client.send_message(message.channel, "`!twitchalert [name]`")
+	else:
+		await client.send_message(message.channel, "`I don't take orders from you.`")
+
+async def removeTwitchAlert(message):
+	global twitchStreams
+	if isMemberAdmin(message):
+		msg = message.content.split(" ")
+		if len(msg) == 2:
+			for i, stream in enumerate(twitchStreams):
+				if stream["NAME"] == msg[1] and message.channel.id in stream["CHANNELS"]:
+					if len(stream["CHANNELS"]) == 1:
+						twitchStreams.remove(stream)
+					else:
+						twitchStreams[i]["CHANNELS"].remove(message.channel.id)
+					dataIO.fileIO("twitch.json", "save", twitchStreams)
+					await client.send_message(message.channel, "`I will stop sending alerts about {}'s stream in this channel.`".format(msg[1]))
+					return True
+			await client.send_message(message.channel, "`There's no alert for {}'s stream in this channel.`".format(msg[1]))
+		else:
+			await client.send_message(message.channel, "`!stoptwitchalert [name]`")
+	else:
+		await client.send_message(message.channel, "`I don't take orders from you.`")
+
+
 ################################################
+
+@asyncio.coroutine
+async def twitchAlert():
+	global twitchStreams
+	CHECK_DELAY = 10
+	while True:
+		if twitchStreams and client.is_logged_in:
+			to_delete = []
+			save = False
+			consistency_check = twitchStreams
+			for i, stream in enumerate(twitchStreams):
+				if twitchStreams == consistency_check: #prevents buggy behavior if twitchStreams gets modified during the iteration
+					try:
+						url =  "https://api.twitch.tv/kraken/streams/" + stream["NAME"]
+						data = requests.get(url).json()
+						if "error" in data: #Stream doesn't exist, remove from list
+							to_delete.append(stream)
+						elif "stream" in data:
+							if data["stream"] != None:
+								if not stream["ALREADY_ONLINE"]:
+									for channel in stream["CHANNELS"]:
+										try:
+											await client.send_message(client.get_channel(channel), "`{} is online!` {}".format(stream["NAME"], "http://www.twitch.tv/" + stream["NAME"]))
+										except: #In case of missing permissions
+											pass
+									twitchStreams[i]["ALREADY_ONLINE"] = True
+									save = True
+							else:
+								if stream["ALREADY_ONLINE"]:
+									twitchStreams[i]["ALREADY_ONLINE"] = False
+									save = True
+					except Exception as e:
+						logger.warning(e)
+
+					if save: #Saves online status, in case the bot needs to be restarted it can prevent message spam
+						dataIO.fileIO("twitch.json", "save", twitchStreams)
+						save = False
+
+					await asyncio.sleep(CHECK_DELAY)
+				else:
+					break
+
+			if to_delete:
+				for invalid_stream in to_delete:
+					twitchStreams.remove(invalid_stream)
+				dataIO.fileIO("twitch.json", "save", twitchStreams)
+		else:
+			await asyncio.sleep(5)
 
 async def customCommand(message):
 	msg = message.content[1:]
@@ -1320,7 +1437,7 @@ def console():
 			print("\n")
 
 def loadDataFromFiles(loadsettings=False):
-	global proverbs, commands, trivia_questions, badwords, badwords_regex, shush_list
+	global proverbs, commands, trivia_questions, badwords, badwords_regex, shush_list, twitchStreams
 
 	proverbs = dataIO.loadProverbs()
 	logger.info("Loaded " + str(len(proverbs)) + " proverbs.")
@@ -1339,7 +1456,10 @@ def loadDataFromFiles(loadsettings=False):
 
 	shush_list = dataIO.fileIO("shushlist.json", "load")
 	logger.info("Loaded " + str(len(shush_list)) + " silenced channels.")
-	
+
+	twitchStreams = dataIO.fileIO("twitch.json", "load")
+	logger.info("Loaded " + str(len(twitchStreams)) + " streams to monitor.")
+
 	if loadsettings:
 		global settings
 		settings = dataIO.fileIO("settings.json", "load")
@@ -1350,6 +1470,10 @@ def main():
 
 	logger = loggerSetup()
 	dataIO.logger = logger
+
+	if not os.path.isfile("twitch.json"):
+		logger.info("Missing twitch.json. Creating it...")
+		dataIO.fileIO("twitch.json", "save", [])
 
 	settings = dataIO.loadAndCheckSettings()
 
@@ -1382,7 +1506,17 @@ def main():
 	if not os.path.exists("cache/"): #Stores youtube audio for DOWNLOADMODE
 		os.makedirs("cache")
 
-	client.run(settings["EMAIL"], settings["PASSWORD"])
+	loop.create_task(twitchAlert())
+
+	#client.run(settings["EMAIL"], settings["PASSWORD"])
+	yield from client.login(settings["EMAIL"], settings["PASSWORD"])
+	yield from client.connect()
 
 if __name__ == '__main__':
-	main()
+	loop = asyncio.get_event_loop()
+	try:
+		loop.run_until_complete(main())
+	except:
+		loop.run_until_complete(client.logout())
+	finally:
+		loop.close()
