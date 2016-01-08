@@ -1131,7 +1131,7 @@ async def setVolume(message):
 		msg = msg.split(" ")
 		try:
 			vol = float(msg[1])
-			if vol >= 0 or vol <= 1:
+			if vol >= 0 and vol <= 1:
 				settings["VOLUME"] = vol
 				await(client.send_message(message.channel, "`Volume set. Next track will have the desired volume.`"))
 				dataIO.fileIO("settings.json", "save", settings)
