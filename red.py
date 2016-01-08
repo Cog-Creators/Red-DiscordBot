@@ -1387,8 +1387,9 @@ async def twitchAlert():
 					try:
 						url =  "https://api.twitch.tv/kraken/streams/" + stream["NAME"]
 						data = requests.get(url).json()
-						if "error" in data: #Stream doesn't exist, remove from list
-							to_delete.append(stream)
+						if "status" in data: 
+							if data["status"] == 404: #Stream doesn't exist, remove from list
+								to_delete.append(stream)
 						elif "stream" in data:
 							if data["stream"] != None:
 								if not stream["ALREADY_ONLINE"]:
