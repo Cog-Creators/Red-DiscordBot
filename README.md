@@ -59,6 +59,7 @@ Take a look at the command list and have fun.
 | !help                                         | Command list                               |
 | !audio help                                   | Audio command list and playlist explanation.|
 | !economy                                      | Explanation of the economy module          |
+| !admin help                                   | Admin commands list                        |
 
 ### Audio commands
 
@@ -103,6 +104,7 @@ Take a look at the command list and have fun.
 | !reload                                                   | Reload most files. Useful in case of manual edits |
 | !name [name]                                              | Change the bot's name                             |
 | !cleanup [number]                                         | Delete the last [number] messages                 |
+| !cleanup [name/mention] [number]                          | Delete the last [number] of messages by [name]    |
 
 
 ### Economy commands

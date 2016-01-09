@@ -101,6 +101,23 @@ audio_help = """
 4) Listen to it with !play [playlist_name]!
 """
 
+admin_help = """
+**Admin commands:**
+!addwords [word1 word2 (...)] [phrase/with/many/words] - Add words to message filter
+!removewords [word1 word2 (...)] [phrase/with/many/words] - Remove words from message filter
+!addregex [regex] - Add regular expression to message filter
+!removeregex [regex] - Remove regular expression from message filter
+!shutdown - Shutdown the bot
+!join [invite] - Join another server
+!leaveserver - Leave server
+!shush - Ignore the current channel
+!talk - Stop ignoring the current channel
+!reload - Reload most files. Useful in case of manual edits
+!name [name] - Change the bot's name
+!cleanup [number] - Delete the last [number] messages
+!cleanup [name/mention] [number] - Delete the last [number] of messages by [name]
+"""
+
 client = discord.Client()
 
 if not discord.opus.is_loaded():
@@ -264,6 +281,11 @@ async def on_message(message):
 				await changeName(message)
 			elif message.content.startswith("!cleanup"):
 				await cleanup(message)	
+			elif message.content == "!admin help":
+				if isMemberAdmin(message):
+					await client.send_message(message.author, admin_help)
+				else:
+					await client.send_message(message.channel, "`Admin status required.`")
 			###################################
 			elif getTriviabyChannel(message.channel): #check if trivia is ongoing in the channel
 				trvsession = getTriviabyChannel(message.channel)
@@ -1297,6 +1319,7 @@ async def reloadSettings(message):
 		await client.send_message(message.channel, "`I don't take orders from you.`")
 
 async def cleanup(message):
+	errorMsg = "`!cleanup [number] !cleanup [name/mention] [number]`"
 	if isMemberAdmin(message):
 		if canDeleteMessages(message):
 			msg = message.content.split()
@@ -1306,9 +1329,32 @@ async def cleanup(message):
 					for x in await client.logs_from(message.channel, limit=n+1):
 						await client.delete_message(x)
 				else:
-					await client.send_message(message.channel, "`!cleanup [number]`")
+					await client.send_message(message.channel, errorMsg)
+			elif len(msg) == 3:
+				_, name, limit = msg
+				try:
+					limit = int(limit)
+				except:
+					await client.send_message(message.channel, errorMsg)
+					return False
+				if message.mentions:
+					m = message.mentions[0]
+				else:
+					m = discord.utils.get(message.server.members, name=name)
+				if m and limit != 0:
+					checksLeft = 5
+					await client.delete_message(message)
+					while checksLeft != 0 and limit != 0:
+						for x in await client.logs_from(message.channel, limit=100):
+							if x.author == m and limit != 0:
+								await client.delete_message(x)
+								limit -= 1
+						checksLeft -= 1
+				else:
+					await client.send_message(message.channel, errorMsg)
+
 			else:
-				await client.send_message(message.channel, "`!cleanup [number]`")
+				await client.send_message(message.channel, errorMsg)
 		else:
 			await client.send_message(message.channel, "`I need permissions to delete messages.`")
 	else:
@@ -1517,7 +1563,10 @@ if __name__ == '__main__':
 	loop = asyncio.get_event_loop()
 	try:
 		loop.run_until_complete(main())
-	except:
+	except discord.LoginFailure:
+		logger.error("The credentials you put in settings.json are wrong. Take a look.")
+	except Exception as e:
+		logger.error(e)
 		loop.run_until_complete(client.logout())
 	finally:
 		loop.close()
