@@ -7,6 +7,7 @@
 A bit of everything. It has the [most common features](#general-commands) of many chatbots (!flip, !8, stopwatch, etc.), custom commands (inspired by Twitch's [Nightbot](https://www.nightbot.tv/)). It features some games such as Trivia (well, it will as soon as I fix it up and find some decent questions lists), rock paper scissors, [users can earn and play with credits](#economy-commands) in the slot machine.  
 [The audio part is quite fleshed out](#audio-commands). Users can stream youtube videos, make or send playlists that everyone will be able to play and control (previous/next song, pause/resume, shuffle...).  
 MP3 and flac files can also be streamed (see [FAQ](#faq) for details on local playlists)  
+Red can be setup to send a notification in the channel whenever you favorite Twitch streamers are online.  
 As for the moderation tools, it includes a powerful message filter with regular expression capabilities and mass messages cleanup.  
 [I'm planning to expand all this much more](#todo-list).  
 See the [command list](#general-commands) for an even better idea of what this bot can do.
@@ -47,11 +48,14 @@ Take a look at the command list and have fun.
 | !trivia start                                 | Start a trivia session                     |
 | !trivia stop                                  | Stop a trivia session                      |
 | !twitch [stream]                              | Check if stream is online                  |
+| !twitchalert [stream]                         | Red sends an alert in the channel when the stream is online (admin only)|
+| !stoptwitchalert [stream]                     | Stop stream alerts (admin only)      |
 | !roll [number]                                | Random number between 0 and chosen number. |
 | !gif [text]                                   | GIF search                                 |
 | !addcom [command] [text]                      | Add a custom command                       |
 | !editcom [command] [text]                     | Edit a custom command                      |
 | !delcom [command]                             | Delete a custom command                    |
+| !customcommands                               | Custom commands' list                      |
 | !help                                         | Command list                               |
 | !audio help                                   | Audio command list and playlist explanation.|
 | !economy                                      | Explanation of the economy module          |
@@ -81,6 +85,7 @@ Take a look at the command list and have fun.
 | !playfavorites             | Play your favorites                                                 |
 | !local [playlist_name]     | Play chosen local playlist                                          |
 | !local or !locallist       | Local playlists' list                                               |
+| !downloadmode              | Enables or disables download mode. (admin only)                     |
 
 ### Admin commands
 
@@ -98,7 +103,7 @@ Take a look at the command list and have fun.
 | !reload                                                   | Reload most files. Useful in case of manual edits |
 | !name [name]                                              | Change the bot's name                             |
 | !cleanup [number]                                         | Delete the last [number] messages                 |
-| !downloadmode                                             | Enables or disables download mode.                |
+
 
 ### Economy commands
 
