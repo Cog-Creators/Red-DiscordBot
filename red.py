@@ -611,15 +611,18 @@ async def delcom(message):
 
 async def listCustomCommands(message):
 	msg = "Custom commands: \n\n```"
-	cmds = commands[message.channel.server.id].keys()
-	if cmds:
-		for i, d in enumerate(cmds):
-			if i % 4 == 0 and i != 0:
-				msg = msg + d + "\n"
-			else:
-				msg = msg + d + "\t"
-		msg += "```"
-		await client.send_message(message.author, msg)
+	if message.channel.server.id in commands:
+		cmds = commands[message.channel.server.id].keys()
+		if cmds:
+			for i, d in enumerate(cmds):
+				if i % 4 == 0 and i != 0:
+					msg = msg + d + "\n"
+				else:
+					msg = msg + d + "\t"
+			msg += "```"
+			await client.send_message(message.author, msg)
+		else:
+			await client.send_message(message.author, "There are no custom commands.")
 	else:
 		await client.send_message(message.author, "There are no custom commands.")
 
@@ -871,7 +874,7 @@ async def playVideo(message):
 			return False
 		stopMusic()
 		if canDeleteMessages(message):
-			await client.send_message(message.channel, "`Playing youtube video {} requested by {}`".format(id, message.author.name))
+			await client.send_message(message.channel, "`Playing` `https://www.youtube.com/watch?v={}` `requested by {}`".format(id, message.author.name))
 			await client.delete_message(message)
 		if settings["DOWNLOADMODE"]:
 			toDelete = await client.send_message(message.channel, "`I'm in download mode. It might take a bit for me to start. I'll delete this message as soon as I'm ready.`".format(id, message.author.name))
@@ -1262,7 +1265,8 @@ async def removeBadWords(message):
 					except:
 						pass
 				await client.send_message(message.channel, "`Updated banned words database.`")
-				dataIO.saveFilter(badwords)
+				dataIO.fileIO("filter.json", "save", badwords)
+				logger.info("Saved filter words.")
 		else:
 			await client.send_message(message.channel, "`!removewords [word1] [word2] [phrase/with/many/words](...)`")
 	else:
@@ -1305,7 +1309,8 @@ async def removeRegex(message):
 			if msg in badwords_regex[message.server.id]:
 				badwords_regex[message.server.id].remove(msg)
 				await client.send_message(message.channel, "`Updated regex filter database.`")
-				dataIO.saveRegex(badwords_regex)
+				dataIO.fileIO("regex_filter.json", "save", badwords_regex)
+				logger.info("Saved regex filter database.")
 			else:
 				await client.send_message(message.channel, "`No match.`")
 	else:
