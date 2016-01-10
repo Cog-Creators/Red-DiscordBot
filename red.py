@@ -935,10 +935,10 @@ async def playLocal(message):
 			if localplaylists and ("/" not in msg[1] and "\\" not in msg[1]):
 				if msg[1] in localplaylists:
 					files = []
-					if glob.glob("localtracks\\" + msg[1] + "\\*.mp3"):
-						files.extend(glob.glob("localtracks\\" + msg[1] + "\\*.mp3"))
-					if glob.glob("localtracks\\" + msg[1] + "\\*.flac"):
-						files.extend(glob.glob("localtracks\\" + msg[1] + "\\*.flac"))
+					if glob.glob("localtracks/" + msg[1] + "/*.mp3"):
+						files.extend(glob.glob("localtracks/" + msg[1] + "/*.mp3"))
+					if glob.glob("localtracks/" + msg[1] + "/*.flac"):
+						files.extend(glob.glob("localtracks/" + msg[1] + "/*.flac"))
 					stopMusic()
 					data = {"filename" : files, "type" : "local"}
 					currentPlaylist = Playlist(data)
