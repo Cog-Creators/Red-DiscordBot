@@ -6,7 +6,7 @@
 ### Cool title, but what does it do exactly?
 A bit of everything. Seriously though:  
 It has the [most common features](#general-commands) of many chatbots (!flip, !8, stopwatch, etc.), **custom commands** (inspired by Twitch's [Nightbot](https://www.nightbot.tv/)).  
-It features some games such as **Trivia** (well, it will as soon as I fix it up and find some decent questions lists), rock paper scissors, [users can earn and play with credits](#economy-commands) in the slot machine.  
+It features some games such as **Trivia**, rock paper scissors, [users can earn and play with credits](#economy-commands) in the slot machine.  
 [The audio part is quite fleshed out](#audio-commands). Users can **stream youtube videos**, create **playlists** that everyone will be able to play and control (previous/next song, pause/resume, shuffle...).  
 **MP3 and flac files can also be streamed** (see [FAQ](#faq) for details on local playlists)  
 **Twitch's online notifications**: Red will notify the channels you want whenever you favorite Twitch streamers are online.  
@@ -47,7 +47,8 @@ Take a look at the command list and have fun.
 | !choose [option1 or option2 or option3 (...)] | Random choice. Supports multiple words     |
 | !8 [question?]                                | Ask 8 ball a question                      |
 | !sw                                           | Start/stop the stopwatch                   |
-| !trivia start                                 | Start a trivia session                     |
+| !trivia                                       | Trivia help and lists                      |
+| !trivia [list]                                | Start a trivia session                     |
 | !trivia stop                                  | Stop a trivia session                      |
 | !twitch [stream]                              | Check if stream is online                  |
 | !twitchalert [stream]                         | Red sends an alert in the channel when the stream is online (admin only)|
