@@ -419,6 +419,9 @@ class Trivia():
 			if score == settings["TRIVIA_MAX_SCORE"]:
 				await self.endGame()
 				return True
+		if self.questionList == []:
+			await self.endGame()
+			return True
 		self.currentQ = choice(self.questionList)
 		self.questionList.remove(self.currentQ)
 		self.status = "waiting for answer"
