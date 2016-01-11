@@ -2,8 +2,8 @@ import json
 import logging
 
 default_settings = ('{"TRIVIA_ADMIN_ONLY": false, "EDIT_CC_ADMIN_ONLY": false, "PASSWORD": "PASSWORDHERE", "FILTER": true, "CUSTOMCOMMANDS": true, ' +
-					'"TRIVIAMAXSCORE": 10, "TRIVIADELAY": 15, "LOGGING": true, "EMAIL": "EMAILHERE", "ADMINROLE": "Transistor", "DOWNLOADMODE" : true, ' +
-					'"VOLUME": 0.20}')
+					'"TRIVIA_MAX_SCORE": 10, "TRIVIA_DELAY": 15, "LOGGING": true, "EMAIL": "EMAILHERE", "ADMINROLE": "Transistor", "DOWNLOADMODE" : true, ' +
+					'"VOLUME": 0.20, "TRIVIA_BOT_PLAYS" : false, "TRIVIA_TIMEOUT" : 120}')
 logger = logging.getLogger("__main__")
 
 

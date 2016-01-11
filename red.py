@@ -49,6 +49,7 @@ help = """**Commands list:**
 
 !audio help - Audio related commands
 !economy - Economy explanation, if available
+!trivia - Trivia commands and lists
 """
 
 youtube_dl_options = {
@@ -118,6 +119,14 @@ admin_help = """
 !cleanup [name/mention] [number] - Delete the last [number] of messages by [name]
 """
 
+trivia_help = """
+**Trivia commands:**
+!trivia - Trivia questions lists and help
+!trivia [name] - Starts trivia session with specified list
+!trivia random - Starts trivia session with random list
+!trivia stop - Stop trivia session
+"""
+
 client = discord.Client()
 
 if not discord.opus.is_loaded():
@@ -125,6 +134,7 @@ if not discord.opus.is_loaded():
 
 @client.async_event
 async def on_message(message):
+	global trivia_sessions
 
 	await gameSwitcher.changeGame()
 
@@ -238,24 +248,24 @@ async def on_message(message):
 			elif message.content == "!downloadmode":
 				await downloadMode(message)
 			################################################
-			elif message.content == "!trivia start":
+			elif message.content == "!trivia":
+				await triviaList(message)
+			elif message.content.startswith("!trivia"):
 				if checkAuth("Trivia", message, settings):
-					if not getTriviabyChannel(message.channel):
-						#th = threading.Thread(target=controlTrivia, args=[message, True])
-						#th.start()
-						#await controlTrivia(message, True)
-						await client.send_message(message.channel, "`Trivia is currently out of service. Sorry.`")
+					if message.content == "!trivia stop":
+						if getTriviabyChannel(message.channel):
+							await getTriviabyChannel(message.channel).endGame()
+							await client.send_message(message.channel, "`Trivia stopped.`")
+						else:
+							await client.send_message(message.channel, "`There's no trivia session ongoing in this channel.`")
+					elif not getTriviabyChannel(message.channel):
+						t = Trivia(message)
+						trivia_sessions.append(t)
+						await t.loadQuestions(message.content)
 					else:
 						await client.send_message(message.channel, "`A trivia session is already ongoing in this channel.`")
 				else:
 					await client.send_message(message.channel, "`Trivia is currently admin-only.`")
-			elif message.content == "!trivia stop":
-				if checkAuth("Trivia", message, settings):
-					await controlTrivia(message, False)
-				else:
-					await client.send_message(message.channel, "`Trivia is currently admin-only.`")
-			elif message.content == "!trivia":
-				pass
 			######## Admin commands #######################
 			elif message.content.startswith('!addwords'):
 				await addBadWords(message)
@@ -336,57 +346,113 @@ def loggerSetup():
 
 class Trivia():
 	def __init__(self, message):
+		self.gaveAnswer = ["I know this one! {}!", "Easy: {}.", "Oh really? It's {} of course."]
+		self.currentQ = None # {"QUESTION" : "String", "ANSWERS" : []}
+		self.questionList = ""
 		self.channel = message.channel
-		self.stop = False
-		self.currentQ = ""
-		self.currentA = ""
-		self.scorelist = {}
-		self.Atimestamp = 99 #var initialization
-		self.answered = False
-		self.noAnswers = ["`No one got it. Disappointing.`", "`Oook... Next one...`", "`Maybe next time I'll tell you the solution.`",
-		"`*sighs*`", "`I have no words. Next one...`", "`Come on, that one was easy.`", "`That was one of the easiest ones.`",
-		"`I knew the answer.`", "`Is the game almost over? I have places to be.`", "`I'm on the verge of tears...`", "`:'(`", "`Really? No one?`", "`Crazy.`",
-		"`I expected nothing and I'm still disappointed.`", "`*facepalm*`"]
 		logger.info("Trivia started in channel " + self.channel.id)
+		self.scoreList = {}
+		self.status = None
+		self.timer = None
+		self.count = 0
 
-	async def game(self):
-		global trivia_sessions
-		while not self.stop:
-			self.answered = False
-			self.currentQ, self.currentA = self.getTriviaQuestion() # [question, answer]
-			logger.debug(self.currentA)
-			await client.send_message(self.channel, "`" + self.currentQ + "`")
-			time.sleep(settings["TRIVIADELAY"])
-			await self.checkScore()
-			if time.perf_counter() - self.Atimestamp  < 3: 
-				time.sleep(2) # waits for 2 seconds if the answer was given very recently
-			if not self.answered and not self.stop:
-				await client.send_message(self.channel, choice(self.noAnswers))
-#				client.send_typing(self.channel) #doesn't work for some reason
-				time.sleep(3)
-		trivia_sessions.remove(self)
-
-	async def checkAnswer(self, message):
-		if self.currentA.lower() == message.content.lower() and not self.answered:
-			if message.author.name in self.scorelist:
-				self.scorelist[message.author.name] += 1
+	async def loadQuestions(self, msg):
+		msg = msg.split(" ")
+		if len(msg) == 2:
+			_, qlist = msg
+			if qlist == "random":
+				chosenList = choice(glob.glob("trivia/*.txt"))
+				self.questionList = self.loadList(chosenList)
+				self.status = "new question"
+				self.timeout = time.perf_counter()
+				if self.questionList: await self.newQuestion()
 			else:
-				self.scorelist[message.author.name] = 1
-			await client.send_message(self.channel, "{} `Correct answer! +1 point! ({} points)`".format(message.author.mention, str(self.scorelist[message.author.name])))
-			self.Atimestamp = time.perf_counter()
-			self.answered = True
+				if os.path.isfile("trivia/" + qlist + ".txt"):
+					self.questionList = self.loadList("trivia/" + qlist + ".txt")
+					self.status = "new question"
+					self.timeout = time.perf_counter()
+					if self.questionList: await self.newQuestion()
+				else:
+					await client.send_message(self.channel, "`There is no list with that name.`")
+					await self.stopTrivia()
+		else:
+			await client.send_message(self.channel, "`!trivia [list name]`")
 
-	async def checkScore(self):
-		for k, v in self.scorelist.items():
-			if self.scorelist[k] == settings["TRIVIAMAXSCORE"]:
-				await client.send_message(self.channel, "`Congratulations {}! You win!`".format(k))
-				self.sendTable()
-				self.stop = True
+	async def stopTrivia(self):
+		global trivia_sessions
+		self.status = "stop"
+		trivia_sessions.remove(self)
+		logger.info("Trivia stopped in channel " + self.channel.id)
 
+	async def endGame(self):
+		global trivia_sessions
+		self.status = "stop"
+		if self.scoreList:
+			await self.sendTable()
+		trivia_sessions.remove(self)
+		logger.info("Trivia stopped in channel " + self.channel.id)
+
+
+	def loadList(self, qlist):
+		with open(qlist, "r") as f:
+			qlist = f.readlines()
+		parsedList = []
+		for line in qlist:
+			if "`" in line and len(line) > 4:
+				line = line.replace("\n", "")
+				line = line.split("`")
+				question = line[0]
+				answers = []
+				for l in line[1:]:
+					answers.append(l.lower())
+				if len(line) >= 2:
+					line = {"QUESTION" : question, "ANSWERS": answers} #string, list
+					parsedList.append(line)
+		if parsedList != []:
+			return parsedList
+		else:
+			self.stopTrivia()
+			return None
+
+	async def newQuestion(self):
+		for score in self.scoreList.values():
+			if score == settings["TRIVIA_MAX_SCORE"]:
+				await self.endGame()
+				return True
+		self.currentQ = choice(self.questionList)
+		self.questionList.remove(self.currentQ)
+		self.status = "waiting for answer"
+		self.count += 1
+		self.timer = int(time.perf_counter())
+		await client.send_message(self.channel, "**Question number {}!**\n\n{}".format(str(self.count), self.currentQ["QUESTION"]))
+		while self.status != "correct answer" and abs(self.timer - int(time.perf_counter())) <= settings["TRIVIA_DELAY"]:
+			if abs(self.timeout - int(time.perf_counter())) >= settings["TRIVIA_TIMEOUT"]:
+				await client.send_message(self.channel, "Guys...? Well, I guess I'll stop then.")
+				await self.stopTrivia()
+				return True
+			await asyncio.sleep(1) #Waiting for an answer or for the time limit
+		if self.status == "correct answer":
+			self.status = "new question"
+			await asyncio.sleep(3)
+			if not self.status == "stop":
+				await self.newQuestion()
+		elif self.status == "stop":
+			return True
+		else:
+			msg = choice(self.gaveAnswer).format(self.currentQ["ANSWERS"][0])
+			if settings["TRIVIA_BOT_PLAYS"]:
+				msg += " **+1** for me!"
+				self.addPoint(client.user.name)
+			self.currentQ["ANSWERS"] = []
+			await client.send_message(self.channel, msg)
+			await asyncio.sleep(3)
+			if not self.status == "stop":
+				await self.newQuestion()
+		
 	async def sendTable(self):
-		self.scorelist = sorted(self.scorelist.items(), reverse=True, key=lambda x: x[1]) # orders score from lower to higher
-		t = "```Scores: \n"
-		for score in self.scorelist:
+		self.scoreList = sorted(self.scoreList.items(), reverse=True, key=lambda x: x[1]) # orders score from lower to higher
+		t = "```Scores: \n\n"
+		for score in self.scoreList:
 			t += score[0] # name
 			t += "\t"
 			t += str(score[1]) # score
@@ -394,10 +460,21 @@ class Trivia():
 		t += "```"
 		await client.send_message(self.channel, t)
 
-	async def stopp(self):
-		self.stop = True
-		await client.send_message(self.channel, "`Trivia stopped!`")
-		logger.info("Trivia stopped in channel " + self.channel.id)
+	async def checkAnswer(self, message):
+		self.timeout = time.perf_counter()
+		for answer in self.currentQ["ANSWERS"]:
+			if answer in message.content.lower():
+				self.currentQ["ANSWERS"] = []
+				self.status = "correct answer"
+				self.addPoint(message.author.name)
+				await client.send_message(self.channel, "You got it {}! **+1** to you!".format(message.author.name))
+				return True
+
+	def addPoint(self, user):
+		if user in self.scoreList:
+			self.scoreList[user] += 1
+		else:
+			self.scoreList[user] = 1
 
 	def getTriviaQuestion(self):
 		q = choice(list(trivia_questions.keys()))
@@ -844,6 +921,29 @@ async def twitchCheck(message):
 			await client.send_message(message.channel, "{} `Error.`".format(message.author.mention))
 	else:
 		await client.send_message(message.channel, "{} `!twitch [stream]`".format(message.author.mention))
+
+async def triviaList(message):
+	await client.send_message(message.author, trivia_help)
+	msg = "**Available trivia lists:** \n\n```"
+	lists = os.listdir("trivia/")
+	if lists:
+		clean_list = []
+		for txt in lists:
+			if txt.endswith(".txt") and " " not in txt:
+				txt = txt.replace(".txt", "")
+				clean_list.append(txt)
+		if clean_list:
+			for i, d in enumerate(clean_list):
+				if i % 4 == 0 and i != 0:
+					msg = msg + d + "\n"
+				else:
+					msg = msg + d + "\t"
+			msg += "```"
+			await client.send_message(message.author, msg)
+		else:
+			await client.send_message(message.author, "There are no trivia lists available.")
+	else:
+		await client.send_message(message.author, "There are no trivia lists available.")
 
 async def uptime(message):
 	up = abs(uptime_timer - int(time.perf_counter()))
@@ -1497,9 +1597,6 @@ def loadDataFromFiles(loadsettings=False):
 	commands = dataIO.fileIO("commands.json", "load")
 	logger.info("Loaded " + str(len(commands)) + " lists of custom commands.")
 
-#	trivia_questions = dataIO.loadTrivia()
-#	logger.info("Loaded " + str(len(trivia_questions)) + " questions.")
-
 	badwords = dataIO.fileIO("filter.json", "load")
 	logger.info("Loaded " + str(len(badwords)) + " lists of filtered words.")
 
@@ -1557,6 +1654,9 @@ def main():
 
 	if not os.path.exists("cache/"): #Stores youtube audio for DOWNLOADMODE
 		os.makedirs("cache")
+
+	if not os.path.exists("trivia/"):
+		os.makedirs("trivia")
 
 	loop.create_task(twitchAlert())
 
