@@ -161,7 +161,7 @@ How many holes are there, usually, in a ten-pin bowling ball?`3`Three
 The Sherlock Holmes Hotel is in which London street?`Baker Street`Baker
 What colour, traditionally, are cabs in New York?`Yellow
 What is the square root of 81?`9`nine
-How many inches in five feet?`60
+How many inches in five feet?`60`sixty
 Courgette is another name for which vegetable?`Zucchini
 What is a group of lions called?`A pride`pride
 What does ET stand for in the 1982 Steven Spielberg film?`Extra Terrestrial`extraterrestrial
@@ -192,7 +192,7 @@ Which domestic animal was worshipped by the ancient Egyptians?`cat
 What value points is the brown ball in a game of snooker?`Four
 What is the name of a long-bodied marine fish and a person who unscrupulously exploits or swindles others?`Shark
 What is the national animal of Finland?`Brown bear
-How many squares are on a chess board?`64
+How many squares are on a chess board?`64`sixtyfour`sixty-four
 In the human body, molars, canines and incisors are all what?`Teeth`tooth
 How many events make up a biathlon?`2`Two
 What is a line called that goes straight from the center of a circle to the circumference?`Radius
@@ -202,18 +202,18 @@ How many wings does a bee have?`4`Four
 The musical "West Side Story" is based on which Shakespeare play?`Romeo and Juliet
 Whose 1988 autobiography is entitled 'Moonwalk'?`Michael Jackson
 How many dice are used in a standard game of 'Craps'?`2`Two
-What is the boiling point of water in degrees Farenheit?`212
+What is the boiling point of water in degrees Farenheit?`212`two hundred and twelve
 What is the first name of Bill and Hillary Clinton’s daughter?`Chelsea
-What is the cube root of 27?`3
-How many days are there in the month of August?`31
+What is the cube root of 27?`3`three
+How many days are there in the month of August?`31`thirtyone`thirty-one
 What is the name of the fairy in the play ‘Peter Pan’ by J M Barrie?`Tinker Bell
 What type of drink is claret?`Wine
 How many compartments does a cow's stomach have?`4`Four
 In humans, what is the name of the front cutting teeth?`Incisor`Incisors
 What is the longest river in North America?`Missouri River`Missouri
 What is the name of the daughter of cartoon character Fred Flintstone?`Pebbles
-What is the highest prime number between 1 and 100?`97
-How many grams in half a kilo?`500
+What is the highest prime number between 1 and 100?`97`ninetyseven`ninety-seven
+How many grams in half a kilo?`500`five hundred
 What colour is the skin of a courgette?`Green
 Gotham City is associated with which fictional superhero?`Batman
 What breed of dog is known as a 'Sausage dog'?`Dachshund
@@ -230,13 +230,13 @@ In the game of Clue, what colour is the piece that represents Mrs Peacock?`Blue
 How many points are scored for a dropped goal in rugby union?`3`Three
 What is the largest gulf in the world?`Gulf of Mexico`the gulf of mexico
 Melbourne is the capital of which Australian state?`Victoria
-How many squares are on a Spear's Games Snakes and Ladders board?`100
+How many squares are on a Spear's Games Snakes and Ladders board?`100`one hundred
 How many Deadly Sins are there?`7`Seven
 How many Jokers are in a standard pack of cards?`2`Two
 Prince Albert, husband of British monarch Queen Victoria, was born in which modern-day country?`Germany
 Which animal is depicted as the face of breakfast cereal Coco Pops?`Monkey
 The countries Ghana, Nigeria and Kenya are all in which continent?`Africa
-What is the square root of 144?`12
+What is the square root of 144?`12`twelve
 What colour is superhero Batman's Batphone?`Red
 'The Grand Ole Opry' in America is famous for what type of music?`Country music`Country
 The caber, kilts and bagpipes are all associated with with European country?`Scotland
@@ -250,8 +250,8 @@ Which legendary English outlaw 'stole from the rich to give to the poor'?`Robin 
 Who played Han Solo in the 'Star Wars' series of films?`Harrison Ford
 Who sang at half time at the US Super Bowl in February 2013?`Beyonce
 In July 2013, who revealed that they were the secret author Robert Galbraith?`J K Rowling`j.k. rowling'j. k. rowling
-How many apostles are there in the painting 'The Last Supper' by Leonardo da Vinci?`12
-Not including the cellar, how many rooms are there in the board game Clue?`Nine
+How many apostles are there in the painting 'The Last Supper' by Leonardo da Vinci?`12`twelve
+Not including the cellar, how many rooms are there in the board game Clue?`Nine`9
 What is the capital of Canada?`Ottawa
 What colour is Teletubby Po in the children's television series Teletubbies?`Red
 In the Harry Potter series of books, what animal does Sirius Black turn into?`Dog
