@@ -21,7 +21,7 @@ Do not panic. Follow these steps:
 - [Install Git](https://git-scm.com/download/win), don't forget to check "Use Git from the Windows Command Prompt"  
 - Open the start menu, type cmd, right click and open the command prompt as admin. Now, do:  
 ```
-pip install git+git://github.com/Rapptz/discord.py.git@5a1d7a2d942c75a2f374b4b0add6ad50fdd227d7
+pip install git+https://github.com/Rapptz/discord.py@async
 pip install requests
 pip install youtube_dl
 pip install beautifulsoup4
