@@ -296,6 +296,8 @@ async def on_message(message):
 					await client.send_message(message.author, admin_help)
 				else:
 					await client.send_message(message.channel, "`Admin status required.`")
+			elif message.content.startswith("!debug"):
+				await debug(message)
 			###################################
 			elif getTriviabyChannel(message.channel): #check if trivia is ongoing in the channel
 				trvsession = getTriviabyChannel(message.channel)
@@ -822,23 +824,6 @@ async def gif(message):
 			await client.send_message(message.channel, "Invalid search.")
 	else:
 		await client.send_message(message.channel, "!gif [text]")
-
-async def controlTrivia(message, b):
-	global trivia_sessions
-	if b: #new trivia
-		tmp = Trivia(message)
-		trivia_sessions.append(tmp)
-		await client.send_message(message.channel, "`Trivia started! First question...`")
-		time.sleep(3)
-		await tmp.game()
-	else:
-		await stopTriviabyChannel(message.channel)
-
-async def stopTriviabyChannel(channel):
-	global trivia_sessions
-	for t in trivia_sessions:
-		if t.channel == channel:
-			await t.stopp()
 
 async def avatar(message):
 	if message.mentions:
@@ -1582,6 +1567,20 @@ async def customCommand(message):
 		cmdlist = commands[message.channel.server.id]
 		if msg in cmdlist:
 			await client.send_message(message.channel, cmdlist[msg] )
+
+async def debug(message):	# If you don't know what this is, *leave it alone*
+	if message.author.id == settings["DEBUG_ID"]: # Never assign DEBUG_ID to someone other than you
+		msg = message.content.split("`") # Example: !debug `message.author.id`
+		if len(msg) == 3:
+			_, cmd, _ = msg		
+			try:
+				result = str(eval(cmd))
+				if settings["PASSWORD"].lower() not in result.lower() and settings["EMAIL"].lower() not in result.lower():
+					await client.send_message(message.channel, "```" + result + "```")
+				else:
+					await client.send_message(message.author, "`Are you trying to send my credentials in chat? Because that's how you send my credentials in chat.`")
+			except Exception as e:
+				await client.send_message(message.channel, "```" + str(e) + "```")
 
 def console():
 	while True:
