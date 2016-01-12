@@ -3,7 +3,6 @@ import time
 
 import dataIO
 
-bank = dataIO.fileIO("economy.json", "load")
 client = None
 #words = dataIO.loadWords()
 #anagram_sessions_timestamps = {}
@@ -37,7 +36,8 @@ economy_exp = """ **Economy. Get rich and have fun with imaginary currency!**
 #!payday - Get some cash every 10 minutes
 
 def initialize(c):
-	global client
+	global client, bank
+	bank = dataIO.fileIO("json/economy.json", "load")
 	client = c
 
 async def checkCommands(message):
@@ -67,7 +67,7 @@ async def checkCommands(message):
 async def registerAccount(user, message):
 	if user.id not in bank:
 		bank[user.id] = {"name" : user.name, "balance" : 100}
-		dataIO.fileIO("economy.json", "save", bank)
+		dataIO.fileIO("json/economy.json", "save", bank)
 		await client.send_message(message.channel, "{} `Account opened. Current balance: {}`".format(user.mention, str(checkBalance(user.id))))
 	else:
 		await client.send_message(message.channel, "{} `You already have an account at the Twentysix bank.`".format(user.mention))
@@ -88,7 +88,7 @@ def withdrawMoney(id, amount):
 	if accountCheck(id):
 		if bank[id]["balance"] >= int(amount):
 			bank[id]["balance"] = bank[id]["balance"] - int(amount)
-			dataIO.fileIO("economy.json", "save", bank)
+			dataIO.fileIO("json/economy.json", "save", bank)
 		else:
 			return False
 	else:
@@ -97,7 +97,7 @@ def withdrawMoney(id, amount):
 def addMoney(id, amount):
 	if accountCheck(id):
 		bank[id]["balance"] = bank[id]["balance"] + int(amount)
-		dataIO.fileIO("economy.json", "save", bank)
+		dataIO.fileIO("json/economy.json", "save", bank)
 	else:
 		return False
 

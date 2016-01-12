@@ -1,5 +1,7 @@
 import json
 import logging
+import os
+import glob
 
 default_settings = ('{"TRIVIA_ADMIN_ONLY": false, "EDIT_CC_ADMIN_ONLY": false, "PASSWORD": "PASSWORDHERE", "FILTER": true, "CUSTOMCOMMANDS": true, ' +
 					'"TRIVIA_MAX_SCORE": 10, "TRIVIA_DELAY": 15, "LOGGING": true, "EMAIL": "EMAILHERE", "ADMINROLE": "Transistor", "DOWNLOADMODE" : true, ' +
@@ -28,26 +30,10 @@ def loadProverbs():
 		data = f.readlines()
 	return data
 
-def loadTrivia():
-	w = {}
-	with open("questions.txt", "r") as f:
-		for line in f:
-			line = line.replace("\n", "")
-			line = line.split("|")
-			w[line[0]] = line[1]
-	return w
-
-def loadWords():
-	w = []
-	with open("words.dat", "r") as f:
-		for line in f:
-			w += line
-	return w
-
 def loadAndCheckSettings():
 	to_delete = []
 	try:
-		current_settings = fileIO("settings.json", "load")
+		current_settings = fileIO("json/settings.json", "load")
 		default = json.loads(default_settings)
 		if current_settings.keys() != default.keys():
 			logger.warning("Something wrong detected with settings.json. Starting check...")
@@ -63,12 +49,56 @@ def loadAndCheckSettings():
 				del current_settings[field]
 			logger.warning("Your settings.json was deprecated (missing or useless fields detected). I fixed it. " +
 						   "If the file was missing any field I've added it and put default values. You might want to check it.")
-		fileIO("settings.json", "save", current_settings)
+		fileIO("json/settings.json", "save", current_settings)
 		return current_settings
 	except IOError:
-		fileIO("settings.json", "save", json.loads(default_settings))
+		fileIO("json/settings.json", "save", json.loads(default_settings))
 		logger.error("Your settings.json is missing. I've created a new one. Edit it with your settings and restart me.")
 		exit(1)
 	except:
 		logger.error("Your settings.json seems to be invalid. Check it. If you're unable to fix it delete it and I'll create a new one the next start.")
 		exit(1)
+
+def migration():
+	if not os.path.exists("json/"):
+		os.makedirs("json")
+		logger.info("Creating json folder...")
+
+	if not os.path.exists("cache/"): #Stores youtube audio for DOWNLOADMODE
+		os.makedirs("cache")
+
+	if not os.path.exists("trivia/"):
+		os.makedirs("trivia")
+	
+	files = glob.glob("*.json")
+	if files != []:
+		logger.info("Moving your json files into the json folder...")
+		for f in files:
+			logger.info("Moving {}...".format(f))
+			os.rename(f, "json/" + f)
+
+def createEmptyFiles():
+	files = {"twitch.json": [], "commands.json": {}, "economy.json" : {}, "filter.json" : {}, "regex_filter.json" : {}, "shushlist.json" : []}
+	games = ["Multi Theft Auto", "her Turn()", "Tomb Raider II", "some music.", "NEO Scavenger", "Python", "World Domination", "with your heart."]
+	files["games.json"] = games
+	for f, data in files.items() :
+		if not os.path.isfile("json/" + f):
+			logger.info("Missing {}. Creating it...".format(f))
+			fileIO("json/" + f, "save", data)
+	if not os.path.isfile("json/settings.json"):
+		logger.info("Missing settings.json. Creating it...\n")
+		fileIO("json/settings.json", "save", json.loads(default_settings))
+		print("You have to configure your settings. If you'd like to do it manually, close this window.\nOtherwise type your bot's account email. DO NOT use your own account for the bot, make a new one.\n\nEmail:")
+		email = input(">")
+		print("Now enter the password.")
+		password = input(">")
+		print("Admin role? Leave empty for default (Transistor)")
+		admin_role = input(">")
+		if admin_role == "": 
+			admin_role = "Transistor"
+		new_settings = json.loads(default_settings)
+		new_settings["EMAIL"] = email
+		new_settings["PASSWORD"] = password
+		new_settings["ADMINROLE"] = admin_role
+		fileIO("json/settings.json", "save", new_settings )
+		logger.info("Settings have been saved.")

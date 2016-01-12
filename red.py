@@ -487,7 +487,7 @@ class Trivia():
 
 class botPlays():
 	def __init__(self):
-		self.games = dataIO.fileIO("games.json", "load")
+		self.games = dataIO.fileIO("json/games.json", "load")
 		self.lastChanged = int(time.perf_counter())
 		self.delay = 300
 
@@ -633,7 +633,7 @@ async def addcom(message):
 				if newcmd not in cmdlist:
 					cmdlist[newcmd] = customtext
 					commands[message.channel.server.id] = cmdlist
-					dataIO.fileIO("commands.json", "save", commands)
+					dataIO.fileIO("json/commands.json", "save", commands)
 					logger.info("Saved commands database.")
 					await client.send_message(message.channel, "`Custom command successfully added.`")
 				else:
@@ -656,7 +656,7 @@ async def editcom(message):
 				if cmd in cmdlist:
 					cmdlist[cmd] = customtext
 					commands[message.channel.server.id] = cmdlist
-					dataIO.fileIO("commands.json", "save", commands)
+					dataIO.fileIO("json/commands.json", "save", commands)
 					logger.info("Saved commands database.")
 					await client.send_message(message.channel, "`Custom command successfully edited.`")
 				else:
@@ -678,7 +678,7 @@ async def delcom(message):
 				if msg[1] in cmdlist:
 					cmdlist.pop(msg[1], None)
 					commands[message.channel.server.id] = cmdlist
-					dataIO.fileIO("commands.json", "save", commands)
+					dataIO.fileIO("json/commands.json", "save", commands)
 					logger.info("Saved commands database.")
 					await client.send_message(message.channel, "`Custom command successfully deleted.`")
 				else:
@@ -1247,7 +1247,7 @@ async def setVolume(message):
 			if vol >= 0 and vol <= 1:
 				settings["VOLUME"] = vol
 				await(client.send_message(message.channel, "`Volume set. Next track will have the desired volume.`"))
-				dataIO.fileIO("settings.json", "save", settings)
+				dataIO.fileIO("json/settings.json", "save", settings)
 			else:
 				await(client.send_message(message.channel, "`Volume must be between 0 and 1. Example: !volume 0.50`"))
 		except:
@@ -1263,7 +1263,7 @@ async def downloadMode(message):
 		else:
 			settings["DOWNLOADMODE"] = True
 			await(client.send_message(message.channel, "`Download mode enabled.`"))
-		dataIO.fileIO("settings.json", "save", settings)
+		dataIO.fileIO("json/settings.json", "save", settings)
 	else:
 		await(client.send_message(message.channel, "`I don't take orders from you.`"))
 
@@ -1303,7 +1303,7 @@ async def shush(message):
 	if isMemberAdmin(message):
 		await client.send_message(message.channel, "`Ok, I'll ignore this channel.`")
 		shush_list.append(message.channel.id)
-		dataIO.fileIO("shushlist.json", "save", shush_list)
+		dataIO.fileIO("json/shushlist.json", "save", shush_list)
 		logger.info("Saved silenced channels database.")
 	else:
 		await client.send_message(message.channel, "`I don't take orders from you.`")
@@ -1312,7 +1312,7 @@ async def talk(message):
 	if isMemberAdmin(message):
 		if message.channel.id in shush_list:
 			shush_list.remove(message.channel.id)
-			dataIO.fileIO("shushlist.json", "save", shush_list)
+			dataIO.fileIO("json/shushlist.json", "save", shush_list)
 			logger.info("Saved silenced channels database.")
 			await client.send_message(message.channel, "`Aaand I'm back.`")
 	else:
@@ -1331,7 +1331,7 @@ async def addBadWords(message):
 						word = word.replace("/", " ")
 					badwords[message.server.id].append(word)
 			await client.send_message(message.channel, "`Updated banned words database.`")
-			dataIO.fileIO("filter.json", "save", badwords)
+			dataIO.fileIO("json/filter.json", "save", badwords)
 			logger.info("Saved filter words.")
 		else:
 			await client.send_message(message.channel, "`!addwords [word1] [word2] [phrase/with/many/words] (...)`")
@@ -1353,7 +1353,7 @@ async def removeBadWords(message):
 					except:
 						pass
 				await client.send_message(message.channel, "`Updated banned words database.`")
-				dataIO.fileIO("filter.json", "save", badwords)
+				dataIO.fileIO("json/filter.json", "save", badwords)
 				logger.info("Saved filter words.")
 		else:
 			await client.send_message(message.channel, "`!removewords [word1] [word2] [phrase/with/many/words](...)`")
@@ -1383,7 +1383,7 @@ async def addRegex(message):
 			badwords_regex[message.server.id] = []
 		badwords_regex[message.server.id].append(msg)
 		await client.send_message(message.channel, "`Updated regex filter database.`")
-		dataIO.fileIO("regex_filter.json", "save", badwords_regex)
+		dataIO.fileIO("json/regex_filter.json", "save", badwords_regex)
 		logger.info("Saved regex filter database.")
 	else:
 		await client.send_message(message.channel, "`I don't take orders from you.`")
@@ -1397,7 +1397,7 @@ async def removeRegex(message):
 			if msg in badwords_regex[message.server.id]:
 				badwords_regex[message.server.id].remove(msg)
 				await client.send_message(message.channel, "`Updated regex filter database.`")
-				dataIO.fileIO("regex_filter.json", "save", badwords_regex)
+				dataIO.fileIO("json/regex_filter.json", "save", badwords_regex)
 				logger.info("Saved regex filter database.")
 			else:
 				await client.send_message(message.channel, "`No match.`")
@@ -1482,7 +1482,7 @@ async def addTwitchAlert(message):
 			if not added: # twitchAlert wasn't monitoring this streamer
 				twitchStreams.append({"CHANNELS" : [message.channel.id], "NAME" : msg[1], "ALREADY_ONLINE" : False})
 
-			dataIO.fileIO("twitch.json", "save", twitchStreams)
+			dataIO.fileIO("json/twitch.json", "save", twitchStreams)
 			await client.send_message(message.channel, "`I will always send an alert in this channel whenever {}'s stream is online. Use !stoptwitchalert [name] to stop it.`".format(msg[1]))
 		else:
 			await client.send_message(message.channel, "`!twitchalert [name]`")
@@ -1500,7 +1500,7 @@ async def removeTwitchAlert(message):
 						twitchStreams.remove(stream)
 					else:
 						twitchStreams[i]["CHANNELS"].remove(message.channel.id)
-					dataIO.fileIO("twitch.json", "save", twitchStreams)
+					dataIO.fileIO("json/twitch.json", "save", twitchStreams)
 					await client.send_message(message.channel, "`I will stop sending alerts about {}'s stream in this channel.`".format(msg[1]))
 					return True
 			await client.send_message(message.channel, "`There's no alert for {}'s stream in this channel.`".format(msg[1]))
@@ -1547,7 +1547,7 @@ async def twitchAlert():
 						logger.warning(e)
 
 					if save: #Saves online status, in case the bot needs to be restarted it can prevent message spam
-						dataIO.fileIO("twitch.json", "save", twitchStreams)
+						dataIO.fileIO("json/twitch.json", "save", twitchStreams)
 						save = False
 
 					await asyncio.sleep(CHECK_DELAY)
@@ -1557,7 +1557,7 @@ async def twitchAlert():
 			if to_delete:
 				for invalid_stream in to_delete:
 					twitchStreams.remove(invalid_stream)
-				dataIO.fileIO("twitch.json", "save", twitchStreams)
+				dataIO.fileIO("json/twitch.json", "save", twitchStreams)
 		else:
 			await asyncio.sleep(5)
 
@@ -1596,24 +1596,24 @@ def loadDataFromFiles(loadsettings=False):
 	proverbs = dataIO.loadProverbs()
 	logger.info("Loaded " + str(len(proverbs)) + " proverbs.")
 
-	commands = dataIO.fileIO("commands.json", "load")
+	commands = dataIO.fileIO("json/commands.json", "load")
 	logger.info("Loaded " + str(len(commands)) + " lists of custom commands.")
 
-	badwords = dataIO.fileIO("filter.json", "load")
+	badwords = dataIO.fileIO("json/filter.json", "load")
 	logger.info("Loaded " + str(len(badwords)) + " lists of filtered words.")
 
-	badwords_regex = dataIO.fileIO("regex_filter.json", "load")
+	badwords_regex = dataIO.fileIO("json/regex_filter.json", "load")
 	logger.info("Loaded " + str(len(badwords_regex)) + " regex lists.")
 
-	shush_list = dataIO.fileIO("shushlist.json", "load")
+	shush_list = dataIO.fileIO("json/shushlist.json", "load")
 	logger.info("Loaded " + str(len(shush_list)) + " silenced channels.")
 
-	twitchStreams = dataIO.fileIO("twitch.json", "load")
+	twitchStreams = dataIO.fileIO("json/twitch.json", "load")
 	logger.info("Loaded " + str(len(twitchStreams)) + " streams to monitor.")
 
 	if loadsettings:
 		global settings
-		settings = dataIO.fileIO("settings.json", "load")
+		settings = dataIO.fileIO("json/settings.json", "load")
 
 def main():
 	global ball, greetings, greetings_caps, stopwatches, trivia_sessions, message, gameSwitcher, uptime_timer, musicPlayer, currentPlaylist
@@ -1622,9 +1622,8 @@ def main():
 	logger = loggerSetup()
 	dataIO.logger = logger
 
-	if not os.path.isfile("twitch.json"):
-		logger.info("Missing twitch.json. Creating it...")
-		dataIO.fileIO("twitch.json", "save", [])
+	dataIO.migration()
+	dataIO.createEmptyFiles()
 
 	settings = dataIO.loadAndCheckSettings()
 
@@ -1653,12 +1652,6 @@ def main():
 
 	musicPlayer = None
 	currentPlaylist = None
-
-	if not os.path.exists("cache/"): #Stores youtube audio for DOWNLOADMODE
-		os.makedirs("cache")
-
-	if not os.path.exists("trivia/"):
-		os.makedirs("trivia")
 
 	loop.create_task(twitchAlert())
 
