@@ -17,7 +17,7 @@ Which animal is James Potter's 'Patronus'?`stag`A stag
 What is the name of the Charms Master at Hogwarts School?`Filius Flitwick`flitwick`professor flitwick
 Who destroyed the last remaining Horcrux?`neville`neville longbottom
 What do Ron and Hermione use to destroy Helga Hufflepuff's cup?`basilisk fang
-When Harry attended his hearing at the Ministry of Magic, what colour paper aeroplanes flew into the lift at Level Four?`pale violet`violet
+When Harry attended his hearing at the Ministry of Magic, what colour paper aeroplanes flew into the lift at Level Four?`pale violet`violet`purple
 How many Chocolate Frog cards does Ron estimate he has in Harry Potter and the Philosopher's Stone?`500`five hundred
 In the epilogue of Harry Potter and the Deathly Hallows, what job does Harry have?`auror
 What is the only antidote to Basilisk venom?`phoenix tears
@@ -95,7 +95,7 @@ What color are unicorn foals?`pale gold`gold
 Who has a famous acid-green Quik-Quotes Quill? `rita skeeter
 What is the name of the vicious tree that Harry and Ron drove into in 'Harry Potter and the Chamber of Secrets'?`The Whomping Willow
 Who was the Whomping Willow planted for?`remus lupin`lupin
-Who has famous Rock Cakes? Hagrid
+Who has famous Rock Cakes?`Hagrid
 What is Hermione's middle name?`jean
 How much was Dobby paid a month in the Hogwarts kitchen?`one galleon`1 galleon
 What is Dumbledore's sister's name?`ariana
@@ -148,7 +148,7 @@ What was the name of Hagrid's half-giant brother?`grawp
 What is the name of the sweet that makes you spew?`puking pastils
 What did Lavender Brown call Ron?`won-won`won won
 Who did Ron suddenly have an infatuation for, after accidentally eating some love potion meant for Harry?`romilda vane
-Hermione Granger Who in the 3rd year class wrote an essay on werewolves?`hermione`hermione granger
+Who in the 3rd year class wrote an essay on werewolves?`hermione`hermione granger
 What is the name of the werewolf who bit Lupin?`fenrir greyback
 What is the theme of the tapestry near the Room of Requirement?`trolls
 What breed was Hagrid's pet dragon? `Norwegian Ridgeback
@@ -169,7 +169,7 @@ What did Dumbledore teach before he was Headmaster?`Transfiguration
 In what country is Voldemort said to be hiding in from books 2-4?`Albania
 In the movies Neville gives Harry Gillyweed before the Second Task. However, who gives it to him in the books?`Dobby
 What color bubbles does Professor Flitwick make for Christmas in the first book?`Gold
-What color is Tonks's hair when Harry first meets her? `purple
+What color is Tonks's hair when Harry first meets her?`purple
 What is Buckbeak's alias?`Witherwings
 What does the sign on Weasley's Wizard Wheezes say?`You-Know-Poo
 What is the core of Cedric's wand?`Unicorn tail hair
@@ -187,7 +187,7 @@ What creature is hatched by putting a toad over a chicken's egg?`basilisk
 Which type of dragon did Fleur Delacour have to face in the first atsk of the Tri-Wizard Tournament?`Common Welsh Green
 Which one of the following subjects does Professor Vector teach?`arithmancy
 What is Dumbeldore's patronus?`phoenix
-What is considered Harry's 'trademark spell'?`Expelliarmus.
+What is considered Harry's 'trademark spell'?`Expelliarmus
 What is the core of Krum's wand?`dragon heartstring
 Who was Dumbledore's predecessor as headmaster at Hogwarts?`Armando Dippet
 What is Rowena Ravenclaw's aughter's name?`Helena
@@ -196,7 +196,7 @@ What house was Tonks in?`Hufflepuff
 Which house was Umbridge in?`Ravenclaw
 Educational Decree No. 30 declared that what wasn't allowed in the corridors?`Music
 The Fat Friar was the Ghost of which house?`Hufflepuff
-Who became the head of Slytherin house in the seventh book after Snape ran away (in the sixth book)? `Horace Slughorn`professor slughorn`slughorn
+Who became the head of Slytherin house in the seventh book after Snape ran away (in the sixth book)?`Horace Slughorn`professor slughorn`slughorn
 Who was the only death eater that was sorted into Gryffindor?`Peter Pettigrew`pettigrew
 Who put Harry's name in the Goblet of Fire?`Barty Crouch Jr`barty crouch jr.
 Who found Harry under his cloak on the train in Half Blood Prince?`Tonks
