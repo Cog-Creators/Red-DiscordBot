@@ -31,8 +31,8 @@ If for some reason pip install doesn't work do these commands with
 python -m pip install
 ```
 instead. Now, about the configuration.  
-- Open settings.json with a text editor and replace EMAILHERE and PASSWORDHERE with your bot's account details (make a dedicated discord account).  
-- Run startRed.bat  
+If you haven't already, [make a new discord account](https://discordapp.com/) for the bot.  
+Open startRed.bat and follow the instructions.
 
 That's it. Remember to make the bot join your server (login into its account through Discord and join it manually) and create a role called "Transistor" in the server to be able to use the admin commands.  
 Take a look at the command list and have fun.
@@ -149,7 +149,7 @@ Everytime you play the audio of a youtube video with download mode on the audio 
 They're all references to [Transistor](https://www.supergiantgames.com/games/transistor/), a videogame by Supergiant Games.
 
 ### TODO List
-- [ ] Redesign trivia, been broken since I moved to async branch
+- [x] Redesign trivia, been broken since I moved to async branch
     - [ ] Find / make some decent questions list(s) for it
 - [ ] Economy module is barebones. Expand it
 - [ ] Make more admin commands
