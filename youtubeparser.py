@@ -1,13 +1,17 @@
 from bs4 import BeautifulSoup
 import requests
+import aiohttp
 import asyncio
 
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 
-def parsePlaylist(url):
+async def parsePlaylist(url):
 	try:
-		page = requests.get(url, headers=headers)
-		soup = BeautifulSoup(page.content, 'html.parser')
+		page = await aiohttp.post(url, headers=headers)
+		page = await page.text()
+
+		#page = requests.get(url, headers=headers)
+		soup = BeautifulSoup(page, 'html.parser')
 		tags = soup.find_all("tr", class_="pl-video yt-uix-tile ")
 		links = []
 
@@ -20,10 +24,13 @@ def parsePlaylist(url):
 	except:
 		return False
 
-def getTitle(url):
+async def getTitle(url):
 	try:
-		page = requests.get(url, headers=headers)
-		soup = BeautifulSoup(page.content, 'html.parser')
+		#page = requests.get(url, headers=headers)
+		page = await aiohttp.post(url, headers=headers)
+		page = await page.text()
+		soup = BeautifulSoup(page, 'html.parser')
 		return soup.title.string.replace(" - YouTube", "")
-	except:
+	except  Exception as e:
+		print(e)
 		return False

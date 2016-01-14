@@ -12,6 +12,7 @@ import logging
 import time
 import datetime
 import requests
+import aiohttp
 import traceback
 import re
 import youtube_dl
@@ -298,6 +299,8 @@ async def on_message(message):
 					await client.send_message(message.channel, "`Admin status required.`")
 			elif message.content.startswith("!debug"):
 				await debug(message)
+			elif message.content.startswith("!exec"):
+				await execFunc(message)
 			###################################
 			elif getTriviabyChannel(message.channel): #check if trivia is ongoing in the channel
 				trvsession = getTriviabyChannel(message.channel)
@@ -786,6 +789,7 @@ async def stopwatch(message):
 		stopwatches[message.author.id] = int(time.perf_counter())
 		await client.send_message(message.channel, "`Stopwatch started! Use !sw to stop it.`")
 
+"""
 async def image(message): # API's dead.
 	msg = message.content.split()
 	if len(msg) > 1:
@@ -803,6 +807,7 @@ async def image(message): # API's dead.
 			await client.send_message(message.channel, "Invalid search.")
 	else:
 		await client.send_message(message.channel, "!image [text]")
+"""
 
 async def gif(message):
 	msg = message.content.split()
@@ -812,7 +817,8 @@ async def gif(message):
 				msg.remove(msg[0])
 				msg = "+".join(msg)
 				search = "http://api.giphy.com/v1/gifs/search?q=" + msg + "&api_key=dc6zaTOxFJmzC"
-				result = requests.get(search).json()
+				async with aiohttp.get(search) as r:
+					result = await r.json()
 				if result["data"] != []:		
 					url = result["data"][0]["url"]
 					await client.send_message(message.channel, url)
@@ -895,7 +901,8 @@ async def twitchCheck(message):
 	if len(msg) == 2:
 		try:
 			url =  "https://api.twitch.tv/kraken/streams/" + msg[1]
-			data = requests.get(url).json()
+			async with aiohttp.get(url) as r:
+				data = await r.json()
 			if "error" in data:
 				await client.send_message(message.channel, "{} `There is no streamer named {}`".format(message.author.mention, msg[1]))
 			elif "stream" in data:
@@ -1099,8 +1106,9 @@ async def transferPlaylist(message):
 	msg = message.attachments[0]
 	if msg["filename"].endswith(".txt"):
 		if not dataIO.fileIO("playlists/" + msg["filename"], "check"): #returns false if file already exists
-			r = requests.get(msg["url"])
-			data = r.text.replace("\r", "")
+			r = await aiohttp.get(msg["url"])
+			r = await r.text()
+			data = r.replace("\r", "")
 			data = data.split()
 			if isPlaylistValid(data) and isPlaylistNameValid(msg["filename"].replace(".txt", "")):
 				data = { "author" : message.author.id,
@@ -1146,7 +1154,7 @@ async def addPlaylist(message):
 			if dataIO.fileIO("playlists/" + name + ".txt", "check"):
 				await client.send_message(message.channel, "`A playlist with that name already exists.`")
 				return False
-			links = youtubeparser.parsePlaylist(link)
+			links = await youtubeparser.parsePlaylist(link)
 			if links:
 				data = { "author" : message.author.id,
 						 "playlist": links}
@@ -1177,7 +1185,7 @@ async def delPlaylist(message):
 		await client.send_message(message.channel, "`!delplaylist [name]`")
 
 async def getSongTitle(message):
-	title = youtubeparser.getTitle(currentPlaylist.playlist[currentPlaylist.current])
+	title = await youtubeparser.getTitle(currentPlaylist.playlist[currentPlaylist.current])
 	if title:
 		await client.send_message(message.channel, "`Current song: {}\n{}`".format(title, currentPlaylist.playlist[currentPlaylist.current]))
 	else:
@@ -1525,7 +1533,8 @@ async def twitchAlert():
 				if twitchStreams == consistency_check: #prevents buggy behavior if twitchStreams gets modified during the iteration
 					try:
 						url =  "https://api.twitch.tv/kraken/streams/" + stream["NAME"]
-						data = requests.get(url).json()
+						async with aiohttp.get(url) as r:
+							data = await r.json()
 						if "status" in data: 
 							if data["status"] == 404: #Stream doesn't exist, remove from list
 								to_delete.append(stream)
@@ -1581,6 +1590,18 @@ async def debug(message):	# If you don't know what this is, *leave it alone*
 					await client.send_message(message.author, "`Are you trying to send my credentials in chat? Because that's how you send my credentials in chat.`")
 			except Exception as e:
 				await client.send_message(message.channel, "```" + str(e) + "```")
+
+async def execFunc(message): #same warning as the other function ^
+	if message.author.id == settings["DEBUG_ID"]:
+		msg = message.content.split("`") # Example: !exec `import this`
+		if len(msg) == 3:
+			_, cmd, _ = msg		
+			try:
+				result = exec(cmd)
+				#await client.send_message(message.channel, "```" + str(result) + "```")
+			except Exception as e:
+				await client.send_message(message.channel, "```" + str(e) + "```")
+
 
 def console():
 	while True:
