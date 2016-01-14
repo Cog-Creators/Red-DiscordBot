@@ -26,11 +26,8 @@ async def parsePlaylist(url):
 
 async def getTitle(url):
 	try:
-		#page = requests.get(url, headers=headers)
-		page = await aiohttp.post(url, headers=headers)
-		page = await page.text()
-		soup = BeautifulSoup(page, 'html.parser')
+		page = requests.get(url, headers=headers)
+		soup = BeautifulSoup(page.content, 'html.parser')
 		return soup.title.string.replace(" - YouTube", "")
-	except  Exception as e:
-		print(e)
+	except:
 		return False
