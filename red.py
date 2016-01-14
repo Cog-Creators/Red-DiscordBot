@@ -820,11 +820,12 @@ async def urban(message):
 				msg.remove(msg[0])
 				msg = "+".join(msg)
 				search = "http://api.urbandictionary.com/v0/define?term=" + msg
-				result = requests.get(search).json()
+				async with aiohttp.get(search) as r:
+					result = await r.json()
 				if result["list"] != []:
 					definition = result['list'][0]['definition']
 					example = result['list'][0]['example']
-					await client.send_message(message.channel, "Definition: " + definition + "\n\n" + "Beispiel: " + example )
+					await client.send_message(message.channel, "Definition: " + definition + "\n\n" + "Example: " + example )
 				else:
 					await client.send_message(message.channel, "Your search terms gave no results.")
 			except:
