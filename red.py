@@ -43,6 +43,7 @@ help = """**Commands list:**
 !stoptwitchalert [stream] - Stop sending alerts about the specified stream in the channel (admin only)
 !roll [number] - Random number between 0 and [number]
 !gif [text] - GIF search
+!urban [text] - Search definitions in the urban dictionary
 !customcommands - Custom commands' list
 !addcom [command] [text] - Add a custom command
 !editcom [command] [text] - Edit a custom command
@@ -194,6 +195,8 @@ async def on_message(message):
 				pass
 			elif message.content.startswith('!gif'):
 				await gif(message)
+			elif message.content.startswith('!urban'):
+				await urban(message)
 			elif message.content.startswith('!uptime'):
 				await uptime(message)
 			elif message.content.startswith('!avatar'):
@@ -808,6 +811,28 @@ async def image(message): # API's dead.
 	else:
 		await client.send_message(message.channel, "!image [text]")
 """
+
+async def urban(message):
+	msg = message.content.split()
+	if len(msg) > 1:
+		if len(msg[1]) > 1 and len([msg[1]]) < 20:
+			try:
+				msg.remove(msg[0])
+				msg = "+".join(msg)
+				search = "http://api.urbandictionary.com/v0/define?term=" + msg
+				result = requests.get(search).json()
+				if result["list"] != []:
+					definition = result['list'][0]['definition']
+					example = result['list'][0]['example']
+					await client.send_message(message.channel, "Definition: " + definition + "\n\n" + "Beispiel: " + example )
+				else:
+					await client.send_message(message.channel, "Your search terms gave no results.")
+			except:
+				await client.send_message(message.channel, "Error.")
+		else:
+			await client.send_message(message.channel, "Invalid search.")
+	else:
+		await client.send_message(message.channel, "!urban [text]")
 
 async def gif(message):
 	msg = message.content.split()
