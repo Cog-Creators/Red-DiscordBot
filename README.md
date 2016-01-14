@@ -15,27 +15,9 @@ As for the moderation tools, it includes a **powerful message filter with regula
 See the [command list](#general-commands) for an even better idea of what this bot can do.
 
 ### I don't even know what I'm looking at. How do I install this?
-Do not panic. Follow these steps:  
-- Download the bot and unpack it.  
-- [Install Python](https://www.python.org/downloads/). This bot needs 3.5.1 32bit or superior. Remember to check "Add python to path".  
-- [Install Git](https://git-scm.com/download/win), don't forget to check "Use Git from the Windows Command Prompt"  
-- Open the start menu, type cmd, right click and open the command prompt as admin. Now, do:  
-```
-pip install git+https://github.com/Rapptz/discord.py@async
-pip install requests
-pip install youtube_dl
-pip install beautifulsoup4
-```
-If for some reason pip install doesn't work do these commands with 
-```
-python -m pip install
-```
-instead. Now, about the configuration.  
-If you haven't already, [make a new discord account](https://discordapp.com/) for the bot.  
-Open startRed.bat and follow the instructions.
-
-That's it. Remember to make the bot join your server (login into its account through Discord and join it manually) and create a role called "Transistor" in the server to be able to use the admin commands.  
-Take a look at the command list and have fun.
+Do not panic. [Enter the wiki and follow the tutorials](https://github.com/Twentysix26/Red-DiscordBot/wiki)!  
+If you have any issue, consult the [troubleshooting](https://github.com/Twentysix26/Red-DiscordBot/wiki/Troubleshooting) page, and if you're still stuck, [join the official server](https://discord.gg/0k4npTwMvTpv9wrh) so you can get some help.
+Once you're done, take a look at the command list and have fun.
 
 ### General commands
 
