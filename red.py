@@ -1453,7 +1453,7 @@ async def cleanup(message):
 			if len(msg) == 2:
 				if msg[1].isdigit():
 					n = int(msg[1])
-					for x in await client.logs_from(message.channel, limit=n+1):
+					async for x in client.logs_from(message.channel, limit=n+1):
 						await client.delete_message(x)
 				else:
 					await client.send_message(message.channel, errorMsg)
@@ -1469,14 +1469,21 @@ async def cleanup(message):
 				else:
 					m = discord.utils.get(message.server.members, name=name)
 				if m and limit != 0:
-					checksLeft = 5
 					await client.delete_message(message)
-					while checksLeft != 0 and limit != 0:
-						for x in await client.logs_from(message.channel, limit=100):
+					checks_left = 5
+					max_range = 100
+					while limit != 0 and checks_left != 0:
+						messages = []
+						async for x in client.logs_from(message.channel, limit=max_range):
+							messages.append(x)
+						if messages == []: break
+						messages = reversed(messages)
+						for x in messages:
 							if x.author == m and limit != 0:
 								await client.delete_message(x)
 								limit -= 1
-						checksLeft -= 1
+						checks_left -= 1
+						max_range += 100
 				else:
 					await client.send_message(message.channel, errorMsg)
 
