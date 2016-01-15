@@ -1449,6 +1449,12 @@ async def cleanup(message):
 	errorMsg = "`!cleanup [number] !cleanup [name/mention] [number]`"
 	if isMemberAdmin(message):
 		if canDeleteMessages(message):
+			try:
+				async for x in client.logs_from(message.channel, limit=1):
+						pass
+			except TypeError:
+				logger.error("Your discord.py is outdated. Update it to use cleanup.")
+				return False
 			msg = message.content.split()
 			if len(msg) == 2:
 				if msg[1].isdigit():
