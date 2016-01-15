@@ -402,7 +402,7 @@ class Trivia():
 
 
 	def loadList(self, qlist):
-		with open(qlist, "r") as f:
+		with open(qlist, "r", encoding="utf-8") as f:
 			qlist = f.readlines()
 		parsedList = []
 		for line in qlist:
