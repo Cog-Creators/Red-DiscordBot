@@ -1451,7 +1451,7 @@ async def cleanup(message):
 		if canDeleteMessages(message):
 			try:
 				async for x in client.logs_from(message.channel, limit=1):
-						pass
+					pass
 			except TypeError:
 				logger.error("Your discord.py is outdated. Update it to use cleanup.")
 				return False
@@ -1475,21 +1475,14 @@ async def cleanup(message):
 				else:
 					m = discord.utils.get(message.server.members, name=name)
 				if m and limit != 0:
+					checksLeft = 5
 					await client.delete_message(message)
-					checks_left = 5
-					max_range = 100
-					while limit != 0 and checks_left != 0:
-						messages = []
-						async for x in client.logs_from(message.channel, limit=max_range):
-							messages.append(x)
-						if messages == []: break
-						messages = reversed(messages)
-						for x in messages:
+					while checksLeft != 0 and limit != 0:
+						async for x in client.logs_from(message.channel, limit=100):
 							if x.author == m and limit != 0:
 								await client.delete_message(x)
 								limit -= 1
-						checks_left -= 1
-						max_range += 100
+						checksLeft -= 1
 				else:
 					await client.send_message(message.channel, errorMsg)
 
