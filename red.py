@@ -974,7 +974,11 @@ async def uptime(message):
 async def checkVoice(message):
 	if not client.is_voice_connected():
 		if message.author.voice_channel:
-			await client.join_voice_channel(message.author.voice_channel)
+			if message.author.voice_channel.permissions_for(message.server.me).connect:
+				await client.join_voice_channel(message.author.voice_channel)
+			else:
+				await client.send_message(message.channel, "{} `I need permissions to join that channel.`".format(message.author.mention))
+				return False
 		else:
 			await client.send_message(message.channel, "{} `You need to join a voice channel first.`".format(message.author.mention))
 			return False
