@@ -1031,7 +1031,7 @@ async def playVideo(message):
 		data = {"filename" : 'https://www.youtube.com/watch?v=' + id, "type" : "singleSong"}
 		currentPlaylist = Playlist(data)
 		if canDeleteMessages(message):
-			await client.send_message(message.channel, "`Playing youtube video {} requested by {}`".format(await youtubeparser.getTitle(currentPlaylist.playlist[currentPlaylist.current]), currentPlaylist.playlist[currentPlaylist.current]))	
+			await client.send_message(message.channel, "`Playing youtube video {} requested by {}`".format(await youtubeparser.getTitle(currentPlaylist.playlist[currentPlaylist.current]), message.author.name))
 			await client.delete_message(message)
 		if toDelete:
 			await client.delete_message(toDelete)
