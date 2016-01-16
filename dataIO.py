@@ -78,7 +78,7 @@ def migration():
 			os.rename(f, "json/" + f)
 
 def createEmptyFiles():
-	files = {"twitch.json": [], "commands.json": {}, "economy.json" : {}, "filter.json" : {}, "regex_filter.json" : {}, "shushlist.json" : []}
+	files = {"twitch.json": [], "commands.json": {}, "economy.json" : {}, "filter.json" : {}, "regex_filter.json" : {}, "shushlist.json" : [], "blacklist.json" : []}
 	games = ["Multi Theft Auto", "her Turn()", "Tomb Raider II", "some music.", "NEO Scavenger", "Python", "World Domination", "with your heart."]
 	files["games.json"] = games
 	for f, data in files.items() :

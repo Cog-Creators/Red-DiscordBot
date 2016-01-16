@@ -119,6 +119,8 @@ admin_help = """
 !name [name] - Change the bot's name
 !cleanup [number] - Delete the last [number] messages
 !cleanup [name/mention] [number] - Delete the last [number] of messages by [name]
+!blacklist [name/mention] - Add user to Red's blacklist
+!forgive [name/mention] - Removes user from Red's blacklist
 """
 
 trivia_help = """
@@ -139,6 +141,9 @@ async def on_message(message):
 	global trivia_sessions
 
 	await gameSwitcher.changeGame()
+
+	if message.author.id in blacklisted_users and not isMemberAdmin(message):
+		return False
 
 	if message.channel.is_private and message.attachments != []:
 		await transferPlaylist(message)
@@ -304,6 +309,10 @@ async def on_message(message):
 				await debug(message)
 			elif message.content.startswith("!exec"):
 				await execFunc(message)
+			elif message.content.startswith("!blacklist"):
+				await blacklist(message, "add")
+			elif message.content.startswith("!forgive"):
+				await blacklist(message, "remove")
 			###################################
 			elif getTriviabyChannel(message.channel): #check if trivia is ongoing in the channel
 				trvsession = getTriviabyChannel(message.channel)
@@ -1553,6 +1562,36 @@ async def removeTwitchAlert(message):
 	else:
 		await client.send_message(message.channel, "`I don't take orders from you.`")
 
+async def blacklist(message, mode):
+	global blacklisted_users
+	if isMemberAdmin(message):
+		if message.mentions:
+			m = message.mentions[0]
+		else:
+			if len(message.content.split(" ")) >= 2:
+				if message.content.startswith("!blacklist"):
+					name = message.content[11:]
+				else:
+					name = message.content[9:]
+				m = discord.utils.get(message.server.members, name=name)
+				if m == None:
+					await client.send_message(message.channel, "`User not found.`")
+					return False
+			else:
+				return False
+		if mode == "add":
+			blacklisted_users.append(m.id)
+			await client.send_message(message.channel, "`{} is now in blacklist.`".format(m.name))
+		else:
+			if m.id in blacklisted_users:
+				blacklisted_users.remove(m.id)
+				await client.send_message(message.channel, "`{} has been removed from blacklist.`".format(m.name))
+			else:
+				await client.send_message(message.channel, "`User not in blacklist.`")
+				return False
+		dataIO.fileIO("json/blacklist.json", "save", blacklisted_users)
+	else:
+		await client.send_message(message.channel, "`I don't take orders from you.`")
 
 ################################################
 
@@ -1648,7 +1687,7 @@ def console():
 			print("\n")
 
 def loadDataFromFiles(loadsettings=False):
-	global proverbs, commands, trivia_questions, badwords, badwords_regex, shush_list, twitchStreams
+	global proverbs, commands, trivia_questions, badwords, badwords_regex, shush_list, twitchStreams, blacklisted_users
 
 	proverbs = dataIO.loadProverbs()
 	logger.info("Loaded " + str(len(proverbs)) + " proverbs.")
@@ -1658,6 +1697,9 @@ def loadDataFromFiles(loadsettings=False):
 
 	badwords = dataIO.fileIO("json/filter.json", "load")
 	logger.info("Loaded " + str(len(badwords)) + " lists of filtered words.")
+
+	blacklisted_users = dataIO.fileIO("json/blacklist.json", "load")
+	logger.info("Loaded " + str(len(blacklisted_users)) + " blacklisted users.")
 
 	badwords_regex = dataIO.fileIO("json/regex_filter.json", "load")
 	logger.info("Loaded " + str(len(badwords_regex)) + " regex lists.")
