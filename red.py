@@ -132,7 +132,7 @@ trivia_help = """
 !trivia random - Starts trivia session with random list
 !trivia stop - Stop trivia session
 """
-
+cleverbot_client = cleverbot3.Cleverbot()
 client = discord.Client()
 
 if not discord.opus.is_loaded():
