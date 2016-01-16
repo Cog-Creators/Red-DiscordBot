@@ -1026,13 +1026,13 @@ async def playVideo(message):
 			await client.send_message(message.channel, "{} `Invalid link.`".format(message.author.mention))
 			return False
 		stopMusic()
-		if canDeleteMessages(message):
-			await client.send_message(message.channel, "`Playing` `https://www.youtube.com/watch?v={}` `requested by {}`".format(id, message.author.name))
-			await client.delete_message(message)
 		if settings["DOWNLOADMODE"]:
 			toDelete = await client.send_message(message.channel, "`I'm in download mode. It might take a bit for me to start. I'll delete this message as soon as I'm ready.`".format(id, message.author.name))
 		data = {"filename" : 'https://www.youtube.com/watch?v=' + id, "type" : "singleSong"}
 		currentPlaylist = Playlist(data)
+		if canDeleteMessages(message):
+			await client.send_message(message.channel, "`Playing youtube video {} requested by {}`".format(await youtubeparser.getTitle(currentPlaylist.playlist[currentPlaylist.current]), currentPlaylist.playlist[currentPlaylist.current]))	
+			await client.delete_message(message)
 		if toDelete:
 			await client.delete_message(toDelete)
 #		currentPlaylist.playlist = ['https://www.youtube.com/watch?v=' + id]
