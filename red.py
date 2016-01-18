@@ -16,6 +16,7 @@ import aiohttp
 import traceback
 import re
 import youtube_dl
+import cleverbot3
 import os
 import asyncio
 import glob
@@ -44,6 +45,7 @@ help = """**Commands list:**
 !roll [number] - Random number between 0 and [number]
 !gif [text] - GIF search
 !urban [text] - Search definitions in the urban dictionary
+!chat [text] - Chat with the Cleverbot
 !customcommands - Custom commands' list
 !addcom [command] [text] - Add a custom command
 !editcom [command] [text] - Edit a custom command
@@ -130,7 +132,7 @@ trivia_help = """
 !trivia random - Starts trivia session with random list
 !trivia stop - Stop trivia session
 """
-
+cleverbot_client = cleverbot3.Cleverbot()
 client = discord.Client()
 
 if not discord.opus.is_loaded():
@@ -202,6 +204,8 @@ async def on_message(message):
 				await gif(message)
 			elif message.content.startswith('!urban'):
 				await urban(message)
+			elif message.content.startswith('!chat'):
+				await chat(message)
 			elif message.content.startswith('!uptime'):
 				await uptime(message)
 			elif message.content.startswith('!avatar'):
@@ -932,6 +936,21 @@ async def urban(message):
 	else:
 		await client.send_message(message.channel, "!urban [text]")
 
+async def chat(message):
+	msg = message.content.split()
+	if len(msg) > 1:
+			try:
+				msg.remove(msg[0])
+				msg = "+".join(msg)
+				question = msg
+				answer = cleverbot_client.ask(question)
+				if msg != "":
+					await client.send_message(message.channel, "{}: ".format(message.author.mention) + answer)
+			except:
+				await client.send_message(message.channel, "Error.")
+	else:
+		await client.send_message(message.channel, "!chat [text]")
+
 async def gif(message):
 	msg = message.content.split()
 	if len(msg) > 1:
@@ -1095,13 +1114,13 @@ async def playVideo(message):
 			await client.send_message(message.channel, "{} `Invalid link.`".format(message.author.mention))
 			return False
 		stopMusic()
-		if canDeleteMessages(message):
-			await client.send_message(message.channel, "`Playing` `https://www.youtube.com/watch?v={}` `requested by {}`".format(id, message.author.name))
-			await client.delete_message(message)
 		if settings["DOWNLOADMODE"]:
 			toDelete = await client.send_message(message.channel, "`I'm in download mode. It might take a bit for me to start. I'll delete this message as soon as I'm ready.`".format(id, message.author.name))
 		data = {"filename" : 'https://www.youtube.com/watch?v=' + id, "type" : "singleSong"}
 		currentPlaylist = Playlist(data)
+		if canDeleteMessages(message):
+			await client.send_message(message.channel, "`Playing youtube video {} requested by {}`".format(await youtubeparser.getTitle(currentPlaylist.playlist[currentPlaylist.current]), message.author.name))
+			await client.delete_message(message)
 		if toDelete:
 			await client.delete_message(toDelete)
 #		currentPlaylist.playlist = ['https://www.youtube.com/watch?v=' + id]
