@@ -256,6 +256,10 @@ async def on_message(message):
 				await setVolume(message)
 			elif message.content == "!downloadmode":
 				await downloadMode(message)
+			elif message.content == "!endpoll":
+				await endPoll(message)
+			elif message.content.startswith("!poll"):
+				await startPoll(message)
 			################################################
 			elif message.content == "!trivia":
 				await triviaList(message)
@@ -319,6 +323,9 @@ async def on_message(message):
 				await trvsession.checkAnswer(message)
 			elif "economy" in modules:
 				await economy.checkCommands(message)
+
+			if getPollByChannel(message):
+				getPollByChannel(message).checkAnswer(message)
 
 			if message.content.startswith('!') and len(message.content) > 2 and settings["CUSTOMCOMMANDS"]:
 				await customCommand(message)
@@ -633,6 +640,87 @@ class Playlist():
 	def shuffle(self):
 		if not self.stop:
 			shuffle(self.playlist)
+
+class Poll():
+	def __init__(self, message):
+		self.channel = message.channel
+		self.author = message.author.id
+		msg = message.content[6:]
+		msg = msg.split(";")
+		if len(msg) < 2: # Needs at least one question and 2 choices
+			self.valid = False
+			return None 
+		else:
+			self.valid = True
+		self.already_voted = []
+		self.question = msg[0]
+		msg.remove(self.question)
+		self.answers = {}
+		i = 1
+		for answer in msg: # {id : {answer, votes}}
+			self.answers[i] = {"ANSWER" : answer, "VOTES" : 0}
+			i += 1
+
+	async def start(self):
+		msg = "**POLL STARTED!**\n\n{}\n\n".format(self.question)
+		for id, data in self.answers.items():
+			msg += "{}. *{}*\n".format(id, data["ANSWER"])
+		msg += "\nType the number to vote!"
+		await client.send_message(self.channel, msg)
+		await asyncio.sleep(settings["POLL_DURATION"])
+		if self.valid:
+			await self.endPoll()
+
+	async def endPoll(self):
+		global poll_sessions
+		self.valid = False
+		msg = "**POLL ENDED!**\n\n{}\n\n".format(self.question)
+		for data in self.answers.values():
+			msg += "*{}* - {} votes\n".format(data["ANSWER"], str(data["VOTES"]))
+		await client.send_message(self.channel, msg)
+		poll_sessions.remove(self)
+
+	def checkAnswer(self, message):
+		try:
+			i = int(message.content)
+			if i in self.answers.keys():
+				if message.author.id not in self.already_voted:
+					data = self.answers[i]
+					data["VOTES"] += 1
+					self.answers[i] = data
+					self.already_voted.append(message.author.id)
+		except ValueError:
+			pass
+
+async def startPoll(message):
+	global poll_sessions
+	if not getPollByChannel(message):
+		p = Poll(message)
+		if p.valid: 
+			poll_sessions.append(p)
+			await p.start()
+		else:
+			await client.send_message(message.channel, "`!poll question;option1;option2 (...)`")
+	else:
+		await client.send_message(message.channel, "`A poll is already ongoing in this channel.`")
+
+async def endPoll(message):
+	global poll_sessions
+	if getPollByChannel(message):
+		p = getPollByChannel(message)
+		if p.author == message.author.id or isMemberAdmin(message):
+			await getPollByChannel(message).endPoll()
+		else:
+			await client.send_message(message.channel, "`Only admins and the author can stop the poll.`")
+	else:
+		await client.send_message(message.channel, "`There's no poll ongoing in this channel.`")
+
+
+def getPollByChannel(message):
+	for poll in poll_sessions:
+		if poll.channel == message.channel:
+			return poll
+	return False
 
 async def addcom(message):
 	if checkAuth("ModifyCommands", message, settings):
@@ -1716,7 +1804,7 @@ def loadDataFromFiles(loadsettings=False):
 
 def main():
 	global ball, greetings, greetings_caps, stopwatches, trivia_sessions, message, gameSwitcher, uptime_timer, musicPlayer, currentPlaylist
-	global logger, settings
+	global logger, settings, poll_sessions
 
 	logger = loggerSetup()
 	dataIO.logger = logger
@@ -1739,6 +1827,7 @@ def main():
 	stopwatches = {}
 
 	trivia_sessions = []
+	poll_sessions = []
 
 	message = ""
 
