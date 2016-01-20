@@ -37,8 +37,8 @@ Once you're done, take a look at the command list and have fun.
 | !stoptwitchalert [stream]                     | Stop stream alerts (admin only)      |
 | !roll [number]                                | Random number between 0 and chosen number. |
 | !gif [text]                                   | GIF search                                 |
-| !urban [text]                                 | Search in the urban dictionary             |
-| !chat [text]                                  | Chat with the cleverbot                    |
+| !poll [question;answer1;answer2 (...)]        | Start poll in the current channel          |
+| !endpoll                                      | Stop poll                                  |
 | !addcom [command] [text]                      | Add a custom command                       |
 | !editcom [command] [text]                     | Edit a custom command                      |
 | !delcom [command]                             | Delete a custom command                    |

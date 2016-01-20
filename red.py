@@ -46,11 +46,13 @@ help = """**Commands list:**
 !gif [text] - GIF search
 !urban [text] - Search definitions in the urban dictionary
 !chat [text] - Chat with the Cleverbot
+!memes [ID;Text1;Text2] - Create a meme
 !customcommands - Custom commands' list
 !addcom [command] [text] - Add a custom command
 !editcom [command] [text] - Edit a custom command
 !delcom [command] - Delete a custom command
 
+!meme help - Help to create an account, find different IDs and to create memes
 !audio help - Audio related commands
 !economy - Economy explanation, if available
 !trivia - Trivia commands and lists
@@ -105,6 +107,77 @@ audio_help = """
 3) Send me the txt. If any line is incorrect I will reject it.
 4) Listen to it with !play [playlist_name]!
 """
+meme_help = """
+To create individual memes you need an account on https://imgflip.com/ , just create an account and add the username and the password in the json/apis file.
+If you want more memes, go on the website https://imgflip.com/memetemplates and choice a meme and click on "Blank Template" then add the ID
+One-Does-Not-Simply 	Template ID: 61579
+!memes 61579;Test;Test
+
+ID		Name
+61579	One Does Not Simply
+438680	Batman Slapping Robin	
+61532	The Most Interesting Man In The World
+101470	Ancient Aliens
+61520	Futurama Fry
+347390	X, X Everywhere
+5496396	Leonardo Dicaprio Cheers
+61539	First World Problems
+61546	Brace Yourselves X is Coming	
+16464531	But Thats None Of My Business
+61582	Creepy Condescending Wonka
+61585	Bad Luck Brian	
+563423	That Would Be Great
+61544	Success Kid	
+405658	Grumpy Cat	
+101288	Third World Skeptical Kid
+8072285	Doge
+100947	Matrix Morpheus
+1509839	Captain Picard Facepalm
+61533	X All The Y
+1035805	Boardroom Meeting Suggestion
+245898	Picard Wtf
+21735	The Rock Driving	
+259680	Am I The Only One Around Here
+14230520	Black Girl Wat
+40945639	Dr Evil Laser
+235589	Evil Toddler
+61580	Too Damn High
+61516	Philosoraptor
+6235864	Finding Neverland
+9440985	Face You Make Robert Downey Jr	
+101287	Third World Success Kid
+100955	Confession Bear	
+444501	The lie detector determined that was a lie. The fact that you X determined that was a lie. Maury Povich.
+97984	Disaster Girl	
+442575	Aint Nobody Got Time For That	
+109765	Ill Just Wait Here
+124212	Say That Again I Dare You
+28251713	Oprah You Get A	
+61556	Grandma Finds The Internet	
+101440	10 Guy
+101711	Skeptical Baby	
+101716	Yo Dawg Heard You	
+101511	Dont You Squidward
+922147	Laughing Men In Suits
+13757816	Awkward Moment Sealion
+1790995	And everybody loses their minds
+195389	Sparta Leonidas
+12403754	Bad Pun Dog
+61583	Conspiracy Keanu	
+766986	Aaaaand Its Gone
+4087833	Waiting Skeleton
+718432	Back In My Day
+61581	Put It Somewhere Else Patrick
+21604248	Mugatu So Hot Right Now
+172314	Kill Yourself Guy
+61522	Scumbag Steve	
+100952	Overly Attached Girlfriend
+1367068	I Should Buy A Boat Cat
+15878567	You The Real MVP
+673439	Confused Gandalf
+13424299	Yall Got Any More Of
+14371066	Star Wars Yoda
+"""
 
 admin_help = """
 **Admin commands:**
@@ -132,6 +205,7 @@ trivia_help = """
 !trivia random - Starts trivia session with random list
 !trivia stop - Stop trivia session
 """
+
 cleverbot_client = cleverbot3.Cleverbot()
 client = discord.Client()
 
@@ -210,6 +284,11 @@ async def on_message(message):
 				await uptime(message)
 			elif message.content.startswith('!avatar'):
 				await avatar(message)
+			elif message.content.startswith ('!memes'):
+				await memes(message)
+			elif message.content == '!meme help':
+				await client.send_message(message.author, meme_help)
+				await client.send_message(message.channel, "{} `Check your DMs for the meme help.`".format(message.author.mention))
 			################## music #######################
 			elif message.content == "!sing":
 				await playPlaylist(message, sing=True)
@@ -260,6 +339,10 @@ async def on_message(message):
 				await setVolume(message)
 			elif message.content == "!downloadmode":
 				await downloadMode(message)
+			elif message.content == "!endpoll":
+				await endPoll(message)
+			elif message.content.startswith("!poll"):
+				await startPoll(message)
 			################################################
 			elif message.content == "!trivia":
 				await triviaList(message)
@@ -323,6 +406,9 @@ async def on_message(message):
 				await trvsession.checkAnswer(message)
 			elif "economy" in modules:
 				await economy.checkCommands(message)
+
+			if getPollByChannel(message):
+				getPollByChannel(message).checkAnswer(message)
 
 			if message.content.startswith('!') and len(message.content) > 2 and settings["CUSTOMCOMMANDS"]:
 				await customCommand(message)
@@ -638,6 +724,87 @@ class Playlist():
 		if not self.stop:
 			shuffle(self.playlist)
 
+class Poll():
+	def __init__(self, message):
+		self.channel = message.channel
+		self.author = message.author.id
+		msg = message.content[6:]
+		msg = msg.split(";")
+		if len(msg) < 2: # Needs at least one question and 2 choices
+			self.valid = False
+			return None 
+		else:
+			self.valid = True
+		self.already_voted = []
+		self.question = msg[0]
+		msg.remove(self.question)
+		self.answers = {}
+		i = 1
+		for answer in msg: # {id : {answer, votes}}
+			self.answers[i] = {"ANSWER" : answer, "VOTES" : 0}
+			i += 1
+
+	async def start(self):
+		msg = "**POLL STARTED!**\n\n{}\n\n".format(self.question)
+		for id, data in self.answers.items():
+			msg += "{}. *{}*\n".format(id, data["ANSWER"])
+		msg += "\nType the number to vote!"
+		await client.send_message(self.channel, msg)
+		await asyncio.sleep(settings["POLL_DURATION"])
+		if self.valid:
+			await self.endPoll()
+
+	async def endPoll(self):
+		global poll_sessions
+		self.valid = False
+		msg = "**POLL ENDED!**\n\n{}\n\n".format(self.question)
+		for data in self.answers.values():
+			msg += "*{}* - {} votes\n".format(data["ANSWER"], str(data["VOTES"]))
+		await client.send_message(self.channel, msg)
+		poll_sessions.remove(self)
+
+	def checkAnswer(self, message):
+		try:
+			i = int(message.content)
+			if i in self.answers.keys():
+				if message.author.id not in self.already_voted:
+					data = self.answers[i]
+					data["VOTES"] += 1
+					self.answers[i] = data
+					self.already_voted.append(message.author.id)
+		except ValueError:
+			pass
+
+async def startPoll(message):
+	global poll_sessions
+	if not getPollByChannel(message):
+		p = Poll(message)
+		if p.valid: 
+			poll_sessions.append(p)
+			await p.start()
+		else:
+			await client.send_message(message.channel, "`!poll question;option1;option2 (...)`")
+	else:
+		await client.send_message(message.channel, "`A poll is already ongoing in this channel.`")
+
+async def endPoll(message):
+	global poll_sessions
+	if getPollByChannel(message):
+		p = getPollByChannel(message)
+		if p.author == message.author.id or isMemberAdmin(message):
+			await getPollByChannel(message).endPoll()
+		else:
+			await client.send_message(message.channel, "`Only admins and the author can stop the poll.`")
+	else:
+		await client.send_message(message.channel, "`There's no poll ongoing in this channel.`")
+
+
+def getPollByChannel(message):
+	for poll in poll_sessions:
+		if poll.channel == message.channel:
+			return poll
+	return False
+
 async def addcom(message):
 	if checkAuth("ModifyCommands", message, settings):
 		msg = message.content.split()	
@@ -825,6 +992,39 @@ async def image(message): # API's dead.
 		await client.send_message(message.channel, "!image [text]")
 """
 
+async def chat(message):
+	msg = message.content.split()
+	if len(msg) > 1:
+			try:
+				msg.remove(msg[0])
+				msg = "+".join(msg)
+				question = msg
+				answer = cleverbot_client.ask(question)
+				if msg != "":
+					await client.send_message(message.channel, "{}: ".format(message.author.mention) + answer)
+			except:
+				await client.send_message(message.channel, "Something went wrong.")
+	else:
+		await client.send_message(message.channel, "!chat [text]")
+
+async def memes(message):
+	msg = message.content.split()
+	msg = message.content[6:]
+	msg = msg.split(";")
+	if len(msg[0]) > 1 and len([msg[1]]) < 20 and len([msg[2]]) < 20:
+		try:
+			search = "https://api.imgflip.com/caption_image?template_id=" + msg[0] + "&username=" + apis["IMGFLIP_USERNAME"] + "&password=" + apis["IMGFLIP_PASSWORD"] + "&text0=" + msg[1] + "&text1=" + msg[2]
+			async with aiohttp.get(search) as r:
+				result = await r.json()
+			if result["data"] != []:		
+				url = result["data"]["url"]
+				await client.send_message(message.channel, url)
+		except:
+			error = result["error_message"]
+			await client.send_message(message.channel, error)
+	else:
+		await client.send_message(message.channel, "!memes id;text1;text2")
+
 async def urban(message):
 	msg = message.content.split()
 	if len(msg) > 1:
@@ -847,21 +1047,6 @@ async def urban(message):
 			await client.send_message(message.channel, "Invalid search.")
 	else:
 		await client.send_message(message.channel, "!urban [text]")
-
-async def chat(message):
-	msg = message.content.split()
-	if len(msg) > 1:
-			try:
-				msg.remove(msg[0])
-				msg = "+".join(msg)
-				question = msg
-				answer = cleverbot_client.ask(question)
-				if msg != "":
-					await client.send_message(message.channel, "{}: ".format(message.author.mention) + answer)
-			except:
-				await client.send_message(message.channel, "Error.")
-	else:
-		await client.send_message(message.channel, "!chat [text]")
 
 async def gif(message):
 	msg = message.content.split()
@@ -1706,7 +1891,7 @@ def console():
 			print("\n")
 
 def loadDataFromFiles(loadsettings=False):
-	global proverbs, commands, trivia_questions, badwords, badwords_regex, shush_list, twitchStreams, blacklisted_users
+	global proverbs, commands, trivia_questions, badwords, badwords_regex, shush_list, twitchStreams, blacklisted_users, apis
 
 	proverbs = dataIO.loadProverbs()
 	logger.info("Loaded " + str(len(proverbs)) + " proverbs.")
@@ -1728,6 +1913,9 @@ def loadDataFromFiles(loadsettings=False):
 
 	twitchStreams = dataIO.fileIO("json/twitch.json", "load")
 	logger.info("Loaded " + str(len(twitchStreams)) + " streams to monitor.")
+	
+	apis = dataIO.fileIO("json/apis.json", "load")
+	logger.info("Loaded " + str(len(apis) // 2 )  + " APIs.")
 
 	if loadsettings:
 		global settings
@@ -1735,7 +1923,7 @@ def loadDataFromFiles(loadsettings=False):
 
 def main():
 	global ball, greetings, greetings_caps, stopwatches, trivia_sessions, message, gameSwitcher, uptime_timer, musicPlayer, currentPlaylist
-	global logger, settings
+	global logger, settings, poll_sessions
 
 	logger = loggerSetup()
 	dataIO.logger = logger
@@ -1758,6 +1946,7 @@ def main():
 	stopwatches = {}
 
 	trivia_sessions = []
+	poll_sessions = []
 
 	message = ""
 
