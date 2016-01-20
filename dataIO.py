@@ -5,7 +5,8 @@ import glob
 
 default_settings = ('{"TRIVIA_ADMIN_ONLY": false, "EDIT_CC_ADMIN_ONLY": false, "PASSWORD": "PASSWORDHERE", "FILTER": true, "CUSTOMCOMMANDS": true, ' +
 					'"TRIVIA_MAX_SCORE": 10, "TRIVIA_DELAY": 15, "LOGGING": true, "EMAIL": "EMAILHERE", "ADMINROLE": "Transistor", "DOWNLOADMODE" : true, ' +
-					'"VOLUME": 0.20, "TRIVIA_BOT_PLAYS" : false, "TRIVIA_TIMEOUT" : 120, "DEBUG_ID" : "IgnoreThis"}')
+					'"VOLUME": 0.20, "TRIVIA_BOT_PLAYS" : false, "TRIVIA_TIMEOUT" : 120, "DEBUG_ID" : "IgnoreThis", "POLL_DURATION" : 60}')
+default_apis = ('{"IMGFLIP_USERNAME": "USERNAMEHERE", "IMGFLIP_PASSWORD": "PASSWORDHERE"}')
 logger = logging.getLogger("__main__")
 
 
@@ -102,3 +103,15 @@ def createEmptyFiles():
 		new_settings["ADMINROLE"] = admin_role
 		fileIO("json/settings.json", "save", new_settings )
 		logger.info("Settings have been saved.")
+	if not os.path.isfile("json/apis.json"):
+		logger.info("Missing apis.json. Creating it...\n")
+		fileIO("json/apis.json", "save", json.loads(default_apis))
+		print("You can configure your apis settings to add extra features to your bot e.g. creating memes.\n If you don't have an account, you can create one on https://imgflip.com/.\n If you'd like to do it manually or do it later, close this window.\n\nimgflip username:")
+		imgflip_username = input(">")
+		print("Now enter the imgflip password.")
+		imgflip_password = input(">")
+		new_settings = json.loads(default_apis)
+		new_settings["IMGFLIP_USERNAME"] = imgflip_username
+		new_settings["IMGFLIP_PASSWORD"] = imgflip_password
+		fileIO("json/apis.json", "save", new_settings )
+		logger.info("API Settings have been saved.\n")
