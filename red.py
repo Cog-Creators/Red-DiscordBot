@@ -158,25 +158,6 @@ ID		Name
 101711	Skeptical Baby	
 101716	Yo Dawg Heard You	
 101511	Dont You Squidward
-922147	Laughing Men In Suits
-13757816	Awkward Moment Sealion
-1790995	And everybody loses their minds
-195389	Sparta Leonidas
-12403754	Bad Pun Dog
-61583	Conspiracy Keanu	
-766986	Aaaaand Its Gone
-4087833	Waiting Skeleton
-718432	Back In My Day
-61581	Put It Somewhere Else Patrick
-21604248	Mugatu So Hot Right Now
-172314	Kill Yourself Guy
-61522	Scumbag Steve	
-100952	Overly Attached Girlfriend
-1367068	I Should Buy A Boat Cat
-15878567	You The Real MVP
-673439	Confused Gandalf
-13424299	Yall Got Any More Of
-14371066	Star Wars Yoda
 """
 
 admin_help = """
