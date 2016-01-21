@@ -984,7 +984,7 @@ async def imdb(message): # Method added by BananaWaffles.
 					try:
 						msg.remove(msg[0])
 						msg = "+".join(msg)
-						search = "http://api.myapifilms.com/imdb/title?format=json&title=" + msg + "&token=" + "yourtokenhere"
+						search = "http://api.myapifilms.com/imdb/title?format=json&title=" + msg + "&token=" + apis["MYAPIFILMS_TOKEN"]
 						async with aiohttp.get(search) as r:
 							result = await r.json()
 							title = result['data']['movies'][0]['title']
