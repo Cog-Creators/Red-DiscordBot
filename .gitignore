@@ -46,3 +46,5 @@ Network Trash Folder
 Temporary Items
 .apdisk
 __pycache__
+json
+cache

@@ -45,11 +45,13 @@ help = """**Commands list:**
 !gif [text] - GIF search
 !imdb - Retrieves a movie's information from IMDB using its title
 !urban [text] - Search definitions in the urban dictionary
+!memes [ID;Text1;Text2] - Create a meme
 !customcommands - Custom commands' list
 !addcom [command] [text] - Add a custom command
 !editcom [command] [text] - Edit a custom command
 !delcom [command] - Delete a custom command
 
+!meme help - Help to create an account, find different IDs and to create memes
 !audio help - Audio related commands
 !economy - Economy explanation, if available
 !trivia - Trivia commands and lists
@@ -103,6 +105,58 @@ audio_help = """
 2) One youtube link each line.
 3) Send me the txt. If any line is incorrect I will reject it.
 4) Listen to it with !play [playlist_name]!
+"""
+meme_help = """
+To create individual memes you need an account on https://imgflip.com/ , just create an account and add the username and the password in the json/apis file.
+If you want more memes, go on the website https://imgflip.com/memetemplates and choice a meme and click on "Blank Template" then add the ID
+One-Does-Not-Simply 	Template ID: 61579
+!memes 61579;Test;Test
+
+ID		Name
+61579	One Does Not Simply
+438680	Batman Slapping Robin	
+61532	The Most Interesting Man In The World
+101470	Ancient Aliens
+61520	Futurama Fry
+347390	X, X Everywhere
+5496396	Leonardo Dicaprio Cheers
+61539	First World Problems
+61546	Brace Yourselves X is Coming	
+16464531	But Thats None Of My Business
+61582	Creepy Condescending Wonka
+61585	Bad Luck Brian	
+563423	That Would Be Great
+61544	Success Kid	
+405658	Grumpy Cat	
+101288	Third World Skeptical Kid
+8072285	Doge
+100947	Matrix Morpheus
+1509839	Captain Picard Facepalm
+61533	X All The Y
+1035805	Boardroom Meeting Suggestion
+245898	Picard Wtf
+21735	The Rock Driving	
+259680	Am I The Only One Around Here
+14230520	Black Girl Wat
+40945639	Dr Evil Laser
+235589	Evil Toddler
+61580	Too Damn High
+61516	Philosoraptor
+6235864	Finding Neverland
+9440985	Face You Make Robert Downey Jr	
+101287	Third World Success Kid
+100955	Confession Bear	
+444501	The lie detector determined that was a lie. The fact that you X determined that was a lie. Maury Povich.
+97984	Disaster Girl	
+442575	Aint Nobody Got Time For That	
+109765	Ill Just Wait Here
+124212	Say That Again I Dare You
+28251713	Oprah You Get A	
+61556	Grandma Finds The Internet	
+101440	10 Guy
+101711	Skeptical Baby	
+101716	Yo Dawg Heard You	
+101511	Dont You Squidward
 """
 
 admin_help = """
@@ -210,6 +264,11 @@ async def on_message(message):
 				await uptime(message)
 			elif message.content.startswith('!avatar'):
 				await avatar(message)
+			elif message.content.startswith ('!memes'):
+				await memes(message)
+			elif message.content == '!meme help':
+				await client.send_message(message.author, meme_help)
+				await client.send_message(message.channel, "{} `Check your DMs for the meme help.`".format(message.author.mention))
 			################## music #######################
 			elif message.content == "!sing":
 				await playPlaylist(message, sing=True)
@@ -914,27 +973,54 @@ async def image(message): # API's dead.
 """
 
 async def imdb(message): # Method added by BananaWaffles.
-    msg = message.content.split()
-    if len(msg) > 1:
-            if len(msg[1]) > 1 and len([msg[1]]) < 20:
-                    try:
-                            msg.remove(msg[0])
-                            msg = "+".join(msg)
-                            search = "http://api.myapifilms.com/imdb/title?format=json&title=" + msg + "&token=" + "yourtokenhere"
-                            async with aiohttp.get(search) as r:
-                                    result = await r.json()
-                                    title = result['data']['movies'][0]['title']
-                                    year = result['data']['movies'][0]['year']
-                                    rating = result['data']['movies'][0]['rating']
-                                    url = result['data']['movies'][0]['urlIMDB']
-                                    msg = "Title: " + title + " | Released on: " + year + " | IMDB Rating: " + rating + ".\n" + url
-                                    await client.send_message(message.channel, msg)
-                    except:
-                            await client.send_message(message.channel, "Error.")
-            else:
-                    await client.send_message(message.channel, "Invalid search.")
-    else:
-            await client.send_message(message.channel, "$imdb [text]")
+	msg = message.content.split()
+	if apis["MYAPIFILMS_TOKEN"] == "TOKENHERE":
+		await client.send_message(message.channel, "`This command wasn't configured properly. If you're the owner, edit json/apis.json`")
+		return False
+	if len(msg) > 1:
+			if len(msg[1]) > 1 and len([msg[1]]) < 20:
+					try:
+						msg.remove(msg[0])
+						msg = "+".join(msg)
+						search = "http://api.myapifilms.com/imdb/title?format=json&title=" + msg + "&token=" + "yourtokenhere"
+						async with aiohttp.get(search) as r:
+							result = await r.json()
+							title = result['data']['movies'][0]['title']
+							year = result['data']['movies'][0]['year']
+							rating = result['data']['movies'][0]['rating']
+							url = result['data']['movies'][0]['urlIMDB']
+							msg = "Title: " + title + " | Released on: " + year + " | IMDB Rating: " + rating + ".\n" + url
+							await client.send_message(message.channel, msg)
+					except:
+						await client.send_message(message.channel, "Error.")
+			else:
+				await client.send_message(message.channel, "Invalid search.")
+	else:
+		await client.send_message(message.channel, "$imdb [text]")
+
+async def memes(message):
+	msg = message.content.split()
+	msg = message.content[6:]
+	msg = msg.split(";")
+	if apis["IMGFLIP_USERNAME"] == "USERNAMEHERE" or apis["IMGFLIP_PASSWORD"] == "PASSWORDHERE":
+		await client.send_message(message.channel, "`This command wasn't configured properly. If you're the owner, edit json/apis.json`")
+		return False
+	if len(msg) == 3:
+		if len(msg[0]) > 1 and len([msg[1]]) < 20 and len([msg[2]]) < 20:
+			try:
+				search = "https://api.imgflip.com/caption_image?template_id=" + msg[0] + "&username=" + apis["IMGFLIP_USERNAME"] + "&password=" + apis["IMGFLIP_PASSWORD"] + "&text0=" + msg[1] + "&text1=" + msg[2]
+				async with aiohttp.get(search) as r:
+					result = await r.json()
+				if result["data"] != []:		
+					url = result["data"]["url"]
+					await client.send_message(message.channel, url)
+			except:
+				error = result["error_message"]
+				await client.send_message(message.channel, error)
+		else:
+			await client.send_message(message.channel, "!memes id;text1;text2")
+	else:
+		await client.send_message(message.channel, "!memes id;text1;text2")
 
 async def urban(message):
 	msg = message.content.split()
@@ -973,13 +1059,13 @@ async def gif(message):
 					url = result["data"][0]["url"]
 					await client.send_message(message.channel, url)
 				else:
-					await client.send_message(message.channel, "Your search terms gave no results.")
+					await client.send_message(message.channel, "`Your search terms gave no results.`")
 			except:
-				await client.send_message(message.channel, "Error.")
+				await client.send_message(message.channel, "`Error.`")
 		else:
-			await client.send_message(message.channel, "Invalid search.")
+			await client.send_message(message.channel, "`Invalid search.`")
 	else:
-		await client.send_message(message.channel, "!gif [text]")
+		await client.send_message(message.channel, "`!gif [text]`")
 
 async def avatar(message):
 	if message.mentions:
@@ -1122,13 +1208,13 @@ async def playVideo(message):
 			await client.send_message(message.channel, "{} `Invalid link.`".format(message.author.mention))
 			return False
 		stopMusic()
-		if canDeleteMessages(message):
-			await client.send_message(message.channel, "`Playing` `https://www.youtube.com/watch?v={}` `requested by {}`".format(id, message.author.name))
-			await client.delete_message(message)
 		if settings["DOWNLOADMODE"]:
 			toDelete = await client.send_message(message.channel, "`I'm in download mode. It might take a bit for me to start. I'll delete this message as soon as I'm ready.`".format(id, message.author.name))
 		data = {"filename" : 'https://www.youtube.com/watch?v=' + id, "type" : "singleSong"}
 		currentPlaylist = Playlist(data)
+		if canDeleteMessages(message):
+			await client.send_message(message.channel, "`Playing youtube video {} requested by {}`".format(await youtubeparser.getTitle(currentPlaylist.playlist[currentPlaylist.current]), message.author.name))
+			await client.delete_message(message)
 		if toDelete:
 			await client.delete_message(toDelete)
 #		currentPlaylist.playlist = ['https://www.youtube.com/watch?v=' + id]
@@ -1174,6 +1260,7 @@ async def playPlaylist(message, sing=False):
 			if toDelete:
 				await client.delete_message(toDelete)
 			await client.send_message(message.channel, choice(msg))
+
 
 async def playLocal(message):
 	global currentPlaylist
@@ -1802,7 +1889,7 @@ def console():
 			print("\n")
 
 def loadDataFromFiles(loadsettings=False):
-	global proverbs, commands, trivia_questions, badwords, badwords_regex, shush_list, twitchStreams, blacklisted_users
+	global proverbs, commands, trivia_questions, badwords, badwords_regex, shush_list, twitchStreams, blacklisted_users, apis
 
 	proverbs = dataIO.loadProverbs()
 	logger.info("Loaded " + str(len(proverbs)) + " proverbs.")
@@ -1824,6 +1911,9 @@ def loadDataFromFiles(loadsettings=False):
 
 	twitchStreams = dataIO.fileIO("json/twitch.json", "load")
 	logger.info("Loaded " + str(len(twitchStreams)) + " streams to monitor.")
+	
+	apis = dataIO.fileIO("json/apis.json", "load")
+	logger.info("Loaded " + str(len(apis) // 2 )  + " APIs.")
 
 	if loadsettings:
 		global settings
