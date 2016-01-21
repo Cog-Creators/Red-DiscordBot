@@ -46,12 +46,13 @@ help = """**Commands list:**
 !imdb - Retrieves a movie's information from IMDB using its title
 !urban [text] - Search definitions in the urban dictionary
 !meme [ID;Text1;Text2] - Create a meme
+!imdb [search terms] - Search on IMDB
 !customcommands - Custom commands' list
 !addcom [command] [text] - Add a custom command
 !editcom [command] [text] - Edit a custom command
 !delcom [command] - Delete a custom command
 
-!meme help - Help to create an account, find different IDs and to create memes
+!meme help - Memes help
 !audio help - Audio related commands
 !economy - Economy explanation, if available
 !trivia - Trivia commands and lists
@@ -994,11 +995,11 @@ async def imdb(message): # Method added by BananaWaffles.
 							msg = "Title: " + title + " | Released on: " + year + " | IMDB Rating: " + rating + ".\n" + url
 							await client.send_message(message.channel, msg)
 					except:
-						await client.send_message(message.channel, "Error.")
+						await client.send_message(message.channel, "`Error.`")
 			else:
-				await client.send_message(message.channel, "Invalid search.")
+				await client.send_message(message.channel, "`Invalid search.`")
 	else:
-		await client.send_message(message.channel, "$imdb [text]")
+		await client.send_message(message.channel, "`!imdb [text]`")
 
 async def memes(message):
 	msg = message.content[6:]
@@ -1019,9 +1020,9 @@ async def memes(message):
 				error = result["error_message"]
 				await client.send_message(message.channel, error)
 		else:
-			await client.send_message(message.channel, "!meme id;text1;text2")
+			await client.send_message(message.channel, "`!meme id;text1;text2   |  !meme help for full list`")
 	else:
-		await client.send_message(message.channel, "!meme id;text1;text2")
+		await client.send_message(message.channel, "`!meme id;text1;text2   |  !meme help for full list`")
 
 async def urban(message):
 	msg = message.content.split()
@@ -1038,13 +1039,13 @@ async def urban(message):
 					example = result['list'][0]['example']
 					await client.send_message(message.channel, "Definition: " + definition + "\n\n" + "Example: " + example )
 				else:
-					await client.send_message(message.channel, "Your search terms gave no results.")
+					await client.send_message(message.channel, "`Your search terms gave no results.`")
 			except:
-				await client.send_message(message.channel, "Error.")
+				await client.send_message(message.channel, "`Error.`")
 		else:
-			await client.send_message(message.channel, "Invalid search.")
+			await client.send_message(message.channel, "`Invalid search.`")
 	else:
-		await client.send_message(message.channel, "!urban [text]")
+		await client.send_message(message.channel, "`!urban [text]`")
 
 async def gif(message):
 	msg = message.content.split()
