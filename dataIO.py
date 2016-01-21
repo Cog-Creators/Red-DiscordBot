@@ -113,7 +113,7 @@ def createEmptyFiles():
 		print("Now enter the imgflip password.")
 		imgflip_password = input(">")
 		if imgflip_username == "": imgflip_username = "USERNAMEHERE"
-		if imgflip_password == "": password = "PASSWORDHERE"
+		if imgflip_password == "": imgflip_password = "PASSWORDHERE"
 		print("\n!imdb configuration. Get your token here http://www.myapifilms.com/token.do\nOr just press enter if you're not interested.")
 		imdb_token = input(">")
 		if imdb_token == "": imdb_token = "TOKENHERE"

@@ -45,7 +45,7 @@ help = """**Commands list:**
 !gif [text] - GIF search
 !imdb - Retrieves a movie's information from IMDB using its title
 !urban [text] - Search definitions in the urban dictionary
-!memes [ID;Text1;Text2] - Create a meme
+!meme [ID;Text1;Text2] - Create a meme
 !customcommands - Custom commands' list
 !addcom [command] [text] - Add a custom command
 !editcom [command] [text] - Edit a custom command
@@ -107,11 +107,11 @@ audio_help = """
 4) Listen to it with !play [playlist_name]!
 """
 meme_help = """
-To create individual memes you need an account on https://imgflip.com/ , just create an account and add the username and the password in the json/apis file.
-If you want more memes, go on the website https://imgflip.com/memetemplates and choice a meme and click on "Blank Template" then add the ID
+Usage example:
 One-Does-Not-Simply 	Template ID: 61579
-!memes 61579;Test;Test
+!meme 61579;Test;Test
 
+Memes list:
 ID		Name
 61579	One Does Not Simply
 438680	Batman Slapping Robin	
@@ -157,6 +157,9 @@ ID		Name
 101711	Skeptical Baby	
 101716	Yo Dawg Heard You	
 101511	Dont You Squidward
+
+For more memes: `https://imgflip.com/memetemplates`
+Choose a meme, click on "Blank Template" then add the ID
 """
 
 admin_help = """
@@ -263,11 +266,11 @@ async def on_message(message):
 				await uptime(message)
 			elif message.content.startswith('!avatar'):
 				await avatar(message)
-			elif message.content.startswith ('!memes'):
-				await memes(message)
-			elif message.content == '!meme help':
+			elif message.content == '!meme help' or message.content == '!memes':
 				await client.send_message(message.author, meme_help)
-				await client.send_message(message.channel, "{} `Check your DMs for the meme help.`".format(message.author.mention))
+				await client.send_message(message.channel, "{} `Check your DMs for !meme help.`".format(message.author.mention))
+			elif message.content.startswith ('!meme'):
+				await memes(message)
 			################## music #######################
 			elif message.content == "!sing":
 				await playPlaylist(message, sing=True)
@@ -998,7 +1001,6 @@ async def imdb(message): # Method added by BananaWaffles.
 		await client.send_message(message.channel, "$imdb [text]")
 
 async def memes(message):
-	msg = message.content.split()
 	msg = message.content[6:]
 	msg = msg.split(";")
 	if apis["IMGFLIP_USERNAME"] == "USERNAMEHERE" or apis["IMGFLIP_PASSWORD"] == "PASSWORDHERE":
@@ -1017,9 +1019,9 @@ async def memes(message):
 				error = result["error_message"]
 				await client.send_message(message.channel, error)
 		else:
-			await client.send_message(message.channel, "!memes id;text1;text2")
+			await client.send_message(message.channel, "!meme id;text1;text2")
 	else:
-		await client.send_message(message.channel, "!memes id;text1;text2")
+		await client.send_message(message.channel, "!meme id;text1;text2")
 
 async def urban(message):
 	msg = message.content.split()
@@ -1912,7 +1914,7 @@ def loadDataFromFiles(loadsettings=False):
 	logger.info("Loaded " + str(len(twitchStreams)) + " streams to monitor.")
 	
 	apis = dataIO.fileIO("json/apis.json", "load")
-	logger.info("Loaded " + str(len(apis) // 2 )  + " APIs.")
+	logger.info("Loaded APIs configuration.")
 
 	if loadsettings:
 		global settings
