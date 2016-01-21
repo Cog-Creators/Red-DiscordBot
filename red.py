@@ -45,7 +45,6 @@ help = """**Commands list:**
 !roll [number] - Random number between 0 and [number]
 !gif [text] - GIF search
 !urban [text] - Search definitions in the urban dictionary
-!chat [text] - Chat with the Cleverbot
 !memes [ID;Text1;Text2] - Create a meme
 !customcommands - Custom commands' list
 !addcom [command] [text] - Add a custom command
@@ -259,8 +258,6 @@ async def on_message(message):
 				await gif(message)
 			elif message.content.startswith('!urban'):
 				await urban(message)
-			elif message.content.startswith('!chat'):
-				await chat(message)
 			elif message.content.startswith('!uptime'):
 				await uptime(message)
 			elif message.content.startswith('!avatar'):
@@ -973,21 +970,6 @@ async def image(message): # API's dead.
 		await client.send_message(message.channel, "!image [text]")
 """
 
-async def chat(message):
-	msg = message.content.split()
-	if len(msg) > 1:
-			try:
-				msg.remove(msg[0])
-				msg = "+".join(msg)
-				question = msg
-				answer = cleverbot_client.ask(question)
-				if msg != "":
-					await client.send_message(message.channel, "{}: ".format(message.author.mention) + answer)
-			except:
-				await client.send_message(message.channel, "Something went wrong.")
-	else:
-		await client.send_message(message.channel, "!chat [text]")
-
 async def memes(message):
 	msg = message.content.split()
 	msg = message.content[6:]
@@ -1244,6 +1226,7 @@ async def playPlaylist(message, sing=False):
 			if toDelete:
 				await client.delete_message(toDelete)
 			await client.send_message(message.channel, choice(msg))
+
 
 async def playLocal(message):
 	global currentPlaylist
