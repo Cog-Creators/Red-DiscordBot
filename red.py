@@ -43,6 +43,7 @@ help = """**Commands list:**
 !stoptwitchalert [stream] - Stop sending alerts about the specified stream in the channel (admin only)
 !roll [number] - Random number between 0 and [number]
 !gif [text] - GIF search
+!imdb - Retrieves a movie's information from IMDB using its title
 !urban [text] - Search definitions in the urban dictionary
 !customcommands - Custom commands' list
 !addcom [command] [text] - Add a custom command
@@ -200,6 +201,8 @@ async def on_message(message):
 				pass
 			elif message.content.startswith('!gif'):
 				await gif(message)
+                    	elif message.content.startswith('!imdb'):
+                            	await imdb(message)
 			elif message.content.startswith('!urban'):
 				await urban(message)
 			elif message.content.startswith('!uptime'):
@@ -908,6 +911,29 @@ async def image(message): # API's dead.
 	else:
 		await client.send_message(message.channel, "!image [text]")
 """
+
+async def imdb(message): # Method added by BananaWaffles.
+    msg = message.content.split()
+    if len(msg) > 1:
+            if len(msg[1]) > 1 and len([msg[1]]) < 20:
+                    try:
+                            msg.remove(msg[0])
+                            msg = "+".join(msg)
+                            search = "http://api.myapifilms.com/imdb/title?format=json&title=" + msg + "&token=" + yourtokenhere
+                            async with aiohttp.get(search) as r:
+                                    result = await r.json()
+                                    title = result['data']['movies'][0]['title']
+                                    year = result['data']['movies'][0]['year']
+                                    rating = result['data']['movies'][0]['rating']
+                                    url = result['data']['movies'][0]['urlIMDB']
+                                    msg = "Title: " + title + " | Released on: " + year + " | IMDB Rating: " + rating + ".\n" + url
+                                    await client.send_message(message.channel, msg)
+                    except:
+                            await client.send_message(message.channel, "Error.")
+            else:
+                    await client.send_message(message.channel, "Invalid search.")
+    else:
+            await client.send_message(message.channel, "$imdb [text]")
 
 async def urban(message):
 	msg = message.content.split()
