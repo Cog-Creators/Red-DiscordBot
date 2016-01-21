@@ -201,8 +201,9 @@ async def on_message(message):
 				pass
 			elif message.content.startswith('!gif'):
 				await gif(message)
-                    	elif message.content.startswith('!imdb'):
-                            	await imdb(message)
+			elif message.content.startswith('!imdb'):
+				#await imdb(message)
+				await client.send_message(message.channel, "`!imdb will be available soon.`")
 			elif message.content.startswith('!urban'):
 				await urban(message)
 			elif message.content.startswith('!uptime'):
@@ -919,7 +920,7 @@ async def imdb(message): # Method added by BananaWaffles.
                     try:
                             msg.remove(msg[0])
                             msg = "+".join(msg)
-                            search = "http://api.myapifilms.com/imdb/title?format=json&title=" + msg + "&token=" + yourtokenhere
+                            search = "http://api.myapifilms.com/imdb/title?format=json&title=" + msg + "&token=" + "yourtokenhere"
                             async with aiohttp.get(search) as r:
                                     result = await r.json()
                                     title = result['data']['movies'][0]['title']
