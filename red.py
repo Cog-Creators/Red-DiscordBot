@@ -16,7 +16,6 @@ import aiohttp
 import traceback
 import re
 import youtube_dl
-import cleverbot3
 import os
 import asyncio
 import glob
@@ -44,6 +43,7 @@ help = """**Commands list:**
 !stoptwitchalert [stream] - Stop sending alerts about the specified stream in the channel (admin only)
 !roll [number] - Random number between 0 and [number]
 !gif [text] - GIF search
+!imdb - Retrieves a movie's information from IMDB using its title
 !urban [text] - Search definitions in the urban dictionary
 !memes [ID;Text1;Text2] - Create a meme
 !customcommands - Custom commands' list
@@ -186,7 +186,6 @@ trivia_help = """
 !trivia stop - Stop trivia session
 """
 
-cleverbot_client = cleverbot3.Cleverbot()
 client = discord.Client()
 
 if not discord.opus.is_loaded():
@@ -256,6 +255,8 @@ async def on_message(message):
 				pass
 			elif message.content.startswith('!gif'):
 				await gif(message)
+			elif message.content.startswith('!imdb'):
+				await imdb(message)
 			elif message.content.startswith('!urban'):
 				await urban(message)
 			elif message.content.startswith('!uptime'):
@@ -970,21 +971,54 @@ async def image(message): # API's dead.
 		await client.send_message(message.channel, "!image [text]")
 """
 
+async def imdb(message): # Method added by BananaWaffles.
+	msg = message.content.split()
+	if apis["MYAPIFILMS_TOKEN"] == "TOKENHERE":
+		await client.send_message(message.channel, "`This command wasn't configured properly. If you're the owner, edit json/apis.json`")
+		return False
+	if len(msg) > 1:
+			if len(msg[1]) > 1 and len([msg[1]]) < 20:
+					try:
+						msg.remove(msg[0])
+						msg = "+".join(msg)
+						search = "http://api.myapifilms.com/imdb/title?format=json&title=" + msg + "&token=" + apis["MYAPIFILMS_TOKEN"]
+						async with aiohttp.get(search) as r:
+							result = await r.json()
+							title = result['data']['movies'][0]['title']
+							year = result['data']['movies'][0]['year']
+							rating = result['data']['movies'][0]['rating']
+							url = result['data']['movies'][0]['urlIMDB']
+							msg = "Title: " + title + " | Released on: " + year + " | IMDB Rating: " + rating + ".\n" + url
+							await client.send_message(message.channel, msg)
+					except:
+						error = result['error']['message']
+						await client.send_message(message.channel, error)
+			else:
+				await client.send_message(message.channel, "Invalid search.")
+	else:
+		await client.send_message(message.channel, "!imdb [text]")
+
 async def memes(message):
 	msg = message.content.split()
 	msg = message.content[6:]
 	msg = msg.split(";")
-	if len(msg[0]) > 1 and len([msg[1]]) < 20 and len([msg[2]]) < 20:
-		try:
-			search = "https://api.imgflip.com/caption_image?template_id=" + msg[0] + "&username=" + apis["IMGFLIP_USERNAME"] + "&password=" + apis["IMGFLIP_PASSWORD"] + "&text0=" + msg[1] + "&text1=" + msg[2]
-			async with aiohttp.get(search) as r:
-				result = await r.json()
-			if result["data"] != []:		
-				url = result["data"]["url"]
-				await client.send_message(message.channel, url)
-		except:
-			error = result["error_message"]
-			await client.send_message(message.channel, error)
+	if apis["IMGFLIP_USERNAME"] == "USERNAMEHERE" or apis["IMGFLIP_PASSWORD"] == "PASSWORDHERE":
+		await client.send_message(message.channel, "`This command wasn't configured properly. If you're the owner, edit json/apis.json`")
+		return False
+	if len(msg) == 3:
+		if len(msg[0]) > 1 and len([msg[1]]) < 20 and len([msg[2]]) < 20:
+			try:
+				search = "https://api.imgflip.com/caption_image?template_id=" + msg[0] + "&username=" + apis["IMGFLIP_USERNAME"] + "&password=" + apis["IMGFLIP_PASSWORD"] + "&text0=" + msg[1] + "&text1=" + msg[2]
+				async with aiohttp.get(search) as r:
+					result = await r.json()
+				if result["data"] != []:		
+					url = result["data"]["url"]
+					await client.send_message(message.channel, url)
+			except:
+				error = result["error_message"]
+				await client.send_message(message.channel, error)
+		else:
+			await client.send_message(message.channel, "!memes id;text1;text2")
 	else:
 		await client.send_message(message.channel, "!memes id;text1;text2")
 
@@ -1025,13 +1059,13 @@ async def gif(message):
 					url = result["data"][0]["url"]
 					await client.send_message(message.channel, url)
 				else:
-					await client.send_message(message.channel, "Your search terms gave no results.")
+					await client.send_message(message.channel, "`Your search terms gave no results.`")
 			except:
-				await client.send_message(message.channel, "Error.")
+				await client.send_message(message.channel, "`Error.`")
 		else:
-			await client.send_message(message.channel, "Invalid search.")
+			await client.send_message(message.channel, "`Invalid search.`")
 	else:
-		await client.send_message(message.channel, "!gif [text]")
+		await client.send_message(message.channel, "`!gif [text]`")
 
 async def avatar(message):
 	if message.mentions:
