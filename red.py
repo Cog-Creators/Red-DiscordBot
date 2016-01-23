@@ -1153,7 +1153,7 @@ async def twitchCheck(message):
 		except:
 			await client.send_message(message.channel, "{} `Error.`".format(message.author.mention))
 	else:
-		await client.send_message(message.channel, "{} `!twitch [stream]`".format(message.author.mention))
+		await client.send_message(message.channel, "{} `!twitch [name]`".format(message.author.mention))
 
 async def triviaList(message):
 	await client.send_message(message.author, trivia_help)
@@ -1728,6 +1728,9 @@ async def addTwitchAlert(message):
 	if isMemberAdmin(message):
 		msg = message.content.split(" ")
 		if len(msg) == 2:
+			if "twitch.tv/" in msg[1]:
+				await client.send_message(message.channel, "`Enter the name of the stream, not the URL.`")
+				return False
 			for i, stream in enumerate(twitchStreams):
 				if stream["NAME"] == msg[1] and message.channel.id in stream["CHANNELS"]:
 					await client.send_message(message.channel, "`I'm already monitoring that stream in this channel.`")
