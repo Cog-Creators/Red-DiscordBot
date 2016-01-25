@@ -4,6 +4,7 @@ import time
 import dataIO
 
 client = None
+settings = []
 #words = dataIO.loadWords()
 #anagram_sessions_timestamps = {}
 anagram_sessions = []
@@ -11,57 +12,59 @@ payday_register = {}
 PAYDAY_TIME = 300 # seconds between each payday
 PAYDAY_CREDITS = 120 # credits received
 
-slot_help = """ Slot machine payouts:
-:two: :two: :six: Bet * 5000
-:four_leaf_clover: :four_leaf_clover: :four_leaf_clover: +1000
-:cherries: :cherries: :cherries: +800
-:two: :six: Bet * 4
-:cherries: :cherries: Bet * 3
+bank = dataIO.fileIO("json/economy.json", "load")
 
-Three symbols: +500
-Two symbols: Bet * 2
+def loadHelp():
+	global slot_help, economy_exp
 
-You need an account to play. !register one.
-Bet range: 5 - 100
-"""
+	if settings == []: return False #first run
 
-economy_exp = """ **Economy. Get rich and have fun with imaginary currency!**
+	slot_help = """ Slot machine payouts:
+	:two: :two: :six: Bet * 5000
+	:four_leaf_clover: :four_leaf_clover: :four_leaf_clover: +1000
+	:cherries: :cherries: :cherries: +800
+	:two: :six: Bet * 4
+	:cherries: :cherries: Bet * 3
 
-!register - Register an account at the Twentysix bank
-!balance - Check your balance
-!slot help - Slot machine explanation
-!slot [bid] - Play the slot machine
-!payday - Type it every {} seconds to receive some credits.
-""".format(str(PAYDAY_TIME))
-#!payday - Get some cash every 10 minutes
+	Three symbols: +500
+	Two symbols: Bet * 2
 
-def initialize(c):
-	global client, bank
-	bank = dataIO.fileIO("json/economy.json", "load")
-	client = c
+	You need an account to play. {0}register one.
+	Bet range: 5 - 100
+	""".format(settings["PREFIX"])
+
+	economy_exp = """ **Economy. Get rich and have fun with imaginary currency!**
+
+	{0}register - Register an account at the Twentysix bank
+	{0}balance - Check your balance
+	{0}slot help - Slot machine explanation
+	{0}slot [bid] - Play the slot machine
+	{0}payday - Type it every {1} seconds to receive some credits.
+	""".format(settings["PREFIX"], str(PAYDAY_TIME))
 
 async def checkCommands(message):
+	p = settings["PREFIX"]
 	cmd = message.content
 	user = message.author
-	if cmd == "!balance":
+	if cmd == p + "balance":
 		if accountCheck(user.id):
 			await client.send_message(message.channel, "{} `Your balance is: {}`".format(user.mention, str(checkBalance(user.id))))
 		else:
 			await client.send_message(message.channel, "{} `You don't have an account at the Twentysix bank. Type !register to open one.`".format(user.mention, str(checkBalance(user.id))))
-	elif cmd == "!register":
+	elif cmd == p + "register":
 		await registerAccount(user, message)
-	elif cmd == "!slot help":
+	elif cmd == p + "slot help":
 		await client.send_message(message.author, slot_help)
 		await client.send_message(message.channel, "{} `Check your DMs for the slot machine explanation.`".format(message.author.mention))
-	elif cmd.startswith("!slot"):
+	elif cmd.startswith(p + "slot"):
 		await slotMachineCheck(message)
-	elif cmd == "!economy":
+	elif cmd == p + "economy":
 		await client.send_message(message.author, economy_exp)
 		await client.send_message(message.channel, "{} `Check your DMs for the economy explanation.`".format(message.author.mention))
-	elif cmd == "!challenge":
+	elif cmd == p + "challenge":
 		#isChallengeOngoing(message)
 		pass
-	elif cmd == "!payday":
+	elif cmd == p + "payday":
 		await payday(message)
 
 async def registerAccount(user, message):
@@ -147,6 +150,7 @@ async def payday(message):
 ###############SLOT##############
 
 async def slotMachineCheck(message):
+	p = settings["PREFIX"]
 	msg = message.content.split()
 	if len(msg) == 2:
 		if msg[1].isdigit():
@@ -157,11 +161,11 @@ async def slotMachineCheck(message):
 				else:
 					await client.send_message(message.channel, "{} `Bid must be between 5 and 100.`".format(message.author.mention))
 			else:
-				await client.send_message(message.channel, "{} `You need an account with enough funds to play the slot machine. (!economy)`".format(message.author.mention))
+				await client.send_message(message.channel, "{0} `You need an account with enough funds to play the slot machine. ({1}economy)`".format(message.author.mention, settings["PREFIX"]))
 		else:
-			await client.send_message(message.channel, "{} `!slot [bid]`".format(message.author.mention))
+			await client.send_message(message.channel, "{} `".format(message.author.mention) + p + "slot [bid]`")
 	else:
-		await client.send_message(message.channel, "{} `!slot [bid]`".format(message.author.mention))
+		await client.send_message(message.channel, "{} `".format(message.author.mention) + p + "slot [bid]`")
 
 async def slotMachine(message, bid):
 	reel_pattern = [":cherries:", ":cookie:", ":two:", ":four_leaf_clover:", ":cyclone:", ":sunflower:", ":six:", ":mushroom:", ":heart:", ":snowflake:"]

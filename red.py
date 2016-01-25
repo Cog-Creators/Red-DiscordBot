@@ -28,35 +28,162 @@ import youtubeparser
 
 from sys import modules
 
-help = """**Commands list:**
-!flip - Flip a coin
-!rps [rock or paper o scissors] - Play rock paper scissors
-!proverb
-!choose option1 or option2 or option3 (...) - Random choice
-!8 [question] - Ask 8 ball
-!sw - Start/stop the stopwatch
-!avatar [name or mention] - Shows user's avatar
-!trivia start - Start a trivia session
-!trivia stop - Stop a trivia session
-!twitch [stream] - Check if stream is online
-!twitchalert [stream] - Whenever the stream is online the bot will send an alert in the channel (admin only)
-!stoptwitchalert [stream] - Stop sending alerts about the specified stream in the channel (admin only)
-!roll [number] - Random number between 0 and [number]
-!gif [text] - GIF search
-!imdb - Retrieves a movie's information from IMDB using its title
-!urban [text] - Search definitions in the urban dictionary
-!meme [ID;Text1;Text2] - Create a meme
-!imdb [search terms] - Search on IMDB
-!customcommands - Custom commands' list
-!addcom [command] [text] - Add a custom command
-!editcom [command] [text] - Edit a custom command
-!delcom [command] - Delete a custom command
+#settings = {"PREFIX" : "!"} #prevents boot error
 
-!meme help - Memes help
-!audio help - Audio related commands
-!economy - Economy explanation, if available
-!trivia - Trivia commands and lists
-"""
+def loadHelp():
+	global help, audio_help, meme_help, admin_help, trivia_help
+
+	help = """**Commands list:**
+	{0}flip - Flip a coin
+	{0}rps [rock or paper o scissors] - Play rock paper scissors
+	{0}proverb
+	{0}choose option1 or option2 or option3 (...) - Random choice
+	{0}8 [question] - Ask 8 ball
+	{0}sw - Start/stop the stopwatch
+	{0}avatar [name or mention] - Shows user's avatar
+	{0}trivia start - Start a trivia session
+	{0}trivia stop - Stop a trivia session
+	{0}twitch [stream] - Check if stream is online
+	{0}twitchalert [stream] - Whenever the stream is online the bot will send an alert in the channel (admin only)
+	{0}stoptwitchalert [stream] - Stop sending alerts about the specified stream in the channel (admin only)
+	{0}roll [number] - Random number between 0 and [number]
+	{0}gif [text] - GIF search
+	{0}imdb - Retrieves a movie's information from IMDB using its title
+	{0}urban [text] - Search definitions in the urban dictionary
+	{0}meme [ID;Text1;Text2] - Create a meme
+	{0}imdb [search terms] - Search on IMDB
+	{0}customcommands - Custom commands' list
+	{0}addcom [command] [text] - Add a custom command
+	{0}editcom [command] [text] - Edit a custom command
+	{0}delcom [command] - Delete a custom command
+
+	{0}meme help - Memes help
+	{0}audio help - Audio related commands
+	{0}economy - Economy explanation, if available
+	{0}trivia - Trivia commands and lists
+	""".format(settings["PREFIX"])
+
+	audio_help = """
+	**General audio help commands:**
+	{0}next or {0}skip - Next song
+	{0}prev - Previous song
+	{0}pause - Pause song
+	{0}resume - Resume song
+	{0}repeat or {0}replay - Replay current song
+	{0}title or {0}song - Current song's title + link
+	{0}youtube [link] - Play a youtube video in a voice channel
+	{0}sing - Make Red sing
+	{0}stop - Stop any voice channel activity
+	{0}volume [0-1] - Sets the volume
+	{0}downloadmode - Disables/enables download mode (admin only)
+
+	**Playlist commands:**
+	{0}play [playlist_name] - Play chosen playlist
+	{0}playlists - Playlists' list
+	{0}shuffle - Mix music list
+	{0}addplaylist [name] [link] - Add a youtube playlist. Link format example: https://www.youtube.com/playlist?list=PLe8jmEHFkvsaDOOWcREvkgFoj6MD0pXXX
+	{0}delplaylist [name] - Delete a youtube playlist. Limited to author and admins.
+	{0}getplaylist - Receive the current playlist through DM. This also works with favorites.
+
+	**Local commands:**
+	{0}local [playlist_name] - Play chosen local playlist
+	{0}locallist or {0}local or {0}locals - Local playlists' list
+
+	**Favorites:**
+	{0}addfavorite - Add song to your favorites
+	{0}delfavorite - Remove song from your favorites
+	{0}playfavorites - Play your favorites
+
+	**You can submit your own playlist by doing the following:**
+	1) Make a txt file. Name must be only letters, numbers and underscores. It will be your playlist's name, so choose wisely.
+	2) One youtube link each line.
+	3) Send me the txt. If any line is incorrect I will reject it.
+	4) Listen to it with {0}play [playlist_name]!
+	""".format(settings["PREFIX"])
+
+	meme_help = """
+	Usage example:
+	One-Does-Not-Simply 	Template ID: 61579
+	{0}meme 61579;Test;Test
+
+	Memes list:
+	ID		Name
+	61579	One Does Not Simply
+	438680	Batman Slapping Robin	
+	61532	The Most Interesting Man In The World
+	101470	Ancient Aliens
+	61520	Futurama Fry
+	347390	X, X Everywhere
+	5496396	Leonardo Dicaprio Cheers
+	61539	First World Problems
+	61546	Brace Yourselves X is Coming	
+	16464531	But Thats None Of My Business
+	61582	Creepy Condescending Wonka
+	61585	Bad Luck Brian	
+	563423	That Would Be Great
+	61544	Success Kid	
+	405658	Grumpy Cat	
+	101288	Third World Skeptical Kid
+	8072285	Doge
+	100947	Matrix Morpheus
+	1509839	Captain Picard Facepalm
+	61533	X All The Y
+	1035805	Boardroom Meeting Suggestion
+	245898	Picard Wtf
+	21735	The Rock Driving	
+	259680	Am I The Only One Around Here
+	14230520	Black Girl Wat
+	40945639	Dr Evil Laser
+	235589	Evil Toddler
+	61580	Too Damn High
+	61516	Philosoraptor
+	6235864	Finding Neverland
+	9440985	Face You Make Robert Downey Jr	
+	101287	Third World Success Kid
+	100955	Confession Bear	
+	444501	The lie detector determined that was a lie. The fact that you X determined that was a lie. Maury Povich.
+	97984	Disaster Girl	
+	442575	Aint Nobody Got Time For That	
+	109765	Ill Just Wait Here
+	124212	Say That Again I Dare You
+	28251713	Oprah You Get A	
+	61556	Grandma Finds The Internet	
+	101440	10 Guy
+	101711	Skeptical Baby	
+	101716	Yo Dawg Heard You	
+	101511	Dont You Squidward
+
+	For more memes: `https://imgflip.com/memetemplates`
+	Choose a meme, click on "Blank Template" then add the ID
+	""".format(settings["PREFIX"])
+
+	admin_help = """
+	**Admin commands:**
+	{0}addwords [word1 word2 (...)] [phrase/with/many/words] - Add words to message filter
+	{0}removewords [word1 word2 (...)] [phrase/with/many/words] - Remove words from message filter
+	{0}addregex [regex] - Add regular expression to message filter
+	{0}removeregex [regex] - Remove regular expression from message filter
+	{0}shutdown - Shutdown the bot
+	{0}join [invite] - Join another server
+	{0}leaveserver - Leave server
+	{0}shush - Ignore the current channel
+	{0}talk - Stop ignoring the current channel
+	{0}reload - Reload most files. Useful in case of manual edits
+	{0}name [name] - Change the bot's name
+	{0}cleanup [number] - Delete the last [number] messages
+	{0}cleanup [name/mention] [number] - Delete the last [number] of messages by [name]
+	{0}blacklist [name/mention] - Add user to Red's blacklist
+	{0}forgive [name/mention] - Removes user from Red's blacklist
+	{0}setting [setting] [value] - Modify setting
+	""".format(settings["PREFIX"])
+
+	trivia_help = """
+	**Trivia commands:**
+	{0}trivia - Trivia questions lists and help
+	{0}trivia [name] - Starts trivia session with specified list
+	{0}trivia random - Starts trivia session with random list
+	{0}trivia stop - Stop trivia session
+	""".format(settings["PREFIX"])
 
 youtube_dl_options = {
 	'format': 'bestaudio/best',
@@ -70,126 +197,6 @@ youtube_dl_options = {
 	'no_warnings': True,
 	'outtmpl': "cache/%(id)s"}
 
-audio_help = """
-**General audio help commands:**
-!next or !skip - Next song
-!prev - Previous song
-!pause - Pause song
-!resume - Resume song
-!repeat or !replay - Replay current song
-!title or !song - Current song's title + link
-!youtube [link] - Play a youtube video in a voice channel
-!sing - Make Red sing
-!stop - Stop any voice channel activity
-!volume [0-1] - Sets the volume
-!downloadmode - Disables/enables download mode (admin only)
-
-**Playlist commands:**
-!play [playlist_name] - Play chosen playlist
-!playlists - Playlists' list
-!shuffle - Mix music list
-!addplaylist [name] [link] - Add a youtube playlist. Link format example: https://www.youtube.com/playlist?list=PLe8jmEHFkvsaDOOWcREvkgFoj6MD0pXXX
-!delplaylist [name] - Delete a youtube playlist. Limited to author and admins.
-!getplaylist - Receive the current playlist through DM. This also works with favorites.
-
-**Local commands:**
-!local [playlist_name] - Play chosen local playlist
-!locallist or !local or !locals - Local playlists' list
-
-**Favorites:**
-!addfavorite - Add song to your favorites
-!delfavorite - Remove song from your favorites
-!playfavorites - Play your favorites
-
-**You can submit your own playlist by doing the following:**
-1) Make a txt file. Name must be only letters, numbers and underscores. It will be your playlist's name, so choose wisely.
-2) One youtube link each line.
-3) Send me the txt. If any line is incorrect I will reject it.
-4) Listen to it with !play [playlist_name]!
-"""
-meme_help = """
-Usage example:
-One-Does-Not-Simply 	Template ID: 61579
-!meme 61579;Test;Test
-
-Memes list:
-ID		Name
-61579	One Does Not Simply
-438680	Batman Slapping Robin	
-61532	The Most Interesting Man In The World
-101470	Ancient Aliens
-61520	Futurama Fry
-347390	X, X Everywhere
-5496396	Leonardo Dicaprio Cheers
-61539	First World Problems
-61546	Brace Yourselves X is Coming	
-16464531	But Thats None Of My Business
-61582	Creepy Condescending Wonka
-61585	Bad Luck Brian	
-563423	That Would Be Great
-61544	Success Kid	
-405658	Grumpy Cat	
-101288	Third World Skeptical Kid
-8072285	Doge
-100947	Matrix Morpheus
-1509839	Captain Picard Facepalm
-61533	X All The Y
-1035805	Boardroom Meeting Suggestion
-245898	Picard Wtf
-21735	The Rock Driving	
-259680	Am I The Only One Around Here
-14230520	Black Girl Wat
-40945639	Dr Evil Laser
-235589	Evil Toddler
-61580	Too Damn High
-61516	Philosoraptor
-6235864	Finding Neverland
-9440985	Face You Make Robert Downey Jr	
-101287	Third World Success Kid
-100955	Confession Bear	
-444501	The lie detector determined that was a lie. The fact that you X determined that was a lie. Maury Povich.
-97984	Disaster Girl	
-442575	Aint Nobody Got Time For That	
-109765	Ill Just Wait Here
-124212	Say That Again I Dare You
-28251713	Oprah You Get A	
-61556	Grandma Finds The Internet	
-101440	10 Guy
-101711	Skeptical Baby	
-101716	Yo Dawg Heard You	
-101511	Dont You Squidward
-
-For more memes: `https://imgflip.com/memetemplates`
-Choose a meme, click on "Blank Template" then add the ID
-"""
-
-admin_help = """
-**Admin commands:**
-!addwords [word1 word2 (...)] [phrase/with/many/words] - Add words to message filter
-!removewords [word1 word2 (...)] [phrase/with/many/words] - Remove words from message filter
-!addregex [regex] - Add regular expression to message filter
-!removeregex [regex] - Remove regular expression from message filter
-!shutdown - Shutdown the bot
-!join [invite] - Join another server
-!leaveserver - Leave server
-!shush - Ignore the current channel
-!talk - Stop ignoring the current channel
-!reload - Reload most files. Useful in case of manual edits
-!name [name] - Change the bot's name
-!cleanup [number] - Delete the last [number] messages
-!cleanup [name/mention] [number] - Delete the last [number] of messages by [name]
-!blacklist [name/mention] - Add user to Red's blacklist
-!forgive [name/mention] - Removes user from Red's blacklist
-"""
-
-trivia_help = """
-**Trivia commands:**
-!trivia - Trivia questions lists and help
-!trivia [name] - Starts trivia session with specified list
-!trivia random - Starts trivia session with random list
-!trivia stop - Stop trivia session
-"""
-
 client = discord.Client()
 
 if not discord.opus.is_loaded():
@@ -198,6 +205,8 @@ if not discord.opus.is_loaded():
 @client.async_event
 async def on_message(message):
 	global trivia_sessions
+
+	p = settings["PREFIX"]
 
 	await gameSwitcher.changeGame()
 
@@ -211,7 +220,7 @@ async def on_message(message):
 		if settings["FILTER"] and not isMemberAdmin(message):
 			if await checkFilter(message) or await checkRegex(message):
 				return False #exits without checking for commands
-		if message.channel.id in shush_list and message.content == "!talk":
+		if message.channel.id in shush_list and message.content == p + "talk":
 			await talk(message)
 
 		if  message.channel.id not in shush_list:
@@ -221,117 +230,117 @@ async def on_message(message):
 				await client.send_message(message.channel, "`" + choice(greetings) + "`")
 			elif message.content == client.user.mention + " ?" or message.content == client.user.mention + "?":
 				await client.send_message(message.channel, "`" + choice(greetings) + "`")
-			elif message.content == "!flip":
+			elif message.content == p + "flip":
 				await client.send_message(message.channel, "*flips a coin and... " + choice(["HEADS!*", "TAILS!*"]))
-			elif message.content.startswith("!rps"):
+			elif message.content.startswith(p + "rps"):
 				await rpsgame(message)
-			elif message.content == "!proverb":
+			elif message.content == p + "proverb":
 				await client.send_message(message.channel, "`" + choice(proverbs) + "`")
-			elif message.content == "!help":
+			elif message.content == p + "help":
 				await client.send_message(message.author, help)
 				await client.send_message(message.channel, "{} `Check your DMs for the command list.`".format(message.author.mention))
-			elif message.content.startswith('!choose'):
+			elif message.content.startswith(p + 'choose'):
 				await randomchoice(message)
-			elif message.content.startswith('!8 ') and message.content.endswith("?") and len(message.content) > 5:
+			elif message.content.startswith(p + '8 ') and message.content.endswith("?") and len(message.content) > 5:
 				await client.send_message(message.channel, "{}: ".format(message.author.mention) + "`" + choice(ball) + "`")
-			elif message.content.startswith('!roll'):
+			elif message.content.startswith(p + 'roll'):
 				await roll(message)
-			elif message.content.startswith('!addcom'):
+			elif message.content.startswith(p + 'addcom'):
 				await addcom(message)
-			elif message.content.startswith('!editcom'):
+			elif message.content.startswith(p + 'editcom'):
 				await editcom(message)
-			elif message.content.startswith('!delcom'):
+			elif message.content.startswith(p + 'delcom'):
 				await delcom(message)
-			elif message.content == "!customcommands":
+			elif message.content == p + "customcommands":
 				await listCustomCommands(message)
-			elif message.content.startswith('!sw'):
+			elif message.content.startswith(p + 'sw'):
 				await stopwatch(message)
-			elif message.content.startswith('!id'):
+			elif message.content.startswith(p + 'id'):
 				await client.send_message(message.channel, "{} `Your id is {}`".format(message.author.mention, message.author.id))
-			elif message.content.startswith('!twitchalert'):
+			elif message.content.startswith(p + 'twitchalert'):
 				await addTwitchAlert(message)
-			elif message.content.startswith('!stoptwitchalert'):
+			elif message.content.startswith(p + 'stoptwitchalert'):
 				await removeTwitchAlert(message)
-			elif message.content.startswith('!twitch'):
+			elif message.content.startswith(p + 'twitch'):
 				await twitchCheck(message)
-			elif message.content.startswith('!image'):
+			elif message.content.startswith(p + 'image'):
 				#image(message)
 				pass
-			elif message.content.startswith('!gif'):
+			elif message.content.startswith(p + 'gif'):
 				await gif(message)
-			elif message.content.startswith('!imdb'):
+			elif message.content.startswith(p + 'imdb'):
 				await imdb(message)
-			elif message.content.startswith('!urban'):
+			elif message.content.startswith(p + 'urban'):
 				await urban(message)
-			elif message.content.startswith('!uptime'):
+			elif message.content.startswith(p + 'uptime'):
 				await uptime(message)
-			elif message.content.startswith('!avatar'):
+			elif message.content.startswith(p + 'avatar'):
 				await avatar(message)
-			elif message.content == '!meme help' or message.content == '!memes':
+			elif message.content == p + 'meme help' or message.content == p + 'memes':
 				await client.send_message(message.author, meme_help)
-				await client.send_message(message.channel, "{} `Check your DMs for !meme help.`".format(message.author.mention))
-			elif message.content.startswith ('!meme'):
+				await client.send_message(message.channel, "{} `Check your DMs for " + p +"meme help.`".format(message.author.mention))
+			elif message.content.startswith (p + 'meme'):
 				await memes(message)
 			################## music #######################
-			elif message.content == "!sing":
+			elif message.content == p + "sing":
 				await playPlaylist(message, sing=True)
-			elif message.content.startswith('!youtube'):
+			elif message.content.startswith(p + 'youtube'):
 				await playVideo(message)
-			elif message.content.startswith('!play '):
+			elif message.content.startswith(p + 'play '):
 				await playPlaylist(message)
-			elif message.content.startswith('!local '):
+			elif message.content.startswith(p + 'local '):
 				await playLocal(message)
-			elif message.content == "!local" or message.content == "!locallist" or message.content == "!locals":
+			elif message.content == p + "local" or message.content == p + "locallist" or message.content == p + "locals":
 				await listLocal(message)
 				await client.send_message(message.channel, "{} `Check your DMs for the local playlists list.`".format(message.author.mention))
-			elif message.content == "!stop":
+			elif message.content == p + "stop":
 				await leaveVoice()
-			elif message.content == "!playlist" or message.content == "!playlists":
+			elif message.content == p + "playlist" or message.content == p + "playlists":
 				await listPlaylists(message)
 				await client.send_message(message.channel, "{} `Check your DMs for the playlists list.`".format(message.author.mention))
-			elif message.content == "!skip" or message.content == "!next":
+			elif message.content == p + "skip" or message.content == p + "next":
 				if currentPlaylist: currentPlaylist.nextSong(currentPlaylist.getNextSong())
-			elif message.content == "!prev" or message.content == "!previous":
+			elif message.content == p + "prev" or message.content == p + "previous":
 				if currentPlaylist: currentPlaylist.nextSong(currentPlaylist.getPreviousSong())
-			elif message.content == "!repeat" or message.content == "!replay":
+			elif message.content == p + "repeat" or message.content == p + "replay":
 				if currentPlaylist: currentPlaylist.nextSong(currentPlaylist.current)
-			elif message.content == "!pause":
+			elif message.content == p + "pause":
 				if currentPlaylist: currentPlaylist.pause()
-			elif message.content == "!resume":
+			elif message.content == p + "resume":
 				if currentPlaylist: currentPlaylist.resume()
-			elif message.content == "!shuffle":
+			elif message.content == p + "shuffle":
 				if currentPlaylist: currentPlaylist.shuffle()
-			elif message.content == "!song" or message.content == "!title" :
+			elif message.content == p + "song" or message.content == p + "title" :
 				if currentPlaylist: await getSongTitle(message)
-			elif message.content == "!audio help":
+			elif message.content == p + "audio help":
 				await client.send_message(message.author, audio_help)
 				await client.send_message(message.channel, "{} `Check your DMs for the audio help.`".format(message.author.mention))
-			elif message.content.startswith("!addplaylist"):
+			elif message.content.startswith(p + "addplaylist"):
 				await addPlaylist(message)
-			elif message.content.startswith("!delplaylist"):
+			elif message.content.startswith(p + "delplaylist"):
 				await delPlaylist(message)
-			elif message.content == "!addfavorite":
+			elif message.content == p + "addfavorite":
 				await addToFavorites(message)
-			elif message.content == "!delfavorite":
+			elif message.content == p + "delfavorite":
 				await removeFromFavorites(message)
-			elif message.content == "!playfavorites":
+			elif message.content == p + "playfavorites":
 				await playFavorites(message)
-			elif message.content == "!getplaylist":
+			elif message.content == p + "getplaylist":
 				await sendPlaylist(message)
-			elif message.content.startswith("!volume"):
+			elif message.content.startswith(p + "volume"):
 				await setVolume(message)
-			elif message.content == "!downloadmode":
+			elif message.content == p + "downloadmode":
 				await downloadMode(message)
-			elif message.content == "!endpoll":
+			elif message.content == p + "endpoll":
 				await endPoll(message)
-			elif message.content.startswith("!poll"):
+			elif message.content.startswith(p + "poll"):
 				await startPoll(message)
 			################################################
-			elif message.content == "!trivia":
+			elif message.content == p + "trivia":
 				await triviaList(message)
-			elif message.content.startswith("!trivia"):
+			elif message.content.startswith(p + "trivia"):
 				if checkAuth("Trivia", message, settings):
-					if message.content == "!trivia stop":
+					if message.content == p + "trivia stop":
 						if getTriviabyChannel(message.channel):
 							await getTriviabyChannel(message.channel).endGame()
 							await client.send_message(message.channel, "`Trivia stopped.`")
@@ -346,43 +355,45 @@ async def on_message(message):
 				else:
 					await client.send_message(message.channel, "`Trivia is currently admin-only.`")
 			######## Admin commands #######################
-			elif message.content.startswith('!addwords'):
+			elif message.content.startswith(p + 'addwords'):
 				await addBadWords(message)
-			elif message.content.startswith('!removewords'):
+			elif message.content.startswith(p + 'removewords'):
 				await removeBadWords(message)
-			elif message.content.startswith('!addregex ') and len(message.content) > 11:
+			elif message.content.startswith(p + 'addregex ') and len(message.content) > 11:
 				await addRegex(message)
-			elif message.content.startswith('!removeregex ') and len(message.content) > 14:
+			elif message.content.startswith(p + 'removeregex ') and len(message.content) > 14:
 				await removeRegex(message)
-			elif message.content == "!shutdown":
+			elif message.content == p + "shutdown":
 				await shutdown(message)
-			elif message.content.startswith('!join'):
+			elif message.content.startswith(p + 'join'):
 				await join(message)
-			elif message.content == "!leaveserver":
+			elif message.content == p + "leaveserver":
 				await leave(message)
-			elif message.content == "!shush":
+			elif message.content == p + "shush":
 				await shush(message)	
-			elif message.content == "!talk": #prevents !talk custom command
+			elif message.content == p + "talk": #prevents !talk custom command
 				pass
-			elif message.content == "!reload":
+			elif message.content == p + "reload":
 				await reloadSettings(message)
-			elif message.content.startswith("!name"):
+			elif message.content.startswith(p + "name"):
 				await changeName(message)
-			elif message.content.startswith("!cleanup"):
+			elif message.content.startswith(p + "cleanup"):
 				await cleanup(message)	
-			elif message.content == "!admin help":
+			elif message.content == p + "admin help":
 				if isMemberAdmin(message):
 					await client.send_message(message.author, admin_help)
 				else:
 					await client.send_message(message.channel, "`Admin status required.`")
-			elif message.content.startswith("!debug"):
+			elif message.content.startswith(p + "debug"):
 				await debug(message)
-			elif message.content.startswith("!exec"):
+			elif message.content.startswith(p + "exec"):
 				await execFunc(message)
-			elif message.content.startswith("!blacklist"):
+			elif message.content.startswith(p + "blacklist"):
 				await blacklist(message, "add")
-			elif message.content.startswith("!forgive"):
+			elif message.content.startswith(p + "forgive"):
 				await blacklist(message, "remove")
+			elif message.content.startswith(p + "setting"):
+				await modifySettings(message)
 			###################################
 			elif getTriviabyChannel(message.channel): #check if trivia is ongoing in the channel
 				trvsession = getTriviabyChannel(message.channel)
@@ -393,7 +404,7 @@ async def on_message(message):
 			if getPollByChannel(message):
 				getPollByChannel(message).checkAnswer(message)
 
-			if message.content.startswith('!') and len(message.content) > 2 and settings["CUSTOMCOMMANDS"]:
+			if message.content.startswith(p) and len(message.content) > 2 and settings["CUSTOMCOMMANDS"]:
 				await customCommand(message)
 
 @client.async_event
@@ -466,7 +477,7 @@ class Trivia():
 					await client.send_message(self.channel, "`There is no list with that name.`")
 					await self.stopTrivia()
 		else:
-			await client.send_message(self.channel, "`!trivia [list name]`")
+			await client.send_message(self.channel, "`" + settings["PREFIX"] + "trivia [list name]`")
 
 	async def stopTrivia(self):
 		global trivia_sessions
@@ -766,7 +777,7 @@ async def startPoll(message):
 			poll_sessions.append(p)
 			await p.start()
 		else:
-			await client.send_message(message.channel, "`!poll question;option1;option2 (...)`")
+			await client.send_message(message.channel, "`" + settings["PREFIX"] + "poll question;option1;option2 (...)`")
 	else:
 		await client.send_message(message.channel, "`A poll is already ongoing in this channel.`")
 
@@ -806,10 +817,10 @@ async def addcom(message):
 					logger.info("Saved commands database.")
 					await client.send_message(message.channel, "`Custom command successfully added.`")
 				else:
-					await client.send_message(message.channel, "`This command already exists. Use !editcom [command] [text]`")
+					await client.send_message(message.channel, "`This command already exists. Use " + settings["PREFIX"] + "editcom [command] [text]`")
 
 		else:
-			await client.send_message(message.channel, "`!addcom [command] [text]`")
+			await client.send_message(message.channel, "`" + settings["PREFIX"] + "addcom [command] [text]`")
 	else:
 		await client.send_message(message.channel, "`You don't have permissions to edit custom commands.`")
 
@@ -829,12 +840,12 @@ async def editcom(message):
 					logger.info("Saved commands database.")
 					await client.send_message(message.channel, "`Custom command successfully edited.`")
 				else:
-					await client.send_message(message.channel, "`That command doesn't exist. Use !addcom [command] [text]`")
+					await client.send_message(message.channel, "`That command doesn't exist. Use " + settings["PREFIX"] + "addcom [command] [text]`")
 			else:
-				await client.send_message(message.channel, "`There are no custom commands in this server. Use !addcom [command] [text]`")
+				await client.send_message(message.channel, "`There are no custom commands in this server. Use " + settings["PREFIX"] + "addcom [command] [text]`")
 
 		else:
-			await client.send_message(message.channel, "`!editcom [command] [text]`")
+			await client.send_message(message.channel, "`" + settings["PREFIX"] + "editcom [command] [text]`")
 	else:
 		await client.send_message(message.channel, "`You don't have permissions to edit custom commands.`")
 
@@ -853,10 +864,10 @@ async def delcom(message):
 				else:
 					await client.send_message(message.channel, "`That command doesn't exist.`")
 			else:
-				await client.send_message(message.channel, "`There are no custom commands in this server. Use !addcom [command] [text]`")
+				await client.send_message(message.channel, "`There are no custom commands in this server. Use " + settings["PREFIX"] + "addcom [command] [text]`")
 
 		else:
-			await client.send_message(message.channel, "`!delcom [command]`")
+			await client.send_message(message.channel, "`" + settings["PREFIX"] + "delcom [command]`")
 	else:
 		await client.send_message(message.channel, "`You don't have permissions to edit custom commands.`")
 
@@ -929,16 +940,16 @@ async def rpsgame(message):
 			elif userchoice == "scissors" and botchoice == "paper":
 				await client.send_message(message.channel, rps[botchoice] + msgs["win"])
 		else:
-			await client.send_message(message.channel, "`!rps [rock or paper or scissors]`")
+			await client.send_message(message.channel, "`" + settings["PREFIX"] + "rps [rock or paper or scissors]`")
 	else:
-		await client.send_message(message.channel, "`!rps [rock or paper or scissors]`")
+		await client.send_message(message.channel, "`" + settings["PREFIX"] + "rps [rock or paper or scissors]`")
 
 async def randomchoice(message):
 	sentences = ["Mmm... I think I'll choose ", "I choose ", "I prefer ", "This one is best: ", "This: "]
 	msg = message.content[8:] # removes !choose
 	msg = msg.split(" or ")
 	if len(msg) == 1:
-		await client.send_message(message.channel, "`!choose option1 or option2 or option3 (...)`")
+		await client.send_message(message.channel, "`" + settings["PREFIX"] + "choose option1 or option2 or option3 (...)`")
 	elif len(msg) >= 2:
 		await client.send_message(message.channel, "`" + choice(sentences) + choice(msg) + "`")
 	else:
@@ -953,7 +964,7 @@ async def stopwatch(message):
 		stopwatches.pop(message.author.id, None)
 	else:
 		stopwatches[message.author.id] = int(time.perf_counter())
-		await client.send_message(message.channel, "`Stopwatch started! Use !sw to stop it.`")
+		await client.send_message(message.channel, "`Stopwatch started! Use " + settings["PREFIX"] + "sw to stop it.`")
 
 """
 async def image(message): # API's dead.
@@ -999,7 +1010,7 @@ async def imdb(message): # Method added by BananaWaffles.
 			else:
 				await client.send_message(message.channel, "`Invalid search.`")
 	else:
-		await client.send_message(message.channel, "`!imdb [text]`")
+		await client.send_message(message.channel, "`" + settings["PREFIX"] + "imdb [text]`")
 
 async def memes(message):
 	msg = message.content[6:]
@@ -1020,9 +1031,9 @@ async def memes(message):
 				error = result["error_message"]
 				await client.send_message(message.channel, error)
 		else:
-			await client.send_message(message.channel, "`!meme id;text1;text2   |  !meme help for full list`")
+			await client.send_message(message.channel, "`" + settings["PREFIX"] + "meme id;text1;text2   |  " + settings["PREFIX"] + "meme help for full list`")
 	else:
-		await client.send_message(message.channel, "`!meme id;text1;text2   |  !meme help for full list`")
+		await client.send_message(message.channel, "`" + settings["PREFIX"] + "meme id;text1;text2   |  " + settings["PREFIX"] + "meme help for full list`")
 
 async def urban(message):
 	msg = message.content.split()
@@ -1045,7 +1056,7 @@ async def urban(message):
 		else:
 			await client.send_message(message.channel, "`Invalid search.`")
 	else:
-		await client.send_message(message.channel, "`!urban [text]`")
+		await client.send_message(message.channel, "`" + settings["PREFIX"] + "urban [text]`")
 
 async def gif(message):
 	msg = message.content.split()
@@ -1067,7 +1078,7 @@ async def gif(message):
 		else:
 			await client.send_message(message.channel, "`Invalid search.`")
 	else:
-		await client.send_message(message.channel, "`!gif [text]`")
+		await client.send_message(message.channel, "`" + settings["PREFIX"] + "gif [text]`")
 
 async def avatar(message):
 	if message.mentions:
@@ -1082,7 +1093,7 @@ async def avatar(message):
 			else:
 				await client.send_message(message.channel, "`User not found.`")
 		else:
-			await client.send_message(message.channel, "`!avatar [name or mention]`")
+			await client.send_message(message.channel, "`" + settings["PREFIX"] + "avatar [name or mention]`")
 
 
 def getTriviabyChannel(channel):
@@ -1101,9 +1112,9 @@ async def roll(message):
 			else:
 				await client.send_message(message.channel, "{} `A number between 1 and 99999, maybe? :)`".format(message.author.mention))
 		else:
-			await client.send_message(message.channel, "`!roll [number]`")
+			await client.send_message(message.channel, "`" + settings["PREFIX"] + "roll [number]`")
 	else:
-		await client.send_message(message.channel, "`!roll [number]`")
+		await client.send_message(message.channel, "`" + settings["PREFIX"] + "roll [number]`")
 
 async def checkFilter(message): #WIP
 	msg = message.content.lower()
@@ -1153,7 +1164,7 @@ async def twitchCheck(message):
 		except:
 			await client.send_message(message.channel, "{} `Error.`".format(message.author.mention))
 	else:
-		await client.send_message(message.channel, "{} `!twitch [name]`".format(message.author.mention))
+		await client.send_message(message.channel, "{} `".format(message.author.mention) + settings["PREFIX"] + "twitch [name]`")
 
 async def triviaList(message):
 	await client.send_message(message.author, trivia_help)
@@ -1226,10 +1237,11 @@ async def playVideo(message):
 
 async def playPlaylist(message, sing=False):
 	global musicPlayer, currentPlaylist
+	p = settings["PREFIX"]
 	msg = message.content
 	toDelete = None
 	if not sing:
-		if msg != "!play" or msg != "play ":
+		if msg != p + "play" or msg != "play ":
 			if await checkVoice(message):
 				msg = message.content[6:]
 				if dataIO.fileIO("playlists/" + msg + ".txt", "check"):
@@ -1266,6 +1278,7 @@ async def playPlaylist(message, sing=False):
 
 async def playLocal(message):
 	global currentPlaylist
+	p = settings["PREFIX"]
 	msg = message.content.split(" ")
 	if await checkVoice(message):
 		if len(msg) == 2:
@@ -1283,11 +1296,11 @@ async def playLocal(message):
 					await asyncio.sleep(2)
 					await currentPlaylist.songSwitcher()
 				else:
-					await client.send_message(message.channel, "`There is no local playlist called {}. !local or !locallist to receive the list.`".format(msg[1]))
+					await client.send_message(message.channel, "`There is no local playlist called {}. " + p + "local or " + p + "locallist to receive the list.`".format(msg[1]))
 			else:
 				await client.send_message(message.channel, "`There are no valid playlists in the localtracks folder.`")
 		else:
-			await client.send_message(message.channel, "`!local [playlist]`")
+			await client.send_message(message.channel, "`" + settings["PREFIX"] + "local [playlist]`")
 
 def getLocalPlaylists():
 	dirs = []
@@ -1359,7 +1372,7 @@ async def transferPlaylist(message):
 				dataIO.fileIO("playlists/" + msg["filename"], "save", data)
 				await client.send_message(message.channel, "`Playlist added. Name: {}`".format(msg["filename"].replace(".txt", "")))
 			else:
-				await client.send_message(message.channel, "`Something is wrong with the playlist or its filename. Type !audio help to read how to format it properly.`")
+				await client.send_message(message.channel, "`Something is wrong with the playlist or its filename. Type " + settings["PREFIX"] + "audio help to read how to format it properly.`")
 		else:
 			await client.send_message(message.channel, "`A playlist with that name already exists. Change the filename and resubmit it.`")
 
@@ -1409,7 +1422,7 @@ async def addPlaylist(message):
 			await client.send_message(message.channel, "`Something is wrong with the playlist's link or its filename. Remember, the name must be with only numbers, letters and underscores. Link must be this format: https://www.youtube.com/playlist?list=PLe8jmEHFkvsaDOOWcREvkgFoj6MD0pXXX`")
 
 	else:
-		await client.send_message(message.channel, "`!addplaylist [name] [link]`")
+		await client.send_message(message.channel, "`" + settings["PREFIX"] + "addplaylist [name] [link]`")
 
 async def delPlaylist(message):
 	msg = message.content.split(" ")
@@ -1425,7 +1438,7 @@ async def delPlaylist(message):
 		else:
 			await client.send_message(message.channel, "`There is no playlist with that name.`")
 	else:
-		await client.send_message(message.channel, "`!delplaylist [name]`")
+		await client.send_message(message.channel, "`" + settings["PREFIX"] + "delplaylist [name]`")
 
 async def getSongTitle(message):
 	title = await youtubeparser.getTitle(currentPlaylist.playlist[currentPlaylist.current])
@@ -1458,7 +1471,7 @@ async def removeFromFavorites(message):
 			else:
 				await client.send_message(message.channel, "{} `This song isn't in your favorites.`".format(message.author.mention))
 		else:
-			await client.send_message(message.channel, "{} `You don't have any favorites yet. Start adding them with !addfavorite`".format(message.author.mention))
+			await client.send_message(message.channel, "{} `You don't have any favorites yet. Start adding them with " + settings["PREFIX"] + "addfavorite`".format(message.author.mention))
 	else:
 		await client.send_message(message.channel, "{} `No song is being played`".format(message.author.mention))
 
@@ -1490,6 +1503,7 @@ async def sendPlaylist(message):
 
 async def setVolume(message):
 	global settings
+	p = settings["PREFIX"]
 	msg = message.content
 	if len(msg.split(" ")) == 2:
 		msg = msg.split(" ")
@@ -1500,11 +1514,11 @@ async def setVolume(message):
 				await(client.send_message(message.channel, "`Volume set. Next track will have the desired volume.`"))
 				dataIO.fileIO("json/settings.json", "save", settings)
 			else:
-				await(client.send_message(message.channel, "`Volume must be between 0 and 1. Example: !volume 0.50`"))
+				await(client.send_message(message.channel, "`Volume must be between 0 and 1. Example: " + p + "volume 0.50`"))
 		except:
-			await(client.send_message(message.channel, "`Volume must be between 0 and 1. Example: !volume 0.15`"))
+			await(client.send_message(message.channel, "`Volume must be between 0 and 1. Example: " + p + "volume 0.15`"))
 	else:
-		await(client.send_message(message.channel, "`Volume must be between 0 and 1. Example: !volume 0.15`"))
+		await(client.send_message(message.channel, "`Volume must be between 0 and 1. Example: " + p + "volume 0.15`"))
 
 async def downloadMode(message):
 	if isMemberAdmin(message):
@@ -1585,7 +1599,7 @@ async def addBadWords(message):
 			dataIO.fileIO("json/filter.json", "save", badwords)
 			logger.info("Saved filter words.")
 		else:
-			await client.send_message(message.channel, "`!addwords [word1] [word2] [phrase/with/many/words] (...)`")
+			await client.send_message(message.channel, "`" + settings["PREFIX"] + "addwords [word1] [word2] [phrase/with/many/words] (...)`")
 	else:
 		await client.send_message(message.channel, "`I don't take orders from you.`")
 
@@ -1607,7 +1621,7 @@ async def removeBadWords(message):
 				dataIO.fileIO("json/filter.json", "save", badwords)
 				logger.info("Saved filter words.")
 		else:
-			await client.send_message(message.channel, "`!removewords [word1] [word2] [phrase/with/many/words](...)`")
+			await client.send_message(message.channel, "`" + settings["PREFIX"] + "removewords [word1] [word2] [phrase/with/many/words](...)`")
 	else:
 		await client.send_message(message.channel, "`I don't take orders from you.`")
 
@@ -1621,7 +1635,7 @@ async def changeName(message):
 			except Exception as e:
 				logger.error(e)
 		else:
-			await client.send_message(message.channel, "`!name [new name]`")
+			await client.send_message(message.channel, "`" + settings["PREFIX"] + "name [new name]`")
 	else:
 		await client.send_message(message.channel, "`I don't take orders from you.`")
 
@@ -1663,7 +1677,7 @@ async def reloadSettings(message):
 		await client.send_message(message.channel, "`I don't take orders from you.`")
 
 async def cleanup(message):
-	errorMsg = "`!cleanup [number] !cleanup [name/mention] [number]`"
+	errorMsg = "`" + settings["PREFIX"] + "cleanup [number] " + settings["PREFIX"] + "cleanup [name/mention] [number]`"
 	if isMemberAdmin(message):
 		if canDeleteMessages(message):
 			try:
@@ -1745,7 +1759,7 @@ async def addTwitchAlert(message):
 			dataIO.fileIO("json/twitch.json", "save", twitchStreams)
 			await client.send_message(message.channel, "`I will always send an alert in this channel whenever {}'s stream is online. Use !stoptwitchalert [name] to stop it.`".format(msg[1]))
 		else:
-			await client.send_message(message.channel, "`!twitchalert [name]`")
+			await client.send_message(message.channel, "`" + settings["PREFIX"] + "twitchalert [name]`")
 	else:
 		await client.send_message(message.channel, "`I don't take orders from you.`")
 
@@ -1765,18 +1779,19 @@ async def removeTwitchAlert(message):
 					return True
 			await client.send_message(message.channel, "`There's no alert for {}'s stream in this channel.`".format(msg[1]))
 		else:
-			await client.send_message(message.channel, "`!stoptwitchalert [name]`")
+			await client.send_message(message.channel, "`" + settings["PREFIX"] + "stoptwitchalert [name]`")
 	else:
 		await client.send_message(message.channel, "`I don't take orders from you.`")
 
 async def blacklist(message, mode):
 	global blacklisted_users
+	p = settings["PREFIX"]
 	if isMemberAdmin(message):
 		if message.mentions:
 			m = message.mentions[0]
 		else:
 			if len(message.content.split(" ")) >= 2:
-				if message.content.startswith("!blacklist"):
+				if message.content.startswith(p + "blacklist"):
 					name = message.content[11:]
 				else:
 					name = message.content[9:]
@@ -1797,6 +1812,46 @@ async def blacklist(message, mode):
 				await client.send_message(message.channel, "`User not in blacklist.`")
 				return False
 		dataIO.fileIO("json/blacklist.json", "save", blacklisted_users)
+	else:
+		await client.send_message(message.channel, "`I don't take orders from you.`")
+
+async def modifySettings(message):
+	global settings
+	if isMemberAdmin(message):
+		msg = message.content.split(" ")
+		if len(msg) == 3:
+			_, key, value = msg
+			if key.lower() == "password" or key.lower() == "email" or key.lower() == "debug_id":
+				await client.send_message(message.channel, "`You cannot modify EMAIL, PASSWORD or DEBUG_ID`")
+				return False
+			if key.lower() == "prefix" and len(value) != 1:
+				await client.send_message(message.channel, "`Prefix cannot be more than one character.`")
+				return False
+			if key in settings.keys():
+				if value.lower() == "true": value = True
+				elif value.lower() == "false": value = False
+				else:
+					try:
+						value = int(value)
+					except:
+						pass
+				settings[key] = value
+				dataIO.fileIO("json/settings.json", "save", settings)
+				loadHelp()
+				if "economy" in modules:
+					economy.settings = settings
+					economy.loadHelp()
+				await client.send_message(message.channel, "`'{}' set to '{}'`".format(key, str(value)))
+			else:
+				await client.send_message(message.channel, "`That setting doesn't exist`")
+		else:
+			msg = "```"
+			for k, v in settings.items():
+				if k != "EMAIL" and k != "PASSWORD":
+					msg += k + ": " + str(v) + "\n"
+			msg += "```\n"
+			msg += settings["PREFIX"] + "setting [setting] [value]"
+			await client.send_message(message.channel, msg)
 	else:
 		await client.send_message(message.channel, "`I don't take orders from you.`")
 
@@ -1924,6 +1979,12 @@ def loadDataFromFiles(loadsettings=False):
 		global settings
 		settings = dataIO.fileIO("json/settings.json", "load")
 
+	loadHelp()
+
+	if "economy" in modules:
+		economy.settings = settings
+		economy.loadHelp()
+
 def main():
 	global ball, greetings, greetings_caps, stopwatches, trivia_sessions, message, gameSwitcher, uptime_timer, musicPlayer, currentPlaylist
 	global logger, settings, poll_sessions
@@ -1956,7 +2017,7 @@ def main():
 	gameSwitcher = botPlays()
 
 	if "economy" in modules:
-		economy.initialize(client)
+		economy.client = client
 
 	uptime_timer = int(time.perf_counter())
 
