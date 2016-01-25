@@ -2018,6 +2018,7 @@ def main():
 
 	if "economy" in modules:
 		economy.client = client
+		economy.initialize()
 
 	uptime_timer = int(time.perf_counter())
 

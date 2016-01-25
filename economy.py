@@ -12,7 +12,9 @@ payday_register = {}
 PAYDAY_TIME = 300 # seconds between each payday
 PAYDAY_CREDITS = 120 # credits received
 
-bank = dataIO.fileIO("json/economy.json", "load")
+def initialize():
+	global bank
+	bank = dataIO.fileIO("json/economy.json", "load")
 
 def loadHelp():
 	global slot_help, economy_exp
