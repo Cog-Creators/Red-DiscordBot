@@ -281,6 +281,8 @@ async def on_message(message):
 				await client.send_message(message.channel, "{} `Check your DMs for " + p +"meme help.`".format(message.author.mention))
 			elif message.content.startswith (p + 'meme'):
 				await memes(message)
+			elif message.content.startswith (p + 'lmgtfy'):
+				await lmgtfy(message)
 			################## music #######################
 			elif message.content == p + "sing":
 				await playPlaylist(message, sing=True)
@@ -549,6 +551,7 @@ class Trivia():
 				self.addPoint(client.user.name)
 			self.currentQ["ANSWERS"] = []
 			await client.send_message(self.channel, msg)
+			await client.send_typing(self.channel)
 			await asyncio.sleep(3)
 			if not self.status == "stop":
 				await self.newQuestion()
@@ -572,6 +575,7 @@ class Trivia():
 				self.status = "correct answer"
 				self.addPoint(message.author.name)
 				await client.send_message(self.channel, "You got it {}! **+1** to you!".format(message.author.name))
+				await client.send_typing(self.channel)
 				return True
 
 	def addPoint(self, user):
@@ -1095,6 +1099,13 @@ async def avatar(message):
 		else:
 			await client.send_message(message.channel, "`" + settings["PREFIX"] + "avatar [name or mention]`")
 
+async def lmgtfy(message):
+	msg = message.content.split()
+	if len(msg) >= 2:
+		msg = "+".join(msg[1:])
+		await client.send_message(message.channel, "http://lmgtfy.com/?q=" + msg)
+	else:
+		await client.send_message(message.channel, "`" + settings["PREFIX"] + "lmgtfy [search terms]`")
 
 def getTriviabyChannel(channel):
 	for t in trivia_sessions:
