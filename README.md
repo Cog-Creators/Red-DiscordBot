@@ -98,6 +98,7 @@ Once you're done, take a look at the command list and have fun.
 | !cleanup [name/mention] [number]                          | Delete the last [number] of messages by [name]    |
 | !blacklist [name/mention]                                 | Add user to blacklist. Red will ignore that user  |
 | !forgive [name/mention]                                   | Remove user from blacklist                        |
+| !setting [setting] [value]                                | Modify setting                                    |
 
 
 ### Economy commands
