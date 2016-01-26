@@ -395,7 +395,7 @@ async def on_message(message):
 				await blacklist(message, "remove")
 			elif message.content.startswith(p + "setting"):
 				await modifySettings(message)
-			elif message.content.startswith(p + "!cache") or message.content.startswith(p + "!delcache"):
+			elif message.content.startswith(p + "cache") or message.content.startswith(p + "delcache"):
 				await delcache(message)
 			###################################
 			elif getTriviabyChannel(message.channel): #check if trivia is ongoing in the channel
