@@ -5,7 +5,7 @@ import glob
 
 default_settings = ('{"TRIVIA_ADMIN_ONLY": false, "EDIT_CC_ADMIN_ONLY": false, "PASSWORD": "PASSWORDHERE", "FILTER": true, "CUSTOMCOMMANDS": true, ' +
 					'"TRIVIA_MAX_SCORE": 10, "TRIVIA_DELAY": 15, "LOGGING": true, "EMAIL": "EMAILHERE", "ADMINROLE": "Transistor", "DOWNLOADMODE" : true, ' +
-					'"VOLUME": 0.20, "TRIVIA_BOT_PLAYS" : false, "TRIVIA_TIMEOUT" : 120, "DEBUG_ID" : "IgnoreThis", "POLL_DURATION" : 60}')
+					'"VOLUME": 0.20, "TRIVIA_BOT_PLAYS" : false, "TRIVIA_TIMEOUT" : 120, "DEBUG_ID" : "IgnoreThis", "POLL_DURATION" : 60, "PREFIX" : "!"}')
 					
 default_apis = ('{"IMGFLIP_USERNAME": "USERNAMEHERE", "IMGFLIP_PASSWORD": "PASSWORDHERE", "MYAPIFILMS_TOKEN" : "TOKENHERE"}')
 
@@ -99,12 +99,19 @@ def createEmptyFiles():
 		admin_role = input(">")
 		if admin_role == "": 
 			admin_role = "Transistor"
+		print("Command prefix? Leave empty for default, '!'. Maximum 1 character.")
+		prefix = input(">")
+		if len(prefix) != 1 or prefix == " ":
+			print("Invalid prefix. Setting prefix as '!'...")
+			prefix = "!"
 		new_settings = json.loads(default_settings)
 		new_settings["EMAIL"] = email
 		new_settings["PASSWORD"] = password
 		new_settings["ADMINROLE"] = admin_role
+		new_settings["PREFIX"] = prefix
 		fileIO("json/settings.json", "save", new_settings )
 		logger.info("Settings have been saved.")
+
 	if not os.path.isfile("json/apis.json"):
 		logger.info("Missing apis.json. Creating it...\n")
 		fileIO("json/apis.json", "save", json.loads(default_apis))
@@ -113,7 +120,7 @@ def createEmptyFiles():
 		print("Now enter the imgflip password.")
 		imgflip_password = input(">")
 		if imgflip_username == "": imgflip_username = "USERNAMEHERE"
-		if imgflip_password == "": password = "PASSWORDHERE"
+		if imgflip_password == "": imgflip_password = "PASSWORDHERE"
 		print("\n!imdb configuration. Get your token here http://www.myapifilms.com/token.do\nOr just press enter if you're not interested.")
 		imdb_token = input(">")
 		if imdb_token == "": imdb_token = "TOKENHERE"

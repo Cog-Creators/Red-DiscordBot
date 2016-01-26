@@ -3,9 +3,10 @@
 [<img align="right" title="Art by Supergiant Games" src="https://www.supergiantgames.com/static/images/transistor/cartoon_red.png">](https://www.supergiantgames.com/games/transistor/)
 [**[Official Server - Announcements & Help]**](https://discord.gg/0k4npTwMvTpv9wrh)  
 
+[<img src="https://img.shields.io/badge/Support-me!-orange.svg">](https://www.patreon.com/Twentysix26)  
 ### Cool title, but what does it do exactly?
 A bit of everything. Seriously though:  
-It has the [most common features](#general-commands) of many chatbots (!flip, !8, stopwatch, etc.), **custom commands** (inspired by Twitch's [Nightbot](https://www.nightbot.tv/)).  
+It has the [most common features](#general-commands) of many chatbots (!flip, !8, stopwatch, etc.), **custom commands** (inspired by Twitch's [Nightbot](https://www.nightbot.tv/)), memes.  
 It features some games such as **Trivia**, rock paper scissors, [users can earn and play with credits](#economy-commands) in the slot machine.  
 [The audio part is quite fleshed out](#audio-commands). Users can **stream youtube videos**, create **playlists** that everyone will be able to play and control (previous/next song, pause/resume, shuffle...).  
 **MP3 and flac files can also be streamed** (see [FAQ](#faq) for details on local playlists)  
@@ -37,6 +38,8 @@ Once you're done, take a look at the command list and have fun.
 | !stoptwitchalert [stream]                     | Stop stream alerts (admin only)      |
 | !roll [number]                                | Random number between 0 and chosen number. |
 | !gif [text]                                   | GIF search                                 |
+| !imdb [movie/etc]                             | Retrieve information from IMDB             |
+| !meme [id;text1;text2]                        | Create a meme                              |
 | !poll [question;answer1;answer2 (...)]        | Start poll in the current channel          |
 | !endpoll                                      | Stop poll                                  |
 | !addcom [command] [text]                      | Add a custom command                       |
@@ -47,6 +50,7 @@ Once you're done, take a look at the command list and have fun.
 | !audio help                                   | Audio command list and playlist explanation.|
 | !economy                                      | Explanation of the economy module          |
 | !admin help                                   | Admin commands list                        |
+| !meme help                                    | Explanation of !meme                       |
 
 ### Audio commands
 
@@ -94,6 +98,7 @@ Once you're done, take a look at the command list and have fun.
 | !cleanup [name/mention] [number]                          | Delete the last [number] of messages by [name]    |
 | !blacklist [name/mention]                                 | Add user to blacklist. Red will ignore that user  |
 | !forgive [name/mention]                                   | Remove user from blacklist                        |
+| !setting [setting] [value]                                | Modify setting                                    |
 
 
 ### Economy commands
