@@ -99,6 +99,7 @@ Once you're done, take a look at the command list and have fun.
 | !blacklist [name/mention]                                 | Add user to blacklist. Red will ignore that user  |
 | !forgive [name/mention]                                   | Remove user from blacklist                        |
 | !setting [setting] [value]                                | Modify setting                                    |
+| !cache or !delcache                                		| Clears the cache folder                           |
 
 
 ### Economy commands

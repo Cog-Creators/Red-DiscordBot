@@ -175,6 +175,7 @@ def loadHelp():
 	{0}blacklist [name/mention] - Add user to Red's blacklist
 	{0}forgive [name/mention] - Removes user from Red's blacklist
 	{0}setting [setting] [value] - Modify setting
+	{0}cache or {0}delcache - Clears the cache	
 	""".format(settings["PREFIX"])
 
 	trivia_help = """
@@ -394,6 +395,8 @@ async def on_message(message):
 				await blacklist(message, "remove")
 			elif message.content.startswith(p + "setting"):
 				await modifySettings(message)
+			elif message.content.startswith(p + "!cache") or message.content.startswith(p + "!delcache"):
+				await delcache(message)
 			###################################
 			elif getTriviabyChannel(message.channel): #check if trivia is ongoing in the channel
 				trvsession = getTriviabyChannel(message.channel)
@@ -1855,6 +1858,24 @@ async def modifySettings(message):
 	else:
 		await client.send_message(message.channel, "`I don't take orders from you.`")
 
+async def delcache(message):
+	folder = 'cache/'
+	if isMemberAdmin(message):
+		for cache_file in os.listdir(folder):
+			file_path = os.path.join(folder, cache_file)
+			try:
+				if os.path.isfile(file_path):
+					os.unlink(file_path)
+				logger.info (file_path + " deleted")
+				
+			except Exception as e:
+				logger.info (e)
+				
+		await client.send_message(message.channel, "Cache cleared")
+	
+	else:
+		await(client.send_message(message.channel, "`I don't take orders from you.`"))
+		
 ################################################
 
 @asyncio.coroutine
