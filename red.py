@@ -176,6 +176,7 @@ admin_help = """
 !cleanup [name/mention] [number] - Delete the last [number] of messages by [name]
 !blacklist [name/mention] - Add user to Red's blacklist
 !forgive [name/mention] - Removes user from Red's blacklist
+!cache | !delcache - Clears the cache									|
 """
 
 trivia_help = """
@@ -379,6 +380,8 @@ async def on_message(message):
 				await blacklist(message, "add")
 			elif message.content.startswith("!forgive"):
 				await blacklist(message, "remove")
+			elif message.content.startswith('!cache') or message.content.startswith('!delcache'):
+				await delcache(message)
 			###################################
 			elif getTriviabyChannel(message.channel): #check if trivia is ongoing in the channel
 				trvsession = getTriviabyChannel(message.channel)
@@ -1587,6 +1590,24 @@ async def addBadWords(message):
 	else:
 		await client.send_message(message.channel, "`I don't take orders from you.`")
 
+async def delcache(message):
+	folder = 'cache/'
+	if isMemberAdmin(message):
+		for cache_file in os.listdir(folder):
+			file_path = os.path.join(folder, cache_file)
+			try:
+				if os.path.isfile(file_path):
+					os.unlink(file_path)
+				logger.info (file_path + " deleted")
+				
+			except Exception as e:
+				logger.info (e)
+				
+		await client.send_message(message.channel, "Cache cleared")
+	
+	else:
+		await(client.send_message(message.channel, "`I don't take orders from you.`"))
+		
 async def removeBadWords(message):
 	global badwords
 	if isMemberAdmin(message):
@@ -1913,7 +1934,7 @@ def loadDataFromFiles(loadsettings=False):
 	logger.info("Loaded " + str(len(twitchStreams)) + " streams to monitor.")
 	
 	apis = dataIO.fileIO("json/apis.json", "load")
-	logger.info("Loaded " + str(len(apis) // 2 )  + " APIs.")
+	logger.info("Loaded APIs configuration")
 
 	if loadsettings:
 		global settings
@@ -1947,7 +1968,7 @@ def main():
 	poll_sessions = []
 
 	message = ""
-
+	
 	gameSwitcher = botPlays()
 
 	if "economy" in modules:
