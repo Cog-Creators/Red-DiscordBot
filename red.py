@@ -21,6 +21,7 @@ import asyncio
 import glob
 from os import path
 from random import choice, randint, shuffle
+from imgurpython import ImgurClient
 
 import dataIO #IO settings, proverbs, etc
 import economy #Credits
@@ -61,6 +62,7 @@ def loadHelp():
 	{0}audio help - Audio related commands
 	{0}economy - Economy explanation, if available
 	{0}trivia - Trivia commands and lists
+	{0}imgur - Retrieves a random image from imgur's random page
 	""".format(settings["PREFIX"])
 
 	audio_help = """
@@ -109,20 +111,20 @@ def loadHelp():
 	Memes list:
 	ID		Name
 	61579	One Does Not Simply
-	438680	Batman Slapping Robin	
+	438680	Batman Slapping Robin
 	61532	The Most Interesting Man In The World
 	101470	Ancient Aliens
 	61520	Futurama Fry
 	347390	X, X Everywhere
 	5496396	Leonardo Dicaprio Cheers
 	61539	First World Problems
-	61546	Brace Yourselves X is Coming	
+	61546	Brace Yourselves X is Coming
 	16464531	But Thats None Of My Business
 	61582	Creepy Condescending Wonka
-	61585	Bad Luck Brian	
+	61585	Bad Luck Brian
 	563423	That Would Be Great
-	61544	Success Kid	
-	405658	Grumpy Cat	
+	61544	Success Kid
+	405658	Grumpy Cat
 	101288	Third World Skeptical Kid
 	8072285	Doge
 	100947	Matrix Morpheus
@@ -130,7 +132,7 @@ def loadHelp():
 	61533	X All The Y
 	1035805	Boardroom Meeting Suggestion
 	245898	Picard Wtf
-	21735	The Rock Driving	
+	21735	The Rock Driving
 	259680	Am I The Only One Around Here
 	14230520	Black Girl Wat
 	40945639	Dr Evil Laser
@@ -138,19 +140,19 @@ def loadHelp():
 	61580	Too Damn High
 	61516	Philosoraptor
 	6235864	Finding Neverland
-	9440985	Face You Make Robert Downey Jr	
+	9440985	Face You Make Robert Downey Jr
 	101287	Third World Success Kid
-	100955	Confession Bear	
+	100955	Confession Bear
 	444501	The lie detector determined that was a lie. The fact that you X determined that was a lie. Maury Povich.
-	97984	Disaster Girl	
-	442575	Aint Nobody Got Time For That	
+	97984	Disaster Girl
+	442575	Aint Nobody Got Time For That
 	109765	Ill Just Wait Here
 	124212	Say That Again I Dare You
-	28251713	Oprah You Get A	
-	61556	Grandma Finds The Internet	
+	28251713	Oprah You Get A
+	61556	Grandma Finds The Internet
 	101440	10 Guy
-	101711	Skeptical Baby	
-	101716	Yo Dawg Heard You	
+	101711	Skeptical Baby
+	101716	Yo Dawg Heard You
 	101511	Dont You Squidward
 
 	For more memes: `https://imgflip.com/memetemplates`
@@ -356,6 +358,8 @@ async def on_message(message):
 						await client.send_message(message.channel, "`A trivia session is already ongoing in this channel.`")
 				else:
 					await client.send_message(message.channel, "`Trivia is currently admin-only.`")
+			elif message.content == p + "imgur":
+                		await imgur(message)
 			######## Admin commands #######################
 			elif message.content.startswith(p + 'addwords'):
 				await addBadWords(message)
@@ -372,7 +376,7 @@ async def on_message(message):
 			elif message.content == p + "leaveserver":
 				await leave(message)
 			elif message.content == p + "shush":
-				await shush(message)	
+				await shush(message)
 			elif message.content == p + "talk": #prevents !talk custom command
 				pass
 			elif message.content == p + "reload":
@@ -380,7 +384,7 @@ async def on_message(message):
 			elif message.content.startswith(p + "name"):
 				await changeName(message)
 			elif message.content.startswith(p + "cleanup"):
-				await cleanup(message)	
+				await cleanup(message)
 			elif message.content == p + "admin help":
 				if isMemberAdmin(message):
 					await client.send_message(message.author, admin_help)
@@ -555,7 +559,7 @@ class Trivia():
 			await asyncio.sleep(3)
 			if not self.status == "stop":
 				await self.newQuestion()
-		
+
 	async def sendTable(self):
 		self.scoreList = sorted(self.scoreList.items(), reverse=True, key=lambda x: x[1]) # orders score from lower to higher
 		t = "```Scores: \n\n"
@@ -730,7 +734,7 @@ class Poll():
 		msg = msg.split(";")
 		if len(msg) < 2: # Needs at least one question and 2 choices
 			self.valid = False
-			return None 
+			return None
 		else:
 			self.valid = True
 		self.already_voted = []
@@ -777,7 +781,7 @@ async def startPoll(message):
 	global poll_sessions
 	if not getPollByChannel(message):
 		p = Poll(message)
-		if p.valid: 
+		if p.valid:
 			poll_sessions.append(p)
 			await p.start()
 		else:
@@ -805,7 +809,7 @@ def getPollByChannel(message):
 
 async def addcom(message):
 	if checkAuth("ModifyCommands", message, settings):
-		msg = message.content.split()	
+		msg = message.content.split()
 		if len(msg) > 2:
 			msg = message.content[8:] # removes !addcom
 			newcmd = msg[:msg.find(" ")] # extracts custom command
@@ -830,7 +834,7 @@ async def addcom(message):
 
 async def editcom(message):
 	if checkAuth("ModifyCommands", message, settings):
-		msg = message.content.split()	
+		msg = message.content.split()
 		if len(msg) > 2:
 			msg = message.content[9:] # removes !editcom
 			cmd = msg[:msg.find(" ")] # extracts custom command
@@ -855,7 +859,7 @@ async def editcom(message):
 
 async def delcom(message):
 	if checkAuth("ModifyCommands", message, settings):
-		msg = message.content.split()	
+		msg = message.content.split()
 		if len(msg) == 2:
 			if message.channel.server.id in commands:
 				cmdlist = commands[message.channel.server.id]
@@ -1028,7 +1032,7 @@ async def memes(message):
 				search = "https://api.imgflip.com/caption_image?template_id=" + msg[0] + "&username=" + apis["IMGFLIP_USERNAME"] + "&password=" + apis["IMGFLIP_PASSWORD"] + "&text0=" + msg[1] + "&text1=" + msg[2]
 				async with aiohttp.get(search) as r:
 					result = await r.json()
-				if result["data"] != []:		
+				if result["data"] != []:
 					url = result["data"]["url"]
 					await client.send_message(message.channel, url)
 			except:
@@ -1072,7 +1076,7 @@ async def gif(message):
 				search = "http://api.giphy.com/v1/gifs/search?q=" + msg + "&api_key=dc6zaTOxFJmzC"
 				async with aiohttp.get(search) as r:
 					result = await r.json()
-				if result["data"] != []:		
+				if result["data"] != []:
 					url = result["data"][0]["url"]
 					await client.send_message(message.channel, url)
 				else:
@@ -1199,6 +1203,12 @@ async def triviaList(message):
 			await client.send_message(message.author, "There are no trivia lists available.")
 	else:
 		await client.send_message(message.author, "There are no trivia lists available.")
+
+async def imgur(message):
+    imgurclient = ImgurClient("anon", "anon")
+    rand = randint(0, 59)
+    items = imgurclient.gallery_random(page=0)
+    await client.send_message(message.channel, items[rand].link)
 
 async def uptime(message):
 	up = abs(uptime_timer - int(time.perf_counter()))
@@ -1331,7 +1341,7 @@ async def leaveVoice():
 	if client.is_voice_connected():
 		stopMusic()
 		await client.voice.disconnect()
-		
+
 async def listPlaylists(message):
 	msg = "Available playlists: \n\n```"
 	files = os.listdir("playlists/")
@@ -1883,7 +1893,7 @@ async def twitchAlert():
 						url =  "https://api.twitch.tv/kraken/streams/" + stream["NAME"]
 						async with aiohttp.get(url) as r:
 							data = await r.json()
-						if "status" in data: 
+						if "status" in data:
 							if data["status"] == 404: #Stream doesn't exist, remove from list
 								to_delete.append(stream)
 						elif "stream" in data:
@@ -1929,7 +1939,7 @@ async def debug(message):	# If you don't know what this is, *leave it alone*
 	if message.author.id == settings["DEBUG_ID"]: # Never assign DEBUG_ID to someone other than you
 		msg = message.content.split("`") # Example: !debug `message.author.id`
 		if len(msg) == 3:
-			_, cmd, _ = msg		
+			_, cmd, _ = msg
 			try:
 				result = str(eval(cmd))
 				if settings["PASSWORD"].lower() not in result.lower() and settings["EMAIL"].lower() not in result.lower():
@@ -1943,7 +1953,7 @@ async def execFunc(message): #same warning as the other function ^
 	if message.author.id == settings["DEBUG_ID"]:
 		msg = message.content.split("`") # Example: !exec `import this`
 		if len(msg) == 3:
-			_, cmd, _ = msg		
+			_, cmd, _ = msg
 			try:
 				result = exec(cmd)
 				#await client.send_message(message.channel, "```" + str(result) + "```")
@@ -1982,7 +1992,7 @@ def loadDataFromFiles(loadsettings=False):
 
 	twitchStreams = dataIO.fileIO("json/twitch.json", "load")
 	logger.info("Loaded " + str(len(twitchStreams)) + " streams to monitor.")
-	
+
 	apis = dataIO.fileIO("json/apis.json", "load")
 	logger.info("Loaded APIs configuration.")
 
