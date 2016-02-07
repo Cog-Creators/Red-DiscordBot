@@ -83,7 +83,7 @@ class TriviaSession():
                 if self.questionList: await self.newQuestion()
             else:
                 if os.path.isfile("data/trivia/" + qlist + ".txt"):
-                    self.questionList = self.loadList("trivia/" + qlist + ".txt")
+                    self.questionList = self.loadList("data/trivia/" + qlist + ".txt")
                     self.status = "new question"
                     self.timeout = time.perf_counter()
                     if self.questionList: await self.newQuestion()
