@@ -221,6 +221,7 @@ def list_cogs():
     cogs = glob.glob("cogs/*.py")
     clean = []
     for c in cogs:
+        c = c.replace("/", "\\") # Linux fix
         clean.append("cogs." + c.split("\\")[1].replace(".py", ""))
     return clean
 
