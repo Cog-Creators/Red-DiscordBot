@@ -6,6 +6,7 @@ import datetime
 import time
 import aiohttp
 import asyncio
+from imgurpython import ImgurClient
 
 settings = {"POLL_DURATION" : 60}
 
@@ -174,6 +175,24 @@ class General:
         except:
             await self.bot.say("Error.")
 
+    @commands.command(no_pm=True)
+    async def imgur(self, *text):
+        """Retrieves a random imgur picture.
+        If a link combination e.g. As3DsA4 is provided it will try to retrieve that image."""
+        imgurclient = ImgurClient("", "")
+        if text == ():
+            rand = randint(0, 59) #60 results per generated page
+            items = imgurclient.gallery_random(page=0)
+            await self.bot.say(items[rand].link)
+        elif text == "viral top":
+            items = imgurclient.gallery(section='hot', sort='viral', page=0, window='day', show_viral=True)
+            await self.bot.say(items[0].link)
+            await self.bot.say(items[1].link)
+            await self.bot.say(items[2].link)
+        else:
+            item = imgurclient.get_image(text)
+            await self.bot.say(item.link)
+
     @commands.command(pass_context=True, no_pm=True)
     async def poll(self, ctx, *text):
         """Starts/stops a poll
@@ -188,7 +207,7 @@ class General:
                 return
         if not self.getPollByChannel(message):
             p = NewPoll(message, self)
-            if p.valid: 
+            if p.valid:
                 self.poll_sessions.append(p)
                 await p.start()
             else:
@@ -213,7 +232,7 @@ class General:
         return False
 
     async def check_poll_votes(self, message):
-        if message.author.id != self.bot.user.id:            
+        if message.author.id != self.bot.user.id:
             if self.getPollByChannel(message):
                     self.getPollByChannel(message).checkAnswer(message)
 
@@ -228,7 +247,7 @@ class NewPoll():
         msg = msg.split(";")
         if len(msg) < 2: # Needs at least one question and 2 choices
             self.valid = False
-            return None 
+            return None
         else:
             self.valid = True
         self.already_voted = []
