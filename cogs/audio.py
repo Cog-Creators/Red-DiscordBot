@@ -70,7 +70,7 @@ class Audio:
                 else:
                     self.playlist = []
                     self.current = -1
-                    if not queue: await self.bot.say("The link has been put into queue.")
+                    if not self.queue: await self.bot.say("The link has been put into queue.")
                     self.queue.append(link)
             else:
                 await self.bot.say("That link is not allowed.")
