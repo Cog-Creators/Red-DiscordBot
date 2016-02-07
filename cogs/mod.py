@@ -87,8 +87,8 @@ class Mod:
         """Deletes last X messages from specified user.
 
         Examples:
-        cleanup @\u200bTwentysix 2
-        cleanup Red 6"""
+        cleanup user @\u200bTwentysix 2
+        cleanup user Red 6"""
         message = ctx.message
         cmdmsg = message
         if number > 0 and number < 10000:
@@ -112,7 +112,7 @@ class Mod:
         """Deletes last X messages.
 
         Example:
-        cleanup 26"""
+        cleanup messages 26"""
         channel = ctx.message.channel
         if number > 0 and number < 10000:
             async for x in self.bot.logs_from(channel, limit=number+1):
