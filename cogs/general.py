@@ -184,14 +184,14 @@ class General:
             rand = randint(0, 59) #60 results per generated page
             items = imgurclient.gallery_random(page=0)
             await self.bot.say(items[rand].link)
-        elif text == "viral top":
-            items = imgurclient.gallery(section='hot', sort='viral', page=0, window='day', show_viral=True)
-            await self.bot.say(items[0].link)
-            await self.bot.say(items[1].link)
-            await self.bot.say(items[2].link)
-        else:
-            item = imgurclient.get_image(text)
-            await self.bot.say(item.link)
+        #elif text == "viral top":
+            #items = imgurclient.gallery(section='hot', sort='viral', page=0, window='day', show_viral=True)
+            #await self.bot.say(items[0].link)
+            #await self.bot.say(items[1].link)
+            #await self.bot.say(items[2].link)
+        #else:
+            #item = imgurclient.get_image(text)
+            #await self.bot.say(item.link)
 
     @commands.command(pass_context=True, no_pm=True)
     async def poll(self, ctx, *text):
