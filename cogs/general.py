@@ -31,7 +31,7 @@ class General:
         if len(choices) < 2:
             await self.bot.say('Not enough choices to pick from.')
         else:
-            await self.bot.say(choice(choices))
+            await self.bot.say(randchoice(choices))
 
     @commands.command()
     async def roll(self, number : int = 100):
