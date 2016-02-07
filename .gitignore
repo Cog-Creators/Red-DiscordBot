@@ -1,0 +1,6 @@
+*.json
+*.pyc
+__pycache__
+data
+!data/trivia/*
+!data/audio/playlists/*
