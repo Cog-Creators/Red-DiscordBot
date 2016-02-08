@@ -188,7 +188,7 @@ class General:
                 return
         if not self.getPollByChannel(message):
             p = NewPoll(message, self)
-            if p.valid: 
+            if p.valid:
                 self.poll_sessions.append(p)
                 await p.start()
             else:
@@ -213,7 +213,7 @@ class General:
         return False
 
     async def check_poll_votes(self, message):
-        if message.author.id != self.bot.user.id:            
+        if message.author.id != self.bot.user.id:
             if self.getPollByChannel(message):
                     self.getPollByChannel(message).checkAnswer(message)
 
@@ -228,7 +228,7 @@ class NewPoll():
         msg = msg.split(";")
         if len(msg) < 2: # Needs at least one question and 2 choices
             self.valid = False
-            return None 
+            return None
         else:
             self.valid = True
         self.already_voted = []
