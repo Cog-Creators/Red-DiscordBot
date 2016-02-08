@@ -6,7 +6,6 @@ import datetime
 import time
 import aiohttp
 import asyncio
-from imgurpython import ImgurClient
 
 settings = {"POLL_DURATION" : 60}
 
@@ -174,24 +173,6 @@ class General:
                 await self.bot.say("Your search terms gave no results.")
         except:
             await self.bot.say("Error.")
-
-    @commands.command(no_pm=True)
-    async def imgur(self, *text):
-        """Retrieves a random imgur picture.
-        If a link combination e.g. As3DsA4 is provided it will try to retrieve that image."""
-        imgurclient = ImgurClient("", "")
-        if text == ():
-            rand = randint(0, 59) #60 results per generated page
-            items = imgurclient.gallery_random(page=0)
-            await self.bot.say(items[rand].link)
-        #elif text == "viral top":
-            #items = imgurclient.gallery(section='hot', sort='viral', page=0, window='day', show_viral=True)
-            #await self.bot.say(items[0].link)
-            #await self.bot.say(items[1].link)
-            #await self.bot.say(items[2].link)
-        #else:
-            #item = imgurclient.get_image(text)
-            #await self.bot.say(item.link)
 
     @commands.command(pass_context=True, no_pm=True)
     async def poll(self, ctx, *text):
