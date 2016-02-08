@@ -248,7 +248,7 @@ class Audio:
         if await self.check_voice(ctx.message.author, ctx.message):
             if not self.playlist:
                 self.queue.append(link)
-                await self.bot.say(self.queue)
+                await self.bot.say("Link added to queue.")
             else:
                 await self.bot.say("I'm already playing a playlist.")
 
