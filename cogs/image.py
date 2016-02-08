@@ -38,7 +38,7 @@ class Image:
                 await self.bot.say("Only top or new is a valid subcommand.")
                 return
             items = imgurclient.subreddit_gallery(text[0], sort=imgSort, window='day', page=0)
-            if (len(items) < 1):
+            if (len(items) < 3):
                 await self.bot.say("This subreddit section does not exist, try 'funny'")
             else:
                 await self.bot.say("{} {} {}".format(items[0].link, items[1].link, items[2].link))
