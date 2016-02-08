@@ -23,7 +23,7 @@ description = """
 Red - A multifunction Discord bot by Twentysix
 """
 
-formatter = commands.HelpFormatter(show_check_failure=True)
+formatter = commands.HelpFormatter(show_check_failure=False)
 
 bot = commands.Bot(command_prefix=["_"], formatter=formatter,
                    description=description, pm_help=True)
