@@ -24,7 +24,7 @@ class Image:
             items = imgurclient.gallery_random(page=0)
             await self.bot.say(items[rand].link)
         elif text[0] == "search":
-            items = imgurclient.gallery_search(text[1:len(text)], advanced=None, sort='time', window='all', page=0)
+            items = imgurclient.gallery_search(" ".join(text[1:len(text)]), advanced=None, sort='time', window='all', page=0)
             if len(items) < 1:
                 await self.bot.say("Your search terms gave no results.")
             else:
