@@ -259,7 +259,7 @@ class Audio:
             return True
         elif discord.utils.get(author.roles, name=checks.settings["MOD_ROLE"]) is not None:
             return True
-        elif len(author.voice_channel.voice_members) == 2:
+        elif len(author.voice_channel.voice_members) in (1, 2):
             return True
         else:
             return False
@@ -585,7 +585,7 @@ class MaximumLength(Exception):
         return self.message
 
 def check_folders():
-    folders = ("data/audio", "data/audio/cache", "data/audio/playlists")
+    folders = ("data/audio", "data/audio/cache", "data/audio/playlists", "data/audio/localtracks")
     for folder in folders:
         if not os.path.exists(folder):
             print("Creating " + folder + " folder...")

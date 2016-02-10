@@ -99,11 +99,12 @@ class General:
             await self.bot.say("Choose rock, paper or scissors.")
 
     @commands.command(name="8", aliases=["8ball"])
-    async def _8ball(self, question : str):
+    async def _8ball(self, *question):
         """Ask 8 ball a question
 
         Question must end with a question mark.
         """
+        question = " ".join(question)
         if question.endswith("?") and question != "?":
             return await self.bot.say("```" + randchoice(self.ball) + "```")
         else:
