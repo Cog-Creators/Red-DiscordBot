@@ -46,7 +46,6 @@ class Image:
 
     @commands.command(no_pm=True)
     async def gif(self, *text):
-        random.seed()
         """ gif [keyword] - retrieves first search result from giphy """
         if len(text) > 0:
             if len(text[0]) > 1 and len(text[0]) < 20:
@@ -56,11 +55,34 @@ class Image:
                     async with aiohttp.get(search) as r:
                         result = await r.json()
                     if result["data"] != []:
-                        maxarray = len(result)
-                        url = result["data"][random.randint(0,maxarray)]["url"]
+                        url = result["data"][0]["url"]
                         await self.bot.say(url)
                     else:
                         await self.bot.say("Your search terms gave no results.")
+                except:
+                    await self.bot.say("Error.")
+            else:
+                await self.bot.say("Invalid search.")
+        else:
+            await self.bot.say("gif [text]")
+
+    @commands.command(no_pm=True)
+    async def gifr(self, *text):
+        """ gifr [keyword] - retrieves a random gif from a giphy search """
+        random.seed()
+        if len(text) > 0:
+            if len(text[0]) > 1 and len(text[0]) < 20:
+                try:
+                    msg = "+".join(text)
+                    search = "http://api.giphy.com/v1/gifs/search?q=" + msg + "&api_key=dc6zaTOxFJmzC"
+                    async with aiohttp.get(search) as r:
+                        result = await r.json()
+                        if result["data"] != []:
+                            maxarray = len(result)
+                            url = result["data"][random.randint(0,maxarray)]["url"]
+                            await self.bot.say(url)
+                        else:
+                            await self.bot.say("Your search terms gave no results.")
                 except:
                     await self.bot.say("Error.")
             else:
