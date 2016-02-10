@@ -3,6 +3,7 @@ from discord.ext import commands
 from random import randint
 from imgurpython import ImgurClient
 import aiohttp
+import random
 
 class Image:
     """Image related commands."""
@@ -45,6 +46,7 @@ class Image:
 
     @commands.command(no_pm=True)
     async def gif(self, *text):
+        random.seed()
         """ gif [keyword] - retrieves first search result from giphy """
         if len(text) > 0:
             if len(text[0]) > 1 and len(text[0]) < 20:
@@ -54,7 +56,8 @@ class Image:
                     async with aiohttp.get(search) as r:
                         result = await r.json()
                     if result["data"] != []:
-                        url = result["data"][0]["url"]
+                        maxarray = len(result)
+                        url = result["data"][random.randint(0,maxarray)]["url"]
                         await self.bot.say(url)
                     else:
                         await self.bot.say("Your search terms gave no results.")
