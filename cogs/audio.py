@@ -12,13 +12,10 @@ import glob
 import re
 import aiohttp
 from bs4 import BeautifulSoup
-import __main__
 import json
 
 if not discord.opus.is_loaded():
     discord.opus.load_opus('libopus-0.dll')
-
-main_path = os.path.dirname(os.path.realpath(__main__.__file__))
 
 youtube_dl_options = {
     'format': 'bestaudio/best',
@@ -344,14 +341,14 @@ class Audio:
         else:
             await self.bot.say("Queue status can be either on or off.")
             return
-        fileIO(main_path + "/data/audio/settings.json", "save", self.settings)
+        fileIO("data/audio/settings.json", "save", self.settings)
 
     @audioset.command()
     async def maxlength(self, length : int):
         """Maximum track length for requested links"""
         self.settings["MAX_LENGTH"] = length
         await self.bot.say("Maximum length is now " + str(length) + " seconds.")
-        fileIO(main_path + "/data/audio/settings.json", "save", self.settings)
+        fileIO("data/audio/settings.json", "save", self.settings)
 
     @audioset.command()
     async def volume(self, level : float):
@@ -359,7 +356,7 @@ class Audio:
         if level >= 0 and level <= 1:
             self.settings["VOLUME"] = level
             await self.bot.say("Volume is now set at " + str(level) + ". It will take effect after the current track.")
-            fileIO(main_path + "/data/audio/settings.json", "save", self.settings)
+            fileIO("data/audio/settings.json", "save", self.settings)
         else:
             await self.bot.say("Volume must be between 0 and 1. Example: 0.40")
 
@@ -589,16 +586,16 @@ def check_files():
     
     settings = {"VOLUME" : 0.5, "MAX_LENGTH" : 3700, "QUEUE_MODE" : True}
 
-    if not os.path.isfile(main_path + "/data/audio/settings.json"):
+    if not os.path.isfile("data/audio/settings.json"):
         print("Creating default audio settings.json...")
-        fileIO(main_path + "/data/audio/settings.json", "save", settings)
+        fileIO("data/audio/settings.json", "save", settings)
 
     allowed = ["^(https:\/\/www\\.youtube\\.com\/watch\\?v=...........*)", "^(https:\/\/youtu.be\/...........*)",
               "^(https:\/\/youtube\\.com\/watch\\?v=...........*)", "^(https:\/\/soundcloud\\.com\/.*)"]
     
-    if not os.path.isfile(main_path + "/data/audio/accepted_links.json"):
+    if not os.path.isfile("data/audio/accepted_links.json"):
         print("Creating accepted_links.json...")
-        fileIO(main_path + "/data/audio/accepted_links.json", "save", allowed)
+        fileIO("data/audio/accepted_links.json", "save", allowed)
 
 def setup(bot):
     check_folders()

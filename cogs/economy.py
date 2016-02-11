@@ -5,9 +5,6 @@ from .utils import checks
 from random import randint
 import os
 import time
-import __main__
-
-main_path = os.path.dirname(os.path.realpath(__main__.__file__))
 
 slot_payouts = """Slot machine payouts:
     :two: :two: :six: Bet * 5000
@@ -18,7 +15,6 @@ slot_payouts = """Slot machine payouts:
 
     Three symbols: +500
     Two symbols: Bet * 2"""
-
 
 class Economy:
     """Economy
@@ -154,28 +150,28 @@ class Economy:
         """Minimum slot machine bid"""
         self.settings["SLOT_MIN"] = bid
         await self.bot.say("Minimum bid is now " + str(bid) + " credits.")
-        fileIO(main_path + "/data/economy/settings.json", "save", self.settings)
+        fileIO("data/economy/settings.json", "save", self.settings)
 
     @economyset.command()
     async def slotmax(self, bid : int):
         """Maximum slot machine bid"""
         self.settings["SLOT_MAX"] = bid
         await self.bot.say("Maximum bid is now " + str(bid) + " credits.")
-        fileIO(main_path + "/data/economy/settings.json", "save", self.settings)
+        fileIO("data/economy/settings.json", "save", self.settings)
 
     @economyset.command()
     async def paydaytime(self, seconds : int):
         """Seconds between each payday"""
         self.settings["PAYDAY_TIME"] = seconds
         await self.bot.say("Value modified. At least " + str(seconds) + " seconds must pass between each payday.")
-        fileIO(main_path + "/data/economy/settings.json", "save", self.settings)
+        fileIO("data/economy/settings.json", "save", self.settings)
 
     @economyset.command()
     async def paydaycredits(self, credits : int):
         """Credits earned each payday"""
         self.settings["PAYDAY_CREDITS"] = credits
         await self.bot.say("Every payday will now give " + str(credits) + " credits.")
-        fileIO(main_path + "/data/economy/settings.json", "save", self.settings)
+        fileIO("data/economy/settings.json", "save", self.settings)
 
     def account_check(self, id):
         if id in self.bank:
