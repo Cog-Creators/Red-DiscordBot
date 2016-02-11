@@ -184,6 +184,7 @@ class Audio:
         msg = ctx.message
         if self.music_player.is_playing():
             if await self.is_alone_or_admin(msg.author):
+                self.current = -1
                 self.playlist = [self.downloader["URL"]]
                 await self.bot.say("I will play this song on repeat.")
             else:

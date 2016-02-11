@@ -108,5 +108,5 @@ def setup(bot):
     try:
         from imgurpython import ImgurClient
     except:
-        raise ModuleNotFound("imgurpython is not installed. Do 'pip install imgurpython' to use this cog.")
+        raise ModuleNotFound("imgurpython is not installed. Do 'pip3 install imgurpython' to use this cog.")
     bot.add_cog(Image(bot))
