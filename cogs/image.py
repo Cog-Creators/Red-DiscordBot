@@ -1,10 +1,6 @@
 import discord
 from discord.ext import commands
 from random import randint
-try:
-    from imgurpython import ImgurClient
-except:
-    print("imgurpython is not installed. Do 'pip install imgurpython' to use this cog.\n")
 import aiohttp
 import random
 
@@ -22,7 +18,7 @@ class Image:
         """Retrieves a random imgur picture
 
         imgur search [keyword] - Retrieves first hit of search query.
-        imgur [subreddit section] [top or new] - retrieves top 3 hottest or latest pictures of today for given a subreddit section, e.g. 'funny'."""
+        imgur [subreddit section] [top or new] - Retrieves top 3 hottest or latest pictures of today for given a subreddit section, e.g. 'funny'."""
         imgurclient = ImgurClient("1fd3ef04daf8cab", "f963e574e8e3c17993c933af4f0522e1dc01e230")
         if text == ():
             rand = randint(0, 59) #60 results per generated page
@@ -35,18 +31,21 @@ class Image:
             else:
                 await self.bot.say(items[0].link)
         elif text[0] != ():
-            if text[1] == "top":
-                imgSort = "top"
-            elif text[1] == "new":
-                imgSort = "time"
-            else:
-                await self.bot.say("Only top or new is a valid subcommand.")
-                return
-            items = imgurclient.subreddit_gallery(text[0], sort=imgSort, window='day', page=0)
-            if (len(items) < 3):
-                await self.bot.say("This subreddit section does not exist, try 'funny'")
-            else:
-                await self.bot.say("{} {} {}".format(items[0].link, items[1].link, items[2].link))
+            try:
+                if text[1] == "top":
+                    imgSort = "top"
+                elif text[1] == "new":
+                    imgSort = "time"
+                else:
+                    await self.bot.say("Only top or new is a valid subcommand.")
+                    return
+                items = imgurclient.subreddit_gallery(text[0], sort=imgSort, window='day', page=0)
+                if (len(items) < 3):
+                    await self.bot.say("This subreddit section does not exist, try 'funny'")
+                else:
+                    await self.bot.say("{} {} {}".format(items[0].link, items[1].link, items[2].link))
+            except:
+                await self.bot.say("Type help imgur for details.")
 
     @commands.command(no_pm=True)
     async def gif(self, *text):
@@ -98,5 +97,16 @@ class Image:
         else:
             await self.bot.say("gifr [text]")
 
+class ModuleNotFound(Exception):
+    def __init__(self, m):
+        self.message = m
+    def __str__(self):
+        return self.message
+
 def setup(bot):
+    global ImgurClient
+    try:
+        from imgurpython import ImgurClient
+    except:
+        raise ModuleNotFound("imgurpython is not installed. Do 'pip install imgurpython' to use this cog.")
     bot.add_cog(Image(bot))
