@@ -62,10 +62,9 @@ class Audio:
         if await self.check_voice(msg.author, msg):
             if self.is_playlist_valid([link]): # reusing a function
                 if await self.is_alone_or_admin(msg.author):
-                    self.queue = []
-                    self.playlist = []
+                    self.queue = []  
                     self.current = -1
-                    await self.play_video(link)
+                    self.playlist = [link]
                 else:
                     self.playlist = []
                     self.current = -1
@@ -79,7 +78,9 @@ class Audio:
         """Shows song title
         """
         if self.downloader["TITLE"]:
-            await self.bot.say(self.downloader["TITLE"])
+            url = ""
+            if self.downloader["URL"]: url = 'Link : "' + self.downloader["URL"] + '"'
+            await self.bot.say(self.downloader["TITLE"] + "\n" + url)
         else:
             await self.bot.say("No title available.")
 
@@ -182,10 +183,7 @@ class Audio:
         msg = ctx.message
         if self.music_player.is_playing():
             if await self.is_alone_or_admin(msg.author):
-                if self.playlist:
-                    self.playlist = self.playlist[[self.current]]
-                elif self.queue:
-                    self.playlist = self.playlist[[self.queue[0]]]
+                self.playlist = [self.downloader["URL"]]
                 await self.bot.say("I will play this song on repeat.")
             else:
                 await self.bot.say("I'm in queue mode. Controls are disabled if you're in a room with multiple people.")
@@ -253,6 +251,8 @@ class Audio:
 
     async def is_alone_or_admin(self, author): #Direct control. fix everything
         if not self.settings["QUEUE_MODE"]:
+            return True
+        elif author.id == checks.settings["OWNER"]:
             return True
         elif discord.utils.get(author.roles, name=checks.settings["ADMIN_ROLE"]) is not None:
             return True
