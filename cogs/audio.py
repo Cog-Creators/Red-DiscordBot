@@ -65,6 +65,7 @@ class Audio:
                     self.queue = []  
                     self.current = -1
                     self.playlist = [link]
+                    self.music_player.stop()
                 else:
                     self.playlist = []
                     self.current = -1
@@ -77,7 +78,7 @@ class Audio:
     async def song(self):
         """Shows song title
         """
-        if self.downloader["TITLE"]:
+        if self.downloader["TITLE"] and "localtracks" not in self.downloader["TITLE"]:
             url = ""
             if self.downloader["URL"]: url = 'Link : "' + self.downloader["URL"] + '"'
             await self.bot.say(self.downloader["TITLE"] + "\n" + url)
