@@ -1,7 +1,10 @@
 import discord
 from discord.ext import commands
 from random import randint
-from imgurpython import ImgurClient
+try:
+    from imgurpython import ImgurClient
+except:
+    print("imgurpython is not installed. Do 'pip install imgurpython' to use this cog.\n")
 import aiohttp
 import random
 
@@ -16,8 +19,9 @@ class Image:
 
     @commands.command(no_pm=True)
     async def imgur(self, *text):
-        """Retrieves a random imgur picture.
-        imgur search [keyword] - retrieves first hit of search query.
+        """Retrieves a random imgur picture
+
+        imgur search [keyword] - Retrieves first hit of search query.
         imgur [subreddit section] [top or new] - retrieves top 3 hottest or latest pictures of today for given a subreddit section, e.g. 'funny'."""
         imgurclient = ImgurClient("1fd3ef04daf8cab", "f963e574e8e3c17993c933af4f0522e1dc01e230")
         if text == ():
@@ -46,7 +50,9 @@ class Image:
 
     @commands.command(no_pm=True)
     async def gif(self, *text):
-        """ gif [keyword] - retrieves first search result from giphy """
+        """Retrieves first search result from giphy
+        
+        gif [keyword]"""
         if len(text) > 0:
             if len(text[0]) > 1 and len(text[0]) < 20:
                 try:
@@ -68,7 +74,9 @@ class Image:
 
     @commands.command(no_pm=True)
     async def gifr(self, *text):
-        """ gifr [keyword] - retrieves a random gif from a giphy search """
+        """Retrieves a random gif from a giphy search
+
+        gifr [keyword]"""
         random.seed()
         if len(text) > 0:
             if len(text[0]) > 1 and len(text[0]) < 20:
@@ -88,7 +96,7 @@ class Image:
             else:
                 await self.bot.say("Invalid search.")
         else:
-            await self.bot.say("gif [text]")
+            await self.bot.say("gifr [text]")
 
 def setup(bot):
     bot.add_cog(Image(bot))
