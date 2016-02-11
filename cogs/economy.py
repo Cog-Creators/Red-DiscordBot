@@ -86,7 +86,7 @@ class Economy:
             if bid >= self.settings["SLOT_MIN"] and bid <= self.settings["SLOT_MAX"]:
                 await self.slot_machine(ctx.message, bid)
             else:
-                await self.bot.say("{} `Bid must be between {0} and {1}.`".format(author.mention, self.settings["SLOT_MIN"], self.settings["SLOT_MAX"]))
+                await self.bot.say("{0} `Bid must be between {1} and {2}.`".format(author.mention, self.settings["SLOT_MIN"], self.settings["SLOT_MAX"]))
         else:
             await self.bot.say("{0} `You need an account with enough funds to play the slot machine.`".format(author.mention))
 
