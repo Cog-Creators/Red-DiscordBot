@@ -37,7 +37,7 @@ class Economy:
         if ctx.invoked_subcommand is None:
             await self.bot.say("Type help bank for info.")
 
-    @_bank.command(pass_context=True)
+    @_bank.command(pass_context=True, no_pm=True)
     async def register(self, ctx):
         """Registers an account at the Twentysix bank"""
         user = ctx.message.author
