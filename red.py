@@ -187,6 +187,7 @@ async def setprefix(*text):
 
 @bot.command(name="uptime")
 async def _uptime():
+    """Shows Red's uptime"""
     up = abs(bot.uptime - int(time.perf_counter()))
     up = str(datetime.timedelta(seconds=up))
     await bot.say("`Uptime: {}`".format(up))

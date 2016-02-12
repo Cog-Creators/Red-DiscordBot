@@ -12,15 +12,10 @@ import glob
 import re
 import aiohttp
 from bs4 import BeautifulSoup
-import __main__
 import json
 
 if not discord.opus.is_loaded():
     discord.opus.load_opus('libopus-0.dll')
-
-main_path = os.path.dirname(os.path.realpath(__main__.__file__))
-
-settings = {"VOLUME" : 0.5, "MAX_LENGTH" : 3700, "QUEUE_MODE" : True}
 
 youtube_dl_options = {
     'format': 'bestaudio/best',
@@ -40,6 +35,7 @@ class Audio:
     def __init__(self, bot):
         self.bot = bot
         self.music_player = EmptyPlayer()
+        self.settings = fileIO("data/audio/settings.json", "load")
         self.queue_mode = False
         self.queue = []
         self.playlist = []
@@ -63,10 +59,10 @@ class Audio:
         if await self.check_voice(msg.author, msg):
             if self.is_playlist_valid([link]): # reusing a function
                 if await self.is_alone_or_admin(msg.author):
-                    self.queue = []
-                    self.playlist = []
+                    self.queue = []  
                     self.current = -1
-                    await self.play_video(link)
+                    self.playlist = [link]
+                    self.music_player.stop()
                 else:
                     self.playlist = []
                     self.current = -1
@@ -79,8 +75,10 @@ class Audio:
     async def song(self):
         """Shows song title
         """
-        if self.downloader["TITLE"]:
-            await self.bot.say(self.downloader["TITLE"])
+        if self.downloader["TITLE"] and "localtracks" not in self.downloader["TITLE"]:
+            url = ""
+            if self.downloader["URL"]: url = 'Link : "' + self.downloader["URL"] + '"'
+            await self.bot.say(self.downloader["TITLE"] + "\n" + url)
         else:
             await self.bot.say("No title available.")
 
@@ -183,10 +181,8 @@ class Audio:
         msg = ctx.message
         if self.music_player.is_playing():
             if await self.is_alone_or_admin(msg.author):
-                if self.playlist:
-                    self.playlist = self.playlist[[self.current]]
-                elif self.queue:
-                    self.playlist = self.playlist[[self.queue[0]]]
+                self.current = -1
+                self.playlist = [self.downloader["URL"]]
                 await self.bot.say("I will play this song on repeat.")
             else:
                 await self.bot.say("I'm in queue mode. Controls are disabled if you're in a room with multiple people.")
@@ -253,7 +249,9 @@ class Audio:
                 await self.bot.say("I'm already playing a playlist.")
 
     async def is_alone_or_admin(self, author): #Direct control. fix everything
-        if not settings["QUEUE_MODE"]:
+        if not self.settings["QUEUE_MODE"]:
+            return True
+        elif author.id == checks.settings["OWNER"]:
             return True
         elif discord.utils.get(author.roles, name=checks.settings["ADMIN_ROLE"]) is not None:
             return True
@@ -325,7 +323,7 @@ class Audio:
         """Changes audio module settings"""
         if ctx.invoked_subcommand is None:
             msg = "```"
-            for k, v in settings.items():
+            for k, v in self.settings.items():
                 msg += str(k) + ": " + str(v) + "\n"
             msg += "\nType help audioset to see the list of commands.```"
             await self.bot.say(msg)
@@ -333,35 +331,32 @@ class Audio:
     @audioset.command(name="queue")
     async def queueset(self, status : str):
         """Enables/disables queue"""
-        global settings
         status = status.lower()
         if status == "on" or status == "true":
-            settings["QUEUE_MODE"] = True
+            self.settings["QUEUE_MODE"] = True
             await self.bot.say("Queue mode is now on.")
         elif status == "off" or status == "false": 
-            settings["QUEUE_MODE"] = False
+            self.settings["QUEUE_MODE"] = False
             await self.bot.say("Queue mode is now off.")
         else:
             await self.bot.say("Queue status can be either on or off.")
             return
-        self.save_settings()
+        fileIO("data/audio/settings.json", "save", self.settings)
 
     @audioset.command()
     async def maxlength(self, length : int):
         """Maximum track length for requested links"""
-        global settings
-        settings["MAX_LENGTH"] = length
+        self.settings["MAX_LENGTH"] = length
         await self.bot.say("Maximum length is now " + str(length) + " seconds.")
-        self.save_settings()
+        fileIO("data/audio/settings.json", "save", self.settings)
 
     @audioset.command()
     async def volume(self, level : float):
         """Sets the volume (0-1)"""
-        global settings  
         if level >= 0 and level <= 1:
-            settings["VOLUME"] = level
+            self.settings["VOLUME"] = level
             await self.bot.say("Volume is now set at " + str(level) + ". It will take effect after the current track.")
-            self.save_settings()
+            fileIO("data/audio/settings.json", "save", self.settings)
         else:
             await self.bot.say("Volume must be between 0 and 1. Example: 0.40")
 
@@ -379,7 +374,7 @@ class Audio:
         if self.downloader["ID"]:
             try:
                 self.music_player.stop()
-                self.music_player = self.bot.voice.create_ffmpeg_player(path + self.downloader["ID"], options='''-filter:a "volume={}"'''.format(settings["VOLUME"]))
+                self.music_player = self.bot.voice.create_ffmpeg_player(path + self.downloader["ID"], options='''-filter:a "volume={}"'''.format(self.settings["VOLUME"]))
                 self.music_player.start()
                 if path != "": await self.bot.change_status(discord.Game(name=self.downloader["TITLE"]))
             except discord.errors.ClientException:
@@ -448,7 +443,7 @@ class Audio:
             self.downloader["DOWNLOADING"] = True
             yt = youtube_dl.YoutubeDL(youtube_dl_options)
             v = yt.extract_info(url, download=False)
-            if v["duration"] > settings["MAX_LENGTH"]: raise MaximumLength("Track exceeded maximum length. See help audioset maxlength")
+            if v["duration"] > self.settings["MAX_LENGTH"]: raise MaximumLength("Track exceeded maximum length. See help audioset maxlength")
             if not os.path.isfile("data/audio/cache/" + v["id"]):
                 v = yt.extract_info(url, download=True)
             audio.downloader = {"DONE" : True, "TITLE" : v["title"], "ID" : v["id"], "URL" : url, "DURATION" : v["duration"], "DOWNLOADING" : False} #Errors out here if invalid link
@@ -564,10 +559,6 @@ class Audio:
         except:
             return False
 
-    def save_settings(self):
-        with open(main_path + "/data/audio/settings.json", "w") as f:
-            f.write(json.dumps(settings))
-
 class EmptyPlayer(): #dummy player
     def __init__(self):
         pass
@@ -591,24 +582,26 @@ def check_folders():
             print("Creating " + folder + " folder...")
             os.makedirs(folder)
 
-def check_files(n):
-    if not os.path.isfile(main_path + "/data/audio/settings.json"):
+def check_files():
+    
+    settings = {"VOLUME" : 0.5, "MAX_LENGTH" : 3700, "QUEUE_MODE" : True}
+
+    if not os.path.isfile("data/audio/settings.json"):
         print("Creating default audio settings.json...")
-        n.save_settings()
+        fileIO("data/audio/settings.json", "save", settings)
 
     allowed = ["^(https:\/\/www\\.youtube\\.com\/watch\\?v=...........*)", "^(https:\/\/youtu.be\/...........*)",
               "^(https:\/\/youtube\\.com\/watch\\?v=...........*)", "^(https:\/\/soundcloud\\.com\/.*)"]
     
-    if not os.path.isfile(main_path + "/data/audio/accepted_links.json"):
+    if not os.path.isfile("data/audio/accepted_links.json"):
         print("Creating accepted_links.json...")
-        with open(main_path + "/data/audio/accepted_links.json", "w") as f:
-            f.write(json.dumps(allowed))
+        fileIO("data/audio/accepted_links.json", "save", allowed)
 
 def setup(bot):
+    check_folders()
+    check_files()
     loop = asyncio.get_event_loop()
     n = Audio(bot)
-    check_folders()
-    check_files(n)
     loop.create_task(n.queue_manager())
     bot.add_listener(n.incoming_messages, "on_message")
     bot.add_cog(n)
