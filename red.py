@@ -272,7 +272,7 @@ def check_configs():
         print("\nChoose a prefix (or multiple ones, one at once) for the commands. Type exit when you're done. Example prefix: !")
         settings["PREFIXES"] = []
         new_prefix = ""
-        while new_prefix.lower() != "exit" and settings["PREFIXES"] != []:
+        while new_prefix.lower() != "exit" or settings["PREFIXES"] == []:
             new_prefix = input("Prefix> ")
             if new_prefix.lower() != "exit" and new_prefix != "":
                 settings["PREFIXES"].append(new_prefix)
