@@ -133,30 +133,50 @@ class General:
         await self.bot.say("http://lmgtfy.com/?q=" + text)
 
     @commands.command(no_pm=True, hidden=True)
-    async def hug(self, member : discord.Member = None):
+    async def hug(self, user : discord.Member = None):
         """Because everyone likes hugs"""
-        await self.bot.say("(っ´▽｀)っ" + " *" + member.name + "*")
+        await self.bot.say("(っ´▽｀)っ" + " *" + user.name + "*")
 
     @commands.command(pass_context=True, no_pm=True)
-    async def info(self, ctx, member : discord.Member = None):
-        """Shows member's information"""
+    async def info(self, ctx, user : discord.Member = None):
+        """Shows users's informations"""
         author = ctx.message.author
-        if not member:
-            member = author
+        if not user:
+            user = author
         roles = []
-        for m in member.roles:
+        for m in user.roles:
             if m.name != "@everyone":
                 roles.append('"' + m.name + '"') #.replace("@", "@\u200b")
         if not roles: roles = ["None"]
         data = "```\n"
-        data += "Name: " + member.name + "\n"
-        data += "ID: " + member.id + "\n"
-        data += "Joined: " + str(member.joined_at) + "\n"
+        data += "Name: " + user.name + "\n"
+        data += "ID: " + user.id + "\n"
+        data += "Joined: " + str(user.joined_at) + "\n"
         data += "Roles: " + " ".join(roles) + "\n"
-        data += "Avatar: " + member.avatar_url + "\n"
+        data += "Avatar: " + user.avatar_url + "\n"
         data += "```"
         await self.bot.say(data)
 
+    @commands.command(pass_context=True, no_pm=True)
+    async def server(self, ctx):
+        """Shows server's informations"""
+        server = ctx.message.server
+        online = str(len([m.status for m in server.members if str(m.status) == "online" or str(m.status) == "idle"]))
+        total = str(len(server.members))
+
+        data = "```\n"
+        data += "Name: " + server.name + "\n"
+        data += "ID: " + server.id + "\n"
+        data += "Region: " + server.region.name + "\n"
+        data += "Users: " + online + "/" + total + "\n"
+        data += "Channels: " + str(len(server.channels)) + "\n"
+        data += "Roles: " + str(len(server.roles)) + "\n"
+        data += "Created: " + str(server.owner.joined_at) + "\n"
+        data += "Owner: " + server.owner.name + "\n"
+        data += "Icon: " + str(server.icon_url) + "\n"
+        data += "```"
+        await self.bot.say(data)
+        
     @commands.command()
     async def urban(self, *, search_terms : str):
         """Urban Dictionary search"""

@@ -2,19 +2,16 @@ import discord
 from discord.ext import commands
 from .utils import checks
 from .utils.dataIO import fileIO
-import __main__
 import os
-
-main_path = os.path.dirname(os.path.realpath(__main__.__file__))
-
 
 class Mod:
     """Moderation tools."""
 
     def __init__(self, bot):
         self.bot = bot
-        self.whitelist_list = fileIO(main_path + "/data/mod/whitelist.json", "load")
-        self.blacklist_list = fileIO(main_path + "/data/mod/blacklist.json", "load")
+        self.whitelist_list = fileIO("data/mod/whitelist.json", "load")
+        self.blacklist_list = fileIO("data/mod/blacklist.json", "load")
+        self.ignore_list = fileIO("data/mod/ignorelist.json", "load")
 
     @commands.command(no_pm=True)
     @checks.admin_or_permissions(kick_members=True)
@@ -130,7 +127,7 @@ class Mod:
         """Adds user to bot's blacklist"""
         if user.id not in self.blacklist_list:
             self.blacklist_list.append(user.id)
-            fileIO(main_path + "/data/mod/blacklist.json", "save", self.blacklist_list)
+            fileIO("data/mod/blacklist.json", "save", self.blacklist_list)
             await self.bot.say("User has been added to blacklist.")
         else:
             await self.bot.say("User is already blacklisted.")
@@ -140,7 +137,7 @@ class Mod:
         """Removes user to bot's blacklist"""
         if user.id in self.blacklist_list:
             self.blacklist_list.remove(user.id)
-            fileIO(main_path + "/data/mod/blacklist.json", "save", self.blacklist_list)
+            fileIO("data/mod/blacklist.json", "save", self.blacklist_list)
             await self.bot.say("User has been removed from blacklist.")
         else:
             await self.bot.say("User is not in blacklist.")
@@ -162,7 +159,7 @@ class Mod:
             else:
                 msg = ""
             self.whitelist_list.append(user.id)
-            fileIO(main_path + "/data/mod/whitelist.json", "save", self.whitelist_list)
+            fileIO("data/mod/whitelist.json", "save", self.whitelist_list)
             await self.bot.say("User has been added to whitelist." + msg)
         else:
             await self.bot.say("User is already whitelisted.")
@@ -172,10 +169,98 @@ class Mod:
         """Removes user to bot's whitelist"""
         if user.id in self.whitelist_list:
             self.whitelist_list.remove(user.id)
-            fileIO(main_path + "/data/mod/whitelist.json", "save", self.whitelist_list)
+            fileIO("data/mod/whitelist.json", "save", self.whitelist_list)
             await self.bot.say("User has been removed from whitelist.")
         else:
             await self.bot.say("User is not in whitelist.")
+
+    @commands.group(pass_context=True, no_pm=True)
+    @checks.admin_or_permissions(manage_channels=True)
+    async def ignore(self, ctx):
+        """Adds servers/channels to ignorelist"""
+        if ctx.invoked_subcommand is None:
+            
+            await self.bot.say(self.count_ignored() + "Type help ignore for info.")
+
+    @ignore.command(name="channel", pass_context=True)
+    async def ignore_channel(self, ctx, channel : discord.Channel=None):
+        """Ignores channel
+
+        Defaults to current one"""
+        current_ch = ctx.message.channel
+        if not channel:
+            if current_ch.id not in self.ignore_list["CHANNELS"]:
+                self.ignore_list["CHANNELS"].append(current_ch.id)
+                fileIO("data/mod/ignorelist.json", "save", self.ignore_list)
+                await self.bot.say("Channel added to ignore list.")
+            else:
+                await self.bot.say("Channel already in ignore list.")
+        else:
+            if channel.id not in self.ignore_list["CHANNELS"]:
+                self.ignore_list["CHANNELS"].append(channel.id)
+                fileIO("data/mod/ignorelist.json", "save", self.ignore_list)
+                await self.bot.say("Channel added to ignore list.")
+            else:
+                await self.bot.say("Channel already in ignore list.")
+
+
+    @ignore.command(name="server", pass_context=True)
+    async def ignore_server(self, ctx):
+        """Ignores current server"""
+        server = ctx.message.server
+        if server.id not in self.ignore_list["SERVERS"]:
+            self.ignore_list["SERVERS"].append(server.id)
+            fileIO("data/mod/ignorelist.json", "save", self.ignore_list)
+            await self.bot.say("This server has been added to the ignore list.")
+        else:
+            await self.bot.say("This server is already being ignored.")
+
+    @commands.group(pass_context=True, no_pm=True)
+    @checks.admin_or_permissions(manage_channels=True)
+    async def unignore(self, ctx):
+        """Removes servers/channels from ignorelist"""
+        if ctx.invoked_subcommand is None:
+            await self.bot.say(self.count_ignored() + "Type help unignore for info.")
+
+    @unignore.command(name="channel", pass_context=True)
+    async def unignore_channel(self, ctx, channel : discord.Channel=None):
+        """Removes channel from ignore list
+
+        Defaults to current one"""
+        current_ch = ctx.message.channel
+        if not channel:
+            if current_ch.id in self.ignore_list["CHANNELS"]:
+                self.ignore_list["CHANNELS"].remove(current_ch.id)
+                fileIO("data/mod/ignorelist.json", "save", self.ignore_list)
+                await self.bot.say("This channel has been removed from the ignore list.")
+            else:
+                await self.bot.say("This channel is not in the ignore list.")
+        else:
+            if channel.id in self.ignore_list["CHANNELS"]:
+                self.ignore_list["CHANNELS"].remove(channel.id)
+                fileIO("data/mod/ignorelist.json", "save", self.ignore_list)
+                await self.bot.say("Channel removed from ignore list.")
+            else:
+                await self.bot.say("That channel is not in the ignore list.")
+
+
+    @unignore.command(name="server", pass_context=True)
+    async def unignore_server(self, ctx):
+        """Removes current server from ignore list"""
+        server = ctx.message.server
+        if server.id in self.ignore_list["SERVERS"]:
+            self.ignore_list["SERVERS"].remove(server.id)
+            fileIO("data/mod/ignorelist.json", "save", self.ignore_list)
+            await self.bot.say("This server has been removed from the ignore list.")
+        else:
+            await self.bot.say("This server is not in the ignore list.")
+
+    def count_ignored(self):
+        msg = "```Currently ignoring:\n"
+        msg += str(len(self.ignore_list["CHANNELS"])) + " channels\n"
+        msg += str(len(self.ignore_list["SERVERS"])) + " servers\n```\n"
+        return msg
+
 
 def check_folders():
     folders = ("data", "data/mod/")
@@ -185,13 +270,19 @@ def check_folders():
             os.makedirs(folder)
 
 def check_files():
-    if not os.path.isfile(main_path + "/data/mod/blacklist.json"):
-        print("Creating empty blacklist.json...")
-        fileIO(main_path + "/data/mod/blacklist.json", "save", [])
+    ignore_list = {"SERVERS" : [], "CHANNELS" : []}
 
-    if not os.path.isfile(main_path + "/data/mod/whitelist.json"):
+    if not os.path.isfile("data/mod/blacklist.json"):
+        print("Creating empty blacklist.json...")
+        fileIO("data/mod/blacklist.json", "save", [])
+
+    if not os.path.isfile("data/mod/whitelist.json"):
         print("Creating empty whitelist.json...")
-        fileIO(main_path + "/data/mod/whitelist.json", "save", [])
+        fileIO("data/mod/whitelist.json", "save", [])
+
+    if not os.path.isfile("data/mod/ignorelist.json"):
+        print("Creating empty ignorelist.json...")
+        fileIO("data/mod/ignorelist.json", "save", ignore_list)
 
 def setup(bot):
     check_folders()

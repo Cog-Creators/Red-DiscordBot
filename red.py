@@ -9,6 +9,7 @@ import copy
 import glob
 import os
 import time
+import sys
 
 #
 #  Red, a Discord bot by Twentysix, based on discord.py and its command extension
@@ -26,7 +27,7 @@ Red - A multifunction Discord bot by Twentysix
 formatter = commands.HelpFormatter(show_check_failure=False)
 
 bot = commands.Bot(command_prefix=["_"], formatter=formatter,
-                   description=description, pm_help=True)
+                   description=description, pm_help=None)
 
 lock = False
 
@@ -63,6 +64,13 @@ async def on_message(message):
 
         if mod.whitelist_list:
             if author.id not in mod.whitelist_list:
+                return
+
+        if not message.channel.is_private:
+            if message.server.id in mod.ignore_list["SERVERS"]:
+                return
+
+            if message.channel.id in mod.ignore_list["CHANNELS"]:
                 return
 
     await bot.process_commands(message)
@@ -170,6 +178,18 @@ async def shutdown():
 
 @bot.command()
 @checks.is_owner()
+async def join(invite_url : discord.Invite):
+    """Joins new server"""
+    try:
+        await bot.accept_invite(invite_url)
+        await bot.say("Server joined.")
+    except discord.NotFound:
+        await bot.say("The invite was invalid or expired.")
+    except discord.HTTPException:
+        await bot.say("I wasn't able to accept the invite. Try again.")
+
+@bot.command()
+@checks.is_owner()
 async def setprefix(*text):
     """Set prefixes"""
     if text == ():
@@ -237,9 +257,6 @@ def check_configs():
     settings_path = "data/red/settings.json"
     settings = {"EMAIL" : "EmailHere", "PASSWORD" : "PasswordHere", "OWNER" : "id_here", "PREFIXES" : [], "ADMIN_ROLE" : "Transistor", "MOD_ROLE" : "Process"}
     if not os.path.isfile(settings_path):
-        print("Creating new settings.json...")
-        with open(settings_path, "w") as f:
-            f.write(json.dumps(settings))
 
         print("Red - First run configuration")
         print("If you don't have one, create a NEW ACCOUNT for Red. Do *not* use yours. (https://discordapp.com)")
@@ -255,7 +272,7 @@ def check_configs():
         print("\nChoose a prefix (or multiple ones, one at once) for the commands. Type exit when you're done. Example prefix: !")
         settings["PREFIXES"] = []
         new_prefix = ""
-        while new_prefix.lower() != "exit":
+        while new_prefix.lower() != "exit" or settings["PREFIXES"] == []:
             new_prefix = input("Prefix> ")
             if new_prefix.lower() != "exit" and new_prefix != "":
                 settings["PREFIXES"].append(new_prefix)
@@ -303,6 +320,14 @@ def set_cog(cog, value):
         f.write(json.dumps(data))
 
 def load_cogs():
+    try:
+        if sys.argv[1] == "--no-prompt":
+            no_prompt = True
+        else:
+            no_prompt = False
+    except:
+        no_prompt = False
+
     with open('data/red/cogs.json', "r") as f:
         data = json.load(f)
     register = tuple(data.keys()) #known cogs
@@ -320,17 +345,18 @@ def load_cogs():
                     print(e)
                     failed.append(extension)
         else:
-            print("\nNew extension: " + extension)
-            print("Load it?(y/n)")
-            if get_answer():
-                data[extension] = True
-                try:
-                    bot.load_extension(extension)
-                except Exception as e:
-                    print(e)
-                    failed.append(extension)
-            else:
-                data[extension] = False
+            if not no_prompt:
+                print("\nNew extension: " + extension)
+                print("Load it?(y/n)")
+                if get_answer():
+                    data[extension] = True
+                    try:
+                        bot.load_extension(extension)
+                    except Exception as e:
+                        print(e)
+                        failed.append(extension)
+                else:
+                    data[extension] = False
 
     if extensions:
         with open('data/red/cogs.json', "w") as f:
@@ -342,12 +368,26 @@ def load_cogs():
             print(m + " ", end="")
         print("\n")
 
-check_folders()
-check_configs()
-settings = load_settings()
-
-if __name__ == '__main__':
+def main():
+    global settings
+    check_folders()
+    check_configs()
+    settings = load_settings()
     checks.owner = settings["OWNER"]
     load_cogs()
     bot.command_prefix = settings["PREFIXES"]
-    bot.run(settings['EMAIL'], settings['PASSWORD'])
+    yield from bot.login(settings["EMAIL"], settings["PASSWORD"])
+    yield from bot.connect()
+
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    try:
+        loop.run_until_complete(main())
+    except discord.LoginFailure:
+        print("Invalid login credentials. Restart Red and configure it properly.")
+        os.remove('data/red/settings.json') # Hopefully this won't backfire in case of discord servers' problems
+    except Exception as e:
+        print(e)
+        loop.run_until_complete(bot.logout())
+    finally:
+        loop.close()
