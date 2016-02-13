@@ -41,7 +41,6 @@ class Audio:
         self.playlist = []
         self.current = -1 #current track index in self.playlist
         self.downloader = {"DONE" : False, "TITLE" : False, "ID" : False, "URL" : False, "DURATION" : False, "DOWNLOADING" : False}
-        self.quit_manager = False
         self.skip_votes = []
 
         self.sing =  ["https://www.youtube.com/watch?v=zGTkAVsrfg8", "https://www.youtube.com/watch?v=cGMWL8cOeAU",
@@ -422,7 +421,7 @@ class Audio:
             return False
 
     async def queue_manager(self):
-        while not self.quit_manager:
+        while "Audio" in self.bot.cogs:
             if self.queue and not self.music_player.is_playing():
                 new_link = self.queue[0]
                 self.queue.pop(0)
@@ -453,10 +452,7 @@ class Audio:
 
     async def incoming_messages(self, msg): # Workaround, need to fix
         if msg.author.id != self.bot.user.id:
-            cmds = ("unload cogs.audio", "reload cogs.audio")
             
-            if msg.content in cmds:
-                self.quit_manager = True
             if msg.channel.is_private and msg.attachments != []:
                 await self.transfer_playlist(msg)
         if not msg.channel.is_private:
