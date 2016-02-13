@@ -26,7 +26,7 @@ Red - A multifunction Discord bot by Twentysix
 formatter = commands.HelpFormatter(show_check_failure=False)
 
 bot = commands.Bot(command_prefix=["_"], formatter=formatter,
-                   description=description, pm_help=True)
+                   description=description, pm_help=None)
 
 lock = False
 
@@ -63,6 +63,13 @@ async def on_message(message):
 
         if mod.whitelist_list:
             if author.id not in mod.whitelist_list:
+                return
+
+        if not message.channel.is_private:
+            if message.server.id in mod.ignore_list["SERVERS"]:
+                return
+
+            if message.channel.id in mod.ignore_list["CHANNELS"]:
                 return
 
     await bot.process_commands(message)
