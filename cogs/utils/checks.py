@@ -20,7 +20,7 @@ except:
     settings = {"OWNER" : False, "ADMIN_ROLE" : False, "MOD_ROLE" : False}
 
 def is_owner_check(ctx):
-    return ctx.message.author.id == owner
+    return ctx.message.author.id == settings["OWNER"]
 
 def is_owner():
     return commands.check(is_owner_check)
