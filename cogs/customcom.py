@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from .utils.dataIO import fileIO
 from .utils import checks
+from __main__ import user_allowed
 import os
 
 class CustomCommands:
@@ -86,12 +87,25 @@ class CustomCommands:
     async def checkCC(self, message):
         if message.author.id == self.bot.user.id or len(message.content) < 2 or message.channel.is_private:
             return
+
+        if not user_allowed(message):
+            return
+
         msg = message.content
         server = message.server
-        if msg[0] in self.bot.command_prefix and server.id in self.c_commands.keys():
+        prefix = self.get_prefix(msg)
+
+        if prefix and server.id in self.c_commands.keys():
             cmdlist = self.c_commands[server.id]
-            if msg[1:] in cmdlist:
-                await self.bot.send_message(message.channel, cmdlist[msg[1:]])
+            cmd = msg[len(prefix):]
+            if cmd in cmdlist.keys():
+                await self.bot.send_message(message.channel, cmdlist[cmd])
+
+    def get_prefix(self, msg):
+        for p in self.bot.command_prefix:
+            if msg.startswith(p):
+                return p
+        return False
 
 def check_folders():
     if not os.path.exists("data/customcom"):

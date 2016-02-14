@@ -33,9 +33,17 @@ lock = False
 
 @bot.event
 async def on_ready():
+    users = str(len([m for m in bot.get_all_members()]))
+    servers = str(len(bot.servers))
+    channels = str(len([c for c in bot.get_all_channels()]))
     print('------')
     print(bot.user.name + " is now online.")
     print('------')
+    print("Connected to:")
+    print(servers + " servers")
+    print(channels + " channels")
+    print(users + " users")
+    print("\n{0} active cogs with {1} commands\n".format(str(len(bot.cogs)), str(len(bot.commands))))
     bot.uptime = int(time.perf_counter())
 
 @bot.event
@@ -44,36 +52,8 @@ async def on_command(command, ctx):
 
 @bot.event
 async def on_message(message):
-    mod = bot.get_cog('Mod')
-    author = message.author
-
-    if mod is not None:
-        if checks.settings["OWNER"] == author.id:
-            await bot.process_commands(message)
-            return
-        if not message.channel.is_private:
-            if discord.utils.get(author.roles, name=checks.settings["ADMIN_ROLE"]) is not None:
-                await bot.process_commands(message)
-                return
-            if discord.utils.get(author.roles, name=checks.settings["MOD_ROLE"]) is not None:
-                await bot.process_commands(message)
-                return
-
-        if author.id in mod.blacklist_list:
-            return
-
-        if mod.whitelist_list:
-            if author.id not in mod.whitelist_list:
-                return
-
-        if not message.channel.is_private:
-            if message.server.id in mod.ignore_list["SERVERS"]:
-                return
-
-            if message.channel.id in mod.ignore_list["CHANNELS"]:
-                return
-
-    await bot.process_commands(message)
+    if user_allowed(message):
+        await bot.process_commands(message)
 
 @bot.command()
 @checks.is_owner()
@@ -212,6 +192,38 @@ async def _uptime():
     up = str(datetime.timedelta(seconds=up))
     await bot.say("`Uptime: {}`".format(up))
 
+def user_allowed(message):
+
+    author = message.author
+
+    mod = bot.get_cog('Mod')
+    
+    if mod is not None:
+        if checks.settings["OWNER"] == author.id:
+            return True
+        if not message.channel.is_private:
+            if discord.utils.get(author.roles, name=checks.settings["ADMIN_ROLE"]) is not None:
+                return True
+            if discord.utils.get(author.roles, name=checks.settings["MOD_ROLE"]) is not None:
+                return True
+
+        if author.id in mod.blacklist_list:
+            return False
+
+        if mod.whitelist_list:
+            if author.id not in mod.whitelist_list:
+                return False
+
+        if not message.channel.is_private:
+            if message.server.id in mod.ignore_list["SERVERS"]:
+                return False
+
+            if message.channel.id in mod.ignore_list["CHANNELS"]:
+                return False
+        return True
+    else:
+        return True
+
 def wait_for_answer(author):
     global lock
     print(author.name + " requested to be set as owner. If this is you, type 'yes'. Otherwise press enter.")
@@ -333,7 +345,7 @@ def load_cogs():
     register = tuple(data.keys()) #known cogs
     extensions = list_cogs()
 
-    if extensions: print("\nLoading cogs...")
+    if extensions: print("\nLoading cogs...\n")
     
     failed = []
     for extension in extensions:
