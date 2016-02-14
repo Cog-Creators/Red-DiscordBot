@@ -13,6 +13,7 @@ import re
 import aiohttp
 from bs4 import BeautifulSoup
 import json
+import time
 
 if not discord.opus.is_loaded():
     discord.opus.load_opus('libopus-0.dll')
@@ -42,6 +43,7 @@ class Audio:
         self.current = -1 #current track index in self.playlist
         self.downloader = {"DONE" : False, "TITLE" : False, "ID" : False, "URL" : False, "DURATION" : False, "DOWNLOADING" : False}
         self.skip_votes = []
+        self.cleanup_timer = int(time.perf_counter())
 
         self.sing =  ["https://www.youtube.com/watch?v=zGTkAVsrfg8", "https://www.youtube.com/watch?v=cGMWL8cOeAU",
                      "https://www.youtube.com/watch?v=vFrjMq4aL-g", "https://www.youtube.com/watch?v=WROI5WYBU_A",
@@ -344,7 +346,7 @@ class Audio:
 
     @audioset.command()
     async def maxlength(self, length : int):
-        """Maximum track length for requested links"""
+        """Maximum track length (seconds) for requested links"""
         self.settings["MAX_LENGTH"] = length
         await self.bot.say("Maximum length is now " + str(length) + " seconds.")
         fileIO("data/audio/settings.json", "save", self.settings)
@@ -359,6 +361,45 @@ class Audio:
         else:
             await self.bot.say("Volume must be between 0 and 1. Example: 0.40")
 
+    @audioset.command()
+    @checks.is_owner()
+    async def maxcache(self, size : int):
+        """Sets the maximum audio cache size (megabytes)
+
+        If set to 0, auto cleanup is disabled."""
+        self.settings["MAX_CACHE"] = size
+        fileIO("data/audio/settings.json", "save", self.settings)
+        if not size:
+            await self.bot.say("Auto audio cache cleanup disabled.")
+        else:
+            await self.bot.say("Maximum audio cache size has been set to " + str(size) + "MB.")
+
+
+    @commands.group(pass_context=True)
+    @checks.is_owner()
+    async def cache(self, ctx):
+        """Audio cache management"""
+        if ctx.invoked_subcommand is None:
+            await self.bot.say("Current audio cache size: " + str(self.cache_size()) + "MB" )
+
+    @cache.command(name="empty")
+    async def cache_delete(self):
+        """Empties audio cache"""
+        self.empty_cache()
+        await self.bot.say("Cache emptied.")
+
+    def empty_cache(self):
+        files = os.listdir("data/audio/cache")
+        for f in files:
+            os.unlink("data/audio/cache/" + f)
+
+    def cache_size(self):
+        total = [os.path.getsize("data/audio/cache/" + f) for f in os.listdir("data/audio/cache")]
+        size = 0
+        for f in total:
+            size += f
+        return int(size / (1024*1024.0))
+    
     async def play_video(self, link):
         self.downloader = {"DONE" : False, "TITLE" : False, "ID" : False, "URL": False, "DURATION" : False, "DOWNLOADING" : False}
         if "https://" in link or "http://" in link:
@@ -452,6 +493,15 @@ class Audio:
 
     async def incoming_messages(self, msg): # Workaround, need to fix
         if msg.author.id != self.bot.user.id:
+
+            if self.settings["MAX_CACHE"] != 0:
+                if abs(self.cleanup_timer - int(time.perf_counter())) >= 900 and not self.music_player.is_playing() and not self.downloader["DOWNLOADING"]: # checks cache's size every 15 minutes
+                    self.cleanup_timer = int(time.perf_counter())
+                    if self.cache_size() >= self.settings["MAX_CACHE"]:
+                        self.empty_cache()
+                        print("Cache emptied.")
+
+
             
             if msg.channel.is_private and msg.attachments != []:
                 await self.transfer_playlist(msg)
@@ -580,11 +630,21 @@ def check_folders():
 
 def check_files():
     
-    settings = {"VOLUME" : 0.5, "MAX_LENGTH" : 3700, "QUEUE_MODE" : True}
+    default = {"VOLUME" : 0.5, "MAX_LENGTH" : 3700, "QUEUE_MODE" : True, "MAX_CACHE" : 0}
+    settings_path = "data/audio/settings.json"
 
-    if not os.path.isfile("data/audio/settings.json"):
+    if not os.path.isfile(settings_path):
         print("Creating default audio settings.json...")
-        fileIO("data/audio/settings.json", "save", settings)
+        fileIO(settings_path, "save", default)
+    else: #consistency check
+        current = fileIO(settings_path, "load")
+        if current.keys() != default.keys():
+            for key in default.keys():
+                if key not in current.keys():
+                    current[key] = default[key]
+                    print("Adding " + str(key) + " field to audio settings.json")
+            fileIO(settings_path, "save", current)
+
 
     allowed = ["^(https:\/\/www\\.youtube\\.com\/watch\\?v=...........*)", "^(https:\/\/youtu.be\/...........*)",
               "^(https:\/\/youtube\\.com\/watch\\?v=...........*)", "^(https:\/\/soundcloud\\.com\/.*)"]
