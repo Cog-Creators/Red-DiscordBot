@@ -12,6 +12,7 @@ class Mod:
         self.whitelist_list = fileIO("data/mod/whitelist.json", "load")
         self.blacklist_list = fileIO("data/mod/blacklist.json", "load")
         self.ignore_list = fileIO("data/mod/ignorelist.json", "load")
+        self.filter = fileIO("data/mod/filter.json", "load")
 
     @commands.command(no_pm=True)
     @checks.admin_or_permissions(kick_members=True)
@@ -261,6 +262,105 @@ class Mod:
         msg += str(len(self.ignore_list["SERVERS"])) + " servers\n```\n"
         return msg
 
+    @commands.group(name="filter", pass_context=True, no_pm=True)
+    @checks.mod_or_permissions(manage_messages=True)
+    async def _filter(self, ctx):
+        """Adds/removes words from filter
+
+        Use double quotes to add/remove sentences
+        Using this command with no subcommands will send
+        the list of the server's filtered words."""
+        if ctx.invoked_subcommand is None:
+            await self.bot.say("Type help filter for info.")
+            server = ctx.message.server
+            author = ctx.message.author
+            msg = ""
+            if server.id in self.filter.keys():
+                if self.filter[server.id] != []:
+                    word_list = self.filter[server.id]
+                    for w in word_list:
+                        msg += '"' + w + '" '
+                    await self.bot.send_message(author, "Words filtered in this server: " + msg)
+
+    @_filter.command(name="add", pass_context=True)
+    async def filter_add(self, ctx, *words : str):
+        """Adds words to the filter
+
+        Use double quotes to add sentences
+        Examples:
+        filter add word1 word2 word3
+        filter add \"This is a sentence\""""
+        if words == ():
+            await self.bot.say("Type help filter add for info.")
+            return
+        server = ctx.message.server
+        added = 0
+        if server.id not in self.filter.keys():
+            self.filter[server.id] = []
+        for w in words:
+            if w.lower() not in self.filter[server.id] and w != "":
+                self.filter[server.id].append(w.lower())
+                added += 1
+        if added:
+            fileIO("data/mod/filter.json", "save", self.filter)
+            await self.bot.say("Words added to filter.")
+        else:
+            await self.bot.say("Words already in the filter.")
+
+    @_filter.command(name="remove", pass_context=True)
+    async def filter_remove(self, ctx, *words : str):
+        """Remove words from the filter
+
+        Use double quotes to remove sentences
+        Examples:
+        filter remove word1 word2 word3
+        filter remove \"This is a sentence\""""
+        if words == ():
+            await self.bot.say("Type help filter remove for info.")
+            return
+        server = ctx.message.server
+        removed = 0
+        if server.id not in self.filter.keys():
+            await self.bot.say("There are no filtered words in this server.")
+            return
+        for w in words:
+            if w.lower() in self.filter[server.id]:
+                self.filter[server.id].remove(w.lower())
+                removed += 1
+        if removed:
+            fileIO("data/mod/filter.json", "save", self.filter)
+            await self.bot.say("Words removed from filter.")
+        else:
+            await self.bot.say("Those words weren't in the filter.")
+
+    def immune_from_filter(self, message):
+        user = message.author
+        if user.id == checks.settings["OWNER"]:
+            return True
+        elif discord.utils.get(user.roles, name=checks.settings["ADMIN_ROLE"]):
+            return True
+        elif discord.utils.get(user.roles, name=checks.settings["MOD_ROLE"]):
+            return True
+        else:
+            return False
+
+    async def check_filter(self, message):
+        if message.channel.is_private:
+            return
+        server = message.server
+        can_delete = message.channel.permissions_for(server.me).manage_messages
+
+        if message.author.id == self.bot.user.id or self.immune_from_filter(message) or not can_delete: # Owner, admins and mods are immune to the filter
+            return
+
+        if server.id in self.filter.keys():
+            for w in self.filter[server.id]:
+                if w in message.content.lower():
+                    try: # Something else in discord.py is throwing a 404 error after deletion
+                        await self.bot.delete_message(message)
+                    except:
+                        pass
+                    print("Message deleted. Filtered: " + w )
 
 def check_folders():
     folders = ("data", "data/mod/")
@@ -284,7 +384,13 @@ def check_files():
         print("Creating empty ignorelist.json...")
         fileIO("data/mod/ignorelist.json", "save", ignore_list)
 
+    if not os.path.isfile("data/mod/filter.json"):
+        print("Creating empty filter.json...")
+        fileIO("data/mod/filter.json", "save", {})
+
 def setup(bot):
     check_folders()
     check_files()
-    bot.add_cog(Mod(bot))
+    n = Mod(bot)
+    bot.add_listener(n.check_filter, "on_message")
+    bot.add_cog(n)
