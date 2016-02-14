@@ -33,9 +33,17 @@ lock = False
 
 @bot.event
 async def on_ready():
+    users = str(len([m for m in bot.get_all_members()]))
+    servers = str(len(bot.servers))
+    channels = str(len([c for c in bot.get_all_channels()]))
     print('------')
     print(bot.user.name + " is now online.")
     print('------')
+    print("Connected to:")
+    print(servers + " servers")
+    print(channels + " channels")
+    print(users + " users")
+    print("\n{0} active cogs with {1} commands\n".format(str(len(bot.cogs)), str(len(bot.commands))))
     bot.uptime = int(time.perf_counter())
 
 @bot.event
@@ -337,7 +345,7 @@ def load_cogs():
     register = tuple(data.keys()) #known cogs
     extensions = list_cogs()
 
-    if extensions: print("\nLoading cogs...")
+    if extensions: print("\nLoading cogs...\n")
     
     failed = []
     for extension in extensions:
