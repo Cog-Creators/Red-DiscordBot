@@ -2,7 +2,6 @@ from discord.ext import commands
 import discord.utils
 import os.path
 import json
-import __main__
 
 #
 # This is a modified version of checks.py, originally made by Rapptz
@@ -11,16 +10,14 @@ import __main__
 #          https://github.com/Rapptz/RoboDanny/tree/async
 #
 
-main_path = os.path.dirname(os.path.realpath(__main__.__file__))
-
 try:
-    with open(main_path + "/data/red/settings.json", "r") as f:
+    with open("data/red/settings.json", "r") as f:
         settings = json.loads(f.read())
 except:
     settings = {"OWNER" : False, "ADMIN_ROLE" : False, "MOD_ROLE" : False}
 
 def is_owner_check(ctx):
-    return ctx.message.author.id == owner
+    return ctx.message.author.id == settings["OWNER"]
 
 def is_owner():
     return commands.check(is_owner_check)

@@ -58,7 +58,9 @@ async def on_message(message):
 @bot.command()
 @checks.is_owner()
 async def load(*, module : str):
-    """Loads a module"""
+    """Loads a module
+
+    Example: load cogs.mod"""
     module = module.strip()
     if not module in list_cogs():
         await bot.say("That module doesn't exist.")
@@ -74,7 +76,9 @@ async def load(*, module : str):
 @bot.command()
 @checks.is_owner()
 async def unload(*, module : str):
-    """Unloads a module"""
+    """Unloads a module
+
+    Example: unload cogs.mod"""
     module = module.strip()
     if not module in list_cogs():
         await bot.say("That module doesn't exist.")
@@ -90,7 +94,9 @@ async def unload(*, module : str):
 @bot.command(name="reload")
 @checks.is_owner()
 async def _reload(*, module : str):
-    """Reloads a module"""
+    """Reloads a module
+
+    Example: reload cogs.mod"""
     module = module.strip()
     if not module in list_cogs():
         await bot.say("That module doesn't exist.")
@@ -167,6 +173,19 @@ async def join(invite_url : discord.Invite):
         await bot.say("The invite was invalid or expired.")
     except discord.HTTPException:
         await bot.say("I wasn't able to accept the invite. Try again.")
+
+@bot.command(pass_context=True)
+@checks.is_owner()
+async def leave(ctx):
+    """Leaves server"""
+    message = ctx.message
+    await bot.say("Are you sure you want me to leave this server? Type yes to confirm")
+    response = await bot.wait_for_message(author=message.author)
+    if response.content.lower().strip() == "yes":
+        await bot.say("Alright. Bye :wave:")
+        await bot.leave_server(message.server)
+    else:
+        await bot.say("Ok I'll stay here then.")
 
 @bot.command()
 @checks.is_owner()
