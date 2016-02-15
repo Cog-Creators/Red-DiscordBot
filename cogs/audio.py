@@ -246,6 +246,7 @@ class Audio:
             if not self.playlist:
                 self.queue.append(link)
                 msg = ctx.message
+                result = await self.get_song_metadata(link)
                 if result["title"] != []:
                     await self.bot.say("{} has been put into the queue by {}.".format(result["title"], msg.author))
                 else:
