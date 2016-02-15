@@ -202,7 +202,6 @@ class General:
         Usage example:
         poll Is this a poll?;Yes;No;Maybe"""
         message = ctx.message
-        print(text)
         if len(text) == 1:
             if text[0].lower() == "stop":
                 await self.endpoll(message)

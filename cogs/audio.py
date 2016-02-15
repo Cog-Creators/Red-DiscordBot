@@ -391,7 +391,10 @@ class Audio:
     def empty_cache(self):
         files = os.listdir("data/audio/cache")
         for f in files:
-            os.unlink("data/audio/cache/" + f)
+            try:
+                os.unlink("data/audio/cache/" + f)
+            except PermissionError: # In case it tries to delete the file that it's currently playing
+                pass
 
     def cache_size(self):
         total = [os.path.getsize("data/audio/cache/" + f) for f in os.listdir("data/audio/cache")]
