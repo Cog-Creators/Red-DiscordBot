@@ -248,10 +248,14 @@ class Audio:
                 self.queue.append(link)
                 msg = ctx.message
                 result = await self.get_song_metadata(link)
-                if result["title"] != []:
-                    await self.bot.say("{} has been put into the queue by {}.".format(result["title"], msg.author))
-                else:
-                    await self.bot.say("The song has been put into the queue by {}, however it may error.".format(msg.author))
+                try: # In case of invalid SOUNDCLOUD ID
+                    if result["title"] != []:
+                        await self.bot.say("{} has been put into the queue by {}.".format(result["title"], msg.author))
+                    else:
+                        await self.bot.say("The song has been put into the queue by {}, however it may error.".format(msg.author))
+                except:
+                    await self.bot.say("A song has been put into the queue by {}.".format(msg.author))
+
             else:
                 await self.bot.say("I'm already playing a playlist.")
 
@@ -405,7 +409,7 @@ class Audio:
 
     @audioset.command()
     @checks.is_owner()
-    async def soundcloud(self, ID : str):
+    async def soundcloud(self, ID : str=None):
         """Sets the SoundCloud Client ID
         """
         self.settings["SOUNDCLOUD_CLIENT_ID"] = ID
@@ -678,7 +682,7 @@ class Audio:
             url = "http://api.soundcloud.com/resolve.json?url={0}&client_id={1}".format(song_url, self.settings["SOUNDCLOUD_CLIENT_ID"])
             result = await self.get_json(url)
         else:
-            result = {"title": "Couldn't get title"}
+            result = {"title": "A song "}
         return result
 
 class EmptyPlayer(): #dummy player
