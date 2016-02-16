@@ -62,7 +62,8 @@ class Audio:
                 if await self.is_alone_or_admin(msg.author):
                     self.queue = []  
                     self.current = -1
-                    self.playlist = [link]
+                    self.playlist = []
+                    self.queue.append(link)
                     self.music_player.stop()
                 else:
                     self.playlist = []
