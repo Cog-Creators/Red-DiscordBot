@@ -343,7 +343,7 @@ class Audio:
                     else:
                         song_names.append("Could not get song title")
                 except:
-                    await self.bot.say("Error.")
+                    song_names.append("Could not get song title")
             song_list = '\n'.join('{}: {}'.format(*k) for k in enumerate(song_names))
         elif self.music_player.is_playing():
             song_list = "0: {}".format(song_names)
