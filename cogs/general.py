@@ -106,7 +106,7 @@ class General:
         """
         question = " ".join(question)
         if question.endswith("?") and question != "?":
-            return await self.bot.say("```" + randchoice(self.ball) + "```")
+            return await self.bot.say("`" + randchoice(self.ball) + "`")
         else:
             return await self.bot.say("That doesn't look like a question.")
 
@@ -200,9 +200,9 @@ class General:
         """Starts/stops a poll
 
         Usage example:
-        poll Is this a poll?;Yes;No;Maybe"""
+        poll Is this a poll?;Yes;No;Maybe
+        poll stop"""
         message = ctx.message
-        print(text)
         if len(text) == 1:
             if text[0].lower() == "stop":
                 await self.endpoll(message)

@@ -71,7 +71,7 @@ class Economy:
                 self.add_money(id, self.settings["PAYDAY_CREDITS"])
                 await self.bot.say("{} `Here, take some credits. Enjoy! (+{} credits!)`".format(author.mention, str(self.settings["PAYDAY_CREDITS"])))
         else:
-            await self.bot.say("{} `You need an account to receive credits. (!economy)`".format(author.mention))
+            await self.bot.say("{} `You need an account to receive credits.`".format(author.mention))
 
     @commands.command(pass_context=True)
     async def payouts(self, ctx):
