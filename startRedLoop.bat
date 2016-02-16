@@ -1,4 +1,5 @@
 @Echo off
+chcp 65001
 :Start
 
 python red.py
