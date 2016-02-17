@@ -18,7 +18,7 @@ class Streams:
         self.bot = bot
         self.twitch_streams = fileIO("data/streams/twitch.json", "load")
         self.hitbox_streams = fileIO("data/streams/hitbox.json", "load")
-        self.streams_settings = fileIO("data/streams/settings.json", "load");
+        self.streams_settings = fileIO("data/streams/settings.json", "load")
         self.pattern = {"CHANNELS" : [], "NAME" : "", "ALREADY_ONLINE" : False}
 
     @commands.command()
@@ -127,9 +127,8 @@ class Streams:
         fileIO("data/streams/hitbox.json", "save", self.hitbox_streams)
 
     @streamalert.command(name="global", pass_context=True)
-    async def global_notify(self, ctx):
+    async def global_notify(self):
         """Adds/removes global notification when stream comes online"""
-        channel = ctx.message.channel
 
         if self.streams_settings["GLOBAL_NOTIFY"]:
             self.streams_settings["GLOBAL_NOTIFY"] = False
