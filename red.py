@@ -412,6 +412,8 @@ async def on_message(message):
 @client.async_event
 async def on_ready():
 	logger.info("I'm online " + "(" + client.user.id + ")")
+	print("THIS VERSION IS OBSOLETE AND NO LONGER BEING SUPPORTED.")
+	print("USE THE CURRENT ONE: https://github.com/Twentysix26/Red-DiscordBot/")
 	await gameSwitcher.changeGame(now=True)
 #	cns = threading.Thread(target=console, args=[])
 #	cns.start() # console, WIP
