@@ -4,4 +4,3 @@ __pycache__
 data
 !data/trivia/*
 !data/audio/playlists/*
-cogs/quote.py
