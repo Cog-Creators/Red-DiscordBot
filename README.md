@@ -3,7 +3,7 @@
 [<img align="right" title="Art by Supergiant Games" src="https://www.supergiantgames.com/static/images/transistor/cartoon_red.png">](https://www.supergiantgames.com/games/transistor/)
 
 [<img src="https://img.shields.io/badge/Support-me!-orange.svg">](https://www.patreon.com/Twentysix26) [<img src="https://img.shields.io/badge/Official-Server-green.svg">](https://discord.gg/0k4npTwMvTpv9wrh) **< Announcements & Help!**  
-**[ [Red is being rewritten. This version is no longer being worked on] ](https://github.com/Twentysix26/Red-DiscordBot/tree/develop)**  
+##**[ [This version is obsolete and no longer being supported. Use the current one] ](https://github.com/Twentysix26/Red-DiscordBot/)**  
 ### Cool title, but what does it do exactly?
 A bit of everything. Seriously though:  
 It has the [most common features](#general-commands) of many chatbots (!flip, !8, stopwatch, etc.), **custom commands** (inspired by Twitch's [Nightbot](https://www.nightbot.tv/)), memes.  
