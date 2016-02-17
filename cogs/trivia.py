@@ -104,7 +104,7 @@ class TriviaSession():
         triviaManager.trivia_sessions.remove(self)
 
     def loadList(self, qlist):
-        with open(qlist, "r", encoding="utf-8") as f:
+        with open(qlist, "r", encoding="ISO-8859-1") as f:
             qlist = f.readlines()
         parsedList = []
         for line in qlist:
