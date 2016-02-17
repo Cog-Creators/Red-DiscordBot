@@ -238,7 +238,7 @@ class Streams:
         return False
 
     async def stream_checker(self):
-        CHECK_DELAY = 10
+        CHECK_DELAY = 60
         while "Streams" in self.bot.cogs:
             
             old = (deepcopy(self.twitch_streams), deepcopy(self.hitbox_streams))
@@ -255,7 +255,7 @@ class Streams:
                                 await self.bot.send_message(self.bot.get_channel(channel), "http://www.twitch.tv/{} is online!".format(stream["NAME"]))
                 else:
                     if stream["ALREADY_ONLINE"] and not online: stream["ALREADY_ONLINE"] = False
-                await asyncio.sleep(1)
+                await asyncio.sleep(0.5)
             
             for stream in self.hitbox_streams:
                 online = await self.hitbox_online(stream["NAME"])
@@ -269,7 +269,7 @@ class Streams:
                                 await self.bot.send_message(self.bot.get_channel(channel), "http://www.hitbox.tv/{} is online!".format(stream["NAME"]))
                 else:
                     if stream["ALREADY_ONLINE"] and not online: stream["ALREADY_ONLINE"] = False
-                await asyncio.sleep(1)
+                await asyncio.sleep(0.5)
 
             if old != (self.twitch_streams, self.hitbox_streams):
                 fileIO("data/streams/twitch.json", "save", self.twitch_streams)
