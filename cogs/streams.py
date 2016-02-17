@@ -127,6 +127,7 @@ class Streams:
         fileIO("data/streams/hitbox.json", "save", self.hitbox_streams)
 
     @streamalert.command(name="global", pass_context=True)
+    @checks.is_owner()
     async def global_notify(self):
         """Adds/removes global notification when stream comes online"""
 
