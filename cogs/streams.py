@@ -139,38 +139,6 @@ class Streams:
 
         fileIO("data/streams/settings.json", "save", self.streams_settings)
 
-    @streamalert.command(name="list", pass_context=True)
-    async def alerts_list(self, ctx):
-        """Shows a list of tracked streams in the current channel"""
-        channel = ctx.message.channel
-
-        data = "```\n"
-        data += "Displaying a list of currently tracked channels\n"
-
-        data += "\nHitbox channels:\n"
-        if len(self.hitbox_streams) == 0:
-            data += "None\n"
-        else:
-            for i, s in enumerate(self.hitbox_streams):
-                if channel.id in s["CHANNELS"]:
-                    data += s["NAME"] + "\n"
-                else:
-                    data += "None\n" 
-
-        data += "\nTwitch channels:\n"
-        if len(self.twitch_streams) == 0:
-            data += "None\n"        
-        else:
-            for i, s in enumerate(self.twitch_streams):
-                if channel.id in s["CHANNELS"]:
-                    data += s["NAME"] + "\n"
-                else:
-                    data += "None\n" 
-
-        data += "```\n"
-
-        await self.bot.say(data)
-
 
     @streamalert.command(name="stop", pass_context=True)
     async def stop_alert(self, ctx):
