@@ -60,9 +60,10 @@ class Audio:
         if await self.check_voice(msg.author, msg):
             if self.is_playlist_valid([link]): # reusing a function
                 if await self.is_alone_or_admin(msg.author):
-                    self.queue = []  
+                    self.queue = []
                     self.current = -1
-                    self.playlist = [link]
+                    self.playlist = []
+                    self.queue.append(link)
                     self.music_player.stop()
                 else:
                     self.playlist = []
@@ -140,7 +141,7 @@ class Audio:
 
             votes_needed = int((len(current_users)-1) / 2)
 
-            if len(self.skip_votes)-1 >= votes_needed: 
+            if len(self.skip_votes)-1 >= votes_needed:
                 self.music_player.stop()
                 self.skip_votes = []
                 return
@@ -245,7 +246,16 @@ class Audio:
         if await self.check_voice(ctx.message.author, ctx.message):
             if not self.playlist:
                 self.queue.append(link)
-                await self.bot.say("Link added to queue.")
+                msg = ctx.message
+                result = await self.get_song_metadata(link)
+                try: # In case of invalid SOUNDCLOUD ID
+                    if result["title"] != []:
+                        await self.bot.say("{} has been put into the queue by {}.".format(result["title"], msg.author))
+                    else:
+                        await self.bot.say("The song has been put into the queue by {}, however it may error.".format(msg.author))
+                except:
+                    await self.bot.say("A song has been put into the queue by {}.".format(msg.author))
+
             else:
                 await self.bot.say("I'm already playing a playlist.")
 
@@ -318,6 +328,29 @@ class Audio:
         else:
             await self.bot.say("There are no local playlists.")
 
+    @_list.command(name="queue", pass_context=True)
+    async def list_queue(self, ctx):
+        message = ctx.message
+        cmdmsg = message
+        song_names = []
+        song_names.append(self.downloader["TITLE"])
+        if len(self.queue) > 0:
+            for song_url in self.queue:
+                try:
+                    result = await self.get_song_metadata(song_url)
+                    if result["title"] != []:
+                        song_names.append(result["title"])
+                    else:
+                        song_names.append("Could not get song title")
+                except:
+                    song_names.append("Could not get song title")
+            song_list = '\n'.join('{}: {}'.format(*k) for k in enumerate(song_names))
+        elif self.music_player.is_playing():
+            song_list = "0: {}".format(song_names)
+        else:
+            song_list = "None"
+        await self.bot.say("Videos in queue: \n" + song_list)
+
     @commands.group(pass_context=True)
     @checks.mod_or_permissions()
     async def audioset(self, ctx):
@@ -336,7 +369,7 @@ class Audio:
         if status == "on" or status == "true":
             self.settings["QUEUE_MODE"] = True
             await self.bot.say("Queue mode is now on.")
-        elif status == "off" or status == "false": 
+        elif status == "off" or status == "false":
             self.settings["QUEUE_MODE"] = False
             await self.bot.say("Queue mode is now off.")
         else:
@@ -374,6 +407,17 @@ class Audio:
         else:
             await self.bot.say("Maximum audio cache size has been set to " + str(size) + "MB.")
 
+    @audioset.command()
+    @checks.is_owner()
+    async def soundcloud(self, ID : str=None):
+        """Sets the SoundCloud Client ID
+        """
+        self.settings["SOUNDCLOUD_CLIENT_ID"] = ID
+        fileIO("data/audio/settings.json", "save", self.settings)
+        if not ID:
+            await self.bot.say("SoundCloud API intergration has been disabled")
+        else:
+            await self.bot.say("SoundCloud Client ID has been set")
 
     @commands.group(pass_context=True)
     @checks.is_owner()
@@ -402,7 +446,7 @@ class Audio:
         for f in total:
             size += f
         return int(size / (1024*1024.0))
-    
+
     async def play_video(self, link):
         self.downloader = {"DONE" : False, "TITLE" : False, "ID" : False, "URL": False, "DURATION" : False, "DOWNLOADING" : False}
         if "https://" in link or "http://" in link:
@@ -505,7 +549,7 @@ class Audio:
                         print("Cache emptied.")
 
 
-            
+
             if msg.channel.is_private and msg.attachments != []:
                 await self.transfer_playlist(msg)
         if not msg.channel.is_private:
@@ -608,6 +652,39 @@ class Audio:
         except:
             return False
 
+    async def get_json(self, url):
+        """
+        Returns the JSON from an URL.
+        Expects the url to be valid and return a JSON object.
+        """
+        async with aiohttp.get(url) as r:
+            result = await r.json()
+        return result
+
+    async def get_song_metadata(self, song_url):
+        """
+        Returns JSON object containing metadata about the song.
+        Expects song_url to be valid url and in acepted_list
+        """
+
+        youtube_regex = (
+            r'(https?://)?(www\.)?'
+            '(youtube|youtu|youtube-nocookie)\.(com|be)/'
+            '(watch\?v=|embed/|v/|.+\?v=)?([^&=%\?]{11})')
+        soundcloud_regex = "^(https:\\/\\/soundcloud\\.com\\/.*)"
+        is_youtube_link = re.match(youtube_regex, song_url)
+        is_soundcloud_link = re.match(soundcloud_regex, song_url)
+
+        if is_youtube_link:
+            url = "http://www.youtube.com/oembed?url={0}&format=json".format(song_url)
+            result = await self.get_json(url)
+        elif is_soundcloud_link and (self.settings["SOUNDCLOUD_CLIENT_ID"] is not None):
+            url = "http://api.soundcloud.com/resolve.json?url={0}&client_id={1}".format(song_url, self.settings["SOUNDCLOUD_CLIENT_ID"])
+            result = await self.get_json(url)
+        else:
+            result = {"title": "A song "}
+        return result
+
 class EmptyPlayer(): #dummy player
     def __init__(self):
         pass
@@ -632,8 +709,8 @@ def check_folders():
             os.makedirs(folder)
 
 def check_files():
-    
-    default = {"VOLUME" : 0.5, "MAX_LENGTH" : 3700, "QUEUE_MODE" : True, "MAX_CACHE" : 0}
+
+    default = {"VOLUME" : 0.5, "MAX_LENGTH" : 3700, "QUEUE_MODE" : True, "MAX_CACHE" : 0, "SOUNDCLOUD_CLIENT_ID": None}
     settings_path = "data/audio/settings.json"
 
     if not os.path.isfile(settings_path):
@@ -651,7 +728,7 @@ def check_files():
 
     allowed = ["^(https:\/\/www\\.youtube\\.com\/watch\\?v=...........*)", "^(https:\/\/youtu.be\/...........*)",
               "^(https:\/\/youtube\\.com\/watch\\?v=...........*)", "^(https:\/\/soundcloud\\.com\/.*)"]
-    
+
     if not os.path.isfile("data/audio/accepted_links.json"):
         print("Creating accepted_links.json...")
         fileIO("data/audio/accepted_links.json", "save", allowed)
