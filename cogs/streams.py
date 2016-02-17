@@ -219,7 +219,6 @@ class Streams:
                 await asyncio.sleep(1)
 
             if old != (self.twitch_streams, self.hitbox_streams):
-                print("DEBUG: Saving...")
                 fileIO("data/streams/twitch.json", "save", self.twitch_streams)
                 fileIO("data/streams/hitbox.json", "save", self.hitbox_streams)
             
