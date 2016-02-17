@@ -18,6 +18,7 @@ class Streams:
         self.bot = bot
         self.twitch_streams = fileIO("data/streams/twitch.json", "load")
         self.hitbox_streams = fileIO("data/streams/hitbox.json", "load")
+        self.streams_settings = fileIO("data/streams/settings.json", "load");
         self.pattern = {"CHANNELS" : [], "NAME" : "", "ALREADY_ONLINE" : False}
 
     @commands.command()
@@ -125,6 +126,21 @@ class Streams:
 
         fileIO("data/streams/hitbox.json", "save", self.hitbox_streams)
 
+    @streamalert.command(name="global", pass_context=True)
+    async def global_notify(self, ctx):
+        """Adds/removes global notification when stream comes online"""
+        channel = ctx.message.channel
+
+        if self.streams_settings["GLOBAL_NOTIFY"]:
+            self.streams_settings["GLOBAL_NOTIFY"] = False
+            await self.bot.say("Global streams alerts disabled.")
+        else:
+            self.streams_settings["GLOBAL_NOTIFY"] = True
+            await self.bot.say("Global streams alerts enabled.")
+
+        fileIO("data/streams/settings.json", "save", self.streams_settings)
+
+
     @streamalert.command(name="stop", pass_context=True)
     async def stop_alert(self, ctx):
         """Stops all streams alerts in the current channel"""
@@ -202,7 +218,10 @@ class Streams:
                     stream["ALREADY_ONLINE"] = True
                     for channel in stream["CHANNELS"]:
                         if self.bot.get_channel(channel):
-                            await self.bot.send_message(self.bot.get_channel(channel), "http://www.twitch.tv/{} is online!".format(stream["NAME"]))
+                            if self.streams_settings["GLOBAL_NOTIFY"]:
+                                await self.bot.send_message(self.bot.get_channel(channel), "@everyone http://www.twitch.tv/{} is online!".format(stream["NAME"]))
+                            else:
+                                await self.bot.send_message(self.bot.get_channel(channel), "http://www.twitch.tv/{} is online!".format(stream["NAME"]))
                 else:
                     if stream["ALREADY_ONLINE"] and not online: stream["ALREADY_ONLINE"] = False
                 await asyncio.sleep(1)
@@ -213,7 +232,10 @@ class Streams:
                     stream["ALREADY_ONLINE"] = True
                     for channel in stream["CHANNELS"]:
                         if self.bot.get_channel(channel):
-                            await self.bot.send_message(self.bot.get_channel(channel), "http://www.hitbox.tv/{} is online!".format(stream["NAME"]))
+                            if self.streams_settings["GLOBAL_NOTIFY"]:
+                                await self.bot.send_message(self.bot.get_channel(channel), "@everyone http://www.hitbox.tv/{} is online!".format(stream["NAME"]))    
+                            else:
+                                await self.bot.send_message(self.bot.get_channel(channel), "http://www.hitbox.tv/{} is online!".format(stream["NAME"]))
                 else:
                     if stream["ALREADY_ONLINE"] and not online: stream["ALREADY_ONLINE"] = False
                 await asyncio.sleep(1)
@@ -239,6 +261,11 @@ def check_files():
     if not fileIO(f, "check"):
         print("Creating empty hitbox.json...")
         fileIO(f, "save", [])
+
+    f = "data/streams/settings.json"
+    if not fileIO(f, "check"):
+        print("Creating settings.json...")
+        fileIO(f, "save", {"GLOBAL_NOTIFY" : False})
 
 def setup(bot):
     logger = logging.getLogger('aiohttp.client')
