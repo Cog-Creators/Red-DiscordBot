@@ -64,6 +64,7 @@ class Audio:
                     self.current = -1
                     self.playlist = []
                     self.queue.append(link)
+                    self.music_player.paused = False
                     self.music_player.stop()
                 else:
                     self.playlist = []
@@ -108,6 +109,7 @@ class Audio:
                 self.current = -1
                 self.playlist = fileIO("data/audio/playlists/" + name, "load")["playlist"]
                 if random: shuffle(self.playlist)
+                self.music_player.paused = False
                 self.music_player.stop()
 
     @commands.command(pass_context=True, aliases=["next"], no_pm=True)
@@ -117,6 +119,7 @@ class Audio:
         msg = ctx.message
         if self.music_player.is_playing():
             if await self.is_alone_or_admin(msg.author):
+                self.music_player.paused = False
                 self.music_player.stop()
             else:
                 await self.vote_skip(msg)
@@ -142,6 +145,7 @@ class Audio:
             votes_needed = int((len(current_users)-1) / 2)
 
             if len(self.skip_votes)-1 >= votes_needed:
+                self.music_player.paused = False
                 self.music_player.stop()
                 self.skip_votes = []
                 return
@@ -168,6 +172,7 @@ class Audio:
                         self.queue = []
                         self.current = -1
                         self.playlist = files
+                        self.music_player.paused = False
                         self.music_player.stop()
                 else:
                     await self.bot.say("I'm in queue mode. Controls are disabled if you're in a room with multiple people.")
@@ -214,6 +219,7 @@ class Audio:
                     self.current = len(self.playlist) -3
                 elif self.current == -2:
                     self.current = len(self.playlist) -2
+                self.music_player.paused = False
                 self.music_player.stop()
 
 
@@ -297,6 +303,22 @@ class Audio:
                     await self.play_video(rndchoice(self.sing))
                 else:
                     await self.bot.say("I'm already playing music for someone else at the moment.")
+
+    @commands.command()
+    async def pause(self):
+        """Pauses the current song"""
+        if self.music_player.is_playing():
+            self.music_player.paused = True
+            self.music_player.pause()
+            await self.bot.say("Song paused.")
+            
+    @commands.command()
+    async def resume(self):
+        """Resumes paused song."""
+        if not self.music_player.is_playing():
+            self.music_player.paused = False
+            self.music_player.resume()
+            await self.bot.say("Resuming song.")
 
     @commands.group(name="list", pass_context=True)
     async def _list(self, ctx):
@@ -471,6 +493,7 @@ class Audio:
             try:
                 self.music_player.stop()
                 self.music_player = self.bot.voice.create_ffmpeg_player(path + self.downloader["ID"], options='''-filter:a "volume={}"'''.format(self.settings["VOLUME"]))
+                self.music_player.paused = False
                 self.music_player.start()
                 if path != "": await self.bot.change_status(discord.Game(name=self.downloader["TITLE"]))
             except discord.errors.ClientException:
@@ -519,19 +542,20 @@ class Audio:
 
     async def queue_manager(self):
         while "Audio" in self.bot.cogs:
-            if self.queue and not self.music_player.is_playing():
-                new_link = self.queue[0]
-                self.queue.pop(0)
-                self.skip_votes = []
-                await self.play_video(new_link)
-            elif self.playlist and not self.music_player.is_playing():
-                if not self.current == len(self.playlist)-1:
-                    self.current += 1
-                else:
-                    self.current = 0
-                new_link = self.playlist[self.current]
-                self.skip_votes = []
-                await self.play_video(new_link)
+            if not self.music_player.paused:
+                if self.queue and not self.music_player.is_playing():
+                    new_link = self.queue[0]
+                    self.queue.pop(0)
+                    self.skip_votes = []
+                    await self.play_video(new_link)
+                elif self.playlist and not self.music_player.is_playing():
+                    if not self.current == len(self.playlist)-1:
+                        self.current += 1
+                    else:
+                        self.current = 0
+                    new_link = self.playlist[self.current]
+                    self.skip_votes = []
+                    await self.play_video(new_link)
             await asyncio.sleep(1)
 
     def get_video(self, url, audio):
@@ -551,7 +575,7 @@ class Audio:
         if msg.author.id != self.bot.user.id:
 
             if self.settings["MAX_CACHE"] != 0:
-                if abs(self.cleanup_timer - int(time.perf_counter())) >= 900 and not self.music_player.is_playing() and not self.downloader["DOWNLOADING"]: # checks cache's size every 15 minutes
+                if abs(self.cleanup_timer - int(time.perf_counter())) >= 900: # checks cache's size every 15 minutes
                     self.cleanup_timer = int(time.perf_counter())
                     if self.cache_size() >= self.settings["MAX_CACHE"]:
                         self.empty_cache()
@@ -696,7 +720,7 @@ class Audio:
 
 class EmptyPlayer(): #dummy player
     def __init__(self):
-        pass
+        self.paused = False
 
     def stop(self):
         pass
