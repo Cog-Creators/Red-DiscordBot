@@ -240,10 +240,15 @@ class Audio:
         await self.bot.voice.disconnect()
 
     @commands.command(name="queue", pass_context=True, no_pm=True) #check that author is in the same channel as the bot
-    async def _queue(self, ctx, link : str):
+    async def _queue(self, ctx, link : str=None):
         """Add link to queue
+
+        Shows queue list if no links are provided.
         """
-        if await self.check_voice(ctx.message.author, ctx.message):
+        if not link:
+            queue_list = await self.queue_titles()
+            await self.bot.say("Videos in queue: \n" + queue_list + "\n\nType queue <link> to add a link to the queue.")
+        elif await self.check_voice(ctx.message.author, ctx.message) and self.is_playlist_valid([link]):
             if not self.playlist:
                 self.queue.append(link)
                 msg = ctx.message
@@ -258,6 +263,8 @@ class Audio:
 
             else:
                 await self.bot.say("I'm already playing a playlist.")
+        else:
+            await self.bot.say("That link is now allowed.")
 
     async def is_alone_or_admin(self, author): #Direct control. fix everything
         if not self.settings["QUEUE_MODE"]:
@@ -330,8 +337,10 @@ class Audio:
 
     @_list.command(name="queue", pass_context=True)
     async def list_queue(self, ctx):
-        message = ctx.message
-        cmdmsg = message
+        queue_list = await self.queue_titles()
+        await self.bot.say("Videos in queue: \n" + queue_list)
+
+    async def queue_titles(self):
         song_names = []
         song_names.append(self.downloader["TITLE"])
         if len(self.queue) > 0:
@@ -344,12 +353,12 @@ class Audio:
                         song_names.append("Could not get song title")
                 except:
                     song_names.append("Could not get song title")
-            song_list = '\n'.join('{}: {}'.format(*k) for k in enumerate(song_names))
+            song_list = "\n".join(["{}: {}".format(str(i+1), s) for i, s in enumerate(song_names)])
         elif self.music_player.is_playing():
-            song_list = "0: {}".format(song_names)
+            song_list = "1: {}".format(song_names[0])
         else:
             song_list = "None"
-        await self.bot.say("Videos in queue: \n" + song_list)
+        return song_list
 
     @commands.group(pass_context=True)
     @checks.mod_or_permissions()
