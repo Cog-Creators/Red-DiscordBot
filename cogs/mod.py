@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from .utils import checks
 from .utils.dataIO import fileIO
+from __main__ import send_cmd_help
 import os
 
 class Mod:
@@ -52,7 +53,7 @@ class Mod:
         cleanup user [name/mention] [number]
         cleanup text \"Text here\" [number]"""
         if ctx.invoked_subcommand is None:
-            await self.bot.say("Type help cleanup for info.")
+            await send_cmd_help(ctx)
 
     @cleanup.command(pass_context=True, no_pm=True)
     async def text(self, ctx, text : str, number : int):
@@ -121,7 +122,7 @@ class Mod:
     async def blacklist(self, ctx):
         """Bans user from using the bot"""
         if ctx.invoked_subcommand is None:
-            await self.bot.say("Type help blacklist for info.")
+            await send_cmd_help(ctx)
 
     @blacklist.command(name="add")
     async def _blacklist_add(self, user : discord.Member):
@@ -149,7 +150,7 @@ class Mod:
     async def whitelist(self, ctx):
         """Users who will be able to use the bot"""
         if ctx.invoked_subcommand is None:
-            await self.bot.say("Type help whitelist for info.")
+            await send_cmd_help(ctx)
 
     @whitelist.command(name="add")
     async def _whitelist_add(self, user : discord.Member):
@@ -180,8 +181,8 @@ class Mod:
     async def ignore(self, ctx):
         """Adds servers/channels to ignorelist"""
         if ctx.invoked_subcommand is None:
-            
-            await self.bot.say(self.count_ignored() + "Type help ignore for info.")
+            await send_cmd_help(ctx)
+            await self.bot.say(self.count_ignored())
 
     @ignore.command(name="channel", pass_context=True)
     async def ignore_channel(self, ctx, channel : discord.Channel=None):
@@ -221,7 +222,8 @@ class Mod:
     async def unignore(self, ctx):
         """Removes servers/channels from ignorelist"""
         if ctx.invoked_subcommand is None:
-            await self.bot.say(self.count_ignored() + "Type help unignore for info.")
+            await send_cmd_help(ctx)
+            await self.bot.say(self.count_ignored())
 
     @unignore.command(name="channel", pass_context=True)
     async def unignore_channel(self, ctx, channel : discord.Channel=None):
@@ -271,7 +273,7 @@ class Mod:
         Using this command with no subcommands will send
         the list of the server's filtered words."""
         if ctx.invoked_subcommand is None:
-            await self.bot.say("Type help filter for info.")
+            await send_cmd_help(ctx)
             server = ctx.message.server
             author = ctx.message.author
             msg = ""
@@ -291,7 +293,7 @@ class Mod:
         filter add word1 word2 word3
         filter add \"This is a sentence\""""
         if words == ():
-            await self.bot.say("Type help filter add for info.")
+            await send_cmd_help(ctx)
             return
         server = ctx.message.server
         added = 0
@@ -316,7 +318,7 @@ class Mod:
         filter remove word1 word2 word3
         filter remove \"This is a sentence\""""
         if words == ():
-            await self.bot.say("Type help filter remove for info.")
+            await send_cmd_help(ctx)
             return
         server = ctx.message.server
         removed = 0

@@ -3,6 +3,8 @@ from discord.ext import commands
 from .utils.dataIO import fileIO
 from .utils import checks
 from random import randint
+from copy import deepcopy
+from __main__ import send_cmd_help
 import os
 import time
 
@@ -31,7 +33,7 @@ class Economy:
     async def _bank(self, ctx):
         """Bank operations"""
         if ctx.invoked_subcommand is None:
-            await self.bot.say("Type help bank for info.")
+            await send_cmd_help(ctx)
 
     @_bank.command(pass_context=True, no_pm=True)
     async def register(self, ctx):

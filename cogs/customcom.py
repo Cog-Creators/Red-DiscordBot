@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from .utils.dataIO import fileIO
 from .utils import checks
-from __main__ import user_allowed
+from __main__ import user_allowed, send_cmd_help
 import os
 
 class CustomCommands:
@@ -21,7 +21,7 @@ class CustomCommands:
         !addcom yourcommand Text you want
         """
         if text == ():
-            await self.bot.say("addcom [command] [text/url]")
+            await send_cmd_help(ctx)
             return
         server = ctx.message.server
         channel = ctx.message.channel
@@ -46,7 +46,7 @@ class CustomCommands:
         !editcom yourcommand Text you want
         """
         if text == ():
-            await self.bot.say("editcom [command] [text/url]")
+            await send_cmd_help(ctx)
             return
         server = ctx.message.server
         channel = ctx.message.channel
