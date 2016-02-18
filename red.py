@@ -55,6 +55,23 @@ async def on_message(message):
     if user_allowed(message):
         await bot.process_commands(message)
 
+@bot.event
+async def on_command_error(error, ctx):
+    if isinstance(error, commands.MissingRequiredArgument):
+        await send_cmd_help(ctx)
+    elif isinstance(error, commands.BadArgument):
+        await send_cmd_help(ctx)
+
+async def send_cmd_help(ctx):
+    if ctx.invoked_subcommand:
+        pages = bot.formatter.format_help_for(ctx, ctx.invoked_subcommand)
+        for page in pages:
+            await bot.send_message(ctx.message.channel, page)
+    else:
+        pages = bot.formatter.format_help_for(ctx, ctx.command)
+        for page in pages:
+            await bot.send_message(ctx.message.channel, page)
+
 @bot.command()
 @checks.is_owner()
 async def load(*, module : str):
@@ -160,7 +177,7 @@ async def setowner(ctx):
 @checks.is_owner()
 async def shutdown():
     """Shuts down Red"""
-    exit(1)
+    await bot.logout()
 
 @bot.command()
 @checks.is_owner()
