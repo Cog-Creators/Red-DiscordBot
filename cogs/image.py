@@ -81,12 +81,11 @@ class Image:
             if len(text[0]) > 1 and len(text[0]) < 20:
                 try:
                     msg = "+".join(text)
-                    search = "http://api.giphy.com/v1/gifs/search?q=" + msg + "&api_key=dc6zaTOxFJmzC"
+                    search = "http://api.giphy.com/v1/gifs/random?&api_key=dc6zaTOxFJmzC&tag=" + msg
                     async with aiohttp.get(search) as r:
                         result = await r.json()
                         if result["data"] != []:
-                            maxarray = len(result)
-                            url = result["data"][random.randint(0,maxarray)]["url"]
+                            url = result["data"]["url"]
                             await self.bot.say(url)
                         else:
                             await self.bot.say("Your search terms gave no results.")
