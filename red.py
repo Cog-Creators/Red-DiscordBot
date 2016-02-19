@@ -344,7 +344,7 @@ def check_configs():
                 settings["PREFIXES"].append(new_prefix)
 
         print("\nInput *your own* ID. You can type \@Yourname in chat to see it (copy only the numbers).")
-        print("If you want, you can also do it later with [prefix]setowner. Leave empty in that case.")
+        print("If you want, you can also do it later with [prefix]set owner. Leave empty in that case.")
         settings["OWNER"] = input("\nID> ")
         if settings["OWNER"] == "": settings["OWNER"] = "id_here"
 
