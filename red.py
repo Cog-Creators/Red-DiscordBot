@@ -156,8 +156,14 @@ async def debug(ctx, *, code : str):
             result = result.replace(w.upper(), r)
     await bot.say(result)
 
-@bot.command(pass_context=True, hidden=True)
-async def setowner(ctx):
+@bot.group(name="set", pass_context=True)
+async def _set(ctx):
+    """Changes settings"""
+    if ctx.invoked_subcommand is None:
+        await send_cmd_help(ctx)
+
+@_set.command(pass_context=True)
+async def owner(ctx):
     """Sets owner"""
     global lock
     msg = ctx.message
@@ -172,6 +178,35 @@ async def setowner(ctx):
     lock = True
     t = threading.Thread(target=wait_for_answer, args=(ctx.message.author,))
     t.start()
+
+@_set.command()
+@checks.is_owner()
+async def prefix(*prefixes):
+    """Sets prefixes
+
+    Must be separated by a space. Enclose in double
+    quotes if a prefix contains spaces."""
+    if prefixes == ():
+        await bot.say("Example: setprefix [ ! ^ .")
+        return
+    bot.command_prefix = list(prefixes)
+    data = load_settings()
+    data["PREFIXES"] = list(prefixes)
+    with open("data/red/settings.json", "w") as f:
+            f.write(json.dumps(data))
+    if len(prefixes) > 1:
+        await bot.say("Prefixes set")
+    else:
+        await bot.say("Prefix set")
+
+@_set.command(pass_context=True)
+@checks.is_owner()
+async def name(ctx, *name : str):
+    """Sets Red's name"""
+    if name == ():
+        await send_cmd_help(ctx)
+    await bot.edit_profile(settings["PASSWORD"], username=" ".join(name))
+    await bot.say("Done.")
 
 @bot.command()
 @checks.is_owner()
@@ -203,23 +238,6 @@ async def leave(ctx):
         await bot.leave_server(message.server)
     else:
         await bot.say("Ok I'll stay here then.")
-
-@bot.command()
-@checks.is_owner()
-async def setprefix(*text):
-    """Set prefixes"""
-    if text == ():
-        await bot.say("Example: setprefix [ ! ^ .")
-        return
-    bot.command_prefix = list(text)
-    data = load_settings()
-    data["PREFIXES"] = list(text)
-    with open("data/red/settings.json", "w") as f:
-            f.write(json.dumps(data))
-    if len(text) > 1:
-        await bot.say("Prefixes set")
-    else:
-        await bot.say("Prefix set")
 
 @bot.command(name="uptime")
 async def _uptime():
