@@ -513,8 +513,9 @@ class Audio:
             if author.voice_channel == v_channel:
                 return True
             elif len(v_channel.voice_members) == 1:
-                if author.is_voice_connected():
+                if author.voice_channel:
                     if author.voice_channel.permissions_for(message.server.me).connect:
+                        wait = await self.close_audio()
                         await self.bot.join_voice_channel(author.voice_channel)
                         return True
                     else:
