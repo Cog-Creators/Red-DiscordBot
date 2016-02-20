@@ -10,6 +10,7 @@ import glob
 import os
 import time
 import sys
+import logging
 
 #
 #  Red, a Discord bot by Twentysix, based on discord.py and its command extension
@@ -368,6 +369,14 @@ def check_configs():
         with open(cogs_s_path, "w") as f:
             f.write(json.dumps(cogs))
 
+def set_logger():
+    global logger
+    logger = logging.getLogger("discord")
+    logger.setLevel(logging.WARNING)
+    handler = logging.FileHandler(filename='data/red/discord.log', encoding='utf-8', mode='a')
+    handler.setFormatter(logging.Formatter('%(asctime)s %(message)s', datefmt="[%d/%m/%Y %H:%M]"))
+    logger.addHandler(handler)
+
 def get_answer():
     choices = ("yes", "y", "no", "n")
     c = ""
@@ -438,6 +447,7 @@ def main():
     global settings
     check_folders()
     check_configs()
+    set_logger()
     settings = load_settings()
     checks.owner = settings["OWNER"]
     load_cogs()

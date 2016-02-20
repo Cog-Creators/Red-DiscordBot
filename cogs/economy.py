@@ -7,6 +7,7 @@ from copy import deepcopy
 from __main__ import send_cmd_help
 import os
 import time
+import logging
 
 slot_payouts = """Slot machine payouts:
     :two: :two: :six: Bet * 5000
@@ -42,18 +43,59 @@ class Economy:
         if user.id not in self.bank:
             self.bank[user.id] = {"name" : user.name, "balance" : 100}
             fileIO("data/economy/bank.json", "save", self.bank)
-            await self.bot.say("{} `Account opened. Current balance: {}`".format(user.mention, str(self.check_balance(user.id))))
+            await self.bot.say("{} Account opened. Current balance: {}".format(user.mention, str(self.check_balance(user.id))))
         else:
-            await self.bot.say("{} `You already have an account at the Twentysix bank.`".format(user.mention))
+            await self.bot.say("{} You already have an account at the Twentysix bank.".format(user.mention))
 
     @_bank.command(pass_context=True)
-    async def balance(self, ctx):
-        """Shows your current balance"""
-        user = ctx.message.author
-        if self.account_check(user.id):
-            await self.bot.say("{} `Your balance is: {}`".format(user.mention, str(self.check_balance(user.id))))
+    async def balance(self, ctx, user : discord.Member=None):
+        """Shows balance of user.
+
+        Defaults to yours."""
+        if not user:
+            user = ctx.message.author
+            if self.account_check(user.id):
+                await self.bot.say("{} Your balance is: {}".format(user.mention, str(self.check_balance(user.id))))
+            else:
+                await self.bot.say("{} You don't have an account at the Twentysix bank. Type !register to open one.".format(user.mention, str(self.check_balance(user.id))))
         else:
-            await self.bot.say("{} `You don't have an account at the Twentysix bank. Type !register to open one.`".format(user.mention, str(self.check_balance(user.id))))
+            if self.account_check(user.id):
+                balance = self.check_balance(user.id)
+                await self.bot.say("{}'s balance is {}".format(user.name, str(balance)))
+            else:
+                await self.bot.say("That user has no bank account.")
+
+    @_bank.command(pass_context=True)
+    async def transfer(self, ctx, user : discord.Member, sum : int):
+        """Transfer credits to other users"""
+        author = ctx.message.author
+        if author == user:
+            await self.bot.say("You can't transfer money to yourself.")
+            return
+        if self.account_check(user.id):
+            if self.enough_money(author.id, sum):
+                self.withdraw_money(author.id, sum)
+                self.add_money(user.id, sum)
+                logger.info("{}({}) transferred {} credits to {}({})".format(author.name, author.id, str(sum), user.name, user.id))
+                await self.bot.say("{} credits have been transferred to {}'s account.".format(str(sum), user.name))
+            else:
+                await self.bot.say("You don't have that sum in your bank account.")
+        else:
+            await self.bot.say("That user has no bank account.")
+
+    @_bank.command(name="set", pass_context=True)
+    @checks.admin_or_permissions(manage_server=True)
+    async def _set(self, ctx, user : discord.Member, sum : int):
+        """Sets money of user's bank account
+
+        Admin/owner restricted."""
+        author = ctx.message.author
+        done = self.set_money(user.id, sum)
+        if done:
+            logger.info("{}({}) set {} credits to {} ({})".format(author.name, author.id, str(sum), user.name, user.id))
+            await self.bot.say("{}'s credits have been set to {}".format(user.name, str(sum)))
+        else:
+            await self.bot.say("User has no bank account.")
 
     @commands.command(pass_context=True, no_pm=True)
     async def payday(self, ctx):
@@ -65,15 +107,15 @@ class Economy:
                 if abs(self.payday_register[id] - int(time.perf_counter()))  >= self.settings["PAYDAY_TIME"]: 
                     self.add_money(id, self.settings["PAYDAY_CREDITS"])
                     self.payday_register[id] = int(time.perf_counter())
-                    await self.bot.say("{} `Here, take some credits. Enjoy! (+{} credits!)`".format(author.mention, str(self.settings["PAYDAY_CREDITS"])))
+                    await self.bot.say("{} Here, take some credits. Enjoy! (+{} credits!)".format(author.mention, str(self.settings["PAYDAY_CREDITS"])))
                 else:
-                    await self.bot.say("{} `Too soon. You have to wait {} seconds between each payday.`".format(author.mention, str(self.settings["PAYDAY_TIME"])))
+                    await self.bot.say("{} Too soon. You have to wait {} seconds between each payday.".format(author.mention, str(self.settings["PAYDAY_TIME"])))
             else:
                 self.payday_register[id] = int(time.perf_counter())
                 self.add_money(id, self.settings["PAYDAY_CREDITS"])
-                await self.bot.say("{} `Here, take some credits. Enjoy! (+{} credits!)`".format(author.mention, str(self.settings["PAYDAY_CREDITS"])))
+                await self.bot.say("{} Here, take some credits. Enjoy! (+{} credits!)".format(author.mention, str(self.settings["PAYDAY_CREDITS"])))
         else:
-            await self.bot.say("{} `You need an account to receive credits.`".format(author.mention))
+            await self.bot.say("{} You need an account to receive credits.".format(author.mention))
 
     @commands.command(pass_context=True)
     async def payouts(self, ctx):
@@ -88,9 +130,9 @@ class Economy:
             if bid >= self.settings["SLOT_MIN"] and bid <= self.settings["SLOT_MAX"]:
                 await self.slot_machine(ctx.message, bid)
             else:
-                await self.bot.say("{0} `Bid must be between {1} and {2}.`".format(author.mention, self.settings["SLOT_MIN"], self.settings["SLOT_MAX"]))
+                await self.bot.say("{0} Bid must be between {1} and {2}.".format(author.mention, self.settings["SLOT_MIN"], self.settings["SLOT_MAX"]))
         else:
-            await self.bot.say("{0} `You need an account with enough funds to play the slot machine.`".format(author.mention))
+            await self.bot.say("{0} You need an account with enough funds to play the slot machine.".format(author.mention))
 
     async def slot_machine(self, message, bid):
         reel_pattern = [":cherries:", ":cookie:", ":two:", ":four_leaf_clover:", ":cyclone:", ":sunflower:", ":six:", ":mushroom:", ":heart:", ":snowflake:"]
@@ -109,42 +151,42 @@ class Economy:
 
         if line[0] == ":two:" and line[1] == ":two:" and line[2] == ":six:":
             bid = bid * 5000
-            await self.bot.send_message(message.channel, "{}{} `226! Your bet is multiplied * 5000! {}!` ".format(display_reels, message.author.mention, str(bid)))
+            await self.bot.send_message(message.channel, "{}{} 226! Your bet is multiplied * 5000! {}! ".format(display_reels, message.author.mention, str(bid)))
         elif line[0] == ":four_leaf_clover:" and line[1] == ":four_leaf_clover:" and line[2] == ":four_leaf_clover:":
             bid += 1000
-            await self.bot.send_message(message.channel, "{}{} `Three FLC! +1000!` ".format(display_reels, message.author.mention))
+            await self.bot.send_message(message.channel, "{}{} Three FLC! +1000! ".format(display_reels, message.author.mention))
         elif line[0] == ":cherries:" and line[1] == ":cherries:" and line[2] == ":cherries:":
             bid += 800
-            await self.bot.send_message(message.channel, "{}{} `Three cherries! +800!` ".format(display_reels, message.author.mention))
+            await self.bot.send_message(message.channel, "{}{} Three cherries! +800! ".format(display_reels, message.author.mention))
         elif line[0] == line[1] == line[2]:
             bid += 500
-            await self.bot.send_message(message.channel, "{}{} `Three symbols! +500!` ".format(display_reels, message.author.mention))
+            await self.bot.send_message(message.channel, "{}{} Three symbols! +500! ".format(display_reels, message.author.mention))
         elif line[0] == ":two:" and line[1] == ":six:" or line[1] == ":two:" and line[2] == ":six:":
             bid = bid * 4
-            await self.bot.send_message(message.channel, "{}{} `26! Your bet is multiplied * 4! {}!` ".format(display_reels, message.author.mention, str(bid)))
+            await self.bot.send_message(message.channel, "{}{} 26! Your bet is multiplied * 4! {}! ".format(display_reels, message.author.mention, str(bid)))
         elif line[0] == ":cherries:" and line[1] == ":cherries:" or line[1] == ":cherries:" and line[2] == ":cherries:":
             bid = bid * 3
-            await self.bot.send_message(message.channel, "{}{} `Two cherries! Your bet is multiplied * 3! {}!` ".format(display_reels, message.author.mention, str(bid)))
+            await self.bot.send_message(message.channel, "{}{} Two cherries! Your bet is multiplied * 3! {}! ".format(display_reels, message.author.mention, str(bid)))
         elif line[0] == line[1] or line[1] == line[2]:
             bid = bid * 2
-            await self.bot.send_message(message.channel, "{}{} `Two symbols! Your bet is multiplied * 2! {}!` ".format(display_reels, message.author.mention, str(bid)))
+            await self.bot.send_message(message.channel, "{}{} Two symbols! Your bet is multiplied * 2! {}! ".format(display_reels, message.author.mention, str(bid)))
         else:
-            await self.bot.send_message(message.channel, "{}{} `Nothing! Lost bet.` ".format(display_reels, message.author.mention))
+            await self.bot.send_message(message.channel, "{}{} Nothing! Lost bet. ".format(display_reels, message.author.mention))
             self.withdraw_money(message.author.id, bid)
-            await self.bot.send_message(message.channel, "`Credits left: {}`".format(str(self.check_balance(message.author.id))))
+            await self.bot.send_message(message.channel, "Credits left: {}".format(str(self.check_balance(message.author.id))))
             return True
         self.add_money(message.author.id, bid)
-        await self.bot.send_message(message.channel, "`Current credits: {}`".format(str(self.check_balance(message.author.id))))
+        await self.bot.send_message(message.channel, "Current credits: {}".format(str(self.check_balance(message.author.id))))
 
     @commands.group(pass_context=True, no_pm=True)
-    @checks.mod_or_permissions()
+    @checks.admin_or_permissions(manage_server=True)
     async def economyset(self, ctx):
         """Changes economy module settings"""
         if ctx.invoked_subcommand is None:
-            msg = "```"
+            msg = ""
             for k, v in self.settings.items():
                 msg += str(k) + ": " + str(v) + "\n"
-            msg += "\nType help economyset to see the list of commands.```"
+            msg += "\nType help economyset to see the list of commands."
             await self.bot.say(msg)
 
     @economyset.command()
@@ -213,6 +255,14 @@ class Economy:
         else:
             return False
 
+    def set_money(self, id, amount):
+        if self.account_check(id):      
+            self.bank[id]["balance"] = amount
+            fileIO("data/economy/bank.json", "save", self.bank)
+            return True
+        else:
+            return False
+
 def check_folders():
     if not os.path.exists("data/economy"):
         print("Creating data/economy folder...")
@@ -232,6 +282,12 @@ def check_files():
         fileIO(f, "save", {})
 
 def setup(bot):
+    global logger
     check_folders()
     check_files()
+    logger = logging.getLogger("economy")
+    logger.setLevel(logging.INFO)
+    handler = logging.FileHandler(filename='data/economy/economy.log', encoding='utf-8', mode='a')
+    handler.setFormatter(logging.Formatter('%(asctime)s %(message)s', datefmt="[%d/%m/%Y %H:%M]"))
+    logger.addHandler(handler)
     bot.add_cog(Economy(bot))
