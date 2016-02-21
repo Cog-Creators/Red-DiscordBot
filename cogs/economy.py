@@ -286,8 +286,9 @@ def setup(bot):
     check_folders()
     check_files()
     logger = logging.getLogger("economy")
-    logger.setLevel(logging.INFO)
-    handler = logging.FileHandler(filename='data/economy/economy.log', encoding='utf-8', mode='a')
-    handler.setFormatter(logging.Formatter('%(asctime)s %(message)s', datefmt="[%d/%m/%Y %H:%M]"))
-    logger.addHandler(handler)
+    if logger.level == 0: # Prevents the logger from being loaded again in case of module reload
+        logger.setLevel(logging.INFO)
+        handler = logging.FileHandler(filename='data/economy/economy.log', encoding='utf-8', mode='a')
+        handler.setFormatter(logging.Formatter('%(asctime)s %(message)s', datefmt="[%d/%m/%Y %H:%M]"))
+        logger.addHandler(handler)
     bot.add_cog(Economy(bot))

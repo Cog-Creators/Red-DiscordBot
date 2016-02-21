@@ -346,6 +346,56 @@ class Mod:
         else:
             await self.bot.say("Those words weren't in the filter.")
 
+    @commands.group(no_pm=True, pass_context=True)
+    @checks.admin_or_permissions(manage_roles=True)
+    async def editrole(self, ctx):
+        if ctx.invoked_subcommand is None:
+            await send_cmd_help(ctx)
+
+    @editrole.command(aliases=["color"], pass_context=True)
+    async def colour(self, ctx, role : discord.Role, value : discord.Colour):
+        """Edits a role's colour
+
+        Use double quotes if the role contains spaces.
+        Colour must be in hexadecimal format.
+        \"http://www.w3schools.com/colors/colors_picker.asp\"
+        #cefdf9 -> 0xcefdf9
+        Examples:
+        !editrole colour \"The Transistor\" 0xffff00
+        !editrole colour Test 0xcefdf9"""
+        author = ctx.message.author
+        try:
+            await self.bot.edit_role(ctx.message.server, role, color=value)
+            logger.info("{}({}) changed the colour of role '{}'".format(author.name, author.id, role.name))
+            await self.bot.say("Done.")
+        except discord.Forbidden:
+            await self.bot.say("I need permissions to manage roles first.")
+        except Exception as e:
+            print(e)
+            await self.bot.say("Something went wrong.")
+
+    @editrole.command(name="name", pass_context=True)
+    async def edit_role_name(self, ctx, role : discord.Role, name : str):
+        """Edits a role's name
+
+        Use double quotes if the role or the name contain spaces.
+        Examples:
+        !editrole name \"The Transistor\" Test"""
+        if name == "":
+            await self.bot.say("Name cannot be empty.")
+            return
+        try:
+            author = ctx.message.author
+            old_name = role.name # probably not necessary?
+            await self.bot.edit_role(ctx.message.server, role, name=name)
+            logger.info("{}({}) changed the name of role '{}' to '{}'".format(author.name, author.id, old_name, name))
+            await self.bot.say("Done.")
+        except discord.Forbidden:
+            await self.bot.say("I need permissions to manage roles first.")
+        except Exception as e:
+            print(e)
+            await self.bot.say("Something went wrong.")
+
     def immune_from_filter(self, message):
         user = message.author
         if user.id == checks.settings["OWNER"]:
@@ -406,10 +456,11 @@ def setup(bot):
     check_folders()
     check_files()
     logger = logging.getLogger("mod")
-    logger.setLevel(logging.INFO)
-    handler = logging.FileHandler(filename='data/mod/mod.log', encoding='utf-8', mode='a')
-    handler.setFormatter(logging.Formatter('%(asctime)s %(message)s', datefmt="[%d/%m/%Y %H:%M]"))
-    logger.addHandler(handler)
+    if logger.level == 0: # Prevents the logger from being loaded again in case of module reload
+        logger.setLevel(logging.INFO)
+        handler = logging.FileHandler(filename='data/mod/mod.log', encoding='utf-8', mode='a')
+        handler.setFormatter(logging.Formatter('%(asctime)s %(message)s', datefmt="[%d/%m/%Y %H:%M]"))
+        logger.addHandler(handler)
     n = Mod(bot)
     bot.add_listener(n.check_filter, "on_message")
     bot.add_cog(n)
