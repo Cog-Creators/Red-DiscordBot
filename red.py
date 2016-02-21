@@ -209,6 +209,16 @@ async def name(ctx, *name : str):
     await bot.edit_profile(settings["PASSWORD"], username=" ".join(name))
     await bot.say("Done.")
 
+@_set.command(pass_context=True)
+@checks.is_owner()
+async def status(ctx, *status : str):
+    """Sets Red's status"""
+    if status != ():
+        await bot.change_status(discord.Game(name=" ".join(status)))
+    else:
+        await self.bot.change_status(None)
+    await bot.say("Done.")
+
 @bot.command()
 @checks.is_owner()
 async def shutdown():

@@ -8,6 +8,7 @@ from random import choice as rndchoice
 from random import shuffle
 from .utils.dataIO import fileIO
 from .utils import checks
+from __main__ import send_cmd_help
 import glob
 import re
 import aiohttp
@@ -44,6 +45,7 @@ class Audio:
         self.downloader = {"DONE" : False, "TITLE" : False, "ID" : False, "URL" : False, "DURATION" : False, "DOWNLOADING" : False}
         self.skip_votes = []
         self.cleanup_timer = int(time.perf_counter())
+        self.past_titles = [] # This is to prevent the audio module from setting the status to None if a status other than a track's title gets set
 
         self.sing =  ["https://www.youtube.com/watch?v=zGTkAVsrfg8", "https://www.youtube.com/watch?v=cGMWL8cOeAU",
                      "https://www.youtube.com/watch?v=vFrjMq4aL-g", "https://www.youtube.com/watch?v=WROI5WYBU_A",
@@ -324,7 +326,7 @@ class Audio:
     async def _list(self, ctx):
         """Lists playlists"""
         if ctx.invoked_subcommand is None:
-            await self.bot.say("Type help list for info.")
+            await send_cmd_help(ctx)
 
     @_list.command(name="playlist", pass_context=True)
     async def list_playlist(self, ctx):
@@ -387,25 +389,31 @@ class Audio:
     async def audioset(self, ctx):
         """Changes audio module settings"""
         if ctx.invoked_subcommand is None:
+            await send_cmd_help(ctx)
             msg = "```"
             for k, v in self.settings.items():
                 msg += str(k) + ": " + str(v) + "\n"
-            msg += "\nType help audioset to see the list of commands.```"
+            msg += "```"
             await self.bot.say(msg)
 
     @audioset.command(name="queue")
-    async def queueset(self, status : str):
-        """Enables/disables queue"""
-        status = status.lower()
-        if status == "on" or status == "true":
-            self.settings["QUEUE_MODE"] = True
+    async def queueset(self):
+        """Enables/disables forced queue"""
+        self.settings["QUEUE_MODE"] = not self.settings["QUEUE_MODE"]
+        if self.settings["QUEUE_MODE"]:
             await self.bot.say("Queue mode is now on.")
-        elif status == "off" or status == "false":
-            self.settings["QUEUE_MODE"] = False
-            await self.bot.say("Queue mode is now off.")
         else:
-            await self.bot.say("Queue status can be either on or off.")
-            return
+            await self.bot.say("Queue mode is now off.")
+        fileIO("data/audio/settings.json", "save", self.settings)
+
+    @audioset.command(name="status")
+    async def songstatus(self):
+        """Enables/disables songs' titles as status"""
+        self.settings["TITLE_STATUS"] = not self.settings["TITLE_STATUS"]
+        if self.settings["TITLE_STATUS"]:
+            await self.bot.say("Songs' titles will show up as status.")
+        else:
+            await self.bot.say("Songs' titles will no longer show up as status.")
         fileIO("data/audio/settings.json", "save", self.settings)
 
     @audioset.command()
@@ -495,7 +503,9 @@ class Audio:
                 self.music_player = self.bot.voice.create_ffmpeg_player(path + self.downloader["ID"], options='''-filter:a "volume={}"'''.format(self.settings["VOLUME"]))
                 self.music_player.paused = False
                 self.music_player.start()
-                if path != "": await self.bot.change_status(discord.Game(name=self.downloader["TITLE"]))
+                if path != "" and self.settings["TITLE_STATUS"]:
+                    self.past_titles.append(self.downloader["TITLE"])
+                    await self.bot.change_status(discord.Game(name=self.downloader["TITLE"]))
             except discord.errors.ClientException:
                 print("Error: I can't play music without ffmpeg. Install it.")
                 self.downloader = {"DONE" : False, "TITLE" : False, "ID" : False, "URL": False, "DURATION" : False, "DOWNLOADING" : False}
@@ -587,7 +597,8 @@ class Audio:
             if msg.channel.is_private and msg.attachments != []:
                 await self.transfer_playlist(msg)
         if not msg.channel.is_private:
-            if not self.playlist and not self.queue and not self.music_player.is_playing() and msg.server.me.game != None:
+            if not self.playlist and not self.queue and not self.music_player.is_playing() and str(msg.server.me.game) in self.past_titles:
+                self.past_titles = []
                 await self.bot.change_status(None)
 
     def get_local_playlists(self):
@@ -744,7 +755,7 @@ def check_folders():
 
 def check_files():
 
-    default = {"VOLUME" : 0.5, "MAX_LENGTH" : 3700, "QUEUE_MODE" : True, "MAX_CACHE" : 0, "SOUNDCLOUD_CLIENT_ID": None}
+    default = {"VOLUME" : 0.5, "MAX_LENGTH" : 3700, "QUEUE_MODE" : True, "MAX_CACHE" : 0, "SOUNDCLOUD_CLIENT_ID": None, "TITLE_STATUS" : True}
     settings_path = "data/audio/settings.json"
 
     if not os.path.isfile(settings_path):
