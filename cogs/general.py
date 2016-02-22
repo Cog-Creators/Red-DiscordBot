@@ -132,9 +132,10 @@ class General:
         text = "+".join(text)
         await self.bot.say("http://lmgtfy.com/?q=" + text)
 
-    @commands.command(no_pm=True, hidden=True)
-    async def hug(self, user : discord.Member = None):
+    @commands.command(pass_context=True, hidden=True)
+    async def hug(self, ctx):
         """Because everyone likes hugs"""
+        user = ctx.message.author
         await self.bot.say("(っ´▽｀)っ" + " *" + user.name + "*")
 
     @commands.command(pass_context=True, no_pm=True)
