@@ -24,8 +24,8 @@ class CustomCommands:
             await send_cmd_help(ctx)
             return
         server = ctx.message.server
-        channel = ctx.message.channel
-        text = " ".join(text)
+        to_replace = ctx.prefix + "addcom " + command + " "
+        text = ctx.message.content.replace(to_replace, "")
         if not server.id in self.c_commands:
             self.c_commands[server.id] = {}
         cmdlist = self.c_commands[server.id]
@@ -33,9 +33,9 @@ class CustomCommands:
             cmdlist[command] = text
             self.c_commands[server.id] = cmdlist
             fileIO("data/customcom/commands.json", "save", self.c_commands)
-            await self.bot.say("`Custom command successfully added.`")
+            await self.bot.say("Custom command successfully added.")
         else:
-            await self.bot.say("`This command already exists. Use editcom to edit it.`")
+            await self.bot.say("This command already exists. Use editcom to edit it.")
 
     @commands.command(pass_context=True, no_pm=True)
     @checks.mod_or_permissions(manage_server=True)
@@ -49,19 +49,19 @@ class CustomCommands:
             await send_cmd_help(ctx)
             return
         server = ctx.message.server
-        channel = ctx.message.channel
-        text = " ".join(text)
+        to_replace = ctx.prefix + "editcom " + command + " "
+        text = ctx.message.content.replace(to_replace, "")
         if server.id in self.c_commands:
             cmdlist = self.c_commands[server.id]
             if command in cmdlist:
                 cmdlist[command] = text
                 self.c_commands[server.id] = cmdlist
                 fileIO("data/customcom/commands.json", "save", self.c_commands)
-                await self.bot.say("`Custom command successfully edited.`")
+                await self.bot.say("Custom command successfully edited.")
             else:
-                await self.bot.say("`That command doesn't exist. Use addcom [command] [text]`")
+                await self.bot.say("That command doesn't exist. Use addcom [command] [text]")
         else:
-             await self.bot.say("`There are no custom commands in this server. Use addcom [command] [text]`")
+             await self.bot.say("There are no custom commands in this server. Use addcom [command] [text]")
 
     @commands.command(pass_context=True, no_pm=True)
     @checks.mod_or_permissions(manage_server=True)
@@ -71,18 +71,32 @@ class CustomCommands:
         Example:
         !delcom yourcommand"""
         server = ctx.message.server
-        channel = ctx.message.channel
         if server.id in self.c_commands:
             cmdlist = self.c_commands[server.id]
             if command in cmdlist:
                 cmdlist.pop(command, None)
                 self.c_commands[server.id] = cmdlist
                 fileIO("data/customcom/commands.json", "save", self.c_commands)
-                await self.bot.send_message(channel, "`Custom command successfully deleted.`")
+                await self.bot.say("Custom command successfully deleted.")
             else:
-                await self.bot.say("`That command doesn't exist.`")
+                await self.bot.say("That command doesn't exist.")
         else:
-            await self.bot.send_message(channel, "`There are no custom commands in this server. Use addcom [command] [text]`")
+            await self.bot.say("There are no custom commands in this server. Use addcom [command] [text]")
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def customcommands(self, ctx):
+        server = ctx.message.server
+        if server.id in self.c_commands:
+            cmdlist = self.c_commands[server.id]
+            if cmdlist:
+                msg = "Custom commands: "
+                for cmd in cmdlist.keys():
+                    msg += ctx.prefix + cmd + " "
+                await self.bot.whisper(msg)
+            else:
+                await self.bot.say("There are no custom commands in this server. Use addcom [command] [text]")
+        else:
+            await self.bot.say("There are no custom commands in this server. Use addcom [command] [text]")
 
     async def checkCC(self, message):
         if message.author.id == self.bot.user.id or len(message.content) < 2 or message.channel.is_private:
