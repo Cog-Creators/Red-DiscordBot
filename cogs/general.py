@@ -133,9 +133,22 @@ class General:
         await self.bot.say("http://lmgtfy.com/?q=" + text)
 
     @commands.command(no_pm=True, hidden=True)
-    async def hug(self, user : discord.Member = None):
-        """Because everyone likes hugs"""
-        await self.bot.say("(っ´▽｀)っ" + " *" + user.name + "*")
+    async def hug(self, user : discord.Member, intensity : int=1):
+        """Because everyone likes hugs
+
+        Up to 10 intensity levels."""
+        name = " *" + user.name + "*"
+        if intensity <= 0:
+            msg = "(っ˘̩╭╮˘̩)っ" + name
+        elif intensity <= 3:
+            msg = "(っ´▽｀)っ" + name
+        elif intensity <= 6:
+            msg = "╰(*´︶`*)╯" + name
+        elif intensity <= 9:
+            msg = "(つ≧▽≦)つ" + name
+        elif intensity >= 10:
+            msg = "(づ￣ ³￣)づ" + name + " ⊂(´・ω・｀⊂)"
+        await self.bot.say(msg)
 
     @commands.command(pass_context=True, no_pm=True)
     async def info(self, ctx, user : discord.Member = None):
