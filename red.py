@@ -216,7 +216,7 @@ async def status(ctx, *status : str):
     if status != ():
         await bot.change_status(discord.Game(name=" ".join(status)))
     else:
-        await self.bot.change_status(None)
+        await bot.change_status(None)
     await bot.say("Done.")
 
 @bot.command()
