@@ -19,7 +19,8 @@ class Trivia:
     async def trivia(self, ctx, list_name : str=None):
         """Start a trivia session with the specified list
 
-        Stop parameter will end the current session
+        trivia stop - Ends the current session
+        trivia - Shows trivia lists
         """
         message = ctx.message
         if list_name == None:

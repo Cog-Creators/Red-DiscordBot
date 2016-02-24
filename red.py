@@ -341,10 +341,12 @@ def check_configs():
         settings["PASSWORD"] = input("\nPassword> ")
 
         if not settings["EMAIL"] or not settings["PASSWORD"]:
-            raise("Email and password cannot be empty.")
+            input("Email and password cannot be empty. Restart Red and repeat the configuration process.")
+            exit(1)
 
         if "@" not in settings["EMAIL"]:
-            raise("Your email is invalid.")
+            input("You didn't enter a valid email. Restart Red and repeat the configuration process.")
+            exit(1)
         
         print("\nChoose a prefix (or multiple ones, one at once) for the commands. Type exit when you're done. Example prefix: !")
         settings["PREFIXES"] = []
@@ -358,6 +360,9 @@ def check_configs():
         print("If you want, you can also do it later with [prefix]set owner. Leave empty in that case.")
         settings["OWNER"] = input("\nID> ")
         if settings["OWNER"] == "": settings["OWNER"] = "id_here"
+        if not settings["OWNER"].isdigit() and settings["OWNER"] != "id_here":
+            print("\nERROR: What you entered is not a valid ID. Set yourself as owner later with [prefix]set owner")
+            settings["OWNER"] = "id_here"
 
         print("\nInput the admin role's name. Anyone with this role will be able to use the bot's admin commands")
         print("Leave blank for default name (Transistor)")

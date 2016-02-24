@@ -245,7 +245,7 @@ class Audio:
         self.current = -1
         self.music_player.stop()
         await asyncio.sleep(1)
-        await self.bot.voice.disconnect()
+        if self.bot.voice: await self.bot.voice.disconnect()
 
     @commands.command(name="queue", pass_context=True, no_pm=True) #check that author is in the same channel as the bot
     async def _queue(self, ctx, link : str=None):
