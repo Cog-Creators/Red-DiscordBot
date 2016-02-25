@@ -563,10 +563,10 @@ Who tried to steal Bandle City's Mothership?`Veigar
 Who can continuously increase their AP by using a skill?`Veigar
 Who has a Leprechaun skin?`Veigar
 Who says "I will swallow your soul."?`Veigar
-Who learns about Valoran by disintegrating subjects?`Vel'koz`vel koz'velkoz
-Who gain 3.141592 (pi) AD per level?`Vel'koz`vel koz'velkoz
+Who learns about Valoran by disintegrating subjects?`Vel'koz`vel koz`velkoz
+Who gains 3.141592 (pi) AD per level?`Vel'koz`vel koz`velkoz
 Who is Vel'koz searching for?`Zilean
-Whose occupation is "Knowledge Seeker"?`Vel'koz`vel koz'velkoz
+Whose occupation is "Knowledge Seeker"?`Vel'koz`vel koz`velkoz
 Who says "Knowledge through... disintegration." when picked in champion select?`Vel'koz`vel koz`velkoz
 Whose dance is the "Dougie"?`Vi
 Whose name means "with force" in Latin?`Vi
