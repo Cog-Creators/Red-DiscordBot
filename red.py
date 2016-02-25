@@ -464,7 +464,7 @@ def main():
     check_configs()
     set_logger()
     settings = load_settings()
-    checks.owner = settings["OWNER"]
+    checks.settings["OWNER"] = settings["OWNER"]
     load_cogs()
     bot.command_prefix = settings["PREFIXES"]
     yield from bot.login(settings["EMAIL"], settings["PASSWORD"])
