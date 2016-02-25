@@ -543,7 +543,6 @@ Where does Udyr live?`Freljord
 Which character cannot max out all of their skills?`Udyr
 Who brought Udyr to Ionia to calm his rage and meet the animal spirits that he uses?`Lee Sin`leesin
 Who cut Urgot in half?`Garen
-Who has the shortest autoattack range of all champions that are classified as ranged?`Urgot
 Whose dance is a reference to Kirby's victory dance?`Urgot
 Who was Urf's Corpse sold to?`Butcher Urgot`Urgot
 When Urgot was a soldier, who was his commanding officer?`Sion
@@ -658,3 +657,15 @@ What is the name of the Viking ghost shopkeeper on the Howling Abyss?`Greyor
 Who bound the Viking's ghost to the Howling Abyss?`Avarosa
 What is the name of the flying robot owned by the Hermit on the Howling Abyss (hint:named after a Rioter)?`Geeves
 What is the capital city of Freljord?`Rakelstake
+What type of minions deal no damage to Nexuses on the Howling Abyss?`Super minions`super
+Against which neutral mob does crowd control last twice as long?`Rift Scuttler
+Smiting which neutral mob will give summon a nature spirit that grants vision over the nearby crossroads for 95 seconds?`Greater Murk Wolf
+Smiting which neutral mob will give you the buff "Gift of Heavy Hands"?`Ancient Krug
+Which neutral mob gives +62 gold when killed?`Gromp
+Which neutral mob gives +58 gold when killed?`Blue Sentinel
+Which neutral mob gives the buff "Doom's Eve"?`Rift Herald
+Which neutral mob will dance if Popstar Ahri dances near it?`Blue Sentinel
+Which neutral mob will dance if any champion dances near it?`Rift Herald
+Which neutral mob is the only mob with scaling armor and magic resistance after level 9?`Dragon
+What is Baron Nashor's movement speed?`300`three hundred
+What is the name of the type minion created by Banner of Command?`Anti-turret Cannon`antiturret cannon

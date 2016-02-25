@@ -72,6 +72,9 @@ class Economy:
         if author == user:
             await self.bot.say("You can't transfer money to yourself.")
             return
+        if sum < 1:
+            await self.bot.say("You need to transfer at least 1 credit.")
+            return
         if self.account_check(user.id):
             if self.enough_money(author.id, sum):
                 self.withdraw_money(author.id, sum)
