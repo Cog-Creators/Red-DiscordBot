@@ -12,7 +12,6 @@ from __main__ import send_cmd_help
 import glob
 import re
 import aiohttp
-from bs4 import BeautifulSoup
 import json
 import time
 
@@ -618,7 +617,7 @@ class Audio:
     @commands.command(pass_context=True, no_pm=True)
     async def addplaylist(self, ctx, name : str, link : str): #CHANGE COMMAND NAME
         """Adds tracks from youtube playlist link"""
-        if self.is_playlist_name_valid(name) and len(name) < 25 and self.is_playlist_link_valid(link):
+        if self.is_playlist_name_valid(name) and len(name) < 25:
             if fileIO("playlists/" + name + ".txt", "check"):
                 await self.bot.say("`A playlist with that name already exists.`")
                 return False
@@ -632,7 +631,7 @@ class Audio:
             else:
                 await self.bot.say("Something went wrong. Either the link was incorrect or I was unable to retrieve the page.")
         else:
-            await self.bot.say("Something is wrong with the playlist's link or its filename. Remember, the name must be with only numbers, letters and underscores. Link must be this format: https://www.youtube.com/playlist?list=PLe8jmEHFkvsaDOOWcREvkgFoj6MD0pXXX")
+            await self.bot.say("Something is wrong with the playlist's link or its filename. Remember, the name must be with only numbers, letters and underscores.")
 
     async def transfer_playlist(self, message):
         msg = message.attachments[0]
@@ -680,20 +679,15 @@ class Audio:
         return True
 
     async def parse_yt_playlist(self, url):
-        headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
         try:
-            page = await aiohttp.post(url, headers=headers)
-            page = await page.text()
-            soup = BeautifulSoup(page, 'html.parser')
-            tags = soup.find_all("tr", class_="pl-video yt-uix-tile ")
-            links = []
-
-            for tag in tags:
-                links.append("https://www.youtube.com/watch?v=" + tag['data-video-id'])
-            if links != []:
-                return links
-            else:
-                return False
+            if not "www.youtube.com/playlist?list=" in url:   
+                url = url.split("&")
+                url = "https://www.youtube.com/playlist?" + [x for x in url if "list=" in x][0]
+            playlist = []
+            yt = youtube_dl.YoutubeDL(youtube_dl_options)
+            for entry in yt.extract_info(url, download=False, process=False)["entries"]:
+                playlist.append("https://www.youtube.com/watch?v=" + entry["id"])
+            return playlist
         except:
             return False
 

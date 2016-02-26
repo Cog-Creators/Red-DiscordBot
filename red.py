@@ -11,6 +11,7 @@ import os
 import time
 import sys
 import logging
+import aiohttp
 
 #
 #  Red, a Discord bot by Twentysix, based on discord.py and its command extension
@@ -218,6 +219,18 @@ async def status(ctx, *status : str):
     else:
         await bot.change_status(None)
     await bot.say("Done.")
+
+@_set.command()
+@checks.is_owner()
+async def avatar(url : str):
+    """Sets Red's avatar"""
+    try:
+        async with aiohttp.get(url) as r:
+            data = await r.read()
+        await bot.edit_profile(settings["PASSWORD"], avatar=data)
+        await bot.say("Done.")
+    except:
+        await bot.say("Error.")
 
 @bot.command()
 @checks.is_owner()
