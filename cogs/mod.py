@@ -17,13 +17,6 @@ class Mod:
         self.ignore_list = fileIO("data/mod/ignorelist.json", "load")
         self.filter = fileIO("data/mod/filter.json", "load")
 
-    # HEY, YOU THERE, READ THIS
-    # In order to save modified BOT settings you MUST:
-    #  1) use self.bot_settings to GET the current settings
-    #       THEN
-    #  2) Use checks.save_bot_settings(modified_bot_settings)
-    #  3) Don't blame me (Will), blame the other guy (not 26)
-
     @commands.group(pass_context=True)
     @checks.admin_or_permissions(manage_server=True)
     async def modset(self,ctx):
