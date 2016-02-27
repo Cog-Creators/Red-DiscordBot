@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 import asyncio
 import threading
-import youtube_dl
 import os
 from random import choice as rndchoice
 from random import shuffle
@@ -15,8 +14,16 @@ import aiohttp
 import json
 import time
 
-if not discord.opus.is_loaded():
-    discord.opus.load_opus('libopus-0.dll')
+try:
+    import youtube_dl
+except:
+    youtube_dl = None
+
+try:
+    if not discord.opus.is_loaded():
+        discord.opus.load_opus('libopus-0.dll')
+except:
+    opus = None
 
 youtube_dl_options = {
     'format': 'bestaudio/best',
@@ -775,6 +782,12 @@ def check_files():
 def setup(bot):
     check_folders()
     check_files()
+    if youtube_dl is None:
+        raise RuntimeError("You need to run `pip3 install youtube_dl`")
+        return
+    if opus is None:
+        raise RuntimeError("You need to get the *.exe's and opus.dll from 26's github.")
+        return
     loop = asyncio.get_event_loop()
     n = Audio(bot)
     loop.create_task(n.queue_manager())

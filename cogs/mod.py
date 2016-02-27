@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
-from .utils import checks
 from .utils.dataIO import fileIO
+from .utils import checks
 from __main__ import send_cmd_help, settings
 import os
 import logging
@@ -23,49 +23,31 @@ class Mod:
     #       THEN
     #  2) Use checks.save_bot_settings(modified_bot_settings)
     #  3) Don't blame me (Will), blame the other guy (not 26)
-    @property
-    def bot_settings(self):
-        settings = {}
-        with open("data/red/settings.json", "r") as f:
-            settings = json.loads(f.read())
-        if settings == {}:
-            raise RuntimeError("Settings not found.")
-        return settings
 
     @commands.group(pass_context=True)
     @checks.admin_or_permissions(manage_server=True)
     async def modset(self,ctx):
         """Manages server administration settings."""
         if ctx.invoked_subcommand is None:
-            send_cmd_help(ctx)
+            await send_cmd_help(ctx)
 
-    @modset.command(name="adminrole",pass_context=True)
+    @modset.command(name="adminrole",pass_context=True,no_pm=True)
     async def _modset_adminrole(self,ctx,role_name : str):
         """Sets the admin role for this server, case insensitive."""
-        sid = ctx.message.server.id
-        settings = self.bot_settings
-        if sid in settings:
-            settings[sid]["ADMIN_ROLE"] = role_name
-        else:
-            settings[sid] = {"ADMIN_ROLE":role_name,"MOD_ROLE":""}
-            settings[sid]["MOD_ROLE"] = settings["default"]["MOD_ROLE"]
+        server = ctx.message.server
+        if server.id not in settings.servers:
             await self.bot.say("Remember to set modrole too.")
+        settings.set_server_admin(server,role_name)
         await self.bot.say("Admin role set to '{}'".format(role_name))
-        checks.save_bot_settings(settings)
 
-    @modset.command(name="modrole",pass_context=True)
+    @modset.command(name="modrole",pass_context=True,no_pm=True)
     async def _modset_modrole(self,ctx,role_name : str):
         """Sets the mod role for this server, case insensitive."""
-        sid = ctx.message.server.id
-        settings = self.bot_settings
-        if sid in settings:
-            settings[sid]["MOD_ROLE"] = role_name
-        else:
-            settings[sid] = {"MOD_ROLE":role_name,"ADMIN_ROLE":""}
-            settings[sid]["ADMIN_ROLE"] = settings["default"]["ADMIN_ROLE"]
+        server = ctx.message.server
+        if server.id not in settings.servers:
             await self.bot.say("Remember to set adminrole too.")
+        settings.set_server_mod(server,role_name)
         await self.bot.say("Mod role set to '{}'".format(role_name))
-        checks.save_bot_settings(settings)
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(kick_members=True)
@@ -449,11 +431,15 @@ class Mod:
 
     def immune_from_filter(self, message):
         user = message.author
-        if user.id == checks.settings["OWNER"]:
+        server = message.server
+        admin_role = settings.get_server_admin(server)
+        mod_role = settings.get_server_mod(server)
+
+        if user.id == settings.owner:
             return True
-        elif discord.utils.get(user.roles, name=checks.settings["ADMIN_ROLE"]):
+        elif discord.utils.get(user.roles, name=admin_role):
             return True
-        elif discord.utils.get(user.roles, name=checks.settings["MOD_ROLE"]):
+        elif discord.utils.get(user.roles, name=mod_role):
             return True
         else:
             return False
