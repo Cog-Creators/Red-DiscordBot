@@ -195,7 +195,7 @@ async def prefix(*prefixes):
     data = load_settings()
     data["PREFIXES"] = list(prefixes)
     with open("data/red/settings.json", "w") as f:
-            f.write(json.dumps(data))
+        f.write(json.dumps(data))
     if len(prefixes) > 1:
         await bot.say("Prefixes set")
     else:
@@ -280,9 +280,13 @@ def user_allowed(message):
         if checks.settings["OWNER"] == author.id:
             return True
         if not message.channel.is_private:
-            if discord.utils.get(author.roles, name=checks.settings["ADMIN_ROLE"]) is not None:
-                return True
-            if discord.utils.get(author.roles, name=checks.settings["MOD_ROLE"]) is not None:
+            sid = message.server.id
+            if sid in checks.settings:
+                names = (checks.settings[sid]["ADMIN_ROLE"],checks.settings[sid]["MOD_ROLE"])
+            else:
+                names = (checks.settings["default"]["ADMIN_ROLE"],checks.settings["default"]["MOD_ROLE"])
+
+            if None not in map(lambda name: discord.utils.get(author.roles,name=name),names):
                 return True
 
         if author.id in mod.blacklist_list:
@@ -345,7 +349,7 @@ def check_folders():
 
 def check_configs():
     settings_path = "data/red/settings.json"
-    settings = {"EMAIL" : "EmailHere", "PASSWORD" : "PasswordHere", "OWNER" : "id_here", "PREFIXES" : [], "ADMIN_ROLE" : "Transistor", "MOD_ROLE" : "Process"}
+    settings = {"EMAIL" : "EmailHere", "PASSWORD" : "PasswordHere", "OWNER" : "id_here", "PREFIXES" : [], "default":{"ADMIN_ROLE" : "Transistor", "MOD_ROLE" : "Process"}}
     if not os.path.isfile(settings_path):
 
         print("Red - First run configuration")
@@ -379,13 +383,13 @@ def check_configs():
 
         print("\nInput the admin role's name. Anyone with this role will be able to use the bot's admin commands")
         print("Leave blank for default name (Transistor)")
-        settings["ADMIN_ROLE"] = input("\nAdmin role> ")
-        if settings["ADMIN_ROLE"] == "": settings["ADMIN_ROLE"] = "Transistor"
+        settings["default"]["ADMIN_ROLE"] = input("\nAdmin role> ")
+        if settings["default"]["ADMIN_ROLE"] == "": settings["default"]["ADMIN_ROLE"] = "Transistor"
 
         print("\nInput the moderator role's name. Anyone with this role will be able to use the bot's mod commands")
         print("Leave blank for default name (Process)")
-        settings["MOD_ROLE"] = input("\nAdmin role> ")
-        if settings["MOD_ROLE"] == "": settings["MOD_ROLE"] = "Process"
+        settings["default"]["MOD_ROLE"] = input("\nAdmin role> ")
+        if settings["default"]["MOD_ROLE"] == "": settings["default"]["MOD_ROLE"] = "Process"
 
         with open(settings_path, "w") as f:
             f.write(json.dumps(settings))
@@ -478,6 +482,7 @@ def main():
     set_logger()
     settings = load_settings()
     checks.settings["OWNER"] = settings["OWNER"]
+    checks.save_bot_settings(checks.settings)
     load_cogs()
     bot.command_prefix = settings["PREFIXES"]
     yield from bot.login(settings["EMAIL"], settings["PASSWORD"])

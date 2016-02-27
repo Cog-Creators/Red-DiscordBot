@@ -2,9 +2,10 @@ import discord
 from discord.ext import commands
 from .utils import checks
 from .utils.dataIO import fileIO
-from __main__ import send_cmd_help
+from __main__ import send_cmd_help, settings
 import os
 import logging
+import json
 
 class Mod:
     """Moderation tools."""
@@ -15,6 +16,56 @@ class Mod:
         self.blacklist_list = fileIO("data/mod/blacklist.json", "load")
         self.ignore_list = fileIO("data/mod/ignorelist.json", "load")
         self.filter = fileIO("data/mod/filter.json", "load")
+
+    # HEY, YOU THERE, READ THIS
+    # In order to save modified BOT settings you MUST:
+    #  1) use self.bot_settings to GET the current settings
+    #       THEN
+    #  2) Use checks.save_bot_settings(modified_bot_settings)
+    #  3) Don't blame me (Will), blame the other guy (not 26)
+    @property
+    def bot_settings(self):
+        settings = {}
+        with open("data/red/settings.json", "r") as f:
+            settings = json.loads(f.read())
+        if settings == {}:
+            raise RuntimeError("Settings not found.")
+        return settings
+
+    @commands.group(pass_context=True)
+    @checks.admin_or_permissions(manage_server=True)
+    async def modset(self,ctx):
+        """Manages server administration settings."""
+        if ctx.invoked_subcommand is None:
+            send_cmd_help(ctx)
+
+    @modset.command(name="adminrole",pass_context=True)
+    async def _modset_adminrole(self,ctx,role_name : str):
+        """Sets the admin role for this server, case insensitive."""
+        sid = ctx.message.server.id
+        settings = self.bot_settings
+        if sid in settings:
+            settings[sid]["ADMIN_ROLE"] = role_name
+        else:
+            settings[sid] = {"ADMIN_ROLE":role_name,"MOD_ROLE":""}
+            settings[sid]["MOD_ROLE"] = settings["default"]["MOD_ROLE"]
+            await self.bot.say("Remember to set modrole too.")
+        await self.bot.say("Admin role set to '{}'".format(role_name))
+        checks.save_bot_settings(settings)
+
+    @modset.command(name="modrole",pass_context=True)
+    async def _modset_modrole(self,ctx,role_name : str):
+        """Sets the mod role for this server, case insensitive."""
+        sid = ctx.message.server.id
+        settings = self.bot_settings
+        if sid in settings:
+            settings[sid]["MOD_ROLE"] = role_name
+        else:
+            settings[sid] = {"MOD_ROLE":role_name,"ADMIN_ROLE":""}
+            settings[sid]["ADMIN_ROLE"] = settings["default"]["ADMIN_ROLE"]
+            await self.bot.say("Remember to set adminrole too.")
+        await self.bot.say("Mod role set to '{}'".format(role_name))
+        checks.save_bot_settings(settings)
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(kick_members=True)
