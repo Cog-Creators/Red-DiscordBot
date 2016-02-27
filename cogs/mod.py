@@ -17,12 +17,17 @@ class Mod:
         self.ignore_list = fileIO("data/mod/ignorelist.json", "load")
         self.filter = fileIO("data/mod/filter.json", "load")
 
-    @commands.group(pass_context=True)
+    @commands.group(pass_context=True,no_pm=True)
     @checks.admin_or_permissions(manage_server=True)
     async def modset(self,ctx):
         """Manages server administration settings."""
         if ctx.invoked_subcommand is None:
             await send_cmd_help(ctx)
+            msg = "```"
+            for k, v in settings.get_server(ctx.message.server).items():
+                msg += str(k) + ": " + str(v) + "\n"
+            msg += "```"
+            await self.bot.say(msg)
 
     @modset.command(name="adminrole",pass_context=True,no_pm=True)
     async def _modset_adminrole(self,ctx,role_name : str):

@@ -49,6 +49,7 @@ class Settings:
 
     @prefixes.setter
     def prefixes(self,value):
+        assert isinstance(value,list)
         self.bot_settings["PREFIXES"] = value
         self.save_settings()
 
@@ -85,6 +86,10 @@ class Settings:
         for server in server_ids:
             ret.update({server:self.bot_settings[server]})
         return ret
+
+    def get_server(self,server):
+        assert isinstance(server,discord.Server)
+        return self.bot_settings.get(server.id,self.bot_settings["default"].copy())
 
     def get_server_admin(self,server):
         assert isinstance(server,discord.Server)

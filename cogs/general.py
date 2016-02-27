@@ -22,6 +22,11 @@ class General:
         self.poll_sessions = []
 
     @commands.command()
+    async def ping(self):
+        """Pong."""
+        self.bot.say("Pong.")
+
+    @commands.command()
     async def choose(self, *choices):
         """Chooses between multiple choices.
 
