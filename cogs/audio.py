@@ -24,6 +24,8 @@ try:
         discord.opus.load_opus('libopus-0.dll')
 except:
     opus = None
+else:
+    opus = True
 
 youtube_dl_options = {
     'format': 'bestaudio/best',
