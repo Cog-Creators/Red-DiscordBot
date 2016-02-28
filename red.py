@@ -389,6 +389,15 @@ def check_configs():
 
         with open(settings_path, "w") as f:
             f.write(json.dumps(settings))
+    else: # Undoing the changes made by the broken pull request
+        data = load_settings()
+        if "default" in data:
+            data["ADMIN_ROLE"] = data["default"]["ADMIN_ROLE"]
+            data["MOD_ROLE"] = data["default"]["MOD_ROLE"]
+            del data["default"]
+            print("Rolling back settings to previous format...")
+            with open(settings_path, "w") as f:
+                f.write(json.dumps(data, indent=4,sort_keys=True,separators=(',',' : ')))
 
     cogs_s_path = "data/red/cogs.json"
     cogs = {}
