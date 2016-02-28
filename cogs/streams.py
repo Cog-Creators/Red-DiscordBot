@@ -191,6 +191,9 @@ class Streams:
 
     async def stream_checker(self):
         CHECK_DELAY = 60
+        old_alerts = []
+        last_twitch_alert = None
+        last_hitbox_alert = None
         while "Streams" in self.bot.cogs:
             
             old = (deepcopy(self.twitch_streams), deepcopy(self.hitbox_streams))
@@ -201,7 +204,9 @@ class Streams:
                     stream["ALREADY_ONLINE"] = True
                     for channel in stream["CHANNELS"]:
                         if self.bot.get_channel(channel):
-                            await self.bot.send_message(self.bot.get_channel(channel), "http://www.twitch.tv/{} is online!".format(stream["NAME"]))
+                            if last_twitch_alert:
+                                old_alerts.append(last_twitch_alert)
+                            last_twitch_alert = await self.bot.send_message(self.bot.get_channel(channel), "http://www.twitch.tv/{} is online!".format(stream["NAME"]))
                 else:
                     if stream["ALREADY_ONLINE"] and not online: stream["ALREADY_ONLINE"] = False
                 await asyncio.sleep(0.5)
@@ -212,7 +217,9 @@ class Streams:
                     stream["ALREADY_ONLINE"] = True
                     for channel in stream["CHANNELS"]:
                         if self.bot.get_channel(channel):
-                            await self.bot.send_message(self.bot.get_channel(channel), "http://www.hitbox.tv/{} is online!".format(stream["NAME"]))
+                            if last_hitbox_alert:
+                                old_alerts.append(last_hitbox_alert)
+                            last_hitbox_alert = await self.bot.send_message(self.bot.get_channel(channel), "http://www.hitbox.tv/{} is online!".format(stream["NAME"]))
                 else:
                     if stream["ALREADY_ONLINE"] and not online: stream["ALREADY_ONLINE"] = False
                 await asyncio.sleep(0.5)
@@ -220,6 +227,10 @@ class Streams:
             if old != (self.twitch_streams, self.hitbox_streams):
                 fileIO("data/streams/twitch.json", "save", self.twitch_streams)
                 fileIO("data/streams/hitbox.json", "save", self.hitbox_streams)
+
+            for msg in old_alerts:
+                await self.bot.delete_message(msg)
+            old_alerts = []
             
             await asyncio.sleep(CHECK_DELAY)
 
