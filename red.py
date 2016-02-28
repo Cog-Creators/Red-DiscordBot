@@ -348,13 +348,14 @@ def check_configs():
             exit(1)
         
         print("\nChoose a prefix (or multiple ones, one at once) for the commands. Type exit when you're done. Example prefix: !")
-        settings.prefixes = []
+        prefixes = []
         new_prefix = ""
-        while new_prefix.lower() != "exit" or settings.prefixes == []:
+        while new_prefix.lower() != "exit" or prefixes == []:
             new_prefix = input("Prefix> ")
             if new_prefix.lower() != "exit" and new_prefix != "":
-                settings.prefixes = settings.prefixes.append(new_prefix)
+                prefixes.append(new_prefix)
                 #Remember we're using property's here, oh well...
+        settings.prefixes = prefixes
 
         print("\nInput *your own* ID. You can type \@Yourname in chat to see it (copy only the numbers).")
         print("If you want, you can also do it later with [prefix]set owner. Leave empty in that case.")

@@ -1,11 +1,13 @@
 from .dataIO import fileIO
 import discord
+import os
 
 default_path = "data/red/settings.json"
 
 class Settings:
     def __init__(self,path=default_path):
         self.path = path
+        self.check_folders()
         self.default_settings = {"EMAIL" : "EmailHere", "PASSWORD" : "PasswordHere", "OWNER" : "id_here", "PREFIXES" : [], "default":{"ADMIN_ROLE" : "Transistor", "MOD_ROLE" : "Process"}}
         if not fileIO(self.path,"check"):
             self.bot_settings = self.default_settings
@@ -14,6 +16,13 @@ class Settings:
             self.bot_settings = fileIO(self.path,"load")
         if "default" not in self.bot_settings:
             self.update_old_settings()
+
+    def check_folders(self):
+        folders = ("data", os.path.dirname(self.path), "cogs", "cogs/utils")
+        for folder in folders:
+            if not os.path.exists(folder):
+                print("Creating " + folder + " folder...")
+                os.makedirs(folder)
 
     def save_settings(self):
         fileIO(self.path,"save",self.bot_settings)
@@ -39,9 +48,19 @@ class Settings:
     def email(self):
         return self.bot_settings["EMAIL"]
 
+    @email.setter
+    def email(self,value):
+        self.bot_settings["EMAIL"] = value
+        self.save_settings()
+
     @property
     def password(self):
         return self.bot_settings["PASSWORD"]
+
+    @password.setter
+    def password(self,value):
+        self.bot_settings["PASSWORD"] = value
+        self.save_settings()
 
     @property
     def prefixes(self):

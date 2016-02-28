@@ -8,6 +8,7 @@ from random import shuffle
 from .utils.dataIO import fileIO
 from .utils import checks
 from __main__ import send_cmd_help
+from __main__ import settings as bot_settings
 import glob
 import re
 import aiohttp
@@ -69,7 +70,7 @@ class Audio:
         msg = ctx.message
         if await self.check_voice(msg.author, msg):
             if self.is_playlist_valid([link]): # reusing a function
-                if await self.is_alone_or_admin(msg.author):
+                if await self.is_alone_or_admin(msg):
                     self.queue = []
                     self.current = -1
                     self.playlist = []
@@ -128,7 +129,7 @@ class Audio:
         """
         msg = ctx.message
         if self.music_player.is_playing():
-            if await self.is_alone_or_admin(msg.author):
+            if await self.is_alone_or_admin(msg):
                 self.music_player.paused = False
                 self.music_player.stop()
             else:
@@ -177,7 +178,7 @@ class Audio:
                     files.extend(glob.glob("data/audio/localtracks/" + name + "/*.mp3"))
                 if glob.glob("data/audio/localtracks/" + name + "/*.flac"):
                     files.extend(glob.glob("data/audio/localtracks/" + name + "/*.flac"))
-                if await self.is_alone_or_admin(msg.author):
+                if await self.is_alone_or_admin(msg):
                     if await self.check_voice(msg.author, ctx.message):
                         self.queue = []
                         self.current = -1
@@ -197,7 +198,7 @@ class Audio:
         """
         msg = ctx.message
         if self.music_player.is_playing():
-            if await self.is_alone_or_admin(msg.author):
+            if await self.is_alone_or_admin(msg):
                 self.current = -1
                 self.playlist = [self.downloader["URL"]]
                 await self.bot.say("I will play this song on repeat.")
@@ -210,7 +211,7 @@ class Audio:
         """
         msg = ctx.message
         if self.music_player.is_playing():
-            if await self.is_alone_or_admin(msg.author):
+            if await self.is_alone_or_admin(msg):
                 if self.playlist:
                     shuffle(self.playlist)
                     await self.bot.say("The order of this playlist has been mixed")
@@ -223,7 +224,7 @@ class Audio:
         """
         msg = ctx.message
         if self.music_player.is_playing() and self.playlist:
-            if await self.is_alone_or_admin(msg.author):
+            if await self.is_alone_or_admin(msg):
                 self.current -= 2
                 if self.current == -1:
                     self.current = len(self.playlist) -3
@@ -240,7 +241,7 @@ class Audio:
         """
         msg = ctx.message
         if self.music_player.is_playing():
-            if await self.is_alone_or_admin(msg.author):
+            if await self.is_alone_or_admin(msg):
                 await self.close_audio()
             else:
                 await self.bot.say("You can't stop music when there are other people in the channel! Vote to skip instead.")
@@ -282,14 +283,16 @@ class Audio:
         else:
             await self.bot.say("That link is now allowed.")
 
-    async def is_alone_or_admin(self, author): #Direct control. fix everything
+    async def is_alone_or_admin(self, message): #Direct control. fix everything
+        author = message.author
+        server = message.server
         if not self.settings["QUEUE_MODE"]:
             return True
-        elif author.id == checks.settings["OWNER"]:
+        elif author.id == bot_settings.owner:
             return True
-        elif discord.utils.get(author.roles, name=checks.settings["ADMIN_ROLE"]) is not None:
+        elif discord.utils.get(author.roles, name=bot_settings.get_server_admin(server)) is not None:
             return True
-        elif discord.utils.get(author.roles, name=checks.settings["MOD_ROLE"]) is not None:
+        elif discord.utils.get(author.roles, name=bot_settings.get_server_mod(server)) is not None:
             return True
         elif len(author.voice_channel.voice_members) in (1, 2):
             return True
@@ -308,7 +311,7 @@ class Audio:
                     self.queue = []
                     await self.play_video(rndchoice(self.sing))
             else:
-                if await self.is_alone_or_admin(msg.author):
+                if await self.is_alone_or_admin(msg):
                     self.queue = []
                     await self.play_video(rndchoice(self.sing))
                 else:
