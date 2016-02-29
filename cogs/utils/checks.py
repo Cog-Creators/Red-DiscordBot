@@ -67,6 +67,8 @@ def admin_or_permissions(**perms):
 
 def serverowner_or_permissions(**perms):
     def predicate(ctx):
+        if ctx.message.server is None:
+            return False
         server = ctx.message.server
         owner = server.owner
 

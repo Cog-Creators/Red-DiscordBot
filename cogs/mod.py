@@ -380,6 +380,7 @@ class Mod:
     @commands.group(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(manage_roles=True)
     async def editrole(self, ctx):
+        """Edits roles settings"""
         if ctx.invoked_subcommand is None:
             await send_cmd_help(ctx)
 

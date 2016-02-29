@@ -107,38 +107,40 @@ class Settings:
         return ret
 
     def get_server(self,server):
+        if server is None:
+            return self.bot_settings["default"].copy()
         assert isinstance(server,discord.Server)
         return self.bot_settings.get(server.id,self.bot_settings["default"]).copy()
 
     def get_server_admin(self,server):
-        assert isinstance(server,discord.Server)
         if server is None:
-            return
+            return self.default_admin
+        assert isinstance(server,discord.Server)
         if server.id not in self.bot_settings:
             return self.default_admin
         return self.bot_settings[server.id].get("ADMIN_ROLE","")
 
     def set_server_admin(self,server,value):
-        assert isinstance(server,discord.Server)
         if server is None:
             return
+        assert isinstance(server,discord.Server)
         if server.id not in self.bot_settings:
             self.add_server(server.id)
         self.bot_settings[server.id]["ADMIN_ROLE"] = value
         self.save_settings()
 
     def get_server_mod(self,server):
-        assert isinstance(server,discord.Server)
         if server is None:
-            return
+            return self.default_mod
+        assert isinstance(server,discord.Server)
         if server.id not in self.bot_settings:
             return self.default_mod
         return self.bot_settings[server.id].get("MOD_ROLE","")
 
     def set_server_mod(self,server,value):
-        assert isinstance(server,discord.Server)
         if server is None:
             return
+        assert isinstance(server,discord.Server)
         if server.id not in self.bot_settings:
             self.add_server(server.id)
         self.bot_settings[server.id]["MOD_ROLE"] = value
