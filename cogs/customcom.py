@@ -24,8 +24,9 @@ class CustomCommands:
             await send_cmd_help(ctx)
             return
         server = ctx.message.server
-        to_replace = ctx.prefix + "addcom " + command + " "
-        text = ctx.message.content.replace(to_replace, "")
+        to_replace = ctx.message.content.find(text[0])
+        text = ctx.message.content[to_replace:]
+        command = command.lower()
         if not server.id in self.c_commands:
             self.c_commands[server.id] = {}
         cmdlist = self.c_commands[server.id]
@@ -49,8 +50,9 @@ class CustomCommands:
             await send_cmd_help(ctx)
             return
         server = ctx.message.server
-        to_replace = ctx.prefix + "editcom " + command + " "
-        text = ctx.message.content.replace(to_replace, "")
+        to_replace = ctx.message.content.find(text[0])
+        text = ctx.message.content[to_replace:]
+        command = command.lower()
         if server.id in self.c_commands:
             cmdlist = self.c_commands[server.id]
             if command in cmdlist:
@@ -71,6 +73,7 @@ class CustomCommands:
         Example:
         !delcom yourcommand"""
         server = ctx.message.server
+        command = command.lower()
         if server.id in self.c_commands:
             cmdlist = self.c_commands[server.id]
             if command in cmdlist:

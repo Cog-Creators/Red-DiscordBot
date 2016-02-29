@@ -1,6 +1,6 @@
 from discord.ext import commands
 import discord
-from cogs.utils import checks
+from cogs.utils.settings import Settings
 from random import choice as rndchoice
 import threading
 import datetime, re
@@ -30,6 +30,10 @@ formatter = commands.HelpFormatter(show_check_failure=False)
 
 bot = commands.Bot(command_prefix=["_"], formatter=formatter,
                    description=description, pm_help=None)
+
+settings = Settings()
+
+from cogs.utils import checks
 
 lock = False
 
@@ -150,7 +154,7 @@ async def debug(ctx, *, code : str):
 
     result = python.format(result)
     if not ctx.message.channel.is_private:
-        censor = (settings["EMAIL"], settings["PASSWORD"])
+        censor = (settings.email, settings.password)
         r = "[EXPUNGED]"
         for w in censor:
             result = result.replace(w, r)
@@ -169,8 +173,7 @@ async def owner(ctx):
     """Sets owner"""
     global lock
     msg = ctx.message
-    data = load_settings()
-    if data["OWNER"] != "id_here":
+    if settings.owner != "id_here":
         await bot.say("Owner ID has already been set.")
         return
     if lock:
@@ -192,10 +195,7 @@ async def prefix(*prefixes):
         await bot.say("Example: setprefix [ ! ^ .")
         return
     bot.command_prefix = list(prefixes)
-    data = load_settings()
-    data["PREFIXES"] = list(prefixes)
-    with open("data/red/settings.json", "w") as f:
-            f.write(json.dumps(data))
+    settings.prefixes = list(prefixes)
     if len(prefixes) > 1:
         await bot.say("Prefixes set")
     else:
@@ -207,7 +207,7 @@ async def name(ctx, *name : str):
     """Sets Red's name"""
     if name == ():
         await send_cmd_help(ctx)
-    await bot.edit_profile(settings["PASSWORD"], username=" ".join(name))
+    await bot.edit_profile(settings.password, username=" ".join(name))
     await bot.say("Done.")
 
 @_set.command(pass_context=True)
@@ -227,7 +227,7 @@ async def avatar(url : str):
     try:
         async with aiohttp.get(url) as r:
             data = await r.read()
-        await bot.edit_profile(settings["PASSWORD"], avatar=data)
+        await bot.edit_profile(settings.password, avatar=data)
         await bot.say("Done.")
     except:
         await bot.say("Error.")
@@ -277,12 +277,12 @@ def user_allowed(message):
     mod = bot.get_cog('Mod')
     
     if mod is not None:
-        if checks.settings["OWNER"] == author.id:
+        if settings.owner == author.id:
             return True
         if not message.channel.is_private:
-            if discord.utils.get(author.roles, name=checks.settings["ADMIN_ROLE"]) is not None:
-                return True
-            if discord.utils.get(author.roles, name=checks.settings["MOD_ROLE"]) is not None:
+            server = message.server
+            names = (settings.get_server_admin(server),settings.get_server_mod(server))
+            if None not in map(lambda name: discord.utils.get(author.roles,name=name),names):
                 return True
 
         if author.id in mod.blacklist_list:
@@ -310,23 +310,12 @@ def wait_for_answer(author):
     while choice.lower() != "yes" and choice == "None":
         choice = input("> ")
     if choice == "yes":
-        data = load_settings()
-        data["OWNER"] = author.id
-        with open("data/red/settings.json", "w") as f:
-            f.write(json.dumps(data))
-        checks.owner = data["OWNER"]
-        print(author.name + " has been set as owner. A restart is required.")
+        settings.owner = author.id
+        print(author.name + " has been set as owner. A restart is required, maybe?")
         lock = False
     else:
         print("setowner request has been ignored.")
         lock = False
-
-def load_settings():
-    try:
-        with open('data/red/settings.json', "r") as f:
-            return json.load(f)
-    except:
-        raise("Couldn't load credentials.")
 
 def list_cogs():
     cogs = glob.glob("cogs/*.py")
@@ -344,60 +333,47 @@ def check_folders():
             os.makedirs(folder)
 
 def check_configs():
-    settings_path = "data/red/settings.json"
-    settings = {"EMAIL" : "EmailHere", "PASSWORD" : "PasswordHere", "OWNER" : "id_here", "PREFIXES" : [], "ADMIN_ROLE" : "Transistor", "MOD_ROLE" : "Process"}
-    if not os.path.isfile(settings_path):
-
+    if settings.bot_settings == settings.default_settings:
         print("Red - First run configuration")
         print("If you don't have one, create a NEW ACCOUNT for Red. Do *not* use yours. (https://discordapp.com)")
-        settings["EMAIL"] = input("\nEmail> ")
-        settings["PASSWORD"] = input("\nPassword> ")
+        settings.email = input("\nEmail> ")
+        settings.password = input("\nPassword> ")
 
-        if not settings["EMAIL"] or not settings["PASSWORD"]:
+        if not settings.email or not settings.password:
             input("Email and password cannot be empty. Restart Red and repeat the configuration process.")
             exit(1)
 
-        if "@" not in settings["EMAIL"]:
+        if "@" not in settings.email:
             input("You didn't enter a valid email. Restart Red and repeat the configuration process.")
             exit(1)
         
         print("\nChoose a prefix (or multiple ones, one at once) for the commands. Type exit when you're done. Example prefix: !")
-        settings["PREFIXES"] = []
+        prefixes = []
         new_prefix = ""
-        while new_prefix.lower() != "exit" or settings["PREFIXES"] == []:
+        while new_prefix.lower() != "exit" or prefixes == []:
             new_prefix = input("Prefix> ")
             if new_prefix.lower() != "exit" and new_prefix != "":
-                settings["PREFIXES"].append(new_prefix)
+                prefixes.append(new_prefix)
+                #Remember we're using property's here, oh well...
+        settings.prefixes = prefixes
 
         print("\nInput *your own* ID. You can type \@Yourname in chat to see it (copy only the numbers).")
         print("If you want, you can also do it later with [prefix]set owner. Leave empty in that case.")
-        settings["OWNER"] = input("\nID> ")
-        if settings["OWNER"] == "": settings["OWNER"] = "id_here"
-        if not settings["OWNER"].isdigit() and settings["OWNER"] != "id_here":
+        settings.owner = input("\nID> ")
+        if settings.owner == "": settings["OWNER"] = "id_here"
+        if not settings.owner.isdigit() and settings["OWNER"] != "id_here":
             print("\nERROR: What you entered is not a valid ID. Set yourself as owner later with [prefix]set owner")
-            settings["OWNER"] = "id_here"
+            settings.owner = "id_here"
 
         print("\nInput the admin role's name. Anyone with this role will be able to use the bot's admin commands")
         print("Leave blank for default name (Transistor)")
-        settings["ADMIN_ROLE"] = input("\nAdmin role> ")
-        if settings["ADMIN_ROLE"] == "": settings["ADMIN_ROLE"] = "Transistor"
+        settings.default_admin = input("\nAdmin role> ")
+        if settings.default_admin == "": settings.default_admin = "Transistor"
 
         print("\nInput the moderator role's name. Anyone with this role will be able to use the bot's mod commands")
         print("Leave blank for default name (Process)")
-        settings["MOD_ROLE"] = input("\nAdmin role> ")
-        if settings["MOD_ROLE"] == "": settings["MOD_ROLE"] = "Process"
-
-        with open(settings_path, "w") as f:
-            f.write(json.dumps(settings))
-    else: # Undoing the changes made by the broken pull request
-        data = load_settings()
-        if "default" in data:
-            data["ADMIN_ROLE"] = data["default"]["ADMIN_ROLE"]
-            data["MOD_ROLE"] = data["default"]["MOD_ROLE"]
-            del data["default"]
-            print("Rolling back settings to previous format...")
-            with open(settings_path, "w") as f:
-                f.write(json.dumps(data, indent=4,sort_keys=True,separators=(',',' : ')))
+        settings.default_mod = input("\nModerator role> ")
+        if settings.default_mod == "": settings.default_mod = "Process"
 
     cogs_s_path = "data/red/cogs.json"
     cogs = {}
@@ -482,14 +458,14 @@ def load_cogs():
 
 def main():
     global settings
+    global checks
+
     check_folders()
     check_configs()
     set_logger()
-    settings = load_settings()
-    checks.settings["OWNER"] = settings["OWNER"]
     load_cogs()
-    bot.command_prefix = settings["PREFIXES"]
-    yield from bot.login(settings["EMAIL"], settings["PASSWORD"])
+    bot.command_prefix = settings.prefixes
+    yield from bot.login(settings.email, settings.password)
     yield from bot.connect()
 
 if __name__ == '__main__':

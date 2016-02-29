@@ -1,10 +1,11 @@
 import discord
 from discord.ext import commands
-from .utils import checks
 from .utils.dataIO import fileIO
-from __main__ import send_cmd_help
+from .utils import checks
+from __main__ import send_cmd_help, settings
 import os
 import logging
+import json
 
 class Mod:
     """Moderation tools."""
@@ -15,6 +16,36 @@ class Mod:
         self.blacklist_list = fileIO("data/mod/blacklist.json", "load")
         self.ignore_list = fileIO("data/mod/ignorelist.json", "load")
         self.filter = fileIO("data/mod/filter.json", "load")
+
+    @commands.group(pass_context=True,no_pm=True)
+    @checks.serverowner_or_permissions(manage_server=True)
+    async def modset(self,ctx):
+        """Manages server administration settings."""
+        if ctx.invoked_subcommand is None:
+            await send_cmd_help(ctx)
+            msg = "```"
+            for k, v in settings.get_server(ctx.message.server).items():
+                msg += str(k) + ": " + str(v) + "\n"
+            msg += "```"
+            await self.bot.say(msg)
+
+    @modset.command(name="adminrole",pass_context=True,no_pm=True)
+    async def _modset_adminrole(self,ctx,role_name : str):
+        """Sets the admin role for this server, case insensitive."""
+        server = ctx.message.server
+        if server.id not in settings.servers:
+            await self.bot.say("Remember to set modrole too.")
+        settings.set_server_admin(server,role_name)
+        await self.bot.say("Admin role set to '{}'".format(role_name))
+
+    @modset.command(name="modrole",pass_context=True,no_pm=True)
+    async def _modset_modrole(self,ctx,role_name : str):
+        """Sets the mod role for this server, case insensitive."""
+        server = ctx.message.server
+        if server.id not in settings.servers:
+            await self.bot.say("Remember to set adminrole too.")
+        settings.set_server_mod(server,role_name)
+        await self.bot.say("Mod role set to '{}'".format(role_name))
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(kick_members=True)
@@ -32,17 +63,17 @@ class Mod:
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(ban_members=True)
-    async def ban(self, ctx, user : discord.Member, purge_msg : int=0):
+    async def ban(self, ctx, user : discord.Member, days : int=0):
         """Bans user and deletes last X days worth of messages.
 
         Minimum 0 days, maximum 7. Defaults to 0."""
         author = ctx.message.author
-        if purge_msg < 0 or purge_msg > 7:
+        if days < 0 or days > 7:
             await self.bot.say("Invalid days. Must be between 0 and 7.")
             return
         try:
             await self.bot.ban(user, days)
-            logger.info("{}({}) banned {}({}), deleting {} days worth of messages".format(author.name, author.id, user.name, user.id, str(purge_msg)))
+            logger.info("{}({}) banned {}({}), deleting {} days worth of messages".format(author.name, author.id, user.name, user.id, str(days)))
             await self.bot.say("Done. It was about time.")
         except discord.errors.Forbidden:
             await self.bot.say("I'm not allowed to do that.")
@@ -398,11 +429,15 @@ class Mod:
 
     def immune_from_filter(self, message):
         user = message.author
-        if user.id == checks.settings["OWNER"]:
+        server = message.server
+        admin_role = settings.get_server_admin(server)
+        mod_role = settings.get_server_mod(server)
+
+        if user.id == settings.owner:
             return True
-        elif discord.utils.get(user.roles, name=checks.settings["ADMIN_ROLE"]):
+        elif discord.utils.get(user.roles, name=admin_role):
             return True
-        elif discord.utils.get(user.roles, name=checks.settings["MOD_ROLE"]):
+        elif discord.utils.get(user.roles, name=mod_role):
             return True
         else:
             return False
