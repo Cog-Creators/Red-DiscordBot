@@ -64,3 +64,14 @@ def admin_or_permissions(**perms):
         return role_or_permissions(ctx, lambda r: r.name.lower() == admin_role.lower(), **perms)
 
     return commands.check(predicate)
+
+def serverowner_or_permissions(**perms):
+    def predicate(ctx):
+        server = ctx.message.server
+        owner = server.owner
+
+        if ctx.message.author.id == owner.id:
+            return True
+
+        return check_permissions(ctx,perms)
+    return commands.check(predicate)

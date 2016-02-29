@@ -18,7 +18,7 @@ class Mod:
         self.filter = fileIO("data/mod/filter.json", "load")
 
     @commands.group(pass_context=True,no_pm=True)
-    @checks.admin_or_permissions(manage_server=True)
+    @checks.serverowner_or_permissions(manage_server=True)
     async def modset(self,ctx):
         """Manages server administration settings."""
         if ctx.invoked_subcommand is None:
