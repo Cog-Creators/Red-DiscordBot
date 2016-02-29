@@ -21,10 +21,10 @@ class General:
                      "Don't count on it", "My reply is no", "My sources say no", "Outlook not so good", "Very doubtful"]
         self.poll_sessions = []
 
-    @commands.command()
+    @commands.command(hidden=True)
     async def ping(self):
         """Pong."""
-        self.bot.say("Pong.")
+        await self.bot.say("Pong.")
 
     @commands.command()
     async def choose(self, *choices):

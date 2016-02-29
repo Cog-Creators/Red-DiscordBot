@@ -22,7 +22,7 @@ class Alias:
     async def _add_alias(self,ctx,command : str,*,to_execute):
         """Add an alias for a command
 
-           Example: !alias add test penis @TwentySix"""
+           Example: !alias add test flip @Twentysix"""
         server = ctx.message.server
         if self.get_prefix(to_execute) == False:
             to_execute = self.bot.command_prefix[0] + to_execute

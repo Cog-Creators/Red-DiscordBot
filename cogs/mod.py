@@ -160,7 +160,7 @@ class Mod:
                 await self.bot.delete_message(x)
 
     @commands.group(pass_context=True)
-    @checks.admin_or_permissions(ban_members=True)
+    @checks.is_owner()
     async def blacklist(self, ctx):
         """Bans user from using the bot"""
         if ctx.invoked_subcommand is None:
@@ -188,7 +188,7 @@ class Mod:
 
     
     @commands.group(pass_context=True)
-    @checks.admin_or_permissions(ban_members=True)
+    @checks.is_owner()
     async def whitelist(self, ctx):
         """Users who will be able to use the bot"""
         if ctx.invoked_subcommand is None:

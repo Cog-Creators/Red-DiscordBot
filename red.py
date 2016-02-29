@@ -311,7 +311,7 @@ def wait_for_answer(author):
         choice = input("> ")
     if choice == "yes":
         settings.owner = author.id
-        print(author.name + " has been set as owner. A restart is required, maybe?")
+        print(author.name + " has been set as owner.")
         lock = False
     else:
         print("setowner request has been ignored.")

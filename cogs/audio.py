@@ -791,7 +791,7 @@ def setup(bot):
         raise RuntimeError("You need to run `pip3 install youtube_dl`")
         return
     if opus is None:
-        raise RuntimeError("You need to get the *.exe's and opus.dll from 26's github.")
+        raise RuntimeError("You need to install ffmpeg and opus. See \"https://github.com/Twentysix26/Red-DiscordBot/wiki/Requirements\"")
         return
     loop = asyncio.get_event_loop()
     n = Audio(bot)

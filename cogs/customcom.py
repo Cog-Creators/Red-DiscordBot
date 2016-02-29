@@ -88,6 +88,7 @@ class CustomCommands:
 
     @commands.command(pass_context=True, no_pm=True)
     async def customcommands(self, ctx):
+        """Shows custom commands list"""
         server = ctx.message.server
         if server.id in self.c_commands:
             cmdlist = self.c_commands[server.id]
