@@ -103,21 +103,24 @@ class Mod:
         message = ctx.message
         cmdmsg = message
         logger.info("{}({}) deleted {} messages containing '{}' in channel {}".format(author.name, author.id, str(number), text, message.channel.name))
-        if number > 0 and number < 10000:
-            while True:
-                new = False
-                async for x in self.bot.logs_from(message.channel, limit=100, before=message):
-                    if number == 0: 
+        try:
+            if number > 0 and number < 10000:
+                while True:
+                    new = False
+                    async for x in self.bot.logs_from(message.channel, limit=100, before=message):
+                        if number == 0: 
+                            await self.bot.delete_message(cmdmsg)
+                            return
+                        if text in x.content:
+                            await self.bot.delete_message(x)
+                            number -= 1
+                        new = True
+                        message = x
+                    if not new or number == 0: 
                         await self.bot.delete_message(cmdmsg)
-                        return
-                    if text in x.content:
-                        await self.bot.delete_message(x)
-                        number -= 1
-                    new = True
-                    message = x
-                if not new or number == 0: 
-                    await self.bot.delete_message(cmdmsg)
-                    break
+                        break
+        except discord.errors.Forbidden:
+            await self.bot.say("I need permissions to manage messages in this channel.")
 
     @cleanup.command(pass_context=True, no_pm=True)
     async def user(self, ctx, user : discord.Member, number : int):
@@ -130,21 +133,24 @@ class Mod:
         message = ctx.message
         cmdmsg = message
         logger.info("{}({}) deleted {} messages made by {}({}) in channel {}".format(author.name, author.id, str(number), user.name, user.id, message.channel.name))
-        if number > 0 and number < 10000:
-            while True:
-                new = False
-                async for x in self.bot.logs_from(message.channel, limit=100, before=message):
-                    if number == 0: 
+        try:
+            if number > 0 and number < 10000:
+                while True:
+                    new = False
+                    async for x in self.bot.logs_from(message.channel, limit=100, before=message):
+                        if number == 0: 
+                            await self.bot.delete_message(cmdmsg)
+                            return
+                        if x.author.id == user.id:
+                            await self.bot.delete_message(x)
+                            number -= 1
+                        new = True
+                        message = x
+                    if not new or number == 0: 
                         await self.bot.delete_message(cmdmsg)
-                        return
-                    if x.author.id == user.id:
-                        await self.bot.delete_message(x)
-                        number -= 1
-                    new = True
-                    message = x
-                if not new or number == 0: 
-                    await self.bot.delete_message(cmdmsg)
-                    break
+                        break
+        except discord.errors.Forbidden:
+            await self.bot.say("I need permissions to manage messages in this channel.")
 
     @cleanup.command(pass_context=True, no_pm=True)
     async def messages(self, ctx, number : int):
@@ -155,9 +161,12 @@ class Mod:
         author = ctx.message.author
         channel = ctx.message.channel
         logger.info("{}({}) deleted {} messages in channel {}".format(author.name, author.id, str(number), channel.name))
-        if number > 0 and number < 10000:
-            async for x in self.bot.logs_from(channel, limit=number+1):
-                await self.bot.delete_message(x)
+        try:
+            if number > 0 and number < 10000:
+                async for x in self.bot.logs_from(channel, limit=number+1):
+                    await self.bot.delete_message(x)
+        except discord.errors.Forbidden:
+            await self.bot.say("I need permissions to manage messages in this channel.")
 
     @commands.group(pass_context=True)
     @checks.is_owner()
