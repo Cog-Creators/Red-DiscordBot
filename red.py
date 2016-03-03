@@ -282,8 +282,10 @@ def user_allowed(message):
         if not message.channel.is_private:
             server = message.server
             names = (settings.get_server_admin(server),settings.get_server_mod(server))
-            if None not in map(lambda name: discord.utils.get(author.roles,name=name),names):
-                return True
+            results = map(lambda name: discord.utils.get(author.roles,name=name),names)
+            for r in results:
+                if r != None:
+                    return True
 
         if author.id in mod.blacklist_list:
             return False
