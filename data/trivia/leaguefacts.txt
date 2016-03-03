@@ -260,6 +260,7 @@ Who is part of the Spirits species?`Kindred
 Aside from Kindred, who else's champion design is based on the idea of "Yin and Yang"?`Karma
 Who has a Shadowfire skin?`Kindred
 The "Tally-men" are followers of whom?`Kindred
+Whose lore tells the story of Magga, a famous actress?`Kindred
 Who has a skill called "Dance of Arrows"?`Kindred
 Who says "Terror coming...daddy coming!"?`Kog'maw`kogmaw`Kog maw
 Who has a Reindeer skin?`Kog'maw`kogmaw`Kog maw
@@ -463,6 +464,7 @@ Who is the Heir of Shurima?`Sivir
 Who has a skill called "Ricochet"?Sivir
 Who is also known as "The Crystal Vanguard"?`Skarner
 Who emerged from the Crystal Scar (Dominion map)?`Skarner
+Which champion is a member of the Brackerns species?`Skarner
 Who yells his own name after standing in a bush for a period of time (reference to Pokemon)?`Skarner
 Who has a skill called "Fracture"?`Skarner
 Who says "On all legs." in game?`Skarner
@@ -657,7 +659,6 @@ What is the name of the Viking ghost shopkeeper on the Howling Abyss?`Greyor
 Who bound the Viking's ghost to the Howling Abyss?`Avarosa
 What is the name of the flying robot owned by the Hermit on the Howling Abyss (hint:named after a Rioter)?`Geeves
 What is the capital city of Freljord?`Rakelstake
-What type of minions deal no damage to Nexuses on the Howling Abyss?`Super minions`super
 Against which neutral mob does crowd control last twice as long?`Rift Scuttler
 Smiting which neutral mob will give summon a nature spirit that grants vision over the nearby crossroads for 95 seconds?`Greater Murk Wolf
 Smiting which neutral mob will give you the buff "Gift of Heavy Hands"?`Ancient Krug
@@ -669,3 +670,7 @@ Which neutral mob will dance if any champion dances near it?`Rift Herald
 Which neutral mob is the only mob with scaling armor and magic resistance after level 9?`Dragon
 What is Baron Nashor's movement speed?`300`three hundred
 What is the name of the type minion created by Banner of Command?`Anti-turret Cannon`antiturret cannon
+What is the name of the continent that League of Legends is located on?`Valoran
+Which champion is capable of having the most spell vamp?`Akali
+Which summoner spell has a 240 second cooldown?`Heal
+What is the name of the spider that lives in the Twisted Treeline?`Vilemaw
