@@ -360,8 +360,8 @@ def check_configs():
         print("\nInput *your own* ID. You can type \@Yourname in chat to see it (copy only the numbers).")
         print("If you want, you can also do it later with [prefix]set owner. Leave empty in that case.")
         settings.owner = input("\nID> ")
-        if settings.owner == "": settings["OWNER"] = "id_here"
-        if not settings.owner.isdigit() and settings["OWNER"] != "id_here":
+        if settings.owner == "": settings.owner = "id_here"
+        if not settings.owner.isdigit() and settings.owner != "id_here":
             print("\nERROR: What you entered is not a valid ID. Set yourself as owner later with [prefix]set owner")
             settings.owner = "id_here"
 
