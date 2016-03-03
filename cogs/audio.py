@@ -200,7 +200,10 @@ class Audio:
         if self.music_player.is_playing():
             if await self.is_alone_or_admin(msg):
                 self.current = -1
-                self.playlist = [self.downloader["URL"]]
+                if self.downloader["URL"]:
+                    self.playlist = [self.downloader["URL"]]
+                else: # local
+                    self.playlist = [self.downloader["ID"]]
                 await self.bot.say("I will play this song on repeat.")
             else:
                 await self.bot.say("I'm in queue mode. Controls are disabled if you're in a room with multiple people.")
@@ -593,7 +596,7 @@ class Audio:
             print(e) # TODO
             audio.downloader = {"DONE" : True, "TITLE" : False, "ID" : False, "URL" : False, "DOWNLOADING" : False}
 
-    async def incoming_messages(self, msg): # Workaround, need to fix
+    async def incoming_messages(self, msg):
         if msg.author.id != self.bot.user.id:
 
             if self.settings["MAX_CACHE"] != 0:
@@ -602,8 +605,6 @@ class Audio:
                     if self.cache_size() >= self.settings["MAX_CACHE"]:
                         self.empty_cache()
                         print("Cache emptied.")
-
-
 
             if msg.channel.is_private and msg.attachments != []:
                 await self.transfer_playlist(msg)
