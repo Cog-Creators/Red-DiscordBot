@@ -111,7 +111,7 @@ class CustomCommands:
         if not user_allowed(message):
             return
 
-        msg = message.content.lower()
+        msg = message.content
         server = message.server
         prefix = self.get_prefix(msg)
 
@@ -120,6 +120,8 @@ class CustomCommands:
             cmd = msg[len(prefix):]
             if cmd in cmdlist.keys():
                 await self.bot.send_message(message.channel, cmdlist[cmd])
+            elif cmd.lower() in cmdlist.keys():
+                await self.bot.send_message(message.channel, cmdlist[cmd.lower()])
 
     def get_prefix(self, msg):
         for p in self.bot.command_prefix:
