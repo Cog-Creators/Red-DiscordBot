@@ -111,7 +111,7 @@ class CustomCommands:
         if not user_allowed(message):
             return
 
-        msg = message.content
+        msg = message.content.lower()
         server = message.server
         prefix = self.get_prefix(msg)
 
