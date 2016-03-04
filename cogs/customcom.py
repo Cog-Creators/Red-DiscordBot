@@ -24,8 +24,9 @@ class CustomCommands:
             await send_cmd_help(ctx)
             return
         server = ctx.message.server
-        to_replace = ctx.message.content.find(text[0])
-        text = ctx.message.content[to_replace:]
+        content = ctx.message.content
+        chars = (len(ctx.prefix), len(ctx.invoked_with), len(command))
+        text = content[chars[0] + chars[1] + chars[2] + 2:] # Gets text of the command
         command = command.lower()
         if not server.id in self.c_commands:
             self.c_commands[server.id] = {}
@@ -50,8 +51,9 @@ class CustomCommands:
             await send_cmd_help(ctx)
             return
         server = ctx.message.server
-        to_replace = ctx.message.content.find(text[0])
-        text = ctx.message.content[to_replace:]
+        content = ctx.message.content
+        chars = (len(ctx.prefix), len(ctx.invoked_with), len(command))
+        text = content[chars[0] + chars[1] + chars[2] + 2:] # Gets text of the command
         command = command.lower()
         if server.id in self.c_commands:
             cmdlist = self.c_commands[server.id]
