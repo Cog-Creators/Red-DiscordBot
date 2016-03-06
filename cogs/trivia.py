@@ -115,7 +115,7 @@ class TriviaSession():
                 question = line[0]
                 answers = []
                 for l in line[1:]:
-                    answers.append(l.lower())
+                    answers.append(l.lower().strip())
                 if len(line) >= 2:
                     line = {"QUESTION" : question, "ANSWERS": answers} #string, list
                     parsed_list.append(line)
