@@ -85,6 +85,7 @@ async def load(*, module : str):
 
     Example: load cogs.mod"""
     module = module.strip()
+    if "cogs." not in module: module = "cogs." + module
     if not module in list_cogs():
         await bot.say("That module doesn't exist.")
         return
@@ -103,6 +104,7 @@ async def unload(*, module : str):
 
     Example: unload cogs.mod"""
     module = module.strip()
+    if "cogs." not in module: module = "cogs." + module
     if not module in list_cogs():
         await bot.say("That module doesn't exist.")
         return
@@ -121,6 +123,7 @@ async def _reload(*, module : str):
 
     Example: reload cogs.mod"""
     module = module.strip()
+    if "cogs." not in module: module = "cogs." + module
     if not module in list_cogs():
         await bot.say("That module doesn't exist.")
         return
