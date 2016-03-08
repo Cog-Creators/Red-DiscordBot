@@ -107,12 +107,13 @@ class Economy:
         id = author.id
         if self.account_check(id):
             if id in self.payday_register:
-                if abs(self.payday_register[id] - int(time.perf_counter()))  >= self.settings["PAYDAY_TIME"]: 
+                seconds = abs(self.payday_register[id] - int(time.perf_counter()))
+                if seconds  >= self.settings["PAYDAY_TIME"]: 
                     self.add_money(id, self.settings["PAYDAY_CREDITS"])
                     self.payday_register[id] = int(time.perf_counter())
                     await self.bot.say("{} Here, take some credits. Enjoy! (+{} credits!)".format(author.mention, str(self.settings["PAYDAY_CREDITS"])))
                 else:
-                    await self.bot.say("{} Too soon. You have to wait {} seconds between each payday.".format(author.mention, str(self.settings["PAYDAY_TIME"])))
+                    await self.bot.say("{} Too soon. For your next payday you have to wait {}.".format(author.mention, self.display_time(self.settings["PAYDAY_TIME"] - seconds)))
             else:
                 self.payday_register[id] = int(time.perf_counter())
                 self.add_money(id, self.settings["PAYDAY_CREDITS"])
@@ -265,6 +266,26 @@ class Economy:
             return True
         else:
             return False
+
+    def display_time(self, seconds, granularity=2): # What would I ever do without stackoverflow?
+        intervals = (                               # Source: http://stackoverflow.com/a/24542445
+            ('weeks', 604800),  # 60 * 60 * 24 * 7
+            ('days', 86400),    # 60 * 60 * 24
+            ('hours', 3600),    # 60 * 60
+            ('minutes', 60),
+            ('seconds', 1),
+            )
+        
+        result = []
+
+        for name, count in intervals:
+            value = seconds // count
+            if value:
+                seconds -= value * count
+                if value == 1:
+                    name = name.rstrip('s')
+                result.append("{} {}".format(value, name))
+        return ', '.join(result[:granularity])
 
 def check_folders():
     if not os.path.exists("data/economy"):
