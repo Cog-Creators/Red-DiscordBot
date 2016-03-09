@@ -12,6 +12,7 @@ import time
 import sys
 import logging
 import aiohttp
+import importlib
 
 #
 #  Red, a Discord bot by Twentysix, based on discord.py and its command extension
@@ -91,7 +92,9 @@ async def load(*, module : str):
         return
     set_cog(module, True)
     try:
-        bot.load_extension(module)
+        mod_obj = importlib.load_module(module)
+        importlib.reload(mod_obj)
+        bot.load_extension(mod_obj.__name__)
     except Exception as e:
         await bot.say('{}: {}'.format(type(e).__name__, e))
     else:
@@ -130,7 +133,9 @@ async def _reload(*, module : str):
     set_cog(module, True)
     try:
         bot.unload_extension(module)
-        bot.load_extension(module)
+        mod_obj = importlib.load_module(module)
+        importlib.reload(mod_obj)
+        bot.load_extension(mod_obj.__name__)
     except Exception as e:
         await bot.say('\U0001f52b')
         await bot.say('{}: {}'.format(type(e).__name__, e))
