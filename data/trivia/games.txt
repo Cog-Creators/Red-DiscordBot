@@ -17,7 +17,7 @@ What role do you play in the game "Pacific Strike"?`American pilot
 What famous monkey had a considerable role in turning Nintendo into the company they are today?`Donkey Kong
 IN the "Final Fantasy X", where is blitzball played?`Underwater
 What was the name of the four-armed sub-boss in the original "Mortal Kombat"?`Goro
-In the Xbox game "Halo", what is the name of the main character?`Master Chief
+In the Xbox game "Halo", what is the name of the main character?`Master Chief`spartan 117`john
 Which famous skateboarder has his name on a skateboard video game series?`Tony Hawk
 Which type of game is "Mortal Kombat"?`Fighting
 In "Animal Crossing: Wild World", what wildlife is found in the town observatory?`Owl
@@ -95,7 +95,7 @@ Name the Atlantean admiral in the campaigns of the popular game Age of Mythology
 Name of the protagonist of the video game Half-Life?`Gordon`Gordon Freeman
 The Half Life symbol is what Greek letter?`Lambda
 In what video game must a player collect four rune keys to prevent Shun-Niggurath form destroying the world?`Quake
-Who is the son of Durotan, an Orcish chiefain in the World of Warcraft?`Thrall
+Who is the son of Durotan, an Orcish chieftain in the World of Warcraft?`Thrall
 What PopCap game required you to swap adjacent gems to form chains of three or more?`Bejeweled
 How much time does Link have to defeat Skull Kid in Majora's Mask?`3 days
 The barrel roll from Star Fox 64 isn’t actually a barrel roll but what?`Aileron roll
@@ -106,7 +106,7 @@ Founded by Paypal employees, what site was bought by Google for $1.65 billion?`Y
 Pescadero, Oceano and Indio are codenames of earlier version of which popular software?`Firefox
 Which American Vice President referred to the Internet as an "Information Super Highway"?`Al Gore
 "Relationship Matter" is the slogan of which social networking site?`Linked In`Linkedin
-What year was the Nintendo Game Boy released in the US?`1990
+What year was the Nintendo Game Boy released in the US?`1989
 In what year was the compact disk invented?`1965
 What was the "beta version" of the Internet called?`ARPAnet
 How is binary digit more commonly known?`Bit
