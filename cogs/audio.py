@@ -399,7 +399,7 @@ class Audio:
         return song_list
 
     @commands.group(pass_context=True)
-    @checks.mod_or_permissions()
+    @checks.mod_or_permissions(manage_roles=True)
     async def audioset(self, ctx):
         """Changes audio module settings"""
         if ctx.invoked_subcommand is None:
