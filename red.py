@@ -92,7 +92,7 @@ async def load(*, module : str):
         return
     set_cog(module, True)
     try:
-        mod_obj = importlib.load_module(module)
+        mod_obj = importlib.import_module(module)
         importlib.reload(mod_obj)
         bot.load_extension(mod_obj.__name__)
     except Exception as e:
@@ -133,7 +133,7 @@ async def _reload(*, module : str):
     set_cog(module, True)
     try:
         bot.unload_extension(module)
-        mod_obj = importlib.load_module(module)
+        mod_obj = importlib.import_module(module)
         importlib.reload(mod_obj)
         bot.load_extension(mod_obj.__name__)
     except Exception as e:
