@@ -176,15 +176,17 @@ class TriviaSession():
         await trivia_manager.bot.say(t)
 
     async def check_answer(self, message):
-        self.timeout = time.perf_counter()
-        for answer in self.current_q["ANSWERS"]:
-            if answer in message.content.lower():
-                self.current_q["ANSWERS"] = []
-                self.status = "correct answer"
-                self.add_point(message.author.name)
-                await trivia_manager.bot.send_message(message.channel, "You got it {}! **+1** to you!".format(message.author.name))
-                await trivia_manager.bot.send_typing(self.channel)
-                return True
+        if message.author.id != trivia_manager.bot.user.id:
+            self.timeout = time.perf_counter()
+            if self.current_q is not None:
+                for answer in self.current_q["ANSWERS"]:
+                    if answer in message.content.lower():
+                        self.current_q["ANSWERS"] = []
+                        self.status = "correct answer"
+                        self.add_point(message.author.name)
+                        await trivia_manager.bot.send_message(message.channel, "You got it {}! **+1** to you!".format(message.author.name))
+                        await trivia_manager.bot.send_typing(self.channel)
+                        return True
 
     def add_point(self, user):
         if user in self.score_list:
