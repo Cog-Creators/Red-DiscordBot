@@ -23,7 +23,9 @@ except:
 try:
     if not discord.opus.is_loaded():
         discord.opus.load_opus('libopus-0.dll')
-except:
+except OSError: # Incorrect bitness
+    opus = False
+except: # Missing opus
     opus = None
 else:
     opus = True
@@ -791,7 +793,10 @@ def setup(bot):
     if youtube_dl is None:
         raise RuntimeError("You need to run `pip3 install youtube_dl`")
         return
-    if opus is None:
+    if opus is False:
+        raise RuntimeError("Your opus library's bitness must match your python installation's bitness. They both must be either 32bit or 64bit.")
+        return
+    elif opus is None:
         raise RuntimeError("You need to install ffmpeg and opus. See \"https://github.com/Twentysix26/Red-DiscordBot/wiki/Requirements\"")
         return
     loop = asyncio.get_event_loop()
