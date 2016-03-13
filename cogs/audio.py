@@ -40,7 +40,8 @@ youtube_dl_options = {
     'ignoreerrors': True,
     'quiet': True,
     'no_warnings': True,
-    'outtmpl': "data/audio/cache/%(id)s"}
+    'outtmpl': "data/audio/cache/%(id)s",
+    'default_search' : 'auto'}
 
 class Audio:
     """Music streaming."""
@@ -63,15 +64,22 @@ class Audio:
                      "https://www.youtube.com/watch?v=41tIUr_ex3g", "https://www.youtube.com/watch?v=f9O2Rjn1azc"]
 
     @commands.command(pass_context=True, no_pm=True)
-    async def play(self, ctx, link : str):
-        """Plays link
+    async def play(self, ctx, *link : str):
+        """Plays videos (links/search terms)
         """
         if self.downloader["DOWNLOADING"]:
             await self.bot.say("I'm already downloading a track.")
             return
         msg = ctx.message
         if await self.check_voice(msg.author, msg):
-            if self.is_playlist_valid([link]): # reusing a function
+            if link != ():
+                link = " ".join(link)
+                if "http" not in link or "www." not in link:
+                    link = "[SEARCH:]" + link
+                else:
+                    if not self.is_playlist_valid([link]):
+                        await self.bot.say("Invalid link.")
+                        return
                 if await self.is_alone_or_admin(msg):
                     self.queue = []
                     self.current = -1
@@ -79,13 +87,14 @@ class Audio:
                     self.queue.append(link)
                     self.music_player.paused = False
                     self.music_player.stop()
+                    await self.bot.say("Playing requested link...")
                 else:
                     self.playlist = []
                     self.current = -1
                     if not self.queue: await self.bot.say("The link has been put into queue.")
                     self.queue.append(link)
             else:
-                await self.bot.say("That link is not allowed.")
+                await self.bot.say("You need to add a link or search terms.")
 
     @commands.command(aliases=["title"])
     async def song(self):
@@ -266,16 +275,23 @@ class Audio:
         if self.bot.voice: await self.bot.voice.disconnect()
 
     @commands.command(name="queue", pass_context=True, no_pm=True) #check that author is in the same channel as the bot
-    async def _queue(self, ctx, link : str=None):
-        """Add link to queue
+    async def _queue(self, ctx, *link : str):
+        """Add links or search terms to queue
 
         Shows queue list if no links are provided.
         """
-        if not link:
+        if link == ():
             queue_list = await self.queue_titles()
-            await self.bot.say("Videos in queue: \n" + queue_list + "\n\nType queue <link> to add a link to the queue.")
-        elif await self.check_voice(ctx.message.author, ctx.message) and self.is_playlist_valid([link]):
+            await self.bot.say("Videos in queue: \n" + queue_list + "\n\nType queue <link> to add a link or search terms to the queue.")
+        elif await self.check_voice(ctx.message.author, ctx.message):
             if not self.playlist:
+                link = " ".join(link)
+                if "http" not in link or "." not in link:
+                    link = "[SEARCH:]" + link
+                else:
+                    if not self.is_playlist_valid([link]):
+                        await self.bot.say("Invalid link.")
+                        return
                 self.queue.append(link)
                 msg = ctx.message
                 result = await self.get_song_metadata(link)
@@ -508,7 +524,7 @@ class Audio:
 
     async def play_video(self, link):
         self.downloader = {"DONE" : False, "TITLE" : False, "ID" : False, "URL": False, "DURATION" : False, "DOWNLOADING" : False}
-        if "https://" in link or "http://" in link:
+        if "https://" in link or "http://" in link or "[SEARCH:]" in link:
             path = "data/audio/cache/"
             t = threading.Thread(target=self.get_video, args=(link,self,))
             t.start()
@@ -593,7 +609,12 @@ class Audio:
         try:
             self.downloader["DOWNLOADING"] = True
             yt = youtube_dl.YoutubeDL(youtube_dl_options)
-            v = yt.extract_info(url, download=False)
+            if "[SEARCH:]" not in url:
+                v = yt.extract_info(url, download=False)
+            else:
+                url = url.replace("[SEARCH:]", "")
+                url = "https://youtube.com/watch?v=" + yt.extract_info(url, download=False)["entries"][0]["id"]
+                v = yt.extract_info(url, download=False)
             if v["duration"] > self.settings["MAX_LENGTH"]: raise MaximumLength("Track exceeded maximum length. See help audioset maxlength")
             if not os.path.isfile("data/audio/cache/" + v["id"]):
                 v = yt.extract_info(url, download=True)
