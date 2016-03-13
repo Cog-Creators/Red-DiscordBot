@@ -167,7 +167,11 @@ class Audio:
 
     @commands.command(pass_context=True, no_pm=True)
     async def local(self, ctx, name : str):
-        """Plays a local playlist"""
+        """Plays a local playlist
+
+        For bot's owner:
+        https://github.com/Twentysix26/Red-DiscordBot/wiki/Audio-module"""
+        help_link = "https://github.com/Twentysix26/Red-DiscordBot/wiki/Audio-module"
         if self.downloader["DOWNLOADING"]:
             await self.bot.say("I'm already downloading a track.")
             return
@@ -192,7 +196,7 @@ class Audio:
             else:
                 await self.bot.say("There is no local playlist with that name.")
         else:
-            await self.bot.say(message.channel, "There are no valid playlists in the localtracks folder.")
+            await self.bot.say(message.channel, "There are no valid playlists in the localtracks folder.\nIf you're the owner, see {}".format(help_link))
 
     @commands.command(pass_context=True, no_pm=True)
     async def loop(self, ctx):
@@ -631,12 +635,15 @@ class Audio:
 
     @commands.command(pass_context=True, no_pm=True)
     async def addplaylist(self, ctx, name : str, link : str): #CHANGE COMMAND NAME
-        """Adds tracks from youtube playlist link"""
+        """Adds tracks from youtube / soundcloud playlist link"""
         if self.is_playlist_name_valid(name) and len(name) < 25:
             if fileIO("playlists/" + name + ".txt", "check"):
                 await self.bot.say("`A playlist with that name already exists.`")
                 return False
-            links = await self.parse_yt_playlist(link)
+            if "youtube" in link.lower():
+                links = await self.parse_yt_playlist(link)
+            elif "soundcloud" in link.lower():
+                links = await self.parse_sc_playlist(link)
             if links:
                 data = { "author"  : ctx.message.author.id,
                          "playlist": links,
@@ -650,6 +657,9 @@ class Audio:
 
     @commands.command(pass_context=True, no_pm=True)
     async def delplaylist(self, ctx, name : str):
+        """Deletes playlist
+
+        Limited to owner, admins and author of the playlist."""
         file_path = "data/audio/playlists/" + name + ".txt"
         author = ctx.message.author
         if fileIO(file_path, "check"):
@@ -725,6 +735,16 @@ class Audio:
             yt = youtube_dl.YoutubeDL(youtube_dl_options)
             for entry in yt.extract_info(url, download=False, process=False)["entries"]:
                 playlist.append("https://www.youtube.com/watch?v=" + entry["id"])
+            return playlist
+        except:
+            return False
+
+    async def parse_sc_playlist(self, link):
+        try:
+            playlist = []
+            yt = youtube_dl.YoutubeDL(youtube_dl_options)
+            for i in yt.extract_info(link, download=False, process=False)["entries"]:
+                playlist.append(i['url'][:4] + 's' + i['url'][4:])
             return playlist
         except:
             return False
