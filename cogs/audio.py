@@ -642,11 +642,34 @@ class Audio:
                          "playlist": links,
                          "link"    : link}
                 fileIO("data/audio/playlists/" + name + ".txt", "save", data)
-                await self.bot.say("Playlist added. Name: {}".format(name))
+                await self.bot.say("Playlist added. Name: {}, songs: {}".format(name, str(len(links))))
             else:
                 await self.bot.say("Something went wrong. Either the link was incorrect or I was unable to retrieve the page.")
         else:
             await self.bot.say("Something is wrong with the playlist's link or its filename. Remember, the name must be with only numbers, letters and underscores.")
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def delplaylist(self, ctx, name : str):
+        file_path = "data/audio/playlists/" + name + ".txt"
+        author = ctx.message.author
+        if fileIO(file_path, "check"):
+            playlist_author_id = fileIO(file_path, "load")["author"]
+            check = await self.admin_or_owner(ctx.message)
+            if check or author.id == playlist_author_id:
+                os.remove(file_path)
+                await self.bot.say("Playlist {} has been removed.".format(name))
+            else:
+                await self.bot.say("Only owner, admins and the author of the playlist can delete it.")
+        else:
+            await self.bot.say("There's no playlist with that name.")
+
+    async def admin_or_owner(self, message):
+        if message.author.id == bot_settings.owner:
+            return True
+        elif discord.utils.get(message.author.roles, name=bot_settings.get_server_admin(message.server)) is not None:
+            return True
+        else:
+            return False
 
     async def transfer_playlist(self, message):
         msg = message.attachments[0]
