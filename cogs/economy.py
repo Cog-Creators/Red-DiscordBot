@@ -121,6 +121,28 @@ class Economy:
         else:
             await self.bot.say("{} You need an account to receive credits.".format(author.mention))
 
+    @commands.command()
+    async def leaderboard(self):
+        """Prints out the leaderboard""" #Originally coded by Airenkun
+        bank_sorted = sorted(self.bank.items(), key=lambda x: x[1]["balance"], reverse=True)
+        topten = bank_sorted[:10]
+        highscore = ""
+        place = 1
+        dashes = "---"
+        for id in topten:
+            if place > 9:
+                dashes = "--"
+            loop = 14 + 8 - len(str(id[1]["balance"])) - len(id[1]["name"])
+            highscore += "{}{}{}".format(place,dashes,id[1]["name"])
+            for i in range(1,loop+1):
+                highscore += "-"
+            highscore += "{}\n".format(id[1]["balance"])
+            place += 1
+        if highscore:
+            await self.bot.say(highscore)
+        else:
+            await self.bot.say("There are no accounts in the bank.")
+
     @commands.command(pass_context=True)
     async def payouts(self, ctx):
         """Shows slot machine payouts"""
