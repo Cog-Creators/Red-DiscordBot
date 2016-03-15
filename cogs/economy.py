@@ -122,25 +122,28 @@ class Economy:
             await self.bot.say("{} You need an account to receive credits.".format(author.mention))
 
     @commands.command()
-    async def leaderboard(self, top : int=10):
+    async def leaderboard(self, page : int=1):
         """Prints out the leaderboard
 
-        Defaults to top 10""" #Originally coded by Airenkun - edited by irdumb
-        if top < 1:
-            top = 10
+        page: default 1""" #Originally coded by Airenkun - edited by irdumb
+        if page < 1:
+            page = 1
         bank_sorted = sorted(self.bank.items(), key=lambda x: x[1]["balance"], reverse=True)
-        if len(bank_sorted) < top:
-            top = len(bank_sorted)
-        topten = bank_sorted[:top]
+        entries_per_page = 12
+        bank_pages = int(len(bank_sorted)/entries_per_page) + int(len(bank_sorted)%entries_per_page!=0)
+        if page > bank_pages:
+            page = bank_pages
+        last = entries_per_page*page
+        place = last-entries_per_page
+        entries = bank_sorted[place:last]
         highscore = ""
-        place = 1
-        for id in topten:
-            highscore += str(place).ljust(len(str(top))+1)
+        for id in entries:
+            place += 1
+            highscore += str(place).ljust(len(str(last))+1)
             highscore += (id[1]["name"]+" ").ljust(23-len(str(id[1]["balance"])))
             highscore += str(id[1]["balance"]) + "\n"
-            place += 1
         if highscore:
-            await self.bot.say("```py\n"+highscore+"```")
+            await self.bot.say("```py\n"+highscore+"```"+"`Page: "+str(page)+"/"+str(bank_pages)+"`\n")
         else:
             await self.bot.say("There are no accounts in the bank.")
 
