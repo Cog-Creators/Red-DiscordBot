@@ -74,7 +74,7 @@ class Audio:
         if await self.check_voice(msg.author, msg):
             if link != ():
                 link = " ".join(link)
-                if "http" not in link or "www." not in link:
+                if "http" not in link and "www." not in link:
                     link = "[SEARCH:]" + link
                 else:
                     if not self.is_playlist_valid([link]):
