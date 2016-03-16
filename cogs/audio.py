@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import asyncio
 import threading
+import queue
 import os
 from random import choice as rndchoice
 from random import shuffle
@@ -39,6 +40,7 @@ youtube_dl_options = {
     'nocheckcertificate': True,
     'ignoreerrors': True,
     'quiet': True,
+    'default_search': 'auto',
     'no_warnings': True,
     'outtmpl': "data/audio/cache/%(id)s",
     'default_search' : 'auto'}
@@ -52,7 +54,9 @@ class Audio:
         self.settings = fileIO("data/audio/settings.json", "load")
         self.queue_mode = False
         self.queue = []
+        self.q = queue.Queue()
         self.playlist = []
+        self.titles = []
         self.current = -1 #current track index in self.playlist
         self.downloader = {"DONE" : False, "TITLE" : False, "ID" : False, "URL" : False, "DURATION" : False, "DOWNLOADING" : False}
         self.skip_votes = []
@@ -84,15 +88,20 @@ class Audio:
                     self.queue = []
                     self.current = -1
                     self.playlist = []
+                    self.titles = []
                     self.queue.append(link)
+                    result = await self.get_song_metadata(link)
+                    self.titles.append(result["title"])
                     self.music_player.paused = False
                     if self.music_player.is_playing(): self.music_player.stop()
                     await self.bot.say("Playing requested link...")
                 else:
-                    self.playlist = []
+                    self.playlist = []   
                     self.current = -1
                     if not self.queue: await self.bot.say("The link has been put into queue.")
                     self.queue.append(link)
+                    result = await self.get_song_metadata(link)
+                    self.titles.append(result["title"])
             else:
                 await self.bot.say("You need to add a link or search terms.")
 
@@ -128,14 +137,21 @@ class Audio:
         if await self.check_voice(msg.author, msg):
             if os.path.isfile("data/audio/playlists/" + name):
                 self.queue = []
+                self.titles = fileIO("data/audio/playlists/" + name, "load")["titles"]
                 self.current = -1
                 self.playlist = fileIO("data/audio/playlists/" + name, "load")["playlist"]
-                if random: shuffle(self.playlist)
+                if random:                
+                    pl = self.playlist
+                    ttl = self.titles
+                    combo = list(zip(pl, ttl))
+                    shuffle(combo)
+                    self.playlist, self.titles = zip(*combo)
+                    
                 self.music_player.paused = False
                 if self.music_player.is_playing(): self.music_player.stop()
             else:
                 await self.bot.say("There's no playlist with that name.")
-
+                
     @commands.command(pass_context=True, aliases=["next"], no_pm=True)
     async def skip(self, ctx):
         """Skips song
@@ -144,7 +160,7 @@ class Audio:
         if self.music_player.is_playing():
             if await self.is_alone_or_admin(msg):
                 self.music_player.paused = False
-                self.music_player.stop()
+                if self.music_player.is_playing(): self.music_player.stop()
             else:
                 await self.vote_skip(msg)
 
@@ -176,6 +192,7 @@ class Audio:
             await self.bot.say("You voted to skip. Votes: [{0}/{1}]".format(str(len(self.skip_votes)-1), str(votes_needed)))
 
 
+    
     @commands.command(pass_context=True, no_pm=True)
     async def local(self, ctx, name : str):
         """Plays a local playlist
@@ -188,6 +205,7 @@ class Audio:
             return
         msg = ctx.message
         localplaylists = self.get_local_playlists()
+        self.titles = []
         if localplaylists and ("data/audio/localtracks/" not in name and "\\" not in name):
             if name in localplaylists:
                 files = []
@@ -197,6 +215,9 @@ class Audio:
                     files.extend(glob.glob("data/audio/localtracks/" + name + "/*.flac"))
                 if await self.is_alone_or_admin(msg):
                     if await self.check_voice(msg.author, ctx.message):
+                        for file in files:
+                            f = file.split("\\")
+                            self.titles.append(f[1][:-4])
                         self.queue = []
                         self.current = -1
                         self.playlist = files
@@ -233,7 +254,11 @@ class Audio:
         if self.music_player.is_playing():
             if await self.is_alone_or_admin(msg):
                 if self.playlist:
-                    shuffle(self.playlist)
+                    pl = self.playlist
+                    ttl = self.titles
+                    combo = list(zip(pl, ttl))
+                    shuffle(combo)
+                    self.playlist, self.titles = zip(*combo)
                     await self.bot.say("The order of this playlist has been mixed")
             else:
                 await self.bot.say("I'm in queue mode. Controls are disabled if you're in a room with multiple people.")
@@ -251,7 +276,7 @@ class Audio:
                 elif self.current == -2:
                     self.current = len(self.playlist) -2
                 self.music_player.paused = False
-                self.music_player.stop()
+                if self.music_player.is_playing(): self.music_player.stop()
 
 
 
@@ -283,8 +308,12 @@ class Audio:
         Shows queue list if no links are provided.
         """
         if link == ():
-            queue_list = await self.queue_titles()
-            await self.bot.say("Videos in queue: \n" + queue_list + "\n\nType queue <link> to add a link or search terms to the queue.")
+            pages = await self.queue_titles()
+            await self.bot.say("Tracks in queue: \n\n")
+            for page in pages:
+                await self.bot.say(page)
+                await asyncio.sleep(1)
+            await self.bot.say("\n\nType queue <link> to add a link or search terms to the queue.")
         elif await self.check_voice(ctx.message.author, ctx.message):
             if not self.playlist:
                 link = " ".join(link)
@@ -297,6 +326,7 @@ class Audio:
                 self.queue.append(link)
                 msg = ctx.message
                 result = await self.get_song_metadata(link)
+                self.titles.append(result["title"])
                 try: # In case of invalid SOUNDCLOUD ID
                     if result["title"] != []:
                         await self.bot.say("{} has been put into the queue by {}.".format(result["title"], msg.author))
@@ -397,30 +427,34 @@ class Audio:
         else:
             await self.bot.say("There are no local playlists.")
 
+    async def local_songs_change_status(self):
+        current_song = self.downloader["TITLE"]
+        if "data/audio/localtracks" in current_song:
+            f = current_song.split("\\")
+            current_song = f[1][:-4]
+            await self.bot.change_status(discord.Game(name=current_song))
+        return current_song
+    
     @_list.command(name="queue", pass_context=True)
     async def list_queue(self, ctx):
-        queue_list = await self.queue_titles()
-        await self.bot.say("Videos in queue: \n" + queue_list)
-
+        pages = await self.queue_titles()
+        await self.bot.say("Tracks in queue: \n\n")
+        for page in pages:
+            await self.bot.say(page)
+            await asyncio.sleep(1)
+    
     async def queue_titles(self):
-        song_names = []
-        song_names.append(self.downloader["TITLE"])
-        if len(self.queue) > 0:
-            for song_url in self.queue:
-                try:
-                    result = await self.get_song_metadata(song_url)
-                    if result["title"] != []:
-                        song_names.append(result["title"])
-                    else:
-                        song_names.append("Could not get song title")
-                except:
-                    song_names.append("Could not get song title")
-            song_list = "\n".join(["{}: {}".format(str(i+1), s) for i, s in enumerate(song_names)])
-        elif self.music_player.is_playing():
-            song_list = "1: {}".format(song_names[0])
-        else:
-            song_list = "None"
-        return song_list
+        message = ""
+        pages = []
+        current_song = await self.local_songs_change_status()
+        message += ("Current Song: "+current_song+"\n\n")
+        for i in range(0,len(self.titles)):
+            message += str(i+1)+". "+self.titles[i]+"\n"
+            if len(message)>1500:
+                pages.append(message)
+                message = ""
+        pages.append(message)
+        return pages
 
     @commands.group(pass_context=True)
     @checks.mod_or_permissions(manage_roles=True)
@@ -523,7 +557,7 @@ class Audio:
         for f in total:
             size += f
         return int(size / (1024*1024.0))
-
+    
     async def play_video(self, link):
         self.downloader = {"DONE" : False, "TITLE" : False, "ID" : False, "URL": False, "DURATION" : False, "DOWNLOADING" : False}
         if "https://" in link or "http://" in link or "[SEARCH:]" in link:
@@ -533,6 +567,7 @@ class Audio:
         else: #local
             path = ""
             self.downloader = {"DONE" : True, "TITLE" : link, "ID" : link, "URL": False, "DURATION" : False, "DOWNLOADING" : False}
+            await self.local_songs_change_status()
         while not self.downloader["DONE"]:
             await asyncio.sleep(1)
         if self.downloader["ID"]:
@@ -549,6 +584,7 @@ class Audio:
                 self.downloader = {"DONE" : False, "TITLE" : False, "ID" : False, "URL": False, "DURATION" : False, "DOWNLOADING" : False}
                 self.queue = []
                 self.playlist = []
+                self.titles = []
             except Exception as e:
                 print(e)
         else:
@@ -559,7 +595,7 @@ class Audio:
         if self.bot.is_voice_connected():
             v_channel = self.bot.voice.channel
             if author.voice_channel == v_channel:
-                return True
+                return True           
             elif len(v_channel.voice_members) == 1:
                 if author.voice_channel:
                     if author.voice_channel.permissions_for(message.server.me).connect:
@@ -612,11 +648,11 @@ class Audio:
             self.downloader["DOWNLOADING"] = True
             yt = youtube_dl.YoutubeDL(youtube_dl_options)
             if "[SEARCH:]" not in url:
-                v = yt.extract_info(url, download=False)
+                v = yt.extract_info(url, download=False, process=False)
             else:
                 url = url.replace("[SEARCH:]", "")
-                url = "https://youtube.com/watch?v=" + yt.extract_info(url, download=False)["entries"][0]["id"]
-                v = yt.extract_info(url, download=False)
+                url = "https://youtube.com/watch?v=" + yt.extract_info(url, download=False, process=False)["entries"][0]["id"]
+                v = yt.extract_info(url, download=False, process=False)
             if v["duration"] > self.settings["MAX_LENGTH"]: raise MaximumLength("Track exceeded maximum length. See help audioset maxlength")
             if not os.path.isfile("data/audio/cache/" + v["id"]):
                 v = yt.extract_info(url, download=True)
@@ -656,9 +692,46 @@ class Audio:
         else:
             return False
 
+    async def search_yt(self, yt, s_count, search_for):
+        name = 'ytsearch'
+        search_format = '%s%s:%s' % (name, s_count, search_for)
+        entries = (yt.extract_info(search_format, download=False, process=False))['entries']
+        for i in entries:
+            await self.bot.say("https://www.youtube.com/watch?v="+i['url'])
+
+    async def get_sc_metadata(self, api_url):
+        api_url= api_url.split('/')[-1]
+        url = "http://api.soundcloud.com/tracks/{0}.json?client_id={1}".format(api_url, self.settings["SOUNDCLOUD_CLIENT_ID"])
+        result = await self.get_json(url)
+        return result
+
+    async def search_sc(self, yt, s_count, search_for):
+        name = 'scsearch'
+        search_format = '%s%s:%s' % (name, s_count, search_for)
+        entries = (yt.extract_info(search_format, download=False, process=False))['entries']
+        for i in entries:
+            result = await self.get_sc_metadata(i['url'])
+            await self.bot.say(result['permalink_url'])
+            #await self.bot.say(result['title'],":",result['permalink_url'])
+    
+    @commands.command(pass_context=True, no_pm=True)
+    async def search(self, ctx, where : str, length : int , *query : str):
+        """Serches for tracks from youtube/soundcloud Ex. yt 1 gmod"""
+        
+        yt = youtube_dl.YoutubeDL(youtube_dl_options)
+        if 'yt' in where or 'youtube' in where:
+            await self.search_yt(yt, length, query)
+        elif 'sc' in where or 'soundcloud' in where:
+            if self.settings["SOUNDCLOUD_CLIENT_ID"] is None:
+                await self.bot.say("Soundcloud ID is required for SC Search.")
+            else:
+                await self.search_sc(yt, length, query)
+    
     @commands.command(pass_context=True, no_pm=True)
     async def addplaylist(self, ctx, name : str, link : str): #CHANGE COMMAND NAME
         """Adds tracks from youtube / soundcloud playlist link"""
+        temp_list = self.titles
+        self.titles = []
         if self.is_playlist_name_valid(name) and len(name) < 25:
             if fileIO("playlists/" + name + ".txt", "check"):
                 await self.bot.say("`A playlist with that name already exists.`")
@@ -670,8 +743,10 @@ class Audio:
             if links:
                 data = { "author"  : ctx.message.author.id,
                          "playlist": links,
+                         "titles"  : self.titles,
                          "link"    : link}
                 fileIO("data/audio/playlists/" + name + ".txt", "save", data)
+                self.titles = temp_list
                 await self.bot.say("Playlist added. Name: {}, songs: {}".format(name, str(len(links))))
             else:
                 await self.bot.say("Something went wrong. Either the link was incorrect or I was unable to retrieve the page.")
@@ -715,6 +790,7 @@ class Audio:
                 if self.is_playlist_valid(data) and self.is_playlist_name_valid(msg["filename"].replace(".txt", "")):
                     data = { "author" : message.author.id,
                              "playlist": data,
+                             "titles"  : self.titles,
                              "link"    : False}
                     fileIO("data/audio/playlists/" + msg["filename"], "save", data)
                     await self.bot.send_message(message.channel, "Playlist added. Name: {}".format(msg["filename"].replace(".txt", "")))
@@ -749,6 +825,20 @@ class Audio:
                 return False
         return True
 
+    def worker(self):
+        while True:
+            item = self.q.get()
+            yt = youtube_dl.YoutubeDL(youtube_dl_options)
+            if item is None:
+                break
+            self.titles[item[1]]=yt.extract_info(item[0], download=False, process=False)['title']
+            self.q.task_done()
+    
+    async def get_titles_yt(self, entries):
+    
+        for i in entries:
+            self.titles.append(i['title'])
+            
     async def parse_yt_playlist(self, url):
         try:
             if not "www.youtube.com/playlist?list=" in url:   
@@ -756,17 +846,52 @@ class Audio:
                 url = "https://www.youtube.com/playlist?" + [x for x in url if "list=" in x][0]
             playlist = []
             yt = youtube_dl.YoutubeDL(youtube_dl_options)
-            for entry in yt.extract_info(url, download=False, process=False)["entries"]:
-                playlist.append("https://www.youtube.com/watch?v=" + entry["id"])
+            entries = list(yt.extract_info(url, download=False, process=False)["entries"])
+            await self.get_titles_yt(entries)
+            for entry in entries:
+                playlist.append("https://www.youtube.com/watch?v=" + entry["id"])           
             return playlist
         except:
             return False
 
+    async def get_titles_sc(self, entries, link):                
+        if (self.settings["SOUNDCLOUD_CLIENT_ID"] is None):
+            threads = []      
+            urls = []       
+            for i in entries:
+                urls.append(i['url'])
+            length = len(urls)
+            self.titles = [None]*length
+            for i in range(0,length):
+                t = threading.Thread(target=self.worker)
+                t.start()
+                threads.append(t)
+                
+            for counter in range(0,length):
+                self.q.put([urls[counter],counter])
+            
+            # block until all tasks are done
+            self.q.join()
+
+            # stop workers
+            for i in range(0,length):
+                self.q.put(None)
+            for t in threads:
+                t.join()
+        else:
+            semi_url = 'http://api.soundcloud.com/resolve.json?url={0}&client_id={1}'
+            url = semi_url.format(link,self.settings["SOUNDCLOUD_CLIENT_ID"])
+            entries = await(self.get_json(url))
+            for i in (entries['tracks']):
+                self.titles.append(i['title'])
+            
     async def parse_sc_playlist(self, link):
         try:
             playlist = []
             yt = youtube_dl.YoutubeDL(youtube_dl_options)
-            for i in yt.extract_info(link, download=False, process=False)["entries"]:
+            entries = list(yt.extract_info(link, download=False, process=False)["entries"])
+            await self.get_titles_sc(entries,link)
+            for i in entries:
                 playlist.append(i['url'][:4] + 's' + i['url'][4:])
             return playlist
         except:
