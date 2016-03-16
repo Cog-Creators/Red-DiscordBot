@@ -86,7 +86,7 @@ class Audio:
                     self.playlist = []
                     self.queue.append(link)
                     self.music_player.paused = False
-                    self.music_player.stop()
+                    if self.music_player.is_playing(): self.music_player.stop()
                     await self.bot.say("Playing requested link...")
                 else:
                     self.playlist = []
@@ -132,7 +132,7 @@ class Audio:
                 self.playlist = fileIO("data/audio/playlists/" + name, "load")["playlist"]
                 if random: shuffle(self.playlist)
                 self.music_player.paused = False
-                self.music_player.stop()
+                if self.music_player.is_playing(): self.music_player.stop()
 
     @commands.command(pass_context=True, aliases=["next"], no_pm=True)
     async def skip(self, ctx):
@@ -168,7 +168,7 @@ class Audio:
 
             if len(self.skip_votes)-1 >= votes_needed:
                 self.music_player.paused = False
-                self.music_player.stop()
+                if self.music_player.is_playing(): self.music_player.stop()
                 self.skip_votes = []
                 return
             await self.bot.say("You voted to skip. Votes: [{0}/{1}]".format(str(len(self.skip_votes)-1), str(votes_needed)))
@@ -199,7 +199,7 @@ class Audio:
                         self.current = -1
                         self.playlist = files
                         self.music_player.paused = False
-                        self.music_player.stop()
+                        if self.music_player.is_playing(): self.music_player.stop()
                 else:
                     await self.bot.say("I'm in queue mode. Controls are disabled if you're in a room with multiple people.")
             else:
@@ -270,7 +270,7 @@ class Audio:
         self.queue = []
         self.playlist = []
         self.current = -1
-        self.music_player.stop()
+        if self.music_player.is_playing(): self.music_player.stop()
         await asyncio.sleep(1)
         if self.bot.voice: await self.bot.voice.disconnect()
 
@@ -535,7 +535,7 @@ class Audio:
             await asyncio.sleep(1)
         if self.downloader["ID"]:
             try:
-                self.music_player.stop()
+                if self.music_player.is_playing(): self.music_player.stop()
                 self.music_player = self.bot.voice.create_ffmpeg_player(path + self.downloader["ID"], options='''-filter:a "volume={}"'''.format(self.settings["VOLUME"]))
                 self.music_player.paused = False
                 self.music_player.start()
