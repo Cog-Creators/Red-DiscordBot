@@ -133,6 +133,8 @@ class Audio:
                 if random: shuffle(self.playlist)
                 self.music_player.paused = False
                 if self.music_player.is_playing(): self.music_player.stop()
+            else:
+                await self.bot.say("There's no playlist with that name.")
 
     @commands.command(pass_context=True, aliases=["next"], no_pm=True)
     async def skip(self, ctx):
