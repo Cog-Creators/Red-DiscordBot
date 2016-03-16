@@ -557,7 +557,7 @@ class Audio:
 
     async def check_voice(self, author, message):
         if self.bot.is_voice_connected():
-            v_channel = message.server.me.voice_channel
+            v_channel = self.bot.voice.channel
             if author.voice_channel == v_channel:
                 return True
             elif len(v_channel.voice_members) == 1:
