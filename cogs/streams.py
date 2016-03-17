@@ -35,12 +35,16 @@ class Streams:
     @commands.command()
     async def twitch(self, stream : str):
         """Checks if twitch stream is online"""
-        online = await self.twitch_online(stream)
-        if online:
-            await self.bot.say("http://www.twitch.tv/{} is online!".format(stream))
-        elif online == False:
-            await self.bot.say(stream + " is offline.")
-        elif online == None:
+        data = await self.get_twitch_data(stream)
+        if data:
+            if data["stream"] != None:
+                if "game" in data["stream"] and data["stream"]["game"] != None:
+                    await self.bot.say("http://www.twitch.tv/{} is online playing {}!".format(stream,data["stream"]["game"]))
+                else:
+                    await self.bot.say("http://www.twitch.tv/{} is online!".format(stream))
+            else:
+                await self.bot.say(stream + " is offline.")
+        elif data == None:
             await self.bot.say("That stream doesn't exist.")
         else:
             await self.bot.say("Error.")
@@ -56,7 +60,7 @@ class Streams:
     async def twitch_alert(self, ctx, stream : str):
         """Adds/removes twitch alerts from the current channel"""
         channel = ctx.message.channel
-        check = await self.twitch_online(stream)
+        check = await self.get_twitch_data(stream)
         if check == None:
             await self.bot.say("That stream doesn't exist.")
             return
@@ -173,16 +177,13 @@ class Streams:
         except:
             return "error"
 
-    async def twitch_online(self, stream):
+    async def get_twitch_data(self, stream):
         url =  "https://api.twitch.tv/kraken/streams/" + stream
         async with aiohttp.get(url) as r:
             data = await r.json()
         try:
             if "stream" in data:
-                if data["stream"] != None:
-                    return True
-                else:
-                    return False
+                return data
             elif "error" in data:
                 return None
         except:
@@ -197,14 +198,18 @@ class Streams:
             old = (deepcopy(self.twitch_streams), deepcopy(self.hitbox_streams))
 
             for stream in self.twitch_streams:
-                online = await self.twitch_online(stream["NAME"])
-                if online and not stream["ALREADY_ONLINE"]:
+                data = await self.get_twitch_data(stream["NAME"])
+                if data["stream"] != None and not stream["ALREADY_ONLINE"]:
                     stream["ALREADY_ONLINE"] = True
                     for channel in stream["CHANNELS"]:
                         if self.bot.get_channel(channel):
-                            await self.bot.send_message(self.bot.get_channel(channel), "http://www.twitch.tv/{} is online!".format(stream["NAME"]))
+                            if "game" in data["stream"] and data["stream"]["game"] != None:
+                                await self.bot.send_message(self.bot.get_channel(channel), "http://www.twitch.tv/{} is online playing {}!".format(stream["NAME"],data["stream"]["game"]))
+                            else:
+                                await self.bot.send_message(self.bot.get_channel(channel), "http://www.twitch.tv/{} is online!".format(stream["NAME"]))
+
                 else:
-                    if stream["ALREADY_ONLINE"] and not online: stream["ALREADY_ONLINE"] = False
+                    if stream["ALREADY_ONLINE"] and not data: stream["ALREADY_ONLINE"] = False
                 await asyncio.sleep(0.5)
             
             for stream in self.hitbox_streams:
