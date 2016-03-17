@@ -96,7 +96,7 @@ class Audio:
                     if self.music_player.is_playing(): self.music_player.stop()
                     await self.bot.say("Playing requested link...")
                 else:
-                    self.playlist = []   
+                    self.playlist = []
                     self.current = -1
                     if not self.queue: await self.bot.say("The link has been put into queue.")
                     self.queue.append(link)
@@ -151,7 +151,7 @@ class Audio:
                 if self.music_player.is_playing(): self.music_player.stop()
             else:
                 await self.bot.say("There's no playlist with that name.")
-                
+
     @commands.command(pass_context=True, aliases=["next"], no_pm=True)
     async def skip(self, ctx):
         """Skips song
@@ -190,8 +190,6 @@ class Audio:
                 self.skip_votes = []
                 return
             await self.bot.say("You voted to skip. Votes: [{0}/{1}]".format(str(len(self.skip_votes)-1), str(votes_needed)))
-
-
     
     @commands.command(pass_context=True, no_pm=True)
     async def local(self, ctx, name : str):
@@ -557,7 +555,7 @@ class Audio:
         for f in total:
             size += f
         return int(size / (1024*1024.0))
-    
+
     async def play_video(self, link):
         self.downloader = {"DONE" : False, "TITLE" : False, "ID" : False, "URL": False, "DURATION" : False, "DOWNLOADING" : False}
         if "https://" in link or "http://" in link or "[SEARCH:]" in link:
@@ -595,7 +593,7 @@ class Audio:
         if self.bot.is_voice_connected():
             v_channel = self.bot.voice.channel
             if author.voice_channel == v_channel:
-                return True           
+                return True
             elif len(v_channel.voice_members) == 1:
                 if author.voice_channel:
                     if author.voice_channel.permissions_for(message.server.me).connect:
@@ -700,8 +698,7 @@ class Audio:
             await self.bot.say("https://www.youtube.com/watch?v="+i['url'])
 
     async def get_sc_metadata(self, api_url):
-        api_url= api_url.split('/')[-1]
-        url = "http://api.soundcloud.com/tracks/{0}.json?client_id={1}".format(api_url, self.settings["SOUNDCLOUD_CLIENT_ID"])
+        url = "{0}.json?client_id={1}".format(api_url, self.settings["SOUNDCLOUD_CLIENT_ID"])
         result = await self.get_json(url)
         return result
 
@@ -716,7 +713,7 @@ class Audio:
     
     @commands.command(pass_context=True, no_pm=True)
     async def search(self, ctx, where : str, length : int , *query : str):
-        """Serches for tracks from youtube/soundcloud Ex. yt 1 gmod"""
+        """Searches for tracks from youtube/soundcloud Ex. yt 1 gmod"""
         
         yt = youtube_dl.YoutubeDL(youtube_dl_options)
         if 'yt' in where or 'youtube' in where:
