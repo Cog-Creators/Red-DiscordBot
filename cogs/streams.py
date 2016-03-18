@@ -24,7 +24,7 @@ class Streams:
     async def hitbox(self, stream : str):
         """Checks if hitbox stream is online"""
         online = await self.hitbox_online(stream)
-        if online:
+        if online is True:
             await self.bot.say("http://www.hitbox.tv/{}/ is online!".format(stream))
         elif online == False:
             await self.bot.say(stream + " is offline.")
@@ -37,7 +37,7 @@ class Streams:
     async def twitch(self, stream : str):
         """Checks if twitch stream is online"""
         online = await self.twitch_online(stream)
-        if online:
+        if online is True:
             await self.bot.say("http://www.twitch.tv/{} is online!".format(stream))
         elif online == False:
             await self.bot.say(stream + " is offline.")
@@ -50,7 +50,7 @@ class Streams:
     async def beam(self, stream : str):
         """Checks if beam stream is online"""
         online = await self.beam_online(stream)
-        if online:
+        if online is True:
             await self.bot.say("https://beam.pro/{} is online!".format(stream))
         elif online == False:
             await self.bot.say(stream + " is offline.")
@@ -277,7 +277,7 @@ class Streams:
 
             for stream in self.twitch_streams:
                 online = await self.twitch_online(stream["NAME"])
-                if online and not stream["ALREADY_ONLINE"]:
+                if online is True and not stream["ALREADY_ONLINE"]:
                     stream["ALREADY_ONLINE"] = True
                     for channel in stream["CHANNELS"]:
                         if self.bot.get_channel(channel):
@@ -288,7 +288,7 @@ class Streams:
             
             for stream in self.hitbox_streams:
                 online = await self.hitbox_online(stream["NAME"])
-                if online and not stream["ALREADY_ONLINE"]:
+                if online is True and not stream["ALREADY_ONLINE"]:
                     stream["ALREADY_ONLINE"] = True
                     for channel in stream["CHANNELS"]:
                         if self.bot.get_channel(channel):
@@ -299,7 +299,7 @@ class Streams:
 
             for stream in self.beam_streams:
                 online = await self.beam_online(stream["NAME"])
-                if online and not stream["ALREADY_ONLINE"]:
+                if online is True and not stream["ALREADY_ONLINE"]:
                     stream["ALREADY_ONLINE"] = True
                     for channel in stream["CHANNELS"]:
                         if self.bot.get_channel(channel):
