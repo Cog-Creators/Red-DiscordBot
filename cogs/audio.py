@@ -57,6 +57,7 @@ class Audio:
         self.q = queue.Queue()
         self.playlist = []
         self.titles = []
+        self.search_results = []
         self.current = -1 #current track index in self.playlist
         self.downloader = {"DONE" : False, "TITLE" : False, "ID" : False, "URL" : False, "DURATION" : False, "DOWNLOADING" : False}
         self.skip_votes = []
@@ -446,8 +447,8 @@ class Audio:
         pages = []
         current_song = await self.local_songs_change_status()
         message += ("Current Song: "+current_song+"\n\n")
-        for i in range(0,len(self.titles)):
-            message += str(i+1)+". "+self.titles[i]+"\n"
+        for i,t in enumerate(self.titles):
+            message += str(i+1)+". "+t+"\n"
             if len(message)>1500:
                 pages.append(message)
                 message = ""
@@ -695,7 +696,7 @@ class Audio:
         search_format = '%s%s:%s' % (name, s_count, search_for)
         entries = (yt.extract_info(search_format, download=False, process=False))['entries']
         for i in entries:
-            await self.bot.say("https://www.youtube.com/watch?v="+i['url'])
+            self.search_results.append(await self.bot.say("https://www.youtube.com/watch?v="+i['url']))
 
     async def get_sc_metadata(self, api_url):
         url = "{0}.json?client_id={1}".format(api_url, self.settings["SOUNDCLOUD_CLIENT_ID"])
@@ -708,13 +709,13 @@ class Audio:
         entries = (yt.extract_info(search_format, download=False, process=False))['entries']
         for i in entries:
             result = await self.get_sc_metadata(i['url'])
-            await self.bot.say(result['permalink_url'])
-            #await self.bot.say(result['title'],":",result['permalink_url'])
+            self.search_results.append(await self.bot.say(result['permalink_url']))
     
     @commands.command(pass_context=True, no_pm=True)
     async def search(self, ctx, where : str, length : int , *query : str):
         """Searches for tracks from youtube/soundcloud Ex. yt 1 gmod"""
         
+        self.search_results = [ctx.message]
         yt = youtube_dl.YoutubeDL(youtube_dl_options)
         if 'yt' in where or 'youtube' in where:
             await self.search_yt(yt, length, query)
@@ -723,7 +724,23 @@ class Audio:
                 await self.bot.say("Soundcloud ID is required for SC Search.")
             else:
                 await self.search_sc(yt, length, query)
-    
+
+    @commands.command(aliases=["delsrc"],pass_context=True, no_pm=True)   
+    async def deletesearch(self, ctx):
+        """Deletes all recent search results"""
+        
+        if self.search_results == []:
+            self.bot.delete_message(ctx.message)
+            return       
+        self.search_results.append(ctx.message)
+        self.search_results.reverse()
+        try:
+            for result in self.search_results:             
+                await self.bot.delete_message(result)
+            self.search_results = []
+        except discord.errors.Forbidden:
+            await self.bot.say("I need permissions to delete search results in this channel.")
+
     @commands.command(pass_context=True, no_pm=True)
     async def addplaylist(self, ctx, name : str, link : str): #CHANGE COMMAND NAME
         """Adds tracks from youtube / soundcloud playlist link"""
