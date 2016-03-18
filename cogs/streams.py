@@ -254,9 +254,9 @@ class Streams:
 
     async def beam_online(self, stream):
         url =  "https://beam.pro/api/v1/channels/" + stream
-        async with aiohttp.get(url) as r:
-            data = await r.json()
         try:
+            async with aiohttp.get(url) as r:
+                data = await r.json()
             if "online" in data:
                 if data["online"] == True:
                     return True
