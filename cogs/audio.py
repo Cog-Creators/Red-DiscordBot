@@ -624,22 +624,21 @@ class Audio:
             await self.bot.say("You need to be in a voice channel.")
             return False
 
+    async def changeLink(self, new_link):
+        self.skip_votes = []
+        await self.play_video(new_link)
+
     async def queue_manager(self):
         while "Audio" in self.bot.cogs:
-            if not self.music_player.paused:
-                if self.queue and not self.music_player.is_playing():
-                    new_link = self.queue[0]
-                    self.queue.pop(0)
-                    self.skip_votes = []
-                    await self.play_video(new_link)
-                elif self.playlist and not self.music_player.is_playing():
+            if not self.music_player.paused and not self.music_player.is_playing():
+                if self.queue:
+                    await self.changeLink(self.queue.pop(0))
+                elif self.playlist:
                     if not self.current == len(self.playlist)-1:
                         self.current += 1
                     else:
                         self.current = 0
-                    new_link = self.playlist[self.current]
-                    self.skip_votes = []
-                    await self.play_video(new_link)
+                    await self.changeLink(self.playlist[self.current])
             await asyncio.sleep(1)
 
     def get_video(self, url, audio):
@@ -725,7 +724,7 @@ class Audio:
             else:
                 await self.search_sc(yt, length, query)
 
-    @commands.command(aliases=["delsrc"],pass_context=True, no_pm=True)   
+    @commands.command(aliases=["delsrc"],pass_context=True, no_pm=True)
     async def deletesearch(self, ctx):
         """Deletes all recent search results"""
         
