@@ -166,8 +166,8 @@ class General:
             if m.name != "@everyone":
                 roles.append('"' + m.name + '"') #.replace("@", "@\u200b")
         if not roles: roles = ["None"]
-        data = "```\n"
-        data += "Name: " + user.name + "\n"
+        data = "```python\n"
+        data += "Name: " + user.name + "#{}\n".format(user.discriminator)
         data += "ID: " + user.id + "\n"
         data += "Created: " + str(user.created_at) + "\n"
         data += "Joined: " + str(user.joined_at) + "\n"
