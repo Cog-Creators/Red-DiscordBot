@@ -64,7 +64,7 @@ class Streams:
         if check == None:
             await self.bot.say("That stream doesn't exist.")
             return
-        elif check == "error":
+        elif check == False:
             await self.bot.say("Error.")
             return
         
@@ -187,8 +187,8 @@ class Streams:
             elif "error" in data:
                 return None
         except:
-            return "error"
-        return "error"
+            return False
+        return False
 
     async def stream_checker(self):
         CHECK_DELAY = 60
@@ -199,7 +199,7 @@ class Streams:
 
             for stream in self.twitch_streams:
                 data = await self.get_twitch_data(stream["NAME"])
-                if data["stream"] != None and not stream["ALREADY_ONLINE"]:
+                if data and data["stream"] != None and not stream["ALREADY_ONLINE"]:
                     stream["ALREADY_ONLINE"] = True
                     for channel in stream["CHANNELS"]:
                         if self.bot.get_channel(channel):
