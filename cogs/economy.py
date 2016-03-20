@@ -8,6 +8,7 @@ from __main__ import send_cmd_help
 import os
 import time
 import logging
+import asyncio
 
 slot_payouts = """Slot machine payouts:
     :two: :two: :six: Bet * 5000
@@ -29,6 +30,32 @@ class Economy:
         self.bank = fileIO("data/economy/bank.json", "load")
         self.settings = fileIO("data/economy/settings.json", "load")
         self.payday_register = {}
+        self.game_state = "null"
+        self.players = {}
+        
+        self.deck = {}
+        for suit in ["hearts", "diamonds", "clubs", "spades"]:
+            self.deck[suit] = {}
+            for i in range(2, 11):
+                self.deck[suit][i] = {}
+                self.deck[suit][i]["rank"] = str(i)
+                self.deck[suit][i]["value"] = i
+            
+            self.deck[suit][1] = {}
+            self.deck[suit][1]["rank"] = "ace"
+            self.deck[suit][1]["value"] = 11
+
+            self.deck[suit][11] = {}
+            self.deck[suit][11]["rank"] = "jack"
+            self.deck[suit][11]["value"] = 10
+
+            self.deck[suit][12] = {}
+            self.deck[suit][12]["rank"] = "queen"
+            self.deck[suit][12]["value"] = 10
+
+            self.deck[suit][13] = {}
+            self.deck[suit][13]["rank"] = "king"
+            self.deck[suit][13]["value"] = 10
 
     @commands.group(name="bank", pass_context=True)
     async def _bank(self, ctx):
@@ -206,6 +233,143 @@ class Economy:
         await self.bot.send_message(message.channel, "Current credits: {}".format(str(self.check_balance(message.author.id))))
 
     @commands.group(pass_context=True, no_pm=True)
+    async def bj(self, ctx):
+        """Play some blackjack"""
+        if ctx.invoked_subcommand is None:
+            await send_cmd_help(ctx)
+
+    @bj.command(pass_context=True, no_pm=True)
+    async def start(self, ctx):
+        """Start a game of blackjack"""
+        author = ctx.message.author
+
+        if self.game_state == "null":
+            await self.bot.say(":moneybag::diamonds:`Blackjack started!`:hearts::moneybag:")
+            self.game_state = "pregame"
+            await self.blackjack(ctx)
+        else:
+            await self.bot.say("A blackjack game is already in progress!")
+
+    @bj.command(pass_context=True, no_pm=True)
+    @checks.admin_or_permissions(manage_server=True)
+    async def stop(self, ctx):
+        """Stop the current game of blackjack (no refunds)"""
+        author = ctx.message.author
+
+        if self.game_state == "null":
+            await self.bot.say("There is no game currently running")
+        else:
+            self.game_state = "null"
+            await self.bot.say("Blackjack has been stopped")
+
+    @bj.command(pass_context=True, no_pm=True)
+    async def bet(self, ctx, bet: int):
+        """Join the game of blackjack with your opening bet"""
+        author = ctx.message.author
+
+        if self.enough_money(author.id, bet) and self.game_state == "pregame":
+            if bet < self.settings["BLACKJACK_MIN"] and bet > self.settings["BLACKJACK_MAX"]:
+                await self.bot.say("{0} Bet must be between {1} and {2}.".format(author.mention, self.settings["BLACKJACK_MIN"], self.settings["BLACKJACK_MAX"]))
+            elif not (author in self.players.keys()):
+                await self.bot.say("{0} has placed a bet of {1}".format(author.mention, bet))
+                self.players[author] = {}
+                self.players[author]["bet"] = bet
+            else:
+                await self.bot.say("{0} has placed a new bet of {1}".format(author.mention, bet))
+                self.players[author] = {}
+                self.players[author]["bet"] = bet
+
+        elif self.game_state == "pregame":
+            await self.bot.say("{0}, you need an account with enough funds to play blackjack".format(author.mention))
+        elif self.game_state == "null":
+            await self.bot.say("There is currently no game running, type `/blackjack start` to begin one")
+        else:
+            await self.bot.say("There is currently a game in progress, wait for the next game")
+
+    async def blackjack(self, ctx):
+        while self.game_state != "null":
+            if self.game_state == "pregame":
+                await asyncio.sleep(self.settings["BLACKJACK_PRE_GAME_WAIT"])
+
+                if len(self.players) == 0:
+                    await self.bot.say("No bets made, aborting game!")
+                    self.game_state = "null"
+                else:
+                    self.game_state = "drawing"
+
+            if self.game_state == "drawing":
+                await self.bot.say("``` ```")
+                for player in self.players:
+                    
+                    card1 = await self.draw_card(player)
+                    card2 = await self.draw_card(player)    
+
+                    count = await self.count_hand(player)
+
+                    await self.bot.say("{0} has drawn a {1} and a {2}, totaling to {3}!".format(player.mention, card1, card2, count))
+                    await self.bot.say("``` ```")
+                
+                card = await self.draw_card("dealer")
+                await self.bot.upload("data\economy\playing_cards\hidden_card.png")
+                await self.bot.say("The dealer has drawn a {0}!".format(card))
+                await self.bot.say("``` ```")
+                self.game_state = "game"
+
+
+    async def draw_card(self, player):
+        suit = randint(1, 4)
+        num = randint(1, 13)
+
+        if suit == 1:
+            suit = "hearts"
+        elif suit == 2:
+            suit = "diamonds"
+        elif suit == 3:
+            suit = "clubs"
+        elif suit == 4:
+            suit = "spades"
+
+        rank = self.deck[suit][num]["rank"]
+
+        if not (player in self.players.keys()):
+            self.players[player] = {}
+
+        if not ("cards" in self.players[player].keys()):
+           self.players[player]["cards"] = {}
+
+        index = len(self.players[player]["cards"])
+
+        self.players[player]["cards"][index] = {}
+        self.players[player]["cards"][index]["suit"] = suit
+        self.players[player]["cards"][index]["rank"] = rank
+        self.players[player]["cards"][index]["value"] = self.deck[suit][num]["value"]
+
+        await self.bot.upload("data\economy\playing_cards\\" + rank + "_of_" + suit + ".png")
+
+        return self.players[player]["cards"][index]["rank"] + " of " + self.players[player]["cards"][index]["suit"]
+
+
+    async def count_hand(self, player):
+        count = ""
+        total = 0
+        contains_ace = False
+
+        for num in self.players[player]["cards"]:
+            value = self.players[player]["cards"][num]["value"]
+            total += value
+            if value == 11:
+                contains_ace = True
+
+        if total > 21 and contains_ace:
+            count = str(total - 10)
+        elif contains_ace:
+            count = str(total) + " (" + str(total - 10) + ")"
+        else:
+            count = str(total)
+
+        return count
+
+    @commands.group(pass_context=True, no_pm=True)
     @checks.admin_or_permissions(manage_server=True)
     async def economyset(self, ctx):
         """Changes economy module settings"""
@@ -228,6 +392,20 @@ class Economy:
         """Maximum slot machine bid"""
         self.settings["SLOT_MAX"] = bid
         await self.bot.say("Maximum bid is now " + str(bid) + " credits.")
+        fileIO("data/economy/settings.json", "save", self.settings)
+
+    @economyset.command()
+    async def blackjackmin(self, bid : int):
+        """Minimum blackjack bid"""
+        self.settings["BLACKJACK_MIN"] = bid
+        await self.bot.say("Minimum bet is now " + str(bid) + " credits.")
+        fileIO("data/economy/settings.json", "save", self.settings)
+
+    @economyset.command()
+    async def blackjackmax(self, bid : int):
+        """Maximum blackjack bid"""
+        self.settings["BLACKJACK_MAX"] = bid
+        await self.bot.say("Maximum bet is now " + str(bid) + " credits.")
         fileIO("data/economy/settings.json", "save", self.settings)
 
     @economyset.command()
@@ -283,7 +461,7 @@ class Economy:
             return False
 
     def set_money(self, id, amount):
-        if self.account_check(id):      
+        if self.account_check(id):    
             self.bank[id]["balance"] = amount
             fileIO("data/economy/bank.json", "save", self.bank)
             return True
@@ -291,7 +469,7 @@ class Economy:
             return False
 
     def display_time(self, seconds, granularity=2): # What would I ever do without stackoverflow?
-        intervals = (                               # Source: http://stackoverflow.com/a/24542445
+        intervals = (                              # Source: http://stackoverflow.com/a/24542445
             ('weeks', 604800),  # 60 * 60 * 24 * 7
             ('days', 86400),    # 60 * 60 * 24
             ('hours', 3600),    # 60 * 60
