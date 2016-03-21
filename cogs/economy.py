@@ -30,6 +30,7 @@ class Economy:
         self.bank = fileIO("data/economy/bank.json", "load")
         self.settings = fileIO("data/economy/settings.json", "load")
         self.payday_register = {}
+
         self.game_state = "null"
         self.players = {}
         
@@ -244,7 +245,8 @@ class Economy:
         author = ctx.message.author
 
         if self.game_state == "null":
-            await self.bot.say(":moneybag::diamonds:`Blackjack started!`:hearts::moneybag:")
+            self.players = {}
+            await self.bot.say(":moneybag::hearts:`Blackjack started!`:diamonds::moneybag:")
             self.game_state = "pregame"
             await self.blackjack(ctx)
         else:
@@ -269,15 +271,17 @@ class Economy:
 
         if self.enough_money(author.id, bet) and self.game_state == "pregame":
             if bet < self.settings["BLACKJACK_MIN"] and bet > self.settings["BLACKJACK_MAX"]:
-                await self.bot.say("{0} Bet must be between {1} and {2}.".format(author.mention, self.settings["BLACKJACK_MIN"], self.settings["BLACKJACK_MAX"]))
-            elif not (author in self.players.keys()):
-                await self.bot.say("{0} has placed a bet of {1}".format(author.mention, bet))
-                self.players[author] = {}
-                self.players[author]["bet"] = bet
+                await self.bot.say("{0} bet must be between {1} and {2}.".format(author.mention, self.settings["BLACKJACK_MIN"], self.settings["BLACKJACK_MAX"]))
             else:
-                await self.bot.say("{0} has placed a new bet of {1}".format(author.mention, bet))
+                if not (author in self.players.keys()):
+                    await self.bot.say("{0} has placed a bet of {1}".format(author.mention, bet))
+
+                else:
+                    await self.bot.say("{0} has placed a new bet of {1}".format(author.mention, bet))
+
                 self.players[author] = {}
                 self.players[author]["bet"] = bet
+                self.players[author]["cards"] = {}
 
         elif self.game_state == "pregame":
             await self.bot.say("{0}, you need an account with enough funds to play blackjack".format(author.mention))
@@ -286,11 +290,33 @@ class Economy:
         else:
             await self.bot.say("There is currently a game in progress, wait for the next game")
 
+    @bj.command(pass_context=True, no_pm=True)
+    async def hit(self, ctx):
+        if(self.game_state == "game"):
+            author = ctx.message.author
+            await self.bot.say("``` ```")
+            for card in self.players[author]["cards"]:
+                rank = self.players[author]["cards"][card]["rank"]
+                suit = self.players[author]["cards"][card]["suit"]
+
+                await self.bot.upload("data\economy\playing_cards\\" + rank + "_of_" + suit + ".png")
+
+            card = await self.draw_card(author)
+            count = await self.count_hand(author)
+
+            if count == "busted":
+                await self.bot.say("{0} has **busted**!".format(author.mention))
+                await self.bot.say("``` ```")
+            else:
+                await self.bot.say("{0} has hit and drawn a {1}, totaling their hand to {3}".format(author.mention, card, count))
+                await self.bot.say("``` ```")
+
     async def blackjack(self, ctx):
         while self.game_state != "null":
             if self.game_state == "pregame":
-                await asyncio.sleep(self.settings["BLACKJACK_PRE_GAME_WAIT"])
+                await asyncio.sleep(self.settings["BLACKJACK_PRE_GAME_TIME"])
 
+            if self.game_state == "pregame":
                 if len(self.players) == 0:
                     await self.bot.say("No bets made, aborting game!")
                     self.game_state = "null"
@@ -309,11 +335,16 @@ class Economy:
                     await self.bot.say("{0} has drawn a {1} and a {2}, totaling to {3}!".format(player.mention, card1, card2, count))
                     await self.bot.say("``` ```")
                 
+                self.players["dealer"] = {}
+                self.players["dealer"]["cards"] = {}
+
                 card = await self.draw_card("dealer")
                 await self.bot.upload("data\economy\playing_cards\hidden_card.png")
-                await self.bot.say("The dealer has drawn a {0}!".format(card))
-                await self.bot.say("``` ```")
+                await self.bot.say("**The dealer has drawn a {0}!**\n``` ```".format(card))
                 self.game_state = "game"
+
+            if self.game_state == "game":
+                await asyncio.sleep(self.settings["BLACKJACK_GAME_TIME"])
 
 
     async def draw_card(self, player):
@@ -330,12 +361,6 @@ class Economy:
             suit = "spades"
 
         rank = self.deck[suit][num]["rank"]
-
-        if not (player in self.players.keys()):
-            self.players[player] = {}
-
-        if not ("cards" in self.players[player].keys()):
-           self.players[player]["cards"] = {}
 
         index = len(self.players[player]["cards"])
 
@@ -364,6 +389,8 @@ class Economy:
             count = str(total - 10)
         elif contains_ace:
             count = str(total) + " (" + str(total - 10) + ")"
+        elif total > 21:
+            count = "busted"
         else:
             count = str(total)
 
@@ -394,6 +421,7 @@ class Economy:
         await self.bot.say("Maximum bid is now " + str(bid) + " credits.")
         fileIO("data/economy/settings.json", "save", self.settings)
 
+    
     @economyset.command()
     async def blackjackmin(self, bid : int):
         """Minimum blackjack bid"""
@@ -408,6 +436,21 @@ class Economy:
         await self.bot.say("Maximum bet is now " + str(bid) + " credits.")
         fileIO("data/economy/settings.json", "save", self.settings)
 
+    @economyset.command()
+    async def blackjackpregametime(self, time : int):
+        """Set the pregame time to join between `/bj start` and the drawing of cards"""
+        self.settings["BLACKJACK_PRE_GAME_TIME"] = time
+        await self.bot.say("Blackjack pre-game time is now " + str(time))
+        fileIO("data/economy/settings.json", "save", self.settings)
+
+    @economyset.command()
+    async def blackjackgametime(self, time : int):
+        """Set the maximum game time given to hit"""
+        self.settings["BLACKJACK_GAME_TIME"] = time
+        await self.bot.say("Blackjack maximum game time is now " + str(time))
+        fileIO("data/economy/settings.json", "save", self.settings)
+
+    
     @economyset.command()
     async def paydaytime(self, seconds : int):
         """Seconds between each payday"""
