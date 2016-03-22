@@ -396,21 +396,30 @@ class Economy:
                 card = await self.draw_card("dealer")
                 dealer_count = await self.count_hand("dealer")
                 ranks = self.players["dealer"]["cards"]["ranks"]
+                blackjack = False
+                if "ace" in ranks and ("jack" in ranks or "queen" in ranks or "king" in ranks) and len(self.players["dealer"]["cards"]["ranks"]) == 2:
+                    blackjack = True
 
-                if dealer_count <= 21:
+                if dealer_count <= 21 and not blackjack:
                     if "ace" in ranks:
                         await self.bot.say("**The dealer has drawn a {0}, totaling his hand to {1} ({2})!**".format(card, str(dealer_count), str(dealer_count - 10)))
                     else:
                         await self.bot.say("**The dealer has drawn a {0}, totaling his hand to {1}!**".format(card, str(dealer_count)))
 
-                if "ace" in ranks and ("jack" in ranks or "queen" in ranks or "king" in ranks) and len(self.players["dealer"]["cards"]["ranks"]) == 2:
+                
+                if blackjack:
                     await self.bot.say("**The dealer has a blackjack!**")
+                    
                     for player in self.players:
-                        if self.players[player]["blackjack"]:
-                            self.add_money(player.id, self.players[player]["bet"])
-                            await self.bot.say("{0} ties dealer and pushes!".format(player.mention))
-                        else:
-                            await self.bot.say("{0} loses with a score of {1}".format(player.mention, str(count)))
+                        if player != "dealer":
+                            if self.players[player]["blackjack"]:
+                                self.add_money(player.id, self.players[player]["bet"])
+                                await self.bot.say("{0} ties dealer and pushes!".format(player.mention))
+                            else:
+                                await self.bot.say("{0} loses with a score of {1}".format(player.mention, str(count)))
+
+                    self.game_state = "pregame"
+                    await asyncio.sleep(3)
 
                 elif dealer_count > 21:
                     await self.bot.say("**The dealer has busted!**")
@@ -425,10 +434,12 @@ class Economy:
                                 await self.bot.say("{0} doesn't bust with a score of {1} and wins **{2}**!".format(player.mention, str(count), self.players[player]["bet"]))
                             else:
                                 await self.bot.say("{0} busted and wins nothing".format(player.mention))
+                    
                     self.game_state = "pregame"
                     await asyncio.sleep(3)
 
                 elif dealer_count >= 17:
+                    await self.bot.say("**The stands at {0}!**".format(dealer_count))
                     for player in self.players:
                         if player != "dealer":
                             count = await self.count_hand(player)
@@ -452,6 +463,7 @@ class Economy:
     async def draw_card(self, player):
         suit = randint(1, 4)
         num = randint(1, 13)
+
         if suit == 1:
             suit = "hearts"
         elif suit == 2:
