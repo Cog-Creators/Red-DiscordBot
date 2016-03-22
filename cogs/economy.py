@@ -269,7 +269,7 @@ class Economy:
         author = ctx.message.author
 
         if self.enough_money(author.id, bet) and self.game_state == "pregame":
-            if bet < self.settings["BLACKJACK_MIN"] or bet > self.settings["BLACKJACK_MAX"]:
+            if bet < self.settings["BLACKJACK_MIN"] or (bet > self.settings["BLACKJACK_MAX"] and self.settings["BLACKJACK_MAX_ENABLED"]):
                 await self.bot.say("{0} bet must be between {1} and {2}.".format(author.mention, self.settings["BLACKJACK_MIN"], self.settings["BLACKJACK_MAX"]))
             else:
                 if not (author in self.players.keys()):
@@ -297,6 +297,7 @@ class Economy:
 
     @bj.command(pass_context=True, no_pm=True)
     async def hit(self, ctx):
+        """Hit and draw another card"""
         author = ctx.message.author
         if self.game_state == "game" and not self.players[author]["standing"]:
 
@@ -319,6 +320,7 @@ class Economy:
 
     @bj.command(pass_context=True, no_pm=True)
     async def stand(self, ctx):
+        """Finishing drawing and stand with your current cards"""
         author = ctx.message.author
         if self.game_state == "game" and not self.players[author]["standing"]:
             count = await self.count_hand(author)
@@ -538,28 +540,39 @@ class Economy:
 
     
     @economyset.command()
-    async def blackjackmin(self, bid : int):
-        """Minimum blackjack bid"""
+    async def bjminbet(self, bet : int):
+        """Minimum blackjack bet"""
         self.settings["BLACKJACK_MIN"] = bid
         await self.bot.say("Minimum bet is now " + str(bid) + " credits.")
         fileIO("data/economy/settings.json", "save", self.settings)
 
     @economyset.command()
-    async def blackjackmax(self, bid : int):
-        """Maximum blackjack bid"""
+    async def bjmaxbet(self, bet : int):
+        """Maximum blackjack bet"""
         self.settings["BLACKJACK_MAX"] = bid
         await self.bot.say("Maximum bet is now " + str(bid) + " credits.")
         fileIO("data/economy/settings.json", "save", self.settings)
 
     @economyset.command()
-    async def blackjackpregametime(self, time : int):
-        """Set the pregame time to join between `/bj start` and the drawing of cards"""
+    async def bjmaxbettoggle(self):
+        """Toggle the use of a maximum blackjack bid"""
+        self.settings["BLACKJACK_MAX_ENABLED"] = not self.settings["BLACKJACK_MAX_ENABLED"]
+        if self.settings["BLACKJACK_MAX_ENABLED"]:
+            await self.bot.say("Maximum bet is now enabled.")
+        else:
+            await self.bot.say("Maximum bet is now disabled.")
+
+        fileIO("data/economy/settings.json", "save", self.settings)
+
+    @economyset.command()
+    async def bjpretime(self, time : int):
+        """Set the pregame time for players to bet"""
         self.settings["BLACKJACK_PRE_GAME_TIME"] = time
         await self.bot.say("Blackjack pre-game time is now " + str(time))
         fileIO("data/economy/settings.json", "save", self.settings)
 
     @economyset.command()
-    async def blackjackgametime(self, time : int):
+    async def bjgametime(self, time : int):
         """Set the maximum game time given to hit"""
         self.settings["BLACKJACK_GAME_TIME"] = time
         await self.bot.say("Blackjack maximum game time is now " + str(time))
