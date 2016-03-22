@@ -97,7 +97,7 @@ class CustomCommands:
             if cmdlist:
                 msg = "```Custom commands:\n"
                 for cmd in sorted([cmd for cmd in cmdlist.keys()]):
-                    msg += "  {}\n".format(cmd)
+                    msg += "  {}{}\n".format(ctx.prefix, cmd)
                 fmsg = msg + "```"
                 await self.bot.whisper(fmsg)
             else:

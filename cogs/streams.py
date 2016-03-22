@@ -12,18 +12,19 @@ import logging
 class Streams:
     """Streams
 
-    Twitch and Hitbox alerts"""
+    Twitch, Hitbox and Beam alerts"""
 
     def __init__(self, bot):
         self.bot = bot
         self.twitch_streams = fileIO("data/streams/twitch.json", "load")
         self.hitbox_streams = fileIO("data/streams/hitbox.json", "load")
+        self.beam_streams = fileIO("data/streams/beam.json", "load")
 
     @commands.command()
     async def hitbox(self, stream : str):
         """Checks if hitbox stream is online"""
         online = await self.hitbox_online(stream)
-        if online:
+        if online is True:
             await self.bot.say("http://www.hitbox.tv/{}/ is online!".format(stream))
         elif online == False:
             await self.bot.say(stream + " is offline.")
@@ -36,8 +37,21 @@ class Streams:
     async def twitch(self, stream : str):
         """Checks if twitch stream is online"""
         online = await self.twitch_online(stream)
-        if online:
+        if online is True:
             await self.bot.say("http://www.twitch.tv/{} is online!".format(stream))
+        elif online == False:
+            await self.bot.say(stream + " is offline.")
+        elif online == None:
+            await self.bot.say("That stream doesn't exist.")
+        else:
+            await self.bot.say("Error.")
+
+    @commands.command()
+    async def beam(self, stream : str):
+        """Checks if beam stream is online"""
+        online = await self.beam_online(stream)
+        if online is True:
+            await self.bot.say("https://beam.pro/{} is online!".format(stream))
         elif online == False:
             await self.bot.say(stream + " is offline.")
         elif online == None:
@@ -124,6 +138,42 @@ class Streams:
 
         fileIO("data/streams/hitbox.json", "save", self.hitbox_streams)
 
+    @streamalert.command(name="beam", pass_context=True)
+    async def beam_alert(self, ctx, stream : str):
+        """Adds/removes beam alerts from the current channel"""
+        channel = ctx.message.channel
+        check = await self.beam_online(stream)
+        if check == None:
+            await self.bot.say("That stream doesn't exist.")
+            return
+        elif check == "error":
+            await self.bot.say("Error.")
+            return
+        
+        done = False
+
+        for i, s in enumerate(self.beam_streams):
+            if s["NAME"] == stream:
+                if channel.id in s["CHANNELS"]:
+                    if len(s["CHANNELS"]) == 1:
+                        self.beam_streams.remove(s)
+                        await self.bot.say("Alert has been removed from this channel.")
+                        done = True
+                    else:
+                        self.beam_streams[i]["CHANNELS"].remove(channel.id)
+                        await self.bot.say("Alert has been removed from this channel.")
+                        done = True
+                else:
+                    self.beam_streams[i]["CHANNELS"].append(channel.id)
+                    await self.bot.say("Alert activated. I will notify this channel everytime {} is live.".format(stream))
+                    done = True
+
+        if not done:
+            self.beam_streams.append({"CHANNELS" : [channel.id], "NAME" : stream, "ALREADY_ONLINE" : False})
+            await self.bot.say("Alert activated. I will notify this channel everytime {} is live.".format(stream))
+
+        fileIO("data/streams/beam.json", "save", self.beam_streams)
+
     @streamalert.command(name="stop", pass_context=True)
     async def stop_alert(self, ctx):
         """Stops all streams alerts in the current channel"""
@@ -153,8 +203,21 @@ class Streams:
         for s in to_delete:
             self.twitch_streams.remove(s)
 
+        to_delete = []
+
+        for s in self.beam_streams:
+            if channel.id in s["CHANNELS"]:
+                if len(s["CHANNELS"]) == 1:
+                    to_delete.append(s)
+                else:
+                    s["CHANNELS"].remove(channel.id)
+
+        for s in to_delete:
+            self.beam_streams.remove(s)
+
         fileIO("data/streams/twitch.json", "save", self.twitch_streams)
         fileIO("data/streams/hitbox.json", "save", self.hitbox_streams)
+        fileIO("data/streams/beam.json", "save", self.beam_streams)
 
         await self.bot.say("There will be no more stream alerts in this channel.")
 
@@ -189,16 +252,32 @@ class Streams:
             return "error"
         return "error"
 
+    async def beam_online(self, stream):
+        url =  "https://beam.pro/api/v1/channels/" + stream
+        try:
+            async with aiohttp.get(url) as r:
+                data = await r.json()
+            if "online" in data:
+                if data["online"] == True:
+                    return True
+                else:
+                    return False
+            elif "error" in data:
+                return None
+        except:
+            return "error"
+        return "error"
+
     async def stream_checker(self):
         CHECK_DELAY = 60
         
         while "Streams" in self.bot.cogs:
             
-            old = (deepcopy(self.twitch_streams), deepcopy(self.hitbox_streams))
+            old = (deepcopy(self.twitch_streams), deepcopy(self.hitbox_streams), deepcopy(self.beam_streams))
 
             for stream in self.twitch_streams:
                 online = await self.twitch_online(stream["NAME"])
-                if online and not stream["ALREADY_ONLINE"]:
+                if online is True and not stream["ALREADY_ONLINE"]:
                     stream["ALREADY_ONLINE"] = True
                     for channel in stream["CHANNELS"]:
                         if self.bot.get_channel(channel):
@@ -209,7 +288,7 @@ class Streams:
             
             for stream in self.hitbox_streams:
                 online = await self.hitbox_online(stream["NAME"])
-                if online and not stream["ALREADY_ONLINE"]:
+                if online is True and not stream["ALREADY_ONLINE"]:
                     stream["ALREADY_ONLINE"] = True
                     for channel in stream["CHANNELS"]:
                         if self.bot.get_channel(channel):
@@ -218,9 +297,21 @@ class Streams:
                     if stream["ALREADY_ONLINE"] and not online: stream["ALREADY_ONLINE"] = False
                 await asyncio.sleep(0.5)
 
-            if old != (self.twitch_streams, self.hitbox_streams):
+            for stream in self.beam_streams:
+                online = await self.beam_online(stream["NAME"])
+                if online is True and not stream["ALREADY_ONLINE"]:
+                    stream["ALREADY_ONLINE"] = True
+                    for channel in stream["CHANNELS"]:
+                        if self.bot.get_channel(channel):
+                            await self.bot.send_message(self.bot.get_channel(channel), "https://beam.pro/{} is online!".format(stream["NAME"]))
+                else:
+                    if stream["ALREADY_ONLINE"] and not online: stream["ALREADY_ONLINE"] = False
+                await asyncio.sleep(0.5)
+
+            if old != (self.twitch_streams, self.hitbox_streams, self.beam_streams):
                 fileIO("data/streams/twitch.json", "save", self.twitch_streams)
                 fileIO("data/streams/hitbox.json", "save", self.hitbox_streams)
+                fileIO("data/streams/beam.json", "save", self.beam_streams)
       
             await asyncio.sleep(CHECK_DELAY)
 
@@ -238,6 +329,11 @@ def check_files():
     f = "data/streams/hitbox.json"
     if not fileIO(f, "check"):
         print("Creating empty hitbox.json...")
+        fileIO(f, "save", [])
+
+    f = "data/streams/beam.json"
+    if not fileIO(f, "check"):
+        print("Creating empty beam.json...")
         fileIO(f, "save", [])
 
 def setup(bot):
