@@ -33,8 +33,9 @@ class Economy:
 
         self.game_state = "null"
         self.players = {}
-        
+        self.timer = 0
         self.deck = {}
+
         for suit in ["hearts", "diamonds", "clubs", "spades"]:
             self.deck[suit] = {}
             for i in range(2, 11):
@@ -245,8 +246,6 @@ class Economy:
         author = ctx.message.author
 
         if self.game_state == "null":
-            self.players = {}
-            await self.bot.say(":moneybag::hearts:`Blackjack started!`:diamonds::moneybag:")
             self.game_state = "pregame"
             await self.blackjack(ctx)
         else:
@@ -262,7 +261,7 @@ class Economy:
             await self.bot.say("There is no game currently running")
         else:
             self.game_state = "null"
-            await self.bot.say("Blackjack has been stopped")
+            await self.bot.say("**Blackjack has been stopped**")
 
     @bj.command(pass_context=True, no_pm=True)
     async def bet(self, ctx, bet: int):
@@ -270,18 +269,24 @@ class Economy:
         author = ctx.message.author
 
         if self.enough_money(author.id, bet) and self.game_state == "pregame":
-            if bet < self.settings["BLACKJACK_MIN"] and bet > self.settings["BLACKJACK_MAX"]:
+            if bet < self.settings["BLACKJACK_MIN"] or bet > self.settings["BLACKJACK_MAX"]:
                 await self.bot.say("{0} bet must be between {1} and {2}.".format(author.mention, self.settings["BLACKJACK_MIN"], self.settings["BLACKJACK_MAX"]))
             else:
                 if not (author in self.players.keys()):
                     await self.bot.say("{0} has placed a bet of {1}".format(author.mention, bet))
+                    self.withdraw_money(author.id, bet)
 
                 else:
                     await self.bot.say("{0} has placed a new bet of {1}".format(author.mention, bet))
+                    self.add_money(author.id, self.players[author]["bet"])
+                    self.withdraw_money(author.id, bet)
 
                 self.players[author] = {}
                 self.players[author]["bet"] = bet
                 self.players[author]["cards"] = {}
+                self.players[author]["cards"]["ranks"] = []
+                self.players[author]["standing"] = False
+                self.players[author]["blackjack"] = False
 
         elif self.game_state == "pregame":
             await self.bot.say("{0}, you need an account with enough funds to play blackjack".format(author.mention))
@@ -292,28 +297,45 @@ class Economy:
 
     @bj.command(pass_context=True, no_pm=True)
     async def hit(self, ctx):
-        if(self.game_state == "game"):
-            author = ctx.message.author
-            await self.bot.say("``` ```")
-            for card in self.players[author]["cards"]:
-                rank = self.players[author]["cards"][card]["rank"]
-                suit = self.players[author]["cards"][card]["suit"]
-
-                await self.bot.upload("data\economy\playing_cards\\" + rank + "_of_" + suit + ".png")
+        author = ctx.message.author
+        if self.game_state == "game" and not self.players[author]["standing"]:
 
             card = await self.draw_card(author)
             count = await self.count_hand(author)
+            ranks = self.players[author]["cards"]["ranks"]
 
-            if count == "busted":
+            if count > 21:
                 await self.bot.say("{0} has **busted**!".format(author.mention))
-                await self.bot.say("``` ```")
+                self.players[author]["standing"] = True
+            elif "ace" in ranks:
+                await self.bot.say("{0} has hit and drawn a {1}, totaling their hand to {2} ({3})".format(author.mention, card, str(count), str(count - 10)))
             else:
-                await self.bot.say("{0} has hit and drawn a {1}, totaling their hand to {3}".format(author.mention, card, count))
-                await self.bot.say("``` ```")
+                await self.bot.say("{0} has hit and drawn a {1}, totaling their hand to {2}".format(author.mention, card, count))
+
+        elif self.game_state != "game":
+            await self.bot.say("{0}, you cannot hit right now".format(author.mention))
+        elif self.players[author]["standing"]:
+            await self.bot.say("{0}, you are standing and cannot hit".format(author.mention))
+
+    @bj.command(pass_context=True, no_pm=True)
+    async def stand(self, ctx):
+        author = ctx.message.author
+        if self.game_state == "game" and not self.players[author]["standing"]:
+            count = await self.count_hand(author)
+
+            await self.bot.say("{0} has stood with a hand totaling to {1}".format(author.mention, str(count)))
+            self.players[author]["standing"] = True
+        elif self.players[author]["standing"]:
+            await self.bot.say("{0}, you are already standing".format(author.mention))
+        elif self.game_state != "game":
+            await self.bot.say("{0}, you cannot stand right now".format(author.mention))
 
     async def blackjack(self, ctx):
         while self.game_state != "null":
             if self.game_state == "pregame":
+                self.players = {}
+                await self.bot.say(":moneybag::hearts:`Blackjack started!`:diamonds::moneybag:")
+                self.timer = 0
                 await asyncio.sleep(self.settings["BLACKJACK_PRE_GAME_TIME"])
 
             if self.game_state == "pregame":
@@ -324,7 +346,6 @@ class Economy:
                     self.game_state = "drawing"
 
             if self.game_state == "drawing":
-                await self.bot.say("``` ```")
                 for player in self.players:
                     
                     card1 = await self.draw_card(player)
@@ -332,25 +353,103 @@ class Economy:
 
                     count = await self.count_hand(player)
 
-                    await self.bot.say("{0} has drawn a {1} and a {2}, totaling to {3}!".format(player.mention, card1, card2, count))
-                    await self.bot.say("``` ```")
-                
+                    ranks = self.players[player]["cards"]["ranks"]
+
+                    if "ace" in ranks and ("jack" in ranks or "queen" in ranks or "king" in ranks):
+                        await self.bot.say("{0} has a **blackjack**!".format(player.mention))
+                        self.players[player]["blackjack"] = True
+                        self.players[player]["standing"] = True
+
+                    elif "ace" in ranks:
+                        await self.bot.say("{0} has drawn a {1} and a {2}, totaling to {3} ({4})!".format(player.mention, card1, card2, str(count), str(count-10)))
+
+                    else:
+                        await self.bot.say("{0} has drawn a {1} and a {2}, totaling to {3}!".format(player.mention, card1, card2, str(count)))
+                    
+                    await asyncio.sleep(1)
+
                 self.players["dealer"] = {}
                 self.players["dealer"]["cards"] = {}
+                self.players["dealer"]["cards"]["ranks"] = []
 
                 card = await self.draw_card("dealer")
                 await self.bot.upload("data\economy\playing_cards\hidden_card.png")
-                await self.bot.say("**The dealer has drawn a {0}!**\n``` ```".format(card))
+                await self.bot.say("**The dealer has drawn a {0}!**".format(card))
                 self.game_state = "game"
 
             if self.game_state == "game":
-                await asyncio.sleep(self.settings["BLACKJACK_GAME_TIME"])
+                all_stood = True
+                for player in self.players:
+                    if player != "dealer" and not self.players[player]["standing"]:
+                        all_stood = False
 
+                if self.timer < self.settings["BLACKJACK_GAME_TIME"] and not all_stood:
+                    self.timer += 1
+                    await asyncio.sleep(1)
+                elif all_stood or self.timer >= self.settings["BLACKJACK_GAME_TIME"]:
+                    self.game_state = "endgame"
+
+            if self.game_state == "endgame":
+
+                card = await self.draw_card("dealer")
+                dealer_count = await self.count_hand("dealer")
+                ranks = self.players["dealer"]["cards"]["ranks"]
+
+                if dealer_count <= 21:
+                    if "ace" in ranks:
+                        await self.bot.say("**The dealer has drawn a {0}, totaling his hand to {1} ({2})!**".format(card, str(dealer_count), str(dealer_count - 10)))
+                    else:
+                        await self.bot.say("**The dealer has drawn a {0}, totaling his hand to {1}!**".format(card, str(dealer_count)))
+
+                if "ace" in ranks and ("jack" in ranks or "queen" in ranks or "king" in ranks) and len(self.players["dealer"]["cards"]["ranks"]) == 2:
+                    await self.bot.say("**The dealer has a blackjack!**")
+                    for player in self.players:
+                        if self.players[player]["blackjack"]:
+                            self.add_money(player.id, self.players[player]["bet"])
+                            await self.bot.say("{0} ties dealer and pushes!".format(player.mention))
+                        else:
+                            await self.bot.say("{0} loses with a score of {1}".format(player.mention, str(count)))
+
+                elif dealer_count > 21:
+                    await self.bot.say("**The dealer has busted!**")
+                    for player in self.players:
+                        if player != "dealer":
+                            count = await self.count_hand(player)
+                            if self.players[player]["blackjack"]:
+                                self.add_money(player.id, self.players[player]["bet"] * 2.5)
+                                await self.bot.say("{0} beats dealer with a blackjack and wins **{2}**!".format(player.mention, str(count), self.players[player]["bet"] * 2.5))
+                            elif count <= 21:
+                                self.add_money(player.id, self.players[player]["bet"] * 2)
+                                await self.bot.say("{0} doesn't bust with a score of {1} and wins **{2}**!".format(player.mention, str(count), self.players[player]["bet"]))
+                            else:
+                                await self.bot.say("{0} busted and wins nothing".format(player.mention))
+                    self.game_state = "pregame"
+                    await asyncio.sleep(3)
+
+                elif dealer_count >= 17:
+                    for player in self.players:
+                        if player != "dealer":
+                            count = await self.count_hand(player)
+                            if self.players[player]["blackjack"]:
+                                self.add_money(player.id, self.players[player]["bet"] * 2.5)
+                                await self.bot.say("{0} beats dealer with a blackjack and wins **{2}**!".format(player.mention, str(count), self.players[player]["bet"] * 2.5))
+                            elif count > 21:
+                                await self.bot.say("{0} busted and wins nothing".format(player.mention))
+                            elif count > dealer_count:
+                                self.add_money(player.id, self.players[player]["bet"] * 2)
+                                await self.bot.say("{0} beats dealer with a score of {1} and wins **{2}**!".format(player.mention, str(count), self.players[player]["bet"]))
+                            elif count == dealer_count:
+                                self.add_money(player.id, self.players[player]["bet"])
+                                await self.bot.say("{0} ties dealer and pushes!".format(player.mention))
+                            else:
+                                await self.bot.say("{0} loses with a score of {1}".format(player.mention, str(count)))
+
+                    self.game_state = "pregame"
+                    await asyncio.sleep(3)
 
     async def draw_card(self, player):
         suit = randint(1, 4)
         num = randint(1, 13)
-
         if suit == 1:
             suit = "hearts"
         elif suit == 2:
@@ -362,37 +461,53 @@ class Economy:
 
         rank = self.deck[suit][num]["rank"]
 
-        index = len(self.players[player]["cards"])
+        index = len(self.players[player]["cards"]) - 1
 
         self.players[player]["cards"][index] = {}
         self.players[player]["cards"][index]["suit"] = suit
         self.players[player]["cards"][index]["rank"] = rank
         self.players[player]["cards"][index]["value"] = self.deck[suit][num]["value"]
 
+        count = await self.count_hand(player)
+       
+        self.players[player]["cards"]["ranks"] = []
+        for card in self.players[player]["cards"]:
+            if card != "ranks":
+                if count > 21:
+                    value = self.players[player]["cards"][card]["value"]
+                    if value == 11:
+                        self.players[player]["cards"][card]["value"] = 1
+                        self.players[player]["cards"][card]["rank"] = "small_ace"
+                        break
+
+        for card in self.players[player]["cards"]:
+            if card != "ranks":
+                self.players[player]["cards"]["ranks"].append(self.players[player]["cards"][card]["rank"])
+
         await self.bot.upload("data\economy\playing_cards\\" + rank + "_of_" + suit + ".png")
+
+        if rank == "small_ace":
+            rank = "ace"
 
         return self.players[player]["cards"][index]["rank"] + " of " + self.players[player]["cards"][index]["suit"]
 
-
     async def count_hand(self, player):
-        count = ""
-        total = 0
-        contains_ace = False
+        count = 0
 
-        for num in self.players[player]["cards"]:
-            value = self.players[player]["cards"][num]["value"]
-            total += value
-            if value == 11:
-                contains_ace = True
+        self.players[player]["cards"]["ranks"] = []
+        for card in self.players[player]["cards"]:
+            if card != "ranks":
+                if count > 21:
+                    value = self.players[player]["cards"][card]["value"]
+                    if value == 11:
+                        self.players[player]["cards"][card]["value"] = 1
+                        self.players[player]["cards"][card]["rank"] = "small_ace"
+                        break
 
-        if total > 21 and contains_ace:
-            count = str(total - 10)
-        elif contains_ace:
-            count = str(total) + " (" + str(total - 10) + ")"
-        elif total > 21:
-            count = "busted"
-        else:
-            count = str(total)
+        for card in self.players[player]["cards"]:
+            if card != "ranks":
+                self.players[player]["cards"]["ranks"].append(self.players[player]["cards"][card]["rank"])
+                count += self.players[player]["cards"][card]["value"]
 
         return count
 
