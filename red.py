@@ -367,8 +367,11 @@ def check_configs():
                 #Remember we're using property's here, oh well...
         settings.prefixes = prefixes
 
-        print("\nInput *your own* ID. You can type \@Yourname in chat to see it (copy only the numbers).")
-        print("If you want, you can also do it later with [prefix]set owner. Leave empty in that case.")
+        print("\nyou now need to enter the Owner ID.")
+        print("to do this, go to a discord server and type \@username")
+        print("for example, if your username is KappaRoss, go to discord and type \@KappaRoss")
+        print("something like <@119079430642466816> will be shown, your ID is the number")
+        print("in this example, KappaRoss's ID is 119079430642466816")
         settings.owner = input("\nID> ")
         if settings.owner == "": settings.owner = "id_here"
         if not settings.owner.isdigit() or len(settings.owner) < 17:
