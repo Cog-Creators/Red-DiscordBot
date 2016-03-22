@@ -243,7 +243,6 @@ class Economy:
     @bj.command(pass_context=True, no_pm=True)
     async def start(self, ctx):
         """Start a game of blackjack"""
-        author = ctx.message.author
 
         if self.game_state == "null":
             self.game_state = "pregame"
@@ -255,7 +254,6 @@ class Economy:
     @checks.admin_or_permissions(manage_server=True)
     async def stop(self, ctx):
         """Stop the current game of blackjack (no refunds)"""
-        author = ctx.message.author
 
         if self.game_state == "null":
             await self.bot.say("There is no game currently running")
@@ -266,30 +264,30 @@ class Economy:
     @bj.command(pass_context=True, no_pm=True)
     async def bet(self, ctx, bet: int):
         """Join the game of blackjack with your opening bet"""
-        author = ctx.message.author
+        player = ctx.message.author
 
-        if self.enough_money(author.id, bet) and self.game_state == "pregame":
+        if self.enough_money(player.id, bet) and self.game_state == "pregame":
             if bet < self.settings["BLACKJACK_MIN"] or (bet > self.settings["BLACKJACK_MAX"] and self.settings["BLACKJACK_MAX_ENABLED"]):
-                await self.bot.say("{0} bet must be between {1} and {2}.".format(author.mention, self.settings["BLACKJACK_MIN"], self.settings["BLACKJACK_MAX"]))
+                await self.bot.say("{0}, bet must be between {1} and {2}.".format(player.mention, self.settings["BLACKJACK_MIN"], self.settings["BLACKJACK_MAX"]))
             else:
-                if not (author in self.players.keys()):
-                    await self.bot.say("{0} has placed a bet of {1}".format(author.mention, bet))
-                    self.withdraw_money(author.id, bet)
+                if not (player in self.players.keys()):
+                    await self.bot.say("{0} has placed a bet of {1}".format(player.mention, bet))
+                    self.withdraw_money(player.id, bet)
 
                 else:
-                    await self.bot.say("{0} has placed a new bet of {1}".format(author.mention, bet))
-                    self.add_money(author.id, self.players[author]["bet"])
-                    self.withdraw_money(author.id, bet)
+                    await self.bot.say("{0} has placed a new bet of {1}".format(player.mention, bet))
+                    self.add_money(player.id, self.players[player]["bet"])
+                    self.withdraw_money(player.id, bet)
 
-                self.players[author] = {}
-                self.players[author]["bet"] = bet
-                self.players[author]["cards"] = {}
-                self.players[author]["cards"]["ranks"] = []
-                self.players[author]["standing"] = False
-                self.players[author]["blackjack"] = False
+                self.players[player] = {}
+                self.players[player]["bet"] = bet
+                self.players[player]["cards"] = {}
+                self.players[player]["cards"]["ranks"] = []
+                self.players[player]["standing"] = False
+                self.players[player]["blackjack"] = False
 
         elif self.game_state == "pregame":
-            await self.bot.say("{0}, you need an account with enough funds to play blackjack".format(author.mention))
+            await self.bot.say("{0}, you need an account with enough funds to play blackjack".format(player.mention))
         elif self.game_state == "null":
             await self.bot.say("There is currently no game running, type `/blackjack start` to begin one")
         else:
@@ -298,39 +296,70 @@ class Economy:
     @bj.command(pass_context=True, no_pm=True)
     async def hit(self, ctx):
         """Hit and draw another card"""
-        author = ctx.message.author
-        if self.game_state == "game" and not self.players[author]["standing"]:
+        player = ctx.message.author
+        if self.game_state == "game" and not self.players[player]["standing"]:
 
-            card = await self.draw_card(author)
-            count = await self.count_hand(author)
-            ranks = self.players[author]["cards"]["ranks"]
+            card = await self.draw_card(player)
+            count = await self.count_hand(player)
+            ranks = self.players[player]["cards"]["ranks"]
 
             if count > 21:
-                await self.bot.say("{0} has **busted**!".format(author.mention))
-                self.players[author]["standing"] = True
+                await self.bot.say("{0} has **busted**!".format(player.mention))
+                self.players[player]["standing"] = True
             elif "ace" in ranks:
-                await self.bot.say("{0} has hit and drawn a {1}, totaling their hand to {2} ({3})".format(author.mention, card, str(count), str(count - 10)))
+                await self.bot.say("{0} has hit and drawn a {1}, totaling their hand to {2} ({3})".format(player.mention, card, str(count), str(count - 10)))
             else:
-                await self.bot.say("{0} has hit and drawn a {1}, totaling their hand to {2}".format(author.mention, card, count))
+                await self.bot.say("{0} has hit and drawn a {1}, totaling their hand to {2}".format(player.mention, card, count))
 
         elif self.game_state != "game":
-            await self.bot.say("{0}, you cannot hit right now".format(author.mention))
-        elif self.players[author]["standing"]:
-            await self.bot.say("{0}, you are standing and cannot hit".format(author.mention))
+            await self.bot.say("{0}, you cannot hit right now".format(player.mention))
+        elif self.players[player]["standing"]:
+            await self.bot.say("{0}, you are standing and cannot hit".format(player.mention))
 
     @bj.command(pass_context=True, no_pm=True)
     async def stand(self, ctx):
         """Finishing drawing and stand with your current cards"""
-        author = ctx.message.author
-        if self.game_state == "game" and not self.players[author]["standing"]:
-            count = await self.count_hand(author)
+        player = ctx.message.author
+        if self.game_state == "game" and not self.players[player]["standing"]:
+            count = await self.count_hand(player)
 
-            await self.bot.say("{0} has stood with a hand totaling to {1}".format(author.mention, str(count)))
-            self.players[author]["standing"] = True
-        elif self.players[author]["standing"]:
-            await self.bot.say("{0}, you are already standing".format(author.mention))
+            await self.bot.say("{0} has stood with a hand totaling to {1}".format(player.mention, str(count)))
+            self.players[player]["standing"] = True
+        elif self.players[player]["standing"]:
+            await self.bot.say("{0}, you are already standing".format(player.mention))
         elif self.game_state != "game":
-            await self.bot.say("{0}, you cannot stand right now".format(author.mention))
+            await self.bot.say("{0}, you cannot stand right now".format(player.mention))
+
+    @bj.command(pass_context=True, no_pm=True)
+    async def double(self, ctx):
+        """Double your original bet and draw one last card"""
+        player = ctx.message.author
+        bet = self.players[player]["bet"]
+
+        if self.enough_money(player.id, bet) and not self.players[player]["standing"] and self.game_state == "game":
+            await self.bot.say("{0} has doubled down, totaling their bet to {1}".format(player.mention, self.players[player]["bet"]))
+
+            self.players[player]["bet"] += bet
+            self.withdraw_money(player.id, bet)
+            
+            card = await self.draw_card(player)
+            count = await self.count_hand(player)
+
+            if count > 21:
+                await self.bot.say("{0} has **busted**!".format(player.mention))
+            else:
+                await self.bot.say("{0} has doubled and drawn a {1}, totaling their hand to {2}".format(player.mention, card, count))
+
+            self.players[player]["standing"] = True
+        
+        elif not self.enough_money(player.id, bet):
+            await self.bot.say("{0}, you do not have enough money to double down!".format(player.mention))
+        
+        elif self.game_state != "game":
+            await self.bot.say("{0}, cannot double down right now!".format(player.mention))
+
+        elif self.players[player]["standing"]:
+            await self.bot.say("{0}, you are standing and cannot double!".format(player.mention))
 
     async def blackjack(self, ctx):
         while self.game_state != "null":
@@ -439,7 +468,7 @@ class Economy:
                     await asyncio.sleep(3)
 
                 elif dealer_count >= 17:
-                    await self.bot.say("**The stands at {0}!**".format(dealer_count))
+                    await self.bot.say("**The dealer stands at {0}!**".format(dealer_count))
                     for player in self.players:
                         if player != "dealer":
                             count = await self.count_hand(player)
