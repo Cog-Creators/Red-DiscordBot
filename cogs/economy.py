@@ -121,18 +121,34 @@ class Economy:
         else:
             await self.bot.say("{} You need an account to receive credits.".format(author.mention))
 
-    @commands.command()
-    async def leaderboard(self, page : int=1):
+    @commands.command(pass_context=True)
+    async def leaderboard(self, ctx, page_or_user : str="1"):
         """Prints out the leaderboard
 
-        page: default 1""" #Originally coded by Airenkun - edited by irdumb
-        if page < 1:
-            page = 1
-        bank_sorted = sorted(self.bank.items(), key=lambda x: x[1]["balance"], reverse=True)
+        Username must be a mention
+        Defaults to page 1""" #Originally coded by Airenkun - edited by irdumb
         entries_per_page = 12
+
+        bank_sorted = sorted(self.bank.items(), key=lambda x: x[1]["balance"], reverse=True)
         bank_pages = int(len(bank_sorted)/entries_per_page) + int(len(bank_sorted)%entries_per_page!=0)
-        if page > bank_pages:
-            page = bank_pages
+        if page_or_user.isdigit():
+            page = int(page_or_user)
+            if page < 1:
+                page = 1
+            if page > bank_pages:
+                page = bank_pages
+        else:
+            key = page_or_user[2:-1]
+            if not key.isdigit() or "@" not in page_or_user:
+                await send_cmd_help(ctx)
+                return
+            else:
+                if key not in self.bank:
+                    await self.bot.say("That user has no bank account.")
+                    return
+                entry = (key , self.bank[key])
+                page = int(bank_sorted.index(entry)/entries_per_page) + 1
+
         last = entries_per_page*page
         place = last-entries_per_page
         entries = bank_sorted[place:last]
