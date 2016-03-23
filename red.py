@@ -323,6 +323,7 @@ def wait_for_answer(author):
         settings.owner = author.id
         print(author.name + " has been set as owner.")
         lock = False
+        owner.hidden = True
     else:
         print("setowner request has been ignored.")
         lock = False
@@ -475,7 +476,19 @@ def main():
     check_configs()
     set_logger()
     load_cogs()
-    bot.command_prefix = settings.prefixes
+    if settings.prefixes != []:
+        bot.command_prefix = settings.prefixes
+    else:
+        print("No prefix set. Defaulting to !")
+        bot.command_prefix = ["!"]
+        if settings.owner != "id_here":
+            print("Use !set prefix to set it.")
+        else:
+            print("Once you're owner use !set prefix to set it.")
+    if settings.owner == "id_here":
+        print("Owner has not been set yet. Do '[p]set owner' in chat to set yourself as owner.")
+    else:
+        owner.hidden = True # Hides the set owner command from help
     yield from bot.login(settings.email, settings.password)
     yield from bot.connect()
 
