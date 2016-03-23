@@ -323,6 +323,7 @@ def wait_for_answer(author):
         settings.owner = author.id
         print(author.name + " has been set as owner.")
         lock = False
+        owner.hidden = True
     else:
         print("setowner request has been ignored.")
         lock = False
@@ -367,8 +368,8 @@ def check_configs():
                 #Remember we're using property's here, oh well...
         settings.prefixes = prefixes
 
-        print("\nInput *your own* ID. You can type \@Yourname in chat to see it (copy only the numbers).")
-        print("If you want, you can also do it later with [prefix]set owner. Leave empty in that case.")
+        print("\nIf you know what an User ID is, input *your own* now and press enter.")
+        print("Otherwise you can just set yourself as owner later with '[prefix]set owner'. Leave empty and press enter in this case.")
         settings.owner = input("\nID> ")
         if settings.owner == "": settings.owner = "id_here"
         if not settings.owner.isdigit() or len(settings.owner) < 17:
@@ -475,7 +476,19 @@ def main():
     check_configs()
     set_logger()
     load_cogs()
-    bot.command_prefix = settings.prefixes
+    if settings.prefixes != []:
+        bot.command_prefix = settings.prefixes
+    else:
+        print("No prefix set. Defaulting to !")
+        bot.command_prefix = ["!"]
+        if settings.owner != "id_here":
+            print("Use !set prefix to set it.")
+        else:
+            print("Once you're owner use !set prefix to set it.")
+    if settings.owner == "id_here":
+        print("Owner has not been set yet. Do '[p]set owner' in chat to set yourself as owner.")
+    else:
+        owner.hidden = True # Hides the set owner command from help
     yield from bot.login(settings.email, settings.password)
     yield from bot.connect()
 

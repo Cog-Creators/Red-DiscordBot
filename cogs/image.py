@@ -15,7 +15,7 @@ class Image:
 
     @commands.command(no_pm=True)
     async def imgur(self, *text):
-        """Retrieves a random imgur picture
+        """Retrieves a picture from imgur
 
         imgur search [keyword] - Retrieves first hit of search query.
         imgur [subreddit section] [top or new] - Retrieves top 3 hottest or latest pictures of today for given a subreddit section, e.g. 'funny'."""
