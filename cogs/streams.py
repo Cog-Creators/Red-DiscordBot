@@ -70,12 +70,12 @@ class Streams:
     async def twitch_alert(self, ctx, stream : str):
         """Adds/removes twitch alerts from the current channel"""
         channel = ctx.message.channel
-        check = await self.twitch_online(stream)
-        if check == None:
+        check = await self.twitch_exists(stream)
+        if check is False:
             await self.bot.say("That stream doesn't exist.")
             return
         elif check == "error":
-            await self.bot.say("Error.")
+            await self.bot.say("Couldn't contact Twitch API. Try again later.")
             return
         
         done = False
@@ -237,17 +237,14 @@ class Streams:
             return "error"
 
     async def twitch_online(self, stream):
-        url =  "https://api.twitch.tv/kraken/streams/" + stream
-        async with aiohttp.get(url) as r:
-            data = await r.json()
+        url =  "https://api.twitch.tv/kraken/streams?channel=" + stream
         try:
-            if "stream" in data:
-                if data["stream"] != None:
-                    return True
-                else:
-                    return False
-            elif "error" in data:
-                return None
+            async with aiohttp.get(url) as r:
+                data = await r.json()
+            if len(data["streams"]) > 0:
+                return True
+            else:
+                return False
         except:
             return "error"
         return "error"
@@ -267,6 +264,18 @@ class Streams:
         except:
             return "error"
         return "error"
+
+    async def twitch_exists(self, stream):
+        url =  "https://api.twitch.tv/channels/" + stream
+        try:
+            async with aiohttp.get(url) as r:
+                data = await r.json()
+            if "error" in data:
+                return False
+            else:
+                return True
+        except:
+            return "error"
 
     async def stream_checker(self):
         CHECK_DELAY = 60
