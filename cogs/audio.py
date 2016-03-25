@@ -207,7 +207,7 @@ class Audio:
             else:
                 await self.bot.say("There is no local playlist with that name.")
         else:
-            await self.bot.say(message.channel, "There are no valid playlists in the localtracks folder.\nIf you're the owner, see {}".format(help_link))
+            await self.bot.say("There are no valid playlists in the localtracks folder.\nIf you're the owner, see {}".format(help_link))
 
     @commands.command(pass_context=True, no_pm=True)
     async def loop(self, ctx):
