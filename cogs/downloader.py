@@ -87,7 +87,7 @@ class Downloader:
             answer = await self.bot.wait_for_message(timeout=15, author=ctx.message.author)
             if answer is None:
                 await self.bot.say("Ok then, you can load it with `{}load {}`".format(ctx.prefix, cog))
-            elif answer.content.lower().strip() == "yes":
+            elif answer.content.lower().strip() in ["yes", "y"]:
                 set_cog("cogs." + cog, True)
                 self.bot.unload_extension("cogs." + cog)
                 self.bot.load_extension("cogs." + cog)
