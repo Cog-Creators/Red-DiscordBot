@@ -95,11 +95,18 @@ class CustomCommands:
         if server.id in self.c_commands:
             cmdlist = self.c_commands[server.id]
             if cmdlist:
-                msg = "```Custom commands:\n"
+                i = 0
+                msg = ["```Custom commands:\n"]
                 for cmd in sorted([cmd for cmd in cmdlist.keys()]):
-                    msg += "  {}{}\n".format(ctx.prefix, cmd)
-                fmsg = msg + "```"
-                await self.bot.whisper(fmsg)
+                    if len(msg[i]) + len(ctx.prefix) + len(cmd) + 5 > 2000:
+                        msg[i] += "```"
+                        i += 1
+                        msg.append("``` {}{}\n".format(ctx.prefix, cmd))
+                    else:
+                        msg[i] += " {}{}\n".format(ctx.prefix, cmd)
+                msg[i] += "```"
+                for cmds in msg:
+                    await self.bot.whisper(cmds)
             else:
                 await self.bot.say("There are no custom commands in this server. Use addcom [command] [text]")
         else:
