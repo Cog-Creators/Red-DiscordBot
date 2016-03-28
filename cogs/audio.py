@@ -40,7 +40,6 @@ youtube_dl_options = {
     'nocheckcertificate': True,
     'ignoreerrors': True,
     'quiet': True,
-    'default_search': 'auto',
     'no_warnings': True,
     'outtmpl': "data/audio/cache/%(id)s",
     'default_search' : 'auto'}
