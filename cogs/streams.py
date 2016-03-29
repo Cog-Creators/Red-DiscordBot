@@ -280,7 +280,7 @@ class Streams:
     async def stream_checker(self):
         CHECK_DELAY = 60
         
-        while "Streams" in self.bot.cogs:
+        while self == self.bot.get_cog("Streams"):
             
             old = (deepcopy(self.twitch_streams), deepcopy(self.hitbox_streams), deepcopy(self.beam_streams))
 

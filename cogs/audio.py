@@ -590,7 +590,7 @@ class Audio:
             return False
 
     async def queue_manager(self):
-        while "Audio" in self.bot.cogs:
+        while self == self.bot.get_cog("Audio"):
             if not self.music_player.paused:
                 if self.queue and not self.music_player.is_playing():
                     new_link = self.queue[0]
