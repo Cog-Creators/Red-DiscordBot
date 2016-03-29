@@ -140,7 +140,10 @@ class Economy:
             highscore += str(id[1]["balance"]) + "\n"
             place += 1
         if highscore:
-            await self.bot.say("```py\n"+highscore+"```")
+            if len(highscore) < 1985:
+                await self.bot.say("```py\n"+highscore+"```")
+            else:
+                await self.bot.say("The leaderboard is too big to be displayed. Try with a lower <top> parameter.")
         else:
             await self.bot.say("There are no accounts in the bank.")
 
