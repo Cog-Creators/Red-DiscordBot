@@ -227,6 +227,14 @@ class Mod:
         else:
             await self.bot.say("User is not in whitelist.")
 
+    @whitelist.command(name="list", pass_context=True)
+    async def _whitelist_list(self, ctx):
+        """Lists users in whitelist"""
+        server = ctx.message.server
+        whitelisted_users = [user for user in server.members if user.id in self.whitelist_list]
+        members_for_output = ', '.join([user.name for user in whitelisted_users])
+        await self.bot.say("Whitelisted users: " + members_for_output)
+
     @commands.group(pass_context=True, no_pm=True)
     @checks.admin_or_permissions(manage_channels=True)
     async def ignore(self, ctx):
