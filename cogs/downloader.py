@@ -65,14 +65,18 @@ class Downloader:
             msg += "\t{}\n".format(item)
         await self.bot.say(box(msg))  # Need to deal with over 2000 characters
 
-    '''@cog.command()
-    async def info(self, cog : str):
+    @cog.command()
+    async def info(self, repo_name: str, cog: str):
         """Shows info about the specified cog"""
-        cogs = self.list_cogs()
-        info_file = self.path + cog + "/info.json"
+        cogs = self.list_cogs(repo_name)
         if cog in cogs:
+            info_file = os.path.join(cogs[cog].get('folder'), "info.json")
             if os.path.isfile(info_file):
-                data = fileIO(info_file, "load")
+                try:
+                    data = fileIO(info_file, "load")
+                except:
+                    await self.bot.say('Error reading info file.')
+                    return
                 msg = "{} by {}\n\n".format(cog, data["AUTHOR"])
                 msg += data["NAME"] + "\n\n" + data["DESCRIPTION"]
                 await self.bot.say(box(msg))
@@ -80,7 +84,7 @@ class Downloader:
                 await self.bot.say("The specified cog has no info file.")
         else:
             await self.bot.say("That cog doesn't exist."
-                               " Use cog list to see the full list.")'''
+                               " Use cog list to see the full list.")
 
     @cog.command(hidden=True)
     async def search(self, *terms: str):
@@ -207,7 +211,7 @@ class Downloader:
                     self.repos[name][cog] = valid_cogs.get(cog, {})
                     self.repos[name][cog]['INSTALLED'] = False
                 else:
-                    self.repos[name][cog].update(cog)
+                    self.repos[name][cog].update(valid_cogs[cog])
         self.save_repos()
 
     def update_repo(self, name):
