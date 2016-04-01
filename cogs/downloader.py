@@ -200,12 +200,14 @@ class Downloader:
 
     def update_repos(self):
         for name in self.repos:
-            valid_cogs = self.list_cogs(name)
             self.update_repo(name)
+            valid_cogs = self.list_cogs(name)
             for cog in valid_cogs:
                 if cog not in self.repos[name]:
                     self.repos[name][cog] = valid_cogs.get(cog, {})
                     self.repos[name][cog]['INSTALLED'] = False
+                else:
+                    self.repos[name][cog].update(cog)
         self.save_repos()
 
     def update_repo(self, name):
