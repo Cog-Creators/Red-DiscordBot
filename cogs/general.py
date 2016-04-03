@@ -191,7 +191,7 @@ class General:
         data += "Channels: " + str(len(server.channels)) + "\n"
         data += "Roles: " + str(len(server.roles)) + "\n"
         data += "Created: " + str(server.created_at) + "\n"
-        data += "Owner: " + server.owner.name + "\n"
+        data += "Owner: " + server.owner.name + "#{}\n".format(server.owner.discriminator)
         data += "Icon: " + str(server.icon_url) + "\n"
         data += "```"
         await self.bot.say(data)
