@@ -37,16 +37,18 @@ class General:
         else:
             await self.bot.say(randchoice(choices))
 
-    @commands.command()
-    async def roll(self, number : int = 100):
+    @commands.command(pass_context=True)
+    async def roll(self, ctx, number : int = 100):
         """Rolls random number (between 1 and user choice)
 
         Defaults to 100.
         """
+        author = ctx.message.author
         if number > 1:
-            return await self.bot.say(":game_die: " + str(randint(1, number)) + " :game_die:")
+            n = str(randint(1, number))
+            return await self.bot.say("{} :game_die: {} :game_die:".format(author.mention, n))
         else:
-            return await self.bot.say("Maybe higher than 1? ;P")
+            return await self.bot.say("{} Maybe higher than 1? ;P".format(author.mention))
 
     @commands.command(pass_context=True)
     async def flip(self, ctx, user : discord.Member=None):
