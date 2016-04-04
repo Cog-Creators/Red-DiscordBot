@@ -216,7 +216,7 @@ class Economy:
             msg = "```"
             for k, v in self.settings.items():
                 msg += str(k) + ": " + str(v) + "\n"
-            msg += "\nType help {}economyset to see the list of commands.```".format(ctx.prefix)
+            msg += "\nType {}help economyset to see the list of commands.```".format(ctx.prefix)
             await self.bot.say(msg)
 
     @economyset.command()
