@@ -186,15 +186,15 @@ class General:
         total = str(len(server.members))
 
         data = "```\n"
-        data += "Name: " + server.name + "\n"
-        data += "ID: " + server.id + "\n"
-        data += "Region: " + str(server.region) + "\n"
-        data += "Users: " + online + "/" + total + "\n"
-        data += "Channels: " + str(len(server.channels)) + "\n"
-        data += "Roles: " + str(len(server.roles)) + "\n"
-        data += "Created: " + str(server.created_at) + "\n"
-        data += "Owner: " + server.owner.name + "\n"
-        data += "Icon: " + str(server.icon_url) + "\n"
+        data += "Name: {}\n".format(server.name)
+        data += "ID: {}\n".format(server.id)
+        data += "Region: {}\n".format(str(server.region))
+        data += "Users: {}/{}\n".format(online, total)
+        data += "Channels: {}\n".format(str(len(server.channels)))
+        data += "Roles: {}\n".format(str(len(server.roles)))
+        data += "Created: {}\n".format(str(server.created_at))
+        data += "Owner: {}#{}\n".format(server.owner.name, server.owner.discriminator)
+        data += "Icon: {}\n".format(server.icon_url)
         data += "```"
         await self.bot.say(data)
         
