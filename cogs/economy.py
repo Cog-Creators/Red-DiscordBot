@@ -108,7 +108,7 @@ class Economy:
         if self.account_check(id):
             if id in self.payday_register:
                 seconds = abs(self.payday_register[id] - int(time.perf_counter()))
-                if seconds  >= self.settings["PAYDAY_TIME"]: 
+                if seconds  >= self.settings["PAYDAY_TIME"]:
                     self.add_money(id, self.settings["PAYDAY_CREDITS"])
                     self.payday_register[id] = int(time.perf_counter())
                     await self.bot.say("{} Here, take some credits. Enjoy! (+{} credits!)".format(author.mention, str(self.settings["PAYDAY_CREDITS"])))
@@ -213,10 +213,10 @@ class Economy:
     async def economyset(self, ctx):
         """Changes economy module settings"""
         if ctx.invoked_subcommand is None:
-            msg = ""
+            msg = "```"
             for k, v in self.settings.items():
                 msg += str(k) + ": " + str(v) + "\n"
-            msg += "\nType help economyset to see the list of commands."
+            msg += "\nType {}help economyset to see the list of commands.```".format(ctx.prefix)
             await self.bot.say(msg)
 
     @economyset.command()
@@ -286,7 +286,7 @@ class Economy:
             return False
 
     def set_money(self, id, amount):
-        if self.account_check(id):      
+        if self.account_check(id):
             self.bank[id]["balance"] = amount
             fileIO("data/economy/bank.json", "save", self.bank)
             return True
@@ -301,7 +301,7 @@ class Economy:
             ('minutes', 60),
             ('seconds', 1),
             )
-        
+
         result = []
 
         for name, count in intervals:
