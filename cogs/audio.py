@@ -307,8 +307,6 @@ class Audio:
 
             else:
                 await self.bot.say("I'm already playing a playlist.")
-        else:
-            await self.bot.say("That link is now allowed.")
 
     async def is_alone_or_admin(self, message): #Direct control. fix everything
         author = message.author
