@@ -49,6 +49,7 @@ class Audio:
     def __init__(self, bot):
         self.bot = bot
         self.music_player = EmptyPlayer()
+        self.sfx_player = EmptyPlayer()
         self.settings = fileIO("data/audio/settings.json", "load")
         self.queue_mode = False
         self.queue = []
@@ -210,6 +211,70 @@ class Audio:
             await self.bot.say("There are no valid playlists in the localtracks folder.\nIf you're the owner, see {}".format(help_link))
 
     @commands.command(pass_context=True, no_pm=True)
+    async def sfx(self, ctx, name : str):
+        """Plays a local sound file
+
+        For bot's owner:
+        audio files must be placed in the data/audio/sfx folder.
+        Supported files are mp3, flac, wav"""
+        #sound effects default enabled
+        server = ctx.message.server
+        if self.settings["SERVER_SFX_ON"].get(server.id,None) is None:
+            self.settings["SERVER_SFX_ON"][server.id] = True
+        if not self.settings["SERVER_SFX_ON"][server.id]:
+            await self.bot.say("Sound effects are not enabled on this server")
+            return
+
+        msg = ctx.message
+        localsfx = self.get_local_sfx()
+        if localsfx and ("data/audio/sfx/" not in name and "\\" not in name):
+            if name in localsfx.keys():
+                file = "data/audio/sfx/{}{}".format(name,localsfx[name])
+
+                if await self.check_voice(msg.author, ctx.message):
+                    try:
+                        if self.music_player.is_playing():
+                            self.music_player.paused = True
+                            self.music_player.pause()
+
+                        if self.sfx_player.is_playing():
+                            self.sfx_player.stop()
+
+                        self.sfx_player = self.bot.voice.create_ffmpeg_player(file, options='''-filter:a "volume={}"'''.format(self.settings["VOLUME"]))
+                        self.sfx_player.start()
+                        while self.sfx_player.is_playing():
+                            await asyncio.sleep(.5)
+
+                        if not self.music_player.is_playing():
+                            self.music_player.paused = False
+                            self.music_player.resume()
+                    except AttributeError:
+                        #music_player not used yet. Still an EmptyPlayer.
+                        #better to ask for forgiveness?
+                        pass
+                    except Exception as e:
+                        print(e)
+
+            else:
+                await self.bot.say("There is no sound effect with that name.")
+        else:
+            await self.bot.say("There are no valid sound effects in the data/audio/sfx folder.")
+
+    def get_local_sfx(self):
+        filenames = {}
+        files = os.listdir("data/audio/sfx/")
+        #only reason why these are the only supported ext is cause I haven't tried any others
+        supported = [".mp3",".flac",".wav"]
+        for f in files:
+            item = os.path.splitext(f)
+            if item[1] in supported:
+                filenames[item[0]] = item[1]
+        if filenames != {}:
+            return filenames
+        else:
+            return False
+
+    @commands.command(pass_context=True, no_pm=True)
     async def loop(self, ctx):
         """Loops single song
         """
@@ -273,6 +338,7 @@ class Audio:
         self.playlist = []
         self.current = -1
         if self.music_player.is_playing(): self.music_player.stop()
+        if self.sfx_player.is_playing(): self.sfx_player.stop()
         await asyncio.sleep(1)
         if self.bot.voice: await self.bot.voice.disconnect()
 
@@ -397,6 +463,21 @@ class Audio:
         else:
             await self.bot.say("There are no local playlists.")
 
+    @_list.command(name="sfx", pass_context=True)
+    async def list_sfx(self, ctx):
+        msg = "Available local sound effects: \n\n```"
+        files = self.get_local_sfx()
+        if files:
+            for i, d in enumerate(files.keys()):
+                if i % 4 == 0 and i != 0:
+                    msg = msg + d + "\n"
+                else:
+                    msg = msg + d + "\t"
+            msg += "```"
+            await self.bot.send_message(ctx.message.author, msg)
+        else:
+            await self.bot.say("There are no local sound effects.")
+
     @_list.command(name="queue", pass_context=True)
     async def list_queue(self, ctx):
         queue_list = await self.queue_titles()
@@ -471,6 +552,22 @@ class Audio:
         else:
             await self.bot.say("Volume must be between 0 and 1. Example: 0.40")
 
+    @audioset.command(name="sfx", pass_context=True)
+    async def _sfx(self, ctx):
+        """Enables/Disables sound effects usage in the server"""
+        #default on.
+        server = ctx.message.server
+        if self.settings["SERVER_SFX_ON"].get(server.id,None) is None:
+            self.settings["SERVER_SFX_ON"][server.id] = True
+        else:
+            self.settings["SERVER_SFX_ON"][server.id] = not self.settings["SERVER_SFX_ON"][server.id]
+        #for a toggle, settings should save here in case bot fails to send message
+        fileIO("data/audio/settings.json", "save", self.settings)
+        if self.settings["SERVER_SFX_ON"][server.id]:
+            await self.bot.say("Sound effects are now enabled on this server.")
+        else:
+            await self.bot.say("Sound effects are now disabled on this server.")
+
     @audioset.command()
     @checks.is_owner()
     async def maxcache(self, size : int):
@@ -538,6 +635,11 @@ class Audio:
         if self.downloader["ID"]:
             try:
                 if self.music_player.is_playing(): self.music_player.stop()
+                # sfx_player should only ever get stuck as much as music_player does
+                # when it happens to music_player, the reponsibility is put on the user to !stop
+                # so we'll do the same with sfx_player. a timeout could be placed here though.
+                while self.sfx_player.is_playing():
+                    await asyncio.sleep(.5)
                 self.music_player = self.bot.voice.create_ffmpeg_player(path + self.downloader["ID"], options='''-filter:a "volume={}"'''.format(self.settings["VOLUME"]))
                 self.music_player.paused = False
                 self.music_player.start()
@@ -822,7 +924,7 @@ class MaximumLength(Exception):
         return self.message
 
 def check_folders():
-    folders = ("data/audio", "data/audio/cache", "data/audio/playlists", "data/audio/localtracks")
+    folders = ("data/audio", "data/audio/cache", "data/audio/playlists", "data/audio/localtracks", "data/audio/sfx")
     for folder in folders:
         if not os.path.exists(folder):
             print("Creating " + folder + " folder...")
@@ -830,7 +932,7 @@ def check_folders():
 
 def check_files():
 
-    default = {"VOLUME" : 0.5, "MAX_LENGTH" : 3700, "QUEUE_MODE" : True, "MAX_CACHE" : 0, "SOUNDCLOUD_CLIENT_ID": None, "TITLE_STATUS" : True}
+    default = {"VOLUME" : 0.5, "MAX_LENGTH" : 3700, "QUEUE_MODE" : True, "MAX_CACHE" : 0, "SOUNDCLOUD_CLIENT_ID": None, "TITLE_STATUS" : True, "SERVER_SFX_ON" : {}}
     settings_path = "data/audio/settings.json"
 
     if not os.path.isfile(settings_path):
