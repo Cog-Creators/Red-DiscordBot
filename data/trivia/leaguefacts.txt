@@ -39,6 +39,11 @@ Who is the champion in the tutorial?`Ashe
 Who says "I only need one shot!" while attacking?`Ashe
 Who is Ashe married to?`Tryndamere
 Who has the only non-ultimate ability with global range?`Ashe
+Who has an Ashen Lord skin?`Aurelion Sol`aurelionsol
+Whose name means "Golden Sun" in Latin?`Aurelion Sol`aurelionsol
+Who is a servant to the Aspects?`Aurelion Sol`aurelionsol
+Who creates the stars?`Aurelion Sol`aurelionsol
+Who has a skill called "Comet of Legend"?`Aurelion Sol`aurelionsol
 Who is Sivir related to?`Azir
 Who has a Gravelord skin?`Azir
 Who is the only champion who has only one option when leveling skills at level 1?`Azir
@@ -500,8 +505,9 @@ Who has a skill called "Cutthroat"?`Talon
 Who was Talon's old partner in crime?`Kavyn
 Who does Taric supposedly have a crush on?`Ezreal
 Who has an Emerald skin?`Taric
-Who has a skill called "Imbue"?`Taric
-Who says "More than just precious stones, I bring you an ancient power." when picked in champion select?`Taric
+Who is also known as "the Shield of Valoran"?`Taric
+Who was punished with the Crown of Stone?`Taric
+Who has a passive called "Bravado"?`Taric
 Who is the smallest champion in the game itself?`Teemo
 Who is rumored to be Teemo's girlfriend?`Tristana
 Who stopped Veigar during his evil plan in Bandle City?`Teemo
