@@ -552,7 +552,7 @@ class Audio:
         else:
             await self.bot.say("Volume must be between 0 and 1. Example: 0.40")
 
-    @audioset.command(name="sfx", pass_context=True)
+    @audioset.command(name="sfx", pass_context=True, no_pm=True)
     async def _sfx(self, ctx):
         """Enables/Disables sound effects usage in the server"""
         #default on.
