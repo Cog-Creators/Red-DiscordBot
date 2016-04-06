@@ -204,16 +204,19 @@ class Downloader:
         git_name = splitted[-1]
         return git_name[:-4]
 
+    def populate_list(self, name):
+        valid_cogs = self.list_cogs(name)
+        for cog in valid_cogs:
+            if cog not in self.repos[name]:
+                self.repos[name][cog] = valid_cogs.get(cog, {})
+                self.repos[name][cog]['INSTALLED'] = False
+            else:
+                self.repos[name][cog].update(valid_cogs[cog])
+
     def update_repos(self):
         for name in self.repos:
             self.update_repo(name)
-            valid_cogs = self.list_cogs(name)
-            for cog in valid_cogs:
-                if cog not in self.repos[name]:
-                    self.repos[name][cog] = valid_cogs.get(cog, {})
-                    self.repos[name][cog]['INSTALLED'] = False
-                else:
-                    self.repos[name][cog].update(valid_cogs[cog])
+            self.populate_list(name)
         self.save_repos()
 
     def update_repo(self, name):
