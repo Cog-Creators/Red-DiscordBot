@@ -43,6 +43,7 @@ class Downloader:
         self.repos[repo_name] = {}
         self.repos[repo_name]['url'] = repo_url
         self.update_repo(repo_name)
+        self.populate_list(repo_name)
         self.save_repos()
 
     @repo.command(name="remove")
