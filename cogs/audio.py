@@ -258,7 +258,7 @@ class Audio:
             else:
                 await self.bot.say("There is no sound effect with that name.")
         else:
-            await self.bot.say("There are no valid sound effects in the data/audio/sfx folder.")
+            await self.bot.say("There are no valid sound effects in the `data/audio/sfx` folder.")
 
     def get_local_sfx(self):
         filenames = {}
@@ -325,7 +325,7 @@ class Audio:
         """Stops audio activity
         """
         msg = ctx.message
-        if self.music_player.is_playing():
+        if self.music_player.is_playing() or self.sfx_player.is_playing():
             if await self.is_alone_or_admin(msg):
                 await self.close_audio()
             else:
