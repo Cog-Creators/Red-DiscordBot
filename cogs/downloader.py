@@ -39,6 +39,7 @@ class Downloader:
 
     @repo.command(name="add")
     async def _repo_add(self, repo_name: str, repo_url: str):
+        """Adds repo to available repo lists"""
         self.repos[repo_name] = {}
         self.repos[repo_name]['url'] = repo_url
         self.update_repo(repo_name)
@@ -46,6 +47,7 @@ class Downloader:
 
     @repo.command(name="remove")
     async def _repo_del(self, repo_name: str):
+        """Removes repo from repo list. COGS ARE NOT REMOVED."""
         if repo_name not in self.repos:
             await self.bot.say("That repo doesn't exist.")
             return
