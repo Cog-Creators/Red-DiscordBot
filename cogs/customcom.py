@@ -14,7 +14,7 @@ class CustomCommands:
 
     @commands.command(pass_context=True, no_pm=True)
     @checks.mod_or_permissions(manage_server=True)
-    async def addcom(self, ctx, command : str, *text):
+    async def addcom(self, ctx, command : str, *, text):
         """Adds a custom command
 
         Example:
@@ -41,7 +41,7 @@ class CustomCommands:
 
     @commands.command(pass_context=True, no_pm=True)
     @checks.mod_or_permissions(manage_server=True)
-    async def editcom(self, ctx, command : str, *text):
+    async def editcom(self, ctx, command : str, *, text):
         """Edits a custom command
 
         Example:
