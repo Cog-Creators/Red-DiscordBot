@@ -20,9 +20,6 @@ class CustomCommands:
         Example:
         !addcom yourcommand Text you want
         """
-        if text == ():
-            await send_cmd_help(ctx)
-            return
         server = ctx.message.server
         content = ctx.message.content
         chars = (len(ctx.prefix), len(ctx.invoked_with), len(command))
@@ -47,9 +44,6 @@ class CustomCommands:
         Example:
         !editcom yourcommand Text you want
         """
-        if text == ():
-            await send_cmd_help(ctx)
-            return
         server = ctx.message.server
         content = ctx.message.content
         chars = (len(ctx.prefix), len(ctx.invoked_with), len(command))
