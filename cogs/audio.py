@@ -465,16 +465,25 @@ class Audio:
 
     @_list.command(name="sfx", pass_context=True)
     async def list_sfx(self, ctx):
-        msg = "Available local sound effects: \n\n```"
+        msgs = ["Available local sound effects: \n\n```\n"]
         files = self.get_local_sfx()
+        m = 0
+        maxm = 1980
         if files:
             for i, d in enumerate(files.keys()):
-                if i % 4 == 0 and i != 0:
-                    msg = msg + d + "\n"
-                else:
-                    msg = msg + d + "\t"
-            msg += "```"
-            await self.bot.send_message(ctx.message.author, msg)
+                if len(d) < maxm: #how did you get a filename this large?
+                    if len(msgs[m]) + len(d) > maxm:
+                        msgs[m] += "```"
+                        m += 1
+                        msgs.append("```\n")
+                    if i % 4 == 0 and i != 0:
+                        msgs[m] += d + "\n"
+                    else:
+                        msgs[m] += d + "\t"
+            msgs[m] += "```"
+            for msg in msgs:
+                await self.bot.send_message(ctx.message.author, msg)
+                await asyncio.sleep(1)
         else:
             await self.bot.say("There are no local sound effects.")
 
