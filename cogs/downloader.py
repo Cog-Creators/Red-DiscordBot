@@ -50,8 +50,10 @@ class Downloader:
                                                  author=ctx.message.author)
         if answer is None:
             await self.bot.say('Not adding repo.')
+            return
         elif "i agree" not in answer.content.lower():
             await self.bot.say('Not adding repo.')
+            return
         self.repos[repo_name] = {}
         self.repos[repo_name]['url'] = repo_url
         self.update_repo(repo_name)
