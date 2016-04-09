@@ -37,14 +37,27 @@ class Downloader:
             await send_cmd_help(ctx)
             return
 
-    @repo.command(name="add")
-    async def _repo_add(self, repo_name: str, repo_url: str):
-        """Adds repo to available repo lists"""
+    @repo.command(name="add", pass_context=True)
+    async def _repo_add(self, ctx, repo_name: str, repo_url: str):
+        """Adds repo to available repo lists
+
+        Warning: Adding 3RD Party Repositories is at your own
+        Risk."""
+        await self.bot.say("Type 'I agree' to confirm "
+                           "adding a 3rd party repo. This has the possibility"
+                           " of being harmful.")
+        answer = await self.bot.wait_for_message(timeout=15,
+                                                 author=ctx.message.author)
+        if answer is None:
+            await self.bot.say('Not adding repo.')
+        elif "i agree" not in answer.content.lower():
+            await self.bot.say('Not adding repo.')
         self.repos[repo_name] = {}
         self.repos[repo_name]['url'] = repo_url
         self.update_repo(repo_name)
         self.populate_list(repo_name)
         self.save_repos()
+        await self.bot.say("Repo '{}' added.".format(repo_name))
 
     @repo.command(name="remove")
     async def _repo_del(self, repo_name: str):
@@ -54,6 +67,7 @@ class Downloader:
             return
         del self.repos[repo_name]
         self.save_repos()
+        await self.bot.say("Repo '{}' removed.".format(repo_name))
 
     @cog.command(name="list")
     async def _send_list(self, repo_name=None):
