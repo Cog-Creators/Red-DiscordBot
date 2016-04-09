@@ -148,6 +148,8 @@ class Audio:
                 self.music_player.stop()
             else:
                 await self.vote_skip(msg)
+        elif self.sfx_player.is_playing():
+            self.sfx_player.stop()
 
     async def vote_skip(self, msg):
         v_channel = msg.server.me.voice_channel
@@ -211,7 +213,7 @@ class Audio:
             await self.bot.say("There are no valid playlists in the localtracks folder.\nIf you're the owner, see {}".format(help_link))
 
     @commands.command(pass_context=True, no_pm=True)
-    async def sfx(self, ctx, name : str):
+    async def sfx(self, ctx, *, name : str):
         """Plays a local sound file
 
         For bot's owner:
@@ -337,8 +339,8 @@ class Audio:
         self.queue = []
         self.playlist = []
         self.current = -1
-        if self.music_player.is_playing(): self.music_player.stop()
-        if self.sfx_player.is_playing(): self.sfx_player.stop()
+        if not self.music_player.is_done(): self.music_player.stop()
+        if not self.sfx_player.is_done(): self.sfx_player.stop()
         await asyncio.sleep(1)
         if self.bot.voice: await self.bot.voice.disconnect()
 
@@ -421,7 +423,9 @@ class Audio:
     @commands.command()
     async def resume(self):
         """Resumes paused song."""
-        if not self.music_player.is_playing():
+        if self.sfx_player.is_playing():
+            self.sfx_player.stop()
+        elif not self.music_player.is_playing():
             self.music_player.paused = False
             self.music_player.resume()
             await self.bot.say("Resuming song.")
