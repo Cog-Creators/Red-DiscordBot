@@ -87,7 +87,8 @@ class Audio:
                     self.playlist = []
                     self.queue.append(link)
                     self.music_player.paused = False
-                    if self.music_player.is_playing(): self.music_player.stop()
+                    if not self.sfx_player.is_done(): self.sfx_player.stop()
+                    if not self.music_player.is_done(): self.music_player.stop()
                     await self.bot.say("Playing requested link...")
                 else:
                     self.playlist = []
@@ -647,12 +648,12 @@ class Audio:
             await asyncio.sleep(1)
         if self.downloader["ID"]:
             try:
-                if self.music_player.is_playing(): self.music_player.stop()
                 # sfx_player should only ever get stuck as much as music_player does
                 # when it happens to music_player, the reponsibility is put on the user to !stop
                 # so we'll do the same with sfx_player. a timeout could be placed here though.
                 while self.sfx_player.is_playing():
                     await asyncio.sleep(.5)
+                if not self.music_player.is_done(): self.music_player.stop()
                 self.music_player = self.bot.voice.create_ffmpeg_player(path + self.downloader["ID"], options='''-filter:a "volume={}"'''.format(self.settings["VOLUME"]))
                 self.music_player.paused = False
                 self.music_player.start()
@@ -929,6 +930,9 @@ class EmptyPlayer(): #dummy player
 
     def is_playing(self):
         return False
+
+    def is_done(self):
+        return True
 
 class MaximumLength(Exception):
     def __init__(self, m):
