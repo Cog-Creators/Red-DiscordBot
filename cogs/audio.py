@@ -522,10 +522,14 @@ class Audio:
     async def audioset(self, ctx):
         """Changes audio module settings"""
         if ctx.invoked_subcommand is None:
+            server = ctx.message.server
             await send_cmd_help(ctx)
             msg = "```"
             for k, v in self.settings.items():
-                msg += str(k) + ": " + str(v) + "\n"
+                if type(v) is dict and server.id in v:
+                    msg += str(k) + ": " + str(v[server.id]) + "\n"
+                else:
+                    msg += str(k) + ": " + str(v) + "\n"
             msg += "```"
             await self.bot.say(msg)
 
