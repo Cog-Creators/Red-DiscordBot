@@ -365,6 +365,13 @@ def check_configs():
     #        input("You didn't enter a valid email or token. Restart Red and repeat the configuration process.")
     #        exit(1)
 
+<<<<<<< HEAD
+=======
+        if "@" not in settings.email:
+            input("You didn't enter a valid email. Restart Red and repeat the configuration process.")
+            exit(1)
+
+>>>>>>> develop
         print("\nChoose a prefix (or multiple ones, one at once) for the commands. Type exit when you're done. Example prefix: !")
         prefixes = []
         new_prefix = ""
@@ -493,7 +500,7 @@ def main():
         else:
             print("Once you're owner use !set prefix to set it.")
     if settings.owner == "id_here":
-        print("Owner has not been set yet. Do '[p]set owner' in chat to set yourself as owner.")
+        print("Owner has not been set yet. Do '{}set owner' in chat to set yourself as owner.".format(bot.command_prefix[0]))
     else:
         owner.hidden = True  # Hides the set owner command from help
     if settings.logintype == "email":
