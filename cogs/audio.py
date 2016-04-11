@@ -222,7 +222,7 @@ class Audio:
         Supported files are mp3, flac, wav"""
         #sound effects default enabled
         server = ctx.message.server
-        if self.settings["SERVER_SFX_ON"].get(server.id,None) is None:
+        if server.id not in self.settings["SERVER_SFX_ON"]:
             self.settings["SERVER_SFX_ON"][server.id] = True
         if not self.settings["SERVER_SFX_ON"][server.id]:
             await self.bot.say("Sound effects are not enabled on this server")
@@ -575,7 +575,7 @@ class Audio:
         """Enables/Disables sound effects usage in the server"""
         #default on.
         server = ctx.message.server
-        if self.settings["SERVER_SFX_ON"].get(server.id,None) is None:
+        if server.id not in self.settings["SERVER_SFX_ON"]:
             self.settings["SERVER_SFX_ON"][server.id] = True
         else:
             self.settings["SERVER_SFX_ON"][server.id] = not self.settings["SERVER_SFX_ON"][server.id]
