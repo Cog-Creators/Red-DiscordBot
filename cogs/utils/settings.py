@@ -8,7 +8,7 @@ class Settings:
     def __init__(self,path=default_path):
         self.path = path
         self.check_folders()
-        self.default_settings = {"EMAIL" : "EmailHere", "PASSWORD" : "PasswordHere", "OWNER" : "id_here", "PREFIXES" : [], "default":{"ADMIN_ROLE" : "Transistor", "MOD_ROLE" : "Process"}}
+        self.default_settings = {"LOGINTYPE" : "email", "LOGIN" : "EmailHere", "PASSWORD" : "", "OWNER" : "id_here", "PREFIXES" : [], "default":{"ADMIN_ROLE" : "Transistor", "MOD_ROLE" : "Process"}}
         if not fileIO(self.path,"check"):
             self.bot_settings = self.default_settings
             self.save_settings()
