@@ -162,7 +162,7 @@ async def debug(ctx, *, code : str):
 
     result = python.format(result)
     if not ctx.message.channel.is_private:
-        censor = (settings.login, settings.password)
+        censor = (settings.email, settings.password)
         r = "[EXPUNGED]"
         for w in censor:
             result = result.replace(w, r)
@@ -348,16 +348,16 @@ def check_configs():
         print("Red - First run configuration")
         print("If you don't have one, create a NEW ACCOUNT for Red. Do *not* use yours. (https://discordapp.com)")
         print("Alternatively, you can use a bot token. Register one in the Discord API docs. (https://discordapp.com/developers/applications/me)")
-        settings.login = input("\nEmail or Token> ")
+        settings.email = input("\nEmail or Token> ")
 
-        if len(settings.login) is 59 and "@" not in settings.login:
+        if len(settings.email) is 59 and "@" not in settings.email:
             print("Token found, We're going to use token for authentication")
             settings.logintype = "token"
         else:
-            settings.logintype = "email"
             print("Email found. We're going to use email for authentication")
+            settings.logintype = "email"
             settings.password = input("\nPassword> ")
-            if not settings.login or not settings.password:
+            if not settings.email or not settings.password:
                 input("Email/Token and password cannot be empty. Restart Red and repeat the configuration process.")
                 exit(1)
 
@@ -493,9 +493,9 @@ def main():
     else:
         owner.hidden = True  # Hides the set owner command from help
     if settings.logintype == "email":
-        yield from bot.login(settings.login, settings.password)
+        yield from bot.login(settings.email, settings.password)
     else:
-        yield from bot.login(settings.login)
+        yield from bot.login(settings.email)
     yield from bot.connect()
 
 if __name__ == '__main__':
