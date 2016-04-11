@@ -166,7 +166,7 @@ class Audio:
                     clean_skip_votes.append(m_id)
             self.skip_votes = clean_skip_votes
 
-            votes_needed = int((len(current_users)-1) / 2)
+            votes_needed = (len(current_users)-1) // 2 + 1
 
             if len(self.skip_votes)-1 >= votes_needed:
                 self.music_player.paused = False
