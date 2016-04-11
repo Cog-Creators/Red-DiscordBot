@@ -361,17 +361,6 @@ def check_configs():
                 input("Email/Token and password cannot be empty. Restart Red and repeat the configuration process.")
                 exit(1)
 
-    #    if "@" not in settings.login and settings.logintype is "email":
-    #        input("You didn't enter a valid email or token. Restart Red and repeat the configuration process.")
-    #        exit(1)
-
-<<<<<<< HEAD
-=======
-        if "@" not in settings.email:
-            input("You didn't enter a valid email. Restart Red and repeat the configuration process.")
-            exit(1)
-
->>>>>>> develop
         print("\nChoose a prefix (or multiple ones, one at once) for the commands. Type exit when you're done. Example prefix: !")
         prefixes = []
         new_prefix = ""
@@ -515,7 +504,7 @@ if __name__ == '__main__':
         loop.run_until_complete(main())
     except discord.LoginFailure:
         print("Invalid login credentials. Restart Red and configure it properly.")
-        # os.remove('data/red/settings.json') # Hopefully this won't backfire in case of discord servers' problems Yes! Yes it surely will!
+        os.remove('data/red/settings.json')  # Hopefully this won't backfire in case of discord servers' problems
     except Exception as e:
         print(e)
         loop.run_until_complete(bot.logout())
