@@ -143,7 +143,7 @@ async def _reload(*, module : str):
         await bot.say("Module reloaded.")
 
 
-@bot.command(pass_context=True, hidden=True) # Modified function, originally made by Rapptz 
+@bot.command(pass_context=True, hidden=True) # Modified function, originally made by Rapptz
 @checks.is_owner()
 async def debug(ctx, *, code : str):
     """Evaluates code"""
@@ -283,7 +283,7 @@ def user_allowed(message):
     author = message.author
 
     mod = bot.get_cog('Mod')
-    
+
     if mod is not None:
         if settings.owner == author.id:
             return True
@@ -357,7 +357,7 @@ def check_configs():
         if "@" not in settings.email:
             input("You didn't enter a valid email. Restart Red and repeat the configuration process.")
             exit(1)
-        
+
         print("\nChoose a prefix (or multiple ones, one at once) for the commands. Type exit when you're done. Example prefix: !")
         prefixes = []
         new_prefix = ""
@@ -434,7 +434,7 @@ def load_cogs():
     extensions = list_cogs()
 
     if extensions: print("\nLoading cogs...\n")
-    
+
     failed = []
     for extension in extensions:
         if extension in register:
@@ -461,7 +461,7 @@ def load_cogs():
     if extensions:
         with open('data/red/cogs.json', "w") as f:
             f.write(json.dumps(data))
-    
+
     if failed:
         print("\nFailed to load: ", end="")
         for m in failed:
@@ -486,7 +486,7 @@ def main():
         else:
             print("Once you're owner use !set prefix to set it.")
     if settings.owner == "id_here":
-        print("Owner has not been set yet. Do '[p]set owner' in chat to set yourself as owner.")
+        print("Owner has not been set yet. Do '{}set owner' in chat to set yourself as owner.".format(bot.command_prefix[0]))
     else:
         owner.hidden = True # Hides the set owner command from help
     yield from bot.login(settings.email, settings.password)
