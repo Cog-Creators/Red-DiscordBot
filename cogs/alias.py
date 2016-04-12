@@ -102,9 +102,8 @@ class Alias:
                 return True
         if server not in self.aliases:
             return False
-        for aname in self.aliases[server]:
-            if aname.startswith(alias):
-                return True
+        if alias.split(" ")[0] in self.aliases[server]:
+            return True
         return False
 
     def remove_old(self):
