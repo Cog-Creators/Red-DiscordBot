@@ -290,7 +290,7 @@ class Streams:
                     stream["ALREADY_ONLINE"] = True
                     for channel in stream["CHANNELS"]:
                         if self.bot.get_channel(channel):
-                            await self.bot.send_message(self.bot.get_channel(channel), "http://www.twitch.tv/{} is online!".format(stream["NAME"]))
+                            await self.bot.send_message(self.bot.get_channel(channel), "http://www.twitch.tv/{} is online!\n".format(stream["NAME"]))
                 else:
                     if stream["ALREADY_ONLINE"] and not online: stream["ALREADY_ONLINE"] = False
                 await asyncio.sleep(0.5)

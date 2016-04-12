@@ -1,0 +1,37 @@
+2016-04-11 04AM: these both work:  tuple(enumerate(open(".gitignore"))) and list(map(lambda a: a, open(".gitignore")))
+2016-04-11 05AM: asyncio scheduler, also creat_task i think. check audio.py
+04-11(Mon) 04PM: once done with todos, put them in usefulalias
+04-11(Mon) 04PM: make an alias to easily add to / edit usefulalias (why not all aliases)
+04-11(Mon) 04PM: find out how to send multiple pages. use multiple commands? put em in a list?
+04-11(Mon) 04PM: add n1=="del", n2=line_number to todo
+04-11(Mon) 06PM: CENA and JUST DO IT sfxs
+04-11(Mon) 06PM: get rid of JOHN_CENA and hey*y*y* old sfx
+04-11(Mon) 07PM: del todo create_task wait_for_message confirmation lol
+04-11(Mon) 10PM: bug kowlin about google image and displaying results
+04-12(Tue) 03AM: add help to todo alias WHHYYYYY
+04-12(Tue) 04AM: learn filter, map, any, all
+04-12(Tue) 04AM: make snackburr  customizable. Read random format strings from text files.
+04-12(Tue) 09AM: todo find function
+04-12(Tue) 09AM: clean up alot and publish. put data into dat folders. add settings/toggle
+04-12(Tue) 09AM: clean up economytickle and publish
+04-12(Tue) 09AM: check if all those new aliases are in usefulalias. like pplsince, etc.
+04-12(Tue) 10AM: compare roles for Kowlin/orels1s role race
+04-12(Tue) 01PM: irdumb: maybe we should make the percentage (skip %) a setting i'll put it in an issue then PR when i get around to it
+04-12(Tue) 01PM: trivia PR while True: 
+---------------:    Try: await trivia_manager.bot.say(msg)
+---------------:        Except: await asyncio.sleep(0.5)
+04-12(Tue) 01PM: edit add todo to show # lines, also, !todo ("last")
+04-12(Tue) 03PM: make sure will didn't break all my alieses :P
+04-12(Tue) 03PM: make PR on bank. change to bank_set(self, sum, *, user), also add bank_add bank_remove with same parameters
+04-12(Tue) 05PM: search "while True" 5 5 5 look for code to auto-find bots for Jenn
+04-12(Tue) 06PM: merge all sfx changes into personal audio.py and get it ready for a PR
+04-12(Tue) 06PM: write a read alias. reads surrounding lines of a search string
+04-12(Tue) 06PM: ^ i mean read from a file and print to discord
+04-12(Tue) 06PM: find other ways to impress eny
+04-12(Tue) 07PM: subprocess open google alias
+04-12(Tue) 07PM: add !install and !open to usefulalias. disclaimer it needs subprocess imported in red.py
+04-12(Tue) 10PM: Note: int(datetime.datetime.now().strftime("%f"))%MAX <- random below 999999? for debugs, no need import
+04-12(Tue) 11PM: github navigating / easy access to the site / getting raw url for !install
+04-13(Wed) 12AM: change open to !subl and make a general !open cmd
+04-13(Wed) 12AM: nebu says add the Dio bttv emote. ask him for link
+04-13(Wed) 01AM: git pull subprocess alias
