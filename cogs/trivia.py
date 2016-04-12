@@ -182,7 +182,13 @@ class TriviaSession():
         self.status = "waiting for answer"
         self.count += 1
         self.timer = int(time.perf_counter())
-        await trivia_manager.bot.say("**Question number {}!**\n\n{}".format(str(self.count), self.current_q["QUESTION"]))
+        msg = "**Question number {}!**\n\n{}".format(str(self.count), self.current_q["QUESTION"])
+        try:
+            await trivia_manager.bot.say(msg)
+        except:
+            asyncio.sleep(0.5)
+            await trivia_manager.bot.say(msg)
+
         while self.status != "correct answer" and abs(self.timer - int(time.perf_counter())) <= self.settings["TRIVIA_DELAY"]:
             if abs(self.timeout - int(time.perf_counter())) >= self.settings["TRIVIA_TIMEOUT"]:
                 await trivia_manager.bot.say("Guys...? Well, I guess I'll stop then.")
@@ -202,8 +208,12 @@ class TriviaSession():
                 msg += " **+1** for me!"
                 self.add_point(trivia_manager.bot.user.name)
             self.current_q["ANSWERS"] = []
-            await trivia_manager.bot.say(msg)
-            await trivia_manager.bot.send_typing(self.channel)
+            try:
+                await trivia_manager.bot.say(msg)
+                await trivia_manager.bot.send_typing(self.channel)
+            except:
+                asyncio.sleep(0.5)
+                await trivia_manager.bot.say(msg)
             await asyncio.sleep(3)
             if not self.status == "stop":
                 await self.new_question()
@@ -228,8 +238,13 @@ class TriviaSession():
                         self.current_q["ANSWERS"] = []
                         self.status = "correct answer"
                         self.add_point(message.author.name)
-                        await trivia_manager.bot.send_message(message.channel, "You got it {}! **+1** to you!".format(message.author.name))
-                        await trivia_manager.bot.send_typing(self.channel)
+                        msg = "You got it {}! **+1** to you!".format(message.author.name)
+                        try:
+                            await trivia_manager.bot.send_typing(self.channel)
+                            await trivia_manager.bot.send_message(message.channel, msg)
+                        except:
+                            asyncio.sleep(0.5)
+                            await trivia_manager.bot.send_message(message.channel, msg)
                         return True
 
     def add_point(self, user):
