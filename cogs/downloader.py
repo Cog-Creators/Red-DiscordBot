@@ -74,14 +74,24 @@ class Downloader:
     @cog.command(name="list")
     async def _send_list(self, repo_name=None):
         """Lists installable cogs"""
+        retlist = []
         if repo_name and repo_name in self.repos:
             msg = "Available cogs:\n"
-            retlist = sorted([k for k in self.repos[repo_name] if k != 'url'])
+            for cog in sorted(self.repos[repo_name].keys()):
+                if 'url' == cog:
+                    continue
+                data = self.get_info_data(repo_name, cog)
+                if data:
+                    retlist.append([cog, data['NAME']])
+                else:
+                    retlist.append([cog, ''])
         else:
             msg = "Available repos:\n"
-            retlist = sorted([k for k in self.repos])
-        for item in retlist:
-            msg += "\t{}\n".format(item)
+            retlist = sorted([[k, ''] for k in self.repos])
+
+        col_width = max(len(row[0]) for row in retlist) + 2
+        for row in retlist:
+            msg += "\t" + "".join(word.ljust(col_width) for word in row) + "\n"
         await self.bot.say(box(msg))  # Need to deal with over 2000 characters
 
     @cog.command()
@@ -89,13 +99,8 @@ class Downloader:
         """Shows info about the specified cog"""
         cogs = self.list_cogs(repo_name)
         if cog in cogs:
-            info_file = os.path.join(cogs[cog].get('folder'), "info.json")
-            if os.path.isfile(info_file):
-                try:
-                    data = fileIO(info_file, "load")
-                except:
-                    await self.bot.say('Error reading info file.')
-                    return
+            data = self.get_info_data(repo_name, cog)
+            if data:
                 msg = "{} by {}\n\n".format(cog, data["AUTHOR"])
                 msg += data["NAME"] + "\n\n" + data["DESCRIPTION"]
                 await self.bot.say(box(msg))
@@ -190,6 +195,18 @@ class Downloader:
         self.repos[repo_name][cog]['INSTALLED'] = True
         self.save_repos()
         return True
+
+    def get_info_data(self, repo_name, cog):
+        cogs = self.list_cogs(repo_name)
+        if cog in cogs:
+            info_file = os.path.join(cogs[cog].get('folder'), "info.json")
+            if os.path.isfile(info_file):
+                try:
+                    data = fileIO(info_file, "load")
+                except:
+                    return None
+                return data
+        return None
 
     def list_cogs(self, repo_name):
         valid_cogs = {}
