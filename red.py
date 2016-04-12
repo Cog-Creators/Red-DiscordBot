@@ -202,8 +202,8 @@ async def prefix(*prefixes):
     if prefixes == ():
         await bot.say("Example: setprefix [ ! ^ .")
         return
-    bot.command_prefix = list(prefixes)
-    settings.prefixes = list(prefixes)
+    bot.command_prefix = sorted(prefixes, reverse=True)
+    settings.prefixes = sorted(prefixes, reverse=True)
     if len(prefixes) > 1:
         await bot.say("Prefixes set")
     else:

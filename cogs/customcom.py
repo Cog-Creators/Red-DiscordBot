@@ -14,19 +14,13 @@ class CustomCommands:
 
     @commands.command(pass_context=True, no_pm=True)
     @checks.mod_or_permissions(manage_server=True)
-    async def addcom(self, ctx, command : str, *text):
+    async def addcom(self, ctx, command : str, *, text):
         """Adds a custom command
 
         Example:
         !addcom yourcommand Text you want
         """
-        if text == ():
-            await send_cmd_help(ctx)
-            return
         server = ctx.message.server
-        content = ctx.message.content
-        chars = (len(ctx.prefix), len(ctx.invoked_with), len(command))
-        text = content[chars[0] + chars[1] + chars[2] + 2:] # Gets text of the command
         command = command.lower()
         if command in self.bot.commands.keys():
             await self.bot.say("That command is already a standard command.")
@@ -44,19 +38,13 @@ class CustomCommands:
 
     @commands.command(pass_context=True, no_pm=True)
     @checks.mod_or_permissions(manage_server=True)
-    async def editcom(self, ctx, command : str, *text):
+    async def editcom(self, ctx, command : str, *, text):
         """Edits a custom command
 
         Example:
         !editcom yourcommand Text you want
         """
-        if text == ():
-            await send_cmd_help(ctx)
-            return
         server = ctx.message.server
-        content = ctx.message.content
-        chars = (len(ctx.prefix), len(ctx.invoked_with), len(command))
-        text = content[chars[0] + chars[1] + chars[2] + 2:] # Gets text of the command
         command = command.lower()
         if server.id in self.c_commands:
             cmdlist = self.c_commands[server.id]
