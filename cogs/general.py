@@ -37,16 +37,18 @@ class General:
         else:
             await self.bot.say(randchoice(choices))
 
-    @commands.command()
-    async def roll(self, number : int = 100):
+    @commands.command(pass_context=True)
+    async def roll(self, ctx, number : int = 100):
         """Rolls random number (between 1 and user choice)
 
         Defaults to 100.
         """
+        author = ctx.message.author
         if number > 1:
-            return await self.bot.say(":game_die: " + str(randint(1, number)) + " :game_die:")
+            n = str(randint(1, number))
+            return await self.bot.say("{} :game_die: {} :game_die:".format(author.mention, n))
         else:
-            return await self.bot.say("Maybe higher than 1? ;P")
+            return await self.bot.say("{} Maybe higher than 1? ;P".format(author.mention))
 
     @commands.command(pass_context=True)
     async def flip(self, ctx, user : discord.Member=None):
@@ -184,15 +186,15 @@ class General:
         total = str(len(server.members))
 
         data = "```\n"
-        data += "Name: " + server.name + "\n"
-        data += "ID: " + server.id + "\n"
-        data += "Region: " + str(server.region) + "\n"
-        data += "Users: " + online + "/" + total + "\n"
-        data += "Channels: " + str(len(server.channels)) + "\n"
-        data += "Roles: " + str(len(server.roles)) + "\n"
-        data += "Created: " + str(server.created_at) + "\n"
-        data += "Owner: " + server.owner.name + "\n"
-        data += "Icon: " + str(server.icon_url) + "\n"
+        data += "Name: {}\n".format(server.name)
+        data += "ID: {}\n".format(server.id)
+        data += "Region: {}\n".format(str(server.region))
+        data += "Users: {}/{}\n".format(online, total)
+        data += "Channels: {}\n".format(str(len(server.channels)))
+        data += "Roles: {}\n".format(str(len(server.roles)))
+        data += "Created: {}\n".format(str(server.created_at))
+        data += "Owner: {}#{}\n".format(server.owner.name, server.owner.discriminator)
+        data += "Icon: {}\n".format(server.icon_url)
         data += "```"
         await self.bot.say(data)
         
