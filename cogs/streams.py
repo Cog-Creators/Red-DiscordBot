@@ -367,6 +367,48 @@ class Streams:
                 fileIO("data/streams/beam.json", "save", self.beam_streams)
 
             await asyncio.sleep(CHECK_DELAY)
+            
+    @commands.command()
+    async def twitchlist(self):
+        """Lists StreamAlerts turned on for Twitch"""
+        await self.bot.say("Twitch Streams set up for Alerts:")
+        twitempty = 1
+        for item in self.twitch_streams:
+            await self.bot.say(item["NAME"])
+            twitempty = 0
+
+        if twitempty == True:
+            await self.bot.say("No Twitch streams are set to Alert in this channel.")
+
+        fileIO("data/streams/twitch.json", "r", self.twitch_streams)
+
+    @commands.command()
+    async def hitboxlist(self):
+        """Lists StreamAlerts turned on for Hitbox"""
+        await self.bot.say("Hitbox Streams set up for Alerts:")
+        hitempty = 1
+        for item in self.hitbox_streams:
+            await self.bot.say(item["NAME"])
+            hitempty = 0
+
+        if hitempty == True:
+            await self.bot.say("No Hitbox streams are set to Alert in this channel.")
+
+        fileIO("data/streams/hitbox.json", "r", self.hitbox_streams)
+
+    @commands.command()
+    async def beamlist(self):
+        """Lists StreamAlerts turned on for Beam"""
+        await self.bot.say("Beam Streams set up for Alerts:")
+        beamempty = 1
+        for item in self.beam_streams:
+            await self.bot.say(item["NAME"])
+            beamempty = 0
+
+        if beamempty == True:
+            await self.bot.say("No Beam streams are set to Alert in this channel.")
+
+        fileIO("data/streams/beam.json", "r", self.beam_streams)
 
 
 def check_folders():
