@@ -186,7 +186,7 @@ class TriviaSession():
         try:
             await trivia_manager.bot.say(msg)
         except:
-            asyncio.sleep(0.5)
+            await asyncio.sleep(0.5)
             await trivia_manager.bot.say(msg)
 
         while self.status != "correct answer" and abs(self.timer - int(time.perf_counter())) <= self.settings["TRIVIA_DELAY"]:
@@ -212,7 +212,7 @@ class TriviaSession():
                 await trivia_manager.bot.say(msg)
                 await trivia_manager.bot.send_typing(self.channel)
             except:
-                asyncio.sleep(0.5)
+                await asyncio.sleep(0.5)
                 await trivia_manager.bot.say(msg)
             await asyncio.sleep(3)
             if not self.status == "stop":
@@ -243,7 +243,7 @@ class TriviaSession():
                             await trivia_manager.bot.send_typing(self.channel)
                             await trivia_manager.bot.send_message(message.channel, msg)
                         except:
-                            asyncio.sleep(0.5)
+                            await asyncio.sleep(0.5)
                             await trivia_manager.bot.send_message(message.channel, msg)
                         return True
 
