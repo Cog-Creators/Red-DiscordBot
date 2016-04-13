@@ -351,14 +351,17 @@ def check_configs():
         settings.email = input("\nEmail or Token> ")
 
         if len(settings.email) is 59 and "@" not in settings.email:
+            # Checks if we're using a token or email.
             print("Token found, We're going to use token for authentication")
-            settings.logintype = "token"
         else:
             print("Email found. We're going to use email for authentication")
-            settings.logintype = "email"
+
             settings.password = input("\nPassword> ")
-            if not settings.email or not settings.password:
-                input("Email/Token and password cannot be empty. Restart Red and repeat the configuration process.")
+            if not settings.email:
+                input("Email cannot be empty. Restart Red and repeat the configuration process.")
+                exit(1)
+            if not settings.password:
+                input("Password cannot be empty. Restart Red and repeat the configuation process.")
                 exit(1)
 
         print("\nChoose a prefix (or multiple ones, one at once) for the commands. Type exit when you're done. Example prefix: !")
@@ -492,10 +495,10 @@ def main():
         print("Owner has not been set yet. Do '{}set owner' in chat to set yourself as owner.".format(bot.command_prefix[0]))
     else:
         owner.hidden = True  # Hides the set owner command from help
-    if settings.logintype == "email":
-        yield from bot.login(settings.email, settings.password)
-    else:
+    if settings.password is "":
         yield from bot.login(settings.email)
+    else:
+        yield from bot.login(settings.email, settings.password)
     yield from bot.connect()
 
 if __name__ == '__main__':
