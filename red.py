@@ -371,7 +371,7 @@ def check_configs():
                 input("Token cannot be empty. Restart Red and repeat the configuration process.")
                 exit(1)
         else:
-            input("Please enter 'email' or 'token' Restart Red and repeat the configuration process.")
+            input("Please enter 'email' or 'token'. Restart Red and repeat the configuration process.")
             exit(1)
 
         print("\nChoose a prefix (or multiple ones, one at once) for the commands. Type exit when you're done. Example prefix: !")
