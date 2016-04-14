@@ -117,7 +117,7 @@ class Alias:
     def part_of_existing_command(self, alias, server):
         '''Command or alias'''
         for command in self.bot.commands:
-            if alias.lower() == command:
+            if alias.lower() == command.lower():
                 return True
         return False
 
