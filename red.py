@@ -345,10 +345,10 @@ def check_folders():
 
 def check_configs():
     if settings.bot_settings == settings.default_settings:
-        # Todo! Add clear chooise between the bot and normal accounts
-        print("Red - First run configuration")
-        print("If you don't have one, create a NEW ACCOUNT for Red. Do *not* use yours. (https://discordapp.com)")
-        print("Alternatively, you can use a bot token. Register one in the Discord API docs. (https://discordapp.com/developers/applications/me)")
+        print("Welcome to Red. A modular Discord bot!")
+        print("Please choose on how you want to log in, you can either choose a normal or bot account.")
+        print("For more information on bot accounts visit: https://discordapp.com/developers/docs/topics/oauth2#bot-vs-user-accounts")
+        print("If you don't know that you NEED a bot-tagged account, don't use one. There are more than just cosmetic differences. If still in doubt, select email")
         print("Please choose if you want to use a Email or Token.")
         settings.login_type = input("\n'email' or 'token'> ").lower()
         # Deny empty logintype!
@@ -357,6 +357,7 @@ def check_configs():
             exit(1)
         # Check if input is either email or token, if email to on to email & password. else go to token input.
         if settings.login_type == "email":
+            print("If you don't have one, create a NEW ACCOUNT for Red. Do *not* use yours. (https://discordapp.com)")
             settings.email = input("\nEmail> ")
             settings.password = input("\nPassword> ")
             if not settings.email:
@@ -366,6 +367,8 @@ def check_configs():
                 input("Password cannot be empty. Restart Red and repeat the configuration process.")
                 exit(1)
         elif settings.login_type == "token":
+            print("Get your bot token from: https://discordapp.com/developers/applications/me")
+            print("If you don't have a application or a bot token, make one and a bot account then copy the token.")
             settings.email = input("\nToken> ")
             if not settings.email:
                 input("Token cannot be empty. Restart Red and repeat the configuration process.")
