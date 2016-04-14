@@ -345,23 +345,30 @@ def check_folders():
 
 def check_configs():
     if settings.bot_settings == settings.default_settings:
+        # Todo! Add clear chooise between the bot and normal accounts
         print("Red - First run configuration")
         print("If you don't have one, create a NEW ACCOUNT for Red. Do *not* use yours. (https://discordapp.com)")
         print("Alternatively, you can use a bot token. Register one in the Discord API docs. (https://discordapp.com/developers/applications/me)")
-        settings.email = input("\nEmail or Token> ")
-
-        if len(settings.email) is 59 and "@" not in settings.email:
-            # Checks if we're using a token or email.
-            print("Token found, We're going to use token for authentication")
-        else:
-            print("Email found. We're going to use email for authentication")
-
+        print("Please choose if you want to use a Email or Token.")
+        settings.login_type = input("\n'email' or 'token'> ").lower()
+        # Deny empty logintype!
+        if not settings.login_type:
+            input("You have to choose either 'email' or 'token'")
+            exit(1)
+        # Check if input is either email or token, if email to on to email & password. else go to token input.
+        if settings.login_type == "email":
+            settings.email = input("\nEmail> ")
             settings.password = input("\nPassword> ")
             if not settings.email:
                 input("Email cannot be empty. Restart Red and repeat the configuration process.")
                 exit(1)
             if not settings.password:
-                input("Password cannot be empty. Restart Red and repeat the configuation process.")
+                input("Password cannot be empty. Restart Red and repeat the configuration process.")
+                exit(1)
+        elif settings.login_type == "token":
+            settings.email = input("\nToken> ")
+            if not settings.email:
+                input("Token cannot be empty. Restart Red and repeat the configuration process.")
                 exit(1)
 
         print("\nChoose a prefix (or multiple ones, one at once) for the commands. Type exit when you're done. Example prefix: !")
@@ -495,7 +502,7 @@ def main():
         print("Owner has not been set yet. Do '{}set owner' in chat to set yourself as owner.".format(bot.command_prefix[0]))
     else:
         owner.hidden = True  # Hides the set owner command from help
-    if settings.password is "":
+    if settings.login_type == "token":
         yield from bot.login(settings.email)
     else:
         yield from bot.login(settings.email, settings.password)

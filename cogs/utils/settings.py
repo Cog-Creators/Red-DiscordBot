@@ -8,7 +8,7 @@ class Settings:
     def __init__(self,path=default_path):
         self.path = path
         self.check_folders()
-        self.default_settings = {"EMAIL" : "EmailHere", "PASSWORD" : "", "OWNER" : "id_here", "PREFIXES" : [], "default":{"ADMIN_ROLE" : "Transistor", "MOD_ROLE" : "Process"}}
+        self.default_settings = {"EMAIL" : "EmailHere", "PASSWORD" : "", "OWNER" : "id_here", "PREFIXES" : [], "default":{"ADMIN_ROLE" : "Transistor", "MOD_ROLE" : "Process"}, "LOGIN_TYPE" : "email"}
         if not fileIO(self.path,"check"):
             self.bot_settings = self.default_settings
             self.save_settings()
@@ -105,6 +105,15 @@ class Settings:
         for server in server_ids:
             ret.update({server:self.bot_settings[server]})
         return ret
+
+    @property
+    def login_type(self):
+                return self.bot_settings["LOGIN_TYPE"]
+
+    @login_type.setter
+    def login_type(self,value):
+                self.bot_settings["LOGIN_TYPE"] = value
+                self.save_settings()
 
     def get_server(self,server):
         if server is None:
