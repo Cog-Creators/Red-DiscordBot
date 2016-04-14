@@ -78,6 +78,20 @@ class Alias:
             fileIO("data/alias/aliases.json", "save", self.aliases)
         await self.bot.say("Alias '{}' deleted.".format(command))
 
+    @commands.command(pass_context=True)
+    async def aliaslist(self, ctx):
+        server = ctx.message.server
+        if server.id in self.aliases:
+            message = "```Alias list:\n"
+            for alias in sorted(self.aliases[server.id]):
+                if len(message) + len(alias) + 3 > 2000:
+                    await self.bot.say(message)
+                    message = "```\n"
+                message += "\t{}\n".format(alias)
+            if len(message) > 4:
+                message += "```"
+                await self.bot.say(message)
+
     async def check_aliases(self, message):
         if message.author.id == self.bot.user.id or \
                 len(message.content) < 2 or message.channel.is_private:
@@ -98,12 +112,14 @@ class Alias:
     def part_of_existing_command(self, alias, server):
         '''Command or alias'''
         for command in self.bot.commands:
-            if alias.startswith(command):
+            if alias.lower() == command:
                 return True
         if server not in self.aliases:
             return False
-        if alias.split(" ")[0] in self.aliases[server]:
-            return True
+        for curr_alias in self.aliases[server]:
+            if alias.split(" ")[0] == curr_alias \
+                    and alias != curr_alias:
+                return True
         return False
 
     def remove_old(self):
