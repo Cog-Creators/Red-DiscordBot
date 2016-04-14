@@ -251,7 +251,7 @@ async def shutdown():
 async def join(invite_url : discord.Invite):
     """Joins new server"""
     if bot.user.bot == True:
-        bot.say("I cannot join servers with invite links. Please use a OAuth link")
+        bot.say("I cannot join servers with invite link. Please use a OAuth link.")
     else:
         try:
             await bot.accept_invite(invite_url)
