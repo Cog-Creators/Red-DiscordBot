@@ -24,6 +24,11 @@ class Alias:
 
            Example: !alias add test flip @Twentysix"""
         server = ctx.message.server
+        if len(command.split(" ")) != 1:
+            await self.bot.say("I can't safely do multi-word aliases because"
+                               " of the fact that I allow arguments to"
+                               " aliases. It sucks, I know, deal with it.")
+            return
         if self.part_of_existing_command(command, server.id):
             await self.bot.say('I can\'t safely add an alias that starts with '
                                'an existing command or alias. Sry <3')
@@ -78,6 +83,20 @@ class Alias:
             fileIO("data/alias/aliases.json", "save", self.aliases)
         await self.bot.say("Alias '{}' deleted.".format(command))
 
+    @commands.command(pass_context=True)
+    async def aliaslist(self, ctx):
+        server = ctx.message.server
+        if server.id in self.aliases:
+            message = "```Alias list:\n"
+            for alias in sorted(self.aliases[server.id]):
+                if len(message) + len(alias) + 3 > 2000:
+                    await self.bot.say(message)
+                    message = "```\n"
+                message += "\t{}\n".format(alias)
+            if len(message) > 4:
+                message += "```"
+                await self.bot.say(message)
+
     async def check_aliases(self, message):
         if message.author.id == self.bot.user.id or \
                 len(message.content) < 2 or message.channel.is_private:
@@ -88,30 +107,32 @@ class Alias:
         prefix = self.get_prefix(msg)
 
         if prefix and server.id in self.aliases:
-            for alias in self.aliases[server.id]:
-                if msg[len(prefix):].startswith(alias):
-                    new_command = self.aliases[server.id][alias]
-                    args = message.content[len(prefix+alias):]
-                    message.content = prefix + new_command + args
-                    await self.bot.process_commands(message)
+            if self.first_word(msg[len(prefix):]) in self.aliases[server.id]:
+                alias = self.first_word(msg[len(prefix):])
+                new_command = self.aliases[server.id][alias]
+                args = message.content[len(prefix + alias):]
+                message.content = prefix + new_command + args
+                await self.bot.process_commands(message)
 
     def part_of_existing_command(self, alias, server):
         '''Command or alias'''
         for command in self.bot.commands:
-            if alias.startswith(command):
+            if alias.lower() == command.lower():
                 return True
-        if server not in self.aliases:
-            return False
-        if alias.split(" ")[0] in self.aliases[server]:
-            return True
         return False
 
     def remove_old(self):
         for sid in self.aliases:
+            to_delete = []
             for aliasname, alias in self.aliases[sid].items():
+                if aliasname != self.first_word(aliasname):
+                    to_delete.append(aliasname)
+                    continue
                 prefix = self.get_prefix(alias)
                 if prefix is not None:
                     self.aliases[sid][aliasname] = alias[len(prefix):]
+            for alias in to_delete:
+                del self.aliases[sid][alias]
         fileIO("data/alias/aliases.json", "save", self.aliases)
 
     def first_word(self, msg):
