@@ -13,6 +13,13 @@ class Settings:
             self.bot_settings = self.default_settings
             self.save_settings()
         else:
+            current = fileIO(self.path, "load")
+            if current.keys() != self.default_settings.keys():
+                for key in self.default_settings.keys():
+                    if key not in current.keys():
+                        current[key] = self.default_settings[key]
+                        print("Adding " + str(key) + " field to red settings.json")
+                fileIO(self.path, "save", current)
             self.bot_settings = fileIO(self.path,"load")
         if "default" not in self.bot_settings:
             self.update_old_settings()
