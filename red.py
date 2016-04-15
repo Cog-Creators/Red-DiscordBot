@@ -262,13 +262,16 @@ async def shutdown():
 @checks.is_owner()
 async def join(invite_url : discord.Invite):
     """Joins new server"""
-    try:
-        await bot.accept_invite(invite_url)
-        await bot.say("Server joined.")
-    except discord.NotFound:
-        await bot.say("The invite was invalid or expired.")
-    except discord.HTTPException:
-        await bot.say("I wasn't able to accept the invite. Try again.")
+    if bot.user.bot == True:
+        bot.say("I cannot join servers with invite link. Please use a OAuth link.")
+    else:
+        try:
+            await bot.accept_invite(invite_url)
+            await bot.say("Server joined.")
+        except discord.NotFound:
+            await bot.say("The invite was invalid or expired.")
+        except discord.HTTPException:
+            await bot.say("I wasn't able to accept the invite. Try again.")
 
 @bot.command(pass_context=True)
 @checks.is_owner()
