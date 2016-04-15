@@ -43,6 +43,7 @@ async def on_ready():
     users = str(len([m for m in bot.get_all_members()]))
     servers = str(len(bot.servers))
     channels = str(len([c for c in bot.get_all_channels()]))
+    bot.uptime = int(time.perf_counter())
     print('------')
     print(bot.user.name + " is now online.")
     print('------')
@@ -51,7 +52,6 @@ async def on_ready():
     print(channels + " channels")
     print(users + " users")
     print("\n{0} active cogs with {1} commands\n".format(str(len(bot.cogs)), str(len(bot.commands))))
-    bot.uptime = int(time.perf_counter())
 
 @bot.event
 async def on_command(command, ctx):
@@ -345,36 +345,25 @@ def check_folders():
 
 def check_configs():
     if settings.bot_settings == settings.default_settings:
-        print("Welcome to Red. A modular Discord bot!")
-        print("Please choose on how you want to log in, you can either choose a normal or bot account.")
-        print("For more information on bot accounts visit: https://discordapp.com/developers/docs/topics/oauth2#bot-vs-user-accounts")
-        print("If you don't know that you NEED a bot-tagged account, don't use one. There are more than just cosmetic differences. If still in doubt, select email")
-        print("Please choose if you want to use a Email or Token.")
-        settings.login_type = input("\n'email' or 'token'> ").lower()
-        # Deny empty logintype!
-        if not settings.login_type:
-            input("You have to choose either 'email' or 'token'")
-            exit(1)
-        # Check if input is either email or token, if email to on to email & password. else go to token input.
-        if settings.login_type == "email":
-            print("If you don't have one, create a NEW ACCOUNT for Red. Do *not* use yours. (https://discordapp.com)")
-            settings.email = input("\nEmail> ")
+        print("Red - First run configuration\n")
+        print("You either need a normal account or a bot account to use Red. *Do not* use your own.")
+        print("For more information on bot accounts see: https://discordapp.com/developers/docs/topics/oauth2#bot-vs-user-accounts")
+        print("If you're not interested in a bot account, create a normal account on https://discordapp.com")
+        print("Otherwise make one and copy the token from https://discordapp.com/developers/applications/me")
+        print("\nType your email or token:")
+        
+        choice = input("> ")
+
+        if "@" not in choice and len(choice) >= 50: #Assuming token
+            settings.login_type = "token"
+            settings.email = choice
+        elif "@" in choice:
+            settings.login_type = "email"
+            settings.email = choice
             settings.password = input("\nPassword> ")
-            if not settings.email:
-                input("Email cannot be empty. Restart Red and repeat the configuration process.")
-                exit(1)
-            if not settings.password:
-                input("Password cannot be empty. Restart Red and repeat the configuration process.")
-                exit(1)
-        elif settings.login_type == "token":
-            print("Get your bot token from: https://discordapp.com/developers/applications/me")
-            print("If you don't have a application or a bot token, make one and a bot account then copy the token.")
-            settings.email = input("\nToken> ")
-            if not settings.email:
-                input("Token cannot be empty. Restart Red and repeat the configuration process.")
-                exit(1)
         else:
-            input("Please enter 'email' or 'token'. Restart Red and repeat the configuration process.")
+            os.remove('data/red/settings.json')
+            input("Invalid input. Restart Red and repeat the configuration process.")
             exit(1)
 
         print("\nChoose a prefix (or multiple ones, one at once) for the commands. Type exit when you're done. Example prefix: !")
