@@ -240,6 +240,18 @@ async def avatar(url : str):
     except:
         await bot.say("Error.")
 
+@_set.command(name="token")
+@checks.is_owner()
+async def _token(token : str):
+    """Sets Red's login token"""
+    if len(token) < 50:
+        await bot.say("Invalid token.")
+    else:
+        settings.login_type = "token"
+        settings.email = token
+        settings.password = ""
+        await bot.say("Token set. Restart me.")
+
 @bot.command()
 @checks.is_owner()
 async def shutdown():
@@ -498,6 +510,7 @@ def main():
     else:
         owner.hidden = True  # Hides the set owner command from help
     if settings.login_type == "token":
+        _token.hidden = True
         yield from bot.login(settings.email)
     else:
         yield from bot.login(settings.email, settings.password)
