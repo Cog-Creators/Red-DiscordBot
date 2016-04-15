@@ -508,7 +508,7 @@ def main():
         print("Owner has not been set yet. Do '{}set owner' in chat to set yourself as owner.".format(bot.command_prefix[0]))
     else:
         owner.hidden = True  # Hides the set owner command from help
-    if settings.login_type is "token":
+    if settings.login_type == "token":
         yield from bot.login(settings.email)
     else:
         yield from bot.login(settings.email, settings.password)
