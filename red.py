@@ -345,17 +345,36 @@ def check_folders():
 
 def check_configs():
     if settings.bot_settings == settings.default_settings:
-        print("Red - First run configuration")
-        print("If you don't have one, create a NEW ACCOUNT for Red. Do *not* use yours. (https://discordapp.com)")
-        settings.email = input("\nEmail> ")
-        settings.password = input("\nPassword> ")
-
-        if not settings.email or not settings.password:
-            input("Email and password cannot be empty. Restart Red and repeat the configuration process.")
+        print("Welcome to Red. A modular Discord bot!")
+        print("Please choose on how you want to log in, you can either choose a normal or bot account.")
+        print("For more information on bot accounts visit: https://discordapp.com/developers/docs/topics/oauth2#bot-vs-user-accounts")
+        print("If you don't know that you NEED a bot-tagged account, don't use one. There are more than just cosmetic differences. If still in doubt, select email")
+        print("Please choose if you want to use a Email or Token.")
+        settings.login_type = input("\n'email' or 'token'> ").lower()
+        # Deny empty logintype!
+        if not settings.login_type:
+            input("You have to choose either 'email' or 'token'")
             exit(1)
-
-        if "@" not in settings.email:
-            input("You didn't enter a valid email. Restart Red and repeat the configuration process.")
+        # Check if input is either email or token, if email to on to email & password. else go to token input.
+        if settings.login_type == "email":
+            print("If you don't have one, create a NEW ACCOUNT for Red. Do *not* use yours. (https://discordapp.com)")
+            settings.email = input("\nEmail> ")
+            settings.password = input("\nPassword> ")
+            if not settings.email:
+                input("Email cannot be empty. Restart Red and repeat the configuration process.")
+                exit(1)
+            if not settings.password:
+                input("Password cannot be empty. Restart Red and repeat the configuration process.")
+                exit(1)
+        elif settings.login_type == "token":
+            print("Get your bot token from: https://discordapp.com/developers/applications/me")
+            print("If you don't have a application or a bot token, make one and a bot account then copy the token.")
+            settings.email = input("\nToken> ")
+            if not settings.email:
+                input("Token cannot be empty. Restart Red and repeat the configuration process.")
+                exit(1)
+        else:
+            input("Please enter 'email' or 'token'. Restart Red and repeat the configuration process.")
             exit(1)
 
         print("\nChoose a prefix (or multiple ones, one at once) for the commands. Type exit when you're done. Example prefix: !")
@@ -365,7 +384,7 @@ def check_configs():
             new_prefix = input("Prefix> ")
             if new_prefix.lower() != "exit" and new_prefix != "":
                 prefixes.append(new_prefix)
-                #Remember we're using property's here, oh well...
+                # Remember we're using property's here, oh well...
         settings.prefixes = sorted(prefixes, reverse=True)
 
         print("\nIf you know what an User ID is, input *your own* now and press enter.")
@@ -488,8 +507,11 @@ def main():
     if settings.owner == "id_here":
         print("Owner has not been set yet. Do '{}set owner' in chat to set yourself as owner.".format(bot.command_prefix[0]))
     else:
-        owner.hidden = True # Hides the set owner command from help
-    yield from bot.login(settings.email, settings.password)
+        owner.hidden = True  # Hides the set owner command from help
+    if settings.login_type == "token":
+        yield from bot.login(settings.email)
+    else:
+        yield from bot.login(settings.email, settings.password)
     yield from bot.connect()
 
 if __name__ == '__main__':
@@ -498,7 +520,7 @@ if __name__ == '__main__':
         loop.run_until_complete(main())
     except discord.LoginFailure:
         print("Invalid login credentials. Restart Red and configure it properly.")
-        os.remove('data/red/settings.json') # Hopefully this won't backfire in case of discord servers' problems
+        os.remove('data/red/settings.json')  # Hopefully this won't backfire in case of discord servers' problems
     except Exception as e:
         print(e)
         loop.run_until_complete(bot.logout())
