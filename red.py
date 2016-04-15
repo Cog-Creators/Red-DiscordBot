@@ -40,7 +40,7 @@ lock = False
 
 @bot.event
 async def on_ready():
-    users = str(len([m for m in bot.get_all_members()]))
+    users = str(len(set(bot.get_all_members())))
     servers = str(len(bot.servers))
     channels = str(len([c for c in bot.get_all_channels()]))
     print('------')
