@@ -523,8 +523,8 @@ def main():
         except TypeError as e:
             print(e)
             msg = "\n"
-            msg += "You are using an outdated discord.py."
-            msg += "update your discord.py with by running this in your cmd prompt/terminal."
+            msg += "You are using an outdated discord.py.\n"
+            msg += "update your discord.py with by running this in your cmd prompt/terminal.\n"
             msg += "pip3 install --upgrade git+https://github.com/Rapptz/discord.py@async"
             sys.exit(msg)
     else:
