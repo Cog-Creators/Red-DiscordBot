@@ -431,6 +431,12 @@ def set_logger():
     handler.setFormatter(logging.Formatter('%(asctime)s %(message)s', datefmt="[%d/%m/%Y %H:%M]"))
     logger.addHandler(handler)
 
+    logger = logging.getLogger("red")
+    logger.setLevel(logging.WARNING)
+    handler = logging.FileHandler(filename='data/red/red.log', encoding='utf-8', mode='a')
+    handler.setFormatter(logging.Formatter('%(asctime)s %(message)s', datefmt="[%d/%m/%Y %H:%M]"))
+    logger.addHandler(handler)
+
 def get_answer():
     choices = ("yes", "y", "no", "n")
     c = ""
@@ -530,12 +536,12 @@ if __name__ == '__main__':
     try:
         loop.run_until_complete(main())
     except discord.LoginFailure:
-        traceback.print_exc()
+        logger.error(traceback.format_exc())
         print("Invalid login credentials. Restart Red and configure it properly.")
-        shutil.copy('data/red/settings.json', 'data/red/settings.json-{}'.format(int(time.time())))
+        shutil.copy('data/red/settings.json', 'data/red/settings-{}.bak'.format(int(time.time())))
         os.remove('data/red/settings.json')  # Hopefully this won't backfire in case of discord servers' problems
     except:
-        traceback.print_exc()
+        logger.error(traceback.format_exc())
         loop.run_until_complete(bot.logout())
     finally:
         loop.close()
