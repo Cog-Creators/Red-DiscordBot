@@ -267,7 +267,7 @@ async def join(invite_url : discord.Invite):
         msg = "I have a **BOT** tag, so I must be invited with an OAuth2 link:\n"
         msg += "`https://discordapp.com/oauth2/authorize?&client_id=`__**`MY_CLIENT_ID_HERE`**__`&scope=bot`\n"
         msg += "For more information: https://discordapp.com/developers/docs/topics/oauth2#adding-bots-to-guilds"
-        bot.say(msg)
+        await bot.say(msg)
     else:
         try:
             await bot.accept_invite(invite_url)
