@@ -165,9 +165,10 @@ async def debug(ctx, *, code : str):
         censor = (settings.email, settings.password)
         r = "[EXPUNGED]"
         for w in censor:
-            result = result.replace(w, r)
-            result = result.replace(w.lower(), r)
-            result = result.replace(w.upper(), r)
+            if w != "":
+                result = result.replace(w, r)
+                result = result.replace(w.lower(), r)
+                result = result.replace(w.upper(), r)
     await bot.say(result)
 
 @bot.group(name="set", pass_context=True)
