@@ -264,7 +264,10 @@ async def shutdown():
 async def join(invite_url : discord.Invite):
     """Joins new server"""
     if bot.user.bot == True:
-        bot.say("I cannot join servers with invite link. Please use a OAuth link.")
+        msg = "I have a **BOT** tag, so I must be invited with an OAuth2 link:\n"
+        msg += "`https://discordapp.com/oauth2/authorize?&client_id=`__**`MY_CLIENT_ID_HERE`**__`&scope=bot`\n"
+        msg += "For more information: https://discordapp.com/developers/docs/topics/oauth2#adding-bots-to-guilds"
+        await bot.say(msg)
     else:
         try:
             await bot.accept_invite(invite_url)
