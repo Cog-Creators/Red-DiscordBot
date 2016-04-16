@@ -513,9 +513,20 @@ def main():
         print("Owner has not been set yet. Do '{}set owner' in chat to set yourself as owner.".format(bot.command_prefix[0]))
     else:
         owner.hidden = True  # Hides the set owner command from help
+    print("-- Logging in.. --")
+    print("Make sure to keep your bot updated by using: git pull")
+    print("and: pip3 install --upgrade git+https://github.com/Rapptz/discord.py@async")
     if settings.login_type == "token":
         _token.hidden = True
-        yield from bot.login(settings.email)
+        try:
+            yield from bot.login(settings.email)
+        except TypeError as e:
+            print(e)
+            msg = "\n"
+            msg += "You are using an outdated discord.py."
+            msg += "update your discord.py with by running this in your cmd prompt/terminal."
+            msg += "pip3 install --upgrade git+https://github.com/Rapptz/discord.py@async"
+            sys.exit(msg)
     else:
         yield from bot.login(settings.email, settings.password)
     yield from bot.connect()
