@@ -530,6 +530,7 @@ if __name__ == '__main__':
     try:
         loop.run_until_complete(main())
     except discord.LoginFailure:
+        traceback.print_exc()
         print("Invalid login credentials. Restart Red and configure it properly.")
         shutil.copy('data/red/settings.json', 'data/red/settings.json-{}'.format(int(time.time())))
         os.remove('data/red/settings.json')  # Hopefully this won't backfire in case of discord servers' problems
