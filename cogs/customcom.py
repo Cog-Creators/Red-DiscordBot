@@ -16,9 +16,14 @@ class CustomCommands:
     @checks.mod_or_permissions(manage_server=True)
     async def addcom(self, ctx, command : str, *, text):
         """Adds a custom command
-
-        Example:
+        Supports arguments: author, server, channel
+        
+        Examples:
         !addcom yourcommand Text you want
+        !addcom kickme :boot: {author.name}
+        !addcom greet hi {author.mention}! welcome to {server.name}!
+        !addcom whereami? you're in {channel.name}.. dumby
+        !addcom id {author.id}
         """
         server = ctx.message.server
         command = command.lower()
@@ -32,7 +37,13 @@ class CustomCommands:
             cmdlist[command] = text
             self.c_commands[server.id] = cmdlist
             fileIO("data/customcom/commands.json", "save", self.c_commands)
-            await self.bot.say("Custom command successfully added.")
+            await self.bot.say("Custom command successfully added.. Testing")
+            message = ctx.message
+            try:
+                await self.bot.say(text.format(message.author, message.server, message.channel, message, author=message.author, server=message.server, channel=message.channel, message=message))
+            except Exception as e:
+                print(e)
+                await self.bot.say('Failed to send. Most likely incorrect format.')
         else:
             await self.bot.say("This command already exists. Use editcom to edit it.")
 
@@ -53,6 +64,12 @@ class CustomCommands:
                 self.c_commands[server.id] = cmdlist
                 fileIO("data/customcom/commands.json", "save", self.c_commands)
                 await self.bot.say("Custom command successfully edited.")
+                message = ctx.message
+                try:
+                    await self.bot.say(text.format(message.author, message.server, message.channel, message, author=message.author, server=message.server, channel=message.channel, message=message))
+                except Exception as e:
+                    print(e)
+                    await self.bot.say('Failed to send. Most likely incorrect format.')
             else:
                 await self.bot.say("That command doesn't exist. Use addcom [command] [text]")
         else:
@@ -117,10 +134,13 @@ class CustomCommands:
         if prefix and server.id in self.c_commands.keys():
             cmdlist = self.c_commands[server.id]
             cmd = msg[len(prefix):]
+            response = None
             if cmd in cmdlist.keys():
-                await self.bot.send_message(message.channel, cmdlist[cmd])
+                response = cmdlist[cmd]
             elif cmd.lower() in cmdlist.keys():
-                await self.bot.send_message(message.channel, cmdlist[cmd.lower()])
+                response = cmdlist[cmd.lower()]
+            if response:
+                await self.bot.send_message(message.channel, response.format(message.author, message.server, message.channel, message, author=message.author, server=message.server, channel=message.channel, message=message))
 
     def get_prefix(self, msg):
         for p in self.bot.command_prefix:
