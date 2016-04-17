@@ -12,7 +12,7 @@ from __main__ import settings
 #
 
 def is_owner_check(ctx):
-    return ctx.message.author.id == settings.owner
+    return ctx.message.author.id == settings.owner and settings.owner != "id_here"
 
 def is_owner():
     return commands.check(is_owner_check)
