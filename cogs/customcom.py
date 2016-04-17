@@ -63,7 +63,7 @@ class CustomCommands:
                 cmdlist[command] = text
                 self.c_commands[server.id] = cmdlist
                 fileIO("data/customcom/commands.json", "save", self.c_commands)
-                await self.bot.say("Custom command successfully edited.")
+                await self.bot.say("Custom command successfully edited.. Testing")
                 message = ctx.message
                 try:
                     await self.bot.say(text.format(message.author, message.server, message.channel, message, author=message.author, server=message.server, channel=message.channel, message=message))
