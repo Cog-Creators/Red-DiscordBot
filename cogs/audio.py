@@ -170,7 +170,7 @@ class Audio:
                     clean_skip_votes.append(m_id)
             self.skip_votes = clean_skip_votes
 
-            votes_needed = (len(current_users)-1) // 2 + 1
+            votes_needed = (len(current_users)-1) // (100/self.settings["VOTE_PERC"]) + 1
 
             if len(self.skip_votes)-1 >= votes_needed:
                 self.music_player.paused = False
@@ -556,6 +556,19 @@ class Audio:
         """Maximum track length (seconds) for requested links"""
         self.settings["MAX_LENGTH"] = length
         await self.bot.say("Maximum length is now " + str(length) + " seconds.")
+        fileIO("data/audio/settings.json", "save", self.settings)
+
+    @audioset.command()
+    async def votes(self, percentage : float):
+        """Percentage threshold that the number of votes must exceed to skip a song
+        
+        Example: 50 is majority
+        """
+        if percentage > 100 or percentage < 0:
+            await self.bot.say("Percentage must be between 0 and 100")
+            return
+        self.settings["VOTE_PERC"] = percentage
+        await self.bot.say("Now more than " + str(percentage) + "% of listeners must vote in order to skip a song.")
         fileIO("data/audio/settings.json", "save", self.settings)
 
     @audioset.command()
@@ -951,7 +964,7 @@ def check_folders():
 
 def check_files():
 
-    default = {"VOLUME" : 0.5, "MAX_LENGTH" : 3700, "QUEUE_MODE" : True, "MAX_CACHE" : 0, "SOUNDCLOUD_CLIENT_ID": None, "TITLE_STATUS" : True, "SERVER_SFX_ON" : {}}
+    default = {"VOLUME" : 0.5, "MAX_LENGTH" : 3700, "QUEUE_MODE" : True, "MAX_CACHE" : 0, "SOUNDCLOUD_CLIENT_ID": None, "TITLE_STATUS" : True, "SERVER_SFX_ON" : {}, "VOTE_PERC" : 50}
     settings_path = "data/audio/settings.json"
 
     if not os.path.isfile(settings_path):
