@@ -162,7 +162,6 @@ class Economy:
                 if author.id in self.slot_register:
                     if abs(self.slot_register[author.id] - int(time.perf_counter()))  >= self.settings["SLOT_TIME"]:               
                         self.slot_register[author.id] = int(time.perf_counter())
-                        #
                         await self.slot_machine(ctx.message, bid)
                     else:
                         await self.bot.say("Slot machine is still cooling off! Wait {} seconds between each pull".format(self.settings["SLOT_TIME"]))
