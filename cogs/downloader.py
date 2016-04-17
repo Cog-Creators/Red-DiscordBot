@@ -139,7 +139,7 @@ class Downloader:
                 print("Downloading cogs repo...")
                 call(["git", "clone", "https://github.com/Twentysix26/Red-Cogs.git", "data/downloader"]) # It's blocking but it shouldn't matter
             else:
-                Popen(["git", "-C", "data/downloader", "pull"])
+                Popen(["git", "-C", "data/downloader", "pull", "-q"])
 
 def setup(bot):
     n = Downloader(bot)
