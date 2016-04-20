@@ -197,6 +197,8 @@ class Audio:
                 files = []
                 if glob.glob("data/audio/localtracks/" + name + "/*.mp3"):
                     files.extend(glob.glob("data/audio/localtracks/" + name + "/*.mp3"))
+                if glob.glob("data/audio/localtracks/" + name + "/*.m4a"):
+                    files.extend(glob.glob("data/audio/localtracks/" + name + "/*.m4a"))
                 if glob.glob("data/audio/localtracks/" + name + "/*.flac"):
                     files.extend(glob.glob("data/audio/localtracks/" + name + "/*.flac"))
                 if await self.is_alone_or_admin(msg):
@@ -267,7 +269,7 @@ class Audio:
         filenames = {}
         files = os.listdir("data/audio/sfx/")
         #only reason why these are the only supported ext is cause I haven't tried any others
-        supported = [".mp3",".flac",".wav"]
+        supported = [".mp3",".flac",".wav",".m4a"]
         for f in files:
             item = os.path.splitext(f)
             if item[1] in supported:
@@ -766,6 +768,8 @@ class Audio:
         for f in files:
             if os.path.isdir("data/audio/localtracks/" + f) and " " not in f:
                 if glob.glob("data/audio/localtracks/" + f + "/*.mp3") != []:
+                    dirs.append(f)
+                elif glob.glob("data/audio/localtracks/" + f + "/*.m4a") != []:
                     dirs.append(f)
                 elif glob.glob("data/audio/localtracks/" + f + "/*.flac") != []:
                     dirs.append(f)
