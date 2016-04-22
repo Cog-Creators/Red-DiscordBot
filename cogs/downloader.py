@@ -49,7 +49,10 @@ class Downloader:
                            "in Red - Discord Bot #support for any cogs "
                            "installed from this repo. If you do require "
                            "support you should contact the owner of this "
-                           "repo.")
+                           "repo.\n\nAgain, ANY repo you add is at YOUR"
+                           " discretion and the creator of Red has "
+                           "ABSOLUTELY ZERO responsibility to help if "
+                           "something goes wrong.")
         answer = await self.bot.wait_for_message(timeout=15,
                                                  author=ctx.message.author)
         if answer is None:
