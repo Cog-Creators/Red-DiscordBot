@@ -45,7 +45,11 @@ class Downloader:
         Risk."""
         await self.bot.say("Type 'I agree' to confirm "
                            "adding a 3rd party repo. This has the possibility"
-                           " of being harmful.")
+                           " of being harmful. You will not receive help "
+                           "in Red - Discord Bot #support for any cogs "
+                           "installed from this repo. If you do require "
+                           "support you should contact the owner of this "
+                           "repo.")
         answer = await self.bot.wait_for_message(timeout=15,
                                                  author=ctx.message.author)
         if answer is None:
