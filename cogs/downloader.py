@@ -279,7 +279,8 @@ def check_folders():
 
 
 def check_files():
-    repos = {'26': {'url': "https://github.com/Twentysix26/Red-Cogs.git"}}
+    repos = \
+        {'community': {'url': "https://github.com/Twentysix26/Red-Cogs.git"}}
 
     f = "data/downloader/repos.json"
     if not fileIO(f, "check"):
