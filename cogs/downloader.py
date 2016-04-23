@@ -287,8 +287,6 @@ def check_files():
         print("Creating default data/downloader/repos.json")
         fileIO(f, "save", repos)
 
->>>>>>> f3b02f3539b7c2b9eac1ce4548b01700871c9fcd
-
 def setup(bot):
     check_folders()
     check_files()
