@@ -16,6 +16,7 @@ class Mod:
         self.blacklist_list = fileIO("data/mod/blacklist.json", "load")
         self.ignore_list = fileIO("data/mod/ignorelist.json", "load")
         self.filter = fileIO("data/mod/filter.json", "load")
+        self.past_names = fileIO("data/mod/past_names.json", "load")
 
     @commands.group(pass_context=True,no_pm=True)
     @checks.serverowner_or_permissions(manage_server=True)
@@ -437,6 +438,20 @@ class Mod:
             print(e)
             await self.bot.say("Something went wrong.")
 
+    @commands.command()
+    async def names(self, user : discord.Member):
+        """Show previous names of a user"""
+        exclude = ("@everyone", "@here")
+        if user.id in self.past_names.keys():
+            names = ""
+            for name in self.past_names[user.id]:
+                if not any(mnt in name.lower() for mnt in exclude):
+                    names += " {}".format(name)
+            names = "```{}```".format(names)
+            await self.bot.say("Past names:\n{}".format(names))
+        else:
+            await self.bot.say("That user doesn't have any recorded name change.")
+
     def immune_from_filter(self, message):
         user = message.author
         server = message.server
@@ -470,6 +485,15 @@ class Mod:
                         pass
                     print("Message deleted. Filtered: " + w )
 
+    async def check_names(self, before, after):
+        if before.name != after.name:
+            if before.id not in self.past_names.keys():
+                self.past_names[before.id] = [before.name]
+            else:
+                if before.name not in self.past_names[before.id]:
+                    self.past_names[before.id].append(before.name)
+            fileIO("data/mod/past_names.json", "save", self.past_names)
+
 def check_folders():
     folders = ("data", "data/mod/")
     for folder in folders:
@@ -496,6 +520,10 @@ def check_files():
         print("Creating empty filter.json...")
         fileIO("data/mod/filter.json", "save", {})
 
+    if not os.path.isfile("data/mod/past_names.json"):
+        print("Creating empty past_names.json...")
+        fileIO("data/mod/past_names.json", "save", {})
+
 def setup(bot):
     global logger
     check_folders()
@@ -508,4 +536,5 @@ def setup(bot):
         logger.addHandler(handler)
     n = Mod(bot)
     bot.add_listener(n.check_filter, "on_message")
+    bot.add_listener(n.check_names, "on_member_update")
     bot.add_cog(n)
