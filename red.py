@@ -304,7 +304,7 @@ async def version():
     """Shows Red's current version"""
     getversion = os.popen(r'git show -s HEAD --format="%cr|%s|%h"').read()
     version = getversion.split('|')
-    await bot.say('Last updated: {}\nCommit: {}\nHash: {}'.format(*version))
+    await bot.say('Last updated: ``{}``\nCommit: ``{}``\nHash: ``{}``'.format(*version))
 
 def user_allowed(message):
 
@@ -379,7 +379,7 @@ def check_configs():
         print("If you're not interested in a bot account, create a normal account on https://discordapp.com")
         print("Otherwise make one and copy the token from https://discordapp.com/developers/applications/me")
         print("\nType your email or token:")
-        
+
         choice = input("> ")
 
         if "@" not in choice and len(choice) >= 50: #Assuming token
