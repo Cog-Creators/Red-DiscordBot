@@ -153,15 +153,37 @@ def check_folders():
         print("Creating data/customcom folder...")
         os.makedirs("data/customcom")
 
-def check_files():
+def check_files(bot):
     f = "data/customcom/commands.json"
     if not fileIO(f, "check"):
         print("Creating empty commands.json...")
-        fileIO(f, "save", {})
+        fileIO(f, "save", {"FORMAT":True})
+        return
+    print('hi')
+    current = fileIO(f, "load")
+    if "FORMAT" not in current: # consistency check
+        print("Custom Commands have been updated with format string support.")
+        print("Updating old custom commands. Any brackets {} found will be escaped {{}}")
+        for sid, commands in current.items():
+            msg = ""
+            for cmd, response in commands.items():
+                if "{" in response or "}" in response:
+                    commands[cmd] = response.replace("{","{{").replace("}","}}")
+                    #use [p] if loaded before settings/prefixes were
+                    pfx = "[p]" if bot.command_prefix[0] == "_" else bot.command_prefix[0]
+                    msg += "{}{}\n".format(pfx,cmd)
+            if msg:
+                # can't get server cause not logged in..
+                svr = bot.get_server(sid)
+                if svr is None:
+                    svr = sid
+                print("Server: {0} - custom commands altered:\n{2}{1}{2}".format(svr, msg, "--------\n"))
+        current["FORMAT"] = True
+        fileIO(f, "save", current)
 
 def setup(bot):
     check_folders()
-    check_files()
+    check_files(bot)
     n = CustomCommands(bot)
     bot.add_listener(n.checkCC, "on_message")
     bot.add_cog(n)
