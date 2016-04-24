@@ -299,6 +299,13 @@ async def _uptime():
     up = str(datetime.timedelta(seconds=up))
     await bot.say("`Uptime: {}`".format(up))
 
+@bot.command()
+async def version():
+    """Shows Red's current version"""
+    getversion = os.popen(r'git show -s HEAD --format="%cr|%s|%h"').read()
+    version = getversion.split('|')
+    await bot.say('Last updated: {}\nCommit: {}\nHash: {}'.format(*version))
+
 def user_allowed(message):
 
     author = message.author
