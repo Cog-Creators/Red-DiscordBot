@@ -302,9 +302,15 @@ async def _uptime():
 @bot.command()
 async def version():
     """Shows Red's current version"""
+    loop = asyncio.get_event_loop()
+    response = loop.run_in_executor(None, get_version)
+    result = await asyncio.wait_for(response, timeout=10)
+    await bot.say(result)
+
+def get_version():
     getversion = os.popen(r'git show -s HEAD --format="%cr|%s|%h"').read()
     version = getversion.split('|')
-    await bot.say('Last updated: ``{}``\nCommit: ``{}``\nHash: ``{}``'.format(*version))
+    return 'Last updated: ``{}``\nCommit: ``{}``\nHash: ``{}``'.format(*version)
 
 def user_allowed(message):
 
