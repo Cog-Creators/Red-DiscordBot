@@ -10,6 +10,7 @@ import asyncio
 import threading
 import datetime
 import glob
+import os
 
 log = logging.getLogger("red.owner")
 
@@ -100,6 +101,9 @@ class Owner:
     @checks.is_owner()
     @commands.command(name="reload")
     async def _reload(self, module):
+        """Reloads a module
+
+        Example: reload audio"""
         if "cogs." not in module:
             module = "cogs." + module
 
@@ -173,6 +177,7 @@ class Owner:
 
         if self.setowner_lock:
             await self.bot.say("A set owner command is already pending.")
+            return
 
         await self.bot.say("Confirm in the console that you're the owner.")
         self.setowner_lock = True
@@ -307,6 +312,13 @@ class Owner:
         up = str(datetime.timedelta(seconds=self.bot.loop.time()))
         await self.bot.say("`Uptime: {}`".format(up))
 
+    @commands.command()
+    async def version(self):
+        """Shows Red's current version"""
+        response = self.bot.loop.run_in_executor(None, self._get_version)
+        result = await asyncio.wait_for(response, timeout=10)
+        await self.bot.say(result)
+
     def _load_cog(self, cogname):
         if not self._does_cogfile_exist(cogname):
             raise CogNotFoundError(cogname)
@@ -361,6 +373,13 @@ class Owner:
         else:
             print("setowner request has been ignored.")
             self.setowner_lock = False
+
+    def _get_version(self):
+        getversion = os.popen(r'git show -s HEAD --format="%cr|%s|%h"')
+        getversion = getversion.read()
+        version = getversion.split('|')
+        return 'Last updated: ``{}``\nCommit: ``{}``\nHash: ``{}``'.format(
+            *version)
 
 
 def setup(bot):
