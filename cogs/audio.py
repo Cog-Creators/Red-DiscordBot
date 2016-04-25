@@ -16,6 +16,11 @@ import json
 import time
 
 try:
+    from gtts import gTTS
+except:
+    gTTS = None
+
+try:
     import youtube_dl
 except:
     youtube_dl = None
@@ -50,6 +55,10 @@ class Audio:
         self.bot = bot
         self.music_player = EmptyPlayer()
         self.sfx_player = EmptyPlayer()
+        self.tts_player = EmptyPlayer()
+        files = glob.glob("data/audio/tts/*") # Start with an clean TTS folder.
+        for f in files:
+            os.remove(f)        
         self.settings = fileIO("data/audio/settings.json", "load")
         self.queue_mode = False
         self.queue = []
@@ -185,8 +194,8 @@ class Audio:
         """Plays a local playlist
 
         For bot's owner:
-        http://twentysix26.github.io/Red-Docs/red_audio/"""
-        help_link = "http://twentysix26.github.io/Red-Docs/red_audio/"
+        https://github.com/Twentysix26/Red-DiscordBot/wiki/Audio-module"""
+        help_link = "https://github.com/Twentysix26/Red-DiscordBot/wiki/Audio-module"
         if self.downloader["DOWNLOADING"]:
             await self.bot.say("I'm already downloading a track.")
             return
@@ -246,8 +255,8 @@ class Audio:
                         self.sfx_player = self.bot.voice.create_ffmpeg_player(file, options='''-filter:a "volume={}"'''.format(self.settings["VOLUME"]))
                         self.sfx_player.start()
                         while self.sfx_player.is_playing():
-                            await asyncio.sleep(.5)
-
+                            await asyncio.sleep(.5)                        
+                        
                         if not self.music_player.is_playing():
                             self.music_player.paused = False
                             self.music_player.resume()
@@ -262,6 +271,65 @@ class Audio:
                 await self.bot.say("There is no sound effect with that name.")
         else:
             await self.bot.say("There are no valid sound effects in the `data/audio/sfx` folder.")
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def tts(self, ctx, lang: str, *, text: str="Please try again."):
+        """Convert your text to speech (Google TTS).
+        """
+        
+        text = self.chop(ctx, text)
+        text = text[2:] # Remove language from string.
+        # Get gTTS data.
+        try:
+            tts = gTTS(text=text, lang=lang)
+        except Exception as e:
+            await self.bot.say(e) # No text to speak/Language not supported or error from requests.
+            return
+        # Make sure we have an unique filename for the data.
+        countTts = 0
+        while countTts <= 999:
+            checkFile = "data/audio/tts/tts{}.mp3".format(countTts)
+            if not os.path.exists(checkFile):
+                ttsFile = "data/audio/tts/tts{}.mp3".format(countTts)
+                break
+            else:
+                countTts += 1
+        tts.save(ttsFile)
+
+        msg = ctx.message
+        localsfx = True
+        if localsfx:
+            if os.path.exists(ttsFile):
+                if await self.check_voice(msg.author, ctx.message, True):
+                    try:
+                        if self.music_player.is_playing():
+                            self.music_player.paused = True
+                            self.music_player.pause()
+
+                        if self.sfx_player.is_playing():
+                            self.sfx_player.stop()
+                            
+                        if self.tts_player.is_playing():
+                            self.tts_player.stop()
+
+                        self.tts_player = self.bot.voice.create_ffmpeg_player(ttsFile, options='''-filter:a "volume={}"'''.format(self.settings["VOLUME"]))
+                        self.tts_player.start()
+                        
+                        while self.tts_player.is_playing():
+                            await asyncio.sleep(.5)
+                        os.remove(ttsFile)
+                        
+                        if not self.music_player.is_playing():
+                            self.music_player.paused = False
+                            self.music_player.resume()
+                    except AttributeError as e:
+                        #music_player not used yet. Still an EmptyPlayer.
+                        #better to ask for forgiveness?
+                        pass
+                    except Exception as e:
+                        print(e)
+        else:
+            await self.bot.say("Oops, I lost the TTS audio file.")       
 
     def get_local_sfx(self):
         filenames = {}
@@ -320,8 +388,6 @@ class Audio:
                     self.current = len(self.playlist) -2
                 self.music_player.paused = False
                 self.music_player.stop()
-
-
 
     @commands.command(pass_context=True, no_pm=True)
     async def stop(self, ctx):
@@ -673,7 +739,7 @@ class Audio:
             pass
 
 
-    async def check_voice(self, author, message):
+    async def check_voice(self, author, message, supressMsg=False):
         if self.bot.is_voice_connected():
             v_channel = self.bot.voice.channel
             if author.voice_channel == v_channel:
@@ -682,29 +748,29 @@ class Audio:
                 if author.voice_channel:
                     if author.voice_channel.permissions_for(message.server.me).connect:
                         wait = await self.close_audio()
-                        await self.bot.join_voice_channel(author.voice_channel)
+                        if supressMsg: await self.bot.join_voice_channel(author.voice_channel)
                         return True
                     else:
-                        await self.bot.say("I need permissions to join that voice channel.")
+                        if supressMsg: await self.bot.say("I need permissions to join that voice channel.")
                         return False
                 else:
-                    await self.bot.say("You need to be in a voice channel.")
+                    if supressMsg: await self.bot.say("You need to be in a voice channel.")
                     return False
             else:
                 if not self.playlist and not self.queue:
                     return True
                 else:
-                    await self.bot.say("I'm already playing music for other people.")
+                    if supressMsg: await self.bot.say("I'm already playing music for other people.")
                     return False
         elif author.voice_channel:
             if author.voice_channel.permissions_for(message.server.me).connect:
                 await self.bot.join_voice_channel(author.voice_channel)
                 return True
             else:
-                await self.bot.say("I need permissions to join that voice channel.")
+                if supressMsg: await self.bot.say("I need permissions to join that voice channel.")
                 return False
         else:
-            await self.bot.say("You need to be in a voice channel.")
+            if supressMsg: await self.bot.say("You need to be in a voice channel.")
             return False
 
     async def queue_manager(self):
@@ -923,6 +989,20 @@ class Audio:
             result = {"title": "A song "}
         return result
 
+    def chop(self, ctx, stuff:str):
+        message = stuff
+        if message == None:
+            message = ctx.message.author.name
+        else:
+            message = ctx.message.clean_content
+            message = message[(len(ctx.prefix)+len(ctx.command.name))+1:]
+            for mentuser in ctx.message.mentions:
+                index = message.index(mentuser.name)
+                message = message[:index-1] + message[index:]
+            if "@\u200beveryone" in message:
+                message = message.replace("@\u200b","")
+        return message              
+        
 class EmptyPlayer(): #dummy player
     def __init__(self):
         self.paused = False
@@ -986,6 +1066,9 @@ def setup(bot):
     elif opus is None:
         raise RuntimeError("You need to install ffmpeg and opus. See \"https://github.com/Twentysix26/Red-DiscordBot/wiki/Requirements\"")
         return
+    elif gTTS is None:
+        raise RuntimeError("You need to run `pip3 install gTTS`")
+        return        
     loop = asyncio.get_event_loop()
     n = Audio(bot)
     loop.create_task(n.queue_manager())
