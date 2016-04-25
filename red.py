@@ -13,6 +13,8 @@ import sys
 import logging
 import aiohttp
 import importlib
+import shutil
+import traceback
 
 #
 #  Red, a Discord bot by Twentysix, based on discord.py and its command extension
@@ -40,9 +42,10 @@ lock = False
 
 @bot.event
 async def on_ready():
-    users = str(len([m for m in bot.get_all_members()]))
+    users = str(len(set(bot.get_all_members())))
     servers = str(len(bot.servers))
     channels = str(len([c for c in bot.get_all_channels()]))
+    bot.uptime = int(time.perf_counter())
     print('------')
     print(bot.user.name + " is now online.")
     print('------')
@@ -51,7 +54,6 @@ async def on_ready():
     print(channels + " channels")
     print(users + " users")
     print("\n{0} active cogs with {1} commands\n".format(str(len(bot.cogs)), str(len(bot.commands))))
-    bot.uptime = int(time.perf_counter())
 
 @bot.event
 async def on_command(command, ctx):
@@ -165,9 +167,10 @@ async def debug(ctx, *, code : str):
         censor = (settings.email, settings.password)
         r = "[EXPUNGED]"
         for w in censor:
-            result = result.replace(w, r)
-            result = result.replace(w.lower(), r)
-            result = result.replace(w.upper(), r)
+            if w != "":
+                result = result.replace(w, r)
+                result = result.replace(w.lower(), r)
+                result = result.replace(w.upper(), r)
     await bot.say(result)
 
 @bot.group(name="set", pass_context=True)
@@ -240,6 +243,18 @@ async def avatar(url : str):
     except:
         await bot.say("Error.")
 
+@_set.command(name="token")
+@checks.is_owner()
+async def _token(token : str):
+    """Sets Red's login token"""
+    if len(token) < 50:
+        await bot.say("Invalid token.")
+    else:
+        settings.login_type = "token"
+        settings.email = token
+        settings.password = ""
+        await bot.say("Token set. Restart me.")
+
 @bot.command()
 @checks.is_owner()
 async def shutdown():
@@ -250,13 +265,19 @@ async def shutdown():
 @checks.is_owner()
 async def join(invite_url : discord.Invite):
     """Joins new server"""
-    try:
-        await bot.accept_invite(invite_url)
-        await bot.say("Server joined.")
-    except discord.NotFound:
-        await bot.say("The invite was invalid or expired.")
-    except discord.HTTPException:
-        await bot.say("I wasn't able to accept the invite. Try again.")
+    if bot.user.bot == True:
+        msg = "I have a **BOT** tag, so I must be invited with an OAuth2 link:\n"
+        msg += "`https://discordapp.com/oauth2/authorize?&client_id=`__**`MY_CLIENT_ID_HERE`**__`&scope=bot`\n"
+        msg += "For more information: https://twentysix26.github.io/Red-Docs/red_guide_bot_accounts/#bot-invites"
+        await bot.say(msg)
+    else:
+        try:
+            await bot.accept_invite(invite_url)
+            await bot.say("Server joined.")
+        except discord.NotFound:
+            await bot.say("The invite was invalid or expired.")
+        except discord.HTTPException:
+            await bot.say("I wasn't able to accept the invite. Try again.")
 
 @bot.command(pass_context=True)
 @checks.is_owner()
@@ -277,6 +298,19 @@ async def _uptime():
     up = abs(bot.uptime - int(time.perf_counter()))
     up = str(datetime.timedelta(seconds=up))
     await bot.say("`Uptime: {}`".format(up))
+
+@bot.command()
+async def version():
+    """Shows Red's current version"""
+    loop = asyncio.get_event_loop()
+    response = loop.run_in_executor(None, get_version)
+    result = await asyncio.wait_for(response, timeout=10)
+    await bot.say(result)
+
+def get_version():
+    getversion = os.popen(r'git show -s HEAD --format="%cr|%s|%h"').read()
+    version = getversion.split('|')
+    return 'Last updated: ``{}``\nCommit: ``{}``\nHash: ``{}``'.format(*version)
 
 def user_allowed(message):
 
@@ -345,17 +379,25 @@ def check_folders():
 
 def check_configs():
     if settings.bot_settings == settings.default_settings:
-        print("Red - First run configuration")
-        print("If you don't have one, create a NEW ACCOUNT for Red. Do *not* use yours. (https://discordapp.com)")
-        settings.email = input("\nEmail> ")
-        settings.password = input("\nPassword> ")
+        print("Red - First run configuration\n")
+        print("You either need a normal account or a bot account to use Red. *Do not* use your own.")
+        print("For more information on bot accounts see: https://discordapp.com/developers/docs/topics/oauth2#bot-vs-user-accounts")
+        print("If you're not interested in a bot account, create a normal account on https://discordapp.com")
+        print("Otherwise make one and copy the token from https://discordapp.com/developers/applications/me")
+        print("\nType your email or token:")
 
-        if not settings.email or not settings.password:
-            input("Email and password cannot be empty. Restart Red and repeat the configuration process.")
-            exit(1)
+        choice = input("> ")
 
-        if "@" not in settings.email:
-            input("You didn't enter a valid email. Restart Red and repeat the configuration process.")
+        if "@" not in choice and len(choice) >= 50: #Assuming token
+            settings.login_type = "token"
+            settings.email = choice
+        elif "@" in choice:
+            settings.login_type = "email"
+            settings.email = choice
+            settings.password = input("\nPassword> ")
+        else:
+            os.remove('data/red/settings.json')
+            input("Invalid input. Restart Red and repeat the configuration process.")
             exit(1)
 
         print("\nChoose a prefix (or multiple ones, one at once) for the commands. Type exit when you're done. Example prefix: !")
@@ -365,7 +407,7 @@ def check_configs():
             new_prefix = input("Prefix> ")
             if new_prefix.lower() != "exit" and new_prefix != "":
                 prefixes.append(new_prefix)
-                #Remember we're using property's here, oh well...
+                # Remember we're using property's here, oh well...
         settings.prefixes = sorted(prefixes, reverse=True)
 
         print("\nIf you know what an User ID is, input *your own* now and press enter.")
@@ -399,7 +441,13 @@ def set_logger():
     logger = logging.getLogger("discord")
     logger.setLevel(logging.WARNING)
     handler = logging.FileHandler(filename='data/red/discord.log', encoding='utf-8', mode='a')
-    handler.setFormatter(logging.Formatter('%(asctime)s %(message)s', datefmt="[%d/%m/%Y %H:%M]"))
+    handler.setFormatter(logging.Formatter('%(asctime)s %(module)s %(lineno)d %(message)s', datefmt="[%d/%m/%Y %H:%M]"))
+    logger.addHandler(handler)
+
+    logger = logging.getLogger("red")
+    logger.setLevel(logging.WARNING)
+    handler = logging.FileHandler(filename='data/red/red.log', encoding='utf-8', mode='a')
+    handler.setFormatter(logging.Formatter('%(asctime)s %(module)s %(lineno)d %(message)s', datefmt="[%d/%m/%Y %H:%M]"))
     logger.addHandler(handler)
 
 def get_answer():
@@ -488,8 +536,23 @@ def main():
     if settings.owner == "id_here":
         print("Owner has not been set yet. Do '{}set owner' in chat to set yourself as owner.".format(bot.command_prefix[0]))
     else:
-        owner.hidden = True # Hides the set owner command from help
-    yield from bot.login(settings.email, settings.password)
+        owner.hidden = True  # Hides the set owner command from help
+    print("-- Logging in.. --")
+    print("Make sure to keep your bot updated by using: git pull")
+    print("and: pip3 install --upgrade git+https://github.com/Rapptz/discord.py@async")
+    if settings.login_type == "token":
+        _token.hidden = True
+        try:
+            yield from bot.login(settings.email)
+        except TypeError as e:
+            print(e)
+            msg = "\n"
+            msg += "You are using an outdated discord.py.\n"
+            msg += "update your discord.py with by running this in your cmd prompt/terminal.\n"
+            msg += "pip3 install --upgrade git+https://github.com/Rapptz/discord.py@async"
+            sys.exit(msg)
+    else:
+        yield from bot.login(settings.email, settings.password)
     yield from bot.connect()
 
 if __name__ == '__main__':
@@ -497,10 +560,12 @@ if __name__ == '__main__':
     try:
         loop.run_until_complete(main())
     except discord.LoginFailure:
+        logger.error(traceback.format_exc())
         print("Invalid login credentials. Restart Red and configure it properly.")
-        os.remove('data/red/settings.json') # Hopefully this won't backfire in case of discord servers' problems
-    except Exception as e:
-        print(e)
+        shutil.copy('data/red/settings.json', 'data/red/settings-{}.bak'.format(int(time.time())))
+        os.remove('data/red/settings.json')  # Hopefully this won't backfire in case of discord servers' problems
+    except:
+        logger.error(traceback.format_exc())
         loop.run_until_complete(bot.logout())
     finally:
         loop.close()

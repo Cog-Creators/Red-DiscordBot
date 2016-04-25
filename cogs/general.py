@@ -229,6 +229,10 @@ class General:
                 await self.endpoll(message)
                 return
         if not self.getPollByChannel(message):
+            check = " ".join(text).lower()
+            if "@everyone" in check or "@here" in check:
+                await self.bot.say("Nice try.")
+                return
             p = NewPoll(message, self)
             if p.valid:
                 self.poll_sessions.append(p)

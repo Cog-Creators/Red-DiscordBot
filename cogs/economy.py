@@ -29,6 +29,7 @@ class Economy:
         self.bank = fileIO("data/economy/bank.json", "load")
         self.settings = fileIO("data/economy/settings.json", "load")
         self.payday_register = {}
+        self.slot_register = {}
 
     @commands.group(name="bank", pass_context=True)
     async def _bank(self, ctx):
@@ -57,7 +58,7 @@ class Economy:
             if self.account_check(user.id):
                 await self.bot.say("{} Your balance is: {}".format(user.mention, str(self.check_balance(user.id))))
             else:
-                await self.bot.say("{} You don't have an account at the Twentysix bank. Type !register to open one.".format(user.mention, str(self.check_balance(user.id))))
+                await self.bot.say("{} You don't have an account at the Twentysix bank. Type {}bank register to open one.".format(user.mention, ctx.prefix))
         else:
             if self.account_check(user.id):
                 balance = self.check_balance(user.id)
@@ -158,7 +159,15 @@ class Economy:
         author = ctx.message.author
         if self.enough_money(author.id, bid):
             if bid >= self.settings["SLOT_MIN"] and bid <= self.settings["SLOT_MAX"]:
-                await self.slot_machine(ctx.message, bid)
+                if author.id in self.slot_register:
+                    if abs(self.slot_register[author.id] - int(time.perf_counter()))  >= self.settings["SLOT_TIME"]:               
+                        self.slot_register[author.id] = int(time.perf_counter())
+                        await self.slot_machine(ctx.message, bid)
+                    else:
+                        await self.bot.say("Slot machine is still cooling off! Wait {} seconds between each pull".format(self.settings["SLOT_TIME"]))
+                else:
+                    self.slot_register[author.id] = int(time.perf_counter())
+                    await self.slot_machine(ctx.message, bid)
             else:
                 await self.bot.say("{0} Bid must be between {1} and {2}.".format(author.mention, self.settings["SLOT_MIN"], self.settings["SLOT_MAX"]))
         else:
@@ -231,6 +240,13 @@ class Economy:
         """Maximum slot machine bid"""
         self.settings["SLOT_MAX"] = bid
         await self.bot.say("Maximum bid is now " + str(bid) + " credits.")
+        fileIO("data/economy/settings.json", "save", self.settings)
+        
+    @economyset.command()
+    async def slottime(self, seconds : int):
+        """Seconds between each slots use"""
+        self.settings["SLOT_TIME"] = seconds
+        await self.bot.say("Cooldown is now " + str(seconds) + " seconds.")
         fileIO("data/economy/settings.json", "save", self.settings)
 
     @economyset.command()
@@ -319,12 +335,20 @@ def check_folders():
         os.makedirs("data/economy")
 
 def check_files():
-    settings = {"PAYDAY_TIME" : 300, "PAYDAY_CREDITS" : 120, "SLOT_MIN" : 5, "SLOT_MAX" : 100}
+    settings = {"PAYDAY_TIME" : 300, "PAYDAY_CREDITS" : 120, "SLOT_MIN" : 5, "SLOT_MAX" : 100, "SLOT_TIME" : 0}
 
     f = "data/economy/settings.json"
     if not fileIO(f, "check"):
         print("Creating default economy's settings.json...")
         fileIO(f, "save", settings)
+    else: #consistency check
+        current = fileIO(f, "load")
+        if current.keys() != settings.keys():
+            for key in settings.keys():
+                if key not in current.keys():
+                    current[key] = settings[key]
+                    print("Adding " + str(key) + " field to economy settings.json")
+            fileIO(f, "save", current)
 
     f = "data/economy/bank.json"
     if not fileIO(f, "check"):
