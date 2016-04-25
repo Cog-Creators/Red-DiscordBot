@@ -6,3 +6,4 @@ data
 !data/audio/playlists/*
 *.exe
 *.dll
+web/
