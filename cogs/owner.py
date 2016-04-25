@@ -67,6 +67,7 @@ class Owner:
                                'something went wrong.'
                                ' Check your logs for more information.')
         else:
+            set_cog(module, True)
             await self.bot.say("Module enabled.")
 
     @commands.command()
@@ -119,6 +120,7 @@ class Owner:
             await self.bot.say("That module could not be loaded. Check your"
                                " logs for more information.")
         else:
+            set_cog(module, True)
             await self.bot.say("Module reloaded.")
 
     @commands.command(pass_context=True, hidden=True)
