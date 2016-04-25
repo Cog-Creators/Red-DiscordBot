@@ -30,15 +30,6 @@ class CogUnloadError(Exception):
     pass
 
 
-def list_cogs():
-    cogs = glob.glob("cogs/*.py")
-    clean = []
-    for c in cogs:
-        c = c.replace("/", "\\")  # Linux fix
-        clean.append("cogs." + c.split("\\")[1].replace(".py", ""))
-    return clean
-
-
 class Owner:
     """All owner-only commands that relate to debug bot operations.
     """
@@ -316,10 +307,18 @@ class Owner:
         except:
             raise CogUnloadError
 
+    def _list_cogs(self):
+        cogs = glob.glob("cogs/*.py")
+        clean = []
+        for c in cogs:
+            c = c.replace("/", "\\")  # Linux fix
+            clean.append("cogs." + c.split("\\")[1].replace(".py", ""))
+        return clean
+
     def _does_cogfile_exist(self, module):
         if "cogs." not in module:
             module = "cogs." + module
-        if module not in list_cogs():
+        if module not in self._list_cogs():
             return False
         return True
 

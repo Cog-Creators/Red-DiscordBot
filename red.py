@@ -1,18 +1,12 @@
 from discord.ext import commands
 import discord
 from cogs.utils.settings import Settings
-from random import choice as rndchoice
-import threading
-import datetime, re
-import json, asyncio
-import copy
-import glob
+import json
+import asyncio
 import os
 import time
 import sys
 import logging
-import aiohttp
-import importlib
 import shutil
 import traceback
 
@@ -38,7 +32,6 @@ settings = Settings()
 
 from cogs.utils import checks
 
-lock = False
 
 @bot.event
 async def on_ready():
@@ -53,16 +46,20 @@ async def on_ready():
     print(servers + " servers")
     print(channels + " channels")
     print(users + " users")
-    print("\n{0} active cogs with {1} commands\n".format(str(len(bot.cogs)), str(len(bot.commands))))
+    print("\n{0} active cogs with {1} commands\n".format(
+        str(len(bot.cogs)), str(len(bot.commands))))
+
 
 @bot.event
 async def on_command(command, ctx):
     pass
 
+
 @bot.event
 async def on_message(message):
     if user_allowed(message):
         await bot.process_commands(message)
+
 
 @bot.event
 async def on_command_error(error, ctx):
@@ -81,6 +78,7 @@ async def send_cmd_help(ctx):
         for page in pages:
             await bot.send_message(ctx.message.channel, page)
 
+
 def user_allowed(message):
 
     author = message.author
@@ -92,10 +90,12 @@ def user_allowed(message):
             return True
         if not message.channel.is_private:
             server = message.server
-            names = (settings.get_server_admin(server),settings.get_server_mod(server))
-            results = map(lambda name: discord.utils.get(author.roles,name=name),names)
+            names = (settings.get_server_admin(
+                server), settings.get_server_mod(server))
+            results = map(
+                lambda name: discord.utils.get(author.roles, name=name), names)
             for r in results:
-                if r != None:
+                if r is not None:
                     return True
 
         if author.id in mod.blacklist_list:
@@ -115,6 +115,7 @@ def user_allowed(message):
     else:
         return True
 
+
 def check_folders():
     folders = ("data", "data/red", "cogs", "cogs/utils")
     for folder in folders:
@@ -122,18 +123,23 @@ def check_folders():
             print("Creating " + folder + " folder...")
             os.makedirs(folder)
 
+
 def check_configs():
     if settings.bot_settings == settings.default_settings:
         print("Red - First run configuration\n")
-        print("You either need a normal account or a bot account to use Red. *Do not* use your own.")
-        print("For more information on bot accounts see: https://discordapp.com/developers/docs/topics/oauth2#bot-vs-user-accounts")
-        print("If you're not interested in a bot account, create a normal account on https://discordapp.com")
-        print("Otherwise make one and copy the token from https://discordapp.com/developers/applications/me")
+        print("You either need a normal account or a bot account to use Red. "
+              "*Do not* use your own.")
+        print("For more information on bot accounts see: https://discordapp"
+              ".com/developers/docs/topics/oauth2#bot-vs-user-accounts")
+        print("If you're not interested in a bot account, create a normal "
+              "account on https://discordapp.com")
+        print("Otherwise make one and copy the token from https://discordapp."
+              "com/developers/applications/me")
         print("\nType your email or token:")
 
         choice = input("> ")
 
-        if "@" not in choice and len(choice) >= 50: #Assuming token
+        if "@" not in choice and len(choice) >= 50:  # Assuming token
             settings.login_type = "token"
             settings.email = choice
         elif "@" in choice:
@@ -142,10 +148,12 @@ def check_configs():
             settings.password = input("\nPassword> ")
         else:
             os.remove('data/red/settings.json')
-            input("Invalid input. Restart Red and repeat the configuration process.")
+            input("Invalid input. Restart Red and repeat the configuration "
+                  "process.")
             exit(1)
 
-        print("\nChoose a prefix (or multiple ones, one at once) for the commands. Type exit when you're done. Example prefix: !")
+        print("\nChoose a prefix (or multiple ones, one at once) for the "
+              "commands. Type exit when you're done. Example prefix: !")
         prefixes = []
         new_prefix = ""
         while new_prefix.lower() != "exit" or prefixes == []:
@@ -155,24 +163,32 @@ def check_configs():
                 # Remember we're using property's here, oh well...
         settings.prefixes = sorted(prefixes, reverse=True)
 
-        print("\nIf you know what an User ID is, input *your own* now and press enter.")
-        print("Otherwise you can just set yourself as owner later with '[prefix]set owner'. Leave empty and press enter in this case.")
+        print("\nIf you know what an User ID is, input *your own* now and"
+              " press enter.")
+        print("Otherwise you can just set yourself as owner later with "
+              "'[prefix]set owner'. Leave empty and press enter in this case.")
         settings.owner = input("\nID> ")
-        if settings.owner == "": settings.owner = "id_here"
+        if settings.owner == "":
+            settings.owner = "id_here"
         if not settings.owner.isdigit() or len(settings.owner) < 17:
             if settings.owner != "id_here":
-                print("\nERROR: What you entered is not a valid ID. Set yourself as owner later with [prefix]set owner")
+                print("\nERROR: What you entered is not a valid ID. Set "
+                      "yourself as owner later with [prefix]set owner")
             settings.owner = "id_here"
 
-        print("\nInput the admin role's name. Anyone with this role will be able to use the bot's admin commands")
+        print("\nInput the admin role's name. Anyone with this role will be "
+              "able to use the bot's admin commands")
         print("Leave blank for default name (Transistor)")
         settings.default_admin = input("\nAdmin role> ")
-        if settings.default_admin == "": settings.default_admin = "Transistor"
+        if settings.default_admin == "":
+            settings.default_admin = "Transistor"
 
-        print("\nInput the moderator role's name. Anyone with this role will be able to use the bot's mod commands")
+        print("\nInput the moderator role's name. Anyone with this role will "
+              "be able to use the bot's mod commands")
         print("Leave blank for default name (Process)")
         settings.default_mod = input("\nModerator role> ")
-        if settings.default_mod == "": settings.default_mod = "Process"
+        if settings.default_mod == "":
+            settings.default_mod = "Process"
 
     cogs_s_path = "data/red/cogs.json"
     cogs = {}
@@ -181,19 +197,27 @@ def check_configs():
         with open(cogs_s_path, "w") as f:
             f.write(json.dumps(cogs))
 
+
 def set_logger():
     global logger
     logger = logging.getLogger("discord")
     logger.setLevel(logging.WARNING)
-    handler = logging.FileHandler(filename='data/red/discord.log', encoding='utf-8', mode='a')
-    handler.setFormatter(logging.Formatter('%(asctime)s %(module)s %(lineno)d %(message)s', datefmt="[%d/%m/%Y %H:%M]"))
+    handler = logging.FileHandler(
+        filename='data/red/discord.log', encoding='utf-8', mode='a')
+    handler.setFormatter(logging.Formatter(
+        '%(asctime)s %(module)s %(lineno)d %(message)s',
+        datefmt="[%d/%m/%Y %H:%M]"))
     logger.addHandler(handler)
 
     logger = logging.getLogger("red")
     logger.setLevel(logging.WARNING)
-    handler = logging.FileHandler(filename='data/red/red.log', encoding='utf-8', mode='a')
-    handler.setFormatter(logging.Formatter('%(asctime)s %(module)s %(lineno)d %(message)s', datefmt="[%d/%m/%Y %H:%M]"))
+    handler = logging.FileHandler(
+        filename='data/red/red.log', encoding='utf-8', mode='a')
+    handler.setFormatter(logging.Formatter(
+        '%(asctime)s %(module)s %(lineno)d %(message)s',
+        datefmt="[%d/%m/%Y %H:%M]"))
     logger.addHandler(handler)
+
 
 def get_answer():
     choices = ("yes", "y", "no", "n")
@@ -205,6 +229,7 @@ def get_answer():
     else:
         return False
 
+
 def set_cog(cog, value):
     with open('data/red/cogs.json', "r") as f:
         data = json.load(f)
@@ -212,7 +237,8 @@ def set_cog(cog, value):
     with open('data/red/cogs.json', "w") as f:
         f.write(json.dumps(data))
 
-def load_cogs():
+
+'''def load_cogs():
     try:
         if sys.argv[1] == "--no-prompt":
             no_prompt = True
@@ -223,10 +249,11 @@ def load_cogs():
 
     with open('data/red/cogs.json', "r") as f:
         data = json.load(f)
-    register = tuple(data.keys()) #known cogs
+    register = tuple(data.keys())  # known cogs
     extensions = list_cogs()
 
-    if extensions: print("\nLoading cogs...\n")
+    if extensions:
+        print("\nLoading cogs...\n")
 
     failed = []
     for extension in extensions:
@@ -259,7 +286,67 @@ def load_cogs():
         print("\nFailed to load: ", end="")
         for m in failed:
             print(m + " ", end="")
+        print("\n")'''
+
+
+def load_cogs():
+    try:
+        if sys.argv[1] == "--no-prompt":
+            no_prompt = True
+        else:
+            no_prompt = False
+    except:
+        no_prompt = False
+
+    with open('data/red/cogs.json', "r") as f:
+        registry = json.load(f)
+
+    bot.load_extension('cogs/owner.py')
+    owner_cog = bot.get_cog('Owner')
+    if owner_cog is None:
+        print("You got rid of the damn OWNER cog. Idiot >.>\n\n"
+              "I can't start without it!")
+        print()
+        print("Go here to find a new copy:\n{}".format(
+            "https://github.com/Twentysix26/Red-DiscordBot"))
+        exit(1)
+
+    extensions = owner_cog._list_cogs()
+    for extension in extensions:
+        in_reg = extension in registry
+        if no_prompt or in_reg:
+            try:
+                owner_cog._load(extension)
+            except:
+                traceback.print_exc()
+                logger.exception()
+                failed.append(extension)
+            else:
+                registry[extension] = True
+        else:
+            print("\nNew extension: {}".format(extension))
+            print("Load it?(y/n)")
+            if get_answer():
+                registry[extension] = True
+                try:
+                    owner_cog._load(extension)
+                except:
+                    traceback.print_exc()
+                    logger.exception()
+                    failed.append(extension)
+            else:
+                registry[extension] = False
+
+    if extensions:
+        with open('data/red/cogs.json', "w") as f:
+            f.write(json.dumps(data))
+
+    if failed:
+        print("\nFailed to load: ", end="")
+        for m in failed:
+            print(m + " ", end="")
         print("\n")
+
 
 def main():
     global settings
@@ -279,22 +366,24 @@ def main():
         else:
             print("Once you're owner use !set prefix to set it.")
     if settings.owner == "id_here":
-        print("Owner has not been set yet. Do '{}set owner' in chat to set yourself as owner.".format(bot.command_prefix[0]))
+        print("Owner has not been set yet. Do '{}set owner' in chat to set "
+              "yourself as owner.".format(bot.command_prefix[0]))
     else:
         owner.hidden = True  # Hides the set owner command from help
     print("-- Logging in.. --")
     print("Make sure to keep your bot updated by using: git pull")
-    print("and: pip3 install --upgrade git+https://github.com/Rapptz/discord.py@async")
+    print("and: pip3 install --upgrade git+https://github.com/Rapptz/"
+          "discord.py@async")
     if settings.login_type == "token":
         _token.hidden = True
         try:
             yield from bot.login(settings.email)
         except TypeError as e:
             print(e)
-            msg = "\n"
-            msg += "You are using an outdated discord.py.\n"
-            msg += "update your discord.py with by running this in your cmd prompt/terminal.\n"
-            msg += "pip3 install --upgrade git+https://github.com/Rapptz/discord.py@async"
+            msg = ("\nYou are using an outdated discord.py.\n"
+                   "update your discord.py with by running this in your cmd "
+                   "prompt/terminal.\npip3 install --upgrade git+https://"
+                   "github.com/Rapptz/discord.py@async")
             sys.exit(msg)
     else:
         yield from bot.login(settings.email, settings.password)
@@ -306,9 +395,12 @@ if __name__ == '__main__':
         loop.run_until_complete(main())
     except discord.LoginFailure:
         logger.error(traceback.format_exc())
-        print("Invalid login credentials. Restart Red and configure it properly.")
-        shutil.copy('data/red/settings.json', 'data/red/settings-{}.bak'.format(int(time.time())))
-        os.remove('data/red/settings.json')  # Hopefully this won't backfire in case of discord servers' problems
+        print("Invalid login credentials. Restart Red and configure it"
+              " properly.")
+        shutil.copy('data/red/settings.json',
+                    'data/red/settings-{}.bak'.format(int(time.time())))
+        # Hopefully this won't backfire in case of discord servers' problems
+        os.remove('data/red/settings.json')
     except:
         logger.error(traceback.format_exc())
         loop.run_until_complete(bot.logout())
