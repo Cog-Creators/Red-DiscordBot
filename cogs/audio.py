@@ -195,7 +195,7 @@ class Audio:
 
         For bot's owner:
         http://twentysix26.github.io/Red-Docs/red_audio/"""
-        help_link = "https://github.com/Twentysix26/Red-DiscordBot/wiki/Audio-module"
+        help_link = "http://twentysix26.github.io/Red-Docs/red_audio/"
         if self.downloader["DOWNLOADING"]:
             await self.bot.say("I'm already downloading a track.")
             return
