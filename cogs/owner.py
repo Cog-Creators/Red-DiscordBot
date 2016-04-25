@@ -1,0 +1,348 @@
+import discord
+from discord.ext import commands
+from cogs.utils import checks
+from __main__ import set_cog, send_cmd_help, settings
+
+import importlib
+import traceback
+import logging
+import asyncio
+import threading
+import datetime
+import glob
+
+log = logging.getLogger("red.owner")
+
+
+class CogNotFoundError(Exception):
+    pass
+
+
+class CogLoadError(Exception):
+    pass
+
+
+class NoSetupError(CogLoadError):
+    pass
+
+
+class CogUnloadError(Exception):
+    pass
+
+
+def list_cogs():
+    cogs = glob.glob("cogs/*.py")
+    clean = []
+    for c in cogs:
+        c = c.replace("/", "\\")  # Linux fix
+        clean.append("cogs." + c.split("\\")[1].replace(".py", ""))
+    return clean
+
+
+class Owner:
+    """All owner-only commands that relate to debug bot operations.
+    """
+
+    def __init__(self, bot):
+        self.bot = bot
+        self.setowner_lock = False
+
+    @commands.command()
+    @checks.is_owner()
+    async def load(self, *, module: str):
+        """Loads a module
+
+        Example: load mod"""
+        module = module.strip()
+        try:
+            self._load_cog(module)
+        except CogNotFoundError:
+            await self.bot.say("That module could not be found.")
+        except CogLoadError:
+            await self.bot.say("There was an issue loading the module."
+                               " Check your logs for more information.")
+        except:
+            log.exception()
+            traceback.print_exc()
+            await self.bot.say('Module was found and possibly loaded but '
+                               'something went wrong.'
+                               ' Check your logs for more information.')
+        else:
+            await self.bot.say("Module enabled.")
+
+    @commands.command()
+    @checks.is_owner()
+    async def unload(self, *, module: str):
+        """Unloads a module
+
+        Example: unload mod"""
+        module = module.strip()
+        if "cogs." not in module:
+            module = "cogs." + module
+        if not self._does_cogfile_exist(module):
+            await self.bot.say("That module file doesn't exist. I will not"
+                               " remove turn off autoloading just in case"
+                               " this isn't supposed to happen.")
+        else:
+            set_cog(module, False)
+        try:  # No matter what we should try to unload it
+            self._unload_cog(module)
+        except CogUnloadError:
+            log.exception()
+            traceback.print_exc()
+            await self.bot.say('Unable to safely disable that module.')
+        else:
+            await self.bot.say("Module disabled.")
+
+    @checks.is_owner()
+    @commands.command(name="reload")
+    async def _reload(self, module):
+        try:
+            self._unload_cog(module)
+        except:
+            pass
+
+        try:
+            self._load_cog(module)
+        except CogNotFoundError:
+            await self.bot.say("That module cannot be found.")
+        except NoSetupError:
+            await self.bot.say("That module does not have a setup function.")
+        except CogLoadError:
+            log.exception()
+            traceback.print_exc()
+            await self.bot.say("That module could not be loaded. Check your"
+                               " logs for more information.")
+        else:
+            await self.bot.say("Module reloaded.")
+
+    @commands.command(pass_context=True, hidden=True)
+    @checks.is_owner()
+    async def debug(self, ctx, *, code):
+        """Evaluates code
+
+        Modified function, originally made by Rapptz"""
+        code = code.strip('` ')
+        python = '```py\n{}\n```'
+        result = None
+
+        try:
+            result = eval(code)
+        except Exception as e:
+            await self.bot.say(python.format(type(e).__name__ + ': ' + str(e)))
+            return
+
+        if asyncio.iscoroutine(result):
+            result = await result
+
+        result = python.format(result)
+        if not ctx.message.channel.is_private:
+            censor = (settings.email, settings.password)
+            r = "[EXPUNGED]"
+            for w in censor:
+                if w != "":
+                    result = result.replace(w, r)
+                    result = result.replace(w.lower(), r)
+                    result = result.replace(w.upper(), r)
+        await self.bot.say(result)
+
+    @commands.group(name="set", pass_context=True)
+    async def _set(self, ctx):
+        """Change global bot settings.
+        """
+        if ctx.invoked_subcommand is None:
+            await send_cmd_help(ctx)
+            return
+
+    @_set.command(pass_context=True)
+    async def owner(self, ctx):
+        """Sets owner
+        """
+        if settings.owner != "id_here":
+            await self.bot.say("Owner ID has already been set.")
+            return
+
+        if self.setowner_lock:
+            await self.bot.say("A set owner command is already pending.")
+
+        await self.bot.say("Confirm in the console that you're the owner.")
+        self.setowner_lock = True
+        t = threading.Thread(target=self.wait_for_answer,
+                             args=(ctx.message.author,))
+        t.start()
+
+    @_set.command()
+    @checks.is_owner()
+    async def prefix(self, *prefixes):
+        """Sets prefixes
+
+        Must be separated by a space. Enclose in double
+        quotes if a prefix contains spaces."""
+        if prefixes == ():
+            await self.bot.say("Example: setprefix [ ! ^ .")
+            return
+
+        self.bot.command_prefix = sorted(prefixes, reverse=True)
+        settings.prefixes = sorted(prefixes, reverse=True)
+        log.debug("Setting prefixes to:\n\t{}".format(settings.prefixes))
+
+        if len(prefixes) > 1:
+            await self.bot.say("Prefixes set")
+        else:
+            await self.bot.say("Prefix set")
+
+    @_set.command(pass_context=True)
+    @checks.is_owner()
+    async def name(self, ctx, *, name):
+        """Sets Red's name"""
+        name = name.strip()
+        if name == "":
+            await send_cmd_help(ctx)
+        await self.bot.edit_profile(settings.password, username=name)
+        await self.bot.say("Done.")
+
+    @_set.command(pass_context=True)
+    @checks.is_owner()
+    async def status(self, ctx, *, status=None):
+        """Sets Red's status
+
+        Leaving this empty will clear it.
+        """
+
+        if status:
+            status = status.strip()
+            await self.bot.change_status(discord.Game(name=status))
+            log.debug('Status set to "{}" by owner'.format(status))
+        else:
+            await self.bot.change_status(None)
+            log.debug('status cleared by owner')
+        await self.bot.say("Done.")
+
+    @_set.command()
+    @checks.is_owner()
+    async def avatar(self, url):
+        """Sets Red's avatar"""
+        try:
+            async with self.bot.session.get(url) as r:
+                data = await r.read()
+            await self.bot.edit_profile(settings.password, avatar=data)
+            await self.bot.say("Done.")
+            log.debug("changed avatar")
+        except:
+            await self.bot.say("Error, check your logs for more information.")
+            log.exception()
+            traceback.print_exc()
+
+    @_set.command(name="token")
+    @checks.is_owner()
+    async def _token(self, token):
+        """Sets Red's login token"""
+        if len(token) < 50:
+            await self.bot.say("Invalid token.")
+        else:
+            settings.login_type = "token"
+            settings.email = token
+            settings.password = ""
+            await self.bot.say("Token set. Restart me.")
+            log.debug("Just converted to a bot account.")
+
+    @commands.command()
+    @checks.is_owner()
+    async def shutdown(self):
+        """Shuts down Red"""
+        await self.bot.logout()
+
+    @commands.command()
+    @checks.is_owner()
+    async def join(self, invite_url: discord.Invite):
+        """Joins new server"""
+        if self.bot.user.bot is True:
+            msg = ("I have a **BOT** tag, so I must be invited with an OAuth2"
+                   " link:\n`https://discordapp.com/oauth2/authorize?&"
+                   "client_id=`__**`MY_CLIENT_ID_HERE`**__`&scope=bot`\n"
+                   "For more information: https://twentysix26.github.io/"
+                   "Red-Docs/red_guide_bot_accounts/#bot-invites")
+            await self.bot.say(msg)
+            return
+
+        try:
+            await self.bot.accept_invite(invite_url)
+            await self.bot.say("Server joined.")
+            log.debug("We just joined {}".format(invite_url))
+        except discord.NotFound:
+            await self.bot.say("The invite was invalid or expired.")
+        except discord.HTTPException:
+            await self.bot.say("I wasn't able to accept the invite."
+                               " Try again.")
+
+    @commands.command(pass_context=True)
+    @checks.is_owner()
+    async def leave(self, ctx):
+        """Leaves server"""
+        message = ctx.message
+
+        await self.bot.say("Are you sure you want me to leave this server?"
+                           " Type yes to confirm.")
+        response = await self.bot.wait_for_message(author=message.author)
+
+        if response.content.lower().strip() == "yes":
+            await self.bot.say("Alright. Bye :wave:")
+            log.debug('Leaving "{}"'.format(message.server.name))
+            await self.bot.leave_server(message.server)
+        else:
+            await self.bot.say("Ok I'll stay here then.")
+
+    @commands.command()
+    async def uptime(self):
+        """Shows Red's uptime"""
+        up = str(datetime.timedelta(seconds=self.bot.loop.time()))
+        await self.bot.say("`Uptime: {}`".format(up))
+
+    def _load_cog(self, cogname):
+        if not self._does_cogfile_exist(cogname):
+            raise CogNotFoundError(cogname)
+        try:
+            mod_obj = importlib.import_module(cogname)
+            importlib.reload(mod_obj)
+            self.bot.load_extension(mod_obj.__name__)
+        except discord.ClientException:
+            raise NoSetupError
+        except:
+            raise CogLoadError
+
+    def _unload_cog(self, cogname):
+        try:
+            self.bot.unload_extension(cogname)
+        except:
+            raise CogUnloadError
+
+    def _does_cogfile_exist(self, module):
+        if "cogs." not in module:
+            module = "cogs." + module
+        if module not in list_cogs():
+            return False
+        return True
+
+    def _wait_for_answer(self, author):
+        print(author.name + " requested to be set as owner. If this is you, "
+              "type 'yes'. Otherwise press enter.")
+        print()
+        print("*DO NOT* set anyone else as owner.")
+
+        choice = "None"
+        while choice.lower() != "yes" and choice == "None":
+            choice = input("> ")
+
+        if choice == "yes":
+            settings.owner = author.id
+            print(author.name + " has been set as owner.")
+            self.setowner_lock = False
+            self.owner.hidden = True
+        else:
+            print("setowner request has been ignored.")
+            self.setowner_lock = False
+
+
+def setup(bot):
+    n = Owner(bot)
+    bot.add_cog(n)
