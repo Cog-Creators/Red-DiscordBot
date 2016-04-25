@@ -238,57 +238,6 @@ def set_cog(cog, value):
         f.write(json.dumps(data))
 
 
-'''def load_cogs():
-    try:
-        if sys.argv[1] == "--no-prompt":
-            no_prompt = True
-        else:
-            no_prompt = False
-    except:
-        no_prompt = False
-
-    with open('data/red/cogs.json', "r") as f:
-        data = json.load(f)
-    register = tuple(data.keys())  # known cogs
-    extensions = list_cogs()
-
-    if extensions:
-        print("\nLoading cogs...\n")
-
-    failed = []
-    for extension in extensions:
-        if extension in register:
-            if data[extension]:
-                try:
-                    bot.load_extension(extension)
-                except Exception as e:
-                    print(e)
-                    failed.append(extension)
-        else:
-            if not no_prompt:
-                print("\nNew extension: " + extension)
-                print("Load it?(y/n)")
-                if get_answer():
-                    data[extension] = True
-                    try:
-                        bot.load_extension(extension)
-                    except Exception as e:
-                        print(e)
-                        failed.append(extension)
-                else:
-                    data[extension] = False
-
-    if extensions:
-        with open('data/red/cogs.json', "w") as f:
-            f.write(json.dumps(data))
-
-    if failed:
-        print("\nFailed to load: ", end="")
-        for m in failed:
-            print(m + " ", end="")
-        print("\n")'''
-
-
 def load_cogs():
     try:
         if sys.argv[1] == "--no-prompt":
@@ -298,10 +247,13 @@ def load_cogs():
     except:
         no_prompt = False
 
-    with open('data/red/cogs.json', "r") as f:
-        registry = json.load(f)
+    try:
+        with open('data/red/cogs.json', "r") as f:
+            registry = json.load(f)
+    except:
+        registry = {}
 
-    bot.load_extension('cogs/owner.py')
+    bot.load_extension('cogs.owner')
     owner_cog = bot.get_cog('Owner')
     if owner_cog is None:
         print("You got rid of the damn OWNER cog. Idiot >.>\n\n"
@@ -311,41 +263,35 @@ def load_cogs():
             "https://github.com/Twentysix26/Red-DiscordBot"))
         exit(1)
 
+    failed = []
     extensions = owner_cog._list_cogs()
     for extension in extensions:
         in_reg = extension in registry
-        if no_prompt or in_reg:
-            try:
-                owner_cog._load(extension)
-            except:
-                traceback.print_exc()
-                logger.exception()
-                failed.append(extension)
-            else:
-                registry[extension] = True
-        else:
+        if not (in_reg or no_prompt):
             print("\nNew extension: {}".format(extension))
             print("Load it?(y/n)")
-            if get_answer():
-                registry[extension] = True
-                try:
-                    owner_cog._load(extension)
-                except:
-                    traceback.print_exc()
-                    logger.exception()
-                    failed.append(extension)
-            else:
-                registry[extension] = False
+            if not get_answer():
+                continue
+        registry[extension] = True
+        try:
+            owner_cog._load_cog(extension)
+        except Exception as e:
+            print("{}: {}".format(e.__class__.__name__, str(e)))
+            logger.exception(e)
+            failed.append(extension)
+            registry[extension] = False
 
     if extensions:
         with open('data/red/cogs.json', "w") as f:
-            f.write(json.dumps(data))
+            f.write(json.dumps(registry))
 
     if failed:
         print("\nFailed to load: ", end="")
         for m in failed:
             print(m + " ", end="")
         print("\n")
+
+    return owner_cog
 
 
 def main():
@@ -355,7 +301,7 @@ def main():
     check_folders()
     check_configs()
     set_logger()
-    load_cogs()
+    owner_cog = load_cogs()
     if settings.prefixes != []:
         bot.command_prefix = settings.prefixes
     else:
@@ -369,13 +315,13 @@ def main():
         print("Owner has not been set yet. Do '{}set owner' in chat to set "
               "yourself as owner.".format(bot.command_prefix[0]))
     else:
-        owner.hidden = True  # Hides the set owner command from help
+        owner_cog.owner.hidden = True  # Hides the set owner command from help
     print("-- Logging in.. --")
     print("Make sure to keep your bot updated by using: git pull")
     print("and: pip3 install --upgrade git+https://github.com/Rapptz/"
           "discord.py@async")
     if settings.login_type == "token":
-        _token.hidden = True
+        owner_cog._token.hidden = True
         try:
             yield from bot.login(settings.email)
         except TypeError as e:

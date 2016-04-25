@@ -45,15 +45,19 @@ class Owner:
 
         Example: load mod"""
         module = module.strip()
+        if "cogs." not in module:
+            module = "cogs." + module
         try:
             self._load_cog(module)
         except CogNotFoundError:
             await self.bot.say("That module could not be found.")
-        except CogLoadError:
+        except CogLoadError as e:
+            log.exception(e)
+            traceback.print_exc()
             await self.bot.say("There was an issue loading the module."
                                " Check your logs for more information.")
-        except:
-            log.exception()
+        except Exception as e:
+            log.exception(e)
             traceback.print_exc()
             await self.bot.say('Module was found and possibly loaded but '
                                'something went wrong.'
@@ -78,8 +82,8 @@ class Owner:
             set_cog(module, False)
         try:  # No matter what we should try to unload it
             self._unload_cog(module)
-        except CogUnloadError:
-            log.exception()
+        except CogUnloadError as e:
+            log.exception(e)
             traceback.print_exc()
             await self.bot.say('Unable to safely disable that module.')
         else:
@@ -88,6 +92,9 @@ class Owner:
     @checks.is_owner()
     @commands.command(name="reload")
     async def _reload(self, module):
+        if "cogs." not in module:
+            module = "cogs." + module
+
         try:
             self._unload_cog(module)
         except:
@@ -117,8 +124,10 @@ class Owner:
         python = '```py\n{}\n```'
         result = None
 
+        global_vars = {'bot': self.bot}
+
         try:
-            result = eval(code)
+            result = eval(code, global_vars)
         except Exception as e:
             await self.bot.say(python.format(type(e).__name__ + ': ' + str(e)))
             return
@@ -298,8 +307,8 @@ class Owner:
             self.bot.load_extension(mod_obj.__name__)
         except discord.ClientException:
             raise NoSetupError
-        except:
-            raise CogLoadError
+        except SyntaxError as e:
+            raise CogLoadError(*e.args)
 
     def _unload_cog(self, cogname):
         try:
