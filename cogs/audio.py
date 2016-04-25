@@ -297,39 +297,37 @@ class Audio:
         tts.save(ttsFile)
 
         msg = ctx.message
-        localsfx = True
-        if localsfx:
-            if os.path.exists(ttsFile):
-                if await self.check_voice(msg.author, ctx.message, True):
-                    try:
-                        if self.music_player.is_playing():
-                            self.music_player.paused = True
-                            self.music_player.pause()
+        if os.path.exists(ttsFile):
+            if await self.check_voice(msg.author, ctx.message, True):
+                try:
+                    if self.music_player.is_playing():
+                        self.music_player.paused = True
+                        self.music_player.pause()
 
-                        if self.sfx_player.is_playing():
-                            self.sfx_player.stop()
-                            
-                        if self.tts_player.is_playing():
-                            self.tts_player.stop()
+                    if self.sfx_player.is_playing():
+                        self.sfx_player.stop()
+                        
+                    if self.tts_player.is_playing():
+                        self.tts_player.stop()
 
-                        self.tts_player = self.bot.voice.create_ffmpeg_player(ttsFile, options='''-filter:a "volume={}"'''.format(self.settings["VOLUME"]))
-                        self.tts_player.start()
-                        
-                        while self.tts_player.is_playing():
-                            await asyncio.sleep(.5)
-                        os.remove(ttsFile)
-                        
-                        if not self.music_player.is_playing():
-                            self.music_player.paused = False
-                            self.music_player.resume()
-                    except AttributeError as e:
-                        #music_player not used yet. Still an EmptyPlayer.
-                        #better to ask for forgiveness?
-                        pass
-                    except Exception as e:
-                        print(e)
-        else:
-            await self.bot.say("Oops, I lost the TTS audio file.")       
+                    self.tts_player = self.bot.voice.create_ffmpeg_player(ttsFile, options='''-filter:a "volume={}"'''.format(self.settings["VOLUME"]))
+                    self.tts_player.start()
+                    
+                    while self.tts_player.is_playing():
+                        await asyncio.sleep(.5)
+                    os.remove(ttsFile)
+                     
+                    if not self.music_player.is_playing():
+                        self.music_player.paused = False
+                        self.music_player.resume()
+                except AttributeError as e:
+                    #music_player not used yet. Still an EmptyPlayer.
+                    #better to ask for forgiveness?
+                    pass
+                except Exception as e:
+                    print(e)
+            else:
+                await self.bot.say("Oops, I lost the TTS audio file.")       
 
     def get_local_sfx(self):
         filenames = {}
@@ -1023,7 +1021,7 @@ class MaximumLength(Exception):
         return self.message
 
 def check_folders():
-    folders = ("data/audio", "data/audio/cache", "data/audio/playlists", "data/audio/localtracks", "data/audio/sfx")
+    folders = ("data/audio", "data/audio/cache", "data/audio/playlists", "data/audio/localtracks", "data/audio/sfx", "data/audio/tts")
     for folder in folders:
         if not os.path.exists(folder):
             print("Creating " + folder + " folder...")
