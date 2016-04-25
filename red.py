@@ -271,6 +271,7 @@ def load_cogs():
             print("\nNew extension: {}".format(extension))
             print("Load it?(y/n)")
             if not get_answer():
+                registry[extension] = False
                 continue
         registry[extension] = True
         try:

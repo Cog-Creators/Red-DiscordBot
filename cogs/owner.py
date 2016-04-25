@@ -30,6 +30,10 @@ class CogUnloadError(Exception):
     pass
 
 
+class OwnerUnloadWithoutReloadError(CogUnloadError):
+    pass
+
+
 class Owner:
     """All owner-only commands that relate to debug bot operations.
     """
@@ -82,6 +86,9 @@ class Owner:
             set_cog(module, False)
         try:  # No matter what we should try to unload it
             self._unload_cog(module)
+        except OwnerUnloadWithoutReloadError:
+            await self.bot.say("Can't unload the Owner plugin without"
+                               " reloading :P")
         except CogUnloadError as e:
             log.exception(e)
             traceback.print_exc()
@@ -96,7 +103,7 @@ class Owner:
             module = "cogs." + module
 
         try:
-            self._unload_cog(module)
+            self._unload_cog(module, reloading=True)
         except:
             pass
 
@@ -167,7 +174,7 @@ class Owner:
 
         await self.bot.say("Confirm in the console that you're the owner.")
         self.setowner_lock = True
-        t = threading.Thread(target=self.wait_for_answer,
+        t = threading.Thread(target=self._wait_for_answer,
                              args=(ctx.message.author,))
         t.start()
 
@@ -310,7 +317,10 @@ class Owner:
         except SyntaxError as e:
             raise CogLoadError(*e.args)
 
-    def _unload_cog(self, cogname):
+    def _unload_cog(self, cogname, reloading=False):
+        if not reloading and cogname == "cogs.owner":
+            raise OwnerUnloadWithoutReloadError(
+                "Can't unload the owner plugin :P")
         try:
             self.bot.unload_extension(cogname)
         except:
