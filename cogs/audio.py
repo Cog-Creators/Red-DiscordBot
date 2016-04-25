@@ -188,7 +188,6 @@ class Audio:
                 return
             await self.bot.say("You voted to skip. Votes: [{0}/{1}]".format(str(len(self.skip_votes)-1), str(votes_needed)))
 
-
     @commands.command(pass_context=True, no_pm=True)
     async def local(self, ctx, name : str):
         """Plays a local playlist
@@ -735,7 +734,6 @@ class Audio:
                 print(e)
         else:
             pass
-
 
     async def check_voice(self, author, message, supressMsg=False):
         if self.bot.is_voice_connected():
