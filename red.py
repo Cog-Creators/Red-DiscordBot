@@ -205,7 +205,8 @@ def set_logger():
     handler = logging.FileHandler(
         filename='data/red/discord.log', encoding='utf-8', mode='a')
     handler.setFormatter(logging.Formatter(
-        '%(asctime)s %(module)s %(lineno)d %(message)s',
+        '%(asctime)s %(levelname)s %(module)s %(funcName)s %(lineno)d: '
+        '%(message)s',
         datefmt="[%d/%m/%Y %H:%M]"))
     logger.addHandler(handler)
 
@@ -214,7 +215,8 @@ def set_logger():
     handler = logging.FileHandler(
         filename='data/red/red.log', encoding='utf-8', mode='a')
     handler.setFormatter(logging.Formatter(
-        '%(asctime)s %(module)s %(lineno)d %(message)s',
+        '%(asctime)s %(levelname)s %(module)s %(funcName)s %(lineno)d: '
+        '%(message)s',
         datefmt="[%d/%m/%Y %H:%M]"))
     logger.addHandler(handler)
 
@@ -256,7 +258,8 @@ def load_cogs():
     bot.load_extension('cogs.owner')
     owner_cog = bot.get_cog('Owner')
     if owner_cog is None:
-        print("You got rid of the damn OWNER cog. Idiot >.>\n\n"
+        print("You got rid of the damn OWNER cog, it has special functions"
+              " that I require to run.\n\n"
               "I can't start without it!")
         print()
         print("Go here to find a new copy:\n{}".format(
@@ -266,6 +269,8 @@ def load_cogs():
     failed = []
     extensions = owner_cog._list_cogs()
     for extension in extensions:
+        if extension.lower() == "cogs.owner":
+            continue
         in_reg = extension in registry
         if not (in_reg or no_prompt):
             print("\nNew extension: {}".format(extension))

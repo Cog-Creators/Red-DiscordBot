@@ -81,15 +81,15 @@ class Owner:
             module = "cogs." + module
         if not self._does_cogfile_exist(module):
             await self.bot.say("That module file doesn't exist. I will not"
-                               " remove turn off autoloading just in case"
+                               " turn off autoloading at start just in case"
                                " this isn't supposed to happen.")
         else:
             set_cog(module, False)
         try:  # No matter what we should try to unload it
             self._unload_cog(module)
         except OwnerUnloadWithoutReloadError:
-            await self.bot.say("Can't unload the Owner plugin without"
-                               " reloading :P")
+            await self.bot.say("I cannot allow you to unload the Owner plugin"
+                               " unless you are in the process of reloading.")
         except CogUnloadError as e:
             log.exception(e)
             traceback.print_exc()
