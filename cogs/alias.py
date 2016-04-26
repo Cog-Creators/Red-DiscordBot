@@ -99,6 +99,8 @@ class Alias:
             if len(message) > 4:
                 message += "```"
                 await self.bot.say(message)
+            else:
+                await self.bot.say("There are no aliases on this server.")
 
     async def check_aliases(self, message):
         if not user_allowed(message):
@@ -113,8 +115,8 @@ class Alias:
         prefix = self.get_prefix(msg)
 
         if prefix and server.id in self.aliases:
-            if self.first_word(msg[len(prefix):]) in self.aliases[server.id]:
-                alias = self.first_word(msg[len(prefix):])
+            alias = self.first_word(msg[len(prefix):]).lower()
+            if alias in self.aliases[server.id]:
                 new_command = self.aliases[server.id][alias]
                 args = message.content[len(prefix + alias):]
                 message.content = prefix + new_command + args
@@ -130,15 +132,22 @@ class Alias:
     def remove_old(self):
         for sid in self.aliases:
             to_delete = []
+            to_add = []
             for aliasname, alias in self.aliases[sid].items():
+                lower = aliasname.lower()
+                if aliasname != lower:
+                    to_delete.append(aliasname)
+                    to_add.append((lower, alias))
                 if aliasname != self.first_word(aliasname):
                     to_delete.append(aliasname)
                     continue
                 prefix = self.get_prefix(alias)
                 if prefix is not None:
                     self.aliases[sid][aliasname] = alias[len(prefix):]
-            for alias in to_delete:
+            for alias in to_delete:  # Fixes caps and bad prefixes
                 del self.aliases[sid][alias]
+            for alias, command in to_add:  # For fixing caps
+                self.aliases[sid][alias] = command
         fileIO("data/alias/aliases.json", "save", self.aliases)
 
     def first_word(self, msg):
