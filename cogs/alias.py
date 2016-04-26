@@ -11,19 +11,20 @@ class Alias:
         self.bot = bot
         self.aliases = fileIO("data/alias/aliases.json", "load")
 
-    @commands.group(pass_context=True)
-    @checks.mod_or_permissions(manage_server=True)
+    @commands.group(pass_context=True, no_pm=True)
     async def alias(self, ctx):
         """Manage per-server aliases for commands"""
         if ctx.invoked_subcommand is None:
             await send_cmd_help(ctx)
 
-    @alias.command(name="add", pass_context=True)
-    async def _add_alias(self, ctx, command: str, *, to_execute):
+    @alias.command(name="add", pass_context=True, no_pm=True)
+    @checks.mod_or_permissions(manage_server=True)
+    async def _add_alias(self, ctx, command, *, to_execute):
         """Add an alias for a command
 
            Example: !alias add test flip @Twentysix"""
         server = ctx.message.server
+        command = command.lower()
         if len(command.split(" ")) != 1:
             await self.bot.say("I can't safely do multi-word aliases because"
                                " of the fact that I allow arguments to"
@@ -46,7 +47,7 @@ class Alias:
             await self.bot.say("Cannot add '{}' because it's a real bot "
                                "command.".format(command))
 
-    @alias.command(name="help", pass_context=True)
+    @alias.command(name="help", pass_context=True, no_pm=True)
     async def _help_alias(self, ctx, command):
         """Tries to execute help for the base command of the alias"""
         server = ctx.message.server
@@ -63,7 +64,7 @@ class Alias:
             else:
                 await self.bot.say("That alias doesn't exist.")
 
-    @alias.command(name="show", pass_context=True)
+    @alias.command(name="show", pass_context=True, no_pm=True)
     async def _show_alias(self, ctx, command):
         """Shows what command the alias executes."""
         server = ctx.message.server
@@ -74,17 +75,19 @@ class Alias:
             else:
                 await self.bot.say("That alias doesn't exist.")
 
-    @alias.command(name="del", pass_context=True)
-    async def _del_alias(self, ctx, command: str):
+    @alias.command(name="del", pass_context=True, no_pm=True)
+    @checks.mod_or_permissions(manage_server=True)
+    async def _del_alias(self, ctx, command):
         """Deletes an alias"""
+        command = command.lower()
         server = ctx.message.server
         if server.id in self.aliases:
             self.aliases[server.id].pop(command, None)
             fileIO("data/alias/aliases.json", "save", self.aliases)
         await self.bot.say("Alias '{}' deleted.".format(command))
 
-    @commands.command(pass_context=True)
-    async def aliaslist(self, ctx):
+    @alias.command(name="list", pass_context=True)
+    async def _alias_list(self, ctx):
         server = ctx.message.server
         if server.id in self.aliases:
             message = "```Alias list:\n"
