@@ -96,7 +96,7 @@ class Alias:
                     await self.bot.say(message)
                     message = "```\n"
                 message += "\t{}\n".format(alias)
-            if len(message) > 4:
+            if message != "```Alias list:\n":
                 message += "```"
                 await self.bot.say(message)
             else:
