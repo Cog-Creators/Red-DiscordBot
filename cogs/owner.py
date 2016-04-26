@@ -137,10 +137,11 @@ class Owner:
         python = '```py\n{}\n```'
         result = None
 
-        global_vars = {'bot': self.bot}
+        local_vars = locals().copy()
+        local_vars['bot'] = self.bot
 
         try:
-            result = eval(code, global_vars)
+            result = eval(code, globals(), local_vars)
         except Exception as e:
             await self.bot.say(python.format(type(e).__name__ + ': ' + str(e)))
             return
