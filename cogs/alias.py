@@ -4,6 +4,7 @@ from .utils.dataIO import fileIO
 from .utils import checks
 from __main__ import user_allowed, send_cmd_help
 import os
+from copy import deepcopy
 
 
 class Alias:
@@ -119,8 +120,9 @@ class Alias:
             if alias in self.aliases[server.id]:
                 new_command = self.aliases[server.id][alias]
                 args = message.content[len(prefix + alias):]
-                message.content = prefix + new_command + args
-                await self.bot.process_commands(message)
+                new_message = deepcopy(message)
+                new_message.content = prefix + new_command + args
+                await self.bot.process_commands(new_message)
 
     def part_of_existing_command(self, alias, server):
         '''Command or alias'''
