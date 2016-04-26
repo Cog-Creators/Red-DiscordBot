@@ -113,15 +113,15 @@ class Mod:
                     new = False
                     async for x in self.bot.logs_from(message.channel, limit=100, before=message):
                         if number == 0:
-                            await self.bot.delete_message(cmdmsg)
+                            await self._delete_message(cmdmsg)
                             return
                         if text in x.content:
-                            await self.bot.delete_message(x)
+                            await self._delete_message(x)
                             number -= 1
                         new = True
                         message = x
                     if not new or number == 0:
-                        await self.bot.delete_message(cmdmsg)
+                        await self._delete_message(cmdmsg)
                         break
         except discord.errors.Forbidden:
             await self.bot.say("I need permissions to manage messages in this channel.")
@@ -144,15 +144,15 @@ class Mod:
                     new = False
                     async for x in self.bot.logs_from(message.channel, limit=100, before=message):
                         if number == 0:
-                            await self.bot.delete_message(cmdmsg)
+                            await self._delete_message(cmdmsg)
                             return
                         if x.author.id == user.id:
-                            await self.bot.delete_message(x)
+                            await self._delete_message(x)
                             number -= 1
                         new = True
                         message = x
                     if not new or number == 0:
-                        await self.bot.delete_message(cmdmsg)
+                        await self._delete_message(cmdmsg)
                         break
         except discord.errors.Forbidden:
             await self.bot.say("I need permissions to manage messages in this channel.")
@@ -170,7 +170,7 @@ class Mod:
         try:
             if number > 0 and number < 10000:
                 async for x in self.bot.logs_from(channel, limit=number + 1):
-                    await self.bot.delete_message(x)
+                    await self._delete_message(x)
         except discord.errors.Forbidden:
             await self.bot.say("I need permissions to manage messages in this channel.")
 
@@ -456,6 +456,14 @@ class Mod:
         else:
             await self.bot.say("That user doesn't have any recorded name change.")
 
+    async def _delete_message(self, message):
+        try:
+            await self.bot.delete_message(message)
+        except discord.errors.NotFound:
+            pass
+        except:
+            raise
+
     def immune_from_filter(self, message):
         user = message.author
         server = message.server
@@ -487,7 +495,7 @@ class Mod:
                     # Something else in discord.py is throwing a 404 error
                     # after deletion
                     try:
-                        await self.bot.delete_message(message)
+                        await self._delete_message(message)
                     except:
                         pass
                     print("Message deleted. Filtered: " + w)
