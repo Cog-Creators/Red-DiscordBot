@@ -48,6 +48,12 @@ async def on_ready():
     print(users + " users")
     print("\n{0} active cogs with {1} commands\n".format(
         str(len(bot.cogs)), str(len(bot.commands))))
+    if settings.login_type == "token":
+        print("------")
+        print("Use this url to bring your bot to a server:")
+        url = await get_oauth_url()
+        print(url)
+        print("------")
 
 
 @bot.event
@@ -114,6 +120,17 @@ def user_allowed(message):
         return True
     else:
         return True
+
+
+async def get_oauth_url():
+    endpoint = "https://discordapp.com/api/oauth2/applications/@me"
+    if bot.headers.get('authorization') is None:
+        bot.headers['authorization'] = "Bot {}".format(settings.email)
+
+    async with bot.session.get(endpoint, headers=bot.headers) as resp:
+        data = await resp.json()
+
+    return discord.utils.oauth_url(data.get('id'))
 
 
 def check_folders():
