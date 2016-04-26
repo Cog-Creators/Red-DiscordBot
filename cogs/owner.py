@@ -118,8 +118,8 @@ class Owner:
             await self.bot.say("That module cannot be found.")
         except NoSetupError:
             await self.bot.say("That module does not have a setup function.")
-        except CogLoadError:
-            log.exception()
+        except CogLoadError as e:
+            log.exception(e)
             traceback.print_exc()
             await self.bot.say("That module could not be loaded. Check your"
                                " logs for more information.")
@@ -243,9 +243,9 @@ class Owner:
             await self.bot.edit_profile(settings.password, avatar=data)
             await self.bot.say("Done.")
             log.debug("changed avatar")
-        except:
+        except Exception as e:
             await self.bot.say("Error, check your logs for more information.")
-            log.exception()
+            log.exception(e)
             traceback.print_exc()
 
     @_set.command(name="token")
