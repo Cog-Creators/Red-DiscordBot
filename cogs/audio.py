@@ -243,7 +243,7 @@ class Audio:
                         if self.sfx_player.is_playing():
                             self.sfx_player.stop()
 
-                        self.sfx_player = self.bot.voice.create_ffmpeg_player(file, use_avconv=self.settings["AVCONV"],options='''-filter:a "volume={}"'''.format(self.settings["VOLUME"]))
+                        self.sfx_player = self.bot.voice.create_ffmpeg_player(file, use_avconv=self.settings["AVCONV"],options='''-filter "volume=volume={}"'''.format(self.settings["VOLUME"]))
                         self.sfx_player.start()
                         while self.sfx_player.is_playing():
                             await asyncio.sleep(.5)
@@ -668,7 +668,7 @@ class Audio:
                 while self.sfx_player.is_playing():
                     await asyncio.sleep(.5)
                 if not self.music_player.is_done(): self.music_player.stop()
-                self.music_player = self.bot.voice.create_ffmpeg_player(path + self.downloader["ID"],use_avconv=self.settings["AVCONV"], options='''-filter:a "volume={}"'''.format(self.settings["VOLUME"]))
+                self.music_player = self.bot.voice.create_ffmpeg_player(path + self.downloader["ID"],use_avconv=self.settings["AVCONV"], options='''-filter "volume=volume={}"'''.format(self.settings["VOLUME"]))
                 self.music_player.paused = False
                 self.music_player.start()
                 if path != "" and self.settings["TITLE_STATUS"]:
