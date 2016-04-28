@@ -243,7 +243,7 @@ class Audio:
                         if self.sfx_player.is_playing():
                             self.sfx_player.stop()
 
-                        self.sfx_player = self.bot.voice.create_ffmpeg_player(file, options='''-filter:a "volume={}"'''.format(self.settings["VOLUME"]))
+                        self.sfx_player = self.bot.voice.create_ffmpeg_player(file, use_avconv=self.settings["AVCONV"],options='''-filter "volume=volume={}"'''.format(self.settings["VOLUME"]))
                         self.sfx_player.start()
                         while self.sfx_player.is_playing():
                             await asyncio.sleep(.5)
@@ -609,6 +609,18 @@ class Audio:
         else:
             await self.bot.say("SoundCloud Client ID has been set")
 
+
+    @audioset.command(name="player")
+    @checks.is_owner()
+    async def player(self):
+        """Toggles between Ffmpeg and Avconv"""
+        self.settings["AVCONV"] = not self.settings["AVCONV"]
+        if self.settings["AVCONV"]:
+            await self.bot.say("Player toggled. You're now using Avconv")
+        else:
+            await self.bot.say("Player toggled. You're now using Ffmpeg")
+        fileIO("data/audio/settings.json", "save", self.settings)
+
     @commands.group(pass_context=True)
     @checks.is_owner()
     async def cache(self, ctx):
@@ -656,7 +668,7 @@ class Audio:
                 while self.sfx_player.is_playing():
                     await asyncio.sleep(.5)
                 if not self.music_player.is_done(): self.music_player.stop()
-                self.music_player = self.bot.voice.create_ffmpeg_player(path + self.downloader["ID"], options='''-filter:a "volume={}"'''.format(self.settings["VOLUME"]))
+                self.music_player = self.bot.voice.create_ffmpeg_player(path + self.downloader["ID"],use_avconv=self.settings["AVCONV"], options='''-filter "volume=volume={}"'''.format(self.settings["VOLUME"]))
                 self.music_player.paused = False
                 self.music_player.start()
                 if path != "" and self.settings["TITLE_STATUS"]:
@@ -951,7 +963,7 @@ def check_folders():
 
 def check_files():
 
-    default = {"VOLUME" : 0.5, "MAX_LENGTH" : 3700, "QUEUE_MODE" : True, "MAX_CACHE" : 0, "SOUNDCLOUD_CLIENT_ID": None, "TITLE_STATUS" : True, "SERVER_SFX_ON" : {}}
+    default = {"VOLUME" : 0.5, "MAX_LENGTH" : 3700, "QUEUE_MODE" : True, "MAX_CACHE" : 0, "SOUNDCLOUD_CLIENT_ID": None, "TITLE_STATUS" : True, "AVCONV" : False, "SERVER_SFX_ON" : {}}
     settings_path = "data/audio/settings.json"
 
     if not os.path.isfile(settings_path):
