@@ -267,15 +267,23 @@ class Owner:
 
     @commands.command()
     @checks.is_owner()
-    async def join(self, invite_url: discord.Invite):
+    async def join(self, invite_url: discord.Invite=None):
         """Joins new server"""
-        if self.bot.user.bot is True:
+        if hasattr(self.bot.user, 'bot') and self.bot.user.bot is True:
+            # Check to ensure they're using updated discord.py
             msg = ("I have a **BOT** tag, so I must be invited with an OAuth2"
-                   " link:\n`https://discordapp.com/oauth2/authorize?&"
-                   "client_id=`__**`MY_CLIENT_ID_HERE`**__`&scope=bot`\n"
-                   "For more information: https://twentysix26.github.io/"
+                   " link:\nFor more information: "
+                   "https://twentysix26.github.io/"
                    "Red-Docs/red_guide_bot_accounts/#bot-invites")
             await self.bot.say(msg)
+            if hasattr(self.bot, 'oauth_url'):
+                await self.bot.whisper("Here's my OAUTH2 link:\n{}".format(
+                    self.bot.oauth_url))
+            return
+
+        if invite_url is None:
+            await self.bot.say("I need a Discord Invite link for the "
+                               "server you want me to join.")
             return
 
         try:

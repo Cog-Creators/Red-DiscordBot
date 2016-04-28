@@ -52,6 +52,7 @@ async def on_ready():
         print("------")
         print("Use this url to bring your bot to a server:")
         url = await get_oauth_url()
+        bot.oauth_url = url
         print(url)
         print("------")
 
