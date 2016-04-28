@@ -11,6 +11,7 @@ import threading
 import datetime
 import glob
 import os
+import time
 
 log = logging.getLogger("red.owner")
 
@@ -162,16 +163,14 @@ class Owner:
 
     @commands.group(name="set", pass_context=True)
     async def _set(self, ctx):
-        """Change global bot settings.
-        """
+        """Changes Red's global settings."""
         if ctx.invoked_subcommand is None:
             await send_cmd_help(ctx)
             return
 
     @_set.command(pass_context=True)
     async def owner(self, ctx):
-        """Sets owner
-        """
+        """Sets owner"""
         if settings.owner != "id_here":
             await self.bot.say("Owner ID has already been set.")
             return
@@ -221,8 +220,7 @@ class Owner:
     async def status(self, ctx, *, status=None):
         """Sets Red's status
 
-        Leaving this empty will clear it.
-        """
+        Leaving this empty will clear it."""
 
         if status:
             status = status.strip()
@@ -310,7 +308,8 @@ class Owner:
     @commands.command()
     async def uptime(self):
         """Shows Red's uptime"""
-        up = str(datetime.timedelta(seconds=self.bot.loop.time()))
+        up = abs(self.bot.uptime - int(time.perf_counter()))
+        up = str(datetime.timedelta(seconds=up))
         await self.bot.say("`Uptime: {}`".format(up))
 
     @commands.command()
