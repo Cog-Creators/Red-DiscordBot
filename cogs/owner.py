@@ -334,10 +334,10 @@ class Owner:
             mod_obj = importlib.import_module(cogname)
             importlib.reload(mod_obj)
             self.bot.load_extension(mod_obj.__name__)
-        except discord.ClientException:
-            raise NoSetupError
         except SyntaxError as e:
             raise CogLoadError(*e.args)
+        except:
+            raise
 
     def _unload_cog(self, cogname, reloading=False):
         if not reloading and cogname == "cogs.owner":
