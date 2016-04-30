@@ -210,10 +210,26 @@ class Owner:
     async def name(self, ctx, *, name):
         """Sets Red's name"""
         name = name.strip()
-        if name == "":
+        if name != "":
+            await self.bot.edit_profile(settings.password, username=name)
+            await self.bot.say("Done.")
+        else:
             await send_cmd_help(ctx)
-        await self.bot.edit_profile(settings.password, username=name)
-        await self.bot.say("Done.")
+
+    @_set.command(pass_context=True, no_pm=True)
+    @checks.is_owner()
+    async def nickname(self, ctx, *, nickname):
+        """Sets Red's nickname"""
+        nickname = nickname.strip()
+        if nickname != "":
+            try:
+                await self.bot.change_nickname(ctx.message.server.me, nickname)
+                await self.bot.say("Done.")
+            except discord.Forbidden:
+                await self.bot.say("I cannot do that, I lack the "
+                    "\"Change Nickname\" permission.")
+        else:
+            await send_cmd_help(ctx)
 
     @_set.command(pass_context=True)
     @checks.is_owner()
