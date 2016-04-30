@@ -298,7 +298,9 @@ def load_cogs():
             if not get_answer():
                 registry[extension] = False
                 continue
-        registry[extension] = True
+            registry[extension] = True
+        if not registry[extension]:
+            continue
         try:
             owner_cog._load_cog(extension)
         except Exception as e:
