@@ -53,7 +53,6 @@ class Economy:
         self.payday_register = {}
         self.slot_register = {}
         self.allin_register = {}
-        self.bj_register = {}
         self.coin_register = {}
         self.dice_register = {}
         self.heist = []
