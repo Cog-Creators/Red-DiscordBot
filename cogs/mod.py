@@ -6,6 +6,7 @@ from __main__ import send_cmd_help, settings
 import os
 import logging
 import json
+import asyncio
 
 class Mod:
     """Moderation tools."""
@@ -126,14 +127,17 @@ class Mod:
                     async for x in self.bot.logs_from(message.channel, limit=100, before=message):
                         if number == 0: 
                             await self.bot.delete_message(cmdmsg)
+                            await asyncio.sleep(0.25)
                             return
                         if text in x.content:
                             await self.bot.delete_message(x)
+                            await asyncio.sleep(0.25)
                             number -= 1
                         new = True
                         message = x
                     if not new or number == 0: 
                         await self.bot.delete_message(cmdmsg)
+                        await asyncio.sleep(0.25)
                         break
         except discord.errors.Forbidden:
             await self.bot.say("I need permissions to manage messages in this channel.")
@@ -156,14 +160,17 @@ class Mod:
                     async for x in self.bot.logs_from(message.channel, limit=100, before=message):
                         if number == 0: 
                             await self.bot.delete_message(cmdmsg)
+                            await asyncio.sleep(0.25)
                             return
                         if x.author.id == user.id:
                             await self.bot.delete_message(x)
+                            await asyncio.sleep(0.25)
                             number -= 1
                         new = True
                         message = x
                     if not new or number == 0: 
                         await self.bot.delete_message(cmdmsg)
+                        await asyncio.sleep(0.25)
                         break
         except discord.errors.Forbidden:
             await self.bot.say("I need permissions to manage messages in this channel.")
@@ -181,6 +188,7 @@ class Mod:
             if number > 0 and number < 10000:
                 async for x in self.bot.logs_from(channel, limit=number+1):
                     await self.bot.delete_message(x)
+                    await asyncio.sleep(0.25)
         except discord.errors.Forbidden:
             await self.bot.say("I need permissions to manage messages in this channel.")
 
