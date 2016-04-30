@@ -398,12 +398,12 @@ class Economy:
                     if author.id in self.coin_register:
                         if abs(self.coin_register[author.id] - int(time.perf_counter()))  >= self.settings["COIN_TIME"]:               
                             self.coin_register[author.id] = int(time.perf_counter())
-                            await self.coin_flip(ctx.message, bid)
+                            await self.coin_flip(ctx.message, choice, bid)
                         else:
                             await self.bot.say("Coin flip machine is still cooling off! Wait {} seconds between each flip.".format(self.settings["COIN_TIME"]))
                     else:
                         self.coin_register[author.id] = int(time.perf_counter())
-                        await self.coin_flip(ctx.message, bid)
+                        await self.coin_flip(ctx.message, choice, bid)
                 else:
                     await self.bot.say("{} You need to pick heads or tails.".format(author.mention))
             else:
