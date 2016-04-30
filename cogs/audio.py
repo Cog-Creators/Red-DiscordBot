@@ -86,15 +86,15 @@ class Audio:
                     self.current = -1
                     self.playlist = []
                     self.queue.append(link)
-                    self.resolve_link(link)
                     self.music_player.paused = False
                     if not self.sfx_player.is_done(): self.sfx_player.stop()
                     if not self.music_player.is_done(): self.music_player.stop()
                     await self.bot.say("Playing requested link...")
                 else:
+                    self.playlist = []
+                    self.current = -1
                     if not self.queue: await self.bot.say("The link has been put into queue.")
                     self.queue.append(link)
-                    self.resolve_link(link)
             else:
                 await self.bot.say("You need to add a link or search terms.")
 
@@ -122,21 +122,19 @@ class Audio:
         await self.start_playlist(ctx, name, random=True)
 
     async def start_playlist(self, ctx, name, random=None):
+        if self.downloader["DOWNLOADING"]:
+            await self.bot.say("I'm already downloading a track.")
+            return
         msg = ctx.message
         name += ".txt"
         if await self.check_voice(msg.author, msg):
             if os.path.isfile("data/audio/playlists/" + name):
+                self.queue = []
                 self.current = -1
                 self.playlist = fileIO("data/audio/playlists/" + name, "load")["playlist"]
                 if random: shuffle(self.playlist)
                 self.music_player.paused = False
-                if not self.queue:
-                    if self.music_player.is_playing():
-                        await self.bot.say("Starting {0} playlist after the current song".format(name[:-4]))
-                    else:
-                        await self.bot.say("Starting {0} playlist".format(name[:-4]))
-                else:
-                    await self.bot.say("Playlist {0} will begin playing once the queue finishes".format(name[:-4]))
+                if self.music_player.is_playing(): self.music_player.stop()
             else:
                 await self.bot.say("There's no playlist with that name.")
 
@@ -172,7 +170,7 @@ class Audio:
                     clean_skip_votes.append(m_id)
             self.skip_votes = clean_skip_votes
 
-            votes_needed = (len(current_users)-1) // (100/self.settings["VOTE_PERC"]) + 1
+            votes_needed = (len(current_users)-1) // 2 + 1
 
             if len(self.skip_votes)-1 >= votes_needed:
                 self.music_player.paused = False
@@ -203,9 +201,11 @@ class Audio:
                     files.extend(glob.glob("data/audio/localtracks/" + name + "/*.flac"))
                 if await self.is_alone_or_admin(msg):
                     if await self.check_voice(msg.author, ctx.message):
+                        self.queue = []
                         self.current = -1
                         self.playlist = files
                         self.music_player.paused = False
+                        if self.music_player.is_playing(): self.music_player.stop()
                 else:
                     await self.bot.say("I'm in queue mode. Controls are disabled if you're in a room with multiple people.")
             else:
@@ -227,11 +227,13 @@ class Audio:
         if not self.settings["SERVER_SFX_ON"][server.id]:
             await self.bot.say("Sound effects are not enabled on this server")
             return
+
         msg = ctx.message
         localsfx = self.get_local_sfx()
         if localsfx and ("data/audio/sfx/" not in name and "\\" not in name):
             if name in localsfx.keys():
                 file = "data/audio/sfx/{}{}".format(name,localsfx[name])
+
                 if await self.check_voice(msg.author, ctx.message):
                     try:
                         if self.music_player.is_playing():
@@ -309,7 +311,7 @@ class Audio:
         """Previous song
         """
         msg = ctx.message
-        if self.music_player.is_playing() and self.playlist and not self.queue:
+        if self.music_player.is_playing() and self.playlist:
             if await self.is_alone_or_admin(msg):
                 self.current -= 2
                 if self.current == -1:
@@ -353,24 +355,27 @@ class Audio:
             queue_list = await self.queue_titles()
             await self.bot.say("Videos in queue: \n" + queue_list + "\n\nType queue <link> to add a link or search terms to the queue.")
         elif await self.check_voice(ctx.message.author, ctx.message):
-            link = " ".join(link)
-            if "http" not in link or "." not in link:
-                link = "[SEARCH:]" + link
-            else:
-                if not self.is_playlist_valid([link]):
-                    await self.bot.say("Invalid link.")
-                    return
-            self.queue.append(link)
-            self.resolve_link(link)
-            msg = ctx.message
-            result = await self.get_song_metadata(link)
-            try: # In case of invalid SOUNDCLOUD ID
-                if result["title"] != []:
-                    await self.bot.say("{} has been put into the queue by {}.".format(result["title"], msg.author))
+            if not self.playlist:
+                link = " ".join(link)
+                if "http" not in link or "." not in link:
+                    link = "[SEARCH:]" + link
                 else:
-                    await self.bot.say("The song has been put into the queue by {}, however it may error.".format(msg.author))
-            except:
-                await self.bot.say("A song has been put into the queue by {}.".format(msg.author))
+                    if not self.is_playlist_valid([link]):
+                        await self.bot.say("Invalid link.")
+                        return
+                self.queue.append(link)
+                msg = ctx.message
+                result = await self.get_song_metadata(link)
+                try: # In case of invalid SOUNDCLOUD ID
+                    if result["title"] != []:
+                        await self.bot.say("{} has been put into the queue by {}.".format(result["title"], msg.author))
+                    else:
+                        await self.bot.say("The song has been put into the queue by {}, however it may error.".format(msg.author))
+                except:
+                    await self.bot.say("A song has been put into the queue by {}.".format(msg.author))
+
+            else:
+                await self.bot.say("I'm already playing a playlist.")
 
     async def is_alone_or_admin(self, message): #Direct control. fix everything
         author = message.author
@@ -554,29 +559,14 @@ class Audio:
         fileIO("data/audio/settings.json", "save", self.settings)
 
     @audioset.command()
-    async def votes(self, percentage : float):
-        """Percentage threshold that the number of votes must exceed to skip a song
-        
-        Example: 50 is majority
-        """
-        if percentage > 100 or percentage < 0:
-            await self.bot.say("Percentage must be between 0 and 100")
-            return
-        self.settings["VOTE_PERC"] = percentage
-        await self.bot.say("Now more than " + str(percentage) + "% of listeners must vote in order to skip a song.")
-        fileIO("data/audio/settings.json", "save", self.settings)
-
-    @audioset.command()
-    async def volume(self, level : float=-1):
-        """Sets the volume (0-100)"""
-        if level == -1:
-            await self.bot.say("Volume is currently set at " + str(100*self.settings["VOLUME"]) + ".")
-        elif level >= 0 and level <= 100:
-            self.settings["VOLUME"] = level/100
+    async def volume(self, level : float):
+        """Sets the volume (0-1)"""
+        if level >= 0 and level <= 1:
+            self.settings["VOLUME"] = level
             await self.bot.say("Volume is now set at " + str(level) + ". It will take effect after the current track.")
             fileIO("data/audio/settings.json", "save", self.settings)
         else:
-            await self.bot.say("Volume must be between 0 and 100. Example: 2.4")
+            await self.bot.say("Volume must be between 0 and 1. Example: 0.40")
 
     @audioset.command(name="sfx", pass_context=True, no_pm=True)
     async def _sfx(self, ctx):
@@ -619,7 +609,8 @@ class Audio:
         else:
             await self.bot.say("SoundCloud Client ID has been set")
 
-    @audioset.command()
+
+    @audioset.command(name="player")
     @checks.is_owner()
     async def player(self):
         """Toggles between Ffmpeg and Avconv"""
@@ -657,20 +648,6 @@ class Audio:
         for f in total:
             size += f
         return int(size / (1024*1024.0))
-
-    def resolve_link(self, link):
-        t = threading.Thread(target=self.resolve_task, args=(link,))
-        t.start()
- 
-    def resolve_task(self, link):
-        yt = youtube_dl.YoutubeDL(youtube_dl_options)
-        st = "[SEARCH:]"
-        resolved = "https://youtube.com/watch?v=" + yt.extract_info(link[len(st):], download=False)["entries"][0]["id"]
-        try:
-            index = self.queue.index(link)
-            self.queue[index] = resolved
-        except:
-            pass
 
     async def play_video(self, link):
         self.downloader = {"DONE" : False, "TITLE" : False, "ID" : False, "URL": False, "DURATION" : False, "DOWNLOADING" : False}
@@ -955,7 +932,7 @@ class Audio:
             url = "http://api.soundcloud.com/resolve.json?url={0}&client_id={1}".format(song_url, self.settings["SOUNDCLOUD_CLIENT_ID"])
             result = await self.get_json(url)
         else:
-            result = {"title":song_url}
+            result = {"title": "A song "}
         return result
 
 class EmptyPlayer(): #dummy player
@@ -985,7 +962,8 @@ def check_folders():
             os.makedirs(folder)
 
 def check_files():
-    default = {"VOLUME" : 0.5, "MAX_LENGTH" : 3700, "QUEUE_MODE" : True, "MAX_CACHE" : 0, "SOUNDCLOUD_CLIENT_ID": None, "TITLE_STATUS" : True, "SERVER_SFX_ON" : {}, "VOTE_PERC" : 50, "AVCONV" : False}
+
+    default = {"VOLUME" : 0.5, "MAX_LENGTH" : 3700, "QUEUE_MODE" : True, "MAX_CACHE" : 0, "SOUNDCLOUD_CLIENT_ID": None, "TITLE_STATUS" : True, "AVCONV" : False, "SERVER_SFX_ON" : {}}
     settings_path = "data/audio/settings.json"
 
     if not os.path.isfile(settings_path):
