@@ -252,6 +252,50 @@ class Mod:
         else:
             await self.bot.say("User is not in whitelist.")
 
+    @whitelist.command(name="show", pass_context=True)
+    async def _whitelist_show(self, ctx):
+        """Shows current whitelisted users"""
+        whtUsers = ''
+        unknown = []
+        whtList = fileIO("data/mod/whitelist.json", "load")
+        if whtList == []:
+            await self.bot.say("There are no whitelisted people.")
+        else:
+            for i in whtList:
+                member = str(discord.utils.get(self.bot.get_all_members(), id=str(i)))
+                if member is not None: #if user can be found
+                    whtUsers += member + ', '
+                elif member is None: #user not found added to unknown list
+                    unknown.append(i)
+            whtUsers = whtUsers[:-2] #remove the last ', '
+            await self.bot.say("The following users are whitelisted: " + whtUsers)
+        if unknown != []: #if there are unknown user ID's, warn the user
+            await self.bot.say("There are users on the whitelist that could not be found on the servers. Would you like to delete them? (yes/no)")
+            response = await self.bot.wait_for_message(author=ctx.message.author)
+            response = response.content.lower().strip()
+            if response == "yes" or response == "y":
+                for i in unknown:
+                    self.whitelist_list.remove(i)
+                fileIO("data/mod/whitelist.json", "save", self.whitelist_list)
+                await self.bot.say("Users have been removed from whitelist.")
+            else:
+                await self.bot.say("Alright, I'll leave them be.")
+
+    @whitelist.command(name="clear", pass_context=True)
+    async def _whitelist_clear(self, ctx):
+        """Resets the whitelist to a blank state"""
+        whtList = fileIO("data/mod/whitelist.json", "load")
+        await self.bot.say("Are you sure you want to clear the whitelist? Everyone will be able to use Red that way. (yes/no)")
+        response = await self.bot.wait_for_message(author=ctx.message.author)
+        response = response.content.lower().strip()
+        if response == "yes" or response == "y":
+            for i in whtList:
+                self.whitelist_list.remove(i)
+            fileIO("data/mod/whitelist.json", "save", self.whitelist_list)
+            await self.bot.say("Whitelist is now clean. All users can use Red")
+        else:
+            await self.bot.say("Understood. Leaving the whitelist intact")
+
     @commands.group(pass_context=True, no_pm=True)
     @checks.admin_or_permissions(manage_channels=True)
     async def ignore(self, ctx):
