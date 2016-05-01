@@ -87,19 +87,19 @@ class Alias:
             fileIO("data/alias/aliases.json", "save", self.aliases)
         await self.bot.say("Alias '{}' deleted.".format(command))
 
-    @alias.command(name="list", pass_context=True)
+    @alias.command(name="list", pass_context=True, no_pm=True)
     async def _alias_list(self, ctx):
         server = ctx.message.server
         if server.id in self.aliases:
             message = "```Alias list:\n"
             for alias in sorted(self.aliases[server.id]):
                 if len(message) + len(alias) + 3 > 2000:
-                    await self.bot.say(message)
+                    await self.bot.whisper(message)
                     message = "```\n"
                 message += "\t{}\n".format(alias)
             if message != "```Alias list:\n":
                 message += "```"
-                await self.bot.say(message)
+                await self.bot.whisper(message)
             else:
                 await self.bot.say("There are no aliases on this server.")
 
