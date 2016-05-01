@@ -83,7 +83,7 @@ class Alias:
             fileIO("data/alias/aliases.json", "save", self.aliases)
         await self.bot.say("Alias '{}' deleted.".format(command))
 
-    @commands.command(pass_context=True)
+    @commands.command(pass_context=True, no_pm=True)
     async def aliaslist(self, ctx):
         server = ctx.message.server
         if server.id in self.aliases:
@@ -95,7 +95,7 @@ class Alias:
                 message += "\t{}\n".format(alias)
             if len(message) > 4:
                 message += "```"
-                await self.bot.say(message)
+                await self.bot.whisper(message)
 
     async def check_aliases(self, message):
         if message.author.id == self.bot.user.id or \
