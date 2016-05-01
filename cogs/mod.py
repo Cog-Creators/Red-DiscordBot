@@ -84,18 +84,19 @@ class Mod:
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(manage_nicknames=True)
-    async def rename(self, ctx, user : discord.Member, *, nickname):
-        """Changes user's nickname"""
+    async def rename(self, ctx, user : discord.Member, *, nickname=""):
+        """Changes user's nickname
+
+        Leaving the nickname empty will remove it."""
         nickname = nickname.strip()
-        if nickname != "":
-            try:
-                await self.bot.change_nickname(user, nickname)
-                await self.bot.say("Done.")
-            except discord.Forbidden:
-                await self.bot.say("I cannot do that, I lack the "
-                    "\"Manage Nicknames\" permission.")
-        else:
-            await send_cmd_help(ctx)
+        if nickname == "":
+            nickname = None
+        try:
+            await self.bot.change_nickname(user, nickname)
+            await self.bot.say("Done.")
+        except discord.Forbidden:
+            await self.bot.say("I cannot do that, I lack the "
+                "\"Manage Nicknames\" permission.")
 
     @commands.group(pass_context=True, no_pm=True)
     @checks.mod_or_permissions(manage_messages=True)

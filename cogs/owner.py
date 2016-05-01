@@ -218,18 +218,19 @@ class Owner:
 
     @_set.command(pass_context=True, no_pm=True)
     @checks.is_owner()
-    async def nickname(self, ctx, *, nickname):
-        """Sets Red's nickname"""
+    async def nickname(self, ctx, *, nickname=""):
+        """Sets Red's nickname
+
+        Leaving this empty will remove it."""
         nickname = nickname.strip()
-        if nickname != "":
-            try:
-                await self.bot.change_nickname(ctx.message.server.me, nickname)
-                await self.bot.say("Done.")
-            except discord.Forbidden:
-                await self.bot.say("I cannot do that, I lack the "
-                    "\"Change Nickname\" permission.")
-        else:
-            await send_cmd_help(ctx)
+        if nickname == "":
+            nickname = None
+        try:
+            await self.bot.change_nickname(ctx.message.server.me, nickname)
+            await self.bot.say("Done.")
+        except discord.Forbidden:
+            await self.bot.say("I cannot do that, I lack the "
+                "\"Change Nickname\" permission.")
 
     @_set.command(pass_context=True)
     @checks.is_owner()
