@@ -9,6 +9,8 @@ import os
 import time
 import logging
 
+log = logging.getLogger('red.economy')
+
 slot_payouts = """Slot machine payouts:
     :two: :two: :six: Bet * 5000
     :four_leaf_clover: :four_leaf_clover: :four_leaf_clover: +1000
@@ -45,12 +47,6 @@ class Economy:
         server = ctx.message.server
         if server.id not in self.bank:
             self.bank[server.id] = {}
-        if user.id in self.bank:
-            self.bank[server.id][user.id] = self.bank[user.id]
-            del self.bank[user.id]
-            await self.bot.say("Your account was successfully recovered. You"
-                               " have a balance of {}".format(
-                                   self.bank[server.id][user.id]['balance']))
         elif user.id not in self.bank[server.id]:
             self.bank[server.id][user.id] = {"name": user.name, "balance": 100}
             fileIO("data/economy/bank.json", "save", self.bank)
@@ -301,7 +297,14 @@ class Economy:
         fileIO("data/economy/settings.json", "save", self.settings)
 
     def account_check(self, sid, id):
+        log.debug('sid: {} id: {}'.format(sid, id))
         if sid in self.bank and id in self.bank[sid]:
+            return True
+        elif id in self.bank:
+            if sid not in self.bank:
+                self.bank[sid] = {}
+            self.bank[sid][id] = self.bank[id]
+            fileIO("data/economy/bank.json", "save", self.bank)
             return True
         else:
             return False
