@@ -330,6 +330,48 @@ class Owner:
         else:
             await self.bot.say("Ok I'll stay here then.")
 
+    @commands.command(pass_context=True)
+    @checks.is_owner()
+    async def servers(self, ctx):
+        """Lists and allows to leave servers"""
+        owner = ctx.message.author
+        servers = list(self.bot.servers)
+        server_list = {}
+        msg = ""
+        for i in range(0, len(servers)):
+            server_list[str(i)] = servers[i]
+            msg += "{}: {}\n".format(str(i), servers[i].name)
+        msg += "\nTo leave a server just type its number."
+        await self.bot.say(msg)
+        while msg != None:
+            msg = await self.bot.wait_for_message(author=owner, timeout=15)
+            if msg != None:
+                msg = msg.content.strip()
+                if msg in server_list.keys():
+                    await self.leave_confirmation(server_list[msg], owner, ctx)
+                else:
+                    break
+            else:
+                break
+
+    async def leave_confirmation(self, server, owner, ctx):
+        if not ctx.message.channel.is_private:
+            current_server = ctx.message.server
+        else:
+            current_server = None
+        answers = ("yes", "y")
+        await self.bot.say("Are you sure you want me "
+                    "to leave {}? (yes/no)".format(server.name))
+        msg = await self.bot.wait_for_message(author=owner, timeout=15)
+        if msg is None:
+            await self.bot.say("I guess not.")
+        elif msg.content.lower().strip() in answers:
+            await self.bot.leave_server(server)
+            if server != current_server:
+                await self.bot.say("Done.")
+        else:
+            await self.bot.say("Alright then.")
+
     @commands.command()
     async def uptime(self):
         """Shows Red's uptime"""
