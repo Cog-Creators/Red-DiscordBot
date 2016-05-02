@@ -570,10 +570,10 @@ class Audio:
     async def volume(self, level : float=-1):
         """Sets the volume (0-100)"""
         if level == -1:
-            await self.bot.say("Volume is currently set at " + str(100*self.settings["VOLUME"]) + ".")
+            await self.bot.say("Volume is currently set at " + str(100*self.settings["VOLUME"]) + "%.")
         elif level >= 0 and level <= 100:
             self.settings["VOLUME"] = level/100
-            await self.bot.say("Volume is now set at " + str(level) + ". It will take effect after the current track.")
+            await self.bot.say("Volume is now set at " + str(level) + "%. It will take effect after the current track.")
             fileIO("data/audio/settings.json", "save", self.settings)
         else:
             await self.bot.say("Volume must be between 0 and 100. Example: 2.4")
