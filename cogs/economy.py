@@ -94,7 +94,7 @@ class Economy:
             if self.account_check(user.id):
                 await self.bot.say("{} Your balance is: {}".format(user.mention, str(self.check_balance(user.id))))
             else:
-                await self.bot.say("{} You don't have an account at the {} bank. Type !register to open one.".format(user.mention, self.bot.user.name))
+                await self.bot.say("{} You don't have an account at the {} bank. Type !bank register to open one.".format(user.mention, self.bot.user.name))
         else:
             if self.account_check(user.id):
                 balance = self.check_balance(user.id)
