@@ -104,6 +104,14 @@ class Audio:
             url = ""
             if self.downloader["URL"]: url = 'Link : "' + self.downloader["URL"] + '"'
             await self.bot.say(self.downloader["TITLE"] + "\n" + url)
+        elif "localtracks" in self.downloader["TITLE"]:
+            title = self.downloader["ID"]
+            title = title[23:]
+            if ".flac" in title:
+                title = title[:-5]
+            else:
+                title = title[:-4]
+            await self.bot.say("Playing from local file: '" + title + "'")
         else:
             await self.bot.say("No title available.")
 
