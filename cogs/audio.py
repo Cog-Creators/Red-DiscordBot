@@ -78,6 +78,22 @@ class EmptyPlayer:  # dummy player
         return True
 
 
+class Action:
+    def __init__(self, priority, **kwargs):
+        self.priority = priority
+        self.__dict__ = kwargs
+        self.is_running = False
+
+    def run(self, player, queue):
+        pass
+
+    def on_finish(self, player, queue):
+        """Should return a new Action object w/ priority or None
+
+        Example: return (0, Action)"""
+        return None
+
+
 class Song:
     def __init__(self, **kwargs):
         self.title = kwargs.get('title')
@@ -136,6 +152,8 @@ class Audio:
         author = ctx.message.author
         voice_channel = author.voice_channel
 
+        # Checking already connected, will join if not
+
         if not self.voice_connected(server):
             try:
                 can_connect = self.has_connect_perm(author, server)
@@ -152,15 +170,18 @@ class Audio:
             if self.voice_client(server).channel != voice_channel:
                 pass  # TODO
 
+        # Checking if playing in current server
+
         if self.already_playing(server):
             await self.bot.say("I'm already playing a song on this server!")
+            return  # TODO Possibly execute queue?
 
-        if server.id in self.downloaders:
-            if not self.downloaders[server.id].done:
-                await self.bot.say("I'm already downloading a song!")
-                return
-            else:
-                pass
+        # If not playing, spawn a downloader if it doesn't exist and begin
+        #   downloading the next song
+
+        if self.currently_downloading(server):
+            await self.bot.say("I'm already downloading a file!")
+            return
 
     def already_playing(self, server):
         if not self.check_voice_connected(server):
@@ -172,6 +193,12 @@ class Audio:
         if not self.voice_client(server).player.is_playing():
             return False
         return True
+
+    def currently_downloading(self, server):
+        if server.id in self.downloaders:
+            if not self.downloaders[server.id].done:
+                return True
+        return False
 
     def has_connect_perm(self, author, server):
         channel = author.voice_channel
