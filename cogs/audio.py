@@ -1,6 +1,5 @@
 import discord
 from discord.ext import commands
-import asyncio
 import threading
 import os
 from random import choice as rndchoice
@@ -15,6 +14,9 @@ import aiohttp
 import json
 import time
 import logging
+import collections
+import copy
+import asyncio
 
 log = logging.getLogger("red.audio")
 
@@ -64,6 +66,10 @@ class AuthorNotConnected(NotConnected):
     pass
 
 
+class VoiceNotConnected(NotConnected):
+    pass
+
+
 class EmptyPlayer:  # dummy player
     def __init__(self):
         self.paused = False
@@ -78,20 +84,19 @@ class EmptyPlayer:  # dummy player
         return True
 
 
-class Action:
-    def __init__(self, priority, **kwargs):
-        self.priority = priority
-        self.__dict__ = kwargs
-        self.is_running = False
+class deque(collections.deque):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-    def run(self, player, queue):
-        pass
+    def peek(self):
+        ret = self.pop()
+        self.append(ret)
+        return copy.deepcopy(ret)
 
-    def on_finish(self, player, queue):
-        """Should return a new Action object w/ priority or None
-
-        Example: return (0, Action)"""
-        return None
+    def peekleft(self):
+        ret = self.popleft()
+        self.appendleft(ret)
+        return copy.deepcopy(ret)
 
 
 class Song:
@@ -103,16 +108,21 @@ class Song:
 
 
 class Downloader(threading.Thread):
-    def __init__(self, url, max_duration):
+    def __init__(self, url, max_duration, download=False,
+                 cache_path="data/audio/cache"):
         self.url = url
         self.max_duration = max_duration
         self.done = False
         self.song = None
         self.failed = False
+        self._download = download
+        self._yt = youtube_dl.YoutubeDL(youtube_dl_options)
 
     def run(self):
         try:
-            self.download()
+            self.get_info()
+            if self._download:
+                self.download()
         except:
             self.done = True
             self.failed = True
@@ -120,22 +130,23 @@ class Downloader(threading.Thread):
             self.done = True
 
     def download(self):
-        yt = youtube_dl.YoutubeDL(youtube_dl_options)
-        if "[SEARCH:]" not in self.url:
-            video = yt.extract_info(self.url, download=False)
-        else:
-            self.url = "https://youtube.com/watch?v={}".format(
-                yt.extract_info(self.url, download=False)["entries"][0]["id"])
-            video = yt.extract_info(self.url, download=False)
-
-        self.song = Song(**video)
-
-        if video['duration'] > self.max_duration:
+        if self.song.duration > self.max_duration:
             return
 
         if not os.path.isfile('data/audio/cache' + self.song.id):
-            video = yt.extract_info(self.url)
+            video = self._yt.extract_info(self.url)
             self.song = Song(**video)
+
+    def get_info(self):
+        if "[SEARCH:]" not in self.url:
+            video = self._yt.extract_info(self.url, download=False)
+        else:
+            self.url = "https://youtube.com/watch?v={}".format(
+                self._yt.extract_info(self.url,
+                                      download=False)["entries"][0]["id"])
+            video = self._yt.extract_info(self.url, download=False)
+
+        self.song = Song(**video)
 
 
 class Audio:
@@ -143,7 +154,82 @@ class Audio:
 
     def __init__(self, bot):
         self.bot = bot
+        self.queue = {}  # add deque's, repeat
         self.downloaders = {}  # sid: object
+        self.settings = fileIO("data/audio/settings.json", 'load')
+        self.cache_path = "data/audio/cache"
+
+    async def _add_to_queue(self, server, url):
+        if server.id not in self.queue:
+            self.queue[server.id] = {"REPEAT": False, "VOICE_CHANNEL_ID": None,
+                                     "QUEUE": deque(), "TEMP_QUEUE": deque()}
+        self.queue[server.id]["QUEUE"].append(url)
+
+    def _create_ffmpeg_player(self, server, filename):
+        """This function will guarantee we have a valid voice client,
+            even if one doesn't exist previously."""
+        voice_client_id = self.queue[server.id]["VOICE_CHANNEL_ID"]
+        voice_client = self.bot.voice_client_in(server)
+
+        if voice_client is None:
+            to_connect = self.bot.get_channel(voice_client_id)
+            if to_connect is None:
+                raise VoiceNotConnected("Okay somehow we're not connected and"
+                                        " we have no valid channel to"
+                                        " reconnect to. In other words...LOL"
+                                        " REKT.")
+            self.bot.join_voice_channel(to_connect)  # SHIT
+        elif voice_client.channel.id != voice_client_id:
+            # This was decided at 3:45 EST in #advanced-testing by 26
+            self.queue[server.id]["VOICE_CHANNEL_ID"] = voice_client.channel.id
+
+        # Okay if we reach here we definitively have a working voice_client
+
+        song_filename = os.path.join(self.cache_path, filename)
+        use_avconv = self.settings["AVCONV"]
+        volume = self.settings["VOLUME"]
+        options = '-filter "volume=volume={}"'.format(volume)
+
+        voice_client.audio_player = voice_client.create_ffmpeg_player(
+            song_filename, use_avconv=use_avconv, options=options)
+
+        return voice_client  # Just for ease of use, it's modified in-place
+
+    async def _play(self, sid, url):
+        if type(sid) is not discord.Server:
+            server = self.bot.get_server(sid)
+        else:
+            server = sid
+        # We can assume by this point that there is definitely a player
+        max_length = self.settings["MAX_LENGTH"]
+        if server.id not in self.downloaders:  # We don't have a downloader
+            self.downloaders[server.id] = Downloader(url, max_length)
+
+        if self.downloaders[server.id].url != url:  # Our downloader is old
+            # I'm praying to Jeezus that we don't accidentally lose a running
+            #   Downloader
+            self.downloaders[server.id] = Downloader(url, max_length)
+
+        while not self.downloaders[server.id].done:  # Getting info w/o DL
+            await asyncio.sleep(0.5)
+
+        song = self.downloaders[server.id].song
+
+        # Now we check to see if we have a cache hit
+        cache_location = os.path.join(self.cache_path, song.id)
+        if not os.path.exists(cache_location):
+            self.downloaders[server.id] = Downloader(url, download=True)
+            self.downloaders[server.id].start()
+
+            while not self.downloaders[server.id].done:
+                await asyncio.sleep(0.5)
+
+            song = self.downloaders[server.id].song
+
+        voice_client = self._create_ffmpeg_player(server, song.id)
+        # That ^ creates the audio_player property
+
+        voice_client.audio_player.start()
 
     @commands.command(pass_context=True)
     async def play(self, ctx, url):
@@ -183,16 +269,22 @@ class Audio:
             await self.bot.say("I'm already downloading a file!")
             return
 
+        self._add_to_queue(server, url)
+
     def already_playing(self, server):
         if not self.check_voice_connected(server):
             return False
         if self.voice_client(server) is None:
             return False
-        if not hasattr(self.voice_client(server), 'player'):
+        if not hasattr(self.voice_client(server), 'audio_player'):
             return False
         if not self.voice_client(server).player.is_playing():
             return False
         return True
+
+    async def cache_manager(self):
+        # cache size: max([50, n * log(n)])
+        pass
 
     def currently_downloading(self, server):
         if server.id in self.downloaders:
@@ -208,6 +300,42 @@ class Audio:
             return True
         return False
 
+    async def queue_manager(self, sid):
+        """This function assumes that there's something in the queue for us to
+            play"""
+        server = self.bot.get_server(sid)
+        voice_client = self.bot.voice_client_in(server)
+
+        if voice_client is None or not hasattr(voice_client, 'audio_player'):
+            # Preface player property with cog name
+            self._create_ffmpeg_player(server)
+
+        # Can assume we have a valid player at voice_client.audio_player
+
+        # This is a reference, or should be at least
+        temp_queue = self.queue[server.id]["TEMP_QUEUE"]
+        queue = self.queue[server.id]["QUEUE"]
+        repeat = self.queue[server.id]["REPEAT"]
+
+        assert temp_queue is self.queue[server.id]["TEMP_QUEUE"]
+        assert queue is self.queue[server.id]["QUEUE"]
+        assert repeat is self.queue[server.id]["REPEAT"]
+
+        if len(temp_queue) > 0:  # Fake queue for irdumb's temp playlist songs
+            await self._play(temp_queue.popleft())
+        else:  # We're in the normal queue
+            url = self.queue.popleft()
+            await self._play(sid, url)
+            if repeat:
+                self.queue.appendleft(url)
+
+    async def queue_scheduler(self):
+        for sid in self.queue:
+            if len(self.queue[sid]["QUEUE"]) == 0 and \
+                    len(self.queue[sid]["TEMP_QUEUE"]) == 0:
+                continue
+            self.bot.loop.create_task(self.queue_manager(sid))
+
     def voice_client(self, server):
         return self.bot.voice_client_in(server)
 
@@ -215,6 +343,15 @@ class Audio:
         if self.bot.is_voice_connected(server):
             return True
         return False
+
+    async def voice_state_update(self, before, after):
+        # Member objects
+        server = after.server
+        if server.id not in self.queue:
+            return
+        # TODO
+        #   Channel changing (by drag n drop)
+        #   Muting
 
 
 def check_folders():
@@ -271,5 +408,8 @@ def setup(bot):
             "You need to install ffmpeg and opus. See \"https://github.com/"
             "Twentysix26/Red-DiscordBot/wiki/Requirements\"")
         return
-    n = Audio(bot)
+    n = Audio(bot)  # Praise 26
     bot.add_cog(n)
+    bot.add_listener(n.voice_state_update, 'on_voice_state_update')
+    bot.loop.create_task(n.queue_scheduler())
+    bot.loop.create_task(n.cache_manager())
