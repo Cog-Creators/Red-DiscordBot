@@ -1,13 +1,13 @@
 import discord
 from discord.ext import commands
-import threading
+import multiprocessing
 import os
 from random import choice as rndchoice
 from random import shuffle
 from cogs.utils.dataIO import fileIO
 from cogs.utils import checks
-from __main__ import send_cmd_help
-from __main__ import settings as bot_settings
+from red import send_cmd_help
+from red import settings as bot_settings
 import glob
 import re
 import aiohttp
@@ -101,22 +101,24 @@ class deque(collections.deque):
 
 class Song:
     def __init__(self, **kwargs):
-        self.title = kwargs.get('title')
-        self.id = kwargs.get('title')
-        self.url = kwargs.get('url')
-        self.duration = kwargs.get('duration')
+        self.__dict__ = kwargs
+        self.title = kwargs.pop('title', None)
+        self.id = kwargs.pop('id', None)
+        self.url = kwargs.pop('url', None)
+        self.duration = kwargs.pop('duration', "")
 
 
-class Downloader(threading.Thread):
+class Downloader(multiprocessing.Process):
     def __init__(self, url, max_duration, download=False,
-                 cache_path="data/audio/cache"):
+                 cache_path="data/audio/cache", *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.url = url
         self.max_duration = max_duration
         self.done = False
         self.song = None
         self.failed = False
         self._download = download
-        self._yt = youtube_dl.YoutubeDL(youtube_dl_options)
+        self._yt = None
 
     def run(self):
         try:
@@ -138,6 +140,8 @@ class Downloader(threading.Thread):
             self.song = Song(**video)
 
     def get_info(self):
+        if self._yt is None:
+            self._yt = youtube_dl.YoutubeDL(youtube_dl_options)
         if "[SEARCH:]" not in self.url:
             video = self._yt.extract_info(self.url, download=False)
         else:
@@ -159,11 +163,18 @@ class Audio:
         self.settings = fileIO("data/audio/settings.json", 'load')
         self.cache_path = "data/audio/cache"
 
-    async def _add_to_queue(self, server, url):
+    def _add_to_queue(self, server, url):
         if server.id not in self.queue:
             self.queue[server.id] = {"REPEAT": False, "VOICE_CHANNEL_ID": None,
-                                     "QUEUE": deque(), "TEMP_QUEUE": deque()}
+                                     "QUEUE": deque(), "TEMP_QUEUE": deque(),
+                                     "NOW_PLAYING": None}
         self.queue[server.id]["QUEUE"].append(url)
+
+    def _clear_queue(self, server):
+        if server.id not in self.queue:
+            return
+        self.queue[server.id]["QUEUE"] = deque()
+        self.queue[server.id]["TEMP_QUEUE"] = deque()
 
     def _create_ffmpeg_player(self, server, filename):
         """This function will guarantee we have a valid voice client,
@@ -195,6 +206,20 @@ class Audio:
 
         return voice_client  # Just for ease of use, it's modified in-place
 
+    def _disconnect_from_voice(self, server):
+        if not self.voice_connected(server):
+            return
+
+        voice_client = self.voice_client_in(server)
+
+        voice_client.disconnect()
+
+    async def _join_voice_channel(self, channel):
+        server = channel.server
+        if server.id in self.queue:
+            self.queue[server.id]["VOICE_CHANNEL_ID"] = channel.id
+        await self.bot.join_voice_channel(channel)
+
     async def _play(self, sid, url):
         if type(sid) is not discord.Server:
             server = self.bot.get_server(sid)
@@ -210,6 +235,9 @@ class Audio:
             #   Downloader
             self.downloaders[server.id] = Downloader(url, max_length)
 
+        # We're assuming we have the right thing in our downloader object
+        self.downloaders[server.id].start()
+
         while not self.downloaders[server.id].done:  # Getting info w/o DL
             await asyncio.sleep(0.5)
 
@@ -218,7 +246,8 @@ class Audio:
         # Now we check to see if we have a cache hit
         cache_location = os.path.join(self.cache_path, song.id)
         if not os.path.exists(cache_location):
-            self.downloaders[server.id] = Downloader(url, download=True)
+            self.downloaders[server.id] = Downloader(url, max_length,
+                                                     download=True)
             self.downloaders[server.id].start()
 
             while not self.downloaders[server.id].done:
@@ -230,6 +259,26 @@ class Audio:
         # That ^ creates the audio_player property
 
         voice_client.audio_player.start()
+
+        return song
+
+    def _stop_downloader(self, server):
+        if server.id not in self.downloaders:
+            return
+        if self.downloaders[server.id].is_alive():
+            self.downloaders[server.id].terminate()
+
+        del self.downloaders[server.id]
+
+    def _stop_player(self, server):
+        if not self.voice_connected(server.id):
+            return
+
+        voice_client = self.voice_client(server)
+
+        if hasattr(voice_client, 'audio_player'):
+            voice_client.audio_player.stop()
+            del voice_client.audio_player
 
     @commands.command(pass_context=True)
     async def play(self, ctx, url):
@@ -251,7 +300,7 @@ class Audio:
                 await self.bot.say("I don't have permissions to join your"
                                    " voice channel.")
             else:
-                await self.bot.join_voice_channel(voice_channel)
+                await self._join_voice_channel(voice_channel)
         else:  # We are connected but not to the right channel
             if self.voice_client(server).channel != voice_channel:
                 pass  # TODO
@@ -271,8 +320,20 @@ class Audio:
 
         self._add_to_queue(server, url)
 
+    @commands.command(pass_context=True)
+    async def stop(self, ctx):
+        """Stops a currently playing song or playlist. CLEARS QUEUE."""
+        # TODO
+        #   All those fun checks for permissions
+        server = ctx.message.server
+
+        self._clear_queue(server)
+        self._stop_downloader(server)
+        self._stop_player(server)
+        self._disconnect_voice_client(server)
+
     def already_playing(self, server):
-        if not self.check_voice_connected(server):
+        if not self.voice_connected(server):
             return False
         if self.voice_client(server) is None:
             return False
@@ -304,37 +365,38 @@ class Audio:
         """This function assumes that there's something in the queue for us to
             play"""
         server = self.bot.get_server(sid)
-        voice_client = self.bot.voice_client_in(server)
-
-        if voice_client is None or not hasattr(voice_client, 'audio_player'):
-            # Preface player property with cog name
-            self._create_ffmpeg_player(server)
-
-        # Can assume we have a valid player at voice_client.audio_player
 
         # This is a reference, or should be at least
         temp_queue = self.queue[server.id]["TEMP_QUEUE"]
         queue = self.queue[server.id]["QUEUE"]
         repeat = self.queue[server.id]["REPEAT"]
+        now_playing = self.queue[server.id]["NOW_PLAYING"]
 
         assert temp_queue is self.queue[server.id]["TEMP_QUEUE"]
         assert queue is self.queue[server.id]["QUEUE"]
         assert repeat is self.queue[server.id]["REPEAT"]
+        assert now_playing is self.queue[server.id]["NOW_PLAYING"]
+
+        # _play handles creating the voice_client and player for us
 
         if len(temp_queue) > 0:  # Fake queue for irdumb's temp playlist songs
-            await self._play(temp_queue.popleft())
+            song = await self._play(temp_queue.popleft())
+            now_playing = song
         else:  # We're in the normal queue
-            url = self.queue.popleft()
-            await self._play(sid, url)
+            url = queue.popleft()
+            song = await self._play(sid, url)
+            now_playing = song
             if repeat:
-                self.queue.appendleft(url)
+                queue.appendleft(url)
 
     async def queue_scheduler(self):
-        for sid in self.queue:
-            if len(self.queue[sid]["QUEUE"]) == 0 and \
-                    len(self.queue[sid]["TEMP_QUEUE"]) == 0:
-                continue
-            self.bot.loop.create_task(self.queue_manager(sid))
+        while self == self.bot.get_cog('Audio'):
+            for sid in self.queue:
+                if len(self.queue[sid]["QUEUE"]) == 0 and \
+                        len(self.queue[sid]["TEMP_QUEUE"]) == 0:
+                    continue
+                self.bot.loop.create_task(self.queue_manager(sid))
+            await asyncio.sleep(0.5)
 
     def voice_client(self, server):
         return self.bot.voice_client_in(server)
