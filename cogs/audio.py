@@ -221,10 +221,7 @@ class Audio:
 
     def _add_to_queue(self, server, url):
         if server.id not in self.queue:
-            self.queue[server.id] = {"REPEAT": False, "PLAYLIST": False,
-                                     "VOICE_CHANNEL_ID": None,
-                                     "QUEUE": deque(), "TEMP_QUEUE": deque(),
-                                     "NOW_PLAYING": None}
+            self._setup_queue(server)
         self.queue[server.id]["QUEUE"].append(url)
 
     def _add_to_temp_queue(self, server, url):
@@ -366,7 +363,7 @@ class Audio:
 
     def _match_yt_url(self, url):
         yt_link = re.compile(
-            r'^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$')
+            r'^(https?\:\/\/)?(www\.|m\.)?(youtube\.com|youtu\.?be)\/.+$')
         if yt_link.match(url):
             return True
         return False
@@ -523,6 +520,17 @@ class Audio:
             self._setup_queue(server)
         self.queue[server.id]["QUEUE"].extend(songlist)
 
+    def _set_queue_channel(self, server, channel):
+        if server.id not in self.queue:
+            return
+
+        try:
+            channel = channel.id
+        except AttributeError:
+            pass
+
+        self.queue[server.id]["VOICE_CHANNEL_ID"] = channel
+
     def _set_queue_playlist(self, server, name=True):
         if server.id not in self.queue:
             self._setup_queue(server)
@@ -573,9 +581,10 @@ class Audio:
 
     def _valid_playable_url(self, url):
         yt = self._match_yt_url(url)
-        if not yt:  # TODO: Add sc check
-            return False
-        return True
+        sc = self._match_sc_url(url)
+        if yt or sc:  # TODO: Add sc check
+            return True
+        return False
 
     @commands.command(hidden=True, pass_context=True)
     @checks.is_owner()
@@ -692,8 +701,19 @@ class Audio:
                                " please let us know and we'll get it"
                                " fixed ASAP.")
 
-    @playlist.command(pass_context=True, no_pm=True, name="play")
-    async def playlist_play(self, ctx, name):
+    @playlist.command(pass_context=True, no_pm=True, name="remove")
+    async def playlist_remove(self, ctx, name):
+        """Delete's a saved playlist."""
+        server = ctx.message.server
+
+        if self._playlist_exists(server, name):
+            self._delete_playlist(server, name)
+            await self.bot.say("Playlist deleted.")
+        else:
+            await self.bot.say("Playlist not found.")
+
+    @playlist.command(pass_context=True, no_pm=True, name="start")
+    async def playlist_start(self, ctx, name):
         """Plays a playlist."""
         server = ctx.message.server
         voice_channel = ctx.message.author.voice_channel
@@ -713,17 +733,6 @@ class Audio:
         else:
             await self.bot.say("That playlist does not exist.")
 
-    @playlist.command(pass_context=True, no_pm=True, name="remove")
-    async def playlist_remove(self, ctx, name):
-        """Delete's a saved playlist."""
-        server = ctx.message.server
-
-        if self._playlist_exists(server, name):
-            self._delete_playlist(server, name)
-            await self.bot.say("Playlist deleted.")
-        else:
-            await self.bot.say("Playlist not found.")
-
     @commands.command(pass_context=True, no_pm=True, name="queue")
     async def _queue(self, ctx, url):
         """Queue's a song to play next. Extended functionality in `!help`
@@ -738,7 +747,7 @@ class Audio:
             return
 
         # We are connected somewhere
-        if not self.queue[server.id]:
+        if server.id not in self.queue:
             log.debug("Something went wrong, we're connected but have no"
                       " queue entry.")
             raise VoiceNotConnected("Something went wrong, we have no internal"
@@ -771,7 +780,7 @@ class Audio:
             else:
                 await self.bot.say("Play something to see this setting.")
 
-    @repeat.command(pass_context=True, no_pm=True)
+    @repeat.command(pass_context=True, no_pm=True, name="toggle")
     async def repeat_toggle(self, ctx):
         """Flips repeat setting."""
         server = ctx.message.server
@@ -780,7 +789,7 @@ class Audio:
                                " Try playing something first.")
             return
 
-        self.queue[server.id]["REPEAT"] = not self.queue[server.id]["REPEAT"]
+        self._set_queue_repeat(server, not self.queue[server.id]["REPEAT"])
         repeat = self.queue[server.id]["REPEAT"]
         if repeat:
             await self.bot.say("Repeat toggled on.")
@@ -917,6 +926,7 @@ class Audio:
                 log.debug("calling _play on the normal queue")
                 song = await self._play(sid, url)
                 if repeat:
+                    # TODO: stick NOW_PLAYING.url back into queue AFTER ending
                     queue.append(url)
             else:
                 song = None
@@ -971,8 +981,22 @@ class Audio:
         server = after.server
         if server.id not in self.queue:
             return
-        # TODO: Channel changing (by drag n drop)
-        # TODO: Muting
+        if after != server.me:
+            return
+
+        # Member is the bot
+
+        if before.channel != after.channel:
+            self._set_queue_channel(after.channel.id)
+
+        if before.mute != after.mute:
+            vc = self.voice_client(server)
+            if after.mute:
+                if vc.audio_player.is_playing():
+                    vc.audio_player.pause()
+            else:
+                if vc.audio_player.is_paused():
+                    vc.audio_player.resume()
 
 
 def check_folders():
