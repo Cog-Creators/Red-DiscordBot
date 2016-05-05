@@ -6,8 +6,8 @@ from random import choice as rndchoice
 from random import shuffle
 from cogs.utils.dataIO import fileIO
 from cogs.utils import checks
-from red import send_cmd_help
-from red import settings as bot_settings
+from __main__ import send_cmd_help
+from __main__ import settings as bot_settings
 import glob
 import re
 import aiohttp
@@ -75,6 +75,18 @@ class ConnectTimeout(NotConnected):
     pass
 
 
+class InvalidURL(Exception):
+    pass
+
+
+class InvalidSong(InvalidURL):
+    pass
+
+
+class InvalidPlaylist(InvalidSong):
+    pass
+
+
 class EmptyPlayer:  # dummy player
     def __init__(self):
         self.paused = False
@@ -113,8 +125,41 @@ class Song:
         self.duration = kwargs.pop('duration', "")
 
 
+class Playlist:
+    def __init__(self, server=None, sid=None, name=None, author=None, url=None,
+                 playlist=None, **kwargs):
+        self.server = server
+        self._sid = sid
+        self.name = name
+        self.author = author
+        self.url = url
+        if url is None and "link" in kwargs:
+            self.url = kwargs.get('link')
+        self.playlist = playlist
+
+    @property
+    def filename(self):
+        f = "data/audio/playlists"
+        f = os.path.join(f, self.sid, self.name + ".txt")
+        return f
+
+    def to_json(self):
+        ret = {"author": self.author, "playlist": self.playlist,
+               "link": self.url}
+        return ret
+
+    @property
+    def sid(self):
+        if self._sid:
+            return self._sid
+        elif self.server:
+            return self.server.id
+        else:
+            return None
+
+
 class Downloader(threading.Thread):
-    def __init__(self, url, max_duration, download=False,
+    def __init__(self, url, max_duration=None, download=False,
                  cache_path="data/audio/cache", *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.url = url
@@ -137,7 +182,7 @@ class Downloader(threading.Thread):
             self.done = True
 
     def download(self):
-        if self.song.duration > self.max_duration:
+        if self.max_duration and self.song.duration > self.max_duration:
             return
 
         if not os.path.isfile('data/audio/cache' + self.song.id):
@@ -170,6 +215,10 @@ class Audio:
                                              "VOTE_THRESHOLD"]
         self.cache_path = "data/audio/cache"
 
+    def __del__(self):
+        for vc in self.bot.voice_clients:
+            self._stop_and_disconnect(vc.server)
+
     def _add_to_queue(self, server, url):
         if server.id not in self.queue:
             self.queue[server.id] = {"REPEAT": False, "PLAYLIST": False,
@@ -180,10 +229,7 @@ class Audio:
 
     def _add_to_temp_queue(self, server, url):
         if server.id not in self.queue:
-            self.queue[server.id] = {"REPEAT": False, "PLAYLIST": False,
-                                     "VOICE_CHANNEL_ID": None,
-                                     "QUEUE": deque(), "TEMP_QUEUE": deque(),
-                                     "NOW_PLAYING": None}
+            self._setup_queue(server)
         self.queue[server.id]["TEMP_QUEUE"].append(url)
 
     def _clear_queue(self, server):
@@ -274,6 +320,29 @@ class Audio:
             log.exception(e)
             raise ConnectTimeout("We timed out connecting to a voice channel")
 
+    def _load_playlist(self, server, name):
+        try:
+            server = server.id
+        except:
+            pass
+
+        f = "data/audio/playlists"
+        f = os.path.join(f, server, name + ".txt")
+        kwargs = fileIO(f, 'load')
+
+        kwargs['name'] = name
+        kwargs['sid'] = server
+
+        return Playlist(**kwargs)
+
+    def _make_playlist(self, author, url, songlist):
+        try:
+            author = author.id
+        except:
+            pass
+
+        return Playlist(author=author, url=url, songlist=songlist)
+
     def _match_sc_playlist(self, url):
         return self._match_sc_url(url)
 
@@ -284,8 +353,9 @@ class Audio:
             r'^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)'
             r'(\/playlist\?).*(list=)(.*)(&|$)')
         # Group 6 should be the list ID
-        if not yt_playlist.match(url):
-            return False
+        if yt_playlist.match(url):
+            return True
+        return False
 
     def _match_sc_url(self, url):
         sc_url = re.compile(
@@ -301,17 +371,44 @@ class Audio:
             return True
         return False
 
-    def _parse_playlist(self, url):
+    async def _parse_playlist(self, url):
         if self._match_sc_playlist(url):
-            return self._parse_sc_playlist(url)
+            return await self._parse_sc_playlist(url)
         elif self._match_yt_playlist(url):
-            return self._parse_yt_playlist(url)
+            return await self._parse_yt_playlist(url)
+        raise InvalidPlaylist("The given URL is neither a Soundcloud or"
+                              " YouTube playlist.")
 
-    def _parse_sc_playlist(self, url):
-        pass
+    async def _parse_sc_playlist(self, url):
+        playlist = []
+        d = Downloader(url)
+        d.start()
 
-    def _parse_yt_playlist(self, url):
-        pass
+        while d.is_alive():
+            await asyncio.sleep(0.5)
+
+        for entry in d.song.entries:
+            if entry.url[4] != "s":
+                song_url = "https{}".format(entry.url[4:])
+                playlist.append(song_url)
+            else:
+                playlist.append(entry.url)
+
+    async def _parse_yt_playlist(self, url):
+        d = Downloader(url)
+        d.start()
+        playlist = []
+
+        while d.is_alive():
+            await asyncio.sleep(0.5)
+
+        for entry in d.song.entries:
+            song_url = "https://www.youtube.com/watch?v={}".format(entry['id'])
+            playlist.append(song_url)
+
+        log.debug("song list:\n\t{}".format(playlist))
+
+        return playlist
 
     async def _play(self, sid, url):
         """Returns the song object of what's playing"""
@@ -372,14 +469,49 @@ class Audio:
 
         return song
 
+    def _playlist_exists(self, server, name):
+        try:
+            server = server.id
+        except AttributeError:
+            pass
+
+        f = "data/audio/playlists"
+        f = os.path.join(f, server, name + ".txt")
+        log.debug('checking for {}'.format(f))
+
+        return fileIO(f, 'check')
+
     def _remove_queue(self, server):
         if server.id in self.queue:
             del self.queue[server.id]
 
     def _save_playlist(self, server, name, playlist):
         sid = server.id
-        f = os.join("data/audio/playlists", sid, name)
+        try:
+            f = playlist.filename
+            playlist = playlist.to_json()
+            log.debug("got playlist object")
+        except AttributeError:
+            f = os.path.join("data/audio/playlists", sid, name + ".txt")
+
+        head, _ = os.path.split(f)
+        if not os.path.exists(head):
+            os.makedirs(head)
+
+        log.debug("saving playlist '{}' to {}:\n\t{}".format(name, f,
+                                                             playlist))
         fileIO(f, 'save', playlist)
+
+    def _set_queue(self, server, songlist):
+        self._clear_queue(server)
+        self._setup_queue(server)
+        self.queue[server.id]["QUEUE"].extend(songlist)
+
+    def _setup_queue(self, server):
+        self.queue[server.id] = {"REPEAT": False, "PLAYLIST": False,
+                                 "VOICE_CHANNEL_ID": None,
+                                 "QUEUE": deque(), "TEMP_QUEUE": deque(),
+                                 "NOW_PLAYING": None}
 
     def _stop_and_disconnect(self, server):
         self._clear_queue(server)
@@ -499,23 +631,70 @@ class Audio:
         if ctx.invoked_subcommand is None:
             await send_cmd_help(ctx)
 
-    @playlist.command(pass_context=True, no_pm=True)
+    @playlist.command(pass_context=True, no_pm=True, name="add")
     async def playlist_add(self, ctx, name, url):
         """Add a YouTube or Soundcloud playlist."""
         server = ctx.message.server
+        author = ctx.message.author
         if not self._valid_playlist_name(name) or len(name) > 25:
             await self.bot.say("That playlist name is invalid. It must only"
                                " contain alpha-numeric characters or _.")
             return
 
         if self._match_yt_playlist(url) or self._match_sc_playlist(url):
-            playlist = self._parse_playlist(url)
-            self._save_playlist(server, playlist)
+            try:
+                await self.bot.say("Enumerating song list...this could take"
+                                   " a few moments.")
+                songlist = await self._parse_playlist(url)
+            except InvalidPlaylist:
+                await self.bot.say("That playlist URL is invalid.")
+                return
+
+            playlist = self._make_playlist(author, url, songlist)
+            # Returns a Playlist object
+
+            playlist.name = name
+            playlist.server = server
+
+            self._save_playlist(server, name, playlist)
+            await self.bot.say("Playlist '{}' saved.".format(name))
         else:
             await self.bot.say("That URL is not a valid Soundcloud or YouTube"
                                " playlist link. If you think this is in error"
                                " please let us know and we'll get it"
                                " fixed ASAP.")
+
+    @playlist.command(pass_context=True, no_pm=True, name="play")
+    async def playlist_play(self, ctx, name):
+        """Plays a playlist."""
+        server = ctx.message.server
+        voice_channel = ctx.message.author.voice_channel
+        if voice_channel is None:
+            await self.bot.say("You must be in a voice channel to start a"
+                               " playlist.")
+            return
+
+        if self._playlist_exists(server, name):
+            # TODO: permissions checks...
+            if not self.voice_connected(server):
+                await self._join_voice_channel(voice_channel)
+            self._clear_queue(server)
+            playlist = self._load_playlist(server, name)
+            self._set_queue(server, playlist.playlist)
+            await self.bot.say("Playlist queued.")
+        else:
+            await self.bot.say("That playlist does not exist.")
+
+    @playlist.command(pass_context=True, no_pm=True, name="remove")
+    async def playlist_remove(self, ctx, name):
+        """Delete's a saved playlist."""
+        server = ctx.message.server
+
+        if self._playlist_exists(server, name):
+            self._delete_playlist(server, name)
+            await self.bot.say("Playlist deleted.")
+        else:
+            await self.bot.say("Playlist not found.")
 
     @commands.command(pass_context=True, no_pm=True, name="queue")
     async def _queue(self, ctx, url):
