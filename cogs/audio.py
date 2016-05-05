@@ -949,10 +949,10 @@ class Audio:
                 #           " for sid: {}".format(sid))
                 tasks.append(
                     self.bot.loop.create_task(self.queue_manager(sid)))
+            completed = [t.done() for t in tasks]
+            while not all(completed):
                 completed = [t.done() for t in tasks]
-                while not all(completed):
-                    completed = [t.done() for t in tasks]
-                    await asyncio.sleep(0.5)
+                await asyncio.sleep(0.5)
             await asyncio.sleep(1)
 
     def save_settings(self):
