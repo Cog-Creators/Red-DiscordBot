@@ -71,6 +71,10 @@ class VoiceNotConnected(NotConnected):
     pass
 
 
+class ConnectTimeout(NotConnected):
+    pass
+
+
 class EmptyPlayer:  # dummy player
     def __init__(self):
         self.paused = False
@@ -226,6 +230,8 @@ class Audio:
 
         return voice_client  # Just for ease of use, it's modified in-place
 
+    # TODO: _disable_controls()
+
     def _disconnect_voice_client(self, server):
         if not self.voice_connected(server):
             return
@@ -256,11 +262,56 @@ class Audio:
                                                      download=True)
             self.downloaders[server.id].start()
 
+    # TODO: _enable_controls()
+
     async def _join_voice_channel(self, channel):
         server = channel.server
         if server.id in self.queue:
             self.queue[server.id]["VOICE_CHANNEL_ID"] = channel.id
-        await self.bot.join_voice_channel(channel)
+        try:
+            await self.bot.join_voice_channel(channel)
+        except asyncio.futures.TimeoutError as e:
+            log.exception(e)
+            raise ConnectTimeout("We timed out connecting to a voice channel")
+
+    def _match_sc_playlist(self, url):
+        return self._match_sc_url(url)
+
+    def _match_yt_playlist(self, url):
+        if not self._match_yt_url(url):
+            return False
+        yt_playlist = re.compile(
+            r'^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)'
+            r'(\/playlist\?).*(list=)(.*)(&|$)')
+        # Group 6 should be the list ID
+        if not yt_playlist.match(url):
+            return False
+
+    def _match_sc_url(self, url):
+        sc_url = re.compile(
+            r'^(https?\:\/\/)?(www\.)?(soundcloud\.com\/)')
+        if sc_url.match(url):
+            return True
+        return False
+
+    def _match_yt_url(self, url):
+        yt_link = re.compile(
+            r'^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$')
+        if yt_link.match(url):
+            return True
+        return False
+
+    def _parse_playlist(self, url):
+        if self._match_sc_playlist(url):
+            return self._parse_sc_playlist(url)
+        elif self._match_yt_playlist(url):
+            return self._parse_yt_playlist(url)
+
+    def _parse_sc_playlist(self, url):
+        pass
+
+    def _parse_yt_playlist(self, url):
+        pass
 
     async def _play(self, sid, url):
         """Returns the song object of what's playing"""
@@ -325,6 +376,11 @@ class Audio:
         if server.id in self.queue:
             del self.queue[server.id]
 
+    def _save_playlist(self, server, name, playlist):
+        sid = server.id
+        f = os.join("data/audio/playlists", sid, name)
+        fileIO(f, 'save', playlist)
+
     def _stop_and_disconnect(self, server):
         self._clear_queue(server)
         self._stop_downloader(server)
@@ -346,6 +402,20 @@ class Audio:
         if hasattr(voice_client, 'audio_player'):
             voice_client.audio_player.stop()
             del voice_client.audio_player
+
+    def _valid_playlist_name(self, name):
+        for l in name:
+            if l.isdigit() or l.isalpha() or l == "_":
+                pass
+            else:
+                return False
+        return True
+
+    def _valid_playable_url(self, url):
+        yt = self._match_yt_url(url)
+        if not yt:  # TODO: Add sc check
+            return False
+        return True
 
     @commands.command(hidden=True, pass_context=True)
     @checks.is_owner()
@@ -402,13 +472,13 @@ class Audio:
                 await self._join_voice_channel(voice_channel)
         else:  # We are connected but not to the right channel
             if self.voice_client(server).channel != voice_channel:
-                pass  # TODO
+                pass  # TODO: Perms
 
         # Checking if playing in current server
 
         if self.is_playing(server):
             await self.bot.say("I'm already playing a song on this server!")
-            return  # TODO Possibly execute queue?
+            return  # TODO: Possibly execute queue?
 
         # If not playing, spawn a downloader if it doesn't exist and begin
         #   downloading the next song
@@ -417,12 +487,35 @@ class Audio:
             await self.bot.say("I'm already downloading a file!")
             return
 
-        # TODO
-        #   URL validation
-        #   song validity check
+        # TODO: URL validation
+        # TODO: song validity check
         self._clear_queue(server)
         self._stop_player(server)
         self._add_to_queue(server, url)
+
+    @commands.group(pass_context=True, no_pm=True)
+    async def playlist(self, ctx):
+        """Playlist management/control."""
+        if ctx.invoked_subcommand is None:
+            await send_cmd_help(ctx)
+
+    @playlist.command(pass_context=True, no_pm=True)
+    async def playlist_add(self, ctx, name, url):
+        """Add a YouTube or Soundcloud playlist."""
+        server = ctx.message.server
+        if not self._valid_playlist_name(name) or len(name) > 25:
+            await self.bot.say("That playlist name is invalid. It must only"
+                               " contain alpha-numeric characters or _.")
+            return
+
+        if self._match_yt_playlist(url) or self._match_sc_playlist(url):
+            playlist = self._parse_playlist(url)
+            self._save_playlist(server, playlist)
+        else:
+            await self.bot.say("That URL is not a valid Soundcloud or YouTube"
+                               " playlist link. If you think this is in error"
+                               " please let us know and we'll get it"
+                               " fixed ASAP.")
 
     @commands.command(pass_context=True, no_pm=True, name="queue")
     async def _queue(self, ctx, url):
@@ -455,6 +548,37 @@ class Audio:
                 server.id))
             self._add_to_queue(server, url)
         await self.bot.say("Queued.")
+
+    @commands.group(pass_context=True, no_pm=True)
+    async def repeat(self, ctx):
+        """Toggles REPEAT"""
+        server = ctx.message.server
+        if ctx.invoked_subcommand is None:
+            if self.is_playing(server):
+                if self.queue[server.id]["REPEAT"]:
+                    msg = "The queue is currently looping."
+                else:
+                    msg = "The queue is currently not looping."
+                await self.bot.say(msg)
+                await self.bot.say("Do `!repeat toggle` to change this.")
+            else:
+                await self.bot.say("Play something to see this setting.")
+
+    @repeat.command(pass_context=True, no_pm=True)
+    async def repeat_toggle(self, ctx):
+        """Flips repeat setting."""
+        server = ctx.message.server
+        if not self.is_playing(server):
+            await self.bot.say("I don't have a repeat setting to flip."
+                               " Try playing something first.")
+            return
+
+        self.queue[server.id]["REPEAT"] = not self.queue[server.id]["REPEAT"]
+        repeat = self.queue[server.id]["REPEAT"]
+        if repeat:
+            await self.bot.say("Repeat toggled on.")
+        else:
+            await self.bot.say("Repeat toggled off.")
 
     @commands.command(pass_context=True, no_pm=True)
     async def resume(self, ctx):
@@ -493,8 +617,7 @@ class Audio:
     @commands.command(pass_context=True)
     async def stop(self, ctx):
         """Stops a currently playing song or playlist. CLEARS QUEUE."""
-        # TODO
-        #   All those fun checks for permissions
+        # TODO: All those fun checks for permissions
         server = ctx.message.server
 
         self._stop_and_disconnect(server)
@@ -512,7 +635,7 @@ class Audio:
         return True
 
     async def cache_manager(self):
-        # cache size: max([50, n * log(n)])
+        # min cache size: max([50, n * log(n)])
         pass
 
     def currently_downloading(self, server):
@@ -626,9 +749,8 @@ class Audio:
         server = after.server
         if server.id not in self.queue:
             return
-        # TODO
-        #   Channel changing (by drag n drop)
-        #   Muting
+        # TODO: Channel changing (by drag n drop)
+        # TODO: Muting
 
 
 def check_folders():
