@@ -469,6 +469,20 @@ class Audio:
 
         return song
 
+    def _play_playlist(self, server, playlist):
+        try:
+            songlist = playlist.playlist
+            name = playlist.name
+        except AttributeError:
+            songlist = playlist
+            name = True
+
+        self._clear_queue(server)
+        self._setup_queue(server)
+        self._set_queue_playlist(server, name)
+        self._set_queue_repeat(server, True)
+        self._set_queue(server, songlist)
+
     def _playlist_exists(self, server, name):
         try:
             server = server.id
@@ -503,9 +517,23 @@ class Audio:
         fileIO(f, 'save', playlist)
 
     def _set_queue(self, server, songlist):
-        self._clear_queue(server)
-        self._setup_queue(server)
+        if server.id in self.queue:
+            self._clear_queue(server)
+        else:
+            self._setup_queue(server)
         self.queue[server.id]["QUEUE"].extend(songlist)
+
+    def _set_queue_playlist(self, server, name=True):
+        if server.id not in self.queue:
+            self._setup_queue(server)
+
+        self.queue[server.id]["PLAYLIST"] = name
+
+    def _set_queue_repeat(self, server, value):
+        if server.id not in self.queue:
+            self._setup_queue(server)
+
+        self.queue[server.id]["REPEAT"] = value
 
     def _setup_queue(self, server):
         self.queue[server.id] = {"REPEAT": False, "PLAYLIST": False,
@@ -680,7 +708,7 @@ class Audio:
                 await self._join_voice_channel(voice_channel)
             self._clear_queue(server)
             playlist = self._load_playlist(server, name)
-            self._set_queue(server, playlist.playlist)
+            self._play_playlist(server, playlist)
             await self.bot.say("Playlist queued.")
         else:
             await self.bot.say("That playlist does not exist.")
@@ -793,6 +821,17 @@ class Audio:
         else:
             await self.bot.say("I'm not playing anything on this server.")
 
+    @commands.command(pass_context=True, no_pm=True)
+    async def skip(self, ctx):
+        """Skips the currently playing song"""
+        server = ctx.message.server
+        if self.is_playing(server):
+            vc = self.voice_client(server)
+            vc.audio_player.stop()
+            await self.bot.say("Skipping...")
+        else:
+            await self.bot.say("Can't skip if I'm not playing.")
+
     @commands.command(pass_context=True)
     async def stop(self, ctx):
         """Stops a currently playing song or playlist. CLEARS QUEUE."""
@@ -873,12 +912,14 @@ class Audio:
                 # Fake queue for irdumb's temp playlist songs
                 log.debug("calling _play because temp_queue is non-empty")
                 song = await self._play(sid, temp_queue.popleft())
-            else:  # We're in the normal queue
+            elif len(queue) > 0:  # We're in the normal queue
                 url = queue.popleft()
                 log.debug("calling _play on the normal queue")
                 song = await self._play(sid, url)
                 if repeat:
                     queue.appendleft(url)
+            else:
+                song = None
             self.queue[server.id]["NOW_PLAYING"] = song
             log.debug("set now_playing for sid {}".format(server.id))
         else:  # We're playing but we might be able to download a new song
