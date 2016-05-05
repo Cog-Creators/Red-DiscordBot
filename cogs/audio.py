@@ -917,7 +917,7 @@ class Audio:
                 log.debug("calling _play on the normal queue")
                 song = await self._play(sid, url)
                 if repeat:
-                    queue.appendleft(url)
+                    queue.append(url)
             else:
                 song = None
             self.queue[server.id]["NOW_PLAYING"] = song
@@ -940,9 +940,10 @@ class Audio:
     async def queue_scheduler(self):
         while self == self.bot.get_cog('Audio'):
             tasks = []
-            for sid in self.queue:
-                if len(self.queue[sid]["QUEUE"]) == 0 and \
-                        len(self.queue[sid]["TEMP_QUEUE"]) == 0:
+            queue = copy.deepcopy(self.queue)
+            for sid in queue:
+                if len(queue[sid]["QUEUE"]) == 0 and \
+                        len(queue[sid]["TEMP_QUEUE"]) == 0:
                     continue
                 # log.debug("scheduler found a non-empty queue"
                 #           " for sid: {}".format(sid))
@@ -950,6 +951,7 @@ class Audio:
                     self.bot.loop.create_task(self.queue_manager(sid)))
                 completed = [t.done() for t in tasks]
                 while not all(completed):
+                    completed = [t.done() for t in tasks]
                     await asyncio.sleep(0.5)
             await asyncio.sleep(1)
 
