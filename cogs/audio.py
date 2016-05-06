@@ -17,6 +17,7 @@ import logging
 import collections
 import copy
 import asyncio
+import math
 
 log = logging.getLogger("red.audio")
 log.setLevel(logging.DEBUG)
@@ -85,20 +86,6 @@ class InvalidSong(InvalidURL):
 
 class InvalidPlaylist(InvalidSong):
     pass
-
-
-class EmptyPlayer:  # dummy player
-    def __init__(self):
-        self.paused = False
-
-    def stop(self):
-        pass
-
-    def is_playing(self):
-        return False
-
-    def is_done(self):
-        return True
 
 
 class deque(collections.deque):
@@ -229,6 +216,47 @@ class Audio:
             self._setup_queue(server)
         self.queue[server.id]["TEMP_QUEUE"].append(url)
 
+    def _cache_desired_files(self):
+        filelist = []
+        for server in self.downloaders:
+            song = self.downloaders[server].song
+            try:
+                filelist.append(song.id)
+            except AttributeError:
+                pass
+        shuffle(filelist)
+        return filelist
+
+    def _cache_max(self):
+        setting_max = self.settings["MAX_CACHE"]
+        return max([setting_max, self._cache_min()])  # enforcing hard limit
+
+    def _cache_min(self):
+        x = self._server_count()
+        return max([60, 96 * math.log(x) * x**0.3])  # log is not log10
+
+    def _cache_required_files(self):
+        queue = copy.deepcopy(self.queue)
+        filelist = []
+        for server in queue:
+            now_playing = queue[server].get("NOW_PLAYING")
+            try:
+                filelist.append(now_playing.id)
+            except AttributeError:
+                pass
+        return filelist
+
+    def _cache_size(self):
+        songs = os.listdir(self.cache_path)
+        size = sum(map(lambda s: os.path.getsize(
+            os.path.join(self.cache_path, s)) / 10**6, songs))
+        return size
+
+    def _cache_too_large(self):
+        if self._cache_size() > self._cache_max():
+            return True
+        return False
+
     def _clear_queue(self, server):
         if server.id not in self.queue:
             return
@@ -273,6 +301,10 @@ class Audio:
 
         return voice_client  # Just for ease of use, it's modified in-place
 
+    # TODO: _current_playlist
+
+    # TODO: _current_song
+
     # TODO: _disable_controls()
 
     def _disconnect_voice_client(self, server):
@@ -304,6 +336,38 @@ class Audio:
             self.downloaders[server.id] = Downloader(next_dl.url, max_length,
                                                      download=True)
             self.downloaders[server.id].start()
+
+    def _dump_cache(self, ignore_desired=False):
+        reqd = self._cache_required_files()
+        log.debug("required cache files:\n\t{}".format(reqd))
+
+        opt = self._cache_desired_files()
+        log.debug("desired cache files:\n\t{}".format(opt))
+
+        prev_size = self._cache_size()
+
+        for file in os.listdir(self.cache_path):
+            if file not in reqd:
+                if ignore_desired or file not in opt:
+                    try:
+                        os.remove(os.path.join(self.cache_path, file))
+                    except OSError:
+                        # A directory got in the cache?
+                        pass
+                    except WindowsError:
+                        # Removing a file in use, reqd failed
+                        pass
+
+        post_size = self._cache_size()
+        dumped = prev_size - post_size
+
+        if not ignore_desired and self._cache_too_large():
+            log.debug("must dump desired files")
+            return dumped + self._dump_cache(ignore_desired=True)
+
+        log.debug("dumped {} MB of audio files".format(dumped))
+
+        return dumped
 
     # TODO: _enable_controls()
 
@@ -367,6 +431,8 @@ class Audio:
         if yt_link.match(url):
             return True
         return False
+
+    # TODO: _next_songs_in_queue
 
     async def _parse_playlist(self, url):
         if self._match_sc_playlist(url):
@@ -513,6 +579,15 @@ class Audio:
                                                              playlist))
         fileIO(f, 'save', playlist)
 
+    def _shuffle_queue(self, server):
+        shuffle(self.queue[server.id]["QUEUE"])
+
+    def _shuffle_temp_queue(self, server):
+        shuffle(self.queue[server.id]["TEMP_QUEUE"])
+
+    def _server_count(self):
+        return max([1, len(self.bot.servers)])
+
     def _set_queue(self, server, songlist):
         if server.id in self.queue:
             self._clear_queue(server)
@@ -586,7 +661,102 @@ class Audio:
             return True
         return False
 
-    @commands.command(hidden=True, pass_context=True)
+    @commands.group(pass_context=True)
+    async def audioset(self, ctx):
+        """Audio settings."""
+        if ctx.invoked_subcommand is None:
+            await send_cmd_help(ctx)
+            return
+
+    @audioset.command(name="cachemax")
+    @checks.is_owner()
+    async def audioset_cachemax(self, size: int):
+        """Set the max cache size in MB"""
+        if size < self._cache_min():
+            await self.bot.say("Sorry, but because of the number of servers"
+                               " that your bot is in I cannot safely allow"
+                               " you to have less than {} MB of cache.".format(
+                                   self._cache_min()))
+            return
+
+        self.settings["MAX_CACHE"] = size
+        await self.bot.say("Max cache size set to {} MB.".format(size))
+        self.save_settings
+
+    @audioset.command(name="maxlength")
+    @checks.is_owner()
+    async def audioset_maxlength(self, length: int):
+        """Maximum track length (seconds) for requested links"""
+        if length <= 0:
+            await self.bot.say("Wow, a non-positive length value...aren't"
+                               " you smart.")
+            return
+        self.settings["MAX_LENGTH"] = length
+        await self.bot.say("Maximum length is now {} seconds.".format(length))
+        self.save_settings()
+
+    @audioset.command(name="player")
+    @checks.is_owner()
+    async def audioset_player(self):
+        """Toggles between Ffmpeg and Avconv"""
+        self.settings["AVCONV"] = not self.settings["AVCONV"]
+        if self.settings["AVCONV"]:
+            await self.bot.say("Player toggled. You're now using avconv.")
+        else:
+            await self.bot.say("Player toggled. You're now using ffmpeg.")
+        self.save_settings()
+
+    @audioset.command(pass_context=True, name="volume")
+    @checks.mod_or_permissions(manage_messages=True)
+    async def audioset_volume(self, ctx, percent: int):
+        """Sets the volume (0 - 100)"""
+        server = ctx.message.server
+        if percent >= 0 and percent <= 100:
+            self.set_server_setting(server, "VOLUME", percent)
+            await self.bot.say("Volume is now set at " + str(percent) +
+                               ". It will take effect after the current"
+                               "track.")
+            self.save_settings()
+        else:
+            await self.bot.say("Volume must be between 0 and 100.")
+
+    @audioset.command(pass_context=True, name="vote")
+    @checks.mod_or_permissions(manage_messages=True)
+    async def audioset_vote(self, ctx, percent: int):
+        """Percentage needed for the masses to skip songs."""
+        server = ctx.message.server
+        if percent < 0:
+            await self.bot.say("Can't be less than zero.")
+            return
+
+        if percent > 100:
+            percent = 100
+
+        await self.bot.say("Vote percentage set to {}%".format(percent))
+        self.set_server_setting(server, "VOTE_THRESHOLD", percent)
+        self.save_settings()
+
+    @commands.group(pass_context=True)
+    async def cache(self, ctx):
+        """Cache management tools."""
+        if ctx.invoked_subcommand is None:
+            await send_cmd_help(ctx)
+            return
+
+    @cache.command(name="dump")
+    @checks.is_owner()
+    async def cache_dump(self):
+        """Dumps the cache."""
+        dumped = self._dump_cache()
+        await self.bot.say("Dumped {:.3f} MB of audio files.".format(dumped))
+
+    @cache.command(name="size")
+    async def cache_size(self):
+        """Current size of the cache."""
+        await self.bot.say("Cache is currently at {:.3f} MB.".format(
+            self._cache_size()))
+
+    @commands.command(hidden=True, pass_context=True, no_pm=True)
     @checks.is_owner()
     async def joinvoice(self, ctx):
         """Joins your voice channel"""
@@ -700,6 +870,41 @@ class Audio:
                                " playlist link. If you think this is in error"
                                " please let us know and we'll get it"
                                " fixed ASAP.")
+
+    @playlist.command(pass_context=True, no_pm=True, name="append")
+    async def playlist_append(self, ctx, name, url):
+        """Appends to a playlist."""
+        await self.bot.say("Not implemented.")
+
+    # TODO: playlist_extend
+
+    @playlist.command(pass_context=True, no_pm=True, name="list")
+    async def playlist_list(self, ctx):
+        """Lists all available playlists"""
+        await self.bot.say("Not implemented.")
+
+    @playlist.command(pass_context=True, no_pm=True, name="queue")
+    async def playlist_queue(self, ctx, url):
+        """Adds a song to the playlist loop.
+
+        Does NOT write to disk."""
+        server = ctx.message.server
+        if not self.voice_connected(server):
+            await self.bot.say("Not voice connected in this server.")
+            return
+
+        # We are connected somewhere
+        if server.id not in self.queue:
+            log.debug("Something went wrong, we're connected but have no"
+                      " queue entry.")
+            raise VoiceNotConnected("Something went wrong, we have no internal"
+                                    " queue to modify. This should never"
+                                    " happen.")
+
+        # We have a queue to modify
+        self._add_to_queue(server, url)
+
+        await self.bot.say("Queued.")
 
     @playlist.command(pass_context=True, no_pm=True, name="remove")
     async def playlist_remove(self, ctx, name):
@@ -816,6 +1021,28 @@ class Audio:
         else:
             await self.bot.say("Nothing paused, nothing to resume.")
 
+    @commands.command(pass_context=True, no_pm=True, name="shuffle")
+    async def _shuffle(self, ctx):
+        """Shuffles the current queue"""
+        server = ctx.message.server
+        if server not in self.queue:
+            await self.bot.say("I have nothing in queue to shuffle.")
+            return
+
+        self._shuffle_queue(server)
+        self._shuffle_temp_queue(server)
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def skip(self, ctx):
+        """Skips the currently playing song"""
+        server = ctx.message.server
+        if self.is_playing(server):
+            vc = self.voice_client(server)
+            vc.audio_player.stop()
+            await self.bot.say("Skipping...")
+        else:
+            await self.bot.say("Can't skip if I'm not playing.")
+
     @commands.command(pass_context=True, no_pm=True)
     async def song(self, ctx):
         """Info about the current song."""
@@ -829,17 +1056,6 @@ class Audio:
                 await self.bot.say("I don't know what this song is either.")
         else:
             await self.bot.say("I'm not playing anything on this server.")
-
-    @commands.command(pass_context=True, no_pm=True)
-    async def skip(self, ctx):
-        """Skips the currently playing song"""
-        server = ctx.message.server
-        if self.is_playing(server):
-            vc = self.voice_client(server)
-            vc.audio_player.stop()
-            await self.bot.say("Skipping...")
-        else:
-            await self.bot.say("Can't skip if I'm not playing.")
 
     @commands.command(pass_context=True)
     async def stop(self, ctx):
@@ -862,8 +1078,13 @@ class Audio:
         return True
 
     async def cache_manager(self):
-        # min cache size: max([50, n * log(n)])
-        pass
+        while self == self.bot.get_cog("Audio"):
+            if self._cache_too_large():
+                # Our cache is too big, dumping
+                log.debug("cache too large ({} > {}), dumping".format(
+                    self._cache_size(), self._cache_max()))
+                self._dump_cache()
+            await asyncio.sleep(5)  # No need to run this every half second
 
     def currently_downloading(self, server):
         if server.id in self.downloaders:
@@ -968,6 +1189,11 @@ class Audio:
     def save_settings(self):
         fileIO('data/audio/settings.json', 'save', self.settings)
 
+    def set_server_setting(self, server, key, value):
+        if server not in self.settings["SERVERS"]:
+            self.settings["SERVERS"][server.id] = {}
+        self.settings["SERVERS"][server.id][key] = value
+
     def voice_client(self, server):
         return self.bot.voice_client_in(server)
 
@@ -986,17 +1212,17 @@ class Audio:
 
         # Member is the bot
 
-        if before.channel != after.channel:
+        if before.voice_channel != after.voice_channel:
             self._set_queue_channel(after.channel.id)
 
         if before.mute != after.mute:
             vc = self.voice_client(server)
-            if after.mute:
-                if vc.audio_player.is_playing():
-                    vc.audio_player.pause()
-            else:
-                if vc.audio_player.is_paused():
-                    vc.audio_player.resume()
+            if after.mute and vc.audio_player.is_playing():
+                vc.audio_player.pause()
+            elif not after.mute and \
+                    (not vc.audio_player.is_playing() and
+                     not vc.audio_player.is_done()):
+                vc.audio_player.resume()
 
 
 def check_folders():
