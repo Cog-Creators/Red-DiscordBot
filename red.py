@@ -38,7 +38,8 @@ async def on_ready():
     users = str(len(set(bot.get_all_members())))
     servers = str(len(bot.servers))
     channels = str(len([c for c in bot.get_all_channels()]))
-    bot.uptime = int(time.perf_counter())
+    if not "uptime" in dir(bot): #prevents reset in case of reconnection
+        bot.uptime = int(time.perf_counter())
     print('------')
     print(bot.user.name + " is now online.")
     print('------')
@@ -55,6 +56,7 @@ async def on_ready():
         bot.oauth_url = url
         print(url)
         print("------")
+    await bot.get_cog('Owner').disable_commands()
 
 
 @bot.event
@@ -74,6 +76,8 @@ async def on_command_error(error, ctx):
         await send_cmd_help(ctx)
     elif isinstance(error, commands.BadArgument):
         await send_cmd_help(ctx)
+    elif isinstance(error, commands.DisabledCommand):
+        await bot.send_message(ctx.message.channel, "That command is disabled.")
 
 async def send_cmd_help(ctx):
     if ctx.invoked_subcommand:
