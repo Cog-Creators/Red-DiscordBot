@@ -1108,7 +1108,7 @@ class Audio:
         except:
             sid = server
 
-        if sid in self.settings["SERVERS"]:
+        if sid not in self.settings["SERVERS"]:
             self.settings["SERVERS"][sid] = {}
         ret = self.settings["SERVERS"][sid]
 
