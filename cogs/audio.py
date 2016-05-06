@@ -826,8 +826,8 @@ class Audio:
             await self.bot.say("I'm already downloading a file!")
             return
 
-        # TODO: URL validation
-        # TODO: song validity check
+        if not (self._match_sc_url(url) or self._match_yt_url(url)):
+            await self.bot.say("That's not a valid URL.")
         self._clear_queue(server)
         self._stop_player(server)
         self._add_to_queue(server, url)
