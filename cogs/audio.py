@@ -466,8 +466,14 @@ class Audio:
             await asyncio.sleep(0.5)
 
         for entry in d.song.entries:
-            song_url = "https://www.youtube.com/watch?v={}".format(entry['id'])
-            playlist.append(song_url)
+            try:
+                song_url = "https://www.youtube.com/watch?v={}".format(
+                    entry['id'])
+                playlist.append(song_url)
+            except AttributeError:
+                pass
+            except TypeError:
+                pass
 
         log.debug("song list:\n\t{}".format(playlist))
 
