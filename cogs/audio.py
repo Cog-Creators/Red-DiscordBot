@@ -2,17 +2,11 @@ import discord
 from discord.ext import commands
 import threading
 import os
-from random import choice as rndchoice
 from random import shuffle
 from cogs.utils.dataIO import fileIO
 from cogs.utils import checks
 from __main__ import send_cmd_help
-from __main__ import settings as bot_settings
-import glob
 import re
-import aiohttp
-import json
-import time
 import logging
 import collections
 import copy
@@ -291,7 +285,7 @@ class Audio:
 
         song_filename = os.path.join(self.cache_path, filename)
         use_avconv = self.settings["AVCONV"]
-        volume = self.settings["VOLUME"]
+        volume = self.get_server_settings(server)["VOLUME"] / 100
         options = '-filter "volume=volume={}"'.format(volume)
 
         log.debug("making player on sid {}".format(server.id))
@@ -304,6 +298,16 @@ class Audio:
     # TODO: _current_playlist
 
     # TODO: _current_song
+
+    def _delete_playlist(self, server, name):
+        if not name.endswith('.txt'):
+            name = name + ".txt"
+        try:
+            os.remove(os.path.join('data/audio/playlists', server.id, name))
+        except OSError:
+            pass
+        except WindowsError:
+            pass
 
     # TODO: _disable_controls()
 
