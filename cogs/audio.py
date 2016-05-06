@@ -1247,7 +1247,7 @@ def check_folders():
 
 
 def check_files():
-    default = {"VOLUME": 0.5, "MAX_LENGTH": 3700, "QUEUE_MODE": True,
+    default = {"VOLUME": 50, "MAX_LENGTH": 3700, "QUEUE_MODE": True,
                "MAX_CACHE": 0, "SOUNDCLOUD_CLIENT_ID": None,
                "TITLE_STATUS": True, "AVCONV": False, "VOTE_THRESHOLD": 50,
                "SERVERS": {}}
