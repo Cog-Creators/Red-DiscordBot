@@ -836,7 +836,7 @@ class Audio:
             await self.bot.say("I'm already downloading a file!")
             return
 
-        if not (self._match_sc_url(url) or self._match_yt_url(url)):
+        if not self._valid_playable_url(url):
             await self.bot.say("That's not a valid URL.")
         self._clear_queue(server)
         self._stop_player(server)
@@ -858,7 +858,7 @@ class Audio:
                                " contain alpha-numeric characters or _.")
             return
 
-        if self._match_yt_playlist(url) or self._match_sc_playlist(url):
+        if self._valid_playable_url(url):
             try:
                 await self.bot.say("Enumerating song list...this could take"
                                    " a few moments.")
@@ -968,6 +968,10 @@ class Audio:
             raise VoiceNotConnected("Something went wrong, we have no internal"
                                     " queue to modify. This should never"
                                     " happen.")
+
+        if not self._valid_playable_url(url):
+            await self.bot.say("Invalid URL.")
+            return
 
         # We have a queue to modify
         if self.queue[server.id]["PLAYLIST"]:
