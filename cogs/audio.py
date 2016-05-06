@@ -1025,7 +1025,7 @@ class Audio:
     async def _shuffle(self, ctx):
         """Shuffles the current queue"""
         server = ctx.message.server
-        if server not in self.queue:
+        if server.id not in self.queue:
             await self.bot.say("I have nothing in queue to shuffle.")
             return
 
@@ -1218,10 +1218,12 @@ class Audio:
         if before.mute != after.mute:
             vc = self.voice_client(server)
             if after.mute and vc.audio_player.is_playing():
+                log.debug("Just got muted, pausing")
                 vc.audio_player.pause()
             elif not after.mute and \
                     (not vc.audio_player.is_playing() and
                      not vc.audio_player.is_done()):
+                log.debug("just got unmuted, resuming")
                 vc.audio_player.resume()
 
 
