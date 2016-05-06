@@ -287,6 +287,7 @@ class Owner:
     @commands.group(name="command", pass_context=True)
     @checks.is_owner()
     async def command_disabler(self, ctx):
+        """Disables/enables commands"""
         if ctx.invoked_subcommand is None:
             await send_cmd_help(ctx)
             if self.disabled_commands:
@@ -298,6 +299,7 @@ class Owner:
 
     @command_disabler.command()
     async def disable(self, *, command):
+        """Disable commands/subcommands"""
         comm_obj = await self.get_command(command)
         if comm_obj is KeyError:
             await self.bot.say("That command doesn't seem to exist.")
@@ -312,6 +314,7 @@ class Owner:
 
     @command_disabler.command()
     async def enable(self, *, command):
+        """Enables commands/subcommands"""
         if command in self.disabled_commands:
             self.disabled_commands.remove(command)
             fileIO("data/red/disabled_commands.json", "save", self.disabled_commands)
