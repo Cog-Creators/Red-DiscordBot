@@ -6,6 +6,7 @@ from __main__ import send_cmd_help, settings
 import os
 import logging
 import json
+import asyncio
 
 class Mod:
     """Moderation tools."""
@@ -81,6 +82,22 @@ class Mod:
         except Exception as e:
             print(e)
 
+    @commands.command(no_pm=True, pass_context=True)
+    @checks.admin_or_permissions(manage_nicknames=True)
+    async def rename(self, ctx, user : discord.Member, *, nickname=""):
+        """Changes user's nickname
+
+        Leaving the nickname empty will remove it."""
+        nickname = nickname.strip()
+        if nickname == "":
+            nickname = None
+        try:
+            await self.bot.change_nickname(user, nickname)
+            await self.bot.say("Done.")
+        except discord.Forbidden:
+            await self.bot.say("I cannot do that, I lack the "
+                "\"Manage Nicknames\" permission.")
+
     @commands.group(pass_context=True, no_pm=True)
     @checks.mod_or_permissions(manage_messages=True)
     async def cleanup(self, ctx):
@@ -111,14 +128,17 @@ class Mod:
                     async for x in self.bot.logs_from(message.channel, limit=100, before=message):
                         if number == 0: 
                             await self.bot.delete_message(cmdmsg)
+                            await asyncio.sleep(0.25)
                             return
                         if text in x.content:
                             await self.bot.delete_message(x)
+                            await asyncio.sleep(0.25)
                             number -= 1
                         new = True
                         message = x
                     if not new or number == 0: 
                         await self.bot.delete_message(cmdmsg)
+                        await asyncio.sleep(0.25)
                         break
         except discord.errors.Forbidden:
             await self.bot.say("I need permissions to manage messages in this channel.")
@@ -141,14 +161,17 @@ class Mod:
                     async for x in self.bot.logs_from(message.channel, limit=100, before=message):
                         if number == 0: 
                             await self.bot.delete_message(cmdmsg)
+                            await asyncio.sleep(0.25)
                             return
                         if x.author.id == user.id:
                             await self.bot.delete_message(x)
+                            await asyncio.sleep(0.25)
                             number -= 1
                         new = True
                         message = x
                     if not new or number == 0: 
                         await self.bot.delete_message(cmdmsg)
+                        await asyncio.sleep(0.25)
                         break
         except discord.errors.Forbidden:
             await self.bot.say("I need permissions to manage messages in this channel.")
@@ -166,6 +189,7 @@ class Mod:
             if number > 0 and number < 10000:
                 async for x in self.bot.logs_from(channel, limit=number+1):
                     await self.bot.delete_message(x)
+                    await asyncio.sleep(0.25)
         except discord.errors.Forbidden:
             await self.bot.say("I need permissions to manage messages in this channel.")
 

@@ -7,6 +7,7 @@ import os
 from subprocess import call, Popen
 import shutil
 import asyncio
+from setuptools import distutils
 
 
 class Downloader:
@@ -196,9 +197,8 @@ class Downloader:
 
         if os.path.exists(cog_data_path):
             print("Copying {}'s data folder...".format(cog))
-            if os.path.exists(os.path.join('data/', cog)):
-                shutil.rmtree(os.path.join('data/', cog))
-            shutil.copytree(cog_data_path, os.path.join('data/', cog))
+            distutils.dir_util.copy_tree(cog_data_path,
+                                         os.path.join('data/', cog))
         self.repos[repo_name][cog]['INSTALLED'] = True
         self.save_repos()
         return True
