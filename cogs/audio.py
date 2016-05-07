@@ -260,7 +260,7 @@ class Audio:
         self.queue[server.id]["QUEUE"] = deque()
         self.queue[server.id]["TEMP_QUEUE"] = deque()
 
-    def _create_ffmpeg_player(self, server, filename):
+    async def _create_ffmpeg_player(self, server, filename):
         """This function will guarantee we have a valid voice client,
             even if one doesn't exist previously."""
         voice_channel_id = self.queue[server.id]["VOICE_CHANNEL_ID"]
@@ -549,7 +549,7 @@ class Audio:
         else:
             log.debug("cache hit on song id {}".format(song.id))
 
-        voice_client = self._create_ffmpeg_player(server, song.id)
+        voice_client = await self._create_ffmpeg_player(server, song.id)
         # That ^ creates the audio_player property
 
         voice_client.audio_player.start()
