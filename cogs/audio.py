@@ -13,6 +13,9 @@ import copy
 import asyncio
 import math
 
+__author__ = "tekulvw"
+__version__ = "0.0.1"
+
 log = logging.getLogger("red.audio")
 log.setLevel(logging.DEBUG)
 
@@ -729,7 +732,7 @@ class Audio:
             await self.bot.say("Player toggled. You're now using ffmpeg.")
         self.save_settings()
 
-    @audioset.command(pass_context=True, name="volume")
+    @audioset.command(pass_context=True, name="volume", no_pm=True)
     @checks.mod_or_permissions(manage_messages=True)
     async def audioset_volume(self, ctx, percent: int):
         """Sets the volume (0 - 100)"""
@@ -743,7 +746,7 @@ class Audio:
         else:
             await self.bot.say("Volume must be between 0 and 100.")
 
-    @audioset.command(pass_context=True, name="vote")
+    @audioset.command(pass_context=True, name="vote", no_pm=True)
     @checks.mod_or_permissions(manage_messages=True)
     async def audioset_vote(self, ctx, percent: int):
         """Percentage needed for the masses to skip songs."""
@@ -760,6 +763,29 @@ class Audio:
         self.save_settings()
 
     @commands.group(pass_context=True)
+    async def audiostat(self, ctx):
+        """General stats on audio stuff."""
+        if ctx.invoked_subcommand is None:
+            await send_cmd_help(ctx)
+            return
+
+    @audiostat.command(name="servers")
+    async def audiostat_servers(self):
+        """Number of servers currently playing."""
+        count = 0
+        queue = copy.deepcopy(self.queue)
+        for server in queue:
+            vc = self.voice_client(server)
+            try:
+                if vc.audio_player.is_playing():
+                    count += 1
+            except:
+                pass
+
+        await self.bot.say("Currently playing music in {} servers.".format(
+            count))
+
+    @commands.group(pass_context=True)
     async def cache(self, ctx):
         """Cache management tools."""
         if ctx.invoked_subcommand is None:
@@ -772,6 +798,12 @@ class Audio:
         """Dumps the cache."""
         dumped = self._dump_cache()
         await self.bot.say("Dumped {:.3f} MB of audio files.".format(dumped))
+
+    @cache.command(name="minimum")
+    async def cache_minimum(self):
+        """Current minimum cache size, based on server count."""
+        await self.bot.say("The cache will be at least {:.3f} MB".format(
+            self._cache_min()))
 
     @cache.command(name="size")
     async def cache_size(self):
