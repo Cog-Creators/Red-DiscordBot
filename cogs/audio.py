@@ -277,7 +277,7 @@ class Audio:
                                         " REKT.")
             log.debug("valid reconnect channel for sid"
                       " {}, reconnecting...".format(server.id))
-            self.bot.join_voice_channel(to_connect)  # SHIT
+            await self._join_voice_channel(to_connect)  # SHIT
         elif voice_client.channel.id != voice_channel_id:
             # This was decided at 3:45 EST in #advanced-testing by 26
             self.queue[server.id]["VOICE_CHANNEL_ID"] = voice_client.channel.id
