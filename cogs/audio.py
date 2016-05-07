@@ -1097,6 +1097,8 @@ class Audio:
         self._shuffle_queue(server)
         self._shuffle_temp_queue(server)
 
+        await self.bot.say("Queues shuffled.")
+
     @commands.command(pass_context=True, no_pm=True)
     async def skip(self, ctx):
         """Skips the currently playing song"""
@@ -1138,7 +1140,7 @@ class Audio:
             return False
         if not hasattr(self.voice_client(server), 'audio_player'):
             return False
-        if not self.voice_client(server).audio_player.is_playing():
+        if self.voice_client(server).audio_player.is_done():
             return False
         return True
 
@@ -1278,7 +1280,7 @@ class Audio:
         # Member is the bot
 
         if before.voice_channel != after.voice_channel:
-            self._set_queue_channel(after.channel.id)
+            self._set_queue_channel(after.voice_channel.id)
 
         if before.mute != after.mute:
             vc = self.voice_client(server)
