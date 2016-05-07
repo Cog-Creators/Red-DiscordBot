@@ -421,7 +421,7 @@ class Audio:
         except:
             pass
 
-        return Playlist(author=author, url=url, songlist=songlist)
+        return Playlist(author=author, url=url, playlist=songlist)
 
     def _match_sc_playlist(self, url):
         return self._match_sc_url(url)
