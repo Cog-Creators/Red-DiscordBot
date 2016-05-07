@@ -288,6 +288,12 @@ class Audio:
         volume = self.get_server_settings(server)["VOLUME"] / 100
         options = '-filter "volume=volume={}"'.format(volume)
 
+        try:
+            voice_client.audio_player.process.kill()
+            log.debug("killed old player")
+        except AttributeError:
+            pass
+
         log.debug("making player on sid {}".format(server.id))
 
         voice_client.audio_player = voice_client.create_ffmpeg_player(
@@ -384,6 +390,12 @@ class Audio:
         except asyncio.futures.TimeoutError as e:
             log.exception(e)
             raise ConnectTimeout("We timed out connecting to a voice channel")
+
+    def _kill_player(self, server):
+        try:
+            self.voice_client(server).audio_player.process.kill()
+        except AttributeError:
+            pass
 
     def _load_playlist(self, server, name):
         try:
@@ -654,6 +666,7 @@ class Audio:
 
         if hasattr(voice_client, 'audio_player'):
             voice_client.audio_player.stop()
+            self._kill_player(server)
             del voice_client.audio_player
 
     def _valid_playlist_name(self, name):
