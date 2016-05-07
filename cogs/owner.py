@@ -72,6 +72,7 @@ class Owner:
                                ' Check your logs for more information.')
         else:
             set_cog(module, True)
+            await self.disable_commands()
             await self.bot.say("Module enabled.")
 
     @commands.command()
@@ -128,6 +129,7 @@ class Owner:
                                " logs for more information.")
         else:
             set_cog(module, True)
+            await self.disable_commands()
             await self.bot.say("Module reloaded.")
 
     @commands.command(pass_context=True, hidden=True)
@@ -348,8 +350,11 @@ class Owner:
     async def disable_commands(self): # runs at boot
         for cmd in self.disabled_commands:
             cmd_obj = await self.get_command(cmd)
-            cmd_obj.enabled = False
-            cmd_obj.hidden = True
+            try:
+                cmd_obj.enabled = False
+                cmd_obj.hidden = True
+            except:
+                pass
 
     @commands.command()
     @checks.is_owner()
