@@ -571,6 +571,19 @@ class Audio:
         self._set_queue_repeat(server, True)
         self._set_queue(server, songlist)
 
+    def _player_count(self):
+        count = 0
+        queue = copy.deepcopy(self.queue)
+        for sid in queue:
+            server = self.bot.get_server(sid)
+            try:
+                vc = self.voice_client(server)
+                if vc.audio_player.is_playing():
+                    count += 1
+            except:
+                pass
+        return count
+
     def _playlist_exists(self, server, name):
         try:
             server = server.id
@@ -772,15 +785,8 @@ class Audio:
     @audiostat.command(name="servers")
     async def audiostat_servers(self):
         """Number of servers currently playing."""
-        count = 0
-        queue = copy.deepcopy(self.queue)
-        for server in queue:
-            vc = self.voice_client(server)
-            try:
-                if vc.audio_player.is_playing():
-                    count += 1
-            except:
-                pass
+
+        count = self._player_count()
 
         await self.bot.say("Currently playing music in {} servers.".format(
             count))
