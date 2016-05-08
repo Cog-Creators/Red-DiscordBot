@@ -1102,6 +1102,28 @@ class Audio:
         else:
             await self.bot.say("That playlist does not exist.")
 
+    @playlist.command(pass_context=True, no_pm=True, name="mix")
+    async def playlist_start_mix(self, ctx, name):
+        """Plays and mixes a playlist."""
+        server = ctx.message.server
+        voice_channel = ctx.message.author.voice_channel
+        if voice_channel is None:
+            await self.bot.say("You must be in a voice channel to start a"
+                               " playlist.")
+            return
+
+        if self._playlist_exists(server, name):
+            # TODO: permissions checks...
+            if not self.voice_connected(server):
+                await self._join_voice_channel(voice_channel)
+            self._clear_queue(server)
+            playlist = self._load_playlist(server, name)
+            shuffle(playlist.playlist)
+            self._play_playlist(server, playlist)
+            await self.bot.say("Playlist queued.")
+        else:
+            await self.bot.say("That playlist does not exist.")
+
     @commands.command(pass_context=True, no_pm=True, name="queue")
     async def _queue(self, ctx, url):
         """Queues a song to play next. Extended functionality in `!help`
@@ -1220,8 +1242,10 @@ class Audio:
         if self.is_playing(server):
             song = self.queue[server.id]["NOW_PLAYING"]
             if song:
-                await self.bot.say("[{}] {}".format(song.creator,
-                                                    song.title))
+                msg = ("**Title:** {}\n**Author:** {}\n**Uploader:** {}\n"
+                "\n<{}>".format(song.title, song.creator,song.uploader, 
+                    song.webpage_url))
+                await self.bot.say(msg.replace("**Author:** None\n", ""))
             else:
                 await self.bot.say("I don't know what this song is either.")
         else:
@@ -1276,7 +1300,10 @@ class Audio:
             if setting not in ret:
                 # Add the default
                 ret[setting] = self.settings[setting]
-
+                if setting.lower() == "volume" and ret[setting] <= 1:
+                    ret[setting] *= 100
+        #^This will make it so that only users with an outdated config will
+        #have their volume set * 100. In theory.
         self.save_settings()
 
         return ret
