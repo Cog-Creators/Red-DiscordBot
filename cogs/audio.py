@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 import threading
 import os
-from random import shuffle
+from random import shuffle, choice
 from cogs.utils.dataIO import fileIO
 from cogs.utils import checks
 from __main__ import send_cmd_help
@@ -983,9 +983,18 @@ class Audio:
 
         if not self._valid_playable_url(url):
             await self.bot.say("That's not a valid URL.")
+            return
         self._clear_queue(server)
         self._stop_player(server)
         self._add_to_queue(server, url)
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def sing(self, ctx):
+        """Makes Red sing one of her songs"""
+        ids = ("zGTkAVsrfg8", "cGMWL8cOeAU", "vFrjMq4aL-g", "WROI5WYBU_A", 
+               "41tIUr_ex3g", "f9O2Rjn1azc")
+        url = "https://www.youtube.com/watch?v={}".format(choice(ids))
+        await self.play.callback(self, ctx, url)
 
     @commands.group(pass_context=True, no_pm=True)
     async def playlist(self, ctx):
@@ -1063,7 +1072,7 @@ class Audio:
 
     @playlist.command(pass_context=True, no_pm=True, name="remove")
     async def playlist_remove(self, ctx, name):
-        """Delete's a saved playlist."""
+        """Deletes a saved playlist."""
         server = ctx.message.server
 
         if self._playlist_exists(server, name):
@@ -1095,7 +1104,7 @@ class Audio:
 
     @commands.command(pass_context=True, no_pm=True, name="queue")
     async def _queue(self, ctx, url):
-        """Queue's a song to play next. Extended functionality in `!help`
+        """Queues a song to play next. Extended functionality in `!help`
 
         If you use `queue` when one song is playing, your new song will get
             added to the song loop (if running). If you use `queue` when a
@@ -1375,7 +1384,7 @@ class Audio:
         # Member is the bot
 
         if before.voice_channel != after.voice_channel:
-            self._set_queue_channel(after.voice_channel.id)
+            self._set_queue_channel(after.server, after.voice_channel)
 
         if before.mute != after.mute:
             vc = self.voice_client(server)
