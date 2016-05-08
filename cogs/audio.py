@@ -754,7 +754,7 @@ class Audio:
             self.set_server_setting(server, "VOLUME", percent)
             await self.bot.say("Volume is now set at " + str(percent) +
                                ". It will take effect after the current"
-                               "track.")
+                               " track.")
             self.save_settings()
         else:
             await self.bot.say("Volume must be between 0 and 100.")
