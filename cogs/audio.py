@@ -181,7 +181,8 @@ class Downloader(threading.Thread):
         else:
             self.url = "https://youtube.com/watch?v={}".format(
                 self._yt.extract_info(self.url,
-                                      download=False)["entries"][0]["id"])
+                                      download=False,
+                                      process=False)["entries"][0]["id"])
             video = self._yt.extract_info(self.url, download=False)
 
         self.song = Song(**video)
@@ -230,7 +231,7 @@ class Audio:
 
     def _cache_min(self):
         x = self._server_count()
-        return max([60, 96 * math.log(x) * x**0.3])  # log is not log10
+        return max([60, 48 * math.log(x) * x**0.3])  # log is not log10
 
     def _cache_required_files(self):
         queue = copy.deepcopy(self.queue)
@@ -754,7 +755,7 @@ class Audio:
             self.set_server_setting(server, "VOLUME", percent)
             await self.bot.say("Volume is now set at " + str(percent) +
                                ". It will take effect after the current"
-                               "track.")
+                               " track.")
             self.save_settings()
         else:
             await self.bot.say("Volume must be between 0 and 100.")
