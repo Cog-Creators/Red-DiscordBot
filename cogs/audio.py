@@ -1361,7 +1361,7 @@ class Audio:
         fileIO('data/audio/settings.json', 'save', self.settings)
 
     def set_server_setting(self, server, key, value):
-        if server not in self.settings["SERVERS"]:
+        if server.id not in self.settings["SERVERS"]:
             self.settings["SERVERS"][server.id] = {}
         self.settings["SERVERS"][server.id][key] = value
 
