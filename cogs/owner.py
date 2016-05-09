@@ -412,7 +412,7 @@ class Owner:
         servers = list(self.bot.servers)
         server_list = {}
         msg = ""
-        for i in range(0, len(servers)):
+        for i in range(1, len(servers)):
             server_list[str(i)] = servers[i]
             msg += "{}: {}\n".format(str(i), servers[i].name)
         msg += "\nTo leave a server just type its number."
