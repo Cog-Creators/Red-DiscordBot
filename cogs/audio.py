@@ -177,13 +177,13 @@ class Downloader(threading.Thread):
         if self._yt is None:
             self._yt = youtube_dl.YoutubeDL(youtube_dl_options)
         if "[SEARCH:]" not in self.url:
-            video = self._yt.extract_info(self.url, download=False)
+            video = self._yt.extract_info(self.url, download=False,
+                                          process=False)
         else:
+            video = self._yt.extract_info(self.url, download=False,
+                                          process=False)
             self.url = "https://youtube.com/watch?v={}".format(
-                self._yt.extract_info(self.url,
-                                      download=False,
-                                      process=False)["entries"][0]["id"])
-            video = self._yt.extract_info(self.url, download=False)
+                video["entries"][0]["id"])
 
         self.song = Song(**video)
 
@@ -199,10 +199,12 @@ class Audio:
         self.server_specific_setting_keys = ["VOLUME", "QUEUE_MODE",
                                              "VOTE_THRESHOLD"]
         self.cache_path = "data/audio/cache"
+        self.local_playlist_path = "data/audio/localtracks"
 
     def __del__(self):
         for vc in self.bot.voice_clients:
             self._stop_and_disconnect(vc.server)
+            log.debug("disconnecting on sid {}".format(vc.server.id))
 
     def _add_to_queue(self, server, url):
         if server.id not in self.queue:
@@ -261,7 +263,7 @@ class Audio:
         self.queue[server.id]["QUEUE"] = deque()
         self.queue[server.id]["TEMP_QUEUE"] = deque()
 
-    async def _create_ffmpeg_player(self, server, filename):
+    async def _create_ffmpeg_player(self, server, filename, local=False):
         """This function will guarantee we have a valid voice client,
             even if one doesn't exist previously."""
         voice_channel_id = self.queue[server.id]["VOICE_CHANNEL_ID"]
@@ -287,7 +289,11 @@ class Audio:
 
         # Okay if we reach here we definitively have a working voice_client
 
-        song_filename = os.path.join(self.cache_path, filename)
+        if local:
+            song_filename = os.path.join(self.local_playlist_path, filename)
+        else:
+            song_filename = os.path.join(self.cache_path, filename)
+
         use_avconv = self.settings["AVCONV"]
         volume = self.get_server_settings(server)["VOLUME"] / 100
         options = '-filter "volume=volume={}"'.format(volume)
@@ -385,6 +391,50 @@ class Audio:
 
     # TODO: _enable_controls()
 
+    async def _guarantee_downloaded(self, server, url):
+        max_length = self.settings["MAX_LENGTH"]
+        if server.id not in self.downloaders:  # We don't have a downloader
+            log.debug("sid {} not in downloaders, making one".format(
+                server.id))
+            self.downloaders[server.id] = Downloader(url, max_length)
+
+        if self.downloaders[server.id].url != url:  # Our downloader is old
+            # I'm praying to Jeezus that we don't accidentally lose a running
+            #   Downloader
+            log.debug("sid {} in downloaders but wrong url".format(server.id))
+            self.downloaders[server.id] = Downloader(url, max_length)
+
+        try:
+            # We're assuming we have the right thing in our downloader object
+            self.downloaders[server.id].start()
+            log.debug("starting our downloader for sid {}".format(server.id))
+        except RuntimeError:
+            # Queue manager already started it for us, isn't that nice?
+            pass
+
+        while self.downloaders[server.id].is_alive():  # Getting info w/o DL
+            await asyncio.sleep(0.5)
+
+        song = self.downloaders[server.id].song
+        log.debug("sid {} wants to play songid {}".format(server.id, song.id))
+
+        # Now we check to see if we have a cache hit
+        cache_location = os.path.join(self.cache_path, song.id)
+        if not os.path.exists(cache_location):
+            log.debug("cache miss on song id {}".format(song.id))
+            self.downloaders[server.id] = Downloader(url, max_length,
+                                                     download=True)
+            self.downloaders[server.id].start()
+
+            while self.downloaders[server.id].is_alive():
+                await asyncio.sleep(0.5)
+
+            song = self.downloaders[server.id].song
+        else:
+            log.debug("cache hit on song id {}".format(song.id))
+
+        return song
+
     async def _join_voice_channel(self, channel):
         server = channel.server
         if server.id in self.queue:
@@ -401,6 +451,14 @@ class Audio:
         except AttributeError:
             pass
 
+    def _list_local_playlists(self):
+        ret = []
+        for thing in os.listdir(self.local_playlist_path):
+            if os.path.isdir(os.path.join(self.local_playlist_path, thing)):
+                ret.append(thing)
+        log.debug("local playlists:\n\t{}".format(ret))
+        return ret
+
     def _load_playlist(self, server, name):
         try:
             server = server.id
@@ -415,6 +473,15 @@ class Audio:
         kwargs['sid'] = server
 
         return Playlist(**kwargs)
+
+    def _local_playlist_songlist(self, name):
+        dirpath = os.path.join(self.local_playlist_path, name)
+        return os.listdir(dirpath)
+
+    def _make_local_song(self, filename):
+        # filename should be playlist_folder/file_name
+        folder, song = os.path.split(filename)
+        return Song(name=song, id=filename, title=song, url=filename)
 
     def _make_playlist(self, author, url, songlist):
         try:
@@ -509,48 +576,18 @@ class Audio:
         assert type(server) is discord.Server
         log.debug('starting to play on "{}"'.format(server.name))
 
-        max_length = self.settings["MAX_LENGTH"]
-        if server.id not in self.downloaders:  # We don't have a downloader
-            log.debug("sid {} not in downloaders, making one".format(
-                server.id))
-            self.downloaders[server.id] = Downloader(url, max_length)
+        if self._valid_playable_url(url):
+            song = await self._guarantee_downloaded(server, url)
+            local = False
+        else:  # Assume local
+            try:
+                song = self._make_local_song(url)
+                local = True
+            except FileNotFoundError:
+                raise
 
-        if self.downloaders[server.id].url != url:  # Our downloader is old
-            # I'm praying to Jeezus that we don't accidentally lose a running
-            #   Downloader
-            log.debug("sid {} in downloaders but wrong url".format(server.id))
-            self.downloaders[server.id] = Downloader(url, max_length)
-
-        try:
-            # We're assuming we have the right thing in our downloader object
-            self.downloaders[server.id].start()
-            log.debug("starting our downloader for sid {}".format(server.id))
-        except RuntimeError:
-            # Queue manager already started it for us, isn't that nice?
-            pass
-
-        while self.downloaders[server.id].is_alive():  # Getting info w/o DL
-            await asyncio.sleep(0.5)
-
-        song = self.downloaders[server.id].song
-        log.debug("sid {} wants to play songid {}".format(server.id, song.id))
-
-        # Now we check to see if we have a cache hit
-        cache_location = os.path.join(self.cache_path, song.id)
-        if not os.path.exists(cache_location):
-            log.debug("cache miss on song id {}".format(song.id))
-            self.downloaders[server.id] = Downloader(url, max_length,
-                                                     download=True)
-            self.downloaders[server.id].start()
-
-            while self.downloaders[server.id].is_alive():
-                await asyncio.sleep(0.5)
-
-            song = self.downloaders[server.id].song
-        else:
-            log.debug("cache hit on song id {}".format(song.id))
-
-        voice_client = await self._create_ffmpeg_player(server, song.id)
+        voice_client = await self._create_ffmpeg_player(server, song.id,
+                                                        local=local)
         # That ^ creates the audio_player property
 
         voice_client.audio_player.start()
@@ -571,6 +608,16 @@ class Audio:
         self._set_queue_playlist(server, name)
         self._set_queue_repeat(server, True)
         self._set_queue(server, songlist)
+
+    def _play_local_playlist(self, server, name):
+        songlist = self._local_playlist_songlist(name)
+
+        ret = []
+        for song in songlist:
+            ret.append(os.path.join(name, song))
+
+        ret_playlist = Playlist(server=server, name=name, playlist=ret)
+        self._play_playlist(server, ret_playlist)
 
     def _player_count(self):
         count = 0
@@ -830,6 +877,52 @@ class Audio:
             self._stop_and_disconnect(server)
 
         await self._join_voice_channel(voice_channel)
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def local(self, ctx, name):
+        """Plays a local playlist"""
+        server = ctx.message.server
+        author = ctx.message.author
+        voice_channel = author.voice_channel
+
+        # Checking already connected, will join if not
+
+        if not self.voice_connected(server):
+            try:
+                can_connect = self.has_connect_perm(author, server)
+            except AuthorNotConnected:
+                await self.bot.say("You must join a voice channel before I can"
+                                   " play anything.")
+                return
+            if not can_connect:
+                await self.bot.say("I don't have permissions to join your"
+                                   " voice channel.")
+            else:
+                await self._join_voice_channel(voice_channel)
+        else:  # We are connected but not to the right channel
+            if self.voice_client(server).channel != voice_channel:
+                pass  # TODO: Perms
+
+        # Checking if playing in current server
+
+        if self.is_playing(server):
+            await self.bot.say("I'm already playing a song on this server!")
+            return  # TODO: Possibly execute queue?
+
+        # If not playing, spawn a downloader if it doesn't exist and begin
+        #   downloading the next song
+
+        if self.currently_downloading(server):
+            await self.bot.say("I'm already downloading a file!")
+            return
+
+        lists = self._list_local_playlists()
+
+        if not any(map(lambda l: os.path.split(l)[1] == name, lists)):
+            await self.bot.say("Local playlist not found.")
+            return
+
+        self._play_local_playlist(server, name)
 
     @commands.command(pass_context=True, no_pm=True)
     async def pause(self, ctx):
@@ -1221,8 +1314,9 @@ class Audio:
                 song = None
             self.queue[server.id]["NOW_PLAYING"] = song
             log.debug("set now_playing for sid {}".format(server.id))
-        else:  # We're playing but we might be able to download a new song
-            curr_dl = self.downloaders[server.id]
+        elif server.id in self.downloaders:
+            # We're playing but we might be able to download a new song
+            curr_dl = self.downloaders.get(server.id)
             if len(temp_queue) > 0:
                 next_dl = Downloader(temp_queue.peekleft(),
                                      max_length)
@@ -1323,15 +1417,6 @@ def check_files():
                     print(
                         "Adding " + str(key) + " field to audio settings.json")
             fileIO(settings_path, "save", current)
-
-    allowed = ["^(https:\/\/www\\.youtube\\.com\/watch\\?v=...........*)",
-               "^(https:\/\/youtu.be\/...........*)",
-               "^(https:\/\/youtube\\.com\/watch\\?v=...........*)",
-               "^(https:\/\/soundcloud\\.com\/.*)"]
-
-    if not os.path.isfile("data/audio/accepted_links.json"):
-        print("Creating accepted_links.json...")
-        fileIO("data/audio/accepted_links.json", "save", allowed)
 
 
 def setup(bot):
