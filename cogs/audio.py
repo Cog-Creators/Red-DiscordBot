@@ -1109,6 +1109,7 @@ class Audio:
 
     @commands.command(name="yt", pass_context=True, no_pm=True)
     async def yt_search(self, ctx, *, search_terms : str):
+        """Searches and plays a video from YouTube"""
         await self.play.callback(self, ctx, search_terms)
 
     @commands.group(pass_context=True, no_pm=True)
