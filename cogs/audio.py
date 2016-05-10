@@ -603,6 +603,8 @@ class Audio:
             songlist = playlist
             name = True
 
+        log.debug("setting up playlist {} on sid {}".format(name, server.id))
+
         self._clear_queue(server)
         self._setup_queue(server)
         self._set_queue_playlist(server, name)
