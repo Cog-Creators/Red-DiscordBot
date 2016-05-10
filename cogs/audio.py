@@ -167,6 +167,8 @@ class Downloader(threading.Thread):
 
     def download(self):
         if self.max_duration and self.song.duration > self.max_duration:
+            log.debug("not downloading {} because of duration".format(
+                self.song.id))
             return
 
         if not os.path.isfile('data/audio/cache' + self.song.id):
@@ -203,7 +205,7 @@ class Audio:
 
     def __del__(self):
         for vc in self.bot.voice_clients:
-            self._stop_and_disconnect(vc.server)
+            self.bot.loop.create_task(self._stop_and_disconnect(vc.server))
             log.debug("disconnecting on sid {}".format(vc.server.id))
 
     def _add_to_queue(self, server, url):
@@ -327,13 +329,13 @@ class Audio:
 
     # TODO: _disable_controls()
 
-    def _disconnect_voice_client(self, server):
+    async def _disconnect_voice_client(self, server):
         if not self.voice_connected(server):
             return
 
         voice_client = self.voice_client(server)
 
-        self.bot.loop.create_task(voice_client.disconnect())
+        await voice_client.disconnect()
 
     async def _download_next(self, server, curr_dl, next_dl):
         """Checks to see if we need to download the next, and does.
@@ -605,7 +607,12 @@ class Audio:
 
         log.debug("setting up playlist {} on sid {}".format(name, server.id))
 
+        self._stop_player(server)
+        self._stop_downloader(server)
         self._clear_queue(server)
+
+        log.debug("finished resetting state on sid {}".format(server.id))
+
         self._setup_queue(server)
         self._set_queue_playlist(server, name)
         self._set_queue_repeat(server, True)
@@ -712,11 +719,11 @@ class Audio:
                                  "QUEUE": deque(), "TEMP_QUEUE": deque(),
                                  "NOW_PLAYING": None}
 
-    def _stop_and_disconnect(self, server):
+    async def _stop_and_disconnect(self, server):
         self._clear_queue(server)
-        self._stop_downloader(server)
         self._stop_player(server)
-        self._disconnect_voice_client(server)
+        await self._disconnect_voice_client(server)
+        self._stop_downloader(server)
 
     def _stop_downloader(self, server):
         if server.id not in self.downloaders:
@@ -876,7 +883,7 @@ class Audio:
         voice_channel = author.voice_channel
 
         if voice_channel is not None:
-            self._stop_and_disconnect(server)
+            await self._stop_and_disconnect(server)
 
         await self._join_voice_channel(voice_channel)
 
@@ -1097,7 +1104,6 @@ class Audio:
             # TODO: permissions checks...
             if not self.voice_connected(server):
                 await self._join_voice_channel(voice_channel)
-            self._clear_queue(server)
             playlist = self._load_playlist(server, name)
             self._play_playlist(server, playlist)
             await self.bot.say("Playlist queued.")
@@ -1259,7 +1265,7 @@ class Audio:
         # TODO: All those fun checks for permissions
         server = ctx.message.server
 
-        self._stop_and_disconnect(server)
+        await self._stop_and_disconnect(server)
         self._remove_queue(server)
 
     def is_playing(self, server):
@@ -1328,6 +1334,7 @@ class Audio:
         temp_queue = self.queue[server.id]["TEMP_QUEUE"]
         queue = self.queue[server.id]["QUEUE"]
         repeat = self.queue[server.id]["REPEAT"]
+        last_song = self.queue[server.id]["NOW_PLAYING"]
 
         assert temp_queue is self.queue[server.id]["TEMP_QUEUE"]
         assert queue is self.queue[server.id]["QUEUE"]
@@ -1345,9 +1352,9 @@ class Audio:
                 url = queue.popleft()
                 log.debug("calling _play on the normal queue")
                 song = await self._play(sid, url)
-                if repeat:
+                if repeat and last_song:
                     # TODO: stick NOW_PLAYING.url back into queue AFTER ending
-                    queue.append(url)
+                    queue.append(last_song.url)
             else:
                 song = None
             self.queue[server.id]["NOW_PLAYING"] = song
@@ -1404,6 +1411,8 @@ class Audio:
 
     async def voice_state_update(self, before, after):
         # Member objects
+        if after is None:
+            return
         server = after.server
         if server.id not in self.queue:
             return
