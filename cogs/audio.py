@@ -205,8 +205,7 @@ class Audio:
         self.local_playlist_path = "data/audio/localtracks"
 
     def __del__(self):
-        while len(list(self.bot.voice_clients)) != 0:
-            vc = list(self.bot.voice_clients)[0]
+        for vc in self.bot.voice_clients:
             self.bot.loop.create_task(self._stop_and_disconnect(vc.server))
             log.debug("disconnecting on sid {}".format(vc.server.id))
 
