@@ -204,11 +204,6 @@ class Audio:
         self.cache_path = "data/audio/cache"
         self.local_playlist_path = "data/audio/localtracks"
 
-    def __del__(self):
-        for vc in self.bot.voice_clients:
-            self.bot.loop.create_task(self._stop_and_disconnect(vc.server))
-            log.debug("disconnecting on sid {}".format(vc.server.id))
-
     def _add_to_queue(self, server, url):
         if server.id not in self.queue:
             self._setup_queue(server)
@@ -1460,6 +1455,16 @@ class Audio:
                 await asyncio.sleep(0.5)
             await asyncio.sleep(1)
 
+    async def reload_monitor(self):
+        while self == self.bot.get_cog('Audio'):
+            await asyncio.sleep(0.5)
+
+        for vc in self.bot.voice_clients:
+            try:
+                vc.audio_player.stop()
+            except:
+                pass
+
     def save_settings(self):
         fileIO('data/audio/settings.json', 'save', self.settings)
 
@@ -1555,3 +1560,4 @@ def setup(bot):
     bot.loop.create_task(n.queue_scheduler())
     bot.loop.create_task(n.cache_manager())
     bot.loop.create_task(n.disconnect_timer())
+    bot.loop.create_task(n.reload_monitor())
