@@ -181,7 +181,7 @@ class Downloader(threading.Thread):
             video = self._yt.extract_info(self.url, download=False,
                                           process=False)
         else:
-            self.url = self.url.strip("[SEARCH:]")
+            self.url = self.url[9:]
             yt_id = self._yt.extract_info(self.url,
                 download=False)["entries"][0]["id"] # Should handle errors here.
             self.url = "https://youtube.com/watch?v={}".format(yt_id)
