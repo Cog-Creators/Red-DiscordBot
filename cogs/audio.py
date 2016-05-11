@@ -12,6 +12,7 @@ import collections
 import copy
 import asyncio
 import math
+import time
 
 __author__ = "tekulvw"
 __version__ = "0.0.1"
@@ -204,7 +205,8 @@ class Audio:
         self.local_playlist_path = "data/audio/localtracks"
 
     def __del__(self):
-        for vc in self.bot.voice_clients:
+        while len(list(self.bot.voice_clients)) != 0:
+            vc = list(self.bot.voice_clients)[0]
             self.bot.loop.create_task(self._stop_and_disconnect(vc.server))
             log.debug("disconnecting on sid {}".format(vc.server.id))
 
@@ -719,11 +721,14 @@ class Audio:
                                  "QUEUE": deque(), "TEMP_QUEUE": deque(),
                                  "NOW_PLAYING": None}
 
-    async def _stop_and_disconnect(self, server):
+    def _stop(self, server):
         self._clear_queue(server)
         self._stop_player(server)
-        await self._disconnect_voice_client(server)
         self._stop_downloader(server)
+
+    async def _stop_and_disconnect(self, server):
+        self._stop(server)
+        await self._disconnect_voice_client(server)
 
     def _stop_downloader(self, server):
         if server.id not in self.downloaders:
@@ -874,6 +879,22 @@ class Audio:
         await self.bot.say("Cache is currently at {:.3f} MB.".format(
             self._cache_size()))
 
+    @commands.group(pass_context=True, hidden=True, no_pm=True)
+    @checks.is_owner()
+    async def disconnect(self, ctx):
+        """Disconnects from voice channel in current server."""
+        if ctx.invoked_subcommand is None:
+            server = ctx.message.server
+            await self._stop_and_disconnect(server)
+
+    @disconnect.command(name="all", hidden=True, no_pm=True)
+    async def disconnect_all(self):
+        """Disconnects from all voice channels."""
+        while len(list(self.bot.voice_clients)) != 0:
+            vc = list(self.bot.voice_clients)[0]
+            await self._stop_and_disconnect(vc.server)
+        await self.bot.say("done.")
+
     @commands.command(hidden=True, pass_context=True, no_pm=True)
     @checks.is_owner()
     async def joinvoice(self, ctx):
@@ -883,7 +904,7 @@ class Audio:
         voice_channel = author.voice_channel
 
         if voice_channel is not None:
-            await self._stop_and_disconnect(server)
+            self._stop(server)
 
         await self._join_voice_channel(voice_channel)
 
@@ -959,6 +980,12 @@ class Audio:
         author = ctx.message.author
         voice_channel = author.voice_channel
 
+        # Checking if playing in current server
+
+        if self.is_playing(server):
+            await self.bot.say("I'm already playing a song on this server!")
+            return  # TODO: Possibly execute queue?
+
         # Checking already connected, will join if not
 
         if not self.voice_connected(server):
@@ -975,13 +1002,8 @@ class Audio:
                 await self._join_voice_channel(voice_channel)
         else:  # We are connected but not to the right channel
             if self.voice_client(server).channel != voice_channel:
-                pass  # TODO: Perms
-
-        # Checking if playing in current server
-
-        if self.is_playing(server):
-            await self.bot.say("I'm already playing a song on this server!")
-            return  # TODO: Possibly execute queue?
+                await self._stop_and_disconnect(server)
+                await self._join_voice_channel(voice_channel)
 
         # If not playing, spawn a downloader if it doesn't exist and begin
         #   downloading the next song
@@ -1265,8 +1287,7 @@ class Audio:
         # TODO: All those fun checks for permissions
         server = ctx.message.server
 
-        await self._stop_and_disconnect(server)
-        self._remove_queue(server)
+        self._stop(server)
 
     def is_playing(self, server):
         if not self.voice_connected(server):
@@ -1293,6 +1314,37 @@ class Audio:
             if self.downloaders[server.id].is_alive():
                 return True
         return False
+
+    async def disconnect_timer(self):
+        stop_times = {}
+        while self == self.bot.get_cog('Audio'):
+            for vc in self.bot.voice_clients:
+                server = vc.server
+                if not hasattr(vc, 'audio_player') and \
+                        (server not in stop_times or
+                         stop_times[server] is None):
+                    log.debug("putting sid {} in stop loop, no player".format(
+                        server.id))
+                    stop_times[server] = int(time.time())
+
+                if hasattr(vc, 'audio_player'):
+                    if vc.audio_player.is_done() and \
+                            (server not in stop_times or
+                             stop_times[server] is None):
+                        log.debug("putting sid {} in stop loop".format(
+                            server.id))
+                        stop_times[server] = int(time.time())
+                    elif vc.audio_player.is_playing():
+                        stop_times[server] = None
+
+            for server in stop_times:
+                if stop_times[server] and \
+                        int(time.time()) - stop_times[server] > 300:
+                    # 5 min not playing to d/c
+                    log.debug("dcing from sid {} after 300s".format(server.id))
+                    await self._disconnect_voice_client(server)
+                    stop_times[server] = None
+            await asyncio.sleep(5)
 
     def get_server_settings(self, server):
         try:
@@ -1487,3 +1539,4 @@ def setup(bot):
     bot.add_listener(n.voice_state_update, 'on_voice_state_update')
     bot.loop.create_task(n.queue_scheduler())
     bot.loop.create_task(n.cache_manager())
+    bot.loop.create_task(n.disconnect_timer())
