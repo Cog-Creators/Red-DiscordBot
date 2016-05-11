@@ -462,14 +462,17 @@ class Audio:
         log.debug("local playlists:\n\t{}".format(ret))
         return ret
 
-    def _load_playlist(self, server, name):
+    def _load_playlist(self, server, name, local=True):
         try:
             server = server.id
         except:
             pass
 
         f = "data/audio/playlists"
-        f = os.path.join(f, server, name + ".txt")
+        if local:
+            f = os.path.join(f, server, name + ".txt")
+        else:
+            f = os.path.join(f, name + ".txt")
         kwargs = fileIO(f, 'load')
 
         kwargs['name'] = name
@@ -643,6 +646,17 @@ class Audio:
         return count
 
     def _playlist_exists(self, server, name):
+        return self._playlist_exists_local(server, name) or \
+            self._playlist_exists_global(name)
+
+    def _playlist_exists_global(self, name):
+        f = "data/audio/playlists"
+        f = os.path.join(f, name + ".txt")
+        log.debug('checking for {}'.format(f))
+
+        return fileIO(f, 'check')
+
+    def _playlist_exists_local(self, server, name):
         try:
             server = server.id
         except AttributeError:
@@ -1125,7 +1139,9 @@ class Audio:
             # TODO: permissions checks...
             if not self.voice_connected(server):
                 await self._join_voice_channel(voice_channel)
-            playlist = self._load_playlist(server, name)
+            playlist = self._load_playlist(server, name,
+                                           local=self._playlist_exists_local(
+                                               server, name))
             self._play_playlist(server, playlist)
             await self.bot.say("Playlist queued.")
         else:
