@@ -460,10 +460,10 @@ class Audio:
         except:
             pass
         path = "data/audio/playlists"
+        old_playlists = [f[:-4] for f in os.listdir(path) if f.endswith(".txt")]
         path = os.path.join(path, server)
-        print(os.listdir(path))
-        files = [f[:-4] for f in os.listdir(path) if f.endswith(".txt")]
-        return files
+        new_playlists = [f[:-4] for f in os.listdir(path) if f.endswith(".txt")]
+        return list(set(old_playlists + new_playlists))
 
     def _list_local_playlists(self):
         ret = []
