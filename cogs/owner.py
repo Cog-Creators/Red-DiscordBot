@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from cogs.utils import checks
 from __main__ import set_cog, send_cmd_help, settings
+from .utils.dataIO import fileIO
 
 import importlib
 import traceback
@@ -43,6 +44,7 @@ class Owner:
     def __init__(self, bot):
         self.bot = bot
         self.setowner_lock = False
+        self.disabled_commands = fileIO("data/red/disabled_commands.json", "load")
 
     @commands.command()
     @checks.is_owner()
@@ -70,6 +72,7 @@ class Owner:
                                ' Check your logs for more information.')
         else:
             set_cog(module, True)
+            await self.disable_commands()
             await self.bot.say("Module enabled.")
 
     @commands.command()
@@ -126,6 +129,7 @@ class Owner:
                                " logs for more information.")
         else:
             set_cog(module, True)
+            await self.disable_commands()
             await self.bot.say("Module reloaded.")
 
     @commands.command(pass_context=True, hidden=True)
@@ -281,6 +285,76 @@ class Owner:
     async def shutdown(self):
         """Shuts down Red"""
         await self.bot.logout()
+
+    @commands.group(name="command", pass_context=True)
+    @checks.is_owner()
+    async def command_disabler(self, ctx):
+        """Disables/enables commands
+
+        With no subcommands returns the disabled commands list"""
+        if ctx.invoked_subcommand is None:
+            await send_cmd_help(ctx)
+            if self.disabled_commands:
+                msg = "Disabled commands:\n```xl\n"
+                for cmd in self.disabled_commands:
+                    msg += "{}, ".format(cmd)
+                msg = msg.strip(", ")
+                await self.bot.whisper("{}```".format(msg))
+
+    @command_disabler.command()
+    async def disable(self, *, command):
+        """Disables commands/subcommands"""
+        comm_obj = await self.get_command(command)
+        if comm_obj is KeyError:
+            await self.bot.say("That command doesn't seem to exist.")
+        elif comm_obj is False:
+            await self.bot.say("You cannot disable the commands of the owner cog.")
+        else:
+            comm_obj.enabled = False
+            comm_obj.hidden = True
+            self.disabled_commands.append(command)
+            fileIO("data/red/disabled_commands.json", "save", self.disabled_commands)
+            await self.bot.say("Command has been disabled.")
+
+    @command_disabler.command()
+    async def enable(self, *, command):
+        """Enables commands/subcommands"""
+        if command in self.disabled_commands:
+            self.disabled_commands.remove(command)
+            fileIO("data/red/disabled_commands.json", "save", self.disabled_commands)
+            await self.bot.say("Command enabled.")
+        else:
+            await self.bot.say("That command is not disabled.")
+            return
+        try:
+            comm_obj = await self.get_command(command)
+            comm_obj.enabled = True
+            comm_obj.hidden = False
+        except:  # In case it was in the disabled list but not currently loaded
+            pass # No point in even checking what returns
+
+    async def get_command(self, command):
+        command = command.split()
+        try:
+            comm_obj = self.bot.commands[command[0]]
+            if len(command) > 1:
+                command.pop(0)
+                for cmd in command:
+                    comm_obj = comm_obj.commands[cmd]
+        except KeyError:
+            return KeyError
+        if comm_obj.cog_name == "Owner":
+            return False
+        return comm_obj
+
+    async def disable_commands(self): # runs at boot
+        for cmd in self.disabled_commands:
+            cmd_obj = await self.get_command(cmd)
+            try:
+                cmd_obj.enabled = False
+                cmd_obj.hidden = True
+            except:
+                pass
 
     @commands.command()
     @checks.is_owner()
@@ -448,7 +522,12 @@ class Owner:
         return 'Last updated: ``{}``\nCommit: ``{}``\nHash: ``{}``'.format(
             *version)
 
+def check_files():
+    if not os.path.isfile("data/red/disabled_commands.json"):
+        print("Creating empty disabled_commands.json...")
+        fileIO("data/red/disabled_commands.json", "save", [])
 
 def setup(bot):
+    check_files()
     n = Owner(bot)
     bot.add_cog(n)
