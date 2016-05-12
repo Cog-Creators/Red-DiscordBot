@@ -12,6 +12,7 @@ import collections
 import copy
 import asyncio
 import math
+import time
 
 __author__ = "tekulvw"
 __version__ = "0.0.1"
@@ -167,6 +168,8 @@ class Downloader(threading.Thread):
 
     def download(self):
         if self.max_duration and self.song.duration > self.max_duration:
+            log.debug("not downloading {} because of duration".format(
+                self.song.id))
             return
 
         if not os.path.isfile('data/audio/cache' + self.song.id):
@@ -201,11 +204,6 @@ class Audio:
         self.cache_path = "data/audio/cache"
         self.local_playlist_path = "data/audio/localtracks"
 
-    def __del__(self):
-        for vc in self.bot.voice_clients:
-            self._stop_and_disconnect(vc.server)
-            log.debug("disconnecting on sid {}".format(vc.server.id))
-
     def _add_to_queue(self, server, url):
         if server.id not in self.queue:
             self._setup_queue(server)
@@ -215,6 +213,11 @@ class Audio:
         if server.id not in self.queue:
             self._setup_queue(server)
         self.queue[server.id]["TEMP_QUEUE"].append(url)
+
+    def _addleft_to_queue(self, server, url):
+        if server.id not in self.queue:
+            self._setup_queue()
+        self.queue[server.id]["QUEUE"].appendleft(url)
 
     def _cache_desired_files(self):
         filelist = []
@@ -327,13 +330,13 @@ class Audio:
 
     # TODO: _disable_controls()
 
-    def _disconnect_voice_client(self, server):
+    async def _disconnect_voice_client(self, server):
         if not self.voice_connected(server):
             return
 
         voice_client = self.voice_client(server)
 
-        self.bot.loop.create_task(voice_client.disconnect())
+        await voice_client.disconnect()
 
     async def _download_next(self, server, curr_dl, next_dl):
         """Checks to see if we need to download the next, and does.
@@ -391,6 +394,12 @@ class Audio:
 
     # TODO: _enable_controls()
 
+    def _get_queue_nowplaying(self, server):
+        if server.id not in self.queue:
+            return None
+
+        return self.queue[server.id]["NOW_PLAYING"]
+
     async def _guarantee_downloaded(self, server, url):
         max_length = self.settings["MAX_LENGTH"]
         if server.id not in self.downloaders:  # We don't have a downloader
@@ -435,6 +444,12 @@ class Audio:
 
         return song
 
+    def _is_queue_playlist(self, server):
+        if server.id not in self.queue:
+            return False
+
+        return self.queue[server.id]["PLAYLIST"]
+
     async def _join_voice_channel(self, channel):
         server = channel.server
         if server.id in self.queue:
@@ -459,14 +474,17 @@ class Audio:
         log.debug("local playlists:\n\t{}".format(ret))
         return ret
 
-    def _load_playlist(self, server, name):
+    def _load_playlist(self, server, name, local=True):
         try:
             server = server.id
         except:
             pass
 
         f = "data/audio/playlists"
-        f = os.path.join(f, server, name + ".txt")
+        if local:
+            f = os.path.join(f, server, name + ".txt")
+        else:
+            f = os.path.join(f, name + ".txt")
         kwargs = fileIO(f, 'load')
 
         kwargs['name'] = name
@@ -603,7 +621,14 @@ class Audio:
             songlist = playlist
             name = True
 
+        log.debug("setting up playlist {} on sid {}".format(name, server.id))
+
+        self._stop_player(server)
+        self._stop_downloader(server)
         self._clear_queue(server)
+
+        log.debug("finished resetting state on sid {}".format(server.id))
+
         self._setup_queue(server)
         self._set_queue_playlist(server, name)
         self._set_queue_repeat(server, True)
@@ -633,6 +658,17 @@ class Audio:
         return count
 
     def _playlist_exists(self, server, name):
+        return self._playlist_exists_local(server, name) or \
+            self._playlist_exists_global(name)
+
+    def _playlist_exists_global(self, name):
+        f = "data/audio/playlists"
+        f = os.path.join(f, name + ".txt")
+        log.debug('checking for {}'.format(f))
+
+        return fileIO(f, 'check')
+
+    def _playlist_exists_local(self, server, name):
         try:
             server = server.id
         except AttributeError:
@@ -692,6 +728,12 @@ class Audio:
 
         self.queue[server.id]["VOICE_CHANNEL_ID"] = channel
 
+    def _set_queue_nowplaying(self, server, song):
+        if server.id not in self.queue:
+            return
+
+        self.queue[server.id]["NOW_PLAYING"] = song
+
     def _set_queue_playlist(self, server, name=True):
         if server.id not in self.queue:
             self._setup_queue(server)
@@ -710,11 +752,14 @@ class Audio:
                                  "QUEUE": deque(), "TEMP_QUEUE": deque(),
                                  "NOW_PLAYING": None}
 
-    def _stop_and_disconnect(self, server):
+    def _stop(self, server):
         self._clear_queue(server)
-        self._stop_downloader(server)
         self._stop_player(server)
-        self._disconnect_voice_client(server)
+        self._stop_downloader(server)
+
+    async def _stop_and_disconnect(self, server):
+        self._stop(server)
+        await self._disconnect_voice_client(server)
 
     def _stop_downloader(self, server):
         if server.id not in self.downloaders:
@@ -865,6 +910,22 @@ class Audio:
         await self.bot.say("Cache is currently at {:.3f} MB.".format(
             self._cache_size()))
 
+    @commands.group(pass_context=True, hidden=True, no_pm=True)
+    @checks.is_owner()
+    async def disconnect(self, ctx):
+        """Disconnects from voice channel in current server."""
+        if ctx.invoked_subcommand is None:
+            server = ctx.message.server
+            await self._stop_and_disconnect(server)
+
+    @disconnect.command(name="all", hidden=True, no_pm=True)
+    async def disconnect_all(self):
+        """Disconnects from all voice channels."""
+        while len(list(self.bot.voice_clients)) != 0:
+            vc = list(self.bot.voice_clients)[0]
+            await self._stop_and_disconnect(vc.server)
+        await self.bot.say("done.")
+
     @commands.command(hidden=True, pass_context=True, no_pm=True)
     @checks.is_owner()
     async def joinvoice(self, ctx):
@@ -874,7 +935,7 @@ class Audio:
         voice_channel = author.voice_channel
 
         if voice_channel is not None:
-            self._stop_and_disconnect(server)
+            self._stop(server)
 
         await self._join_voice_channel(voice_channel)
 
@@ -950,6 +1011,12 @@ class Audio:
         author = ctx.message.author
         voice_channel = author.voice_channel
 
+        # Checking if playing in current server
+
+        if self.is_playing(server):
+            await self.bot.say("I'm already playing a song on this server!")
+            return  # TODO: Possibly execute queue?
+
         # Checking already connected, will join if not
 
         if not self.voice_connected(server):
@@ -966,13 +1033,8 @@ class Audio:
                 await self._join_voice_channel(voice_channel)
         else:  # We are connected but not to the right channel
             if self.voice_client(server).channel != voice_channel:
-                pass  # TODO: Perms
-
-        # Checking if playing in current server
-
-        if self.is_playing(server):
-            await self.bot.say("I'm already playing a song on this server!")
-            return  # TODO: Possibly execute queue?
+                await self._stop_and_disconnect(server)
+                await self._join_voice_channel(voice_channel)
 
         # If not playing, spawn a downloader if it doesn't exist and begin
         #   downloading the next song
@@ -987,6 +1049,36 @@ class Audio:
         self._clear_queue(server)
         self._stop_player(server)
         self._add_to_queue(server, url)
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def prev(self, ctx):
+        """Goes back to the last song."""
+        # Current song is in NOW_PLAYING
+        server = ctx.message.server
+
+        if self.is_playing(server):
+            curr_url = self._get_queue_nowplaying(server).webpage_url
+            last_url = None
+            if self._is_queue_playlist(server):
+                # need to reorder queue
+                try:
+                    last_url = self.queue[server.id]["QUEUE"].pop()
+                except IndexError:
+                    pass
+
+            log.debug("prev on sid {}, curr_url {}".format(server.id,
+                                                           curr_url))
+
+            self._addleft_to_queue(server, curr_url)
+            if last_url:
+                self._addleft_to_queue(server, last_url)
+            self._set_queue_nowplaying(server, None)
+
+            self.voice_client(server).audio_player.stop()
+
+            await self.bot.say("Going back 1 song.")
+        else:
+            await self.bot.say("Not playing anything on this server.")
 
     @commands.command(pass_context=True, no_pm=True)
     async def sing(self, ctx):
@@ -1095,8 +1187,9 @@ class Audio:
             # TODO: permissions checks...
             if not self.voice_connected(server):
                 await self._join_voice_channel(voice_channel)
-            self._clear_queue(server)
-            playlist = self._load_playlist(server, name)
+            playlist = self._load_playlist(server, name,
+                                           local=self._playlist_exists_local(
+                                               server, name))
             self._play_playlist(server, playlist)
             await self.bot.say("Playlist queued.")
         else:
@@ -1257,8 +1350,7 @@ class Audio:
         # TODO: All those fun checks for permissions
         server = ctx.message.server
 
-        self._stop_and_disconnect(server)
-        self._remove_queue(server)
+        self._stop(server)
 
     def is_playing(self, server):
         if not self.voice_connected(server):
@@ -1280,11 +1372,47 @@ class Audio:
                 self._dump_cache()
             await asyncio.sleep(5)  # No need to run this every half second
 
+    async def cache_scheduler(self):
+        await asyncio.sleep(30)  # Extra careful
+
+        self.bot.loop.create_task(self.cache_manager())
+
     def currently_downloading(self, server):
         if server.id in self.downloaders:
             if self.downloaders[server.id].is_alive():
                 return True
         return False
+
+    async def disconnect_timer(self):
+        stop_times = {}
+        while self == self.bot.get_cog('Audio'):
+            for vc in self.bot.voice_clients:
+                server = vc.server
+                if not hasattr(vc, 'audio_player') and \
+                        (server not in stop_times or
+                         stop_times[server] is None):
+                    log.debug("putting sid {} in stop loop, no player".format(
+                        server.id))
+                    stop_times[server] = int(time.time())
+
+                if hasattr(vc, 'audio_player'):
+                    if vc.audio_player.is_done() and \
+                            (server not in stop_times or
+                             stop_times[server] is None):
+                        log.debug("putting sid {} in stop loop".format(
+                            server.id))
+                        stop_times[server] = int(time.time())
+                    elif vc.audio_player.is_playing():
+                        stop_times[server] = None
+
+            for server in stop_times:
+                if stop_times[server] and \
+                        int(time.time()) - stop_times[server] > 300:
+                    # 5 min not playing to d/c
+                    log.debug("dcing from sid {} after 300s".format(server.id))
+                    await self._disconnect_voice_client(server)
+                    stop_times[server] = None
+            await asyncio.sleep(5)
 
     def get_server_settings(self, server):
         try:
@@ -1326,6 +1454,7 @@ class Audio:
         temp_queue = self.queue[server.id]["TEMP_QUEUE"]
         queue = self.queue[server.id]["QUEUE"]
         repeat = self.queue[server.id]["REPEAT"]
+        last_song = self.queue[server.id]["NOW_PLAYING"]
 
         assert temp_queue is self.queue[server.id]["TEMP_QUEUE"]
         assert queue is self.queue[server.id]["QUEUE"]
@@ -1343,9 +1472,9 @@ class Audio:
                 url = queue.popleft()
                 log.debug("calling _play on the normal queue")
                 song = await self._play(sid, url)
-                if repeat:
+                if repeat and last_song:
                     # TODO: stick NOW_PLAYING.url back into queue AFTER ending
-                    queue.append(url)
+                    queue.append(last_song.webpage_url)
             else:
                 song = None
             self.queue[server.id]["NOW_PLAYING"] = song
@@ -1384,6 +1513,16 @@ class Audio:
                 await asyncio.sleep(0.5)
             await asyncio.sleep(1)
 
+    async def reload_monitor(self):
+        while self == self.bot.get_cog('Audio'):
+            await asyncio.sleep(0.5)
+
+        for vc in self.bot.voice_clients:
+            try:
+                vc.audio_player.stop()
+            except:
+                pass
+
     def save_settings(self):
         fileIO('data/audio/settings.json', 'save', self.settings)
 
@@ -1402,6 +1541,8 @@ class Audio:
 
     async def voice_state_update(self, before, after):
         # Member objects
+        if after is None:
+            return
         server = after.server
         if server.id not in self.queue:
             return
@@ -1475,4 +1616,6 @@ def setup(bot):
     bot.add_cog(n)
     bot.add_listener(n.voice_state_update, 'on_voice_state_update')
     bot.loop.create_task(n.queue_scheduler())
-    bot.loop.create_task(n.cache_manager())
+    bot.loop.create_task(n.disconnect_timer())
+    bot.loop.create_task(n.reload_monitor())
+    bot.loop.create_task(n.cache_scheduler())
