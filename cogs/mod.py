@@ -165,8 +165,8 @@ class Mod:
                         await asyncio.sleep(0.25)
                         break
         except discord.errors.Forbidden:
-            await self.bot.say(message.channel, "I need permissions to manage "
-                "messages in this channel.")
+            await self.bot.send_message(message.channel, "I need permissions"
+                 " to manage messages in this channel.")
 
     @cleanup.command(pass_context=True, no_pm=True)
     async def user(self, ctx, user : discord.Member, number : int):
