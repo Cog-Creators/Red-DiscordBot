@@ -185,13 +185,26 @@ class Mod:
         author = ctx.message.author
         channel = ctx.message.channel
         logger.info("{}({}) deleted {} messages in channel {}".format(author.name, author.id, str(number), channel.name))
+        if self.bot.user.bot and self.discordpy_updated():
+            try:
+                self.bot.purge_from(channel, limit=number)
+            except discord.errors.Forbidden:
+                await self.bot.say("I need permissions to manage messages in this channel.")
+        else:
+            self.legacy_cleanup_messages(author, channel)
+
+    async def legacy_cleanup_messages(self, author, channel):
+        author = ctx.message.author
+        channel = ctx.message.channel
+        if self.bot.user.bot:
+                print("Your discord.py is outdated, defaulting to slow deletion.")
         try:
             if number > 0 and number < 10000:
                 async for x in self.bot.logs_from(channel, limit=number+1):
                     await self.bot.delete_message(x)
                     await asyncio.sleep(0.25)
         except discord.errors.Forbidden:
-            await self.bot.say("I need permissions to manage messages in this channel.")
+            await self.bot.send_message(channel, "I need permissions to manage messages in this channel.")
 
     @commands.group(pass_context=True)
     @checks.is_owner()
@@ -475,6 +488,13 @@ class Mod:
             await self.bot.say("Past names:\n{}".format(names))
         else:
             await self.bot.say("That user doesn't have any recorded name change.")
+
+    def discordpy_updated(self):
+        try:
+            assert self.bot.purge_from
+        except:
+            return False
+        return True
 
     def immune_from_filter(self, message):
         user = message.author
