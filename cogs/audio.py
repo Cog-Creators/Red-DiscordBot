@@ -1634,6 +1634,12 @@ def setup(bot):
             "You need to install ffmpeg and opus. See \"https://github.com/"
             "Twentysix26/Red-DiscordBot/wiki/Requirements\"")
         return
+    try:
+        bot.voice_clients
+    except AttributeError:
+        raise discord.Forbidden(
+            "Your discord.py is outdated. Update to the newest one with\npip3 "
+            "install --upgrade git+https://github.com/Rapptz/discord.py@async")
     n = Audio(bot)  # Praise 26
     bot.add_cog(n)
     bot.add_listener(n.voice_state_update, 'on_voice_state_update')
