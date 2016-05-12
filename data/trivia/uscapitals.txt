@@ -48,3 +48,8 @@ What is the USA state capital of Mississippi?`Jackson
 What is the USA state capital of Wisconsin?`Madison
 What is the USA state capital of Missouri?`Jefferson City
 What is the USA state capital of Wyoming?`Cheyenne
+What is the USA territory capital of American Samoa?`Pago Pago
+What is the USA territory capital of Guam?`Hagatna`Agana
+What is the USA territory capital of Northern Mariana Islands?`Capitol Hill
+What is the USA territory capital of Puerto Rico?`San Juan
+What is the USA territory capital of U.S. Virgin Islands?`Charlotte Amalie
