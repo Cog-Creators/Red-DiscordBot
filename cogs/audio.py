@@ -1372,6 +1372,11 @@ class Audio:
                 self._dump_cache()
             await asyncio.sleep(5)  # No need to run this every half second
 
+    async def cache_scheduler(self):
+        await asyncio.sleep(30)  # Extra careful
+
+        self.bot.loop.create_task(self.cache_manager())
+
     def currently_downloading(self, server):
         if server.id in self.downloaders:
             if self.downloaders[server.id].is_alive():
@@ -1611,6 +1616,6 @@ def setup(bot):
     bot.add_cog(n)
     bot.add_listener(n.voice_state_update, 'on_voice_state_update')
     bot.loop.create_task(n.queue_scheduler())
-    bot.loop.create_task(n.cache_manager())
     bot.loop.create_task(n.disconnect_timer())
     bot.loop.create_task(n.reload_monitor())
+    bot.loop.create_task(n.cache_scheduler())
