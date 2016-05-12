@@ -214,6 +214,11 @@ class Audio:
             self._setup_queue(server)
         self.queue[server.id]["TEMP_QUEUE"].append(url)
 
+    def _addleft_to_queue(self, server, url):
+        if server.id not in self.queue:
+            self._setup_queue()
+        self.queue[server.id]["QUEUE"].appendleft(url)
+
     def _cache_desired_files(self):
         filelist = []
         for server in self.downloaders:
@@ -389,6 +394,12 @@ class Audio:
 
     # TODO: _enable_controls()
 
+    def _get_queue_nowplaying(self, server):
+        if server.id not in self.queue:
+            return None
+
+        return self.queue[server.id]["NOW_PLAYING"]
+
     async def _guarantee_downloaded(self, server, url):
         max_length = self.settings["MAX_LENGTH"]
         if server.id not in self.downloaders:  # We don't have a downloader
@@ -432,6 +443,12 @@ class Audio:
             log.debug("cache hit on song id {}".format(song.id))
 
         return song
+
+    def _is_queue_playlist(self, server):
+        if server.id not in self.queue:
+            return False
+
+        return self.queue[server.id]["PLAYLIST"]
 
     async def _join_voice_channel(self, channel):
         server = channel.server
@@ -710,6 +727,12 @@ class Audio:
             pass
 
         self.queue[server.id]["VOICE_CHANNEL_ID"] = channel
+
+    def _set_queue_nowplaying(self, server, song):
+        if server.id not in self.queue:
+            return
+
+        self.queue[server.id]["NOW_PLAYING"] = song
 
     def _set_queue_playlist(self, server, name=True):
         if server.id not in self.queue:
@@ -1026,6 +1049,36 @@ class Audio:
         self._clear_queue(server)
         self._stop_player(server)
         self._add_to_queue(server, url)
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def prev(self, ctx):
+        """Goes back to the last song."""
+        # Current song is in NOW_PLAYING
+        server = ctx.message.server
+
+        if self.is_playing(server):
+            curr_url = self._get_queue_nowplaying(server).webpage_url
+            last_url = None
+            if self._is_queue_playlist(server):
+                # need to reorder queue
+                try:
+                    last_url = self.queue[server.id]["QUEUE"].pop()
+                except IndexError:
+                    pass
+
+            log.debug("prev on sid {}, curr_url {}".format(server.id,
+                                                           curr_url))
+
+            self._addleft_to_queue(server, curr_url)
+            if last_url:
+                self._addleft_to_queue(server, last_url)
+            self._set_queue_nowplaying(server, None)
+
+            self.voice_client(server).audio_player.stop()
+
+            await self.bot.say("Going back 1 song.")
+        else:
+            await self.bot.say("Not playing anything on this server.")
 
     @commands.command(pass_context=True, no_pm=True)
     async def sing(self, ctx):
@@ -1416,7 +1469,7 @@ class Audio:
                 song = await self._play(sid, url)
                 if repeat and last_song:
                     # TODO: stick NOW_PLAYING.url back into queue AFTER ending
-                    queue.append(last_song.url)
+                    queue.append(last_song.webpage_url)
             else:
                 song = None
             self.queue[server.id]["NOW_PLAYING"] = song
