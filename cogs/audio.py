@@ -12,7 +12,10 @@ import collections
 import copy
 import asyncio
 import math
+<<<<<<< HEAD
 import time
+=======
+>>>>>>> audio-changes
 import inspect
 
 __author__ = "tekulvw"
@@ -1025,12 +1028,15 @@ class Audio:
         author = ctx.message.author
         voice_channel = author.voice_channel
 
+<<<<<<< HEAD
         # Checking if playing in current server
 
         if self.is_playing(server):
             await self.bot.say("I'm already playing a song on this server!")
             return  # TODO: Possibly execute queue?
 
+=======
+>>>>>>> audio-changes
         # Checking already connected, will join if not
         
         caller = inspect.currentframe().f_back.f_code.co_name
@@ -1224,9 +1230,13 @@ class Audio:
             if not self.voice_connected(server):
                 await self._join_voice_channel(voice_channel)
             self._clear_queue(server)
+<<<<<<< HEAD
             playlist = self._load_playlist(server, name,
                                            local=self._playlist_exists_local(
                                                server, name))
+=======
+            playlist = self._load_playlist(server, name)
+>>>>>>> audio-changes
             if caller == "playlist_start_mix":
                 shuffle(playlist.playlist)
             self._play_playlist(server, playlist)
