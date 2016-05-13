@@ -46,6 +46,9 @@ class ayy:
         elif "k" in message.content.split():
             if enabled:
                 await self.bot.send_message(message.channel, ":ok:")
+        elif "kkk" in message.content.split():
+            if enabled:
+                await self.bot.send_message(message.channel, "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/KKK.svg/500px-KKK.svg.png")
 
 def check_folders():
     if not os.path.exists("data/ayy"):
