@@ -5,6 +5,7 @@ from .utils import checks
 from __main__ import send_cmd_help, settings
 import os
 import logging
+import asyncio
 
 
 class Mod:

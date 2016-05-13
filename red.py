@@ -245,6 +245,7 @@ def set_logger():
 
     stdout_handler = logging.StreamHandler(sys.stdout)
     stdout_handler.setFormatter(red_format)
+    stdout_handler.setLevel(logging.INFO)
 
     fhandler = logging.handlers.RotatingFileHandler(
         filename='data/red/red.log', encoding='utf-8', mode='a',

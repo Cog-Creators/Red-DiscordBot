@@ -451,14 +451,6 @@ class Audio:
 
         return song
 
-    def _list_local_playlists(self):
-        ret = []
-        for thing in os.listdir(self.local_playlist_path):
-            if os.path.isdir(os.path.join(self.local_playlist_path, thing)):
-                ret.append(thing)
-        log.debug("local playlists:\n\t{}".format(ret))
-        return ret
-
     def _is_queue_playlist(self, server):
         if server.id not in self.queue:
             return False
@@ -481,6 +473,14 @@ class Audio:
         except AttributeError:
             pass
 
+    def _list_local_playlists(self):
+        ret = []
+        for thing in os.listdir(self.local_playlist_path):
+            if os.path.isdir(os.path.join(self.local_playlist_path, thing)):
+                ret.append(thing)
+        log.debug("local playlists:\n\t{}".format(ret))
+        return ret
+
     def _list_playlists(self, server):
         try:
             server = server.id
@@ -490,17 +490,12 @@ class Audio:
         old_playlists = [f[:-4] for f in os.listdir(path)
                          if f.endswith(".txt")]
         path = os.path.join(path, server)
-        new_playlists = [f[:-4] for f in os.listdir(path)
-                         if f.endswith(".txt")]
+        if os.path.exists(path):
+            new_playlists = [f[:-4] for f in os.listdir(path)
+                             if f.endswith(".txt")]
+        else:
+            new_playlists = []
         return list(set(old_playlists + new_playlists))
-
-    def _list_local_playlists(self):
-        ret = []
-        for thing in os.listdir(self.local_playlist_path):
-            if os.path.isdir(os.path.join(self.local_playlist_path, thing)):
-                ret.append(thing)
-        log.debug("local playlists:\n\t{}".format(ret))
-        return ret
 
     def _load_playlist(self, server, name, local=True):
         try:
