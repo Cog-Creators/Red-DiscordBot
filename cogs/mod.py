@@ -7,6 +7,7 @@ import os
 import logging
 import asyncio
 
+
 class Mod:
     """Moderation tools."""
 
