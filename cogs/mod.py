@@ -144,7 +144,7 @@ class Mod:
         message = ctx.message
         cmdmsg = ctx.message
         if self.bot.user.bot:
-            print("Your discord.py is outdated, defaulting to slow deletion.")
+            logger.info("Your discord.py is outdated, defaulting to slow deletion.")
         try:
             if number > 0 and number < 10000:
                 while True:
@@ -202,7 +202,7 @@ class Mod:
         message = ctx.message
         cmdmsg = ctx.message
         if self.bot.user.bot:
-            print("Your discord.py is outdated, defaulting to slow deletion.")
+            logger.info("Your discord.py is outdated, defaulting to slow deletion.")
         try:
             if number > 0 and number < 10000:
                 while True:
@@ -251,7 +251,7 @@ class Mod:
         author = ctx.message.author
         channel = ctx.message.channel
         if self.bot.user.bot:
-                print("Your discord.py is outdated, defaulting to slow deletion.")
+                logger.info("Your discord.py is outdated, defaulting to slow deletion.")
         try:
             if number > 0 and number < 10000:
                 async for x in self.bot.logs_from(channel, limit=number+1):
