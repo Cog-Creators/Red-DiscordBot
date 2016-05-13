@@ -144,7 +144,7 @@ class Mod:
         message = ctx.message
         cmdmsg = ctx.message
         if self.bot.user.bot:
-            logger.info("Your discord.py is outdated, defaulting to slow deletion.")
+            print("Your discord.py is outdated, defaulting to slow deletion.")
         try:
             if number > 0 and number < 10000:
                 while True:
@@ -202,7 +202,7 @@ class Mod:
         message = ctx.message
         cmdmsg = ctx.message
         if self.bot.user.bot:
-            logger.info("Your discord.py is outdated, defaulting to slow deletion.")
+            print("Your discord.py is outdated, defaulting to slow deletion.")
         try:
             if number > 0 and number < 10000:
                 while True:
@@ -241,7 +241,7 @@ class Mod:
             author.id, str(number), channel.name))
         if self.bot.user.bot and self.discordpy_updated():
             try:
-                self.bot.purge_from(channel, limit=number+1)
+                await self.bot.purge_from(channel, limit=number+1)
             except discord.errors.Forbidden:
                 await self.bot.say("I need permissions to manage messages in this channel.")
         else:
@@ -251,7 +251,7 @@ class Mod:
         author = ctx.message.author
         channel = ctx.message.channel
         if self.bot.user.bot:
-                logger.info("Your discord.py is outdated, defaulting to slow deletion.")
+                print("Your discord.py is outdated, defaulting to slow deletion.")
         try:
             if number > 0 and number < 10000:
                 async for x in self.bot.logs_from(channel, limit=number+1):
