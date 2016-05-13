@@ -5,8 +5,8 @@ from .utils import checks
 from __main__ import send_cmd_help, settings
 import os
 import logging
-import json
 import asyncio
+
 
 class Mod:
     """Moderation tools."""
@@ -19,9 +19,9 @@ class Mod:
         self.filter = fileIO("data/mod/filter.json", "load")
         self.past_names = fileIO("data/mod/past_names.json", "load")
 
-    @commands.group(pass_context=True,no_pm=True)
+    @commands.group(pass_context=True, no_pm=True)
     @checks.serverowner_or_permissions(manage_server=True)
-    async def modset(self,ctx):
+    async def modset(self, ctx):
         """Manages server administration settings."""
         if ctx.invoked_subcommand is None:
             await send_cmd_help(ctx)
@@ -31,32 +31,33 @@ class Mod:
             msg += "```"
             await self.bot.say(msg)
 
-    @modset.command(name="adminrole",pass_context=True,no_pm=True)
-    async def _modset_adminrole(self,ctx,role_name : str):
+    @modset.command(name="adminrole", pass_context=True, no_pm=True)
+    async def _modset_adminrole(self, ctx, role_name: str):
         """Sets the admin role for this server, case insensitive."""
         server = ctx.message.server
         if server.id not in settings.servers:
             await self.bot.say("Remember to set modrole too.")
-        settings.set_server_admin(server,role_name)
+        settings.set_server_admin(server, role_name)
         await self.bot.say("Admin role set to '{}'".format(role_name))
 
-    @modset.command(name="modrole",pass_context=True,no_pm=True)
-    async def _modset_modrole(self,ctx,role_name : str):
+    @modset.command(name="modrole", pass_context=True, no_pm=True)
+    async def _modset_modrole(self, ctx, role_name: str):
         """Sets the mod role for this server, case insensitive."""
         server = ctx.message.server
         if server.id not in settings.servers:
             await self.bot.say("Remember to set adminrole too.")
-        settings.set_server_mod(server,role_name)
+        settings.set_server_mod(server, role_name)
         await self.bot.say("Mod role set to '{}'".format(role_name))
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(kick_members=True)
-    async def kick(self, ctx, user : discord.Member):
+    async def kick(self, ctx, user: discord.Member):
         """Kicks user."""
         author = ctx.message.author
         try:
             await self.bot.kick(user)
-            logger.info("{}({}) kicked {}({})".format(author.name, author.id, user.name, user.id))
+            logger.info("{}({}) kicked {}({})".format(
+                author.name, author.id, user.name, user.id))
             await self.bot.say("Done. That felt good.")
         except discord.errors.Forbidden:
             await self.bot.say("I'm not allowed to do that.")
@@ -65,7 +66,7 @@ class Mod:
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(ban_members=True)
-    async def ban(self, ctx, user : discord.Member, days : int=0):
+    async def ban(self, ctx, user: discord.Member, days: int=0):
         """Bans user and deletes last X days worth of messages.
 
         Minimum 0 days, maximum 7. Defaults to 0."""
@@ -75,8 +76,8 @@ class Mod:
             return
         try:
             await self.bot.ban(user, days)
-            logger.info("{}({}) banned {}({}), deleting {} days worth of messages".format(author.name,
-                author.id, user.name, user.id, str(days)))
+            logger.info("{}({}) banned {}({}), deleting {} days worth of messages".format(
+                author.name, author.id, user.name, user.id, str(days)))
             await self.bot.say("Done. It was about time.")
         except discord.errors.Forbidden:
             await self.bot.say("I'm not allowed to do that.")
@@ -111,7 +112,7 @@ class Mod:
             await send_cmd_help(ctx)
 
     @cleanup.command(pass_context=True, no_pm=True)
-    async def text(self, ctx, text : str, number : int):
+    async def text(self, ctx, text: str, number: int):
         """Deletes last X messages matching the specified text.
 
         Example:
@@ -150,18 +151,18 @@ class Mod:
                 while True:
                     new = False
                     async for x in self.bot.logs_from(message.channel, limit=100, before=message):
-                        if number == 0: 
-                            await self.bot.delete_message(cmdmsg)
+                        if number == 0:
+                            await self._delete_message(cmdmsg)
                             await asyncio.sleep(0.25)
                             return
                         if text in x.content:
-                            await self.bot.delete_message(x)
+                            await self._delete_message(x)
                             await asyncio.sleep(0.25)
                             number -= 1
                         new = True
                         message = x
-                    if not new or number == 0: 
-                        await self.bot.delete_message(cmdmsg)
+                    if not new or number == 0:
+                        await self._delete_message(cmdmsg)
                         await asyncio.sleep(0.25)
                         break
         except discord.errors.Forbidden:
@@ -169,7 +170,7 @@ class Mod:
                  " to manage messages in this channel.")
 
     @cleanup.command(pass_context=True, no_pm=True)
-    async def user(self, ctx, user : discord.Member, number : int):
+    async def user(self, ctx, user: discord.Member, number: int):
         """Deletes last X messages from specified user.
 
         Examples:
@@ -208,18 +209,18 @@ class Mod:
                 while True:
                     new = False
                     async for x in self.bot.logs_from(message.channel, limit=100, before=message):
-                        if number == 0: 
-                            await self.bot.delete_message(cmdmsg)
+                        if number == 0:
+                            await self._delete_message(cmdmsg)
                             await asyncio.sleep(0.25)
                             return
                         if x.author.id == user.id:
-                            await self.bot.delete_message(x)
+                            await self._delete_message(x)
                             await asyncio.sleep(0.25)
                             number -= 1
                         new = True
                         message = x
-                    if not new or number == 0: 
-                        await self.bot.delete_message(cmdmsg)
+                    if not new or number == 0:
+                        await self._delete_message(cmdmsg)
                         await asyncio.sleep(0.25)
                         break
         except discord.errors.Forbidden:
@@ -228,7 +229,7 @@ class Mod:
 
 
     @cleanup.command(pass_context=True, no_pm=True)
-    async def messages(self, ctx, number : int):
+    async def messages(self, ctx, number: int):
         """Deletes last X messages.
 
         Example:
@@ -254,8 +255,8 @@ class Mod:
                 print("Your discord.py is outdated, defaulting to slow deletion.")
         try:
             if number > 0 and number < 10000:
-                async for x in self.bot.logs_from(channel, limit=number+1):
-                    await self.bot.delete_message(x)
+                async for x in self.bot.logs_from(channel, limit=number + 1):
+                    await self._delete_message(x)
                     await asyncio.sleep(0.25)
         except discord.errors.Forbidden:
             await self.bot.send_message(channel, "I need permissions to manage messages in this channel.")
@@ -268,7 +269,7 @@ class Mod:
             await send_cmd_help(ctx)
 
     @blacklist.command(name="add")
-    async def _blacklist_add(self, user : discord.Member):
+    async def _blacklist_add(self, user: discord.Member):
         """Adds user to bot's blacklist"""
         if user.id not in self.blacklist_list:
             self.blacklist_list.append(user.id)
@@ -278,7 +279,7 @@ class Mod:
             await self.bot.say("User is already blacklisted.")
 
     @blacklist.command(name="remove")
-    async def _blacklist_remove(self, user : discord.Member):
+    async def _blacklist_remove(self, user: discord.Member):
         """Removes user to bot's blacklist"""
         if user.id in self.blacklist_list:
             self.blacklist_list.remove(user.id)
@@ -287,7 +288,6 @@ class Mod:
         else:
             await self.bot.say("User is not in blacklist.")
 
-    
     @commands.group(pass_context=True)
     @checks.is_owner()
     async def whitelist(self, ctx):
@@ -296,10 +296,10 @@ class Mod:
             await send_cmd_help(ctx)
 
     @whitelist.command(name="add")
-    async def _whitelist_add(self, user : discord.Member):
+    async def _whitelist_add(self, user: discord.Member):
         """Adds user to bot's whitelist"""
         if user.id not in self.whitelist_list:
-            if not self.whitelist_list: 
+            if not self.whitelist_list:
                 msg = "\nAll users not in whitelist will be ignored (owner, admins and mods excluded)"
             else:
                 msg = ""
@@ -310,7 +310,7 @@ class Mod:
             await self.bot.say("User is already whitelisted.")
 
     @whitelist.command(name="remove")
-    async def _whitelist_remove(self, user : discord.Member):
+    async def _whitelist_remove(self, user: discord.Member):
         """Removes user to bot's whitelist"""
         if user.id in self.whitelist_list:
             self.whitelist_list.remove(user.id)
@@ -328,7 +328,7 @@ class Mod:
             await self.bot.say(self.count_ignored())
 
     @ignore.command(name="channel", pass_context=True)
-    async def ignore_channel(self, ctx, channel : discord.Channel=None):
+    async def ignore_channel(self, ctx, channel: discord.Channel=None):
         """Ignores channel
 
         Defaults to current one"""
@@ -347,7 +347,6 @@ class Mod:
                 await self.bot.say("Channel added to ignore list.")
             else:
                 await self.bot.say("Channel already in ignore list.")
-
 
     @ignore.command(name="server", pass_context=True)
     async def ignore_server(self, ctx):
@@ -369,7 +368,7 @@ class Mod:
             await self.bot.say(self.count_ignored())
 
     @unignore.command(name="channel", pass_context=True)
-    async def unignore_channel(self, ctx, channel : discord.Channel=None):
+    async def unignore_channel(self, ctx, channel: discord.Channel=None):
         """Removes channel from ignore list
 
         Defaults to current one"""
@@ -388,7 +387,6 @@ class Mod:
                 await self.bot.say("Channel removed from ignore list.")
             else:
                 await self.bot.say("That channel is not in the ignore list.")
-
 
     @unignore.command(name="server", pass_context=True)
     async def unignore_server(self, ctx):
@@ -428,7 +426,7 @@ class Mod:
                     await self.bot.send_message(author, "Words filtered in this server: " + msg)
 
     @_filter.command(name="add", pass_context=True)
-    async def filter_add(self, ctx, *words : str):
+    async def filter_add(self, ctx, *words: str):
         """Adds words to the filter
 
         Use double quotes to add sentences
@@ -453,7 +451,7 @@ class Mod:
             await self.bot.say("Words already in the filter.")
 
     @_filter.command(name="remove", pass_context=True)
-    async def filter_remove(self, ctx, *words : str):
+    async def filter_remove(self, ctx, *words: str):
         """Remove words from the filter
 
         Use double quotes to remove sentences
@@ -486,7 +484,7 @@ class Mod:
             await send_cmd_help(ctx)
 
     @editrole.command(aliases=["color"], pass_context=True)
-    async def colour(self, ctx, role : discord.Role, value : discord.Colour):
+    async def colour(self, ctx, role: discord.Role, value: discord.Colour):
         """Edits a role's colour
 
         Use double quotes if the role contains spaces.
@@ -499,7 +497,8 @@ class Mod:
         author = ctx.message.author
         try:
             await self.bot.edit_role(ctx.message.server, role, color=value)
-            logger.info("{}({}) changed the colour of role '{}'".format(author.name, author.id, role.name))
+            logger.info("{}({}) changed the colour of role '{}'".format(
+                author.name, author.id, role.name))
             await self.bot.say("Done.")
         except discord.Forbidden:
             await self.bot.say("I need permissions to manage roles first.")
@@ -508,7 +507,7 @@ class Mod:
             await self.bot.say("Something went wrong.")
 
     @editrole.command(name="name", pass_context=True)
-    async def edit_role_name(self, ctx, role : discord.Role, name : str):
+    async def edit_role_name(self, ctx, role: discord.Role, name: str):
         """Edits a role's name
 
         Use double quotes if the role or the name contain spaces.
@@ -519,9 +518,10 @@ class Mod:
             return
         try:
             author = ctx.message.author
-            old_name = role.name # probably not necessary?
+            old_name = role.name  # probably not necessary?
             await self.bot.edit_role(ctx.message.server, role, name=name)
-            logger.info("{}({}) changed the name of role '{}' to '{}'".format(author.name, author.id, old_name, name))
+            logger.info("{}({}) changed the name of role '{}' to '{}'".format(
+                author.name, author.id, old_name, name))
             await self.bot.say("Done.")
         except discord.Forbidden:
             await self.bot.say("I need permissions to manage roles first.")
@@ -549,6 +549,14 @@ class Mod:
         except:
             return False
         return True
+
+    async def _delete_message(self, message):
+        try:
+            await self.bot.delete_message(message)
+        except discord.errors.NotFound:
+            pass
+        except:
+            raise
 
     def immune_from_filter(self, message):
         user = message.author
@@ -578,11 +586,14 @@ class Mod:
         if server.id in self.filter.keys():
             for w in self.filter[server.id]:
                 if w in message.content.lower():
-                    try: # Something else in discord.py is throwing a 404 error after deletion
-                        await self.bot.delete_message(message)
+                    # Something else in discord.py is throwing a 404 error
+                    # after deletion
+                    try:
+                        await self._delete_message(message)
                     except:
                         pass
-                    print("Message deleted. Filtered: " + w )
+                    print("Message deleted. Filtered: " + w)
+
 
     async def check_names(self, before, after):
         if before.name != after.name:
@@ -600,8 +611,9 @@ def check_folders():
             print("Creating " + folder + " folder...")
             os.makedirs(folder)
 
+
 def check_files():
-    ignore_list = {"SERVERS" : [], "CHANNELS" : []}
+    ignore_list = {"SERVERS": [], "CHANNELS": []}
 
     if not os.path.isfile("data/mod/blacklist.json"):
         print("Creating empty blacklist.json...")
@@ -623,15 +635,20 @@ def check_files():
         print("Creating empty past_names.json...")
         fileIO("data/mod/past_names.json", "save", {})
 
+
+
 def setup(bot):
     global logger
     check_folders()
     check_files()
     logger = logging.getLogger("mod")
-    if logger.level == 0: # Prevents the logger from being loaded again in case of module reload
+    # Prevents the logger from being loaded again in case of module reload
+    if logger.level == 0:
         logger.setLevel(logging.INFO)
-        handler = logging.FileHandler(filename='data/mod/mod.log', encoding='utf-8', mode='a')
-        handler.setFormatter(logging.Formatter('%(asctime)s %(message)s', datefmt="[%d/%m/%Y %H:%M]"))
+        handler = logging.FileHandler(
+            filename='data/mod/mod.log', encoding='utf-8', mode='a')
+        handler.setFormatter(
+            logging.Formatter('%(asctime)s %(message)s', datefmt="[%d/%m/%Y %H:%M]"))
         logger.addHandler(handler)
     n = Mod(bot)
     bot.add_listener(n.check_filter, "on_message")
