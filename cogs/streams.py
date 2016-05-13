@@ -40,7 +40,7 @@ class Streams:
         """Checks if twitch stream is online"""
         online = await self.twitch_online(stream)
         if online and online != "error":
-            await self.bot.say(":video_camera:  ***" + stream + "***  **is live !!!** :video_game: ***" + online["game"] + "***\n*" + online["channel"]["status"] + "*\nhttps://twitch.tv/" + stream)
+            await self.bot.say("@here :video_camera:  ***" + stream + "***  **is live !!!** :video_game: ***" + online["game"] + "***\n*" + online["channel"]["status"] + "*\nhttps://twitch.tv/" + stream)
         elif online is False:
             await self.bot.say(stream + " is offline.")
         elif online is None:
