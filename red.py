@@ -7,6 +7,7 @@ import os
 import time
 import sys
 import logging
+import logging.handlers
 import shutil
 import traceback
 
@@ -38,7 +39,8 @@ async def on_ready():
     users = str(len(set(bot.get_all_members())))
     servers = str(len(bot.servers))
     channels = str(len([c for c in bot.get_all_channels()]))
-    bot.uptime = int(time.perf_counter())
+    if not "uptime" in dir(bot): #prevents reset in case of reconnection
+        bot.uptime = int(time.perf_counter())
     print('------')
     print(bot.user.name + " is now online.")
     print('------')
@@ -55,6 +57,7 @@ async def on_ready():
         bot.oauth_url = url
         print(url)
         print("------")
+    await bot.get_cog('Owner').disable_commands()
 
 
 @bot.event
@@ -74,6 +77,8 @@ async def on_command_error(error, ctx):
         await send_cmd_help(ctx)
     elif isinstance(error, commands.BadArgument):
         await send_cmd_help(ctx)
+    elif isinstance(error, commands.DisabledCommand):
+        await bot.send_message(ctx.message.channel, "That command is disabled.")
 
 async def send_cmd_help(ctx):
     if ctx.invoked_subcommand:
@@ -231,14 +236,23 @@ def set_logger():
     logger.addHandler(handler)
 
     logger = logging.getLogger("red")
-    logger.setLevel(logging.WARNING)
-    handler = logging.FileHandler(
-        filename='data/red/red.log', encoding='utf-8', mode='a')
-    handler.setFormatter(logging.Formatter(
+    logger.setLevel(logging.INFO)
+
+    red_format = logging.Formatter(
         '%(asctime)s %(levelname)s %(module)s %(funcName)s %(lineno)d: '
         '%(message)s',
-        datefmt="[%d/%m/%Y %H:%M]"))
-    logger.addHandler(handler)
+        datefmt="[%d/%m/%Y %H:%M]")
+
+    stdout_handler = logging.StreamHandler(sys.stdout)
+    stdout_handler.setFormatter(red_format)
+
+    fhandler = logging.handlers.RotatingFileHandler(
+        filename='data/red/red.log', encoding='utf-8', mode='a',
+        maxBytes=10**7, backupCount=5)
+    fhandler.setFormatter(red_format)
+
+    logger.addHandler(fhandler)
+    logger.addHandler(stdout_handler)
 
 
 def get_answer():
