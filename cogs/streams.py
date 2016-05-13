@@ -39,9 +39,8 @@ class Streams:
     async def twitch(self, stream: str):
         """Checks if twitch stream is online"""
         online = await self.twitch_online(stream)
-        if online is True:
-            await self.bot.say("http://www.twitch.tv/{} "
-                               "is online!".format(stream))
+        if online and online != "error":
+            await self.bot.say(":video_camera:  ***" + stream + "***  **is live !!!** :video_game: ***" + online["game"] + "***\n*" + online["channel"]["status"] + "*\nhttps://twitch.tv/" + stream)
         elif online is False:
             await self.bot.say(stream + " is offline.")
         elif online is None:
@@ -266,7 +265,7 @@ class Streams:
             async with aiohttp.get(url) as r:
                 data = await r.json()
             if len(data["streams"]) > 0:
-                return True
+                return data["streams"][0]
             else:
                 return False
         except:
@@ -311,16 +310,13 @@ class Streams:
 
             for stream in self.twitch_streams:
                 online = await self.twitch_online(stream["NAME"])
-                if online is True and not stream["ALREADY_ONLINE"]:
+                if online and online != "error" and not stream["ALREADY_ONLINE"]:
                     stream["ALREADY_ONLINE"] = True
                     for channel in stream["CHANNELS"]:
                         channel_obj = self.bot.get_channel(channel)
                         can_speak = channel_obj.permissions_for(channel_obj.server.me).send_messages
                         if channel_obj and can_speak:
-                            await self.bot.send_message(
-                                self.bot.get_channel(channel),
-                                "http://www.twitch.tv/"
-                                "{} is online!".format(stream["NAME"]))
+                            await self.bot.send_message(self.bot.get_channel(channel), "@here :video_camera:  ***" + stream["NAME"] + "***  **is live !!!** :video_game: ***" + online["game"] + "***\n*" + online["channel"]["status"] + "*\nhttps://twitch.tv/" + stream["NAME"])
                 else:
                     if stream["ALREADY_ONLINE"] and not online:
                         stream["ALREADY_ONLINE"] = False
