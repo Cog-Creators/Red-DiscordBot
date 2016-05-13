@@ -6,6 +6,7 @@ from __main__ import send_cmd_help, settings
 import os
 import logging
 
+
 class Mod:
     """Moderation tools."""
 
