@@ -7,7 +7,6 @@ import os
 import time
 import sys
 import logging
-import logging.handlers
 import shutil
 import traceback
 
@@ -236,24 +235,14 @@ def set_logger():
     logger.addHandler(handler)
 
     logger = logging.getLogger("red")
-    logger.setLevel(logging.INFO)
-
-    red_format = logging.Formatter(
+    logger.setLevel(logging.WARNING)
+    handler = logging.FileHandler(
+        filename='data/red/red.log', encoding='utf-8', mode='a')
+    handler.setFormatter(logging.Formatter(
         '%(asctime)s %(levelname)s %(module)s %(funcName)s %(lineno)d: '
         '%(message)s',
-        datefmt="[%d/%m/%Y %H:%M]")
-
-    stdout_handler = logging.StreamHandler(sys.stdout)
-    stdout_handler.setFormatter(red_format)
-    stdout_handler.setLevel(logging.INFO)
-
-    fhandler = logging.handlers.RotatingFileHandler(
-        filename='data/red/red.log', encoding='utf-8', mode='a',
-        maxBytes=10**7, backupCount=5)
-    fhandler.setFormatter(red_format)
-
-    logger.addHandler(fhandler)
-    logger.addHandler(stdout_handler)
+        datefmt="[%d/%m/%Y %H:%M]"))
+    logger.addHandler(handler)
 
 
 def get_answer():
