@@ -21,12 +21,6 @@ __version__ = "0.0.1"
 log = logging.getLogger("red.audio")
 log.setLevel(logging.DEBUG)
 
-__author__ = "tekulvw"
-__version__ = "0.0.1"
-
-log = logging.getLogger("red.audio")
-log.setLevel(logging.DEBUG)
-
 try:
     import youtube_dl
 except:
@@ -194,6 +188,8 @@ class Downloader(threading.Thread):
                                           process=False)
             self.url = "https://youtube.com/watch?v={}".format(
                 video["entries"][0]["id"])
+
+            video.url = self.url
 
         self.song = Song(**video)
 
@@ -1068,14 +1064,14 @@ class Audio:
             await self.bot.say("I'm already downloading a file!")
             return
 
-        if caller != "yt_search":
-            if not self._valid_playable_url(url):
-                await self.bot.say("That's not a valid URL.")
-                return
-        else:
+        if caller == "yt_search":
             url = "[SEARCH:]" + url
-        self._clear_queue(server)
+        elif not self._valid_playable_url(url):
+            await self.bot.say("That's not a valid URL.")
+            return
+
         self._stop_player(server)
+        self._clear_queue(server)
         self._add_to_queue(server, url)
 
     @commands.command(pass_context=True, no_pm=True)
@@ -1107,19 +1103,6 @@ class Audio:
             await self.bot.say("Going back 1 song.")
         else:
             await self.bot.say("Not playing anything on this server.")
-
-    @commands.command(pass_context=True, no_pm=True)
-    async def sing(self, ctx):
-        """Makes Red sing one of her songs"""
-        ids = ("zGTkAVsrfg8", "cGMWL8cOeAU", "vFrjMq4aL-g", "WROI5WYBU_A",
-               "41tIUr_ex3g", "f9O2Rjn1azc")
-        url = "https://www.youtube.com/watch?v={}".format(choice(ids))
-        await self.play.callback(self, ctx, url)
-
-    @commands.command(name="yt", pass_context=True, no_pm=True)
-    async def yt_search(self, ctx, *, search_terms: str):
-        """Searches and plays a video from YouTube"""
-        await self.play.callback(self, ctx, search_terms)
 
     @commands.group(pass_context=True, no_pm=True)
     async def playlist(self, ctx):
@@ -1361,6 +1344,14 @@ class Audio:
             await self.bot.say("Can't skip if I'm not playing.")
 
     @commands.command(pass_context=True, no_pm=True)
+    async def sing(self, ctx):
+        """Makes Red sing one of her songs"""
+        ids = ("zGTkAVsrfg8", "cGMWL8cOeAU", "vFrjMq4aL-g", "WROI5WYBU_A",
+               "41tIUr_ex3g", "f9O2Rjn1azc")
+        url = "https://www.youtube.com/watch?v={}".format(choice(ids))
+        await self.play.callback(self, ctx, url)
+
+    @commands.command(pass_context=True, no_pm=True)
     async def song(self, ctx):
         """Info about the current song."""
         server = ctx.message.server
@@ -1384,6 +1375,12 @@ class Audio:
         server = ctx.message.server
 
         self._stop(server)
+
+    @commands.command(name="yt", pass_context=True, no_pm=True)
+    async def yt_search(self, ctx, *, search_terms: str):
+        """Searches and plays a video from YouTube"""
+        await self.bot.say('This got broken. Will be fixed soon.')
+        # await self.play.callback(self, ctx, search_terms)
 
     def is_playing(self, server):
         if not self.voice_connected(server):
