@@ -304,13 +304,11 @@ class Audio:
         volume = self.get_server_settings(server)["VOLUME"] / 100
         options = '-filter "volume=volume={}"'.format(volume)
 
-        self._kill_player(server)
-        log.debug("killed old player")
-        # try:
-        #     voice_client.audio_player.process.kill()
-        #     log.debug("killed old player")
-        # except AttributeError:
-        #     pass
+        try:
+            voice_client.audio_player.process.kill()
+            log.debug("killed old player")
+        except AttributeError:
+            pass
 
         log.debug("making player on sid {}".format(server.id))
 
@@ -470,20 +468,6 @@ class Audio:
             self.voice_client(server).audio_player.process.kill()
         except AttributeError:
             pass
-        except ProcessLookupError:
-            print('uh huh ProcessLookupError-------')
-            pass
-
-    def _list_playlists(self, server):
-        try:
-            server = server.id
-        except:
-            pass
-        path = "data/audio/playlists"
-        old_playlists = [f[:-4] for f in os.listdir(path) if f.endswith(".txt")]
-        path = os.path.join(path, server)
-        new_playlists = [f[:-4] for f in os.listdir(path) if f.endswith(".txt")]
-        return list(set(old_playlists + new_playlists))
 
     def _list_local_playlists(self):
         ret = []
@@ -492,6 +476,22 @@ class Audio:
                 ret.append(thing)
         log.debug("local playlists:\n\t{}".format(ret))
         return ret
+
+    def _list_playlists(self, server):
+        try:
+            server = server.id
+        except:
+            pass
+        path = "data/audio/playlists"
+        old_playlists = [f[:-4] for f in os.listdir(path)
+                         if f.endswith(".txt")]
+        path = os.path.join(path, server)
+        if os.path.exists(path):
+            new_playlists = [f[:-4] for f in os.listdir(path)
+                             if f.endswith(".txt")]
+        else:
+            new_playlists = []
+        return list(set(old_playlists + new_playlists))
 
     def _load_playlist(self, server, name, local=True):
         try:
@@ -575,11 +575,13 @@ class Audio:
             await asyncio.sleep(0.5)
 
         for entry in d.song.entries:
-            if entry.url[4] != "s":
-                song_url = "https{}".format(entry.url[4:])
+            if entry["url"][4] != "s":
+                song_url = "https{}".format(entry["url"][4:])
                 playlist.append(song_url)
             else:
                 playlist.append(entry.url)
+
+        return playlist
 
     async def _parse_yt_playlist(self, url):
         d = Downloader(url)
@@ -1023,33 +1025,6 @@ class Audio:
         else:
             await self.bot.say("Nothing playing, nothing to pause.")
 
-
-    async def _pls_join_voice(self, ctx):
-        server = ctx.message.server
-        author = ctx.message.author
-        voice_channel = author.voice_channel
-
-        # Checking already connected, will join if not
-        
-        if not self.voice_connected(server):
-            try:
-                can_connect = self.has_connect_perm(author, server)
-            except AuthorNotConnected:
-                await self.bot.send_message(ctx.message.channel, "You must join a voice channel before I can"
-                                   " play anything.")
-                return False
-            if not can_connect:
-                await self.bot.send_message(ctx.message.channel, "I don't have permissions to join your"
-                                   " voice channel.")
-                return False
-            else:
-                await self._join_voice_channel(voice_channel)
-        else:  # We are connected but not to the right channel
-            if self.voice_client(server).channel != voice_channel:
-                await self._stop_and_disconnect(server)
-                await self._join_voice_channel(voice_channel)
-        return True
-
     @commands.command(pass_context=True, no_pm=True)
     async def play(self, ctx, url):
         """Plays a song"""
@@ -1057,18 +1032,32 @@ class Audio:
         author = ctx.message.author
         voice_channel = author.voice_channel
 
-        # Checking already connected, will join if not
-        
-        caller = inspect.currentframe().f_back.f_code.co_name
-        
-        if not await self._pls_join_voice(ctx):
-            return
-
         # Checking if playing in current server
 
         if self.is_playing(server):
             await self.bot.say("I'm already playing a song on this server!")
             return  # TODO: Possibly execute queue?
+
+        # Checking already connected, will join if not
+
+        caller = inspect.currentframe().f_back.f_code.co_name
+
+        if not self.voice_connected(server):
+            try:
+                can_connect = self.has_connect_perm(author, server)
+            except AuthorNotConnected:
+                await self.bot.say("You must join a voice channel before I can"
+                                   " play anything.")
+                return
+            if not can_connect:
+                await self.bot.say("I don't have permissions to join your"
+                                   " voice channel.")
+            else:
+                await self._join_voice_channel(voice_channel)
+        else:  # We are connected but not to the right channel
+            if self.voice_client(server).channel != voice_channel:
+                await self._stop_and_disconnect(server)
+                await self._join_voice_channel(voice_channel)
 
         # If not playing, spawn a downloader if it doesn't exist and begin
         #   downloading the next song
@@ -1076,15 +1065,15 @@ class Audio:
         if self.currently_downloading(server):
             await self.bot.say("I'm already downloading a file!")
             return
-        
-        # when will [SEARCH:] ever be the beginning of a url?
-        # if caller != "yt_search":
-        if not self._valid_playable_url(url) and not url.startswith("[SEARCH:]"):
+
+        if caller == "yt_search":
+            url = "[SEARCH:]" + url
+        elif not self._valid_playable_url(url):
             await self.bot.say("That's not a valid URL.")
             return
 
-        self._clear_queue(server)
         self._stop_player(server)
+        self._clear_queue(server)
         self._add_to_queue(server, url)
 
     @commands.command(pass_context=True, no_pm=True)
@@ -1117,28 +1106,6 @@ class Audio:
         else:
             await self.bot.say("Not playing anything on this server.")
 
-    @commands.command(pass_context=True, no_pm=True)
-    async def sing(self, ctx):
-        """Makes Red sing one of her songs"""
-        ids = ("zGTkAVsrfg8", "cGMWL8cOeAU", "vFrjMq4aL-g", "WROI5WYBU_A", 
-               "41tIUr_ex3g", "f9O2Rjn1azc")
-        url = "https://www.youtube.com/watch?v={}".format(choice(ids))
-        await self.play.callback(self, ctx, url)
-
-    @commands.group(name="yt", pass_context=True, no_pm=True)
-    async def yt_search(self, ctx):
-        """Searches and plays a video from YouTube"""
-        if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
-
-    @yt_search.command(name="queue", pass_context=True, no_pm=True)
-    async def yt_queue(self, ctx, *, search_terms : str):
-        await self._queue.callback(self, ctx, "[SEARCH:]"+search_terms)
-
-    @yt_search.command(name="play", pass_context=True, no_pm=True)
-    async def yt_play(self, ctx, *, search_terms : str):
-        await self.play.callback(self, ctx, "[SEARCH:]"+search_terms)
-
     @commands.group(pass_context=True, no_pm=True)
     async def playlist(self, ctx):
         """Playlist management/control."""
@@ -1157,7 +1124,7 @@ class Audio:
 
         if self._valid_playable_url(url):
             try:
-                await self.bot.say("Enumerating song list...this could take"
+                await self.bot.say("Enumerating song list... This could take"
                                    " a few moments.")
                 songlist = await self._parse_playlist(url)
             except InvalidPlaylist:
@@ -1171,7 +1138,8 @@ class Audio:
             playlist.server = server
 
             self._save_playlist(server, name, playlist)
-            await self.bot.say("Playlist '{}' saved.".format(name))
+            await self.bot.say("Playlist '{}' saved. Tracks: {}".format(name, 
+                len(songlist)))
         else:
             await self.bot.say("That URL is not a valid Soundcloud or YouTube"
                                " playlist link. If you think this is in error"
@@ -1256,6 +1224,7 @@ class Audio:
                                                server, name))
             if caller == "playlist_start_mix":
                 shuffle(playlist.playlist)
+
             self._play_playlist(server, playlist)
             await self.bot.say("Playlist queued.")
         else:
@@ -1275,20 +1244,19 @@ class Audio:
             playlist is running, it will temporarily be played next and will
             NOT stay in the playlist loop."""
         server = ctx.message.server
-        if not await self._pls_join_voice(ctx):
+        if not self.voice_connected(server):
+            await self.bot.say("Not voice connected in this server.")
             return
 
         # We are connected somewhere
         if server.id not in self.queue:
-            await self.play.callback(self, ctx, url)
-            return
-            # log.debug("Something went wrong, we're connected but have no"
-            #           " queue entry.")
-            # raise VoiceNotConnected("Something went wrong, we have no internal"
-            #                         " queue to modify. This should never"
-            #                         " happen.")
+            log.debug("Something went wrong, we're connected but have no"
+                      " queue entry.")
+            raise VoiceNotConnected("Something went wrong, we have no internal"
+                                    " queue to modify. This should never"
+                                    " happen.")
 
-        if not self._valid_playable_url(url) and not url.startswith("[SEARCH:]"):
+        if not self._valid_playable_url(url):
             await self.bot.say("Invalid URL.")
             return
 
@@ -1379,6 +1347,14 @@ class Audio:
             await self.bot.say("Can't skip if I'm not playing.")
 
     @commands.command(pass_context=True, no_pm=True)
+    async def sing(self, ctx):
+        """Makes Red sing one of her songs"""
+        ids = ("zGTkAVsrfg8", "cGMWL8cOeAU", "vFrjMq4aL-g", "WROI5WYBU_A",
+               "41tIUr_ex3g", "f9O2Rjn1azc")
+        url = "https://www.youtube.com/watch?v={}".format(choice(ids))
+        await self.play.callback(self, ctx, url)
+
+    @commands.command(pass_context=True, no_pm=True)
     async def song(self, ctx):
         """Info about the current song."""
         server = ctx.message.server
@@ -1401,6 +1377,12 @@ class Audio:
         server = ctx.message.server
 
         self._stop(server)
+
+    @commands.command(name="yt", pass_context=True, no_pm=True)
+    async def yt_search(self, ctx, *, search_terms: str):
+        """Searches and plays a video from YouTube"""
+        await self.bot.say("Searching...")
+        await self.play.callback(self, ctx, search_terms)
 
     def is_playing(self, server):
         if not self.voice_connected(server):
@@ -1480,8 +1462,8 @@ class Audio:
                 ret[setting] = self.settings[setting]
                 if setting.lower() == "volume" and ret[setting] <= 1:
                     ret[setting] *= 100
-        #^This will make it so that only users with an outdated config will
-        #have their volume set * 100. In theory.
+        # ^This will make it so that only users with an outdated config will
+        # have their volume set * 100. In theory.
         self.save_settings()
 
         return ret
