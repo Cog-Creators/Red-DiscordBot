@@ -560,6 +560,10 @@ class Audio:
             r'^(https?\:\/\/)?(www\.|m\.)?(youtube\.com|youtu\.?be)\/.+$')
         if yt_link.match(url):
             return True
+        yt_link = re.compile(
+            r'^(https?\:\/\/)?(www\.|m\.)?(youtube\.be|youtu\.?be)\/.+$')
+        if yt_link.match(url):
+            return True
         return False
 
     # TODO: _next_songs_in_queue
@@ -1663,7 +1667,7 @@ def setup(bot):
     try:
         bot.voice_clients
     except AttributeError:
-        raise discord.Forbidden(
+        raise RuntimeError(
             "Your discord.py is outdated. Update to the newest one with\npip3 "
             "install --upgrade git+https://github.com/Rapptz/discord.py@async")
     n = Audio(bot)  # Praise 26
