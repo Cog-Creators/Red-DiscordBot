@@ -1359,9 +1359,8 @@ class Audio:
             song = self.queue[server.id]["NOW_PLAYING"]
             if song:
                 msg = ("\n**Title:** {}\n**Author:** {}\n**Uploader:** {}\n"
-                       "**Views:** {}\n\n<{}>".format(
-                           song.title, song.creator, song.view_count,
-                           song.webpage_url))
+                "**Views:** {}\n\n<{}>".format(song.title, song.creator, 
+                    song.uploader, song.view_count, song.webpage_url))
                 await self.bot.say(msg.replace("**Author:** None\n", ""))
             else:
                 await self.bot.say("I don't know what this song is either.")
