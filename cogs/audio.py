@@ -76,6 +76,8 @@ class UnauthorizedConnect(Exception):
 class UnauthorizedSpeak(Exception):
     pass
 
+class UnauthorizedSave(Exception):
+    pass
 
 class ConnectTimeout(NotConnected):
     pass
@@ -119,12 +121,15 @@ class Song:
 
 class Playlist:
     def __init__(self, server=None, sid=None, name=None, author=None, url=None,
-                 playlist=None, **kwargs):
+                 playlist=None, path=None, main_class=None, **kwargs):
         self.server = server
         self._sid = sid
         self.name = name
         self.author = author
         self.url = url
+        self.main_class = main_class # reference to Audio
+        self.path = path
+
         if url is None and "link" in kwargs:
             self.url = kwargs.get('link')
         self.playlist = playlist
@@ -139,6 +144,18 @@ class Playlist:
         ret = {"author": self.author, "playlist": self.playlist,
                "link": self.url}
         return ret
+
+    def append_song(self, author, url):
+        if author.id != self.author:
+            raise UnauthorizedSave
+        elif not self.main_class._valid_playable_url(url):
+            raise InvalidURL
+        else:
+            self.playlist.append(url)
+            self.save()
+
+    def save(self):
+        fileIO(self.path, "save", self.to_json())
 
     @property
     def sid(self):
@@ -512,6 +529,8 @@ class Audio:
             f = os.path.join(f, name + ".txt")
         kwargs = fileIO(f, 'load')
 
+        kwargs['path'] = f
+        kwargs['main_class'] = self
         kwargs['name'] = name
         kwargs['sid'] = server
 
@@ -560,8 +579,6 @@ class Audio:
             r'^(https?\:\/\/)?(www\.|m\.)?(youtube\.com|youtu\.?be)\/.+$')
         if yt_link.match(url):
             return True
-        yt_link = re.compile(
-            r'^(https?\:\/\/)?(www\.|m\.)?(youtube\.be|youtu\.?be)\/.+$')
         if yt_link.match(url):
             return True
         return False
@@ -1165,7 +1182,22 @@ class Audio:
     @playlist.command(pass_context=True, no_pm=True, name="append")
     async def playlist_append(self, ctx, name, url):
         """Appends to a playlist."""
-        await self.bot.say("Not implemented.")
+        author = ctx.message.author
+        server = ctx.message.server
+        if name not in self._list_playlists(server):
+            await self.bot.say("There is no playlist with that name.")
+            return
+        playlist = self._load_playlist(server, name,
+                                local=self._playlist_exists_local(
+                                    server, name))
+        try:
+            playlist.append_song(author, url)
+        except UnauthorizedSave:
+            await self.bot.say("You're not the author of that playlist.")
+        except InvalidURL:
+            await self.bot.say("Invalid link.")
+        else:
+            await self.bot.say("Done.")
 
     # TODO: playlist_extend
 
@@ -1261,7 +1293,7 @@ class Audio:
             NOT stay in the playlist loop."""
         server = ctx.message.server
         if not self.voice_connected(server):
-            await self.bot.say("Not voice connected in this server.")
+            await self.play.callback(self, ctx, url)
             return
 
         # We are connected somewhere
