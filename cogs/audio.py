@@ -575,11 +575,13 @@ class Audio:
             await asyncio.sleep(0.5)
 
         for entry in d.song.entries:
-            if entry.url[4] != "s":
-                song_url = "https{}".format(entry.url[4:])
+            if entry["url"][4] != "s":
+                song_url = "https{}".format(entry["url"][4:])
                 playlist.append(song_url)
             else:
                 playlist.append(entry.url)
+
+        return playlist
 
     async def _parse_yt_playlist(self, url):
         d = Downloader(url)
@@ -1122,7 +1124,7 @@ class Audio:
 
         if self._valid_playable_url(url):
             try:
-                await self.bot.say("Enumerating song list...this could take"
+                await self.bot.say("Enumerating song list... This could take"
                                    " a few moments.")
                 songlist = await self._parse_playlist(url)
             except InvalidPlaylist:
@@ -1136,7 +1138,8 @@ class Audio:
             playlist.server = server
 
             self._save_playlist(server, name, playlist)
-            await self.bot.say("Playlist '{}' saved.".format(name))
+            await self.bot.say("Playlist '{}' saved. Tracks: {}".format(name, 
+                len(songlist)))
         else:
             await self.bot.say("That URL is not a valid Soundcloud or YouTube"
                                " playlist link. If you think this is in error"
