@@ -70,6 +70,12 @@ class AuthorNotConnected(NotConnected):
 class VoiceNotConnected(NotConnected):
     pass
 
+class UnauthorizedConnect(Exception):
+    pass
+
+class UnauthorizedSpeak(Exception):
+    pass
+
 
 class ConnectTimeout(NotConnected):
     pass
@@ -976,8 +982,11 @@ class Audio:
                 await self.bot.say("You must join a voice channel before I can"
                                    " play anything.")
                 return
-            if not can_connect:
+            except UnauthorizedConnect:
                 await self.bot.say("I don't have permissions to join your"
+                                   " voice channel.")
+            except UnauthorizedSpeak:
+                await self.bot.say("I don't have permissions to speak in your"
                                    " voice channel.")
             else:
                 await self._join_voice_channel(voice_channel)
@@ -1049,8 +1058,11 @@ class Audio:
                 await self.bot.say("You must join a voice channel before I can"
                                    " play anything.")
                 return
-            if not can_connect:
+            except UnauthorizedConnect:
                 await self.bot.say("I don't have permissions to join your"
+                                   " voice channel.")
+            except UnauthorizedSpeak:
+                await self.bot.say("I don't have permissions to speak in your"
                                    " voice channel.")
             else:
                 await self._join_voice_channel(voice_channel)
@@ -1472,7 +1484,11 @@ class Audio:
         channel = author.voice_channel
         if channel is None:
             raise AuthorNotConnected
-        if channel.permissions_for(server.me):
+        elif channel.permissions_for(server.me).connect is False:
+            raise UnauthorizedConnect
+        elif channel.permissions_for(server.me).speak is False:
+            raise UnauthorizedSpeak
+        else:
             return True
         return False
 
