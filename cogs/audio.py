@@ -579,8 +579,6 @@ class Audio:
             r'^(https?\:\/\/)?(www\.|m\.)?(youtube\.com|youtu\.?be)\/.+$')
         if yt_link.match(url):
             return True
-        if yt_link.match(url):
-            return True
         return False
 
     # TODO: _next_songs_in_queue
@@ -1006,9 +1004,11 @@ class Audio:
             except UnauthorizedConnect:
                 await self.bot.say("I don't have permissions to join your"
                                    " voice channel.")
+                return
             except UnauthorizedSpeak:
                 await self.bot.say("I don't have permissions to speak in your"
                                    " voice channel.")
+                return
             else:
                 await self._join_voice_channel(voice_channel)
         else:  # We are connected but not to the right channel
@@ -1056,8 +1056,9 @@ class Audio:
             await self.bot.say("Nothing playing, nothing to pause.")
 
     @commands.command(pass_context=True, no_pm=True)
-    async def play(self, ctx, url):
-        """Plays a song"""
+    async def play(self, ctx, url_or_search_terms):
+        """Plays a link / searches and play"""
+        url = url_or_search_terms
         server = ctx.message.server
         author = ctx.message.author
         voice_channel = author.voice_channel
@@ -1065,8 +1066,8 @@ class Audio:
         # Checking if playing in current server
 
         if self.is_playing(server):
-            await self.bot.say("I'm already playing a song on this server!")
-            return  # TODO: Possibly execute queue?
+            await self._queue.callback(self, ctx, url)
+            return  # Default to queue
 
         # Checking already connected, will join if not
 
@@ -1082,9 +1083,11 @@ class Audio:
             except UnauthorizedConnect:
                 await self.bot.say("I don't have permissions to join your"
                                    " voice channel.")
+                return
             except UnauthorizedSpeak:
                 await self.bot.say("I don't have permissions to speak in your"
                                    " voice channel.")
+                return
             else:
                 await self._join_voice_channel(voice_channel)
         else:  # We are connected but not to the right channel
@@ -1099,11 +1102,12 @@ class Audio:
             await self.bot.say("I'm already downloading a file!")
             return
 
-        if caller == "yt_search":
+        if "." in url:
+            if not self._valid_playable_url(url):
+                await self.bot.say("That's not a valid URL.")
+                return
+        else:
             url = "[SEARCH:]" + url
-        elif not self._valid_playable_url(url):
-            await self.bot.say("That's not a valid URL.")
-            return
 
         self._stop_player(server)
         self._clear_queue(server)
@@ -1253,6 +1257,7 @@ class Audio:
     async def playlist_start(self, ctx, name):
         """Plays a playlist."""
         server = ctx.message.server
+        author = ctx.message.author
         voice_channel = ctx.message.author.voice_channel
 
         caller = inspect.currentframe().f_back.f_code.co_name
@@ -1263,9 +1268,23 @@ class Audio:
             return
 
         if self._playlist_exists(server, name):
-            # TODO: permissions checks...
             if not self.voice_connected(server):
-                await self._join_voice_channel(voice_channel)
+                try:
+                    can_connect = self.has_connect_perm(author, server)
+                except AuthorNotConnected:
+                    await self.bot.say("You must join a voice channel before I can"
+                                       " play anything.")
+                    return
+                except UnauthorizedConnect:
+                    await self.bot.say("I don't have permissions to join your"
+                                       " voice channel.")
+                    return
+                except UnauthorizedSpeak:
+                    await self.bot.say("I don't have permissions to speak in your"
+                                       " voice channel.")
+                    return
+                else:
+                    await self._join_voice_channel(voice_channel)
             self._clear_queue(server)
             playlist = self._load_playlist(server, name,
                                            local=self._playlist_exists_local(
@@ -1304,9 +1323,12 @@ class Audio:
                                     " queue to modify. This should never"
                                     " happen.")
 
-        if not self._valid_playable_url(url):
-            await self.bot.say("Invalid URL.")
-            return
+        if "." in url:
+            if not self._valid_playable_url(url):
+                await self.bot.say("That's not a valid URL.")
+                return
+        else:
+            url = "[SEARCH:]" + url
 
         # We have a queue to modify
         if self.queue[server.id]["PLAYLIST"]:
