@@ -184,12 +184,12 @@ class Downloader(threading.Thread):
             video = self._yt.extract_info(self.url, download=False,
                                           process=False)
         else:
+            self.url = self.url[9:]
+            yt_id = self._yt.extract_info(self.url,
+                download=False)["entries"][0]["id"] # Should handle errors here.
+            self.url = "https://youtube.com/watch?v={}".format(yt_id)
             video = self._yt.extract_info(self.url, download=False,
                                           process=False)
-            self.url = "https://youtube.com/watch?v={}".format(
-                video["entries"][0]["id"])
-
-            video.url = self.url
 
         self.song = Song(**video)
 
@@ -613,7 +613,7 @@ class Audio:
         assert type(server) is discord.Server
         log.debug('starting to play on "{}"'.format(server.name))
 
-        if self._valid_playable_url(url):
+        if self._valid_playable_url(url) or "[SEARCH:]" in url:
             song = await self._guarantee_downloaded(server, url)
             local = False
         else:  # Assume local
@@ -1378,8 +1378,8 @@ class Audio:
     @commands.command(name="yt", pass_context=True, no_pm=True)
     async def yt_search(self, ctx, *, search_terms: str):
         """Searches and plays a video from YouTube"""
-        await self.bot.say('This got broken. Will be fixed soon.')
-        # await self.play.callback(self, ctx, search_terms)
+        await self.bot.say("Searching...")
+        await self.play.callback(self, ctx, search_terms)
 
     def is_playing(self, server):
         if not self.voice_connected(server):
