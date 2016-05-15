@@ -150,17 +150,11 @@ def check_folders():
 def check_configs():
     if settings.bot_settings == settings.default_settings:
         print("Red - First run configuration\n")
-        print("You either need a normal account or a bot account to use Red. "
-              "*Do not* use your own.")
-        print("For more information on bot accounts see: https://twentysix26."
-              "github.io/Red-Docs/red_guide_bot_accounts/"
+        print("If you haven't already, create a new account:\n"
+              "https://twentysix26.github.io/Red-Docs/red_guide_bot_accounts/"
               "#creating-a-new-bot-account")
-        print("If you decide to use a normal account, create an account for "
-              "your bot on https://discordapp.com then enter your email here.")
-        print("Otherwise make a bot account and copy the token from "
-              "https://discordapp.com/developers/applications/me then enter "
-              "your token here.")
-        print("\nType your email or token:")
+        print("and obtain your bot's token like described.")
+        print("\nInsert your bot's token:")
 
         choice = input("> ")
 
