@@ -1066,7 +1066,7 @@ class Audio:
         # Checking if playing in current server
 
         if self.is_playing(server):
-            await self._queue.callback(self, ctx, url)
+            await ctx.invoke(self._queue, url=url)
             return  # Default to queue
 
         # Checking already connected, will join if not
