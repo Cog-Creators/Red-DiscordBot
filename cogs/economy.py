@@ -120,7 +120,7 @@ class Economy:
                 self.add_money(id, self.settings["PAYDAY_CREDITS"])
                 await self.bot.say("{} Here, take some credits. Enjoy! (+{} credits!)".format(author.mention, str(self.settings["PAYDAY_CREDITS"])))
         else:
-            await self.bot.say("{} You need an account to receive credits.".format(author.mention))
+            await self.bot.say("{} You need an account to receive credits. Type {}bank register to open one.".format(author.mention, ctx.prefix))
 
     @commands.command()
     async def leaderboard(self, top : int=10):
@@ -157,6 +157,9 @@ class Economy:
     async def slot(self, ctx, bid : int):
         """Play the slot machine"""
         author = ctx.message.author
+        if not self.account_check(author.id):
+            await self.bot.say("{} You need an account to use the slot machine. Type {}bank register to open one.".format(author.mention, ctx.prefix))
+            return
         if self.enough_money(author.id, bid):
             if bid >= self.settings["SLOT_MIN"] and bid <= self.settings["SLOT_MAX"]:
                 if author.id in self.slot_register:
