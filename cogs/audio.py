@@ -1056,7 +1056,7 @@ class Audio:
             await self.bot.say("Nothing playing, nothing to pause.")
 
     @commands.command(pass_context=True, no_pm=True)
-    async def play(self, ctx, url_or_search_terms):
+    async def play(self, ctx, *, url_or_search_terms):
         """Plays a link / searches and play"""
         url = url_or_search_terms
         server = ctx.message.server
@@ -1203,7 +1203,12 @@ class Audio:
         else:
             await self.bot.say("Done.")
 
-    # TODO: playlist_extend
+    @playlist.command(pass_context=True, no_pm=True, name="extend")
+    async def playlist_extend(self, ctx, playlist_url_or_name):
+        """Extends a playlist with a playlist link"""
+        # Need better wording ^
+        await self.bot.say("Not implemented yet.")
+
 
     @playlist.command(pass_context=True, no_pm=True, name="list")
     async def playlist_list(self, ctx):
@@ -1303,7 +1308,7 @@ class Audio:
         await self.playlist_start.callback(self, ctx, name)
 
     @commands.command(pass_context=True, no_pm=True, name="queue")
-    async def _queue(self, ctx, url):
+    async def _queue(self, ctx, *, url):
         """Queues a song to play next. Extended functionality in `!help`
 
         If you use `queue` when one song is playing, your new song will get
@@ -1312,7 +1317,7 @@ class Audio:
             NOT stay in the playlist loop."""
         server = ctx.message.server
         if not self.voice_connected(server):
-            await self.play.callback(self, ctx, url)
+            await ctx.invoke(self.play, url_or_search_terms=url)
             return
 
         # We are connected somewhere
@@ -1422,7 +1427,7 @@ class Audio:
         ids = ("zGTkAVsrfg8", "cGMWL8cOeAU", "vFrjMq4aL-g", "WROI5WYBU_A",
                "41tIUr_ex3g", "f9O2Rjn1azc")
         url = "https://www.youtube.com/watch?v={}".format(choice(ids))
-        await self.play.callback(self, ctx, url)
+        await ctx.invoke(self.play, url_or_search_terms=url)
 
     @commands.command(pass_context=True, no_pm=True)
     async def song(self, ctx):
@@ -1452,7 +1457,7 @@ class Audio:
     async def yt_search(self, ctx, *, search_terms: str):
         """Searches and plays a video from YouTube"""
         await self.bot.say("Searching...")
-        await self.play.callback(self, ctx, search_terms)
+        await ctx.invoke(self.play, url_or_search_terms=search_terms)
 
     def is_playing(self, server):
         if not self.voice_connected(server):
