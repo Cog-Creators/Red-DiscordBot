@@ -234,7 +234,7 @@ class Economytrickle:
 					del self.activeUsers[sid][u]
 					debug += message.server._members[u].name + ", "
 				debug += "\n" + str(len(self.activeUsers[sid])) +" ausers left in server---"
-				print(debug)
+				#print(debug)
 				#new active user bonus reduce
 				if self.tricklePot[sid] > 0:
 					self.tricklePot[sid] -= self.settings[sid]["ACTIVE_BONUS_DEFLATE"]
