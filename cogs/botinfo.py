@@ -80,48 +80,48 @@ class BotInfo:
         msg += "**Want me on your server? Use this link:** <http://invite.fishyfing.xyz>"
         await self.bot.say(msg)
 
-    @commands.group(pass_context=True, no_pm=True)
-    async def welcome(self, ctx):
-        if not ctx.invoked_subcommand:
-            await send_cmd_help(ctx)
+    # @commands.group(pass_context=True, no_pm=True)
+    # async def welcome(self, ctx):
+    #     if not ctx.invoked_subcommand:
+    #         await send_cmd_help(ctx)
 
-    @welcome.command(name="set", pass_context=True)
-    async def _welcome_set(self, ctx, *, message):
-        """You can use $user to mention the member who joins"""
-        server = ctx.message.server.id
-        channel_mentions = ctx.message.channel_mentions
-        if server not in self.welcome_messages:
-            self.welcome_messages[server] = {}
-        if len(channel_mentions) == 0:
-            channel = ctx.message.server.default_channel
-        else:
-            poss_mention = message.split(" ")[0]
-            if not re.compile(r'<#([0-9]+)>').match(poss_mention):
-                channel = ctx.message.server.default_channel
-            else:
-                channel = utils.get(channel_mentions, mention=poss_mention)
-                message = message[len(channel.mention) + 1:]  # for the space
+    # @welcome.command(name="set", pass_context=True)
+    # async def _welcome_set(self, ctx, *, message):
+    #     """You can use $user to mention the member who joins"""
+    #     server = ctx.message.server.id
+    #     channel_mentions = ctx.message.channel_mentions
+    #     if server not in self.welcome_messages:
+    #         self.welcome_messages[server] = {}
+    #     if len(channel_mentions) == 0:
+    #         channel = ctx.message.server.default_channel
+    #     else:
+    #         poss_mention = message.split(" ")[0]
+    #         if not re.compile(r'<#([0-9]+)>').match(poss_mention):
+    #             channel = ctx.message.server.default_channel
+    #         else:
+    #             channel = utils.get(channel_mentions, mention=poss_mention)
+    #             message = message[len(channel.mention) + 1:]  # for the space
 
-        self.welcome_messages[server][channel.id] = message
-        fileIO("data/botinfo/welcome.json", "save", self.welcome_messages)
+        # self.welcome_messages[server][channel.id] = message
+        # fileIO("data/botinfo/welcome.json", "save", self.welcome_messages)
 
-        await self.bot.say('Member join message on '
-                           '{} set to:\n\n{}'.format(channel.mention, message))
+        # await self.bot.say('Member join message on '
+        #                    '{} set to:\n\n{}'.format(channel.mention, message))
 
-    @welcome.command(name="remove", pass_context=True)
-    async def _welcome_remove(self, ctx, channel):
-        server = ctx.message.server.id
-        channel_mentions = ctx.message.channel_mentions
-        if server not in self.welcome_messages:
-            return
-        channel = utils.get(channel_mentions, mention=channel)
-        if channel is None:
-            await self.bot.say('Invalid channel.')
-            return
+    # @welcome.command(name="remove", pass_context=True)
+    # async def _welcome_remove(self, ctx, channel):
+    #     server = ctx.message.server.id
+    #     channel_mentions = ctx.message.channel_mentions
+    #     if server not in self.welcome_messages:
+    #         return
+    #     channel = utils.get(channel_mentions, mention=channel)
+    #     if channel is None:
+    #         await self.bot.say('Invalid channel.')
+    #         return
 
-        if channel.id in self.welcome_messages[server]:
-            del self.welcome_messages[server][channel.id]
-            self.save_welcome()
+    #     if channel.id in self.welcome_messages[server]:
+    #         del self.welcome_messages[server][channel.id]
+    #         self.save_welcome()
 
     async def serverjoin(self, server):
         channel = server.default_channel
@@ -131,20 +131,20 @@ class BotInfo:
         except discord.errors.Forbidden:
             pass
 
-    async def memberjoin(self, member):
-        server = member.server
-        welcome = self.welcome_messages.copy()
-        if server.id in welcome:
-            for chan_id in welcome[server.id]:
-                channel = server.get_channel(chan_id)
-                if channel is None:
-                    del self.welcome_messages[server.id][chan_id]
-                    self.save_welcome()
-                    continue
-                template = welcome[server.id][chan_id]
-                message = string.Template(template)
-                message = message.safe_substitute(user=member.mention)
-                await self.bot.send_message(channel, message)
+    # async def memberjoin(self, member):
+    #     server = member.server
+    #     welcome = self.welcome_messages.copy()
+    #     if server.id in welcome:
+    #         for chan_id in welcome[server.id]:
+    #             channel = server.get_channel(chan_id)
+    #             if channel is None:
+    #                 del self.welcome_messages[server.id][chan_id]
+    #                 self.save_welcome()
+    #                 continue
+    #             template = welcome[server.id][chan_id]
+    #             message = string.Template(template)
+    #             message = message.safe_substitute(user=member.mention)
+    #             await self.bot.send_message(channel, message)
 
 
 def check_folders():
