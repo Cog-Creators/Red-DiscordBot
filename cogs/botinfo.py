@@ -76,7 +76,7 @@ class BotInfo:
         msg += "**Language:** Python/discord.py\n"
         msg += "**Owner:** <@!116079569349378049>\n"
         msg += "**Scrutinise my code:** <http://github.fishyfing.xyz>\n"
-        msg += "**Need more help? Drop me an email!** <http://contact.fishyfing.xyz>"
+        msg += "**Need more help? Drop me an email! (Copy paste into the browser)** `mailto:fishyfing@gmail.com?subject=MonsterLyrics Bot Support&body= [Please describe in as much detail as possible]`"
         msg += "**Want me on your server? Use this link:** <http://invite.fishyfing.xyz>"
         await self.bot.say(msg)
 
