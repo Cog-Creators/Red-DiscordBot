@@ -75,7 +75,8 @@ class BotInfo:
         msg += "\n"
         msg += "**Language:** Python/discord.py\n"
         msg += "**Owner:** <@!116079569349378049>\n"
-        msg += "Want me on your server? Use this link: <https://discordapp.com/oauth2/authorize?client_id=168453097859973120&scope=bot>"
+        msg += "**Scrutinise my code:** <http://github.fishyfing.xyz>\n"
+        msg += "Want me on your server? Use this link: <http://invite.fishyfing.xyz>"
         await self.bot.say(msg)
 
     @commands.group(pass_context=True, no_pm=True)
