@@ -147,10 +147,10 @@ class BotInfo:
     #             await self.bot.send_message(channel, message)
 
 
-def check_folders():
-    if not os.path.exists("data/botinfo"):
-        print("Creating default mentiontracker's welcome.json")
-        os.mkdir("data/botinfo")
+# def check_folders():
+#     if not os.path.exists("data/botinfo"):
+#         print("Creating default mentiontracker's welcome.json")
+#         os.mkdir("data/botinfo")
 
 
 # def check_files():
@@ -161,8 +161,8 @@ def check_folders():
 
 
 def setup(bot):
-    check_folders()
-    check_files()
+    #check_folders()
+    #check_files()
     n = BotInfo(bot)
     bot.add_listener(n.serverjoin, "on_server_join")
     #bot.add_listener(n.memberjoin, "on_member_join")
