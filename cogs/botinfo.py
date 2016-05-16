@@ -153,11 +153,11 @@ def check_folders():
         os.mkdir("data/botinfo")
 
 
-def check_files():
-    f = "data/botinfo/welcome.json"
-    if not fileIO(f, "check"):
-        print("Creating default botinfo's welcome.json...")
-        fileIO(f, "save", {})
+# def check_files():
+#     f = "data/botinfo/welcome.json"
+#     if not fileIO(f, "check"):
+#         print("Creating default botinfo's welcome.json...")
+#         fileIO(f, "save", {})
 
 
 def setup(bot):
@@ -165,5 +165,5 @@ def setup(bot):
     check_files()
     n = BotInfo(bot)
     bot.add_listener(n.serverjoin, "on_server_join")
-    bot.add_listener(n.memberjoin, "on_member_join")
+    #bot.add_listener(n.memberjoin, "on_member_join")
     bot.add_cog(n)
