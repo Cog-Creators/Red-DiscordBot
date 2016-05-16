@@ -76,7 +76,8 @@ class BotInfo:
         msg += "**Language:** Python/discord.py\n"
         msg += "**Owner:** <@!116079569349378049>\n"
         msg += "**Scrutinise my code:** <http://github.fishyfing.xyz>\n"
-        msg += "Want me on your server? Use this link: <http://invite.fishyfing.xyz>"
+        msg += "**Need more help? Drop me an email!** <http://contact.fishyfing.xyz>"
+        msg += "**Want me on your server? Use this link:** <http://invite.fishyfing.xyz>"
         await self.bot.say(msg)
 
     @commands.group(pass_context=True, no_pm=True)
