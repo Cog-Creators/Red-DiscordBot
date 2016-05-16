@@ -253,8 +253,7 @@ class Mod:
         response = await self.bot.wait_for_message(author=ctx.message.author)
         response = response.content.lower().strip()
         if response == "yes" or response == "y":
-            for i in blklist:
-                self.blacklist_list.remove(i)
+            self.blacklist_list = []
             fileIO("data/mod/blacklist.json", "save", self.blacklist_list)
             await self.bot.say("Blacklist is now clean.")
         else:
@@ -328,8 +327,7 @@ class Mod:
         response = await self.bot.wait_for_message(author=ctx.message.author)
         response = response.content.lower().strip()
         if response == "yes" or response == "y":
-            for i in whtList:
-                self.whitelist_list.remove(i)
+            self.whitelist_list = []
             fileIO("data/mod/whitelist.json", "save", self.whitelist_list)
             await self.bot.say("Whitelist is now clean. All users can use me")
         else:
