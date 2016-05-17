@@ -61,7 +61,7 @@ class Admin:
         await self.bot.say(evald)
 
     @commands.command(pass_context=True)
-    @checks.is_owner()
+    @checks.admin_or_permissions(manage_server=True)
     async def sudo(self, ctx, user: discord.Member, *, command):
         """Runs the [command] as if [user] had run it. DON'T ADD A PREFIX
         """
