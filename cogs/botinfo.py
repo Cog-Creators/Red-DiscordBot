@@ -77,7 +77,7 @@ class BotInfo:
         msg += "**Owner:** <@!116079569349378049>\n"
         msg += "**Scrutinise my code:** <http://github.fishyfing.xyz>\n"
         msg += "**Need more help? Drop me an email!** support@bot.fishyfing.xyz\n"
-        msg += "**More info:** <http://fishyfing.xyz>"
+        msg += "**More info:** <http://fishyfing.xyz>\n"
         msg += "**Want me on your server? Use this link:** <http://invite.fishyfing.xyz>"
         await self.bot.say(msg)
 
