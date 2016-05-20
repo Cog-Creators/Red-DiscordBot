@@ -19,6 +19,98 @@ slot_payouts = """Slot machine payouts:
     Three symbols: +500
     Two symbols: Bet * 2"""
 
+class ExistantAccount(Exception):
+    pass
+
+class NoAccount(Exception):
+    pass
+
+class InsufficientBalance(Exception):
+    pass
+
+class NegativeValue(Exception):
+    pass
+
+class Bank:
+    def __init__(self):
+        self.accounts = fileIO("data/economy/bank.json", "load")
+
+    def create_account(self, user):
+        server = user.server
+        if not self.account_exists(user):
+            acc = {"name" : user.name, "balance" : 0}
+            self.accounts[server.id][user.id] = acc
+            self.save_bank()
+        else:
+            raise ExistantAccount
+
+    def account_exists(self, user):
+        server = user.server
+        if user.id in self.accounts[server.id]:
+            return True
+        else:
+            return False
+
+    def widthdraw_credits(self, user, amount):
+        server = user.server
+        
+        if not amount >= 0:
+            raise NegativeValue
+        
+        if self.account_exists(user):
+            account = self.accounts[server.id][user.id]
+            if account["balance"] >= amount:
+                account["balance"] -= amount
+                self.accounts[server.id][user.id] = account
+                self.save_bank()
+            else:
+                raise InsufficientBalance
+        else:
+            raise NoAccount
+
+    def deposit_credits(self, user, amount):
+        server = user.server
+        if not amount >= 0:
+            raise NegativeValue
+        if self.account_exists(user)
+            account = self.accounts[server.id][user.id]
+            account["balance"] =+ amount
+            self.accounts[server.id][user.id] = account
+            self.save_bank()
+        else:
+            raise NoAccount
+
+    def transfer_money(self, sender, receiver, amount):
+        server = sender.server
+        if not amount >= 0:
+            raise NegativeValue
+        if self.account_exists(sender) and self.account_exists(receiver):
+            sender_acc = self.accounts[server.id][sender.id]
+            if sender_acc["balance"] < amount:
+                raise InsufficientBalance
+            self.widthdraw_credits(sender, amount)
+            self.deposit_credits(receiver, amount)
+            self.save_bank()
+        else:
+            raise NoAccount
+
+    def get_all_accounts(self, server):
+        accounts = []
+        for accounts in self.accounts[server.id]:
+            accounts.append(account)
+        return account
+
+    def get_account(self, user):
+        server = user.server
+        try:
+            return self.accounts[server.id][user.id]
+        except KeyError:
+            raise NoAccount
+
+    def save_bank(self):
+        pass
+
+
 class Economy:
     """Economy
 
