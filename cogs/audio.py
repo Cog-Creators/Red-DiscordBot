@@ -491,6 +491,8 @@ class Audio:
             self.voice_client(server).audio_player.process.kill()
         except AttributeError:
             pass
+        except ProcessLookupError:
+            pass
 
     def _list_local_playlists(self):
         ret = []
