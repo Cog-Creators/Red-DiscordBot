@@ -332,6 +332,8 @@ class Audio:
             log.debug("killed old player")
         except AttributeError:
             pass
+        except ProcessLookupError:
+            pass
 
         log.debug("making player on sid {}".format(server.id))
 
