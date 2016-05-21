@@ -1,6 +1,7 @@
 from discord.ext import commands
 import discord
 from cogs.utils.settings import Settings
+from cogs.utils.dataIO import dataIO
 import json
 import asyncio
 import os
@@ -209,12 +210,9 @@ def check_configs():
         if settings.default_mod == "":
             settings.default_mod = "Process"
 
-    cogs_s_path = "data/red/cogs.json"
-    cogs = {}
-    if not os.path.isfile(cogs_s_path):
+    if not os.path.isfile("data/red/cogs.json"):
         print("Creating new cogs.json...")
-        with open(cogs_s_path, "w") as f:
-            f.write(json.dumps(cogs))
+        dataIO.save_json("data/red/cogs.json", {})
 
 
 def set_logger():
@@ -262,12 +260,9 @@ def get_answer():
 
 
 def set_cog(cog, value):
-    with open('data/red/cogs.json', "r") as f:
-        data = json.load(f)
+    data = dataIO.load_json("data/red/cogs.json")
     data[cog] = value
-    with open('data/red/cogs.json', "w") as f:
-        f.write(json.dumps(data))
-
+    dataIO.save_json("data/red/cogs.json", data)
 
 def load_cogs():
     try:
@@ -279,8 +274,7 @@ def load_cogs():
         no_prompt = False
 
     try:
-        with open('data/red/cogs.json', "r") as f:
-            registry = json.load(f)
+        registry = dataIO.load_json("data/red/cogs.json")
     except:
         registry = {}
 
@@ -319,8 +313,7 @@ def load_cogs():
             registry[extension] = False
 
     if extensions:
-        with open('data/red/cogs.json', "w") as f:
-            f.write(json.dumps(registry))
+        dataIO.save_json("data/red/cogs.json", registry)
 
     if failed:
         print("\nFailed to load: ", end="")
