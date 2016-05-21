@@ -54,9 +54,11 @@ class Mod:
     async def kick(self, ctx, user: discord.Member, *reason):
         """Kicks user."""
         author = ctx.message.author
-        if not reason:
+        if not r:
             reason = "None specified."
             return
+        else:
+            reason = r
         try:
             await self.bot.kick(user)
             logger.info("{}({}) kicked {}({})".format(
@@ -69,7 +71,7 @@ class Mod:
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(ban_members=True)
-    async def ban(self, ctx, user: discord.Member, *reason, days: int=0):
+    async def ban(self, ctx, user: discord.Member, *r, days: int=0):
         """Bans user and deletes last X days worth of messages.
 
         Minimum 0 days, maximum 7. Defaults to 0."""
@@ -77,9 +79,11 @@ class Mod:
         if days < 0 or days > 7:
             await self.bot.say("Invalid days. Must be between 0 and 7.")
             return
-        if not reason:
+        if not r:
             reason = "None specified."
             return
+        else:
+            reason = r
         try:
             await self.bot.ban(user, days)
             logger.info("{}({}) banned {}({}), deleting {} days worth of messages".format(
