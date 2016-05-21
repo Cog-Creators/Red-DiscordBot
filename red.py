@@ -1,7 +1,7 @@
 from discord.ext import commands
 import discord
 from cogs.utils.settings import Settings
-from cogs.utils.dataIO import DataIO
+from cogs.utils.dataIO import dataIO
 import json
 import asyncio
 import os
@@ -327,9 +327,7 @@ def load_cogs():
 def main():
     global settings
     global checks
-    global dataIO
 
-    dataIO = DataIO()
     check_folders()
     check_configs()
     set_logger()
