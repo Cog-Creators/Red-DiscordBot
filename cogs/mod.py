@@ -54,11 +54,11 @@ class Mod:
     async def kick(self, ctx, user: discord.Member, *reason):
         """Kicks user."""
         author = ctx.message.author
-        if not r:
-            reason = "None specified."
-            return
-        else:
+        if r:
             reason = r
+        else:
+            reason = "None specified."
+        await self.bot.say("DEBUG: " + reason)
         try:
             await self.bot.kick(user)
             logger.info("{}({}) kicked {}({})".format(
@@ -79,11 +79,10 @@ class Mod:
         if days < 0 or days > 7:
             await self.bot.say("Invalid days. Must be between 0 and 7.")
             return
-        if not r:
-            reason = "None specified."
-            return
-        else:
+        if r:
             reason = r
+        else:
+            reason = "None specified."
         try:
             await self.bot.ban(user, days)
             logger.info("{}({}) banned {}({}), deleting {} days worth of messages".format(
