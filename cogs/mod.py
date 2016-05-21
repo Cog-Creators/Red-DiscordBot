@@ -54,11 +54,14 @@ class Mod:
     async def kick(self, ctx, user: discord.Member, reason):
         """Kicks user."""
         author = ctx.message.author
+        if reason == ""
+            reason = "None specified."
+            return
         try:
             await self.bot.kick(user)
             logger.info("{}({}) kicked {}({})".format(
                 author.name, author.id, user.name, user.id))
-            await self.bot.say("{} was kicked by {}.\nReason: `{}`".format(user.name, author.name, reason))
+            await self.bot.say("**{}** was kicked by **{}**.\nReason: `{}`".format(user.name, author.name, reason))
         except discord.errors.Forbidden:
             await self.bot.say("I'm not allowed to do that.")
         except Exception as e:
@@ -74,11 +77,14 @@ class Mod:
         if days < 0 or days > 7:
             await self.bot.say("Invalid days. Must be between 0 and 7.")
             return
+        if reason == ""
+            reason = "None specified."
+            return
         try:
             await self.bot.ban(user, days)
             logger.info("{}({}) banned {}({}), deleting {} days worth of messages".format(
                 author.name, author.id, user.name, user.id, str(days)))
-            await self.bot.say("{} was banned by {}.\nReason: `{}`".format(user.name, author.name, reason))
+            await self.bot.say("**{}** was banned by **{}**.\nReason: `{}`".format(user.name, author.name, reason))
         except discord.errors.Forbidden:
             await self.bot.say("I'm not allowed to do that.")
         except Exception as e:
