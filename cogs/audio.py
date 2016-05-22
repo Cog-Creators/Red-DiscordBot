@@ -106,7 +106,11 @@ class Song:
         self.title = kwargs.pop('title', None)
         self.id = kwargs.pop('id', None)
         self.url = kwargs.pop('url', None)
-        self.duration = kwargs.pop('duration', "")
+        self.duration = kwargs.pop('duration', None)
+        self.webpage_url = kwargs.pop('webpage_url', None)
+        self.creator = kwargs.pop('creator', None)
+        self.uploader = kwargs.pop('uploader', None)
+        self.view_count = kwargs.pop('view_count', None)
 
 
 class Playlist:
@@ -1263,10 +1267,18 @@ class Audio:
         if self.is_playing(server):
             song = self.queue[server.id]["NOW_PLAYING"]
             if song:
-                msg = ("\n**Title:** {}\n**Author:** {}\n**Uploader:** {}\n"
-                "**Views:** {}\n\n<{}>".format(song.title, song.creator, 
-                    song.uploader, song.view_count, song.webpage_url))
-                await self.bot.say(msg.replace("**Author:** None\n", ""))
+                msg = ''
+                if song.title:
+                    msg += '\n**Title:** ' + song.title
+                if song.creator:
+                    msg += '\n**Author:** ' + song.creator
+                if song.uploader:
+                    msg += '\n**Uploader:** ' + song.uploader
+                if song.view_count:
+                    msg += '\n**Views:** ' + str(song.view_count)
+                if song.webpage_url:
+                    msg += '\n\n<{}>'.format(song.webpage_url)
+                await self.bot.say(msg)
             else:
                 await self.bot.say("I don't know what this song is either.")
         else:
