@@ -106,7 +106,11 @@ class Song:
         self.title = kwargs.pop('title', None)
         self.id = kwargs.pop('id', None)
         self.url = kwargs.pop('url', None)
-        self.duration = kwargs.pop('duration', "")
+        self.duration = kwargs.pop('duration', None)
+        self.webpage_url = kwargs.pop('webpage_url', None)
+        self.creator = kwargs.pop('creator', None)
+        self.uploader = kwargs.pop('uploader', None)
+        self.view_count = kwargs.pop('view_count', None)
 
 
 class Playlist:
@@ -491,6 +495,16 @@ class Audio:
 
         return Playlist(author=author, url=url, playlist=songlist)
 
+    def _match_bc_playlist(self, url):
+        # Bandcamp doesn't have playlists, but we'll treat albums as lists
+        if not self._match_bc_url(url):
+            return False
+        bc_album = re.compile(
+            r'^(https?\:\/\/)?[^.]+\.bandcamp\.com\/album\/.+$')
+        if bc_album.match(url):
+            return True
+        return False
+
     def _match_sc_playlist(self, url):
         return self._match_sc_url(url)
 
@@ -502,6 +516,14 @@ class Audio:
             r'(\/playlist\?).*(list=)(.*)(&|$)')
         # Group 6 should be the list ID
         if yt_playlist.match(url):
+            return True
+        return False
+
+    def _match_bc_url(self, url):
+        # Valid URLs have username.bandcamp.com and /track/ or /album/
+        bc_url = re.compile(
+            r'^(https?\:\/\/)?[^.]+\.bandcamp\.com\/(album|track)\/.+$')
+        if bc_url.match(url):
             return True
         return False
 
@@ -526,8 +548,10 @@ class Audio:
             return await self._parse_sc_playlist(url)
         elif self._match_yt_playlist(url):
             return await self._parse_yt_playlist(url)
+        elif self._match_bc_playlist(url):
+            return await self._parse_sc_playlist(url) # Same as SC
         raise InvalidPlaylist("The given URL is neither a Soundcloud or"
-                              " YouTube playlist.")
+                              " YouTube playlist, or a BandCamp album.")
 
     async def _parse_sc_playlist(self, url):
         playlist = []
@@ -542,7 +566,7 @@ class Audio:
                 song_url = "https{}".format(entry.url[4:])
                 playlist.append(song_url)
             else:
-                playlist.append(entry.url)
+                playlist.append(entry['url'])
 
     async def _parse_yt_playlist(self, url):
         d = Downloader(url)
@@ -744,7 +768,8 @@ class Audio:
     def _valid_playable_url(self, url):
         yt = self._match_yt_url(url)
         sc = self._match_sc_url(url)
-        if yt or sc:  # TODO: Add sc check
+        bc = self._match_bc_url(url)
+        if yt or sc or bc:  # TODO: Add sc check
             return True
         return False
 
@@ -1242,10 +1267,18 @@ class Audio:
         if self.is_playing(server):
             song = self.queue[server.id]["NOW_PLAYING"]
             if song:
-                msg = ("\n**Title:** {}\n**Author:** {}\n**Uploader:** {}\n"
-                "**Views:** {}\n\n<{}>".format(song.title, song.creator, 
-                    song.uploader, song.view_count, song.webpage_url))
-                await self.bot.say(msg.replace("**Author:** None\n", ""))
+                msg = ''
+                if song.title:
+                    msg += '\n**Title:** ' + song.title
+                if song.creator:
+                    msg += '\n**Author:** ' + song.creator
+                if song.uploader:
+                    msg += '\n**Uploader:** ' + song.uploader
+                if song.view_count:
+                    msg += '\n**Views:** ' + str(song.view_count)
+                if song.webpage_url:
+                    msg += '\n\n<{}>'.format(song.webpage_url)
+                await self.bot.say(msg)
             else:
                 await self.bot.say("I don't know what this song is either.")
         else:
