@@ -20,7 +20,7 @@ class Mod:
         self.past_names = fileIO("data/mod/past_names.json", "load")
 
     @commands.group(pass_context=True, no_pm=True)
-    @checks.serverowner_or_permissions(manage_server=True)
+    @checks.serverowner_or_permissions(administrator=True)
     async def modset(self, ctx):
         """Manages server administration settings."""
         if ctx.invoked_subcommand is None:
@@ -507,6 +507,7 @@ class Mod:
             await self.bot.say("Something went wrong.")
 
     @editrole.command(name="name", pass_context=True)
+    @checks.admin_or_permissions(administrator=True)
     async def edit_role_name(self, ctx, role: discord.Role, name: str):
         """Edits a role's name
 

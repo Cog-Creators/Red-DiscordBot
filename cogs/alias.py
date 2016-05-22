@@ -12,7 +12,7 @@ class Alias:
         self.aliases = fileIO("data/alias/aliases.json", "load")
 
     @commands.group(pass_context=True)
-    @checks.mod_or_permissions(manage_server=True)
+    @checks.mod_or_permissions(administrator=True)
     async def alias(self, ctx):
         """Manage per-server aliases for commands"""
         if ctx.invoked_subcommand is None:

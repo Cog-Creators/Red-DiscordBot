@@ -17,7 +17,7 @@ class Trivia:
         self.settings = fileIO("data/trivia/settings.json", "load")
 
     @commands.group(pass_context=True)
-    @checks.mod_or_permissions(manage_roles=True)
+    @checks.mod_or_permissions(administrator=True)
     async def triviaset(self, ctx):
         """Change trivia settings"""
         if ctx.invoked_subcommand is None:
