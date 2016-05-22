@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from .utils.dataIO import fileIO
+from cogs.utils.dataIO import dataIO
 from random import randint
 from copy import deepcopy
 from .utils import checks
@@ -33,14 +33,14 @@ class NegativeValue(Exception):
 
 class Bank:
     def __init__(self):
-        self.accounts = fileIO("data/economy/bank.json", "load")
+        self.accounts = dataIO.load_json("data/economy/bank.json")
 
     def create_account(self, user):
         server = user.server
         if not self.account_exists(user):
             acc = {"name" : user.name, "balance" : 0}
             self.accounts[server.id][user.id] = acc
-            self.save_bank()
+            self._save_bank()
         else:
             raise ExistantAccount
 
@@ -62,7 +62,7 @@ class Bank:
             if account["balance"] >= amount:
                 account["balance"] -= amount
                 self.accounts[server.id][user.id] = account
-                self.save_bank()
+                self._save_bank()
             else:
                 raise InsufficientBalance
         else:
@@ -76,7 +76,19 @@ class Bank:
             account = self.accounts[server.id][user.id]
             account["balance"] =+ amount
             self.accounts[server.id][user.id] = account
-            self.save_bank()
+            self._save_bank()
+        else:
+            raise NoAccount
+
+    def set_credits(self, user, amount):
+        server = user.server
+        if not amount >= 0:
+            raise NegativeValue
+        if self.account_exists(user)
+            account = self.accounts[server.id][user.id]
+            account["balance"] = amount
+            self.accounts[server.id][user.id] = account
+            self._save_bank()
         else:
             raise NoAccount
 
@@ -90,7 +102,7 @@ class Bank:
                 raise InsufficientBalance
             self.widthdraw_credits(sender, amount)
             self.deposit_credits(receiver, amount)
-            self.save_bank()
+            self._save_bank()
         else:
             raise NoAccount
 
@@ -107,9 +119,8 @@ class Bank:
         except KeyError:
             raise NoAccount
 
-    def save_bank(self):
-        pass
-
+    def _save_bank(self):
+        dataIO.save_json("data/economy/bank.json", self.accounts)
 
 class Economy:
     """Economy
