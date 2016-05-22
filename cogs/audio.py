@@ -491,6 +491,16 @@ class Audio:
 
         return Playlist(author=author, url=url, playlist=songlist)
 
+    def _match_bc_playlist(self, url):
+        # Bandcamp doesn't have playlists, but we'll treat albums as lists
+        if not self._match_bc_url(url):
+            return False
+        bc_album = re.compile(
+            r'^(https?\:\/\/)?[^.]+\.bandcamp\.com\/album\/.+$')
+        if bc_album.match(url):
+            return True
+        return False
+
     def _match_sc_playlist(self, url):
         return self._match_sc_url(url)
 
@@ -502,6 +512,14 @@ class Audio:
             r'(\/playlist\?).*(list=)(.*)(&|$)')
         # Group 6 should be the list ID
         if yt_playlist.match(url):
+            return True
+        return False
+
+    def _match_bc_url(self, url):
+        # Valid URLs have username.bandcamp.com and /track/ or /album/
+        bc_url = re.compile(
+            r'^(https?\:\/\/)?[^.]+\.bandcamp\.com\/(album|track)\/.+$')
+        if bc_url.match(url):
             return True
         return False
 
@@ -526,8 +544,10 @@ class Audio:
             return await self._parse_sc_playlist(url)
         elif self._match_yt_playlist(url):
             return await self._parse_yt_playlist(url)
+        elif self._match_bc_playlist(url):
+            return await self._parse_sc_playlist(url) # Same as SC
         raise InvalidPlaylist("The given URL is neither a Soundcloud or"
-                              " YouTube playlist.")
+                              " YouTube playlist, or a BandCamp album.")
 
     async def _parse_sc_playlist(self, url):
         playlist = []
@@ -542,7 +562,7 @@ class Audio:
                 song_url = "https{}".format(entry.url[4:])
                 playlist.append(song_url)
             else:
-                playlist.append(entry.url)
+                playlist.append(entry['url'])
 
     async def _parse_yt_playlist(self, url):
         d = Downloader(url)
@@ -744,7 +764,8 @@ class Audio:
     def _valid_playable_url(self, url):
         yt = self._match_yt_url(url)
         sc = self._match_sc_url(url)
-        if yt or sc:  # TODO: Add sc check
+        bc = self._match_bc_url(url)
+        if yt or sc or bc:  # TODO: Add sc check
             return True
         return False
 
