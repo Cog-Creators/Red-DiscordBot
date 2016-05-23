@@ -8,7 +8,7 @@ class YouTube:
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(pass_context=True, aliases=['yt'])
+    @commands.command(pass_context=True)
     async def youtube(self, context, *arguments: str):
         """Search on Youtube"""
         try:

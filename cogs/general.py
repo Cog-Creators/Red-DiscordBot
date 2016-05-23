@@ -105,7 +105,7 @@ class General:
         else:
             await self.bot.say("Choose rock, paper or scissors.")
 
-    @commands.command(name="8", aliases=["8ball"])
+    @commands.command(name="8ball", aliases=["8b"])
     async def _8ball(self, *question):
         """Ask 8 ball a question
 
