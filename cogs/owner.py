@@ -63,13 +63,13 @@ class Owner:
             log.exception(e)
             traceback.print_exc()
             await self.bot.say("There was an issue loading the module."
-                               " Check your logs for more information.")
+                               " Check your console for more information.")
         except Exception as e:
             log.exception(e)
             traceback.print_exc()
             await self.bot.say('Module was found and possibly loaded but '
                                'something went wrong.'
-                               ' Check your logs for more information.')
+                               ' Check your console for more information.')
         else:
             set_cog(module, True)
             await self.disable_commands()
@@ -149,7 +149,7 @@ class Owner:
             log.exception(e)
             traceback.print_exc()
             await self.bot.say("That module could not be loaded. Check your"
-                               " logs for more information.")
+                               " console for more information.")
         else:
             set_cog(module, True)
             await self.disable_commands()
@@ -286,7 +286,7 @@ class Owner:
             await self.bot.say("Done.")
             log.debug("changed avatar")
         except Exception as e:
-            await self.bot.say("Error, check your logs for more information.")
+            await self.bot.say("Error, check your console for more information.")
             log.exception(e)
             traceback.print_exc()
 
