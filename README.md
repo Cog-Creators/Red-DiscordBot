@@ -1,6 +1,6 @@
 # Red - A fully customizable Discord bot
 #### *Music, admin, trivia, fun commands and much more!*
-[<img src="https://img.shields.io/badge/Support-me!-orange.svg">](https://www.patreon.com/Twentysix26) [<img src="https://img.shields.io/badge/Official-Server-green.svg">](https://discord.gg/0k4npTwMvTpv9wrh)  
+[<img src="https://img.shields.io/badge/Support-me!-orange.svg">](https://www.patreon.com/Twentysix26) [<img src="https://discordapp.com/api/servers/133049272517001216/widget.png?style=banner5">](https://discord.gg/0k4npTwMvTpv9wrh)  
 
 Red has been completely rewritten. It is now fully modular and it comes with sets of features/commands that can be enabled/disabled to your liking, making it customizable exactly how you want.  
 You can turn Red into a trivia bot, an admin bot, a music bot (...) or all of these together.  
@@ -22,6 +22,6 @@ Red is in continuous development and new features get added all the time. Stay t
 The installation process is as straightforward as ever: [[Wiki]](https://github.com/Twentysix26/Red-DiscordBot/wiki).  
 Don't forget to read the [general tips](https://github.com/Twentysix26/Red-DiscordBot/wiki/General-tips) for a better idea of how Red works.
 
-If [*after reading the guides*](https://github.com/Twentysix26/Red-DiscordBot/wiki) you're still experiencing issues that are not listed in [this page](https://github.com/Twentysix26/Red-DiscordBot/wiki/Troubleshooting), feel free to join the [official server](https://discord.gg/0k4npTwMvTpv9wrh) with your main account to get some help.  
+If [*after reading the guides*](https://twentysix26.github.io/Red-Docs/) you're still experiencing issues that are not listed in [this page](https://twentysix26.github.io/Red-Docs/red_guide_troubleshooting/), feel free to join the [official server](https://discord.gg/0k4npTwMvTpv9wrh) with your main account to get some help.  
 
 Have fun!

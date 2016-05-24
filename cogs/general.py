@@ -37,16 +37,18 @@ class General:
         else:
             await self.bot.say(randchoice(choices))
 
-    @commands.command()
-    async def roll(self, number : int = 100):
+    @commands.command(pass_context=True)
+    async def roll(self, ctx, number : int = 100):
         """Rolls random number (between 1 and user choice)
 
         Defaults to 100.
         """
+        author = ctx.message.author
         if number > 1:
-            return await self.bot.say(":game_die: " + str(randint(1, number)) + " :game_die:")
+            n = str(randint(1, number))
+            return await self.bot.say("{} :game_die: {} :game_die:".format(author.mention, n))
         else:
-            return await self.bot.say("Maybe higher than 1? ;P")
+            return await self.bot.say("{} Maybe higher than 1? ;P".format(author.mention))
 
     @commands.command(pass_context=True)
     async def flip(self, ctx, user : discord.Member=None):
@@ -161,18 +163,17 @@ class General:
         author = ctx.message.author
         if not user:
             user = author
-        roles = []
-        for m in user.roles:
-            if m.name != "@everyone":
-                roles.append('"' + m.name + '"') #.replace("@", "@\u200b")
+        roles = [x.name for x in user.roles if x.name != "@everyone"]
         if not roles: roles = ["None"]
         data = "```python\n"
-        data += "Name: " + user.name + "#{}\n".format(user.discriminator)
-        data += "ID: " + user.id + "\n"
-        data += "Created: " + str(user.created_at) + "\n"
-        data += "Joined: " + str(user.joined_at) + "\n"
-        data += "Roles: " + " ".join(roles) + "\n"
-        data += "Avatar: " + user.avatar_url + "\n"
+        data += "Name: {}\n".format(user)
+        data += "ID: {}\n".format(user.id)
+        passed = (ctx.message.timestamp - user.created_at).days
+        data += "Created: {} ({} days ago)\n".format(user.created_at, passed)
+        passed = (ctx.message.timestamp - user.joined_at).days
+        data += "Joined: {} ({} days ago)\n".format(user.joined_at, passed)
+        data += "Roles: {}\n".format(", ".join(roles))
+        data += "Avatar: {}\n".format(user.avatar_url)
         data += "```"
         await self.bot.say(data)
 
@@ -181,18 +182,22 @@ class General:
         """Shows server's informations"""
         server = ctx.message.server
         online = str(len([m.status for m in server.members if str(m.status) == "online" or str(m.status) == "idle"]))
-        total = str(len(server.members))
+        total_users = str(len(server.members))
+        text_channels = len([x for x in server.channels if str(x.type) == "text"])
+        voice_channels = len(server.channels) - text_channels
 
-        data = "```\n"
-        data += "Name: " + server.name + "\n"
-        data += "ID: " + server.id + "\n"
-        data += "Region: " + str(server.region) + "\n"
-        data += "Users: " + online + "/" + total + "\n"
-        data += "Channels: " + str(len(server.channels)) + "\n"
-        data += "Roles: " + str(len(server.roles)) + "\n"
-        data += "Created: " + str(server.created_at) + "\n"
-        data += "Owner: " + server.owner.name + "\n"
-        data += "Icon: " + str(server.icon_url) + "\n"
+        data = "```python\n"
+        data += "Name: {}\n".format(server.name)
+        data += "ID: {}\n".format(server.id)
+        data += "Region: {}\n".format(server.region)
+        data += "Users: {}/{}\n".format(online, total_users)
+        data += "Text channels: {}\n".format(text_channels)
+        data += "Voice channels: {}\n".format(voice_channels)
+        data += "Roles: {}\n".format(len(server.roles))
+        passed = (ctx.message.timestamp - server.created_at).days
+        data += "Created: {} ({} days ago)\n".format(server.created_at, passed)
+        data += "Owner: {}\n".format(server.owner)
+        data += "Icon: {}\n".format(server.icon_url)
         data += "```"
         await self.bot.say(data)
         
@@ -227,6 +232,10 @@ class General:
                 await self.endpoll(message)
                 return
         if not self.getPollByChannel(message):
+            check = " ".join(text).lower()
+            if "@everyone" in check or "@here" in check:
+                await self.bot.say("Nice try.")
+                return
             p = NewPoll(message, self)
             if p.valid:
                 self.poll_sessions.append(p)

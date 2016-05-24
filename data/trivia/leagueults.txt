@@ -52,7 +52,7 @@ Which champions ultimate is named: Thrill of the Hunt?`Rengar
 Which champions ultimate is named: Death Lotus?`Katarina
 Which champions ultimate is named: Slicing Maelstrom?`Kennen
 Which champions ultimate is named: Explosive Cask?`Gragas
-Which champions ultimate is named: Radiance?`Taric
+Which champions ultimate is named: Cosmic Radiance?`Taric
 Which champions ultimate is named: Hallucinate?`Shaco
 Which champions ultimate is named: Chronobreak?`Ekko
 Which champions ultimate is named: Feast?`Cho'gath`cho gath`chogath
@@ -126,3 +126,4 @@ Which champions ultimate is named: Let's Bounce!`Zac
 Which champions ultimate is named: Mimic?`Leblanc
 Which champions ultimate is named: Grandmaster's Might?`Jax
 Which champions ultimate is named: Curtain Call?`Jhin
+Which champions ultimate is named: Voice of Light?`Aurelion Sol`aurelionsol

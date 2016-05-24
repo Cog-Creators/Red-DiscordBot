@@ -110,7 +110,7 @@ What year was the Nintendo Game Boy released in the US?`1989
 In what year was the compact disk invented?`1965
 What was the "beta version" of the Internet called?`ARPAnet
 How is binary digit more commonly known?`Bit
-Which company published the famous first person shooter game 'Quake'?`id Software
+Which company developed the famous first person shooter game 'Quake'?`id Software
 Name the ebook develped by Barnes & Noble.`Nook
 Who released the 2011 viral video 'Friday'?`Rebecca Black
 Advertised briefly as the bloodiest video game in existence`mortal kombat
