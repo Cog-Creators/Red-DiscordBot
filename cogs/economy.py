@@ -38,18 +38,20 @@ class Economy:
         
         """
         self.players
-            player
-                cards
-                    0
-                        rank
-                        suit
-                        value
-                ranks
-                standing
-                splits
-                bet
-                blackjack
-            dealer
+            player_name
+                "hand"
+                    0 (hand number)
+                        "card"
+                            0 (card number)
+                                "rank"
+                                "suit"
+                                "value"
+                        "ranks"
+                        "bet"
+                        "standing"
+                        "blackjack"
+                "curr_hand"
+            *dealer*
         """
 
         self.deck = {}
