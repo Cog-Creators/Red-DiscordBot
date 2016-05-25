@@ -439,11 +439,17 @@ class Economy:
         
         curr_hand = self.players[player]["curr_hand"]
         cards = self.players[player]["hand"][curr_hand]["card"]
+
+        if (cards[0]["value"] == 11 and cards[1]["value"] == 1) or (cards[0]["value"] == 1 and cards[1]["value"] == 11): #reset aces to orginal value
+            cards[0]["value"] = 11
+            cards[0]["rank"] = "ace"
+
+            cards[1]["value"] = 11
+            cards[1]["rank"] = "ace"
         
-        if len(cards) == 2 and cards[0]["value"] == cards[1]["value"] and self.game_state == "game" and not self.players[player]["hand"][curr_hand]["standing"]:
+        if cards[0]["value"] == cards[1]["value"] and len(cards) == 2 and self.game_state == "game" and not self.players[player]["hand"][curr_hand]["standing"]:
             await self.bot.say("{0} has split their {1}'s! Play through your first hand and stand to begin your next!".format(player.mention, cards[0]["value"]))
             hand_index = len(self.players[player]["hand"])
-            print(hand_index)
             
             self.players[player]["hand"][hand_index] = {}
             self.players[player]["hand"][hand_index]["card"] = {}
@@ -561,7 +567,6 @@ class Economy:
                                     await self.bot.say("{0} loses with a score of {1}".format(player.mention, str(count)))
 
                     self.game_state = "pregame"
-                    print(dealer_count)
                     await asyncio.sleep(3)
 
                 elif dealer_count > 21: #if dealer busts
@@ -580,7 +585,6 @@ class Economy:
                                     await self.bot.say("{0} busted and wins nothing".format(player.mention))
                     
                     self.game_state = "pregame"
-                    print(dealer_count)
                     await asyncio.sleep(3)
 
                 elif dealer_count >= 17: #if dealer stands
@@ -604,7 +608,6 @@ class Economy:
                                     await self.bot.say("{0} loses with a score of {1}".format(player.mention, str(count)))
 
                     self.game_state = "pregame"
-                    print(dealer_count)
                     await asyncio.sleep(3)
 
     async def draw_card(self, player):
