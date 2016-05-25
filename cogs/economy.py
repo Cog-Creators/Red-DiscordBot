@@ -266,6 +266,10 @@ class Economy:
         self.add_money(message.author.id, bid)
         await self.bot.send_message(message.channel, "Current credits: {}".format(str(self.check_balance(message.author.id))))
 
+    
+    #BLACKJACK
+
+
     @commands.group(pass_context=True, no_pm=True)
     async def bj(self, ctx):
         """Play some blackjack"""
@@ -308,7 +312,7 @@ class Economy:
 
                 else:
                     await self.bot.say("{0} has placed a new bet of {1}".format(player.mention, bet))
-                    self.add_money(player.id, self.players[player]["hand"][curr_hand]["bet"])
+                    self.add_money(player.id, bet)
                     self.withdraw_money(player.id, bet)
 
                 self.players[player] = {}
