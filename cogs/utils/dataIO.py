@@ -46,13 +46,13 @@ class DataIO():
 
     def _read_json(self, filename):
         with open(filename, encoding='utf-8', mode="r") as f:
-            data = json.loads(f.read())
+            data = json.load(f)
         return data
 
     def _save_json(self, filename, data):
         with open(filename, encoding='utf-8', mode="w") as f:
-            f.write(json.dumps(data,indent=4,sort_keys=True,
-                separators=(',',' : ')))
+            json.dump(data, f, indent=4,sort_keys=True,
+                separators=(',',' : '))
         return data
 
     def _restore_json(self, filename):
@@ -81,7 +81,7 @@ class DataIO():
 
 def get_value(filename, key):
     with open(filename, encoding='utf-8', mode="r") as f:
-        data = json.loads(f.read())
+        data = json.load(f)
     return data[key]
 
 def set_value(filename, key, value):
