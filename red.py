@@ -172,48 +172,54 @@ def check_configs():
                   "process.")
             exit(1)
 
-        print("\nChoose a prefix (or multiple ones, one at once) for the "
-              "commands. Type exit when you're done. Example prefix: !")
-        prefixes = []
-        new_prefix = ""
-        while new_prefix.lower() != "exit" or prefixes == []:
-            new_prefix = input("Prefix> ")
-            if new_prefix.lower() != "exit" and new_prefix != "":
-                prefixes.append(new_prefix)
-                # Remember we're using property's here, oh well...
-        settings.prefixes = sorted(prefixes, reverse=True)
+        print("\nChoose a prefix. A prefix is what you type before a command.\n"
+              "A typical prefix would be the exclamation mark. Example: !help\n"
+              "Can be multiple characters. You will be able to change it "
+              "later and add more of them.\nChoose your prefix:")
+        confirmation = False
+        while confirmation is False:
+            new_prefix = ensure_reply("\nPrefix> ").strip()
+            print("\nAre you sure you want {0} as your prefix?\nYou "
+                  "will be able to issue commands like this: {0}help"
+                  "\nType yes to confirm or no to change it".format(new_prefix))
+            confirmation = get_answer()
 
-        print("\nIf you know what an User ID is, input *your own* now and"
-              " press enter.")
-        print("Otherwise you can just set yourself as owner later with "
-              "'[prefix]set owner'. Leave empty and press enter in this case.")
-        settings.owner = input("\nID> ")
+        settings.prefixes = [new_prefix]
+
+        print("\nOnce you're done with the configuration, you will have to type "
+              "'{}set owner' *in Discord's chat*\nto set yourself as owner.\n"
+              "Press enter to continue".format(new_prefix))
+        settings.owner = input("") # Shh, they will never know it's here
         if settings.owner == "":
             settings.owner = "id_here"
         if not settings.owner.isdigit() or len(settings.owner) < 17:
             if settings.owner != "id_here":
                 print("\nERROR: What you entered is not a valid ID. Set "
-                      "yourself as owner later with [prefix]set owner")
+                      "yourself as owner later with {}set owner".format(new_prefix))
             settings.owner = "id_here"
 
-        print("\nInput the admin role's name. Anyone with this role will be "
+        print("\nInput the admin role's name. Anyone with this role in Discord will be "
               "able to use the bot's admin commands")
         print("Leave blank for default name (Transistor)")
         settings.default_admin = input("\nAdmin role> ")
         if settings.default_admin == "":
             settings.default_admin = "Transistor"
 
-        print("\nInput the moderator role's name. Anyone with this role will "
+        print("\nInput the moderator role's name. Anyone with this role in Discord will "
               "be able to use the bot's mod commands")
         print("Leave blank for default name (Process)")
         settings.default_mod = input("\nModerator role> ")
         if settings.default_mod == "":
             settings.default_mod = "Process"
 
+        print("\nThe configuration is done. Leave this window always open to keep "
+              "Red online.\nAll commands will have to be issued through Discord's "
+              "chat, *this window will now be read only*.\nPress enter to continue")
+        input("\n")
+
     if not os.path.isfile("data/red/cogs.json"):
         print("Creating new cogs.json...")
         dataIO.save_json("data/red/cogs.json", {})
-
 
 def set_logger():
     global logger
@@ -247,6 +253,11 @@ def set_logger():
     logger.addHandler(fhandler)
     logger.addHandler(stdout_handler)
 
+def ensure_reply(msg):
+    choice = ""
+    while choice == "":
+        choice = input(msg)
+    return choice
 
 def get_answer():
     choices = ("yes", "y", "no", "n")
@@ -257,7 +268,6 @@ def get_answer():
         return True
     else:
         return False
-
 
 def set_cog(cog, value):
     data = dataIO.load_json("data/red/cogs.json")
