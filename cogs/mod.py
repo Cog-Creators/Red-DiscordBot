@@ -49,14 +49,23 @@ class Mod:
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(kick_members=True)
-    async def kick(self, ctx, user: discord.Member):
+    async def kick(self, ctx, user: discord.Member, *reason):
         """Kicks user."""
         author = ctx.message.author
+        server = ctx.message.server
+        r = str(reason)
+        r = r.replace("'", "")
+        r = r.replace(")", "")
+        r = r.replace("(", "")
+        r = r.replace(",", "")
+        if r == "": 
+            r = "None specified." 
         try:
+            await self.bot.send_message(user, "You were kicked from **{}** for `{}`.\n".format(server.name, r))
             await self.bot.kick(user)
-            logger.info("{}({}) kicked {}({})".format(
-                author.name, author.id, user.name, user.id))
-            await self.bot.say("Done. That felt good.")
+            logger.info("{}({}) kicked {}({}) for {}".format(
+                author.name, author.id, user.name, user.id, r))
+            await self.bot.say("**{}** was kicked by **{}**.\nReason: `{}`".format(user.name, author.name, r))
         except discord.errors.Forbidden:
             await self.bot.say("I'm not allowed to do that.")
         except Exception as e:
@@ -64,19 +73,54 @@ class Mod:
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(ban_members=True)
-    async def ban(self, ctx, user: discord.Member, days: int=0):
+    async def ban(self, ctx, user: discord.Member, days: int=0, *reason):
         """Bans user and deletes last X days worth of messages.
 
         Minimum 0 days, maximum 7. Defaults to 0."""
         author = ctx.message.author
+        server = ctx.message.server
+        r = str(reason)
+        r = r.replace("'", "")
+        r = r.replace(")", "")
+        r = r.replace("(", "")
+        r = r.replace(",", "")
+        if r == "":
+            r = "None specified." 
         if days < 0 or days > 7:
             await self.bot.say("Invalid days. Must be between 0 and 7.")
             return
         try:
+            await self.bot.send_message(user, "You were banned from **{}** for `{}`.".format(server.name, r))
             await self.bot.ban(user, days)
-            logger.info("{}({}) banned {}({}), deleting {} days worth of messages".format(
-                author.name, author.id, user.name, user.id, str(days)))
-            await self.bot.say("Done. It was about time.")
+            logger.info("{}({}) banned {}({}) for {], deleting {} days worth of messages".format(
+                author.name, author.id, user.name, user.id, r, str(days)))
+            await self.bot.say("{} was banned by {}.\nCleared {} days worth of messages.\nReason: `{}`".format(user.name, author.name, days, r)) 
+        except discord.errors.Forbidden:
+            await self.bot.say("I'm not allowed to do that.")
+        except Exception as e:
+            print(e)
+            
+    @commands.command(no_pm=True, pass_context=True)
+    @checks.admin_or_permissions(ban_members=True)
+    async def softban(self, ctx, user: discord.Member, *reason):
+        """Softbans the user, deleting 24 hours worth of messages."""
+        author = ctx.message.author
+        server = ctx.message.server
+        r = str(reason)
+        r = r.replace("'", "")
+        r = r.replace(")", "")
+        r = r.replace("(", "")
+        r = r.replace(",", "")
+        if r == "": 
+            r = "None specified." 
+        days = 0
+        try:
+            await self.bot.send_message(user, "You were softbanned from **{}** for `{}`.\nThis means the guys in charge wanted all your messages gone quickly, so they banned and unbanned you again.\nFeel free to rejoin at anytime!".format(server.name, r))
+            await self.bot.ban(user, days)
+            await self.bot.unban(server, user)
+            logger.info("{}({}) softbanned {}({}) for {}, deleting 24 hours worth of messages".format(
+                author.name, author.id, user.name, user.id, r))
+            await self.bot.say("**{}** was softbanned by **{}**.\nCleared 24 hours worth of messages.\nReason: `{}`".format(user.name, author.name, r)) 
         except discord.errors.Forbidden:
             await self.bot.say("I'm not allowed to do that.")
         except Exception as e:
