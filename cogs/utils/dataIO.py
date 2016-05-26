@@ -1,7 +1,7 @@
 import json
 import os
 import logging
-from shutil import copyfile
+from shutil import copy
 
 class InvalidFileIO(Exception):
     pass
@@ -17,7 +17,7 @@ class DataIO():
         """Saves and backups json file"""
         bak_file = os.path.splitext(filename)[0]+'.bak'
         self._save_json(filename, data)
-        copyfile(filename, bak_file) # Backup copy
+        copy(filename, bak_file) # Backup copy
 
     def load_json(self, filename):
         """Loads json file and restores backup copy in case of corrupted file"""
@@ -46,19 +46,19 @@ class DataIO():
 
     def _read_json(self, filename):
         with open(filename, encoding='utf-8', mode="r") as f:
-            data = json.loads(f)
+            data = json.load(f)
         return data
 
     def _save_json(self, filename, data):
         with open(filename, encoding='utf-8', mode="w") as f:
-            json.dump(data, f, indent=4,sort_keys=True, 
-                separators=(',',' : ')) 
+            json.dump(data, f, indent=4,sort_keys=True,
+                separators=(',',' : '))
         return data
 
     def _restore_json(self, filename):
         bak_file = os.path.splitext(filename)[0]+'.bak'
         if os.path.isfile(bak_file):
-            copyfile(bak_file, filename) # Restore last working copy
+            copy(bak_file, filename) # Restore last working copy
             self.logger.warning("{} was corrupted. Restored "
                     "backup copy.".format(filename))
             return True
@@ -81,7 +81,7 @@ class DataIO():
 
 def get_value(filename, key):
     with open(filename, encoding='utf-8', mode="r") as f:
-        data = json.load(f) 
+        data = json.load(f)
     return data[key]
 
 def set_value(filename, key, value):
