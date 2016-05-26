@@ -46,7 +46,7 @@ class DataIO():
 
     def _read_json(self, filename):
         with open(filename, encoding='utf-8', mode="r") as f:
-            data = json.loads(f
+            data = json.loads(f)
         return data
 
     def _save_json(self, filename, data):
