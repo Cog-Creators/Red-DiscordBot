@@ -526,7 +526,10 @@ class Economy:
                 self.players["dealer"]["hand"][0]["ranks"] = []
 
                 card = await self.draw_card("dealer")
-                await self.bot.upload("data\economy\playing_cards\hidden_card.png")
+                
+                if self.settings["BLACKJACK_IMAGES_ENABLED"]:
+                    await self.bot.upload("data\economy\playing_cards\hidden_card.png")
+                
                 await self.bot.say("**The dealer has drawn a {0}!**".format(card))
                 self.game_state = "game"
 
@@ -642,7 +645,8 @@ class Economy:
 
         await self.count_hand(player, curr_hand) #to change ace names and values in the "ranks" table, don't actually need the count
 
-        await self.bot.upload("data\economy\playing_cards\\" + rank + "_of_" + suit + ".png")
+        if self.settings["BLACKJACK_IMAGES_ENABLED"]:
+            await self.bot.upload("data\economy\playing_cards\\" + rank + "_of_" + suit + ".png")
 
         if rank == "small_ace":
             rank = "ace"
@@ -839,7 +843,8 @@ def check_files():
     "BLACKJACK_MAX" : 5000,
     "BLACKJACK_MAX_ENABLED" : False,
     "BLACKJACK_GAME_TIME" : 60,
-    "BLACKJACK_PRE_GAME_TIME" : 15
+    "BLACKJACK_PRE_GAME_TIME" : 15,
+    "BLACKJACK_IMAGES_ENABLED" : True
     }
 
     f = "data/economy/settings.json"
