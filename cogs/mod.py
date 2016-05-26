@@ -20,7 +20,7 @@ class Mod:
         self.past_names = fileIO("data/mod/past_names.json", "load")
 
     @commands.group(pass_context=True, no_pm=True)
-    @checks.serverowner_or_permissions(manage_server=True)
+    @checks.serverowner_or_permissions(administrator=True)
     async def modset(self, ctx):
         """Manages server administration settings."""
         if ctx.invoked_subcommand is None:
@@ -477,7 +477,7 @@ class Mod:
             await self.bot.say("Those words weren't in the filter.")
 
     @commands.group(no_pm=True, pass_context=True)
-    @checks.admin_or_permissions(manage_roles=True)
+    @checks.admin_or_permissions(administrator=True)
     async def editrole(self, ctx):
         """Edits roles settings"""
         if ctx.invoked_subcommand is None:

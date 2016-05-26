@@ -12,7 +12,7 @@ class Admin:
         self.bot = bot
 
     @commands.command(no_pm=True, pass_context=True)
-    @checks.admin_or_permissions(manage_roles=True)
+    @checks.admin_or_permissions(administrator=True)
     async def addrole(self, ctx, rolename, user: discord.Member=None):
         author = ctx.message.author
         channel = ctx.message.channel
@@ -39,7 +39,7 @@ class Admin:
         await self.bot.say('Added role {} to {}'.format(role.name, user.name))
 
     @commands.command(no_pm=True, pass_context=True)
-    @checks.admin_or_permissions(manage_roles=True)
+    @checks.admin_or_permissions(administrator=True)
     async def removerole(self, ctx, rolename, user: discord.Member=None):
         pass
 
@@ -61,7 +61,7 @@ class Admin:
         await self.bot.say(evald)
 
     @commands.command(pass_context=True)
-    @checks.admin_or_permissions(manage_server=True)
+    @checks.admin_or_permissions(administrator=True)
     async def sudo(self, ctx, user: discord.Member, *, command):
         """Runs the [command] as if [user] had run it. DON'T ADD A PREFIX
         """

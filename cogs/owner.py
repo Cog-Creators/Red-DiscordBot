@@ -63,18 +63,18 @@ class Owner:
             log.exception(e)
             traceback.print_exc()
             await self.bot.say("There was an issue loading the module."
-                               " Check your logs for more information.")
+                               " Check your console/logs for more information.")
         except Exception as e:
             log.exception(e)
             traceback.print_exc()
             await self.bot.say('Module was found and possibly loaded but '
                                'something went wrong.'
-                               ' Check your logs for more information.')
+                               ' Check your console/logs for more information.')
         else:
             set_cog(module, True)
             await self.bot.say("Module enabled.")
 
-    @commands.command()
+    @commands.group(invoke_without_command=True) 
     @checks.is_owner()
     async def unload(self, *, module: str):
         """Unloads a module
@@ -101,6 +101,30 @@ class Owner:
         else:
             await self.bot.say("Module disabled.")
 
+    @unload.command(name="all") 
+    @checks.is_owner() 
+    async def unload_all(self): 
+        """Unloads all modules""" 
+        cogs = self._list_cogs() 
+        still_loaded = [] 
+        for cog in cogs: 
+            set_cog(cog, False) 
+            try: 
+                self._unload_cog(cog) 
+            except OwnerUnloadWithoutReloadError: 
+                pass 
+            except CogUnloadError as e: 
+                log.exception(e) 
+                traceback.print_exc() 
+                still_loaded.append(cog) 
+        if still_loaded: 
+            still_loaded = ", ".join(still_loaded) 
+            await self.bot.say("I was unable to unload some cogs: " 
+                "{}".format(still_loaded)) 
+        else: 
+            await self.bot.say("All cogs are now unloaded.")  
+ 
+
     @checks.is_owner()
     @commands.command(name="reload")
     async def _reload(self, module):
@@ -125,7 +149,7 @@ class Owner:
             log.exception(e)
             traceback.print_exc()
             await self.bot.say("That module could not be loaded. Check your"
-                               " logs for more information.")
+                               " console/logs for more information.")
         else:
             set_cog(module, True)
             await self.bot.say("Module reloaded.")
@@ -261,7 +285,7 @@ class Owner:
             await self.bot.say("Done.")
             log.debug("changed avatar")
         except Exception as e:
-            await self.bot.say("Error, check your logs for more information.")
+            await self.bot.say("Error, check your console/logs for more information.")
             log.exception(e)
             traceback.print_exc()
 
