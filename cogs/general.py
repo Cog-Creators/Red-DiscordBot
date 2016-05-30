@@ -131,13 +131,10 @@ class General:
             self.stopwatches.pop(author.id, None)
 
     @commands.command()
-    async def lmgtfy(self, *text):
+    async def lmgtfy(self, *, search_terms : str):
         """Creates a lmgtfy link"""
-        if text == ():
-            await self.bot.say("lmgtfy [search terms]")
-            return
-        text = "+".join(text)
-        await self.bot.say("http://lmgtfy.com/?q=" + text)
+        search_terms = search_terms.replace(" ", "+")
+        await self.bot.say("http://lmgtfy.com/?q={}".format(search_terms))
 
     @commands.command(no_pm=True, hidden=True)
     async def hug(self, user : discord.Member, intensity : int=1):
