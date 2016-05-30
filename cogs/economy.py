@@ -19,7 +19,7 @@ slot_payouts = """Slot machine payouts:
     Three symbols: +500
     Two symbols: Bet * 2"""
 
-class ExistantAccount(Exception):
+class AccountAlreadyExists(Exception):
     pass
 
 class NoAccount(Exception):
@@ -29,6 +29,9 @@ class InsufficientBalance(Exception):
     pass
 
 class NegativeValue(Exception):
+    pass
+
+class SameSenderAndReceiver(Exception):
     pass
 
 class Bank:
@@ -41,8 +44,9 @@ class Bank:
             acc = {"name" : user.name, "balance" : 0}
             self.accounts[server.id][user.id] = acc
             self._save_bank()
+            return acc
         else:
-            raise ExistantAccount
+            raise AccountAlreadyExists
 
     def account_exists(self, user):
         server = user.server
@@ -57,54 +61,57 @@ class Bank:
         if not amount >= 0:
             raise NegativeValue
         
-        if self.account_exists(user):
-            account = self.accounts[server.id][user.id]
-            if account["balance"] >= amount:
-                account["balance"] -= amount
-                self.accounts[server.id][user.id] = account
-                self._save_bank()
-            else:
-                raise InsufficientBalance
+        account = self.get_account(user)
+        if account["balance"] >= amount:
+            account["balance"] -= amount
+            self.accounts[server.id][user.id] = account
+            self._save_bank()
         else:
-            raise NoAccount
+            raise InsufficientBalance
 
     def deposit_credits(self, user, amount):
         server = user.server
         if not amount >= 0:
             raise NegativeValue
-        if self.account_exists(user)
-            account = self.accounts[server.id][user.id]
-            account["balance"] =+ amount
-            self.accounts[server.id][user.id] = account
-            self._save_bank()
-        else:
-            raise NoAccount
+        account = self.get_account(user)
+        account["balance"] =+ amount
+        self.accounts[server.id][user.id] = account
+        self._save_bank()
 
     def set_credits(self, user, amount):
         server = user.server
         if not amount >= 0:
             raise NegativeValue
-        if self.account_exists(user)
-            account = self.accounts[server.id][user.id]
-            account["balance"] = amount
-            self.accounts[server.id][user.id] = account
-            self._save_bank()
-        else:
-            raise NoAccount
+        account = self.get_account(user)
+        account["balance"] = amount
+        self.accounts[server.id][user.id] = account
+        self._save_bank()
 
     def transfer_money(self, sender, receiver, amount):
         server = sender.server
         if not amount >= 0:
             raise NegativeValue
+        if sender.id == receiver.id:
+            raise SameSenderAndReceiver
         if self.account_exists(sender) and self.account_exists(receiver):
-            sender_acc = self.accounts[server.id][sender.id]
+            sender_acc = self.get_account(sender)
             if sender_acc["balance"] < amount:
                 raise InsufficientBalance
             self.widthdraw_credits(sender, amount)
             self.deposit_credits(receiver, amount)
-            self._save_bank()
         else:
             raise NoAccount
+
+    def can_spend(self, user, amount):
+        account = self.bank.get_account(user)
+        if account["balance"] >= amount:
+            return True
+        else:
+            return False
+
+    def wipe_bank(self, server):
+        self.accounts[server.id] = {}
+        self._save_bank()
 
     def get_all_accounts(self, server):
         accounts = []
@@ -129,7 +136,7 @@ class Economy:
 
     def __init__(self, bot):
         self.bot = bot
-        self.bank = fileIO("data/economy/bank.json", "load")
+        self.bank = Bank()
         self.settings = fileIO("data/economy/settings.json", "load")
         self.payday_register = {}
         self.slot_register = {}
@@ -144,11 +151,11 @@ class Economy:
     async def register(self, ctx):
         """Registers an account at the Twentysix bank"""
         user = ctx.message.author
-        if user.id not in self.bank:
-            self.bank[user.id] = {"name" : user.name, "balance" : 100}
-            fileIO("data/economy/bank.json", "save", self.bank)
-            await self.bot.say("{} Account opened. Current balance: {}".format(user.mention, str(self.check_balance(user.id))))
-        else:
+        try:
+            account = self.bank.create_account(user)
+            await self.bot.say("{} Account opened. Current balance: {}".format(user.mention, 
+                account["balance"]))
+        except AccountAlreadyExists:
             await self.bot.say("{} You already have an account at the Twentysix bank.".format(user.mention))
 
     @_bank.command(pass_context=True)
@@ -158,36 +165,33 @@ class Economy:
         Defaults to yours."""
         if not user:
             user = ctx.message.author
-            if self.account_check(user.id):
-                await self.bot.say("{} Your balance is: {}".format(user.mention, str(self.check_balance(user.id))))
-            else:
-                await self.bot.say("{} You don't have an account at the Twentysix bank. Type {}bank register to open one.".format(user.mention, ctx.prefix))
+            try:
+                await self.bot.say("{} Your balance is: {}".format(user.mention, self.bank.get_account(user)["balance"]))
+            except NoAccount:            
+                await self.bot.say("{} You don't have an account at the Twentysix bank."
+                 " Type {}bank register to open one.".format(user.mention, ctx.prefix))
         else:
-            if self.account_check(user.id):
-                balance = self.check_balance(user.id)
-                await self.bot.say("{}'s balance is {}".format(user.name, str(balance)))
-            else:
+            try:
+                await self.bot.say("{}'s balance is {}".format(user.name, self.bank.get_account(user)["balance"])))
+            except NoAccount:
                 await self.bot.say("That user has no bank account.")
 
     @_bank.command(pass_context=True)
     async def transfer(self, ctx, user : discord.Member, sum : int):
         """Transfer credits to other users"""
         author = ctx.message.author
-        if author == user:
-            await self.bot.say("You can't transfer money to yourself.")
-            return
-        if sum < 1:
+        try:
+            self.bank.transfer_money(author, user, sum)
+            logger.info("{}({}) transferred {} credits to {}({})".format(
+                author.name, author.id, sum, user.name, user.id))
+            await self.bot.say("{} credits have been transferred to {}'s account.".format(sum, user.name))
+        except NegativeValue:
             await self.bot.say("You need to transfer at least 1 credit.")
-            return
-        if self.account_check(user.id):
-            if self.enough_money(author.id, sum):
-                self.withdraw_money(author.id, sum)
-                self.add_money(user.id, sum)
-                logger.info("{}({}) transferred {} credits to {}({})".format(author.name, author.id, str(sum), user.name, user.id))
-                await self.bot.say("{} credits have been transferred to {}'s account.".format(str(sum), user.name))
-            else:
-                await self.bot.say("You don't have that sum in your bank account.")
-        else:
+        except SameSenderAndReceiver:
+            await self.bot.say("You can't transfer money to yourself.")
+        except InsufficientBalance:
+            await self.bot.say("You don't have that sum in your bank account.")
+        except NoAccount:
             await self.bot.say("That user has no bank account.")
 
     @_bank.command(name="set", pass_context=True)
@@ -197,15 +201,15 @@ class Economy:
 
         Admin/owner restricted."""
         author = ctx.message.author
-        done = self.set_money(user.id, sum)
-        if done:
+        try:
+            self.bank.set_credits(user.id, sum)
             logger.info("{}({}) set {} credits to {} ({})".format(author.name, author.id, str(sum), user.name, user.id))
             await self.bot.say("{}'s credits have been set to {}".format(user.name, str(sum)))
-        else:
+        except NoAccount:
             await self.bot.say("User has no bank account.")
 
     @commands.command(pass_context=True, no_pm=True)
-    async def payday(self, ctx):
+    async def payday(self, ctx): # TODO
         """Get some free credits"""
         author = ctx.message.author
         id = author.id
@@ -225,14 +229,16 @@ class Economy:
         else:
             await self.bot.say("{} You need an account to receive credits. Type {}bank register to open one.".format(author.mention, ctx.prefix))
 
-    @commands.command()
-    async def leaderboard(self, top : int=10):
+    @commands.command(pass_context=True)
+    async def leaderboard(self, ctx, top : int=10):
         """Prints out the leaderboard
 
         Defaults to top 10""" #Originally coded by Airenkun - edited by irdumb
+        server = ctx.message.server
         if top < 1:
             top = 10
-        bank_sorted = sorted(self.bank.items(), key=lambda x: x[1]["balance"], reverse=True)
+        bank_sorted = sorted(self.bank.get_all_accounts(server),
+         key=lambda x: x[1]["balance"], reverse=True)
         if len(bank_sorted) < top:
             top = len(bank_sorted)
         topten = bank_sorted[:top]
@@ -251,10 +257,10 @@ class Economy:
         else:
             await self.bot.say("There are no accounts in the bank.")
 
-    @commands.command(pass_context=True)
-    async def payouts(self, ctx):
+    @commands.command()
+    async def payouts(self):
         """Shows slot machine payouts"""
-        await self.bot.send_message(ctx.message.author, slot_payouts)
+        await self.bot.whisper(slot_payouts)
 
     @commands.command(pass_context=True, no_pm=True)
     async def slot(self, ctx, bid : int):
