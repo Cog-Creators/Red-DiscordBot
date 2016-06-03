@@ -385,8 +385,6 @@ if __name__ == '__main__':
               " properly.")
         shutil.copy('data/red/settings.json',
                     'data/red/settings-{}.bak'.format(int(time.time())))
-        # Hopefully this won't backfire in case of discord servers' problems
-        os.remove('data/red/settings.json')
     except:
         logger.error(traceback.format_exc())
         loop.run_until_complete(bot.logout())
