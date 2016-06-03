@@ -383,8 +383,6 @@ if __name__ == '__main__':
         logger.error(traceback.format_exc())
         print("Invalid login credentials. Restart Red and configure it"
               " properly.")
-        shutil.copy('data/red/settings.json',
-                    'data/red/settings-{}.bak'.format(int(time.time())))
     except:
         logger.error(traceback.format_exc())
         loop.run_until_complete(bot.logout())
