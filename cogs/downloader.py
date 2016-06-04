@@ -175,6 +175,23 @@ class Downloader:
             await self.bot.say("Ok then, you can reload cogs with"
                                " `{}reload <cog_name>`".format(ctx.prefix))
 
+    @cog.command(pass_context=True)
+    async def uninstall(self, ctx, repo_name, cog):
+        """Uninstalls a cog"""
+        if repo_name not in self.repos:
+            await self.bot.say("That repo doesn't exist.")
+            return
+        if cog not in self.repos[repo_name]:
+            await self.bot.say("That cog isn't available from that repo.")
+            return
+        set_cog("cogs." + cog, False)
+        self.repos[repo_name][cog]['INSTALLED'] = False
+        self.save_repos()
+        os.remove(os.path.join("cogs", cog + ".py"))
+        owner = self.bot.get_cog('Owner')
+        await owner.unload.callback(owner, module=cog)
+        await self.bot.say("Cog successfully uninstalled.")
+
     @cog.command(name="install", pass_context=True)
     async def _install(self, ctx, repo_name: str, cog: str):
         """Installs specified cog"""
@@ -199,7 +216,7 @@ class Downloader:
             elif answer.content.lower().strip() == "yes":
                 set_cog("cogs." + cog, True)
                 owner = self.bot.get_cog('Owner')
-                owner.load.callback(cog)
+                await owner.load.callback(owner, module=cog)
             else:
                 await self.bot.say("Ok then, you can load it with"
                                    " `{}load {}`".format(ctx.prefix, cog))
