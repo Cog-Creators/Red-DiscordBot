@@ -226,7 +226,6 @@ class Downloader(threading.Thread):
                                           process=False)
 
         self.song = Song(**video)
-        self.duration_check()
 
 
 class Audio:
@@ -397,6 +396,10 @@ class Audio:
             log.debug("downloader ID's mismatch on sid {}".format(server.id) +
                       " gonna start dl-ing the next thing on the queue"
                       " id {}".format(next_dl.song.id))
+            try:
+                next_dl.duration_check()
+            except MaximumLength:
+                return
             self.downloaders[server.id] = Downloader(next_dl.url, max_length,
                                                      download=True)
             self.downloaders[server.id].start()
