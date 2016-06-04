@@ -198,9 +198,8 @@ class Downloader:
                                    " `{}load {}`".format(ctx.prefix, cog))
             elif answer.content.lower().strip() == "yes":
                 set_cog("cogs." + cog, True)
-                self.bot.unload_extension("cogs." + cog)
-                self.bot.load_extension("cogs." + cog)
-                await self.bot.say("Done.")
+                owner = self.bot.get_cog('Owner')
+                owner.load.callback(cog)
             else:
                 await self.bot.say("Ok then, you can load it with"
                                    " `{}load {}`".format(ctx.prefix, cog))
