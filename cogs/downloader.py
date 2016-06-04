@@ -203,9 +203,10 @@ class Downloader:
             return
         install_cog = await self.install(repo_name, cog)
         data = self.get_info_data(repo_name, cog)
-        install_msg = data.get("INSTALL_MSG", None)
-        if install_msg is not None:
-            await self.bot.say(install_msg[:2000])
+        if data is not None:
+            install_msg = data.get("INSTALL_MSG", None)
+            if install_msg is not None:
+                await self.bot.say(install_msg[:2000])
         if install_cog:
             await self.bot.say("Installation completed. Load it now? (yes/no)")
             answer = await self.bot.wait_for_message(timeout=15,
