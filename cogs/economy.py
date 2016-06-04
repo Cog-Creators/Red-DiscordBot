@@ -41,7 +41,11 @@ class Bank:
     def create_account(self, user):
         server = user.server
         if not self.account_exists(user):
-            acc = {"name" : user.name, "balance" : 0}
+            if user.id in self.accounts: # Legacy account
+                balance = self.accounts[user.id]["balance"]
+            else:
+                balance = 0
+            acc = {"name" : user.name, "balance" : balance}
             self.accounts[server.id][user.id] = acc
             self._save_bank()
             return acc
@@ -202,7 +206,7 @@ class Economy:
         Admin/owner restricted."""
         author = ctx.message.author
         try:
-            self.bank.set_credits(user.id, sum)
+            self.bank.set_credits(user, sum)
             logger.info("{}({}) set {} credits to {} ({})".format(author.name, author.id, str(sum), user.name, user.id))
             await self.bot.say("{}'s credits have been set to {}".format(user.name, str(sum)))
         except NoAccount:
@@ -213,18 +217,18 @@ class Economy:
         """Get some free credits"""
         author = ctx.message.author
         id = author.id
-        if self.account_check(id):
+        if self.bank.account_exists(user):
             if id in self.payday_register:
                 seconds = abs(self.payday_register[id] - int(time.perf_counter()))
                 if seconds  >= self.settings["PAYDAY_TIME"]:
-                    self.add_money(id, self.settings["PAYDAY_CREDITS"])
+                    self.bank.deposit_credits(author, self.settings["PAYDAY_CREDITS"])
                     self.payday_register[id] = int(time.perf_counter())
                     await self.bot.say("{} Here, take some credits. Enjoy! (+{} credits!)".format(author.mention, str(self.settings["PAYDAY_CREDITS"])))
                 else:
                     await self.bot.say("{} Too soon. For your next payday you have to wait {}.".format(author.mention, self.display_time(self.settings["PAYDAY_TIME"] - seconds)))
             else:
                 self.payday_register[id] = int(time.perf_counter())
-                self.add_money(id, self.settings["PAYDAY_CREDITS"])
+                self.bank.deposit_credits(user, self.settings["PAYDAY_CREDITS"])
                 await self.bot.say("{} Here, take some credits. Enjoy! (+{} credits!)".format(author.mention, str(self.settings["PAYDAY_CREDITS"])))
         else:
             await self.bot.say("{} You need an account to receive credits. Type {}bank register to open one.".format(author.mention, ctx.prefix))
