@@ -177,10 +177,11 @@ class Downloader(threading.Thread):
         super().__init__(*args, **kwargs)
         self.url = url
         self.max_duration = max_duration
-        self.done = False
+        self.done = threading.Event()
         self.song = None
         self.failed = False
         self._download = download
+        self.hit_max_length = threading.Event()
         self._yt = None
 
     def run(self):
@@ -188,21 +189,26 @@ class Downloader(threading.Thread):
             self.get_info()
             if self._download:
                 self.download()
+        except MaximumLength:
+            self.hit_max_length.set()
         except:
-            self.done = True
             self.failed = True
-        else:
-            self.done = True
+        self.done.set()
 
     def download(self):
-        if self.max_duration and self.song.duration > self.max_duration:
-            log.debug("not downloading {} because of duration".format(
-                self.song.id))
-            return
+        self.duration_check()
 
         if not os.path.isfile('data/audio/cache' + self.song.id):
             video = self._yt.extract_info(self.url)
             self.song = Song(**video)
+
+    def duration_check(self):
+        log.debug("duration {} for songid {}".format(self.song.duration,
+                                                     self.song.id))
+        if self.max_duration and self.song.duration > self.max_duration:
+            log.debug("songid {} too long".format(self.song.id))
+            raise MaximumLength("songid {} has duration {} > {}".format(
+                self.song.id, self.song.duration, self.max_duration))
 
     def get_info(self):
         if self._yt is None:
@@ -220,6 +226,7 @@ class Downloader(threading.Thread):
                                           process=False)
 
         self.song = Song(**video)
+        self.duration_check()
 
 
 class Audio:
@@ -454,10 +461,13 @@ class Audio:
             # Queue manager already started it for us, isn't that nice?
             pass
 
-        while self.downloaders[server.id].is_alive():  # Getting info w/o DL
-            await asyncio.sleep(0.5)
+        # Getting info w/o download
+        self.downloaders[server.id].done.wait()
 
+        # This will throw a maxlength exception if required
+        self.downloaders[server.id].duration_check()
         song = self.downloaders[server.id].song
+
         log.debug("sid {} wants to play songid {}".format(server.id, song.id))
 
         # Now we check to see if we have a cache hit
@@ -650,7 +660,13 @@ class Audio:
         log.debug('starting to play on "{}"'.format(server.name))
 
         if self._valid_playable_url(url) or "[SEARCH:]" in url:
-            song = await self._guarantee_downloaded(server, url)
+            try:
+                song = await self._guarantee_downloaded(server, url)
+            except MaximumLength:
+                log.warning("I can't play URL below because it is too long."
+                            " Use {}audioset maxlength to change this.\n\n"
+                            "{}".format(self.bot.command_prefix[0], url))
+                raise
             local = False
         else:  # Assume local
             try:
@@ -1584,13 +1600,18 @@ class Audio:
             if len(temp_queue) > 0:
                 # Fake queue for irdumb's temp playlist songs
                 log.debug("calling _play because temp_queue is non-empty")
-                song = await self._play(sid, temp_queue.popleft())
+                try:
+                    song = await self._play(sid, temp_queue.popleft())
+                except MaximumLength:
+                    return
             elif len(queue) > 0:  # We're in the normal queue
                 url = queue.popleft()
                 log.debug("calling _play on the normal queue")
-                song = await self._play(sid, url)
+                try:
+                    song = await self._play(sid, url)
+                except MaximumLength:
+                    return
                 if repeat and last_song:
-                    # TODO: stick NOW_PLAYING.url back into queue AFTER ending
                     queue.append(last_song.webpage_url)
             else:
                 song = None
@@ -1718,17 +1739,14 @@ def setup(bot):
     check_files()
     if youtube_dl is None:
         raise RuntimeError("You need to run `pip3 install youtube_dl`")
-        return
     if opus is False:
         raise RuntimeError(
             "Your opus library's bitness must match your python installation's"
             " bitness. They both must be either 32bit or 64bit.")
-        return
     elif opus is None:
         raise RuntimeError(
             "You need to install ffmpeg and opus. See \"https://github.com/"
             "Twentysix26/Red-DiscordBot/wiki/Requirements\"")
-        return
     try:
         bot.voice_clients
     except AttributeError:
