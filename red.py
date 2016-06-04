@@ -43,14 +43,14 @@ async def on_ready():
     if not "uptime" in dir(bot): #prevents reset in case of reconnection
         bot.uptime = int(time.perf_counter())
     print('------')
-    print(bot.user.name + " is now online.")
+    print("{} is now online.".format(bot.user.name))
     print('------')
     print("Connected to:")
-    print(servers + " servers")
-    print(channels + " channels")
-    print(users + " users")
+    print("{} servers".format(servers))
+    print("{} channels".format(channels))
+    print("{} users".format(users))
     print("\n{0} active cogs with {1} commands\n".format(
-        str(len(bot.cogs)), str(len(bot.commands))))
+        len(bot.cogs), len(bot.commands)))
     if settings.login_type == "token":
         print("------")
         print("Use this url to bring your bot to a server:")
@@ -173,7 +173,7 @@ def check_configs():
             exit(1)
 
         print("\nChoose a prefix. A prefix is what you type before a command.\n"
-              "A typical prefix would be the exclamation mark. Example: !help\n"
+              "A typical prefix would be the exclamation mark.\n"
               "Can be multiple characters. You will be able to change it "
               "later and add more of them.\nChoose your prefix:")
         confirmation = False
