@@ -70,14 +70,18 @@ class AuthorNotConnected(NotConnected):
 class VoiceNotConnected(NotConnected):
     pass
 
+
 class UnauthorizedConnect(Exception):
     pass
+
 
 class UnauthorizedSpeak(Exception):
     pass
 
+
 class UnauthorizedSave(Exception):
     pass
+
 
 class ConnectTimeout(NotConnected):
     pass
@@ -127,7 +131,7 @@ class Playlist:
         self.name = name
         self.author = author
         self.url = url
-        self.main_class = main_class # reference to Audio
+        self.main_class = main_class  # reference to Audio
         self.path = path
 
         if url is None and "link" in kwargs:
@@ -208,8 +212,9 @@ class Downloader(threading.Thread):
                                           process=False)
         else:
             self.url = self.url[9:]
-            yt_id = self._yt.extract_info(self.url,
-                download=False)["entries"][0]["id"] # Should handle errors here.
+            yt_id = self._yt.extract_info(
+                self.url, download=False)["entries"][0]["id"]
+            # Should handle errors here ^
             self.url = "https://youtube.com/watch?v={}".format(yt_id)
             video = self._yt.extract_info(self.url, download=False,
                                           process=False)
@@ -1000,7 +1005,7 @@ class Audio:
 
         if not self.voice_connected(server):
             try:
-                can_connect = self.has_connect_perm(author, server)
+                self.has_connect_perm(author, server)
             except AuthorNotConnected:
                 await self.bot.say("You must join a voice channel before I can"
                                    " play anything.")
@@ -1075,11 +1080,9 @@ class Audio:
 
         # Checking already connected, will join if not
 
-        caller = inspect.currentframe().f_back.f_code.co_name
-
         if not self.voice_connected(server):
             try:
-                can_connect = self.has_connect_perm(author, server)
+                self.has_connect_perm(author, server)
             except AuthorNotConnected:
                 await self.bot.say("You must join a voice channel before I can"
                                    " play anything.")
@@ -1179,8 +1182,8 @@ class Audio:
             playlist.server = server
 
             self._save_playlist(server, name, playlist)
-            await self.bot.say("Playlist '{}' saved. Tracks: {}".format(name, 
-                len(songlist)))
+            await self.bot.say("Playlist '{}' saved. Tracks: {}".format(
+                name, len(songlist)))
         else:
             await self.bot.say("That URL is not a valid Soundcloud or YouTube"
                                " playlist link. If you think this is in error"
@@ -1195,9 +1198,8 @@ class Audio:
         if name not in self._list_playlists(server):
             await self.bot.say("There is no playlist with that name.")
             return
-        playlist = self._load_playlist(server, name,
-                                local=self._playlist_exists_local(
-                                    server, name))
+        playlist = self._load_playlist(
+            server, name, local=self._playlist_exists_local(server, name))
         try:
             playlist.append_song(author, url)
         except UnauthorizedSave:
@@ -1212,7 +1214,6 @@ class Audio:
         """Extends a playlist with a playlist link"""
         # Need better wording ^
         await self.bot.say("Not implemented yet.")
-
 
     @playlist.command(pass_context=True, no_pm=True, name="list")
     async def playlist_list(self, ctx):
@@ -1279,18 +1280,18 @@ class Audio:
         if self._playlist_exists(server, name):
             if not self.voice_connected(server):
                 try:
-                    can_connect = self.has_connect_perm(author, server)
+                    self.has_connect_perm(author, server)
                 except AuthorNotConnected:
-                    await self.bot.say("You must join a voice channel before I can"
-                                       " play anything.")
+                    await self.bot.say("You must join a voice channel before"
+                                       " I can play anything.")
                     return
                 except UnauthorizedConnect:
                     await self.bot.say("I don't have permissions to join your"
                                        " voice channel.")
                     return
                 except UnauthorizedSpeak:
-                    await self.bot.say("I don't have permissions to speak in your"
-                                       " voice channel.")
+                    await self.bot.say("I don't have permissions to speak in"
+                                       " your voice channel.")
                     return
                 else:
                     await self._join_voice_channel(voice_channel)
@@ -1441,8 +1442,9 @@ class Audio:
             song = self.queue[server.id]["NOW_PLAYING"]
             if song:
                 msg = ("\n**Title:** {}\n**Author:** {}\n**Uploader:** {}\n"
-                "**Views:** {}\n\n<{}>".format(song.title, song.creator, 
-                    song.uploader, song.view_count, song.webpage_url))
+                       "**Views:** {}\n\n<{}>".format(
+                           song.title, song.creator, song.uploader,
+                           song.view_count, song.webpage_url))
                 await self.bot.say(msg.replace("**Author:** None\n", ""))
             else:
                 await self.bot.say("I don't know what this song is either.")
