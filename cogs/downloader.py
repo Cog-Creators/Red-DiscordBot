@@ -1,5 +1,5 @@
 from discord.ext import commands
-from cogs.utils.dataIO import fileIO
+from cogs.utils.dataIO import dataIO, fileIO
 from cogs.utils import checks
 from cogs.utils.chat_formatting import box
 from __main__ import send_cmd_help, set_cog
@@ -67,6 +67,11 @@ class Downloader:
         self.update_repo(repo_name)
         self.populate_list(repo_name)
         self.save_repos()
+        data = self.get_info_data(repo_name)
+        if data:
+            msg = data.get("INSTALL_MSG")
+            if msg:
+                await self.bot.say(msg[:2000])
         await self.bot.say("Repo '{}' added.".format(repo_name))
 
     @repo.command(name="remove")
@@ -90,12 +95,17 @@ class Downloader:
                     continue
                 data = self.get_info_data(repo_name, cog)
                 if data:
-                    retlist.append([cog, data['NAME']])
+                    retlist.append([cog, data.get("SHORT", "")])
                 else:
                     retlist.append([cog, ''])
         else:
             msg = "Available repos:\n"
-            retlist = sorted([[k, ''] for k in self.repos])
+            for repo_name in sorted(self.repos.keys()):
+                data = self.get_info_data(repo_name)
+                if data:
+                    retlist.append([repo_name, data.get("SHORT", "")])
+                else:
+                    retlist.append([repo_name, ""])
 
         col_width = max(len(row[0]) for row in retlist) + 2
         for row in retlist:
@@ -103,20 +113,34 @@ class Downloader:
         await self.bot.say(box(msg))  # Need to deal with over 2000 characters
 
     @cog.command()
-    async def info(self, repo_name: str, cog: str):
+    async def info(self, repo_name: str, cog: str=None):
         """Shows info about the specified cog"""
-        cogs = self.list_cogs(repo_name)
-        if cog in cogs:
-            data = self.get_info_data(repo_name, cog)
-            if data:
-                msg = "{} by {}\n\n".format(cog, data["AUTHOR"])
-                msg += data["NAME"] + "\n\n" + data["DESCRIPTION"]
-                await self.bot.say(box(msg))
+        if cog is not None:
+            cogs = self.list_cogs(repo_name)
+            if cog in cogs:
+                data = self.get_info_data(repo_name, cog)
+                if data:
+                    msg = "{} by {}\n\n".format(cog, data["AUTHOR"])
+                    msg += data["NAME"] + "\n\n" + data["DESCRIPTION"]
+                    await self.bot.say(box(msg))
+                else:
+                    await self.bot.say("The specified cog has no info file.")
             else:
-                await self.bot.say("The specified cog has no info file.")
+                await self.bot.say("That cog doesn't exist."
+                                   " Use cog list to see the full list.")
         else:
-            await self.bot.say("That cog doesn't exist."
-                               " Use cog list to see the full list.")
+            data = self.get_info_data(repo_name)
+            if data is None:
+                await self.bot.say("That repo does not exist or the"
+                                   " information file is missing for that repo"
+                                   ".")
+                return
+            name = data.get("NAME", None)
+            name = repo_name if name is None else name
+            author = data.get("AUTHOR", "tekulvw ;)")
+            desc = data.get("DESCRIPTION", "")
+            msg = ("```{} by {}```\n\n{}".format(name, author, desc))
+            await self.bot.say(msg)
 
     @cog.command(hidden=True)
     async def search(self, *terms: str):
@@ -151,6 +175,23 @@ class Downloader:
             await self.bot.say("Ok then, you can reload cogs with"
                                " `{}reload <cog_name>`".format(ctx.prefix))
 
+    @cog.command(pass_context=True)
+    async def uninstall(self, ctx, repo_name, cog):
+        """Uninstalls a cog"""
+        if repo_name not in self.repos:
+            await self.bot.say("That repo doesn't exist.")
+            return
+        if cog not in self.repos[repo_name]:
+            await self.bot.say("That cog isn't available from that repo.")
+            return
+        set_cog("cogs." + cog, False)
+        self.repos[repo_name][cog]['INSTALLED'] = False
+        self.save_repos()
+        os.remove(os.path.join("cogs", cog + ".py"))
+        owner = self.bot.get_cog('Owner')
+        await owner.unload.callback(owner, module=cog)
+        await self.bot.say("Cog successfully uninstalled.")
+
     @cog.command(name="install", pass_context=True)
     async def _install(self, ctx, repo_name: str, cog: str):
         """Installs specified cog"""
@@ -161,6 +202,11 @@ class Downloader:
             await self.bot.say("That cog isn't available from that repo.")
             return
         install_cog = await self.install(repo_name, cog)
+        data = self.get_info_data(repo_name, cog)
+        if data is not None:
+            install_msg = data.get("INSTALL_MSG", None)
+            if install_msg is not None:
+                await self.bot.say(install_msg[:2000])
         if install_cog:
             await self.bot.say("Installation completed. Load it now? (yes/no)")
             answer = await self.bot.wait_for_message(timeout=15,
@@ -170,9 +216,8 @@ class Downloader:
                                    " `{}load {}`".format(ctx.prefix, cog))
             elif answer.content.lower().strip() == "yes":
                 set_cog("cogs." + cog, True)
-                self.bot.unload_extension("cogs." + cog)
-                self.bot.load_extension("cogs." + cog)
-                await self.bot.say("Done.")
+                owner = self.bot.get_cog('Owner')
+                await owner.load.callback(owner, module=cog)
             else:
                 await self.bot.say("Ok then, you can load it with"
                                    " `{}load {}`".format(ctx.prefix, cog))
@@ -190,7 +235,7 @@ class Downloader:
         cog_folder_path = self.repos[repo_name][cog]['folder']
         cog_data_path = os.path.join(cog_folder_path, 'data')
 
-        to_path = os.path.join("cogs/", cog+".py")
+        to_path = os.path.join("cogs/", cog + ".py")
 
         print("Copying {}...".format(cog))
         shutil.copy(path, to_path)
@@ -203,16 +248,25 @@ class Downloader:
         self.save_repos()
         return True
 
-    def get_info_data(self, repo_name, cog):
-        cogs = self.list_cogs(repo_name)
-        if cog in cogs:
-            info_file = os.path.join(cogs[cog].get('folder'), "info.json")
-            if os.path.isfile(info_file):
+    def get_info_data(self, repo_name, cog=None):
+        if cog is not None:
+            cogs = self.list_cogs(repo_name)
+            if cog in cogs:
+                info_file = os.path.join(cogs[cog].get('folder'), "info.json")
+                if os.path.isfile(info_file):
+                    try:
+                        data = fileIO(info_file, "load")
+                    except:
+                        return None
+                    return data
+        else:
+            repo_info = os.path.join(self.path, repo_name, 'info.json')
+            if os.path.isfile(repo_info):
                 try:
-                    data = fileIO(info_file, "load")
+                    data = dataIO.load_json(repo_info)
+                    return data
                 except:
                     return None
-                return data
         return None
 
     def list_cogs(self, repo_name):
@@ -269,6 +323,7 @@ class Downloader:
             # It's blocking but it shouldn't matter
             call(["git", "clone", url, "data/downloader/" + name])
         else:
+            Popen(["git", "-C", "data/downloader/" + name, "stash", "-q"])
             Popen(["git", "-C", "data/downloader/" + name, "pull", "-q"])
 
 
@@ -286,6 +341,7 @@ def check_files():
     if not fileIO(f, "check"):
         print("Creating default data/downloader/repos.json")
         fileIO(f, "save", repos)
+
 
 def setup(bot):
     check_folders()
