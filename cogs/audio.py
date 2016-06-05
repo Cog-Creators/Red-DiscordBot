@@ -1148,6 +1148,9 @@ class Audio:
         else:
             url = "[SEARCH:]" + url
 
+        if "[SEARCH:]" not in url and "youtube" in url:
+            url = url.split("&")[0] # Temp fix for the &list issue
+
         self._stop_player(server)
         self._clear_queue(server)
         self._add_to_queue(server, url)
@@ -1371,6 +1374,9 @@ class Audio:
                 return
         else:
             url = "[SEARCH:]" + url
+
+        if "[SEARCH:]" not in url and "youtube" in url:
+            url = url.split("&")[0] # Temp fix for the &list issue
 
         # We have a queue to modify
         if self.queue[server.id]["PLAYLIST"]:
