@@ -444,6 +444,18 @@ class Audio:
 
         return self.queue[server.id]["NOW_PLAYING"]
 
+    def _get_queue_playlist(self, server):
+        if server.id not in self.queue:
+            return None
+
+        return self.queue[server.id]["PLAYLIST"]
+
+    def _get_queue_repeat(self, server):
+        if server.id not in self.queue:
+            return None
+
+        return self.queue[server.id]["REPEAT"]
+
     async def _guarantee_downloaded(self, server, url):
         max_length = self.settings["MAX_LENGTH"]
         if server.id not in self.downloaders:  # We don't have a downloader
@@ -828,7 +840,7 @@ class Audio:
                                  "NOW_PLAYING": None}
 
     def _stop(self, server):
-        self._clear_queue(server)
+        self._setup_queue(server)
         self._stop_player(server)
         self._stop_downloader(server)
 
@@ -1442,6 +1454,8 @@ class Audio:
         if self.is_playing(server):
             vc = self.voice_client(server)
             vc.audio_player.stop()
+            if self._get_queue_repeat(server) is False:
+                self._set_queue_nowplaying(server, None)
             await self.bot.say("Skipping...")
         else:
             await self.bot.say("Can't skip if I'm not playing.")
