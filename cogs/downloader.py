@@ -137,7 +137,7 @@ class Downloader:
                 return
             name = data.get("NAME", None)
             name = repo_name if name is None else name
-            author = data.get("AUTHOR", "tekulvw ;)")
+            author = data.get("AUTHOR", "Unknown")
             desc = data.get("DESCRIPTION", "")
             msg = ("```{} by {}```\n\n{}".format(name, author, desc))
             await self.bot.say(msg)
