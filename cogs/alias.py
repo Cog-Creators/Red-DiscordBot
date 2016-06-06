@@ -2,7 +2,7 @@ from discord.ext import commands
 from .utils.chat_formatting import *
 from .utils.dataIO import fileIO
 from .utils import checks
-from __main__ import send_cmd_help
+from __main__ import user_allowed, send_cmd_help
 import os
 
 
@@ -98,6 +98,9 @@ class Alias:
                 await self.bot.say(message)
 
     async def check_aliases(self, message):
+        if not user_allowed(message):
+            return
+
         if message.author.id == self.bot.user.id or \
                 len(message.content) < 2 or message.channel.is_private:
             return
