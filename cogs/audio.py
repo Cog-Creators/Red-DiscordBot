@@ -19,7 +19,6 @@ __author__ = "tekulvw"
 __version__ = "0.0.1"
 
 log = logging.getLogger("red.audio")
-log.setLevel(logging.DEBUG)
 
 try:
     import youtube_dl
