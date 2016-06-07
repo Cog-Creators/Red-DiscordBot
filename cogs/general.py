@@ -7,7 +7,8 @@ import time
 import aiohttp
 import asyncio
 
-settings = {"POLL_DURATION" : 60}
+settings = {"POLL_DURATION": 60}
+
 
 class General:
     """General commands."""
@@ -197,20 +198,27 @@ class General:
         data += "Icon: {}\n".format(server.icon_url)
         data += "```"
         await self.bot.say(data)
-        
+
     @commands.command()
-    async def urban(self, *, search_terms : str):
-        """Urban Dictionary search"""
+    async def urban(self, *, search_terms: str):
+        """Urban Dictionary search
+        Using a number behind the search will show a specific definition"""
+        position = 0
         search_terms = search_terms.split(" ")
+        check = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']
+        if any(x in search_terms[-1] for x in check):
+            position = int(search_terms[-1])
+            del search_terms[-1]  # Remove and store position
+            position = position - 1  # And ajust for math and list logic
         search_terms = "+".join(search_terms)
-        search = "http://api.urbandictionary.com/v0/define?term=" + search_terms
+        search = 'http://api.urbandictionary.com/v0/define?term={}'.format(search_terms)
         try:
             async with aiohttp.get(search) as r:
                 result = await r.json()
             if result["list"] != []:
-                definition = result['list'][0]['definition']
-                example = result['list'][0]['example']
-                await self.bot.say("**Definition:** " + definition + "\n\n" + "**Example:** " + example )
+                definition = result['list'][position]['definition']
+                example = result['list'][position]['example']
+                await self.bot.say("**Definition:** " + definition + "\n\n" + "**Example:** " + example)
             else:
                 await self.bot.say("Your search terms gave no results.")
         except:
