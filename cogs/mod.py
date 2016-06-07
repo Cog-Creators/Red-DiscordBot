@@ -64,18 +64,6 @@ class Mod:
         except Exception as e:
             print(e)
 
-    @commands.command()
-    @checks.serverowner_or_permissions(administrator=True)
-    async def test(self, *, message : str):
-        """Prints message"""
-        await self.bot.say(message)
-			
-			
-    @commands.command()
-    @checks.serverowner_or_permissions(administrator=True)
-    async def print(self, *, message : str):
-        """Prints message"""
-        await self.bot.say(message)
 		
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(ban_members=True)
