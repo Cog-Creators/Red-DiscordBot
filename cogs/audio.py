@@ -233,6 +233,7 @@ class Audio:
     def __init__(self, bot):
         self.bot = bot
         self.queue = {}  # add deque's, repeat
+        self.queue_lock = asyncio.Lock()
         self.downloaders = {}  # sid: object
         self.settings = fileIO("data/audio/settings.json", 'load')
         self.server_specific_setting_keys = ["VOLUME", "QUEUE_MODE",
@@ -1347,13 +1348,15 @@ class Audio:
         await self.playlist_start.callback(self, ctx, name)
 
     @commands.command(pass_context=True, no_pm=True, name="queue")
-    async def _queue(self, ctx, *, url):
+    async def _queue(self, ctx, *, url=None):
         """Queues a song to play next. Extended functionality in `!help`
 
         If you use `queue` when one song is playing, your new song will get
             added to the song loop (if running). If you use `queue` when a
             playlist is running, it will temporarily be played next and will
             NOT stay in the playlist loop."""
+        if url is None:
+            return await self._queue_list(ctx)
         server = ctx.message.server
         if not self.voice_connected(server):
             await ctx.invoke(self.play, url_or_search_terms=url)
@@ -1387,6 +1390,44 @@ class Audio:
                 server.id))
             self._add_to_queue(server, url)
         await self.bot.say("Queued.")
+
+    async def _queue_list(self, ctx):
+        """Not a command, use `queue` with no args to call this."""
+        server = ctx.message.server
+        if server.id not in self.queue:
+            await self.bot.say("Nothing playing on this server!")
+            return
+        elif len(self.queue[server.id]["QUEUE"]) == 0:
+            await self.bot.say("Nothing queued on this server.")
+            return
+
+        urlist = []
+        for i in range(5):
+            try:
+                urlist.append(self.queue[server.id]["QUEUE"][i])
+            except IndexError:
+                pass
+
+        downloaders = []
+        for url in urlist:
+            d = Downloader(url, download=False)
+            d.start()
+            downloaders.append(d)
+
+        await self.bot.say("Gathering information...")
+
+        while any(map(lambda d: d.is_alive(), downloaders)):
+            await asyncio.sleep(0.5)
+
+        msg = []
+        for num, d in enumerate(downloaders, 1):
+            try:
+                msg.append("{}. {.title}".format(num, d.song))
+            except AttributeError:
+                msg.append("{}. {}".format(num, d.url))
+        msg = "Next up:\n" + "\n".join(msg)
+
+        await self.bot.say(msg)
 
     @commands.group(pass_context=True, no_pm=True)
     async def repeat(self, ctx):
