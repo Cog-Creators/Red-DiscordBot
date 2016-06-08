@@ -240,6 +240,7 @@ class Audio:
                                              "VOTE_THRESHOLD"]
         self.cache_path = "data/audio/cache"
         self.local_playlist_path = "data/audio/localtracks"
+        self._old_game = False
 
     def _add_to_queue(self, server, url):
         if server.id not in self.queue:
@@ -839,13 +840,14 @@ class Audio:
                                  "QUEUE": deque(), "TEMP_QUEUE": deque(),
                                  "NOW_PLAYING": None}
 
-    def _stop(self, server):
+    async def _stop(self, server):
         self._setup_queue(server)
         self._stop_player(server)
         self._stop_downloader(server)
+        await self.update_bot_status()
 
     async def _stop_and_disconnect(self, server):
-        self._stop(server)
+        await self._stop(server)
         await self._disconnect_voice_client(server)
 
     def _stop_downloader(self, server):
@@ -923,6 +925,19 @@ class Audio:
             await self.bot.say("Player toggled. You're now using avconv.")
         else:
             await self.bot.say("Player toggled. You're now using ffmpeg.")
+        self.save_settings()
+
+    @audioset.command(name="status")
+    @checks.is_owner()  # cause effect is cross-server
+    async def audioset_status(self):
+        """Enables/disables songs' titles as status"""
+        self.settings["TITLE_STATUS"] = not self.settings["TITLE_STATUS"]
+        if self.settings["TITLE_STATUS"]:
+            await self.bot.say("If only one server is playing music, songs' titles will now show up as status")
+        else:
+            await self.bot.say("Songs' titles will no longer show up as status")
+        # doen't update for some reason. fix later.
+        await self.update_bot_status()
         self.save_settings()
 
     @audioset.command(pass_context=True, name="volume", no_pm=True)
@@ -1022,7 +1037,7 @@ class Audio:
         voice_channel = author.voice_channel
 
         if voice_channel is not None:
-            self._stop(server)
+            await self._stop(server)
 
         await self._join_voice_channel(voice_channel)
 
@@ -1497,7 +1512,7 @@ class Audio:
         # TODO: All those fun checks for permissions
         server = ctx.message.server
 
-        self._stop(server)
+        await self._stop(server)
 
     @commands.command(name="yt", pass_context=True, no_pm=True)
     async def yt_search(self, ctx, *, search_terms: str):
@@ -1513,6 +1528,37 @@ class Audio:
         if not hasattr(self.voice_client(server), 'audio_player'):
             return False
         if self.voice_client(server).audio_player.is_done():
+            return False
+        return True
+
+    def get_active_voice_clients(self):
+        avcs = []
+        for vc in self.bot.voice_clients:
+            if hasattr(vc, 'audio_player') and not vc.audio_player.is_done():
+                avcs.append(vc)
+        return avcs
+
+    # returns False if not changed.
+    async def update_bot_status(self):
+        if self.settings["TITLE_STATUS"]:
+            active_servers = self.get_active_voice_clients()
+            song = None
+            if len(active_servers) == 1:
+                server = active_servers[0].server.id
+                song = self.queue[server.id]["NOW_PLAYING"]
+            if song:
+                if self._old_game is False:
+                    self._old_game = server.me.game
+                await self.bot.change_status(discord.Game(name=song.title))
+            elif self._old_game is not False:  # self._old_game can be None. want to use it.
+                await self.bot.change_status(self._old_game)
+                self._old_game = False
+            else:
+                return False
+        elif self._old_game is not False:  # self._old_game can be None. want to use it.
+            await self.bot.change_status(self._old_game)
+            self._old_game = False
+        else:
             return False
         return True
 
@@ -1641,6 +1687,8 @@ class Audio:
                 song = None
             self.queue[server.id]["NOW_PLAYING"] = song
             log.debug("set now_playing for sid {}".format(server.id))
+            await self.update_bot_status()
+
         elif server.id in self.downloaders:
             # We're playing but we might be able to download a new song
             curr_dl = self.downloaders.get(server.id)
