@@ -936,7 +936,7 @@ class Audio:
             await self.bot.say("If only one server is playing music, songs' titles will now show up as status")
         else:
             await self.bot.say("Songs' titles will no longer show up as status")
-        # doen't update for some reason. fix later. PR dangit
+        # go ahead and update here.
         await self.update_bot_status()
         self.save_settings()
 
