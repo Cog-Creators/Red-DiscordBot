@@ -1531,6 +1531,9 @@ class Audio:
             return False
         return True
 
+    # returns list of active voice channels 
+    # assuming list does not change during the execution of this function
+    # if that happens, blame asyncio.
     def get_active_voice_clients(self):
         avcs = []
         for vc in self.bot.voice_clients:
@@ -1538,24 +1541,24 @@ class Audio:
                 avcs.append(vc)
         return avcs
 
-    # returns False if not changed.
+    # returns False if not changed. People may want in the future? ¯\_(ツ)_/¯
     async def update_bot_status(self):
         if self.settings["TITLE_STATUS"]:
             active_servers = self.get_active_voice_clients()
             song = None
             if len(active_servers) == 1:
-                server = active_servers[0].server.id
+                server = active_servers[0].server
                 song = self.queue[server.id]["NOW_PLAYING"]
             if song:
-                if self._old_game is False:
+                if self._old_game is False:  # self._old_game can be None. want to use it.
                     self._old_game = server.me.game
                 await self.bot.change_status(discord.Game(name=song.title))
-            elif self._old_game is not False:  # self._old_game can be None. want to use it.
+            elif self._old_game is not False:
                 await self.bot.change_status(self._old_game)
                 self._old_game = False
             else:
                 return False
-        elif self._old_game is not False:  # self._old_game can be None. want to use it.
+        elif self._old_game is not False:
             await self.bot.change_status(self._old_game)
             self._old_game = False
         else:
