@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from .utils import checks
 
 class Dogcog:
 	"""The DogCog, it makes woofing noises."""
