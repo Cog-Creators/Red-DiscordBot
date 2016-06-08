@@ -64,6 +64,7 @@ class Mod:
         except Exception as e:
             print(e)
 
+		
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(ban_members=True)
     async def ban(self, ctx, user: discord.Member, days: int=0):

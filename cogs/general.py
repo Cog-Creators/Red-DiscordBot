@@ -18,7 +18,7 @@ class General:
         self.ball = ["As I see it, yes", "It is certain", "It is decidedly so", "Most likely", "Outlook good",
                      "Signs point to yes", "Without a doubt", "Yes", "Yes – definitely", "You may rely on it", "Reply hazy, try again",
                      "Ask again later", "Better not tell you now", "Cannot predict now", "Concentrate and ask again",
-                     "Don't count on it", "My reply is no", "My sources say no", "Outlook not so good", "Very doubtful"]
+                     "Don't count on it", "My reply is no", "My sources say no", "Outlook not so good", "Very doubtful", "[](/vinylscrewyou)"]
         self.poll_sessions = []
 
     @commands.command(hidden=True)
@@ -48,7 +48,7 @@ class General:
             n = str(randint(1, number))
             return await self.bot.say("{} :game_die: {} :game_die:".format(author.mention, n))
         else:
-            return await self.bot.say("{} Maybe higher than 1? ;P".format(author.mention))
+            return await self.bot.say("{} Maybe higher than 1? [](/ppcute)".format(author.mention))
 
     @commands.command(pass_context=True)
     async def flip(self, ctx, user : discord.Member=None):
@@ -81,6 +81,8 @@ class General:
            "paper": ":page_facing_up:",
            "scissors":":scissors:"}
         choice = choice.lower()
+        if choice == "spock":
+            await self.bot.say("[](/ppdont)")
         if choice in rpsbot.keys():
             botchoice = randchoice(list(rpsbot.keys()))
             msgs = {
@@ -135,23 +137,24 @@ class General:
         """Creates a lmgtfy link"""
         search_terms = search_terms.replace(" ", "+")
         await self.bot.say("http://lmgtfy.com/?q={}".format(search_terms))
+		
 
     @commands.command(no_pm=True, hidden=True)
     async def hug(self, user : discord.Member, intensity : int=1):
         """Because everyone likes hugs
 
-        Up to 10 intensity levels."""
+        Up to 3 intensity levels."""
         name = " *" + user.name + "*"
-        if intensity <= 0:
-            msg = "(っ˘̩╭╮˘̩)っ" + name
-        elif intensity <= 3:
-            msg = "(っ´▽｀)っ" + name
-        elif intensity <= 6:
-            msg = "╰(*´︶`*)╯" + name
-        elif intensity <= 9:
-            msg = "(つ≧▽≦)つ" + name
-        elif intensity >= 10:
-            msg = "(づ￣ ³￣)づ" + name + " ⊂(´・ω・｀⊂)"
+        if self.bot.user.id == user.id:
+            msg = "[](/squintaloo) *hugs "+user.name+"*"
+        elif intensity <= 1:
+            msg = "[](/intensehugs)" + name
+        elif intensity == 2:
+            msg = "[](/scootahug)" + name
+        elif intensity >= 3:
+            msg = "[](/abwantshugs)" + name + " [](/abwantshugs-r)"
+        #if user == self:
+            #msg = "[](/sbsquint) *hugs" + user.name + "*"
         await self.bot.say(msg)
 
     @commands.command(pass_context=True, no_pm=True)
