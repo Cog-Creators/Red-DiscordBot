@@ -9,6 +9,8 @@ import asyncio
 from copy import deepcopy
 import logging
 
+class StreamTypeNotSupported(Exception):
+    pass
 
 class Streams:
     """Streams
@@ -105,8 +107,8 @@ class Streams:
 
         if not done:
             self.twitch_streams.append(
-                {"CHANNELS": [channel.id],
-                 "NAME": stream, "ALREADY_ONLINE": False})
+                {"CHANNELS": [channel.id], "NAME": stream, 
+                 "COOLDOWN": None, "ALREADY_ONLINE": False})
             await self.bot.say("Alert activated. I will notify this channel "
                                "everytime {} is live.".format(stream))
 
@@ -149,7 +151,7 @@ class Streams:
         if not done:
             self.hitbox_streams.append(
                 {"CHANNELS": [channel.id], "NAME": stream,
-                 "ALREADY_ONLINE": False})
+                 "COOLDOWN": None, "ALREADY_ONLINE": False})
             await self.bot.say("Alert activated. I will notify this channel "
                                "everytime {} is live.".format(stream))
 
@@ -192,7 +194,7 @@ class Streams:
         if not done:
             self.beam_streams.append(
                 {"CHANNELS": [channel.id], "NAME": stream,
-                 "ALREADY_ONLINE": False})
+                 "COOLDOWN": None, "ALREADY_ONLINE": False})
             await self.bot.say("Alert activated. I will notify this channel "
                                "everytime {} is live.".format(stream))
 
@@ -301,6 +303,42 @@ class Streams:
         except:
             return "error"
 
+    # sends a stream's channel alerts if appropriate.
+    # service must be 'TWITCH', 'BEAM', or 'HITBOX'
+    # raises StreamTypeNotSupported otherwise
+    # 
+    # avoids posting the same alert within POST_COOLDOWN seconds
+    async def send_stream_alert(self, stream, service):
+        POST_COOLDOWN = 1800  # 30 minutes
+        avail_services = {"TWITCH" : {"URL" : "http://www.twitch.tv/", 
+                                      "CHECKER" : self.twitch_online},
+                          "HITBOX" : {"URL" : "http://www.hitbox.tv/", 
+                                      "CHECKER" : self.hitbox_online},
+                          "BEAM" :   {"URL" : "https://beam.pro/", 
+                                      "CHECKER" : self.beam_online}}
+
+        if service not in avail_services:
+            raise StreamTypeNotSupported(service)
+
+        online = await avail_services[service]["CHECKER"](stream["NAME"])
+        if online is True and not stream["ALREADY_ONLINE"]:
+            stream["ALREADY_ONLINE"] = True
+            current = int(time.time())
+            # get for backwards compatibility
+            if stream.get("COOLDOWN") is None or current > stream["COOLDOWN"]:
+                # ignore case when adding/removing channel since the cooldown is so short
+                stream["COOLDOWN"] = current + POST_COOLDOWN
+                for channel in stream["CHANNELS"]:
+                    channel_obj = self.bot.get_channel(channel)
+                    if channel_obj and channel_obj.permissions_for(
+                            channel_obj.server.me).send_messages:
+                        await self.bot.send_message(
+                                self.bot.get_channel(channel), "{}{} is online!".format(
+                                avail_services[service]["URL"], stream["NAME"]))
+        else:
+            if stream["ALREADY_ONLINE"] and not online:
+                stream["ALREADY_ONLINE"] = False
+
     async def stream_checker(self):
         CHECK_DELAY = 60
 
@@ -309,56 +347,14 @@ class Streams:
             old = (deepcopy(self.twitch_streams), deepcopy(
                 self.hitbox_streams), deepcopy(self.beam_streams))
 
-            for stream in self.twitch_streams:
-                online = await self.twitch_online(stream["NAME"])
-                if online is True and not stream["ALREADY_ONLINE"]:
-                    stream["ALREADY_ONLINE"] = True
-                    for channel in stream["CHANNELS"]:
-                        channel_obj = self.bot.get_channel(channel)
-                        can_speak = channel_obj.permissions_for(channel_obj.server.me).send_messages
-                        if channel_obj and can_speak:
-                            await self.bot.send_message(
-                                self.bot.get_channel(channel),
-                                "http://www.twitch.tv/"
-                                "{} is online!".format(stream["NAME"]))
-                else:
-                    if stream["ALREADY_ONLINE"] and not online:
-                        stream["ALREADY_ONLINE"] = False
-                await asyncio.sleep(0.5)
-
-            for stream in self.hitbox_streams:
-                online = await self.hitbox_online(stream["NAME"])
-                if online is True and not stream["ALREADY_ONLINE"]:
-                    stream["ALREADY_ONLINE"] = True
-                    for channel in stream["CHANNELS"]:
-                        channel_obj = self.bot.get_channel(channel)
-                        can_speak = channel_obj.permissions_for(channel_obj.server.me).send_messages
-                        if channel_obj and can_speak:
-                            await self.bot.send_message(
-                                self.bot.get_channel(channel),
-                                "http://www.hitbox.tv/"
-                                "{} is online!".format(stream["NAME"]))
-                else:
-                    if stream["ALREADY_ONLINE"] and not online:
-                        stream["ALREADY_ONLINE"] = False
-                await asyncio.sleep(0.5)
-
-            for stream in self.beam_streams:
-                online = await self.beam_online(stream["NAME"])
-                if online is True and not stream["ALREADY_ONLINE"]:
-                    stream["ALREADY_ONLINE"] = True
-                    for channel in stream["CHANNELS"]:
-                        channel_obj = self.bot.get_channel(channel)
-                        can_speak = channel_obj.permissions_for(channel_obj.server.me).send_messages
-                        if channel_obj and can_speak:
-                            await self.bot.send_message(
-                                self.bot.get_channel(channel),
-                                "https://beam.pro/"
-                                "{} is online!".format(stream["NAME"]))
-                else:
-                    if stream["ALREADY_ONLINE"] and not online:
-                        stream["ALREADY_ONLINE"] = False
-                await asyncio.sleep(0.5)
+            # temp until rewrite of streams
+            stream_list = [("TWITCH", self.twitch_streams), 
+                            ("HITBOX", self.hitbox_streams),
+                            ("BEAM", self.beam_streams)]
+            for service, streams  in stream_list:
+                for stream in streams:
+                    await self.send_stream_alert(stream, service)
+                    await asyncio.sleep(0.5)
 
             if old != (self.twitch_streams, self.hitbox_streams,
                        self.beam_streams):
