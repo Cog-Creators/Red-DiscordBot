@@ -520,10 +520,9 @@ class Mod:
         Use double quotes if the role contains spaces.
         Colour must be in hexadecimal format.
         \"http://www.w3schools.com/colors/colors_picker.asp\"
-        #cefdf9 -> 0xcefdf9
         Examples:
-        !editrole colour \"The Transistor\" 0xffff00
-        !editrole colour Test 0xcefdf9"""
+        !editrole colour \"The Transistor\" #ff0000
+        !editrole colour Test #ff9900"""
         author = ctx.message.author
         try:
             await self.bot.edit_role(ctx.message.server, role, color=value)
