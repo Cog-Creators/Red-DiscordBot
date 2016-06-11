@@ -130,14 +130,11 @@ def user_allowed(message):
 
 
 async def get_oauth_url():
-    endpoint = "https://discordapp.com/api/oauth2/applications/@me"
-    if bot.headers.get('authorization') is None:
-        bot.headers['authorization'] = "Bot {}".format(settings.email)
-
-    async with bot.session.get(endpoint, headers=bot.headers) as resp:
-        data = await resp.json()
-
-    return discord.utils.oauth_url(data.get('id'))
+    try:
+        data = await bot.application_info()
+    except AttributeError:
+        return "Your discord.py is outdated. Couldn't retrieve invite link."
+    return discord.utils.oauth_url(data.id)
 
 
 def check_folders():
