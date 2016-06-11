@@ -119,6 +119,7 @@ class Song:
         self.title = kwargs.pop('title', None)
         self.id = kwargs.pop('id', None)
         self.url = kwargs.pop('url', None)
+        self.webpage_url = kwargs.pop('webpage_url', "")
         self.duration = kwargs.pop('duration', "")
 
 
@@ -378,6 +379,22 @@ class Audio:
 
         await voice_client.disconnect()
 
+    async def _download_all(self, url_list):
+        """
+        Doesn't actually download, just get's info for uses like queue_list
+        """
+        downloaders = []
+        for url in url_list:
+            d = Downloader(url)
+            d.start()
+            downloaders.append(d)
+
+        while any([d.is_alive() for d in downloaders]):
+            await asyncio.sleep(0.1)
+
+        songs = [d.song for d in downloaders]
+        return songs
+
     async def _download_next(self, server, curr_dl, next_dl):
         """Checks to see if we need to download the next, and does.
 
@@ -438,6 +455,19 @@ class Audio:
 
     # TODO: _enable_controls()
 
+    def _get_queue(self, server, limit):
+        if server.id not in self.queue:
+            return []
+
+        ret = []
+        for i in range(limit):
+            try:
+                ret.append(self.queue[server.id]["QUEUE"][i])
+            except IndexError:
+                pass
+
+        return ret
+
     def _get_queue_nowplaying(self, server):
         if server.id not in self.queue:
             return None
@@ -455,6 +485,18 @@ class Audio:
             return None
 
         return self.queue[server.id]["REPEAT"]
+
+    def _get_queue_tempqueue(self, server, limit):
+        if server.id not in self.queue:
+            return []
+
+        ret = []
+        for i in range(limit):
+            try:
+                ret.append(self.queue[server.id]["TEMP_QUEUE"][i])
+            except IndexError:
+                pass
+        return ret
 
     async def _guarantee_downloaded(self, server, url):
         max_length = self.settings["MAX_LENGTH"]
@@ -1401,31 +1443,34 @@ class Audio:
             await self.bot.say("Nothing queued on this server.")
             return
 
-        urlist = []
-        for i in range(5):
-            try:
-                urlist.append(self.queue[server.id]["QUEUE"][i])
-            except IndexError:
-                pass
+        msg = ""
 
-        downloaders = []
-        for url in urlist:
-            d = Downloader(url, download=False)
-            d.start()
-            downloaders.append(d)
+        now_playing = self._get_queue_nowplaying(server)
+
+        if now_playing is not None:
+            msg += "\n***Now playing:***\n{}\n".format(now_playing.title)
+
+        queue_url_list = self._get_queue(server, 5)
+        tempqueue_url_list = self._get_queue_tempqueue(server, 5)
 
         await self.bot.say("Gathering information...")
 
-        while any(map(lambda d: d.is_alive(), downloaders)):
-            await asyncio.sleep(0.5)
+        queue_song_list = await self._download_all(queue_url_list)
+        tempqueue_song_list = await self._download_all(tempqueue_url_list)
 
-        msg = []
-        for num, d in enumerate(downloaders, 1):
+        song_info = []
+        for num, song in enumerate(tempqueue_song_list, 1):
             try:
-                msg.append("{}. {.title}".format(num, d.song))
+                song_info.append("{}. {.title}".format(num, song))
             except AttributeError:
-                msg.append("{}. {}".format(num, d.url))
-        msg = "Next up:\n" + "\n".join(msg)
+                song_info.append("{}. {.webpage_url}".format(num, song))
+
+        for num, song in enumerate(queue_song_list, len(song_info) + 1):
+            try:
+                song_info.append("{}. {.title}".format(num, song))
+            except AttributeError:
+                song_info.append("{}. {.webpage_url}".format(num, song))
+        msg += "\n***Next up:***\n" + "\n".join(song_info)
 
         await self.bot.say(msg)
 
