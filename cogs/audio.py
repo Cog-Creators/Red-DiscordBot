@@ -19,7 +19,6 @@ __author__ = "tekulvw"
 __version__ = "0.0.1"
 
 log = logging.getLogger("red.audio")
-log.setLevel(logging.DEBUG)
 
 try:
     import youtube_dl
@@ -120,6 +119,7 @@ class Song:
         self.title = kwargs.pop('title', None)
         self.id = kwargs.pop('id', None)
         self.url = kwargs.pop('url', None)
+        self.webpage_url = kwargs.pop('webpage_url', "")
         self.duration = kwargs.pop('duration', "")
 
 
@@ -378,6 +378,22 @@ class Audio:
 
         await voice_client.disconnect()
 
+    async def _download_all(self, url_list):
+        """
+        Doesn't actually download, just get's info for uses like queue_list
+        """
+        downloaders = []
+        for url in url_list:
+            d = Downloader(url)
+            d.start()
+            downloaders.append(d)
+
+        while any([d.is_alive() for d in downloaders]):
+            await asyncio.sleep(0.1)
+
+        songs = [d.song for d in downloaders]
+        return songs
+
     async def _download_next(self, server, curr_dl, next_dl):
         """Checks to see if we need to download the next, and does.
 
@@ -438,6 +454,19 @@ class Audio:
 
     # TODO: _enable_controls()
 
+    def _get_queue(self, server, limit):
+        if server.id not in self.queue:
+            return []
+
+        ret = []
+        for i in range(limit):
+            try:
+                ret.append(self.queue[server.id]["QUEUE"][i])
+            except IndexError:
+                pass
+
+        return ret
+
     def _get_queue_nowplaying(self, server):
         if server.id not in self.queue:
             return None
@@ -455,6 +484,18 @@ class Audio:
             return None
 
         return self.queue[server.id]["REPEAT"]
+
+    def _get_queue_tempqueue(self, server, limit):
+        if server.id not in self.queue:
+            return []
+
+        ret = []
+        for i in range(limit):
+            try:
+                ret.append(self.queue[server.id]["TEMP_QUEUE"][i])
+            except IndexError:
+                pass
+        return ret
 
     async def _guarantee_downloaded(self, server, url):
         max_length = self.settings["MAX_LENGTH"]
@@ -1348,13 +1389,15 @@ class Audio:
         await self.playlist_start.callback(self, ctx, name)
 
     @commands.command(pass_context=True, no_pm=True, name="queue")
-    async def _queue(self, ctx, *, url):
+    async def _queue(self, ctx, *, url=None):
         """Queues a song to play next. Extended functionality in `!help`
 
         If you use `queue` when one song is playing, your new song will get
             added to the song loop (if running). If you use `queue` when a
             playlist is running, it will temporarily be played next and will
             NOT stay in the playlist loop."""
+        if url is None:
+            return await self._queue_list(ctx)
         server = ctx.message.server
         if not self.voice_connected(server):
             await ctx.invoke(self.play, url_or_search_terms=url)
@@ -1388,6 +1431,49 @@ class Audio:
                 server.id))
             self._add_to_queue(server, url)
         await self.bot.say("Queued.")
+
+    async def _queue_list(self, ctx):
+        """Not a command, use `queue` with no args to call this."""
+        server = ctx.message.server
+        if server.id not in self.queue:
+            await self.bot.say("Nothing playing on this server!")
+            return
+        elif len(self.queue[server.id]["QUEUE"]) == 0:
+            await self.bot.say("Nothing queued on this server.")
+            return
+
+        msg = ""
+
+        now_playing = self._get_queue_nowplaying(server)
+
+        if now_playing is not None:
+            msg += "\n***Now playing:***\n{}\n".format(now_playing.title)
+
+        queue_url_list = self._get_queue(server, 5)
+        tempqueue_url_list = self._get_queue_tempqueue(server, 5)
+
+        await self.bot.say("Gathering information...")
+
+        queue_song_list = await self._download_all(queue_url_list)
+        tempqueue_song_list = await self._download_all(tempqueue_url_list)
+
+        song_info = []
+        for num, song in enumerate(tempqueue_song_list, 1):
+            try:
+                song_info.append("{}. {.title}".format(num, song))
+            except AttributeError:
+                song_info.append("{}. {.webpage_url}".format(num, song))
+
+        for num, song in enumerate(queue_song_list, len(song_info) + 1):
+            if num > 5:
+                break
+            try:
+                song_info.append("{}. {.title}".format(num, song))
+            except AttributeError:
+                song_info.append("{}. {.webpage_url}".format(num, song))
+        msg += "\n***Next up:***\n" + "\n".join(song_info)
+
+        await self.bot.say(msg)
 
     @commands.group(pass_context=True, no_pm=True)
     async def repeat(self, ctx):
