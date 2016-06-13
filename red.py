@@ -2,7 +2,7 @@ from discord.ext import commands
 import discord
 from cogs.utils.settings import Settings
 from cogs.utils.dataIO import dataIO
-import json
+from cogs.utils.chat_formatting import inline
 import asyncio
 import os
 import time
@@ -79,7 +79,18 @@ async def on_command_error(error, ctx):
     elif isinstance(error, commands.BadArgument):
         await send_cmd_help(ctx)
     elif isinstance(error, commands.DisabledCommand):
-        await bot.send_message(ctx.message.channel, "That command is disabled.")
+        await bot.send_message(ctx.message.channel,
+                               "That command is disabled.")
+    elif type(error) is commands.CommandError:
+        cmd_error = error.__cause__
+        logging.exception("Exception in command '{}'".format(
+            ctx.command.qualified_name), exc_info=cmd_error)
+        oneliner = "Error in command '{}' - {}: {}".format(
+            ctx.command.qualified_name, type(cmd_error).__name__,
+            str(cmd_error))
+        await ctx.bot.send_message(ctx.message.channel, inline(oneliner))
+    else:
+        logging.exception(type(error).__name__, exc_info=error)
 
 async def send_cmd_help(ctx):
     if ctx.invoked_subcommand:
