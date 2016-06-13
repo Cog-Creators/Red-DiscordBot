@@ -388,12 +388,16 @@ if __name__ == '__main__':
         loop.run_until_complete(main())
     except discord.LoginFailure:
         logger.error(traceback.format_exc())
-        print("Invalid login credentials. Restart Red and configure it"
-              " properly.")
-        shutil.copy('data/red/settings.json',
-                    'data/red/settings-{}.bak'.format(int(time.time())))
-        # Hopefully this won't backfire in case of discord servers' problems
-        os.remove('data/red/settings.json')
+        choice = input("Invalid login credentials. "
+            "If they worked before Discord might be having temporary "
+            "technical issues.\nIn this case, press enter and "
+            "try again later.\nOtherwise you can type 'reset' to "
+            "delete the current configuration and redo the setup process "
+            "again the next start.\n> ")
+        if choice.strip() == "reset":
+            shutil.copy('data/red/settings.json',
+                        'data/red/settings-{}.bak'.format(int(time.time())))
+            os.remove('data/red/settings.json')
     except:
         logger.error(traceback.format_exc())
         loop.run_until_complete(bot.logout())
