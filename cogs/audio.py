@@ -234,7 +234,6 @@ class Audio:
     def __init__(self, bot):
         self.bot = bot
         self.queue = {}  # add deque's, repeat
-        self.queue_lock = asyncio.Lock()
         self.downloaders = {}  # sid: object
         self.settings = fileIO("data/audio/settings.json", 'load')
         self.server_specific_setting_keys = ["VOLUME", "QUEUE_MODE",
@@ -1466,6 +1465,8 @@ class Audio:
                 song_info.append("{}. {.webpage_url}".format(num, song))
 
         for num, song in enumerate(queue_song_list, len(song_info) + 1):
+            if num > 5:
+                break
             try:
                 song_info.append("{}. {.title}".format(num, song))
             except AttributeError:
