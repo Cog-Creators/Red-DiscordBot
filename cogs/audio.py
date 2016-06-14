@@ -832,7 +832,7 @@ class Audio:
     async def _remove_song_status(self):
         if self._old_game is not False:
             await self.bot.change_status(self._old_game)
-            log.debug('Bot status returned to ' + self._old_game)
+            log.debug('Bot status returned to ' + str(self._old_game))
             self._old_game = False
 
     def _save_playlist(self, server, name, playlist):
