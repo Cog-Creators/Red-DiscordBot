@@ -88,6 +88,8 @@ async def on_command_error(error, ctx):
             ctx.command.qualified_name, type(error.original).__name__,
             str(error.original))
         await ctx.bot.send_message(ctx.message.channel, inline(oneliner))
+    elif isinstance(error, commands.CommandNotFound):
+        pass
     else:
         logger.exception(type(error).__name__, exc_info=error)
 
