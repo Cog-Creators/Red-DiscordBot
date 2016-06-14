@@ -933,7 +933,7 @@ class Audio:
     # no return. they can check themselves.
     async def _update_bot_status(self):
         if self.settings["TITLE_STATUS"]:
-            active_servers = self.get_active_voice_clients()
+            active_servers = self._get_active_voice_clients()
             song = None
             if len(active_servers) == 1:
                 server = active_servers[0].server
