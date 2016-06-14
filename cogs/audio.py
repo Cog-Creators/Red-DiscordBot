@@ -244,7 +244,7 @@ class Audio:
 
     async def _add_song_status(self, song):
         if self._old_game is False:
-            self._old_game = current
+            self._old_game = list(self.bot.servers)[0].me.game
         await self.bot.change_status(discord.Game(name=song.title))
         log.debug('Bot status changed to song title: ' + song.title)
 
