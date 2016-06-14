@@ -280,7 +280,7 @@ class Owner:
     async def avatar(self, url):
         """Sets Red's avatar"""
         try:
-            async with self.bot.session.get(url) as r:
+            async with self.bot.http.session.get(url) as r:
                 data = await r.read()
             await self.bot.edit_profile(settings.password, avatar=data)
             await self.bot.say("Done.")
