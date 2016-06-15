@@ -165,11 +165,16 @@ class Owner:
         python = '```py\n{}\n```'
         result = None
 
-        local_vars = locals().copy()
-        local_vars['bot'] = self.bot
+        global_vars = globals().copy()
+        global_vars['bot'] = self.bot
+        global_vars['ctx'] = ctx
+        global_vars['message'] = ctx.message
+        global_vars['author'] = ctx.message.author
+        global_vars['channel'] = ctx.message.channel
+        global_vars['server'] = ctx.message.server
 
         try:
-            result = eval(code, globals(), local_vars)
+            result = eval(code, global_vars, locals())
         except Exception as e:
             await self.bot.say(python.format(type(e).__name__ + ': ' + str(e)))
             return
