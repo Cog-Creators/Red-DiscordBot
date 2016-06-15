@@ -941,7 +941,7 @@ class Audio:
 
         self.settings["MAX_CACHE"] = size
         await self.bot.say("Max cache size set to {} MB.".format(size))
-        self.save_settings
+        self.save_settings()
 
     @audioset.command(name="maxlength")
     @checks.is_owner()
