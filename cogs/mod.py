@@ -227,6 +227,35 @@ class Mod:
         else:
             await self.legacy_cleanup_user_messages(ctx, user, number)
 
+    @cleanup.command(pass_context=True, no_pm=True)
+    async def after(self, ctx, message_id : int):
+        """Deletes all messages after specified message
+
+        To get a message id, enable developer mode in Discord's
+        settings, 'appearance' tab. Then right click a message
+        and copy its id.
+        """
+        channel = ctx.message.channel
+        try:
+            message = await self.bot.get_message(channel, str(message_id))
+        except discord.errors.NotFound:
+            await self.bot.say("Message not found.")
+            return
+        except discord.errors.Forbidden:
+            if self.bot.user.bot:
+                await self.bot.say("I'm not authorized to get that message.")
+            else:
+                await self.bot.say("This function is limited to bot accounts.")
+            return
+        except discord.errors.HTTPException:
+            await self.bot.say("Couldn't retrieve the message.")
+            return
+
+        try:
+            await self.bot.purge_from(channel, limit=2500, after=message)
+        except discord.errors.Forbidden:
+                await self.bot.say("I need permissions to manage messages "
+                                   "in this channel.")
 
     async def legacy_cleanup_user_messages(self, ctx, user, number):
         author = ctx.message.author
