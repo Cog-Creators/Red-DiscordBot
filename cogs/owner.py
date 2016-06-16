@@ -13,6 +13,7 @@ import datetime
 import glob
 import os
 import time
+import aiohttp
 
 log = logging.getLogger("red.owner")
 
@@ -45,6 +46,10 @@ class Owner:
         self.bot = bot
         self.setowner_lock = False
         self.disabled_commands = fileIO("data/red/disabled_commands.json", "load")
+        self.session = aiohttp.ClientSession(loop=self.bot.loop)
+
+    def __unload(self):
+        self.session.close()
 
     @commands.command()
     @checks.is_owner()
@@ -280,7 +285,7 @@ class Owner:
     async def avatar(self, url):
         """Sets Red's avatar"""
         try:
-            async with self.bot.http.session.get(url) as r:
+            async with self.session.get(url) as r:
                 data = await r.read()
             await self.bot.edit_profile(settings.password, avatar=data)
             await self.bot.say("Done.")
