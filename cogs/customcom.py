@@ -16,9 +16,14 @@ class CustomCommands:
     @checks.mod_or_permissions(administrator=True)
     async def addcom(self, ctx, command : str, *, text):
         """Adds a custom command
-
-        Example:
+        Supports arguments: author, server, channel
+        
+        Examples:
         !addcom yourcommand Text you want
+        !addcom kickme :boot: {author.name}
+        !addcom greet hi {author.mention}! welcome to {server.name}!
+        !addcom whereami? you're in {channel.name}.. dumby
+        !addcom id {author.id}
         """
         server = ctx.message.server
         command = command.lower()
@@ -32,7 +37,13 @@ class CustomCommands:
             cmdlist[command] = text
             self.c_commands[server.id] = cmdlist
             fileIO("data/customcom/commands.json", "save", self.c_commands)
-            await self.bot.say("Custom command successfully added.")
+            await self.bot.say("Custom command successfully added.. Testing")
+            message = ctx.message
+            try:
+                await self.bot.say(text.format(message.author, message.server, message.channel, message, author=message.author, server=message.server, channel=message.channel, message=message))
+            except Exception as e:
+                print(e)
+                await self.bot.say('Failed to send. Most likely incorrect format.')
         else:
             await self.bot.say("This command already exists. Use editcom to edit it.")
 
@@ -52,7 +63,13 @@ class CustomCommands:
                 cmdlist[command] = text
                 self.c_commands[server.id] = cmdlist
                 fileIO("data/customcom/commands.json", "save", self.c_commands)
-                await self.bot.say("Custom command successfully edited.")
+                await self.bot.say("Custom command successfully edited.. Testing")
+                message = ctx.message
+                try:
+                    await self.bot.say(text.format(message.author, message.server, message.channel, message, author=message.author, server=message.server, channel=message.channel, message=message))
+                except Exception as e:
+                    print(e)
+                    await self.bot.say('Failed to send. Most likely incorrect format.')
             else:
                 await self.bot.say("That command doesn't exist. Use addcom [command] [text]")
         else:
@@ -117,10 +134,13 @@ class CustomCommands:
         if prefix and server.id in self.c_commands.keys():
             cmdlist = self.c_commands[server.id]
             cmd = msg[len(prefix):]
+            response = None
             if cmd in cmdlist.keys():
-                await self.bot.send_message(message.channel, cmdlist[cmd])
+                response = cmdlist[cmd]
             elif cmd.lower() in cmdlist.keys():
-                await self.bot.send_message(message.channel, cmdlist[cmd.lower()])
+                response = cmdlist[cmd.lower()]
+            if response:
+                await self.bot.send_message(message.channel, response.format(message.author, message.server, message.channel, message, author=message.author, server=message.server, channel=message.channel, message=message))
 
     def get_prefix(self, msg):
         for p in self.bot.command_prefix:
@@ -133,15 +153,37 @@ def check_folders():
         print("Creating data/customcom folder...")
         os.makedirs("data/customcom")
 
-def check_files():
+def check_files(bot):
     f = "data/customcom/commands.json"
     if not fileIO(f, "check"):
         print("Creating empty commands.json...")
-        fileIO(f, "save", {})
+        fileIO(f, "save", {"FORMAT":True})
+        return
+    print('hi')
+    current = fileIO(f, "load")
+    if "FORMAT" not in current: # consistency check
+        print("Custom Commands have been updated with format string support.")
+        print("Updating old custom commands. Any brackets {} found will be escaped {{}}")
+        for sid, commands in current.items():
+            msg = ""
+            for cmd, response in commands.items():
+                if "{" in response or "}" in response:
+                    commands[cmd] = response.replace("{","{{").replace("}","}}")
+                    #use [p] if loaded before settings/prefixes were
+                    pfx = "[p]" if bot.command_prefix[0] == "_" else bot.command_prefix[0]
+                    msg += "{}{}\n".format(pfx,cmd)
+            if msg:
+                # can't get server cause not logged in..
+                svr = bot.get_server(sid)
+                if svr is None:
+                    svr = sid
+                print("Server: {0} - custom commands altered:\n{2}{1}{2}".format(svr, msg, "--------\n"))
+        current["FORMAT"] = True
+        fileIO(f, "save", current)
 
 def setup(bot):
     check_folders()
-    check_files()
+    check_files(bot)
     n = CustomCommands(bot)
     bot.add_listener(n.checkCC, "on_message")
     bot.add_cog(n)
