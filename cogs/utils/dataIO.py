@@ -79,11 +79,11 @@ def fileIO(filename, IO, data=None):
     """Old fileIO provided for backwards compatibility"""
     config = DataIO(filename)
     if IO == "save" and data is not None:
-        return config.save_json(filename, data)
+        return config.save(data)
     elif IO == "load" and data is None:
-        return config.load_json(filename)
+        return config.load()
     elif IO == "check" and data is None:
-        return config.is_valid_json(filename)
+        return config.is_valid()
     else:
         raise InvalidFileIO("FileIO was called with invalid"
                             " parameters")
