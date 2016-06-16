@@ -1564,18 +1564,27 @@ class Audio:
     async def song(self, ctx):
         """Info about the current song."""
         server = ctx.message.server
-        if self.is_playing(server):
-            song = self.queue[server.id]["NOW_PLAYING"]
-            if song:
-                msg = ("\n**Title:** {}\n**Author:** {}\n**Uploader:** {}\n"
-                       "**Views:** {}\n\n<{}>".format(
-                           song.title, song.creator, song.uploader,
-                           song.view_count, song.webpage_url))
-                await self.bot.say(msg.replace("**Author:** None\n", ""))
-            else:
-                await self.bot.say("I don't know what this song is either.")
+        if not self.is_playing(server):
+            await self.bot.say("I'm not playing on this server.")
+            return
+
+        song = self._get_queue_nowplaying(server)
+        if song:
+            if not hasattr(song, 'creator'):
+                song.creator = None
+            if not hasattr(song, 'view_count'):
+                song.view_count = None
+            if not hasattr(song, 'uploader'):
+                song.uploader = None
+            msg = ("**Title:** {}\n**Author:** {}\n**Uploader:** {}\n"
+                   "**Views:** {}\n\n<{}>".format(
+                       song.title, song.creator, song.uploader,
+                       song.view_count, song.webpage_url))
+            await self.bot.say(msg.replace("**Author:** None\n", "")
+                                  .replace("**Views:** None\n", "")
+                                  .replace("**Uploader:** None\n", ""))
         else:
-            await self.bot.say("I'm not playing anything on this server.")
+            await self.bot.say("Darude - Sandstorm.")
 
     @commands.command(pass_context=True)
     async def stop(self, ctx):
