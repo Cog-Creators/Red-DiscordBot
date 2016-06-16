@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from .utils.dataIO import fileIO
+from .utils.chat_formatting import *
 from .utils import checks
 import os
 import time
@@ -24,6 +25,7 @@ class Streams:
     @commands.command()
     async def hitbox(self, stream: str):
         """Checks if hitbox stream is online"""
+        stream = escape_mass_mentions(stream)
         online = await self.hitbox_online(stream)
         if online is True:
             await self.bot.say("http://www.hitbox.tv/{}/"
@@ -38,6 +40,7 @@ class Streams:
     @commands.command()
     async def twitch(self, stream: str):
         """Checks if twitch stream is online"""
+        stream = escape_mass_mentions(stream)
         online = await self.twitch_online(stream)
         if online is True:
             await self.bot.say("http://www.twitch.tv/{} "
@@ -52,6 +55,7 @@ class Streams:
     @commands.command()
     async def beam(self, stream: str):
         """Checks if beam stream is online"""
+        stream = escape_mass_mentions(stream)
         online = await self.beam_online(stream)
         if online is True:
             await self.bot.say("https://beam.pro/{} is online!".format(stream))
@@ -72,6 +76,7 @@ class Streams:
     @streamalert.command(name="twitch", pass_context=True)
     async def twitch_alert(self, ctx, stream: str):
         """Adds/removes twitch alerts from the current channel"""
+        stream = escape_mass_mentions(stream)
         channel = ctx.message.channel
         check = await self.twitch_exists(stream)
         if check is False:
@@ -115,6 +120,7 @@ class Streams:
     @streamalert.command(name="hitbox", pass_context=True)
     async def hitbox_alert(self, ctx, stream: str):
         """Adds/removes hitbox alerts from the current channel"""
+        stream = escape_mass_mentions(stream)
         channel = ctx.message.channel
         check = await self.hitbox_online(stream)
         if check is None:
@@ -158,6 +164,7 @@ class Streams:
     @streamalert.command(name="beam", pass_context=True)
     async def beam_alert(self, ctx, stream: str):
         """Adds/removes beam alerts from the current channel"""
+        stream = escape_mass_mentions(stream)
         channel = ctx.message.channel
         check = await self.beam_online(stream)
         if check is None:

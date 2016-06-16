@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from .utils.chat_formatting import *
 from random import randint
 from random import choice as randchoice
 import datetime
@@ -32,6 +33,7 @@ class General:
 
         To denote multiple choices, you should use double quotes.
         """
+        choices = [escape_mass_mentions(choice) for choice in choices]
         if len(choices) < 2:
             await self.bot.say('Not enough choices to pick from.')
         else:
@@ -133,7 +135,7 @@ class General:
     @commands.command()
     async def lmgtfy(self, *, search_terms : str):
         """Creates a lmgtfy link"""
-        search_terms = search_terms.replace(" ", "+")
+        search_terms = escape_mass_mentions(search_terms.replace(" ", "+"))
         await self.bot.say("http://lmgtfy.com/?q={}".format(search_terms))
 
     @commands.command(no_pm=True, hidden=True)
@@ -163,7 +165,7 @@ class General:
         roles = [x.name for x in user.roles if x.name != "@everyone"]
         if not roles: roles = ["None"]
         data = "```python\n"
-        data += "Name: {}\n".format(user)
+        data += "Name: {}\n".format(escape_mass_mentions(str(user)))
         data += "ID: {}\n".format(user.id)
         passed = (ctx.message.timestamp - user.created_at).days
         data += "Created: {} ({} days ago)\n".format(user.created_at, passed)

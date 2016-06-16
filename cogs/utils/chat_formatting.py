@@ -15,3 +15,12 @@ def box(text):
 
 def inline(text):
     return "`"+str(text)+"`"
+
+def escape_mass_mentions(text):
+    words = {
+        "@everyone": "@\u200beveryone",
+        "@here": "@\u200bhere"
+    }
+    for k, v in words.items():
+        text = text.replace(k, v)
+    return text
