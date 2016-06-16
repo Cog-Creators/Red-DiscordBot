@@ -18,13 +18,13 @@ class DataIO():
     def __init__(self, filename):
         self.filename = filename
 
-    def save_json(self, data):
+    def save(self, data):
         """Saves and backups json file"""
         bak_file = os.path.splitext(self.filename)[0] + '.bak'
         self._save_json(self.filename, data)
         copy(self.filename, bak_file)  # Backup copy
 
-    def load_json(self, filename):
+    def load(self):
         """Loads json file and restores backup copy in case of corrupted
            file"""
         try:
@@ -38,7 +38,7 @@ class DataIO():
                 raise CorruptedJSON("{} is corrupted and no backup copy is"
                                     " available.".format(self.filename))
 
-    def is_valid_json(self, filename):
+    def is_valid(self):
         """Returns True if readable json file, False if not existing.
            Tries to restore backup copy if corrupted"""
         try:
