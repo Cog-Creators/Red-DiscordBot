@@ -1576,13 +1576,19 @@ class Audio:
                 song.view_count = None
             if not hasattr(song, 'uploader'):
                 song.uploader = None
+            if hasattr(song, 'duration'):
+                m, s = divmod(song.duration, 60)
+                dur = "{:.2f}:{:.2f}".format(m, s)
+            else:
+                dur = None
             msg = ("**Title:** {}\n**Author:** {}\n**Uploader:** {}\n"
-                   "**Views:** {}\n\n<{}>".format(
+                   "**Views:** {}\n**Duration:** {}\n\n<{}>".format(
                        song.title, song.creator, song.uploader,
-                       song.view_count, song.webpage_url))
+                       song.view_count, song.webpage_url, dur))
             await self.bot.say(msg.replace("**Author:** None\n", "")
                                   .replace("**Views:** None\n", "")
-                                  .replace("**Uploader:** None\n", ""))
+                                  .replace("**Uploader:** None\n", "")
+                                  .replace("**Duration:** None\n", ""))
         else:
             await self.bot.say("Darude - Sandstorm.")
 
