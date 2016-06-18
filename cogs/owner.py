@@ -292,18 +292,18 @@ class Owner:
 
         Leaving both stream_name and game_name empty will clear it."""
 
-        if status:
-            status = status.strip()
-            if "twitch.tv/" not in stream:
-                stream = "https://www.twitch.tv/" + stream
-            await self.bot.change_status(discord.Game(type=1, url=stream, name=status))
-            log.debug('Owner has set streaming status and url to "{}" and {}'.format(status, stream))
-        elif stream is not None:
+        if game_name:
+            game_name = game_name.strip()
+            if "twitch.tv/" not in stream_name:
+                stream_name = "https://www.twitch.tv/" + stream_name
+            await self.bot.change_status(discord.Game(type=1, url=stream_name, name=game_name))
+            log.debug('Owner has set streaming status and url to "{}" and {}'.format(game_name, stream_name))
+        elif stream_name is not None:
             await send_cmd_help(ctx)
             return
         else:
             await self.bot.change_status(None)
-            log.debug('status cleared by owner')
+            log.debug('stream cleared by owner')
         await self.bot.say("Done.")
 
     @_set.command()
