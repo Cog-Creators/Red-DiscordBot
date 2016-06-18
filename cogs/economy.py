@@ -143,7 +143,7 @@ class Bank:
         accounts = []
         for server_id, v in self.accounts.items():
             server = self.bot.get_server(server_id)
-            if server is None:# Servers that has since been left will be ignored
+            if server is None:# Servers that have since been left will be ignored
                 continue      # Same for users_id from the old bank format
             raw_server_accounts = deepcopy(self.accounts[server.id])
             for k, v in raw_server_accounts.items():
@@ -494,52 +494,6 @@ class Economy:
         await self.bot.say("Every payday will now give " + str(credits) + " credits.")
         fileIO("data/economy/settings.json", "save", self.settings)
 
-    def account_check(self, id):
-        if id in self.bank:
-            return True
-        else:
-            return False
-
-    def check_balance(self, id):
-        if self.account_check(id):
-            return self.bank[id]["balance"]
-        else:
-            return False
-
-    def add_money(self, id, amount):
-        if self.account_check(id):
-            self.bank[id]["balance"] = self.bank[id]["balance"] + int(amount)
-            fileIO("data/economy/bank.json", "save", self.bank)
-        else:
-            return False
-
-    def withdraw_money(self, id, amount):
-        if self.account_check(id):
-            if self.bank[id]["balance"] >= int(amount):
-                self.bank[id]["balance"] = self.bank[id]["balance"] - int(amount)
-                fileIO("data/economy/bank.json", "save", self.bank)
-            else:
-                return False
-        else:
-            return False
-
-    def enough_money(self, id, amount):
-        if self.account_check(id):
-            if self.bank[id]["balance"] >= int(amount):
-                return True
-            else:
-                return False
-        else:
-            return False
-
-    def set_money(self, id, amount):
-        if self.account_check(id):
-            self.bank[id]["balance"] = amount
-            fileIO("data/economy/bank.json", "save", self.bank)
-            return True
-        else:
-            return False
-
     def display_time(self, seconds, granularity=2): # What would I ever do without stackoverflow?
         intervals = (                               # Source: http://stackoverflow.com/a/24542445
             ('weeks', 604800),  # 60 * 60 * 24 * 7
@@ -571,16 +525,6 @@ def check_files():
     if not fileIO(f, "check"):
         print("Creating default economy's settings.json...")
         fileIO(f, "save", {})
-    """
-    else: #consistency check
-        current = fileIO(f, "load")
-        if current.keys() != default_settings.keys():
-            for key in default_settings.keys():
-                if key not in current.keys():
-                    current[key] = default_settings[key]
-                    print("Adding " + str(key) + " field to economy settings.json")
-            fileIO(f, "save", current)
-    """
 
     f = "data/economy/bank.json"
     if not fileIO(f, "check"):
