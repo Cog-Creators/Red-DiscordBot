@@ -128,7 +128,7 @@ class Owner:
             await self.bot.say("I was unable to unload some cogs: "
                 "{}".format(still_loaded))
         else:
-            await self.bot.say("All cogs are now unloaded.") 
+            await self.bot.say("All cogs are now unloaded.")
 
     @checks.is_owner()
     @commands.command(name="reload")
@@ -461,6 +461,35 @@ class Owner:
                     break
             else:
                 break
+
+    @commands.command(pass_context=True)
+    async def contact(self, ctx, *, message : str):
+        """Sends message to the owner"""
+        if settings.owner == "id_here":
+            await self.bot.say("I have no owner set.")
+            return
+        owner = discord.utils.get(self.bot.get_all_members(), id=settings.owner)
+        author = ctx.message.author
+        sender = "From {} ({}):\n\n".format(author, author.id)
+        message = sender + message
+        try:
+            await self.bot.send_message(owner, message)
+        except discord.errors.InvalidArgument:
+            await self.bot.say("I cannot send your message, I'm unable to find"
+                               "my owner... *sigh*")
+        except discord.errors.HTTPException:
+            await self.bot.say("Your message is too long.")
+        except:
+            await self.bot.say("I'm unable to deliver your message. Sorry.")
+
+    @commands.command()
+    async def info(self):
+        """Shows info about Red"""
+        await self.bot.say(
+        "This is an instance of Red, an open source Discord bot created by "
+        "Twentysix and improved by many.\n\n**Github:**\n"
+        "<https://github.com/Twentysix26/Red-DiscordBot/>\n"
+        "**Official server:**\n<https://discord.me/Red-DiscordBot>")
 
     async def leave_confirmation(self, server, owner, ctx):
         if not ctx.message.channel.is_private:
