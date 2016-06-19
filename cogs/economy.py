@@ -70,10 +70,10 @@ class Bank:
 
     def widthdraw_credits(self, user, amount):
         server = user.server
-        
+
         if amount < 0:
             raise NegativeValue
-        
+
         account = self._get_account(user)
         if account["balance"] >= amount:
             account["balance"] -= amount
@@ -156,7 +156,6 @@ class Bank:
     def get_server_accounts(self, server):
         if server.id in self.accounts:
             server_accounts = deepcopy(self.accounts[server.id])
-            print(server_accounts)
             accounts = []
             for k, v in server_accounts.items():
                 v["id"] = k
@@ -226,7 +225,7 @@ class Economy:
         user = ctx.message.author
         try:
             account = self.bank.create_account(user)
-            await self.bot.say("{} Account opened. Current balance: {}".format(user.mention, 
+            await self.bot.say("{} Account opened. Current balance: {}".format(user.mention,
                 account.balance))
         except AccountAlreadyExists:
             await self.bot.say("{} You already have an account at the Twentysix bank.".format(user.mention))
@@ -240,7 +239,7 @@ class Economy:
             user = ctx.message.author
             try:
                 await self.bot.say("{} Your balance is: {}".format(user.mention, self.bank.get_balance(user)))
-            except NoAccount:            
+            except NoAccount:
                 await self.bot.say("{} You don't have an account at the Twentysix bank."
                  " Type {}bank register to open one.".format(user.mention, ctx.prefix))
         else:
@@ -310,7 +309,7 @@ class Economy:
 
     @leaderboard.command(name="server", pass_context=True)
     async def _server_leaderboard(self, ctx, top : int=10):
-        """Prints out the leaderboard
+        """Prints out the server's leaderboard
 
         Defaults to top 10""" #Originally coded by Airenkun - edited by irdumb
         server = ctx.message.server
@@ -338,6 +337,9 @@ class Economy:
 
     @leaderboard.command(name="global")
     async def _global_leaderboard(self, top : int=10):
+        """Prints out the global leaderboard
+
+        Defaults to top 10"""
         if top < 1:
             top = 10
         bank_sorted = sorted(self.bank.get_all_accounts(),
@@ -386,7 +388,7 @@ class Economy:
         if self.bank.can_spend(author, bid):
             if bid >= self.settings[server.id]["SLOT_MIN"] and bid <= self.settings[server.id]["SLOT_MAX"]:
                 if author.id in self.slot_register:
-                    if abs(self.slot_register[author.id] - int(time.perf_counter()))  >= self.settings[server.id]["SLOT_TIME"]:               
+                    if abs(self.slot_register[author.id] - int(time.perf_counter()))  >= self.settings[server.id]["SLOT_TIME"]:
                         self.slot_register[author.id] = int(time.perf_counter())
                         await self.slot_machine(ctx.message, bid)
                     else:
@@ -469,7 +471,7 @@ class Economy:
         self.settings[server.id]["SLOT_MAX"] = bid
         await self.bot.say("Maximum bid is now " + str(bid) + " credits.")
         fileIO("data/economy/settings.json", "save", self.settings)
-        
+
     @economyset.command(pass_context=True)
     async def slottime(self, ctx, seconds : int):
         """Seconds between each slots use"""
