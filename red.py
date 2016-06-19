@@ -79,7 +79,7 @@ async def on_command_error(error, ctx):
     elif isinstance(error, commands.BadArgument):
         await send_cmd_help(ctx)
     elif isinstance(error, commands.DisabledCommand):
-        await bot.send_message(ctx.message.channel, 
+        await bot.send_message(ctx.message.channel,
             "That command is disabled.")
     elif isinstance(error, commands.CommandInvokeError):
         logger.exception("Exception in command '{}'".format(
@@ -89,6 +89,8 @@ async def on_command_error(error, ctx):
             str(error.original))
         await ctx.bot.send_message(ctx.message.channel, inline(oneliner))
     elif isinstance(error, commands.CommandNotFound):
+        pass
+    elif isinstance(error, commands.CheckFailure):
         pass
     else:
         logger.exception(type(error).__name__, exc_info=error)
