@@ -153,19 +153,6 @@ class Bank:
                 accounts.append(acc)
         return accounts
 
-    def get_server_accounts(self, server):
-        if server.id in self.accounts:
-            server_accounts = deepcopy(self.accounts[server.id])
-            accounts = []
-            for k, v in server_accounts.items():
-                v["id"] = k
-                v["server"] = server
-                acc = self._create_account_obj(v)
-                accounts.append(acc)
-            return accounts
-        else:
-            return []
-
     def get_balance(self, user):
         account = self._get_account(user)
         return account["balance"]
@@ -304,6 +291,9 @@ class Economy:
 
     @commands.group(pass_context=True)
     async def leaderboard(self, ctx):
+        """Server / global leaderboard
+
+        Defaults to server"""
         if ctx.invoked_subcommand is None:
             await ctx.invoke(self._server_leaderboard)
 
@@ -449,11 +439,14 @@ class Economy:
     @checks.admin_or_permissions(manage_server=True)
     async def economyset(self, ctx):
         """Changes economy module settings"""
+        server = ctx.message.server
+        settings = self.settings[server.id]
         if ctx.invoked_subcommand is None:
             msg = "```"
-            for k, v in self.settings.items():
-                msg += str(k) + ": " + str(v) + "\n"
-            msg += "\nType {}help economyset to see the list of commands.```".format(ctx.prefix)
+            for k, v in settings.items():
+                msg += "{}: {}\n".format(k, v)
+            msg += "```"
+            await send_cmd_help(ctx)
             await self.bot.say(msg)
 
     @economyset.command(pass_context=True)
