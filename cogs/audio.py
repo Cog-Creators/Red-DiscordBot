@@ -1578,10 +1578,10 @@ class Audio:
                 song.uploader = None
             if hasattr(song, 'duration'):
                 m, s = divmod(song.duration, 60)
-                dur = "{:.2f}:{:.2f}".format(m, s)
+                dur = "{:.0f}:{:.0f}".format(m, s)
             else:
                 dur = None
-            msg = ("**Title:** {}\n**Author:** {}\n**Uploader:** {}\n"
+            msg = ("\n**Title:** {}\n**Author:** {}\n**Uploader:** {}\n"
                    "**Views:** {}\n**Duration:** {}\n\n<{}>".format(
                        song.title, song.creator, song.uploader,
                        song.view_count, song.webpage_url, dur))
