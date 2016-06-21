@@ -287,18 +287,18 @@ class Owner:
         
     @_set.command(pass_context=True)
     @checks.is_owner()
-    async def stream(self, ctx, stream_name=None, *, game_name=None):
+    async def stream(self, ctx, streamer=None, *, stream_title=None):
         """Sets Red's streaming status
 
-        Leaving both stream_name and game_name empty will clear it."""
+        Leaving both streamer and stream_title empty will clear it."""
 
-        if game_name:
-            game_name = game_name.strip()
-            if "twitch.tv/" not in stream_name:
-                stream_name = "https://www.twitch.tv/" + stream_name
-            await self.bot.change_status(discord.Game(type=1, url=stream_name, name=game_name))
-            log.debug('Owner has set streaming status and url to "{}" and {}'.format(game_name, stream_name))
-        elif stream_name is not None:
+        if stream_title:
+            stream_title = stream_title.strip()
+            if "twitch.tv/" not in streamer:
+                streamer = "https://www.twitch.tv/" + streamer
+            await self.bot.change_status(discord.Game(type=1, url=streamer, name=stream_title))
+            log.debug('Owner has set streaming status and url to "{}" and {}'.format(stream_title, streamer))
+        elif streamer is not None:
             await send_cmd_help(ctx)
             return
         else:
