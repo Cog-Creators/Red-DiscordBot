@@ -1,8 +1,10 @@
 import discord
 from discord.ext import commands
-from .utils.dataIO import fileIO
+from .utils.dataIO import fileIO, dataIO
 from .utils import checks
 from __main__ import send_cmd_help, settings
+from collections import deque
+from cogs.utils.chat_formatting import escape_mass_mentions
 import os
 import logging
 import asyncio
@@ -13,11 +15,12 @@ class Mod:
 
     def __init__(self, bot):
         self.bot = bot
-        self.whitelist_list = fileIO("data/mod/whitelist.json", "load")
-        self.blacklist_list = fileIO("data/mod/blacklist.json", "load")
-        self.ignore_list = fileIO("data/mod/ignorelist.json", "load")
-        self.filter = fileIO("data/mod/filter.json", "load")
-        self.past_names = fileIO("data/mod/past_names.json", "load")
+        self.whitelist_list = dataIO.load_json("data/mod/whitelist.json")
+        self.blacklist_list = dataIO.load_json("data/mod/blacklist.json")
+        self.ignore_list = dataIO.load_json("data/mod/ignorelist.json")
+        self.filter = dataIO.load_json("data/mod/filter.json")
+        self.past_names = dataIO.load_json("data/mod/past_names.json")
+        self.past_nicknames = dataIO.load_json("data/mod/past_nicknames.json")
 
     @commands.group(pass_context=True, no_pm=True)
     @checks.serverowner_or_permissions(administrator=True)
@@ -101,7 +104,7 @@ class Mod:
                 except:
                     pass
                 await self.bot.ban(user, 1)
-                logger.info("{}({}) softbanned {}({}), deleting 1 day worth " 
+                logger.info("{}({}) softbanned {}({}), deleting 1 day worth "
                     "of messages".format(author.name, author.id, user.name,
                      user.id))
                 await self.bot.unban(server, user)
@@ -590,17 +593,29 @@ class Mod:
 
     @commands.command()
     async def names(self, user : discord.Member):
-        """Show previous names of a user"""
-        exclude = ("@everyone", "@here")
-        if user.id in self.past_names.keys():
-            names = ""
-            for name in self.past_names[user.id]:
-                if not any(mnt in name.lower() for mnt in exclude):
-                    names += " {}".format(name)
-            names = "```{}```".format(names)
-            await self.bot.say("Past names:\n{}".format(names))
+        """Show previous names/nicknames of a user"""
+        server = user.server
+        names = self.past_names[user.id] if user.id in self.past_names else None
+        try:
+            nicks = self.past_nicknames[server.id][user.id]
+            nicks = [escape_mass_mentions(nick) for nick in nicks]
+        except:
+            nicks = None
+        msg = ""
+        if names:
+            names = [escape_mass_mentions(name) for name in names]
+            msg += "**Past 20 names**:\n"
+            msg += ", ".join(names)
+        if nicks:
+            if msg:
+                msg += "\n\n"
+            msg += "**Past 20 nicknames**:\n"
+            msg += ", ".join(nicks)
+        if msg:
+            await self.bot.say(msg)
         else:
-            await self.bot.say("That user doesn't have any recorded name change.")
+            await self.bot.say("That user doesn't have any recorded name or "
+                               "nickname change.")
 
     def discordpy_updated(self):
         try:
@@ -638,7 +653,7 @@ class Mod:
         server = message.server
         can_delete = message.channel.permissions_for(server.me).manage_messages
 
-        if (message.author.id == self.bot.user.id or 
+        if (message.author.id == self.bot.user.id or
         self.immune_from_filter(message) or not can_delete): # Owner, admins and mods are immune to the filter
             return
 
@@ -653,15 +668,31 @@ class Mod:
                         pass
                     print("Message deleted. Filtered: " + w)
 
-
     async def check_names(self, before, after):
         if before.name != after.name:
             if before.id not in self.past_names.keys():
-                self.past_names[before.id] = [before.name]
+                self.past_names[before.id] = [after.name]
             else:
-                if before.name not in self.past_names[before.id]:
-                    self.past_names[before.id].append(before.name)
-            fileIO("data/mod/past_names.json", "save", self.past_names)
+                if after.name not in self.past_names[before.id]:
+                    names = deque(self.past_names[before.id], maxlen=20)
+                    names.append(after.name)
+                    self.past_names[before.id] = list(names)
+            dataIO.save_json("data/mod/past_names.json", self.past_names)
+
+        if before.nick != after.nick and after.nick is not None:
+            server = before.server
+            if not server.id in self.past_nicknames:
+                self.past_nicknames[server.id] = {}
+            if before.id in self.past_nicknames[server.id]:
+                nicks = deque(self.past_nicknames[server.id][before.id],
+                              maxlen=20)
+            else:
+                nicks = []
+            if after.nick not in nicks:
+                nicks.append(after.nick)
+                self.past_nicknames[server.id][before.id] = list(nicks)
+                dataIO.save_json("data/mod/past_nicknames.json",
+                                 self.past_nicknames)
 
 def check_folders():
     folders = ("data", "data/mod/")
@@ -693,6 +724,10 @@ def check_files():
     if not os.path.isfile("data/mod/past_names.json"):
         print("Creating empty past_names.json...")
         fileIO("data/mod/past_names.json", "save", {})
+
+    if not os.path.isfile("data/mod/past_nicknames.json"):
+        print("Creating empty past_nicknames.json...")
+        fileIO("data/mod/past_nicknames.json", "save", {})
 
 
 
