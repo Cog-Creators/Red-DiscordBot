@@ -16,8 +16,8 @@ class DataIO():
     def save_json(self, filename, data):
         """Saves and backups json file"""
         bak_file = os.path.splitext(filename)[0]+'.bak'
+        copy(filename, bak_file)  # Backup copy
         self._save_json(filename, data)
-        copy(filename, bak_file) # Backup copy
 
     def load_json(self, filename):
         """Loads json file and restores backup copy in case of corrupted file"""
