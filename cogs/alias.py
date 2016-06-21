@@ -89,6 +89,9 @@ class Alias:
 
     @alias.command(name="list", pass_context=True, no_pm=True)
     async def _alias_list(self, ctx):
+        """Lists aliases available on this server
+
+        Responds in DM"""
         server = ctx.message.server
         if server.id in self.aliases:
             message = "```Alias list:\n"
