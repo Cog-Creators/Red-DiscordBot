@@ -402,7 +402,7 @@ class Economy:
             reels.append([reel[n - 1], reel[n], reel[n + 1]])
         line = [reels[0][1], reels[1][1], reels[2][1]]
 
-        display_reels = "  " + reels[0][0] + " " + reels[1][0] + " " + reels[2][0] + "\n"
+        display_reels = "\n  " + reels[0][0] + " " + reels[1][0] + " " + reels[2][0] + "\n"
         display_reels += ">" + reels[0][1] + " " + reels[1][1] + " " + reels[2][1] + "\n"
         display_reels += "  " + reels[0][2] + " " + reels[1][2] + " " + reels[2][2] + "\n"
 
@@ -530,7 +530,7 @@ def setup(bot):
     global logger
     check_folders()
     check_files()
-    logger = logging.getLogger("economy")
+    logger = logging.getLogger("red.economy")
     if logger.level == 0: # Prevents the logger from being loaded again in case of module reload
         logger.setLevel(logging.INFO)
         handler = logging.FileHandler(filename='data/economy/economy.log', encoding='utf-8', mode='a')
