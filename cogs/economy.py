@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
-from .utils.dataIO import fileIO
+from cogs.utils.dataIO import dataIO, fileIO
+from collections import namedtuple, defaultdict
+from datetime import datetime
 from random import randint
 from copy import deepcopy
 from .utils import checks
@@ -8,6 +10,8 @@ from __main__ import send_cmd_help
 import os
 import time
 import logging
+
+default_settings = {"PAYDAY_TIME" : 300, "PAYDAY_CREDITS" : 120, "SLOT_MIN" : 5, "SLOT_MAX" : 100, "SLOT_TIME" : 0}
 
 slot_payouts = """Slot machine payouts:
     :two: :two: :six: Bet * 5000
@@ -19,17 +23,182 @@ slot_payouts = """Slot machine payouts:
     Three symbols: +500
     Two symbols: Bet * 2"""
 
+class AccountAlreadyExists(Exception):
+    pass
+
+class NoAccount(Exception):
+    pass
+
+class InsufficientBalance(Exception):
+    pass
+
+class NegativeValue(Exception):
+    pass
+
+class SameSenderAndReceiver(Exception):
+    pass
+
+class Bank:
+    def __init__(self, bot):
+        self.accounts = dataIO.load_json("data/economy/bank.json")
+        self.bot = bot
+
+    def create_account(self, user):
+        server = user.server
+        if not self.account_exists(user):
+            if server.id not in self.accounts:
+                self.accounts[server.id] = {}
+            if user.id in self.accounts: # Legacy account
+                balance = self.accounts[user.id]["balance"]
+            else:
+                balance = 0
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            account = {"name" : user.name, "balance" : balance,
+            "created_at" : timestamp}
+            self.accounts[server.id][user.id] = account
+            self._save_bank()
+            return self.get_account(user)
+        else:
+            raise AccountAlreadyExists
+
+    def account_exists(self, user):
+        try:
+            self._get_account(user)
+        except NoAccount:
+            return False
+        return True
+
+    def widthdraw_credits(self, user, amount):
+        server = user.server
+
+        if amount < 0:
+            raise NegativeValue
+
+        account = self._get_account(user)
+        if account["balance"] >= amount:
+            account["balance"] -= amount
+            self.accounts[server.id][user.id] = account
+            self._save_bank()
+        else:
+            raise InsufficientBalance
+
+    def deposit_credits(self, user, amount):
+        server = user.server
+        if amount < 0:
+            raise NegativeValue
+        account = self._get_account(user)
+        account["balance"] += amount
+        self.accounts[server.id][user.id] = account
+        self._save_bank()
+
+    def set_credits(self, user, amount):
+        server = user.server
+        if amount < 0:
+            raise NegativeValue
+        account = self._get_account(user)
+        account["balance"] = amount
+        self.accounts[server.id][user.id] = account
+        self._save_bank()
+
+    def transfer_money(self, sender, receiver, amount):
+        server = sender.server
+        if amount < 0:
+            raise NegativeValue
+        if sender.id == receiver.id:
+            raise SameSenderAndReceiver
+        if self.account_exists(sender) and self.account_exists(receiver):
+            sender_acc = self._get_account(sender)
+            if sender_acc["balance"] < amount:
+                raise InsufficientBalance
+            self.widthdraw_credits(sender, amount)
+            self.deposit_credits(receiver, amount)
+        else:
+            raise NoAccount
+
+    def can_spend(self, user, amount):
+        account = self._get_account(user)
+        if account["balance"] >= amount:
+            return True
+        else:
+            return False
+
+    def wipe_bank(self, server):
+        self.accounts[server.id] = {}
+        self._save_bank()
+
+    def get_server_accounts(self, server):
+        if server.id in self.accounts:
+            raw_server_accounts = deepcopy(self.accounts[server.id])
+            accounts = []
+            for k, v in raw_server_accounts.items():
+                v["id"] = k
+                v["server"] = server
+                acc = self._create_account_obj(v)
+                accounts.append(acc)
+            return accounts
+        else:
+            return []
+
+    def get_all_accounts(self):
+        accounts = []
+        for server_id, v in self.accounts.items():
+            server = self.bot.get_server(server_id)
+            if server is None:# Servers that have since been left will be ignored
+                continue      # Same for users_id from the old bank format
+            raw_server_accounts = deepcopy(self.accounts[server.id])
+            for k, v in raw_server_accounts.items():
+                v["id"] = k
+                v["server"] = server
+                acc = self._create_account_obj(v)
+                accounts.append(acc)
+        return accounts
+
+    def get_balance(self, user):
+        account = self._get_account(user)
+        return account["balance"]
+
+    def get_account(self, user):
+        acc = self._get_account(user)
+        acc["id"] = user.id
+        acc["server"] = user.server
+        return self._create_account_obj(acc)
+
+    def _create_account_obj(self, account):
+        Account = namedtuple("Account", "id name "
+        "balance created_at server")
+        return Account(
+            id = account["id"],
+            name = account["name"],
+            balance = account["balance"],
+            created_at = datetime.strptime(account["created_at"], "%Y-%m-%d %H:%M:%S"),
+            server = account["server"])
+
+    def _save_bank(self):
+        dataIO.save_json("data/economy/bank.json", self.accounts)
+
+    def _get_account(self, user):
+        server = user.server
+        try:
+            return deepcopy(self.accounts[server.id][user.id])
+        except KeyError:
+            raise NoAccount
+
 class Economy:
     """Economy
 
     Get rich and have fun with imaginary currency!"""
 
     def __init__(self, bot):
+        global default_settings
         self.bot = bot
-        self.bank = fileIO("data/economy/bank.json", "load")
+        self.bank = Bank(bot)
         self.settings = fileIO("data/economy/settings.json", "load")
-        self.payday_register = {}
-        self.slot_register = {}
+        if "PAYDAY_TIME" in self.settings: #old format
+            default_settings = self.settings
+            self.settings = {}
+        self.settings = defaultdict(lambda: default_settings, self.settings)
+        self.payday_register = defaultdict(dict)
+        self.slot_register = defaultdict(dict)
 
     @commands.group(name="bank", pass_context=True)
     async def _bank(self, ctx):
@@ -41,11 +210,11 @@ class Economy:
     async def register(self, ctx):
         """Registers an account at the Twentysix bank"""
         user = ctx.message.author
-        if user.id not in self.bank:
-            self.bank[user.id] = {"name" : user.name, "balance" : 100}
-            fileIO("data/economy/bank.json", "save", self.bank)
-            await self.bot.say("{} Account opened. Current balance: {}".format(user.mention, str(self.check_balance(user.id))))
-        else:
+        try:
+            account = self.bank.create_account(user)
+            await self.bot.say("{} Account opened. Current balance: {}".format(user.mention,
+                account.balance))
+        except AccountAlreadyExists:
             await self.bot.say("{} You already have an account at the Twentysix bank.".format(user.mention))
 
     @_bank.command(pass_context=True)
@@ -55,36 +224,33 @@ class Economy:
         Defaults to yours."""
         if not user:
             user = ctx.message.author
-            if self.account_check(user.id):
-                await self.bot.say("{} Your balance is: {}".format(user.mention, str(self.check_balance(user.id))))
-            else:
-                await self.bot.say("{} You don't have an account at the Twentysix bank. Type {}bank register to open one.".format(user.mention, ctx.prefix))
+            try:
+                await self.bot.say("{} Your balance is: {}".format(user.mention, self.bank.get_balance(user)))
+            except NoAccount:
+                await self.bot.say("{} You don't have an account at the Twentysix bank."
+                 " Type {}bank register to open one.".format(user.mention, ctx.prefix))
         else:
-            if self.account_check(user.id):
-                balance = self.check_balance(user.id)
-                await self.bot.say("{}'s balance is {}".format(user.name, str(balance)))
-            else:
+            try:
+                await self.bot.say("{}'s balance is {}".format(user.name, self.bank.get_balance(user)))
+            except NoAccount:
                 await self.bot.say("That user has no bank account.")
 
     @_bank.command(pass_context=True)
     async def transfer(self, ctx, user : discord.Member, sum : int):
         """Transfer credits to other users"""
         author = ctx.message.author
-        if author == user:
-            await self.bot.say("You can't transfer money to yourself.")
-            return
-        if sum < 1:
+        try:
+            self.bank.transfer_money(author, user, sum)
+            logger.info("{}({}) transferred {} credits to {}({})".format(
+                author.name, author.id, sum, user.name, user.id))
+            await self.bot.say("{} credits have been transferred to {}'s account.".format(sum, user.name))
+        except NegativeValue:
             await self.bot.say("You need to transfer at least 1 credit.")
-            return
-        if self.account_check(user.id):
-            if self.enough_money(author.id, sum):
-                self.withdraw_money(author.id, sum)
-                self.add_money(user.id, sum)
-                logger.info("{}({}) transferred {} credits to {}({})".format(author.name, author.id, str(sum), user.name, user.id))
-                await self.bot.say("{} credits have been transferred to {}'s account.".format(str(sum), user.name))
-            else:
-                await self.bot.say("You don't have that sum in your bank account.")
-        else:
+        except SameSenderAndReceiver:
+            await self.bot.say("You can't transfer money to yourself.")
+        except InsufficientBalance:
+            await self.bot.say("You don't have that sum in your bank account.")
+        except NoAccount:
             await self.bot.say("That user has no bank account.")
 
     @_bank.command(name="set", pass_context=True)
@@ -94,51 +260,62 @@ class Economy:
 
         Admin/owner restricted."""
         author = ctx.message.author
-        done = self.set_money(user.id, sum)
-        if done:
+        try:
+            self.bank.set_credits(user, sum)
             logger.info("{}({}) set {} credits to {} ({})".format(author.name, author.id, str(sum), user.name, user.id))
             await self.bot.say("{}'s credits have been set to {}".format(user.name, str(sum)))
-        else:
+        except NoAccount:
             await self.bot.say("User has no bank account.")
 
     @commands.command(pass_context=True, no_pm=True)
-    async def payday(self, ctx):
+    async def payday(self, ctx): # TODO
         """Get some free credits"""
         author = ctx.message.author
+        server = author.server
         id = author.id
-        if self.account_check(id):
-            if id in self.payday_register:
-                seconds = abs(self.payday_register[id] - int(time.perf_counter()))
-                if seconds  >= self.settings["PAYDAY_TIME"]:
-                    self.add_money(id, self.settings["PAYDAY_CREDITS"])
-                    self.payday_register[id] = int(time.perf_counter())
-                    await self.bot.say("{} Here, take some credits. Enjoy! (+{} credits!)".format(author.mention, str(self.settings["PAYDAY_CREDITS"])))
+        if self.bank.account_exists(author):
+            if id in self.payday_register[server.id]:
+                seconds = abs(self.payday_register[server.id][id] - int(time.perf_counter()))
+                if seconds  >= self.settings[server.id]["PAYDAY_TIME"]:
+                    self.bank.deposit_credits(author, self.settings[server.id]["PAYDAY_CREDITS"])
+                    self.payday_register[server.id][id] = int(time.perf_counter())
+                    await self.bot.say("{} Here, take some credits. Enjoy! (+{} credits!)".format(author.mention, str(self.settings[server.id]["PAYDAY_CREDITS"])))
                 else:
-                    await self.bot.say("{} Too soon. For your next payday you have to wait {}.".format(author.mention, self.display_time(self.settings["PAYDAY_TIME"] - seconds)))
+                    await self.bot.say("{} Too soon. For your next payday you have to wait {}.".format(author.mention, self.display_time(self.settings[server.id]["PAYDAY_TIME"] - seconds)))
             else:
-                self.payday_register[id] = int(time.perf_counter())
-                self.add_money(id, self.settings["PAYDAY_CREDITS"])
-                await self.bot.say("{} Here, take some credits. Enjoy! (+{} credits!)".format(author.mention, str(self.settings["PAYDAY_CREDITS"])))
+                self.payday_register[server.id][id] = int(time.perf_counter())
+                self.bank.deposit_credits(author, self.settings[server.id]["PAYDAY_CREDITS"])
+                await self.bot.say("{} Here, take some credits. Enjoy! (+{} credits!)".format(author.mention, str(self.settings[server.id]["PAYDAY_CREDITS"])))
         else:
             await self.bot.say("{} You need an account to receive credits. Type {}bank register to open one.".format(author.mention, ctx.prefix))
 
-    @commands.command()
-    async def leaderboard(self, top : int=10):
-        """Prints out the leaderboard
+    @commands.group(pass_context=True)
+    async def leaderboard(self, ctx):
+        """Server / global leaderboard
+
+        Defaults to server"""
+        if ctx.invoked_subcommand is None:
+            await ctx.invoke(self._server_leaderboard)
+
+    @leaderboard.command(name="server", pass_context=True)
+    async def _server_leaderboard(self, ctx, top : int=10):
+        """Prints out the server's leaderboard
 
         Defaults to top 10""" #Originally coded by Airenkun - edited by irdumb
+        server = ctx.message.server
         if top < 1:
             top = 10
-        bank_sorted = sorted(self.bank.items(), key=lambda x: x[1]["balance"], reverse=True)
+        bank_sorted = sorted(self.bank.get_server_accounts(server),
+         key=lambda x: x.balance, reverse=True)
         if len(bank_sorted) < top:
             top = len(bank_sorted)
         topten = bank_sorted[:top]
         highscore = ""
         place = 1
-        for id in topten:
+        for acc in topten:
             highscore += str(place).ljust(len(str(top))+1)
-            highscore += (id[1]["name"]+" ").ljust(23-len(str(id[1]["balance"])))
-            highscore += str(id[1]["balance"]) + "\n"
+            highscore += (acc.name+" ").ljust(23-len(str(acc.balance)))
+            highscore += str(acc.balance) + "\n"
             place += 1
         if highscore:
             if len(highscore) < 1985:
@@ -148,31 +325,69 @@ class Economy:
         else:
             await self.bot.say("There are no accounts in the bank.")
 
-    @commands.command(pass_context=True)
-    async def payouts(self, ctx):
+    @leaderboard.command(name="global")
+    async def _global_leaderboard(self, top : int=10):
+        """Prints out the global leaderboard
+
+        Defaults to top 10"""
+        if top < 1:
+            top = 10
+        bank_sorted = sorted(self.bank.get_all_accounts(),
+         key=lambda x: x.balance, reverse=True)
+        unique_accounts = []
+        for acc in bank_sorted:
+            if not self.already_in_list(unique_accounts, acc):
+                unique_accounts.append(acc)
+        if len(unique_accounts) < top:
+            top = len(unique_accounts)
+        topten = unique_accounts[:top]
+        highscore = ""
+        place = 1
+        for acc in topten:
+            highscore += str(place).ljust(len(str(top))+1)
+            highscore += ("{} |{}| ".format(acc.name, acc.server.name)).ljust(23-len(str(acc.balance)))
+            highscore += str(acc.balance) + "\n"
+            place += 1
+        if highscore:
+            if len(highscore) < 1985:
+                await self.bot.say("```py\n"+highscore+"```")
+            else:
+                await self.bot.say("The leaderboard is too big to be displayed. Try with a lower <top> parameter.")
+        else:
+            await self.bot.say("There are no accounts in the bank.")
+
+    def already_in_list(self, accounts, user):
+        for acc in accounts:
+            if user.id == acc.id:
+                return True
+        return False
+
+    @commands.command()
+    async def payouts(self):
         """Shows slot machine payouts"""
-        await self.bot.send_message(ctx.message.author, slot_payouts)
+        await self.bot.whisper(slot_payouts)
 
     @commands.command(pass_context=True, no_pm=True)
     async def slot(self, ctx, bid : int):
         """Play the slot machine"""
         author = ctx.message.author
-        if not self.account_check(author.id):
+        server = author.server
+        if not self.bank.account_exists(author):
             await self.bot.say("{} You need an account to use the slot machine. Type {}bank register to open one.".format(author.mention, ctx.prefix))
             return
-        if self.enough_money(author.id, bid):
-            if bid >= self.settings["SLOT_MIN"] and bid <= self.settings["SLOT_MAX"]:
+        if self.bank.can_spend(author, bid):
+            if bid >= self.settings[server.id]["SLOT_MIN"] and bid <= self.settings[server.id]["SLOT_MAX"]:
                 if author.id in self.slot_register:
-                    if abs(self.slot_register[author.id] - int(time.perf_counter()))  >= self.settings["SLOT_TIME"]:               
+                    if abs(self.slot_register[author.id] - int(time.perf_counter()))  >= self.settings[server.id]["SLOT_TIME"]:
                         self.slot_register[author.id] = int(time.perf_counter())
                         await self.slot_machine(ctx.message, bid)
                     else:
-                        await self.bot.say("Slot machine is still cooling off! Wait {} seconds between each pull".format(self.settings["SLOT_TIME"]))
+                        await self.bot.say("Slot machine is still cooling off! Wait {} seconds between each pull".format(self.settings[server.id]["SLOT_TIME"]))
                 else:
                     self.slot_register[author.id] = int(time.perf_counter())
                     await self.slot_machine(ctx.message, bid)
             else:
-                await self.bot.say("{0} Bid must be between {1} and {2}.".format(author.mention, self.settings["SLOT_MIN"], self.settings["SLOT_MAX"]))
+                await self.bot.say("{0} Bid must be between {1} and {2}.".format(author.mention, self.settings[server.id]["SLOT_MIN"], self.settings[server.id]["SLOT_MAX"]))
         else:
             await self.bot.say("{0} You need an account with enough funds to play the slot machine.".format(author.mention))
 
@@ -214,103 +429,65 @@ class Economy:
             await self.bot.send_message(message.channel, "{}{} Two symbols! Your bet is multiplied * 2! {}! ".format(display_reels, message.author.mention, str(bid)))
         else:
             await self.bot.send_message(message.channel, "{}{} Nothing! Lost bet. ".format(display_reels, message.author.mention))
-            self.withdraw_money(message.author.id, bid)
-            await self.bot.send_message(message.channel, "Credits left: {}".format(str(self.check_balance(message.author.id))))
+            self.bank.widthdraw_credits(message.author, bid)
+            await self.bot.send_message(message.channel, "Credits left: {}".format(self.bank.get_balance(message.author)))
             return True
-        self.add_money(message.author.id, bid)
-        await self.bot.send_message(message.channel, "Current credits: {}".format(str(self.check_balance(message.author.id))))
+        self.bank.deposit_credits(message.author, bid)
+        await self.bot.send_message(message.channel, "Current credits: {}".format(self.bank.get_balance(message.author)))
 
     @commands.group(pass_context=True, no_pm=True)
     @checks.admin_or_permissions(manage_server=True)
     async def economyset(self, ctx):
         """Changes economy module settings"""
+        server = ctx.message.server
+        settings = self.settings[server.id]
         if ctx.invoked_subcommand is None:
             msg = "```"
-            for k, v in self.settings.items():
-                msg += str(k) + ": " + str(v) + "\n"
-            msg += "\nType {}help economyset to see the list of commands.```".format(ctx.prefix)
+            for k, v in settings.items():
+                msg += "{}: {}\n".format(k, v)
+            msg += "```"
+            await send_cmd_help(ctx)
             await self.bot.say(msg)
 
-    @economyset.command()
-    async def slotmin(self, bid : int):
+    @economyset.command(pass_context=True)
+    async def slotmin(self, ctx, bid : int):
         """Minimum slot machine bid"""
-        self.settings["SLOT_MIN"] = bid
+        server = ctx.message.server
+        self.settings[server.id]["SLOT_MIN"] = bid
         await self.bot.say("Minimum bid is now " + str(bid) + " credits.")
         fileIO("data/economy/settings.json", "save", self.settings)
 
-    @economyset.command()
-    async def slotmax(self, bid : int):
+    @economyset.command(pass_context=True)
+    async def slotmax(self, ctx, bid : int):
         """Maximum slot machine bid"""
-        self.settings["SLOT_MAX"] = bid
+        server = ctx.message.server
+        self.settings[server.id]["SLOT_MAX"] = bid
         await self.bot.say("Maximum bid is now " + str(bid) + " credits.")
         fileIO("data/economy/settings.json", "save", self.settings)
-        
-    @economyset.command()
-    async def slottime(self, seconds : int):
+
+    @economyset.command(pass_context=True)
+    async def slottime(self, ctx, seconds : int):
         """Seconds between each slots use"""
-        self.settings["SLOT_TIME"] = seconds
+        server = ctx.message.server
+        self.settings[server.id]["SLOT_TIME"] = seconds
         await self.bot.say("Cooldown is now " + str(seconds) + " seconds.")
         fileIO("data/economy/settings.json", "save", self.settings)
 
-    @economyset.command()
-    async def paydaytime(self, seconds : int):
+    @economyset.command(pass_context=True)
+    async def paydaytime(self, ctx, seconds : int):
         """Seconds between each payday"""
-        self.settings["PAYDAY_TIME"] = seconds
+        server = ctx.message.server
+        self.settings[server.id]["PAYDAY_TIME"] = seconds
         await self.bot.say("Value modified. At least " + str(seconds) + " seconds must pass between each payday.")
         fileIO("data/economy/settings.json", "save", self.settings)
 
-    @economyset.command()
-    async def paydaycredits(self, credits : int):
+    @economyset.command(pass_context=True)
+    async def paydaycredits(self, ctx, credits : int):
         """Credits earned each payday"""
-        self.settings["PAYDAY_CREDITS"] = credits
+        server = ctx.message.server
+        self.settings[server.id]["PAYDAY_CREDITS"] = credits
         await self.bot.say("Every payday will now give " + str(credits) + " credits.")
         fileIO("data/economy/settings.json", "save", self.settings)
-
-    def account_check(self, id):
-        if id in self.bank:
-            return True
-        else:
-            return False
-
-    def check_balance(self, id):
-        if self.account_check(id):
-            return self.bank[id]["balance"]
-        else:
-            return False
-
-    def add_money(self, id, amount):
-        if self.account_check(id):
-            self.bank[id]["balance"] = self.bank[id]["balance"] + int(amount)
-            fileIO("data/economy/bank.json", "save", self.bank)
-        else:
-            return False
-
-    def withdraw_money(self, id, amount):
-        if self.account_check(id):
-            if self.bank[id]["balance"] >= int(amount):
-                self.bank[id]["balance"] = self.bank[id]["balance"] - int(amount)
-                fileIO("data/economy/bank.json", "save", self.bank)
-            else:
-                return False
-        else:
-            return False
-
-    def enough_money(self, id, amount):
-        if self.account_check(id):
-            if self.bank[id]["balance"] >= int(amount):
-                return True
-            else:
-                return False
-        else:
-            return False
-
-    def set_money(self, id, amount):
-        if self.account_check(id):
-            self.bank[id]["balance"] = amount
-            fileIO("data/economy/bank.json", "save", self.bank)
-            return True
-        else:
-            return False
 
     def display_time(self, seconds, granularity=2): # What would I ever do without stackoverflow?
         intervals = (                               # Source: http://stackoverflow.com/a/24542445
@@ -338,20 +515,11 @@ def check_folders():
         os.makedirs("data/economy")
 
 def check_files():
-    settings = {"PAYDAY_TIME" : 300, "PAYDAY_CREDITS" : 120, "SLOT_MIN" : 5, "SLOT_MAX" : 100, "SLOT_TIME" : 0}
 
     f = "data/economy/settings.json"
     if not fileIO(f, "check"):
         print("Creating default economy's settings.json...")
-        fileIO(f, "save", settings)
-    else: #consistency check
-        current = fileIO(f, "load")
-        if current.keys() != settings.keys():
-            for key in settings.keys():
-                if key not in current.keys():
-                    current[key] = settings[key]
-                    print("Adding " + str(key) + " field to economy settings.json")
-            fileIO(f, "save", current)
+        fileIO(f, "save", {})
 
     f = "data/economy/bank.json"
     if not fileIO(f, "check"):
@@ -362,7 +530,7 @@ def setup(bot):
     global logger
     check_folders()
     check_files()
-    logger = logging.getLogger("economy")
+    logger = logging.getLogger("red.economy")
     if logger.level == 0: # Prevents the logger from being loaded again in case of module reload
         logger.setLevel(logging.INFO)
         handler = logging.FileHandler(filename='data/economy/economy.log', encoding='utf-8', mode='a')
