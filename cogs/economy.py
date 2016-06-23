@@ -23,19 +23,22 @@ slot_payouts = """Slot machine payouts:
     Three symbols: +500
     Two symbols: Bet * 2"""
 
-class AccountAlreadyExists(Exception):
+class BankError(Exception):
     pass
 
-class NoAccount(Exception):
+class AccountAlreadyExists(BankError):
     pass
 
-class InsufficientBalance(Exception):
+class NoAccount(BankError):
     pass
 
-class NegativeValue(Exception):
+class InsufficientBalance(BankError):
     pass
 
-class SameSenderAndReceiver(Exception):
+class NegativeValue(BankError):
+    pass
+
+class SameSenderAndReceiver(BankError):
     pass
 
 class Bank:
