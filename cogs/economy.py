@@ -71,7 +71,7 @@ class Bank:
             return False
         return True
 
-    def widthdraw_credits(self, user, amount):
+    def withdraw_credits(self, user, amount):
         server = user.server
 
         if amount < 0:
@@ -113,7 +113,7 @@ class Bank:
             sender_acc = self._get_account(sender)
             if sender_acc["balance"] < amount:
                 raise InsufficientBalance
-            self.widthdraw_credits(sender, amount)
+            self.withdraw_credits(sender, amount)
             self.deposit_credits(receiver, amount)
         else:
             raise NoAccount
@@ -432,7 +432,7 @@ class Economy:
             await self.bot.send_message(message.channel, "{}{} Two symbols! Your bet is multiplied * 2! {}! ".format(display_reels, message.author.mention, str(bid)))
         else:
             await self.bot.send_message(message.channel, "{}{} Nothing! Lost bet. ".format(display_reels, message.author.mention))
-            self.bank.widthdraw_credits(message.author, bid)
+            self.bank.withdraw_credits(message.author, bid)
             await self.bot.send_message(message.channel, "Credits left: {}".format(self.bank.get_balance(message.author)))
             return True
         self.bank.deposit_credits(message.author, bid)
