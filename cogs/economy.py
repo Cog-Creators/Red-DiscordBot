@@ -103,7 +103,7 @@ class Bank:
         self.accounts[server.id][user.id] = account
         self._save_bank()
 
-    def transfer_money(self, sender, receiver, amount):
+    def transfer_credits(self, sender, receiver, amount):
         server = sender.server
         if amount < 0:
             raise NegativeValue
@@ -243,14 +243,14 @@ class Economy:
         """Transfer credits to other users"""
         author = ctx.message.author
         try:
-            self.bank.transfer_money(author, user, sum)
+            self.bank.transfer_credits(author, user, sum)
             logger.info("{}({}) transferred {} credits to {}({})".format(
                 author.name, author.id, sum, user.name, user.id))
             await self.bot.say("{} credits have been transferred to {}'s account.".format(sum, user.name))
         except NegativeValue:
             await self.bot.say("You need to transfer at least 1 credit.")
         except SameSenderAndReceiver:
-            await self.bot.say("You can't transfer money to yourself.")
+            await self.bot.say("You can't transfer credits to yourself.")
         except InsufficientBalance:
             await self.bot.say("You don't have that sum in your bank account.")
         except NoAccount:
@@ -259,7 +259,7 @@ class Economy:
     @_bank.command(name="set", pass_context=True)
     @checks.admin_or_permissions(manage_server=True)
     async def _set(self, ctx, user : discord.Member, sum : int):
-        """Sets money of user's bank account
+        """Sets credits of user's bank account
 
         Admin/owner restricted."""
         author = ctx.message.author
