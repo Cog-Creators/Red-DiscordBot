@@ -170,8 +170,8 @@ class Bank:
         account["member"] = account["server"].get_member(account["id"])
         account["created_at"] = datetime.strptime(account["created_at"],
                                                   "%Y-%m-%d %H:%M:%S")
-        Account = namedtuple("Account", "id name "
-                             "balance created_at server")
+        Account = namedtuple("Account", "id name balance "
+                             "created_at server member")
         return Account(**account)
 
     def _save_bank(self):
