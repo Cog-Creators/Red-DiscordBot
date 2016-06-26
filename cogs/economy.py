@@ -42,8 +42,8 @@ class SameSenderAndReceiver(BankError):
     pass
 
 class Bank:
-    def __init__(self, bot):
-        self.accounts = dataIO.load_json("data/economy/bank.json")
+    def __init__(self, bot, file_path):
+        self.accounts = dataIO.load_json(file_path)
         self.bot = bot
 
     def create_account(self, user):
@@ -167,14 +167,12 @@ class Bank:
         return self._create_account_obj(acc)
 
     def _create_account_obj(self, account):
+        account["member"] = account["server"].get_member(account["id"])
+        account["created_at"] = datetime.strptime(account["created_at"],
+                                                  "%Y-%m-%d %H:%M:%S")
         Account = namedtuple("Account", "id name "
-        "balance created_at server")
-        return Account(
-            id = account["id"],
-            name = account["name"],
-            balance = account["balance"],
-            created_at = datetime.strptime(account["created_at"], "%Y-%m-%d %H:%M:%S"),
-            server = account["server"])
+                             "balance created_at server")
+        return Account(**account)
 
     def _save_bank(self):
         dataIO.save_json("data/economy/bank.json", self.accounts)
@@ -194,7 +192,7 @@ class Economy:
     def __init__(self, bot):
         global default_settings
         self.bot = bot
-        self.bank = Bank(bot)
+        self.bank = Bank(bot, "data/economy/bank.json")
         self.settings = fileIO("data/economy/settings.json", "load")
         if "PAYDAY_TIME" in self.settings: #old format
             default_settings = self.settings
