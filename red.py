@@ -369,8 +369,8 @@ def main():
         owner_cog.owner.hidden = True  # Hides the set owner command from help
     print("-- Logging in.. --")
     print("Make sure to keep your bot updated by using: git pull")
-    print("and: pip3 install --upgrade git+https://github.com/Rapptz/"
-          "discord.py@async")
+    print("and: pip3 install -U git+https://github.com/Rapptz/"
+          "discord.py@master#egg=discord.py[voice]")
     if settings.login_type == "token":
         owner_cog._token.hidden = True
         try:
