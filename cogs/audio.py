@@ -971,7 +971,8 @@ class Audio:
         else:
             await self.bot.say("Volume must be between 0 and 100.")
 
-    @audioset.command(pass_context=True, name="vote", no_pm=True)
+    @audioset.command(pass_context=True, name="vote", no_pm=True,
+                      hidden=True, enabled=False)
     @checks.mod_or_permissions(manage_messages=True)
     async def audioset_vote(self, ctx, percent: int):
         """Percentage needed for the masses to skip songs."""
