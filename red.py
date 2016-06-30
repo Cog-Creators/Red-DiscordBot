@@ -316,7 +316,10 @@ def load_cogs():
         if extension.lower() == "cogs.owner":
             continue
         in_reg = extension in registry
-        if not (in_reg or no_prompt):
+        if in_reg is False:
+            if no_prompt is True:
+                registry[extension] = False
+                continue
             print("\nNew extension: {}".format(extension))
             print("Load it?(y/n)")
             if not get_answer():
