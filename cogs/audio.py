@@ -895,7 +895,6 @@ class Audio:
 
         if hasattr(voice_client, 'audio_player'):
             voice_client.audio_player.stop()
-            del voice_client.audio_player
 
     def _valid_playlist_name(self, name):
         for l in name:
