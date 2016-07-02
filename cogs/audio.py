@@ -1609,18 +1609,33 @@ class Audio:
     async def song(self, ctx):
         """Info about the current song."""
         server = ctx.message.server
-        if self.is_playing(server):
-            song = self.queue[server.id]["NOW_PLAYING"]
-            if song:
-                msg = ("\n**Title:** {}\n**Author:** {}\n**Uploader:** {}\n"
-                       "**Views:** {}\n\n<{}>".format(
-                           song.title, song.creator, song.uploader,
-                           song.view_count, song.webpage_url))
-                await self.bot.say(msg.replace("**Author:** None\n", ""))
+        if not self.is_playing(server):
+            await self.bot.say("I'm not playing on this server.")
+            return
+
+        song = self._get_queue_nowplaying(server)
+        if song:
+            if not hasattr(song, 'creator'):
+                song.creator = None
+            if not hasattr(song, 'view_count'):
+                song.view_count = None
+            if not hasattr(song, 'uploader'):
+                song.uploader = None
+            if hasattr(song, 'duration'):
+                m, s = divmod(song.duration, 60)
+                dur = "{:.0f}:{:.0f}".format(m, s)
             else:
-                await self.bot.say("I don't know what this song is either.")
+                dur = None
+            msg = ("\n**Title:** {}\n**Author:** {}\n**Uploader:** {}\n"
+                   "**Views:** {}\n**Duration:** {}\n\n<{}>".format(
+                       song.title, song.creator, song.uploader,
+                       song.view_count, dur, song.webpage_url))
+            await self.bot.say(msg.replace("**Author:** None\n", "")
+                                  .replace("**Views:** None\n", "")
+                                  .replace("**Uploader:** None\n", "")
+                                  .replace("**Duration:** None\n", ""))
         else:
-            await self.bot.say("I'm not playing anything on this server.")
+            await self.bot.say("Darude - Sandstorm.")
 
     @commands.command(pass_context=True)
     async def stop(self, ctx):
