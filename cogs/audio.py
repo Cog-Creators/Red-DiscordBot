@@ -1779,6 +1779,16 @@ class Audio:
                 log.debug("calling _play on the normal queue")
                 try:
                     song = await self._play(sid, url)
+                    channel = discord.utils.get(server.channels, name='music')
+                    if channel != None:
+                        if song.title != None:
+                            msg = ("**Now Playing:**\n**Title:** {}\n**Author:** {}\n**Uploader:** {}\n"
+                                   "**Views:** {}\n\n<{}>".format(
+                                       song.title, song.creator, song.uploader,
+                                       song.view_count, song.webpage_url))
+                            await self.bot.send_message(channel, msg.replace("**Author:** None\n", ""))   ####################
+                        else:
+                            await self.bot.send_message(channel, "Playing unknown song")
                 except MaximumLength:
                     return
                 if repeat and last_song:
