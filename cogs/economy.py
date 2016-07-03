@@ -62,7 +62,7 @@ class Bank:
             self._save_bank()
             return self.get_account(user)
         else:
-            raise AccountAlreadyExists
+            raise AccountAlreadyExists()
 
     def account_exists(self, user):
         try:
@@ -75,7 +75,7 @@ class Bank:
         server = user.server
 
         if amount < 0:
-            raise NegativeValue
+            raise NegativeValue()
 
         account = self._get_account(user)
         if account["balance"] >= amount:
@@ -83,12 +83,12 @@ class Bank:
             self.accounts[server.id][user.id] = account
             self._save_bank()
         else:
-            raise InsufficientBalance
+            raise InsufficientBalance()
 
     def deposit_credits(self, user, amount):
         server = user.server
         if amount < 0:
-            raise NegativeValue
+            raise NegativeValue()
         account = self._get_account(user)
         account["balance"] += amount
         self.accounts[server.id][user.id] = account
@@ -97,7 +97,7 @@ class Bank:
     def set_credits(self, user, amount):
         server = user.server
         if amount < 0:
-            raise NegativeValue
+            raise NegativeValue()
         account = self._get_account(user)
         account["balance"] = amount
         self.accounts[server.id][user.id] = account
@@ -106,17 +106,17 @@ class Bank:
     def transfer_credits(self, sender, receiver, amount):
         server = sender.server
         if amount < 0:
-            raise NegativeValue
+            raise NegativeValue()
         if sender is receiver:
-            raise SameSenderAndReceiver
+            raise SameSenderAndReceiver()
         if self.account_exists(sender) and self.account_exists(receiver):
             sender_acc = self._get_account(sender)
             if sender_acc["balance"] < amount:
-                raise InsufficientBalance
+                raise InsufficientBalance()
             self.withdraw_credits(sender, amount)
             self.deposit_credits(receiver, amount)
         else:
-            raise NoAccount
+            raise NoAccount()
 
     def can_spend(self, user, amount):
         account = self._get_account(user)
@@ -182,7 +182,7 @@ class Bank:
         try:
             return deepcopy(self.accounts[server.id][user.id])
         except KeyError:
-            raise NoAccount
+            raise NoAccount()
 
 class Economy:
     """Economy
