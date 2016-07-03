@@ -107,7 +107,7 @@ class Bank:
         server = sender.server
         if amount < 0:
             raise NegativeValue
-        if sender.id == receiver.id:
+        if sender is receiver:
             raise SameSenderAndReceiver
         if self.account_exists(sender) and self.account_exists(receiver):
             sender_acc = self._get_account(sender)
