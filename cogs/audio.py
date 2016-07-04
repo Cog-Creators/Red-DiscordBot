@@ -1165,7 +1165,7 @@ class Audio:
 
     @commands.command(pass_context=True, no_pm=True)
     async def pause(self, ctx):
-        """Pauses the current song, `!resume` to continue."""
+        """Pauses the current song, `[p]resume` to continue."""
         server = ctx.message.server
         if not self.voice_connected(server):
             await self.bot.say("Not voice connected in this server.")
@@ -1435,7 +1435,7 @@ class Audio:
 
     @commands.command(pass_context=True, no_pm=True, name="queue")
     async def _queue(self, ctx, *, url=None):
-        """Queues a song to play next. Extended functionality in `!help`
+        """Queues a song to play next. Extended functionality in `[p]help`
 
         If you use `queue` when one song is playing, your new song will get
             added to the song loop (if running). If you use `queue` when a
@@ -1531,7 +1531,7 @@ class Audio:
                 else:
                     msg = "The queue is currently not looping."
                 await self.bot.say(msg)
-                await self.bot.say("Do `!repeat toggle` to change this.")
+                await self.bot.say("Do `{}repeat toggle` to change this.".format(ctx.prefix))
             else:
                 await self.bot.say("Play something to see this setting.")
 
