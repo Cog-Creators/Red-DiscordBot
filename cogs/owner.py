@@ -312,7 +312,7 @@ class Owner:
             settings.email = token
             settings.password = ""
             await self.bot.say("Token set. Restart me.")
-            log.debug("Just converted to a bot account.")
+            log.debug("Token changed.")
 
     @commands.command()
     @checks.is_owner()

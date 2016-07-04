@@ -375,7 +375,6 @@ def main():
     print("and: pip3 install -U git+https://github.com/Rapptz/"
           "discord.py@master#egg=discord.py[voice]")
     if settings.login_type == "token":
-        owner_cog._token.hidden = True
         try:
             yield from bot.login(settings.email)
         except TypeError as e:
