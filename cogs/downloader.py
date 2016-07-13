@@ -320,9 +320,11 @@ class Downloader:
         if not os.path.exists("data/downloader/" + name):
             print("Downloading cogs repo...")
             url = self.repos[name]['url']
+            print('Folder: {}'.format(name))
             # It's blocking but it shouldn't matter
             call(["git", "clone", url, "data/downloader/" + name])
         else:
+            print('Folder: {}'.format(name))
             Popen(["git", "-C", "data/downloader/" + name, "stash", "-q"])
             Popen(["git", "-C", "data/downloader/" + name, "pull", "-q"])
 
