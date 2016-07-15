@@ -314,11 +314,33 @@ class Owner:
             await self.bot.say("Token set. Restart me.")
             log.debug("Token changed.")
 
-    @commands.command()
+    @commands.group(pass_context=True)
     @checks.is_owner()
-    async def shutdown(self):
+    async def shutdown(self, ctx):
         """Shuts down Red"""
-        await self.bot.logout()
+        if ctx.invoked_subcommand is None:
+            if settings.sd_msg_toggle == "false":
+                await self.bot.logout()
+            elif settings.sd_msg_toggle == "true":
+                await self.bot.say(settings.sd_msg)
+                await self.bot.logout()
+
+    @shutdown.command()
+    async def toggle(self, toggle):
+        """Toggles shutdown message"""
+        if toggle.lower() == "on":
+            settings.sd_msg_toggle = "true"
+            await self.bot.say("Shutdown message toggle set to ON(it will show the message)")
+        elif toggle.lower() == "off":
+            settings.sd_msg_toggle = "false"
+            await self.bot.say("Shutdown message toggle set to OFF(it will not show the message)")
+
+    @shutdown.command()
+    async def message(self, *, msg):
+        """Changes shutdown message"""
+        settings.sd_msg = msg
+        await self.bot.say("Shutdown message set to: {}".format(settings.sd_msg))
+
 
     @commands.group(name="command", pass_context=True)
     @checks.is_owner()
