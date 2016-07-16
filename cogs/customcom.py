@@ -2,8 +2,10 @@ import discord
 from discord.ext import commands
 from .utils.dataIO import fileIO
 from .utils import checks
+from string import ascii_letters
 from __main__ import user_allowed, send_cmd_help
 import os
+import re
 
 class CustomCommands:
     """Custom commands."""
@@ -118,15 +120,56 @@ class CustomCommands:
             cmdlist = self.c_commands[server.id]
             cmd = msg[len(prefix):]
             if cmd in cmdlist.keys():
-                await self.bot.send_message(message.channel, cmdlist[cmd])
+                cmd = cmdlist[cmd]
+                cmd = self.format_cc(cmd, message)
+                await self.bot.send_message(message.channel, cmd)
             elif cmd.lower() in cmdlist.keys():
-                await self.bot.send_message(message.channel, cmdlist[cmd.lower()])
+                cmd = cmdlist[cmd.lower()]
+                cmd = self.format_cc(cmd, message)
+                await self.bot.send_message(message.channel, cmd)
 
     def get_prefix(self, msg):
         for p in self.bot.command_prefix:
             if msg.startswith(p):
                 return p
         return False
+
+    def format_cc(self, command, message):
+        regexp = "/\{([^}]+)\}/g"
+        results = re.findall(regexp, command)
+        for result in results:
+            param = self.transform_parameter(result, message)
+            command = command.replace(result, param)
+        return command
+
+    def transform_parameter(self, result, message):
+        """
+        This should be bomb proof. I eval only the base object, and only
+        if it's present in the allowed list. Only one depth level is allowed.
+        Only letters and dots are allowed.
+        """
+        raw_result = result
+        result = result.replace("{", "").replace("}", "")
+        author = message.author
+        channel = message.channel
+        server = author.server
+        valid_chars = ascii_letters + "."
+        allowed = ("message", "author", "server", "channel")
+        for char in result:
+            if char not in valid_chars:
+                return raw_result
+        if result in allowed:
+            return str(eval(result))
+        try:
+            first, second = result.split(".")
+        except ValueError:
+            return raw_result
+        if first in allowed:
+            first = eval(first)
+        else:
+            return raw_result
+        return str(getattr(first, second, raw_result))
+
 
 def check_folders():
     if not os.path.exists("data/customcom"):
