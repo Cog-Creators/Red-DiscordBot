@@ -135,11 +135,10 @@ class CustomCommands:
         return False
 
     def format_cc(self, command, message):
-        regexp = "/\{([^}]+)\}/g"
-        results = re.findall(regexp, command)
+        results = re.findall("\{([^}]+)\}", command)
         for result in results:
             param = self.transform_parameter(result, message)
-            command = command.replace(result, param)
+            command = command.replace("{" + result + "}", param)
         return command
 
     def transform_parameter(self, result, message):
@@ -148,8 +147,7 @@ class CustomCommands:
         if it's present in the allowed list. Only one depth level is allowed.
         Only letters and dots are allowed.
         """
-        raw_result = result
-        result = result.replace("{", "").replace("}", "")
+        raw_result = "{" + result + "}"
         author = message.author
         channel = message.channel
         server = author.server
