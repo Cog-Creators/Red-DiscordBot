@@ -225,10 +225,10 @@ class General:
         await self.bot.say(msg)    
         
     @commands.command()
-    async def urban(self, *, search_terms : str, definition_number : int=1): 
-        """Urban Dictionary search 
- 
-        Definition number must be between 1 and 10""" 
+    async def urban(self, *, search_terms : str, definition_number : int=1):
+        """Urban Dictionary search
+        
+        Definition number must be between 1 and 10"""
         # definition_number is just there to show up in the help
         # all this mess is to avoid forcing double quotes on the user
         search_terms = search_terms.split(" ")
