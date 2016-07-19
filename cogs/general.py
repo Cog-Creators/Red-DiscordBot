@@ -135,8 +135,8 @@ class General:
     @commands.command()
     async def lmgtfy(self, *, search_terms : str):
         """Creates a lmgtfy link"""
-        search_terms = escape_mass_mentions(search_terms.replace(" ", "+"))
-        await self.bot.say("http://lmgtfy.com/?q={}".format(search_terms))
+        search_terms = escape_mass_mentions(search_terms.replace(" ", "+")) 
+        await self.bot.say("http://lmgtfy.com/?q={}".format(search_terms)) 
 
     @commands.command(no_pm=True, hidden=True)
     async def hug(self, user : discord.Member, intensity : int=1):
@@ -166,12 +166,19 @@ class General:
         if not roles: roles = ["None"]
         data = "```python\n"
         data += "Name: {}\n".format(escape_mass_mentions(str(user)))
-        data += "ID: {}\n".format(user.id)
+        data += "Nickname: {}\n".format(escape_mass_mentions(str(user.nick)))
+        data += "ID: {}\n\n".format(user.id)
+        data += "Status: {}\n".format(user.status)
+        if user.game.url is None:
+            data += "Playing: {}\n\n".format(user.game)
+        else:
+            data += "Streaming: {} (<{}>)\n\n".format(user.game, user.game.url)
         passed = (ctx.message.timestamp - user.created_at).days
         data += "Created: {} ({} days ago)\n".format(user.created_at, passed)
         passed = (ctx.message.timestamp - user.joined_at).days
-        data += "Joined: {} ({} days ago)\n".format(user.joined_at, passed)
+        data += "Joined: {} ({} days ago)\n\n".format(user.joined_at, passed)
         data += "Roles: {}\n".format(", ".join(roles))
+        data += "Color: {}\n".format(user.color)
         data += "Avatar: {}\n".format(user.avatar_url)
         data += "```"
         await self.bot.say(data)
@@ -200,43 +207,61 @@ class General:
         data += "```"
         await self.bot.say(data)
 
+    @commands.command(pass_context=True)
+    async def users(self, ctx):
+        """Current total user count"""
+        server = ctx.message.server
+        user = set(self.bot.get_all_members())
+        online = str(len([m.status for m in user if str(m.status) == "online"]))
+        idle = str(len([m.status for m in user if str(m.status) == "idle"]))
+        offline = str(len([m.status for m in user if str(m.status) == "offline"]))
+        users = str(len(user))
+        msg = "```xl\n"
+        msg += self.bot.user.name + " is serving " + users + " users in total.\n\n"
+        msg += "Online: " + online
+        msg += "\nIdle: " + idle
+        msg += "\nOffline: " + offline
+        msg += "\n```"
+        await self.bot.say(msg)    
+        
     @commands.command()
-    async def urban(self, *, search_terms : str, definition_number : int=1):
-        """Urban Dictionary search
-
-        Definition number must be between 1 and 10"""
-        # definition_number is just there to show up in the help
-        # all this mess is to avoid forcing double quotes on the user
+    async def urban(self, *, search_terms : str, definition_number : int=1): 
+        """Urban Dictionary search 
+ 
+        Definition number must be between 1 and 10""" 
+        # definition_number is just there to show up in the help 
+        # all this mess is to avoid forcing double quotes on the user 
+        """Urban Dictionary search"""
         search_terms = search_terms.split(" ")
-        try:
-            if len(search_terms) > 1:
-                pos = int(search_terms[-1]) - 1
-                search_terms = search_terms[:-1]
-            else:
-                pos = 0
-            if pos not in range(0, 11): # API only provides the
-                pos = 0                 # top 10 definitions
-        except ValueError:
-            pos = 0
+        try: 
+            if len(search_terms) > 1: 
+                pos = int(search_terms[-1]) - 1 
+                search_terms = search_terms[:-1] 
+            else: 
+                pos = 0 
+            if pos not in range(0, 11): # API only provides the 
+                pos = 0                 # top 10 definitions 
+        except ValueError: 
+            pos = 0 
         search_terms = "+".join(search_terms)
-        url = "http://api.urbandictionary.com/v0/define?term=" + search_terms
+        url = "http://api.urbandictionary.com/v0/define?term=" + search_terms 
         try:
             async with aiohttp.get(url) as r:
                 result = await r.json()
-            if result["list"]:
-                definition = result['list'][pos]['definition']
-                example = result['list'][pos]['example']
-                defs = len(result['list'])
-                msg = ("**Definition #{} out of {}:\n**{}\n\n"
-                       "**Example:\n**{}".format(pos+1, defs, definition,
-                                                 example))
-                msg = pagify(msg, ["\n"])
-                for page in msg:
+            if result["list"]: 
+                definition = result['list'][pos]['definition'] 
+                example = result['list'][pos]['example'] 
+                defs = len(result['list']) 
+                msg = ("**Definition #{} out of {}:\n**{}\n\n" 
+                       "**Example:\n**{}".format(pos+1, defs, definition, 
+                                                 example)) 
+                msg = pagify(msg, ["\n"]) 
+                for page in msg: 
                     await self.bot.say(page)
             else:
                 await self.bot.say("Your search terms gave no results.")
-        except IndexError:
-            await self.bot.say("There is no definition #{}".format(pos+1))
+        except IndexError: 
+            await self.bot.say("There is no definition #{}".format(pos+1)) 
         except:
             await self.bot.say("Error.")
 
