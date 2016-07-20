@@ -169,10 +169,13 @@ class General:
         data += "Nickname: {}\n".format(escape_mass_mentions(str(user.nick)))
         data += "ID: {}\n\n".format(user.id)
         data += "Status: {}\n".format(user.status)
-        if user.game.url is None:
-            data += "Playing: {}\n\n".format(user.game)
+        if user.game is None:
+            data += "Playing: Nothing\n\n"
         else:
-            data += "Streaming: {} (<{}>)\n\n".format(user.game, user.game.url)
+            if user.game.url is None:
+                data += "Playing: {}\n\n".format(user.game)
+            else:
+                data += "Streaming: {} (<{}>)\n\n".format(user.game, user.game.url)
         passed = (ctx.message.timestamp - user.created_at).days
         data += "Created: {} ({} days ago)\n".format(user.created_at, passed)
         passed = (ctx.message.timestamp - user.joined_at).days
