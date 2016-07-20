@@ -171,11 +171,10 @@ class General:
         data += "Status: {}\n".format(user.status)
         if user.game is None:
             data += "Playing: Nothing\n\n"
+        elif user.game.url is None:
+            data += "Playing: {}\n\n".format(user.game)
         else:
-            if user.game.url is None:
-                data += "Playing: {}\n\n".format(user.game)
-            else:
-                data += "Streaming: {} (<{}>)\n\n".format(user.game, user.game.url)
+            data += "Streaming: {} (<{}>)\n\n".format(user.game, user.game.url)
         passed = (ctx.message.timestamp - user.created_at).days
         data += "Created: {} ({} days ago)\n".format(user.created_at, passed)
         passed = (ctx.message.timestamp - user.joined_at).days
