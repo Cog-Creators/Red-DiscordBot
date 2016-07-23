@@ -37,11 +37,13 @@ from cogs.utils import checks
 
 @bot.event
 async def on_ready():
-    users = str(len(set(bot.get_all_members())))
-    servers = str(len(bot.servers))
-    channels = str(len([c for c in bot.get_all_channels()]))
-    if not "uptime" in dir(bot): #prevents reset in case of reconnection
+    users = len(set(bot.get_all_members()))
+    servers = len(bot.servers)
+    channels = len([c for c in bot.get_all_channels()])
+    if not hasattr(bot, "uptime"):
         bot.uptime = int(time.perf_counter())
+    if settings.login_type == "token" and settings.owner == "id_here":
+        await set_bot_owner()
     print('------')
     print("{} is now online.".format(bot.user.name))
     print('------')
@@ -150,6 +152,15 @@ async def get_oauth_url():
         return "Your discord.py is outdated. Couldn't retrieve invite link."
     return discord.utils.oauth_url(data.id)
 
+async def set_bot_owner():
+    try:
+        data = await bot.application_info()
+        settings.owner = data.owner.id
+    except AttributeError:
+        print("Your discord.py is outdated. Couldn't retrieve owner's ID.")
+        return
+    print("{} has been recognized and set as owner.".format(data.owner.name))
+
 
 def check_folders():
     folders = ("data", "data/red", "cogs", "cogs/utils")
@@ -196,17 +207,19 @@ def check_configs():
             confirmation = get_answer()
 
         settings.prefixes = [new_prefix]
-
-        print("\nOnce you're done with the configuration, you will have to type "
-              "'{}set owner' *in Discord's chat*\nto set yourself as owner.\n"
-              "Press enter to continue".format(new_prefix))
-        settings.owner = input("") # Shh, they will never know it's here
-        if settings.owner == "":
-            settings.owner = "id_here"
-        if not settings.owner.isdigit() or len(settings.owner) < 17:
-            if settings.owner != "id_here":
-                print("\nERROR: What you entered is not a valid ID. Set "
-                      "yourself as owner later with {}set owner".format(new_prefix))
+        if settings.login_type == "email":
+            print("\nOnce you're done with the configuration, you will have to type "
+                  "'{}set owner' *in Discord's chat*\nto set yourself as owner.\n"
+                  "Press enter to continue".format(new_prefix))
+            settings.owner = input("") # Shh, they will never know it's here
+            if settings.owner == "":
+                settings.owner = "id_here"
+            if not settings.owner.isdigit() or len(settings.owner) < 17:
+                if settings.owner != "id_here":
+                    print("\nERROR: What you entered is not a valid ID. Set "
+                          "yourself as owner later with {}set owner".format(new_prefix))
+                settings.owner = "id_here"
+        else:
             settings.owner = "id_here"
 
         print("\nInput the admin role's name. Anyone with this role in Discord will be "
@@ -365,7 +378,7 @@ def main():
             print("Use !set prefix to set it.")
         else:
             print("Once you're owner use !set prefix to set it.")
-    if settings.owner == "id_here":
+    if settings.owner == "id_here" and settings.login_type == "email":
         print("Owner has not been set yet. Do '{}set owner' in chat to set "
               "yourself as owner.".format(bot.command_prefix[0]))
     else:
