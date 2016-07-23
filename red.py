@@ -37,6 +37,8 @@ from cogs.utils import checks
 
 @bot.event
 async def on_ready():
+    owner_cog = bot.get_cog('Owner')
+    total_cogs = len(owner_cog._list_cogs())
     users = len(set(bot.get_all_members()))
     servers = len(bot.servers)
     channels = len([c for c in bot.get_all_channels()])
@@ -51,8 +53,10 @@ async def on_ready():
     print("{} servers".format(servers))
     print("{} channels".format(channels))
     print("{} users".format(users))
-    print("\n{0} active cogs with {1} commands\n".format(
-        len(bot.cogs), len(bot.commands)))
+    print("\n{}/{} active cogs with {} commands".format(
+        len(bot.cogs), total_cogs, len(bot.commands)))
+    prefix_label = "Prefixes:" if len(bot.command_prefix) > 1 else "Prefix:"
+    print("{} {}\n".format(prefix_label, " ".join(bot.command_prefix)))
     if settings.login_type == "token":
         print("------")
         print("Use this url to bring your bot to a server:")
