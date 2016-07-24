@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 from .utils.dataIO import fileIO
 from .utils import checks
-from string import ascii_letters
 from __main__ import user_allowed, send_cmd_help
 import os
 import re
@@ -143,27 +142,24 @@ class CustomCommands:
 
     def transform_parameter(self, result, message):
         """
-        This should be bomb proof. I eval only the base object, and only
-        if it's present in the allowed list. Only one depth level is allowed.
-        Only letters and dots are allowed.
+        For security reasons only specific objects are allowed
+        Internals are ignored
         """
         raw_result = "{" + result + "}"
-        author = message.author
-        channel = message.channel
-        server = author.server
-        valid_chars = ascii_letters + "."
-        allowed = ("message", "author", "server", "channel")
-        for char in result:
-            if char not in valid_chars:
-                return raw_result
-        if result in allowed:
-            return str(eval(result))
+        objects = {
+            "message" : message,
+            "author"  : message.author,
+            "channel" : message.channel,
+            "server"  : message.server
+        }
+        if result in objects:
+            return str(objects[result])
         try:
             first, second = result.split(".")
         except ValueError:
             return raw_result
-        if first in allowed:
-            first = eval(first)
+        if first in objects and not second.startswith("_"):
+            first = objects[first]
         else:
             return raw_result
         return str(getattr(first, second, raw_result))
