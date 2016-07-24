@@ -1348,7 +1348,7 @@ class Audio:
             msg += "```"
             await self.bot.say("Available playlists:\n{}".format(msg))
         else:
-            await self.bot.says("There are no playlists.")
+            await self.bot.say("There are no playlists.")
 
     @playlist.command(pass_context=True, no_pm=True, name="queue")
     async def playlist_queue(self, ctx, url):
