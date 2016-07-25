@@ -8,7 +8,7 @@ class Settings:
     def __init__(self,path=default_path):
         self.path = path
         self.check_folders()
-        self.default_settings = {"EMAIL" : "EmailHere", "PASSWORD" : "", "OWNER" : "id_here", "PREFIXES" : [], "default":{"ADMIN_ROLE" : "Transistor", "MOD_ROLE" : "Process"}, "LOGIN_TYPE" : "email"}
+        self.default_settings = {"EMAIL" : "EmailHere", "PASSWORD" : "", "OWNER" : "id_here", "PREFIXES" : [], "default":{"ADMIN_ROLE" : "Transistor", "MOD_ROLE" : "Process"}, "LOGIN_TYPE" : "email", "shutdown_message" : "See you soon.", "shutdown_message_toggle" : "false"}
         if not fileIO(self.path,"check"):
             self.bot_settings = self.default_settings
             self.save_settings()
@@ -165,3 +165,21 @@ class Settings:
     def add_server(self,sid):
         self.bot_settings[sid] = self.bot_settings["default"].copy()
         self.save_settings()
+
+    @property
+    def sd_msg_toggle(self):
+        return self.bot_settings["shutdown_message_toggle"]
+
+    @sd_msg_toggle.setter
+    def sd_msg_toggle(self,value):
+                self.bot_settings["shutdown_message_toggle"] = value
+                self.save_settings()
+
+    @property
+    def sd_msg(self):
+        return self.bot_settings["shutdown_message"]
+
+    @sd_msg.setter
+    def sd_msg(self,value):
+                self.bot_settings["shutdown_message"] = value
+                self.save_settings()
