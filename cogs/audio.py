@@ -1277,6 +1277,29 @@ class Audio:
         if ctx.invoked_subcommand is None:
             await send_cmd_help(ctx)
 
+    @playlist.command(pass_context=True, no_pm=True, name="create")
+    async def playlist_create(self, ctx, name):
+        """Creates an empty playlist"""
+        server = ctx.message.server
+        author = ctx.message.author
+        if not self._valid_playlist_name(name) or len(name) > 25:
+            await self.bot.say("That playlist name is invalid. It must only"
+                               " contain alpha-numeric characters or _.")
+            return
+
+        # Returns a Playlist object
+        url = None
+        songlist = []
+        playlist = self._make_playlist(author, url, songlist)
+
+        playlist.name = name
+        playlist.server = server
+
+        self._save_playlist(server, name, playlist)
+        await self.bot.say("Empty playlist '{}' saved.".format(name))
+
+
+
     @playlist.command(pass_context=True, no_pm=True, name="add")
     async def playlist_add(self, ctx, name, url):
         """Add a YouTube or Soundcloud playlist."""
