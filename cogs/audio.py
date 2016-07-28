@@ -461,7 +461,7 @@ class Audio:
 
     # TODO: _enable_controls()
 
-    # returns list of active voice channels 
+    # returns list of active voice channels
     # assuming list does not change during the execution of this function
     # if that happens, blame asyncio.
     def _get_active_voice_clients(self):
@@ -1876,6 +1876,19 @@ class Audio:
                 vc.audio_player.resume()
 
 
+def check_ffmpeg():
+    """Windows only"""
+    files = ("ffmpeg.exe", "ffplay.exe", "ffprobe.exe")
+    if os.name == "nt":
+        if "ffmpeg" in os.environ['PATH']:
+            return True
+        elif all([os.path.isfile(f) for f in files]):
+            return True
+        else:
+            return False
+    return True
+
+
 def check_folders():
     folders = ("data/audio", "data/audio/cache", "data/audio/playlists",
                "data/audio/localtracks", "data/audio/sfx")
@@ -1907,6 +1920,8 @@ def check_files():
 
 
 def setup(bot):
+    support_page = "https://twentysix26.github.io/Red-Docs/"\
+                   "red_guide_troubleshooting/#installation-issues"
     check_folders()
     check_files()
     if youtube_dl is None:
@@ -1925,6 +1940,9 @@ def setup(bot):
         raise RuntimeError(
             "Your discord.py is outdated. Update to the newest one with\npip3 "
             "install --upgrade git+https://github.com/Rapptz/discord.py@async")
+    if check_ffmpeg() is False:
+        raise RuntimeError("You need ffmpeg to play audio.\n{}"
+                           "".format(support_page))
     n = Audio(bot)  # Praise 26
     bot.add_cog(n)
     bot.add_listener(n.voice_state_update, 'on_voice_state_update')

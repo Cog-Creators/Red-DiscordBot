@@ -327,6 +327,16 @@ class Downloader:
             Popen(["git", "-C", "data/downloader/" + name, "pull", "-q"])
 
 
+def check_git():
+    """Windows only"""
+    if os.name == "nt":
+        if "git.exe" in os.environ["PATH"]:
+            return True
+        else:
+            return False
+    return True
+
+
 def check_folders():
     if not os.path.exists("data/downloader"):
         print('Making repo downloads folder...')
@@ -344,6 +354,9 @@ def check_files():
 
 
 def setup(bot):
+    if check_git() is False:
+        raise RuntimeError("You don't have git in your PATH environment variable\n"
+                           "That's necessary for the downloader to run\n")
     check_folders()
     check_files()
     n = Downloader(bot)
