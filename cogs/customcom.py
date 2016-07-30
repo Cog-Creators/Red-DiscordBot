@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from .utils.dataIO import fileIO
 from .utils import checks
-from __main__ import user_allowed, send_cmd_help
+from __main__ import user_allowed, send_cmd_help, settings
 import os
 import re
 
@@ -113,7 +113,7 @@ class CustomCommands:
 
         msg = message.content
         server = message.server
-        prefix = self.get_prefix(msg)
+        prefix = settings.prefixes[0]
 
         if prefix and server.id in self.c_commands.keys():
             cmdlist = self.c_commands[server.id]
@@ -126,12 +126,6 @@ class CustomCommands:
                 cmd = cmdlist[cmd.lower()]
                 cmd = self.format_cc(cmd, message)
                 await self.bot.send_message(message.channel, cmd)
-
-    def get_prefix(self, msg):
-        for p in self.bot.command_prefix:
-            if msg.startswith(p):
-                return p
-        return False
 
     def format_cc(self, command, message):
         results = re.findall("\{([^}]+)\}", command)
