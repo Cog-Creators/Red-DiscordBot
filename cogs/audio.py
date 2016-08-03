@@ -1232,6 +1232,7 @@ class Audio:
                 await self.bot.say("That's not a valid URL.")
                 return
         else:
+            url = url.replace("/", "&#47")
             url = "[SEARCH:]" + url
 
         if "[SEARCH:]" not in url and "youtube" in url:
