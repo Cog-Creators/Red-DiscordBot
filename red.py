@@ -21,9 +21,7 @@ import traceback
 #             https://github.com/Rapptz/RoboDanny/tree/async
 #
 
-description = """
-Red - A multifunction Discord bot by Twentysix
-"""
+description = "Red - A multifunction Discord bot by Twentysix"
 
 formatter = commands.HelpFormatter(show_check_failure=False)
 
@@ -31,8 +29,6 @@ bot = commands.Bot(command_prefix=["_"], formatter=formatter,
                    description=description, pm_help=None)
 
 settings = Settings()
-
-from cogs.utils import checks
 
 
 @bot.event
@@ -367,7 +363,6 @@ def load_cogs():
 
 def main():
     global settings
-    global checks
 
     check_folders()
     check_configs()

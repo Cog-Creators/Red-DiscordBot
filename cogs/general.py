@@ -47,10 +47,10 @@ class General:
         """
         author = ctx.message.author
         if number > 1:
-            n = str(randint(1, number))
-            return await self.bot.say("{} :game_die: {} :game_die:".format(author.mention, n))
+            n = randint(1, number)
+            await self.bot.say("{} :game_die: {} :game_die:".format(author.mention, n))
         else:
-            return await self.bot.say("{} Maybe higher than 1? ;P".format(author.mention))
+            await self.bot.say("{} Maybe higher than 1? ;P".format(author.mention))
 
     @commands.command(pass_context=True)
     async def flip(self, ctx, user : discord.Member=None):
@@ -71,9 +71,9 @@ class General:
             tran = "∀qƆpƎℲפHIſʞ˥WNOԀQᴚS┴∩ΛMX⅄Z"
             table = str.maketrans(char, tran)
             name = name.translate(table)
-            return await self.bot.say(msg + "(╯°□°）╯︵ " + name[::-1])
+            await self.bot.say(msg + "(╯°□°）╯︵ " + name[::-1])
         else:
-            return await self.bot.say("*flips a coin and... " + randchoice(["HEADS!*", "TAILS!*"]))
+            await self.bot.say("*flips a coin and... " + randchoice(["HEADS!*", "TAILS!*"]))
 
     @commands.command(pass_context=True)
     async def rps(self, ctx, choice : str):
@@ -108,16 +108,15 @@ class General:
             await self.bot.say("Choose rock, paper or scissors.")
 
     @commands.command(name="8", aliases=["8ball"])
-    async def _8ball(self, *question):
+    async def _8ball(self, *, question : str):
         """Ask 8 ball a question
 
         Question must end with a question mark.
         """
-        question = " ".join(question)
         if question.endswith("?") and question != "?":
-            return await self.bot.say("`" + randchoice(self.ball) + "`")
+            await self.bot.say("`" + randchoice(self.ball) + "`")
         else:
-            return await self.bot.say("That doesn't look like a question.")
+            await self.bot.say("That doesn't look like a question.")
 
     @commands.command(aliases=["sw"], pass_context=True)
     async def stopwatch(self, ctx):
@@ -129,7 +128,7 @@ class General:
         else:
             tmp = abs(self.stopwatches[author.id] - int(time.perf_counter()))
             tmp = str(datetime.timedelta(seconds=tmp))
-            await self.bot.say(author.mention + " Stopwatch stopped! Time: **" + str(tmp) + "**")
+            await self.bot.say(author.mention + " Stopwatch stopped! Time: **" + tmp + "**")
             self.stopwatches.pop(author.id, None)
 
     @commands.command()
