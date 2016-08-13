@@ -1609,8 +1609,8 @@ class Audio:
                         reply = "you voted to skip."
 
                     num_votes = len(self.skip_votes[server.id])
-                    # Exclude bots
-                    num_members =  len([m for m in vchan.voice_members if m.bot is False])
+                    # Exclude bots and non-plebs
+                    num_members =  sum(not (m.bot or self.can_instaskip(m)) for m in vchan.voice_members)
                     vote = int(100*num_votes / num_members)
                     thresh = self.get_server_settings(server)["VOTE_THRESHOLD"]
 
@@ -1643,6 +1643,17 @@ class Audio:
         nonbots = [m for m in author.voice_channel.voice_members if m.bot is False]
         alone = len(nonbots) <= 1
         return qmode or is_owner or is_admin or is_mod or alone
+
+    def can_instaskip(self, member):
+        server = member.server
+        admin_role = settings.get_server_admin(server)
+        mod_role = settings.get_server_mod(server)
+
+        qmode = not self.settings["QUEUE_MODE"]
+        is_owner = member.id == settings.owner
+        is_admin = discord.utils.get(member.roles, name=admin_role) is not None
+        is_mod = discord.utils.get(member.roles, name=mod_role) is not None
+        return is_owner or is_admin or is_mod
 
     @commands.command(pass_context=True, no_pm=True)
     async def sing(self, ctx):
