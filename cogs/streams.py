@@ -3,6 +3,7 @@ from discord.ext import commands
 from .utils.dataIO import fileIO
 from .utils.chat_formatting import *
 from .utils import checks
+from __main__ import send_cmd_help
 import os
 import time
 import aiohttp
@@ -21,6 +22,7 @@ class Streams:
         self.twitch_streams = fileIO("data/streams/twitch.json", "load")
         self.hitbox_streams = fileIO("data/streams/hitbox.json", "load")
         self.beam_streams = fileIO("data/streams/beam.json", "load")
+        self.settings = fileIO("data/streams/settings.json", "load")
 
     @commands.command()
     async def hitbox(self, stream: str):
@@ -253,6 +255,22 @@ class Streams:
         await self.bot.say("There will be no more stream alerts in this "
                            "channel.")
 
+    @commands.group(pass_context=True)
+    @checks.is_owner()
+    async def streamset(self, ctx):
+        """Stream settings"""
+        if ctx.invoked_subcommand is None:
+            await send_cmd_help(ctx)
+
+    @streamset.command()
+    async def twitchtoken(self, token : str):
+        """Sets the Client-ID for Twitch
+
+        https://blog.twitch.tv/client-id-required-for-kraken-api-calls-afbb8e95f843"""
+        self.settings["TWITCH_TOKEN"] = token
+        fileIO("data/streams/settings.json", "save", self.settings)
+        await self.bot.say('Twitch Client-ID set.')
+
     async def hitbox_online(self, stream):
         url = "https://api.hitbox.tv/user/" + stream
         try:
@@ -269,8 +287,9 @@ class Streams:
 
     async def twitch_online(self, stream):
         url = "https://api.twitch.tv/kraken/streams?channel=" + stream
+        header = {'Client-ID': self.settings.get("TWITCH_TOKEN", "")}
         try:
-            async with aiohttp.get(url) as r:
+            async with aiohttp.get(url, headers=header) as r:
                 data = await r.json()
             if len(data["streams"]) > 0:
                 return True
@@ -403,6 +422,11 @@ def check_files():
     if not fileIO(f, "check"):
         print("Creating empty beam.json...")
         fileIO(f, "save", [])
+
+    f = "data/streams/settings.json"
+    if not fileIO(f, "check"):
+        print("Creating empty settings.json...")
+        fileIO(f, "save", {})
 
 
 def setup(bot):
