@@ -267,6 +267,11 @@ Who has a Shadowfire skin?`Kindred
 The "Tally-men" are followers of whom?`Kindred
 Whose lore tells the story of Magga, a famous actress?`Kindred
 Who has a skill called "Dance of Arrows"?`Kindred
+What does Kled's secondary bar measure?`Courage
+What is the name of Kled's friend and mount?`Skaarl
+Who is also known as "The Great Hussar", "The Mountain Admiral", "The High General Marshal Sergeant", "Lord Colonel Major Centurion", "Rear Forward Brigadier Admiral", "Forward Admiral Major", "Sir Admiral Major", "Lieutenant Sergeant Commodore", "Sergeant General Colonel", "Sergeant Double Admiral", "High Major Commodore of the First Legion Third Multiplication Double Admiral Artillery Vanguard Company", and "Lord Major Admiral of the Second Legion's Forward Artillery-Cavalary Multiplication"?`Kled
+What nation is Kled from?`Noxus
+What immortal species is Kled's mount?`desert drakalops
 Who says "Terror coming...daddy coming!"?`Kog'maw`kogmaw`Kog maw
 Who has a Reindeer skin?`Kog'maw`kogmaw`Kog maw
 Who is the "Mouth of the Abyss"?`Kog'maw`kogmaw`Kog maw
