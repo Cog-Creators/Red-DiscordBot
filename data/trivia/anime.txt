@@ -106,16 +106,17 @@ In what CLAMP anime is there a little Persocon named Chii?`Chobits
 (Code Geass) What are the structures associated with Geass that work through a person's memories?`Thought Elevator
 (Code Geass) Who is the first prince of Britannia?`Odysseus eu Britannia`Odysseus
 (Code Geass) What is the name of the aerial carrier of the Black Knights?`Ikaruga
+(Code Geass) Who killed prince clovis?`lelouch
+(Code Geass) Who is Suzaku's cousin?`Kaguya Sumeragi`Kaguya
 (Cowboy Bebop) What is the villan Vicious's weapon of choice?`katana
-(Cowboy Bebop) Who does Spike have an affair with?`Julia
-(Cowboy Bebop) Spike Spiegel was formerly a hitman for which criminal group?`Red Dragon Syndicate
+(Cowboy Bebop) Who dies?`Spike
 Which anime involves a Corgi hound named Ein as one of the characters?`cowboy bebop
 (Death Note) Who is the second Kira?`Misa Amane`misa
 (Death Note) Who is the first Kira?`Light Yagami`Light
 (Death Note) Who is the third Kira?`Kyosuke Higuchi`Kyosuke
 (Death Note) What is the default way the Death Note kills?`cardiac paralysis
 (Death Note) What is the name of the Shinigami that owns the Death Note Light Yagami uses?`Ryuk
-(Death Note) What is L's real name?`L Lawliets
+(Death Note) What is L's real name?`L Lawliet
 (Death Note) Who did the first Death Note to be picked up belong to?`Sidoh
 (Death Note) When Misa meets Light, what is her occupation?`Model
 (Death Note) What nickname is given to Raito (Light) after he finds the Death Note?`Kira
@@ -125,6 +126,12 @@ Which anime involves a Corgi hound named Ein as one of the characters?`cowboy be
 (Death Note) Who did L always call an idiot?`Matsuda
 (Death Note) What is Light's last name?`Yagami
 (Death Note) What was the name of the inside man in the Yotsuba group?`Renji Namikawa
+(Death Note) What does SPK stand for?`Special Provision for Kira
+(Death Note) What is the title of the final chapter of death note manga?`Finis
+(Death Note) Who was the first person that Light killed?`Kurou Otoharada`Kurou`Otoharada
+(Death Note) What does L hate?`Socks
+(Death Note) What is the character Mello (Mihael Keehl) addicted to eating?`Chocolate
+(Death Note) If L sits normally, he claims his deductive reasoning reasoning will drop by what percent?`40`Forty
 (Detective Conan) What is Shinichi Kudo's best sport?`soccer`football
 (Digimon) Which year was the American adaptation of Digimon: The Movie released?`2000
 (Digimon) What was Taichi Kamiya's first Digimon?`Botamon
@@ -188,7 +195,7 @@ For which anime were these songs written: "Cha La Head Cha La" and "Boku-tachi w
 (Fullmetal Alchemist) How tall is Edward?`4'6"`four and a half feet`four foot six inches`four foot 6
 (Fullmetal Alchemist) What does Winry do for a living?`mechanic
 (Fullmetal Alchemist) What's Hughes's daughter's name?`elicia
-(Fullmetal Alchemist) What is the name of Ed and Al's mother?`Trisha
+(Fullmetal Alchemist) What is the name of Ed and Al's mother?`Trisha Elric`Trisha
 (Fullmetal Alchemist) What did Ed give up to revive his mother?`left leg
 (Fullmetal Alchemist) Who is Ed's father?`Hohenheim
 (Fullmetal Alchemist) How old was Edward when he became a state alchemist?`12`twelve
@@ -204,6 +211,14 @@ For which anime were these songs written: "Cha La Head Cha La" and "Boku-tachi w
 (Fullmetal Alchemist) Alex Louis Armstrong is also known as the __ Alchemist?`Strong Arm`strongarm
 (Fullmetal Alchemist) Who is known as the Northern Wall of Briggs?`Olivier Mira Armstrong`Olivier Armstrong
 (Fullmetal Alchemist) Who is a pseudo Gate of Truth?`Gluttony
+(Fullmetal Alchemist) Who is Colonel Mustang's best friend?`Maes Hughes`Hughes
+(Fullmetal Alchemist) What does Roy Mustang give in exchange to go through the portal?`His eyesight`eyesight`vision`sight
+(Fullmetal Alchemist) What are Winry and Pinako Rockbell best known for making?`Automail
+(Fullmetal Alchemist) For the majority of the series, where is Mustang stationed at?`East headquarters`East HQ
+(Fullmetal Alchemist) What is the name of the Ishbalan who hates State Alchemists and murders them because he thinks it is an act of God?`Scar
+(Fullmetal Alchemist) Which homunculus was the Fuhrer? `Pride
+(Fullmetal Alchemist) What are Colonel Mustang's gloves made of?`ignition cloth
+(Fullmetal Alchemist) What's Hughes's daughter's name? `Elicia
 After Watase Yuu's creation of "Fushigi Yuugi", which famous shoujo anime did she make?`Ayashi no Ceres
 (Fushigi Yuugi) Miaka is the priestess of what?`Suzaku
 (Fushigi Yuugi) The world of Fushigi Yuugi is based on the ancient form of what country?`China
@@ -254,6 +269,23 @@ Sakura, Sasuke, Rock Lee, and Kakashi are all characters from which anime?`Narut
 (Naruto) What is the Third Hokage's first name?`Hiruzen
 (Naruto) What legendary ninja was known as "Konoha's White Fang?"`Sakumo Hatake`Sakumo`Hatake Sakumo
 (Naruto) Which Sound ninja has a kekkei genkai ability called Shikotsu Myaku?`Kimimaro Kaguya`Kimimaro
+(Naruto) Who was Naruto's teacher at the ninja academy?`Iruka
+(Naruto) What village does Naruto belong to?`Konohagakure
+(Naruto) What is the name of the Biju inside Gaara?`Shukaku
+(Naruto) Who is the second hokage of Konoha?`Tobirama Senju`Tobirama`Senju
+(Naruto) Where does Ino wear her ninja headband?`Hip
+(Naruto) What is the last hand sign for the Uchiha Clan's Katon: Gokakyu no Jutsu?`Tiger
+(Naruto) Who was suggested as hokage while Tsunade was in a coma?`Kakashi
+(Naruto) Who revived Gaara when the Biju was taken out of him?`Chiyo
+(Naruto) What's the name of Shizune's pet pig?`Tonton
+(Naruto) Who uses the Yin Seal?`Tsunade`sakura
+(Naruto) Who has had amnesia when the person was a child?`Kabuto
+(Naruto) What is the name of the slug summoned by Tsunade and Sakura?`Katsuyu
+(Naruto) Which country has the samurai?`Land of Iron`Iron
+(Naruto) Which clan is Karin a member of?`Uzumaki
+(Naruto) Where did the Uzumaki clan originate from?`Uzushiogakure`Land of Whirlpools`Hidden Eddy Village
+(Naruto) Who used the Six Red Yang Formation?`Obito
+(Naruto) Who is officially the Sixth Hokage at the end of the manga series?`Kakashi
 (Neon Genesis Evangelion)Who is the pilot of Unit-02?`asuka langley-soryu`asuka langley soryu
 (Neon Genesis Evangelion) In what year did the show start airing?`1995
 (No Game No Life) How many races exist in Disboard?`16`sixteen
@@ -278,6 +310,24 @@ Sakura, Sasuke, Rock Lee, and Kakashi are all characters from which anime?`Narut
 (One Punch Man) What city does Saitama live in?`Z-city`z city`z
 (One Punch Man) What city is the headquarters of the Hero Association in?`A-city`A city`A
 (One Punch Man) Who is the Rank 1 Class S Hero?`Blast
+(One Punch Man) How long did Saitama train for before he became strong?`A year and a half`1.5 years`year and a half
+(One Punch Man) What is Bang's fighting style?`Water Stream Rock Smashing Fist
+(One Punch Man) Bang is also known as_?`Silver Fang`Greatest Treasure of Martial Arts
+(One Punch Man) What is Bang's older brother's name?`Bomb
+(One Punch Man) What is Bang's brother's fighting style?`Whirlwind Iron Cutting Fist
+(One Punch Man) What is Tsumaki also known as?`Tornado of Terror
+(One Punch Man) Who is Tsumaki's younger sister?`Fubuki
+(One Punch Man) Who is known as the Blizzard of Hell?`Fubuki
+(One Punch Man) What is the group headed by Fubuki?`The Blizzard Group`blizzard group
+(One Punch Man) Who is the Class S Rank 4 Hero?`Atomic Samurai
+(One Punch Man) Who is the youngest hero in the Hero Association?`Child Emperor
+(One Punch Man) Where is Child Emperor's lab located?`Y-city`Y city`y
+(One Punch Man) What is Metal Knight's real name?`Bofoi
+(One Punch Man) Which character uses a technique called "Ultimate Hellfire Wavemotion Cannon"?`King
+(One Punch Man) What is Genos' hero name?`Demon Cyborg
+(One Punch Man) What are Genos' tears made of?`oil
+(One Punch Man) Where did Saitama work before becoming a hero?`convenience store
+(One Punch Man) What is Saitama also know as?`Caped Baldy
 (Ouran High School Host Club) Who is mistaken for a boy in the anime?`Haruhi
 (Pokemon) In the original Japanese version, what is Ash Ketchum's name?`Satoshi
 (Pokemon) Pokemon was created by Stoshi Tajiri in which year?`1996
