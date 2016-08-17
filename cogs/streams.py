@@ -73,7 +73,7 @@ class Streams:
     async def streamalert(self, ctx):
         """Adds/removes stream alerts from the current channel"""
         if ctx.invoked_subcommand is None:
-            await self.bot.say("Type help streamalert for info.")
+            await send_cmd_help(ctx)
 
     @streamalert.command(name="twitch", pass_context=True)
     async def twitch_alert(self, ctx, stream: str):

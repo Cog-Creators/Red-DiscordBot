@@ -225,15 +225,16 @@ class Owner:
                              args=(ctx.message.author,))
         t.start()
 
-    @_set.command()
+    @_set.command(pass_context=True)
     @checks.is_owner()
-    async def prefix(self, *prefixes):
-        """Sets prefixes
+    async def prefix(self, ctx, *prefixes):
+        """Sets Red's prefixes
 
-        Must be separated by a space. Enclose in double
-        quotes if a prefix contains spaces."""
+        Accepts multiple prefixes separated by a space. Enclose in double
+        quotes if a prefix contains spaces.
+        Example: set prefix ! $ ? "two words" """
         if prefixes == ():
-            await self.bot.say("Example: setprefix [ ! ^ .")
+            await send_cmd_help(ctx)
             return
 
         self.bot.command_prefix = sorted(prefixes, reverse=True)
