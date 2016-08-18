@@ -128,7 +128,7 @@ class TriviaSession():
                 if self.question_list: await self.new_question()
             else:
                 if os.path.isfile("data/trivia/" + qlist + ".txt"):
-                    self.question_list = self.load_list("data/trivia/" + qlist + ".txt")
+                    self.question_list = await self.load_list("data/trivia/" + qlist + ".txt")
                     self.status = "new question"
                     self.timeout = time.perf_counter()
                     if self.question_list: await self.new_question()
@@ -148,7 +148,7 @@ class TriviaSession():
             await self.send_table()
         trivia_manager.trivia_sessions.remove(self)
 
-    def load_list(self, qlist):
+    async def load_list(self, qlist):
         with open(qlist, "r", encoding="ISO-8859-1") as f:
             qlist = f.readlines()
         parsed_list = []
