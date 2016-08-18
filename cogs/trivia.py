@@ -166,7 +166,7 @@ class TriviaSession():
         if parsed_list != []:
             return parsed_list
         else:
-            self.stop_trivia()
+            await self.stop_trivia()
             return None
 
     async def new_question(self):
@@ -217,7 +217,7 @@ class TriviaSession():
             await asyncio.sleep(3)
             if not self.status == "stop":
                 await self.new_question()
-        
+
     async def send_table(self):
         self.score_list = sorted(self.score_list.items(), reverse=True, key=lambda x: x[1]) # orders score from lower to higher
         t = "```Scores: \n\n"
