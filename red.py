@@ -11,6 +11,7 @@ import logging
 import logging.handlers
 import shutil
 import traceback
+import requests
 
 #
 #  Red, a Discord bot by Twentysix, based on discord.py and its command extension
@@ -168,6 +169,18 @@ def check_folders():
         if not os.path.exists(folder):
             print("Creating " + folder + " folder...")
             os.makedirs(folder)
+
+
+def check_files():
+    files = ("ffmpeg.exe", "ffplay.exe", "ffprobe.exe")
+    for f in files:
+        if not os.path.exists(f):
+            print("Downloading " + f + "...")
+            r = requests.get(
+                "https://github.com/Twentysix26/Red-DiscordBot/raw/master/"
+                + f)
+            with open(f, "wb") as f_out:
+                f_out.write(r.content)
 
 
 def check_configs():
@@ -365,6 +378,8 @@ def main():
     global settings
 
     check_folders()
+    if sys.platform is "win32":
+        check_files()
     check_configs()
     set_logger()
     owner_cog = load_cogs()
