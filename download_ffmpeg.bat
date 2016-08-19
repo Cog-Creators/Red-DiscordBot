@@ -1,4 +1,5 @@
 @echo off
+pushd %~dp0
 IF "%PROCESSOR_ARCHITECTURE%"=="x86" (GOTO 32bit) else (GOTO 64bit)
 echo Couldn't detect system bitness.
 PAUSE
