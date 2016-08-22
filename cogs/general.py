@@ -165,14 +165,26 @@ class General:
         if not roles: roles = ["None"]
         data = "```python\n"
         data += "Name: {}\n".format(escape_mass_mentions(str(user)))
+        data += "Nickname: {}\n".format(escape_mass_mentions(str(user.nick)))
         data += "ID: {}\n".format(user.id)
+        if user.game is None:
+            pass
+        elif user.game.url is None:
+            data += "Playing: {}\n".format(escape_mass_mentions(str(user.game)))
+        else:
+            data += "Streaming: {} ({})\n".format(escape_mass_mentions(str(user.game)),
+                                                      escape_mass_mentions(user.game.url))
         passed = (ctx.message.timestamp - user.created_at).days
         data += "Created: {} ({} days ago)\n".format(user.created_at, passed)
         passed = (ctx.message.timestamp - user.joined_at).days
         data += "Joined: {} ({} days ago)\n".format(user.joined_at, passed)
         data += "Roles: {}\n".format(", ".join(roles))
-        data += "Avatar: {}\n".format(user.avatar_url)
-        data += "```"
+        if user.avatar_url != "":
+            data += "Avatar:"
+            data += "```"
+            data += user.avatar_url
+        else:
+            data += "```"
         await self.bot.say(data)
 
     @commands.command(pass_context=True, no_pm=True)
