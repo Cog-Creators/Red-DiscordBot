@@ -159,6 +159,7 @@ class General:
     async def userinfo(self, ctx, user : discord.Member = None):
         """Shows users's informations"""
         author = ctx.message.author
+        server = ctx.message.server
         if not user:
             user = author
         roles = [x.name for x in user.roles if x.name != "@everyone"]
@@ -176,8 +177,9 @@ class General:
                                                       escape_mass_mentions(user.game.url))
         passed = (ctx.message.timestamp - user.created_at).days
         data += "Created: {} ({} days ago)\n".format(user.created_at, passed)
-        passed = (ctx.message.timestamp - user.joined_at).days
-        data += "Joined: {} ({} days ago)\n".format(user.joined_at, passed)
+        joined_at = self.fetch_joined_at(user, server)
+        passed = (ctx.message.timestamp - joined_at).days
+        data += "Joined: {} ({} days ago)\n".format(joined_at, passed)
         data += "Roles: {}\n".format(", ".join(roles))
         if user.avatar_url != "":
             data += "Avatar:"
@@ -207,8 +209,12 @@ class General:
         passed = (ctx.message.timestamp - server.created_at).days
         data += "Created: {} ({} days ago)\n".format(server.created_at, passed)
         data += "Owner: {}\n".format(server.owner)
-        data += "Icon: {}\n".format(server.icon_url)
-        data += "```"
+        if server.icon_url != "":
+            data += "Icon:"
+            data += "```"
+            data += server.icon_url
+        else:
+            data += "```"
         await self.bot.say(data)
 
     @commands.command()
@@ -298,6 +304,12 @@ class General:
             if self.getPollByChannel(message):
                     self.getPollByChannel(message).checkAnswer(message)
 
+    def fetch_joined_at(self, user, server):
+        """Just a special case for someone special :^)"""
+        if user.id == "96130341705637888" and server.id == "133049272517001216":
+            return datetime.datetime(2016, 1, 10, 6, 8, 4, 443000)
+        else:
+            return user.joined_at
 
 class NewPoll():
     def __init__(self, message, main):
@@ -350,7 +362,6 @@ class NewPoll():
                     self.already_voted.append(message.author.id)
         except ValueError:
             pass
-
 
 def setup(bot):
     n = General(bot)
