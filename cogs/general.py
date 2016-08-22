@@ -165,12 +165,21 @@ class General:
         if not roles: roles = ["None"]
         data = "```python\n"
         data += "Name: {}\n".format(escape_mass_mentions(str(user)))
-        data += "ID: {}\n".format(user.id)
+        data += "Nickname: {}\n".format(escape_mass_mentions(str(user.nick)))
+        data += "ID: {}\n\n".format(user.id)
+        data += "Status: {}\n".format(user.status)
+        if user.game is None:
+            data += "Playing: Nothing\n\n"
+        elif user.game.url is None:
+            data += "Playing: {}\n\n".format(user.game)
+        else:
+            data += "Streaming: {} (<{}>)\n\n".format(user.game, user.game.url)
         passed = (ctx.message.timestamp - user.created_at).days
         data += "Created: {} ({} days ago)\n".format(user.created_at, passed)
         passed = (ctx.message.timestamp - user.joined_at).days
-        data += "Joined: {} ({} days ago)\n".format(user.joined_at, passed)
+        data += "Joined: {} ({} days ago)\n\n".format(user.joined_at, passed)
         data += "Roles: {}\n".format(", ".join(roles))
+        data += "Color: {}\n".format(user.color)
         data += "Avatar: {}\n".format(user.avatar_url)
         data += "```"
         await self.bot.say(data)
@@ -199,10 +208,27 @@ class General:
         data += "```"
         await self.bot.say(data)
 
+    @commands.command(pass_context=True)
+    async def users(self, ctx):
+        """Current total user count"""
+        server = ctx.message.server
+        user = set(self.bot.get_all_members())
+        online = str(len([m.status for m in user if str(m.status) == "online"]))
+        idle = str(len([m.status for m in user if str(m.status) == "idle"]))
+        offline = str(len([m.status for m in user if str(m.status) == "offline"]))
+        users = str(len(user))
+        msg = "```xl\n"
+        msg += self.bot.user.name + " is serving " + users + " users in total.\n\n"
+        msg += "Online: " + online
+        msg += "\nIdle: " + idle
+        msg += "\nOffline: " + offline
+        msg += "\n```"
+        await self.bot.say(msg)    
+        
     @commands.command()
     async def urban(self, *, search_terms : str, definition_number : int=1):
         """Urban Dictionary search
-
+        
         Definition number must be between 1 and 10"""
         # definition_number is just there to show up in the help
         # all this mess is to avoid forcing double quotes on the user
