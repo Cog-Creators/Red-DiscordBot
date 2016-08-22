@@ -6,6 +6,10 @@ def warning(text):
     return ":warning: {}".format(text)
 
 
+def info(text):
+    return ":information_source: {}".format(text)
+
+
 def bold(text):
     return "**{}**".format(text)
 
