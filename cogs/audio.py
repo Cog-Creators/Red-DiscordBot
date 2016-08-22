@@ -5,7 +5,7 @@ import os
 from random import shuffle, choice
 from cogs.utils.dataIO import fileIO
 from cogs.utils import checks
-from __main__ import send_cmd_help
+from __main__ import send_cmd_help, settings
 import re
 import logging
 import collections
@@ -237,11 +237,13 @@ class Audio:
         self.queue = {}  # add deque's, repeat
         self.downloaders = {}  # sid: object
         self.settings = fileIO("data/audio/settings.json", 'load')
-        self.server_specific_setting_keys = ["VOLUME", "QUEUE_MODE",
+        self.server_specific_setting_keys = ["VOLUME", "VOTE_ENABLED",
                                              "VOTE_THRESHOLD"]
         self.cache_path = "data/audio/cache"
         self.local_playlist_path = "data/audio/localtracks"
         self._old_game = False
+
+        self.skip_votes = {}
 
     async def _add_song_status(self, song):
         if self._old_game is False:
@@ -1038,21 +1040,27 @@ class Audio:
             msg = "Volume must be between 0 and 100."
         await self.bot.say(msg)
 
-    @audioset.command(pass_context=True, name="vote", no_pm=True,
-                      hidden=True, enabled=False)
+    @audioset.command(pass_context=True, name="vote", no_pm=True)
     @checks.mod_or_permissions(manage_messages=True)
     async def audioset_vote(self, ctx, percent: int):
-        """Percentage needed for the masses to skip songs."""
+        """Percentage needed for the masses to skip songs. 0 to disable."""
         server = ctx.message.server
+
         if percent < 0:
             await self.bot.say("Can't be less than zero.")
             return
-
-        if percent > 100:
+        elif percent > 100:
             percent = 100
 
-        await self.bot.say("Vote percentage set to {}%".format(percent))
+        if percent == 0:
+            enabled = False
+            await self.bot.say("Voting disabled. All users can stop or skip.")
+        else:
+            enabled = True
+            await self.bot.say("Vote percentage set to {}%".format(percent))
+
         self.set_server_setting(server, "VOTE_THRESHOLD", percent)
+        self.set_server_setting(server, "VOTE_ENABLED", enabled)
         self.save_settings()
 
     @commands.group(pass_context=True)
@@ -1621,18 +1629,69 @@ class Audio:
 
         await self.bot.say("Queues shuffled.")
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command(pass_context=True, aliases=["next"], no_pm=True)
     async def skip(self, ctx):
-        """Skips the currently playing song"""
+        """Skips a song, using the set threshold if the requester isn't
+        a mod or admin. Mods, admins and bot owner are not counted in 
+        the vote threshold."""
+        msg = ctx.message
         server = ctx.message.server
         if self.is_playing(server):
+            vchan = server.me.voice_channel
             vc = self.voice_client(server)
-            vc.audio_player.stop()
-            if self._get_queue_repeat(server) is False:
-                self._set_queue_nowplaying(server, None)
-            await self.bot.say("Skipping...")
+            if msg.author.voice_channel == vchan:
+                if self.can_instaskip(msg.author):
+                    vc.audio_player.stop()
+                    if self._get_queue_repeat(server) is False:
+                        self._set_queue_nowplaying(server, None)
+                    await self.bot.say("Skipping...")
+                else:
+                    if msg.author.id in self.skip_votes[server.id]:
+                        self.skip_votes[server.id].remove(msg.author.id)
+                        reply = "I removed your vote to skip."
+                    else:
+                        self.skip_votes[server.id].append(msg.author.id)
+                        reply = "you voted to skip."
+
+                    num_votes = len(self.skip_votes[server.id])
+                    # Exclude bots and non-plebs
+                    num_members =  sum(not (m.bot or self.can_instaskip(m)) for m in vchan.voice_members)
+                    vote = int(100*num_votes / num_members)
+                    thresh = self.get_server_settings(server)["VOTE_THRESHOLD"]
+
+                    if vote >= thresh:
+                        vc.audio_player.stop()
+                        if self._get_queue_repeat(server) is False:
+                            self._set_queue_nowplaying(server, None)
+                        self.skip_votes[server.id] = []
+                        await self.bot.say("Vote threshold met. Skipping...")
+                        return
+                    else:
+                        reply += " Votes: %d/%d" % (num_votes, num_members)
+                        reply += " (%d%% out of %d%% needed)" % (vote, thresh)
+                    await self.bot.reply(reply)
+            else:
+                await self.bot.reply("you aren't in the current playback channel.")
         else:
             await self.bot.say("Can't skip if I'm not playing.")
+
+    def can_instaskip(self, member):
+        server = member.server
+
+        if not self.get_server_settings(server)["VOTE_ENABLED"]:
+            return True
+
+        admin_role = settings.get_server_admin(server)
+        mod_role = settings.get_server_mod(server)
+
+        is_owner = member.id == settings.owner
+        is_admin = discord.utils.get(member.roles, name=admin_role) is not None
+        is_mod = discord.utils.get(member.roles, name=mod_role) is not None
+
+        nonbots = sum(not m.bot for m in member.voice_channel.voice_members)
+        alone = nonbots <= 1
+
+        return is_owner or is_admin or is_mod or alone
 
     @commands.command(pass_context=True, no_pm=True)
     async def sing(self, ctx):
@@ -1674,13 +1733,18 @@ class Audio:
         else:
             await self.bot.say("Darude - Sandstorm.")
 
-    @commands.command(pass_context=True)
+    @commands.command(pass_context=True, no_pm=True)
     async def stop(self, ctx):
         """Stops a currently playing song or playlist. CLEARS QUEUE."""
-        # TODO: All those fun checks for permissions
         server = ctx.message.server
-
-        self._stop(server)
+        if self.is_playing(server):
+            if self.can_instaskip(ctx.message.author):
+                await self.bot.say('Stopping...')
+                self._stop(server)
+            else:
+                await self.bot.say("You can't stop music when there are other people in the channel! Vote to skip instead.")
+        else:
+            await self.bot.say("Can't stop if I'm not playing.")
 
     @commands.command(name="yt", pass_context=True, no_pm=True)
     async def yt_search(self, ctx, *, search_terms: str):
@@ -1804,6 +1868,7 @@ class Audio:
         if not self.is_playing(server):
             log.debug("not playing anything on sid {}".format(server.id) +
                       ", attempting to start a new song.")
+            self.skip_votes[server.id] = [] # Reset skip votes for each new song
             if len(temp_queue) > 0:
                 # Fake queue for irdumb's temp playlist songs
                 log.debug("calling _play because temp_queue is non-empty")
@@ -1887,10 +1952,14 @@ class Audio:
         return False
 
     async def voice_state_update(self, before, after):
+        server = after.server
         # Member objects
+        if server.id in self.skip_votes and\
+            after.id in self.skip_votes[server.id] and\
+            after.voice_channel != before.voice_channel:
+            self.skip_votes[server.id].remove(after.id)
         if after is None:
             return
-        server = after.server
         if server.id not in self.queue:
             return
         if after != server.me:
@@ -1923,7 +1992,7 @@ def check_folders():
 
 
 def check_files():
-    default = {"VOLUME": 50, "MAX_LENGTH": 3700, "QUEUE_MODE": True,
+    default = {"VOLUME": 50, "MAX_LENGTH": 3700, "VOTE_ENABLED": True,
                "MAX_CACHE": 0, "SOUNDCLOUD_CLIENT_ID": None,
                "TITLE_STATUS": True, "AVCONV": False, "VOTE_THRESHOLD": 50,
                "SERVERS": {}}
