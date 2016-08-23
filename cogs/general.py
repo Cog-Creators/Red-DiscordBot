@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from .utils.chat_formatting import *
 from random import randint
 from random import choice as randchoice
 import datetime
@@ -32,6 +33,7 @@ class General:
 
         To denote multiple choices, you should use double quotes.
         """
+        choices = [escape_mass_mentions(choice) for choice in choices]
         if len(choices) < 2:
             await self.bot.say('Not enough choices to pick from.')
         else:
@@ -45,10 +47,10 @@ class General:
         """
         author = ctx.message.author
         if number > 1:
-            n = str(randint(1, number))
-            return await self.bot.say("{} :game_die: {} :game_die:".format(author.mention, n))
+            n = randint(1, number)
+            await self.bot.say("{} :game_die: {} :game_die:".format(author.mention, n))
         else:
-            return await self.bot.say("{} Maybe higher than 1? ;P".format(author.mention))
+            await self.bot.say("{} Maybe higher than 1? ;P".format(author.mention))
 
     @commands.command(pass_context=True)
     async def flip(self, ctx, user : discord.Member=None):
@@ -69,9 +71,9 @@ class General:
             tran = "∀qƆpƎℲפHIſʞ˥WNOԀQᴚS┴∩ΛMX⅄Z"
             table = str.maketrans(char, tran)
             name = name.translate(table)
-            return await self.bot.say(msg + "(╯°□°）╯︵ " + name[::-1])
+            await self.bot.say(msg + "(╯°□°）╯︵ " + name[::-1])
         else:
-            return await self.bot.say("*flips a coin and... " + randchoice(["HEADS!*", "TAILS!*"]))
+            await self.bot.say("*flips a coin and... " + randchoice(["HEADS!*", "TAILS!*"]))
 
     @commands.command(pass_context=True)
     async def rps(self, ctx, choice : str):
@@ -106,16 +108,15 @@ class General:
             await self.bot.say("Choose rock, paper or scissors.")
 
     @commands.command(name="8", aliases=["8ball"])
-    async def _8ball(self, *question):
+    async def _8ball(self, *, question : str):
         """Ask 8 ball a question
 
         Question must end with a question mark.
         """
-        question = " ".join(question)
         if question.endswith("?") and question != "?":
-            return await self.bot.say("`" + randchoice(self.ball) + "`")
+            await self.bot.say("`" + randchoice(self.ball) + "`")
         else:
-            return await self.bot.say("That doesn't look like a question.")
+            await self.bot.say("That doesn't look like a question.")
 
     @commands.command(aliases=["sw"], pass_context=True)
     async def stopwatch(self, ctx):
@@ -127,17 +128,14 @@ class General:
         else:
             tmp = abs(self.stopwatches[author.id] - int(time.perf_counter()))
             tmp = str(datetime.timedelta(seconds=tmp))
-            await self.bot.say(author.mention + " Stopwatch stopped! Time: **" + str(tmp) + "**")
+            await self.bot.say(author.mention + " Stopwatch stopped! Time: **" + tmp + "**")
             self.stopwatches.pop(author.id, None)
 
     @commands.command()
-    async def lmgtfy(self, *text):
+    async def lmgtfy(self, *, search_terms : str):
         """Creates a lmgtfy link"""
-        if text == ():
-            await self.bot.say("lmgtfy [search terms]")
-            return
-        text = "+".join(text)
-        await self.bot.say("http://lmgtfy.com/?q=" + text)
+        search_terms = escape_mass_mentions(search_terms.replace(" ", "+"))
+        await self.bot.say("http://lmgtfy.com/?q={}".format(search_terms))
 
     @commands.command(no_pm=True, hidden=True)
     async def hug(self, user : discord.Member, intensity : int=1):
@@ -158,61 +156,98 @@ class General:
         await self.bot.say(msg)
 
     @commands.command(pass_context=True, no_pm=True)
-    async def info(self, ctx, user : discord.Member = None):
+    async def userinfo(self, ctx, user : discord.Member = None):
         """Shows users's informations"""
         author = ctx.message.author
         if not user:
             user = author
-        roles = []
-        for m in user.roles:
-            if m.name != "@everyone":
-                roles.append('"' + m.name + '"') #.replace("@", "@\u200b")
+        roles = [x.name for x in user.roles if x.name != "@everyone"]
         if not roles: roles = ["None"]
         data = "```python\n"
-        data += "Name: " + user.name + "#{}\n".format(user.discriminator)
-        data += "ID: " + user.id + "\n"
-        data += "Created: " + str(user.created_at) + "\n"
-        data += "Joined: " + str(user.joined_at) + "\n"
-        data += "Roles: " + " ".join(roles) + "\n"
-        data += "Avatar: " + user.avatar_url + "\n"
-        data += "```"
+        data += "Name: {}\n".format(escape_mass_mentions(str(user)))
+        data += "Nickname: {}\n".format(escape_mass_mentions(str(user.nick)))
+        data += "ID: {}\n".format(user.id)
+        if user.game is None:
+            pass
+        elif user.game.url is None:
+            data += "Playing: {}\n".format(escape_mass_mentions(str(user.game)))
+        else:
+            data += "Streaming: {} ({})\n".format(escape_mass_mentions(str(user.game)),
+                                                      escape_mass_mentions(user.game.url))
+        passed = (ctx.message.timestamp - user.created_at).days
+        data += "Created: {} ({} days ago)\n".format(user.created_at, passed)
+        passed = (ctx.message.timestamp - user.joined_at).days
+        data += "Joined: {} ({} days ago)\n".format(user.joined_at, passed)
+        data += "Roles: {}\n".format(", ".join(roles))
+        if user.avatar_url != "":
+            data += "Avatar:"
+            data += "```"
+            data += user.avatar_url
+        else:
+            data += "```"
         await self.bot.say(data)
 
     @commands.command(pass_context=True, no_pm=True)
-    async def server(self, ctx):
+    async def serverinfo(self, ctx):
         """Shows server's informations"""
         server = ctx.message.server
         online = str(len([m.status for m in server.members if str(m.status) == "online" or str(m.status) == "idle"]))
-        total = str(len(server.members))
+        total_users = str(len(server.members))
+        text_channels = len([x for x in server.channels if str(x.type) == "text"])
+        voice_channels = len(server.channels) - text_channels
 
-        data = "```\n"
+        data = "```python\n"
         data += "Name: {}\n".format(server.name)
         data += "ID: {}\n".format(server.id)
-        data += "Region: {}\n".format(str(server.region))
-        data += "Users: {}/{}\n".format(online, total)
-        data += "Channels: {}\n".format(str(len(server.channels)))
-        data += "Roles: {}\n".format(str(len(server.roles)))
-        data += "Created: {}\n".format(str(server.created_at))
-        data += "Owner: {}#{}\n".format(server.owner.name, server.owner.discriminator)
+        data += "Region: {}\n".format(server.region)
+        data += "Users: {}/{}\n".format(online, total_users)
+        data += "Text channels: {}\n".format(text_channels)
+        data += "Voice channels: {}\n".format(voice_channels)
+        data += "Roles: {}\n".format(len(server.roles))
+        passed = (ctx.message.timestamp - server.created_at).days
+        data += "Created: {} ({} days ago)\n".format(server.created_at, passed)
+        data += "Owner: {}\n".format(server.owner)
         data += "Icon: {}\n".format(server.icon_url)
         data += "```"
         await self.bot.say(data)
-        
+
     @commands.command()
-    async def urban(self, *, search_terms : str):
-        """Urban Dictionary search"""
+    async def urban(self, *, search_terms : str, definition_number : int=1):
+        """Urban Dictionary search
+
+        Definition number must be between 1 and 10"""
+        # definition_number is just there to show up in the help
+        # all this mess is to avoid forcing double quotes on the user
         search_terms = search_terms.split(" ")
-        search_terms = "+".join(search_terms)
-        search = "http://api.urbandictionary.com/v0/define?term=" + search_terms
         try:
-            async with aiohttp.get(search) as r:
+            if len(search_terms) > 1:
+                pos = int(search_terms[-1]) - 1
+                search_terms = search_terms[:-1]
+            else:
+                pos = 0
+            if pos not in range(0, 11): # API only provides the
+                pos = 0                 # top 10 definitions
+        except ValueError:
+            pos = 0
+        search_terms = "+".join(search_terms)
+        url = "http://api.urbandictionary.com/v0/define?term=" + search_terms
+        try:
+            async with aiohttp.get(url) as r:
                 result = await r.json()
-            if result["list"] != []:
-                definition = result['list'][0]['definition']
-                example = result['list'][0]['example']
-                await self.bot.say("**Definition:** " + definition + "\n\n" + "**Example:** " + example )
+            if result["list"]:
+                definition = result['list'][pos]['definition']
+                example = result['list'][pos]['example']
+                defs = len(result['list'])
+                msg = ("**Definition #{} out of {}:\n**{}\n\n"
+                       "**Example:\n**{}".format(pos+1, defs, definition,
+                                                 example))
+                msg = pagify(msg, ["\n"])
+                for page in msg:
+                    await self.bot.say(page)
             else:
                 await self.bot.say("Your search terms gave no results.")
+        except IndexError:
+            await self.bot.say("There is no definition #{}".format(pos+1))
         except:
             await self.bot.say("Error.")
 
