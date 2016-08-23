@@ -5,4 +5,5 @@ data
 !data/trivia/*
 !data/audio/playlists/*
 *.exe
-*.dll
+*.dll 
+ffmpeg-3.0.2
