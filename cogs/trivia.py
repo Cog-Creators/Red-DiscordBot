@@ -17,7 +17,7 @@ class Trivia:
         self.settings = fileIO("data/trivia/settings.json", "load")
 
     @commands.group(pass_context=True)
-    @checks.mod_or_permissions(manage_roles=True)
+    @checks.mod_or_permissions(administrator=True)
     async def triviaset(self, ctx):
         """Change trivia settings"""
         if ctx.invoked_subcommand is None:
@@ -128,7 +128,7 @@ class TriviaSession():
                 if self.question_list: await self.new_question()
             else:
                 if os.path.isfile("data/trivia/" + qlist + ".txt"):
-                    self.question_list = self.load_list("data/trivia/" + qlist + ".txt")
+                    self.question_list = await self.load_list("data/trivia/" + qlist + ".txt")
                     self.status = "new question"
                     self.timeout = time.perf_counter()
                     if self.question_list: await self.new_question()
@@ -148,7 +148,7 @@ class TriviaSession():
             await self.send_table()
         trivia_manager.trivia_sessions.remove(self)
 
-    def load_list(self, qlist):
+    async def load_list(self, qlist):
         with open(qlist, "r", encoding="ISO-8859-1") as f:
             qlist = f.readlines()
         parsed_list = []
@@ -166,7 +166,7 @@ class TriviaSession():
         if parsed_list != []:
             return parsed_list
         else:
-            self.stop_trivia()
+            await self.stop_trivia()
             return None
 
     async def new_question(self):
@@ -217,7 +217,7 @@ class TriviaSession():
             await asyncio.sleep(3)
             if not self.status == "stop":
                 await self.new_question()
-        
+
     async def send_table(self):
         self.score_list = sorted(self.score_list.items(), reverse=True, key=lambda x: x[1]) # orders score from lower to higher
         t = "```Scores: \n\n"

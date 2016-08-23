@@ -1,16 +1,24 @@
 import discord
 from discord.ext import commands
-from .utils.dataIO import fileIO
+from .utils.dataIO import fileIO, dataIO
 from .utils import checks
 from __main__ import send_cmd_help, settings
+from collections import deque
+from cogs.utils.chat_formatting import escape_mass_mentions
 import os
 import logging
+<<<<<<< HEAD
+=======
+import asyncio
+>>>>>>> refs/remotes/Twentysix26/develop
+
 
 class Mod:
     """Moderation tools."""
 
     def __init__(self, bot):
         self.bot = bot
+<<<<<<< HEAD
         self.whitelist_list = fileIO("data/mod/whitelist.json", "load")
         self.blacklist_list = fileIO("data/mod/blacklist.json", "load")
         self.ignore_list = fileIO("data/mod/ignorelist.json", "load")
@@ -19,6 +27,17 @@ class Mod:
 
     @commands.group(pass_context=True, no_pm=True)
     @checks.serverowner_or_permissions(manage_server=True)
+=======
+        self.whitelist_list = dataIO.load_json("data/mod/whitelist.json")
+        self.blacklist_list = dataIO.load_json("data/mod/blacklist.json")
+        self.ignore_list = dataIO.load_json("data/mod/ignorelist.json")
+        self.filter = dataIO.load_json("data/mod/filter.json")
+        self.past_names = dataIO.load_json("data/mod/past_names.json")
+        self.past_nicknames = dataIO.load_json("data/mod/past_nicknames.json")
+
+    @commands.group(pass_context=True, no_pm=True)
+    @checks.serverowner_or_permissions(administrator=True)
+>>>>>>> refs/remotes/Twentysix26/develop
     async def modset(self, ctx):
         """Manages server administration settings."""
         if ctx.invoked_subcommand is None:
@@ -83,6 +102,36 @@ class Mod:
             print(e)
 
     @commands.command(no_pm=True, pass_context=True)
+    @checks.admin_or_permissions(ban_members=True)
+    async def softban(self, ctx, user: discord.Member):
+        """Kicks the user, deleting 1 day worth of messages."""
+        server = ctx.message.server
+        channel = ctx.message.channel
+        can_ban = channel.permissions_for(server.me).ban_members
+        author = ctx.message.author
+        if can_ban:
+            try:
+                try: # We don't want blocked DMs preventing us from banning
+                    msg = await self.bot.send_message(user, "You have been banned and "
+                              "then unbanned as a quick way to delete your messages.\n"
+                              "You can now join the server again.")
+                except:
+                    pass
+                await self.bot.ban(user, 1)
+                logger.info("{}({}) softbanned {}({}), deleting 1 day worth "
+                    "of messages".format(author.name, author.id, user.name,
+                     user.id))
+                await self.bot.unban(server, user)
+                await self.bot.say("Done. Enough chaos.")
+            except discord.errors.Forbidden:
+                await self.bot.say("My role is not high enough to softban that user.")
+                await self.bot.delete_message(msg)
+            except Exception as e:
+                print(e)
+        else:
+            await self.bot.say("I'm not allowed to do that.")
+
+    @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(manage_nicknames=True)
     async def rename(self, ctx, user : discord.Member, *, nickname=""):
         """Changes user's nickname
@@ -117,11 +166,39 @@ class Mod:
         cleanup text \"test\" 5
 
         Remember to use double quotes."""
+        if number < 1:
+            number = 1
         author = ctx.message.author
         message = ctx.message
+<<<<<<< HEAD
         cmdmsg = message
         logger.info("{}({}) deleted {} messages containing '{}' in channel {}".format(
             author.name, author.id, str(number), text, message.channel.name))
+=======
+        channel = ctx.message.channel
+        logger.info("{}({}) deleted {} messages containing '{}' in channel {}".format(author.name,
+            author.id, str(number), text, message.channel.name))
+        if self.bot.user.bot and self.discordpy_updated():
+            def to_delete(m):
+                if m == ctx.message or text in m.content:
+                    return True
+                else:
+                    return False
+            try:
+                await self.bot.purge_from(channel, limit=number+1, check=to_delete)
+            except discord.errors.Forbidden:
+                await self.bot.say("I need permissions to manage messages "
+                                   "in this channel.")
+        else:
+            await self.legacy_cleanup_text_messages(ctx, text, number)
+
+
+    async def legacy_cleanup_text_messages(self, ctx, text, number):
+        message = ctx.message
+        cmdmsg = ctx.message
+        if self.bot.user.bot:
+            print("Your discord.py is outdated, defaulting to slow deletion.")
+>>>>>>> refs/remotes/Twentysix26/develop
         try:
             if number > 0 and number < 10000:
                 while True:
@@ -129,17 +206,30 @@ class Mod:
                     async for x in self.bot.logs_from(message.channel, limit=100, before=message):
                         if number == 0:
                             await self._delete_message(cmdmsg)
+<<<<<<< HEAD
                             return
                         if text in x.content:
                             await self._delete_message(x)
+=======
+                            await asyncio.sleep(0.25)
+                            return
+                        if text in x.content:
+                            await self._delete_message(x)
+                            await asyncio.sleep(0.25)
+>>>>>>> refs/remotes/Twentysix26/develop
                             number -= 1
                         new = True
                         message = x
                     if not new or number == 0:
                         await self._delete_message(cmdmsg)
+<<<<<<< HEAD
+=======
+                        await asyncio.sleep(0.25)
+>>>>>>> refs/remotes/Twentysix26/develop
                         break
         except discord.errors.Forbidden:
-            await self.bot.say("I need permissions to manage messages in this channel.")
+            await self.bot.send_message(message.channel, "I need permissions"
+                 " to manage messages in this channel.")
 
     @cleanup.command(pass_context=True, no_pm=True)
     async def user(self, ctx, user: discord.Member, number: int):
@@ -148,11 +238,69 @@ class Mod:
         Examples:
         cleanup user @\u200bTwentysix 2
         cleanup user Red 6"""
+        if number < 1:
+            number = 1
         author = ctx.message.author
+        channel = ctx.message.channel
         message = ctx.message
+<<<<<<< HEAD
         cmdmsg = message
         logger.info("{}({}) deleted {} messages made by {}({}) in channel {}".format(
             author.name, author.id, str(number), user.name, user.id, message.channel.name))
+=======
+        logger.info("{}({}) deleted {} messages made by {}({}) in channel {}".format(author.name,
+            author.id, str(number), user.name, user.id, message.channel.name))
+        if self.bot.user.bot and self.discordpy_updated():
+            def is_user(m):
+                if m == ctx.message or m.author == user:
+                    return True
+                else:
+                    return False
+            try:
+                await self.bot.purge_from(channel, limit=number+1, check=is_user)
+            except discord.errors.Forbidden:
+                await self.bot.say("I need permissions to manage messages "
+                                   "in this channel.")
+        else:
+            await self.legacy_cleanup_user_messages(ctx, user, number)
+
+    @cleanup.command(pass_context=True, no_pm=True)
+    async def after(self, ctx, message_id : int):
+        """Deletes all messages after specified message
+
+        To get a message id, enable developer mode in Discord's
+        settings, 'appearance' tab. Then right click a message
+        and copy its id.
+        """
+        channel = ctx.message.channel
+        try:
+            message = await self.bot.get_message(channel, str(message_id))
+        except discord.errors.NotFound:
+            await self.bot.say("Message not found.")
+            return
+        except discord.errors.Forbidden:
+            if self.bot.user.bot:
+                await self.bot.say("I'm not authorized to get that message.")
+            else:
+                await self.bot.say("This function is limited to bot accounts.")
+            return
+        except discord.errors.HTTPException:
+            await self.bot.say("Couldn't retrieve the message.")
+            return
+
+        try:
+            await self.bot.purge_from(channel, limit=2500, after=message)
+        except discord.errors.Forbidden:
+                await self.bot.say("I need permissions to manage messages "
+                                   "in this channel.")
+
+    async def legacy_cleanup_user_messages(self, ctx, user, number):
+        author = ctx.message.author
+        message = ctx.message
+        cmdmsg = ctx.message
+        if self.bot.user.bot:
+            print("Your discord.py is outdated, defaulting to slow deletion.")
+>>>>>>> refs/remotes/Twentysix26/develop
         try:
             if number > 0 and number < 10000:
                 while True:
@@ -160,17 +308,31 @@ class Mod:
                     async for x in self.bot.logs_from(message.channel, limit=100, before=message):
                         if number == 0:
                             await self._delete_message(cmdmsg)
+<<<<<<< HEAD
                             return
                         if x.author.id == user.id:
                             await self._delete_message(x)
+=======
+                            await asyncio.sleep(0.25)
+                            return
+                        if x.author.id == user.id:
+                            await self._delete_message(x)
+                            await asyncio.sleep(0.25)
+>>>>>>> refs/remotes/Twentysix26/develop
                             number -= 1
                         new = True
                         message = x
                     if not new or number == 0:
                         await self._delete_message(cmdmsg)
+<<<<<<< HEAD
+=======
+                        await asyncio.sleep(0.25)
+>>>>>>> refs/remotes/Twentysix26/develop
                         break
         except discord.errors.Forbidden:
-            await self.bot.say("I need permissions to manage messages in this channel.")
+            await self.bot.send_message(ctx.channel, "I need permissions "
+                            "to manage messages in this channel.")
+
 
     @cleanup.command(pass_context=True, no_pm=True)
     async def messages(self, ctx, number: int):
@@ -178,16 +340,40 @@ class Mod:
 
         Example:
         cleanup messages 26"""
+        if number < 1:
+            number = 1
         author = ctx.message.author
         channel = ctx.message.channel
+        logger.info("{}({}) deleted {} messages in channel {}".format(author.name,
+            author.id, str(number), channel.name))
+        if self.bot.user.bot and self.discordpy_updated():
+            try:
+                await self.bot.purge_from(channel, limit=number+1)
+            except discord.errors.Forbidden:
+                await self.bot.say("I need permissions to manage messages in this channel.")
+        else:
+            await self.legacy_cleanup_messages(ctx, number)
+
+    async def legacy_cleanup_messages(self, ctx, number):
+        author = ctx.message.author
+        channel = ctx.message.channel
+<<<<<<< HEAD
         logger.info("{}({}) deleted {} messages in channel {}".format(
             author.name, author.id, str(number), channel.name))
+=======
+        if self.bot.user.bot:
+                print("Your discord.py is outdated, defaulting to slow deletion.")
+>>>>>>> refs/remotes/Twentysix26/develop
         try:
             if number > 0 and number < 10000:
                 async for x in self.bot.logs_from(channel, limit=number + 1):
                     await self._delete_message(x)
+<<<<<<< HEAD
+=======
+                    await asyncio.sleep(0.25)
+>>>>>>> refs/remotes/Twentysix26/develop
         except discord.errors.Forbidden:
-            await self.bot.say("I need permissions to manage messages in this channel.")
+            await self.bot.send_message(channel, "I need permissions to manage messages in this channel.")
 
     @commands.group(pass_context=True)
     @checks.is_owner()
@@ -418,10 +604,9 @@ class Mod:
         Use double quotes if the role contains spaces.
         Colour must be in hexadecimal format.
         \"http://www.w3schools.com/colors/colors_picker.asp\"
-        #cefdf9 -> 0xcefdf9
         Examples:
-        !editrole colour \"The Transistor\" 0xffff00
-        !editrole colour Test 0xcefdf9"""
+        !editrole colour \"The Transistor\" #ff0000
+        !editrole colour Test #ff9900"""
         author = ctx.message.author
         try:
             await self.bot.edit_role(ctx.message.server, role, color=value)
@@ -435,6 +620,10 @@ class Mod:
             await self.bot.say("Something went wrong.")
 
     @editrole.command(name="name", pass_context=True)
+<<<<<<< HEAD
+=======
+    @checks.admin_or_permissions(administrator=True)
+>>>>>>> refs/remotes/Twentysix26/develop
     async def edit_role_name(self, ctx, role: discord.Role, name: str):
         """Edits a role's name
 
@@ -459,17 +648,44 @@ class Mod:
 
     @commands.command()
     async def names(self, user : discord.Member):
-        """Show previous names of a user"""
-        exclude = ("@everyone", "@here")
-        if user.id in self.past_names.keys():
-            names = ""
-            for name in self.past_names[user.id]:
-                if not any(mnt in name.lower() for mnt in exclude):
-                    names += " {}".format(name)
-            names = "```{}```".format(names)
-            await self.bot.say("Past names:\n{}".format(names))
+        """Show previous names/nicknames of a user"""
+        server = user.server
+        names = self.past_names[user.id] if user.id in self.past_names else None
+        try:
+            nicks = self.past_nicknames[server.id][user.id]
+            nicks = [escape_mass_mentions(nick) for nick in nicks]
+        except:
+            nicks = None
+        msg = ""
+        if names:
+            names = [escape_mass_mentions(name) for name in names]
+            msg += "**Past 20 names**:\n"
+            msg += ", ".join(names)
+        if nicks:
+            if msg:
+                msg += "\n\n"
+            msg += "**Past 20 nicknames**:\n"
+            msg += ", ".join(nicks)
+        if msg:
+            await self.bot.say(msg)
         else:
-            await self.bot.say("That user doesn't have any recorded name change.")
+            await self.bot.say("That user doesn't have any recorded name or "
+                               "nickname change.")
+
+    def discordpy_updated(self):
+        try:
+            assert self.bot.purge_from
+        except:
+            return False
+        return True
+
+    async def _delete_message(self, message):
+        try:
+            await self.bot.delete_message(message)
+        except discord.errors.NotFound:
+            pass
+        except:
+            raise
 
     async def _delete_message(self, message):
         try:
@@ -500,8 +716,13 @@ class Mod:
         server = message.server
         can_delete = message.channel.permissions_for(server.me).manage_messages
 
+<<<<<<< HEAD
         # Owner, admins and mods are immune to the filter
         if message.author.id == self.bot.user.id or self.immune_from_filter(message) or not can_delete:
+=======
+        if (message.author.id == self.bot.user.id or
+        self.immune_from_filter(message) or not can_delete): # Owner, admins and mods are immune to the filter
+>>>>>>> refs/remotes/Twentysix26/develop
             return
 
         if server.id in self.filter.keys():
@@ -514,16 +735,36 @@ class Mod:
                     except:
                         pass
                     print("Message deleted. Filtered: " + w)
+<<<<<<< HEAD
 
+=======
+>>>>>>> refs/remotes/Twentysix26/develop
 
     async def check_names(self, before, after):
         if before.name != after.name:
             if before.id not in self.past_names.keys():
-                self.past_names[before.id] = [before.name]
+                self.past_names[before.id] = [after.name]
             else:
-                if before.name not in self.past_names[before.id]:
-                    self.past_names[before.id].append(before.name)
-            fileIO("data/mod/past_names.json", "save", self.past_names)
+                if after.name not in self.past_names[before.id]:
+                    names = deque(self.past_names[before.id], maxlen=20)
+                    names.append(after.name)
+                    self.past_names[before.id] = list(names)
+            dataIO.save_json("data/mod/past_names.json", self.past_names)
+
+        if before.nick != after.nick and after.nick is not None:
+            server = before.server
+            if not server.id in self.past_nicknames:
+                self.past_nicknames[server.id] = {}
+            if before.id in self.past_nicknames[server.id]:
+                nicks = deque(self.past_nicknames[server.id][before.id],
+                              maxlen=20)
+            else:
+                nicks = []
+            if after.nick not in nicks:
+                nicks.append(after.nick)
+                self.past_nicknames[server.id][before.id] = list(nicks)
+                dataIO.save_json("data/mod/past_nicknames.json",
+                                 self.past_nicknames)
 
 def check_folders():
     folders = ("data", "data/mod/")
@@ -556,6 +797,13 @@ def check_files():
         print("Creating empty past_names.json...")
         fileIO("data/mod/past_names.json", "save", {})
 
+<<<<<<< HEAD
+=======
+    if not os.path.isfile("data/mod/past_nicknames.json"):
+        print("Creating empty past_nicknames.json...")
+        fileIO("data/mod/past_nicknames.json", "save", {})
+
+>>>>>>> refs/remotes/Twentysix26/develop
 
 
 def setup(bot):

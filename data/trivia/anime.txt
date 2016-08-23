@@ -16,6 +16,8 @@ What character type is a heroine that started as a villain trying to kill the pr
 It's common in anime for a character to pull their lower eyelid down to taunt someone. What is this called?`akanabe
 What anime character type is known as a quiet and often antisocial character?`dandere
 What character type is very loving and gentle to someone before their devotion becomes destructive in nature, often through violence and/or brutality?`yandere
+What genre of anime covers female to female sexual relationships?`Yuri
+What genre of anime covers male to male sexual relationships?`Yaoi
 Which Hayao Miyazaki movie was based off of a book by a British author named Dianna Wynne Jones?`Castle in the sky
 As of 2015, among all the 17 long anime movies Hayao Miyazaki participated in, how many did he direct?`11`eleven
 (Attack on Titan) Who is the main character?`Eren Yeager`Eren
@@ -49,7 +51,16 @@ Which series features a location called the Soul Society?`Bleach
 (Bleach) What is a Hollow that has removed its mask and has gained Shinigami-like powers?`Arrancar
 (Bleach) What is the name of Hitsugaya Toshirou's Zanpakutou?`Hyourinmaru
 (Bleach) Who does Orikasa Fumiko voice?`Rukia
-In what CLAMP Animé is there a little Persocon named Chii?`Chobits
+(Bleach) Who are Shinigami who have obtained Hollow powers?`Visored
+(Bleach) Who are the top ranked Arrancar?`Espada
+(Bleach) What is the name of Orihime's power which is manifested through her hairpins?`Shun Shun Rikka
+(Bleach) What is the name of Urahara's Zanpakutou?`Benihime
+(Bleach) What is the name of Ichigo's Zanpakutou?`Zangetsu
+(Bleach) What is the ritual performed by Shinigami to send Pluses to Soul Society?`Konso
+(Bleach) Jigokucho which are used as messengers in Soul Society are what type of animal?`Butterfly
+(Bleach) What are the artificial bodies used by Shinigami in the World of the Living?`Gigai
+(Bleach) What is the name of Karin's twin?`Yuzu
+In what CLAMP anime is there a little Persocon named Chii?`Chobits
 (Chobits) What is the first thing that came on the screen in episode 1?`cow
 (Code Geass) The character Li Xingke is a member of which group?`the chinese federation`chinese federation
 (Code Geass) The leader of the Four Holy Swords is named...?`General Kyoshiro Tohdoh`general tohdoh`kyoshiro tohdoh`tohdoh
@@ -57,6 +68,46 @@ In what CLAMP Animé is there a little Persocon named Chii?`Chobits
 (Code Geass) What game does Lelouch skip school to play?`chess
 (Code Geass) Wat was the name of the academy Lelouch went to?`Ashford Academy`Ashford
 (Code Geass) At the very end, how many characters were aware of Lelouch's true intentions?`4`four
+(Code Geass) What is also known as the "Power of Kings"?`Geass
+(Code Geass) Who had a geass which allows them to telepathically hear the conscious thoughts of anyone within an radius of five hundred meters?`Mao
+(Code Geass) Who had a geass which gave them the power to be loved?`C.C.`cc
+(Code Geass) Who did Marianne vi Britannia transfer her consciousness into?`Anya Alstreim`Anya
+(Code Geass) Who piloted the Knightmare Frame named "Percival"?`Luciano Bradley`Luciano
+(Code Geass) Who piloted the Knightmare Frame named "Mordred"?`Anya Alstreim`Anya
+(Code Geass) Who is the Knight of Three?`Gino Weinberg`Gino
+(Code Geass) Who piloted the Knightmare Frame known as "Tristan"?`Gino Weinberg`Gino
+(Code Geass) Who is the Knight of Zero?`Suzaku Kururugi`Suzaku
+(Code Geass) What is the name of Suzaku's cat?`Arthur
+(Code Geass) Who becomes mentally unstable after Euphemia's death?`Nina Einstein`Nina
+(Code Geass) Who is the Secretary of the Ashford Academy Student Council?`Rivalz Cardemonde`Rivalz
+(Code Geass) What is the name of the floating fortress developed by the Toromo Agency at Cambodia?`Damocles
+(Code Geass) Who is the second prince of the Britannian Imperial Family and the only person Lelouch was unable to beat at chess as a child?`Schneizel el Britannia`Schneizel
+(Code Geass) Who is the second princess of Britannia also known as the "Witch of Britannia"?`Cornelia li Britannia`Cornelia
+(Code Geass) Who has the codename "Q-1"?`Kallen Kozuki`Kallen Stadtfeld`Kallen
+(Code Geass) What is the name of the Indian scientist and the head of the Black Knights' research and development team?`Rakshata Chawla`Rakshata
+(Code Geass) What is the name of the coalition of states created to counter Britannia?`United Federation of Nations
+(Code Geass) Who is the leader of the United Federation of Nations?`Kaguya Sumeragi`Kaguya
+(Code Geass) Who is the leader of the Chinese Federation?`Empress Tianzi`Tianzi
+(Code Geass) Aside from Britannia and the Chinese Federation, what is the third major superpower in the world?`Europia United
+(Code Geass) What is the capitol of the Holy Britannian Empire?`Pendragon
+(Code Geass) Who unknowingly killed Shirley's father?`Kallen Kozuki`Kallen Stadtfeld`Kallen
+(Code Geass) What is Villetta Nu's Japanese name?`Chigusa
+(Code Geass) Who rescues Villetta Nu after her amnesia?`Kaname Ohgi`Ohgi
+(Code Geass) Who is the head of the swimming club?`Villetta Nu`Villetta
+(Code Geass) What is the name of Lelouch and Nunnally's maid?`Sayoko Shinozaki`Sayoko
+(Code Geass) What is the name of the group of 8 men who controlled the Chinese Federation through the Empress?`High Eunuchs`the high eunuchs
+(Code Geass) Who is the Eunuch Gao Hai executed by?`Li Xingke`Xingke
+(Code Geass) Who kills Shirley?`Rolo Lamperouge`Rolo
+(Code Geass) Who is the only female member of the Four Holy Swords?`Nagisa Chiba`Chiba
+(Code Geass) What is the name of the elite unit commanded by Kyoshiro Tohdoh?`Four Holy Swords
+(Code Geass) Who is in love with Tohdoh?`Nagisa Chiba`Chiba
+(Code Geass) What is the name of the Knightmare Frame custom built for Kyoshiro Tohdoh by the Militarized Zone of India?`Zangetsu
+(Code Geass) What is the name of the warhead developed by Nina?`F.L.E.I.J.A.`FLEIJA
+(Code Geass) What are the structures associated with Geass that work through a person's memories?`Thought Elevator
+(Code Geass) Who is the first prince of Britannia?`Odysseus eu Britannia`Odysseus
+(Code Geass) What is the name of the aerial carrier of the Black Knights?`Ikaruga
+(Code Geass) Who killed prince clovis?`lelouch
+(Code Geass) Who is Suzaku's cousin?`Kaguya Sumeragi`Kaguya
 (Cowboy Bebop) What is the villan Vicious's weapon of choice?`katana
 (Cowboy Bebop) Who dies?`Spike
 Which anime involves a Corgi hound named Ein as one of the characters?`cowboy bebop
@@ -65,7 +116,7 @@ Which anime involves a Corgi hound named Ein as one of the characters?`cowboy be
 (Death Note) Who is the third Kira?`Kyosuke Higuchi`Kyosuke
 (Death Note) What is the default way the Death Note kills?`cardiac paralysis
 (Death Note) What is the name of the Shinigami that owns the Death Note Light Yagami uses?`Ryuk
-(Death Note) What is L's real name?`L Lawliets
+(Death Note) What is L's real name?`L Lawliet
 (Death Note) Who did the first Death Note to be picked up belong to?`Sidoh
 (Death Note) When Misa meets Light, what is her occupation?`Model
 (Death Note) What nickname is given to Raito (Light) after he finds the Death Note?`Kira
@@ -75,6 +126,12 @@ Which anime involves a Corgi hound named Ein as one of the characters?`cowboy be
 (Death Note) Who did L always call an idiot?`Matsuda
 (Death Note) What is Light's last name?`Yagami
 (Death Note) What was the name of the inside man in the Yotsuba group?`Renji Namikawa
+(Death Note) What does SPK stand for?`Special Provision for Kira
+(Death Note) What is the title of the final chapter of death note manga?`Finis
+(Death Note) Who was the first person that Light killed?`Kurou Otoharada`Kurou`Otoharada
+(Death Note) What does L hate?`Socks
+(Death Note) What is the character Mello (Mihael Keehl) addicted to eating?`Chocolate
+(Death Note) If L sits normally, he claims his deductive reasoning reasoning will drop by what percent?`40`Forty
 (Detective Conan) What is Shinichi Kudo's best sport?`soccer`football
 (Digimon) Which year was the American adaptation of Digimon: The Movie released?`2000
 (Digimon) What was Taichi Kamiya's first Digimon?`Botamon
@@ -86,10 +143,27 @@ Which anime involves a Corgi hound named Ein as one of the characters?`cowboy be
 (Dragon Ball Z) Which android is the only one who marries?`18
 For which anime were these songs written: "Cha La Head Cha La" and "Boku-tachi wa Tenshi Datta"?`Dragon Ball Z
 (Durarara) What is the name of the hot tempered bar tender with super human strength?`Shizuo
-(Fairy Tail) Where did Lucy get her guild mark?`Right hand`back of right hand`hand
+(Fairy Tail) Where did Lucy get her guild mark?`Right hand
 (Fairy Tail) Who was the first guild master of Fairy Tail?`Mavis
-(Fairy Tail) Where is the location of the Fairy Tail guildhouse?`Magnolia
+(Fairy Tail) Where is the location of the Fairy Tail guildhouse?`Magnolia Town`Magnolia
 (Fairy Tail) What is the name of the dragon that raised Natsu in Fairy Tail?`Igneel
+(Fairy Tail) What is Lucy's last name?`Heartfilia
+(Fairy Tail) Who has the power "Satan Soul"?`Mirajane
+(Fairy Tail) Aside from Wendy, who is the other Sky Sister?`Sherria
+(Fairy Tail) Who is the leader of the guild Lamia Scale?`Ooba Babasaama`Ooba
+(Fairy Tail) What type of magic does Jura use?`Earth Magic`Earth
+(Fairy Tail) What are Laxus' followers called?`Thunder God Tribe
+(Fairy Tail) Who is Evergreen romantically involved with?`Elfman
+(Fairy Tail) Who is Cana's father?`Gildarts
+(Fairy Tail) Where is Natsu's guild mark?`Right shoulder
+(Fairy Tail) Who was able to use the skill "Fairy Glitter"?`Cana
+(Fairy Tail) Where is the holy ground for the guild Fairy Tail?`Tenrou Island
+(Fairy Tail) What is the brand of Erza's casual armor?`Heart Kreuz
+(Fairy Tail) Who is also known as Titania?`Erza Scarlet`Erza
+(Fairy Tail) What is Gray's last name?`Fullbuster
+(Fairy Tail) Who taught Gray his magic?`Ur
+(Fairy Tail) Which continent do the Ten Wizard Saints come from?`Ishgar
+(Fairy Tail) Who uses Arc of Time magic?`Ultear
 (Fooly Cooly) How many manga-like (comic-like) scenes are there in total?`2`two
 (Fooly Cooly) There are a couple of scenes where you see the commander getting a haircut. What popular show's animation resembles the special animation in this scene?`South Park
 (Fruits Basket) What is the last name of the cursed family Tohru stays with?`Sohma
@@ -121,7 +195,7 @@ For which anime were these songs written: "Cha La Head Cha La" and "Boku-tachi w
 (Fullmetal Alchemist) How tall is Edward?`4'6"`four and a half feet`four foot six inches`four foot 6
 (Fullmetal Alchemist) What does Winry do for a living?`mechanic
 (Fullmetal Alchemist) What's Hughes's daughter's name?`elicia
-(Fullmetal Alchemist) What is the name of Ed and Al's mother?`Trisha
+(Fullmetal Alchemist) What is the name of Ed and Al's mother?`Trisha Elric`Trisha
 (Fullmetal Alchemist) What did Ed give up to revive his mother?`left leg
 (Fullmetal Alchemist) Who is Ed's father?`Hohenheim
 (Fullmetal Alchemist) How old was Edward when he became a state alchemist?`12`twelve
@@ -137,6 +211,14 @@ For which anime were these songs written: "Cha La Head Cha La" and "Boku-tachi w
 (Fullmetal Alchemist) Alex Louis Armstrong is also known as the __ Alchemist?`Strong Arm`strongarm
 (Fullmetal Alchemist) Who is known as the Northern Wall of Briggs?`Olivier Mira Armstrong`Olivier Armstrong
 (Fullmetal Alchemist) Who is a pseudo Gate of Truth?`Gluttony
+(Fullmetal Alchemist) Who is Colonel Mustang's best friend?`Maes Hughes`Hughes
+(Fullmetal Alchemist) What does Roy Mustang give in exchange to go through the portal?`His eyesight`eyesight`vision`sight
+(Fullmetal Alchemist) What are Winry and Pinako Rockbell best known for making?`Automail
+(Fullmetal Alchemist) For the majority of the series, where is Mustang stationed at?`East headquarters`East HQ
+(Fullmetal Alchemist) What is the name of the Ishbalan who hates State Alchemists and murders them because he thinks it is an act of God?`Scar
+(Fullmetal Alchemist) Which homunculus was the Fuhrer? `Pride
+(Fullmetal Alchemist) What are Colonel Mustang's gloves made of?`ignition cloth
+(Fullmetal Alchemist) What's Hughes's daughter's name? `Elicia
 After Watase Yuu's creation of "Fushigi Yuugi", which famous shoujo anime did she make?`Ayashi no Ceres
 (Fushigi Yuugi) Miaka is the priestess of what?`Suzaku
 (Fushigi Yuugi) The world of Fushigi Yuugi is based on the ancient form of what country?`China
@@ -159,7 +241,6 @@ Basketball Anime that came out in 2012?`Kuroko No Basket
 (Love Hina) In the Christmas special, what did Keitarou buy Naru?`Coat`jacket
 (Magic Knight Rayearth) Thee three heroines, Hikaru, Umi and Fuu, have powers associated with different elements. What kind of elemental spells does Umi use?`water
 (Mew Mew Power) What type of animal power does Kiki have?`monkey
-Which 2011 magical girl anime features Grief Seeds, witches, a mysterious white creature called Kyubey, and the characters Homura, Sayaka and Mami?`Puella Magi Madoka Magica
 (Naruto) What is the relationship between Hinata and Hanabi Hyuga?`sisters`sister
 (Naruto) Who is Negi's cousin?`Hinata Hyuga`Hinata
 Sakura, Sasuke, Rock Lee, and Kakashi are all characters from which anime?`Naruto
@@ -182,6 +263,29 @@ Sakura, Sasuke, Rock Lee, and Kakashi are all characters from which anime?`Narut
 (Naruto) When in The Forest Of Death, Orochimaru disguises himself as a ninja from what village?`Grass
 (Naruto) What is involved to use most summoning techniques?`blood
 (Naruto) Who is the proctor for the second stage of the Chunin Exams?`Anko Mitarashi
+(Naruto) Who writes the Make Out Paradise books?`Jiraiya
+(Naruto) What does the symbol on Gaara's forehead mean?`Love
+(Naruto) What is the Third Hokage's last name?`Sarutobi
+(Naruto) What is the Third Hokage's first name?`Hiruzen
+(Naruto) What legendary ninja was known as "Konoha's White Fang?"`Sakumo Hatake`Sakumo`Hatake Sakumo
+(Naruto) Which Sound ninja has a kekkei genkai ability called Shikotsu Myaku?`Kimimaro Kaguya`Kimimaro
+(Naruto) Who was Naruto's teacher at the ninja academy?`Iruka
+(Naruto) What village does Naruto belong to?`Konohagakure
+(Naruto) What is the name of the Biju inside Gaara?`Shukaku
+(Naruto) Who is the second hokage of Konoha?`Tobirama Senju`Tobirama`Senju
+(Naruto) Where does Ino wear her ninja headband?`Hip
+(Naruto) What is the last hand sign for the Uchiha Clan's Katon: Gokakyu no Jutsu?`Tiger
+(Naruto) Who was suggested as hokage while Tsunade was in a coma?`Kakashi
+(Naruto) Who revived Gaara when the Biju was taken out of him?`Chiyo
+(Naruto) What's the name of Shizune's pet pig?`Tonton
+(Naruto) Who uses the Yin Seal?`Tsunade`sakura
+(Naruto) Who has had amnesia when the person was a child?`Kabuto
+(Naruto) What is the name of the slug summoned by Tsunade and Sakura?`Katsuyu
+(Naruto) Which country has the samurai?`Land of Iron`Iron
+(Naruto) Which clan is Karin a member of?`Uzumaki
+(Naruto) Where did the Uzumaki clan originate from?`Uzushiogakure`Land of Whirlpools`Hidden Eddy Village
+(Naruto) Who used the Six Red Yang Formation?`Obito
+(Naruto) Who is officially the Sixth Hokage at the end of the manga series?`Kakashi
 (Neon Genesis Evangelion)Who is the pilot of Unit-02?`asuka langley-soryu`asuka langley soryu
 (Neon Genesis Evangelion) In what year did the show start airing?`1995
 (No Game No Life) How many races exist in Disboard?`16`sixteen
@@ -206,17 +310,75 @@ Sakura, Sasuke, Rock Lee, and Kakashi are all characters from which anime?`Narut
 (One Punch Man) What city does Saitama live in?`Z-city`z city`z
 (One Punch Man) What city is the headquarters of the Hero Association in?`A-city`A city`A
 (One Punch Man) Who is the Rank 1 Class S Hero?`Blast
+(One Punch Man) How long did Saitama train for before he became strong?`A year and a half`1.5 years`year and a half
+(One Punch Man) What is Bang's fighting style?`Water Stream Rock Smashing Fist
+(One Punch Man) Bang is also known as_?`Silver Fang`Greatest Treasure of Martial Arts
+(One Punch Man) What is Bang's older brother's name?`Bomb
+(One Punch Man) What is Bang's brother's fighting style?`Whirlwind Iron Cutting Fist
+(One Punch Man) What is Tsumaki also known as?`Tornado of Terror
+(One Punch Man) Who is Tsumaki's younger sister?`Fubuki
+(One Punch Man) Who is known as the Blizzard of Hell?`Fubuki
+(One Punch Man) What is the group headed by Fubuki?`The Blizzard Group`blizzard group
+(One Punch Man) Who is the Class S Rank 4 Hero?`Atomic Samurai
+(One Punch Man) Who is the youngest hero in the Hero Association?`Child Emperor
+(One Punch Man) Where is Child Emperor's lab located?`Y-city`Y city`y
+(One Punch Man) What is Metal Knight's real name?`Bofoi
+(One Punch Man) Which character uses a technique called "Ultimate Hellfire Wavemotion Cannon"?`King
+(One Punch Man) What is Genos' hero name?`Demon Cyborg
+(One Punch Man) What are Genos' tears made of?`oil
+(One Punch Man) Where did Saitama work before becoming a hero?`convenience store
+(One Punch Man) What is Saitama also know as?`Caped Baldy
 (Ouran High School Host Club) Who is mistaken for a boy in the anime?`Haruhi
 (Pokemon) In the original Japanese version, what is Ash Ketchum's name?`Satoshi
 (Pokemon) Pokemon was created by Stoshi Tajiri in which year?`1996
 (Pokemon) What starter pokemon did Ash Ketchum originally intend to choose?`Squirtle
+(Pokemon) What is the name of the friend who travels with Ash during only the Orange Islands arc?`Tracey Sketchit`Tracey
+(Pokemon) Who aspires to be a Pokemon Watcher?`Tracey Sketchit`Tracey
+(Pokemon) What region is Ash from?`Kanto
+(Pokemon) What building in Lavender Town is filled with graves?`Pokemon Tower
+(Pokemon) What is the name of Brock's father?`Flint
+(Pokemon) Who did Brock leave Ash to work for?`Professor Ivy
+(Pokemon) What did May enjoy competing in?`Pokemon Contests`Pokemon Contest
+(Pokemon) What is the name of May's younger brother?`Max
+(Pokemon) What region is Dawn from?`Sinnoh
+(Pokemon) Who is a Pokemon Connoisseur?`Cilan
+(Pokemon) Who is trying to become a Pokemon Performer?`Serena
+(Pokemon) What Pokemon is Todd Snap trying to take a picture of?`Articuno
+(Pokemon) What is the name of Ritchie's Pikachu?`Sparky
+(Pokemon) Who is the Professor of the Hoenn region?`Professor Birch
+Which 2011 magical girl anime features Grief Seeds, witches, a mysterious white creature called Kyubey, and the characters Homura, Sayaka and Mami?`Puella Magi Madoka Magica
 (Ranma 1/2) What does Ryouga turn into when he gets doused with cold water?`pig`a pig
 (Ranma 1/2) What is Ranma most afraid of?`cats`cat
 (Rave Master) What's 3713 real name?`Elie
+(Rurouni Kenshin) What is the name of the principle of "swords that give life"?`katsujinken
+(Rurouni Kenshin) What is the name of the principle of "swords that kill"?`satsujinken
+What was the other name of the popular anime known as Samurai X?`Rurouni Kenshin
+(Rurouni Kenshin) The Meiji Era took place after the fall of what era?`Tokugawa
+(Rurouni Kenshin) This character was the captain of the third squad of the Shinsengumi and later became a policeman...?`Saitou Hajime`Saitou
+(Rurouni Kenshin) Kenshin calls himself a rurouni. What is a rurouni?`Wandering Swordsman`Wanderer
+(Rurouni Kenshin) What illegal drug did Takani Megumi make?`Opium
+(Rurouni Kenshin) How old is Kenshin Himura in the beginning of the anime?`TwentyEight`Twenty-Eight`twenty eight`28
+(Rurouni Kenshin) What is the name of the girl Kenshin accidentally killed?`Tomoe Yukishiro`Tomoe
+(Rurouni Kenshin) Who is in love with Kenshin Himura?`Kaoru Kamiya`Kaoru
+(Rurouni Kenshin) What was Kenshin's nickname during the Meji Revolution?`Hitokiri Battousai`Battousai the Manslayer`Battousai
+(Rurouni Kenshin) What type of sword does Kenshin use (japanese for reverse blade sword)?`Sabakou
+(Rurouni Kenshin) Who is Kaoru's pupil?`Myojin Yahiko`Yahiko
+(Rurouni Kenshin) What does Yahiko use as a weapon?`Shinai
+(Rurouni Kenshin) What does Kaoru use as a weapon?`Bokken
+(Rurouni Kenshin) What is the name of Kenshin's son?`Kenji
+(Rurouni Kenshin) How does Kenshin eventually die?`Tuberculosis
+(Rurouni Kenshin) What was Yahiko before he was rescued?`Pickpocket
+(Rurouni Kenshin) What is the name of Kenshin's sword style?`Hiten Mitsurugi
+(Rurouni Kenshin) What is the name of Kenshin's master?`Hiko
 Usagi Tsukino is better known as...?`Sailor Moon
 (Sailor Moon) Who was Minako's crime-fighting alter ego before she became Sailor Venus?`sailor v
 (Sailor Moon) What are the Sailor Senshi named after?`Planets
 (Sailor Moon) Who is the love interest of Sailor Moon?`Tuxedo Mask`Mamoru Chiba`Mamoru`Endymion
+What anime is about samurai swordsmen in a hip hop setting?`Samurai Champloo
+(Samurai Champloo) What does the samurai who Fuu is looking for smell like?`Sunflowers`Sunflower
+(Samurai Champloo) What is the name of Fuu's flying squirrel?`Momo
+(Samurai Champloo) What is Mugen's totem?`Rooster
+(Samurai Champloo) What is Jin's totem?`Koi Fish`Koi
 (Shokugeki no Soma) Who is the 7th seat on the Elite Ten Council?`Satoshi Isshiki`Isshiki
 (Shokugeki no Soma) Who is the 10th seat on the Elite Ten Council?`Erina Nakiri`Erina
 (Shokugeki no Soma) What was Joichiro Yukihira's original name?`Joichiro Saiba`Saiba Joichiro`Saiba
@@ -251,7 +413,7 @@ Maka Albarn is from what anime?`soul eater
 Sakura Kinamoto is the heroine of 'Cardcaptor Sakura'. In which CLAMP manga/anime does she also appear?`Tsubasa: Reservoir Chronicle`Tsubasa`Tsubasa Reservoir Chronicle`Tsubasa - Reservoir Chronicle
 (Tsubasa Chronicle) What does the gang needed to collect?`Princess Sakura's feathers`feathers
 Which manga made by CLAMP was named after a plant?`clover
-What is name for the rabbit-like creatures from Clamp?`mokona
+What is name for the rabbit-like creatures from CLAMP?`mokona
 What is Kazuki Takahashi best known as the creator of?`yu-gi-oh`yu-gi-oh!
 (Yu Yu Hakusho) What level computer does Mitari have to fight in Game Master's territory?`7`seven
 (Yu Yu Hakasho) What is Yuskey's close advisor and ghost friend?`Botan
