@@ -480,11 +480,13 @@ class Owner:
             await self.bot.send_message(owner, message)
         except discord.errors.InvalidArgument:
             await self.bot.say("I cannot send your message, I'm unable to find"
-                               "my owner... *sigh*")
+                               " my owner... *sigh*")
         except discord.errors.HTTPException:
             await self.bot.say("Your message is too long.")
         except:
             await self.bot.say("I'm unable to deliver your message. Sorry.")
+        else:
+            await self.bot.say("Your message has been sent.")
 
     @commands.command()
     async def info(self):
