@@ -434,6 +434,7 @@ class Economy:
             slotMsg = "{}{} Nothing! Lost bet. ".format(display_reels, message.author.mention)
             self.bank.withdraw_credits(message.author, bid)
             slotMsg += "\n" + "Credits left: {}".format(self.bank.get_balance(message.author))
+            await self.bot.send_message(message.channel, slotMsg)
             return True
         self.bank.deposit_credits(message.author, bid)
         slotMsg += "\n" + "Current credits: {}".format(self.bank.get_balance(message.author))
