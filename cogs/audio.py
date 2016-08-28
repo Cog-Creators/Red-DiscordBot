@@ -1134,8 +1134,14 @@ class Audio:
 
         await self._join_voice_channel(voice_channel)
 
-    @commands.command(pass_context=True, no_pm=True)
-    async def local(self, ctx, name):
+    @commands.group(pass_context=True, no_pm=True)
+    async def local(self, ctx):
+        """Local playlists commands"""
+        if ctx.invoked_subcommand is None:
+            await send_cmd_help(ctx)
+
+    @local.command(name="start", pass_context=True, no_pm=True)
+    async def play_local(self, ctx, name):
         """Plays a local playlist"""
         server = ctx.message.server
         author = ctx.message.author
@@ -1184,6 +1190,20 @@ class Audio:
             return
 
         self._play_local_playlist(server, name)
+
+    @local.command(name="list", no_pm=True)
+    async def list_local(self):
+        """Lists local playlists"""
+        local_playlists = self._list_local_playlists()
+        if local_playlists:
+            msg = "```xl\n"
+            for p in local_playlists:
+                msg += "{}, ".format(p)
+            msg = msg.strip(", ")
+            msg += "```"
+            await self.bot.say("Available local playlists:\n{}".format(msg))
+        else:
+            await self.bot.say("There are no playlists.")
 
     @commands.command(pass_context=True, no_pm=True)
     async def pause(self, ctx):
@@ -1632,7 +1652,7 @@ class Audio:
     @commands.command(pass_context=True, aliases=["next"], no_pm=True)
     async def skip(self, ctx):
         """Skips a song, using the set threshold if the requester isn't
-        a mod or admin. Mods, admins and bot owner are not counted in 
+        a mod or admin. Mods, admins and bot owner are not counted in
         the vote threshold."""
         msg = ctx.message
         server = ctx.message.server
