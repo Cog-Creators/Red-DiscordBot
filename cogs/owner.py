@@ -346,7 +346,7 @@ class Owner:
         if comm_obj is KeyError:
             await self.bot.say("That command doesn't seem to exist.")
         elif comm_obj is False:
-            await self.bot.say("You cannot disable the commands of the owner cog.")
+            await self.bot.say("You cannot disable owner restricted commands.")
         else:
             comm_obj.enabled = False
             comm_obj.hidden = True
@@ -381,8 +381,9 @@ class Owner:
                     comm_obj = comm_obj.commands[cmd]
         except KeyError:
             return KeyError
-        if comm_obj.cog_name == "Owner":
-            return False
+        for check in comm_obj.checks:
+            if check.__name__ == "is_owner_check":
+                return False
         return comm_obj
 
     async def disable_commands(self): # runs at boot
