@@ -475,7 +475,12 @@ class Owner:
             return
         owner = discord.utils.get(self.bot.get_all_members(), id=settings.owner)
         author = ctx.message.author
-        sender = "From {} ({}):\n\n".format(author, author.id)
+        if ctx.message.channel.is_private is False:
+            server = ctx.message.server
+            source = ", server **{}** ({})".format(server.name, server.id)
+        else:
+            source = ", direct message"
+        sender = "From **{}** ({}){}:\n\n".format(author, author.id, source)
         message = sender + message
         try:
             await self.bot.send_message(owner, message)
