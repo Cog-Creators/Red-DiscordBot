@@ -1,13 +1,13 @@
 def error(text):
-    return ":no_entry_sign: {}".format(text)
+    return "\N{NO ENTRY SIGN} {}".format(text)
 
 
 def warning(text):
-    return ":warning: {}".format(text)
+    return "\N{WARNING SIGN} {}".format(text)
 
 
 def info(text):
-    return ":information_source: {}".format(text)
+    return "\N{INFORMATION SOURCE} {}".format(text)
 
 
 def bold(text):
