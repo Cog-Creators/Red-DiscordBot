@@ -1,3 +1,4 @@
+import discord
 from discord.ext import commands
 from cogs.utils.dataIO import dataIO, fileIO
 from cogs.utils import checks
@@ -176,7 +177,7 @@ class Downloader:
                         updated_cogs.extend([(name, c) for c in l])
 
             status = ' %d/%d repos updated' % (tasknum, num_repos)
-            await self.bot.edit_message(msg, base_msg + status)
+            msg = await self._robust_edit(msg, base_msg + status)
         status = 'done. '
 
         if not any(self.repos[repo][cog]['INSTALLED'] for repo, cog in updated_cogs):
@@ -192,7 +193,7 @@ class Downloader:
             status += '\nUpdated cogs: ' + \
                 ', '.join('%s/%s' % c for c in updated_cogs) + '.'
 
-        await self.bot.edit_message(msg, base_msg + status)
+        msg = await self._robust_edit(msg, base_msg + status)
 
         for repo, cog in updated_cogs:
             if self.repos[repo][cog]['INSTALLED']:
@@ -210,12 +211,19 @@ class Downloader:
                                " `{}reload <cog_name>`".format(ctx.prefix))
         elif answer.content.lower().strip() == "yes":
             update_list = []
+            fail_list = []
             for (repo, cog) in installed_updated_cogs:
-                update_list.append(cog)
-                self.bot.unload_extension("cogs." + cog)
-                self.bot.load_extension("cogs." + cog)
-            await self.bot.say("Done. The following cogs were reloaded: " +
-                               ', '.join(update_list))
+                try:
+                    self.bot.unload_extension("cogs." + cog)
+                    self.bot.load_extension("cogs." + cog)
+                    update_list.append(cog)
+                except:
+                    fail_list.append(cog)
+                msg = 'Done.'
+                if update_list: 
+                    msg += " The following cogs were reloaded: " + ', '.join(update_list)
+                if fail_list:
+                    msg += " The following cogs failed to reload: " + ', '.join(fail_list)
         else:
             await self.bot.say("Ok then, you can reload cogs with"
                                " `{}reload <cog_name>`".format(ctx.prefix))
@@ -393,6 +401,15 @@ class Downloader:
     async def _update_repo(self, name):
         """asyncio task wrapper"""
         return self.update_repo(name)
+
+    async def _robust_edit(self, msg, text):
+        try:
+            msg = await self.bot.edit_message(msg, text)
+        except discord.errors.NotFound:
+            msg = await self.bot.send_message(msg.channel, text)
+        except:
+            raise
+        return msg
 
 
 def check_folders():
