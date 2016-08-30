@@ -10,6 +10,10 @@ def info(text):
     return "\N{INFORMATION SOURCE} {}".format(text)
 
 
+def question(text):
+    return "\N{QUESTION} {}".format(text)
+
+
 def bold(text):
     return "**{}**".format(text)
 
