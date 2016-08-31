@@ -11,7 +11,7 @@ def info(text):
 
 
 def question(text):
-    return "\N{QUESTION} {}".format(text)
+    return "\N{BLACK QUESTION MARK ORNAMENT} {}".format(text)
 
 
 def bold(text):
