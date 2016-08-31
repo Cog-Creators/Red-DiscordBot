@@ -403,38 +403,40 @@ class Economy:
             reels.append([reel[n - 1], reel[n], reel[n + 1]])
         line = [reels[0][1], reels[1][1], reels[2][1]]
 
-        display_reels = "\n  " + reels[0][0] + " " + reels[1][0] + " " + reels[2][0] + "\n"
+        display_reels = "~~\n~~  " + reels[0][0] + " " + reels[1][0] + " " + reels[2][0] + "\n"
         display_reels += ">" + reels[0][1] + " " + reels[1][1] + " " + reels[2][1] + "\n"
         display_reels += "  " + reels[0][2] + " " + reels[1][2] + " " + reels[2][2] + "\n"
 
         if line[0] == ":two:" and line[1] == ":two:" and line[2] == ":six:":
             bid = bid * 5000
-            await self.bot.send_message(message.channel, "{}{} 226! Your bet is multiplied * 5000! {}! ".format(display_reels, message.author.mention, str(bid)))
+            slotMsg = "{}{} 226! Your bet is multiplied * 5000! {}! ".format(display_reels, message.author.mention, str(bid))
         elif line[0] == ":four_leaf_clover:" and line[1] == ":four_leaf_clover:" and line[2] == ":four_leaf_clover:":
             bid += 1000
-            await self.bot.send_message(message.channel, "{}{} Three FLC! +1000! ".format(display_reels, message.author.mention))
+            slotMsg = "{}{} Three FLC! +1000! ".format(display_reels, message.author.mention)
         elif line[0] == ":cherries:" and line[1] == ":cherries:" and line[2] == ":cherries:":
             bid += 800
-            await self.bot.send_message(message.channel, "{}{} Three cherries! +800! ".format(display_reels, message.author.mention))
+            slotMsg = "{}{} Three cherries! +800! ".format(display_reels, message.author.mention)
         elif line[0] == line[1] == line[2]:
             bid += 500
-            await self.bot.send_message(message.channel, "{}{} Three symbols! +500! ".format(display_reels, message.author.mention))
+            slotMsg = "{}{} Three symbols! +500! ".format(display_reels, message.author.mention)
         elif line[0] == ":two:" and line[1] == ":six:" or line[1] == ":two:" and line[2] == ":six:":
             bid = bid * 4
-            await self.bot.send_message(message.channel, "{}{} 26! Your bet is multiplied * 4! {}! ".format(display_reels, message.author.mention, str(bid)))
+            slotMsg = "{}{} 26! Your bet is multiplied * 4! {}! ".format(display_reels, message.author.mention, str(bid))
         elif line[0] == ":cherries:" and line[1] == ":cherries:" or line[1] == ":cherries:" and line[2] == ":cherries:":
             bid = bid * 3
-            await self.bot.send_message(message.channel, "{}{} Two cherries! Your bet is multiplied * 3! {}! ".format(display_reels, message.author.mention, str(bid)))
+            slotMsg = "{}{} Two cherries! Your bet is multiplied * 3! {}! ".format(display_reels, message.author.mention, str(bid))
         elif line[0] == line[1] or line[1] == line[2]:
             bid = bid * 2
-            await self.bot.send_message(message.channel, "{}{} Two symbols! Your bet is multiplied * 2! {}! ".format(display_reels, message.author.mention, str(bid)))
+            slotMsg = "{}{} Two symbols! Your bet is multiplied * 2! {}! ".format(display_reels, message.author.mention, str(bid))
         else:
-            await self.bot.send_message(message.channel, "{}{} Nothing! Lost bet. ".format(display_reels, message.author.mention))
+            slotMsg = "{}{} Nothing! Lost bet. ".format(display_reels, message.author.mention)
             self.bank.withdraw_credits(message.author, bid)
-            await self.bot.send_message(message.channel, "Credits left: {}".format(self.bank.get_balance(message.author)))
+            slotMsg += "\n" + " Credits left: {}".format(self.bank.get_balance(message.author))
+            await self.bot.send_message(message.channel, slotMsg)
             return True
         self.bank.deposit_credits(message.author, bid)
-        await self.bot.send_message(message.channel, "Current credits: {}".format(self.bank.get_balance(message.author)))
+        slotMsg += "\n" + " Current credits: {}".format(self.bank.get_balance(message.author))
+        await self.bot.send_message(message.channel, slotMsg)
 
     @commands.group(pass_context=True, no_pm=True)
     @checks.admin_or_permissions(manage_server=True)
