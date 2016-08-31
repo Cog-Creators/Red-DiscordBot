@@ -252,8 +252,15 @@ class Owner:
         """Sets Red's name"""
         name = name.strip()
         if name != "":
-            await self.bot.edit_profile(settings.password, username=name)
-            await self.bot.say("Done.")
+            try:
+                await self.bot.edit_profile(settings.password, username=name)
+            except:
+                await self.bot.say("Failed to change name. Remember that you"
+                                   " can only do it up to 2 times an hour."
+                                   "Use nicknames if you need frequent "
+                                   "changes. {}set nickname".format(ctx.prefix))
+            else:
+                await self.bot.say("Done.")
         else:
             await send_cmd_help(ctx)
 
