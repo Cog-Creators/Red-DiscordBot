@@ -219,11 +219,12 @@ class Downloader:
                     update_list.append(cog)
                 except:
                     fail_list.append(cog)
-                msg = 'Done.'
-                if update_list: 
-                    msg += " The following cogs were reloaded: " + ', '.join(update_list)
-                if fail_list:
-                    msg += " The following cogs failed to reload: " + ', '.join(fail_list)
+            msg = 'Done.'
+            if update_list: 
+                msg += " The following cogs were reloaded: " + ', '.join(update_list)
+            if fail_list:
+                msg += " The following cogs failed to reload: " + ', '.join(fail_list)
+            await self.bot.say(msg)
         else:
             await self.bot.say("Ok then, you can reload cogs with"
                                " `{}reload <cog_name>`".format(ctx.prefix))
