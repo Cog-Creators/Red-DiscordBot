@@ -1889,7 +1889,7 @@ class Audio:
                     if self._delete_replays(server, [add_that_date]):
                         await self.bot.say("Deleted {}({}).".format(add_that_date, add_replay["alias"]))
                     else:
-                        await self.bot.sayy("Failed in deleting {}({}).".format(add_that_date, add_replay["alias"]))
+                        await self.bot.say("Failed in deleting {}({}).".format(add_that_date, add_replay["alias"]))
         elif with_replay is False:
             await self.bot.reply("No replay history available for {}".format(with_that_date))
         elif add_replay is False:
@@ -1936,7 +1936,7 @@ class Audio:
                 if self._delete_replays(server, [that_date]):
                     await self.bot.say("Deleted {}({}).".format(that_date, replay["alias"]))
                 else:
-                    await self.bot.sayy("Failed in deleting {}({}).".format(that_date, replay["alias"]))
+                    await self.bot.say("Failed in deleting {}({}).".format(that_date, replay["alias"]))
         elif replay is False:
             await self.bot.reply("No replay history available for today, given date or alias")
 
