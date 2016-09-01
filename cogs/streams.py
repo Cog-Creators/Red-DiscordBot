@@ -58,7 +58,7 @@ class Streams:
             await self.bot.say("Error.")
 
     @commands.command()
-    async def youtube(self, channelid: str):
+    async def ytlive(self, channelid: str):
         """Checks if youtube stream is online"""
         channelid = escape_mass_mentions(channelid)
         online = await self.youtube_online(channelid)
