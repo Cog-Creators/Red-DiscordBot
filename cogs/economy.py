@@ -11,7 +11,7 @@ import os
 import time
 import logging
 
-default_settings = {"PAYDAY_TIME" : 300, "PAYDAY_CREDITS" : 120, "SLOT_MIN" : 5, "SLOT_MAX" : 100, "SLOT_TIME" : 0}
+default_settings = {"PAYDAY_TIME" : 300, "PAYDAY_CREDITS" : 120, "SLOT_MIN" : 5, "SLOT_MAX" : 100, "SLOT_TIME" : 0, "REGISTER_CREDITS" : 0}
 
 slot_payouts = """Slot machine payouts:
     :two: :two: :six: Bet * 5000
@@ -213,8 +213,9 @@ class Economy:
     async def register(self, ctx):
         """Registers an account at the Twentysix bank"""
         user = ctx.message.author
+        credits = self.settings[ctx.message.server.id]["REGISTER_CREDITS"]
         try:
-            account = self.bank.create_account(user)
+            account = self.bank.create_account(user, initial_balance= credits)
             await self.bot.say("{} Account opened. Current balance: {}".format(user.mention,
                 account.balance))
         except AccountAlreadyExists:
@@ -492,6 +493,14 @@ class Economy:
         server = ctx.message.server
         self.settings[server.id]["PAYDAY_CREDITS"] = credits
         await self.bot.say("Every payday will now give " + str(credits) + " credits.")
+        fileIO("data/economy/settings.json", "save", self.settings)
+    
+    @economyset.command(pass_context=True)
+    async def registercredits(self, ctx, credits : int):
+        """Credits given on registering an account"""
+        server = ctx.message.server
+        self.settings[server.id]["REGISTER_CREDITS"] = credits
+        await self.bot.say("Registering an account will now give " + str(credits) + " credits.")
         fileIO("data/economy/settings.json", "save", self.settings)
 
     def display_time(self, seconds, granularity=2): # What would I ever do without stackoverflow?
