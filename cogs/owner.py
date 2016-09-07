@@ -433,7 +433,7 @@ class Owner:
             await self.bot.say("I wasn't able to accept the invite."
                                " Try again.")
 
-    @commands.command(pass_context=True)
+    @commands.command(pass_context=True, no_pm=True)
     @checks.is_owner()
     async def leave(self, ctx):
         """Leaves server"""
