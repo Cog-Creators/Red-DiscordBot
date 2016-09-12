@@ -7,6 +7,7 @@ import datetime
 import time
 import aiohttp
 import asyncio
+import re
 
 settings = {"POLL_DURATION" : 60}
 
@@ -40,17 +41,37 @@ class General:
             await self.bot.say(randchoice(choices))
 
     @commands.command(pass_context=True)
-    async def roll(self, ctx, number : int = 100):
-        """Rolls random number (between 1 and user choice)
-
-        Defaults to 100.
+    async def roll(self, ctx, *text):
+        """roll NdM - rolls N M-sided dice and reports the result (N and reason are optional)
+        roll NdM reason - rolls N M-sided dice and reports the result and why you rolled it
         """
         author = ctx.message.author
-        if number > 1:
-            n = randint(1, number)
-            await self.bot.say("{} :game_die: {} :game_die:".format(author.mention, n))
+        matches = re.search('(\d+)?d(\d+)( ?[+-]\d+)?( .*)?', ' '.join(text), flags=re.IGNORECASE)
+
+        if matches:
+            number = int(matches.group(1)) if matches.group(1) else 1
+            sides = int(matches.group(2))
+            modifier = int(matches.group(3)) if matches.group(3) else 0
+            reason = matches.group(4) if matches.group(4) else ''
         else:
-            await self.bot.say("{} Maybe higher than 1? ;P".format(author.mention))
+            number = 1
+            sides = 6
+            modifier = 0
+            reason = ''
+
+        rolls = list(range(number))
+        results = list(map(lambda x: randint(1, sides), rolls))
+
+        total = sum(results)
+
+        total = total + modifier
+
+        if modifier == 0:
+            modifier = ''
+        else:
+            modifier = "+{}".format(modifier) if modifier > 0 else modifier
+
+        await self.bot.say("{} {}: **{}** ({}d{}{}) rolls: {}".format(author.mention, reason, total, number, sides, modifier, results))
 
     @commands.command(pass_context=True)
     async def flip(self, ctx, user : discord.Member=None):
