@@ -1,7 +1,6 @@
 import json
 import os
 import logging
-from shutil import copy
 from random import randint
 
 class InvalidFileIO(Exception):
@@ -20,9 +19,13 @@ class DataIO():
         try:
             self._read_json(tmp_file)
         except json.decoder.JSONDecodeError:
-            self.logger.warning("Failed to save file {}".format(filename))
-            return
+            self.logger.exception("Attempted to write file {} but JSON "
+                                  "integrity check on tmp file has failed. "
+                                  "The original file is unaltered."
+                                  "".format(filename))
+            return False
         os.replace(tmp_file, filename)
+        return True
 
     def load_json(self, filename):
         """Loads json file"""
