@@ -1,12 +1,9 @@
 import json
 import os
 import logging
-from shutil import copy
+from random import randint
 
 class InvalidFileIO(Exception):
-    pass
-
-class CorruptedJSON(Exception):
     pass
 
 class DataIO():
@@ -14,35 +11,35 @@ class DataIO():
         self.logger = logging.getLogger("red")
 
     def save_json(self, filename, data):
-        """Saves and backups json file"""
-        bak_file = os.path.splitext(filename)[0]+'.bak'
-        self._save_json(filename, data)
-        copy(filename, bak_file) # Backup copy
+        """Atomically saves json file"""
+        rnd = randint(1000, 9999)
+        path, ext = os.path.splitext(filename)
+        tmp_file = "{}-{}.tmp".format(path, rnd)
+        self._save_json(tmp_file, data)
+        try:
+            self._read_json(tmp_file)
+        except json.decoder.JSONDecodeError:
+            self.logger.exception("Attempted to write file {} but JSON "
+                                  "integrity check on tmp file has failed. "
+                                  "The original file is unaltered."
+                                  "".format(filename))
+            return False
+        os.replace(tmp_file, filename)
+        return True
 
     def load_json(self, filename):
-        """Loads json file and restores backup copy in case of corrupted file"""
-        try:
-            return self._read_json(filename)
-        except json.decoder.JSONDecodeError:
-            result = self._restore_json(filename)
-            if result:
-                return self._read_json(filename) # Which hopefully will work
-            else:
-                raise CorruptedJSON("{} is corrupted and no backup copy is"
-                                    " available.".format(filename))
+        """Loads json file"""
+        return self._read_json(filename)
 
     def is_valid_json(self, filename):
-        """Returns True if readable json file, False if not existing.
-           Tries to restore backup copy if corrupted"""
+        """Verifies if json file exists / is readable"""
         try:
-            data = self._read_json(filename)
+            self._read_json(filename)
+            return True
         except FileNotFoundError:
             return False
         except json.decoder.JSONDecodeError:
-            result = self._restore_json(filename)
-            return result # If False, no backup copy, might as well
-        else:             # allow the overwrite
-            return True
+            return False
 
     def _read_json(self, filename):
         with open(filename, encoding='utf-8', mode="r") as f:
@@ -54,18 +51,6 @@ class DataIO():
             json.dump(data, f, indent=4,sort_keys=True,
                 separators=(',',' : '))
         return data
-
-    def _restore_json(self, filename):
-        bak_file = os.path.splitext(filename)[0]+'.bak'
-        if os.path.isfile(bak_file):
-            copy(bak_file, filename) # Restore last working copy
-            self.logger.warning("{} was corrupted. Restored "
-                    "backup copy.".format(filename))
-            return True
-        else:
-            self.logger.critical("{} is corrupted and there is no "
-                    "backup copy available.".format(filename))
-            return False
 
     def _legacy_fileio(self, filename, IO, data=None):
         """Old fileIO provided for backwards compatibility"""
