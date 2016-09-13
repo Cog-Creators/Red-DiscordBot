@@ -1040,6 +1040,22 @@ class Audio:
             msg = "Volume must be between 0 and 100."
         await self.bot.say(msg)
 
+    @audioset.command(pass_context=True, name="linger", no_pm=True)
+    @checks.is_owner()
+    async def audioset_linger(self, ctx, time: int=None):
+        """Sets linger time after bot is finished playing a song"""
+        server = ctx.message.server
+        if time is None:
+            linger = self.get_server_settings(server)['LINGER']
+            msg = "Linger time is currently set to {} seconds".format(linger)
+        elif time >= 0:
+            self.set_server_setting(server, "LINGER", time)
+            msg = "Linger time is now set to {} seconds".format(time)
+            self.save_settings()
+        else:
+            msg = "Linger time must be above 0."
+        await self.bot.say(msg)
+
     @audioset.command(pass_context=True, name="vote", no_pm=True)
     @checks.mod_or_permissions(manage_messages=True)
     async def audioset_vote(self, ctx, percent: int):
@@ -1827,13 +1843,13 @@ class Audio:
                         stop_times[server] = None
 
             for server in stop_times:
+                linger = self.get_server_settings(server)['LINGER']
                 if stop_times[server] and \
-                        int(time.time()) - stop_times[server] > 300:
-                    # 5 min not playing to d/c
-                    log.debug("dcing from sid {} after 300s".format(server.id))
+                        int(time.time()) - stop_times[server] > linger:
+                    log.debug("dcing from sid {} after {}s".format(server.id, linger))
                     await self._disconnect_voice_client(server)
                     stop_times[server] = None
-            await asyncio.sleep(5)
+            await asyncio.sleep(1)
 
     def get_server_settings(self, server):
         try:
@@ -2016,7 +2032,7 @@ def check_files():
     default = {"VOLUME": 50, "MAX_LENGTH": 3700, "VOTE_ENABLED": True,
                "MAX_CACHE": 0, "SOUNDCLOUD_CLIENT_ID": None,
                "TITLE_STATUS": True, "AVCONV": False, "VOTE_THRESHOLD": 50,
-               "SERVERS": {}}
+               "SERVERS": {}, "LINGER": 300}
     settings_path = "data/audio/settings.json"
 
     if not os.path.isfile(settings_path):
