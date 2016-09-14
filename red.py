@@ -114,6 +114,9 @@ def user_allowed(message):
 
     mod = bot.get_cog('Mod')
 
+    if author.bot:
+        return False
+
     if mod is not None:
         if settings.owner == author.id:
             return True
