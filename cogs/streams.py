@@ -317,8 +317,9 @@ class Streams:
 
     async def twitch_exists(self, stream):
         url = "https://api.twitch.tv/channels/" + stream
+        header = {'Client-ID': self.settings.get("TWITCH_TOKEN", "")}
         try:
-            async with aiohttp.get(url) as r:
+            async with aiohttp.get(url, headers=header) as r:
                 data = await r.json()
             if "error" in data:
                 return False
