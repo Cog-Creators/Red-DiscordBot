@@ -238,7 +238,7 @@ class Audio:
         self.downloaders = {}  # sid: object
         self.settings = fileIO("data/audio/settings.json", 'load')
         self.server_specific_setting_keys = ["VOLUME", "VOTE_ENABLED",
-                                             "VOTE_THRESHOLD"]
+                                             "VOTE_THRESHOLD", "LINGER"]
         self.cache_path = "data/audio/cache"
         self.local_playlist_path = "data/audio/localtracks"
         self._old_game = False
