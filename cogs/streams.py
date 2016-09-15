@@ -327,7 +327,7 @@ class Streams:
                 return False
         except:
             return "error"
-        return "error" CHECK_DELAY = 60
+        return "error"
 
     async def stream_checker(self):
         CHECK_DELAY = 60
