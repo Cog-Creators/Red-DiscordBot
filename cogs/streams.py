@@ -316,17 +316,18 @@ class Streams:
         return "error"
 
     async def twitch_exists(self, stream):
-        url = "https://api.twitch.tv/channels/" + stream
+        url = "https://api.twitch.tv/kraken/channels/" + stream
         header = {'Client-ID': self.settings.get("TWITCH_TOKEN", "")}
         try:
             async with aiohttp.get(url, headers=header) as r:
-                data = await r.json()
-            if "error" in data:
-                return False
-            else:
+                data = await r.json()   
+            if len(data["display_name"]) > 0:
                 return True
+            else:
+                return False
         except:
             return "error"
+        return "error" CHECK_DELAY = 60
 
     async def stream_checker(self):
         CHECK_DELAY = 60
