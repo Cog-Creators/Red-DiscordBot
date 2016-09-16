@@ -954,8 +954,11 @@ class Audio:
             if len(active_servers) == 1:
                 server = active_servers[0].server
                 song = self.queue[server.id]["NOW_PLAYING"]
-            if song:
-                await self.bot.say("Now playing: " + song.title)
+                if song:
+                    message = "Now playing: {}.".format(song.title)
+                    await self.bot.send_message(self.playing_text_channel, message)
+                else:
+                    await self.bot.send_message(self.playing_text_channel, "I'm not playing anything right now")
 
     def _valid_playlist_name(self, name):
         for l in name:
@@ -1010,7 +1013,7 @@ class Audio:
     @checks.is_owner()
     async def audioset_notify(self):
         """Maximum track length (seconds) for requested links"""
-        self.settings["NOTIFY"] = not self.settings.get("NOTIFY", False)
+        self.settings["NOTIFY"] = not self.settings.get["NOTIFY"]
         if self.settings["NOTIFY"]:
             await self.bot.say("Now notifying when a new track plays.")
         else:
@@ -1257,6 +1260,7 @@ class Audio:
         server = ctx.message.server
         author = ctx.message.author
         voice_channel = author.voice_channel
+        self.playing_text_channel = ctx.message.channel
 
         # Checking if playing in current server
 
@@ -1936,8 +1940,8 @@ class Audio:
                 song = None
             self.queue[server.id]["NOW_PLAYING"] = song
             log.debug("set now_playing for sid {}".format(server.id))
-            self.bot.loop.create_task(self._update_bot_status())
             self.bot.loop.create_task(self._notify_song_name())
+            self.bot.loop.create_task(self._update_bot_status())
 
         elif server.id in self.downloaders:
             # We're playing but we might be able to download a new song
