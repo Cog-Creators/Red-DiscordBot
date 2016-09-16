@@ -1012,7 +1012,7 @@ class Audio:
     @audioset.command(name="notify")
     @checks.is_owner()
     async def audioset_notify(self):
-        """Maximum track length (seconds) for requested links"""
+        """Send notifications to the channel when the songs changes"""
         self.settings["NOTIFY"] = not self.settings["NOTIFY"]
         if self.settings["NOTIFY"]:
             await self.bot.say("Now notifying when a new track plays.")
