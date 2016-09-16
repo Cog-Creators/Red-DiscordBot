@@ -1175,6 +1175,7 @@ class Audio:
         server = ctx.message.server
         author = ctx.message.author
         voice_channel = author.voice_channel
+        self.playing_text_channel = ctx.message.channel
 
         # Checking already connected, will join if not
 
@@ -1486,6 +1487,7 @@ class Audio:
         server = ctx.message.server
         author = ctx.message.author
         voice_channel = ctx.message.author.voice_channel
+        self.playing_text_channel = ctx.message.channel
 
         caller = inspect.currentframe().f_back.f_code.co_name
 
