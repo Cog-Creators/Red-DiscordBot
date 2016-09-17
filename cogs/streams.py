@@ -39,8 +39,8 @@ class Streams:
         else:
             await self.bot.say("Error.")
 
-    @commands.command()
-    async def twitch(self, stream: str):
+    @commands.command(pass_context=True)
+    async def twitch(self, ctx, stream: str):
         """Checks if twitch stream is online"""
         stream = escape_mass_mentions(stream)
         online = await self.twitch_online(stream)
@@ -51,6 +51,8 @@ class Streams:
             await self.bot.say(stream + " is offline.")
         elif online is None:
             await self.bot.say("That stream doesn't exist.")
+        elif online == "notoken":
+            await self.bot.say("No Twitch token set. run ``{}streamset twitchtoken``".format(ctx.prefix))
         else:
             await self.bot.say("Error.")
 
@@ -81,6 +83,9 @@ class Streams:
         stream = escape_mass_mentions(stream)
         channel = ctx.message.channel
         check = await self.twitch_exists(stream)
+        if check == "notoken":
+            await self.bot.say("No Twitch token set. Not setting the Twitch alert! run ``{}streamset twitchtoken``".format(ctx.prefix))
+            return
         if check is False:
             await self.bot.say("That stream doesn't exist.")
             return
@@ -288,6 +293,8 @@ class Streams:
     async def twitch_online(self, stream):
         url = "https://api.twitch.tv/kraken/streams?channel=" + stream
         header = {'Client-ID': self.settings.get("TWITCH_TOKEN", "")}
+        if self.settings.get("TWITCH_TOKEN") is None:
+            return "notoken"
         try:
             async with aiohttp.get(url, headers=header) as r:
                 data = await r.json()
