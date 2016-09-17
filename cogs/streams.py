@@ -39,8 +39,8 @@ class Streams:
         else:
             await self.bot.say("Error.")
 
-    @commands.command()
-    async def twitch(self, stream: str):
+    @commands.command(pass_context=True)
+    async def twitch(self, ctx, stream: str):
         """Checks if twitch stream is online"""
         stream = escape_mass_mentions(stream)
         online = await self.twitch_online(stream)
@@ -49,8 +49,12 @@ class Streams:
                                "is online!".format(stream))
         elif online is False:
             await self.bot.say(stream + " is offline.")
-        elif online is None:
+        elif online == 404:
             await self.bot.say("That stream doesn't exist.")
+        elif online == 400:
+            await self.bot.say("Owner: Client-ID is invalid or not set. "
+                               "See `{}streamset twitchtoken`"
+                               "".format(ctx.prefix))
         else:
             await self.bot.say("Error.")
 
@@ -80,9 +84,14 @@ class Streams:
         """Adds/removes twitch alerts from the current channel"""
         stream = escape_mass_mentions(stream)
         channel = ctx.message.channel
-        check = await self.twitch_exists(stream)
-        if check is False:
+        check = await self.twitch_online(stream)
+        if check == 404:
             await self.bot.say("That stream doesn't exist.")
+            return
+        elif check == 400:
+            await self.bot.say("Owner: Client-ID is invalid or not set. "
+                               "See `{}streamset twitchtoken`"
+                               "".format(ctx.prefix))
             return
         elif check == "error":
             await self.bot.say("Couldn't contact Twitch API. Try again later.")
@@ -286,15 +295,21 @@ class Streams:
             return "error"
 
     async def twitch_online(self, stream):
-        url = "https://api.twitch.tv/kraken/streams?channel=" + stream
+        session = aiohttp.ClientSession()
+        url = "https://api.twitch.tv/kraken/streams/" + stream
         header = {'Client-ID': self.settings.get("TWITCH_TOKEN", "")}
         try:
-            async with aiohttp.get(url, headers=header) as r:
+            async with session.get(url, headers=header) as r:
                 data = await r.json()
-            if len(data["streams"]) > 0:
-                return True
-            else:
+            await session.close()
+            if r.status == 400:
+                return 400
+            elif r.status == 404:
+                return 404
+            elif data["stream"] is None:
                 return False
+            elif data["stream"]:
+                return True
         except:
             return "error"
         return "error"
@@ -314,19 +329,6 @@ class Streams:
         except:
             return "error"
         return "error"
-
-    async def twitch_exists(self, stream):
-        url = "https://api.twitch.tv/channels/" + stream
-        header = {'Client-ID': self.settings.get("TWITCH_TOKEN", "")}
-        try:
-            async with aiohttp.get(url, headers=header) as r:
-                data = await r.json()
-            if "error" in data:
-                return False
-            else:
-                return True
-        except:
-            return "error"
 
     async def stream_checker(self):
         CHECK_DELAY = 60
