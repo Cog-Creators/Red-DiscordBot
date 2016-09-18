@@ -76,24 +76,27 @@ async def on_message(message):
 
 @bot.event
 async def on_command_error(error, ctx):
+    channel = ctx.message.channel
     if isinstance(error, commands.MissingRequiredArgument):
         await send_cmd_help(ctx)
     elif isinstance(error, commands.BadArgument):
         await send_cmd_help(ctx)
     elif isinstance(error, commands.DisabledCommand):
-        await bot.send_message(ctx.message.channel,
-            "That command is disabled.")
+        await bot.send_message(channel, "That command is disabled.")
     elif isinstance(error, commands.CommandInvokeError):
         logger.exception("Exception in command '{}'".format(
             ctx.command.qualified_name), exc_info=error.original)
         oneliner = "Error in command '{}' - {}: {}".format(
             ctx.command.qualified_name, type(error.original).__name__,
             str(error.original))
-        await ctx.bot.send_message(ctx.message.channel, inline(oneliner))
+        await ctx.bot.send_message(channel, inline(oneliner))
     elif isinstance(error, commands.CommandNotFound):
         pass
     elif isinstance(error, commands.CheckFailure):
         pass
+    elif isinstance(error, commands.NoPrivateMessage):
+        await bot.send_message(channel, "That command is not "
+                                        "available in DMs.")
     else:
         logger.exception(type(error).__name__, exc_info=error)
 
