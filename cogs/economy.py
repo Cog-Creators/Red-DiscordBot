@@ -207,18 +207,19 @@ class Economy:
     def save_result(self, user, result, bid, old):
         #Array guide:  0- lose, 1- 1000, 2-4 *2-4, 5- 500, 6- 800, 7- 5000, 8- total money sloted, 9- money won
         server = user.server
+        entry_found = True
+        bid -= old
         if server.id in self.slot_stats:
             if user.id in self.slot_stats[server.id]:
                 self.slot_stats[server.id][user.id][result] += 1
                 self.slot_stats[server.id][user.id][9] += bid
                 self.slot_stats[server.id][user.id][8] += old
             else:
-                self.slot_stats[server.id][user.id] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                self.slot_stats[server.id][user.id][result] += 1
-                self.slot_stats[server.id][user.id][9] += bid
-                self.slot_stats[server.id][user.id][8] += old
+                entry_found = False
         else:
             self.slot_stats[server.id] = {}
+            entry_found = False
+        if entry_found == False:
             self.slot_stats[server.id][user.id] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
             self.slot_stats[server.id][user.id][result] += 1
             self.slot_stats[server.id][user.id][9] += bid
@@ -240,10 +241,9 @@ class Economy:
         return temp_msg
 
     #temp command
-    @commands.command(name="sstats", pass_context=True, no_pm=True)
-    async def sstats(self, ctx):
+    @commands.command(name="stats", pass_context=True, no_pm=True)
+    async def stats(self, ctx, user:discord.Member=None):
         """Get slot statiscs for a user. Defaults to user who ran the command unless another user is mentioned."""
-        user = []
         try:
             user = ctx.message.mentions
             user = user[0]
