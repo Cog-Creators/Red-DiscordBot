@@ -458,7 +458,7 @@ class Economy:
             reels.append([reel[n - 1], reel[n], reel[n + 1]])
         line = [reels[0][1], reels[1][1], reels[2][1]]
 
-        display_reels = "\n  " + reels[0][0] + " " + reels[1][0] + " " + reels[2][0] + "\n"
+        display_reels = "~~\n~~  " + reels[0][0] + " " + reels[1][0] + " " + reels[2][0] + "\n"
         display_reels += ">" + reels[0][1] + " " + reels[1][1] + " " + reels[2][1] + "\n"
         display_reels += "  " + reels[0][2] + " " + reels[1][2] + " " + reels[2][2] + "\n"
 
