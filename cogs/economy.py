@@ -59,7 +59,7 @@ class Bank:
             account = {"name" : user.name,
                        "balance" : balance,
                        "created_at" : timestamp
-                      }
+                       }
             self.accounts[server.id][user.id] = account
             self._save_bank()
             return self.get_account(user)
@@ -202,6 +202,57 @@ class Economy:
         self.settings = defaultdict(lambda: default_settings, self.settings)
         self.payday_register = defaultdict(dict)
         self.slot_register = defaultdict(dict)
+        self.slot_stats = dataIO.load_json("data/economy/stats.json")
+
+    def save_result(self, user, result, bid, old):
+        #Array guide:  0- lose, 1- 1000, 2-4 *2-4, 5- 500, 6- 800, 7- 5000, 8- total money sloted, 9- money won
+        server = user.server
+        if server.id in self.slot_stats:
+            if user.id in self.slot_stats[server.id]:
+                self.slot_stats[server.id][user.id][result] += 1
+                self.slot_stats[server.id][user.id][9] += bid
+                self.slot_stats[server.id][user.id][8] += old
+            else:
+                self.slot_stats[server.id][user.id] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                self.slot_stats[server.id][user.id][result] += 1
+                self.slot_stats[server.id][user.id][9] += bid
+                self.slot_stats[server.id][user.id][8] += old
+        else:
+            self.slot_stats[server.id] = {}
+            self.slot_stats[server.id][user.id] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+            self.slot_stats[server.id][user.id][result] += 1
+            self.slot_stats[server.id][user.id][9] += bid
+            self.slot_stats[server.id][user.id][8] += old
+        fileIO("data/economy/stats.json", "save", self.slot_stats)
+
+    def slot_stat(self, ctx, user):
+        server = ctx.message.server
+        if server.id not in self.slot_stats:
+            self.slot_stats[server.id] = {}
+            self.slot_stats[server.id][user.id] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        if user.id not in self.slot_stats[server.id]:
+            self.slot_stats[server.id][user.id] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        temp_msg = "```ruby\nSlot statistics for " + user.name + ":\n\nLose:\t  " + str(self.slot_stats[server.id][user.id][0]) + "\nx2:\t\t" + str(self.slot_stats[server.id][user.id][2]) + \
+            "\nx3:\t\t" + str(self.slot_stats[server.id][user.id][3]) + "\nx4:\t\t" + str(self.slot_stats[server.id][user.id][4]) + \
+            "\nx5000:\t " + str(self.slot_stats[server.id][user.id][7]) + "\n\n+500:\t  " + str(self.slot_stats[server.id][user.id][5]) + \
+            "\n+800:\t  " + str(self.slot_stats[server.id][user.id][6]) + "\n+1000:\t " + str(self.slot_stats[server.id][user.id][1]) + \
+            "\n\nSpent:\t " + str(self.slot_stats[server.id][user.id][8]) + "\nGained:\t" + str(self.slot_stats[server.id][user.id][9]) + "```"
+        return temp_msg
+
+    #temp command
+    @commands.command(name="sstats", pass_context=True, no_pm=True)
+    async def sstats(self, ctx):
+        """Get slot statiscs for a user. Defaults to user who ran the command unless another user is mentioned."""
+        user = []
+        try:
+            user = ctx.message.mentions
+            user = user[0]
+        except:
+            user = ctx.message.author
+        try:
+            await self.bot.say(self.slot_stat(ctx, user))
+        except:
+            await self.bot.say("User has no slot information!")
 
     @commands.group(name="bank", pass_context=True)
     async def _bank(self, ctx):
@@ -395,6 +446,8 @@ class Economy:
             await self.bot.say("{0} You need an account with enough funds to play the slot machine.".format(author.mention))
 
     async def slot_machine(self, message, bid):
+        oldbid = bid
+        slot_result = ""
         reel_pattern = [":cherries:", ":cookie:", ":two:", ":four_leaf_clover:", ":cyclone:", ":sunflower:", ":six:", ":mushroom:", ":heart:", ":snowflake:"]
         padding_before = [":mushroom:", ":heart:", ":snowflake:"] # padding prevents index errors
         padding_after = [":cherries:", ":cookie:", ":two:"]
@@ -405,40 +458,50 @@ class Economy:
             reels.append([reel[n - 1], reel[n], reel[n + 1]])
         line = [reels[0][1], reels[1][1], reels[2][1]]
 
-        display_reels = "~~\n~~  " + reels[0][0] + " " + reels[1][0] + " " + reels[2][0] + "\n"
+        display_reels = "\n  " + reels[0][0] + " " + reels[1][0] + " " + reels[2][0] + "\n"
         display_reels += ">" + reels[0][1] + " " + reels[1][1] + " " + reels[2][1] + "\n"
         display_reels += "  " + reels[0][2] + " " + reels[1][2] + " " + reels[2][2] + "\n"
 
         if line[0] == ":two:" and line[1] == ":two:" and line[2] == ":six:":
             bid = bid * 5000
+            slot_result = 7
             slotMsg = "{}{} 226! Your bet is multiplied * 5000! {}! ".format(display_reels, message.author.mention, str(bid))
         elif line[0] == ":four_leaf_clover:" and line[1] == ":four_leaf_clover:" and line[2] == ":four_leaf_clover:":
             bid += 1000
+            slot_result = 1
             slotMsg = "{}{} Three FLC! +1000! ".format(display_reels, message.author.mention)
         elif line[0] == ":cherries:" and line[1] == ":cherries:" and line[2] == ":cherries:":
             bid += 800
+            slot_result = 6
             slotMsg = "{}{} Three cherries! +800! ".format(display_reels, message.author.mention)
         elif line[0] == line[1] == line[2]:
             bid += 500
+            slot_result = 5
             slotMsg = "{}{} Three symbols! +500! ".format(display_reels, message.author.mention)
         elif line[0] == ":two:" and line[1] == ":six:" or line[1] == ":two:" and line[2] == ":six:":
             bid = bid * 4
+            slot_result = 4
             slotMsg = "{}{} 26! Your bet is multiplied * 4! {}! ".format(display_reels, message.author.mention, str(bid))
         elif line[0] == ":cherries:" and line[1] == ":cherries:" or line[1] == ":cherries:" and line[2] == ":cherries:":
             bid = bid * 3
+            slot_result = 3
             slotMsg = "{}{} Two cherries! Your bet is multiplied * 3! {}! ".format(display_reels, message.author.mention, str(bid))
         elif line[0] == line[1] or line[1] == line[2]:
             bid = bid * 2
+            slot_result = 2
             slotMsg = "{}{} Two symbols! Your bet is multiplied * 2! {}! ".format(display_reels, message.author.mention, str(bid))
         else:
             slotMsg = "{}{} Nothing! Lost bet. ".format(display_reels, message.author.mention)
+            slot_result = 0
             self.bank.withdraw_credits(message.author, bid)
             slotMsg += "\n" + " Credits left: {}".format(self.bank.get_balance(message.author))
             await self.bot.send_message(message.channel, slotMsg)
+            self.save_result(message.author, slot_result, bid, oldbid)
             return True
         self.bank.deposit_credits(message.author, bid)
         slotMsg += "\n" + " Current credits: {}".format(self.bank.get_balance(message.author))
         await self.bot.send_message(message.channel, slotMsg)
+        self.save_result(message.author, slot_result, bid, oldbid)
 
     @commands.group(pass_context=True, no_pm=True)
     @checks.admin_or_permissions(manage_server=True)
@@ -529,6 +592,11 @@ def check_files():
     f = "data/economy/bank.json"
     if not fileIO(f, "check"):
         print("Creating empty bank.json...")
+        fileIO(f, "save", {})
+
+    f = "data/economy/stats.json"
+    if not fileIO(f, "check"):
+        print("Creating empty stats.json...")
         fileIO(f, "save", {})
 
 def setup(bot):
