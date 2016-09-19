@@ -59,7 +59,7 @@ class Bank:
             account = {"name" : user.name,
                        "balance" : balance,
                        "created_at" : timestamp
-                       }
+                      }
             self.accounts[server.id][user.id] = account
             self._save_bank()
             return self.get_account(user)
