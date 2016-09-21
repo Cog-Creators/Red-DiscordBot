@@ -195,8 +195,10 @@ class Downloader:
 
         msg = await self._robust_edit(msg, base_msg + status)
 
+        registry = dataIO.load_json("data/red/cogs.json")
+
         for repo, cog in updated_cogs:
-            if self.repos[repo][cog]['INSTALLED']:
+            if (self.repos[repo][cog]['INSTALLED'] and registry.get('cogs.' + cog, False)):
                 installed_updated_cogs.append((repo, cog))
                 await self.install(repo, cog)
 
