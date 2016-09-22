@@ -169,6 +169,7 @@ class Mod:
                     msgs.append(i)
             try:
                 await self.bot.delete_messages(msgs)
+                await self.bot.delete_message(message)
             except discord.errors.Forbidden:
                 await self.bot.say("I need permissions to manage messages "
                                    "in this channel.")
@@ -228,6 +229,7 @@ class Mod:
                     msgs.append(i)
             try:
                 await self.bot.delete_messages(msgs)
+                await self.bot.delete_message(message)
             except discord.errors.Forbidden:
                 await self.bot.say("I need permissions to manage messages "
                                    "in this channel.")
