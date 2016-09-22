@@ -116,8 +116,6 @@ async def update_check():
         cur_version = os.popen(r'git show -s HEAD --format="%cr|%s|%h"')
         cur_version = cur_version.read()
         version = cur_version.split("|")[-1]
-        print(version.strip())
-        print(latest_sha.strip())
         if latest_sha.strip() != version.strip():
             message = "Your bot is out of date! Please update me using git pull!"
             return (owner, message)
