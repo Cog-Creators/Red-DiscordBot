@@ -3,17 +3,17 @@ What item is this? http://i.imgur.com/1aGrpuHh.png `Wraith Band
 What item is this? http://i.imgur.com/VwXSKr8h.png `Wind Lace
 What item is this? http://i.imgur.com/HgJHyfkh.png `Void Stone
 What item is this? http://i.imgur.com/y8uW7V1h.png `Vladimir's Offering
-What item is this? http://i.imgur.com/EuIAVjMh.png `Vitality Booster`Vit Booster
+What item is this? http://i.imgur.com/EuIAVjMh.png `Vitality Booster
 What item is this? http://i.imgur.com/3KCIBDOh.png `Veil of Discord
 What item is this? http://i.imgur.com/cLS2cZDh.png `Vanguard
 What item is this? http://i.imgur.com/JbKeDUch.png `Urn of Shadows
 What item is this? http://i.imgur.com/lkyWMvxh.png `Ultimate Orb
-What item is this? http://i.imgur.com/FGLZkBqh.png `Tranquil Boots`Tranquil Boots Inactive
-What item is this? http://i.imgur.com/dvk1MCMh.png `Tranquil Boots`Tranquil Boots Active
+What item is this? http://i.imgur.com/FGLZkBqh.png `Tranquil Boots (Inactive)`Tranquil Boots Inactive
+What item is this? http://i.imgur.com/dvk1MCMh.png `Tranquil Boots (Active)`Tranquil Boots Active
 What item is this? http://i.imgur.com/KcW7edyh.png `Town Portal Scroll`TP Scroll
 What item is this? http://i.imgur.com/77S9U75h.png `Tome of Knowledge
 What item is this? http://i.imgur.com/WaKy1Pjh.png `Tango
-What item is this? http://i.imgur.com/NkYZgr5h.png `Tango Shared`Shared Tango
+What item is this? http://i.imgur.com/NkYZgr5h.png `Tango (Shared)`Tango Shared`Shared Tango
 What item is this? http://i.imgur.com/cYj1mr0h.png `Talisman of Evasion
 What item is this? http://i.imgur.com/DHILKexh.png `Stout Shield
 What item is this? http://i.imgur.com/JUbevw4h.png `Staff of Wizardry
@@ -39,21 +39,21 @@ What item is this? http://i.imgur.com/vAEHlcZh.png `Robe of the Magi
 What item is this? http://i.imgur.com/kMypuTgh.png `Ring of Regen
 What item is this? http://i.imgur.com/6YGgKGHh.png `Ring of Protection
 What item is this? http://i.imgur.com/E2tg3xEh.png `Ring of Health
-What item is this? http://i.imgur.com/unPvR9Wh.png `Ring of Basilius`Ring of Basilius Inactive
-What item is this? http://i.imgur.com/7SvVqRKh.png `Ring of Basilius`Ring of Basilius Active
-What item is this? http://i.imgur.com/JYBiGVxh.png `Ring of Aquila`Ring of Aquila Inactive
-What item is this? http://i.imgur.com/bdVdrp3h.png `Ring of Aquila`Ring of Aquila Active
+What item is this? http://i.imgur.com/unPvR9Wh.png `Ring of Basilius (Inactive)`Ring of Basilius Inactive
+What item is this? http://i.imgur.com/7SvVqRKh.png `Ring of Basilius (Active)`Ring of Basilius Active
+What item is this? http://i.imgur.com/JYBiGVxh.png `Ring of Aquila (Inactive)`Ring of Aquila Inactive
+What item is this? http://i.imgur.com/bdVdrp3h.png `Ring of Aquila (Active)`Ring of Aquila Active
 What item is this? http://i.imgur.com/0Li6O8Nh.png `Refresher Orb
 What item is this? http://i.imgur.com/vg0KnIqh.png `Recipe Scroll`Recipe
 What item is this? http://i.imgur.com/KFNb72Yh.png `Reaver
-What item is this? http://i.imgur.com/m2UA7a8h.png `Radiance`Radiance Inactive
-What item is this? http://i.imgur.com/W2F2SUdh.png `Radiance`Radiance Active
+What item is this? http://i.imgur.com/m2UA7a8h.png `Radiance (Inactive)`Radiance Inactive
+What item is this? http://i.imgur.com/W2F2SUdh.png `Radiance (Active)`Radiance Active
 What item is this? http://i.imgur.com/H5nRu05h.png `Quelling Blade
 What item is this? http://i.imgur.com/LVpcOnfh.png `Quarterstaff
 What item is this? http://i.imgur.com/haXACouh.png `Power Treads
-What item is this? http://i.imgur.com/nXn8KhOh.png `Power Treads`Power Treads Strength
-What item is this? http://i.imgur.com/11IYBplh.png `Power Treads`Power Treads Intelligence
-What item is this? http://i.imgur.com/XYIEKMih.png `Power Treads`Power Treads Agility
+What item is this? http://i.imgur.com/nXn8KhOh.png `Power Treads (Strength)`Power Treads Strength
+What item is this? http://i.imgur.com/11IYBplh.png `Power Treads (Intelligence)`Power Treads Intelligence
+What item is this? http://i.imgur.com/XYIEKMih.png `Power Treads (Agility)`Power Treads Agility
 What item is this? http://i.imgur.com/hze6GhNh.png `Poor Man's Shield`PMS
 What item is this? http://i.imgur.com/Pote0DAh.png `Point Booster
 What item is this? http://i.imgur.com/m0U0nlLh.png `Platemail
@@ -71,7 +71,7 @@ What item is this? http://i.imgur.com/cJ3dEwhh.png `Oblivion Staff
 What item is this? http://i.imgur.com/oentyyCh.png `Null Talisman
 What item is this? http://i.imgur.com/1GWm8o6h.png `Necronomicon 3
 What item is this? http://i.imgur.com/gjofxoFh.png `Necronomicon 2
-What item is this? http://i.imgur.com/WwEfwWih.png `Necronomicon`Necronomicon 1
+What item is this? http://i.imgur.com/WwEfwWih.png `Necronomicon 1
 What item is this? http://i.imgur.com/u9psKe0h.png `Mystic Staff
 What item is this? http://i.imgur.com/my0MEtjh.png `Morbid Mask
 What item is this? http://i.imgur.com/YsrEZDLh.png `Moon Shard
@@ -97,10 +97,10 @@ What item is this? http://i.imgur.com/M6EbZFPh.png `Hurricane Pike
 What item is this? http://i.imgur.com/vDCqBu6h.png `Hood of Defiance
 What item is this? http://i.imgur.com/AG7Ii56h.png `Helm of the Dominator
 What item is this? http://i.imgur.com/MQ6pxQdh.png `Helm of Iron Will
-What item is this? http://i.imgur.com/NrEdGsnh.png `Heaven's Hallberd
+What item is this? http://i.imgur.com/NrEdGsnh.png `Heaven's Halberd
 What item is this? http://i.imgur.com/MudmQ6Rh.png `Heart of Tarrasque
 What item is this? http://i.imgur.com/w6qAscbh.png `Healing Salve
-What item is this? http://i.imgur.com/FlVerQTh.png `Headress
+What item is this? http://i.imgur.com/FlVerQTh.png `Headdress
 What item is this? http://i.imgur.com/430kekph.png `Hand of Midas
 What item is this? http://i.imgur.com/LSVesWoh.png `Guardian Greaves
 What item is this? http://i.imgur.com/CqtxuPEh.png `Gloves of Haste
@@ -109,8 +109,8 @@ What item is this? http://i.imgur.com/rr3OllOh.png `Ghost Scepter
 What item is this? http://i.imgur.com/sxkItEZh.png `Gem of True Sight
 What item is this? http://i.imgur.com/oKhuvbGh.png `Gauntlets of Strength
 What item is this? http://i.imgur.com/C6vL76qh.png `Force Staff
-What item is this? http://i.imgur.com/NbeuShMh.png `Flying Courier`Flying Courier Radiant
-What item is this? http://i.imgur.com/0nQt3onh.png `Flying Courier`Flying Courier Dire
+What item is this? http://i.imgur.com/NbeuShMh.png `Flying Courier (Radiant)`Flying Courier Radiant
+What item is this? http://i.imgur.com/0nQt3onh.png `Flying Courier (Dire)`Flying Courier Dire
 What item is this? http://i.imgur.com/6uNaTtDh.png `Faerie Fire
 What item is this? http://i.imgur.com/C6Ch4mVh.png `Eye of Skadi
 What item is this? http://i.imgur.com/7Sp3W66h.png `Eul's Scepter of Divinity
@@ -124,14 +124,14 @@ What item is this? http://i.imgur.com/hF3mjT1h.png `Drum of Endurance
 What item is this? http://i.imgur.com/NUeLPgTh.png `Dragon Lance
 What item is this? http://i.imgur.com/VFdPRUDh.png `Divine Rapier
 What item is this? http://i.imgur.com/HLr6SQbh.png `Diffusal Blade 2
-What item is this? http://i.imgur.com/UJ52OSoh.png `Diffusal Blade`Diffusal Blade 1
+What item is this? http://i.imgur.com/UJ52OSoh.png `Diffusal Blade 1
 What item is this? http://i.imgur.com/O4E1IR5h.png `Desolator
 What item is this? http://i.imgur.com/ASNIrpmh.png `Demon Edge
 What item is this? http://i.imgur.com/qM0dRmSh.png `Dagon 5
 What item is this? http://i.imgur.com/ZoIjUQFh.png `Dagon 4
 What item is this? http://i.imgur.com/9g6jw0Xh.png `Dagon 3
 What item is this? http://i.imgur.com/V6kBeNhh.png `Dagon 2
-What item is this? http://i.imgur.com/h4dZ64Xh.png `Dagon`Dagon 1
+What item is this? http://i.imgur.com/h4dZ64Xh.png `Dagon 1
 What item is this? http://i.imgur.com/E9OmVm3h.png `Daedelus
 What item is this? http://i.imgur.com/IL1hH1mh.png `Crystalys
 What item is this? http://i.imgur.com/9VtRTBlh.png `Crimson Guard
@@ -145,17 +145,17 @@ What item is this? http://i.imgur.com/cpjr5Ezh.png `Butterfly
 What item is this? http://i.imgur.com/226lkTRh.png `Buckler
 What item is this? http://i.imgur.com/xw7yLKwh.png `Broadsword
 What item is this? http://i.imgur.com/JpqHPSAh.png `Bracer
-What item is this? http://i.imgur.com/KLGzvMbh.png `Bottle`Bottle Small
-What item is this? http://i.imgur.com/kWErZRYh.png `Bottle`Bottle Regeneration
-What item is this? http://i.imgur.com/B4AJKcjh.png `Bottle`Bottle Medium
-What item is this? http://i.imgur.com/RGlRQJeh.png `Bottle`Bottle Invisibility
-What item is this? http://i.imgur.com/Tqg4c3Oh.png `Bottle`Bottle Illusion
-What item is this? http://i.imgur.com/z2OZqwah.png `Bottle`Bottle Haste
-What item is this? http://i.imgur.com/iYzaR71h.png `Bottle`Bottle Full
-What item is this? http://i.imgur.com/Hm7z9Xnh.png `Bottle`Bottle Empty
-What item is this? http://i.imgur.com/cmeeK2Ch.png `Bottle`Bottle Double Damage
-What item is this? http://i.imgur.com/rUKqmWDh.png `Bottle`Bottle Bounty
-What item is this? http://i.imgur.com/FBRqnb9h.png `Bottle`Bottle Arcane
+What item is this? http://i.imgur.com/KLGzvMbh.png `Bottle (Small)`Bottle Small
+What item is this? http://i.imgur.com/kWErZRYh.png `Bottle (Regeneration)`Bottle Regeneration
+What item is this? http://i.imgur.com/B4AJKcjh.png `Bottle (Medium)`Bottle Medium
+What item is this? http://i.imgur.com/RGlRQJeh.png `Bottle (Invisibility)`Bottle Invisibility
+What item is this? http://i.imgur.com/Tqg4c3Oh.png `Bottle (Illusion)`Bottle Illusion
+What item is this? http://i.imgur.com/z2OZqwah.png `Bottle (Haste)`Bottle Haste
+What item is this? http://i.imgur.com/iYzaR71h.png `Bottle (Full)`Bottle Full
+What item is this? http://i.imgur.com/Hm7z9Xnh.png `Bottle (Empty)`Bottle Empty
+What item is this? http://i.imgur.com/cmeeK2Ch.png `Bottle (Double Damage)`Bottle Double Damage
+What item is this? http://i.imgur.com/rUKqmWDh.png `Bottle (Bounty)`Bottle Bounty
+What item is this? http://i.imgur.com/FBRqnb9h.png `Bottle (Arcane)`Bottle Arcane
 What item is this? http://i.imgur.com/4EIKWONh.png `Boots of Travel 2
 What item is this? http://i.imgur.com/7MQvg5gh.png `Boots of Travel 1
 What item is this? http://i.imgur.com/dDdmPAVh.png `Boots of Speed
@@ -172,11 +172,11 @@ What item is this? http://i.imgur.com/f8opJQch.png `Battle Fury
 What item is this? http://i.imgur.com/2XowFK1h.png `Band of Elvenskin
 What item is this? http://i.imgur.com/ibmZmvSh.png `Banana
 What item is this? http://i.imgur.com/GvtjXIFh.png `Assault Cuirass
-What item is this? http://i.imgur.com/owoQWNVh.png `Armlet of Mordiggian`Armlet`Armlet of Mordiggian Inactive
-What item is this? http://i.imgur.com/vvn8qPbh.png `Armlet of Mordiggian`Armlet`Armlet of Mordiggian Active
+What item is this? http://i.imgur.com/owoQWNVh.png `Armlet of Mordiggian (Inactive)`Armlet of Mordiggian
+What item is this? http://i.imgur.com/vvn8qPbh.png `Armlet of Mordiggian (Active)`Armlet of Mordiggian
 What item is this? http://i.imgur.com/xemeapRh.png `Arcane Boots
-What item is this? http://i.imgur.com/VtNBM6gh.png `Animal Courier`Courier`Courier Radiant
-What item is this? http://i.imgur.com/lzdpgK0h.png `Animal Courier`Courier`Courier Dire
+What item is this? http://i.imgur.com/VtNBM6gh.png `Animal Courier (Radiant)`Courier Radiant`Animal Courier Radiant
+What item is this? http://i.imgur.com/lzdpgK0h.png `Animal Courier (Dire)`Courier Dire`Animal Courier Dire
 What item is this? http://i.imgur.com/5eeAXJCh.png `Aghanim's Scepter
 What item is this? http://i.imgur.com/ZjhX5T8h.png `Aether Lens
 What item is this? http://i.imgur.com/5dfDXymh.png `Aegis of the Immortal

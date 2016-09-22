@@ -127,3 +127,4 @@ Which champions ultimate is named: Mimic?`Leblanc
 Which champions ultimate is named: Grandmaster's Might?`Jax
 Which champions ultimate is named: Curtain Call?`Jhin
 Which champions ultimate is named: Voice of Light?`Aurelion Sol`aurelionsol
+Which champions ultimate is named: Chaaaaaaaarge!!! ?`Kled

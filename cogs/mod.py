@@ -335,20 +335,27 @@ class Mod:
         """Adds user to bot's blacklist"""
         if user.id not in self.blacklist_list:
             self.blacklist_list.append(user.id)
-            fileIO("data/mod/blacklist.json", "save", self.blacklist_list)
+            dataIO.save_json("data/mod/blacklist.json", self.blacklist_list)
             await self.bot.say("User has been added to blacklist.")
         else:
             await self.bot.say("User is already blacklisted.")
 
     @blacklist.command(name="remove")
     async def _blacklist_remove(self, user: discord.Member):
-        """Removes user to bot's blacklist"""
+        """Removes user from bot's blacklist"""
         if user.id in self.blacklist_list:
             self.blacklist_list.remove(user.id)
-            fileIO("data/mod/blacklist.json", "save", self.blacklist_list)
+            dataIO.save_json("data/mod/blacklist.json", self.blacklist_list)
             await self.bot.say("User has been removed from blacklist.")
         else:
             await self.bot.say("User is not in blacklist.")
+
+    @blacklist.command(name="clear")
+    async def _blacklist_clear(self):
+        """Clears the blacklist"""
+        self.blacklist_list = []
+        dataIO.save_json("data/mod/blacklist.json", self.blacklist_list)
+        await self.bot.say("Blacklist is now empty.")
 
     @commands.group(pass_context=True)
     @checks.is_owner()
@@ -366,20 +373,27 @@ class Mod:
             else:
                 msg = ""
             self.whitelist_list.append(user.id)
-            fileIO("data/mod/whitelist.json", "save", self.whitelist_list)
+            dataIO.save_json("data/mod/whitelist.json", self.whitelist_list)
             await self.bot.say("User has been added to whitelist." + msg)
         else:
             await self.bot.say("User is already whitelisted.")
 
     @whitelist.command(name="remove")
     async def _whitelist_remove(self, user: discord.Member):
-        """Removes user to bot's whitelist"""
+        """Removes user from bot's whitelist"""
         if user.id in self.whitelist_list:
             self.whitelist_list.remove(user.id)
-            fileIO("data/mod/whitelist.json", "save", self.whitelist_list)
+            dataIO.save_json("data/mod/whitelist.json", self.whitelist_list)
             await self.bot.say("User has been removed from whitelist.")
         else:
             await self.bot.say("User is not in whitelist.")
+
+    @whitelist.command(name="clear")
+    async def _whitelist_clear(self):
+        """Clears the whitelist"""
+        self.whitelist_list = []
+        dataIO.save_json("data/mod/whitelist.json", self.whitelist_list)
+        await self.bot.say("Whitelist is now empty.")
 
     @commands.group(pass_context=True, no_pm=True)
     @checks.admin_or_permissions(manage_channels=True)

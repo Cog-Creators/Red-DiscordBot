@@ -252,8 +252,15 @@ class Owner:
         """Sets Red's name"""
         name = name.strip()
         if name != "":
-            await self.bot.edit_profile(settings.password, username=name)
-            await self.bot.say("Done.")
+            try:
+                await self.bot.edit_profile(settings.password, username=name)
+            except:
+                await self.bot.say("Failed to change name. Remember that you"
+                                   " can only do it up to 2 times an hour."
+                                   "Use nicknames if you need frequent "
+                                   "changes. {}set nickname".format(ctx.prefix))
+            else:
+                await self.bot.say("Done.")
         else:
             await send_cmd_help(ctx)
 
@@ -287,6 +294,27 @@ class Owner:
         else:
             await self.bot.change_status(None)
             log.debug('status cleared by owner')
+        await self.bot.say("Done.")
+        
+    @_set.command(pass_context=True)
+    @checks.is_owner()
+    async def stream(self, ctx, streamer=None, *, stream_title=None):
+        """Sets Red's streaming status
+
+        Leaving both streamer and stream_title empty will clear it."""
+
+        if stream_title:
+            stream_title = stream_title.strip()
+            if "twitch.tv/" not in streamer:
+                streamer = "https://www.twitch.tv/" + streamer
+            await self.bot.change_status(discord.Game(type=1, url=streamer, name=stream_title))
+            log.debug('Owner has set streaming status and url to "{}" and {}'.format(stream_title, streamer))
+        elif streamer is not None:
+            await send_cmd_help(ctx)
+            return
+        else:
+            await self.bot.change_status(None)
+            log.debug('stream cleared by owner')
         await self.bot.say("Done.")
 
     @_set.command()
@@ -346,7 +374,7 @@ class Owner:
         if comm_obj is KeyError:
             await self.bot.say("That command doesn't seem to exist.")
         elif comm_obj is False:
-            await self.bot.say("You cannot disable the commands of the owner cog.")
+            await self.bot.say("You cannot disable owner restricted commands.")
         else:
             comm_obj.enabled = False
             comm_obj.hidden = True
@@ -381,8 +409,9 @@ class Owner:
                     comm_obj = comm_obj.commands[cmd]
         except KeyError:
             return KeyError
-        if comm_obj.cog_name == "Owner":
-            return False
+        for check in comm_obj.checks:
+            if check.__name__ == "is_owner_check":
+                return False
         return comm_obj
 
     async def disable_commands(self): # runs at boot
@@ -425,7 +454,7 @@ class Owner:
             await self.bot.say("I wasn't able to accept the invite."
                                " Try again.")
 
-    @commands.command(pass_context=True)
+    @commands.command(pass_context=True, no_pm=True)
     @checks.is_owner()
     async def leave(self, ctx):
         """Leaves server"""
@@ -474,17 +503,24 @@ class Owner:
             return
         owner = discord.utils.get(self.bot.get_all_members(), id=settings.owner)
         author = ctx.message.author
-        sender = "From {} ({}):\n\n".format(author, author.id)
+        if ctx.message.channel.is_private is False:
+            server = ctx.message.server
+            source = ", server **{}** ({})".format(server.name, server.id)
+        else:
+            source = ", direct message"
+        sender = "From **{}** ({}){}:\n\n".format(author, author.id, source)
         message = sender + message
         try:
             await self.bot.send_message(owner, message)
         except discord.errors.InvalidArgument:
             await self.bot.say("I cannot send your message, I'm unable to find"
-                               "my owner... *sigh*")
+                               " my owner... *sigh*")
         except discord.errors.HTTPException:
             await self.bot.say("Your message is too long.")
         except:
             await self.bot.say("I'm unable to deliver your message. Sorry.")
+        else:
+            await self.bot.say("Your message has been sent.")
 
     @commands.command()
     async def info(self):

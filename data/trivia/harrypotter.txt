@@ -148,7 +148,7 @@ What was the name of Hagrid's half-giant brother?`grawp
 What is the name of the sweet that makes you spew?`puking pastils
 What did Lavender Brown call Ron?`won-won`won won
 Who did Ron suddenly have an infatuation for, after accidentally eating some love potion meant for Harry?`romilda vane
-Hermione Granger Who in the 3rd year class wrote an essay on werewolves?`hermione`hermione granger
+Who in the 3rd year class wrote an essay on werewolves?`hermione`hermione granger
 What is the name of the werewolf who bit Lupin?`fenrir greyback
 What is the theme of the tapestry near the Room of Requirement?`trolls
 What breed was Hagrid's pet dragon? `Norwegian Ridgeback
@@ -175,7 +175,7 @@ What does the sign on Weasley's Wizard Wheezes say?`You-Know-Poo
 What is the core of Cedric's wand?`Unicorn tail hair
 Which unforgivable curse causes pain to the victim?`Crucio
 Who is the Blacks' house elf?`Kreacher
-Who gave Hermoine her Time-Turner?`minerva mcgonagall`mcgonagall`professor mcgonagall
+Who gave Hermione her Time-Turner?`minerva mcgonagall`mcgonagall`professor mcgonagall
 Which shop sells candy?`honeydukes
 Who killed Alastor Moody?`voldemort`lord voldemort
 Which unforgivable curse kills the victim?`Avada Kedavra
