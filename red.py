@@ -412,10 +412,12 @@ def main():
     yield from bot.connect()
 
 if __name__ == '__main__':
+    error = False
     loop = asyncio.get_event_loop()
     try:
         loop.run_until_complete(main())
     except discord.LoginFailure:
+        error = True
         logger.error(traceback.format_exc())
         choice = input("Invalid login credentials. "
             "If they worked before Discord might be having temporary "
@@ -427,8 +429,13 @@ if __name__ == '__main__':
             shutil.copy('data/red/settings.json',
                         'data/red/settings-{}.bak'.format(int(time.time())))
             os.remove('data/red/settings.json')
+    except KeyboardInterrupt:
+        loop.run_until_complete(bot.logout())
     except:
+        error = True
         logger.error(traceback.format_exc())
         loop.run_until_complete(bot.logout())
     finally:
         loop.close()
+        if error:
+            exit(1)
