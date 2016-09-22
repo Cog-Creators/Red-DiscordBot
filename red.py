@@ -3,7 +3,7 @@ import discord
 from cogs.utils.settings import Settings
 from cogs.utils.dataIO import dataIO
 from cogs.utils.chat_formatting import inline
-import requests
+import aiohttp
 import asyncio
 import os
 import time
@@ -61,10 +61,7 @@ async def on_ready():
         bot.oauth_url = url
         print(url)
         print("------")
-    resp = bot.loop.run_in_executor(None, update_check)
-    result = await asyncio.wait_for(resp, timeout=10)
-    print(result[0])
-    print(result[1])
+    result = await update_check()
     if result is not None:
         await bot.send_message(result[0], result[1])
     await bot.get_cog('Owner').disable_commands()
@@ -107,14 +104,14 @@ async def on_command_error(error, ctx):
     else:
         logger.exception(type(error).__name__, exc_info=error)
 
-def update_check():
+async def update_check():
     if settings.owner == "id_here":
         print("No owner set!")
         return None
     owner = discord.utils.get(bot.get_all_members(), id=settings.owner)
     try:
-        r = requests.get("https://api.github.com/repos/Twentysix26/Red-DiscordBot/commits")
-        gh_commits = r.json()
+        async with aiohttp.get("https://api.github.com/repos/Twentysix26/Red-DiscordBot/commits") as r:
+            gh_commits = await r.json()
         latest_sha = gh_commits[0]["sha"][:7]
         cur_version = os.popen(r'git show -s HEAD --format="%cr|%s|%h"')
         cur_version = cur_version.read()
