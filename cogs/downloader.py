@@ -164,7 +164,7 @@ class Downloader:
         deleted_cogs = []
         installed_updated_cogs = []
 
-        for f in asyncio.as_completed(tasks, loop=self.bot.loop):
+        for f in tasks:
             tasknum += 1
             name, updates = await f
             if updates:
