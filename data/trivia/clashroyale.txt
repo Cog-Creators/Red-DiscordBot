@@ -1,5 +1,5 @@
 What is the name of the first Arena?`Training Camp
-How many cards does the 1st place in the biggest tournament get?`Fifteen Thousand`15000`15 000`15k`15,000`15.000`15'000
+How many cards do you get for taking the 1st place in the largest tournament?`two thousand`2000`2,000`2k
 Who shoots destructo beams?`Witch
 Who doesn't know what "Overkill" means?`Sparky
 What is the best distraction for the Mini P.E.K.K.A?`A Butterfly`Butterfly
@@ -11,6 +11,7 @@ What is the max level of Common Cards?`13`thirteen
 What is the max level of Rare Cards?`11`eleven
 What is the max level of Epic Cards?`8`eight
 What is the max level of Legendary cards?`5`five
+What is The Log's favourite song?`They see me rollin'`they see me rollin
 Annnnnd...?`Fireball!`fireball
 What does the Lumberjack do at night?`Hunts The Log`hunts`hunts log`Hunt the log`He is hunting the log
 How many Gems does a Wagon of Gold cost?`4500`4 500`4,500`4.500`4.5k`4,5k`4'500`Four Thousand Five Hundred
@@ -70,7 +71,7 @@ A pile of bones?`Skeletons`skellies`skeleton`skelly
 What is the creepiest building according to its descripton?`Tombstone`tomb`tombst`tmbstne`tstone
 At which Arena can you unlock Furnace?`Arena 5`Spell Valley`5
 Where you shouldn't look inside?`Goblin Hut`gob hut
-Who shouldn't have been taught?`Spear Goblins`spear gobs
+At which Arena do you get a chance for Legendary cards to appear in the shop?`Legendary Arena`Legendary`Legend`A9`9`Arena 9
 Who's a one-man wrecking crew?`Giant
 Who's born ready for a barbeque?`Baby Dragon`baby drag
 Who has delicately coiffed hair?`Musketeer`musket`musky`musket`musk
@@ -81,7 +82,7 @@ Larry, Harry, Terry, Mary, Leedoot and friends together make a...?`Skeleton Army
 Who has a coil of iron and wheels of wood?`Sparky 
 Who's stunning?`Princess
 Who carries around a drink on the Arena?`Lumberjack`lj
-Why is it bad for you if you feel warm feelings towards the Princess?`Because you're probably on fire!`cuz ur on fire`because your probably on fire`You are on fire`you are probably on fire`youre probably on fire
+Why is it bad for you if you feel warm feelings towards the Princess?`Because you're probably on fire!`cuz ur on fire`because your probably on fire`You are on fire`you are probably on fire
 How many different cards is available in shop on Sunday?`6`six
 How much gold does the 2nd Legendary cost in the shop?`80000`80k`80,000`80'000`80.000`80 000`eighty thousand
 How many Gems does a Wagon contain?`6500`6,500`6'500`6.500`6.5k`six thousand five hundred`sixtyfive hundred
