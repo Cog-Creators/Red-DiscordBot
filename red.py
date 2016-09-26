@@ -3,7 +3,6 @@ import discord
 from cogs.utils.settings import Settings
 from cogs.utils.dataIO import dataIO
 from cogs.utils.chat_formatting import inline
-import aiohttp
 import asyncio
 import os
 import time
