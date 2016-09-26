@@ -61,9 +61,6 @@ async def on_ready():
         bot.oauth_url = url
         print(url)
         print("------")
-    result = await update_check()
-    if result is not None:
-        await bot.send_message(result[0], result[1])
     await bot.get_cog('Owner').disable_commands()
 
 
@@ -103,27 +100,6 @@ async def on_command_error(error, ctx):
                                         "available in DMs.")
     else:
         logger.exception(type(error).__name__, exc_info=error)
-
-async def update_check():
-    if settings.owner == "id_here":
-        print("No owner set!")
-        return None
-    owner = discord.utils.get(bot.get_all_members(), id=settings.owner)
-    try:
-        async with aiohttp.get("https://api.github.com/repos/Twentysix26/Red-DiscordBot/commits") as r:
-            gh_commits = await r.json()
-        latest_sha = gh_commits[0]["sha"][:7]
-        cur_version = os.popen(r'git show -s HEAD --format="%cr|%s|%h"')
-        cur_version = cur_version.read()
-        version = cur_version.split("|")[-1]
-        if latest_sha.strip() != version.strip():
-            message = "Your bot is out of date! Please update me using git pull!"
-            return (owner, message)
-        else:
-            message = "Your bot is up to date!"
-            return (owner, message)
-    except:
-        raise
 
 
 async def send_cmd_help(ctx):
