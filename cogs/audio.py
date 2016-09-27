@@ -1831,13 +1831,15 @@ class Audio:
                     elif vc.audio_player.is_playing() and len(vc.channel.voice_members) == 1:
                         log.debug("putting sid {} in stop loop".format(
                             server.id))
+                        self._stop(server)
+                        self._clear_queue(server)
                         stop_times[server] = int(time.time())
                     elif vc.audio_player.is_playing():
                         stop_times[server] = None
 
             for server in stop_times:
                 if stop_times[server] and \
-                        int(time.time()) - stop_times[server] > 300:
+                        int(time.time()) - stop_times[server] > 120:
                     # 5 min not playing to d/c
                     log.debug("dcing from sid {} after 300s".format(server.id))
                     await self._disconnect_voice_client(server)
