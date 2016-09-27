@@ -1839,7 +1839,7 @@ class Audio:
 
             for server in stop_times:
                 if stop_times[server] and \
-                        int(time.time()) - stop_times[server] > 120:
+                        int(time.time()) - stop_times[server] > 300:
                     # 5 min not playing to d/c
                     log.debug("dcing from sid {} after 300s".format(server.id))
                     await self._disconnect_voice_client(server)
