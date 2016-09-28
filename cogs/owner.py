@@ -282,20 +282,60 @@ class Owner:
 
     @_set.command(pass_context=True)
     @checks.is_owner()
-    async def status(self, ctx, *, status=None):
-        """Sets Red's status
+    async def game(self, ctx, *, game=None):
+        """Sets Red's playing status
 
         Leaving this empty will clear it."""
 
-        if status:
-            status = status.strip()
-            await self.bot.change_status(discord.Game(name=status))
-            log.debug('Status set to "{}" by owner'.format(status))
+        server = ctx.message.server
+
+        current_status = server.me.status if server is not None else None
+
+        if game:
+            game = game.strip()
+            await self.bot.change_presence(game=discord.Game(name=game),
+                                           status=current_status)
+            log.debug('Status set to "{}" by owner'.format(game))
         else:
-            await self.bot.change_status(None)
+            await self.bot.change_presence(game=None, status=current_status)
             log.debug('status cleared by owner')
         await self.bot.say("Done.")
-        
+
+    @_set.command(pass_context=True)
+    @checks.is_owner()
+    async def status(self, ctx, *, status=None):
+        """Sets Red's status
+
+        Statuses:
+            online
+            idle
+            dnd
+            invisible"""
+
+        statuses = {
+                    "online"    : discord.Status.online,
+                    "idle"      : discord.Status.idle,
+                    "dnd"       : discord.Status.dnd,
+                    "invisible" : discord.Status.invisible
+                   }
+
+        server = ctx.message.server
+
+        current_game = server.me.game if server is not None else None
+
+        if status is None:
+            await self.bot.change_presence(status=discord.Status.online,
+                                           game=current_game)
+            await self.bot.say("Status reset.")
+        else:
+            status = statuses.get(status.lower(), None)
+            if status:
+                await self.bot.change_presence(status=status,
+                                               game=current_game)
+                await self.bot.say("Status changed.")
+            else:
+                await send_cmd_help(ctx)
+
     @_set.command(pass_context=True)
     @checks.is_owner()
     async def stream(self, ctx, streamer=None, *, stream_title=None):
@@ -303,17 +343,22 @@ class Owner:
 
         Leaving both streamer and stream_title empty will clear it."""
 
+        server = ctx.message.server
+
+        current_status = server.me.status if server is not None else None
+
         if stream_title:
             stream_title = stream_title.strip()
             if "twitch.tv/" not in streamer:
                 streamer = "https://www.twitch.tv/" + streamer
-            await self.bot.change_status(discord.Game(type=1, url=streamer, name=stream_title))
+            game = discord.Game(type=1, url=streamer, name=stream_title)
+            await self.bot.change_presence(game=game, status=current_status)
             log.debug('Owner has set streaming status and url to "{}" and {}'.format(stream_title, streamer))
         elif streamer is not None:
             await send_cmd_help(ctx)
             return
         else:
-            await self.bot.change_status(None)
+            await self.bot.change_presence(game=None, status=current_status)
             log.debug('stream cleared by owner')
         await self.bot.say("Done.")
 
