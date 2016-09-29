@@ -233,11 +233,7 @@ class Economy:
             self.slot_stats[server.id][user.id] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         if user.id not in self.slot_stats[server.id]:
             self.slot_stats[server.id][user.id] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        temp_msg = "```ruby\nSlot statistics for " + user.name + ":\n\nLose:\t  " + str(self.slot_stats[server.id][user.id][0]) + "\nx2:\t\t" + str(self.slot_stats[server.id][user.id][2]) + \
-            "\nx3:\t\t" + str(self.slot_stats[server.id][user.id][3]) + "\nx4:\t\t" + str(self.slot_stats[server.id][user.id][4]) + \
-            "\nx5000:\t " + str(self.slot_stats[server.id][user.id][7]) + "\n\n+500:\t  " + str(self.slot_stats[server.id][user.id][5]) + \
-            "\n+800:\t  " + str(self.slot_stats[server.id][user.id][6]) + "\n+1000:\t " + str(self.slot_stats[server.id][user.id][1]) + \
-            "\n\nSpent:\t " + str(self.slot_stats[server.id][user.id][8]) + "\nGained:\t" + str(self.slot_stats[server.id][user.id][9]) + "```"
+        temp_msg = "```ruby\nSlot statistics for {0.name}:\n\nLose:\t  {1}\nx2:\t\t{2}\nx3:\t\t{3}\nx4:\t\t{4}\nx5000:\t {5}\n\n+500:\t  {6}\n+800:\t  {7}\n+1000:\t {8}\n\nSpent:\t {9}\nGained:\t{10}```".format(user, self.slot_stats[server.id][user.id][0], self.slot_stats[server.id][user.id][2], self.slot_stats[server.id][user.id][3], self.slot_stats[server.id][user.id][4], self.slot_stats[server.id][user.id][7], self.slot_stats[server.id][user.id][5], self.slot_stats[server.id][user.id][6], self.slot_stats[server.id][user.id][1], self.slot_stats[server.id][user.id][8], self.slot_stats[server.id][user.id][9])
         return temp_msg
 
     #temp command
