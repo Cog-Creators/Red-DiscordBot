@@ -160,13 +160,16 @@ class Mod:
         logger.info("{}({}) deleted {} messages containing '{}' in channel {}".format(author.name,
             author.id, str(number), text, message.channel.name))
         if self.bot.user.bot and self.discordpy_updated():
-            def to_delete(m):
-                if m == ctx.message or text in m.content:
-                    return True
-                else:
-                    return False
+            msgs = []
+            async for i in self.bot.logs_from(channel, limit=100): #I'm not sure what the limit for this should be
+                if number < 0:
+                    break
+                if text in i.content:
+                    number -= 1
+                    msgs.append(i)
             try:
-                await self.bot.purge_from(channel, limit=number+1, check=to_delete)
+                await self.bot.delete_messages(msgs)
+                await self.bot.delete_message(message)
             except discord.errors.Forbidden:
                 await self.bot.say("I need permissions to manage messages "
                                    "in this channel.")
@@ -217,13 +220,16 @@ class Mod:
         logger.info("{}({}) deleted {} messages made by {}({}) in channel {}".format(author.name,
             author.id, str(number), user.name, user.id, message.channel.name))
         if self.bot.user.bot and self.discordpy_updated():
-            def is_user(m):
-                if m == ctx.message or m.author == user:
-                    return True
-                else:
-                    return False
+            msgs = []
+            async for i in self.bot.logs_from(channel, limit=100): #I'm not sure what the limit for this should be
+                if number < 0:
+                    break
+                if i.author == user:
+                    number -= 1
+                    msgs.append(i)
             try:
-                await self.bot.purge_from(channel, limit=number+1, check=is_user)
+                await self.bot.delete_messages(msgs)
+                await self.bot.delete_message(message)
             except discord.errors.Forbidden:
                 await self.bot.say("I need permissions to manage messages "
                                    "in this channel.")
