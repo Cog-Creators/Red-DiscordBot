@@ -1444,6 +1444,11 @@ class Audio:
         """Deletes a saved playlist."""
         server = ctx.message.server
 
+        if not self._valid_playlist_name(name):
+            await self.bot.say("The playlist's name contains invalid "
+                               "characters.")
+            return
+
         if self._playlist_exists(server, name):
             self._delete_playlist(server, name)
             await self.bot.say("Playlist deleted.")
