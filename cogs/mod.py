@@ -154,7 +154,8 @@ class Mod:
         Remember to use double quotes."""
 
         channel = ctx.message.channel
-        server = channel.server
+        author = ctx.message.author
+        server = author.server
         is_bot = self.bot.user.bot
         has_permissions = channel.permissions_for(server.me).manage_messages
 
@@ -183,6 +184,10 @@ class Mod:
                 tmp = message
             tries_left -= 1
 
+        logger.info("{}({}) deleted {} messages "
+                    " containing '{}' in channel {}".format(author.name,
+                    author.id, len(to_delete), text, channel.id))
+
         if is_bot:
             await self.mass_purge(to_delete)
         else:
@@ -197,7 +202,8 @@ class Mod:
         cleanup user Red 6"""
 
         channel = ctx.message.channel
-        server = channel.server
+        author = ctx.message.author
+        server = author.server
         is_bot = self.bot.user.bot
         has_permissions = channel.permissions_for(server.me).manage_messages
 
@@ -226,6 +232,11 @@ class Mod:
                 tmp = message
             tries_left -= 1
 
+        logger.info("{}({}) deleted {} messages "
+                    " made by {}({}) in channel {}"
+                    "".format(author.name, author.id, len(to_delete),
+                              user.name, user.id, channel.name))
+
         if is_bot:
             await self.mass_purge(to_delete)
         else:
@@ -241,6 +252,7 @@ class Mod:
         """
 
         channel = ctx.message.channel
+        author = ctx.message.author
         server = channel.server
         is_bot = self.bot.user.bot
         has_permissions = channel.permissions_for(server.me).manage_messages
@@ -260,6 +272,10 @@ class Mod:
                                                 after=after):
             to_delete.append(message)
 
+        logger.info("{}({}) deleted {} messages in channel {}"
+                    "".format(author.name, author.id,
+                              len(to_delete), channel.name))
+
         if is_bot:
             await self.mass_purge(to_delete)
         else:
@@ -273,7 +289,8 @@ class Mod:
         cleanup messages 26"""
 
         channel = ctx.message.channel
-        server = channel.server
+        author = ctx.message.author
+        server = author.server
         is_bot = self.bot.user.bot
         has_permissions = channel.permissions_for(server.me).manage_messages
 
@@ -285,6 +302,10 @@ class Mod:
 
         async for message in self.bot.logs_from(channel, limit=number+1):
             to_delete.append(message)
+
+        logger.info("{}({}) deleted {} messages in channel {}"
+                    "".format(author.name, author.id,
+                              number, channel.name))
 
         if is_bot:
             await self.mass_purge(to_delete)
