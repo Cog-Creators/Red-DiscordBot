@@ -95,12 +95,17 @@ class Mod:
         channel = ctx.message.channel
         can_ban = channel.permissions_for(server.me).ban_members
         author = ctx.message.author
+        try:
+            invite = await self.bot.create_invite(server, max_age=3600*24)
+            invite = "\nInvite: " + invite
+        except:
+            invite = ""
         if can_ban:
             try:
                 try: # We don't want blocked DMs preventing us from banning
                     msg = await self.bot.send_message(user, "You have been banned and "
                               "then unbanned as a quick way to delete your messages.\n"
-                              "You can now join the server again.")
+                              "You can now join the server again.{}".format(invite))
                 except:
                     pass
                 await self.bot.ban(user, 1)
