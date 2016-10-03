@@ -106,11 +106,14 @@ class Downloader:
                     retlist.append([repo_name, data.get("SHORT", "")])
                 else:
                     retlist.append([repo_name, ""])
-
-        col_width = max(len(row[0]) for row in retlist) + 2
-        for row in retlist:
-            msg += "\t" + "".join(word.ljust(col_width) for word in row) + "\n"
-        await self.bot.say(box(msg))  # Need to deal with over 2000 characters
+                    
+        try:
+            col_width = max(len(row[0]) for row in retlist) + 2
+            for row in retlist:
+                msg += "\t" + "".join(word.ljust(col_width) for word in row) + "\n"
+            await self.bot.say(box(msg))  # Need to deal with over 2000 characters
+        except ValueError:
+            await self.bot.say("You don't have repos added.")
 
     @cog.command()
     async def info(self, repo_name: str, cog: str=None):
