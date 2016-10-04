@@ -248,7 +248,9 @@ class Audio:
     async def _add_song_status(self, song):
         if self._old_game is False:
             self._old_game = list(self.bot.servers)[0].me.game
-        await self.bot.change_status(discord.Game(name=song.title))
+        status = list(self.bot.servers)[0].me.status
+        game = discord.Game(name=song.title)
+        await self.bot.change_presence(status=status, game=game)
         log.debug('Bot status changed to song title: ' + song.title)
 
     def _add_to_queue(self, server, url):
@@ -828,7 +830,9 @@ class Audio:
 
     async def _remove_song_status(self):
         if self._old_game is not False:
-            await self.bot.change_status(self._old_game)
+            status = list(self.bot.servers)[0].me.status
+            await self.bot.change_presence(game=self._old_game,
+                                           status=status)
             log.debug('Bot status returned to ' + str(self._old_game))
             self._old_game = False
 
