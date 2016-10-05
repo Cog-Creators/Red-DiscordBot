@@ -467,7 +467,7 @@ class Economy:
         server = ctx.message.server
         self.settings[server.id]["SLOT_MIN"] = bid
         await self.bot.say("Minimum bid is now " + str(bid) + " credits.")
-        dataIO.save_json(self.file_path, self.system)
+        dataIO.save_json(self.file_path, self.settings)
 
     @economyset.command(pass_context=True)
     async def slotmax(self, ctx, bid : int):
@@ -475,7 +475,7 @@ class Economy:
         server = ctx.message.server
         self.settings[server.id]["SLOT_MAX"] = bid
         await self.bot.say("Maximum bid is now " + str(bid) + " credits.")
-        dataIO.save_json(self.file_path, self.system)
+        dataIO.save_json(self.file_path, self.settings)
 
     @economyset.command(pass_context=True)
     async def slottime(self, ctx, seconds : int):
@@ -483,7 +483,7 @@ class Economy:
         server = ctx.message.server
         self.settings[server.id]["SLOT_TIME"] = seconds
         await self.bot.say("Cooldown is now " + str(seconds) + " seconds.")
-        dataIO.save_json(self.file_path, self.system)
+        dataIO.save_json(self.file_path, self.settings)
 
     @economyset.command(pass_context=True)
     async def paydaytime(self, ctx, seconds : int):
@@ -491,7 +491,7 @@ class Economy:
         server = ctx.message.server
         self.settings[server.id]["PAYDAY_TIME"] = seconds
         await self.bot.say("Value modified. At least " + str(seconds) + " seconds must pass between each payday.")
-        dataIO.save_json(self.file_path, self.system)
+        dataIO.save_json(self.file_path, self.settings)
 
     @economyset.command(pass_context=True)
     async def paydaycredits(self, ctx, credits : int):
@@ -499,7 +499,7 @@ class Economy:
         server = ctx.message.server
         self.settings[server.id]["PAYDAY_CREDITS"] = credits
         await self.bot.say("Every payday will now give " + str(credits) + " credits.")
-        dataIO.save_json(self.file_path, self.system)
+        dataIO.save_json(self.file_path, self.settings)
 
     def display_time(self, seconds, granularity=2):  # What would I ever do without stackoverflow?
         intervals = (                                # Source: http://stackoverflow.com/a/24542445
