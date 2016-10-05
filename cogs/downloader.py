@@ -22,7 +22,7 @@ class Downloader:
         self.update_repos()
 
     def save_repos(self):
-        dataIO.save_json(self.file_path, self.system)
+        dataIO.save_json(self.file_path, self.repos)
 
     @commands.group(pass_context=True)
     @checks.is_owner()
