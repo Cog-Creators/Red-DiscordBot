@@ -53,7 +53,7 @@ class CustomCommands:
             if command in cmdlist:
                 cmdlist[command] = text
                 self.c_commands[server.id] = cmdlist
-                fileIO("data/customcom/commands.json", "save", self.c_commands)
+                dataIO.save_json(self.file_path, self.c_commands)
                 await self.bot.say("Custom command successfully edited.")
             else:
                 await self.bot.say("That command doesn't exist. Use addcom [command] [text]")
@@ -74,7 +74,7 @@ class CustomCommands:
             if command in cmdlist:
                 cmdlist.pop(command, None)
                 self.c_commands[server.id] = cmdlist
-                fileIO("data/customcom/commands.json", "save", self.c_commands)
+                dataIO.save_json(self.file_path, self.c_commands)
                 await self.bot.say("Custom command successfully deleted.")
             else:
                 await self.bot.say("That command doesn't exist.")
@@ -173,9 +173,9 @@ def check_folders():
 
 def check_files():
     f = "data/customcom/commands.json"
-    if not fileIO(f, "check"):
+    if not dataIO.is_valid_json(f):
         print("Creating empty commands.json...")
-        fileIO(f, "save", {})
+        dataIO.save_json(f, {})
 
 def setup(bot):
     check_folders()
