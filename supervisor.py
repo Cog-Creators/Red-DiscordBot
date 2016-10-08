@@ -6,6 +6,7 @@ import os
 import subprocess
 import sys
 import urllib.request
+from functools import partial
 from html.parser import HTMLParser
 from zipfile import *
 
@@ -50,50 +51,6 @@ def check_for_ffmpeg():
         return False
 
 
-class ProcessManager:
-    """
-    This class manages monitoring and restarting the process when it dies.
-    """
-    def __init__(self):
-        """
-        Initialize the class.
-        :ivar cmd: Holds the executable path for the current python interpreter running this supervisor. This will also be used to run the bot.
-        :ivar process: Holds the current subprocess popen reference
-        """
-        self.cmd = sys.executable
-        self.process = None
-
-    def start(self):
-        """
-        Start the subprocess and separate it to a new process group so they can run independently.
-        :return: True or False
-        """
-        if os.name == 'nt':
-            try:
-                self.process = subprocess.Popen([self.cmd, 'red.py'],
-                                                stdin=subprocess.DEVNULL,
-                                                stdout=subprocess.DEVNULL,
-                                                stderr=subprocess.STDOUT,
-                                                creationflags=subprocess.CREATE_NEW_PROCESS_GROUP)
-                return True
-            except Exception as e:
-                return False
-        else:
-            try:
-                self.process = subprocess.Popen([self.cmd, 'red.py'],
-                                                stdin=subprocess.DEVNULL,
-                                                stdout=subprocess.DEVNULL,
-                                                stderr=subprocess.STDOUT,
-                                                preexec_fn=os.setpgrp)
-                return True
-            except Exception as e:
-                return False
-
-    def wait(self):
-        self.process.wait()
-        return self.process.returncode
-
-
 if __name__ == "__main__":
     # Check for Git
     if not check_for_git():
@@ -105,15 +62,10 @@ if __name__ == "__main__":
         if not check_for_ffmpeg():
             if IS_X8664:
                 print("FFMPEG not found. Downloading.")
-                with urllib.request.urlopen("https://github.com/Twentysix26/Red-DiscordBot/raw/master/ffmpeg.exe") as data:
-                    with open("ffmpeg.exe", "wb") as f:
-                        f.write(data.read())
-                with urllib.request.urlopen("https://github.com/Twentysix26/Red-DiscordBot/raw/master/ffplay.exe") as data:
-                    with open("ffplay.exe", "wb") as f:
-                        f.write(data.read())
-                with urllib.request.urlopen("https://github.com/Twentysix26/Red-DiscordBot/raw/master/ffprobe.exe") as data:
-                    with open("ffprobe.exe", "wb") as f:
-                        f.write(data.read())
+                for item in ['ffmpeg.exe', 'ffprobe.exe', 'ffplay.exe']:
+                    with urllib.request.urlopen("https://github.com/Twentysix26/Red-DiscordBot/raw/master/{}".format(item)) as data:
+                        with open(item, "wb") as f:
+                            f.write(data.read())
                 print("FFMPEG downloaded.")
             else:
                 parser = LinkParser()
@@ -138,7 +90,7 @@ if __name__ == "__main__":
 
     # Try to pull
     print("We're going to update your instance of redbot now.")
-    updates = subprocess.Popen(['git', 'pull'])
+    updates = subprocess.run(['git', 'pull'])
     if updates.wait() != 0:
         print("Error updating Redbot. Please investigate.")
         sys.exit(0)
@@ -147,12 +99,22 @@ if __name__ == "__main__":
 
     # Well, let's start her up
     print("Redbot starting.")
-    redbot = ProcessManager()
+    if os.name == 'nt':
+        redbot = partial(subprocess.Popen, [sys.executable, 'red.py'],
+                         stdin=subprocess.DEVNULL,
+                         stdout=subprocess.DEVNULL,
+                         stderr=subprocess.STDOUT,
+                         creationflags=subprocess.CREATE_NEW_PROCESS_GROUP
+                         )
+    else:
+        redbot = partial(subprocess.Popen, [sys.executable, 'red.py'],
+                         stdin=subprocess.DEVNULL,
+                         stdout=subprocess.DEVNULL,
+                         stderr=subprocess.STDOUT,
+                         preexec_fn=os.setpgrp,
+                         )
     while True:
-        if redbot.start():
-            if redbot.wait() == 0:  # We will close if redbot exits cleanly
-                break
-        else:
+        if redbot().wait() == 0:
             break
     print("Redbot shutting down.")
     sys.exit(0)
