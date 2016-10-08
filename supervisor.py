@@ -90,8 +90,7 @@ if __name__ == "__main__":
 
     # Try to pull
     print("We're going to update your instance of redbot now.")
-    updates = subprocess.run(['git', 'pull'])
-    if updates.wait() != 0:
+    if subprocess.run(['git', 'pull']).returncode:
         print("Error updating Redbot. Please investigate.")
         sys.exit(0)
     else:
