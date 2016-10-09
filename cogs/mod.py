@@ -7,7 +7,6 @@ from collections import deque
 from cogs.utils.chat_formatting import escape_mass_mentions
 import os
 import logging
-import asyncio
 
 
 class Mod:
@@ -138,7 +137,7 @@ class Mod:
             await self.bot.say("I cannot do that, I lack the "
                 "\"Manage Nicknames\" permission.")
 
-    @commands.group(pass_context=True, no_pm=True)
+    @commands.group(pass_context=True)
     @checks.mod_or_permissions(manage_messages=True)
     async def cleanup(self, ctx):
         """Deletes messages.
@@ -149,7 +148,7 @@ class Mod:
         if ctx.invoked_subcommand is None:
             await send_cmd_help(ctx)
 
-    @cleanup.command(pass_context=True, no_pm=True)
+    @cleanup.command(pass_context=True)
     async def text(self, ctx, text: str, number: int):
         """Deletes last X messages matching the specified text.
 
@@ -160,9 +159,12 @@ class Mod:
 
         channel = ctx.message.channel
         author = ctx.message.author
-        server = author.server
         is_bot = self.bot.user.bot
-        has_permissions = channel.permissions_for(server.me).manage_messages
+        if channel.type is discord.ChannelType.text:
+            server = author.server
+            has_permissions = channel.permissions_for(server.me).manage_messages
+        else:
+            has_permissions = author.id == self.bot.user.id
 
         def check(m):
             if text in m.content:
@@ -198,7 +200,7 @@ class Mod:
         else:
             await self.slow_deletion(to_delete)
 
-    @cleanup.command(pass_context=True, no_pm=True)
+    @cleanup.command(pass_context=True)
     async def user(self, ctx, user: discord.Member, number: int):
         """Deletes last X messages from specified user.
 
@@ -208,9 +210,12 @@ class Mod:
 
         channel = ctx.message.channel
         author = ctx.message.author
-        server = author.server
         is_bot = self.bot.user.bot
-        has_permissions = channel.permissions_for(server.me).manage_messages
+        if channel.type is discord.ChannelType.text:
+            server = author.server
+            has_permissions = channel.permissions_for(server.me).manage_messages
+        else:  # in group messages or DMs, we can only delete our own messages
+            has_permissions = author.id == self.bot.user.id == user.id
 
         def check(m):
             if m.author == user:
@@ -258,9 +263,14 @@ class Mod:
 
         channel = ctx.message.channel
         author = ctx.message.author
-        server = channel.server
         is_bot = self.bot.user.bot
+        server = author.server
         has_permissions = channel.permissions_for(server.me).manage_messages
+
+        if not is_bot:
+            await self.bot.say('This command uses the an API endpoint that '
+                               'is only available to bot accounts.')
+            return
 
         to_delete = []
 
@@ -286,7 +296,7 @@ class Mod:
         else:
             await self.slow_deletion(to_delete)
 
-    @cleanup.command(pass_context=True, no_pm=True)
+    @cleanup.command(pass_context=True)
     async def messages(self, ctx, number: int):
         """Deletes last X messages.
 
@@ -295,9 +305,12 @@ class Mod:
 
         channel = ctx.message.channel
         author = ctx.message.author
-        server = author.server
         is_bot = self.bot.user.bot
-        has_permissions = channel.permissions_for(server.me).manage_messages
+        if channel.type is discord.ChannelType.text:
+            server = author.server
+            has_permissions = channel.permissions_for(server.me).manage_messages
+        else:
+            has_permissions = author.id == self.bot.user.id
 
         to_delete = []
 
@@ -632,7 +645,6 @@ class Mod:
                 messages = messages[100:]
             else:
                 await self.delete_message(messages)
-            await asyncio.sleep(1.5)
 
     async def slow_deletion(self, messages):
         for message in messages:
@@ -640,7 +652,6 @@ class Mod:
                 await self.bot.delete_message(message)
             except:
                 pass
-            await asyncio.sleep(1.5)
 
     async def _delete_message(self, message):
         try:
