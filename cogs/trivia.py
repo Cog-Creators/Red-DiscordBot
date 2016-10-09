@@ -98,7 +98,10 @@ class Trivia:
                     else:
                         msg = msg + d + "\t"
                 msg += "```"
-                await self.bot.send_message(author, msg)
+                if len(clean_list) > 100:
+                    await self.bot.send_message(author, msg)
+                else:
+                    await self.bot.say(msg)
             else:
                 await self.bot.say("There are no trivia lists available.")
         else:
