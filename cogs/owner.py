@@ -3,6 +3,7 @@ from discord.ext import commands
 from cogs.utils import checks
 from __main__ import set_cog, send_cmd_help, settings
 from .utils.dataIO import fileIO
+from .utils.chat_formatting import pagify
 
 import importlib
 import traceback
@@ -528,7 +529,8 @@ class Owner:
             server_list[str(i)] = servers[i]
             msg += "{}: {}\n".format(str(i), servers[i].name)
         msg += "\nTo leave a server just type its number."
-        await self.bot.say(msg)
+        for page in pagify(msg, ['\n']):
+            await self.bot.say(page)
         while msg != None:
             msg = await self.bot.wait_for_message(author=owner, timeout=15)
             if msg != None:
