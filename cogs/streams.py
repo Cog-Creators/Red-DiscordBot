@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from .utils.dataIO import fileIO
+from .utils.dataIO import dataIO
 from .utils.chat_formatting import *
 from .utils import checks
 from __main__ import send_cmd_help
@@ -19,10 +19,10 @@ class Streams:
 
     def __init__(self, bot):
         self.bot = bot
-        self.twitch_streams = fileIO("data/streams/twitch.json", "load")
-        self.hitbox_streams = fileIO("data/streams/hitbox.json", "load")
-        self.beam_streams = fileIO("data/streams/beam.json", "load")
-        self.settings = fileIO("data/streams/settings.json", "load")
+        self.twitch_streams = dataIO.load_json("data/streams/twitch.json")
+        self.hitbox_streams = dataIO.load_json("data/streams/hitbox.json")
+        self.beam_streams = dataIO.load_json("data/streams/beam.json")
+        self.settings = dataIO.load_json("data/streams/settings.json")
 
     @commands.command()
     async def hitbox(self, stream: str):
@@ -126,7 +126,7 @@ class Streams:
             await self.bot.say("Alert activated. I will notify this channel "
                                "everytime {} is live.".format(stream))
 
-        fileIO("data/streams/twitch.json", "save", self.twitch_streams)
+        dataIO.save_json("data/streams/twitch.json", self.twitch_streams)
 
     @streamalert.command(name="hitbox", pass_context=True)
     async def hitbox_alert(self, ctx, stream: str):
@@ -170,7 +170,7 @@ class Streams:
             await self.bot.say("Alert activated. I will notify this channel "
                                "everytime {} is live.".format(stream))
 
-        fileIO("data/streams/hitbox.json", "save", self.hitbox_streams)
+        dataIO.save_json("data/streams/hitbox.json", self.hitbox_streams)
 
     @streamalert.command(name="beam", pass_context=True)
     async def beam_alert(self, ctx, stream: str):
@@ -214,7 +214,7 @@ class Streams:
             await self.bot.say("Alert activated. I will notify this channel "
                                "everytime {} is live.".format(stream))
 
-        fileIO("data/streams/beam.json", "save", self.beam_streams)
+        dataIO.save_json("data/streams/beam.json", self.beam_streams)
 
     @streamalert.command(name="stop", pass_context=True)
     async def stop_alert(self, ctx):
@@ -257,9 +257,9 @@ class Streams:
         for s in to_delete:
             self.beam_streams.remove(s)
 
-        fileIO("data/streams/twitch.json", "save", self.twitch_streams)
-        fileIO("data/streams/hitbox.json", "save", self.hitbox_streams)
-        fileIO("data/streams/beam.json", "save", self.beam_streams)
+        dataIO.save_json("data/streams/twitch.json", self.twitch_streams)
+        dataIO.save_json("data/streams/hitbox.json", self.hitbox_streams)
+        dataIO.save_json("data/streams/beam.json", self.beam_streams)
 
         await self.bot.say("There will be no more stream alerts in this "
                            "channel.")
@@ -277,7 +277,7 @@ class Streams:
 
         https://blog.twitch.tv/client-id-required-for-kraken-api-calls-afbb8e95f843"""
         self.settings["TWITCH_TOKEN"] = token
-        fileIO("data/streams/settings.json", "save", self.settings)
+        dataIO.save_json("data/streams/settings.json", self.settings)
         await self.bot.say('Twitch Client-ID set.')
 
     async def hitbox_online(self, stream):
@@ -397,9 +397,9 @@ class Streams:
 
             if old != (self.twitch_streams, self.hitbox_streams,
                        self.beam_streams):
-                fileIO("data/streams/twitch.json", "save", self.twitch_streams)
-                fileIO("data/streams/hitbox.json", "save", self.hitbox_streams)
-                fileIO("data/streams/beam.json", "save", self.beam_streams)
+                dataIO.save_json("data/streams/twitch.json", self.twitch_streams)
+                dataIO.save_json("data/streams/hitbox.json", self.hitbox_streams)
+                dataIO.save_json("data/streams/beam.json", self.beam_streams)
 
             await asyncio.sleep(CHECK_DELAY)
 
@@ -412,24 +412,24 @@ def check_folders():
 
 def check_files():
     f = "data/streams/twitch.json"
-    if not fileIO(f, "check"):
+    if not dataIO.is_valid_json(f):
         print("Creating empty twitch.json...")
-        fileIO(f, "save", [])
+        dataIO.save_json(f, [])
 
     f = "data/streams/hitbox.json"
-    if not fileIO(f, "check"):
+    if not dataIO.is_valid_json(f):
         print("Creating empty hitbox.json...")
-        fileIO(f, "save", [])
+        dataIO.save_json(f, [])
 
     f = "data/streams/beam.json"
-    if not fileIO(f, "check"):
+    if not dataIO.is_valid_json(f):
         print("Creating empty beam.json...")
-        fileIO(f, "save", [])
+        dataIO.save_json(f, [])
 
     f = "data/streams/settings.json"
-    if not fileIO(f, "check"):
+    if not dataIO.is_valid_json(f):
         print("Creating empty settings.json...")
-        fileIO(f, "save", {})
+        dataIO.save_json(f, {})
 
 
 def setup(bot):

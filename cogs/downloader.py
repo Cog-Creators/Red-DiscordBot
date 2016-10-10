@@ -1,5 +1,5 @@
 from discord.ext import commands
-from cogs.utils.dataIO import dataIO, fileIO
+from cogs.utils.dataIO import dataIO
 from cogs.utils import checks
 from cogs.utils.chat_formatting import box
 from __main__ import send_cmd_help, set_cog
@@ -16,12 +16,13 @@ class Downloader:
     def __init__(self, bot):
         self.bot = bot
         self.path = "data/downloader/"
+        self.file_path = "data/downloader/repos.json"
         # {name:{url,cog1:{installed},cog1:{installed}}}
-        self.repos = fileIO("data/downloader/repos.json", "load")
+        self.repos = dataIO.load_json(self.file_path)
         self.update_repos()
 
     def save_repos(self):
-        fileIO("data/downloader/repos.json", "save", self.repos)
+        dataIO.save_json(self.file_path, self.repos)
 
     @commands.group(pass_context=True)
     @checks.is_owner()
@@ -255,7 +256,7 @@ class Downloader:
                 info_file = os.path.join(cogs[cog].get('folder'), "info.json")
                 if os.path.isfile(info_file):
                     try:
-                        data = fileIO(info_file, "load")
+                        data = dataIO.load_json(info_file)
                     except:
                         return None
                     return data
@@ -338,9 +339,9 @@ def check_files():
         {'community': {'url': "https://github.com/Twentysix26/Red-Cogs.git"}}
 
     f = "data/downloader/repos.json"
-    if not fileIO(f, "check"):
+    if not dataIO.is_valid_json(f):
         print("Creating default data/downloader/repos.json")
-        fileIO(f, "save", repos)
+        dataIO.save_json(f, repos)
 
 
 def setup(bot):
