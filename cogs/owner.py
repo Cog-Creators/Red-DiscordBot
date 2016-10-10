@@ -530,7 +530,8 @@ class Owner:
             server_list[str(i)] = servers[i]
             msg += "{}: {}\n".format(str(i), servers[i].name)
         msg += "\nTo leave a server just type its number."
-        await self.bot.say(msg)
+        for page in pagify(msg, ['\n']):
+            await self.bot.say(page)
         while msg != None:
             msg = await self.bot.wait_for_message(author=owner, timeout=15)
             if msg != None:
