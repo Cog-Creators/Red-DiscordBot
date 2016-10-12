@@ -191,9 +191,16 @@ Who has the highest potential tenacity in the game?`Irelia
 Who is known as the "Will of the Blades"?`Irelia
 Who says "This battle will be won."?`Irelia
 Name one of the champions that has the Mantle of Decorum?`Irelia or Karma`Irelia`Karma
+Who cannot damage any non-epic neutral monsters?`Ivern
+What is the name of Ivern's summoned sentinel?`Daisy
+Who felled the God Willow?`Ivern
+Where was Ivern originally from when he was human?`Freljord
+What does Ivern find scary?`Rift Herald
+Who was once known as "the Cruel"?`Ivern
 Who has the Victorious skin for season 2?`Janna
 Who is known as the "Storm's Fury"?`Janna
 What is Janna's last name?`Windforce
+What is the name of Janna's bird companion?`Zephyr
 Who is the only champion that can shield turrets?`Janna
 Who says "For tranquility."?`Janna
 Who is the "Exemplar of Demacia"?`Jarvan IV`j4`jarvan 4
@@ -219,6 +226,8 @@ Who has a skill called "Curtain Call"?`Jhin
 Who says "I accidentally did that on purpose."?`Jinx
 What is the name of Jinx's smaller gun?`Pow-pow`pow pow
 What is the name of Jinx's bigger gun?`Fishbones
+What is the name of Star Guardian Jinx's white gun?`Shiro
+What is the name of Star Guardian Jinx's black gun?`Kuro
 Who has a Firecracker skin?`Jinx
 Who used to have a crush on Jinx before she went crazy?`Ekko
 Who is related to the Ruined King (Blade of the Ruined King)?`Kalista
