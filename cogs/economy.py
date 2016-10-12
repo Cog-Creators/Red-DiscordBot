@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from cogs.utils.dataIO import dataIO, fileIO
+from cogs.utils.dataIO import fileIO
 from collections import namedtuple, defaultdict
 from datetime import datetime
 from random import randint
@@ -23,23 +23,30 @@ slot_payouts = """Slot machine payouts:
     Three symbols: +500
     Two symbols: Bet * 2"""
 
+
 class BankError(Exception):
     pass
+
 
 class AccountAlreadyExists(BankError):
     pass
 
+
 class NoAccount(BankError):
     pass
+
 
 class InsufficientBalance(BankError):
     pass
 
+
 class NegativeValue(BankError):
     pass
 
+
 class SameSenderAndReceiver(BankError):
     pass
+
 
 class Bank:
     def __init__(self, bot, file_path):
@@ -106,7 +113,6 @@ class Bank:
         self._save_bank()
 
     def transfer_credits(self, sender, receiver, amount):
-        server = sender.server
         if amount < 0:
             raise NegativeValue()
         if sender is receiver:
@@ -195,7 +201,8 @@ class Economy:
         global default_settings
         self.bot = bot
         self.bank = Bank(bot, "data/economy/bank.json")
-        self.settings = fileIO("data/economy/settings.json", "load")
+        self.file_path = "data/economy/settings.json"
+        self.settings = dataIO.load_json(self.file_path)
         if "PAYDAY_TIME" in self.settings: #old format
             default_settings = self.settings
             self.settings = {}
@@ -519,7 +526,7 @@ class Economy:
         server = ctx.message.server
         self.settings[server.id]["SLOT_MIN"] = bid
         await self.bot.say("Minimum bid is now " + str(bid) + " credits.")
-        fileIO("data/economy/settings.json", "save", self.settings)
+        dataIO.save_json(self.file_path, self.system)
 
     @economyset.command(pass_context=True)
     async def slotmax(self, ctx, bid : int):
@@ -527,7 +534,7 @@ class Economy:
         server = ctx.message.server
         self.settings[server.id]["SLOT_MAX"] = bid
         await self.bot.say("Maximum bid is now " + str(bid) + " credits.")
-        fileIO("data/economy/settings.json", "save", self.settings)
+        dataIO.save_json(self.file_path, self.system)
 
     @economyset.command(pass_context=True)
     async def slottime(self, ctx, seconds : int):
@@ -535,7 +542,7 @@ class Economy:
         server = ctx.message.server
         self.settings[server.id]["SLOT_TIME"] = seconds
         await self.bot.say("Cooldown is now " + str(seconds) + " seconds.")
-        fileIO("data/economy/settings.json", "save", self.settings)
+        dataIO.save_json(self.file_path, self.system)
 
     @economyset.command(pass_context=True)
     async def paydaytime(self, ctx, seconds : int):
@@ -543,7 +550,7 @@ class Economy:
         server = ctx.message.server
         self.settings[server.id]["PAYDAY_TIME"] = seconds
         await self.bot.say("Value modified. At least " + str(seconds) + " seconds must pass between each payday.")
-        fileIO("data/economy/settings.json", "save", self.settings)
+        dataIO.save_json(self.file_path, self.system)
 
     @economyset.command(pass_context=True)
     async def paydaycredits(self, ctx, credits : int):
@@ -551,10 +558,10 @@ class Economy:
         server = ctx.message.server
         self.settings[server.id]["PAYDAY_CREDITS"] = credits
         await self.bot.say("Every payday will now give " + str(credits) + " credits.")
-        fileIO("data/economy/settings.json", "save", self.settings)
+        dataIO.save_json(self.file_path, self.system)
 
-    def display_time(self, seconds, granularity=2): # What would I ever do without stackoverflow?
-        intervals = (                               # Source: http://stackoverflow.com/a/24542445
+    def display_time(self, seconds, granularity=2):  # What would I ever do without stackoverflow?
+        intervals = (                                # Source: http://stackoverflow.com/a/24542445
             ('weeks', 604800),  # 60 * 60 * 24 * 7
             ('days', 86400),    # 60 * 60 * 24
             ('hours', 3600),    # 60 * 60
@@ -573,34 +580,37 @@ class Economy:
                 result.append("{} {}".format(value, name))
         return ', '.join(result[:granularity])
 
+
 def check_folders():
     if not os.path.exists("data/economy"):
         print("Creating data/economy folder...")
         os.makedirs("data/economy")
 
+
 def check_files():
 
     f = "data/economy/settings.json"
-    if not fileIO(f, "check"):
+    if not dataIO.is_valid_json(f):
         print("Creating default economy's settings.json...")
-        fileIO(f, "save", {})
+        dataIO.save_json(f, {})
 
     f = "data/economy/bank.json"
-    if not fileIO(f, "check"):
+    if not dataIO.is_valid_json(f):
         print("Creating empty bank.json...")
-        fileIO(f, "save", {})
+        dataIO.save_json(f, {})
 
     f = "data/economy/stats.json"
-    if not fileIO(f, "check"):
+    if not dataIO.is_valid_json(f):
         print("Creating empty stats.json...")
-        fileIO(f, "save", {})
+        dataIO.save_json(f, {})
+
 
 def setup(bot):
     global logger
     check_folders()
     check_files()
     logger = logging.getLogger("red.economy")
-    if logger.level == 0: # Prevents the logger from being loaded again in case of module reload
+    if logger.level == 0:  # Prevents the logger from being loaded again in case of module reload
         logger.setLevel(logging.INFO)
         handler = logging.FileHandler(filename='data/economy/economy.log', encoding='utf-8', mode='a')
         handler.setFormatter(logging.Formatter('%(asctime)s %(message)s', datefmt="[%d/%m/%Y %H:%M]"))
