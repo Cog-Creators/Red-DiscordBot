@@ -1,4 +1,4 @@
-from .dataIO import fileIO
+from .dataIO import dataIO
 import discord
 import os
 
@@ -9,18 +9,18 @@ class Settings:
         self.path = path
         self.check_folders()
         self.default_settings = {"EMAIL" : "EmailHere", "PASSWORD" : "", "OWNER" : "id_here", "PREFIXES" : [], "default":{"ADMIN_ROLE" : "Transistor", "MOD_ROLE" : "Process"}, "LOGIN_TYPE" : "email"}
-        if not fileIO(self.path,"check"):
+        if not dataIO.is_valid_json(self.path):
             self.bot_settings = self.default_settings
             self.save_settings()
         else:
-            current = fileIO(self.path, "load")
+            current = dataIO.load_json(self.path)
             if current.keys() != self.default_settings.keys():
                 for key in self.default_settings.keys():
                     if key not in current.keys():
                         current[key] = self.default_settings[key]
                         print("Adding " + str(key) + " field to red settings.json")
-                fileIO(self.path, "save", current)
-            self.bot_settings = fileIO(self.path,"load")
+                dataIO.save_json(self.path, current)
+            self.bot_settings = dataIO.load_json(self.path)
         if "default" not in self.bot_settings:
             self.update_old_settings()
 
@@ -32,7 +32,7 @@ class Settings:
                 os.makedirs(folder)
 
     def save_settings(self):
-        fileIO(self.path,"save",self.bot_settings)
+        dataIO.save_json(self.path,self.bot_settings)
 
     def update_old_settings(self):
         mod = self.bot_settings["MOD_ROLE"]
