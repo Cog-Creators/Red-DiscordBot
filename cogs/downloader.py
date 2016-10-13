@@ -365,7 +365,8 @@ class Downloader:
         for cog in new & old:
             self.repos[name][cog].update(valid_cogs[cog])
         for cog in old - new:
-            del self.repos[name][cog]
+            if cog != 'url':
+                del self.repos[name][cog]
 
     def update_repo(self, name):
         if name not in self.repos:
