@@ -7,6 +7,7 @@ import os
 from subprocess import call, Popen
 import shutil
 import asyncio
+import stat
 from setuptools import distutils
 
 
@@ -83,6 +84,12 @@ class Downloader:
             return
         del self.repos[repo_name]
         self.save_repos()
+        folders = [repo.name for repo in os.scandir("data/downloader") if repo.is_dir()]
+        folders_check = [folder for folder in folders if not folder.startswith(".")]
+        cog_list = [repo for repo in folders_check if repo not in self.repos.keys()]
+        cog_path = [folder.path for folder in os.scandir("data/downloader") if folder.name in cog_list]
+        for cog in cog_path:
+            shutil.rmtree(cog, onerror=self.del_rw)
         await self.bot.say("Repo '{}' removed.".format(repo_name))
 
     @cog.command(name="list")
@@ -326,6 +333,10 @@ class Downloader:
         else:
             Popen(["git", "-C", "data/downloader/" + name, "stash", "-q"])
             Popen(["git", "-C", "data/downloader/" + name, "pull", "-q"])
+
+    def del_rw(action, name, exc):
+        os.chmod(name, stat.S_IWRITE)
+        os.remove(name)
 
 
 def check_folders():
