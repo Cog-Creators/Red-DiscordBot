@@ -130,7 +130,7 @@ class Mod:
         server = ctx.message.server
         if not self.settings[server.id]["delete_repeats"]:
             self.settings[server.id]["delete_repeats"] = True
-            await self.bot.say("Messages repeated up to 3 times will"
+            await self.bot.say("Messages repeated up to 3 times will "
                                "be deleted.")
         else:
             self.settings[server.id]["delete_repeats"] = False
@@ -435,6 +435,7 @@ class Mod:
     @commands.command(pass_context=True)
     @checks.mod_or_permissions(manage_messages=True)
     async def reason(self, ctx, case : int, *, reason : str):
+        """Lets you specify a reason for mod-log's cases"""
         author = ctx.message.author
         server = author.server
         case = str(case)
