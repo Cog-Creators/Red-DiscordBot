@@ -3,7 +3,7 @@ from discord.ext import commands
 import threading
 import os
 from random import shuffle, choice
-from cogs.utils.dataIO import fileIO
+from cogs.utils.dataIO import dataIO
 from cogs.utils import checks
 from __main__ import send_cmd_help, settings
 import re
@@ -160,7 +160,7 @@ class Playlist:
             self.save()
 
     def save(self):
-        fileIO(self.path, "save", self.to_json())
+        dataIO.save_json(self.path, self.to_json())
 
     @property
     def sid(self):
@@ -236,7 +236,7 @@ class Audio:
         self.bot = bot
         self.queue = {}  # add deque's, repeat
         self.downloaders = {}  # sid: object
-        self.settings = fileIO("data/audio/settings.json", 'load')
+        self.settings = dataIO.load_json("data/audio/settings.json")
         self.server_specific_setting_keys = ["VOLUME", "VOTE_ENABLED",
                                              "VOTE_THRESHOLD"]
         self.cache_path = "data/audio/cache"
@@ -619,7 +619,7 @@ class Audio:
             f = os.path.join(f, server, name + ".txt")
         else:
             f = os.path.join(f, name + ".txt")
-        kwargs = fileIO(f, 'load')
+        kwargs = dataIO.load_json(f)
 
         kwargs['path'] = f
         kwargs['main_class'] = self
@@ -810,7 +810,7 @@ class Audio:
         f = os.path.join(f, name + ".txt")
         log.debug('checking for {}'.format(f))
 
-        return fileIO(f, 'check')
+        return dataIO.is_valid_json(f)
 
     def _playlist_exists_local(self, server, name):
         try:
@@ -822,7 +822,7 @@ class Audio:
         f = os.path.join(f, server, name + ".txt")
         log.debug('checking for {}'.format(f))
 
-        return fileIO(f, 'check')
+        return dataIO.is_valid_json(f)
 
     def _remove_queue(self, server):
         if server.id in self.queue:
@@ -851,7 +851,7 @@ class Audio:
 
         log.debug("saving playlist '{}' to {}:\n\t{}".format(name, f,
                                                              playlist))
-        fileIO(f, 'save', playlist)
+        dataIO.save_json(f, playlist)
 
     def _shuffle_queue(self, server):
         shuffle(self.queue[server.id]["QUEUE"])
@@ -1966,7 +1966,7 @@ class Audio:
                 pass
 
     def save_settings(self):
-        fileIO('data/audio/settings.json', 'save', self.settings)
+        dataIO.save_json('data/audio/settings.json', self.settings)
 
     def set_server_setting(self, server, key, value):
         if server.id not in self.settings["SERVERS"]:
@@ -2030,16 +2030,16 @@ def check_files():
 
     if not os.path.isfile(settings_path):
         print("Creating default audio settings.json...")
-        fileIO(settings_path, "save", default)
+        dataIO.save_json(settings_path, default)
     else:  # consistency check
-        current = fileIO(settings_path, "load")
+        current = dataIO.load_json(settings_path)
         if current.keys() != default.keys():
             for key in default.keys():
                 if key not in current.keys():
                     current[key] = default[key]
                     print(
                         "Adding " + str(key) + " field to audio settings.json")
-            fileIO(settings_path, "save", current)
+            dataIO.save_json(settings_path, current)
 
 
 def setup(bot):
