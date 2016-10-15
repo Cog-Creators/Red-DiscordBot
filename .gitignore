@@ -1,8 +1,10 @@
 *.json
 *.pyc
 __pycache__
-data
-!data/trivia/*
-!data/audio/playlists/*
+data/*
+!data/trivia/
+!data/audio/
+data/audio/*
+!data/audio/playlists/
 *.exe
 *.dll
