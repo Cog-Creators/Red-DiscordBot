@@ -894,6 +894,8 @@ class Mod:
             msgs = self.cache[author]
             if len(msgs) == 3 and \
             msgs[0].content == msgs[1].content == msgs[2].content:
+                if any([m.attachments for m in msgs]):
+                    return False
                 try:
                     await self.bot.delete_message(message)
                     return True
