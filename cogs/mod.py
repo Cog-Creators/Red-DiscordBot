@@ -48,6 +48,7 @@ class Mod:
         self.cache = defaultdict(lambda: deque(maxlen=3))
         self.cases = dataIO.load_json("data/mod/modlog.json")
         self._tmp_banned_cache = []
+        self.last_case = defaultdict(lambda: dict())
 
     @commands.group(pass_context=True, no_pm=True)
     @checks.serverowner_or_permissions(administrator=True)
@@ -434,11 +435,26 @@ class Mod:
 
     @commands.command(pass_context=True)
     @checks.mod_or_permissions(manage_messages=True)
-    async def reason(self, ctx, case : int, *, reason : str):
-        """Lets you specify a reason for mod-log's cases"""
+    async def reason(self, ctx, case, *, reason : str=""):
+        """Lets you specify a reason for mod-log's cases
+
+        Defaults to last case assigned to yourself, if available."""
         author = ctx.message.author
         server = author.server
-        case = str(case)
+        try:
+            case = int(case)
+            if not reason:
+                await send_cmd_help(ctx)
+                return
+        except:
+            if reason:
+                reason = "{} {}".format(case, reason)
+            else:
+                reason = case
+            case = self.last_case[server.id].get(author.id, None)
+            if case is None:
+                await send_cmd_help(ctx)
+                return
         try:
             await self.update_case(server, case=case, mod=author,
                                    reason=reason)
@@ -451,7 +467,7 @@ class Mod:
         except CaseMessageNotFound:
             await self.bot.say("Couldn't find the case's message.")
         else:
-            await self.bot.say("Case updated.")
+            await self.bot.say("Case #{} updated.".format(case))
 
 
     @commands.group(pass_context=True)
@@ -836,6 +852,9 @@ class Mod:
         case["message"] = msg.id if msg is not None else None
 
         self.cases[server.id][str(case_n)] = case
+
+        if mod:
+            self.last_case[server.id][mod.id] = case_n
 
         dataIO.save_json("data/mod/modlog.json", self.cases)
 
