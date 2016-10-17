@@ -83,6 +83,18 @@ class Downloader:
             return
         del self.repos[repo_name]
         self.save_repos()
+        folders = [repo.name for repo in os.scandir("data/downloader") if repo.is_dir()]
+        folders_check = [folder for folder in folders if not folder.startswith(".")]
+        cog_list = [repo for repo in folders_check if repo not in self.repos.keys()]
+        cog_path = [folder.path for folder in os.scandir("data/downloader") if folder.name in cog_list]
+        for cog in cog_path:
+            os.chmod(cog, 0o777)
+            for root, dirs, files in os.walk(cog):
+                for d in dirs:
+                    os.chmod(os.path.join(root, d), 0o777)
+                for f in files:
+                    os.chmod(os.path.join(root, f), 0o777)
+            shutil.rmtree(cog)
         await self.bot.say("Repo '{}' removed.".format(repo_name))
 
     @cog.command(name="list")
