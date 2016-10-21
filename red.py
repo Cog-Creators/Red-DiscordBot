@@ -305,13 +305,7 @@ def set_cog(cog, value):
     dataIO.save_json("data/red/cogs.json", data)
 
 def load_cogs():
-    try:
-        if sys.argv[1] == "--no-prompt":
-            no_prompt = True
-        else:
-            no_prompt = False
-    except:
-        no_prompt = False
+    no_prompt = "--no-prompt" in sys.argv[1:]
 
     try:
         registry = dataIO.load_json("data/red/cogs.json")
