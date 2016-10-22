@@ -884,7 +884,7 @@ class Mod:
 
         msg = await self.bot.get_message(channel, case["message"])
         if msg:
-            await self.bot.edit_message(msg, case_msg.format(**case))
+            await self.bot.edit_message(msg, case_msg)
         else:
             raise CaseMessageNotFound()
 
