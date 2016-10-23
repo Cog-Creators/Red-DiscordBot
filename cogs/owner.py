@@ -457,7 +457,7 @@ class Owner:
         except KeyError:
             return KeyError
         for check in comm_obj.checks:
-            if check.__name__ == "is_owner_check":
+            if hasattr(check, "__name__") and check.__name__ == "is_owner_check":
                 return False
         return comm_obj
 
