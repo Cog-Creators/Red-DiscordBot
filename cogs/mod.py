@@ -784,7 +784,7 @@ class Mod:
                 await self.bot.delete_messages(messages[:100])
                 messages = messages[100:]
             else:
-                await self.bot.delete_message(messages)
+                await self.bot.delete_message(messages[0])
             await asyncio.sleep(1.5)
 
     async def slow_deletion(self, messages):
