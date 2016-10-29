@@ -264,7 +264,7 @@ class Downloader:
                 commit_author = data[0]['commit']['author']['name']
                 patch_note = "```Prolog\n{}\n{}\nHash: {}\nAuthor: {}\n{}```".format(header, line, commit_hash, commit_author.lower(), commit_body.lower())
         except:
-            patch_note = "```Prolog\n{}\n{}\n Unable to fetch this cog's patch notes. Please refer to the respective repo for more information.```".format(header, line)
+            patch_note = "```{}\n{}\n Unable to fetch this cog's patch notes. Please refer to the respective repo for more information.```".format(header, line)
 
         return patch_note
 
