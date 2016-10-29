@@ -1,12 +1,14 @@
+import discord
+import aiohttp
+import os
+import shutil
+import asyncio
 from discord.ext import commands
 from cogs.utils.dataIO import dataIO
 from cogs.utils import checks
 from cogs.utils.chat_formatting import box
 from __main__ import send_cmd_help, set_cog
-import os
-from subprocess import call, Popen
-import shutil
-import asyncio
+from subprocess import run, PIPE
 from setuptools import distutils
 
 
@@ -19,7 +21,6 @@ class Downloader:
         self.file_path = "data/downloader/repos.json"
         # {name:{url,cog1:{installed},cog1:{installed}}}
         self.repos = dataIO.load_json(self.file_path)
-        self.update_repos()
 
     def save_repos(self):
         dataIO.save_json(self.file_path, self.repos)
@@ -42,7 +43,6 @@ class Downloader:
     @repo.command(name="add", pass_context=True)
     async def _repo_add(self, ctx, repo_name: str, repo_url: str):
         """Adds repo to available repo lists
-
         Warning: Adding 3RD Party Repositories is at your own
         Risk."""
         await self.bot.say("Type 'I agree' to confirm "
@@ -151,30 +151,122 @@ class Downloader:
     @cog.command(pass_context=True)
     async def update(self, ctx):
         """Updates cogs"""
-        self.update_repos()
-        await self.bot.say("Downloading updated cogs. Wait 10 seconds...")
-        # TO DO: Wait for the result instead, without being blocking.
-        await asyncio.sleep(10)
-        installed_user_cogs = [(repo, cog) for repo in self.repos
-                               for cog in self.repos[repo]
-                               if cog != 'url' and
-                               self.repos[repo][cog]['INSTALLED'] is True]
-        for cog in installed_user_cogs:
-            await self.install(*cog)
-        await self.bot.say("Cogs updated. Reload all installed cogs? (yes/no)")
+
+        tasks = [self._update_repo(r) for r in self.repos]
+        tasknum = 0
+        num_repos = len(self.repos)
+
+        base_msg = "Downloading updated cogs, please wait... "
+        status = ' %d/%d repos updated' % (tasknum, num_repos)
+        msg = await self.bot.say(base_msg + status)
+
+        updated_cogs = []
+        new_cogs = []
+        deleted_cogs = []
+        installed_updated_cogs = []
+
+        for f in tasks:
+            tasknum += 1
+            name, updates = await f
+            if updates:
+                for k, l in updates.items():
+                    if k == 'A':
+                        new_cogs.extend([(name, c) for c in l])
+                    elif k == 'D':
+                        deleted_cogs.extend([(name, c) for c in l])
+                    elif k == 'M':
+                        updated_cogs.extend([(name, c) for c in l])
+
+            status = ' %d/%d repos updated' % (tasknum, num_repos)
+            msg = await self._robust_edit(msg, base_msg + status)
+        status = 'done. '
+
+        if not any(self.repos[repo][cog]['INSTALLED'] for repo, cog in updated_cogs):
+            status += ' No updates to apply. '
+
+        if new_cogs:
+            status += '\nNew cogs: ' + \
+                ', '.join('%s/%s' % c for c in new_cogs) + '.'
+        if deleted_cogs:
+            status += '\nDeleted cogs: ' + \
+                ', '.join('%s/%s' % c for c in deleted_cogs) + '.'
+        if updated_cogs:
+            status += '\nUpdated cogs: ' + \
+                ', '.join('%s/%s' % c for c in updated_cogs) + '.'
+
+        msg = await self._robust_edit(msg, base_msg + status)
+
+        registry = dataIO.load_json("data/red/cogs.json")
+
+        for repo, cog in updated_cogs:
+            if (self.repos[repo][cog]['INSTALLED'] and registry.get('cogs.' + cog, False)):
+                installed_updated_cogs.append((repo, cog))
+                await self.install(repo, cog)
+
+        if not installed_updated_cogs:
+            return
+
+        patch_notes = await self.patch_notes_handler(updated_cogs)
+
+        await self.bot.say("Cogs updated. Reload updated installed cogs? (yes/no)")
         answer = await self.bot.wait_for_message(timeout=15,
                                                  author=ctx.message.author)
         if answer is None:
             await self.bot.say("Ok then, you can reload cogs with"
                                " `{}reload <cog_name>`".format(ctx.prefix))
         elif answer.content.lower().strip() == "yes":
-            for (repo, cog) in installed_user_cogs:
-                self.bot.unload_extension("cogs." + cog)
-                self.bot.load_extension("cogs." + cog)
-            await self.bot.say("Done.")
+            update_list = []
+            fail_list = []
+            for (repo, cog) in installed_updated_cogs:
+                try:
+                    self.bot.unload_extension("cogs." + cog)
+                    self.bot.load_extension("cogs." + cog)
+                    update_list.append(cog)
+                except:
+                    fail_list.append(cog)
+            msg = 'Done.'
+            if update_list:
+                msg += " The following cogs were reloaded: " + ', '.join(update_list) + "\n"
+            if fail_list:
+                msg += " The following cogs failed to reload: " + ', '.join(fail_list)
+            await self.bot.say(msg)
+
         else:
             await self.bot.say("Ok then, you can reload cogs with"
                                " `{}reload <cog_name>`".format(ctx.prefix))
+
+        for note in patch_notes:
+            await asyncio.sleep(1)  # Slow down the number of messages sent.
+            await self.bot.say(note)
+
+    async def patch_notes_handler(self, cogs):
+        # FIXME Perhaps some regex to fix the replace
+        patch_tasks = [(repo["url"].replace("https://github.com/", "https://api.github.com/repos/").replace("Cogs.git", "Cogs") + "/commits?path=" + cog[1], cog[1]) for cog in cogs for repo in self.repos.values() if cog[1] in repo.keys()]
+
+        patch_notes = await asyncio.gather(*[self.fetch_note(url[0], url[1]) for url in patch_tasks], return_exceptions=True)
+
+        for index, cog in enumerate(patch_tasks):
+            print('{}: {}'.format(cog[1], "Error" if isinstance(patch_notes[index], Exception) else 'OK'))
+
+        return patch_notes
+
+    async def fetch_note(self, url, cog):
+        async with aiohttp.get(url) as r:
+            data = await r.json()
+
+        header = "{} Patch Notes".format(cog)
+        line = "=" * len(header)
+
+        try:
+            if "message" in data[0]['commit']:
+                commit_body = data[0]['commit']['message']
+                commit_hash = data[0]['commit']['tree']['sha'][0:7]
+                commit_author = data[0]['commit']['author']['name']
+                patch_note = "```Prolog\n{}\n{}\nHash: {}\nAuthor: {}\n{}```".format(header, line, commit_hash, commit_author.lower(), commit_body.lower())
+        except:
+            patch_note = "```Prolog\n{}\n{}\n Unable to fetch this cog's patch notes. Please refer to the respective repo for more information.```".format(header, line)
+
+        return patch_note
 
     @cog.command(pass_context=True)
     async def uninstall(self, ctx, repo_name, cog):
@@ -302,30 +394,63 @@ class Downloader:
 
     def populate_list(self, name):
         valid_cogs = self.list_cogs(name)
-        for cog in valid_cogs:
-            if cog not in self.repos[name]:
-                self.repos[name][cog] = valid_cogs.get(cog, {})
-                self.repos[name][cog]['INSTALLED'] = False
-            else:
-                self.repos[name][cog].update(valid_cogs[cog])
-
-    def update_repos(self):
-        for name in self.repos:
-            self.update_repo(name)
-            self.populate_list(name)
-        self.save_repos()
+        new = set(valid_cogs.keys())
+        old = set(self.repos[name].keys())
+        for cog in new - old:
+            self.repos[name][cog] = valid_cogs.get(cog, {})
+            self.repos[name][cog]['INSTALLED'] = False
+        for cog in new & old:
+            self.repos[name][cog].update(valid_cogs[cog])
+        for cog in old - new:
+            if cog != 'url':
+                del self.repos[name][cog]
 
     def update_repo(self, name):
         if name not in self.repos:
-            return
+            return name, None
         if not os.path.exists("data/downloader/" + name):
             print("Downloading cogs repo...")
             url = self.repos[name]['url']
-            # It's blocking but it shouldn't matter
-            call(["git", "clone", url, "data/downloader/" + name])
+            run(["git", "clone", url, "data/downloader/" + name])
         else:
-            Popen(["git", "-C", "data/downloader/" + name, "stash", "-q"])
-            Popen(["git", "-C", "data/downloader/" + name, "pull", "-q"])
+            p = run(["git", "-C", "data/downloader/" + name, "rev-parse", "HEAD"], stdout=PIPE)
+            oldhash = p.stdout.decode().strip()
+            run(["git", "-C", "data/downloader/" + name, "stash", "-q"])
+            run(["git", "-C", "data/downloader/" + name, "pull", "-q"])
+            p = run(["git", "-C", "data/downloader/" + name, "rev-parse", "HEAD"], stdout=PIPE)
+            newhash = p.stdout.decode().strip()
+            if oldhash == newhash:
+                return name, None
+            else:
+                self.populate_list(name)
+                self.save_repos()
+                ret = {}
+                cmd = ['git', '-C', 'data/downloader/' + name, 'diff',
+                       '--no-commit-id', '--name-status', oldhash, newhash]
+                p = run(cmd, stdout=PIPE)
+                changed = p.stdout.strip().decode().split('\n')
+                for f in changed:
+                    if not f.endswith('.py'):
+                        continue
+                    status, cogpath = f.split('\t')
+                    cogname = os.path.split(cogpath)[-1][:-3]  # strip .py
+                    if status not in ret:
+                        ret[status] = []
+                    ret[status].append(cogname)
+                return name, ret
+
+    async def _update_repo(self, name):
+        """asyncio task wrapper"""
+        return self.update_repo(name)
+
+    async def _robust_edit(self, msg, text):
+        try:
+            msg = await self.bot.edit_message(msg, text)
+        except discord.errors.NotFound:
+            msg = await self.bot.send_message(msg.channel, text)
+        except:
+            raise
+        return msg
 
 
 def check_folders():
