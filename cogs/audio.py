@@ -575,7 +575,12 @@ class Audio:
         return self.queue[server.id]["PLAYLIST"]
 
     async def _join_voice_channel(self, channel):
-        server = channel.server
+        try:
+            server = channel.server
+        except AttributeError:
+            await self.bot.say("You must join a voice channel before I can"
+                               " play anything.")
+            return
         if server.id in self.queue:
             self.queue[server.id]["VOICE_CHANNEL_ID"] = channel.id
         try:
