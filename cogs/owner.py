@@ -213,13 +213,17 @@ class Owner:
     @_set.command(pass_context=True)
     async def owner(self, ctx):
         """Sets owner"""
-        if settings.owner != "id_here":
-            await self.bot.say("Owner ID has already been set.")
-            return
-
         if self.setowner_lock:
             await self.bot.say("A set owner command is already pending.")
             return
+
+        if settings.owner != "id_here":
+            await self.bot.say(
+            "The owner is already set. Remember that setting the owner "
+            "to someone else other than who hosts the bot has security "
+            "repercussions and is *NOT recommended*. Proceed at your own risk."
+            )
+            await asyncio.sleep(3)
 
         await self.bot.say("Confirm in the console that you're the owner.")
         self.setowner_lock = True
@@ -651,7 +655,8 @@ class Owner:
         print(author.name + " requested to be set as owner. If this is you, "
               "type 'yes'. Otherwise press enter.")
         print()
-        print("*DO NOT* set anyone else as owner.")
+        print("*DO NOT* set anyone else as owner. This has security "
+              "repercussions.")
 
         choice = "None"
         while choice.lower() != "yes" and choice == "None":
@@ -663,7 +668,7 @@ class Owner:
             self.setowner_lock = False
             self.owner.hidden = True
         else:
-            print("setowner request has been ignored.")
+            print("The set owner request has been ignored.")
             self.setowner_lock = False
 
     def _get_version(self):
