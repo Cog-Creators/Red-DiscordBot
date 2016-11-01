@@ -39,11 +39,23 @@ class Image:
                 else:
                     await self.bot.say("Only top or new is a valid subcommand.")
                     return
-                items = imgurclient.subreddit_gallery(text[0], sort=imgSort, window='day', page=0)
-                if (len(items) < 3):
-                    await self.bot.say("This subreddit section does not exist, try 'funny'")
+                # Find the time window with the most images (at least 3)
+                windowList=['day','week','month','year','all']
+                for x in windowList:
+                    items = imgurclient.subreddit_gallery(text[0], sort=imgSort, window=x, page=0)
+                    if (len(items) < 3):
+                        continue
+                    else:
+                        for i in range(0, 3):
+                            itemTitle=items[i].title
+                            if items[i].animated:
+                                itemLink=items[i].gifv
+                            else:
+                                itemLink=items[i].link
+                            await self.bot.say("{}\n{}\n".format(itemTitle, itemLink))
+                        break
                 else:
-                    await self.bot.say("{} {} {}".format(items[0].link, items[1].link, items[2].link))
+                    await self.bot.say("\"{}\" either does not exist or does not have enough content!".format(text[0]))
             except:
                 await self.bot.say("Type help imgur for details.")
 
