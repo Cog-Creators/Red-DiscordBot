@@ -1,7 +1,7 @@
 from discord.ext import commands
 from cogs.utils.dataIO import dataIO
 from cogs.utils import checks
-from cogs.utils.chat_formatting import box
+from cogs.utils.chat_formatting import pagify, box
 from __main__ import send_cmd_help, set_cog
 import os
 from subprocess import call, Popen
@@ -111,7 +111,9 @@ class Downloader:
         col_width = max(len(row[0]) for row in retlist) + 2
         for row in retlist:
             msg += "\t" + "".join(word.ljust(col_width) for word in row) + "\n"
-        await self.bot.say(box(msg))  # Need to deal with over 2000 characters
+        coglist = "".join(msg)
+        for page in pagify(coglist, ["\n"], shorten_by=12):
+            await self.bot.say("{}".format(box(page)))
 
     @cog.command()
     async def info(self, repo_name: str, cog: str=None):
