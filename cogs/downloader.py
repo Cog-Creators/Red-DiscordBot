@@ -113,7 +113,7 @@ class Downloader:
             msg += "\t" + "".join(word.ljust(col_width) for word in row) + "\n"
         coglist = "".join(msg)
         for page in pagify(coglist, ["\n"], shorten_by=12):
-            await self.bot.say("```{}```".format(page))
+            await self.bot.say("{}".format(box(page)))
 
     @cog.command()
     async def info(self, repo_name: str, cog: str=None):
