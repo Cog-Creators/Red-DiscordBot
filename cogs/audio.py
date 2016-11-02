@@ -4,7 +4,7 @@ import threading
 import os
 from random import shuffle, choice
 from cogs.utils.dataIO import fileIO
-from cogs.utils import checks
+from cogs.utils import checks, chat_formatting
 from __main__ import send_cmd_help, settings
 import re
 import logging
@@ -13,7 +13,9 @@ import copy
 import asyncio
 import math
 import time
+from datetime import datetime
 import inspect
+from operator import itemgetter
 
 __author__ = "tekulvw"
 __version__ = "0.1.1"
@@ -238,12 +240,13 @@ class Audio:
         self.downloaders = {}  # sid: object
         self.settings = fileIO("data/audio/settings.json", 'load')
         self.server_specific_setting_keys = ["VOLUME", "VOTE_ENABLED",
-                                             "VOTE_THRESHOLD"]
+                                             "VOTE_THRESHOLD", "WAYBACK_HISTORY"]
         self.cache_path = "data/audio/cache"
         self.local_playlist_path = "data/audio/localtracks"
         self._old_game = False
 
         self.skip_votes = {}
+        self.replay = {}
 
     async def _add_song_status(self, song):
         if self._old_game is False:
@@ -267,6 +270,99 @@ class Audio:
         if server.id not in self.queue:
             self._setup_queue()
         self.queue[server.id]["QUEUE"].appendleft(url)
+
+    def _pop_historical_replay_tail(self, server, day_offset:int, zeroplay=True):
+        now = round(time.time())
+        sid = server.id
+
+        # Pass if recently checked, assuming calling audio with least 3hr bot uptime is not uncommon.
+        if now < self.replay[sid]["LAST_CHECKUP"]+10800:
+            print("skip")
+            return
+        else:
+            print("cleanup")
+            log.debug("_pop_historical_replay_tail(): Cleaning replays for server: {}".format(sid))
+            self.replay[sid]["LAST_CHECKUP"] = now
+            secday_offset = day_offset*86400
+
+            # Get all replay dates.
+            replays = self._load_replay(server)
+
+            # Delete history (default with zeroplay and last edit beyond day_offset).
+            to_delete = []
+            offset =  now-secday_offset
+            for rd in replays:
+                rpc = replays[rd]["replays"]
+                redit = replays[rd]["last_edit"]
+                if (rpc == 0 and redit <= offset) or (not zeroplay and redit <= offset):
+                    to_delete.append(rd)
+            self._delete_replays(server, to_delete)
+
+    async def _update_replay(self, server, replay_queue):
+        # Write item(s) to json.
+        today = str(datetime.utcnow().date())
+        now = round(time.time())
+        sid = server.id
+        await asyncio.sleep(0.20)
+
+        replays = self._load_replay(server)
+        if not replays:
+            # New record.
+            replays = {}
+            upd_playlist = replay_queue
+            replays[today] = {
+                "alias" : today,
+                "last_edit" : now,
+                "comment" : today,
+                "playlist" : upd_playlist,
+                "replays" : 0
+            }
+        else:
+            # New record or update.
+            if today in replays:
+                upd_playlist = replays[today]["playlist"]
+                for i in replay_queue:
+                    upd_playlist.append(i)
+                replays[today]["playlist"] = upd_playlist
+            else:
+                upd_playlist = replay_queue
+                replays[today] = {
+                    "alias" : today,
+                    "last_edit" : now,
+                    "comment" : today,
+                    "playlist" : upd_playlist,
+                    "replays" : 0
+                }
+        try:
+            self._save_replay(server, replays)
+        except Exception as e:
+            log.debug("_update_replay(): Storage may be to slow to keep up(@[Errno 22] Invalid argument)"
+                        ", consider raising the sleeptime value:\n{}".format(e))
+
+    def _add_to_replay(self, server, url):
+        sid = server.id
+        now = round(time.time())
+
+        if sid not in self.replay:
+            self.replay[sid] = {"Q": [], "LAST_CHECKUP": now}
+
+        # Get rid of old and unplayed replays.
+        days = self.get_server_settings(server)["WAYBACK_HISTORY"]
+        self._pop_historical_replay_tail(server, days)
+
+        # Add queue to existing current replay list.
+        if type(url) == list:
+            for i in url:
+                self.replay[sid]["Q"].append(i)
+        elif type(url) == str:
+            self.replay[sid]["Q"].append(url)
+        replay_queue = self.replay[sid]["Q"]
+
+        # Dealing with async as well as non-assync combined with sleep
+        # This usually wont cause randomness, order may get lost on write delay hiccups.
+        self.bot.loop.create_task(self._update_replay(server, replay_queue))
+        # Clear for next call.
+        self.replay[sid]["Q"] = []
 
     def _cache_desired_files(self):
         filelist = []
@@ -520,6 +616,23 @@ class Audio:
             except IndexError:
                 pass
         return ret
+
+    async def _get_confirmation(self, ctx, question, cancel_msg="Aborted..."):
+        await self.bot.say(question)
+        response = await self.bot.wait_for_message(timeout=20, author=ctx.message.author)
+        if response is None:
+            await self.bot.say(cancel_msg)
+            return False
+        else:
+            response = response.content.lower().strip()
+        if response.startswith(("y","yes")):
+            return True
+        elif response.startswith("n"):
+            await self.bot.say(cancel_msg)
+            return False
+        else:
+            await self.bot.say(cancel_msg)
+            return False
 
     async def _guarantee_downloaded(self, server, url):
         max_length = self.settings["MAX_LENGTH"]
@@ -775,6 +888,7 @@ class Audio:
 
         self._setup_queue(server)
         self._set_queue_playlist(server, name)
+        self._add_to_replay(server, songlist)
         self._set_queue_repeat(server, True)
         self._set_queue(server, songlist)
 
@@ -787,6 +901,7 @@ class Audio:
 
         ret_playlist = Playlist(server=server, name=name, playlist=ret)
         self._play_playlist(server, ret_playlist)
+        self._add_to_replay(server, ret_playlist)
 
     def _player_count(self):
         count = 0
@@ -946,13 +1061,11 @@ class Audio:
             else:
                 await self._remove_song_status()
 
-    def _valid_playlist_name(self, name):
-        for l in name:
-            if l.isdigit() or l.isalpha() or l == "_":
-                pass
-            else:
-                return False
-        return True
+    def _valid_name(self, name, invalid="([^\d\w])"):
+        if re.search(invalid, name) is None:
+            return True
+        else:
+            return False
 
     def _valid_playable_url(self, url):
         yt = self._match_yt_url(url)
@@ -1066,6 +1179,24 @@ class Audio:
         self.set_server_setting(server, "VOTE_THRESHOLD", percent)
         self.set_server_setting(server, "VOTE_ENABLED", enabled)
         self.save_settings()
+
+    @audioset.command(pass_context=True, name="history", no_pm=True)
+    @checks.mod_or_permissions(manage_messages=True)
+    async def audioset_history(self, ctx, days: int=None):
+        """Sets the max amount of days to preserve replay history for this server.
+            All unplayed history will automatically be removed after this amount of days."""
+        server = ctx.message.server
+        if days is None:
+            days = self.get_server_settings(server)["WAYBACK_HISTORY"]
+            msg = "Replay history is currently set to {} days.".format(days)
+        elif days >= 1 and days <= 365:
+            self.set_server_setting(server, "WAYBACK_HISTORY", days)
+            msg = "Replay history is set to {} days.".format(days)
+
+            self.save_settings()
+        else:
+            msg = "The amount of days must be between 1 and 365."
+        await self.bot.say(msg)
 
     @commands.group(pass_context=True)
     async def audiostat(self, ctx):
@@ -1287,6 +1418,7 @@ class Audio:
         self._stop_player(server)
         self._clear_queue(server)
         self._add_to_queue(server, url)
+        self._add_to_replay(server, url)
 
     @commands.command(pass_context=True, no_pm=True)
     async def prev(self, ctx):
@@ -1329,7 +1461,7 @@ class Audio:
         """Creates an empty playlist"""
         server = ctx.message.server
         author = ctx.message.author
-        if not self._valid_playlist_name(name) or len(name) > 25:
+        if not self._valid_name(name) or len(name) > 25:
             await self.bot.say("That playlist name is invalid. It must only"
                                " contain alpha-numeric characters or _.")
             return
@@ -1345,14 +1477,12 @@ class Audio:
         self._save_playlist(server, name, playlist)
         await self.bot.say("Empty playlist '{}' saved.".format(name))
 
-
-
     @playlist.command(pass_context=True, no_pm=True, name="add")
     async def playlist_add(self, ctx, name, url):
         """Add a YouTube or Soundcloud playlist."""
         server = ctx.message.server
         author = ctx.message.author
-        if not self._valid_playlist_name(name) or len(name) > 25:
+        if not self._valid_name(name) or len(name) > 25:
             await self.bot.say("That playlist name is invalid. It must only"
                                " contain alpha-numeric characters or _.")
             return
@@ -1440,6 +1570,7 @@ class Audio:
 
         # We have a queue to modify
         self._add_to_queue(server, url)
+        self._add_to_replay(server, url)
 
         await self.bot.say("Queued.")
 
@@ -1508,6 +1639,356 @@ class Audio:
         """Plays and mixes a playlist."""
         await self.playlist_start.callback(self, ctx, name)
 
+    def _load_replay(self, server):
+        sid = server.id
+        f = os.path.join("data/audio/replay/", sid + ".json")
+        if not fileIO(f, "check"):
+            return
+        else:
+            replays = fileIO(f, 'load')
+            return replays
+
+    def _save_replay(self, server, replays):
+        sid = server.id
+        f = os.path.join("data/audio/replay/", sid + ".json")
+        log.debug("saving replays '{}' to {}:\n\t{}".format(sid, f,
+                                                         replays))
+        fileIO(f, "save", replays)
+        return True
+
+    def _delete_replays(self, server, to_delete:list):
+        try:
+            replays = self._load_replay(server)
+            for rd in to_delete:
+                if rd in replays:
+                    replays.pop(rd)
+                else:
+                    log.debug("_delete_replays(): Not available,"
+                                " skipping deletion of {} from server:{},".format(rd, server.id))
+            self._save_replay(server, replays)
+            log.debug("_delete_replays(): Deleted {} from server:{}".format(to_delete, server.id))
+            return True
+        except Exception as e:
+            log.debug("_delete_replays(): Failed deleting replays:{}"
+                        " from server:{}\n{}".format(to_delete, server.id, e))
+            return False
+
+    async def _replay_available(self, server, that_input=False):
+        replays = self._load_replay(server)
+        if replays:
+            name = None
+            if that_input is not False:
+                # Check for alias
+                for day in replays:
+                    name = replays[day]["alias"]
+                    if that_input == name:
+                        return replays[day], day, replays
+                # Check for name(date)
+                if that_input in replays:
+                    return replays[that_input], that_input, replays
+            return False, that_input, replays
+        else:
+            return False, that_input, replays
+
+    async def _replay_start(self, ctx, playlist: list):
+        server = ctx.message.server
+        author = ctx.message.author
+        voice_channel = author.voice_channel
+        # Checking already connected, will join if not
+        if not self.voice_connected(server):
+            try:
+                self.has_connect_perm(author, server)
+            except AuthorNotConnected:
+                await self.bot.say("You must join a voice channel before I can"
+                                   " play anything.")
+                return
+            except UnauthorizedConnect:
+                await self.bot.say("I don't have permissions to join your"
+                                   " voice channel.")
+                return
+            except UnauthorizedSpeak:
+                await self.bot.say("I don't have permissions to speak in your"
+                                   " voice channel.")
+                return
+            else:
+                await self._join_voice_channel(voice_channel)
+        else:  # We are connected but not to the right channel
+            if self.voice_client(server).channel != voice_channel:
+                await self._stop_and_disconnect(server)
+                await self._join_voice_channel(voice_channel)
+
+        self._stop_player(server)
+        self._clear_queue(server)
+        if server.id not in self.queue:
+            self._setup_queue(server)
+        for song in playlist:
+            self.queue[server.id]["QUEUE"].append(song)
+            self._add_to_replay(server, song)
+
+    @commands.group(name="replay", pass_context=True)
+    async def _replay(self, ctx): # "replay" wont work
+        """Replay requested songs of an certain date."""
+        if ctx.invoked_subcommand is None:
+            await send_cmd_help(ctx)
+            return
+
+    @_replay.command(name="list", pass_context=True)
+    async def replay_list(self, ctx):
+        """Lists all available replays."""
+        server = ctx.message.server
+        replays = self._load_replay(server)
+
+        if replays:
+            playlists = []
+            playlists.append(["Date".ljust(10), "Alias".ljust(25), "Tracks".ljust(6), "Comment".ljust(80)])
+
+            for i in replays:
+                day = i
+                alias = replays[i]["alias"]
+                comment = replays[i]["comment"]
+                tracksam = str(len(replays[i]["playlist"]))
+                if day == comment:
+                    comment = " "
+                if alias == day:
+                    alias = " "
+                playlists.append([day.ljust(10), alias.ljust(25), tracksam.center(6), comment.ljust(75)])
+            if len(playlists) > 1:
+                playlists = sorted(playlists, key=itemgetter(0), reverse=True)
+
+                msg = "Available replay playlists:\n"
+                msg += "```xl\n"
+                for i, list in enumerate(playlists):
+                    msg += "{0} / {1} / {2} / {3}\n".format(playlists[i][0], playlists[i][1], playlists[i][2], playlists[i][3])
+                msg += "```"
+                paged = chat_formatting.pagify(msg, delims="\n")
+                for page in paged:
+                    await self.bot.say("{0}".format(page))
+        else:
+            await self.bot.say("There are no replay playlists available.")
+            return
+
+    @_replay.command(name="alias", pass_context=True)
+    @checks.mod_or_permissions(manage_messages=True)
+    async def replay_alias(self, ctx, date_or_alias, *, new_alias):
+        """Give an replay list a alias to call it with."""
+        server = ctx.message.server
+        today = str(datetime.utcnow().date())
+        now = round(time.time())
+
+        if date_or_alias is None:
+            search = today
+            replay, that_date, replays = await self._replay_available(server, search)
+            if replay is not False:
+                if not await self._get_confirmation(ctx, "You gave no source to for alias, "
+                                                                    "do you want to give today's replay an alias? y/n"):
+                    return
+        else:
+            search = date_or_alias
+
+        if not self._valid_name(new_alias, "([^\d\w-])") or len(new_alias) > 25:
+            await self.bot.say("That replay alias is invalid. Must be shorter that 25 characters"
+                               ", and must only contain alpha-numeric characters or _-")
+            return
+
+        replay, that_date, replays = await self._replay_available(server, search)
+        if replay is not False:
+            # Label(alias) replay date and save
+            already_exist = False
+            for i in replays:
+                alias = replays[that_date]["alias"]
+                if alias == new_alias:
+                    already_exist = True
+            if already_exist:
+                await self.bot.reply("That alias already exists!")
+                return
+            replays[that_date]["alias"] = new_alias
+            self._save_replay(server, replays)
+            await self.bot.say("Done.")
+        elif replay is False:
+            await self.bot.reply("No replay history available for today, given date or alias")
+
+    @_replay.command(name="comment", pass_context=True)
+    @checks.mod_or_permissions(manage_messages=True)
+    async def replay_comment(self, ctx, date_or_alias, *, new_comment):
+        """Give an description for a historical replay list."""
+        server = ctx.message.server
+        today = str(datetime.utcnow().date())
+        now = round(time.time())
+
+        if date_or_alias is None:
+            search = today
+            replay, that_date, replays = await self._replay_available(server, search)
+            if replay is not False:
+                if not await self._get_confirmation(ctx, "You gave no source to comment on"
+                                                                ", do you want to comment on today's replay? y/n"):
+                    return
+        else:
+            search = date_or_alias
+
+        if not self._valid_name(new_comment, "([^\d\w -])") or len(new_comment) > 75:
+            await self.bot.say("That replay comment is invalid. Must be shorter that 75 characters"
+                               ", and must only contain alpha-numeric characters or _ -")
+            return
+        replay, that_date, replays = await self._replay_available(server, search)
+        if replay is not False:
+            replays[that_date]["comment"] = new_comment
+            self._save_replay(server, replays)
+            await self.bot.say("Done.")
+        elif replay is False:
+            await self.bot.reply("No replay history available for today, given date or alias")
+
+    @_replay.command(name="cleanup", pass_context=True)
+    @checks.mod_or_permissions(manage_messages=True)
+    async def replay_cleanup(self, ctx, date_or_alias=None):
+        """Remove song or search duplicates from a certain history."""
+        server = ctx.message.server
+        today = str(datetime.utcnow().date())
+        now = round(time.time())
+
+        if date_or_alias is None:
+            search = today
+            replay, that_date, replays = await self._replay_available(server, search)
+            if replay is not False:
+                if not await self._get_confirmation(ctx, "You gave no source to clean, "
+                                                                    "do you want to clean up today's replay? y/n"):
+                    return
+        else:
+            search = date_or_alias
+
+        replay, that_date, replays = await self._replay_available(server, search)
+        if replay is not False:
+            # Clean up replay date and save.
+            curr_playlist = replays[that_date]["playlist"]
+            new_playlist = []
+            for song in curr_playlist:
+                if song not in new_playlist:
+                    new_playlist.append(song)
+            replays[that_date]["playlist"] = new_playlist
+
+            self._save_replay(server, replays)
+            await self.bot.say("Done.")
+        elif replay is False:
+            await self.bot.reply("No replay history available for today, given date or alias")
+
+    @_replay.command(name="merge", pass_context=True)
+    @checks.mod_or_permissions(manage_messages=True)
+    async def replay_merge(self, ctx, with_date_or_alias, add_date_or_alias):
+        """Merge two replay replays together."""
+        server = ctx.message.server
+        today = str(datetime.utcnow().date())
+
+        with_replay, with_that_date, replays = await self._replay_available(server, with_date_or_alias)
+        add_replay, add_that_date, replays = await self._replay_available(server, add_date_or_alias)
+        if with_replay and add_replay is not False:
+            if await self._get_confirmation(ctx, "Are you sure you want to merge `{1}` with `{0}`? "
+                                                        "(`{0}` will be overwritten as both.) y/n".format(with_date_or_alias, add_date_or_alias)):
+                # Make new playlist.
+                new_playlist = []
+                new_playlist.extend(with_replay["playlist"])
+                new_playlist.extend(add_replay["playlist"])
+                replays[with_that_date]["playlist"] = new_playlist
+
+                # Save replay
+                self._save_replay(server, replays)
+                await self.bot.say("Done.")
+                log.debug("Merged replays:{}-{} server:{}".format(with_that_date, add_that_date, server.id))
+
+                # Ask for deletion.
+                if await self._get_confirmation(ctx, "Do you want to delete replay `{}({})`? y/n".format(add_that_date, add_replay["alias"])):
+                    if self._delete_replays(server, [add_that_date]):
+                        await self.bot.say("Deleted {}({}).".format(add_that_date, add_replay["alias"]))
+                    else:
+                        await self.bot.say("Failed in deleting {}({}).".format(add_that_date, add_replay["alias"]))
+        elif with_replay is False:
+            await self.bot.reply("No replay history available for {}".format(with_that_date))
+        elif add_replay is False:
+            await self.bot.reply("No replay history available for {}".format(add_that_date))
+
+    @_replay.command(name="export", pass_context=True)
+    @checks.mod_or_permissions(manage_messages=True)
+    async def replay_export(self, ctx, date_or_alias=None):
+        """Export historical replay as playlist."""
+        server = ctx.message.server
+        today = str(datetime.utcnow().date())
+        author = ctx.message.author
+
+        if date_or_alias is None:
+            search = today
+            replay, that_date, replays = await self._replay_available(server, search)
+            if replay is not False:
+                if not await self._get_confirmation(ctx, "You gave no source, do you want to export today's replay? y/n"):
+                    return
+        else:
+            search = date_or_alias
+
+        replay, that_date, replays = await self._replay_available(server, search)
+        if replay is not False:
+            # Build playlist and save.
+            if replay["alias"] == that_date:
+                name = that_date
+                comment = replay["comment"].replace(" ", "_")
+                url = "replay-{}-X-{}".format(that_date, comment)
+            else:
+                name = replay["alias"]
+                url = "replay-{}-{}-{}".format(that_date, replay["alias"], replay["comment"])
+            playlist = self._make_playlist(author, url,  replay["playlist"])
+
+            playlist.server = server
+            playlist.name = name
+            self._save_playlist(server, name, playlist)
+
+            await self.bot.say("Exported replay: {0} as {0}.txt to playlist folder".format(name, server.id))
+            log.debug("Exported replay: {0} from server: {1} as {0}.txt".format(name, server.id))
+
+            # Ask for deletion
+            if await self._get_confirmation(ctx, "Do you want to delete replay`{}({})`? y/n".format(that_date, replay["alias"])):
+                if self._delete_replays(server, [that_date]):
+                    await self.bot.say("Deleted {}({}).".format(that_date, replay["alias"]))
+                else:
+                    await self.bot.say("Failed in deleting {}({}).".format(that_date, replay["alias"]))
+        elif replay is False:
+            await self.bot.reply("No replay history available for today, given date or alias")
+
+    @_replay.command(name="start", pass_context=True)
+    async def replay_start(self, ctx, date_or_alias=None):
+        """Replays the queued audiotracks of an certain date."""
+        server = ctx.message.server
+        today = str(datetime.utcnow().date())
+
+        if date_or_alias is None:
+            search = today
+            replay, that_date, replays = await self._replay_available(server, search)
+            if replay is not False:
+                if not await self._get_confirmation(ctx, "You gave no target,"
+                                                                    " do you want to start today's replay? y/n"):
+                    return
+        else:
+            search = date_or_alias
+
+        # Update stats and play.
+        replay, that_date, replays = await self._replay_available(server, search)
+        if replay is not False:
+            replays[that_date]["replays"] += 1
+            self._save_replay(server, replays)
+            await self._replay_start(ctx, replay["playlist"])
+        elif replay is False:
+            await self.bot.reply("No replay history available for today, given date or alias")
+
+    @_replay.command(name="del", pass_context=True)
+    @checks.mod_or_permissions(manage_messages=True)
+    async def replay_del(self, ctx, date_or_alias):
+        """Removes an historical replay list."""
+        server = ctx.message.server
+        replay, that_date, replays = await self._replay_available(server, date_or_alias)
+
+        if replay is not False:
+            if self._delete_replays(server, [that_date]):
+                await self.bot.say("Deleted {}.".format(that_date))
+            else:
+                await self.bot.say("Failed deleting {}.".format(that_date))
+        elif replay is False:
+            await self.bot.reply("No replay history available for today, given date or alias")
+
     @commands.command(pass_context=True, no_pm=True, name="queue")
     async def _queue(self, ctx, *, url=None):
         """Queues a song to play next. Extended functionality in `[p]help`
@@ -1546,10 +2027,12 @@ class Audio:
             log.debug("queueing to the temp_queue for sid {}".format(
                 server.id))
             self._add_to_temp_queue(server, url)
+            self._add_to_replay(server, url)
         else:
             log.debug("queueing to the actual queue for sid {}".format(
                 server.id))
             self._add_to_queue(server, url)
+            self._add_to_replay(server, url)
         await self.bot.say("Queued.")
 
     async def _queue_list(self, ctx):
@@ -2014,7 +2497,7 @@ class Audio:
 
 def check_folders():
     folders = ("data/audio", "data/audio/cache", "data/audio/playlists",
-               "data/audio/localtracks", "data/audio/sfx")
+               "data/audio/localtracks", "data/audio/sfx", "data/audio/replay")
     for folder in folders:
         if not os.path.exists(folder):
             print("Creating " + folder + " folder...")
@@ -2025,7 +2508,7 @@ def check_files():
     default = {"VOLUME": 50, "MAX_LENGTH": 3700, "VOTE_ENABLED": True,
                "MAX_CACHE": 0, "SOUNDCLOUD_CLIENT_ID": None,
                "TITLE_STATUS": True, "AVCONV": False, "VOTE_THRESHOLD": 50,
-               "SERVERS": {}}
+               "WAYBACK_HISTORY": 10, "SERVERS": {}}
     settings_path = "data/audio/settings.json"
 
     if not os.path.isfile(settings_path):
