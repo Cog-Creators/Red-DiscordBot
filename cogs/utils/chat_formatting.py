@@ -61,6 +61,7 @@ def strikethrough(text):
 def underline(text):
     return "__{}__".format(text)
 
+
 def escape(text, *, mass_mentions=False, formatting=False):
     if mass_mentions:
         text = text.replace("@everyone", "@\u200beveryone")
@@ -71,6 +72,7 @@ def escape(text, *, mass_mentions=False, formatting=False):
                     .replace("_", "\\_")
                     .replace("~", "\\~"))
     return text
+
 
 def escape_mass_mentions(text):
     return escape(text, mass_mentions=True)
