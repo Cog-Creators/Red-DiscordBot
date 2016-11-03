@@ -635,7 +635,8 @@ class Audio:
     def _make_local_song(self, filename):
         # filename should be playlist_folder/file_name
         folder, song = os.path.split(filename)
-        return Song(name=song, id=filename, title=song, url=filename)
+        return Song(name=song, id=filename, title=song, url=filename,
+                    webpage_url=filename)
 
     def _make_playlist(self, author, url, songlist):
         try:
