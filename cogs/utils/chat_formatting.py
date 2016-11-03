@@ -37,8 +37,9 @@ def pagify(text, delims=[], escape=True, shorten_by=8, page_length=2000):
     if escape:
         num_mentions = text.count("@here") + text.count("@everyone")
         shorten_by += num_mentions
+    page_length -= shorten_by
     while len(in_text) > page_length:
-        closest_delim = max([in_text.rfind(d, 0, page_length - shorten_by)
+        closest_delim = max([in_text.rfind(d, 0, page_length)
                              for d in delims])
         closest_delim = closest_delim if closest_delim != -1 else page_length
         if escape:
