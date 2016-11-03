@@ -3,14 +3,14 @@ import aiohttp
 import os
 import shutil
 import asyncio
+import re
 from discord.ext import commands
 from cogs.utils.dataIO import dataIO
 from cogs.utils import checks
-from cogs.utils.chat_formatting import box
+from cogs.utils.chat_formatting import box, pagify
 from __main__ import send_cmd_help, set_cog
 from subprocess import run, PIPE
 from setuptools import distutils
-
 
 class Downloader:
     """Cog downloader/installer."""
@@ -206,7 +206,7 @@ class Downloader:
         if not installed_updated_cogs:
             return
 
-        patch_notes = await self.patch_notes_handler(updated_cogs)
+        patch_notes = await self.patch_notes_handler(installed_updated_cogs)
 
         await self.bot.say("Cogs updated. Reload updated installed cogs? (yes/no)")
         answer = await self.bot.wait_for_message(timeout=15,
@@ -231,40 +231,54 @@ class Downloader:
                 msg += " The following cogs failed to reload: " + ', '.join(fail_list)
             await self.bot.say(msg)
 
+            for page in pagify('\n'.join(patch_notes), ['```\n']):
+                await self.bot.say(page)
         else:
             await self.bot.say("Ok then, you can reload cogs with"
                                " `{}reload <cog_name>`".format(ctx.prefix))
 
-        for note in patch_notes:
-            await asyncio.sleep(1)  # Slow down the number of messages sent.
-            await self.bot.say(note)
 
-    async def patch_notes_handler(self, cogs):
-        # FIXME Perhaps some regex to fix the replace
-        patch_tasks = [(repo["url"].replace("https://github.com/", "https://api.github.com/repos/").replace("Cogs.git", "Cogs") + "/commits?path=" + cog[1], cog[1]) for cog in cogs for repo in self.repos.values() if cog[1] in repo.keys()]
+    async def patch_notes_handler(self, repo_cog_pairs):
+        queries = []
+        for repo, cog in repo_cog_pairs:
+            url = self.repos[repo].get('url', None)
+            if not url:
+                continue
+            # Get folder and filename only
+            cogfile = self.repos[repo][cog]['file'].split('/', 3)[-1]
+            api_url = self._commits_url_from_repo(url, cogfile)
+            queries.append((api_url, cog))
 
-        patch_notes = await asyncio.gather(*[self.fetch_note(url[0], url[1]) for url in patch_tasks], return_exceptions=True)
-
-        for index, cog in enumerate(patch_tasks):
-            print('{}: {}'.format(cog[1], "Error" if isinstance(patch_notes[index], Exception) else 'OK'))
+        patch_notes = await asyncio.gather(*map(self.fetch_note, queries))
 
         return patch_notes
 
-    async def fetch_note(self, url, cog):
+    async def fetch_note(self, url_cog_pair):
+        url, cog = url_cog_pair
         async with aiohttp.get(url) as r:
             data = await r.json()
 
-        header = "{} Patch Notes".format(cog)
+        header = "Patch Notes for " + cog
         line = "=" * len(header)
 
         try:
             if "message" in data[0]['commit']:
-                commit_body = data[0]['commit']['message']
-                commit_hash = data[0]['commit']['tree']['sha'][0:7]
-                commit_author = data[0]['commit']['author']['name']
-                patch_note = "```Prolog\n{}\n{}\nHash: {}\nAuthor: {}\n{}```".format(header, line, commit_hash, commit_author.lower(), commit_body.lower())
+                return '\n'.join((
+                    '```Prolog',
+                    header, line,
+                    'Hash: ' + data[0]['commit']['tree']['sha'][:7],
+                    'Author: ' + data[0]['commit']['author']['name'].lower(),
+                    data[0]['commit']['message'].lower(),
+                    '```'
+                ))
         except:
-            patch_note = "```{}\n{}\n Unable to fetch this cog's patch notes. Please refer to the respective repo for more information.```".format(header, line)
+            return '\n'.join((
+                '```', header, line,
+                ("Unable to fetch this cog's patch notes. "
+                 "Please refer to the respective repo for more "
+                 "information."),
+                '```'
+            ))
 
         return patch_note
 
@@ -451,6 +465,13 @@ class Downloader:
         except:
             raise
         return msg
+
+    @staticmethod
+    def _commits_url_from_repo(repo_url, path='/'):
+        api_url = 'https://api.github.com/repos/'
+        api_url += re.sub('.*://github.com/(.*?/.*?)(\.git|/)?$', r'\1', repo_url)
+        api_url += '/commits?path=' + path
+        return api_url
 
 
 def check_folders():
