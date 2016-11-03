@@ -937,7 +937,8 @@ class Audio:
             try:
                 active_servers = self._get_active_voice_clients()
             except:
-                log.debug("voice_clients changed while trying to update bot's song status")
+                log.debug("Voice client changed while trying to update bot's"
+                          " song status")
                 return
             if len(active_servers) == 1:
                 server = active_servers[0].server
@@ -948,8 +949,8 @@ class Audio:
                 await self._remove_song_status()
 
     def _valid_playlist_name(self, name):
-        for l in name:
-            if l.isdigit() or l.isalpha() or l == "_":
+        for char in name:
+            if char.isdigit() or char.isalpha() or char == "_":
                 pass
             else:
                 return False
@@ -1013,11 +1014,14 @@ class Audio:
         """Enables/disables songs' titles as status"""
         self.settings["TITLE_STATUS"] = not self.settings["TITLE_STATUS"]
         if self.settings["TITLE_STATUS"]:
-            await self.bot.say("If only one server is playing music, songs' titles will now show up as status")
-            # not updating on disable if we say disable means don't mess with it.
+            await self.bot.say("If only one server is playing music, songs'"
+                               " titles will now show up as status")
+            # not updating on disable if we say disable
+            #   means don't mess with it.
             await self._update_bot_status()
         else:
-            await self.bot.say("Songs' titles will no longer show up as status")
+            await self.bot.say("Songs' titles will no longer show up as"
+                               " status")
         self.save_settings()
 
     @audioset.command(pass_context=True, name="volume", no_pm=True)
@@ -1033,7 +1037,8 @@ class Audio:
             self.set_server_setting(server, "VOLUME", percent)
             msg = "Volume is now set to %d." % percent
             if percent > 100:
-                msg += "\nWarning: volume levels above 100 may result in clipping"
+                msg += ("\nWarning: volume levels above 100 may result in"
+                        " clipping")
 
             # Set volume of playing audio
             vc = self.voice_client(server)
@@ -1245,23 +1250,23 @@ class Audio:
 
         # Checking already connected, will join if not
 
+        try:
+            self.has_connect_perm(author, server)
+        except AuthorNotConnected:
+            await self.bot.say("You must join a voice channel before I can"
+                               " play anything.")
+            return
+        except UnauthorizedConnect:
+            await self.bot.say("I don't have permissions to join your"
+                               " voice channel.")
+            return
+        except UnauthorizedSpeak:
+            await self.bot.say("I don't have permissions to speak in your"
+                               " voice channel.")
+            return
+
         if not self.voice_connected(server):
-            try:
-                self.has_connect_perm(author, server)
-            except AuthorNotConnected:
-                await self.bot.say("You must join a voice channel before I can"
-                                   " play anything.")
-                return
-            except UnauthorizedConnect:
-                await self.bot.say("I don't have permissions to join your"
-                                   " voice channel.")
-                return
-            except UnauthorizedSpeak:
-                await self.bot.say("I don't have permissions to speak in your"
-                                   " voice channel.")
-                return
-            else:
-                await self._join_voice_channel(voice_channel)
+            await self._join_voice_channel(voice_channel)
         else:  # We are connected but not to the right channel
             if self.voice_client(server).channel != voice_channel:
                 await self._stop_and_disconnect(server)
@@ -1283,7 +1288,7 @@ class Audio:
             url = "[SEARCH:]" + url
 
         if "[SEARCH:]" not in url and "youtube" in url:
-            url = url.split("&")[0] # Temp fix for the &list issue
+            url = url.split("&")[0]  # Temp fix for the &list issue
 
         self._stop_player(server)
         self._clear_queue(server)
@@ -1345,8 +1350,6 @@ class Audio:
 
         self._save_playlist(server, name, playlist)
         await self.bot.say("Empty playlist '{}' saved.".format(name))
-
-
 
     @playlist.command(pass_context=True, no_pm=True, name="add")
     async def playlist_add(self, ctx, name, url):
@@ -1540,7 +1543,7 @@ class Audio:
             url = "[SEARCH:]" + url
 
         if "[SEARCH:]" not in url and "youtube" in url:
-            url = url.split("&")[0] # Temp fix for the &list issue
+            url = url.split("&")[0]  # Temp fix for the &list issue
 
         # We have a queue to modify
         if self.queue[server.id]["PLAYLIST"]:
@@ -1607,7 +1610,8 @@ class Audio:
                 else:
                     msg = "The queue is currently not looping."
                 await self.bot.say(msg)
-                await self.bot.say("Do `{}repeat toggle` to change this.".format(ctx.prefix))
+                await self.bot.say(
+                    "Do `{}repeat toggle` to change this.".format(ctx.prefix))
             else:
                 await self.bot.say("Play something to see this setting.")
 
@@ -1686,8 +1690,9 @@ class Audio:
 
                     num_votes = len(self.skip_votes[server.id])
                     # Exclude bots and non-plebs
-                    num_members =  sum(not (m.bot or self.can_instaskip(m)) for m in vchan.voice_members)
-                    vote = int(100*num_votes / num_members)
+                    num_members = sum(not (m.bot or self.can_instaskip(m))
+                                      for m in vchan.voice_members)
+                    vote = int(100 * num_votes / num_members)
                     thresh = self.get_server_settings(server)["VOTE_THRESHOLD"]
 
                     if vote >= thresh:
@@ -1702,7 +1707,8 @@ class Audio:
                         reply += " (%d%% out of %d%% needed)" % (vote, thresh)
                     await self.bot.reply(reply)
             else:
-                await self.bot.reply("you aren't in the current playback channel.")
+                await self.bot.reply("you aren't in the current playback"
+                                     " channel.")
         else:
             await self.bot.say("Can't skip if I'm not playing.")
 
@@ -1773,7 +1779,9 @@ class Audio:
                 await self.bot.say('Stopping...')
                 self._stop(server)
             else:
-                await self.bot.say("You can't stop music when there are other people in the channel! Vote to skip instead.")
+                await self.bot.say("You can't stop music when there are other"
+                                   " people in the channel! Vote to skip"
+                                   " instead.")
         else:
             await self.bot.say("Can't stop if I'm not playing.")
 
@@ -1899,7 +1907,8 @@ class Audio:
         if not self.is_playing(server):
             log.debug("not playing anything on sid {}".format(server.id) +
                       ", attempting to start a new song.")
-            self.skip_votes[server.id] = [] # Reset skip votes for each new song
+            self.skip_votes[server.id] = []
+            # Reset skip votes for each new song
             if len(temp_queue) > 0:
                 # Fake queue for irdumb's temp playlist songs
                 log.debug("calling _play because temp_queue is non-empty")
@@ -1985,10 +1994,12 @@ class Audio:
     async def voice_state_update(self, before, after):
         server = after.server
         # Member objects
-        if server.id in self.skip_votes and\
-            after.id in self.skip_votes[server.id] and\
-            after.voice_channel != before.voice_channel:
-            self.skip_votes[server.id].remove(after.id)
+        if after.voice_channel != before.voice_channel:
+            try:
+                self.skip_votes[server.id].remove(after.id)
+            except (ValueError, KeyError):
+                pass
+                # Either the server ID or member ID already isn't in there
         if after is None:
             return
         if server.id not in self.queue:
