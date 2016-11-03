@@ -630,7 +630,7 @@ class Audio:
 
     def _local_playlist_songlist(self, name):
         dirpath = os.path.join(self.local_playlist_path, name)
-        return os.listdir(dirpath)
+        return sorted(os.listdir(dirpath))
 
     def _make_local_song(self, filename):
         # filename should be playlist_folder/file_name
