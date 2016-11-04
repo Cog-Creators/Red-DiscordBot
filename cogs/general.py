@@ -1,10 +1,10 @@
 import discord
 from discord.ext import commands
-from .utils.chat_formatting import *
 from random import randint
 from random import choice as randchoice
 from cogs.utils.chat_formatting import pagify
 from cogs.utils.chat_formatting import box
+from cogs.utils.chat_formatting import escape_mass_mentions
 import datetime
 import time
 import aiohttp
