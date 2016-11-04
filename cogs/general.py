@@ -155,7 +155,7 @@ class General:
             msg = "(づ￣ ³￣)づ" + name + " ⊂(´・ω・｀⊂)"
         await self.bot.say(msg)
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.command(pass_context=True)
     async def userinfo(self, ctx, user : discord.Member = None):
         """Shows users's informations"""
         author = ctx.message.author
@@ -164,10 +164,11 @@ class General:
             user = author
         roles = [x.name for x in user.roles if x.name != "@everyone"]
         if not roles: roles = ["None"]
-        data = "```python\n"
+        data = ""
         data += "Name: {}\n".format(escape_mass_mentions(str(user)))
         data += "Nickname: {}\n".format(escape_mass_mentions(str(user.nick)))
         data += "ID: {}\n".format(user.id)
+        data += "Status: {}\n".format(user.status)
         if user.game is None:
             pass
         elif user.game.url is None:
@@ -181,13 +182,19 @@ class General:
         passed = (ctx.message.timestamp - joined_at).days
         data += "Joined: {} ({} days ago)\n".format(joined_at, passed)
         data += "Roles: {}\n".format(", ".join(roles))
+        if user.is_afk == True:
+            data+= "AFK: Yes\n"
+        else:
+            data+= "AFK: No\n"
         if user.avatar_url != "":
             data += "Avatar:"
-            data += "```"
-            data += user.avatar_url
+            for page in pagify(data, ["\n"], shorten_by=9, page_length=2000):
+                await self.bot.say("```Py\n{}```".format(page))
+
+            await self.bot.say("{}".format(user.avatar_url))
         else:
-            data += "```"
-        await self.bot.say(data)
+            for page in pagify(data, ["\n"], shorten_by=9, page_length=2000):
+                await self.bot.say("```Py\n{}```".format(page))
 
     @commands.command(pass_context=True, no_pm=True)
     async def serverinfo(self, ctx):
@@ -198,24 +205,62 @@ class General:
         text_channels = len([x for x in server.channels if str(x.type) == "text"])
         voice_channels = len(server.channels) - text_channels
 
-        data = "```python\n"
+        data = ""
         data += "Name: {}\n".format(server.name)
         data += "ID: {}\n".format(server.id)
         data += "Region: {}\n".format(server.region)
         data += "Users: {}/{}\n".format(online, total_users)
         data += "Text channels: {}\n".format(text_channels)
         data += "Voice channels: {}\n".format(voice_channels)
+        data += "Emojis: {}\n".format(len(server.emojis))
         data += "Roles: {}\n".format(len(server.roles))
         passed = (ctx.message.timestamp - server.created_at).days
         data += "Created: {} ({} days ago)\n".format(server.created_at, passed)
         data += "Owner: {}\n".format(server.owner)
         if server.icon_url != "":
             data += "Icon:"
-            data += "```"
-            data += server.icon_url
+            for page in pagify(data, ["\n"], shorten_by=9, page_length=2000):
+                await self.bot.say("```Py\n{}```".format(page))
+
+            await self.bot.say("{}".format(server.icon_url))
         else:
-            data += "```"
-        await self.bot.say(data)
+            for page in pagify(data, ["\n"], shorten_by=9, page_length=2000):
+                await self.bot.say("```Py\n{}```".format(page))
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def serverinfofull(self, ctx):
+        """Shows server's full informations"""
+        server = ctx.message.server
+        online = str(len([m.status for m in server.members if str(m.status) == "online" or str(m.status) == "idle"]))
+        total_users = str(len(server.members))
+        text_channels = len([x for x in server.channels if str(x.type) == "text"])
+        voice_channels = len(server.channels) - text_channels
+
+        data = ""
+        data += "Name: {}\n".format(server.name)
+        data += "ID: {}\n".format(server.id)
+        data += "Region: {}\n".format(server.region)
+        data += "Users: {}/{}\n".format(online, total_users)
+        data += "Text channels: {}\n".format(text_channels)
+        data += "Voice channels: {}\n".format(voice_channels)
+        data += "Channel names:\n{}\n".format([e.name for e in server.channels])
+        data += "Emojis: {}\n".format(len(server.emojis))
+        data += "{}\n".format([e.name for e in server.emojis])
+        data += "Roles: {} \n".format(len(server.roles))
+        data += "{}\n".format([f.name for f in server.roles])
+        passed = (ctx.message.timestamp - server.created_at).days
+        data += "Created: {} ({} days ago)\n".format(server.created_at, passed)
+        data += "Owner: {}\n".format(server.owner)
+
+        if server.icon_url != "":
+            data += "Icon:"
+            for page in pagify(data, ["\n"], shorten_by=9, page_length=2000):
+                await self.bot.say("```Py\n{}```".format(page))
+
+            await self.bot.say("{}".format(server.icon_url))
+        else:
+            for page in pagify(data, ["\n"], shorten_by=9, page_length=2000):
+                await self.bot.say("```Py\n{}```".format(page))
 
     @commands.command()
     async def urban(self, *, search_terms : str, definition_number : int=1):
