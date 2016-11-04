@@ -31,7 +31,7 @@ def italics(text):
     return "*{}*".format(text)
 
 
-def pagify(text, delims=[], escape=True, shorten_by=8, page_length=2000):
+def pagify(text, delims=["\n"], escape=True, shorten_by=8, page_length=2000):
     """DOES NOT RESPECT MARKDOWN BOXES OR INLINE CODE"""
     in_text = text
     if escape:
