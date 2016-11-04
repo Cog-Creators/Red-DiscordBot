@@ -4,6 +4,7 @@ from .utils.chat_formatting import *
 from random import randint
 from random import choice as randchoice
 from cogs.utils.chat_formatting import pagify
+from cogs.utils.chat_formatting import box
 import datetime
 import time
 import aiohttp
@@ -190,12 +191,12 @@ class General:
         if user.avatar_url != "":
             data += "Avatar:"
             for page in pagify(data, ["\n"], shorten_by=9, page_length=2000):
-                await self.bot.say("```Py\n{}```".format(page))
+                await self.bot.say(box(page, 'py'))
 
             await self.bot.say("{}".format(user.avatar_url))
         else:
             for page in pagify(data, ["\n"], shorten_by=9, page_length=2000):
-                await self.bot.say("```Py\n{}```".format(page))
+                await self.bot.say(box(page, 'py'))
 
     @commands.command(pass_context=True, no_pm=True)
     async def serverinfo(self, ctx):
@@ -221,12 +222,12 @@ class General:
         if server.icon_url != "":
             data += "Icon:"
             for page in pagify(data, ["\n"], shorten_by=9, page_length=2000):
-                await self.bot.say("```Py\n{}```".format(page))
+                await self.bot.say(box(page, 'py'))
 
             await self.bot.say("{}".format(server.icon_url))
         else:
             for page in pagify(data, ["\n"], shorten_by=9, page_length=2000):
-                await self.bot.say("```Py\n{}```".format(page))
+                await self.bot.say(box(page, 'py'))
 
     @commands.command(pass_context=True, no_pm=True)
     async def serverinfofull(self, ctx):
@@ -256,12 +257,12 @@ class General:
         if server.icon_url != "":
             data += "Icon:"
             for page in pagify(data, ["\n"], shorten_by=9, page_length=2000):
-                await self.bot.say("```Py\n{}```".format(page))
+                await self.bot.say(box(page, 'py'))
 
             await self.bot.say("{}".format(server.icon_url))
         else:
             for page in pagify(data, ["\n"], shorten_by=9, page_length=2000):
-                await self.bot.say("```Py\n{}```".format(page))
+                await self.bot.say(box(page, 'py'))
 
     @commands.command()
     async def urban(self, *, search_terms : str, definition_number : int=1):
