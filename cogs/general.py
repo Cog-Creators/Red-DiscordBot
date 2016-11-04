@@ -3,6 +3,7 @@ from discord.ext import commands
 from .utils.chat_formatting import *
 from random import randint
 from random import choice as randchoice
+from cogs.utils.chat_formatting import pagify
 import datetime
 import time
 import aiohttp
