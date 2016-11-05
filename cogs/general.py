@@ -4,7 +4,6 @@ from random import randint
 from random import choice as randchoice
 from cogs.utils.chat_formatting import pagify
 from cogs.utils.chat_formatting import box
-from cogs.utils.chat_formatting import escape_mass_mentions
 import datetime
 import time
 import aiohttp
@@ -184,19 +183,16 @@ class General:
         passed = (ctx.message.timestamp - joined_at).days
         data += "Joined: {} ({} days ago)\n".format(joined_at, passed)
         data += "Roles: {}\n".format(", ".join(roles))
-        if user.is_afk == True:
-            data+= "AFK: Yes\n"
-        else:
-            data+= "AFK: No\n"
+        data+= "AFK: {}\n".format(user.is_afk)
         if user.avatar_url != "":
             data += "Avatar:"
-            for page in pagify(data, ["\n"], shorten_by=9, page_length=2000):
-                await self.bot.say(box(page, 'py'))
+            for page in pagify(data, ["\n"], shorten_by=13, page_length=2000):
+                await self.bot.say(box(page, 'Prolog'))
 
             await self.bot.say("{}".format(user.avatar_url))
         else:
-            for page in pagify(data, ["\n"], shorten_by=9, page_length=2000):
-                await self.bot.say(box(page, 'py'))
+            for page in pagify(data, ["\n"], shorten_by=13, page_length=2000):
+                await self.bot.say(box(page, 'Prolog'))
 
     @commands.command(pass_context=True, no_pm=True)
     async def serverinfo(self, ctx):
@@ -221,13 +217,13 @@ class General:
         data += "Owner: {}\n".format(server.owner)
         if server.icon_url != "":
             data += "Icon:"
-            for page in pagify(data, ["\n"], shorten_by=9, page_length=2000):
-                await self.bot.say(box(page, 'py'))
+            for page in pagify(data, ["\n"], shorten_by=13, page_length=2000):
+                await self.bot.say(box(page, 'Prolog'))
 
             await self.bot.say("{}".format(server.icon_url))
         else:
-            for page in pagify(data, ["\n"], shorten_by=9, page_length=2000):
-                await self.bot.say(box(page, 'py'))
+            for page in pagify(data, ["\n"], shorten_by=13, page_length=2000):
+                await self.bot.say(box(page, 'Prolog'))
 
     @commands.command(pass_context=True, no_pm=True)
     async def serverinfofull(self, ctx):
@@ -245,24 +241,23 @@ class General:
         data += "Users: {}/{}\n".format(online, total_users)
         data += "Text channels: {}\n".format(text_channels)
         data += "Voice channels: {}\n".format(voice_channels)
-        data += "Channel names:\n{}\n".format([e.name for e in server.channels])
+        data += "Channel names:\n{}\n".format([c.name for c in server.channels])
         data += "Emojis: {}\n".format(len(server.emojis))
-        data += "{}\n".format([e.name for e in server.emojis])
+        data += "{}\n".format(", ".join([e.name for e in server.emojis]))
         data += "Roles: {} \n".format(len(server.roles))
         data += "{}\n".format([r.name for r in server.role_hierarchy])
         passed = (ctx.message.timestamp - server.created_at).days
         data += "Created: {} ({} days ago)\n".format(server.created_at, passed)
         data += "Owner: {}\n".format(server.owner)
-
         if server.icon_url != "":
             data += "Icon:"
-            for page in pagify(data, ["\n"], shorten_by=9, page_length=2000):
-                await self.bot.say(box(page, 'py'))
+            for page in pagify(data, ["\n"], shorten_by=13, page_length=2000):
+                await self.bot.say(box(page, 'Prolog'))
 
             await self.bot.say("{}".format(server.icon_url))
         else:
-            for page in pagify(data, ["\n"], shorten_by=9, page_length=2000):
-                await self.bot.say(box(page, 'py'))
+            for page in pagify(data, ["\n"], shorten_by=13, page_length=2000):
+                await self.bot.say(box(page, 'Prolog'))
 
     @commands.command()
     async def urban(self, *, search_terms : str, definition_number : int=1):
