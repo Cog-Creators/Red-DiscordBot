@@ -249,7 +249,7 @@ class General:
         data += "Emojis: {}\n".format(len(server.emojis))
         data += "{}\n".format([e.name for e in server.emojis])
         data += "Roles: {} \n".format(len(server.roles))
-        data += "{}\n".format([f.name for f in server.roles])
+        data += "{}\n".format([r.name for r in server.role_hierarchy])
         passed = (ctx.message.timestamp - server.created_at).days
         data += "Created: {} ({} days ago)\n".format(server.created_at, passed)
         data += "Owner: {}\n".format(server.owner)
