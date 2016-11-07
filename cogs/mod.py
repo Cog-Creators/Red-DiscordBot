@@ -47,8 +47,10 @@ class Mod:
         self.settings = defaultdict(lambda: default_settings.copy(), settings)
         self.cache = defaultdict(lambda: deque(maxlen=3))
         self.cases = dataIO.load_json("data/mod/modlog.json")
+        self.last_case = defaultdict(dict)
         self._tmp_banned_cache = []
-        self.last_case = defaultdict(lambda: dict())
+        perms_cache = dataIO.load_json("data/mod/perms_cache.json")
+        self._perms_cache = defaultdict(dict, perms_cache)
 
     @commands.group(pass_context=True, no_pm=True)
     @checks.serverowner_or_permissions(administrator=True)
@@ -253,6 +255,148 @@ class Mod:
         except discord.Forbidden:
             await self.bot.say("I cannot do that, I lack the "
                 "\"Manage Nicknames\" permission.")
+
+    @commands.group(pass_context=True, no_pm=True, invoke_without_command=True)
+    @checks.mod_or_permissions(administrator=True)
+    async def mute(self, ctx, user : discord.Member):
+        """Mutes user in the channel/server
+
+        Defaults to channel"""
+        if ctx.invoked_subcommand is None:
+            await ctx.invoke(self.channel_mute, user=user)
+
+    @mute.command(name="channel", pass_context=True, no_pm=True)
+    async def channel_mute(self, ctx, user : discord.Member):
+        """Mutes user in the current channel"""
+        channel = ctx.message.channel
+        overwrites = channel.overwrites_for(user)
+        if overwrites.send_messages is False:
+            await self.bot.say("That user can't send messages in this "
+                               "channel.")
+            return
+        self._perms_cache[user.id][channel.id] = overwrites.send_messages
+        overwrites.send_messages = False
+        try:
+            await self.bot.edit_channel_permissions(channel, user, overwrites)
+        except discord.Forbidden:
+            await self.bot.say("Failed to mute user. I need the manage roles "
+                               "permission and the user I'm muting must be "
+                               "lower than myself in the role hierarchy.")
+        else:
+            dataIO.save_json("data/mod/perms_cache.json", self._perms_cache)
+            await self.bot.say("User has been muted in this channel.")
+
+    @mute.command(name="server", pass_context=True, no_pm=True)
+    async def server_mute(self, ctx, user : discord.Member):
+        """Mutes user in the server"""
+        server = ctx.message.server
+        register = {}
+        for channel in server.channels:
+            if channel.type != discord.ChannelType.text:
+                continue
+            overwrites = channel.overwrites_for(user)
+            if overwrites.send_messages is False:
+                continue
+            register[channel.id] = overwrites.send_messages
+            overwrites.send_messages = False
+            try:
+                await self.bot.edit_channel_permissions(channel, user,
+                                                        overwrites)
+            except discord.Forbidden:
+                await self.bot.say("Failed to mute user. I need the manage roles "
+                                   "permission and the user I'm muting must be "
+                                   "lower than myself in the role hierarchy.")
+                return
+            else:
+                await asyncio.sleep(0.1)
+        if not register:
+            await self.bot.say("That user is already muted in all channels.")
+            return
+        self._perms_cache[user.id] = register
+        dataIO.save_json("data/mod/perms_cache.json", self._perms_cache)
+        await self.bot.say("User has been muted in this server.")
+
+    @commands.group(pass_context=True, no_pm=True, invoke_without_command=True)
+    @checks.mod_or_permissions(administrator=True)
+    async def unmute(self, ctx, user : discord.Member):
+        """Unmutes user in the channel/server
+
+        Defaults to channel"""
+        if ctx.invoked_subcommand is None:
+            await ctx.invoke(self.channel_unmute, user=user)
+
+    @unmute.command(name="channel", pass_context=True, no_pm=True)
+    async def channel_unmute(self, ctx, user : discord.Member):
+        """Unmutes user in the current channel"""
+        channel = ctx.message.channel
+        overwrites = channel.overwrites_for(user)
+        if overwrites.send_messages:
+            await self.bot.say("That user doesn't seem to be muted "
+                               "in this channel.")
+            return
+        if user.id in self._perms_cache:
+            old_value = self._perms_cache[user.id].get(channel.id, None)
+        else:
+            old_value = None
+        overwrites.send_messages = old_value
+        is_empty = self.are_overwrites_empty(overwrites)
+        try:
+            if not is_empty:
+                await self.bot.edit_channel_permissions(channel, user,
+                                                        overwrites)
+            else:
+                await self.bot.delete_channel_permissions(channel, user)
+        except discord.Forbidden:
+            await self.bot.say("Failed to unmute user. I need the manage roles"
+                               " permission and the user I'm unmuting must be "
+                               "lower than myself in the role hierarchy.")
+        else:
+            try:
+                del self._perms_cache[user.id][channel.id]
+            except KeyError:
+                pass
+            if user.id in self._perms_cache and not self._perms_cache[user.id]:
+                del self._perms_cache[user.id] #cleanup
+            dataIO.save_json("data/mod/perms_cache.json", self._perms_cache)
+            await self.bot.say("User has been unmuted in this channel.")
+
+    @unmute.command(name="server", pass_context=True, no_pm=True)
+    async def server_unmute(self, ctx, user : discord.Member):
+        """Unmutes user in the server"""
+        server = ctx.message.server
+        if user.id not in self._perms_cache:
+            await self.bot.say("That user doesn't seem to have been muted with {0}mute commands. "
+                               "Unmute them in the channels you want with `{0}unmute <user>`"
+                               "".format(ctx.prefix))
+            return
+        for channel in server.channels:
+            if channel.type != discord.ChannelType.text:
+                continue
+            if channel.id not in self._perms_cache[user.id]:
+                continue
+            value = self._perms_cache[user.id].get(channel.id)
+            overwrites = channel.overwrites_for(user)
+            if overwrites.send_messages is False:
+                overwrites.send_messages = value
+                is_empty = self.are_overwrites_empty(overwrites)
+                try:
+                    if not is_empty:
+                        await self.bot.edit_channel_permissions(channel, user,
+                                                                overwrites)
+                    else:
+                        await self.bot.delete_channel_permissions(channel, user)
+                except discord.Forbidden:
+                    await self.bot.say("Failed to unmute user. I need the manage roles"
+                                       " permission and the user I'm unmuting must be "
+                                       "lower than myself in the role hierarchy.")
+                    return
+                else:
+                    del self._perms_cache[user.id][channel.id]
+                    await asyncio.sleep(0.1)
+        if user.id in self._perms_cache and not self._perms_cache[user.id]:
+            del self._perms_cache[user.id] #cleanup
+        dataIO.save_json("data/mod/perms_cache.json", self._perms_cache)
+        await self.bot.say("User has been unmuted in this server.")
 
     @commands.group(pass_context=True, no_pm=True)
     @checks.mod_or_permissions(manage_messages=True)
@@ -995,6 +1139,12 @@ class Mod:
                 dataIO.save_json("data/mod/past_nicknames.json",
                                  self.past_nicknames)
 
+    def are_overwrites_empty(self, overwrites):
+        """There is currently no cleaner way to check if a
+        PermissionOverwrite object is empty"""
+        original = [p for p in iter(overwrites)]
+        empty = [p for p in iter(discord.PermissionOverwrite())]
+        return original == empty
 
 def check_folders():
     folders = ("data", "data/mod/")
@@ -1007,38 +1157,22 @@ def check_folders():
 def check_files():
     ignore_list = {"SERVERS": [], "CHANNELS": []}
 
-    if not os.path.isfile("data/mod/blacklist.json"):
-        print("Creating empty blacklist.json...")
-        dataIO.save_json("data/mod/blacklist.json", [])
+    files = {
+        "blacklist.json"      : [],
+        "whitelist.json"      : [],
+        "ignorelist.json"     : ignore_list,
+        "filter.json"         : {},
+        "past_names.json"     : {},
+        "past_nicknames.json" : {},
+        "settings.json"       : {},
+        "modlog.json"         : {},
+        "perms_cache.json"    : {}
+    }
 
-    if not os.path.isfile("data/mod/whitelist.json"):
-        print("Creating empty whitelist.json...")
-        dataIO.save_json("data/mod/whitelist.json", [])
-
-    if not os.path.isfile("data/mod/ignorelist.json"):
-        print("Creating empty ignorelist.json...")
-        dataIO.save_json("data/mod/ignorelist.json", ignore_list)
-
-    if not os.path.isfile("data/mod/filter.json"):
-        print("Creating empty filter.json...")
-        dataIO.save_json("data/mod/filter.json", {})
-
-    if not os.path.isfile("data/mod/past_names.json"):
-        print("Creating empty past_names.json...")
-        dataIO.save_json("data/mod/past_names.json", {})
-
-    if not os.path.isfile("data/mod/past_nicknames.json"):
-        print("Creating empty past_nicknames.json...")
-        dataIO.save_json("data/mod/past_nicknames.json", {})
-
-    if not os.path.isfile("data/mod/settings.json"):
-        print("Creating empty settings.json...")
-        dataIO.save_json("data/mod/settings.json", {})
-
-    if not os.path.isfile("data/mod/modlog.json"):
-        print("Creating empty modlog.json...")
-        dataIO.save_json("data/mod/modlog.json", {})
-
+    for filename, value in files.items():
+        if not os.path.isfile("data/mod/{}".format(filename)):
+            print("Creating empty {}".format(filename))
+            dataIO.save_json("data/mod/{}".format(filename), value)
 
 def setup(bot):
     global logger
