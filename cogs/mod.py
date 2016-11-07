@@ -952,7 +952,7 @@ class Mod:
 
     async def on_message(self, message):
         if message.channel.is_private or self.bot.user == message.author \
-         or isinstance(message.author, discord.User):
+         or not isinstance(message.author, discord.Member):
             return
         elif self.is_mod_or_superior(message):
             return
