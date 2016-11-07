@@ -23,7 +23,24 @@ import traceback
 
 description = "Red - A multifunction Discord bot by Twentysix"
 
-formatter = commands.HelpFormatter(show_check_failure=False)
+
+class Formatter(commands.HelpFormatter):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def _add_subcommands_to_page(self, max_width, commands):
+        for name, command in sorted(commands, key=lambda t: t[0]):
+            if name in command.aliases:
+                # skip aliases
+                continue
+
+            entry = '  {0:<{width}} {1}'.format(name, command.short_doc,
+                                                width=max_width)
+            shortened = self.shorten(entry)
+            self._paginator.add_line(shortened)
+
+
+formatter = Formatter(show_check_failure=False)
 
 bot = commands.Bot(command_prefix=["_"], formatter=formatter,
                    description=description, pm_help=None)
