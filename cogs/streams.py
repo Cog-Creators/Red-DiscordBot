@@ -79,6 +79,27 @@ class Streams:
         if ctx.invoked_subcommand is None:
             await send_cmd_help(ctx)
 
+    @streamalert.command(name="mention", pass_context=True)
+    async def mention_on_live(self, ctx, mention_type: str):
+        """Sets mention group for live channels.
+           Valid inputs: everyone, here, or off"""
+        server = str(ctx.message.server.id)
+        self.settings[server] = {"MENTION_TYPE": ""}
+        if mention_type == "everyone":
+            self.settings[server]["MENTION_TYPE"] = "everyone"
+            dataIO.save_json("data/streams/settings.json", self.settings)
+            await self.bot.say("Mention type is now set to " + mention_type)
+        elif mention_type == "here":
+            self.settings[server]["MENTION_TYPE"] = "here"
+            dataIO.save_json("data/streams/settings.json", self.settings)
+            await self.bot.say("Mention type is now set to " + mention_type)
+        elif mention_type == "off":
+            self.settings[server]["MENTION_TYPE"] = ""
+            dataIO.save_json("data/streams/settings.json", self.settings)
+            await self.bot.say("Mention type cleared")
+        else:
+            await self.bot.say("Invalid mention type specified")
+
     @streamalert.command(name="twitch", pass_context=True)
     async def twitch_alert(self, ctx, stream: str):
         """Adds/removes twitch alerts from the current channel"""
@@ -348,10 +369,22 @@ class Streams:
                             continue
                         can_speak = channel_obj.permissions_for(channel_obj.server.me).send_messages
                         if channel_obj and can_speak:
-                            await self.bot.send_message(
-                                self.bot.get_channel(channel),
-                                "http://www.twitch.tv/"
-                                "{} is online!".format(stream["NAME"]))
+                            mention_type = self.settings[channel_obj.server.id]["MENTION_TYPE"]
+                            if mention_type == "everyone":
+                                await self.bot.send_message(
+                                    self.bot.get_channel(channel),
+                                    "@everyone http://www.twitch.tv/"
+                                    "{} is online!".format(stream["NAME"]))
+                            elif mention_type == "here":
+                                await self.bot.send_message(
+                                    self.bot.get_channel(channel),
+                                    "@here http://www.twitch.tv/"
+                                    "{} is online!".format(stream["NAME"]))
+                            else:
+                                await self.bot.send_message(
+                                    self.bot.get_channel(channel),
+                                    "http://www.twitch.tv/"
+                                    "{} is online!".format(stream["NAME"]))
                 else:
                     if stream["ALREADY_ONLINE"] and not online:
                         stream["ALREADY_ONLINE"] = False
