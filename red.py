@@ -1,8 +1,3 @@
-from discord.ext import commands
-import discord
-from cogs.utils.settings import Settings
-from cogs.utils.dataIO import dataIO
-from cogs.utils.chat_formatting import inline
 import asyncio
 import os
 import time
@@ -11,6 +6,20 @@ import logging
 import logging.handlers
 import shutil
 import traceback
+
+try:
+    from discord.ext import commands
+    import discord
+except ImportError:
+    print("Discord.py is not installed.\n"
+          "Consult the guide for your operating system "
+          "and do ALL the steps in order.\n"
+          "https://twentysix26.github.io/Red-Docs/\n")
+    sys.exit()
+
+from cogs.utils.settings import Settings
+from cogs.utils.dataIO import dataIO
+from cogs.utils.chat_formatting import inline
 
 #
 #  Red, a Discord bot by Twentysix, based on discord.py and its command extension
