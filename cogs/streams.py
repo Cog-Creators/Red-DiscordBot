@@ -400,10 +400,22 @@ class Streams:
                             continue
                         can_speak = channel_obj.permissions_for(channel_obj.server.me).send_messages
                         if channel_obj and can_speak:
-                            await self.bot.send_message(
-                                self.bot.get_channel(channel),
-                                "http://www.hitbox.tv/"
-                                "{} is online!".format(stream["NAME"]))
+                            mention_type = self.settings[channel_obj.server.id]["MENTION_TYPE"]
+                            if mention_type == "everyone":
+                                await self.bot.send_message(
+                                    self.bot.get_channel(channel),
+                                    "@everyone http://www.hitbox.tv/"
+                                    "{} is online!".format(stream["NAME"]))
+                            elif mention_type == "here":
+                                await self.bot.send_message(
+                                    self.bot.get_channel(channel),
+                                    "@here http://www.hitbox.tv/"
+                                    "{} is online!".format(stream["NAME"]))
+                            else:
+                                await self.bot.send_message(
+                                    self.bot.get_channel(channel),
+                                    "http://www.hitbox.tv/"
+                                    "{} is online!".format(stream["NAME"]))
                 else:
                     if stream["ALREADY_ONLINE"] and not online:
                         stream["ALREADY_ONLINE"] = False
@@ -419,10 +431,22 @@ class Streams:
                             continue
                         can_speak = channel_obj.permissions_for(channel_obj.server.me).send_messages
                         if channel_obj and can_speak:
-                            await self.bot.send_message(
-                                self.bot.get_channel(channel),
-                                "https://beam.pro/"
-                                "{} is online!".format(stream["NAME"]))
+                            mention_type = self.settings[channel_obj.server.id]["MENTION_TYPE"]
+                            if mention_type == "everyone":
+                                await self.bot.send_message(
+                                    self.bot.get_channel(channel),
+                                    "@everyone http://beam.pro/"
+                                    "{} is online!".format(stream["NAME"]))
+                            elif mention_type == "here":
+                                await self.bot.send_message(
+                                    self.bot.get_channel(channel),
+                                    "@here http://beam.pro/"
+                                    "{} is online!".format(stream["NAME"]))
+                            else:
+                                await self.bot.send_message(
+                                    self.bot.get_channel(channel),
+                                    "http://beam.pro/"
+                                    "{} is online!".format(stream["NAME"]))
                 else:
                     if stream["ALREADY_ONLINE"] and not online:
                         stream["ALREADY_ONLINE"] = False
