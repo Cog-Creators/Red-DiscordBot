@@ -1848,6 +1848,13 @@ class Audio:
                         log.debug("putting sid {} in stop loop".format(
                             server.id))
                         stop_times[server] = int(time.time())
+                    elif vc.audio_player.is_playing() and\
+                            len(vc.channel.voice_members) == 1:
+                        log.debug("putting sid {} in stop loop".format(
+                            server.id))
+                        self._stop(server)
+                        self._clear_queue(server)
+                        stop_times[server] = int(time.time())
                     elif vc.audio_player.is_playing():
                         stop_times[server] = None
 
