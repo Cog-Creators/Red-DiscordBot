@@ -232,7 +232,7 @@ class Downloader(threading.Thread):
 class Audio:
     """Music Streaming."""
 
-    def __init__(self, bot):
+    def __init__(self, bot, player):
         self.bot = bot
         self.queue = {}  # add deque's, repeat
         self.downloaders = {}  # sid: object
@@ -244,6 +244,12 @@ class Audio:
         self._old_game = False
 
         self.skip_votes = {}
+
+        if player == "ffmpeg":
+            self.settings["AVCONV"] = False
+        elif player == "avconv":
+            self.settings["AVCONV"] = True
+        self.save_settings()
 
     async def _add_song_status(self, song):
         if self._old_game is False:
@@ -2053,10 +2059,25 @@ def check_files():
                         "Adding " + str(key) + " field to audio settings.json")
             dataIO.save_json(settings_path, current)
 
+def verify_ffmpeg_avconv():
+    try:
+        subprocess.call(["ffmpeg", "-version"], stdout=subprocess.DEVNULL)
+    except FileNotFoundError:
+        pass
+    else:
+        return "ffmpeg"
+
+    try:
+        subprocess.call(["avconv", "-version"], stdout=subprocess.DEVNULL)
+    except FileNotFoundError:
+        return False
+    else:
+        return "avconv"
 
 def setup(bot):
     check_folders()
     check_files()
+    
     if youtube_dl is None:
         raise RuntimeError("You need to run `pip3 install youtube_dl`")
     if opus is False:
@@ -2067,13 +2088,21 @@ def setup(bot):
         raise RuntimeError(
             "You need to install ffmpeg and opus. See \"https://github.com/"
             "Twentysix26/Red-DiscordBot/wiki/Requirements\"")
-    try:
-        bot.voice_clients
-    except AttributeError:
+
+    player = verify_ffmpeg_avconv()
+
+    if not player:
+        if os.name == "nt":
+            msg = "ffmpeg isn't installed"
+        else:
+            msg = "Neither ffmpeg nor avconv are installed"
         raise RuntimeError(
-            "Your discord.py is outdated. Update to the newest one with\npip3 "
-            "install --upgrade git+https://github.com/Rapptz/discord.py@async")
-    n = Audio(bot)  # Praise 26
+          "{}.\nConsult the guide for your operating system "
+          "and do ALL the steps in order.\n"
+          "https://twentysix26.github.io/Red-Docs/\n"
+          "".format(msg))
+    
+    n = Audio(bot, player=player)  # Praise 26
     bot.add_cog(n)
     bot.add_listener(n.voice_state_update, 'on_voice_state_update')
     bot.loop.create_task(n.queue_scheduler())
