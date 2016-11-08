@@ -14,6 +14,7 @@ import asyncio
 import math
 import time
 import inspect
+import subprocess
 
 __author__ = "tekulvw"
 __version__ = "0.1.1"
