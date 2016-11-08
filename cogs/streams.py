@@ -84,7 +84,8 @@ class Streams:
         """Sets mention group for live channels.
            Valid inputs: everyone, here, or off"""
         server = str(ctx.message.server.id)
-        self.settings[server] = {"MENTION_TYPE": ""}
+        if server not in self.settings:
+            self.settings[server] = {"MENTION_TYPE": ""}
         if mention_type == "everyone":
             self.settings[server]["MENTION_TYPE"] = "everyone"
             dataIO.save_json("data/streams/settings.json", self.settings)
