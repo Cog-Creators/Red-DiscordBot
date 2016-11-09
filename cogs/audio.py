@@ -412,7 +412,7 @@ class Audio:
         while any([d.is_alive() for d in downloaders]):
             await asyncio.sleep(0.1)
 
-        songs = [d.song for d in downloaders]
+        songs = [d.song for d in downloaders if d.song is not None]
         return songs
 
     async def _download_next(self, server, curr_dl, next_dl):
