@@ -1842,12 +1842,10 @@ class Audio:
                     stop_times[server] = int(time.time())
 
                 if hasattr(vc, 'audio_player'):
-                    if (vc.audio_player.is_done() or len(vc.channel.voice_members) == 1) and \
-                            (server not in stop_times or
-                             stop_times[server] is None):
-                        log.debug("putting sid {} in stop loop".format(
-                            server.id))
-                        stop_times[server] = int(time.time())
+                    if (vc.audio_player.is_done() or len(vc.channel.voice_members) == 1):
+                        if server not in stop_times or stop_times[server] is None:
+                            log.debug("putting sid {} in stop loop".format(server.id))
+                            stop_times[server] = int(time.time())
                     elif vc.audio_player.is_playing():
                         stop_times[server] = None
 
