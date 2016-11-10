@@ -471,6 +471,7 @@ class Mod:
         server = author.server
         is_bot = self.bot.user.bot
         has_permissions = channel.permissions_for(server.me).manage_messages
+        self_delete = user == self.bot.user
 
         def check(m):
             if m.author == user:
@@ -492,7 +493,7 @@ class Mod:
         while tries_left and len(to_delete) - 1 < number:
             async for message in self.bot.logs_from(channel, limit=100,
                                                     before=tmp):
-                if len(to_delete) -1 < number and check(message):
+                if len(to_delete) - 1 < number and check(message):
                     to_delete.append(message)
                 tmp = message
             tries_left -= 1
@@ -502,7 +503,8 @@ class Mod:
                     "".format(author.name, author.id, len(to_delete),
                               user.name, user.id, channel.name))
 
-        if is_bot:
+        if is_bot and not self_delete:
+            # For whatever reason the purge endpoint requires manage_messages
             await self.mass_purge(to_delete)
         else:
             await self.slow_deletion(to_delete)
