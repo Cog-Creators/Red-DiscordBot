@@ -370,7 +370,11 @@ class Streams:
                             continue
                         can_speak = channel_obj.permissions_for(channel_obj.server.me).send_messages
                         if channel_obj and can_speak:
-                            mention_type = self.settings[channel_obj.server.id]["MENTION_TYPE"]
+                            try:
+                                mention_type = self.settings[channel_obj.server.id]["MENTION_TYPE"]
+                            except KeyError:
+                                print("Mention type not set for {}".format(str(channel_obj.server.id)))
+                                mention_type = ""
                             if mention_type == "everyone":
                                 await self.bot.send_message(
                                     self.bot.get_channel(channel),
