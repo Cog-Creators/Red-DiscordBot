@@ -1763,7 +1763,11 @@ class Audio:
                 song.uploader = None
             if hasattr(song, 'duration'):
                 m, s = divmod(song.duration, 60)
-                dur = "{:.0f}:{:.0f}".format(m, s)
+                h, m = divmod(m, 60)
+                if h:
+                    dur = "{0}:{1:0>2}:{2:0>2}".format(h, m, s)
+                else:
+                    dur = "{0}:{1:0>2}".format(m, s)
             else:
                 dur = None
             msg = ("\n**Title:** {}\n**Author:** {}\n**Uploader:** {}\n"
