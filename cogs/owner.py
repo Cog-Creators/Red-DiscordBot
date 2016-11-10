@@ -130,7 +130,7 @@ class Owner:
         if still_loaded:
             still_loaded = ", ".join(still_loaded)
             await self.bot.say("I was unable to unload some cogs: "
-                "{}".format(still_loaded))
+                               "{}".format(still_loaded))
         else:
             await self.bot.say("All cogs are now unloaded.")
 
@@ -221,9 +221,10 @@ class Owner:
 
         if settings.owner != "id_here":
             await self.bot.say(
-            "The owner is already set. Remember that setting the owner "
-            "to someone else other than who hosts the bot has security "
-            "repercussions and is *NOT recommended*. Proceed at your own risk."
+                "The owner is already set. Remember that setting the owner "
+                "to someone else other than who hosts the bot has security "
+                "repercussions and is *NOT recommended*. Proceed at your own"
+                " risk."
             )
             await asyncio.sleep(3)
 
@@ -266,7 +267,8 @@ class Owner:
                 await self.bot.say("Failed to change name. Remember that you"
                                    " can only do it up to 2 times an hour."
                                    "Use nicknames if you need frequent "
-                                   "changes. {}set nickname".format(ctx.prefix))
+                                   "changes. {}set"
+                                   " nickname".format(ctx.prefix))
             else:
                 await self.bot.say("Done.")
         else:
@@ -286,7 +288,7 @@ class Owner:
             await self.bot.say("Done.")
         except discord.Forbidden:
             await self.bot.say("I cannot do that, I lack the "
-                "\"Change Nickname\" permission.")
+                               "\"Change Nickname\" permission.")
 
     @_set.command(pass_context=True)
     @checks.is_owner()
@@ -321,11 +323,11 @@ class Owner:
             invisible"""
 
         statuses = {
-                    "online"    : discord.Status.online,
-                    "idle"      : discord.Status.idle,
-                    "dnd"       : discord.Status.dnd,
-                    "invisible" : discord.Status.invisible
-                   }
+            "online": discord.Status.online,
+            "idle": discord.Status.idle,
+            "dnd": discord.Status.dnd,
+            "invisible": discord.Status.invisible
+        }
 
         server = ctx.message.server
 
@@ -361,7 +363,8 @@ class Owner:
                 streamer = "https://www.twitch.tv/" + streamer
             game = discord.Game(type=1, url=streamer, name=stream_title)
             await self.bot.change_presence(game=game, status=current_status)
-            log.debug('Owner has set streaming status and url to "{}" and {}'.format(stream_title, streamer))
+            log.debug('Owner has set streaming status and url to'
+                      ' "{}" and {}'.format(stream_title, streamer))
         elif streamer is not None:
             await send_cmd_help(ctx)
             return
@@ -450,7 +453,7 @@ class Owner:
             comm_obj.enabled = True
             comm_obj.hidden = False
         except:  # In case it was in the disabled list but not currently loaded
-            pass # No point in even checking what returns
+            pass  # No point in even checking what returns
 
     async def get_command(self, command):
         command = command.split()
@@ -463,11 +466,12 @@ class Owner:
         except KeyError:
             return KeyError
         for check in comm_obj.checks:
-            if hasattr(check, "__name__") and check.__name__ == "is_owner_check":
+            if hasattr(check, "__name__") and \
+                    check.__name__ == "is_owner_check":
                 return False
         return comm_obj
 
-    async def disable_commands(self): # runs at boot
+    async def disable_commands(self):  # runs at boot
         for cmd in self.disabled_commands:
             cmd_obj = await self.get_command(cmd)
             try:
@@ -564,12 +568,13 @@ class Owner:
             await self.bot.say("Alright then.")
 
     @commands.command(pass_context=True)
-    async def contact(self, ctx, *, message : str):
+    async def contact(self, ctx, *, message: str):
         """Sends message to the owner"""
         if settings.owner == "id_here":
             await self.bot.say("I have no owner set.")
             return
-        owner = discord.utils.get(self.bot.get_all_members(), id=settings.owner)
+        owner = discord.utils.get(
+            self.bot.get_all_members(), id=settings.owner)
         author = ctx.message.author
         if ctx.message.channel.is_private is False:
             server = ctx.message.server
@@ -593,6 +598,7 @@ class Owner:
     @commands.command()
     async def info(self):
         """Shows info about Red"""
+<<<<<<< HEAD
         author_repo = "https://github.com/Twentysix26"
         red_repo = author_repo + "/Red-DiscordBot"
         server_url = "https://discord.me/Red-DiscordBot"
@@ -636,6 +642,31 @@ class Owner:
         except discord.HTTPException:
             await self.bot.say("I need the `Embed links` permission "
                                "to send this")
+=======
+        await self.bot.say(
+            "This is an instance of Red, an open source Discord bot created"
+            " by Twentysix and improved by many.\n\n**Github:**\n"
+            "<https://github.com/Twentysix26/Red-DiscordBot/>\n"
+            "**Official server:**\n<https://discord.me/Red-DiscordBot>")
+
+    async def leave_confirmation(self, server, owner, ctx):
+        if not ctx.message.channel.is_private:
+            current_server = ctx.message.server
+        else:
+            current_server = None
+        answers = ("yes", "y")
+        await self.bot.say("Are you sure you want me "
+                           "to leave {}? (yes/no)".format(server.name))
+        msg = await self.bot.wait_for_message(author=owner, timeout=15)
+        if msg is None:
+            await self.bot.say("I guess not.")
+        elif msg.content.lower().strip() in answers:
+            await self.bot.leave_server(server)
+            if server != current_server:
+                await self.bot.say("Done.")
+        else:
+            await self.bot.say("Alright then.")
+>>>>>>> 59b7010... [Owner] PEP8
 
     @commands.command()
     async def uptime(self):
