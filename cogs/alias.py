@@ -108,10 +108,7 @@ class Alias:
                 await self.bot.say("There are no aliases on this server.")
 
     async def check_aliases(self, message):
-        if not user_allowed(message):
-            return
-
-        if message.author.id == self.bot.user.id or \
+        if message.author == self.bot.user or \
                 len(message.content) < 2 or message.channel.is_private:
             return
 
@@ -119,7 +116,10 @@ class Alias:
         server = message.server
         prefix = self.get_prefix(msg)
 
-        if prefix and server.id in self.aliases:
+        if not prefix:
+            return
+
+        if server.id in self.aliases and user_allowed(message):
             alias = self.first_word(msg[len(prefix):]).lower()
             if alias in self.aliases[server.id]:
                 new_command = self.aliases[server.id][alias]
