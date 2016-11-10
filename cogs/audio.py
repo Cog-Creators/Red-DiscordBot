@@ -1846,12 +1846,10 @@ class Audio:
                     stop_times[server] = int(time.time())
 
                 if hasattr(vc, 'audio_player'):
-                    if vc.audio_player.is_done() and \
-                            (server not in stop_times or
-                             stop_times[server] is None):
-                        log.debug("putting sid {} in stop loop".format(
-                            server.id))
-                        stop_times[server] = int(time.time())
+                    if (vc.audio_player.is_done() or len(vc.channel.voice_members) == 1):
+                        if server not in stop_times or stop_times[server] is None:
+                            log.debug("putting sid {} in stop loop".format(server.id))
+                            stop_times[server] = int(time.time())
                     elif vc.audio_player.is_playing():
                         stop_times[server] = None
 
@@ -1860,7 +1858,8 @@ class Audio:
                         int(time.time()) - stop_times[server] > 300:
                     # 5 min not playing to d/c
                     log.debug("dcing from sid {} after 300s".format(server.id))
-                    await self._disconnect_voice_client(server)
+                    self._clear_queue(server)
+                    await self._stop_and_disconnect(server)
                     stop_times[server] = None
             await asyncio.sleep(5)
 
