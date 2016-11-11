@@ -2,6 +2,7 @@ import json
 import os
 import logging
 from random import randint
+import asyncio
 
 
 class InvalidFileIO(Exception):
@@ -11,6 +12,8 @@ class InvalidFileIO(Exception):
 class DataIO():
     def __init__(self):
         self.logger = logging.getLogger("red")
+        self.to_flush = {}  # Used for file flushing, modified by Owner
+        self.flush_lock = asyncio.Lock()
 
     def save_json(self, filename, data):
         """Atomically saves json file"""
@@ -28,6 +31,14 @@ class DataIO():
             return False
         os.replace(tmp_file, filename)
         return True
+
+    async def flush_json(self, filename, data):
+        """So what does this do? Instead of instantly writing the data to disk
+            it stores it in memory for a moment (30s) and then writes it. That
+            way multiple quick changes to a single file are only written once,
+            saving blocking time from file writes."""
+        async with self.flush_lock:
+            self.to_flush[filename] = data
 
     def load_json(self, filename):
         """Loads json file"""

@@ -50,8 +50,11 @@ class Owner:
         self.disabled_commands = dataIO.load_json(self.file_path)
         self.session = aiohttp.ClientSession(loop=self.bot.loop)
 
+        self.flusher_task = self.bot.loop.create_task(self.file_flusher)
+
     def __unload(self):
         self.session.close()
+        self.flusher_task.cancel()
 
     @commands.command()
     @checks.is_owner()
@@ -598,7 +601,6 @@ class Owner:
     @commands.command()
     async def info(self):
         """Shows info about Red"""
-<<<<<<< HEAD
         author_repo = "https://github.com/Twentysix26"
         red_repo = author_repo + "/Red-DiscordBot"
         server_url = "https://discord.me/Red-DiscordBot"
@@ -642,31 +644,6 @@ class Owner:
         except discord.HTTPException:
             await self.bot.say("I need the `Embed links` permission "
                                "to send this")
-=======
-        await self.bot.say(
-            "This is an instance of Red, an open source Discord bot created"
-            " by Twentysix and improved by many.\n\n**Github:**\n"
-            "<https://github.com/Twentysix26/Red-DiscordBot/>\n"
-            "**Official server:**\n<https://discord.me/Red-DiscordBot>")
-
-    async def leave_confirmation(self, server, owner, ctx):
-        if not ctx.message.channel.is_private:
-            current_server = ctx.message.server
-        else:
-            current_server = None
-        answers = ("yes", "y")
-        await self.bot.say("Are you sure you want me "
-                           "to leave {}? (yes/no)".format(server.name))
-        msg = await self.bot.wait_for_message(author=owner, timeout=15)
-        if msg is None:
-            await self.bot.say("I guess not.")
-        elif msg.content.lower().strip() in answers:
-            await self.bot.leave_server(server)
-            if server != current_server:
-                await self.bot.say("Done.")
-        else:
-            await self.bot.say("Alright then.")
->>>>>>> 59b7010... [Owner] PEP8
 
     @commands.command()
     async def uptime(self):
@@ -740,6 +717,7 @@ class Owner:
             self.setowner_lock = False
 
     def _get_version(self):
+<<<<<<< HEAD
         url = os.popen(r'git config --get remote.origin.url')
         url = url.read().strip()[:-4]
         repo_name = url.split("/")[-1]
@@ -761,6 +739,23 @@ class Owner:
         embed.set_footer(text="Total commits: " + ncommits)
 
         return embed
+=======
+        getversion = os.popen(r'git show -s HEAD --format="%cr|%s|%h"')
+        getversion = getversion.read()
+        version = getversion.split('|')
+        return 'Last updated: ``{}``\nCommit: ``{}``\nHash: ``{}``'.format(
+            *version)
+
+    async def file_flusher(self):
+        while True:
+            await dataIO.flush_lock.acquire()
+            for filename, data in dataIO.to_flush.items():
+                dataIO.save_json(filename, data)
+            dataIO.to_flush = {}
+            dataIO.flush_lock.release()
+            await asyncio.sleep(60)
+
+>>>>>>> 8caf5fa... initial test
 
 def check_files():
     if not os.path.isfile("data/red/disabled_commands.json"):
