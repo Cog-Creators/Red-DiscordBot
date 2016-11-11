@@ -751,6 +751,7 @@ class Owner:
             await dataIO.flush_lock.acquire()
             for filename, data in dataIO.to_flush.items():
                 dataIO.save_json(filename, data)
+                await asyncio.sleep(0.5)
             dataIO.to_flush = {}
             dataIO.flush_lock.release()
             await asyncio.sleep(60)
