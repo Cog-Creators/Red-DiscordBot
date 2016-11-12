@@ -6,6 +6,7 @@ from __main__ import send_cmd_help, settings
 from collections import deque, defaultdict
 from cogs.utils.chat_formatting import escape_mass_mentions, box
 import os
+import re
 import logging
 import asyncio
 
@@ -398,7 +399,7 @@ class Mod:
         dataIO.save_json("data/mod/perms_cache.json", self._perms_cache)
         await self.bot.say("User has been unmuted in this server.")
 
-    @commands.group(pass_context=True, no_pm=True)
+    @commands.group(pass_context=True)
     @checks.mod_or_permissions(manage_messages=True)
     async def cleanup(self, ctx):
         """Deletes messages.
@@ -514,6 +515,8 @@ class Mod:
         To get a message id, enable developer mode in Discord's
         settings, 'appearance' tab. Then right click a message
         and copy its id.
+
+        This command only works on bots running as bot accounts.
         """
 
         channel = ctx.message.channel
@@ -521,6 +524,11 @@ class Mod:
         server = channel.server
         is_bot = self.bot.user.bot
         has_permissions = channel.permissions_for(server.me).manage_messages
+
+        if not is_bot:
+            await self.bot.say("This command can only be used on bots with "
+                               "bot accounts.")
+            return
 
         to_delete = []
 
@@ -541,10 +549,7 @@ class Mod:
                     "".format(author.name, author.id,
                               len(to_delete), channel.name))
 
-        if is_bot:
-            await self.mass_purge(to_delete)
-        else:
-            await self.slow_deletion(to_delete)
+        await self.mass_purge(to_delete)
 
     @cleanup.command(pass_context=True, no_pm=True)
     async def messages(self, ctx, number: int):
@@ -573,6 +578,79 @@ class Mod:
                               number, channel.name))
 
         if is_bot:
+            await self.mass_purge(to_delete)
+        else:
+            await self.slow_deletion(to_delete)
+
+    @cleanup.command(pass_context=True, name='bot')
+    async def cleanup_bot(self, ctx, number: int, match_pattern: str = None):
+        """Cleans up messages owned by the bot.
+
+        By default, all messages are cleaned. If a third argument is specified,
+        it is used for pattern matching: If it begins with r( and ends with ),
+        then it is interpreted as a regex, and messages that match it are
+        deleted. Otherwise, it is used in a simple substring test.
+
+        Some helpful regex flags to include in your pattern:
+        Dots match newlines: (?s); Ignore case: (?i); Both: (?si)
+        """
+        channel = ctx.message.channel
+        author = ctx.message.author
+        is_bot = self.bot.user.bot
+
+        # You can always delete your own messages, this is needed to purge
+        can_mass_purge = False
+        if type(author) is discord.Member:
+            me = channel.server.me
+            can_mass_purge = channel.permissions_for(me).manage_messages
+
+        use_re = (match_pattern and match_pattern.startswith('r(') and
+                  match_pattern.endswith(')'))
+
+        if use_re:
+            match_pattern = match_pattern[1:] # strip 'r'
+            match_re = re.compile(match_pattern)
+
+            def content_match(c):
+                return bool(match_re.match(c))
+        elif match_pattern:
+            def content_match(c):
+                return match_pattern in c
+        else:
+            def content_match(_):
+                return True
+
+        def check(m):
+            if m.author.id != self.bot.user.id:
+                return False
+            elif content_match(m.content):
+                return True
+            return False
+
+        to_delete = []
+
+        tries_left = 5
+        tmp = ctx.message
+
+        while tries_left and len(to_delete) < number:
+            async for message in self.bot.logs_from(channel, limit=100,
+                                                    before=tmp):
+                if len(to_delete) < number and check(message):
+                    to_delete.append(message)
+                tmp = message
+            tries_left -= 1
+
+        if channel.name:
+            channel_name = 'channel ' + channel.name
+        else:
+            channel_name = str(channel)
+
+        logger.info("{}({}) deleted {} messages "
+                    "sent by the bot in {}"
+                    "".format(author.name, author.id, len(to_delete),
+                              channel_name))
+
+        if is_bot and can_mass_purge:
             await self.mass_purge(to_delete)
         else:
             await self.slow_deletion(to_delete)
@@ -938,7 +1016,6 @@ class Mod:
                 await self.bot.delete_message(message)
             except:
                 pass
-            await asyncio.sleep(1.5)
 
     def is_mod_or_superior(self, message):
         user = message.author
