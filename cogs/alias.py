@@ -108,8 +108,7 @@ class Alias:
                 await self.bot.say("There are no aliases on this server.")
 
     async def check_aliases(self, message):
-        if message.author == self.bot.user or \
-                len(message.content) < 2 or message.channel.is_private:
+        if len(message.content) < 2 or message.channel.is_private:
             return
 
         msg = message.content

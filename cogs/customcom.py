@@ -106,8 +106,7 @@ class CustomCommands:
             await self.bot.say("There are no custom commands in this server. Use addcom [command] [text]")
 
     async def checkCC(self, message):
-        if message.author == self.bot.user or\
-                len(message.content) < 2 or message.channel.is_private:
+        if len(message.content) < 2 or message.channel.is_private:
             return
 
         msg = message.content
