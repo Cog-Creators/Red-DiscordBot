@@ -3,7 +3,7 @@ from discord.ext import commands
 from cogs.utils import checks
 from __main__ import set_cog, send_cmd_help, settings
 from .utils.dataIO import dataIO
-from .utils.chat_formatting import pagify
+from .utils.chat_formatting import pagify, box
 
 import importlib
 import traceback
@@ -172,7 +172,6 @@ class Owner:
 
         Modified function, originally made by Rapptz"""
         code = code.strip('` ')
-        python = '```py\n{}\n```'
         result = None
 
         global_vars = globals().copy()
@@ -186,13 +185,15 @@ class Owner:
         try:
             result = eval(code, global_vars, locals())
         except Exception as e:
-            await self.bot.say(python.format(type(e).__name__ + ': ' + str(e)))
+            await self.bot.say(box('{}: {}'.format(type(e).__name__, str(e)),
+                                   lang="py"))
             return
 
         if asyncio.iscoroutine(result):
             result = await result
 
-        result = python.format(result)
+        result = str(result)
+
         if not ctx.message.channel.is_private:
             censor = (settings.email, settings.password)
             r = "[EXPUNGED]"
@@ -201,7 +202,8 @@ class Owner:
                     result = result.replace(w, r)
                     result = result.replace(w.lower(), r)
                     result = result.replace(w.upper(), r)
-        await self.bot.say(result)
+        for page in pagify(result, shorten_by=12):
+            await self.bot.say(box(page, lang="py"))
 
     @commands.group(name="set", pass_context=True)
     async def _set(self, ctx):
