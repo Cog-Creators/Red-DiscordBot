@@ -67,7 +67,8 @@ async def on_ready():
     if not hasattr(bot, "uptime"):
         bot.uptime = int(time.perf_counter())
     if settings.login_type == "token" and settings.owner == "id_here":
-        await set_bot_owner()
+        settings.owner = bot.appinfo.owner.id
+        print("{} has been recognized and set as owner.".format(bot.appinfo.owner.name))
     print('------')
     print("{} is now online.".format(bot.user.name))
     print('------')
@@ -82,9 +83,8 @@ async def on_ready():
     if settings.login_type == "token":
         print("------")
         print("Use this url to bring your bot to a server:")
-        url = await get_oauth_url()
-        bot.oauth_url = url
-        print(url)
+        bot.oauth_url = discord.utils.oauth_url(bot.appinfo.id)
+        print(bot.oauth_url)
         print("------")
     await bot.get_cog('Owner').disable_commands()
 
@@ -175,23 +175,6 @@ def user_allowed(message):
         return True
     else:
         return True
-
-
-async def get_oauth_url():
-    try:
-        data = await bot.application_info()
-    except AttributeError:
-        return "Your discord.py is outdated. Couldn't retrieve invite link."
-    return discord.utils.oauth_url(data.id)
-
-async def set_bot_owner():
-    try:
-        data = await bot.application_info()
-        settings.owner = data.owner.id
-    except AttributeError:
-        print("Your discord.py is outdated. Couldn't retrieve owner's ID.")
-        return
-    print("{} has been recognized and set as owner.".format(data.owner.name))
 
 
 def check_folders():
@@ -331,13 +314,7 @@ def set_cog(cog, value):
     dataIO.save_json("data/red/cogs.json", data)
 
 def load_cogs():
-    try:
-        if sys.argv[1] == "--no-prompt":
-            no_prompt = True
-        else:
-            no_prompt = False
-    except:
-        no_prompt = False
+    no_prompt = "--no-prompt" in sys.argv[1:]
 
     try:
         registry = dataIO.load_json("data/red/cogs.json")
@@ -435,6 +412,7 @@ def main():
             sys.exit(msg)
     else:
         yield from bot.login(settings.email, settings.password)
+    bot.appinfo = yield from bot.application_info()
     yield from bot.connect()
 
 if __name__ == '__main__':
