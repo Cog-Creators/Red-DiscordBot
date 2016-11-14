@@ -493,7 +493,7 @@ class Mod:
         while tries_left and len(to_delete) - 1 < number:
             async for message in self.bot.logs_from(channel, limit=100,
                                                     before=tmp):
-                if len(to_delete) -1 < number and check(message):
+                if len(to_delete) - 1 < number and check(message):
                     to_delete.append(message)
                 tmp = message
             tries_left -= 1
@@ -582,8 +582,68 @@ class Mod:
         else:
             await self.slow_deletion(to_delete)
 
-    @cleanup.command(pass_context=True, name='bot')
-    async def cleanup_bot(self, ctx, number: int, match_pattern: str = None):
+    @cleanup.command(pass_context=True, no_pm=True, name='bot')
+    async def cleanup_bot(self, ctx, number: int):
+        """Cleans up command messages and messages from the bot"""
+
+        channel = ctx.message.channel
+        author = ctx.message.author
+        server = channel.server
+        is_bot = self.bot.user.bot
+        has_permissions = channel.permissions_for(server.me).manage_messages
+
+        prefixes = self.bot.command_prefix
+        if isinstance(prefixes, str):
+            prefixes = [prefixes]
+        elif callable(prefixes):
+            if asyncio.iscoroutine(prefixes):
+                await self.bot.say('Coroutine prefixes not yet implemented.')
+                return
+            prefixes = prefixes(self.bot, ctx.message)
+
+        # In case some idiot sets a null prefix
+        if '' in prefixes:
+            prefixes.pop('')
+
+        def check(m):
+            if m.author.id == self.bot.user.id:
+                return True
+            elif m == ctx.message:
+                return True
+            p = discord.utils.find(m.content.startswith, prefixes)
+            if p and len(p) > 0:
+                return m.content[len(p):].startswith(tuple(self.bot.commands))
+            return False
+
+        to_delete = [ctx.message]
+
+        if not has_permissions:
+            await self.bot.say("I'm not allowed to delete messages.")
+            return
+
+        tries_left = 5
+        tmp = ctx.message
+
+        while tries_left and len(to_delete) - 1 < number:
+            async for message in self.bot.logs_from(channel, limit=100,
+                                                    before=tmp):
+                if len(to_delete) - 1 < number and check(message):
+                    to_delete.append(message)
+                tmp = message
+            tries_left -= 1
+
+        logger.info("{}({}) deleted {} "
+                    " command messages in channel {}"
+                    "".format(author.name, author.id, len(to_delete),
+                              channel.name))
+
+        if is_bot:
+            await self.mass_purge(to_delete)
+        else:
+            await self.slow_deletion(to_delete)
+
+    @cleanup.command(pass_context=True, name='self')
+    async def cleanup_self(self, ctx, number: int, match_pattern: str = None):
         """Cleans up messages owned by the bot.
 
         By default, all messages are cleaned. If a third argument is specified,
@@ -608,7 +668,7 @@ class Mod:
                   match_pattern.endswith(')'))
 
         if use_re:
-            match_pattern = match_pattern[1:] # strip 'r'
+            match_pattern = match_pattern[1:]  # strip 'r'
             match_re = re.compile(match_pattern)
 
             def content_match(c):
@@ -690,7 +750,6 @@ class Mod:
             await self.bot.say("Couldn't find the case's message.")
         else:
             await self.bot.say("Case #{} updated.".format(case))
-
 
     @commands.group(pass_context=True)
     @checks.is_owner()
@@ -1134,7 +1193,7 @@ class Mod:
             self.cache[author].append(message)
             msgs = self.cache[author]
             if len(msgs) == 3 and \
-            msgs[0].content == msgs[1].content == msgs[2].content:
+                    msgs[0].content == msgs[1].content == msgs[2].content:
                 if any([m.attachments for m in msgs]):
                     return False
                 try:
@@ -1223,6 +1282,7 @@ class Mod:
         empty = [p for p in iter(discord.PermissionOverwrite())]
         return original == empty
 
+
 def check_folders():
     folders = ("data", "data/mod/")
     for folder in folders:
@@ -1250,6 +1310,7 @@ def check_files():
         if not os.path.isfile("data/mod/{}".format(filename)):
             print("Creating empty {}".format(filename))
             dataIO.save_json("data/mod/{}".format(filename), value)
+
 
 def setup(bot):
     global logger
