@@ -40,29 +40,31 @@ class Downloader:
             return
 
     @repo.command(name="add", pass_context=True)
-    async def _repo_add(self, ctx, repo_name: str, repo_url: str):
+    async def _repo_add(self, ctx, repo_name: str, repo_url: str,
+                        no_confirm: bool=False):
         """Adds repo to available repo lists
 
         Warning: Adding 3RD Party Repositories is at your own
         Risk."""
-        await self.bot.say("Type 'I agree' to confirm "
-                           "adding a 3rd party repo. This has the possibility"
-                           " of being harmful. You will not receive help "
-                           "in Red - Discord Bot #support for any cogs "
-                           "installed from this repo. If you do require "
-                           "support you should contact the owner of this "
-                           "repo.\n\nAgain, ANY repo you add is at YOUR"
-                           " discretion and the creator of Red has "
-                           "ABSOLUTELY ZERO responsibility to help if "
-                           "something goes wrong.")
-        answer = await self.bot.wait_for_message(timeout=15,
-                                                 author=ctx.message.author)
-        if answer is None:
-            await self.bot.say('Not adding repo.')
-            return
-        elif "i agree" not in answer.content.lower():
-            await self.bot.say('Not adding repo.')
-            return
+        if not no_confirm:
+            await self.bot.say("Type 'I agree' to confirm adding "
+                               "a 3rd party repo. This has the possibility"
+                               " of being harmful. You will not receive help "
+                               "in Red - Discord Bot #support for any cogs "
+                               "installed from this repo. If you do require "
+                               "support you should contact the owner of this "
+                               "repo.\n\nAgain, ANY repo you add is at YOUR"
+                               " discretion and the creator of Red has "
+                               "ABSOLUTELY ZERO responsibility to help if "
+                               "something goes wrong.")
+            answer = await self.bot.wait_for_message(timeout=15,
+                                                     author=ctx.message.author)
+            if answer is None:
+                await self.bot.say('Not adding repo.')
+                return
+            elif "i agree" not in answer.content.lower():
+                await self.bot.say('Not adding repo.')
+                return
         self.repos[repo_name] = {}
         self.repos[repo_name]['url'] = repo_url
         self.update_repo(repo_name)
@@ -151,7 +153,7 @@ class Downloader:
         pass  # TO DO
 
     @cog.command(pass_context=True)
-    async def update(self, ctx):
+    async def update(self, ctx, no_confirm: bool=False):
         """Updates cogs"""
         self.update_repos()
         await self.bot.say("Downloading updated cogs. Wait 10 seconds...")
@@ -163,6 +165,12 @@ class Downloader:
                                self.repos[repo][cog]['INSTALLED'] is True]
         for cog in installed_user_cogs:
             await self.install(*cog)
+        if no_confirm:
+            for (repo, cog) in installed_user_cogs:
+                self.bot.unload_extension("cogs." + cog)
+                self.bot.load_extension("cogs." + cog)
+            await self.bot.say("Cogs updated and reloaded.")
+            return
         await self.bot.say("Cogs updated. Reload all installed cogs? (yes/no)")
         answer = await self.bot.wait_for_message(timeout=15,
                                                  author=ctx.message.author)
@@ -196,7 +204,8 @@ class Downloader:
         await self.bot.say("Cog successfully uninstalled.")
 
     @cog.command(name="install", pass_context=True)
-    async def _install(self, ctx, repo_name: str, cog: str):
+    async def _install(self, ctx, repo_name: str, cog: str,
+                       no_confirm: bool=False):
         """Installs specified cog"""
         if repo_name not in self.repos:
             await self.bot.say("That repo doesn't exist.")
@@ -211,6 +220,13 @@ class Downloader:
             if install_msg is not None:
                 await self.bot.say(install_msg[:2000])
         if install_cog:
+            if no_confirm:
+                set_cog("cogs." + cog, True)
+                owner = self.bot.get_cog('Owner')
+                await owner.load.callback(owner, module=cog)
+                await self.bot.say("Installation completed and cog loaded.")
+                return
+
             await self.bot.say("Installation completed. Load it now? (yes/no)")
             answer = await self.bot.wait_for_message(timeout=15,
                                                      author=ctx.message.author)
