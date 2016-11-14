@@ -402,11 +402,7 @@ class Mod:
     @commands.group(pass_context=True)
     @checks.mod_or_permissions(manage_messages=True)
     async def cleanup(self, ctx):
-        """Deletes messages.
-
-        cleanup messages [number]
-        cleanup user [name/mention] [number]
-        cleanup text \"Text here\" [number]"""
+        """Deletes messages."""
         if ctx.invoked_subcommand is None:
             await send_cmd_help(ctx)
 
