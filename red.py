@@ -180,16 +180,16 @@ def user_allowed(message):
 async def get_oauth_url():
     try:
         data = await bot.application_info()
-    except AttributeError:
-        return "Your discord.py is outdated. Couldn't retrieve invite link."
+    except Exception as e:
+        return "Couldn't retrieve invite link.Error: {}".format(e)
     return discord.utils.oauth_url(data.id)
 
 async def set_bot_owner():
     try:
         data = await bot.application_info()
         settings.owner = data.owner.id
-    except AttributeError:
-        print("Your discord.py is outdated. Couldn't retrieve owner's ID.")
+    except Exception as e:
+        print("Couldn't retrieve owner's ID. Error: {}".format(e))
         return
     print("{} has been recognized and set as owner.".format(data.owner.name))
 
@@ -424,15 +424,7 @@ def main():
               "discord.py@master#egg=discord.py[voice]")
     print("Official server: https://discord.me/Red-DiscordBot")
     if settings.login_type == "token":
-        try:
-            yield from bot.login(settings.email)
-        except TypeError as e:
-            print(e)
-            msg = ("\nYou are using an outdated discord.py.\n"
-                   "update your discord.py with by running this in your cmd "
-                   "prompt/terminal.\npip3 install --upgrade git+https://"
-                   "github.com/Rapptz/discord.py@async")
-            sys.exit(msg)
+        yield from bot.login(settings.email)
     else:
         yield from bot.login(settings.email, settings.password)
     yield from bot.connect()
