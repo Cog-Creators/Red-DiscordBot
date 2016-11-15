@@ -149,6 +149,36 @@ class Mod:
         dataIO.save_json("data/mod/modlog.json", self.cases)
         await self.bot.say("Cases have been reset.")
 
+    @modset.command(pass_context=True, no_pm=True)
+    async def deletedelay(self, ctx, time: int=None):
+        """Sets the delay until the bot removes the command message. Must be
+            between -1 and 60.
+
+        A delay of -1 means the bot will not remove the message."""
+        server = ctx.message.server
+        if time is not None:
+            time = min(max(time, -1), 60)  # Enforces the time limits
+            self.settings[server.id]["delete_delay"] = time
+            if time == -1:
+                await self.bot.say("Command deleting disabled.")
+            else:
+                await self.bot.say("Delete delay set to {}"
+                                   " seconds.".format(time))
+            dataIO.save_json("data/mod/settings.json", self.settings)
+        else:
+            try:
+                delay = self.settings[server.id]["delete_delay"]
+            except KeyError:
+                await self.bot.say("Delete delay not yet set up on this"
+                                   " server.")
+            else:
+                if delay != -1:
+                    await self.bot.say("Bot will delete command messages after"
+                                       " {} seconds. Set this value to -1 to"
+                                       " stop deleting messages".format(delay))
+                else:
+                    await self.bot.say("I will not delete command messages.")
+
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(kick_members=True)
     async def kick(self, ctx, user: discord.Member):
@@ -1225,6 +1255,32 @@ class Mod:
                     await asyncio.sleep(1)
                     self._tmp_banned_cache.remove(author)
         return False
+
+    async def on_command(self, command, ctx):
+        """Currently used for:
+            * delete delay"""
+        server = ctx.message.server
+        message = ctx.message
+        try:
+            delay = self.settings[server.id]["delete_delay"]
+        except KeyError:
+            # We have no delay set
+            return
+
+        if delay == -1:
+            return
+
+        async def _delete_helper(bot, message):
+            try:
+                await bot.delete_message(message)
+                logger.debug("Deleted command msg {}".format(message.id))
+            except discord.errors.Forbidden:
+                # Do not have delete permissions
+                logger.debug("Wanted to delete mid {} but no"
+                             " permissions".format(message.id))
+
+        await asyncio.sleep(delay)
+        await _delete_helper(self.bot, message)
 
     async def on_message(self, message):
         if message.channel.is_private or self.bot.user == message.author \
