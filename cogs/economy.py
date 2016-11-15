@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from cogs.utils.dataIO import fileIO
+from cogs.utils.dataIO import dataIO
 from collections import namedtuple, defaultdict
 from datetime import datetime
 from random import randint
@@ -216,15 +216,14 @@ class Economy:
         server = user.server
         entry_found = True
         bid -= old
-        if server.id in self.slot_stats:
-            if user.id in self.slot_stats[server.id]:
-                self.slot_stats[server.id][user.id][result] += 1
-                self.slot_stats[server.id][user.id][9] += bid
-                self.slot_stats[server.id][user.id][8] += old
-            else:
-                entry_found = False
-        else:
+        if server.id not in self.slot_stats:
             self.slot_stats[server.id] = {}
+            entry_found = False
+        if user.id in self.slot_stats[server.id]:
+            self.slot_stats[server.id][user.id][result] += 1
+            self.slot_stats[server.id][user.id][9] += bid
+            self.slot_stats[server.id][user.id][8] += old
+        else:
             entry_found = False
         if entry_found == False:
             self.slot_stats[server.id][user.id] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -240,7 +239,27 @@ class Economy:
             self.slot_stats[server.id][user.id] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         if user.id not in self.slot_stats[server.id]:
             self.slot_stats[server.id][user.id] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        temp_msg = "```ruby\nSlot statistics for {0.name}:\n\nLose:\t  {1}\nx2:\t\t{2}\nx3:\t\t{3}\nx4:\t\t{4}\nx5000:\t {5}\n\n+500:\t  {6}\n+800:\t  {7}\n+1000:\t {8}\n\nSpent:\t {9}\nGained:\t{10}```".format(user, self.slot_stats[server.id][user.id][0], self.slot_stats[server.id][user.id][2], self.slot_stats[server.id][user.id][3], self.slot_stats[server.id][user.id][4], self.slot_stats[server.id][user.id][7], self.slot_stats[server.id][user.id][5], self.slot_stats[server.id][user.id][6], self.slot_stats[server.id][user.id][1], self.slot_stats[server.id][user.id][8], self.slot_stats[server.id][user.id][9])
+        temp_msg = "```ruby\nSlot statistics for {0.name}:\n\n
+        Lose:\t  {1}\n
+        x2:\t\t{2}\n
+        x3:\t\t{3}\n
+        x4:\t\t{4}\n
+        x5000:\t {5}\n\n
+        +500:\t  {6}\n
+        +800:\t  {7}\n
+        +1000:\t {8}\n\n
+        Spent:\t {9}\n
+        Gained:\t{10}```".format(user,
+                                 self.slot_stats[server.id][user.id][0],
+                                 self.slot_stats[server.id][user.id][2],
+                                 self.slot_stats[server.id][user.id][3],
+                                 self.slot_stats[server.id][user.id][4],
+                                 self.slot_stats[server.id][user.id][7],
+                                 self.slot_stats[server.id][user.id][5],
+                                 self.slot_stats[server.id][user.id][6],
+                                 self.slot_stats[server.id][user.id][1],
+                                 self.slot_stats[server.id][user.id][8],
+                                 self.slot_stats[server.id][user.id][9])
         return temp_msg
 
     #temp command
@@ -526,7 +545,7 @@ class Economy:
         server = ctx.message.server
         self.settings[server.id]["SLOT_MIN"] = bid
         await self.bot.say("Minimum bid is now " + str(bid) + " credits.")
-        dataIO.save_json(self.file_path, self.system)
+        dataIO.save_json(self.file_path, self.settings)
 
     @economyset.command(pass_context=True)
     async def slotmax(self, ctx, bid : int):
@@ -534,7 +553,7 @@ class Economy:
         server = ctx.message.server
         self.settings[server.id]["SLOT_MAX"] = bid
         await self.bot.say("Maximum bid is now " + str(bid) + " credits.")
-        dataIO.save_json(self.file_path, self.system)
+        dataIO.save_json(self.file_path, self.settings)
 
     @economyset.command(pass_context=True)
     async def slottime(self, ctx, seconds : int):
@@ -542,7 +561,7 @@ class Economy:
         server = ctx.message.server
         self.settings[server.id]["SLOT_TIME"] = seconds
         await self.bot.say("Cooldown is now " + str(seconds) + " seconds.")
-        dataIO.save_json(self.file_path, self.system)
+        dataIO.save_json(self.file_path, self.settings)
 
     @economyset.command(pass_context=True)
     async def paydaytime(self, ctx, seconds : int):
@@ -550,7 +569,7 @@ class Economy:
         server = ctx.message.server
         self.settings[server.id]["PAYDAY_TIME"] = seconds
         await self.bot.say("Value modified. At least " + str(seconds) + " seconds must pass between each payday.")
-        dataIO.save_json(self.file_path, self.system)
+        dataIO.save_json(self.file_path, self.settings)
 
     @economyset.command(pass_context=True)
     async def paydaycredits(self, ctx, credits : int):
@@ -558,7 +577,7 @@ class Economy:
         server = ctx.message.server
         self.settings[server.id]["PAYDAY_CREDITS"] = credits
         await self.bot.say("Every payday will now give " + str(credits) + " credits.")
-        dataIO.save_json(self.file_path, self.system)
+        dataIO.save_json(self.file_path, self.settings)
 
     def display_time(self, seconds, granularity=2):  # What would I ever do without stackoverflow?
         intervals = (                                # Source: http://stackoverflow.com/a/24542445
@@ -610,7 +629,7 @@ def setup(bot):
     check_folders()
     check_files()
     logger = logging.getLogger("red.economy")
-    if logger.level == 0:  # Prevents the logger from being loaded again in case of module reload
+    if logger.level == 0: # Prevents the logger from being loaded again in case of module reload
         logger.setLevel(logging.INFO)
         handler = logging.FileHandler(filename='data/economy/economy.log', encoding='utf-8', mode='a')
         handler.setFormatter(logging.Formatter('%(asctime)s %(message)s', datefmt="[%d/%m/%Y %H:%M]"))
