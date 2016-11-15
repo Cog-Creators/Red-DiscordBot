@@ -170,7 +170,7 @@ class General:
         joined_at = self.fetch_joined_at(user, server)
         since_created = (ctx.message.timestamp - user.created_at).days
         since_joined = (ctx.message.timestamp - joined_at).days
-        user_joined = server.created_at.strftime("%d %B, %Y %H:%M")
+        user_joined = joined_at.strftime("%d %B, %Y %H:%M")
         user_created = user.created_at.strftime("%d %B, %Y %H:%M")
 
         game = None
