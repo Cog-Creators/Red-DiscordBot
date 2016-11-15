@@ -239,16 +239,16 @@ class Economy:
             self.slot_stats[server.id][user.id] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         if user.id not in self.slot_stats[server.id]:
             self.slot_stats[server.id][user.id] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        temp_msg = "```ruby\nSlot statistics for {0.name}:\n\n
-        Lose:\t  {1}\n
-        x2:\t\t{2}\n
-        x3:\t\t{3}\n
-        x4:\t\t{4}\n
-        x5000:\t {5}\n\n
-        +500:\t  {6}\n
-        +800:\t  {7}\n
-        +1000:\t {8}\n\n
-        Spent:\t {9}\n
+        temp_msg = "```ruby\nSlot statistics for {0.name}:\n\n\
+        Lose:\t  {1}\n\
+        x2:\t\t{2}\n\
+        x3:\t\t{3}\n\
+        x4:\t\t{4}\n\
+        x5000:\t {5}\n\n\
+        +500:\t  {6}\n\
+        +800:\t  {7}\n\
+        +1000:\t {8}\n\n\
+        Spent:\t {9}\n\
         Gained:\t{10}```".format(user,
                                  self.slot_stats[server.id][user.id][0],
                                  self.slot_stats[server.id][user.id][2],
