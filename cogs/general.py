@@ -170,7 +170,7 @@ class General:
         joined_at = self.fetch_joined_at(user, server)
         since_created = (ctx.message.timestamp - user.created_at).days
         since_joined = (ctx.message.timestamp - joined_at).days
-        user_joined = server.created_at.strftime("%d %B, %Y %H:%M")
+        user_joined = joined_at.strftime("%d %B, %Y %H:%M")
         user_created = user.created_at.strftime("%d %B, %Y %H:%M")
 
         game = None
@@ -182,7 +182,7 @@ class General:
             game = "Streaming: {} ({})".format(str(user.game), user.game.url)
 
         usr = discord.utils.get(server.members, id=self.bot.user.id)
-        if ctx.message.channel.permissions_for(usr).embed_links:
+        if ctx.message.channel.permissions_for(usr).embed_links and self.bot.user.bot:
             data = discord.Embed(
                 type='rich',
                 description=game,
@@ -236,7 +236,7 @@ class General:
         colour = int(colour, 16)
 
         usr = discord.utils.get(server.members, id=self.bot.user.id)
-        if ctx.message.channel.permissions_for(usr).embed_links:
+        if ctx.message.channel.permissions_for(usr).embed_links and self.bot.user.bot:
             data = discord.Embed(
                 description=str("ID: {}".format(server.id)),
                 type='rich',
