@@ -191,7 +191,7 @@ class General:
             data.add_field(name="Created on", value="{}\n({} days ago)".format(user_created, since_created))
             data.add_field(name="Joined on", value="{}\n({} days ago)".format(user_joined, since_joined))
             data.add_field(name="Nickname", value=str(user.nick))
-            data.add_field(name="Roles", value='{}'.format(", ".join(roles)), inline=False)
+            data.add_field(name="Roles", value='{}'.format(", ".join(sorted(roles, key=[x.name for x in server.role_hierarchy if x.name != "@everyone"].index))), inline=False)
             data.set_footer(text="ID: {}".format(user.id))
             if user.avatar_url:
                 data.set_author(name=user.name, icon_url=user.avatar_url)
@@ -212,7 +212,7 @@ class General:
 
         data += "Created: {} ({} days ago)\n".format(user_created, since_created)
         data += "Joined: {} ({} days ago)\n".format(user_joined, since_joined)
-        data += "Roles: {}\n".format(", ".join(roles))
+        data += "Roles: {}".format(", ".join(sorted(roles, key=[x.name for x in server.role_hierarchy if x.name != "@everyone"].index)))
         if user.avatar_url != "":
             data += "Avatar:"
             data += "```"
