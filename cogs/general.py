@@ -182,7 +182,7 @@ class General:
             game = "Streaming: {} ({})".format(str(user.game), user.game.url)
 
         usr = discord.utils.get(server.members, id=self.bot.user.id)
-        if ctx.message.channel.permissions_for(usr).embed_links and self.bot.user.bot:
+        if ctx.message.channel.permissions_for(usr).embed_links:
             data = discord.Embed(
                 type='rich',
                 description=game,
@@ -236,7 +236,7 @@ class General:
         colour = int(colour, 16)
 
         usr = discord.utils.get(server.members, id=self.bot.user.id)
-        if ctx.message.channel.permissions_for(usr).embed_links and self.bot.user.bot:
+        if ctx.message.channel.permissions_for(usr).embed_links:
             data = discord.Embed(
                 description=str("ID: {}".format(server.id)),
                 type='rich',
