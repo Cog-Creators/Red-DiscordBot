@@ -529,31 +529,6 @@ class Owner:
     async def servers(self, ctx):
         """Lists and allows to leave servers"""
         owner = ctx.message.author
-        servers = list(self.bot.servers)
-        server_list = {}
-        msg = ""
-        for i in range(0, len(servers)):
-            server_list[str(i)] = servers[i]
-            msg += "{}: {}\n".format(str(i), servers[i].name)
-        msg += "\nTo leave a server just type its number."
-        for page in pagify(msg, ['\n']):
-            await self.bot.say(page)
-        while msg != None:
-            msg = await self.bot.wait_for_message(author=owner, timeout=15)
-            if msg != None:
-                msg = msg.content.strip()
-                if msg in server_list.keys():
-                    await self.leave_confirmation(server_list[msg], owner, ctx)
-                else:
-                    break
-            else:
-                break
-
-    @commands.command(pass_context=True)
-    @checks.is_owner()
-    async def servers(self, ctx):
-        """Lists and allows to leave servers"""
-        owner = ctx.message.author
         servers = sorted(list(self.bot.servers),
                          key=lambda s: s.name.lower())
         msg = ""
@@ -618,11 +593,30 @@ class Owner:
     @commands.command()
     async def info(self):
         """Shows info about Red"""
-        await self.bot.say(
-        "This is an instance of Red, an open source Discord bot created by "
-        "Twentysix and improved by many.\n\n**Github:**\n"
-        "<https://github.com/Twentysix26/Red-DiscordBot/>\n"
-        "**Official server:**\n<https://discord.me/Red-DiscordBot>")
+        author_repo = "https://github.com/Twentysix26"
+        red_repo = author_repo + "/Red-DiscordBot"
+        server_url = "https://discord.me/Red-DiscordBot"
+        discordpy_repo = "https://github.com/Rapptz/discord.py"
+        python_url = "https://www.python.org/"
+        since = datetime.datetime(2016, 1, 2, 0, 0)
+        days_since = (datetime.datetime.now() - since).days
+
+        about = (
+            "This is an instance of [Red, an open source Discord bot]({}) "
+            "created by [Twentysix]({}) and improved by many.\n\n"
+            "Red is backed by a passionate community who contributes and "
+            "creates content for everyone to enjoy. [Join us today]({}) "
+            "and help us improve!\n\n"
+            "Written in [Python]({}), powered by [discord.py]({})"
+            "".format(red_repo, author_repo, server_url, python_url,
+                      discordpy_repo))
+
+        embed = discord.Embed(colour=discord.Colour.red())
+        embed.add_field(name="About Red", value=about)
+        embed.set_footer(text="Bringing joy since 02 Jan 2016 (over "
+                         "{} days ago!)".format(days_since))
+
+        await self.bot.say(embed=embed)
 
     @commands.command()
     async def uptime(self):
