@@ -224,7 +224,7 @@ class Economy:
         if ctx.message.server.id in self.settings:
             credits = self.settings[ctx.message.server.id]["REGISTER_CREDITS"]
         try:
-            account = self.bank.create_account(user, credits)
+            account = self.bank.create_account(user, initial_balance=credits)
             await self.bot.say("{} Account opened. Current balance: {}".format(user.mention,
                 account.balance))
         except AccountAlreadyExists:
@@ -508,8 +508,11 @@ class Economy:
     async def registercredits(self, ctx, credits : int):
         """Credits given on registering an account"""
         server = ctx.message.server
-        self.settings[server.id]["REGISTER_CREDITS"] = credits
-        await self.bot.say("Registering an account will now give " + str(credits) + " credits.")
+        if credits >= 0:
+            self.settings[server.id]["REGISTER_CREDITS"] = credits
+            await self.bot.say("Registering an account will now give " + str(credits) + " credits.")
+        else:
+            self.settings[server.id]["REGISTER_CREDITS"] = 0
         dataIO.save_json(self.file_path, self.settings)
 
     def display_time(self, seconds, granularity=2):  # What would I ever do without stackoverflow?
