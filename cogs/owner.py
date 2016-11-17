@@ -621,9 +621,10 @@ class Owner:
     @commands.command()
     async def uptime(self):
         """Shows Red's uptime"""
-        up = abs(self.bot.uptime - int(time.perf_counter()))
-        up = str(datetime.timedelta(seconds=up))
-        await self.bot.say("`Uptime: {}`".format(up))
+        now = datetime.datetime.now()
+        uptime = (now - self.bot.uptime).seconds
+        uptime = datetime.timedelta(seconds=uptime)
+        await self.bot.say("`Uptime: {}`".format(uptime))
 
     @commands.command()
     async def version(self):
