@@ -14,6 +14,13 @@ from concurrent.futures import ThreadPoolExecutor
 from time import time
 
 NUM_THREADS = 4
+REPO_NONEX = 0x1
+REPO_CLONE = 0x2
+REPO_SAME = 0x4
+
+
+class UpdateError(Exception):
+    pass
 
 
 class Downloader:
@@ -26,6 +33,7 @@ class Downloader:
         # {name:{url,cog1:{installed},cog1:{installed}}}
         self.repos = dataIO.load_json(self.file_path)
         self.executor = ThreadPoolExecutor(NUM_THREADS)
+        self._do_first_run()
 
     def save_repos(self):
         dataIO.save_json(self.file_path, self.repos)
@@ -88,6 +96,7 @@ class Downloader:
             await self.bot.say("That repo doesn't exist.")
             return
         del self.repos[repo_name]
+        #shutil.rmtree(os.path.join(self.path, repo_name))
         self.save_repos()
         await self.bot.say("Repo '{}' removed.".format(repo_name))
 
@@ -162,8 +171,8 @@ class Downloader:
         tasknum = 0
         num_repos = len(self.repos)
 
-        min_dt = 0.25
-        burst_inc = 2*min_dt/NUM_THREADS
+        min_dt = 0.5
+        burst_inc = 0.1/(NUM_THREADS)
         touch_n = tasknum
         touch_t = time()
 
@@ -188,20 +197,26 @@ class Downloader:
         updated_cogs = []
         new_cogs = []
         deleted_cogs = []
+        error_repos = {}
         installed_updated_cogs = []
 
         for f in as_completed(tasks):
             tasknum += 1
-            name, updates, oldhash = await f
-            if updates:
-                for k, l in updates.items():
-                    tl = [(name, c, oldhash) for c in l]
-                    if k == 'A':
-                        new_cogs.extend(tl)
-                    elif k == 'D':
-                        deleted_cogs.extend(tl)
-                    elif k == 'M':
-                        updated_cogs.extend(tl)
+            try:
+                name, updates, oldhash = await f
+                if updates:
+                    if type(updates) is dict:
+                        for k, l in updates.items():
+                            tl = [(name, c, oldhash) for c in l]
+                            if k == 'A':
+                                new_cogs.extend(tl)
+                            elif k == 'D':
+                                deleted_cogs.extend(tl)
+                            elif k == 'M':
+                                updated_cogs.extend(tl)
+            except UpdateError as e:
+                name, what = e.args
+                error_repos[name] = what
             edit, touch_t, touch_n = regulate(touch_t, touch_n)
             if edit:
                 status = ' %d/%d repos updated' % (tasknum, num_repos)
@@ -221,6 +236,10 @@ class Downloader:
         if updated_cogs:
             status += '\nUpdated cogs: ' \
                    + ', '.join('%s/%s' % c[:2] for c in updated_cogs) + '.'
+        if error_repos:
+            status += '\nThe following repos failed to update: '
+            for n, what in error_repos.items():
+                status += '\n%s: %s' % (n, what)
 
         msg = await self._robust_edit(msg, base_msg + status)
 
@@ -409,6 +428,17 @@ class Downloader:
         git_name = splitted[-1]
         return git_name[:-4]
 
+    def _do_first_run(self):
+        save = False
+        for repo in self.repos:
+            broken = 'url' in self.repos[repo] and len(self.repos[repo]) == 1
+            if broken:
+                self.update_repo(repo)
+                self.populate_list(repo)
+                save = True
+        if save:
+            self.save_repos()
+
     def populate_list(self, name):
         valid_cogs = self.list_cogs(name)
         new = set(valid_cogs.keys())
@@ -423,40 +453,63 @@ class Downloader:
                 del self.repos[name][cog]
 
     def update_repo(self, name):
-        dd = self.path
-        if name not in self.repos:
-            return name, None, None
-        if not os.path.exists(dd + name):
-            url = self.repos[name]['url']
-            run(["git", "clone", url, dd + name])
-        else:
-            rpcmd = ["git", "-C", dd + name, "rev-parse", "HEAD"]
-            run(["git", "-C", dd + name, "reset", "--hard",
-                 "origin/HEAD", "-q"])
-            p = run(rpcmd, stdout=PIPE)
-            oldhash = p.stdout.decode().strip()
-            run(["git", "-C", dd + name, "pull", "-q"])
-            p = run(rpcmd, stdout=PIPE)
-            newhash = p.stdout.decode().strip()
-            if oldhash == newhash:
-                return name, None, None
-            else:
+        try:
+            dd = self.path
+            if name not in self.repos:
+                raise UpdateError("Repo does not exist in data, wtf")
+            folder = os.path.join(dd, name)
+            # Make sure we don't git reset the Red folder on accident
+            if not os.path.exists(os.path.join(folder, '.git')):
+                #if os.path.exists(folder):
+                    #shutil.rmtree(folder)
+                url = self.repos[name].get('url')
+                if not url:
+                    raise UpdateError("Need to clone but no URL set")
+                p = run(["git", "clone", url, dd + name])
+                if p.returncode != 0:
+                    raise UpdateError("Error cloning")
                 self.populate_list(name)
-                self.save_repos()
-                ret = {}
-                cmd = ['git', '-C', dd + name, 'diff', '--no-commit-id',
-                       '--name-status', oldhash, newhash]
-                p = run(cmd, stdout=PIPE)
-                changed = p.stdout.strip().decode().split('\n')
-                for f in changed:
-                    if not f.endswith('.py'):
-                        continue
-                    status, cogpath = f.split('\t')
-                    cogname = os.path.split(cogpath)[-1][:-3]  # strip .py
-                    if status not in ret:
-                        ret[status] = []
-                    ret[status].append(cogname)
-                return name, ret, oldhash
+                return name, REPO_CLONE, None
+            else:
+                rpcmd = ["git", "-C", dd + name, "rev-parse", "HEAD"]
+                p = run(["git", "-C", dd + name, "reset", "--hard",
+                        "origin/HEAD", "-q"])
+                if p.returncode != 0:
+                    raise UpdateError("Error resetting to origin/HEAD")
+                p = run(rpcmd, stdout=PIPE)
+                if p.returncode != 0:
+                    raise UpdateError("Unable to determine old commit hash")
+                oldhash = p.stdout.decode().strip()
+                p = run(["git", "-C", dd + name, "pull", "-q"])
+                if p.returncode != 0:
+                    raise UpdateError("Error pulling updates")
+                p = run(rpcmd, stdout=PIPE)
+                if p.returncode != 0:
+                    raise UpdateError("Unable to determine new commit hash")
+                newhash = p.stdout.decode().strip()
+                if oldhash == newhash:
+                    return name, REPO_SAME, None
+                else:
+                    self.populate_list(name)
+                    self.save_repos()
+                    ret = {}
+                    cmd = ['git', '-C', dd + name, 'diff', '--no-commit-id',
+                           '--name-status', oldhash, newhash]
+                    p = run(cmd, stdout=PIPE)
+                    if p.returncode != 0:
+                        raise UpdateError("Error in git diff")
+                    changed = p.stdout.strip().decode().split('\n')
+                    for f in changed:
+                        if not f.endswith('.py'):
+                            continue
+                        status, cogpath = f.split('\t')
+                        cogname = os.path.split(cogpath)[-1][:-3]  # strip .py
+                        if status not in ret:
+                            ret[status] = []
+                        ret[status].append(cogname)
+                    return name, ret, oldhash
+        except UpdateError as e:
+            raise UpdateError(name, *e.args) from None
 
     async def _robust_edit(self, msg, text):
         try:
