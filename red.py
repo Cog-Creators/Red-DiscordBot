@@ -6,8 +6,10 @@ import logging
 import logging.handlers
 import shutil
 import traceback
+import datetime
 
 try:
+    assert sys.version_info >= (3, 5)
     from discord.ext import commands
     import discord
 except ImportError:
@@ -16,10 +18,17 @@ except ImportError:
           "and do ALL the steps in order.\n"
           "https://twentysix26.github.io/Red-Docs/\n")
     sys.exit()
+except AssertionError:
+    print("Red needs Python 3.5 or superior.\n"
+          "Consult the guide for your operating system "
+          "and do ALL the steps in order.\n"
+          "https://twentysix26.github.io/Red-Docs/\n")
+    sys.exit()
 
 from cogs.utils.settings import Settings
 from cogs.utils.dataIO import dataIO
 from cogs.utils.chat_formatting import inline
+from collections import Counter
 
 #
 #  Red, a Discord bot by Twentysix, based on discord.py and its command extension
@@ -31,6 +40,62 @@ from cogs.utils.chat_formatting import inline
 #
 
 description = "Red - A multifunction Discord bot by Twentysix"
+
+
+class Bot(commands.Bot):
+    def __init__(self, *args, **kwargs):
+        self.counter = Counter()
+        self.uptime = datetime.datetime.now()
+        super().__init__(*args, **kwargs)
+
+    async def send_cmd_help(self, ctx):
+        if ctx.invoked_subcommand:
+            pages = bot.formatter.format_help_for(ctx, ctx.invoked_subcommand)
+            for page in pages:
+                await bot.send_message(ctx.message.channel, page)
+        else:
+            pages = bot.formatter.format_help_for(ctx, ctx.command)
+            for page in pages:
+                await bot.send_message(ctx.message.channel, page)
+
+    def user_allowed(self, message):
+        author = message.author
+
+        if author.bot or author == self.user:
+            return False
+
+        mod = self.get_cog('Mod')
+
+        if mod is not None:
+            if settings.owner == author.id:
+                return True
+            if not message.channel.is_private:
+                server = message.server
+                names = (settings.get_server_admin(
+                    server), settings.get_server_mod(server))
+                results = map(
+                    lambda name: discord.utils.get(author.roles, name=name),
+                    names)
+                for r in results:
+                    if r is not None:
+                        return True
+
+            if author.id in mod.blacklist_list:
+                return False
+
+            if mod.whitelist_list:
+                if author.id not in mod.whitelist_list:
+                    return False
+
+            if not message.channel.is_private:
+                if message.server.id in mod.ignore_list["SERVERS"]:
+                    return False
+
+                if message.channel.id in mod.ignore_list["CHANNELS"]:
+                    return False
+            return True
+        else:
+            return True
 
 
 class Formatter(commands.HelpFormatter):
@@ -51,8 +116,11 @@ class Formatter(commands.HelpFormatter):
 
 formatter = Formatter(show_check_failure=False)
 
-bot = commands.Bot(command_prefix=["_"], formatter=formatter,
-                   description=description, pm_help=None)
+bot = Bot(command_prefix=["_"], formatter=formatter,
+          description=description, pm_help=None)
+
+send_cmd_help = bot.send_cmd_help  # Backwards
+user_allowed = bot.user_allowed    # compatibility
 
 settings = Settings()
 
@@ -64,8 +132,6 @@ async def on_ready():
     users = len(set(bot.get_all_members()))
     servers = len(bot.servers)
     channels = len([c for c in bot.get_all_channels()])
-    if not hasattr(bot, "uptime"):
-        bot.uptime = int(time.perf_counter())
     if settings.login_type == "token" and settings.owner == "id_here":
         await set_bot_owner()
     print('------')
@@ -91,11 +157,12 @@ async def on_ready():
 
 @bot.event
 async def on_command(command, ctx):
-    pass
+    bot.counter["processed_commands"] += 1
 
 
 @bot.event
 async def on_message(message):
+    bot.counter["messages_read"] += 1
     if user_allowed(message):
         await bot.process_commands(message)
 
@@ -125,57 +192,6 @@ async def on_command_error(error, ctx):
                                         "available in DMs.")
     else:
         logger.exception(type(error).__name__, exc_info=error)
-
-async def send_cmd_help(ctx):
-    if ctx.invoked_subcommand:
-        pages = bot.formatter.format_help_for(ctx, ctx.invoked_subcommand)
-        for page in pages:
-            await bot.send_message(ctx.message.channel, page)
-    else:
-        pages = bot.formatter.format_help_for(ctx, ctx.command)
-        for page in pages:
-            await bot.send_message(ctx.message.channel, page)
-
-
-def user_allowed(message):
-
-    author = message.author
-
-    if author.bot or author == bot.user:
-        return False
-
-    mod = bot.get_cog('Mod')
- 
-    if mod is not None:
-        if settings.owner == author.id:
-            return True
-        if not message.channel.is_private:
-            server = message.server
-            names = (settings.get_server_admin(
-                server), settings.get_server_mod(server))
-            results = map(
-                lambda name: discord.utils.get(author.roles, name=name), names)
-            for r in results:
-                if r is not None:
-                    return True
-
-        if author.id in mod.blacklist_list:
-            return False
-
-        if mod.whitelist_list:
-            if author.id not in mod.whitelist_list:
-                return False
-
-        if not message.channel.is_private:
-            if message.server.id in mod.ignore_list["SERVERS"]:
-                return False
-
-            if message.channel.id in mod.ignore_list["CHANNELS"]:
-                return False
-        return True
-    else:
-        return True
-
 
 async def get_oauth_url():
     try:
@@ -331,13 +347,7 @@ def set_cog(cog, value):
     dataIO.save_json("data/red/cogs.json", data)
 
 def load_cogs():
-    try:
-        if sys.argv[1] == "--no-prompt":
-            no_prompt = True
-        else:
-            no_prompt = False
-    except:
-        no_prompt = False
+    no_prompt = "--no-prompt" in sys.argv[1:]
 
     try:
         registry = dataIO.load_json("data/red/cogs.json")

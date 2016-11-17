@@ -194,13 +194,14 @@ class General:
         data = discord.Embed(description=game, colour=user.colour)
         data.add_field(name="Joined Discord on", value=created_on)
         data.add_field(name="Joined this server on", value=joined_on)
-        data.add_field(name="Nickname", value=str(user.nick))
         data.add_field(name="Roles", value=roles, inline=False)
-        data.set_footer(text="ID: {}".format(user.id))
+        data.set_footer(text="User ID: " + user.id)
 
         if user.avatar_url:
-            data.set_author(name=user.name, url=user.avatar_url,
-                            icon_url=user.avatar_url)
+            name = str(user)
+            name = " ~ ".join((name, user.nick)) if user.nick else name
+            data.set_author(name=name, url=user.avatar_url)
+            data.set_thumbnail(url=user.avatar_url)
         else:
             data.set_author(name=user.name)
 
@@ -230,7 +231,7 @@ class General:
         colour = int(colour, 16)
 
         data = discord.Embed(
-            description="ID: " + server.id,
+            description="Server ID: " + server.id,
             colour=discord.Colour(value=colour))
         data.add_field(name="Region", value=str(server.region))
         data.add_field(name="Users", value="{}/{}".format(online, total_users))
@@ -241,8 +242,8 @@ class General:
         data.set_footer(text=created_at)
 
         if server.icon_url:
-            data.set_author(name=server.name, url=server.icon_url,
-                            icon_url=server.icon_url)
+            data.set_author(name=server.name, url=server.icon_url)
+            data.set_thumbnail(url=server.icon_url)
         else:
             data.set_author(name=server.name)
 

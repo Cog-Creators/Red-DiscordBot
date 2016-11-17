@@ -621,16 +621,21 @@ class Owner:
     @commands.command()
     async def uptime(self):
         """Shows Red's uptime"""
-        up = abs(self.bot.uptime - int(time.perf_counter()))
-        up = str(datetime.timedelta(seconds=up))
-        await self.bot.say("`Uptime: {}`".format(up))
+        now = datetime.datetime.now()
+        uptime = (now - self.bot.uptime).seconds
+        uptime = datetime.timedelta(seconds=uptime)
+        await self.bot.say("`Uptime: {}`".format(uptime))
 
     @commands.command()
     async def version(self):
         """Shows Red's current version"""
         response = self.bot.loop.run_in_executor(None, self._get_version)
         result = await asyncio.wait_for(response, timeout=10)
-        await self.bot.say(result)
+        try:
+            await self.bot.say(embed=result)
+        except:
+            await self.bot.say("I need the `Embed links` permission "
+                               "to send this")
 
     def _load_cog(self, cogname):
         if not self._does_cogfile_exist(cogname):
@@ -685,12 +690,27 @@ class Owner:
             self.setowner_lock = False
 
     def _get_version(self):
-        getversion = os.popen(r'git show -s HEAD --format="%cr|%s|%h"')
-        getversion = getversion.read()
-        version = getversion.split('|')
-        return 'Last updated: ``{}``\nCommit: ``{}``\nHash: ``{}``'.format(
-            *version)
+        url = os.popen(r'git config --get remote.origin.url')
+        url = url.read().strip()[:-4]
+        repo_name = url.split("/")[-1]
+        commits = os.popen(r'git show -s -n 3 HEAD --format="%cr|%s|%H"')
+        ncommits = os.popen(r'git rev-list --count HEAD').read()
 
+        lines = commits.read().split('\n')
+        embed = discord.Embed(title="Updates of " + repo_name,
+                              description="Last three updates",
+                              colour=discord.Colour.red(),
+                              url=url)
+        for line in lines:
+            if not line:
+                continue
+            when, commit, chash = line.split("|")
+            commit_url = url + "/commit/" + chash
+            content = "[{}]({}) - {} ".format(chash[:6], commit_url, commit)
+            embed.add_field(name=when, value=content, inline=False)
+        embed.set_footer(text="Total commits: " + ncommits)
+
+        return embed
 
 def check_files():
     if not os.path.isfile("data/red/disabled_commands.json"):
