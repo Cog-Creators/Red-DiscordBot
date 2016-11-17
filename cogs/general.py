@@ -156,66 +156,101 @@ class General:
         await self.bot.say(msg)
 
     @commands.command(pass_context=True, no_pm=True)
-    async def userinfo(self, ctx, user : discord.Member = None):
+    async def userinfo(self, ctx, user: discord.Member=None):
         """Shows users's informations"""
         author = ctx.message.author
         server = ctx.message.server
+
         if not user:
             user = author
+
         roles = [x.name for x in user.roles if x.name != "@everyone"]
-        if not roles: roles = ["None"]
-        data = "```python\n"
-        data += "Name: {}\n".format(escape_mass_mentions(str(user)))
-        data += "Nickname: {}\n".format(escape_mass_mentions(str(user.nick)))
-        data += "ID: {}\n".format(user.id)
+
+        joined_at = self.fetch_joined_at(user, server)
+        since_created = (ctx.message.timestamp - user.created_at).days
+        since_joined = (ctx.message.timestamp - joined_at).days
+        user_joined = joined_at.strftime("%d %b %Y %H:%M")
+        user_created = user.created_at.strftime("%d %b %Y %H:%M")
+
+        created_on = "{}\n({} days ago)".format(user_created, since_created)
+        joined_on = "{}\n({} days ago)".format(user_joined, since_joined)
+
+        game = "Chilling in {} status".format(user.status)
+
         if user.game is None:
             pass
         elif user.game.url is None:
-            data += "Playing: {}\n".format(escape_mass_mentions(str(user.game)))
+            game = "Playing {}".format(user.game)
         else:
-            data += "Streaming: {} ({})\n".format(escape_mass_mentions(str(user.game)),
-                                                      escape_mass_mentions(user.game.url))
-        passed = (ctx.message.timestamp - user.created_at).days
-        data += "Created: {} ({} days ago)\n".format(user.created_at, passed)
-        joined_at = self.fetch_joined_at(user, server)
-        passed = (ctx.message.timestamp - joined_at).days
-        data += "Joined: {} ({} days ago)\n".format(joined_at, passed)
-        data += "Roles: {}\n".format(", ".join(roles))
-        if user.avatar_url != "":
-            data += "Avatar:"
-            data += "```"
-            data += user.avatar_url
+            game = "Streaming: {} ({})".format(user.game, user.game.url)
+
+        if roles:
+            roles = sorted(roles, key=[x.name for x in server.role_hierarchy
+                                       if x.name != "@everyone"].index)
+            roles = ", ".join(roles)
         else:
-            data += "```"
-        await self.bot.say(data)
+            roles = "None"
+
+        data = discord.Embed(description=game, colour=user.colour)
+        data.add_field(name="Joined Discord on", value=created_on)
+        data.add_field(name="Joined this server on", value=joined_on)
+        data.add_field(name="Nickname", value=str(user.nick))
+        data.add_field(name="Roles", value=roles, inline=False)
+        data.set_footer(text="ID: {}".format(user.id))
+
+        if user.avatar_url:
+            data.set_author(name=user.name, url=user.avatar_url,
+                            icon_url=user.avatar_url)
+        else:
+            data.set_author(name=user.name)
+
+        try:
+            await self.bot.say(embed=data)
+        except:
+            await self.bot.say("I need the `Embed links` permission "
+                               "to send this")
 
     @commands.command(pass_context=True, no_pm=True)
     async def serverinfo(self, ctx):
         """Shows server's informations"""
         server = ctx.message.server
-        online = str(len([m.status for m in server.members if str(m.status) == "online" or str(m.status) == "idle"]))
-        total_users = str(len(server.members))
-        text_channels = len([x for x in server.channels if str(x.type) == "text"])
+        online = len([m.status for m in server.members
+                      if m.status == discord.Status.online or
+                      m.status == discord.Status.idle])
+        total_users = len(server.members)
+        text_channels = len([x for x in server.channels
+                             if x.type == discord.ChannelType.text])
         voice_channels = len(server.channels) - text_channels
-
-        data = "```python\n"
-        data += "Name: {}\n".format(server.name)
-        data += "ID: {}\n".format(server.id)
-        data += "Region: {}\n".format(server.region)
-        data += "Users: {}/{}\n".format(online, total_users)
-        data += "Text channels: {}\n".format(text_channels)
-        data += "Voice channels: {}\n".format(voice_channels)
-        data += "Roles: {}\n".format(len(server.roles))
         passed = (ctx.message.timestamp - server.created_at).days
-        data += "Created: {} ({} days ago)\n".format(server.created_at, passed)
-        data += "Owner: {}\n".format(server.owner)
-        if server.icon_url != "":
-            data += "Icon:"
-            data += "```"
-            data += server.icon_url
+        created_at = ("Created on {} ({} days ago!)"
+                      "".format(server.created_at.strftime("%d %b %Y %H:%M"),
+                                passed))
+
+        colour = ''.join([randchoice('0123456789ABCDEF') for x in range(6)])
+        colour = int(colour, 16)
+
+        data = discord.Embed(
+            description="ID: " + server.id,
+            colour=discord.Colour(value=colour))
+        data.add_field(name="Region", value=str(server.region))
+        data.add_field(name="Users", value="{}/{}".format(online, total_users))
+        data.add_field(name="Text Channels", value=text_channels)
+        data.add_field(name="Voice Channels", value=voice_channels)
+        data.add_field(name="Roles", value=len(server.roles))
+        data.add_field(name="Owner", value=str(server.owner))
+        data.set_footer(text=created_at)
+
+        if server.icon_url:
+            data.set_author(name=server.name, url=server.icon_url,
+                            icon_url=server.icon_url)
         else:
-            data += "```"
-        await self.bot.say(data)
+            data.set_author(name=server.name)
+
+        try:
+            await self.bot.say(embed=data)
+        except:
+            await self.bot.say("I need the `Embed links` permission "
+                               "to send this")
 
     @commands.command()
     async def urban(self, *, search_terms : str, definition_number : int=1):
