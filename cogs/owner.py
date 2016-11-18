@@ -50,7 +50,7 @@ class Owner:
         self.disabled_commands = dataIO.load_json(self.file_path)
         self.session = aiohttp.ClientSession(loop=self.bot.loop)
 
-        self.flusher_task = self.bot.loop.create_task(self.file_flusher)
+        self.flusher_task = self.bot.loop.create_task(self.file_flusher())
 
     def __unload(self):
         self.session.close()
