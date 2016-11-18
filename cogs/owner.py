@@ -596,10 +596,24 @@ class Owner:
         author_repo = "https://github.com/Twentysix26"
         red_repo = author_repo + "/Red-DiscordBot"
         server_url = "https://discord.me/Red-DiscordBot"
-        discordpy_repo = "https://github.com/Rapptz/discord.py"
+        dpy_repo = "https://github.com/Rapptz/discord.py"
         python_url = "https://www.python.org/"
         since = datetime.datetime(2016, 1, 2, 0, 0)
         days_since = (datetime.datetime.now() - since).days
+        dpy_version = "[{}]({})".format(discord.__version__, dpy_repo)
+        py_version = "[{}.{}.{}]({})".format(*os.sys.version_info[:3],
+                                             python_url)
+
+        owner = settings.owner if settings.owner != "id_here" else None
+        if owner:
+            owner = discord.utils.get(self.bot.get_all_members(), id=owner)
+            if not owner:
+                try:
+                    owner = await self.bot.get_user_info(settings.owner)
+                except:
+                    owner = None
+        if not owner:
+            owner = "Unknown"
 
         about = (
             "This is an instance of [Red, an open source Discord bot]({}) "
@@ -607,12 +621,13 @@ class Owner:
             "Red is backed by a passionate community who contributes and "
             "creates content for everyone to enjoy. [Join us today]({}) "
             "and help us improve!\n\n"
-            "Written in [Python]({}), powered by [discord.py]({})"
-            "".format(red_repo, author_repo, server_url, python_url,
-                      discordpy_repo))
+            "".format(red_repo, author_repo, server_url))
 
         embed = discord.Embed(colour=discord.Colour.red())
-        embed.add_field(name="About Red", value=about)
+        embed.add_field(name="Instance owned by", value=str(owner))
+        embed.add_field(name="Python", value=py_version)
+        embed.add_field(name="discord.py", value=dpy_version)
+        embed.add_field(name="About Red", value=about, inline=False)
         embed.set_footer(text="Bringing joy since 02 Jan 2016 (over "
                          "{} days ago!)".format(days_since))
 

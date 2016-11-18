@@ -182,7 +182,7 @@ class General:
         elif user.game.url is None:
             game = "Playing {}".format(user.game)
         else:
-            game = "Streaming: {} ({})".format(user.game, user.game.url)
+            game = "Streaming: [{}]({})".format(user.game, user.game.url)
 
         if roles:
             roles = sorted(roles, key=[x.name for x in server.role_hierarchy
@@ -223,7 +223,7 @@ class General:
                              if x.type == discord.ChannelType.text])
         voice_channels = len(server.channels) - text_channels
         passed = (ctx.message.timestamp - server.created_at).days
-        created_at = ("Created on {} ({} days ago!)"
+        created_at = ("Since {}. That's over {} days ago!"
                       "".format(server.created_at.strftime("%d %b %Y %H:%M"),
                                 passed))
 
@@ -231,7 +231,7 @@ class General:
         colour = int(colour, 16)
 
         data = discord.Embed(
-            description="Server ID: " + server.id,
+            description=created_at,
             colour=discord.Colour(value=colour))
         data.add_field(name="Region", value=str(server.region))
         data.add_field(name="Users", value="{}/{}".format(online, total_users))
@@ -239,7 +239,7 @@ class General:
         data.add_field(name="Voice Channels", value=voice_channels)
         data.add_field(name="Roles", value=len(server.roles))
         data.add_field(name="Owner", value=str(server.owner))
-        data.set_footer(text=created_at)
+        data.set_footer(text="Server ID: " + server.id)
 
         if server.icon_url:
             data.set_author(name=server.name, url=server.icon_url)
