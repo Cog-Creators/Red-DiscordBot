@@ -13,7 +13,6 @@ import threading
 import datetime
 import glob
 import os
-import time
 import aiohttp
 
 log = logging.getLogger("red.owner")
@@ -557,7 +556,7 @@ class Owner:
 
     async def leave_confirmation(self, server, owner, ctx):
         await self.bot.say("Are you sure you want me "
-                    "to leave {}? (yes/no)".format(server.name))
+                           "to leave {}? (yes/no)".format(server.name))
 
         msg = await self.bot.wait_for_message(author=owner, timeout=15)
 
