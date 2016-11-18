@@ -6,6 +6,7 @@ from datetime import datetime
 from random import randint
 from copy import deepcopy
 from .utils import checks
+from cogs.utils.chat_formatting import pagify, box
 from __main__ import send_cmd_help
 import os
 import time
@@ -368,11 +369,9 @@ class Economy:
             highscore += (acc.name + " ").ljust(23 - len(str(acc.balance)))
             highscore += str(acc.balance) + "\n"
             place += 1
-        if highscore:
-            if len(highscore) < 1985:
-                await self.bot.say("```py\n" + highscore + "```")
-            else:
-                await self.bot.say("The leaderboard is too big to be displayed. Try with a lower <top> parameter.")
+        if highscore != "":
+            for page in pagify(highscore, shorten_by=12):
+                await self.bot.say(box(page, lang="py"))
         else:
             await self.bot.say("There are no accounts in the bank.")
 
@@ -400,11 +399,9 @@ class Economy:
                           ).ljust(23 - len(str(acc.balance)))
             highscore += str(acc.balance) + "\n"
             place += 1
-        if highscore:
-            if len(highscore) < 1985:
-                await self.bot.say("```py\n" + highscore + "```")
-            else:
-                await self.bot.say("The leaderboard is too big to be displayed. Try with a lower <top> parameter.")
+        if highscore != "":
+            for page in pagify(highscore, shorten_by=12):
+                await self.bot.say(box(page, lang="py"))
         else:
             await self.bot.say("There are no accounts in the bank.")
 
