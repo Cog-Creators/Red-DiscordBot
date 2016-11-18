@@ -122,7 +122,7 @@ class Song:
         self.id = kwargs.pop('id', None)
         self.url = kwargs.pop('url', None)
         self.webpage_url = kwargs.pop('webpage_url', "")
-        self.duration = kwargs.pop('duration', "")
+        self.duration = kwargs.pop('duration', 60)
 
 
 class Playlist:
