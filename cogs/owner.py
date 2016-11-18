@@ -717,7 +717,6 @@ class Owner:
             self.setowner_lock = False
 
     def _get_version(self):
-<<<<<<< HEAD
         url = os.popen(r'git config --get remote.origin.url')
         url = url.read().strip()[:-4]
         repo_name = url.split("/")[-1]
@@ -737,14 +736,7 @@ class Owner:
             content = "[{}]({}) - {} ".format(chash[:6], commit_url, commit)
             embed.add_field(name=when, value=content, inline=False)
         embed.set_footer(text="Total commits: " + ncommits)
-
         return embed
-=======
-        getversion = os.popen(r'git show -s HEAD --format="%cr|%s|%h"')
-        getversion = getversion.read()
-        version = getversion.split('|')
-        return 'Last updated: ``{}``\nCommit: ``{}``\nHash: ``{}``'.format(
-            *version)
 
     async def file_flusher(self):
         while True:
@@ -756,7 +748,6 @@ class Owner:
             dataIO.flush_lock.release()
             await asyncio.sleep(60)
 
->>>>>>> 8caf5fa... initial test
 
 def check_files():
     if not os.path.isfile("data/red/disabled_commands.json"):
