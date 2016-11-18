@@ -616,7 +616,11 @@ class Owner:
         embed.set_footer(text="Bringing joy since 02 Jan 2016 (over "
                          "{} days ago!)".format(days_since))
 
-        await self.bot.say(embed=embed)
+        try:
+            await self.bot.say(embed=embed)
+        except discord.HTTPException:
+            await self.bot.say("I need the `Embed links` permission "
+                               "to send this")
 
     @commands.command()
     async def uptime(self):
@@ -633,7 +637,7 @@ class Owner:
         result = await asyncio.wait_for(response, timeout=10)
         try:
             await self.bot.say(embed=result)
-        except:
+        except discord.HTTPException:
             await self.bot.say("I need the `Embed links` permission "
                                "to send this")
 

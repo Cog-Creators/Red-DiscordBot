@@ -207,7 +207,7 @@ class General:
 
         try:
             await self.bot.say(embed=data)
-        except:
+        except discord.HTTPException:
             await self.bot.say("I need the `Embed links` permission "
                                "to send this")
 
@@ -249,7 +249,7 @@ class General:
 
         try:
             await self.bot.say(embed=data)
-        except:
+        except discord.HTTPException:
             await self.bot.say("I need the `Embed links` permission "
                                "to send this")
 
