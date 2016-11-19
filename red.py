@@ -90,7 +90,7 @@ class Bot(commands.Bot):
         self._message_modifiers.append(func)
 
     def remove_message_modifier(self, func):
-        """Removes a message modifier function from the bot"""
+        """Removes a message modifier from the bot"""
         if func not in self._message_modifiers:
             raise RuntimeError("Function not present in the message "
                                "modifiers.")
