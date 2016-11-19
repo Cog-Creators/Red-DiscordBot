@@ -122,7 +122,7 @@ class Song:
         self.id = kwargs.pop('id', None)
         self.url = kwargs.pop('url', None)
         self.webpage_url = kwargs.pop('webpage_url', "")
-        self.duration = kwargs.pop('duration', "")
+        self.duration = kwargs.pop('duration', 60)
 
 
 class Playlist:
@@ -1158,7 +1158,7 @@ class Audio:
             await send_cmd_help(ctx)
 
     @local.command(name="start", pass_context=True, no_pm=True)
-    async def play_local(self, ctx, name):
+    async def play_local(self, ctx, *, name):
         """Plays a local playlist"""
         server = ctx.message.server
         author = ctx.message.author
