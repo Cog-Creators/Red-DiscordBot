@@ -1732,7 +1732,10 @@ class Audio:
         is_admin = discord.utils.get(member.roles, name=admin_role) is not None
         is_mod = discord.utils.get(member.roles, name=mod_role) is not None
 
-        nonbots = sum(not m.bot for m in member.voice_channel.voice_members)
+        try:
+            nonbots = sum(not m.bot for m in member.voice_channel.voice_members)
+        except:
+            nonbots = 0
         alone = nonbots <= 1
 
         return is_owner or is_admin or is_mod or alone
@@ -1786,13 +1789,17 @@ class Audio:
         """Stops a currently playing song or playlist. CLEARS QUEUE."""
         server = ctx.message.server
         if self.is_playing(server):
-            if self.can_instaskip(ctx.message.author):
-                await self.bot.say('Stopping...')
-                self._stop(server)
+            if ctx.message.author.voice_channel == server.me.voice_channel:
+                if self.can_instaskip(ctx.message.author):
+                    await self.bot.say('Stopping...')
+                    self._stop(server)
+                else:
+                    await self.bot.say("You can't stop music when there are other"
+                                       " people in the channel! Vote to skip"
+                                       " instead.")
             else:
-                await self.bot.say("You can't stop music when there are other"
-                                   " people in the channel! Vote to skip"
-                                   " instead.")
+                await self.bot.reply("you aren't in the current playback"
+                                     " channel.")
         else:
             await self.bot.say("Can't stop if I'm not playing.")
 
@@ -2081,7 +2088,7 @@ def verify_ffmpeg_avconv():
 def setup(bot):
     check_folders()
     check_files()
-    
+
     if youtube_dl is None:
         raise RuntimeError("You need to run `pip3 install youtube_dl`")
     if opus is False:
@@ -2105,7 +2112,7 @@ def setup(bot):
           "and do ALL the steps in order.\n"
           "https://twentysix26.github.io/Red-Docs/\n"
           "".format(msg))
-    
+
     n = Audio(bot, player=player)  # Praise 26
     bot.add_cog(n)
     bot.add_listener(n.voice_state_update, 'on_voice_state_update')
