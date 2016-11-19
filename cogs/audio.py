@@ -1732,10 +1732,8 @@ class Audio:
         is_admin = discord.utils.get(member.roles, name=admin_role) is not None
         is_mod = discord.utils.get(member.roles, name=mod_role) is not None
 
-        try:
-            nonbots = sum(not m.bot for m in member.voice_channel.voice_members)
-        except:
-            nonbots = 0
+
+        nonbots = sum(not m.bot for m in member.voice_channel.voice_members)
         alone = nonbots <= 1
 
         return is_owner or is_admin or is_mod or alone
