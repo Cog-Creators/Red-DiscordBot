@@ -60,11 +60,13 @@ class Bot(commands.Bot):
                 await super().send_message(*args, **kwargs)
                 return
 
+            content = kwargs['content']
             for m in self._message_modifiers:
                 try:
-                    kwargs["content"] = str(m(kwargs["content"]))
+                    content = str(m(content))
                 except:   # Faulty modifiers should not
                     pass  # break send_message
+            kwargs['content'] = content
 
         await super().send_message(*args, **kwargs)
 
