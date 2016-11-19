@@ -57,8 +57,7 @@ class Bot(commands.Bot):
                 args = list(args)
                 kwargs["content"] = args.pop()
             else:
-                await super().send_message(*args, **kwargs)
-                return
+                return await super().send_message(*args, **kwargs)
 
             content = kwargs['content']
             for m in self._message_modifiers:
@@ -68,7 +67,7 @@ class Bot(commands.Bot):
                     pass  # break send_message
             kwargs['content'] = content
 
-        await super().send_message(*args, **kwargs)
+        return await super().send_message(*args, **kwargs)
 
     def add_message_modifier(self, func):
         """
