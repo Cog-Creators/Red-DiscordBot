@@ -189,7 +189,7 @@ class Owner:
                          ", ".join(sorted(unloaded)))
                )
         for page in pagify(msg, [" "], shorten_by=16):
-            await self.bot.say("{}".format(box(page.lstrip(" "), lang="diff")))
+            await self.bot.say(box(page.lstrip(" "), lang="diff"))
 
     @commands.command(pass_context=True, hidden=True)
     @checks.is_owner()
