@@ -165,6 +165,32 @@ class Owner:
             await self.disable_commands()
             await self.bot.say("Module reloaded.")
 
+    @commands.command(name="cogs")
+    @checks.is_owner()
+    async def _show_cogs(self):
+        """Shows loaded/unloaded cogs"""
+        # This function assumes that all cogs are in the cogs folder,
+        # which is currently true.
+
+        # Extracting filename from __module__ Example: cogs.owner
+        loaded = [c.__module__.split(".")[1] for c in self.bot.cogs.values()]
+        # What's in the folder but not loaded is unloaded
+        unloaded = [c.split(".")[1] for c in self._list_cogs()
+                    if c.split(".")[1] not in loaded]
+
+        if not unloaded:
+            unloaded = ["None"]
+
+        msg = ("+ Loaded\n"
+               "{}\n\n"
+               "- Unloaded\n"
+               "{}"
+               "".format(", ".join(sorted(loaded)),
+                         ", ".join(sorted(unloaded)))
+               )
+
+        await self.bot.say(box(msg, lang="diff"))
+
     @commands.command(pass_context=True, hidden=True)
     @checks.is_owner()
     async def debug(self, ctx, *, code):
