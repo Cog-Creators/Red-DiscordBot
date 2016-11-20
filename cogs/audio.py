@@ -1714,8 +1714,7 @@ class Audio:
                         reply += " (%d%% out of %d%% needed)" % (vote, thresh)
                     await self.bot.reply(reply)
             else:
-                await self.bot.reply("you aren't in the current playback"
-                                     " channel.")
+                await self.bot.say("You need to be in the voice channel to skip the music.")
         else:
             await self.bot.say("Can't skip if I'm not playing.")
 
@@ -1796,8 +1795,7 @@ class Audio:
                                        " people in the channel! Vote to skip"
                                        " instead.")
             else:
-                await self.bot.reply("you aren't in the current playback"
-                                     " channel.")
+                await self.bot.say("You need to be in the voice channel to stop the music.")
         else:
             await self.bot.say("Can't stop if I'm not playing.")
 
