@@ -239,6 +239,7 @@ class Owner:
             return
 
     @_set.command(pass_context=True)
+    @checks.is_owner()
     async def owner(self, ctx):
         """Sets owner"""
         if self.setowner_lock:
