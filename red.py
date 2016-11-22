@@ -32,15 +32,15 @@ from collections import Counter
 
 #
 # Red, a Discord bot by Twentysix, based on discord.py and its command
-#   extension.
+#                             extension.
 #
-#   https://github.com/Twentysix26/
+#                   https://github.com/Twentysix26/
 #
 #
 # red.py and cogs/utils/checks.py both contain some modified functions
-#   originally made by Rapptz.
+#                     originally made by Rapptz.
 #
-#   https://github.com/Rapptz/RoboDanny/tree/async
+#                 https://github.com/Rapptz/RoboDanny/
 #
 
 description = "Red - A multifunction Discord bot by Twentysix"
