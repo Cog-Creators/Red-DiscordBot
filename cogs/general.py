@@ -182,7 +182,7 @@ class General:
         elif user.game.url is None:
             game = "Playing {}".format(user.game)
         else:
-            game = "Streaming: {} ({})".format(user.game, user.game.url)
+            game = "Streaming: [{}]({})".format(user.game, user.game.url)
 
         if roles:
             roles = sorted(roles, key=[x.name for x in server.role_hierarchy
@@ -194,19 +194,20 @@ class General:
         data = discord.Embed(description=game, colour=user.colour)
         data.add_field(name="Joined Discord on", value=created_on)
         data.add_field(name="Joined this server on", value=joined_on)
-        data.add_field(name="Nickname", value=str(user.nick))
         data.add_field(name="Roles", value=roles, inline=False)
-        data.set_footer(text="ID: {}".format(user.id))
+        data.set_footer(text="User ID: " + user.id)
 
         if user.avatar_url:
-            data.set_author(name=user.name, url=user.avatar_url,
-                            icon_url=user.avatar_url)
+            name = str(user)
+            name = " ~ ".join((name, user.nick)) if user.nick else name
+            data.set_author(name=name, url=user.avatar_url)
+            data.set_thumbnail(url=user.avatar_url)
         else:
             data.set_author(name=user.name)
 
         try:
             await self.bot.say(embed=data)
-        except:
+        except discord.HTTPException:
             await self.bot.say("I need the `Embed links` permission "
                                "to send this")
 
@@ -222,7 +223,7 @@ class General:
                              if x.type == discord.ChannelType.text])
         voice_channels = len(server.channels) - text_channels
         passed = (ctx.message.timestamp - server.created_at).days
-        created_at = ("Created on {} ({} days ago!)"
+        created_at = ("Since {}. That's over {} days ago!"
                       "".format(server.created_at.strftime("%d %b %Y %H:%M"),
                                 passed))
 
@@ -230,7 +231,7 @@ class General:
         colour = int(colour, 16)
 
         data = discord.Embed(
-            description="ID: " + server.id,
+            description=created_at,
             colour=discord.Colour(value=colour))
         data.add_field(name="Region", value=str(server.region))
         data.add_field(name="Users", value="{}/{}".format(online, total_users))
@@ -238,17 +239,17 @@ class General:
         data.add_field(name="Voice Channels", value=voice_channels)
         data.add_field(name="Roles", value=len(server.roles))
         data.add_field(name="Owner", value=str(server.owner))
-        data.set_footer(text=created_at)
+        data.set_footer(text="Server ID: " + server.id)
 
         if server.icon_url:
-            data.set_author(name=server.name, url=server.icon_url,
-                            icon_url=server.icon_url)
+            data.set_author(name=server.name, url=server.icon_url)
+            data.set_thumbnail(url=server.icon_url)
         else:
             data.set_author(name=server.name)
 
         try:
             await self.bot.say(embed=data)
-        except:
+        except discord.HTTPException:
             await self.bot.say("I need the `Embed links` permission "
                                "to send this")
 

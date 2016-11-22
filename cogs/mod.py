@@ -684,6 +684,10 @@ class Mod:
             return False
 
         to_delete = []
+        # Selfbot convenience, delete trigger message
+        if author == self.bot.user:
+            to_delete.append(ctx.message)
+            number += 1
 
         tries_left = 5
         tmp = ctx.message

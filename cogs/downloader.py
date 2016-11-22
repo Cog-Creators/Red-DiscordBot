@@ -258,6 +258,8 @@ class Downloader:
         patchnote_lang = 'Prolog'
         shorten_by = 8 + len(patchnote_lang)
         for note in self.patch_notes_handler(installed_updated_cogs):
+            if note is None:
+                continue
             for page in pagify(note, delims=['\n'], shorten_by=shorten_by):
                 await self.bot.say(box(page, patchnote_lang))
 

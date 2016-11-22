@@ -46,7 +46,59 @@ class Bot(commands.Bot):
     def __init__(self, *args, **kwargs):
         self.counter = Counter()
         self.uptime = datetime.datetime.now()
+        self._message_modifiers = []
         super().__init__(*args, **kwargs)
+
+    async def send_message(self, *args, **kwargs):
+        if self._message_modifiers:
+            if "content" in kwargs:
+                pass
+            elif len(args) == 2:
+                args = list(args)
+                kwargs["content"] = args.pop()
+            else:
+                return await super().send_message(*args, **kwargs)
+
+            content = kwargs['content']
+            for m in self._message_modifiers:
+                try:
+                    content = str(m(content))
+                except:   # Faulty modifiers should not
+                    pass  # break send_message
+            kwargs['content'] = content
+
+        return await super().send_message(*args, **kwargs)
+
+    def add_message_modifier(self, func):
+        """
+        Adds a message modifier to the bot
+
+        A message modifier is a callable that accepts a message's
+        content as the first positional argument.
+        Before a message gets sent, func will get called with
+        the message's content as the only argument. The message's
+        content will then be modified to be the func's return
+        value.
+        Exceptions thrown by the callable will be catched and
+        silenced.
+        """
+        if not callable(func):
+            raise TypeError("The message modifier function "
+                            "must be a callable.")
+
+        self._message_modifiers.append(func)
+
+    def remove_message_modifier(self, func):
+        """Removes a message modifier from the bot"""
+        if func not in self._message_modifiers:
+            raise RuntimeError("Function not present in the message "
+                               "modifiers.")
+
+        self._message_modifiers.remove(func)
+
+    def clear_message_modifiers(self):
+        """Removes all message modifiers from the bot"""
+        self._message_modifiers.clear()
 
     async def send_cmd_help(self, ctx):
         if ctx.invoked_subcommand:

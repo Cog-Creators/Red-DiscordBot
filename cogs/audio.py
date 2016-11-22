@@ -122,7 +122,7 @@ class Song:
         self.id = kwargs.pop('id', None)
         self.url = kwargs.pop('url', None)
         self.webpage_url = kwargs.pop('webpage_url', "")
-        self.duration = kwargs.pop('duration', "")
+        self.duration = kwargs.pop('duration', 60)
 
 
 class Playlist:
@@ -1158,7 +1158,7 @@ class Audio:
             await send_cmd_help(ctx)
 
     @local.command(name="start", pass_context=True, no_pm=True)
-    async def play_local(self, ctx, name):
+    async def play_local(self, ctx, *, name):
         """Plays a local playlist"""
         server = ctx.message.server
         author = ctx.message.author
@@ -1714,8 +1714,7 @@ class Audio:
                         reply += " (%d%% out of %d%% needed)" % (vote, thresh)
                     await self.bot.reply(reply)
             else:
-                await self.bot.reply("you aren't in the current playback"
-                                     " channel.")
+                await self.bot.say("You need to be in the voice channel to skip the music.")
         else:
             await self.bot.say("Can't skip if I'm not playing.")
 
@@ -1731,6 +1730,7 @@ class Audio:
         is_owner = member.id == settings.owner
         is_admin = discord.utils.get(member.roles, name=admin_role) is not None
         is_mod = discord.utils.get(member.roles, name=mod_role) is not None
+
 
         nonbots = sum(not m.bot for m in member.voice_channel.voice_members)
         alone = nonbots <= 1
@@ -1786,13 +1786,16 @@ class Audio:
         """Stops a currently playing song or playlist. CLEARS QUEUE."""
         server = ctx.message.server
         if self.is_playing(server):
-            if self.can_instaskip(ctx.message.author):
-                await self.bot.say('Stopping...')
-                self._stop(server)
+            if ctx.message.author.voice_channel == server.me.voice_channel:
+                if self.can_instaskip(ctx.message.author):
+                    await self.bot.say('Stopping...')
+                    self._stop(server)
+                else:
+                    await self.bot.say("You can't stop music when there are other"
+                                       " people in the channel! Vote to skip"
+                                       " instead.")
             else:
-                await self.bot.say("You can't stop music when there are other"
-                                   " people in the channel! Vote to skip"
-                                   " instead.")
+                await self.bot.say("You need to be in the voice channel to stop the music.")
         else:
             await self.bot.say("Can't stop if I'm not playing.")
 
@@ -2081,7 +2084,7 @@ def verify_ffmpeg_avconv():
 def setup(bot):
     check_folders()
     check_files()
-    
+
     if youtube_dl is None:
         raise RuntimeError("You need to run `pip3 install youtube_dl`")
     if opus is False:
@@ -2105,7 +2108,7 @@ def setup(bot):
           "and do ALL the steps in order.\n"
           "https://twentysix26.github.io/Red-Docs/\n"
           "".format(msg))
-    
+
     n = Audio(bot, player=player)  # Praise 26
     bot.add_cog(n)
     bot.add_listener(n.voice_state_update, 'on_voice_state_update')
