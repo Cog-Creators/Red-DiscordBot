@@ -51,6 +51,7 @@ Once you're done, take a look at the command list and have fun.
 | !economy                                      | Explanation of the economy module          |
 | !admin help                                   | Admin commands list                        |
 | !meme help                                    | Explanation of !meme                       |
+| !imgur                                        | Retrieves a random image from imgur's random page |
 
 ### Audio commands
 
