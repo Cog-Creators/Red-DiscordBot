@@ -47,6 +47,7 @@ class Bot(commands.Bot):
         self.counter = Counter()
         self.uptime = datetime.datetime.now()
         self._message_modifiers = []
+        self.settings = Settings()
         super().__init__(*args, **kwargs)
 
     async def send_message(self, *args, **kwargs):
@@ -174,7 +175,7 @@ bot = Bot(command_prefix=["_"], formatter=formatter,
 send_cmd_help = bot.send_cmd_help  # Backwards
 user_allowed = bot.user_allowed    # compatibility
 
-settings = Settings()
+settings = bot.settings
 
 
 @bot.event
