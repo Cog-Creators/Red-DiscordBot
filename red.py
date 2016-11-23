@@ -31,12 +31,16 @@ from cogs.utils.chat_formatting import inline
 from collections import Counter
 
 #
-#  Red, a Discord bot by Twentysix, based on discord.py and its command extension
+# Red, a Discord bot by Twentysix, based on discord.py and its command
+#                             extension.
+#
 #                   https://github.com/Twentysix26/
 #
 #
-# red.py and cogs/utils/checks.py both contain some modified functions originally made by Rapptz
-#             https://github.com/Rapptz/RoboDanny/tree/async
+# red.py and cogs/utils/checks.py both contain some modified functions
+#                     originally made by Rapptz.
+#
+#                 https://github.com/Rapptz/RoboDanny/
 #
 
 description = "Red - A multifunction Discord bot by Twentysix"
@@ -47,6 +51,7 @@ class Bot(commands.Bot):
         self.counter = Counter()
         self.uptime = datetime.datetime.now()
         self._message_modifiers = []
+        self.settings = Settings()
         super().__init__(*args, **kwargs)
 
     async def send_message(self, *args, **kwargs):
@@ -174,7 +179,7 @@ bot = Bot(command_prefix=["_"], formatter=formatter,
 send_cmd_help = bot.send_cmd_help  # Backwards
 user_allowed = bot.user_allowed    # compatibility
 
-settings = Settings()
+settings = bot.settings
 
 
 @bot.event
@@ -245,12 +250,14 @@ async def on_command_error(error, ctx):
     else:
         logger.exception(type(error).__name__, exc_info=error)
 
+
 async def get_oauth_url():
     try:
         data = await bot.application_info()
     except Exception as e:
         return "Couldn't retrieve invite link.Error: {}".format(e)
     return discord.utils.oauth_url(data.id)
+
 
 async def set_bot_owner():
     try:
@@ -294,8 +301,8 @@ def check_configs():
                   "process.")
             exit(1)
 
-        print("\nChoose a prefix. A prefix is what you type before a command.\n"
-              "A typical prefix would be the exclamation mark.\n"
+        print("\nChoose a prefix. A prefix is what you type before a command."
+              "\nA typical prefix would be the exclamation mark.\n"
               "Can be multiple characters. You will be able to change it "
               "later and add more of them.\nChoose your prefix:")
         confirmation = False
@@ -303,47 +310,51 @@ def check_configs():
             new_prefix = ensure_reply("\nPrefix> ").strip()
             print("\nAre you sure you want {0} as your prefix?\nYou "
                   "will be able to issue commands like this: {0}help"
-                  "\nType yes to confirm or no to change it".format(new_prefix))
+                  "\nType yes to confirm or no to change it".format(
+                      new_prefix))
             confirmation = get_answer()
 
         settings.prefixes = [new_prefix]
         if settings.login_type == "email":
-            print("\nOnce you're done with the configuration, you will have to type "
-                  "'{}set owner' *in Discord's chat*\nto set yourself as owner.\n"
-                  "Press enter to continue".format(new_prefix))
-            settings.owner = input("") # Shh, they will never know it's here
+            print("\nOnce you're done with the configuration, you will have to"
+                  " type '{}set owner' *in Discord's chat*\nto set yourself as"
+                  " owner.\nPress enter to continue".format(new_prefix))
+            settings.owner = input("")  # Shh, they will never know it's here
             if settings.owner == "":
                 settings.owner = "id_here"
             if not settings.owner.isdigit() or len(settings.owner) < 17:
                 if settings.owner != "id_here":
                     print("\nERROR: What you entered is not a valid ID. Set "
-                          "yourself as owner later with {}set owner".format(new_prefix))
+                          "yourself as owner later with {}set owner".format(
+                              new_prefix))
                 settings.owner = "id_here"
         else:
             settings.owner = "id_here"
 
-        print("\nInput the admin role's name. Anyone with this role in Discord will be "
-              "able to use the bot's admin commands")
+        print("\nInput the admin role's name. Anyone with this role in Discord"
+              " will be able to use the bot's admin commands")
         print("Leave blank for default name (Transistor)")
         settings.default_admin = input("\nAdmin role> ")
         if settings.default_admin == "":
             settings.default_admin = "Transistor"
 
-        print("\nInput the moderator role's name. Anyone with this role in Discord will "
-              "be able to use the bot's mod commands")
+        print("\nInput the moderator role's name. Anyone with this role in"
+              " Discord will be able to use the bot's mod commands")
         print("Leave blank for default name (Process)")
         settings.default_mod = input("\nModerator role> ")
         if settings.default_mod == "":
             settings.default_mod = "Process"
 
-        print("\nThe configuration is done. Leave this window always open to keep "
-              "Red online.\nAll commands will have to be issued through Discord's "
-              "chat, *this window will now be read only*.\nPress enter to continue")
+        print("\nThe configuration is done. Leave this window always open to"
+              " keep Red online.\nAll commands will have to be issued through"
+              " Discord's chat, *this window will now be read only*.\nPress"
+              " enter to continue")
         input("\n")
 
     if not os.path.isfile("data/red/cogs.json"):
         print("Creating new cogs.json...")
         dataIO.save_json("data/red/cogs.json", {})
+
 
 def set_logger():
     global logger
@@ -377,11 +388,13 @@ def set_logger():
     logger.addHandler(fhandler)
     logger.addHandler(stdout_handler)
 
+
 def ensure_reply(msg):
     choice = ""
     while choice == "":
         choice = input(msg)
     return choice
+
 
 def get_answer():
     choices = ("yes", "y", "no", "n")
@@ -393,10 +406,12 @@ def get_answer():
     else:
         return False
 
+
 def set_cog(cog, value):
     data = dataIO.load_json("data/red/cogs.json")
     data[cog] = value
     dataIO.save_json("data/red/cogs.json", data)
+
 
 def load_cogs():
     no_prompt = "--no-prompt" in sys.argv[1:]
@@ -500,11 +515,11 @@ if __name__ == '__main__':
         error = True
         logger.error(traceback.format_exc())
         choice = input("Invalid login credentials. "
-            "If they worked before Discord might be having temporary "
-            "technical issues.\nIn this case, press enter and "
-            "try again later.\nOtherwise you can type 'reset' to "
-            "delete the current configuration and redo the setup process "
-            "again the next start.\n> ")
+                       "If they worked before Discord might be having temporary "
+                       "technical issues.\nIn this case, press enter and "
+                       "try again later.\nOtherwise you can type 'reset' to "
+                       "delete the current configuration and redo the setup process "
+                       "again the next start.\n> ")
         if choice.strip() == "reset":
             shutil.copy('data/red/settings.json',
                         'data/red/settings-{}.bak'.format(int(time.time())))
