@@ -510,9 +510,10 @@ class Economy:
         server = ctx.message.server
         if credits >= 0:
             self.settings[server.id]["REGISTER_CREDITS"] = credits
-            await self.bot.say("Registering an account will now give " + str(credits) + " credits.")
         else:
             self.settings[server.id]["REGISTER_CREDITS"] = 0
+            credits = 0
+        await self.bot.say("Registering an account will now give {} credits.".format(credits))
         dataIO.save_json(self.file_path, self.settings)
 
     def display_time(self, seconds, granularity=2):  # What would I ever do without stackoverflow?
