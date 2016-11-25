@@ -202,8 +202,8 @@ async def on_ready():
     print("{} users".format(users))
     print("\n{}/{} active cogs with {} commands".format(
         len(bot.cogs), total_cogs, len(bot.commands)))
-    prefix_label = "Prefixes:" if len(bot.command_prefix) > 1 else "Prefix:"
-    print("{} {}\n".format(prefix_label, " ".join(bot.command_prefix)))
+    prefix_label = "Prefixes:" if len(settings.prefixes) > 1 else "Prefix:"
+    print("{} {}\n".format(prefix_label, " ".join(settings.prefixes)))
     if settings.login_type == "token":
         print("------")
         print("Use this url to bring your bot to a server:")
@@ -481,14 +481,14 @@ def main():
     owner_cog = load_cogs()
     if settings.prefixes == []:
         print("No prefix set. Defaulting to !")
-        bot.command_prefix = ["!"]
+        settings.prefixes = ["!"]
         if settings.owner != "id_here":
             print("Use !set prefix to set it.")
         else:
             print("Once you're owner use !set prefix to set it.")
     if settings.owner == "id_here" and settings.login_type == "email":
         print("Owner has not been set yet. Do '{}set owner' in chat to set "
-              "yourself as owner.".format(bot.command_prefix[0]))
+              "yourself as owner.".format(settings.prefixes[0]))
     else:
         owner_cog.owner.hidden = True  # Hides the set owner command from help
     print("-- Logging in.. --")
