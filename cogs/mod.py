@@ -13,7 +13,8 @@ import asyncio
 default_settings = {
     "ban_mention_spam" : False,
     "delete_repeats"   : False,
-    "mod-log"          : None
+    "mod-log"          : None,
+    "Points"           : 10
                    }
 
 
@@ -42,6 +43,7 @@ class Mod:
         self.blacklist_list = dataIO.load_json("data/mod/blacklist.json")
         self.ignore_list = dataIO.load_json("data/mod/ignorelist.json")
         self.filter = dataIO.load_json("data/mod/filter.json")
+        self.warnings = dataIO.load_json("data/mod/warnings.json")
         self.past_names = dataIO.load_json("data/mod/past_names.json")
         self.past_nicknames = dataIO.load_json("data/mod/past_nicknames.json")
         settings = dataIO.load_json("data/mod/settings.json")
@@ -107,6 +109,22 @@ class Mod:
         dataIO.save_json("data/mod/settings.json", self.settings)
 
     @modset.command(pass_context=True, no_pm=True)
+    async def points(self, ctx, points : int):
+        """Set the limit of warning points before being banned"""
+
+        server = ctx.message.server
+        if "Points" in self.settings[server.id]:
+            self.settings[server.id]["Points"] = points
+            await self.bot.say("You have set the max warning points to {}".format(points))
+        else:
+            if self.settings[server.id]["Points"] is None:
+                await send_cmd_help(ctx)
+                return
+            self.settings[server.id]["Points"] = 10
+            await self.bot.say("Set warning points to 10")
+        dataIO.save_json("data/mod/settings.json", self.settings)
+
+    @modset.command(pass_context=True, no_pm=True)
     async def banmentionspam(self, ctx, max_mentions : int=False):
         """Enables auto ban for messages mentioning X different people
 
@@ -168,6 +186,110 @@ class Mod:
             await self.bot.say("I'm not allowed to do that.")
         except Exception as e:
             print(e)
+
+    @commands.command(no_pm=True, pass_context=True)
+    @checks.admin_or_permissions(ban_members=True)
+    async def warn(self, ctx, user: discord.Member, number: int):
+        """Warns a user with warning points"""
+        author = ctx.message.author
+        server = author.server
+
+        if server.id not in self.warnings:
+            self.warnings[server.id] = {}
+            dataIO.save_json("data/mod/warnings.json", self.warnings)
+        else:
+            pass
+
+        if number < 0:
+            await self.bot.say("Negative Numbers is not allowed.")
+            return
+
+        if user.id in self.warnings[server.id]:
+            warn = int(self.warnings[server.id][user.id]) + int(number)
+        else:
+            warn = number
+
+        self.warnings[server.id].update({user.id : warn})
+        dataIO.save_json("data/mod/warnings.json", self.warnings)
+
+        points = self.warnings[server.id][user.id]
+        maxpoints = self.settings[server.id]["Points"]
+
+        if points >= maxpoints:
+            try:
+                self._tmp_banned_cache.append(user)
+                await self.bot.ban(user, 0)
+                logger.info("{}({}) banned {}({}), deleting {} days worth of messages".format(
+                    author.name, author.id, user.name, user.id, str(days)))
+                await self.new_case(server, action="Ban \N{HAMMER}", mod=author, user=user)
+                await self.bot.say("Done. It was about time.")
+            except discord.errors.Forbidden:
+                await self.bot.say("I'm not allowed to do that.")
+            except Exception as e:
+                print(e)
+            finally:
+                await asyncio.sleep(1)
+                self._tmp_banned_cache.remove(user)
+
+        if points < maxpoints:
+            try:
+                logger.info("{}({}) has warned {}({}) with {} points".format(
+                author.name, author.id, user.name, user.id, str(number)))
+                await self.new_case(server,
+                                    action="Warning:warning:",
+                                    mod=author,
+                                    user=user)
+                await self.bot.say("Done. That felt good.")
+            except discord.errors.Forbidden:
+                await self.bot.say("I'm not allowed to do that.")
+            except Exception as e:
+                print(e)
+
+    @commands.command(no_pm=True, pass_context=True)
+    @checks.admin_or_permissions(ban_members=True)
+    async def removep(self, ctx, user: discord.Member, num: int):
+        """Removes warning points"""
+
+        author = ctx.message.author
+        server = author.server
+
+        if server.id not in self.warnings:
+            self.warnings[server.id] = {}
+            dataIO.save_json("data/mod/warnings.json", self.warnings)
+        else:
+            pass
+
+        if num < 0:
+            await self.bot.say("Just because we are taking away points, doesn't mean we need to use -.")
+        else:
+            pass
+
+        points = self.warnings[server.id][user.id]
+        maxpoints = self.settings[server.id]["Points"]
+
+        if points > maxpoints:
+            await self.bot.say("You can subtract more then your max")
+        else:
+            pass
+
+        if num > points:
+            await self.bot.say("You can't subtract more points then what the user already has")
+        else:
+            pass
+
+        if num <= points:
+            if num < maxpoints:
+                warn = int(self.warnings[server.id][user.id]) - int(num)
+                self.warnings[server.id].update({user.id : warn})
+                dataIO.save_json("data/mod/warnings.json", self.warnings)
+                await self.bot.say("You have subtracted -{} from {} warnings points".format(num, points))
+            else:
+                await self.bot.say("Number is higher the maxpoints")
+        else:
+            await self.bot.say("Number is higher then what the person already has")
+
+
+
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(ban_members=True)
@@ -1303,6 +1425,7 @@ def check_files():
         "past_nicknames.json" : {},
         "settings.json"       : {},
         "modlog.json"         : {},
+        "warnings.json"       : {},
         "perms_cache.json"    : {}
     }
 
