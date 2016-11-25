@@ -57,7 +57,7 @@ class Alias:
             server_aliases = self.aliases[server.id]
             if command in server_aliases:
                 help_cmd = server_aliases[command].split(" ")[0]
-                new_content = self.bot.command_prefix[0]
+                new_content = self.bot.settings.get_prefix(server)[0]
                 new_content += "help "
                 new_content += help_cmd[len(self.get_prefix(help_cmd)):]
                 message = ctx.message
