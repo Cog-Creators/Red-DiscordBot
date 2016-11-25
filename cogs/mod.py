@@ -59,11 +59,14 @@ class Mod:
             await send_cmd_help(ctx)
             roles = settings.get_server(server).copy()
             _settings = {**self.settings[server.id], **roles}
+            if "delete_delay" not in _settings:
+                _settings["delete_delay"] = -1
             msg = ("Admin role: {ADMIN_ROLE}\n"
                    "Mod role: {MOD_ROLE}\n"
                    "Mod-log: {mod-log}\n"
                    "Delete repeats: {delete_repeats}\n"
                    "Ban mention spam: {ban_mention_spam}\n"
+                   "Delete delay: {delete_delay}\n"
                    "".format(**_settings))
             await self.bot.say(box(msg))
 
@@ -148,8 +151,8 @@ class Mod:
 
     @modset.command(pass_context=True, no_pm=True)
     async def deletedelay(self, ctx, time: int=None):
-        """Sets the delay until the bot removes the command message. Must be
-            between -1 and 60.
+        """Sets the delay until the bot removes the command message.
+            Must be between -1 and 60.
 
         A delay of -1 means the bot will not remove the message."""
         server = ctx.message.server
