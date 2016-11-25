@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from cogs.utils import checks
-from __main__ import set_cog, send_cmd_help, settings
+from __main__ import set_cog
 from .utils.dataIO import dataIO
 from .utils.chat_formatting import pagify, box
 
@@ -13,7 +13,6 @@ import threading
 import datetime
 import glob
 import os
-import time
 import aiohttp
 
 log = logging.getLogger("red.owner")
@@ -221,7 +220,7 @@ class Owner:
         result = str(result)
 
         if not ctx.message.channel.is_private:
-            censor = (settings.email, settings.password)
+            censor = (self.bot.settings.email, self.bot.settings.password)
             r = "[EXPUNGED]"
             for w in censor:
                 if w != "":
@@ -235,7 +234,7 @@ class Owner:
     async def _set(self, ctx):
         """Changes Red's global settings."""
         if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
             return
 
     @_set.command(pass_context=True)
@@ -245,7 +244,7 @@ class Owner:
             await self.bot.say("A set owner command is already pending.")
             return
 
-        if settings.owner != "id_here":
+        if self.bot.settings.owner != "id_here":
             await self.bot.say(
             "The owner is already set. Remember that setting the owner "
             "to someone else other than who hosts the bot has security "
@@ -262,23 +261,46 @@ class Owner:
     @_set.command(pass_context=True)
     @checks.is_owner()
     async def prefix(self, ctx, *prefixes):
-        """Sets Red's prefixes
+        """Sets Red's global prefixes
 
         Accepts multiple prefixes separated by a space. Enclose in double
         quotes if a prefix contains spaces.
         Example: set prefix ! $ ? "two words" """
         if prefixes == ():
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
             return
 
-        self.bot.command_prefix = sorted(prefixes, reverse=True)
-        settings.prefixes = sorted(prefixes, reverse=True)
-        log.debug("Setting prefixes to:\n\t{}".format(settings.prefixes))
+        self.bot.settings.prefixes = sorted(prefixes, reverse=True)
+        log.debug("Setting global prefixes to:\n\t{}"
+                  "".format(self.bot.settings.prefixes))
 
-        if len(prefixes) > 1:
-            await self.bot.say("Prefixes set")
-        else:
-            await self.bot.say("Prefix set")
+        p = "prefixes" if len(prefixes) > 1 else "prefix"
+        await self.bot.say("Global {} set".format(p))
+
+    @_set.command(pass_context=True, no_pm=True)
+    @checks.serverowner_or_permissions(administrator=True)
+    async def serverprefix(self, ctx, *prefixes):
+        """Sets Red's prefixes for this server
+
+        Accepts multiple prefixes separated by a space. Enclose in double
+        quotes if a prefix contains spaces.
+        Example: set prefix ! $ ? "two words" """
+        server = ctx.message.server
+
+        if prefixes == ():
+            self.bot.settings.set_server_prefixes(server, [])
+            current_p = ", ".join(self.bot.settings.prefixes)
+            await self.bot.say("Prefixes reset. Current prefixes: "
+                               "`{}`".format(current_p))
+            return
+
+        prefixes = sorted(prefixes, reverse=True)
+        self.bot.settings.set_server_prefixes(server, prefixes)
+        log.debug("Setting server's {} prefixes to:\n\t{}"
+                  "".format(server.id, self.bot.settings.prefixes))
+
+        p = "Prefixes" if len(prefixes) > 1 else "Prefix"
+        await self.bot.say("{} set for this server".format(p))
 
     @_set.command(pass_context=True)
     @checks.is_owner()
@@ -287,16 +309,18 @@ class Owner:
         name = name.strip()
         if name != "":
             try:
-                await self.bot.edit_profile(settings.password, username=name)
+                await self.bot.edit_profile(self.bot.settings.password,
+                                            username=name)
             except:
                 await self.bot.say("Failed to change name. Remember that you"
                                    " can only do it up to 2 times an hour."
                                    "Use nicknames if you need frequent "
-                                   "changes. {}set nickname".format(ctx.prefix))
+                                   "changes. {}set nickname"
+                                   "".format(ctx.prefix))
             else:
                 await self.bot.say("Done.")
         else:
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
 
     @_set.command(pass_context=True, no_pm=True)
     @checks.is_owner()
@@ -368,7 +392,7 @@ class Owner:
                                                game=current_game)
                 await self.bot.say("Status changed.")
             else:
-                await send_cmd_help(ctx)
+                await self.bot.send_cmd_help(ctx)
 
     @_set.command(pass_context=True)
     @checks.is_owner()
@@ -389,7 +413,7 @@ class Owner:
             await self.bot.change_presence(game=game, status=current_status)
             log.debug('Owner has set streaming status and url to "{}" and {}'.format(stream_title, streamer))
         elif streamer is not None:
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
             return
         else:
             await self.bot.change_presence(game=None, status=current_status)
@@ -403,7 +427,7 @@ class Owner:
         try:
             async with self.session.get(url) as r:
                 data = await r.read()
-            await self.bot.edit_profile(settings.password, avatar=data)
+            await self.bot.edit_profile(self.bot.settings.password, avatar=data)
             await self.bot.say("Done.")
             log.debug("changed avatar")
         except Exception as e:
@@ -419,9 +443,9 @@ class Owner:
         if len(token) < 50:
             await self.bot.say("Invalid token.")
         else:
-            settings.login_type = "token"
-            settings.email = token
-            settings.password = ""
+            self.bot.settings.login_type = "token"
+            self.bot.settings.email = token
+            self.bot.settings.password = ""
             await self.bot.say("Token set. Restart me.")
             log.debug("Token changed.")
 
@@ -438,7 +462,7 @@ class Owner:
 
         With no subcommands returns the disabled commands list"""
         if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
             if self.disabled_commands:
                 msg = "Disabled commands:\n```xl\n"
                 for cmd in self.disabled_commands:
@@ -592,10 +616,11 @@ class Owner:
     @commands.command(pass_context=True)
     async def contact(self, ctx, *, message : str):
         """Sends message to the owner"""
-        if settings.owner == "id_here":
+        if self.bot.settings.owner == "id_here":
             await self.bot.say("I have no owner set.")
             return
-        owner = discord.utils.get(self.bot.get_all_members(), id=settings.owner)
+        owner = discord.utils.get(self.bot.get_all_members(),
+                                  id=self.bot.settings.owner)
         author = ctx.message.author
         if ctx.message.channel.is_private is False:
             server = ctx.message.server
@@ -630,12 +655,13 @@ class Owner:
         py_version = "[{}.{}.{}]({})".format(*os.sys.version_info[:3],
                                              python_url)
 
-        owner = settings.owner if settings.owner != "id_here" else None
+        owner_set = self.bot.settings.owner != "id_here"
+        owner = self.bot.settings.owner if owner_set else None
         if owner:
             owner = discord.utils.get(self.bot.get_all_members(), id=owner)
             if not owner:
                 try:
-                    owner = await self.bot.get_user_info(settings.owner)
+                    owner = await self.bot.get_user_info(self.bot.settings.owner)
                 except:
                     owner = None
         if not owner:
@@ -726,7 +752,7 @@ class Owner:
             choice = input("> ")
 
         if choice == "yes":
-            settings.owner = author.id
+            self.bot.settings.owner = author.id
             print(author.name + " has been set as owner.")
             self.setowner_lock = False
             self.owner.hidden = True

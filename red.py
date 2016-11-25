@@ -52,7 +52,7 @@ class Bot(commands.Bot):
         self.uptime = datetime.datetime.now()
         self._message_modifiers = []
         self.settings = Settings()
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, command_prefix=self.prefix_manager, **kwargs)
 
     async def send_message(self, *args, **kwargs):
         if self._message_modifiers:
@@ -154,6 +154,9 @@ class Bot(commands.Bot):
         else:
             return True
 
+    def prefix_manager(self, bot, msg):
+        return self.settings.get_prefixes(msg.server)
+
 
 class Formatter(commands.HelpFormatter):
     def __init__(self, *args, **kwargs):
@@ -173,8 +176,7 @@ class Formatter(commands.HelpFormatter):
 
 formatter = Formatter(show_check_failure=False)
 
-bot = Bot(command_prefix=["_"], formatter=formatter,
-          description=description, pm_help=None)
+bot = Bot(formatter=formatter, description=description, pm_help=None)
 
 send_cmd_help = bot.send_cmd_help  # Backwards
 user_allowed = bot.user_allowed    # compatibility
@@ -477,9 +479,7 @@ def main():
     check_configs()
     set_logger()
     owner_cog = load_cogs()
-    if settings.prefixes != []:
-        bot.command_prefix = settings.prefixes
-    else:
+    if settings.prefixes == []:
         print("No prefix set. Defaulting to !")
         bot.command_prefix = ["!"]
         if settings.owner != "id_here":
