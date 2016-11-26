@@ -284,13 +284,16 @@ class Owner:
 
         Accepts multiple prefixes separated by a space. Enclose in double
         quotes if a prefix contains spaces.
-        Example: set prefix ! $ ? "two words" """
+        Example: set serverprefix ! $ ? "two words"
+
+        Issuing this command with no parameters will reset the server
+        prefixes and the global ones will be used instead."""
         server = ctx.message.server
 
         if prefixes == ():
             self.bot.settings.set_server_prefixes(server, [])
             current_p = ", ".join(self.bot.settings.prefixes)
-            await self.bot.say("Prefixes reset. Current prefixes: "
+            await self.bot.say("Server prefixes reset. Current prefixes: "
                                "`{}`".format(current_p))
             return
 
@@ -300,7 +303,10 @@ class Owner:
                   "".format(server.id, self.bot.settings.prefixes))
 
         p = "Prefixes" if len(prefixes) > 1 else "Prefix"
-        await self.bot.say("{} set for this server".format(p))
+        await self.bot.say("{} set for this server.\n"
+                           "To go back to the global prefixes, do"
+                           " `{}set serverprefix` "
+                           "".format(p, prefixes[0]))
 
     @_set.command(pass_context=True)
     @checks.is_owner()

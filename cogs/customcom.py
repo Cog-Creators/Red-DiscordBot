@@ -128,7 +128,7 @@ class CustomCommands:
                 await self.bot.send_message(message.channel, cmd)
 
     def get_prefix(self, message):
-        for p in self.bot.settings.get_prefix(message.server):
+        for p in self.bot.settings.get_prefixes(message.server):
             if message.content.startswith(p):
                 return p
         return False
