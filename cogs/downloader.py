@@ -23,6 +23,10 @@ class UpdateError(Exception):
     pass
 
 
+class CloningError(UpdateError):
+    pass
+
+
 class Downloader:
     """Cog downloader/installer."""
 
@@ -79,7 +83,13 @@ class Downloader:
             return
         self.repos[repo_name] = {}
         self.repos[repo_name]['url'] = repo_url
-        self.update_repo(repo_name)
+        try:
+            self.update_repo(repo_name)
+        except CloningError:
+            await self.bot.say("That repository link doesn't seem to be "
+                               "valid.")
+            del self.repos[repo_name]
+            return
         self.populate_list(repo_name)
         self.save_repos()
         data = self.get_info_data(repo_name)
@@ -431,13 +441,26 @@ class Downloader:
         return git_name[:-4]
 
     def _do_first_run(self):
+        invalid = []
         save = False
+
         for repo in self.repos:
             broken = 'url' in self.repos[repo] and len(self.repos[repo]) == 1
             if broken:
-                self.update_repo(repo)
-                self.populate_list(repo)
                 save = True
+                try:
+                    self.update_repo(repo)
+                    self.populate_list(repo)
+                except CloningError:
+                    invalid.append(repo)
+                    continue
+                except Exception as e:
+                    print(e) # TODO: Proper logging
+                    continue
+
+        for repo in invalid:
+            del self.repos[repo]
+
         if save:
             self.save_repos()
 
@@ -469,7 +492,7 @@ class Downloader:
                     raise UpdateError("Need to clone but no URL set")
                 p = run(["git", "clone", url, dd + name])
                 if p.returncode != 0:
-                    raise UpdateError("Error cloning")
+                    raise CloningError()
                 self.populate_list(name)
                 return name, REPO_CLONE, None
             else:
@@ -510,6 +533,8 @@ class Downloader:
                             ret[status] = []
                         ret[status].append(cogname)
                     return name, ret, oldhash
+        except CloningError as e:
+            raise CloningError(name, *e.args) from None
         except UpdateError as e:
             raise UpdateError(name, *e.args) from None
 
