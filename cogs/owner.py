@@ -194,9 +194,14 @@ class Owner:
     @commands.command(pass_context=True, hidden=True)
     @checks.is_owner()
     async def debug(self, ctx, *, code):
-        """Evaluates code
+        """Evaluates code"""
+        def check(m):
+            if m.content.strip().lower() == "more":
+                return True
 
-        Modified function, originally made by Rapptz"""
+        author = ctx.message.author
+        channel = ctx.message.channel
+
         code = code.strip('` ')
         result = None
 
@@ -228,7 +233,25 @@ class Owner:
                     result = result.replace(w, r)
                     result = result.replace(w.lower(), r)
                     result = result.replace(w.upper(), r)
-        for page in pagify(result, shorten_by=12):
+
+        result = list(pagify(result, shorten_by=16))
+
+        for i, page in enumerate(result):
+            if i != 0 and i % 4 == 0:
+                last = await self.bot.say("There are still {} messages. "
+                                          "Type `more` to continue."
+                                          "".format(len(result) - (i+1)))
+                msg = await self.bot.wait_for_message(author=author,
+                                                      channel=channel,
+                                                      check=check,
+                                                      timeout=10)
+                if msg is None:
+                    try:
+                        await self.bot.delete_message(last)
+                    except:
+                        pass
+                    finally:
+                        break
             await self.bot.say(box(page, lang="py"))
 
     @commands.group(name="set", pass_context=True)
