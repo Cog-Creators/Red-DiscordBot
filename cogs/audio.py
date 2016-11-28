@@ -1852,11 +1852,11 @@ class Audio:
                     stop_times[server] = int(time.time())
 
                 if hasattr(vc, 'audio_player'):
-                    if (vc.audio_player.is_done() == 1):
+                    if (vc.audio_player.is_done() == True):
                         if server not in stop_times or stop_times[server] is None:
                             log.debug("putting sid {} in stop loop".format(server.id))
                             stop_times[server] = int(time.time())
-                    elif self._noppl_disconnect == False:
+                    if not self._noppl_disconnect:
                         if (len(vc.channel.voice_members) == 1):
                             if server not in stop_times or stop_times[server] is None:
                                 log.debug("putting sid {} in stop loop".format(server.id))
