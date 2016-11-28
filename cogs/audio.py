@@ -290,8 +290,8 @@ class Audio:
         setting_max = self.settings["MAX_CACHE"]
         return max([setting_max, self._cache_min()])  # enforcing hard limit
 
-    def _nodisconnect(self):
-        setting_nodis = self.settings["NODIS"]
+    def _noppl_disconnect(self):
+        setting_nodis = self.settings["NOPPL_DIS"]
 
     def _cache_min(self):
         x = self._server_count()
@@ -1852,8 +1852,12 @@ class Audio:
                     stop_times[server] = int(time.time())
 
                 if hasattr(vc, 'audio_player'):
-                    if (self._nodisconnect() == False):
-                        if (vc.audio_player.is_done() or len(vc.channel.voice_members) == 1):
+                    if (vc.audio_player.is_done() == 1):
+                        if server not in stop_times or stop_times[server] is None:
+                            log.debug("putting sid {} in stop loop".format(server.id))
+                            stop_times[server] = int(time.time())
+                    elif self._noppl_disconnect == False:
+                        if (len(vc.channel.voice_members) == 1):
                             if server not in stop_times or stop_times[server] is None:
                                 log.debug("putting sid {} in stop loop".format(server.id))
                                 stop_times[server] = int(time.time())
@@ -2053,7 +2057,7 @@ def check_folders():
 def check_files():
     default = {"VOLUME": 50, "MAX_LENGTH": 3700, "VOTE_ENABLED": True,
                "MAX_CACHE": 0, "SOUNDCLOUD_CLIENT_ID": None,
-               "TITLE_STATUS": True, "AVCONV": False, "VOTE_THRESHOLD": 50, "NODIS": False,
+               "TITLE_STATUS": True, "AVCONV": False, "VOTE_THRESHOLD": 50, "NOPPL_DIS": False,
                "SERVERS": {}}
     settings_path = "data/audio/settings.json"
 
