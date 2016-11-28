@@ -291,7 +291,7 @@ class Audio:
         return max([setting_max, self._cache_min()])  # enforcing hard limit
 
     def _nodisconnect(self):
-        setting_nodis = self.settings["NO_PPLDIS"]
+        setting_nodis = self.settings["NODIS"]
 
     def _cache_min(self):
         x = self._server_count()
@@ -2053,7 +2053,7 @@ def check_folders():
 def check_files():
     default = {"VOLUME": 50, "MAX_LENGTH": 3700, "VOTE_ENABLED": True,
                "MAX_CACHE": 0, "SOUNDCLOUD_CLIENT_ID": None,
-               "TITLE_STATUS": True, "AVCONV": False, "VOTE_THRESHOLD": 50, "NO_PPLDIS": False,
+               "TITLE_STATUS": True, "AVCONV": False, "VOTE_THRESHOLD": 50, "NODIS": False,
                "SERVERS": {}}
     settings_path = "data/audio/settings.json"
 
