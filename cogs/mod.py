@@ -1310,7 +1310,7 @@ class Mod:
 
     async def check_names(self, before, after):
         if before.name != after.name:
-            if before.id not in self.past_names.keys():
+            if before.id not in self.past_names:
                 self.past_names[before.id] = [after.name]
             else:
                 if after.name not in self.past_names[before.id]:
