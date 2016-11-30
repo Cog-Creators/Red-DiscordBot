@@ -1852,15 +1852,14 @@ class Audio:
                     stop_times[server] = int(time.time())
 
                 if hasattr(vc, 'audio_player'):
-                    if (vc.audio_player.is_done() == True):
+                    if vc.audio_player.is_done():
                         if server not in stop_times or stop_times[server] is None:
                             log.debug("putting sid {} in stop loop".format(server.id))
                             stop_times[server] = int(time.time())
-                    if not self._noppl_disconnect:
-                        if (len(vc.channel.voice_members) == 1):
-                            if server not in stop_times or stop_times[server] is None:
-                                log.debug("putting sid {} in stop loop".format(server.id))
-                                stop_times[server] = int(time.time())
+                    if self._noppl_disconnect and len(vc.channel.voice_members) == 1:
+                        if server not in stop_times or stop_times[server] is None:
+                            log.debug("putting sid {} in stop loop".format(server.id))
+                            stop_times[server] = int(time.time())
                     elif vc.audio_player.is_playing():
                         stop_times[server] = None
 
@@ -2057,7 +2056,7 @@ def check_folders():
 def check_files():
     default = {"VOLUME": 50, "MAX_LENGTH": 3700, "VOTE_ENABLED": True,
                "MAX_CACHE": 0, "SOUNDCLOUD_CLIENT_ID": None,
-               "TITLE_STATUS": True, "AVCONV": False, "VOTE_THRESHOLD": 50, "NOPPL_DIS": False,
+               "TITLE_STATUS": True, "AVCONV": False, "VOTE_THRESHOLD": 50, "NOPPL_DIS": True,
                "SERVERS": {}}
     settings_path = "data/audio/settings.json"
 
