@@ -239,7 +239,7 @@ class Audio:
         self.downloaders = {}  # sid: object
         self.settings = dataIO.load_json("data/audio/settings.json")
         self.server_specific_setting_keys = ["VOLUME", "VOTE_ENABLED",
-                                             "VOTE_THRESHOLD"]
+                                             "VOTE_THRESHOLD", "NOPPL_DISCONNECT"]
         self.cache_path = "data/audio/cache"
         self.local_playlist_path = "data/audio/localtracks"
         self._old_game = False
@@ -992,12 +992,16 @@ class Audio:
         await self.bot.say("Max cache size set to {} MB.".format(size))
         self.save_settings()
     
-    @audioset.command(name="emptydisconnect")
+    @audioset.command(name="emptydisconnect", pass_context=True)
     @checks.is_owner()  # cause effect is cross-server
-    async def audioset_emptydisconnect(self):
+    async def audioset_emptydisconnect(self, ctx):
         """Toggles auto disconnection when everyone leaves the channel"""
-        self.settings["NOPPL_DIS"] = not self.settings["NOPPL_DIS"]
-        if self.settings["NOPPL_DIS"]:
+        server = ctx.message.server
+        server_set = self.get_server_settings(server_set)
+        noppl_disconnect = server_set.get("NOPPL_DISCONNECT", True)
+        self.set_server_setting(server, "NOPPL_DISCONNECT",
+                                not noppl_disconnect)
+        if not noppl_disconnect:
             await self.bot.say("If there is no one left in the voice channel"
                                " the bot will automatically disconnect after"
                                " five minutes.")
@@ -1868,7 +1872,8 @@ class Audio:
                             log.debug("putting sid {} in stop loop".format(server.id))
                             stop_times[server] = int(time.time())
 
-                    noppl_disconnect = self.settings["NOPPL_DIS"]
+                    noppl_disconnect = self.get_server_setting(server)
+                    noppl_disconnect = noppl_disconnect.get("NOPPL_DISCONNECT", True)
                     if noppl_disconnect and len(vc.channel.voice_members) == 1:
                         if server not in stop_times or stop_times[server] is None:
                             log.debug("putting sid {} in stop loop".format(server.id))
@@ -2069,7 +2074,7 @@ def check_folders():
 def check_files():
     default = {"VOLUME": 50, "MAX_LENGTH": 3700, "VOTE_ENABLED": True,
                "MAX_CACHE": 0, "SOUNDCLOUD_CLIENT_ID": None,
-               "TITLE_STATUS": True, "AVCONV": False, "VOTE_THRESHOLD": 50, "NOPPL_DIS": True,
+               "TITLE_STATUS": True, "AVCONV": False, "VOTE_THRESHOLD": 50,
                "SERVERS": {}}
     settings_path = "data/audio/settings.json"
 
