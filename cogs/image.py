@@ -9,6 +9,7 @@ except:
 
 CLIENT_ID = "1fd3ef04daf8cab"
 CLIENT_SECRET = "f963e574e8e3c17993c933af4f0522e1dc01e230"
+GIPHY_API_KEY = "dc6zaTOxFJmzC"
 
 
 class Image:
@@ -90,7 +91,7 @@ class Image:
                 try:
                     msg = "+".join(text)
                     search = "http://api.giphy.com/v1/gifs/search?q=" + msg +\
-                             "&api_key=dc6zaTOxFJmzC"
+                             "&api_key=" + GIPHY_API_KEY
                     async with aiohttp.get(search) as r:
                         result = await r.json()
                     if result["data"] != []:
@@ -117,7 +118,7 @@ class Image:
                 try:
                     msg = "+".join(text)
                     search = "http://api.giphy.com/v1/gifs/random" +\
-                             "?&api_key=dc6zaTOxFJmzC&tag=" + msg
+                             "?&api_key=" + GIPHY_API_KEY + "&tag=" + msg
                     async with aiohttp.get(search) as r:
                         result = await r.json()
                         if result["data"] != []:
