@@ -995,7 +995,7 @@ class Audio:
     @audioset.command(name="emptydisconnect")
     @checks.is_owner()  # cause effect is cross-server
     async def audioset_emptydisconnect(self):
-        """Enables/disables songs' titles as status"""
+        """Toggles auto disconnection when everyone leaves the channel"""
         self.settings["NOPPL_DIS"] = not self.settings["NOPPL_DIS"]
         if self.settings["NOPPL_DIS"]:
             await self.bot.say("If there is no one left in the voice channel"
