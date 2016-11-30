@@ -178,8 +178,7 @@ class Settings:
     def get_server_prefixes(self, server):
         if server is None or server.id not in self.bot_settings:
             return self.prefixes
-        p = self.bot_settings[server.id].get("PREFIXES")
-        return p if p else None
+        return self.bot_settings[server.id].get("PREFIXES", [])
 
     def set_server_prefixes(self, server, prefixes):
         if server is None:

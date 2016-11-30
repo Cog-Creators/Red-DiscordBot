@@ -52,7 +52,8 @@ class Bot(commands.Bot):
         self.uptime = datetime.datetime.now()
         self._message_modifiers = []
         self.settings = Settings()
-        super().__init__(*args, command_prefix=self.prefix_manager, **kwargs)
+        prefix_man = lambda bot, msg: self.settings.get_prefixes(msg.server)
+        super().__init__(*args, command_prefix=prefix_man, **kwargs)
 
     async def send_message(self, *args, **kwargs):
         if self._message_modifiers:
@@ -153,9 +154,6 @@ class Bot(commands.Bot):
             return True
         else:
             return True
-
-    def prefix_manager(self, bot, msg):
-        return self.settings.get_prefixes(msg.server)
 
 
 class Formatter(commands.HelpFormatter):
