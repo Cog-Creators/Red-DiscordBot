@@ -48,12 +48,23 @@ description = "Red - A multifunction Discord bot by Twentysix"
 
 class Bot(commands.Bot):
     def __init__(self, *args, **kwargs):
+
+        def prefix_manager(bot, message):
+            """
+            Returns prefixes of the message's server if set.
+            If none are set or if the message's server is None
+            it will return the global prefixes instead.
+
+            Requires a Bot instance and a Message object to be
+            passed as arguments.
+            """
+            return bot.settings.get_prefixes(message.server)
+
         self.counter = Counter()
         self.uptime = datetime.datetime.now()
         self._message_modifiers = []
         self.settings = Settings()
-        prefix_man = lambda bot, msg: bot.settings.get_prefixes(msg.server)
-        super().__init__(*args, command_prefix=prefix_man, **kwargs)
+        super().__init__(*args, command_prefix=prefix_manager, **kwargs)
 
     async def send_message(self, *args, **kwargs):
         if self._message_modifiers:
