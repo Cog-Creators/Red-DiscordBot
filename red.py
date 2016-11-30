@@ -52,7 +52,7 @@ class Bot(commands.Bot):
         self.uptime = datetime.datetime.now()
         self._message_modifiers = []
         self.settings = Settings()
-        prefix_man = lambda bot, msg: self.settings.get_prefixes(msg.server)
+        prefix_man = lambda bot, msg: bot.settings.get_prefixes(msg.server)
         super().__init__(*args, command_prefix=prefix_man, **kwargs)
 
     async def send_message(self, *args, **kwargs):
