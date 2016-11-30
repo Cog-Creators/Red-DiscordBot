@@ -4,9 +4,11 @@ import aiohttp
 import random
 try:
     from imgurpython import ImgurClient
-    have_imgurpython = True
 except:
-    have_imgurpython = False
+    ImgurClient = False
+
+CLIENT_ID = "1fd3ef04daf8cab"
+CLIENT_SECRET = "f963e574e8e3c17993c933af4f0522e1dc01e230"
 
 
 class Image:
@@ -14,12 +16,7 @@ class Image:
 
     def __init__(self, bot):
         self.bot = bot
-        self.imgurclient\
-            = ImgurClient("1fd3ef04daf8cab",
-                          "f963e574e8e3c17993c933af4f0522e1dc01e230")
-        # Reserved for further ... stuff
-
-    """Commands section"""
+        self.imgurclient = ImgurClient(CLIENT_ID, CLIENT_SECRET)
 
     @commands.group(no_pm=True, pass_context=True)
     async def imgur(self, ctx):
@@ -139,8 +136,8 @@ class Image:
 
 
 def setup(bot):
-    if not have_imgurpython:
-        raise RuntimeError("You need to do pip3 install" +
-                           " imgurpython to use this!")
-    else:
+    if ImgurClient:
         bot.add_cog(Image(bot))
+    else:
+        raise RuntimeError("You need the imgurpython module to use this!\n"
+                           "pip3 install imgurpython")
