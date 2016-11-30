@@ -222,7 +222,7 @@ class Economy:
         user = ctx.message.author
         credits = 0
         if ctx.message.server.id in self.settings:
-            credits = self.settings[ctx.message.server.id]["REGISTER_CREDITS"]
+            credits = self.settings[ctx.message.server.id].get("REGISTER_CREDITS", 0)
         try:
             account = self.bank.create_account(user, initial_balance=credits)
             await self.bot.say("{} Account opened. Current balance: {}".format(user.mention,
@@ -508,11 +508,9 @@ class Economy:
     async def registercredits(self, ctx, credits : int):
         """Credits given on registering an account"""
         server = ctx.message.server
-        if credits >= 0:
-            self.settings[server.id]["REGISTER_CREDITS"] = credits
-        else:
-            self.settings[server.id]["REGISTER_CREDITS"] = 0
+        if credits < 0:
             credits = 0
+        self.settings[server.id]["REGISTER_CREDITS"] = credits
         await self.bot.say("Registering an account will now give {} credits.".format(credits))
         dataIO.save_json(self.file_path, self.settings)
 
