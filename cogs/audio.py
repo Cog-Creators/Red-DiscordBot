@@ -290,9 +290,6 @@ class Audio:
         setting_max = self.settings["MAX_CACHE"]
         return max([setting_max, self._cache_min()])  # enforcing hard limit
 
-    def _noppl_disconnect(self):
-        setting_nodis = self.settings["NOPPL_DIS"]
-
     def _cache_min(self):
         x = self._server_count()
         return max([60, 48 * math.log(x) * x**0.3])  # log is not log10
