@@ -1867,7 +1867,8 @@ class Audio:
                         if server not in stop_times or stop_times[server] is None:
                             log.debug("putting sid {} in stop loop".format(server.id))
                             stop_times[server] = int(time.time())
-                    if self._noppl_disconnect and len(vc.channel.voice_members) == 1:
+                    noppl_disconnect = self.settings["NOPPL_DIS"]
+                    if noppl_disconnect and len(vc.channel.voice_members) == 1:
                         if server not in stop_times or stop_times[server] is None:
                             log.debug("putting sid {} in stop loop".format(server.id))
                             stop_times[server] = int(time.time())
