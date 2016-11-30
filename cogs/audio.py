@@ -993,7 +993,7 @@ class Audio:
         self.save_settings()
     
     @audioset.command(name="emptydisconnect", pass_context=True)
-    @checks.is_owner()  # cause effect is cross-server
+    @checks.mod_or_permissions(manage_messages=True)
     async def audioset_emptydisconnect(self, ctx):
         """Toggles auto disconnection when everyone leaves the channel"""
         server = ctx.message.server
