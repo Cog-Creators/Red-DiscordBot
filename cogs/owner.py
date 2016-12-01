@@ -13,7 +13,6 @@ import threading
 import datetime
 import glob
 import os
-import time
 import aiohttp
 
 log = logging.getLogger("red.owner")
@@ -50,8 +49,11 @@ class Owner:
         self.disabled_commands = dataIO.load_json(self.file_path)
         self.session = aiohttp.ClientSession(loop=self.bot.loop)
 
+        self.flusher_task = self.bot.loop.create_task(self.file_flusher())
+
     def __unload(self):
         self.session.close()
+        self.flusher_task.cancel()
 
     @commands.command()
     @checks.is_owner()
@@ -130,7 +132,7 @@ class Owner:
         if still_loaded:
             still_loaded = ", ".join(still_loaded)
             await self.bot.say("I was unable to unload some cogs: "
-                "{}".format(still_loaded))
+                               "{}".format(still_loaded))
         else:
             await self.bot.say("All cogs are now unloaded.")
 
@@ -270,9 +272,10 @@ class Owner:
 
         if settings.owner != "id_here":
             await self.bot.say(
-            "The owner is already set. Remember that setting the owner "
-            "to someone else other than who hosts the bot has security "
-            "repercussions and is *NOT recommended*. Proceed at your own risk."
+                "The owner is already set. Remember that setting the owner "
+                "to someone else other than who hosts the bot has security "
+                "repercussions and is *NOT recommended*. Proceed at your own"
+                " risk."
             )
             await asyncio.sleep(3)
 
@@ -315,7 +318,8 @@ class Owner:
                 await self.bot.say("Failed to change name. Remember that you"
                                    " can only do it up to 2 times an hour."
                                    "Use nicknames if you need frequent "
-                                   "changes. {}set nickname".format(ctx.prefix))
+                                   "changes. {}set"
+                                   " nickname".format(ctx.prefix))
             else:
                 await self.bot.say("Done.")
         else:
@@ -335,7 +339,7 @@ class Owner:
             await self.bot.say("Done.")
         except discord.Forbidden:
             await self.bot.say("I cannot do that, I lack the "
-                "\"Change Nickname\" permission.")
+                               "\"Change Nickname\" permission.")
 
     @_set.command(pass_context=True)
     @checks.is_owner()
@@ -370,11 +374,11 @@ class Owner:
             invisible"""
 
         statuses = {
-                    "online"    : discord.Status.online,
-                    "idle"      : discord.Status.idle,
-                    "dnd"       : discord.Status.dnd,
-                    "invisible" : discord.Status.invisible
-                   }
+            "online": discord.Status.online,
+            "idle": discord.Status.idle,
+            "dnd": discord.Status.dnd,
+            "invisible": discord.Status.invisible
+        }
 
         server = ctx.message.server
 
@@ -410,7 +414,8 @@ class Owner:
                 streamer = "https://www.twitch.tv/" + streamer
             game = discord.Game(type=1, url=streamer, name=stream_title)
             await self.bot.change_presence(game=game, status=current_status)
-            log.debug('Owner has set streaming status and url to "{}" and {}'.format(stream_title, streamer))
+            log.debug('Owner has set streaming status and url to'
+                      ' "{}" and {}'.format(stream_title, streamer))
         elif streamer is not None:
             await send_cmd_help(ctx)
             return
@@ -499,7 +504,7 @@ class Owner:
             comm_obj.enabled = True
             comm_obj.hidden = False
         except:  # In case it was in the disabled list but not currently loaded
-            pass # No point in even checking what returns
+            pass  # No point in even checking what returns
 
     async def get_command(self, command):
         command = command.split()
@@ -512,11 +517,12 @@ class Owner:
         except KeyError:
             return KeyError
         for check in comm_obj.checks:
-            if hasattr(check, "__name__") and check.__name__ == "is_owner_check":
+            if hasattr(check, "__name__") and \
+                    check.__name__ == "is_owner_check":
                 return False
         return comm_obj
 
-    async def disable_commands(self): # runs at boot
+    async def disable_commands(self):  # runs at boot
         for cmd in self.disabled_commands:
             cmd_obj = await self.get_command(cmd)
             try:
@@ -599,7 +605,7 @@ class Owner:
 
     async def leave_confirmation(self, server, owner, ctx):
         await self.bot.say("Are you sure you want me "
-                    "to leave {}? (yes/no)".format(server.name))
+                           "to leave {}? (yes/no)".format(server.name))
 
         msg = await self.bot.wait_for_message(author=owner, timeout=15)
 
@@ -613,12 +619,13 @@ class Owner:
             await self.bot.say("Alright then.")
 
     @commands.command(pass_context=True)
-    async def contact(self, ctx, *, message : str):
+    async def contact(self, ctx, *, message: str):
         """Sends message to the owner"""
         if settings.owner == "id_here":
             await self.bot.say("I have no owner set.")
             return
-        owner = discord.utils.get(self.bot.get_all_members(), id=settings.owner)
+        owner = discord.utils.get(
+            self.bot.get_all_members(), id=settings.owner)
         author = ctx.message.author
         if ctx.message.channel.is_private is False:
             server = ctx.message.server
@@ -777,8 +784,18 @@ class Owner:
             content = "[{}]({}) - {} ".format(chash[:6], commit_url, commit)
             embed.add_field(name=when, value=content, inline=False)
         embed.set_footer(text="Total commits: " + ncommits)
-
         return embed
+
+    async def file_flusher(self):
+        while True:
+            await dataIO.flush_lock.acquire()
+            for filename, data in dataIO.to_flush.items():
+                dataIO.save_json(filename, data)
+                await asyncio.sleep(0.5)
+            dataIO.to_flush = {}
+            dataIO.flush_lock.release()
+            await asyncio.sleep(60)
+
 
 def check_files():
     if not os.path.isfile("data/red/disabled_commands.json"):

@@ -2,13 +2,18 @@ import json
 import os
 import logging
 from random import randint
+import asyncio
+
 
 class InvalidFileIO(Exception):
     pass
 
+
 class DataIO():
     def __init__(self):
         self.logger = logging.getLogger("red")
+        self.to_flush = {}  # Used for file flushing, modified by Owner
+        self.flush_lock = asyncio.Lock()
 
     def save_json(self, filename, data):
         """Atomically saves json file"""
@@ -26,6 +31,14 @@ class DataIO():
             return False
         os.replace(tmp_file, filename)
         return True
+
+    async def flush_json(self, filename, data):
+        """So what does this do? Instead of instantly writing the data to disk
+            it stores it in memory for a moment (30s) and then writes it. That
+            way multiple quick changes to a single file are only written once,
+            saving blocking time from file writes."""
+        async with self.flush_lock:
+            self.to_flush[filename] = data
 
     def load_json(self, filename):
         """Loads json file"""
@@ -48,26 +61,28 @@ class DataIO():
 
     def _save_json(self, filename, data):
         with open(filename, encoding='utf-8', mode="w") as f:
-            json.dump(data, f, indent=4,sort_keys=True,
-                separators=(',',' : '))
+            json.dump(data, f, indent=4, sort_keys=True,
+                      separators=(',', ' : '))
         return data
 
     def _legacy_fileio(self, filename, IO, data=None):
         """Old fileIO provided for backwards compatibility"""
-        if IO == "save" and data != None:
+        if IO == "save" and data is not None:
             return self.save_json(filename, data)
-        elif IO == "load" and data == None:
+        elif IO == "load" and data is None:
             return self.load_json(filename)
-        elif IO == "check" and data == None:
+        elif IO == "check" and data is None:
             return self.is_valid_json(filename)
         else:
             raise InvalidFileIO("FileIO was called with invalid"
-                " parameters")
+                                " parameters")
+
 
 def get_value(filename, key):
     with open(filename, encoding='utf-8', mode="r") as f:
         data = json.load(f)
     return data[key]
+
 
 def set_value(filename, key, value):
     data = fileIO(filename, "load")
@@ -75,5 +90,6 @@ def set_value(filename, key, value):
     fileIO(filename, "save", data)
     return True
 
+
 dataIO = DataIO()
-fileIO = dataIO._legacy_fileio # backwards compatibility
+fileIO = dataIO._legacy_fileio  # backwards compatibility
