@@ -48,11 +48,23 @@ description = "Red - A multifunction Discord bot by Twentysix"
 
 class Bot(commands.Bot):
     def __init__(self, *args, **kwargs):
+
+        def prefix_manager(bot, message):
+            """
+            Returns prefixes of the message's server if set.
+            If none are set or if the message's server is None
+            it will return the global prefixes instead.
+
+            Requires a Bot instance and a Message object to be
+            passed as arguments.
+            """
+            return bot.settings.get_prefixes(message.server)
+
         self.counter = Counter()
         self.uptime = datetime.datetime.now()
         self._message_modifiers = []
         self.settings = Settings()
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, command_prefix=prefix_manager, **kwargs)
 
     async def send_message(self, *args, **kwargs):
         if self._message_modifiers:
@@ -173,8 +185,7 @@ class Formatter(commands.HelpFormatter):
 
 formatter = Formatter(show_check_failure=False)
 
-bot = Bot(command_prefix=["_"], formatter=formatter,
-          description=description, pm_help=None)
+bot = Bot(formatter=formatter, description=description, pm_help=None)
 
 send_cmd_help = bot.send_cmd_help  # Backwards
 user_allowed = bot.user_allowed    # compatibility
@@ -200,8 +211,8 @@ async def on_ready():
     print("{} users".format(users))
     print("\n{}/{} active cogs with {} commands".format(
         len(bot.cogs), total_cogs, len(bot.commands)))
-    prefix_label = "Prefixes:" if len(bot.command_prefix) > 1 else "Prefix:"
-    print("{} {}\n".format(prefix_label, " ".join(bot.command_prefix)))
+    prefix_label = "Prefixes:" if len(settings.prefixes) > 1 else "Prefix:"
+    print("{} {}\n".format(prefix_label, " ".join(settings.prefixes)))
     if settings.login_type == "token":
         print("------")
         print("Use this url to bring your bot to a server:")
@@ -477,18 +488,16 @@ def main():
     check_configs()
     set_logger()
     owner_cog = load_cogs()
-    if settings.prefixes != []:
-        bot.command_prefix = settings.prefixes
-    else:
+    if settings.prefixes == []:
         print("No prefix set. Defaulting to !")
-        bot.command_prefix = ["!"]
+        settings.prefixes = ["!"]
         if settings.owner != "id_here":
             print("Use !set prefix to set it.")
         else:
             print("Once you're owner use !set prefix to set it.")
     if settings.owner == "id_here" and settings.login_type == "email":
         print("Owner has not been set yet. Do '{}set owner' in chat to set "
-              "yourself as owner.".format(bot.command_prefix[0]))
+              "yourself as owner.".format(settings.prefixes[0]))
     else:
         owner_cog.owner.hidden = True  # Hides the set owner command from help
     print("-- Logging in.. --")

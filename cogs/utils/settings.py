@@ -13,7 +13,9 @@ class Settings:
         self.default_settings = {
             "EMAIL": "EmailHere", "PASSWORD": "", "OWNER": "id_here",
             "PREFIXES": [],
-            "default": {"ADMIN_ROLE": "Transistor", "MOD_ROLE": "Process"},
+            "default": {"ADMIN_ROLE": "Transistor",
+                        "MOD_ROLE": "Process",
+                        "PREFIXES": []},
             "LOGIN_TYPE": "email"}
         if not dataIO.is_valid_json(self.path):
             self.bot_settings = self.default_settings
@@ -46,7 +48,9 @@ class Settings:
         admin = self.bot_settings["ADMIN_ROLE"]
         del self.bot_settings["MOD_ROLE"]
         del self.bot_settings["ADMIN_ROLE"]
-        self.bot_settings["default"] = {"MOD_ROLE": mod, "ADMIN_ROLE": admin}
+        self.bot_settings["default"] = {"MOD_ROLE": mod,
+                                        "ADMIN_ROLE": admin,
+                                        "PREFIXES" : []}
         self.save_settings()
 
     @property
@@ -170,6 +174,25 @@ class Settings:
             self.add_server(server.id)
         self.bot_settings[server.id]["MOD_ROLE"] = value
         self.save_settings()
+
+    def get_server_prefixes(self, server):
+        if server is None or server.id not in self.bot_settings:
+            return self.prefixes
+        return self.bot_settings[server.id].get("PREFIXES", [])
+
+    def set_server_prefixes(self, server, prefixes):
+        if server is None:
+            return
+        assert isinstance(server, discord.Server)
+        if server.id not in self.bot_settings:
+            self.add_server(server.id)
+        self.bot_settings[server.id]["PREFIXES"] = prefixes
+        self.save_settings()
+
+    def get_prefixes(self, server):
+        """Returns server's prefixes if set, otherwise global ones"""
+        p = self.get_server_prefixes(server)
+        return p if p else self.prefixes
 
     def add_server(self, sid):
         self.bot_settings[sid] = self.bot_settings["default"].copy()

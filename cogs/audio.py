@@ -745,8 +745,8 @@ class Audio:
                 song = await self._guarantee_downloaded(server, url)
             except MaximumLength:
                 log.warning("I can't play URL below because it is too long."
-                            " Use {}audioset maxlength to change this.\n\n"
-                            "{}".format(self.bot.command_prefix[0], url))
+                            " Use [p]audioset maxlength to change this.\n\n"
+                            "{}".format(url))
                 raise
             local = False
         else:  # Assume local
