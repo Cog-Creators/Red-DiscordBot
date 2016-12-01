@@ -1273,6 +1273,9 @@ class Mod:
         except KeyError:
             # We have no delay set
             return
+        except AttributeError:
+            # DM
+            return
 
         if delay == -1:
             return
