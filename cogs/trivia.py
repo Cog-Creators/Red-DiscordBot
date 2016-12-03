@@ -8,6 +8,7 @@ import datetime
 import time
 import os
 import asyncio
+import chardet
 
 class Trivia:
     """General commands."""
@@ -152,8 +153,16 @@ class TriviaSession():
             await self.send_table()
         trivia_manager.trivia_sessions.remove(self)
 
+    def guess_encoding(self, trivia_list):
+        with open(trivia_list, "rb") as f:
+            try:
+                return chardet.detect(f.read())["encoding"]
+            except:
+                return "ISO-8859-1"
+
     async def load_list(self, qlist):
-        with open(qlist, "r", encoding="ISO-8859-1") as f:
+        encoding = self.guess_encoding(qlist)
+        with open(qlist, "r", encoding=encoding) as f:
             qlist = f.readlines()
         parsed_list = []
         for line in qlist:
