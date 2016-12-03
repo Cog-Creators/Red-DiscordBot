@@ -283,7 +283,7 @@ class Economy:
     @_bank.command(name="add", pass_context=True)
     @checks.admin_or_permissions(manage_server=True)
     async def _add(self, ctx, user : discord.Member, sum : int):
-        """Add Credits to user's bank account"""
+        """Add Credits to a user's bank account"""
         author = ctx.message.author
         try:
             self.bank.deposit_credits(user, sum)
@@ -295,7 +295,7 @@ class Economy:
     @_bank.command(name="remove", pass_context=True)
     @checks.admin_or_permissions(manage_server=True)
     async def _remove(self, ctx, user : discord.Member, sum : int):
-        """Remove Credits to user's bank account"""
+        """Remove Credits from a user's bank account"""
         author = ctx.message.author
         try:
             self.bank.withdraw_credits(user, sum)
