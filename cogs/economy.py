@@ -112,28 +112,6 @@ class Bank:
         self.accounts[server.id][user.id] = account
         self._save_bank()
 
-    def add_credits(self, user, amount):
-        server = user.server
-        if amount < 0:
-            raise NegativeValue()
-        account = self._get_account(user)
-        add = account["balance"] 
-        total = add + amount
-        account["balance"] = total
-        self.accounts[server.id][user.id] = account
-        self._save_bank()
-
-    def remv_credits(self, user, amount):
-        server = user.server
-        if amount < 0:
-            raise NegativeValue()
-        account = self._get_account(user)
-        add = account["balance"] 
-        total = add - amount
-        account["balance"] = total
-        self.accounts[server.id][user.id] = account
-        self._save_bank()
-
     def transfer_credits(self, sender, receiver, amount):
         if amount < 0:
             raise NegativeValue()
@@ -308,7 +286,7 @@ class Economy:
         """Add Credits to user's bank account"""
         author = ctx.message.author
         try:
-            self.bank.add_credits(user, sum)
+            self.bank.deposit_credits(user, sum)
             logger.info("{}({}) add {} Credits to {} ({})".format(author.name, author.id, str(sum), user.name, user.id))
             await self.bot.say("{} Credits has been added to {}'s Bank Account.".format(str(sum), user.name))
         except NoAccount:
@@ -320,7 +298,7 @@ class Economy:
         """Remove Credits to user's bank account"""
         author = ctx.message.author
         try:
-            self.bank.remv_credits(user, sum)
+            self.bank.withdraw_credits(user, sum)
             logger.info("{}({}) removed {} Credits from {} ({})".format(author.name, author.id, str(sum), user.name, user.id))
             await self.bot.say("{} Credits has been removed to {}'s Bank Account.".format(str(sum), user.name))
         except NoAccount:
