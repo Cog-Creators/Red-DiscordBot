@@ -1,10 +1,8 @@
 import asyncio
 import os
-import time
 import sys
 import logging
 import logging.handlers
-import shutil
 import traceback
 import datetime
 
@@ -64,6 +62,7 @@ class Bot(commands.Bot):
         self.uptime = datetime.datetime.now()
         self._message_modifiers = []
         self.settings = Settings()
+        kwargs["self_bot"] = self.settings.self_bot
         super().__init__(*args, command_prefix=prefix_manager, **kwargs)
 
     async def send_message(self, *args, **kwargs):
@@ -119,13 +118,13 @@ class Bot(commands.Bot):
 
     async def send_cmd_help(self, ctx):
         if ctx.invoked_subcommand:
-            pages = bot.formatter.format_help_for(ctx, ctx.invoked_subcommand)
+            pages = self.formatter.format_help_for(ctx, ctx.invoked_subcommand)
             for page in pages:
-                await bot.send_message(ctx.message.channel, page)
+                await self.send_message(ctx.message.channel, page)
         else:
-            pages = bot.formatter.format_help_for(ctx, ctx.command)
+            pages = self.formatter.format_help_for(ctx, ctx.command)
             for page in pages:
-                await bot.send_message(ctx.message.channel, page)
+                await self.send_message(ctx.message.channel, page)
 
     def user_allowed(self, message):
         author = message.author
@@ -288,30 +287,32 @@ def check_folders():
             os.makedirs(folder)
 
 
-def check_configs():
-    if settings.bot_settings == settings.default_settings:
+def interactive_setup():
+    first_run = settings.bot_settings == settings.default_settings
+
+    if first_run:
         print("Red - First run configuration\n")
         print("If you haven't already, create a new account:\n"
               "https://twentysix26.github.io/Red-Docs/red_guide_bot_accounts/"
               "#creating-a-new-bot-account")
         print("and obtain your bot's token like described.")
+
+    if settings.token is None and settings.email is None:
         print("\nInsert your bot's token:")
+        while settings.token is None and settings.email is None:
+            choice = input("> ")
+            if "@" not in choice and len(choice) >= 50:  # Assuming token
+                settings.login_type = "token"
+                settings.token = choice
+            elif "@" in choice:
+                settings.login_type = "email"
+                settings.email = choice
+                settings.password = input("\nPassword> ")
+            else:
+                print("That doesn't look like a valid token.")
+        settings.save_settings()
 
-        choice = input("> ")
-
-        if "@" not in choice and len(choice) >= 50:  # Assuming token
-            settings.login_type = "token"
-            settings.email = choice
-        elif "@" in choice:
-            settings.login_type = "email"
-            settings.email = choice
-            settings.password = input("\nPassword> ")
-        else:
-            os.remove('data/red/settings.json')
-            input("Invalid input. Restart Red and repeat the configuration "
-                  "process.")
-            exit(1)
-
+    if not settings.prefixes:
         print("\nChoose a prefix. A prefix is what you type before a command."
               "\nA typical prefix would be the exclamation mark.\n"
               "Can be multiple characters. You will be able to change it "
@@ -324,30 +325,17 @@ def check_configs():
                   "\nType yes to confirm or no to change it".format(
                       new_prefix))
             confirmation = get_answer()
-
         settings.prefixes = [new_prefix]
-        if settings.login_type == "email":
-            print("\nOnce you're done with the configuration, you will have to"
-                  " type '{}set owner' *in Discord's chat*\nto set yourself as"
-                  " owner.\nPress enter to continue".format(new_prefix))
-            settings.owner = input("")  # Shh, they will never know it's here
-            if settings.owner == "":
-                settings.owner = "id_here"
-            if not settings.owner.isdigit() or len(settings.owner) < 17:
-                if settings.owner != "id_here":
-                    print("\nERROR: What you entered is not a valid ID. Set "
-                          "yourself as owner later with {}set owner".format(
-                              new_prefix))
-                settings.owner = "id_here"
-        else:
-            settings.owner = "id_here"
+        settings.save_settings()
 
+    if first_run:
         print("\nInput the admin role's name. Anyone with this role in Discord"
               " will be able to use the bot's admin commands")
         print("Leave blank for default name (Transistor)")
         settings.default_admin = input("\nAdmin role> ")
         if settings.default_admin == "":
             settings.default_admin = "Transistor"
+        settings.save_settings()
 
         print("\nInput the moderator role's name. Anyone with this role in"
               " Discord will be able to use the bot's mod commands")
@@ -355,16 +343,15 @@ def check_configs():
         settings.default_mod = input("\nModerator role> ")
         if settings.default_mod == "":
             settings.default_mod = "Process"
+        settings.save_settings()
 
         print("\nThe configuration is done. Leave this window always open to"
               " keep Red online.\nAll commands will have to be issued through"
-              " Discord's chat, *this window will now be read only*.\nPress"
-              " enter to continue")
+              " Discord's chat, *this window will now be read only*.\n"
+              "Please read this guide for a good overview on how Red works:\n"
+              "https://twentysix26.github.io/Red-Docs/red_getting_started/\n"
+              "Press enter to continue")
         input("\n")
-
-    if not os.path.isfile("data/red/cogs.json"):
-        print("Creating new cogs.json...")
-        dataIO.save_json("data/red/cogs.json", {})
 
 
 def set_logger():
@@ -425,7 +412,8 @@ def set_cog(cog, value):
 
 
 def load_cogs():
-    no_prompt = "--no-prompt" in sys.argv[1:]
+    defaults = ("alias", "audio", "customcom", "downloader", "economy",
+                "general", "image", "mod", "streams", "trivia")
 
     try:
         registry = dataIO.load_json("data/red/cogs.json")
@@ -435,67 +423,45 @@ def load_cogs():
     bot.load_extension('cogs.owner')
     owner_cog = bot.get_cog('Owner')
     if owner_cog is None:
-        print("You got rid of the damn OWNER cog, it has special functions"
-              " that I require to run.\n\n"
-              "I can't start without it!")
-        print()
-        print("Go here to find a new copy:\n{}".format(
-            "https://github.com/Twentysix26/Red-DiscordBot"))
+        print("The owner cog is missing. It contains core functions without "
+              "which Red cannot function. Reinstall.")
         exit(1)
 
     failed = []
     extensions = owner_cog._list_cogs()
+
+    if not registry: # All default cogs enabled by default
+        for ext in defaults:
+            registry["cogs." + ext] = True
+
     for extension in extensions:
         if extension.lower() == "cogs.owner":
             continue
-        in_reg = extension in registry
-        if in_reg is False:
-            if no_prompt is True:
+        to_load = registry.get(extension, False)
+        if to_load:
+            try:
+                owner_cog._load_cog(extension)
+            except Exception as e:
+                print("{}: {}".format(e.__class__.__name__, str(e)))
+                logger.exception(e)
+                failed.append(extension)
                 registry[extension] = False
-                continue
-            print("\nNew extension: {}".format(extension))
-            print("Load it?(y/n)")
-            if not get_answer():
-                registry[extension] = False
-                continue
-            registry[extension] = True
-        if not registry[extension]:
-            continue
-        try:
-            owner_cog._load_cog(extension)
-        except Exception as e:
-            print("{}: {}".format(e.__class__.__name__, str(e)))
-            logger.exception(e)
-            failed.append(extension)
-            registry[extension] = False
 
-    if extensions:
-        dataIO.save_json("data/red/cogs.json", registry)
+    dataIO.save_json("data/red/cogs.json", registry)
 
     if failed:
-        print("\nFailed to load: ", end="")
-        for m in failed:
-            print(m + " ", end="")
-        print("\n")
+        print("\nFailed to load: {}\n".format(" ".join(failed)))
 
     return owner_cog
 
 
 def main():
-    global settings
-
     check_folders()
-    check_configs()
+    if not settings.no_prompt:
+        interactive_setup()
     set_logger()
     owner_cog = load_cogs()
-    if settings.prefixes == []:
-        print("No prefix set. Defaulting to !")
-        settings.prefixes = ["!"]
-        if settings.owner != "id_here":
-            print("Use !set prefix to set it.")
-        else:
-            print("Once you're owner use !set prefix to set it.")
-    if settings.owner == "id_here" and settings.login_type == "email":
+    if settings.owner is None and settings.login_type == "email":
         print("Owner has not been set yet. Do '{}set owner' in chat to set "
               "yourself as owner.".format(settings.prefixes[0]))
     else:
@@ -510,9 +476,9 @@ def main():
               "discord.py@master#egg=discord.py[voice]")
     print("Official server: https://discord.me/Red-DiscordBot")
     if settings.login_type == "token":
-        yield from bot.login(settings.email)
+        yield from bot.login(settings.token, bot=not settings.self_bot)
     else:
-        yield from bot.login(settings.email, settings.password)
+        yield from bot.login(settings.email, settings.password, bot=not settings.self_bot)
     yield from bot.connect()
 
 if __name__ == '__main__':
@@ -523,16 +489,18 @@ if __name__ == '__main__':
     except discord.LoginFailure:
         error = True
         logger.error(traceback.format_exc())
-        choice = input("Invalid login credentials. "
-                       "If they worked before Discord might be having temporary "
-                       "technical issues.\nIn this case, press enter and "
-                       "try again later.\nOtherwise you can type 'reset' to "
-                       "delete the current configuration and redo the setup process "
-                       "again the next start.\n> ")
-        if choice.strip() == "reset":
-            shutil.copy('data/red/settings.json',
-                        'data/red/settings-{}.bak'.format(int(time.time())))
-            os.remove('data/red/settings.json')
+        if not settings.no_prompt:
+            choice = input("Invalid login credentials. "
+                           "If they worked before Discord might be having temporary "
+                           "technical issues.\nIn this case, press enter and "
+                           "try again later.\nOtherwise you can type 'reset' to "
+                           "reset the current credentials and set them "
+                           "again the next start.\n> ")
+            if choice.lower().strip() == "reset":
+                settings.token = None
+                settings.email = None
+                settings.password = None
+                settings.save_settings()
     except KeyboardInterrupt:
         loop.run_until_complete(bot.logout())
     except:

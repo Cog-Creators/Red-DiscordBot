@@ -1,6 +1,9 @@
 from .dataIO import dataIO
+from copy import deepcopy
 import discord
 import os
+import argparse
+
 
 default_path = "data/red/settings.json"
 
@@ -11,27 +14,92 @@ class Settings:
         self.path = path
         self.check_folders()
         self.default_settings = {
-            "EMAIL": "EmailHere", "PASSWORD": "", "OWNER": "id_here",
+            "TOKEN": None,
+            "EMAIL": None,
+            "PASSWORD": None,
+            "OWNER": None,
             "PREFIXES": [],
             "default": {"ADMIN_ROLE": "Transistor",
                         "MOD_ROLE": "Process",
                         "PREFIXES": []},
-            "LOGIN_TYPE": "email"}
+            "LOGIN_TYPE": None}
+        self.memory_only = False
+        old_format = False
+
         if not dataIO.is_valid_json(self.path):
-            self.bot_settings = self.default_settings
+            self.bot_settings = deepcopy(self.default_settings)
             self.save_settings()
         else:
             current = dataIO.load_json(self.path)
             if current.keys() != self.default_settings.keys():
                 for key in self.default_settings.keys():
                     if key not in current.keys():
+                        if key == "TOKEN":
+                            old_format = True
                         current[key] = self.default_settings[key]
                         print("Adding " + str(key) +
                               " field to red settings.json")
                 dataIO.save_json(self.path, current)
             self.bot_settings = dataIO.load_json(self.path)
+
         if "default" not in self.bot_settings:
-            self.update_old_settings()
+            self.update_old_settings_v1()
+
+        if old_format:
+            self.update_old_settings_v2()
+
+        self.parse_cmd_arguments()
+
+    def parse_cmd_arguments(self):
+        parser = argparse.ArgumentParser(description="Red - Discord Bot")
+        parser.add_argument("--email")
+        parser.add_argument("--password")
+        parser.add_argument("--token")
+        parser.add_argument("--owner", help="ID of the owner")
+        parser.add_argument("--prefix", "-p", action="append",
+                            help="Global prefix. Can be multiple.")
+        parser.add_argument("--admin-role")
+        parser.add_argument("--mod-role")
+        parser.add_argument("--no-prompt",
+                            action='store_true',
+                            help="Disables console inputs. Features requiring "
+                                 "console interaction could be disabled as a "
+                                 "result")
+        parser.add_argument("--self-bot",
+                            action='store_true',
+                            help="Specifies if Red should log in as selfbot")
+        parser.add_argument("--memory-only",
+                            action='store_true',
+                            help="Arguments passed and future edits to the "
+                                 "settings will not be saved to disk")
+
+        args = parser.parse_args()
+        args_items = vars(args)
+
+        for arg in args_items:
+            if args_items[arg] is None:
+                continue
+            if arg == "token":
+                self.token = args.token
+                self.login_type = "token"
+            elif arg == "email":
+                self.email = args.email
+                self.password = args.password
+                self.login_type = "email"
+            elif arg == "owner":
+                self.owner = args.owner
+            elif arg == "prefix":
+                self.prefixes = sorted(args.prefix, reverse=True)
+            elif arg == "admin_role":
+                self.default_admin = args.admin_role
+            elif arg == "mod_role":
+                self.default_mod = args.mod_role
+
+        self.no_prompt = args.no_prompt
+        self.self_bot = args.self_bot
+        self.memory_only = args.memory_only
+
+        self.save_settings()
 
     def check_folders(self):
         folders = ("data", os.path.dirname(self.path), "cogs", "cogs/utils")
@@ -41,9 +109,11 @@ class Settings:
                 os.makedirs(folder)
 
     def save_settings(self):
-        dataIO.save_json(self.path, self.bot_settings)
+        if not self.memory_only:
+            dataIO.save_json(self.path, self.bot_settings)
 
-    def update_old_settings(self):
+    def update_old_settings_v1(self):
+        # This converts the old settings format
         mod = self.bot_settings["MOD_ROLE"]
         admin = self.bot_settings["ADMIN_ROLE"]
         del self.bot_settings["MOD_ROLE"]
@@ -53,6 +123,22 @@ class Settings:
                                         "PREFIXES" : []}
         self.save_settings()
 
+    def update_old_settings_v2(self):
+        # The joys of backwards compatibility
+        if self.email == "EmailHere":
+            self.email = None
+        if self.password == "":
+            self.password = None
+        if self.login_type == "token":
+            self.token = self.email
+            self.email = None
+            self.password = None
+        else:
+            self.token = None
+        if self.email is None and self.token is None:
+            self.login_type = None
+        self.save_settings()
+
     @property
     def owner(self):
         return self.bot_settings["OWNER"]
@@ -60,7 +146,14 @@ class Settings:
     @owner.setter
     def owner(self, value):
         self.bot_settings["OWNER"] = value
-        self.save_settings()
+
+    @property
+    def token(self):
+        return self.bot_settings["TOKEN"]
+
+    @token.setter
+    def token(self, value):
+        self.bot_settings["TOKEN"] = value
 
     @property
     def email(self):
@@ -69,7 +162,6 @@ class Settings:
     @email.setter
     def email(self, value):
         self.bot_settings["EMAIL"] = value
-        self.save_settings()
 
     @property
     def password(self):
@@ -78,7 +170,6 @@ class Settings:
     @password.setter
     def password(self, value):
         self.bot_settings["PASSWORD"] = value
-        self.save_settings()
 
     @property
     def prefixes(self):
@@ -88,7 +179,6 @@ class Settings:
     def prefixes(self, value):
         assert isinstance(value, list)
         self.bot_settings["PREFIXES"] = value
-        self.save_settings()
 
     @property
     def default_admin(self):
@@ -101,20 +191,18 @@ class Settings:
         if "default" not in self.bot_settings:
             self.update_old_settings()
         self.bot_settings["default"]["ADMIN_ROLE"] = value
-        self.save_settings()
 
     @property
     def default_mod(self):
         if "default" not in self.bot_settings:
-            self.update_old_settings()
+            self.update_old_settings_v1()
         return self.bot_settings["default"].get("MOD_ROLE", "")
 
     @default_mod.setter
     def default_mod(self, value):
         if "default" not in self.bot_settings:
-            self.update_old_settings()
+            self.update_old_settings_v1()
         self.bot_settings["default"]["MOD_ROLE"] = value
-        self.save_settings()
 
     @property
     def servers(self):
@@ -132,7 +220,6 @@ class Settings:
     @login_type.setter
     def login_type(self, value):
         self.bot_settings["LOGIN_TYPE"] = value
-        self.save_settings()
 
     def get_server(self, server):
         if server is None:
