@@ -997,8 +997,8 @@ class Audio:
     async def audioset_emptydisconnect(self, ctx):
         """Toggles auto disconnection when everyone leaves the channel"""
         server = ctx.message.server
-        server_set = self.get_server_settings(server_set)
-        noppl_disconnect = server_set.get("NOPPL_DISCONNECT", True)
+        settings = self.get_server_settings(server.id)
+        noppl_disconnect = settings.get("NOPPL_DISCONNECT", True)
         self.set_server_setting(server, "NOPPL_DISCONNECT",
                                 not noppl_disconnect)
         if not noppl_disconnect:
@@ -1872,7 +1872,7 @@ class Audio:
                             log.debug("putting sid {} in stop loop".format(server.id))
                             stop_times[server] = int(time.time())
 
-                    noppl_disconnect = self.get_server_setting(server)
+                    noppl_disconnect = self.get_server_settings(server)
                     noppl_disconnect = noppl_disconnect.get("NOPPL_DISCONNECT", True)
                     if noppl_disconnect and len(vc.channel.voice_members) == 1:
                         if server not in stop_times or stop_times[server] is None:
