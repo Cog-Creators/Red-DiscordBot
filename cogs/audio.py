@@ -1897,14 +1897,14 @@ class Audio:
         except:
             sid = server
 
+        if sid not in self.settings["SERVERS"]:
+            self.settings["SERVERS"][sid] = {}
+        ret = self.settings["SERVERS"][sid]
+
         # Not the cleanest way. Some refactoring is suggested if more settings
         # have to be added
         if "NOPPL_DISCONNECT" not in ret:
             ret["NOPPL_DISCONNECT"] = True
-
-        if sid not in self.settings["SERVERS"]:
-            self.settings["SERVERS"][sid] = {}
-        ret = self.settings["SERVERS"][sid]
 
         for setting in self.server_specific_setting_keys:
             if setting not in ret:
