@@ -61,7 +61,7 @@ class Settings:
         parser.add_argument("--admin-role")
         parser.add_argument("--mod-role")
         parser.add_argument("--no-prompt",
-                            action='store_true',
+                            action="store_true",
                             help="Disables console inputs. Features requiring "
                                  "console interaction could be disabled as a "
                                  "result")
@@ -69,9 +69,12 @@ class Settings:
                             action='store_true',
                             help="Specifies if Red should log in as selfbot")
         parser.add_argument("--memory-only",
-                            action='store_true',
+                            action="store_true",
                             help="Arguments passed and future edits to the "
                                  "settings will not be saved to disk")
+        parser.add_argument("--debug",
+                            action="store_true",
+                            help="Enables debug mode")
 
         args = parser.parse_args()
         args_items = vars(args)
@@ -98,6 +101,7 @@ class Settings:
         self.no_prompt = args.no_prompt
         self.self_bot = args.self_bot
         self.memory_only = args.memory_only
+        self.debug = args.debug
 
         self.save_settings()
 
