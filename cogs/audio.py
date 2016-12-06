@@ -239,7 +239,7 @@ class Audio:
         self.downloaders = {}  # sid: object
         self.settings = dataIO.load_json("data/audio/settings.json")
         self.server_specific_setting_keys = ["VOLUME", "VOTE_ENABLED",
-                                             "VOTE_THRESHOLD"]
+                                             "VOTE_THRESHOLD", "NOPPL_DISCONNECT"]
         self.cache_path = "data/audio/cache"
         self.local_playlist_path = "data/audio/localtracks"
         self._old_game = False
@@ -990,6 +990,24 @@ class Audio:
 
         self.settings["MAX_CACHE"] = size
         await self.bot.say("Max cache size set to {} MB.".format(size))
+        self.save_settings()
+    
+    @audioset.command(name="emptydisconnect", pass_context=True)
+    @checks.mod_or_permissions(manage_messages=True)
+    async def audioset_emptydisconnect(self, ctx):
+        """Toggles auto disconnection when everyone leaves the channel"""
+        server = ctx.message.server
+        settings = self.get_server_settings(server.id)
+        noppl_disconnect = settings.get("NOPPL_DISCONNECT", True)
+        self.set_server_setting(server, "NOPPL_DISCONNECT",
+                                not noppl_disconnect)
+        if not noppl_disconnect:
+            await self.bot.say("If there is no one left in the voice channel"
+                               " the bot will automatically disconnect after"
+                               " five minutes.")
+        else:
+            await self.bot.say("The bot will no longer auto disconnect"
+                               " if the voice channel is empty.")
         self.save_settings()
 
     @audioset.command(name="maxlength")
@@ -1849,11 +1867,18 @@ class Audio:
                     stop_times[server] = int(time.time())
 
                 if hasattr(vc, 'audio_player'):
-                    if (vc.audio_player.is_done() or len(vc.channel.voice_members) == 1):
+                    if vc.audio_player.is_done():
                         if server not in stop_times or stop_times[server] is None:
                             log.debug("putting sid {} in stop loop".format(server.id))
                             stop_times[server] = int(time.time())
-                    elif vc.audio_player.is_playing():
+
+                    noppl_disconnect = self.get_server_settings(server)
+                    noppl_disconnect = noppl_disconnect.get("NOPPL_DISCONNECT", True)
+                    if noppl_disconnect and len(vc.channel.voice_members) == 1:
+                        if server not in stop_times or stop_times[server] is None:
+                            log.debug("putting sid {} in stop loop".format(server.id))
+                            stop_times[server] = int(time.time())
+                    elif not vc.audio_player.is_done():
                         stop_times[server] = None
 
             for server in stop_times:
@@ -1875,6 +1900,11 @@ class Audio:
         if sid not in self.settings["SERVERS"]:
             self.settings["SERVERS"][sid] = {}
         ret = self.settings["SERVERS"][sid]
+
+        # Not the cleanest way. Some refactoring is suggested if more settings
+        # have to be added
+        if "NOPPL_DISCONNECT" not in ret:
+            ret["NOPPL_DISCONNECT"] = True
 
         for setting in self.server_specific_setting_keys:
             if setting not in ret:
