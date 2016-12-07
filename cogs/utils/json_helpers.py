@@ -83,6 +83,8 @@ class ServerDB(DataDB):
         """Sets a server's entry"""
         if not isinstance(server, discord.Server):
             raise TypeError('Can only set server data')
+        if server.id not in self._data:
+            self._data[server.id] = {}
         self._data[server.id][key] = value
         self._save()
 
