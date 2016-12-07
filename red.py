@@ -129,7 +129,10 @@ class Bot(commands.Bot):
     def user_allowed(self, message):
         author = message.author
 
-        if author.bot or author == self.user:
+        if author.bot:
+            return False
+
+        if author == self.user and not self.settings.self_bot:
             return False
 
         mod = self.get_cog('Mod')
@@ -212,7 +215,7 @@ async def on_ready():
         len(bot.cogs), total_cogs, len(bot.commands)))
     prefix_label = "Prefixes:" if len(settings.prefixes) > 1 else "Prefix:"
     print("{} {}\n".format(prefix_label, " ".join(settings.prefixes)))
-    if settings.login_type == "token":
+    if settings.login_type == "token" and not settings.self_bot:
         print("------")
         print("Use this url to bring your bot to a server:")
         url = await get_oauth_url()
