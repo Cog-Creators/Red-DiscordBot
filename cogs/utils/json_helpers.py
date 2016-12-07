@@ -1,6 +1,6 @@
 import os
 import discord
-import collections.defaultdict
+from collections import defaultdict
 from cogs.utils.dataIO import dataIO
 
 GLOBAL_KEY = '__global__'
@@ -32,7 +32,7 @@ class DataDB:
         if default_value is not None:
             def _get_default():
                 return default_value
-            self._data = collections.defaultdict(_get_default, self._data)
+            self._data = defaultdict(_get_default, self._data)
 
     def set(self, key, value):
         """Sets a DB's entry"""
