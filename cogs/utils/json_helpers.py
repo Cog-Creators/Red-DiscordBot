@@ -4,18 +4,17 @@ from collections import defaultdict
 from cogs.utils.dataIO import dataIO
 
 GLOBAL_KEY = '__global__'
+SENTINEL = object()
 
 
 class DataDB:
     """
     A helper class to streamline the saving of json files
     """
-    def __init__(self, file_path, *, create_dirs=False, default_value=None):
+    def __init__(self, file_path, *, create_dirs=False, default_value=SENTINEL):
         self.path = file_path
 
-        path_exists = os.path.isfile(file_path)
-
-        if create_dirs and not path_exists:
+        if create_dirs:
             path, _ = os.path.split(file_path)
             if path:
                 try:
@@ -29,7 +28,7 @@ class DataDB:
             self._data = {}
             self._save()
 
-        if default_value is not None:
+        if default_value is not SENTINEL:
             def _get_default():
                 return default_value
             self._data = defaultdict(_get_default, self._data)
@@ -39,9 +38,9 @@ class DataDB:
         self._data[key] = value
         self._save()
 
-    def get(self, key, default=None):
+    def get(self, key):
         """Returns a DB's entry"""
-        return self._data.get(key, default)
+        return self._data[key]
 
     def remove(self, key):
         """Removes a DB's entry"""
