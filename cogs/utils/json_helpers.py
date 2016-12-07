@@ -102,7 +102,7 @@ class ServerDB(DataDB):
     def get_all(self, server):
         """Returns all entries of a server"""
         if not isinstance(server, discord.Server):
-            raise TypeError('Can only remove servers')
+            raise TypeError('Can only get server data')
         return self._data[server.id]
 
     def remove_all(self, server):
