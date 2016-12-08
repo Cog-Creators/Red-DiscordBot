@@ -52,14 +52,20 @@ class Settings:
 
     def parse_cmd_arguments(self):
         parser = argparse.ArgumentParser(description="Red - Discord Bot")
-        parser.add_argument("--email")
-        parser.add_argument("--password")
-        parser.add_argument("--token")
-        parser.add_argument("--owner", help="ID of the owner")
+        parser.add_argument("--email", help="Email login. Must provide a "
+                                            "password too. Not using a bot "
+                                            "account with a token is "
+                                            "discouraged")
+        parser.add_argument("--password", help="Password of the email login")
+        parser.add_argument("--token", help="Login token")
+        parser.add_argument("--owner", help="ID of the owner. Only who hosts "
+                                            "Red should be owner, this has "
+                                            "security implications")
         parser.add_argument("--prefix", "-p", action="append",
-                            help="Global prefix. Can be multiple.")
-        parser.add_argument("--admin-role")
-        parser.add_argument("--mod-role")
+                            help="Global prefix. Can be multiple")
+        parser.add_argument("--admin-role", help="Role seen as admin role by "
+                                                 "Red")
+        parser.add_argument("--mod-role", help="Role seen as mod role by Red")
         parser.add_argument("--no-prompt",
                             action="store_true",
                             help="Disables console inputs. Features requiring "
@@ -77,26 +83,25 @@ class Settings:
                             help="Enables debug mode")
 
         args = parser.parse_args()
-        args_items = vars(args)
 
-        for arg in args_items:
-            if args_items[arg] is None:
-                continue
-            if arg == "token":
-                self.token = args.token
-                self.login_type = "token"
-            elif arg == "email":
-                self.email = args.email
-                self.password = args.password
-                self.login_type = "email"
-            elif arg == "owner":
-                self.owner = args.owner
-            elif arg == "prefix":
-                self.prefixes = sorted(args.prefix, reverse=True)
-            elif arg == "admin_role":
-                self.default_admin = args.admin_role
-            elif arg == "mod_role":
-                self.default_mod = args.mod_role
+        if args.email and args.password:
+            self.email = args.email
+            self.password = args.password
+            self.token = None
+            self.login_type = "email"
+        if args.token:
+            self.token = args.token
+            self.email = None
+            self.password = None
+            self.login_type = "token"
+        if args.owner:
+            self.owner = args.owner
+        if args.prefix:
+            self.prefixes = sorted(args.prefix, reverse=True)
+        if args.admin_role:
+            self.default_admin = args.admin_role
+        if args.mod_role:
+            self.default_mod = args.mod_role
 
         self.no_prompt = args.no_prompt
         self.self_bot = args.self_bot
