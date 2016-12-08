@@ -22,8 +22,8 @@ class Settings:
             "default": {"ADMIN_ROLE": "Transistor",
                         "MOD_ROLE": "Process",
                         "PREFIXES": []}
-                        }
-        self._memory_only = False
+        }
+        self.memory_only = False
 
         if not dataIO.is_valid_json(self.path):
             self.bot_settings = deepcopy(self.default_settings)
@@ -225,6 +225,24 @@ class Settings:
         for server in server_ids:
             ret.update({server: self.bot_settings[server]})
         return ret
+
+    @property
+    def rethink_url(self):
+        return self.bot_settings.get("RETHINK_URL", 'localhost')
+
+    @rethink_url.setter
+    def rethink_url(self, value):
+        self.bot_settings["RETHINK_URL"] = value
+        self.save_settings()
+
+    @property
+    def rethink_port(self):
+        return self.bot_settings.get("RETHINK_PORT", 28015)
+
+    @rethink_port.setter
+    def rethink_port(self, value):
+        self.bot_settings["RETHINK_PORT"] = value
+        self.save_settings
 
     def get_server(self, server):
         if server is None:
