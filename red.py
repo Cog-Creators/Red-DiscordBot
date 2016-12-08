@@ -62,6 +62,7 @@ class Bot(commands.Bot):
         self.uptime = datetime.datetime.now()
         self._message_modifiers = []
         self.settings = Settings()
+        self._intro_displayed = False
         kwargs["self_bot"] = self.settings.self_bot
         super().__init__(*args, command_prefix=prefix_manager, **kwargs)
 
@@ -197,31 +198,54 @@ settings = bot.settings
 
 @bot.event
 async def on_ready():
+    if bot._intro_displayed:
+        return
+    bot._intro_displayed = True
+
     owner_cog = bot.get_cog('Owner')
     total_cogs = len(owner_cog._list_cogs())
     users = len(set(bot.get_all_members()))
     servers = len(bot.servers)
     channels = len([c for c in bot.get_all_channels()])
-    if settings.login_type == "token" and settings.owner == "id_here":
-        await set_bot_owner()
-    print('------')
-    print("{} is now online.".format(bot.user.name))
-    print('------')
-    print("Connected to:")
+
+    login_time = datetime.datetime.now() - bot.uptime
+    login_time = login_time.seconds + login_time.microseconds/1E6
+
+    print("Login successful. ({}ms)\n".format(login_time))
+
+    owner = await set_bot_owner()
+
+    print("-----------------")
+    print("Red - Discord Bot")
+    print("-----------------")
+    print(str(bot.user))
+    print("\nConnected to:")
     print("{} servers".format(servers))
     print("{} channels".format(channels))
-    print("{} users".format(users))
-    print("\n{}/{} active cogs with {} commands".format(
-        len(bot.cogs), total_cogs, len(bot.commands)))
+    print("{} users\n".format(users))
     prefix_label = "Prefixes:" if len(settings.prefixes) > 1 else "Prefix:"
-    print("{} {}\n".format(prefix_label, " ".join(settings.prefixes)))
+    print("{} {}".format(prefix_label, " ".join(settings.prefixes)))
+    print("Owner: " + str(owner))
+    print("{}/{} active cogs with {} commands".format(
+        len(bot.cogs), total_cogs, len(bot.commands)))
+    print("-----------------")
+
     if settings.login_type == "token" and not settings.self_bot:
-        print("------")
-        print("Use this url to bring your bot to a server:")
+        print("\nUse this url to bring your bot to a server:")
         url = await get_oauth_url()
         bot.oauth_url = url
         print(url)
-        print("------")
+
+    print("\nOfficial server: https://discord.me/Red-DiscordBot")
+
+    if os.name == "nt" and os.path.isfile("update.bat"):
+        print("\nMake sure to keep your bot updated by running the file "
+              "update.bat")
+    else:
+        print("\nMake sure to keep your bot updated by using: git pull")
+        print("and: pip3 install -U git+https://github.com/Rapptz/"
+              "discord.py@master#egg=discord.py[voice]")
+
     await bot.get_cog('Owner').disable_commands()
 
 
@@ -273,13 +297,34 @@ async def get_oauth_url():
 
 
 async def set_bot_owner():
-    try:
-        data = await bot.application_info()
-        settings.owner = data.owner.id
-    except Exception as e:
-        print("Couldn't retrieve owner's ID. Error: {}".format(e))
-        return
-    print("{} has been recognized and set as owner.".format(data.owner.name))
+    if settings.self_bot:
+        settings.owner = bot.user.id
+        return "[Selfbot mode]"
+
+    if bot.settings.owner:
+        owner = discord.utils.get(bot.get_all_members(),
+                                  id=bot.settings.owner)
+        if not owner:
+            try:
+                owner = await bot.get_user_info(bot.settings.owner)
+            except:
+                owner = None
+            else:
+                owner = bot.settings.owner # Just the ID then
+        return owner
+
+    how_to = "Do `[p]set owner` in chat to set it"
+
+    if bot.user.bot: # Can fetch owner
+        try:
+            data = await bot.application_info()
+            settings.owner = data.owner.id
+            settings.save_settings()
+            return data.owner
+        except:
+            return "Failed to fetch owner. " + how_to
+    else:
+        return "Yet to be set. " + how_to
 
 
 def check_folders():
@@ -398,6 +443,7 @@ def set_logger():
         datefmt="[%d/%m/%Y %H:%M]"))
     logger.addHandler(handler)
 
+
 def ensure_reply(msg):
     choice = ""
     while choice == "":
@@ -463,29 +509,16 @@ def load_cogs():
     if failed:
         print("\nFailed to load: {}\n".format(" ".join(failed)))
 
-    return owner_cog
-
 
 def main():
     check_folders()
     if not settings.no_prompt:
         interactive_setup()
+    load_cogs()
     set_logger()
-    owner_cog = load_cogs()
-    if settings.owner is None and settings.login_type == "email":
-        print("Owner has not been set yet. Do '{}set owner' in chat to set "
-              "yourself as owner.".format(settings.prefixes[0]))
-    else:
-        owner_cog.owner.hidden = True  # Hides the set owner command from help
-    print("-- Logging in.. --")
-    if os.name == "nt" and os.path.isfile("update.bat"):
-        print("Make sure to keep your bot updated by running the file "
-              "update.bat")
-    else:
-        print("Make sure to keep your bot updated by using: git pull")
-        print("and: pip3 install -U git+https://github.com/Rapptz/"
-              "discord.py@master#egg=discord.py[voice]")
-    print("Official server: https://discord.me/Red-DiscordBot")
+
+    print("Logging into Discord...")
+
     if settings.login_type == "token":
         yield from bot.login(settings.token, bot=not settings.self_bot)
     else:
