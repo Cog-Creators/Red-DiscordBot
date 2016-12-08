@@ -14,7 +14,9 @@ class DataDB:
     def __init__(self, file_path, *, create_dirs=False, default_value=SENTINEL):
         self.path = file_path
 
-        if create_dirs:
+        file_exists = os.path.isfile(file_path)
+
+        if create_dirs and not file_exists:
             path, _ = os.path.split(file_path)
             if path:
                 try:
@@ -22,7 +24,7 @@ class DataDB:
                 except FileExistsError:
                     pass
 
-        if path_exists:
+        if file_exists:
             self._data = dataIO.load_json(file_path)
         else:
             self._data = {}
@@ -38,9 +40,9 @@ class DataDB:
         self._data[key] = value
         self._save()
 
-    def get(self, key):
+    def get(self, key, default=None):
         """Returns a DB's entry"""
-        return self._data[key]
+        return self._data.get(key, default)
 
     def remove(self, key):
         """Removes a DB's entry"""
