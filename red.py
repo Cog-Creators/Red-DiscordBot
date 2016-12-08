@@ -27,6 +27,7 @@ from cogs.utils.settings import Settings
 from cogs.utils.dataIO import dataIO
 from cogs.utils.chat_formatting import inline
 from collections import Counter
+from io import TextIOWrapper
 
 #
 # Red, a Discord bot by Twentysix, based on discord.py and its command
@@ -526,6 +527,10 @@ def main():
     yield from bot.connect()
 
 if __name__ == '__main__':
+    sys.stdout = TextIOWrapper(sys.stdout.detach(),
+                               encoding=sys.stdout.encoding,
+                               errors="replace",
+                               line_buffering=True)
     error = False
     loop = asyncio.get_event_loop()
     try:
