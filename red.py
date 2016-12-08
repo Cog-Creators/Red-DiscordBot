@@ -133,8 +133,8 @@ class Bot(commands.Bot):
         if author.bot:
             return False
 
-        if author == self.user and not self.settings.self_bot:
-            return False
+        if author == self.user:
+            return self.settings.self_bot
 
         mod = self.get_cog('Mod')
 
