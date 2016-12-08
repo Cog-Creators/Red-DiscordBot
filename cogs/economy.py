@@ -238,7 +238,7 @@ class Economy:
                 await self.bot.say("{} Your balance is: {}".format(user.mention, self.bank.get_balance(user)))
             except NoAccount:
                 await self.bot.say("{} You don't have an account at the Twentysix bank."
-                 " Type {}bank register to open one.".format(user.mention, ctx.prefix))
+                 " Type `{}bank register` to open one.".format(user.mention, ctx.prefix))
         else:
             try:
                 await self.bot.say("{}'s balance is {}".format(user.name, self.bank.get_balance(user)))
@@ -297,7 +297,7 @@ class Economy:
                 self.bank.deposit_credits(author, self.settings[server.id]["PAYDAY_CREDITS"])
                 await self.bot.say("{} Here, take some credits. Enjoy! (+{} credits!)".format(author.mention, str(self.settings[server.id]["PAYDAY_CREDITS"])))
         else:
-            await self.bot.say("{} You need an account to receive credits. Type {}bank register to open one.".format(author.mention, ctx.prefix))
+            await self.bot.say("{} You need an account to receive credits. Type `{}bank register` to open one.".format(author.mention, ctx.prefix))
 
     @commands.group(pass_context=True)
     async def leaderboard(self, ctx):
@@ -383,7 +383,7 @@ class Economy:
         author = ctx.message.author
         server = author.server
         if not self.bank.account_exists(author):
-            await self.bot.say("{} You need an account to use the slot machine. Type {}bank register to open one.".format(author.mention, ctx.prefix))
+            await self.bot.say("{} You need an account to use the slot machine. Type `{}bank register` to open one.".format(author.mention, ctx.prefix))
             return
         if self.bank.can_spend(author, bid):
             if bid >= self.settings[server.id]["SLOT_MIN"] and bid <= self.settings[server.id]["SLOT_MAX"]:
