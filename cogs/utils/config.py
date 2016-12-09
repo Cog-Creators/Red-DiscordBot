@@ -2,14 +2,16 @@ from .red_mongo import MissingCollection
 
 
 class BaseConfig:
-    def __init__(self, cog_name, unique_identifier, driver, hash_uuid=True,
-                 collection="GLOBAL", collection_uuid=None, defaults={}):
+    def __init__(self, cog_name, unique_identifier, driver_spawn,
+                 hash_uuid=True, collection="GLOBAL", collection_uuid=None,
+                 defaults={}):
         self.cog_name = cog_name
         if hash_uuid:
             self.uuid = hash(unique_identifier)
         else:
             self.uuid = unique_identifier
-        self.driver = driver
+        self.driver_spawn = driver_spawn
+        self._driver = None
         self.collection = collection
         self.collection_uuid = collection_uuid
 
@@ -38,6 +40,13 @@ class BaseConfig:
         self.defaults = defaults if defaults else {
             "GLOBAL": {}, "SERVER": {}, "CHANNEL": {}, "ROLE": {},
             "MEMBER": {}, "USER": {}}
+
+    @property
+    def driver(self):
+        if self._driver is None:
+            return self.driver_spawn()
+        else:
+            return self._driver
 
     def __getattr__(self, key):
         """This should be used to return config key data as determined by
@@ -117,9 +126,6 @@ class BaseConfig:
 
 
 class Config(BaseConfig):
-
-    __slots__ = ("collection", "collection_uuid", "curr_key")
-
     def __getattr__(self, key):
         try:
             default = self.defaults[self.collection][key]
@@ -177,6 +183,7 @@ class Config(BaseConfig):
                          hash_uuid=False, defaults=self.defaults)
         new.collection = "SERVER"
         new.collection_uuid = server.id
+        new._driver = None
         return new
 
     def channel(self, channel):
@@ -184,6 +191,7 @@ class Config(BaseConfig):
                          hash_uuid=False, defaults=self.defaults)
         new.collection = "CHANNEL"
         new.collection_uuid = channel.id
+        new._driver = None
         return new
 
     def role(self, role):
@@ -191,6 +199,7 @@ class Config(BaseConfig):
                          hash_uuid=False, defaults=self.defaults)
         new.collection = "ROLE"
         new.collection_uuid = role.id
+        new._driver = None
         return new
 
     def member(self, member):
@@ -199,6 +208,7 @@ class Config(BaseConfig):
                          hash_uuid=False, defaults=self.defaults)
         new.collection = "MEMBER"
         new.collection_uuid = (member.id, server.id)
+        new._driver = None
         return new
 
     def user(self, user):
@@ -206,4 +216,5 @@ class Config(BaseConfig):
                          hash_uuid=False, defaults=self.defaults)
         new.collection = "USER"
         new.collection_uuid = user.id
+        new._driver = None
         return new

@@ -227,8 +227,11 @@ class Bot(commands.Bot):
     def get_mongo_conf(self, cog_name, unique_identifier):
         url = self.settings.mongo_url
         port = self.settings.mongo_port
-        driver = Mongo(url, port)
-        return CogConfig(cog_name, unique_identifier, driver)
+
+        def spawn_driver():
+            return Mongo(url, port)
+
+        return CogConfig(cog_name, unique_identifier, spawn_driver)
 
 
 class Formatter(commands.HelpFormatter):
