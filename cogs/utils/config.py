@@ -106,64 +106,75 @@ class MongoConfig(BaseConfig):
         }
 
         if self.collection != "MEMBER":
-            collections[self.collection](self.cog_name, self.uuid,
-                                         self.collection_uuid, key,
-                                         default=default)
+            ret = collections[self.collection](
+                self.cog_name, self.uuid, self.collection_uuid, key,
+                default=default)
         else:
             mid, sid = self.collection_uuid
-            self.driver.get_member(self.cog_name, self.uuid,
-                                   mid, sid, key, default=default)
+            ret = self.driver.get_member(
+                self.cog_name, self.uuid, mid, sid, key,
+                default=default)
 
-    def set(self, value):
+        return ret
+
+    def set(self, key, value):
+        if key not in self.defaults[self.collection]:
+            raise AttributeError("Key '{}' not registered!".format(key))
+
         if self.collection == "GLOBAL":
-            self.driver.set_global(self.cog_name, self.uuid, self.curr_key,
+            self.driver.set_global(self.cog_name, self.uuid, key,
                                    value)
         elif self.collection == "SERVER":
             self.driver.set_server(self.cog_name, self.uuid,
-                                   self.collection_uuid, self.curr_key, value)
+                                   self.collection_uuid, key, value)
         elif self.collection == "CHANNEL":
             self.driver.set_channel(self.cog_name, self.uuid,
-                                    self.collection_uuid, self.curr_key, value)
+                                    self.collection_uuid, key, value)
         elif self.collection == "ROLE":
             self.driver.set_channel(self.cog_name, self.uuid,
-                                    self.collection_uuid, self.curr_key, value)
+                                    self.collection_uuid, key, value)
         elif self.collection == "MEMBER":
             mid, sid = self.collection_uuid
             self.driver.set_member(self.cog_name, self.uuid, mid, sid,
-                                   self.curr_key, value)
+                                   key, value)
         elif self.collection == "USER":
             self.driver.set_user(self.cog_name, self.uuid,
-                                 self.collection_uuid, self.curr_key, value)
+                                 self.collection_uuid, key, value)
         else:
             raise MissingCollection("Can't find collection: {}".format(
                 self.collection))
 
     def server(self, server):
-        new = deepcopy(self)
+        new = type(self)(self.cog_name, self.uuid, self.driver,
+                         hash_uuid=False, defaults=self.defaults)
         new.collection = "SERVER"
         new.collection_uuid = server.id
         return new
 
     def channel(self, channel):
-        new = deepcopy(self)
+        new = type(self)(self.cog_name, self.uuid, self.driver,
+                         hash_uuid=False, defaults=self.defaults)
         new.collection = "CHANNEL"
         new.collection_uuid = channel.id
         return new
 
     def role(self, role):
-        new = deepcopy(self)
+        new = type(self)(self.cog_name, self.uuid, self.driver,
+                         hash_uuid=False, defaults=self.defaults)
         new.collection = "ROLE"
         new.collection_uuid = role.id
         return new
 
-    def member(self, member):
-        new = deepcopy(self)
+    def member(self, member, server):
+        new = type(self)(self.cog_name, self.uuid, self.driver,
+                         hash_uuid=False, defaults=self.defaults)
         new.collection = "MEMBER"
         new.collection_uuid = (member.id, server.id)
         return new
 
     def user(self, user):
-        new = deepcopy(self)
+        new = type(self)(self.cog_name, self.uuid, self.driver,
+                         hash_uuid=False, defaults=self.defaults)
         new.collection = "USER"
         new.collection_uuid = user.id
         return new

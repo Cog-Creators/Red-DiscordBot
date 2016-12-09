@@ -33,11 +33,11 @@ class Mongo:
         doc = self._global.find(
             {"cog_name": cog_name, "cog_identifier": cog_identifier},
             projection=[key, ], batch_size=2)
-        if len(doc) == 2:
+        if doc.count() == 2:
             raise MultipleMatches("Too many matching documents at the GLOBAL"
                                   " level: ({}, {})".format(cog_name,
                                                             cog_identifier))
-        elif len(doc) == 1:
+        elif doc.count() == 1:
             return doc[0].get(key, default)
         return default
 
@@ -47,11 +47,11 @@ class Mongo:
             {"cog_name": cog_name, "cog_identifier": cog_identifier,
              "server_id": server_id},
             projection=[key, ], batch_size=2)
-        if len(doc) == 2:
+        if doc.count() == 2:
             raise MultipleMatches("Too many matching documents at the SERVER"
                                   " level: ({}, {}, {})".format(
                                       cog_name, cog_identifier, server_id))
-        elif len(doc) == 1:
+        elif doc.count() == 1:
             return doc[0].get(key, default)
         return default
 
@@ -61,11 +61,11 @@ class Mongo:
             {"cog_name": cog_name, "cog_identifier": cog_identifier,
              "channel_id": channel_id},
             projection=[key, ], batch_size=2)
-        if len(doc) == 2:
+        if doc.count() == 2:
             raise MultipleMatches("Too many matching documents at the CHANNEL"
                                   " level: ({}, {}, {})".format(
                                       cog_name, cog_identifier, channel_id))
-        elif len(doc) == 1:
+        elif doc.count() == 1:
             return doc[0].get(key, default)
         return default
 
@@ -75,11 +75,11 @@ class Mongo:
             {"cog_name": cog_name, "cog_identifier": cog_identifier,
              "role_id": role_id},
             projection=[key, ], batch_size=2)
-        if len(doc) == 2:
+        if doc.count() == 2:
             raise MultipleMatches("Too many matching documents at the SERVER"
                                   " level: ({}, {}, {})".format(
                                       cog_name, cog_identifier, role_id))
-        elif len(doc) == 1:
+        elif doc.count() == 1:
             return doc[0].get(key, default)
         return default
 
@@ -89,32 +89,33 @@ class Mongo:
             {"cog_name": cog_name, "cog_identifier": cog_identifier,
              "user_id": user_id, "server_id": server_id},
             projection=[key, ], batch_size=2)
-        if len(doc) == 2:
+        if doc.count() == 2:
             raise MultipleMatches("Too many matching documents at the SERVER"
                                   " level: ({}, {}, mid {}, sid {})".format(
                                       cog_name, cog_identifier, user_id,
                                       server_id))
-        elif len(doc) == 1:
+        elif doc.count() == 1:
             return doc[0].get(key, default)
         return default
 
     def get_user(self, cog_name, cog_identifier, user_id, key, *,
                  default=None):
-        doc = self._global.find(
+        doc = self._user.find(
             {"cog_name": cog_name, "cog_identifier": cog_identifier,
              "user_id": user_id},
             projection=[key, ], batch_size=2)
-        if len(doc) == 2:
+        if doc.count() == 2:
             raise MultipleMatches("Too many matching documents at the SERVER"
                                   " level: ({}, {}, mid {})".format(
                                       cog_name, cog_identifier, user_id))
-        elif len(doc) == 1:
+        elif doc.count() == 1:
             return doc[0].get(key, default)
-        return default
+        else:
+            return default
 
     def set_global(self, cog_name, cog_identifier, key, value):
         filter = {"cog_name": cog_name, "cog_identifier": cog_identifier}
-        data = {key: value}
+        data = {"$set": {key: value}}
         if self._global.count(filter) > 1:
             raise MultipleMatches("Too many matching documents at the GLOBAL"
                                   " level: ({}, {})".format(cog_name,
@@ -125,7 +126,7 @@ class Mongo:
     def set_server(self, cog_name, cog_identifier, server_id, key, value):
         filter = {"cog_name": cog_name, "cog_identifier": cog_identifier,
                   "server_id": server_id}
-        data = {key: value}
+        data = {"$set": {key: value}}
         if self._server.count(filter) > 1:
             raise MultipleMatches("Too many matching documents at the SERVER"
                                   " level: ({}, {}, {})".format(
@@ -136,7 +137,7 @@ class Mongo:
     def set_channel(self, cog_name, cog_identifier, channel_id, key, value):
         filter = {"cog_name": cog_name, "cog_identifier": cog_identifier,
                   "channel_id": channel_id}
-        data = {key: value}
+        data = {"$set": {key: value}}
         if self._channel.count(filter) > 1:
             raise MultipleMatches("Too many matching documents at the CHANNEL"
                                   " level: ({}, {}, {})".format(
@@ -147,7 +148,7 @@ class Mongo:
     def set_role(self, cog_name, cog_identifier, role_id, key, value):
         filter = {"cog_name": cog_name, "cog_identifier": cog_identifier,
                   "role_id": role_id}
-        data = {key: value}
+        data = {"$set": {key: value}}
         if self._role.count(filter) > 1:
             raise MultipleMatches("Too many matching documents at the ROLE"
                                   " level: ({}, {}, {})".format(
@@ -159,7 +160,7 @@ class Mongo:
                    value):
         filter = {"cog_name": cog_name, "cog_identifier": cog_identifier,
                   "server_id": server_id, "user_id": user_id}
-        data = {key: value}
+        data = {"$set": {key: value}}
         if self._member.count(filter) > 1:
             raise MultipleMatches("Too many matching documents at the SERVER"
                                   " level: ({}, {}, mid {}, sid {})".format(
@@ -171,7 +172,7 @@ class Mongo:
     def set_user(self, cog_name, cog_identifier, user_id, key, value):
         filter = {"cog_name": cog_name, "cog_identifier": cog_identifier,
                   "user_id": user_id}
-        data = {key: value}
+        data = {"$set": {key: value}}
         if self._user.count(filter) > 1:
             raise MultipleMatches("Too many matching documents at the SERVER"
                                   " level: ({}, {}, mid {})".format(
