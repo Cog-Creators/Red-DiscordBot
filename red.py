@@ -28,6 +28,8 @@ except AssertionError:
 from cogs.utils.settings import Settings
 from cogs.utils.dataIO import dataIO
 from cogs.utils.chat_formatting import inline
+from cogs.utils.red_mongo import Mongo
+from cogs.utils.config import Config as CogConfig
 from collections import Counter
 from io import TextIOWrapper
 
@@ -221,6 +223,12 @@ class Bot(commands.Bot):
 
         response = self.loop.run_in_executor(None, install)
         return await asyncio.wait_for(response, timeout=timeout)
+
+    def get_mongo_conf(self, cog_name, unique_identifier):
+        url = self.settings.mongo_url
+        port = self.settings.mongo_port
+        driver = Mongo(url, port)
+        return CogConfig(cog_name, unique_identifier, driver)
 
 
 class Formatter(commands.HelpFormatter):

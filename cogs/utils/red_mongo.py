@@ -18,10 +18,17 @@ class MissingCollection(RedMongoException):
 
 
 class Mongo:
-    def __init__(self, host, port=27017, **kwargs):
+    def __init__(self, host, port=27017, admin_user=None, admin_pass=None,
+                 **kwargs):
         self.conn = m.MongoClient(host=host, port=port, **kwargs)
 
+        self.admin_user = admin_user
+        self.admin_pass = admin_pass
+
         self._db = self.conn.red
+        if self.admin_user is not None and self.admin_pass is not None:
+            self._db.authenticate(self.admin_user, self.admin_pass)
+
         self._global = self._db.GLOBAL
         self._server = self._db.SERVER
         self._channel = self._db.CHANNEL
