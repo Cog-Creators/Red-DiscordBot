@@ -29,6 +29,7 @@ from cogs.utils.settings import Settings
 from cogs.utils.dataIO import dataIO
 from cogs.utils.chat_formatting import inline
 from cogs.utils.red_mongo import Mongo
+from cogs.utils.red_json import JSON as JSONDriver
 from cogs.utils.config import Config as CogConfig
 from collections import Counter
 from io import TextIOWrapper
@@ -228,8 +229,13 @@ class Bot(commands.Bot):
         url = self.settings.mongo_url
         port = self.settings.mongo_port
 
-        def spawn_driver():
+        def spawn_mongo_driver():
             return Mongo(url, port)
+
+        if self.settings.backend == "json":
+            spawn_driver = JSONDriver(cog_name)
+        elif self.settings.backend == "mongo":
+            spawn_driver = spawn_mongo_driver
 
         return CogConfig(cog_name, unique_identifier, spawn_driver)
 

@@ -44,9 +44,12 @@ class BaseConfig:
     @property
     def driver(self):
         if self._driver is None:
-            return self.driver_spawn()
-        else:
-            return self._driver
+            try:
+                self._driver = self.driver_spawn()
+            except TypeError:
+                return self.driver_spawn
+
+        return self._driver
 
     def __getattr__(self, key):
         """This should be used to return config key data as determined by

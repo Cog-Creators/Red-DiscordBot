@@ -262,6 +262,15 @@ class Settings:
         self.bot_settings['MONGO_PASSWORD'] = value
         self.save_settings()
 
+    @property
+    def backend(self):
+        return self.bot_settings.get("BACKEND", "json")
+
+    @backend.setter
+    def backend(self, value):
+        self.bot_settings["BACKEND"] = value
+        self.save_settings()
+
     def get_server(self, server):
         if server is None:
             return self.bot_settings["default"].copy()
