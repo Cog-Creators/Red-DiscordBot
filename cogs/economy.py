@@ -20,7 +20,7 @@ slot_payouts = """Slot machine payouts:
     :two: :two: :six: Bet * 5000
     :four_leaf_clover: :four_leaf_clover: :four_leaf_clover: +1000
     :cherries: :cherries: :cherries: +800
-    :two: :six: Bet * 4
+    :two: :six: Bet * -4
     :cherries: :cherries: Bet * 3
 
     Three symbols: +500
