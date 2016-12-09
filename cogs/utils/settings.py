@@ -227,21 +227,21 @@ class Settings:
         return ret
 
     @property
-    def rethink_url(self):
-        return self.bot_settings.get("RETHINK_URL", 'localhost')
+    def mongo_url(self):
+        return self.bot_settings.get("mongo_URL", 'localhost')
 
-    @rethink_url.setter
-    def rethink_url(self, value):
-        self.bot_settings["RETHINK_URL"] = value
+    @mongo_url.setter
+    def mongo_url(self, value):
+        self.bot_settings["mongo_URL"] = value
         self.save_settings()
 
     @property
-    def rethink_port(self):
-        return self.bot_settings.get("RETHINK_PORT", 28015)
+    def mongo_port(self):
+        return self.bot_settings.get("mongo_PORT", 28015)
 
-    @rethink_port.setter
-    def rethink_port(self, value):
-        self.bot_settings["RETHINK_PORT"] = value
+    @mongo_port.setter
+    def mongo_port(self, value):
+        self.bot_settings["mongo_PORT"] = value
         self.save_settings
 
     def get_server(self, server):
