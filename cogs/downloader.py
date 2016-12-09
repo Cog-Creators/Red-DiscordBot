@@ -5,6 +5,7 @@ from cogs.utils.chat_formatting import pagify, box
 from __main__ import send_cmd_help, set_cog
 import os
 from subprocess import run, PIPE
+import stat
 import shutil
 from asyncio import as_completed
 from setuptools import distutils
@@ -108,6 +109,12 @@ class Downloader:
         del self.repos[repo_name]
         #shutil.rmtree(os.path.join(self.path, repo_name))
         self.save_repos()
+        folders = [repo.name for repo in os.scandir(self.path) if repo.is_dir()]
+        folders_check = [folder for folder in folders if not folder.startswith(".")]
+        cog_list = [repo for repo in folders_check if repo not in self.repos.keys()]
+        cog_path = [folder.path for folder in os.scandir(self.path) if folder.name in cog_list]
+        for cog in cog_path:
+            shutil.rmtree(cog, onerror=self.del_rw)
         await self.bot.say("Repo '{}' removed.".format(repo_name))
 
     @cog.command(name="list")
@@ -537,6 +544,10 @@ class Downloader:
             raise CloningError(name, *e.args) from None
         except UpdateError as e:
             raise UpdateError(name, *e.args) from None
+
+    def del_rw(action, name, exc):
+        os.chmod(name, stat.S_IWRITE)
+        os.remove(name)
 
     async def _robust_edit(self, msg, text):
         try:
