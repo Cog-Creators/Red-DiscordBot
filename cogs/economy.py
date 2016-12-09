@@ -231,15 +231,9 @@ class Economy:
         if ctx.message.server.id in self.settings:
             credits = self.settings[ctx.message.server.id].get("REGISTER_CREDITS", 0)
         try:
-<<<<<<< HEAD
-            account = self.bank.create_account(user, initial_balance=credits)
-            await self.bot.say("{} Account opened. Current balance: {}".format(user.mention,
-                account.balance))
-=======
             account = self.bank.create_account(user)
             await self.bot.say("{} Account opened. Current balance: {}".format(
                 user.mention, account.balance))
->>>>>>> cb472f9... Some PEP8 stuff
         except AccountAlreadyExists:
             await self.bot.say("{} You already have an account at the"
                                " Twentysix bank.".format(user.mention))
@@ -558,9 +552,8 @@ class Economy:
         await self.bot.say("Every payday will now give " + str(credits) + " credits.")
         dataIO.save_json(self.file_path, self.settings)
 
-<<<<<<< HEAD
     @economyset.command(pass_context=True)
-    async def registercredits(self, ctx, credits : int):
+    async def registercredits(self, ctx, credits: int):
         """Credits given on registering an account"""
         server = ctx.message.server
         if credits < 0:
@@ -569,13 +562,9 @@ class Economy:
         await self.bot.say("Registering an account will now give {} credits.".format(credits))
         dataIO.save_json(self.file_path, self.settings)
 
-    def display_time(self, seconds, granularity=2):  # What would I ever do without stackoverflow?
-        intervals = (                                # Source: http://stackoverflow.com/a/24542445
-=======
     # What would I ever do without stackoverflow?
     def display_time(self, seconds, granularity=2):
         intervals = (  # Source: http://stackoverflow.com/a/24542445
->>>>>>> cb472f9... Some PEP8 stuff
             ('weeks', 604800),  # 60 * 60 * 24 * 7
             ('days', 86400),    # 60 * 60 * 24
             ('hours', 3600),    # 60 * 60
