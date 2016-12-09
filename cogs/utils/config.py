@@ -1,4 +1,3 @@
-from copy import deepcopy
 from .red_mongo import MissingCollection
 
 
