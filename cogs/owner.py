@@ -227,7 +227,10 @@ class Owner:
         if not ctx.message.channel.is_private:
             censor = (self.bot.settings.email,
                       self.bot.settings.password,
-                      self.bot.settings.token)
+                      self.bot.settings.token,
+                      self.bot.settings.mongo_url,
+                      self.bot.settings.mongo_user,
+                      self.bot.settings.mongo_password)
             r = "[EXPUNGED]"
             for w in censor:
                 if w is None or w == "":
