@@ -113,7 +113,7 @@ class Mongo:
         else:
             return default
 
-    def set_global(self, cog_name, cog_identifier, key, value):
+    def set_global(self, cog_name, cog_identifier, key, value, clear=False):
         filter = {"cog_name": cog_name, "cog_identifier": cog_identifier}
         data = {"$set": {key: value}}
         if self._global.count(filter) > 1:
@@ -121,9 +121,13 @@ class Mongo:
                                   " level: ({}, {})".format(cog_name,
                                                             cog_identifier))
         else:
-            self._global.update_one(filter, data, upsert=True)
+            if clear:
+                self._global.delete_one(filter)
+            else:
+                self._global.update_one(filter, data, upsert=True)
 
-    def set_server(self, cog_name, cog_identifier, server_id, key, value):
+    def set_server(self, cog_name, cog_identifier, server_id, key, value,
+                   clear=False):
         filter = {"cog_name": cog_name, "cog_identifier": cog_identifier,
                   "server_id": server_id}
         data = {"$set": {key: value}}
@@ -132,9 +136,13 @@ class Mongo:
                                   " level: ({}, {}, {})".format(
                                       cog_name, cog_identifier, server_id))
         else:
-            self._server.update_one(filter, data, upsert=True)
+            if clear:
+                self._server.delete_one(filter)
+            else:
+                self._server.update_one(filter, data, upsert=True)
 
-    def set_channel(self, cog_name, cog_identifier, channel_id, key, value):
+    def set_channel(self, cog_name, cog_identifier, channel_id, key, value,
+                    clear=False):
         filter = {"cog_name": cog_name, "cog_identifier": cog_identifier,
                   "channel_id": channel_id}
         data = {"$set": {key: value}}
@@ -143,9 +151,13 @@ class Mongo:
                                   " level: ({}, {}, {})".format(
                                       cog_name, cog_identifier, channel_id))
         else:
-            self._channel.update_one(filter, data, upsert=True)
+            if clear:
+                self._channel.delete_one(filter)
+            else:
+                self._channel.update_one(filter, data, upsert=True)
 
-    def set_role(self, cog_name, cog_identifier, role_id, key, value):
+    def set_role(self, cog_name, cog_identifier, role_id, key, value,
+                 clear=False):
         filter = {"cog_name": cog_name, "cog_identifier": cog_identifier,
                   "role_id": role_id}
         data = {"$set": {key: value}}
@@ -154,10 +166,13 @@ class Mongo:
                                   " level: ({}, {}, {})".format(
                                       cog_name, cog_identifier, role_id))
         else:
-            self._role.update_one(filter, data, upsert=True)
+            if clear:
+                self._role.delete_one(filter)
+            else:
+                self._role.update_one(filter, data, upsert=True)
 
     def set_member(self, cog_name, cog_identifier, user_id, server_id, key,
-                   value):
+                   value, clear=False):
         filter = {"cog_name": cog_name, "cog_identifier": cog_identifier,
                   "server_id": server_id, "user_id": user_id}
         data = {"$set": {key: value}}
@@ -167,9 +182,13 @@ class Mongo:
                                       cog_name, cog_identifier, user_id,
                                       server_id))
         else:
-            self._member.update_one(filter, data, upsert=True)
+            if clear:
+                self._member.delete_one(filter)
+            else:
+                self._member.update_one(filter, data, upsert=True)
 
-    def set_user(self, cog_name, cog_identifier, user_id, key, value):
+    def set_user(self, cog_name, cog_identifier, user_id, key, value,
+                 clear=False):
         filter = {"cog_name": cog_name, "cog_identifier": cog_identifier,
                   "user_id": user_id}
         data = {"$set": {key: value}}
@@ -178,4 +197,7 @@ class Mongo:
                                   " level: ({}, {}, mid {})".format(
                                       cog_name, cog_identifier, user_id))
         else:
-            self._user.update_one(filter, data, upsert=True)
+            if clear:
+                self._user.delete_one(filter)
+            else:
+                self._user.update_one(filter, data, upsert=True)

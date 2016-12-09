@@ -13,6 +13,22 @@ class BaseConfig:
         self.collection = collection
         self.collection_uuid = collection_uuid
 
+        self.driver_getmap = {
+            "GLOBAL": self.driver.get_global,
+            "SERVER": self.driver.get_server,
+            "CHANNEL": self.driver.get_channel,
+            "ROLE": self.driver.get_role,
+            "USER": self.driver.get_user
+        }
+
+        self.driver_setmap = {
+            "GLOBAL": self.driver.set_global,
+            "SERVER": self.driver.set_server,
+            "CHANNEL": self.driver.set_channel,
+            "ROLE": self.driver.set_role,
+            "USER": self.driver.set_user
+        }
+
         self.curr_key = None
 
         self.defaults = defaults if defaults else {
@@ -28,7 +44,7 @@ class BaseConfig:
         """Clears all values in the current context ONLY."""
         raise NotImplemented
 
-    def set(self, value):
+    def set(self, key, value):
         """This should set config key with value `value` in the
             corresponding collection as defined by `self.collection` and
             `self.collection_uuid`."""
@@ -84,7 +100,7 @@ class BaseConfig:
         self.defaults["USER"][key] = default
 
 
-class MongoConfig(BaseConfig):
+class Config(BaseConfig):
 
     __slots__ = ("collection", "collection_uuid", "curr_key")
 
@@ -96,16 +112,8 @@ class MongoConfig(BaseConfig):
 
         self.curr_key = key
 
-        collections = {
-            "GLOBAL": self.driver.get_global,
-            "SERVER": self.driver.get_server,
-            "CHANNEL": self.driver.get_channel,
-            "ROLE": self.driver.get_role,
-            "USER": self.driver.get_user
-        }
-
         if self.collection != "MEMBER":
-            ret = collections[self.collection](
+            ret = self.driver_getmap[self.collection](
                 self.cog_name, self.uuid, self.collection_uuid, key,
                 default=default)
         else:
@@ -142,6 +150,11 @@ class MongoConfig(BaseConfig):
         else:
             raise MissingCollection("Can't find collection: {}".format(
                 self.collection))
+
+    def clear(self):
+        self.driver_setmap[self.collection](
+            self.cog_name, self.uuid, self.collection_uuid, None, None,
+            clear=True)
 
     def server(self, server):
         new = type(self)(self.cog_name, self.uuid, self.driver,
