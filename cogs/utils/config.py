@@ -31,6 +31,10 @@ class BaseConfig:
 
         self.curr_key = None
 
+        self.restricted_keys = ("cog_name", "cog_identifier", "_id",
+                                "server_id", "channel_id", "role_id",
+                                "user_id")
+
         self.defaults = defaults if defaults else {
             "GLOBAL": {}, "SERVER": {}, "CHANNEL": {}, "ROLE": {},
             "MEMBER": {}, "USER": {}}
@@ -77,26 +81,38 @@ class BaseConfig:
 
     def registerGlobal(self, key, default=None):
         """Registers a global config key `key`"""
+        if key in self.restricted_keys:
+            raise KeyError("Attempt to use restricted key: '{}'".format(key))
         self.defaults["GLOBAL"][key] = default
 
     def registerServer(self, key, default=None):
         """Registers a server config key `key`"""
+        if key in self.restricted_keys:
+            raise KeyError("Attempt to use restricted key: '{}'".format(key))
         self.defaults["SERVER"][key] = default
 
     def registerChannel(self, key, default=None):
         """Registers a channel config key `key`"""
+        if key in self.restricted_keys:
+            raise KeyError("Attempt to use restricted key: '{}'".format(key))
         self.defaults["CHANNEL"][key] = default
 
     def registerRole(self, key, default=None):
         """Registers a role config key `key`"""
+        if key in self.restricted_keys:
+            raise KeyError("Attempt to use restricted key: '{}'".format(key))
         self.defaults["ROLE"][key] = default
 
     def registerMember(self, key, default=None):
         """Registers a member config key `key`"""
+        if key in self.restricted_keys:
+            raise KeyError("Attempt to use restricted key: '{}'".format(key))
         self.defaults["MEMBER"][key] = default
 
     def registerUser(self, key, default=None):
         """Registers a user config key `key`"""
+        if key in self.restricted_keys:
+            raise KeyError("Attempt to use restricted key: '{}'".format(key))
         self.defaults["USER"][key] = default
 
 
