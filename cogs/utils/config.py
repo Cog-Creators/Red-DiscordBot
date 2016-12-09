@@ -177,7 +177,8 @@ class Config(BaseConfig):
         new.collection_uuid = role.id
         return new
 
-    def member(self, member, server):
+    def member(self, member):
+        server = member.server
         new = type(self)(self.cog_name, self.uuid, self.driver,
                          hash_uuid=False, defaults=self.defaults)
         new.collection = "MEMBER"
