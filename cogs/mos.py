@@ -10,16 +10,14 @@ import aiohttp
 import asyncio
 import csv
 import shelve
+import redis
 
 
-
+r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 class mos:
     """ Made of Styrofoam Specific Commands."""
-    d = shelve.open('myfile.db')
-    FUCKS = d['fucks']
-    d.close() 
-
+    FUCKS = int(r.get('Quixoticelixer'))
 
     def __init__(self,bot):
         self.bot = bot
@@ -34,19 +32,26 @@ class mos:
         "fuckquix lol"
         d = shelve.open('myfile.db')
 
-        mos.FUCKS['quix'] += 1
-        f = mos.FUCKS['quix']
+        mos.FUCKS += 1
+        f = mos.FUCKS
         await self.bot.say(f)
+        r.set('Quixoticelixer',f)
 
-        fucks = {'quix': f}
-        d = shelve.open('myfile.db')
-        d['fucks'] = fucks
-        d.close()    
     @commands.command(hidden=True)
     async def bmi(self):
         nbmi = random.uniform(2,39)
         await self.bot.say("your \" BMI \" is {:3.2f}. \nAlgorithm provided by Quixoticelixer".format(nbmi))
         
+    @commands.command(hidden=True)
+    async def addme(self, days, name):
+        r.zadd('daysSince', days, name) 
+        await self.bot.say('added {}'.format(name))
+
+    @commands.command(hidden=True)
+    async def days_since(self, name):
+        days = r.zscore('daysSince', name)
+        await self.bot.say(days)
+
 def setup(bot):
     n = mos(bot)
     bot.add_cog(n)
