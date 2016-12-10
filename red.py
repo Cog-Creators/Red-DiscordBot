@@ -225,7 +225,7 @@ class Bot(commands.Bot):
         response = self.loop.run_in_executor(None, install)
         return await asyncio.wait_for(response, timeout=timeout)
 
-    def get_mongo_conf(self, cog_name, unique_identifier):
+    def get_conf(self, cog_name, unique_identifier):
         url = self.settings.mongo_url
         port = self.settings.mongo_port
 
