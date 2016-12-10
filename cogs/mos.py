@@ -71,8 +71,12 @@ class mos:
         d,m,y = time.strftime("%d:%m:%Y").split(":")
         d = int(d); m = int(m); y = int(y);
         t2 = date(y,m,d)
-        time_delta, minutes = str(t1 - t2).split(",")
-        await self.bot.say("{}".format(time_delta))
+        try:
+            time_delta, minutes = str(t1 - t2).split(",")
+        except ValueError:
+            await self.bot.say("0 Days ໒( •́ ‸ •̀ )७"" ")
+        else:
+            await self.bot.say("{}".format(time_delta))
 
 def setup(bot):
     n = mos(bot)
