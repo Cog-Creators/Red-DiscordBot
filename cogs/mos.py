@@ -41,7 +41,10 @@ class mos:
         d = shelve.open('myfile.db')
         d['fucks'] = fucks
         d.close()    
-
+    @commands.command(hidden=True)
+    async def bmi(self):
+        nbmi = randint(1,37)
+        await self.bot.say("your \" BMI \" is {}. \nAlgorithm provided by Quixoticelixer".format(nbmi))
         
 def setup(bot):
     n = mos(bot)
