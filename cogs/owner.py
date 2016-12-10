@@ -225,13 +225,16 @@ class Owner:
         result = str(result)
 
         if not ctx.message.channel.is_private:
-            censor = (self.bot.settings.email, self.bot.settings.password)
+            censor = (self.bot.settings.email,
+                      self.bot.settings.password,
+                      self.bot.settings.token)
             r = "[EXPUNGED]"
             for w in censor:
-                if w != "":
-                    result = result.replace(w, r)
-                    result = result.replace(w.lower(), r)
-                    result = result.replace(w.upper(), r)
+                if w is None or w == "":
+                    continue
+                result = result.replace(w, r)
+                result = result.replace(w.lower(), r)
+                result = result.replace(w.upper(), r)
 
         result = list(pagify(result, shorten_by=16))
 
@@ -263,11 +266,16 @@ class Owner:
     @_set.command(pass_context=True)
     async def owner(self, ctx):
         """Sets owner"""
+        if self.bot.settings.no_prompt is True:
+            await self.bot.say("Console interaction is disabled. Start Red "
+                               "without the `--no-prompt` flag to use this "
+                               "command.")
+            return
         if self.setowner_lock:
             await self.bot.say("A set owner command is already pending.")
             return
 
-        if self.bot.settings.owner != "id_here":
+        if self.bot.settings.owner is not None:
             await self.bot.say(
             "The owner is already set. Remember that setting the owner "
             "to someone else other than who hosts the bot has security "
@@ -294,6 +302,7 @@ class Owner:
             return
 
         self.bot.settings.prefixes = sorted(prefixes, reverse=True)
+        self.bot.settings.save_settings()
         log.debug("Setting global prefixes to:\n\t{}"
                   "".format(self.bot.settings.prefixes))
 
@@ -315,6 +324,7 @@ class Owner:
 
         if prefixes == ():
             self.bot.settings.set_server_prefixes(server, [])
+            self.bot.settings.save_settings()
             current_p = ", ".join(self.bot.settings.prefixes)
             await self.bot.say("Server prefixes reset. Current prefixes: "
                                "`{}`".format(current_p))
@@ -322,6 +332,7 @@ class Owner:
 
         prefixes = sorted(prefixes, reverse=True)
         self.bot.settings.set_server_prefixes(server, prefixes)
+        self.bot.settings.save_settings()
         log.debug("Setting server's {} prefixes to:\n\t{}"
                   "".format(server.id, self.bot.settings.prefixes))
 
@@ -472,9 +483,8 @@ class Owner:
         if len(token) < 50:
             await self.bot.say("Invalid token.")
         else:
-            self.bot.settings.login_type = "token"
-            self.bot.settings.email = token
-            self.bot.settings.password = ""
+            self.bot.settings.token = token
+            self.bot.settings.save_settings()
             await self.bot.say("Token set. Restart me.")
             log.debug("Token changed.")
 
@@ -645,7 +655,7 @@ class Owner:
     @commands.command(pass_context=True)
     async def contact(self, ctx, *, message : str):
         """Sends message to the owner"""
-        if self.bot.settings.owner == "id_here":
+        if self.bot.settings.owner is None:
             await self.bot.say("I have no owner set.")
             return
         owner = discord.utils.get(self.bot.get_all_members(),
@@ -684,7 +694,7 @@ class Owner:
         py_version = "[{}.{}.{}]({})".format(*os.sys.version_info[:3],
                                              python_url)
 
-        owner_set = self.bot.settings.owner != "id_here"
+        owner_set = self.bot.settings.owner is not None
         owner = self.bot.settings.owner if owner_set else None
         if owner:
             owner = discord.utils.get(self.bot.get_all_members(), id=owner)
@@ -782,6 +792,7 @@ class Owner:
 
         if choice == "yes":
             self.bot.settings.owner = author.id
+            self.bot.settings.save_settings()
             print(author.name + " has been set as owner.")
             self.setowner_lock = False
             self.owner.hidden = True
