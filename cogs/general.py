@@ -3,6 +3,7 @@ from discord.ext import commands
 from .utils.chat_formatting import *
 from random import randint
 from random import choice as randchoice
+from cogs.utils import checks as checks
 import datetime
 import time
 import aiohttp
@@ -23,6 +24,7 @@ class General:
         self.poll_sessions = []
 
     @commands.command(hidden=True)
+    @checks.is_owner()
     async def ping(self):
         """Pong."""
         await self.bot.say("Pong.")
