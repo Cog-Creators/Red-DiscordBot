@@ -483,9 +483,7 @@ class Owner:
         if len(token) < 50:
             await self.bot.say("Invalid token.")
         else:
-            self.bot.settings.login_type = "token"
-            self.bot.settings.email = token
-            self.bot.settings.password = None
+            self.bot.settings.token = token
             self.bot.settings.save_settings()
             await self.bot.say("Token set. Restart me.")
             log.debug("Token changed.")

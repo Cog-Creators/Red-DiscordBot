@@ -231,7 +231,7 @@ async def on_ready():
         len(bot.cogs), total_cogs, len(bot.commands)))
     print("-----------------")
 
-    if settings.login_type == "token" and not settings.self_bot:
+    if settings.token and not settings.self_bot:
         print("\nUse this url to bring your bot to a server:")
         url = await get_oauth_url()
         bot.oauth_url = url
@@ -346,15 +346,13 @@ def interactive_setup():
               "#creating-a-new-bot-account")
         print("and obtain your bot's token like described.")
 
-    if settings.token is None and settings.email is None:
+    if not settings.login_credentials:
         print("\nInsert your bot's token:")
         while settings.token is None and settings.email is None:
             choice = input("> ")
             if "@" not in choice and len(choice) >= 50:  # Assuming token
-                settings.login_type = "token"
                 settings.token = choice
             elif "@" in choice:
-                settings.login_type = "email"
                 settings.email = choice
                 settings.password = input("\nPassword> ")
             else:
@@ -520,10 +518,12 @@ def main():
 
     print("Logging into Discord...")
 
-    if settings.login_type == "token":
-        yield from bot.login(settings.token, bot=not settings.self_bot)
+    if settings.login_credentials:
+        yield from bot.login(*settings.login_credentials,
+                             bot=not settings.self_bot)
     else:
-        yield from bot.login(settings.email, settings.password, bot=not settings.self_bot)
+        print("No credentials available to login.")
+        raise RuntimeError()
     yield from bot.connect()
 
 if __name__ == '__main__':

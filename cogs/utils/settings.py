@@ -21,10 +21,9 @@ class Settings:
             "PREFIXES": [],
             "default": {"ADMIN_ROLE": "Transistor",
                         "MOD_ROLE": "Process",
-                        "PREFIXES": []},
-            "LOGIN_TYPE": None}
+                        "PREFIXES": []}
+                        }
         self.memory_only = False
-        old_format = False
 
         if not dataIO.is_valid_json(self.path):
             self.bot_settings = deepcopy(self.default_settings)
@@ -34,8 +33,6 @@ class Settings:
             if current.keys() != self.default_settings.keys():
                 for key in self.default_settings.keys():
                     if key not in current.keys():
-                        if key == "TOKEN":
-                            old_format = True
                         current[key] = self.default_settings[key]
                         print("Adding " + str(key) +
                               " field to red settings.json")
@@ -45,11 +42,10 @@ class Settings:
         if "default" not in self.bot_settings:
             self.update_old_settings_v1()
 
-        if old_format:
+        if "LOGIN_TYPE" in self.bot_settings:
             self.update_old_settings_v2()
 
         self.parse_cmd_arguments()
-        self.check_env_vars()
 
     def parse_cmd_arguments(self):
         parser = argparse.ArgumentParser(description="Red - Discord Bot")
@@ -95,25 +91,6 @@ class Settings:
 
         self.save_settings()
 
-    def check_env_vars(self):
-        token = os.environ.get("RED_TOKEN")
-        email = os.environ.get("RED_EMAIL")
-        password = os.environ.get("RED_PASSWORD")
-        if token:  # If all are set, token takes precedence
-            print("Using token from environment variables")
-            self.token = token
-            self.email = None
-            self.password = None
-            self.login_type = "token"
-            self.save_settings()
-        elif email and password:
-            print("Using email/password from environment variables")
-            self.email = email
-            self.password = password
-            self.token = None
-            self.login_type = "email"
-            self.save_settings()
-
     def check_folders(self):
         folders = ("data", os.path.dirname(self.path), "cogs", "cogs/utils")
         for folder in folders:
@@ -139,18 +116,18 @@ class Settings:
 
     def update_old_settings_v2(self):
         # The joys of backwards compatibility
-        if self.email == "EmailHere":
-            self.email = None
-        if self.password == "":
-            self.password = None
-        if self.login_type == "token":
-            self.token = self.email
-            self.email = None
-            self.password = None
+        settings = self.bot_settings
+        if settings["EMAIL"] == "EmailHere":
+            settings["EMAIL"] = None
+        if settings["PASSWORD"] == "":
+            settings["PASSWORD"] = None
+        if settings["LOGIN_TYPE"] == "token":
+            settings["TOKEN"] = settings["EMAIL"]
+            settings["EMAIL"] = None
+            settings["PASSWORD"] = None
         else:
-            self.token = None
-        if self.email is None and self.token is None:
-            self.login_type = None
+            settings["TOKEN"] = None
+        del settings["LOGIN_TYPE"]
         self.save_settings()
 
     @property
@@ -163,27 +140,39 @@ class Settings:
 
     @property
     def token(self):
-        return self.bot_settings["TOKEN"]
+        return os.environ.get("RED_TOKEN", self.bot_settings["TOKEN"])
 
     @token.setter
     def token(self, value):
         self.bot_settings["TOKEN"] = value
+        self.bot_settings["EMAIL"] = None
+        self.bot_settings["PASSWORD"] = None
 
     @property
     def email(self):
-        return self.bot_settings["EMAIL"]
+        return os.environ.get("RED_EMAIL", self.bot_settings["EMAIL"])
 
     @email.setter
     def email(self, value):
         self.bot_settings["EMAIL"] = value
+        self.bot_settings["TOKEN"] = None
 
     @property
     def password(self):
-        return self.bot_settings["PASSWORD"]
+        return os.environ.get("RED_PASSWORD", self.bot_settings["PASSWORD"])
 
     @password.setter
     def password(self, value):
         self.bot_settings["PASSWORD"] = value
+
+    @property
+    def login_credentials(self):
+        if self.token:
+            return (self.token,)
+        elif self.email and self.password:
+            return (self.email, self.password)
+        else:
+            return tuple()
 
     @property
     def prefixes(self):
@@ -226,14 +215,6 @@ class Settings:
         for server in server_ids:
             ret.update({server: self.bot_settings[server]})
         return ret
-
-    @property
-    def login_type(self):
-        return self.bot_settings["LOGIN_TYPE"]
-
-    @login_type.setter
-    def login_type(self, value):
-        self.bot_settings["LOGIN_TYPE"] = value
 
     def get_server(self, server):
         if server is None:
