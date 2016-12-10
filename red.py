@@ -60,7 +60,7 @@ class Bot(commands.Bot):
             return bot.settings.get_prefixes(message.server)
 
         self.counter = Counter()
-        self.uptime = datetime.datetime.now()
+        self.uptime = datetime.datetime.now() #  Will be refreshed before login
         self._message_modifiers = []
         self.settings = Settings()
         self._intro_displayed = False
@@ -251,6 +251,11 @@ async def on_ready():
 
 
 @bot.event
+async def on_resumed():
+    bot.counter["session_resumed"] += 1
+
+
+@bot.event
 async def on_command(command, ctx):
     bot.counter["processed_commands"] += 1
 
@@ -429,18 +434,18 @@ def set_logger():
     logger.addHandler(fhandler)
     logger.addHandler(stdout_handler)
 
-    logger = logging.getLogger("discord")
+    dpy_logger = logging.getLogger("discord")
     if settings.debug:
-        logger.setLevel(logging.DEBUG)
+        dpy_logger.setLevel(logging.DEBUG)
     else:
-        logger.setLevel(logging.WARNING)
+        dpy_logger.setLevel(logging.WARNING)
     handler = logging.FileHandler(
         filename='data/red/discord.log', encoding='utf-8', mode='a')
     handler.setFormatter(logging.Formatter(
         '%(asctime)s %(levelname)s %(module)s %(funcName)s %(lineno)d: '
         '%(message)s',
         datefmt="[%d/%m/%Y %H:%M]"))
-    logger.addHandler(handler)
+    dpy_logger.addHandler(handler)
 
 
 def ensure_reply(msg):
@@ -517,6 +522,7 @@ def main():
     set_logger()
 
     print("Logging into Discord...")
+    bot.uptime = datetime.datetime.now()
 
     if settings.login_credentials:
         yield from bot.login(*settings.login_credentials,
