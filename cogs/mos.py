@@ -3,6 +3,7 @@ from discord.ext import commands
 from .utils.chat_formatting import *
 from random import randint
 from random import choice as randchoice
+import random
 import datetime
 import time
 import aiohttp
@@ -43,8 +44,8 @@ class mos:
         d.close()    
     @commands.command(hidden=True)
     async def bmi(self):
-        nbmi = randint(1,37)
-        await self.bot.say("your \" BMI \" is {}. \nAlgorithm provided by Quixoticelixer".format(nbmi))
+        nbmi = random.uniform(2,39)
+        await self.bot.say("your \" BMI \" is {:3.2f}. \nAlgorithm provided by Quixoticelixer".format(nbmi))
         
 def setup(bot):
     n = mos(bot)
