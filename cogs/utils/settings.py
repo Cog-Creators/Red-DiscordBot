@@ -49,15 +49,10 @@ class Settings:
             self.update_old_settings_v2()
 
         self.parse_cmd_arguments()
+        self.check_env_vars()
 
     def parse_cmd_arguments(self):
         parser = argparse.ArgumentParser(description="Red - Discord Bot")
-        parser.add_argument("--email", help="Email login. Must provide a "
-                                            "password too. Not using a bot "
-                                            "account with a token is "
-                                            "discouraged")
-        parser.add_argument("--password", help="Password of the email login")
-        parser.add_argument("--token", help="Login token")
         parser.add_argument("--owner", help="ID of the owner. Only who hosts "
                                             "Red should be owner, this has "
                                             "security implications")
@@ -84,16 +79,6 @@ class Settings:
 
         args = parser.parse_args()
 
-        if args.email and args.password:
-            self.email = args.email
-            self.password = args.password
-            self.token = None
-            self.login_type = "email"
-        if args.token:
-            self.token = args.token
-            self.email = None
-            self.password = None
-            self.login_type = "token"
         if args.owner:
             self.owner = args.owner
         if args.prefix:
@@ -109,6 +94,25 @@ class Settings:
         self.debug = args.debug
 
         self.save_settings()
+
+    def check_env_vars(self):
+        token = os.environ.get("RED_TOKEN")
+        email = os.environ.get("RED_EMAIL")
+        password = os.environ.get("RED_PASSWORD")
+        if token:  # If all are set, token takes precedence
+            print("Using token from environment variables")
+            self.token = token
+            self.email = None
+            self.password = None
+            self.login_type = "token"
+            self.save_settings()
+        elif email and password:
+            print("Using email/password from environment variables")
+            self.email = email
+            self.password = password
+            self.token = None
+            self.login_type = "email"
+            self.save_settings()
 
     def check_folders(self):
         folders = ("data", os.path.dirname(self.path), "cogs", "cogs/utils")
@@ -129,7 +133,8 @@ class Settings:
         del self.bot_settings["ADMIN_ROLE"]
         self.bot_settings["default"] = {"MOD_ROLE": mod,
                                         "ADMIN_ROLE": admin,
-                                        "PREFIXES" : []}
+                                        "PREFIXES": []
+                                        }
         self.save_settings()
 
     def update_old_settings_v2(self):
