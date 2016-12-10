@@ -11,7 +11,10 @@ import asyncio
 import csv
 import shelve
 import redis
-
+import datetime
+from datetime import date
+from datetime import timedelta 
+import time
 
 r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
@@ -42,15 +45,34 @@ class mos:
         nbmi = random.uniform(2,39)
         await self.bot.say("your \" BMI \" is {:3.2f}. \nAlgorithm provided by Quixoticelixer".format(nbmi))
         
-    @commands.command(hidden=True)
-    async def addme(self, days, name):
-        r.zadd('daysSince', days, name) 
-        await self.bot.say('added {}'.format(name))
+    @commands.command(pass_context = True)
+    async def addme(self,ctx, days_slc : int):
+        "Adds you to the days_since db \nAdd the initial days after the command "
 
-    @commands.command(hidden=True)
-    async def days_since(self, name):
-        days = r.zscore('daysSince', name)
-        await self.bot.say(days)
+        user = ctx.message.author
+        d,m,y = time.strftime("%d,%m,%Y").split(",")
+        d = int(d); m = int(m); y = int(y);
+        t1 = date(y,m,d)
+        t1 = t1 + timedelta(days = days_slc)
+        date_slc = str(t1) 
+        r.hset('user:{}'.format(user),'date_slc', date_slc) 
+
+        await self.bot.say('added {}'.format(user))
+
+
+    @commands.command(pass_context=True)
+    async def days_since(self, ctx):
+        "Shows the days since you last..."
+        user = ctx.message.author
+        
+        y,m,d = str(r.hget('user:{}'.format(user), 'date_slc'), 'utf-8').split("-")
+        d = int(d); m = int(m); y = int(y);
+        t1 = date(y,m,d)
+        d,m,y = time.strftime("%d:%m:%Y").split(":")
+        d = int(d); m = int(m); y = int(y);
+        t2 = date(y,m,d)
+        time_delta, minutes = str(t1 - t2).split(",")
+        await self.bot.say("{}".format(time_delta))
 
 def setup(bot):
     n = mos(bot)
