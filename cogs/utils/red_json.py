@@ -1,4 +1,5 @@
 from .dataIO import dataIO
+import os
 
 
 class JSON:
@@ -14,7 +15,11 @@ class JSON:
         for k in ("GLOBAL", "SERVER", "CHANNEL", "ROLE", "MEMBER", "USER"):
             if k not in self.data:
                 self.data[k] = {}
-        dataIO.save_json(self.data_path, self.data)
+        try:
+            dataIO.save_json(self.data_path, self.data)
+        except FileNotFoundError:
+            os.makedirs("data/{}".format(self.cog_name))
+            dataIO.save_json(self.data_path, self.data)
 
     def get_global(self, cog_name, ident, key, *, default=None):
         return self.data["GLOBAL"].get(key, default)
