@@ -519,7 +519,6 @@ def main():
     if not settings.no_prompt:
         interactive_setup()
     load_cogs()
-    set_logger()
 
     print("Logging into Discord...")
     bot.uptime = datetime.datetime.now()
@@ -537,6 +536,7 @@ if __name__ == '__main__':
                                encoding=sys.stdout.encoding,
                                errors="replace",
                                line_buffering=True)
+    set_logger()
     error = False
     loop = asyncio.get_event_loop()
     try:
