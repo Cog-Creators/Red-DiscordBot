@@ -42,7 +42,7 @@ class mos:
 
     @commands.command(hidden=True)
     async def bmi(self):
-        nbmi = random.uniform(2,39)
+        nbmi = random.normalvariate(18,8)
         await self.bot.say("your \" BMI \" is {:3.2f}. \nAlgorithm provided by Quixoticelixer".format(nbmi))
         
     @commands.command(pass_context = True)
@@ -60,7 +60,7 @@ class mos:
         await self.bot.say('added {}'.format(user))
 
 
-    @commands.command(pass_context=True)
+    @commands.command(hidden = True,pass_context=True)
     async def days_since(self, ctx):
         "Shows the days since you last..."
         user = ctx.message.author
@@ -77,6 +77,37 @@ class mos:
             await self.bot.say("0 Days ໒( •́ ‸ •̀ )७"" ")
         else:
             await self.bot.say("{}".format(time_delta))
+
+    @commands.command(pass_context = True)
+    async def reset(self,ctx, days_slc : int = 0):
+        "Adds you to the days_since db \nAdd the initial days after the command "
+
+        user = ctx.message.author
+        d,m,y = time.strftime("%d,%m,%Y").split(",")
+        d = int(d); m = int(m); y = int(y);
+        t1 = date(y,m,d)
+        t1 = t1 + timedelta(days = days_slc)
+        date_slc = str(t1) 
+        r.hset('user:{}'.format(user),'date_slc', date_slc) 
+
+        await self.bot.say('໒( •́ ‸ •̀ )७ {} '.format(user))
+
+    @commands.command()
+    async def fesh(self):
+        "random fesh emoji"
+        num = random.randint(1,5)
+
+        if num == 1:
+            await self.bot.say(":fish:")
+        elif num == 2:
+            await self.bot.say(":fish2:")
+        elif num == 3:
+            await self.bot.say(":fish3:")
+    @commands.command()
+    async def miata(self):
+        await self.bot.say(":rainbow:")
+        
+
 
 def setup(bot):
     n = mos(bot)
