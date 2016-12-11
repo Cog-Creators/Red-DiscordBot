@@ -98,11 +98,13 @@ class mos:
         num = random.randint(1,5)
 
         if num == 1:
-            await self.bot.say(":fish:")
+            await self.bot.say("https://github.com/Quixoticelixer/Red-DiscordBot/blob/develop/data/images/nigel.JPG?raw=true")
         elif num == 2:
-            await self.bot.say(":fish2:")
+            await self.bot.say("https://github.com/Quixoticelixer/Red-DiscordBot/blob/develop/data/images/feshtank.JPG?raw=true")
         elif num == 3:
-            await self.bot.say(":fish3:")
+            await self.bot.say("https://github.com/Quixoticelixer/Red-DiscordBot/blob/develop/data/images/feshtank2.JPG?raw=true")
+        elif num == 4:
+            await self.bot.say("https://github.com/Quixoticelixer/Red-DiscordBot/blob/develop/data/images/subaru1.JPG?raw=true")
     @commands.command()
     async def miata(self):
         await self.bot.say(":rainbow:")
