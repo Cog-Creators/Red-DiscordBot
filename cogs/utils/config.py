@@ -1,4 +1,4 @@
-from .red_mongo import MissingCollection
+from .drivers.red_mongo import MissingCollection
 
 
 class BaseConfig:
