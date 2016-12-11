@@ -28,8 +28,8 @@ except AssertionError:
 from cogs.utils.settings import Settings
 from cogs.utils.dataIO import dataIO
 from cogs.utils.chat_formatting import inline
-from cogs.utils.red_mongo import Mongo
-from cogs.utils.red_json import JSON as JSONDriver
+from cogs.utils.drivers.red_mongo import Mongo
+from cogs.utils.drivers.red_json import JSON as JSONDriver
 from cogs.utils.config import Config as CogConfig
 from collections import Counter
 from io import TextIOWrapper
