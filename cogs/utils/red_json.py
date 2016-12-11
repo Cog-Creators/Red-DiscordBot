@@ -21,7 +21,7 @@ class JSON:
             os.makedirs("data/{}".format(self.cog_name))
             dataIO.save_json(self.data_path, self.data)
 
-    def get_global(self, cog_name, ident, key, *, default=None):
+    def get_global(self, cog_name, ident, _, key, *, default=None):
         return self.data["GLOBAL"].get(key, default)
 
     def get_server(self, cog_name, ident, server_id, key, *, default=None):
