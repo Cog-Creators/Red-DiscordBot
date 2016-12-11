@@ -1,6 +1,3 @@
-from .drivers.red_mongo import MissingCollection
-
-
 class BaseConfig:
     def __init__(self, cog_name, unique_identifier, driver_spawn,
                  hash_uuid=True, collection="GLOBAL", collection_uuid=None,
@@ -172,9 +169,6 @@ class Config(BaseConfig):
         elif self.collection == "USER":
             self.driver.set_user(self.cog_name, self.uuid,
                                  self.collection_uuid, key, value)
-        else:
-            raise MissingCollection("Can't find collection: {}".format(
-                self.collection))
 
     def clear(self):
         self.driver_setmap[self.collection](
