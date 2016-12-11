@@ -1,4 +1,5 @@
 import pymongo as m
+from .red_base import BaseDriver
 
 
 class RedMongoException(Exception):
@@ -17,7 +18,7 @@ class MissingCollection(RedMongoException):
     pass
 
 
-class Mongo:
+class Mongo(BaseDriver):
     def __init__(self, host, port=27017, admin_user=None, admin_pass=None,
                  **kwargs):
         self.conn = m.MongoClient(host=host, port=port, **kwargs)

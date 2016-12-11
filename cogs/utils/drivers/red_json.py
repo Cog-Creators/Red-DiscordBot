@@ -1,8 +1,9 @@
-from .dataIO import dataIO
+from ..dataIO import dataIO
 import os
+from .red_base import BaseDriver
 
 
-class JSON:
+class JSON(BaseDriver):
     def __init__(self, cog_name, *args, **kwargs):
         self.cog_name = cog_name
         self.data_path = "data/{}/settings.json".format(self.cog_name)
