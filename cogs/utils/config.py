@@ -160,8 +160,8 @@ class Config(BaseConfig):
             self.driver.set_channel(self.cog_name, self.uuid,
                                     self.collection_uuid, key, value)
         elif self.collection == "ROLE":
-            self.driver.set_channel(self.cog_name, self.uuid,
-                                    self.collection_uuid, key, value)
+            self.driver.set_role(self.cog_name, self.uuid,
+                                 self.collection_uuid, key, value)
         elif self.collection == "MEMBER":
             mid, sid = self.collection_uuid
             self.driver.set_member(self.cog_name, self.uuid, mid, sid,
