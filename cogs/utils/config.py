@@ -88,37 +88,37 @@ class BaseConfig:
             `collection` and `collection_uuid`."""
         raise NotImplemented
 
-    def registerGlobal(self, key, default=None):
+    def register_global(self, key, default=None):
         """Registers a global config key `key`"""
         if key in self.restricted_keys:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
         self.defaults["GLOBAL"][key] = default
 
-    def registerServer(self, key, default=None):
+    def register_server(self, key, default=None):
         """Registers a server config key `key`"""
         if key in self.restricted_keys:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
         self.defaults["SERVER"][key] = default
 
-    def registerChannel(self, key, default=None):
+    def register_channel(self, key, default=None):
         """Registers a channel config key `key`"""
         if key in self.restricted_keys:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
         self.defaults["CHANNEL"][key] = default
 
-    def registerRole(self, key, default=None):
+    def register_role(self, key, default=None):
         """Registers a role config key `key`"""
         if key in self.restricted_keys:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
         self.defaults["ROLE"][key] = default
 
-    def registerMember(self, key, default=None):
+    def register_member(self, key, default=None):
         """Registers a member config key `key`"""
         if key in self.restricted_keys:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
         self.defaults["MEMBER"][key] = default
 
-    def registerUser(self, key, default=None):
+    def register_user(self, key, default=None):
         """Registers a user config key `key`"""
         if key in self.restricted_keys:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
