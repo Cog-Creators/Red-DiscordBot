@@ -150,25 +150,13 @@ class Config(BaseConfig):
         if key not in self.defaults[self.collection]:
             raise AttributeError("Key '{}' not registered!".format(key))
 
-        if self.collection == "GLOBAL":
-            self.driver.set_global(self.cog_name, self.uuid, key,
-                                   value)
-        elif self.collection == "SERVER":
-            self.driver.set_server(self.cog_name, self.uuid,
-                                   self.collection_uuid, key, value)
-        elif self.collection == "CHANNEL":
-            self.driver.set_channel(self.cog_name, self.uuid,
-                                    self.collection_uuid, key, value)
-        elif self.collection == "ROLE":
-            self.driver.set_role(self.cog_name, self.uuid,
-                                 self.collection_uuid, key, value)
+        if self.collection in self.driver_setmap:
+            func = self.driver_setmap[self.collection]
+            func(self.cog_name, self.uuid, self.collection_uuid, key, value)
         elif self.collection == "MEMBER":
             mid, sid = self.collection_uuid
             self.driver.set_member(self.cog_name, self.uuid, mid, sid,
                                    key, value)
-        elif self.collection == "USER":
-            self.driver.set_user(self.cog_name, self.uuid,
-                                 self.collection_uuid, key, value)
 
     def clear(self):
         self.driver_setmap[self.collection](
