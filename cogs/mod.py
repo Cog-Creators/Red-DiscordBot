@@ -300,6 +300,7 @@ class Mod:
             await ctx.invoke(self.channel_mute, user=user)
 
     @mute.command(name="channel", pass_context=True, no_pm=True)
+    @checks.mod_or_permissions(administrator=True)
     async def channel_mute(self, ctx, user : discord.Member):
         """Mutes user in the current channel"""
         channel = ctx.message.channel
@@ -321,6 +322,7 @@ class Mod:
             await self.bot.say("User has been muted in this channel.")
 
     @mute.command(name="server", pass_context=True, no_pm=True)
+    @checks.mod_or_permissions(administrator=True)
     async def server_mute(self, ctx, user : discord.Member):
         """Mutes user in the server"""
         server = ctx.message.server
@@ -360,6 +362,7 @@ class Mod:
             await ctx.invoke(self.channel_unmute, user=user)
 
     @unmute.command(name="channel", pass_context=True, no_pm=True)
+    @checks.mod_or_permissions(administrator=True)
     async def channel_unmute(self, ctx, user : discord.Member):
         """Unmutes user in the current channel"""
         channel = ctx.message.channel
@@ -395,6 +398,7 @@ class Mod:
             await self.bot.say("User has been unmuted in this channel.")
 
     @unmute.command(name="server", pass_context=True, no_pm=True)
+    @checks.mod_or_permissions(administrator=True)
     async def server_unmute(self, ctx, user : discord.Member):
         """Unmutes user in the server"""
         server = ctx.message.server
