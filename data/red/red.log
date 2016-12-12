@@ -58351,3 +58351,3127 @@ Traceback (most recent call last):
   File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 748, in _load_cog
     raise CogLoadError(*e.args)
 cogs.owner.CogLoadError: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 107, 8, '    sync def miata(self):\n'))
+[11/12/2016 18:31] ERROR red on_command_error 249: Exception in command 'userinfo'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/general.py", line 194, in userinfo
+    data = discord.Embed(description=game, colour=user.colour)
+AttributeError: module 'discord' has no attribute 'Embed'
+[11/12/2016 18:34] ERROR red load_cogs 468: 'module' object is not callable
+Traceback (most recent call last):
+  File "red.py", line 465, in load_cogs
+    owner_cog._load_cog(extension)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 744, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 986, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 969, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 958, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 673, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 665, in exec_module
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 20, in <module>
+    print(discord.emoji())
+TypeError: 'module' object is not callable
+[11/12/2016 18:35] ERROR owner _reload 157: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 21, 5, 'class mos:\n'))
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 744, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 986, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 969, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 958, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 673, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 661, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 767, in get_code
+  File "<frozen importlib._bootstrap_external>", line 727, in source_to_code
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 21
+    class mos:
+        ^
+SyntaxError: invalid syntax
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 151, in _reload
+    self._load_cog(module)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 748, in _load_cog
+    raise CogLoadError(*e.args)
+cogs.owner.CogLoadError: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 21, 5, 'class mos:\n'))
+[11/12/2016 18:56] ERROR owner _reload 157: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 113, 14, '        await.self.boy.say("http://www.ranga.co.nz/wp-content/uploads/2015/12/Ranga-GB-6Pack.jpg")\n'))
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 744, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 986, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 969, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 958, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 673, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 661, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 767, in get_code
+  File "<frozen importlib._bootstrap_external>", line 727, in source_to_code
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 113
+    await.self.boy.say("http://www.ranga.co.nz/wp-content/uploads/2015/12/Ranga-GB-6Pack.jpg")
+         ^
+SyntaxError: invalid syntax
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 151, in _reload
+    self._load_cog(module)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 748, in _load_cog
+    raise CogLoadError(*e.args)
+cogs.owner.CogLoadError: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 113, 14, '        await.self.boy.say("http://www.ranga.co.nz/wp-content/uploads/2015/12/Ranga-GB-6Pack.jpg")\n'))
+[11/12/2016 18:57] ERROR red on_command_error 249: Exception in command 'ginger'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 113, in ginger
+    await self.boy.say("http://www.ranga.co.nz/wp-content/uploads/2015/12/Ranga-GB-6Pack.jpg")
+AttributeError: 'mos' object has no attribute 'boy'
+[11/12/2016 19:55] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 117, in calc
+    await self.boy.say(eval(input))
+AttributeError: 'mos' object has no attribute 'boy'
+[11/12/2016 19:55] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 117, in calc
+    await self.bot.say(eval(input))
+AttributeError: 'mos' object has no attribute 'boy'
+[11/12/2016 19:55] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 117, in calc
+    await self.bot.say(eval(input))
+AttributeError: 'mos' object has no attribute 'boy'
+[11/12/2016 19:56] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 117, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+ZeroDivisionError: division by zero
+[11/12/2016 19:57] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 117, in calc
+    try:
+  File "<string>", line 1
+    100!
+       ^
+SyntaxError: unexpected EOF while parsing
+[11/12/2016 19:58] ERROR owner _reload 157: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 119, 24, '       ZeroDivisionError:\n'))
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 744, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 986, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 969, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 958, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 673, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 661, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 767, in get_code
+  File "<frozen importlib._bootstrap_external>", line 727, in source_to_code
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 119
+    ZeroDivisionError:
+                    ^
+SyntaxError: invalid syntax
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 151, in _reload
+    self._load_cog(module)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 748, in _load_cog
+    raise CogLoadError(*e.args)
+cogs.owner.CogLoadError: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 119, 24, '       ZeroDivisionError:\n'))
+[11/12/2016 19:58] ERROR owner _reload 157: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 123, 42, '    async def convert(self, unit1, unit2)\n'))
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 744, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 986, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 969, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 958, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 673, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 661, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 767, in get_code
+  File "<frozen importlib._bootstrap_external>", line 727, in source_to_code
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 123
+    async def convert(self, unit1, unit2)
+                                        ^
+SyntaxError: invalid syntax
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 151, in _reload
+    self._load_cog(module)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 748, in _load_cog
+    raise CogLoadError(*e.args)
+cogs.owner.CogLoadError: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 123, 42, '    async def convert(self, unit1, unit2)\n'))
+[11/12/2016 19:59] ERROR owner _reload 157: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 123, 42, '    async def convert(self, unit1, unit2)\n'))
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 744, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 986, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 969, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 958, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 673, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 661, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 767, in get_code
+  File "<frozen importlib._bootstrap_external>", line 727, in source_to_code
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 123
+    async def convert(self, unit1, unit2)
+                                        ^
+SyntaxError: invalid syntax
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 151, in _reload
+    self._load_cog(module)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 748, in _load_cog
+    raise CogLoadError(*e.args)
+cogs.owner.CogLoadError: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 123, 42, '    async def convert(self, unit1, unit2)\n'))
+[11/12/2016 19:59] ERROR owner _reload 157: ('expected an indented block', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 127, 0, 'def setup(bot):\n'))
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 744, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 986, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 969, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 958, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 673, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 661, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 767, in get_code
+  File "<frozen importlib._bootstrap_external>", line 727, in source_to_code
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 127
+    def setup(bot):
+                  ^
+IndentationError: expected an indented block
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 151, in _reload
+    self._load_cog(module)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 748, in _load_cog
+    raise CogLoadError(*e.args)
+cogs.owner.CogLoadError: ('expected an indented block', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 127, 0, 'def setup(bot):\n'))
+[11/12/2016 20:00] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 118, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1
+    (100
+       ^
+SyntaxError: unexpected EOF while parsing
+[11/12/2016 20:01] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 118, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1
+    (100
+       ^
+SyntaxError: unexpected EOF while parsing
+[11/12/2016 20:02] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 118, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1
+    4cos(25)
+       ^
+SyntaxError: invalid syntax
+[11/12/2016 20:03] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 118, in calc
+    try:
+  File "<string>", line 1
+    5!
+     ^
+SyntaxError: unexpected EOF while parsing
+[11/12/2016 20:03] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 118, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'math' is not defined
+[11/12/2016 20:04] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 119, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+AttributeError: module 'math' has no attribute 'sine'
+[11/12/2016 20:05] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 119, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+NameError: name 'string' is not defined
+[11/12/2016 20:05] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 119, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1
+    (await
+         ^
+SyntaxError: unexpected EOF while parsing
+[11/12/2016 20:05] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 119, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1
+    (await
+         ^
+SyntaxError: unexpected EOF while parsing
+[11/12/2016 20:06] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 119, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1
+    (await
+         ^
+SyntaxError: unexpected EOF while parsing
+[11/12/2016 20:06] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 119, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1
+    (await
+         ^
+SyntaxError: unexpected EOF while parsing
+[11/12/2016 20:06] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 119, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1
+    (await self.bot.say(3))
+              ^
+SyntaxError: invalid syntax
+[11/12/2016 20:08] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "red.py", line 522, in <module>
+    loop.run_until_complete(main())
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 375, in run_until_complete
+    self.run_forever()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 345, in run_forever
+    self._run_once()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 1312, in _run_once
+    handle._run()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/events.py", line 125, in _run
+    self._callback(*self._args)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/tasks.py", line 239, in _step
+    result = coro.send(None)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 273, in _run_event
+    yield from getattr(self, event)(*args, **kwargs)
+  File "red.py", line 235, in on_message
+    await bot.process_commands(message)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/bot.py", line 822, in process_commands
+    yield from command.invoke(ctx)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 367, in invoke
+    yield from injected(*ctx.args, **ctx.kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 119, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 119, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+NameError: name 'what' is not defined
+[11/12/2016 20:08] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "red.py", line 522, in <module>
+    loop.run_until_complete(main())
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 375, in run_until_complete
+    self.run_forever()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 345, in run_forever
+    self._run_once()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 1312, in _run_once
+    handle._run()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/events.py", line 125, in _run
+    self._callback(*self._args)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/tasks.py", line 239, in _step
+    result = coro.send(None)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 273, in _run_event
+    yield from getattr(self, event)(*args, **kwargs)
+  File "red.py", line 235, in on_message
+    await bot.process_commands(message)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/bot.py", line 822, in process_commands
+    yield from command.invoke(ctx)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 367, in invoke
+    yield from injected(*ctx.args, **ctx.kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 119, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 119, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+NameError: name 'A' is not defined
+[11/12/2016 20:10] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 119, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+NameError: name 'noot' is not defined
+[11/12/2016 20:10] ERROR red on_command_error 249: Exception in command 'info'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 707, in info
+    embed = discord.Embed(colour=discord.Colour.red())
+AttributeError: module 'discord' has no attribute 'Embed'
+[11/12/2016 20:14] ERROR red on_command_error 249: Exception in command 'info'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 707, in info
+    embed = discord.Embed(colour=discord.Colour.red())
+AttributeError: module 'discord' has no attribute 'Embed'
+[11/12/2016 20:14] ERROR red on_command_error 249: Exception in command 'convert'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 125, in convert
+    u1 = unit1.strip('kg','lbs')
+TypeError: strip() takes at most 1 argument (2 given)
+[11/12/2016 20:15] ERROR red on_command_error 249: Exception in command 'convert'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 125, in convert
+    u1 = unit1.strip('kg','lbs')
+TypeError: strip() takes at most 1 argument (2 given)
+[11/12/2016 20:15] ERROR red on_command_error 249: Exception in command 'convert'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 127, in convert
+    u3 = u1 * 2.2046
+TypeError: can't multiply sequence by non-int of type 'float'
+[11/12/2016 20:17] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 119, in calc
+    try:
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/bot.py", line 293, in _augmented_msg
+    msg = yield from coro
+  File "red.py", line 87, in send_message
+    return await super().send_message(*args, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 829, in send_message
+    data = yield from self.http.send_message(channel_id, content, guild_id=guild_id, tts=tts)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 137, in request
+    raise HTTPException(r, data)
+discord.errors.HTTPException: BAD REQUEST (status code: 400)
+[11/12/2016 20:17] ERROR red on_command_error 249: Exception in command 'info'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 707, in info
+    embed = discord.Embed(colour=discord.Colour.red())
+AttributeError: module 'discord' has no attribute 'Embed'
+[11/12/2016 20:17] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 119, in calc
+    try:
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/bot.py", line 293, in _augmented_msg
+    msg = yield from coro
+  File "red.py", line 87, in send_message
+    return await super().send_message(*args, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 829, in send_message
+    data = yield from self.http.send_message(channel_id, content, guild_id=guild_id, tts=tts)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 137, in request
+    raise HTTPException(r, data)
+discord.errors.HTTPException: BAD REQUEST (status code: 400)
+[11/12/2016 20:18] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 119, in calc
+    try:
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/bot.py", line 293, in _augmented_msg
+    msg = yield from coro
+  File "red.py", line 87, in send_message
+    return await super().send_message(*args, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 829, in send_message
+    data = yield from self.http.send_message(channel_id, content, guild_id=guild_id, tts=tts)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 137, in request
+    raise HTTPException(r, data)
+discord.errors.HTTPException: BAD REQUEST (status code: 400)
+[11/12/2016 20:18] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 119, in calc
+    try:
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/bot.py", line 293, in _augmented_msg
+    msg = yield from coro
+  File "red.py", line 87, in send_message
+    return await super().send_message(*args, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 829, in send_message
+    data = yield from self.http.send_message(channel_id, content, guild_id=guild_id, tts=tts)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 137, in request
+    raise HTTPException(r, data)
+discord.errors.HTTPException: BAD REQUEST (status code: 400)
+[11/12/2016 20:18] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 119, in calc
+    try:
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/bot.py", line 293, in _augmented_msg
+    msg = yield from coro
+  File "red.py", line 87, in send_message
+    return await super().send_message(*args, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 829, in send_message
+    data = yield from self.http.send_message(channel_id, content, guild_id=guild_id, tts=tts)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 137, in request
+    raise HTTPException(r, data)
+discord.errors.HTTPException: BAD REQUEST (status code: 400)
+[11/12/2016 20:19] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 119, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'OS' is not defined
+[11/12/2016 20:19] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 119, in calc
+    try:
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/bot.py", line 293, in _augmented_msg
+    msg = yield from coro
+  File "red.py", line 87, in send_message
+    return await super().send_message(*args, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 829, in send_message
+    data = yield from self.http.send_message(channel_id, content, guild_id=guild_id, tts=tts)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 137, in request
+    raise HTTPException(r, data)
+discord.errors.HTTPException: BAD REQUEST (status code: 400)
+[11/12/2016 20:19] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 119, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'os' is not defined
+[11/12/2016 20:19] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 119, in calc
+    try:
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/bot.py", line 293, in _augmented_msg
+    msg = yield from coro
+  File "red.py", line 87, in send_message
+    return await super().send_message(*args, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 829, in send_message
+    data = yield from self.http.send_message(channel_id, content, guild_id=guild_id, tts=tts)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 137, in request
+    raise HTTPException(r, data)
+discord.errors.HTTPException: BAD REQUEST (status code: 400)
+[11/12/2016 20:19] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 119, in calc
+    try:
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/bot.py", line 293, in _augmented_msg
+    msg = yield from coro
+  File "red.py", line 87, in send_message
+    return await super().send_message(*args, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 829, in send_message
+    data = yield from self.http.send_message(channel_id, content, guild_id=guild_id, tts=tts)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 137, in request
+    raise HTTPException(r, data)
+discord.errors.HTTPException: BAD REQUEST (status code: 400)
+[11/12/2016 20:20] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 119, in calc
+    try:
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/bot.py", line 293, in _augmented_msg
+    msg = yield from coro
+  File "red.py", line 87, in send_message
+    return await super().send_message(*args, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 829, in send_message
+    data = yield from self.http.send_message(channel_id, content, guild_id=guild_id, tts=tts)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 137, in request
+    raise HTTPException(r, data)
+discord.errors.HTTPException: BAD REQUEST (status code: 400)
+[11/12/2016 20:20] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 119, in calc
+    try:
+  File "<string>", line 1
+    import
+         ^
+SyntaxError: unexpected EOF while parsing
+[11/12/2016 20:20] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/bot.py", line 293, in _augmented_msg
+    msg = yield from coro
+  File "red.py", line 87, in send_message
+    return await super().send_message(*args, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 829, in send_message
+    data = yield from self.http.send_message(channel_id, content, guild_id=guild_id, tts=tts)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 137, in request
+    raise HTTPException(r, data)
+discord.errors.HTTPException: BAD REQUEST (status code: 400)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 123, in calc
+    except HTTPException:
+NameError: name 'HTTPException' is not defined
+[11/12/2016 20:21] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+NameError: name 'OS' is not defined
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 123, in calc
+    except HTTPException:
+NameError: name 'HTTPException' is not defined
+[11/12/2016 20:22] ERROR red on_command_error 249: Exception in command 'convert'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 129, in convert
+    unit3 = unit1 * ureg.kilogram
+NameError: name 'ureg' is not defined
+[11/12/2016 20:22] ERROR red on_command_error 249: Exception in command 'convert'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 128, in convert
+    unit3 = unit3 * ureg.lbs
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/pint/quantity.py", line 727, in __mul__
+    return self._mul_div(other, operator.mul)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/pint/quantity.py", line 715, in _mul_div
+    magnitude = magnitude_op(new_self._magnitude, other._magnitude)
+TypeError: can't multiply sequence by non-int of type 'float'
+[11/12/2016 20:23] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+OverflowError: int too large to convert to float
+[11/12/2016 20:23] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+NameError: name 'hi' is not defined
+[11/12/2016 20:24] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+OverflowError: (34, 'Result too large')
+[11/12/2016 20:24] ERROR red on_command_error 249: Exception in command 'convert'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/pint/quantity.py", line 1107, in __getattr__
+    return getattr(self._magnitude, item)
+AttributeError: 'str' object has no attribute 'to_imperial_units'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 128, in convert
+    unit3 = unit3.to_imperial_units
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/pint/quantity.py", line 1110, in __getattr__
+    "has attribute '{1}'".format(self._magnitude, item))
+AttributeError: Neither Quantity object nor its magnitude (123) has attribute 'to_imperial_units'
+[11/12/2016 20:25] ERROR red on_command_error 249: Exception in command 'convert'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 128, in convert
+    unit3 = unit3.to(ureg.lbs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/pint/quantity.py", line 263, in to
+    magnitude = self._convert_magnitude_not_inplace(other, *contexts, **ctx_kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/pint/quantity.py", line 231, in _convert_magnitude_not_inplace
+    return self._REGISTRY.convert(self._magnitude, self._units, other)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/pint/unit.py", line 1026, in convert
+    return self._convert(value, src, dst, inplace)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/pint/unit.py", line 1130, in _convert
+    value = value * factor
+TypeError: can't multiply sequence by non-int of type 'float'
+[11/12/2016 20:26] ERROR red on_command_error 249: Exception in command 'convert'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 130, in convert
+    await self.boy.say("{}kgs is {}lbs".format(unit1,unit3))
+AttributeError: 'mos' object has no attribute 'boy'
+[11/12/2016 20:26] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+NameError: name 'Import' is not defined
+[11/12/2016 20:29] ERROR owner _reload 157: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 131, 19, "        elif unit 2 == 'lb' or unit2 == 'lbs'\n"))
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 744, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 986, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 969, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 958, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 673, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 661, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 767, in get_code
+  File "<frozen importlib._bootstrap_external>", line 727, in source_to_code
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 131
+    elif unit 2 == 'lb' or unit2 == 'lbs'
+              ^
+SyntaxError: invalid syntax
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 151, in _reload
+    self._load_cog(module)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 748, in _load_cog
+    raise CogLoadError(*e.args)
+cogs.owner.CogLoadError: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 131, 19, "        elif unit 2 == 'lb' or unit2 == 'lbs'\n"))
+[11/12/2016 20:30] ERROR owner _reload 157: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 131, 19, "        elif unit 2 == 'lb' or unit2 == 'lbs':\n"))
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 744, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 986, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 969, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 958, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 673, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 661, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 767, in get_code
+  File "<frozen importlib._bootstrap_external>", line 727, in source_to_code
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 131
+    elif unit 2 == 'lb' or unit2 == 'lbs':
+              ^
+SyntaxError: invalid syntax
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 151, in _reload
+    self._load_cog(module)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 748, in _load_cog
+    raise CogLoadError(*e.args)
+cogs.owner.CogLoadError: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 131, 19, "        elif unit 2 == 'lb' or unit2 == 'lbs':\n"))
+[11/12/2016 20:30] ERROR red on_command_error 249: Exception in command 'convert'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 133, in convert
+    unit3 = unit3.to(ureg.kgs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/pint/unit.py", line 375, in __getattr__
+    return self.Unit(item)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/pint/unit.py", line 66, in __new__
+    inst._units = inst._REGISTRY.parse_units(units)._units
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/pint/unit.py", line 1201, in parse_units
+    units = self._parse_units(input_string, as_delta)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/pint/unit.py", line 1223, in _parse_units
+    cname = self.get_name(name)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/pint/unit.py", line 753, in get_name
+    raise UndefinedUnitError(name_or_alias)
+pint.errors.UndefinedUnitError: 'kgs' is not defined in the unit registry
+[11/12/2016 20:34] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+NameError: name 'os' is not defined
+[11/12/2016 20:34] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+NameError: name 'Os' is not defined
+[11/12/2016 20:34] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+NameError: name 'sys' is not defined
+[11/12/2016 20:35] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+NameError: name 'sys' is not defined
+[11/12/2016 20:35] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+NameError: name 'Bot' is not defined
+[11/12/2016 20:36] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+AttributeError: module 'discord' has no attribute 'e'
+[11/12/2016 20:36] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1
+    discord.ext.*
+                ^
+SyntaxError: unexpected EOF while parsing
+[11/12/2016 20:39] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: type object 'super' has no attribute 'json'
+[11/12/2016 20:39] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'json' is not defined
+[11/12/2016 20:41] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1
+    >tfw
+    ^
+SyntaxError: invalid syntax
+[11/12/2016 20:41] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'nice' is not defined
+[11/12/2016 20:42] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'os' is not defined
+[11/12/2016 20:45] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'traceback' is not defined
+[11/12/2016 20:47] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: module 'time' has no attribute 'gm_time'
+[11/12/2016 20:52] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1
+    (return
+          ^
+SyntaxError: unexpected EOF while parsing
+[11/12/2016 20:54] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'shutil' is not defined
+[11/12/2016 20:54] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'os' is not defined
+[11/12/2016 20:54] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'logging' is not defined
+[11/12/2016 20:55] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: module 'time' has no attribute 'getmembers'
+[11/12/2016 20:56] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: module 'discord' has no attribute 'keys'
+[11/12/2016 20:56] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: module 'discord' has no attribute 'keys'
+[11/12/2016 20:59] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: module 'discord' has no attribute 'oauthurl'
+[11/12/2016 21:00] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: module 'discord.utils' has no attribute 'oaut_url'
+[11/12/2016 21:00] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: module 'discord.utils' has no attribute 'oaut_url'
+[11/12/2016 21:00] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+TypeError: oauth_url() missing 1 required positional argument: 'client_id'
+[11/12/2016 21:06] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'bot' is not defined
+[11/12/2016 21:06] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1
+    print('Hiya
+              ^
+SyntaxError: EOL while scanning string literal
+[11/12/2016 21:06] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1
+    print('hiya
+              ^
+SyntaxError: EOL while scanning string literal
+[11/12/2016 21:08] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: module 'time' has no attribute 'gettime'
+[11/12/2016 21:11] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/bot.py", line 293, in _augmented_msg
+    msg = yield from coro
+  File "red.py", line 87, in send_message
+    return await super().send_message(*args, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 829, in send_message
+    data = yield from self.http.send_message(channel_id, content, guild_id=guild_id, tts=tts)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 137, in request
+    raise HTTPException(r, data)
+discord.errors.HTTPException: BAD REQUEST (status code: 400)
+[11/12/2016 21:12] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'Bot' is not defined
+[11/12/2016 21:17] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: module 'discord.ext.commands.bot' has no attribute 'say'
+[11/12/2016 21:17] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: module 'discord.ext.commands.bot' has no attribute 'attributes'
+[11/12/2016 21:19] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1
+    commands.bot.say('imma
+                         ^
+SyntaxError: EOL while scanning string literal
+[11/12/2016 21:20] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: module 'discord.ext.commands.bot' has no attribute 'say'
+[11/12/2016 21:21] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: module 'discord.ext.commands.bot' has no attribute 'say'
+[11/12/2016 21:21] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: module 'discord.ext.commands.bot' has no attribute 'type'
+[11/12/2016 21:24] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+TypeError: 'module' object is not callable
+[11/12/2016 21:24] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: module 'discord.ext.commands.bot' has no attribute 'ext'
+[11/12/2016 21:27] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: 'int' object has no attribute 'type'
+[11/12/2016 21:28] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/bot.py", line 293, in _augmented_msg
+    msg = yield from coro
+  File "red.py", line 87, in send_message
+    return await super().send_message(*args, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 829, in send_message
+    data = yield from self.http.send_message(channel_id, content, guild_id=guild_id, tts=tts)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 137, in request
+    raise HTTPException(r, data)
+discord.errors.HTTPException: BAD REQUEST (status code: 400)
+[11/12/2016 21:29] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: 'mos' object has no attribute 'giner'
+[11/12/2016 21:30] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1
+    self.ginger.class
+                    ^
+SyntaxError: unexpected EOF while parsing
+[11/12/2016 21:30] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1
+    self.ginger.class()
+                    ^
+SyntaxError: invalid syntax
+[11/12/2016 21:30] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: 'mos' object has no attribute 'invoke'
+[11/12/2016 21:31] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: 'mos' object has no attribute 'dir'
+[11/12/2016 21:31] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: 'mos' object has no attribute 'dict'
+[11/12/2016 21:32] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: 'mos' object has no attribute 'dict'
+[11/12/2016 21:33] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+TypeError: 'mos' object is not iterable
+[11/12/2016 21:33] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'doc' is not defined
+[11/12/2016 21:34] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'bot' is not defined
+[11/12/2016 21:37] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 262, in __getattr__
+    raise AttributeError(msg.format(self.__class__, name))
+AttributeError: '<class '__main__.Bot'>' object has no attribute 'super'
+[11/12/2016 21:38] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 262, in __getattr__
+    raise AttributeError(msg.format(self.__class__, name))
+AttributeError: '<class '__main__.Bot'>' object has no attribute 'Super'
+[11/12/2016 21:39] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'hi' is not defined
+[11/12/2016 21:41] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'inspect_stack' is not defined
+[11/12/2016 21:41] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'inspect' is not defined
+[11/12/2016 21:42] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 262, in __getattr__
+    raise AttributeError(msg.format(self.__class__, name))
+AttributeError: '<class '__main__.Bot'>' object has no attribute 'name'
+[11/12/2016 21:44] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: 'mos' object has no attribute 'command'
+[11/12/2016 21:44] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 262, in __getattr__
+    raise AttributeError(msg.format(self.__class__, name))
+AttributeError: '<class '__main__.Bot'>' object has no attribute 'dir'
+[11/12/2016 21:45] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 262, in __getattr__
+    raise AttributeError(msg.format(self.__class__, name))
+AttributeError: '<class '__main__.Bot'>' object has no attribute 'channel'
+[11/12/2016 21:45] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/bot.py", line 293, in _augmented_msg
+    msg = yield from coro
+  File "red.py", line 87, in send_message
+    return await super().send_message(*args, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 829, in send_message
+    data = yield from self.http.send_message(channel_id, content, guild_id=guild_id, tts=tts)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 137, in request
+    raise HTTPException(r, data)
+discord.errors.HTTPException: BAD REQUEST (status code: 400)
+[11/12/2016 21:46] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'message' is not defined
+[11/12/2016 21:46] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'client' is not defined
+[11/12/2016 21:46] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: 'mos' object has no attribute 'client'
+[11/12/2016 21:47] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: 'mos' object has no attribute 'send_message'
+[11/12/2016 21:48] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'message' is not defined
+[11/12/2016 21:48] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'channel' is not defined
+[11/12/2016 21:49] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 262, in __getattr__
+    raise AttributeError(msg.format(self.__class__, name))
+AttributeError: '<class '__main__.Bot'>' object has no attribute 'channel'
+[11/12/2016 21:49] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 262, in __getattr__
+    raise AttributeError(msg.format(self.__class__, name))
+AttributeError: '<class '__main__.Bot'>' object has no attribute 'ctx'
+[11/12/2016 21:50] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'ctx' is not defined
+[11/12/2016 21:51] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'message' is not defined
+[11/12/2016 21:55] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: 'list' object has no attribute 'str'
+[11/12/2016 21:55] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'doc' is not defined
+[11/12/2016 21:55] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+TypeError: throw expected at least 1 arguments, got 0
+[11/12/2016 21:56] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+TypeError: send() takes exactly one argument (0 given)
+[11/12/2016 21:57] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+TypeError: can't send non-None value to a just-started generator
+[11/12/2016 21:58] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+TypeError: send() takes exactly one argument (2 given)
+[11/12/2016 21:58] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+TypeError: can't send non-None value to a just-started generator
+[11/12/2016 21:58] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+TypeError: can't send non-None value to a just-started generator
+[11/12/2016 21:58] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'none' is not defined
+[11/12/2016 21:58] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'NULL' is not defined
+[11/12/2016 21:58] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'null' is not defined
+[11/12/2016 21:59] ERROR red on_command_error 249: Exception in command 'userinfo'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/general.py", line 194, in userinfo
+    data = discord.Embed(description=game, colour=user.colour)
+AttributeError: module 'discord' has no attribute 'Embed'
+[11/12/2016 21:59] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: 'function' object has no attribute 'stop'
+[11/12/2016 21:59] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: 'generator' object has no attribute 'stop'
+[11/12/2016 22:03] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+AttributeError: module 'time' has no attribute 'gettime'
+[11/12/2016 22:06] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1
+    self.FUCKS++
+               ^
+SyntaxError: unexpected EOF while parsing
+[11/12/2016 22:06] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1
+    (self.FUCKS)++
+                 ^
+SyntaxError: unexpected EOF while parsing
+[11/12/2016 22:06] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1
+    (self.FUCKS)+=4
+                 ^
+SyntaxError: invalid syntax
+[11/12/2016 22:13] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    try:
+  File "<string>", line 1, in <module>
+NameError: name 'os' is not defined
+[11/12/2016 22:14] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    async def calc(self, input):
+  File "<string>", line 1
+    import
+         ^
+SyntaxError: unexpected EOF while parsing
+[11/12/2016 22:14] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    async def calc(self, input):
+  File "<string>", line 1
+    import\os
+         ^
+SyntaxError: invalid syntax
+[11/12/2016 22:14] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    async def calc(self, input):
+  File "<string>", line 1
+    import\
+         ^
+SyntaxError: invalid syntax
+[11/12/2016 22:14] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    async def calc(self, input):
+  File "<string>", line 1
+    import\
+         ^
+SyntaxError: invalid syntax
+[11/12/2016 22:15] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    async def calc(self, input):
+  File "<string>", line 1, in <module>
+NameError: name 'Super' is not defined
+[11/12/2016 22:16] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    async def calc(self, input):
+  File "<string>", line 1, in <module>
+NameError: name 'server' is not defined
+[11/12/2016 22:17] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    async def calc(self, input):
+  File "<string>", line 1
+    r.set('noot'\
+                ^
+SyntaxError: unexpected character after line continuation character
+[11/12/2016 22:17] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    async def calc(self, input):
+  File "<string>", line 1, in <module>
+TypeError: set() missing 1 required positional argument: 'value'
+[11/12/2016 22:17] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    async def calc(self, input):
+  File "<string>", line 1
+    r.set('noot'
+               ^
+SyntaxError: unexpected EOF while parsing
+[11/12/2016 22:17] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    async def calc(self, input):
+  File "<string>", line 1
+    r.set('noot',
+                ^
+SyntaxError: unexpected EOF while parsing
+[11/12/2016 22:17] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    async def calc(self, input):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/bot.py", line 293, in _augmented_msg
+    msg = yield from coro
+  File "red.py", line 87, in send_message
+    return await super().send_message(*args, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 829, in send_message
+    data = yield from self.http.send_message(channel_id, content, guild_id=guild_id, tts=tts)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 137, in request
+    raise HTTPException(r, data)
+discord.errors.HTTPException: BAD REQUEST (status code: 400)
+[11/12/2016 22:17] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    async def calc(self, input):
+  File "<string>", line 1
+    r.set('noot',\
+                 ^
+SyntaxError: unexpected character after line continuation character
+[11/12/2016 22:18] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    async def calc(self, input):
+  File "<string>", line 1
+    r.set('noot',
+                ^
+SyntaxError: unexpected EOF while parsing
+[11/12/2016 22:18] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    async def calc(self, input):
+  File "<string>", line 1, in <module>
+TypeError: set() missing 2 required positional arguments: 'name' and 'value'
+[11/12/2016 22:19] ERROR owner _reload 157: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 139, 20, '        stringer = \n'))
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 744, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 986, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 969, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 958, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 673, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 661, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 767, in get_code
+  File "<frozen importlib._bootstrap_external>", line 727, in source_to_code
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 139
+    stringer =
+              ^
+SyntaxError: invalid syntax
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 151, in _reload
+    self._load_cog(module)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 748, in _load_cog
+    raise CogLoadError(*e.args)
+cogs.owner.CogLoadError: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 139, 20, '        stringer = \n'))
+[11/12/2016 22:19] ERROR owner _reload 157: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 139, 20, '        stringer = \n'))
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 744, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 986, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 969, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 958, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 673, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 661, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 767, in get_code
+  File "<frozen importlib._bootstrap_external>", line 727, in source_to_code
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 139
+    stringer =
+              ^
+SyntaxError: invalid syntax
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 151, in _reload
+    self._load_cog(module)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 748, in _load_cog
+    raise CogLoadError(*e.args)
+cogs.owner.CogLoadError: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 139, 20, '        stringer = \n'))
+[11/12/2016 22:20] ERROR owner _reload 157: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 138, 20, '        stringer = \n'))
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 744, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 986, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 969, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 958, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 673, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 661, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 767, in get_code
+  File "<frozen importlib._bootstrap_external>", line 727, in source_to_code
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 138
+    stringer =
+              ^
+SyntaxError: invalid syntax
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 151, in _reload
+    self._load_cog(module)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 748, in _load_cog
+    raise CogLoadError(*e.args)
+cogs.owner.CogLoadError: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 138, 20, '        stringer = \n'))
+[11/12/2016 22:20] ERROR owner _reload 157: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 139, 37, "        await self.bot.say(' USD is'} \n"))
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 744, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 986, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 969, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 958, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 673, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 661, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 767, in get_code
+  File "<frozen importlib._bootstrap_external>", line 727, in source_to_code
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 139
+    await self.bot.say(' USD is'}
+                                ^
+SyntaxError: invalid syntax
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 151, in _reload
+    self._load_cog(module)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 748, in _load_cog
+    raise CogLoadError(*e.args)
+cogs.owner.CogLoadError: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 139, 37, "        await self.bot.say(' USD is'} \n"))
+[11/12/2016 22:21] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 121, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1
+    self.FUCKS=self.FUCKS+4
+              ^
+SyntaxError: invalid syntax
+[11/12/2016 22:21] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 121, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1
+    print([x
+           ^
+SyntaxError: unexpected EOF while parsing
+[11/12/2016 22:21] ERROR owner _reload 157: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 38, 55, "        FUCKS = int(r.get('Quixoticelixer'))        mos.FUCKS += 1\n"))
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 744, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 986, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 969, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 958, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 673, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 661, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 767, in get_code
+  File "<frozen importlib._bootstrap_external>", line 727, in source_to_code
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 38
+    FUCKS = int(r.get('Quixoticelixer'))        mos.FUCKS += 1
+                                                  ^
+SyntaxError: invalid syntax
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 151, in _reload
+    self._load_cog(module)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 748, in _load_cog
+    raise CogLoadError(*e.args)
+cogs.owner.CogLoadError: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 38, 55, "        FUCKS = int(r.get('Quixoticelixer'))        mos.FUCKS += 1\n"))
+[11/12/2016 22:22] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+AttributeError: 'mos' object has no attribute 'FUCKS'
+[11/12/2016 22:23] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1
+    import os
+         ^
+SyntaxError: invalid syntax
+[11/12/2016 22:23] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1
+    import os
+         ^
+SyntaxError: invalid syntax
+[11/12/2016 22:23] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1
+    import os;
+         ^
+SyntaxError: invalid syntax
+[11/12/2016 22:24] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1
+    await self.bot.say([x for x in range(5)])
+             ^
+SyntaxError: invalid syntax
+[11/12/2016 22:24] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1
+    await\ self.bot.say([x for x in range(5)])
+                                             ^
+SyntaxError: unexpected character after line continuation character
+[11/12/2016 22:24] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+AttributeError: 'mos' object has no attribute 'FUCKS'
+[11/12/2016 22:25] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+AttributeError: 'mos' object has no attribute 'BMI'
+[11/12/2016 22:26] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+NameError: name 'platform' is not defined
+[11/12/2016 22:26] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+NameError: name 'system' is not defined
+[11/12/2016 22:27] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/bot.py", line 293, in _augmented_msg
+    msg = yield from coro
+  File "red.py", line 87, in send_message
+    return await super().send_message(*args, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 829, in send_message
+    data = yield from self.http.send_message(channel_id, content, guild_id=guild_id, tts=tts)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 137, in request
+    raise HTTPException(r, data)
+discord.errors.HTTPException: BAD REQUEST (status code: 400)
+[11/12/2016 22:28] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+AttributeError: 'mos' object has no attribute 'set'
+[11/12/2016 22:29] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+AttributeError: 'mos' object has no attribute 'Os'
+[11/12/2016 22:29] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+NameError: name 'Os' is not defined
+[11/12/2016 22:29] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+NameError: name 'this' is not defined
+[11/12/2016 22:30] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+NameError: name 'reload' is not defined
+[11/12/2016 22:30] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+TypeError: exec expected at least 1 arguments, got 0
+[11/12/2016 22:30] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+TypeError: exec() arg 1 must be a string, bytes or code object
+[11/12/2016 22:31] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+AttributeError: 'mos' object has no attribute 'FUCKS'
+[11/12/2016 22:31] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+  File "<string>", line 1
+    oh shit whaddup
+          ^
+SyntaxError: invalid syntax
+[11/12/2016 22:31] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1
+    exec(\'oh shit whaddup\')
+                            ^
+SyntaxError: unexpected character after line continuation character
+[11/12/2016 22:32] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+TypeError: exec() arg 1 must be a string, bytes or code object
+[11/12/2016 22:32] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1
+    exec(\\'oh shit whaddup\\')
+                              ^
+SyntaxError: unexpected character after line continuation character
+[11/12/2016 22:32] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1
+    exec(\\\\'oh shit whaddup\\\\')
+                                  ^
+SyntaxError: unexpected character after line continuation character
+[11/12/2016 22:32] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1
+    exec(//'oh shit whaddup//')
+          ^
+SyntaxError: invalid syntax
+[11/12/2016 22:33] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+NameError: name 'fuckquix' is not defined
+[11/12/2016 22:33] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+AttributeError: 'Command' object has no attribute 'FUCKS'
+[11/12/2016 22:33] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+AttributeError: 'Command' object has no attribute 'FUCKS'
+[11/12/2016 22:33] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+NameError: name 'os' is not defined
+[11/12/2016 22:34] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+AttributeError: 'mos' object has no attribute 'darude'
+[11/12/2016 22:35] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1
+    exec('nootnooot
+                  ^
+SyntaxError: EOL while scanning string literal
+[11/12/2016 22:35] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "red.py", line 522, in <module>
+    loop.run_until_complete(main())
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 375, in run_until_complete
+    self.run_forever()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 345, in run_forever
+    self._run_once()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 1312, in _run_once
+    handle._run()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/events.py", line 125, in _run
+    self._callback(*self._args)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/tasks.py", line 239, in _step
+    result = coro.send(None)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 273, in _run_event
+    yield from getattr(self, event)(*args, **kwargs)
+  File "red.py", line 235, in on_message
+    await bot.process_commands(message)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/bot.py", line 822, in process_commands
+    yield from command.invoke(ctx)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 367, in invoke
+    yield from injected(*ctx.args, **ctx.kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+KeyboardInterrupt
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1
+    exec('nootnooot
+                  ^
+SyntaxError: EOL while scanning string literal
+[11/12/2016 22:36] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 120, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+NameError: name 'nootnooot' is not defined
+[11/12/2016 23:29] ERROR red load_cogs 468: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 146, 2, '~\n'))
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 744, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 986, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 969, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 958, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 673, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 661, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 767, in get_code
+  File "<frozen importlib._bootstrap_external>", line 727, in source_to_code
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 146
+    ~
+    ^
+SyntaxError: invalid syntax
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "red.py", line 465, in load_cogs
+    owner_cog._load_cog(extension)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 748, in _load_cog
+    raise CogLoadError(*e.args)
+cogs.owner.CogLoadError: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 146, 2, '~\n'))
+[11/12/2016 23:29] ERROR owner _reload 157: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 146, 2, '~\n'))
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 744, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 986, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 969, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 958, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 673, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 661, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 767, in get_code
+  File "<frozen importlib._bootstrap_external>", line 727, in source_to_code
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 146
+    ~
+    ^
+SyntaxError: invalid syntax
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 151, in _reload
+    self._load_cog(module)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 748, in _load_cog
+    raise CogLoadError(*e.args)
+cogs.owner.CogLoadError: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 146, 2, '~\n'))
+[11/12/2016 23:29] ERROR owner _reload 157: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 146, 2, '~\n'))
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 744, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 986, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 969, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 958, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 673, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 661, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 767, in get_code
+  File "<frozen importlib._bootstrap_external>", line 727, in source_to_code
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 146
+    ~
+    ^
+SyntaxError: invalid syntax
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 151, in _reload
+    self._load_cog(module)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 748, in _load_cog
+    raise CogLoadError(*e.args)
+cogs.owner.CogLoadError: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 146, 2, '~\n'))
+[12/12/2016 07:28] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 123, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+NameError: name 'x' is not defined
+[12/12/2016 16:31] ERROR red <module> 540: Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 601, in _create_direct_connection
+    local_addr=self._local_addr)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 695, in create_connection
+    raise exceptions[0]
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 682, in create_connection
+    yield from self.sock_connect(sock, address)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/futures.py", line 361, in __iter__
+    yield self  # This tells Task to wait for completion.
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/tasks.py", line 296, in _wakeup
+    future.result()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/futures.py", line 274, in result
+    raise self._exception
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/selector_events.py", line 414, in _sock_connect
+    sock.connect(address)
+OSError: [Errno 51] Network is unreachable
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 304, in connect
+    yield from self._create_connection(req)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 578, in _create_connection
+    transport, proto = yield from self._create_direct_connection(req)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 624, in _create_direct_connection
+    (req.host, req.port, exc.strerror)) from exc
+aiohttp.errors.ClientOSError: [Errno 51] Can not connect to discordapp.com:443 [Network is unreachable]
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "red.py", line 522, in <module>
+    loop.run_until_complete(main())
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 387, in run_until_complete
+    return future.result()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/futures.py", line 274, in result
+    raise self._exception
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/tasks.py", line 241, in _step
+    result = coro.throw(exc)
+  File "red.py", line 516, in main
+    yield from bot.connect()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 418, in connect
+    self.ws = yield from DiscordWebSocket.from_client(self, resume=resume)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/gateway.py", line 174, in from_client
+    gateway = yield from client.http.get_gateway()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 536, in get_gateway
+    data = yield from self.get(self.GATEWAY, bucket=_func_())
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 105, in request
+    r = yield from self.session.request(method, url, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/client.py", line 555, in __iter__
+    resp = yield from self._coro
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/client.py", line 198, in _request
+    conn = yield from self._connector.connect(req)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 314, in connect
+    .format(key, exc.strerror)) from exc
+aiohttp.errors.ClientOSError: [Errno 51] Cannot connect to host discordapp.com:443 ssl:True [Can not connect to discordapp.com:443 [Network is unreachable]]
+
+[12/12/2016 16:31] ERROR red <module> 540: Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 304, in connect
+    yield from self._create_connection(req)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 578, in _create_connection
+    transport, proto = yield from self._create_direct_connection(req)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 589, in _create_direct_connection
+    hosts = yield from self._resolve_host(req.host, req.port)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 561, in _resolve_host
+    self._resolver.resolve(host, port, family=self._family)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/resolver.py", line 29, in resolve
+    host, port, type=socket.SOCK_STREAM, family=family)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/futures.py", line 361, in __iter__
+    yield self  # This tells Task to wait for completion.
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/tasks.py", line 296, in _wakeup
+    future.result()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/futures.py", line 274, in result
+    raise self._exception
+  File "/Users/maxtweddell/anaconda/lib/python3.5/concurrent/futures/thread.py", line 55, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/socket.py", line 732, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "red.py", line 522, in <module>
+    loop.run_until_complete(main())
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 387, in run_until_complete
+    return future.result()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/futures.py", line 274, in result
+    raise self._exception
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/tasks.py", line 241, in _step
+    result = coro.throw(exc)
+  File "red.py", line 513, in main
+    yield from bot.login(settings.email)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 382, in login
+    yield from getattr(self, '_login_' + str(n))(*args, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 312, in _login_1
+    data = yield from self.http.static_login(token, bot=is_bot)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 195, in static_login
+    data = yield from self.get(self.ME)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 105, in request
+    r = yield from self.session.request(method, url, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/client.py", line 555, in __iter__
+    resp = yield from self._coro
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/client.py", line 198, in _request
+    conn = yield from self._connector.connect(req)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 314, in connect
+    .format(key, exc.strerror)) from exc
+aiohttp.errors.ClientOSError: [Errno 8] Cannot connect to host discordapp.com:443 ssl:True [nodename nor servname provided, or not known]
+
+[12/12/2016 16:31] ERROR red <module> 540: Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 304, in connect
+    yield from self._create_connection(req)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 578, in _create_connection
+    transport, proto = yield from self._create_direct_connection(req)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 589, in _create_direct_connection
+    hosts = yield from self._resolve_host(req.host, req.port)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 561, in _resolve_host
+    self._resolver.resolve(host, port, family=self._family)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/resolver.py", line 29, in resolve
+    host, port, type=socket.SOCK_STREAM, family=family)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/futures.py", line 361, in __iter__
+    yield self  # This tells Task to wait for completion.
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/tasks.py", line 296, in _wakeup
+    future.result()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/futures.py", line 274, in result
+    raise self._exception
+  File "/Users/maxtweddell/anaconda/lib/python3.5/concurrent/futures/thread.py", line 55, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/socket.py", line 732, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "red.py", line 522, in <module>
+    loop.run_until_complete(main())
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 387, in run_until_complete
+    return future.result()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/futures.py", line 274, in result
+    raise self._exception
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/tasks.py", line 241, in _step
+    result = coro.throw(exc)
+  File "red.py", line 513, in main
+    yield from bot.login(settings.email)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 382, in login
+    yield from getattr(self, '_login_' + str(n))(*args, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 312, in _login_1
+    data = yield from self.http.static_login(token, bot=is_bot)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 195, in static_login
+    data = yield from self.get(self.ME)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 105, in request
+    r = yield from self.session.request(method, url, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/client.py", line 555, in __iter__
+    resp = yield from self._coro
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/client.py", line 198, in _request
+    conn = yield from self._connector.connect(req)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 314, in connect
+    .format(key, exc.strerror)) from exc
+aiohttp.errors.ClientOSError: [Errno 8] Cannot connect to host discordapp.com:443 ssl:True [nodename nor servname provided, or not known]
+
+[12/12/2016 16:31] ERROR red <module> 540: Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 304, in connect
+    yield from self._create_connection(req)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 578, in _create_connection
+    transport, proto = yield from self._create_direct_connection(req)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 589, in _create_direct_connection
+    hosts = yield from self._resolve_host(req.host, req.port)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 561, in _resolve_host
+    self._resolver.resolve(host, port, family=self._family)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/resolver.py", line 29, in resolve
+    host, port, type=socket.SOCK_STREAM, family=family)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/futures.py", line 361, in __iter__
+    yield self  # This tells Task to wait for completion.
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/tasks.py", line 296, in _wakeup
+    future.result()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/futures.py", line 274, in result
+    raise self._exception
+  File "/Users/maxtweddell/anaconda/lib/python3.5/concurrent/futures/thread.py", line 55, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/socket.py", line 732, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "red.py", line 522, in <module>
+    loop.run_until_complete(main())
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 387, in run_until_complete
+    return future.result()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/futures.py", line 274, in result
+    raise self._exception
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/tasks.py", line 241, in _step
+    result = coro.throw(exc)
+  File "red.py", line 513, in main
+    yield from bot.login(settings.email)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 382, in login
+    yield from getattr(self, '_login_' + str(n))(*args, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 312, in _login_1
+    data = yield from self.http.static_login(token, bot=is_bot)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 195, in static_login
+    data = yield from self.get(self.ME)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 105, in request
+    r = yield from self.session.request(method, url, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/client.py", line 555, in __iter__
+    resp = yield from self._coro
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/client.py", line 198, in _request
+    conn = yield from self._connector.connect(req)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 314, in connect
+    .format(key, exc.strerror)) from exc
+aiohttp.errors.ClientOSError: [Errno 8] Cannot connect to host discordapp.com:443 ssl:True [nodename nor servname provided, or not known]
+
+[12/12/2016 16:54] ERROR red <module> 540: Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 601, in _create_direct_connection
+    local_addr=self._local_addr)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 695, in create_connection
+    raise exceptions[0]
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 682, in create_connection
+    yield from self.sock_connect(sock, address)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/futures.py", line 361, in __iter__
+    yield self  # This tells Task to wait for completion.
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/tasks.py", line 296, in _wakeup
+    future.result()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/futures.py", line 274, in result
+    raise self._exception
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/selector_events.py", line 439, in _sock_connect_cb
+    raise OSError(err, 'Connect call failed %s' % (address,))
+TimeoutError: [Errno 60] Connect call failed ('104.16.59.5', 443)
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 304, in connect
+    yield from self._create_connection(req)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 578, in _create_connection
+    transport, proto = yield from self._create_direct_connection(req)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 624, in _create_direct_connection
+    (req.host, req.port, exc.strerror)) from exc
+aiohttp.errors.ClientOSError: [Errno 60] Can not connect to discordapp.com:443 [Connect call failed ('104.16.59.5', 443)]
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "red.py", line 522, in <module>
+    loop.run_until_complete(main())
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 387, in run_until_complete
+    return future.result()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/futures.py", line 274, in result
+    raise self._exception
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/tasks.py", line 241, in _step
+    result = coro.throw(exc)
+  File "red.py", line 516, in main
+    yield from bot.connect()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 418, in connect
+    self.ws = yield from DiscordWebSocket.from_client(self, resume=resume)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/gateway.py", line 174, in from_client
+    gateway = yield from client.http.get_gateway()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 536, in get_gateway
+    data = yield from self.get(self.GATEWAY, bucket=_func_())
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 105, in request
+    r = yield from self.session.request(method, url, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/client.py", line 555, in __iter__
+    resp = yield from self._coro
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/client.py", line 198, in _request
+    conn = yield from self._connector.connect(req)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 314, in connect
+    .format(key, exc.strerror)) from exc
+aiohttp.errors.ClientOSError: [Errno 60] Cannot connect to host discordapp.com:443 ssl:True [Can not connect to discordapp.com:443 [Connect call failed ('104.16.59.5', 443)]]
+
+[12/12/2016 16:55] ERROR red <module> 540: Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 304, in connect
+    yield from self._create_connection(req)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 578, in _create_connection
+    transport, proto = yield from self._create_direct_connection(req)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 589, in _create_direct_connection
+    hosts = yield from self._resolve_host(req.host, req.port)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 561, in _resolve_host
+    self._resolver.resolve(host, port, family=self._family)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/resolver.py", line 29, in resolve
+    host, port, type=socket.SOCK_STREAM, family=family)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/futures.py", line 361, in __iter__
+    yield self  # This tells Task to wait for completion.
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/tasks.py", line 296, in _wakeup
+    future.result()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/futures.py", line 274, in result
+    raise self._exception
+  File "/Users/maxtweddell/anaconda/lib/python3.5/concurrent/futures/thread.py", line 55, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/socket.py", line 732, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "red.py", line 522, in <module>
+    loop.run_until_complete(main())
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 387, in run_until_complete
+    return future.result()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/futures.py", line 274, in result
+    raise self._exception
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/tasks.py", line 241, in _step
+    result = coro.throw(exc)
+  File "red.py", line 513, in main
+    yield from bot.login(settings.email)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 382, in login
+    yield from getattr(self, '_login_' + str(n))(*args, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 312, in _login_1
+    data = yield from self.http.static_login(token, bot=is_bot)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 195, in static_login
+    data = yield from self.get(self.ME)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 105, in request
+    r = yield from self.session.request(method, url, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/client.py", line 555, in __iter__
+    resp = yield from self._coro
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/client.py", line 198, in _request
+    conn = yield from self._connector.connect(req)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 314, in connect
+    .format(key, exc.strerror)) from exc
+aiohttp.errors.ClientOSError: [Errno 8] Cannot connect to host discordapp.com:443 ssl:True [nodename nor servname provided, or not known]
+
+[12/12/2016 16:55] ERROR red <module> 540: Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 304, in connect
+    yield from self._create_connection(req)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 578, in _create_connection
+    transport, proto = yield from self._create_direct_connection(req)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 589, in _create_direct_connection
+    hosts = yield from self._resolve_host(req.host, req.port)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 561, in _resolve_host
+    self._resolver.resolve(host, port, family=self._family)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/resolver.py", line 29, in resolve
+    host, port, type=socket.SOCK_STREAM, family=family)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/futures.py", line 361, in __iter__
+    yield self  # This tells Task to wait for completion.
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/tasks.py", line 296, in _wakeup
+    future.result()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/futures.py", line 274, in result
+    raise self._exception
+  File "/Users/maxtweddell/anaconda/lib/python3.5/concurrent/futures/thread.py", line 55, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/socket.py", line 732, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "red.py", line 522, in <module>
+    loop.run_until_complete(main())
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 387, in run_until_complete
+    return future.result()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/futures.py", line 274, in result
+    raise self._exception
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/tasks.py", line 241, in _step
+    result = coro.throw(exc)
+  File "red.py", line 513, in main
+    yield from bot.login(settings.email)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 382, in login
+    yield from getattr(self, '_login_' + str(n))(*args, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 312, in _login_1
+    data = yield from self.http.static_login(token, bot=is_bot)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 195, in static_login
+    data = yield from self.get(self.ME)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 105, in request
+    r = yield from self.session.request(method, url, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/client.py", line 555, in __iter__
+    resp = yield from self._coro
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/client.py", line 198, in _request
+    conn = yield from self._connector.connect(req)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 314, in connect
+    .format(key, exc.strerror)) from exc
+aiohttp.errors.ClientOSError: [Errno 8] Cannot connect to host discordapp.com:443 ssl:True [nodename nor servname provided, or not known]
+
+[12/12/2016 16:56] ERROR red <module> 540: Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 304, in connect
+    yield from self._create_connection(req)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 578, in _create_connection
+    transport, proto = yield from self._create_direct_connection(req)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 589, in _create_direct_connection
+    hosts = yield from self._resolve_host(req.host, req.port)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 561, in _resolve_host
+    self._resolver.resolve(host, port, family=self._family)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/resolver.py", line 29, in resolve
+    host, port, type=socket.SOCK_STREAM, family=family)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/futures.py", line 361, in __iter__
+    yield self  # This tells Task to wait for completion.
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/tasks.py", line 296, in _wakeup
+    future.result()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/futures.py", line 274, in result
+    raise self._exception
+  File "/Users/maxtweddell/anaconda/lib/python3.5/concurrent/futures/thread.py", line 55, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/socket.py", line 732, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno 8] nodename nor servname provided, or not known
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "red.py", line 522, in <module>
+    loop.run_until_complete(main())
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 387, in run_until_complete
+    return future.result()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/futures.py", line 274, in result
+    raise self._exception
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/tasks.py", line 241, in _step
+    result = coro.throw(exc)
+  File "red.py", line 513, in main
+    yield from bot.login(settings.email)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 382, in login
+    yield from getattr(self, '_login_' + str(n))(*args, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 312, in _login_1
+    data = yield from self.http.static_login(token, bot=is_bot)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 195, in static_login
+    data = yield from self.get(self.ME)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 105, in request
+    r = yield from self.session.request(method, url, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/client.py", line 555, in __iter__
+    resp = yield from self._coro
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/client.py", line 198, in _request
+    conn = yield from self._connector.connect(req)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/connector.py", line 314, in connect
+    .format(key, exc.strerror)) from exc
+aiohttp.errors.ClientOSError: [Errno 8] Cannot connect to host discordapp.com:443 ssl:True [nodename nor servname provided, or not known]
+
+[12/12/2016 18:27] ERROR red <module> 540: Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/selector_events.py", line 669, in _read_ready
+    data = self._sock.recv(self.max_size)
+ConnectionResetError: [Errno 54] Connection reset by peer
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/client.py", line 202, in _request
+    yield from resp.start(conn, read_until_eof)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/client_reqrep.py", line 640, in start
+    message = yield from httpstream.read()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/streams.py", line 613, in read
+    result = yield from super().read()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/streams.py", line 466, in read
+    yield from self._waiter
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/futures.py", line 361, in __iter__
+    yield self  # This tells Task to wait for completion.
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/tasks.py", line 296, in _wakeup
+    future.result()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/futures.py", line 274, in result
+    raise self._exception
+aiohttp.errors.ServerDisconnectedError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "red.py", line 522, in <module>
+    loop.run_until_complete(main())
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 387, in run_until_complete
+    return future.result()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/futures.py", line 274, in result
+    raise self._exception
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/tasks.py", line 241, in _step
+    result = coro.throw(exc)
+  File "red.py", line 516, in main
+    yield from bot.connect()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 418, in connect
+    self.ws = yield from DiscordWebSocket.from_client(self, resume=resume)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/gateway.py", line 174, in from_client
+    gateway = yield from client.http.get_gateway()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 536, in get_gateway
+    data = yield from self.get(self.GATEWAY, bucket=_func_())
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/http.py", line 105, in request
+    r = yield from self.session.request(method, url, **kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/client.py", line 555, in __iter__
+    resp = yield from self._coro
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/aiohttp/client.py", line 209, in _request
+    raise aiohttp.ClientResponseError() from exc
+aiohttp.errors.ClientResponseError
+
+[12/12/2016 18:34] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 123, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1
+    1/
+     ^
+SyntaxError: unexpected EOF while parsing
+[12/12/2016 18:35] ERROR red <module> 540: Traceback (most recent call last):
+  File "red.py", line 522, in <module>
+    loop.run_until_complete(main())
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 375, in run_until_complete
+    self.run_forever()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 345, in run_forever
+    self._run_once()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 1312, in _run_once
+    handle._run()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/events.py", line 125, in _run
+    self._callback(*self._args)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/tasks.py", line 239, in _step
+    result = coro.send(None)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 273, in _run_event
+    yield from getattr(self, event)(*args, **kwargs)
+  File "red.py", line 235, in on_message
+    await bot.process_commands(message)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/bot.py", line 822, in process_commands
+    yield from command.invoke(ctx)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 367, in invoke
+    yield from injected(*ctx.args, **ctx.kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 123, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+  File "/Users/maxtweddell/anaconda/lib/python3.5/_sitebuiltins.py", line 26, in __call__
+    raise SystemExit(code)
+SystemExit
+
+[12/12/2016 18:36] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 123, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+NameError: name 'no' is not defined
+[12/12/2016 18:36] ERROR red <module> 540: Traceback (most recent call last):
+  File "red.py", line 522, in <module>
+    loop.run_until_complete(main())
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 375, in run_until_complete
+    self.run_forever()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 345, in run_forever
+    self._run_once()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 1312, in _run_once
+    handle._run()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/events.py", line 125, in _run
+    self._callback(*self._args)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/tasks.py", line 239, in _step
+    result = coro.send(None)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 273, in _run_event
+    yield from getattr(self, event)(*args, **kwargs)
+  File "red.py", line 235, in on_message
+    await bot.process_commands(message)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/bot.py", line 822, in process_commands
+    yield from command.invoke(ctx)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 367, in invoke
+    yield from injected(*ctx.args, **ctx.kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 123, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+  File "/Users/maxtweddell/anaconda/lib/python3.5/_sitebuiltins.py", line 26, in __call__
+    raise SystemExit(code)
+SystemExit
+
+[12/12/2016 18:37] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 123, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1
+    print('definitely yes')\n quit()
+                                   ^
+SyntaxError: unexpected character after line continuation character
+[12/12/2016 18:39] ERROR red <module> 540: Traceback (most recent call last):
+  File "red.py", line 522, in <module>
+    loop.run_until_complete(main())
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 375, in run_until_complete
+    self.run_forever()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 345, in run_forever
+    self._run_once()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 1312, in _run_once
+    handle._run()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/events.py", line 125, in _run
+    self._callback(*self._args)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/tasks.py", line 239, in _step
+    result = coro.send(None)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 273, in _run_event
+    yield from getattr(self, event)(*args, **kwargs)
+  File "red.py", line 235, in on_message
+    await bot.process_commands(message)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/bot.py", line 822, in process_commands
+    yield from command.invoke(ctx)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 367, in invoke
+    yield from injected(*ctx.args, **ctx.kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 123, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+  File "/Users/maxtweddell/anaconda/lib/python3.5/_sitebuiltins.py", line 26, in __call__
+    raise SystemExit(code)
+SystemExit
+
+[12/12/2016 18:39] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "red.py", line 522, in <module>
+    loop.run_until_complete(main())
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 375, in run_until_complete
+    self.run_forever()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 345, in run_forever
+    self._run_once()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 1312, in _run_once
+    handle._run()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/events.py", line 125, in _run
+    self._callback(*self._args)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/tasks.py", line 239, in _step
+    result = coro.send(None)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 273, in _run_event
+    yield from getattr(self, event)(*args, **kwargs)
+  File "red.py", line 235, in on_message
+    await bot.process_commands(message)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/bot.py", line 822, in process_commands
+    yield from command.invoke(ctx)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 367, in invoke
+    yield from injected(*ctx.args, **ctx.kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 123, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+  File "/Users/maxtweddell/anaconda/lib/python3.5/_sitebuiltins.py", line 26, in __call__
+    raise SystemExit(code)
+SystemExit
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 123, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+NameError: name 'tkdbf' is not defined
+[12/12/2016 18:39] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "red.py", line 522, in <module>
+    loop.run_until_complete(main())
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 375, in run_until_complete
+    self.run_forever()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 345, in run_forever
+    self._run_once()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 1312, in _run_once
+    handle._run()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/events.py", line 125, in _run
+    self._callback(*self._args)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/tasks.py", line 239, in _step
+    result = coro.send(None)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 273, in _run_event
+    yield from getattr(self, event)(*args, **kwargs)
+  File "red.py", line 235, in on_message
+    await bot.process_commands(message)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/bot.py", line 822, in process_commands
+    yield from command.invoke(ctx)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 367, in invoke
+    yield from injected(*ctx.args, **ctx.kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 123, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+  File "/Users/maxtweddell/anaconda/lib/python3.5/_sitebuiltins.py", line 26, in __call__
+    raise SystemExit(code)
+SystemExit
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 123, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+NameError: name 'no' is not defined
+[12/12/2016 18:39] ERROR owner _reload 157: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 125, 93, "           weighted_choices = [('noot', 1),('0', 4)] ('1', 8), ('0', 8), ('max', 1),('f', 2)],('x', 2),('iqx',1)('--2', 1)]]]]\n"))
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 744, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 986, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 969, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 958, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 673, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 661, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 767, in get_code
+  File "<frozen importlib._bootstrap_external>", line 727, in source_to_code
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 125
+    weighted_choices = [('noot', 1),('0', 4)] ('1', 8), ('0', 8), ('max', 1),('f', 2)],('x', 2),('iqx',1)('--2', 1)]]]]
+                                                                                     ^
+SyntaxError: invalid syntax
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 151, in _reload
+    self._load_cog(module)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 748, in _load_cog
+    raise CogLoadError(*e.args)
+cogs.owner.CogLoadError: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 125, 93, "           weighted_choices = [('noot', 1),('0', 4)] ('1', 8), ('0', 8), ('max', 1),('f', 2)],('x', 2),('iqx',1)('--2', 1)]]]]\n"))
+[12/12/2016 18:40] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 123, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+ZeroDivisionError: division by zero
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 125, in calc
+    weighted_choices = [('noot', 1),('0', 4) ('1', 8), ('0', 8), ('max', 1),('f', 2),('x', 2),('iqx',1)('--2', 1)]
+TypeError: 'tuple' object is not callable
+[12/12/2016 18:41] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 123, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+ZeroDivisionError: division by zero
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 125, in calc
+    weighted_choices = [('noot', 1),('0', 4) ('1', 8), ('0', 8), ('max', 1),('f', 2),('x', 2),('iqx',1)('--2', 1)]
+TypeError: 'tuple' object is not callable
+[12/12/2016 18:41] ERROR red <module> 540: Traceback (most recent call last):
+  File "red.py", line 522, in <module>
+    loop.run_until_complete(main())
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 375, in run_until_complete
+    self.run_forever()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 345, in run_forever
+    self._run_once()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/base_events.py", line 1312, in _run_once
+    handle._run()
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/events.py", line 125, in _run
+    self._callback(*self._args)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/asyncio/tasks.py", line 239, in _step
+    result = coro.send(None)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/client.py", line 273, in _run_event
+    yield from getattr(self, event)(*args, **kwargs)
+  File "red.py", line 235, in on_message
+    await bot.process_commands(message)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/bot.py", line 822, in process_commands
+    yield from command.invoke(ctx)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 367, in invoke
+    yield from injected(*ctx.args, **ctx.kwargs)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 123, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+  File "/Users/maxtweddell/anaconda/lib/python3.5/_sitebuiltins.py", line 26, in __call__
+    raise SystemExit(code)
+SystemExit
+
+[12/12/2016 18:42] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 123, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+ZeroDivisionError: division by zero
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 125, in calc
+    weighted_choices = [('noot', 1),('0', 4) ('1', 8), ('0', 8), ('max', 1),('f', 2),('x', 2),('iqx',1),('--2', 1)]
+TypeError: 'tuple' object is not callable
+[12/12/2016 18:43] ERROR red on_command_error 249: Exception in command 'calc'
+Traceback (most recent call last):
+  File "/Users/maxtweddell/anaconda/lib/python3.5/site-packages/discord/ext/commands/core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 123, in calc
+    await self.bot.say(eval(input))
+  File "<string>", line 1, in <module>
+NameError: name 'fesh' is not defined
+[12/12/2016 18:44] ERROR owner _reload 157: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 128, 27, '           for x in range 0:10:\n'))
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 744, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "/Users/maxtweddell/anaconda/lib/python3.5/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 986, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 969, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 958, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 673, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 661, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 767, in get_code
+  File "<frozen importlib._bootstrap_external>", line 727, in source_to_code
+  File "<frozen importlib._bootstrap>", line 222, in _call_with_frames_removed
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py", line 128
+    for x in range 0:10:
+                   ^
+SyntaxError: invalid syntax
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 151, in _reload
+    self._load_cog(module)
+  File "/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/owner.py", line 748, in _load_cog
+    raise CogLoadError(*e.args)
+cogs.owner.CogLoadError: ('invalid syntax', ('/Users/maxtweddell/MEGAsync/MoS/Red-DiscordBot/cogs/mos.py', 128, 27, '           for x in range 0:10:\n'))
