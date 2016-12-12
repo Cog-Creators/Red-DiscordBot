@@ -23,7 +23,6 @@ class Settings:
                         "MOD_ROLE": "Process",
                         "PREFIXES": []}
                         }
-        self.memory_only = False
 
         if not dataIO.is_valid_json(self.path):
             self.bot_settings = deepcopy(self.default_settings)
@@ -62,6 +61,9 @@ class Settings:
                             help="Disables console inputs. Features requiring "
                                  "console interaction could be disabled as a "
                                  "result")
+        parser.add_argument("--no-cogs",
+                            action="store_true",
+                            help="Starts Red with no cogs loaded, only core")
         parser.add_argument("--self-bot",
                             action='store_true',
                             help="Specifies if Red should log in as selfbot")
@@ -86,7 +88,8 @@ class Settings:
 
         self.no_prompt = args.no_prompt
         self.self_bot = args.self_bot
-        self.memory_only = args.memory_only
+        self._memory_only = args.memory_only
+        self._no_cogs = args.no_cogs
         self.debug = args.debug
 
         self.save_settings()
@@ -99,7 +102,7 @@ class Settings:
                 os.makedirs(folder)
 
     def save_settings(self):
-        if not self.memory_only:
+        if not self._memory_only:
             dataIO.save_json(self.path, self.bot_settings)
 
     def update_old_settings_v1(self):

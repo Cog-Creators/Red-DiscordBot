@@ -488,6 +488,12 @@ def load_cogs():
               "which Red cannot function. Reinstall.")
         exit(1)
 
+    if settings._no_cogs:
+        logger.debug("Skipping initial cogs loading (--no-cogs)")
+        if not os.path.isfile("data/red/cogs.json"):
+            dataIO.save_json("data/red/cogs.json", {})
+        return
+
     failed = []
     extensions = owner_cog._list_cogs()
 
