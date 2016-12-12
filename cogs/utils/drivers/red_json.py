@@ -47,14 +47,15 @@ class JSON(BaseDriver):
         userdata = self.data["USER"].get(str(user_id), {})
         return userdata.get(key, default)
 
-    def set_global(self, cog_name, ident, key, value, clear=False):
+    def set_global(self, cog_name, ident, _, key, value, *, clear=False):
         if clear:
             self.data["GLOBAL"] = {}
         else:
             self.data["GLOBAL"][key] = value
         dataIO.save_json(self.data_path, self.data)
 
-    def set_server(self, cog_name, ident, server_id, key, value, clear=False):
+    def set_server(self, cog_name, ident, server_id, key, value, *,
+                   clear=False):
         server_id = str(server_id)
         if clear:
             self.data["SERVER"][server_id] = {}
@@ -66,7 +67,7 @@ class JSON(BaseDriver):
                 self.data["SERVER"][server_id][key] = value
         dataIO.save_json(self.data_path, self.data)
 
-    def set_channel(self, cog_name, ident, channel_id, key, value,
+    def set_channel(self, cog_name, ident, channel_id, key, value, *,
                     clear=False):
         channel_id = str(channel_id)
         if clear:
@@ -79,7 +80,7 @@ class JSON(BaseDriver):
                 self.data["CHANNEL"][channel_id][key] = value
         dataIO.save_json(self.data_path, self.data)
 
-    def set_role(self, cog_name, ident, role_id, key, value, clear=False):
+    def set_role(self, cog_name, ident, role_id, key, value, *, clear=False):
         role_id = str(role_id)
         if clear:
             self.data["ROLE"][role_id] = {}
@@ -91,7 +92,7 @@ class JSON(BaseDriver):
                 self.data["ROLE"][role_id][key] = value
         dataIO.save_json(self.data_path, self.data)
 
-    def set_member(self, cog_name, ident, user_id, server_id, key, value,
+    def set_member(self, cog_name, ident, user_id, server_id, key, value, *,
                    clear=False):
         user_id = str(user_id)
         server_id = str(server_id)
@@ -109,7 +110,7 @@ class JSON(BaseDriver):
                 self.data["MEMBER"][user_id][server_id][key] = value
         dataIO.save_json(self.data_path, self.data)
 
-    def set_user(self, cog_name, ident, user_id, key, value, clear=False):
+    def set_user(self, cog_name, ident, user_id, key, value, *, clear=False):
         user_id = str(user_id)
         if clear:
             self.data["USER"][user_id] = {}

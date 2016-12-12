@@ -53,6 +53,18 @@ class BaseConfig:
             `self.collection` and `self.collection_uuid`."""
         raise NotImplemented
 
+    def __setattr__(self, key, value):
+        if 'defaults' in self.__dict__:  # Necessary to let the cog load
+            restricted = list(self.defaults[self.collection].keys()) + \
+                list(self.restricted_keys)
+            if key in restricted:
+                raise ValueError("Not allowed to dynamically set attributes of"
+                                 " restricted_keys: {}".format(restricted))
+            else:
+                self.__dict__[key] = value
+        else:
+            self.__dict__[key] = value
+
     def clear(self):
         """Clears all values in the current context ONLY."""
         raise NotImplemented
