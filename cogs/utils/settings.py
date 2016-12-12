@@ -23,6 +23,7 @@ class Settings:
                         "MOD_ROLE": "Process",
                         "PREFIXES": []}
                         }
+        self._memory_only = False
 
         if not dataIO.is_valid_json(self.path):
             self.bot_settings = deepcopy(self.default_settings)
