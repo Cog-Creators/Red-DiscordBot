@@ -13,11 +13,12 @@ import shelve
 import redis
 import datetime
 from datetime import date
-from datetime import timedelta 
+from datetime import timedelta
 import time
 import math
 import pint
 from currency_converter import CurrencyConverter
+import os
 
 c = CurrencyConverter()
 ureg = pint.UnitRegistry()
@@ -25,7 +26,7 @@ r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 class mos:
     """ Made of Styrofoam Specific Commands."""
-  
+
 
     def __init__(self,bot):
         self.bot = bot
@@ -38,7 +39,7 @@ class mos:
     @commands.command(hidden=True)
     async def fuckquix(self):
         "fuckquix lol"
-        FUCKS = int(r.get('Quixoticelixer'))   
+        FUCKS = int(r.get('Quixoticelixer'))
         FUCKS += 1
         f = FUCKS
         await self.bot.say(f)
@@ -48,28 +49,28 @@ class mos:
     async def bmi(self):
         nbmi = random.normalvariate(18,8)
         await self.bot.say("your \" BMI \" is {:3.2f}. \nAlgorithm provided by Quixoticelixer".format(nbmi))
-        
+
     @commands.command(pass_context = True)
-    async def addme(self,ctx, days_slc : int):
-        "Adds you to the days_since db \nAdd the initial days after the command "
+    async def addme(self,ctx, days_slc : int, stringer):
+        "Adds you to the days_since, input the number of days since and the ting "
 
         user = ctx.message.author
         d,m,y = time.strftime("%d,%m,%Y").split(",")
         d = int(d); m = int(m); y = int(y);
         t1 = date(y,m,d)
         t1 = t1 + timedelta(days = days_slc)
-        date_slc = str(t1) 
-        r.hset('user:{}'.format(user),'date_slc', date_slc) 
+        date_slc = str(t1)
+        r.hset('user:{}'.format(user),"datesl_{}".format(stringer), date_slc)
 
         await self.bot.say('added {}'.format(user))
 
 
     @commands.command(hidden = True,pass_context=True)
-    async def days_since(self, ctx):
+    async def days_since(self, ctx, stringer):
         "Shows the days since you last..."
         user = ctx.message.author
-        
-        y,m,d = str(r.hget('user:{}'.format(user), 'date_slc'), 'utf-8').split("-")
+
+        y,m,d = str(r.hget('user:{}'.format(user), "datesl_{}".format(stringer)), 'utf-8').split("-")
         d = int(d); m = int(m); y = int(y);
         t1 = date(y,m,d)
         d,m,y = time.strftime("%d:%m:%Y").split(":")
@@ -79,20 +80,22 @@ class mos:
             time_delta, minutes = str(t1 - t2).split(",")
         except ValueError:
             await self.bot.say("0 Days ໒( •́ ‸ •̀ )७"" ")
-        else:
-            await self.bot.say("{}".format(time_delta))
+        try:
+            await self.bot.say("{} days since {} ".format(time_delta, stringer))
+        except TypeError:
+            await self.bot.say("I can not find the thing you are looking for")
 
     @commands.command(pass_context = True)
-    async def reset(self,ctx, days_slc : int = 0):
+    async def reset(self,ctx, stringer):
         "Adds you to the days_since db \nAdd the initial days after the command "
-
+        days_slc = 0
         user = ctx.message.author
         d,m,y = time.strftime("%d,%m,%Y").split(",")
         d = int(d); m = int(m); y = int(y);
         t1 = date(y,m,d)
         t1 = t1 + timedelta(days = days_slc)
-        date_slc = str(t1) 
-        r.hset('user:{}'.format(user),'date_slc', date_slc) 
+        date_slc = str(t1)
+        r.hset('user:{}'.format(user),'datesl', date_slc)
 
         await self.bot.say('໒( •́ ‸ •̀ )७ {} '.format(user))
 
@@ -112,13 +115,16 @@ class mos:
     @commands.command()
     async def miata(self):
         await self.bot.say("https://goo.gl/s9MKcU :rainbow::gay_pride_flag::rainbow::rainbow::gay_pride_flag::rainbow::rainbow::rainbow::rainbow::rainbow::rainbow::rainbow::rainbow:::gay_pride_flag::rainbow:::gay_pride_flag::rainbow:::gay_pride_flag::rainbow:::gay_pride_flag::rainbow::gay_pride_flag:")
-    
+
     @commands.command()
     async def ginger(self):
         await self.bot.say("http://www.ranga.co.nz/wp-content/uploads/2015/12/Ranga-GB-6Pack.jpg")
 
     @commands.command()
     async def calc(self, input):
+       awd,AWD = 3,3
+       rwd,RWD = 2,2
+       fwd,FWD = 1,1
        try:
            await self.bot.say(eval(input))
        except ZeroDivisionError:
@@ -126,7 +132,7 @@ class mos:
            stringer = [val for val, cnt in weighted_choices for i in range(cnt)]
            output = 'fml'
            for x in range (0,90):
-                 output = output + str(random.choice(stringer)) 
+                 output = output + str(random.choice(stringer))
            await self.bot.say(output)
 
     @commands.command()
@@ -149,6 +155,15 @@ class mos:
 
         # await self.bot.say('{0} USD is {1:7.2f} EUR, {2:7.2f} CAD, {3:7.2f} NZD, {4:7.2f} AUD'.format(unit,eur,cad,nzd,aud))
 
+    @commands.command()
+    async def add_poni(self, name, picture):
+        r.set(name, picture)
+        await self.bot.say("added {}".format(name))
+
+    @commands.command()
+    async def get_poni(self, name):
+        pname = r.get(name).decode('utf-8')
+        await self.bot.say(pname)
 def setup(bot):
     n = mos(bot)
     bot.add_cog(n)
