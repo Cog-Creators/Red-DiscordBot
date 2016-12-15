@@ -18,6 +18,7 @@ import time
 import math
 import pint
 from currency_converter import CurrencyConverter
+import discord.client
 import os
 
 c = CurrencyConverter()
@@ -26,7 +27,9 @@ r = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 class mos:
     """ Made of Styrofoam Specific Commands."""
-
+    awd,AWD = 3,3
+    rwd,RWD = 2,2
+    fwd,FWD = 1,1
 
     def __init__(self,bot):
         self.bot = bot
@@ -122,9 +125,6 @@ class mos:
 
     @commands.command()
     async def calc(self, input):
-       awd,AWD = 3,3
-       rwd,RWD = 2,2
-       fwd,FWD = 1,1
        try:
            await self.bot.say(eval(input))
        except ZeroDivisionError:
@@ -162,8 +162,18 @@ class mos:
 
     @commands.command()
     async def get_poni(self, name):
-        pname = r.get(name).decode('utf-8')
-        await self.bot.say(pname)
+        try:
+            pname = r.get(name).decode('utf-8')
+            await self.bot.say(pname)
+        except AttributeError:
+            await self.bot.say("```That poni can not be found.```")
+
+    @commands.command(pass_context=True)
+    async def say(self,ctx, input):
+
+        await self.bot.say(input)
+
+        await client.delete_message("!say noot")
 def setup(bot):
     n = mos(bot)
     bot.add_cog(n)
