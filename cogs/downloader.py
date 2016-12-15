@@ -1,16 +1,31 @@
-import discord
-import aiohttp
-import os
-import shutil
-import asyncio
-import re
 from discord.ext import commands
 from cogs.utils.dataIO import dataIO
 from cogs.utils import checks
-from cogs.utils.chat_formatting import box, pagify
+from cogs.utils.chat_formatting import pagify, box
 from __main__ import send_cmd_help, set_cog
+import os
 from subprocess import run, PIPE
+import shutil
+from asyncio import as_completed
 from setuptools import distutils
+import discord
+from functools import partial
+from concurrent.futures import ThreadPoolExecutor
+from time import time
+
+NUM_THREADS = 4
+REPO_NONEX = 0x1
+REPO_CLONE = 0x2
+REPO_SAME = 0x4
+
+
+class UpdateError(Exception):
+    pass
+
+
+class CloningError(UpdateError):
+    pass
+
 
 class Downloader:
     """Cog downloader/installer."""
@@ -21,6 +36,8 @@ class Downloader:
         self.file_path = "data/downloader/repos.json"
         # {name:{url,cog1:{installed},cog1:{installed}}}
         self.repos = dataIO.load_json(self.file_path)
+        self.executor = ThreadPoolExecutor(NUM_THREADS)
+        self._do_first_run()
 
     def save_repos(self):
         dataIO.save_json(self.file_path, self.repos)
@@ -43,6 +60,7 @@ class Downloader:
     @repo.command(name="add", pass_context=True)
     async def _repo_add(self, ctx, repo_name: str, repo_url: str):
         """Adds repo to available repo lists
+
         Warning: Adding 3RD Party Repositories is at your own
         Risk."""
         await self.bot.say("Type 'I agree' to confirm "
@@ -65,7 +83,13 @@ class Downloader:
             return
         self.repos[repo_name] = {}
         self.repos[repo_name]['url'] = repo_url
-        self.update_repo(repo_name)
+        try:
+            self.update_repo(repo_name)
+        except CloningError:
+            await self.bot.say("That repository link doesn't seem to be "
+                               "valid.")
+            del self.repos[repo_name]
+            return
         self.populate_list(repo_name)
         self.save_repos()
         data = self.get_info_data(repo_name)
@@ -82,6 +106,7 @@ class Downloader:
             await self.bot.say("That repo doesn't exist.")
             return
         del self.repos[repo_name]
+        #shutil.rmtree(os.path.join(self.path, repo_name))
         self.save_repos()
         await self.bot.say("Repo '{}' removed.".format(repo_name))
 
@@ -111,7 +136,8 @@ class Downloader:
         col_width = max(len(row[0]) for row in retlist) + 2
         for row in retlist:
             msg += "\t" + "".join(word.ljust(col_width) for word in row) + "\n"
-        await self.bot.say(box(msg))  # Need to deal with over 2000 characters
+        for page in pagify(msg, delims=['\n'], shorten_by=8):
+            await self.bot.say(box(page))
 
     @cog.command()
     async def info(self, repo_name: str, cog: str=None):
@@ -152,9 +178,27 @@ class Downloader:
     async def update(self, ctx):
         """Updates cogs"""
 
-        tasks = [self._update_repo(r) for r in self.repos]
         tasknum = 0
         num_repos = len(self.repos)
+
+        min_dt = 0.5
+        burst_inc = 0.1/(NUM_THREADS)
+        touch_n = tasknum
+        touch_t = time()
+
+        def regulate(touch_t, touch_n):
+            dt = time() - touch_t
+            if dt + burst_inc*(touch_n) > min_dt:
+                touch_n = 0
+                touch_t = time()
+                return True, touch_t, touch_n
+            return False, touch_t, touch_n + 1
+
+        tasks = []
+        for r in self.repos:
+            task = partial(self.update_repo, r)
+            task = self.bot.loop.run_in_executor(self.executor, task)
+            tasks.append(task)
 
         base_msg = "Downloading updated cogs, please wait... "
         status = ' %d/%d repos updated' % (tasknum, num_repos)
@@ -163,52 +207,73 @@ class Downloader:
         updated_cogs = []
         new_cogs = []
         deleted_cogs = []
+        error_repos = {}
         installed_updated_cogs = []
 
-        for f in tasks:
+        for f in as_completed(tasks):
             tasknum += 1
-            name, updates = await f
-            if updates:
-                for k, l in updates.items():
-                    if k == 'A':
-                        new_cogs.extend([(name, c) for c in l])
-                    elif k == 'D':
-                        deleted_cogs.extend([(name, c) for c in l])
-                    elif k == 'M':
-                        updated_cogs.extend([(name, c) for c in l])
-
-            status = ' %d/%d repos updated' % (tasknum, num_repos)
-            msg = await self._robust_edit(msg, base_msg + status)
+            try:
+                name, updates, oldhash = await f
+                if updates:
+                    if type(updates) is dict:
+                        for k, l in updates.items():
+                            tl = [(name, c, oldhash) for c in l]
+                            if k == 'A':
+                                new_cogs.extend(tl)
+                            elif k == 'D':
+                                deleted_cogs.extend(tl)
+                            elif k == 'M':
+                                updated_cogs.extend(tl)
+            except UpdateError as e:
+                name, what = e.args
+                error_repos[name] = what
+            edit, touch_t, touch_n = regulate(touch_t, touch_n)
+            if edit:
+                status = ' %d/%d repos updated' % (tasknum, num_repos)
+                msg = await self._robust_edit(msg, base_msg + status)
         status = 'done. '
 
-        if not any(self.repos[repo][cog]['INSTALLED'] for repo, cog in updated_cogs):
+        if not any(self.repos[repo][cog]['INSTALLED'] for
+                   repo, cog, _ in updated_cogs):
             status += ' No updates to apply. '
 
         if new_cogs:
-            status += '\nNew cogs: ' + \
-                ', '.join('%s/%s' % c for c in new_cogs) + '.'
+            status += '\nNew cogs: ' \
+                   + ', '.join('%s/%s' % c[:2] for c in new_cogs) + '.'
         if deleted_cogs:
-            status += '\nDeleted cogs: ' + \
-                ', '.join('%s/%s' % c for c in deleted_cogs) + '.'
+            status += '\nDeleted cogs: ' \
+                   + ', '.join('%s/%s' % c[:2] for c in deleted_cogs) + '.'
         if updated_cogs:
-            status += '\nUpdated cogs: ' + \
-                ', '.join('%s/%s' % c for c in updated_cogs) + '.'
+            status += '\nUpdated cogs: ' \
+                   + ', '.join('%s/%s' % c[:2] for c in updated_cogs) + '.'
+        if error_repos:
+            status += '\nThe following repos failed to update: '
+            for n, what in error_repos.items():
+                status += '\n%s: %s' % (n, what)
 
         msg = await self._robust_edit(msg, base_msg + status)
 
         registry = dataIO.load_json("data/red/cogs.json")
 
-        for repo, cog in updated_cogs:
-            if (self.repos[repo][cog]['INSTALLED'] and registry.get('cogs.' + cog, False)):
-                installed_updated_cogs.append((repo, cog))
+        for t in updated_cogs:
+            repo, cog, _ = t
+            if (self.repos[repo][cog]['INSTALLED'] and
+                    registry.get('cogs.' + cog, False)):
+                installed_updated_cogs.append(t)
                 await self.install(repo, cog)
 
         if not installed_updated_cogs:
             return
 
-        patch_notes = await self.patch_notes_handler(installed_updated_cogs)
+        patchnote_lang = 'Prolog'
+        shorten_by = 8 + len(patchnote_lang)
+        for note in self.patch_notes_handler(installed_updated_cogs):
+            if note is None:
+                continue
+            for page in pagify(note, delims=['\n'], shorten_by=shorten_by):
+                await self.bot.say(box(page, patchnote_lang))
 
-        await self.bot.say("Cogs updated. Reload updated installed cogs? (yes/no)")
+        await self.bot.say("Cogs updated. Reload updated cogs? (yes/no)")
         answer = await self.bot.wait_for_message(timeout=15,
                                                  author=ctx.message.author)
         if answer is None:
@@ -217,7 +282,7 @@ class Downloader:
         elif answer.content.lower().strip() == "yes":
             update_list = []
             fail_list = []
-            for (repo, cog) in installed_updated_cogs:
+            for repo, cog, _ in installed_updated_cogs:
                 try:
                     self.bot.unload_extension("cogs." + cog)
                     self.bot.load_extension("cogs." + cog)
@@ -226,61 +291,30 @@ class Downloader:
                     fail_list.append(cog)
             msg = 'Done.'
             if update_list:
-                msg += " The following cogs were reloaded: " + ', '.join(update_list) + "\n"
+                msg += " The following cogs were reloaded: "\
+                    + ', '.join(update_list) + "\n"
             if fail_list:
-                msg += " The following cogs failed to reload: " + ', '.join(fail_list)
+                msg += " The following cogs failed to reload: "\
+                    + ', '.join(fail_list)
             await self.bot.say(msg)
 
-            for page in pagify('\n'.join(patch_notes), ['```\n']):
-                await self.bot.say(page)
         else:
             await self.bot.say("Ok then, you can reload cogs with"
                                " `{}reload <cog_name>`".format(ctx.prefix))
 
-
-    async def patch_notes_handler(self, repo_cog_pairs):
-        queries = []
-        for repo, cog in repo_cog_pairs:
-            url = self.repos[repo].get('url', None)
-            if not url:
-                continue
-            # Get folder and filename only
-            cogfile = self.repos[repo][cog]['file'].split('/', 3)[-1]
-            api_url = self._commits_url_from_repo(url, cogfile)
-            queries.append((api_url, cog))
-
-        patch_notes = await asyncio.gather(*map(self.fetch_note, queries))
-
-        return patch_notes
-
-    async def fetch_note(self, url_cog_pair):
-        url, cog = url_cog_pair
-        async with aiohttp.get(url) as r:
-            data = await r.json()
-
-        header = "Patch Notes for " + cog
-        line = "=" * len(header)
-
-        try:
-            if "message" in data[0]['commit']:
-                return '\n'.join((
-                    '```Prolog',
-                    header, line,
-                    'Hash: ' + data[0]['commit']['tree']['sha'][:7],
-                    'Author: ' + data[0]['commit']['author']['name'].lower(),
-                    data[0]['commit']['message'].lower(),
-                    '```'
-                ))
-        except:
-            return '\n'.join((
-                '```', header, line,
-                ("Unable to fetch this cog's patch notes. "
-                 "Please refer to the respective repo for more "
-                 "information."),
-                '```'
-            ))
-
-        return patch_note
+    def patch_notes_handler(self, repo_cog_hash_pairs):
+        for repo, cog, oldhash in repo_cog_hash_pairs:
+            pathsplit = self.repos[repo][cog]['file'].split('/')
+            repo_path = os.path.join(*pathsplit[:-2])
+            cogfile = os.path.join(*pathsplit[-2:])
+            cmd = ["git", "-C", repo_path, "log", "--relative-date",
+                   "--reverse", oldhash + '..', cogfile
+                   ]
+            try:
+                log = run(cmd, stdout=PIPE).stdout.decode().strip()
+                yield self.format_patch(repo, cog, log)
+            except:
+                pass
 
     @cog.command(pass_context=True)
     async def uninstall(self, ctx, repo_name, cog):
@@ -312,7 +346,7 @@ class Downloader:
         data = self.get_info_data(repo_name, cog)
         if data is not None:
             install_msg = data.get("INSTALL_MSG", None)
-            if install_msg is not None:
+            if install_msg:
                 await self.bot.say(install_msg[:2000])
         if install_cog:
             await self.bot.say("Installation completed. Load it now? (yes/no)")
@@ -406,6 +440,30 @@ class Downloader:
         git_name = splitted[-1]
         return git_name[:-4]
 
+    def _do_first_run(self):
+        invalid = []
+        save = False
+
+        for repo in self.repos:
+            broken = 'url' in self.repos[repo] and len(self.repos[repo]) == 1
+            if broken:
+                save = True
+                try:
+                    self.update_repo(repo)
+                    self.populate_list(repo)
+                except CloningError:
+                    invalid.append(repo)
+                    continue
+                except Exception as e:
+                    print(e) # TODO: Proper logging
+                    continue
+
+        for repo in invalid:
+            del self.repos[repo]
+
+        if save:
+            self.save_repos()
+
     def populate_list(self, name):
         valid_cogs = self.list_cogs(name)
         new = set(valid_cogs.keys())
@@ -420,42 +478,65 @@ class Downloader:
                 del self.repos[name][cog]
 
     def update_repo(self, name):
-        if name not in self.repos:
-            return name, None
-        if not os.path.exists("data/downloader/" + name):
-            print("Downloading cogs repo...")
-            url = self.repos[name]['url']
-            run(["git", "clone", url, "data/downloader/" + name])
-        else:
-            p = run(["git", "-C", "data/downloader/" + name, "rev-parse", "HEAD"], stdout=PIPE)
-            oldhash = p.stdout.decode().strip()
-            run(["git", "-C", "data/downloader/" + name, "stash", "-q"])
-            run(["git", "-C", "data/downloader/" + name, "pull", "-q"])
-            p = run(["git", "-C", "data/downloader/" + name, "rev-parse", "HEAD"], stdout=PIPE)
-            newhash = p.stdout.decode().strip()
-            if oldhash == newhash:
-                return name, None
-            else:
+        try:
+            dd = self.path
+            if name not in self.repos:
+                raise UpdateError("Repo does not exist in data, wtf")
+            folder = os.path.join(dd, name)
+            # Make sure we don't git reset the Red folder on accident
+            if not os.path.exists(os.path.join(folder, '.git')):
+                #if os.path.exists(folder):
+                    #shutil.rmtree(folder)
+                url = self.repos[name].get('url')
+                if not url:
+                    raise UpdateError("Need to clone but no URL set")
+                p = run(["git", "clone", url, dd + name])
+                if p.returncode != 0:
+                    raise CloningError()
                 self.populate_list(name)
-                self.save_repos()
-                ret = {}
-                cmd = ['git', '-C', 'data/downloader/' + name, 'diff',
-                       '--no-commit-id', '--name-status', oldhash, newhash]
-                p = run(cmd, stdout=PIPE)
-                changed = p.stdout.strip().decode().split('\n')
-                for f in changed:
-                    if not f.endswith('.py'):
-                        continue
-                    status, cogpath = f.split('\t')
-                    cogname = os.path.split(cogpath)[-1][:-3]  # strip .py
-                    if status not in ret:
-                        ret[status] = []
-                    ret[status].append(cogname)
-                return name, ret
-
-    async def _update_repo(self, name):
-        """asyncio task wrapper"""
-        return self.update_repo(name)
+                return name, REPO_CLONE, None
+            else:
+                rpcmd = ["git", "-C", dd + name, "rev-parse", "HEAD"]
+                p = run(["git", "-C", dd + name, "reset", "--hard",
+                        "origin/HEAD", "-q"])
+                if p.returncode != 0:
+                    raise UpdateError("Error resetting to origin/HEAD")
+                p = run(rpcmd, stdout=PIPE)
+                if p.returncode != 0:
+                    raise UpdateError("Unable to determine old commit hash")
+                oldhash = p.stdout.decode().strip()
+                p = run(["git", "-C", dd + name, "pull", "-q"])
+                if p.returncode != 0:
+                    raise UpdateError("Error pulling updates")
+                p = run(rpcmd, stdout=PIPE)
+                if p.returncode != 0:
+                    raise UpdateError("Unable to determine new commit hash")
+                newhash = p.stdout.decode().strip()
+                if oldhash == newhash:
+                    return name, REPO_SAME, None
+                else:
+                    self.populate_list(name)
+                    self.save_repos()
+                    ret = {}
+                    cmd = ['git', '-C', dd + name, 'diff', '--no-commit-id',
+                           '--name-status', oldhash, newhash]
+                    p = run(cmd, stdout=PIPE)
+                    if p.returncode != 0:
+                        raise UpdateError("Error in git diff")
+                    changed = p.stdout.strip().decode().split('\n')
+                    for f in changed:
+                        if not f.endswith('.py'):
+                            continue
+                        status, cogpath = f.split('\t')
+                        cogname = os.path.split(cogpath)[-1][:-3]  # strip .py
+                        if status not in ret:
+                            ret[status] = []
+                        ret[status].append(cogname)
+                    return name, ret, oldhash
+        except CloningError as e:
+            raise CloningError(name, *e.args) from None
+        except UpdateError as e:
+            raise UpdateError(name, *e.args) from None
 
     async def _robust_edit(self, msg, text):
         try:
@@ -467,11 +548,11 @@ class Downloader:
         return msg
 
     @staticmethod
-    def _commits_url_from_repo(repo_url, path='/'):
-        api_url = 'https://api.github.com/repos/'
-        api_url += re.sub('.*://github.com/(.*?/.*?)(\.git|/)?$', r'\1', repo_url)
-        api_url += '/commits?path=' + path
-        return api_url
+    def format_patch(repo, cog, log):
+        header = "Patch Notes for %s/%s" % (repo, cog)
+        line = "=" * len(header)
+        if log:
+            return '\n'.join((header, line, log))
 
 
 def check_folders():
