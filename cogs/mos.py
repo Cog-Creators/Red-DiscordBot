@@ -53,54 +53,6 @@ class mos:
         nbmi = random.normalvariate(18,8)
         await self.bot.say("your \" BMI \" is {:3.2f}. \nAlgorithm provided by Quixoticelixer".format(nbmi))
 
-    @commands.command(pass_context = True)
-    async def addme(self,ctx, days_slc : int, stringer):
-        "Adds you to the days_since, input the number of days since and the ting "
-
-        user = ctx.message.author
-        d,m,y = time.strftime("%d,%m,%Y").split(",")
-        d = int(d); m = int(m); y = int(y);
-        t1 = date(y,m,d)
-        t1 = t1 + timedelta(days = days_slc)
-        date_slc = str(t1)
-        r.hset('user:{}'.format(user),"datesl_{}".format(stringer), date_slc)
-
-        await self.bot.say('added {}'.format(user))
-
-
-    @commands.command(hidden = True,pass_context=True)
-    async def days_since(self, ctx, stringer):
-        "Shows the days since you last..."
-        user = ctx.message.author
-
-        y,m,d = str(r.hget('user:{}'.format(user), "datesl_{}".format(stringer)), 'utf-8').split("-")
-        d = int(d); m = int(m); y = int(y);
-        t1 = date(y,m,d)
-        d,m,y = time.strftime("%d:%m:%Y").split(":")
-        d = int(d); m = int(m); y = int(y);
-        t2 = date(y,m,d)
-        try:
-            time_delta, minutes = str(t1 - t2).split(",")
-        except ValueError:
-            await self.bot.say("0 Days ໒( •́ ‸ •̀ )७"" ")
-        try:
-            await self.bot.say("{} days since {} ".format(time_delta, stringer))
-        except TypeError:
-            await self.bot.say("I can not find the thing you are looking for")
-
-    @commands.command(pass_context = True)
-    async def reset(self,ctx, stringer):
-        "Adds you to the days_since db \nAdd the initial days after the command "
-        days_slc = 0
-        user = ctx.message.author
-        d,m,y = time.strftime("%d,%m,%Y").split(",")
-        d = int(d); m = int(m); y = int(y);
-        t1 = date(y,m,d)
-        t1 = t1 + timedelta(days = days_slc)
-        date_slc = str(t1)
-        r.hset('user:{}'.format(user),'datesl', date_slc)
-
-        await self.bot.say('໒( •́ ‸ •̀ )७ {} '.format(user))
 
     @commands.command()
     async def fesh(self):
@@ -134,26 +86,6 @@ class mos:
            for x in range (0,90):
                  output = output + str(random.choice(stringer))
            await self.bot.say(output)
-
-    @commands.command()
-    async def convert(self, unit1, unit2):
-        unit1 = int(unit1)
-        if unit2 == 'kg' or unit2 == 'kgs':
-            unit3 = unit1 * ureg.kilogram
-            unit3 = unit3.to(ureg.lbs)
-            await self.bot.say("{}kgs is {:3.1f}s".format(unit1,unit3))
-        elif unit2 == 'lb' or unit2 == 'lbs':
-            unit3 = unit1 * ureg.lbs
-            unit3 = unit3.to(ureg.kg)
-            await self.bot.say("{}lbs is {:3.1f}s".format(unit1,unit3))
-   # @commands.command()
-  #  async def moni_convert(self, unit):
-   #     eur = c.convert(unit, 'USD','EUR')
-   #     cad = c.convert(unit, 'USD','CAD')
-   #     nzd = c.convert(unit, 'USD','NZD')
-   #     aud = c.convert(unit, 'USD','AUD')
-
-        # await self.bot.say('{0} USD is {1:7.2f} EUR, {2:7.2f} CAD, {3:7.2f} NZD, {4:7.2f} AUD'.format(unit,eur,cad,nzd,aud))
 
     @commands.command()
     async def add_poni(self, name, picture):
