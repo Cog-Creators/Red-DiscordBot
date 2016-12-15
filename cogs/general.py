@@ -171,18 +171,19 @@ class General:
         since_joined = (ctx.message.timestamp - joined_at).days
         user_joined = joined_at.strftime("%d %b %Y %H:%M")
         user_created = user.created_at.strftime("%d %b %Y %H:%M")
+        user_number = sorted(server.members, key=lambda m: m.joined_at).index(user)
 
         created_on = "{}\n({} days ago)".format(user_created, since_created)
         joined_on = "{}\n({} days ago)".format(user_joined, since_joined)
 
-        game = "Chilling in {} status".format(user.status)
+        game = "Chilling in {} status.\nServer member {}".format(user.status, str(user_number))
 
         if user.game is None:
-            pass
+            game = "Server member {}".format(str(user_number))
         elif user.game.url is None:
-            game = "Playing {}".format(user.game)
+            game = "Playing {}.\nServer member {}".format(user.game, str(user_number))
         else:
-            game = "Streaming: [{}]({})".format(user.game, user.game.url)
+            game = "Streaming: [{}]({}).\nServer member {}".format(user.game, user.game.url, str(user_number))
 
         if roles:
             roles = sorted(roles, key=[x.name for x in server.role_hierarchy
