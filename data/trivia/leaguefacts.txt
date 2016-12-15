@@ -73,6 +73,11 @@ Who has a Safari skin?`Caitlyn
 Who says "Time for a shakedown." in game?`Caitlyn
 Who has the longest base range at level 1?`Caitlyn
 Who uses cupcakes as a weapon?`Caitlyn
+Who is also known as the Steel Shadow?`Camille
+How old is Camille?`80`Eighty
+What is Camille's last name?`Ferros
+Whose family motto is "For family, I will give."?`Camille
+Who says "Precision is the difference between a butcher and a surgeon." when picked?`Camille
 Who does Cassiopeia betray?`Sivir
 The Mythic Cassiopeia skin was released to celebrate the release of the server for which country?`Greece`Greek
 Who has a skill called "Miasma"?`Cassiopeia
