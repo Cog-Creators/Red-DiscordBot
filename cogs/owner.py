@@ -1,9 +1,9 @@
 import discord
 from discord.ext import commands
 from cogs.utils import checks
-from __main__ import set_cog, send_cmd_help, settings
+from __main__ import set_cog
 from .utils.dataIO import dataIO
-from .utils.chat_formatting import pagify
+from .utils.chat_formatting import pagify, box
 
 import importlib
 import traceback
@@ -13,7 +13,6 @@ import threading
 import datetime
 import glob
 import os
-import time
 import aiohttp
 
 log = logging.getLogger("red.owner")
@@ -165,14 +164,44 @@ class Owner:
             await self.disable_commands()
             await self.bot.say("Module reloaded.")
 
+    @commands.command(name="cogs")
+    @checks.is_owner()
+    async def _show_cogs(self):
+        """Shows loaded/unloaded cogs"""
+        # This function assumes that all cogs are in the cogs folder,
+        # which is currently true.
+
+        # Extracting filename from __module__ Example: cogs.owner
+        loaded = [c.__module__.split(".")[1] for c in self.bot.cogs.values()]
+        # What's in the folder but not loaded is unloaded
+        unloaded = [c.split(".")[1] for c in self._list_cogs()
+                    if c.split(".")[1] not in loaded]
+
+        if not unloaded:
+            unloaded = ["None"]
+
+        msg = ("+ Loaded\n"
+               "{}\n\n"
+               "- Unloaded\n"
+               "{}"
+               "".format(", ".join(sorted(loaded)),
+                         ", ".join(sorted(unloaded)))
+               )
+        for page in pagify(msg, [" "], shorten_by=16):
+            await self.bot.say(box(page.lstrip(" "), lang="diff"))
+
     @commands.command(pass_context=True, hidden=True)
     @checks.is_owner()
     async def debug(self, ctx, *, code):
-        """Evaluates code
+        """Evaluates code"""
+        def check(m):
+            if m.content.strip().lower() == "more":
+                return True
 
-        Modified function, originally made by Rapptz"""
+        author = ctx.message.author
+        channel = ctx.message.channel
+
         code = code.strip('` ')
-        python = '```py\n{}\n```'
         result = None
 
         global_vars = globals().copy()
@@ -186,40 +215,73 @@ class Owner:
         try:
             result = eval(code, global_vars, locals())
         except Exception as e:
-            await self.bot.say(python.format(type(e).__name__ + ': ' + str(e)))
+            await self.bot.say(box('{}: {}'.format(type(e).__name__, str(e)),
+                                   lang="py"))
             return
 
         if asyncio.iscoroutine(result):
             result = await result
 
-        result = python.format(result)
+        result = str(result)
+
         if not ctx.message.channel.is_private:
-            censor = (settings.email, settings.password)
+            censor = (self.bot.settings.email,
+                      self.bot.settings.password,
+                      self.bot.settings.token)
             r = "[EXPUNGED]"
             for w in censor:
-                if w != "":
-                    result = result.replace(w, r)
-                    result = result.replace(w.lower(), r)
-                    result = result.replace(w.upper(), r)
-        await self.bot.say(result)
+                if w is None or w == "":
+                    continue
+                result = result.replace(w, r)
+                result = result.replace(w.lower(), r)
+                result = result.replace(w.upper(), r)
+
+        result = list(pagify(result, shorten_by=16))
+
+        for i, page in enumerate(result):
+            if i != 0 and i % 4 == 0:
+                last = await self.bot.say("There are still {} messages. "
+                                          "Type `more` to continue."
+                                          "".format(len(result) - (i+1)))
+                msg = await self.bot.wait_for_message(author=author,
+                                                      channel=channel,
+                                                      check=check,
+                                                      timeout=10)
+                if msg is None:
+                    try:
+                        await self.bot.delete_message(last)
+                    except:
+                        pass
+                    finally:
+                        break
+            await self.bot.say(box(page, lang="py"))
 
     @commands.group(name="set", pass_context=True)
     async def _set(self, ctx):
         """Changes Red's global settings."""
         if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
             return
 
     @_set.command(pass_context=True)
     async def owner(self, ctx):
         """Sets owner"""
-        if settings.owner != "id_here":
-            await self.bot.say("Owner ID has already been set.")
+        if self.bot.settings.no_prompt is True:
+            await self.bot.say("Console interaction is disabled. Start Red "
+                               "without the `--no-prompt` flag to use this "
+                               "command.")
             return
-
         if self.setowner_lock:
             await self.bot.say("A set owner command is already pending.")
             return
+
+        if self.bot.settings.owner is not None:
+            await self.bot.say(
+            "The owner is already set. Remember that setting the owner "
+            "to someone else other than who hosts the bot has security "
+            "repercussions and is *NOT recommended*. Proceed at your own risk."
+            )
+            await asyncio.sleep(3)
 
         await self.bot.say("Confirm in the console that you're the owner.")
         self.setowner_lock = True
@@ -230,23 +292,55 @@ class Owner:
     @_set.command(pass_context=True)
     @checks.is_owner()
     async def prefix(self, ctx, *prefixes):
-        """Sets Red's prefixes
+        """Sets Red's global prefixes
 
         Accepts multiple prefixes separated by a space. Enclose in double
         quotes if a prefix contains spaces.
         Example: set prefix ! $ ? "two words" """
         if prefixes == ():
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
             return
 
-        self.bot.command_prefix = sorted(prefixes, reverse=True)
-        settings.prefixes = sorted(prefixes, reverse=True)
-        log.debug("Setting prefixes to:\n\t{}".format(settings.prefixes))
+        self.bot.settings.prefixes = sorted(prefixes, reverse=True)
+        self.bot.settings.save_settings()
+        log.debug("Setting global prefixes to:\n\t{}"
+                  "".format(self.bot.settings.prefixes))
 
-        if len(prefixes) > 1:
-            await self.bot.say("Prefixes set")
-        else:
-            await self.bot.say("Prefix set")
+        p = "prefixes" if len(prefixes) > 1 else "prefix"
+        await self.bot.say("Global {} set".format(p))
+
+    @_set.command(pass_context=True, no_pm=True)
+    @checks.serverowner_or_permissions(administrator=True)
+    async def serverprefix(self, ctx, *prefixes):
+        """Sets Red's prefixes for this server
+
+        Accepts multiple prefixes separated by a space. Enclose in double
+        quotes if a prefix contains spaces.
+        Example: set serverprefix ! $ ? "two words"
+
+        Issuing this command with no parameters will reset the server
+        prefixes and the global ones will be used instead."""
+        server = ctx.message.server
+
+        if prefixes == ():
+            self.bot.settings.set_server_prefixes(server, [])
+            self.bot.settings.save_settings()
+            current_p = ", ".join(self.bot.settings.prefixes)
+            await self.bot.say("Server prefixes reset. Current prefixes: "
+                               "`{}`".format(current_p))
+            return
+
+        prefixes = sorted(prefixes, reverse=True)
+        self.bot.settings.set_server_prefixes(server, prefixes)
+        self.bot.settings.save_settings()
+        log.debug("Setting server's {} prefixes to:\n\t{}"
+                  "".format(server.id, self.bot.settings.prefixes))
+
+        p = "Prefixes" if len(prefixes) > 1 else "Prefix"
+        await self.bot.say("{} set for this server.\n"
+                           "To go back to the global prefixes, do"
+                           " `{}set serverprefix` "
+                           "".format(p, prefixes[0]))
 
     @_set.command(pass_context=True)
     @checks.is_owner()
@@ -255,16 +349,18 @@ class Owner:
         name = name.strip()
         if name != "":
             try:
-                await self.bot.edit_profile(settings.password, username=name)
+                await self.bot.edit_profile(self.bot.settings.password,
+                                            username=name)
             except:
                 await self.bot.say("Failed to change name. Remember that you"
                                    " can only do it up to 2 times an hour."
                                    "Use nicknames if you need frequent "
-                                   "changes. {}set nickname".format(ctx.prefix))
+                                   "changes. {}set nickname"
+                                   "".format(ctx.prefix))
             else:
                 await self.bot.say("Done.")
         else:
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
 
     @_set.command(pass_context=True, no_pm=True)
     @checks.is_owner()
@@ -336,7 +432,7 @@ class Owner:
                                                game=current_game)
                 await self.bot.say("Status changed.")
             else:
-                await send_cmd_help(ctx)
+                await self.bot.send_cmd_help(ctx)
 
     @_set.command(pass_context=True)
     @checks.is_owner()
@@ -357,7 +453,7 @@ class Owner:
             await self.bot.change_presence(game=game, status=current_status)
             log.debug('Owner has set streaming status and url to "{}" and {}'.format(stream_title, streamer))
         elif streamer is not None:
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
             return
         else:
             await self.bot.change_presence(game=None, status=current_status)
@@ -371,7 +467,7 @@ class Owner:
         try:
             async with self.session.get(url) as r:
                 data = await r.read()
-            await self.bot.edit_profile(settings.password, avatar=data)
+            await self.bot.edit_profile(self.bot.settings.password, avatar=data)
             await self.bot.say("Done.")
             log.debug("changed avatar")
         except Exception as e:
@@ -387,9 +483,8 @@ class Owner:
         if len(token) < 50:
             await self.bot.say("Invalid token.")
         else:
-            settings.login_type = "token"
-            settings.email = token
-            settings.password = ""
+            self.bot.settings.token = token
+            self.bot.settings.save_settings()
             await self.bot.say("Token set. Restart me.")
             log.debug("Token changed.")
 
@@ -406,7 +501,7 @@ class Owner:
 
         With no subcommands returns the disabled commands list"""
         if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
             if self.disabled_commands:
                 msg = "Disabled commands:\n```xl\n"
                 for cmd in self.disabled_commands:
@@ -523,33 +618,48 @@ class Owner:
     async def servers(self, ctx):
         """Lists and allows to leave servers"""
         owner = ctx.message.author
-        servers = list(self.bot.servers)
-        server_list = {}
+        servers = sorted(list(self.bot.servers),
+                         key=lambda s: s.name.lower())
         msg = ""
-        for i in range(0, len(servers)):
-            server_list[str(i)] = servers[i]
-            msg += "{}: {}\n".format(str(i), servers[i].name)
+        for i, server in enumerate(servers):
+            msg += "{}: {}\n".format(i, server.name)
         msg += "\nTo leave a server just type its number."
+
         for page in pagify(msg, ['\n']):
             await self.bot.say(page)
-        while msg != None:
+
+        while msg is not None:
             msg = await self.bot.wait_for_message(author=owner, timeout=15)
-            if msg != None:
-                msg = msg.content.strip()
-                if msg in server_list.keys():
-                    await self.leave_confirmation(server_list[msg], owner, ctx)
-                else:
-                    break
-            else:
+            try:
+                msg = int(msg.content)
+                await self.leave_confirmation(servers[msg], owner, ctx)
                 break
+            except (IndexError, ValueError, AttributeError):
+                pass
+
+    async def leave_confirmation(self, server, owner, ctx):
+        await self.bot.say("Are you sure you want me "
+                    "to leave {}? (yes/no)".format(server.name))
+
+        msg = await self.bot.wait_for_message(author=owner, timeout=15)
+
+        if msg is None:
+            await self.bot.say("I guess not.")
+        elif msg.content.lower().strip() in ("yes", "y"):
+            await self.bot.leave_server(server)
+            if server != ctx.message.server:
+                await self.bot.say("Done.")
+        else:
+            await self.bot.say("Alright then.")
 
     @commands.command(pass_context=True)
     async def contact(self, ctx, *, message : str):
         """Sends message to the owner"""
-        if settings.owner == "id_here":
+        if self.bot.settings.owner is None:
             await self.bot.say("I have no owner set.")
             return
-        owner = discord.utils.get(self.bot.get_all_members(), id=settings.owner)
+        owner = discord.utils.get(self.bot.get_all_members(),
+                                  id=self.bot.settings.owner)
         author = ctx.message.author
         if ctx.message.channel.is_private is False:
             server = ctx.message.server
@@ -573,43 +683,69 @@ class Owner:
     @commands.command()
     async def info(self):
         """Shows info about Red"""
-        await self.bot.say(
-        "This is an instance of Red, an open source Discord bot created by "
-        "Twentysix and improved by many.\n\n**Github:**\n"
-        "<https://github.com/Twentysix26/Red-DiscordBot/>\n"
-        "**Official server:**\n<https://discord.me/Red-DiscordBot>")
+        author_repo = "https://github.com/Twentysix26"
+        red_repo = author_repo + "/Red-DiscordBot"
+        server_url = "https://discord.me/Red-DiscordBot"
+        dpy_repo = "https://github.com/Rapptz/discord.py"
+        python_url = "https://www.python.org/"
+        since = datetime.datetime(2016, 1, 2, 0, 0)
+        days_since = (datetime.datetime.now() - since).days
+        dpy_version = "[{}]({})".format(discord.__version__, dpy_repo)
+        py_version = "[{}.{}.{}]({})".format(*os.sys.version_info[:3],
+                                             python_url)
 
-    async def leave_confirmation(self, server, owner, ctx):
-        if not ctx.message.channel.is_private:
-            current_server = ctx.message.server
-        else:
-            current_server = None
-        answers = ("yes", "y")
-        await self.bot.say("Are you sure you want me "
-                    "to leave {}? (yes/no)".format(server.name))
-        msg = await self.bot.wait_for_message(author=owner, timeout=15)
-        if msg is None:
-            await self.bot.say("I guess not.")
-        elif msg.content.lower().strip() in answers:
-            await self.bot.leave_server(server)
-            if server != current_server:
-                await self.bot.say("Done.")
-        else:
-            await self.bot.say("Alright then.")
+        owner_set = self.bot.settings.owner is not None
+        owner = self.bot.settings.owner if owner_set else None
+        if owner:
+            owner = discord.utils.get(self.bot.get_all_members(), id=owner)
+            if not owner:
+                try:
+                    owner = await self.bot.get_user_info(self.bot.settings.owner)
+                except:
+                    owner = None
+        if not owner:
+            owner = "Unknown"
+
+        about = (
+            "This is an instance of [Red, an open source Discord bot]({}) "
+            "created by [Twentysix]({}) and improved by many.\n\n"
+            "Red is backed by a passionate community who contributes and "
+            "creates content for everyone to enjoy. [Join us today]({}) "
+            "and help us improve!\n\n"
+            "".format(red_repo, author_repo, server_url))
+
+        embed = discord.Embed(colour=discord.Colour.red())
+        embed.add_field(name="Instance owned by", value=str(owner))
+        embed.add_field(name="Python", value=py_version)
+        embed.add_field(name="discord.py", value=dpy_version)
+        embed.add_field(name="About Red", value=about, inline=False)
+        embed.set_footer(text="Bringing joy since 02 Jan 2016 (over "
+                         "{} days ago!)".format(days_since))
+
+        try:
+            await self.bot.say(embed=embed)
+        except discord.HTTPException:
+            await self.bot.say("I need the `Embed links` permission "
+                               "to send this")
 
     @commands.command()
     async def uptime(self):
         """Shows Red's uptime"""
-        up = abs(self.bot.uptime - int(time.perf_counter()))
-        up = str(datetime.timedelta(seconds=up))
-        await self.bot.say("`Uptime: {}`".format(up))
+        now = datetime.datetime.now()
+        uptime = (now - self.bot.uptime).seconds
+        uptime = datetime.timedelta(seconds=uptime)
+        await self.bot.say("`Uptime: {}`".format(uptime))
 
     @commands.command()
     async def version(self):
         """Shows Red's current version"""
         response = self.bot.loop.run_in_executor(None, self._get_version)
         result = await asyncio.wait_for(response, timeout=10)
-        await self.bot.say(result)
+        try:
+            await self.bot.say(embed=result)
+        except discord.HTTPException:
+            await self.bot.say("I need the `Embed links` permission "
+                               "to send this")
 
     def _load_cog(self, cogname):
         if not self._does_cogfile_exist(cogname):
@@ -633,12 +769,8 @@ class Owner:
             raise CogUnloadError
 
     def _list_cogs(self):
-        cogs = glob.glob("cogs/*.py")
-        clean = []
-        for c in cogs:
-            c = c.replace("/", "\\")  # Linux fix
-            clean.append("cogs." + c.split("\\")[1].replace(".py", ""))
-        return clean
+        cogs = [os.path.basename(f) for f in glob.glob("cogs/*.py")]
+        return ["cogs." + os.path.splitext(f)[0] for f in cogs]
 
     def _does_cogfile_exist(self, module):
         if "cogs." not in module:
@@ -651,28 +783,45 @@ class Owner:
         print(author.name + " requested to be set as owner. If this is you, "
               "type 'yes'. Otherwise press enter.")
         print()
-        print("*DO NOT* set anyone else as owner.")
+        print("*DO NOT* set anyone else as owner. This has security "
+              "repercussions.")
 
         choice = "None"
         while choice.lower() != "yes" and choice == "None":
             choice = input("> ")
 
         if choice == "yes":
-            settings.owner = author.id
+            self.bot.settings.owner = author.id
+            self.bot.settings.save_settings()
             print(author.name + " has been set as owner.")
             self.setowner_lock = False
             self.owner.hidden = True
         else:
-            print("setowner request has been ignored.")
+            print("The set owner request has been ignored.")
             self.setowner_lock = False
 
     def _get_version(self):
-        getversion = os.popen(r'git show -s HEAD --format="%cr|%s|%h"')
-        getversion = getversion.read()
-        version = getversion.split('|')
-        return 'Last updated: ``{}``\nCommit: ``{}``\nHash: ``{}``'.format(
-            *version)
+        url = os.popen(r'git config --get remote.origin.url')
+        url = url.read().strip()[:-4]
+        repo_name = url.split("/")[-1]
+        commits = os.popen(r'git show -s -n 3 HEAD --format="%cr|%s|%H"')
+        ncommits = os.popen(r'git rev-list --count HEAD').read()
 
+        lines = commits.read().split('\n')
+        embed = discord.Embed(title="Updates of " + repo_name,
+                              description="Last three updates",
+                              colour=discord.Colour.red(),
+                              url=url)
+        for line in lines:
+            if not line:
+                continue
+            when, commit, chash = line.split("|")
+            commit_url = url + "/commit/" + chash
+            content = "[{}]({}) - {} ".format(chash[:6], commit_url, commit)
+            embed.add_field(name=when, value=content, inline=False)
+        embed.set_footer(text="Total commits: " + ncommits)
+
+        return embed
 
 def check_files():
     if not os.path.isfile("data/red/disabled_commands.json"):

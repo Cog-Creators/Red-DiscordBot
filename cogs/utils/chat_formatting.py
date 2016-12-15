@@ -31,11 +31,16 @@ def italics(text):
     return "*{}*".format(text)
 
 
-def pagify(text, delims=[], escape=True, shorten_by=8, page_length=2000):
+def pagify(text, delims=["\n"], *, escape=True, shorten_by=8,
+           page_length=2000):
     """DOES NOT RESPECT MARKDOWN BOXES OR INLINE CODE"""
     in_text = text
+    if escape:
+        num_mentions = text.count("@here") + text.count("@everyone")
+        shorten_by += num_mentions
+    page_length -= shorten_by
     while len(in_text) > page_length:
-        closest_delim = max([in_text.rfind(d, 0, page_length - shorten_by)
+        closest_delim = max([in_text.rfind(d, 0, page_length)
                              for d in delims])
         closest_delim = closest_delim if closest_delim != -1 else page_length
         if escape:
@@ -58,6 +63,7 @@ def strikethrough(text):
 def underline(text):
     return "__{}__".format(text)
 
+
 def escape(text, *, mass_mentions=False, formatting=False):
     if mass_mentions:
         text = text.replace("@everyone", "@\u200beveryone")
@@ -68,6 +74,7 @@ def escape(text, *, mass_mentions=False, formatting=False):
                     .replace("_", "\\_")
                     .replace("~", "\\~"))
     return text
+
 
 def escape_mass_mentions(text):
     return escape(text, mass_mentions=True)

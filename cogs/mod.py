@@ -6,6 +6,7 @@ from __main__ import send_cmd_help, settings
 from collections import deque, defaultdict
 from cogs.utils.chat_formatting import escape_mass_mentions, box
 import os
+import re
 import logging
 import asyncio
 
@@ -47,8 +48,10 @@ class Mod:
         self.settings = defaultdict(lambda: default_settings.copy(), settings)
         self.cache = defaultdict(lambda: deque(maxlen=3))
         self.cases = dataIO.load_json("data/mod/modlog.json")
+        self.last_case = defaultdict(dict)
         self._tmp_banned_cache = []
-        self.last_case = defaultdict(lambda: dict())
+        perms_cache = dataIO.load_json("data/mod/perms_cache.json")
+        self._perms_cache = defaultdict(dict, perms_cache)
 
     @commands.group(pass_context=True, no_pm=True)
     @checks.serverowner_or_permissions(administrator=True)
@@ -59,11 +62,14 @@ class Mod:
             await send_cmd_help(ctx)
             roles = settings.get_server(server).copy()
             _settings = {**self.settings[server.id], **roles}
+            if "delete_delay" not in _settings:
+                _settings["delete_delay"] = -1
             msg = ("Admin role: {ADMIN_ROLE}\n"
                    "Mod role: {MOD_ROLE}\n"
                    "Mod-log: {mod-log}\n"
                    "Delete repeats: {delete_repeats}\n"
                    "Ban mention spam: {ban_mention_spam}\n"
+                   "Delete delay: {delete_delay}\n"
                    "".format(**_settings))
             await self.bot.say(box(msg))
 
@@ -145,6 +151,36 @@ class Mod:
         self.cases[server.id] = {}
         dataIO.save_json("data/mod/modlog.json", self.cases)
         await self.bot.say("Cases have been reset.")
+
+    @modset.command(pass_context=True, no_pm=True)
+    async def deletedelay(self, ctx, time: int=None):
+        """Sets the delay until the bot removes the command message.
+            Must be between -1 and 60.
+
+        A delay of -1 means the bot will not remove the message."""
+        server = ctx.message.server
+        if time is not None:
+            time = min(max(time, -1), 60)  # Enforces the time limits
+            self.settings[server.id]["delete_delay"] = time
+            if time == -1:
+                await self.bot.say("Command deleting disabled.")
+            else:
+                await self.bot.say("Delete delay set to {}"
+                                   " seconds.".format(time))
+            dataIO.save_json("data/mod/settings.json", self.settings)
+        else:
+            try:
+                delay = self.settings[server.id]["delete_delay"]
+            except KeyError:
+                await self.bot.say("Delete delay not yet set up on this"
+                                   " server.")
+            else:
+                if delay != -1:
+                    await self.bot.say("Bot will delete command messages after"
+                                       " {} seconds. Set this value to -1 to"
+                                       " stop deleting messages".format(delay))
+                else:
+                    await self.bot.say("I will not delete command messages.")
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(kick_members=True)
@@ -254,14 +290,156 @@ class Mod:
             await self.bot.say("I cannot do that, I lack the "
                 "\"Manage Nicknames\" permission.")
 
-    @commands.group(pass_context=True, no_pm=True)
+    @commands.group(pass_context=True, no_pm=True, invoke_without_command=True)
+    @checks.mod_or_permissions(administrator=True)
+    async def mute(self, ctx, user : discord.Member):
+        """Mutes user in the channel/server
+
+        Defaults to channel"""
+        if ctx.invoked_subcommand is None:
+            await ctx.invoke(self.channel_mute, user=user)
+
+    @mute.command(name="channel", pass_context=True, no_pm=True)
+    @checks.mod_or_permissions(administrator=True)
+    async def channel_mute(self, ctx, user : discord.Member):
+        """Mutes user in the current channel"""
+        channel = ctx.message.channel
+        overwrites = channel.overwrites_for(user)
+        if overwrites.send_messages is False:
+            await self.bot.say("That user can't send messages in this "
+                               "channel.")
+            return
+        self._perms_cache[user.id][channel.id] = overwrites.send_messages
+        overwrites.send_messages = False
+        try:
+            await self.bot.edit_channel_permissions(channel, user, overwrites)
+        except discord.Forbidden:
+            await self.bot.say("Failed to mute user. I need the manage roles "
+                               "permission and the user I'm muting must be "
+                               "lower than myself in the role hierarchy.")
+        else:
+            dataIO.save_json("data/mod/perms_cache.json", self._perms_cache)
+            await self.bot.say("User has been muted in this channel.")
+
+    @mute.command(name="server", pass_context=True, no_pm=True)
+    @checks.mod_or_permissions(administrator=True)
+    async def server_mute(self, ctx, user : discord.Member):
+        """Mutes user in the server"""
+        server = ctx.message.server
+        register = {}
+        for channel in server.channels:
+            if channel.type != discord.ChannelType.text:
+                continue
+            overwrites = channel.overwrites_for(user)
+            if overwrites.send_messages is False:
+                continue
+            register[channel.id] = overwrites.send_messages
+            overwrites.send_messages = False
+            try:
+                await self.bot.edit_channel_permissions(channel, user,
+                                                        overwrites)
+            except discord.Forbidden:
+                await self.bot.say("Failed to mute user. I need the manage roles "
+                                   "permission and the user I'm muting must be "
+                                   "lower than myself in the role hierarchy.")
+                return
+            else:
+                await asyncio.sleep(0.1)
+        if not register:
+            await self.bot.say("That user is already muted in all channels.")
+            return
+        self._perms_cache[user.id] = register
+        dataIO.save_json("data/mod/perms_cache.json", self._perms_cache)
+        await self.bot.say("User has been muted in this server.")
+
+    @commands.group(pass_context=True, no_pm=True, invoke_without_command=True)
+    @checks.mod_or_permissions(administrator=True)
+    async def unmute(self, ctx, user : discord.Member):
+        """Unmutes user in the channel/server
+
+        Defaults to channel"""
+        if ctx.invoked_subcommand is None:
+            await ctx.invoke(self.channel_unmute, user=user)
+
+    @unmute.command(name="channel", pass_context=True, no_pm=True)
+    @checks.mod_or_permissions(administrator=True)
+    async def channel_unmute(self, ctx, user : discord.Member):
+        """Unmutes user in the current channel"""
+        channel = ctx.message.channel
+        overwrites = channel.overwrites_for(user)
+        if overwrites.send_messages:
+            await self.bot.say("That user doesn't seem to be muted "
+                               "in this channel.")
+            return
+        if user.id in self._perms_cache:
+            old_value = self._perms_cache[user.id].get(channel.id, None)
+        else:
+            old_value = None
+        overwrites.send_messages = old_value
+        is_empty = self.are_overwrites_empty(overwrites)
+        try:
+            if not is_empty:
+                await self.bot.edit_channel_permissions(channel, user,
+                                                        overwrites)
+            else:
+                await self.bot.delete_channel_permissions(channel, user)
+        except discord.Forbidden:
+            await self.bot.say("Failed to unmute user. I need the manage roles"
+                               " permission and the user I'm unmuting must be "
+                               "lower than myself in the role hierarchy.")
+        else:
+            try:
+                del self._perms_cache[user.id][channel.id]
+            except KeyError:
+                pass
+            if user.id in self._perms_cache and not self._perms_cache[user.id]:
+                del self._perms_cache[user.id] #cleanup
+            dataIO.save_json("data/mod/perms_cache.json", self._perms_cache)
+            await self.bot.say("User has been unmuted in this channel.")
+
+    @unmute.command(name="server", pass_context=True, no_pm=True)
+    @checks.mod_or_permissions(administrator=True)
+    async def server_unmute(self, ctx, user : discord.Member):
+        """Unmutes user in the server"""
+        server = ctx.message.server
+        if user.id not in self._perms_cache:
+            await self.bot.say("That user doesn't seem to have been muted with {0}mute commands. "
+                               "Unmute them in the channels you want with `{0}unmute <user>`"
+                               "".format(ctx.prefix))
+            return
+        for channel in server.channels:
+            if channel.type != discord.ChannelType.text:
+                continue
+            if channel.id not in self._perms_cache[user.id]:
+                continue
+            value = self._perms_cache[user.id].get(channel.id)
+            overwrites = channel.overwrites_for(user)
+            if overwrites.send_messages is False:
+                overwrites.send_messages = value
+                is_empty = self.are_overwrites_empty(overwrites)
+                try:
+                    if not is_empty:
+                        await self.bot.edit_channel_permissions(channel, user,
+                                                                overwrites)
+                    else:
+                        await self.bot.delete_channel_permissions(channel, user)
+                except discord.Forbidden:
+                    await self.bot.say("Failed to unmute user. I need the manage roles"
+                                       " permission and the user I'm unmuting must be "
+                                       "lower than myself in the role hierarchy.")
+                    return
+                else:
+                    del self._perms_cache[user.id][channel.id]
+                    await asyncio.sleep(0.1)
+        if user.id in self._perms_cache and not self._perms_cache[user.id]:
+            del self._perms_cache[user.id] #cleanup
+        dataIO.save_json("data/mod/perms_cache.json", self._perms_cache)
+        await self.bot.say("User has been unmuted in this server.")
+
+    @commands.group(pass_context=True)
     @checks.mod_or_permissions(manage_messages=True)
     async def cleanup(self, ctx):
-        """Deletes messages.
-
-        cleanup messages [number]
-        cleanup user [name/mention] [number]
-        cleanup text \"Text here\" [number]"""
+        """Deletes messages."""
         if ctx.invoked_subcommand is None:
             await send_cmd_help(ctx)
 
@@ -348,7 +526,7 @@ class Mod:
         while tries_left and len(to_delete) - 1 < number:
             async for message in self.bot.logs_from(channel, limit=100,
                                                     before=tmp):
-                if len(to_delete) -1 < number and check(message):
+                if len(to_delete) - 1 < number and check(message):
                     to_delete.append(message)
                 tmp = message
             tries_left -= 1
@@ -370,6 +548,8 @@ class Mod:
         To get a message id, enable developer mode in Discord's
         settings, 'appearance' tab. Then right click a message
         and copy its id.
+
+        This command only works on bots running as bot accounts.
         """
 
         channel = ctx.message.channel
@@ -377,6 +557,11 @@ class Mod:
         server = channel.server
         is_bot = self.bot.user.bot
         has_permissions = channel.permissions_for(server.me).manage_messages
+
+        if not is_bot:
+            await self.bot.say("This command can only be used on bots with "
+                               "bot accounts.")
+            return
 
         to_delete = []
 
@@ -397,10 +582,7 @@ class Mod:
                     "".format(author.name, author.id,
                               len(to_delete), channel.name))
 
-        if is_bot:
-            await self.mass_purge(to_delete)
-        else:
-            await self.slow_deletion(to_delete)
+        await self.mass_purge(to_delete)
 
     @cleanup.command(pass_context=True, no_pm=True)
     async def messages(self, ctx, number: int):
@@ -429,6 +611,143 @@ class Mod:
                               number, channel.name))
 
         if is_bot:
+            await self.mass_purge(to_delete)
+        else:
+            await self.slow_deletion(to_delete)
+
+    @cleanup.command(pass_context=True, no_pm=True, name='bot')
+    async def cleanup_bot(self, ctx, number: int):
+        """Cleans up command messages and messages from the bot"""
+
+        channel = ctx.message.channel
+        author = ctx.message.author
+        server = channel.server
+        is_bot = self.bot.user.bot
+        has_permissions = channel.permissions_for(server.me).manage_messages
+
+        prefixes = self.bot.command_prefix
+        if isinstance(prefixes, str):
+            prefixes = [prefixes]
+        elif callable(prefixes):
+            if asyncio.iscoroutine(prefixes):
+                await self.bot.say('Coroutine prefixes not yet implemented.')
+                return
+            prefixes = prefixes(self.bot, ctx.message)
+
+        # In case some idiot sets a null prefix
+        if '' in prefixes:
+            prefixes.pop('')
+
+        def check(m):
+            if m.author.id == self.bot.user.id:
+                return True
+            elif m == ctx.message:
+                return True
+            p = discord.utils.find(m.content.startswith, prefixes)
+            if p and len(p) > 0:
+                return m.content[len(p):].startswith(tuple(self.bot.commands))
+            return False
+
+        to_delete = [ctx.message]
+
+        if not has_permissions:
+            await self.bot.say("I'm not allowed to delete messages.")
+            return
+
+        tries_left = 5
+        tmp = ctx.message
+
+        while tries_left and len(to_delete) - 1 < number:
+            async for message in self.bot.logs_from(channel, limit=100,
+                                                    before=tmp):
+                if len(to_delete) - 1 < number and check(message):
+                    to_delete.append(message)
+                tmp = message
+            tries_left -= 1
+
+        logger.info("{}({}) deleted {} "
+                    " command messages in channel {}"
+                    "".format(author.name, author.id, len(to_delete),
+                              channel.name))
+
+        if is_bot:
+            await self.mass_purge(to_delete)
+        else:
+            await self.slow_deletion(to_delete)
+
+    @cleanup.command(pass_context=True, name='self')
+    async def cleanup_self(self, ctx, number: int, match_pattern: str = None):
+        """Cleans up messages owned by the bot.
+
+        By default, all messages are cleaned. If a third argument is specified,
+        it is used for pattern matching: If it begins with r( and ends with ),
+        then it is interpreted as a regex, and messages that match it are
+        deleted. Otherwise, it is used in a simple substring test.
+
+        Some helpful regex flags to include in your pattern:
+        Dots match newlines: (?s); Ignore case: (?i); Both: (?si)
+        """
+        channel = ctx.message.channel
+        author = ctx.message.author
+        is_bot = self.bot.user.bot
+
+        # You can always delete your own messages, this is needed to purge
+        can_mass_purge = False
+        if type(author) is discord.Member:
+            me = channel.server.me
+            can_mass_purge = channel.permissions_for(me).manage_messages
+
+        use_re = (match_pattern and match_pattern.startswith('r(') and
+                  match_pattern.endswith(')'))
+
+        if use_re:
+            match_pattern = match_pattern[1:]  # strip 'r'
+            match_re = re.compile(match_pattern)
+
+            def content_match(c):
+                return bool(match_re.match(c))
+        elif match_pattern:
+            def content_match(c):
+                return match_pattern in c
+        else:
+            def content_match(_):
+                return True
+
+        def check(m):
+            if m.author.id != self.bot.user.id:
+                return False
+            elif content_match(m.content):
+                return True
+            return False
+
+        to_delete = []
+        # Selfbot convenience, delete trigger message
+        if author == self.bot.user:
+            to_delete.append(ctx.message)
+            number += 1
+
+        tries_left = 5
+        tmp = ctx.message
+
+        while tries_left and len(to_delete) < number:
+            async for message in self.bot.logs_from(channel, limit=100,
+                                                    before=tmp):
+                if len(to_delete) < number and check(message):
+                    to_delete.append(message)
+                tmp = message
+            tries_left -= 1
+
+        if channel.name:
+            channel_name = 'channel ' + channel.name
+        else:
+            channel_name = str(channel)
+
+        logger.info("{}({}) deleted {} messages "
+                    "sent by the bot in {}"
+                    "".format(author.name, author.id, len(to_delete),
+                              channel_name))
+
+        if is_bot and can_mass_purge:
             await self.mass_purge(to_delete)
         else:
             await self.slow_deletion(to_delete)
@@ -468,7 +787,6 @@ class Mod:
             await self.bot.say("Couldn't find the case's message.")
         else:
             await self.bot.say("Case #{} updated.".format(case))
-
 
     @commands.group(pass_context=True)
     @checks.is_owner()
@@ -794,7 +1112,6 @@ class Mod:
                 await self.bot.delete_message(message)
             except:
                 pass
-            await asyncio.sleep(1.5)
 
     def is_mod_or_superior(self, message):
         user = message.author
@@ -837,7 +1154,7 @@ class Mod:
             tmp["reason"] = "Type [p]reason {} <reason> to add it".format(case_n)
         if case["moderator"] is None:
             tmp["moderator"] = "Unknown"
-            tmp["moderator_id"] = "Nobody has claimed responsability yet"
+            tmp["moderator_id"] = "Nobody has claimed responsibility yet"
 
         case_msg = ("**Case #{case}** | {action}\n"
                     "**User:** {user} ({user_id})\n"
@@ -913,7 +1230,7 @@ class Mod:
             self.cache[author].append(message)
             msgs = self.cache[author]
             if len(msgs) == 3 and \
-            msgs[0].content == msgs[1].content == msgs[2].content:
+                    msgs[0].content == msgs[1].content == msgs[2].content:
                 if any([m.attachments for m in msgs]):
                     return False
                 try:
@@ -950,8 +1267,38 @@ class Mod:
                     self._tmp_banned_cache.remove(author)
         return False
 
+    async def on_command(self, command, ctx):
+        """Currently used for:
+            * delete delay"""
+        server = ctx.message.server
+        message = ctx.message
+        try:
+            delay = self.settings[server.id]["delete_delay"]
+        except KeyError:
+            # We have no delay set
+            return
+        except AttributeError:
+            # DM
+            return
+
+        if delay == -1:
+            return
+
+        async def _delete_helper(bot, message):
+            try:
+                await bot.delete_message(message)
+                logger.debug("Deleted command msg {}".format(message.id))
+            except discord.errors.Forbidden:
+                # Do not have delete permissions
+                logger.debug("Wanted to delete mid {} but no"
+                             " permissions".format(message.id))
+
+        await asyncio.sleep(delay)
+        await _delete_helper(self.bot, message)
+
     async def on_message(self, message):
-        if message.channel.is_private or self.bot.user == message.author:
+        if message.channel.is_private or self.bot.user == message.author \
+         or not isinstance(message.author, discord.Member):
             return
         elif self.is_mod_or_superior(message):
             return
@@ -970,7 +1317,7 @@ class Mod:
 
     async def check_names(self, before, after):
         if before.name != after.name:
-            if before.id not in self.past_names.keys():
+            if before.id not in self.past_names:
                 self.past_names[before.id] = [after.name]
             else:
                 if after.name not in self.past_names[before.id]:
@@ -994,6 +1341,13 @@ class Mod:
                 dataIO.save_json("data/mod/past_nicknames.json",
                                  self.past_nicknames)
 
+    def are_overwrites_empty(self, overwrites):
+        """There is currently no cleaner way to check if a
+        PermissionOverwrite object is empty"""
+        original = [p for p in iter(overwrites)]
+        empty = [p for p in iter(discord.PermissionOverwrite())]
+        return original == empty
+
 
 def check_folders():
     folders = ("data", "data/mod/")
@@ -1006,44 +1360,29 @@ def check_folders():
 def check_files():
     ignore_list = {"SERVERS": [], "CHANNELS": []}
 
-    if not os.path.isfile("data/mod/blacklist.json"):
-        print("Creating empty blacklist.json...")
-        dataIO.save_json("data/mod/blacklist.json", [])
+    files = {
+        "blacklist.json"      : [],
+        "whitelist.json"      : [],
+        "ignorelist.json"     : ignore_list,
+        "filter.json"         : {},
+        "past_names.json"     : {},
+        "past_nicknames.json" : {},
+        "settings.json"       : {},
+        "modlog.json"         : {},
+        "perms_cache.json"    : {}
+    }
 
-    if not os.path.isfile("data/mod/whitelist.json"):
-        print("Creating empty whitelist.json...")
-        dataIO.save_json("data/mod/whitelist.json", [])
-
-    if not os.path.isfile("data/mod/ignorelist.json"):
-        print("Creating empty ignorelist.json...")
-        dataIO.save_json("data/mod/ignorelist.json", ignore_list)
-
-    if not os.path.isfile("data/mod/filter.json"):
-        print("Creating empty filter.json...")
-        dataIO.save_json("data/mod/filter.json", {})
-
-    if not os.path.isfile("data/mod/past_names.json"):
-        print("Creating empty past_names.json...")
-        dataIO.save_json("data/mod/past_names.json", {})
-
-    if not os.path.isfile("data/mod/past_nicknames.json"):
-        print("Creating empty past_nicknames.json...")
-        dataIO.save_json("data/mod/past_nicknames.json", {})
-
-    if not os.path.isfile("data/mod/settings.json"):
-        print("Creating empty settings.json...")
-        dataIO.save_json("data/mod/settings.json", {})
-
-    if not os.path.isfile("data/mod/modlog.json"):
-        print("Creating empty modlog.json...")
-        dataIO.save_json("data/mod/modlog.json", {})
+    for filename, value in files.items():
+        if not os.path.isfile("data/mod/{}".format(filename)):
+            print("Creating empty {}".format(filename))
+            dataIO.save_json("data/mod/{}".format(filename), value)
 
 
 def setup(bot):
     global logger
     check_folders()
     check_files()
-    logger = logging.getLogger("mod")
+    logger = logging.getLogger("red.mod")
     # Prevents the logger from being loaded again in case of module reload
     if logger.level == 0:
         logger.setLevel(logging.INFO)

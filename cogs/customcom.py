@@ -106,19 +106,18 @@ class CustomCommands:
             await self.bot.say("There are no custom commands in this server. Use addcom [command] [text]")
 
     async def checkCC(self, message):
-        if message.author.id == self.bot.user.id or len(message.content) < 2 or message.channel.is_private:
+        if len(message.content) < 2 or message.channel.is_private:
             return
 
-        if not user_allowed(message):
-            return
-
-        msg = message.content
         server = message.server
-        prefix = self.get_prefix(msg)
+        prefix = self.get_prefix(message)
 
-        if prefix and server.id in self.c_commands.keys():
+        if not prefix:
+            return
+
+        if server.id in self.c_commands and user_allowed(message):
             cmdlist = self.c_commands[server.id]
-            cmd = msg[len(prefix):]
+            cmd = message.content[len(prefix):]
             if cmd in cmdlist.keys():
                 cmd = cmdlist[cmd]
                 cmd = self.format_cc(cmd, message)
@@ -128,9 +127,9 @@ class CustomCommands:
                 cmd = self.format_cc(cmd, message)
                 await self.bot.send_message(message.channel, cmd)
 
-    def get_prefix(self, msg):
-        for p in self.bot.command_prefix:
-            if msg.startswith(p):
+    def get_prefix(self, message):
+        for p in self.bot.settings.get_prefixes(message.server):
+            if message.content.startswith(p):
                 return p
         return False
 
