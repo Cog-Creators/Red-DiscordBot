@@ -60,7 +60,7 @@ class Bot(commands.Bot):
             return bot.settings.get_prefixes(message.server)
 
         self.counter = Counter()
-        self.uptime = datetime.datetime.now() #  Will be refreshed before login
+        self.uptime = datetime.datetime.now()  # Will be refreshed before login
         self._message_modifiers = []
         self.settings = Settings()
         self._intro_displayed = False
@@ -274,6 +274,9 @@ async def on_command_error(error, ctx):
         await send_cmd_help(ctx)
     elif isinstance(error, commands.BadArgument):
         await send_cmd_help(ctx)
+    elif isinstance(error, commands.TooManyArguments):
+        await self.bot.send_message(channel, "Too many arguments given for "
+                                             "this command")
     elif isinstance(error, commands.DisabledCommand):
         await bot.send_message(channel, "That command is disabled.")
     elif isinstance(error, commands.CommandInvokeError):
@@ -316,12 +319,12 @@ async def set_bot_owner():
             except:
                 owner = None
             else:
-                owner = bot.settings.owner # Just the ID then
+                owner = bot.settings.owner  # Just the ID then
         return owner
 
     how_to = "Do `[p]set owner` in chat to set it"
 
-    if bot.user.bot: # Can fetch owner
+    if bot.user.bot:  # Can fetch owner
         try:
             data = await bot.application_info()
             settings.owner = data.owner.id
@@ -497,7 +500,7 @@ def load_cogs():
     failed = []
     extensions = owner_cog._list_cogs()
 
-    if not registry: # All default cogs enabled by default
+    if not registry:  # All default cogs enabled by default
         for ext in defaults:
             registry["cogs." + ext] = True
 
@@ -551,12 +554,12 @@ if __name__ == '__main__':
         error = True
         logger.error(traceback.format_exc())
         if not settings.no_prompt:
-            choice = input("Invalid login credentials. "
-                           "If they worked before Discord might be having temporary "
-                           "technical issues.\nIn this case, press enter and "
-                           "try again later.\nOtherwise you can type 'reset' to "
-                           "reset the current credentials and set them "
-                           "again the next start.\n> ")
+            choice = input("Invalid login credentials. If they worked before, "
+                           "Discord might be having temporary technical "
+                           "issues.\nIn this case, press enter and try again "
+                           "later.\nOtherwise you can type 'reset' to reset "
+                           "the current credentials and set them again on "
+                           "the next start.\n> ")
             if choice.lower().strip() == "reset":
                 settings.token = None
                 settings.email = None
