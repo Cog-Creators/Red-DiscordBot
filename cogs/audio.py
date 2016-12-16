@@ -1305,7 +1305,9 @@ class Audio:
             await self.bot.say("I'm already downloading a file!")
             return
 
-        if "." in url:
+        URLMatch = re.compile('@^(https?|ftp)://[^\s/$.?#].[^\s]*$@iS', re.IGNORECASE)
+
+        if URLMatch.match(url):
             if not self._valid_playable_url(url):
                 await self.bot.say("That's not a valid URL.")
                 return
