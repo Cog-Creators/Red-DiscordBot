@@ -4,6 +4,7 @@ from cogs.utils import checks
 from __main__ import set_cog
 from .utils.dataIO import dataIO
 from .utils.chat_formatting import pagify, box
+from requests.compat import json as complexjson
 
 import importlib
 import traceback
@@ -14,6 +15,7 @@ import datetime
 import glob
 import os
 import aiohttp
+import json
 
 log = logging.getLogger("red.owner")
 
@@ -740,7 +742,10 @@ class Owner:
     async def version(self):
         """Shows Red's current version"""
         response = self.bot.loop.run_in_executor(None, self._get_version)
-        result = await asyncio.wait_for(response, timeout=10)
+        result, url, chash = await asyncio.wait_for(response, timeout=10)
+        commit_count = await(self._check_remote_commitlog(url, chash))
+        if commit_count:
+            result.add_field(name="Available updates: ", value=commit_count, inline=False)
         try:
             await self.bot.say(embed=result)
         except discord.HTTPException:
@@ -800,28 +805,49 @@ class Owner:
             print("The set owner request has been ignored.")
             self.setowner_lock = False
 
+    async def _check_remote_commitlog(self, url, chash):
+        new_commit_count = 0
+        async with aiohttp.get(url) as r:
+            commits = await r.json()
+            try:
+                for commit in commits:
+                    if commit["sha"] != chash:
+                        new_commit_count += 1
+                    else:
+                        break
+            except:
+                return None
+        return new_commit_count
+
     def _get_version(self):
         url = os.popen(r'git config --get remote.origin.url')
         url = url.read().strip()[:-4]
         repo_name = url.split("/")[-1]
         commits = os.popen(r'git show -s -n 3 HEAD --format="%cr|%s|%H"')
         ncommits = os.popen(r'git rev-list --count HEAD').read()
-
+        ghuser = url.split("/")[-2]
+        gh_api_url = "https://api.github.com/repos/{}/{}/commits".format(
+            ghuser, repo_name
+        )
         lines = commits.read().split('\n')
         embed = discord.Embed(title="Updates of " + repo_name,
                               description="Last three updates",
                               colour=discord.Colour.red(),
                               url=url)
+        comt_hash = None
         for line in lines:
             if not line:
                 continue
             when, commit, chash = line.split("|")
+            if not comt_hash:
+                comt_hash = chash
             commit_url = url + "/commit/" + chash
             content = "[{}]({}) - {} ".format(chash[:6], commit_url, commit)
             embed.add_field(name=when, value=content, inline=False)
         embed.set_footer(text="Total commits: " + ncommits)
 
-        return embed
+        return embed, gh_api_url, comt_hash
+
 
 def check_files():
     if not os.path.isfile("data/red/disabled_commands.json"):
