@@ -731,10 +731,10 @@ class Owner:
     @commands.command()
     async def uptime(self):
         """Shows Red's uptime"""
-        now = datetime.datetime.now()
-        uptime = (now - self.bot.uptime).seconds
-        uptime = datetime.timedelta(seconds=uptime)
-        await self.bot.say("`Uptime: {}`".format(uptime))
+        since = self.bot.uptime.strftime("%Y-%m-%d %H:%M:%S")
+        passed = self.get_bot_uptime()
+        await self.bot.say("Been up for: **{}** (since {} UTC)"
+                           "".format(passed, since))
 
     @commands.command()
     async def version(self):
@@ -822,6 +822,27 @@ class Owner:
         embed.set_footer(text="Total commits: " + ncommits)
 
         return embed
+
+    def get_bot_uptime(self, *, brief=False):
+        # Courtesy of Danny
+        now = datetime.datetime.utcnow()
+        delta = now - self.bot.uptime
+        hours, remainder = divmod(int(delta.total_seconds()), 3600)
+        minutes, seconds = divmod(remainder, 60)
+        days, hours = divmod(hours, 24)
+
+        if not brief:
+            if days:
+                fmt = '{d} days, {h} hours, {m} minutes, and {s} seconds'
+            else:
+                fmt = '{h} hours, {m} minutes, and {s} seconds'
+        else:
+            fmt = '{h}h {m}m {s}s'
+            if days:
+                fmt = '{d}d ' + fmt
+
+        return fmt.format(d=days, h=hours, m=minutes, s=seconds)
+
 
 def check_files():
     if not os.path.isfile("data/red/disabled_commands.json"):

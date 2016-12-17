@@ -60,7 +60,7 @@ class Bot(commands.Bot):
             return bot.settings.get_prefixes(message.server)
 
         self.counter = Counter()
-        self.uptime = datetime.datetime.now() #  Will be refreshed before login
+        self.uptime = datetime.datetime.utcnow()  # Refreshed before login
         self._message_modifiers = []
         self.settings = Settings()
         self._intro_displayed = False
@@ -209,7 +209,7 @@ async def on_ready():
     servers = len(bot.servers)
     channels = len([c for c in bot.get_all_channels()])
 
-    login_time = datetime.datetime.now() - bot.uptime
+    login_time = datetime.datetime.utcnow() - bot.uptime
     login_time = login_time.seconds + login_time.microseconds/1E6
 
     print("Login successful. ({}ms)\n".format(login_time))
@@ -527,7 +527,7 @@ def main():
     load_cogs()
 
     print("Logging into Discord...")
-    bot.uptime = datetime.datetime.now()
+    bot.uptime = datetime.datetime.utcnow()
 
     if settings.login_credentials:
         yield from bot.login(*settings.login_credentials,
