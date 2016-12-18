@@ -483,7 +483,7 @@ class Mod:
 
         to_delete = [ctx.message]
 
-        if not has_permissions:
+        if not has_permissions and not self_delete:
             await self.bot.say("I'm not allowed to delete messages.")
             return
 
