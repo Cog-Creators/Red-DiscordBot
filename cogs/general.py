@@ -156,7 +156,7 @@ class General:
         await self.bot.say(msg)
 
     @commands.command(pass_context=True, no_pm=True)
-    async def userinfo(self, ctx, user: discord.Member=None):
+    async def userinfo(self, ctx, *, user: discord.Member=None):
         """Shows users's informations"""
         author = ctx.message.author
         server = ctx.message.server
@@ -171,26 +171,20 @@ class General:
         since_joined = (ctx.message.timestamp - joined_at).days
         user_joined = joined_at.strftime("%d %b %Y %H:%M")
         user_created = user.created_at.strftime("%d %b %Y %H:%M")
-        user_number =\
-            sorted(server.members, key=lambda m: m.joined_at).index(user)
+        member_number = sorted(server.members,
+                               key=lambda m: m.joined_at).index(user) + 1
 
         created_on = "{}\n({} days ago)".format(user_created, since_created)
         joined_on = "{}\n({} days ago)".format(user_joined, since_joined)
 
-        game = "Chilling in {} status.\nServer member {}".format(
-            user.status, str(user_number)
-        )
+        game = "Chilling in {} status".format(user.status)
 
         if user.game is None:
-            game = "Server member {}".format(str(user_number))
+            pass
         elif user.game.url is None:
-            game = "Playing {}.\nServer member {}".format(
-                user.game, str(user_number)
-            )
+            game = "Playing {}".format(user.game)
         else:
-            game = "Streaming: [{}]({}).\nServer member {}".format(
-                user.game, user.game.url, str(user_number)
-            )
+            game = "Streaming: [{}]({})".format(user.game, user.game.url)
 
         if roles:
             roles = sorted(roles, key=[x.name for x in server.role_hierarchy
@@ -203,7 +197,8 @@ class General:
         data.add_field(name="Joined Discord on", value=created_on)
         data.add_field(name="Joined this server on", value=joined_on)
         data.add_field(name="Roles", value=roles, inline=False)
-        data.set_footer(text="User ID: " + user.id)
+        data.set_footer(text="Member #{} | User ID:{}"
+                             "".format(member_number, user.id))
 
         if user.avatar_url:
             name = str(user)
