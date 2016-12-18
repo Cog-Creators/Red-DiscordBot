@@ -199,6 +199,28 @@ class Bank:
             raise NoAccount()
 
 
+class SetParser:
+    def __init__(self, argument):
+        allowed = ("+", "-")
+        if argument and argument[0] in allowed:
+            try:
+                self.sum = int(argument)
+            except:
+                raise
+            if self.sum < 0:
+                self.operation = "withdraw"
+            elif self.sum > 0:
+                self.operation = "deposit"
+            else:
+                raise
+            self.sum = abs(self.sum)
+        elif argument.isdigit():
+            self.sum = int(argument)
+            self.operation = "set"
+        else:
+            raise
+
+
 class Economy:
     """Economy
 
@@ -281,17 +303,38 @@ class Economy:
 
     @_bank.command(name="set", pass_context=True)
     @checks.admin_or_permissions(manage_server=True)
-    async def _set(self, ctx, user: discord.Member, sum: int):
-        """Sets credits of user's bank account
+    async def _set(self, ctx, user: discord.Member, credits: SetParser):
+        """Sets credits of user's bank account. See help for more operations
 
-        Admin/owner restricted."""
+        Passing positive and negative values will add/remove credits instead
+
+        Examples:
+            bank set @Twentysix 26 - Sets 26 credits
+            bank set @Twentysix +2 - Adds 2 credits
+            bank set @Twentysix -6 - Removes 6 credits"""
         author = ctx.message.author
         try:
-            self.bank.set_credits(user, sum)
-            logger.info("{}({}) set {} credits to {} ({})".format(
-                author.name, author.id, str(sum), user.name, user.id))
-            await self.bot.say("{}'s credits have been set to {}".format(
-                user.name, str(sum)))
+            if credits.operation == "deposit":
+                self.bank.deposit_credits(user, credits.sum)
+                logger.info("{}({}) added {} credits to {} ({})".format(
+                    author.name, author.id, credits.sum, user.name, user.id))
+                await self.bot.say("{} credits have been added to {}"
+                                   "".format(credits.sum, user.name))
+            elif credits.operation == "withdraw":
+                self.bank.withdraw_credits(user, credits.sum)
+                logger.info("{}({}) removed {} credits to {} ({})".format(
+                    author.name, author.id, credits.sum, user.name, user.id))
+                await self.bot.say("{} credits have been withdrawn from {}"
+                                   "".format(credits.sum, user.name))
+            elif credits.operation == "set":
+                self.bank.set_credits(user, credits.sum)
+                logger.info("{}({}) set {} credits to {} ({})"
+                            "".format(author.name, author.id, credits.sum,
+                                      user.name, user.id))
+                await self.bot.say("{}'s credits have been set to {}".format(
+                    user.name, credits.sum))
+        except InsufficientBalance:
+            await self.bot.say("User doesn't have enough credits.")
         except NoAccount:
             await self.bot.say("User has no bank account.")
 
