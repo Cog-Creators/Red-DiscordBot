@@ -13,11 +13,11 @@ import time
 import logging
 
 slot_emotes = {
-    'TWO': '2\u20e3',
-    'SIX': '6\u20e3',
-    'HEART':'\u2764\ufe0f',
-    'FOUR LEAF CLOVER':'\ud83c\udf40',
-    'CHERRIES':'\ud83c\udf52',
+	'TWO': '2\u20e3',
+	'SIX': '6\u20e3',
+	'HEART':'\u2764\ufe0f',
+	'FOUR LEAF CLOVER':'\ud83c\udf40',
+	'CHERRIES':'\ud83c\udf52',
 	'COOKIE':'\ud83c\udf6a',
 	'SNOWFLAKE':'\u2744\ufe0f',
 	'SUNFLOWER':'\ud83c\udf3c',
