@@ -1234,7 +1234,7 @@ class Audio:
         playlists = ", ".join(self._list_local_playlists())
         if playlists:
             playlists = "Available local playlists:\n\n" + playlists
-            for page in pagify(playlists):
+            for page in pagify(playlists, delims=[" "]):
                 await self.bot.say(page)
         else:
             await self.bot.say("There are no playlists.")
@@ -1441,7 +1441,7 @@ class Audio:
         playlists = ", ".join(self._list_playlists(server))
         if playlists:
             playlists = "Available playlists:\n\n" + playlists
-            for page in pagify(playlists):
+            for page in pagify(playlists, delims=[" "]):
                 await self.bot.say(page)
         else:
             await self.bot.say("There are no playlists.")
