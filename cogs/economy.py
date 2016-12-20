@@ -12,16 +12,20 @@ import os
 import time
 import logging
 
+uni_two = '2\u20e3'
+uni_six = '6\u20e3'
+uni_heart = '\u2764\ufe0f'
+
 default_settings = {"PAYDAY_TIME": 300, "PAYDAY_CREDITS": 120,
                     "SLOT_MIN": 5, "SLOT_MAX": 100, "SLOT_TIME": 0,
                     "REGISTER_CREDITS": 0}
 
 slot_payouts = """Slot machine payouts:
-    :two: :two: :six: Bet * 5000
-    :four_leaf_clover: :four_leaf_clover: :four_leaf_clover: +1000
-    :cherries: :cherries: :cherries: +800
-    :two: :six: Bet * 4
-    :cherries: :cherries: Bet * 3
+    |uni_two + uni_two + uni_six|Bet * 5000
+    \N{FOUR LEAF CLOVER} \N{FOUR LEAF CLOVER} \N{FOUR LEAF CLOVER} +1000
+    \N{CHERRIES} \N{CHERRIES} \N{CHERRIES} +800
+     |uni_two + uni_six|Bet * 4
+    \N{CHERRIES} \N{CHERRIES} Bet * 3
 
     Three symbols: +500
     Two symbols: Bet * 2"""
@@ -479,11 +483,11 @@ class Economy:
             await self.bot.say("{0} You need an account with enough funds to play the slot machine.".format(author.mention))
 
     async def slot_machine(self, message, bid):
-        reel_pattern = [":cherries:", ":cookie:", ":two:", ":four_leaf_clover:",
-                        ":cyclone:", ":sunflower:", ":six:", ":mushroom:", ":heart:", ":snowflake:"]
+        reel_pattern = ["\N{CHERRIES}", "\N{COOKIE}", "|uni_two|", "\N{FOUR LEAF CLOVER}",
+                        "\N{CYCLONE}", "\N{SUNFLOWER}", "|uni_six|", "\N{MUSHROOM}", "|uni_heart|", "\N{SNOWFLAKE}"]
         # padding prevents index errors
-        padding_before = [":mushroom:", ":heart:", ":snowflake:"]
-        padding_after = [":cherries:", ":cookie:", ":two:"]
+        padding_before = ["\N{MUSHROOM}", "|uni_heart|", "\N{SNOWFLAKE}"]
+        padding_after = ["\N{CHERRIES}", "\N{COOKIE}", "|uni_two|"]
         reel = padding_before + reel_pattern + padding_after
         reels = []
         for i in range(0, 3):
@@ -498,15 +502,15 @@ class Economy:
         display_reels += "  " + reels[0][2] + " " + \
             reels[1][2] + " " + reels[2][2] + "\n"
 
-        if line[0] == ":two:" and line[1] == ":two:" and line[2] == ":six:":
+        if line[0] == "|uni_two|" and line[1] == "|uni_two|" and line[2] == "|uni_six|":
             bid = bid * 5000
             slotMsg = "{}{} 226! Your bet is multiplied * 5000! {}! ".format(
                 display_reels, message.author.mention, str(bid))
-        elif line[0] == ":four_leaf_clover:" and line[1] == ":four_leaf_clover:" and line[2] == ":four_leaf_clover:":
+        elif line[0] == "\N{FOUR LEAF CLOVER}" and line[1] == "\N{FOUR LEAF CLOVER}" and line[2] == "\N{FOUR LEAF CLOVER}":
             bid += 1000
             slotMsg = "{}{} Three FLC! +1000! ".format(
                 display_reels, message.author.mention)
-        elif line[0] == ":cherries:" and line[1] == ":cherries:" and line[2] == ":cherries:":
+        elif line[0] == "\N{CHERRIES}" and line[1] == "\N{CHERRIES}" and line[2] == "\N{CHERRIES}":
             bid += 800
             slotMsg = "{}{} Three cherries! +800! ".format(
                 display_reels, message.author.mention)
@@ -514,11 +518,11 @@ class Economy:
             bid += 500
             slotMsg = "{}{} Three symbols! +500! ".format(
                 display_reels, message.author.mention)
-        elif line[0] == ":two:" and line[1] == ":six:" or line[1] == ":two:" and line[2] == ":six:":
+        elif line[0] == "|uni_two|" and line[1] == "|uni_six|" or line[1] == "|uni_two|" and line[2] == "|uni_six|":
             bid = bid * 4
             slotMsg = "{}{} 26! Your bet is multiplied * 4! {}! ".format(
                 display_reels, message.author.mention, str(bid))
-        elif line[0] == ":cherries:" and line[1] == ":cherries:" or line[1] == ":cherries:" and line[2] == ":cherries:":
+        elif line[0] == "\N{CHERRIES}" and line[1] == "\N{CHERRIES}" or line[1] == "\N{CHERRIES}" and line[2] == "\N{CHERRIES}":
             bid = bid * 3
             slotMsg = "{}{} Two cherries! Your bet is multiplied * 3! {}! ".format(
                 display_reels, message.author.mention, str(bid))
