@@ -315,7 +315,7 @@ async def set_bot_owner():
                 owner = await bot.get_user_info(bot.settings.owner)
             except:
                 owner = None
-            else:
+            if not owner:
                 owner = bot.settings.owner # Just the ID then
         return owner
 
