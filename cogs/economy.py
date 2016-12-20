@@ -13,16 +13,16 @@ import time
 import logging
 
 slot_emotes = {
-	'TWO': '2\u20e3',
-	'SIX': '6\u20e3',
-	'HEART':'\u2764\ufe0f',
-	'FOUR LEAF CLOVER':'\ud83c\udf40',
-	'CHERRIES':'\ud83c\udf52',
-	'COOKIE':'\ud83c\udf6a',
-	'SNOWFLAKE':'\u2744\ufe0f',
-	'SUNFLOWER':'\ud83c\udf3c',
-	'CYCLONE':'\ud83c\udf00',
-	'MUSHROOM':'\ud83c\udf44'
+    'TWO': '2\u20e3',
+    'SIX': '6\u20e3',
+    'HEART':'\u2764\ufe0f',
+    'FOUR LEAF CLOVER':'\ud83c\udf40',
+    'CHERRIES':'\ud83c\udf52',
+    'COOKIE':'\ud83c\udf6a',
+    'SNOWFLAKE':'\u2744\ufe0f',
+    'SUNFLOWER':'\ud83c\udf3c',
+    'CYCLONE':'\ud83c\udf00',
+    'MUSHROOM':'\ud83c\udf44'
 }
 
 default_settings = {"PAYDAY_TIME": 300, "PAYDAY_CREDITS": 120,
@@ -30,10 +30,10 @@ default_settings = {"PAYDAY_TIME": 300, "PAYDAY_CREDITS": 120,
                     "REGISTER_CREDITS": 0}
 
 slot_payouts = """Slot machine payouts:
-    {TWO}{TWO}{SIX}Bet * 5000
+    {TWO} {TWO} {SIX} Bet * 5000
     {FOUR LEAF CLOVER} {FOUR LEAF CLOVER} {FOUR LEAF CLOVER} +1000
     {CHERRIES} {CHERRIES} {CHERRIES} +800
-     {TWO}{SIX}Bet * 4
+     {TWO} {SIX} Bet * 4
     {CHERRIES} {CHERRIES} Bet * 3
 
     Three symbols: +500
@@ -492,11 +492,11 @@ class Economy:
             await self.bot.say("{0} You need an account with enough funds to play the slot machine.".format(author.mention))
 
     async def slot_machine(self, message, bid):
-        reel_pattern = ["{CHERRIES}".format(**slot_emotes), "{COOKIE}".format(**slot_emotes), "{TWO}".format(**slot_emotes), "{FOUR LEAF CLOVER}".format(**slot_emotes),
-                        "{CYCLONE}".format(**slot_emotes), "{SUNFLOWER}".format(**slot_emotes), "{SIX}".format(**slot_emotes), "{MUSHROOM}".format(**slot_emotes), "{HEART}".format(**slot_emotes), "{SNOWFLAKE}".format(**slot_emotes)]
+        reel_pattern = ["{CHERRIES}", "{COOKIE}", "{TWO}", "{FOUR LEAF CLOVER}",
+                        "{CYCLONE}", "{SUNFLOWER}", "{SIX}", "{MUSHROOM}", "{HEART}", "{SNOWFLAKE}"]
         # padding prevents index errors
-        padding_before = ["{MUSHROOM}".format(**slot_emotes), "{HEART}".format(**slot_emotes), "{SNOWFLAKE}".format(**slot_emotes)]
-        padding_after = ["{CHERRIES}".format(**slot_emotes), "{COOKIE}".format(**slot_emotes), "{TWO}".format(**slot_emotes)]
+        padding_before = ["{MUSHROOM}", "{HEART}", "{SNOWFLAKE}"]
+        padding_after = ["{CHERRIES}", "{COOKIE}", "{TWO}"]
         reel = padding_before + reel_pattern + padding_after
         reels = []
         for i in range(0, 3):
@@ -505,11 +505,11 @@ class Economy:
         line = [reels[0][1], reels[1][1], reels[2][1]]
 
         display_reels = "~~\n~~  " + \
-            reels[0][0] + " " + reels[1][0] + " " + reels[2][0] + "\n"
-        display_reels += ">" + reels[0][1] + " " + \
-            reels[1][1] + " " + reels[2][1] + "\n"
-        display_reels += "  " + reels[0][2] + " " + \
-            reels[1][2] + " " + reels[2][2] + "\n"
+            reels[0][0].format(**slot_emotes) + " " + reels[1][0].format(**slot_emotes) + " " + reels[2][0].format(**slot_emotes) + "\n"
+        display_reels += ">" + reels[0][1].format(**slot_emotes) + " " + \
+            reels[1][1].format(**slot_emotes) + " " + reels[2][1].format(**slot_emotes) + "\n"
+        display_reels += "  " + reels[0][2].format(**slot_emotes) + " " + \
+            reels[1][2].format(**slot_emotes) + " " + reels[2][2].format(**slot_emotes) + "\n"
 
         if line[0] == "{TWO}".format(**slot_emotes) and line[1] == "{TWO}".format(**slot_emotes) and line[2] == "{SIX}".format(**slot_emotes):
             bid = bid * 5000
