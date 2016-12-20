@@ -12,23 +12,25 @@ import os
 import time
 import logging
 
-uni_two = '2\u20e3'
-uni_six = '6\u20e3'
-uni_heart = '\u2764\ufe0f'
+slot_emotes = {
+    'TWO': '2\u20e3',
+    'SIX': '6\u20e3',
+    'HEART':'\u2764\ufe0f'
+}
 
 default_settings = {"PAYDAY_TIME": 300, "PAYDAY_CREDITS": 120,
                     "SLOT_MIN": 5, "SLOT_MAX": 100, "SLOT_TIME": 0,
                     "REGISTER_CREDITS": 0}
 
 slot_payouts = """Slot machine payouts:
-    """+ uni_two + uni_two + uni_six +"""Bet * 5000
+    {TWO}{TWO}{SIX}Bet * 5000
     \N{FOUR LEAF CLOVER} \N{FOUR LEAF CLOVER} \N{FOUR LEAF CLOVER} +1000
     \N{CHERRIES} \N{CHERRIES} \N{CHERRIES} +800
-     """+uni_two + uni_six +"""Bet * 4
+     {TWO}{SIX}Bet * 4
     \N{CHERRIES} \N{CHERRIES} Bet * 3
 
     Three symbols: +500
-    Two symbols: Bet * 2"""
+    Two symbols: Bet * 2""".format(**slot_emotes)
 
 
 class BankError(Exception):
@@ -483,11 +485,11 @@ class Economy:
             await self.bot.say("{0} You need an account with enough funds to play the slot machine.".format(author.mention))
 
     async def slot_machine(self, message, bid):
-        reel_pattern = ["\N{CHERRIES}", "\N{COOKIE}", uni_two, "\N{FOUR LEAF CLOVER}",
-                        "\N{CYCLONE}", "\N{SUNFLOWER}", uni_six, "\N{MUSHROOM}", uni_heart, "\N{SNOWFLAKE}"]
+        reel_pattern = ["\N{CHERRIES}", "\N{COOKIE}", "{TWO}".format(**slot_emotes), "\N{FOUR LEAF CLOVER}",
+                        "\N{CYCLONE}", "\N{SUNFLOWER}", "{SIX}".format(**slot_emotes), "\N{MUSHROOM}", "{HEART}".format(**slot_emotes), "\N{SNOWFLAKE}"]
         # padding prevents index errors
-        padding_before = ["\N{MUSHROOM}", uni_heart, "\N{SNOWFLAKE}"]
-        padding_after = ["\N{CHERRIES}", "\N{COOKIE}", uni_two]
+        padding_before = ["\N{MUSHROOM}", "{HEART}".format(**slot_emotes), "\N{SNOWFLAKE}"]
+        padding_after = ["\N{CHERRIES}", "\N{COOKIE}", "{TWO}".format(**slot_emotes)]
         reel = padding_before + reel_pattern + padding_after
         reels = []
         for i in range(0, 3):
@@ -502,7 +504,7 @@ class Economy:
         display_reels += "  " + reels[0][2] + " " + \
             reels[1][2] + " " + reels[2][2] + "\n"
 
-        if line[0] == uni_two and line[1] == uni_two and line[2] == uni_six:
+        if line[0] == "{TWO}".format(**slot_emotes) and line[1] == "{TWO}".format(**slot_emotes) and line[2] == "{SIX}".format(**slot_emotes):
             bid = bid * 5000
             slotMsg = "{}{} 226! Your bet is multiplied * 5000! {}! ".format(
                 display_reels, message.author.mention, str(bid))
@@ -518,7 +520,7 @@ class Economy:
             bid += 500
             slotMsg = "{}{} Three symbols! +500! ".format(
                 display_reels, message.author.mention)
-        elif line[0] == uni_two and line[1] == uni_six or line[1] == uni_two and line[2] == uni_six:
+        elif line[0] == "{TWO}".format(**slot_emotes) and line[1] == "{SIX}".format(**slot_emotes) or line[1] == "{TWO}".format(**slot_emotes) and line[2] == "{SIX}".format(**slot_emotes):
             bid = bid * 4
             slotMsg = "{}{} 26! Your bet is multiplied * 4! {}! ".format(
                 display_reels, message.author.mention, str(bid))
