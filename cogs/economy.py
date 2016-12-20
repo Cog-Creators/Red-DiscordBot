@@ -33,7 +33,7 @@ slot_payouts = """Slot machine payouts:
     {TWO} {TWO} {SIX} Bet * 5000
     {FOUR LEAF CLOVER} {FOUR LEAF CLOVER} {FOUR LEAF CLOVER} +1000
     {CHERRIES} {CHERRIES} {CHERRIES} +800
-     {TWO} {SIX} Bet * 4
+    {TWO} {SIX} Bet * 4
     {CHERRIES} {CHERRIES} Bet * 3
 
     Three symbols: +500
