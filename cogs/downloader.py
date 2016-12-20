@@ -545,7 +545,7 @@ class Downloader:
         except UpdateError as e:
             raise UpdateError(name, *e.args) from None
 
-    def del_rw(action, name, exc):
+    def del_rw(cog, action, name, exc):
         os.chmod(name, stat.S_IWRITE)
         os.remove(name)
 
