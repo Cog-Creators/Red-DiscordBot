@@ -546,7 +546,7 @@ class Downloader:
             raise UpdateError(name, *e.args) from None
 
     def del_rw(cog, action, name, exc):
-        os.chmod(name, stat.S_IWRITE)
+        os.chmod(name, stat.S_IWUSR)
         os.remove(name)
 
     async def _robust_edit(self, msg, text):
