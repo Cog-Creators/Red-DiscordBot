@@ -505,43 +505,43 @@ class Economy:
         line = [reels[0][1], reels[1][1], reels[2][1]]
 
         display_reels = "~~\n~~  " + \
-            reels[0][0].format(**slot_emotes) + " " + reels[1][0].format(**slot_emotes) + " " + reels[2][0].format(**slot_emotes) + "\n"
-        display_reels += ">" + reels[0][1].format(**slot_emotes) + " " + \
-            reels[1][1].format(**slot_emotes) + " " + reels[2][1].format(**slot_emotes) + "\n"
-        display_reels += "  " + reels[0][2].format(**slot_emotes) + " " + \
-            reels[1][2].format(**slot_emotes) + " " + reels[2][2].format(**slot_emotes) + "\n"
+            reels[0][0] + " " + reels[1][0] + " " + reels[2][0] + "\n"
+        display_reels += ">" + reels[0][1] + " " + \
+            reels[1][1] + " " + reels[2][1] + "\n"
+        display_reels += "  " + reels[0][2] + " " + \
+            reels[1][2] + " " + reels[2][2] + "\n"
 
-        if line[0] == "2\u20e3" and line[1] == "2\u20e3" and line[2] == "6\u20e3":
+        if line[0] == "{TWO}" and line[1] == "{TWO}" and line[2] == "{SIX}":
             bid = bid * 5000
             slotMsg = "{}{} 226! Your bet is multiplied * 5000! {}! ".format(
-                display_reels, message.author.mention, str(bid))
-        elif line[0] == "\ud83c\udf40" and line[1] == "\ud83c\udf40" and line[2] == "\ud83c\udf40":
+                display_reels.format(**slot_emotes), message.author.mention, str(bid))
+        elif line[0] == "{FOUR LEAF CLOVER}" and line[1] == "{FOUR LEAF CLOVER}" and line[2] == "{FOUR LEAF CLOVER}":
             bid += 1000
             slotMsg = "{}{} Three FLC! +1000! ".format(
-                display_reels, message.author.mention)
-        elif line[0] == "\ud83c\udf52" and line[1] == "\ud83c\udf52" and line[2] == "\ud83c\udf52":
+                display_reels.format(**slot_emotes), message.author.mention)
+        elif line[0] == "{CHERRIES}" and line[1] == "{CHERRIES}" and line[2] == "{CHERRIES}":
             bid += 800
             slotMsg = "{}{} Three cherries! +800! ".format(
-                display_reels, message.author.mention)
+                display_reels.format(**slot_emotes), message.author.mention)
         elif line[0] == line[1] == line[2]:
             bid += 500
             slotMsg = "{}{} Three symbols! +500! ".format(
-                display_reels, message.author.mention)
-        elif line[0] == "2\u20e3" and line[1] == "6\u20e3" or line[1] == "2\u20e3" and line[2] == "6\u20e3":
+                display_reels.format(**slot_emotes), message.author.mention)
+        elif line[0] == "{TWO}" and line[1] == "{SIX}" or line[1] == "{TWO}" and line[2] == "{SIX}":
             bid = bid * 4
             slotMsg = "{}{} 26! Your bet is multiplied * 4! {}! ".format(
-                display_reels, message.author.mention, str(bid))
-        elif line[0] == "\ud83c\udf52" and line[1] == "\ud83c\udf52" or line[1] == "\ud83c\udf52" and line[2] == "\ud83c\udf52":
+                display_reels.format(**slot_emotes), message.author.mention, str(bid))
+        elif line[0] == "{CHERRIES}" and line[1] == "{CHERRIES}" or line[1] == "{CHERRIES}" and line[2] == "{CHERRIES}":
             bid = bid * 3
             slotMsg = "{}{} Two cherries! Your bet is multiplied * 3! {}! ".format(
-                display_reels, message.author.mention, str(bid))
+                display_reels.format(**slot_emotes), message.author.mention, str(bid))
         elif line[0] == line[1] or line[1] == line[2]:
             bid = bid * 2
             slotMsg = "{}{} Two symbols! Your bet is multiplied * 2! {}! ".format(
-                display_reels, message.author.mention, str(bid))
+                display_reels.format(**slot_emotes), message.author.mention, str(bid))
         else:
             slotMsg = "{}{} Nothing! Lost bet. ".format(
-                display_reels, message.author.mention)
+                display_reels.format(**slot_emotes), message.author.mention)
             self.bank.withdraw_credits(message.author, bid)
             slotMsg += "\n" + \
                 " Credits left: {}".format(
