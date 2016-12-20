@@ -5,6 +5,7 @@ import os
 from random import shuffle, choice
 from cogs.utils.dataIO import dataIO
 from cogs.utils import checks
+from cogs.utils.chat_formatting import pagify
 from __main__ import send_cmd_help, settings
 from json import JSONDecodeError
 import re
@@ -1230,14 +1231,11 @@ class Audio:
     @local.command(name="list", no_pm=True)
     async def list_local(self):
         """Lists local playlists"""
-        local_playlists = self._list_local_playlists()
-        if local_playlists:
-            msg = "```xl\n"
-            for p in local_playlists:
-                msg += "{}, ".format(p)
-            msg = msg.strip(", ")
-            msg += "```"
-            await self.bot.say("Available local playlists:\n{}".format(msg))
+        playlists = ", ".join(self._list_local_playlists())
+        if playlists:
+            playlists = "Available local playlists:\n\n" + playlists
+            for page in pagify(playlists):
+                await self.bot.say(page)
         else:
             await self.bot.say("There are no playlists.")
 
@@ -1439,14 +1437,12 @@ class Audio:
     @playlist.command(pass_context=True, no_pm=True, name="list")
     async def playlist_list(self, ctx):
         """Lists all available playlists"""
-        files = self._list_playlists(ctx.message.server)
-        if files:
-            msg = "```xl\n"
-            for f in files:
-                msg += "{}, ".format(f)
-            msg = msg.strip(", ")
-            msg += "```"
-            await self.bot.say("Available playlists:\n{}".format(msg))
+        server = ctx.message.server
+        playlists = ", ".join(self._list_playlists(server))
+        if playlists:
+            playlists = "Available playlists:\n\n" + playlists
+            for page in pagify(playlists):
+                await self.bot.say(page)
         else:
             await self.bot.say("There are no playlists.")
 
