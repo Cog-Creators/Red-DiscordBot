@@ -13,11 +13,11 @@ import time
 import logging
 
 slot_emotes = {
-    'TWO': '2\u20e3',
-    'SIX': '6\u20e3',
+    'TWO': '"2\u20e3"',
+    'SIX': '"6\u20e3"',
     'HEART':'\u2764\ufe0f',
-    'FOUR LEAF CLOVER':'\ud83c\udf40',
-    'CHERRIES':'\ud83c\udf52',
+    'FOUR LEAF CLOVER':'"\ud83c\udf40"',
+    'CHERRIES':'"\ud83c\udf52"',
     'COOKIE':'\ud83c\udf6a',
     'SNOWFLAKE':'\u2744\ufe0f',
     'SUNFLOWER':'\ud83c\udf3c',
@@ -33,7 +33,7 @@ slot_payouts = """Slot machine payouts:
     {TWO} {TWO} {SIX} Bet * 5000
     {FOUR LEAF CLOVER} {FOUR LEAF CLOVER} {FOUR LEAF CLOVER} +1000
     {CHERRIES} {CHERRIES} {CHERRIES} +800
-    {TWO} {SIX} Bet * 4
+     {TWO} {SIX} Bet * 4
     {CHERRIES} {CHERRIES} Bet * 3
 
     Three symbols: +500
@@ -511,15 +511,15 @@ class Economy:
         display_reels += "  " + reels[0][2].format(**slot_emotes) + " " + \
             reels[1][2].format(**slot_emotes) + " " + reels[2][2].format(**slot_emotes) + "\n"
 
-        if line[0] == "{TWO}".format(**slot_emotes) and line[1] == "{TWO}".format(**slot_emotes) and line[2] == "{SIX}".format(**slot_emotes):
+        if line[0] == "2\u20e3" and line[1] == "2\u20e3" and line[2] == "6\u20e3":
             bid = bid * 5000
             slotMsg = "{}{} 226! Your bet is multiplied * 5000! {}! ".format(
                 display_reels, message.author.mention, str(bid))
-        elif line[0] == "{FOUR LEAF CLOVER}".format(**slot_emotes) and line[1] == "{FOUR LEAF CLOVER}".format(**slot_emotes) and line[2] == "{FOUR LEAF CLOVER}".format(**slot_emotes):
+        elif line[0] == "\ud83c\udf40" and line[1] == "\ud83c\udf40" and line[2] == "\ud83c\udf40":
             bid += 1000
             slotMsg = "{}{} Three FLC! +1000! ".format(
                 display_reels, message.author.mention)
-        elif line[0] == "{CHERRIES}".format(**slot_emotes) and line[1] == "{CHERRIES}".format(**slot_emotes) and line[2] == "{CHERRIES}".format(**slot_emotes):
+        elif line[0] == "\ud83c\udf52" and line[1] == "\ud83c\udf52" and line[2] == "\ud83c\udf52":
             bid += 800
             slotMsg = "{}{} Three cherries! +800! ".format(
                 display_reels, message.author.mention)
@@ -527,11 +527,11 @@ class Economy:
             bid += 500
             slotMsg = "{}{} Three symbols! +500! ".format(
                 display_reels, message.author.mention)
-        elif line[0] == "{TWO}".format(**slot_emotes) and line[1] == "{SIX}".format(**slot_emotes) or line[1] == "{TWO}".format(**slot_emotes) and line[2] == "{SIX}".format(**slot_emotes):
+        elif line[0] == "2\u20e3" and line[1] == "6\u20e3" or line[1] == "2\u20e3" and line[2] == "6\u20e3":
             bid = bid * 4
             slotMsg = "{}{} 26! Your bet is multiplied * 4! {}! ".format(
                 display_reels, message.author.mention, str(bid))
-        elif line[0] == "{CHERRIES}".format(**slot_emotes) and line[1] == "{CHERRIES}".format(**slot_emotes) or line[1] == "{CHERRIES}".format(**slot_emotes) and line[2] == "{CHERRIES}".format(**slot_emotes):
+        elif line[0] == "\ud83c\udf52" and line[1] == "\ud83c\udf52" or line[1] == "\ud83c\udf52" and line[2] == "\ud83c\udf52":
             bid = bid * 3
             slotMsg = "{}{} Two cherries! Your bet is multiplied * 3! {}! ".format(
                 display_reels, message.author.mention, str(bid))
