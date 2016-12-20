@@ -15,7 +15,14 @@ import logging
 slot_emotes = {
     'TWO': '2\u20e3',
     'SIX': '6\u20e3',
-    'HEART':'\u2764\ufe0f'
+    'HEART':'\u2764\ufe0f',
+    'FOUR LEAF CLOVER':'\ud83c\udf40',
+    'CHERRIES':'\ud83c\udf52',
+	'COOKIE':'\ud83c\udf6a',
+	'SNOWFLAKE':'\u2744\ufe0f',
+	'SUNFLOWER':'\ud83c\udf3c',
+	'CYCLONE':'\ud83c\udf00',
+	'MUSHROOM':'\ud83c\udf44'
 }
 
 default_settings = {"PAYDAY_TIME": 300, "PAYDAY_CREDITS": 120,
@@ -24,10 +31,10 @@ default_settings = {"PAYDAY_TIME": 300, "PAYDAY_CREDITS": 120,
 
 slot_payouts = """Slot machine payouts:
     {TWO}{TWO}{SIX}Bet * 5000
-    \N{FOUR LEAF CLOVER} \N{FOUR LEAF CLOVER} \N{FOUR LEAF CLOVER} +1000
-    \N{CHERRIES} \N{CHERRIES} \N{CHERRIES} +800
+    {FOUR LEAF CLOVER} {FOUR LEAF CLOVER} {FOUR LEAF CLOVER} +1000
+    {CHERRIES} {CHERRIES} {CHERRIES} +800
      {TWO}{SIX}Bet * 4
-    \N{CHERRIES} \N{CHERRIES} Bet * 3
+    {CHERRIES} {CHERRIES} Bet * 3
 
     Three symbols: +500
     Two symbols: Bet * 2""".format(**slot_emotes)
@@ -485,11 +492,11 @@ class Economy:
             await self.bot.say("{0} You need an account with enough funds to play the slot machine.".format(author.mention))
 
     async def slot_machine(self, message, bid):
-        reel_pattern = ["\N{CHERRIES}", "\N{COOKIE}", "{TWO}".format(**slot_emotes), "\N{FOUR LEAF CLOVER}",
-                        "\N{CYCLONE}", "\N{SUNFLOWER}", "{SIX}".format(**slot_emotes), "\N{MUSHROOM}", "{HEART}".format(**slot_emotes), "\N{SNOWFLAKE}"]
+        reel_pattern = ["{CHERRIES}".format(**slot_emotes), "{COOKIE}".format(**slot_emotes), "{TWO}".format(**slot_emotes), "{FOUR LEAF CLOVER}".format(**slot_emotes),
+                        "{CYCLONE}".format(**slot_emotes), "{SUNFLOWER}".format(**slot_emotes), "{SIX}".format(**slot_emotes), "{MUSHROOM}".format(**slot_emotes), "{HEART}".format(**slot_emotes), "{SNOWFLAKE}".format(**slot_emotes)]
         # padding prevents index errors
-        padding_before = ["\N{MUSHROOM}", "{HEART}".format(**slot_emotes), "\N{SNOWFLAKE}"]
-        padding_after = ["\N{CHERRIES}", "\N{COOKIE}", "{TWO}".format(**slot_emotes)]
+        padding_before = ["{MUSHROOM}".format(**slot_emotes), "{HEART}".format(**slot_emotes), "{SNOWFLAKE}".format(**slot_emotes)]
+        padding_after = ["{CHERRIES}".format(**slot_emotes), "{COOKIE}".format(**slot_emotes), "{TWO}".format(**slot_emotes)]
         reel = padding_before + reel_pattern + padding_after
         reels = []
         for i in range(0, 3):
@@ -508,11 +515,11 @@ class Economy:
             bid = bid * 5000
             slotMsg = "{}{} 226! Your bet is multiplied * 5000! {}! ".format(
                 display_reels, message.author.mention, str(bid))
-        elif line[0] == "\N{FOUR LEAF CLOVER}" and line[1] == "\N{FOUR LEAF CLOVER}" and line[2] == "\N{FOUR LEAF CLOVER}":
+        elif line[0] == "{FOUR LEAF CLOVER}".format(**slot_emotes) and line[1] == "{FOUR LEAF CLOVER}".format(**slot_emotes) and line[2] == "{FOUR LEAF CLOVER}".format(**slot_emotes):
             bid += 1000
             slotMsg = "{}{} Three FLC! +1000! ".format(
                 display_reels, message.author.mention)
-        elif line[0] == "\N{CHERRIES}" and line[1] == "\N{CHERRIES}" and line[2] == "\N{CHERRIES}":
+        elif line[0] == "{CHERRIES}".format(**slot_emotes) and line[1] == "{CHERRIES}".format(**slot_emotes) and line[2] == "{CHERRIES}".format(**slot_emotes):
             bid += 800
             slotMsg = "{}{} Three cherries! +800! ".format(
                 display_reels, message.author.mention)
@@ -524,7 +531,7 @@ class Economy:
             bid = bid * 4
             slotMsg = "{}{} 26! Your bet is multiplied * 4! {}! ".format(
                 display_reels, message.author.mention, str(bid))
-        elif line[0] == "\N{CHERRIES}" and line[1] == "\N{CHERRIES}" or line[1] == "\N{CHERRIES}" and line[2] == "\N{CHERRIES}":
+        elif line[0] == "{CHERRIES}".format(**slot_emotes) and line[1] == "{CHERRIES}".format(**slot_emotes) or line[1] == "{CHERRIES}".format(**slot_emotes) and line[2] == "{CHERRIES}".format(**slot_emotes):
             bid = bid * 3
             slotMsg = "{}{} Two cherries! Your bet is multiplied * 3! {}! ".format(
                 display_reels, message.author.mention, str(bid))
