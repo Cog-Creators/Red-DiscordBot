@@ -11,7 +11,7 @@ In the original Kingdom Hearts, who is Sora looking for?`Kairi
 Who is the main character from Final Fantasy IX?`Zidane Tribal
 In what series of video games did Master Chief appear?`Halo
 What video game made the Golden Gun famous?`Goldeneye
-Gran Turismo is exclusive to 1 console, what is it?`Sony Playstation
+Gran Turismo is exclusive to 1 console, what is it?`Playstation
 Who is Harry Potter's best friend in the game "Harry Potter and the Chamber of Secrets"?`Ron Weasley
 What role do you play in the game "Pacific Strike"?`American pilot
 What famous monkey had a considerable role in turning Nintendo into the company they are today?`Donkey Kong
@@ -44,7 +44,7 @@ The PS4, along with Xbox One and Wii U, is a part of what generation of video ga
 Who is the main protagonist of "Call of Duty: Ghosts"?`Logan Walker
 Who is the main antagonist of "Battlefield 4"?`Admiral Chang
 Who is the main character of "GTA: San Andreas"?`CJ`Carl Johnson
-In "GTA: San Andrea", what is CJ's brother's name?`Sweet
+In "GTA: San Andreas", what is CJ's older brother's name?`Sweet
 What popular PS3 game that spawned a sequel was narrated by Stephen Fry?`Little Big Planet
 What Rockstar Game was the first to feature bullet time?`Max Payne
 Who must Kratos kill in "God of War"?`Ares
@@ -88,7 +88,7 @@ What does "RPG" stand for in the world of gaming?`Role Playing Game
 In the original "Donkey Kong" arcade game, what was the ape's favorite weapon to use against Mario?`Barrel`Barrels
 Final Fantasy VII was originally designed in what video game system?`Nintendo 64
 What was the doomed console Apple released against the Nintendo 64, Sony PlayStation and Sega Saturn?`Apple Pippin
-In what video game must a player maintain proper educational quotients, life expediencies, as well as pollution levels?`Sim City
+In what video game must a player maintain proper educational quotients, life expediencies, as well as pollution levels?`SimCity`Sim City
 What is the name of town in Diablo?`Tristram
 In what country can the town of Silent Hill be found?`United States
 Name the Atlantean admiral in the campaigns of the popular game Age of Mythology?`Arkontos
@@ -137,7 +137,7 @@ What do you need to collect 100 of to get an extra life in Super Mario Bros.?`Co
 What is Mario's profession?`Plumber
 What is the most powerful whip in 'Castlevania 2'?`Flame Whip
 What is the name of the cloud-riding, glasses-wearing koopa in the Super Mario Bros. series?`Lakitu
-What is the name of the Playstation controller that uses two analog joysticks?`Dual Shock
+What is the name of the Playstation controller that uses two analog joysticks?`Dualshock`Dual Shock
 What is the name of the Star Fox Team's cocky wingman?`Falco Lombardi`Falco
 What is your character's name in the 'Legend of Zelda' series?`Link
 What member of the original StarFox team betrays the group to join StarWolf?`Pigma Dengar`Pigma
@@ -149,8 +149,8 @@ Who created the music for N2O: Nitrous Oxide?`The Crystal Method`Crystal Method
 Who invented Tetris?`Alexey Pazhitnov`Alexey Pajitnov
 Who is Mega Man's creator?`Dr. Light`Dr Light
 Who is Mega Man's sister?`Roll
-Who is the developer at Nintendo responsible for classics like Donkey Kong, Super Mario Bros., and The Legend of Zelda?`Shigeru Miyamoto
-Who is the famed musical director for Square's Final Fantasy series?`Nobuo Uematsu
+Who is the developer at Nintendo responsible for classics like Donkey Kong, Super Mario Bros., and The Legend of Zelda?`Shigeru Miyamoto`Miyamoto
+Who is the famed musical director for Square's Final Fantasy series?`Nobuo Uematsu`Uematsu
 Who is the first gym leader you fight in 'Pokmon' for the Game Boy?`Brock
 Who is the main character from Nintendo's 'Earthbound'?`Ness
 Who is the main character in the 'DeathQuest' series?`Lucretzia
