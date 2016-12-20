@@ -9,7 +9,6 @@ import time
 import aiohttp
 import asyncio
 import csv
-import shelve
 import redis
 import datetime
 from datetime import date
@@ -18,8 +17,6 @@ import time
 import math
 import pint
 from currency_converter import CurrencyConverter
-import discord.client
-import os
 
 c = CurrencyConverter()
 ureg = pint.UnitRegistry()

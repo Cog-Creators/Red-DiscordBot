@@ -13,7 +13,7 @@ import time
 import logging
 
 default_settings = {"PAYDAY_TIME": 300, "PAYDAY_CREDITS": 120,
-                    "SLOT_MIN": 5, "SLOT_MAX": 100, "SLOT_TIME": 0,
+                    "SLOT_MIN": 5, "SLOT_MAX": 1000, "SLOT_TIME": 0,
                     "REGISTER_CREDITS": 0}
 
 slot_payouts = """Slot machine payouts:
