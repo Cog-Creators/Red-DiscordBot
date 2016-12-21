@@ -570,7 +570,7 @@ class Economy:
         if not payout:
             # Checks for two-consecutive-symbols special rewards
             payout = PAYOUTS.get((rows[1][0], rows[1][1]),
-                     PAYOUTS.get((rows[1][0], rows[1][1]))
+                     PAYOUTS.get((rows[1][1], rows[1][2]))
                                 )
         if not payout:
             # Still nothing. Let's check for 3 generic same symbols
