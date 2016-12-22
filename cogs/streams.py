@@ -440,7 +440,7 @@ class Streams:
                         can_speak = channel_obj.permissions_for(channel_obj.server.me).send_messages
                         if channel_obj and can_speak:
                             await self.bot.send_message(
-                                self.bot.get_channel(channel), embed=em)
+                                self.bot.get_channel(channel), embed=emb)
                 else:
                     if stream["ALREADY_ONLINE"] and not online:
                         stream["ALREADY_ONLINE"] = False
