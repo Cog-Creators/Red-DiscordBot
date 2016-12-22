@@ -274,6 +274,10 @@ async def on_command_error(error, ctx):
         await send_cmd_help(ctx)
     elif isinstance(error, commands.BadArgument):
         await send_cmd_help(ctx)
+    elif isinstance(error, commands.TooManyArguments):
+        oneliner = ("Error in command '{}' - TooManyArguments "
+                    "passed".format(ctx.command.qualified_name))
+        await bot.send_message(channel, oneliner)
     elif isinstance(error, commands.DisabledCommand):
         await bot.send_message(channel, "That command is disabled.")
     elif isinstance(error, commands.CommandInvokeError):
