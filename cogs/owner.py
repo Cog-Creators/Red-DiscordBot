@@ -803,13 +803,22 @@ class Owner:
         url = url.read().strip()[:-4]
         branch = os.popen(r'git rev-parse --abbrev-ref HEAD')
         branch = branch.read().strip()
+        allbranches = os.popen(r'git branch')
+        allbranches = allbranches.read().strip()
+
+        if allbranches.find("* " + branch) != -1:
+            defaultbranch = True
+        else:
+            defaultbranch = False
+
         travisbuildstatus = "{}.png?branch={}".format(url.replace("github.com", "api.travis-ci.org"), branch)
         repo_name = url.split("/")[-1]
         commits = os.popen(r'git show -s -n 3 HEAD --format="%cr|%s|%H"')
         ncommits = os.popen(r'git rev-list --count HEAD').read()
 
         lines = commits.read().split('\n')
-        if branch == "master":
+
+        if defaultbranch:
             embed = discord.Embed(title="Updates of {}".format(repo_name),
                                   description="Last three updates",
                                   colour=discord.Colour.red(),
