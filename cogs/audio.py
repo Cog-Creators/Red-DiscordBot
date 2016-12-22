@@ -174,8 +174,8 @@ class Playlist:
         if self.main_class._playlist_exists_global(self.name):
             return False
 
-        admin_role = settings.get_server_admin(server)
-        mod_role = settings.get_server_mod(server)
+        admin_role = settings.get_server_admin(self.server)
+        mod_role = settings.get_server_mod(self.server)
 
         is_playlist_author = self.is_author(user)
         is_bot_owner = user.id == settings.owner
@@ -673,6 +673,7 @@ class Audio:
         kwargs['main_class'] = self
         kwargs['name'] = name
         kwargs['sid'] = server
+        kwargs['server'] = self.bot.get_server(server)
 
         return Playlist(**kwargs)
 
