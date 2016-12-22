@@ -76,9 +76,15 @@ class Streams:
                                 colour=discord.Colour(value=colour),
                                 url="http://www.twitch.tv/{}/".format(stream),
                                 description=desc)
-            emb.add_field(name="Title", value=title)
+            if title != "":
+                emb.add_field(name="Title", value=title)
+            else:
+                emb.add_field(name="Title", value="Unknown")
             emb.add_field(name="Viewer count", value=viewers)
-            emb.add_field(name="Game", value=game)
+            if game != "":
+                emb.add_field(name="Game", value=game)
+            else:
+                emb.add_field(name="Game", value="Unknown")
             emb.add_field(name="User", value=username)
             emb.set_image(url=data["stream"]["preview"]["medium"])
             await self.bot.send_message(ctx.message.channel, embed=emb)
@@ -416,9 +422,15 @@ class Streams:
                                         colour=discord.Colour(value=colour),
                                         url="http://www.twitch.tv/{}/".format(stream),
                                         description=desc)
-                    emb.add_field(name="Title", value=title)
+                    if title != "":
+                        emb.add_field(name="Title", value=title)
+                    else:
+                        emb.add_field(name="Title", value="Unknown")
                     emb.add_field(name="Viewer count", value=viewers)
-                    emb.add_field(name="Game", value=game)
+                    if game != "":
+                        emb.add_field(name="Game", value=game)
+                    else:
+                        emb.add_field(name="Game", value="Unknown")
                     emb.add_field(name="User", value=username)
                     emb.set_image(url=data["stream"]["preview"]["medium"])
                     for channel in stream["CHANNELS"]:
