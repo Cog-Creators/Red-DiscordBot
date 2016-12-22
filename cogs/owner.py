@@ -741,6 +741,7 @@ class Owner:
         """Shows Red's current version"""
         response = self.bot.loop.run_in_executor(None, self._get_version)
         result = await asyncio.wait_for(response, timeout=10)
+        result.set_image(url="https://travis-ci.org/Twentysix26/Red-DiscordBot.png?branch=develop")
         try:
             await self.bot.say(embed=result)
         except discord.HTTPException:
