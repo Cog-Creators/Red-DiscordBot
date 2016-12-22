@@ -130,9 +130,12 @@ class Song:
 class Playlist:
     def __init__(self, server=None, sid=None, name=None, author=None, url=None,
                  playlist=None, path=None, main_class=None, **kwargs):
+        # when is this used? idk
+        # what is server when it's global? None? idk
         self.server = server
         self._sid = sid
         self.name = name
+        # this is an id......
         self.author = author
         self.url = url
         self.main_class = main_class  # reference to Audio
@@ -153,8 +156,46 @@ class Playlist:
                "link": self.url}
         return ret
 
+    def is_author(self, user):
+        """checks if the user is the author of this playlist
+        Returns True/False"""
+        return user.id == self.author
+
+    def can_edit(self, user):
+        """right now checks if user is mod or higher including server owner
+        global playlists are uneditable atm
+
+        dev notes:
+        should probably be defined elsewhere later or be dynamic"""
+
+        # I don't know how global playlists are handled.
+        # Not sure if the framework is there for them to be editable.
+        # Don't know how they are handled by Playlist
+        # Don't know how they are handled by Audio
+        # so let's make sure it's not global at all.
+        if self.main_class._playlist_exists_global(self.name):
+            return False
+
+        admin_role = settings.get_server_admin(self.server)
+        mod_role = settings.get_server_mod(self.server)
+
+        is_playlist_author = self.is_author(user)
+        is_bot_owner = user.id == settings.owner
+        is_server_owner = self.server.owner.id == self.author
+        is_admin = discord.utils.get(user.roles, name=admin_role) is not None
+        is_mod = discord.utils.get(user.roles, name=mod_role) is not None
+
+        return any((is_playlist_author,
+                    is_bot_owner,
+                    is_server_owner,
+                    is_admin,
+                    is_mod))
+
+
+    # def __del__() ?
+
     def append_song(self, author, url):
-        if author.id != self.author:
+        if not self.can_edit(author):
             raise UnauthorizedSave
         elif not self.main_class._valid_playable_url(url):
             raise InvalidURL
@@ -634,6 +675,7 @@ class Audio:
         kwargs['main_class'] = self
         kwargs['name'] = name
         kwargs['sid'] = server
+        kwargs['server'] = self.bot.get_server(server)
 
         return Playlist(**kwargs)
 
@@ -1472,6 +1514,7 @@ class Audio:
     @playlist.command(pass_context=True, no_pm=True, name="remove")
     async def playlist_remove(self, ctx, name):
         """Deletes a saved playlist."""
+        author = ctx.message.author
         server = ctx.message.server
 
         if not self._valid_playlist_name(name):
@@ -1479,11 +1522,20 @@ class Audio:
                                "characters.")
             return
 
-        if self._playlist_exists(server, name):
-            self._delete_playlist(server, name)
-            await self.bot.say("Playlist deleted.")
-        else:
+        if not self._playlist_exists(server, name):
             await self.bot.say("Playlist not found.")
+            return
+
+        playlist = self._load_playlist(
+            server, name, local=self._playlist_exists_local(server, name))
+
+        if not playlist.can_edit(author):
+            await self.bot.say("You do not have permissions to delete that playlist.")
+            return
+
+        self._delete_playlist(server, name)
+        await self.bot.say("Playlist deleted.")
+
 
     @playlist.command(pass_context=True, no_pm=True, name="start")
     async def playlist_start(self, ctx, name):
