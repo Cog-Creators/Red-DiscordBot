@@ -809,10 +809,16 @@ class Owner:
         ncommits = os.popen(r'git rev-list --count HEAD').read()
 
         lines = commits.read().split('\n')
-        embed = discord.Embed(title="Updates of " + repo_name,
-                              description="Last three updates",
-                              colour=discord.Colour.red(),
-                              url=url)
+        if branch == "master":
+            embed = discord.Embed(title="Updates of {}".format(repo_name),
+                                  description="Last three updates",
+                                  colour=discord.Colour.red(),
+                                  url=url)
+        else:
+            embed = discord.Embed(title="Updates of {} in {}".format(branch, repo_name),
+                                  description="Last three updates",
+                                  colour=discord.Colour.red(),
+                                  url=url)
         for line in lines:
             if not line:
                 continue
