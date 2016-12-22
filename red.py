@@ -528,6 +528,10 @@ def main(bot):
         interactive_setup(bot.settings)
     load_cogs(bot)
 
+    if bot.settings._dry_run:
+        print("Quitting: dry run")
+        exit(0)
+
     print("Logging into Discord...")
     bot.uptime = datetime.datetime.utcnow()
 
