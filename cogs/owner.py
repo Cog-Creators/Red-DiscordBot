@@ -741,7 +741,6 @@ class Owner:
         """Shows Red's current version"""
         response = self.bot.loop.run_in_executor(None, self._get_version)
         result = await asyncio.wait_for(response, timeout=10)
-        result.set_image(url="https://travis-ci.org/Twentysix26/Red-DiscordBot.png?branch=develop")
         try:
             await self.bot.say(embed=result)
         except discord.HTTPException:
@@ -820,6 +819,8 @@ class Owner:
             commit_url = url + "/commit/" + chash
             content = "[{}]({}) - {} ".format(chash[:6], commit_url, commit)
             embed.add_field(name=when, value=content, inline=False)
+        embed.add_field(name=u"\u2063", value="**Build Status of Reds latest version**", inline=False)
+        embed.set_image(url="https://travis-ci.org/Twentysix26/Red-DiscordBot.png?branch=develop")
         embed.set_footer(text="Total commits: " + ncommits)
 
         return embed
