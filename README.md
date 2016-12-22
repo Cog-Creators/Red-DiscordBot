@@ -6,7 +6,7 @@ Red is a fully modular bot which comes with sets of features/commands that can b
 You can turn Red into a trivia bot, an admin bot, a music bot (...) or all of these together.  
 
 The default set of modules includes and it's not limited to:
-* admin commands
+* moderation features (kick/ban/softban, filters, mod-log...)
 * trivia (lists included and you can make new ones!)
 * music features (playlists, youtube, soundcloud, queues...)
 * stream alerts (twitch/hitbox)
