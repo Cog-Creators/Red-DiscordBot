@@ -420,7 +420,7 @@ class Streams:
                     desc = "Created at " + live_since
                     emb = discord.Embed(title="Online!",
                                         colour=discord.Colour(value=colour),
-                                        url="http://www.twitch.tv/{}/".format(stream),
+                                        url="http://www.twitch.tv/{}/".format(stream["NAME"]),
                                         description=desc)
                     if title != "":
                         emb.add_field(name="Title", value=title)
@@ -461,7 +461,7 @@ class Streams:
                     desc = "Created at " + live_since
                     emb = discord.Embed(title="Online!",
                                         colour=discord.Colour(value=colour),
-                                        url="http://www.hitbox.tv/{}/".format(stream),
+                                        url="http://www.hitbox.tv/{}/".format(stream["NAME"]),
                                         description=desc)
                     emb.add_field(name="Title", value=media_status)
                     emb.add_field(name="Viewer count", value=viewers)
@@ -496,7 +496,7 @@ class Streams:
                     desc = "Updated at " + updated_at
                     emb = discord.Embed(title="Online!",
                                         colour=discord.Colour(value=colour),
-                                        url="http://beam.pro/{}/".format(stream),
+                                        url="http://beam.pro/{}/".format(stream["NAME"]),
                                         description=desc)
                     emb.add_field(name="Title", value=title)
                     emb.add_field(name="Username", value=username)
