@@ -12,15 +12,57 @@ if NOT %errorLevel% == 0 (
     GOTO end  
 )
 
+:ban2x
+FOR /F "tokens=* USEBACKQ" %%V IN (`python --version`) DO (
+SET pt=%%V
+)
+set ptv=%pt:~7,1%
+IF %ptv%== 2 (goto halt) else (goto choose)
+
+
+:halt
+echo Your default python version is lower than the requirements (Python 3.5 or higher)
+echo OR this script is not able to detect it ... yet
+CHOICE /M "You still want to continue?"
+IF errorlevel 2 goto end
+IF errorlevel 1 goto choose
+PAUSE
+
+:choose
+set u=%username%
+echo %u%
+echo.
+IF EXIST "C:\Users\%u%\AppData\Local\Programs\Python\Python35*" echo 1) Python 3.5.x
+IF EXIST "C:\Users\%u%\AppData\Local\Programs\Python\Python36*" echo 2) Python 3.6.x
+echo 3) Use AUTO Detect for default Python version
+
+echo.
+set /p a=
+if %a%== 01 goto p35
+if %a%== 1 goto p35
+if %a%== 02 goto p36
+if %a%== 2 goto p36
+if %a%== 03 goto pyvars
+if %a%== 3 goto pyvars
+
+:p35
+set ptv=3.5
+echo %ptv%
+goto startupdate
+
+:p36
+set ptv=3.6
+echo %ptv%
+goto startupdate
+
 :pyvars
 FOR /F "tokens=* USEBACKQ" %%V IN (`py.exe --version`) DO (
 SET pt=%%V
 )
-::ECHO Your Python version is %pt%
-::ECHO Please stop if your version is 2.x
 set ptv=%pt:~7,3%
 echo %ptv%
 
+:startupdate
 ::Checking git and updating
 git.exe --version > NUL 2>&1
 IF %ERRORLEVEL% NEQ 0 GOTO gitmessage
