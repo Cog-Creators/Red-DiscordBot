@@ -17,11 +17,11 @@ default_settings = {"PAYDAY_TIME": 300, "PAYDAY_CREDITS": 120,
                     "REGISTER_CREDITS": 0}
 
 slot_payouts = """Slot machine payouts:
-    :two: :two: :six: Bet * 5000
-    :four_leaf_clover: :four_leaf_clover: :four_leaf_clover: +1000
-    :cherries: :cherries: :cherries: +800
-    :two: :six: Bet * 4
-    :cherries: :cherries: Bet * 3
+    2\u20e3 2\u20e3 6\u20e3 Bet * 5000
+    \ud83c\udf40 \ud83c\udf40 \ud83c\udf40 +1000
+    \ud83c\udf52 \ud83c\udf52 \ud83c\udf52 +800
+    2\u20e3 6\u20e3 Bet * 4
+    \ud83c\udf52 \ud83c\udf52 Bet * 3
 
     Three symbols: +500
     Two symbols: Bet * 2"""
@@ -479,11 +479,11 @@ class Economy:
             await self.bot.say("{0} You need an account with enough funds to play the slot machine.".format(author.mention))
 
     async def slot_machine(self, message, bid):
-        reel_pattern = [":cherries:", ":cookie:", ":two:", ":four_leaf_clover:",
-                        ":cyclone:", ":sunflower:", ":six:", ":mushroom:", ":heart:", ":snowflake:"]
+        reel_pattern = ["\ud83c\udf52", "\ud83c\udf6a", "2\u20e3", "\ud83c\udf40",
+                        "\ud83c\udf00", "\ud83c\udf3c", "6\u20e3", "\ud83c\udf44", "\u2764\ufe0f", "\u2744\ufe0f"]
         # padding prevents index errors
-        padding_before = [":mushroom:", ":heart:", ":snowflake:"]
-        padding_after = [":cherries:", ":cookie:", ":two:"]
+        padding_before = ["\ud83c\udf44", "\u2764\ufe0f", "\u2744\ufe0f"]
+        padding_after = ["\ud83c\udf52", "\ud83c\udf6a", "2\u20e3"]
         reel = padding_before + reel_pattern + padding_after
         reels = []
         for i in range(0, 3):
@@ -498,15 +498,15 @@ class Economy:
         display_reels += "  " + reels[0][2] + " " + \
             reels[1][2] + " " + reels[2][2] + "\n"
 
-        if line[0] == ":two:" and line[1] == ":two:" and line[2] == ":six:":
+        if line[0] == "2\u20e3" and line[1] == "2\u20e3" and line[2] == "6\u20e3":
             bid = bid * 5000
             slotMsg = "{}{} 226! Your bet is multiplied * 5000! {}! ".format(
                 display_reels, message.author.mention, str(bid))
-        elif line[0] == ":four_leaf_clover:" and line[1] == ":four_leaf_clover:" and line[2] == ":four_leaf_clover:":
+        elif line[0] == "\ud83c\udf40" and line[1] == "\ud83c\udf40" and line[2] == "\ud83c\udf40":
             bid += 1000
             slotMsg = "{}{} Three FLC! +1000! ".format(
                 display_reels, message.author.mention)
-        elif line[0] == ":cherries:" and line[1] == ":cherries:" and line[2] == ":cherries:":
+        elif line[0] == "\ud83c\udf52" and line[1] == "\ud83c\udf52" and line[2] == "\ud83c\udf52":
             bid += 800
             slotMsg = "{}{} Three cherries! +800! ".format(
                 display_reels, message.author.mention)
@@ -514,11 +514,11 @@ class Economy:
             bid += 500
             slotMsg = "{}{} Three symbols! +500! ".format(
                 display_reels, message.author.mention)
-        elif line[0] == ":two:" and line[1] == ":six:" or line[1] == ":two:" and line[2] == ":six:":
+        elif line[0] == "2\u20e3" and line[1] == "6\u20e3" or line[1] == "2\u20e3" and line[2] == "6\u20e3":
             bid = bid * 4
             slotMsg = "{}{} 26! Your bet is multiplied * 4! {}! ".format(
                 display_reels, message.author.mention, str(bid))
-        elif line[0] == ":cherries:" and line[1] == ":cherries:" or line[1] == ":cherries:" and line[2] == ":cherries:":
+        elif line[0] == "\ud83c\udf52" and line[1] == "\ud83c\udf52" or line[1] == "\ud83c\udf52" and line[2] == "\ud83c\udf52":
             bid = bid * 3
             slotMsg = "{}{} Two cherries! Your bet is multiplied * 3! {}! ".format(
                 display_reels, message.author.mention, str(bid))
