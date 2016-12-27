@@ -1,0 +1,4 @@
+pip
+git+git://github.com/Rapptz/discord.py.git
+youtube_dl
+imgurpython
