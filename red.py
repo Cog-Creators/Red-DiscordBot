@@ -283,13 +283,8 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
 
         print("\nOfficial server: https://discord.me/Red-DiscordBot")
 
-        if os.name == "nt" and os.path.isfile("update.bat"):
-            print("\nMake sure to keep your bot updated by running the file "
-                  "update.bat")
-        else:
-            print("\nMake sure to keep your bot updated by using: git pull")
-            print("and: pip3 install -U git+https://github.com/Rapptz/"
-                  "discord.py@master#egg=discord.py[voice]")
+        print("Make sure to keep your bot updated. Select the 'Update' "
+              "option from the launcher.")
 
         await bot.get_cog('Owner').disable_commands()
 
