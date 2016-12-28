@@ -364,8 +364,8 @@ def main():
         print(INTRO)
         print("1. Run Red /w autorestart in case of issues")
         print("2. Run Red")
-        print("3. Install requirements")
-        print("4. Update")
+        print("3. Update")
+        print("4. Install requirements")
         print("5. Maintenance (repair, reset...)")
         print("\n0. Quit")
         choice = user_choice()
@@ -374,9 +374,9 @@ def main():
         elif choice == "2":
             run_red(autorestart=False)
         elif choice == "3":
-            requirements_menu()
-        elif choice == "4":
             update_menu()
+        elif choice == "4":
+            requirements_menu()
         elif choice == "5":
             maintenace_menu()
         elif choice == "0":
