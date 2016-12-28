@@ -1,30 +1,33 @@
 import discord
 from discord.ext import commands
 from cogs.utils.dataIO import dataIO
-from collections import namedtuple, defaultdict
+from collections import namedtuple, defaultdict, deque
 from datetime import datetime
-from random import randint
 from copy import deepcopy
 from .utils import checks
 from cogs.utils.chat_formatting import pagify, box
+from enum import Enum
 from __main__ import send_cmd_help
 import os
 import time
 import logging
+import random
 
 default_settings = {"PAYDAY_TIME": 300, "PAYDAY_CREDITS": 120,
                     "SLOT_MIN": 5, "SLOT_MAX": 100, "SLOT_TIME": 0,
                     "REGISTER_CREDITS": 0}
 
-slot_payouts = """Slot machine payouts:
-    :two: :two: :six: Bet * 5000
-    :four_leaf_clover: :four_leaf_clover: :four_leaf_clover: +1000
-    :cherries: :cherries: :cherries: +800
-    :two: :six: Bet * 4
-    :cherries: :cherries: Bet * 3
 
-    Three symbols: +500
-    Two symbols: Bet * 2"""
+class EconomyError(Exception):
+    pass
+
+
+class OnCooldown(EconomyError):
+    pass
+
+
+class InvalidBid(EconomyError):
+    pass
 
 
 class BankError(Exception):
@@ -49,6 +52,62 @@ class NegativeValue(BankError):
 
 class SameSenderAndReceiver(BankError):
     pass
+
+
+NUM_ENC = "\N{COMBINING ENCLOSING KEYCAP}"
+
+
+class SMReel(Enum):
+    cherries  = "\N{CHERRIES}"
+    cookie    = "\N{COOKIE}"
+    two       = "\N{DIGIT TWO}" + NUM_ENC
+    flc       = "\N{FOUR LEAF CLOVER}"
+    cyclone   = "\N{CYCLONE}"
+    sunflower = "\N{SUNFLOWER}"
+    six       = "\N{DIGIT SIX}" + NUM_ENC
+    mushroom  = "\N{MUSHROOM}"
+    heart     = "\N{HEAVY BLACK HEART}"
+    snowflake = "\N{SNOWFLAKE}"
+
+PAYOUTS = {
+    (SMReel.two, SMReel.two, SMReel.six) : {
+        "payout" : lambda x: x * 2500 + x,
+        "phrase" : "JACKPOT! 226! Your bid has been multiplied * 2500!"
+    },
+    (SMReel.flc, SMReel.flc, SMReel.flc) : {
+        "payout" : lambda x: x + 1000,
+        "phrase" : "4LC! +1000!"
+    },
+    (SMReel.cherries, SMReel.cherries, SMReel.cherries) : {
+        "payout" : lambda x: x + 800,
+        "phrase" : "Three cherries! +800!"
+    },
+    (SMReel.two, SMReel.six) : {
+        "payout" : lambda x: x * 4 + x,
+        "phrase" : "2 6! Your bid has been multiplied * 4!"
+    },
+    (SMReel.cherries, SMReel.cherries) : {
+        "payout" : lambda x: x * 3 + x,
+        "phrase" : "Two cherries! Your bid has been multiplied * 3!"
+    },
+    "3 symbols" : {
+        "payout" : lambda x: x + 500,
+        "phrase" : "Three symbols! +500!"
+    },
+    "2 symbols" : {
+        "payout" : lambda x: x * 2 + x,
+        "phrase" : "Two consecutive symbols! Your bid has been multiplied * 2!"
+    },
+}
+
+SLOT_PAYOUTS_MSG = ("Slot machine payouts:\n"
+                    "{two.value} {two.value} {six.value} Bet * 2500\n"
+                    "{flc.value} {flc.value} {flc.value} +1000\n"
+                    "{cherries.value} {cherries.value} {cherries.value} +800\n"
+                    "{two.value} {six.value} Bet * 4\n"
+                    "{cherries.value} {cherries.value} Bet * 3\n\n"
+                    "Three symbols: +500\n"
+                    "Two symbols: Bet * 2".format(**SMReel.__dict__))
 
 
 class Bank:
@@ -248,17 +307,18 @@ class Economy:
     @_bank.command(pass_context=True, no_pm=True)
     async def register(self, ctx):
         """Registers an account at the Twentysix bank"""
-        user = ctx.message.author
+        settings = self.settings[ctx.message.server.id]
+        author = ctx.message.author
         credits = 0
         if ctx.message.server.id in self.settings:
-            credits = self.settings[ctx.message.server.id].get("REGISTER_CREDITS", 0)
+            credits = settings.get("REGISTER_CREDITS", 0)
         try:
-            account = self.bank.create_account(user)
-            await self.bot.say("{} Account opened. Current balance: {}".format(
-                user.mention, account.balance))
+            account = self.bank.create_account(author, initial_balance=credits)
+            await self.bot.say("{} Account opened. Current balance: {}"
+                               "".format(author.mention, account.balance))
         except AccountAlreadyExists:
             await self.bot.say("{} You already have an account at the"
-                               " Twentysix bank.".format(user.mention))
+                               " Twentysix bank.".format(author.mention))
 
     @_bank.command(pass_context=True)
     async def balance(self, ctx, user: discord.Member=None):
@@ -451,95 +511,91 @@ class Economy:
     @commands.command()
     async def payouts(self):
         """Shows slot machine payouts"""
-        await self.bot.whisper(slot_payouts)
+        await self.bot.whisper(SLOT_PAYOUTS_MSG)
 
     @commands.command(pass_context=True, no_pm=True)
     async def slot(self, ctx, bid: int):
         """Play the slot machine"""
         author = ctx.message.author
         server = author.server
-        if not self.bank.account_exists(author):
-            await self.bot.say("{} You need an account to use the slot machine. Type `{}bank register` to open one.".format(author.mention, ctx.prefix))
-            return
-        if self.bank.can_spend(author, bid):
-            if bid >= self.settings[server.id]["SLOT_MIN"] and bid <= self.settings[server.id]["SLOT_MAX"]:
-                if author.id in self.slot_register:
-                    if abs(self.slot_register[author.id] - int(time.perf_counter())) >= self.settings[server.id]["SLOT_TIME"]:
-                        self.slot_register[author.id] = int(
-                            time.perf_counter())
-                        await self.slot_machine(ctx.message, bid)
-                    else:
-                        await self.bot.say("Slot machine is still cooling off! Wait {} seconds between each pull".format(self.settings[server.id]["SLOT_TIME"]))
-                else:
-                    self.slot_register[author.id] = int(time.perf_counter())
-                    await self.slot_machine(ctx.message, bid)
-            else:
-                await self.bot.say("{0} Bid must be between {1} and {2}.".format(author.mention, self.settings[server.id]["SLOT_MIN"], self.settings[server.id]["SLOT_MAX"]))
-        else:
-            await self.bot.say("{0} You need an account with enough funds to play the slot machine.".format(author.mention))
+        settings = self.settings[server.id]
+        valid_bid = settings["SLOT_MIN"] <= bid and bid <= settings["SLOT_MAX"]
+        slot_time = settings["SLOT_TIME"]
+        last_slot = self.slot_register.get(author.id)
+        now = datetime.utcnow()
+        try:
+            if last_slot:
+                if (now - last_slot).seconds < slot_time:
+                    raise OnCooldown()
+            if not valid_bid:
+                raise InvalidBid()
+            if not self.bank.can_spend(author, bid):
+                raise InsufficientBalance
+            await self.slot_machine(author, bid)
+        except NoAccount:
+            await self.bot.say("{} You need an account to use the slot "
+                               "machine. Type `{}bank register` to open one."
+                               "".format(author.mention, ctx.prefix))
+        except InsufficientBalance:
+            await self.bot.say("{} You need an account with enough funds to "
+                               "play the slot machine.".format(author.mention))
+        except OnCooldown:
+            await self.bot.say("Slot machine is still cooling off! Wait {} "
+                               "seconds between each pull".format(slot_time))
+        except InvalidBid:
+            await self.bot.say("Bid must be between {} and {}."
+                               "".format(settings["SLOT_MIN"],
+                                         settings["SLOT_MAX"]))
 
-    async def slot_machine(self, message, bid):
-        reel_pattern = [":cherries:", ":cookie:", ":two:", ":four_leaf_clover:",
-                        ":cyclone:", ":sunflower:", ":six:", ":mushroom:", ":heart:", ":snowflake:"]
-        # padding prevents index errors
-        padding_before = [":mushroom:", ":heart:", ":snowflake:"]
-        padding_after = [":cherries:", ":cookie:", ":two:"]
-        reel = padding_before + reel_pattern + padding_after
+    async def slot_machine(self, author, bid):
+        default_reel = deque(SMReel)
         reels = []
-        for i in range(0, 3):
-            n = randint(3, 12)
-            reels.append([reel[n - 1], reel[n], reel[n + 1]])
-        line = [reels[0][1], reels[1][1], reels[2][1]]
+        self.slot_register[author.id] = datetime.utcnow()
+        for i in range(3):
+            default_reel.rotate(random.randint(-999, 999)) # weeeeee
+            new_reel = deque(default_reel, maxlen=3) # we need only 3 symbols
+            reels.append(new_reel)                   # for each reel
+        rows = ((reels[0][0], reels[1][0], reels[2][0]),
+                (reels[0][1], reels[1][1], reels[2][1]),
+                (reels[0][2], reels[1][2], reels[2][2]))
 
-        display_reels = "~~\n~~  " + \
-            reels[0][0] + " " + reels[1][0] + " " + reels[2][0] + "\n"
-        display_reels += ">" + reels[0][1] + " " + \
-            reels[1][1] + " " + reels[2][1] + "\n"
-        display_reels += "  " + reels[0][2] + " " + \
-            reels[1][2] + " " + reels[2][2] + "\n"
+        slot = "~~\n~~" # Mobile friendly
+        for i, row in enumerate(rows): # Let's build the slot to show
+            sign = "  "
+            if i == 1:
+                sign = ">"
+            slot += "{}{} {} {}\n".format(sign, *[c.value for c in row])
 
-        if line[0] == ":two:" and line[1] == ":two:" and line[2] == ":six:":
-            bid = bid * 5000
-            slotMsg = "{}{} 226! Your bet is multiplied * 5000! {}! ".format(
-                display_reels, message.author.mention, str(bid))
-        elif line[0] == ":four_leaf_clover:" and line[1] == ":four_leaf_clover:" and line[2] == ":four_leaf_clover:":
-            bid += 1000
-            slotMsg = "{}{} Three FLC! +1000! ".format(
-                display_reels, message.author.mention)
-        elif line[0] == ":cherries:" and line[1] == ":cherries:" and line[2] == ":cherries:":
-            bid += 800
-            slotMsg = "{}{} Three cherries! +800! ".format(
-                display_reels, message.author.mention)
-        elif line[0] == line[1] == line[2]:
-            bid += 500
-            slotMsg = "{}{} Three symbols! +500! ".format(
-                display_reels, message.author.mention)
-        elif line[0] == ":two:" and line[1] == ":six:" or line[1] == ":two:" and line[2] == ":six:":
-            bid = bid * 4
-            slotMsg = "{}{} 26! Your bet is multiplied * 4! {}! ".format(
-                display_reels, message.author.mention, str(bid))
-        elif line[0] == ":cherries:" and line[1] == ":cherries:" or line[1] == ":cherries:" and line[2] == ":cherries:":
-            bid = bid * 3
-            slotMsg = "{}{} Two cherries! Your bet is multiplied * 3! {}! ".format(
-                display_reels, message.author.mention, str(bid))
-        elif line[0] == line[1] or line[1] == line[2]:
-            bid = bid * 2
-            slotMsg = "{}{} Two symbols! Your bet is multiplied * 2! {}! ".format(
-                display_reels, message.author.mention, str(bid))
+        payout = PAYOUTS.get(rows[1])
+        if not payout:
+            # Checks for two-consecutive-symbols special rewards
+            payout = PAYOUTS.get((rows[1][0], rows[1][1]),
+                     PAYOUTS.get((rows[1][1], rows[1][2]))
+                                )
+        if not payout:
+            # Still nothing. Let's check for 3 generic same symbols
+            # or 2 consecutive symbols
+            has_three = rows[1][0] == rows[1][1] == rows[1][2]
+            has_two = (rows[1][0] == rows[1][1]) or (rows[1][1] == rows[1][0])
+            if has_three:
+                payout = PAYOUTS["3 symbols"]
+            elif has_two:
+                payout = PAYOUTS["2 symbols"]
+
+        if payout:
+            then = self.bank.get_balance(author)
+            pay = payout["payout"](bid)
+            now = then - bid + pay
+            self.bank.set_credits(author, now)
+            await self.bot.say("{}\n{} {}\n\nYour bid: {}\n{} → {}!"
+                               "".format(slot, author.mention,
+                                         payout["phrase"], bid, then, now))
         else:
-            slotMsg = "{}{} Nothing! Lost bet. ".format(
-                display_reels, message.author.mention)
-            self.bank.withdraw_credits(message.author, bid)
-            slotMsg += "\n" + \
-                " Credits left: {}".format(
-                    self.bank.get_balance(message.author))
-            await self.bot.send_message(message.channel, slotMsg)
-            return True
-        self.bank.deposit_credits(message.author, bid)
-        slotMsg += "\n" + \
-            " Current credits: {}".format(
-                self.bank.get_balance(message.author))
-        await self.bot.send_message(message.channel, slotMsg)
+            then = self.bank.get_balance(author)
+            self.bank.withdraw_credits(author, bid)
+            now = then - bid
+            await self.bot.say("{}\n{} Nothing!\nYour bid: {}\n{} → {}!"
+                               "".format(slot, author.mention, bid, then, now))
 
     @commands.group(pass_context=True, no_pm=True)
     @checks.admin_or_permissions(manage_server=True)
@@ -560,7 +616,7 @@ class Economy:
         """Minimum slot machine bid"""
         server = ctx.message.server
         self.settings[server.id]["SLOT_MIN"] = bid
-        await self.bot.say("Minimum bid is now " + str(bid) + " credits.")
+        await self.bot.say("Minimum bid is now {} credits.".format(bid))
         dataIO.save_json(self.file_path, self.settings)
 
     @economyset.command(pass_context=True)
@@ -568,7 +624,7 @@ class Economy:
         """Maximum slot machine bid"""
         server = ctx.message.server
         self.settings[server.id]["SLOT_MAX"] = bid
-        await self.bot.say("Maximum bid is now " + str(bid) + " credits.")
+        await self.bot.say("Maximum bid is now {} credits.".format(bid))
         dataIO.save_json(self.file_path, self.settings)
 
     @economyset.command(pass_context=True)
@@ -576,7 +632,7 @@ class Economy:
         """Seconds between each slots use"""
         server = ctx.message.server
         self.settings[server.id]["SLOT_TIME"] = seconds
-        await self.bot.say("Cooldown is now " + str(seconds) + " seconds.")
+        await self.bot.say("Cooldown is now {} seconds.".format(seconds))
         dataIO.save_json(self.file_path, self.settings)
 
     @economyset.command(pass_context=True)
@@ -584,7 +640,8 @@ class Economy:
         """Seconds between each payday"""
         server = ctx.message.server
         self.settings[server.id]["PAYDAY_TIME"] = seconds
-        await self.bot.say("Value modified. At least " + str(seconds) + " seconds must pass between each payday.")
+        await self.bot.say("Value modified. At least {} seconds must pass "
+                           "between each payday.".format(seconds))
         dataIO.save_json(self.file_path, self.settings)
 
     @economyset.command(pass_context=True)
@@ -592,7 +649,8 @@ class Economy:
         """Credits earned each payday"""
         server = ctx.message.server
         self.settings[server.id]["PAYDAY_CREDITS"] = credits
-        await self.bot.say("Every payday will now give " + str(credits) + " credits.")
+        await self.bot.say("Every payday will now give {} credits."
+                           "".format(credits))
         dataIO.save_json(self.file_path, self.settings)
 
     @economyset.command(pass_context=True)
@@ -602,7 +660,8 @@ class Economy:
         if credits < 0:
             credits = 0
         self.settings[server.id]["REGISTER_CREDITS"] = credits
-        await self.bot.say("Registering an account will now give {} credits.".format(credits))
+        await self.bot.say("Registering an account will now give {} credits."
+                           "".format(credits))
         dataIO.save_json(self.file_path, self.settings)
 
     # What would I ever do without stackoverflow?
