@@ -178,7 +178,7 @@ class Bot(commands.Bot):
 
     async def pip_install(self, name, *, timeout=60):
         """
-        Installs a python library in the local 'lib' folder
+        Installs a pip package in the local 'lib' folder
         Can specify the max seconds to wait for the task to complete
         Thread safe
         Returns a bool indicating if the installation was successful
