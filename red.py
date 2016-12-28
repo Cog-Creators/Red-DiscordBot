@@ -6,6 +6,7 @@ import logging
 import logging.handlers
 import traceback
 import datetime
+import subprocess
 
 try:
     assert sys.version_info >= (3, 5)
@@ -174,6 +175,32 @@ class Bot(commands.Bot):
             return True
         else:
             return True
+
+    async def pip_install(self, name, *, timeout=60):
+        """
+        Installs a python library in the local 'lib' folder
+        Can specify the max seconds to wait for the task to complete
+        Thread safe
+        Returns a bool indicating if the installation was successful
+        """
+
+        interpreter = sys.executable
+
+        if interpreter is None:
+            raise RuntimeError("Couldn't find Python's interpreter")
+
+        def install():
+            code = subprocess.call((
+                interpreter, "-m",
+                "pip", "install",
+                "--upgrade",
+                "--target", "lib",
+                name
+            ))
+            return not bool(code)
+
+        response = self.loop.run_in_executor(None, install)
+        return await asyncio.wait_for(response, timeout=timeout)
 
 
 class Formatter(commands.HelpFormatter):
