@@ -1,3 +1,16 @@
+
+class PluralDict(dict):
+    def __missing__(self, key):
+        if '(' in key and key.endswith(')'):
+            key, rest = key.split('(', 1)
+            value = super().__getitem__(key)
+            suffix = rest.rstrip(')').split(',')
+            if len(suffix) == 1:
+                suffix.insert(0, '')
+            return suffix[0] if value <= 1 else suffix[1]
+        raise KeyError(key)
+
+
 def error(text):
     return "\N{NO ENTRY SIGN} {}".format(text)
 
