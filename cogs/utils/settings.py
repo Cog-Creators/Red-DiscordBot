@@ -10,7 +10,7 @@ default_path = "data/red/settings.json"
 
 class Settings:
 
-    def __init__(self, path=default_path):
+    def __init__(self, path=default_path, parse_args=True):
         self.path = path
         self.check_folders()
         self.default_settings = {
@@ -44,8 +44,8 @@ class Settings:
 
         if "LOGIN_TYPE" in self.bot_settings:
             self.update_old_settings_v2()
-
-        self.parse_cmd_arguments()
+        if parse_args:
+            self.parse_cmd_arguments()
 
     def parse_cmd_arguments(self):
         parser = argparse.ArgumentParser(description="Red - Discord Bot")
