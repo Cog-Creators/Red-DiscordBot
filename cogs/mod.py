@@ -74,7 +74,7 @@ class Mod:
             await self.bot.say(box(msg))
 
     @modset.command(name="adminrole", pass_context=True, no_pm=True)
-    async def _modset_adminrole(self, ctx, role_name: str):
+    async def _modset_adminrole(self, ctx, *, role_name: str):
         """Sets the admin role for this server, case insensitive."""
         server = ctx.message.server
         if server.id not in settings.servers:
@@ -83,7 +83,7 @@ class Mod:
         await self.bot.say("Admin role set to '{}'".format(role_name))
 
     @modset.command(name="modrole", pass_context=True, no_pm=True)
-    async def _modset_modrole(self, ctx, role_name: str):
+    async def _modset_modrole(self, ctx, *, role_name: str):
         """Sets the mod role for this server, case insensitive."""
         server = ctx.message.server
         if server.id not in settings.servers:
