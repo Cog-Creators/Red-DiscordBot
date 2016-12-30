@@ -8,11 +8,11 @@ except ImportError:                         # check anyway
     pass
 import platform
 import webbrowser
-import datetime
 import hashlib
 import argparse
 import shutil
 import stat
+import time
 try:
     import pip
 except ImportError:
@@ -23,7 +23,6 @@ sys.path.insert(0, REQS_DIR)
 REQS_TXT = "requirements.txt"
 REQS_NO_AUDIO_TXT = "requirements_no_audio.txt"
 FFMPEG_BUILDS_URL = "https://ffmpeg.zeranoe.com/builds/"
-CURRENT_YEAR = datetime.datetime.now().year
 
 INTRO = ("==========================\n"
          "Red Discord Bot - Launcher\n"
@@ -126,17 +125,18 @@ def factory_reset():
     repair_red()
 
 
-def download_ffmpeg():
+def download_ffmpeg(bitness):
+    clear_screen()
     repo = "https://github.com/Twentysix26/Red-DiscordBot/raw/master/"
     verified = []
 
-    if not IS_64BIT:
-        print("You have a 32bit system. Please download 'ffmpeg 32bit static'"
-              " from the page that is about to open.\nOnce done, extract the "
-              "content of the bin folder and put it inside Red's main folder."
-              "\nThis would be all automated if only you had a 64bit system "
-              "in {}. For shame.".format(CURRENT_YEAR))
-        wait()
+    if bitness == "32bit":
+        print("Please download 'ffmpeg 32bit static' from the page that "
+              "is about to open.\nOnce done, open the 'bin' folder located "
+              "inside the zip.\nThere should be 3 files: ffmpeg.exe, "
+              "ffplay.exe, ffprobe.exe.\nPut all three of them into the "
+              "bot's main folder.")
+        time.sleep(4)
         webbrowser.open(FFMPEG_BUILDS_URL)
         return
 
@@ -194,11 +194,14 @@ def requirements_menu():
     clear_screen()
     while True:
         print(INTRO)
-        print("Requirements:\n")
+        print("Main requirements:\n")
         print("1. Install basic + audio requirements (recommended)")
         print("2. Install basic requirements")
         if IS_WINDOWS:
-            print("3. Install ffmpeg (required for audio)")
+            print("\nffmpeg (audio requirement):")
+            print("3. Install ffmpeg 32bit")
+            if IS_64BIT:
+                print("4. Install ffmpeg 64bit (recommended on Windows 64bit)")
         print("\n0. Go back")
         choice = user_choice()
         if choice == "1":
@@ -210,7 +213,10 @@ def requirements_menu():
             install_reqs(audio=False)
             wait()
         elif choice == "3" and IS_WINDOWS:
-            download_ffmpeg()
+            download_ffmpeg(bitness="32bit")
+            wait()
+        elif choice == "4" and (IS_WINDOWS and IS_64BIT):
+            download_ffmpeg(bitness="64bit")
             wait()
         elif choice == "0":
             break
