@@ -92,37 +92,42 @@ def update_red():
               "the main menu")
 
 
-def repair_red():
-    code = subprocess.call(("git", "reset", "--hard"))
-    if code == 0:
-        print("\nRed has been restored to the last commit.")
-    else:
-        print("\nThe repair has failed.")
+def reset_red(reqs=False, data=False, cogs=False, git_reset=False):
+    if reqs:
+        try:
+            shutil.rmtree(REQS_DIR, onerror=remove_readonly)
+            print("Installed local packages have been wiped.")
+        except FileNotFoundError:
+            pass
+        except Exception as e:
+            print("An error occured when trying to remove installed "
+                  "requirements: {}".format(e))
+    if data:
+        try:
+            shutil.rmtree("data", onerror=remove_readonly)
+            print("'data' folder has been wiped.")
+        except FileNotFoundError:
+            pass
+        except Exception as e:
+            print("An error occured when trying to remove the 'data' folder: "
+                  "{}".format(e))
 
+    if cogs:
+        try:
+            shutil.rmtree("cogs", onerror=remove_readonly)
+            print("'cogs' folder has been wiped.")
+        except FileNotFoundError:
+            pass
+        except Exception as e:
+            print("An error occured when trying to remove the 'cogs' folder: "
+                  "{}".format(e))
 
-def wipe_requirements():
-    try:
-        shutil.rmtree(REQS_DIR, onerror=remove_readonly)
-        print("Installed libraries have been wiped.")
-    except FileNotFoundError:
-        pass
-    except Exception as e:
-        print("An error occured when trying to remove installed requirements:"
-              " {}".format(e))
-
-
-def factory_reset():
-    wipe_requirements()
-    try:
-        shutil.rmtree("data", onerror=remove_readonly)
-        shutil.rmtree("cogs", onerror=remove_readonly)
-        print("Red's data has been wiped.")
-    except FileNotFoundError:
-        pass
-    except Exception as e:
-        print("An error occured when trying to remove Red's data folders:"
-              " {}".format(e))
-    repair_red()
+    if git_reset:
+        code = subprocess.call(("git", "reset", "--hard"))
+        if code == 0:
+            print("Red has been restored to the last local commit.")
+        else:
+            print("The repair has failed.")
 
 
 def download_ffmpeg(bitness):
@@ -261,24 +266,35 @@ def maintenace_menu():
     while True:
         print(INTRO)
         print("Maintenace:\n")
-        print("1. Repair Red (discards changes, keeps data)")
-        print("2. Wipe requirements")
-        print("3. Factory reset (wipe data/requirements)")
+        print("1. Repair Red (discards code changes, keeps data intact)")
+        print("2. Wipe 'data' folder (all settings, cogs' data...)")
+        print("3. Wipe 'lib' folder (all local requirements / local installed"
+              " packages)")
+        print("4. Factory reset")
         print("\n0. Go back")
         choice = user_choice()
         if choice == "1":
-            repair_red()
-            wait()
+            print("Any code modification you have made will be lost. Data/"
+                  "non-default cogs will be left intact. Are you sure?")
+            if user_pick_yes_no():
+                reset_red(git_reset=True)
+                wait()
         elif choice == "2":
-            wipe_requirements()
-            wait()
+            print("Are you sure? This will wipe the 'data' folder, which "
+                  "contains all your settings and cogs' data.\nThe 'cogs' "
+                  "folder, however, will be left intact.")
+            if user_pick_yes_no():
+                reset_red(data=True)
+                wait()
         elif choice == "3":
+            reset_red(reqs=True)
+            wait()
+        elif choice == "4":
             print("Are you sure? This will wipe ALL your Red's installation "
-                  "data. You'll lose all your settings, cogs and any "
-                  "modification you have made. There is no going back.")
-            choice = input("Yes/No > ").lower().strip()
-            if choice in ("yes", "y"):
-                factory_reset()
+                  "data.\nYou'll lose all your settings, cogs and any "
+                  "modification you have made.\nThere is no going back.")
+            if user_pick_yes_no():
+                reset_red(reqs=True, data=True, cogs=True, git_reset=True)
                 wait()
         elif choice == "0":
             break
@@ -330,6 +346,15 @@ def wait():
 
 def user_choice():
     return input("> ").lower().strip()
+
+
+def user_pick_yes_no():
+    choice = None
+    yes = ("yes", "y")
+    no = ("no", "n")
+    while choice not in yes and choice not in no:
+        choice = input("Yes/No > ").lower().strip()
+    return choice in yes
 
 
 def remove_readonly(func, path, excinfo):
@@ -403,15 +428,18 @@ if __name__ == '__main__':
     # Sets current directory to the script's
     os.chdir(dirname)
     if not PYTHON_OK:
-        input("Red needs Python 3.5 or superior. Install the required "
+        print("Red needs Python 3.5 or superior. Install the required "
               "version.\nPress enter to continue.")
+        if INTERACTIVE_MODE:
+            wait()
+        exit(1)
     if pip is None:
         print("Red cannot work without the pip module. Please make sure to "
               "install Python without unchecking any option during the setup")
         wait()
         exit(1)
     if args.repair:
-        repair_red()
+        reset_red(git_reset=True)
     if args.update_red:
         update_red()
     if args.update_reqs:
