@@ -399,6 +399,15 @@ def main():
     clear_screen()
     while True:
         print(INTRO)
+
+        if not os.path.isdir(".git"):
+            print("WARNING: It doesnt' look like Red has been "
+                  "installed with git.\nThis means that you won't "
+                  "be able to update and some features won't be working.\n"
+                  "A reinstallation is recommended. Follow the guide "
+                  "properly this time:\n"
+                  "https://twentysix26.github.io/Red-Docs/\n")
+
         print("1. Run Red /w autorestart in case of issues")
         print("2. Run Red")
         print("3. Update")
