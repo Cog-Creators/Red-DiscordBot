@@ -315,27 +315,24 @@ def run_red(autorestart):
             exit(1)
 
     cmd = (interpreter, "red.py")
-    if autorestart:
-        while True:
-            try:
-                code = subprocess.call(cmd)
-            except KeyboardInterrupt:
-                code = 0
+
+    while True:
+        try:
+            code = subprocess.call(cmd)
+        except KeyboardInterrupt:
+            break
+        else:
             if code == 0:
                 break
-    else:
-        while True:
-            try:
-                code = subprocess.call(cmd)
-            except KeyboardInterrupt:
-                break
+            elif code == 26:
+                print("Restarting Red...")
+                continue
             else:
-                if code == 26:
-                    print("Restarting Red...")
-                    continue # A restart has been requested
-                else:
+                if not autorestart:
                     break
-    print("Red has been terminated.")
+
+    print("Red has been terminated. Exit code: %d" % code)
+
     if INTERACTIVE_MODE:
         wait()
 
