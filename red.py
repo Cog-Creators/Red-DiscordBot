@@ -66,6 +66,7 @@ class Bot(commands.Bot):
         self._message_modifiers = []
         self.settings = Settings()
         self._intro_displayed = False
+        self._restart_requested = False
         self.logger = set_logger(self)
         if 'self_bot' in kwargs:
             self.settings.self_bot = kwargs['self_bot']
@@ -92,6 +93,15 @@ class Bot(commands.Bot):
             kwargs['content'] = content
 
         return await super().send_message(*args, **kwargs)
+
+    async def shutdown(self, *, restart=False):
+        """Gracefully quits Red with exit code 0
+
+        If restart is True, the exit code will be 26 instead
+        The launcher automatically restarts Red when that happens"""
+        if restart:
+            self._restart_requested = True
+        await self.logout()
 
     def add_message_modifier(self, func):
         """
@@ -603,3 +613,5 @@ if __name__ == '__main__':
         loop.close()
         if error:
             exit(1)
+        if bot._restart_requested:
+            exit(26)

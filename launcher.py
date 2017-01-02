@@ -240,6 +240,7 @@ def update_menu():
         choice = user_choice()
         if choice == "1":
             update_red()
+            print("Updating requirements...")
             audio = is_dpy_audio_installed()
             if audio is not None:
                 install_reqs(audio=audio)
@@ -269,7 +270,7 @@ def maintenace_menu():
         print("1. Repair Red (discards code changes, keeps data intact)")
         print("2. Wipe 'data' folder (all settings, cogs' data...)")
         print("3. Wipe 'lib' folder (all local requirements / local installed"
-              " packages)")
+              " python packages)")
         print("4. Factory reset")
         print("\n0. Go back")
         choice = user_choice()
@@ -323,10 +324,17 @@ def run_red(autorestart):
             if code == 0:
                 break
     else:
-        try:
-            subprocess.call(cmd)
-        except KeyboardInterrupt:
-            pass
+        while True:
+            try:
+                code = subprocess.call(cmd)
+            except KeyboardInterrupt:
+                break
+            else:
+                if code == 26:
+                    print("Restarting Red...")
+                    continue # A restart has been requested
+                else:
+                    break
     print("Red has been terminated.")
     if INTERACTIVE_MODE:
         wait()
