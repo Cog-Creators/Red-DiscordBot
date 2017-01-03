@@ -216,11 +216,9 @@ def requirements_menu():
         print("\n0. Go back")
         choice = user_choice()
         if choice == "1":
-            create_batch_files()
             install_reqs(audio=True)
             wait()
         elif choice == "2":
-            create_batch_files()
             install_reqs(audio=False)
             wait()
         elif choice == "3" and IS_WINDOWS:
@@ -382,33 +380,56 @@ def calculate_md5(filename):
     return hash_md5.hexdigest()
 
 
-def create_batch_files():
-    """These get generated automatically before the requirements get
-    installed through the launcher"""
+def create_fast_start_scripts():
+    """Creates scripts for fast boot of Red without going
+    through the launcher"""
     interpreter = sys.executable
-    if not IS_WINDOWS or not interpreter:
+    if not interpreter:
         return
-    call = "\"{}\" launcher.py".format(interpreter)
-    files = {
-        "start_red.bat"             : "{} --start\npause".format(call),
-        "start_red_autorestart.bat" : ("{} --start --auto-restart\npause"
-                                       "".format(call))
-    }
 
-    print("Creating fast start batch files...")
+    call = "\"{}\" launcher.py".format(interpreter)
+    start_red = "{} --start".format(call)
+    start_red_autorestart = "{} --start --auto-restart".format(call)
+    modified = False
+
+    if IS_WINDOWS:
+        pause = "\npause"
+        ext = ".bat"
+    else:
+        pause = "\nread -rsp $'Press enter to continue...\n'"
+        ext = ".sh"
+
+    start_red             = start_red + pause
+    start_red_autorestart = start_red_autorestart + pause
+
+    files = {
+        "start_red"             + ext : start_red,
+        "start_red_autorestart" + ext : start_red_autorestart
+    }
 
     for filename, content in files.items():
         if not os.path.isfile(filename):
+            print("Creating {}... (fast start scripts)".format(filename))
+            modified = True
             with open(filename, "w") as f:
                 f.write(content)
-        else:
-            print("{} already exists. Skipping.".format(filename))
+
+    if not IS_WINDOWS and modified: # Let's make them executable on Unix
+        for script in ("start_red.sh", "start_red_autorestart.sh"):
+            st = os.stat(script)
+            os.chmod(script, st.st_mode | stat.S_IEXEC)
 
 
 def main():
     if IS_WINDOWS:
         os.system("TITLE Red Discord Bot - Launcher")
     clear_screen()
+
+    try:
+        create_fast_start_scripts()
+    except Exception as e:
+        print("Failed making fast start scripts: {}\n".format(e))
+
     while True:
         print(INTRO)
 
