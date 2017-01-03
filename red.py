@@ -186,11 +186,12 @@ class Bot(commands.Bot):
         else:
             return True
 
-    async def pip_install(self, name, *, timeout=60):
+    async def pip_install(self, name, *, timeout=None):
         """
-        Installs a pip package in the local 'lib' folder
+        Installs a pip package in the local 'lib' folder in a thread safe
+        way. On Mac systems the 'lib' folder is not used.
         Can specify the max seconds to wait for the task to complete
-        Thread safe
+
         Returns a bool indicating if the installation was successful
         """
 
