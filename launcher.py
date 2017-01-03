@@ -397,7 +397,10 @@ def create_fast_start_scripts():
         ext = ".bat"
     else:
         pause = "\nread -rsp $'Press enter to continue...\n'"
-        ext = ".sh"
+        if not IS_MAC:
+            ext = ".sh"
+        else:
+            ext = ".command"
 
     start_red             = start_red + pause
     start_red_autorestart = start_red_autorestart + pause
