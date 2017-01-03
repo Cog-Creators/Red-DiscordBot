@@ -194,19 +194,26 @@ class Bot(commands.Bot):
         Returns a bool indicating if the installation was successful
         """
 
+        IS_MAC = sys.platform == "darwin"
         interpreter = sys.executable
 
         if interpreter is None:
             raise RuntimeError("Couldn't find Python's interpreter")
 
+        args = [
+            interpreter, "-m",
+            "pip", "install",
+            "--upgrade",
+            "--target", "lib",
+            name
+        ]
+
+        if IS_MAC: # --target is a problem on Homebrew. See PR #552
+            args.remove("--target")
+            args.remove("lib")
+
         def install():
-            code = subprocess.call((
-                interpreter, "-m",
-                "pip", "install",
-                "--upgrade",
-                "--target", "lib",
-                name
-            ))
+            code = subprocess.call(args)
             return not bool(code)
 
         response = self.loop.run_in_executor(None, install)

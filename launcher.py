@@ -29,6 +29,7 @@ INTRO = ("==========================\n"
          "==========================\n")
 
 IS_WINDOWS = os.name == "nt"
+IS_MAC = sys.platform == "darwin"
 IS_64BIT = platform.machine().endswith("64")
 INTERACTIVE_MODE = not len(sys.argv) > 1  # CLI flags = non-interactive
 PYTHON_OK = sys.version_info >= (3, 5)
@@ -65,13 +66,18 @@ def parse_cli_arguments():
 
 def install_reqs(audio):
     txt = REQS_TXT if audio else REQS_NO_AUDIO_TXT
-
-    code = pip.main([
+    args = [
         "install",
         "--upgrade",
         "--target", REQS_DIR,
         "-r", txt
-    ])
+    ]
+
+    if IS_MAC: # --target is a problem on Homebrew. See PR #552
+        args.remove("--target")
+        args.remove(REQS_DIR)
+
+    code = pip.main(args)
 
     if code == 0:
         message = "\nRequirements setup completed."
@@ -320,6 +326,7 @@ def run_red(autorestart):
         try:
             code = subprocess.call(cmd)
         except KeyboardInterrupt:
+            code = 0
             break
         else:
             if code == 0:
