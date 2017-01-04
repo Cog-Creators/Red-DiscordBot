@@ -17,6 +17,8 @@ import time
 import math
 import pint
 from currency_converter import CurrencyConverter
+import os
+
 
 c = CurrencyConverter()
 ureg = pint.UnitRegistry()
@@ -97,12 +99,13 @@ class mos:
         except AttributeError:
             await self.bot.say("```That poni can not be found.```")
 
-    @commands.command(pass_context=True)
-    async def say(self,ctx, input):
 
-        await self.bot.say(input)
 
-        await client.delete_message("!say noot")
+    @commands.command()
+    async def fortune(self):
+        cowsay = str(os.popen('fortune | cowsay').read())
+        await self.bot.say("```{}```".format(cowsay))
+                  
 def setup(bot):
     n = mos(bot)
     bot.add_cog(n)
