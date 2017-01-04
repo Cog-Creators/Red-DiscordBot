@@ -9,7 +9,7 @@ if NOT %errorLevel% == 0 (
     echo Right click on it ^-^> Run as administrator
     echo.
     PAUSE
-    GOTO end  
+    GOTO end
 )
 
 ::Checking git and updating
@@ -24,7 +24,7 @@ echo Updating requirements...
 ::Attempts to start py launcher without relying on PATH
 %SYSTEMROOT%\py.exe --version > NUL 2>&1
 IF %ERRORLEVEL% NEQ 0 GOTO attempt
-%SYSTEMROOT%\py.exe -3.5 -m pip install --upgrade -r requirements.txt
+%SYSTEMROOT%\py.exe -3 -m pip install --upgrade -r requirements.txt
 PAUSE
 GOTO end
 
@@ -32,7 +32,7 @@ GOTO end
 :attempt
 py.exe --version > NUL 2>&1
 IF %ERRORLEVEL% NEQ 0 GOTO lastattempt
-py.exe -3.5 -m pip install --upgrade -r requirements.txt
+py.exe -3 -m pip install --upgrade -r requirements.txt
 PAUSE
 GOTO end
 
@@ -45,7 +45,7 @@ PAUSE
 GOTO end
 
 :pythonmessage
-echo Couldn't find a valid Python 3.5 installation. Python needs to be installed and available in the PATH environment variable.
+echo Couldn't find a valid Python ^>3.5 installation. Python needs to be installed and available in the PATH environment variable.
 echo https://twentysix26.github.io/Red-Docs/red_install_windows/#software
 PAUSE
 GOTO end

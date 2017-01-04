@@ -1,131 +1,132 @@
-Which champions ultimate is named: Spirit Rush?`Ahri
-Which champions ultimate is named: Hemoplague?`Vladimir
-Which champions ultimate is named: On The Hunt?`Sivir
-Which champions ultimate is named: Destiny?`Twisted Fate
-Which champions ultimate is named: UPGRADE!!!`Heimerdinger
-Which champions ultimate is named: Enchanted Crystal Arrow?`Ashe
-Which champions ultimate is named: Mantra?`Karma
-Which champions ultimate is named: Keeper's Verdict?`Poppy
-Which champions ultimate is named: Glacial Storm?`Anivia
-Which champions ultimate is named: Rite of the Arcane?`Xerath
-Which champions ultimate is named: Bullet Time?`Miss Fortune
-Which champions ultimate is named: Tempered Fate?`Bard
-Which champions ultimate is named: Void Assault?`Kha'zix`khazix`kha zix
-Which champions ultimate is named: Fury of the Sands?`Nasus
-Which champions ultimate is named: Shadow Assault?`Talon
-Which champions ultimate is named: Crowstorm?`Fiddlesticks
-Which champions ultimate is named: Thunder Claws?`Volibear
-Which champions ultimate is named: Behind Enemy Lines?`Quinn
-Which champions ultimate is named: Cyclone?`Wukong
-Which champions ultimate is named: Infinite Duress?`Warwick
-Which champions ultimate is named: Glacial Prison?`Sejuani
-Which champions ultimate is named: Spider Form/Human Form?`Elise
-Which champions ultimate is named: Requiem?`Karthus
-Which champions ultimate is named: Trueshot Barrage?`Ezreal
-Which champions ultimate is named: Life Form Disintegration Ray?`Vel'koz`vel koz`velkoz
-Which champions ultimate is named: Command: Shockwave?`Orianna
-Which champions ultimate is named: Children of the Grave?`Mordekaiser
-Which champions ultimate is named: Missile Barrage?`Corki
-Which champions ultimate is named: Lamb's Respite?`Kindred
-Which champions ultimate is named: Paranoia?`Nocturne
-Which champions ultimate is named: Crescent Sweep?`Xin Zhao`xinzhao
-Which champions ultimate is named: Chain of Corruption?`Varus
-Which champions ultimate is named: GNAR!`Gnar
-Which champions ultimate is named: Unstoppable Force?`Malphite
-Which champions ultimate is named: Frozen Tomb?`Lissandra
-Which champions ultimate is named: Ravenous Flock?`Swain
-Which champions ultimate is named: Summon: Tibbers?`Annie
-Which champions ultimate is named: Riftwalk?`Kassadin
-Which champions ultimate is named: Insanity Potion?`Singed
-Which champions ultimate is named: Transcendent Blades?`Irelia
-Which champions ultimate is named: Super Mega Death Rocket!`Jinx
-Which champions ultimate is named: Intervention?`Kayle
-Which champions ultimate is named: Buster Shot?`Tristana
-Which champions ultimate is named: Monsoon?`Janna
-Which champions ultimate is named: Pyroclasm?`Brand
-Which champions ultimate is named: Depth Charge?`Nautilus
-Which champions ultimate is named: The Equalizer?`Rumble
-Which champions ultimate is named: Chronoshift?`Zilean
-Which champions ultimate is named: Mercury Cannon/Mercury Hammer?`Jayce
-Which champions ultimate is named: The Box?`Thresh
-Which champions ultimate is named: Thrill of the Hunt?`Rengar
-Which champions ultimate is named: Death Lotus?`Katarina
-Which champions ultimate is named: Slicing Maelstrom?`Kennen
-Which champions ultimate is named: Explosive Cask?`Gragas
-Which champions ultimate is named: Cosmic Radiance?`Taric
-Which champions ultimate is named: Hallucinate?`Shaco
-Which champions ultimate is named: Chronobreak?`Ekko
-Which champions ultimate is named: Feast?`Cho'gath`cho gath`chogath
-Which champions ultimate is named: Aspect of the Cougar?`Nidalee
-Which champions ultimate is named: Unbreakable Will?`Alistar
-Which champions ultimate is named: Vengeful Maelstrom?`Maokai
-Which champions ultimate is named: Absolute Zero?`Nunu
-Which champions ultimate is named: Cataclysm?`Jarvan
-Which champions ultimate is named: Tremors?`Rammus
-Which champions ultimate is named: Nether Graps?`Malzahar
-Which champions ultimate is named: Last Breath?`Yasuo
-Which champions ultimate is named: The Culling?`Lucian
-Which champions ultimate is named: Lunar Rush?`Diana
-Which champions ultimate is named: Massacre?`Aatrox
-Which champions ultimate is named: Noxian Guillotine?`Darius
-Which champions ultimate is named: Soul Shackles?`Morgana
-Which champions ultimate is named: Unstoppable Onslaught?`Sion
-Which champions ultimate is named: Living ARtiller?`Kog'maw`kogmaw`kog maw
-Which champions ultimate is named: Primordial Burst?`Veigar
-Which champions ultimate is named: Dragon's Descent?`Shyvana
-Which champions ultimate is named: Demacian Justice?`Garen
-Which champions ultimate is named: Ace in the Hole?`Caitlyn
-Which champions ultimate is named: Tidal Wave?`Nami
-Which champions ultimate is named: Fate's Call?`Kalista
-Which champions ultimate is named: Wish?`Soraka
-Which champions ultimate is named: Blade of the Exile?`Riven
-Which champions ultimate is named: Wild Growth?`Lulu
-Which champions ultimate is named: Final Hour?`Vayne
-Which champions ultimate is named: Undying Rage?`Tryndamere 
-Which champions ultimate is named: Noxious Trap?`Teemo
-Which champions ultimate is named: Cannon Barrage?`Gangplank
-Which champions ultimate is named: Sadism?`Dr. Mundo`dr mundo`mundo`drmundo
-Which champions ultimate is named: Chaos Storm?`Viktor
-Which champions ultimate is named: Emperor's Divide?`Azir
-Which champions ultimate is named: Static Field?`Blitzcrank
-Which champions ultimate is named: Stranglethorns?`Zyra
-Which champions ultimate is named: Chum the Waters?`Fizz
-Which champions ultimate is named: Agony's Embrace?`Evelynn
-Which champions ultimate is named: Grand Skyfall?`Pantheon
-Which champions ultimate is named: Shadow Dance?`Akali
-Which champions ultimate is named: Highlander?`Master Yi
-Which champions ultimate is named: Omen of Death?`Yorick
-Which champions ultimate is named: Final Spark?`Lux
-Which champions ultimate is named: Onslaught of Shadows?`Hecarim
-Which champions ultimate is named: Stand United?`Shen
-Which champions ultimate is named: Assault and Battery?`Vi
-Which champions ultimate is named: Abyssal Voyage?`Tahm Kench`tahmkench
-Which champions ultimate is named: Dominus?`Renekton
-Which champions ultimate is named: Mega Inferno Bomb?`Ziggs
-Which champions ultimate is named: Desperate Power?`Ryze
-Which champions ultimate is named: Solar Flare?`Leona
-Which champions ultimate is named: Impale?`Skarner
-Which champions ultimate is named: Grand Challenge?`Fiora
-Which champions ultimate is named: Petrifying Gaze?`Cassiopeia
-Which champions ultimate is named: Crescendo?`Sona
-Which champions ultimate is named: Death Mark?`Zed
-Which champions ultimate is named: Leap of Faith?`Illaoi
-Which champions ultimate is named: Dragon's Rage?`Lee Sin`leesin
-Which champions ultimate is named: Pheonix Stance?`Udyr
-Which champions ultimate is named: Whirling Death?`Draven
-Which champions ultimate is named: Hyper-Kinteic Position Reverser?`Urgot
-Which champions ultimate is named: Idol of Durand?`Galio
-Which champions ultimate is named: Glacial Fissure?`Braum
-Which champions ultimate is named: Subjugate?`Trundle
-Which champions ultimate is named: Unleashed Power?`Syndra
-Which champions ultimate is named: Rat-Ta-Tat-Tat?`Twitch
-Which champions ultimate is named: Void Rush?`Rek'sai`rek sai`reksai
-Which champions ultimate is named: Collateral Damage?`Graves
-Which champions ultimate is named: Ragnarok?`Olaf
-Which champions ultimate is named: Let's Bounce!`Zac
-Which champions ultimate is named: Mimic?`Leblanc
-Which champions ultimate is named: Grandmaster's Might?`Jax
-Which champions ultimate is named: Curtain Call?`Jhin
-Which champions ultimate is named: Voice of Light?`Aurelion Sol`aurelionsol
-Which champions ultimate is named: Chaaaaaaaarge!!! ?`Kled
-Which champions ultimate is named: Daisy!?`Ivern
+Which champion's ultimate is named: Spirit Rush?`Ahri
+Which champion's ultimate is named: Hemoplague?`Vladimir
+Which champion's ultimate is named: On The Hunt?`Sivir
+Which champion's ultimate is named: Destiny?`Twisted Fate
+Which champion's ultimate is named: UPGRADE!!!`Heimerdinger
+Which champion's ultimate is named: Enchanted Crystal Arrow?`Ashe
+Which champion's ultimate is named: Mantra?`Karma
+Which champion's ultimate is named: Keeper's Verdict?`Poppy
+Which champion's ultimate is named: Glacial Storm?`Anivia
+Which champion's ultimate is named: Rite of the Arcane?`Xerath
+Which champion's ultimate is named: Bullet Time?`Miss Fortune
+Which champion's ultimate is named: Tempered Fate?`Bard
+Which champion's ultimate is named: Void Assault?`Kha'zix`khazix`kha zix
+Which champion's ultimate is named: Fury of the Sands?`Nasus
+Which champion's ultimate is named: Shadow Assault?`Talon
+Which champion's ultimate is named: Crowstorm?`Fiddlesticks
+Which champion's ultimate is named: Thunder Claws?`Volibear
+Which champion's ultimate is named: Behind Enemy Lines?`Quinn
+Which champion's ultimate is named: Cyclone?`Wukong
+Which champion's ultimate is named: Infinite Duress?`Warwick
+Which champion's ultimate is named: Glacial Prison?`Sejuani
+Which champion's ultimate is named: Spider Form/Human Form?`Elise
+Which champion's ultimate is named: Requiem?`Karthus
+Which champion's ultimate is named: Trueshot Barrage?`Ezreal
+Which champion's ultimate is named: Life Form Disintegration Ray?`Vel'koz`vel koz`velkoz
+Which champion's ultimate is named: Command: Shockwave?`Orianna
+Which champion's ultimate is named: Children of the Grave?`Mordekaiser
+Which champion's ultimate is named: Missile Barrage?`Corki
+Which champion's ultimate is named: Lamb's Respite?`Kindred
+Which champion's ultimate is named: Paranoia?`Nocturne
+Which champion's ultimate is named: Crescent Sweep?`Xin Zhao`xinzhao
+Which champion's ultimate is named: Chain of Corruption?`Varus
+Which champion's ultimate is named: GNAR!`Gnar
+Which champion's ultimate is named: Unstoppable Force?`Malphite
+Which champion's ultimate is named: Frozen Tomb?`Lissandra
+Which champion's ultimate is named: Ravenous Flock?`Swain
+Which champion's ultimate is named: Summon: Tibbers?`Annie
+Which champion's ultimate is named: Riftwalk?`Kassadin
+Which champion's ultimate is named: Insanity Potion?`Singed
+Which champion's ultimate is named: Transcendent Blades?`Irelia
+Which champion's ultimate is named: Super Mega Death Rocket!`Jinx
+Which champion's ultimate is named: Intervention?`Kayle
+Which champion's ultimate is named: Buster Shot?`Tristana
+Which champion's ultimate is named: Monsoon?`Janna
+Which champion's ultimate is named: Pyroclasm?`Brand
+Which champion's ultimate is named: Depth Charge?`Nautilus
+Which champion's ultimate is named: The Equalizer?`Rumble
+Which champion's ultimate is named: Chronoshift?`Zilean
+Which champion's ultimate is named: Mercury Cannon/Mercury Hammer?`Jayce
+Which champion's ultimate is named: The Box?`Thresh
+Which champion's ultimate is named: Thrill of the Hunt?`Rengar
+Which champion's ultimate is named: Death Lotus?`Katarina
+Which champion's ultimate is named: Slicing Maelstrom?`Kennen
+Which champion's ultimate is named: Explosive Cask?`Gragas
+Which champion's ultimate is named: Cosmic Radiance?`Taric
+Which champion's ultimate is named: Hallucinate?`Shaco
+Which champion's ultimate is named: Chronobreak?`Ekko
+Which champion's ultimate is named: Feast?`Cho'gath`cho gath`chogath
+Which champion's ultimate is named: Aspect of the Cougar?`Nidalee
+Which champion's ultimate is named: Unbreakable Will?`Alistar
+Which champion's ultimate is named: Vengeful Maelstrom?`Maokai
+Which champion's ultimate is named: Absolute Zero?`Nunu
+Which champion's ultimate is named: Cataclysm?`Jarvan
+Which champion's ultimate is named: Tremors?`Rammus
+Which champion's ultimate is named: Nether Grasp?`Malzahar
+Which champion's ultimate is named: Last Breath?`Yasuo
+Which champion's ultimate is named: The Culling?`Lucian
+Which champion's ultimate is named: Lunar Rush?`Diana
+Which champion's ultimate is named: Massacre?`Aatrox
+Which champion's ultimate is named: Noxian Guillotine?`Darius
+Which champion's ultimate is named: Soul Shackles?`Morgana
+Which champion's ultimate is named: Unstoppable Onslaught?`Sion
+Which champion's ultimate is named: Living ARtiller?`Kog'maw`kogmaw`kog maw
+Which champion's ultimate is named: Primordial Burst?`Veigar
+Which champion's ultimate is named: Dragon's Descent?`Shyvana
+Which champion's ultimate is named: Demacian Justice?`Garen
+Which champion's ultimate is named: Ace in the Hole?`Caitlyn
+Which champion's ultimate is named: Tidal Wave?`Nami
+Which champion's ultimate is named: Fate's Call?`Kalista
+Which champion's ultimate is named: Wish?`Soraka
+Which champion's ultimate is named: Blade of the Exile?`Riven
+Which champion's ultimate is named: Wild Growth?`Lulu
+Which champion's ultimate is named: Final Hour?`Vayne
+Which champion's ultimate is named: Undying Rage?`Tryndamere 
+Which champion's ultimate is named: Noxious Trap?`Teemo
+Which champion's ultimate is named: Cannon Barrage?`Gangplank
+Which champion's ultimate is named: Sadism?`Dr. Mundo`dr mundo`mundo`drmundo
+Which champion's ultimate is named: Chaos Storm?`Viktor
+Which champion's ultimate is named: Emperor's Divide?`Azir
+Which champion's ultimate is named: Static Field?`Blitzcrank
+Which champion's ultimate is named: Stranglethorns?`Zyra
+Which champion's ultimate is named: Chum the Waters?`Fizz
+Which champion's ultimate is named: Agony's Embrace?`Evelynn
+Which champion's ultimate is named: Grand Skyfall?`Pantheon
+Which champion's ultimate is named: Shadow Dance?`Akali
+Which champion's ultimate is named: Highlander?`Master Yi
+Which champion's ultimate is named: Omen of Death?`Yorick
+Which champion's ultimate is named: Final Spark?`Lux
+Which champion's ultimate is named: Onslaught of Shadows?`Hecarim
+Which champion's ultimate is named: Stand United?`Shen
+Which champion's ultimate is named: Assault and Battery?`Vi
+Which champion's ultimate is named: Abyssal Voyage?`Tahm Kench`tahmkench
+Which champion's ultimate is named: Dominus?`Renekton
+Which champion's ultimate is named: Mega Inferno Bomb?`Ziggs
+Which champion's ultimate is named: Desperate Power?`Ryze
+Which champion's ultimate is named: Solar Flare?`Leona
+Which champion's ultimate is named: Impale?`Skarner
+Which champion's ultimate is named: Grand Challenge?`Fiora
+Which champion's ultimate is named: Petrifying Gaze?`Cassiopeia
+Which champion's ultimate is named: Crescendo?`Sona
+Which champion's ultimate is named: Death Mark?`Zed
+Which champion's ultimate is named: Leap of Faith?`Illaoi
+Which champion's ultimate is named: Dragon's Rage?`Lee Sin`leesin
+Which champion's ultimate is named: Pheonix Stance?`Udyr
+Which champion's ultimate is named: Whirling Death?`Draven
+Which champion's ultimate is named: Hyper-Kinteic Position Reverser?`Urgot
+Which champion's ultimate is named: Idol of Durand?`Galio
+Which champion's ultimate is named: Glacial Fissure?`Braum
+Which champion's ultimate is named: Subjugate?`Trundle
+Which champion's ultimate is named: Unleashed Power?`Syndra
+Which champion's ultimate is named: Rat-Ta-Tat-Tat?`Twitch
+Which champion's ultimate is named: Void Rush?`Rek'sai`rek sai`reksai
+Which champion's ultimate is named: Collateral Damage?`Graves
+Which champion's ultimate is named: Ragnarok?`Olaf
+Which champion's ultimate is named: Let's Bounce!`Zac
+Which champion's ultimate is named: Mimic?`Leblanc
+Which champion's ultimate is named: Grandmaster's Might?`Jax
+Which champion's ultimate is named: Curtain Call?`Jhin
+Which champion's ultimate is named: Voice of Light?`Aurelion Sol`aurelionsol
+Which champion's ultimate is named: Chaaaaaaaarge!!! ?`Kled
+Which champion's ultimate is named: Daisy!?`Ivern
+Which champion's ultimate is named: Hextech Ultimatum?`Camille

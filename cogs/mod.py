@@ -74,7 +74,7 @@ class Mod:
             await self.bot.say(box(msg))
 
     @modset.command(name="adminrole", pass_context=True, no_pm=True)
-    async def _modset_adminrole(self, ctx, role_name: str):
+    async def _modset_adminrole(self, ctx, *, role_name: str):
         """Sets the admin role for this server, case insensitive."""
         server = ctx.message.server
         if server.id not in settings.servers:
@@ -83,7 +83,7 @@ class Mod:
         await self.bot.say("Admin role set to '{}'".format(role_name))
 
     @modset.command(name="modrole", pass_context=True, no_pm=True)
-    async def _modset_modrole(self, ctx, role_name: str):
+    async def _modset_modrole(self, ctx, *, role_name: str):
         """Sets the mod role for this server, case insensitive."""
         server = ctx.message.server
         if server.id not in settings.servers:
@@ -300,6 +300,7 @@ class Mod:
             await ctx.invoke(self.channel_mute, user=user)
 
     @mute.command(name="channel", pass_context=True, no_pm=True)
+    @checks.mod_or_permissions(administrator=True)
     async def channel_mute(self, ctx, user : discord.Member):
         """Mutes user in the current channel"""
         channel = ctx.message.channel
@@ -321,6 +322,7 @@ class Mod:
             await self.bot.say("User has been muted in this channel.")
 
     @mute.command(name="server", pass_context=True, no_pm=True)
+    @checks.mod_or_permissions(administrator=True)
     async def server_mute(self, ctx, user : discord.Member):
         """Mutes user in the server"""
         server = ctx.message.server
@@ -360,6 +362,7 @@ class Mod:
             await ctx.invoke(self.channel_unmute, user=user)
 
     @unmute.command(name="channel", pass_context=True, no_pm=True)
+    @checks.mod_or_permissions(administrator=True)
     async def channel_unmute(self, ctx, user : discord.Member):
         """Unmutes user in the current channel"""
         channel = ctx.message.channel
@@ -395,6 +398,7 @@ class Mod:
             await self.bot.say("User has been unmuted in this channel.")
 
     @unmute.command(name="server", pass_context=True, no_pm=True)
+    @checks.mod_or_permissions(administrator=True)
     async def server_unmute(self, ctx, user : discord.Member):
         """Unmutes user in the server"""
         server = ctx.message.server
@@ -501,6 +505,7 @@ class Mod:
         server = author.server
         is_bot = self.bot.user.bot
         has_permissions = channel.permissions_for(server.me).manage_messages
+        self_delete = user == self.bot.user
 
         def check(m):
             if m.author == user:
@@ -512,7 +517,7 @@ class Mod:
 
         to_delete = [ctx.message]
 
-        if not has_permissions:
+        if not has_permissions and not self_delete:
             await self.bot.say("I'm not allowed to delete messages.")
             return
 
@@ -532,7 +537,8 @@ class Mod:
                     "".format(author.name, author.id, len(to_delete),
                               user.name, user.id, channel.name))
 
-        if is_bot:
+        if is_bot and not self_delete:
+            # For whatever reason the purge endpoint requires manage_messages
             await self.mass_purge(to_delete)
         else:
             await self.slow_deletion(to_delete)
@@ -1378,7 +1384,7 @@ def setup(bot):
     global logger
     check_folders()
     check_files()
-    logger = logging.getLogger("mod")
+    logger = logging.getLogger("red.mod")
     # Prevents the logger from being loaded again in case of module reload
     if logger.level == 0:
         logger.setLevel(logging.INFO)
