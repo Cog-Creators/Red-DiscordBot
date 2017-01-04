@@ -266,11 +266,11 @@ def update_menu():
         clear_screen()
 
 
-def maintenace_menu():
+def maintenance_menu():
     clear_screen()
     while True:
         print(INTRO)
-        print("Maintenace:\n")
+        print("Maintenance:\n")
         print("1. Repair Red (discards code changes, keeps data intact)")
         print("2. Wipe 'data' folder (all settings, cogs' data...)")
         print("3. Wipe 'lib' folder (all local requirements / local installed"
@@ -460,7 +460,7 @@ def main():
         elif choice == "4":
             requirements_menu()
         elif choice == "5":
-            maintenace_menu()
+            maintenance_menu()
         elif choice == "0":
             break
         clear_screen()
