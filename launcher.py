@@ -65,9 +65,17 @@ def parse_cli_arguments():
 
 
 def install_reqs(audio):
+    interpreter = sys.executable
+
+    if interpreter is None:
+        print("Python interpreter not found.")
+        return
+
     txt = REQS_TXT if audio else REQS_NO_AUDIO_TXT
+
     args = [
-        "install",
+        interpreter, "-m",
+        "pip", "install",
         "--upgrade",
         "--target", REQS_DIR,
         "-r", txt
@@ -77,15 +85,34 @@ def install_reqs(audio):
         args.remove("--target")
         args.remove(REQS_DIR)
 
-    code = pip.main(args)
+    code = subprocess.call(args)
 
     if code == 0:
-        message = "\nRequirements setup completed."
+        print("\nRequirements setup completed.")
     else:
-        message = ("\nAn error occured and the requirements setup might "
-                   "not be completed. Consult the docs.\n")
+        print("\nAn error occured and the requirements setup might "
+              "not be completed. Consult the docs.\n")
 
-    print(message)
+
+def update_pip():
+    interpreter = sys.executable
+
+    if interpreter is None:
+        print("Python interpreter not found.")
+        return
+
+    args = [
+        interpreter, "-m",
+        "pip", "install",
+        "--upgrade", "pip"
+    ]
+
+    code = subprocess.call(args)
+
+    if code == 0:
+        print("\nPip has been updated.")
+    else:
+        print("\nAn error occurred and pip might not have been updated.")
 
 
 def update_red():
@@ -237,9 +264,12 @@ def update_menu():
     while True:
         print(INTRO)
         print("Update:\n")
+        print("Red:")
         print("1. Update Red + requirements (recommended)")
         print("2. Update Red")
         print("3. Update requirements")
+        print("\nOthers:")
+        print("4. Update pip (might require admin privileges)")
         print("\n0. Go back")
         choice = user_choice()
         if choice == "1":
@@ -260,6 +290,9 @@ def update_menu():
                 install_reqs(audio=audio)
             else:
                 print("The requirements haven't been installed yet.")
+            wait()
+        elif choice == "4":
+            update_pip()
             wait()
         elif choice == "0":
             break
