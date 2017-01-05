@@ -824,9 +824,10 @@ class Owner:
 
     def _get_version(self):
         url = os.popen(r'git config --get remote.origin.url').read().strip()
-        if not url:
 
-            embed = discord.Embed(title="This is not a git clone.", colour=discord.Colour.yellow())
+        if not url:
+            embed = discord.Embed(
+                title="This is not a git clone.", colour=discord.Colour.yellow())
 
             return embed
 
