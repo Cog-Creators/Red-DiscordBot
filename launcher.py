@@ -127,7 +127,7 @@ def update_red():
     else:
         print("\nRed could not update properly. If this is caused by edits "
               "you have made to the code you can try the repair option from "
-              "the main menu")
+              "the Maintenance submenu")
 
 
 def reset_red(reqs=False, data=False, cogs=False, git_reset=False):
