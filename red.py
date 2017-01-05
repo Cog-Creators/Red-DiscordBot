@@ -1,10 +1,12 @@
 import asyncio
 import os
 import sys
+sys.path.insert(0, "lib")
 import logging
 import logging.handlers
 import traceback
 import datetime
+import subprocess
 
 try:
     assert sys.version_info >= (3, 5)
@@ -64,6 +66,7 @@ class Bot(commands.Bot):
         self._message_modifiers = []
         self.settings = Settings()
         self._intro_displayed = False
+        self._restart_requested = False
         self.logger = set_logger(self)
         if 'self_bot' in kwargs:
             self.settings.self_bot = kwargs['self_bot']
@@ -90,6 +93,15 @@ class Bot(commands.Bot):
             kwargs['content'] = content
 
         return await super().send_message(*args, **kwargs)
+
+    async def shutdown(self, *, restart=False):
+        """Gracefully quits Red with exit code 0
+
+        If restart is True, the exit code will be 26 instead
+        The launcher automatically restarts Red when that happens"""
+        if restart:
+            self._restart_requested = True
+        await self.logout()
 
     def add_message_modifier(self, func):
         """
@@ -173,6 +185,40 @@ class Bot(commands.Bot):
             return True
         else:
             return True
+
+    async def pip_install(self, name, *, timeout=None):
+        """
+        Installs a pip package in the local 'lib' folder in a thread safe
+        way. On Mac systems the 'lib' folder is not used.
+        Can specify the max seconds to wait for the task to complete
+
+        Returns a bool indicating if the installation was successful
+        """
+
+        IS_MAC = sys.platform == "darwin"
+        interpreter = sys.executable
+
+        if interpreter is None:
+            raise RuntimeError("Couldn't find Python's interpreter")
+
+        args = [
+            interpreter, "-m",
+            "pip", "install",
+            "--upgrade",
+            "--target", "lib",
+            name
+        ]
+
+        if IS_MAC: # --target is a problem on Homebrew. See PR #552
+            args.remove("--target")
+            args.remove("lib")
+
+        def install():
+            code = subprocess.call(args)
+            return not bool(code)
+
+        response = self.loop.run_in_executor(None, install)
+        return await asyncio.wait_for(response, timeout=timeout)
 
 
 class Formatter(commands.HelpFormatter):
@@ -282,13 +328,8 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
 
         print("\nOfficial server: https://discord.me/Red-DiscordBot")
 
-        if os.name == "nt" and os.path.isfile("update.bat"):
-            print("\nMake sure to keep your bot updated by running the file "
-                  "update.bat")
-        else:
-            print("\nMake sure to keep your bot updated by using: git pull")
-            print("and: pip3 install -U git+https://github.com/Rapptz/"
-                  "discord.py@master#egg=discord.py[voice]")
+        print("Make sure to keep your bot updated. Select the 'Update' "
+              "option from the launcher.")
 
         await bot.get_cog('Owner').disable_commands()
 
@@ -580,3 +621,5 @@ if __name__ == '__main__':
         loop.close()
         if error:
             exit(1)
+        if bot._restart_requested:
+            exit(26)
