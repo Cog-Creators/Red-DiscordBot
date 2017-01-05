@@ -116,7 +116,12 @@ def update_pip():
 
 
 def update_red():
-    code = subprocess.call(("git", "pull", "--ff-only"))
+    try:
+        code = subprocess.call(("git", "pull", "--ff-only"))
+    except FileNotFoundError:
+        print("\nError: Git not found. It's either not installed or not in "
+              "the PATH environment variable like requested in the guide.")
+        return
     if code == 0:
         print("\nRed has been updated")
     else:
