@@ -823,17 +823,26 @@ class Owner:
             self.setowner_lock = False
 
     def _get_version(self):
-        url = os.popen(r'git config --get remote.origin.url')
-        url = url.read().strip()[:-4]
+        url = os.popen(r'git config --get remote.origin.url').read().strip()
+        if not url:
+
+            embed = discord.Embed(title="This is not a git clone.", colour=discord.Colour.yellow())
+
+            return embed
+
+        elif url.endswith(".git"):
+            url = url[:-4]
+
         repo_name = url.split("/")[-1]
         commits = os.popen(r'git show -s -n 3 HEAD --format="%cr|%s|%H"')
         ncommits = os.popen(r'git rev-list --count HEAD').read()
+        branch = os.popen(r'git rev-parse --abbrev-ref HEAD').read().strip()
 
         lines = commits.read().split('\n')
         embed = discord.Embed(title="Updates of " + repo_name,
                               description="Last three updates",
                               colour=discord.Colour.red(),
-                              url=url)
+                              url="{}/tree/{}".format(url, branch))
         for line in lines:
             if not line:
                 continue
