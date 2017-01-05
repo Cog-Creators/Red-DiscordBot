@@ -233,6 +233,17 @@ def is_dpy_audio_installed():
         return True
 
 
+def is_git_installed():
+    try:
+        subprocess.call(["git", "--version"], stdout=subprocess.DEVNULL,
+                                              stdin =subprocess.DEVNULL,
+                                              stderr=subprocess.DEVNULL)
+    except FileNotFoundError:
+        return False
+    else:
+        return True
+
+
 def requirements_menu():
     clear_screen()
     while True:
@@ -448,6 +459,9 @@ def create_fast_start_scripts():
         "start_red_autorestart" + ext : start_red_autorestart
     }
 
+    if not IS_WINDOWS:
+        files["start_launcher" + ext] = call
+
     for filename, content in files.items():
         if not os.path.isfile(filename):
             print("Creating {}... (fast start scripts)".format(filename))
@@ -456,12 +470,15 @@ def create_fast_start_scripts():
                 f.write(content)
 
     if not IS_WINDOWS and modified: # Let's make them executable on Unix
-        for script in ("start_red.sh", "start_red_autorestart.sh"):
+        for script in files:
             st = os.stat(script)
             os.chmod(script, st.st_mode | stat.S_IEXEC)
 
 
 def main():
+    print("Verifying git installation...")
+    has_git = is_git_installed()
+    is_git_installation = os.path.isdir(".git")
     if IS_WINDOWS:
         os.system("TITLE Red Discord Bot - Launcher")
     clear_screen()
@@ -474,13 +491,18 @@ def main():
     while True:
         print(INTRO)
 
-        if not os.path.isdir(".git"):
+        if not is_git_installation:
             print("WARNING: It doesnt' look like Red has been "
                   "installed with git.\nThis means that you won't "
                   "be able to update and some features won't be working.\n"
                   "A reinstallation is recommended. Follow the guide "
                   "properly this time:\n"
                   "https://twentysix26.github.io/Red-Docs/\n")
+
+        if not has_git:
+            print("WARNING: Git not found. This means that it's either not "
+                  "installed or not in the PATH environment variable like "
+                  "requested in the guide.\n")
 
         print("1. Run Red /w autorestart in case of issues")
         print("2. Run Red")
