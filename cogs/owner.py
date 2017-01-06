@@ -291,6 +291,28 @@ class Owner:
 
     @_set.command(pass_context=True)
     @checks.is_owner()
+    async def defaultmodrole(self, ctx, role_name: str):
+        """Sets the default mod role_name
+           (which is used if a server-specific
+           one is not set)
+        """
+        self.bot.settings.default_mod = role_name
+        self.bot.settings.save_settings()
+        await self.bot.say("Set the default mod role")
+
+    @_set.command(pass_context=True)
+    @checks.is_owner()
+    async def defaultadminrole(self, ctx, role_name: str):
+        """Sets the default admin role_name
+           (which is used if a server-specific
+           one is not set)
+        """
+        self.bot.settings.default_admin = role_name
+        self.bot.settings.save_settings()
+        await self.bot.say("Set the default admin role")
+
+    @_set.command(pass_context=True)
+    @checks.is_owner()
     async def prefix(self, ctx, *prefixes):
         """Sets Red's global prefixes
 
