@@ -297,7 +297,7 @@ class Owner:
            This is used if a server-specific role is not set"""
         self.bot.settings.default_mod = role_name
         self.bot.settings.save_settings()
-        await self.bot.say("Set the default mod role")
+        await self.bot.say("The default mod role name has been set.")
 
     @_set.command()
     @checks.is_owner()
@@ -307,7 +307,7 @@ class Owner:
            This is used if a server-specific role is not set"""
         self.bot.settings.default_admin = role_name
         self.bot.settings.save_settings()
-        await self.bot.say("Set the default admin role")
+        await self.bot.say("The default admin role name has been set.")
 
     @_set.command(pass_context=True)
     @checks.is_owner()
