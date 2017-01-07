@@ -63,7 +63,8 @@ class Downloader:
             return
 
     @repo.command(name="add", pass_context=True)
-    async def _repo_add(self, ctx, repo_name: str, repo_url: str):
+    async def _repo_add(self, ctx, repo_name: str, repo_url: str,
+                        repo_branch: str="master"):
         """Adds repo to available repo lists
 
         Warning: Adding 3RD Party Repositories is at your own
@@ -88,8 +89,9 @@ class Downloader:
             return
         self.repos[repo_name] = {}
         self.repos[repo_name]['url'] = repo_url
+        self.repos[repo_name]['branch'] = repo_branch
         try:
-            self.update_repo(repo_name)
+            self.update_repo(repo_name, repo_branch)
         except CloningError:
             await self.bot.say("That repository link doesn't seem to be "
                                "valid.")
@@ -201,7 +203,7 @@ class Downloader:
 
         tasks = []
         for r in self.repos:
-            task = partial(self.update_repo, r)
+            task = partial(self.update_repo, r, r["branch"])
             task = self.bot.loop.run_in_executor(self.executor, task)
             tasks.append(task)
 
@@ -507,7 +509,7 @@ class Downloader:
             if broken:
                 save = True
                 try:
-                    self.update_repo(repo)
+                    self.update_repo(repo, branch)
                     self.populate_list(repo)
                 except CloningError:
                     invalid.append(repo)
@@ -535,7 +537,7 @@ class Downloader:
             if cog != 'url':
                 del self.repos[name][cog]
 
-    def update_repo(self, name):
+    def update_repo(self, name, branch):
         try:
             dd = self.path
             if name not in self.repos:
@@ -548,7 +550,10 @@ class Downloader:
                 url = self.repos[name].get('url')
                 if not url:
                     raise UpdateError("Need to clone but no URL set")
-                p = run(["git", "clone", url, dd + name])
+                if branch != "master":
+                    p = run(["git", "clone", "-b", branch, url, dd + name])
+                else:
+                    p = run(["git", "clone", url, dd + name])
                 if p.returncode != 0:
                     raise CloningError()
                 self.populate_list(name)
