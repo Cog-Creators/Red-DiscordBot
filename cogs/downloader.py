@@ -548,7 +548,13 @@ class Downloader:
                 url = self.repos[name].get('url')
                 if not url:
                     raise UpdateError("Need to clone but no URL set")
-                p = run(["git", "clone", url, dd + name])
+                branch = None
+                if "@" in url: # Specific branch
+                    url, branch = url.rsplit("@", maxsplit=1)
+                if branch is None:
+                    p = run(["git", "clone", url, dd + name])
+                else:
+                    p = run(["git", "clone", "-b", branch, url, dd + name])
                 if p.returncode != 0:
                     raise CloningError()
                 self.populate_list(name)
