@@ -289,6 +289,26 @@ class Owner:
                              args=(ctx.message.author,))
         t.start()
 
+    @_set.command()
+    @checks.is_owner()
+    async def defaultmodrole(self, *, role_name: str):
+        """Sets the default mod role name
+
+           This is used if a server-specific role is not set"""
+        self.bot.settings.default_mod = role_name
+        self.bot.settings.save_settings()
+        await self.bot.say("The default mod role name has been set.")
+
+    @_set.command()
+    @checks.is_owner()
+    async def defaultadminrole(self, *, role_name: str):
+        """Sets the default admin role name
+
+           This is used if a server-specific role is not set"""
+        self.bot.settings.default_admin = role_name
+        self.bot.settings.save_settings()
+        await self.bot.say("The default admin role name has been set.")
+
     @_set.command(pass_context=True)
     @checks.is_owner()
     async def prefix(self, ctx, *prefixes):
