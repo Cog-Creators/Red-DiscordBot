@@ -1,5 +1,5 @@
 
-![intro](http://i.imgur.com/OOtUQ9r.jpg)
+![intro](http://i.imgur.com/RgGlNpQ.jpg)
 
 # Red - A fully customizable Discord bot
 #### *Music, admin, trivia, fun commands and much more!*
