@@ -25,20 +25,19 @@ The installation process is as straightforward as ever, all major platforms are 
 * [Linux](https://twentysix26.github.io/Red-Docs/red_install_linux/)
 * [macOS](https://twentysix26.github.io/Red-Docs/red_install_mac/)
 
-Don't forget to read the [general tips](http://twentysix26.github.io/Red-Docs/red_general_tips/) for a better idea of how Red works.
+Don't forget to read the [getting started](https://twentysix26.github.io/Red-Docs/red_getting_started/) guide to quickly learn about the main features of Red.
 
 If you have any other questions, feel free to explore the [Wiki](https://twentysix26.github.io/Red-Docs/) for guidance.
 
-If [*after reading the guides*](https://twentysix26.github.io/Red-Docs/) you're still experiencing issues that are not listed in [this page](https://twentysix26.github.io/Red-Docs/red_guide_troubleshooting/), feel free to join the [official server](https://discord.gg/0k4npTwMvTpv9wrh) with your main account to get some help.  
-
-# Staying up to date
-
-Red is in continuous development, new features get added all the time and it's supported by an active community which produces even more content (plugins!). Stay tuned by [joining the official server](https://discord.gg/0k4npTwMvTpv9wrh)!
-
+If [*after reading the guides*](https://twentysix26.github.io/Red-Docs/) you're still experiencing issues that are not listed in [this page](https://twentysix26.github.io/Red-Docs/red_guide_troubleshooting/) or in the [FAQs](https://twentysix26.github.io/Red-Docs/red_faq/), feel free to join the [official server](https://discord.gg/0k4npTwMvTpv9wrh) with your main account to get some help.  
 Have fun!
+
+# Join the community!
+
+Red is in continuous development, new features get added all the time and it's supported by an active community that produces lots of content (plugins!) for everyone to enjoy. Stay tuned by [joining the official server](https://discord.gg/0k4npTwMvTpv9wrh)!
 
 # License
 
 Released under the [GNU GPL v3](LICENSE).
 
-*Pictures property of [Supergiant Games](https://www.supergiantgames.com/games/transistor/)*
+*Red is named after the main character of "Transistor", a videogame by [Supergiant Games](https://www.supergiantgames.com/games/transistor/)*
