@@ -397,7 +397,7 @@ class Economy:
             await self.bot.say("User doesn't have enough credits.")
         except NoAccount:
             await self.bot.say("User has no bank account.")
-    
+
     @_bank.command(pass_context=True, no_pm=True)
     @checks.serverowner_or_permissions(administrator=True)
     async def reset(self, ctx):
