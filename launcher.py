@@ -117,7 +117,6 @@ def update_pip():
 
 
 def update_red():
-    remove_reqs_readonly()
     try:
         code = subprocess.call(("git", "pull", "--ff-only"))
     except FileNotFoundError:
