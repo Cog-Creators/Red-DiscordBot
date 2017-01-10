@@ -397,6 +397,13 @@ class Economy:
             await self.bot.say("User doesn't have enough credits.")
         except NoAccount:
             await self.bot.say("User has no bank account.")
+    
+    @_bank.command(pass_context=True, no_pm=True)
+    @checks.serverowner_or_permissions(administrator=True)
+    async def reset(self, ctx):
+        """Reset the server's bank"""
+        self.bank.wipe_bank(ctx.message.server)
+        await self.bot.say("Wiped the bank for this server")
 
     @commands.command(pass_context=True, no_pm=True)
     async def payday(self, ctx):  # TODO
