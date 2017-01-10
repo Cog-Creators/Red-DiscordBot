@@ -65,6 +65,7 @@ def parse_cli_arguments():
 
 
 def install_reqs(audio):
+    remove_reqs_readonly()
     interpreter = sys.executable
 
     if interpreter is None:
@@ -116,6 +117,7 @@ def update_pip():
 
 
 def update_red():
+    remove_reqs_readonly()
     try:
         code = subprocess.call(("git", "pull", "--ff-only"))
     except FileNotFoundError:
@@ -419,6 +421,18 @@ def user_pick_yes_no():
 def remove_readonly(func, path, excinfo):
     os.chmod(path, stat.S_IWRITE)
     func(path)
+
+
+def remove_reqs_readonly():
+    """Workaround for issue #569"""
+    if not os.path.isdir(REQS_DIR):
+        return
+    os.chmod(REQS_DIR, stat.S_IWRITE)
+    for root, dirs, files in os.walk(REQS_DIR):
+        for d in dirs:
+            os.chmod(os.path.join(root, d), stat.S_IWRITE)
+        for f in files:
+            os.chmod(os.path.join(root, f), stat.S_IWRITE)
 
 
 def calculate_md5(filename):
