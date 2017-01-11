@@ -28,13 +28,13 @@ What is the capital of Burkina Faso?`Ouagadougou
 What is the capital of Burundi?`Bujumbura
 What is the capital of Cabo Verde?`Praia
 What is the capital of Cambodia?`Phnom Penh
-What is the capital of Cameroon?`YaoundÈ`yaounde
+What is the capital of Cameroon?`Yaound√©`yaounde
 What is the capital of Canada?`Ottawa
 What is the capital of Central African Republic?`Bangui
 What is the capital of Chad?`N'Djamena`ndjamena`n djamena
 What is the capital of Chile?`Santiago
 What is the capital of China?`Beijing
-What is the capital of Colombia?`Bogot·`Bogota
+What is the capital of Colombia?`Bogot√°`Bogota
 What is the capital of Comoros?`Moroni
 What is the capital of the Republic of the Congo?`Brazzaville
 What is the capital of the Democratic Republic of the Congo?`Kinshasa
@@ -133,7 +133,7 @@ What is the capital of Palau?`Ngerulmud
 What is the capital of Palestine?`Ramallah
 What is the capital of Panama?`Panama City`panamacity
 What is the capital of Papua New Guinea?`Port Moresby`portmoresby
-What is the capital of Paraguay?`AsunciÛn`asuncion
+What is the capital of Paraguay?`Asunci√≥n`asuncion
 What is the capital of Peru?`Lima
 What is the capital of Philippines?`Manila
 What is the capital of Poland?`Warsaw
@@ -147,7 +147,7 @@ What is the capital of Saint Lucia?`Castries
 What is the capital of Saint Vincent and the Grenadines?`Kingstown
 What is the capital of Samoa?`Apia
 What is the capital of San Marino?`San Marino`sanmarino
-What is the capital of Sao Tome and Principe?`S„o TomÈ`sao tome`saotome
+What is the capital of Sao Tome and Principe?`S√£o Tom√©`sao tome`saotome
 What is the capital of Saudi Arabia?`Riyadh
 What is the capital of Senegal?`Dakar
 What is the capital of Serbia?`Belgrade
@@ -162,7 +162,7 @@ Name of the capitals of South Africa?`Pretoria`Cape Town`capetown`Bloemfontein
 What is the capital of South Korea?`Seoul
 What is the capital of South Sudan?`Juba
 What is the capital of Spain?`Madrid
-What is the capital of Sri Lanka?`Sri Jayawardenepura Kotte`srijawawardenpurakotte
+What is the capital of Sri Lanka?`Sri Jayawardenepura Kotte`srijawawardenpurakotte`Kotte
 What is the capital of Sudan?`Khartoum
 What is the capital of Suriname?`Paramaribo
 What is the capital of Swaziland?`Mbabane
@@ -174,7 +174,7 @@ What is the capital of Tajikistan?`Dushanbe
 What is the capital of Tanzania?`Dodoma
 What is the capital of Thailand?`Bangkok
 What is the capital of Timor-Leste?`Dili
-What is the capital of Togo?`LomÈ`lome
+What is the capital of Togo?`Lom√©`lome
 What is the capital of Tonga?`Nuku'alofa`nukualofa
 What is the capital of Trinidad and Tobago?`Port of Spain`portofspain
 What is the capital of Tunisia?`Tunis
@@ -182,7 +182,7 @@ What is the capital of Turkey?`Ankara
 What is the capital of Turkmenistan?`Ashgabat
 What is the capital of Tuvalu?`Funafuti
 What is the capital of Uganda?`Kampala
-What is the capital of Ukraine?`Kyiv
+What is the capital of Ukraine?`Kyiv`Kiev
 What is the capital of United Arab Emirates?`Abu Dhabi`abudhabi
 What is the capital of the United Kingdom?`London
 What is the capital of the United States of America?`Washington, D.C.`washingtondc`washington dc`washington d.c.`washington, dc`washington,d.c.`washington,dc`washingtond.c.

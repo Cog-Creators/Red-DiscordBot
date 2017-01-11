@@ -70,7 +70,7 @@ Which champion's ultimate is named: Massacre?`Aatrox
 Which champion's ultimate is named: Noxian Guillotine?`Darius
 Which champion's ultimate is named: Soul Shackles?`Morgana
 Which champion's ultimate is named: Unstoppable Onslaught?`Sion
-Which champion's ultimate is named: Living ARtiller?`Kog'maw`kogmaw`kog maw
+Which champion's ultimate is named: Living Artillery?`Kog'maw`kogmaw`kog maw
 Which champion's ultimate is named: Primordial Burst?`Veigar
 Which champion's ultimate is named: Dragon's Descent?`Shyvana
 Which champion's ultimate is named: Demacian Justice?`Garen

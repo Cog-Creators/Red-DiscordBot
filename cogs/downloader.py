@@ -12,6 +12,7 @@ import discord
 from functools import partial
 from concurrent.futures import ThreadPoolExecutor
 from time import time
+from importlib.util import find_spec
 
 NUM_THREADS = 4
 REPO_NONEX = 0x1
@@ -24,6 +25,10 @@ class UpdateError(Exception):
 
 
 class CloningError(UpdateError):
+    pass
+
+
+class RequirementFail(UpdateError):
     pass
 
 
@@ -207,6 +212,7 @@ class Downloader:
         updated_cogs = []
         new_cogs = []
         deleted_cogs = []
+        failed_cogs = []
         error_repos = {}
         installed_updated_cogs = []
 
@@ -233,6 +239,21 @@ class Downloader:
                 msg = await self._robust_edit(msg, base_msg + status)
         status = 'done. '
 
+        for t in updated_cogs:
+            repo, cog, _ = t
+            if self.repos[repo][cog]['INSTALLED']:
+                try:
+                    await self.install(repo, cog,
+                                       no_install_on_reqs_fail=False)
+                except RequirementFail:
+                    failed_cogs.append(t)
+                else:
+                    installed_updated_cogs.append(t)
+
+        for t in updated_cogs.copy():
+            if t in failed_cogs:
+                updated_cogs.remove(t)
+
         if not any(self.repos[repo][cog]['INSTALLED'] for
                    repo, cog, _ in updated_cogs):
             status += ' No updates to apply. '
@@ -246,21 +267,16 @@ class Downloader:
         if updated_cogs:
             status += '\nUpdated cogs: ' \
                    + ', '.join('%s/%s' % c[:2] for c in updated_cogs) + '.'
+        if failed_cogs:
+            status += '\nCogs that got new requirements which have ' + \
+                   'failed to install: ' + \
+                   ', '.join('%s/%s' % c[:2] for c in failed_cogs) + '.'
         if error_repos:
             status += '\nThe following repos failed to update: '
             for n, what in error_repos.items():
                 status += '\n%s: %s' % (n, what)
 
         msg = await self._robust_edit(msg, base_msg + status)
-
-        registry = dataIO.load_json("data/red/cogs.json")
-
-        for t in updated_cogs:
-            repo, cog, _ = t
-            if (self.repos[repo][cog]['INSTALLED'] and
-                    registry.get('cogs.' + cog, False)):
-                installed_updated_cogs.append(t)
-                await self.install(repo, cog)
 
         if not installed_updated_cogs:
             return
@@ -280,9 +296,12 @@ class Downloader:
             await self.bot.say("Ok then, you can reload cogs with"
                                " `{}reload <cog_name>`".format(ctx.prefix))
         elif answer.content.lower().strip() == "yes":
+            registry = dataIO.load_json("data/red/cogs.json")
             update_list = []
             fail_list = []
             for repo, cog, _ in installed_updated_cogs:
+                if not registry.get('cogs.' + cog, False):
+                    continue
                 try:
                     self.bot.unload_extension("cogs." + cog)
                     self.bot.load_extension("cogs." + cog)
@@ -342,8 +361,14 @@ class Downloader:
         if cog not in self.repos[repo_name]:
             await self.bot.say("That cog isn't available from that repo.")
             return
-        install_cog = await self.install(repo_name, cog)
         data = self.get_info_data(repo_name, cog)
+        try:
+            install_cog = await self.install(repo_name, cog, notify_reqs=True)
+        except RequirementFail:
+            await self.bot.say("That cog has requirements that I could not "
+                               "install. Check the console for more "
+                               "informations.")
+            return
         if data is not None:
             install_msg = data.get("INSTALL_MSG", None)
             if install_msg:
@@ -368,13 +393,40 @@ class Downloader:
             await self.bot.say("That cog doesn't exist. Use cog list to see"
                                " the full list.")
 
-    async def install(self, repo_name, cog):
+    async def install(self, repo_name, cog, *, notify_reqs=False,
+                      no_install_on_reqs_fail=True):
+        # 'no_install_on_reqs_fail' will make the cog get installed anyway
+        # on requirements installation fail. This is necessary because due to
+        # how 'cog update' works right now, the user would have no way to
+        # reupdate the cog if the update fails, since 'cog update' only
+        # updates the cogs that get a new commit.
+        # This is not a great way to deal with the problem and a cog update
+        # rework would probably be the best course of action.
+        reqs_failed = False
         if cog.endswith('.py'):
             cog = cog[:-3]
 
         path = self.repos[repo_name][cog]['file']
         cog_folder_path = self.repos[repo_name][cog]['folder']
         cog_data_path = os.path.join(cog_folder_path, 'data')
+        data = self.get_info_data(repo_name, cog)
+        if data is not None:
+            requirements = data.get("REQUIREMENTS", [])
+
+            requirements = [r for r in requirements
+                            if not self.is_lib_installed(r)]
+
+            if requirements and notify_reqs:
+                await self.bot.say("Installing cog's requirements...")
+
+            for requirement in requirements:
+                if not self.is_lib_installed(requirement):
+                    success = await self.bot.pip_install(requirement)
+                    if not success:
+                        if no_install_on_reqs_fail:
+                            raise RequirementFail()
+                        else:
+                            reqs_failed = True
 
         to_path = os.path.join("cogs/", cog + ".py")
 
@@ -387,7 +439,10 @@ class Downloader:
                                          os.path.join('data/', cog))
         self.repos[repo_name][cog]['INSTALLED'] = True
         self.save_repos()
-        return True
+        if not reqs_failed:
+            return True
+        else:
+            raise RequirementFail()
 
     def get_info_data(self, repo_name, cog=None):
         if cog is not None:
@@ -440,6 +495,9 @@ class Downloader:
         git_name = splitted[-1]
         return git_name[:-4]
 
+    def is_lib_installed(self, name):
+        return bool(find_spec(name))
+
     def _do_first_run(self):
         invalid = []
         save = False
@@ -490,7 +548,13 @@ class Downloader:
                 url = self.repos[name].get('url')
                 if not url:
                     raise UpdateError("Need to clone but no URL set")
-                p = run(["git", "clone", url, dd + name])
+                branch = None
+                if "@" in url: # Specific branch
+                    url, branch = url.rsplit("@", maxsplit=1)
+                if branch is None:
+                    p = run(["git", "clone", url, dd + name])
+                else:
+                    p = run(["git", "clone", "-b", branch, url, dd + name])
                 if p.returncode != 0:
                     raise CloningError()
                 self.populate_list(name)
