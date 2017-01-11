@@ -4,7 +4,6 @@ from cogs.utils import checks
 from __main__ import set_cog
 from .utils.dataIO import dataIO
 from .utils.chat_formatting import pagify, box
-from requests.compat import json as complexjson
 
 import importlib
 import traceback
@@ -15,7 +14,6 @@ import datetime
 import glob
 import os
 import aiohttp
-import json
 
 log = logging.getLogger("red.owner")
 
