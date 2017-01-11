@@ -682,6 +682,13 @@ class Audio:
             return True
         return False
 
+    def _match_any_url(self, url):
+        any_link = re.compile(
+            r'@^(https?|ftp)://[^\s/$.?#].[^\s]*$@iS', re.IGNORECASE)
+        if any_link.match(url):
+            return True
+        return False
+
     # TODO: _next_songs_in_queue
 
     async def _parse_playlist(self, url):
