@@ -1312,6 +1312,7 @@ class Audio:
             await self.bot.say("I'm already downloading a file!")
             return
 
+        if self._match_any_url(url):
             if not self._valid_playable_url(url):
                 await self.bot.say("That's not a valid URL.")
                 return
