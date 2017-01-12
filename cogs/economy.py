@@ -398,6 +398,30 @@ class Economy:
         except NoAccount:
             await self.bot.say("User has no bank account.")
 
+    @_bank.command(name="add", pass_context=True)
+    @checks.admin_or_permissions(manage_server=True)
+    async def _add(self, ctx, user : discord.Member, sum : int):
+        """Add Credits to a user's bank account"""
+        author = ctx.message.author
+        try:
+            self.bank.deposit_credits(user, sum)
+            logger.info("{}({}) add {} Credits to {} ({})".format(author.name, author.id, str(sum), user.name, user.id))
+            await self.bot.say("{} Credits has been added to {}'s Bank Account.".format(str(sum), user.name))
+        except NoAccount:
+            await self.bot.say("User has no bank account.")
+
+    @_bank.command(name="remove", pass_context=True)
+    @checks.admin_or_permissions(manage_server=True)
+    async def _remove(self, ctx, user : discord.Member, sum : int):
+        """Remove Credits from a user's bank account"""
+        author = ctx.message.author
+        try:
+            self.bank.withdraw_credits(user, sum)
+            logger.info("{}({}) removed {} Credits from {} ({})".format(author.name, author.id, str(sum), user.name, user.id))
+            await self.bot.say("{} Credits has been removed to {}'s Bank Account.".format(str(sum), user.name))
+        except NoAccount:
+            await self.bot.say("User has no bank account.")
+
     @commands.command(pass_context=True, no_pm=True)
     async def payday(self, ctx):  # TODO
         """Get some free credits"""
