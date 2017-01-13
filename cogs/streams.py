@@ -5,6 +5,7 @@ from .utils.chat_formatting import *
 from .utils import checks
 from __main__ import send_cmd_help
 import os
+import re
 import time
 import aiohttp
 import asyncio
