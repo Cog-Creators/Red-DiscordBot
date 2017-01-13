@@ -28,9 +28,8 @@ class Streams:
     async def hitbox(self, stream: str):
         """Checks if hitbox stream is online"""
         stream = escape_mass_mentions(stream)
-        hitboxUsername = re.compile(
-            r'^(https?\:\/\/)?(www\.)?(hitbox\.tv\/)')
-        stream = re.sub(hitboxUsername, '', stream)
+        regex = r'^(https?\:\/\/)?(www\.)?(hitbox\.tv\/)'
+        stream = re.sub(regex, '', stream)
         online = await self.hitbox_online(stream)
         if online is True:
             await self.bot.say("http://www.hitbox.tv/{}/"
@@ -46,9 +45,8 @@ class Streams:
     async def twitch(self, ctx, stream: str):
         """Checks if twitch stream is online"""
         stream = escape_mass_mentions(stream)
-        twitchUsername = re.compile(
-            r'^(https?\:\/\/)?(www\.)?(twitch\.tv\/)')
-        stream = re.sub(twitchUsername, '', stream)
+        regex = r'^(https?\:\/\/)?(www\.)?(twitch\.tv\/)'
+        stream = re.sub(regex, '', stream)
         online = await self.twitch_online(stream)
         if online is True:
             await self.bot.say("http://www.twitch.tv/{} "
@@ -68,9 +66,8 @@ class Streams:
     async def beam(self, stream: str):
         """Checks if beam stream is online"""
         stream = escape_mass_mentions(stream)
-        beamUsername = re.compile(
-            r'^(https?\:\/\/)?(www\.)?(beam\.pro\/)')
-        stream = re.sub(beamUsername, '', stream)
+        regex = r'^(https?\:\/\/)?(www\.)?(beam\.pro\/)'
+        stream = re.sub(regex, '', stream)
         online = await self.beam_online(stream)
         if online is True:
             await self.bot.say("https://beam.pro/{} is online!".format(stream))
@@ -92,9 +89,8 @@ class Streams:
     async def twitch_alert(self, ctx, stream: str):
         """Adds/removes twitch alerts from the current channel"""
         stream = escape_mass_mentions(stream)
-        twitchUsername = re.compile(
-            r'^(https?\:\/\/)?(www\.)?(twitch\.tv\/)')
-        stream = re.sub(twitchUsername, '', stream)
+        regex = r'^(https?\:\/\/)?(www\.)?(twitch\.tv\/)'
+        stream = re.sub(regex, '', stream)
         channel = ctx.message.channel
         check = await self.twitch_online(stream)
         if check == 404:
@@ -144,9 +140,8 @@ class Streams:
     async def hitbox_alert(self, ctx, stream: str):
         """Adds/removes hitbox alerts from the current channel"""
         stream = escape_mass_mentions(stream)
-        hitboxUsername = re.compile(
-            r'^(https?\:\/\/)?(www\.)?(hitbox\.tv\/)')
-        stream = re.sub(hitboxUsername, '', stream)
+        regex = r'^(https?\:\/\/)?(www\.)?(hitbox\.tv\/)'
+        stream = re.sub(regex, '', stream)
         channel = ctx.message.channel
         check = await self.hitbox_online(stream)
         if check is None:
@@ -191,9 +186,8 @@ class Streams:
     async def beam_alert(self, ctx, stream: str):
         """Adds/removes beam alerts from the current channel"""
         stream = escape_mass_mentions(stream)
-        beamUsername = re.compile(
-            r'^(https?\:\/\/)?(www\.)?(beam\.pro\/)')
-        stream = re.sub(beamUsername, '', stream)
+        regex = r'^(https?\:\/\/)?(www\.)?(beam\.pro\/)'
+        stream = re.sub(regex, '', stream)
         channel = ctx.message.channel
         check = await self.beam_online(stream)
         if check is None:
