@@ -1,10 +1,12 @@
 import asyncio
 import os
 import sys
+sys.path.insert(0, "lib")
 import logging
 import logging.handlers
 import traceback
 import datetime
+import subprocess
 
 try:
     assert sys.version_info >= (3, 5)
@@ -60,11 +62,16 @@ class Bot(commands.Bot):
             return bot.settings.get_prefixes(message.server)
 
         self.counter = Counter()
-        self.uptime = datetime.datetime.now() #  Will be refreshed before login
+        self.uptime = datetime.datetime.utcnow()  # Refreshed before login
         self._message_modifiers = []
         self.settings = Settings()
         self._intro_displayed = False
-        kwargs["self_bot"] = self.settings.self_bot
+        self._restart_requested = False
+        self.logger = set_logger(self)
+        if 'self_bot' in kwargs:
+            self.settings.self_bot = kwargs['self_bot']
+        else:
+            kwargs['self_bot'] = self.settings.self_bot
         super().__init__(*args, command_prefix=prefix_manager, **kwargs)
 
     async def send_message(self, *args, **kwargs):
@@ -86,6 +93,15 @@ class Bot(commands.Bot):
             kwargs['content'] = content
 
         return await super().send_message(*args, **kwargs)
+
+    async def shutdown(self, *, restart=False):
+        """Gracefully quits Red with exit code 0
+
+        If restart is True, the exit code will be 26 instead
+        The launcher automatically restarts Red when that happens"""
+        if restart:
+            self._restart_requested = True
+        await self.logout()
 
     def add_message_modifier(self, func):
         """
@@ -140,12 +156,12 @@ class Bot(commands.Bot):
         mod = self.get_cog('Mod')
 
         if mod is not None:
-            if settings.owner == author.id:
+            if self.settings.owner == author.id:
                 return True
             if not message.channel.is_private:
                 server = message.server
-                names = (settings.get_server_admin(
-                    server), settings.get_server_mod(server))
+                names = (self.settings.get_server_admin(
+                    server), self.settings.get_server_mod(server))
                 results = map(
                     lambda name: discord.utils.get(author.roles, name=name),
                     names)
@@ -170,6 +186,40 @@ class Bot(commands.Bot):
         else:
             return True
 
+    async def pip_install(self, name, *, timeout=None):
+        """
+        Installs a pip package in the local 'lib' folder in a thread safe
+        way. On Mac systems the 'lib' folder is not used.
+        Can specify the max seconds to wait for the task to complete
+
+        Returns a bool indicating if the installation was successful
+        """
+
+        IS_MAC = sys.platform == "darwin"
+        interpreter = sys.executable
+
+        if interpreter is None:
+            raise RuntimeError("Couldn't find Python's interpreter")
+
+        args = [
+            interpreter, "-m",
+            "pip", "install",
+            "--upgrade",
+            "--target", "lib",
+            name
+        ]
+
+        if IS_MAC: # --target is a problem on Homebrew. See PR #552
+            args.remove("--target")
+            args.remove("lib")
+
+        def install():
+            code = subprocess.call(args)
+            return not bool(code)
+
+        response = self.loop.run_in_executor(None, install)
+        return await asyncio.wait_for(response, timeout=timeout)
+
 
 class Formatter(commands.HelpFormatter):
     def __init__(self, *args, **kwargs):
@@ -187,150 +237,143 @@ class Formatter(commands.HelpFormatter):
             self._paginator.add_line(shortened)
 
 
-formatter = Formatter(show_check_failure=False)
+def initialize(bot_class=Bot, formatter_class=Formatter):
+    formatter = formatter_class(show_check_failure=False)
 
-bot = Bot(formatter=formatter, description=description, pm_help=None)
+    bot = bot_class(formatter=formatter, description=description, pm_help=None)
 
-send_cmd_help = bot.send_cmd_help  # Backwards
-user_allowed = bot.user_allowed    # compatibility
+    import __main__
+    __main__.send_cmd_help = bot.send_cmd_help  # Backwards
+    __main__.user_allowed = bot.user_allowed    # compatibility
+    __main__.settings = bot.settings            # sucks
 
-settings = bot.settings
-
-
-@bot.event
-async def on_ready():
-    if bot._intro_displayed:
-        return
-    bot._intro_displayed = True
-
-    owner_cog = bot.get_cog('Owner')
-    total_cogs = len(owner_cog._list_cogs())
-    users = len(set(bot.get_all_members()))
-    servers = len(bot.servers)
-    channels = len([c for c in bot.get_all_channels()])
-
-    login_time = datetime.datetime.now() - bot.uptime
-    login_time = login_time.seconds + login_time.microseconds/1E6
-
-    print("Login successful. ({}ms)\n".format(login_time))
-
-    owner = await set_bot_owner()
-
-    print("-----------------")
-    print("Red - Discord Bot")
-    print("-----------------")
-    print(str(bot.user))
-    print("\nConnected to:")
-    print("{} servers".format(servers))
-    print("{} channels".format(channels))
-    print("{} users\n".format(users))
-    prefix_label = "Prefixes:" if len(settings.prefixes) > 1 else "Prefix:"
-    print("{} {}".format(prefix_label, " ".join(settings.prefixes)))
-    print("Owner: " + str(owner))
-    print("{}/{} active cogs with {} commands".format(
-        len(bot.cogs), total_cogs, len(bot.commands)))
-    print("-----------------")
-
-    if settings.token and not settings.self_bot:
-        print("\nUse this url to bring your bot to a server:")
-        url = await get_oauth_url()
-        bot.oauth_url = url
-        print(url)
-
-    print("\nOfficial server: https://discord.me/Red-DiscordBot")
-
-    if os.name == "nt" and os.path.isfile("update.bat"):
-        print("\nMake sure to keep your bot updated by running the file "
-              "update.bat")
-    else:
-        print("\nMake sure to keep your bot updated by using: git pull")
-        print("and: pip3 install -U git+https://github.com/Rapptz/"
-              "discord.py@master#egg=discord.py[voice]")
-
-    await bot.get_cog('Owner').disable_commands()
-
-
-@bot.event
-async def on_resumed():
-    bot.counter["session_resumed"] += 1
-
-
-@bot.event
-async def on_command(command, ctx):
-    bot.counter["processed_commands"] += 1
-
-
-@bot.event
-async def on_message(message):
-    bot.counter["messages_read"] += 1
-    if user_allowed(message):
-        await bot.process_commands(message)
-
-
-@bot.event
-async def on_command_error(error, ctx):
-    channel = ctx.message.channel
-    if isinstance(error, commands.MissingRequiredArgument):
-        await send_cmd_help(ctx)
-    elif isinstance(error, commands.BadArgument):
-        await send_cmd_help(ctx)
-    elif isinstance(error, commands.DisabledCommand):
-        await bot.send_message(channel, "That command is disabled.")
-    elif isinstance(error, commands.CommandInvokeError):
-        logger.exception("Exception in command '{}'".format(
-            ctx.command.qualified_name), exc_info=error.original)
-        oneliner = "Error in command '{}' - {}: {}".format(
-            ctx.command.qualified_name, type(error.original).__name__,
-            str(error.original))
-        await ctx.bot.send_message(channel, inline(oneliner))
-    elif isinstance(error, commands.CommandNotFound):
-        pass
-    elif isinstance(error, commands.CheckFailure):
-        pass
-    elif isinstance(error, commands.NoPrivateMessage):
-        await bot.send_message(channel, "That command is not "
-                                        "available in DMs.")
-    else:
-        logger.exception(type(error).__name__, exc_info=error)
-
-
-async def get_oauth_url():
-    try:
-        data = await bot.application_info()
-    except Exception as e:
-        return "Couldn't retrieve invite link.Error: {}".format(e)
-    return discord.utils.oauth_url(data.id)
-
-
-async def set_bot_owner():
-    if settings.self_bot:
-        settings.owner = bot.user.id
-        return "[Selfbot mode]"
-
-    if bot.settings.owner:
-        owner = discord.utils.get(bot.get_all_members(),
-                                  id=bot.settings.owner)
-        if not owner:
-            try:
-                owner = await bot.get_user_info(bot.settings.owner)
-            except:
-                owner = None
-            else:
-                owner = bot.settings.owner # Just the ID then
-        return owner
-
-    how_to = "Do `[p]set owner` in chat to set it"
-
-    if bot.user.bot: # Can fetch owner
+    async def get_oauth_url():
         try:
             data = await bot.application_info()
-            settings.owner = data.owner.id
-            settings.save_settings()
-            return data.owner
-        except:
-            return "Failed to fetch owner. " + how_to
-    else:
-        return "Yet to be set. " + how_to
+        except Exception as e:
+            return "Couldn't retrieve invite link.Error: {}".format(e)
+        return discord.utils.oauth_url(data.id)
+
+    async def set_bot_owner():
+        if bot.settings.self_bot:
+            bot.settings.owner = bot.user.id
+            return "[Selfbot mode]"
+
+        if bot.settings.owner:
+            owner = discord.utils.get(bot.get_all_members(),
+                                      id=bot.settings.owner)
+            if not owner:
+                try:
+                    owner = await bot.get_user_info(bot.settings.owner)
+                except:
+                    owner = None
+                if not owner:
+                    owner = bot.settings.owner  # Just the ID then
+            return owner
+
+        how_to = "Do `[p]set owner` in chat to set it"
+
+        if bot.user.bot:  # Can fetch owner
+            try:
+                data = await bot.application_info()
+                bot.settings.owner = data.owner.id
+                bot.settings.save_settings()
+                return data.owner
+            except:
+                return "Failed to fetch owner. " + how_to
+        else:
+            return "Yet to be set. " + how_to
+
+    @bot.event
+    async def on_ready():
+        if bot._intro_displayed:
+            return
+        bot._intro_displayed = True
+
+        owner_cog = bot.get_cog('Owner')
+        total_cogs = len(owner_cog._list_cogs())
+        users = len(set(bot.get_all_members()))
+        servers = len(bot.servers)
+        channels = len([c for c in bot.get_all_channels()])
+
+        login_time = datetime.datetime.utcnow() - bot.uptime
+        login_time = login_time.seconds + login_time.microseconds/1E6
+
+        print("Login successful. ({}ms)\n".format(login_time))
+
+        owner = await set_bot_owner()
+
+        print("-----------------")
+        print("Red - Discord Bot")
+        print("-----------------")
+        print(str(bot.user))
+        print("\nConnected to:")
+        print("{} servers".format(servers))
+        print("{} channels".format(channels))
+        print("{} users\n".format(users))
+        prefix_label = 'Prefix'
+        if len(bot.settings.prefixes) > 1:
+            prefix_label += 'es'
+        print("{}: {}".format(prefix_label, " ".join(bot.settings.prefixes)))
+        print("Owner: " + str(owner))
+        print("{}/{} active cogs with {} commands".format(
+            len(bot.cogs), total_cogs, len(bot.commands)))
+        print("-----------------")
+
+        if bot.settings.token and not bot.settings.self_bot:
+            print("\nUse this url to bring your bot to a server:")
+            url = await get_oauth_url()
+            bot.oauth_url = url
+            print(url)
+
+        print("\nOfficial server: https://discord.me/Red-DiscordBot")
+
+        print("Make sure to keep your bot updated. Select the 'Update' "
+              "option from the launcher.")
+
+        await bot.get_cog('Owner').disable_commands()
+
+    @bot.event
+    async def on_resumed():
+        bot.counter["session_resumed"] += 1
+
+    @bot.event
+    async def on_command(command, ctx):
+        bot.counter["processed_commands"] += 1
+
+    @bot.event
+    async def on_message(message):
+        bot.counter["messages_read"] += 1
+        if bot.user_allowed(message):
+            await bot.process_commands(message)
+
+    @bot.event
+    async def on_command_error(error, ctx):
+        channel = ctx.message.channel
+        if isinstance(error, commands.MissingRequiredArgument):
+            await bot.send_cmd_help(ctx)
+        elif isinstance(error, commands.BadArgument):
+            await bot.send_cmd_help(ctx)
+        elif isinstance(error, commands.DisabledCommand):
+            await bot.send_message(channel, "That command is disabled.")
+        elif isinstance(error, commands.CommandInvokeError):
+            bot.logger.exception("Exception in command '{}'".format(
+                ctx.command.qualified_name), exc_info=error.original)
+            oneliner = "Error in command '{}' - {}: {}".format(
+                ctx.command.qualified_name, type(error.original).__name__,
+                str(error.original))
+            await ctx.bot.send_message(channel, inline(oneliner))
+        elif isinstance(error, commands.CommandNotFound):
+            pass
+        elif isinstance(error, commands.CheckFailure):
+            pass
+        elif isinstance(error, commands.NoPrivateMessage):
+            await bot.send_message(channel, "That command is not "
+                                            "available in DMs.")
+        else:
+            bot.logger.exception(type(error).__name__, exc_info=error)
+
+    return bot
 
 
 def check_folders():
@@ -341,7 +384,7 @@ def check_folders():
             os.makedirs(folder)
 
 
-def interactive_setup():
+def interactive_setup(settings):
     first_run = settings.bot_settings == settings.default_settings
 
     if first_run:
@@ -406,9 +449,7 @@ def interactive_setup():
         input("\n")
 
 
-def set_logger():
-    global logger
-
+def set_logger(bot):
     logger = logging.getLogger("red")
     logger.setLevel(logging.INFO)
 
@@ -419,7 +460,7 @@ def set_logger():
 
     stdout_handler = logging.StreamHandler(sys.stdout)
     stdout_handler.setFormatter(red_format)
-    if settings.debug:
+    if bot.settings.debug:
         stdout_handler.setLevel(logging.DEBUG)
         logger.setLevel(logging.DEBUG)
     else:
@@ -435,7 +476,7 @@ def set_logger():
     logger.addHandler(stdout_handler)
 
     dpy_logger = logging.getLogger("discord")
-    if settings.debug:
+    if bot.settings.debug:
         dpy_logger.setLevel(logging.DEBUG)
     else:
         dpy_logger.setLevel(logging.WARNING)
@@ -446,6 +487,8 @@ def set_logger():
         '%(message)s',
         datefmt="[%d/%m/%Y %H:%M]"))
     dpy_logger.addHandler(handler)
+
+    return logger
 
 
 def ensure_reply(msg):
@@ -466,13 +509,13 @@ def get_answer():
         return False
 
 
-def set_cog(cog, value):
+def set_cog(cog, value):  # TODO: move this out of red.py
     data = dataIO.load_json("data/red/cogs.json")
     data[cog] = value
     dataIO.save_json("data/red/cogs.json", data)
 
 
-def load_cogs():
+def load_cogs(bot):
     defaults = ("alias", "audio", "customcom", "downloader", "economy",
                 "general", "image", "mod", "streams", "trivia")
 
@@ -488,8 +531,8 @@ def load_cogs():
               "which Red cannot function. Reinstall.")
         exit(1)
 
-    if settings._no_cogs:
-        logger.debug("Skipping initial cogs loading (--no-cogs)")
+    if bot.settings._no_cogs:
+        bot.logger.debug("Skipping initial cogs loading (--no-cogs)")
         if not os.path.isfile("data/red/cogs.json"):
             dataIO.save_json("data/red/cogs.json", {})
         return
@@ -497,7 +540,7 @@ def load_cogs():
     failed = []
     extensions = owner_cog._list_cogs()
 
-    if not registry: # All default cogs enabled by default
+    if not registry:  # All default cogs enabled by default
         for ext in defaults:
             registry["cogs." + ext] = True
 
@@ -510,7 +553,7 @@ def load_cogs():
                 owner_cog._load_cog(extension)
             except Exception as e:
                 print("{}: {}".format(e.__class__.__name__, str(e)))
-                logger.exception(e)
+                bot.logger.exception(e)
                 failed.append(extension)
                 registry[extension] = False
 
@@ -520,55 +563,63 @@ def load_cogs():
         print("\nFailed to load: {}\n".format(" ".join(failed)))
 
 
-def main():
+def main(bot):
     check_folders()
-    if not settings.no_prompt:
-        interactive_setup()
-    load_cogs()
+    if not bot.settings.no_prompt:
+        interactive_setup(bot.settings)
+    load_cogs(bot)
+
+    if bot.settings._dry_run:
+        print("Quitting: dry run")
+        exit(0)
 
     print("Logging into Discord...")
-    bot.uptime = datetime.datetime.now()
+    bot.uptime = datetime.datetime.utcnow()
 
-    if settings.login_credentials:
-        yield from bot.login(*settings.login_credentials,
-                             bot=not settings.self_bot)
+    if bot.settings.login_credentials:
+        yield from bot.login(*bot.settings.login_credentials,
+                             bot=not bot.settings.self_bot)
     else:
         print("No credentials available to login.")
         raise RuntimeError()
     yield from bot.connect()
+
 
 if __name__ == '__main__':
     sys.stdout = TextIOWrapper(sys.stdout.detach(),
                                encoding=sys.stdout.encoding,
                                errors="replace",
                                line_buffering=True)
-    set_logger()
+    bot = initialize()
     error = False
     loop = asyncio.get_event_loop()
     try:
-        loop.run_until_complete(main())
+        loop.run_until_complete(main(bot))
     except discord.LoginFailure:
         error = True
-        logger.error(traceback.format_exc())
-        if not settings.no_prompt:
-            choice = input("Invalid login credentials. "
-                           "If they worked before Discord might be having temporary "
-                           "technical issues.\nIn this case, press enter and "
-                           "try again later.\nOtherwise you can type 'reset' to "
-                           "reset the current credentials and set them "
-                           "again the next start.\n> ")
+        bot.logger.error(traceback.format_exc())
+        if not bot.settings.no_prompt:
+            choice = input("Invalid login credentials. If they worked before "
+                           "Discord might be having temporary technical "
+                           "issues.\nIn this case, press enter and try again "
+                           "later.\nOtherwise you can type 'reset' to reset "
+                           "the current credentials and set them again the "
+                           "next start.\n> ")
             if choice.lower().strip() == "reset":
-                settings.token = None
-                settings.email = None
-                settings.password = None
-                settings.save_settings()
+                bot.settings.token = None
+                bot.settings.email = None
+                bot.settings.password = None
+                bot.settings.save_settings()
     except KeyboardInterrupt:
         loop.run_until_complete(bot.logout())
-    except:
+    except Exception as e:
         error = True
-        logger.error(traceback.format_exc())
+        bot.logger.exception("Fatal exception, attempting graceful logout",
+                             exc_info=e)
         loop.run_until_complete(bot.logout())
     finally:
         loop.close()
         if error:
             exit(1)
+        if bot._restart_requested:
+            exit(26)

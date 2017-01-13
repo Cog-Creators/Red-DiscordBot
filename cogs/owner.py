@@ -289,6 +289,26 @@ class Owner:
                              args=(ctx.message.author,))
         t.start()
 
+    @_set.command()
+    @checks.is_owner()
+    async def defaultmodrole(self, *, role_name: str):
+        """Sets the default mod role name
+
+           This is used if a server-specific role is not set"""
+        self.bot.settings.default_mod = role_name
+        self.bot.settings.save_settings()
+        await self.bot.say("The default mod role name has been set.")
+
+    @_set.command()
+    @checks.is_owner()
+    async def defaultadminrole(self, *, role_name: str):
+        """Sets the default admin role name
+
+           This is used if a server-specific role is not set"""
+        self.bot.settings.default_admin = role_name
+        self.bot.settings.save_settings()
+        await self.bot.say("The default admin role name has been set.")
+
     @_set.command(pass_context=True)
     @checks.is_owner()
     async def prefix(self, ctx, *prefixes):
@@ -490,9 +510,31 @@ class Owner:
 
     @commands.command()
     @checks.is_owner()
-    async def shutdown(self):
+    async def shutdown(self, silently : bool=False):
         """Shuts down Red"""
-        await self.bot.logout()
+        wave = "\N{WAVING HAND SIGN}"
+        skin = "\N{EMOJI MODIFIER FITZPATRICK TYPE-3}"
+        try: # We don't want missing perms to stop our shutdown
+            if not silently:
+                await self.bot.say("Shutting down... " + wave + skin)
+        except:
+            pass
+        await self.bot.shutdown()
+
+    @commands.command()
+    @checks.is_owner()
+    async def restart(self, silently : bool=False):
+        """Attempts to restart Red
+
+        Makes Red quit with exit code 26
+        The restart is not guaranteed: it must be dealt
+        with by the process manager in use"""
+        try:
+            if not silently:
+                await self.bot.say("Restarting...")
+        except:
+            pass
+        await self.bot.shutdown(restart=True)
 
     @commands.group(name="command", pass_context=True)
     @checks.is_owner()
@@ -689,7 +731,7 @@ class Owner:
         dpy_repo = "https://github.com/Rapptz/discord.py"
         python_url = "https://www.python.org/"
         since = datetime.datetime(2016, 1, 2, 0, 0)
-        days_since = (datetime.datetime.now() - since).days
+        days_since = (datetime.datetime.utcnow() - since).days
         dpy_version = "[{}]({})".format(discord.__version__, dpy_repo)
         py_version = "[{}.{}.{}]({})".format(*os.sys.version_info[:3],
                                              python_url)
@@ -731,10 +773,10 @@ class Owner:
     @commands.command()
     async def uptime(self):
         """Shows Red's uptime"""
-        now = datetime.datetime.now()
-        uptime = (now - self.bot.uptime).seconds
-        uptime = datetime.timedelta(seconds=uptime)
-        await self.bot.say("`Uptime: {}`".format(uptime))
+        since = self.bot.uptime.strftime("%Y-%m-%d %H:%M:%S")
+        passed = self.get_bot_uptime()
+        await self.bot.say("Been up for: **{}** (since {} UTC)"
+                           "".format(passed, since))
 
     @commands.command()
     async def version(self):
@@ -822,6 +864,27 @@ class Owner:
         embed.set_footer(text="Total commits: " + ncommits)
 
         return embed
+
+    def get_bot_uptime(self, *, brief=False):
+        # Courtesy of Danny
+        now = datetime.datetime.utcnow()
+        delta = now - self.bot.uptime
+        hours, remainder = divmod(int(delta.total_seconds()), 3600)
+        minutes, seconds = divmod(remainder, 60)
+        days, hours = divmod(hours, 24)
+
+        if not brief:
+            if days:
+                fmt = '{d} days, {h} hours, {m} minutes, and {s} seconds'
+            else:
+                fmt = '{h} hours, {m} minutes, and {s} seconds'
+        else:
+            fmt = '{h}h {m}m {s}s'
+            if days:
+                fmt = '{d}d ' + fmt
+
+        return fmt.format(d=days, h=hours, m=minutes, s=seconds)
+
 
 def check_files():
     if not os.path.isfile("data/red/disabled_commands.json"):

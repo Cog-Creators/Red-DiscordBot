@@ -2,13 +2,34 @@ import discord
 from discord.ext import commands
 from .utils.chat_formatting import *
 from random import randint
-from random import choice as randchoice
+from random import choice
+from enum import Enum
 import datetime
 import time
 import aiohttp
 import asyncio
 
 settings = {"POLL_DURATION" : 60}
+
+
+class RPS(Enum):
+    rock     = "\N{MOYAI}"
+    paper    = "\N{PAGE FACING UP}"
+    scissors = "\N{BLACK SCISSORS}"
+
+
+class RPSParser:
+    def __init__(self, argument):
+        argument = argument.lower()
+        if argument == "rock":
+            self.choice = RPS.rock
+        elif argument == "paper":
+            self.choice = RPS.paper
+        elif argument == "scissors":
+            self.choice = RPS.scissors
+        else:
+            raise
+
 
 class General:
     """General commands."""
@@ -33,11 +54,11 @@ class General:
 
         To denote multiple choices, you should use double quotes.
         """
-        choices = [escape_mass_mentions(choice) for choice in choices]
+        choices = [escape_mass_mentions(c) for c in choices]
         if len(choices) < 2:
             await self.bot.say('Not enough choices to pick from.')
         else:
-            await self.bot.say(randchoice(choices))
+            await self.bot.say(choice(choices))
 
     @commands.command(pass_context=True)
     async def roll(self, ctx, number : int = 100):
@@ -73,39 +94,37 @@ class General:
             name = name.translate(table)
             await self.bot.say(msg + "(╯°□°）╯︵ " + name[::-1])
         else:
-            await self.bot.say("*flips a coin and... " + randchoice(["HEADS!*", "TAILS!*"]))
+            await self.bot.say("*flips a coin and... " + choice(["HEADS!*", "TAILS!*"]))
 
     @commands.command(pass_context=True)
-    async def rps(self, ctx, choice : str):
+    async def rps(self, ctx, your_choice : RPSParser):
         """Play rock paper scissors"""
         author = ctx.message.author
-        rpsbot = {"rock" : ":moyai:",
-           "paper": ":page_facing_up:",
-           "scissors":":scissors:"}
-        choice = choice.lower()
-        if choice in rpsbot.keys():
-            botchoice = randchoice(list(rpsbot.keys()))
-            msgs = {
-                "win": " You win {}!".format(author.mention),
-                "square": " We're square {}!".format(author.mention),
-                "lose": " You lose {}!".format(author.mention)
-            }
-            if choice == botchoice:
-                await self.bot.say(rpsbot[botchoice] + msgs["square"])
-            elif choice == "rock" and botchoice == "paper":
-                await self.bot.say(rpsbot[botchoice] + msgs["lose"])
-            elif choice == "rock" and botchoice == "scissors":
-                await self.bot.say(rpsbot[botchoice] + msgs["win"])
-            elif choice == "paper" and botchoice == "rock":
-                await self.bot.say(rpsbot[botchoice] + msgs["win"])
-            elif choice == "paper" and botchoice == "scissors":
-                await self.bot.say(rpsbot[botchoice] + msgs["lose"])
-            elif choice == "scissors" and botchoice == "rock":
-                await self.bot.say(rpsbot[botchoice] + msgs["lose"])
-            elif choice == "scissors" and botchoice == "paper":
-                await self.bot.say(rpsbot[botchoice] + msgs["win"])
+        player_choice = your_choice.choice
+        red_choice = choice((RPS.rock, RPS.paper, RPS.scissors))
+        cond = {
+                (RPS.rock,     RPS.paper)    : False,
+                (RPS.rock,     RPS.scissors) : True,
+                (RPS.paper,    RPS.rock)     : True,
+                (RPS.paper,    RPS.scissors) : False,
+                (RPS.scissors, RPS.rock)     : False,
+                (RPS.scissors, RPS.paper)    : True
+               }
+
+        if red_choice == player_choice:
+            outcome = None # Tie
         else:
-            await self.bot.say("Choose rock, paper or scissors.")
+            outcome = cond[(player_choice, red_choice)]
+
+        if outcome is True:
+            await self.bot.say("{} You win {}!"
+                               "".format(red_choice.value, author.mention))
+        elif outcome is False:
+            await self.bot.say("{} You lose {}!"
+                               "".format(red_choice.value, author.mention))
+        else:
+            await self.bot.say("{} We're square {}!"
+                               "".format(red_choice.value, author.mention))
 
     @commands.command(name="8", aliases=["8ball"])
     async def _8ball(self, *, question : str):
@@ -114,7 +133,7 @@ class General:
         Question must end with a question mark.
         """
         if question.endswith("?") and question != "?":
-            await self.bot.say("`" + randchoice(self.ball) + "`")
+            await self.bot.say("`" + choice(self.ball) + "`")
         else:
             await self.bot.say("That doesn't look like a question.")
 
@@ -156,7 +175,7 @@ class General:
         await self.bot.say(msg)
 
     @commands.command(pass_context=True, no_pm=True)
-    async def userinfo(self, ctx, user: discord.Member=None):
+    async def userinfo(self, ctx, *, user: discord.Member=None):
         """Shows users's informations"""
         author = ctx.message.author
         server = ctx.message.server
@@ -171,6 +190,8 @@ class General:
         since_joined = (ctx.message.timestamp - joined_at).days
         user_joined = joined_at.strftime("%d %b %Y %H:%M")
         user_created = user.created_at.strftime("%d %b %Y %H:%M")
+        member_number = sorted(server.members,
+                               key=lambda m: m.joined_at).index(user) + 1
 
         created_on = "{}\n({} days ago)".format(user_created, since_created)
         joined_on = "{}\n({} days ago)".format(user_joined, since_joined)
@@ -195,7 +216,8 @@ class General:
         data.add_field(name="Joined Discord on", value=created_on)
         data.add_field(name="Joined this server on", value=joined_on)
         data.add_field(name="Roles", value=roles, inline=False)
-        data.set_footer(text="User ID: " + user.id)
+        data.set_footer(text="Member #{} | User ID:{}"
+                             "".format(member_number, user.id))
 
         if user.avatar_url:
             name = str(user)
@@ -227,7 +249,7 @@ class General:
                       "".format(server.created_at.strftime("%d %b %Y %H:%M"),
                                 passed))
 
-        colour = ''.join([randchoice('0123456789ABCDEF') for x in range(6)])
+        colour = ''.join([choice('0123456789ABCDEF') for x in range(6)])
         colour = int(colour, 16)
 
         data = discord.Embed(

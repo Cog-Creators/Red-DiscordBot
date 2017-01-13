@@ -74,7 +74,7 @@ class Mod:
             await self.bot.say(box(msg))
 
     @modset.command(name="adminrole", pass_context=True, no_pm=True)
-    async def _modset_adminrole(self, ctx, role_name: str):
+    async def _modset_adminrole(self, ctx, *, role_name: str):
         """Sets the admin role for this server, case insensitive."""
         server = ctx.message.server
         if server.id not in settings.servers:
@@ -83,7 +83,7 @@ class Mod:
         await self.bot.say("Admin role set to '{}'".format(role_name))
 
     @modset.command(name="modrole", pass_context=True, no_pm=True)
-    async def _modset_modrole(self, ctx, role_name: str):
+    async def _modset_modrole(self, ctx, *, role_name: str):
         """Sets the mod role for this server, case insensitive."""
         server = ctx.message.server
         if server.id not in settings.servers:
@@ -505,6 +505,7 @@ class Mod:
         server = author.server
         is_bot = self.bot.user.bot
         has_permissions = channel.permissions_for(server.me).manage_messages
+        self_delete = user == self.bot.user
 
         def check(m):
             if m.author == user:
@@ -516,7 +517,7 @@ class Mod:
 
         to_delete = [ctx.message]
 
-        if not has_permissions:
+        if not has_permissions and not self_delete:
             await self.bot.say("I'm not allowed to delete messages.")
             return
 
@@ -536,7 +537,8 @@ class Mod:
                     "".format(author.name, author.id, len(to_delete),
                               user.name, user.id, channel.name))
 
-        if is_bot:
+        if is_bot and not self_delete:
+            # For whatever reason the purge endpoint requires manage_messages
             await self.mass_purge(to_delete)
         else:
             await self.slow_deletion(to_delete)

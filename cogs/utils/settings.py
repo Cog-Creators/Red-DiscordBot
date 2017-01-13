@@ -10,7 +10,7 @@ default_path = "data/red/settings.json"
 
 class Settings:
 
-    def __init__(self, path=default_path):
+    def __init__(self, path=default_path, parse_args=True):
         self.path = path
         self.check_folders()
         self.default_settings = {
@@ -44,8 +44,8 @@ class Settings:
 
         if "LOGIN_TYPE" in self.bot_settings:
             self.update_old_settings_v2()
-
-        self.parse_cmd_arguments()
+        if parse_args:
+            self.parse_cmd_arguments()
 
     def parse_cmd_arguments(self):
         parser = argparse.ArgumentParser(description="Red - Discord Bot")
@@ -72,6 +72,11 @@ class Settings:
                             action="store_true",
                             help="Arguments passed and future edits to the "
                                  "settings will not be saved to disk")
+        parser.add_argument("--dry-run",
+                            action="store_true",
+                            help="Makes Red quit with code 0 just before the "
+                                 "login. This is useful for testing the boot "
+                                 "process.")
         parser.add_argument("--debug",
                             action="store_true",
                             help="Enables debug mode")
@@ -92,6 +97,7 @@ class Settings:
         self._memory_only = args.memory_only
         self._no_cogs = args.no_cogs
         self.debug = args.debug
+        self._dry_run = args.dry_run
 
         self.save_settings()
 
