@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from .utils.dataIO import dataIO
 from .utils.chat_formatting import *
+from random import choice as randchoice
 from .utils import checks
 from __main__ import send_cmd_help
 import os
@@ -24,14 +25,30 @@ class Streams:
         self.beam_streams = dataIO.load_json("data/streams/beam.json")
         self.settings = dataIO.load_json("data/streams/settings.json")
 
-    @commands.command()
-    async def hitbox(self, stream: str):
+    @commands.command(pass_context=True)
+    async def hitbox(self, ctx, stream: str):
         """Checks if hitbox stream is online"""
+        cmd_channel = ctx.message.channel
         stream = escape_mass_mentions(stream)
-        online = await self.hitbox_online(stream)
+        online, data = await self.hitbox_online(stream)
         if online is True:
-            await self.bot.say("http://www.hitbox.tv/{}/"
-                               " is online!".format(stream))
+            username = data["livestream"][0]["media_user_name"]
+            media_status = data["livestream"][0]["media_status"]
+            live_since = data["livestream"][0]["media_live_since"]
+            viewers = data["livestream"][0]["media_views"]
+            colour =\
+                ''.join([randchoice('0123456789ABCDEF')
+                         for x in range(6)])
+            colour = int(colour, 16)
+            desc = "Created at " + live_since
+            emb = discord.Embed(title="Online!",
+                                colour=discord.Colour(value=colour),
+                                url="http://www.hitbox.tv/{}/".format(stream),
+                                description=desc)
+            emb.add_field(name="Title", value=media_status)
+            emb.add_field(name="Viewer count", value=viewers)
+            emb.add_field(name="Username", value=username)
+            await self.bot.send_message(cmd_channel, embed=emb)
         elif online is False:
             await self.bot.say(stream + " is offline.")
         elif online is None:
@@ -43,10 +60,34 @@ class Streams:
     async def twitch(self, ctx, stream: str):
         """Checks if twitch stream is online"""
         stream = escape_mass_mentions(stream)
-        online = await self.twitch_online(stream)
+        online, data = await self.twitch_online(stream)
         if online is True:
-            await self.bot.say("http://www.twitch.tv/{} "
-                               "is online!".format(stream))
+            username = data["stream"]["channel"]["display_name"]
+            game = data["stream"]["game"]
+            viewers = data["stream"]["viewers"]
+            title = data["stream"]["channel"]["status"]
+            live_since = data["stream"]["created_at"]
+            colour =\
+                ''.join([randchoice('0123456789ABCDEF')
+                         for x in range(6)])
+            colour = int(colour, 16)
+            desc = "Created at " + live_since
+            emb = discord.Embed(title="Online!",
+                                colour=discord.Colour(value=colour),
+                                url="http://www.twitch.tv/{}/".format(stream),
+                                description=desc)
+            if title != "":
+                emb.add_field(name="Title", value=title)
+            else:
+                emb.add_field(name="Title", value="Unknown")
+            emb.add_field(name="Viewer count", value=viewers)
+            if game != "":
+                emb.add_field(name="Game", value=game)
+            else:
+                emb.add_field(name="Game", value="Unknown")
+            emb.add_field(name="User", value=username)
+            emb.set_image(url=data["stream"]["preview"]["medium"])
+            await self.bot.send_message(ctx.message.channel, embed=emb)
         elif online is False:
             await self.bot.say(stream + " is offline.")
         elif online == 404:
@@ -58,13 +99,37 @@ class Streams:
         else:
             await self.bot.say("Error.")
 
-    @commands.command()
-    async def beam(self, stream: str):
+    @commands.command(pass_context=True)
+    async def beam(self, ctx, stream: str):
         """Checks if beam stream is online"""
         stream = escape_mass_mentions(stream)
-        online = await self.beam_online(stream)
+        online, data = await self.beam_online(stream)
         if online is True:
-            await self.bot.say("https://beam.pro/{} is online!".format(stream))
+            username = data["token"]
+            title = data["name"]
+            viewer_count = data["viewersCurrent"]
+            if data["type"]:
+                game_name = data["type"]["name"]
+            else:
+                game_name = "Unknown"
+            audience = data["audience"]
+            updated_at = data["updatedAt"]
+            colour =\
+                ''.join([randchoice('0123456789ABCDEF')
+                         for x in range(6)])
+            colour = int(colour, 16)
+            desc = "Updated at " + updated_at
+            emb = discord.Embed(title="Online!",
+                                colour=discord.Colour(value=colour),
+                                url="http://beam.pro/{}/".format(stream),
+                                description=desc)
+            emb.add_field(name="Title", value=title)
+            emb.add_field(name="Username", value=username)
+            emb.add_field(name="Viewer count", value=viewer_count)
+            emb.add_field(name="Game", value=game_name)
+            emb.add_field(name="Audience", value=audience)
+            emb.set_image(url=data["thumbnail"]["url"])
+            await self.bot.send_message(ctx.message.channel, embed=emb)
         elif online is False:
             await self.bot.say(stream + " is offline.")
         elif online is None:
@@ -133,7 +198,7 @@ class Streams:
         """Adds/removes hitbox alerts from the current channel"""
         stream = escape_mass_mentions(stream)
         channel = ctx.message.channel
-        check = await self.hitbox_online(stream)
+        check, data = await self.hitbox_online(stream)
         if check is None:
             await self.bot.say("That stream doesn't exist.")
             return
@@ -281,18 +346,19 @@ class Streams:
         await self.bot.say('Twitch Client-ID set.')
 
     async def hitbox_online(self, stream):
-        url = "https://api.hitbox.tv/user/" + stream
+        url = "https://api.hitbox.tv/media/live/" + stream
         try:
             async with aiohttp.get(url) as r:
                 data = await r.json()
-            if data["is_live"] == "0":
-                return False
-            elif data["is_live"] == "1":
-                return True
-            elif data["is_live"] is None:
-                return None
+            if "livestream" not in data:
+                return None, None
+            elif data["livestream"][0]["media_is_live"] == "0":
+                return False, None
+            elif data["livestream"][0]["media_is_live"] == "1":
+                return True, data
         except:
-            return "error"
+            raise
+            # return "error", None
 
     async def twitch_online(self, stream):
         session = aiohttp.ClientSession()
@@ -303,16 +369,16 @@ class Streams:
                 data = await r.json()
             await session.close()
             if r.status == 400:
-                return 400
+                return 400, None
             elif r.status == 404:
-                return 404
+                return 404, None
             elif data["stream"] is None:
-                return False
+                return False, None
             elif data["stream"]:
-                return True
+                return True, data
         except:
-            return "error"
-        return "error"
+            return "error", None
+        return "error", None
 
     async def beam_online(self, stream):
         url = "https://beam.pro/api/v1/channels/" + stream
@@ -321,14 +387,14 @@ class Streams:
                 data = await r.json()
             if "online" in data:
                 if data["online"] is True:
-                    return True
+                    return True, data
                 else:
-                    return False
+                    return False, None
             elif "error" in data:
-                return None
+                return None, None
         except:
-            return "error"
-        return "error"
+            return "error", None
+        return "error", None
 
     async def stream_checker(self):
         CHECK_DELAY = 60
@@ -339,9 +405,34 @@ class Streams:
                 self.hitbox_streams), deepcopy(self.beam_streams))
 
             for stream in self.twitch_streams:
-                online = await self.twitch_online(stream["NAME"])
+                online, data = await self.twitch_online(stream["NAME"])
                 if online is True and not stream["ALREADY_ONLINE"]:
                     stream["ALREADY_ONLINE"] = True
+                    username = data["stream"]["channel"]["display_name"]
+                    game = data["stream"]["game"]
+                    viewers = data["stream"]["viewers"]
+                    title = data["stream"]["channel"]["status"]
+                    live_since = data["stream"]["created_at"]
+                    colour =\
+                        ''.join([randchoice('0123456789ABCDEF')
+                                for x in range(6)])
+                    colour = int(colour, 16)
+                    desc = "Created at " + live_since
+                    emb = discord.Embed(title="Online!",
+                                        colour=discord.Colour(value=colour),
+                                        url="http://www.twitch.tv/{}/".format(stream["NAME"]),
+                                        description=desc)
+                    if title != "":
+                        emb.add_field(name="Title", value=title)
+                    else:
+                        emb.add_field(name="Title", value="Unknown")
+                    emb.add_field(name="Viewer count", value=viewers)
+                    if game != "":
+                        emb.add_field(name="Game", value=game)
+                    else:
+                        emb.add_field(name="Game", value="Unknown")
+                    emb.add_field(name="User", value=username)
+                    emb.set_image(url=data["stream"]["preview"]["medium"])
                     for channel in stream["CHANNELS"]:
                         channel_obj = self.bot.get_channel(channel)
                         if channel_obj is None:
@@ -349,18 +440,32 @@ class Streams:
                         can_speak = channel_obj.permissions_for(channel_obj.server.me).send_messages
                         if channel_obj and can_speak:
                             await self.bot.send_message(
-                                self.bot.get_channel(channel),
-                                "http://www.twitch.tv/"
-                                "{} is online!".format(stream["NAME"]))
+                                self.bot.get_channel(channel), embed=emb)
                 else:
                     if stream["ALREADY_ONLINE"] and not online:
                         stream["ALREADY_ONLINE"] = False
                 await asyncio.sleep(0.5)
 
             for stream in self.hitbox_streams:
-                online = await self.hitbox_online(stream["NAME"])
+                online, data = await self.hitbox_online(stream["NAME"])
                 if online is True and not stream["ALREADY_ONLINE"]:
                     stream["ALREADY_ONLINE"] = True
+                    username = data["livestream"][0]["media_user_name"]
+                    media_status = data["livestream"][0]["media_status"]
+                    live_since = data["livestream"][0]["media_live_since"]
+                    viewers = data["livestream"][0]["media_views"]
+                    colour =\
+                        ''.join([randchoice('0123456789ABCDEF')
+                                 for x in range(6)])
+                    colour = int(colour, 16)
+                    desc = "Created at " + live_since
+                    emb = discord.Embed(title="Online!",
+                                        colour=discord.Colour(value=colour),
+                                        url="http://www.hitbox.tv/{}/".format(stream["NAME"]),
+                                        description=desc)
+                    emb.add_field(name="Title", value=media_status)
+                    emb.add_field(name="Viewer count", value=viewers)
+                    emb.add_field(name="Username", value=username)
                     for channel in stream["CHANNELS"]:
                         channel_obj = self.bot.get_channel(channel)
                         if channel_obj is None:
@@ -368,9 +473,7 @@ class Streams:
                         can_speak = channel_obj.permissions_for(channel_obj.server.me).send_messages
                         if channel_obj and can_speak:
                             await self.bot.send_message(
-                                self.bot.get_channel(channel),
-                                "http://www.hitbox.tv/"
-                                "{} is online!".format(stream["NAME"]))
+                                self.bot.get_channel(channel), embed=emb)
                 else:
                     if stream["ALREADY_ONLINE"] and not online:
                         stream["ALREADY_ONLINE"] = False
@@ -380,6 +483,27 @@ class Streams:
                 online = await self.beam_online(stream["NAME"])
                 if online is True and not stream["ALREADY_ONLINE"]:
                     stream["ALREADY_ONLINE"] = True
+                    username = data["token"]
+                    title = data["name"]
+                    viewer_count = data["viewersCurrent"]
+                    game_name = data["type"]["name"]
+                    audience = data["audience"]
+                    updated_at = data["updatedAt"]
+                    colour =\
+                        ''.join([randchoice('0123456789ABCDEF')
+                                for x in range(6)])
+                    colour = int(colour, 16)
+                    desc = "Updated at " + updated_at
+                    emb = discord.Embed(title="Online!",
+                                        colour=discord.Colour(value=colour),
+                                        url="http://beam.pro/{}/".format(stream["NAME"]),
+                                        description=desc)
+                    emb.add_field(name="Title", value=title)
+                    emb.add_field(name="Username", value=username)
+                    emb.add_field(name="Viewer count", value=viewer_count)
+                    emb.add_field(name="Game", value=game_name)
+                    emb.add_field(name="Audience", value=audience)
+                    emb.set_image(url=data["thumbnail"]["url"])
                     for channel in stream["CHANNELS"]:
                         channel_obj = self.bot.get_channel(channel)
                         if channel_obj is None:
@@ -387,9 +511,7 @@ class Streams:
                         can_speak = channel_obj.permissions_for(channel_obj.server.me).send_messages
                         if channel_obj and can_speak:
                             await self.bot.send_message(
-                                self.bot.get_channel(channel),
-                                "https://beam.pro/"
-                                "{} is online!".format(stream["NAME"]))
+                                self.bot.get_channel(channel), embed=emb)
                 else:
                     if stream["ALREADY_ONLINE"] and not online:
                         stream["ALREADY_ONLINE"] = False
