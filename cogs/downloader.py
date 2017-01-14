@@ -569,7 +569,7 @@ class Downloader:
                 if p.returncode != 0:
                     raise UpdateError("Unable to determine old commit hash")
                 oldhash = p.stdout.decode().strip()
-                p = run(["git", "-C", dd + name, "pull", "-q"])
+                p = run(["git", "-C", dd + name, "pull", "-q", "--ff-only"])
                 if p.returncode != 0:
                     raise UpdateError("Error pulling updates")
                 p = run(rpcmd, stdout=PIPE)
