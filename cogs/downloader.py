@@ -18,6 +18,7 @@ NUM_THREADS = 4
 REPO_NONEX = 0x1
 REPO_CLONE = 0x2
 REPO_SAME = 0x4
+REPOS_LIST = "https://twentysix26.github.io/Red-Docs/red_cog_approved_repos/"
 
 
 class UpdateError(Exception):
@@ -117,7 +118,10 @@ class Downloader:
 
     @cog.command(name="list")
     async def _send_list(self, repo_name=None):
-        """Lists installable cogs"""
+        """Lists installable cogs
+
+        Repositories list:
+        https://twentysix26.github.io/Red-Docs/red_cog_approved_repos/"""
         retlist = []
         if repo_name and repo_name in self.repos:
             msg = "Available cogs:\n"
@@ -130,17 +134,23 @@ class Downloader:
                 else:
                     retlist.append([cog, ''])
         else:
-            msg = "Available repos:\n"
-            for repo_name in sorted(self.repos.keys()):
-                data = self.get_info_data(repo_name)
-                if data:
-                    retlist.append([repo_name, data.get("SHORT", "")])
-                else:
-                    retlist.append([repo_name, ""])
+            if self.repos:
+                msg = "Available repos:\n"
+                for repo_name in sorted(self.repos.keys()):
+                    data = self.get_info_data(repo_name)
+                    if data:
+                        retlist.append([repo_name, data.get("SHORT", "")])
+                    else:
+                        retlist.append([repo_name, ""])
+            else:
+                await self.bot.say("You haven't added a repository yet.\n"
+                                   "Start now! {}".format(REPOS_LIST))
+                return
 
         col_width = max(len(row[0]) for row in retlist) + 2
         for row in retlist:
             msg += "\t" + "".join(word.ljust(col_width) for word in row) + "\n"
+        msg += "\nRepositories list: {}".format(REPOS_LIST)
         for page in pagify(msg, delims=['\n'], shorten_by=8):
             await self.bot.say(box(page))
 
@@ -626,13 +636,10 @@ def check_folders():
 
 
 def check_files():
-    repos = \
-        {'community': {'url': "https://github.com/Twentysix26/Red-Cogs.git"}}
-
     f = "data/downloader/repos.json"
     if not dataIO.is_valid_json(f):
         print("Creating default data/downloader/repos.json")
-        dataIO.save_json(f, repos)
+        dataIO.save_json(f, {})
 
 
 def setup(bot):
