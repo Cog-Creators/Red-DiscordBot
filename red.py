@@ -72,6 +72,8 @@ class Bot(commands.Bot):
             self.settings.self_bot = kwargs['self_bot']
         else:
             kwargs['self_bot'] = self.settings.self_bot
+            if self.settings.self_bot:
+                kwargs['pm_help'] = False
         super().__init__(*args, command_prefix=prefix_manager, **kwargs)
 
     async def send_message(self, *args, **kwargs):
