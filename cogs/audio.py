@@ -727,7 +727,7 @@ class Audio:
 
     def _match_any_url(self, url):
         any_link = re.compile(
-            r'@^(https?|ftp)://[^\s/$.?#].[^\s]*$@iS', re.IGNORECASE)
+            r"(?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'.,<>?«»“”‘’]))", re.IGNORECASE)
         if any_link.match(url):
             return True
         return False
