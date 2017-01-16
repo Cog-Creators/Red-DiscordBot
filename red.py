@@ -217,6 +217,7 @@ class Bot(commands.Bot):
 
         def install():
             code = subprocess.call(args)
+            sys.path_importer_cache = {}
             return not bool(code)
 
         response = self.loop.run_in_executor(None, install)
