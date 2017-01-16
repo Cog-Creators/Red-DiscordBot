@@ -398,6 +398,19 @@ class Economy:
         except NoAccount:
             await self.bot.say("User has no bank account.")
 
+    @_bank.command(pass_context=True, no_pm=True)
+    @checks.serverowner_or_permissions(administrator=True)
+    async def reset(self, ctx, confirmation: bool=False):
+        """Deletes all server's bank accounts"""
+        if confirmation is False:
+            await self.bot.say("This will delete all bank accounts on "
+                               "this server.\nIf you're sure, type "
+                               "{}bank reset yes".format(ctx.prefix))
+        else:
+            self.bank.wipe_bank(ctx.message.server)
+            await self.bot.say("All bank accounts of this server have been "
+                               "deleted.")
+
     @commands.command(pass_context=True, no_pm=True)
     async def payday(self, ctx):  # TODO
         """Get some free credits"""
