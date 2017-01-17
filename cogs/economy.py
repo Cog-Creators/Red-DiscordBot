@@ -306,7 +306,7 @@ class Economy:
 
     @_bank.command(pass_context=True, no_pm=True)
     async def register(self, ctx):
-        """Registers an account at the Twentysix bank"""
+        """Registers an account at the First Dolphin Pan-galactic Bank & Trust."""
         settings = self.settings[ctx.message.server.id]
         author = ctx.message.author
         credits = 0
@@ -318,7 +318,7 @@ class Economy:
                                "".format(author.mention, account.balance))
         except AccountAlreadyExists:
             await self.bot.say("{} You already have an account at the"
-                               " Twentysix bank.".format(author.mention))
+                               " First Dolphin Pan-galactic Bank & Trust.".format(author.mention))
 
     @_bank.command(pass_context=True)
     async def balance(self, ctx, user: discord.Member=None):
@@ -332,7 +332,7 @@ class Economy:
                     user.mention, self.bank.get_balance(user)))
             except NoAccount:
                 await self.bot.say("{} You don't have an account at the"
-                                   " Twentysix bank. Type `{}bank register`"
+                                   " First Dolphin Pan-galactic Bank & Trust. Type `{}bank register`"
                                    " to open one.".format(user.mention,
                                                           ctx.prefix))
         else:
@@ -344,18 +344,18 @@ class Economy:
 
     @_bank.command(pass_context=True)
     async def transfer(self, ctx, user: discord.Member, sum: int):
-        """Transfer credits to other users"""
+        """Transfer towels to other users"""
         author = ctx.message.author
         try:
             self.bank.transfer_credits(author, user, sum)
-            logger.info("{}({}) transferred {} credits to {}({})".format(
+            logger.info("{}({}) transferred {} towels to {}({})".format(
                 author.name, author.id, sum, user.name, user.id))
-            await self.bot.say("{} credits have been transferred to {}'s"
+            await self.bot.say("{} towels have been transferred to {}'s"
                                " account.".format(sum, user.name))
         except NegativeValue:
             await self.bot.say("You need to transfer at least 1 credit.")
         except SameSenderAndReceiver:
-            await self.bot.say("You can't transfer credits to yourself.")
+            await self.bot.say("You can't transfer towels to yourself.")
         except InsufficientBalance:
             await self.bot.say("You don't have that sum in your bank account.")
         except NoAccount:
@@ -364,37 +364,37 @@ class Economy:
     @_bank.command(name="set", pass_context=True)
     @checks.admin_or_permissions(manage_server=True)
     async def _set(self, ctx, user: discord.Member, credits: SetParser):
-        """Sets credits of user's bank account. See help for more operations
+        """Sets towels in user's bank account. See help for more operations
 
-        Passing positive and negative values will add/remove credits instead
+        Passing positive and negative values will add/remove towels instead
 
         Examples:
-            bank set @Twentysix 26 - Sets 26 credits
-            bank set @Twentysix +2 - Adds 2 credits
-            bank set @Twentysix -6 - Removes 6 credits"""
+            bank set @MARViN 42 - Sets 42 towels
+            bank set @MARViN +4 - Adds 4 towels
+            bank set @MARViN -2 - Removes 2 towels"""
         author = ctx.message.author
         try:
             if credits.operation == "deposit":
                 self.bank.deposit_credits(user, credits.sum)
-                logger.info("{}({}) added {} credits to {} ({})".format(
+                logger.info("{}({}) added {} towels to {} ({})".format(
                     author.name, author.id, credits.sum, user.name, user.id))
-                await self.bot.say("{} credits have been added to {}"
+                await self.bot.say("{} towels have been added to {}"
                                    "".format(credits.sum, user.name))
             elif credits.operation == "withdraw":
                 self.bank.withdraw_credits(user, credits.sum)
-                logger.info("{}({}) removed {} credits to {} ({})".format(
+                logger.info("{}({}) removed {} towels to {} ({})".format(
                     author.name, author.id, credits.sum, user.name, user.id))
-                await self.bot.say("{} credits have been withdrawn from {}"
+                await self.bot.say("{} towels have been withdrawn from {}"
                                    "".format(credits.sum, user.name))
             elif credits.operation == "set":
                 self.bank.set_credits(user, credits.sum)
-                logger.info("{}({}) set {} credits to {} ({})"
+                logger.info("{}({}) set {} towels to {} ({})"
                             "".format(author.name, author.id, credits.sum,
                                       user.name, user.id))
-                await self.bot.say("{}'s credits have been set to {}".format(
+                await self.bot.say("{}'s towels have been set to {}".format(
                     user.name, credits.sum))
         except InsufficientBalance:
-            await self.bot.say("User doesn't have enough credits.")
+            await self.bot.say("User doesn't have enough towels.")
         except NoAccount:
             await self.bot.say("User has no bank account.")
 
@@ -413,7 +413,7 @@ class Economy:
 
     @commands.command(pass_context=True, no_pm=True)
     async def payday(self, ctx):  # TODO
-        """Get some free credits"""
+        """Get some free towels"""
         author = ctx.message.author
         server = author.server
         id = author.id
@@ -427,8 +427,8 @@ class Economy:
                     self.payday_register[server.id][
                         id] = int(time.perf_counter())
                     await self.bot.say(
-                        "{} Here, take some credits. Enjoy! (+{}"
-                        " credits!)".format(
+                        "{} Here, take some towels. Enjoy! (+{}"
+                        " towels!)".format(
                             author.mention,
                             str(self.settings[server.id]["PAYDAY_CREDITS"])))
                 else:
@@ -442,11 +442,11 @@ class Economy:
                 self.bank.deposit_credits(author, self.settings[
                                           server.id]["PAYDAY_CREDITS"])
                 await self.bot.say(
-                    "{} Here, take some credits. Enjoy! (+{} credits!)".format(
+                    "{} Here, take some towels. Enjoy! (+{} towels!)".format(
                         author.mention,
                         str(self.settings[server.id]["PAYDAY_CREDITS"])))
         else:
-            await self.bot.say("{} You need an account to receive credits."
+            await self.bot.say("{} You need an account to receive towels."
                                " Type `{}bank register` to open one.".format(
                                    author.mention, ctx.prefix))
 
@@ -629,7 +629,7 @@ class Economy:
         """Minimum slot machine bid"""
         server = ctx.message.server
         self.settings[server.id]["SLOT_MIN"] = bid
-        await self.bot.say("Minimum bid is now {} credits.".format(bid))
+        await self.bot.say("Minimum bid is now {} towels.".format(bid))
         dataIO.save_json(self.file_path, self.settings)
 
     @economyset.command(pass_context=True)
@@ -637,7 +637,7 @@ class Economy:
         """Maximum slot machine bid"""
         server = ctx.message.server
         self.settings[server.id]["SLOT_MAX"] = bid
-        await self.bot.say("Maximum bid is now {} credits.".format(bid))
+        await self.bot.say("Maximum bid is now {} towels.".format(bid))
         dataIO.save_json(self.file_path, self.settings)
 
     @economyset.command(pass_context=True)
@@ -659,21 +659,21 @@ class Economy:
 
     @economyset.command(pass_context=True)
     async def paydaycredits(self, ctx, credits: int):
-        """Credits earned each payday"""
+        """Towels earned each payday"""
         server = ctx.message.server
         self.settings[server.id]["PAYDAY_CREDITS"] = credits
-        await self.bot.say("Every payday will now give {} credits."
+        await self.bot.say("Every payday will now give {} towels."
                            "".format(credits))
         dataIO.save_json(self.file_path, self.settings)
 
     @economyset.command(pass_context=True)
     async def registercredits(self, ctx, credits: int):
-        """Credits given on registering an account"""
+        """Towels given on registering an account"""
         server = ctx.message.server
         if credits < 0:
             credits = 0
         self.settings[server.id]["REGISTER_CREDITS"] = credits
-        await self.bot.say("Registering an account will now give {} credits."
+        await self.bot.say("Registering an account will now give {} towels."
                            "".format(credits))
         dataIO.save_json(self.file_path, self.settings)
 
@@ -722,7 +722,7 @@ def setup(bot):
     global logger
     check_folders()
     check_files()
-    logger = logging.getLogger("red.economy")
+    logger = logging.getLogger("marvin.economy")
     if logger.level == 0:
         # Prevents the logger from being loaded again in case of module reload
         logger.setLevel(logging.INFO)

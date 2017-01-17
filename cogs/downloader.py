@@ -18,7 +18,7 @@ NUM_THREADS = 4
 REPO_NONEX = 0x1
 REPO_CLONE = 0x2
 REPO_SAME = 0x4
-REPOS_LIST = "https://twentysix26.github.io/Red-Docs/red_cog_approved_repos/"
+REPOS_LIST = "https://ControllerNetwork.com/MARViN-Docs/marvin_cog_approved_repos/"
 
 
 class UpdateError(Exception):
@@ -72,11 +72,11 @@ class Downloader:
         await self.bot.say("Type 'I agree' to confirm "
                            "adding a 3rd party repo. This has the possibility"
                            " of being harmful. You will not receive help "
-                           "in Red - Discord Bot #support for any cogs "
+                           "in MARViN - Discord Bot #support for any cogs "
                            "installed from this repo. If you do require "
                            "support you should contact the owner of this "
                            "repo.\n\nAgain, ANY repo you add is at YOUR"
-                           " discretion and the creator of Red has "
+                           " discretion and the creator of MARViN has "
                            "ABSOLUTELY ZERO responsibility to help if "
                            "something goes wrong.")
         answer = await self.bot.wait_for_message(timeout=15,
@@ -121,7 +121,7 @@ class Downloader:
         """Lists installable cogs
 
         Repositories list:
-        https://twentysix26.github.io/Red-Docs/red_cog_approved_repos/"""
+        https://ControllerNetwork.com/MARViN-Docs/marvin_cog_approved_repos/"""
         retlist = []
         if repo_name and repo_name in self.repos:
             msg = "Available cogs:\n"
@@ -306,7 +306,7 @@ class Downloader:
             await self.bot.say("Ok then, you can reload cogs with"
                                " `{}reload <cog_name>`".format(ctx.prefix))
         elif answer.content.lower().strip() == "yes":
-            registry = dataIO.load_json("data/red/cogs.json")
+            registry = dataIO.load_json("data/marvin/cogs.json")
             update_list = []
             fail_list = []
             for repo, cog, _ in installed_updated_cogs:
@@ -551,7 +551,7 @@ class Downloader:
             if name not in self.repos:
                 raise UpdateError("Repo does not exist in data, wtf")
             folder = os.path.join(dd, name)
-            # Make sure we don't git reset the Red folder on accident
+            # Make sure we don't git reset the MARViN folder on accident
             if not os.path.exists(os.path.join(folder, '.git')):
                 #if os.path.exists(folder):
                     #shutil.rmtree(folder)
