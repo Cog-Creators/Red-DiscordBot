@@ -16,13 +16,13 @@ except ImportError:
     print("Discord.py is not installed.\n"
           "Consult the guide for your operating system "
           "and do ALL the steps in order.\n"
-          "https://twentysix26.github.io/Red-Docs/\n")
+          "https://ControllerNetwork.com/MARViN-Docs/\n")
     sys.exit()
 except AssertionError:
-    print("Red needs Python 3.5 or superior.\n"
+    print("MARViN needs Python 3.5 or superior.\n"
           "Consult the guide for your operating system "
           "and do ALL the steps in order.\n"
-          "https://twentysix26.github.io/Red-Docs/\n")
+          "https://ControllerNetwork.com/MARViN-Docs/\n")
     sys.exit()
 
 from cogs.utils.settings import Settings
@@ -32,19 +32,19 @@ from collections import Counter
 from io import TextIOWrapper
 
 #
-# Red, a Discord bot by Twentysix, based on discord.py and its command
+# MARViN, a Discord bot based on Twentysix, based on discord.py and its command
 #                             extension.
 #
-#                   https://github.com/Twentysix26/
+#                   https://ControllerNetwork.com
 #
 #
-# red.py and cogs/utils/checks.py both contain some modified functions
+# marvin.py and cogs/utils/checks.py both contain some modified functions
 #                     originally made by Rapptz.
 #
-#                 https://github.com/Rapptz/RoboDanny/
+#                 https://ControllerNetwork.com
 #
 
-description = "Red - A multifunction Discord bot by Twentysix"
+description = "MARViN - A multifunction Discord bot by Controller Network"
 
 
 class Bot(commands.Bot):
@@ -97,10 +97,10 @@ class Bot(commands.Bot):
         return await super().send_message(*args, **kwargs)
 
     async def shutdown(self, *, restart=False):
-        """Gracefully quits Red with exit code 0
+        """Gracefully quits MARViN with exit code 0
 
         If restart is True, the exit code will be 26 instead
-        The launcher automatically restarts Red when that happens"""
+        The launcher automatically restarts MARViN when that happens"""
         if restart:
             self._restart_requested = True
         await self.logout()
@@ -307,7 +307,7 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
         owner = await set_bot_owner()
 
         print("-----------------")
-        print("Red - Discord Bot")
+        print("MARViN - Discord Bot")
         print("-----------------")
         print(str(bot.user))
         print("\nConnected to:")
@@ -329,7 +329,7 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
             bot.oauth_url = url
             print(url)
 
-        print("\nOfficial server: https://discord.me/Red-DiscordBot")
+        print("\nOfficial server: https://discord.me/MARViN-DiscordBot")
 
         print("Make sure to keep your bot updated. Select the 'Update' "
               "option from the launcher.")
@@ -380,7 +380,7 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
 
 
 def check_folders():
-    folders = ("data", "data/red", "cogs", "cogs/utils")
+    folders = ("data", "data/marvin", "cogs", "cogs/utils")
     for folder in folders:
         if not os.path.exists(folder):
             print("Creating " + folder + " folder...")
@@ -391,9 +391,9 @@ def interactive_setup(settings):
     first_run = settings.bot_settings == settings.default_settings
 
     if first_run:
-        print("Red - First run configuration\n")
+        print("MARViN - First run configuration\n")
         print("If you haven't already, create a new account:\n"
-              "https://twentysix26.github.io/Red-Docs/red_guide_bot_accounts/"
+              "https://ControllerNetwork.com/MARViN-Docs/marvin_guide_bot_accounts/"
               "#creating-a-new-bot-account")
         print("and obtain your bot's token like described.")
 
@@ -429,40 +429,40 @@ def interactive_setup(settings):
     if first_run:
         print("\nInput the admin role's name. Anyone with this role in Discord"
               " will be able to use the bot's admin commands")
-        print("Leave blank for default name (Transistor)")
+        print("Leave blank for default name (Hitchhicker)")
         settings.default_admin = input("\nAdmin role> ")
         if settings.default_admin == "":
-            settings.default_admin = "Transistor"
+            settings.default_admin = "Hitchhicker"
         settings.save_settings()
 
         print("\nInput the moderator role's name. Anyone with this role in"
               " Discord will be able to use the bot's mod commands")
-        print("Leave blank for default name (Process)")
+        print("Leave blank for default name (Vogon)")
         settings.default_mod = input("\nModerator role> ")
         if settings.default_mod == "":
-            settings.default_mod = "Process"
+            settings.default_mod = "Vogon"
         settings.save_settings()
 
         print("\nThe configuration is done. Leave this window always open to"
-              " keep Red online.\nAll commands will have to be issued through"
+              " keep MARViN online.\nAll commands will have to be issued through"
               " Discord's chat, *this window will now be read only*.\n"
-              "Please read this guide for a good overview on how Red works:\n"
-              "https://twentysix26.github.io/Red-Docs/red_getting_started/\n"
+              "Please read this guide for a good overview on how MARViN works:\n"
+              "https://ControllerNetwork.com/MARViN-Docs/marvin_getting_started/\n"
               "Press enter to continue")
         input("\n")
 
 
 def set_logger(bot):
-    logger = logging.getLogger("red")
+    logger = logging.getLogger("marvin")
     logger.setLevel(logging.INFO)
 
-    red_format = logging.Formatter(
+    marvin_format = logging.Formatter(
         '%(asctime)s %(levelname)s %(module)s %(funcName)s %(lineno)d: '
         '%(message)s',
         datefmt="[%d/%m/%Y %H:%M]")
 
     stdout_handler = logging.StreamHandler(sys.stdout)
-    stdout_handler.setFormatter(red_format)
+    stdout_handler.setFormatter(marvin_format)
     if bot.settings.debug:
         stdout_handler.setLevel(logging.DEBUG)
         logger.setLevel(logging.DEBUG)
@@ -471,9 +471,9 @@ def set_logger(bot):
         logger.setLevel(logging.INFO)
 
     fhandler = logging.handlers.RotatingFileHandler(
-        filename='data/red/red.log', encoding='utf-8', mode='a',
+        filename='data/marvin/marvin.log', encoding='utf-8', mode='a',
         maxBytes=10**7, backupCount=5)
-    fhandler.setFormatter(red_format)
+    fhandler.setFormatter(marvin_format)
 
     logger.addHandler(fhandler)
     logger.addHandler(stdout_handler)
@@ -484,7 +484,7 @@ def set_logger(bot):
     else:
         dpy_logger.setLevel(logging.WARNING)
     handler = logging.FileHandler(
-        filename='data/red/discord.log', encoding='utf-8', mode='a')
+        filename='data/marvin/discord.log', encoding='utf-8', mode='a')
     handler.setFormatter(logging.Formatter(
         '%(asctime)s %(levelname)s %(module)s %(funcName)s %(lineno)d: '
         '%(message)s',
@@ -512,10 +512,10 @@ def get_answer():
         return False
 
 
-def set_cog(cog, value):  # TODO: move this out of red.py
-    data = dataIO.load_json("data/red/cogs.json")
+def set_cog(cog, value):  # TODO: move this out of marvin.py
+    data = dataIO.load_json("data/marvin/cogs.json")
     data[cog] = value
-    dataIO.save_json("data/red/cogs.json", data)
+    dataIO.save_json("data/marvin/cogs.json", data)
 
 
 def load_cogs(bot):
@@ -523,7 +523,7 @@ def load_cogs(bot):
                 "general", "image", "mod", "streams", "trivia")
 
     try:
-        registry = dataIO.load_json("data/red/cogs.json")
+        registry = dataIO.load_json("data/marvin/cogs.json")
     except:
         registry = {}
 
@@ -531,13 +531,13 @@ def load_cogs(bot):
     owner_cog = bot.get_cog('Owner')
     if owner_cog is None:
         print("The owner cog is missing. It contains core functions without "
-              "which Red cannot function. Reinstall.")
+              "which MARViN cannot function. Reinstall.")
         exit(1)
 
     if bot.settings._no_cogs:
         bot.logger.debug("Skipping initial cogs loading (--no-cogs)")
-        if not os.path.isfile("data/red/cogs.json"):
-            dataIO.save_json("data/red/cogs.json", {})
+        if not os.path.isfile("data/marvin/cogs.json"):
+            dataIO.save_json("data/marvin/cogs.json", {})
         return
 
     failed = []
@@ -560,7 +560,7 @@ def load_cogs(bot):
                 failed.append(extension)
                 registry[extension] = False
 
-    dataIO.save_json("data/red/cogs.json", registry)
+    dataIO.save_json("data/marvin/cogs.json", registry)
 
     if failed:
         print("\nFailed to load: {}\n".format(" ".join(failed)))
