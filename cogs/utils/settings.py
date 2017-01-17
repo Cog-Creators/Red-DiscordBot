@@ -19,7 +19,7 @@ class Settings:
             "PASSWORD": None,
             "OWNER": None,
             "PREFIXES": [],
-            "default": {"ADMIN_ROLE": "Hitchhicker",
+            "default": {"ADMIN_ROLE": "Hitchhiker",
                         "MOD_ROLE": "Vogon",
                         "PREFIXES": []}
                         }
