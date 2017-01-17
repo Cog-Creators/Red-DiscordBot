@@ -18,10 +18,10 @@ import time
 import inspect
 import subprocess
 
-__author__ = "tekulvw"
-__version__ = "0.1.1"
+__author__ = "ControllerNetwork"
+__version__ = "0.0.1"
 
-log = logging.getLogger("red.audio")
+log = logging.getLogger("marvin.audio")
 
 try:
     import youtube_dl
@@ -1807,7 +1807,7 @@ class Audio:
 
     @commands.command(pass_context=True, no_pm=True)
     async def sing(self, ctx):
-        """Makes Red sing one of her songs"""
+        """Makes MARViN sing one of her songs"""
         ids = ("zGTkAVsrfg8", "cGMWL8cOeAU", "vFrjMq4aL-g", "WROI5WYBU_A",
                "41tIUr_ex3g", "f9O2Rjn1azc")
         url = "https://www.youtube.com/watch?v={}".format(choice(ids))
@@ -2192,7 +2192,7 @@ def setup(bot):
         raise RuntimeError(
           "{}.\nConsult the guide for your operating system "
           "and do ALL the steps in order.\n"
-          "https://twentysix26.github.io/Red-Docs/\n"
+          "https://ControllerNetwork.com/MARViN/\n"
           "".format(msg))
 
     n = Audio(bot, player=player)  # Praise 26
