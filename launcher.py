@@ -455,17 +455,19 @@ def create_fast_start_scripts():
     modified = False
 
     if IS_WINDOWS:
+        ccd = "pushd %~dp0\n"
         pause = "\npause"
         ext = ".bat"
     else:
-        pause = "\nread -rsp $'Press enter to continue...\n'"
+        ccd = 'cd "$(dirname "$0")"\n'
+        pause = "\nread -rsp $'Press enter to continue...\\n'"
         if not IS_MAC:
             ext = ".sh"
         else:
             ext = ".command"
 
-    start_red             = start_red + pause
-    start_red_autorestart = start_red_autorestart + pause
+    start_red             = ccd + start_red             + pause
+    start_red_autorestart = ccd + start_red_autorestart + pause
 
     files = {
         "start_red"             + ext : start_red,
@@ -473,7 +475,7 @@ def create_fast_start_scripts():
     }
 
     if not IS_WINDOWS:
-        files["start_launcher" + ext] = call
+        files["start_launcher" + ext] = ccd + call
 
     for filename, content in files.items():
         if not os.path.isfile(filename):
