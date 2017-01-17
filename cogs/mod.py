@@ -497,8 +497,8 @@ class Mod:
         """Deletes last X messages from specified user.
 
         Examples:
-        cleanup user @\u200bTwentysix 2
-        cleanup user Red 6"""
+        cleanup user @\u200bMARViN 2
+        cleanup user MARViN 6"""
 
         channel = ctx.message.channel
         author = ctx.message.author
@@ -1034,7 +1034,7 @@ class Mod:
         Colour must be in hexadecimal format.
         \"http://www.w3schools.com/colors/colors_picker.asp\"
         Examples:
-        !editrole colour \"The Transistor\" #ff0000
+        !editrole colour \"The Controllers\" #ff0000
         !editrole colour Test #ff9900"""
         author = ctx.message.author
         try:
@@ -1055,7 +1055,7 @@ class Mod:
 
         Use double quotes if the role or the name contain spaces.
         Examples:
-        !editrole name \"The Transistor\" Test"""
+        !editrole name \"The Controllers\" Test"""
         if name == "":
             await self.bot.say("Name cannot be empty.")
             return
@@ -1384,7 +1384,7 @@ def setup(bot):
     global logger
     check_folders()
     check_files()
-    logger = logging.getLogger("red.mod")
+    logger = logging.getLogger("marvin.mod")
     # Prevents the logger from being loaded again in case of module reload
     if logger.level == 0:
         logger.setLevel(logging.INFO)
