@@ -455,19 +455,17 @@ def create_fast_start_scripts():
     modified = False
 
     if IS_WINDOWS:
-        ccd = "pushd %~dp0\n"
         pause = "\npause"
         ext = ".bat"
     else:
-        ccd = 'cd "$(dirname "$0")"\n'
-        pause = "\nread -rsp $'Press enter to continue...\\n'"
+        pause = "\nread -rsp $'Press enter to continue...\n'"
         if not IS_MAC:
             ext = ".sh"
         else:
             ext = ".command"
 
-    start_marvin             = ccd + start_marvin             + pause
-    start_marvin_autorestart = ccd + start_marvin_autorestart + pause
+    start_marvin             = start_marvin + pause
+    start_marvin_autorestart = start_marvin_autorestart + pause
 
     files = {
         "start_marvin"             + ext : start_marvin,
@@ -475,7 +473,7 @@ def create_fast_start_scripts():
     }
 
     if not IS_WINDOWS:
-        files["start_launcher" + ext] = ccd + call
+        files["start_launcher" + ext] = call
 
     for filename, content in files.items():
         if not os.path.isfile(filename):
