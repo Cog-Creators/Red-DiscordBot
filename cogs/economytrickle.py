@@ -47,7 +47,7 @@ class Economytrickle:
 
 	@trickleset.command(name="bot", pass_context=True)
 	async def tricklebot(self, ctx):
-		"""Enables/disables trickling economy to the bot"""
+		"""Enables/disables trickling economy to me"""
 		sid = ctx.message.server.id
 		econ = self.bot.get_cog('Economy')
 		if econ.bank.account_exists(ctx.message.server.me):
@@ -138,7 +138,7 @@ class Economytrickle:
 	@commands.command(pass_context=True)
 	@checks.is_owner()
 	async def registerbot(self, ctx, agree : str):
-		"""registers the bot into Economy.py bank.
+		"""registers me into Economy.py bank.
 
 		Although nothing bad will probably happen, this was not how Economy was intended.
 		I can't guarantee this and/or the economy cog won't break. I can't gaurantee your bank won't get corrupted.

@@ -62,7 +62,7 @@ class Statistics:
     @checks.serverowner_or_permissions(manage_server=True)
     async def statschannel(self, context, channel: discord.Channel=None):
         """
-        Set the channel to which the bot will sent its continues updates.
+        Set the channel to which I will send continued statistic updates.
         Example: [p]statschannel #statistics
         """
         if channel:

@@ -15,9 +15,9 @@ def is_owner_check(ctx):
 def is_owner():
     return commands.check(is_owner_check)
 
-# The permission system of the bot is based on a "just works" basis
-# You have permissions and the bot has permissions. If you meet the permissions
-# required to execute the command (and the bot does as well) then it goes through
+# The permission system of me based on a "just works" basis
+# You have permissions and I have permissions. If you meet the permissions
+# required to execute the command (and I do as well) then it goes through
 # and you can execute the command.
 # If these checks fail, then there are two fallbacks.
 # A role with the name of Bot Mod and a role with the name of Bot Admin.

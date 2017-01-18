@@ -1,7 +1,7 @@
 
 ![intro](imgs/MARViN_HEADER.png)
 
-# MARViN - A fully customizable Discord bot based on [Red Discord Bot](https://github.com/Twentysix26/Red-DiscordBot)
+# MARViN - A customizable Discord bot based on [Red Discord Bot](https://github.com/Twentysix26/Red-DiscordBot)
 #### *Music, admin, trivia, fun commands and much more!*
 [<img src="https://img.shields.io/badge/Support-me!-orange.svg">](https://www.patreon.com/Twentysix26)  [<img src="https://img.shields.io/badge/discord-py-blue.svg">](https://github.com/Rapptz/discord.py) [<img src="https://discordapp.com/api/guilds/133049272517001216/widget.png?style=shield">](https://discord.gg/0k4npTwMvTpv9wrh) [![Build Status](https://travis-ci.org/Twentysix26/Red-DiscordBot.svg?branch=develop)](https://travis-ci.org/Twentysix26/Red-DiscordBot)
 

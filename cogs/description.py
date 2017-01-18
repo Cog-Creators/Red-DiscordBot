@@ -19,7 +19,7 @@ class Description:
     @commands.command()
     @checks.is_owner()
     async def description(self, *, description: str = None):
-        """Sets the bot's description text"""
+        """Sets my description text"""
         if description:
             self.settings['description'] = description
             await self.bot.say('Bot description set.')

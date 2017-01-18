@@ -204,7 +204,7 @@ FUMBLE = {"{a} closes in on {d}, but suddenly remembers a funny joke and laughs 
           "{a} {v} their {o}, but fumbles and drops it on their {b}!": indicatize(WEAPONS)
           }
 
-BOT = {"{a} charges its laser aaaaaaaand... BZZZZZZT! {d} is now a smoking crater for daring to challenge the bot.": INITIAL_HP}
+BOT = {"{a} charges its laser aaaaaaaand... BZZZZZZT! {d} is now a smoking crater for daring to challenge me.": INITIAL_HP}
 
 HITS = ['deals', 'hits for']
 RECOVERS = ['recovers', 'gains', 'heals']

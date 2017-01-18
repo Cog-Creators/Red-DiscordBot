@@ -118,7 +118,7 @@ class ReCensor:
 
     @recensor.command(pass_context=True, name='add')
     async def _add(self, ctx, pattern: str, mode: str=MODE_INCLUSIVE, channel: discord.Channel=None):
-        """Adds a pattern to filter messages. Mods, bot admins, and the bot's
+        """Adds a pattern to filter messages. Mods, bot admins, and my
         owner are not subjected to the filter.
         If the pattern contains spaces, it must be put in double quotes. Single quotes will not work.
 

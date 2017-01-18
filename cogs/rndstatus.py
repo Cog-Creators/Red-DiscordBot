@@ -32,7 +32,7 @@ class RandomStatus:
         Accepts multiple statuses.
         Must be enclosed in double quotes in case of multiple words.
         Example:
-        !rndstatus set \"Tomb Raider II\" \"Controller\" \"with your heart.\"
+        !rndstatus set \"DON'T PANiC Sound Track\" \"with the I.I.D.\" \"his G.P.P.\"
         Shows current list if empty."""
         current_status = ctx.message.server.me.status
         if statuses == () or "" in statuses:
@@ -95,7 +95,7 @@ def check_folders():
 
 def check_files():
     settings = {"DELAY" : 300}
-    default = ["her Turn()", "Tomb Raider II", "Controller", "NEO Scavenger", "Python", "with your heart."]
+    default = ["with the I.I.D.", "DON'T PANiC Sound Track", "Controller Config", "his G.P.P.", "with your feelings", "with your head."]
 
     f = "data/rndstatus/settings.json"
     if not fileIO(f, "check"):

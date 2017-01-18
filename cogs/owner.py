@@ -278,7 +278,7 @@ class Owner:
         if self.bot.settings.owner is not None:
             await self.bot.say(
             "The owner is already set. Remember that setting the owner "
-            "to someone else other than who hosts the bot has security "
+            "to someone else other than who hosts me has security "
             "repercussions and is *NOT recommended*. Proceed at your own risk."
             )
             await asyncio.sleep(3)
@@ -616,7 +616,7 @@ class Owner:
             msg = ("I have a **BOT** tag, so I must be invited with an OAuth2"
                    " link:\nFor more information: "
                    "https://controllernetwork.com/kb/"
-                   "MARViN-Docs/marvin_guide_bot_accounts/#bot-invites")
+                   "MARViN/bot_accounts/#bot-invites")
             await self.bot.say(msg)
             if hasattr(self.bot, 'oauth_url'):
                 await self.bot.whisper("Here's my OAUTH2 link:\n{}".format(

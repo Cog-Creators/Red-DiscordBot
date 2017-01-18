@@ -16,13 +16,13 @@ except ImportError:
     print("Discord.py is not installed.\n"
           "Consult the guide for your operating system "
           "and do ALL the steps in order.\n"
-          "https://ControllerNetwork.com/MARViN-Docs/\n")
+          "https://ControllerNetwork.com/MARViN/\n")
     sys.exit()
 except AssertionError:
     print("MARViN needs Python 3.5 or superior.\n"
           "Consult the guide for your operating system "
           "and do ALL the steps in order.\n"
-          "https://ControllerNetwork.com/MARViN-Docs/\n")
+          "https://ControllerNetwork.com/MARViN/\n")
     sys.exit()
 
 from cogs.utils.settings import Settings
@@ -107,7 +107,7 @@ class Bot(commands.Bot):
 
     def add_message_modifier(self, func):
         """
-        Adds a message modifier to the bot
+        Adds a message modifier to me
 
         A message modifier is a callable that accepts a message's
         content as the first positional argument.
@@ -125,7 +125,7 @@ class Bot(commands.Bot):
         self._message_modifiers.append(func)
 
     def remove_message_modifier(self, func):
-        """Removes a message modifier from the bot"""
+        """Removes a message modifier from me"""
         if func not in self._message_modifiers:
             raise RuntimeError("Function not present in the message "
                                "modifiers.")
@@ -133,7 +133,7 @@ class Bot(commands.Bot):
         self._message_modifiers.remove(func)
 
     def clear_message_modifiers(self):
-        """Removes all message modifiers from the bot"""
+        """Removes all message modifiers from me"""
         self._message_modifiers.clear()
 
     async def send_cmd_help(self, ctx):
@@ -393,7 +393,7 @@ def interactive_setup(settings):
     if first_run:
         print("MARViN - First run configuration\n")
         print("If you haven't already, create a new account:\n"
-              "https://ControllerNetwork.com/MARViN-Docs/marvin_guide_bot_accounts/"
+              "https://ControllerNetwork.com/MARViN/bot_accounts/"
               "#creating-a-new-bot-account")
         print("and obtain your bot's token like described.")
 
@@ -428,7 +428,7 @@ def interactive_setup(settings):
 
     if first_run:
         print("\nInput the admin role's name. Anyone with this role in Discord"
-              " will be able to use the bot's admin commands")
+              " will be able to use my admin commands")
         print("Leave blank for default name (Hitchhiker)")
         settings.default_admin = input("\nAdmin role> ")
         if settings.default_admin == "":
@@ -436,7 +436,7 @@ def interactive_setup(settings):
         settings.save_settings()
 
         print("\nInput the moderator role's name. Anyone with this role in"
-              " Discord will be able to use the bot's mod commands")
+              " Discord will be able to use my mod commands")
         print("Leave blank for default name (Vogon)")
         settings.default_mod = input("\nModerator role> ")
         if settings.default_mod == "":
@@ -447,7 +447,7 @@ def interactive_setup(settings):
               " keep MARViN online.\nAll commands will have to be issued through"
               " Discord's chat, *this window will now be read only*.\n"
               "Please read this guide for a good overview on how MARViN works:\n"
-              "https://ControllerNetwork.com/MARViN-Docs/marvin_getting_started/\n"
+              "https://ControllerNetwork.com/MARViN/getting_started/\n"
               "Press enter to continue")
         input("\n")
 

@@ -1047,10 +1047,10 @@ class Audio:
                                 not noppl_disconnect)
         if not noppl_disconnect:
             await self.bot.say("If there is no one left in the voice channel"
-                               " the bot will automatically disconnect after"
+                               " I will automatically disconnect after"
                                " five minutes.")
         else:
-            await self.bot.say("The bot will no longer auto disconnect"
+            await self.bot.say("I will no longer auto disconnect"
                                " if the voice channel is empty.")
         self.save_settings()
 
@@ -1807,9 +1807,13 @@ class Audio:
 
     @commands.command(pass_context=True, no_pm=True)
     async def sing(self, ctx):
-        """Makes MARViN sing one of her songs"""
-        ids = ("zGTkAVsrfg8", "cGMWL8cOeAU", "vFrjMq4aL-g", "WROI5WYBU_A",
-               "41tIUr_ex3g", "f9O2Rjn1azc")
+        """Makes MARViN play one of the H.G.2.T.G. Sound tracks"""
+        ids = ("VoZ_eupjzYg", "1iXzi9KpdKQ", "F0dxfpRgL34", "zs97DhZ9mrU",
+               "XPEMuC_botM", "u6Zoezcq1RA", "dnAIrQYr-dU", "XIb6RoxF5tg",
+               "K3kGtgVmQ2Q", "GnxS9XX9gUk", "Nmv2eKJb52k", "aUJWnZD89Vs",
+               "FzE6w198G9M", "gn-ZVeVyD38", "rtQWPQRqjjo", "sN279Qdwb0E",
+               "hkU87cBSnZA", "Sd_lJDoNnHU", "W-xnEN2XGJk", "DYBnCocBUus",
+               "ch7MIV-_4Mo", "G8U86BgtZA4", "YEFmuLnUZZo")
         url = "https://www.youtube.com/watch?v={}".format(choice(ids))
         await ctx.invoke(self.play, url_or_search_terms=url)
 

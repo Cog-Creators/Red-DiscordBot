@@ -18,7 +18,7 @@ NUM_THREADS = 4
 REPO_NONEX = 0x1
 REPO_CLONE = 0x2
 REPO_SAME = 0x4
-REPOS_LIST = "https://ControllerNetwork.com/MARViN-Docs/marvin_cog_approved_repos/"
+REPOS_LIST = "https://ControllerNetwork.com/MARViN/approved_repos/"
 
 
 class UpdateError(Exception):
@@ -121,7 +121,7 @@ class Downloader:
         """Lists installable cogs
 
         Repositories list:
-        https://ControllerNetwork.com/MARViN-Docs/marvin_cog_approved_repos/"""
+        https://ControllerNetwork.com/MARViN/approved_repos/"""
         retlist = []
         if repo_name and repo_name in self.repos:
             msg = "Available cogs:\n"
