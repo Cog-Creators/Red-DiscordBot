@@ -61,7 +61,7 @@ class BotInfo:
                            "Patreon: https://www.patreon.com/tekulvw")
 
     @commands.command()
-    async def info(self):
+    async def minfo(self):
         """General bot information"""
         await self.bot.say("I'm Squid, a general, multi-purpose bot that is"
                            " always getting new features. You can access my"

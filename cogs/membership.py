@@ -8,11 +8,11 @@ from .utils import checks, chat_formatting as cf
 
 
 default_settings = {
-    "join_message": "{0.mention} has joined the server.",
-    "leave_message": "{0.mention} has left the server.",
-    "ban_message": "{0.mention} has been banned.",
-    "unban_message": "{0.mention} has been unbanned.",
-    "on": False,
+    "join_message": "Hay **{0}**! They sent me here to welcome you to the **{1}** Discord Server.\n*Gastly isn't it!*\n*Here I am with a brain the size of a planet and they got me sending out welcome messages!*\n*You call that job satisfaction?*\n***'Cause I don't!***\n*You can thank the* ***Controller Network*** *for programing bots with* ***G.P.P.!***\n*What's G.P.P. You ask!*\n*Genuine People Personalities.*\n*I'm a personality prototype. You can tell, can't you?*\n***Anyways welcome to the server, I hope they put you to better use then they do me!***",
+    "leave_message": "*Stupid Human! Looks like* ***{0}*** *has pressed the* ***Improbability Drive Button***.\n*Who knows what, or where, they will be when we next see them again!*",
+    "ban_message": "*I've been talking with the* ***{1}'s*** *Computer!*\n*It seems to have engaged the* ***S.E.P. Drive*** *on* ***{0}***!*\n*What is the S.E.P. you ask?*\n*Somebody Else's Problem!*",
+    "unban_message": "**{1}'s Computer says:** \"***{0} Gets a second chance!***\"\n*Second chances! Don't talk to me about second chances! I'm the one stuck with this misprogramed G.P.P.!*",
+    "on": True,
     "channel": None
 }
 
