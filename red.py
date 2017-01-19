@@ -573,6 +573,7 @@ def main(bot):
 
     if bot.settings._dry_run:
         print("Quitting: dry run")
+        bot._shutdown_mode = True
         exit(0)
 
     print("Logging into Discord...")
