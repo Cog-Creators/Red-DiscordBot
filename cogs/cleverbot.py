@@ -11,6 +11,7 @@ from __main__ import send_cmd_help, user_allowed
 import os
 import discord
 import asyncio
+import re #chem
 
 class Cleverbot():
     """Cleverbot"""
@@ -53,11 +54,10 @@ class Cleverbot():
             return
 
         if message.author.id != self.bot.user.id:
-            mention = message.server.me.mention
-            if message.content.startswith(mention):
-                content = message.content.replace(mention, "").strip()
+            regexp = re.compile(r'\b[mM][aA][rR][vV][iI][nN]\b') #FoxLovesYou
+            if regexp.search(message.content.lower()) is not None: #FoxLovesYou
                 await self.bot.send_typing(message.channel)
-                response = await self.get_response(content)
+                response = await self.get_response(message.content)
                 await self.bot.send_message(message.channel, response)
 
 def check_folders():
