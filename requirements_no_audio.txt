@@ -14,3 +14,7 @@ pytz
 psutil
 numpy
 scipy
+datadog
+mutagen
+bs4
+feedparser

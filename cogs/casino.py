@@ -20,7 +20,7 @@ except ImportError:
 
 
 # Default settings that is created when a server begin's using Casino
-server_default = {"System Config": {"Casino Name": "Han Wavel Galactic Casino", "Casino Open": True,
+server_default = {"System Config": {"Casino Name": "Han Wavel Galactic", "Casino Open": True,
                                     "Chip Name": "Flainian Pobble Beads", "Chip Rate": 1, "Default Payday": 100,
                                     "Payday Timer": 1200, "Threshold Switch": False,
                                     "Threshold": 10000, "Credit Rate": 1, "Version": 1.53
