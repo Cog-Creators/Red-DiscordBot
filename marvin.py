@@ -101,7 +101,7 @@ class Bot(commands.Bot):
 
         If restart is True, the exit code will be 42 instead
         The launcher automatically restarts MARViN when that happens"""
-            self._shutdown_mode = not restart
+        self._shutdown_mode = not restart
         await self.logout()
 
     def add_message_modifier(self, func):
