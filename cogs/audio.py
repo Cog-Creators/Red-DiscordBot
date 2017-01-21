@@ -725,6 +725,13 @@ class Audio:
             return True
         return False
 
+    def _match_any_url(self, url):
+        any_link = re.compile(
+            r"(?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'.,<>?«»“”‘’]))", re.IGNORECASE)
+        if any_link.match(url):
+            return True
+        return False
+
     # TODO: _next_songs_in_queue
 
     async def _parse_playlist(self, url):
@@ -1345,7 +1352,7 @@ class Audio:
             await self.bot.say("I'm already downloading a file!")
             return
 
-        if "." in url:
+        if self._match_any_url(url):
             if not self._valid_playable_url(url):
                 await self.bot.say("That's not a valid URL.")
                 return
