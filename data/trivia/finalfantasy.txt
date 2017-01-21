@@ -1,0 +1,287 @@
+(FFI) What is the HP of the final boss (Chaos), in the original NES version?`2,000`2000
+(FFI) Who is the true identity of Chaos?`Garland
+(FFI) What is the name of the secret mini-game?`15 Puzzle
+(FFI) Who is the fiend of wind?`Tiamat
+(FFI) Who is the fiend of water?`Kraken
+(FFI) Who is the fiend of earth?`Lich
+(FFI) Who is the fiend of fire?`Marilith
+(FFI) What are descendants of the "Sky People" called?`Lufenian`Lufaine`Lefeinish
+(FFI) What is the name of the superboss residing in the deepest level of the Labyrinth of Time?`Chronodia
+(FFII) Name the largest airship.`Dreadnought
+(FFII) What is the Emperor's name?`Mateus
+(FFII) Princess Hilda is the leader of which organization?`Wild Rose Rebellion
+(FFII) Who is Gordon's brother?`Scott
+(FFIII) Who was Xande's mentor?`Great Magus Noah`Noah
+(FFIII) What gift did Xande's mentor bestow upon him?`The gift of mortality`Mortality
+(FFIII) What is the gender of the Cloud of Darkness?`Genderless`None
+(FFIV) Which floor on the Tower of Zot are the Magus Sisters fought?`5th`Fifth`5`Five
+(FFIV) What item was used to cure Rosa's desert fever?`Sand Pearl
+(FFIV) Rosa has feelings for Kain. T/F?`False`F
+(FFIV) Name an airship present in the game.`Enterprise or Falcon`Falcon`Enterprise
+(FFIV) It was later revealed that Golbez was being mind-controlled by who?`Zemus
+(FFIV) Who originally summoned the Mist Dragon?`Rydia's mother`Mother of Rydia
+(FFIV) Cecil marries Rosa. T/F?`True`T
+(FFIV) Who does Edge have a crush on?`Rydia
+(FFIV) Who is the Queen of Eidolons?`Asura
+(FFIV) What is Edge's real name?`Edward Geraldine`Edward
+(FFIV) What is the name of the "Home to all Eidolons"?`Feymarch
+(FFIV) What is Golbez's real name?`Theodor
+(FFIV) Tellah died after casting what magic spell?`Meteor
+(FFIV) Who is Cecil's brother?`Golbez`Theodor
+(FFIV) What crystal was exchanged for Rosa's safety?`Earth Crystal`Earth
+(FFIV) What is the name of Cecil's son?`Ceodore Harvey`Ceodore
+(FFVI) 'Summons' are known as?`Espers`Esper
+(FFVI) Celes posed as who in an opera?`Maria
+(FFVII) What is Red XIII's real name?`Nanaki
+(FFVII) Who is Sephiroth's mother?`Lucrecia Crescent`Lucrecia
+(FFVII) Well-known katana.`Masamune
+(FFVII) What is Cid's occupation/role?`Pilot
+(FFVII) What type of weapon does Cait Sith use?`Megaphone
+(FFVII) What is the ultimate summon?`Knights of the Round
+(FFVII) You get the Blue Magic, 'Beta', from which monster?`Midgardsormr
+(FFVIII) Who is Laguna's wife?`Raine
+(FFVIII) Who is Squall Leonhart related to?`Laguna
+(FFVIII) What is the true identity/name of the UFO?`PuPu
+(FFVIII) In two words; what happens to Laguna when he gets nervous?`Leg cramp
+(FFVIII) There are absolutely no moogles in Final Fantasy VIII. T/F?`F
+(FFVIII) What is Cid's occupation/role?`Headmaster of Balamb Garden`Headmaster
+(FFVIII) What is the name of the creature engraved in Squall's Revolver?`Griever
+(FFVIII) Which monster interrupted Laguna while filming?`Ruby Dragon
+(FFVIII) What is the fictional character mentioned by Seifer, 'Sorceress Knight', named as?`Zefer
+(FFVIII) What is the name of the card game?`Triple Triad
+(FFVIII) Squall's character design was heavily influenced by which real life actor?`River Phoenix
+(FFVIII) What is the ultimate GF?`Eden
+(FFVIII) What is the Queen of Cards' name in the French version?`Ishtar
+(FFVIII) What is MiniMog's role?`A GF`GF
+(FFVIII) What does GF stand for?`Guardian Force
+(FFVIII) 'Eyes on Me' was sung by?`Faye Wong
+(FFIX) What is Princess Garnet's nickname?`Dagger
+(FFIX) What is the name of the card game?`Tetra Master
+(FFIX) Who is the moogle with the shiniest coat?`Artemicion
+(FFIX) Name a world present in the FFIX.`Gaia`Terra
+(FFIX) Which continent does Cleyra belong to?`Mist continent`Mist
+(FFIX) Which continent does Daguerro belong to?`Forgotten continent`Forgotten
+(FFIX) What is Cid's occupation/role?`Regent of Lindblum`Regent
+(FFIX) Which moogle wears a leopard skin hood?`Stiltzkin
+(FFX) Who is Yuna's father?`Braska
+(FFX) Who created Sin?`Yu Yevon
+(FFXIII) What is Lightning's real name?`Claire Farron`Eclair`Claire
+(FFXIII-2) What is Caius's full name?`Paddra Ballad-Caius`Paddra Ballad Caius
+(FFXIV) What is the name of The Fiend?`Sephirot
+(FFXIV) What is Bahamut Prime's signature move?`Tera Flare`Teraflare
+(FFXIV) What is the identity of Phoenix?`Louisoix Leveilleur`Louisoix
+(FFXIV) Who is the Lord of the Inferno?`Ifrit
+(FFXIV) Who is the Lord of the Crags?`Titan
+(FFXIV) Who is the Lord of the Whorl?`Leviathan
+(FFXIV) Who is the Lady of the Frost?`Shiva
+(FFXIV) Who is the Lady of the Vortex?`Garuda
+(FFXIV) Who is the Lord of Levin?`Ramuh
+(FFXIV) Who is the Lord of the Hive?`Ravana
+(FFXIV) Who is the Lord of the Mists?`Bismarck
+(FFXIV) Who is known as 'The Black Wolf'?`Gaius van Baelsar`Gaius
+(FFXIV) Who attempts to steal Tupsimati from The Rising Stones?`Nabriales`Ascian Napriales`Napriales
+(FFXIV) How many dragon killers are present on the Steps of Faith?`3`Three
+(FFXIV) Who was responsible for the destruction of the first Agrius model?`Midgardsormr
+(FFXIV) Who is the Legatus of the XIVth Imperial Legion?`Gaius van Baelsar`Gaius
+(FFXIV) Who is the Legatus of the VIth Imperial Legion?`Regula van Hydrus`Regula
+(FFXIV) Who is Livia sas Junius's sister?`Lucia goe Junius`Lucia
+(FFXIV) Who is the Tribunus of the XIVth Imperial Legion?`Nero tol Scaeva`Nero
+(FFXV) What was the original/scrapped title of Final Fantasy XV?`Final Fantasy Versus XIII`Versus XIII
+(FFXV) Name the character who was scrapped and replaced by Lunafreya Nox Fleuret.`Stella Nox Fleuret`Stella
+(FFXV) Who is known as "The Dragoon"?`Aranea Highwind`Aranea
+(FFXV) What is the name of King Regis' car?`Regalia
+(FFXV) Name the lvl 120 superboss.`Nagifar
+(FFXV) Name the lvl 110 superboss.`Ayakashi
+(FFXV) Name the lvl 99 superboss.`Adamantoise
+(FFXV) Which fish is generally regarded as the hardest to catch?`Pink Jade Gar
+(FFXV) Shiva is also known as?`Gentiana
+(FFXV) Name Lunafreya's white dog.`Pryna
+(FFXV) Name Lunafreya's black dog.`Umbra
+(FFXV) Pryna was saved by who?`Prompto
+(FFXV) What is the most valuable item you can get from playing Justice Monsters Five?`Wind-up Lord Vexxos`Wind up Lord Vexxos
+(FFT) Who is known as the 'Silver Prince/Demon'?`Messam Elmdore`Marquis Elmdore`Marquis Messam Elmdore de Limberry
+(FFT) What is the name of the terrorist organization led by Wiegraf Folles?`Corpse Brigade`Death Corps
+(FFT) Who is the Holy Dragon?`Reis Duelar`Reis`Duelar
+(FFTA) What is the name of the strongest (highest ATK) Sword in the game?`Chirijaden
+(FFTA) What is the name of the strongest (highest ATK) Saber in the game?`Manganese
+(FFTA) What is the name of the strongest (highest ATK) Knightsword in the game?`Excalibur2 or Sequence`Excalibur 2`Excalibur2`Sequence
+(FFTA) What is the name of the strongest (highest ATK) Greatsword in the game?`Master Sword
+(FFTA) What is the name of the strongest (highest ATK) Rapier in the game?`Femme Fatale
+(FFTA) What is the name of the strongest (highest ATK) Greatbow in the game?`Max's Oathbow`Max Oathbow
+(FFTA) What is the name of the strongest (highest ATK) Spear in the game?`Odin's Lance`Odin Lance
+(FFTA) What is the name of the strongest (highest ATK) Katana in the game?`Masamune
+(FFTA) Which non-generic character comes with the ability, Astra?`Ezel Berbier`Ezel`Berbier
+(FFTA) Who is the inventor of Anti-Laws?`Ezel Berbier`Ezel`Berbier
+(FFTA) Who is the first Totema you encounter?`Famfrit
+(FFTA) What is the game's default Clan name?`Clan Nutsy`Nutsy
+(FFTA) Llednar is a "reverse" image of who?`Mewt Randell`Mewt
+(FFTA) Famfrit is the totema of which race?`Moogles`Moogle
+(FFTA) Ultima is the totema of which race?`Nu Mou
+(FFTA) Adrammelech is the totema of which race?`Bangaa
+(FFTA) Exodus is the totema of which race?`Viera
+(FFTA) Mateus is the totema of which race?`Humans`Human
+(FFTA) Who is Marche's brother?`Doned Radiuju`Doned
+(FFTA) What are the lawless areas known as?`Jagds`Jagd
+(FFTA) What did Marche initially thought Bangaas were?`Lizards`Lizard`Lizardmen
+(FFTA) Who saved Marche when he first warped to fantasy Ivalice?`Montblanc
+(FFTA) It was later revealed that the dream world of Ivalice is actually a fantasy of whose?`Mewt Randell`Mewt
+(FFTA) What is Ritz's natural hair color?`White
+(FFTA) Which clan does Ritz originally belonged to?`Clan Ritz`Ritz
+(FFTA) Who is Ritz's closest partner/comrade?`Shara
+(FFTA) Ritz utilizes the viera job tree. T/F?`T
+(FFTA) What is Cid's occupation/role?`Judgemaster`Judge Master
+(FFTA) In real world Ivalice, what caused Cid to fall into depression?`The death of his wife`Death of his wife`Passing of his wife`Death of Remedi`Passing of Remedi`His wife died
+(FFTA) Who is Mewt's mother?`Remedi`Queen Remedi
+(FFTA) It is possible to recruit Llednar to your clan. T/F?`F
+(FFTA) It is possible to recruit Judgemaster Cid to your clan. T/F?`T
+(FFTA) Who is the true identity of Queen Remedi?`Li-Grim`Li Grim`Ligrim
+(FFVII C.C.) Which real life singer served as the character design model for Genesis Rhapsodos?`GACKT
+(FFVII C.C.) What's the title of Genesis' favorite book?`LOVELESS
+(TYPE-0) What is Kurasame Susaya's nickname?`Ice Reaper
+(TYPE-0) What is Tiz's real name?`Tohno Mahoroha
+(TYPE-0) What is Joker's real name?`Lean Hampelmann
+(TYPE-0) Who is the commanding officer of Class Zero?`Kurasame Susaya`Kurasame`Susaya
+(TYPE-0) Who is No.00 of Class Zero?`Joker`Lean Hampelmann`Lean`Hampelmann
+(TYPE-0) Who is No.01 of Class Zero?`Ace
+(TYPE-0) Who is No.02 of Class Zero?`Deuce
+(TYPE-0) Who is No.03 of Class Zero?`Trey
+(TYPE-0) Who is No.04 of Class Zero?`Cater
+(TYPE-0) Who is No.05 of Class Zero?`Cinque
+(TYPE-0) Who is No.06 of Class Zero?`Sice
+(TYPE-0) Who is No.07 of Class Zero?`Seven
+(TYPE-0) Who is No.08 of Class Zero?`Eight
+(TYPE-0) Who is No.09 of Class Zero?`Nine
+(TYPE-0) Who is No.10 of Class Zero?`Tiz`Tohno Mahoroha`Tohno`Mahoroha
+(TYPE-0) Who is No.11 of Class Zero?`Jack
+(TYPE-0) Who is No.12 of Class Zero?`Queen
+(TYPE-0) Who is No.13 of Class Zero?`King
+(TYPE-0) Name a member of Class Zero who isn't assigned a number.`Rem Tokimiya or Machina Kunagiri`Rem Tokimiya`Rem`Tokimiya`Machina Kunagiri`Machina`Kunagiri
+(TYPE-0) What is Ace's weapon of choice?`Cards`Card
+(TYPE-0) What is Deuce's weapon of choice?`Flute
+(TYPE-0) What is Trey's weapon of choice?`Bow
+(TYPE-0) What is Cater's weapon of choice?`Magicite pistol`Gun`Pistol
+(TYPE-0) What is Cinque's weapon of choice?`Mace
+(TYPE-0) What is Sice's weapon of choice?`Scythe
+(TYPE-0) What is Seven's weapon of choice?`Whipblade
+(TYPE-0) What is Eight's weapon of choice?`Knuckles`Fists`Fist
+(TYPE-0) What is Nine's weapon of choice?`Spear
+(TYPE-0) What is Jack's weapon of choice?`Katana
+(TYPE-0) What is Queen's weapon of choice?`Sword
+(TYPE-0) What is King's weapon of choice?`Dual guns`Guns`Gun
+(TYPE-0) What is Machina's weapon of choice?`Twin rapiers`Rapiers`Rapier
+(TYPE-0) What is Rem's weapon of choice?`Twin daggers`Daggers`Dagger
+(DISSIDIA) Who is the Goddess of Harmony?`Cosmos
+(DISSIDIA) Who is the God of Discord?`Chaos
+(DISSIDIA) Who created the Warrior of Light?`Cid of the Lufaine`Cid
+(RECORD KEEPER) What does the term, BSB, stand for?`Burst Soul Break
+(RECORD KEEPER) What does the term, OSB, stand for?`Overflow Soul Break`Overstrike Soul Break
+(RECORD KEEPER) What does the term, SSB, stand for?`Super Soul Break
+(RECORD KEEPER) What does the term, USB, stand for?`Ultra Soul Break
+(RECORD KEEPER) What does the term, CLSB, stand for?`Chain Limit Soul Break
+(RECORD KEEPER) What is the name of the buff that prevents fatal damage once?`Last Stand
+(RECORD KEEPER) There is a secret Dress Record for Cloud in cross-dressing form. T/F?`F
+(RECORD KEEPER) What is the name of the main character?`Tyro`Deshi
+(RECORD KEEPER) What type of Materia are bound to characters?`Legend Materia`Legend
+(RECORD KEEPER) Final Fantasy: Record Keeper has its own unique OST album. T/F?`T
+(RECORD KEEPER) It is possible to have a 8* relic. T/F?`T
+(RECORD KEEPER) Which character has the highest growth rate (1-99)?`Onion Knight
+(RECORD KEEPER) Name one of the characters given as a reward for pre-registers.`Tidus`Warrior
+(RECORD KEEPER) The first ever event dungeon released was from which realm?`VII`7`Seven
+(RECORD KEEPER) What is the name of the "realm" that has synergy bonus for all realms?'Beyond
+(RECORD KEEPER) Name the first ever "meta" strategy.`Retaliate Meta`Retaliate`Reta`Reta Meta
+(RECORD KEEPER) What is the name of the ability that has the power to reduce an enemy's chance of inflicting debuffs?`Affliction Break
+(RECORD KEEPER) There is a Summon that hits more than 3x. T/F?`T
+(RECORD KEEPER) It is possible to draw a 5* (or higher) relic from the free daily draw. T/F?`T
+(RECORD KEEPER) "Mythril" is the in-game currency that is bought with real money. T/F?`F
+(RECORD KEEPER) There is/was an exclusive invitation-only MVP club which you could join if you spent 20,000USD or more on in-game purchases. T/F?`F
+(RECORD KEEPER) What is the first boss introduced for the official release of Multiplayer Raids?`Gilgamesh
+(RECORD KEEPER) Name the material meant for augmenting.`Rosetta Stone
+(RECORD KEEPER) Name the material necessary for reforging.`Dark Matter
+(RECORD KEEPER) What is the official term for "costumes" which you can use to change your characters' sprite design?`Dress Records`Dress Record
+Name the main composer for the Final Fantasy series.`Nobuo Uematsu
+Name the main character designer for the Final Fantasy series.`Tetsuya Nomura
+Which FF title first featured Blue Magic?`Final Fantasy V`FFV`FF5`5`v
+'Final Fantasy: Avenged Children' is a movie (T/F)?`False`F
+What is any moogle's favorite food?`Kupo nut
+Name the first FF title where the logo included Yoshitaka Amano's signature.`Final Fantasy X`FFX`FF10
+Name the only non-FF game which is part of Ivalice lore.`Vagrant Story
+Name the accessory that generally grants immunity to most debuffs.`Ribbon
+What was 'Final Fantasy' originally named?`Fighting Fantasy
+Who is 'The Man with the Machine Gun'?`Laguna
+Who is Gilgamesh's sidekick?`Enkidu
+What is Gilgamesh's widely known nickname?`Greg
+'Wings of Pride' is a move used by?`Angeal Hewley`Angeal
+What armor does Gilgamesh wear?`Genji
+Who is widely regarded as the 'Father of Final Fantasy'?`Hironobu Sakaguchi`Sakaguchi Hironobu
+THE iconic duo.`Biggs and Wedge`Wedge and Biggs
+THE male white mage.`Minwu
+Carbuncle grants what buff?`Reflect
+Siren deals what debuff?`Silence
+What does the term, 'ATB', stand for?`Active Time Battle
+Kirin grants what buff?`Regen
+Iconic painting.`Lakshmi's Portrait`Portrait of Lakshmi
+What is Odin's signature move?`Zantetsuken
+What is Shiva's signature move?`Diamond Dust
+What is Ramuh's signature move?`Judgment Bolt`Judgement Bolt
+What is Titan's signature move?`Gaia's Wrath
+What is Ifrit's signature move?`Hellfire`Inferno
+What is Leviathan's signature move?`Tsunami`Tidal Wave
+What is Diabolos' signature move?`Dark Messenger
+What is Bahamut's signature move?`Mega Flare`Giga Flare`Megaflare`Gigaflare
+What is Alexander's signature move?`Divine Judgment`Divine Judgement
+What is Cactuar's signature move?`1000 Needles`10000 Needles
+What is Tonberry's signature move?`Everyone's Grudge`everyones grudge
+What is Malboro's signature move?`Bad Breath
+What is Goblin's signature move?`Goblin Punch
+Flans are generally weak against...`Black Magic`Magic
+What is the Japanese name for Cactuar (in Romaji)?`Saboten
+Complete the name! _____ Tribal`Zidane
+Complete the name! _____ Gainsborough`Aerith`Aeris
+Complete the name! _____ Leonhart`Squall
+Complete the name! _____ Strife`Cloud
+Complete the name! _____ Fair`Zack
+Complete the name! _____ Branford`Terra
+Complete the name! _____ Pollendina`Cid
+Complete the name! _____ Scherwiz`Faris
+Complete the name! _____ Quen`Quina
+Complete the name! _____ Kramer`Cid`Edea
+Complete the name! _____ Loire`Laguna
+Complete the name! _____ Heartilly`Rinoa`Julia
+Complete the name! _____ Almasy`Seifer
+Complete the name! _____ Katzroy`Sazh
+Complete the name! _____ Valentine`Vincent
+Complete the name! _____ Farron`Claire`Eclair`Serah
+Complete the name! _____ Villiers`Snow
+Complete the name! _____ Guado`Seymour
+Complete the name! _____ Beoulve`Ramza`Barbaneth`Zalbaag`Dycedarg`Alma
+Complete the name! _____ Heiral`Delita`Tietra
+Complete the name! _____ Thadalfus`Argus
+Complete the name! _____ Folles`Wiegraf`Milleuda
+Complete the name! _____ Madiuju`Marche
+Complete the name! _____ Randell`Mewt`Cid
+Complete the name! _____ Malheur`Ritz
+Complete the name! _____ Crescent`Lucrecia
+Complete the name! _____ Rhapsodos`Genesis
+Complete the name! _____ Izunia`Ardyn
+Complete the name! _____ Garamonde`Cyan
+Complete the name! _____ Figaro`Edgar Roni`Edgar`Sabin Rene`Sabin
+Complete the name! _____ Chere`Celes
+Complete the name! _____ Gabbiani`Setzer
+Complete the name! _____ Cole`Locke
+Complete the name! _____ Arrowny`Relm
+Complete the name! _____ Magus`Strago
+Complete the name! _____ Palazzo`Kefka
+Complete the name! _____ Klauser`Bartz
+Complete the name! _____ Tycoon`Lenna Charlotte`Lenna
+Complete the name! _____ Hewley`Angeal`Gillian
+Complete the name! _____ Kreiss`Noel
+Complete the name! _____ Geraldine`Edward`Edge
+Complete the name! _____ Tokimiya`Rem
+Complete the name! _____ Susaya`Kurasame
+Complete the name! _____ Duelar`Reis
+Complete the name! _____ Joanna Farrel`Rosa
+Complete the name! _____ Harvey`Cecil`Ceodore
+Complete the name! _____ Swain`Babus`Abacus
+Complete the name! _____ Fabool`Cid`Hildagarde
+Complete the name! _____ Adelbert`Steiner
+Complete the name! _____ Coral`Amarant
