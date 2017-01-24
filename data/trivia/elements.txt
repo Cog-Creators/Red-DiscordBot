@@ -80,12 +80,12 @@ What is the element symbol of "Meitnerium"?`Mt
 What is the element symbol of "Darmstadtium"?`Ds
 What is the element symbol of "Roentgnium"?`Rg
 What is the element symbol of "Copernicium"?`Cn
-What is the element symbol of "Ununtrium"?`Uut
+What is the element symbol of "Nihonium"?`Nh
 What is the element symbol of "Flerovium"?`Fl
-What is the element symbol of "Ununpentium"?`Uup
+What is the element symbol of "Moscovium"?`Mc
 What is the element symbol of "Livermorium"?`Lv
-What is the element symbol of "Ununseptium"?`Uus
-What is the element symbol of "Ununoctium"?`Uuo
+What is the element symbol of "Tennessine"?`Ts
+What is the element symbol of "Oganesson"?`Og
 What is the element symbol of "Lanthanum"?`La
 What is the element symbol of "Cerium"?`Ce
 What is the element symbol of "Praseodymium"?`Pr
