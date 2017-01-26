@@ -207,10 +207,13 @@ class Mod:
 
     @modset.command(pass_context=True, no_pm=True, name='cases')
     async def set_cases(self, ctx, action: str = None, enabled: bool = None):
-        """Enables or disables case creation for each type of mod action"""
+        """Enables or disables case creation for each type of mod action
+        
+        Enabled can be 'on' or 'off'"""
         server = ctx.message.server
 
         if action == enabled:  # No args given
+            await self.bot.send_cmd_help(ctx)
             msg = "Current settings:\n```py\n"
             maxlen = max(map(lambda x: len(x[0]), ACTIONS_REPR.values()))
             for action, name in ACTIONS_REPR.items():
