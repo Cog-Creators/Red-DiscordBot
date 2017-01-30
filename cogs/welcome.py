@@ -8,9 +8,9 @@ import os
 from random import choice as rand_choice
 
 
-default_greeting = "Welcome {0.name} to {1.name}!"
-default_settings = {"GREETING": [default_greeting], "ON": False,
-                    "CHANNEL": None, "WHISPER": False,
+default_greeting = "Hay **{0}**! They sent me here to welcome you to the **{1}** Discord Server.\n*Gastly isn't it!*\n*Here I am with a brain the size of a planet and they got me sending out welcome messages!*\n*You call that job satisfaction?*\n***'Cause I don't!***\n*You can thank the* ***Controller Network*** *for programing bots with* ***G.P.P.!***\n*What's G.P.P. You ask!*\n*Genuine People Personalities.*\n*I'm a personality prototype. You can tell, can't you?*\n***Anyways welcome to the server, I hope they put you to better use then they do me!***"
+default_settings = {"GREETING": [default_greeting], "ON": True,
+                    "CHANNEL": None, "WHISPER": True,
                     "BOTS_MSG": None, "BOTS_ROLE": None}
 settings_path = "data/welcome/settings.json"
 
