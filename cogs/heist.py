@@ -86,7 +86,8 @@ class Heist:
         self.bot = bot
         self.file_path = "data/JumperCogs/heist/heist.json"
         self.system = dataIO.load_json(self.file_path)
-        self.version = "2.0.6"
+        self.version = "2.0.8"
+        self.cycle_task = bot.loop.create_task(self.vault_updater())
 
     @commands.group(pass_context=True, no_pm=True)
     async def heist(self, ctx):
@@ -103,6 +104,15 @@ class Heist:
         settings = self.check_server_settings(server)
         self.reset_heist(settings)
         await self.bot.say("```Heist has been reset```")
+
+    @heist.command(name="clear", pass_context=True)
+    @checks.admin_or_permissions(manage_server=True)
+    async def _clear_heist(self, ctx, user: discord.Member):
+        """Clears a member of jail and death."""
+        author = ctx.message.author
+        settings = self.check_server_settings(author.server)
+        self.user_clear(settings, user)
+        await self.bot.say("```{} administratively cleared {}```".format(author.name, user.name))
 
     @heist.command(name="version", pass_context=True)
     @checks.admin_or_permissions(manage_server=True)
@@ -214,7 +224,7 @@ class Heist:
             await self.bot.say("Bank creation cancelled.")
             return
 
-        if crew.content in [subdict["Crew"] for subdict in settings["Banks"].values()]:
+        if int(crew.content) + 1 in [subdict["Crew"] for subdict in settings["Banks"].values()]:
             await self.bot.say("Crew size conflicts with another bank. Cancelling bank creation.")
             return
 
@@ -331,7 +341,7 @@ class Heist:
         OOB = settings["Players"][author.id]["OOB"]
 
         if settings["Players"][author.id]["Status"] == "Apprehended" or OOB:
-            remaining = self.cooldown_calculator(settings, author, player_time, base_time)
+            remaining = self.cooldown_calculator(settings, player_time, base_time)
             if remaining:
                 msg = ("You still have time on your sentence. You still need to wait:\n"
                        "```{}```".format(remaining))
@@ -359,7 +369,7 @@ class Heist:
         base_time = settings["Config"]["Death Timer"]
 
         if settings["Players"][author.id]["Status"] == "Dead":
-            remainder = self.cooldown_calculator(settings, author, player_time, base_time)
+            remainder = self.cooldown_calculator(settings, player_time, base_time)
             if not remainder:
                 settings["Players"][author.id]["Death Timer"] = 0
                 settings["Players"][author.id]["Status"] = "Free"
@@ -371,6 +381,21 @@ class Heist:
         else:
             msg = "You still have a pulse. I can't revive someone who isn't dead."
         await self.bot.say(msg)
+
+    def cleric_hook(self, server, author, user):
+        settings = self.check_server_settings(server)
+        self.account_check(settings, user)
+        if settings["Players"][user.id]["Status"] == "Dead":
+            settings["Players"][user.id]["Death Timer"] = 0
+            settings["Players"][user.id]["Status"] = "Free"
+            dataIO.save_json(self.file_path, self.system)
+            msg = ("{} casted `resurrection` on {} and returned them "
+                   "to the living.".format(author.name, user.name))
+            action = "True"
+        else:
+            msg = "Cast failed. {} is alive.".format(user.name)
+            action = None
+        return action, msg
 
     @heist.command(name="stats", pass_context=True)
     async def _stats_heist(self, ctx):
@@ -384,12 +409,12 @@ class Heist:
         status = settings["Players"][author.id]["Status"]
         sentence = settings["Players"][author.id]["Sentence"]
         time_served = settings["Players"][author.id]["Time Served"]
-        jail_fmt = self.cooldown_calculator(settings, author, time_served, sentence)
+        jail_fmt = self.cooldown_calculator(settings, time_served, sentence)
         bail = settings["Players"][author.id]["Bail Cost"]
         jail_counter = settings["Players"][author.id]["Jail Counter"]
         death_timer = settings["Players"][author.id]["Death Timer"]
         base_death_timer = settings["Config"]["Death Timer"]
-        death_fmt = self.cooldown_calculator(settings, author, death_timer, base_death_timer)
+        death_fmt = self.cooldown_calculator(settings, death_timer, base_death_timer)
         spree = settings["Players"][author.id]["Spree"]
         probation = settings["Players"][author.id]["OOB"]
         total_deaths = settings["Players"][author.id]["Deaths"]
@@ -595,19 +620,30 @@ class Heist:
         await self.bot.say("The Heist is now over. Give me a moment to count your towels.")
         await asyncio.sleep(5)
 
-    async def vault_update(self):
-        while self == self.bot.get_cog("Heist"):
-            servers = [x.id for x in self.bot.servers if x.id in self.system["Servers"].keys()]
-            for serverid in servers:
-                for bank in list(self.system["Servers"][serverid]["Banks"].keys()):
-                    vault = self.system["Servers"][serverid]["Banks"][bank]["Vault"]
-                    vault_max = self.system["Servers"][serverid]["Banks"][bank]["Vault Max"]
-                    if vault < vault_max:
-                        self.system["Servers"][serverid]["Banks"][bank]["Vault"] += 45
-                    else:
-                        pass
-            dataIO.save_json(self.file_path, self.system)
-            await asyncio.sleep(120)  # task runs every 120 seconds
+    async def vault_updater(self):
+        await self.bot.wait_until_ready()
+        try:
+            await asyncio.sleep(15)  # Start-up Time
+            while True:
+                servers = [x.id for x in self.bot.servers if x.id in self.system["Servers"].keys()]
+                for serverid in servers:
+                    for bank in list(self.system["Servers"][serverid]["Banks"].keys()):
+                        vault = self.system["Servers"][serverid]["Banks"][bank]["Vault"]
+                        vault_max = self.system["Servers"][serverid]["Banks"][bank]["Vault Max"]
+                        if vault < vault_max:
+                            increment = min(vault + 45, vault_max)
+                            self.system["Servers"][serverid]["Banks"][bank]["Vault"] = increment
+                        else:
+                            pass
+                dataIO.save_json(self.file_path, self.system)
+                await asyncio.sleep(120)  # task runs every 120 seconds
+        except asyncio.CancelledError:
+            pass
+
+    def __unload(self):
+        self.cycle_task.cancel()
+        self.shutdown_save()
+        dataIO.save_json(self.file_path, self.system)
 
     def calculate_credits(self, settings, players, target):
         names = [player.name for player in players]
@@ -692,6 +728,17 @@ class Heist:
         banks = [x[0] for x in groups]
         return banks[bisect(breakpoints, crew)]
 
+    def user_clear(self, settings, user):
+        settings["Players"][user.id]["Status"] = "Free"
+        settings["Players"][user.id]["Criminal Level"] = 0
+        settings["Players"][user.id]["Jail Counter"] = 0
+        settings["Players"][user.id]["Death Timer"] = 0
+        settings["Players"][user.id]["Bail Cost"] = 0
+        settings["Players"][user.id]["Sentence"] = 0
+        settings["Players"][user.id]["Time Served"] = 0
+        settings["Players"][user.id]["OOB"] = False
+        dataIO.save_json(self.file_path, self.system)
+
     def reset_heist(self, settings):
         settings["Crew"] = {}
         settings["Config"]["Heist Planned"] = False
@@ -724,7 +771,7 @@ class Heist:
             bail = settings["Players"][author.id]["Bail Cost"]
             sentence_raw = settings["Players"][author.id]["Sentence"]
             time_served = settings["Players"][author.id]["Time Served"]
-            remaining = self.cooldown_calculator(settings, author, sentence_raw, time_served)
+            remaining = self.cooldown_calculator(settings, sentence_raw, time_served)
             sentence = self.time_format(sentence_raw)
             if remaining:
                 msg = ("You are in jail. You are serving a sentence of {}.\nYou can wait out your "
@@ -737,7 +784,7 @@ class Heist:
         elif settings["Players"][author.id]["Status"] == "Dead":
             death_time = settings["Players"][author.id]["Death Timer"]
             base_timer = settings["Config"]["Death Timer"]
-            remaining = self.cooldown_calculator(settings, author, death_time, base_timer)
+            remaining = self.cooldown_calculator(settings, death_time, base_timer)
             if remaining:
                 msg = ("You are dead. You can revive in:\n{}\nUse the command {}heist revive when "
                        "the timer has expired.".format(remaining, prefix))
@@ -772,7 +819,25 @@ class Heist:
             amount = self.time_format(seconds)
             return None, amount
 
-    def cooldown_calculator(self, settings, user, player_time, base_time):
+    def shutdown_save(self):
+        for server in self.system["Servers"]:
+            death_time = self.system["Servers"][server]["Config"]["Death Timer"]
+            for player in self.system["Servers"][server]["Players"]:
+                player_death = self.system["Servers"][server]["Players"][player]["Death Timer"]
+                player_sentence = self.system["Servers"][server]["Players"][player]["Time Served"]
+                sentence = self.system["Servers"][server]["Players"][player]["Sentence"]
+
+                if player_death > 0:
+                    s = abs(player_death - int(time.perf_counter()))
+                    seconds = abs(s - death_time)
+                    self.system["Servers"][server]["Players"][player]["Death Timer"] = seconds
+
+                if player_sentence > 0:
+                    s = abs(player_sentence - int(time.perf_counter()))
+                    seconds = abs(s - sentence)
+                    self.system["Servers"][server]["Players"][player]["Time Served"] = seconds
+
+    def cooldown_calculator(self, settings, player_time, base_time):
         if abs(player_time - int(time.perf_counter())) >= base_time:
             return None
         else:
@@ -834,7 +899,7 @@ class Heist:
 
     def check_server_settings(self, server):
         if server.id not in self.system["Servers"]:
-            default = {"Config": {"Heist Start": False, "Heist Planned": False,  "Heist Cost": 100,
+            default = {"Config": {"Heist Start": False, "Heist Planned": False, "Heist Cost": 100,
                                   "Wait Time": 20, "Hardcore": False, "Police Alert": 60,
                                   "Alert Time": 0, "Sentence Base": 600, "Bail Base": 500,
                                   "Death Timer": 86400},
@@ -873,6 +938,5 @@ def setup(bot):
     n = Heist(bot)
     if tabulateAvailable:
         bot.add_cog(n)
-        bot.loop.create_task(n.vault_update())
     else:
         raise RuntimeError("You need to run 'pip3 install tabulate' in command prompt.")
