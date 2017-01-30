@@ -6,6 +6,7 @@ from random import shuffle, choice
 from cogs.utils.dataIO import dataIO
 from cogs.utils import checks
 from cogs.utils.chat_formatting import pagify
+from urllib.parse import urlparse
 from __main__ import send_cmd_help, settings
 from json import JSONDecodeError
 import re
@@ -725,6 +726,12 @@ class Audio:
             return True
         return False
 
+    def _match_any_url(self, url):
+        url = urlparse(url)
+        if url.scheme and url.netloc and url.path:
+            return True
+        return False
+
     # TODO: _next_songs_in_queue
 
     async def _parse_playlist(self, url):
@@ -1345,7 +1352,9 @@ class Audio:
             await self.bot.say("I'm already downloading a file!")
             return
 
-        if "." in url:
+        url = url.strip("<>")
+
+        if self._match_any_url(url):
             if not self._valid_playable_url(url):
                 await self.bot.say("That's not a valid URL.")
                 return
@@ -1609,7 +1618,9 @@ class Audio:
                                     " queue to modify. This should never"
                                     " happen.")
 
-        if "." in url:
+        url = url.strip("<>")
+
+        if self._match_any_url(url):
             if not self._valid_playable_url(url):
                 await self.bot.say("That's not a valid URL.")
                 return
