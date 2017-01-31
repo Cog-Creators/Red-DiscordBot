@@ -823,7 +823,7 @@ class Owner:
             self.setowner_lock = False
 
     def _get_version(self):
-        url = os.popen(r'git config --get remote.origin.url').read().strip()
+        url = os.popen(r'LC_ALL=C git config --get remote.origin.url').read().strip()
 
         if not url:
             embed = discord.Embed(
@@ -835,9 +835,9 @@ class Owner:
             url = url[:-4]
 
         repo_name = url.split("/")[-1]
-        commits = os.popen(r'git show -s -n 3 HEAD --format="%cr|%s|%H"')
-        ncommits = os.popen(r'git rev-list --count HEAD').read()
-        branch = os.popen(r'git rev-parse --abbrev-ref HEAD').read().strip()
+        commits = os.popen(r'LC_ALL=C git show -s -n 3 HEAD --format="%cr|%s|%H"')
+        ncommits = os.popen(r'LC_ALL=C git rev-list --count HEAD').read()
+        branch = os.popen(r'LC_ALL=C git rev-parse --abbrev-ref HEAD').read().strip()
 
         lines = commits.read().split('\n')
         embed = discord.Embed(title="Updates of " + repo_name,
