@@ -17,8 +17,6 @@ IF %ERRORLEVEL% NEQ 0 goto attempt
 PAUSE
 GOTO end
 
-:preattempt
-
 ::Attempts to start py launcher by relying on PATH
 :attempt
 py.exe --version > NUL 2>&1
