@@ -6,3 +6,6 @@ data
 !data/audio/playlists/*
 *.exe
 *.dll
+start_red.bat
+start_red_autorestart.bat
+README.md
