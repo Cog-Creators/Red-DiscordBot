@@ -1,8 +1,9 @@
 @echo off
 title Red Discord Bot - Windows Launcher
-color 0F ::Replace with 0C for the Red experience
+::Replace with 0C for the Red experience
+color 0F
 
-mode con: cols=80 lines=12
+mode con: cols=85 lines=14
 pushd %~dp0
 
 echo(
@@ -11,6 +12,7 @@ echo(
 
 chcp 65001 > NUL
 cls
+
 
 ::Attempts to start py launcher without relying on PATH
 %SYSTEMROOT%\py.exe --version > NUL 2>&1
