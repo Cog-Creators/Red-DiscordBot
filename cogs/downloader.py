@@ -508,6 +508,8 @@ class Downloader:
         return git_name[:-4]
 
     def is_lib_installed(self, name):
+        if "git+" in name:
+            name = name.split("/")[-1]
         return bool(find_spec(name))
 
     def _do_first_run(self):
