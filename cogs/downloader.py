@@ -20,6 +20,13 @@ REPO_CLONE = 0x2
 REPO_SAME = 0x4
 REPOS_LIST = "https://ControllerNetwork.com/MARViN/approved_repos/"
 
+DISCLAIMER = ("You're about to add a 3rd party repository. The creator of Red"
+              " and its community have no responsibility for any potential "
+              "damage that the content of 3rd party repositories might cause."
+              "\nBy typing 'I agree' you declare to have read and understand "
+              "the above message. This message won't be shown again until the"
+              " next reboot.")
+
 
 class UpdateError(Exception):
     pass
@@ -38,6 +45,7 @@ class Downloader:
 
     def __init__(self, bot):
         self.bot = bot
+        self.disclaimer_accepted = False
         self.path = "data/downloader/"
         self.file_path = "data/downloader/repos.json"
         # {name:{url,cog1:{installed},cog1:{installed}}}
