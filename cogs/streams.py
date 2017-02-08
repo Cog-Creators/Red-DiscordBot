@@ -11,6 +11,10 @@ import aiohttp
 import asyncio
 import logging
 
+TWITCH_COLOR = 0x6441A4
+HITBOX_COLOR = 0x98CB00
+BEAM_COLOR = 0x4C90F3
+
 
 class Streams:
     """Streams
@@ -376,6 +380,7 @@ class Streams:
         embed.set_thumbnail(url=channel["logo"])
         embed.set_image(url=data["stream"]["preview"]["medium"])
         embed.set_footer(text="Playing: " + channel["game"])
+        embed.color = TWITCH_COLOR
         return embed
 
     def hitbox_embed(self, data):
@@ -390,6 +395,7 @@ class Streams:
         embed.set_thumbnail(url=base_url + channel["user_logo"])
         embed.set_image(url=base_url + livestream["media_thumbnail"])
         embed.set_footer(text="Playing: " + livestream["category_name"])
+        embed.color = HITBOX_COLOR
         return embed
 
     def beam_embed(self, data):
@@ -401,6 +407,7 @@ class Streams:
         embed.add_field(name="Total views", value=data["viewersTotal"])
         embed.set_thumbnail(url=user["avatarUrl"])
         embed.set_image(url=data["thumbnail"]["url"])
+        embed.color = BEAM_COLOR
         if data["type"] is not None:
             embed.set_footer(text="Playing: " + data["type"]["name"])
         return embed
