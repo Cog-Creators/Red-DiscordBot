@@ -18,15 +18,27 @@ try:
 except ImportError:
     pip = None
 
+try:
+    from colorama import init, Fore
+    init()
+    colorama = True
+except ImportError:
+    colorama = None
+
 REQS_DIR = "lib"
 sys.path.insert(0, REQS_DIR)
 REQS_TXT = "requirements.txt"
 REQS_NO_AUDIO_TXT = "requirements_no_audio.txt"
 FFMPEG_BUILDS_URL = "https://ffmpeg.zeranoe.com/builds/"
 
-INTRO = ("==========================\n"
-         "Red Discord Bot - Launcher\n"
-         "==========================\n")
+if colorama:
+    INTRO = (Fore.RED + "============================\n"
+             " Red Discord Bot - Launcher \n"
+             "============================\n" + Fore.WHITE)
+else:
+    INTRO = ("============================\n"
+             " Red Discord Bot - Launcher \n"
+             "============================\n")
 
 IS_WINDOWS = os.name == "nt"
 IS_MAC = sys.platform == "darwin"
@@ -482,12 +494,20 @@ def main():
                   "properly this time:\n"
                   "https://twentysix26.github.io/Red-Docs/\n")
 
-        print("1. Run Red /w autorestart in case of issues")
-        print("2. Run Red")
-        print("3. Update")
-        print("4. Install requirements")
-        print("5. Maintenance (repair, reset...)")
-        print("\n0. Quit")
+        if colorama:
+            print(Fore.CYAN + "1." + Fore.WHITE + " Run Red /w autorestart in case of issues")
+            print(Fore.CYAN + "2." + Fore.WHITE + " Run Red")
+            print(Fore.CYAN + "3." + Fore.WHITE + " Update")
+            print(Fore.CYAN + "4." + Fore.WHITE + " Install requirements")
+            print(Fore.CYAN + "5." + Fore.WHITE + " Maintenance (repair, reset...)")
+            print(Fore.CYAN + "\n0." + Fore.WHITE + " Quit")
+        else:
+            print("1. Run Red /w autorestart in case of issues")
+            print("2. Run Red")
+            print("3. Update")
+            print("4. Install requirements")
+            print("5. Maintenance (repair, reset...)")
+            print("\n0. Quit")
         choice = user_choice()
         if choice == "1":
             run_red(autorestart=True)
