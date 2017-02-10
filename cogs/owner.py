@@ -14,6 +14,7 @@ import datetime
 import glob
 import os
 import aiohttp
+import requests
 
 log = logging.getLogger("red.owner")
 
@@ -783,11 +784,8 @@ class Owner:
         """Shows Red's current version"""
         response = self.bot.loop.run_in_executor(None, self._get_version)
         result = await asyncio.wait_for(response, timeout=10)
-        try:
-            await self.bot.say(embed=result)
-        except discord.HTTPException:
-            await self.bot.say("I need the `Embed links` permission "
-                               "to send this")
+        await self.bot.say(embed=result)
+
 
     def _load_cog(self, cogname):
         if not self._does_cogfile_exist(cogname):
@@ -845,15 +843,33 @@ class Owner:
     def _get_version(self):
         url = os.popen(r'git config --get remote.origin.url')
         url = url.read().strip()[:-4]
+        branch = os.popen(r'git rev-parse --abbrev-ref HEAD')
+        branch = branch.read().strip()
+        allbranches = os.popen(r'git branch')
+        allbranches = allbranches.read().strip()
+
+        if allbranches.find("* " + branch) != -1:
+            defaultbranch = True
+        else:
+            defaultbranch = False
+
+        travisbuildstatus = "{}.png?branch={}".format(url.replace("github.com", "api.travis-ci.org"), branch)
         repo_name = url.split("/")[-1]
         commits = os.popen(r'git show -s -n 3 HEAD --format="%cr|%s|%H"')
         ncommits = os.popen(r'git rev-list --count HEAD').read()
 
         lines = commits.read().split('\n')
-        embed = discord.Embed(title="Updates of " + repo_name,
-                              description="Last three updates",
-                              colour=discord.Colour.red(),
-                              url=url)
+
+        if defaultbranch:
+            embed = discord.Embed(title="Updates of {}".format(repo_name),
+                                  description="Last three updates",
+                                  colour=discord.Colour.red(),
+                                  url=url)
+        else:
+            embed = discord.Embed(title="Updates of {} in {}".format(branch, repo_name),
+                                  description="Last three updates",
+                                  colour=discord.Colour.red(),
+                                  url=url)
         for line in lines:
             if not line:
                 continue
@@ -861,6 +877,11 @@ class Owner:
             commit_url = url + "/commit/" + chash
             content = "[{}]({}) - {} ".format(chash[:6], commit_url, commit)
             embed.add_field(name=when, value=content, inline=False)
+
+        request = requests.get(travisbuildstatus)
+        if request.status_code == 200:
+            embed.set_thumbnail(url=travisbuildstatus)
+
         embed.set_footer(text="Total commits: " + ncommits)
 
         return embed
