@@ -843,24 +843,37 @@ class Owner:
             self.setowner_lock = False
 
     def _get_version(self):
-        url = os.popen(r'git config --get remote.origin.url')
-        url = url.read().strip()[:-4]
-        repo_name = url.split("/")[-1]
-        commits = os.popen(r'git show -s -n 3 HEAD --format="%cr|%s|%H"')
-        ncommits = os.popen(r'git rev-list --count HEAD').read()
+        if not os.path.isdir(".git"):
+            msg = "This instance of Red hasn't been installed with git."
+            e = discord.Embed(title=msg,
+                              colour=discord.Colour.red())
+            return e
 
-        lines = commits.read().split('\n')
+        commands = " && ".join((
+            r'git config --get remote.origin.url',         # Remote URL
+            r'git rev-list --count HEAD',                  # Number of commits
+            r'git rev-parse --abbrev-ref HEAD',            # Branch name
+            r'git show -s -n 3 HEAD --format="%cr|%s|%H"'  # Last 3 commits
+        ))
+        result = os.popen(commands).read()
+        url, ncommits, branch, commits = result.split("\n", 3)
+        if url.endswith(".git"):
+            url = url[:-4]
+        repo_name = url.split("/")[-1]
+
         embed = discord.Embed(title="Updates of " + repo_name,
                               description="Last three updates",
                               colour=discord.Colour.red(),
-                              url=url)
-        for line in lines:
+                              url="{}/tree/{}".format(url, branch))
+
+        for line in commits.split('\n'):
             if not line:
                 continue
             when, commit, chash = line.split("|")
             commit_url = url + "/commit/" + chash
             content = "[{}]({}) - {} ".format(chash[:6], commit_url, commit)
             embed.add_field(name=when, value=content, inline=False)
+
         embed.set_footer(text="Total commits: " + ncommits)
 
         return embed
