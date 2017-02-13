@@ -374,13 +374,20 @@ class Streams:
     def twitch_embed(self, data):
         channel = data["stream"]["channel"]
         url = channel["url"]
-        embed = discord.Embed(title=channel["status"], url=url)
+        logo = channel["logo"]
+        if logo is None:
+            logo = "https://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_70x70.png"
+        status = channel["status"]
+        if not status:
+            status = "Untitled broadcast"
+        embed = discord.Embed(title=status, url=url)
         embed.set_author(name=channel["display_name"])
         embed.add_field(name="Followers", value=channel["followers"])
         embed.add_field(name="Total views", value=channel["views"])
-        embed.set_thumbnail(url=channel["logo"])
+        embed.set_thumbnail(url=logo)
         embed.set_image(url=data["stream"]["preview"]["medium"])
-        embed.set_footer(text="Playing: " + channel["game"])
+        if channel["game"]:
+            embed.set_footer(text="Playing: " + channel["game"])
         embed.color = 0x6441A4
         return embed
 

@@ -290,6 +290,8 @@ class Audio:
 
         self.skip_votes = {}
 
+        self.connect_timers = {}
+
         if player == "ffmpeg":
             self.settings["AVCONV"] = False
         elif player == "avconv":
@@ -627,13 +629,21 @@ class Audio:
 
     async def _join_voice_channel(self, channel):
         server = channel.server
+        connect_time = self.connect_timers.get(server.id, 0)
+        if time.time() < connect_time:
+            diff = int(connect_time - time.time())
+            raise ConnectTimeout("You are on connect cooldown for another {}"
+                                 " seconds.".format(diff))
         if server.id in self.queue:
             self.queue[server.id]["VOICE_CHANNEL_ID"] = channel.id
         try:
-            await self.bot.join_voice_channel(channel)
+            await asyncio.wait_for(self.bot.join_voice_channel(channel),
+                                   timeout=5, loop=self.bot.loop)
         except asyncio.futures.TimeoutError as e:
             log.exception(e)
-            raise ConnectTimeout("We timed out connecting to a voice channel")
+            self.connect_timers[server.id] = time.time() + 300
+            raise ConnectTimeout("We timed out connecting to a voice channel,"
+                                 " please try again in 10 minutes.")
 
     def _list_local_playlists(self):
         ret = []
