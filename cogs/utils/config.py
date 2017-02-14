@@ -17,7 +17,8 @@ class BaseConfig:
             "SERVER": self.driver.get_server,
             "CHANNEL": self.driver.get_channel,
             "ROLE": self.driver.get_role,
-            "USER": self.driver.get_user
+            "USER": self.driver.get_user,
+            "MISC": self.driver.get_misc
         }
 
         self.driver_setmap = {
@@ -25,7 +26,8 @@ class BaseConfig:
             "SERVER": self.driver.set_server,
             "CHANNEL": self.driver.set_channel,
             "ROLE": self.driver.set_role,
-            "USER": self.driver.set_user
+            "USER": self.driver.set_user,
+            "MISC": self.driver.set_misc
         }
 
         self.curr_key = None
@@ -36,7 +38,7 @@ class BaseConfig:
 
         self.defaults = defaults if defaults else {
             "GLOBAL": {}, "SERVER": {}, "CHANNEL": {}, "ROLE": {},
-            "MEMBER": {}, "USER": {}}
+            "MEMBER": {}, "USER": {}, "MISC": {}}
 
     @property
     def driver(self):
@@ -162,18 +164,24 @@ class Config(BaseConfig):
         if key not in self.defaults[self.collection]:
             raise AttributeError("Key '{}' not registered!".format(key))
 
-        if self.collection in self.driver_setmap:
-            func = self.driver_setmap[self.collection]
-            func(self.cog_name, self.uuid, self.collection_uuid, key, value)
-        elif self.collection == "MEMBER":
+        if self.collection == "MEMBER":
             mid, sid = self.collection_uuid
             self.driver.set_member(self.cog_name, self.uuid, mid, sid,
                                    key, value)
+        elif self.collection in self.driver_setmap:
+            func = self.driver_setmap[self.collection]
+            func(self.cog_name, self.uuid, self.collection_uuid, key, value)
+
+    def set_misc(self, value):
+        self.driver.set_misc(self.cog_name, self.uuid, value)
 
     def clear(self):
         self.driver_setmap[self.collection](
             self.cog_name, self.uuid, self.collection_uuid, None, None,
             clear=True)
+
+    def clear_misc(self):
+        self.driver.set_misc(self.cog_name, self.uuid, None, clear=True)
 
     def server(self, server):
         new = type(self)(self.cog_name, self.uuid, self.driver,
@@ -215,3 +223,13 @@ class Config(BaseConfig):
         new.collection_uuid = user.id
         new._driver = None
         return new
+
+    def misc(self):
+        try:
+            default = self.defaults["MISC"]
+        except KeyError as e:
+            default = {}
+
+        return self.driver_getmap["MISC"](
+            self.cog_name, self.uuid,
+            default=default)

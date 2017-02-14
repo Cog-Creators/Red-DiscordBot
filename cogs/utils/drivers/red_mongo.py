@@ -36,6 +36,7 @@ class Mongo(BaseDriver):
         self._role = self._db.ROLE
         self._member = self._db.MEMBER
         self._user = self._db.USER
+        self._misc = self._db.MISC
 
     def get_global(self, cog_name, cog_identifier, key, *, default=None):
         doc = self._global.find(
@@ -84,7 +85,7 @@ class Mongo(BaseDriver):
              "role_id": role_id},
             projection=[key, ], batch_size=2)
         if doc.count() == 2:
-            raise MultipleMatches("Too many matching documents at the SERVER"
+            raise MultipleMatches("Too many matching documents at the ROLE"
                                   " level: ({}, {}, {})".format(
                                       cog_name, cog_identifier, role_id))
         elif doc.count() == 1:
@@ -98,7 +99,7 @@ class Mongo(BaseDriver):
              "user_id": user_id, "server_id": server_id},
             projection=[key, ], batch_size=2)
         if doc.count() == 2:
-            raise MultipleMatches("Too many matching documents at the SERVER"
+            raise MultipleMatches("Too many matching documents at the MEMBER"
                                   " level: ({}, {}, mid {}, sid {})".format(
                                       cog_name, cog_identifier, user_id,
                                       server_id))
@@ -113,11 +114,26 @@ class Mongo(BaseDriver):
              "user_id": user_id},
             projection=[key, ], batch_size=2)
         if doc.count() == 2:
-            raise MultipleMatches("Too many matching documents at the SERVER"
+            raise MultipleMatches("Too many matching documents at the USER"
                                   " level: ({}, {}, mid {})".format(
                                       cog_name, cog_identifier, user_id))
         elif doc.count() == 1:
             return doc[0].get(key, default)
+        else:
+            return default
+
+    def get_misc(self, cog_name, cog_identifier, *, default=None):
+        doc = self._misc.find(
+            {"cog_name": cog_name, "cog_identifier": cog_identifier},
+            batch_size=2)
+        print("here")
+        print(doc.count())
+        if doc.count() == 2:
+            raise MultipleMatches("Too many matching documents at the MISC"
+                                  " level: ({}, {})".format(
+                                      cog_name, cog_identifier))
+        elif doc.count() == 1:
+            return doc[0].get("MISC", default)
         else:
             return default
 
@@ -185,7 +201,7 @@ class Mongo(BaseDriver):
                   "server_id": server_id, "user_id": user_id}
         data = {"$set": {key: value}}
         if self._member.count(filter) > 1:
-            raise MultipleMatches("Too many matching documents at the SERVER"
+            raise MultipleMatches("Too many matching documents at the MEMBER"
                                   " level: ({}, {}, mid {}, sid {})".format(
                                       cog_name, cog_identifier, user_id,
                                       server_id))
@@ -201,7 +217,7 @@ class Mongo(BaseDriver):
                   "user_id": user_id}
         data = {"$set": {key: value}}
         if self._user.count(filter) > 1:
-            raise MultipleMatches("Too many matching documents at the SERVER"
+            raise MultipleMatches("Too many matching documents at the USER"
                                   " level: ({}, {}, mid {})".format(
                                       cog_name, cog_identifier, user_id))
         else:
@@ -209,3 +225,17 @@ class Mongo(BaseDriver):
                 self._user.delete_one(filter)
             else:
                 self._user.update_one(filter, data, upsert=True)
+
+    def set_misc(self, cog_name, cog_identifier, value: dict,
+                 clear=False):
+        filter = {"cog_name": cog_name, "cog_identifier": cog_identifier}
+        data = {"$set": {"MISC": value}}
+        if self._misc.count(filter) > 1:
+            raise MultipleMatches("Too many matching documents at the MISC"
+                                  " level: ({}, {})".format(
+                                      cog_name, cog_identifier))
+        else:
+            if clear:
+                self._misc.delete_one(filter)
+            else:
+                self._misc.update_one(filter, data, upsert=True)

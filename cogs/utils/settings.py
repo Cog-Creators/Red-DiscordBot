@@ -249,7 +249,7 @@ class Settings:
         return self.bot_settings.get("MONGO_USER", "")
 
     @mongo_user.setter
-    def mongo_port(self, value):
+    def mongo_user(self, value):
         self.bot_settings["MONGO_USER"] = value
         self.save_settings()
 
