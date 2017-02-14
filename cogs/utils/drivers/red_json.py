@@ -13,7 +13,8 @@ class JSON(BaseDriver):
         except FileNotFoundError:
             self.data = {}
 
-        for k in ("GLOBAL", "SERVER", "CHANNEL", "ROLE", "MEMBER", "USER"):
+        for k in ("GLOBAL", "SERVER", "CHANNEL", "ROLE", "MEMBER", "USER",
+                  "MISC"):
             if k not in self.data:
                 self.data[k] = {}
         try:
@@ -46,6 +47,10 @@ class JSON(BaseDriver):
     def get_user(self, cog_name, ident, user_id, key, *, default=None):
         userdata = self.data["USER"].get(str(user_id), {})
         return userdata.get(key, default)
+
+    def get_misc(self, cog_name, ident, *, default=None):
+        miscdata = self.data["MISC"]
+        return miscdata.get("MISC", default)
 
     def set_global(self, cog_name, ident, _, key, value, *, clear=False):
         if clear:
@@ -120,4 +125,11 @@ class JSON(BaseDriver):
             except KeyError:
                 self.data["USER"][user_id] = {}
                 self.data["USER"][user_id][key] = value
+        dataIO.save_json(self.data_path, self.data)
+
+    def set_misc(self, cog_name, ident, value, clear=False):
+        if clear:
+            self.data["MISC"] = {}
+        else:
+            self.data["MISC"]["MISC"] = value
         dataIO.save_json(self.data_path, self.data)
