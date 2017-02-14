@@ -6,7 +6,6 @@ from random import shuffle, choice
 from cogs.utils.dataIO import dataIO
 from cogs.utils import checks
 from cogs.utils.chat_formatting import pagify
-from urllib.parse import urlparse
 from __main__ import send_cmd_help, settings
 from json import JSONDecodeError
 import re
@@ -642,7 +641,7 @@ class Audio:
         except asyncio.futures.TimeoutError as e:
             log.exception(e)
             self.connect_timers[server.id] = time.time() + 300
-            raise ConnectTimeout("We timed out connecting to a voice channel,"
+            raise ConnectTimeout("I have timed out connecting to a voice channel,"
                                  " please try again in 10 minutes.")
 
     def _list_local_playlists(self):
@@ -733,12 +732,6 @@ class Audio:
         yt_link = re.compile(
             r'^(https?\:\/\/)?(www\.|m\.)?(youtube\.com|youtu\.?be)\/.+$')
         if yt_link.match(url):
-            return True
-        return False
-
-    def _match_any_url(self, url):
-        url = urlparse(url)
-        if url.scheme and url.netloc and url.path:
             return True
         return False
 
@@ -1064,10 +1057,10 @@ class Audio:
                                 not noppl_disconnect)
         if not noppl_disconnect:
             await self.bot.say("If there is no one left in the voice channel"
-                               " I will automatically disconnect after"
+                               " the bot will automatically disconnect after"
                                " five minutes.")
         else:
-            await self.bot.say("I will no longer auto disconnect"
+            await self.bot.say("The bot will no longer auto disconnect"
                                " if the voice channel is empty.")
         self.save_settings()
 
@@ -1362,9 +1355,7 @@ class Audio:
             await self.bot.say("I'm already downloading a file!")
             return
 
-        url = url.strip("<>")
-
-        if self._match_any_url(url):
+        if "." in url:
             if not self._valid_playable_url(url):
                 await self.bot.say("That's not a valid URL.")
                 return
@@ -1628,9 +1619,7 @@ class Audio:
                                     " queue to modify. This should never"
                                     " happen.")
 
-        url = url.strip("<>")
-
-        if self._match_any_url(url):
+        if "." in url:
             if not self._valid_playable_url(url):
                 await self.bot.say("That's not a valid URL.")
                 return
@@ -1828,13 +1817,9 @@ class Audio:
 
     @commands.command(pass_context=True, no_pm=True)
     async def sing(self, ctx):
-        """Makes MARViN play one of the H.G.2.T.G. Sound tracks"""
-        ids = ("VoZ_eupjzYg", "1iXzi9KpdKQ", "F0dxfpRgL34", "zs97DhZ9mrU",
-               "XPEMuC_botM", "u6Zoezcq1RA", "dnAIrQYr-dU", "XIb6RoxF5tg",
-               "K3kGtgVmQ2Q", "GnxS9XX9gUk", "Nmv2eKJb52k", "aUJWnZD89Vs",
-               "FzE6w198G9M", "gn-ZVeVyD38", "rtQWPQRqjjo", "sN279Qdwb0E",
-               "hkU87cBSnZA", "Sd_lJDoNnHU", "W-xnEN2XGJk", "DYBnCocBUus",
-               "ch7MIV-_4Mo", "G8U86BgtZA4", "YEFmuLnUZZo")
+        """Makes MARViN sing one of her songs"""
+        ids = ("zGTkAVsrfg8", "cGMWL8cOeAU", "vFrjMq4aL-g", "WROI5WYBU_A",
+               "41tIUr_ex3g", "f9O2Rjn1azc")
         url = "https://www.youtube.com/watch?v={}".format(choice(ids))
         await ctx.invoke(self.play, url_or_search_terms=url)
 

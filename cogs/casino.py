@@ -1,9 +1,13 @@
+# STD Library
 import asyncio
 import logging
 import logging.handlers
 import os
 import random
 import time
+from copy import deepcopy
+
+# Discord imports
 import discord
 from fractions import Fraction
 from operator import itemgetter
@@ -12,6 +16,7 @@ from .utils import checks
 from discord.ext import commands
 from __main__ import send_cmd_help
 
+# Third Party Libraries
 try:   # Check if Tabulate is installed
     from tabulate import tabulate
     tabulateAvailable = True
@@ -20,10 +25,10 @@ except ImportError:
 
 
 # Default settings that is created when a server begin's using Casino
-server_default = {"System Config": {"Casino Name": "Han Wavel Galactic", "Casino Open": True,
+server_default = {"System Config": {"Casino Name": "Han Wavel Galactic Casino", "Casino Open": True,
                                     "Chip Name": "Flainian Pobble Beads", "Chip Rate": 1, "Default Payday": 100,
                                     "Payday Timer": 1200, "Threshold Switch": False,
-                                    "Threshold": 10000, "Credit Rate": 1, "Version": 1.551
+                                    "Threshold": 10000, "Credit Rate": 1, "Version": 1.581
                                     },
                   "Memberships": {},
                   "Players": {},
@@ -70,6 +75,10 @@ class CasinoError(Exception):
     pass
 
 
+class WipeError(CasinoError):
+    pass
+
+
 class UserAlreadyRegistered(CasinoError):
     pass
 
@@ -96,14 +105,15 @@ class CasinoBank:
     def __init__(self, bot, file_path):
         self.memberships = dataIO.load_json(file_path)
         self.bot = bot
-        self.patch = 1.551
+        self.patch = 1.581
 
     def create_account(self, user):
         server = user.server
         path = self.check_server_settings(server)
 
         if user.id not in path["Players"]:
-            path["Players"][user.id] = new_user
+            default_user = deepcopy(new_user)
+            path["Players"][user.id] = default_user
             path["Players"][user.id]["Name"] = user.name
             self.save_system()
             membership = path["Players"][user.id]
@@ -322,7 +332,7 @@ class Casino:
         self.file_path = "data/JumperCogs/casino/casino.json"
         self.casino_bank = CasinoBank(bot, self.file_path)
         self.games = ["Blackjack", "Coin", "Allin", "Cups", "Dice", "Hi-Lo", "War"]
-        self.version = "1.5.5.1"
+        self.version = "1.5.8.1"
         self.cycle_task = bot.loop.create_task(self.membership_updater())
 
     @commands.group(pass_context=True, no_pm=True)
@@ -433,7 +443,7 @@ class Casino:
         if not self.casino_bank.membership_exists(user):
             msg = ("You need to register to the {} Casino. To register type `{}casino "
                    "join`.".format(casino_name, ctx.prefix))
-        elif currency not in ["Chips", "Towels"]:
+        elif currency not in ["Chips", "Credits"]:
             msg = "I can only exchange chips or towels, please specify one."
 
         # Logic for choosing chips
@@ -450,8 +460,8 @@ class Casino:
             else:
                 msg = "You don't have that many chips to exchange."
 
-        # Logic for choosing Towels
-        elif currency == "Towels":
+        # Logic for choosing Credits
+        elif currency == "Credits":
             if amount <= 0 and amount % chip_multiple != 0:
                 msg = "The amount must be higher than 0 and a multiple of {}.".format(chip_multiple)
             elif bank.can_spend(user, amount):
@@ -542,7 +552,7 @@ class Casino:
         cooldown = [subdict["Cooldown"] for subdict in settings["Games"].values()]
         cooldown_formatted = [self.time_format(x) for x in cooldown]
 
-        # Determine the ratio calculations for chips and towels
+        # Determine the ratio calculations for chips and credits
         chip_ratio = str(Fraction(chip_exchange_rate).limit_denominator()).replace("/", ":")
         credit_ratio = str(Fraction(credit_exchange_rate).limit_denominator()).replace("/", ":")
 
@@ -598,7 +608,7 @@ class Casino:
 
     @commands.command(pass_context=True, no_pm=True, aliases=["hl", "hi-lo"])
     async def hilo(self, ctx, choice: str, bet: int):
-        """Pick High, Low, Seven. Lo is < 7 Hi is > 7. 12x payout on 7"""
+        """Pick High, Low, Seven. Lo is < 7 Hi is > 7. 6x payout on 7"""
 
         # Declare variables for the game.
         user = ctx.message.author
@@ -620,20 +630,24 @@ class Casino:
         else:  # Run the game when the checks return None
             self.casino_bank.withdraw_chips(user, bet)
             settings["Players"][user.id]["Played"]["Hi-Lo Played"] += 1
-            outcome = self.hl_outcome()
             await self.bot.say("The dice hit the table and slowly fall into place...")
+            die_one = random.randint(1, 6)
+            die_two = random.randint(1, 6)
+            result = die_one + die_two
+            outcome = self.hl_outcome(result)
             await asyncio.sleep(2)
 
             # Begin game logic to determine a win or loss
+            msg = ("The dice landed on {} and {} \n".format(die_one, die_two))
             if choice in outcome:
-                msg = ("Congratulations the outcome was "
-                       "{} ({})".format(outcome[0], outcome[2]))
+                msg += ("Congratulations! The outcome was "
+                        "{} ({})!".format(outcome[0], outcome[2]))
                 settings["Players"][user.id]["Won"]["Hi-Lo Won"] += 1
 
                 # Check for a 7 to give a 12x multiplier
-                if outcome[1] == "Seven":
-                    amount = bet * 12
-                    msg += "\n**BONUS!** 12x multiplier for Seven!"
+                if outcome[2] == "Seven":
+                    amount = bet * 6
+                    msg += "\n**BONUS!** 6x multiplier for Seven!"
                 else:
                     amount = int(round(bet * settings["Games"]["Hi-Lo"]["Multiplier"]))
 
@@ -654,7 +668,7 @@ class Casino:
                     self.casino_bank.deposit_chips(user, amount)
                     msg += "```Python\nYou just won {} {} chips.```".format(amount, chip_name)
             else:
-                msg = "Sorry. The outcome was {} ({})".format(outcome[0], outcome[2])
+                msg += "Sorry. The outcome was {} ({}).".format(outcome[0], outcome[2])
             # Save the results of the game
             self.casino_bank.save_system()
         # Send a message telling the user the outcome of this command
@@ -777,17 +791,21 @@ class Casino:
             msg = check
         else:  # Run the game when the checks return None
             self.casino_bank.withdraw_chips(user, bet)
-            outcome = random.randint(1, 12)
             settings["Players"][user.id]["Played"]["Dice Played"] += 1
             await self.bot.say("The dice strike the back of the table and begin to tumble into "
                                "place...")
+            die_one = random.randint(1, 6)
+            die_two = random.randint(1, 6)
+            outcome = die_one + die_two
             await asyncio.sleep(2)
 
             # Begin game logic to determine a win or loss
+            msg = "The dice landed on {} and {} \n".format(die_one, die_two)
             if outcome in [2, 7, 11, 12]:
                 amount = int(round(bet * settings["Games"]["Dice"]["Multiplier"]))
                 settings["Players"][user.id]["Won"]["Dice Won"] += 1
-                msg = "Congratulations! The dice landed on {}.".format(outcome)
+
+                msg += "Congratulations! The dice landed on {}.".format(outcome)
 
                 # Check if a threshold is set and withold chips if amount is exceeded
                 if self.threshold_check(settings, amount):
@@ -806,7 +824,7 @@ class Casino:
                     self.casino_bank.deposit_chips(user, amount)
                     msg += "```Python\nYou just won {} {} chips.```".format(amount, chip_name)
             else:
-                msg = "Sorry! The dice landed on {}.".format(outcome)
+                msg += "Sorry! The result was {}.".format(outcome)
             # Save the results of the game
             self.casino_bank.save_system()
         # Send a message telling the user the outcome of this command
@@ -932,7 +950,7 @@ class Casino:
         author = ctx.message.author
         settings = self.casino_bank.check_server_settings(author.server)
         cancel = ctx.prefix + "cancel"
-        requirement_list = ["Days On Server", "Towels", "Chips", "Role"]
+        requirement_list = ["Days On Server", "Credits", "Chips", "Role"]
         colors = ["blue", "red", "green", "orange", "purple", "yellow", "turquoise", "teal",
                   "magenta"]
         server_roles = [r.name for r in ctx.message.server.roles if r.name != "Bot"]
@@ -1014,6 +1032,11 @@ class Casino:
 
         if access.content == cancel:
             await self.bot.say("Membership creation cancelled.")
+            return
+
+        if int(access.content) in [x["Access"] for x in list(settings["Memberships"].keys())]:
+            await self.bot.say("You cannot have memberships with the same access level. Cancelling "
+                               "creation.")
             return
 
         await self.bot.say("What is the requirement for this membership? Available options are:\n"
@@ -1161,36 +1184,39 @@ class Casino:
 
     @casino.command(name="wipe", pass_context=True)
     @checks.admin_or_permissions(manage_server=True)
-    async def _wipe_casino(self, ctx, servername: str):
-        """Wipe casino server data"""
+    async def _wipe_casino(self, ctx, *, servername: str):
+        """Wipe casino server data. Case Sensitive"""
         user = ctx.message.author
         servers = self.casino_bank.get_all_servers()
-        server = [self.bot.get_server(x) for x in servers.keys()
-                  if self.bot.get_server(x).name == servername][0]
 
-        if not server:
-            msg = "This server hasn't used casino yet!"
-        else:
-            await self.bot.say("This will wipe casino server data.**WARNING** ALL PLAYER DATA WILL "
-                               "BE DESTROYED.\nDo you wish to wipe {}?".format(server.name))
+        try:
+            server = [self.bot.get_server(x) for x in servers.keys()
+                      if self.bot.get_server(x).name == servername][0]
+        except IndexError:
+            raise WipeError("This server name provided could not be located. Check your spelling "
+                            "and remember that names are case sensitive")
+
+        await self.bot.say("This will wipe casino server data.**WARNING** ALL PLAYER DATA WILL "
+                           "BE DESTROYED.\nDo you wish to wipe {}?".format(server.name))
+        response = await self.bot.wait_for_message(timeout=15, author=user)
+
+        if response is None:
+            msg = "No response, casino wipe cancelled."
+        elif response.content.title() == "No":
+            msg = "Cancelling casino wipe."
+        elif response.content.title() == "Yes":
+            await self.bot.say("To confirm type the server name: {}".format(server.name))
             response = await self.bot.wait_for_message(timeout=15, author=user)
-
             if response is None:
                 msg = "No response, casino wipe cancelled."
-            elif response.content.title() == "No":
-                msg = "Cancelling casino wipe."
-            elif response.content.title() == "Yes":
-                await self.bot.say("To confirm type the server name: {}".format(server.name))
-                response = await self.bot.wait_for_message(timeout=15, author=user)
-                if response is None:
-                    msg = "No response, casino wipe cancelled."
-                elif response.content == server.name:
-                    self.casino_bank.wipe_caisno_server(server)
-                    msg = "Casino wiped."
-                else:
-                    msg = "Incorrect server name. Cancelling casino wipe."
+            elif response.content == server.name:
+                self.casino_bank.wipe_caisno_server(server)
+                msg = "Casino wiped."
             else:
-                msg = "Improper response. Cancelling casino wipe."
+                msg = "Incorrect server name. Cancelling casino wipe."
+        else:
+            msg = "Improper response. Cancelling casino wipe."
+
         await self.bot.say(msg)
 
     @commands.group(pass_context=True, no_pm=True)
@@ -1337,7 +1363,7 @@ class Casino:
         author = ctx.message.author
         settings = self.casino_bank.check_server_settings(author.server)
         cancel_message = "You took too long to respond. Cancelling requirement addition."
-        requirement_options = ["Days On Server", "Towels", "Chips", "Role"]
+        requirement_options = ["Days On Server", "Credits", "Chips", "Role"]
         server_roles = [r.name for r in ctx.message.server.roles if r.name != "Bot"]
 
         # Message checks
@@ -1360,7 +1386,7 @@ class Casino:
                 return
 
             else:
-                # Determine amount for DoS, Towels, or Chips
+                # Determine amount for DoS, Credits, or Chips
                 if rsp.content.title() != "Role":
                     name = rsp.content.split(' ', 1)[0]
                     await self.bot.say("How many {} are required?".format(name))
@@ -1448,7 +1474,7 @@ class Casino:
             logger.info("{}({}) changed the chip rate to {}".format(author.name, author.id, rate))
             self.casino_bank.save_system()
             msg = "Setting the exchange rate for towels to chips to {}".format(rate)
-        elif currency.title() == "Towels":
+        elif currency.title() == "Credits":
             settings["System Config"]["Credit Rate"] = rate
             logger.info("SETTINGS CHANGED {}({}) changed the credit rate to "
                         "{}".format(author.name, author.id, rate))
@@ -1880,7 +1906,8 @@ class Casino:
         # Loop through the memberships and their requirements
         for membership in memberships:
             requirements = []
-            for req in path[membership]["Requirements"].keys():
+            reqs = path[membership]["Requirements"]
+            for req in reqs.keys():
 
                 # If the requirement is a role, run role logic
                 if req == "Role":
@@ -1889,11 +1916,11 @@ class Casino:
                         requirements.append(True)
                     else:
                         requirements.append(False)
-                # If the requirement is a towels, run credit logic
-                if req == "Towels":
+                # If the requirement is a credits, run credit logic
+                if req == "Credits":
                     try:
                         user_credits = bank.get_balance(user)
-                        if user_credits >= int(path[membership]["Requirements"]["Towels"]):
+                        if user_credits >= int(path[membership]["Requirements"]["Credits"]):
                             requirements.append(True)
                         else:
                             requirements.append(False)
@@ -1953,11 +1980,11 @@ class Casino:
         else:
             return False
 
-    def hl_outcome(self):
+    def hl_outcome(self, dicetotal):
         choices = [(1, "Lo", "Low"), (2, "Lo", "Low"), (3, "Lo", "Low"), (4, "Lo", "Low"),
                    (5, "Lo", "Low"), (6, "Lo", "Low"), (7, "7", "Seven"), (8, "Hi", "High"),
                    (9, "Hi", "High"), (10, "Hi", "High"), (11, "Hi", "High"), (12, "Hi", "High")]
-        outcome = random.choice(choices)
+        outcome = choices[dicetotal - 1]
         return outcome
 
     def minmax_check(self, bet, game, settings):
@@ -1967,8 +1994,11 @@ class Casino:
         if mi <= bet <= mx:
             return None
         else:
-            msg = ("Your bet needs to be higher than {}, but cannot exceed the"
-                   "maximum of {} chips.".format(mi, mx))
+            if mi != mx:
+                msg = ("Your bet needs to be {} or higher, but cannot exceed the "
+                       "maximum of {} chips.".format(mi, mx))
+            else:
+                msg = ("Your bet needs to be exactly {}.".format(mi))
             return msg
 
     def stats_cooldowns(self, settings, user, cd_list):
@@ -2087,10 +2117,7 @@ class Casino:
         else:
             cd_check = self.check_cooldowns(user, game, settings)
             # Cooldowns are checked last incase another check failed.
-            if cd_check:
-                return cd_check
-            else:
-                return None
+            return cd_check
 
     def color_lookup(self, color):
         colors = {"blue": 0x3366FF, "red": 0xFF0000, "green": 0x00CC33, "orange": 0xFF6600,
@@ -2188,7 +2215,7 @@ def setup(bot):
     global logger
     check_folders()
     check_files()
-    logger = logging.getLogger("marvin.casino")
+    logger = logging.getLogger("red.casino")
     if logger.level == 0:
         logger.setLevel(logging.INFO)
         # Rotates to a new file every 10mb, up to 5

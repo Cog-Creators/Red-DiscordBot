@@ -451,6 +451,7 @@ class Streams:
                             save = True
                             stream["ALREADY_ONLINE"] = False
                     await asyncio.sleep(0.5)
+
             if save:
                 dataIO.save_json("data/streams/twitch.json", self.twitch_streams)
                 dataIO.save_json("data/streams/hitbox.json", self.hitbox_streams)

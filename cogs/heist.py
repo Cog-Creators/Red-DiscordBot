@@ -1,41 +1,47 @@
-#  This will create a JSON file and two data folders
-import os
-import time
+#  Heist was created by Redjumpman for Redbot
+
+# Standard Library
 import asyncio
+import os
 import random
-import discord
+import time
 from bisect import bisect
 from operator import itemgetter
+
+# Discord / Red Bot
+import discord
 from discord.ext import commands
 from .utils.dataIO import dataIO
 from .utils import checks
 from __main__ import send_cmd_help
+
+# Third party library requirement
 try:
     from tabulate import tabulate
     tabulateAvailable = True
 except ImportError:
     tabulateAvailable = False
 
-good = [["{} had the car gassed up and ready to go. +25 towels.", 25],
-        ["{} cut the power to the bank. +50 towels.", 50],
-        ["{} erased the video footage. +50 towels.", 50],
-        ["{} hacked the security system and put it on a loop feed. +75 towels.", 75],
-        ["{} stopped the teller from triggering the silent alarm. +50 towels.", 50],
-        ["{} knocked out the local security. +50 towels.", 50],
-        ["{} stopped a local from being a hero +50 towels.", 50],
-        ["{} got the police negotiator to deliver everyone pizza. +25 towels.", 25],
-        ["{} brought masks of former presidents to hide our identity. +25 towels.", 25],
-        ["{} found an escape route. +25 towels.", 25],
-        ["{} brought extra ammunition for the crew. +25 towels.", 25],
-        ["{} cut through that safe like butter. +25 towels.", 25],
-        ["{} kept the hostages under control. +25 towels.", 25],
-        ["{} created a distraction to get the crew out. +50 towels.", 50],
-        ["{} improvised under pressure and got the crew out. +50 towels.", 50],
-        ["{} counter sniped a sniper. +100 towels.", 100],
-        ["{} distracted the guard. +25 towels.", 25],
-        ["{} brought a Go-Bag for the team. +25 towels.", 25],
-        ["{} found a secret stash in the deposit box room. +50 towels.", 50],
-        ["{} found a box of jewelry on a civilian. +25 towels.", 25]]
+good = [["{} had the car gassed up and ready to go. +25 credits.", 25],
+        ["{} cut the power to the bank. +50 credits.", 50],
+        ["{} erased the video footage. +50 credits.", 50],
+        ["{} hacked the security system and put it on a loop feed. +75 credits.", 75],
+        ["{} stopped the teller from triggering the silent alarm. +50 credits.", 50],
+        ["{} knocked out the local security. +50 credits.", 50],
+        ["{} stopped a local from being a hero +50 credits.", 50],
+        ["{} got the police negotiator to deliver everyone pizza. +25 credits.", 25],
+        ["{} brought masks of former presidents to hide our identity. +25 credits.", 25],
+        ["{} found an escape route. +25 credits.", 25],
+        ["{} brought extra ammunition for the crew. +25 credits.", 25],
+        ["{} cut through that safe like butter. +25 credits.", 25],
+        ["{} kept the hostages under control. +25 credits.", 25],
+        ["{} created a distraction to get the crew out. +50 credits.", 50],
+        ["{} improvised under pressure and got the crew out. +50 credits.", 50],
+        ["{} counter sniped a sniper. +100 credits.", 100],
+        ["{} distracted the guard. +25 credits.", 25],
+        ["{} brought a Go-Bag for the team. +25 credits.", 25],
+        ["{} found a secret stash in the deposit box room. +50 credits.", 50],
+        ["{} found a box of jewelry on a civilian. +25 credits.", 25]]
 
 bad = [["A shoot out with local authorities began and {0} was hit...but survived!", "Apprehended"],
        ["The cops dusted for finger prints and later arrested {0}.", "Apprehended"],
@@ -86,7 +92,7 @@ class Heist:
         self.bot = bot
         self.file_path = "data/JumperCogs/heist/heist.json"
         self.system = dataIO.load_json(self.file_path)
-        self.version = "2.0.8"
+        self.version = "2.0.8.1"
         self.cycle_task = bot.loop.create_task(self.vault_updater())
 
     @commands.group(pass_context=True, no_pm=True)
@@ -151,15 +157,15 @@ class Heist:
         if settings["Players"][user.id]["Status"] == "Apprehended":
             cost = settings["Players"][user.id]["Bail Cost"]
             if not self.bank_check(settings, user, cost):
-                await self.bot.say("You do not have enough towels to afford the bail amount.")
+                await self.bot.say("You do not have enough credits to afford the bail amount.")
                 return
 
             if user.id == author.id:
-                msg = ("Do you want to make bail? It will cost {} towels. If you are caught "
+                msg = ("Do you want to make bail? It will cost {} credits. If you are caught "
                        "robbing a bank while out on bail your next sentence and bail amount will "
                        "triple. Do you still wish to make bail?".format(cost))
             else:
-                msg = ("You are about to make bail for {0} and it will cost you {1} towels. "
+                msg = ("You are about to make bail for {0} and it will cost you {1} credits. "
                        "Are you sure you wish to pay {1} for {0}?".format(user.name, cost))
 
             await self.bot.say(msg)
@@ -228,7 +234,7 @@ class Heist:
             await self.bot.say("Crew size conflicts with another bank. Cancelling bank creation.")
             return
 
-        await self.bot.say("How many starting towels are in the vault of this bank?")
+        await self.bot.say("How many starting credits are in the vault of this bank?")
         vault = await self.bot.wait_for_message(timeout=35, author=author, check=check)
 
         if vault is None:
@@ -239,7 +245,7 @@ class Heist:
             await self.bot.say("Bank creation cancelled.")
             return
 
-        await self.bot.say("What is the maximum number of towels this bank can hold?")
+        await self.bot.say("What is the maximum number of credits this bank can hold?")
         vault_max = await self.bot.wait_for_message(timeout=35, author=author, check=check)
 
         if vault_max is None:
@@ -314,7 +320,7 @@ class Heist:
         death = settings["Config"]["Death Timer"]
         timers = list(map(self.time_format, [wait, police, sentence, death]))
         description = "{} Heist Settings".format(server.name)
-        footer = "MARViN Heist."
+        footer = "Heist was developed by Redjumpman for Red Bot."
 
         embed = discord.Embed(colour=0x0066FF, description=description)
         embed.title = "Heist Version {}".format(self.version)
@@ -381,21 +387,6 @@ class Heist:
         else:
             msg = "You still have a pulse. I can't revive someone who isn't dead."
         await self.bot.say(msg)
-
-    def cleric_hook(self, server, author, user):
-        settings = self.check_server_settings(server)
-        self.account_check(settings, user)
-        if settings["Players"][user.id]["Status"] == "Dead":
-            settings["Players"][user.id]["Death Timer"] = 0
-            settings["Players"][user.id]["Status"] = "Free"
-            dataIO.save_json(self.file_path, self.system)
-            msg = ("{} casted `resurrection` on {} and returned them "
-                   "to the living.".format(author.name, user.name))
-            action = "True"
-        else:
-            msg = "Cast failed. {} is alive.".format(user.name)
-            action = None
-        return action, msg
 
     @heist.command(name="stats", pass_context=True)
     async def _stats_heist(self, ctx):
@@ -479,9 +470,9 @@ class Heist:
                 if settings["Crew"]:
                     players = [server.get_member(x) for x in list(settings["Crew"])]
                     data = self.calculate_credits(settings, players, target)
-                    headers = ["Criminals", "Towels Stolen", "Bonuses", "Total"]
+                    headers = ["Criminals", "Credits Stolen", "Bonuses", "Total"]
                     t = tabulate(data, headers=headers)
-                    msg = ("The towels stolen from the vault was split among the winners:\n```"
+                    msg = ("The credits stolen from the vault was split among the winners:\n```"
                            "Python\n{}```".format(t))
                 else:
                     msg = "No one made it out safe. The good guys win."
@@ -584,7 +575,7 @@ class Heist:
     @setheist.command(name="hardcore", pass_context=True)
     @checks.admin_or_permissions(manage_server=True)
     async def _hardcore_setheist(self, ctx):
-        """Set game to hardcore mode. Deaths will wipe towels and chips."""
+        """Set game to hardcore mode. Deaths will wipe credits and chips."""
         server = ctx.message.server
         settings = self.check_server_settings(server)
 
@@ -593,7 +584,7 @@ class Heist:
             msg = "Hardcore mode now OFF."
         else:
             settings["Config"]["Hardcore"] = True
-            msg = "Hardcore mode now ON! **Warning** death will result in towel **and chip wipe**."
+            msg = "Hardcore mode now ON! **Warning** death will result in credit **and chip wipe**."
         dataIO.save_json(self.file_path, self.system)
         await self.bot.say(msg)
 
@@ -617,7 +608,7 @@ class Heist:
         for result in results:
             await self.bot.say(result)
             await asyncio.sleep(5)
-        await self.bot.say("The Heist is now over. Give me a moment to count your towels.")
+        await self.bot.say("The Heist is now over. Give me a moment to count your credits.")
         await asyncio.sleep(5)
 
     async def vault_updater(self):
@@ -713,13 +704,7 @@ class Heist:
             settings["Players"][user.id]["Total Jail"] += 1
             settings["Players"][user.id]["Criminal Level"] += 1
         else:
-            settings["Players"][user.id]["Criminal Level"] = 0
-            settings["Players"][user.id]["Status"] = "Dead"
-            settings["Players"][user.id]["Deaths"] += 1
-            settings["Players"][user.id]["Jail Counter"] = 0
-            settings["Players"][user.id]["Death Timer"] = int(time.perf_counter())
-            if settings["Config"]["Hardcore"]:
-                self.hardcore_handler(settings, user)
+            self.run_death(settings, user)
 
     def heist_target(self, settings, crew):
         groups = sorted([(x, y["Crew"]) for x, y in settings["Banks"].items()], key=itemgetter(1))
@@ -727,6 +712,18 @@ class Heist:
         breakpoints = [x for x in crew_sizes if x != max(crew_sizes)]
         banks = [x[0] for x in groups]
         return banks[bisect(breakpoints, crew)]
+
+    def run_death(self, settings, user):
+        settings["Players"][user.id]["Criminal Level"] = 0
+        settings["Players"][user.id]["OOB"] = False
+        settings["Players"][user.id]["Bail Cost"] = 0
+        settings["Players"][user.id]["Sentence"] = 0
+        settings["Players"][user.id]["Status"] = "Dead"
+        settings["Players"][user.id]["Deaths"] += 1
+        settings["Players"][user.id]["Jail Counter"] = 0
+        settings["Players"][user.id]["Death Timer"] = int(time.perf_counter())
+        if settings["Config"]["Hardcore"]:
+            self.hardcore_handler(settings, user)
 
     def user_clear(self, settings, user):
         settings["Players"][user.id]["Status"] = "Free"
@@ -775,7 +772,7 @@ class Heist:
             sentence = self.time_format(sentence_raw)
             if remaining:
                 msg = ("You are in jail. You are serving a sentence of {}.\nYou can wait out your "
-                       "remaining sentence of: {} or pay {} towels to post "
+                       "remaining sentence of: {} or pay {} credits to post "
                        "bail.".format(sentence, remaining, bail))
             else:
                 msg = ("You have finished serving your sentence, but your still in jail! Get the "
@@ -793,8 +790,8 @@ class Heist:
                        "command {}heist revive .".format(prefix))
             return None, msg
         elif not self.bank_check(settings, author, cost):
-            msg = ("You do not have enough towels to cover the costs of "
-                   "entry. You need {} towels to participate.".format(cost))
+            msg = ("You do not have enough credits to cover the costs of "
+                   "entry. You need {} credits to participate.".format(cost))
             return None, msg
         elif not (alert):
             msg = ("The police is on high alert after the last job. We should "
@@ -915,6 +912,37 @@ class Heist:
         else:
             path = self.system["Servers"][server.id]
             return path
+
+    # =========== Commission hooks =====================
+
+    def reaper_hook(self, server, author, user):
+        settings = self.check_server_settings(server)
+        self.account_check(settings, user)
+        if settings["Players"][user.id]["Status"] == "Dead":
+            msg = "Cast failed. {} is dead.".format(user.name)
+            action = None
+        else:
+            self.run_death(settings, user)
+            dataIO.save_json(self.file_path, self.system)
+            msg = ("{} casted :skull: `death` :skull: on {} and sent them "
+                   "to the graveyard.".format(author.name, user.name))
+            action = "True"
+        return action, msg
+
+    def cleric_hook(self, server, author, user):
+        settings = self.check_server_settings(server)
+        self.account_check(settings, user)
+        if settings["Players"][user.id]["Status"] == "Dead":
+            settings["Players"][user.id]["Death Timer"] = 0
+            settings["Players"][user.id]["Status"] = "Free"
+            dataIO.save_json(self.file_path, self.system)
+            msg = ("{} casted :trident: `resurrection` :trident: on {} and returned them "
+                   "to the living.".format(author.name, user.name))
+            action = "True"
+        else:
+            msg = "Cast failed. {} is alive.".format(user.name)
+            action = None
+        return action, msg
 
 
 def check_folders():

@@ -278,7 +278,7 @@ class Owner:
         if self.bot.settings.owner is not None:
             await self.bot.say(
             "The owner is already set. Remember that setting the owner "
-            "to someone else other than who hosts me has security "
+            "to someone else other than who hosts the bot has security "
             "repercussions and is *NOT recommended*. Proceed at your own risk."
             )
             await asyncio.sleep(3)
@@ -616,7 +616,7 @@ class Owner:
             msg = ("I have a **BOT** tag, so I must be invited with an OAuth2"
                    " link:\nFor more information: "
                    "https://controllernetwork.com/kb/"
-                   "MARViN/bot_accounts/#bot-invites")
+                   "MARViN-Docs/marvin_guide_bot_accounts/#bot-invites")
             await self.bot.say(msg)
             if hasattr(self.bot, 'oauth_url'):
                 await self.bot.whisper("Here's my OAUTH2 link:\n{}".format(
@@ -844,7 +844,7 @@ class Owner:
 
     def _get_version(self):
         if not os.path.isdir(".git"):
-            msg = "This instance of Red hasn't been installed with git."
+            msg = "This instance of MARViN hasn't been installed with git."
             e = discord.Embed(title=msg,
                               colour=discord.Colour.red())
             return e
@@ -873,7 +873,6 @@ class Owner:
             commit_url = url + "/commit/" + chash
             content = "[{}]({}) - {} ".format(chash[:6], commit_url, commit)
             embed.add_field(name=when, value=content, inline=False)
-
         embed.set_footer(text="Total commits: " + ncommits)
 
         return embed

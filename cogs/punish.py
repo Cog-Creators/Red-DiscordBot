@@ -1,8 +1,6 @@
 import discord
 from discord.ext import commands
 from .utils import checks
-# import asyncio
-# from __main__ import send_cmd_help
 import logging
 from cogs.utils.dataIO import dataIO
 import os
@@ -16,7 +14,7 @@ except Exception as e:
 
 UserInputError = commands.UserInputError
 
-log = logging.getLogger('marvin.punish')
+log = logging.getLogger('red.punish')
 
 UNIT_TABLE = {'s': 1, 'm': 60, 'h': 60 * 60, 'd': 60 * 60 * 24}
 UNIT_SUF_TABLE = {'sec': (1, ''),
@@ -89,11 +87,15 @@ class Punish:
     async def cpunish(self, ctx, user: discord.Member, duration: str=None, *, reason: str=None):
         """Same as punish but cleans up after itself and the target"""
         server = ctx.message.server
+
+        if ctx.message.author.top_role <= user.top_role:
+            await self.bot.say('Permission denied.')
+            return
+
         role = await self.setup_role(server, quiet=True)
         if not role:
             return
 
-        self.json = dataIO.load_json(self.location)
         if server.id not in self.json:
             self.json[server.id] = {}
 
@@ -141,11 +143,15 @@ class Punish:
         Example: !punish @idiot 1.1h10m Enough bitching already!"""
 
         server = ctx.message.server
+
+        if ctx.message.author.top_role <= user.top_role:
+            await self.bot.say('Permission denied.')
+            return
+
         role = await self.setup_role(server)
         if role is None:
             return
 
-        self.json = dataIO.load_json(self.location)
         if server.id not in self.json:
             self.json[server.id] = {}
 
@@ -339,7 +345,6 @@ class Punish:
 
     def _unpunish_data(self, member):
         """Removes punish data entry and cancels any present callback"""
-        self.json = dataIO.load_json(self.location)
         sid = member.server.id
         if sid in self.json and member.id in self.json[sid]:
             del(self.json[member.server.id][member.id])
@@ -383,7 +388,6 @@ class Punish:
         sid = member.server.id
         role = discord.utils.get(member.server.roles, name=self.role_name)
         if role:
-            self.json = dataIO.load_json(self.location)
             if not (sid in self.json and member.id in self.json[sid]):
                 return
             duration = self.json[sid][member.id]['until'] - time.time()

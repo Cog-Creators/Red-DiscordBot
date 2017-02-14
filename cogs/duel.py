@@ -1,3 +1,8 @@
+# Procedurally generated duel cog for Red-DiscordBot
+# Copyright (c) 2016 Caleb Jonson
+# Idea and rule system courtesy of Axas
+# Additional moves suggested by OrdinatorStouff
+
 import discord
 from discord.ext import commands
 from .utils.dataIO import dataIO
@@ -131,7 +136,7 @@ BODYPARTS = [
     'other knee'
 ]
 
-VERB_IND_SUB = {'munch': 'munches'}
+VERB_IND_SUB = {'munch': 'munches', 'toss': 'tosses'}
 
 ATTACK = {"{a} {v} their {o} at {d}!": indicatize(WEAPONS),
           "{a} {v} their {o} into {d}!": indicatize(MELEE),
@@ -204,7 +209,7 @@ FUMBLE = {"{a} closes in on {d}, but suddenly remembers a funny joke and laughs 
           "{a} {v} their {o}, but fumbles and drops it on their {b}!": indicatize(WEAPONS)
           }
 
-BOT = {"{a} charges its laser aaaaaaaand... BZZZZZZT! {d} is now a smoking crater for daring to challenge me.": INITIAL_HP}
+BOT = {"{a} charges its laser aaaaaaaand... BZZZZZZT! {d} is now a smoking crater for daring to challenge the bot.": INITIAL_HP}
 
 HITS = ['deals', 'hits for']
 RECOVERS = ['recovers', 'gains', 'heals']
@@ -223,7 +228,6 @@ WEIGHTED_MOVES = {'CRITICAL': 0.05, 'ATTACK': 1, 'FUMBLE': 0.1, 'HEAL': 0.1}
 
 
 class Player:
-
     def __init__(self, cog, member, initial_hp=INITIAL_HP):
         self.hp = initial_hp
         self.member = member
@@ -232,7 +236,7 @@ class Player:
 
     # Using object in string context gives (nick)name
     def __str__(self):
-        return self.member.nick if self.member.nick else self.member.name
+        return self.member.display_name
 
     # helpers for stat functions
     def _set_stat(self, stat, num):
@@ -245,6 +249,9 @@ class Player:
     def _get_stat(self, stat):
         stats = self.cog._get_stats(self)
         return stats[stat] if stats and stat in stats else 0
+
+    def get_state(self):
+        return {k: self._get_stat(k) for k in ('wins', 'losses', 'draws')}
 
     # Race-safe, directly usable properties
     @property
@@ -295,6 +302,12 @@ class Duel:
             return None
         else:
             return self.duelists[serverid][userid]
+
+    def get_player(self, user: discord.Member):
+        return Player(self, user)
+
+    def get_all_players(self, server: discord.Server):
+        return [self.get_player(m) for m in server.members]
 
     @checks.mod_or_permissions(administrator=True)
     @commands.command(name="protect", pass_context=True)
@@ -421,6 +434,7 @@ class Duel:
         else:
             author = ctx.message.author
             server = ctx.message.server
+            channel = ctx.message.channel
             duelists = self.duelists.get(server.id, {})
             p1 = Player(self, author)
             p2 = Player(self, user)
@@ -436,6 +450,8 @@ class Duel:
                 await self.bot.reply("you can't duel anyone while you're on "
                                      " the protected users list.")
                 return
+
+            self.bot.dispatch('duel', channel=channel, players=(p1, p2))
 
             order = [(p1, p2), (p2, p1)]
             random.shuffle(order)
@@ -466,12 +482,15 @@ class Duel:
                 for p, delim in [(victor, '; '), (loser, '.')]:
                     msg += '%s has %d wins, %d losses, %d draws%s' % (p, p.wins, p.losses, p.draws, delim)
             else:
+                victor=None
                 for p in [p1, p2]:
                     p.draws += 1
                 msg = 'After %d rounds, the duel ends in a tie!' % (i + 1)
 
             # append stats
             await self.bot.say(msg)
+            self.bot.dispatch('duel_completion', channel=channel,
+                              players=(p1,p2), victor=victor)
 
     def generate_action(self, attacker, defender, move_cat=None):
         # Select move category
