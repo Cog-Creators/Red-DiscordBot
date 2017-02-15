@@ -5,6 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 import os
 import functools
 import asyncio
+import urllib  # urllib.parse.urlparse(url).scheme != ""
 import logging
 
 try:
@@ -90,7 +91,9 @@ class ChecksMixin:
             except Exception:
                 log.exception("Error in play check '{}'".format(f.__name__))
             else:
-                return res
+                if res is False:
+                    return False
+        return True
 
     def add_play_check(self, f):
         self._checks_to_play.append(f)
@@ -109,7 +112,9 @@ class ChecksMixin:
             except Exception:
                 log.exception("Error in skip check '{}'".format(f.__name__))
             else:
-                return res
+                if res is False:
+                    return False
+        return True
 
     def add_skip_check(self, f):
         self._checks_to_skip.append(f)
@@ -128,7 +133,9 @@ class ChecksMixin:
             except Exception:
                 log.exception("Error in queue check '{}'".format(f.__name__))
             else:
-                return res
+                if res is False:
+                    return False
+        return True
 
     def add_queue_check(self, f):
         self._checks_to_queue.append(f)
@@ -147,7 +154,9 @@ class ChecksMixin:
             except Exception:
                 log.exception("Error in connect check '{}'".format(f.__name__))
             else:
-                return res
+                if res is False:
+                    return False
+        return True
 
     def add_connect_check(self, f):
         self._checks_to_connect.append(f)
@@ -162,12 +171,24 @@ class ChecksMixin:
 
 class MusicPlayerCommandsMixin:
     def skip(self):
-        raise NotImplemented
+        raise NotImplementedError()
+
+    def pause(self):
+        raise NotImplementedError()
+
+    def play(self):
+        raise NotImplementedError()
+
+    def stop(self):
+        raise NotImplementedError()
+
+    def queue(self):
+        raise NotImplementedError()
 
 
 class AudioCommandErrorHandlersMixin:
     async def no_permissions(self, error, ctx):
-        log.error(exc_info=error)
+        log.error("No permissions", exc_info=error)
         channel = ctx.message.channel
         # Say may turn out to be unreliable, do this instead
         await ctx.bot.send_message(channel,
@@ -218,6 +239,13 @@ class MusicQueue:
         except IndexError:
             return False
 
+    def clear(self, songs=True, temp_songs=True):
+        if songs is True:
+            self._songs = []
+
+        if temp_songs is True:
+            self._temp_songs = []
+
     def skip(self, num=1):
         if num >= len(self._temp_songs):
             num -= len(self._temp_songs)
@@ -227,6 +255,9 @@ class MusicQueue:
         else:
             self._temp_songs = self._temp_songs[num:]
         return self.current_song
+
+    def next(self):
+        return self.skip()
 
 
 class MusicPlayer(MusicPlayerCommandsMixin):
@@ -239,11 +270,25 @@ class MusicPlayer(MusicPlayerCommandsMixin):
         self._voice_client = None
         self._server = voice_member.server
 
+        self._current_song_done = asyncio.Event(loop=bot.loop)
+
+        self._queue = MusicQueue()
+
+        self._dpy_player = None
+
+        self._play_loop = discord.compat.create_task(self.play_loop(),
+                                                     loop=bot.loop)
+
+        self.bot.add_listener(self.on_red_audio_unload,
+                              "on_red_audio_unload")
+
     def __eq__(self, other):
         return self.server == other.server
 
-    def __unload(self):
-        raise NotImplemented
+    async def on_red_audio_unload(self):
+        self._play_loop.cancel()
+        if self.is_connected:
+            await self.disconnect()
 
     @property
     def is_connected(self):
@@ -253,18 +298,45 @@ class MusicPlayer(MusicPlayerCommandsMixin):
             # self._voice_channel is None
             return False
 
+    @property
+    def dpy_player_active(self):
+        return self._dpy_player is not None
+
     async def connect(self):
-        connect_fut = self.bot.join_voice_channel(self._voice_channel)
-        try:
-            await asyncio.wait_for(connect_fut, 10, loop=self.bot.loop)
-        except Exception as exc:
-            log.error(exc_info=exc)
-        else:
-            self._voice_client = self.bot.voice_client_in(
-                self._voice_channel.server)
+        if not self.is_connected:
+            connect_fut = self.bot.join_voice_channel(self._voice_channel)
+            try:
+                await asyncio.wait_for(connect_fut, 10, loop=self.bot.loop)
+            except asyncio.TimeoutError as exc:
+                log.error("Timed out connecting", exc_info=exc)
+        self._voice_client = self.bot.voice_client_in(
+            self._voice_channel.server)
 
     async def disconnect(self):
         await self._voice_client.disconnect()
+
+    def play(self, str_or_url, *, temp=False, clear=False):
+        if clear is True:
+            self._queue.clear_queue()
+
+        if temp is True:
+            self._queue._temp_songs.append(str_or_url)
+        else:
+            self._queue._songs.append(str_or_url)
+
+    async def update_stuff(self):
+        self._current_song_done.clear()
+
+    async def play_loop(self):
+        while True:
+            try:
+                if not self.dpy_player_active or \
+                        self._current_song_done.is_set():
+                    await self.update_stuff()
+            except Exception as e:
+                log.error("Exception in audio play loop", exc_info=e)
+            finally:
+                await asyncio.sleep(1)
 
 
 class PlayerManager:
@@ -280,6 +352,10 @@ class PlayerManager:
 
     def has_player(self, server):
         return any(mp._server == server for mp in self._music_players)
+
+    def is_connected(self, ctx):
+        server = ctx.message.server
+        return self.has_player(server) and self.player(ctx).is_connected
 
     async def create_player(self, ctx):
         member = ctx.message.author
@@ -316,6 +392,13 @@ class Audio(ChecksMixin, AudioCommandErrorHandlersMixin):
         #   might not need it.
         self.bot.dispatch("on_red_audio_unload")
 
+    async def guarantee_connected(self, ctx):
+        if not self._mp_manager.is_connected(ctx):
+            if self.can_connect(ctx.message.author):
+                await self._mp_manager.guarantee_connected(ctx)
+            else:
+                raise NoPermissions("Not allowed to connect.")
+
     @commands.command(pass_context=True, hidden=True)
     async def disconnect(self, ctx):
         """
@@ -346,15 +429,21 @@ class Audio(ChecksMixin, AudioCommandErrorHandlersMixin):
 
     @commands.command(pass_context=True)
     async def play(self, ctx, str_or_url):
-        if self.can_connect(ctx.message.author):
-            await self._mp_manager.guarantee_connected(ctx)
+        await self.guarantee_connected(ctx)
+
+        if self.can_play(ctx.message.author):
+            self._mp_manager.player(ctx).play(str_or_url, clear=True)
+        else:
+            return  # TODO: say something or raise something
+
+        await ctx.bot.say("Done.")
 
     @play.error
-    @joinvoice.error  # I think we're allowed to stack these
-    @disconnect.error
+    # @joinvoice.error  # I think we're allowed to stack these
+    # @disconnect.error
     async def _play_error(self, error, ctx):
         if isinstance(error, NoPermissions):
-            self.no_permissions(error, ctx)
+            await self.no_permissions(error, ctx)
 
 
 def import_checks():
