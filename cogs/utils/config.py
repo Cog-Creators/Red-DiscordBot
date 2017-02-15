@@ -140,6 +140,18 @@ class BaseConfig:
 
 
 class Config(BaseConfig):
+    """
+    Config object created by `Bot.get_conf()`
+
+    Use the `set()` function to save data at a certain level
+        e.g.:
+            Global level: `conf.set("key1", "value1")`
+            Server level: `conf.server(server_id).set("key2", "value2")
+
+    Misc data is special, use `conf.get_misc()` and `conf.set_misc(value)`
+        respectively.
+    """
+
     def __getattr__(self, key):
         try:
             default = self.defaults[self.collection][key]
