@@ -38,7 +38,7 @@ class Mongo(BaseDriver):
         self._user = self._db.USER
         self._misc = self._db.MISC
 
-    def get_global(self, cog_name, cog_identifier, key, *, default=None):
+    def get_global(self, cog_name, cog_identifier, _, key, *, default=None):
         doc = self._global.find(
             {"cog_name": cog_name, "cog_identifier": cog_identifier},
             projection=[key, ], batch_size=2)
