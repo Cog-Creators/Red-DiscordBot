@@ -148,7 +148,7 @@ class Config(BaseConfig):
             Global level: `conf.set("key1", "value1")`
             Server level: `conf.server(server_id).set("key2", "value2")
 
-    Misc data is special, use `conf.get_misc()` and `conf.set_misc(value)`
+    Misc data is special, use `conf.misc()` and `conf.set_misc(value)`
         respectively.
     """
 
