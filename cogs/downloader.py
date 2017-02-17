@@ -110,11 +110,18 @@ class Downloader:
     @repo.command(name="remove")
     async def _repo_del(self, repo_name: str):
         """Removes repo from repo list. COGS ARE NOT REMOVED."""
+        def remove_readonly(func, path, excinfo):
+            os.chmod(path, 0o755)
+            func(path)
+
         if repo_name not in self.repos:
             await self.bot.say("That repo doesn't exist.")
             return
         del self.repos[repo_name]
-        #shutil.rmtree(os.path.join(self.path, repo_name))
+        try:
+            shutil.rmtree(os.path.join(self.path, repo_name), onerror=remove_readonly)
+        except FileNotFoundError:
+            pass
         self.save_repos()
         await self.bot.say("Repo '{}' removed.".format(repo_name))
 
