@@ -13,8 +13,24 @@ try:
 
     # I'm trusting borkedit on this one
     youtube_dl.utils.bug_reports_message = lambda: ''
+    ytdl_opts = {
+        'format': 'bestaudio/best',
+        'extractaudio': True,
+        'audioformat': 'mp3',
+        'outtmpl': '%(id)s-%(title)s.%(ext)s',
+        'restrictfilenames': True,
+        'noplaylist': True,
+        'nocheckcertificate': True,
+        'ignoreerrors': False,
+        'logtostderr': False,
+        'quiet': True,
+        'no_warnings': True,
+        'default_search': 'auto',
+        'source_address': '0.0.0.0'
+    }
 except NameError:
     youtube_dl = False
+    ytdl_opts = {}
 
 log = logging.getLogger("red.audio")
 
@@ -60,20 +76,57 @@ class AudioSettings:
 
 class Song:
     def __init__(self, **kwargs):
-        self.name = kwargs.get("name", "")
+        self.title = kwargs.get("title", "")
         self.duration = kwargs.get("duration", 0)
 
-    @classmethod
-    def from_ytdl(cls, **kwargs):
-        raise NotImplemented
+        self.webpage_url = kwargs.get("webpage_url", "")
+
+        self.extra_data = kwargs
 
     @classmethod
-    def from_file(cls, *args):
-        raise NotImplemented
+    def from_ytdl(cls, extracted_info: dict):
+        return cls(**extracted_info)
+
+    def to_json(self):
+        return self.extra_data
+
+    @classmethod
+    def from_json(cls, json_data):
+        return cls(**json_data)
 
 
-class Playlist:
-    pass
+class Playlist(Song):
+    def __init__(self, *, song_list=[], **kwargs):
+        super().__init__(song_list=song_list, **kwargs)
+
+        self.extractor_key = kwargs.get("extractor_key", "generic")
+
+        self.song_list = song_list
+
+    @staticmethod
+    def repair_youtube_url(video_id):
+        return "https://youtube.com/watch?v={}".format(video_id)
+
+    @classmethod
+    def from_ytdl(cls, extracted_info: dict):
+        song_list = []
+        for entry in extracted_info.get("entries", []):
+            # For whatever stupid reason the urls in the youtube playlist json
+            #   are just video id's, we may need to modify this for other
+            #   websites as well.
+            if entry.get("ie_key", "") == "Youtube":
+                song_url = cls.repair_youtube_url(entry.get("url", ""))
+            else:
+                song_url = entry.get("url", "")
+            song_list.append(song_url)
+
+        try:
+            del extracted_info["entries"]
+            # I don't want this stored with the Playlist object, serves no
+            #   purpose and will just take up filespace.
+        except KeyError:
+            pass
+        return cls(song_list=song_list, **extracted_info)
 
 
 class ChecksMixin:
@@ -196,26 +249,99 @@ class AudioCommandErrorHandlersMixin:
 
 
 class Downloader:
-    ytdl_opts = {
-        'format': 'bestaudio/best',
-        'extractaudio': True,
-        'audioformat': 'mp3',
-        'outtmpl': '%(id)s-%(title)s.%(ext)s',
-        'restrictfilenames': True,
-        'noplaylist': True,
-        'nocheckcertificate': True,
-        'ignoreerrors': False,
-        'logtostderr': False,
-        'quiet': True,
-        'no_warnings': True,
-        'default_search': 'auto',
-        'source_address': '0.0.0.0'
-    }
+    """
+    I'm gonna take a minute here and thank imayhaveborkedit for the majority of
+        this downloader code. There's not a lot of good ways to do this and
+        he's done a damn good job with it.
 
-    def __init__(self, url):
-        self._url = url
+        Original code can be found here:
+            https://github.com/Just-Some-Bots/MusicBot/blob/master/
+            musicbot/downloader.py
+    """
 
-        self._thread_pool = ThreadPoolExecutor(max_workers=2)
+    def __init__(self, download_folder="data/audio/cache"):
+        self.thread_pool = ThreadPoolExecutor(max_workers=2)
+        self.unsafe_ytdl = youtube_dl.YoutubeDL(ytdl_opts)
+        self.safe_ytdl = youtube_dl.YoutubeDL(ytdl_opts)
+        self.safe_ytdl.params['ignoreerrors'] = True
+        self.download_folder = download_folder
+
+        if download_folder:
+            otmpl = self.unsafe_ytdl.params['outtmpl']
+            self.unsafe_ytdl.params['outtmpl'] = \
+                os.path.join(download_folder, otmpl)
+
+            otmpl = self.safe_ytdl.params['outtmpl']
+            self.safe_ytdl.params['outtmpl'] =  \
+                os.path.join(download_folder, otmpl)
+
+    @property
+    def ytdl(self):
+        return self.safe_ytdl
+
+    async def extract_info(self, loop, *args, on_error=None,
+                           retry_on_error=False, download=False,
+                           process=False, **kwargs):
+        """
+            Runs ytdl.extract_info within the threadpool. Returns a future
+                that will fire when it's done. If `on_error` is passed and an
+                exception is raised, the exception will be caught and passed to
+                on_error as an argument.
+
+            This should be called with `url` as a positional argument. Set the
+                kwargs as necessary
+
+            The kwarg `process` does a fuck ton of extra (I think unnecessary)
+                url resolving so probably don't use it.
+
+            The kwarg `download` determines if youtube_dl will download the
+                video file (! or playlist !) at the provided link.
+
+            A kwarg `extra_info` (dict) can be passed to this function and will
+                be added to the returned result.
+        """
+        if callable(on_error):
+            try:
+                return await loop.run_in_executor(
+                    self.thread_pool,
+                    functools.partial(
+                        self.unsafe_ytdl.extract_info, *args,
+                        download=download, process=process, **kwargs)
+                )
+
+            except Exception as e:
+                # (youtube_dl.utils.ExtractorError
+                # youtube_dl.utils.DownloadError)
+                # I hope I don't have to deal with ContentTooShortError's
+                if asyncio.iscoroutinefunction(on_error):
+                    asyncio.ensure_future(on_error(e), loop=loop)
+
+                elif asyncio.iscoroutine(on_error):
+                    asyncio.ensure_future(on_error, loop=loop)
+
+                else:
+                    loop.call_soon_threadsafe(on_error, e)
+
+                if retry_on_error:
+                    return await self.safe_extract_info(loop, *args,
+                                                        download=download,
+                                                        process=process,
+                                                        **kwargs)
+        else:
+            return await loop.run_in_executor(
+                self.thread_pool,
+                functools.partial(self.unsafe_ytdl.extract_info,
+                                  *args, download=download,
+                                  process=process, **kwargs)
+            )
+
+    async def safe_extract_info(self, loop, *args, download=False,
+                                process=False, **kwargs):
+        return await loop.run_in_executor(
+            self.thread_pool,
+            functools.partial(self.safe_ytdl.extract_info, *args,
+                              download=download, process=process, **kwargs)
+        )
 
 
 class MusicQueue:
@@ -270,9 +396,8 @@ class MusicPlayer(MusicPlayerCommandsMixin):
         self._voice_client = None
         self._server = voice_member.server
 
-        self._current_song_done = asyncio.Event(loop=bot.loop)
-
         self._queue = MusicQueue()
+        self._downloader = Downloader()
 
         self._dpy_player = None
 
@@ -330,11 +455,9 @@ class MusicPlayer(MusicPlayerCommandsMixin):
     async def play_loop(self):
         while True:
             try:
-                if not self.dpy_player_active or \
-                        self._current_song_done.is_set():
-                    await self.update_stuff()
-            except Exception as e:
-                log.error("Exception in audio play loop", exc_info=e)
+                await self.update_stuff()
+            except Exception:
+                log.exception("Exception in audio play loop")
             finally:
                 await asyncio.sleep(1)
 
