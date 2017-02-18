@@ -163,15 +163,15 @@ class General:
         Up to 10 intensity levels."""
         name = "*{}*".format(user.display_name)
         if intensity <= 0:
-            msg = "(っ˘̩╭╮˘̩)っ" + name
+            msg = "(っ˘̩╭╮˘̩)っ{}".format(name)
         elif intensity <= 3:
-            msg = "(っ´▽｀)っ" + name
+            msg = "(っ´▽｀)っ{}".format(name)
         elif intensity <= 6:
-            msg = "╰(*´︶`*)╯" + name
+            msg = "╰(*´︶`*)╯{}".format(name)
         elif intensity <= 9:
-            msg = "(つ≧▽≦)つ" + name
+            msg = "(つ≧▽≦)つ{}".format(name)
         elif intensity >= 10:
-            msg = "(づ￣ ³￣)づ {} ⊂(´・ω・｀⊂)".format(name)
+            msg = "(づ￣ ³￣)づ{} ⊂(´・ω・｀⊂)".format(name)
         await self.bot.say(msg)
 
     @commands.command(pass_context=True, no_pm=True)
