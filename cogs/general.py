@@ -161,7 +161,7 @@ class General:
         """Because everyone likes hugs
 
         Up to 10 intensity levels."""
-        name = " *" + user.name + "*"
+        name = "*{}*".format(user.display_name)
         if intensity <= 0:
             msg = "(っ˘̩╭╮˘̩)っ" + name
         elif intensity <= 3:
@@ -171,7 +171,7 @@ class General:
         elif intensity <= 9:
             msg = "(つ≧▽≦)つ" + name
         elif intensity >= 10:
-            msg = "(づ￣ ³￣)づ" + name + " ⊂(´・ω・｀⊂)"
+            msg = "(づ￣ ³￣)づ {} ⊂(´・ω・｀⊂)".format(name)
         await self.bot.say(msg)
 
     @commands.command(pass_context=True, no_pm=True)
