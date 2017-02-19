@@ -17,7 +17,7 @@ try:
         'format': 'bestaudio/best',
         'extractaudio': True,
         'audioformat': 'mp3',
-        'outtmpl': '%(id)s-%(title)s.%(ext)s',
+        'outtmpl': '%(id)s',
         'restrictfilenames': True,
         'noplaylist': True,
         'nocheckcertificate': True,
@@ -81,11 +81,18 @@ class Song:
 
         self.webpage_url = kwargs.get("webpage_url", "")
 
+        self.meta_file = kwargs.get("meta_file")
+        # Only the filename, needs to get joined with download_folder to create
+        #   the actual accessible path
+
         self.extra_data = kwargs
 
     @classmethod
     def from_ytdl(cls, extracted_info: dict):
-        return cls(**extracted_info)
+        # TODO: Write metadata to file here
+        meta_file = youtube_dl.compat.compat_expanduser(ytdl_opts["outtmpl"])
+        meta_file += ".meta"
+        return cls(meta_file=meta_file, **extracted_info)
 
     def to_json(self):
         return self.extra_data
@@ -342,6 +349,71 @@ class Downloader:
             functools.partial(self.safe_ytdl.extract_info, *args,
                               download=download, process=process, **kwargs)
         )
+
+
+class MusicCache:
+    def __init__(self):
+        self.downloader = Downloader()
+        self._id_url_map = {}
+
+    async def is_downloaded(self, url):
+        _id = self._id_url_map.get(url, None)
+        if _id is None:
+            _id = await self.get_raw_info(url).get("id", "NOTFOUND")
+        audio_file = os.path.join(self.downloader.download_folder, _id)
+        return os.path.exists(audio_file)
+
+    async def get_raw_info(self, url, *, download=False, ctx=None):
+        """
+        Does not create song/playlist object and does not save metadata.
+        """
+        if ctx is not None:
+            extra_info = {
+                "author": ctx.message.author.id,
+                "channel": ctx.message.channel.id
+            }
+        else:
+            extra_info = {}
+        return await self.downloader.extract_info(url, download=download,
+                                                  extra_info=extra_info)
+
+    async def get_info(self, url, *, download=False, ctx=None):
+        raw_info = await self.get_raw_info(url, download=download, ctx=ctx)
+
+        if raw_info.get("_type", "video").lower() == "playlist":
+            ret = Playlist.from_ytdl(**raw_info)
+        else:
+            ret = Song.from_ytdl(**raw_info)
+
+        self._id_url_map[ret.get("webpage_url", url)] = raw_info.get(
+            "id", "NOTFOUND")
+        return ret
+
+    async def get_filename(self, obj, *, ctx=None):
+        if not (await self.is_downloaded(obj.webpage_url)):
+            obj = await self.get_info(obj.webpage_url, download=True, ctx=ctx)
+        filename = os.path.join(self.downloader.download_folder,
+                                obj.id)
+        return filename
+
+    async def get_meta_data(self, *, url=None, obj=None):
+        if obj is not None:
+            # TODO: open the file
+            return os.path.join(self.downloader.download_folder, obj.meta_file)
+        elif url is not None:
+            return await self.get_raw_info(url)
+        else:
+            raise ValueError("You must provide either the object or the URL"
+                             " to access metadata.")
+
+    async def guarantee_downloaded(self, obj, *, ctx=None):
+        if not self.is_downloaded(obj.webpage_url):
+            return await self.get_info(obj.webpage_url, download=True, ctx=ctx)
+        else:
+            return obj
+
+
+music_cache = MusicCache()
 
 
 class MusicQueue:
