@@ -154,7 +154,7 @@ class General:
     async def lmgtfy(self, *, search_terms : str):
         """Creates a lmgtfy link"""
         search_terms = escape_mass_mentions(search_terms.replace(" ", "+"))
-        await self.bot.say("http://lmgtfy.com/?q={}".format(search_terms))
+        await self.bot.say("https://lmgtfy.com/?q={}".format(search_terms))
 
     @commands.command(no_pm=True, hidden=True)
     async def hug(self, user : discord.Member, intensity : int=1):
