@@ -161,15 +161,15 @@ class General:
         """Because everyone likes hugs
 
         Up to 10 intensity levels."""
-        name = "*{}*".format(user.display_name)
+        name = italics(user.display_name)
         if intensity <= 0:
-            msg = "(っ˘̩╭╮˘̩)っ{}".format(name)
+            msg = "(っ˘̩╭╮˘̩)っ" + name
         elif intensity <= 3:
-            msg = "(っ´▽｀)っ{}".format(name)
+            msg = "(っ´▽｀)っ" + name
         elif intensity <= 6:
-            msg = "╰(*´︶`*)╯{}".format(name)
+            msg = "╰(*´︶`*)╯" + name
         elif intensity <= 9:
-            msg = "(つ≧▽≦)つ{}".format(name)
+            msg = "(つ≧▽≦)つ" + name
         elif intensity >= 10:
             msg = "(づ￣ ³￣)づ{} ⊂(´・ω・｀⊂)".format(name)
         await self.bot.say(msg)
