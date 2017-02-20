@@ -154,14 +154,14 @@ class General:
     async def lmgtfy(self, *, search_terms : str):
         """Creates a lmgtfy link"""
         search_terms = escape_mass_mentions(search_terms.replace(" ", "+"))
-        await self.bot.say("http://lmgtfy.com/?q={}".format(search_terms))
+        await self.bot.say("https://lmgtfy.com/?q={}".format(search_terms))
 
     @commands.command(no_pm=True, hidden=True)
     async def hug(self, user : discord.Member, intensity : int=1):
         """Because everyone likes hugs
 
         Up to 10 intensity levels."""
-        name = " *" + user.name + "*"
+        name = italics(user.display_name)
         if intensity <= 0:
             msg = "(っ˘̩╭╮˘̩)っ" + name
         elif intensity <= 3:
@@ -171,7 +171,7 @@ class General:
         elif intensity <= 9:
             msg = "(つ≧▽≦)つ" + name
         elif intensity >= 10:
-            msg = "(づ￣ ³￣)づ" + name + " ⊂(´・ω・｀⊂)"
+            msg = "(づ￣ ³￣)づ{} ⊂(´・ω・｀⊂)".format(name)
         await self.bot.say(msg)
 
     @commands.command(pass_context=True, no_pm=True)
