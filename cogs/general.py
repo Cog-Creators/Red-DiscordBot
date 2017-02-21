@@ -4,6 +4,7 @@ from .utils.chat_formatting import *
 from random import randint
 from random import choice
 from enum import Enum
+from urllib.parse import quote_plus
 import datetime
 import time
 import aiohttp
@@ -280,8 +281,12 @@ class General:
         """Urban Dictionary search
 
         Definition number must be between 1 and 10"""
+        def encode(s):
+            return quote_plus(s, encoding='utf-8', errors='replace')
+
         # definition_number is just there to show up in the help
         # all this mess is to avoid forcing double quotes on the user
+
         search_terms = search_terms.split(" ")
         try:
             if len(search_terms) > 1:
@@ -293,7 +298,8 @@ class General:
                 pos = 0                 # top 10 definitions
         except ValueError:
             pos = 0
-        search_terms = "+".join(search_terms)
+
+        search_terms = "+".join([encode(s) for s in search_terms])
         url = "http://api.urbandictionary.com/v0/define?term=" + search_terms
         try:
             async with aiohttp.get(url) as r:
