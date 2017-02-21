@@ -695,6 +695,7 @@ class Owner:
             await self.bot.say("Alright then.")
 
     @commands.command(pass_context=True)
+    @commands.cooldown(1, 60, commands.BucketType.user)
     async def contact(self, ctx, *, message : str):
         """Sends message to the owner"""
         if self.bot.settings.owner is None:
