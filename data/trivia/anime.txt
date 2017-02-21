@@ -164,6 +164,7 @@ For which anime were these songs written: "Cha La Head Cha La" and "Boku-tachi w
 (Fairy Tail) Who taught Gray his magic?`Ur
 (Fairy Tail) Which continent do the Ten Wizard Saints come from?`Ishgar
 (Fairy Tail) Who uses Arc of Time magic?`Ultear
+(Fairy Tail) What is Erza's favorite brand of armor?`Heart Kreuz
 (Fooly Cooly) How many manga-like (comic-like) scenes are there in total?`2`two
 (Fooly Cooly) There are a couple of scenes where you see the commander getting a haircut. What popular show's animation resembles the special animation in this scene?`South Park
 (Fruits Basket) What is the last name of the cursed family Tohru stays with?`Sohma
@@ -289,7 +290,6 @@ Sakura, Sasuke, Rock Lee, and Kakashi are all characters from which anime?`Narut
 (Neon Genesis Evangelion)Who is the pilot of Unit-02?`asuka langley-soryu`asuka langley soryu
 (Neon Genesis Evangelion) In what year did the show start airing?`1995
 (No Game No Life) How many races exist in Disboard?`16`sixteen
-(One Piece) What's the bounty on Roronoa Zoro's head?`120,000,000`120000000
 (One Piece) Luffy ate what Devil Fruit?`Gomu Gomu`gum gum
 (One Piece) What year was the manga created?`1997
 (One Piece) Who is the Pirate King?`Gol D. Roger`Gol D Roger
@@ -306,6 +306,75 @@ Sakura, Sasuke, Rock Lee, and Kakashi are all characters from which anime?`Narut
 (One Piece) Who is the navigator of the Straw Hat Pirates?`Nami
 (One Piece) Whose crew did Nami work for before joining Luffy's crew?`Arlong`Arlong's
 (One Piece) What fruit did Bartholomew Kuma eat?`Pawpaw fruit`Pawpaw`paw paw
+(One Piece) Who has a natural weakness to Luffy's power?`Enel
+(One Piece) Which village is Zoro from?`Simotsuki village`simotsuki
+(One Piece) Who is the user of Hana hana nomi?`Nico robin`robin
+(One Piece) What's the name of Rob Lucci's pet pidgeon?`Hattori
+(One Piece) What is Wiper's weapon called?`Burn bazooka
+(One Piece) In which country was Law born?`Flevance
+(One Piece) What is A water spirit (or fairy) that dwells on ships called?`Klabautermann
+(One Piece) What is the real name of Mr. 2,Bon kurei?`Bentham
+(One Piece) What is the name of zombie which had Zoro's shadow?`Jigoro
+(One Piece) What is the 1st chapter named?`Romance dawn
+(One Piece) Where did the strawhat crew find Dorry and Broggy fighting?`Little garden
+(One Piece) According to the northblue fairytales, who is known as the trickster/liar telling the people about a golden city in jaya?`Montblanc Norland`noland
+(One Piece) What is the name of the gorgon sisters who is in love with luffy?`Boa hancock`hancock
+(One Piece) What is the name of zoro's sword which was destroyed by Shu?`Yubashiri
+(One Piece) What fruit did the marine Shu eat?`Rust rust fruit`rustrust fruit`rust rust`rustrust`sabi sabi no mi
+(One Piece) Who is the youngest shichibukai?`Law
+(One Piece) Who was the fleet admiral before sengoku?`Kong
+(One Piece) What is the name of character from sabaody+fishman island arc who is always ignored?`Pappagu
+(One Piece) What is the name of Tsuru's devilfruit?`Woshu woshu fruit`Wash wash fruit`wash wash`woshu woshu
+(One Piece) What is chopper's godfather's name?`Dr. Hiluluk`hiluluk
+(One Piece) What is the name of the logpose variation which is permanently set to a specific island?`Eternal pose
+(One Piece) Who said this? "Miracles only happen to those who give up"`Ivankov
+(One Piece) How many movies are made on onepiece franchise?`13`thirteen
+(One Piece) What is the name of the host of corrida collesium?`Mr.gyats`gyats`mr gyats`mr. gyats
+(One Piece) During the marineford arc, who opened Marco's cuffs?`Mr.3`3`mr3`mr 3
+(One Piece) Where did franky train during the 2 years gap?`Barujima karakuri island`barujima karakuri
+(One Piece) Where did Ussop train during the 2 years gap?`Boing island`boing
+(One Piece) Where did sanji train during the 2 years gap?`Kamabakka kingdom
+(One Piece) Who was the first corazon?`Vergo
+(One Piece) Name the doctor of Gol D roger pirates.`Crocus
+(One Piece) Who is the creator of the sun pirates?`Fisher tiger`tiger
+(One Piece) What is franky's real name?`Cutty flam
+(One Piece) Who was the first zoan type user to appear in the series?`Dalton
+(One Piece) Who is the only known fishman devilfruit eater?`Vander decken
+(One Piece) What is the Birthplace of robin called?`Ohara
+(One Piece) Who uses the move "Out-of-the-bag"?`captain kuro`kuro
+(One Piece) Who was stuck on the same island as Zoro?`Perona
+(One Piece) Who is able to use the CP9 technique "moon walk" (bounce on air) from strawhats?`sanji
+(One Piece) What is the name of the cigarette brand Sanji smokes?`king grand
+(One Piece) In which Island was sanji in near to death situation?`Fishman island
+(One Piece) Which one from the 11 Supernovas is a woman?`Jewelry Bonney`bonney
+(One Piece) What is the name of Zoro's teacher and Kuina's father?`Koshiro
+(One Piece) What does Piiman want to be when he grows up?`Carpenter
+(One Piece) What is the name of Whitebeard's flag ship?`Moby dick
+(One Piece) Whitebeard was stabbed by his own ally. Who was it?`Squard
+(One Piece) On which island is Syrup village located?`Gecko
+(One Piece) Who is the Fifth Commander of the Whitebeard Pirates?`vista 
+(One Piece) What is the name of the Vice Admiral to whom Ace had to deliver a message during Ace's Great Blackbeard Search?`Comil
+(One Piece) What is the name of Dracule Mihawk's black sword?`yoru
+(One Piece) Which type of Dial emits a stream of "Iron cloud" which can be shaped and used for defense and attack?`Eisen Dial`eisen
+(One Piece) When Trafalgar Law came to collect Luffy from the War at Marineford, who caught Luffy and Jinbe when they were thrown to them?`Jean Bart
+(One Piece) What is the name of the plant shown in the film Strong World which is toxic to animals?`Daft green
+(One Piece) Who is the 8th division commander from the whitebeard pirates?`Namur
+(One Piece) What does Tamanegi want to be when he grows up?`Author
+(One Piece) What is the name of ussop's current weapon?`Kuro kabuto`black kabuto`kabuto
+(One Piece) Who is the only named camel in the series?`Eyelashes
+(One Piece) Who has a natural weakness to Luffy's power?`Enel
+(One Piece) Who gave shanks his straw hat?`Gol D. Roger`Roger`gol d roger`goldroger
+(One Piece) What kind of fighting style does Mr. 2 Bon Clay use?`Okama kenpo
+(One Piece) Who calls himself the lover of gossip?`Fukurou`fukuro
+(One Piece) Whose laughing style is this :"chapapapapapa"?`Fukurou`fukuro
+(One Piece) Who is the oldest person of the crew?`Brook
+(One Piece) Who did Luffy fight before them joining the crew?`Franky
+(One Piece) How many hours a day did warden Magellan actually control the prisoners?`4`four
+(One Piece) What is Nami's village called?`Cocoyashi village`cocoyashi
+(One Piece) Which Yarukiman Grove was excessively uprooted by Kizaru?`27`grove 27`grove27
+(One Piece) What is robin's mother's name?`Nico Olivia`olivia
+(One Piece) What's the nickname that Sanji always uses for Zorro?`Marimo (mosshead)`marimo`mosshead
+(One Piece) Who is the vice captain(fuku-senchou) of Buggys crew?`Mohji
 (One Punch Man) Who is the main protagonist?`Saitama
 (One Punch Man) What city does Saitama live in?`Z-city`z city`z
 (One Punch Man) What city is the headquarters of the Hero Association in?`A-city`A city`A
@@ -327,7 +396,20 @@ Sakura, Sasuke, Rock Lee, and Kakashi are all characters from which anime?`Narut
 (One Punch Man) What is Genos' hero name?`Demon Cyborg
 (One Punch Man) What are Genos' tears made of?`oil
 (One Punch Man) Where did Saitama work before becoming a hero?`convenience store
-(One Punch Man) What is Saitama also know as?`Caped Baldy
+(One Punch Man) What is Saitama also known as?`Caped Baldy
+(One Punch Man) What is the Japanese name?`Wanpanman
+(One Punch Man) What is Saitama's hero profile number?`03402
+(One Punch Man) Who is the leader of the Dark Matter Thieves?`Boros
+(One Punch Man) Who is also known as the "Human Monster"?`Garou
+(One Punch Man) How old is Metal Bat?`17`seventeen
+(One Punch Man) How old is Saitama?`25`twentyfive
+(One Punch Man) Who was the leader of the seafolk?`Deep Sea King
+(One Punch Man) Who uses a bamboo shoot spear?`Stinger
+(One Punch Man) What is the name of Mumen Rider's bicycle?`Bicycle of Justice`Justice
+(One Punch Man) Who was a Mysterious Being that was created when a man ate too much crab and underwent metamorphosis?`Crablante
+(One Punch Man) Who created the Hero Association?`Agoni
+(One Punch Man) Who is the leader of the Monster Association?`Psykos
+(One Punch Man) What is Dr. Bofoi's hero name?`Metal Knight
 (Ouran High School Host Club) Who is mistaken for a boy in the anime?`Haruhi
 (Pokemon) In the original Japanese version, what is Ash Ketchum's name?`Satoshi
 (Pokemon) Pokemon was created by Stoshi Tajiri in which year?`1996
@@ -350,6 +432,10 @@ Which 2011 magical girl anime features Grief Seeds, witches, a mysterious white 
 (Ranma 1/2) What does Ryouga turn into when he gets doused with cold water?`pig`a pig
 (Ranma 1/2) What is Ranma most afraid of?`cats`cat
 (Rave Master) What's 3713 real name?`Elie
+(Rave Master) Who is the bearer of the Rave Stone?`Plue
+(Rave Master) Who is a known pervert?`Griffon Kato`Griffon
+(Rave Master) What is Haru's last name?`Glory
+(Rave Master) What was Elie's old name?`Resha
 (Rurouni Kenshin) What is the name of the principle of "swords that give life"?`katsujinken
 (Rurouni Kenshin) What is the name of the principle of "swords that kill"?`satsujinken
 What was the other name of the popular anime known as Samurai X?`Rurouni Kenshin

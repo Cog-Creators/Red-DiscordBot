@@ -130,3 +130,5 @@ Which champion's ultimate is named: Voice of Light?`Aurelion Sol`aurelionsol
 Which champion's ultimate is named: Chaaaaaaaarge!!! ?`Kled
 Which champion's ultimate is named: Daisy!?`Ivern
 Which champion's ultimate is named: Hextech Ultimatum?`Camille
+Which champion's ultimate is named: Curse of the Sad Mummy?`Amumu
+Which champion's ultimate is named: Weaver's Wall?`Taliyah
