@@ -277,15 +277,30 @@ class Mod:
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(ban_members=True)
-    async def ban(self, ctx, user: discord.Member, days: int=0, *, reason: str = None):
+    async def ban(self, ctx, user: discord.Member, days: str = None, *, reason: str = None):
         """Bans user and deletes last X days worth of messages.
 
+        If days is not a number, it's treated as the first word of the reason.
         Minimum 0 days, maximum 7. Defaults to 0."""
         author = ctx.message.author
         server = author.server
+
+        if days:
+            if days.isdigit():
+                days = int(days)
+            else:
+                if reason:
+                    reason = days + ' ' + reason
+                else:
+                    reason = days
+                days = 0
+        else:
+            days = 0
+
         if days < 0 or days > 7:
             await self.bot.say("Invalid days. Must be between 0 and 7.")
             return
+
         try:
             self._tmp_banned_cache.append(user)
             await self.bot.ban(user, days)
