@@ -42,7 +42,7 @@ What country is represented by this flag? https://i.imgur.com/R36hcy9.png `Cote 
 What country is represented by this flag? https://i.imgur.com/02a0Xre.png `Croatia
 What country is represented by this flag? https://i.imgur.com/5IRTv2m.png `Cuba
 What country is represented by this flag? https://i.imgur.com/wr0KhwF.png `Cyprus
-What country is represented by this flag? https://i.imgur.com/FQyZE9l.png `Czech Republic
+What country is represented by this flag? https://i.imgur.com/FQyZE9l.png `Czech Republic`Czechia
 What country is represented by this flag? https://i.imgur.com/1tH3blw.png `Denmark
 What country is represented by this flag? https://i.imgur.com/begWgBT.png `Djibouti
 What country is represented by this flag? https://i.imgur.com/XoL54ql.png `Dominica
@@ -136,7 +136,8 @@ What country is represented by this flag? https://i.imgur.com/3H3Lfat.png `Phili
 What country is represented by this flag? https://i.imgur.com/Acc9xZt.png `Poland
 What country is represented by this flag? https://i.imgur.com/3rcX6U2.png `Portugal
 What country is represented by this flag? https://i.imgur.com/njfbYnM.png `Qatar
-What country is represented by this flag? https://i.imgur.com/s3tXQ9E.png `Romania
+What country is represented by this flag? https://i.imgur.com/Kytf2Mm.png `Romania
+What country is represented by this flag? https://i.imgur.com/VZLff6p.png `Chad
 What country is represented by this flag? https://i.imgur.com/OJ3jk8h.png `Russia
 What country is represented by this flag? https://i.imgur.com/THNCPFu.png `Rwanda
 What country is represented by this flag? https://i.imgur.com/duJRErG.png `Saint Kitts and Nevis`Saint Kitts`St Kitts`St Kitts and Nevis
