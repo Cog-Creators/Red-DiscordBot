@@ -695,6 +695,7 @@ class Owner:
             await self.bot.say("Alright then.")
 
     @commands.command(pass_context=True)
+    @commands.cooldown(1, 60, commands.BucketType.user)
     async def contact(self, ctx, *, message : str):
         """Sends message to the owner"""
         if self.bot.settings.owner is None:
@@ -859,6 +860,9 @@ class Owner:
         url, ncommits, branch, commits = result.split("\n", 3)
         if url.endswith(".git"):
             url = url[:-4]
+        if url.startswith("git@"):
+            domain, _, resource = url[4:].partition(':')
+            url = 'https://{}/{}'.format(domain, resource)
         repo_name = url.split("/")[-1]
 
         embed = discord.Embed(title="Updates of " + repo_name,

@@ -373,7 +373,9 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
             await bot.send_message(channel, "That command is not "
                                             "available in DMs.")
         elif isinstance(error, commands.CommandOnCooldown):
-            await bot.send_message(channel, error)
+            await bot.send_message(channel, "This command is on cooldown. "
+                                            "Try again in {:.2f}s"
+                                            "".format(error.retry_after))
         else:
             bot.logger.exception(type(error).__name__, exc_info=error)
 
