@@ -518,6 +518,10 @@ Who has the most lines in the game?`Tahm Kench`tahmkench
 Who says "Savor the misery."?`Tahm Kench`tahmkench
 Who has a skill called "Devour"?`Tahm Kench`tahmkench
 Whose race is "River Demon"?`Tahm Kench`tahmkench
+What is Taliyah's favorite ice cream flavor?`Rocky Road
+How old is Taliyah?`16`sixteen
+Who nicknamed Taliyah "little sparrow"?`Yasuo
+Who gave Yasuo the thread he uses to tie up his hair?`Taliyah
 Who is Talon's rival?`Quinn
 Who is also known as the Blade's Shadow?`Talon
 Who has a skill called "Cutthroat"?`Talon
