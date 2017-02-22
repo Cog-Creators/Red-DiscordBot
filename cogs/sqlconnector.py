@@ -11,9 +11,9 @@ class DBCon:
         self.bot = bot
 # Connect to the database
 connection = pymysql.connect(host='localhost',
-                             user='DATABASEUSER',
-                             password='PASSWORD',
-                             db='DATABASE',
+                             user='devsqlusr',
+                             password='R1v1t3d0n3!',
+                             db='devpress',
                              charset='utf8mb4',
                              cursorclass=pymysql.cursors.DictCursor)
 

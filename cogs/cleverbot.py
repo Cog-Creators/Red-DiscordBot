@@ -1,31 +1,48 @@
-try:
-    import cleverbot as clv
-    # A terrible fix for a broken wrapper
-    clv.Cleverbot.API_URL = "http://www.cleverbot.com/webservicemin?uc=321&"
-except:
-    clv = False
 from discord.ext import commands
 from cogs.utils import checks
 from .utils.dataIO import dataIO
-from __main__ import send_cmd_help, user_allowed
 import os
-import discord
-import asyncio
+import aiohttp
 import re #chem
+
+API = "https://cleverbot.io/1.0"
+API_CREATE = API + "/create"
+API_ASK    = API + "/ask"
+
+
+class CleverbotError(Exception):
+    pass
+
+
+class NoCredentials(CleverbotError):
+    pass
+
+
+class APIError(CleverbotError):
+    pass
+
 
 class Cleverbot():
     """Cleverbot"""
 
     def __init__(self, bot):
         self.bot = bot
-        self.clv = clv.Cleverbot()
         self.settings = dataIO.load_json("data/cleverbot/settings.json")
+        self.instances = {}
 
-    @commands.group(no_pm=True, invoke_without_command=True)
-    async def cleverbot(self, *, message):
+    @commands.group(no_pm=True, invoke_without_command=True, pass_context=True)
+    async def cleverbot(self, ctx, *, message):
         """Talk with cleverbot"""
-        result = await self.get_response(message)
-        await self.bot.say(result)
+        author = ctx.message.author
+        try:
+            result = await self.get_response(author, message)
+        except NoCredentials:
+            await self.bot.say("The owner needs to set the credentials first.\n"
+                               "See: `{}cleverbot apikey`".format(ctx.prefix))
+        except APIError:
+            await self.bot.say("Error contacting the API.")
+        else:
+            await self.bot.say(result)
 
     @cleverbot.command()
     @checks.is_owner()
@@ -38,32 +55,92 @@ class Cleverbot():
             await self.bot.say("I won't reply on mention anymore.")
         dataIO.save_json("data/cleverbot/settings.json", self.settings)
 
-    async def get_response(self, msg):
-        question = self.bot.loop.run_in_executor(None, self.clv.ask, msg)
+    @cleverbot.command()
+    @checks.is_owner()
+    async def apikey(self, user: str, key: str):
+        """Sets credentials to be used with cleverbot.io
+
+        You can get them from https://cleverbot.io/keys
+        Use this command in direct message to keep your
+        credentials secret"""
+        self.settings["user"] = user
+        self.settings["key"] = key
+        dataIO.save_json("data/cleverbot/settings.json", self.settings)
+        await self.bot.say("Credentials set.")
+
+    async def create_instance(self, author):
+        session = aiohttp.ClientSession()
+        payload = self.get_credentials()
+
+        async with session.post(API_CREATE, data=payload) as r:
+            if r.status != 200:
+                raise APIError()
+            data = await r.json()
+        await session.close()
+        if data["status"] == "success":  # because bools are too mainstream
+            self.instances[author.id] = data["nick"]
+            return data["nick"]
+        else:
+            raise APIError()
+
+    async def get_response(self, author, text):
+        session = aiohttp.ClientSession()
+        payload = self.get_credentials()
+        payload["nick"] = self.instances.get(author.id,
+                                             await self.create_instance(author))
+        payload["text"] = text
+        async with session.post(API_ASK, data=payload) as r:
+            if r.status != 200:
+                raise APIError()
+            data = await r.json()
+        await session.close()
+        if data["status"] == "success":  # because bools are too mainstream
+            return data["response"]
+        else:
+            raise APIError()
+
+    def get_credentials(self):
         try:
-            answer = await asyncio.wait_for(question, timeout=10)
-        except asyncio.TimeoutError:
-            answer = "We'll talk later..."
-        return answer
+            return {'user': self.settings["user"],
+                    'key': self.settings["key"]}
+        except KeyError:
+            raise NoCredentials()
 
     async def on_message(self, message):
-        if not self.settings["TOGGLE"] or message.channel.is_private:
+        if not self.settings["TOGGLE"] or message.server is None:
             return
 
-        if not user_allowed(message):
+        if not self.bot.user_allowed(message):
             return
+
+        author = message.author
+        channel = message.channel
 
         if message.author.id != self.bot.user.id:
-            regexp = re.compile(r'\b[mM][aA][rR][vV][iI][nN]\b') #FoxLovesYou
-            if regexp.search(message.content.lower()) is not None: #FoxLovesYou
-                await self.bot.send_typing(message.channel)
-                response = await self.get_response(message.content)
-                await self.bot.send_message(message.channel, response)
+#            regexp = re.compile(r'\b[mM][aA][rR][vV][iI][nN]\b') #FoxLovesYou
+#            if regexp.search(message.content.lower()) is not None: #FoxLovesYou
+            to_strip = "@" + author.server.me.display_name + " "
+            text = message.clean_content
+            if not text.startswith(to_strip):
+                return
+            text = text.replace(to_strip, "", 1)
+            await self.bot.send_typing(channel)
+            try:
+                response = await self.get_response(author, text)
+            except NoCredentials:
+                await self.bot.send_message(channel, "The owner needs to set the credentials first.\n"
+                                                     "See: `[p]cleverbot apikey`")
+            except APIError:
+                await self.bot.send_message(channel, "Error contacting the my Speach Matrix Try again later.")
+            else:
+                await self.bot.send_message(channel, response)
+
 
 def check_folders():
     if not os.path.exists("data/cleverbot"):
         print("Creating data/cleverbot folder...")
         os.makedirs("data/cleverbot")
+
 
 def check_files():
     f = "data/cleverbot/settings.json"
@@ -71,12 +148,8 @@ def check_files():
     if not dataIO.is_valid_json(f):
         dataIO.save_json(f, data)
 
+
 def setup(bot):
-    if clv is False:
-        raise RuntimeError("You're missing the cleverbot library.\n"
-                           "Install it with: 'pip3 install cleverbot' "
-                           "and reload the module.")
     check_folders()
     check_files()
-    n = Cleverbot(bot)
-    bot.add_cog(n)
+    bot.add_cog(Cleverbot(bot))
