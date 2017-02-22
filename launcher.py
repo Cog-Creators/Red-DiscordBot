@@ -26,7 +26,7 @@ REQS_NO_AUDIO_TXT = "requirements_no_audio.txt"
 FFMPEG_BUILDS_URL = "https://ffmpeg.zeranoe.com/builds/"
 
 INTRO = ("==========================\n"
-         "Red Discord Bot - Launcher\n"
+         "MARViN Discord Bot - Launcher\n"
          "==========================\n")
 
 IS_WINDOWS = os.name == "nt"
@@ -43,15 +43,15 @@ FFMPEG_FILES = {
 
 
 def parse_cli_arguments():
-    parser = argparse.ArgumentParser(description="Red - Discord Bot's launcher")
+    parser = argparse.ArgumentParser(description="MARViN - DBot's launcher")
     parser.add_argument("--start", "-s",
-                        help="Starts Red",
+                        help="Starts MARViN",
                         action="store_true")
     parser.add_argument("--auto-restart",
-                        help="Autorestarts Red in case of issues",
+                        help="Autorestarts MARViN in case of issues",
                         action="store_true")
-    parser.add_argument("--update-red",
-                        help="Updates Red (git)",
+    parser.add_argument("--update-marvin",
+                        help="Updates MARViN (git)",
                         action="store_true")
     parser.add_argument("--update-reqs",
                         help="Updates requirements (w/ audio)",
@@ -117,7 +117,7 @@ def update_pip():
         print("\nAn error occurred and pip might not have been updated.")
 
 
-def update_red():
+def update_marvin():
     try:
         code = subprocess.call(("git", "pull", "--ff-only"))
     except FileNotFoundError:
@@ -125,14 +125,14 @@ def update_red():
               "the PATH environment variable like requested in the guide.")
         return
     if code == 0:
-        print("\nRed has been updated")
+        print("\nMarvin has been updated")
     else:
-        print("\nRed could not update properly. If this is caused by edits "
+        print("\nMarvin could not update properly. If this is caused by edits "
               "you have made to the code you can try the repair option from "
               "the Maintenance submenu")
 
 
-def reset_red(reqs=False, data=False, cogs=False, git_reset=False):
+def reset_marvin(reqs=False, data=False, cogs=False, git_reset=False):
     if reqs:
         try:
             shutil.rmtree(REQS_DIR, onerror=remove_readonly)
@@ -165,7 +165,7 @@ def reset_red(reqs=False, data=False, cogs=False, git_reset=False):
     if git_reset:
         code = subprocess.call(("git", "reset", "--hard"))
         if code == 0:
-            print("Red has been restored to the last local commit.")
+            print("MARViN has been restored to the last local commit.")
         else:
             print("The repair has failed.")
 
@@ -281,16 +281,16 @@ def update_menu():
             status = "Basic + audio requirements installed"
         print("Status: " + status + "\n")
         print("Update:\n")
-        print("Red:")
-        print("1. Update Red + requirements (recommended)")
-        print("2. Update Red")
+        print("MARViN:")
+        print("1. Update MARViN + requirements (recommended)")
+        print("2. Update MARViN")
         print("3. Update requirements")
         print("\nOthers:")
         print("4. Update pip (might require admin privileges)")
         print("\n0. Go back")
         choice = user_choice()
         if choice == "1":
-            update_red()
+            update_marvin()
             print("Updating requirements...")
             reqs = verify_requirements()
             if reqs is not None:
@@ -299,7 +299,7 @@ def update_menu():
                 print("The requirements haven't been installed yet.")
             wait()
         elif choice == "2":
-            update_red()
+            update_marvin()
             wait()
         elif choice == "3":
             reqs = verify_requirements()
@@ -321,7 +321,7 @@ def maintenance_menu():
     while True:
         print(INTRO)
         print("Maintenance:\n")
-        print("1. Repair Red (discards code changes, keeps data intact)")
+        print("1. Repair MARViN (discards code changes, keeps data intact)")
         print("2. Wipe 'data' folder (all settings, cogs' data...)")
         print("3. Wipe 'lib' folder (all local requirements / local installed"
               " python packages)")
@@ -332,43 +332,43 @@ def maintenance_menu():
             print("Any code modification you have made will be lost. Data/"
                   "non-default cogs will be left intact. Are you sure?")
             if user_pick_yes_no():
-                reset_red(git_reset=True)
+                reset_marvin(git_reset=True)
                 wait()
         elif choice == "2":
             print("Are you sure? This will wipe the 'data' folder, which "
                   "contains all your settings and cogs' data.\nThe 'cogs' "
                   "folder, however, will be left intact.")
             if user_pick_yes_no():
-                reset_red(data=True)
+                reset_marvin(data=True)
                 wait()
         elif choice == "3":
-            reset_red(reqs=True)
+            reset_marvin(reqs=True)
             wait()
         elif choice == "4":
-            print("Are you sure? This will wipe ALL your Red's installation "
+            print("Are you sure? This will wipe ALL your MARViN's installation "
                   "data.\nYou'll lose all your settings, cogs and any "
                   "modification you have made.\nThere is no going back.")
             if user_pick_yes_no():
-                reset_red(reqs=True, data=True, cogs=True, git_reset=True)
+                reset_marvin(reqs=True, data=True, cogs=True, git_reset=True)
                 wait()
         elif choice == "0":
             break
         clear_screen()
 
 
-def run_red(autorestart):
+def run_marvin(autorestart):
     interpreter = sys.executable
 
     if interpreter is None: # This should never happen
         raise RuntimeError("Couldn't find Python's interpreter")
 
     if verify_requirements() is None:
-        print("You don't have the requirements to start Red. "
+        print("You don't have the requirements to start MARViN. "
               "Install them from the launcher.")
         if not INTERACTIVE_MODE:
             exit(1)
 
-    cmd = (interpreter, "red.py")
+    cmd = (interpreter, "marvin.py")
 
     while True:
         try:
@@ -380,13 +380,13 @@ def run_red(autorestart):
             if code == 0:
                 break
             elif code == 26:
-                print("Restarting Red...")
+                print("Restarting MARViN...")
                 continue
             else:
                 if not autorestart:
                     break
 
-    print("Red has been terminated. Exit code: %d" % code)
+    print("MARViN has been terminated. Exit code: %d" % code)
 
     if INTERACTIVE_MODE:
         wait()
@@ -443,15 +443,15 @@ def calculate_md5(filename):
 
 
 def create_fast_start_scripts():
-    """Creates scripts for fast boot of Red without going
+    """Creates scripts for fast boot of MARViN without going
     through the launcher"""
     interpreter = sys.executable
     if not interpreter:
         return
 
     call = "\"{}\" launcher.py".format(interpreter)
-    start_red = "{} --start".format(call)
-    start_red_autorestart = "{} --start --auto-restart".format(call)
+    start_marvin = "{} --start".format(call)
+    start_marvin_autorestart = "{} --start --auto-restart".format(call)
     modified = False
 
     if IS_WINDOWS:
@@ -466,12 +466,12 @@ def create_fast_start_scripts():
         else:
             ext = ".command"
 
-    start_red             = ccd + start_red             + pause
-    start_red_autorestart = ccd + start_red_autorestart + pause
+    start_marvin             = ccd + start_marvin             + pause
+    start_marvin_autorestart = ccd + start_marvin_autorestart + pause
 
     files = {
-        "start_red"             + ext : start_red,
-        "start_red_autorestart" + ext : start_red_autorestart
+        "start_marvin"             + ext : start_marvin,
+        "start_marvin_autorestart" + ext : start_marvin_autorestart
     }
 
     if not IS_WINDOWS:
@@ -495,7 +495,7 @@ def main():
     has_git = is_git_installed()
     is_git_installation = os.path.isdir(".git")
     if IS_WINDOWS:
-        os.system("TITLE Red Discord Bot - Launcher")
+        os.system("TITLE MARViN Discord Bot - Launcher")
     clear_screen()
 
     try:
@@ -507,29 +507,29 @@ def main():
         print(INTRO)
 
         if not is_git_installation:
-            print("WARNING: It doesnt' look like Red has been "
+            print("WARNING: It doesnt' look like MARViN has been "
                   "installed with git.\nThis means that you won't "
                   "be able to update and some features won't be working.\n"
                   "A reinstallation is recommended. Follow the guide "
                   "properly this time:\n"
-                  "https://twentysix26.github.io/Red-Docs/\n")
+                  "https://controllernetwork.com/kb/MARViN/\n")
 
         if not has_git:
             print("WARNING: Git not found. This means that it's either not "
                   "installed or not in the PATH environment variable like "
                   "requested in the guide.\n")
 
-        print("1. Run Red /w autorestart in case of issues")
-        print("2. Run Red")
+        print("1. Run MARViN /w autorestart in case of issues")
+        print("2. Run MARViN")
         print("3. Update")
         print("4. Install requirements")
         print("5. Maintenance (repair, reset...)")
         print("\n0. Quit")
         choice = user_choice()
         if choice == "1":
-            run_red(autorestart=True)
+            run_marvin(autorestart=True)
         elif choice == "2":
-            run_red(autorestart=False)
+            run_marvin(autorestart=False)
         elif choice == "3":
             update_menu()
         elif choice == "4":
@@ -548,20 +548,20 @@ if __name__ == '__main__':
     # Sets current directory to the script's
     os.chdir(dirname)
     if not PYTHON_OK:
-        print("Red needs Python 3.5 or superior. Install the required "
+        print("MARViN needs Python 3.5 or superior. Install the required "
               "version.\nPress enter to continue.")
         if INTERACTIVE_MODE:
             wait()
         exit(1)
     if pip is None:
-        print("Red cannot work without the pip module. Please make sure to "
+        print("MARViN cannot work without the pip module. Please make sure to "
               "install Python without unchecking any option during the setup")
         wait()
         exit(1)
     if args.repair:
-        reset_red(git_reset=True)
-    if args.update_red:
-        update_red()
+        reset_marvin(git_reset=True)
+    if args.update_marvin:
+        update_marvin()
     if args.update_reqs:
         install_reqs(audio=True)
     elif args.update_reqs_no_audio:
@@ -569,5 +569,5 @@ if __name__ == '__main__':
     if INTERACTIVE_MODE:
         main()
     elif args.start:
-        print("Starting Red...")
-        run_red(autorestart=args.auto_restart)
+        print("Starting MARViN...")
+        run_marvin(autorestart=args.auto_restart)

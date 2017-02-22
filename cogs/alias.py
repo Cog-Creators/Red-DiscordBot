@@ -26,7 +26,7 @@ class Alias:
     async def _add_alias(self, ctx, command, *, to_execute):
         """Add an alias for a command
 
-           Example: !alias add test flip @Twentysix"""
+           Example: !alias add test flip @MARViN"""
         server = ctx.message.server
         command = command.lower()
         if len(command.split(" ")) != 1:

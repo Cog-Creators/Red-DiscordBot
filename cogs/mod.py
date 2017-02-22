@@ -154,10 +154,10 @@ class Mod:
 
     @modset.command(pass_context=True, no_pm=True)
     async def deletedelay(self, ctx, time: int=None):
-        """Sets the delay until the bot removes the command message.
+        """Sets the delay until I removes the command message.
             Must be between -1 and 60.
 
-        A delay of -1 means the bot will not remove the message."""
+        A delay of -1 means I will not remove the message."""
         server = ctx.message.server
         if time is not None:
             time = min(max(time, -1), 60)  # Enforces the time limits
@@ -497,8 +497,8 @@ class Mod:
         """Deletes last X messages from specified user.
 
         Examples:
-        cleanup user @\u200bTwentysix 2
-        cleanup user Red 6"""
+        cleanup user @\u200bMARViN 2
+        cleanup user MARViN 6"""
 
         channel = ctx.message.channel
         author = ctx.message.author
@@ -619,7 +619,7 @@ class Mod:
 
     @cleanup.command(pass_context=True, no_pm=True, name='bot')
     async def cleanup_bot(self, ctx, number: int):
-        """Cleans up command messages and messages from the bot"""
+        """Cleans up command messages and chat messages from me."""
 
         channel = ctx.message.channel
         author = ctx.message.author
@@ -679,7 +679,7 @@ class Mod:
 
     @cleanup.command(pass_context=True, name='self')
     async def cleanup_self(self, ctx, number: int, match_pattern: str = None):
-        """Cleans up messages owned by the bot.
+        """Cleans up messages owned by me.
 
         By default, all messages are cleaned. If a third argument is specified,
         it is used for pattern matching: If it begins with r( and ends with ),
@@ -745,7 +745,7 @@ class Mod:
             channel_name = str(channel)
 
         logger.info("{}({}) deleted {} messages "
-                    "sent by the bot in {}"
+                    "sent by me in {}"
                     "".format(author.name, author.id, len(to_delete),
                               channel_name))
 
@@ -793,7 +793,7 @@ class Mod:
     @commands.group(pass_context=True)
     @checks.is_owner()
     async def blacklist(self, ctx):
-        """Bans user from using the bot"""
+        """Bans user from using me"""
         if ctx.invoked_subcommand is None:
             await send_cmd_help(ctx)
 
@@ -827,7 +827,7 @@ class Mod:
     @commands.group(pass_context=True)
     @checks.is_owner()
     async def whitelist(self, ctx):
-        """Users who will be able to use the bot"""
+        """Users who will be able to use me"""
         if ctx.invoked_subcommand is None:
             await send_cmd_help(ctx)
 
@@ -1034,7 +1034,7 @@ class Mod:
         Colour must be in hexadecimal format.
         \"http://www.w3schools.com/colors/colors_picker.asp\"
         Examples:
-        !editrole colour \"The Transistor\" #ff0000
+        !editrole colour \"The Controllers\" #ff0000
         !editrole colour Test #ff9900"""
         author = ctx.message.author
         try:
@@ -1055,7 +1055,7 @@ class Mod:
 
         Use double quotes if the role or the name contain spaces.
         Examples:
-        !editrole name \"The Transistor\" Test"""
+        !editrole name \"The Controllers\" Test"""
         if name == "":
             await self.bot.say("Name cannot be empty.")
             return
@@ -1229,12 +1229,12 @@ class Mod:
         if server.id not in self.settings:
             return False
         if self.settings[server.id]["delete_repeats"]:
-            if not message.content:
-                return False
             self.cache[author].append(message)
             msgs = self.cache[author]
             if len(msgs) == 3 and \
                     msgs[0].content == msgs[1].content == msgs[2].content:
+                if any([m.attachments for m in msgs]):
+                    return False
                 try:
                     await self.bot.delete_message(message)
                     return True
@@ -1384,7 +1384,7 @@ def setup(bot):
     global logger
     check_folders()
     check_files()
-    logger = logging.getLogger("red.mod")
+    logger = logging.getLogger("marvin.mod")
     # Prevents the logger from being loaded again in case of module reload
     if logger.level == 0:
         logger.setLevel(logging.INFO)

@@ -1,0 +1,27 @@
+[Unit]
+Description=MARViN-DiscordBot %i
+After=multi-user.target
+
+[Service]
+Type=idle
+User=marvin
+Group=marvin
+WorkingDirectory=/srv/marvin/%i/
+ExecStart=/usr/bin/python3.5 /srv/marvin/%i/marvin.py --no-prompt
+
+# If set to "on-failure" MARViN will only restart when it crashed or froze, but not when [p]shutdown is used. (froze untested)
+# If set to "always" MARViN will always attempt to restart regardless of how it was turned off.
+Restart=always
+
+# Limit waiting for MARViN to stop to 30 seconds to prevent terminal from freezing up.
+TimeoutStopSec="30"
+
+# Send SIGINT for graceful stop
+KillSignal=SIGINT
+KillMode=mixed
+
+# Discord hearbeat is about every 40 seconds. Using 90 to be safe from false restarts.
+WatchdogSec=90
+
+[Install]
+WantedBy=multi-user.target

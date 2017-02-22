@@ -15,7 +15,7 @@ import glob
 import os
 import aiohttp
 
-log = logging.getLogger("red.owner")
+log = logging.getLogger("marvin.owner")
 
 
 class CogNotFoundError(Exception):
@@ -45,7 +45,7 @@ class Owner:
     def __init__(self, bot):
         self.bot = bot
         self.setowner_lock = False
-        self.file_path = "data/red/disabled_commands.json"
+        self.file_path = "data/marvin/disabled_commands.json"
         self.disabled_commands = dataIO.load_json(self.file_path)
         self.session = aiohttp.ClientSession(loop=self.bot.loop)
 
@@ -258,7 +258,7 @@ class Owner:
 
     @commands.group(name="set", pass_context=True)
     async def _set(self, ctx):
-        """Changes Red's global settings."""
+        """Changes MARViN's global settings."""
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
             return
@@ -267,7 +267,7 @@ class Owner:
     async def owner(self, ctx):
         """Sets owner"""
         if self.bot.settings.no_prompt is True:
-            await self.bot.say("Console interaction is disabled. Start Red "
+            await self.bot.say("Console interaction is disabled. Start MARViN "
                                "without the `--no-prompt` flag to use this "
                                "command.")
             return
@@ -312,7 +312,7 @@ class Owner:
     @_set.command(pass_context=True)
     @checks.is_owner()
     async def prefix(self, ctx, *prefixes):
-        """Sets Red's global prefixes
+        """Sets MARViN's global prefixes
 
         Accepts multiple prefixes separated by a space. Enclose in double
         quotes if a prefix contains spaces.
@@ -332,7 +332,7 @@ class Owner:
     @_set.command(pass_context=True, no_pm=True)
     @checks.serverowner_or_permissions(administrator=True)
     async def serverprefix(self, ctx, *prefixes):
-        """Sets Red's prefixes for this server
+        """Sets MARViN's prefixes for this server
 
         Accepts multiple prefixes separated by a space. Enclose in double
         quotes if a prefix contains spaces.
@@ -365,7 +365,7 @@ class Owner:
     @_set.command(pass_context=True)
     @checks.is_owner()
     async def name(self, ctx, *, name):
-        """Sets Red's name"""
+        """Sets MARViN's name"""
         name = name.strip()
         if name != "":
             try:
@@ -385,7 +385,7 @@ class Owner:
     @_set.command(pass_context=True, no_pm=True)
     @checks.is_owner()
     async def nickname(self, ctx, *, nickname=""):
-        """Sets Red's nickname
+        """Sets MARViN's nickname
 
         Leaving this empty will remove it."""
         nickname = nickname.strip()
@@ -401,7 +401,7 @@ class Owner:
     @_set.command(pass_context=True)
     @checks.is_owner()
     async def game(self, ctx, *, game=None):
-        """Sets Red's playing status
+        """Sets MARViN's playing status
 
         Leaving this empty will clear it."""
 
@@ -422,7 +422,7 @@ class Owner:
     @_set.command(pass_context=True)
     @checks.is_owner()
     async def status(self, ctx, *, status=None):
-        """Sets Red's status
+        """Sets MARViN's status
 
         Statuses:
             online
@@ -457,7 +457,7 @@ class Owner:
     @_set.command(pass_context=True)
     @checks.is_owner()
     async def stream(self, ctx, streamer=None, *, stream_title=None):
-        """Sets Red's streaming status
+        """Sets MARViN's streaming status
 
         Leaving both streamer and stream_title empty will clear it."""
 
@@ -483,7 +483,7 @@ class Owner:
     @_set.command()
     @checks.is_owner()
     async def avatar(self, url):
-        """Sets Red's avatar"""
+        """Sets MARViN's avatar"""
         try:
             async with self.session.get(url) as r:
                 data = await r.read()
@@ -499,7 +499,7 @@ class Owner:
     @_set.command(name="token")
     @checks.is_owner()
     async def _token(self, token):
-        """Sets Red's login token"""
+        """Sets MARViN's login token"""
         if len(token) < 50:
             await self.bot.say("Invalid token.")
         else:
@@ -511,7 +511,7 @@ class Owner:
     @commands.command()
     @checks.is_owner()
     async def shutdown(self, silently : bool=False):
-        """Shuts down Red"""
+        """Shuts down MARViN"""
         wave = "\N{WAVING HAND SIGN}"
         skin = "\N{EMOJI MODIFIER FITZPATRICK TYPE-3}"
         try: # We don't want missing perms to stop our shutdown
@@ -524,9 +524,9 @@ class Owner:
     @commands.command()
     @checks.is_owner()
     async def restart(self, silently : bool=False):
-        """Attempts to restart Red
+        """Attempts to restart MARViN
 
-        Makes Red quit with exit code 26
+        Makes MARViN quit with exit code 26
         The restart is not guaranteed: it must be dealt
         with by the process manager in use"""
         try:
@@ -615,8 +615,8 @@ class Owner:
             # Check to ensure they're using updated discord.py
             msg = ("I have a **BOT** tag, so I must be invited with an OAuth2"
                    " link:\nFor more information: "
-                   "https://twentysix26.github.io/"
-                   "Red-Docs/red_guide_bot_accounts/#bot-invites")
+                   "https://controllernetwork.com/kb/"
+                   "MARViN-Docs/marvin_guide_bot_accounts/#bot-invites")
             await self.bot.say(msg)
             if hasattr(self.bot, 'oauth_url'):
                 await self.bot.whisper("Here's my OAUTH2 link:\n{}".format(
@@ -725,10 +725,10 @@ class Owner:
 
     @commands.command()
     async def info(self):
-        """Shows info about Red"""
-        author_repo = "https://github.com/Twentysix26"
-        red_repo = author_repo + "/Red-DiscordBot"
-        server_url = "https://discord.gg/red"
+        """Shows info about MARViN"""
+        author_repo = "https://github.com/Controller-Network"
+        marvin_repo = author_repo + "/MARViN-DBot"
+        server_url = "https://discord.gg/MA2BrsY"
         dpy_repo = "https://github.com/Rapptz/discord.py"
         python_url = "https://www.python.org/"
         since = datetime.datetime(2016, 1, 2, 0, 0)
@@ -750,19 +750,19 @@ class Owner:
             owner = "Unknown"
 
         about = (
-            "This is an instance of [Red, an open source Discord bot]({}) "
-            "created by [Twentysix]({}) and improved by many.\n\n"
-            "Red is backed by a passionate community who contributes and "
+            "This is an instance of [MARViN, an open source Discord bot]({}) "
+            "created by [ControllerNetwork]({}) and improved by many.\n\n"
+            "MARViN is backed by a passionate community who contributes and "
             "creates content for everyone to enjoy. [Join us today]({}) "
             "and help us improve!\n\n"
-            "".format(red_repo, author_repo, server_url))
+            "".format(marvin_repo, author_repo, server_url))
 
         embed = discord.Embed(colour=discord.Colour.red())
         embed.add_field(name="Instance owned by", value=str(owner))
         embed.add_field(name="Python", value=py_version)
         embed.add_field(name="discord.py", value=dpy_version)
-        embed.add_field(name="About Red", value=about, inline=False)
-        embed.set_footer(text="Bringing joy since 02 Jan 2016 (over "
+        embed.add_field(name="About MARViN", value=about, inline=False)
+        embed.set_footer(text="Bringing joy since 01 Jan 2017 (over "
                          "{} days ago!)".format(days_since))
 
         try:
@@ -773,7 +773,7 @@ class Owner:
 
     @commands.command()
     async def uptime(self):
-        """Shows Red's uptime"""
+        """Shows MARViN's uptime"""
         since = self.bot.uptime.strftime("%Y-%m-%d %H:%M:%S")
         passed = self.get_bot_uptime()
         await self.bot.say("Been up for: **{}** (since {} UTC)"
@@ -781,7 +781,7 @@ class Owner:
 
     @commands.command()
     async def version(self):
-        """Shows Red's current version"""
+        """Shows MARViN's current version"""
         response = self.bot.loop.run_in_executor(None, self._get_version)
         result = await asyncio.wait_for(response, timeout=10)
         try:
@@ -845,7 +845,7 @@ class Owner:
 
     def _get_version(self):
         if not os.path.isdir(".git"):
-            msg = "This instance of Red hasn't been installed with git."
+            msg = "This instance of MARViN hasn't been installed with git."
             e = discord.Embed(title=msg,
                               colour=discord.Colour.red())
             return e
@@ -877,7 +877,6 @@ class Owner:
             commit_url = url + "/commit/" + chash
             content = "[{}]({}) - {} ".format(chash[:6], commit_url, commit)
             embed.add_field(name=when, value=content, inline=False)
-
         embed.set_footer(text="Total commits: " + ncommits)
 
         return embed
@@ -904,9 +903,9 @@ class Owner:
 
 
 def check_files():
-    if not os.path.isfile("data/red/disabled_commands.json"):
+    if not os.path.isfile("data/marvin/disabled_commands.json"):
         print("Creating empty disabled_commands.json...")
-        dataIO.save_json("data/red/disabled_commands.json", [])
+        dataIO.save_json("data/marvin/disabled_commands.json", [])
 
 
 def setup(bot):

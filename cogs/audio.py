@@ -6,7 +6,6 @@ from random import shuffle, choice
 from cogs.utils.dataIO import dataIO
 from cogs.utils import checks
 from cogs.utils.chat_formatting import pagify
-from urllib.parse import urlparse
 from __main__ import send_cmd_help, settings
 from json import JSONDecodeError
 import re
@@ -19,10 +18,10 @@ import time
 import inspect
 import subprocess
 
-__author__ = "tekulvw"
-__version__ = "0.1.1"
+__author__ = "ControllerNetwork"
+__version__ = "0.0.1"
 
-log = logging.getLogger("red.audio")
+log = logging.getLogger("marvin.audio")
 
 try:
     import youtube_dl
@@ -642,7 +641,7 @@ class Audio:
         except asyncio.futures.TimeoutError as e:
             log.exception(e)
             self.connect_timers[server.id] = time.time() + 300
-            raise ConnectTimeout("We timed out connecting to a voice channel,"
+            raise ConnectTimeout("I have timed out connecting to a voice channel,"
                                  " please try again in 10 minutes.")
 
     def _list_local_playlists(self):
@@ -733,12 +732,6 @@ class Audio:
         yt_link = re.compile(
             r'^(https?\:\/\/)?(www\.|m\.)?(youtube\.com|youtu\.?be)\/.+$')
         if yt_link.match(url):
-            return True
-        return False
-
-    def _match_any_url(self, url):
-        url = urlparse(url)
-        if url.scheme and url.netloc and url.path:
             return True
         return False
 
@@ -1362,9 +1355,7 @@ class Audio:
             await self.bot.say("I'm already downloading a file!")
             return
 
-        url = url.strip("<>")
-
-        if self._match_any_url(url):
+        if "." in url:
             if not self._valid_playable_url(url):
                 await self.bot.say("That's not a valid URL.")
                 return
@@ -1628,9 +1619,7 @@ class Audio:
                                     " queue to modify. This should never"
                                     " happen.")
 
-        url = url.strip("<>")
-
-        if self._match_any_url(url):
+        if "." in url:
             if not self._valid_playable_url(url):
                 await self.bot.say("That's not a valid URL.")
                 return
@@ -1828,7 +1817,7 @@ class Audio:
 
     @commands.command(pass_context=True, no_pm=True)
     async def sing(self, ctx):
-        """Makes Red sing one of her songs"""
+        """Makes MARViN sing one of her songs"""
         ids = ("zGTkAVsrfg8", "cGMWL8cOeAU", "vFrjMq4aL-g", "WROI5WYBU_A",
                "41tIUr_ex3g", "f9O2Rjn1azc")
         url = "https://www.youtube.com/watch?v={}".format(choice(ids))
@@ -2213,7 +2202,7 @@ def setup(bot):
         raise RuntimeError(
           "{}.\nConsult the guide for your operating system "
           "and do ALL the steps in order.\n"
-          "https://twentysix26.github.io/Red-Docs/\n"
+          "https://ControllerNetwork.com/MARViN/\n"
           "".format(msg))
 
     n = Audio(bot, player=player)  # Praise 26

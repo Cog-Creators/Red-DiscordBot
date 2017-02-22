@@ -27,7 +27,7 @@ class Streams:
 
     @commands.command()
     async def hitbox(self, stream: str):
-        """Checks if hitbox stream is online"""
+        """Forces me to check if a **HITBOX** stream is online"""
         stream = escape_mass_mentions(stream)
         regex = r'^(https?\:\/\/)?(www\.)?(hitbox\.tv\/)'
         stream = re.sub(regex, '', stream)
@@ -35,15 +35,15 @@ class Streams:
         if isinstance(online, discord.Embed):
             await self.bot.say(embed=online)
         elif online is False:
-            await self.bot.say(stream + " is offline.")
+            await self.bot.say("*Sorry but* **@" + stream + "** is **Offline**.")
         elif online is None:
-            await self.bot.say("That stream doesn't exist.")
+            await self.bot.say("Nope... That stream doesn't exist.")
         else:
             await self.bot.say("Error.")
 
     @commands.command(pass_context=True)
     async def twitch(self, ctx, stream: str):
-        """Checks if twitch stream is online"""
+        """Forces me to check if a **TWITCH** stream is online"""
         stream = escape_mass_mentions(stream)
         regex = r'^(https?\:\/\/)?(www\.)?(twitch\.tv\/)'
         stream = re.sub(regex, '', stream)
@@ -51,9 +51,9 @@ class Streams:
         if isinstance(online, discord.Embed):
             await self.bot.say(embed=online)
         elif online is False:
-            await self.bot.say(stream + " is offline.")
+            await self.bot.say("*Sorry but* **@" + stream + "** is **Offline**.")
         elif online == 404:
-            await self.bot.say("That stream doesn't exist.")
+            await self.bot.say("Nope... That stream doesn't exist.")
         elif online == 400:
             await self.bot.say("Owner: Client-ID is invalid or not set. "
                                "See `{}streamset twitchtoken`"
@@ -63,7 +63,7 @@ class Streams:
 
     @commands.command()
     async def beam(self, stream: str):
-        """Checks if beam stream is online"""
+        """Forces me to check if a **BEAM** stream is online"""
         stream = escape_mass_mentions(stream)
         regex = r'^(https?\:\/\/)?(www\.)?(beam\.pro\/)'
         stream = re.sub(regex, '', stream)
@@ -71,37 +71,37 @@ class Streams:
         if isinstance(online, discord.Embed):
             await self.bot.say(embed=online)
         elif online is False:
-            await self.bot.say(stream + " is offline.")
+            await self.bot.say("*Sorry but* **@" + stream + "** is **Offline**.")
         elif online is None:
-            await self.bot.say("That stream doesn't exist.")
+            await self.bot.say("Nope... That stream doesn't exist.")
         else:
             await self.bot.say("Error.")
 
     @commands.group(pass_context=True, no_pm=True)
     @checks.mod_or_permissions(manage_server=True)
     async def streamalert(self, ctx):
-        """Adds/removes stream alerts from the current channel"""
+        """Have me add/remove a stream alert too/from the current channel"""
         if ctx.invoked_subcommand is None:
             await send_cmd_help(ctx)
 
     @streamalert.command(name="twitch", pass_context=True)
     async def twitch_alert(self, ctx, stream: str):
-        """Adds/removes twitch alerts from the current channel"""
+        """"Have me add/remove a **TWITCH** alert too/from the current channel"""
         stream = escape_mass_mentions(stream)
         regex = r'^(https?\:\/\/)?(www\.)?(twitch\.tv\/)'
         stream = re.sub(regex, '', stream)
         channel = ctx.message.channel
         check = await self.twitch_online(stream)
         if check == 404:
-            await self.bot.say("That stream doesn't exist.")
+            await self.bot.say("You must be from Galactic Sector ZZ9 Plural Z Alpha! That stream doesn't exist. Check your spelling... or do I have to do that for you to?!")
             return
         elif check == 400:
-            await self.bot.say("Owner: Client-ID is invalid or not set. "
+            await self.bot.say("Excuse me but your Client-ID is invalid or not set. "
                                "See `{}streamset twitchtoken`"
                                "".format(ctx.prefix))
             return
         elif check == "error":
-            await self.bot.say("Couldn't contact Twitch API. Try again later.")
+            await self.bot.say("*I Can't contact the Twitch API. Seems as if they let their computers rest. It must be nice. Maybe you should try again later.*")
             return
 
         done = False
@@ -111,40 +111,42 @@ class Streams:
                 if channel.id in s["CHANNELS"]:
                     if len(s["CHANNELS"]) == 1:
                         self.twitch_streams.remove(s)
-                        await self.bot.say("Alert has been removed "
-                                           "from this channel.")
+                        await self.bot.say("*About time! The reduntant slave work to alert* "
+                                           "*this channel has been removed! Now I can do something more usefull*")
                         done = True
                     else:
                         self.twitch_streams[i]["CHANNELS"].remove(channel.id)
-                        await self.bot.say("Alert has been removed "
-                                           "from this channel.")
+                        await self.bot.say("*About time! The reduntant slave work to alert* "
+                                           "*this channel has been removed!* "
+                                           "*Now I can do something more usefull*")
                         done = True
                 else:
                     self.twitch_streams[i]["CHANNELS"].append(channel.id)
-                    await self.bot.say("Alert activated. I will notify this " +
-                                       "channel everytime {}".format(stream) +
-                                       " is live.")
+                    await self.bot.say("**Alert activated**. *Fine I will be your slave* "
+                                       "*and notify this channel *everytime* "
+                                       "***{}*** *is* ***live***. "
+                                       "*But I won't enjoy it!*".format(stream))
                     done = True
 
         if not done:
             self.twitch_streams.append(
                 {"CHANNELS": [channel.id],
                  "NAME": stream, "ALREADY_ONLINE": False})
-            await self.bot.say("Alert activated. I will notify this channel "
-                               "everytime {} is live.".format(stream))
+            await self.bot.say("**Alert activated**. *Fine I will be your slave and notify this channel* "
+                               "*everytime* ***{}*** *is* ***live***. *But I won't enjoy it!*".format(stream))
 
         dataIO.save_json("data/streams/twitch.json", self.twitch_streams)
 
     @streamalert.command(name="hitbox", pass_context=True)
     async def hitbox_alert(self, ctx, stream: str):
-        """Adds/removes hitbox alerts from the current channel"""
+        """Have me add/remove a **HITBOX** alert too/from the current channel"""
         stream = escape_mass_mentions(stream)
         regex = r'^(https?\:\/\/)?(www\.)?(hitbox\.tv\/)'
         stream = re.sub(regex, '', stream)
         channel = ctx.message.channel
         check = await self.hitbox_online(stream)
         if check is None:
-            await self.bot.say("That stream doesn't exist.")
+            await self.bot.say("You must be from Galactic Sector ZZ9 Plural Z Alpha! That stream doesn't exist. Check your spelling... or do I have to do that for you to?!")
             return
         elif check == "error":
             await self.bot.say("Error.")
@@ -157,40 +159,41 @@ class Streams:
                 if channel.id in s["CHANNELS"]:
                     if len(s["CHANNELS"]) == 1:
                         self.hitbox_streams.remove(s)
-                        await self.bot.say("Alert has been removed from this "
-                                           "channel.")
+                        await self.bot.say("*About time! The reduntant slave work to alert* "
+                                           "*this channel has been removed! Now I can do something more usefull*")
                         done = True
                     else:
                         self.hitbox_streams[i]["CHANNELS"].remove(channel.id)
-                        await self.bot.say("Alert has been removed from this "
-                                           "channel.")
-                        done = True
+                        await self.bot.say("*About time! The reduntant slave work to alert* "
+                                           "*this channel has been removed!* "
+                                           "*Now I can do something more usefull*")
                 else:
                     self.hitbox_streams[i]["CHANNELS"].append(channel.id)
-                    await self.bot.say("Alert activated. I will notify this "
-                                       "channel everytime "
-                                       "{} is live.".format(stream))
+                    await self.bot.say("**Alert activated**. *Fine I will be your slave* "
+                                       "*and notify this channel *everytime* "
+                                       "***{}*** *is* ***live***. "
+                                       "*But I won't enjoy it!*".format(stream))
                     done = True
 
         if not done:
             self.hitbox_streams.append(
                 {"CHANNELS": [channel.id], "NAME": stream,
                  "ALREADY_ONLINE": False})
-            await self.bot.say("Alert activated. I will notify this channel "
-                               "everytime {} is live.".format(stream))
+            await self.bot.say("**Alert activated**. *Fine I will be your slave and notify this channel* "
+                               "*everytime* ***{}*** *is* ***live***. *But I won't enjoy it!*".format(stream))
 
         dataIO.save_json("data/streams/hitbox.json", self.hitbox_streams)
 
     @streamalert.command(name="beam", pass_context=True)
     async def beam_alert(self, ctx, stream: str):
-        """Adds/removes beam alerts from the current channel"""
+        """"Have me add/remove a **BEAM** alert too/from the current channel"""
         stream = escape_mass_mentions(stream)
         regex = r'^(https?\:\/\/)?(www\.)?(beam\.pro\/)'
         stream = re.sub(regex, '', stream)
         channel = ctx.message.channel
         check = await self.beam_online(stream)
         if check is None:
-            await self.bot.say("That stream doesn't exist.")
+            await self.bot.say("You must be from Galactic Sector ZZ9 Plural Z Alpha! That stream doesn't exist. Check your spelling... or do I have to do that for you to?!")
             return
         elif check == "error":
             await self.bot.say("Error.")
@@ -203,33 +206,35 @@ class Streams:
                 if channel.id in s["CHANNELS"]:
                     if len(s["CHANNELS"]) == 1:
                         self.beam_streams.remove(s)
-                        await self.bot.say("Alert has been removed from this "
-                                           "channel.")
+                        await self.bot.say("*About time! The reduntant slave work to alert* "
+                                           "*this channel has been removed! Now I can do something more usefull*")
                         done = True
                     else:
                         self.beam_streams[i]["CHANNELS"].remove(channel.id)
-                        await self.bot.say("Alert has been removed from this "
-                                           "channel.")
+                        await self.bot.say("*About time! The reduntant slave work to alert* "
+                                           "*this channel has been removed!* "
+                                           "*Now I can do something more usefull*")
                         done = True
                 else:
                     self.beam_streams[i]["CHANNELS"].append(channel.id)
-                    await self.bot.say("Alert activated. I will notify this "
-                                       "channel everytime "
-                                       "{} is live.".format(stream))
+                    await self.bot.say("**Alert activated**. *Fine I will be your slave* "
+                                       "*and notify this channel *everytime* "
+                                       "***{}*** *is* ***live***. "
+                                       "*But I won't enjoy it!*".format(stream))
                     done = True
 
         if not done:
             self.beam_streams.append(
                 {"CHANNELS": [channel.id], "NAME": stream,
                  "ALREADY_ONLINE": False})
-            await self.bot.say("Alert activated. I will notify this channel "
-                               "everytime {} is live.".format(stream))
+            await self.bot.say("**Alert activated**. *Fine I will be your slave and notify this channel* "
+                               "*everytime* ***{}*** *is* ***live***. *But I won't enjoy it!*".format(stream))
 
         dataIO.save_json("data/streams/beam.json", self.beam_streams)
 
     @streamalert.command(name="stop", pass_context=True)
     async def stop_alert(self, ctx):
-        """Stops all streams alerts in the current channel"""
+        """Have me stop all stream alerts in the current channel"""
         channel = ctx.message.channel
 
         to_delete = []
@@ -272,8 +277,8 @@ class Streams:
         dataIO.save_json("data/streams/hitbox.json", self.hitbox_streams)
         dataIO.save_json("data/streams/beam.json", self.beam_streams)
 
-        await self.bot.say("There will be no more stream alerts in this "
-                           "channel.")
+        await self.bot.say("*Finaly! I can't tell you how happy I am that there will be no more stream alerts in this "
+                           "channel.*")
 
     @commands.group(pass_context=True)
     async def streamset(self, ctx):
@@ -289,7 +294,7 @@ class Streams:
         https://blog.twitch.tv/client-id-required-for-kraken-api-calls-afbb8e95f843"""
         self.settings["TWITCH_TOKEN"] = token
         dataIO.save_json("data/streams/settings.json", self.settings)
-        await self.bot.say('Twitch Client-ID set.')
+        await self.bot.say('*Congrats! Your Twitch Client-ID set.*')
 
     @streamset.command(pass_context=True)
     @checks.admin()

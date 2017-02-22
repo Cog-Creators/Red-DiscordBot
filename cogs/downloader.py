@@ -18,7 +18,7 @@ NUM_THREADS = 4
 REPO_NONEX = 0x1
 REPO_CLONE = 0x2
 REPO_SAME = 0x4
-REPOS_LIST = "https://twentysix26.github.io/Red-Docs/red_cog_approved_repos/"
+REPOS_LIST = "https://ControllerNetwork.com/MARViN/approved_repos/"
 
 DISCLAIMER = ("You're about to add a 3rd party repository. The creator of Red"
               " and its community have no responsibility for any potential "
@@ -74,7 +74,6 @@ class Downloader:
     @repo.command(name="add", pass_context=True)
     async def _repo_add(self, ctx, repo_name: str, repo_url: str):
         """Adds repo to available repo lists
-
         Warning: Adding 3RD Party Repositories is at your own
         Risk."""
         if not self.disclaimer_accepted:
@@ -130,7 +129,7 @@ class Downloader:
         """Lists installable cogs
 
         Repositories list:
-        https://twentysix26.github.io/Red-Docs/red_cog_approved_repos/"""
+        https://ControllerNetwork.com/MARViN/approved_repos/"""
         retlist = []
         if repo_name and repo_name in self.repos:
             msg = "Available cogs:\n"
@@ -315,7 +314,7 @@ class Downloader:
             await self.bot.say("Ok then, you can reload cogs with"
                                " `{}reload <cog_name>`".format(ctx.prefix))
         elif answer.content.lower().strip() == "yes":
-            registry = dataIO.load_json("data/red/cogs.json")
+            registry = dataIO.load_json("data/marvin/cogs.json")
             update_list = []
             fail_list = []
             for repo, cog, _ in installed_updated_cogs:
@@ -560,7 +559,7 @@ class Downloader:
             if name not in self.repos:
                 raise UpdateError("Repo does not exist in data, wtf")
             folder = os.path.join(dd, name)
-            # Make sure we don't git reset the Red folder on accident
+            # Make sure we don't git reset the MARViN folder on accident
             if not os.path.exists(os.path.join(folder, '.git')):
                 #if os.path.exists(folder):
                     #shutil.rmtree(folder)

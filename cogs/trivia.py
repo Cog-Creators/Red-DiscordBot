@@ -31,11 +31,11 @@ class Trivia:
 
     @triviaset.command()
     async def maxscore(self, score : int):
-        """Points required to win"""
+        """Towels required to win"""
         if score > 0:
             self.settings["TRIVIA_MAX_SCORE"] = score
             dataIO.save_json(self.file_path, self.settings)
-            await self.bot.say("Points required to win set to {}".format(str(score)))
+            await self.bot.say("Towels required to win set to {}".format(str(score)))
         else:
             await self.bot.say("Score must be superior to 0.")
 
@@ -51,7 +51,7 @@ class Trivia:
 
     @triviaset.command()
     async def botplays(self):
-        """Red gains points"""
+        """MARViN gains towels"""
         if self.settings["TRIVIA_BOT_PLAYS"] is True:
             self.settings["TRIVIA_BOT_PLAYS"] = False
             await self.bot.say("Alright, I won't embarass you at trivia anymore.")
