@@ -76,6 +76,7 @@ class AudioSettings:
 
 class Song:
     def __init__(self, **kwargs):
+        self.id = kwargs.get("id", "")
         self.title = kwargs.get("title", "")
         self.duration = kwargs.get("duration", 0)
 
@@ -86,6 +87,9 @@ class Song:
         #   the actual accessible path
 
         self.extra_data = kwargs
+
+    def __eq__(self, other):
+        return self.id == other.id
 
     @classmethod
     def from_ytdl(cls, extracted_info: dict):
@@ -370,7 +374,8 @@ class MusicCache:
         if ctx is not None:
             extra_info = {
                 "author": ctx.message.author.id,
-                "channel": ctx.message.channel.id
+                "channel": ctx.message.channel.id,
+                "downloaded": download
             }
         else:
             extra_info = {}
@@ -417,18 +422,47 @@ music_cache = MusicCache()
 
 
 class MusicQueue:
-    def __init__(self, songs=[], temp_songs=[], start_index=0):
+    def __init__(self, bot, songs=[], temp_songs=[], start_index=0):
+        self.bot = bot
         self._songs = songs
         self._temp_songs = temp_songs
 
         self._current_index = start_index
+
+        self._downloads = {}  # Song/Playlist ID : Future
+
+        self.advance_downloads = 1
+        self.download_loop = discord.compat.create_task(
+            self.download_watcher(),
+            loop=bot.loop)
 
     @property
     def current_song(self):
         try:
             return self._temp_songs[0]
         except IndexError:
-            return self._songs[self._current_index]
+            try:
+                return self._songs[self._current_index]
+            except IndexError:
+                return None  # Empty queue
+
+    def queue(self, num=1):
+        """
+        Does not include the current song.
+        """
+        songs = []
+        try:
+            songs = self._temp_songs[1:]
+        except IndexError:
+            # Means that the only song in temp songs is current song
+            songs.extend(self._songs)
+        else:
+            try:
+                songs = self._songs[1:]
+            except IndexError:
+                songs = []
+
+        return songs[:num]
 
     @property
     def is_playing_tempsong(self):
@@ -457,6 +491,53 @@ class MusicQueue:
     def next(self):
         return self.skip()
 
+    def update_queue(self, position, new_object):
+        try:
+            self._temp_songs[position] = new_object
+        except IndexError:
+            position -= len(self._temp_songs)
+
+        try:
+            self._songs[position] = new_object
+        except IndexError:
+            log.warning("Tried to update a nonexistant queue position. Please"
+                        " report this error!")
+
+    async def update_downloaders():
+        songs = [s.id for s in
+                 [self.current_song, ] + self.queue(self.advance_downloads)]
+        for i, s in enumerate(songs):
+            if s not in self._downloads:
+                d = self.bot.loop.create_task(
+                    music_cache.guarantee_downloaded(s))
+                self._downloads[s.id] = d
+            elif self._downloads[s].done():
+                try:
+                    info = self._downloads[s].result()
+                except CancelledError:
+                    del self._downloads[s]
+                else:
+                    self.update_queue(i, info)
+
+        await asyncio.sleep(0.1)
+
+        to_kill = []
+        for s in self._downloads:
+            if s not in songs:
+                to_kill.append(s)
+
+        for s in to_kill:
+            self._downloads[s].cancel()
+            del self._downloads[s]
+
+    async def download_watcher(self):
+        while True:
+            try:
+                await self.update_downloaders()
+            except Exception:
+                log.exception("Uncaught exception in MusicQueue"
+                              " download_watcher.")
+
 
 class MusicPlayer(MusicPlayerCommandsMixin):
     def __init__(self, bot, voice_member):
@@ -468,16 +549,20 @@ class MusicPlayer(MusicPlayerCommandsMixin):
         self._voice_client = None
         self._server = voice_member.server
 
-        self._queue = MusicQueue()
-        self._downloader = Downloader()
+        self._queue = MusicQueue(bot)
 
         self._dpy_player = None
 
-        self._play_loop = discord.compat.create_task(self.play_loop(),
-                                                     loop=bot.loop)
+        # self._play_loop = discord.compat.create_task(self.play_loop(),
+        #                                              loop=bot.loop)
+
+        self.current_song = None
 
         self.bot.add_listener(self.on_red_audio_unload,
                               "on_red_audio_unload")
+
+        self.bot.add_listener(self.on_song_change, "on_red_audio_song_change")
+        self.bot.add_listener(self.on_song_end, "on_red_audio_song_end")
 
     def __eq__(self, other):
         return self.server == other.server
@@ -494,6 +579,11 @@ class MusicPlayer(MusicPlayerCommandsMixin):
         except AttributeError:
             # self._voice_channel is None
             return False
+
+    @property
+    def is_playing(self):
+        return self.is_connected and self.dpy_player_active and \
+            self._dpy_player.is_playing()
 
     @property
     def dpy_player_active(self):
@@ -521,9 +611,25 @@ class MusicPlayer(MusicPlayerCommandsMixin):
         else:
             self._queue._songs.append(str_or_url)
 
-    async def update_stuff(self):
-        self._current_song_done.clear()
+    async def on_song_change(self, song):
+        if song != self._queue.current_song:
+            # This should never happen
+            log.warning("Requested song doesn't match the current song from"
+                        " queue! Please report this error as it should never"
+                        " happen.")
+            self._queue._temp_songs.insert(0, song)
 
+        if self.current_song != self._queue.current_song:
+            # TODO: Kill current dpy player
+            # TODO: Guarantee downloaded new current
+            # TODO: Guarantee downloaded next N songs
+            self.current_song = self._queue.current_song
+
+    async def on_song_end(self):
+        song = self._queue.next()
+        self.bot.dispatch("on_red_audio_song_change", song)
+
+    """
     async def play_loop(self):
         while True:
             try:
@@ -532,6 +638,7 @@ class MusicPlayer(MusicPlayerCommandsMixin):
                 log.exception("Exception in audio play loop")
             finally:
                 await asyncio.sleep(1)
+    """
 
 
 class PlayerManager:
