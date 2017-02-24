@@ -266,8 +266,8 @@ class Downloader:
             musicbot/downloader.py
     """
 
-    def __init__(self, download_folder="data/audio/cache"):
-        self.thread_pool = ThreadPoolExecutor(max_workers=2)
+    def __init__(self, download_folder="data/audio/cache", max_workers=2):
+        self.thread_pool = ThreadPoolExecutor(max_workers=max_workers)
         self.unsafe_ytdl = youtube_dl.YoutubeDL(ytdl_opts)
         self.safe_ytdl = youtube_dl.YoutubeDL(ytdl_opts)
         self.safe_ytdl.params['ignoreerrors'] = True
@@ -353,7 +353,7 @@ class Downloader:
 
 class MusicCache:
     def __init__(self):
-        self.downloader = Downloader()
+        self.downloader = Downloader(max_workers=4)
         self._id_url_map = {}
 
     async def is_downloaded(self, url):
