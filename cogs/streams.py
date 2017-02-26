@@ -316,7 +316,7 @@ class Streams:
         url = "https://api.hitbox.tv/media/live/" + stream
         try:
             async with aiohttp.get(url) as r:
-                data = await r.json()
+                data = await r.json(encoding='utf-8')
             if "livestream" not in data:
                 return None
             if data["livestream"][0]["media_is_live"] == "0":
@@ -334,7 +334,7 @@ class Streams:
         header = {'Client-ID': self.settings.get("TWITCH_TOKEN", "")}
         try:
             async with session.get(url, headers=header) as r:
-                data = await r.json()
+                data = await r.json(encoding='utf-8')
             await session.close()
             if r.status == 400:
                 return 400
@@ -353,7 +353,7 @@ class Streams:
         url = "https://beam.pro/api/v1/channels/" + stream
         try:
             async with aiohttp.get(url) as r:
-                data = await r.json()
+                data = await r.json(encoding='utf-8')
             if "online" in data:
                 if data["online"] is True:
                     data = self.beam_embed(data)
