@@ -402,13 +402,18 @@ class Streams:
         return embed
 
     def beam_embed(self, data):
+        default_avatar = ("https://beam.pro/_latest/assets/images/main/"
+                          "avatars/default.jpg")
         user = data["user"]
         url = "https://beam.pro/" + data["token"]
         embed = discord.Embed(title=data["name"], url=url)
         embed.set_author(name=user["username"])
         embed.add_field(name="Followers", value=data["numFollowers"])
         embed.add_field(name="Total views", value=data["viewersTotal"])
-        embed.set_thumbnail(url=user["avatarUrl"])
+        if user["avatarUrl"]:
+            embed.set_thumbnail(url=user["avatarUrl"])
+        else:
+            embed.set_thumbnail(url=default_avatar)
         embed.set_image(url=data["thumbnail"]["url"])
         embed.color = 0x4C90F3
         if data["type"] is not None:
