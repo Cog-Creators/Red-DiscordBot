@@ -51,6 +51,13 @@ Philosophy:
 
     - All permissions checks need to be done in `Audio` class, don't be stupid
         like me and want to pass around the audio instance.
+    - My queue logic is still a little weird so I'm going to attempt to make it
+        easier to understand here. When a song is queued, the string or url
+        that the user provides should automatically get dumped into a `Song`
+        object which is THEN put into the queue. Then the downloader inside the
+        queue instance goes through each object and grabs actual data from YT
+        or wherever and REPLACES the song object in the queue using the new one
+        it creates with the data from the website.
 """
 
 
@@ -503,7 +510,7 @@ class MusicQueue:
             log.warning("Tried to update a nonexistant queue position. Please"
                         " report this error!")
 
-    async def update_downloaders():
+    async def update_downloaders(self):
         songs = [s.id for s in
                  [self.current_song, ] + self.queue(self.advance_downloads)]
         for i, s in enumerate(songs):
@@ -511,13 +518,16 @@ class MusicQueue:
                 d = self.bot.loop.create_task(
                     music_cache.guarantee_downloaded(s))
                 self._downloads[s.id] = d
+            elif self._downloads[s] is None:
+                continue
             elif self._downloads[s].done():
                 try:
                     info = self._downloads[s].result()
-                except CancelledError:
+                except asyncio.CancelledError:
                     del self._downloads[s]
                 else:
                     self.update_queue(i, info)
+                    self._downloads[s] = None
 
         await asyncio.sleep(0.1)
 
