@@ -5,7 +5,7 @@ from concurrent.futures import ThreadPoolExecutor
 import os
 import functools
 import asyncio
-import urllib  # urllib.parse.urlparse(url).scheme != ""
+import urllib
 import logging
 
 try:
@@ -51,6 +51,13 @@ Philosophy:
 
     - All permissions checks need to be done in `Audio` class, don't be stupid
         like me and want to pass around the audio instance.
+    - My queue logic is still a little weird so I'm going to attempt to make it
+        easier to understand here. When a song is queued, the string or url
+        that the user provides should automatically get dumped into a `Song`
+        object which is THEN put into the queue. Then the downloader inside the
+        queue instance goes through each object and grabs actual data from YT
+        or wherever and REPLACES the song object in the queue using the new one
+        it creates with the data from the website.
 """
 
 
@@ -104,6 +111,13 @@ class Song:
     @classmethod
     def from_json(cls, json_data):
         return cls(**json_data)
+
+
+class LocalSong(Song):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+        self.local = True
 
 
 class Playlist(Song):
@@ -363,7 +377,7 @@ class MusicCache:
     async def is_downloaded(self, url):
         _id = self._id_url_map.get(url, None)
         if _id is None:
-            _id = await self.get_raw_info(url).get("id", "NOTFOUND")
+            _id = (await self.get_raw_info(url)).get("id", "NOTFOUND")
         audio_file = os.path.join(self.downloader.download_folder, _id)
         return os.path.exists(audio_file)
 
@@ -371,6 +385,11 @@ class MusicCache:
         """
         Does not create song/playlist object and does not save metadata.
         """
+
+        is_url = urllib.parse.urlparse(url).scheme != ""
+        if not is_url:
+            url = "ytsearch1:{}".format(url)  # Thanks Mash
+
         if ctx is not None:
             extra_info = {
                 "author": ctx.message.author.id,
@@ -379,7 +398,8 @@ class MusicCache:
             }
         else:
             extra_info = {}
-        return await self.downloader.extract_info(url, download=download,
+        return await self.downloader.extract_info(self.bot.loop,
+                                                  url, download=download,
                                                   extra_info=extra_info)
 
     async def get_info(self, url, *, download=False, ctx=None):
@@ -412,7 +432,7 @@ class MusicCache:
                              " to access metadata.")
 
     async def guarantee_downloaded(self, obj, *, ctx=None):
-        if not self.is_downloaded(obj.webpage_url):
+        if not (await self.is_downloaded(obj.webpage_url)):
             return await self.get_info(obj.webpage_url, download=True, ctx=ctx)
         else:
             return obj
@@ -436,6 +456,8 @@ class MusicQueue:
             self.download_watcher(),
             loop=bot.loop)
 
+        # TODO: Add functions for adding to queue
+
     @property
     def current_song(self):
         try:
@@ -445,6 +467,16 @@ class MusicQueue:
                 return self._songs[self._current_index]
             except IndexError:
                 return None  # Empty queue
+
+    @property
+    def current_song_ready(self):
+        """
+        Used to determine if the `current_song` has been updated in queue and
+            ready to be played.
+        """
+        return self.current_song is not None and \
+            self.current_song.id in self._downloads and \
+            self._downloads.get(self.current_song.id, True) is None
 
     def queue(self, num=1):
         """
@@ -503,32 +535,38 @@ class MusicQueue:
             log.warning("Tried to update a nonexistant queue position. Please"
                         " report this error!")
 
-    async def update_downloaders():
-        songs = [s.id for s in
-                 [self.current_song, ] + self.queue(self.advance_downloads)]
+    async def update_downloaders(self):
+        try:
+            songs = [s for s in [self.current_song, ] +
+                     self.queue(self.advance_downloads) if s is not None]
+        except AttributeError:
+            return
         for i, s in enumerate(songs):
-            if s not in self._downloads:
+            if s.id not in self._downloads:
                 d = self.bot.loop.create_task(
                     music_cache.guarantee_downloaded(s))
                 self._downloads[s.id] = d
-            elif self._downloads[s].done():
+            elif self._downloads[s.id] is None:
+                continue
+            elif self._downloads[s.id].done():
                 try:
-                    info = self._downloads[s].result()
-                except CancelledError:
-                    del self._downloads[s]
+                    info = self._downloads[s.id].result()
+                except asyncio.CancelledError:
+                    del self._downloads[s.id]
                 else:
                     self.update_queue(i, info)
+                    self._downloads[s.id] = None
 
         await asyncio.sleep(0.1)
 
         to_kill = []
-        for s in self._downloads:
-            if s not in songs:
+        for id in self._downloads:
+            if id not in [s.id for s in songs]:
                 to_kill.append(s)
 
-        for s in to_kill:
-            self._downloads[s].cancel()
-            del self._downloads[s]
+        for id in to_kill:
+            self._downloads[id].cancel()
+            del self._downloads[id]
 
     async def download_watcher(self):
         while True:
@@ -537,6 +575,7 @@ class MusicQueue:
             except Exception:
                 log.exception("Uncaught exception in MusicQueue"
                               " download_watcher.")
+            await asyncio.sleep(0.5)
 
 
 class MusicPlayer(MusicPlayerCommandsMixin):
@@ -556,7 +595,7 @@ class MusicPlayer(MusicPlayerCommandsMixin):
         # self._play_loop = discord.compat.create_task(self.play_loop(),
         #                                              loop=bot.loop)
 
-        self.current_song = None
+        self.stream_mode = False
 
         self.bot.add_listener(self.on_red_audio_unload,
                               "on_red_audio_unload")
@@ -568,7 +607,7 @@ class MusicPlayer(MusicPlayerCommandsMixin):
         return self.server == other.server
 
     async def on_red_audio_unload(self):
-        self._play_loop.cancel()
+        # self._play_loop.cancel()
         if self.is_connected:
             await self.disconnect()
 
@@ -602,14 +641,26 @@ class MusicPlayer(MusicPlayerCommandsMixin):
     async def disconnect(self):
         await self._voice_client.disconnect()
 
+    # MusicPlayerCommandsMixin
+
+    def pause(self):
+        try:
+            self._dpy_player.pause()
+        except AttributeError:
+            pass  # Meaning we don't have a dpy player
+
     def play(self, str_or_url, *, temp=False, clear=False):
         if clear is True:
-            self._queue.clear_queue()
+            self._queue.clear()
+
+        obj = Song(webpage_url=str_or_url)
 
         if temp is True:
-            self._queue._temp_songs.append(str_or_url)
+            self._queue._temp_songs.append(obj)
         else:
-            self._queue._songs.append(str_or_url)
+            self._queue._songs.append(obj)
+
+    # End mixin
 
     async def on_song_change(self, song):
         if song != self._queue.current_song:
