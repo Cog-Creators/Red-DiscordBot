@@ -18,7 +18,7 @@ class Champgg:
 
     @commands.command()
     async def winrate(self,*,name):
-        """Tells you the winrate of one champiion"""
+        """Tells you the winrate of one champion"""
         print("[Champgg] FINDING WINRATE OF " + name)
         name = name.replace(" ","")
         cname = name.upper()[0] + name[1:]
