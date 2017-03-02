@@ -40,8 +40,9 @@ def pagify(text, delims=["\n"], *, escape=True, shorten_by=8,
         shorten_by += num_mentions
     page_length -= shorten_by
     while len(in_text) > page_length:
-        closest_delim = max([in_text.rfind(d, len(d), page_length)
-                             for d in delims])
+        closest_delim = max([in_text.rfind(d, len(d) if in_text.startswith(d)
+                                           else 0, page_length)
+                            for d in delims])
         closest_delim = closest_delim if closest_delim != -1 else page_length
         if escape:
             to_send = escape_mass_mentions(in_text[:closest_delim])
