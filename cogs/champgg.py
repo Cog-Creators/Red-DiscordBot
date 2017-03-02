@@ -16,9 +16,10 @@ class Champgg:
         self.bot = bot
 
     @commands.command()
-    async def winrate(self, name):
+    async def winrate(self,*,name):
         """Tells you the winrate of one champiion"""
         print("[Champgg] FINDING WINRATE OF " + name)
+        name = name.replace(" ","")
         cname = name.upper()[0] + name[1:]
 
         url = "http://api.champion.gg/champion/" + name + "/general?api_key=b096f8311a7c35406547e0b38363f0ee"  # build the web adress
