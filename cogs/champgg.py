@@ -16,7 +16,7 @@ class Champgg:
         self.bot = bot
 
     @commands.command()
-    async def winrate(self, name, name2):
+    async def winrate(self, name):
         """Tells you the winrate of one champiion"""
         print("[Champgg] FINDING WINRATE OF " + name)
         cname = name.upper()[0] + name[1:]
