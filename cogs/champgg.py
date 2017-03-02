@@ -14,6 +14,7 @@ class Champgg:
 
     def __init__(self, bot):
         self.bot = bot
+        self.apikey = "b096f8311a7c35406547e0b38363f0ee"
 
     @commands.command()
     async def winrate(self,*,name):
@@ -22,14 +23,29 @@ class Champgg:
         name = name.replace(" ","")
         cname = name.upper()[0] + name[1:]
 
-        url = "http://api.champion.gg/champion/" + name + "/general?api_key=b096f8311a7c35406547e0b38363f0ee"  # build the web adress
+        url = "http://api.champion.gg/champion/" + name + "/general?api_key=" + self.apikey  # build the web adress
 
         request = requests.get(url)
         data = request.json()
         try:
-            await self.bot.say(cname + '\'s winrate is ' + str(data[0]['winPercent']['val']) + "%.")
+            winpercent = float(data[0]['winPercent']['val'])
         except:
             await self.bot.say("Can't find any data for " + cname)
+            return
+
+        if  winpercent < 50.0:
+            if winpercent < 45.0:
+                rating = -1
+            else:
+                rating = 0
+        else:
+            rating = int((winpercent - 50) / 4 * 7)
+
+        if rating == -1:
+            await self.bot.say(cname + '\'s winrate is ' + str(winpercent) + "%. That will not be touched by Devon.")
+        else:
+            await self.bot.say(cname + '\'s winrate is ' + str(winpercent) + "%. That's a " + str(rating) + "/7 on the Devon scale.")
+
 
 def setup(bot):
     if soupAvailable:
