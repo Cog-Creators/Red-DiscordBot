@@ -5,7 +5,7 @@ from .utils import checks
 from __main__ import send_cmd_help, settings
 from datetime import datetime
 from collections import deque, defaultdict
-from cogs.utils.chat_formatting import escape_mass_mentions, box
+from cogs.utils.chat_formatting import escape_mass_mentions, box, pagify
 import os
 import re
 import logging
@@ -1072,13 +1072,15 @@ class Mod:
             await send_cmd_help(ctx)
             server = ctx.message.server
             author = ctx.message.author
-            msg = ""
-            if server.id in self.filter.keys():
-                if self.filter[server.id] != []:
-                    word_list = self.filter[server.id]
-                    for w in word_list:
-                        msg += '"' + w + '" '
-                    await self.bot.send_message(author, "Words filtered in this server: " + msg)
+            if server.id in self.filter:
+                if self.filter[server.id]:
+                    words = ", ".join(self.filter[server.id])
+                    words = "Filtered in this server:\n\n" + words
+                    try:
+                        for page in pagify(words, delims=[" ", "\n"], shorten_by=8):
+                            await self.bot.send_message(author, page)
+                    except discord.Forbidden:
+                        await self.bot.say("I can't send direct messages to you.")
 
     @_filter.command(name="add", pass_context=True)
     async def filter_add(self, ctx, *words: str):
