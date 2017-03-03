@@ -83,6 +83,10 @@ class UnauthorizedSpeak(Exception):
     pass
 
 
+class ChannelUserLimit(Exception):
+    pass
+
+
 class UnauthorizedSave(Exception):
     pass
 
@@ -1260,6 +1264,9 @@ class Audio:
                 await self.bot.say("I don't have permissions to speak in your"
                                    " voice channel.")
                 return
+            except ChannelUserLimit:
+                await self.bot.say("Your voice channel is full.")
+                return
             else:
                 await self._join_voice_channel(voice_channel)
         else:  # We are connected but not to the right channel
@@ -1346,6 +1353,9 @@ class Audio:
         except UnauthorizedSpeak:
             await self.bot.say("I don't have permissions to speak in your"
                                " voice channel.")
+            return
+        except ChannelUserLimit:
+            await self.bot.say("Your voice channel is full.")
             return
 
         if not self.voice_connected(server):
@@ -1585,6 +1595,9 @@ class Audio:
                 except UnauthorizedSpeak:
                     await self.bot.say("I don't have permissions to speak in"
                                        " your voice channel.")
+                    return
+                except ChannelUserLimit:
+                    await self.bot.say("Your voice channel is full.")
                     return
                 else:
                     await self._join_voice_channel(voice_channel)
@@ -1991,12 +2004,22 @@ class Audio:
 
     def has_connect_perm(self, author, server):
         channel = author.voice_channel
+
+        if channel:
+            is_admin = channel.permissions_for(server.me).administrator
+            if channel.user_limit == 0:
+                is_full = False
+            else:
+                is_full = len(channel.voice_members) >= channel.user_limit
+
         if channel is None:
             raise AuthorNotConnected
         elif channel.permissions_for(server.me).connect is False:
             raise UnauthorizedConnect
         elif channel.permissions_for(server.me).speak is False:
             raise UnauthorizedSpeak
+        elif is_full and not is_admin:
+            raise ChannelUserLimit
         else:
             return True
         return False
