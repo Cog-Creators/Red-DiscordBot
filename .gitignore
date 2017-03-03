@@ -6,3 +6,17 @@ data
 !data/audio/playlists/*
 *.exe
 *.dll
+cogs/*
+!cogs/utils
+!cogs/alias.py
+!cogs/audio.py
+!cogs/customcom.py
+!cogs/downloader.py
+!cogs/economy.py
+!cogs/general.py
+!cogs/image.py
+!cogs/mod.py
+!cogs/owner.py
+!cogs/streams.py
+!cogs/trivia.py
+*.sublime-*
