@@ -1294,10 +1294,10 @@ class Mod:
             "modified"     : None,
             "action"       : action,
             "channel"      : channel.id if channel else None,
-            "user"         : user.name,
+            "user"         : str(user),
             "user_id"      : user.id,
             "reason"       : reason,
-            "moderator"    : mod.name if mod is not None else None,
+            "moderator"    : str(mod) if mod is not None else None,
             "moderator_id" : mod.id if mod is not None else None,
             "amended_by"   : None,
             "amended_id"   : None,
@@ -1332,12 +1332,12 @@ class Mod:
         if case["moderator_id"] is not None:
             if case["moderator_id"] != mod.id:
                 if self.is_admin_or_superior(mod):
-                    case["amended_by"] = mod.name
+                    case["amended_by"] = str(mod)
                     case["amended_id"] = mod.id
                 else:
                     raise UnauthorizedCaseEdit()
         else:
-            case["moderator"] = mod.name
+            case["moderator"] = str(mod)
             case["moderator_id"] = mod.id
 
         if case["reason"]:  # Existing reason
