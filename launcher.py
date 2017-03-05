@@ -92,7 +92,7 @@ def install_reqs(audio):
     if code == 0:
         print("\nRequirements setup completed.")
     else:
-        print("\nAn error occured and the requirements setup might "
+        print("\nAn error occurred and the requirements setup might "
               "not be completed. Consult the docs.\n")
 
 
@@ -140,7 +140,7 @@ def reset_red(reqs=False, data=False, cogs=False, git_reset=False):
         except FileNotFoundError:
             pass
         except Exception as e:
-            print("An error occured when trying to remove installed "
+            print("An error occurred when trying to remove installed "
                   "requirements: {}".format(e))
     if data:
         try:
@@ -159,7 +159,7 @@ def reset_red(reqs=False, data=False, cogs=False, git_reset=False):
         except FileNotFoundError:
             pass
         except Exception as e:
-            print("An error occured when trying to remove the 'cogs' folder: "
+            print("An error occurred when trying to remove the 'cogs' folder: "
                   "{}".format(e))
 
     if git_reset:
