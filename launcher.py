@@ -149,7 +149,7 @@ def reset_red(reqs=False, data=False, cogs=False, git_reset=False):
         except FileNotFoundError:
             pass
         except Exception as e:
-            print("An error occured when trying to remove the 'data' folder: "
+            print("An error occurred when trying to remove the 'data' folder: "
                   "{}".format(e))
 
     if cogs:
