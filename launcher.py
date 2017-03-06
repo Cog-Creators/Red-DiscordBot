@@ -507,7 +507,7 @@ def main():
         print(INTRO)
 
         if not is_git_installation:
-            print("WARNING: It doesnt' look like Red has been "
+            print("WARNING: It doesn't look like Red has been "
                   "installed with git.\nThis means that you won't "
                   "be able to update and some features won't be working.\n"
                   "A reinstallation is recommended. Follow the guide "
