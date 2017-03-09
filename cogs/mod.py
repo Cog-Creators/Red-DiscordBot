@@ -258,6 +258,12 @@ class Mod:
         """Kicks user."""
         author = ctx.message.author
         server = author.server
+
+        if author == user:
+            await self.bot.say("I cannot let you do that. Self-harm is "
+                               "bad \N{PENSIVE FACE}")
+            return
+
         try:
             await self.bot.kick(user)
             logger.info("{}({}) kicked {}({})".format(
@@ -284,6 +290,11 @@ class Mod:
         Minimum 0 days, maximum 7. Defaults to 0."""
         author = ctx.message.author
         server = author.server
+
+        if author == user:
+            await self.bot.say("I cannot let you do that. Self-harm is "
+                               "bad \N{PENSIVE FACE}")
+            return
 
         if days:
             if days.isdigit():
@@ -330,6 +341,12 @@ class Mod:
         channel = ctx.message.channel
         can_ban = channel.permissions_for(server.me).ban_members
         author = ctx.message.author
+
+        if author == user:
+            await self.bot.say("I cannot let you do that. Self-harm is "
+                               "bad \N{PENSIVE FACE}")
+            return
+
         try:
             invite = await self.bot.create_invite(server, max_age=3600*24)
             invite = "\nInvite: " + invite
@@ -382,7 +399,7 @@ class Mod:
             await self.bot.say("Done.")
         except discord.Forbidden:
             await self.bot.say("I cannot do that, I lack the "
-                "\"Manage Nicknames\" permission.")
+                               "\"Manage Nicknames\" permission.")
 
     @commands.group(pass_context=True, no_pm=True, invoke_without_command=True)
     @checks.mod_or_permissions(administrator=True)
