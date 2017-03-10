@@ -245,7 +245,7 @@ def requirements_menu():
         print("1. Install basic + audio requirements (recommended)")
         print("2. Install basic requirements")
         if IS_WINDOWS:
-            print("\nffmpeg (audio requirement):")
+            print("\nffmpeg (required for audio):")
             print("3. Install ffmpeg 32bit")
             if IS_64BIT:
                 print("4. Install ffmpeg 64bit (recommended on Windows 64bit)")
