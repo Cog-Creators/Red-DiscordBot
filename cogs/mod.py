@@ -17,7 +17,8 @@ ACTIONS_REPR = {
     "KICK"    : ("Kick", "\N{WOMANS BOOTS}"),
     "CMUTE"   : ("Channel mute", "\N{SPEAKER WITH CANCELLATION STROKE}"),
     "SMUTE"   : ("Server mute", "\N{SPEAKER WITH CANCELLATION STROKE}"),
-    "SOFTBAN" : ("Softban", "\N{DASH SYMBOL} \N{HAMMER}")
+    "SOFTBAN" : ("Softban", "\N{DASH SYMBOL} \N{HAMMER}"),
+    "UNBAN"   : ("Unban", "\N{DOVE OF PEACE}")
 }
 
 ACTIONS_CASES = {
@@ -25,7 +26,8 @@ ACTIONS_CASES = {
     "KICK"    : True,
     "CMUTE"   : False,
     "SMUTE"   : True,
-    "SOFTBAN" : True
+    "SOFTBAN" : True,
+    "UNBAN"   : True
 }
 
 default_settings = {
@@ -56,6 +58,30 @@ class NoModLogChannel(ModError):
     pass
 
 
+class TempCache:
+    """
+    This is how we avoid events such as ban and unban
+    from triggering twice in the mod-log.
+    Kinda hacky but functioning
+    """
+    def __init__(self, bot):
+        self.bot = bot
+        self._cache = []
+
+    def add(self, user, server, action, seconds=1):
+        tmp = (user.id, server.id, action)
+        self._cache.append(tmp)
+
+        async def delete_value():
+            await asyncio.sleep(seconds)
+            self._cache.remove(tmp)
+
+        self.bot.loop.create_task(delete_value())
+
+    def check(self, user, server, action):
+        return (user.id, server.id, action) in self._cache
+
+
 class Mod:
     """Moderation tools."""
 
@@ -72,7 +98,7 @@ class Mod:
         self.cache = defaultdict(lambda: deque(maxlen=3))
         self.cases = dataIO.load_json("data/mod/modlog.json")
         self.last_case = defaultdict(dict)
-        self._tmp_banned_cache = []
+        self.temp_cache = TempCache(bot)
         perms_cache = dataIO.load_json("data/mod/perms_cache.json")
         self._perms_cache = defaultdict(dict, perms_cache)
 
@@ -311,7 +337,7 @@ class Mod:
             return
 
         try:
-            self._tmp_banned_cache.append(user)
+            self.temp_cache.add(user, server, "BAN")
             await self.bot.ban(user, days)
             logger.info("{}({}) banned {}({}), deleting {} days worth of messages".format(
                 author.name, author.id, user.name, user.id, str(days)))
@@ -325,9 +351,6 @@ class Mod:
             await self.bot.say("I'm not allowed to do that.")
         except Exception as e:
             print(e)
-        finally:
-            await asyncio.sleep(1)
-            self._tmp_banned_cache.remove(user)
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(ban_members=True)
@@ -356,7 +379,7 @@ class Mod:
                               "You can now join the server again.{}".format(invite))
                 except:
                     pass
-                self._tmp_banned_cache.append(user)
+                self.temp_cache.add(user, server, "BAN")
                 await self.bot.ban(user, 1)
                 logger.info("{}({}) softbanned {}({}), deleting 1 day worth "
                     "of messages".format(author.name, author.id, user.name,
@@ -366,6 +389,7 @@ class Mod:
                                     mod=author,
                                     user=user,
                                     reason=reason)
+                self.temp_cache.add(user, server, "UNBAN")
                 await self.bot.unban(server, user)
                 await self.bot.say("Done. Enough chaos.")
             except discord.errors.Forbidden:
@@ -373,9 +397,6 @@ class Mod:
                 await self.bot.delete_message(msg)
             except Exception as e:
                 print(e)
-            finally:
-                await asyncio.sleep(1)
-                self._tmp_banned_cache.remove(user)
         else:
             await self.bot.say("I'm not allowed to do that.")
 
@@ -1459,7 +1480,7 @@ class Mod:
             mentions = set(message.mentions)
             if len(mentions) >= max_mentions:
                 try:
-                    self._tmp_banned_cache.append(author)
+                    self.temp_cache.add(author, server, "BAN")
                     await self.bot.ban(author, 1)
                 except:
                     logger.info("Failed to ban member for mention spam in "
@@ -1471,9 +1492,6 @@ class Mod:
                                         user=author,
                                         reason="Mention spam (Autoban)")
                     return True
-                finally:
-                    await asyncio.sleep(1)
-                    self._tmp_banned_cache.remove(author)
         return False
 
     async def on_command(self, command, ctx):
@@ -1518,11 +1536,17 @@ class Mod:
             deleted = await self.check_mention_spam(message)
 
     async def on_member_ban(self, member):
-        if member not in self._tmp_banned_cache:
-            server = member.server
+        server = member.server
+        if not self.temp_cache.check(member, server, "BAN"):
             await self.new_case(server,
                                 user=member,
                                 action="BAN")
+
+    async def on_member_unban(self, server, user):
+        if not self.temp_cache.check(user, server, "UNBAN"):
+            await self.new_case(server,
+                                user=user,
+                                action="UNBAN")
 
     async def check_names(self, before, after):
         if before.name != after.name:
