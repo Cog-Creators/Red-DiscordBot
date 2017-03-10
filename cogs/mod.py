@@ -268,13 +268,11 @@ class Mod:
             await self.bot.kick(user)
             logger.info("{}({}) kicked {}({})".format(
                 author.name, author.id, user.name, user.id))
-            if self.settings[server.id].get('kick_cases',
-                                            default_settings['kick_cases']):
-                await self.new_case(server,
-                                    action="KICK",
-                                    mod=author,
-                                    user=user,
-                                    reason=reason)
+            await self.new_case(server,
+                                action="KICK",
+                                mod=author,
+                                user=user,
+                                reason=reason)
             await self.bot.say("Done. That felt good.")
         except discord.errors.Forbidden:
             await self.bot.say("I'm not allowed to do that.")
@@ -317,13 +315,11 @@ class Mod:
             await self.bot.ban(user, days)
             logger.info("{}({}) banned {}({}), deleting {} days worth of messages".format(
                 author.name, author.id, user.name, user.id, str(days)))
-            if self.settings[server.id].get('ban_cases',
-                                            default_settings['ban_cases']):
-                await self.new_case(server,
-                                    action="BAN",
-                                    mod=author,
-                                    user=user,
-                                    reason=reason)
+            await self.new_case(server,
+                                action="BAN",
+                                mod=author,
+                                user=user,
+                                reason=reason)
             await self.bot.say("Done. It was about time.")
         except discord.errors.Forbidden:
             await self.bot.say("I'm not allowed to do that.")
@@ -365,13 +361,11 @@ class Mod:
                 logger.info("{}({}) softbanned {}({}), deleting 1 day worth "
                     "of messages".format(author.name, author.id, user.name,
                      user.id))
-                if self.settings[server.id].get('softban_cases',
-                                                default_settings['softban_cases']):
-                    await self.new_case(server,
-                                        action="SOFTBAN",
-                                        mod=author,
-                                        user=user,
-                                        reason=reason)
+                await self.new_case(server,
+                                    action="SOFTBAN",
+                                    mod=author,
+                                    user=user,
+                                    reason=reason)
                 await self.bot.unban(server, user)
                 await self.bot.say("Done. Enough chaos.")
             except discord.errors.Forbidden:
@@ -432,14 +426,12 @@ class Mod:
                                "lower than myself in the role hierarchy.")
         else:
             dataIO.save_json("data/mod/perms_cache.json", self._perms_cache)
-            if self.settings[server.id].get('cmute_cases',
-                            default_settings['cmute_cases']):
-                await self.new_case(server,
-                                    action="CMUTE",
-                                    channel=channel,
-                                    mod=author,
-                                    user=user,
-                                    reason=reason)
+            await self.new_case(server,
+                                action="CMUTE",
+                                channel=channel,
+                                mod=author,
+                                user=user,
+                                reason=reason)
             await self.bot.say("User has been muted in this channel.")
 
     @checks.mod_or_permissions(administrator=True)
@@ -472,13 +464,11 @@ class Mod:
             return
         self._perms_cache[user.id] = register
         dataIO.save_json("data/mod/perms_cache.json", self._perms_cache)
-        if self.settings[server.id].get('smute_cases',
-                        default_settings['smute_cases']):
-            await self.new_case(server,
-                                action="SMUTE",
-                                mod=author,
-                                user=user,
-                                reason=reason)
+        await self.new_case(server,
+                            action="SMUTE",
+                            mod=author,
+                            user=user,
+                            reason=reason)
         await self.bot.say("User has been muted in this server.")
 
     @commands.group(pass_context=True, no_pm=True, invoke_without_command=True)
@@ -1296,6 +1286,10 @@ class Mod:
             return False
 
     async def new_case(self, server, *, action, mod=None, user, reason=None, until=None, channel=None):
+        action_type = action.lower() + "_cases"
+        if not self.settings[server.id].get(action_type, default_settings[action_type]):
+            return
+
         mod_channel = server.get_channel(self.settings[server.id]["mod-log"])
         if mod_channel is None:
             return
