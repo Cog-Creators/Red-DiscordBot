@@ -92,7 +92,7 @@ def install_reqs(audio):
     if code == 0:
         print("\nRequirements setup completed.")
     else:
-        print("\nAn error occured and the requirements setup might "
+        print("\nAn error occurred and the requirements setup might "
               "not be completed. Consult the docs.\n")
 
 
@@ -140,7 +140,7 @@ def reset_red(reqs=False, data=False, cogs=False, git_reset=False):
         except FileNotFoundError:
             pass
         except Exception as e:
-            print("An error occured when trying to remove installed "
+            print("An error occurred when trying to remove installed "
                   "requirements: {}".format(e))
     if data:
         try:
@@ -149,7 +149,7 @@ def reset_red(reqs=False, data=False, cogs=False, git_reset=False):
         except FileNotFoundError:
             pass
         except Exception as e:
-            print("An error occured when trying to remove the 'data' folder: "
+            print("An error occurred when trying to remove the 'data' folder: "
                   "{}".format(e))
 
     if cogs:
@@ -159,7 +159,7 @@ def reset_red(reqs=False, data=False, cogs=False, git_reset=False):
         except FileNotFoundError:
             pass
         except Exception as e:
-            print("An error occured when trying to remove the 'cogs' folder: "
+            print("An error occurred when trying to remove the 'cogs' folder: "
                   "{}".format(e))
 
     if git_reset:
@@ -245,7 +245,7 @@ def requirements_menu():
         print("1. Install basic + audio requirements (recommended)")
         print("2. Install basic requirements")
         if IS_WINDOWS:
-            print("\nffmpeg (audio requirement):")
+            print("\nffmpeg (required for audio):")
             print("3. Install ffmpeg 32bit")
             if IS_64BIT:
                 print("4. Install ffmpeg 64bit (recommended on Windows 64bit)")
@@ -507,7 +507,7 @@ def main():
         print(INTRO)
 
         if not is_git_installation:
-            print("WARNING: It doesnt' look like Red has been "
+            print("WARNING: It doesn't look like Red has been "
                   "installed with git.\nThis means that you won't "
                   "be able to update and some features won't be working.\n"
                   "A reinstallation is recommended. Follow the guide "
