@@ -139,7 +139,10 @@ class Downloader:
                     continue
                 data = self.get_info_data(repo_name, cog)
                 if data:
-                    retlist.append([cog, data.get("SHORT", "")])
+                    if "HIDDEN" in data and data["HIDDEN"] is True:
+                        continue
+                    else:
+                        retlist.append([cog, data.get("SHORT", "")])
                 else:
                     retlist.append([cog, ''])
         else:
