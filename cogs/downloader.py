@@ -581,14 +581,14 @@ class Downloader:
             else:
                 rpcmd = ["git", "-C", dd + name, "rev-parse", "HEAD"]
                 p = run(["git", "-C", dd + name, "reset", "--hard",
-                        "origin/HEAD", "-q"])
+                        "HEAD", "-q"])
                 if p.returncode != 0:
-                    raise UpdateError("Error resetting to origin/HEAD")
+                    raise UpdateError("Error resetting to HEAD")
                 p = run(rpcmd, stdout=PIPE)
                 if p.returncode != 0:
                     raise UpdateError("Unable to determine old commit hash")
                 oldhash = p.stdout.decode().strip()
-                p = run(["git", "-C", dd + name, "pull", "-q", "--ff-only"])
+                p = run(["git", "-C", dd + name, "pull", "-q"])
                 if p.returncode != 0:
                     raise UpdateError("Error pulling updates")
                 p = run(rpcmd, stdout=PIPE)
