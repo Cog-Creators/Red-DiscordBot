@@ -220,13 +220,14 @@ class General:
         data.set_footer(text="Member #{} | User ID:{}"
                              "".format(member_number, user.id))
 
+        name = str(user)
+        name = " ~ ".join((name, user.nick)) if user.nick else name
+
         if user.avatar_url:
-            name = str(user)
-            name = " ~ ".join((name, user.nick)) if user.nick else name
             data.set_author(name=name, url=user.avatar_url)
             data.set_thumbnail(url=user.avatar_url)
         else:
-            data.set_author(name=user.name)
+            data.set_author(name=name)
 
         try:
             await self.bot.say(embed=data)
