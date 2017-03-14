@@ -382,7 +382,8 @@ class Streams:
         embed.add_field(name="Followers", value=channel["followers"])
         embed.add_field(name="Total views", value=channel["views"])
         embed.set_thumbnail(url=logo)
-        embed.set_image(url=data["stream"]["preview"]["medium"] + self.rnd_attr())
+        if data["stream"]["preview"]["medium"]:
+            embed.set_image(url=data["stream"]["preview"]["medium"] + self.rnd_attr())
         if channel["game"]:
             embed.set_footer(text="Playing: " + channel["game"])
         embed.color = 0x6441A4
@@ -398,7 +399,8 @@ class Streams:
         embed.add_field(name="Followers", value=channel["followers"])
         #embed.add_field(name="Views", value=channel["views"])
         embed.set_thumbnail(url=base_url + channel["user_logo"])
-        embed.set_image(url=base_url + livestream["media_thumbnail"] + self.rnd_attr())
+        if livestream["media_thumbnail"]:
+            embed.set_image(url=base_url + livestream["media_thumbnail"] + self.rnd_attr())
         embed.set_footer(text="Playing: " + livestream["category_name"])
         embed.color = 0x98CB00
         return embed
@@ -416,7 +418,8 @@ class Streams:
             embed.set_thumbnail(url=user["avatarUrl"])
         else:
             embed.set_thumbnail(url=default_avatar)
-        embed.set_image(url=data["thumbnail"]["url"] + self.rnd_attr())
+        if data["thumbnail"]:
+            embed.set_image(url=data["thumbnail"]["url"] + self.rnd_attr())
         embed.color = 0x4C90F3
         if data["type"] is not None:
             embed.set_footer(text="Playing: " + data["type"]["name"])
