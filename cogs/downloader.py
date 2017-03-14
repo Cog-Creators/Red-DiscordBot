@@ -138,7 +138,9 @@ class Downloader:
                 if 'url' == cog:
                     continue
                 data = self.get_info_data(repo_name, cog)
-                if data and data.get("HIDDEN", False) is False:
+                if data and data.get("HIDDEN") is True:
+                    continue
+                if data:
                     retlist.append([cog, data.get("SHORT", "")])
                 else:
                     retlist.append([cog, ''])
