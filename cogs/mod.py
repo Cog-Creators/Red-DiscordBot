@@ -31,9 +31,10 @@ ACTIONS_CASES = {
 }
 
 default_settings = {
-    "ban_mention_spam" : False,
-    "delete_repeats"   : False,
-    "mod-log"          : None
+    "ban_mention_spam"  : False,
+    "delete_repeats"    : False,
+    "mod-log"           : None,
+    "respect_hierarchy" : False
 }
 
 
@@ -111,14 +112,18 @@ class Mod:
             await send_cmd_help(ctx)
             roles = settings.get_server(server).copy()
             _settings = {**self.settings[server.id], **roles}
+            if "respect_hierarchy" not in _settings:
+                _settings["respect_hierarchy"] = default_settings["respect_hierarchy"]
             if "delete_delay" not in _settings:
-                _settings["delete_delay"] = -1
+                _settings["delete_delay"] = "Disabled"
+
             msg = ("Admin role: {ADMIN_ROLE}\n"
                    "Mod role: {MOD_ROLE}\n"
                    "Mod-log: {mod-log}\n"
                    "Delete repeats: {delete_repeats}\n"
                    "Ban mention spam: {ban_mention_spam}\n"
                    "Delete delay: {delete_delay}\n"
+                   "Respects hierarchy: {respect_hierarchy}"
                    "".format(**_settings))
             await self.bot.say(box(msg))
 
@@ -234,7 +239,7 @@ class Mod:
     @modset.command(pass_context=True, no_pm=True, name='cases')
     async def set_cases(self, ctx, action: str = None, enabled: bool = None):
         """Enables or disables case creation for each type of mod action
-        
+
         Enabled can be 'on' or 'off'"""
         server = ctx.message.server
 
@@ -278,6 +283,23 @@ class Mod:
                    )
             await self.bot.say(msg)
 
+    @modset.command(pass_context=True, no_pm=True)
+    @checks.serverowner_or_permissions()
+    async def hierarchy(self, ctx):
+        """Toggles role hierarchy check for mods / admins"""
+        server = ctx.message.server
+        toggled = self.settings[server.id].get("respect_hierarchy",
+                                               default_settings["respect_hierarchy"])
+        if not toggled:
+            self.settings[server.id]["respect_hierarchy"] = True
+            await self.bot.say("Role hierarchy will be checked when "
+                               "moderation commands are issued.")
+        else:
+            self.settings[server.id]["respect_hierarchy"] = False
+            await self.bot.say("Role hierarchy will be ignored when "
+                               "moderation commands are issued.")
+        dataIO.save_json("data/mod/settings.json", self.settings)
+
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(kick_members=True)
     async def kick(self, ctx, user: discord.Member, *, reason: str = None):
@@ -288,6 +310,11 @@ class Mod:
         if author == user:
             await self.bot.say("I cannot let you do that. Self-harm is "
                                "bad \N{PENSIVE FACE}")
+            return
+        elif not self.is_allowed_by_hierarchy(server, author, user):
+            await self.bot.say("I cannot let you do that. You are "
+                               "not higher than the user in the role "
+                               "hierarchy.")
             return
 
         try:
@@ -318,6 +345,11 @@ class Mod:
         if author == user:
             await self.bot.say("I cannot let you do that. Self-harm is "
                                "bad \N{PENSIVE FACE}")
+            return
+        elif not self.is_allowed_by_hierarchy(server, author, user):
+            await self.bot.say("I cannot let you do that. You are "
+                               "not higher than the user in the role "
+                               "hierarchy.")
             return
 
         if days:
@@ -364,6 +396,11 @@ class Mod:
         if author == user:
             await self.bot.say("I cannot let you do that. Self-harm is "
                                "bad \N{PENSIVE FACE}")
+            return
+        elif not self.is_allowed_by_hierarchy(server, author, user):
+            await self.bot.say("I cannot let you do that. You are "
+                               "not higher than the user in the role "
+                               "hierarchy.")
             return
 
         try:
@@ -433,10 +470,17 @@ class Mod:
         channel = ctx.message.channel
         server = ctx.message.server
         overwrites = channel.overwrites_for(user)
+
         if overwrites.send_messages is False:
             await self.bot.say("That user can't send messages in this "
                                "channel.")
             return
+        elif not self.is_allowed_by_hierarchy(server, author, user):
+            await self.bot.say("I cannot let you do that. You are "
+                               "not higher than the user in the role "
+                               "hierarchy.")
+            return
+
         self._perms_cache[user.id][channel.id] = overwrites.send_messages
         overwrites.send_messages = False
         try:
@@ -461,6 +505,13 @@ class Mod:
         """Mutes user in the server"""
         author = ctx.message.author
         server = ctx.message.server
+
+        if not self.is_allowed_by_hierarchy(server, author, user):
+            await self.bot.say("I cannot let you do that. You are "
+                               "not higher than the user in the role "
+                               "hierarchy.")
+            return
+
         register = {}
         for channel in server.channels:
             if channel.type != discord.ChannelType.text:
@@ -506,11 +557,20 @@ class Mod:
     async def channel_unmute(self, ctx, user : discord.Member):
         """Unmutes user in the current channel"""
         channel = ctx.message.channel
+        author = ctx.message.author
+        server = ctx.message.server
         overwrites = channel.overwrites_for(user)
+
         if overwrites.send_messages:
             await self.bot.say("That user doesn't seem to be muted "
                                "in this channel.")
             return
+        elif not self.is_allowed_by_hierarchy(server, author, user):
+            await self.bot.say("I cannot let you do that. You are "
+                               "not higher than the user in the role "
+                               "hierarchy.")
+            return
+
         if user.id in self._perms_cache:
             old_value = self._perms_cache[user.id].get(channel.id)
         else:
@@ -542,11 +602,19 @@ class Mod:
     async def server_unmute(self, ctx, user : discord.Member):
         """Unmutes user in the server"""
         server = ctx.message.server
+        author = ctx.message.author
+
         if user.id not in self._perms_cache:
             await self.bot.say("That user doesn't seem to have been muted with {0}mute commands. "
                                "Unmute them in the channels you want with `{0}unmute <user>`"
                                "".format(ctx.prefix))
             return
+        elif not self.is_allowed_by_hierarchy(server, author, user):
+            await self.bot.say("I cannot let you do that. You are "
+                               "not higher than the user in the role "
+                               "hierarchy.")
+            return
+
         for channel in server.channels:
             if channel.type != discord.ChannelType.text:
                 continue
@@ -1305,6 +1373,16 @@ class Mod:
             return True
         else:
             return False
+
+    def is_allowed_by_hierarchy(self, server, mod, user):
+        toggled = self.settings[server.id].get("respect_hierarchy",
+                                               default_settings["respect_hierarchy"])
+        is_special = mod == server.owner or mod.id == self.bot.settings.owner
+
+        if not toggled:
+            return True
+        else:
+            return mod.top_role.position > user.top_role.position or is_special
 
     async def new_case(self, server, *, action, mod=None, user, reason=None, until=None, channel=None):
         action_type = action.lower() + "_cases"
