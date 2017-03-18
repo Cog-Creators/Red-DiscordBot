@@ -1003,7 +1003,13 @@ class Mod:
     async def blacklist(self, ctx):
         """Bans user from using the bot"""
         if ctx.invoked_subcommand is None:
+            name = list(set([x.name for x in self.bot.get_all_members() if x.id in self.blacklist_list]))
             await send_cmd_help(ctx)
+            if name:
+                userlist = ', '.join(name)
+            else:
+                userlist = "No one"
+            await self.bot.say(box('Blacklisted users:\n' + userlist))
 
     @blacklist.command(name="add")
     async def _blacklist_add(self, user: discord.Member):
@@ -1037,7 +1043,13 @@ class Mod:
     async def whitelist(self, ctx):
         """Users who will be able to use the bot"""
         if ctx.invoked_subcommand is None:
+            name = list(set([x.name for x in self.bot.get_all_members() if x.id in self.whitelist_list]))
             await send_cmd_help(ctx)
+            if name:
+                userlist = ', '.join(name)
+            else:
+                userlist = "No one"
+            await self.bot.say(box('Whitelisted users:\n' + userlist))
 
     @whitelist.command(name="add")
     async def _whitelist_add(self, user: discord.Member):
