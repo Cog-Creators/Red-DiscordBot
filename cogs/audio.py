@@ -2011,6 +2011,10 @@ class Audio:
                 is_full = False
             else:
                 is_full = len(channel.voice_members) >= channel.user_limit
+            if server.me.voice_channel == channel:
+                same_vc = True
+            else:
+                same_vc = False
 
         if channel is None:
             raise AuthorNotConnected
@@ -2018,7 +2022,9 @@ class Audio:
             raise UnauthorizedConnect
         elif channel.permissions_for(server.me).speak is False:
             raise UnauthorizedSpeak
-        elif is_full and not is_admin:
+        elif same_vc:
+            return True
+        elif not is_admin and is_full:
             raise ChannelUserLimit
         else:
             return True
