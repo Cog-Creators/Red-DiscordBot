@@ -1005,11 +1005,13 @@ class Mod:
         if ctx.invoked_subcommand is None:
             name = list(set([x.name for x in self.bot.get_all_members() if x.id in self.blacklist_list]))
             await send_cmd_help(ctx)
+            userlist = 'Blacklisted users:\n'
             if name:
-                userlist = ', '.join(name)
+                userlist += ', '.join(name)
             else:
-                userlist = "No one"
-            await self.bot.say(box('Blacklisted users:\n' + userlist))
+                userlist += "No one"
+            for page in pagify(userlist):
+                await self.bot.say(box(page))
 
     @blacklist.command(name="add")
     async def _blacklist_add(self, user: discord.Member):
@@ -1045,11 +1047,13 @@ class Mod:
         if ctx.invoked_subcommand is None:
             name = list(set([x.name for x in self.bot.get_all_members() if x.id in self.whitelist_list]))
             await send_cmd_help(ctx)
+            userlist = 'Whitelisted users:\n'
             if name:
-                userlist = ', '.join(name)
+                userlist += ', '.join(name)
             else:
-                userlist = "No one"
-            await self.bot.say(box('Whitelisted users:\n' + userlist))
+                userlist += "No one"
+            for page in pagify(userlist):
+                await self.bot.say(box(page))
 
     @whitelist.command(name="add")
     async def _whitelist_add(self, user: discord.Member):
