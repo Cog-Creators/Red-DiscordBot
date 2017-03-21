@@ -236,6 +236,36 @@ class Mod:
                 else:
                     await self.bot.say("I will not delete command messages.")
 
+    @modset.command(pass_context=True, no_pm=True)
+    async def deleteself(self, ctx, time: int=None):
+        """Sets the delay until the bot removes its own messages.
+            Must be between -1 and 60.
+
+        A delay of -1 means the bot will not remove the message."""
+        server = ctx.message.server
+        if time is not None:
+            time = min(max(time, -1), 60)  # Enforces the time limits
+            self.settings[server.id]["selfdelete_delay"] = time
+            if time == -1:
+                await self.bot.say("Self deleting disabled.")
+            else:
+                await self.bot.say("Self-delete delay set to {}"
+                                   " seconds.".format(time))
+            dataIO.save_json("data/mod/settings.json", self.settings)
+        else:
+            try:
+                delay = self.settings[server.id]["selfdelete_delay"]
+            except KeyError:
+                await self.bot.say("Self-delete delay not yet set up on this"
+                                   " server.")
+            else:
+                if delay != -1:
+                    await self.bot.say("Bot will delete its own messages after"
+                                       " {} seconds. Set this value to -1 to"
+                                       " stop deleting messages".format(delay))
+                else:
+                    await self.bot.say("I will not delete my own messages.")
+
     @modset.command(pass_context=True, no_pm=True, name='cases')
     async def set_cases(self, ctx, action: str = None, enabled: bool = None):
         """Enables or disables case creation for each type of mod action
@@ -1577,37 +1607,52 @@ class Mod:
             * delete delay"""
         server = ctx.message.server
         message = ctx.message
-        try:
-            delay = self.settings[server.id]["delete_delay"]
-        except KeyError:
-            # We have no delay set
-            return
-        except AttributeError:
-            # DM
-            return
 
-        if delay == -1:
-            return
-
-        async def _delete_helper(bot, message):
+        async def delete_task(bot, delay, message):
             try:
+                await asyncio.sleep(delay)
                 await bot.delete_message(message)
                 logger.debug("Deleted command msg {}".format(message.id))
             except discord.errors.Forbidden:
                 # Do not have delete permissions
                 logger.debug("Wanted to delete mid {} but no"
                              " permissions".format(message.id))
+            except asyncio.CancelledError:
+                pass
 
-        await asyncio.sleep(delay)
-        await _delete_helper(self.bot, message)
+        if server:
+            delay = self.settings.get(server.id, {}).get("delete_delay", -1)
+            if delay != -1:
+                coro = delete_task(self.bot, delay, message)
+                self.bot.loop.create_task(coro)
 
     async def on_message(self, message):
-        if message.channel.is_private or self.bot.user == message.author \
-         or not isinstance(message.author, discord.Member):
+        if message.channel.is_private or not isinstance(message.author, discord.Member):
             return
+
+        elif message.server and message.author == self.bot.user:
+            sid = message.server.id
+            delay = self.settings.get(sid, {}).get("selfdelete_delay", -1)
+            if delay == -1:
+                return
+
+            async def delete_task(bot, delay, message):
+                try:
+                    await asyncio.sleep(delay)
+                    await bot.delete_message(message)
+                    logger.debug("Deleted own msg {}".format(message.id))
+                except asyncio.CancelledError:
+                    pass
+
+            coro = delete_task(self.bot, delay, message)
+            self.bot.loop.create_task(coro)
+            return
+
         elif self.is_mod_or_superior(message):
             return
+
         deleted = await self.check_filter(message)
+
         if not deleted:
             deleted = await self.check_duplicates(message)
         if not deleted:
