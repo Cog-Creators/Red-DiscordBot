@@ -4,7 +4,7 @@ from cogs.utils import checks
 from cogs.utils.chat_formatting import pagify, box
 from __main__ import send_cmd_help, set_cog
 import os
-from subprocess import run, PIPE
+from subprocess import run as sp_run, PIPE
 import shutil
 from asyncio import as_completed
 from setuptools import distutils
@@ -351,7 +351,7 @@ class Downloader:
                    "--reverse", oldhash + '..', cogfile
                    ]
             try:
-                log = run(cmd, stdout=PIPE).stdout.decode().strip()
+                log = sp_run(cmd, stdout=PIPE).stdout.decode().strip()
                 yield self.format_patch(repo, cog, log)
             except:
                 pass
@@ -557,6 +557,13 @@ class Downloader:
                 del self.repos[name][cog]
 
     def update_repo(self, name):
+
+        def run(*args, **kwargs):
+            env = os.environ.copy()
+            env['GIT_TERMINAL_PROMPT'] = '0'
+            kwargs['env'] = env
+            return sp_run(*args, **kwargs)
+
         try:
             dd = self.path
             if name not in self.repos:
@@ -606,18 +613,24 @@ class Downloader:
                     cmd = ['git', '-C', dd + name, 'diff', '--no-commit-id',
                            '--name-status', oldhash, newhash]
                     p = run(cmd, stdout=PIPE)
+
                     if p.returncode != 0:
                         raise UpdateError("Error in git diff")
+
                     changed = p.stdout.strip().decode().split('\n')
+
                     for f in changed:
                         if not f.endswith('.py'):
                             continue
-                        status, cogpath = f.split('\t')
+
+                        status, _, cogpath = f.partition('\t')
                         cogname = os.path.split(cogpath)[-1][:-3]  # strip .py
                         if status not in ret:
                             ret[status] = []
                         ret[status].append(cogname)
+
                     return name, ret, oldhash
+
         except CloningError as e:
             raise CloningError(name, *e.args) from None
         except UpdateError as e:
