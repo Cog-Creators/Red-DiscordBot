@@ -12,35 +12,11 @@ import logging
 import asyncio
 
 
-ACTIONS_REPR = {
-    "BAN"     : ("Ban", "\N{HAMMER}"),
-    "KICK"    : ("Kick", "\N{WOMANS BOOTS}"),
-    "CMUTE"   : ("Channel mute", "\N{SPEAKER WITH CANCELLATION STROKE}"),
-    "SMUTE"   : ("Server mute", "\N{SPEAKER WITH CANCELLATION STROKE}"),
-    "SOFTBAN" : ("Softban", "\N{DASH SYMBOL} \N{HAMMER}"),
-    "UNBAN"   : ("Unban", "\N{DOVE OF PEACE}")
-}
-
-ACTIONS_CASES = {
-    "BAN"     : True,
-    "KICK"    : True,
-    "CMUTE"   : False,
-    "SMUTE"   : True,
-    "SOFTBAN" : True,
-    "UNBAN"   : True
-}
-
 default_settings = {
     "ban_mention_spam"  : False,
     "delete_repeats"    : False,
-    "mod-log"           : None,
     "respect_hierarchy" : False
 }
-
-
-for act, enabled in ACTIONS_CASES.items():
-    act = act.lower() + '_cases'
-    default_settings[act] = enabled
 
 
 class ModError(Exception):
@@ -87,6 +63,158 @@ class TempCache:
         return (user.id, server.id, action) in self._cache
 
 
+class ModLog:
+    """Mod log"""
+
+    def __init__(self, bot):
+        self.bot = bot
+        self.last_case = defaultdict(dict)
+        self.cases = dataIO.load_json("data/mod/modlog.json")
+        self.settings = dataIO.load_json("data/mod/modlog_settings.json")
+
+    async def new_case(self, server, *, action, mod=None, user, reason=None,
+                       until=None, channel=None):
+        if action not in self.settings[server.id]["CASETYPES"]:
+            return
+        if not self.settings[server.id]["CASETYPES"][action]["enabled"]:
+            return
+
+        mod_channel = server.get_channel(self.settings[server.id]["channel"])
+        if mod_channel is None:
+            return
+
+        if server.id not in self.cases:
+            self.cases[server.id] = {}
+
+        case_n = len(self.cases[server.id]) + 1
+
+        case = {
+            "case"         : case_n,
+            "created"      : datetime.utcnow().timestamp(),
+            "modified"     : None,
+            "action"       : action,
+            "channel"      : channel.id if channel else None,
+            "user"         : str(user),
+            "user_id"      : user.id,
+            "reason"       : reason,
+            "moderator"    : str(mod) if mod is not None else None,
+            "moderator_id" : mod.id if mod is not None else None,
+            "amended_by"   : None,
+            "amended_id"   : None,
+            "message"      : None,
+            "until"        : None,
+        }
+
+        case_msg = self.format_case_msg(case, server)
+
+        try:
+            msg = await self.bot.send_message(mod_channel, case_msg)
+            case["message"] = msg.id
+        except:
+            pass
+
+        self.cases[server.id][str(case_n)] = case
+
+        if mod:
+            self.last_case[server.id][mod.id] = case_n
+
+        dataIO.save_json("data/mod/modlog.json", self.cases)
+
+    async def update_case(self, server, *, case, mod=None, reason=None,
+                          until=False):
+        channel = server.get_channel(self.settings[server.id]["channel"])
+        if channel is None:
+            raise NoModLogChannel()
+
+        case = str(case)
+        case = self.cases[server.id][case]
+
+        if case["moderator_id"] is not None:
+            if case["moderator_id"] != mod.id:
+                if self.is_admin_or_superior(mod):
+                    case["amended_by"] = str(mod)
+                    case["amended_id"] = mod.id
+                else:
+                    raise UnauthorizedCaseEdit()
+        else:
+            case["moderator"] = str(mod)
+            case["moderator_id"] = mod.id
+
+        if case["reason"]:  # Existing reason
+            case["modified"] = datetime.utcnow().timestamp()
+        case["reason"] = reason
+
+        if until is not False:
+            case["until"] = until
+
+        case_msg = self.format_case_msg(case, server)
+
+        dataIO.save_json("data/mod/modlog.json", self.cases)
+
+        msg = await self.bot.get_message(channel, case["message"])
+        if msg:
+            await self.bot.edit_message(msg, case_msg)
+        else:
+            raise CaseMessageNotFound()
+
+    def format_case_msg(self, case, server):
+        tmp = case.copy()
+        if case["reason"] is None:
+            tmp["reason"] = "Type [p]reason %i <reason> to add it" % tmp["case"]
+        if case["moderator"] is None:
+            tmp["moderator"] = "Unknown"
+            tmp["moderator_id"] = "Nobody has claimed responsibility yet"
+        if case["action"] in self.settings[server.id]["CASETYPES"]:
+            tmp["action"] = ' '.join(self.settings[server.id]["CASETYPES"][tmp["action"]]["repr"])
+
+        channel = case.get("channel")
+        if channel:
+            channel = self.bot.get_channel(channel)
+            tmp["action"] += ' in ' + channel.mention
+
+        case_msg = (
+            "**Case #{case}** | {action}\n"
+            "**User:** {user} ({user_id})\n"
+            "**Moderator:** {moderator} ({moderator_id})\n"
+        ).format(**tmp)
+
+        created = case.get('created')
+        until = case.get('until')
+        if created and until:
+            start = datetime.fromtimestamp(created)
+            end = datetime.fromtimestamp(until)
+            end_fmt = end.strftime('%Y-%m-%d %H:%M:%S UTC')
+            duration = end - start
+            dur_fmt = strfdelta(duration)
+            case_msg += ("**Until:** {}\n"
+                         "**Duration:** {}\n").format(end_fmt, dur_fmt)
+
+        amended = case.get('amended_by')
+        if amended:
+            amended_id = case.get('amended_id')
+            case_msg += "**Amended by:** %s (%s)\n" % (amended, amended_id)
+
+        modified = case.get('modified')
+        if modified:
+            modified = datetime.fromtimestamp(modified)
+            modified_fmt = modified.strftime('%Y-%m-%d %H:%M:%S UTC')
+            case_msg += "**Last modified:** %s\n" % modified_fmt
+
+        case_msg += "**Reason:** %s\n" % tmp["reason"]
+
+        return case_msg
+
+    def register_casetype(self, name: str, state: bool, case_repr: tuple):
+        """Registers a new case"""
+        if name.upper() not in self.settings["DEFAULT"]["CASETYPES"]:
+            print("Registering new case type {}".format(name.upper()))
+            self.settings["DEFAULT"]["CASETYPES"][name.upper()] = {}
+            self.settings["DEFAULT"]["CASETYPES"][name.upper()]["repr"] = case_repr
+            self.settings["DEFAULT"]["CASETYPES"][name.upper()]["enabled"] = state
+            dataIO.save_json("data/mod/modlog_settings.json", self.settings)
+            print("New case type registered")
+
+
 class Mod:
     """Moderation tools."""
 
@@ -101,8 +229,7 @@ class Mod:
         settings = dataIO.load_json("data/mod/settings.json")
         self.settings = defaultdict(lambda: default_settings.copy(), settings)
         self.cache = defaultdict(lambda: deque(maxlen=3))
-        self.cases = dataIO.load_json("data/mod/modlog.json")
-        self.last_case = defaultdict(dict)
+        self.modlog = ModLog(self.bot)
         self.temp_cache = TempCache(bot)
         perms_cache = dataIO.load_json("data/mod/perms_cache.json")
         self._perms_cache = defaultdict(dict, perms_cache)
@@ -120,6 +247,7 @@ class Mod:
                 _settings["respect_hierarchy"] = default_settings["respect_hierarchy"]
             if "delete_delay" not in _settings:
                 _settings["delete_delay"] = "Disabled"
+            _settings["mod-log"] = self.modlog.settings[server.id]["channel"]
 
             msg = ("Admin role: {ADMIN_ROLE}\n"
                    "Mod role: {MOD_ROLE}\n"
@@ -149,23 +277,25 @@ class Mod:
         settings.set_server_mod(server, role_name)
         await self.bot.say("Mod role set to '{}'".format(role_name))
 
-    @modset.command(pass_context=True, no_pm=True)
-    async def modlog(self, ctx, channel : discord.Channel=None):
+    @modset.command(pass_context=True, no_pm=True, name="modlog")
+    async def set_modlog_channel(self, ctx, channel: discord.Channel=None):
         """Sets a channel as mod log
 
         Leaving the channel parameter empty will deactivate it"""
         server = ctx.message.server
+        if server.id not in self.modlog.settings:
+            self.modlog.settings[server.id] = self.modlog.settings["DEFAULT"].copy()
         if channel:
-            self.settings[server.id]["mod-log"] = channel.id
+            self.modlog.settings[server.id]["channel"] = channel.id
             await self.bot.say("Mod events will be sent to {}"
                                "".format(channel.mention))
         else:
-            if self.settings[server.id]["mod-log"] is None:
+            if self.modlog.settings[server.id]["channel"] is None:
                 await send_cmd_help(ctx)
                 return
-            self.settings[server.id]["mod-log"] = None
+            self.modlog.settings[server.id]["channel"] = None
             await self.bot.say("Mod log deactivated.")
-        dataIO.save_json("data/mod/settings.json", self.settings)
+        dataIO.save_json("data/mod/modlog_settings.json", self.modlog.settings)
 
     @modset.command(pass_context=True, no_pm=True)
     async def banmentionspam(self, ctx, max_mentions : int=False):
@@ -206,8 +336,8 @@ class Mod:
     async def resetcases(self, ctx):
         """Resets modlog's cases"""
         server = ctx.message.server
-        self.cases[server.id] = {}
-        dataIO.save_json("data/mod/modlog.json", self.cases)
+        self.modlog.cases[server.id] = {}
+        dataIO.save_json("data/mod/modlog.json", self.modlog.cases)
         await self.bot.say("Cases have been reset.")
 
     @modset.command(pass_context=True, no_pm=True)
@@ -246,44 +376,51 @@ class Mod:
 
         Enabled can be 'on' or 'off'"""
         server = ctx.message.server
-
+        if server.id not in self.modlog.settings:
+            self.modlog.settings[server.id] = self.modlog.settings["DEFAULT"].copy()
         if action == enabled:  # No args given
             await self.bot.send_cmd_help(ctx)
             msg = "Current settings:\n```py\n"
-            maxlen = max(map(lambda x: len(x[0]), ACTIONS_REPR.values()))
-            for action, name in ACTIONS_REPR.items():
-                action = action.lower() + '_cases'
-                value = self.settings[server.id].get(action,
-                                                     default_settings[action])
-                value = 'enabled' if value else 'disabled'
-                msg += '%s : %s\n' % (name[0].ljust(maxlen), value)
-
+            for action in list(self.modlog.settings[server.id]["CASETYPES"].keys()):
+                case_type = self.modlog.settings[server.id]["CASETYPES"][action]["repr"][0]
+                isenabled = "enabled" if self.modlog.settings[server.id]["CASETYPES"][action]["enabled"] else "disabled"
+                msg += "{}: {}\n".format(case_type, isenabled)
             msg += '```'
             await self.bot.say(msg)
 
-        elif action.upper() not in ACTIONS_CASES:
+        elif action.upper() not in list(self.modlog.settings[server.id]["CASETYPES"].keys()):
             msg = "That's not a valid action. Valid actions are: \n"
-            msg += ', '.join(sorted(map(str.lower, ACTIONS_CASES)))
+            msg += ', '.join(sorted(map(str.lower, list(self.modlog.settings[server.id]["CASETYPES"].keys()))))
             await self.bot.say(msg)
 
-        elif enabled == None:
+        elif enabled is None:
             action = action.lower() + '_cases'
-            value = self.settings[server.id].get(action,
-                                                 default_settings[action])
-            await self.bot.say('Case creation for %s is currently %s' %
-                               (action, 'enabled' if value else 'disabled'))
+            isenabled = "enabled" if self.modlog.settings[server.id]["CASETYPES"][action]["enabled"] else "disabled"
+            await self.bot.say('Case creation for {} is currently {}'.format(action, isenabled))
         else:
-            name = ACTIONS_REPR[action.upper()][0]
-            action = action.lower() + '_cases'
-            value = self.settings[server.id].get(action,
-                                                 default_settings[action])
-            if value != enabled:
-                self.settings[server.id][action] = enabled
-                dataIO.save_json("data/mod/settings.json", self.settings)
+            name = self.modlog.settings[server.id]["CASETYPES"][action.upper()]["repr"][0]
+            ALREADY_DONE = False
+            isenabled = None
+            if enabled:
+                if self.modlog.settings[server.id]["CASETYPES"][action.upper()]["enabled"]:
+                    ALREADY_DONE = True
+                    isenabled = True
+                else:
+                    self.modlog.settings[server.id]["CASETYPES"][action.upper()]["enabled"] = True
+                    isenabled = True
+            else:
+                if not self.modlog.settings[server.id]["CASETYPES"][action.upper()]["enabled"]:
+                    ALREADY_DONE = True
+                    isenabled = False
+                else:
+                    self.modlog.settings[server.id]["CASETYPES"][action.upper()]["enabled"] = False
+                    isenabled = False
+
+            dataIO.save_json("data/mod/modlog_settings.json", self.modlog.settings)
             msg = ('Case creation for %s actions %s %s.' %
                    (name.lower(),
-                    'was already' if enabled == value else 'is now',
-                    'enabled' if enabled else 'disabled')
+                    'was already' if ALREADY_DONE else 'is now',
+                    'enabled' if isenabled else 'disabled')
                    )
             await self.bot.say(msg)
 
@@ -325,11 +462,11 @@ class Mod:
             await self.bot.kick(user)
             logger.info("{}({}) kicked {}({})".format(
                 author.name, author.id, user.name, user.id))
-            await self.new_case(server,
-                                action="KICK",
-                                mod=author,
-                                user=user,
-                                reason=reason)
+            await self.modlog.new_case(server,
+                                       action="KICK",
+                                       mod=author,
+                                       user=user,
+                                       reason=reason)
             await self.bot.say("Done. That felt good.")
         except discord.errors.Forbidden:
             await self.bot.say("I'm not allowed to do that.")
@@ -377,11 +514,11 @@ class Mod:
             await self.bot.ban(user, days)
             logger.info("{}({}) banned {}({}), deleting {} days worth of messages".format(
                 author.name, author.id, user.name, user.id, str(days)))
-            await self.new_case(server,
-                                action="BAN",
-                                mod=author,
-                                user=user,
-                                reason=reason)
+            await self.modlog.new_case(server,
+                                       action="BAN",
+                                       mod=author,
+                                       user=user,
+                                       reason=reason)
             await self.bot.say("Done. It was about time.")
         except discord.errors.Forbidden:
             await self.bot.say("I'm not allowed to do that.")
@@ -425,11 +562,11 @@ class Mod:
                 logger.info("{}({}) softbanned {}({}), deleting 1 day worth "
                     "of messages".format(author.name, author.id, user.name,
                      user.id))
-                await self.new_case(server,
-                                    action="SOFTBAN",
-                                    mod=author,
-                                    user=user,
-                                    reason=reason)
+                await self.modlog.new_case(server,
+                                           action="SOFTBAN",
+                                           mod=author,
+                                           user=user,
+                                           reason=reason)
                 self.temp_cache.add(user, server, "UNBAN")
                 await self.bot.unban(server, user)
                 await self.bot.say("Done. Enough chaos.")
@@ -495,12 +632,12 @@ class Mod:
                                "lower than myself in the role hierarchy.")
         else:
             dataIO.save_json("data/mod/perms_cache.json", self._perms_cache)
-            await self.new_case(server,
-                                action="CMUTE",
-                                channel=channel,
-                                mod=author,
-                                user=user,
-                                reason=reason)
+            await self.modlog.new_case(server,
+                                       action="CMUTE",
+                                       channel=channel,
+                                       mod=author,
+                                       user=user,
+                                       reason=reason)
             await self.bot.say("User has been muted in this channel.")
 
     @checks.mod_or_permissions(administrator=True)
@@ -540,11 +677,11 @@ class Mod:
             return
         self._perms_cache[user.id] = register
         dataIO.save_json("data/mod/perms_cache.json", self._perms_cache)
-        await self.new_case(server,
-                            action="SMUTE",
-                            mod=author,
-                            user=user,
-                            reason=reason)
+        await self.modlog.new_case(server,
+                                   action="SMUTE",
+                                   mod=author,
+                                   user=user,
+                                   reason=reason)
         await self.bot.say("User has been muted in this server.")
 
     @commands.group(pass_context=True, no_pm=True, invoke_without_command=True)
@@ -984,13 +1121,13 @@ class Mod:
                 reason = "{} {}".format(case, reason)
             else:
                 reason = case
-            case = self.last_case[server.id].get(author.id)
+            case = self.modlog.last_case[server.id].get(author.id)
             if case is None:
                 await send_cmd_help(ctx)
                 return
         try:
-            await self.update_case(server, case=case, mod=author,
-                                   reason=reason)
+            await self.modlog.update_case(server, case=case, mod=author,
+                                          reason=reason)
         except UnauthorizedCaseEdit:
             await self.bot.say("That case is not yours.")
         except KeyError:
@@ -1391,143 +1528,6 @@ class Mod:
         else:
             return mod.top_role.position > user.top_role.position or is_special
 
-    async def new_case(self, server, *, action, mod=None, user, reason=None, until=None, channel=None):
-        action_type = action.lower() + "_cases"
-        if not self.settings[server.id].get(action_type, default_settings[action_type]):
-            return
-
-        mod_channel = server.get_channel(self.settings[server.id]["mod-log"])
-        if mod_channel is None:
-            return
-
-        if server.id not in self.cases:
-            self.cases[server.id] = {}
-
-        case_n = len(self.cases[server.id]) + 1
-
-        case = {
-            "case"         : case_n,
-            "created"      : datetime.utcnow().timestamp(),
-            "modified"     : None,
-            "action"       : action,
-            "channel"      : channel.id if channel else None,
-            "user"         : str(user),
-            "user_id"      : user.id,
-            "reason"       : reason,
-            "moderator"    : str(mod) if mod is not None else None,
-            "moderator_id" : mod.id if mod is not None else None,
-            "amended_by"   : None,
-            "amended_id"   : None,
-            "message"      : None,
-            "until"        : None,
-        }
-
-        case_msg = self.format_case_msg(case)
-
-        try:
-            msg = await self.bot.send_message(mod_channel, case_msg)
-            case["message"] = msg.id
-        except:
-            pass
-
-        self.cases[server.id][str(case_n)] = case
-
-        if mod:
-            self.last_case[server.id][mod.id] = case_n
-
-        dataIO.save_json("data/mod/modlog.json", self.cases)
-
-    async def update_case(self, server, *, case, mod=None, reason=None,
-                          until=False):
-        channel = server.get_channel(self.settings[server.id]["mod-log"])
-        if channel is None:
-            raise NoModLogChannel()
-
-        case = str(case)
-        case = self.cases[server.id][case]
-
-        if case["moderator_id"] is not None:
-            if case["moderator_id"] != mod.id:
-                if self.is_admin_or_superior(mod):
-                    case["amended_by"] = str(mod)
-                    case["amended_id"] = mod.id
-                else:
-                    raise UnauthorizedCaseEdit()
-        else:
-            case["moderator"] = str(mod)
-            case["moderator_id"] = mod.id
-
-        if case["reason"]:  # Existing reason
-            case["modified"] = datetime.utcnow().timestamp()
-        case["reason"] = reason
-
-        if until is not False:
-            case["until"] = until
-
-        case_msg = self.format_case_msg(case)
-
-        dataIO.save_json("data/mod/modlog.json", self.cases)
-
-        if case["message"] is None:  # The case's message was never sent
-            raise CaseMessageNotFound()
-
-        try:
-            msg = await self.bot.get_message(channel, case["message"])
-        except discord.NotFound:
-            raise CaseMessageNotFound()
-        except discord.Forbidden:
-            raise NoModLogAccess()
-        else:
-            await self.bot.edit_message(msg, case_msg)
-
-
-    def format_case_msg(self, case):
-        tmp = case.copy()
-        if case["reason"] is None:
-            tmp["reason"] = "Type [p]reason %i <reason> to add it" % tmp["case"]
-        if case["moderator"] is None:
-            tmp["moderator"] = "Unknown"
-            tmp["moderator_id"] = "Nobody has claimed responsibility yet"
-        if case["action"] in ACTIONS_REPR:
-            tmp["action"] = ' '.join(ACTIONS_REPR[tmp["action"]])
-
-        channel = case.get("channel")
-        if channel:
-            channel = self.bot.get_channel(channel)
-            tmp["action"] += ' in ' + channel.mention
-
-        case_msg = (
-            "**Case #{case}** | {action}\n"
-            "**User:** {user} ({user_id})\n"
-            "**Moderator:** {moderator} ({moderator_id})\n"
-        ).format(**tmp)
-
-        created = case.get('created')
-        until = case.get('until')
-        if created and until:
-            start = datetime.fromtimestamp(created)
-            end = datetime.fromtimestamp(until)
-            end_fmt = end.strftime('%Y-%m-%d %H:%M:%S UTC')
-            duration = end - start
-            dur_fmt = strfdelta(duration)
-            case_msg += ("**Until:** {}\n"
-                         "**Duration:** {}\n").format(end_fmt, dur_fmt)
-
-        amended = case.get('amended_by')
-        if amended:
-            amended_id = case.get('amended_id')
-            case_msg += "**Amended by:** %s (%s)\n" % (amended, amended_id)
-
-        modified = case.get('modified')
-        if modified:
-            modified = datetime.fromtimestamp(modified)
-            modified_fmt = modified.strftime('%Y-%m-%d %H:%M:%S UTC')
-            case_msg += "**Last modified:** %s\n" % modified_fmt
-
-        case_msg += "**Reason:** %s\n" % tmp["reason"]
-
-        return case_msg
-
     async def check_filter(self, message):
         server = message.server
         if server.id in self.filter.keys():
@@ -1578,11 +1578,11 @@ class Mod:
                     logger.info("Failed to ban member for mention spam in "
                                 "server {}".format(server.id))
                 else:
-                    await self.new_case(server,
-                                        action="BAN",
-                                        mod=server.me,
-                                        user=author,
-                                        reason="Mention spam (Autoban)")
+                    await self.modlog.new_case(server,
+                                               action="BAN",
+                                               mod=server.me,
+                                               user=author,
+                                               reason="Mention spam (Autoban)")
                     return True
         return False
 
@@ -1630,15 +1630,15 @@ class Mod:
     async def on_member_ban(self, member):
         server = member.server
         if not self.temp_cache.check(member, server, "BAN"):
-            await self.new_case(server,
-                                user=member,
-                                action="BAN")
+            await self.modlog.new_case(server,
+                                       user=member,
+                                       action="BAN")
 
     async def on_member_unban(self, server, user):
         if not self.temp_cache.check(user, server, "UNBAN"):
-            await self.new_case(server,
-                                user=user,
-                                action="UNBAN")
+            await self.modlog.new_case(server,
+                                       user=user,
+                                       action="UNBAN")
 
     async def check_names(self, before, after):
         if before.name != after.name:
@@ -1706,6 +1706,38 @@ def check_folders():
 def check_files():
     ignore_list = {"SERVERS": [], "CHANNELS": []}
 
+    default_modlog_settings = {
+        "DEFAULT": {
+            "CASETYPES": {
+                "BAN": {
+                    "repr": ("Ban", "\N{HAMMER}"),
+                    "enabled": True
+                },
+                "KICK": {
+                    "repr": ("Kick", "\N{WOMANS BOOTS}"),
+                    "enabled": True
+                },
+                "CMUTE": {
+                    "repr": ("Channel mute", "\N{SPEAKER WITH CANCELLATION STROKE}"),
+                    "enabled": False
+                },
+                "SMUTE": {
+                    "repr": ("Server mute", "\N{SPEAKER WITH CANCELLATION STROKE}"),
+                    "enabled": True
+                },
+                "SOFTBAN": {
+                    "repr": ("Softban", "\N{DASH SYMBOL} \N{HAMMER}"),
+                    "enabled": True
+                },
+                "UNBAN": {
+                    "repr": ("Unban", "\N{DOVE OF PEACE}"),
+                    "enabled": True
+                }
+            },
+            "channel": None
+        }
+    }
+
     files = {
         "blacklist.json"      : [],
         "whitelist.json"      : [],
@@ -1715,7 +1747,8 @@ def check_files():
         "past_nicknames.json" : {},
         "settings.json"       : {},
         "modlog.json"         : {},
-        "perms_cache.json"    : {}
+        "perms_cache.json"    : {},
+        "modlog_settings.json": default_modlog_settings
     }
 
     for filename, value in files.items():
