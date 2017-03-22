@@ -588,11 +588,15 @@ class Downloader:
                 self.populate_list(name)
                 return name, REPO_CLONE, None
             else:
-                rpcmd = ["git", "-C", dd + name, "rev-parse", "HEAD"]
+                rpbcmd = ["git", "-C", dd + name, "rev-parse", "--abbrev-ref", "HEAD"]
+                p = run(rpbcmd, stdout=PIPE)
+                branch = p.stdout.decode().strip()
+
+                rpcmd = ["git", "-C", dd + name, "rev-parse", branch]
                 p = run(["git", "-C", dd + name, "reset", "--hard",
-                        "origin/HEAD", "-q"])
+                        "origin/%s" % branch, "-q"])
                 if p.returncode != 0:
-                    raise UpdateError("Error resetting to origin/HEAD")
+                    raise UpdateError("Error resetting to origin/%s" % branch)
                 p = run(rpcmd, stdout=PIPE)
                 if p.returncode != 0:
                     raise UpdateError("Unable to determine old commit hash")
