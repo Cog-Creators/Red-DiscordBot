@@ -68,6 +68,7 @@ class Bot(commands.Bot):
         self._intro_displayed = False
         self._shutdown_mode = None
         self.logger = set_logger(self)
+        self._last_exception = None
         if 'self_bot' in kwargs:
             self.settings.self_bot = kwargs['self_bot']
         else:
@@ -361,10 +362,15 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
         elif isinstance(error, commands.CommandInvokeError):
             bot.logger.exception("Exception in command '{}'".format(
                 ctx.command.qualified_name), exc_info=error.original)
-            oneliner = "Error in command '{}' - {}: {}".format(
-                ctx.command.qualified_name, type(error.original).__name__,
-                str(error.original))
-            await ctx.bot.send_message(channel, inline(oneliner))
+            message = ("Error in command '{}'. Check your console or "
+                       "logs for details."
+                       "".format(ctx.command.qualified_name))
+            log = ("Exception in command '{}'\n"
+                   "".format(ctx.command.qualified_name))
+            log += "".join(traceback.format_exception(type(error), error,
+                                                      error.__traceback__))
+            bot._last_exception = log
+            await ctx.bot.send_message(channel, inline(message))
         elif isinstance(error, commands.CommandNotFound):
             pass
         elif isinstance(error, commands.CheckFailure):
