@@ -1005,7 +1005,8 @@ class Mod:
         if ctx.invoked_subcommand is None:
             name = []
             for x in self.blacklist_list:
-                name.append(str(await self.bot.get_user_info(x)))
+                x = await self.bot.get_user_info(x)
+                name.append('{0.name}#{0.discriminator} ({0.id})'.format(x))
             await send_cmd_help(ctx)
             userlist = 'Blacklisted users:\n'
             if name:
@@ -1049,11 +1050,12 @@ class Mod:
         if ctx.invoked_subcommand is None:
             name = []
             for x in self.whitelist_list:
-                name.append(str(await self.bot.get_user_info(x)))
+                x = await self.bot.get_user_info(x)
+                name.append('{0.name}#{0.discriminator} ({0.id})'.format(x))
             await send_cmd_help(ctx)
             userlist = 'Whitelisted users:\n'
             if name:
-                userlist += ', '.join(name)
+                userlist += '\n'.join(name)
             else:
                 userlist += "No one"
             for page in pagify(userlist):
