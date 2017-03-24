@@ -151,11 +151,18 @@ class ModLog:
 
         dataIO.save_json("data/mod/modlog.json", self.cases)
 
-        msg = await self.bot.get_message(channel, case["message"])
-        if msg:
-            await self.bot.edit_message(msg, case_msg)
-        else:
+        if case["message"] is None:
             raise CaseMessageNotFound()
+
+        try:
+            msg = await self.bot.get_message(channel, case["message"])
+        except discord.NotFound:
+            raise CaseMessageNotFound()
+        except discord.Forbidden:
+            raise NoModLogAccess()
+        else:
+            await self.bot.edit_message(msg, case_msg)
+
 
     def format_case_msg(self, case, server):
         tmp = case.copy()
