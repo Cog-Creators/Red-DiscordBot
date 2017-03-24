@@ -1003,7 +1003,9 @@ class Mod:
     async def blacklist(self, ctx):
         """Bans user from using the bot"""
         if ctx.invoked_subcommand is None:
-            name = list(set([x.name for x in self.bot.get_all_members() if x.id in self.blacklist_list]))
+            name = []
+            for x in self.blacklist_list:
+                name.append(str(await self.bot.get_user_info(x)))
             await send_cmd_help(ctx)
             userlist = 'Blacklisted users:\n'
             if name:
@@ -1045,7 +1047,9 @@ class Mod:
     async def whitelist(self, ctx):
         """Users who will be able to use the bot"""
         if ctx.invoked_subcommand is None:
-            name = list(set([x.name for x in self.bot.get_all_members() if x.id in self.whitelist_list]))
+            name = []
+            for x in self.whitelist_list:
+                name.append(str(await self.bot.get_user_info(x)))
             await send_cmd_help(ctx)
             userlist = 'Whitelisted users:\n'
             if name:
