@@ -370,7 +370,7 @@ class Downloader:
         self.save_repos()
         os.remove(os.path.join("cogs", cog + ".py"))
         owner = self.bot.get_cog('Owner')
-        await owner.unload.callback(owner, module=cog)
+        await owner.unload.callback(owner, cog_name=cog)
         await self.bot.say("Cog successfully uninstalled.")
 
     @cog.command(name="install", pass_context=True)
@@ -404,7 +404,7 @@ class Downloader:
             elif answer.content.lower().strip() == "yes":
                 set_cog("cogs." + cog, True)
                 owner = self.bot.get_cog('Owner')
-                await owner.load.callback(owner, module=cog)
+                await owner.load.callback(owner, cog_name=cog)
             else:
                 await self.bot.say("Ok then, you can load it with"
                                    " `{}load {}`".format(ctx.prefix, cog))
