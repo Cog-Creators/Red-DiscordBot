@@ -54,46 +54,44 @@ class Owner:
 
     @commands.command()
     @checks.is_owner()
-    async def load(self, *, module: str):
-        """Loads a module
+    async def load(self, *, cog_name: str):
+        """Loads a cog
 
         Example: load mod"""
-        module = module.strip()
+        module = cog_name.strip()
         if "cogs." not in module:
             module = "cogs." + module
         try:
             self._load_cog(module)
         except CogNotFoundError:
-            await self.bot.say("That module could not be found.")
+            await self.bot.say("That cog could not be found.")
         except CogLoadError as e:
             log.exception(e)
             traceback.print_exc()
-            await self.bot.say("There was an issue loading the module. Check"
-                               " your console or logs for more information.\n"
-                               "\nError: `{}`".format(e.args[0]))
+            await self.bot.say("There was an issue loading the cog. Check"
+                               " your console or logs for more information.")
         except Exception as e:
             log.exception(e)
             traceback.print_exc()
-            await self.bot.say('Module was found and possibly loaded but '
+            await self.bot.say('Cog was found and possibly loaded but '
                                'something went wrong. Check your console '
-                               'or logs for more information.\n\n'
-                               'Error: `{}`'.format(e.args[0]))
+                               'or logs for more information.')
         else:
             set_cog(module, True)
             await self.disable_commands()
-            await self.bot.say("Module enabled.")
+            await self.bot.say("The cog has been loaded.")
 
     @commands.group(invoke_without_command=True)
     @checks.is_owner()
-    async def unload(self, *, module: str):
-        """Unloads a module
+    async def unload(self, *, cog_name: str):
+        """Unloads a cog
 
         Example: unload mod"""
-        module = module.strip()
+        module = cog_name.strip()
         if "cogs." not in module:
             module = "cogs." + module
         if not self._does_cogfile_exist(module):
-            await self.bot.say("That module file doesn't exist. I will not"
+            await self.bot.say("That cog file doesn't exist. I will not"
                                " turn off autoloading at start just in case"
                                " this isn't supposed to happen.")
         else:
@@ -106,14 +104,14 @@ class Owner:
         except CogUnloadError as e:
             log.exception(e)
             traceback.print_exc()
-            await self.bot.say('Unable to safely disable that module.')
+            await self.bot.say('Unable to safely unload that cog.')
         else:
-            await self.bot.say("Module disabled.")
+            await self.bot.say("The cog has been unloaded.")
 
     @unload.command(name="all")
     @checks.is_owner()
     async def unload_all(self):
-        """Unloads all modules"""
+        """Unloads all cogs"""
         cogs = self._list_cogs()
         still_loaded = []
         for cog in cogs:
@@ -135,10 +133,11 @@ class Owner:
 
     @checks.is_owner()
     @commands.command(name="reload")
-    async def _reload(self, module):
-        """Reloads a module
+    async def _reload(self, *, cog_name: str):
+        """Reloads a cog
 
         Example: reload audio"""
+        module = cog_name.strip()
         if "cogs." not in module:
             module = "cogs." + module
 
@@ -150,19 +149,18 @@ class Owner:
         try:
             self._load_cog(module)
         except CogNotFoundError:
-            await self.bot.say("That module cannot be found.")
+            await self.bot.say("That cog cannot be found.")
         except NoSetupError:
-            await self.bot.say("That module does not have a setup function.")
+            await self.bot.say("That cog does not have a setup function.")
         except CogLoadError as e:
             log.exception(e)
             traceback.print_exc()
-            await self.bot.say("That module could not be loaded. Check your"
-                               " console or logs for more information.\n\n"
-                               "Error: `{}`".format(e.args[0]))
+            await self.bot.say("That cog could not be loaded. Check your"
+                               " console or logs for more information.")
         else:
             set_cog(module, True)
             await self.disable_commands()
-            await self.bot.say("Module reloaded.")
+            await self.bot.say("The cog has been reloaded.")
 
     @commands.command(name="cogs")
     @checks.is_owner()
@@ -789,6 +787,23 @@ class Owner:
         except discord.HTTPException:
             await self.bot.say("I need the `Embed links` permission "
                                "to send this")
+
+    @commands.command(pass_context=True)
+    @checks.is_owner()
+    async def traceback(self, ctx, public: bool=False):
+        """Sends to the owner the last command exception that has occurred
+
+        If public (yes is specified), it will be sent to the chat instead"""
+        if not public:
+            destination = ctx.message.author
+        else:
+            destination = ctx.message.channel
+
+        if self.bot._last_exception:
+            for page in pagify(self.bot._last_exception):
+                await self.bot.send_message(destination, box(page, lang="py"))
+        else:
+            await self.bot.say("No exception has occurred yet.")
 
     def _load_cog(self, cogname):
         if not self._does_cogfile_exist(cogname):
