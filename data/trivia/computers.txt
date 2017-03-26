@@ -4,7 +4,6 @@ A computer which links several PCs together in a network is called a...?`Server
 Which device allows your computer to talk to other computers over a telephone line as well as access the internet?`Modem
 How many logical drives is it possible to fit onto a physical disk?`Twenty-four`twentyfour`24`twenty four
 According to ISO, HDLC means...?`High-level Data Link Control`highlevel data link control`high level data link control
-You are troubleshooting your WinXP system. You want to invoke the Help And Support Center, and you fail. For the Help And Support Center to function, which of the following services must be running?`helpsvc.exe
 How much information can a CD (Compact Disc) usually store?`650 Mb
 The cabinet containing the computer’s working parts is known as the...?`Workstation`Case
 IP Addresses have ________ bytes?`Four`4
