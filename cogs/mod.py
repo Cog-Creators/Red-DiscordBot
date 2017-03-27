@@ -207,7 +207,7 @@ class Mod:
         await self.bot.say("Cases have been reset.")
 
     @modset.command(pass_context=True, no_pm=True)
-    async def deletedelay(self, ctx, time: int=None):
+    async def deletecmd(self, ctx, time: int=None):
         """Sets the delay until the bot removes the command message.
             Must be between -1 and 60.
 
