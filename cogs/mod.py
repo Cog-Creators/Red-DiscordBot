@@ -59,6 +59,10 @@ class NoModLogChannel(ModError):
     pass
 
 
+class NoModLogAccess(ModError):
+    pass
+
+
 class TempCache:
     """
     This is how we avoid events such as ban and unban
@@ -994,7 +998,10 @@ class Mod:
         except NoModLogChannel:
             await self.bot.say("There's no mod-log channel set.")
         except CaseMessageNotFound:
-            await self.bot.say("Couldn't find the case's message.")
+            await self.bot.say("I couldn't find the case's message.")
+        except NoModLogAccess:
+            await self.bot.say("I'm not allowed to access the mod-log "
+                               "channel (or its message history)")
         else:
             await self.bot.say("Case #{} updated.".format(case))
 
@@ -1461,11 +1468,18 @@ class Mod:
 
         dataIO.save_json("data/mod/modlog.json", self.cases)
 
-        msg = await self.bot.get_message(channel, case["message"])
-        if msg:
-            await self.bot.edit_message(msg, case_msg)
-        else:
+        if case["message"] is None:  # The case's message was never sent
             raise CaseMessageNotFound()
+
+        try:
+            msg = await self.bot.get_message(channel, case["message"])
+        except discord.NotFound:
+            raise CaseMessageNotFound()
+        except discord.Forbidden:
+            raise NoModLogAccess()
+        else:
+            await self.bot.edit_message(msg, case_msg)
+
 
     def format_case_msg(self, case):
         tmp = case.copy()

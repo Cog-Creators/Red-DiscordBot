@@ -102,7 +102,7 @@ Which champion's ultimate is named: Assault and Battery?`Vi
 Which champion's ultimate is named: Abyssal Voyage?`Tahm Kench`tahmkench
 Which champion's ultimate is named: Dominus?`Renekton
 Which champion's ultimate is named: Mega Inferno Bomb?`Ziggs
-Which champion's ultimate is named: Desperate Power?`Ryze
+Which champion's ultimate is named: Realm Warp?`Ryze
 Which champion's ultimate is named: Solar Flare?`Leona
 Which champion's ultimate is named: Impale?`Skarner
 Which champion's ultimate is named: Grand Challenge?`Fiora
@@ -114,7 +114,7 @@ Which champion's ultimate is named: Dragon's Rage?`Lee Sin`leesin
 Which champion's ultimate is named: Pheonix Stance?`Udyr
 Which champion's ultimate is named: Whirling Death?`Draven
 Which champion's ultimate is named: Hyper-Kinteic Position Reverser?`Urgot
-Which champion's ultimate is named: Idol of Durand?`Galio
+Which champion's ultimate is named: Hero's Entrance?`Galio
 Which champion's ultimate is named: Glacial Fissure?`Braum
 Which champion's ultimate is named: Subjugate?`Trundle
 Which champion's ultimate is named: Unleashed Power?`Syndra

@@ -149,12 +149,12 @@ Whose ult makes the corpses of small champions disappear?`Fizz
 Who was born in the Guardian's Sea?`Fizz
 Who says "I'll show them a watery grave."?`Fizz
 Whose champion design is based on an axolotl?`Fizz
-Who is also known as the "Sentinel's Sorrow"?`Galio
-Who has a skill called "Bulwark"?`Galio
+Who is also known as the "Walking National Monument"?`Galio
+Who has a skill called "Justice Punch"?`Galio
 Who created Galio?`Durand
 Whose dance is from Beauty and the Beast?`Galio
-Who has the highest attainable AP at level 1 on Summoner's Rift?`Galio
 What color is Galio in his legendary skin?`Red
+Who is the only mage Galio likes?`Lux
 Who does Captain Gangplank say "Prepare to be boarded." to?`Miss Fortune
 Whose warship did Gangplank steal?`Swain
 Who is Gangplank's ex-girlfriend?`Illaoi
@@ -472,7 +472,7 @@ Which Demacian disapproves of Shyvana due to her lack of self-control?`Garen
 Who has a skill called "Flame Breath"?`Shyvana
 Who has a skin that was made in celebration of the 2014 World Championship?`Shyvana
 Who was the first champion ever created?`Singed
-Who was once Warwick's apprentice?`Singed
+Who did augmented Warwick?`Singed
 Who supplies Gragas with brewing equipment?`Singed
 Who invented the weapon used to destroy Master Yi's home village?`Singed
 Who has a skill called "Fling"?`Singed
@@ -618,9 +618,9 @@ What species is Volibear?`Ursine
 Who says "Let the storm follow in my wake." when picked in champion select?`Volibear
 Who has a skill called "Majestic Roar"?`Volibear
 Who killed Urf?`Warwick
-Who is also known as "the Blood Hunter"?`Warwick
+Who is also known as "the Uncaged Wrath of Zaun"?`Warwick
 If you search for Urf in champion select, whose name pops up?`Warwick
-Who has a skill called Infinite Duress?`Warwick
+Who is also known as Subject #1088?`Warwick
 Who has a Hyena skin?`Warwick
 Warwick betrayed Soraka to get her heart for who?`Singed
 Who has the skill with the highest AD Ratio in the game?`Wukong
