@@ -117,6 +117,50 @@ class Downloader:
                 await self.bot.say(msg[:2000])
         await self.bot.say("Repo '{}' added.".format(repo_name))
 
+    @repo.command(name="massadd", pass_context=True)
+    async def _repo_massadd(self, ctx, *, repos_to_add: str):
+        """Adds multiple repos by url. Warning: Adding 3RD Party
+        Repositories is at your own Risk. Repos should be separated
+        by a semicolon, and the repo's name should be separated from
+        its url by a comma (i.e. "repo1",url;"repo2",url)"""
+        author = ctx.message.author
+        if not self.disclaimer_multi_accepted:
+            await self.bot.say(DISCLAIMER_MULTI)
+            answer = await self.bot.wait_for_message(timeout=30,
+                                                     author=author)
+            if answer is None:
+                await self.bot.say('Not adding repo.')
+                return
+            elif "i agree" not in answer.content.lower():
+                await self.bot.say('Not adding repo.')
+                return
+            else:
+                self.disclaimer_multi_accepted = True
+
+        repos = repos_to_add.split(";")
+        for repo in repos:
+            cur_repo = repo.split(",")
+            repo_name = cur_repo[0]
+            repo_url = cur_repo[1]
+            self.repos[repo_name] = {}
+            self.repos[repo_name]['url'] = repo_url
+            try:
+                self.update_repo(repo_name)
+            except CloningError:
+                await self.bot.say("That repository link doesn't seem to be "
+                                   "valid.")
+                del self.repos[repo_name]
+                return
+            self.populate_list(repo_name)
+            self.save_repos()
+            data = self.get_info_data(repo_name)
+            if data:
+                msg = data.get("INSTALL_MSG")
+                if msg:
+                    await self.bot.say(msg[:2000])
+            await self.bot.say("Repo '{}' added.".format(repo_name))
+            await self.bot.say("=" * 40)
+
     @repo.command(name="catadd", pass_context=True)
     async def _repo_catadd(self, ctx, repo_category: str):
         """Adds all repos in a specific category (approved,
@@ -158,7 +202,7 @@ class Downloader:
                         if msg:
                             await self.bot.say(msg[:2000])
                     await self.bot.say("Repo '{}' added.".format(repo_name))
-                    await self.bot.say("=" * 80)
+                    await self.bot.say("=" * 40)
 
     @repo.command(name="remove")
     async def _repo_del(self, repo_name: str):
