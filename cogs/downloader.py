@@ -117,8 +117,8 @@ class Downloader:
                 await self.bot.say(msg[:2000])
         await self.bot.say("Repo '{}' added.".format(repo_name))
 
-    @repo.command(name="massadd", pass_context=True)
-    async def _repo_massadd(self, ctx, repo_category: str):
+    @repo.command(name="catadd", pass_context=True)
+    async def _repo_catadd(self, ctx, repo_category: str):
         """Adds all repos in a specific category (approved,
         beta, unapproved, or all). Warning: Adding 3RD Party
         Repositories is at your own Risk."""
