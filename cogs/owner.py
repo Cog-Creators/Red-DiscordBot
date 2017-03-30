@@ -865,14 +865,33 @@ class Owner:
                               colour=discord.Colour.red())
             return e
 
+        behind = [int(s) for s in os.popen(
+            r'git fetch && git status -uno').read().strip().split() if s.isdigit()]
+        if behind:
+            behind = behind[0]
+        else:
+            behind = 0
+
         commands = " && ".join((
             r'git config --get remote.origin.url',         # Remote URL
             r'git rev-list --count HEAD',                  # Number of commits
             r'git rev-parse --abbrev-ref HEAD',            # Branch name
-            r'git show -s -n 3 HEAD --format="%cr|%s|%H"'  # Last 3 commits
+            # Last 3 commits
+            r'git show -s -n {0} HEAD --format="%cr|%s|%H~"'.format(behind + 3)
         ))
         result = os.popen(commands).read()
         url, ncommits, branch, commits = result.split("\n", 3)
+
+        ncommits = str(int(ncommits) - behind)
+        commits = commits.split('~')
+
+        currentcommits = []
+
+        for x in range(behind, behind + 4):
+            currentcommits.append(commits[x])
+
+        commits = "\n".join(currentcommits)
+
         if url.endswith(".git"):
             url = url[:-4]
         if url.startswith("git@"):
@@ -893,9 +912,15 @@ class Owner:
             content = "[{}]({}) - {} ".format(chash[:6], commit_url, commit)
             embed.add_field(name=when, value=content, inline=False)
 
-        embed.set_footer(text="Total commits: " + ncommits)
+        if behind > 0:
+            embed.set_footer(text="Total commits: " + ncommits +
+                             "      Your Bot is out of date. Please update")
+        else:
+            embed.set_footer(text="Total commits: " + ncommits)
 
         return embed
+
+
 
     def get_bot_uptime(self, *, brief=False):
         # Courtesy of Danny
