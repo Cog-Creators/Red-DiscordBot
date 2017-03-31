@@ -449,6 +449,7 @@ def create_fast_start_scripts():
     if not interpreter:
         return
 
+    shebang = "#!/bin/bash"
     call = "\"{}\" launcher.py".format(interpreter)
     start_red = "{} --start".format(call)
     start_red_autorestart = "{} --start --auto-restart".format(call)
@@ -465,6 +466,9 @@ def create_fast_start_scripts():
             ext = ".sh"
         else:
             ext = ".command"
+
+    if not IS_WINDOWS:
+        ccd = "#!/bin/bash\n" + ccd
 
     start_red             = ccd + start_red             + pause
     start_red_autorestart = ccd + start_red_autorestart + pause
