@@ -16,7 +16,7 @@ DEFAULTS = {"MAX_SCORE"    : 10,
             "BOT_PLAYS"    : False,
             "REVEAL_ANSWER": True}
 
-TriviaLine = namedtuple("Question", "question answers")
+TriviaLine = namedtuple("TriviaLine", "question answers")
 
 
 class Trivia:
@@ -284,17 +284,32 @@ class TriviaSession():
         await self.bot.say(box(t, lang="diff"))
 
     async def check_answer(self, message):
-        if message.author.id != self.bot.user.id:
-            self.timeout = time.perf_counter()
-            if self.current_line is not None:
-                for answer in self.current_line.answers:
-                    if answer.lower() in message.content.lower():
-                        self.current_line = None
-                        self.status = "correct answer"
-                        self.scores[message.author] += 1
-                        msg = "You got it {}! **+1** to you!".format(message.author.name)
-                        await self.bot.send_message(message.channel, msg)
-                        return True
+        if message.author == self.bot.user:
+            return
+        elif self.current_line is None:
+            return
+
+        self.timeout = time.perf_counter()
+        has_guessed = False
+
+        for answer in self.current_line.answers:
+            answer = answer.lower()
+            guess = message.content.lower()
+            if " " not in answer:  # Exact matching, issue #331
+                guess = guess.split(" ")
+                for word in guess:
+                    if word == answer:
+                        has_guessed = True
+            else:  # The answer has spaces, we can't be as strict
+                if answer in guess:
+                    has_guessed = True
+
+        if has_guessed:
+            self.current_line = None
+            self.status = "correct answer"
+            self.scores[message.author] += 1
+            msg = "You got it {}! **+1** to you!".format(message.author.name)
+            await self.bot.send_message(message.channel, msg)
 
 
 def check_folders():
