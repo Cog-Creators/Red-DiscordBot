@@ -360,6 +360,16 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
         elif isinstance(error, commands.DisabledCommand):
             await bot.send_message(channel, "That command is disabled.")
         elif isinstance(error, commands.CommandInvokeError):
+            # A bit hacky, couldn't find a better way
+            no_dms = "Cannot send messages to this user"
+            is_help_cmd = ctx.command.qualified_name == "help"
+            is_forbidden = isinstance(error.original, discord.Forbidden)
+            if is_help_cmd and is_forbidden and error.original.text == no_dms:
+                msg = ("I couldn't send the help message to you in DM. Either"
+                       " you blocked me or you disabled DMs in this server.")
+                await bot.send_message(channel, msg)
+                return
+
             bot.logger.exception("Exception in command '{}'".format(
                 ctx.command.qualified_name), exc_info=error.original)
             message = ("Error in command '{}'. Check your console or "
