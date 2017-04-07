@@ -17,13 +17,13 @@ class CustomCommands:
         self.c_commands = dataIO.load_json(self.file_path)
 
     @commands.group(aliases=["cc"], pass_context=True, no_pm=True)
-    @checks.mod_or_permissions(administrator=True)
     async def customcom(self, ctx):
         """Custom commands management"""
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
 
     @customcom.command(name="add", pass_context=True)
+    @checks.mod_or_permissions(administrator=True)
     async def cc_add(self, ctx, command : str, *, text):
         """Adds a custom command
 
@@ -52,6 +52,7 @@ class CustomCommands:
                                "".format(ctx.prefix))
 
     @customcom.command(name="edit", pass_context=True)
+    @checks.mod_or_permissions(administrator=True)
     async def cc_edit(self, ctx, command : str, *, text):
         """Edits a custom command
 
@@ -77,6 +78,7 @@ class CustomCommands:
                                "".format(ctx.prefix))
 
     @customcom.command(name="delete", pass_context=True)
+    @checks.mod_or_permissions(administrator=True)
     async def cc_delete(self, ctx, command : str):
         """Deletes a custom command
 
