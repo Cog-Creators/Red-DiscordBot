@@ -28,9 +28,16 @@ class Image:
             await self.bot.send_cmd_help(ctx)
 
     @_imgur.command(pass_context=True, name="random")
-    async def imgur_random(self, ctx):
-        """Retrieves a random image from Imgur"""
-        task = functools.partial(self.imgur.gallery_random, page=0)
+    async def imgur_random(self, ctx, *, term: str=None):
+        """Retrieves a random image from Imgur
+
+        Search terms can be specified"""
+        if term is None:
+            task = functools.partial(self.imgur.gallery_random, page=0)
+        else:
+            task = functools.partial(self.imgur.gallery_search, term,
+                                     advanced=None, sort='time',
+                                     window='all', page=0)
         task = self.bot.loop.run_in_executor(None, task)
 
         try:
@@ -38,9 +45,12 @@ class Image:
         except asyncio.TimeoutError:
             await self.bot.say("Error: request timed out")
         else:
-            item = choice(results)
-            link = item.gifv if hasattr(item, "gifv") else item.link
-            await self.bot.say(link)
+            if results:
+                item = choice(results)
+                link = item.gifv if hasattr(item, "gifv") else item.link
+                await self.bot.say(link)
+            else:
+                await self.bot.say("Your search terms gave no results.")
 
     @_imgur.command(pass_context=True, name="search")
     async def imgur_search(self, ctx, *, term: str):
