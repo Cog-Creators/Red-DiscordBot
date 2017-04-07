@@ -1,5 +1,5 @@
 from discord.ext import commands
-from random import choice
+from random import choice, shuffle
 import aiohttp
 import functools
 import asyncio
@@ -54,19 +54,24 @@ class Image:
 
     @_imgur.command(pass_context=True, name="search")
     async def imgur_search(self, ctx, *, term: str):
-        """Searches Imgur for the specified term"""
+        """Searches Imgur for the specified term and returns up to 3 results"""
         task = functools.partial(self.imgur.gallery_search, term,
                                  advanced=None, sort='time',
                                  window='all', page=0)
         task = self.bot.loop.run_in_executor(None, task)
 
         try:
-            result = await asyncio.wait_for(task, timeout=10)
+            results = await asyncio.wait_for(task, timeout=10)
         except asyncio.TimeoutError:
             await self.bot.say("Error: request timed out")
         else:
-            if result:
-                await self.bot.say(result[0].link)
+            if results:
+                shuffle(results)
+                msg = "Search results...\n"
+                for r in results[:3]:
+                    msg += r.gifv if hasattr(r, "gifv") else r.link
+                    msg += "\n"
+                await self.bot.say(msg)
             else:
                 await self.bot.say("Your search terms gave no results.")
 
