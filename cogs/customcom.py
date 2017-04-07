@@ -1,7 +1,7 @@
 from discord.ext import commands
 from .utils.dataIO import dataIO
 from .utils import checks
-from __main__ import user_allowed
+from .utils.chat_formatting import pagify, box
 import os
 import re
 
@@ -102,29 +102,22 @@ class CustomCommands:
     async def cc_list(self, ctx):
         """Shows custom commands list"""
         server = ctx.message.server
-        if server.id in self.c_commands:
-            cmdlist = self.c_commands[server.id]
-            if cmdlist:
-                i = 0
-                msg = ["```Custom commands:\n"]
-                for cmd in sorted([cmd for cmd in cmdlist]):
-                    if len(msg[i]) + len(ctx.prefix) + len(cmd) + 5 > 2000:
-                        msg[i] += "```"
-                        i += 1
-                        msg.append("``` {}{}\n".format(ctx.prefix, cmd))
-                    else:
-                        msg[i] += " {}{}\n".format(ctx.prefix, cmd)
-                msg[i] += "```"
-                for cmds in msg:
-                    await self.bot.whisper(cmds)
-            else:
-                await self.bot.say("There are no custom commands in this server."
-                                   " Use `{}customcom add` to start adding some."
-                                   "".format(ctx.prefix))
-        else:
+        commands = self.c_commands.get(server.id, {})
+
+        if not commands:
             await self.bot.say("There are no custom commands in this server."
                                " Use `{}customcom add` to start adding some."
                                "".format(ctx.prefix))
+            return
+
+        commands = ", ".join([ctx.prefix + c for c in sorted(commands)])
+        commands = "Custom commands:\n\n" + commands
+
+        if len(commands) < 1500:
+            await self.bot.say(box(commands))
+        else:
+            for page in pagify(commands, delims=[" ", "\n"]):
+                await self.bot.whisper(box(page))
 
     async def on_message(self, message):
         if len(message.content) < 2 or message.channel.is_private:
@@ -136,7 +129,7 @@ class CustomCommands:
         if not prefix:
             return
 
-        if server.id in self.c_commands and user_allowed(message):
+        if server.id in self.c_commands and self.bot.user_allowed(message):
             cmdlist = self.c_commands[server.id]
             cmd = message.content[len(prefix):]
             if cmd in cmdlist:
