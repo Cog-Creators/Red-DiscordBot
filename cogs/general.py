@@ -174,7 +174,7 @@ class General:
             elif intensity <= 9:
                 msg = "(つ≧▽≦)つ " + name
             elif intensity == 10:
-                msg = "(づ￣ ³￣)づ{} ⊂(´・ω・｀⊂)".format(name)
+                msg = "(づ￣ ³￣)づ {} ⊂(´・ω・｀⊂)".format(name)
             elif intensity >= 11:
                 msg = "***HUGGING INTENSIFIES***"
             await self.bot.say(msg)
