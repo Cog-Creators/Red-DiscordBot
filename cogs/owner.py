@@ -64,22 +64,19 @@ class Owner:
         try:
             self._load_cog(module)
         except CogNotFoundError:
-            await self.bot.say("That cog could not be found.")
+            await self.bot.say("'{}' could not be found.".format(cog_name))
         except CogLoadError as e:
             log.exception(e)
             traceback.print_exc()
-            await self.bot.say("There was an issue loading {}. Check"
-                               " your console or logs for more information.".format(cog_name))
+            await self.bot.say("There was an issue loading '{}'. Check your console or logs for more information.".format(cog_name))
         except Exception as e:
             log.exception(e)
             traceback.print_exc()
-            await self.bot.say('{} was found and possibly loaded but '
-                               'something went wrong. Check your console '
-                               'or logs for more information.'.format(cog_name))
+            await self.bot.say("'{}' was found and possibly loaded but something went wrong. Check your console or logs for more information.".format(cog_name))
         else:
             set_cog(module, True)
             await self.disable_commands()
-            await self.bot.say("{} has been loaded.".format(cog_name))
+            await self.bot.say("'{}' has been loaded.".format(cog_name))
 
     @commands.group(invoke_without_command=True)
     @checks.is_owner()
@@ -91,20 +88,19 @@ class Owner:
         if "cogs." not in module:
             module = "cogs." + module
         if not self._does_cogfile_exist(module):
-            await self.bot.say("{} doesn't exist. I will not turn off autoloading at start just in case this isn't supposed to happen.".format(cog_name))
+            await self.bot.say("'{}' doesn't exist. I will not turn off autoloading at start just in case this isn't supposed to happen.".format(cog_name))
         else:
             set_cog(module, False)
         try:  # No matter what we should try to unload it
             self._unload_cog(module)
         except OwnerUnloadWithoutReloadError:
-            await self.bot.say("I cannot allow you to unload the Owner plugin"
-                               " unless you are in the process of reloading.")
+            await self.bot.say("I cannot allow you to unload the Owner plugin unless you are in the process of reloading.")
         except CogUnloadError as e:
             log.exception(e)
             traceback.print_exc()
-            await self.bot.say('Unable to safely unload {}.'.format(cog_name))
+            await self.bot.say("Unable to safely unload '{}'.".format(cog_name))
         else:
-            await self.bot.say("{} has been unloaded.".format(cog_name))
+            await self.bot.say("'{}' has been unloaded.".format(cog_name))
 
     @unload.command(name="all")
     @checks.is_owner()
