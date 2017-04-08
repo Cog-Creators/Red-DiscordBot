@@ -39,15 +39,15 @@ class General:
         self.bot = bot
         self.stopwatches = {}
         self.ball = ["As I see it, yes", "It is certain", "It is decidedly so", "Most likely", "Outlook good",
-                     "Signs point to yes", "Without a doubt", "Yes", "Yes – definitely", "You may rely on it", "Reply hazy, try again",
-                     "Ask again later", "Better not tell you now", "Cannot predict now", "Concentrate and ask again",
-                     "Don't count on it", "My reply is no", "My sources say no", "Outlook not so good", "Very doubtful"]
+                     "Signs point to yes", "Without a doubt", "Yes", "Yes – definitely", "You may rely on it",
+                     "Better not tell you now", "Don't count on it", "My reply is no", "My sources say no",
+                     "Outlook not so good", "Very doubtful"]
         self.poll_sessions = []
 
     @commands.command(hidden=True)
     async def ping(self):
-        """Pong."""
-        await self.bot.say("Pong.")
+        """Test response time."""
+        await self.bot.say(":ping_pong:")
 
     @commands.command()
     async def choose(self, *choices):
@@ -157,23 +157,27 @@ class General:
         search_terms = escape_mass_mentions(search_terms.replace(" ", "+"))
         await self.bot.say("https://lmgtfy.com/?q={}".format(search_terms))
 
-    @commands.command(no_pm=True, hidden=True)
-    async def hug(self, user : discord.Member, intensity : int=1):
+    @commands.command(pass_context = True, no_pm=True, hidden=True)
+    async def hug(self, ctx, user : discord.Member, intensity : int=1):
         """Because everyone likes hugs
 
         Up to 10 intensity levels."""
-        name = italics(user.display_name)
-        if intensity <= 0:
-            msg = "(っ˘̩╭╮˘̩)っ" + name
-        elif intensity <= 3:
-            msg = "(っ´▽｀)っ" + name
-        elif intensity <= 6:
-            msg = "╰(*´︶`*)╯" + name
-        elif intensity <= 9:
-            msg = "(つ≧▽≦)つ" + name
-        elif intensity >= 10:
-            msg = "(づ￣ ³￣)づ{} ⊂(´・ω・｀⊂)".format(name)
-        await self.bot.say(msg)
+        author = ctx.message.author
+        if user == author:
+            name = italics(user.display_name)
+            if intensity <= 0:
+                msg = "(っ˘̩╭╮˘̩)っ" + name
+            elif intensity <= 3:
+                msg = "(っ´▽｀)っ" + name
+            elif intensity <= 6:
+                msg = "╰(*´︶`*)╯" + name
+            elif intensity <= 9:
+                msg = "(つ≧▽≦)つ" + name
+            elif intensity >= 10:
+                msg = "(づ￣ ³￣)づ{} ⊂(´・ω・｀⊂)".format(name)
+            await self.bot.say(msg)
+        else:
+            await self.bot.say("Aw, {} is alone :'(".format(author))
 
     @commands.command(pass_context=True, no_pm=True)
     async def userinfo(self, ctx, *, user: discord.Member=None):
