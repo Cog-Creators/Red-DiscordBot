@@ -118,10 +118,10 @@ class General:
             outcome = cond[(player_choice, red_choice)]
 
         if outcome is True:
-            await self.bot.say("{} You win {}!"
+            await self.bot.say("{}\nYou win {}!"
                                "".format(red_choice.value, author.mention))
         elif outcome is False:
-            await self.bot.say("{} You lose {}!"
+            await self.bot.say("{}\nYou lose {}!"
                                "".format(red_choice.value, author.mention))
         else:
             await self.bot.say("{} We're square {}!"
