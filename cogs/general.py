@@ -174,10 +174,10 @@ class General:
             elif intensity <= 9:
                 msg = "(つ≧▽≦)つ" + name
             elif intensity >= 10:
-                msg = "(づ￣ ³￣)づ{} ⊂(´・ω・｀⊂)".format(name)
+                msg = "(づ￣ ³￣)づ{} ⊂(´・ω・｀⊂)".format(name.mention)
             await self.bot.say(msg)
         else:
-            await self.bot.say("Aw, {} is alone :'(".format(author))
+            await self.bot.say("Aw, {} is alone :'(".format(author.mention))
 
     @commands.command(pass_context=True, no_pm=True)
     async def userinfo(self, ctx, *, user: discord.Member=None):
