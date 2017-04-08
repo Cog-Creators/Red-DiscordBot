@@ -68,18 +68,18 @@ class Owner:
         except CogLoadError as e:
             log.exception(e)
             traceback.print_exc()
-            await self.bot.say("There was an issue loading the cog. Check"
-                               " your console or logs for more information.")
+            await self.bot.say("There was an issue loading {}. Check"
+                               " your console or logs for more information.".format(cog_name))
         except Exception as e:
             log.exception(e)
             traceback.print_exc()
-            await self.bot.say('Cog was found and possibly loaded but '
+            await self.bot.say('{} was found and possibly loaded but '
                                'something went wrong. Check your console '
-                               'or logs for more information.')
+                               'or logs for more information.'.format(cog_name))
         else:
             set_cog(module, True)
             await self.disable_commands()
-            await self.bot.say("The cog has been loaded.")
+            await self.bot.say("{} has been loaded.".format(cog_name))
 
     @commands.group(invoke_without_command=True)
     @checks.is_owner()
@@ -91,9 +91,7 @@ class Owner:
         if "cogs." not in module:
             module = "cogs." + module
         if not self._does_cogfile_exist(module):
-            await self.bot.say("That cog file doesn't exist. I will not"
-                               " turn off autoloading at start just in case"
-                               " this isn't supposed to happen.")
+            await self.bot.say("{} doesn't exist. I will not turn off autoloading at start just in case this isn't supposed to happen.".format(cog_name))
         else:
             set_cog(module, False)
         try:  # No matter what we should try to unload it
@@ -104,9 +102,9 @@ class Owner:
         except CogUnloadError as e:
             log.exception(e)
             traceback.print_exc()
-            await self.bot.say('Unable to safely unload that cog.')
+            await self.bot.say('Unable to safely unload {}.'.format(cog_name))
         else:
-            await self.bot.say("The cog has been unloaded.")
+            await self.bot.say("{} has been unloaded.".format(cog_name))
 
     @unload.command(name="all")
     @checks.is_owner()
