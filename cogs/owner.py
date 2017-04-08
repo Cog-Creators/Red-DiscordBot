@@ -505,6 +505,26 @@ class Owner:
             await self.bot.say("Token set. Restart me.")
             log.debug("Token changed.")
 
+    @_set.command(name="adminrole", pass_context=True, no_pm=True)
+    @checks.serverowner()
+    async def _modset_adminrole(self, ctx, *, role_name: str):
+        """Sets the admin role for this server, case insensitive."""
+        server = ctx.message.server
+        if server.id not in self.bot.settings.servers:
+            await self.bot.say("Remember to set modrole too.")
+        self.bot.settings.set_server_admin(server, role_name)
+        await self.bot.say("Admin role set to '{}'".format(role_name))
+
+    @_set.command(name="modrole", pass_context=True, no_pm=True)
+    @checks.serverowner()
+    async def _modset_modrole(self, ctx, *, role_name: str):
+        """Sets the mod role for this server, case insensitive."""
+        server = ctx.message.server
+        if server.id not in self.bot.settings.servers:
+            await self.bot.say("Remember to set adminrole too.")
+        self.bot.settings.set_server_mod(server, role_name)
+        await self.bot.say("Mod role set to '{}'".format(role_name))
+
     @commands.group(pass_context=True)
     @checks.is_owner()
     async def blacklist(self, ctx):

@@ -129,23 +129,17 @@ class Mod:
                    "".format(**_settings))
             await self.bot.say(box(msg))
 
-    @modset.command(name="adminrole", pass_context=True, no_pm=True)
-    async def _modset_adminrole(self, ctx, *, role_name: str):
+    @modset.command(name="adminrole", pass_context=True, no_pm=True, hidden=True)
+    async def _modset_adminrole(self, ctx):
         """Sets the admin role for this server, case insensitive."""
-        server = ctx.message.server
-        if server.id not in settings.servers:
-            await self.bot.say("Remember to set modrole too.")
-        settings.set_server_admin(server, role_name)
-        await self.bot.say("Admin role set to '{}'".format(role_name))
+        await self.bot.say("This command has been renamed "
+                           "`{}set adminrole`".format(ctx.prefix))
 
-    @modset.command(name="modrole", pass_context=True, no_pm=True)
-    async def _modset_modrole(self, ctx, *, role_name: str):
+    @modset.command(name="modrole", pass_context=True, no_pm=True, hidden=True)
+    async def _modset_modrole(self, ctx):
         """Sets the mod role for this server, case insensitive."""
-        server = ctx.message.server
-        if server.id not in settings.servers:
-            await self.bot.say("Remember to set adminrole too.")
-        settings.set_server_mod(server, role_name)
-        await self.bot.say("Mod role set to '{}'".format(role_name))
+        await self.bot.say("This command has been renamed "
+                           "`{}set modrole`".format(ctx.prefix))
 
     @modset.command(pass_context=True, no_pm=True)
     async def modlog(self, ctx, channel : discord.Channel=None):
