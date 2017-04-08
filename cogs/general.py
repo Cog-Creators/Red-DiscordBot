@@ -179,7 +179,7 @@ class General:
                 msg = "***HUGGING INTENSIFIES***"
             await self.bot.say(msg)
         else:
-            await self.bot.say("Aw, {} is alone :'(".format(author.mention))
+            await self.bot.say("Aw, {} is alone :cry:".format(author.mention))
 
     @commands.command(pass_context=True, no_pm=True)
     async def userinfo(self, ctx, *, user: discord.Member=None):
