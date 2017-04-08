@@ -39,14 +39,13 @@ class OwnerUnloadWithoutReloadError(CogUnloadError):
 
 
 class Owner:
-    """All owner-only commands that relate to debug bot operations.
-    """
+    """All owner-only commands that relate to debug bot operations."""
 
     def __init__(self, bot):
         self.bot = bot
         self.setowner_lock = False
-        self.file_path = "data/red/disabled_commands.json"
-        self.disabled_commands = dataIO.load_json(self.file_path)
+        self.disabled_commands = dataIO.load_json("data/red/disabled_commands.json")
+        self.global_ignores = dataIO.load_json("data/red/global_ignores.json")
         self.session = aiohttp.ClientSession(loop=self.bot.loop)
 
     def __unload(self):
@@ -506,6 +505,78 @@ class Owner:
             await self.bot.say("Token set. Restart me.")
             log.debug("Token changed.")
 
+    @commands.group(pass_context=True)
+    @checks.is_owner()
+    async def blacklist(self, ctx):
+        """Bans user from using Red"""
+        if ctx.invoked_subcommand is None:
+            await self.bot.send_cmd_help(ctx)
+
+    @blacklist.command(name="add")
+    async def _blacklist_add(self, user: discord.Member):
+        """Adds user to Red's global blacklist"""
+        if user.id not in self.global_ignores["blacklist"]:
+            self.global_ignores["blacklist"].append(user.id)
+            self.save_global_ignores()
+            await self.bot.say("User has been added to blacklist.")
+        else:
+            await self.bot.say("User is already blacklisted.")
+
+    @blacklist.command(name="remove")
+    async def _blacklist_remove(self, user: discord.Member):
+        """Removes user from Red's global blacklist"""
+        if user.id in self.global_ignores["blacklist"]:
+            self.global_ignores["blacklist"].remove(user.id)
+            self.save_global_ignores()
+            await self.bot.say("User has been removed from blacklist.")
+        else:
+            await self.bot.say("User is not in blacklist.")
+
+    @blacklist.command(name="clear")
+    async def _blacklist_clear(self):
+        """Clears the global blacklist"""
+        self.global_ignores["blacklist"] = []
+        self.save_global_ignores()
+        await self.bot.say("Blacklist is now empty.")
+
+    @commands.group(pass_context=True)
+    @checks.is_owner()
+    async def whitelist(self, ctx):
+        """Users who will be able to use Red"""
+        if ctx.invoked_subcommand is None:
+            await self.bot.send_cmd_help(ctx)
+
+    @whitelist.command(name="add")
+    async def _whitelist_add(self, user: discord.Member):
+        """Adds user to Red's global whitelist"""
+        if user.id not in self.global_ignores["whitelist"]:
+            if not self.global_ignores["whitelist"]:
+                msg = "\nAll users not in whitelist will be ignored (owner, admins and mods excluded)"
+            else:
+                msg = ""
+            self.global_ignores["whitelist"].append(user.id)
+            self.save_global_ignores()
+            await self.bot.say("User has been added to whitelist." + msg)
+        else:
+            await self.bot.say("User is already whitelisted.")
+
+    @whitelist.command(name="remove")
+    async def _whitelist_remove(self, user: discord.Member):
+        """Removes user from Red's global whitelist"""
+        if user.id in self.global_ignores["whitelist"]:
+            self.global_ignores["whitelist"].remove(user.id)
+            self.save_global_ignores()
+            await self.bot.say("User has been removed from whitelist.")
+        else:
+            await self.bot.say("User is not in whitelist.")
+
+    @whitelist.command(name="clear")
+    async def _whitelist_clear(self):
+        """Clears the global whitelist"""
+        self.global_ignores["whitelist"] = []
+        self.save_global_ignores()
+        await self.bot.say("Whitelist is now empty.")
+
     @commands.command()
     @checks.is_owner()
     async def shutdown(self, silently : bool=False):
@@ -561,7 +632,7 @@ class Owner:
             comm_obj.enabled = False
             comm_obj.hidden = True
             self.disabled_commands.append(command)
-            dataIO.save_json(self.file_path, self.disabled_commands)
+            self.save_disabled_commands()
             await self.bot.say("Command has been disabled.")
 
     @command_disabler.command()
@@ -569,7 +640,7 @@ class Owner:
         """Enables commands/subcommands"""
         if command in self.disabled_commands:
             self.disabled_commands.remove(command)
-            dataIO.save_json(self.file_path, self.disabled_commands)
+            self.save_disabled_commands()
             await self.bot.say("Command enabled.")
         else:
             await self.bot.say("That command is not disabled.")
@@ -917,11 +988,43 @@ class Owner:
 
         return fmt.format(d=days, h=hours, m=minutes, s=seconds)
 
+    def save_global_ignores(self):
+        dataIO.save_json("data/red/global_ignores.json", self.global_ignores)
+
+    def save_disabled_commands(self):
+        dataIO.save_json("data/red/disabled_commands.json", self.disabled_commands)
+
+
+def _import_old_data(data):
+    """Migration from mod.py"""
+    try:
+        data["blacklist"] = dataIO.load_json("data/mod/blacklist.json")
+    except FileNotFoundError:
+        pass
+
+    try:
+        data["whitelist"] = dataIO.load_json("data/mod/whitelist.json")
+    except FileNotFoundError:
+        pass
+
+    return data
+
 
 def check_files():
     if not os.path.isfile("data/red/disabled_commands.json"):
         print("Creating empty disabled_commands.json...")
         dataIO.save_json("data/red/disabled_commands.json", [])
+
+    if not os.path.isfile("data/red/global_ignores.json"):
+        print("Creating empty global_ignores.json...")
+        data = {"blacklist": [], "whitelist": []}
+        try:
+            data = _import_old_data(data)
+        except Exception as e:
+            log.error("Failed to migrate blacklist / whitelist data from "
+                      "mod.py: {}".format(e))
+
+        dataIO.save_json("data/red/global_ignores.json", data)
 
 
 def setup(bot):
