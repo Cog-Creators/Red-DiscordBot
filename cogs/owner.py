@@ -143,18 +143,17 @@ class Owner:
         try:
             self._load_cog(module)
         except CogNotFoundError:
-            await self.bot.say("That cog cannot be found.")
+            await self.bot.say("'{}' cannot be found.".format(cog_name))
         except NoSetupError:
-            await self.bot.say("That cog does not have a setup function.")
+            await self.bot.say("'{}' does not have a setup function.".format(cog_name))
         except CogLoadError as e:
             log.exception(e)
             traceback.print_exc()
-            await self.bot.say("That cog could not be loaded. Check your"
-                               " console or logs for more information.")
+            await self.bot.say("'{}' could not be loaded. Check your console or logs for more information.".format(cog_name))
         else:
             set_cog(module, True)
             await self.disable_commands()
-            await self.bot.say("The cog has been reloaded.")
+            await self.bot.say("'{}' has been reloaded.".format(cog_name))
 
     @commands.command(name="cogs")
     @checks.is_owner()
