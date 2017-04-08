@@ -164,17 +164,19 @@ class General:
         Up to 10 intensity levels."""
         author = ctx.message.author
         if user != author:
-            name = italics(user.display_name)
+            name = italics(user.mention)
             if intensity <= 0:
-                msg = "(っ˘̩╭╮˘̩)っ" + name
+                msg = "(っ˘̩╭╮˘̩)っ " + name
             elif intensity <= 3:
-                msg = "(っ´▽｀)っ" + name
+                msg = "(っ´▽｀)っ " + name
             elif intensity <= 6:
-                msg = "╰(*´︶`*)╯" + name
+                msg = "╰(*´︶`*)╯ " + name
             elif intensity <= 9:
-                msg = "(つ≧▽≦)つ" + name
-            elif intensity >= 10:
-                msg = "(づ￣ ³￣)づ{} ⊂(´・ω・｀⊂)".format(name.mention)
+                msg = "(つ≧▽≦)つ " + name
+            elif intensity == 10:
+                msg = "(づ￣ ³￣)づ{} ⊂(´・ω・｀⊂)".format(name)
+            elif intensity >= 11:
+                msg = "***HUGGING INTENSIFIES***"
             await self.bot.say(msg)
         else:
             await self.bot.say("Aw, {} is alone :'(".format(author.mention))
