@@ -163,7 +163,7 @@ class General:
 
         Up to 10 intensity levels."""
         author = ctx.message.author
-        if user == author:
+        if user != author:
             name = italics(user.display_name)
             if intensity <= 0:
                 msg = "(っ˘̩╭╮˘̩)っ" + name
