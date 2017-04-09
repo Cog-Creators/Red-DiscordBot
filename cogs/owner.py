@@ -255,7 +255,7 @@ class Owner:
 
     @commands.group(name="set", pass_context=True)
     async def _set(self, ctx):
-        """Changes Red's global settings."""
+        """Changes Red's core settings"""
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
             return
@@ -528,7 +528,9 @@ class Owner:
     @commands.group(pass_context=True)
     @checks.is_owner()
     async def blacklist(self, ctx):
-        """Bans user from using Red"""
+        """Blacklist management commands
+
+        Blacklisted users will be unable to issue commands"""
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
 
@@ -538,7 +540,7 @@ class Owner:
         if user.id not in self.global_ignores["blacklist"]:
             self.global_ignores["blacklist"].append(user.id)
             self.save_global_ignores()
-            await self.bot.say("User has been added to blacklist.")
+            await self.bot.say("User has been blacklisted.")
         else:
             await self.bot.say("User is already blacklisted.")
 
@@ -548,9 +550,9 @@ class Owner:
         if user.id in self.global_ignores["blacklist"]:
             self.global_ignores["blacklist"].remove(user.id)
             self.save_global_ignores()
-            await self.bot.say("User has been removed from blacklist.")
+            await self.bot.say("User has been removed from the blacklist.")
         else:
-            await self.bot.say("User is not in blacklist.")
+            await self.bot.say("User is not blacklisted.")
 
     @blacklist.command(name="clear")
     async def _blacklist_clear(self):
@@ -562,7 +564,10 @@ class Owner:
     @commands.group(pass_context=True)
     @checks.is_owner()
     async def whitelist(self, ctx):
-        """Users who will be able to use Red"""
+        """Whitelist management commands
+
+        If the whitelist is not empty, only whitelisted users will
+        be able to use Red"""
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
 
@@ -571,12 +576,12 @@ class Owner:
         """Adds user to Red's global whitelist"""
         if user.id not in self.global_ignores["whitelist"]:
             if not self.global_ignores["whitelist"]:
-                msg = "\nAll users not in whitelist will be ignored (owner, admins and mods excluded)"
+                msg = "\nNon-whitelisted users will be ignored."
             else:
                 msg = ""
             self.global_ignores["whitelist"].append(user.id)
             self.save_global_ignores()
-            await self.bot.say("User has been added to whitelist." + msg)
+            await self.bot.say("User has been whitelisted." + msg)
         else:
             await self.bot.say("User is already whitelisted.")
 
@@ -586,9 +591,9 @@ class Owner:
         if user.id in self.global_ignores["whitelist"]:
             self.global_ignores["whitelist"].remove(user.id)
             self.save_global_ignores()
-            await self.bot.say("User has been removed from whitelist.")
+            await self.bot.say("User has been removed from the whitelist.")
         else:
-            await self.bot.say("User is not in whitelist.")
+            await self.bot.say("User is not whitelisted.")
 
     @whitelist.command(name="clear")
     async def _whitelist_clear(self):
