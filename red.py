@@ -161,6 +161,13 @@ class Bot(commands.Bot):
         if self.settings.owner == author.id:
             return True
 
+        if author.id in global_ignores["blacklist"]:
+            return False
+
+        if global_ignores["whitelist"]:
+            if author.id not in global_ignores["whitelist"]:
+                return False
+
         if not message.channel.is_private:
             server = message.server
             names = (self.settings.get_server_admin(
@@ -171,13 +178,6 @@ class Bot(commands.Bot):
             for r in results:
                 if r is not None:
                     return True
-
-        if author.id in global_ignores["blacklist"]:
-            return False
-
-        if global_ignores["whitelist"]:
-            if author.id not in global_ignores["whitelist"]:
-                return False
 
         if mod_cog is not None:
             if not message.channel.is_private:
