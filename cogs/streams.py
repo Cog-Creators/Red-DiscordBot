@@ -69,9 +69,8 @@ class Streams:
         stream = escape_mass_mentions(stream)
         regex = r'^(https?\:\/\/)?(www\.)?(twitch\.tv\/)'
         stream = re.sub(regex, '', stream)
-        embed = await self.twitch_online(stream)
         try:
-            embed = await self.hitbox_online(stream)
+            embed = await self.twitch_online(stream)
         except OfflineStream:
             await self.bot.say(stream + " is offline.")
         except StreamNotFound:
@@ -91,9 +90,8 @@ class Streams:
         stream = escape_mass_mentions(stream)
         regex = r'^(https?\:\/\/)?(www\.)?(beam\.pro\/)'
         stream = re.sub(regex, '', stream)
-        embed = await self.beam_online(stream)
         try:
-            embed = await self.hitbox_online(stream)
+            embed = await self.beam_online(stream)
         except OfflineStream:
             await self.bot.say(stream + " is offline.")
         except StreamNotFound:
@@ -117,47 +115,31 @@ class Streams:
         regex = r'^(https?\:\/\/)?(www\.)?(twitch\.tv\/)'
         stream = re.sub(regex, '', stream)
         channel = ctx.message.channel
-        check = await self.twitch_online(stream)
-        if check == 404:
+        try:
+            await self.twitch_online(stream)
+        except StreamNotFound:
             await self.bot.say("That stream doesn't exist.")
             return
-        elif check == 400:
+        except APIError:
+            await self.bot.say("Error contacting the API.")
+            return
+        except InvalidCredentials:
             await self.bot.say("Owner: Client-ID is invalid or not set. "
                                "See `{}streamset twitchtoken`"
                                "".format(ctx.prefix))
             return
-        elif check == "error":
-            await self.bot.say("Couldn't contact Twitch API. Try again later.")
-            return
+        except OfflineStream:
+            pass
 
-        done = False
+        enabled = self.enable_or_disable_if_active(self.twitch_streams,
+                                                   stream,
+                                                   channel)
 
-        for i, s in enumerate(self.twitch_streams):
-            if s["NAME"] == stream:
-                if channel.id in s["CHANNELS"]:
-                    if len(s["CHANNELS"]) == 1:
-                        self.twitch_streams.remove(s)
-                        await self.bot.say("Alert has been removed "
-                                           "from this channel.")
-                        done = True
-                    else:
-                        self.twitch_streams[i]["CHANNELS"].remove(channel.id)
-                        await self.bot.say("Alert has been removed "
-                                           "from this channel.")
-                        done = True
-                else:
-                    self.twitch_streams[i]["CHANNELS"].append(channel.id)
-                    await self.bot.say("Alert activated. I will notify this " +
-                                       "channel everytime {}".format(stream) +
-                                       " is live.")
-                    done = True
-
-        if not done:
-            self.twitch_streams.append(
-                {"CHANNELS": [channel.id],
-                 "NAME": stream, "ALREADY_ONLINE": False})
+        if enabled:
             await self.bot.say("Alert activated. I will notify this channel "
-                               "everytime {} is live.".format(stream))
+                               "when {} is live.".format(stream))
+        else:
+            await self.bot.say("Alert has been removed from this channel.")
 
         dataIO.save_json("data/streams/twitch.json", self.twitch_streams)
 
@@ -168,42 +150,26 @@ class Streams:
         regex = r'^(https?\:\/\/)?(www\.)?(hitbox\.tv\/)'
         stream = re.sub(regex, '', stream)
         channel = ctx.message.channel
-        check = await self.hitbox_online(stream)
-        if check is None:
+        try:
+            await self.hitbox_online(stream)
+        except StreamNotFound:
             await self.bot.say("That stream doesn't exist.")
             return
-        elif check == "error":
-            await self.bot.say("Error.")
+        except APIError:
+            await self.bot.say("Error contacting the API.")
             return
+        except OfflineStream:
+            pass
 
-        done = False
+        enabled = self.enable_or_disable_if_active(self.hitbox_streams,
+                                                   stream,
+                                                   channel)
 
-        for i, s in enumerate(self.hitbox_streams):
-            if s["NAME"] == stream:
-                if channel.id in s["CHANNELS"]:
-                    if len(s["CHANNELS"]) == 1:
-                        self.hitbox_streams.remove(s)
-                        await self.bot.say("Alert has been removed from this "
-                                           "channel.")
-                        done = True
-                    else:
-                        self.hitbox_streams[i]["CHANNELS"].remove(channel.id)
-                        await self.bot.say("Alert has been removed from this "
-                                           "channel.")
-                        done = True
-                else:
-                    self.hitbox_streams[i]["CHANNELS"].append(channel.id)
-                    await self.bot.say("Alert activated. I will notify this "
-                                       "channel everytime "
-                                       "{} is live.".format(stream))
-                    done = True
-
-        if not done:
-            self.hitbox_streams.append(
-                {"CHANNELS": [channel.id], "NAME": stream,
-                 "ALREADY_ONLINE": False})
+        if enabled:
             await self.bot.say("Alert activated. I will notify this channel "
-                               "everytime {} is live.".format(stream))
+                               "when {} is live.".format(stream))
+        else:
+            await self.bot.say("Alert has been removed from this channel.")
 
         dataIO.save_json("data/streams/hitbox.json", self.hitbox_streams)
 
@@ -214,42 +180,26 @@ class Streams:
         regex = r'^(https?\:\/\/)?(www\.)?(beam\.pro\/)'
         stream = re.sub(regex, '', stream)
         channel = ctx.message.channel
-        check = await self.beam_online(stream)
-        if check is None:
+        try:
+            await self.beam_online(stream)
+        except StreamNotFound:
             await self.bot.say("That stream doesn't exist.")
             return
-        elif check == "error":
-            await self.bot.say("Error.")
+        except APIError:
+            await self.bot.say("Error contacting the API.")
             return
+        except OfflineStream:
+            pass
 
-        done = False
+        enabled = self.enable_or_disable_if_active(self.beam_streams,
+                                                   stream,
+                                                   channel)
 
-        for i, s in enumerate(self.beam_streams):
-            if s["NAME"] == stream:
-                if channel.id in s["CHANNELS"]:
-                    if len(s["CHANNELS"]) == 1:
-                        self.beam_streams.remove(s)
-                        await self.bot.say("Alert has been removed from this "
-                                           "channel.")
-                        done = True
-                    else:
-                        self.beam_streams[i]["CHANNELS"].remove(channel.id)
-                        await self.bot.say("Alert has been removed from this "
-                                           "channel.")
-                        done = True
-                else:
-                    self.beam_streams[i]["CHANNELS"].append(channel.id)
-                    await self.bot.say("Alert activated. I will notify this "
-                                       "channel everytime "
-                                       "{} is live.".format(stream))
-                    done = True
-
-        if not done:
-            self.beam_streams.append(
-                {"CHANNELS": [channel.id], "NAME": stream,
-                 "ALREADY_ONLINE": False})
+        if enabled:
             await self.bot.say("Alert activated. I will notify this channel "
-                               "everytime {} is live.".format(stream))
+                               "when {} is live.".format(stream))
+        else:
+            await self.bot.say("Alert has been removed from this channel.")
 
         dataIO.save_json("data/streams/beam.json", self.beam_streams)
 
@@ -258,41 +208,23 @@ class Streams:
         """Stops all streams alerts in the current channel"""
         channel = ctx.message.channel
 
-        to_delete = []
+        streams = (
+            self.hitbox_streams,
+            self.twitch_streams,
+            self.beam_streams
+        )
 
-        for s in self.hitbox_streams:
-            if channel.id in s["CHANNELS"]:
-                if len(s["CHANNELS"]) == 1:
-                    to_delete.append(s)
-                else:
+        for stream_type in streams:
+            to_delete = []
+
+            for s in stream_type:
+                if channel.id in s["CHANNELS"]:
                     s["CHANNELS"].remove(channel.id)
+                    if not s["CHANNELS"]:
+                        to_delete.append(s)
 
-        for s in to_delete:
-            self.hitbox_streams.remove(s)
-
-        to_delete = []
-
-        for s in self.twitch_streams:
-            if channel.id in s["CHANNELS"]:
-                if len(s["CHANNELS"]) == 1:
-                    to_delete.append(s)
-                else:
-                    s["CHANNELS"].remove(channel.id)
-
-        for s in to_delete:
-            self.twitch_streams.remove(s)
-
-        to_delete = []
-
-        for s in self.beam_streams:
-            if channel.id in s["CHANNELS"]:
-                if len(s["CHANNELS"]) == 1:
-                    to_delete.append(s)
-                else:
-                    s["CHANNELS"].remove(channel.id)
-
-        for s in to_delete:
-            self.beam_streams.remove(s)
+            for s in to_delete:
+                stream_type.remove(s)
 
         dataIO.save_json("data/streams/twitch.json", self.twitch_streams)
         dataIO.save_json("data/streams/hitbox.json", self.hitbox_streams)
@@ -446,6 +378,27 @@ class Streams:
         if data["type"] is not None:
             embed.set_footer(text="Playing: " + data["type"]["name"])
         return embed
+
+    def enable_or_disable_if_active(streams, stream, channel):
+        """Returns True if enabled or False if disabled"""
+        for i, s in enumerate(streams):
+            if s["NAME"] != stream:
+                continue
+
+            if channel.id in s["CHANNELS"]:
+                streams[i]["CHANNELS"].remove(channel.id)
+                if not s["CHANNELS"]:
+                    streams.remove(s)
+                return False
+            else:
+                streams[i]["CHANNELS"].append(channel.id)
+                return True
+
+        streams.append({"CHANNELS": [channel.id],
+                        "NAME": stream,
+                        "ALREADY_ONLINE": False})
+
+        return True
 
     async def stream_checker(self):
         CHECK_DELAY = 60
