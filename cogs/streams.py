@@ -379,7 +379,7 @@ class Streams:
             embed.set_footer(text="Playing: " + data["type"]["name"])
         return embed
 
-    def enable_or_disable_if_active(streams, stream, channel):
+    def enable_or_disable_if_active(self, streams, stream, channel):
         """Returns True if enabled or False if disabled"""
         for i, s in enumerate(streams):
             if s["NAME"] != stream:
@@ -410,26 +410,27 @@ class Streams:
                        (self.hitbox_streams, self.hitbox_online),
                        (self.beam_streams,   self.beam_online))
 
-            for stream_type in streams:
-                streams = stream_type[0]
-                parser = stream_type[1]
-                for stream in streams:
-                    online = await parser(stream["NAME"])
-                    if isinstance(online, discord.Embed) and not stream["ALREADY_ONLINE"]:
-                        save = True
-                        stream["ALREADY_ONLINE"] = True
-                        for channel in stream["CHANNELS"]:
-                            channel_obj = self.bot.get_channel(channel)
-                            if channel_obj is None:
-                                continue
-                            mention = self.settings.get(channel_obj.server.id, {}).get("MENTION", "")
-                            can_speak = channel_obj.permissions_for(channel_obj.server.me).send_messages
-                            if channel_obj and can_speak:
-                                await self.bot.send_message(channel_obj, mention, embed=online)
-                    else:
-                        if stream["ALREADY_ONLINE"] and not online:
-                            save = True
+            for streams_list, parser in streams:
+                for stream in streams_list:
+                    try:
+                        embed = await parser(stream["NAME"])
+                    except OfflineStream:
+                        if stream["ALREADY_ONLINE"]:
                             stream["ALREADY_ONLINE"] = False
+                            save = True
+                    else:
+                        if not stream["ALREADY_ONLINE"]:
+                            save = True
+                            stream["ALREADY_ONLINE"] = True
+                            for channel in stream["CHANNELS"]:
+                                channel_obj = self.bot.get_channel(channel)
+                                if channel_obj is None:
+                                    continue
+                                mention = self.settings.get(channel_obj.server.id, {}).get("MENTION", "")
+                                can_speak = channel_obj.permissions_for(channel_obj.server.me).send_messages
+                                if channel_obj and can_speak:
+                                    await self.bot.send_message(channel_obj, mention, embed=embed)
+
                     await asyncio.sleep(0.5)
 
             if save:
