@@ -1,12 +1,11 @@
-import discord
 from discord.ext import commands
 from .utils.dataIO import dataIO
 from .utils.chat_formatting import escape_mass_mentions
 from .utils import checks
-from __main__ import send_cmd_help
 from collections import defaultdict
 from string import ascii_letters
 from random import choice
+import discord
 import os
 import re
 import aiohttp
@@ -14,10 +13,30 @@ import asyncio
 import logging
 
 
+class StreamsError(Exception):
+    pass
+
+
+class StreamNotFound(StreamsError):
+    pass
+
+
+class APIError(StreamsError):
+    pass
+
+
+class InvalidCredentials(StreamsError):
+    pass
+
+
+class OfflineStream(StreamsError):
+    pass
+
+
 class Streams:
     """Streams
 
-    Twitch, Hitbox and Beam alerts"""
+    Alerts for a variety of streaming services"""
 
     def __init__(self, bot):
         self.bot = bot
@@ -33,15 +52,16 @@ class Streams:
         stream = escape_mass_mentions(stream)
         regex = r'^(https?\:\/\/)?(www\.)?(hitbox\.tv\/)'
         stream = re.sub(regex, '', stream)
-        online = await self.hitbox_online(stream)
-        if isinstance(online, discord.Embed):
-            await self.bot.say(embed=online)
-        elif online is False:
+        try:
+            embed = await self.hitbox_online(stream)
+        except OfflineStream:
             await self.bot.say(stream + " is offline.")
-        elif online is None:
+        except StreamNotFound:
             await self.bot.say("That stream doesn't exist.")
+        except APIError:
+            await self.bot.say("Error contacting the API.")
         else:
-            await self.bot.say("Error.")
+            await self.bot.say(embed=embed)
 
     @commands.command(pass_context=True)
     async def twitch(self, ctx, stream: str):
@@ -49,19 +69,21 @@ class Streams:
         stream = escape_mass_mentions(stream)
         regex = r'^(https?\:\/\/)?(www\.)?(twitch\.tv\/)'
         stream = re.sub(regex, '', stream)
-        online = await self.twitch_online(stream)
-        if isinstance(online, discord.Embed):
-            await self.bot.say(embed=online)
-        elif online is False:
+        embed = await self.twitch_online(stream)
+        try:
+            embed = await self.hitbox_online(stream)
+        except OfflineStream:
             await self.bot.say(stream + " is offline.")
-        elif online == 404:
+        except StreamNotFound:
             await self.bot.say("That stream doesn't exist.")
-        elif online == 400:
+        except APIError:
+            await self.bot.say("Error contacting the API.")
+        except InvalidCredentials:
             await self.bot.say("Owner: Client-ID is invalid or not set. "
                                "See `{}streamset twitchtoken`"
                                "".format(ctx.prefix))
         else:
-            await self.bot.say("Error.")
+            await self.bot.say(embed=embed)
 
     @commands.command()
     async def beam(self, stream: str):
@@ -69,22 +91,24 @@ class Streams:
         stream = escape_mass_mentions(stream)
         regex = r'^(https?\:\/\/)?(www\.)?(beam\.pro\/)'
         stream = re.sub(regex, '', stream)
-        online = await self.beam_online(stream)
-        if isinstance(online, discord.Embed):
-            await self.bot.say(embed=online)
-        elif online is False:
+        embed = await self.beam_online(stream)
+        try:
+            embed = await self.hitbox_online(stream)
+        except OfflineStream:
             await self.bot.say(stream + " is offline.")
-        elif online is None:
+        except StreamNotFound:
             await self.bot.say("That stream doesn't exist.")
+        except APIError:
+            await self.bot.say("Error contacting the API.")
         else:
-            await self.bot.say("Error.")
+            await self.bot.say(embed=embed)
 
     @commands.group(pass_context=True, no_pm=True)
     @checks.mod_or_permissions(manage_server=True)
     async def streamalert(self, ctx):
         """Adds/removes stream alerts from the current channel"""
         if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
 
     @streamalert.command(name="twitch", pass_context=True)
     async def twitch_alert(self, ctx, stream: str):
@@ -281,7 +305,7 @@ class Streams:
     async def streamset(self, ctx):
         """Stream settings"""
         if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
+            await self.bot.send_cmd_help(ctx)
 
     @streamset.command()
     @checks.is_owner()
@@ -316,57 +340,55 @@ class Streams:
 
     async def hitbox_online(self, stream):
         url = "https://api.hitbox.tv/media/live/" + stream
-        try:
-            async with aiohttp.get(url) as r:
-                data = await r.json(encoding='utf-8')
-            if "livestream" not in data:
-                return None
-            if data["livestream"][0]["media_is_live"] == "0":
-                return False
-            elif data["livestream"][0]["media_is_live"] == "1":
-                data = self.hitbox_embed(data)
-                return data
-            return "error"
-        except:
-            return "error"
+
+        async with aiohttp.get(url) as r:
+            data = await r.json(encoding='utf-8')
+
+        if "livestream" not in data:
+            raise StreamNotFound()
+        elif data["livestream"][0]["media_is_live"] == "0":
+            raise OfflineStream()
+        elif data["livestream"][0]["media_is_live"] == "1":
+            data = self.hitbox_embed(data)
+            return data
+
+        raise APIError()
 
     async def twitch_online(self, stream):
         session = aiohttp.ClientSession()
         url = "https://api.twitch.tv/kraken/streams/" + stream
         header = {'Client-ID': self.settings.get("TWITCH_TOKEN", "")}
-        try:
-            async with session.get(url, headers=header) as r:
-                data = await r.json(encoding='utf-8')
-            await session.close()
-            if r.status == 400:
-                return 400
-            elif r.status == 404:
-                return 404
-            elif data["stream"] is None:
-                return False
-            elif data["stream"]:
-                embed = self.twitch_embed(data)
-                return embed
-        except:
-            return "error"
-        return "error"
+
+        async with session.get(url, headers=header) as r:
+            data = await r.json(encoding='utf-8')
+        await session.close()
+        if r.status == 200:
+            if data["stream"] is None:
+                raise OfflineStream()
+            embed = self.twitch_embed(data)
+            return embed
+        elif r.status == 400:
+            raise InvalidCredentials()
+        elif r.status == 404:
+            raise StreamNotFound()
+        else:
+            raise APIError()
 
     async def beam_online(self, stream):
         url = "https://beam.pro/api/v1/channels/" + stream
-        try:
-            async with aiohttp.get(url) as r:
-                data = await r.json(encoding='utf-8')
-            if "online" in data:
-                if data["online"] is True:
-                    data = self.beam_embed(data)
-                    return data
-                else:
-                    return False
-            elif "error" in data:
-                return None
-        except:
-            return "error"
-        return "error"
+
+        async with aiohttp.get(url) as r:
+            data = await r.json(encoding='utf-8')
+        if r.status == 200:
+            if data["online"] is True:
+                data = self.beam_embed(data)
+                return data
+            else:
+                raise OfflineStream()
+        elif r.status == 404:
+            raise StreamNotFound()
+        else:
+            raise APIError()
 
     def twitch_embed(self, data):
         channel = data["stream"]["channel"]
@@ -476,20 +498,16 @@ def check_folders():
 
 
 def check_files():
-    f = "data/streams/twitch.json"
-    if not dataIO.is_valid_json(f):
-        print("Creating empty twitch.json...")
-        dataIO.save_json(f, [])
+    stream_files = (
+        "twitch.json",
+        "hitbox.json",
+        "beam.json"
+    )
 
-    f = "data/streams/hitbox.json"
-    if not dataIO.is_valid_json(f):
-        print("Creating empty hitbox.json...")
-        dataIO.save_json(f, [])
-
-    f = "data/streams/beam.json"
-    if not dataIO.is_valid_json(f):
-        print("Creating empty beam.json...")
-        dataIO.save_json(f, [])
+    for filename in stream_files:
+        if not dataIO.is_valid_json("data/streams/" + filename):
+            print("Creating empty {}...".format(filename))
+            dataIO.save_json("data/streams/" + filename, [])
 
     f = "data/streams/settings.json"
     if not dataIO.is_valid_json(f):
