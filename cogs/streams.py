@@ -418,6 +418,8 @@ class Streams:
                         if stream["ALREADY_ONLINE"]:
                             stream["ALREADY_ONLINE"] = False
                             save = True
+                    except:  # We don't want our task to die
+                        continue
                     else:
                         if not stream["ALREADY_ONLINE"]:
                             save = True
