@@ -142,7 +142,7 @@ class Trivia:
         lists = [l.replace(".txt", "") for l in lists]
 
         if lists:
-            msg = "+ Available trivia lists\n\n" + ", ".join(lists)
+            msg = "+ Available trivia lists\n\n" + ", ".join(sorted(lists))
             msg = box(msg, lang="diff")
             if len(lists) < 100:
                 await self.bot.say(msg)
