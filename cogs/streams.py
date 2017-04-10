@@ -421,17 +421,18 @@ class Streams:
                     except:  # We don't want our task to die
                         continue
                     else:
-                        if not stream["ALREADY_ONLINE"]:
-                            save = True
-                            stream["ALREADY_ONLINE"] = True
-                            for channel in stream["CHANNELS"]:
-                                channel_obj = self.bot.get_channel(channel)
-                                if channel_obj is None:
-                                    continue
-                                mention = self.settings.get(channel_obj.server.id, {}).get("MENTION", "")
-                                can_speak = channel_obj.permissions_for(channel_obj.server.me).send_messages
-                                if channel_obj and can_speak:
-                                    await self.bot.send_message(channel_obj, mention, embed=embed)
+                        if stream["ALREADY_ONLINE"]:
+                            continue
+                        save = True
+                        stream["ALREADY_ONLINE"] = True
+                        for channel_id in stream["CHANNELS"]:
+                            channel = self.bot.get_channel(channel_id)
+                            if channel is None:
+                                continue
+                            mention = self.settings.get(channel.server.id, {}).get("MENTION", "")
+                            can_speak = channel.permissions_for(channel.server.me).send_messages
+                            if channel and can_speak:
+                                await self.bot.send_message(channel, mention, embed=embed)
 
                     await asyncio.sleep(0.5)
 
