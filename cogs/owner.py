@@ -607,34 +607,12 @@ class Owner:
 
     @commands.command()
     @checks.is_owner()
-    async def join(self, invite_url: discord.Invite=None):
-        """Joins new server"""
-        if hasattr(self.bot.user, 'bot') and self.bot.user.bot is True:
-            # Check to ensure they're using updated discord.py
-            msg = ("I have a **BOT** tag, so I must be invited with an OAuth2"
-                   " link:\nFor more information: "
-                   "https://twentysix26.github.io/"
-                   "Red-Docs/red_guide_bot_accounts/#bot-invites")
-            await self.bot.say(msg)
-            if hasattr(self.bot, 'oauth_url'):
-                await self.bot.whisper("Here's my OAUTH2 link:\n{}".format(
-                    self.bot.oauth_url))
-            return
-
-        if invite_url is None:
-            await self.bot.say("I need a Discord Invite link for the "
-                               "server you want me to join.")
-            return
-
-        try:
-            await self.bot.accept_invite(invite_url)
-            await self.bot.say("Server joined.")
-            log.debug("We just joined {}".format(invite_url))
-        except discord.NotFound:
-            await self.bot.say("The invite was invalid or expired.")
-        except discord.HTTPException:
-            await self.bot.say("I wasn't able to accept the invite."
-                               " Try again.")
+    async def join(self):
+        """Shows Red's invite URL"""
+        if self.bot.user.bot:
+            await self.bot.whisper("Invite URL: " + self.bot.oauth_url)
+        else:
+            await self.bot.say("I'm not a bot account. I have no invite URL.")
 
     @commands.command(pass_context=True, no_pm=True)
     @checks.is_owner()
