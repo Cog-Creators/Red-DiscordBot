@@ -673,26 +673,42 @@ class Owner:
     @commands.command(pass_context=True)
     @commands.cooldown(1, 60, commands.BucketType.user)
     async def contact(self, ctx, *, message : str):
-        """Sends message to the owner"""
+        """Sends a message to the owner"""
         if self.bot.settings.owner is None:
             await self.bot.say("I have no owner set.")
             return
+        server = ctx.message.server
         owner = discord.utils.get(self.bot.get_all_members(),
                                   id=self.bot.settings.owner)
         author = ctx.message.author
-        if ctx.message.channel.is_private is False:
-            server = ctx.message.server
-            source = ", server **{}** ({})".format(server.name, server.id)
+        footer = "User ID: " + author.id
+
+        if ctx.message.server is None:
+            source = "through DM"
         else:
-            source = ", direct message"
-        sender = "From **{}** ({}){}:\n\n".format(author, author.id, source)
-        message = sender + message
+            source = "from {}".format(server)
+            footer += " | Server ID: " + server.id
+
+        if isinstance(author, discord.Member):
+            colour = author.colour
+        else:
+            colour = discord.Colour.red()
+
+        description = "Sent by {} {}".format(author, source)
+
+        e = discord.Embed(colour=colour, description=message)
+        if author.avatar_url:
+            e.set_author(name=description, icon_url=author.avatar_url)
+        else:
+            e.set_author(name=description)
+        e.set_footer(text=footer)
+
         try:
-            await self.bot.send_message(owner, message)
-        except discord.errors.InvalidArgument:
+            await self.bot.send_message(owner, embed=e)
+        except discord.InvalidArgument:
             await self.bot.say("I cannot send your message, I'm unable to find"
                                " my owner... *sigh*")
-        except discord.errors.HTTPException:
+        except discord.HTTPException:
             await self.bot.say("Your message is too long.")
         except:
             await self.bot.say("I'm unable to deliver your message. Sorry.")
