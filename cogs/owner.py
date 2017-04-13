@@ -507,23 +507,23 @@ class Owner:
 
     @_set.command(name="adminrole", pass_context=True, no_pm=True)
     @checks.serverowner()
-    async def _modset_adminrole(self, ctx, *, role_name: str):
-        """Sets the admin role for this server, case insensitive."""
+    async def _server_adminrole(self, ctx, *, role: discord.Role):
+        """Sets the admin role for this server"""
         server = ctx.message.server
         if server.id not in self.bot.settings.servers:
             await self.bot.say("Remember to set modrole too.")
-        self.bot.settings.set_server_admin(server, role_name)
-        await self.bot.say("Admin role set to '{}'".format(role_name))
+        self.bot.settings.set_server_admin(server, role.name)
+        await self.bot.say("Admin role set to '{}'".format(role.name))
 
     @_set.command(name="modrole", pass_context=True, no_pm=True)
     @checks.serverowner()
-    async def _modset_modrole(self, ctx, *, role_name: str):
-        """Sets the mod role for this server, case insensitive."""
+    async def _server_modrole(self, ctx, *, role: discord.Role):
+        """Sets the mod role for this server"""
         server = ctx.message.server
         if server.id not in self.bot.settings.servers:
             await self.bot.say("Remember to set adminrole too.")
-        self.bot.settings.set_server_mod(server, role_name)
-        await self.bot.say("Mod role set to '{}'".format(role_name))
+        self.bot.settings.set_server_mod(server, role.name)
+        await self.bot.say("Mod role set to '{}'".format(role.name))
 
     @commands.group(pass_context=True)
     @checks.is_owner()
