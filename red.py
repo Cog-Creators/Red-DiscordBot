@@ -549,12 +549,17 @@ def load_cogs(bot):
         registry = {}
 
     bot.load_extension('cogs.owner')
+    bot.load_extension('cogs.core')
     owner_cog = bot.get_cog('Owner')
+    core_cog = bot.get_cog('Core')
     if owner_cog is None:
         print("The owner cog is missing. It contains core functions without "
               "which Red cannot function. Reinstall.")
         exit(1)
-
+    elif core_cog is None:
+        print("The core cog is missing. It contains core functions without "
+              "which Red cannot function. Reinstall.")
+        exit(1)
     if bot.settings._no_cogs:
         bot.logger.debug("Skipping initial cogs loading (--no-cogs)")
         if not os.path.isfile("data/red/cogs.json"):

@@ -34,6 +34,10 @@ class CogUnloadError(Exception):
     pass
 
 
+class CoreUnloadWithoutReloadError(CogUnloadError):
+    pass
+
+
 class OwnerUnloadWithoutReloadError(CogUnloadError):
     pass
 
@@ -118,6 +122,8 @@ class Owner:
             try:
                 self._unload_cog(cog)
             except OwnerUnloadWithoutReloadError:
+                pass
+            except CoreUnloadWithoutReloadError:
                 pass
             except CogUnloadError as e:
                 log.exception(e)
@@ -954,6 +960,10 @@ class Owner:
         if not reloading and cogname == "cogs.owner":
             raise OwnerUnloadWithoutReloadError(
                 "Can't unload the owner plugin :P")
+        elif not reloading and cogname == "cogs.core":
+            raise CoreUnloadWithoutReloadError(
+                "Can't unload the core plugin :P"
+            )
         try:
             self.bot.unload_extension(cogname)
         except:
