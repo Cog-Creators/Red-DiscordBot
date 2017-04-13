@@ -113,18 +113,22 @@ class Streams:
            (defaults to the current channel)"""
         if not channel:
             channel = ctx.message.channel
-        msg = "Twitch Streams: \n"
-        for stream in self.twitch_streams:
-            if channel.id in stream["CHANNELS"]:
-                msg += stream["NAME"] + " is " + ("online" if stream["ALREADY_ONLINE"] else "offline") + "\n"
-        msg += "\nBeam Streams: \n"
-        for stream in self.beam_streams:
-            if channel.id in stream["CHANNELS"]:
-                msg += stream["NAME"] + " is " + ("online" if stream["ALREADY_ONLINE"] else "offline") + "\n"
-        msg += "\nHitbox Streams: \n"
-        for stream in self.hitbox_streams:
-            if channel.id in stream["CHANNELS"]:
-                msg += stream["NAME"] + " is " + ("online" if stream["ALREADY_ONLINE"] else "offline") + "\n"
+        msg = "Stream alerts for the current channel: "
+        if len([s for s in self.twitch_streams if channel.id in s["CHANNELS"]]) > 0:
+            msg += "\nTwitch Streams: \n"
+            for stream in self.twitch_streams:
+                if channel.id in stream["CHANNELS"]:
+                    msg += stream["NAME"] + " is " + ("online" if stream["ALREADY_ONLINE"] else "offline") + "\n"
+        if len([s for s in self.beam_streams if channel.id in s["CHANNELS"]]) > 0:
+            msg += "\nBeam Streams: \n"
+            for stream in self.beam_streams:
+                if channel.id in stream["CHANNELS"]:
+                    msg += stream["NAME"] + " is " + ("online" if stream["ALREADY_ONLINE"] else "offline") + "\n"
+        if len([s for s in self.hitbox_streams if channel.id in s["CHANNELS"]]) > 0:
+            msg += "\nHitbox Streams: \n"
+            for stream in self.hitbox_streams:
+                if channel.id in stream["CHANNELS"]:
+                    msg += stream["NAME"] + " is " + ("online" if stream["ALREADY_ONLINE"] else "offline") + "\n"
         await self.bot.say(msg)
 
     @streamalert.command(name="twitch", pass_context=True)
