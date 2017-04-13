@@ -1582,10 +1582,8 @@ def check_folders():
 
 
 def check_files():
-    ignore_list = {"SERVERS": [], "CHANNELS": []}
 
     files = {
-        "ignorelist.json"     : ignore_list,
         "filter.json"         : {},
         "past_names.json"     : {},
         "past_nicknames.json" : {},
