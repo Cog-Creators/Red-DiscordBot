@@ -554,6 +554,17 @@ class Owner:
         else:
             await self.bot.say("User is not blacklisted.")
 
+    @blacklist.command(name="list")
+    async def _blacklist_list(self):
+        """Lists users on the blacklist"""
+        blacklist = self._populate_list(self.global_ignores["blacklist"])
+
+        if blacklist:
+            for page in blacklist:
+                await self.bot.say(box(page))
+        else:
+            await self.bot.say("The blacklist is empty.")
+
     @blacklist.command(name="clear")
     async def _blacklist_clear(self):
         """Clears the global blacklist"""
@@ -594,6 +605,17 @@ class Owner:
             await self.bot.say("User has been removed from the whitelist.")
         else:
             await self.bot.say("User is not whitelisted.")
+
+    @whitelist.command(name="list")
+    async def _whitelist_list(self):
+        """Lists users on the whitelist"""
+        whitelist = self._populate_list(self.global_ignores["whitelist"])
+
+        if whitelist:
+            for page in whitelist:
+                await self.bot.say(box(page))
+        else:
+            await self.bot.say("The whitelist is empty.")
 
     @whitelist.command(name="clear")
     async def _whitelist_clear(self):
@@ -900,6 +922,27 @@ class Owner:
                 await self.bot.send_message(destination, box(page, lang="py"))
         else:
             await self.bot.say("No exception has occurred yet.")
+
+    def _populate_list(self, _list):
+        """Used for both whitelist / blacklist
+
+        Returns a paginated list"""
+        users = []
+        total = len(_list)
+
+        for user_id in _list:
+            user = discord.utils.get(self.bot.get_all_members(), id=user_id)
+            if user:
+                users.append(str(user))
+
+        if users:
+            not_found = total - len(users)
+            users = ", ".join(users)
+            if not_found:
+                users += "\n\n ... and {} users I could not find".format(not_found)
+            return list(pagify(users, delims=[" ", "\n"]))
+
+        return []
 
     def _load_cog(self, cogname):
         if not self._does_cogfile_exist(cogname):
