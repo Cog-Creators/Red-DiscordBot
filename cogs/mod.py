@@ -1055,7 +1055,20 @@ class Mod:
     async def blacklist(self, ctx):
         """Bans user from using the bot"""
         if ctx.invoked_subcommand is None:
+            name = []
+            for x in self.blacklist_list:
+                if x in [u.id for u in self.bot.get_all_members()]:
+                    name.append('{0.name}#{0.discriminator} ({0.id})'.format([u for u in self.bot.get_all_members() if u.id == x][0]))
+                else:
+                    name.append('{0.name}#{0.discriminator} ({0.id})'.format(await self.bot.get_user_info(x)))
             await send_cmd_help(ctx)
+            userlist = 'Blacklisted users:\n'
+            if name:
+                userlist += ', '.join(name)
+            else:
+                userlist += "No one"
+            for page in pagify(userlist):
+                await self.bot.say(box(page))
 
     @blacklist.command(name="add")
     async def _blacklist_add(self, user: discord.Member):
@@ -1089,7 +1102,20 @@ class Mod:
     async def whitelist(self, ctx):
         """Users who will be able to use the bot"""
         if ctx.invoked_subcommand is None:
+            name = []
+            for x in self.whitelist_list:
+                if x in [u.id for u in self.bot.get_all_members()]:
+                    name.append('{0.name}#{0.discriminator} ({0.id})'.format([u for u in self.bot.get_all_members() if u.id == x][0]))
+                else:
+                    name.append('{0.name}#{0.discriminator} ({0.id})'.format(await self.bot.get_user_info(x)))
             await send_cmd_help(ctx)
+            userlist = 'Whitelisted users:\n'
+            if name:
+                userlist += '\n'.join(name)
+            else:
+                userlist += "No one"
+            for page in pagify(userlist):
+                await self.bot.say(box(page))
 
     @whitelist.command(name="add")
     async def _whitelist_add(self, user: discord.Member):
