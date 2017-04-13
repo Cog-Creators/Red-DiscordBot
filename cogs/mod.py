@@ -131,13 +131,13 @@ class Mod:
 
     @modset.command(name="adminrole", pass_context=True, no_pm=True, hidden=True)
     async def _modset_adminrole(self, ctx):
-        """Sets the admin role for this server, case insensitive."""
+        """Use [p]set adminrole instead"""
         await self.bot.say("This command has been renamed "
                            "`{}set adminrole`".format(ctx.prefix))
 
     @modset.command(name="modrole", pass_context=True, no_pm=True, hidden=True)
     async def _modset_modrole(self, ctx):
-        """Sets the mod role for this server, case insensitive."""
+        """Use [p]set modrole instead"""
         await self.bot.say("This command has been renamed "
                            "`{}set modrole`".format(ctx.prefix))
 
