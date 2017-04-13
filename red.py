@@ -156,38 +156,39 @@ class Bot(commands.Bot):
         if author == self.user:
             return self.settings.self_bot
 
-        mod = self.get_cog('Mod')
+        mod_cog = self.get_cog('Mod')
+        global_ignores = self.get_cog('Owner').global_ignores
 
-        if mod is not None:
-            if self.settings.owner == author.id:
-                return True
-            if not message.channel.is_private:
-                server = message.server
-                names = (self.settings.get_server_admin(
-                    server), self.settings.get_server_mod(server))
-                results = map(
-                    lambda name: discord.utils.get(author.roles, name=name),
-                    names)
-                for r in results:
-                    if r is not None:
-                        return True
+        if self.settings.owner == author.id:
+            return True
 
-            if author.id in mod.blacklist_list:
+        if author.id in global_ignores["blacklist"]:
+            return False
+
+        if global_ignores["whitelist"]:
+            if author.id not in global_ignores["whitelist"]:
                 return False
 
-            if mod.whitelist_list:
-                if author.id not in mod.whitelist_list:
-                    return False
+        if not message.channel.is_private:
+            server = message.server
+            names = (self.settings.get_server_admin(
+                server), self.settings.get_server_mod(server))
+            results = map(
+                lambda name: discord.utils.get(author.roles, name=name),
+                names)
+            for r in results:
+                if r is not None:
+                    return True
 
+        if mod_cog is not None:
             if not message.channel.is_private:
-                if message.server.id in mod.ignore_list["SERVERS"]:
+                if message.server.id in mod_cog.ignore_list["SERVERS"]:
                     return False
 
-                if message.channel.id in mod.ignore_list["CHANNELS"]:
+                if message.channel.id in mod_cog.ignore_list["CHANNELS"]:
                     return False
-            return True
-        else:
-            return True
+
+        return True
 
     async def pip_install(self, name, *, timeout=None):
         """
