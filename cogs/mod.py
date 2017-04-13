@@ -534,6 +534,49 @@ class Mod:
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(ban_members=True)
+    async def hackban(self, ctx, user_id: int, *, reason: str = None):
+        """Preemptively bans user from the server
+
+        A user ID needs to be provided
+        If the user is present in the server a normal ban will be
+        issued instead"""
+        user_id = str(user_id)
+        author = ctx.message.author
+        server = author.server
+
+        ban_list = await self.bot.get_bans(server)
+        is_banned = discord.utils.get(ban_list, id=user_id)
+
+        if is_banned:
+            await self.bot.say("User is already banned.")
+            return
+
+        user = server.get_member(user_id)
+        if user is not None:
+            await ctx.invoke(self.ban, user=user, reason=reason)
+            return
+
+        try:
+            await self.bot.http.ban(user_id, server.id)
+        except discord.NotFound:
+            await self.bot.say("User not found. Have you provided the "
+                               "correct user ID?")
+        except discord.Forbidden:
+            await self.bot.say("I lack the permissions to do this.")
+        else:
+            logger.info("{}({}) hackbanned {}"
+                        "".format(author.name, author.id, user_id))
+            user = await self.bot.get_user_info(user_id)
+            await self.modlog.new_case(server,
+                                       action="HACKBAN",
+                                       mod=author,
+                                       user=user,
+                                       reason=reason)
+            await self.bot.say("Done. The user will not be able to join this "
+                               "server.")
+
+    @commands.command(no_pm=True, pass_context=True)
+    @checks.admin_or_permissions(ban_members=True)
     async def softban(self, ctx, user: discord.Member, *, reason: str = None):
         """Kicks the user, deleting 1 day worth of messages."""
         server = ctx.message.server
@@ -1738,6 +1781,10 @@ def check_files():
                 },
                 "UNBAN": {
                     "repr": ("Unban", "\N{DOVE OF PEACE}"),
+                    "enabled": True
+                },
+                "HACKBAN": {
+                    "repr": ("Preemptive ban", "\N{BUST IN SILHOUETTE} \N{HAMMER}"),
                     "enabled": True
                 }
             },

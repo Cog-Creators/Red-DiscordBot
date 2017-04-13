@@ -1,14 +1,23 @@
-import discord
 from discord.ext import commands
-from random import randint
-from random import choice as randchoice
+from random import choice
 from .utils.dataIO import dataIO
 from .utils import checks
-import datetime
+from .utils.chat_formatting import box
+from collections import Counter, defaultdict, namedtuple
+import discord
 import time
 import os
 import asyncio
 import chardet
+
+DEFAULTS = {"MAX_SCORE"    : 10,
+            "TIMEOUT"      : 120,
+            "DELAY"        : 15,
+            "BOT_PLAYS"    : False,
+            "REVEAL_ANSWER": True}
+
+TriviaLine = namedtuple("TriviaLine", "question answers")
+
 
 class Trivia:
     """General commands."""
@@ -16,195 +25,233 @@ class Trivia:
         self.bot = bot
         self.trivia_sessions = []
         self.file_path = "data/trivia/settings.json"
-        self.settings = dataIO.load_json(self.file_path)
+        settings = dataIO.load_json(self.file_path)
+        self.settings = defaultdict(lambda: DEFAULTS.copy(), settings)
 
-    @commands.group(pass_context=True)
+    @commands.group(pass_context=True, no_pm=True)
     @checks.mod_or_permissions(administrator=True)
     async def triviaset(self, ctx):
         """Change trivia settings"""
+        server = ctx.message.server
         if ctx.invoked_subcommand is None:
-            msg = "```\n"
-            for k, v in self.settings.items():
-                msg += "{}: {}\n".format(k, v)
-            msg += "```\nSee {}help triviaset to edit the settings".format(ctx.prefix)
+            settings = self.settings[server.id]
+            msg = box("Red gains points: {BOT_PLAYS}\n"
+                      "Seconds to answer: {DELAY}\n"
+                      "Points to win: {MAX_SCORE}\n"
+                      "Reveal answer on timeout: {REVEAL_ANSWER}\n"
+                      "".format(**settings))
+            msg += "\nSee {}help triviaset to edit the settings".format(ctx.prefix)
             await self.bot.say(msg)
 
-    @triviaset.command()
-    async def maxscore(self, score : int):
+    @triviaset.command(pass_context=True)
+    async def maxscore(self, ctx, score : int):
         """Points required to win"""
+        server = ctx.message.server
         if score > 0:
-            self.settings["TRIVIA_MAX_SCORE"] = score
-            dataIO.save_json(self.file_path, self.settings)
-            await self.bot.say("Points required to win set to {}".format(str(score)))
+            self.settings[server.id]["MAX_SCORE"] = score
+            self.save_settings()
+            await self.bot.say("Points required to win set to {}".format(score))
         else:
             await self.bot.say("Score must be superior to 0.")
 
-    @triviaset.command()
-    async def timelimit(self, seconds : int):
+    @triviaset.command(pass_context=True)
+    async def timelimit(self, ctx, seconds : int):
         """Maximum seconds to answer"""
+        server = ctx.message.server
         if seconds > 4:
-            self.settings["TRIVIA_DELAY"] = seconds
-            dataIO.save_json(self.file_path, self.settings)
-            await self.bot.say("Maximum seconds to answer set to {}".format(str(seconds)))
+            self.settings[server.id]["DELAY"] = seconds
+            self.save_settings()
+            await self.bot.say("Maximum seconds to answer set to {}".format(seconds))
         else:
             await self.bot.say("Seconds must be at least 5.")
 
-    @triviaset.command()
-    async def botplays(self):
+    @triviaset.command(pass_context=True)
+    async def botplays(self, ctx):
         """Red gains points"""
-        if self.settings["TRIVIA_BOT_PLAYS"] is True:
-            self.settings["TRIVIA_BOT_PLAYS"] = False
+        server = ctx.message.server
+        if self.settings[server.id]["BOT_PLAYS"]:
+            self.settings[server.id]["BOT_PLAYS"] = False
             await self.bot.say("Alright, I won't embarass you at trivia anymore.")
         else:
-            self.settings["TRIVIA_BOT_PLAYS"] = True
+            self.settings[server.id]["BOT_PLAYS"] = True
             await self.bot.say("I'll gain a point everytime you don't answer in time.")
-        dataIO.save_json(self.file_path, self.settings)
+        self.save_settings()
 
-    @commands.command(pass_context=True)
-    async def trivia(self, ctx, list_name : str=None):
-        """Start a trivia session with the specified list
+    @triviaset.command(pass_context=True)
+    async def revealanswer(self, ctx):
+        """Reveals answer to the question on timeout"""
+        server = ctx.message.server
+        if self.settings[server.id]["REVEAL_ANSWER"]:
+            self.settings[server.id]["REVEAL_ANSWER"] = False
+            await self.bot.say("I won't reveal the answer to the questions anymore.")
+        else:
+            self.settings[server.id]["REVEAL_ANSWER"] = True
+            await self.bot.say("I'll reveal the answer if no one knows it.")
+        self.save_settings()
 
-        trivia stop - Ends the current session
-        trivia - Shows trivia lists
-        """
+    @commands.group(pass_context=True, invoke_without_command=True, no_pm=True)
+    async def trivia(self, ctx, list_name: str):
+        """Start a trivia session with the specified list"""
         message = ctx.message
-        if list_name == None:
-            await self.trivia_list(ctx.message.author)
-        elif list_name.lower() == "stop":
-            if await get_trivia_by_channel(message.channel):
-                s = await get_trivia_by_channel(message.channel)
-                await s.end_game()
-                await self.bot.say("Trivia stopped.")
+        server = message.server
+        session = self.get_trivia_by_channel(message.channel)
+        if not session:
+            try:
+                trivia_list = self.parse_trivia_list(list_name)
+            except FileNotFoundError:
+                await self.bot.say("That trivia list doesn't exist.")
+            except Exception as e:
+                print(e)
+                await self.bot.say("Error loading the trivia list.")
             else:
-                await self.bot.say("There's no trivia session ongoing in this channel.")
-        elif not await get_trivia_by_channel(message.channel):
-            t = TriviaSession(message, self.settings)
-            self.trivia_sessions.append(t)
-            await t.load_questions(message.content)
+                settings = self.settings[server.id]
+                t = TriviaSession(self.bot, trivia_list, message, settings)
+                self.trivia_sessions.append(t)
+                await t.new_question()
         else:
             await self.bot.say("A trivia session is already ongoing in this channel.")
 
-    async def trivia_list(self, author):
-        msg = "**Available trivia lists:** \n\n```"
-        lists = os.listdir("data/trivia/")
-        if lists:
-            clean_list = []
-            for txt in lists:
-                if txt.endswith(".txt") and " " not in txt:
-                    txt = txt.replace(".txt", "")
-                    clean_list.append(txt)
-            if clean_list:
-                for i, d in enumerate(clean_list):
-                    if i % 4 == 0 and i != 0:
-                        msg = msg + d + "\n"
-                    else:
-                        msg = msg + d + "\t"
-                msg += "```"
-                if len(clean_list) > 100:
-                    await self.bot.send_message(author, msg)
-                else:
-                    await self.bot.say(msg)
+    @trivia.group(name="stop", pass_context=True, no_pm=True)
+    async def trivia_stop(self, ctx):
+        """Stops an ongoing trivia session"""
+        author = ctx.message.author
+        server = author.server
+        admin_role = self.bot.settings.get_server_admin(server)
+        mod_role = self.bot.settings.get_server_mod(server)
+        is_admin = discord.utils.get(author.roles, name=admin_role)
+        is_mod = discord.utils.get(author.roles, name=mod_role)
+        is_owner = author.id == self.bot.settings.owner
+        is_server_owner = author == server.owner
+        is_authorized = is_admin or is_mod or is_owner or is_server_owner
+
+        session = self.get_trivia_by_channel(ctx.message.channel)
+        if session:
+            if author == session.starter or is_authorized:
+                await session.end_game()
+                await self.bot.say("Trivia stopped.")
             else:
-                await self.bot.say("There are no trivia lists available.")
+                await self.bot.say("You are not allowed to do that.")
+        else:
+            await self.bot.say("There's no trivia session ongoing in this channel.")
+
+    @trivia.group(name="list")
+    async def trivia_list(self):
+        """Shows available trivia lists"""
+        lists = os.listdir("data/trivia/")
+        lists = [l for l in lists if l.endswith(".txt") and " " not in l]
+        lists = [l.replace(".txt", "") for l in lists]
+
+        if lists:
+            msg = "+ Available trivia lists\n\n" + ", ".join(sorted(lists))
+            msg = box(msg, lang="diff")
+            if len(lists) < 100:
+                await self.bot.say(msg)
+            else:
+                await self.bot.whisper(msg)
         else:
             await self.bot.say("There are no trivia lists available.")
 
+    def parse_trivia_list(self, filename):
+        path = "data/trivia/{}.txt".format(filename)
+        parsed_list = []
+
+        with open(path, "rb") as f:
+            try:
+                encoding = chardet.detect(f.read())["encoding"]
+            except:
+                encoding = "ISO-8859-1"
+
+        with open(path, "r", encoding=encoding) as f:
+            trivia_list = f.readlines()
+
+        for line in trivia_list:
+            if "`" not in line:
+                continue
+            line = line.replace("\n", "")
+            line = line.split("`")
+            question = line[0]
+            answers = []
+            for l in line[1:]:
+                answers.append(l.strip())
+            if len(line) >= 2 and question and answers:
+                line = TriviaLine(question=question, answers=answers)
+                parsed_list.append(line)
+
+        if not parsed_list:
+            raise ValueError("Empty trivia list")
+
+        return parsed_list
+
+    def get_trivia_by_channel(self, channel):
+        for t in self.trivia_sessions:
+            if t.channel == channel:
+                return t
+        return None
+
+    async def on_message(self, message):
+        if message.author != self.bot.user:
+            session = self.get_trivia_by_channel(message.channel)
+            if session:
+                await session.check_answer(message)
+
+    async def on_trivia_end(self, instance):
+        if instance in self.trivia_sessions:
+            self.trivia_sessions.remove(instance)
+
+    def save_settings(self):
+        dataIO.save_json(self.file_path, self.settings)
+
+
 class TriviaSession():
-    def __init__(self, message, settings):
-        self.gave_answer = ["I know this one! {}!", "Easy: {}.", "Oh really? It's {} of course."]
-        self.current_q = None # {"QUESTION" : "String", "ANSWERS" : []}
-        self.question_list = ""
+    def __init__(self, bot, trivia_list, message, settings):
+        self.bot = bot
+        self.reveal_messages = ("I know this one! {}!",
+                                "Easy: {}.",
+                                "Oh really? It's {} of course.")
+        self.fail_messages = ("To the next one I guess...",
+                              "Moving on...",
+                              "I'm sure you'll know the answer of the next one.",
+                              "\N{PENSIVE FACE} Next one.")
+        self.current_line = None # {"QUESTION" : "String", "ANSWERS" : []}
+        self.question_list = trivia_list
         self.channel = message.channel
-        self.score_list = {}
-        self.status = None
+        self.starter = message.author
+        self.scores = Counter()
+        self.status = "new question"
         self.timer = None
+        self.timeout = time.perf_counter()
         self.count = 0
         self.settings = settings
 
-    async def load_questions(self, msg):
-        msg = msg.split(" ")
-        if len(msg) == 2:
-            _, qlist = msg
-            if qlist == "random":
-                chosen_list = randchoice(glob.glob("data/trivia/*.txt"))
-                self.question_list = self.load_list(chosen_list)
-                self.status = "new question"
-                self.timeout = time.perf_counter()
-                if self.question_list: await self.new_question()
-            else:
-                if os.path.isfile("data/trivia/" + qlist + ".txt"):
-                    self.question_list = await self.load_list("data/trivia/" + qlist + ".txt")
-                    self.status = "new question"
-                    self.timeout = time.perf_counter()
-                    if self.question_list: await self.new_question()
-                else:
-                    await trivia_manager.bot.say("There is no list with that name.")
-                    await self.stop_trivia()
-        else:
-            await trivia_manager.bot.say("trivia [list name]")
-
     async def stop_trivia(self):
         self.status = "stop"
-        trivia_manager.trivia_sessions.remove(self)
+        self.bot.dispatch("trivia_end", self)
 
     async def end_game(self):
         self.status = "stop"
-        if self.score_list:
+        if self.scores:
             await self.send_table()
-        trivia_manager.trivia_sessions.remove(self)
-
-    def guess_encoding(self, trivia_list):
-        with open(trivia_list, "rb") as f:
-            try:
-                return chardet.detect(f.read())["encoding"]
-            except:
-                return "ISO-8859-1"
-
-    async def load_list(self, qlist):
-        encoding = self.guess_encoding(qlist)
-        with open(qlist, "r", encoding=encoding) as f:
-            qlist = f.readlines()
-        parsed_list = []
-        for line in qlist:
-            if "`" in line and len(line) > 4:
-                line = line.replace("\n", "")
-                line = line.split("`")
-                question = line[0]
-                answers = []
-                for l in line[1:]:
-                    answers.append(l.lower().strip())
-                if len(line) >= 2:
-                    line = {"QUESTION" : question, "ANSWERS": answers} #string, list
-                    parsed_list.append(line)
-        if parsed_list != []:
-            return parsed_list
-        else:
-            await self.stop_trivia()
-            return None
+        self.bot.dispatch("trivia_end", self)
 
     async def new_question(self):
-        for score in self.score_list.values():
-            if score == self.settings["TRIVIA_MAX_SCORE"]:
+        for score in self.scores.values():
+            if score == self.settings["MAX_SCORE"]:
                 await self.end_game()
                 return True
         if self.question_list == []:
             await self.end_game()
             return True
-        self.current_q = randchoice(self.question_list)
-        self.question_list.remove(self.current_q)
+        self.current_line = choice(self.question_list)
+        self.question_list.remove(self.current_line)
         self.status = "waiting for answer"
         self.count += 1
         self.timer = int(time.perf_counter())
-        msg = "**Question number {}!**\n\n{}".format(str(self.count), self.current_q["QUESTION"])
-        try:
-            await trivia_manager.bot.say(msg)
-        except:
-            await asyncio.sleep(0.5)
-            await trivia_manager.bot.say(msg)
+        msg = "**Question number {}!**\n\n{}".format(self.count, self.current_line.question)
+        await self.bot.say(msg)
 
-        while self.status != "correct answer" and abs(self.timer - int(time.perf_counter())) <= self.settings["TRIVIA_DELAY"]:
-            if abs(self.timeout - int(time.perf_counter())) >= self.settings["TRIVIA_TIMEOUT"]:
-                await trivia_manager.bot.say("Guys...? Well, I guess I'll stop then.")
+        while self.status != "correct answer" and abs(self.timer - int(time.perf_counter())) <= self.settings["DELAY"]:
+            if abs(self.timeout - int(time.perf_counter())) >= self.settings["TIMEOUT"]:
+                await self.bot.say("Guys...? Well, I guess I'll stop then.")
                 await self.stop_trivia()
                 return True
             await asyncio.sleep(1) #Waiting for an answer or for the time limit
@@ -216,71 +263,53 @@ class TriviaSession():
         elif self.status == "stop":
             return True
         else:
-            msg = randchoice(self.gave_answer).format(self.current_q["ANSWERS"][0])
-            if self.settings["TRIVIA_BOT_PLAYS"]:
+            if self.settings["REVEAL_ANSWER"]:
+                msg = choice(self.reveal_messages).format(self.current_line.answers[0])
+            else:
+                msg = choice(self.fail_messages)
+            if self.settings["BOT_PLAYS"]:
                 msg += " **+1** for me!"
-                self.add_point(trivia_manager.bot.user.name)
-            self.current_q["ANSWERS"] = []
-            try:
-                await trivia_manager.bot.say(msg)
-                await trivia_manager.bot.send_typing(self.channel)
-            except:
-                await asyncio.sleep(0.5)
-                await trivia_manager.bot.say(msg)
+                self.scores[self.bot.user] += 1
+            self.current_line = None
+            await self.bot.say(msg)
+            await self.bot.type()
             await asyncio.sleep(3)
             if not self.status == "stop":
                 await self.new_question()
 
     async def send_table(self):
-        self.score_list = sorted(self.score_list.items(), reverse=True, key=lambda x: x[1]) # orders score from lower to higher
-        t = "```Scores: \n\n"
-        for score in self.score_list:
-            t += score[0] # name
-            t += "\t"
-            t += str(score[1]) # score
-            t += "\n"
-        t += "```"
-        await trivia_manager.bot.say(t)
+        t = "+ Results: \n\n"
+        for user, score in self.scores.most_common():
+            t += "+ {}\t{}\n".format(user, score)
+        await self.bot.say(box(t, lang="diff"))
 
     async def check_answer(self, message):
-        if message.author.id != trivia_manager.bot.user.id:
-            self.timeout = time.perf_counter()
-            if self.current_q is not None:
-                for answer in self.current_q["ANSWERS"]:
-                    if answer in message.content.lower():
-                        self.current_q["ANSWERS"] = []
-                        self.status = "correct answer"
-                        self.add_point(message.author.name)
-                        msg = "You got it {}! **+1** to you!".format(message.author.name)
-                        try:
-                            await trivia_manager.bot.send_typing(self.channel)
-                            await trivia_manager.bot.send_message(message.channel, msg)
-                        except:
-                            await asyncio.sleep(0.5)
-                            await trivia_manager.bot.send_message(message.channel, msg)
-                        return True
+        if message.author == self.bot.user:
+            return
+        elif self.current_line is None:
+            return
 
-    def add_point(self, user):
-        if user in self.score_list:
-            self.score_list[user] += 1
-        else:
-            self.score_list[user] = 1
+        self.timeout = time.perf_counter()
+        has_guessed = False
 
-    def get_trivia_question(self):
-        q = randchoice(list(trivia_questions.keys()))
-        return q, trivia_questions[q] # question, answer
+        for answer in self.current_line.answers:
+            answer = answer.lower()
+            guess = message.content.lower()
+            if " " not in answer:  # Exact matching, issue #331
+                guess = guess.split(" ")
+                for word in guess:
+                    if word == answer:
+                        has_guessed = True
+            else:  # The answer has spaces, we can't be as strict
+                if answer in guess:
+                    has_guessed = True
 
-async def get_trivia_by_channel(channel):
-        for t in trivia_manager.trivia_sessions:
-            if t.channel == channel:
-                return t
-        return False
-
-async def check_messages(message):
-    if message.author.id != trivia_manager.bot.user.id:
-        if await get_trivia_by_channel(message.channel):
-            trvsession = await get_trivia_by_channel(message.channel)
-            await trvsession.check_answer(message)
+        if has_guessed:
+            self.current_line = None
+            self.status = "correct answer"
+            self.scores[message.author] += 1
+            msg = "You got it {}! **+1** to you!".format(message.author.name)
+            await self.bot.send_message(message.channel, msg)
 
 
 def check_folders():
@@ -292,17 +321,12 @@ def check_folders():
 
 
 def check_files():
-    settings = {"TRIVIA_MAX_SCORE" : 10, "TRIVIA_TIMEOUT" : 120,  "TRIVIA_DELAY" : 15, "TRIVIA_BOT_PLAYS" : False}
-
     if not os.path.isfile("data/trivia/settings.json"):
         print("Creating empty settings.json...")
-        dataIO.save_json("data/trivia/settings.json", settings)
+        dataIO.save_json("data/trivia/settings.json", {})
 
 
 def setup(bot):
-    global trivia_manager
     check_folders()
     check_files()
-    bot.add_listener(check_messages, "on_message")
-    trivia_manager = Trivia(bot)
-    bot.add_cog(trivia_manager)
+    bot.add_cog(Trivia(bot))

@@ -469,6 +469,7 @@ class Economy:
             top = 10
         bank_sorted = sorted(self.bank.get_server_accounts(server),
                              key=lambda x: x.balance, reverse=True)
+        bank_sorted = [a for a in bank_sorted if a.member] #  exclude users who left
         if len(bank_sorted) < top:
             top = len(bank_sorted)
         topten = bank_sorted[:top]
@@ -476,7 +477,7 @@ class Economy:
         place = 1
         for acc in topten:
             highscore += str(place).ljust(len(str(top)) + 1)
-            highscore += (acc.name + " ").ljust(23 - len(str(acc.balance)))
+            highscore += (str(acc.member.display_name) + " ").ljust(23 - len(str(acc.balance)))
             highscore += str(acc.balance) + "\n"
             place += 1
         if highscore != "":
@@ -494,6 +495,7 @@ class Economy:
             top = 10
         bank_sorted = sorted(self.bank.get_all_accounts(),
                              key=lambda x: x.balance, reverse=True)
+        bank_sorted = [a for a in bank_sorted if a.member] #  exclude users who left
         unique_accounts = []
         for acc in bank_sorted:
             if not self.already_in_list(unique_accounts, acc):
@@ -505,7 +507,7 @@ class Economy:
         place = 1
         for acc in topten:
             highscore += str(place).ljust(len(str(top)) + 1)
-            highscore += ("{} |{}| ".format(acc.name, acc.server.name)
+            highscore += ("{} |{}| ".format(acc.member, acc.server)
                           ).ljust(23 - len(str(acc.balance)))
             highscore += str(acc.balance) + "\n"
             place += 1
