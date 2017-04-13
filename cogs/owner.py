@@ -46,7 +46,7 @@ class Owner:
         self.setowner_lock = False
         self.disabled_commands = dataIO.load_json("data/red/disabled_commands.json")
         self.global_ignores = dataIO.load_json("data/red/global_ignores.json")
-        self.ignore_list = dataIO.load_json("data/mod/ignorelist.json")
+        self.ignore_list = dataIO.load_json("data/red/ignorelist.json")
         self.session = aiohttp.ClientSession(loop=self.bot.loop)
 
     def __unload(self):
@@ -1158,12 +1158,26 @@ def _import_old_data(data):
 
     return data
 
+def _import_old_ignorelist(data):
+    """Import ignorelist.json from mod.py"""
+    try:
+        data["ignorelist"] = dataIO.load_json("data/mod/ignorelist.json")
+    except FileNotFoundError:
+        pass
+    return data
 
 def check_files():
     if not os.path.isfile("data/red/disabled_commands.json"):
         print("Creating empty disabled_commands.json...")
         dataIO.save_json("data/red/disabled_commands.json", [])
-
+    if not os.path.isfile("data/red/ignorelist.json"):
+        print("Creating empty ignorelist.json...")
+        data = {"SERVERS": [], "CHANNELS": []}
+        try:
+            data = _import_old_ignorelist(data)
+        except Exception as e:
+            log.error("Failed to migrate ignore list data from mod.py: {}".format(e))
+        dataIO.save_json("data/red/ignorelist.json", data)
     if not os.path.isfile("data/red/global_ignores.json"):
         print("Creating empty global_ignores.json...")
         data = {"blacklist": [], "whitelist": []}
