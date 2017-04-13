@@ -94,8 +94,6 @@ class Mod:
 
     def __init__(self, bot):
         self.bot = bot
-        self.whitelist_list = dataIO.load_json("data/mod/whitelist.json")
-        self.blacklist_list = dataIO.load_json("data/mod/blacklist.json")
         self.ignore_list = dataIO.load_json("data/mod/ignorelist.json")
         self.filter = dataIO.load_json("data/mod/filter.json")
         self.past_names = dataIO.load_json("data/mod/past_names.json")
@@ -133,23 +131,17 @@ class Mod:
                    "".format(**_settings))
             await self.bot.say(box(msg))
 
-    @modset.command(name="adminrole", pass_context=True, no_pm=True)
-    async def _modset_adminrole(self, ctx, *, role_name: str):
-        """Sets the admin role for this server, case insensitive."""
-        server = ctx.message.server
-        if server.id not in settings.servers:
-            await self.bot.say("Remember to set modrole too.")
-        settings.set_server_admin(server, role_name)
-        await self.bot.say("Admin role set to '{}'".format(role_name))
+    @modset.command(name="adminrole", pass_context=True, no_pm=True, hidden=True)
+    async def _modset_adminrole(self, ctx):
+        """Use [p]set adminrole instead"""
+        await self.bot.say("This command has been renamed "
+                           "`{}set adminrole`".format(ctx.prefix))
 
-    @modset.command(name="modrole", pass_context=True, no_pm=True)
-    async def _modset_modrole(self, ctx, *, role_name: str):
-        """Sets the mod role for this server, case insensitive."""
-        server = ctx.message.server
-        if server.id not in settings.servers:
-            await self.bot.say("Remember to set adminrole too.")
-        settings.set_server_mod(server, role_name)
-        await self.bot.say("Mod role set to '{}'".format(role_name))
+    @modset.command(name="modrole", pass_context=True, no_pm=True, hidden=True)
+    async def _modset_modrole(self, ctx):
+        """Use [p]set modrole instead"""
+        await self.bot.say("This command has been renamed "
+                           "`{}set modrole`".format(ctx.prefix))
 
     @modset.command(pass_context=True, no_pm=True)
     async def modlog(self, ctx, channel : discord.Channel=None):
@@ -1050,78 +1042,6 @@ class Mod:
         else:
             await self.bot.say("Case #{} updated.".format(case))
 
-    @commands.group(pass_context=True)
-    @checks.is_owner()
-    async def blacklist(self, ctx):
-        """Bans user from using the bot"""
-        if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
-
-    @blacklist.command(name="add")
-    async def _blacklist_add(self, user: discord.Member):
-        """Adds user to bot's blacklist"""
-        if user.id not in self.blacklist_list:
-            self.blacklist_list.append(user.id)
-            dataIO.save_json("data/mod/blacklist.json", self.blacklist_list)
-            await self.bot.say("User has been added to blacklist.")
-        else:
-            await self.bot.say("User is already blacklisted.")
-
-    @blacklist.command(name="remove")
-    async def _blacklist_remove(self, user: discord.Member):
-        """Removes user from bot's blacklist"""
-        if user.id in self.blacklist_list:
-            self.blacklist_list.remove(user.id)
-            dataIO.save_json("data/mod/blacklist.json", self.blacklist_list)
-            await self.bot.say("User has been removed from blacklist.")
-        else:
-            await self.bot.say("User is not in blacklist.")
-
-    @blacklist.command(name="clear")
-    async def _blacklist_clear(self):
-        """Clears the blacklist"""
-        self.blacklist_list = []
-        dataIO.save_json("data/mod/blacklist.json", self.blacklist_list)
-        await self.bot.say("Blacklist is now empty.")
-
-    @commands.group(pass_context=True)
-    @checks.is_owner()
-    async def whitelist(self, ctx):
-        """Users who will be able to use the bot"""
-        if ctx.invoked_subcommand is None:
-            await send_cmd_help(ctx)
-
-    @whitelist.command(name="add")
-    async def _whitelist_add(self, user: discord.Member):
-        """Adds user to bot's whitelist"""
-        if user.id not in self.whitelist_list:
-            if not self.whitelist_list:
-                msg = "\nAll users not in whitelist will be ignored (owner, admins and mods excluded)"
-            else:
-                msg = ""
-            self.whitelist_list.append(user.id)
-            dataIO.save_json("data/mod/whitelist.json", self.whitelist_list)
-            await self.bot.say("User has been added to whitelist." + msg)
-        else:
-            await self.bot.say("User is already whitelisted.")
-
-    @whitelist.command(name="remove")
-    async def _whitelist_remove(self, user: discord.Member):
-        """Removes user from bot's whitelist"""
-        if user.id in self.whitelist_list:
-            self.whitelist_list.remove(user.id)
-            dataIO.save_json("data/mod/whitelist.json", self.whitelist_list)
-            await self.bot.say("User has been removed from whitelist.")
-        else:
-            await self.bot.say("User is not in whitelist.")
-
-    @whitelist.command(name="clear")
-    async def _whitelist_clear(self):
-        """Clears the whitelist"""
-        self.whitelist_list = []
-        dataIO.save_json("data/mod/whitelist.json", self.whitelist_list)
-        await self.bot.say("Whitelist is now empty.")
-
     @commands.group(pass_context=True, no_pm=True)
     @checks.admin_or_permissions(manage_channels=True)
     async def ignore(self, ctx):
@@ -1752,8 +1672,6 @@ def check_files():
     ignore_list = {"SERVERS": [], "CHANNELS": []}
 
     files = {
-        "blacklist.json"      : [],
-        "whitelist.json"      : [],
         "ignorelist.json"     : ignore_list,
         "filter.json"         : {},
         "past_names.json"     : {},
