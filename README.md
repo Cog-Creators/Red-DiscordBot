@@ -34,7 +34,7 @@ Have fun!
 
 # Join the community!
 
-Red is in continuous development, new features get added all the time and it's supported by an active community that produces lots of content (plugins!) for everyone to enjoy. Stay tuned by [joining the official server](https://discord.gg/0k4npTwMvTpv9wrh)!
+Red is in continuous development, new features get added all the time and it's supported by an active community that produces lots of content (plugins!) for everyone to enjoy. Stay tuned by [joining the official server](https://discord.gg/red)!
 
 # License
 
