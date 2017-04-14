@@ -120,7 +120,7 @@ def check_file():
     if not dataIO.is_valid_json("data/red/ignorelist.json"):
         data = {"SERVERS": [], "CHANNELS": []}
         data = _ignore_migrate(data)
-        dataIO.save_json("data/red/ignorelist.json")
+        dataIO.save_json("data/red/ignorelist.json", data)
 
 
 def setup(bot):
