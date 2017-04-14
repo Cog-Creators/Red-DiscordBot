@@ -29,12 +29,12 @@ Don't forget to read the [getting started](https://twentysix26.github.io/Red-Doc
 
 If you have any other questions, feel free to explore the [Wiki](https://twentysix26.github.io/Red-Docs/) for guidance.
 
-If [*after reading the guides*](https://twentysix26.github.io/Red-Docs/) you're still experiencing issues that are not listed in [this page](https://twentysix26.github.io/Red-Docs/red_guide_troubleshooting/) or in the [FAQs](https://twentysix26.github.io/Red-Docs/red_faq/), feel free to join the [official server](https://discord.gg/0k4npTwMvTpv9wrh) with your main account to get some help.  
+If [*after reading the guides*](https://twentysix26.github.io/Red-Docs/) you're still experiencing issues that are not listed in [this page](https://twentysix26.github.io/Red-Docs/red_guide_troubleshooting/) or in the [FAQs](https://twentysix26.github.io/Red-Docs/red_faq/), feel free to join the [official server](https://discord.gg/red) with your main account to get some help.  
 Have fun!
 
 # Join the community!
 
-Red is in continuous development, new features get added all the time and it's supported by an active community that produces lots of content (plugins!) for everyone to enjoy. Stay tuned by [joining the official server](https://discord.gg/0k4npTwMvTpv9wrh)!
+Red is in continuous development, new features get added all the time and it's supported by an active community that produces lots of content (plugins!) for everyone to enjoy. Stay tuned by [joining the official server](https://discord.gg/red)!
 
 # License
 
