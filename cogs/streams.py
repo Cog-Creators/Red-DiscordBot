@@ -45,6 +45,7 @@ class Streams:
         self.beam_streams = dataIO.load_json("data/streams/beam.json")
         settings = dataIO.load_json("data/streams/settings.json")
         self.settings = defaultdict(dict, settings)
+        self.messages_cache = defaultdict(list)
 
     @commands.command()
     async def hitbox(self, stream: str):
@@ -270,6 +271,22 @@ class Streams:
 
         dataIO.save_json("data/streams/settings.json", self.settings)
 
+    @streamset.command(pass_context=True)
+    @checks.admin()
+    async def autodelete(self, ctx):
+        """Toggles automatic notification deletion for streams that go offline"""
+        server = ctx.message.server
+        settings = self.settings[server.id]
+        current = settings.get("AUTODELETE", True)
+        settings["AUTODELETE"] = not current
+        if settings["AUTODELETE"]:
+            await self.bot.say("Notifications will be automatically deleted "
+                               "once the stream goes offline.")
+        else:
+            await self.bot.say("Notifications won't be deleted anymore.")
+
+        dataIO.save_json("data/streams/settings.json", self.settings)
+
     async def hitbox_online(self, stream):
         url = "https://api.hitbox.tv/media/live/" + stream
 
@@ -412,12 +429,14 @@ class Streams:
 
             for streams_list, parser in streams:
                 for stream in streams_list:
+                    key = (parser, stream["NAME"])
                     try:
                         embed = await parser(stream["NAME"])
                     except OfflineStream:
                         if stream["ALREADY_ONLINE"]:
                             stream["ALREADY_ONLINE"] = False
                             save = True
+                            await self.delete_old_notifications(key)
                     except:  # We don't want our task to die
                         continue
                     else:
@@ -425,14 +444,18 @@ class Streams:
                             continue
                         save = True
                         stream["ALREADY_ONLINE"] = True
+                        messages_sent = []
                         for channel_id in stream["CHANNELS"]:
                             channel = self.bot.get_channel(channel_id)
                             if channel is None:
                                 continue
                             mention = self.settings.get(channel.server.id, {}).get("MENTION", "")
                             can_speak = channel.permissions_for(channel.server.me).send_messages
+                            message = mention + " {} is live!".format(stream["NAME"])
                             if channel and can_speak:
-                                await self.bot.send_message(channel, mention, embed=embed)
+                                m = await self.bot.send_message(channel, message, embed=embed)
+                                messages_sent.append(m)
+                        self.messages_cache[key] = messages_sent
 
                     await asyncio.sleep(0.5)
 
@@ -442,6 +465,19 @@ class Streams:
                 dataIO.save_json("data/streams/beam.json", self.beam_streams)
 
             await asyncio.sleep(CHECK_DELAY)
+
+    async def delete_old_notifications(self, key):
+        for message in self.messages_cache[key]:
+            server = message.server
+            settings = self.settings.get(server.id, {})
+            is_enabled = settings.get("AUTODELETE", True)
+            try:
+                if is_enabled:
+                    await self.bot.delete_message(message)
+            except:
+                pass
+
+        del self.messages_cache[key]
 
     def rnd_attr(self):
         """Avoids Discord's caching"""
