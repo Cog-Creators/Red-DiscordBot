@@ -458,7 +458,14 @@ class Streams:
     async def stream_checker(self):
         CHECK_DELAY = 60
 
-        await self._convert_twitch_usernames_to_ids()
+        try:
+            await self._migration_twitch_v5()
+        except InvalidCredentials:
+            print("Error during convertion of twitch usernames to IDs: "
+                  "invalid token")
+        except Exception as e:
+            print("Error during convertion of twitch usernames to IDs: "
+                  "{}".format(e))
 
         while self == self.bot.get_cog("Streams"):
             save = False
@@ -529,8 +536,8 @@ class Streams:
         """Avoids Discord's caching"""
         return "?rnd=" + "".join([choice(ascii_letters) for i in range(6)])
 
-    async def _convert_twitch_usernames_to_ids(self):
-        # Migration to Twitch API v5
+    async def _migration_twitch_v5(self):
+        #  Migration of old twitch streams to API v5
         to_convert = []
         for stream in self.twitch_streams:
             if "ID" not in stream:
