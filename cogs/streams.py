@@ -50,6 +50,7 @@ class Streams:
         settings = dataIO.load_json("data/streams/settings.json")
         self.settings = defaultdict(dict, settings)
         self.messages_cache = defaultdict(list)
+        self.twitch_users = dataIO.load_json("data/streams/twitch_users.json")
 
     @commands.command()
     async def hitbox(self, stream: str):
@@ -317,12 +318,19 @@ class Streams:
             'Client-ID': self.settings.get("TWITCH_TOKEN", ""),
             'Accept': 'application/vnd.twitchtv.v5+json'
         }
-        async with session.get(id_url, headers=header) as id_r:
-            id_data = await id_r.json(encoding='utf-8')
-        if len(id_data["users"]) == 0:
-            raise InvalidUser()
+        for user in self.twitch_users:
+            if user["name"] == stream:
+                url += user["id"]
+                break
         else:
-            url += id_data["users"][0]["_id"]
+            async with session.get(id_url, headers=header) as id_r:
+                id_data = await id_r.json(encoding='utf-8')
+            if len(id_data["users"]) == 0:
+                raise InvalidUser()
+            else:
+                url += id_data["users"][0]["_id"]
+                self.twitch_users.append({"name": stream, "id": id_data["users"][0]["_id"]})
+                dataIO.save_json("data/streams/twitch_users.json", self.twitch_users)
         async with session.get(url, headers=header) as r:
             data = await r.json(encoding='utf-8')
         await session.close()
@@ -508,6 +516,7 @@ def check_folders():
 def check_files():
     stream_files = (
         "twitch.json",
+        "twitch_users.json",
         "hitbox.json",
         "beam.json"
     )
