@@ -328,8 +328,13 @@ class Streams:
             if len(id_data["users"]) == 0:
                 raise InvalidUser()
             else:
+                for u in self.twitch_users:
+                    if u["id"] == id_data["users"][0]["_id"]:
+                        u["name"] = stream
+                        break
+                else:
+                    self.twitch_users.append({"name": stream, "id": id_data["users"][0]["_id"]})
                 url += id_data["users"][0]["_id"]
-                self.twitch_users.append({"name": stream, "id": id_data["users"][0]["_id"]})
                 dataIO.save_json("data/streams/twitch_users.json", self.twitch_users)
         async with session.get(url, headers=header) as r:
             data = await r.json(encoding='utf-8')
