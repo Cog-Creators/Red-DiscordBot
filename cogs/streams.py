@@ -480,10 +480,10 @@ class Streams:
                 else:
                     _type = "NAME"
                 for stream in streams_list:
+                    if _type not in stream:
+                        continue
                     key = (parser, stream[_type])
                     try:
-                        if _type not in stream:
-                            continue
                         embed = await parser(stream[_type])
                     except OfflineStream:
                         if stream["ALREADY_ONLINE"]:
