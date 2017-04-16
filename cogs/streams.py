@@ -29,6 +29,10 @@ class InvalidCredentials(StreamsError):
     pass
 
 
+class InvalidUser(StreamsError):
+    pass
+
+
 class OfflineStream(StreamsError):
     pass
 
@@ -72,6 +76,8 @@ class Streams:
         stream = re.sub(regex, '', stream)
         try:
             embed = await self.twitch_online(stream)
+        except InvalidUser:
+            await self.bot.say(stream + " doesn't exist.")
         except OfflineStream:
             await self.bot.say(stream + " is offline.")
         except StreamNotFound:
@@ -305,9 +311,18 @@ class Streams:
 
     async def twitch_online(self, stream):
         session = aiohttp.ClientSession()
-        url = "https://api.twitch.tv/kraken/streams/" + stream
-        header = {'Client-ID': self.settings.get("TWITCH_TOKEN", "")}
-
+        id_url = "https://api.twitch.tv/kraken/users?login={}".format(stream)
+        url = "https://api.twitch.tv/kraken/streams/"        
+        header = {
+            'Client-ID': self.settings.get("TWITCH_TOKEN", ""),
+            'Accept': 'application/vnd.twitchtv.v5+json'
+        }
+        async with session.get(id_url, headers=header) as id_r:
+            id_data = await id_r.json(encoding='utf-8')
+        if len(id_data["users"]) == 0:
+            raise InvalidUser()
+        else:
+            url += id_data["users"][0]["_id"]
         async with session.get(url, headers=header) as r:
             data = await r.json(encoding='utf-8')
         await session.close()
