@@ -330,7 +330,10 @@ class Streams:
             else:
                 for u in self.twitch_users:
                     if u["id"] == id_data["users"][0]["_id"]:
-                        u["name"] = stream
+                        tmp = u
+                        tmp["name"] = stream
+                        self.twitch_users.remove(u)
+                        self.twitch_users.append(tmp)
                         break
                 else:
                     self.twitch_users.append({"name": stream, "id": id_data["users"][0]["_id"]})
