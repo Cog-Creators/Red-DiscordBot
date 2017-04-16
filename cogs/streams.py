@@ -29,6 +29,10 @@ class InvalidCredentials(StreamsError):
     pass
 
 
+class InvalidUser(StreamsError):
+    pass
+
+
 class OfflineStream(StreamsError):
     pass
 
@@ -46,6 +50,7 @@ class Streams:
         settings = dataIO.load_json("data/streams/settings.json")
         self.settings = defaultdict(dict, settings)
         self.messages_cache = defaultdict(list)
+        self.twitch_users = dataIO.load_json("data/streams/twitch_users.json")
 
     @commands.command()
     async def hitbox(self, stream: str):
@@ -72,6 +77,8 @@ class Streams:
         stream = re.sub(regex, '', stream)
         try:
             embed = await self.twitch_online(stream)
+        except InvalidUser:
+            await self.bot.say(stream + " doesn't exist.")
         except OfflineStream:
             await self.bot.say(stream + " is offline.")
         except StreamNotFound:
@@ -305,9 +312,33 @@ class Streams:
 
     async def twitch_online(self, stream):
         session = aiohttp.ClientSession()
-        url = "https://api.twitch.tv/kraken/streams/" + stream
-        header = {'Client-ID': self.settings.get("TWITCH_TOKEN", "")}
-
+        id_url = "https://api.twitch.tv/kraken/users?login={}".format(stream)
+        url = "https://api.twitch.tv/kraken/streams/"        
+        header = {
+            'Client-ID': self.settings.get("TWITCH_TOKEN", ""),
+            'Accept': 'application/vnd.twitchtv.v5+json'
+        }
+        for user in self.twitch_users:
+            if user["name"] == stream:
+                url += user["id"]
+                break
+        else:
+            async with session.get(id_url, headers=header) as id_r:
+                id_data = await id_r.json(encoding='utf-8')
+            if len(id_data["users"]) == 0:
+                raise InvalidUser()
+            else:
+                for u in self.twitch_users:
+                    if u["id"] == id_data["users"][0]["_id"]:
+                        tmp = u
+                        tmp["name"] = stream
+                        self.twitch_users.remove(u)
+                        self.twitch_users.append(tmp)
+                        break
+                else:
+                    self.twitch_users.append({"name": stream, "id": id_data["users"][0]["_id"]})
+                url += id_data["users"][0]["_id"]
+                dataIO.save_json("data/streams/twitch_users.json", self.twitch_users)
         async with session.get(url, headers=header) as r:
             data = await r.json(encoding='utf-8')
         await session.close()
@@ -493,6 +524,7 @@ def check_folders():
 def check_files():
     stream_files = (
         "twitch.json",
+        "twitch_users.json",
         "hitbox.json",
         "beam.json"
     )
