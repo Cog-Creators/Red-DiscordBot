@@ -71,7 +71,7 @@ class Streams:
         regex = r'^(https?\:\/\/)?(www\.)?(twitch\.tv\/)'
         stream = re.sub(regex, '', stream)
         try:
-            data = await self.fetch_twitch_id(stream, raise_if_none=True)
+            data = await self.fetch_twitch_ids(stream, raise_if_none=True)
             embed = await self.twitch_online(data[0]["_id"])
         except OfflineStream:
             await self.bot.say(stream + " is offline.")
@@ -118,7 +118,7 @@ class Streams:
         stream = re.sub(regex, '', stream)
         channel = ctx.message.channel
         try:
-            data = await self.fetch_twitch_id(stream, raise_if_none=True)
+            data = await self.fetch_twitch_ids(stream, raise_if_none=True)
         except StreamNotFound:
             await self.bot.say("That stream doesn't exist.")
             return
@@ -298,8 +298,7 @@ class Streams:
         elif data["livestream"][0]["media_is_live"] == "0":
             raise OfflineStream()
         elif data["livestream"][0]["media_is_live"] == "1":
-            data = self.hitbox_embed(data)
-            return data
+            return self.hitbox_embed(data)
 
         raise APIError()
 
@@ -317,8 +316,7 @@ class Streams:
         if r.status == 200:
             if data["stream"] is None:
                 raise OfflineStream()
-            embed = self.twitch_embed(data)
-            return embed
+            return self.twitch_embed(data)
         elif r.status == 400:
             raise InvalidCredentials()
         elif r.status == 404:
@@ -333,8 +331,7 @@ class Streams:
             data = await r.json(encoding='utf-8')
         if r.status == 200:
             if data["online"] is True:
-                data = self.beam_embed(data)
-                return data
+                return self.beam_embed(data)
             else:
                 raise OfflineStream()
         elif r.status == 404:
@@ -342,7 +339,7 @@ class Streams:
         else:
             raise APIError()
 
-    async def fetch_twitch_id(self, *streams, raise_if_none=False):
+    async def fetch_twitch_ids(self, *streams, raise_if_none=False):
         def chunks(l):
             for i in range(0, len(l), 100):
                 yield l[i:i + 100]
@@ -546,7 +543,7 @@ class Streams:
         if not to_convert:
             return
 
-        results = await self.fetch_twitch_id(*to_convert)
+        results = await self.fetch_twitch_ids(*to_convert)
 
         for stream in self.twitch_streams:
             for result in results:
