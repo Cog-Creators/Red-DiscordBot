@@ -14,6 +14,8 @@ import argparse
 import shutil
 import stat
 import time
+import getpass
+import grp
 try:
     import pip
 except ImportError:
@@ -130,6 +132,31 @@ def update_red():
         print("\nRed could not update properly. If this is caused by edits "
               "you have made to the code you can try the repair option from "
               "the Maintenance submenu")
+
+
+def setup_autostart():
+    if sys.platform != "linux":
+        return
+    username = getpass.getuser()
+    groupname = grp.getgrgid(os.getgid())[0]
+    homedir = os.getenv("HOME")
+    file_contents = "[Unit]\nDescription=Red-DiscordBot\n" +\
+        "After=multi-user.target\n[Service]\nWorkingDirectory=" +\
+        "{}/Red-DiscordBot".format(homedir) + "\nUser={}".format(username) +\
+        "\nGroup={}\n".format(groupname) + "ExecStart=" +\
+        "{} {}/Red-DiscordBot/".format(sys.executable, homedir) +\
+        "launcher.py -s --auto-restart --update-red --update-reqs\n" +\
+        "Type=idle\nRestart=always\nRestartSec=15\n\n[Install]\n" +\
+        "WantedBy=multi-user.target"
+    with open("{}/red.service".format(homedir), "w") as as_out:
+        as_out.write(file_contents)
+    print("Created red.service file in your home directory!")
+    print("To use it, do sudo mv ~/red.service /etc/systemd/system/")
+    print("Then you can start it with:")
+    print("sudo systemctl start red.service")
+    print("To start at boot, you can do:")
+    print("sudo systemctl enable red.service")
+    time.sleep(15)
 
 
 def reset_red(reqs=False, data=False, cogs=False, git_reset=False):
@@ -524,6 +551,7 @@ def main():
         print("3. Update")
         print("4. Install requirements")
         print("5. Maintenance (repair, reset...)")
+        print("6. Generate autostart file (linux only)")
         print("\n0. Quit")
         choice = user_choice()
         if choice == "1":
@@ -536,6 +564,8 @@ def main():
             requirements_menu()
         elif choice == "5":
             maintenance_menu()
+        elif choice == "6":
+            setup_autostart()
         elif choice == "0":
             break
         clear_screen()
