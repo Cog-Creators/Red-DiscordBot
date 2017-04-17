@@ -550,6 +550,9 @@ class Streams:
                 if stream["NAME"].lower() == result["name"].lower():
                     stream["ID"] = result["_id"]
 
+        # We might as well delete the invalid / renamed ones
+        self.twitch_streams = [s for s in self.twitch_streams if "ID" in s]
+
         dataIO.save_json("data/streams/twitch.json", self.twitch_streams)
 
 
