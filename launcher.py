@@ -136,6 +136,12 @@ def update_red():
 
 def setup_autostart():
     if sys.platform != "linux":
+        print("This functionality is only available on Linux")
+        return
+    sd_check = subprocess.call(["which", "systemd"])
+    if sd_check != 0:
+        print("It appears as if your system doesn't use systemd!")
+        print("This functionality only supports systemd at present")
         return
     username = getpass.getuser()
     groupname = grp.getgrgid(os.getgid())[0]
