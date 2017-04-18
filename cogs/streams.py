@@ -71,7 +71,8 @@ class Streams:
         regex = r'^(https?\:\/\/)?(www\.)?(twitch\.tv\/)'
         stream = re.sub(regex, '', stream)
         try:
-            embed = await self.twitch_online(stream)
+            data = await self.fetch_twitch_ids(stream, raise_if_none=True)
+            embed = await self.twitch_online(data[0]["_id"])
         except OfflineStream:
             await self.bot.say(stream + " is offline.")
         except StreamNotFound:
@@ -117,7 +118,7 @@ class Streams:
         stream = re.sub(regex, '', stream)
         channel = ctx.message.channel
         try:
-            await self.twitch_online(stream)
+            data = await self.fetch_twitch_ids(stream, raise_if_none=True)
         except StreamNotFound:
             await self.bot.say("That stream doesn't exist.")
             return
@@ -129,12 +130,11 @@ class Streams:
                                "See `{}streamset twitchtoken`"
                                "".format(ctx.prefix))
             return
-        except OfflineStream:
-            pass
 
         enabled = self.enable_or_disable_if_active(self.twitch_streams,
                                                    stream,
-                                                   channel)
+                                                   channel,
+                                                   _id=data[0]["_id"])
 
         if enabled:
             await self.bot.say("Alert activated. I will notify this channel "
@@ -298,15 +298,17 @@ class Streams:
         elif data["livestream"][0]["media_is_live"] == "0":
             raise OfflineStream()
         elif data["livestream"][0]["media_is_live"] == "1":
-            data = self.hitbox_embed(data)
-            return data
+            return self.hitbox_embed(data)
 
         raise APIError()
 
     async def twitch_online(self, stream):
         session = aiohttp.ClientSession()
         url = "https://api.twitch.tv/kraken/streams/" + stream
-        header = {'Client-ID': self.settings.get("TWITCH_TOKEN", "")}
+        header = {
+            'Client-ID': self.settings.get("TWITCH_TOKEN", ""),
+            'Accept': 'application/vnd.twitchtv.v5+json'
+        }
 
         async with session.get(url, headers=header) as r:
             data = await r.json(encoding='utf-8')
@@ -314,8 +316,7 @@ class Streams:
         if r.status == 200:
             if data["stream"] is None:
                 raise OfflineStream()
-            embed = self.twitch_embed(data)
-            return embed
+            return self.twitch_embed(data)
         elif r.status == 400:
             raise InvalidCredentials()
         elif r.status == 404:
@@ -330,14 +331,43 @@ class Streams:
             data = await r.json(encoding='utf-8')
         if r.status == 200:
             if data["online"] is True:
-                data = self.beam_embed(data)
-                return data
+                return self.beam_embed(data)
             else:
                 raise OfflineStream()
         elif r.status == 404:
             raise StreamNotFound()
         else:
             raise APIError()
+
+    async def fetch_twitch_ids(self, *streams, raise_if_none=False):
+        def chunks(l):
+            for i in range(0, len(l), 100):
+                yield l[i:i + 100]
+
+        base_url = "https://api.twitch.tv/kraken/users?login="
+        header = {
+            'Client-ID': self.settings.get("TWITCH_TOKEN", ""),
+            'Accept': 'application/vnd.twitchtv.v5+json'
+        }
+        results = []
+
+        for streams_list in chunks(streams):
+            session = aiohttp.ClientSession()
+            url = base_url + ",".join(streams_list)
+            async with session.get(url, headers=header) as r:
+                data = await r.json()
+            if r.status == 200:
+                results.extend(data["users"])
+            elif r.status == 400:
+                raise InvalidCredentials()
+            else:
+                raise APIError()
+            await session.close()
+
+        if not results and raise_if_none:
+            raise StreamNotFound()
+
+        return results
 
     def twitch_embed(self, data):
         channel = data["stream"]["channel"]
@@ -396,7 +426,7 @@ class Streams:
             embed.set_footer(text="Playing: " + data["type"]["name"])
         return embed
 
-    def enable_or_disable_if_active(self, streams, stream, channel):
+    def enable_or_disable_if_active(self, streams, stream, channel, _id=None):
         """Returns True if enabled or False if disabled"""
         for i, s in enumerate(streams):
             if s["NAME"] != stream:
@@ -411,14 +441,28 @@ class Streams:
                 streams[i]["CHANNELS"].append(channel.id)
                 return True
 
-        streams.append({"CHANNELS": [channel.id],
-                        "NAME": stream,
-                        "ALREADY_ONLINE": False})
+        data = {"CHANNELS": [channel.id],
+                "NAME": stream,
+                "ALREADY_ONLINE": False}
+
+        if _id:
+            data["ID"] = _id
+
+        streams.append(data)
 
         return True
 
     async def stream_checker(self):
         CHECK_DELAY = 60
+
+        try:
+            await self._migration_twitch_v5()
+        except InvalidCredentials:
+            print("Error during convertion of twitch usernames to IDs: "
+                  "invalid token")
+        except Exception as e:
+            print("Error during convertion of twitch usernames to IDs: "
+                  "{}".format(e))
 
         while self == self.bot.get_cog("Streams"):
             save = False
@@ -428,10 +472,16 @@ class Streams:
                        (self.beam_streams,   self.beam_online))
 
             for streams_list, parser in streams:
+                if parser == self.twitch_online:
+                    _type = "ID"
+                else:
+                    _type = "NAME"
                 for stream in streams_list:
-                    key = (parser, stream["NAME"])
+                    if _type not in stream:
+                        continue
+                    key = (parser, stream[_type])
                     try:
-                        embed = await parser(stream["NAME"])
+                        embed = await parser(stream[_type])
                     except OfflineStream:
                         if stream["ALREADY_ONLINE"]:
                             stream["ALREADY_ONLINE"] = False
@@ -482,6 +532,28 @@ class Streams:
     def rnd_attr(self):
         """Avoids Discord's caching"""
         return "?rnd=" + "".join([choice(ascii_letters) for i in range(6)])
+
+    async def _migration_twitch_v5(self):
+        #  Migration of old twitch streams to API v5
+        to_convert = []
+        for stream in self.twitch_streams:
+            if "ID" not in stream:
+                to_convert.append(stream["NAME"])
+
+        if not to_convert:
+            return
+
+        results = await self.fetch_twitch_ids(*to_convert)
+
+        for stream in self.twitch_streams:
+            for result in results:
+                if stream["NAME"].lower() == result["name"].lower():
+                    stream["ID"] = result["_id"]
+
+        # We might as well delete the invalid / renamed ones
+        self.twitch_streams = [s for s in self.twitch_streams if "ID" in s]
+
+        dataIO.save_json("data/streams/twitch.json", self.twitch_streams)
 
 
 def check_folders():
