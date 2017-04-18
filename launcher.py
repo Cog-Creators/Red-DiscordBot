@@ -150,9 +150,10 @@ def setup_autostart():
         "WantedBy=multi-user.target"
     with open("{}/red.service".format(homedir), "w") as as_out:
         as_out.write(file_contents)
-    print("Created red.service file in your home directory!")
-    print("To use it, do sudo mv ~/red.service /etc/systemd/system/")
-    print("Then you can start it with:")
+    print("Moving red.service to the proper location")
+    subprocess.call(["sudo", "-k", "mv", "{}/red.service".format(homedir), "/etc/systemd/system/"])
+    print("Created red.service file!")
+    print("You can start it with:")
     print("sudo systemctl start red.service")
     print("To start at boot, you can do:")
     print("sudo systemctl enable red.service")
