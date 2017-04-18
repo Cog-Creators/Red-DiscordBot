@@ -2160,6 +2160,10 @@ class Audio:
                 log.debug("just got unmuted, resuming")
                 vc.audio_player.resume()
 
+    def __unload(self):
+        for vc in self.bot.voice_clients:
+            self.bot.loop.create_task(vc.disconnect())
+
 
 def check_folders():
     folders = ("data/audio", "data/audio/cache", "data/audio/playlists",
