@@ -4,6 +4,7 @@ from cogs.utils import checks
 from cogs.utils.chat_formatting import pagify, box
 from __main__ import send_cmd_help, set_cog
 import os
+import aiohttp
 from subprocess import run as sp_run, PIPE
 import shutil
 from asyncio import as_completed
@@ -27,6 +28,14 @@ DISCLAIMER = ("You're about to add a 3rd party repository. The creator of Red"
               "the above message. This message won't be shown again until the"
               " next reboot.")
 
+DISCLAIMER_MULTI = ("You're about to add several 3rd party repositories. The"
+              " creator of Red and its community have no responsibility for"
+              " any potential damage that the content of 3rd party repositories"
+              " might cause."
+              "\nBy typing 'I agree' you declare to have read and understand "
+              "the above message. This message won't be shown again until the"
+              " next reboot.")
+
 
 class UpdateError(Exception):
     pass
@@ -46,6 +55,7 @@ class Downloader:
     def __init__(self, bot):
         self.bot = bot
         self.disclaimer_accepted = False
+        self.disclaimer_multi_accepted = False
         self.path = "data/downloader/"
         self.file_path = "data/downloader/repos.json"
         # {name:{url,cog1:{installed},cog1:{installed}}}
@@ -106,6 +116,93 @@ class Downloader:
             if msg:
                 await self.bot.say(msg[:2000])
         await self.bot.say("Repo '{}' added.".format(repo_name))
+
+    @repo.command(name="massadd", pass_context=True)
+    async def _repo_massadd(self, ctx, *, repos_to_add: str):
+        """Adds multiple repos by url. Warning: Adding 3RD Party
+        Repositories is at your own Risk. Repos should be separated
+        by a semicolon, and the repo's name should be separated from
+        its url by a comma (i.e. "repo1",url;"repo2",url)"""
+        author = ctx.message.author
+        if not self.disclaimer_multi_accepted:
+            await self.bot.say(DISCLAIMER_MULTI)
+            answer = await self.bot.wait_for_message(timeout=30,
+                                                     author=author)
+            if answer is None:
+                await self.bot.say('Not adding repo.')
+                return
+            elif "i agree" not in answer.content.lower():
+                await self.bot.say('Not adding repo.')
+                return
+            else:
+                self.disclaimer_multi_accepted = True
+
+        repos = repos_to_add.split(";")
+        for repo in repos:
+            cur_repo = repo.split(",")
+            repo_name = cur_repo[0]
+            repo_url = cur_repo[1]
+            self.repos[repo_name] = {}
+            self.repos[repo_name]['url'] = repo_url
+            try:
+                self.update_repo(repo_name)
+            except CloningError:
+                await self.bot.say("That repository link doesn't seem to be "
+                                   "valid.")
+                del self.repos[repo_name]
+                return
+            self.populate_list(repo_name)
+            self.save_repos()
+            data = self.get_info_data(repo_name)
+            if data:
+                msg = data.get("INSTALL_MSG")
+                if msg:
+                    await self.bot.say(msg[:2000])
+            await self.bot.say("Repo '{}' added.".format(repo_name))
+            await self.bot.say("=" * 40)
+
+    @repo.command(name="catadd", pass_context=True)
+    async def _repo_catadd(self, ctx, repo_category: str):
+        """Adds all repos in a specific category (approved,
+        beta, unapproved, or all). Warning: Adding 3RD Party
+        Repositories is at your own Risk."""
+        if not self.disclaimer_multi_accepted:
+            await self.bot.say(DISCLAIMER_MULTI)
+            answer = await self.bot.wait_for_message(timeout=30,
+                                                     author=ctx.message.author)
+            if answer is None:
+                await self.bot.say('Not adding repo.')
+                return
+            elif "i agree" not in answer.content.lower():
+                await self.bot.say('Not adding repo.')
+                return
+            else:
+                self.disclaimer_multi_accepted = True
+        async with aiohttp.get("https://cogs.red/api/v1/repos/") as all_repos:
+            all_repos_data = await all_repos.json()
+        if not all_repos_data["error"]:
+            for repo in all_repos_data["results"]["list"]:
+                if repo_category.lower() == "all" or repo["type"] == repo_category.lower():
+                    repo_name = repo["name"].lower()
+                    repo_url = repo["links"]["github"]["self"]
+                    self.repos[repo_name] = {}
+                    self.repos[repo_name]['url'] = repo_url
+                    try:
+                        self.update_repo(repo_name)
+                    except CloningError:
+                        await self.bot.say("That repository link doesn't seem to be "
+                                           "valid.")
+                        del self.repos[repo_name]
+                        continue
+                    self.populate_list(repo_name)
+                    self.save_repos()
+                    data = self.get_info_data(repo_name)
+                    if data:
+                        msg = data.get("INSTALL_MSG")
+                        if msg:
+                            await self.bot.say(msg[:2000])
+                    await self.bot.say("Repo '{}' added.".format(repo_name))
+                    await self.bot.say("=" * 40)
 
     @repo.command(name="remove")
     async def _repo_del(self, repo_name: str):
