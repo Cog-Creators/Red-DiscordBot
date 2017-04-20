@@ -134,14 +134,57 @@ def update_red():
               "the Maintenance submenu")
 
 
-def setup_autostart():
+def setup_upstart_autostart():
+    if sys.platform != "linux":
+        print("This is only available on Linux!")
+        return
+    upstart_check = subprocess.call(["which", "initctl"])
+    if upstart_check != 0:
+        print("It looks like your system isn't using upstart!")
+        return
+    username = getpass.getuser()
+    groupname = grp.getgrgid(os.getgid())[0]
+    homedir = os.getenv("HOME")
+    file_contents = "start on runlevel [2345]\nstop on runlevel [016]\n\n" +\
+        "respawn\nchdir {}\nsetuid {}\nsetgid {}".format(homedir, username, groupname) +\
+        "\nexec {} launcher.py -s --autorestart --update-red --update-reqs".format(sys.executable)
+    with open("{}/red.conf".format(homedir), "w") as conf_write:
+        conf_write.write(file_contents)
+    print("Moving red.service to the proper location...")
+    subprocess.call(["sudo", "-k", "mv", "{}/red.conf".format(homedir), "/etc/init/"])
+    print("Created red.conf file!")
+    print("You can start it with:")
+    print("sudo start red")
+    print("To stop it, do sudo stop red")
+    print("To restart it, do sudo restart red")
+    time.sleep(15)
+
+
+def setup_openrc_autostart():
+    return
+    """
+    if sys.platform != "linux":
+        print("This is only available on Linux!")
+        return
+    openrc_check = subprocess.call(["which", "openrc"])
+    if openrc_check != 0:
+        print("It appears your system doesn't use openrc!")
+        return
+    file_contents = "!#/sbin/openrc-run\n\ndepend() {\nneed net\n}\n"
+    """
+
+
+def setup_launchd_autostart():
+    pass
+
+
+def setup_systemd_autostart():
     if sys.platform != "linux":
         print("This functionality is only available on Linux")
         return
     sd_check = subprocess.call(["which", "systemd"])
     if sd_check != 0:
         print("It appears as if your system doesn't use systemd!")
-        print("This functionality only supports systemd at present")
         return
     username = getpass.getuser()
     groupname = grp.getgrgid(os.getgid())[0]
@@ -301,6 +344,29 @@ def requirements_menu():
             break
         clear_screen()
 
+
+def autostart_menu():
+    clear_screen()
+    while True:
+        print(INTRO)
+        print("Autorestart:\n")
+        print("1. Systemd")
+        print("2. Upstart")
+        print("3. OpenRC")
+        print("4. launchd")
+        print("\n0. Go Back")
+        choice = user_choice()
+        if choice == "1":
+            setup_systemd_autostart()
+        elif choice == "2":
+            setup_upstart_autostart()
+        elif choice == "3":
+            setup_openrc_autostart()
+        elif choice == "4":
+            setup_launchd_autostart()
+        elif choice == "0":
+            break
+        clear_screen()
 
 def update_menu():
     clear_screen()
