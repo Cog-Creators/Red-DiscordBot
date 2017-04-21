@@ -46,8 +46,8 @@ class Downloader:
     def __init__(self, bot):
         self.bot = bot
         self.disclaimer_accepted = False
-        self.path = "data/downloader/"
-        self.file_path = "data/downloader/repos.json"
+        self.path = os.path.join("data", "downloader")
+        self.file_path = os.path.join(self.path, "repos.json")
         # {name:{url,cog1:{installed},cog1:{installed}}}
         self.repos = dataIO.load_json(self.file_path)
         self.executor = ThreadPoolExecutor(NUM_THREADS)
@@ -317,7 +317,7 @@ class Downloader:
             await self.bot.say("Ok then, you can reload cogs with"
                                " `{}reload <cog_name>`".format(ctx.prefix))
         elif answer.content.lower().strip() == "yes":
-            registry = dataIO.load_json("data/red/cogs.json")
+            registry = dataIO.load_json(os.path.join("data", "red", "cogs.json"))
             update_list = []
             fail_list = []
             for repo, cog, _ in installed_updated_cogs:
@@ -448,7 +448,7 @@ class Downloader:
                         else:
                             reqs_failed = True
 
-        to_path = os.path.join("cogs/", cog + ".py")
+        to_path = os.path.join("cogs", cog + ".py")
 
         print("Copying {}...".format(cog))
         shutil.copy(path, to_path)
@@ -456,7 +456,7 @@ class Downloader:
         if os.path.exists(cog_data_path):
             print("Copying {}'s data folder...".format(cog))
             distutils.dir_util.copy_tree(cog_data_path,
-                                         os.path.join('data/', cog))
+                                         os.path.join('data', cog))
         self.repos[repo_name][cog]['INSTALLED'] = True
         self.save_repos()
         if not reqs_failed:
@@ -579,20 +579,20 @@ class Downloader:
                 if "@" in url: # Specific branch
                     url, branch = url.rsplit("@", maxsplit=1)
                 if branch is None:
-                    p = run(["git", "clone", url, dd + name])
+                    p = run(["git", "clone", url, folder])
                 else:
-                    p = run(["git", "clone", "-b", branch, url, dd + name])
+                    p = run(["git", "clone", "-b", branch, url, folder])
                 if p.returncode != 0:
                     raise CloningError()
                 self.populate_list(name)
                 return name, REPO_CLONE, None
             else:
-                rpbcmd = ["git", "-C", dd + name, "rev-parse", "--abbrev-ref", "HEAD"]
+                rpbcmd = ["git", "-C", folder, "rev-parse", "--abbrev-ref", "HEAD"]
                 p = run(rpbcmd, stdout=PIPE)
                 branch = p.stdout.decode().strip()
 
-                rpcmd = ["git", "-C", dd + name, "rev-parse", branch]
-                p = run(["git", "-C", dd + name, "reset", "--hard",
+                rpcmd = ["git", "-C", folder, "rev-parse", branch]
+                p = run(["git", "-C", folder, "reset", "--hard",
                         "origin/%s" % branch, "-q"])
                 if p.returncode != 0:
                     raise UpdateError("Error resetting to origin/%s" % branch)
@@ -600,7 +600,7 @@ class Downloader:
                 if p.returncode != 0:
                     raise UpdateError("Unable to determine old commit hash")
                 oldhash = p.stdout.decode().strip()
-                p = run(["git", "-C", dd + name, "pull", "-q", "--ff-only"])
+                p = run(["git", "-C", folder, "pull", "-q", "--ff-only"])
                 if p.returncode != 0:
                     raise UpdateError("Error pulling updates")
                 p = run(rpcmd, stdout=PIPE)
@@ -613,7 +613,7 @@ class Downloader:
                     self.populate_list(name)
                     self.save_repos()
                     ret = {}
-                    cmd = ['git', '-C', dd + name, 'diff', '--no-commit-id',
+                    cmd = ['git', '-C', folder, 'diff', '--no-commit-id',
                            '--name-status', oldhash, newhash]
                     p = run(cmd, stdout=PIPE)
 
@@ -657,13 +657,13 @@ class Downloader:
 
 
 def check_folders():
-    if not os.path.exists("data/downloader"):
+    if not os.path.exists(os.path.join("data", "downloader")):
         print('Making repo downloads folder...')
-        os.mkdir('data/downloader')
+        os.mkdir(os.path.join("data", "downloader"))
 
 
 def check_files():
-    f = "data/downloader/repos.json"
+    f = os.path.join("data", "downloader", "repos.json")
     if not dataIO.is_valid_json(f):
         print("Creating default data/downloader/repos.json")
         dataIO.save_json(f, {})
