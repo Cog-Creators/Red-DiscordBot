@@ -9,7 +9,6 @@ import datetime
 import subprocess
 
 try:
-    assert sys.version_info >= (3, 5)
     from discord.ext import commands
     import discord
 except ImportError:
@@ -17,13 +16,7 @@ except ImportError:
           "Consult the guide for your operating system "
           "and do ALL the steps in order.\n"
           "https://twentysix26.github.io/Red-Docs/\n")
-    sys.exit()
-except AssertionError:
-    print("Red needs Python 3.5 or superior.\n"
-          "Consult the guide for your operating system "
-          "and do ALL the steps in order.\n"
-          "https://twentysix26.github.io/Red-Docs/\n")
-    sys.exit()
+    sys.exit(1)
 
 from cogs.utils.settings import Settings
 from cogs.utils.dataIO import dataIO
@@ -633,6 +626,7 @@ if __name__ == '__main__':
                 bot.settings.email = None
                 bot.settings.password = None
                 bot.settings.save_settings()
+                print("Login credentials have been reset.")
     except KeyboardInterrupt:
         loop.run_until_complete(bot.logout())
     except Exception as e:
