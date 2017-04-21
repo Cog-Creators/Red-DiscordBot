@@ -575,7 +575,7 @@ def shardss_menu():
                 print("Enabled Sharding")
                 wait()
         elif choice == "2":
-            with open("data/data/shard/shard.json", "r+") as settings:
+            with open("data/shard/shard.json", "r+") as settings:
                 settings["SHARDS"] = "False"
                 f.seek(0)
                 f.write(json.dumps(settings, indent=4, sort_keys=True))
