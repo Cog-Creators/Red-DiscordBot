@@ -10,7 +10,7 @@ class DataIO():
     def __init__(self):
         self.logger = logging.getLogger("red")
         try:
-            __import__(aiofiles)
+            __import__("aiofiles")
             import aiofiles
             self.async_compatible = True
         except ImportError:
