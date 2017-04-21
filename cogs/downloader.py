@@ -519,8 +519,24 @@ class Downloader:
         return bool(find_spec(name))
 
     def _do_first_run(self):
-        invalid = []
         save = False
+        repos_copy = deepcopy(self.repos)
+
+        # Issue 725
+        for repo in repos_copy:
+            for cog in repos_copy[repo]:
+                cog_data = repos_copy[repo][cog]
+                if isinstance(cog_data, str):  # ... url field
+                    continue
+                for k, v in cog_data.items():
+                    if k in ("file", "folder"):
+                        repos_copy[repo][cog][k] = os.path.normpath(cog_data[k])
+
+        if self.repos != repos_copy:
+            self.repos = repos_copy
+            save = True
+
+        invalid = []
 
         for repo in self.repos:
             broken = 'url' in self.repos[repo] and len(self.repos[repo]) == 1
