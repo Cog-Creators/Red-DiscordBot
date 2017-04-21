@@ -14,7 +14,7 @@ class DataIO():
             import aiofiles
             self.async = True
         except ImportError:
-            self.logger.exception("Attempted to use aiofiles but 
+            self.logger.exception("Attempted to use aiofiles but "
                                   "dependancy wasn\'t installed. "
                                   "Please update all dependancies!")
             self.async = False
