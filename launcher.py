@@ -292,7 +292,6 @@ def update_menu():
         print("3. Update requirements")
         print("\nOthers:")
         print("4. Update pip (might require admin privileges)")
-        print("5. Disable Sharding")
         print("\n0. Go back")
         choice = user_choice()
         if choice == "1":
@@ -572,7 +571,7 @@ def shardss_menu():
                 f.truncate()
                 print("Enabled Sharding")
         elif choice == "2":
-            with open("data/shard/shard.json", "r+") as settings:
+            with open("data/data/shard/shard.json", "r+") as settings:
                 settings["SHARDS"] = "False"
                 f.seek(0)
                 f.write(json.dumps(settings, indent=4, sort_keys=True))
