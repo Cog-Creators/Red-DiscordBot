@@ -13,6 +13,7 @@ from functools import partial
 from concurrent.futures import ThreadPoolExecutor
 from time import time
 from importlib.util import find_spec
+from copy import deepcopy
 
 NUM_THREADS = 4
 REPO_NONEX = 0x1
