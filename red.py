@@ -50,13 +50,13 @@ description = "Red - A multifunction Discord bot by Twentysix"
 shardpath = "data/shard/"
 if not os.path.exists(shardpath):
     os.makedirs(shardpath)
-
-# Firt Time Run Json, wont need it after
-with open(shardpath + "shard.json", "w") as f:
-    writeJ = '{"SHARDS": "False","SHARD0": "0","SHARD1": "1","SHARDC": "2"}'
-    parse = json.loads(writeJ)
-    f.write(json.dumps(parse, indent=4, sort_keys=True))
-    f.truncate()
+    with open(shardpath + "shard.json", "w") as f:
+        writeJ = '{"SHARDS": "False","SHARD0": "0","SHARD1": "1","SHARDC": "2"}'
+        parse = json.loads(writeJ)
+        f.write(json.dumps(parse, indent=4, sort_keys=True))
+        f.truncate()
+else:
+    print("Found Shard Path")
 
 with open("data/shard/shard.json") as f:
     config = json.load(f)
