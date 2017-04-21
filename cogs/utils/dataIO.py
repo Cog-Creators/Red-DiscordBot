@@ -12,12 +12,12 @@ class DataIO():
         try:
             __import__(aiofiles)
             import aiofiles
-            self.async = True
+            self.async_compatible = True
         except ImportError:
             self.logger.exception("Attempted to use aiofiles but "
                                   "dependancy wasn\'t installed. "
                                   "Please update all dependancies!")
-            self.async = False
+            self.async_compatible = False
 
     def save_json(self, filename, data):
         """Atomically saves json file"""
@@ -72,7 +72,7 @@ class DataIO():
         
     async def async_save_json(self, filename, data):
         """Atomically saves json file"""
-        if not self.async:
+        if not self.async_compatible:
             self.logger.exception("Attempted to save using aiofiles "
                                   "but dependancy wasn't installed. "
                                   "Please update all dependancies!")
@@ -94,7 +94,7 @@ class DataIO():
     
     async def async_load_json(self, filename):
         """Loads json file"""
-        if not self.async:
+        if not self.async_compatible:
             self.logger.exception("Attempted to load using aiofiles "
                                   "but dependancy wasn't installed. "
                                   "Please update all dependancies!")
