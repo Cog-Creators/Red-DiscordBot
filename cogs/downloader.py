@@ -344,9 +344,8 @@ class Downloader:
 
     def patch_notes_handler(self, repo_cog_hash_pairs):
         for repo, cog, oldhash in repo_cog_hash_pairs:
-            pathsplit = self.repos[repo][cog]['file'].split('/')
-            repo_path = os.path.join(*pathsplit[:-2])
-            cogfile = os.path.join(*pathsplit[-2:])
+            repo_path = os.path.join('data', 'downloader', repo)
+            cogfile = os.path.join(cog, cog + ".py")
             cmd = ["git", "-C", repo_path, "log", "--relative-date",
                    "--reverse", oldhash + '..', cogfile
                    ]
