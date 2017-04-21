@@ -449,7 +449,7 @@ class Downloader:
                         else:
                             reqs_failed = True
 
-        to_path = os.path.join("cogs/", cog + ".py")
+        to_path = os.path.join("cogs", cog + ".py")
 
         print("Copying {}...".format(cog))
         shutil.copy(path, to_path)
@@ -457,7 +457,7 @@ class Downloader:
         if os.path.exists(cog_data_path):
             print("Copying {}'s data folder...".format(cog))
             distutils.dir_util.copy_tree(cog_data_path,
-                                         os.path.join('data/', cog))
+                                         os.path.join('data', cog))
         self.repos[repo_name][cog]['INSTALLED'] = True
         self.save_repos()
         if not reqs_failed:
