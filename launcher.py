@@ -10,6 +10,7 @@ except ImportError:
 import platform
 import webbrowser
 import hashlib
+import json
 import argparse
 import shutil
 import stat
@@ -27,6 +28,10 @@ FFMPEG_BUILDS_URL = "https://ffmpeg.zeranoe.com/builds/"
 
 INTRO = ("==========================\n"
          "Red Discord Bot - Launcher\n"
+         "==========================\n")
+
+SHARD_INTRO = ("==========================\n"
+         "Red Discord Bot - Shard Menu\n"
          "==========================\n")
 
 IS_WINDOWS = os.name == "nt"
@@ -287,6 +292,7 @@ def update_menu():
         print("3. Update requirements")
         print("\nOthers:")
         print("4. Update pip (might require admin privileges)")
+        print("5. Disable Sharding")
         print("\n0. Go back")
         choice = user_choice()
         if choice == "1":
@@ -524,6 +530,7 @@ def main():
         print("3. Update")
         print("4. Install requirements")
         print("5. Maintenance (repair, reset...)")
+        print("6. Open Shard Menu (Back up Data, this is in Beta)")
         print("\n0. Quit")
         choice = user_choice()
         if choice == "1":
@@ -536,11 +543,45 @@ def main():
             requirements_menu()
         elif choice == "5":
             maintenance_menu()
+        elif choice == "6":
+            shardss_menu()
         elif choice == "0":
             break
         clear_screen()
 
 args = parse_cli_arguments()
+
+
+def shardss_menu():
+    clear_screen()
+    while True:
+        print(SHARD_INTRO)
+        print("Shard Menu:\n")
+        print("1. Enable Shards")
+        print("2. Disable Shards")
+        print("\n0. Go back")
+        choice = user_choice()
+        if choice == "1":
+            with open("data/red/settings.json", "r+") as f:
+                settings = json.load(f)
+                settings["SHARDS"] = "True"
+                settings["SHARD0"] = "0"
+                settings["SHARDC"] = "2"
+                f.seek(0)
+                f.write(json.dumps(settings, indent=4, sort_keys=True))
+                f.truncate()
+                print("Enabled Sharding")
+        elif choice == "2":
+            with open("data/red/settings.json", "r+") as settings:
+                settings["SHARDS"] = "False"
+                f.seek(0)
+                f.write(json.dumps(settings, indent=4, sort_keys=True))
+                f.truncate()
+                wait()
+                print("Disabled Sharding")
+        elif choice == "0":
+            break
+        clear_screen()
 
 if __name__ == '__main__':
     abspath = os.path.abspath(__file__)
