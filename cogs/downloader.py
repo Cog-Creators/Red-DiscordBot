@@ -317,7 +317,7 @@ class Downloader:
             await self.bot.say("Ok then, you can reload cogs with"
                                " `{}reload <cog_name>`".format(ctx.prefix))
         elif answer.content.lower().strip() == "yes":
-            registry = dataIO.load_json(os.path.join(self.path, "cogs.json")
+            registry = dataIO.load_json(os.path.join(self.path, "cogs.json"))
             update_list = []
             fail_list = []
             for repo, cog, _ in installed_updated_cogs:
