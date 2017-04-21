@@ -292,7 +292,6 @@ def update_menu():
         print("3. Update requirements")
         print("\nOthers:")
         print("4. Update pip (might require admin privileges)")
-        print("5. Disable Sharding")
         print("\n0. Go back")
         choice = user_choice()
         if choice == "1":
