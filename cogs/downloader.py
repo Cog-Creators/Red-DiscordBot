@@ -46,8 +46,8 @@ class Downloader:
     def __init__(self, bot):
         self.bot = bot
         self.disclaimer_accepted = False
-        self.path = "data/downloader/"
-        self.file_path = "data/downloader/repos.json"
+        self.path = os.path.join("data", "downloader")
+        self.file_path = os.path.join(self.path, "repos.json")
         # {name:{url,cog1:{installed},cog1:{installed}}}
         self.repos = dataIO.load_json(self.file_path)
         self.executor = ThreadPoolExecutor(NUM_THREADS)
@@ -317,7 +317,7 @@ class Downloader:
             await self.bot.say("Ok then, you can reload cogs with"
                                " `{}reload <cog_name>`".format(ctx.prefix))
         elif answer.content.lower().strip() == "yes":
-            registry = dataIO.load_json("data/red/cogs.json")
+            registry = dataIO.load_json(os.path.join(self.path, "cogs.json"))
             update_list = []
             fail_list = []
             for repo, cog, _ in installed_updated_cogs:
@@ -449,7 +449,7 @@ class Downloader:
                         else:
                             reqs_failed = True
 
-        to_path = os.path.join("cogs/", cog + ".py")
+        to_path = os.path.join("cogs", cog + ".py")
 
         print("Copying {}...".format(cog))
         shutil.copy(path, to_path)
@@ -457,7 +457,7 @@ class Downloader:
         if os.path.exists(cog_data_path):
             print("Copying {}'s data folder...".format(cog))
             distutils.dir_util.copy_tree(cog_data_path,
-                                         os.path.join('data/', cog))
+                                         os.path.join('data', cog))
         self.repos[repo_name][cog]['INSTALLED'] = True
         self.save_repos()
         if not reqs_failed:
@@ -658,13 +658,13 @@ class Downloader:
 
 
 def check_folders():
-    if not os.path.exists("data/downloader"):
+    if not os.path.exists(os.path.join("data", "downloader")):
         print('Making repo downloads folder...')
-        os.mkdir('data/downloader')
+        os.mkdir(os.path.join("data", "downloader"))
 
 
 def check_files():
-    f = "data/downloader/repos.json"
+    f = os.path.join("data", "downloader", "repos.json")
     if not dataIO.is_valid_json(f):
         print("Creating default data/downloader/repos.json")
         dataIO.save_json(f, {})
