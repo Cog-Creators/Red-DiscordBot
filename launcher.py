@@ -558,26 +558,43 @@ def shardss_menu():
         print("Shard Menu:\n")
         print("1. Enable Shards")
         print("2. Disable Shards")
+        print("3. Add another shard Value")
         print("\n0. Go back")
         choice = user_choice()
         if choice == "1":
             with open("data/shard/shard.json", "r+") as f:
                 settings = json.load(f)
                 settings["SHARDS"] = "True"
-                settings["SHARD0"] = "0"
-                settings["SHARDC"] = "2"
+                shardidin = input("Please enter shard id here: ")
+                settings["SHARD0"] = shardidin
+                shardcountin = input("Please enter total shard count: ")
+                settings["SHARDC"] = shardcountin
                 f.seek(0)
                 f.write(json.dumps(settings, indent=4, sort_keys=True))
                 f.truncate()
                 print("Enabled Sharding")
+                wait()
         elif choice == "2":
             with open("data/data/shard/shard.json", "r+") as settings:
                 settings["SHARDS"] = "False"
                 f.seek(0)
                 f.write(json.dumps(settings, indent=4, sort_keys=True))
                 f.truncate()
-                wait()
                 print("Disabled Sharding")
+                wait()
+        elif choice == "3":
+            with open("data/shard/shard.json", "r+") as f:
+                shardname = input("Please enter value name (Something like SHARD0): ")
+                shardidout = input("Please enter shard id: ")
+                shardidcountout = input("Please enter total shard count: ")
+                settings = json.load(f)
+                settings[shardname] = shardidout
+                settings["SHARDC"] = shardidcountout
+                f.seek(0)
+                f.write(json.dumps(settings, indent=4, sort_keys=True))
+                f.truncate()
+                print("Added Value")
+                wait()
         elif choice == "0":
             break
         clear_screen()
