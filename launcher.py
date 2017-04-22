@@ -529,7 +529,7 @@ def main():
         print("3. Update")
         print("4. Install requirements")
         print("5. Maintenance (repair, reset...)")
-        print("6. Open Shard Menu (Back up Data, this is in Beta)")
+        print("6. Open Shard Menu v1.0 (Back up Data, There's a data issue)")
         print("\n0. Quit")
         choice = user_choice()
         if choice == "1":
