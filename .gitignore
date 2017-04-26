@@ -1,0 +1,6 @@
+*.json
+*.pyc
+__pycache__
+*.exe
+*.dll
+*.log
