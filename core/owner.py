@@ -1,5 +1,5 @@
 from discord.ext import commands
-from core.utils import checks
+from core import checks
 from core.utils.chat_formatting import box
 import asyncio
 import importlib
