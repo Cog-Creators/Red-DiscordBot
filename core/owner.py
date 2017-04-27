@@ -1,17 +1,17 @@
 from discord.ext import commands
 from core import checks
 from core.utils.chat_formatting import box
+import logging
 import asyncio
 import importlib
 import os
 import discord
 
+log = logging.getLogger("red")
+
 
 class Owner:
     """All owner-only commands that relate to debug bot operations."""
-
-    def __init__(self, bot):
-        self.bot = bot
 
     @commands.command()
     @checks.is_owner()
@@ -19,8 +19,16 @@ class Owner:
         """Loads a package"""
         if not cog_name.startswith("cogs."):
             cog_name = "cogs." + cog_name
-        self.bot.load_extension(cog_name)
-        await ctx.send("Done.")
+
+        try:
+            ctx.bot.load_extension(cog_name)
+        except Exception as e:
+            log.exception("Package loading failed", exc_info=e)
+            await ctx.send("Failed to load package. Check your console or "
+                           "logs for details.")
+        else:
+            ctx.bot.save_packages_status()
+            await ctx.send("Done.")
 
     @commands.group()
     @checks.is_owner()
@@ -28,8 +36,10 @@ class Owner:
         """Unloads a package"""
         if not cog_name.startswith("cogs."):
             cog_name = "cogs." + cog_name
-        if cog_name in self.bot.extensions:
-            self.bot.unload_extension(cog_name)
+
+        if cog_name in ctx.bot.extensions:
+            ctx.bot.unload_extension(cog_name)
+            ctx.bot.save_packages_status()
             await ctx.send("Done.")
         else:
             await ctx.send("That extension is not loaded.")
@@ -40,10 +50,18 @@ class Owner:
         """Reloads a package"""
         if not cog_name.startswith("cogs."):
             cog_name = "cogs." + cog_name
-        self.refresh_modules(cog_name)
-        self.bot.unload_extension(cog_name)
-        self.bot.load_extension(cog_name)
-        await ctx.send("Done.")
+
+        try:
+            self.refresh_modules(cog_name)
+            ctx.bot.unload_extension(cog_name)
+            ctx.bot.load_extension(cog_name)
+        except Exception as e:
+            log.exception("Package reloading failed", exc_info=e)
+            await ctx.send("Failed to reload package. Check your console or "
+                           "logs for details.")
+        else:
+            ctx.bot.save_packages_status()
+            await ctx.send("Done.")
 
     def refresh_modules(self, module):
         """Interally reloads modules so that changes are detected"""
@@ -69,7 +87,7 @@ class Owner:
         result = None
 
         global_vars = globals().copy()
-        global_vars['bot'] = self.bot
+        global_vars['bot'] = ctx.bot
         global_vars['ctx'] = ctx
         global_vars['message'] = ctx.message
         global_vars['author'] = ctx.message.author
@@ -109,7 +127,7 @@ class Owner:
         ctx.message.author = user
         ctx.message.content = ctx.prefix + command
 
-        await self.bot.process_commands(ctx.message)
+        await ctx.bot.process_commands(ctx.message)
 
         ctx.message.author = old_author
         ctx.message.content = old_content

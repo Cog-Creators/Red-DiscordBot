@@ -8,7 +8,7 @@ from core.utils.chat_formatting import inline
 log = logging.getLogger("red")
 
 
-def init_events(bot):
+def init_events(bot, cli_flags):
 
     @bot.event
     async def on_connect():
@@ -17,14 +17,33 @@ def init_events(bot):
 
     @bot.event
     async def on_ready():
-        if bot.uptime is None:
-            bot.uptime = datetime.datetime.utcnow()
-            print("Loading cogs...")
-            # load the packages at this point
-            total_channels = len([c for c in bot.get_all_channels()])
-            total_users = len(set([m for m in bot.get_all_members()]))
-            print("Ready and operational on {} servers.\n"
-                  "".format(len(bot.guilds)))
+        if bot.uptime is not None:
+            return
+
+        bot.uptime = datetime.datetime.utcnow()
+
+        if cli_flags.no_cogs is False:
+            print("Loading packages...")
+            failed = []
+            packages = bot.db.get_global("packages", [])
+
+            for package in packages:
+                try:
+                    bot.load_extension(package)
+                except Exception as e:
+                    log.exception("Failed to load package {}".format(package),
+                                  exc_info=e)
+                    failed.append(package)
+
+            if failed:
+                bot.save_packages_status()
+            if packages:
+                print("Loaded packages: " + ", ".join(packages))
+
+        #  total_channels = len([c for c in bot.get_all_channels()])
+        #  total_users = len(set([m for m in bot.get_all_members()]))
+
+        print("Ready and operational on {} servers.".format(len(bot.guilds)))
 
     @bot.event
     async def on_command_error(error, ctx):
@@ -61,7 +80,7 @@ def init_events(bot):
         elif isinstance(error, commands.CommandNotFound):
             pass
         elif isinstance(error, commands.CheckFailure):
-            await ctx.send("⛔")
+            await ctx.send("⛔ You are not authorized to issue that command.")
         elif isinstance(error, commands.NoPrivateMessage):
             await ctx.send("That command is not available in DMs.")
         elif isinstance(error, commands.CommandOnCooldown):

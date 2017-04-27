@@ -65,6 +65,13 @@ class Red(commands.Bot):
         """Lists packages present in the cogs the folder"""
         return os.listdir("cogs")
 
+    def save_packages_status(self):
+        loaded = []
+        for package in self.extensions:
+            if package.startswith("cogs."):
+                loaded.append(package)
+        self.db.set_global("packages", loaded)
+
 
 class ExitCodes(Enum):
     CRITICAL = 1

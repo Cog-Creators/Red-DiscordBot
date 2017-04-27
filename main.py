@@ -57,7 +57,7 @@ if __name__ == '__main__':
     description = "Red v3 - Alpha"
     red = Red(cli_flags, description=description, pm_help=None)
     init_global_checks(red)
-    init_events(red)
+    init_events(red, cli_flags)
     red.load_extension('core')
     if cli_flags.dev:
         pass # load dev cog here?

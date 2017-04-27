@@ -21,9 +21,9 @@ class Audio:
             await ctx.send("Join a voice channel first!")
             return
 
-        if ctx.guild.voice_client:
-            if ctx.guild.voice_client.channel != ctx.author.voice.channel:
-                await ctx.guild.voice_client.disconnect()
+        if ctx.voice_client:
+            if ctx.voice_client.channel != ctx.author.voice.channel:
+                await ctx.voice_client.disconnect()
         path = os.path.join("cogs", "audio", "songs", filename + ".mp3")
         if not os.path.isfile(path):
             await ctx.send("Let's play a file that exists pls")
@@ -44,9 +44,9 @@ class Audio:
             await ctx.send("Youtube links pls")
             return
 
-        if ctx.guild.voice_client:
-            if ctx.guild.voice_client.channel != ctx.author.voice.channel:
-                await ctx.guild.voice_client.disconnect()
+        if ctx.voice_client:
+            if ctx.voice_client.channel != ctx.author.voice.channel:
+                await ctx.voice_client.disconnect()
         yt = YoutubeSource(url)
         player = PCMVolumeTransformer(yt, volume=1)
         voice = await ctx.author.voice.channel.connect()
@@ -56,9 +56,9 @@ class Audio:
     @commands.command()
     async def stop(self, ctx):
         """Stops the music and disconnects"""
-        if ctx.guild.voice_client:
-            ctx.guild.voice_client.source.cleanup()
-            await ctx.guild.voice_client.disconnect()
+        if ctx.voice_client:
+            ctx.voice_client.source.cleanup()
+            await ctx.voice_client.disconnect()
         else:
             await ctx.send("I'm not even connected to a voice channel!", delete_after=2)
         await ctx.message.delete()
@@ -66,8 +66,8 @@ class Audio:
     @commands.command()
     async def pause(self, ctx):
         """Pauses the music"""
-        if ctx.guild.voice_client:
-            ctx.guild.voice_client.pause()
+        if ctx.voice_client:
+            ctx.voice_client.pause()
             await ctx.send("👌", delete_after=2)
         else:
             await ctx.send("I'm not even connected to a voice channel!", delete_after=2)
@@ -76,8 +76,8 @@ class Audio:
     @commands.command()
     async def resume(self, ctx):
         """Resumes the music"""
-        if ctx.guild.voice_client:
-            ctx.guild.voice_client.resume()
+        if ctx.voice_client:
+            ctx.voice_client.resume()
             await ctx.send("👌", delete_after=2)
         else:
             await ctx.send("I'm not even connected to a voice channel!", delete_after=2)
@@ -86,8 +86,8 @@ class Audio:
     @commands.command(hidden=True)
     async def volume(self, ctx, n: float):
         """Sets the volume"""
-        if ctx.guild.voice_client:
-            ctx.guild.voice_client.source.volume = n
+        if ctx.voice_client:
+            ctx.voice_client.source.volume = n
             await ctx.send("Volume set.", delete_after=2)
         else:
             await ctx.send("I'm not even connected to a voice channel!", delete_after=2)
