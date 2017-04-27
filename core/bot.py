@@ -34,7 +34,7 @@ class Red(commands.Bot):
 
     async def is_owner(self, user, allow_coowners=True):
         if allow_coowners:
-            if user.id in self.settings.coowners:
+            if user.id in self.db.get_global("coowners", []):
                 return True
         return await super().is_owner(user)
 
