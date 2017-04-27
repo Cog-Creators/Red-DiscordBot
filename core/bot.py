@@ -1,12 +1,13 @@
 from discord.ext import commands
 from collections import Counter
 from core.utils.helpers import JsonGuildDB
+from enum import Enum
 import os
 
 
 class Red(commands.Bot):
     def __init__(self, cli_flags, **kwargs):
-        self._shutdown_mode = None
+        self._shutdown_mode = ExitCodes.CRITICAL
         self.db = JsonGuildDB("core/data/settings.json",
                               autosave=True,
                               create_dirs=True)
@@ -48,14 +49,24 @@ class Red(commands.Bot):
             for page in pages:
                 await ctx.send(page)
 
-    async def logout(self, *, restart=False):
+    async def shutdown(self, *, restart=False):
         """Gracefully quits Red with exit code 0
 
         If restart is True, the exit code will be 26 instead
         Upon receiving that exit code, the launcher restarts Red"""
-        self._shutdown_mode = not restart
-        await super().logout()
+        if not restart:
+            self._shutdown_mode = ExitCodes.SHUTDOWN
+        else:
+            self._shutdown_mode = ExitCodes.RESTART
+
+        await self.logout()
 
     def list_packages(self):
         """Lists packages present in the cogs the folder"""
         return os.listdir("cogs")
+
+
+class ExitCodes(Enum):
+    CRITICAL = 1
+    SHUTDOWN = 0
+    RESTART  = 26
