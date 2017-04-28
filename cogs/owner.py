@@ -169,7 +169,11 @@ class Owner:
         # which is currently true.
 
         # Extracting filename from __module__ Example: cogs.owner
-        loaded = [c.__module__.split(".")[1] for c in self.bot.cogs.values()]
+        loaded = []
+        for cog in self.bot.cogs.values():
+            if cog.__module__.startswith("cogs."):
+                loaded.append(cog.__module__.split(".")[1])
+
         # What's in the folder but not loaded is unloaded
         unloaded = [c.split(".")[1] for c in self._list_cogs()
                     if c.split(".")[1] not in loaded]
