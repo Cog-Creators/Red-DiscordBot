@@ -85,5 +85,10 @@ if __name__ == '__main__':
         log.critical("Fatal exception", exc_info=e)
         loop.run_until_complete(red.logout())
     finally:
+        pending = asyncio.Task.all_tasks(loop=red.loop)
+        gathered = asyncio.gather(*pending, loop=red.loop)
+        gathered.cancel()
+        red.loop.run_until_complete(gathered)
+        gathered.exception()
         sys.exit(red._shutdown_mode.value)
 
