@@ -1581,11 +1581,16 @@ class Mod:
         await _delete_helper(self.bot, message)
 
     async def on_message(self, message):
-        if message.channel.is_private or self.bot.user == message.author \
-         or not isinstance(message.author, discord.Member):
+        author = message.author
+        if message.server is None or self.bot.user == author:
             return
-        elif self.is_mod_or_superior(message):
+
+        valid_user = isinstance(author, discord.Member) and not author.bot
+
+        #  Bots and mods or superior are ignored from the filter
+        if not valid_user or self.is_mod_or_superior(message):
             return
+
         deleted = await self.check_filter(message)
         if not deleted:
             deleted = await self.check_duplicates(message)
