@@ -210,6 +210,12 @@ class Bot(commands.Bot):
             args.remove("--target")
             args.remove("lib")
 
+        # Debian-patched pip defaults to --user, which conflicts with --target.
+        # They also add a --system option to force it not to install to user path.
+        ic = pip.commands.InstallCommand()
+        if ic.cmd_opts.has_option('--system'):
+            args.append('--system')
+
         def install():
             code = subprocess.call(args)
             sys.path_importer_cache = {}

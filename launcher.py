@@ -83,6 +83,12 @@ def install_reqs(audio):
         "-r", txt
     ]
 
+    # Debian-patched pip defaults to --user, which conflicts with --target.
+    # They also add a --system option to force it not to install to user path.
+    ic = pip.commands.InstallCommand()
+    if ic.cmd_opts.has_option('--system'):
+        args.append('--system')
+
     if IS_MAC: # --target is a problem on Homebrew. See PR #552
         args.remove("--target")
         args.remove(REQS_DIR)
