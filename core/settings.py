@@ -1,16 +1,87 @@
+from core.utils.helpers import JsonGuildDB
+import discord
 import argparse
 
-# Do we even need a Settings class this time? To be decided
 
-
-class Settings:
-    def __init__(self):
-        args = {}
-        self.coowners = []
+class CoreDB(JsonGuildDB):
+    """
+    The central DB used by Red to store a variety
+    of settings, both global and guild specific
+    """
 
     def can_login(self):
         """Used on start to determine if Red is setup enough to login"""
         raise NotImplementedError
+
+    def get_admin_role(self, guild):
+        """Returns the guild's admin role
+
+        Returns None if not set or if the role
+        couldn't be retrieved"""
+        _id = self.get_all(guild, {}).get("admin_role", None)
+        return discord.utils.get(guild.roles, id=_id)
+
+    def get_mod_role(self, guild):
+        """Returns the guild's mod role
+
+        Returns None if not set or if the role
+        couldn't be retrieved"""
+        _id = self.get_all(guild, {}).get("mod_role", None)
+        return discord.utils.get(guild.roles, id=_id)
+
+    async def set_admin_role(self, role):
+        """Sets the admin role for the guild"""
+        if not isinstance(role, discord.Role):
+            raise TypeError("A valid Discord role must be passed.")
+        await self.set(role.guild, "admin_role", role.id)
+
+    async def set_mod_role(self, role):
+        """Sets the mod role for the guild"""
+        if not isinstance(role, discord.Role):
+            raise TypeError("A valid Discord role must be passed.")
+        await self.set(role.guild, "mod_role", role.id)
+
+    def get_global_whitelist(self):
+        """Returns the global whitelist"""
+        return self.get_global("whitelist", [])
+
+    def get_global_blacklist(self):
+        """Returns the global whitelist"""
+        return self.get_global("blacklist", [])
+
+    async def set_global_whitelist(self, whitelist):
+        """Sets the global whitelist"""
+        if not isinstance(list, whitelist):
+            raise TypeError("A list of IDs must be passed.")
+        await self.set_global("whitelist", whitelist)
+
+    async def set_global_blacklist(self, blacklist):
+        """Sets the global blacklist"""
+        if not isinstance(list, blacklist):
+            raise TypeError("A list of IDs must be passed.")
+        await self.set_global("blacklist", blacklist)
+
+    def get_guild_whitelist(self, guild):
+        """Returns the guild's whitelist"""
+        return self.get(guild, "whitelist", [])
+
+    def get_guild_blacklist(self, guild):
+        """Returns the guild's blacklist"""
+        return self.get(guild, "blacklist", [])
+
+    async def set_guild_whitelist(self, guild, whitelist):
+        """Sets the guild's whitelist"""
+        if not isinstance(guild, discord.Guild) or not isinstance(whitelist, list):
+            raise TypeError("A valid Discord guild and a list of IDs "
+                            "must be passed.")
+        await self.set(guild, "whitelist", whitelist)
+
+    async def set_guild_blacklist(self, guild, blacklist):
+        """Sets the guild's blacklist"""
+        if not isinstance(guild, discord.Guild) or not isinstance(blacklist, list):
+            raise TypeError("A valid Discord guild and a list of IDs "
+                            "must be passed.")
+        await self.set(guild, "blacklist", blacklist)
 
 
 def parse_cli_flags():

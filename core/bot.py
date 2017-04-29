@@ -1,6 +1,6 @@
 from discord.ext import commands
 from collections import Counter
-from core.utils.helpers import JsonGuildDB
+from core.settings import CoreDB
 from enum import Enum
 import os
 
@@ -8,9 +8,9 @@ import os
 class Red(commands.Bot):
     def __init__(self, cli_flags, **kwargs):
         self._shutdown_mode = ExitCodes.CRITICAL
-        self.db = JsonGuildDB("core/data/settings.json",
-                              autosave=True,
-                              create_dirs=True)
+        self.db = CoreDB("core/data/settings.json",
+                         autosave=True,
+                         create_dirs=True)
 
         def prefix_manager(bot, message):
             global_prefix = self.db.get_global("prefix", [])

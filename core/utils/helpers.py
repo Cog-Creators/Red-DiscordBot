@@ -152,7 +152,7 @@ class JsonGuildDB(JsonDB):
         await self.save()
         return value
 
-    def get_all(self, guild, default):
+    def get_all(self, guild, default=None):
         """Returns all entries of a guild"""
         if not isinstance(guild, discord.Guild):
             raise TypeError('Can only get guild data')
@@ -182,7 +182,7 @@ class JsonGuildDB(JsonDB):
         """Removes a global value"""
         if GLOBAL_KEY not in self._data:
             self._data[GLOBAL_KEY] = {}
-        del self._data[key]
+        del self._data[GLOBAL_KEY][key]
         await self.save()
 
     async def pop_global(self, key, default=None):
