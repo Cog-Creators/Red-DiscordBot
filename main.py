@@ -1,7 +1,6 @@
 from core.bot import Red, ExitCodes
 from core.global_checks import init_global_checks
 from core.events import init_events
-from core.json_flusher import init_flusher
 from core.settings import parse_cli_flags
 import asyncio
 import discord
@@ -53,7 +52,6 @@ def init_loggers(cli_flags):
 if __name__ == '__main__':
     cli_flags = parse_cli_flags()
     log = init_loggers(cli_flags)
-    init_flusher()
     description = "Red v3 - Alpha"
     red = Red(cli_flags, description=description, pm_help=None)
     init_global_checks(red)

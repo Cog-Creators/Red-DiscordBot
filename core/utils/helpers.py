@@ -1,8 +1,9 @@
 import os
 import discord
+import asyncio
+import functools
 from collections import defaultdict
 from core.json_io import JsonIO
-from core import json_flusher
 
 
 GLOBAL_KEY = '__global__'
@@ -20,18 +21,15 @@ class JsonDB(JsonIO):
     create_dirs: bool=False
       If True, it will create any missing directory leading to
       the file you want to create
-    autosave: bool=False
-      If True, any change to the "database" will be queued to the
-      flusher and scheduled for a later write
     default_value: Optional=None
       Same behaviour as a defaultdict
     """
+
     def __init__(self, file_path, **kwargs):
         create_dirs = kwargs.pop("create_dirs", False)
         default_value = kwargs.pop("default_value", SENTINEL)
         self.autosave = kwargs.pop("autosave", False)
         self.path = file_path
-        self._flusher = json_flusher.get_flusher()
 
         file_exists = os.path.isfile(file_path)
 
@@ -48,49 +46,51 @@ class JsonDB(JsonIO):
             self._data = self._load_json(file_path)
         else:
             self._data = {}
-            self._save()
+            self._blocking_save()
 
         if default_value is not SENTINEL:
             def _get_default():
                 return default_value
             self._data = defaultdict(_get_default, self._data)
 
-    def set(self, key, value):
+        self._loop = asyncio.get_event_loop()
+        self._task = functools.partial(self._threadsafe_save_json, self._data)
+
+    async def set(self, key, value):
         """Sets a DB's entry"""
         self._data[key] = value
-        if self.autosave:
-            self._flusher.add_to_queue(self.path, self._data)
+        await self.save()
 
     def get(self, key, default=None):
         """Returns a DB's entry"""
         return self._data.get(key, default)
 
-    def remove(self, key):
+    async def remove(self, key):
         """Removes a DB's entry"""
         del self._data[key]
-        if self.autosave:
-            self._flusher.add_to_queue(self.path, self._data)
+        await self.save()
 
-    def pop(self, key, default=None):
+    async def pop(self, key, default=None):
         """Removes and returns a DB's entry"""
-        return self._data.pop(key, default)
+        value = self._data.pop(key, default)
+        await self.save()
+        return value
 
-    def wipe(self):
+    async def wipe(self):
         """Wipes DB"""
         self._data = {}
-        if self.autosave:
-            self._flusher.add_to_queue(self.path, self._data)
+        await self.save()
 
     def all(self):
         """Returns all DB's data"""
         return self._data
 
-    def _save(self):
+    def _blocking_save(self):
         """Using this should be avoided. Let's stick to threadsafe saves"""
         self._save_json(self.path, self._data)
 
     async def save(self):
-        self._flusher.remove_from_queue(self.path)
+        """Threadsafe save to file"""
         await self._threadsafe_save_json(self.path, self._data)
 
     def __contains__(self, key):
@@ -118,15 +118,14 @@ class JsonGuildDB(JsonDB):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def set(self, guild, key, value):
+    async def set(self, guild, key, value):
         """Sets a guild's entry"""
         if not isinstance(guild, discord.Guild):
             raise TypeError('Can only set guild data')
         if str(guild.id) not in self._data:
             self._data[str(guild.id)] = {}
         self._data[str(guild.id)][key] = value
-        if self.autosave:
-            self._flusher.add_to_queue(self.path, self._data)
+        await self.save()
 
     def get(self, guild, key, default=None):
         """Returns a guild's entry"""
@@ -136,23 +135,22 @@ class JsonGuildDB(JsonDB):
             return default
         return self._data[str(guild.id)].get(key, default)
 
-    def remove(self, guild, key):
+    async def remove(self, guild, key):
         """Removes a guild's entry"""
         if not isinstance(guild, discord.Guild):
             raise TypeError('Can only remove guild data')
         if str(guild.id) not in self._data:
             raise KeyError('Guild data is not present')
         del self._data[str(guild.id)][key]
-        if self.autosave:
-            self._flusher.add_to_queue(self.path, self._data)
+        await self.save()
 
-    def pop(self, guild, key, default=None):
+    async def pop(self, guild, key, default=None):
         """Removes and returns a guild's entry"""
         if not isinstance(guild, discord.Guild):
             raise TypeError('Can only remove guild data')
-        return self._data.get(str(guild.id), {}).pop(key, default)
-        if self.autosave:
-            self._flusher.add_to_queue(self.path, self._data)
+        value = self._data.get(str(guild.id), {}).pop(key, default)
+        await self.save()
+        return value
 
     def get_all(self, guild, default):
         """Returns all entries of a guild"""
@@ -160,21 +158,18 @@ class JsonGuildDB(JsonDB):
             raise TypeError('Can only get guild data')
         return self._data.get(str(guild.id), default)
 
-    def remove_all(self, guild):
+    async def remove_all(self, guild):
         """Removes all entries of a guild"""
         if not isinstance(guild, discord.Guild):
             raise TypeError('Can only remove guilds')
-        super().remove(str(guild.id))
-        if self.autosave:
-            self._flusher.add_to_queue(self.path, self._data)
+        await super().remove(str(guild.id))
 
-    def set_global(self, key, value):
+    async def set_global(self, key, value):
         """Sets a global value"""
         if GLOBAL_KEY not in self._data:
             self._data[GLOBAL_KEY] = {}
         self._data[GLOBAL_KEY][key] = value
-        if self.autosave:
-            self._flusher.add_to_queue(self.path, self._data)
+        await self.save()
 
     def get_global(self, key, default=None):
         """Gets a global value"""
@@ -183,18 +178,17 @@ class JsonGuildDB(JsonDB):
 
         return self._data[GLOBAL_KEY].get(key, default)
 
-    def remove_global(self, key):
+    async def remove_global(self, key):
         """Removes a global value"""
         if GLOBAL_KEY not in self._data:
             self._data[GLOBAL_KEY] = {}
         del self._data[key]
-        if self.autosave:
-            self._flusher.add_to_queue(self.path, self._data)
+        await self.save()
 
-    def pop_global(self, key, default=None):
+    async def pop_global(self, key, default=None):
         """Removes and returns a global value"""
         if GLOBAL_KEY not in self._data:
             self._data[GLOBAL_KEY] = {}
-        return self._data.pop(key, default)
-        if self.autosave:
-            self._flusher.add_to_queue(self.path, self._data)
+        value = self._data[GLOBAL_KEY].pop(key, default)
+        await self.save()
+        return value

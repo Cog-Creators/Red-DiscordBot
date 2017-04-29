@@ -16,9 +16,8 @@ MINIFIED = {"sort_keys": True, "separators": (',', ':')}
 
 
 class JsonIO:
-    """Basic functions for atomic saving / loading of json files
-
-    This is inherited by the flusher and db helpers"""
+    """Basic functions for atomic saving / loading of json files"""
+    _lock = asyncio.Lock()
 
     def _save_json(self, path, data, settings=PRETTY):
         log.debug("Saving file {}".format(path))
@@ -31,7 +30,8 @@ class JsonIO:
     async def _threadsafe_save_json(self, path, data, settings=PRETTY):
         loop = asyncio.get_event_loop()
         func = functools.partial(self._save_json, path, data, settings)
-        await loop.run_in_executor(None, func)
+        with await self._lock:
+            await loop.run_in_executor(None, func)
 
     def _load_json(self, path):
         log.debug("Reading file {}".format(path))
@@ -43,4 +43,5 @@ class JsonIO:
         loop = asyncio.get_event_loop()
         func = functools.partial(self._load_json, path)
         task = loop.run_in_executor(None, func)
-        return await asyncio.wait_for(task)
+        with await self._lock:
+            return await asyncio.wait_for(task)
