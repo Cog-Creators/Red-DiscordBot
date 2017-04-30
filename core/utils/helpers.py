@@ -2,6 +2,7 @@ import os
 import discord
 import asyncio
 import functools
+import inspect
 from collections import defaultdict
 from core.json_io import JsonIO
 
@@ -18,23 +19,34 @@ class JsonDB(JsonIO):
 
     file_path: str
       The path of the json file you want to create / access
-    create_dirs: bool=False
+    create_dirs: bool=True
       If True, it will create any missing directory leading to
       the file you want to create
+    relative_path: bool=True
+      The file_path you specified is relative to the path from which
+      you're instantiating this object from
+      i.e. If you're in a package's folder and your file_path is
+      'data/settings.json', these files will be created inside
+      the package's folder and not Red's root folder
     default_value: Optional=None
       Same behaviour as a defaultdict
     """
+    _caller = ""
 
     def __init__(self, file_path, **kwargs):
-        create_dirs = kwargs.pop("create_dirs", False)
+        local = kwargs.pop("relative_path", True)
+        if local and not self._caller:
+            self._caller = self._get_caller_path()
+
+        create_dirs = kwargs.pop("create_dirs", True)
         default_value = kwargs.pop("default_value", SENTINEL)
         self.autosave = kwargs.pop("autosave", False)
-        self.path = file_path
+        self.path = os.path.join(self._caller, file_path)
 
-        file_exists = os.path.isfile(file_path)
+        file_exists = os.path.isfile(self.path)
 
         if create_dirs and not file_exists:
-            path, _ = os.path.split(file_path)
+            path, _ = os.path.split(self.path)
             if path:
                 try:
                     os.makedirs(path)
@@ -43,7 +55,7 @@ class JsonDB(JsonIO):
 
         if file_exists:
             # Might be worth looking into threadsafe ways for very large files
-            self._data = self._load_json(file_path)
+            self._data = self._load_json(self.path)
         else:
             self._data = {}
             self._blocking_save()
@@ -93,6 +105,12 @@ class JsonDB(JsonIO):
         """Threadsafe save to file"""
         await self._threadsafe_save_json(self.path, self._data)
 
+    def _get_caller_path(self):
+        frame = inspect.stack()[2]
+        module = inspect.getmodule(frame[0])
+        abspath = os.path.abspath(module.__file__)
+        return os.path.dirname(abspath)
+
     def __contains__(self, key):
         return key in self._data
 
@@ -116,6 +134,10 @@ class JsonGuildDB(JsonDB):
     """
 
     def __init__(self, *args, **kwargs):
+        local = kwargs.get("relative_path", True)
+        if local and not self._caller:
+            self._caller = self._get_caller_path()
+
         super().__init__(*args, **kwargs)
 
     async def set(self, guild, key, value):

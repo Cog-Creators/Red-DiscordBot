@@ -36,7 +36,7 @@ def init_events(bot, cli_flags):
                     failed.append(package)
 
             if failed:
-                bot.save_packages_status()
+                await bot.save_packages_status()
             if packages:
                 print("Loaded packages: " + ", ".join(packages))
 

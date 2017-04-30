@@ -9,8 +9,7 @@ class Red(commands.Bot):
     def __init__(self, cli_flags, **kwargs):
         self._shutdown_mode = ExitCodes.CRITICAL
         self.db = CoreDB("core/data/settings.json",
-                         autosave=True,
-                         create_dirs=True)
+                         relative_path=False)
 
         def prefix_manager(bot, message):
             global_prefix = self.db.get_global("prefix", [])
