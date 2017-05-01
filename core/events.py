@@ -7,6 +7,11 @@ from core.utils.chat_formatting import inline
 
 log = logging.getLogger("red")
 
+INTRO = ("{0}===================\n"
+         "{0} Red - Discord Bot \n"
+         "{0}===================\n"
+         "".format(" " * 20))
+
 
 def init_events(bot, cli_flags):
 
@@ -21,6 +26,8 @@ def init_events(bot, cli_flags):
             return
 
         bot.uptime = datetime.datetime.utcnow()
+
+        print(INTRO)
 
         if cli_flags.no_cogs is False:
             print("Loading packages...")
@@ -40,10 +47,26 @@ def init_events(bot, cli_flags):
             if packages:
                 print("Loaded packages: " + ", ".join(packages))
 
-        #  total_channels = len([c for c in bot.get_all_channels()])
-        #  total_users = len(set([m for m in bot.get_all_members()]))
+        guilds = len(bot.guilds)
+        users = len(set([m for m in bot.get_all_members()]))
 
-        print("Ready and operational on {} servers.".format(len(bot.guilds)))
+        try:
+            data = await bot.application_info()
+            invite_url = discord.utils.oauth_url(data.id)
+        except:
+            if bot.user.bot:
+                invite_url = "Could not fetch invite url"
+            else:
+                invite_url = None
+
+        if guilds:
+            print("Ready and operational on {} servers with a total of {} "
+                  "users.".format(guilds, users))
+        else:
+            print("Ready. I'm not in any server yet!")
+
+        if invite_url:
+            print("\nInvite URL: {}\n".format(invite_url))
 
     @bot.event
     async def on_command_error(error, ctx):
