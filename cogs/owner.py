@@ -57,6 +57,7 @@ class Owner:
         """Loads a cog
 
         Example: load mod"""
+
         if cogs == ():
             await self.bot.send_cmd_help(ctx)
             return
@@ -118,6 +119,7 @@ class Owner:
         """Unloads a cog
 
         Example: unload mod"""
+
         if cogs == ():
             await self.bot.send_cmd_help(ctx)
             return
@@ -173,6 +175,7 @@ class Owner:
     @checks.is_owner()
     async def unload_all(self):
         """Unloads all cogs"""
+
         cogs = self._list_cogs()
         still_loaded = []
         for cog in cogs:
@@ -198,6 +201,7 @@ class Owner:
         """Reloads a cog
 
         Example: reload audio"""
+
         if cogs == ():
             await self.bot.send_cmd_help(ctx)
             return
