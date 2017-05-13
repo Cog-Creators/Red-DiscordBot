@@ -12,20 +12,16 @@ class Red(commands.Bot):
                          relative_path=False)
 
         def prefix_manager(bot, message):
-            global_prefix = self.db.get_global("prefix", [])
+            if not cli_flags.prefix:
+                global_prefix = self.db.get_global("prefix", [])
+            else:
+                global_prefix = cli_flags.prefix
             if message.guild is None:
                 return global_prefix
             server_prefix = self.db.get(message.guild, "prefix", [])
             return server_prefix if server_prefix else global_prefix
 
-        # Priority: args passed > cli flags > db
         if "command_prefix" not in kwargs:
-            if cli_flags.prefix:
-                kwargs["command_prefix"] = lambda bot, message: cli_flags.prefix
-            else:
-                kwargs["command_prefix"] = None
-
-        if kwargs["command_prefix"] is None:
             kwargs["command_prefix"] = prefix_manager
 
         self.counter = Counter()

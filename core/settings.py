@@ -9,10 +9,6 @@ class CoreDB(JsonGuildDB):
     of settings, both global and guild specific
     """
 
-    def can_login(self):
-        """Used on start to determine if Red is setup enough to login"""
-        raise NotImplementedError
-
     def get_admin_role(self, guild):
         """Returns the guild's admin role
 
