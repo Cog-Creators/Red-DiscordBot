@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from core.utils.chat_formatting import escape_mass_mentions, italics, pagify
+from core.utils.chat_formatting import escape, italics, pagify
 from random import randint
 from random import choice
 from enum import Enum
@@ -55,7 +55,7 @@ class General:
 
         To denote multiple choices, you should use double quotes.
         """
-        choices = [escape_mass_mentions(c) for c in choices]
+        choices = [escape(c, mass_mentions=True) for c in choices]
         if len(choices) < 2:
             await ctx.send('Not enough choices to pick from.')
         else:
@@ -154,7 +154,7 @@ class General:
     @commands.command()
     async def lmgtfy(self, ctx, *, search_terms : str):
         """Creates a lmgtfy link"""
-        search_terms = escape_mass_mentions(search_terms.replace(" ", "+"))
+        search_terms = escape(search_terms.replace(" ", "+"), mass_mentions=True)
         await ctx.send("https://lmgtfy.com/?q={}".format(search_terms))
 
     @commands.command(hidden=True)
