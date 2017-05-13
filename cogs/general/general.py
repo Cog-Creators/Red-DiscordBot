@@ -38,10 +38,15 @@ class General:
     def __init__(self, bot):
         self.bot = bot
         self.stopwatches = {}
-        self.ball = ["As I see it, yes", "It is certain", "It is decidedly so", "Most likely", "Outlook good",
-                     "Signs point to yes", "Without a doubt", "Yes", "Yes – definitely", "You may rely on it", "Reply hazy, try again",
-                     "Ask again later", "Better not tell you now", "Cannot predict now", "Concentrate and ask again",
-                     "Don't count on it", "My reply is no", "My sources say no", "Outlook not so good", "Very doubtful"]
+        self.ball = [
+            "As I see it, yes", "It is certain", "It is decidedly so",
+            "Most likely", "Outlook good", "Signs point to yes",
+            "Without a doubt", "Yes", "Yes – definitely", "You may rely on it",
+            "Reply hazy, try again", "Ask again later",
+            "Better not tell you now", "Cannot predict now",
+            "Concentrate and ask again", "Don't count on it", "My reply is no",
+            "My sources say no", "Outlook not so good", "Very doubtful"
+        ]
         self.poll_sessions = []
 
     @commands.command(hidden=True)
@@ -67,15 +72,17 @@ class General:
 
         Defaults to 100.
         """
-        author = ctx.message.author
+        author = ctx.author
         if number > 1:
             n = randint(1, number)
-            await ctx.send("{} :game_die: {} :game_die:".format(author.mention, n))
+            await ctx.send(
+                "{} :game_die: {} :game_die:".format(author.mention, n)
+            )
         else:
             await ctx.send("{} Maybe higher than 1? ;P".format(author.mention))
 
     @commands.command()
-    async def flip(self, ctx, user : discord.Member=None):
+    async def flip(self, ctx, user: discord.Member=None):
         """Flips a coin... or a user.
 
         Defaults to coin.
@@ -83,8 +90,9 @@ class General:
         if user != None:
             msg = ""
             if user.id == self.bot.user.id:
-                user = ctx.message.author
-                msg = "Nice try. You think this is funny? How about *this* instead:\n\n"
+                user = ctx.author
+                msg = "Nice try. You think this is funny?" +\
+                    "How about *this* instead:\n\n"
             char = "abcdefghijklmnopqrstuvwxyz"
             tran = "ɐqɔpǝɟƃɥᴉɾʞlɯuodbɹsʇnʌʍxʎz"
             table = str.maketrans(char, tran)
@@ -95,12 +103,14 @@ class General:
             name = name.translate(table)
             await ctx.send(msg + "(╯°□°）╯︵ " + name[::-1])
         else:
-            await ctx.send("*flips a coin and... " + choice(["HEADS!*", "TAILS!*"]))
+            await ctx.send(
+                "*flips a coin and... " + choice(["HEADS!*", "TAILS!*"])
+            )
 
     @commands.command()
     async def rps(self, ctx, your_choice : RPSParser):
         """Play rock paper scissors"""
-        author = ctx.message.author
+        author = ctx.author
         player_choice = your_choice.choice
         red_choice = choice((RPS.rock, RPS.paper, RPS.scissors))
         cond = {
@@ -118,14 +128,17 @@ class General:
             outcome = cond[(player_choice, red_choice)]
 
         if outcome is True:
-            await ctx.send("{} You win {}!"
-                               "".format(red_choice.value, author.mention))
+            await ctx.send("{} You win {}!".format(
+                red_choice.value, author.mention
+            ))
         elif outcome is False:
-            await ctx.send("{} You lose {}!"
-                               "".format(red_choice.value, author.mention))
+            await ctx.send("{} You lose {}!".format(
+                red_choice.value, author.mention
+            ))
         else:
-            await ctx.send("{} We're square {}!"
-                               "".format(red_choice.value, author.mention))
+            await ctx.send("{} We're square {}!".format(
+                red_choice.value, author.mention
+            ))
 
     @commands.command(name="8", aliases=["8ball"])
     async def _8ball(self, ctx, *, question : str):
@@ -141,7 +154,7 @@ class General:
     @commands.command(aliases=["sw"])
     async def stopwatch(self, ctx):
         """Starts/stops stopwatch"""
-        author = ctx.message.author
+        author = ctx.author
         if not author.id in self.stopwatches:
             self.stopwatches[author.id] = int(time.perf_counter())
             await ctx.send(author.mention + " Stopwatch started!")
@@ -180,17 +193,17 @@ class General:
     @commands.guild_only()
     async def userinfo(self, ctx, *, user: discord.Member=None):
         """Shows users's informations"""
-        author = ctx.message.author
-        guild = ctx.message.guild
+        author = ctx.author
+        guild = ctx.guild
 
         if not user:
             user = author
 
-        roles = [x.name for x in user.roles if x.name != "@everyone"]
+        roles = [x.name for x in user.roles if not x.is_everyone()]
 
         joined_at = self.fetch_joined_at(user, guild)
-        since_created = (ctx.message.timestamp - user.created_at).days
-        since_joined = (ctx.message.timestamp - joined_at).days
+        since_created = (ctx.message.created_at - user.created_at).days
+        since_joined = (ctx.message.created_at - joined_at).days
         user_joined = joined_at.strftime("%d %b %Y %H:%M")
         user_created = user.created_at.strftime("%d %b %Y %H:%M")
         member_number = sorted(guild.members,
@@ -201,16 +214,14 @@ class General:
 
         game = "Chilling in {} status".format(user.status)
 
-        if user.game is None:
-            pass
-        elif user.game.url is None:
-            game = "Playing {}".format(user.game)
-        else:
+        if user.game and user.game.name and user.game.url:
             game = "Streaming: [{}]({})".format(user.game, user.game.url)
+        elif user.game and user.game.name:
+            game = "Playing {}".format(user.game)
+
 
         if roles:
-            roles = sorted(roles, key=[x.name for x in guild.role_hierarchy
-                                       if x.name != "@everyone"].index)
+            roles = sorted(user.roles)
             roles = ", ".join(roles)
         else:
             roles = "None"
@@ -225,7 +236,7 @@ class General:
         name = str(user)
         name = " ~ ".join((name, user.nick)) if user.nick else name
 
-        if user.avatar_url:
+        if user.avatar:
             data.set_author(name=name, url=user.avatar_url)
             data.set_thumbnail(url=user.avatar_url)
         else:
@@ -235,27 +246,26 @@ class General:
             await ctx.send(embed=data)
         except discord.HTTPException:
             await ctx.send("I need the `Embed links` permission "
-                            "to send this")
+                           "to send this")
 
     @commands.command()
     @commands.guild_only()
     async def guildinfo(self, ctx):
         """Shows guild's informations"""
-        guild = ctx.message.guild
+        guild = ctx.guild
         online = len([m.status for m in guild.members
                       if m.status == discord.Status.online or
                       m.status == discord.Status.idle])
         total_users = len(guild.members)
-        text_channels = len([x for x in guild.channels
-                             if x.type == discord.ChannelType.text])
-        voice_channels = len(guild.channels) - text_channels
-        passed = (ctx.message.timestamp - guild.created_at).days
+        text_channels = len(guild.text_channels)
+        voice_channels = len(guild.voice_channels)
+        passed = (ctx.message.created_at - guild.created_at).days
         created_at = ("Since {}. That's over {} days ago!"
                       "".format(guild.created_at.strftime("%d %b %Y %H:%M"),
                                 passed))
 
         colour = ''.join([choice('0123456789ABCDEF') for x in range(6)])
-        colour = int(colour, 16)
+        colour = randint(0, 0xFFFFFF)
 
         data = discord.Embed(
             description=created_at,
@@ -266,7 +276,7 @@ class General:
         data.add_field(name="Voice Channels", value=voice_channels)
         data.add_field(name="Roles", value=len(guild.roles))
         data.add_field(name="Owner", value=str(guild.owner))
-        data.set_footer(text="Guild ID: " + guild.id)
+        data.set_footer(text="Guild ID: " + str(guild.id))
 
         if guild.icon_url:
             data.set_author(name=guild.name, url=guild.icon_url)
@@ -303,15 +313,17 @@ class General:
         except ValueError:
             pos = 0
 
-        search_terms = "+".join([encode(s) for s in search_terms])
-        url = "http://api.urbandictionary.com/v0/define?term=" + search_terms
+        search_terms = {"term": "+".join([s for s in search_terms])}
+        url = "http://api.urbandictionary.com/v0/define"
         try:
-            async with aiohttp.request("GET", url) as r:
-                result = await r.json()
-            if result["list"]:
-                definition = result['list'][pos]['definition']
-                example = result['list'][pos]['example']
-                defs = len(result['list'])
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url, params=search_terms) as r:
+                    result = await r.json()
+            item_list = result["list"]
+            if item_list:
+                definition = item_list[pos]['definition']
+                example = item_list[pos]['example']
+                defs = len(item_list)
                 msg = ("**Definition #{} out of {}:\n**{}\n\n"
                        "**Example:\n**{}".format(pos+1, defs, definition,
                                                  example))
@@ -398,9 +410,8 @@ class NewPoll():
         msg.remove(self.question)
         self.answers = {}
         i = 1
-        for answer in msg: # {id : {answer, votes}}
+        for i, answer in enumerate(msg, 1): # {id : {answer, votes}}
             self.answers[i] = {"ANSWER" : answer, "VOTES" : 0}
-            i += 1
 
     async def start(self):
         msg = "**POLL STARTED!**\n\n{}\n\n".format(self.question)
