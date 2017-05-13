@@ -368,7 +368,7 @@ class General:
                 return poll
         return False
 
-    async def check_poll_votes(self, message):
+    async def on_message(self, message):
         if message.author.id != self.bot.user.id:
             if self.getPollByChannel(message):
                 self.getPollByChannel(message).checkAnswer(message)
