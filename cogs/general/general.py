@@ -10,8 +10,6 @@ import time
 import aiohttp
 import asyncio
 
-settings = {"POLL_DURATION" : 60}
-
 
 class RPS(Enum):
     rock     = "\N{MOYAI}"
@@ -35,8 +33,7 @@ class RPSParser:
 class General:
     """General commands."""
 
-    def __init__(self, bot):
-        self.bot = bot
+    def __init__(self):
         self.stopwatches = {}
         self.ball = [
             "As I see it, yes", "It is certain", "It is decidedly so",
@@ -47,7 +44,6 @@ class General:
             "Concentrate and ask again", "Don't count on it", "My reply is no",
             "My sources say no", "Outlook not so good", "Very doubtful"
         ]
-        self.poll_sessions = []
 
     @commands.command(hidden=True)
     async def ping(self, ctx):
@@ -89,7 +85,7 @@ class General:
         """
         if user != None:
             msg = ""
-            if user.id == self.bot.user.id:
+            if user.id == ctx.bot.user.id:
                 user = ctx.author
                 msg = "Nice try. You think this is funny?" +\
                     "How about *this* instead:\n\n"
@@ -335,108 +331,9 @@ class General:
         except:
             await ctx.send("Error.")
 
-    @commands.command()
-    @commands.guild_only()
-    async def poll(self, ctx, *text):
-        """Starts/stops a poll
-
-        Usage example:
-        poll Is this a poll?;Yes;No;Maybe
-        poll stop"""
-        message = ctx.message
-        if len(text) == 1:
-            if text[0].lower() == "stop":
-                await self.endpoll(message)
-                return
-        if not self.get_poll_by_channel(message):
-            check = " ".join(text).lower()
-            if "@everyone" in check or "@here" in check:
-                await ctx.send("Nice try.")
-                return
-            p = NewPoll(message, self)
-            if p.valid:
-                self.poll_sessions.append(p)
-                await p.start()
-            else:
-                await ctx.send("poll question;option1;option2 (...)")
-        else:
-            await ctx.send("A poll is already ongoing in this channel.")
-
-    async def endpoll(self, message):
-        if self.get_poll_by_channel(message):
-            p = self.get_poll_by_channel(message)
-            if p.author == message.author.id: # or isMemberAdmin(message)
-                await self.get_poll_by_channel(message).end_poll()
-            else:
-                await message.channel.send("Only admins and the author can stop the poll.")
-        else:
-            await message.channel.send("There's no poll ongoing in this channel.")
-
-    def get_poll_by_channel(self, message):
-        for poll in self.poll_sessions:
-            if poll.channel == message.channel:
-                return poll
-        return False
-
-    async def on_message(self, message):
-        if message.author.id != self.bot.user.id:
-            if self.get_poll_by_channel(message):
-                self.get_poll_by_channel(message).check_answer(message)
-
     def fetch_joined_at(self, user, guild):
         """Just a special case for someone special :^)"""
         if user.id == 96130341705637888 and guild.id == 133049272517001216:
             return datetime.datetime(2016, 1, 10, 6, 8, 4, 443000)
         else:
             return user.joined_at
-
-class NewPoll():
-    def __init__(self, message, main):
-        self.channel = message.channel
-        self.author = message.author.id
-        self.client = main.bot
-        self.poll_sessions = main.poll_sessions
-        msg = message.content[6:]
-        msg = msg.split(";")
-        if len(msg) < 2: # Needs at least one question and 2 choices
-            self.valid = False
-            return None
-        else:
-            self.valid = True
-        self.already_voted = []
-        self.question = msg[0]
-        msg.remove(self.question)
-        self.answers = {}
-        i = 1
-        for i, answer in enumerate(msg, 1): # {id : {answer, votes}}
-            self.answers[i] = {"ANSWER" : answer, "VOTES" : 0}
-
-    async def start(self):
-        msg = "**POLL STARTED!**\n\n{}\n\n".format(self.question)
-        for id, data in self.answers.items():
-            msg += "{}. *{}*\n".format(id, data["ANSWER"])
-        msg += "\nType the number to vote!"
-        await self.channel.send(msg)
-        await asyncio.sleep(settings["POLL_DURATION"])
-        if self.valid:
-            await self.end_poll()
-
-    async def end_poll(self):
-        self.valid = False
-        msg = "**POLL ENDED!**\n\n{}\n\n".format(self.question)
-        for data in self.answers.values():
-            msg += "*{}* - {} votes\n".format(data["ANSWER"], str(data["VOTES"]))
-        await self.channel.send(msg)
-        self.poll_sessions.remove(self)
-
-    def check_answer(self, message):
-        try:
-            i = int(message.content)
-            if i in self.answers.keys():
-                if message.author.id not in self.already_voted:
-                    data = self.answers[i]
-                    data["VOTES"] += 1
-                    self.answers[i] = data
-                    self.already_voted.append(message.author.id)
-        except ValueError:
-            pass
