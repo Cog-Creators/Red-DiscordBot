@@ -1,14 +1,12 @@
-import discord
 from discord.ext import commands
 from core.utils.chat_formatting import escape, italics, pagify
-from random import randint
-from random import choice
+from random import randint, choice
 from enum import Enum
 from urllib.parse import quote_plus
+import discord
 import datetime
 import time
 import aiohttp
-import asyncio
 
 
 class RPS(Enum):
