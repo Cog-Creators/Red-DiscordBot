@@ -199,7 +199,7 @@ class General:
         if not user:
             user = author
 
-        roles = [x.name for x in user.roles if not x.is_everyone()]
+        roles = sorted(user.roles)[1:]
 
         joined_at = self.fetch_joined_at(user, guild)
         since_created = (ctx.message.created_at - user.created_at).days
@@ -219,10 +219,8 @@ class General:
         elif user.game and user.game.name:
             game = "Playing {}".format(user.game)
 
-
         if roles:
-            roles = sorted(user.roles)
-            roles = ", ".join(roles)
+            roles = ", ".join([x.name for x in roles])
         else:
             roles = "None"
 
