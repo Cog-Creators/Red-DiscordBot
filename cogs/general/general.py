@@ -350,7 +350,7 @@ class General:
             if text[0].lower() == "stop":
                 await self.endpoll(message)
                 return
-        if not self.getPollByChannel(message):
+        if not self.get_poll_by_channel(message):
             check = " ".join(text).lower()
             if "@everyone" in check or "@here" in check:
                 await ctx.send("Nice try.")
@@ -365,16 +365,16 @@ class General:
             await ctx.send("A poll is already ongoing in this channel.")
 
     async def endpoll(self, message):
-        if self.getPollByChannel(message):
-            p = self.getPollByChannel(message)
+        if self.get_poll_by_channel(message):
+            p = self.get_poll_by_channel(message)
             if p.author == message.author.id: # or isMemberAdmin(message)
-                await self.getPollByChannel(message).endPoll()
+                await self.get_poll_by_channel(message).end_poll()
             else:
                 await message.channel.send("Only admins and the author can stop the poll.")
         else:
             await message.channel.send("There's no poll ongoing in this channel.")
 
-    def getPollByChannel(self, message):
+    def get_poll_by_channel(self, message):
         for poll in self.poll_sessions:
             if poll.channel == message.channel:
                 return poll
@@ -382,8 +382,8 @@ class General:
 
     async def on_message(self, message):
         if message.author.id != self.bot.user.id:
-            if self.getPollByChannel(message):
-                self.getPollByChannel(message).checkAnswer(message)
+            if self.get_poll_by_channel(message):
+                self.get_poll_by_channel(message).check_answer(message)
 
     def fetch_joined_at(self, user, guild):
         """Just a special case for someone special :^)"""
@@ -421,9 +421,9 @@ class NewPoll():
         await self.channel.send(msg)
         await asyncio.sleep(settings["POLL_DURATION"])
         if self.valid:
-            await self.endPoll()
+            await self.end_poll()
 
-    async def endPoll(self):
+    async def end_poll(self):
         self.valid = False
         msg = "**POLL ENDED!**\n\n{}\n\n".format(self.question)
         for data in self.answers.values():
@@ -431,7 +431,7 @@ class NewPoll():
         await self.channel.send(msg)
         self.poll_sessions.remove(self)
 
-    def checkAnswer(self, message):
+    def check_answer(self, message):
         try:
             i = int(message.content)
             if i in self.answers.keys():
