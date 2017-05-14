@@ -250,7 +250,7 @@ class Streams:
         dataIO.save_json("data/streams/settings.json", self.settings)
         await self.bot.say('Twitch Client-ID set.')
 
-    @streamset.command(pass_context=True)
+    @streamset.command(pass_context=True, no_pm=True)
     @checks.admin()
     async def mention(self, ctx, *, mention_type : str):
         """Sets mentions for stream alerts
@@ -271,7 +271,7 @@ class Streams:
 
         dataIO.save_json("data/streams/settings.json", self.settings)
 
-    @streamset.command(pass_context=True)
+    @streamset.command(pass_context=True, no_pm=True)
     @checks.admin()
     async def autodelete(self, ctx):
         """Toggles automatic notification deletion for streams that go offline"""
