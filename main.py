@@ -3,6 +3,8 @@ from core.global_checks import init_global_checks
 from core.events import init_events
 from core.settings import parse_cli_flags
 from core.cli import interactive_config, confirm
+from core.core_commands import Core
+from core.dev_commands import Dev
 import asyncio
 import discord
 import logging.handlers
@@ -58,9 +60,10 @@ if __name__ == '__main__':
     red = Red(cli_flags, description=description, pm_help=None)
     init_global_checks(red)
     init_events(red, cli_flags)
-    red.load_extension('core')
+    red.add_cog(Core())
+
     if cli_flags.dev:
-        pass # load dev cog here?
+        red.add_cog(Dev())
 
     token = os.environ.get("RED_TOKEN", red.db.get_global("token", None))
     prefix = cli_flags.prefix or red.db.get_global("prefix", [])
