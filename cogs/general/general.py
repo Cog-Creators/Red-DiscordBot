@@ -249,7 +249,7 @@ class General:
 
     @commands.command()
     @commands.guild_only()
-    async def guildinfo(self, ctx):
+    async def serverinfo(self, ctx):
         """Shows guild's informations"""
         guild = ctx.guild
         online = len([m.status for m in guild.members
