@@ -227,9 +227,9 @@ class General:
 
         data = discord.Embed(description=game, colour=user.colour)
         data.add_field(name="Joined Discord on", value=created_on)
-        data.add_field(name="Joined this guild on", value=joined_on)
+        data.add_field(name="Joined this server on", value=joined_on)
         data.add_field(name="Roles", value=roles, inline=False)
-        data.set_footer(text="Member #{} | User ID:{}"
+        data.set_footer(text="Member #{} | User ID: {}"
                              "".format(member_number, user.id))
 
         name = str(user)
@@ -275,7 +275,7 @@ class General:
         data.add_field(name="Voice Channels", value=voice_channels)
         data.add_field(name="Roles", value=len(guild.roles))
         data.add_field(name="Owner", value=str(guild.owner))
-        data.set_footer(text="Guild ID: " + str(guild.id))
+        data.set_footer(text="Server ID: " + str(guild.id))
 
         if guild.icon_url:
             data.set_author(name=guild.name, url=guild.icon_url)
