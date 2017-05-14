@@ -195,9 +195,14 @@ class General:
         if not user:
             user = author
 
+        #  A special case for a special someone :^)
+        special_date = datetime.datetime(2016, 1, 10, 6, 8, 4, 443000)
+        is_special = (user.id == 96130341705637888 and
+                      guild.id == 133049272517001216)
+        
         roles = sorted(user.roles)[1:]
 
-        joined_at = self.fetch_joined_at(user, guild)
+        joined_at = user.joined_at if not is_special else special_date
         since_created = (ctx.message.created_at - user.created_at).days
         since_joined = (ctx.message.created_at - joined_at).days
         user_joined = joined_at.strftime("%d %b %Y %H:%M")
@@ -330,10 +335,3 @@ class General:
             await ctx.send("There is no definition #{}".format(pos+1))
         except:
             await ctx.send("Error.")
-
-    def fetch_joined_at(self, user, guild):
-        """Just a special case for someone special :^)"""
-        if user.id == 96130341705637888 and guild.id == 133049272517001216:
-            return datetime.datetime(2016, 1, 10, 6, 8, 4, 443000)
-        else:
-            return user.joined_at
