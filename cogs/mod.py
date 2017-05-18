@@ -1572,10 +1572,8 @@ class Mod:
             try:
                 await bot.delete_message(message)
                 logger.debug("Deleted command msg {}".format(message.id))
-            except discord.errors.Forbidden:
-                # Do not have delete permissions
-                logger.debug("Wanted to delete mid {} but no"
-                             " permissions".format(message.id))
+            except:
+                pass  # We don't really care if it fails or not
 
         await asyncio.sleep(delay)
         await _delete_helper(self.bot, message)
