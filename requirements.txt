@@ -1,4 +1,13 @@
-pip
-git+git://github.com/Rapptz/discord.py.git#egg=discord.py[voice]
-youtube_dl
-imgurpython
+aiohttp==1.0.5
+async-timeout==1.0.0
+cffi==1.8.3
+chardet==2.3.0
+discord.py==0.13.0
+imgurpython==1.1.7
+multidict==2.1.2
+pycparser==2.14
+PyNaCl==1.0.1
+requests==2.11.1
+six==1.10.0
+websockets==3.2
+youtube-dl==2016.10.12
