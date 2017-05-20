@@ -45,7 +45,6 @@ youtube_dl_options = {
     'extractaudio': True,
     'audioformat': "mp3",
     'outtmpl': '%(id)s',
-    'noplaylist': True,
     'nocheckcertificate': True,
     'ignoreerrors': True,
     'quiet': True,
@@ -720,7 +719,7 @@ class Audio:
             return False
         yt_playlist = re.compile(
             r'^(https?\:\/\/)?(www\.)?(youtube\.com|youtu\.?be)'
-            r'(\/playlist\?).*(list=)(.*)(&|$)')
+            r'((\/playlist\?)|\/watch\?).*(list=)(.*)(&|$)')
         # Group 6 should be the list ID
         if yt_playlist.match(url):
             return True
