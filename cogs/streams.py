@@ -261,7 +261,8 @@ class Streams:
         streams = (
             self.hitbox_streams,
             self.twitch_streams,
-            self.beam_streams
+            self.beam_streams,
+            self.picarto_streams
         )
 
         for stream_type in streams:
@@ -279,6 +280,7 @@ class Streams:
         dataIO.save_json("data/streams/twitch.json", self.twitch_streams)
         dataIO.save_json("data/streams/hitbox.json", self.hitbox_streams)
         dataIO.save_json("data/streams/beam.json", self.beam_streams)
+        dataIO.save_json("data/streams/picarto.json", self.picarto_streams)
 
         await self.bot.say("There will be no more stream alerts in this "
                            "channel.")
