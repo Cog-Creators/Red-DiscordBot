@@ -49,7 +49,7 @@ class BaseConfig:
             "MEMBER": {}, "USER": {}, "MISC": {}}
 
     @classmethod
-    def get_conf(cls, cog_name, unique_identifier):
+    def get_conf(cls, cog_name: str, unique_identifier: int):
         """
         Gets a config object that cog's can use to safely store data. The
             backend to this is totally modular and can easily switch between
