@@ -139,7 +139,7 @@ class BaseConfig:
             `collection` and `collection_uuid`."""
         raise NotImplemented
 
-    def register_global(self, global_defaults: dict):
+    def register_global(self, **global_defaults):
         """
         Registers a new dict of global defaults. This function should
             be called EVERY TIME the cog loads (aka just do it in
@@ -162,7 +162,7 @@ class BaseConfig:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
         self.defaults["GLOBAL"][key] = default
 
-    def register_guild(self, guild_defaults: dict):
+    def register_guild(self, **guild_defaults):
         """
         Registers a new dict of guild defaults. This function should
             be called EVERY TIME the cog loads (aka just do it in
@@ -185,7 +185,7 @@ class BaseConfig:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
         self.defaults["SERVER"][key] = default
 
-    def register_channel(self, channel_defaults: dict):
+    def register_channel(self, **channel_defaults):
         """
         Registers a new dict of channel defaults. This function should
             be called EVERY TIME the cog loads (aka just do it in
@@ -208,7 +208,7 @@ class BaseConfig:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
         self.defaults["CHANNEL"][key] = default
 
-    def register_role(self, role_defaults: dict):
+    def register_role(self, **role_defaults):
         """
         Registers a new dict of role defaults. This function should
             be called EVERY TIME the cog loads (aka just do it in
@@ -231,7 +231,7 @@ class BaseConfig:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
         self.defaults["ROLE"][key] = default
 
-    def register_member(self, member_defaults: dict):
+    def register_member(self, **member_defaults):
         """
         Registers a new dict of member defaults. This function should
             be called EVERY TIME the cog loads (aka just do it in
@@ -254,7 +254,7 @@ class BaseConfig:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
         self.defaults["MEMBER"][key] = default
 
-    def register_user(self, user_defaults: dict):
+    def register_user(self, **user_defaults):
         """
         Registers a new dict of user defaults. This function should
             be called EVERY TIME the cog loads (aka just do it in
@@ -311,12 +311,12 @@ class Config(BaseConfig):
         self.curr_key = key
 
         if self.collection != "MEMBER":
-            ret = lambda self, default=default: self.driver_getmap[self.collection](
+            ret = lambda default=default: self.driver_getmap[self.collection](
                 self.cog_name, self.uuid, self.collection_uuid, key,
                 default=default)
         else:
             mid, sid = self.collection_uuid
-            ret = lambda self, default=default: self.driver.get_member(
+            ret = lambda default=default: self.driver.get_member(
                 self.cog_name, self.uuid, mid, sid, key,
                 default=default)
         return ret
