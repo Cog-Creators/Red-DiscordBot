@@ -289,25 +289,49 @@ class Config(BaseConfig):
         respectively.
     """
 
-    def __getattr__(self, key):
+    def __getattr__(self, key) -> function:
+        """
+        Until I've got a better way to do this I'm just gonna fake __call__
+        
+        :param key: 
+        :return: lambda function with kwarg 
+        """
+        return self._get_value_from_key(key)
+
+    def _get_value_from_key(self, key, ignore_exc=False) -> function:
         try:
             default = self.defaults[self.collection][key]
         except KeyError as e:
-            raise AttributeError("Key '{}' not registered!".format(key)) from e
+            if not ignore_exc:
+                raise AttributeError("Key '{}' not registered!".format(key)) from e
+            default = None
 
         self.curr_key = key
 
         if self.collection != "MEMBER":
-            ret = self.driver_getmap[self.collection](
+            ret = lambda self, default=default: self.driver_getmap[self.collection](
                 self.cog_name, self.uuid, self.collection_uuid, key,
                 default=default)
         else:
             mid, sid = self.collection_uuid
-            ret = self.driver.get_member(
+            ret = lambda self, default=default: self.driver.get_member(
                 self.cog_name, self.uuid, mid, sid, key,
                 default=default)
-
         return ret
+
+    def get(self, key, default=None):
+        """
+        Included as an alternative to registering defaults.
+        
+        :param key: 
+        :param default: 
+        :return: 
+        """
+
+        try:
+            return getattr(self, key)
+        except AttributeError:
+            return
 
     def set(self, key, value):
         # Notice to future developers:
