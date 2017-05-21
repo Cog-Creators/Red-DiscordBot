@@ -185,6 +185,13 @@ class JsonGuildDB(JsonDB):
             raise TypeError('Can only get guild data')
         return self._data.get(str(guild.id), default)
 
+    async def guild_set_all(self, guild, data):
+        """Sets all entries for guild"""
+        if not isinstance(guild, discord.Guild):
+            raise TypeError('Can only set guild data')
+        self._data[str(guild.id)] = data
+        await self.save()
+
     async def remove_all(self, guild):
         """Removes all entries of a guild"""
         if not isinstance(guild, discord.Guild):
