@@ -2,7 +2,7 @@ class BaseDriver:
     def get_global(self, cog_name, ident, collection_id, key, *, default=None):
         raise NotImplementedError()
 
-    def get_server(self, cog_name, ident, server_id, key, *, default=None):
+    def get_guild(self, cog_name, ident, guild_id, key, *, default=None):
         raise NotImplementedError()
 
     def get_channel(self, cog_name, ident, channel_id, key, *, default=None):
@@ -11,7 +11,7 @@ class BaseDriver:
     def get_role(self, cog_name, ident, role_id, key, *, default=None):
         raise NotImplementedError()
 
-    def get_member(self, cog_name, ident, user_id, server_id, key, *,
+    def get_member(self, cog_name, ident, user_id, guild_id, key, *,
                    default=None):
         raise NotImplementedError()
 
@@ -24,7 +24,7 @@ class BaseDriver:
     def set_global(self, cog_name, ident, key, value, clear=False):
         raise NotImplementedError()
 
-    def set_server(self, cog_name, ident, server_id, key, value, clear=False):
+    def set_guild(self, cog_name, ident, guild_id, key, value, clear=False):
         raise NotImplementedError()
 
     def set_channel(self, cog_name, ident, channel_id, key, value,
@@ -34,7 +34,7 @@ class BaseDriver:
     def set_role(self, cog_name, ident, role_id, key, value, clear=False):
         raise NotImplementedError()
 
-    def set_member(self, cog_name, ident, user_id, server_id, key, value,
+    def set_member(self, cog_name, ident, user_id, guild_id, key, value,
                    clear=False):
         raise NotImplementedError()
 

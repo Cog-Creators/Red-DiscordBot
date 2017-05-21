@@ -31,7 +31,7 @@ class Mongo(BaseDriver):
             self._db.authenticate(self.admin_user, self.admin_pass)
 
         self._global = self._db.GLOBAL
-        self._server = self._db.SERVER
+        self._guild = self._db.GUILD
         self._channel = self._db.CHANNEL
         self._role = self._db.ROLE
         self._member = self._db.MEMBER
@@ -50,16 +50,16 @@ class Mongo(BaseDriver):
             return doc[0].get(key, default)
         return default
 
-    def get_server(self, cog_name, cog_identifier, server_id, key, *,
+    def get_guild(self, cog_name, cog_identifier, guild_id, key, *,
                    default=None):
-        doc = self._server.find(
+        doc = self._guild.find(
             {"cog_name": cog_name, "cog_identifier": cog_identifier,
-             "server_id": server_id},
+             "guild_id": guild_id},
             projection=[key, ], batch_size=2)
         if doc.count() == 2:
-            raise MultipleMatches("Too many matching documents at the SERVER"
+            raise MultipleMatches("Too many matching documents at the GUILD"
                                   " level: ({}, {}, {})".format(
-                                      cog_name, cog_identifier, server_id))
+                                      cog_name, cog_identifier, guild_id))
         elif doc.count() == 1:
             return doc[0].get(key, default)
         return default
@@ -92,17 +92,17 @@ class Mongo(BaseDriver):
             return doc[0].get(key, default)
         return default
 
-    def get_member(self, cog_name, cog_identifier, user_id, server_id, key, *,
+    def get_member(self, cog_name, cog_identifier, user_id, guild_id, key, *,
                    default=None):
         doc = self._member.find(
             {"cog_name": cog_name, "cog_identifier": cog_identifier,
-             "user_id": user_id, "server_id": server_id},
+             "user_id": user_id, "guild_id": guild_id},
             projection=[key, ], batch_size=2)
         if doc.count() == 2:
             raise MultipleMatches("Too many matching documents at the MEMBER"
                                   " level: ({}, {}, mid {}, sid {})".format(
                                       cog_name, cog_identifier, user_id,
-                                      server_id))
+                                      guild_id))
         elif doc.count() == 1:
             return doc[0].get(key, default)
         return default
@@ -150,20 +150,20 @@ class Mongo(BaseDriver):
             else:
                 self._global.update_one(filter, data, upsert=True)
 
-    def set_server(self, cog_name, cog_identifier, server_id, key, value,
+    def set_guild(self, cog_name, cog_identifier, guild_id, key, value,
                    clear=False):
         filter = {"cog_name": cog_name, "cog_identifier": cog_identifier,
-                  "server_id": server_id}
+                  "guild_id": guild_id}
         data = {"$set": {key: value}}
-        if self._server.count(filter) > 1:
-            raise MultipleMatches("Too many matching documents at the SERVER"
+        if self._guild.count(filter) > 1:
+            raise MultipleMatches("Too many matching documents at the GUILD"
                                   " level: ({}, {}, {})".format(
-                                      cog_name, cog_identifier, server_id))
+                                      cog_name, cog_identifier, guild_id))
         else:
             if clear:
-                self._server.delete_one(filter)
+                self._guild.delete_one(filter)
             else:
-                self._server.update_one(filter, data, upsert=True)
+                self._guild.update_one(filter, data, upsert=True)
 
     def set_channel(self, cog_name, cog_identifier, channel_id, key, value,
                     clear=False):
@@ -195,16 +195,16 @@ class Mongo(BaseDriver):
             else:
                 self._role.update_one(filter, data, upsert=True)
 
-    def set_member(self, cog_name, cog_identifier, user_id, server_id, key,
+    def set_member(self, cog_name, cog_identifier, user_id, guild_id, key,
                    value, clear=False):
         filter = {"cog_name": cog_name, "cog_identifier": cog_identifier,
-                  "server_id": server_id, "user_id": user_id}
+                  "guild_id": guild_id, "user_id": user_id}
         data = {"$set": {key: value}}
         if self._member.count(filter) > 1:
             raise MultipleMatches("Too many matching documents at the MEMBER"
                                   " level: ({}, {}, mid {}, sid {})".format(
                                       cog_name, cog_identifier, user_id,
-                                      server_id))
+                                      guild_id))
         else:
             if clear:
                 self._member.delete_one(filter)

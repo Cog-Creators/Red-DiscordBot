@@ -20,7 +20,7 @@ class BaseConfig:
 
         self.driver_getmap = {
             "GLOBAL": self.driver.get_global,
-            "SERVER": self.driver.get_server,
+            "SERVER": self.driver.get_guild,
             "CHANNEL": self.driver.get_channel,
             "ROLE": self.driver.get_role,
             "USER": self.driver.get_user,
@@ -29,7 +29,7 @@ class BaseConfig:
 
         self.driver_setmap = {
             "GLOBAL": self.driver.set_global,
-            "SERVER": self.driver.set_server,
+            "SERVER": self.driver.set_guild,
             "CHANNEL": self.driver.set_channel,
             "ROLE": self.driver.set_role,
             "USER": self.driver.set_user,
@@ -39,7 +39,7 @@ class BaseConfig:
         self.curr_key = None
 
         self.restricted_keys = ("cog_name", "cog_identifier", "_id",
-                                "server_id", "channel_id", "role_id",
+                                "guild_id", "channel_id", "role_id",
                                 "user_id")
 
         self.defaults = defaults if defaults else {
@@ -112,7 +112,7 @@ class BaseConfig:
             `self.collection_uuid`."""
         raise NotImplemented
 
-    def server(self, server):
+    def guild(self, guild):
         """This should return a `BaseConfig` instance with the corresponding
             `collection` and `collection_uuid`."""
         raise NotImplemented
@@ -160,25 +160,25 @@ class BaseConfig:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
         self.defaults["GLOBAL"][key] = default
 
-    def register_server(self, server_defaults: dict):
+    def register_guild(self, guild_defaults: dict):
         """
-        Registers a new dict of server defaults. This function should
+        Registers a new dict of guild defaults. This function should
             be called EVERY TIME the cog loads (aka just do it in
             __init__)!
 
-        :param server_defaults: Each key should be the key you want to
+        :param guild_defaults: Each key should be the key you want to
             access data by and the value is the default value of that
             key.
         :return: 
         """
-        for k, v in server_defaults.items():
+        for k, v in guild_defaults.items():
             try:
-                self._register_server(k, v)
+                self._register_guild(k, v)
             except KeyError:
-                log.exception("Bad default server key.")
+                log.exception("Bad default guild key.")
 
-    def _register_server(self, key, default=None):
-        """Registers a server config key `key`"""
+    def _register_guild(self, key, default=None):
+        """Registers a guild config key `key`"""
         if key in self.restricted_keys:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
         self.defaults["SERVER"][key] = default
@@ -283,7 +283,7 @@ class Config(BaseConfig):
     Use the `set()` function to save data at a certain level
         e.g.:
             Global level: `conf.set("key1", "value1")`
-            Server level: `conf.server(server_id).set("key2", "value2")
+            Guild level: `conf.guild(guild_id).set("key2", "value2")
 
     Misc data is special, use `conf.misc()` and `conf.set_misc(value)`
         respectively.
@@ -337,11 +337,11 @@ class Config(BaseConfig):
     def clear_misc(self):
         self.driver.set_misc(self.cog_name, self.uuid, None, clear=True)
 
-    def server(self, server):
+    def guild(self, guild):
         new = type(self)(self.cog_name, self.uuid, self.driver,
                          hash_uuid=False, defaults=self.defaults)
         new.collection = "SERVER"
-        new.collection_uuid = server.id
+        new.collection_uuid = guild.id
         new._driver = None
         return new
 
@@ -362,11 +362,11 @@ class Config(BaseConfig):
         return new
 
     def member(self, member):
-        server = member.server
+        guild = member.guild
         new = type(self)(self.cog_name, self.uuid, self.driver,
                          hash_uuid=False, defaults=self.defaults)
         new.collection = "MEMBER"
-        new.collection_uuid = (member.id, server.id)
+        new.collection_uuid = (member.id, guild.id)
         new._driver = None
         return new
 
