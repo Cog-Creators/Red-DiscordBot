@@ -1,5 +1,8 @@
 from core.drivers.red_json import JSON as JSONDriver
 from core.drivers.red_mongo import Mongo
+import logging
+
+log = logging.getLogger("red.config")
 
 class BaseConfig:
     def __init__(self, cog_name, unique_identifier, driver_spawn,
@@ -134,37 +137,139 @@ class BaseConfig:
             `collection` and `collection_uuid`."""
         raise NotImplemented
 
-    def register_global(self, key, default=None):
+    def register_global(self, global_defaults: dict):
+        """
+        Registers a new dict of global defaults. This function should
+            be called EVERY TIME the cog loads (aka just do it in
+            __init__)!
+
+        :param global_defaults: Each key should be the key you want to
+            access data by and the value is the default value of that
+            key.
+        :return: 
+        """
+        for k, v in global_defaults.items():
+            try:
+                self._register_global(k, v)
+            except KeyError:
+                log.exception("Bad default global key.")
+
+    def _register_global(self, key, default=None):
         """Registers a global config key `key`"""
         if key in self.restricted_keys:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
         self.defaults["GLOBAL"][key] = default
 
-    def register_server(self, key, default=None):
+    def register_server(self, server_defaults: dict):
+        """
+        Registers a new dict of server defaults. This function should
+            be called EVERY TIME the cog loads (aka just do it in
+            __init__)!
+
+        :param server_defaults: Each key should be the key you want to
+            access data by and the value is the default value of that
+            key.
+        :return: 
+        """
+        for k, v in server_defaults.items():
+            try:
+                self._register_server(k, v)
+            except KeyError:
+                log.exception("Bad default server key.")
+
+    def _register_server(self, key, default=None):
         """Registers a server config key `key`"""
         if key in self.restricted_keys:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
         self.defaults["SERVER"][key] = default
 
-    def register_channel(self, key, default=None):
+    def register_channel(self, channel_defaults: dict):
+        """
+        Registers a new dict of channel defaults. This function should
+            be called EVERY TIME the cog loads (aka just do it in
+            __init__)!
+
+        :param channel_defaults: Each key should be the key you want to
+            access data by and the value is the default value of that
+            key.
+        :return: 
+        """
+        for k, v in channel_defaults.items():
+            try:
+                self._register_channel(k, v)
+            except KeyError:
+                log.exception("Bad default channel key.")
+
+    def _register_channel(self, key, default=None):
         """Registers a channel config key `key`"""
         if key in self.restricted_keys:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
         self.defaults["CHANNEL"][key] = default
 
-    def register_role(self, key, default=None):
+    def register_role(self, role_defaults: dict):
+        """
+        Registers a new dict of role defaults. This function should
+            be called EVERY TIME the cog loads (aka just do it in
+            __init__)!
+
+        :param role_defaults: Each key should be the key you want to
+            access data by and the value is the default value of that
+            key.
+        :return: 
+        """
+        for k, v in role_defaults.items():
+            try:
+                self._register_role(k, v)
+            except KeyError:
+                log.exception("Bad default role key.")
+
+    def _register_role(self, key, default=None):
         """Registers a role config key `key`"""
         if key in self.restricted_keys:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
         self.defaults["ROLE"][key] = default
 
-    def register_member(self, key, default=None):
+    def register_member(self, member_defaults: dict):
+        """
+        Registers a new dict of member defaults. This function should
+            be called EVERY TIME the cog loads (aka just do it in
+            __init__)!
+
+        :param member_defaults: Each key should be the key you want to
+            access data by and the value is the default value of that
+            key.
+        :return: 
+        """
+        for k, v in member_defaults.items():
+            try:
+                self._register_member(k, v)
+            except KeyError:
+                log.exception("Bad default member key.")
+
+    def _register_member(self, key, default=None):
         """Registers a member config key `key`"""
         if key in self.restricted_keys:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
         self.defaults["MEMBER"][key] = default
 
-    def register_user(self, key, default=None):
+    def register_user(self, user_defaults: dict):
+        """
+        Registers a new dict of user defaults. This function should
+            be called EVERY TIME the cog loads (aka just do it in
+            __init__)!
+
+        :param user_defaults: Each key should be the key you want to
+            access data by and the value is the default value of that
+            key.
+        :return: 
+        """
+        for k, v in user_defaults.items():
+            try:
+                self._register_user(k, v)
+            except KeyError:
+                log.exception("Bad default user key.")
+
+    def _register_user(self, key, default=None):
         """Registers a user config key `key`"""
         if key in self.restricted_keys:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
@@ -205,8 +310,13 @@ class Config(BaseConfig):
         return ret
 
     def set(self, key, value):
-        if key not in self.defaults[self.collection]:
-            raise AttributeError("Key '{}' not registered!".format(key))
+        # Notice to future developers:
+        #   This code was commented to allow users to set keys without having to register them.
+        #       That being said, if they try to get keys without registering them
+        #       things will blow up. I do highly recommend enforcing the key registration.
+
+        # if key not in self.defaults[self.collection]:
+        #     raise AttributeError("Key '{}' not registered!".format(key))
 
         if self.collection == "MEMBER":
             mid, sid = self.collection_uuid
