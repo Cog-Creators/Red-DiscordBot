@@ -93,9 +93,14 @@ class JsonDB(JsonIO):
         self._data = {}
         await self.save()
 
-    def all(self):
+    def get_all(self):
         """Returns all DB's data"""
         return self._data
+    
+    async def set_all(self, data):
+        """Sets all DB's data"""
+        self._data = data
+        await self.save()
 
     def _blocking_save(self):
         """Using this should be avoided. Let's stick to threadsafe saves"""
@@ -174,11 +179,18 @@ class JsonGuildDB(JsonDB):
         await self.save()
         return value
 
-    def get_all(self, guild, default=None):
+    def guild_get_all(self, guild, default=None):
         """Returns all entries of a guild"""
         if not isinstance(guild, discord.Guild):
             raise TypeError('Can only get guild data')
         return self._data.get(str(guild.id), default)
+
+    async def guild_set_all(self, guild, data):
+        """Sets all entries for guild"""
+        if not isinstance(guild, discord.Guild):
+            raise TypeError('Can only set guild data')
+        self._data[str(guild.id)] = data
+        await self.save()
 
     async def remove_all(self, guild):
         """Removes all entries of a guild"""
