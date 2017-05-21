@@ -2,6 +2,8 @@ from core.drivers.red_json import JSON as JSONDriver
 from core.drivers.red_mongo import Mongo
 import logging
 
+from typing import Callable
+
 log = logging.getLogger("red.config")
 
 class BaseConfig:
@@ -289,7 +291,7 @@ class Config(BaseConfig):
         respectively.
     """
 
-    def __getattr__(self, key) -> function:
+    def __getattr__(self, key) -> Callable:
         """
         Until I've got a better way to do this I'm just gonna fake __call__
         
@@ -298,7 +300,7 @@ class Config(BaseConfig):
         """
         return self._get_value_from_key(key)
 
-    def _get_value_from_key(self, key, ignore_exc=False) -> function:
+    def _get_value_from_key(self, key, ignore_exc=False) -> Callable:
         try:
             default = self.defaults[self.collection][key]
         except KeyError as e:
