@@ -12,7 +12,7 @@ class BaseConfig:
                  defaults={}):
         self.cog_name = cog_name
         if hash_uuid:
-            self.uuid = hash(unique_identifier)
+            self.uuid = str(hash(unique_identifier))
         else:
             self.uuid = unique_identifier
         self.driver_spawn = driver_spawn
