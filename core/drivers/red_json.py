@@ -16,16 +16,23 @@ class JSON(BaseDriver):
         except FileNotFoundError:
             self.data = {}
 
-        for k in ("GLOBAL", "SERVER", "CHANNEL", "ROLE", "MEMBER", "USER",
-                  "MISC"):
-            for ident in self.data:
-                if k not in self.data[ident]:
-                    self.data[ident][k] = {}
         try:
             dataIO._save_json(self.data_path, self.data)
         except FileNotFoundError:
             os.makedirs("data/{}".format(self.cog_name))
             dataIO._save_json(self.data_path, self.data)
+
+    def maybe_add_ident(self, ident: str):
+        if ident in self.data:
+            return
+
+        self.data[ident] = {}
+        for k in ("GLOBAL", "SERVER", "CHANNEL", "ROLE", "MEMBER", "USER",
+                  "MISC"):
+            if k not in self.data[ident]:
+                self.data[ident][k] = {}
+
+        dataIO._save_json(self.data_path, self.data)
 
     def get_global(self, cog_name, ident, _, key, *, default=None):
         return self.data[ident]["GLOBAL"].get(key, default)

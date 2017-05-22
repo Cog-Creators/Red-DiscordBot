@@ -20,6 +20,11 @@ class BaseConfig:
         self.collection = collection
         self.collection_uuid = collection_uuid
 
+        try:
+            self.driver.maybe_add_ident(self.uuid)
+        except AttributeError:
+            pass
+
         self.driver_getmap = {
             "GLOBAL": self.driver.get_global,
             "SERVER": self.driver.get_guild,
