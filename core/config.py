@@ -49,7 +49,7 @@ class BaseConfig:
             "MEMBER": {}, "USER": {}, "MISC": {}}
 
     @classmethod
-    def get_conf(cls, cog_name: str, unique_identifier: int):
+    def get_conf(cls, cog_name: str, unique_identifier: int=0):
         """
         Gets a config object that cog's can use to safely store data. The
             backend to this is totally modular and can easily switch between
@@ -59,6 +59,8 @@ class BaseConfig:
         Positional Arguments:
             cog_name - String representation of your cog name, normally something
                 like `self.__class__.__name__`
+        
+        Keyword Arguments:
             unique_identifier - a random integer or string that is used to
                 differentiate your cog from any other named the same. This way we
                 can safely store data for multiple cogs that are named the same.
