@@ -289,12 +289,75 @@ class BaseConfig:
 
 class Config(BaseConfig):
     """
-    Config object created by `Bot.get_conf()`
+    Config object created by `Config.get_conf()`
 
-    Use the `set()` function to save data at a certain level
-        e.g.:
-            Global level: `conf.set("key1", "value1")`
-            Guild level: `conf.guild(guild_id).set("key2", "value2")
+    This configuration object is designed to make backend data
+        storage mechanisms pluggable. It also is designed to
+        help a cog developer make fewer mistakes (such as
+        typos) when dealing with cog data and to make those mistakes
+        apparent much faster in the design process.
+        
+        It also has the capability to safely store data between cogs
+        that share the same name.
+        
+    There are two main components to this config object. First,
+        you have the ability to get data on a level specific basis.
+        The seven levels available are: global, guild, channel, role,
+        member, user, and misc.
+        
+        The second main component is registering default values for
+        data in each of the levels. This functionality is OPTIONAL
+        and must be explicitly enabled when creating the Config object
+        using the kwarg `force_registration=True`.
+
+    Basic Usage:
+        Creating a Config object:
+            Use the `Config.get_conf()` class method to create new
+                Config objects.
+                
+                See the `Config.get_conf()` documentation for more
+                information.
+
+        Registering Default Values (optional):
+            You can register default values for data at all levels
+                EXCEPT misc.
+            
+            Simply pass in the key/value pairs as keyword arguments to
+                the respective function.
+                
+                e.g.: conf_obj.register_global(enabled=True)
+                      conf_obj.register_guild(likes_red=True)
+        
+        Retrieving data by attributes:
+            Since I registered the "enabled" key in the previous example
+                at the global level I can now do:
+                
+                conf_obj.enabled()
+                
+                which will retrieve the current value of the "enabled"
+                key, making use of the default of "True". I can also do
+                the same for the guild key "likes_red":
+                
+                conf_obj.guild(guild_obj).likes_red()
+            
+            If I elected to not register default values, you can provide them
+                when you try to access the key:
+            
+                conf_obj.no_default(default=True)
+                
+                However if you do not provide a default and you do not register
+                defaults, accessing the attribute will return "None".
+        
+        Saving data:
+            This is accomplished by using the `set` function available at
+                every level.
+                
+                e.g.: conf_obj.set("enabled", False)
+                      conf_obj.guild(guild_obj).set("likes_red", False)
+                      
+                If `force_registration` was enabled when the config object
+                was created you will only be allowed to save keys that you
+                have registered.
 
     Misc data is special, use `conf.misc()` and `conf.set_misc(value)`
         respectively.
