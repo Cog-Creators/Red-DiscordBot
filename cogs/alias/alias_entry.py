@@ -5,11 +5,11 @@ import discord
 
 
 class AliasEntry:
-    def __init__(self, alias_name: str, command: Collection[str],
+    def __init__(self, name: str, command: Collection[str],
                  creator: discord.Member):
         super().__init__()
         self.has_real_data = False
-        self.alias_name = alias_name
+        self.name = name
         self.command = command
         self.creator = creator
 
@@ -28,20 +28,27 @@ class AliasEntry:
         return self.uses
 
     def to_json(self) -> dict:
+        try:
+            creator = str(self.creator.id)
+            guild = str(self.guild.id)
+        except AttributeError:
+            creator = self.creator
+            guild = self.guild
+
         return {
-            "alias_name": self.alias_name,
+            "name": self.name,
             "command": self.command,
-            "creator": str(self.creator.id),
-            "guild": str(self.guild.id),
+            "creator": creator,
+            "guild": guild,
             "uses": self.uses
         }
 
     @classmethod
     def from_json(cls, data: dict, bot: commands.Bot=None):
-        ret = cls(data["alias_name"], data["command"],
+        ret = cls(data["name"], data["command"],
                   data["creator"])
 
-        if bot is not None:
+        if bot:
             ret.has_real_data = True
             ret.creator = bot.get_user(int(data["creator"]))
             guild = bot.get_guild(int(data["guild"]))
