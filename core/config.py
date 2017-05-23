@@ -7,7 +7,7 @@ from typing import Callable
 log = logging.getLogger("red.config")
 
 class BaseConfig:
-    def __init__(self, cog_name, unique_identifier, driver_spawn,
+    def __init__(self, cog_name, unique_identifier, driver_spawn, force_registration=False,
                  hash_uuid=True, collection="GLOBAL", collection_uuid=None,
                  defaults={}):
         self.cog_name = cog_name
@@ -19,6 +19,8 @@ class BaseConfig:
         self._driver = None
         self.collection = collection
         self.collection_uuid = collection_uuid
+
+        self.force_registration = force_registration
 
         try:
             self.driver.maybe_add_ident(self.uuid)
@@ -311,7 +313,7 @@ class Config(BaseConfig):
         try:
             default = self.defaults[self.collection][key]
         except KeyError as e:
-            if not ignore_exc:
+            if self.force_registration or not ignore_exc:
                 raise AttributeError("Key '{}' not registered!".format(key)) from e
             default = None
 
@@ -348,8 +350,8 @@ class Config(BaseConfig):
         #       That being said, if they try to get keys without registering them
         #       things will blow up. I do highly recommend enforcing the key registration.
 
-        # if key not in self.defaults[self.collection]:
-        #     raise AttributeError("Key '{}' not registered!".format(key))
+        if self.force_registration and key not in self.defaults[self.collection]:
+            raise AttributeError("Key '{}' not registered!".format(key))
 
         if self.collection == "MEMBER":
             mid, sid = self.collection_uuid
