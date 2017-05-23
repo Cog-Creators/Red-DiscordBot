@@ -201,7 +201,13 @@ class Alias:
     @alias.command(name="show", no_pm=True)
     async def _show_alias(self, ctx: commands.Context, alias_name: str):
         """Shows what command the alias executes."""
-        # TODO: Show what command the alias executes
+        is_alias, alias = self.is_alias(ctx.guild, alias_name)
+
+        if is_alias:
+            await ctx.send(f"The `{alias_name}` alias will execute"
+                           f" the command `{alias.command}`")
+        else:
+            await ctx.send(f"There is no alias with the name `{alias_name}`")
 
     @alias.command(name="del", no_pm=True)
     async def _del_alias(self, ctx: commands.Context, alias_name: str):
@@ -226,7 +232,6 @@ class Alias:
         """
         Lists the available aliases on this server.
         """
-        # TODO: box this stuff
         names = ["Aliases:", ] + sorted([f"+ {a.name}" for a in self.unloaded_aliases(ctx.guild)])
         if len(names) == 0:
             await ctx.send("There are no aliases on this server.")
