@@ -407,7 +407,7 @@ class Config(BaseConfig):
         except AttributeError:
             return
 
-    def set(self, key, value):
+    async def set(self, key, value):
         # Notice to future developers:
         #   This code was commented to allow users to set keys without having to register them.
         #       That being said, if they try to get keys without registering them
@@ -418,22 +418,22 @@ class Config(BaseConfig):
 
         if self.collection == "MEMBER":
             mid, sid = self.collection_uuid
-            self.driver.set_member(self.cog_name, self.uuid, mid, sid,
-                                   key, value)
+            await self.driver.set_member(self.cog_name, self.uuid, mid, sid,
+                                         key, value)
         elif self.collection in self.driver_setmap:
             func = self.driver_setmap[self.collection]
-            func(self.cog_name, self.uuid, self.collection_uuid, key, value)
+            await func(self.cog_name, self.uuid, self.collection_uuid, key, value)
 
-    def set_misc(self, value):
-        self.driver.set_misc(self.cog_name, self.uuid, value)
+    async def set_misc(self, value):
+        await self.driver.set_misc(self.cog_name, self.uuid, value)
 
-    def clear(self):
-        self.driver_setmap[self.collection](
+    async def clear(self):
+        await self.driver_setmap[self.collection](
             self.cog_name, self.uuid, self.collection_uuid, None, None,
             clear=True)
 
-    def clear_misc(self):
-        self.driver.set_misc(self.cog_name, self.uuid, None, clear=True)
+    async def clear_misc(self):
+        await self.driver.set_misc(self.cog_name, self.uuid, None, clear=True)
 
     def guild(self, guild):
         new = type(self)(self.cog_name, self.uuid, self.driver,
