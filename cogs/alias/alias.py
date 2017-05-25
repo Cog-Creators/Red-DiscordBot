@@ -91,8 +91,15 @@ class Alias:
             await self._aliases.guild(ctx.guild).set("enabled", True)
         return alias
 
-    async def delete_alias(self, ctx: commands.Context, alias_name: str) -> bool:
-        aliases = self.unloaded_aliases(ctx.guild)
+    async def delete_alias(self, ctx: commands.Context, alias_name: str,
+                           global_: bool=False) -> bool:
+        if global_:
+            aliases = self.unloaded_global_aliases()
+            setter_func = self._aliases.set
+        else:
+            aliases = self.unloaded_aliases(ctx.guild)
+            setter_func = self._aliases.guild(ctx.guild).set
+
         did_delete_alias = False
 
         to_keep = []
@@ -102,7 +109,7 @@ class Alias:
             else:
                 did_delete_alias = True
 
-        await self._aliases.guild(ctx.guild).set(
+        await setter_func(
             "entries",
             [a.to_json() for a in to_keep]
         )
@@ -175,6 +182,14 @@ class Alias:
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
 
+    @alias.group(name="global")
+    async def global_(self, ctx: commands.Context):
+        """
+        Manage global aliases.
+        """
+        if ctx.invoked_subcommand is None:
+            await self.bot.send_cmd_help(ctx)
+
     @alias.command(name="add", no_pm=True)
     async def _add_alias(self, ctx: commands.Context,
                          alias_name: str, *, command):
@@ -216,7 +231,7 @@ class Alias:
         await ctx.send(f"A new alias with the trigger `{alias_name}`"
                        " has been created.")
 
-    @alias.command(name="gadd")
+    @global_.command(name="add")
     async def _add_global_alias(self, ctx: commands.Context,
                                 alias_name: str, *, command):
         """
@@ -288,12 +303,41 @@ class Alias:
         else:
             await ctx.send(f"Alias with name `{alias_name}` was not found.")
 
+    @global_.command(name="del")
+    async def _del_global_alias(self, ctx: commands.Context, alias_name: str):
+        """
+        Deletes an existing global alias.
+        :param alias_name: 
+        """
+        aliases = self.unloaded_global_aliases()
+        try:
+            next(aliases)
+        except StopIteration:
+            await ctx.send("There are no aliases on this bot.")
+
+        if await self.delete_alias(ctx, alias_name, global_=True):
+            await ctx.send(f"Alias with the name `{alias_name}` was successfully"
+                           " deleted.")
+        else:
+            await ctx.send(f"Alias with name `{alias_name}` was not found.")
+
     @alias.command(name="list", no_pm=True)
-    async def _alias_list(self, ctx: commands.Context):
+    async def _list_alias(self, ctx: commands.Context):
         """
         Lists the available aliases on this server.
         """
         names = ["Aliases:", ] + sorted([f"+ {a.name}" for a in self.unloaded_aliases(ctx.guild)])
+        if len(names) == 0:
+            await ctx.send("There are no aliases on this server.")
+        else:
+            await ctx.send(box("\n".join(names), "diff"))
+
+    @global_.command(name="list")
+    async def _list_global_alias(self, ctx: commands.Context):
+        """
+        Lists the available global aliases on this bot.
+        """
+        names = ["Aliases:", ] + sorted([f"+ {a.name}" for a in self.unloaded_global_aliases()])
         if len(names) == 0:
             await ctx.send("There are no aliases on this server.")
         else:
