@@ -176,7 +176,7 @@ How many Inquisitors are after The Rebels in the 2nd season?`2`two
 Who was the Trade Federation Leader?`Nute Gunray `Nute `Gunray
 Who was the leader of the Techno Union?`Watt Tambor`Watt`Tambor
 What creature was in the Sand Pits of Carcoon?`Sarlacc
-How many clones were ready when Obi Wan went to Kamino?`1000000`one million`million`a million
+How many clones were ready when Obi Wan went to Kamino?`200000`200,000`two hundred thousand
 Where was the secret Jedi temple in Star Wars: Rebels?`Lothal
 Who did Ezra meet on Morriban?`Maul
 Who killed 2 of the 3 new inquisitors in Star Wars Rebels season 2 finale?`Maul
@@ -219,7 +219,6 @@ Who is the leader of the now destroyed Protectors?`Fen Rau`Rau
 What do the Rebels find on Geonosis?`the last geonosian`a geonosian queen egg`genosian queen egg`last genosian
 What color is Ezra’s Lightsaber?`Blue`Geeen
 What is the name of the Imperial pilot who defected to the Rebels in Rogue One?`Bodhi Rook`Bodhi
-
 Who was the commander in charge of construction of the second Death Star?`Moff Jerrod`Moff Jer Jerrod
 Where are C-3P0's ears located?`neck`his neck
 What is the last name of the father-daughter pair who had a hand in the design of the Victory and Imperial Class Star Destroyers as well as the A-Wing fighter?`Blissex
