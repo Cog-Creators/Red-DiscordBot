@@ -2,6 +2,7 @@ from discord.ext import commands
 from .utils.dataIO import dataIO
 from .utils import checks
 from .utils.chat_formatting import pagify, box
+import asyncio
 import os
 import re
 
@@ -126,7 +127,7 @@ class CustomCommands:
             return
 
         server = message.server
-        prefix = self.get_prefix(message)
+        prefix = await self.get_prefix(message)
 
         if not prefix:
             return
@@ -143,11 +144,17 @@ class CustomCommands:
                 cmd = self.format_cc(cmd, message)
                 await self.bot.send_message(message.channel, cmd)
 
-    def get_prefix(self, message):
-        for p in self.bot.settings.get_prefixes(message.server):
-            if message.content.startswith(p):
+    async def get_prefix(self, msg):
+        prefixes = self.bot.command_prefix
+        if callable(prefixes):
+            prefixes = prefixes(self.bot, msg)
+            if asyncio.iscoroutine(prefixes):
+                prefixes = await prefixes
+
+        for p in prefixes:
+            if msg.content.startswith(p):
                 return p
-        return False
+        return None
 
     def format_cc(self, command, message):
         results = re.findall("\{([^}]+)\}", command)

@@ -4,6 +4,7 @@ from .utils.dataIO import dataIO
 from .utils import checks
 from __main__ import user_allowed, send_cmd_help
 from copy import deepcopy
+import asyncio
 import os
 import discord
 
@@ -38,7 +39,11 @@ class Alias:
             await self.bot.say('I can\'t safely add an alias that starts with '
                                'an existing command or alias. Sry <3')
             return
-        prefix = self.get_prefix(server, to_execute)
+
+        new_message = deepcopy(ctx.message)
+        new_message.content = to_execute
+        prefix = await self.get_prefix(new_message)
+
         if prefix is not None:
             to_execute = to_execute[len(prefix):]
         if server.id not in self.aliases:
@@ -57,17 +62,20 @@ class Alias:
         server = ctx.message.server
         if server.id in self.aliases:
             server_aliases = self.aliases[server.id]
-            if command in server_aliases:
-                help_cmd = server_aliases[command].split(" ")[0]
-                new_content = self.bot.settings.get_prefixes(server)[0]
-                new_content += "help "
-                new_content += help_cmd[len(self.get_prefix(server,
-                                        help_cmd)):]
-                message = ctx.message
-                message.content = new_content
-                await self.bot.process_commands(message)
-            else:
+            if command not in server_aliases:
                 await self.bot.say("That alias doesn't exist.")
+                return
+
+            new_message = deepcopy(ctx.message)
+
+            help_cmd = server_aliases[command].split(" ")[0] 
+            new_message.content = help_cmd
+            prefix = await self.get_prefix(new_message)
+            if prefix:
+                help_cmd = help_cmd[len(prefix):]
+
+            new_message.content = ctx.prefix + 'help ' + help_cmd
+            await self.bot.process_commands(new_message)
 
     @alias.command(name="show", pass_context=True, no_pm=True)
     async def _show_alias(self, ctx, command):
@@ -116,7 +124,7 @@ class Alias:
 
         msg = message.content
         server = message.server
-        prefix = self.get_prefix(server, msg)
+        prefix = await self.get_prefix(message)
 
         if not prefix:
             return
@@ -150,7 +158,7 @@ class Alias:
                     to_delete.append(aliasname)
                     continue
                 server = discord.Object(id=sid)
-                prefix = self.get_prefix(server, alias)
+                prefix = self.get_prefix_old(server, alias)
                 if prefix is not None:
                     self.aliases[sid][aliasname] = alias[len(prefix):]
             for alias in to_delete:  # Fixes caps and bad prefixes
@@ -162,10 +170,22 @@ class Alias:
     def first_word(self, msg):
         return msg.split(" ")[0]
 
-    def get_prefix(self, server, msg):
+    def get_prefix_old(self, server, msg):
         prefixes = self.bot.settings.get_prefixes(server)
         for p in prefixes:
             if msg.startswith(p):
+                return p
+        return None
+
+    async def get_prefix(self, msg):
+        prefixes = self.bot.command_prefix
+        if callable(prefixes):
+            prefixes = prefixes(self.bot, msg)
+            if asyncio.iscoroutine(prefixes):
+                prefixes = await prefixes
+
+        for p in prefixes:
+            if msg.content.startswith(p):
                 return p
         return None
 
