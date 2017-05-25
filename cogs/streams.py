@@ -123,13 +123,37 @@ class Streams:
             await self.bot.say(embed=embed)
 
     @commands.group(pass_context=True, no_pm=True)
-    @checks.mod_or_permissions(manage_server=True)
     async def streamalert(self, ctx):
         """Adds/removes stream alerts from the current channel"""
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
 
+    @streamalert.command(name="list", pass_context=True)
+    async def streamalert_list(self, ctx, channel: discord.Channel=None):
+        """Lists all streamalerts for the specified channel
+           (defaults to the current channel)"""
+        if not channel:
+            channel = ctx.message.channel
+        msg = "Stream alerts for the current channel: "
+        if len([s for s in self.twitch_streams if channel.id in s["CHANNELS"]]) > 0:
+            msg += "\nTwitch Streams: \n"
+            for stream in self.twitch_streams:
+                if channel.id in stream["CHANNELS"]:
+                    msg += stream["NAME"] + " is " + ("online" if stream["ALREADY_ONLINE"] else "offline") + "\n"
+        if len([s for s in self.beam_streams if channel.id in s["CHANNELS"]]) > 0:
+            msg += "\nBeam Streams: \n"
+            for stream in self.beam_streams:
+                if channel.id in stream["CHANNELS"]:
+                    msg += stream["NAME"] + " is " + ("online" if stream["ALREADY_ONLINE"] else "offline") + "\n"
+        if len([s for s in self.hitbox_streams if channel.id in s["CHANNELS"]]) > 0:
+            msg += "\nHitbox Streams: \n"
+            for stream in self.hitbox_streams:
+                if channel.id in stream["CHANNELS"]:
+                    msg += stream["NAME"] + " is " + ("online" if stream["ALREADY_ONLINE"] else "offline") + "\n"
+        await self.bot.say(msg)
+
     @streamalert.command(name="twitch", pass_context=True)
+    @checks.mod_or_permissions(manage_server=True)
     async def twitch_alert(self, ctx, stream: str):
         """Adds/removes twitch alerts from the current channel"""
         stream = escape_mass_mentions(stream)
@@ -164,6 +188,7 @@ class Streams:
         dataIO.save_json("data/streams/twitch.json", self.twitch_streams)
 
     @streamalert.command(name="hitbox", pass_context=True)
+    @checks.mod_or_permissions(manage_server=True)
     async def hitbox_alert(self, ctx, stream: str):
         """Adds/removes hitbox alerts from the current channel"""
         stream = escape_mass_mentions(stream)
@@ -194,6 +219,7 @@ class Streams:
         dataIO.save_json("data/streams/hitbox.json", self.hitbox_streams)
 
     @streamalert.command(name="beam", pass_context=True)
+    @checks.mod_or_permissions(manage_server=True)
     async def beam_alert(self, ctx, stream: str):
         """Adds/removes beam alerts from the current channel"""
         stream = escape_mass_mentions(stream)
@@ -254,6 +280,7 @@ class Streams:
         dataIO.save_json("data/streams/picarto.json", self.picarto_streams)
 
     @streamalert.command(name="stop", pass_context=True)
+    @checks.mod_or_permissions(manage_server=True)
     async def stop_alert(self, ctx):
         """Stops all streams alerts in the current channel"""
         channel = ctx.message.channel
