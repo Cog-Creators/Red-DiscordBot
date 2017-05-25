@@ -344,10 +344,8 @@ class Alias:
             await ctx.send(box("\n".join(names), "diff"))
 
     async def on_message(self, message: discord.Message):
-        if not self._aliases.guild(message.guild).enabled():
-            return
-
-        aliases = list(self.unloaded_aliases(message.guild))
+        aliases = list(self.unloaded_aliases(message.guild)) + \
+            list(self.unloaded_global_aliases())
 
         if len(aliases) == 0:
             return
