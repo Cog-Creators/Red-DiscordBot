@@ -2,7 +2,6 @@ import functools
 import json
 import os
 import asyncio
-import aiofiles
 import logging
 from uuid import uuid4
 
@@ -20,24 +19,19 @@ class JsonIO:
     """Basic functions for atomic saving / loading of json files"""
     _lock = asyncio.Lock()
 
-    def _get_tmp_file(self, path):
-        filename, _ = os.path.splitext(path)
-        tmp_file = "{}-{}.tmp".format(filename, uuid4().fields[0])
-        return tmp_file
-
     def _save_json(self, path, data, settings=PRETTY):
         log.debug("Saving file {}".format(path))
-        tmp_file = self._get_tmp_file(path)
+        filename, _ = os.path.splitext(path)
+        tmp_file = "{}-{}.tmp".format(filename, uuid4().fields[0])
         with open(tmp_file, encoding="utf-8", mode="w") as f:
             json.dump(data, f, **settings)
         os.replace(tmp_file, path)
 
     async def _threadsafe_save_json(self, path, data, settings=PRETTY):
-        tmp_path = self._get_tmp_file(path)
-        async with aiofiles.open(tmp_path, encoding='utf-8', mode='w') as f:
-            data = json.dumps(data, **settings)
-            await f.write(data)
-        os.replace(tmp_path, path)
+        loop = asyncio.get_event_loop()
+        func = functools.partial(self._save_json, path, data, settings)
+        with await self._lock:
+            await loop.run_in_executor(None, func)
 
     def _load_json(self, path):
         log.debug("Reading file {}".format(path))
@@ -46,6 +40,8 @@ class JsonIO:
         return data
 
     async def _threadsafe_load_json(self, path):
-        async with aiofiles.open(path, encoding='utf-8', mode='r') as f:
-            data = await f.read()
-            return json.loads(data)
+        loop = asyncio.get_event_loop()
+        func = functools.partial(self._load_json, path)
+        task = loop.run_in_executor(None, func)
+        with await self._lock:
+            return await asyncio.wait_for(task)

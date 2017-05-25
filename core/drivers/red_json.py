@@ -63,14 +63,14 @@ class JSON(BaseDriver):
         miscdata = self.data[ident]["MISC"]
         return miscdata.get("MISC", default)
 
-    async def set_global(self, cog_name, ident, key, value, clear=False):
+    def set_global(self, cog_name, ident, key, value, clear=False):
         if clear:
             self.data[ident]["GLOBAL"] = {}
         else:
             self.data[ident]["GLOBAL"][key] = value
-        await dataIO._threadsafe_save_json(self.data_path, self.data)
+        dataIO._save_json(self.data_path, self.data)
 
-    async def set_guild(self, cog_name, ident, guild_id, key, value, clear=False):
+    def set_guild(self, cog_name, ident, guild_id, key, value, clear=False):
         guild_id = str(guild_id)
         if clear:
             self.data[ident]["SERVER"][guild_id] = {}
@@ -80,9 +80,9 @@ class JSON(BaseDriver):
             except KeyError:
                 self.data[ident]["SERVER"][guild_id] = {}
                 self.data[ident]["SERVER"][guild_id][key] = value
-        await dataIO._threadsafe_save_json(self.data_path, self.data)
+        dataIO._save_json(self.data_path, self.data)
 
-    async def set_channel(self, cog_name, ident, channel_id, key, value, clear=False):
+    def set_channel(self, cog_name, ident, channel_id, key, value, clear=False):
         channel_id = str(channel_id)
         if clear:
             self.data[ident]["CHANNEL"][channel_id] = {}
@@ -92,9 +92,9 @@ class JSON(BaseDriver):
             except KeyError:
                 self.data[ident]["CHANNEL"][channel_id] = {}
                 self.data[ident]["CHANNEL"][channel_id][key] = value
-        await dataIO._threadsafe_save_json(self.data_path, self.data)
+        dataIO._save_json(self.data_path, self.data)
 
-    async def set_role(self, cog_name, ident, role_id, key, value, clear=False):
+    def set_role(self, cog_name, ident, role_id, key, value, clear=False):
         role_id = str(role_id)
         if clear:
             self.data[ident]["ROLE"][role_id] = {}
@@ -104,9 +104,9 @@ class JSON(BaseDriver):
             except KeyError:
                 self.data[ident]["ROLE"][role_id] = {}
                 self.data[ident]["ROLE"][role_id][key] = value
-        await dataIO._threadsafe_save_json(self.data_path, self.data)
+        dataIO._save_json(self.data_path, self.data)
 
-    async def set_member(self, cog_name, ident, user_id, guild_id, key, value, clear=False):
+    def set_member(self, cog_name, ident, user_id, guild_id, key, value, clear=False):
         user_id = str(user_id)
         guild_id = str(guild_id)
         if clear:
@@ -121,9 +121,9 @@ class JSON(BaseDriver):
                     self.data[ident]["MEMBER"][user_id][guild_id] = {}
 
                 self.data[ident]["MEMBER"][user_id][guild_id][key] = value
-        await dataIO._threadsafe_save_json(self.data_path, self.data)
+        dataIO._save_json(self.data_path, self.data)
 
-    async def set_user(self, cog_name, ident, user_id, key, value, clear=False):
+    def set_user(self, cog_name, ident, user_id, key, value, clear=False):
         user_id = str(user_id)
         if clear:
             self.data[ident]["USER"][user_id] = {}
@@ -133,11 +133,11 @@ class JSON(BaseDriver):
             except KeyError:
                 self.data[ident]["USER"][user_id] = {}
                 self.data[ident]["USER"][user_id][key] = value
-        await dataIO._threadsafe_save_json(self.data_path, self.data)
+        dataIO._save_json(self.data_path, self.data)
 
-    async def set_misc(self, cog_name, ident, value, clear=False):
+    def set_misc(self, cog_name, ident, value, clear=False):
         if clear:
             self.data[ident]["MISC"] = {}
         else:
             self.data[ident]["MISC"]["MISC"] = value
-        await dataIO._threadsafe_save_json(self.data_path, self.data)
+        dataIO._save_json(self.data_path, self.data)
