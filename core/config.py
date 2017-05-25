@@ -416,7 +416,9 @@ class Config(BaseConfig):
         if self.force_registration and key not in self.defaults[self.collection]:
             raise AttributeError("Key '{}' not registered!".format(key))
 
-        if self.collection == "MEMBER":
+        if self.collection == "GLOBAL":
+            await self.driver.set_global(self.cog_name, self.uuid, key, value)
+        elif self.collection == "MEMBER":
             mid, sid = self.collection_uuid
             await self.driver.set_member(self.cog_name, self.uuid, mid, sid,
                                          key, value)
