@@ -1,11 +1,11 @@
-from typing import Collection
+from typing import Tuple
 from discord.ext import commands
 
 import discord
 
 
 class AliasEntry:
-    def __init__(self, name: str, command: Collection[str],
+    def __init__(self, name: str, command: Tuple[str],
                  creator: discord.Member, global_: bool=False):
         super().__init__()
         self.has_real_data = False
