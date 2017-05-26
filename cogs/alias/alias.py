@@ -176,7 +176,8 @@ class Alias:
         new_message.content = "{}{} {}".format(prefix, alias.command, args)
         await self.bot.process_commands(new_message)
 
-    @commands.group(no_pm=True)
+    @commands.group()
+    @commands.guild_only()
     async def alias(self, ctx: commands.Context):
         """Manage per-server aliases for commands"""
         if ctx.invoked_subcommand is None:
@@ -190,7 +191,8 @@ class Alias:
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
 
-    @alias.command(name="add", no_pm=True)
+    @alias.command(name="add")
+    @commands.guild_only()
     async def _add_alias(self, ctx: commands.Context,
                          alias_name: str, *, command):
         """
@@ -269,12 +271,14 @@ class Alias:
         await ctx.send(("A new global alias with the trigger `{}`"
                         " has been created.").format(alias_name))
 
-    @alias.command(name="help", no_pm=True)
+    @alias.command(name="help")
+    @commands.guild_only()
     async def _help_alias(self, ctx: commands.Context, alias_name: str):
         """Tries to execute help for the base command of the alias"""
         # TODO: attempt to show the help of the base command of the alias
 
-    @alias.command(name="show", no_pm=True)
+    @alias.command(name="show")
+    @commands.guild_only()
     async def _show_alias(self, ctx: commands.Context, alias_name: str):
         """Shows what command the alias executes."""
         is_alias, alias = self.is_alias(ctx.guild, alias_name)
@@ -285,7 +289,8 @@ class Alias:
         else:
             await ctx.send("There is no alias with the name `{}`".format(alias_name))
 
-    @alias.command(name="del", no_pm=True)
+    @alias.command(name="del")
+    @commands.guild_only()
     async def _del_alias(self, ctx: commands.Context, alias_name: str):
         """
         Deletes an existing alias on this server.
@@ -321,7 +326,8 @@ class Alias:
         else:
             await ctx.send("Alias with name `{}` was not found.".format(alias_name))
 
-    @alias.command(name="list", no_pm=True)
+    @alias.command(name="list")
+    @commands.guild_only()
     async def _list_alias(self, ctx: commands.Context):
         """
         Lists the available aliases on this server.
