@@ -169,6 +169,9 @@ class BaseConfig:
         """Registers a global config key `key`"""
         if key in self.restricted_keys:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
+        elif not key.isidentifier():
+            raise RuntimeError("Invalid key name, must be a valid python variable"
+                               " name.")
         self.defaults["GLOBAL"][key] = default
 
     def register_guild(self, **guild_defaults):
@@ -192,6 +195,9 @@ class BaseConfig:
         """Registers a guild config key `key`"""
         if key in self.restricted_keys:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
+        elif not key.isidentifier():
+            raise RuntimeError("Invalid key name, must be a valid python variable"
+                               " name.")
         self.defaults["GUILD"][key] = default
 
     def register_channel(self, **channel_defaults):
@@ -215,6 +221,9 @@ class BaseConfig:
         """Registers a channel config key `key`"""
         if key in self.restricted_keys:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
+        elif not key.isidentifier():
+            raise RuntimeError("Invalid key name, must be a valid python variable"
+                               " name.")
         self.defaults["CHANNEL"][key] = default
 
     def register_role(self, **role_defaults):
@@ -238,6 +247,9 @@ class BaseConfig:
         """Registers a role config key `key`"""
         if key in self.restricted_keys:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
+        elif not key.isidentifier():
+            raise RuntimeError("Invalid key name, must be a valid python variable"
+                               " name.")
         self.defaults["ROLE"][key] = default
 
     def register_member(self, **member_defaults):
@@ -261,6 +273,9 @@ class BaseConfig:
         """Registers a member config key `key`"""
         if key in self.restricted_keys:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
+        elif not key.isidentifier():
+            raise RuntimeError("Invalid key name, must be a valid python variable"
+                               " name.")
         self.defaults["MEMBER"][key] = default
 
     def register_user(self, **user_defaults):
@@ -284,6 +299,9 @@ class BaseConfig:
         """Registers a user config key `key`"""
         if key in self.restricted_keys:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
+        elif not key.isidentifier():
+            raise RuntimeError("Invalid key name, must be a valid python variable"
+                               " name.")
         self.defaults["USER"][key] = default
 
 
@@ -415,6 +433,10 @@ class Config(BaseConfig):
 
         if self.force_registration and key not in self.defaults[self.collection]:
             raise AttributeError("Key '{}' not registered!".format(key))
+
+        if not key.isidentifier():
+            raise RuntimeError("Invalid key name, must be a valid python variable"
+                               " name.")
 
         if self.collection == "GLOBAL":
             await self.driver.set_global(self.cog_name, self.uuid, key, value)

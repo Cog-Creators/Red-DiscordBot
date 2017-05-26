@@ -8,6 +8,11 @@ def test_config_register_global(config):
     assert config.enabled() is False
 
 
+def test_config_register_global_badvalues(config):
+    with pytest.raises(RuntimeError):
+        config.register_global(**{"invalid var name": True})
+
+
 def test_config_register_guild(config, empty_guild):
     config.register_guild(enabled=False, some_list=[], some_dict={})
     assert config.defaults["GUILD"]["enabled"] is False
@@ -102,6 +107,12 @@ def test_user_default_override(config, empty_user):
 async def test_set_global(config):
     await config.set("enabled", True)
     assert config.enabled() is True
+
+
+@pytest.mark.asyncio
+async def test_set_global_badkey(config):
+    with pytest.raises(RuntimeError):
+        await config.set("this is a bad key", True)
 
 
 @pytest.mark.asyncio
