@@ -253,7 +253,7 @@ class Alias:
         is_alias, _ = self.is_alias(ctx.guild, alias_name)
         if is_alias:
             await ctx.send(("You attempted to create a new alias"
-                            " with the name {alias_name} but that"
+                            " with the name {} but that"
                             " alias already exists on this server.").format(alias_name))
             return
 
