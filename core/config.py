@@ -403,7 +403,7 @@ class Config(BaseConfig):
         """
 
         try:
-            return getattr(self, key)
+            return getattr(self, key)(default=default)
         except AttributeError:
             return
 
