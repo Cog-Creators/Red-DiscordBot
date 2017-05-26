@@ -33,7 +33,7 @@ class Alias:
     def __init__(self, bot: Red):
         self.bot = bot
         self.file_path = "data/alias/aliases.json"
-        self._aliases = Config.get_conf(self.__class__.__name__, 8927348724)
+        self._aliases = Config.get_conf(self, 8927348724)
 
         self._aliases.register_global(**self.default_global_settings)
         self._aliases.register_guild(**self.default_guild_settings)
