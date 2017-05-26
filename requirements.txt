@@ -1,4 +1,5 @@
 git+https://github.com/Rapptz/discord.py@rewrite#egg=discord.py[voice]
 youtube_dl
 pytest
-pytest-asyncio
+git+https://github.com/pytest-dev/pytest-asyncio
+pymongo
