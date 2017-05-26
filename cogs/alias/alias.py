@@ -188,7 +188,8 @@ class Alias:
         """
         Manage global aliases.
         """
-        if ctx.invoked_subcommand is None:
+        if ctx.invoked_subcommand is None or \
+                isinstance(ctx.invoked_subcommand, commands.Group):
             await self.bot.send_cmd_help(ctx)
 
     @alias.command(name="add")
