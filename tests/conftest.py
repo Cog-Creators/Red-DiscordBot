@@ -38,32 +38,45 @@ def config_fr(json_driver):
 
 
 #region Dpy Mocks
-@pytest.fixture
+@pytest.fixture(scope="module")
 def empty_guild():
     mock_guild = namedtuple("Guild", "id members")
     return mock_guild(random.randint(1, 999999999), [])
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def empty_channel():
     mock_channel = namedtuple("Channel", "id")
     return mock_channel(random.randint(1, 999999999))
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def empty_role():
     mock_role = namedtuple("Role", "id")
     return mock_role(random.randint(1, 999999999))
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def empty_member(empty_guild):
     mock_member = namedtuple("Member", "id guild")
     return mock_member(random.randint(1, 999999999), empty_guild)
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def empty_user():
     mock_user = namedtuple("User", "id")
     return mock_user(random.randint(1, 999999999))
+
+
+@pytest.fixture(scope="module")
+def empty_message():
+    mock_msg = namedtuple("Message", "content")
+    return mock_msg("No content.")
+
+
+@pytest.fixture(scope="module")
+def ctx(empty_member, empty_channel):
+    mock_ctx = namedtuple("Context", "author guild channel message")
+    return mock_ctx(empty_member, empty_member.guild, empty_channel,
+                    empty_message)
 #endregion
