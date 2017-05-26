@@ -12,11 +12,12 @@ class Streams:
     def __init__(self, bot):
         self.db = JsonDB("data/streams.json")
         self.streams = self.load_streams()
-        self.task = bot.loop.create_task(self.check_streams())
+        self.task = bot.loop.create_task(self._stream_alerts())
         self.bot = bot
 
     @commands.command()
     async def twitch(self, ctx, channel_name: str):
+        """Checks if a Twitch channel is streaming"""
         token = self.db.get("tokens", {}).get(TwitchStream.__name__)
         stream = TwitchStream(name=channel_name,
                               token=token)
@@ -24,16 +25,19 @@ class Streams:
 
     @commands.command()
     async def hitbox(self, ctx, channel_name: str):
+        """Checks if a Hitbox channel is streaming"""
         stream = HitboxStream(name=channel_name)
         await self.check_online(ctx, stream)
 
     @commands.command()
     async def beam(self, ctx, channel_name: str):
+        """Checks if a beam.pro channel is streaming"""
         stream = BeamStream(name=channel_name)
         await self.check_online(ctx, stream)
 
     @commands.command()
     async def picarto(self, ctx, channel_name: str):
+        """Checks if a Picarto channel is streaming"""
         stream = PicartoStream(name=channel_name)
         await self.check_online(ctx, stream)
 
@@ -52,23 +56,36 @@ class Streams:
             await ctx.send(embed=embed)
 
     @commands.group()
+    @commands.guild_only()
     async def streamalert(self, ctx):
-        ...
+        if ctx.invoked_subcommands is None:
+            await ctx.bot.send_cmd_help(ctx)
 
     @streamalert.command(name="twitch")
     async def twitch_alert(self, ctx, channel_name: str):
+        """Sets a Twitch stream alert notification in the channel"""
         await self.stream_alert(ctx, TwitchStream, channel_name)
 
     @streamalert.command(name="hitbox")
     async def hitbox_alert(self, ctx, channel_name: str):
+        """Sets a Hitbox stream alert notification in the channel"""
         await self.stream_alert(ctx, HitboxStream, channel_name)
 
     @streamalert.command(name="beam")
     async def beam_alert(self, ctx, channel_name: str):
+        """Sets a beam.pro stream alert notification in the channel"""
         await self.stream_alert(ctx, BeamStream, channel_name)
 
     @streamalert.command(name="picarto")
     async def picarto_alert(self, ctx, channel_name: str):
+        """Sets a Picarto stream alert notification in the channel"""
+        await self.stream_alert(ctx, PicartoStream, channel_name)
+
+    @streamalert.command(name="stop")
+    async def streamalert_stop(self, ctx, all: bool):
+        """Stops all stream notifications in the channel
+
+        Adding 'yes' will stops all notifications in the server"""
         await self.stream_alert(ctx, PicartoStream, channel_name)
 
     async def stream_alert(self, ctx, _class, channel_name):
@@ -81,6 +98,33 @@ class Streams:
             await self.add_or_remove(ctx, stream)
         else:
             await ctx.send("That channel doesn't seem to exist.")
+
+    @commands.group()
+    async def streamset(self, ctx):
+        if ctx.invoked_subcommands is None:
+            await ctx.bot.send_cmd_help(ctx)
+
+    @streamset.command()
+    async def twitchtoken(self, ctx, token: str):
+        tokens = self.db.get("tokens", {})
+        tokens["TwitchStream"] = token
+        await self.db.set("tokens", tokens)
+        await ctx.send("Twitch token set.")
+
+    @streamset.command()
+    @commands.guild_only()
+    async def autodelete(self, ctx, on_off: bool):
+        settings = self.db.get("settings", {})
+        if str(ctx.guild.id) not in settings:
+            settings[str(ctx.guild.id)] = {}
+        settings[str(ctx.guild.id)]["autodelete"] = on_off
+        await self.db.set("settings", settings)
+
+        if on_off:
+            await ctx.send("The notifications will be deleted once "
+                           "streams go offline.")
+        else:
+            await ctx.send("Notifications will never be deleted.")
 
     async def add_or_remove(self, ctx, stream):
         if ctx.channel.id not in stream.channels:
@@ -111,21 +155,28 @@ class Streams:
             return False
         return True
 
-    async def check_streams(self):
+    async def _stream_alerts(self):
         while True:
-            for stream in self.streams:
-                try:
-                    embed = await stream.is_online()
-                except OfflineStream:
-                    for message in stream._messages_cache:
-                        try:
-                            await message.delete()
-                        except:
-                            pass
-                    stream._messages_cache.clear()
-                    continue
-                except:
-                    continue
+            try:
+                await self.check_streams()
+            except asyncio.CancelledError:
+                pass
+            await asyncio.sleep(CHECK_DELAY)
+
+    async def check_streams(self):
+        for stream in self.streams:
+            try:
+                embed = await stream.is_online()
+            except OfflineStream:
+                for message in stream._messages_cache:
+                    try:
+                        await message.delete()
+                    except:
+                        pass
+                stream._messages_cache.clear()
+            except:
+                pass
+            else:
                 if stream._messages_cache:
                     continue
                 for channel_id in stream.channels:
@@ -136,14 +187,13 @@ class Streams:
                         stream._messages_cache.append(m)
                     except:
                         pass
-            await asyncio.sleep(CHECK_DELAY)
 
     def load_streams(self):
         raw_streams = self.db.get("streams")
         streams = []
 
         for raw_stream in raw_streams:
-            _class = getattr(StreamClasses, raw_stream["type"])
+            _class = getattr(StreamClasses, raw_stream["type"], None)
             if not _class:
                 continue
 
