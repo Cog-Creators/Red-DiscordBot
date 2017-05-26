@@ -7,9 +7,12 @@ dataIO = JsonIO()
 
 
 class JSON(BaseDriver):
-    def __init__(self, cog_name, *args, **kwargs):
+    def __init__(self, cog_name, *args, data_path_override=None, **kwargs):
         self.cog_name = cog_name
-        self.data_path = "data/{}/settings.json".format(self.cog_name)
+        if data_path_override:
+            self.data_path = f"{data_path_override}/settings.json"
+        else:
+            self.data_path = "data/{}/settings.json".format(self.cog_name)
 
         try:
             self.data = dataIO._load_json(self.data_path)

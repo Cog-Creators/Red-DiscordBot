@@ -29,7 +29,7 @@ class BaseConfig:
 
         self.driver_getmap = {
             "GLOBAL": self.driver.get_global,
-            "SERVER": self.driver.get_guild,
+            "GUILD": self.driver.get_guild,
             "CHANNEL": self.driver.get_channel,
             "ROLE": self.driver.get_role,
             "USER": self.driver.get_user,
@@ -38,7 +38,7 @@ class BaseConfig:
 
         self.driver_setmap = {
             "GLOBAL": self.driver.set_global,
-            "SERVER": self.driver.set_guild,
+            "GUILD": self.driver.set_guild,
             "CHANNEL": self.driver.set_channel,
             "ROLE": self.driver.set_role,
             "USER": self.driver.set_user,
@@ -52,7 +52,7 @@ class BaseConfig:
                                 "user_id")
 
         self.defaults = defaults if defaults else {
-            "GLOBAL": {}, "SERVER": {}, "CHANNEL": {}, "ROLE": {},
+            "GLOBAL": {}, "GUILD": {}, "CHANNEL": {}, "ROLE": {},
             "MEMBER": {}, "USER": {}, "MISC": {}}
 
     @classmethod
@@ -192,7 +192,7 @@ class BaseConfig:
         """Registers a guild config key `key`"""
         if key in self.restricted_keys:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
-        self.defaults["SERVER"][key] = default
+        self.defaults["GUILD"][key] = default
 
     def register_channel(self, **channel_defaults):
         """
@@ -372,11 +372,11 @@ class Config(BaseConfig):
         """
         return self._get_value_from_key(key)
 
-    def _get_value_from_key(self, key, ignore_exc=False) -> Callable:
+    def _get_value_from_key(self, key) -> Callable:
         try:
             default = self.defaults[self.collection][key]
         except KeyError as e:
-            if self.force_registration or not ignore_exc:
+            if self.force_registration:
                 raise AttributeError("Key '{}' not registered!".format(key)) from e
             default = None
 
@@ -440,7 +440,7 @@ class Config(BaseConfig):
     def guild(self, guild):
         new = type(self)(self.cog_name, self.uuid, self.driver,
                          hash_uuid=False, defaults=self.defaults)
-        new.collection = "SERVER"
+        new.collection = "GUILD"
         new.collection_uuid = guild.id
         new._driver = None
         return new
