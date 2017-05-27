@@ -32,8 +32,7 @@ class BaseConfig:
             "GUILD": self.driver.get_guild,
             "CHANNEL": self.driver.get_channel,
             "ROLE": self.driver.get_role,
-            "USER": self.driver.get_user,
-            "MISC": self.driver.get_misc
+            "USER": self.driver.get_user
         }
 
         self.driver_setmap = {
@@ -41,8 +40,7 @@ class BaseConfig:
             "GUILD": self.driver.set_guild,
             "CHANNEL": self.driver.set_channel,
             "ROLE": self.driver.set_role,
-            "USER": self.driver.set_user,
-            "MISC": self.driver.set_misc
+            "USER": self.driver.set_user
         }
 
         self.curr_key = None
@@ -53,7 +51,7 @@ class BaseConfig:
 
         self.defaults = defaults if defaults else {
             "GLOBAL": {}, "GUILD": {}, "CHANNEL": {}, "ROLE": {},
-            "MEMBER": {}, "USER": {}, "MISC": {}}
+            "MEMBER": {}, "USER": {}}
 
     @classmethod
     def get_conf(cls, cog_instance: object, unique_identifier: int=0,
@@ -453,16 +451,10 @@ class Config(BaseConfig):
             func = self.driver_setmap[self.collection]
             await func(self.cog_name, self.uuid, self.collection_uuid, key, value)
 
-    async def set_misc(self, value):
-        await self.driver.set_misc(self.cog_name, self.uuid, value)
-
     async def clear(self):
         await self.driver_setmap[self.collection](
             self.cog_name, self.uuid, self.collection_uuid, None, None,
             clear=True)
-
-    async def clear_misc(self):
-        await self.driver.set_misc(self.cog_name, self.uuid, None, clear=True)
 
     def guild(self, guild):
         new = type(self)(self.cog_name, self.uuid, self.driver,
@@ -504,13 +496,3 @@ class Config(BaseConfig):
         new.collection_uuid = user.id
         new._driver = None
         return new
-
-    def misc(self):
-        try:
-            default = self.defaults["MISC"]
-        except KeyError as e:
-            default = {}
-
-        return self.driver_getmap["MISC"](
-            self.cog_name, self.uuid,
-            default=default)

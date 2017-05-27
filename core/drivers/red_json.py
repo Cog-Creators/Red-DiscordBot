@@ -30,8 +30,7 @@ class JSON(BaseDriver):
             return
 
         self.data[ident] = {}
-        for k in ("GLOBAL", "GUILD", "CHANNEL", "ROLE", "MEMBER", "USER",
-                  "MISC"):
+        for k in ("GLOBAL", "GUILD", "CHANNEL", "ROLE", "MEMBER", "USER"):
             if k not in self.data[ident]:
                 self.data[ident][k] = {}
 
@@ -61,10 +60,6 @@ class JSON(BaseDriver):
     def get_user(self, cog_name, ident, user_id, key, *, default=None):
         userdata = self.data[ident]["USER"].get(str(user_id), {})
         return userdata.get(key, default)
-
-    def get_misc(self, cog_name, ident, *, default=None):
-        miscdata = self.data[ident]["MISC"]
-        return miscdata.get("MISC", default)
 
     async def set_global(self, cog_name, ident, key, value, clear=False):
         if clear:
@@ -136,11 +131,4 @@ class JSON(BaseDriver):
             except KeyError:
                 self.data[ident]["USER"][user_id] = {}
                 self.data[ident]["USER"][user_id][key] = value
-        await dataIO._threadsafe_save_json(self.data_path, self.data)
-
-    async def set_misc(self, cog_name, ident, value, clear=False):
-        if clear:
-            self.data[ident]["MISC"] = {}
-        else:
-            self.data[ident]["MISC"]["MISC"] = value
         await dataIO._threadsafe_save_json(self.data_path, self.data)
