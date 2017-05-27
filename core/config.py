@@ -72,6 +72,11 @@ class BaseConfig:
                 can safely store data for multiple cogs that are named the same.
                 
                 YOU SHOULD USE THIS.
+            
+            force_registration - A flag which will cause the Config object to
+                throw exceptions if you try to get/set data keys that you have
+                not pre-registered. I highly recommend you ENABLE this as it
+                will help reduce dumb typo errors.
         """
 
         url = None  # TODO: get mongo url
