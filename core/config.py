@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from core.drivers.red_json import JSON as JSONDriver
 from core.drivers.red_mongo import Mongo
 import logging
@@ -93,6 +95,14 @@ class BaseConfig:
 
         return cls(cog_name=cog_name, unique_identifier=unique_identifier,
                    driver_spawn=driver_spawn, force_registration=force_registration)
+
+    @classmethod
+    def get_core_conf(cls, force_registration: bool=False):
+        core_data_path = Path.cwd() / 'core' / '.data'
+        driver_spawn = JSONDriver("Core", data_path_override=core_data_path)
+        return cls(cog_name="Core", driver_spawn=driver_spawn,
+                   unique_identifier=0,
+                   force_registration=force_registration)
 
     @property
     def driver(self):

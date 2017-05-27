@@ -1,4 +1,5 @@
 from collections import namedtuple
+from pathlib import Path
 
 import pytest
 import random
@@ -11,7 +12,7 @@ from core import Config
 def json_driver(tmpdir_factory):
     driver = red_json.JSON(
         "PyTest",
-        data_path_override=tmpdir_factory.getbasetemp()
+        data_path_override=Path(str(tmpdir_factory.getbasetemp()))
     )
     return driver
 

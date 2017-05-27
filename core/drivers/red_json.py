@@ -2,28 +2,29 @@ from core.json_io import JsonIO
 import os
 from .red_base import BaseDriver
 
-
-dataIO = JsonIO()
+from pathlib import Path
 
 
 class JSON(BaseDriver):
-    def __init__(self, cog_name, *args, data_path_override=None, **kwargs):
+    def __init__(self, cog_name, *args, data_path_override: Path=None,
+                 file_name_override: str="settings.json", **kwargs):
         self.cog_name = cog_name
+        self.file_name = file_name_override
         if data_path_override:
-            self.data_path = "{}/settings.json".format(data_path_override)
+            self.data_path = data_path_override
         else:
-            self.data_path = "data/{}/settings.json".format(self.cog_name)
+            self.data_path = Path.cwd() / 'cogs' / '.data' / self.cog_name
+
+        self.data_path.mkdir(parents=True, exist_ok=True)
+
+        self.data_path = self.data_path / self.file_name
+        
+        self.jsonIO = JsonIO(self.data_path)
 
         try:
-            self.data = dataIO._load_json(self.data_path)
+            self.data = self.jsonIO._load_json()
         except FileNotFoundError:
             self.data = {}
-
-        try:
-            dataIO._save_json(self.data_path, self.data)
-        except FileNotFoundError:
-            os.makedirs("data/{}".format(self.cog_name))
-            dataIO._save_json(self.data_path, self.data)
 
     def maybe_add_ident(self, ident: str):
         if ident in self.data:
@@ -34,7 +35,7 @@ class JSON(BaseDriver):
             if k not in self.data[ident]:
                 self.data[ident][k] = {}
 
-        dataIO._save_json(self.data_path, self.data)
+        self.jsonIO._save_json(self.data)
 
     def get_global(self, cog_name, ident, _, key, *, default=None):
         return self.data[ident]["GLOBAL"].get(key, default)
@@ -66,7 +67,7 @@ class JSON(BaseDriver):
             self.data[ident]["GLOBAL"] = {}
         else:
             self.data[ident]["GLOBAL"][key] = value
-        dataIO._save_json(self.data_path, self.data)
+        await self.jsonIO._threadsafe_save_json(self.data)
 
     async def set_guild(self, cog_name, ident, guild_id, key, value, clear=False):
         guild_id = str(guild_id)
@@ -78,7 +79,7 @@ class JSON(BaseDriver):
             except KeyError:
                 self.data[ident]["GUILD"][guild_id] = {}
                 self.data[ident]["GUILD"][guild_id][key] = value
-        await dataIO._threadsafe_save_json(self.data_path, self.data)
+        await self.jsonIO._threadsafe_save_json(self.data)
 
     async def set_channel(self, cog_name, ident, channel_id, key, value, clear=False):
         channel_id = str(channel_id)
@@ -90,7 +91,7 @@ class JSON(BaseDriver):
             except KeyError:
                 self.data[ident]["CHANNEL"][channel_id] = {}
                 self.data[ident]["CHANNEL"][channel_id][key] = value
-        await dataIO._threadsafe_save_json(self.data_path, self.data)
+        await self.jsonIO._threadsafe_save_json(self.data)
 
     async def set_role(self, cog_name, ident, role_id, key, value, clear=False):
         role_id = str(role_id)
@@ -102,7 +103,7 @@ class JSON(BaseDriver):
             except KeyError:
                 self.data[ident]["ROLE"][role_id] = {}
                 self.data[ident]["ROLE"][role_id][key] = value
-        await dataIO._threadsafe_save_json(self.data_path, self.data)
+        await self.jsonIO._threadsafe_save_json(self.data)
 
     async def set_member(self, cog_name, ident, user_id, guild_id, key, value, clear=False):
         user_id = str(user_id)
@@ -119,7 +120,7 @@ class JSON(BaseDriver):
                     self.data[ident]["MEMBER"][user_id][guild_id] = {}
 
                 self.data[ident]["MEMBER"][user_id][guild_id][key] = value
-        await dataIO._threadsafe_save_json(self.data_path, self.data)
+        await self.jsonIO._threadsafe_save_json(self.data)
 
     async def set_user(self, cog_name, ident, user_id, key, value, clear=False):
         user_id = str(user_id)
@@ -131,4 +132,4 @@ class JSON(BaseDriver):
             except KeyError:
                 self.data[ident]["USER"][user_id] = {}
                 self.data[ident]["USER"][user_id][key] = value
-        await dataIO._threadsafe_save_json(self.data_path, self.data)
+        await self.jsonIO._threadsafe_save_json(self.data)
