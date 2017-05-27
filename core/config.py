@@ -56,7 +56,8 @@ class BaseConfig:
             "MEMBER": {}, "USER": {}, "MISC": {}}
 
     @classmethod
-    def get_conf(cls, cog_instance: object, unique_identifier: int=0):
+    def get_conf(cls, cog_instance: object, unique_identifier: int=0,
+                 force_registration: bool=False):
         """
         Gets a config object that cog's can use to safely store data. The
             backend to this is totally modular and can easily switch between
@@ -88,7 +89,7 @@ class BaseConfig:
         driver_spawn = JSONDriver(cog_name)
 
         return cls(cog_name=cog_name, unique_identifier=unique_identifier,
-                   driver_spawn=driver_spawn)
+                   driver_spawn=driver_spawn, force_registration=force_registration)
 
     @property
     def driver(self):
