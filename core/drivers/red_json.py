@@ -30,7 +30,7 @@ class JSON(BaseDriver):
             return
 
         self.data[ident] = {}
-        for k in ("GLOBAL", "SERVER", "CHANNEL", "ROLE", "MEMBER", "USER",
+        for k in ("GLOBAL", "GUILD", "CHANNEL", "ROLE", "MEMBER", "USER",
                   "MISC"):
             if k not in self.data[ident]:
                 self.data[ident][k] = {}
@@ -41,7 +41,7 @@ class JSON(BaseDriver):
         return self.data[ident]["GLOBAL"].get(key, default)
 
     def get_guild(self, cog_name, ident, guild_id, key, *, default=None):
-        guilddata = self.data[ident]["SERVER"].get(str(guild_id), {})
+        guilddata = self.data[ident]["GUILD"].get(str(guild_id), {})
         return guilddata.get(key, default)
 
     def get_channel(self, cog_name, ident, channel_id, key, *, default=None):
@@ -76,13 +76,13 @@ class JSON(BaseDriver):
     async def set_guild(self, cog_name, ident, guild_id, key, value, clear=False):
         guild_id = str(guild_id)
         if clear:
-            self.data[ident]["SERVER"][guild_id] = {}
+            self.data[ident]["GUILD"][guild_id] = {}
         else:
             try:
-                self.data[ident]["SERVER"][guild_id][key] = value
+                self.data[ident]["GUILD"][guild_id][key] = value
             except KeyError:
-                self.data[ident]["SERVER"][guild_id] = {}
-                self.data[ident]["SERVER"][guild_id][key] = value
+                self.data[ident]["GUILD"][guild_id] = {}
+                self.data[ident]["GUILD"][guild_id][key] = value
         await dataIO._threadsafe_save_json(self.data_path, self.data)
 
     async def set_channel(self, cog_name, ident, channel_id, key, value, clear=False):
