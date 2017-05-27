@@ -16,8 +16,6 @@ class Red(commands.Bot):
             prefix=[],
             packages=[],
             coowners=[],
-            admin_role=None,
-            mod_role=None,
             whitelist=[],
             blacklist=[]
         )
@@ -25,7 +23,9 @@ class Red(commands.Bot):
         self.db.register_guild(
             prefix=[],
             whitelist=[],
-            blacklist=[]
+            blacklist=[],
+            admin_role=None,
+            mod_role=None
         )
 
         def prefix_manager(bot, message):

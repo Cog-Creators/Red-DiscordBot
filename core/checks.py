@@ -23,8 +23,8 @@ def mod_or_permissions(**perms):
         if ctx.guild is None:
             return has_perms_or_is_owner
         author = ctx.author
-        mod_role = ctx.bot.db.get_mod_role(ctx.guild)
-        admin_role = ctx.bot.db.get_admin_role(ctx.guild)
+        mod_role = ctx.bot.db.guild(ctx.guild).mod_role()
+        admin_role = ctx.bot.db.guild(ctx.guild).admin_role()
         is_staff = mod_role in author.roles or admin_role in author.roles
         is_guild_owner = author == ctx.guild.owner
 
@@ -40,7 +40,7 @@ def admin_or_permissions(**perms):
             return has_perms_or_is_owner
         author = ctx.author
         is_guild_owner = author == ctx.guild.owner
-        admin_role = ctx.bot.db.get_admin_role(ctx.guild)
+        admin_role = ctx.bot.db.guild(ctx.guild).admin_role()
 
         return admin_role in author.roles or has_perms_or_is_owner or is_guild_owner
 
