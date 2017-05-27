@@ -93,17 +93,17 @@ def ctx(empty_member, empty_channel, red):
 
 
 #region Red Mock
-@pytest.fixture
-def red(monkeypatch, config_fr, event_loop):
+@pytest.fixture(scope="module")
+def red(monkeysession, config_fr):
     from core.cli import parse_cli_flags
     cli_flags = parse_cli_flags()
 
     description = "Red v3 - Alpha"
 
-    monkeypatch.setattr("core.config.Config.get_core_conf",
-                        lambda *args, **kwargs: config_fr)
+    monkeysession.setattr("core.config.Config.get_core_conf",
+                          lambda *args, **kwargs: config_fr)
 
-    red = Red(cli_flags, description=description, pm_help=None,
-              loop=event_loop)
+    red = Red(cli_flags, description=description, pm_help=None)
+
     return red
 #endregion
