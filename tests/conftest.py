@@ -87,7 +87,7 @@ def ctx(empty_member, empty_channel, red):
 #region Red Mock
 @pytest.fixture
 def red(monkeypatch, config_fr, event_loop):
-    from core.settings import parse_cli_flags
+    from core.cli import parse_cli_flags
     cli_flags = parse_cli_flags()
 
     description = "Red v3 - Alpha"
