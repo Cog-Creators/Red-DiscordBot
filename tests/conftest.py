@@ -78,7 +78,7 @@ def empty_message():
 
 @pytest.fixture(scope="module")
 def ctx(empty_member, empty_channel, red):
-    mock_ctx = namedtuple("Context", "author guild channel mess age bot")
+    mock_ctx = namedtuple("Context", "author guild channel message bot")
     return mock_ctx(empty_member, empty_member.guild, empty_channel,
                     empty_message, red)
 #endregion
