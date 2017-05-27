@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 import random
 
+from core.bot import Red
 from core.drivers import red_json
 from core import Config
 
@@ -80,4 +81,21 @@ def ctx(empty_member, empty_channel):
     mock_ctx = namedtuple("Context", "author guild channel message")
     return mock_ctx(empty_member, empty_member.guild, empty_channel,
                     empty_message)
+#endregion
+
+
+#region Red Mock
+@pytest.fixture(scope="module")
+def red(monkeypatch, config_fr, event_loop):
+    from core.settings import parse_cli_flags
+    cli_flags = parse_cli_flags()
+
+    description = "Red v3 - Alpha"
+
+    monkeypatch.setattr("core.config.Config.get_core_conf",
+                        lambda *args, **kwargs: config_fr)
+
+    red = Red(cli_flags, description=description, pm_help=None,
+              loop=event_loop)
+    return red
 #endregion
