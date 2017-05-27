@@ -116,6 +116,12 @@ async def test_set_global_badkey(config):
 
 
 @pytest.mark.asyncio
+async def test_set_global_invalidkey(config):
+    with pytest.raises(KeyError):
+        await config.set("uuid", True)
+
+
+@pytest.mark.asyncio
 async def test_set_guild(config, empty_guild):
     await config.guild(empty_guild).set("enabled", True)
     assert config.guild(empty_guild).enabled() is True
