@@ -89,11 +89,11 @@ if __name__ == '__main__':
                      "a user account, remember that the --not-bot flag "
                      "must be used. For self-bot functionalities instead, "
                      "--self-bot")
-        db_token = red.db.get_global("token")
+        db_token = red.db.token()
         if db_token and not cli_flags.no_prompt:
             print("\nDo you want to reset the token? (y/n)")
             if confirm("> "):
-                loop.run_until_complete(red.db.remove_global("token"))
+                loop.run_until_complete(red.db.set("token", ""))
                 print("Token has been reset.")
     except KeyboardInterrupt:
         log.info("Keyboard interrupt detected. Quitting...")
