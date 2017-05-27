@@ -32,7 +32,7 @@ def init_events(bot, cli_flags):
         if cli_flags.no_cogs is False:
             print("Loading packages...")
             failed = []
-            packages = bot.db.get_global("packages", [])
+            packages = bot.db.packages()
 
             for package in packages:
                 try:

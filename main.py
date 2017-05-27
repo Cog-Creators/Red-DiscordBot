@@ -65,8 +65,8 @@ if __name__ == '__main__':
     if cli_flags.dev:
         red.add_cog(Dev())
 
-    token = os.environ.get("RED_TOKEN", red.db.get_global("token", None))
-    prefix = cli_flags.prefix or red.db.get_global("prefix", [])
+    token = os.environ.get("RED_TOKEN", red.db.token())
+    prefix = cli_flags.prefix or red.db.prefix()
 
     if token is None or not prefix:
         if cli_flags.no_prompt is False:

@@ -1,6 +1,7 @@
 from discord.ext import commands
 from collections import Counter
-from core.settings import CoreDB
+
+from core import Config
 from enum import Enum
 import os
 
@@ -8,17 +9,33 @@ import os
 class Red(commands.Bot):
     def __init__(self, cli_flags, **kwargs):
         self._shutdown_mode = ExitCodes.CRITICAL
-        self.db = CoreDB("core/data/settings.json",
-                         relative_path=False)
+        self.db = Config.get_core_conf(force_registration=True)
+
+        self.db.register_global(
+            token=None,
+            prefix=[],
+            packages=[],
+            coowners=[],
+            admin_role=None,
+            mod_role=None,
+            whitelist=[],
+            blacklist=[]
+        )
+
+        self.db.register_guild(
+            prefix=[],
+            whitelist=[],
+            blacklist=[]
+        )
 
         def prefix_manager(bot, message):
             if not cli_flags.prefix:
-                global_prefix = self.db.get_global("prefix", [])
+                global_prefix = self.db.prefix()
             else:
                 global_prefix = cli_flags.prefix
             if message.guild is None:
                 return global_prefix
-            server_prefix = self.db.get(message.guild, "prefix", [])
+            server_prefix = self.db.guild(message.guild).prefix()
             return server_prefix if server_prefix else global_prefix
 
         if "command_prefix" not in kwargs:
@@ -30,7 +47,7 @@ class Red(commands.Bot):
 
     async def is_owner(self, user, allow_coowners=True):
         if allow_coowners:
-            if user.id in self.db.get_global("coowners", []):
+            if user.id in self.db.coowners():
                 return True
         return await super().is_owner(user)
 
@@ -65,7 +82,7 @@ class Red(commands.Bot):
         for package in self.extensions:
             if package.startswith("cogs."):
                 loaded.append(package)
-        await self.db.set_global("packages", loaded)
+        await self.db.set("packages", loaded)
 
 
 class ExitCodes(Enum):
