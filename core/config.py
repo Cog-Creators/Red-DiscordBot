@@ -47,9 +47,14 @@ class BaseConfig:
 
         self.curr_key = None
 
-        self.restricted_keys = ("cog_name", "cog_identifier", "_id",
+        self.unsettable_keys = ("cog_name", "cog_identifier", "_id",
                                 "guild_id", "channel_id", "role_id",
-                                "user_id")
+                                "user_id", "uuid")
+        self.invalid_keys = (
+            "driver_spawn",
+            "_driver", "collection",
+            "collection_uuid", "force_registration"
+        )
 
         self.defaults = defaults if defaults else {
             "GLOBAL": {}, "GUILD": {}, "CHANNEL": {}, "ROLE": {},
@@ -122,10 +127,10 @@ class BaseConfig:
     def __setattr__(self, key, value):
         if 'defaults' in self.__dict__:  # Necessary to let the cog load
             restricted = list(self.defaults[self.collection].keys()) + \
-                list(self.restricted_keys)
+                list(self.unsettable_keys)
             if key in restricted:
                 raise ValueError("Not allowed to dynamically set attributes of"
-                                 " restricted_keys: {}".format(restricted))
+                                 " unsettable_keys: {}".format(restricted))
             else:
                 self.__dict__[key] = value
         else:
@@ -185,7 +190,7 @@ class BaseConfig:
 
     def _register_global(self, key, default=None):
         """Registers a global config key `key`"""
-        if key in self.restricted_keys:
+        if key in self.unsettable_keys:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
         elif not key.isidentifier():
             raise RuntimeError("Invalid key name, must be a valid python variable"
@@ -211,7 +216,7 @@ class BaseConfig:
 
     def _register_guild(self, key, default=None):
         """Registers a guild config key `key`"""
-        if key in self.restricted_keys:
+        if key in self.unsettable_keys:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
         elif not key.isidentifier():
             raise RuntimeError("Invalid key name, must be a valid python variable"
@@ -237,7 +242,7 @@ class BaseConfig:
 
     def _register_channel(self, key, default=None):
         """Registers a channel config key `key`"""
-        if key in self.restricted_keys:
+        if key in self.unsettable_keys:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
         elif not key.isidentifier():
             raise RuntimeError("Invalid key name, must be a valid python variable"
@@ -263,7 +268,7 @@ class BaseConfig:
 
     def _register_role(self, key, default=None):
         """Registers a role config key `key`"""
-        if key in self.restricted_keys:
+        if key in self.unsettable_keys:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
         elif not key.isidentifier():
             raise RuntimeError("Invalid key name, must be a valid python variable"
@@ -289,7 +294,7 @@ class BaseConfig:
 
     def _register_member(self, key, default=None):
         """Registers a member config key `key`"""
-        if key in self.restricted_keys:
+        if key in self.unsettable_keys:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
         elif not key.isidentifier():
             raise RuntimeError("Invalid key name, must be a valid python variable"
@@ -315,7 +320,7 @@ class BaseConfig:
 
     def _register_user(self, key, default=None):
         """Registers a user config key `key`"""
-        if key in self.restricted_keys:
+        if key in self.unsettable_keys:
             raise KeyError("Attempt to use restricted key: '{}'".format(key))
         elif not key.isidentifier():
             raise RuntimeError("Invalid key name, must be a valid python variable"
@@ -448,6 +453,9 @@ class Config(BaseConfig):
         #   This code was commented to allow users to set keys without having to register them.
         #       That being said, if they try to get keys without registering them
         #       things will blow up. I do highly recommend enforcing the key registration.
+
+        if key in self.unsettable_keys or key in self.invalid_keys:
+            raise KeyError("Restricted key name, please use another.")
 
         if self.force_registration and key not in self.defaults[self.collection]:
             raise AttributeError("Key '{}' not registered!".format(key))
