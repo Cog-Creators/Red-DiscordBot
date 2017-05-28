@@ -19,7 +19,8 @@ class Streams:
         )
 
         self.db.register_guild(
-            settings={}
+            autodelete=False,
+            mention=""
         )
 
         self.streams = self.load_streams()
@@ -101,7 +102,6 @@ class Streams:
         streams = self.streams.copy()
         local_channel_ids = [c.id for c in ctx.guild.channels]
         to_remove = []
-        msg = ""
 
         for stream in streams:
             for channel_id in stream.channels:
@@ -120,11 +120,10 @@ class Streams:
         self.streams = streams
         await self.save_streams()
 
-        if _all:
-            msg = (" All stream notifications have been removed from the "
-                   "server")
+        msg = "All stream notifications have been removed from the "
+        msg += "server" if _all else "channel"
 
-        await ctx.send("Done." + msg)
+        await ctx.send(msg)
 
     async def stream_alert(self, ctx, _class, channel_name):
         stream = self.get_stream(_class, channel_name)
@@ -139,12 +138,13 @@ class Streams:
         await self.add_or_remove(ctx, stream)
 
     @commands.group()
-    @checks.is_owner()
+    @checks.mod()
     async def streamset(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.bot.send_cmd_help(ctx)
 
     @streamset.command()
+    @checks.is_owner()
     async def twitchtoken(self, ctx, token: str):
         tokens = self.db.tokens()
         tokens["TwitchStream"] = token
@@ -153,13 +153,14 @@ class Streams:
 
     @streamset.command()
     @commands.guild_only()
-    async def autodelete(self, ctx, on_off: bool):
-        settings = self.db.settings()
-        if str(ctx.guild.id) not in settings:
-            settings[str(ctx.guild.id)] = {}
-        settings[str(ctx.guild.id)]["autodelete"] = on_off
-        await self.db.set("settings", settings)
+    async def mention(self, ctx, mention_type: str):
+        ...
 
+    @streamset.command()
+    @commands.guild_only()
+    async def autodelete(self, ctx, on_off: bool):
+        """Toggles automatic deletion of notifications for streams that go offline"""
+        await self.db.guild(ctx.guild).set("autodelete", on_off)
         if on_off:
             await ctx.send("The notifications will be deleted once "
                            "streams go offline.")
@@ -186,7 +187,7 @@ class Streams:
         for stream in self.streams:
             # if isinstance(stream, _class) and stream.name == name:
             #    return stream
-            #  Reloading this cog causes an issue with this check ^
+            # Reloading this cog causes an issue with this check ^
             # isinstance will always return False
             # As a workaround, we'll compare the class' name instead.
             # Good enough.
@@ -217,7 +218,9 @@ class Streams:
             except OfflineStream:
                 for message in stream._messages_cache:
                     try:
-                        await message.delete()
+                        autodelete = self.db.guild(message.guild).autodelete()
+                        if autodelete:
+                            await message.delete()
                     except:
                         pass
                 stream._messages_cache.clear()
