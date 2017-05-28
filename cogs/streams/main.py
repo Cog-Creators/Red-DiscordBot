@@ -1,5 +1,6 @@
 from discord.ext import commands
 from core.config import Config
+from core import checks
 from .streams import TwitchStream, HitboxStream, BeamStream, PicartoStream
 from .errors import OfflineStream, StreamNotFound, APIError, InvalidCredentials
 from . import streams as StreamClasses
@@ -67,6 +68,7 @@ class Streams:
 
     @commands.group()
     @commands.guild_only()
+    @checks.mod()
     async def streamalert(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.bot.send_cmd_help(ctx)
@@ -92,11 +94,37 @@ class Streams:
         await self.stream_alert(ctx, PicartoStream, channel_name)
 
     @streamalert.command(name="stop")
-    async def streamalert_stop(self, ctx, all: bool):
+    async def streamalert_stop(self, ctx, _all: bool=False):
         """Stops all stream notifications in the channel
 
-        Adding 'yes' will stops all notifications in the server"""
-        await self.stream_alert(ctx, PicartoStream, channel_name)
+        Adding 'yes' will disable all notifications in the server"""
+        streams = self.streams.copy()
+        local_channel_ids = [c.id for c in ctx.guild.channels]
+        to_remove = []
+        msg = ""
+
+        for stream in streams:
+            for channel_id in stream.channels:
+                if channel_id == ctx.channel.id:
+                    stream.channels.remove(channel_id)
+                elif _all and ctx.channel.id in local_channel_ids:
+                    if channel_id in stream.channels:
+                        stream.channels.remove(channel_id)
+
+            if not stream.channels:
+                to_remove.append(stream)
+
+        for stream in to_remove:
+            streams.remove(stream)
+
+        self.streams = streams
+        await self.save_streams()
+
+        if _all:
+            msg = (" All stream notifications have been removed from the "
+                   "server")
+
+        await ctx.send("Done." + msg)
 
     async def stream_alert(self, ctx, _class, channel_name):
         stream = self.get_stream(_class, channel_name)
@@ -104,12 +132,14 @@ class Streams:
             token = self.db.tokens().get(_class.__name__)
             stream = _class(name=channel_name,
                             token=token)
-        if await self.check_exists(stream):
-            await self.add_or_remove(ctx, stream)
-        else:
-            await ctx.send("That channel doesn't seem to exist.")
+            if not await self.check_exists(stream):
+                await ctx.send("That channel doesn't seem to exist.")
+                return
+
+        await self.add_or_remove(ctx, stream)
 
     @commands.group()
+    @checks.is_owner()
     async def streamset(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.bot.send_cmd_help(ctx)
@@ -149,11 +179,18 @@ class Streams:
                 self.streams.remove(stream)
             await ctx.send("I won't send notifications about {} in this "
                            "channel anymore.".format(stream.name))
+
         await self.save_streams()
 
     def get_stream(self, _class, name):
         for stream in self.streams:
-            if isinstance(stream, _class) and stream.name == name:
+            # if isinstance(stream, _class) and stream.name == name:
+            #    return stream
+            #  Reloading this cog causes an issue with this check ^
+            # isinstance will always return False
+            # As a workaround, we'll compare the class' name instead.
+            # Good enough.
+            if stream.type == _class.__name__ and stream.name == name:
                 return stream
 
     async def check_exists(self, stream):
