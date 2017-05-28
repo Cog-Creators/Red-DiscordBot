@@ -7,7 +7,7 @@ from uuid import uuid4
 
 # This is basically our old DataIO, except that it's now threadsafe
 # and just a base for much more elaborate classes
-
+from pathlib import Path
 
 log = logging.getLogger("red")
 
@@ -17,25 +17,33 @@ MINIFIED = {"sort_keys": True, "separators": (',', ':')}
 
 class JsonIO:
     """Basic functions for atomic saving / loading of json files"""
-    _lock = asyncio.Lock()
+    def __init__(self, path: Path=Path.cwd()):
+        """
+        :param path: Full path to file.
+        """
+        self._lock = asyncio.Lock()
+        self.path = path
 
-    def _save_json(self, path, data, settings=PRETTY):
-        log.debug("Saving file {}".format(path))
-        filename, _ = os.path.splitext(path)
+    # noinspection PyUnresolvedReferences
+    def _save_json(self, data, settings=PRETTY):
+        log.debug("Saving file {}".format(self.path))
+        filename = self.path.stem
         tmp_file = "{}-{}.tmp".format(filename, uuid4().fields[0])
-        with open(tmp_file, encoding="utf-8", mode="w") as f:
+        tmp_path = self.path.parent / tmp_file
+        with tmp_path.open(encoding="utf-8", mode="w") as f:
             json.dump(data, f, **settings)
-        os.replace(tmp_file, path)
+        tmp_path.replace(self.path)
 
-    async def _threadsafe_save_json(self, path, data, settings=PRETTY):
+    async def _threadsafe_save_json(self, data, settings=PRETTY):
         loop = asyncio.get_event_loop()
-        func = functools.partial(self._save_json, path, data, settings)
+        func = functools.partial(self._save_json, data, settings)
         with await self._lock:
             await loop.run_in_executor(None, func)
 
-    def _load_json(self, path):
-        log.debug("Reading file {}".format(path))
-        with open(path, encoding='utf-8', mode="r") as f:
+    # noinspection PyUnresolvedReferences
+    def _load_json(self):
+        log.debug("Reading file {}".format(self.path))
+        with self.path.open(encoding='utf-8', mode="r") as f:
             data = json.load(f)
         return data
 
