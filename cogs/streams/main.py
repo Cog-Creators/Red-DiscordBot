@@ -1,5 +1,5 @@
 from discord.ext import commands
-from core.utils.helpers import JsonDB
+from core.config import Config
 from .streams import TwitchStream, HitboxStream, BeamStream, PicartoStream
 from .errors import OfflineStream, StreamNotFound, APIError, InvalidCredentials
 from . import streams as StreamClasses
@@ -10,7 +10,17 @@ CHECK_DELAY = 60
 
 class Streams:
     def __init__(self, bot):
-        self.db = JsonDB("data/streams.json")
+        self.db = Config.get_conf(self, 26262626, force_registration=True)
+
+        self.db.register_global(
+            tokens={},
+            streams=[]
+        )
+
+        self.db.register_guild(
+            settings={}
+        )
+
         self.streams = self.load_streams()
         self.task = bot.loop.create_task(self._stream_alerts())
         self.bot = bot
@@ -18,7 +28,7 @@ class Streams:
     @commands.command()
     async def twitch(self, ctx, channel_name: str):
         """Checks if a Twitch channel is streaming"""
-        token = self.db.get("tokens", {}).get(TwitchStream.__name__)
+        token = self.db.tokens().get(TwitchStream.__name__)
         stream = TwitchStream(name=channel_name,
                               token=token)
         await self.check_online(ctx, stream)
@@ -58,7 +68,7 @@ class Streams:
     @commands.group()
     @commands.guild_only()
     async def streamalert(self, ctx):
-        if ctx.invoked_subcommands is None:
+        if ctx.invoked_subcommand is None:
             await ctx.bot.send_cmd_help(ctx)
 
     @streamalert.command(name="twitch")
@@ -91,7 +101,7 @@ class Streams:
     async def stream_alert(self, ctx, _class, channel_name):
         stream = self.get_stream(_class, channel_name)
         if not stream:
-            token = self.db.get("tokens", {}).get(_class.__name__)
+            token = self.db.tokens().get(_class.__name__)
             stream = _class(name=channel_name,
                             token=token)
         if await self.check_exists(stream):
@@ -101,12 +111,12 @@ class Streams:
 
     @commands.group()
     async def streamset(self, ctx):
-        if ctx.invoked_subcommands is None:
+        if ctx.invoked_subcommand is None:
             await ctx.bot.send_cmd_help(ctx)
 
     @streamset.command()
     async def twitchtoken(self, ctx, token: str):
-        tokens = self.db.get("tokens", {})
+        tokens = self.db.tokens()
         tokens["TwitchStream"] = token
         await self.db.set("tokens", tokens)
         await ctx.send("Twitch token set.")
@@ -114,7 +124,7 @@ class Streams:
     @streamset.command()
     @commands.guild_only()
     async def autodelete(self, ctx, on_off: bool):
-        settings = self.db.get("settings", {})
+        settings = self.db.settings()
         if str(ctx.guild.id) not in settings:
             settings[str(ctx.guild.id)] = {}
         settings[str(ctx.guild.id)]["autodelete"] = on_off
@@ -189,15 +199,14 @@ class Streams:
                         pass
 
     def load_streams(self):
-        raw_streams = self.db.get("streams")
         streams = []
 
-        for raw_stream in raw_streams:
+        for raw_stream in self.db.streams():
             _class = getattr(StreamClasses, raw_stream["type"], None)
             if not _class:
                 continue
 
-            token = self.db.get("tokens", {}).get(_class.__name__)
+            token = self.db.tokens().get(_class.__name__)
             streams.append(_class(token=token, **raw_stream))
 
         return streams

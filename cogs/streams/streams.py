@@ -50,7 +50,7 @@ class TwitchStream(Stream):
         session = aiohttp.ClientSession()
         url = TWITCH_STREAMS_ENDPOINT + self.id
         header = {
-            'Client-ID': self._token,
+            'Client-ID': str(self._token),
             'Accept': 'application/vnd.twitchtv.v5+json'
         }
 
@@ -74,7 +74,7 @@ class TwitchStream(Stream):
 
     async def fetch_id(self):
         header = {
-            'Client-ID': self._token,
+            'Client-ID': str(self._token),
             'Accept': 'application/vnd.twitchtv.v5+json'
         }
         url = TWITCH_ID_ENDPOINT + self.name
