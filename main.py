@@ -1,6 +1,7 @@
 from core.bot import Red, ExitCodes
 from core.global_checks import init_global_checks
 from core.events import init_events
+from core.sentry_setup import init_sentry_logging
 from core.cli import interactive_config, confirm, parse_cli_flags
 from core.core_commands import Core
 from core.dev_commands import Dev
@@ -59,6 +60,10 @@ if __name__ == '__main__':
     red = Red(cli_flags, description=description, pm_help=None)
     init_global_checks(red)
     init_events(red, cli_flags)
+
+    if red.db.enable_sentry():
+        init_sentry_logging()
+
     red.add_cog(Core())
 
     if cli_flags.dev:
