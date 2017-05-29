@@ -79,7 +79,7 @@ if __name__ == '__main__':
             log.critical("Token and prefix must be set in order to login.")
             sys.exit(1)
 
-    if red.db.sentry_decided() is False:
+    if red.db.enable_sentry() is None:
         ask_sentry(red)
 
     if red.db.enable_sentry():

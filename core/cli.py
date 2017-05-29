@@ -58,9 +58,8 @@ def ask_sentry(red: Red):
     if resp.lower() in ("off", ):
         loop.run_until_complete(red.db.set("enable_sentry", False))
     else:
+        loop.run_until_complete(red.db.set("enable_sentry", True))
         print("\nThank you for helping us with the development process!")
-
-    loop.run_until_complete(red.db.set("sentry_decided", True))
 
 
 def parse_cli_flags():

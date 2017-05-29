@@ -18,8 +18,7 @@ class Red(commands.Bot):
             coowners=[],
             whitelist=[],
             blacklist=[],
-            enable_sentry=True,
-            sentry_decided=False
+            enable_sentry=None
         )
 
         self.db.register_guild(
