@@ -52,8 +52,8 @@ def ask_sentry(red: Red):
           " is not suited for production use and is aimed at testing\n"
           " the current and upcoming featureset, that's why we will\n"
           " also collect the fatal error logs to help us fix any new\n"
-          " found issues in a timely manner. If you wish to opt out\n"
-          " of the process please type \"off\":\n")
+          " found issues in a timely manner. If you wish to opt in\n"
+          " the process please type \"yes\":\n")
     if not confirm("> "):
         loop.run_until_complete(red.db.set("enable_sentry", False))
     else:
