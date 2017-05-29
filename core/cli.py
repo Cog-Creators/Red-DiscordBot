@@ -60,6 +60,8 @@ def ask_sentry(red: Red):
     else:
         print("\nThank you for helping us with the development process!")
 
+    loop.run_until_complete(red.db.set("sentry_decided", True))
+
 
 def parse_cli_flags():
     parser = argparse.ArgumentParser(description="Red - Discord Bot")

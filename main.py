@@ -2,7 +2,7 @@ from core.bot import Red, ExitCodes
 from core.global_checks import init_global_checks
 from core.events import init_events
 from core.sentry_setup import init_sentry_logging
-from core.cli import interactive_config, confirm, parse_cli_flags
+from core.cli import interactive_config, confirm, parse_cli_flags, ask_sentry
 from core.core_commands import Core
 from core.dev_commands import Dev
 import asyncio
@@ -61,9 +61,6 @@ if __name__ == '__main__':
     init_global_checks(red)
     init_events(red, cli_flags)
 
-    if red.db.enable_sentry():
-        init_sentry_logging()
-
     red.add_cog(Core())
 
     if cli_flags.dev:
@@ -81,6 +78,12 @@ if __name__ == '__main__':
         else:
             log.critical("Token and prefix must be set in order to login.")
             sys.exit(1)
+
+    if red.db.sentry_decided() is False:
+        ask_sentry(red)
+
+    if red.db.enable_sentry():
+        init_sentry_logging()
 
     loop = asyncio.get_event_loop()
     cleanup_tasks = True
