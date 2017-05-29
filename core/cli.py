@@ -54,8 +54,7 @@ def ask_sentry(red: Red):
           " also collect the fatal error logs to help us fix any new\n"
           " found issues in a timely manner. If you wish to opt out\n"
           " of the process please type \"off\":\n")
-    resp = input("> ")
-    if resp.lower() in ("off", ):
+    if not confirm("> "):
         loop.run_until_complete(red.db.set("enable_sentry", False))
     else:
         loop.run_until_complete(red.db.set("enable_sentry", True))
