@@ -11,3 +11,18 @@ class InvalidRepoName(DownloaderException):
         the message for a more detailed reason.
     """
     pass
+
+
+class ExistingGitRepo(DownloaderException):
+    """
+    Thrown when trying to clone into a folder where a
+        git repo already exists.
+    """
+    pass
+
+
+class CloningError(DownloaderException):
+    """
+    Thrown when git clone returns a non zero exit code.
+    """
+    pass

@@ -1,26 +1,71 @@
 import os
 from pathlib import Path
-from typing import MutableMapping
+from typing import MutableMapping, List
 from subprocess import run as sp_run
+import importlib.util
 
 from core import Config
-from .errors import InvalidRepoName
+from .errors import InvalidRepoName, ExistingGitRepo, CloningError
 
 
 class Repo:
     GIT_CLONE = "git clone -b {branch} {url} {folder}"
 
-    def __init__(self, name: str, url: str, branch: str, file_path: Path):
+    def __init__(self, name: str, url: str, branch: str, folder_path: Path,
+                 available_modules: List[str]=()):
         self.url = url
         self.branch = branch
 
         self.name = name
 
-        self.file_path = file_path
-        self.file_path.mkdir(parents=True, exist_ok=True)
+        self.folder_path = folder_path
+        self.folder_path.mkdir(parents=True, exist_ok=True)
 
-    async def clone(self):
-        raise NotImplementedError()
+        self.available_modules = available_modules
+
+    def _existing_git_repo(self) -> (bool, Path):
+        git_path = self.folder_path / '.git'
+        return git_path.exists(), git_path
+
+    def _update_available_modules(self) -> List[str]:
+        """
+        Updates the available modules attribute for this repo.
+        :return: List of available modules.
+        """
+        curr_modules = []
+        for name in self.folder_path.iterdir():
+            if name.is_dir():
+                spec = importlib.util.spec_from_file_location(
+                    name, location=str(self.folder_path / name)
+                )
+                if spec is not None:
+                    curr_modules.append(name)
+        self.available_modules = curr_modules
+        return self.available_modules
+
+    async def clone(self) -> List[str]:
+        """
+        Clones a new repo.
+        :return: List of available modules from this repo.
+        """
+        exists, path = self._existing_git_repo()
+        if exists:
+            raise ExistingGitRepo(
+                "A git repo already exists at path: {}".format(path)
+            )
+
+        p = self._run(
+            self.GIT_CLONE.format(
+                branch=self.branch,
+                url=self.url,
+                folder=self.folder_path
+            )
+        )
+
+        if p.returncode() != 0:
+            raise CloningError("Error when running git clone.")
+
+        return self._update_available_modules()
 
     async def update(self):
         raise NotImplementedError()
@@ -36,13 +81,15 @@ class Repo:
             "url": self.url,
             "name": self.name,
             "branch": self.branch,
-            "file_path": self.file_path
+            "folder_path": self.folder_path,
+            "available_modules": self.available_modules
         }
 
     @classmethod
     def from_json(cls, data):
         return Repo(data['name'], data['url'], data['branch'],
-                    Path(data['file_path']))
+                    Path(data['folder_path']),
+                    data['available_modules'])
 
 
 class RepoManager:
@@ -71,7 +118,7 @@ class RepoManager:
 
         # noinspection PyTypeChecker
         r = Repo(url=url, name=name, branch=branch,
-                 file_path=self.repos_folder / name)
+                 folder_path=self.repos_folder / name)
 
         r.clone()
 
