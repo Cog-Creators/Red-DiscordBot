@@ -5,6 +5,12 @@ class DownloaderException(Exception):
     pass
 
 
+class GitException(DownloaderException):
+    """
+    Generic class for git exceptions.
+    """
+
+
 class InvalidRepoName(DownloaderException):
     """
     Throw when a repo name is invalid. Check
@@ -21,8 +27,24 @@ class ExistingGitRepo(DownloaderException):
     pass
 
 
-class CloningError(DownloaderException):
+class MissingGitRepo(DownloaderException):
+    """
+    Thrown when a git repo is expected to exist but
+        does not.
+    """
+    pass
+
+
+class CloningError(GitException):
     """
     Thrown when git clone returns a non zero exit code.
+    """
+    pass
+
+
+class CurrentHashError(GitException):
+    """
+    Thrown when git returns a non zero exit code attempting
+        to determine the current commit hash.
     """
     pass

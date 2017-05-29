@@ -1,18 +1,25 @@
+import asyncio
 import os
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-from typing import MutableMapping, List
-from subprocess import run as sp_run
+from typing import List
+from subprocess import run as sp_run, PIPE
 import importlib.util
 
+import functools
+
 from core import Config
-from .errors import InvalidRepoName, ExistingGitRepo, CloningError
+from .errors import *
 
 
 class Repo:
     GIT_CLONE = "git clone -b {branch} {url} {folder}"
+    GIT_CURRENT_BRANCH = "git -C {path} rev-parse --abbrev-ref HEAD"
+    GIT_LATEST_COMMIT = "git -C {path} rev-parse {branch}"
+    GIT_HARD_RESET = "git -C {path} reset --hard origin/{branch} -q"
 
     def __init__(self, name: str, url: str, branch: str, folder_path: Path,
-                 available_modules: List[str]=()):
+                 available_modules: List[str]=(), loop: asyncio.AbstractEventLoop=None):
         self.url = url
         self.branch = branch
 
@@ -22,6 +29,12 @@ class Repo:
         self.folder_path.mkdir(parents=True, exist_ok=True)
 
         self.available_modules = available_modules
+
+        self._executor = ThreadPoolExecutor(4)
+
+        self._loop = loop
+        if self._loop is None:
+            self._loop = asyncio.get_event_loop()
 
     def _existing_git_repo(self) -> (bool, Path):
         git_path = self.folder_path / '.git'
@@ -54,27 +67,83 @@ class Repo:
                 "A git repo already exists at path: {}".format(path)
             )
 
-        p = self._run(
+        p = await self._run(
             self.GIT_CLONE.format(
                 branch=self.branch,
                 url=self.url,
                 folder=self.folder_path
-            )
+            ).split()
         )
 
-        if p.returncode() != 0:
+        if p.returncode != 0:
             raise CloningError("Error when running git clone.")
 
         return self._update_available_modules()
 
+    async def current_branch(self) -> str:
+        """
+        Determines the current branch using git commands.
+        :return: Current branch name
+        """
+        exists, _ = self._existing_git_repo()
+        if not exists:
+            raise MissingGitRepo(
+                "A git repo does not exist at path: {}".format(self.folder_path)
+            )
+
+        p = await self._run(
+            self.GIT_CURRENT_BRANCH.format(
+                path=self.folder_path
+            ).split()
+        )
+
+        if p.returncode != 0:
+            raise GitException("Could not determine current branch"
+                               " at path: {}".format(self.folder_path))
+
+        return p.stdout.decode().strip()
+
+    async def current_commit(self) -> str:
+        """
+        Determines the current commit hash of the repo.
+        :return: Commit hash string
+        """
+        exists, _ = self._existing_git_repo()
+        if not exists:
+            raise MissingGitRepo(
+                "A git repo does not exist at path: {}".format(self.folder_path)
+            )
+
+        p = await self._run(
+            self.GIT_LATEST_COMMIT.format(
+                path=self.folder_path,
+                branch=self.branch
+            ).split()
+        )
+
+        if p.returncode != 0:
+            raise CurrentHashError("Unable to determine old commit hash.")
+
+        return p.stdout.decode().strip()
+
+    async def hard_reset(self):
+        """
+        Performs a hard reset on the current repo.
+        :return:
+        """
+        raise NotImplementedError()
+
     async def update(self):
         raise NotImplementedError()
 
-    def _run(*args, **kwargs):
+    async def _run(self, *args, **kwargs):
         env = os.environ.copy()
         env['GIT_TERMINAL_PROMPT'] = '0'
         kwargs['env'] = env
-        return sp_run(*args, **kwargs)
+        return await self._loop.run_in_executor(
+            self._executor,
+            functools.partial(sp_run, *args, stdout=PIPE, **kwargs)
+        )
 
     def to_json(self):
         return {
