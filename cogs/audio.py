@@ -694,8 +694,13 @@ class Audio:
         return Playlist(**kwargs)
 
     def _local_playlist_songlist(self, name):
+        from pathlib import PurePath
         dirpath = os.path.join(self.local_playlist_path, name)
-        return sorted(os.listdir(dirpath))
+        return [
+            str(PurePath(os.path.join(root, file)).relative_to(dirpath))
+            for root, _, files in os.walk(dirpath)
+            for file in sorted(files)
+        ]
 
     def _find_local_song(self, filename):
         filename = filename.lower()
