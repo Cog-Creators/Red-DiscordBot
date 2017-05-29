@@ -96,9 +96,9 @@ class RepoManager:
     def __init__(self, downloader_config: Config):
         self.downloader_config = downloader_config
 
-        self.repos_folder = Path(self.__file__).parent / 'repos'
+        self.repos_folder = Path(__file__).parent / 'repos'
 
-        self.repos = MutableMapping[str, Repo]
+        self.repos = {}  # str_name: Repo
 
     def does_repo_exist(self, name: str) -> bool:
         return name in self.repos
@@ -110,7 +110,7 @@ class RepoManager:
 
     async def add_repo(self, url: str, name: str, branch: str="master") -> Repo:
         name = self.normalize_repo_name(name)
-        if name in self.repos:
+        if name in self.repos.keys():
             raise InvalidRepoName(
                 "That repo name you provided already exists."
                 " Please choose another."
@@ -120,6 +120,6 @@ class RepoManager:
         r = Repo(url=url, name=name, branch=branch,
                  folder_path=self.repos_folder / name)
 
-        r.clone()
+        await r.clone()
 
         return r
