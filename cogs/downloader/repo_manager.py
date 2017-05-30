@@ -231,10 +231,9 @@ class Repo:
                                  " execute a hard reset on the repo at"
                                  " the following path: {}".format(self.folder_path))
 
-    async def update(self) -> (Tuple[str], str, str):
+    async def update(self) -> (str, str):
         """
         Updates the current branch of this repo.
-        :return: List of available modules after update
         :return: Old commit hash
         :return: New commit hash
         """
@@ -255,7 +254,9 @@ class Repo:
 
         new_commit = await self.current_commit(branch=curr_branch)
 
-        return self._update_available_modules(), old_commit, new_commit
+        self._update_available_modules()
+
+        return old_commit, new_commit
 
     def to_json(self):
         return {
@@ -279,7 +280,7 @@ class RepoManager:
 
         self.repos_folder = Path(__file__).parent / 'repos'
 
-        self.repos = {}  # str_name: Repo
+        self.repos = self.downloader_config.repos()  # str_name: Repo
 
     def does_repo_exist(self, name: str) -> bool:
         return name in self.repos
@@ -300,7 +301,29 @@ class RepoManager:
         # noinspection PyTypeChecker
         r = Repo(url=url, name=name, branch=branch,
                  folder_path=self.repos_folder / name)
-
         await r.clone()
 
+        self.repos[name] = r
+        await self._save_repos()
+
         return r
+
+    async def get_repo(self, name: str):
+        """
+        Returns a repo object with the given name.
+        :param name: Repo name
+        :return: Repo object or None
+        """
+        return self.repos.get(name, None)
+
+    async def update_all_repos(self) -> MutableMapping[Repo, Tuple[str, str]]:
+        ret = {}
+        for _, repo in self.repos.items():
+            ret[repo] = await repo.update()
+
+        await self._save_repos()
+        return ret
+
+    async def _save_repos(self):
+        repo_json_info = {name: r.to_json() for name, r in self.repos}
+        await self.downloader_config.set("repos", repo_json_info)
