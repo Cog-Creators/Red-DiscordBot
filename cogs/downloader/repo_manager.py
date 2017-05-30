@@ -2,7 +2,7 @@ import asyncio
 import os
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-from typing import List
+from typing import Tuple, MutableMapping
 from subprocess import run as sp_run, PIPE
 import importlib.util
 
@@ -17,9 +17,14 @@ class Repo:
     GIT_CURRENT_BRANCH = "git -C {path} rev-parse --abbrev-ref HEAD"
     GIT_LATEST_COMMIT = "git -C {path} rev-parse {branch}"
     GIT_HARD_RESET = "git -C {path} reset --hard origin/{branch} -q"
+    GIT_PULL = "git -C {path} pull -q --ff-only"
+    GIT_DIFF_FILE_STATUS = ("git -C {path} diff --no-commit-id --name-status"
+                            " {old_hash} {new_hash}")
+    GIT_LOG = ("git -C {path} log --relative-date --reverse {old_hash}.."
+               " {relative_file_path}")
 
     def __init__(self, name: str, url: str, branch: str, folder_path: Path,
-                 available_modules: List[str]=(), loop: asyncio.AbstractEventLoop=None):
+                 available_modules: Tuple[str]=(), loop: asyncio.AbstractEventLoop=None):
         self.url = url
         self.branch = branch
 
@@ -30,7 +35,9 @@ class Repo:
 
         self.available_modules = available_modules
 
-        self._executor = ThreadPoolExecutor(4)
+        self._executor = ThreadPoolExecutor(1)
+
+        self._repo_lock = asyncio.Lock()
 
         self._loop = loop
         if self._loop is None:
@@ -40,7 +47,62 @@ class Repo:
         git_path = self.folder_path / '.git'
         return git_path.exists(), git_path
 
-    def _update_available_modules(self) -> List[str]:
+    async def _get_file_update_statuses(
+            self, old_hash: str, new_hash: str) -> MutableMapping[str, str]:
+        """
+        Gets the file update status letters for each changed file between
+            the two hashes.
+        :param old_hash: Pre-update
+        :param new_hash: Post-update
+        :return: Mapping of filename -> status_letter
+        """
+        p = await self._run(
+            self.GIT_DIFF_FILE_STATUS.format(
+                path=self.folder_path,
+                old_hash=old_hash,
+                new_hash=new_hash
+            )
+        )
+
+        if p.returncode != 0:
+            raise GitDiffError("Git diff failed for repo at path:"
+                               " {}".format(self.folder_path))
+
+        stdout = p.stdout.strip().decode().split('\n')
+
+        ret = {}
+
+        for filename in stdout:
+            # TODO: filter these filenames by ones in self.available_modules
+            status, _, filepath = filename.partition('\t')
+            ret[filepath] = status
+
+        return ret
+
+    async def _get_commit_notes(self, old_commit_hash: str,
+                                relative_file_path: str) -> str:
+        """
+        Gets the commit notes from git log.
+        :param old_commit_hash: Point in time to start getting messages
+        :param file_relative_path: Path relative to the repo folder of the file
+            to get messages for.
+        :return: Git commit note log
+        """
+        p = await self._run(
+            self.GIT_LOG.format(
+                path=self.folder_path,
+                old_hash=old_commit_hash,
+                relative_file_path=relative_file_path
+            )
+        )
+
+        if p.returncode != 0:
+            raise GitException("An exception occurred while executing git log on"
+                               " this repo: {}".format(self.folder_path))
+
+        return p.stdout.decode().strip()
+
+    def _update_available_modules(self) -> Tuple[str]:
         """
         Updates the available modules attribute for this repo.
         :return: List of available modules.
@@ -54,9 +116,21 @@ class Repo:
                 if spec is not None:
                     curr_modules.append(name)
         self.available_modules = curr_modules
-        return self.available_modules
 
-    async def clone(self) -> List[str]:
+        # noinspection PyTypeChecker
+        return tuple(self.available_modules)
+
+    async def _run(self, *args, **kwargs):
+        env = os.environ.copy()
+        env['GIT_TERMINAL_PROMPT'] = '0'
+        kwargs['env'] = env
+        async with self._repo_lock:
+            return await self._loop.run_in_executor(
+                self._executor,
+                functools.partial(sp_run, *args, stdout=PIPE, **kwargs)
+            )
+
+    async def clone(self) -> Tuple[str]:
         """
         Clones a new repo.
         :return: List of available modules from this repo.
@@ -103,11 +177,15 @@ class Repo:
 
         return p.stdout.decode().strip()
 
-    async def current_commit(self) -> str:
+    async def current_commit(self, branch: str=None) -> str:
         """
         Determines the current commit hash of the repo.
+        :param branch: Override for repo's branch attribute
         :return: Commit hash string
         """
+        if branch is None:
+            branch = self.branch
+
         exists, _ = self._existing_git_repo()
         if not exists:
             raise MissingGitRepo(
@@ -117,7 +195,7 @@ class Repo:
         p = await self._run(
             self.GIT_LATEST_COMMIT.format(
                 path=self.folder_path,
-                branch=self.branch
+                branch=branch
             ).split()
         )
 
@@ -126,24 +204,58 @@ class Repo:
 
         return p.stdout.decode().strip()
 
-    async def hard_reset(self):
+    async def hard_reset(self, branch: str=None) -> None:
         """
         Performs a hard reset on the current repo.
+        :param branch: Override for repo branch attribute.
         :return:
         """
-        raise NotImplementedError()
+        if branch is None:
+            branch = self.branch
 
-    async def update(self):
-        raise NotImplementedError()
+        exists, _ = self._existing_git_repo()
+        if not exists:
+            raise MissingGitRepo(
+                "A git repo does not exist at path: {}".format(self.folder_path)
+            )
 
-    async def _run(self, *args, **kwargs):
-        env = os.environ.copy()
-        env['GIT_TERMINAL_PROMPT'] = '0'
-        kwargs['env'] = env
-        return await self._loop.run_in_executor(
-            self._executor,
-            functools.partial(sp_run, *args, stdout=PIPE, **kwargs)
+        p = await self._run(
+            self.GIT_HARD_RESET.format(
+                path=self.folder_path,
+                branch=branch
+            ).split()
         )
+
+        if p.returncode != 0:
+            raise HardResetError("Some error occurred when trying to"
+                                 " execute a hard reset on the repo at"
+                                 " the following path: {}".format(self.folder_path))
+
+    async def update(self) -> (Tuple[str], str, str):
+        """
+        Updates the current branch of this repo.
+        :return: List of available modules after update
+        :return: Old commit hash
+        :return: New commit hash
+        """
+        curr_branch = await self.current_branch()
+        old_commit = await self.current_commit(branch=curr_branch)
+
+        await self.hard_reset(branch=curr_branch)
+
+        p = await self._run(
+            self.GIT_PULL.format(
+                path=self.folder_path
+            )
+        )
+
+        if p.returncode != 0:
+            raise UpdateError("Git pull returned a non zero exit code"
+                              " for the repo located at path: {}".format(self.folder_path))
+
+        new_commit = await self.current_commit(branch=curr_branch)
+
+        return self._update_available_modules(), old_commit, new_commit
 
     def to_json(self):
         return {
@@ -179,7 +291,7 @@ class RepoManager:
 
     async def add_repo(self, url: str, name: str, branch: str="master") -> Repo:
         name = self.normalize_repo_name(name)
-        if name in self.repos.keys():
+        if self.does_repo_exist(name):
             raise InvalidRepoName(
                 "That repo name you provided already exists."
                 " Please choose another."

@@ -48,3 +48,25 @@ class CurrentHashError(GitException):
         to determine the current commit hash.
     """
     pass
+
+
+class HardResetError(GitException):
+    """
+    Thrown when there is an issue trying to execute a hard reset
+        (usually prior to a repo update).
+    """
+    pass
+
+
+class UpdateError(GitException):
+    """
+    Thrown when git pull returns a non zero error code.
+    """
+    pass
+
+
+class GitDiffError(GitException):
+    """
+    Thrown when a git diff fails.
+    """
+    pass
