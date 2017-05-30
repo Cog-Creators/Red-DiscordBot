@@ -280,7 +280,7 @@ class RepoManager:
 
         self.repos_folder = Path(__file__).parent / 'repos'
 
-        self.repos = self.downloader_config.repos()  # str_name: Repo
+        self.repos = self._load_repos()  # str_name: Repo
 
     def does_repo_exist(self, name: str) -> bool:
         return name in self.repos
@@ -323,6 +323,12 @@ class RepoManager:
 
         await self._save_repos()
         return ret
+
+    def _load_repos(self) -> MutableMapping[str, Repo]:
+        return {
+            name: Repo.from_json(data) for name, data in
+            self.downloader_config.repos().items()
+        }
 
     async def _save_repos(self):
         repo_json_info = {name: r.to_json() for name, r in self.repos}
