@@ -263,7 +263,7 @@ class Repo:
             "url": self.url,
             "name": self.name,
             "branch": self.branch,
-            "folder_path": self.folder_path,
+            "folder_path": str(self.folder_path),
             "available_modules": self.available_modules
         }
 
@@ -331,5 +331,5 @@ class RepoManager:
         }
 
     async def _save_repos(self):
-        repo_json_info = {name: r.to_json() for name, r in self.repos}
+        repo_json_info = {name: r.to_json() for name, r in self.repos.items()}
         await self.downloader_config.set("repos", repo_json_info)
