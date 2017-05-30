@@ -1,9 +1,12 @@
 from discord.ext import commands
-
 from core import Config
 from core.bot import Red
 
 from .repo_manager import RepoManager
+
+import logging
+
+log = logging.getLogger("red.downloader")
 
 
 class Downloader:

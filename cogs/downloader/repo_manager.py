@@ -12,17 +12,6 @@ from core import Config
 from .errors import *
 
 
-class Installable:
-    """
-    Base class for anything the Downloader cog can install.
-        - Modules
-        - Repo Libraries
-        - Other stuff?
-    """
-    def __init__(self):
-        raise NotImplementedError()
-
-
 class Repo:
     GIT_CLONE = "git clone -b {branch} {url} {folder}"
     GIT_CURRENT_BRANCH = "git -C {path} rev-parse --abbrev-ref HEAD"
