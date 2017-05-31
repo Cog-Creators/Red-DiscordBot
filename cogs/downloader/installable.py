@@ -5,7 +5,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Tuple, Union, MutableMapping, Any
 
-from .downloader import log
+from .log import log
 
 
 class InstallableType(Enum):
