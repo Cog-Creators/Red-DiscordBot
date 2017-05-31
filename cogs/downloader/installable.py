@@ -175,3 +175,13 @@ class Installable:
             self.type = InstallableType.UNKNOWN
 
         return info
+
+    def to_json(self):
+        return {
+            "info_file_path": str(self.__info_file)
+        }
+
+    @classmethod
+    def from_json(cls, data: dict):
+        info_file_path = Path(data["info_file_path"])
+        return cls(location=info_file_path)
