@@ -170,6 +170,7 @@ class Installable:
             self.type = InstallableType.COG
         elif installable_type == "SHARED_LIBRARY":
             self.type = InstallableType.SHARED_LIBRARY
+            self.hidden = True
         else:
             self.type = InstallableType.UNKNOWN
 
