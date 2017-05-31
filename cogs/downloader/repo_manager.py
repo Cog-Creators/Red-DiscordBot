@@ -10,6 +10,7 @@ import functools
 
 from core import Config
 from .errors import *
+from .installable import Installable, InstallableType
 
 
 class Repo:
@@ -24,7 +25,7 @@ class Repo:
                " {relative_file_path}")
 
     def __init__(self, name: str, url: str, branch: str, folder_path: Path,
-                 available_modules: Tuple[str]=(), loop: asyncio.AbstractEventLoop=None):
+                 available_modules: Tuple[Installable]=(), loop: asyncio.AbstractEventLoop=None):
         self.url = url
         self.branch = branch
 
@@ -258,20 +259,44 @@ class Repo:
 
         return old_commit, new_commit
 
+    @property
+    def available_cogs(self) -> Tuple[Installable]:
+        """
+        Returns a list of available cogs (not shared libraries and not hidden).
+        :return: tuple(installable)
+        """
+        # noinspection PyTypeChecker
+        return tuple(
+            [m for m in self.available_modules
+             if m.type == InstallableType.COG and not m.hidden]
+        )
+
+    @property
+    def available_libraries(self) -> Tuple[Installable]:
+        """
+        Returns a list of available shared libraries in this repo.
+        """
+        # noinspection PyTypeChecker
+        return tuple(
+            [m for m in self.available_modules
+             if m.type == InstallableType.SHARED_LIBRARY]
+        )
+
     def to_json(self):
         return {
             "url": self.url,
             "name": self.name,
             "branch": self.branch,
             "folder_path": str(self.folder_path),
-            "available_modules": self.available_modules
+            "available_modules": [m.to_json() for m in self.available_modules]
         }
 
     @classmethod
     def from_json(cls, data):
+        # noinspection PyTypeChecker
         return Repo(data['name'], data['url'], data['branch'],
                     Path(data['folder_path']),
-                    data['available_modules'])
+                    [Installable.from_json(m) for m in data['available_modules']])
 
 
 class RepoManager:
