@@ -305,10 +305,10 @@ class RepoManager:
 
         self.repos_folder = Path(__file__).parent / 'repos'
 
-        self.repos = self._load_repos()  # str_name: Repo
+        self._repos = self._load_repos()  # str_name: Repo
 
     def does_repo_exist(self, name: str) -> bool:
-        return name in self.repos
+        return name in self._repos
 
     @staticmethod
     def normalize_repo_name(name: str) -> str:
@@ -316,6 +316,13 @@ class RepoManager:
         return ret.lower()
 
     async def add_repo(self, url: str, name: str, branch: str="master") -> Repo:
+        """
+        Adds a repo and clones it.
+        :param url:
+        :param name:
+        :param branch:
+        :return:
+        """
         name = self.normalize_repo_name(name)
         if self.does_repo_exist(name):
             raise InvalidRepoName(
@@ -328,7 +335,7 @@ class RepoManager:
                  folder_path=self.repos_folder / name)
         await r.clone()
 
-        self.repos[name] = r
+        self._repos[name] = r
         await self._save_repos()
 
         return r
@@ -339,11 +346,11 @@ class RepoManager:
         :param name: Repo name
         :return: Repo object or None
         """
-        return self.repos.get(name, None)
+        return self._repos.get(name, None)
 
     async def update_all_repos(self) -> MutableMapping[Repo, Tuple[str, str]]:
         ret = {}
-        for _, repo in self.repos.items():
+        for _, repo in self._repos.items():
             ret[repo] = await repo.update()
 
         await self._save_repos()
@@ -356,5 +363,5 @@ class RepoManager:
         }
 
     async def _save_repos(self):
-        repo_json_info = {name: r.to_json() for name, r in self.repos.items()}
+        repo_json_info = {name: r.to_json() for name, r in self._repos.items()}
         await self.downloader_config.set("repos", repo_json_info)
