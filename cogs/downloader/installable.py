@@ -1,4 +1,6 @@
 import json
+import distutils.dir_util
+import shutil
 from enum import Enum
 from pathlib import Path
 from typing import Tuple, Union, MutableMapping, Any
@@ -64,6 +66,7 @@ class Installable:
         self.required_cogs = {}  # Cog name -> repo URL
         self.requirements = ()
         self.short = None
+        self.tags = ()
         self.type = InstallableType.UNKNOWN
 
         self.__info_file = self._info_file()
@@ -72,13 +75,29 @@ class Installable:
         if self.__info_file is not None:
             self.__info = self._process_info_file(self.__info_file)
 
-    async def install_to(self, install_dir: Path) -> bool:
+    async def copy_to(self, target_dir: Path) -> bool:
         """
-        Installs this installable to the given directory.
-        :param install_dir: The installation directory to install to.
+        Copies this cog/shared_lib to the given directory. This
+            will overwrite any files in the target directory
+        :param target_dir: The installation directory to install to.
         :return: bool - status of installation
         """
-        raise NotImplementedError()
+        if self.__location.is_file():
+            copy_func = shutil.copy2
+        else:
+            copy_func = distutils.dir_util.copy_tree
+
+        # noinspection PyBroadException
+        try:
+            copy_func(
+                src=str(self.__location),
+                dst=str(target_dir)
+            )
+        except:
+            log.exception("Error occurred when copying path:"
+                          " {}".format(self.__location))
+            return False
+        return True
 
     def _info_file(self) -> Union[Path, None]:
         """
@@ -95,6 +114,7 @@ class Installable:
         """
         Processes an information file. Loads dependencies among other
             information into this object.
+        :type info_file_path:
         :param info_file_path: Optional path to information file, defaults to `self.__info_file`
         :return: Raw information dictionary
         """
@@ -139,6 +159,12 @@ class Installable:
 
         self.short = info.get("short")
 
+        try:
+            tags = tuple(info.get("tags", ()))
+        except ValueError:
+            tags = ()
+        self.tags = tags
+
         installable_type = info.get("type", "")
         if installable_type == "COG":
             self.type = InstallableType.COG
@@ -148,18 +174,3 @@ class Installable:
             self.type = InstallableType.UNKNOWN
 
         return info
-
-
-class Cog(Installable):
-    def __init__(self, location: Path):
-        super().__init__(location)
-        raise NotImplementedError()
-
-
-class RepoLibrary(Installable):
-    """
-    You're welcome Caleb.
-    """
-    def __init__(self, location: Path):
-        super().__init__(location)
-        raise NotImplementedError()
