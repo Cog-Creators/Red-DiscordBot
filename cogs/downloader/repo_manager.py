@@ -8,12 +8,14 @@ import importlib.util
 
 import functools
 
+from discord.ext import commands
+
 from core import Config
 from .errors import *
 from .installable import Installable, InstallableType
 
 
-class Repo:
+class Repo(commands.Converter):
     GIT_CLONE = "git clone -b {branch} {url} {folder}"
     GIT_CURRENT_BRANCH = "git -C {path} rev-parse --abbrev-ref HEAD"
     GIT_LATEST_COMMIT = "git -C {path} rev-parse {branch}"
@@ -26,6 +28,7 @@ class Repo:
 
     def __init__(self, name: str, url: str, branch: str, folder_path: Path,
                  available_modules: Tuple[Installable]=(), loop: asyncio.AbstractEventLoop=None):
+        super().__init__()
         self.url = url
         self.branch = branch
 
@@ -43,6 +46,18 @@ class Repo:
         self._loop = loop
         if self._loop is None:
             self._loop = asyncio.get_event_loop()
+
+    async def convert(self, ctx: commands.Context, argument: str):
+        downloader_cog = ctx.bot.get_cog("Downloader")
+        if downloader_cog is None:
+            raise RuntimeError("No Downloader cog found.")
+
+        # noinspection PyProtectedMember
+        repo_manager = downloader_cog._repo_manager
+        poss_repo = repo_manager.get_repo(argument)
+        if poss_repo is None:
+            raise ValueError("Repo by the name {} does not exist.".format(argument))
+        return poss_repo
 
     def _existing_git_repo(self) -> (bool, Path):
         git_path = self.folder_path / '.git'
@@ -311,9 +326,10 @@ class RepoManager:
         return name in self._repos
 
     @staticmethod
-    def normalize_repo_name(name: str) -> str:
-        ret = name.replace(" ", "_")
-        return ret.lower()
+    def validate_and_normalize_repo_name(name: str) -> str:
+        if not name.isidentifier():
+            raise InvalidRepoName("Not a valid Python variable name.")
+        return name.lower()
 
     async def add_repo(self, url: str, name: str, branch: str="master") -> Repo:
         """
@@ -323,7 +339,7 @@ class RepoManager:
         :param branch:
         :return:
         """
-        name = self.normalize_repo_name(name)
+        name = self.validate_and_normalize_repo_name(name)
         if self.does_repo_exist(name):
             raise InvalidRepoName(
                 "That repo name you provided already exists."

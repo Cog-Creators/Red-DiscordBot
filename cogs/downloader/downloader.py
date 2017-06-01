@@ -32,7 +32,8 @@ class Downloader:
     async def _repo_add(self, ctx, name: str, repo_url: str):
         """
         Add a new repo to Downloader.
-        :param name: Name that must contain only characters A-Z and numbers 0-9 and _
+        :param name: Name that must follow python variable naming rules and
+            contain only characters A-Z and numbers 0-9 and _
         :param repo_url: Clone url for the cog repo
         """
         raise NotImplementedError()
