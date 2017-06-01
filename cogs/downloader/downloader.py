@@ -123,7 +123,7 @@ class Downloader:
         """
         cogs = repo_name.available_cogs
         cogs = "Available Cogs:\n" + "\n".join(
-            ["+ {}: {}".format(c.name, c.short) for c in cogs])
+            ["+ {}: {}".format(c.name, c.short or "") for c in cogs])
 
         await ctx.send(box(cogs, lang="diff"))
 
@@ -141,5 +141,5 @@ class Downloader:
             ))
             return
 
-        msg = "Information on {}:\n{}".format(cog.name, cog.description)
+        msg = "Information on {}:\n{}".format(cog.name, cog.description or "")
         await ctx.send(box(msg))

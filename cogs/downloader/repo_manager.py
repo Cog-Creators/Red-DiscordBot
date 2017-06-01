@@ -315,7 +315,9 @@ class Repo:
         else:
             libraries = self.available_libraries
 
-        return all([lib.copy_to(target_dir=target_dir) for lib in libraries])
+        if libraries:
+            return all([lib.copy_to(target_dir=target_dir) for lib in libraries])
+        return True
 
     @property
     def available_cogs(self) -> Tuple[Installable]:

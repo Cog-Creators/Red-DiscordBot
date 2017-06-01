@@ -59,7 +59,7 @@ class Installable:
         self.__location = location
 
         self.author = ()
-        self.bot_version = None
+        self.bot_version = (3, 0, 0)
         self.description = None
         self.hidden = False
         self.install_msg = None
@@ -74,6 +74,8 @@ class Installable:
 
         if self.__info_file is not None:
             self.__info = self._process_info_file(self.__info_file)
+        else:
+            self.type = InstallableType.COG
 
     @property
     def name(self):
