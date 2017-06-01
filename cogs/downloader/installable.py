@@ -29,8 +29,8 @@ class Installable:
     an info file (and maybe how the Downloader cog uses them).
     
     KEYS (case sensitive):
-        author (tuple of strings) - list of names of authors of the cog
-        bot_version (tuple of integer) - Min version number of Red in the
+        author (list of strings) - list of names of authors of the cog
+        bot_version (list of integer) - Min version number of Red in the
             format (MAJOR, MINOR, PATCH)
         description (string) - A long description of the cog that appears
             when a user executes `!cog info`
@@ -40,12 +40,12 @@ class Installable:
         required_cogs (map of cogname to repo URL) - A map of required cogs
             that this cog depends on. Downloader will not deal with this
             functionality but it may be useful for other cogs.
-        requirements (tuple of strings) - list of required libraries that are
+        requirements (list of strings) - list of required libraries that are
             passed to pip on cog install. SHARED_LIBRARIES do NOT go in this
             list.
         short (string) - A short description of the cog that appears when
             a user executes `!cog list`
-        tags (tuple of strings) - A list of strings that are related to the
+        tags (list of strings) - A list of strings that are related to the
             functionality of the cog. Used to aid in searching.
         type (string) - Optional, defaults to COG. Must be either COG or
             SHARED_LIBRARY. If SHARED_LIBRARY then HIDDEN will be True.
