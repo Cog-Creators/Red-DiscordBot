@@ -4,8 +4,8 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Tuple, MutableMapping
 from subprocess import run as sp_run, PIPE
-import importlib.util
-
+import pkgutil
+import shutil
 import functools
 
 from discord.ext import commands
@@ -15,7 +15,7 @@ from .errors import *
 from .installable import Installable, InstallableType
 
 
-class Repo(commands.Converter):
+class Repo:
     GIT_CLONE = "git clone -b {branch} {url} {folder}"
     GIT_CURRENT_BRANCH = "git -C {path} rev-parse --abbrev-ref HEAD"
     GIT_LATEST_COMMIT = "git -C {path} rev-parse {branch}"
@@ -46,18 +46,6 @@ class Repo(commands.Converter):
         self._loop = loop
         if self._loop is None:
             self._loop = asyncio.get_event_loop()
-
-    async def convert(self, ctx: commands.Context, argument: str):
-        downloader_cog = ctx.bot.get_cog("Downloader")
-        if downloader_cog is None:
-            raise RuntimeError("No Downloader cog found.")
-
-        # noinspection PyProtectedMember
-        repo_manager = downloader_cog._repo_manager
-        poss_repo = repo_manager.get_repo(argument)
-        if poss_repo is None:
-            raise ValueError("Repo by the name {} does not exist.".format(argument))
-        return poss_repo
 
     def _existing_git_repo(self) -> (bool, Path):
         git_path = self.folder_path / '.git'
@@ -124,13 +112,21 @@ class Repo(commands.Converter):
         :return: List of available modules.
         """
         curr_modules = []
+        """
         for name in self.folder_path.iterdir():
             if name.is_dir():
                 spec = importlib.util.spec_from_file_location(
-                    name, location=str(self.folder_path / name)
+                    name.stem, location=str(name.parent)
                 )
                 if spec is not None:
-                    curr_modules.append(name)
+                    curr_modules.append(
+                        Installable(location=name)
+                    )
+        """
+        for file_finder, name, is_pkg in pkgutil.walk_packages(path=[str(self.folder_path), ]):
+            curr_modules.append(
+                Installable(location=self.folder_path / name)
+            )
         self.available_modules = curr_modules
 
         # noinspection PyTypeChecker
@@ -356,13 +352,33 @@ class RepoManager:
 
         return r
 
-    async def get_repo(self, name: str):
+    def get_repo(self, name: str) -> Repo:
         """
         Returns a repo object with the given name.
         :param name: Repo name
         :return: Repo object or None
         """
         return self._repos.get(name, None)
+
+    async def delete_repo(self, name: str):
+        """
+        Deletes a repo and its' folders with the given name.
+        :param name:
+        :return:
+        """
+        repo = self.get_repo(name)
+        if repo is None:
+            raise MissingGitRepo("There is no repo with the name {}".format(name))
+
+        shutil.rmtree(str(repo.folder_path))
+
+        repos = self.downloader_config.repos()
+        try:
+            del self._repos[name]
+        except KeyError:
+            pass
+
+        await self._save_repos()
 
     async def update_all_repos(self) -> MutableMapping[Repo, Tuple[str, str]]:
         ret = {}

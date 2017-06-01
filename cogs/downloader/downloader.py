@@ -1,10 +1,12 @@
 from discord.ext import commands
 from core import Config
 from core.bot import Red
+from core import checks
 
 from .repo_manager import RepoManager
-
+from .converters import RepoName, Repo
 from .log import log
+from .errors import CloningError, ExistingGitRepo
 
 
 class Downloader:
@@ -15,12 +17,13 @@ class Downloader:
                                     force_registration=True)
 
         self.conf.register_global(
-            repos=[]
+            repos={}
         )
 
         self._repo_manager = RepoManager(self.conf)
 
     @commands.group()
+    @checks.is_owner()
     async def repo(self, ctx):
         """
         Command group for managing Downloader repos.
@@ -29,22 +32,38 @@ class Downloader:
             await self.bot.send_cmd_help(ctx)
 
     @repo.command(name="add")
-    async def _repo_add(self, ctx, name: str, repo_url: str):
+    async def _repo_add(self, ctx, name: RepoName, repo_url: str, branch: str="master"):
         """
         Add a new repo to Downloader.
         :param name: Name that must follow python variable naming rules and
             contain only characters A-Z and numbers 0-9 and _
         :param repo_url: Clone url for the cog repo
         """
-        raise NotImplementedError()
+        try:
+            # noinspection PyTypeChecker
+            await self._repo_manager.add_repo(
+                name=name,
+                url=repo_url,
+                branch=branch
+            )
+        except ExistingGitRepo:
+            await ctx.send("That git repo has already been added under another name.")
+        except CloningError:
+            await ctx.send("Something went wrong during the cloning process.")
+            log.exception("Something went wrong during the cloning process.")
+        else:
+            await ctx.send("Repo `{}` successfully added.".format(name))
 
+    # noinspection PyUnresolvedReferences
     @repo.command(name="del")
-    async def _repo_del(self, ctx, name: str):
+    async def _repo_del(self, ctx, repo_name: Repo):
         """
         Removes a repo from Downloader and its' files.
         :param name: Repo name in Downloader
         """
-        raise NotImplementedError()
+        await self._repo_manager.delete_repo(repo_name.name)
+
+        await ctx.send("The repo `{}` has been deleted successfully.".format(repo_name.name))
 
     @repo.command(name="list")
     async def _repo_list(self, ctx):
@@ -54,6 +73,7 @@ class Downloader:
         raise NotImplementedError()
 
     @commands.group()
+    @checks.is_owner()
     async def cog(self, ctx):
         """
         Command group for managing installable Cogs.
