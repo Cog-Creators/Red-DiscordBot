@@ -360,6 +360,14 @@ class RepoManager:
         """
         return self._repos.get(name, None)
 
+    def get_all_repo_names(self) -> Tuple[str]:
+        """
+        Returns a tuple of all repo names
+        :return:
+        """
+        # noinspection PyTypeChecker
+        return tuple(self._repos.keys())
+
     async def delete_repo(self, name: str):
         """
         Deletes a repo and its' folders with the given name.

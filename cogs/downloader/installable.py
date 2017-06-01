@@ -75,6 +75,10 @@ class Installable:
         if self.__info_file is not None:
             self.__info = self._process_info_file(self.__info_file)
 
+    @property
+    def name(self):
+        return self.__location.stem
+
     async def copy_to(self, target_dir: Path) -> bool:
         """
         Copies this cog/shared_lib to the given directory. This
@@ -143,7 +147,7 @@ class Installable:
             bot_version = 2
         self.bot_version = bot_version
 
-        self.description = info.get("description")
+        self.description = info.get("description", "")
 
         try:
             hidden = bool(info.get("hidden", False))
@@ -157,7 +161,7 @@ class Installable:
 
         self.requirements = info.get("requirements", ())
 
-        self.short = info.get("short")
+        self.short = info.get("short", "")
 
         try:
             tags = tuple(info.get("tags", ()))
@@ -166,7 +170,7 @@ class Installable:
         self.tags = tags
 
         installable_type = info.get("type", "")
-        if installable_type == "COG":
+        if installable_type in ("", "COG"):
             self.type = InstallableType.COG
         elif installable_type == "SHARED_LIBRARY":
             self.type = InstallableType.SHARED_LIBRARY
@@ -178,10 +182,10 @@ class Installable:
 
     def to_json(self):
         return {
-            "info_file_path": str(self.__info_file)
+            "location": str(self.__location)
         }
 
     @classmethod
     def from_json(cls, data: dict):
-        info_file_path = Path(data["info_file_path"])
-        return cls(location=info_file_path)
+        location = Path(data["location"])
+        return cls(location=location)

@@ -1,7 +1,9 @@
+import discord
 from discord.ext import commands
 from core import Config
 from core.bot import Red
 from core import checks
+from core.utils.chat_formatting import box
 
 from .repo_manager import RepoManager
 from .converters import RepoName, Repo
@@ -59,7 +61,7 @@ class Downloader:
     async def _repo_del(self, ctx, repo_name: Repo):
         """
         Removes a repo from Downloader and its' files.
-        :param name: Repo name in Downloader
+        :param repo_name: Repo name in Downloader
         """
         await self._repo_manager.delete_repo(repo_name.name)
 
@@ -70,7 +72,10 @@ class Downloader:
         """
         Lists all installed repos.
         """
-        raise NotImplementedError()
+        repos = self._repo_manager.get_all_repo_names()
+        joined = "Installed Repos:\n" + "\n".join(["+ " + r for r in repos])
+
+        await ctx.send(box(joined, lang="diff"))
 
     @commands.group()
     @checks.is_owner()
@@ -82,7 +87,7 @@ class Downloader:
             await self.bot.send_cmd_help(ctx)
 
     @cog.command(name="install")
-    async def _cog_install(self, ctx, repo_name: str, cog_name: str):
+    async def _cog_install(self, ctx, repo_name: Repo, cog_name: str):
         """
         Installs a cog from the given repo.
         :param repo_name:
@@ -90,19 +95,33 @@ class Downloader:
         """
         raise NotImplementedError()
 
+    # noinspection PyUnresolvedReferences
     @cog.command(name="list")
-    async def _cog_list(self, ctx, repo_name: str):
+    async def _cog_list(self, ctx, repo_name: Repo):
         """
         Lists all available cogs from a single repo.
         :param repo_name: Repo name available from `[p]repo list`
         """
-        raise NotImplementedError()
+        cogs = repo_name.available_cogs
+        cogs = "Available Cogs:\n" + "\n".join(
+            ["+ {}: {}".format(c.name, c.short) for c in cogs])
 
+        await ctx.send(box(cogs, lang="diff"))
+
+    # noinspection PyUnresolvedReferences
     @cog.command(name="info")
-    async def _cog_info(self, ctx, repo_name: str, cog_name: str):
+    async def _cog_info(self, ctx, repo_name: Repo, cog_name: str):
         """
         Lists information about a single cog.
         :param repo_name:
         :param cog_name:
         """
-        raise NotImplementedError()
+        cog = discord.utils.get(repo_name.available_cogs, name=cog_name)
+        if cog is None:
+            await ctx.send("There is no cog `{}` in the repo `{}`".format(
+                cog_name, repo_name.name
+            ))
+            return
+
+        msg = "Information on {}:\n{}".format(cog.name, cog.description)
+        await ctx.send(box(msg))
