@@ -47,6 +47,19 @@ class Repo:
         if self._loop is None:
             self._loop = asyncio.get_event_loop()
 
+    @classmethod
+    async def convert(cls, ctx: commands.Context, argument: str):
+        downloader_cog = ctx.bot.get_cog("Downloader")
+        if downloader_cog is None:
+            raise commands.CommandError("No Downloader cog found.")
+
+        # noinspection PyProtectedMember
+        repo_manager = downloader_cog._repo_manager
+        poss_repo = repo_manager.get_repo(argument)
+        if poss_repo is None:
+            raise commands.BadArgument("Repo by the name {} does not exist.".format(argument))
+        return poss_repo
+
     def _existing_git_repo(self) -> (bool, Path):
         git_path = self.folder_path / '.git'
         return git_path.exists(), git_path
@@ -269,6 +282,40 @@ class Repo:
         self._update_available_modules()
 
         return old_commit, new_commit
+
+    async def install_cog(self, cog: Installable, target_dir: Path) -> bool:
+        """
+        Copies a cog to the target directory.
+        :param cog:
+        :param target_dir:
+        :return: bool - if installation succeeded
+        """
+        if cog not in self.available_cogs:
+            raise DownloaderException("That cog does not exist in this repo")
+
+        if not target_dir.is_dir():
+            raise ValueError("That target directory is not actually a directory.")
+
+        if not target_dir.exists():
+            raise ValueError("That target directory does not exist.")
+
+        return await cog.copy_to(target_dir=target_dir)
+
+    async def install_libraries(self, target_dir: Path, libraries: Tuple[Installable]=()) -> bool:
+        """
+        Copies all shared libraries (or a given subset) to the target
+            directory.
+        :param target_dir:
+        :param libraries: A subset of available libraries
+        :return: bool - all copies succeeded
+        """
+        if libraries:
+            if not all([i in self.available_libraries for i in libraries]):
+                raise ValueError("Some given libraries are not available in this repo.")
+        else:
+            libraries = self.available_libraries
+
+        return all([lib.copy_to(target_dir=target_dir) for lib in libraries])
 
     @property
     def available_cogs(self) -> Tuple[Installable]:

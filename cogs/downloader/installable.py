@@ -95,7 +95,7 @@ class Installable:
         try:
             copy_func(
                 src=str(self.__location),
-                dst=str(target_dir)
+                dst=str(target_dir / self.__location.stem)
             )
         except:
             log.exception("Error occurred when copying path:"

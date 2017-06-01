@@ -1,17 +1,25 @@
 import discord
 from discord.ext import commands
+from pathlib import Path
+
 from core import Config
 from core.bot import Red
 from core import checks
 from core.utils.chat_formatting import box
 
-from .repo_manager import RepoManager
-from .converters import RepoName, Repo
+from .repo_manager import RepoManager, Repo
+from .converters import RepoName
 from .log import log
 from .errors import CloningError, ExistingGitRepo
 
 
 class Downloader:
+
+    COG_PATH = Path.cwd() / "cogs"
+    LIB_PATH = Path.cwd() / "lib"
+    SHAREDLIB_PATH = LIB_PATH / "cog_shared"
+    SHAREDLIB_INIT = SHAREDLIB_PATH / "__init__.py"
+
     def __init__(self, bot: Red):
         self.bot = bot
 
@@ -19,8 +27,15 @@ class Downloader:
                                     force_registration=True)
 
         self.conf.register_global(
-            repos={}
+            repos={},
+            installed=[]
         )
+
+        self.LIB_PATH.mkdir(parents=True, exist_ok=True)
+        self.SHAREDLIB_PATH.mkdir(parents=True, exist_ok=True)
+        if not self.SHAREDLIB_INIT.exists():
+            with self.SHAREDLIB_INIT.open(mode='w') as f:
+                pass
 
         self._repo_manager = RepoManager(self.conf)
 
@@ -56,7 +71,6 @@ class Downloader:
         else:
             await ctx.send("Repo `{}` successfully added.".format(name))
 
-    # noinspection PyUnresolvedReferences
     @repo.command(name="del")
     async def _repo_del(self, ctx, repo_name: Repo):
         """
@@ -87,15 +101,20 @@ class Downloader:
             await self.bot.send_cmd_help(ctx)
 
     @cog.command(name="install")
-    async def _cog_install(self, ctx, repo_name: Repo, cog_name: str):
+    async def _cog_install(self, ctx, repo_name: Repo, cog_name: str, install_libraries: bool=True):
         """
         Installs a cog from the given repo.
         :param repo_name:
         :param cog_name: Cog name available from `[p]cog list <repo_name>`
         """
-        raise NotImplementedError()
+        cog = discord.utils.get(repo_name.available_cogs, name=cog_name)
+        await repo_name.install_cog(cog, self.COG_PATH)
 
-    # noinspection PyUnresolvedReferences
+        if install_libraries:
+            await repo_name.install_libraries(self.SHAREDLIB_PATH)
+
+        await ctx.send("`{}` cog successfully installed.".format(cog_name))
+
     @cog.command(name="list")
     async def _cog_list(self, ctx, repo_name: Repo):
         """
@@ -108,7 +127,6 @@ class Downloader:
 
         await ctx.send(box(cogs, lang="diff"))
 
-    # noinspection PyUnresolvedReferences
     @cog.command(name="info")
     async def _cog_info(self, ctx, repo_name: Repo, cog_name: str):
         """
