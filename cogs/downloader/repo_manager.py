@@ -4,6 +4,7 @@ from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Tuple, MutableMapping
 from subprocess import run as sp_run, PIPE
+from sys import executable
 import pkgutil
 import shutil
 import functools
@@ -13,6 +14,7 @@ from discord.ext import commands
 from core import Config
 from .errors import *
 from .installable import Installable, InstallableType
+from .log import log
 
 
 class Repo:
@@ -25,6 +27,8 @@ class Repo:
                             " {old_hash} {new_hash}")
     GIT_LOG = ("git -C {path} log --relative-date --reverse {old_hash}.."
                " {relative_file_path}")
+
+    PIP_INSTALL = "{python} -m pip install -U -t {target_dir} {reqs}"
 
     def __init__(self, name: str, url: str, branch: str, folder_path: Path,
                  available_modules: Tuple[Installable]=(), loop: asyncio.AbstractEventLoop=None):
@@ -317,6 +321,44 @@ class Repo:
 
         if libraries:
             return all([lib.copy_to(target_dir=target_dir) for lib in libraries])
+        return True
+
+    async def install_requirements(self, cog: Installable, target_dir: Path) -> bool:
+        """
+        Installs the requirements defined by the requirements
+            attribute on the cog object and puts them in the given
+            target directory.
+        :param cog:
+        :param target_dir:
+        :return:
+        """
+        if not target_dir.is_dir():
+            raise ValueError("Target directory is not a directory.")
+        target_dir.mkdir(parents=True, exist_ok=True)
+
+        return await self.install_raw_requirements(cog.requirements, target_dir)
+
+    async def install_raw_requirements(self, requirements: Tuple[str], target_dir: Path) -> bool:
+        """
+        Installs a list of requirements using pip and places them into
+            the given target directory.
+        :param requirements:
+        :param target_dir:
+        :return:
+        """
+        p = await self._run(
+            self.PIP_INSTALL.format(
+                python=executable,
+                target_dir=target_dir,
+                reqs=" ".join(requirements)
+            ).split()
+        )
+
+        if p.returncode != 0:
+            log.error("Something went wrong when installing"
+                      " the following requirements:"
+                      " {}".format(", ".join(requirements)))
+            return False
         return True
 
     @property

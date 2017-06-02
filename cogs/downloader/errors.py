@@ -70,3 +70,10 @@ class GitDiffError(GitException):
     Thrown when a git diff fails.
     """
     pass
+
+
+class PipError(DownloaderException):
+    """
+    Thrown when pip returns a non-zero return code.
+    """
+    pass

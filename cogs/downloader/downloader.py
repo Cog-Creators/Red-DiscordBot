@@ -38,7 +38,7 @@ class Downloader:
         self.LIB_PATH.mkdir(parents=True, exist_ok=True)
         self.SHAREDLIB_PATH.mkdir(parents=True, exist_ok=True)
         if not self.SHAREDLIB_INIT.exists():
-            with self.SHAREDLIB_INIT.open(mode='w') as f:
+            with self.SHAREDLIB_INIT.open(mode='w') as _:
                 pass
 
         if str(self.LIB_PATH) not in syspath:
@@ -103,6 +103,35 @@ class Downloader:
 
         # noinspection PyTypeChecker
         return tuple(failed)
+
+    async def _reinstall_requirements(self, cogs: Tuple[Installable]) -> bool:
+        """
+        Reinstalls requirements for given cogs that have been updated.
+            Returns a bool that indicates if all requirement installations
+            were successful.
+        :param cogs:
+        :return:
+        """
+
+        # Reduces requirements to a single list with no repeats
+        requirements = set(r for c in cogs for r in c.requirements)
+        repo_names = self._repo_manager.get_all_repo_names()
+        repos = [(self._repo_manager.get_repo(rn), []) for rn in repo_names]
+
+        # This for loop distributes the requirements across all repos
+        # which will allow us to concurrently install requirements
+        for i, req in enumerate(requirements):
+            repo_index = i % len(repos)
+            repos[repo_index][1].append(req)
+
+        has_reqs = list(filter(lambda item: len(item[1]) > 0, repos))
+
+        ret = True
+        for repo, reqs in has_reqs:
+            for req in reqs:
+                # noinspection PyTypeChecker
+                ret = ret and await repo.install_raw_requirements([req, ], self.LIB_PATH)
+        return ret
 
     @commands.group()
     @checks.is_owner()
@@ -178,6 +207,11 @@ class Downloader:
                            " `{}` in the `{}` repo.".format(cog_name, repo_name.name))
             return
 
+        if not await repo_name.install_requirements(cog, self.LIB_PATH):
+            await ctx.send("Failed to install the required libraries for"
+                           " `{}`: `{}`".format(cog.name, cog.requirements))
+            return
+
         await repo_name.install_cog(cog, self.COG_PATH)
 
         await self._add_to_installed(cog)
@@ -193,7 +227,16 @@ class Downloader:
             through Downloader.
         :param cog_name:
         """
-        raise NotImplementedError()
+        # noinspection PyUnresolvedReferences,PyProtectedMember
+        real_name = cog_name._location.stem
+
+        poss_installed_path = self.COG_PATH / real_name
+        if poss_installed_path.exists():
+            raise NotImplementedError()
+        else:
+            await ctx.send("That cog was installed but can no longer"
+                           " be located. You may need to remove it's"
+                           " files manually if it is still usable.")
 
     @cog.command(name="update")
     async def _cog_update(self, ctx, cog_name: InstalledCog=None):
@@ -207,6 +250,9 @@ class Downloader:
             updated_cogs = set(cog for repo in updated.keys() for cog in repo.available_cogs)
 
             installed_and_updated = updated_cogs & installed_cogs
+
+            # noinspection PyTypeChecker
+            await self._reinstall_requirements(installed_and_updated)
 
             # noinspection PyTypeChecker
             await self._reinstall_cogs(installed_and_updated)

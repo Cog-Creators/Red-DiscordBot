@@ -3,7 +3,7 @@ import distutils.dir_util
 import shutil
 from enum import Enum
 from pathlib import Path
-from typing import Tuple, Union, MutableMapping, Any
+from typing import Union, MutableMapping, Any
 
 from .log import log
 
@@ -113,16 +113,6 @@ class Installable:
                           " {}".format(self._location))
             return False
         return True
-
-    async def install_requirements(self, target_dir: Path) -> bool:
-        """
-        Installs the requirements defined by the requirements
-            attribute on this object and puts them in the given
-            target directory.
-        :param target_dir:
-        :return:
-        """
-        raise NotImplementedError()
 
     def _info_file(self) -> Union[Path, None]:
         """
