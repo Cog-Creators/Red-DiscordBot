@@ -9,10 +9,14 @@ BASE_VERSION = version_info(3, 0, 0)
 
 
 def get_latest_version():
-    p = run(
-        "git describe --abbrev=0 --tags".split(),
-        stdout=PIPE
-    )
+    try:
+        p = run(
+            "git describe --abbrev=0 --tags".split(),
+            stdout=PIPE
+        )
+    except FileNotFoundError:
+        # No git
+        return BASE_VERSION
 
     if p.returncode != 0:
         return BASE_VERSION
