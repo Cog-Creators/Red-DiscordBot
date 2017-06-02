@@ -193,10 +193,10 @@ class Installable:
 
     def to_json(self):
         return {
-            "location": str(self._location)
+            "location": self._location.relative_to(Path.cwd()).parts
         }
 
     @classmethod
     def from_json(cls, data: dict):
-        location = Path(data["location"])
+        location = Path(*data["location"])
         return cls(location=location)

@@ -423,7 +423,7 @@ class Repo:
             "url": self.url,
             "name": self.name,
             "branch": self.branch,
-            "folder_path": str(self.folder_path),
+            "folder_path": self.folder_path.relative_to(Path.cwd()).parts,
             "available_modules": [m.to_json() for m in self.available_modules]
         }
 
@@ -431,7 +431,7 @@ class Repo:
     def from_json(cls, data):
         # noinspection PyTypeChecker
         return Repo(data['name'], data['url'], data['branch'],
-                    Path(data['folder_path']),
+                    Path(*data['folder_path']),
                     tuple([Installable.from_json(m) for m in data['available_modules']]))
 
 
