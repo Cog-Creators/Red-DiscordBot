@@ -17,6 +17,23 @@ from .installable import Installable, InstallableType
 from .log import log
 
 
+class RepoJSONParser:
+    def __init__(self, repo_folder: Path):
+        self._location = repo_folder
+
+        self.author = None
+        self.install_msg = None
+        self.short = None
+        self.description = None
+
+        self._info_file = repo_folder / "info.json"
+        if self._info_file.exists():
+            self._read_info_file()
+
+    def _read_info_file(self):
+        raise NotImplementedError()
+
+
 class Repo:
     GIT_CLONE = "git clone -b {branch} {url} {folder}"
     GIT_CLONE_NO_BRANCH = "git clone {url} {folder}"
