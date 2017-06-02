@@ -198,5 +198,5 @@ class Installable:
 
     @classmethod
     def from_json(cls, data: dict):
-        location = Path(*data["location"])
+        location = Path.cwd() / Path(*data["location"])
         return cls(location=location)
