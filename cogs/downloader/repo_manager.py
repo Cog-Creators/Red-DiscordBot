@@ -346,6 +346,9 @@ class Repo:
         :param target_dir:
         :return:
         """
+        if len(requirements) == 0:
+            return True
+
         p = await self._run(
             self.PIP_INSTALL.format(
                 python=executable,

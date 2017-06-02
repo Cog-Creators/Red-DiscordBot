@@ -1,3 +1,4 @@
+import discord
 from discord.ext import commands
 from .repo_manager import RepoManager
 from .installable import Installable
@@ -14,9 +15,10 @@ class InstalledCog(commands.Converter):
         if downloader is None:
             raise commands.CommandError("Downloader not loaded.")
 
-        try:
-            return Installable.from_json(downloader.installed_cogs[arg])
-        except KeyError as e:
+        cog = discord.utils.get(downloader.installed_cogs, name=arg)
+        if cog is None:
             raise commands.BadArgument(
                 "That cog is not installed"
-            ) from e
+            )
+
+        return cog

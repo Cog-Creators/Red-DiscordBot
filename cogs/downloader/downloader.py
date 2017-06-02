@@ -1,3 +1,5 @@
+import os
+import shutil
 from typing import MutableMapping, Tuple
 
 import discord
@@ -70,6 +72,19 @@ class Downloader:
             installed.append(cog_json)
             await self.conf.set("installed", installed)
 
+    async def _remove_from_installed(self, cog: Installable):
+        """
+        Removes a cog from the saved list of installed cogs.
+        :param cog:
+        :return:
+        """
+        installed = self.conf.installed()
+        cog_json = cog.to_json()
+
+        if cog_json in installed:
+            installed.remove(cog_json)
+            await self.conf.set("installed", installed)
+
     async def _reinstall_cogs(self, cogs: Tuple[Installable]) -> Tuple[Installable]:
         """
         Installs a list of cogs, used when updating.
@@ -132,6 +147,21 @@ class Downloader:
                 # noinspection PyTypeChecker
                 ret = ret and await repo.install_raw_requirements([req, ], self.LIB_PATH)
         return ret
+
+    @staticmethod
+    async def _delete_cog(target: Path):
+        """
+        Removes an (installed) cog.
+        :param target: Path pointing to an existing file or directory
+        :return:
+        """
+        if not target.exists():
+            return
+
+        if target.is_dir():
+            shutil.rmtree(str(target))
+        elif target.is_file():
+            os.remove(str(target))
 
     @commands.group()
     @checks.is_owner()
@@ -232,7 +262,10 @@ class Downloader:
 
         poss_installed_path = self.COG_PATH / real_name
         if poss_installed_path.exists():
-            raise NotImplementedError()
+            await self._delete_cog(poss_installed_path)
+            # noinspection PyTypeChecker
+            await self._remove_from_installed(cog_name)
+            await ctx.send("`{}` was successfully removed.".format(real_name))
         else:
             await ctx.send("That cog was installed but can no longer"
                            " be located. You may need to remove it's"
