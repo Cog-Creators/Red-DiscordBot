@@ -83,6 +83,9 @@ class Installable:
         # noinspection PyProtectedMember
         return self._location == other._location
 
+    def __hash__(self):
+        return hash(self._location)
+
     @property
     def name(self):
         return self._location.stem
@@ -110,6 +113,16 @@ class Installable:
                           " {}".format(self._location))
             return False
         return True
+
+    async def install_requirements(self, target_dir: Path) -> bool:
+        """
+        Installs the requirements defined by the requirements
+            attribute on this object and puts them in the given
+            target directory.
+        :param target_dir:
+        :return:
+        """
+        raise NotImplementedError()
 
     def _info_file(self) -> Union[Path, None]:
         """

@@ -3,6 +3,7 @@ from typing import MutableMapping, Tuple
 import discord
 from discord.ext import commands
 from pathlib import Path
+from sys import path as syspath
 
 from core import Config
 from core.bot import Red
@@ -11,7 +12,7 @@ from core.utils.chat_formatting import box
 
 from .repo_manager import RepoManager, Repo
 from .installable import Installable
-from .converters import RepoName, InstalledCogData
+from .converters import RepoName, InstalledCog
 from .log import log
 from .errors import CloningError, ExistingGitRepo
 
@@ -40,6 +41,9 @@ class Downloader:
             with self.SHAREDLIB_INIT.open(mode='w') as f:
                 pass
 
+        if str(self.LIB_PATH) not in syspath:
+            syspath.insert(1, str(self.LIB_PATH))
+
         self._repo_manager = RepoManager(self.conf)
 
     @property
@@ -60,8 +64,11 @@ class Downloader:
         :return:
         """
         installed = self.conf.installed()
-        installed.append(cog.to_json())
-        await self.conf.set("installed", list(set(installed)))
+        cog_json = cog.to_json()
+
+        if cog_json not in installed:
+            installed.append(cog_json)
+            await self.conf.set("installed", installed)
 
     async def _reinstall_cogs(self, cogs: Tuple[Installable]) -> Tuple[Installable]:
         """
@@ -166,6 +173,11 @@ class Downloader:
         :param cog_name: Cog name available from `[p]cog list <repo_name>`
         """
         cog = discord.utils.get(repo_name.available_cogs, name=cog_name)
+        if cog is None:
+            await ctx.send("Error, there is no cog by the name of"
+                           " `{}` in the `{}` repo.".format(cog_name, repo_name.name))
+            return
+
         await repo_name.install_cog(cog, self.COG_PATH)
 
         await self._add_to_installed(cog)
@@ -175,7 +187,7 @@ class Downloader:
         await ctx.send("`{}` cog successfully installed.".format(cog_name))
 
     @cog.command(name="uninstall")
-    async def _cog_uninstall(self, ctx, cog_name: InstalledCogData):
+    async def _cog_uninstall(self, ctx, cog_name: InstalledCog):
         """
         Allows you to uninstall cogs that were previously installed
             through Downloader.
@@ -184,7 +196,7 @@ class Downloader:
         raise NotImplementedError()
 
     @cog.command(name="update")
-    async def _cog_update(self, ctx, cog_name: InstalledCogData=None):
+    async def _cog_update(self, ctx, cog_name: InstalledCog=None):
         """
         Updates all cogs or one of your choosing.
         :param cog_name:
