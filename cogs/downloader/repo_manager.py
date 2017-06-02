@@ -201,7 +201,7 @@ class Repo:
                 self.GIT_CLONE_NO_BRANCH.format(
                     url=self.url,
                     folder=self.folder_path
-                )
+                ).split()
             )
 
         if p.returncode != 0:
