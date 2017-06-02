@@ -19,6 +19,7 @@ from .log import log
 
 class Repo:
     GIT_CLONE = "git clone -b {branch} {url} {folder}"
+    GIT_CLONE_NO_BRANCH = "git clone {url} {folder}"
     GIT_CURRENT_BRANCH = "git -C {path} rev-parse --abbrev-ref HEAD"
     GIT_LATEST_COMMIT = "git -C {path} rev-parse {branch}"
     GIT_HARD_RESET = "git -C {path} reset --hard origin/{branch} -q"
@@ -170,16 +171,27 @@ class Repo:
                 "A git repo already exists at path: {}".format(path)
             )
 
-        p = await self._run(
-            self.GIT_CLONE.format(
-                branch=self.branch,
-                url=self.url,
-                folder=self.folder_path
-            ).split()
-        )
+        if self.branch is not None:
+            p = await self._run(
+                self.GIT_CLONE.format(
+                    branch=self.branch,
+                    url=self.url,
+                    folder=self.folder_path
+                ).split()
+            )
+        else:
+            p = await self._run(
+                self.GIT_CLONE_NO_BRANCH.format(
+                    url=self.url,
+                    folder=self.folder_path
+                )
+            )
 
         if p.returncode != 0:
             raise CloningError("Error when running git clone.")
+
+        if self.branch is None:
+            self.branch = await self.current_branch()
 
         return self._update_available_modules()
 
@@ -348,6 +360,8 @@ class Repo:
         """
         if len(requirements) == 0:
             return True
+
+        # TODO: Check and see if any of these modules are already available
 
         p = await self._run(
             self.PIP_INSTALL.format(

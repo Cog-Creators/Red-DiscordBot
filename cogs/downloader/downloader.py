@@ -173,12 +173,14 @@ class Downloader:
             await self.bot.send_cmd_help(ctx)
 
     @repo.command(name="add")
-    async def _repo_add(self, ctx, name: RepoName, repo_url: str, branch: str="master"):
+    async def _repo_add(self, ctx, name: RepoName, repo_url: str, branch: str=None):
         """
         Add a new repo to Downloader.
         :param name: Name that must follow python variable naming rules and
             contain only characters A-Z and numbers 0-9 and _
         :param repo_url: Clone url for the cog repo
+        :param branch: Specify branch if you want it to be different than
+            repo default.
         """
         try:
             # noinspection PyTypeChecker
