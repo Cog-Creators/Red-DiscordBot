@@ -270,7 +270,7 @@ class Repo:
         p = await self._run(
             self.GIT_PULL.format(
                 path=self.folder_path
-            )
+            ).split()
         )
 
         if p.returncode != 0:
@@ -438,9 +438,17 @@ class RepoManager:
         await self._save_repos()
 
     async def update_all_repos(self) -> MutableMapping[Repo, Tuple[str, str]]:
+        """
+        Calls repo.update() on all repos, returns a mapping of repos
+            that received new commits to a tuple containing old and
+            new commit hashes.
+        :return:
+        """
         ret = {}
         for _, repo in self._repos.items():
-            ret[repo] = await repo.update()
+            old, new = await repo.update()
+            if old != new:
+                ret[repo] = (old, new)
 
         await self._save_repos()
         return ret

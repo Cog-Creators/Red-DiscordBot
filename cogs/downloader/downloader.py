@@ -1,3 +1,5 @@
+from typing import MutableMapping, Tuple
+
 import discord
 from discord.ext import commands
 from pathlib import Path
@@ -8,7 +10,8 @@ from core import checks
 from core.utils.chat_formatting import box
 
 from .repo_manager import RepoManager, Repo
-from .converters import RepoName
+from .installable import Installable
+from .converters import RepoName, InstalledCogData
 from .log import log
 from .errors import CloningError, ExistingGitRepo
 
@@ -38,6 +41,61 @@ class Downloader:
                 pass
 
         self._repo_manager = RepoManager(self.conf)
+
+    @property
+    def installed_cogs(self) -> Tuple[Installable]:
+        """
+        Returns the dictionary mapping cog name to install location
+            and repo name.
+        :return:
+        """
+        installed = self.conf.installed()
+        # noinspection PyTypeChecker
+        return tuple(Installable.from_json(v) for v in installed)
+
+    async def _add_to_installed(self, cog: Installable):
+        """
+        Marks a cog as installed.
+        :param cog:
+        :return:
+        """
+        installed = self.conf.installed()
+        installed.append(cog.to_json())
+        await self.conf.set("installed", list(set(installed)))
+
+    async def _reinstall_cogs(self, cogs: Tuple[Installable]) -> Tuple[Installable]:
+        """
+        Installs a list of cogs, used when updating.
+        :param cogs:
+        :return: Any cogs that failed to copy
+        """
+        failed = []
+        for cog in cogs:
+            if not await cog.copy_to(self.COG_PATH):
+                failed.append(cog)
+
+        # noinspection PyTypeChecker
+        return tuple(failed)
+
+    async def _reinstall_libraries(self, cogs: Tuple[Installable]) -> Tuple[Installable]:
+        """
+        Reinstalls any shared libraries from the repos of cogs that
+            were updated.
+        :param cogs:
+        :return: Any libraries that failed to copy
+        """
+        repo_names = set(cog.repo_name for cog in cogs)
+        unfiltered_repos = (self._repo_manager.get_repo(r) for r in repo_names)
+        repos = filter(lambda r: r is not None, unfiltered_repos)
+
+        failed = []
+
+        for repo in repos:
+            if not await repo.install_libraries(target_dir=self.SHAREDLIB_PATH):
+                failed.extend(repo.available_libraries)
+
+        # noinspection PyTypeChecker
+        return tuple(failed)
 
     @commands.group()
     @checks.is_owner()
@@ -101,7 +159,7 @@ class Downloader:
             await self.bot.send_cmd_help(ctx)
 
     @cog.command(name="install")
-    async def _cog_install(self, ctx, repo_name: Repo, cog_name: str, install_libraries: bool=True):
+    async def _cog_install(self, ctx, repo_name: Repo, cog_name: str):
         """
         Installs a cog from the given repo.
         :param repo_name:
@@ -110,10 +168,40 @@ class Downloader:
         cog = discord.utils.get(repo_name.available_cogs, name=cog_name)
         await repo_name.install_cog(cog, self.COG_PATH)
 
-        if install_libraries:
-            await repo_name.install_libraries(self.SHAREDLIB_PATH)
+        await self._add_to_installed(cog)
+
+        await repo_name.install_libraries(self.SHAREDLIB_PATH)
 
         await ctx.send("`{}` cog successfully installed.".format(cog_name))
+
+    @cog.command(name="uninstall")
+    async def _cog_uninstall(self, ctx, cog_name: InstalledCogData):
+        """
+        Allows you to uninstall cogs that were previously installed
+            through Downloader.
+        :param cog_name:
+        """
+        raise NotImplementedError()
+
+    @cog.command(name="update")
+    async def _cog_update(self, ctx, cog_name: InstalledCogData=None):
+        """
+        Updates all cogs or one of your choosing.
+        :param cog_name:
+        """
+        if cog_name is None:
+            updated = await self._repo_manager.update_all_repos()
+            installed_cogs = set(self.installed_cogs)
+            updated_cogs = set(cog for repo in updated.keys() for cog in repo.available_cogs)
+
+            installed_and_updated = updated_cogs & installed_cogs
+
+            # noinspection PyTypeChecker
+            await self._reinstall_cogs(installed_and_updated)
+
+            # noinspection PyTypeChecker
+            await self._reinstall_libraries(installed_and_updated)
+        await ctx.send("Cog update completed successfully.")
 
     @cog.command(name="list")
     async def _cog_list(self, ctx, repo_name: Repo):

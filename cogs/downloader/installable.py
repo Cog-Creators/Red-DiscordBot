@@ -56,7 +56,9 @@ class Installable:
         Base installable initializer.
         :param location: Location (file or folder) to the installable.
         """
-        self.__location = location
+        self._location = location
+
+        self.repo_name = self._location.stem
 
         self.author = ()
         self.bot_version = (3, 0, 0)
@@ -77,9 +79,13 @@ class Installable:
         else:
             self.type = InstallableType.COG
 
+    def __eq__(self, other):
+        # noinspection PyProtectedMember
+        return self._location == other._location
+
     @property
     def name(self):
-        return self.__location.stem
+        return self._location.stem
 
     async def copy_to(self, target_dir: Path) -> bool:
         """
@@ -88,7 +94,7 @@ class Installable:
         :param target_dir: The installation directory to install to.
         :return: bool - status of installation
         """
-        if self.__location.is_file():
+        if self._location.is_file():
             copy_func = shutil.copy2
         else:
             copy_func = distutils.dir_util.copy_tree
@@ -96,12 +102,12 @@ class Installable:
         # noinspection PyBroadException
         try:
             copy_func(
-                src=str(self.__location),
-                dst=str(target_dir / self.__location.stem)
+                src=str(self._location),
+                dst=str(target_dir / self._location.stem)
             )
         except:
             log.exception("Error occurred when copying path:"
-                          " {}".format(self.__location))
+                          " {}".format(self._location))
             return False
         return True
 
@@ -110,7 +116,7 @@ class Installable:
         Determines if an information file exists.
         :return: Path to info file or None
         """
-        info_path = self.__location / self.INFO_FILE_NAME
+        info_path = self._location / self.INFO_FILE_NAME
         if info_path.is_file():
             return info_path
 
@@ -184,7 +190,7 @@ class Installable:
 
     def to_json(self):
         return {
-            "location": str(self.__location)
+            "location": str(self._location)
         }
 
     @classmethod
