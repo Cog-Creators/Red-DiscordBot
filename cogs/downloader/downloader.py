@@ -164,7 +164,7 @@ class Downloader:
             os.remove(str(target))
 
     @commands.group()
-    @commands.is_owner()
+    @checks.is_owner()
     async def repo(self, ctx):
         """
         Command group for managing Downloader repos.
@@ -218,7 +218,7 @@ class Downloader:
         await ctx.send(box(joined, lang="diff"))
 
     @commands.group()
-    @commands.is_owner()
+    @checks.is_owner()
     async def cog(self, ctx):
         """
         Command group for managing installable Cogs.
