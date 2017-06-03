@@ -1,6 +1,6 @@
 import os
 import shutil
-from typing import MutableMapping, Tuple
+from typing import Tuple
 
 import discord
 from discord.ext import commands
@@ -17,6 +17,7 @@ from .installable import Installable
 from .converters import RepoName, InstalledCog
 from .log import log
 from .errors import CloningError, ExistingGitRepo
+from .checks import install_agreement
 
 
 class Downloader:
@@ -36,6 +37,8 @@ class Downloader:
             repos={},
             installed=[]
         )
+
+        self.already_agreed = False
 
         self.LIB_PATH.mkdir(parents=True, exist_ok=True)
         self.SHAREDLIB_PATH.mkdir(parents=True, exist_ok=True)
@@ -173,6 +176,7 @@ class Downloader:
             await self.bot.send_cmd_help(ctx)
 
     @repo.command(name="add")
+    @install_agreement()
     async def _repo_add(self, ctx, name: RepoName, repo_url: str, branch: str=None):
         """
         Add a new repo to Downloader.
