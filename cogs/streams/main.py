@@ -1,9 +1,11 @@
 from discord.ext import commands
 from core.config import Config
+from core.utils.chat_formatting import pagify
 from core import checks
 from .streams import TwitchStream, HitboxStream, BeamStream, PicartoStream
 from .errors import OfflineStream, StreamNotFound, APIError, InvalidCredentials
 from . import streams as StreamClasses
+from collections import defaultdict
 import asyncio
 
 CHECK_DELAY = 60
@@ -124,6 +126,28 @@ class Streams:
         msg += "server" if _all else "channel"
 
         await ctx.send(msg)
+
+    @streamalert.command(name="list")
+    async def streamalert_list(self, ctx):
+        streams_list = defaultdict(list)
+        guild_channels_ids = [c.id for c in ctx.guild.channels]
+        msg = "Active stream alerts:\n\n"
+
+        for stream in self.streams:
+            for channel_id in stream.channels:
+                if channel_id in guild_channels_ids:
+                    streams_list[channel_id].append(stream.name)
+
+        if not streams_list:
+            await ctx.send("There are no active stream alerts in this server.")
+            return
+
+        for channel_id, streams in streams_list.items():
+            channel = ctx.guild.get_channel(channel_id)
+            msg += "** - #{}**\n{}\n".format(channel, ", ".join(streams))
+
+        for page in pagify(msg):
+            await ctx.send(page)
 
     async def stream_alert(self, ctx, _class, channel_name):
         stream = self.get_stream(_class, channel_name)

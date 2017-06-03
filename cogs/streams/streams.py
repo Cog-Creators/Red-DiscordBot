@@ -36,6 +36,9 @@ class Stream:
                 data[k] = v
         return data
 
+    def __repr__(self):
+        return "<{0.__class__.__name__}: {0.name}>".format(self)
+
 
 class TwitchStream(Stream):
     def __init__(self, **kwargs):
@@ -115,6 +118,9 @@ class TwitchStream(Stream):
         embed.color = 0x6441A4
 
         return embed
+
+    def __repr__(self):
+        return "<{0.__class__.__name__}: {0.name} (ID: {0.id})>".format(self)
 
 
 class HitboxStream(Stream):
