@@ -11,7 +11,7 @@ REPO_INSTALL_MSG = (
     "damage that the content of 3rd party repositories might cause."
     "\n\nBy typing '**I agree**' you declare that you have read and"
     " fully understand the above message. This message won't be "
-    "shown again until the next reboot.\n\nYou have **10** seconds"
+    "shown again until the next reboot.\n\nYou have **30** seconds"
     " to reply to this message."
 )
 
@@ -23,12 +23,14 @@ def install_agreement():
             return True
 
         def does_agree(msg: discord.Message):
-            return msg.content == "I agree"
+            return ctx.author == msg.author and \
+                   ctx.channel == msg.channel and \
+                   msg.content == "I agree"
 
         await ctx.send(REPO_INSTALL_MSG)
 
         try:
-            await ctx.bot.wait_for('message', check=does_agree, timeout=10)
+            await ctx.bot.wait_for('message', check=does_agree, timeout=30)
         except asyncio.TimeoutError:
             await ctx.send("Your response has timed out, please try again.")
             return False
