@@ -2,7 +2,7 @@ from discord.ext import commands
 from core.config import Config
 from core.utils.chat_formatting import pagify
 from core import checks
-from .streams import TwitchStream, HitboxStream, BeamStream, PicartoStream
+from .streams import TwitchStream, HitboxStream, MixerStream, PicartoStream
 from .errors import OfflineStream, StreamNotFound, APIError, InvalidCredentials
 from . import streams as StreamClasses
 from collections import defaultdict
@@ -44,9 +44,9 @@ class Streams:
         await self.check_online(ctx, stream)
 
     @commands.command()
-    async def beam(self, ctx, channel_name: str):
-        """Checks if a beam.pro channel is streaming"""
-        stream = BeamStream(name=channel_name)
+    async def mixer(self, ctx, channel_name: str):
+        """Checks if a Mixer channel is streaming"""
+        stream = MixerStream(name=channel_name)
         await self.check_online(ctx, stream)
 
     @commands.command()
@@ -86,10 +86,10 @@ class Streams:
         """Sets a Hitbox stream alert notification in the channel"""
         await self.stream_alert(ctx, HitboxStream, channel_name)
 
-    @streamalert.command(name="beam")
-    async def beam_alert(self, ctx, channel_name: str):
-        """Sets a beam.pro stream alert notification in the channel"""
-        await self.stream_alert(ctx, BeamStream, channel_name)
+    @streamalert.command(name="mixer")
+    async def mixer_alert(self, ctx, channel_name: str):
+        """Sets a Mixer stream alert notification in the channel"""
+        await self.stream_alert(ctx, MixerStream, channel_name)
 
     @streamalert.command(name="picarto")
     async def picarto_alert(self, ctx, channel_name: str):
@@ -122,8 +122,8 @@ class Streams:
         self.streams = streams
         await self.save_streams()
 
-        msg = "All stream notifications have been removed from the "
-        msg += "server" if _all else "channel"
+        msg = "All {}'s stream alerts have been disabled." \
+              "".format("server" if _all else "channel")
 
         await ctx.send(msg)
 

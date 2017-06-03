@@ -161,15 +161,17 @@ class HitboxStream(Stream):
         return embed
 
 
-class BeamStream(Stream):
+class MixerStream(Stream):
     async def is_online(self):
-        url = "https://beam.pro/api/v1/channels/" + self.name
+        url = "https://mixer.com/api/v1/channels/" + self.name
 
         session = aiohttp.ClientSession()
         async with session.get(url) as r:
-            data = await r.json(encoding='utf-8')
+            #data = await r.json(encoding='utf-8')
+            data = await r.text(encoding='utf-8')
         await session.close()
         if r.status == 200:
+            data = json.loads(data, strict=False)
             if data["online"] is True:
                 #self.already_online = True
                 return self.make_embed(data)
@@ -182,10 +184,10 @@ class BeamStream(Stream):
             raise APIError()
 
     def make_embed(self, data):
-        default_avatar = ("https://beam.pro/_latest/assets/images/main/"
+        default_avatar = ("https://mixer.com/_latest/assets/images/main/"
                           "avatars/default.jpg")
         user = data["user"]
-        url = "https://beam.pro/" + data["token"]
+        url = "https://mixer.com/" + data["token"]
         embed = discord.Embed(title=data["name"], url=url)
         embed.set_author(name=user["username"])
         embed.add_field(name="Followers", value=data["numFollowers"])
