@@ -5,8 +5,16 @@ import pytest
 import random
 
 from core.bot import Red
+from _pytest.monkeypatch import MonkeyPatch
 from core.drivers import red_json
 from core import Config
+
+
+@pytest.fixture(scope="session")
+def monkeysession(request):
+    mpatch = MonkeyPatch()
+    yield mpatch
+    mpatch.undo()
 
 
 @pytest.fixture(scope="module")
