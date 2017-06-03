@@ -123,7 +123,7 @@ class Repo:
         """
         Gets the commit notes from git log.
         :param old_commit_hash: Point in time to start getting messages
-        :param file_relative_path: Path relative to the repo folder of the file
+        :param relative_file_path: Path relative to the repo folder of the file
             to get messages for.
         :return: Git commit note log
         """
