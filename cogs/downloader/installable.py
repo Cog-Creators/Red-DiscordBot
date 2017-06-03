@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Union, MutableMapping, Any
 
 from .log import log
+from .json_mixins import RepoJSONMixin
 
 
 class InstallableType(Enum):
@@ -14,7 +15,7 @@ class InstallableType(Enum):
     SHARED_LIBRARY = 2
 
 
-class Installable:
+class Installable(RepoJSONMixin):
     """
     Base class for anything the Downloader cog can install.
         - Modules
@@ -22,7 +23,6 @@ class Installable:
         - Other stuff?
     """
 
-    INFO_FILE_NAME = "info.json"
     INFO_FILE_DESCRIPTION = """
     The info.json file may exist inside every package folder in the repo,
     it is optional however. This string describes the valid keys within
@@ -56,39 +56,33 @@ class Installable:
         Base installable initializer.
         :param location: Location (file or folder) to the installable.
         """
-        self._location = location
+        super().__init__(location)
 
-        self.repo_name = self._location.stem
+        self.repo_name = self._info_file.stem
 
         self.author = ()
         self.bot_version = (3, 0, 0)
-        self.description = None
         self.hidden = False
-        self.install_msg = None
         self.required_cogs = {}  # Cog name -> repo URL
         self.requirements = ()
-        self.short = None
         self.tags = ()
         self.type = InstallableType.UNKNOWN
 
-        self.__info_file = self._info_file()
-        self.__info = {}
+        self._process_info_file(self._info_file)
 
-        if self.__info_file is not None:
-            self.__info = self._process_info_file(self.__info_file)
-        else:
+        if self._info == {}:
             self.type = InstallableType.COG
 
     def __eq__(self, other):
         # noinspection PyProtectedMember
-        return self._location == other._location
+        return self._info_file == other._info_file
 
     def __hash__(self):
-        return hash(self._location)
+        return hash(self._info_file)
 
     @property
     def name(self):
-        return self._location.stem
+        return self._info_file.stem
 
     async def copy_to(self, target_dir: Path) -> bool:
         """
@@ -97,7 +91,7 @@ class Installable:
         :param target_dir: The installation directory to install to.
         :return: bool - status of installation
         """
-        if self._location.is_file():
+        if self._info_file.is_file():
             copy_func = shutil.copy2
         else:
             copy_func = distutils.dir_util.copy_tree
@@ -105,25 +99,14 @@ class Installable:
         # noinspection PyBroadException
         try:
             copy_func(
-                src=str(self._location),
-                dst=str(target_dir / self._location.stem)
+                src=str(self._info_file),
+                dst=str(target_dir / self._info_file.stem)
             )
         except:
             log.exception("Error occurred when copying path:"
-                          " {}".format(self._location))
+                          " {}".format(self._info_file))
             return False
         return True
-
-    def _info_file(self) -> Union[Path, None]:
-        """
-        Determines if an information file exists.
-        :return: Path to info file or None
-        """
-        info_path = self._location / self.INFO_FILE_NAME
-        if info_path.is_file():
-            return info_path
-
-        return None
 
     def _process_info_file(self, info_file_path: Path=None) -> MutableMapping[str, Any]:
         """
@@ -133,7 +116,7 @@ class Installable:
         :param info_file_path: Optional path to information file, defaults to `self.__info_file`
         :return: Raw information dictionary
         """
-        info_file_path = info_file_path or self.__info_file
+        info_file_path = info_file_path or self._info_file
         if info_file_path is None or not info_file_path.is_file():
             raise ValueError("No valid information file path was found.")
 
@@ -145,9 +128,11 @@ class Installable:
                 info = {}
                 log.exception("Invalid JSON information file at path:"
                               " {}".format(info_file_path))
+            else:
+                self._info = info
 
         try:
-            author = tuple(info.get("author", ()))
+            author = tuple(info.get("author", []))
         except ValueError:
             author = ()
         self.author = author
@@ -158,21 +143,15 @@ class Installable:
             bot_version = 2
         self.bot_version = bot_version
 
-        self.description = info.get("description", "")
-
         try:
             hidden = bool(info.get("hidden", False))
         except ValueError:
             hidden = False
         self.hidden = hidden
 
-        self.install_msg = info.get("install_msg")
-
         self.required_cogs = info.get("required_cogs", {})
 
         self.requirements = info.get("requirements", ())
-
-        self.short = info.get("short", "")
 
         try:
             tags = tuple(info.get("tags", ()))
@@ -193,7 +172,7 @@ class Installable:
 
     def to_json(self):
         return {
-            "location": self._location.relative_to(Path.cwd()).parts
+            "location": self._info_file.relative_to(Path.cwd()).parts
         }
 
     @classmethod

@@ -8,7 +8,7 @@ INFO_JSON = {
     "author": (
         "tekulvw",
     ),
-    "bot_version": 3,
+    "bot_version": (3, 0, 0),
     "description": "A long description",
     "hidden": False,
     "install_msg": "A post-installation message",

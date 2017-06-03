@@ -1,4 +1,5 @@
 import asyncio
+import json
 import os
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -15,26 +16,10 @@ from core import Config
 from .errors import *
 from .installable import Installable, InstallableType
 from .log import log
+from .json_mixins import RepoJSONMixin
 
 
-class RepoJSONParser:
-    def __init__(self, repo_folder: Path):
-        self._location = repo_folder
-
-        self.author = None
-        self.install_msg = None
-        self.short = None
-        self.description = None
-
-        self._info_file = repo_folder / "info.json"
-        if self._info_file.exists():
-            self._read_info_file()
-
-    def _read_info_file(self):
-        raise NotImplementedError()
-
-
-class Repo:
+class Repo(RepoJSONMixin):
     GIT_CLONE = "git clone -b {branch} {url} {folder}"
     GIT_CLONE_NO_BRANCH = "git clone {url} {folder}"
     GIT_CURRENT_BRANCH = "git -C {path} rev-parse --abbrev-ref HEAD"
@@ -50,7 +35,6 @@ class Repo:
 
     def __init__(self, name: str, url: str, branch: str, folder_path: Path,
                  available_modules: Tuple[Installable]=(), loop: asyncio.AbstractEventLoop=None):
-        super().__init__()
         self.url = url
         self.branch = branch
 
@@ -58,6 +42,8 @@ class Repo:
 
         self.folder_path = folder_path
         self.folder_path.mkdir(parents=True, exist_ok=True)
+
+        super().__init__(self.folder_path)
 
         self.available_modules = available_modules
 
@@ -210,6 +196,8 @@ class Repo:
         if self.branch is None:
             self.branch = await self.current_branch()
 
+        self._read_info_file()
+
         return self._update_available_modules()
 
     async def current_branch(self) -> str:
@@ -313,6 +301,7 @@ class Repo:
         new_commit = await self.current_commit(branch=curr_branch)
 
         self._update_available_modules()
+        self._read_info_file()
 
         return old_commit, new_commit
 
