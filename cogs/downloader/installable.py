@@ -138,7 +138,7 @@ class Installable(RepoJSONMixin):
         self.author = author
 
         try:
-            bot_version = int(info.get("bot_version", 2))
+            bot_version = tuple(info.get("bot_version", [3, 0, 0]))
         except ValueError:
             bot_version = 2
         self.bot_version = bot_version
