@@ -68,7 +68,8 @@ class Installable(RepoJSONMixin):
         self.tags = ()
         self.type = InstallableType.UNKNOWN
 
-        self._process_info_file(self._info_file)
+        if self._info_file.exists():
+            self._process_info_file(self._info_file)
 
         if self._info == {}:
             self.type = InstallableType.COG
