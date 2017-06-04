@@ -15,6 +15,7 @@ class Red(commands.Bot):
             token=None,
             prefix=[],
             packages=[],
+            owner=None,
             coowners=[],
             whitelist=[],
             blacklist=[],
@@ -42,14 +43,16 @@ class Red(commands.Bot):
         if "command_prefix" not in kwargs:
             kwargs["command_prefix"] = prefix_manager
 
+        if "owner_id" not in kwargs:
+            kwargs["owner_id"] = self.db.get("owner")
+
         self.counter = Counter()
         self.uptime = None
         super().__init__(**kwargs)
 
-    async def is_owner(self, user, allow_coowners=True):
-        if allow_coowners:
-            if user.id in self.db.coowners():
-                return True
+    async def is_owner(self, user):
+        if user.id in self.db.coowners():
+            return True
         return await super().is_owner(user)
 
     async def send_cmd_help(self, ctx):
