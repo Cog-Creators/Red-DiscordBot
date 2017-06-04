@@ -19,7 +19,9 @@ REPO_INSTALL_MSG = (
 def install_agreement():
     async def pred(ctx: commands.Context):
         downloader = ctx.command.instance
-        if downloader.already_agreed:
+        if downloader is None:
+            raise commands.CommandError("Downloader not loaded.")
+        elif downloader.already_agreed:
             return True
 
         def does_agree(msg: discord.Message):
