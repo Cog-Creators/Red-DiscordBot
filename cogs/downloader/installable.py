@@ -58,7 +58,7 @@ class Installable(RepoJSONMixin):
         """
         super().__init__(location)
 
-        self.repo_name = self._info_file.stem
+        self.repo_name = self._repo_folder.stem
 
         self.author = ()
         self.bot_version = (3, 0, 0)
@@ -83,7 +83,7 @@ class Installable(RepoJSONMixin):
 
     @property
     def name(self):
-        return self._info_file.stem
+        return self._info_file.parent.stem
 
     async def copy_to(self, target_dir: Path) -> bool:
         """
