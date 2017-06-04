@@ -264,7 +264,7 @@ class Downloader:
         :param cog_name:
         """
         # noinspection PyUnresolvedReferences,PyProtectedMember
-        real_name = cog_name._location.stem
+        real_name = cog_name.name
 
         poss_installed_path = self.COG_PATH / real_name
         if poss_installed_path.exists():
