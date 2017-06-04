@@ -149,8 +149,8 @@ class Bot(commands.Bot):
         if author == self.user:
             return self.settings.self_bot
 
-        mod_cog = self.get_cog('Mod')
         global_ignores = self.get_cog('Owner').global_ignores
+        local_ignores = self.get_cog('Core').ignore_list
 
         if self.settings.owner == author.id:
             return True
@@ -173,13 +173,12 @@ class Bot(commands.Bot):
                 if r is not None:
                     return True
 
-        if mod_cog is not None:
-            if not message.channel.is_private:
-                if message.server.id in mod_cog.ignore_list["SERVERS"]:
-                    return False
+        if not message.channel.is_private:
+            if message.server.id in local_ignores["SERVERS"]:
+                return False
 
-                if message.channel.id in mod_cog.ignore_list["CHANNELS"]:
-                    return False
+            if message.channel.id in local_ignores["CHANNELS"]:
+                return False
 
         return True
 
@@ -542,12 +541,17 @@ def load_cogs(bot):
         registry = {}
 
     bot.load_extension('cogs.owner')
+    bot.load_extension('cogs.core')
     owner_cog = bot.get_cog('Owner')
+    core_cog = bot.get_cog('Core')
     if owner_cog is None:
         print("The owner cog is missing. It contains core functions without "
               "which Red cannot function. Reinstall.")
         exit(1)
-
+    elif core_cog is None:
+        print("The core cog is missing. It contains core functions without "
+              "which Red cannot function. Reinstall.")
+        exit(1)
     if bot.settings._no_cogs:
         bot.logger.debug("Skipping initial cogs loading (--no-cogs)")
         if not os.path.isfile("data/red/cogs.json"):
