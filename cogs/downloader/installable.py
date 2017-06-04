@@ -78,10 +78,10 @@ class Installable(RepoJSONMixin):
 
     def __eq__(self, other):
         # noinspection PyProtectedMember
-        return self._info_file == other._info_file
+        return self._location == other._location
 
     def __hash__(self):
-        return hash(self._info_file)
+        return hash(self._location)
 
     @property
     def name(self):
@@ -181,10 +181,10 @@ class Installable(RepoJSONMixin):
 
     def to_json(self):
         return {
-            "location": self._info_file.relative_to(Path.cwd()).parts
+            "location": self._location.relative_to(Path.cwd()).parts
         }
 
     @classmethod
     def from_json(cls, data: dict):
-        location = Path.cwd() / Path(*data["location"]).parent
+        location = Path.cwd() / Path(*data["location"])
         return cls(location=location)
