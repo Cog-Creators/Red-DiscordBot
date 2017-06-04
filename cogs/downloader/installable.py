@@ -109,6 +109,12 @@ class Installable(RepoJSONMixin):
             return False
         return True
 
+    def _read_info_file(self):
+        super()._read_info_file()
+
+        if self._info_file.exists():
+            self._process_info_file()
+
     def _process_info_file(self, info_file_path: Path=None) -> MutableMapping[str, Any]:
         """
         Processes an information file. Loads dependencies among other
