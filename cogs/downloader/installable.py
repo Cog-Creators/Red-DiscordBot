@@ -58,6 +58,8 @@ class Installable(RepoJSONMixin):
         """
         super().__init__(location)
 
+        self._location = location
+
         self.repo_name = self._repo_folder.stem
 
         self.author = ()
@@ -83,7 +85,7 @@ class Installable(RepoJSONMixin):
 
     @property
     def name(self):
-        return self._info_file.parent.stem
+        return self._location.stem
 
     async def copy_to(self, target_dir: Path) -> bool:
         """
@@ -92,7 +94,7 @@ class Installable(RepoJSONMixin):
         :param target_dir: The installation directory to install to.
         :return: bool - status of installation
         """
-        if self._info_file.is_file():
+        if self._location.is_file():
             copy_func = shutil.copy2
         else:
             copy_func = distutils.dir_util.copy_tree
@@ -100,12 +102,12 @@ class Installable(RepoJSONMixin):
         # noinspection PyBroadException
         try:
             copy_func(
-                src=str(self._info_file),
-                dst=str(target_dir / self._info_file.stem)
+                src=str(self._location),
+                dst=str(target_dir / self._location.stem)
             )
         except:
             log.exception("Error occurred when copying path:"
-                          " {}".format(self._info_file))
+                          " {}".format(self._location))
             return False
         return True
 
