@@ -252,7 +252,8 @@ class Core:
 
         for i in range(length):
             token += random.choice(chars)
-        log.info("{0} ({0.id}) requested to be set as owner.")
+        log.info("{0} ({0.id}) requested to be set as owner."
+                 "".format(ctx.author))
         print("\nVerification token:")
         print(token)
 
