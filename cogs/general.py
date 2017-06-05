@@ -39,15 +39,15 @@ class General:
         self.bot = bot
         self.stopwatches = {}
         self.ball = ["As I see it, yes", "It is certain", "It is decidedly so", "Most likely", "Outlook good",
-                     "Signs point to yes", "Without a doubt", "Yes", "Yes – definitely", "You may rely on it", "Reply hazy, try again",
-                     "Ask again later", "Better not tell you now", "Cannot predict now", "Concentrate and ask again",
-                     "Don't count on it", "My reply is no", "My sources say no", "Outlook not so good", "Very doubtful"]
+                     "Signs point to yes", "Without a doubt", "Yes", "Yes – definitely", "You may rely on it",
+                     "Better not tell you now", "Don't count on it", "My reply is no", "My sources say no",
+                     "Outlook not so good", "Very doubtful"]
         self.poll_sessions = []
 
     @commands.command(hidden=True)
     async def ping(self):
-        """Pong."""
-        await self.bot.say("Pong.")
+        """Test response time."""
+        await self.bot.say(":ping_pong:")
 
     @commands.command()
     async def choose(self, *choices):
@@ -118,13 +118,13 @@ class General:
             outcome = cond[(player_choice, red_choice)]
 
         if outcome is True:
-            await self.bot.say("{} You win {}!"
+            await self.bot.say("{}\n\nYou win {}!"
                                "".format(red_choice.value, author.mention))
         elif outcome is False:
-            await self.bot.say("{} You lose {}!"
+            await self.bot.say("{}\n\nYou lose {}!"
                                "".format(red_choice.value, author.mention))
         else:
-            await self.bot.say("{} We're square {}!"
+            await self.bot.say("{}\n\nWe're square {}!"
                                "".format(red_choice.value, author.mention))
 
     @commands.command(name="8", aliases=["8ball"])
@@ -157,23 +157,29 @@ class General:
         search_terms = escape_mass_mentions(search_terms.replace(" ", "+"))
         await self.bot.say("https://lmgtfy.com/?q={}".format(search_terms))
 
-    @commands.command(no_pm=True, hidden=True)
-    async def hug(self, user : discord.Member, intensity : int=1):
+    @commands.command(pass_context = True, no_pm=True, hidden=True)
+    async def hug(self, ctx, user : discord.Member, intensity : int=1):
         """Because everyone likes hugs
 
         Up to 10 intensity levels."""
-        name = italics(user.display_name)
-        if intensity <= 0:
-            msg = "(っ˘̩╭╮˘̩)っ" + name
-        elif intensity <= 3:
-            msg = "(っ´▽｀)っ" + name
-        elif intensity <= 6:
-            msg = "╰(*´︶`*)╯" + name
-        elif intensity <= 9:
-            msg = "(つ≧▽≦)つ" + name
-        elif intensity >= 10:
-            msg = "(づ￣ ³￣)づ{} ⊂(´・ω・｀⊂)".format(name)
-        await self.bot.say(msg)
+        author = ctx.message.author
+        if user != author:
+            name = italics(user.mention)
+            if intensity <= 0:
+                msg = "(っ˘̩╭╮˘̩)っ " + name
+            elif intensity <= 3:
+                msg = "(っ´▽｀)っ " + name
+            elif intensity <= 6:
+                msg = "╰(*´︶`*)╯ " + name
+            elif intensity <= 9:
+                msg = "(つ≧▽≦)つ " + name
+            elif intensity == 10:
+                msg = "(づ￣ ³￣)づ {} ⊂(´・ω・｀⊂)".format(name)
+            elif intensity >= 11:
+                msg = "***HUGGING INTENSIFIES***"
+            await self.bot.say(msg)
+        else:
+            await self.bot.say("Aw, {} is alone :cry:".format(author.mention))
 
     @commands.command(pass_context=True, no_pm=True)
     async def userinfo(self, ctx, *, user: discord.Member=None):

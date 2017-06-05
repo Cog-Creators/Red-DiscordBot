@@ -740,6 +740,7 @@ class Mod:
             await self.mass_purge(to_delete)
         else:
             await self.slow_deletion(to_delete)
+        await self.bot.say("Deleted {} messages containing {}".format(number, text))
 
     @cleanup.command(pass_context=True, no_pm=True)
     async def user(self, ctx, user: discord.Member, number: int):
@@ -791,6 +792,7 @@ class Mod:
             await self.mass_purge(to_delete)
         else:
             await self.slow_deletion(to_delete)
+        await self.bot.say("Deleted {} messages from {}".format(number, user.mention))
 
     @cleanup.command(pass_context=True, no_pm=True)
     async def after(self, ctx, message_id : int):
@@ -834,6 +836,7 @@ class Mod:
                               len(to_delete), channel.name))
 
         await self.mass_purge(to_delete)
+        await self.bot.say("Deleted {} messages".format(len(to_delete)))
 
     @cleanup.command(pass_context=True, no_pm=True)
     async def messages(self, ctx, number: int):
@@ -865,6 +868,7 @@ class Mod:
             await self.mass_purge(to_delete)
         else:
             await self.slow_deletion(to_delete)
+        await self.bot.say("Deleted {} messages".format(number))
 
     @cleanup.command(pass_context=True, no_pm=True, name='bot')
     async def cleanup_bot(self, ctx, number: int):
@@ -925,6 +929,7 @@ class Mod:
             await self.mass_purge(to_delete)
         else:
             await self.slow_deletion(to_delete)
+        await self.bot.say("Deleted {} messages".format(number))
 
     @cleanup.command(pass_context=True, name='self')
     async def cleanup_self(self, ctx, number: int, match_pattern: str = None):
@@ -1002,6 +1007,7 @@ class Mod:
             await self.mass_purge(to_delete)
         else:
             await self.slow_deletion(to_delete)
+        await self.bot.say("Deleted {} messages".format(number))
 
     @commands.command(pass_context=True)
     @checks.mod_or_permissions(manage_messages=True)
