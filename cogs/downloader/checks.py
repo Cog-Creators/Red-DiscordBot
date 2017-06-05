@@ -20,7 +20,7 @@ def install_agreement():
     async def pred(ctx: commands.Context):
         downloader = ctx.command.instance
         if downloader is None:
-            raise commands.CommandError("Downloader not loaded.")
+            return True
         elif downloader.already_agreed:
             return True
         elif ctx.invoked_subcommand is None or \
