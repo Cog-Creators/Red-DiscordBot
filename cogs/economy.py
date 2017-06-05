@@ -107,7 +107,7 @@ SLOT_PAYOUTS_MSG = ("Slot machine payouts:\n"
                     "{two.value} {six.value} Bet * 4\n"
                     "{cherries.value} {cherries.value} Bet * 3\n\n"
                     "Three symbols: +500\n"
-                    "Two symbols: Bet * 2".format(**SMReel.__dict__))
+                    "Two symbols: Bet * 2".format(**vars(SMReel)))
 
 
 class Bank:
