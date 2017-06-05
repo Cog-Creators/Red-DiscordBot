@@ -60,7 +60,7 @@ class Installable(RepoJSONMixin):
 
         self._location = location
 
-        self.repo_name = self._repo_folder.stem
+        self.repo_name = self._location.parent.stem
 
         self.author = ()
         self.bot_version = (3, 0, 0)
