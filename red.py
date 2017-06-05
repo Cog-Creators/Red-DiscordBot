@@ -149,7 +149,7 @@ class Bot(commands.Bot):
         if author == self.user:
             return self.settings.self_bot
 
-        mod_cog = self.get_cog('Mod')
+        local_ignores = self.get_cog("Owner").ignore_list
         global_ignores = self.get_cog('Owner').global_ignores
 
         if self.settings.owner == author.id:
@@ -173,13 +173,12 @@ class Bot(commands.Bot):
                 if r is not None:
                     return True
 
-        if mod_cog is not None:
-            if not message.channel.is_private:
-                if message.server.id in mod_cog.ignore_list["SERVERS"]:
-                    return False
+        if not message.channel.is_private:
+            if message.server.id in local_ignores.ignore_list["SERVERS"]:
+                return False
 
-                if message.channel.id in mod_cog.ignore_list["CHANNELS"]:
-                    return False
+            if message.channel.id in local_ignores.ignore_list["CHANNELS"]:
+                return False
 
         return True
 
