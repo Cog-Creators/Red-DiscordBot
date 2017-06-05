@@ -330,6 +330,28 @@ class Mod:
         except Exception as e:
             print(e)
 
+     
+    @commands.command(no_pm=True, pass_context=True)
+    @checks.admin_or_permissions(kick_members=True)
+    async def warn(self, ctx, user: discord.Member):
+        """Warns user."""
+        author = ctx.message.author
+        server = author.server
+        try:
+            await self.bot.say("Processing...")
+            logger.info("{}({}) warned {}({})".format(
+                author.name, author.id, user.name, user.id))
+            await self.new_case(server,
+                                action="Warn",
+                                mod=author,
+                                user=user)
+            await self.bot.say("Cupcake 4 me sir? Done.")
+        except discord.errors.Forbidden:
+            await self.bot.say("I'm not allowed to do that.")
+        except Exception as e:
+            print(e)       
+
+            
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(ban_members=True)
     async def ban(self, ctx, user: discord.Member, days: str = None, *, reason: str = None):
