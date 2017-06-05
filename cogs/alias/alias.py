@@ -123,7 +123,7 @@ class Alias:
 
             Will raise ValueError if no prefix is found.
         :param message: Message object
-        :return: 
+        :return:
         """
         guild = message.guild
         content = message.content
@@ -198,8 +198,6 @@ class Alias:
                          alias_name: str, *, command):
         """
         Add an alias for a command.
-        :param alias_name: 
-        :param command: 
         """
 #region Alias Add Validity Checking
         is_command = self.is_command(alias_name)
@@ -239,8 +237,6 @@ class Alias:
                                 alias_name: str, *, command):
         """
         Add a global alias for a command.
-        :param alias_name: 
-        :param command: 
         """
 # region Alias Add Validity Checking
         is_command = self.is_command(alias_name)
@@ -303,7 +299,6 @@ class Alias:
     async def _del_alias(self, ctx: commands.Context, alias_name: str):
         """
         Deletes an existing alias on this server.
-        :param alias_name: 
         """
         aliases = self.unloaded_aliases(ctx.guild)
         try:
@@ -321,7 +316,6 @@ class Alias:
     async def _del_global_alias(self, ctx: commands.Context, alias_name: str):
         """
         Deletes an existing global alias.
-        :param alias_name: 
         """
         aliases = self.unloaded_global_aliases()
         try:
