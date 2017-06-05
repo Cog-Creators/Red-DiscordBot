@@ -1019,6 +1019,24 @@ class Audio:
             else:
                 await self._remove_song_status()
 
+    # no return. they can check themselves.
+    async def _notify_song_name(self):
+        if self.settings.get("NOTIFY"):
+            song = None
+            try:
+                active_servers = self._get_active_voice_clients()
+            except:
+                log.debug("voice_clients changed while trying to send chat notification")
+                return
+            if len(active_servers) == 1:
+                server = active_servers[0].server
+                song = self.queue[server.id]["NOW_PLAYING"]
+                if song:
+                    message = "Now playing: {}.".format(song.title)
+                    await self.bot.send_message(self.playing_text_channel, message)
+                else:
+                    await self.bot.send_message(self.playing_text_channel, "I'm not playing anything right now")
+
     def _valid_playlist_name(self, name):
         for char in name:
             if char.isdigit() or char.isalpha() or char == "_":
@@ -1084,6 +1102,17 @@ class Audio:
             return
         self.settings["MAX_LENGTH"] = length
         await self.bot.say("Maximum length is now {} seconds.".format(length))
+        self.save_settings()
+
+    @audioset.command(name="notify")
+    @checks.is_owner()
+    async def audioset_notify(self):
+        """Send notifications to the channel when the songs changes"""
+        self.settings["NOTIFY"] = not self.settings["NOTIFY"]
+        if self.settings["NOTIFY"]:
+            await self.bot.say("Now notifying when a new track plays.")
+        else:
+            await self.bot.say("No longer notifying when a new track plays.")
         self.save_settings()
 
     @audioset.command(name="player")
@@ -1245,6 +1274,7 @@ class Audio:
         server = ctx.message.server
         author = ctx.message.author
         voice_channel = author.voice_channel
+        self.playing_text_channel = ctx.message.channel
 
         # Checking already connected, will join if not
 
@@ -1330,6 +1360,7 @@ class Audio:
         server = ctx.message.server
         author = ctx.message.author
         voice_channel = author.voice_channel
+        self.playing_text_channel = ctx.message.channel
 
         # Checking if playing in current server
 
@@ -1571,6 +1602,7 @@ class Audio:
         server = ctx.message.server
         author = ctx.message.author
         voice_channel = ctx.message.author.voice_channel
+        self.playing_text_channel = ctx.message.channel
 
         caller = inspect.currentframe().f_back.f_code.co_name
 
@@ -2065,6 +2097,7 @@ class Audio:
                 song = None
             self.queue[server.id]["NOW_PLAYING"] = song
             log.debug("set now_playing for sid {}".format(server.id))
+            self.bot.loop.create_task(self._notify_song_name())
             self.bot.loop.create_task(self._update_bot_status())
 
         elif server.id in self.downloaders:
@@ -2174,10 +2207,16 @@ def check_folders():
 
 
 def check_files():
-    default = {"VOLUME": 50, "MAX_LENGTH": 3700, "VOTE_ENABLED": True,
-               "MAX_CACHE": 0, "SOUNDCLOUD_CLIENT_ID": None,
-               "TITLE_STATUS": True, "AVCONV": False, "VOTE_THRESHOLD": 50,
-               "SERVERS": {}}
+    default = {"VOLUME": 50,
+               "MAX_LENGTH": 3700,
+               "VOTE_ENABLED": True,
+               "MAX_CACHE": 0,
+               "SOUNDCLOUD_CLIENT_ID": None,
+               "TITLE_STATUS": True,
+               "AVCONV": False,
+               "VOTE_THRESHOLD": 50,
+               "SERVERS": {},
+               "NOTIFY" : False}
     settings_path = "data/audio/settings.json"
 
     if not os.path.isfile(settings_path):
