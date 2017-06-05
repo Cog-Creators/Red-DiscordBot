@@ -7,6 +7,7 @@ import logging.handlers
 import traceback
 import datetime
 import subprocess
+import json
 
 try:
     from discord.ext import commands
@@ -39,6 +40,23 @@ from io import TextIOWrapper
 
 description = "Red - A multifunction Discord bot by Twentysix"
 
+shardpath = "data/shard/"
+if not os.path.exists(shardpath):
+    os.makedirs(shardpath)
+    with open(shardpath + "shard.json", "w") as f:
+        writeJ = '{"SHARDS": "False","SHARD0": "0","SHARD1": "1","SHARDC": "2"}'
+        parse = json.loads(writeJ)
+        f.write(json.dumps(parse, indent=4, sort_keys=True))
+        f.truncate()
+else:
+    print("Found Shard Path")
+
+with open("data/shard/shard.json") as f:
+    config = json.load(f)
+
+shard_check = config["SHARDS"]
+shardzero = config["SHARD0"]
+shardc = config["SHARDC"]
 
 class Bot(commands.Bot):
     def __init__(self, *args, **kwargs):
@@ -238,7 +256,11 @@ class Formatter(commands.HelpFormatter):
 def initialize(bot_class=Bot, formatter_class=Formatter):
     formatter = formatter_class(show_check_failure=False)
 
-    bot = bot_class(formatter=formatter, description=description, pm_help=None)
+    #Basic Shard info. Create this file as many as the shards have.
+    if shard_check == "True":
+        bot = bot_class(formatter=formatter, description=description, pm_help=None, shard_id=int(shardzero), shard_count=int(shardc))
+    if shard_check == "False":
+        bot = bot_class(formatter=formatter, description=description, pm_help=None)
 
     import __main__
     __main__.send_cmd_help = bot.send_cmd_help  # Backwards
@@ -308,6 +330,10 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
         print("\nConnected to:")
         print("{} servers".format(servers))
         print("{} channels".format(channels))
+        try:
+            print("Shard #{0} out of {1} Shards".format(bot.shard_id,bot.shard_count)) # Displays shard count and ID
+        except Exception as e:
+            print("No shards defind")
         print("{} users\n".format(users))
         prefix_label = 'Prefix'
         if len(bot.settings.prefixes) > 1:

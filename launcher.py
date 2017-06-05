@@ -10,6 +10,7 @@ except ImportError:
 import platform
 import webbrowser
 import hashlib
+import json
 import argparse
 import shutil
 import stat
@@ -27,6 +28,10 @@ FFMPEG_BUILDS_URL = "https://ffmpeg.zeranoe.com/builds/"
 
 INTRO = ("==========================\n"
          "Red Discord Bot - Launcher\n"
+         "==========================\n")
+
+SHARD_INTRO = ("==========================\n"
+         "Red Discord Bot - Shard Menu\n"
          "==========================\n")
 
 IS_WINDOWS = os.name == "nt"
@@ -524,6 +529,7 @@ def main():
         print("3. Update")
         print("4. Install requirements")
         print("5. Maintenance (repair, reset...)")
+        print("6. Open Shard Menu v1.0 (Back up Data, There's a data issue)")
         print("\n0. Quit")
         choice = user_choice()
         if choice == "1":
@@ -536,11 +542,62 @@ def main():
             requirements_menu()
         elif choice == "5":
             maintenance_menu()
+        elif choice == "6":
+            shardss_menu()
         elif choice == "0":
             break
         clear_screen()
 
 args = parse_cli_arguments()
+
+
+def shardss_menu():
+    clear_screen()
+    while True:
+        print(SHARD_INTRO)
+        print("Shard Menu:\n")
+        print("1. Enable Shards")
+        print("2. Disable Shards")
+        print("3. Add another shard Value")
+        print("\n0. Go back")
+        choice = user_choice()
+        if choice == "1":
+            with open("data/shard/shard.json", "r+") as f:
+                settings = json.load(f)
+                settings["SHARDS"] = "True"
+                shardidin = input("Please enter shard id here: ")
+                settings["SHARD0"] = shardidin
+                shardcountin = input("Please enter total shard count: ")
+                settings["SHARDC"] = shardcountin
+                f.seek(0)
+                f.write(json.dumps(settings, indent=4, sort_keys=True))
+                f.truncate()
+                print("Enabled Sharding")
+                wait()
+        elif choice == "2":
+            with open("data/shard/shard.json", "r+") as settings:
+                settings["SHARDS"] = "False"
+                f.seek(0)
+                f.write(json.dumps(settings, indent=4, sort_keys=True))
+                f.truncate()
+                print("Disabled Sharding")
+                wait()
+        elif choice == "3":
+            with open("data/shard/shard.json", "r+") as f:
+                shardname = input("Please enter value name (Something like SHARD0): ")
+                shardidout = input("Please enter shard id: ")
+                shardidcountout = input("Please enter total shard count: ")
+                settings = json.load(f)
+                settings[shardname] = shardidout
+                settings["SHARDC"] = shardidcountout
+                f.seek(0)
+                f.write(json.dumps(settings, indent=4, sort_keys=True))
+                f.truncate()
+                print("Added Value")
+                wait()
+        elif choice == "0":
+            break
+        clear_screen()
 
 if __name__ == '__main__':
     abspath = os.path.abspath(__file__)
