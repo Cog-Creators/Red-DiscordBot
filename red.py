@@ -37,7 +37,7 @@ from io import TextIOWrapper
 #                 https://github.com/Rapptz/RoboDanny/
 #
 
-description = "Red - A multifunction Discord bot by Twentysix"
+description = "Devon-Bot - A multifunction Discord bot by Devon Mack, based on Red-Discord bot"
 
 
 class Bot(commands.Bot):
