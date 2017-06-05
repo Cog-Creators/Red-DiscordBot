@@ -448,6 +448,7 @@ class Streams:
         embed = discord.Embed(title=status, url=url)
         embed.set_author(name=channel["display_name"])
         embed.add_field(name="Followers", value=channel["followers"])
+        embed.add_field(name="Viewers", value=data["stream"]["viewers"])
         embed.add_field(name="Total views", value=channel["views"])
         embed.set_thumbnail(url=logo)
         if data["stream"]["preview"]["medium"]:
@@ -481,6 +482,7 @@ class Streams:
         embed = discord.Embed(title=data["name"], url=url)
         embed.set_author(name=user["username"])
         embed.add_field(name="Followers", value=data["numFollowers"])
+        embed.add_field(name="Viewers", value=data["viewersCurrent"])
         embed.add_field(name="Total views", value=data["viewersTotal"])
         if user["avatarUrl"]:
             embed.set_thumbnail(url=user["avatarUrl"])
