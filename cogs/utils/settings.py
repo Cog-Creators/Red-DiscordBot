@@ -22,7 +22,7 @@ class Settings:
             "default": {"ADMIN_ROLE": "Transistor",
                         "MOD_ROLE": "Process",
                         "PREFIXES": []}
-                        }
+        }
         self._memory_only = False
 
         if not dataIO.is_valid_json(self.path):
@@ -225,6 +225,51 @@ class Settings:
         for server in server_ids:
             ret.update({server: self.bot_settings[server]})
         return ret
+
+    @property
+    def mongo_url(self):
+        return self.bot_settings.get("MONGO_URL", 'localhost')
+
+    @mongo_url.setter
+    def mongo_url(self, value):
+        self.bot_settings["MONGO_URL"] = value
+        self.save_settings()
+
+    @property
+    def mongo_port(self):
+        return self.bot_settings.get("MONGO_PORT", 27017)
+
+    @mongo_port.setter
+    def mongo_port(self, value):
+        self.bot_settings["MONGO_PORT"] = value
+        self.save_settings
+
+    @property
+    def mongo_user(self):
+        return self.bot_settings.get("MONGO_USER", "")
+
+    @mongo_user.setter
+    def mongo_user(self, value):
+        self.bot_settings["MONGO_USER"] = value
+        self.save_settings()
+
+    @property
+    def mongo_password(self):
+        return self.bot_settings.get("MONGO_PASSWORD", "")
+
+    @mongo_password.setter
+    def mongo_password(self, value):
+        self.bot_settings['MONGO_PASSWORD'] = value
+        self.save_settings()
+
+    @property
+    def backend(self):
+        return self.bot_settings.get("BACKEND", "json")
+
+    @backend.setter
+    def backend(self, value):
+        self.bot_settings["BACKEND"] = value
+        self.save_settings()
 
     def get_server(self, server):
         if server is None:

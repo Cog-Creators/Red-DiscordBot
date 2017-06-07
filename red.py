@@ -21,6 +21,9 @@ except ImportError:
 from cogs.utils.settings import Settings
 from cogs.utils.dataIO import dataIO
 from cogs.utils.chat_formatting import inline
+from cogs.utils.drivers.red_mongo import Mongo
+from cogs.utils.drivers.red_json import JSON as JSONDriver
+from cogs.utils.config import Config as CogConfig
 from collections import Counter
 from io import TextIOWrapper
 
@@ -217,6 +220,33 @@ class Bot(commands.Bot):
 
         response = self.loop.run_in_executor(None, install)
         return await asyncio.wait_for(response, timeout=timeout)
+
+    def get_conf(self, cog_name, unique_identifier):
+        """
+        Gets a config object that cog's can use to safely store data. The
+            backend to this is totally modular and can easily switch between
+            JSON and a DB. However, when changed, all data will likely be lost
+            unless cogs write some converters for their data.
+
+        Positional Arguments:
+        cog_name - String representation of your cog name, normally something
+            like `self.__class__.__name__`
+        unique_identifier - a random integer or string that is used to
+            differentiate your cog from any other named the same. This way we
+            can safely store data for multiple cogs that are named the same.
+        """
+        url = self.settings.mongo_url
+        port = self.settings.mongo_port
+
+        def spawn_mongo_driver():
+            return Mongo(url, port)
+
+        if self.settings.backend == "json":
+            spawn_driver = JSONDriver(cog_name)
+        elif self.settings.backend == "mongo":
+            spawn_driver = spawn_mongo_driver
+
+        return CogConfig(cog_name, unique_identifier, spawn_driver)
 
 
 class Formatter(commands.HelpFormatter):
