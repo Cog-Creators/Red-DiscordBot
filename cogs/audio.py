@@ -1020,12 +1020,7 @@ class Audio:
                 await self._remove_song_status()
 
     def _valid_playlist_name(self, name):
-        for char in name:
-            if char.isdigit() or char.isalpha() or char == "_":
-                pass
-            else:
-                return False
-        return True
+        return bool(re.match(r'^\w+$', name))
 
     def _valid_playable_url(self, url):
         yt = self._match_yt_url(url)
