@@ -1,5 +1,4 @@
 from typing import Tuple, MutableMapping, Any
-
 from discord.ext import commands
 from collections import Counter
 
@@ -91,8 +90,9 @@ class Red(commands.Bot):
                 loaded.append(package)
         await self.db.set("packages", loaded)
 
-    def delayed_load_extension(self, name: str, wait_until_ready: bool=False,
-                               cog_dependencies: Tuple[str]=()):
+    def delayed_load_extension(
+            self, name: str, wait_until_ready: bool=False,
+            cog_dependencies: Tuple[str]=()):
         """
         This function allows you to delay loading of your cog until the bot
             has issued an `on_ready` event and/or until other cog
@@ -124,7 +124,7 @@ class Red(commands.Bot):
 
         return meets_ready and meets_deps
 
-    async def on_load_extension(self, _: str):
+    def handle_load_extension(self, _: str):
         to_remove = []
         for name, info in self.delayed_load_info.items():
             if self.can_load_delayed(info):
@@ -141,6 +141,14 @@ class Red(commands.Bot):
             raise
         else:
             self.dispatch('load_extension', name)
+
+    def unload_extension(self, name):
+        try:
+            super().unload_extension(name)
+        except:
+            raise
+        else:
+            self.dispatch('unload_extension', name)
 
 
 class ExitCodes(Enum):
