@@ -118,12 +118,9 @@ class Red(commands.Bot):
     def can_load_delayed(self, info: MutableMapping[str, Any]) -> bool:
         meets_ready = (not info["wait_ready"]) or self.is_ready()
 
-        def get_loaded_extensions():
-            for ext in self.extensions:
-                yield ext.split('.')[-1]
+        loaded_exts = [ext.split('.')[-1] for ext in self.extensions.keys()]
 
-        meets_deps = all(c in list(get_loaded_extensions()) for c in
-                         info["cog_deps"])
+        meets_deps = all(c in loaded_exts for c in info["cog_deps"])
 
         return meets_ready and meets_deps
 
