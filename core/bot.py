@@ -1,3 +1,5 @@
+from typing import Tuple, MutableMapping, Any
+
 from discord.ext import commands
 from collections import Counter
 
@@ -48,6 +50,7 @@ class Red(commands.Bot):
 
         self.counter = Counter()
         self.uptime = None
+        self.delayed_load_info = {}
         super().__init__(**kwargs)
 
     async def is_owner(self, user):
@@ -87,6 +90,60 @@ class Red(commands.Bot):
             if package.startswith("cogs."):
                 loaded.append(package)
         await self.db.set("packages", loaded)
+
+    def delayed_load_extension(self, name: str, wait_until_ready: bool=False,
+                               cog_dependencies: Tuple[str]=()):
+        """
+        This function allows you to delay loading of your cog until the bot
+            has issued an `on_ready` event and/or until other cog
+            dependencies have loaded.
+        :param name: ALL LOWERCASE - the same name you use with the `load`
+            command.
+        :param wait_until_ready: Should cog loading wait until `on_ready`?
+        :param cog_dependencies: ALL LOWERCASE - the same name you use
+            with `load`. Should cog loading wait until these cogs have
+            also loaded?
+        :return:
+        """
+        data = {
+            "wait_ready": wait_until_ready,
+            "cog_deps": cog_dependencies
+        }
+
+        if self.can_load_delayed(data):
+            self.load_extension(name)
+        else:
+            self.delayed_load_info[name] = data
+
+    def can_load_delayed(self, info: MutableMapping[str, Any]) -> bool:
+        meets_ready = (not info["wait_ready"]) or self.is_ready()
+
+        def get_loaded_extensions():
+            for ext in self.extensions:
+                yield ext.split('.')[-1]
+
+        meets_deps = all(c in list(get_loaded_extensions()) for c in
+                         info["cog_deps"])
+
+        return meets_ready and meets_deps
+
+    async def on_load_extension(self, _: str):
+        to_remove = []
+        for name, info in self.delayed_load_info.items():
+            if self.can_load_delayed(info):
+                self.load_extension(name)
+                to_remove.append(name)
+
+        for name in to_remove:
+            del self.delayed_load_info[name]
+
+    def load_extension(self, name: str):
+        try:
+            super().load_extension(name)
+        except:
+            raise
+        else:
+            self.dispatch('load_extension', name)
 
 
 class ExitCodes(Enum):
