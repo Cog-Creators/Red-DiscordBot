@@ -90,44 +90,34 @@ class Red(commands.Bot):
                 loaded.append(package)
         await self.db.set("packages", loaded)
 
-    def delayed_load_extension(
-            self, name: str, wait_until_ready: bool=False,
-            cog_dependencies: Tuple[str]=()):
+    def delayed_load_extension(self, name: str, cog_dependencies: Tuple[str]=()):
         """
-        This function allows you to delay loading of your cog until the bot
-            has issued an `on_ready` event and/or until other cog
+        This function allows you to delay loading of your cog until other cog
             dependencies have loaded.
         :param name: ALL LOWERCASE - the same name you use with the `load`
             command.
-        :param wait_until_ready: Should cog loading wait until `on_ready`?
         :param cog_dependencies: ALL LOWERCASE - the same name you use
             with `load`. Should cog loading wait until these cogs have
             also loaded?
         :return:
         """
-        data = {
-            "wait_ready": wait_until_ready,
-            "cog_deps": cog_dependencies
-        }
 
-        if self.can_load_delayed(data):
+        if self.can_load_delayed(cog_dependencies):
             self.load_extension(name)
         else:
-            self.delayed_load_info[name] = data
+            self.delayed_load_info[name] = cog_dependencies
 
-    def can_load_delayed(self, info: MutableMapping[str, Any]) -> bool:
-        meets_ready = (not info["wait_ready"]) or self.is_ready()
-
+    def can_load_delayed(self, dependencies: Tuple[str]) -> bool:
         loaded_exts = [ext.split('.')[-1] for ext in self.extensions.keys()]
 
-        meets_deps = all(c in loaded_exts for c in info["cog_deps"])
+        meets_deps = all(c in loaded_exts for c in dependencies)
 
-        return meets_ready and meets_deps
+        return meets_deps
 
     def handle_load_extension(self, _: str):
         to_remove = []
-        for name, info in self.delayed_load_info.items():
-            if self.can_load_delayed(info):
+        for name, deps in self.delayed_load_info.items():
+            if self.can_load_delayed(deps):
                 self.load_extension(name)
                 to_remove.append(name)
 
