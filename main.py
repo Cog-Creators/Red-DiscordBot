@@ -26,11 +26,14 @@ if discord.version_info.major < 1:
 
 
 def init_loggers(cli_flags):
+    # d.py stuff
     dpy_logger = logging.getLogger("discord")
     dpy_logger.setLevel(logging.WARNING)
     console = logging.StreamHandler()
     console.setLevel(logging.WARNING)
     dpy_logger.addHandler(console)
+
+    # Red stuff
 
     logger = logging.getLogger("red")
 
@@ -56,12 +59,16 @@ def init_loggers(cli_flags):
     logger.addHandler(fhandler)
     logger.addHandler(stdout_handler)
 
-    return logger
+    # Sentry stuff
+    sentry_logger = logging.getLogger("red.sentry")
+    sentry_logger.setLevel(logging.WARNING)
+
+    return logger, sentry_logger
 
 
 if __name__ == '__main__':
     cli_flags = parse_cli_flags()
-    log = init_loggers(cli_flags)
+    log, sentry_log = init_loggers(cli_flags)
     description = "Red v3 - Alpha"
     red = Red(cli_flags, description=description, pm_help=None)
     init_global_checks(red)
@@ -89,7 +96,7 @@ if __name__ == '__main__':
         ask_sentry(red)
 
     if red.db.enable_sentry():
-        init_sentry_logging()
+        init_sentry_logging(sentry_log)
 
     loop = asyncio.get_event_loop()
     cleanup_tasks = True
@@ -114,6 +121,7 @@ if __name__ == '__main__':
         red._shutdown_mode = ExitCodes.SHUTDOWN
     except Exception as e:
         log.critical("Fatal exception", exc_info=e)
+        sentry_log.critical("Fatal Exception", exc_info=e)
         loop.run_until_complete(red.logout())
     finally:
         if cleanup_tasks:

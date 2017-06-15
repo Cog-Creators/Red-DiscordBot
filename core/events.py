@@ -4,8 +4,10 @@ import datetime
 import logging
 from discord.ext import commands
 from core.utils.chat_formatting import inline
+from core.sentry_setup import should_log
 
 log = logging.getLogger("red")
+sentry_log = logging.getLogger("red.sentry")
 
 INTRO = ("{0}===================\n"
          "{0} Red - Discord Bot \n"
@@ -100,6 +102,12 @@ def init_events(bot, cli_flags):
                                      error, error.__traceback__))
             bot._last_exception = exception_log
             await ctx.send(inline(message))
+
+            module = ctx.command.module
+            if should_log(module):
+                sentry_log.exception("Exception in command '{}'"
+                                     "".format(ctx.command.qualified_name),
+                                     exc_info=error.original)
         elif isinstance(error, commands.CommandNotFound):
             pass
         elif isinstance(error, commands.CheckFailure):
