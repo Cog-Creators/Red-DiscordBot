@@ -1,4 +1,9 @@
+import importlib
 from typing import Tuple, MutableMapping, Any
+
+import sys
+
+import discord
 from discord.ext import commands
 from collections import Counter
 
@@ -103,7 +108,7 @@ class Red(commands.Bot):
         """
 
         if self.can_load_delayed(cog_dependencies):
-            self.load_extension("cogs." + name)
+            self.load_extension("cogs." + name, from_delayed=True)
         else:
             self.delayed_load_info[name] = cog_dependencies
 
@@ -126,18 +131,28 @@ class Red(commands.Bot):
 
         for name, deps in self.delayed_load_info.items():
             if self.can_load_delayed(deps):
-                self.load_extension("cogs." + name)
+                self.load_extension("cogs." + name, from_delayed=True)
                 to_remove.append(name)
 
         for name in to_remove:
             del self.delayed_load_info[name]
 
-    def load_extension(self, name: str):
+    def load_extension(self, name: str, from_delayed: bool=False):
+        if name in self.extensions:
+            return
+
+        lib = importlib.import_module(name)
+        if not hasattr(lib, 'setup'):
+            del lib
+            del sys.modules[name]
+            raise discord.ClientException('extension does not have a setup function')
+
         try:
-            super().load_extension(name)
-        except:
-            raise
+            lib.setup(self, from_delayed)
+        except TypeError:
+            lib.setup(self)
         else:
+            self.extensions[name] = lib
             self.dispatch('load_extension', name)
 
     def unload_extension(self, name):
