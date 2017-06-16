@@ -413,13 +413,13 @@ class Config(BaseConfig):
         """
         return self._get_value_from_key(key)
 
-    def _get_value_from_key(self, key) -> Callable:
+    def _get_value_from_key(self, key, opt_default=None) -> Callable:
         try:
             default = self.defaults[self.collection][key]
         except KeyError as e:
             if self.force_registration:
                 raise AttributeError("Key '{}' not registered!".format(key)) from e
-            default = None
+            default = opt_default
 
         self.curr_key = key
 
@@ -443,10 +443,7 @@ class Config(BaseConfig):
         :return: 
         """
 
-        try:
-            return getattr(self, key)(default=default)
-        except AttributeError:
-            return
+        return self._get_value_from_key(key, default)
 
     async def set(self, key, value):
         # Notice to future developers:
