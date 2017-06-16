@@ -18,7 +18,7 @@ def json_driver(tmpdir_factory):
     return driver
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture()
 def config(json_driver):
     return Config(
         cog_name="PyTest",
@@ -26,7 +26,7 @@ def config(json_driver):
         driver_spawn=json_driver)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture()
 def config_fr(json_driver):
     """
     Mocked config object with force_register enabled.
