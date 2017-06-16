@@ -103,7 +103,7 @@ class Red(commands.Bot):
         """
 
         if self.can_load_delayed(cog_dependencies):
-            self.load_extension(name)
+            self.load_extension("cogs." + name)
         else:
             self.delayed_load_info[name] = cog_dependencies
 
@@ -119,7 +119,7 @@ class Red(commands.Bot):
         to_remove = []
         for name, deps in self.delayed_load_info.items():
             if self.can_load_delayed(deps):
-                self.load_extension(name)
+                self.load_extension("cogs." + name)
                 to_remove.append(name)
 
         for name in to_remove:
