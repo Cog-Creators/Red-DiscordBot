@@ -117,7 +117,11 @@ class Red(commands.Bot):
 
     def handle_load_extension(self, name_: str):
         to_remove = []
-        if "cogs." + name_ in self.extensions:
+
+        # Preventing stack overflow here
+        if not name_.startswith("cogs."):
+            name_ = "cogs." + name_
+        if name_ in self.extensions:
             return
 
         for name, deps in self.delayed_load_info.items():
