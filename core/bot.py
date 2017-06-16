@@ -115,8 +115,11 @@ class Red(commands.Bot):
                 return False
         return True
 
-    def handle_load_extension(self, _: str):
+    def handle_load_extension(self, name_: str):
         to_remove = []
+        if "cogs." + name_ in self.extensions:
+            return
+
         for name, deps in self.delayed_load_info.items():
             if self.can_load_delayed(deps):
                 self.load_extension("cogs." + name)
