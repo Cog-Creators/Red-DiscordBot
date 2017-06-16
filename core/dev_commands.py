@@ -20,6 +20,7 @@ https://github.com/Rapptz/RoboDanny/blob/master/cogs/repl.py
 
 
 class Dev:
+    """Various development focused utilities"""
     def __init__(self):
         self._last_result = None
         self.sessions = set()
