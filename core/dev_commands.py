@@ -50,6 +50,7 @@ class Dev:
         return result
 
     @commands.command()
+    @checks.is_owner()
     async def debug(self, ctx, *, code):
         """
         Executes code and prints the result to discord.
