@@ -110,9 +110,10 @@ class Red(commands.Bot):
     def can_load_delayed(self, dependencies: Tuple[str]) -> bool:
         loaded_exts = [ext.split('.')[-1] for ext in self.extensions.keys()]
 
-        meets_deps = all(c in loaded_exts for c in dependencies)
-
-        return meets_deps
+        for dep in dependencies:
+            if not any(ext.endswith(dep) for ext in loaded_exts):
+                return False
+        return True
 
     def handle_load_extension(self, _: str):
         to_remove = []
