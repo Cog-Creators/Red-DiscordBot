@@ -11,8 +11,7 @@ import io
 
 
 class Dev:
-    def __init__(self, bot):
-        self.bot = bot
+    def __init__(self):
         self._last_result = None
         self.sessions = set()
 
@@ -47,7 +46,7 @@ class Dev:
         Executes code and prints the result to discord.
         """
         env = {
-            'bot': self.bot,
+            'bot': ctx.bot,
             'ctx': ctx,
             'channel': ctx.channel,
             'author': ctx.author,
@@ -88,7 +87,7 @@ class Dev:
             statement).
         """
         env = {
-            'bot': self.bot,
+            'bot': ctx.bot,
             'ctx': ctx,
             'channel': ctx.channel,
             'author': ctx.author,
@@ -119,7 +118,7 @@ class Dev:
         else:
             value = stdout.getvalue()
             try:
-                await self.bot.add_reaction(ctx.message, '\u2705')
+                await ctx.bot.add_reaction(ctx.message, '\u2705')
             except:
                 pass
 
@@ -139,7 +138,7 @@ class Dev:
         """
         variables = {
             'ctx': ctx,
-            'bot': self.bot,
+            'bot': ctx.bot,
             'message': ctx.message,
             'server': ctx.guild,
             'channel': ctx.channel,
@@ -159,7 +158,7 @@ class Dev:
                 m.content.startswith('`')
 
         while True:
-            response = await self.bot.wait_for(
+            response = await ctx.bot.wait_for(
                 "message",
                 check=msg_check)
 

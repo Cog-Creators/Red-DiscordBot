@@ -70,7 +70,7 @@ if __name__ == '__main__':
     red.add_cog(Core())
 
     if cli_flags.dev:
-        red.add_cog(Dev(red))
+        red.add_cog(Dev())
 
     token = os.environ.get("RED_TOKEN", red.db.token())
     prefix = cli_flags.prefix or red.db.prefix()
