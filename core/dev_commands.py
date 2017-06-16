@@ -10,6 +10,15 @@ from contextlib import redirect_stdout
 import io
 
 
+"""
+Notice:
+
+95% of the below code came from R.Danny which can be found here:
+
+https://github.com/Rapptz/RoboDanny/blob/master/cogs/repl.py
+"""
+
+
 class Dev:
     def __init__(self):
         self._last_result = None
