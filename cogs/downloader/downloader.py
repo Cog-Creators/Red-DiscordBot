@@ -180,11 +180,9 @@ class Downloader:
     async def _repo_add(self, ctx, name: RepoName, repo_url: str, branch: str=None):
         """
         Add a new repo to Downloader.
-        :param name: Name that must follow python variable naming rules and
-            contain only characters A-Z and numbers 0-9 and _
-        :param repo_url: Clone url for the cog repo
-        :param branch: Specify branch if you want it to be different than
-            repo default.
+
+        Name can only contain characters A-z, numbers and underscore
+        Branch will default to master if not specified
         """
         try:
             # noinspection PyTypeChecker
@@ -201,11 +199,10 @@ class Downloader:
         else:
             await ctx.send("Repo `{}` successfully added.".format(name))
 
-    @repo.command(name="del")
+    @repo.command(name="delete")
     async def _repo_del(self, ctx, repo_name: Repo):
         """
         Removes a repo from Downloader and its' files.
-        :param repo_name: Repo name in Downloader
         """
         await self._repo_manager.delete_repo(repo_name.name)
 
@@ -234,8 +231,6 @@ class Downloader:
     async def _cog_install(self, ctx, repo_name: Repo, cog_name: str):
         """
         Installs a cog from the given repo.
-        :param repo_name:
-        :param cog_name: Cog name available from `[p]cog list <repo_name>`
         """
         cog = discord.utils.get(repo_name.available_cogs, name=cog_name)
         if cog is None:
@@ -261,7 +256,6 @@ class Downloader:
         """
         Allows you to uninstall cogs that were previously installed
             through Downloader.
-        :param cog_name:
         """
         # noinspection PyUnresolvedReferences,PyProtectedMember
         real_name = cog_name.name
@@ -281,7 +275,6 @@ class Downloader:
     async def _cog_update(self, ctx, cog_name: InstalledCog=None):
         """
         Updates all cogs or one of your choosing.
-        :param cog_name:
         """
         if cog_name is None:
             updated = await self._repo_manager.update_all_repos()
@@ -304,7 +297,6 @@ class Downloader:
     async def _cog_list(self, ctx, repo_name: Repo):
         """
         Lists all available cogs from a single repo.
-        :param repo_name: Repo name available from `[p]repo list`
         """
         cogs = repo_name.available_cogs
         cogs = "Available Cogs:\n" + "\n".join(
@@ -316,8 +308,6 @@ class Downloader:
     async def _cog_info(self, ctx, repo_name: Repo, cog_name: str):
         """
         Lists information about a single cog.
-        :param repo_name:
-        :param cog_name:
         """
         cog = discord.utils.get(repo_name.available_cogs, name=cog_name)
         if cog is None:
