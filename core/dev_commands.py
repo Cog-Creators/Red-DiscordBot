@@ -135,6 +135,7 @@ class Dev:
 
             if ret is None:
                 if value:
+                    value = self.sanitize_output(ctx, value)
                     await ctx.send(box(value, lang="py"))
             else:
                 ret = self.sanitize_output(ctx, ret)
@@ -208,7 +209,6 @@ class Dev:
                     result = executor(code, variables)
                     if inspect.isawaitable(result):
                         result = await result
-                    result = self.sanitize_output(ctx, result)
             except:
                 value = stdout.getvalue()
                 value = self.sanitize_output(ctx, value)
@@ -223,6 +223,7 @@ class Dev:
 
             try:
                 for page in pagify(msg, shorten_by=12):
+                    page = self.sanitize_output(ctx, page)
                     await ctx.send(box(page, "py"))
             except discord.Forbidden:
                 pass
