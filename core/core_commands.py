@@ -115,7 +115,7 @@ class Core:
         await session.close()
 
         try:
-            await self.bot.user.edit(avatar=data)
+            await ctx.bot.user.edit(avatar=data)
         except discord.HTTPException:
             await ctx.send("Failed. Remember that you can edit my avatar "
                            "up to two times a hour. The URL must be a "
@@ -272,7 +272,7 @@ class Core:
         else:
             if message.content.strip() == token:
                 self.owner.reset_cooldown(ctx)
-                await self.bot.db.set("owner", ctx.author.id)
+                await ctx.bot.db.set("owner", ctx.author.id)
                 ctx.bot.author_id = ctx.author.id
                 await ctx.send("You have been set as owner.")
             else:
