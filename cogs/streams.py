@@ -1,6 +1,6 @@
 from discord.ext import commands
 from .utils.dataIO import dataIO
-from .utils.chat_formatting import escape_mass_mentions
+from .utils.chat_formatting import escape_mass_mentions, pagify, box
 from .utils import checks
 from collections import defaultdict
 from string import ascii_letters
@@ -36,7 +36,6 @@ class OfflineStream(StreamsError):
 
 class Streams:
     """Streams
-
     Alerts for a variety of streaming services"""
 
     def __init__(self, bot):
@@ -291,11 +290,33 @@ class Streams:
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
 
+    @streamset.command(pass_context=True, name = "list")
+    @checks.admin()
+    async def List_streams(self, ctx):
+        """Returns all the names of streams for current server""" #Should also add the channel names (for easy of use... just maybe)
+        streams = (self.twitch_streams, self.hitbox_streams, self.mixer_streams, self.picarto_streams)
+        stream_list = []
+        
+        
+        for channel in set(ctx.message.server.channels):#..
+            for stream in streams: #...
+                for s in stream: #!!!
+                    if channel.id in s['CHANNELS']: #*cry*
+                        stream_list.append(s['NAME'])
+
+        msg = ("+ Streams\n"
+               "{}\n\n"
+               "".format(", ".join(sorted(stream_list))))
+
+        for page in pagify(msg, [" "], shorten_by=16):
+            await self.bot.say(box(page.lstrip(" "), lang="diff"))
+            
+        
+
     @streamset.command()
     @checks.is_owner()
     async def twitchtoken(self, token : str):
         """Sets the Client-ID for Twitch
-
         https://blog.twitch.tv/client-id-required-for-kraken-api-calls-afbb8e95f843"""
         self.settings["TWITCH_TOKEN"] = token
         dataIO.save_json("data/streams/settings.json", self.settings)
@@ -305,7 +326,6 @@ class Streams:
     @checks.admin()
     async def mention(self, ctx, *, mention_type : str):
         """Sets mentions for stream alerts
-
         Types: everyone, here, none"""
         server = ctx.message.server
         mention_type = mention_type.lower()
