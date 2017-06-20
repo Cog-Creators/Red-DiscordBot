@@ -105,5 +105,7 @@ def red(monkeysession, config_fr):
 
     red = Red(cli_flags, description=description, pm_help=None)
 
-    return red
+    yield red
+
+    red.http._session.close()
 #endregion
