@@ -2,7 +2,7 @@ from cogs.alias import Alias
 import pytest
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def alias(monkeysession, config):
     def get_mock_conf(*args, **kwargs):
         return config

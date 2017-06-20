@@ -27,7 +27,7 @@ def patch_relative_to(monkeysession):
     monkeysession.setattr("pathlib.Path.relative_to", fake_relative_to)
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def repo_manager(tmpdir_factory, config):
     config.register_global(repos={})
     rm = RepoManager(config)

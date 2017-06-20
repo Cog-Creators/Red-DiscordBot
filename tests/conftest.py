@@ -84,7 +84,7 @@ def empty_message():
     return mock_msg("No content.")
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def ctx(empty_member, empty_channel, red):
     mock_ctx = namedtuple("Context", "author guild channel message bot")
     return mock_ctx(empty_member, empty_member.guild, empty_channel,
@@ -93,7 +93,7 @@ def ctx(empty_member, empty_channel, red):
 
 
 #region Red Mock
-@pytest.fixture(scope="module")
+@pytest.fixture
 def red(monkeysession, config_fr):
     from core.cli import parse_cli_flags
     cli_flags = parse_cli_flags()
