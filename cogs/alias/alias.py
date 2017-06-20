@@ -305,6 +305,7 @@ class Alias:
             next(aliases)
         except StopIteration:
             await ctx.send("There are no aliases on this guild.")
+            return
 
         if await self.delete_alias(ctx, alias_name):
             await ctx.send(("Alias with the name `{}` was successfully"
@@ -322,6 +323,7 @@ class Alias:
             next(aliases)
         except StopIteration:
             await ctx.send("There are no aliases on this bot.")
+            return
 
         if await self.delete_alias(ctx, alias_name, global_=True):
             await ctx.send(("Alias with the name `{}` was successfully"
