@@ -84,7 +84,7 @@ def empty_message():
     return mock_msg("No content.")
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture
 def ctx(empty_member, empty_channel, red):
     mock_ctx = namedtuple("Context", "author guild channel message bot")
     return mock_ctx(empty_member, empty_member.guild, empty_channel,
@@ -94,16 +94,18 @@ def ctx(empty_member, empty_channel, red):
 
 #region Red Mock
 @pytest.fixture
-def red(monkeypatch, config_fr, event_loop):
+def red(monkeysession, config_fr):
     from core.cli import parse_cli_flags
     cli_flags = parse_cli_flags()
 
     description = "Red v3 - Alpha"
 
-    monkeypatch.setattr("core.config.Config.get_core_conf",
-                        lambda *args, **kwargs: config_fr)
+    monkeysession.setattr("core.config.Config.get_core_conf",
+                          lambda *args, **kwargs: config_fr)
 
-    red = Red(cli_flags, description=description, pm_help=None,
-              loop=event_loop)
-    return red
+    red = Red(cli_flags, description=description, pm_help=None)
+
+    yield red
+
+    red.http._session.close()
 #endregion
