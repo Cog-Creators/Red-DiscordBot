@@ -407,7 +407,7 @@ class Mod:
             return
 
         try:
-            await self.bot.http.ban(user_id, server.id)
+            await self.bot.http.ban(user_id, server.id, 0)
         except discord.NotFound:
             await self.bot.say("User not found. Have you provided the "
                                "correct user ID?")
