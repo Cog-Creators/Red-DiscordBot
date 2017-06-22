@@ -14,6 +14,8 @@ import argparse
 import shutil
 import stat
 import time
+import getpass
+import grp
 try:
     import pip
 except ImportError:
@@ -130,6 +132,81 @@ def update_red():
         print("\nRed could not update properly. If this is caused by edits "
               "you have made to the code you can try the repair option from "
               "the Maintenance submenu")
+
+
+def setup_upstart_autostart():
+    if sys.platform != "linux":
+        print("This is only available on Linux!")
+        return
+    upstart_check = subprocess.call(["which", "initctl"])
+    if upstart_check != 0:
+        print("It looks like your system isn't using upstart!")
+        return
+    username = getpass.getuser()
+    groupname = grp.getgrgid(os.getgid())[0]
+    homedir = os.getenv("HOME")
+    file_contents = "start on runlevel [2345]\nstop on runlevel [016]\n\n" +\
+        "respawn\nchdir {}\nsetuid {}\nsetgid {}".format(homedir, username, groupname) +\
+        "\nexec {} launcher.py -s --autorestart --update-red --update-reqs".format(sys.executable)
+    with open("{}/red.conf".format(homedir), "w") as conf_write:
+        conf_write.write(file_contents)
+    print("Moving red.service to the proper location...")
+    subprocess.call(["sudo", "-k", "mv", "{}/red.conf".format(homedir), "/etc/init/"])
+    print("Created red.conf file!")
+    print("You can start it with:")
+    print("sudo start red")
+    print("To stop it, do sudo stop red")
+    print("To restart it, do sudo restart red")
+    time.sleep(15)
+
+
+def setup_openrc_autostart():
+    return
+    """
+    if sys.platform != "linux":
+        print("This is only available on Linux!")
+        return
+    openrc_check = subprocess.call(["which", "openrc"])
+    if openrc_check != 0:
+        print("It appears your system doesn't use openrc!")
+        return
+    file_contents = "!#/sbin/openrc-run\n\ndepend() {\nneed net\n}\n"
+    """
+
+
+def setup_launchd_autostart():
+    pass
+
+
+def setup_systemd_autostart():
+    if sys.platform != "linux":
+        print("This functionality is only available on Linux")
+        return
+    sd_check = subprocess.call(["which", "systemd"])
+    if sd_check != 0:
+        print("It appears as if your system doesn't use systemd!")
+        return
+    username = getpass.getuser()
+    groupname = grp.getgrgid(os.getgid())[0]
+    homedir = os.getenv("HOME")
+    file_contents = "[Unit]\nDescription=Red-DiscordBot\n" +\
+        "After=multi-user.target\n[Service]\nWorkingDirectory=" +\
+        "{}/Red-DiscordBot".format(homedir) + "\nUser={}".format(username) +\
+        "\nGroup={}\n".format(groupname) + "ExecStart=" +\
+        "{} {}/Red-DiscordBot/".format(sys.executable, homedir) +\
+        "launcher.py -s --auto-restart --update-red --update-reqs\n" +\
+        "Type=idle\nRestart=always\nRestartSec=15\n\n[Install]\n" +\
+        "WantedBy=multi-user.target"
+    with open("{}/red.service".format(homedir), "w") as as_out:
+        as_out.write(file_contents)
+    print("Moving red.service to the proper location")
+    subprocess.call(["sudo", "-k", "mv", "{}/red.service".format(homedir), "/etc/systemd/system/"])
+    print("Created red.service file!")
+    print("You can start it with:")
+    print("sudo systemctl start red.service")
+    print("To start at boot, you can do:")
+    print("sudo systemctl enable red.service")
+    time.sleep(15)
 
 
 def reset_red(reqs=False, data=False, cogs=False, git_reset=False):
@@ -267,6 +344,29 @@ def requirements_menu():
             break
         clear_screen()
 
+
+def autostart_menu():
+    clear_screen()
+    while True:
+        print(INTRO)
+        print("Autorestart:\n")
+        print("1. Systemd")
+        print("2. Upstart")
+        print("3. OpenRC")
+        print("4. launchd")
+        print("\n0. Go Back")
+        choice = user_choice()
+        if choice == "1":
+            setup_systemd_autostart()
+        elif choice == "2":
+            setup_upstart_autostart()
+        elif choice == "3":
+            setup_openrc_autostart()
+        elif choice == "4":
+            setup_launchd_autostart()
+        elif choice == "0":
+            break
+        clear_screen()
 
 def update_menu():
     clear_screen()
@@ -524,6 +624,7 @@ def main():
         print("3. Update")
         print("4. Install requirements")
         print("5. Maintenance (repair, reset...)")
+        print("6. Generate autostart file (linux only)")
         print("\n0. Quit")
         choice = user_choice()
         if choice == "1":
@@ -536,6 +637,8 @@ def main():
             requirements_menu()
         elif choice == "5":
             maintenance_menu()
+        elif choice == "6":
+            setup_autostart()
         elif choice == "0":
             break
         clear_screen()
