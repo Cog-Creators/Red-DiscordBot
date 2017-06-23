@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import discord
 from discord.ext import commands
 
@@ -5,8 +7,9 @@ from core import Config, checks
 
 import logging
 
+from core.utils.chat_formatting import box
 from .announcer import Announcer
-from .converters import MemberDefaultAuthor
+from .converters import MemberDefaultAuthor, SelfRole
 
 log = logging.getLogger("red.admin")
 
@@ -31,10 +34,13 @@ RUNNING_ANNOUNCEMENT = (
 
 class Admin:
     def __init__(self):
-        self.conf = Config.get_conf(self, 8237492837454039)
+        self.conf = Config.get_conf(self, 8237492837454039,
+                                    force_registration=True)
 
         self.conf.register_guild(
-            announce_channel=None
+            announce_ignore=False,
+            announce_channel=None,  # Integer ID
+            selfroles=[]  # List of integer ID's
         )
 
         self.__current_announcer = None
@@ -71,6 +77,38 @@ class Admin:
         """
         return ctx.guild.me.top_role > role
 
+    async def _addrole(self, ctx: commands.Context, member: discord.Member,
+                       role: discord.Role):
+        try:
+            await member.add_roles(role)
+        except discord.Forbidden:
+            if not self.pass_heirarchy_check(ctx, role):
+                await self.complain(ctx, HIERARCHY_ISSUE, role=role,
+                                    member=member)
+            else:
+                await self.complain(ctx, GENERIC_FORBIDDEN)
+        else:
+            await ctx.send("I successfully added {role.name} to"
+                           " {member.display_name}".format(
+                               role=role, member=member
+                           ))
+
+    async def _removerole(self, ctx: commands.Context, member: discord.Member,
+                          role: discord.Role):
+        try:
+            await member.remove_roles(role)
+        except discord.Forbidden:
+            if not self.pass_heirarchy_check(ctx, role):
+                await self.complain(ctx, HIERARCHY_ISSUE, role=role,
+                                    member=member)
+            else:
+                await self.complain(ctx, GENERIC_FORBIDDEN)
+        else:
+            await ctx.send("I successfully removed {role.name} from"
+                           " {member.display_name}".format(
+                               role=role, member=member
+                           ))
+
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(manage_roles=True)
@@ -82,20 +120,8 @@ class Admin:
         """
         # So I'm an idiot.
 
-        try:
-            # noinspection PyUnresolvedReferences
-            user.add_roles(rolename)
-        except discord.Forbidden:
-            if not self.pass_heirarchy_check(ctx, rolename):
-                await self.complain(ctx, HIERARCHY_ISSUE, role=rolename,
-                                    member=user)
-            else:
-                await self.complain(ctx, GENERIC_FORBIDDEN)
-        else:
-            await ctx.send("I successfully added {role.name} to"
-                           " {member.display_name}".format(
-                               role=rolename, member=user
-                           ))
+        # noinspection PyTypeChecker
+        await self._addrole(ctx, user, rolename)
 
     @commands.command()
     @commands.guild_only()
@@ -106,19 +132,8 @@ class Admin:
         Removes a role from a user. If user is left blank it defaults to the
             author of the command.
         """
-        try:
-            user.remove_roles(rolename)
-        except discord.Forbidden:
-            if not self.pass_heirarchy_check(ctx, rolename):
-                await self.complain(ctx, HIERARCHY_ISSUE, role=rolename,
-                                    member=user)
-            else:
-                await self.complain(ctx, GENERIC_FORBIDDEN)
-        else:
-            await ctx.send("I successfully removed {role.name} from"
-                           " {member.display_name}".format(
-                               role=rolename, member=user
-                           ))
+        # noinspection PyTypeChecker
+        await self._removerole(ctx, user, rolename)
 
     @commands.group()
     @commands.guild_only()
@@ -200,3 +215,74 @@ class Admin:
             pass
 
         await ctx.send("The current announcement has been cancelled.")
+
+    async def _valid_selfroles(self, guild: discord.Guild) -> Tuple[discord.Role]:
+        """
+        Returns a list of valid selfroles
+        :param guild:
+        :return:
+        """
+        selfrole_ids = set(self.conf.guild(guild).selfroles())
+        guild_roles = guild.roles
+
+        valid_roles = tuple(r for r in guild_roles if r.id in selfrole_ids)
+        valid_role_ids = set(r.id for r in valid_roles)
+
+        if selfrole_ids != valid_role_ids:
+            await self.conf.guild(guild).set("selfroles", valid_role_ids)
+
+        # noinspection PyTypeChecker
+        return valid_roles
+
+    @commands.group(invoke_without_command=True)
+    async def selfrole(self, ctx: commands.Context, selfrole: SelfRole):
+        """
+        Add a role to yourself that server admins have configured as
+            user settable.
+        """
+        # noinspection PyTypeChecker
+        await self._addrole(ctx, ctx.author, selfrole)
+
+    @selfrole.command(name="remove")
+    async def selfrole_remove(self, ctx: commands.Context, selfrole: SelfRole):
+        """
+        Removes a selfrole from yourself.
+        """
+        # noinspection PyTypeChecker
+        await self._removerole(ctx, ctx.author, selfrole)
+
+    @selfrole.command(name="add")
+    @commands.has_permissions(manage_roles=True)
+    async def selfrole_add(self, ctx: commands.Context, role: discord.Role):
+        """
+        Add a role to the list of available selfroles.
+        """
+        curr_selfroles = self.conf.guild(ctx.guild).selfroles()
+        if role.id not in curr_selfroles:
+            curr_selfroles.append(role.id)
+            await self.conf.guild(ctx.guild).set("selfroles", curr_selfroles)
+
+        await ctx.send("The selfroles list has been successfully modified.")
+
+    @selfrole.command(name="delete")
+    @commands.has_permissions(manage_roles=True)
+    async def selfrole_delete(self, ctx: commands.Context, role: SelfRole):
+        """
+        Removes a role from the list of available selfroles.
+        """
+        curr_selfroles = self.conf.guild(ctx.guild).selfroles()
+        curr_selfroles.remove(role.id)
+        await self.conf.guild(ctx.guild).set("selfroles", curr_selfroles)
+
+        await ctx.send("The selfroles list has been successfully modified.")
+
+    @selfrole.command(name="list")
+    async def selfrole_list(self, ctx: commands.Context):
+        """
+        Lists all available selfroles.
+        """
+        selfroles = await self._valid_selfroles(ctx.guild)
+        fmt_selfroles = "\n".join(["+ " + r.name for r in selfroles])
+
+        msg = "Available Selfroles:\n{}".format(fmt_selfroles)
+        await ctx.send(box(msg, "diff"))
