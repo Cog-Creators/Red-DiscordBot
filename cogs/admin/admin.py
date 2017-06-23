@@ -185,7 +185,7 @@ class Admin:
             log.info(reason)
             await ctx.send("Done.")
 
-    @commands.group()
+    @commands.group(invoke_without_command=True)
     @checks.is_owner()
     async def announce(self, ctx: commands.Context, message: str):
         """
@@ -215,6 +215,41 @@ class Admin:
             pass
 
         await ctx.send("The current announcement has been cancelled.")
+
+    @announce.command(name="channel")
+    @commands.guild_only()
+    @checks.guildowner_or_permissions(administrator=True)
+    async def announce_channel(self, ctx, channel: discord.TextChannel=None):
+        """
+        Changes the channel on which the bot makes announcements.
+        """
+        if channel is None:
+            channel = ctx.channel
+        await self.conf.guild(ctx.guild).set("announce_channel", channel.id)
+
+        await ctx.send("The announcement channel has been set to {}".format(
+            channel.mention
+        ))
+
+    @announce.command(name="ignore")
+    @commands.guild_only()
+    @checks.guildowner_or_permissions(administrator=True)
+    async def announce_ignore(self, ctx, guild: discord.Guild=None):
+        """
+        Toggles whether the announcements will ignore the given server.
+            Defaults to the current server if none is provided.
+        """
+        if guild is None:
+            guild = ctx.guild
+
+        ignored = self.conf.guild(guild).announce_ignore()
+        await self.conf.guild(guild).set("announce_ignore", not ignored)
+
+        verb = "will" if ignored else "will not"
+
+        await ctx.send("The server {} {} receive announcements.".format(
+            guild.name, verb
+        ))
 
     async def _valid_selfroles(self, guild: discord.Guild) -> Tuple[discord.Role]:
         """

@@ -26,7 +26,8 @@ class Announcer:
         :return:
         """
         if self.active is None:
-            asyncio.ensure_future(self.announcer(), loop=ctx.bot.loop)
+            self.active = True
+            self.ctx.bot.loop.create_task(self.announcer())
 
     def cancel(self):
         """
@@ -36,14 +37,14 @@ class Announcer:
         self.active = False
 
     def _get_announce_channel(self, guild: discord.Guild) -> discord.TextChannel:
-        channel_id = self.config.guild(g).announce_channel()
+        channel_id = self.config.guild(guild).announce_channel()
         channel = None
 
         if channel_id is not None:
-            channel = self.ctx.bot.get_channel(channel_id=int(channel_id))
+            channel = guild.get_channel(channel_id)
 
         if channel is None:
-            channel = g
+            channel = guild.default_channel
 
         return channel
 
