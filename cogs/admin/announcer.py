@@ -54,6 +54,9 @@ class Announcer:
             if not self.active:
                 return
 
+            if self.config.guild(g).announce_ignore():
+                continue
+
             channel = self._get_announce_channel(g)
 
             try:
