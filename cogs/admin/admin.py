@@ -3,9 +3,12 @@ from discord.ext import commands
 
 from core import Config, checks
 
+import logging
+
 from .announcer import Announcer
 from .converters import MemberDefaultAuthor
 
+log = logging.getLogger("red.admin")
 
 GENERIC_FORBIDDEN = (
     "I attempted to do something that Discord denied me permissions for."
@@ -57,7 +60,8 @@ class Admin:
 
         return self.__current_announcer.active or False
 
-    def pass_heirarchy_check(self, ctx: commands.Context,
+    @staticmethod
+    def pass_heirarchy_check(ctx: commands.Context,
                              role: discord.Role) -> bool:
         """
         Determines if the bot has a higher role than the given one.
@@ -68,6 +72,7 @@ class Admin:
         return ctx.guild.me.top_role > role
 
     @commands.command()
+    @commands.guild_only()
     @checks.admin_or_permissions(manage_roles=True)
     async def addrole(self, ctx: commands.Context, rolename: discord.Role,
                       user: MemberDefaultAuthor=None):
@@ -93,6 +98,7 @@ class Admin:
                            ))
 
     @commands.command()
+    @commands.guild_only()
     @checks.admin_or_permissions(manage_roles=True)
     async def removerole(self, ctx: commands.Context, rolename: discord.Role,
                          user: MemberDefaultAuthor=None):
@@ -113,6 +119,56 @@ class Admin:
                            " {member.display_name}".format(
                                role=rolename, member=user
                            ))
+
+    @commands.group()
+    @commands.guild_only()
+    @checks.admin_or_permissions(manage_roles=True)
+    async def editrole(self, ctx: commands.Context):
+        """Edits roles settings"""
+        if ctx.invoked_subcommand is None:
+            await ctx.bot.send_cmd_help(ctx)
+
+    @editrole.command(name="colour", aliases=["color", ])
+    async def editrole_colour(self, ctx: commands.Context, role: discord.Role,
+                              value: discord.Colour):
+        """Edits a role's colour
+
+        Use double quotes if the role contains spaces.
+        Colour must be in hexadecimal format.
+        \"http://www.w3schools.com/colors/colors_picker.asp\"
+        Examples:
+        !editrole colour \"The Transistor\" #ff0000
+        !editrole colour Test #ff9900"""
+        author = ctx.author
+        reason = "{}({}) changed the colour of role '{}'".format(
+            author.name, author.id, role.name)
+        try:
+            await role.edit(reason=reason, color=value)
+        except discord.Forbidden:
+            await self.complain(ctx, GENERIC_FORBIDDEN)
+        else:
+            log.info(reason)
+            await ctx.send("Done.")
+
+    @editrole.command(name="name")
+    @checks.admin_or_permissions(administrator=True)
+    async def edit_role_name(self, ctx: commands.Context, role: discord.Role, *, name: str):
+        """Edits a role's name
+
+        Use double quotes if the role or the name contain spaces.
+        Examples:
+        !editrole name \"The Transistor\" Test"""
+        author = ctx.message.author
+        old_name = role.name
+        reason = "{}({}) changed the name of role '{}' to '{}'".format(
+            author.name, author.id, old_name, name)
+        try:
+            await role.edit(reason=reason, name=name)
+        except discord.Forbidden:
+            await self.complain(ctx, GENERIC_FORBIDDEN)
+        else:
+            log.info(reason)
+            await ctx.send("Done.")
 
     @commands.group()
     @checks.is_owner()
