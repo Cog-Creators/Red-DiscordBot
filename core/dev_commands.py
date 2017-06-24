@@ -222,7 +222,7 @@ class Dev:
                     msg = "{}".format(value)
 
             try:
-                for page in pagify(msg, shorten_by=12):
+                for page in pagify(str(msg), shorten_by=12):
                     page = self.sanitize_output(ctx, page)
                     await ctx.send(box(page, "py"))
             except discord.Forbidden:
