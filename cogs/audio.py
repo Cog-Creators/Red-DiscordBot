@@ -763,13 +763,16 @@ class Audio:
         while d.is_alive():
             await asyncio.sleep(0.5)
 
-        for entry in d.song.entries:
-            if entry["url"][4] != "s":
-                song_url = "https{}".format(entry["url"][4:])
-                playlist.append(song_url)
-            else:
-                playlist.append(entry.url)
-
+        try:
+            for entry in d.song.entries:
+                if entry["url"][4] != "s":
+                    song_url = "https{}".format(entry["url"][4:])
+                    playlist.append(song_url)
+                else:
+                    playlist.append(entry.url)
+        except:
+            return
+        
         return playlist
 
     async def _parse_yt_playlist(self, url):
@@ -780,15 +783,19 @@ class Audio:
         while d.is_alive():
             await asyncio.sleep(0.5)
 
-        for entry in d.song.entries:
-            try:
-                song_url = "https://www.youtube.com/watch?v={}".format(
-                    entry['id'])
-                playlist.append(song_url)
-            except AttributeError:
-                pass
-            except TypeError:
-                pass
+        try:
+            for entry in d.song.entries:
+                try:
+                    song_url = "https://www.youtube.com/watch?v={}".format(
+                        entry['id'])
+                    playlist.append(song_url)
+                except AttributeError:
+                    pass
+                except TypeError:
+                    pass
+
+        except:
+            return
 
         log.debug("song list:\n\t{}".format(playlist))
 
@@ -1494,15 +1501,55 @@ class Audio:
         except UnauthorizedSave:
             await self.bot.say("You're not the author of that playlist.")
         except InvalidURL:
-            await self.bot.say("Invalid link.")
+            await self.bot.say("PLAYLIST Invalid link.")
         else:
             await self.bot.say("Done.")
 
     @playlist.command(pass_context=True, no_pm=True, name="extend")
-    async def playlist_extend(self, ctx, playlist_url_or_name):
+    async def playlist_extend(self, ctx, name, url):
         """Extends a playlist with a playlist link"""
         # Need better wording ^
-        await self.bot.say("Not implemented yet.")
+
+        server = ctx.message.server
+        author = ctx.message.author
+        if not self._valid_playlist_name(name) or len(name) > 25:
+            await self.bot.say("That playlist name is invalid. It must only"
+                               " contain alpha-numeric characters or _.")
+            return
+
+        if(self._playlist_exists_local(server, name)):
+            if self._valid_playable_url(url):
+                await self.bot.say("Preparing the songs from the playlist.")
+                songlist = await self._parse_playlist(url)
+                try:
+                    await self.bot.say("Adding " + str(len(songlist)) + " songs to the playlist \"" + name + "\".")
+                    temp = self._load_playlist(server, name, True)
+
+                    for song in songlist:
+                        try:
+                            temp.append_song(author, song)
+                        except AttributeError:
+                            pass
+                        except TypeError:
+                            pass
+                    temp.save()
+                    await self.bot.say("Done extending the playlist \"" + name + "\".")
+                except:
+                    await self.bot.say("That URL is not a valid Soundcloud or YouTube"
+                                       " playlist link. If you think this is in error"
+                                       " please let us know and we'll get it"
+                                       " fixed ASAP.")
+            else:
+                await self.bot.say("That URL is not a valid Soundcloud or YouTube"
+                                   " playlist link. If you think this is in error"
+                                   " please let us know and we'll get it"
+                                   " fixed ASAP.")
+
+        else:
+            await self.bot.say("The playlist \"" + name + "\" does not exist.")
+
+        
+            
 
     @playlist.command(pass_context=True, no_pm=True, name="list")
     async def playlist_list(self, ctx):
@@ -1628,6 +1675,7 @@ class Audio:
         if url is None:
             return await self._queue_list(ctx)
         server = ctx.message.server
+        author = ctx.message.author
         if not self.voice_connected(server):
             await ctx.invoke(self.play, url_or_search_terms=url)
             return
@@ -1661,7 +1709,21 @@ class Audio:
             log.debug("queueing to the actual queue for sid {}".format(
                 server.id))
             self._add_to_queue(server, url)
-        await self.bot.say("Queued.")
+
+
+        d = Downloader(url)
+        d.get_info()
+        url = d.url
+        
+        try:
+            self._load_playlist(
+            server, "global", local=self._playlist_exists_local(server, "global")).append_song(author, url)
+        except UnauthorizedSave:
+            await self.bot.say("You're not the author of that playlist.")
+        except InvalidURL:
+            await self.bot.say("PLAYLIST 2 Invalid link:   " + url)
+        else:
+            await self.bot.say("Queued.")
 
     async def _queue_list(self, ctx):
         """Not a command, use `queue` with no args to call this."""
