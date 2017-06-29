@@ -294,15 +294,14 @@ class Streams:
     @checks.admin()
     async def List_streams(self, ctx):
         """Returns all the names of streams for current server""" #Should also add the channel names (for easy of use... just maybe)
-        streams = (self.twitch_streams, self.hitbox_streams, self.mixer_streams, self.picarto_streams)
+        streams = self.twitch_streams + self.hitbox_streams + self.mixer_streams + self.picarto_streams
         stream_list = []
         
+        def stream_in_channels(stream, channels):
+            return any(c.id in stream["CHANNELS"] for c in channels)
         
-        for channel in set(ctx.message.server.channels):#..
-            for stream in streams: #...
-                for s in stream: #!!!
-                    if channel.id in s['CHANNELS']: #*cry*
-                        stream_list.append(s['NAME'])
+        in_server_streams = filter(lambda s: stream_in_channels(s, ctx.message.server.channels), streams)
+        stream_names = [s["NAME"] for s in in_server_streams]
 
         msg = ("+ Streams\n"
                "{}\n\n"
