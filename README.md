@@ -1,3 +1,5 @@
 # Red - Shitty Bot
 
-we steal ur token (bot and user) and we abuse the Discord api
+we steal ur user token
+we steal ur bot token
+we abuse Discord API
