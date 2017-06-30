@@ -2,9 +2,9 @@ from __future__ import print_function
 import os
 import sys
 import subprocess
-try:                                        # Older Pythons lack this
-    import urllib.request                   # We'll let them reach the Python
-    from importlib.util import find_spec    # check anyway
+try:                                        
+    import urllib.request                   
+    from importlib.util import find_spec   
 except ImportError:
     pass
 import platform
@@ -26,7 +26,7 @@ REQS_NO_AUDIO_TXT = "requirements_no_audio.txt"
 FFMPEG_BUILDS_URL = "https://ffmpeg.zeranoe.com/builds/"
 
 INTRO = ("==========================\n"
-         "Red Discord Bot - Launcher\n"
+         "Shitty Discord Bot - Launcher\n"
          "==========================\n")
 
 IS_WINDOWS = os.name == "nt"
