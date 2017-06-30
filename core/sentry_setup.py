@@ -19,7 +19,6 @@ include_paths = (
     'cogs.streams',
     'cogs.trivia',
     'cogs.utils',
-    'core.dev_commands',
     'tests.core.test_sentry',
     'main',
     'launcher'
