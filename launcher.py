@@ -215,10 +215,10 @@ def download_ffmpeg(bitness):
 
 
 def verify_requirements():
-    sys.path_importer_cache = {} # I don't know if the cache reset has any
-    basic = find_spec("discord") # side effect. Without it, the lib folder
-    audio = find_spec("nacl")    # wouldn't be seen if it didn't exist
-    if not basic:                # when the launcher was started
+    sys.path_importer_cache = {} 
+    basic = find_spec("discord") 
+    audio = find_spec("nacl")    
+    if not basic:               
         return None
     elif not audio:
         return False
