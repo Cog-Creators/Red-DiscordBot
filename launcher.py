@@ -355,7 +355,7 @@ def maintenance_menu():
             break
         clear_screen()
 
-
+.
 def run_red(autorestart):
     interpreter = sys.executable
 
