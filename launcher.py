@@ -2,9 +2,9 @@ from __future__ import print_function
 import os
 import sys
 import subprocess
-try:                                        # Older Pythons lack this
-    import urllib.request                   # We'll let them reach the Python
-    from importlib.util import find_spec    # check anyway
+try:                                        
+    import urllib.request                   
+    from importlib.util import find_spec   
 except ImportError:
     pass
 import platform
@@ -26,7 +26,7 @@ REQS_NO_AUDIO_TXT = "requirements_no_audio.txt"
 FFMPEG_BUILDS_URL = "https://ffmpeg.zeranoe.com/builds/"
 
 INTRO = ("==========================\n"
-         "Red Discord Bot - Launcher\n"
+         "Shitty Gay Discord Bot - Launcher\n"
          "==========================\n")
 
 IS_WINDOWS = os.name == "nt"
@@ -215,10 +215,10 @@ def download_ffmpeg(bitness):
 
 
 def verify_requirements():
-    sys.path_importer_cache = {} # I don't know if the cache reset has any
-    basic = find_spec("discord") # side effect. Without it, the lib folder
-    audio = find_spec("nacl")    # wouldn't be seen if it didn't exist
-    if not basic:                # when the launcher was started
+    sys.path_importer_cache = {} 
+    basic = find_spec("discord") 
+    audio = find_spec("nacl")    
+    if not basic:               
         return None
     elif not audio:
         return False
