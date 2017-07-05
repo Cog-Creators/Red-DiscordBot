@@ -209,7 +209,6 @@ class Streams:
                 )
             )
 
-
     @streamset.command()
     @commands.guild_only()
     async def autodelete(self, ctx, on_off: bool):
@@ -285,12 +284,30 @@ class Streams:
                     continue
                 for channel_id in stream.channels:
                     channel = self.bot.get_channel(channel_id)
-                    try:
-                        m = await channel.send("%s is online!" % stream.name,
-                                               embed=embed)
-                        stream._messages_cache.append(m)
-                    except:
-                        pass
+                    mention_type = self.db.guild(channel.guild).mention()
+                    mention = None
+                    if isinstance(mention_type, int):
+                        mention =\
+                            [r for r in channel.guild.roles if r.id == mention_type][0]
+                    elif mention_type == "everyone" or mention_type == "here":
+                        mention = "@" + mention_type
+                    if mention:
+                        try:
+                            m = await channel.send(
+                                "{} , {} is online!".format(
+                                    mention, stream.name
+                                ), embed=embed
+                            )
+                            stream._messages_cache.append(m)
+                        except:
+                            pass
+                    else:
+                        try:
+                            m = await channel.send("%s is online!" % stream.name,
+                                                   embed=embed)
+                            stream._messages_cache.append(m)
+                        except:
+                            pass
 
     def load_streams(self):
         streams = []
