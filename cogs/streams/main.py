@@ -1,6 +1,7 @@
+import discord
 from discord.ext import commands
 from core.config import Config
-from core.utils.chat_formatting import pagify
+from core.utils.chat_formatting import pagify, box
 from core import checks
 from .streams import TwitchStream, HitboxStream, MixerStream, PicartoStream
 from .errors import OfflineStream, StreamNotFound, APIError, InvalidCredentials
@@ -22,7 +23,7 @@ class Streams:
 
         self.db.register_guild(
             autodelete=False,
-            mention=""
+            mention="none"
         )
 
         self.streams = self.load_streams()
@@ -177,8 +178,37 @@ class Streams:
 
     @streamset.command()
     @commands.guild_only()
-    async def mention(self, ctx, mention_type: str):
-        ...
+    async def mention(self, ctx, mention_type: str, role: discord.Role=None):
+        """Sets mentions for stream alerts
+        Types: everyone, here, role, none"""
+        if mention_type.lower() == "role" and not role:
+            await ctx.send("I need a role if you want to"
+                           "set the mention type to 'role'!")
+            return
+        if mention_type.lower() == "everyone" or mention_type.lower() == "here":
+            await self.db.guild(ctx.guild).set("mention", mention_type.lower())
+            await ctx.send("When a stream being tracked by streamalerts "
+                           "comes online, @\u200b{} will be mentioned"
+                           "".format(mention_type.lower()))
+        elif mention_type.lower() == "role":
+            await self.db.guild(ctx.guild).set("mention", role.id)
+            await ctx.send("When a stream being tracked by streamalerts "
+                           "comes online, @\u200b{} will be mentioned"
+                           "".format(role.name))
+        elif mention_type.lower() == "none":
+            await self.db.guild(ctx.guild).set("mention", "none")
+            await ctx.send("Mentioning disabled")
+        else:  # Invalid mention type
+            await self.bot.send_cmd_help(ctx)
+            current_mention_type = self.db.guild(ctx.guild).mention()
+            await ctx.send(
+                box(
+                    "role" if isinstance(current_mention_type, int)
+                    else current_mention_type,
+                    lang="Current mention type:"
+                )
+            )
+
 
     @streamset.command()
     @commands.guild_only()
