@@ -2,8 +2,9 @@ from discord.ext import commands
 from core.config import Config
 from core.utils.chat_formatting import pagify
 from core import checks
-from .streams import TwitchStream, HitboxStream, MixerStream, PicartoStream
-from .errors import OfflineStream, StreamNotFound, APIError, InvalidCredentials
+from core.bot import Red
+from .streams import TwitchStream, HitboxStream, MixerStream, PicartoStream, TwitchCommunity
+from .errors import OfflineStream, StreamNotFound, APIError, InvalidCredentials, CommunityNotFound, OfflineCommunity
 from . import streams as StreamClasses
 from collections import defaultdict
 import asyncio
@@ -12,12 +13,13 @@ CHECK_DELAY = 60
 
 
 class Streams:
-    def __init__(self, bot):
+    def __init__(self, bot: Red):
         self.db = Config.get_conf(self, 26262626, force_registration=True)
 
         self.db.register_global(
             tokens={},
-            streams=[]
+            streams=[],
+            communities=[]
         )
 
         self.db.register_guild(
@@ -26,6 +28,7 @@ class Streams:
         )
 
         self.streams = self.load_streams()
+        self.communities = self.load_communities()
         self.task = bot.loop.create_task(self._stream_alerts())
         self.bot = bot
 
@@ -76,10 +79,22 @@ class Streams:
         if ctx.invoked_subcommand is None:
             await ctx.bot.send_cmd_help(ctx)
 
-    @streamalert.command(name="twitch")
-    async def twitch_alert(self, ctx, channel_name: str):
+    @streamalert.group(name="twitch")
+    async def twitch(self, ctx):
+        """Twitch stream alerts"""
+        if ctx.invoked_subcommand is None:
+            await self.bot.send_cmd_help(ctx)
+
+    @twitch.command(name="channel")
+    async def twitch_alert_channel(self, ctx: commands.Context, channel_name: str):
         """Sets a Twitch stream alert notification in the channel"""
         await self.stream_alert(ctx, TwitchStream, channel_name)
+
+    @twitch.command(name="community")
+    async def twitch_alert_community(self, ctx: commands.Context, community: str):
+        """Sets a Twitch stream alert notification in the channel
+        for the specified community."""
+        await self.community_alert(ctx, TwitchCommunity, community)
 
     @streamalert.command(name="hitbox")
     async def hitbox_alert(self, ctx, channel_name: str):
@@ -161,6 +176,18 @@ class Streams:
 
         await self.add_or_remove(ctx, stream)
 
+    async def community_alert(self, ctx, _class, community_name):
+        community = self.get_community(_class, community_name)
+        if not community:
+            token = self.db.tokens().get(_class.__name__)
+            community = _class(name=community_name, token=token)
+            try:
+                await community.get_community_streams()
+            except CommunityNotFound:
+                await ctx.send("That community doesn't seem to exist")
+                return
+        await self.add_or_remove_community(ctx, community)
+
     @commands.group()
     @checks.mod()
     async def streamset(self, ctx):
@@ -172,6 +199,7 @@ class Streams:
     async def twitchtoken(self, ctx, token: str):
         tokens = self.db.tokens()
         tokens["TwitchStream"] = token
+        tokens["TwitchCommunity"] = token
         await self.db.set("tokens", tokens)
         await ctx.send("Twitch token set.")
 
@@ -207,6 +235,23 @@ class Streams:
 
         await self.save_streams()
 
+    async def add_or_remove_community(self, ctx, community):
+        if ctx.channel.id not in community.channels:
+            community.channels.append(ctx.channel.id)
+            if community not in self.communities:
+                self.communities.append(community)
+            await ctx.send("I'll send a notification in this channel when a "
+                           "channel is streaming to the {} community"
+                           "".format(community.name))
+        else:
+            community.channels.remove(ctx.channel.id)
+            if not community.channels:
+                self.communities.remove(community)
+            await ctx.send("I won't send notifications about channels streaming "
+                           "to the {} community in this channel anymore"
+                           "".format(community.name))
+        await self.save_communities()
+
     def get_stream(self, _class, name):
         for stream in self.streams:
             # if isinstance(stream, _class) and stream.name == name:
@@ -217,6 +262,11 @@ class Streams:
             # Good enough.
             if stream.type == _class.__name__ and stream.name == name:
                 return stream
+
+    def get_community(self, _class, name):
+        for community in self.communities:
+            if community.type == _class.__name__ and community.name == name:
+                return community
 
     async def check_exists(self, stream):
         try:
@@ -231,6 +281,10 @@ class Streams:
         while True:
             try:
                 await self.check_streams()
+            except asyncio.CancelledError:
+                pass
+            try:
+                await self.check_communities()
             except asyncio.CancelledError:
                 pass
             await asyncio.sleep(CHECK_DELAY)
@@ -262,6 +316,34 @@ class Streams:
                     except:
                         pass
 
+    async def check_communities(self):
+        for community in self.communities:
+            try:
+                streams = community.get_community_streams()
+            except CommunityNotFound:
+                print("Community {} not found!".format(community.name))
+                continue
+            except OfflineCommunity:
+                pass
+            else:
+                token = self.db.tokens().get(TwitchStream.__name__)
+                for channel in community.channels:
+                    chn = self.bot.get_channel(channel)
+                    await chn.send("Online streams for {}".format(community.name))
+                for stream in streams:
+                    stream_obj = TwitchStream(
+                        token=token, name=stream["channel"]["name"],
+                        id=stream["_id"]
+                    )
+                    try:
+                        emb = await stream_obj.is_online()
+                    except:
+                        pass
+                    else:
+                        for channel in community.channels:
+                            chn = self.bot.get_channel(channel)
+                            await chn.send(embed=emb)
+
     def load_streams(self):
         streams = []
 
@@ -275,12 +357,32 @@ class Streams:
 
         return streams
 
+    def load_communities(self):
+        communities = []
+
+        for raw_community in self.db.communities():
+            _class = getattr(StreamClasses, raw_community["type"], None)
+            if not _class:
+                continue
+
+            token = self.db.tokens().get(_class.__name__)
+            communities.append(_class(token=token, **raw_community))
+
+        return communities
+
     async def save_streams(self):
         raw_streams = []
         for stream in self.streams:
             raw_streams.append(stream.export())
 
         await self.db.set("streams", raw_streams)
+
+    async def save_communities(self):
+        raw_communities = []
+        for community in self.communities:
+            raw_communities.append(community.export())
+
+        await self.db.set("communities", raw_communities)
 
     def __unload(self):
         self.task.cancel()

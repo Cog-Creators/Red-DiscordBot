@@ -1,4 +1,4 @@
-from .errors import StreamNotFound, APIError, InvalidCredentials, OfflineStream
+from .errors import StreamNotFound, APIError, InvalidCredentials, OfflineStream, CommunityNotFound, OfflineCommunity
 from random import choice
 from string import ascii_letters
 import discord
@@ -8,11 +8,66 @@ import json
 TWITCH_BASE_URL = "https://api.twitch.tv"
 TWITCH_ID_ENDPOINT = TWITCH_BASE_URL + "/kraken/users?login="
 TWITCH_STREAMS_ENDPOINT = TWITCH_BASE_URL + "/kraken/streams/"
+TWITCH_COMMUNITIES_ENDPOINT = TWITCH_BASE_URL + "/kraken/communities"
 
 
 def rnd(url):
     """Appends a random parameter to the url to avoid Discord's caching"""
     return url + "?rnd=" + "".join([choice(ascii_letters) for i in range(6)])
+
+
+class TwitchCommunity:
+    def __init__(self, **kwargs):
+        self.name = kwargs.pop("name")
+        self.id = kwargs.pop("id", None)
+        self.channels = kwargs.pop("channels", [])
+        self._token = kwargs.pop("token", None)
+        self.type = self.__class__.__name__
+
+    async def get_community_id(self):
+        session = aiohttp.ClientSession()
+        headers = {
+            "Accept": "application/vnd.twitchtv.v5+json",
+            "Client-ID": str(self._token)
+        }
+        params = {
+            "name": self.name
+        }
+        async with session.get(TWITCH_COMMUNITIES_ENDPOINT, headers=headers, params=params) as r:
+            data = await r.json()
+        await session.close()
+        if "status" in data and data["status"] == 404:
+            raise CommunityNotFound()
+        return data["_id"]
+
+    async def get_community_streams(self):
+        if not self.id:
+            try:
+                self.id = await self.get_community_id()
+            except CommunityNotFound:
+                raise
+        session = aiohttp.ClientSession()
+        headers = {
+            "Accept": "application/vnd.twitchtv.v5+json",
+            "Client-ID": str(self._token)
+        }
+        params = {
+            "community_id": self.id
+        }
+        url = TWITCH_BASE_URL + "/kraken/streams"
+        async with session.get(url, headers=headers, params=params) as r:
+            data = await r.json()
+        if data["_total"] == 0:
+            raise OfflineCommunity()
+        else:
+            return data["streams"]
+
+    def export(self):
+        data = {}
+        for k, v in self.__dict__.items():
+            if not k.startswith("_"):
+                data[k] = v
+        return data
 
 
 class Stream:
