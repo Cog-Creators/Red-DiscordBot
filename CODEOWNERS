@@ -9,3 +9,4 @@ core/sentry_setup.py        @Kowlin @tekulvw
 # Cogs
 cogs/alias/*                @tekulvw
 cogs/downloader/*           @tekulvw
+cogs/general/*              @palmtree5
