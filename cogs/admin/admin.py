@@ -37,6 +37,10 @@ class Admin:
         self.conf = Config.get_conf(self, 8237492837454039,
                                     force_registration=True)
 
+        self.conf.register_global(
+            serverlocked=False
+        )
+
         self.conf.register_guild(
             announce_ignore=False,
             announce_channel=None,  # Integer ID
@@ -321,3 +325,33 @@ class Admin:
 
         msg = "Available Selfroles:\n{}".format(fmt_selfroles)
         await ctx.send(box(msg, "diff"))
+
+    async def _serverlock_check(self, guild: discord.Guild) -> bool:
+        """
+        Checks if serverlocked is enabled.
+        :param guild:
+        :return: True if locked and left server
+        """
+        if self.conf.serverlocked():
+            await guild.leave()
+            return True
+        return False
+
+    @commands.command()
+    @checks.is_owner()
+    async def serverlock(self, ctx: commands.Context):
+        """
+        Locks a bot to it's current servers only.
+        """
+        serverlocked = self.conf.serverlocked()
+        await self.conf.set("serverlocked", not serverlocked)
+
+        verb = "is now" if not serverlocked else "is no longer"
+
+        await ctx.send("The bot {} serverlocked.".format(verb))
+
+# region Event Handlers
+    async def on_guild_join(self, guild: discord.Guild):
+        if await self._serverlock_check(guild):
+            return
+# endregion
