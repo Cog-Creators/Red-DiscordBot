@@ -33,8 +33,8 @@ RUNNING_ANNOUNCEMENT = (
 
 
 class Admin:
-    def __init__(self):
-        self.conf = Config.get_conf(self, 8237492837454039,
+    def __init__(self, config=Config):
+        self.conf = config.get_conf(self, 8237492837454039,
                                     force_registration=True)
 
         self.conf.register_global(
