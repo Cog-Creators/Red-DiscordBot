@@ -1,9 +1,17 @@
+import importlib.util
+from importlib.machinery import ModuleSpec
+
+import discord
 from discord.ext import commands
 from collections import Counter
+
+from discord.ext.commands import GroupMixin
 
 from core import Config
 from enum import Enum
 import os
+
+from core.cog_manager import CogManager
 
 
 class Red(commands.Bot):
@@ -51,6 +59,10 @@ class Red(commands.Bot):
 
         self.counter = Counter()
         self.uptime = None
+
+        # This needs to be optional at some point.
+        self.cog_mgr = CogManager(paths=('cogs',))
+
         super().__init__(**kwargs)
 
     async def is_owner(self, user):
@@ -85,11 +97,73 @@ class Red(commands.Bot):
         return os.listdir("cogs")
 
     async def save_packages_status(self):
+        # TODO: This is going to have to change.
+        """
         loaded = []
         for package in self.extensions:
             if package.startswith("cogs."):
                 loaded.append(package)
         await self.db.packages.set(loaded)
+        """
+
+    def load_extension(self, spec: ModuleSpec):
+        name = spec.name.split('.')[-1]
+        if name in self.extensions:
+            return
+
+        lib = spec.loader.load_module()
+        if not hasattr(lib, 'setup'):
+            del lib
+            raise discord.ClientException('extension does not have a setup function')
+
+        lib.setup(self)
+        self.extensions[name] = lib
+
+    def unload_extension(self, name):
+        lib = self.extensions.get(name)
+        if lib is None:
+            return
+
+        lib_name = lib.__name__  # Thank you
+
+        # find all references to the module
+
+        # remove the cogs registered from the module
+        for cogname, cog in self.cogs.copy().items():
+            if cog.__module__.startswith(lib_name):
+                self.remove_cog(cogname)
+
+        # first remove all the commands from the module
+        for cmd in self.all_commands.copy().values():
+            if cmd.module.startswith(lib_name):
+                if isinstance(cmd, GroupMixin):
+                    cmd.recursively_remove_all_commands()
+                self.remove_command(cmd.name)
+
+        # then remove all the listeners from the module
+        for event_list in self.extra_events.copy().values():
+            remove = []
+            for index, event in enumerate(event_list):
+                if event.__module__.startswith(lib_name):
+                    remove.append(index)
+
+            for index in reversed(remove):
+                del event_list[index]
+
+        try:
+            func = getattr(lib, 'teardown')
+        except AttributeError:
+            pass
+        else:
+            try:
+                func(self)
+            except:
+                pass
+        finally:
+            # finally remove the import..
+            del lib
+            del self.extensions[name]
+            # del sys.modules[name]
 
 
 class ExitCodes(Enum):

@@ -9,6 +9,8 @@ import discord
 import aiohttp
 import asyncio
 
+from core.cog_manager import NoModuleFound
+
 log = logging.getLogger("red")
 
 OWNER_DISCLAIMER = ("⚠ **Only** the person who is hosting Red should be "
@@ -24,11 +26,15 @@ class Core:
     @checks.is_owner()
     async def load(self, ctx, *, cog_name: str):
         """Loads a package"""
-        if not cog_name.startswith("cogs."):
-            cog_name = "cogs." + cog_name
+        try:
+            spec = ctx.bot.cog_mgr.find_cog(cog_name)
+        except NoModuleFound:
+            await ctx.send("No module by that name was found in any"
+                           " cog path.")
+            return
 
         try:
-            ctx.bot.load_extension(cog_name)
+            ctx.bot.load_extension(spec)
         except Exception as e:
             log.exception("Package loading failed", exc_info=e)
             await ctx.send("Failed to load package. Check your console or "
@@ -41,9 +47,6 @@ class Core:
     @checks.is_owner()
     async def unload(self, ctx, *, cog_name: str):
         """Unloads a package"""
-        if not cog_name.startswith("cogs."):
-            cog_name = "cogs." + cog_name
-
         if cog_name in ctx.bot.extensions:
             ctx.bot.unload_extension(cog_name)
             await ctx.bot.save_packages_status()

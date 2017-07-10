@@ -1,5 +1,5 @@
+import pkgutil
 from importlib import invalidate_caches
-from importlib.util import spec_from_file_location
 from importlib.machinery import ModuleSpec
 from typing import Tuple, Union
 from pathlib import Path
@@ -20,7 +20,7 @@ class NoModuleFound(CogManagerException):
 
 
 class CogManager:
-    def __init__(self, paths=()):
+    def __init__(self, paths: Tuple[str]=()):
         self.conf = Config.get_conf(self, 2938473984732, True)
         self.conf.register_global(
             paths=()
@@ -95,10 +95,12 @@ class CogManager:
         :param name:
         :return:
         """
-        for path in self.paths:
-            spec = spec_from_file_location(name, path)
-            if spec:
-                return spec
+        resolved_paths = [str(p.resolve()) for p in self.paths]
+        for finder, module_name, _ in pkgutil.iter_modules(resolved_paths):
+            if name == module_name:
+                spec = finder.find_spec(name)
+                if spec:
+                    return spec
 
         raise NoModuleFound("No module by the name of '{}' was found"
                             " in any available path.".format(name))
