@@ -26,7 +26,7 @@ class CogManager:
             paths=()
         )
 
-        self._paths = set(self.conf.paths() + list(paths))
+        self._paths = set(list(self.conf.paths()) + list(paths))
 
     @property
     def paths(self) -> Tuple[Path, ...]:
