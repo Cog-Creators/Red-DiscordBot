@@ -1,8 +1,9 @@
-
+import discord
 from discord.ext import commands
-from .utils.dataIO import dataIO
-from .utils import checks
-from .utils.chat_formatting import pagify, box
+from core import Config, checks
+from core.utils.chat_formatting import box
+
+
 import os
 import re
 
@@ -14,10 +15,16 @@ class CustomCommands:
     def __init__(self, bot):
         self.bot = bot
         self.file_path = "data/customcom/commands.json"
-        self.c_commands = dataIO.load_json(self.file_path)
+        self.c_commands = Config.get_conf(self.__class__.__name__,
+                                          414589031223512)
+        self.c_commands.register_guild(is_guild_enabled=False)
+        self.c_commands.register_channel(is_channel_enabled=False)
+        self.c_commands.register_member(is_member_enabled=False)
+        self.c_commands.register_user(is_user_enabled=False)
 
     @commands.group(aliases=["cc"], pass_context=True, no_pm=True)
-    async def customcom(self, ctx):
+    @commands.guild_only()
+    async def customcom(self, ctx: commands.Context):
         """Custom commands management"""
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
@@ -31,23 +38,23 @@ class CustomCommands:
         CCs can be enhanced with arguments:
         https://twentysix26.github.io/Red-Docs/red_guide_command_args/
         """
-        server = ctx.message.server
+        guild = ctx.message.guild
         command = command.lower()
         if command in self.bot.commands:
-            await self.bot.say("That command is already a standard command.")
+            await ctx.send("That command is already a standard command.")
             return
-        if server.id not in self.c_commands:
-            self.c_commands[server.id] = {}
-        cmdlist = self.c_commands[server.id]
+        if guild.id not in self.c_commands:
+            self.c_commands[guild.id] = {}
+        cmdlist = self.c_commands[guild.id]
         if command not in cmdlist:
             cmdlist[command] = text
-            self.c_commands[server.id] = cmdlist
+            self.c_commands[guild.id] = cmdlist
             dataIO.save_json(self.file_path, self.c_commands)
-            await self.bot.say("Custom command successfully added.")
+            await ctx.send("Custom command successfully added.")
         else:
-            await self.bot.say("This command already exists. Use "
-                               "`{}customcom edit` to edit it."
-                               "".format(ctx.prefix))
+            await ctx.send("This command already exists. Use "
+                           "`{}customcom edit` to edit it."
+                           "".format(ctx.prefix))
 
     @customcom.command(name="edit", pass_context=True)
     @checks.mod_or_permissions(administrator=True)
@@ -56,23 +63,23 @@ class CustomCommands:
         Example:
         [p]customcom edit yourcommand Text you want
         """
-        server = ctx.message.server
+        guild = ctx.message.guild
         command = command.lower()
-        if server.id in self.c_commands:
-            cmdlist = self.c_commands[server.id]
+        if guild.id in self.c_commands:
+            cmdlist = self.c_commands[guild.id]
             if command in cmdlist:
                 cmdlist[command] = text
-                self.c_commands[server.id] = cmdlist
+                self.c_commands[guild.id] = cmdlist
                 dataIO.save_json(self.file_path, self.c_commands)
-                await self.bot.say("Custom command successfully edited.")
+                await ctx.send("Custom command successfully edited.")
             else:
-                await self.bot.say("That command doesn't exist. Use "
-                                   "`{}customcom add` to add it."
-                                   "".format(ctx.prefix))
-        else:
-            await self.bot.say("There are no custom commands in this server."
-                               " Use `{}customcom add` to start adding some."
+                await ctx.send("That command doesn't exist. Use "
+                               "`{}customcom add` to add it."
                                "".format(ctx.prefix))
+        else:
+            await ctx.send("There are no custom commands in this guild."
+                           " Use `{}customcom add` to start adding some."
+                           "".format(ctx.prefix))
 
     @customcom.command(name="delete", pass_context=True)
     @checks.mod_or_permissions(administrator=True)
@@ -80,55 +87,56 @@ class CustomCommands:
         """Deletes a custom command
         Example:
         [p]customcom delete yourcommand"""
-        server = ctx.message.server
+        guild = ctx.message.guild
         command = command.lower()
-        if server.id in self.c_commands:
-            cmdlist = self.c_commands[server.id]
+        if guild.id in self.c_commands:
+            cmdlist = self.c_commands[guild.id]
             if command in cmdlist:
                 cmdlist.pop(command, None)
-                self.c_commands[server.id] = cmdlist
+                self.c_commands[guild.id] = cmdlist
                 dataIO.save_json(self.file_path, self.c_commands)
-                await self.bot.say("Custom command successfully deleted.")
+                await ctx.send("Custom command successfully deleted.")
             else:
-                await self.bot.say("That command doesn't exist.")
+                await ctx.send("That command doesn't exist.")
         else:
-            await self.bot.say("There are no custom commands in this server."
-                               " Use `{}customcom add` to start adding some."
-                               "".format(ctx.prefix))
+            await ctx.send("There are no custom commands in this guild."
+                           " Use `{}customcom add` to start adding some."
+                           "".format(ctx.prefix))
 
     @customcom.command(name="list", pass_context=True)
     async def cc_list(self, ctx):
         """Shows custom commands list"""
-        server = ctx.message.server
-        commands = self.c_commands.get(server.id, {})
+        guild = ctx.message.guild
+        commands = self.c_commands.get(guild.id, {})
 
         if not commands:
-            await self.bot.say("There are no custom commands in this server."
-                               " Use `{}customcom add` to start adding some."
-                               "".format(ctx.prefix))
+            await ctx.send("There are no custom commands in this guild."
+                           " Use `{}customcom add` to start adding some."
+                           "".format(ctx.prefix))
             return
 
         commands = ", ".join([ctx.prefix + c for c in sorted(commands)])
         commands = "Custom commands:\n\n" + commands
 
         if len(commands) < 1500:
-            await self.bot.say(box(commands))
+            await ctx.send(box(commands))
         else:
             for page in pagify(commands, delims=[" ", "\n"]):
                 await self.bot.whisper(box(page))
 
     async def on_message(self, message):
-        if len(message.content) < 2 or message.channel.is_private:
+        is_private = isinstance(message.channel, discord.abc.PrivateChannel)
+        if len(message.content) < 2 or is_private:
             return
 
-        server = message.server
+        guild = message.guild
         prefix = self.get_prefix(message)
 
         if not prefix:
             return
 
-        if server.id in self.c_commands and self.bot.user_allowed(message):
-            cmdlist = self.c_commands[server.id]
+        if guild.id in self.c_commands and self.bot.user_allowed(message):
+            cmdlist = self.c_commands[guild.id]
             cmd = message.content[len(prefix):]
             if cmd in cmdlist:
                 cmd = cmdlist[cmd]
@@ -140,7 +148,7 @@ class CustomCommands:
                 await self.bot.send_message(message.channel, cmd)
 
     def get_prefix(self, message):
-        for p in self.bot.settings.get_prefixes(message.server):
+        for p in self.bot.settings.get_prefixes(message.guild):
             if message.content.startswith(p):
                 return p
         return False
@@ -162,7 +170,7 @@ class CustomCommands:
             "message": message,
             "author": message.author,
             "channel": message.channel,
-            "server": message.server
+            "guild": message.guild
         }
         if result in objects:
             return str(objects[result])

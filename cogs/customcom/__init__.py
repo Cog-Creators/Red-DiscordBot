@@ -1,4 +1,4 @@
-from customcom import CustomCommands
+from .customcom import CustomCommands
 
 
 def setup(bot):
