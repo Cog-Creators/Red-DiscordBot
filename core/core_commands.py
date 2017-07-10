@@ -1,10 +1,11 @@
+import itertools
 from discord.ext import commands
 from core import checks
 from string import ascii_letters, digits
 from random import SystemRandom
 import logging
 import importlib
-import os
+import sys
 import discord
 import aiohttp
 import asyncio
@@ -58,17 +59,11 @@ class Core:
     @checks.is_owner()
     async def _reload(self, ctx, *, cog_name: str):
         """Reloads a package"""
-        if cog_name == "downloader":
-            await ctx.send("DONT RELOAD DOWNLOADER.")
-            return
-
-        if not cog_name.startswith("cogs."):
-            cog_name = "cogs." + cog_name
-
+        ctx.bot.unload_extension(cog_name)
+        self.cleanup_and_refresh_modules(cog_name)
         try:
-            self.refresh_modules(cog_name)
-            ctx.bot.unload_extension(cog_name)
-            ctx.bot.load_extension(cog_name)
+            spec = ctx.bot.cog_mgr.find_cog(cog_name)
+            ctx.bot.load_extension(spec)
         except Exception as e:
             log.exception("Package reloading failed", exc_info=e)
             await ctx.send("Failed to reload package. Check your console or "
@@ -77,18 +72,25 @@ class Core:
             await ctx.bot.save_packages_status()
             await ctx.send("Done.")
 
-    def refresh_modules(self, module):
+    def cleanup_and_refresh_modules(self, module_name: str):
         """Interally reloads modules so that changes are detected"""
-        module = module.replace(".", os.sep)
-        for root, dirs, files in os.walk(module):
-            for name in files:
-                if name.endswith(".py"):
-                    path = os.path.join(root, name)
-                    path, _ = os.path.splitext(path)
-                    path = ".".join(path.split(os.sep))
-                    print("Reloading " + path)
-                    m = importlib.import_module(path)
-                    importlib.reload(m)
+        splitted = module_name.split('.')
+
+        def maybe_reload(new_name):
+            try:
+                lib = sys.modules[new_name]
+            except KeyError:
+                pass
+            else:
+                importlib._bootstrap._exec(lib.__spec__, lib)
+
+        modules = itertools.accumulate(splitted, lambda old, next: "{}.{}".format(old, next))
+        for m in modules:
+            maybe_reload(m)
+
+        children = {name: lib for name, lib in sys.modules.items() if name.startswith(module_name)}
+        for child_name, lib in children.items():
+            importlib._bootstrap._exec(lib.__spec__, lib)
 
     @commands.group(name="set")
     async def _set(self, ctx):
