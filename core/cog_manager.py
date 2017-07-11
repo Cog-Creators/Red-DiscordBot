@@ -1,7 +1,7 @@
 import pkgutil
 from importlib import invalidate_caches
 from importlib.machinery import ModuleSpec
-from typing import Tuple, Union
+from typing import Tuple, Union, List
 from pathlib import Path
 
 from discord.ext import commands
@@ -74,8 +74,8 @@ class CogManager:
             raise InvalidPath("'{}' is not a valid directory.".format(path))
 
         all_paths = set(self.paths + (path, ))
-        to_save = [str(p) for p in all_paths]
-        await self.conf.set("paths", to_save)
+        # noinspection PyTypeChecker
+        await self.set_paths(all_paths)
 
     async def remove_path(self, path: Union[Path, str]) -> Tuple[Path, ...]:
         """
@@ -87,8 +87,18 @@ class CogManager:
         all_paths = list(self.paths)
         if path in all_paths:
             all_paths.remove(path)  # Modifies in place
-            await self.conf.set("paths", all_paths)
+            await self.set_paths(all_paths)
         return tuple(all_paths)
+
+    async def set_paths(self, paths_: List[Path]):
+        """
+        Sets the current paths list.
+        :param paths_:
+        :return:
+        """
+        self._paths = paths_
+        str_paths = [str(p) for p in paths_]
+        await self.conf.set("paths", str_paths)
 
     def find_cog(self, name: str) -> ModuleSpec:
         """
@@ -162,3 +172,29 @@ class CogManagerUI:
 
         await ctx.bot.cog_mgr.remove_path(to_remove)
         await ctx.send("Path successfully removed.")
+
+    @commands.command()
+    async def reorderpath(self, ctx: commands.Context, from_: int, to: int):
+        """
+        Reorders paths internally to allow discovery of different cogs.
+        """
+        # Doing this because in the paths command they're 1 indexed
+        from_ -= 1
+        to -= 1
+
+        all_paths = list(ctx.bot.cog_mgr.paths)
+        try:
+            to_move = all_paths.pop(from_)
+        except IndexError:
+            await ctx.send("Invalid 'from' index.")
+            return
+
+        try:
+            all_paths.insert(to, to_move)
+        except IndexError:
+            await ctx.send("Invalid 'to' index.")
+            return
+
+        await ctx.bot.cog_mgr.set_paths(all_paths)
+        await ctx.send("Paths reordered.")
+
