@@ -1,4 +1,5 @@
 from core.bot import Red, ExitCodes
+from core.cog_manager import CogManagerUI
 from core.global_checks import init_global_checks
 from core.events import init_events
 from core.sentry_setup import init_sentry_logging
@@ -75,6 +76,7 @@ if __name__ == '__main__':
     init_events(red, cli_flags)
 
     red.add_cog(Core())
+    red.add_cog(CogManagerUI())
 
     if cli_flags.dev:
         red.add_cog(Dev())

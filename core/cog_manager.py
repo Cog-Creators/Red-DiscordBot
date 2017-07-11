@@ -4,7 +4,10 @@ from importlib.machinery import ModuleSpec
 from typing import Tuple, Union
 from pathlib import Path
 
+from discord.ext import commands
+
 from core.config import Config
+from core.utils.chat_formatting import box
 
 
 class CogManagerException(Exception):
@@ -35,7 +38,7 @@ class CogManager:
         :return:
         """
         paths = [Path(p) for p in self._paths]
-        return tuple(p for p in paths if p.is_dir())
+        return tuple(p.resolve() for p in paths if p.is_dir())
 
     @staticmethod
     def _ensure_path_obj(path: Union[Path, str]) -> Path:
@@ -115,3 +118,47 @@ class CogManager:
         :return:
         """
         invalidate_caches()
+
+
+class CogManagerUI:
+    @commands.command()
+    async def paths(self, ctx: commands.Context):
+        """
+        Lists current cog paths in order of priority.
+        """
+        cog_paths = ctx.bot.cog_mgr.paths
+        msg = []
+        for i, p in enumerate(cog_paths, start=1):
+            msg.append("{}. {}".format(i, p))
+
+        msg = "\n".join(msg)
+        await ctx.send(box(msg))
+
+    @commands.command()
+    async def addpath(self, ctx: commands.Context, path: Path):
+        """
+        Add a path to the list of available cog paths.
+        """
+        if not path.is_dir():
+            await ctx.send("That path is does not exist or does not"
+                           " point to a valid directory.")
+            return
+
+        await ctx.bot.cog_mgr.add_path(path)
+        await ctx.send("Path successfully added.")
+
+    @commands.command()
+    async def removepath(self, ctx: commands.Context, path_number: int):
+        """
+        Removes a path from the available cog paths given the path_number
+            from !paths
+        """
+        cog_paths = ctx.bot.cog_mgr.paths
+        try:
+            to_remove = cog_paths[path_number]
+        except IndexError:
+            await ctx.send("That is an invalid path number.")
+            return
+
+        await ctx.bot.cog_mgr.remove_path(to_remove)
+        await ctx.send("Path successfully removed.")
