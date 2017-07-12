@@ -55,6 +55,10 @@ class Core:
     @checks.is_owner()
     async def _reload(self, ctx, *, cog_name: str):
         """Reloads a package"""
+        if cog_name == "downloader":
+            await ctx.send("DONT RELOAD DOWNLOADER.")
+            return
+
         if not cog_name.startswith("cogs."):
             cog_name = "cogs." + cog_name
 
