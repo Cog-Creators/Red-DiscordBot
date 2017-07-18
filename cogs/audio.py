@@ -194,7 +194,6 @@ class Playlist:
                     is_admin,
                     is_mod))
 
-
     # def __del__() ?
 
     def append_song(self, author, url):
@@ -1563,7 +1562,6 @@ class Audio:
         self._delete_playlist(server, name)
         await self.bot.say("Playlist deleted.")
 
-
     @playlist.command(pass_context=True, no_pm=True, name="start")
     async def playlist_start(self, ctx, name):
         """Plays a playlist."""
@@ -1830,7 +1828,6 @@ class Audio:
         is_server_owner = member == server.owner
         is_admin = discord.utils.get(member.roles, name=admin_role) is not None
         is_mod = discord.utils.get(member.roles, name=mod_role) is not None
-
 
         nonbots = sum(not m.bot for m in member.voice_channel.voice_members)
         alone = nonbots <= 1
@@ -2198,6 +2195,7 @@ def check_files():
                         "Adding " + str(key) + " field to audio settings.json")
             dataIO.save_json(settings_path, current)
 
+
 def verify_ffmpeg_avconv():
     try:
         subprocess.call(["ffmpeg", "-version"], stdout=subprocess.DEVNULL)
@@ -2212,6 +2210,7 @@ def verify_ffmpeg_avconv():
         return False
     else:
         return "avconv"
+
 
 def setup(bot):
     check_folders()
