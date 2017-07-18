@@ -44,7 +44,6 @@ youtube_dl_options = {
     'format': 'bestaudio/best',
     'extractaudio': True,
     'audioformat': "mp3",
-    'outtmpl': '%(id)s',
     'nocheckcertificate': True,
     'ignoreerrors': True,
     'quiet': True,
