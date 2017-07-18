@@ -1196,6 +1196,12 @@ class Audio:
         await self.bot.say("The cache will be at least {:.3f} MB".format(
             self._cache_min()))
 
+    @cache.command(name="maximum")
+    async def cache_maximum(self):
+        """Current max cache size.  User setting or minimum, whichever is higher"""
+        await self.bot.say("The max cache is set to {:.3f} MB".format(
+            self._cache_max()))
+
     @cache.command(name="size")
     async def cache_size(self):
         """Current size of the cache."""
