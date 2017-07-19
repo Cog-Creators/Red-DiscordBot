@@ -51,7 +51,7 @@ class Red(commands.Bot):
         super().__init__(**kwargs)
 
     async def is_owner(self, user):
-        if user.id in self.db.coowners():
+        if user.id in self.db.coowners() or user.id == self.db.owner():
             return True
         return await super().is_owner(user)
 
