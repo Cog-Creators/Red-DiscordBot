@@ -277,7 +277,7 @@ class Core:
             if message.content.strip() == token:
                 self.owner.reset_cooldown(ctx)
                 await ctx.bot.db.set("owner", ctx.author.id)
-                ctx.bot.author_id = ctx.author.id
+                ctx.bot.owner_id = ctx.author.id
                 await ctx.send("You have been set as owner.")
             else:
                 await ctx.send("Invalid token.")
