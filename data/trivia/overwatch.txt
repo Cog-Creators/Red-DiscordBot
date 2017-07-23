@@ -180,3 +180,123 @@ Which hero has a skin named "Sparrow?"`Genji
 On which date did the Closed Beta for Overwatch start?`27 october`october 27
 What is the name of Tracer's ultimate?`Pulse bomb
 What does Tracer say when using her ultimate?`Time's up`times up
+What is Tracer's real name?`Lena Oxton
+What is Torbjorn's full name?`Torbjorn Lindholm
+What is Soldier: 76's real name?`Jack Morrison
+What is McCree's full name?`Jesse McCree
+What is Ana's full name`Ana Amari
+What is Reinhardt's full name?`Reinhardt Wilhelm
+What is Mei's full name?`Mei-Ling Zhou
+What is Mercy's real name?`Angela Ziegler
+What is Genji's full name?`Genji Shimada
+What is Widowmaker's real name?`Amelie Lacroix
+What is Zenyatta's full name?`Tekharta Zenyatta
+What is Hanzo's full name?`Hanzo Shimada
+What is Pharah's real name?`Fareeha Amari
+What is Roadhog's real name?`Mako Rutledge
+What is Junkrat's real name?`Jamison Fawkes
+What is Symmetra's real name?`Satya Vaswani
+What is Lúcio's full name?`Lucio Correia dos Santos
+What is D.VA's real name?`Hana Song
+What is Zarya's real name?`Aleksandra Zaryanova
+Which character's ultimate has the highest DPS`Roadhog
+In the Beta, Junkrat's ultimate was adapted from one designed for another character. Who was that?`Bastion
+How much health per second does Zenyatta's ultimate heal?`300`three hundred
+What is the cooldown in seconds for Genji's Dash?`8`eight
+What is the cooldown in seconds for Mcree's Roll?`8`eight
+What is the cooldown in seconds for Hanzo's Sonic Arrow?`20`twenty
+What is the cooldown in seconds for Orisa's Fortify?`12`Twelve
+What is the cooldown in seconds for Sombra's Translocator?`4`Four
+What is the cooldown in seconds for Reapers Shadow Step?` 10`Ten
+What is the cooldown in seconds for Tracer's Recall?`12`twelve
+What is Pharah's Ultimate called?`Barrage
+What is Genji's Ultimate called?`Dragonblade
+What is McCree's Ultimate called?`Deadeye
+What is Reaper's Ultimate called?`Death Blossom
+What is Soldier: 76's Ultimate called?`Tactical Visor
+What is Sombra's Ultimate called?`EMP
+What is Tracer's Ultimate called?`Pulse Bomb
+What is Bastion's Ultimate called?`Configuration: Tank`Configuration:Tank`Configuration Tank
+What is Hanzo's Ultimate called?`Dragonstrike
+What is Junkrat's Ultimate called?`RIP-Tire`RIPtire`RIP Tire
+What is Mei's Ultimate called?`Blizzard
+What is Torbjörn's Ultimate called?`Molten Core
+What is Widowmaker's Ultimate called?`Infra-Sight`Infra Sight`InfraSight
+What is D.Va's Ultimate called?`Self-Destruct`Self Destruct
+What is Orisa's Ultimate called?`Supercharger
+What is Reinhardt's Ultimate called?`Earthshatter
+What is Roadhog's Ultimate called?`Whole Hog
+What is Winston's Ultimate called?`Primal Rage
+What is Zarya's Ultimate called?`Graviton Surge
+What is Ana's Ultimate called?`Nano Boost
+What is Lúcio's Ultimate called?`Sound Barrier
+What is Mercy's Ultimate called?`Resurrect
+What are Symmetra's Ultimates called?`Teleporter and Shield Generator`Teleporter & Shield Generator`Teleporter Shield Generator`Shield Generator Teleporter`Shield Generator & Teleporter`Shield Generator and Teleporter 
+What is Zenyatta's Ultimate called?`Transcendence
+How much Total health does Genji have?`200
+How much Total health does McCree have?`200
+How much Total health does Pharah have?`200
+How much Total health does Reaper have?`250
+How much Total health does Soldier: 76 have?`200
+How much Total health does Sombra have?`200
+How much Total health does Tracer have?`150
+How much Total health does Bastion have?`300
+How much Total health does Hanzo have?`200
+How much Total health does Junkrat have?`200
+How much Total health does Mei have?`250
+How much Total health does Torbjörn have?`200
+How much Total health does Widowmaker have?`200
+How much Total health does D.Va (in Mech form) have?`600
+How much Total health does D.Va (in pilot form) have?`150
+How much Total health does Orisa have?`400
+How much Total health does Reinhardt have?`500
+How much Total health does Roadhog have?`600
+How much Total health does Winston have?`500
+How much Total health does Zarya have?`400
+How much Total health does Ana have?`200
+How much Total health does Lúcio have?`200
+How much Total health does Mercy have?`200
+How much Total health does Zenyatta have?`200
+What is the name of Bastion's bird?`Ganymede
+What is the name of the gang based in Dorado?`Los Muertos
+What is Mei's robot called?`Snowball
+What is Punch kid's Name?`Timmy
+What is Punch kid's older brother's name?`Brian
+How much health does a small health pack heal?`75
+How much health does a large health pack heal?`250
+How many Heroes were available to play at launch?`21
+Which Omnic Organization were Zenyatta and Mondatta formerly a part of?`Shambali`the Shambali
+Orignally when Overwatch was released players could choose to stack multiples of any hero on any team,it was later limited to 1 of each hero per team, and an arcade mode where heros tacking was again possble was added, what is this mode called?`No Limits
+Which of these does the most damage? Genji's shuriken, Winstons leap, Ana's Rifle or Junkrats Grenade?`Ana's Rifle`ana`rifle`anas rifle
+On which map was this screenshot taken? http://i.imgur.com/d02tYI5.jpg`Dorado
+On which map was this screenshot taken? http://i.imgur.com/VFDOLXR.jpg`Dorado
+On which map was this screenshot taken? http://i.imgur.com/XLgLEdh.jpg`Kings Row`King's Row
+On which map was this screenshot taken? http://i.imgur.com/fbW965j.jpg`Hanamura
+On which map was this screenshot taken? http://i.imgur.com/NMQDM7y.jpg`Hanamura
+On which map was this screenshot taken? http://i.imgur.com/vxqkKQ0.jpg`Kings Row`King's Row
+On which map was this screenshot taken? http://i.imgur.com/ZyVeLTU.jpg`Lijiang Tower
+On which map was this screenshot taken? http://i.imgur.com/Yk8vqgn.jpg`Hollywood
+On which map was this screenshot taken? http://i.imgur.com/3WKgUfA.jpg`Hollywood
+On which map was this screenshot taken? http://i.imgur.com/uMcjqeW.jpg`Hollywood
+On which map was this screenshot taken? http://i.imgur.com/G7xpRlQ.jpg`Hollywood
+On which map was this screenshot taken? http://i.imgur.com/KXLulKa.jpg`Oasis
+On which map was this screenshot taken? http://i.imgur.com/cNjKeE3.jpg`Oasis
+On which map was this screenshot taken? http://i.imgur.com/2qrMC16.jpg`Volskaya Industries`Volskaya
+On which map was this screenshot taken? http://i.imgur.com/xuO8PDw.jpg`Volskaya Industries`Volskaya
+On which map was this screenshot taken? http://i.imgur.com/qgyW1LF.jpg`Volskaya Industries`Volskaya
+On which map was this screenshot taken? http://i.imgur.com/h8zqtSf.jpg`Oasis
+On which map was this screenshot taken? http://i.imgur.com/YlMy2iE.jpg`Lijiang Tower
+On which map was this screenshot taken? http://i.imgur.com/5bXsDP1.jpg`Lijiang Tower
+Over the design period for Overwatch, Bastion had several different ults before he got Tank mode how many including his current one did he have?`4: a mine, bouncing grenades, shooting though walls and tank mode`4
+What was the first seasonal event in Overwatch called?`The Summer Games`Summer Games
+What name was given to the Halloween event in Overwatch?`Halloween Terror
+What name was given to the Halloween themed Brawl, which featured waves of Zombie Omnics?`Junkenstein's Revenge`Junkensteins Revenge
+What was the name of the Christmas themed event in Overwatch?`Winter Wonderland
+What was the name of the Lunar New Year themed event in Overwatch?`Year of the Rooster
+In April of 2017, players could play a Historic Overwatch event. What was its name?`Uprising`Omnic Uprising
+The Overwatch short Alive, featuring Widowmaker and Tracer, was set on which map?`King's Row`Kings Row
+The Overwatch short Dragons, featuring Genji and Hanzo, was set on which map?`Hanamura
+The Overwatch short Infiltration, featuring Sombra, Widomaker and Reaper, was set on which map?`Volskaya Industries`Volskaya
+The Overwatch short Recall, featuring Winston and Reaper, was set on which map?`Watchpoint Gibraltar`Watchpoint: Gibraltar`Gibraltar
+The Overwatch short Hero, featuring Soldier 76, was set on which map?`Dorado
+What is the Undercover section of Overwatch called?`Blackwatch

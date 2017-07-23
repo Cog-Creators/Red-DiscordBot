@@ -132,3 +132,6 @@ Which champion's ultimate is named: Daisy!?`Ivern
 Which champion's ultimate is named: Hextech Ultimatum?`Camille
 Which champion's ultimate is named: Curse of the Sad Mummy?`Amumu
 Which champion's ultimate is named: Weaver's Wall?`Taliyah
+Which champion's ultimate is named: The Quickness?`Rakan
+Which champion's ultimate is named: Featherstorm?`Xayah
+Which champion's ultimate is named: Umbral Trespass?`Kayn
