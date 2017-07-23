@@ -74,4 +74,4 @@ The difference between a new feature and improvement can be quite fuzzy and the 
 At a very basic level a PR is a new feature if it changes the intended way any part of the Red project currently works or if it modifies the user experience (UX) in any significant way. Otherwise, it is likely to be considered an improvement.
 
 # Community
-You can chat with the core team and other community members about issues or pull requests on the #coding channel of the Red support server located [here](https://discord.gg/red).
+You can chat with the core team and other community members about issues or pull requests in the #coding channel of the Red support server located [here](https://discord.gg/red).
