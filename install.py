@@ -144,45 +144,6 @@ def download_git(is64bit: bool=True):
     )
 
 
-def download_python35(is64bit: bool=True):
-    if is64bit:
-        print("Downloading Python 3.5.3")
-        py_r = requests.get("https://www.python.org/ftp/python/3.5.3/python-3.5.3-amd64.exe")
-        filename = "python-3.5.3-amd64.exe"
-        with open(filename, "wb") as fout:
-            fout.write(py_r.content)
-        good = subprocess.call(
-            [
-                os.path.join(os.getcwd(), filename), "/passive",
-                "PrependPath=1", "InstallLauncherAllUsers=0"
-            ]
-        )
-        if good:
-            print("Python 3.5.3 has been installed successfully."
-                  "Please rerun this install script using that version")
-        else:
-            print("Something went wrong while installing Python 3.5.3. Have "
-                  "you tried using the Powershell script to install it?")
-    else:
-        print("Downloading Python 3.5.3")
-        py_r = requests.get("https://www.python.org/ftp/python/3.5.3/python-3.5.3.exe")
-        filename = "python-3.5.3.exe"
-        with open(filename, "wb") as fout:
-            fout.write(py_r.content)
-        good = subprocess.call(
-            [
-                os.path.join(os.getcwd(), filename), "/passive",
-                "PrependPath=1", "InstallLauncherAllUsers=0"
-            ]
-        )
-        if good:
-            print("Python 3.5.3 has been installed successfully."
-                  "Please rerun this install script using that version")
-        else:
-            print("Something went wrong while installing Python 3.5.3. Have "
-                  "you tried using the Powershell script to install it?")
-
-
 def do_windows_install():
     if "ffmpeg.exe" not in os.listdir(os.getcwd())\
             or "ffprobe.exe" not in os.listdir(os.getcwd())\
@@ -215,9 +176,9 @@ if __name__ == "__main__":
         # For Windows, we'll attempt to install the correct
         # version, telling the user to rerun the script using
         # the newly installed version
-        print("Red needs Python 3.5 or superior. Attempting to "
-              "install the required version.\n")
-        download_python35(True if IS_64BIT else False)
+        print("Red needs Python 3.5 or superior. Please run "
+              "launch-install-win.ps1 using powershell to "
+              "install the correct version")
         exit(InstallerExitCodes.IMPROPERPYVER)
     elif not PYTHON_OK and not IS_WINDOWS and not IS_MAC:  # Improper python version and on Linux
         print("Red needs Python 3.5 or superior. Please install the required version.\n")
