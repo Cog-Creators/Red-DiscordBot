@@ -17,7 +17,7 @@ We've made a point to use [ZenHub](https://www.zenhub.com/) (a plugin for GitHub
 3. Create new tests for code you add or bugs you fix. It helps us help you by making sure we don't accidentally break anything :grinning:
 4. Create any issues for new features you'd like to implement and explain why this feature is useful to everyone and not just you personally.
 5. Don't add new cogs unless specifically given approval in an issue discussing said cog idea.
-6. When creating PRs please use the ZenHub "Connect with an issue" feature and link your PR to it's respective issue.
+6. When creating PRs please use the ZenHub "Connect with an issue" feature and link your PR to its respective issue.
 7. Be welcoming to newcomers and encourage diverse new contributors from all backgrounds. See [Python Community Code of Conduct](https://www.python.org/psf/codeofconduct/).
 
 # Your First Contribution
@@ -35,7 +35,7 @@ At this point you're ready to start making changes. Feel free to ask for help; e
 We've recently started adding unit-testing into Red. All current tests can be found in the `tests/` directory at the root level of the repository. You will need `py.test` installed in order to run them (which is already in `requirement.txt`). Tests can be run by simply calling `pytest` once you've `cd`'d into the Red repository folder.
 
 ### Linking to issues
-As mentioned in the [Ground Rules](#Ground-Rules) above, we use ZenHub to collaborate on Red effectively. In order to do so we expect each PR to be "linked" to it's respective issue when it is submitted.
+As mentioned in the [Ground Rules](#Ground-Rules) above, we use ZenHub to collaborate on Red effectively. In order to do so we expect each PR to be "linked" to its respective issue when it is submitted.
 
 ### To contribute changes
 1. Create your own fork of the Red repository.
@@ -43,7 +43,7 @@ As mentioned in the [Ground Rules](#Ground-Rules) above, we use ZenHub to collab
 3. If you like the changes and think the main Red project could use it:
     * Ensure your code follows (generally) the PEP8 Python style guide
     * Create a Pull Request on GitHub with your changes
-    * Link your Pull Request to it's corresponding issue
+    * Link your Pull Request to its corresponding issue
 
 ### Small contributions
 For things like spelling errors, comment clean ups, or style formatting you don't need to link your PRs to an issue.
