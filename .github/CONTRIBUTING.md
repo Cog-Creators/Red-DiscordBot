@@ -35,7 +35,7 @@ At this point you're ready to start making changes. Feel free to ask for help; e
 We've recently started adding unit-testing into Red. All current tests can be found in the `tests/` directory at the root level of the repository. You will need `py.test` installed in order to run them (which is already in `requirement.txt`). Tests can be run by simply calling `pytest` once you've `cd`'d into the Red repository folder.
 
 ### Linking to issues
-As mentioned in the [Ground Rules][#Ground Rules] above, we use ZenHub to collaborate on Red effectively. In order to do so we expect each PR to be "linked" to it's respective issue when it is submitted.
+As mentioned in the [Ground Rules](#Ground-Rules) above, we use ZenHub to collaborate on Red effectively. In order to do so we expect each PR to be "linked" to it's respective issue when it is submitted.
 
 ### To contribute changes
 1. Create your own fork of the Red repository.
