@@ -1,0 +1,3 @@
+pip
+requests
+distro;sys_platform=="linux"
