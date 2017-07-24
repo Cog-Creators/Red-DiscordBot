@@ -30,7 +30,7 @@ def json_driver(tmpdir_factory):
 def config(json_driver):
     return Config(
         cog_name="PyTest",
-        unique_identifier=0,
+        unique_identifier='0',
         driver_spawn=json_driver)
 
 
@@ -41,7 +41,7 @@ def config_fr(json_driver):
     """
     return Config(
         cog_name="PyTest",
-        unique_identifier=0,
+        unique_identifier='0',
         driver_spawn=json_driver,
         force_registration=True
     )
