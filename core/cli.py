@@ -63,9 +63,17 @@ def ask_sentry(red: Red):
 
 def parse_cli_flags():
     parser = argparse.ArgumentParser(description="Red - Discord Bot")
-    parser.add_argument("--owner", help="ID of the owner. Only who hosts "
-                                        "Red should be owner, this has "
-                                        "security implications")
+    parser.add_argument("--owner", type=int,
+                        help="ID of the owner. Only who hosts "
+                             "Red should be owner, this has "
+                             "serious security implications.")
+    parser.add_argument("--co-owner", type=int, action="append", default=[],
+                        help="ID of a co-owner. Only people who have access "
+                             "to the system that is hosting Red should be  "
+                             "co-owners, as this gives them complete access "
+                             "to the system's data. This has serious "
+                             "security implications if misused. Can be "
+                             "multiple.")
     parser.add_argument("--prefix", "-p", action="append",
                         help="Global prefix. Can be multiple")
     parser.add_argument("--no-prompt",
