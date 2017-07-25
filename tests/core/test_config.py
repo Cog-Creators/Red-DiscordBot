@@ -69,6 +69,14 @@ def test_nested_group_value_badreg(config):
         config.register_global(foo__bar=False)
 
 
+def test_nested_toplevel_reg(config):
+    defaults = {'bar': True, 'baz': False}
+    config.register_global(foo=defaults)
+
+    assert config.foo.bar() is True
+    assert config.foo.baz() is False
+
+
 #region Default Value Overrides
 def test_global_default_override(config):
     assert config.enabled(True) is True
