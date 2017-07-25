@@ -1,13 +1,15 @@
 from typing import Tuple
 
+from core.drivers.red_base import BaseDriver
 from core.json_io import JsonIO
 
 from pathlib import Path
 
 
-class JSON:
+class JSON(BaseDriver):
     def __init__(self, cog_name, *args, data_path_override: Path=None,
                  file_name_override: str="settings.json"):
+        super().__init__()
         self.cog_name = cog_name
         self.file_name = file_name_override
         if data_path_override:
