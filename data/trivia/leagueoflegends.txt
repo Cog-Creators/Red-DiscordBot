@@ -265,6 +265,11 @@ What champion has the same voice actress as Kayle?`Soraka
 Which champion is the only champion capable of giving full invulnerability to damage?`Kayle
 Who is the only female champion with a Riot skin?`Kayle
 Who says "Are... You sure you're not in the wrong league?" as a taunt?`Kayle
+What is the name of Kayn's weapon?`Rhaast
+What is Kayn's first name?`Shieda
+Who has a skill called "Blade's Reach"?`Kayn
+What species is Kayn?`Human
+What country was Kayn born in?`Noxus
 Who is the "Heart of the Tempest"?`Kennen
 Who has a Deadly skin which is a parody of Deadpool?`Kennen
 Who says "The eyes never lie." when picked during champion select?`Kennen
@@ -413,6 +418,11 @@ Who has a Phoenix skin?`Quinn
 Who is dating Jarvan IV (according to Riot Ransom)?`Quinn
 Who does Valor (Quinn's eagle) not respect?`Garen
 What is the name of Quinn's dead brother?`Caleb
+Who has a skill called "Battle Dance"?`Rakan
+What is Rakan's favorite human food?`Chocolate
+What tribe do Rakan and Xayah belong to?`Lhotlan
+What are Rakan's wings disguised as to blend in with humans?`His Cloak`cloak
+Who has the lowest basic attack range of all ranged champions?`Rakan
 Who has the least number of quotes?`Rammus
 Who has a Molten skin?`Rammus
 According to the dating service run by Blitzcrank, what is Rammus' best match?`A cactus`cactus
@@ -627,6 +637,11 @@ Who has the skill with the highest AD Ratio in the game?`Wukong
 Who named Wukong, "Wukong"?`Master Yi`Yi
 Who created Wukong's staff?`Doran
 Who is the only champion with a stealth ability who is not classified as an assassin?`Wukong
+What species are Rakan and Xayah?`Vastaya
+Who has a skill called "Double Daggers"?`Xayah
+Who is also known as "the Rebel"?`Xayah
+Who did Xayah and Rakan fight in the "Wild Magic" Promo video?`Zed
+Who has a Cosmic Dusk skin?`Xayah
 Who has a Runeborn skin?`Xerath
 Who has a skill called "Arcanopulse"?`Xerath
 Who says "I will be free." when picked during champion select?`Xerath
