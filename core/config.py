@@ -1,8 +1,10 @@
 import logging
+from pathlib import Path
 
 from typing import Callable, NewType, Union, Tuple
 
 import discord
+from .drivers.red_json import JSON as JSONDriver
 
 log = logging.getLogger("red.config")
 
@@ -139,6 +141,14 @@ class Config:
         cog_name = cog_instance.__class__.__name__
         uuid = str(hash(identifier))
         return cls(cog_name=cog_name, unique_identifier=uuid,
+                   force_registration=force_registration)
+
+    @classmethod
+    def get_core_conf(cls, force_registration: bool=False):
+        core_data_path = Path.cwd() / 'core' / '.data'
+        driver_spawn = JSONDriver("Core", data_path_override=core_data_path)
+        return cls(cog_name="Core", driver_spawn=driver_spawn,
+                   unique_identifier='0',
                    force_registration=force_registration)
 
     def __getattr__(self, item: str) -> Union[Group, Value]:
