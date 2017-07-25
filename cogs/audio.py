@@ -1190,23 +1190,15 @@ class Audio:
         dumped = self._dump_cache()
         await self.bot.say("Dumped {:.3f} MB of audio files.".format(dumped))
 
-    @cache.command(name="minimum")
-    async def cache_minimum(self):
-        """Current minimum cache size, based on server count."""
-        await self.bot.say("The cache will be at least {:.3f} MB".format(
-            self._cache_min()))
-
-    @cache.command(name="maximum")
-    async def cache_maximum(self):
-        """Current max cache size.  User setting or minimum, whichever is higher"""
-        await self.bot.say("The max cache is set to {:.3f} MB".format(
-            self._cache_max()))
-
-    @cache.command(name="size")
-    async def cache_size(self):
-        """Current size of the cache."""
-        await self.bot.say("Cache is currently at {:.3f} MB.".format(
-            self._cache_size()))
+    @cache.command(name='stats')
+    async def cache_stats(self):
+        """Reports info about the cache.
+            - Current size of the cache.
+            - Maximum cache size. User setting or minimum, whichever is higher.
+            - Minimum cache size. Automatically determined by number of servers Red is running on.
+        """
+        await self.bot.say("Current size: {:.3f} MB\nMaximum: {:.3f} MB\nMinimum: {:.3f} MB".format(
+                self._cache_size(), self._cache_max(), self._cache_min()))
 
     @commands.group(pass_context=True, hidden=True, no_pm=True)
     @checks.is_owner()
