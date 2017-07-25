@@ -135,6 +135,39 @@ class Group(Value):
         await value_obj.set(value)
 
 
+class MemberGroup(Group):
+    def all_guilds(self) -> dict:
+        """
+        Gets a dict of all guilds and members.
+
+        REMEMBER: ID's are stored in these dicts as STRINGS.
+        :return:
+        """
+        new_identifiers = (self.identifiers[0], )
+        value_obj = Value(
+            identifiers=new_identifiers,
+            default_value={},
+            spawner=self.spawner
+        )
+        return value_obj()
+
+    def all_members(self) -> dict:
+        """
+        Gets a dict of all members from the same guild as the
+            given member.
+
+        REMEMBER: ID's are stored in these dicts as STRINGS.
+        :return:
+        """
+        new_identifiers = self.identifiers[:2]
+        value_obj = Value(
+            identifiers=new_identifiers,
+            default_value={},
+            spawner=self.spawner
+        )
+        return value_obj()
+
+
 class Config:
     GLOBAL = "GLOBAL"
     GUILD = "GUILD"
@@ -263,9 +296,10 @@ class Config:
     def register_member(self, **kwargs):
         self._register_default(self.MEMBER, **kwargs)
 
-    def _get_base_group(self, key: str, *identifiers: str) -> Group:
+    def _get_base_group(self, key: str, *identifiers: str,
+                        group_class=Group) -> Group:
         # noinspection PyTypeChecker
-        return Group(
+        return group_class(
             identifiers=(key, ) + identifiers,
             defaults=self.defaults.get(key, {}),
             spawner=self.spawner,
@@ -284,6 +318,7 @@ class Config:
     def user(self, user: discord.User) -> Group:
         return self._get_base_group(self.USER, user.id)
 
-    def member(self, member: discord.Member) -> Group:
-        return self._get_base_group(self.MEMBER, member.guild.id, member.id)
+    def member(self, member: discord.Member) -> MemberGroup:
+        return self._get_base_group(self.MEMBER, member.guild.id, member.id,
+                                    group_class=MemberGroup)
 

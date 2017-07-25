@@ -187,6 +187,7 @@ async def test_set_channel_no_register(config, empty_channel):
     assert config.channel(empty_channel).no_register() is True
 #endregion
 
+
 # Dynamic attribute testing
 @pytest.mark.asyncio
 async def test_set_dynamic_attr(config):
@@ -197,3 +198,20 @@ async def test_set_dynamic_attr(config):
 
 def test_get_dynamic_attr(config):
     assert config.get("foobaz", True) is True
+
+
+# Member Group testing
+@pytest.mark.asyncio
+async def test_membergroup_allservers(config, empty_member):
+    await config.member(empty_member).foo.set(False)
+
+    all_servers = config.member(empty_member).all_servers()
+    assert str(empty_member.guild.id) in all_servers
+
+
+@pytest.mark.asyncio
+async def test_membergroup_allservers(config, empty_member):
+    await config.member(empty_member).foo.set(False)
+
+    all_members = config.member(empty_member).all_members()
+    assert str(empty_member.id) in all_members
