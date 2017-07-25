@@ -143,7 +143,7 @@ class MemberGroup(Group):
         REMEMBER: ID's are stored in these dicts as STRINGS.
         :return:
         """
-        new_identifiers = (self.identifiers[0], )
+        new_identifiers = self.identifiers[:2]
         value_obj = Value(
             identifiers=new_identifiers,
             default_value={},
@@ -159,7 +159,7 @@ class MemberGroup(Group):
         REMEMBER: ID's are stored in these dicts as STRINGS.
         :return:
         """
-        new_identifiers = self.identifiers[:2]
+        new_identifiers = self.identifiers[:3]
         value_obj = Value(
             identifiers=new_identifiers,
             default_value={},
@@ -303,7 +303,7 @@ class Config:
                         group_class=Group) -> Group:
         # noinspection PyTypeChecker
         return group_class(
-            identifiers=(key, ) + identifiers,
+            identifiers=(self.unique_identifier, key) + identifiers,
             defaults=self.defaults.get(key, {}),
             spawner=self.spawner,
             force_registration=self.force_registration
