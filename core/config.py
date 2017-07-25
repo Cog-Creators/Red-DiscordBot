@@ -107,12 +107,32 @@ class Group(Value):
 
         return not isinstance(default, dict)
 
+    def get(self, item: str, default=None):
+        """
+        You should avoid this function whenever possible.
+        :param item:
+        :param default:
+        :return:
+        """
+        value = getattr(self, item)
+        return value(default=default)
+
     async def set(self, value):
         if not isinstance(value, dict):
             raise ValueError(
                 "You may only set the value of a group to be a dict."
             )
         await super().set(value)
+
+    async def set_attr(self, item: str, value):
+        """
+        You should avoid this function whenever possible.
+        :param item:
+        :param value:
+        :return:
+        """
+        value_obj = getattr(self, item)
+        await value_obj.set(value)
 
 
 class Config:
