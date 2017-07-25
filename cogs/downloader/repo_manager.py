@@ -526,4 +526,4 @@ class RepoManager:
 
     async def _save_repos(self):
         repo_json_info = {name: r.to_json() for name, r in self._repos.items()}
-        await self.downloader_config.set("repos", repo_json_info)
+        await self.downloader_config.repos.set(repo_json_info)
