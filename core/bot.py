@@ -47,7 +47,7 @@ class Red(commands.Bot):
             kwargs["owner_id"] = cli_flags.owner
 
         if "owner_id" not in kwargs:
-            kwargs["owner_id"] = self.db.get("owner")
+            kwargs["owner_id"] = self.db.owner()
 
         self.counter = Counter()
         self.uptime = None
