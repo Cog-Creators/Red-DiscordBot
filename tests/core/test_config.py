@@ -70,6 +70,17 @@ def test_nested_registration_asdict(config):
     assert config.foo.bar.baz() is False
 
 
+@pytest.mark.asyncio
+async def test_nested_registration_and_changing(config):
+    defaults = {'bar': {'baz': False}}
+    config.register_global(foo=defaults)
+
+    assert config.foo.bar.baz() is False
+
+    with pytest.raises(ValueError):
+        await config.foo.set(True)
+
+
 def test_nested_registration_multidict(config):
     defaults = {
         "foo": {

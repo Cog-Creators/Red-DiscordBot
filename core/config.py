@@ -107,6 +107,13 @@ class Group(Value):
 
         return not isinstance(default, dict)
 
+    async def set(self, value):
+        if not isinstance(value, dict):
+            raise ValueError(
+                "You may only set the value of a group to be a dict."
+            )
+        await super().set(value)
+
 
 class Config:
     GLOBAL = "GLOBAL"
