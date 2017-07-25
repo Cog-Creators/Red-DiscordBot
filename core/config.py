@@ -195,15 +195,18 @@ class Config:
             variables.
         :param cog_instance:
         :param identifier: Any random integer, used to keep your data
-            distict from any other cog with the same name.
+            distinct from any other cog with the same name.
         :param force_registration: Should config require registration
             of data keys before allowing you to get/set values?
         :return:
         """
         cog_name = cog_instance.__class__.__name__
         uuid = str(hash(identifier))
+
+        spawner = JSONDriver(cog_name)
         return cls(cog_name=cog_name, unique_identifier=uuid,
-                   force_registration=force_registration)
+                   force_registration=force_registration,
+                   driver_spawn=spawner)
 
     @classmethod
     def get_core_conf(cls, force_registration: bool=False):
