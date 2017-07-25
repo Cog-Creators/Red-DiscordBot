@@ -175,7 +175,7 @@ class Config:
         """
         ret = {}
         partial = ret
-        splitted = key.split('.')
+        splitted = key.split('__')
         for i, k in enumerate(splitted, start=1):
             if not k.isidentifier():
                 raise RuntimeError("'{}' is an invalid config key.".format(k))
@@ -202,8 +202,8 @@ class Config:
             if k in _partial:
                 existing_is_dict = isinstance(_partial[k], dict)
                 if not (val_is_dict and existing_is_dict):
-                    raise ValueError("You cannot register a Group and a Value under"
-                                     " the same name.")
+                    raise KeyError("You cannot register a Group and a Value under"
+                                   " the same name.")
                 if val_is_dict:
                     Config._update_defaults(v, _partial=_partial[k])
             else:

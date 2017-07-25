@@ -57,6 +57,18 @@ def test_config_force_register_global(config_fr):
 #endregion
 
 
+# Test nested registration
+def test_nested_registration(config):
+    config.register_global(foo__bar__baz=False)
+    assert config.foo.bar.baz() is False
+
+
+def test_nested_group_value_badreg(config):
+    config.register_global(foo=True)
+    with pytest.raises(KeyError):
+        config.register_global(foo__bar=False)
+
+
 #region Default Value Overrides
 def test_global_default_override(config):
     assert config.enabled(True) is True
