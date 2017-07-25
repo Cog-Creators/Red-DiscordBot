@@ -1,5 +1,6 @@
 import pytest
 
+
 @pytest.fixture()
 def bank(config):
     from core import Config

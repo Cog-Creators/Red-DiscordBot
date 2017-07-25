@@ -6,7 +6,6 @@ from enum import Enum
 
 import discord
 from discord.ext import commands
-
 from core import checks, Config, bank
 from core.utils.chat_formatting import pagify, box
 from core.bot import Red
