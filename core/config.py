@@ -107,7 +107,7 @@ class Group(Value):
 
         return not isinstance(default, dict)
 
-    def get(self, item: str, default=None):
+    def get_attr(self, item: str, default=None):
         """
         You should avoid this function whenever possible.
         :param item:

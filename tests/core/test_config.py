@@ -197,7 +197,7 @@ async def test_set_dynamic_attr(config):
 
 
 def test_get_dynamic_attr(config):
-    assert config.get("foobaz", True) is True
+    assert config.get_attr("foobaz", True) is True
 
 
 # Member Group testing
