@@ -63,6 +63,28 @@ def test_nested_registration(config):
     assert config.foo.bar.baz() is False
 
 
+def test_nested_registration_asdict(config):
+    defaults = {'bar': {'baz': False}}
+    config.register_global(foo=defaults)
+
+    assert config.foo.bar.baz() is False
+
+
+def test_nested_registration_multidict(config):
+    defaults = {
+        "foo": {
+            "bar": {
+                "baz": True
+            }
+        },
+        "blah": True
+    }
+    config.register_global(**defaults)
+
+    assert config.foo.bar.baz() is True
+    assert config.blah() is True
+
+
 def test_nested_group_value_badreg(config):
     config.register_global(foo=True)
     with pytest.raises(KeyError):
@@ -75,6 +97,20 @@ def test_nested_toplevel_reg(config):
 
     assert config.foo.bar() is True
     assert config.foo.baz() is False
+
+
+def test_nested_overlapping(config):
+    config.register_global(foo__bar=True)
+    config.register_global(foo__baz=False)
+
+    assert config.foo.bar() is True
+    assert config.foo.baz() is False
+
+
+def test_nesting_nofr(config):
+    config.register_global(foo={})
+    assert config.foo.bar() is None
+    assert config.foo() == {}
 
 
 #region Default Value Overrides
