@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 class JSON(BaseDriver):
-    def __init__(self, cog_name, *args, data_path_override: Path=None,
+    def __init__(self, cog_name, *, data_path_override: Path=None,
                  file_name_override: str="settings.json"):
         super().__init__()
         self.cog_name = cog_name
