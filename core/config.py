@@ -13,14 +13,17 @@ CogInstance = NewType("CogInstance", object)
 
 class Value:
     def __init__(self, identifiers: Tuple[str], default_value, spawner):
-        self.identifiers = identifiers
+        self._identifiers = identifiers
         self.default = default_value
 
         self.spawner = spawner
 
+    @property
+    def identifiers(self):
+        return tuple(str(i) for i in self._identifiers)
+
     def __call__(self, default=None):
         driver = self.spawner.get_driver()
-
         try:
             ret = driver.get(self.identifiers)
         except KeyError:
@@ -37,7 +40,6 @@ class Group(Value):
                  defaults: dict,
                  spawner,
                  force_registration: bool=False):
-        self.identifiers = identifiers
         self.defaults = defaults
         self.force_registration = force_registration
         self.spawner = spawner
