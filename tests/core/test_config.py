@@ -202,15 +202,15 @@ def test_get_dynamic_attr(config):
 
 # Member Group testing
 @pytest.mark.asyncio
-async def test_membergroup_allservers(config, empty_member):
+async def test_membergroup_allguilds(config, empty_member):
     await config.member(empty_member).foo.set(False)
 
-    all_servers = config.member(empty_member).all_servers()
+    all_servers = config.member(empty_member).all_guilds()
     assert str(empty_member.guild.id) in all_servers
 
 
 @pytest.mark.asyncio
-async def test_membergroup_allservers(config, empty_member):
+async def test_membergroup_allmembers(config, empty_member):
     await config.member(empty_member).foo.set(False)
 
     all_members = config.member(empty_member).all_members()
