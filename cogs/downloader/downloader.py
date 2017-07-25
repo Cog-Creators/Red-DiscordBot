@@ -73,7 +73,7 @@ class Downloader:
 
         if cog_json not in installed:
             installed.append(cog_json)
-            await self.conf.set("installed", installed)
+            await self.conf.installed.set(installed)
 
     async def _remove_from_installed(self, cog: Installable):
         """
@@ -86,7 +86,7 @@ class Downloader:
 
         if cog_json in installed:
             installed.remove(cog_json)
-            await self.conf.set("installed", installed)
+            await self.conf.installed.set(installed)
 
     async def _reinstall_cogs(self, cogs: Tuple[Installable]) -> Tuple[Installable]:
         """

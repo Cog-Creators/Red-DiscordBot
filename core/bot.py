@@ -89,7 +89,7 @@ class Red(commands.Bot):
         for package in self.extensions:
             if package.startswith("cogs."):
                 loaded.append(package)
-        await self.db.set("packages", loaded)
+        await self.db.packages.set(loaded)
 
 
 class ExitCodes(Enum):
