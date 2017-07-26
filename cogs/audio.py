@@ -1197,8 +1197,12 @@ class Audio:
             - Maximum cache size. User setting or minimum, whichever is higher.
             - Minimum cache size. Automatically determined by number of servers Red is running on.
         """
-        await self.bot.say("Current size: {:.2f} MB, Max: {:.1f} MB, Min: {:.1f} MB".format(
-                self._cache_size(), self._cache_max(), self._cache_min()))
+        await self.bot.say("Cache stats:\n"
+                           "Current size: {:.2f} MB\n"
+                           "Maximum: {:.1f} MB\n"
+                           "Minimum: {:.1f} MB".format(self._cache_size(),
+                                                       self._cache_max(),
+                                                       self._cache_min()))
 
     @commands.group(pass_context=True, hidden=True, no_pm=True)
     @checks.is_owner()
