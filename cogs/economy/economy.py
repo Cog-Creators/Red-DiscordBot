@@ -7,9 +7,6 @@ from enum import Enum
 import discord
 from discord.ext import commands
 
-from cogs.bank.bank import Bank
-from cogs.bank.errors import AccountAlreadyExists, NoAccount, NoSenderAccount, NoReceiverAccount, InsufficientBalance, \
-    NegativeValue, SameSenderAndReceiver
 from core import checks, Config
 from core.utils.chat_formatting import pagify, box
 from core.bot import Red
@@ -123,7 +120,7 @@ class Economy:
         "last_slot": 0
     }
 
-    def __init__(self, bot: Red, bank: Bank):
+    def __init__(self, bot: Red):
         global logger
         logger = logging.getLogger("red.economy")
         self.bot = bot
@@ -131,7 +128,7 @@ class Economy:
         self.config = Config.get_conf(self, 1256844281)
         self.config.register_guild(**self.default_guild_settings)
         self.config.register_member(**self.default_member_settings)
-        self.bank = bank
+        self.bank = bot.bank
         self.slot_register = defaultdict(dict)
 
     @commands.group(name="bank")
