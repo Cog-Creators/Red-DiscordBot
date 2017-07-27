@@ -1,5 +1,6 @@
+import datetime
 from collections import namedtuple
-from typing import Tuple
+from typing import Tuple, Generator, Union
 
 import discord
 
@@ -34,6 +35,33 @@ conf.register_global(**DEFAULT_GLOBAL)
 conf.register_guild(**DEFAULT_GUILD)
 conf.register_member(**DEFAULT_MEMBER)
 conf.register_user(**DEFAULT_USER)
+
+
+def encoded_current_time() -> int:
+    """
+    Encoded current timestamp in UTC.
+    :return:
+    """
+    now = datetime.datetime.utcnow()
+    return encode_time(now)
+
+
+def encode_time(time: datetime.datetime) -> int:
+    """
+    Goes from datetime object to serializable int.
+    :param time:
+    :return:
+    """
+    return int(time.timestamp())
+
+
+def decode_time(time: int) -> datetime.datetime:
+    """
+    Returns decoded timestamp in UTC.
+    :param time:
+    :return:
+    """
+    return datetime.datetime.utcfromtimestamp(time)
 
 
 def get_balance(member: discord.Member) -> int:
@@ -71,9 +99,14 @@ async def set_balance(member: discord.Member, amount: int) -> int:
     if amount < 0:
         raise ValueError("Not allowed to have negative balance.")
     if conf.is_global():
-        await conf.user(member).balance.set(amount)
+        group = conf.user(member)
     else:
-        await conf.member(member).balance.set(amount)
+        group = conf.member(member)
+    await group.balance.set(amount)
+
+    if group.created_at() == "":
+        await group.created_at.set(encoded_current_time())
+
     return amount
 
 
@@ -147,7 +180,7 @@ async def wipe_bank(guild: discord.Guild):
         await conf.member(user).clear()
 
 
-def get_guild_accounts(guild: discord.Guild) -> Tuple[Account]:
+def get_guild_accounts(guild: discord.Guild) -> Generator[Account]:
     """
     Gets all account data for the given guild.
 
@@ -158,4 +191,40 @@ def get_guild_accounts(guild: discord.Guild) -> Tuple[Account]:
     if conf.is_global():
         raise RuntimeError("The bank is currently global.")
 
-    accs = conf.member(guild.owner)
+    accs = conf.member(guild.owner).all()
+    for acc in accs:
+        acc['created_at'] = decode_time(acc['created_at'])
+        yield Account(**acc)
+
+
+def get_global_accounts(guild: discord.Guild) -> Generator[Account]:
+    """
+    Gets all global account data.
+
+    May raise RuntimeError if the bank is currently guild specific.
+    :param guild:
+    :return:
+    """
+    if not conf.is_global():
+        raise RuntimeError("The bank is not currently global.")
+
+    accs = conf.user(guild.owner).all()
+    for acc in accs:
+        acc['created_at'] = decode_time(acc['created_at'])
+        yield Account(**acc)
+
+
+def get_account(member: Union[discord.Member, discord.User]) -> Account:
+    """
+    Gets the appropriate account for the given member.
+    :param member:
+    :return:
+    """
+    if conf.is_global():
+        acc_data = conf.user(member)()
+    else:
+        acc_data = conf.member(member)()
+
+    acc_data['created_at'] = decode_time(acc_data['created_at'])
+
+    return Account(**acc_data)
