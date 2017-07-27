@@ -7,9 +7,11 @@ from enum import Enum
 import discord
 from discord.ext import commands
 
-from core import checks, Config
+from core import checks, Config, bank
 from core.utils.chat_formatting import pagify, box
 from core.bot import Red
+
+logger = logging.getLogger("red.economy")
 
 NUM_ENC = "\N{COMBINING ENCLOSING KEYCAP}"
 
@@ -82,23 +84,19 @@ SLOT_PAYOUTS_MSG = ("Slot machine payouts:\n"
 class SetParser:
     def __init__(self, argument):
         allowed = ("+", "-")
+        self.sum = int(argument)
         if argument and argument[0] in allowed:
-            try:
-                self.sum = int(argument)
-            except:
-                raise
             if self.sum < 0:
                 self.operation = "withdraw"
             elif self.sum > 0:
                 self.operation = "deposit"
             else:
-                raise
+                raise RuntimeError
             self.sum = abs(self.sum)
         elif argument.isdigit():
-            self.sum = int(argument)
             self.operation = "set"
         else:
-            raise
+            raise RuntimeError
 
 
 class Economy:
@@ -121,14 +119,11 @@ class Economy:
     }
 
     def __init__(self, bot: Red):
-        global logger
-        logger = logging.getLogger("red.economy")
         self.bot = bot
         self.file_path = "data/economy/settings.json"
         self.config = Config.get_conf(self, 1256844281)
         self.config.register_guild(**self.default_guild_settings)
         self.config.register_member(**self.default_member_settings)
-        self.bank = bot.bank
         self.slot_register = defaultdict(dict)
 
     @commands.group(name="bank")
@@ -142,52 +137,33 @@ class Economy:
         """Shows balance of user.
 
         Defaults to yours."""
-        if not user:
+        if user is None:
             user = ctx.author
-            bank_name = self.config.guild(ctx.guild).BANK_NAME()
-            try:
-                await ctx.send("{} Your balance is: {}".format(
-                    user.mention, self.bank.get_balance(user)))
-            except NoAccount:
-                await ctx.send("{} You don't have an account at the"
-                                   " {}. Type `{}bank register`"
-                                   " to open one.".format(user.mention,
-                                                          bank_name,
-                                                          ctx.prefix))
-        else:
-            try:
-                await ctx.send("{}'s balance is {}".format(
-                    user.name, self.bank.get_balance(user)))
-            except NoAccount:
-                await ctx.send("That user has no bank account.")
+
+        bal = bank.get_balance(user)
+        currency = bank.get_currency_name(ctx.guild)
+
+        await ctx.send("{}'s balance is {} {}".format(
+            user.display_name, bal, currency))
 
     @_bank.command()
-    async def transfer(self, ctx: commands.Context, user: discord.Member, amount: int):
+    async def transfer(self, ctx: commands.Context, to: discord.Member, amount: int):
         """Transfer currency to other users"""
-        author = ctx.author
-        credits_name = self.config.guild(ctx.guild).CREDITS_NAME()
+        from_ = ctx.author
+        currency = bank.get_currency_name(ctx.guild)
+
         try:
-            await self.bank.transfer_credits(author, user, amount)
-            logger.info("{}({}) transferred {} {} to {}({})".format(
-                author.name, author.id, amount, credits_name, user.name, user.id))
-            await ctx.send("{} {} have been transferred to {}'s"
-                           " account.".format(amount, credits_name, user.name))
-        except NegativeValue:
-            await ctx.send("You need to transfer at least 1 {}.".format(credits_name))
-        except SameSenderAndReceiver:
-            await ctx.send("You can't transfer {} to yourself.".format(credits_name))
-        except InsufficientBalance:
-            await ctx.send("You don't have that sum in your bank account.")
-        except NoSenderAccount:
-            await ctx.send("You don't have a bank account!")
-        except NoReceiverAccount:
-            await ctx.send("The specified target doesn't have an account!")
-        except NoAccount:
-            await ctx.send("Neither you nor the specified target have a bank account.")
+            await bank.transfer_credits(from_, to, amount)
+        except ValueError as e:
+            await ctx.send(str(e))
+
+        await ctx.send("{} transferred {} {} to {}".format(
+            from_.display_name, amount, currency, to.display_name
+        ))
 
     @_bank.command(name="set")
     @checks.admin_or_permissions(manage_guild=True)
-    async def _set(self, ctx: commands.Context, user: discord.Member, creds: SetParser):
+    async def _set(self, ctx: commands.Context, to: discord.Member, creds: SetParser):
         """Sets balance of user's bank account. See help for more operations
 
         Passing positive and negative values will add/remove currency instead
@@ -197,50 +173,24 @@ class Economy:
             bank set @Twentysix +2 - Increases balance by 2
             bank set @Twentysix -6 - Decreases balance by 6"""
         author = ctx.author
-        credits_name = self.config.guild(ctx.guild).CREDITS_NAME()
-        try:
-            if creds.operation == "deposit":
-                await self.bank.deposit_credits(user, creds.sum)
-                logger.info(
-                    "{}({}) added {} {} to {} ({})".format(
-                        author.name, author.id, creds.sum,
-                        credits_name, user.name, user.id
-                    )
-                )
-                await ctx.send("{} {} have been added to {}"
-                                   "".format(creds.sum, credits_name, user.name))
-            elif creds.operation == "withdraw":
-                await self.bank.withdraw_credits(user, creds.sum)
-                logger.info(
-                    "{}({}) removed {} {} to {} ({})".format(
-                        author.name, author.id, creds.sum, credits_name,
-                        user.name, user.id
-                    )
-                )
-                await ctx.send(
-                    "{} {} have been withdrawn from {}"
-                    "".format(
-                        creds.sum, credits_name, user.name
-                    )
-                )
-            elif creds.operation == "set":
-                await self.bank.set_credits(user, creds.sum)
-                logger.info(
-                    "{}({}) set {} {} to {} ({})"
-                    "".format(
-                        author.name, author.id, creds.sum,
-                        credits_name, user.name, user.id
-                    )
-                )
-                await ctx.send(
-                    "{}'s {} have been set to {}".format(
-                        user.name, credits_name, creds.sum
-                    )
-                )
-        except InsufficientBalance:
-            await ctx.send("User doesn't have enough {}.".format(credits_name))
-        except NoAccount:
-            await ctx.send("User has no bank account.")
+        currency = bank.get_currency_name(ctx.guild)
+
+        if creds.operation == "deposit":
+            await bank.deposit_credits(to, creds.sum)
+            await ctx.send("{} added {} {} to {}'s account.".format(
+                author.display_name, creds.sum, currency, to.display_name
+            ))
+        elif creds.operation == "withdraw":
+            await bank.withdraw_credits(to, creds.sum)
+            await ctx.send("{} removed {} {} from {}'s account.".format(
+                author.display_name, creds.sum, currency, to.display_name
+            ))
+        else:
+            await bank.set_balance(to, creds.sum)
+            await ctx.send("{} set {}'s account to {} {}.".format(
+                author.display_name, to.display_name, creds.sum, currency
+            ))
+
 
     @_bank.command()
     @commands.guild_only()
@@ -265,26 +215,22 @@ class Economy:
         next_payday = self.config.member(author).next_payday()
         cur_time = calendar.timegm(ctx.message.created_at.utctimetuple())
         credits_name = self.config.guild(guild).CREDITS_NAME()
-        if self.bank.account_exists(author):
-            if cur_time >= next_payday:
-                await self.bank.deposit_credits(author, self.config.guild(guild).PAYDAY_CREDITS())
-                next_payday = cur_time + self.config.guild(guild).PAYDAY_TIME()
-                await self.config.member(author).set("next_payday", next_payday)
-                await ctx.send(
-                    "{} Here, take some {}. Enjoy! (+{}"
-                    " {}!)".format(
-                        author.mention, credits_name,
-                        str(self.config.guild(guild).PAYDAY_CREDITS()),
-                        credits_name))
-            else:
-                dtime = self.display_time(next_payday - cur_time)
-                await ctx.send(
-                    "{} Too soon. For your next payday you have to"
-                    " wait {}.".format(author.mention, dtime))
+
+        if cur_time >= next_payday:
+            await bank.deposit_credits(author, self.config.guild(guild).PAYDAY_CREDITS())
+            next_payday = cur_time + self.config.guild(guild).PAYDAY_TIME()
+            await self.config.member(author).set("next_payday", next_payday)
+            await ctx.send(
+                "{} Here, take some {}. Enjoy! (+{}"
+                " {}!)".format(
+                    author.mention, credits_name,
+                    str(self.config.guild(guild).PAYDAY_CREDITS()),
+                    credits_name))
         else:
-            await ctx.send("{} You need an account to receive {}."
-                           " Type `{}bank register` to open one.".format(
-                            author.mention, credits_name, ctx.prefix))
+            dtime = self.display_time(next_payday - cur_time)
+            await ctx.send(
+                "{} Too soon. For your next payday you have to"
+                " wait {}.".format(author.mention, dtime))
 
     @commands.command()
     @commands.guild_only()
@@ -296,25 +242,25 @@ class Economy:
         guild = ctx.guild
         if top < 1:
             top = 10
-        if self.bank.accounts.is_global():
-            bank_sorted = sorted(self.bank.get_accounts(),
-                                 key=lambda x: x[1]["balance"], reverse=True)
+        if bank.is_global():
+            bank_sorted = sorted(bank.get_global_accounts(ctx.author),
+                                 key=lambda x: x.balance, reverse=True)
         else:
-            bank_sorted = sorted(self.bank.get_server_accounts(guild),
-                                 key=lambda x: x[1]["balance"], reverse=True)
+            bank_sorted = sorted(bank.get_guild_accounts(guild),
+                                 key=lambda x: x.balance, reverse=True)
         if len(bank_sorted) < top:
             top = len(bank_sorted)
         topten = bank_sorted[:top]
         highscore = ""
         place = 1
         for acc in topten:
-            dname = str(acc[0].display_name)
-            if len(dname) >= 23 - len(str(acc[1]["balance"])):
-                dname = dname[:(23 - len(str(acc[1]["balance"]))) - 3]
+            dname = str(acc.name)
+            if len(dname) >= 23 - len(str(acc.balance)):
+                dname = dname[:(23 - len(str(acc.balance))) - 3]
                 dname += "... "
             highscore += str(place).ljust(len(str(top)) + 1)
-            highscore += dname.ljust(23 - len(str(acc[1]["balance"])))
-            highscore += str(acc[1]["balance"]) + "\n"
+            highscore += dname.ljust(23 - len(str(acc.balance)))
+            highscore += str(acc.balance) + "\n"
             place += 1
         if highscore != "":
             for page in pagify(highscore, shorten_by=12):
@@ -339,39 +285,16 @@ class Economy:
         slot_time = self.config.guild(guild).SLOT_TIME()
         last_slot = self.config.member(author).last_slot()
         now = calendar.timegm(ctx.message.created_at.utctimetuple())
-        try:
-            if (now - last_slot) < slot_time:
-                raise OnCooldown()
-            if not valid_bid:
-                raise InvalidBid()
-            if not self.bank.can_spend(author, bid):
-                raise InsufficientBalance()
-            await self.config.member(author).set("last_slot", now)
-            await self.slot_machine(author, channel, bid)
-        except NoAccount:
-            await ctx.send(
-                "{} You need an account to use the slot "
-                "machine. Type `{}bank register` to open one."
-                "".format(author.mention, ctx.prefix)
-            )
-        except InsufficientBalance:
-            await ctx.send(
-                "{} You need an account with enough funds to "
-                "play the slot machine.".format(author.mention)
-            )
-        except OnCooldown:
-            await ctx.send(
-                "Slot machine is still cooling off! Wait {} "
-                "seconds between each pull".format(slot_time)
-            )
-        except InvalidBid:
-            await ctx.send(
-                "Bid must be between {} and {}."
-                "".format(
-                    self.config.guild(guild).SLOT_MIN(),
-                    self.config.guild(guild).SLOT_MAX()
-                )
-            )
+
+        if (now - last_slot) < slot_time:
+            raise OnCooldown()
+        if not valid_bid:
+            raise InvalidBid()
+        if not bank.can_spend(author, bid):
+            await ctx.send("You ain't got enough money, friend.")
+            return
+        await self.config.member(author).set("last_slot", now)
+        await self.slot_machine(author, channel, bid)
 
     async def slot_machine(self, author, channel, bid):
         default_reel = deque(SMReel)
@@ -407,16 +330,16 @@ class Economy:
                 payout = PAYOUTS["2 symbols"]
 
         if payout:
-            then = self.bank.get_balance(author)
+            then = bank.get_balance(author)
             pay = payout["payout"](bid)
             now = then - bid + pay
-            await self.bank.set_credits(author, now)
+            await bank.set_balance(author, now)
             await channel.send("{}\n{} {}\n\nYour bid: {}\n{} → {}!"
                                "".format(slot, author.mention,
                                          payout["phrase"], bid, then, now))
         else:
-            then = self.bank.get_balance(author)
-            await self.bank.withdraw_credits(author, bid)
+            then = bank.get_balance(author)
+            await bank.withdraw_credits(author, bid)
             now = then - bid
             await channel.send("{}\n{} Nothing!\nYour bid: {}\n{} → {}!"
                                "".format(slot, author.mention, bid, then, now))

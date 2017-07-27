@@ -200,7 +200,7 @@ def get_guild_accounts(guild: discord.Guild) -> Generator[Account, None, None]:
         yield Account(**acc)
 
 
-def get_global_accounts(guild: discord.Guild) -> Generator[Account, None, None]:
+def get_global_accounts(user: discord.User) -> Generator[Account, None, None]:
     """
     Gets all global account data.
 
@@ -211,7 +211,7 @@ def get_global_accounts(guild: discord.Guild) -> Generator[Account, None, None]:
     if not is_global():
         raise RuntimeError("The bank is not currently global.")
 
-    accs = conf.user(guild.owner).all()
+    accs = conf.user(user).all()
     for acc in accs:
         acc['created_at'] = decode_time(acc['created_at'])
         yield Account(**acc)
