@@ -253,6 +253,22 @@ async def test_member_clear(config, member_factory):
     assert config.member(m2).foo() is False
 
 
+@pytest.mark.asyncio
+async def test_member_clear_all(config, member_factory):
+    server_ids = []
+    for _ in range(5):
+        member = member_factory.get()
+        await config.member(member).foo.set(True)
+        server_ids.append(member.guild.id)
+
+    member = member_factory.get()
+    assert len(config.member(member).all_guilds()) == len(server_ids)
+
+    await config.member(member).clear_all()
+
+    assert len(config.member(member).all_guilds()) == 0
+
+
 # Get All testing
 @pytest.mark.asyncio
 async def test_user_get_all(config, user_factory):

@@ -166,6 +166,16 @@ class Group(Value):
 
 
 class MemberGroup(Group):
+    @property
+    def _guild_group(self) -> Group:
+        new_identifiers = self.identifiers[:2]
+        group_obj = Group(
+            identifiers=new_identifiers,
+            defaults={},
+            spawner=self.spawner
+        )
+        return group_obj
+
     def all_guilds(self) -> dict:
         """
         Gets a dict of all guilds and members.
@@ -173,20 +183,15 @@ class MemberGroup(Group):
         REMEMBER: ID's are stored in these dicts as STRINGS.
         :return:
         """
-        new_identifiers = self.identifiers[:2]
-        value_obj = Value(
-            identifiers=new_identifiers,
-            default_value={},
-            spawner=self.spawner
-        )
-        return value_obj()
+        # noinspection PyTypeChecker
+        return self._guild_group()
 
-    async def clear(self):
+    async def clear_all(self):
         """
-        Removes all member data from the current member's guild.
+        Removes all member data from the all guilds.
         :return:
         """
-        await self._super_group.set({})
+        await self._guild_group.set({})
 
 
 class Config:
