@@ -213,7 +213,7 @@ async def test_membergroup_allguilds(config, empty_member):
 async def test_membergroup_allmembers(config, empty_member):
     await config.member(empty_member).foo.set(False)
 
-    all_members = config.member(empty_member).all_members()
+    all_members = config.member(empty_member).all()
     assert str(empty_member.id) in all_members
 
 
@@ -251,3 +251,16 @@ async def test_member_clear(config, member_factory):
     await config.member(m1).clear()
     assert config.member(m1).foo() is True
     assert config.member(m2).foo() is False
+
+
+# Get All testing
+@pytest.mark.asyncio
+async def test_user_get_all(config, user_factory):
+    for _ in range(5):
+        user = user_factory.get()
+        await config.user(user).foo.set(True)
+
+    user = user_factory.get()
+    all_data = config.user(user).all()
+
+    assert len(all_data) == 5

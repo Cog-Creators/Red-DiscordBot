@@ -96,10 +96,21 @@ def empty_member(member_factory):
     return member_factory.get()
 
 
-@pytest.fixture(scope="module")
-def empty_user():
+@pytest.fixture()
+def user_factory():
     mock_user = namedtuple("User", "id")
-    return mock_user(random.randint(1, 999999999))
+
+    class UserFactory:
+        def get(self):
+            return mock_user(
+                random.randint(1, 999999999))
+
+    return UserFactory()
+
+
+@pytest.fixture()
+def empty_user(user_factory):
+    return user_factory.get()
 
 
 @pytest.fixture(scope="module")

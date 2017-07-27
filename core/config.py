@@ -87,6 +87,16 @@ class Group(Value):
                 spawner=self.spawner
             )
 
+    @property
+    def _super_group(self) -> 'Group':
+        super_group = Group(
+            self.identifiers[:-1],
+            defaults={},
+            spawner=self.spawner,
+            force_registration=self.force_registration
+        )
+        return super_group
+
     def is_group(self, item: str) -> bool:
         """
         Determines if an attribute access is pointing at a registered group.
@@ -118,6 +128,16 @@ class Group(Value):
         """
         value = getattr(self, item)
         return value(default=default)
+
+    def all(self) -> dict:
+        """
+        Gets all entries of the given kind. If this kind is member
+            then this method returns all members from the same
+            server.
+        :return:
+        """
+        # noinspection PyTypeChecker
+        return self._super_group()
 
     async def set(self, value):
         if not isinstance(value, dict):
@@ -161,34 +181,12 @@ class MemberGroup(Group):
         )
         return value_obj()
 
-    def all_members(self) -> dict:
-        """
-        Gets a dict of all members from the same guild as the
-            given member.
-
-        REMEMBER: ID's are stored in these dicts as STRINGS.
-        :return:
-        """
-        new_identifiers = self.identifiers[:3]
-        value_obj = Value(
-            identifiers=new_identifiers,
-            default_value={},
-            spawner=self.spawner
-        )
-        return value_obj()
-
     async def clear(self):
         """
         Removes all member data from the current member's guild.
         :return:
         """
-        super_group = Group(
-            self.identifiers[:-1],
-            defaults=self.defaults,
-            spawner=self.spawner,
-            force_registration=self.force_registration
-        )
-        await super_group.set({})
+        await self._super_group.set({})
 
 
 class Config:
