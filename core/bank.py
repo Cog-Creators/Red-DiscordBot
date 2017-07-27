@@ -8,7 +8,8 @@ from core import Config
 
 __all__ = ["get_balance", "set_balance", "withdraw_credits", "deposit_credits",
            "can_spend", "transfer_credits", "wipe_bank", "get_guild_accounts",
-           "get_global_accounts", "get_account", "is_global"]
+           "get_global_accounts", "get_account", "is_global", "get_bank_name",
+           "set_bank_name", "get_currency_name", "set_currency_name"]
 
 DEFAULT_GLOBAL = {
     "is_global": False,
@@ -243,16 +244,94 @@ def is_global() -> bool:
 async def set_global(global_: bool, user: Union[discord.User, discord.Member]) -> bool:
     """
     Sets global status of the bank, all accounts are reset when you switch!
-    :param global_:
-    :return:
+    :param global_: True will set bank to global mode.
+    :param user: Must be a Member object if changing TO global mode.
+    :return: New bank mode, True is global.
     """
     if is_global() is global_:
         return global_
 
     if is_global():
         await conf.user(user).clear()
+    elif isinstance(user, discord.Member):
+        await conf.member(user).clear_all()
     else:
-        await conf.member(user)
+        raise RuntimeError("You must provide a member if you're changing to global"
+                           " bank mode.")
 
     await conf.is_global.set(global_)
     return global_
+
+
+def get_bank_name(guild: discord.Guild=None) -> str:
+    """
+    Gets the current bank name. If the bank is guild-specific the
+        guild parameter is required.
+
+    May raise RuntimeError if guild is missing and required.
+    :param guild:
+    :return:
+    """
+    if is_global():
+        return conf.bank_name()
+    elif guild is not None:
+        return conf.guild(guild).bank_name()
+    else:
+        raise RuntimeError("Guild parameter is required and missing.")
+
+
+async def set_bank_name(name: str, guild: discord.Guild=None) -> str:
+    """
+    Sets the bank name, if bank is server specific the guild parameter is
+        required.
+
+    May throw RuntimeError if guild is required and missing.
+    :param name:
+    :param guild:
+    :return:
+    """
+    if is_global():
+        await conf.bank_name.set(name)
+    elif guild is not None:
+        await conf.guild(guild).bank_name.set(name)
+    else:
+        raise RuntimeError("Guild must be provided if setting the name of a guild"
+                           "-specific bank.")
+    return name
+
+
+def get_currency_name(guild: discord.Guild=None) -> str:
+    """
+    Gets the currency name of the bank. The guild parameter is required if
+        the bank is guild-specific.
+
+    May raise RuntimeError if the guild is missing and required.
+    :param guild:
+    :return:
+    """
+    if is_global():
+        return conf.currency()
+    elif guild is not None:
+        return conf.guild(guild).currency()
+    else:
+        raise RuntimeError("Guild must be provided.")
+
+
+async def set_currency_name(name: str, guild: discord.Guild=None) -> str:
+    """
+    Sets the currency name for the bank, if bank is guild specific the
+        guild parameter is required.
+
+    May raise RuntimeError if guild is missing and required.
+    :param name:
+    :param guild:
+    :return:
+    """
+    if is_global():
+        await conf.currency.set(name)
+    elif guild is not None:
+        await conf.guild(guild).currency.set(name)
+    else:
+        raise RuntimeError("Guild must be provided if setting the currency"
+                           " name of a guild-specific bank.")
+    return name
