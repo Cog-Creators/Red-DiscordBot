@@ -4,6 +4,8 @@ from pathlib import Path
 from typing import Callable, NewType, Union, Tuple
 
 import discord
+from copy import deepcopy
+
 from .drivers.red_json import JSON as JSONDriver
 
 log = logging.getLogger("red.config")
@@ -134,6 +136,14 @@ class Group(Value):
         value_obj = getattr(self, item)
         await value_obj.set(value)
 
+    async def clear(self):
+        """
+        Wipes out data for all entries in this category
+            e.g. Guild/Role/User
+        :return:
+        """
+        await self.set({})
+
 
 class MemberGroup(Group):
     def all_guilds(self) -> dict:
@@ -166,6 +176,19 @@ class MemberGroup(Group):
             spawner=self.spawner
         )
         return value_obj()
+
+    async def clear(self):
+        """
+        Removes all member data from the current member's guild.
+        :return:
+        """
+        super_group = Group(
+            self.identifiers[:-1],
+            defaults=self.defaults,
+            spawner=self.spawner,
+            force_registration=self.force_registration
+        )
+        await super_group.set({})
 
 
 class Config:
@@ -276,7 +299,9 @@ class Config:
         if key not in self.defaults:
             self.defaults[key] = {}
 
-        for k, v in kwargs.items():
+        data = deepcopy(kwargs)
+
+        for k, v in data.items():
             to_add = self._get_defaults_dict(k, v)
             self._update_defaults(to_add, self.defaults[key])
 

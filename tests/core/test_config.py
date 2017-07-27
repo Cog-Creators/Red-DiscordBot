@@ -215,3 +215,39 @@ async def test_membergroup_allmembers(config, empty_member):
 
     all_members = config.member(empty_member).all_members()
     assert str(empty_member.id) in all_members
+
+
+# Clearing testing
+@pytest.mark.asyncio
+async def test_global_clear(config):
+    config.register_global(foo=True, bar=False)
+
+    await config.foo.set(False)
+    await config.bar.set(True)
+
+    assert config.foo() is False
+    assert config.bar() is True
+
+    await config.clear()
+
+    assert config.foo() is True
+    assert config.bar() is False
+
+
+@pytest.mark.asyncio
+async def test_member_clear(config, member_factory):
+    config.register_member(foo=True)
+
+    m1 = member_factory.get()
+    await config.member(m1).foo.set(False)
+    assert config.member(m1).foo() is False
+
+    m2 = member_factory.get()
+    await config.member(m2).foo.set(False)
+    assert config.member(m2).foo() is False
+
+    assert m1.guild.id != m2.guild.id
+
+    await config.member(m1).clear()
+    assert config.member(m1).foo() is True
+    assert config.member(m2).foo() is False
