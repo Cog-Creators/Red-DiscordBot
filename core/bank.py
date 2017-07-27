@@ -6,7 +6,9 @@ import discord
 
 from core import Config
 
-__all__ = ["get_balance", "set_balance", "withdraw_credits"]
+__all__ = ["get_balance", "set_balance", "withdraw_credits", "deposit_credits",
+           "can_spend", "transfer_credits", "wipe_bank", "get_guild_accounts",
+           "get_global_accounts", "get_account"]
 
 DEFAULT_GLOBAL = {
     "is_global": False,
