@@ -183,7 +183,7 @@ async def wipe_bank(guild: discord.Guild):
         await conf.member(user).clear()
 
 
-def get_guild_accounts(guild: discord.Guild) -> Generator[Account]:
+def get_guild_accounts(guild: discord.Guild) -> Generator[Account, None, None]:
     """
     Gets all account data for the given guild.
 
@@ -200,7 +200,7 @@ def get_guild_accounts(guild: discord.Guild) -> Generator[Account]:
         yield Account(**acc)
 
 
-def get_global_accounts(guild: discord.Guild) -> Generator[Account]:
+def get_global_accounts(guild: discord.Guild) -> Generator[Account, None, None]:
     """
     Gets all global account data.
 
