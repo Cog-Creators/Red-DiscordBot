@@ -8,7 +8,7 @@ from core import Config
 
 __all__ = ["get_balance", "set_balance", "withdraw_credits", "deposit_credits",
            "can_spend", "transfer_credits", "wipe_bank", "get_guild_accounts",
-           "get_global_accounts", "get_account"]
+           "get_global_accounts", "get_account", "is_global"]
 
 DEFAULT_GLOBAL = {
     "is_global": False,
@@ -72,7 +72,7 @@ def get_balance(member: discord.Member) -> int:
     :param member:
     :return:
     """
-    if conf.is_global():
+    if is_global():
         return conf.user(member).balance()
     return conf.member(member).balance()
 
@@ -100,7 +100,7 @@ async def set_balance(member: discord.Member, amount: int) -> int:
     """
     if amount < 0:
         raise ValueError("Not allowed to have negative balance.")
-    if conf.is_global():
+    if is_global():
         group = conf.user(member)
     else:
         group = conf.member(member)
@@ -176,7 +176,7 @@ async def wipe_bank(guild: discord.Guild):
     :return:
     """
     user = guild.owner
-    if conf.is_global():
+    if is_global():
         await conf.user(user).clear()
     else:
         await conf.member(user).clear()
@@ -190,7 +190,7 @@ def get_guild_accounts(guild: discord.Guild) -> Generator[Account]:
     :param guild:
     :return:
     """
-    if conf.is_global():
+    if is_global():
         raise RuntimeError("The bank is currently global.")
 
     accs = conf.member(guild.owner).all()
@@ -207,7 +207,7 @@ def get_global_accounts(guild: discord.Guild) -> Generator[Account]:
     :param guild:
     :return:
     """
-    if not conf.is_global():
+    if not is_global():
         raise RuntimeError("The bank is not currently global.")
 
     accs = conf.user(guild.owner).all()
@@ -222,7 +222,7 @@ def get_account(member: Union[discord.Member, discord.User]) -> Account:
     :param member:
     :return:
     """
-    if conf.is_global():
+    if is_global():
         acc_data = conf.user(member)()
     else:
         acc_data = conf.member(member)()
@@ -230,3 +230,29 @@ def get_account(member: Union[discord.Member, discord.User]) -> Account:
     acc_data['created_at'] = decode_time(acc_data['created_at'])
 
     return Account(**acc_data)
+
+
+def is_global() -> bool:
+    """
+    Determines if the bank is currently global.
+    :return:
+    """
+    return conf.is_global()
+
+
+async def set_global(global_: bool, user: Union[discord.User, discord.Member]) -> bool:
+    """
+    Sets global status of the bank, all accounts are reset when you switch!
+    :param global_:
+    :return:
+    """
+    if is_global() is global_:
+        return global_
+
+    if is_global():
+        await conf.user(user).clear()
+    else:
+        await conf.member(user)
+
+    await conf.is_global.set(global_)
+    return global_
