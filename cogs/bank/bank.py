@@ -35,7 +35,7 @@ class Bank:
         If the bank is global, it will become per-guild
         If the bank is per-guild, it will become global"""
         cur_setting = bank.is_global()
-        await bank.set_global(not cur_setting, ctx.guild)
+        await bank.set_global(not cur_setting, ctx.author)
 
         word = "per-guild" if cur_setting else "global"
 

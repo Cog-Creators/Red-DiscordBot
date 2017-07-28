@@ -34,7 +34,7 @@ DEFAULT_MEMBER = {
 
 DEFAULT_USER = DEFAULT_MEMBER
 
-bank_type = type("Bank")
+bank_type = type("Bank", (object, ), {})
 Account = namedtuple("Account", "name balance created_at")
 
 conf = Config.get_conf(bank_type(), 384734293238749, force_registration=True)
@@ -89,7 +89,7 @@ def can_spend(member: discord.Member, amount: int) -> bool:
     :param amount:
     :return:
     """
-    if _invalid_depwith_amount(amount):
+    if _invalid_amount(amount):
         return False
     return get_balance(member) > amount
 
@@ -121,7 +121,7 @@ async def set_balance(member: discord.Member, amount: int) -> int:
     return amount
 
 
-def _invalid_depwith_amount(amount: int) -> bool:
+def _invalid_amount(amount: int) -> bool:
     return amount <= 0
 
 
@@ -135,7 +135,7 @@ async def withdraw_credits(member: discord.Member, amount: int) -> int:
     :param amount:
     :return: New account balance.
     """
-    if _invalid_depwith_amount(amount):
+    if _invalid_amount(amount):
         raise ValueError("Invalid withdrawal amount {} <= 0".format(amount))
 
     bal = get_balance(member)
@@ -154,7 +154,7 @@ async def deposit_credits(member: discord.Member, amount: int) -> int:
     :param amount:
     :return:
     """
-    if _invalid_depwith_amount(amount):
+    if _invalid_amount(amount):
         raise ValueError("Invalid withdrawal amount {} <= 0".format(amount))
 
     bal = get_balance(member)
@@ -172,7 +172,7 @@ async def transfer_credits(from_: discord.Member, to: discord.Member, amount: in
     :param amount:
     :return:
     """
-    if _invalid_depwith_amount(amount):
+    if _invalid_amount(amount):
         raise ValueError("Invalid transfer amount {} <= 0".format(amount))
 
     await withdraw_credits(from_, amount)
@@ -219,8 +219,8 @@ def get_global_accounts(user: discord.User) -> Generator[Account, None, None]:
     if not is_global():
         raise RuntimeError("The bank is not currently global.")
 
-    accs = conf.user(user).all()
-    for acc in accs:
+    accs = conf.user(user).all()  # this is a dict of user -> acc
+    for user_id, acc in accs.items():
         acc['created_at'] = decode_time(acc['created_at'])
         yield Account(**acc)
 
