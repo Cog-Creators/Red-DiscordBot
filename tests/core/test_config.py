@@ -145,3 +145,18 @@ async def test_set_channel_no_register(config, empty_channel):
     await config.channel(empty_channel).set("no_register", True)
     assert config.channel(empty_channel).no_register() is True
 #endregion
+
+
+# region Getting Values
+def test_get_func_w_reg(config):
+    config.register_global(
+        thing=True
+    )
+    assert config.get("thing") is True
+    assert config.get("thing", False) is False
+
+
+def test_get_func_wo_reg(config):
+    assert config.get("thing") is None
+    assert config.get("thing", True) is True
+# endregion

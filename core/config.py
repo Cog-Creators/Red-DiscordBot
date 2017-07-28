@@ -443,10 +443,10 @@ class Config(BaseConfig):
         :return: 
         """
 
-        try:
-            return getattr(self, key)(default=default)
-        except AttributeError:
-            return
+        if default is not None:
+            return self._get_value_from_key(key)(default)
+        else:
+            return self._get_value_from_key(key)()
 
     async def set(self, key, value):
         # Notice to future developers:
