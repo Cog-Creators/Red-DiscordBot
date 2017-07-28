@@ -71,7 +71,7 @@ class SMReel(Enum):
 
 PAYOUTS = {
     (SMReel.two, SMReel.two, SMReel.six) : {
-        "payout" : lambda x: x * 2500 + x,
+        "payout" : lambda x: x * 2500,
         "phrase" : "JACKPOT! 226! Your bid has been multiplied * 2500!"
     },
     (SMReel.flc, SMReel.flc, SMReel.flc) : {
@@ -83,11 +83,11 @@ PAYOUTS = {
         "phrase" : "Three cherries! +800!"
     },
     (SMReel.two, SMReel.six) : {
-        "payout" : lambda x: x * 4 + x,
+        "payout" : lambda x: x * 4,
         "phrase" : "2 6! Your bid has been multiplied * 4!"
     },
     (SMReel.cherries, SMReel.cherries) : {
-        "payout" : lambda x: x * 3 + x,
+        "payout" : lambda x: x * 3,
         "phrase" : "Two cherries! Your bid has been multiplied * 3!"
     },
     "3 symbols" : {
@@ -95,7 +95,7 @@ PAYOUTS = {
         "phrase" : "Three symbols! +500!"
     },
     "2 symbols" : {
-        "payout" : lambda x: x * 2 + x,
+        "payout" : lambda x: x * 2,
         "phrase" : "Two consecutive symbols! Your bid has been multiplied * 2!"
     },
 }
