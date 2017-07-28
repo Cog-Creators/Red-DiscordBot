@@ -2,6 +2,7 @@ from discord.ext import commands
 from core import checks
 from string import ascii_letters, digits
 from random import SystemRandom
+from collections import namedtuple
 import logging
 import importlib
 import os
@@ -19,8 +20,6 @@ OWNER_DISCLAIMER = ("⚠ **Only** the person who is hosting Red should be "
 
 class Core:
     """Commands related to core functions"""
-    def __init__(self, bot):
-        self.bot = bot
 
     @commands.command()
     @checks.is_owner()
@@ -300,8 +299,14 @@ class Core:
             source = "from {}".format(guild)
             footer += " | Server ID: %s" % guild.id
 
-        content = ("Prefix your message(s) with `dm:%s` "
-                   "to reply to this user" % author.id)
+        # We need to grab the DM command prefix (global)
+        # Since it can also be set through cli flags, bot.db is not a reliable
+        # source. So we'll just mock a DM message instead.
+        fake_message = namedtuple('Message', 'guild')
+        prefix = ctx.bot.command_prefix(ctx.bot, fake_message(guild=None))[0]
+
+        content = ("Use `{}dm {} <text>` to reply to this user"
+                   "".format(prefix, author.id))
 
         if isinstance(author, discord.Member):
             colour = author.colour
@@ -327,40 +332,33 @@ class Core:
         else:
             await ctx.send("Your message has been sent.")
 
-    async def on_message(self, message):
-        author = message.author
-        if message.guild or not await self.bot.is_owner(author):
-            return
-        prefix, _, content = message.content.partition(" ")
-        if not prefix.startswith("dm:") or not content:
-            return
-        destination_id = prefix.split(":", 1)[1:]
-
-        try:
-            destination_id = int(destination_id[0])
-            destination = discord.utils.get(self.bot.get_all_members(),
-                                            id=destination_id)
-            if destination is None:
-                raise ValueError()
-        except:
-            await author.send("Invalid ID or user not found. You can only "
-                              "send messages to people I share a server "
-                              "with.")
+    @commands.command()
+    @checks.is_owner()
+    async def dm(self, ctx, user_id: int, *, message: str):
+        """Sends a DM to the user"""
+        destination = discord.utils.get(ctx.bot.get_all_members(),
+                                        id=user_id)
+        if destination is None:
+            await ctx.send("Invalid ID or user not found. You can only "
+                           "send messages to people I share a server "
+                           "with.")
             return
 
-        e = discord.Embed(colour=discord.Colour.red(), description=content)
-        description = "Owner of %s" % self.bot.user
-        e.set_footer(text="You can reply to this message with %scontact"
-                          "" % self.bot.command_prefix(self.bot, message)[0])
-        if author.avatar_url:
-            e.set_author(name=description, icon_url=self.bot.user.avatar_url)
+        e = discord.Embed(colour=discord.Colour.red(), description=message)
+        description = "Owner of %s" % ctx.bot.user
+        fake_message = namedtuple('Message', 'guild')
+        prefix = ctx.bot.command_prefix(ctx.bot, fake_message(guild=None))[0]
+        e.set_footer(text=("You can reply to this message with %scontact"
+                           "" % prefix))
+        if ctx.bot.user.avatar_url:
+            e.set_author(name=description, icon_url=ctx.bot.user.avatar_url)
         else:
             e.set_author(name=description)
 
         try:
             await destination.send(embed=e)
         except:
-            await author.send("Sorry, I couldn't deliver your message "
-                              "to %s" % destination)
+            await ctx.send("Sorry, I couldn't deliver your message "
+                           "to %s" % destination)
         else:
-            await author.send("Message delivered to %s" % destination)
+            await ctx.send("Message delivered to %s" % destination)
