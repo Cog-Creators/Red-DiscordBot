@@ -19,6 +19,8 @@ OWNER_DISCLAIMER = ("⚠ **Only** the person who is hosting Red should be "
 
 class Core:
     """Commands related to core functions"""
+    def __init__(self, bot):
+        self.bot = bot
 
     @commands.command()
     @checks.is_owner()
@@ -281,3 +283,84 @@ class Core:
                 await ctx.send("You have been set as owner.")
             else:
                 await ctx.send("Invalid token.")
+
+    @commands.command()
+    @commands.cooldown(1, 60, commands.BucketType.user)
+    async def contact(self, ctx, *, message: str):
+        """Sends a message to the owner"""
+        guild = ctx.message.guild
+        owner = discord.utils.get(ctx.bot.get_all_members(),
+                                  id=ctx.bot.owner_id)
+        author = ctx.message.author
+        footer = "User ID: %s" % author.id
+
+        if ctx.guild is None:
+            source = "through DM"
+        else:
+            source = "from {}".format(guild)
+            footer += " | Server ID: %s" % guild.id
+
+        content = ("Prefix your message(s) with `dm:%s` "
+                   "to reply to this user" % author.id)
+
+        if isinstance(author, discord.Member):
+            colour = author.colour
+        else:
+            colour = discord.Colour.red()
+
+        description = "Sent by {} {}".format(author, source)
+
+        e = discord.Embed(colour=colour, description=message)
+        if author.avatar_url:
+            e.set_author(name=description, icon_url=author.avatar_url)
+        else:
+            e.set_author(name=description)
+        e.set_footer(text=footer)
+
+        try:
+            await owner.send(content, embed=e)
+        except discord.InvalidArgument:
+            await ctx.send("I cannot send your message, I'm unable to find "
+                           "my owner... *sigh*")
+        except:
+            await ctx.send("I'm unable to deliver your message. Sorry.")
+        else:
+            await ctx.send("Your message has been sent.")
+
+    async def on_message(self, message):
+        author = message.author
+        if message.guild or not await self.bot.is_owner(author):
+            return
+        prefix, _, content = message.content.partition(" ")
+        if not prefix.startswith("dm:") or not content:
+            return
+        destination_id = prefix.split(":", 1)[1:]
+
+        try:
+            destination_id = int(destination_id[0])
+            destination = discord.utils.get(self.bot.get_all_members(),
+                                            id=destination_id)
+            if destination is None:
+                raise ValueError()
+        except:
+            await author.send("Invalid ID or user not found. You can only "
+                              "send messages to people I share a server "
+                              "with.")
+            return
+
+        e = discord.Embed(colour=discord.Colour.red(), description=content)
+        description = "Owner of %s" % self.bot.user
+        e.set_footer(text="You can reply to this message with %scontact"
+                          "" % self.bot.command_prefix(self.bot, message)[0])
+        if author.avatar_url:
+            e.set_author(name=description, icon_url=self.bot.user.avatar_url)
+        else:
+            e.set_author(name=description)
+
+        try:
+            await destination.send(embed=e)
+        except:
+            await author.send("Sorry, I couldn't deliver your message "
+                              "to %s" % destination)
+        else:
+            await author.send("Message delivered to %s" % destination)

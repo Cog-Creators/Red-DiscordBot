@@ -74,7 +74,7 @@ if __name__ == '__main__':
     init_global_checks(red)
     init_events(red, cli_flags)
 
-    red.add_cog(Core())
+    red.add_cog(Core(red))
 
     if cli_flags.dev:
         red.add_cog(Dev())
