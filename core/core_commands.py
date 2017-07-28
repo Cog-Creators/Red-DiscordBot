@@ -335,7 +335,12 @@ class Core:
     @commands.command()
     @checks.is_owner()
     async def dm(self, ctx, user_id: int, *, message: str):
-        """Sends a DM to the user"""
+        """Sends a DM to a user
+
+        This command needs a user id to work.
+        To get a user id enable 'developer mode' in Discord's
+        settings, 'appearance' tab. Then right click a user
+        and copy their id"""
         destination = discord.utils.get(ctx.bot.get_all_members(),
                                         id=user_id)
         if destination is None:
