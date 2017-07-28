@@ -1,64 +1,53 @@
 import pytest
 
-from cogs.bank import bank
+@pytest.fixture()
+def bank(config):
+    from core import Config
+    Config.get_conf = lambda *args, **kwargs: config
 
-
-@pytest.fixture(scope='module')
-def banks(monkeysession, config):
-    def get_mock_conf(*args, **kwargs):
-        return config
-
-    monkeysession.setattr("core.config.Config.get_conf", get_mock_conf)
-
+    from core import bank
     return bank
 
 
-@pytest.mark.asyncio
-async def test_bank_register(banks, ctx):
-    acc = await banks.create_account(ctx.author, initial_balance=0)
-    assert isinstance(acc, dict)
-    assert acc["balance"] == 0
+def test_bank_register(bank, ctx):
+    default_bal = bank.get_default_balance(ctx.guild)
+    assert default_bal == bank.get_account(ctx.author).balance
+
+
+async def has_account(member, bank):
+    balance = bank.get_balance(member)
+    if balance == 0:
+        balance = 1
+    await bank.set_balance(member, balance)
 
 
 @pytest.mark.asyncio
-async def test_bank_transfer(banks, random_member):
-    mbr1 = random_member.get()
-    mbr2 = random_member.get()
-    acc1 = await bank.create_account(mbr1, initial_balance=100)
-    acc2 = await bank.create_account(mbr2)
-    transfer_success = await bank.transfer_credits(mbr1, mbr2, 50)
-    assert transfer_success
-    acc1 = bank.get_account(mbr1)
-    acc2 = bank.get_account(mbr2)
-    assert acc1["balance"] == 50
-    assert acc2["balance"] == 50
+async def test_bank_transfer(bank, member_factory):
+    mbr1 = member_factory.get()
+    mbr2 = member_factory.get()
+    bal1 = bank.get_account(mbr1).balance
+    bal2 = bank.get_account(mbr2).balance
+    await bank.transfer_credits(mbr1, mbr2, 50)
+    newbal1 = bank.get_account(mbr1).balance
+    newbal2 = bank.get_account(mbr2).balance
+    assert bal1 - 50 == newbal1
+    assert bal2 + 50 == newbal2
 
 
 @pytest.mark.asyncio
-async def test_bank_set(banks, random_member):
-    mbr = random_member.get()
-    acc = await bank.create_account(mbr)
-    set_success = await bank.set_credits(mbr, 250)
-    assert set_success
+async def test_bank_set(bank, member_factory):
+    mbr = member_factory.get()
+    await bank.set_balance(mbr, 250)
     acc = bank.get_account(mbr)
-    assert acc["balance"] == 250
+    assert acc.balance == 250
 
 
 @pytest.mark.asyncio
-async def test_bank_can_spend(banks, random_member):
-    mbr = random_member.get()
-    acc = await bank.create_account(mbr)
+async def test_bank_can_spend(bank, member_factory):
+    mbr = member_factory.get()
     canspend = bank.can_spend(mbr, 50)
-    assert not canspend
-    await bank.set_credits(mbr, 200)
+    assert canspend == (50 < bank.get_default_balance(mbr.guild))
+    await bank.set_balance(mbr, 200)
     acc = bank.get_account(mbr)
     canspendnow = bank.can_spend(mbr, 100)
     assert canspendnow
-
-
-@pytest.mark.asyncio
-async def test_bank_get_balance(banks, random_member):
-    mbr = random_member.get()
-    await bank.create_account(mbr)
-    cur_balance = bank.get_balance(mbr)
-    assert cur_balance == 0

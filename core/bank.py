@@ -3,35 +3,39 @@ from collections import namedtuple
 from typing import Tuple, Generator, Union
 
 import discord
+from copy import deepcopy
 
 from core import Config
 
 __all__ = ["get_balance", "set_balance", "withdraw_credits", "deposit_credits",
            "can_spend", "transfer_credits", "wipe_bank", "get_guild_accounts",
            "get_global_accounts", "get_account", "is_global", "get_bank_name",
-           "set_bank_name", "get_currency_name", "set_currency_name"]
+           "set_bank_name", "get_currency_name", "set_currency_name",
+           "get_default_balance", "set_default_balance"]
 
 DEFAULT_GLOBAL = {
     "is_global": False,
     "bank_name": "Twentysix bank",
-    "currency": "credits"
+    "currency": "credits",
+    "default_balance": 100
 }
 
 DEFAULT_GUILD = {
     "bank_name": "Twentysix bank",
-    "currency": "credits"
+    "currency": "credits",
+    "default_balance": 100
 }
 
 DEFAULT_MEMBER = {
     "name": "",
     "balance": 0,
-    "created_at": ""
+    "created_at": 0
 }
 
 DEFAULT_USER = DEFAULT_MEMBER
 
 bank_type = type("Bank")
-Account = namedtuple("Account", "name", "balance", "created_at")
+Account = namedtuple("Account", "name balance created_at")
 
 conf = Config.get_conf(bank_type(), 384734293238749, force_registration=True)
 conf.register_global(**DEFAULT_GLOBAL)
@@ -55,7 +59,8 @@ def encode_time(time: datetime.datetime) -> int:
     :param time:
     :return:
     """
-    return int(time.timestamp())
+    ret = int(time.timestamp())
+    return ret
 
 
 def decode_time(time: int) -> datetime.datetime:
@@ -73,9 +78,8 @@ def get_balance(member: discord.Member) -> int:
     :param member:
     :return:
     """
-    if is_global():
-        return conf.user(member).balance()
-    return conf.member(member).balance()
+    acc = get_account(member)
+    return acc.balance
 
 
 def can_spend(member: discord.Member, amount: int) -> bool:
@@ -107,8 +111,12 @@ async def set_balance(member: discord.Member, amount: int) -> int:
         group = conf.member(member)
     await group.balance.set(amount)
 
-    if group.created_at() == "":
-        await group.created_at.set(encoded_current_time())
+    if group.created_at() == 0:
+        time = encoded_current_time()
+        await group.created_at.set(time)
+
+    if group.name() == "":
+        await group.name.set(member.display_name)
 
     return amount
 
@@ -224,12 +232,21 @@ def get_account(member: Union[discord.Member, discord.User]) -> Account:
     :return:
     """
     if is_global():
-        acc_data = conf.user(member)()
+        acc_data = deepcopy(conf.user(member)())
+        default = deepcopy(DEFAULT_USER)
     else:
-        acc_data = conf.member(member)()
+        acc_data = deepcopy(conf.member(member)())
+        default = deepcopy(DEFAULT_MEMBER)
+
+    if acc_data == {}:
+        acc_data = default
+        acc_data['name'] = member.display_name
+        try:
+            acc_data['balance'] = get_default_balance(member.guild)
+        except AttributeError:
+            acc_data['balance'] = get_default_balance()
 
     acc_data['created_at'] = decode_time(acc_data['created_at'])
-
     return Account(**acc_data)
 
 
@@ -335,3 +352,43 @@ async def set_currency_name(name: str, guild: discord.Guild=None) -> str:
         raise RuntimeError("Guild must be provided if setting the currency"
                            " name of a guild-specific bank.")
     return name
+
+
+def get_default_balance(guild: discord.Guild=None) -> int:
+    """
+    Gets the current default balance amount. If the bank is guild-specific
+        you must pass guild.
+
+    May raise RuntimeError if guild is missing and required.
+    :param guild:
+    :return:
+    """
+    if is_global():
+        return conf.default_balance()
+    elif guild is not None:
+        return conf.guild(guild).default_balance()
+    else:
+        raise RuntimeError("Guild is missing and required!")
+
+
+async def set_default_balance(amount: int, guild: discord.Guild=None) -> int:
+    """
+    Sets the default balance amount. Guild is required if the bank is
+        guild-specific.
+
+    May raise RuntimeError if guild is missing and required.
+    May raise ValueError if amount is invalid.
+    :param guild:
+    :param amount:
+    :return:
+    """
+    amount = int(amount)
+    if amount < 0:
+        raise ValueError("Amount must be greater than zero.")
+
+    if is_global():
+        await conf.default_balance.set(amount)
+    elif guild is not None:
+        await conf.guild(guild).default_balance.set(amount)
+    else:
+        raise RuntimeError("Guild is missing and required.")
