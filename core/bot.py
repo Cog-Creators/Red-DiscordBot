@@ -2,7 +2,6 @@ from discord.ext import commands
 from collections import Counter
 
 from core import Config
-from core import bank
 from enum import Enum
 import os
 
@@ -52,7 +51,6 @@ class Red(commands.Bot):
 
         self.counter = Counter()
         self.uptime = None
-        self.bank = bank
         super().__init__(**kwargs)
 
     async def is_owner(self, user):
