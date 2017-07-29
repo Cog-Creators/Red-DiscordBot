@@ -17,45 +17,46 @@ NUM_ENC = "\N{COMBINING ENCLOSING KEYCAP}"
 
 
 class SMReel(Enum):
-    cherries  = "\N{CHERRIES}"
-    cookie    = "\N{COOKIE}"
-    two       = "\N{DIGIT TWO}" + NUM_ENC
-    flc       = "\N{FOUR LEAF CLOVER}"
-    cyclone   = "\N{CYCLONE}"
+    cherries = "\N{CHERRIES}"
+    cookie = "\N{COOKIE}"
+    two = "\N{DIGIT TWO}" + NUM_ENC
+    flc = "\N{FOUR LEAF CLOVER}"
+    cyclone = "\N{CYCLONE}"
     sunflower = "\N{SUNFLOWER}"
-    six       = "\N{DIGIT SIX}" + NUM_ENC
-    mushroom  = "\N{MUSHROOM}"
-    heart     = "\N{HEAVY BLACK HEART}"
+    six = "\N{DIGIT SIX}" + NUM_ENC
+    mushroom = "\N{MUSHROOM}"
+    heart = "\N{HEAVY BLACK HEART}"
     snowflake = "\N{SNOWFLAKE}"
 
+
 PAYOUTS = {
-    (SMReel.two, SMReel.two, SMReel.six) : {
-        "payout" : lambda x: x * 2500 + x,
-        "phrase" : "JACKPOT! 226! Your bid has been multiplied * 2500!"
+    (SMReel.two, SMReel.two, SMReel.six): {
+        "payout": lambda x: x * 2500 + x,
+        "phrase": "JACKPOT! 226! Your bid has been multiplied * 2500!"
     },
-    (SMReel.flc, SMReel.flc, SMReel.flc) : {
-        "payout" : lambda x: x + 1000,
-        "phrase" : "4LC! +1000!"
+    (SMReel.flc, SMReel.flc, SMReel.flc): {
+        "payout": lambda x: x + 1000,
+        "phrase": "4LC! +1000!"
     },
-    (SMReel.cherries, SMReel.cherries, SMReel.cherries) : {
-        "payout" : lambda x: x + 800,
-        "phrase" : "Three cherries! +800!"
+    (SMReel.cherries, SMReel.cherries, SMReel.cherries): {
+        "payout": lambda x: x + 800,
+        "phrase": "Three cherries! +800!"
     },
-    (SMReel.two, SMReel.six) : {
-        "payout" : lambda x: x * 4 + x,
-        "phrase" : "2 6! Your bid has been multiplied * 4!"
+    (SMReel.two, SMReel.six): {
+        "payout": lambda x: x * 4 + x,
+        "phrase": "2 6! Your bid has been multiplied * 4!"
     },
-    (SMReel.cherries, SMReel.cherries) : {
-        "payout" : lambda x: x * 3 + x,
-        "phrase" : "Two cherries! Your bid has been multiplied * 3!"
+    (SMReel.cherries, SMReel.cherries): {
+        "payout": lambda x: x * 3 + x,
+        "phrase": "Two cherries! Your bid has been multiplied * 3!"
     },
-    "3 symbols" : {
-        "payout" : lambda x: x + 500,
-        "phrase" : "Three symbols! +500!"
+    "3 symbols": {
+        "payout": lambda x: x + 500,
+        "phrase": "Three symbols! +500!"
     },
-    "2 symbols" : {
-        "payout" : lambda x: x * 2 + x,
-        "phrase" : "Two consecutive symbols! Your bid has been multiplied * 2!"
+    "2 symbols": {
+        "payout": lambda x: x * 2 + x,
+        "phrase": "Two consecutive symbols! Your bid has been multiplied * 2!"
     },
 }
 
@@ -121,7 +122,7 @@ class Economy:
             await self.bot.send_cmd_help(ctx)
 
     @_bank.command()
-    async def balance(self, ctx: commands.Context, user: discord.Member=None):
+    async def balance(self, ctx: commands.Context, user: discord.Member = None):
         """Shows balance of user.
 
         Defaults to yours."""
@@ -179,11 +180,10 @@ class Economy:
                 author.display_name, to.display_name, creds.sum, currency
             ))
 
-
     @_bank.command()
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
-    async def reset(self, ctx, confirmation: bool=False):
+    async def reset(self, ctx, confirmation: bool = False):
         """Deletes all guild's bank accounts"""
         if confirmation is False:
             await ctx.send("This will delete all bank accounts on "
@@ -222,7 +222,7 @@ class Economy:
 
     @commands.command()
     @commands.guild_only()
-    async def leaderboard(self, ctx: commands.Context, top: int=10):
+    async def leaderboard(self, ctx: commands.Context, top: int = 10):
         """Prints out the leaderboard
 
         Defaults to top 10"""
@@ -290,15 +290,15 @@ class Economy:
         default_reel = deque(SMReel)
         reels = []
         for i in range(3):
-            default_reel.rotate(random.randint(-999, 999)) # weeeeee
-            new_reel = deque(default_reel, maxlen=3) # we need only 3 symbols
-            reels.append(new_reel)                   # for each reel
+            default_reel.rotate(random.randint(-999, 999))  # weeeeee
+            new_reel = deque(default_reel, maxlen=3)  # we need only 3 symbols
+            reels.append(new_reel)  # for each reel
         rows = ((reels[0][0], reels[1][0], reels[2][0]),
                 (reels[0][1], reels[1][1], reels[2][1]),
                 (reels[0][2], reels[1][2], reels[2][2]))
 
-        slot = "~~\n~~" # Mobile friendly
-        for i, row in enumerate(rows): # Let's build the slot to show
+        slot = "~~\n~~"  # Mobile friendly
+        for i, row in enumerate(rows):  # Let's build the slot to show
             sign = "  "
             if i == 1:
                 sign = ">"
@@ -308,7 +308,7 @@ class Economy:
         if not payout:
             # Checks for two-consecutive-symbols special rewards
             payout = PAYOUTS.get((rows[1][0], rows[1][1]),
-                     PAYOUTS.get((rows[1][1], rows[1][2])))
+                                 PAYOUTS.get((rows[1][1], rows[1][2])))
         if not payout:
             # Still nothing. Let's check for 3 generic same symbols
             # or 2 consecutive symbols
@@ -372,7 +372,7 @@ class Economy:
         guild = ctx.guild
         await self.config.guild(guild).PAYDAY_TIME.set(seconds)
         await ctx.send("Value modified. At least {} seconds must pass "
-                        "between each payday.".format(seconds))
+                       "between each payday.".format(seconds))
 
     @economyset.command()
     async def paydayamount(self, ctx: commands.Context, creds: int):
@@ -384,7 +384,7 @@ class Economy:
             return
         await self.config.guild(guild).PAYDAY_CREDITS.set(creds)
         await ctx.send("Every payday will now give {} {}."
-                        "".format(creds, credits_name))
+                       "".format(creds, credits_name))
 
     @economyset.command()
     async def registeramount(self, ctx: commands.Context, creds: int):
@@ -395,14 +395,14 @@ class Economy:
         credits_name = bank.get_currency_name(guild)
         await bank.set_default_balance(creds, guild)
         await ctx.send("Registering an account will now give {} {}."
-                           "".format(creds, credits_name))
+                       "".format(creds, credits_name))
 
     # What would I ever do without stackoverflow?
     def display_time(self, seconds, granularity=2):
         intervals = (  # Source: http://stackoverflow.com/a/24542445
             ('weeks', 604800),  # 60 * 60 * 24 * 7
-            ('days', 86400),    # 60 * 60 * 24
-            ('hours', 3600),    # 60 * 60
+            ('days', 86400),  # 60 * 60 * 24
+            ('hours', 3600),  # 60 * 60
             ('minutes', 60),
             ('seconds', 1),
         )
