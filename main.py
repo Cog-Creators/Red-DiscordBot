@@ -1,3 +1,9 @@
+import os
+
+abspath = os.path.abspath(__file__)
+dname = os.path.dirname(abspath)
+os.chdir(dname)
+
 from core.bot import Red, ExitCodes
 from core.global_checks import init_global_checks
 from core.events import init_events
@@ -9,7 +15,6 @@ import asyncio
 import discord
 import logging.handlers
 import logging
-import os
 import sys
 
 #
