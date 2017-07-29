@@ -158,17 +158,34 @@ class Group(Value):
 
     async def clear(self):
         """
-        Wipes out data for all entries in this category
+        Wipes out data for the given entry in this category
             e.g. Guild/Role/User
         :return:
         """
         await self.set({})
 
+    async def clear_all(self):
+        """
+        Removes all data from all entries.
+        :return:
+        """
+        await self._super_group.set({})
+
 
 class MemberGroup(Group):
     @property
-    def _guild_group(self) -> Group:
+    def _super_group(self) -> Group:
         new_identifiers = self.identifiers[:2]
+        group_obj = Group(
+            identifiers=new_identifiers,
+            defaults={},
+            spawner=self.spawner
+        )
+        return group_obj
+
+    @property
+    def _guild_group(self) -> Group:
+        new_identifiers = self.identifiers[:3]
         group_obj = Group(
             identifiers=new_identifiers,
             defaults={},
@@ -184,15 +201,15 @@ class MemberGroup(Group):
         :return:
         """
         # noinspection PyTypeChecker
-        return self._guild_group()
+        return self._super_group()
 
-    async def clear_all(self):
+    def all(self) -> dict:
         """
-        Removes all member data from the all guilds.
+        Returns the dict of all members in the same guild.
         :return:
         """
-        await self._guild_group.set({})
-
+        # noinspection PyTypeChecker
+        return self._guild_group()
 
 class Config:
     GLOBAL = "GLOBAL"
