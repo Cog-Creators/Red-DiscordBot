@@ -203,7 +203,7 @@ def get_guild_accounts(guild: discord.Guild) -> Generator[Account, None, None]:
         raise RuntimeError("The bank is currently global.")
 
     accs = conf.member(guild.owner).all()
-    for acc in accs:
+    for user_id, acc in accs.items():
         acc['created_at'] = decode_time(acc['created_at'])
         yield Account(**acc)
 
@@ -269,7 +269,7 @@ async def set_global(global_: bool, user: Union[discord.User, discord.Member]) -
         return global_
 
     if is_global():
-        await conf.user(user).clear()
+        await conf.user(user).clear_all()
     elif isinstance(user, discord.Member):
         await conf.member(user).clear_all()
     else:
