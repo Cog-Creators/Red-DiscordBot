@@ -213,7 +213,7 @@ def get_global_accounts(user: discord.User) -> Generator[Account, None, None]:
     Gets all global account data.
 
     May raise RuntimeError if the bank is currently guild specific.
-    :param guild:
+    :param user:
     :return:
     """
     if not is_global():
