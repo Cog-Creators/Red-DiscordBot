@@ -1,15 +1,12 @@
 from core.config import Config
 from subprocess import run, PIPE
 from collections import namedtuple
-import os
-import __main__ as main
 
 __all__ = ["Config", "__version__"]
 version_info = namedtuple("VersionInfo", "major minor patch")
 
 BASE_VERSION = version_info(3, 0, 0)
-RED_PATH, filename = os.path.split(os.path.realpath(main.__file__))
-os.chdir(RED_PATH)
+
 
 def get_latest_version():
     try:
@@ -37,3 +34,4 @@ def get_latest_version():
     return BASE_VERSION
 
 __version__ = get_latest_version()
+
