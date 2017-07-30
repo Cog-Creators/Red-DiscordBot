@@ -81,6 +81,13 @@ async def test_nested_registration_and_changing(config):
         await config.foo.set(True)
 
 
+def test_doubleset_default(config):
+    config.register_global(foo=True)
+    config.register_global(foo=False)
+
+    assert config.foo() is False
+
+
 def test_nested_registration_multidict(config):
     defaults = {
         "foo": {
