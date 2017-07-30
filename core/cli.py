@@ -102,6 +102,9 @@ def parse_cli_flags():
     parser.add_argument("--dev",
                         action="store_true",
                         help="Enables developer mode")
+    parser.add_argument("config",
+                        nargs='?',
+                        help="Path to config generated on initial setup.")
 
     args = parser.parse_args()
 

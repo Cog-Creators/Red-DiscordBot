@@ -2,6 +2,7 @@ from pathlib import Path
 
 from core.bot import Red, ExitCodes
 from core.cog_manager import CogManagerUI
+from core.data_manager import load_basic_configuration
 from core.global_checks import init_global_checks
 from core.events import init_events
 from core.sentry_setup import init_sentry_logging
@@ -75,6 +76,14 @@ def determine_main_folder() -> Path:
 
 if __name__ == '__main__':
     cli_flags = parse_cli_flags()
+
+    if cli_flags.config:
+        load_basic_configuration(Path(cli_flags.config).resolve())
+    else:
+        raise RuntimeError("You need to create a basic configuration file,"
+                           " this error will disappear when the launcher has"
+                           " been rewritten.")
+
     log, sentry_log = init_loggers(cli_flags)
     description = "Red v3 - Alpha"
     bot_dir = determine_main_folder()

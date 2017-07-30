@@ -8,6 +8,7 @@ from copy import deepcopy
 from pathlib import Path
 
 from .drivers.red_json import JSON as JSONDriver
+from core.data_manager import cog_data_path, core_data_path
 
 log = logging.getLogger("red.config")
 
@@ -210,6 +211,7 @@ class MemberGroup(Group):
         # noinspection PyTypeChecker
         return self._guild_group()
 
+
 class Config:
     GLOBAL = "GLOBAL"
     GUILD = "GUILD"
@@ -242,18 +244,18 @@ class Config:
             of data keys before allowing you to get/set values?
         :return:
         """
-        cog_name = cog_instance.__class__.__name__
+        cog_path_override = cog_data_path(cog_instance)
+        cog_name = cog_path_override.stem
         uuid = str(hash(identifier))
 
-        spawner = JSONDriver(cog_name)
+        spawner = JSONDriver(cog_name, data_path_override=cog_path_override)
         return cls(cog_name=cog_name, unique_identifier=uuid,
                    force_registration=force_registration,
                    driver_spawn=spawner)
 
     @classmethod
     def get_core_conf(cls, force_registration: bool=False):
-        core_data_path = Path.cwd() / 'core' / '.data'
-        driver_spawn = JSONDriver("Core", data_path_override=core_data_path)
+        driver_spawn = JSONDriver("Core", data_path_override=core_data_path())
         return cls(cog_name="Core", driver_spawn=driver_spawn,
                    unique_identifier='0',
                    force_registration=force_registration)
