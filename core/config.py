@@ -5,6 +5,8 @@ from typing import Callable, Union, Tuple
 import discord
 from copy import deepcopy
 
+from pathlib import Path
+
 from .drivers.red_json import JSON as JSONDriver
 
 log = logging.getLogger("red.config")
