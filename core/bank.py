@@ -179,12 +179,11 @@ async def transfer_credits(from_: discord.Member, to: discord.Member, amount: in
     return await deposit_credits(to, amount)
 
 
-async def wipe_bank(guild: discord.Guild):
+async def wipe_bank(user: Union[discord.User, discord.Member]):
     """
     Deletes all accounts from the bank.
     :return:
     """
-    user = guild.owner
     if is_global():
         await _conf.user(user).clear()
     else:
