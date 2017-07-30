@@ -10,7 +10,8 @@ if ($PSVersionTable.PSVersion.Major -lt 3)
 }
 
 # Install python
-
+if (((gcm "python.exe" -ErrorAction SilentlyContinue) -eq $null) -or -not ((gcm "python.exe" -ErrorAction SilentlyContinue | select -expand Version).major -eq 3 -and (gcm "python.exe" -ErrorAction SilentlyContinue | select -expand Version).minor -eq 5))
+{
 echo "Downloading Python"
 if ($procarch -eq "AMD64")
 {
@@ -28,9 +29,13 @@ echo "Launching Python"
 $launchpath = ".\\" + $filename
 $ret = & $launchpath /passive PrependPath=1 InstallLauncherAllUsers=0
 echo $ret
+echo "Done installing Python."
+}
 # Python installed
 
-echo "Done installing Python. Downloading Git"
+if ((gcm "git.exe" -ErrorAction SilentlyContinue) -eq $null)
+{
+echo "Downloading Git"
 
 # Install Git
 
@@ -72,9 +77,13 @@ else
 }
 
 # Git installed
+echo "Git installed"
+}
 
+if (((gcm "ffmpeg.exe" -ErrorAction SilentlyContinue) -eq $null) -or ((gcm "ffplay.exe" -ErrorAction SilentlyContinue) -eq $null) -or ((gcm "ffprobe.exe" -ErrorAction SilentlyContinue) -eq $null))
+{
 # Install ffmpeg
-
+echo "Installing ffmpeg"
 if ($procarch -eq "AMD64")
 {
     wget -Uri https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-latest-win64-static.zip -OutFile ffmpeg-latest-win64.zip
@@ -107,3 +116,9 @@ else
         Set-ItemProperty -Path 'Registry::HKEY_CURRENT_USER\Environment' -Name PATH -Value $newpath
     }
 }
+echo "ffmpeg installed"
+}
+# echo "Downloading install.py"
+# wget -Uri http://example.com
+echo "Done installing prerequisites for Red. You may now continue by running python install.py."
+echo "If you have issues with that, try logging out and back into your account or restarting your computer"
