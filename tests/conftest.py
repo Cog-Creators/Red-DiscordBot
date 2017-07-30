@@ -19,9 +19,12 @@ def monkeysession(request):
 
 @pytest.fixture()
 def json_driver(tmpdir_factory):
+    import uuid
+    rand = str(uuid.uuid4())
+    path = Path(str(tmpdir_factory.mktemp(rand)))
     driver = red_json.JSON(
         "PyTest",
-        data_path_override=Path(str(tmpdir_factory.getbasetemp()))
+        data_path_override=path
     )
     return driver
 
@@ -29,10 +32,12 @@ def json_driver(tmpdir_factory):
 @pytest.fixture()
 def config(json_driver):
     import uuid
-    return Config(
+    conf = Config(
         cog_name="PyTest",
         unique_identifier=str(uuid.uuid4()),
         driver_spawn=json_driver)
+    yield conf
+    conf.defaults = {}
 
 
 @pytest.fixture()
@@ -41,12 +46,14 @@ def config_fr(json_driver):
     Mocked config object with force_register enabled.
     """
     import uuid
-    return Config(
+    conf = Config(
         cog_name="PyTest",
         unique_identifier=str(uuid.uuid4()),
         driver_spawn=json_driver,
         force_registration=True
     )
+    yield conf
+    conf.defaults = {}
 
 
 #region Dpy Mocks
