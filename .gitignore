@@ -7,3 +7,11 @@ __pycache__
 *.tmp
 .data
 lib/
+
+discord.py-rewrite.zip
+
+cogs/general/general.py
+
+cogs/alias/alias.py
+
+cogs/testcog.py
