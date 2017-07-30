@@ -6,6 +6,7 @@ from discord.ext import commands
 from collections import Counter
 
 from discord.ext.commands import GroupMixin
+from pathlib import Path
 
 from core import Config
 from enum import Enum
@@ -15,7 +16,7 @@ from core.cog_manager import CogManager
 
 
 class Red(commands.Bot):
-    def __init__(self, cli_flags, **kwargs):
+    def __init__(self, cli_flags, bot_dir: Path=Path.cwd(), **kwargs):
         self._shutdown_mode = ExitCodes.CRITICAL
         self.db = Config.get_core_conf(force_registration=True)
         self._co_owners = cli_flags.co_owner
@@ -60,8 +61,9 @@ class Red(commands.Bot):
         self.counter = Counter()
         self.uptime = None
 
-        # This needs to be optional at some point.
-        self.cog_mgr = CogManager(paths=('cogs',))
+        self.main_dir = bot_dir
+
+        self.cog_mgr = CogManager(paths=(str(self.main_dir),))
 
         super().__init__(**kwargs)
 

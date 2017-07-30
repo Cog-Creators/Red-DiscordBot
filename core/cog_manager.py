@@ -52,7 +52,8 @@ class CogManager:
 
     async def set_install_path(self, path: Path) -> Path:
         """
-        Install path setter.
+        Install path setter, will return the absolute path to
+            the given path.
         :param path:
         :return:
         """

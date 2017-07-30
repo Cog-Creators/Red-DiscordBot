@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from core.bot import Red, ExitCodes
 from core.cog_manager import CogManagerUI
 from core.global_checks import init_global_checks
@@ -67,11 +69,17 @@ def init_loggers(cli_flags):
     return logger, sentry_logger
 
 
+def determine_main_folder() -> Path:
+    return Path(os.path.dirname(__file__)).resolve()
+
+
 if __name__ == '__main__':
     cli_flags = parse_cli_flags()
     log, sentry_log = init_loggers(cli_flags)
     description = "Red v3 - Alpha"
-    red = Red(cli_flags, description=description, pm_help=None)
+    bot_dir = determine_main_folder()
+    red = Red(cli_flags, description=description, pm_help=None,
+              bot_dir=bot_dir)
     init_global_checks(red)
     init_events(red, cli_flags)
 
