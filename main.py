@@ -57,8 +57,10 @@ def init_loggers(cli_flags):
     else:
         logger.setLevel(logging.WARNING)
 
+    from core.data_manager import core_data_path
+    logfile_path = core_data_path() / 'red.log'
     fhandler = logging.handlers.RotatingFileHandler(
-        filename='red.log', encoding='utf-8', mode='a',
+        filename=str(logfile_path), encoding='utf-8', mode='a',
         maxBytes=10**7, backupCount=5)
     fhandler.setFormatter(red_format)
 
