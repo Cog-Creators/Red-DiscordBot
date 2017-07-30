@@ -4,3 +4,4 @@ pytest
 git+https://github.com/pytest-dev/pytest-asyncio
 pymongo
 git+https://github.com/getsentry/raven-python
+appdirs

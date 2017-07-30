@@ -1,9 +1,6 @@
 from raven import Client, breadcrumbs
 from raven.versioning import fetch_git_sha
-from raven.conf import setup_logging
 from raven.handlers.logging import SentryHandler
-
-from pathlib import Path
 
 __all__ = ("init_sentry_logging", "should_log")
 
