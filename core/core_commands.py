@@ -11,10 +11,10 @@ import asyncio
 
 log = logging.getLogger("red")
 
-OWNER_DISCLAIMER = ("Setting as owner people who do not have access to "
-                    "the system that is hosting Red is **extremely "
-                    "dangerous**.\n**Owners and co owners are able to access "
-                    "any data that is present on the host system.**")
+OWNER_DISCLAIMER = ("⚠ **Only** the person who is hosting Red should be "
+                    "owner. **This has SERIOUS security implications. The "
+                    "owner can access any data that is present on the host "
+                    "system.** ⚠")
 
 
 class Core:
@@ -55,6 +55,10 @@ class Core:
     @checks.is_owner()
     async def _reload(self, ctx, *, cog_name: str):
         """Reloads a package"""
+        if cog_name == "downloader":
+            await ctx.send("DONT RELOAD DOWNLOADER.")
+            return
+
         if not cog_name.startswith("cogs."):
             cog_name = "cogs." + cog_name
 
@@ -273,42 +277,7 @@ class Core:
             if message.content.strip() == token:
                 self.owner.reset_cooldown(ctx)
                 await ctx.bot.db.set("owner", ctx.author.id)
-                ctx.bot.author_id = ctx.author.id
+                ctx.bot.owner_id = ctx.author.id
                 await ctx.send("You have been set as owner.")
             else:
                 await ctx.send("Invalid token.")
-
-    @_set.command(aliases=["coowners"])
-    @checks.is_owner()
-    @commands.guild_only()
-    async def coowner(self, ctx, *coowners: discord.Member):
-        """Sets Red's coowner(s)
-
-        Leave empty to reset"""
-        def check(m):
-            return m.author == ctx.author and m.channel == ctx.channel
-
-        coowners = [m.id for m in coowners]
-
-        if not coowners:
-            await ctx.bot.db.set("coowners", [])
-            await ctx.send("Coowners list cleared.")
-            return
-
-        await ctx.send("Remember:\n" + OWNER_DISCLAIMER)
-        await asyncio.sleep(5)
-
-        await ctx.send("Type `I understand` if you have read and understand "
-                       "the above message.")
-
-        try:
-            message = await ctx.bot.wait_for("message", check=check,
-                                             timeout=60)
-        except asyncio.TimeoutError:
-            await ctx.send("The set owner request has timed out.")
-        else:
-            if message.content.lower().strip() == "i understand":
-                await ctx.bot.db.set("coowners", coowners)
-                await ctx.send("{} coowner(s) set.".format(len(coowners)))
-            else:
-                await ctx.send("Set coowner request aborted.")

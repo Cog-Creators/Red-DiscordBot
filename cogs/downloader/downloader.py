@@ -1,6 +1,6 @@
 import os
 import shutil
-from typing import Tuple
+from typing import Tuple, Union
 
 import discord
 from discord.ext import commands
@@ -317,4 +317,72 @@ class Downloader:
             return
 
         msg = "Information on {}:\n{}".format(cog.name, cog.description or "")
+        await ctx.send(box(msg))
+
+    def is_installed(self, cog_name: str) -> (bool, Union[Installable, None]):
+        """
+        Checks to see if a cog with the given name was installed
+            through Downloader.
+        :param cog_name:
+        :return: is_installed, Installable
+        """
+        for installable in self.installed_cogs:
+            if installable.name == cog_name:
+                return True, installable
+        return False, None
+
+    def format_findcog_info(self, command_name: str,
+                            cog_installable: Union[Installable, object]=None) -> str:
+        """
+        Formats the info for output to discord
+        :param command_name:
+        :param cog_installable: Can be an Installable instance or a Cog instance.
+        :return: str
+        """
+        if isinstance(cog_installable, Installable):
+            made_by = ", ".join(cog_installable.author) or "Missing from info.json"
+            repo = self._repo_manager.get_repo(cog_installable.repo_name)
+            repo_url = repo.url
+            cog_name = cog_installable.name
+        else:
+            made_by = "26 & co."
+            repo_url = "https://github.com/Twentysix26/Red-DiscordBot"
+            cog_name = cog_installable.__class__.__name__
+
+        msg = "Command: {}\nMade by: {}\nRepo: {}\nCog name: {}"
+
+        return msg.format(command_name, made_by, repo_url, cog_name)
+
+    def cog_name_from_instance(self, instance: object) -> str:
+        """
+        Determines the cog name that Downloader knows from the cog instance.
+
+        Probably.
+        :param instance:
+        :return:
+        """
+        splitted = instance.__module__.split('.')
+        return splitted[-2]
+
+    @commands.command()
+    async def findcog(self, ctx: commands.Context, command_name: str):
+        """
+        Figures out which cog a command comes from. Only works with loaded
+            cogs.
+        """
+        command = ctx.bot.all_commands.get(command_name)
+
+        if command is None:
+            await ctx.send("That command doesn't seem to exist.")
+            return
+
+        # Check if in installed cogs
+        cog_name = self.cog_name_from_instance(command.instance)
+        installed, cog_installable = self.is_installed(cog_name)
+        if installed:
+            msg = self.format_findcog_info(command_name, cog_installable)
+        else:
+            # Assume it's in a base cog
+            msg = self.format_findcog_info(command_name, command.instance)
+
         await ctx.send(box(msg))
