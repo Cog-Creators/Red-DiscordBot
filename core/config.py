@@ -1,7 +1,6 @@
 import logging
-from pathlib import Path
 
-from typing import Callable, NewType, Union, Tuple
+from typing import Callable, Union, Tuple
 
 import discord
 from copy import deepcopy
@@ -9,8 +8,6 @@ from copy import deepcopy
 from .drivers.red_json import JSON as JSONDriver
 
 log = logging.getLogger("red.config")
-
-CogInstance = NewType("CogInstance", object)
 
 
 class Value:
@@ -231,7 +228,7 @@ class Config:
         self.defaults = defaults or {}
 
     @classmethod
-    def get_conf(cls, cog_instance: CogInstance, identifier: int,
+    def get_conf(cls, cog_instance, identifier: int,
                  force_registration=False):
         """
         Returns a Config instance based on a simplified set of initial
