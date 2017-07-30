@@ -26,7 +26,8 @@ class CogManager:
     def __init__(self, paths: Tuple[str]=()):
         self.conf = Config.get_conf(self, 2938473984732, True)
         self.conf.register_global(
-            paths=()
+            paths=(),
+            install_path="cogs"
         )
 
         self._paths = set(list(self.conf.paths()) + list(paths))
@@ -39,6 +40,27 @@ class CogManager:
         """
         paths = [Path(p) for p in self._paths]
         return tuple(p.resolve() for p in paths if p.is_dir())
+
+    @property
+    def install_path(self) -> Path:
+        """
+        Returns the install path for 3rd party cogs.
+        :return:
+        """
+        p = self.conf.install_path()
+        return p.resolve()
+
+    async def set_install_path(self, path: Path) -> Path:
+        """
+        Install path setter.
+        :param path:
+        :return:
+        """
+        if not path.is_dir():
+            raise ValueError("The install path must be an existing directory.")
+        resolved = path.resolve()
+        await self.conf.install_path.set(resolved)
+        return resolved
 
     @staticmethod
     def _ensure_path_obj(path: Union[Path, str]) -> Path:
@@ -98,7 +120,7 @@ class CogManager:
         """
         self._paths = paths_
         str_paths = [str(p) for p in paths_]
-        await self.conf.set("paths", str_paths)
+        await self.conf.paths.set(str_paths)
 
     def find_cog(self, name: str) -> ModuleSpec:
         """
