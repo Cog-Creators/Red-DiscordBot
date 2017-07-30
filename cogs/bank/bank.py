@@ -4,12 +4,21 @@ from core import checks, bank
 from core.bot import Red  # Only used for type hints
 
 
-def check_global_setting():
+def check_global_setting_guildowner():
     async def pred(ctx: commands.Context):
         if bank.is_global():
             return checks.is_owner()
         else:
             return checks.guildowner_or_permissions(administrator=True)
+    return commands.check(pred)
+
+
+def check_global_setting_admin():
+    async def pred(ctx: commands.Context):
+        if bank.is_global():
+            return checks.is_owner()
+        else:
+            return checks.admin_or_permissions(manage_guild=True)
     return commands.check(pred)
 
 
@@ -42,14 +51,14 @@ class Bank:
         await ctx.send("The bank is now {}.".format(word))
 
     @bankset.command(name="bankname")
-    @check_global_setting()
+    @check_global_setting_guildowner()
     async def bankset_bankname(self, ctx: commands.Context, *, name: str):
         """Set the bank's name"""
         await bank.set_bank_name(name, ctx.guild)
         await ctx.send("Bank's name has been set to {}".format(name))
 
     @bankset.command(name="creditsname")
-    @check_global_setting()
+    @check_global_setting_guildowner()
     async def bankset_creditsname(self, ctx: commands.Context, *, name: str):
         """Set the name for the bank's currency"""
         await bank.set_currency_name(name, ctx.guild)

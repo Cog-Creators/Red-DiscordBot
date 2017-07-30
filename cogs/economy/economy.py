@@ -9,6 +9,7 @@ from discord.ext import commands
 from core import checks, Config, bank
 from core.utils.chat_formatting import pagify, box
 from core.bot import Red
+from cogs.bank import check_global_setting_guildowner, check_global_setting_admin
 
 logger = logging.getLogger("red.economy")
 
@@ -150,7 +151,7 @@ class Economy:
         ))
 
     @_bank.command(name="set")
-    @checks.admin_or_permissions(manage_guild=True)
+    @check_global_setting_admin()
     async def _set(self, ctx: commands.Context, to: discord.Member, creds: SetParser):
         """Sets balance of user's bank account. See help for more operations
 
@@ -181,7 +182,7 @@ class Economy:
 
     @_bank.command()
     @commands.guild_only()
-    @checks.guildowner_or_permissions(administrator=True)
+    @check_global_setting_guildowner()
     async def reset(self, ctx, confirmation: bool = False):
         """Deletes all guild's bank accounts"""
         if confirmation is False:
