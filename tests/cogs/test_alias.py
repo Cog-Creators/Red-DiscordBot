@@ -2,12 +2,11 @@ from cogs.alias import Alias
 import pytest
 
 
-@pytest.fixture
-def alias(monkeysession, config):
-    def get_mock_conf(*args, **kwargs):
-        return config
+@pytest.fixture()
+def alias(config):
+    import cogs.alias.alias
 
-    monkeysession.setattr("core.config.Config.get_conf", get_mock_conf)
+    cogs.alias.alias.Config.get_conf = lambda *args, **kwargs: config
 
     return Alias(None)
 
@@ -25,9 +24,17 @@ def test_empty_global_aliases(alias):
     assert list(alias.unloaded_global_aliases()) == []
 
 
+async def create_test_guild_alias(alias, ctx):
+    await alias.add_alias(ctx, "test", "ping", global_=False)
+
+
+async def create_test_global_alias(alias, ctx):
+    await alias.add_alias(ctx, "test", "ping", global_=True)
+
+
 @pytest.mark.asyncio
 async def test_add_guild_alias(alias, ctx):
-    await alias.add_alias(ctx, "test", "ping", global_=False)
+    await create_test_guild_alias(alias, ctx)
 
     is_alias, alias_obj = alias.is_alias(ctx.guild, "test")
     assert is_alias is True
@@ -36,6 +43,7 @@ async def test_add_guild_alias(alias, ctx):
 
 @pytest.mark.asyncio
 async def test_delete_guild_alias(alias, ctx):
+    await create_test_guild_alias(alias, ctx)
     is_alias, _ = alias.is_alias(ctx.guild, "test")
     assert is_alias is True
 
@@ -47,7 +55,7 @@ async def test_delete_guild_alias(alias, ctx):
 
 @pytest.mark.asyncio
 async def test_add_global_alias(alias, ctx):
-    await alias.add_alias(ctx, "test", "ping", global_=True)
+    await create_test_global_alias(alias, ctx)
     is_alias, alias_obj = alias.is_alias(ctx.guild, "test")
 
     assert is_alias is True
@@ -56,6 +64,7 @@ async def test_add_global_alias(alias, ctx):
 
 @pytest.mark.asyncio
 async def test_delete_global_alias(alias, ctx):
+    await create_test_global_alias(alias, ctx)
     is_alias, alias_obj = alias.is_alias(ctx.guild, "test")
     assert is_alias is True
     assert alias_obj.global_ is True
