@@ -39,7 +39,9 @@ class CogManager:
         This will return all currently valid path directories.
         :return:
         """
-        paths = [Path(p) for p in self._paths] + [self.install_path]
+        paths = [Path(p) for p in self._paths]
+        if self.install_path not in paths:
+            paths.append(self.install_path)
         return tuple(p.resolve() for p in paths if p.is_dir())
 
     @property
