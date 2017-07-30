@@ -3,10 +3,7 @@ import os
 import sys
 import subprocess
 from enum import Enum
-try:
-    import requests
-except ImportError:
-    requests = None
+import argparse
 import platform
 try:
     import pip
@@ -14,9 +11,6 @@ except ImportError:
     pip = None
 
 
-FFMPEG_32 = "https://ffmpeg.zeranoe.com/builds/win32/static/ffmpeg-latest-win32-static.zip"
-FFMPEG_64 = "https://ffmpeg.zeranoe.com/builds/win64/static/ffmpeg-latest-win64-static.zip"
-GFW_LATEST_RELEASE = "https://api.github.com/repos/git-for-windows/git/releases/latest"
 IS_WINDOWS = os.name == "nt"
 IS_MAC = sys.platform == "darwin"
 IS_64BIT = platform.machine().endswith("64")
@@ -35,45 +29,18 @@ if not IS_WINDOWS and not IS_MAC:  # On linux, so import distro to help determin
         distro = None
 
 
-def do_windows_install():
-    good_to_continue = True
-    # Python 3.5 install confirmation
-    if not PYTHON_OK:
-        print("I need Python 3.5 to work properly!")
-        good_to_continue = False
-
-    # ffmpeg install confirmation
-    ffmpegdir = os.path.join(os.environ["LOCALAPPDATA"], "Programs", "ffmpeg", "bin")
-    try:
-        ffmpegdircontents = os.listdir(ffmpegdir)
-    except FileNotFoundError:
-        print("I need ffmpeg in order for audio to work properly!")
-        good_to_continue = False
-    else:
-        if "ffmpeg.exe" not in ffmpegdircontents \
-                or "ffplay.exe" not in ffmpegdircontents \
-                or "ffprobe.exe" not in ffmpegdircontents:
-            print("I need ffmpeg in order for audio to work properly!")
-            good_to_continue = False
-
-    # git install confirmation
-    gitdir = os.path.join(os.environ["LOCALAPPDATA"], "Programs", "Git", "bin")
-    try:
-        gitcontents = os.listdir(gitdir)
-    except FileNotFoundError:
-        print("I need git in order for Downloader to work properly!")
-        good_to_continue = False
-    else:
-        if "git.exe" not in gitcontents:
-            print("I need git in order for Downloader to work properly!")
-            good_to_continue = False
-
-    # Print out a message directing the user to run the powershell script and then exit
-    if not good_to_continue:
-        print("Please run the powershell script to install requirements")
-        exit(InstallerExitCodes.WINFAIL)
-    else:
-        print("All requirements appear to be installed properly!")
+def parse_cli_args():
+    parser = argparse.ArgumentParser(description="Red-DiscordBot's installer")
+    parser.add_argument("--install-reqs", "-i",
+                        help="Installs the needed prereqs for Red",
+                        action="store_true")
+    parser.add_argument("--setup-red", "-s",
+                        help="Downloads and walks through setting up Red",
+                        action="store_true")
+    parser.add_argument("--update-red", "-u",
+                        help="Updates Red",
+                        action="store_true")
+    return parser.parse_args()
 
 
 def do_mac_install():
@@ -115,29 +82,43 @@ class InstallerExitCodes(Enum):
     IMPROPERPYVER = 1
     NOPIP = 2
     PIPFAILED = 3
-    WINFAIL = 4
+    ARGCONFLICT = 4
     HOMEBREWFAIL = 5
     BREWINSTALLFAIL = 6
 
 
+args = parse_cli_args()
+
 if __name__ == "__main__":
-    if pip is None:
-        print("It appears pip is not installed! I need pip for installing requirements!")
-        exit(InstallerExitCodes.NOPIP)
-    if not IS_WINDOWS and not IS_MAC and distro is None:
-        print("You are missing some requirements for using the launcher!")
-        print("Attempting to fix this now...")
-        status = pip.main(["install", "-U", "-r", "launcher-requirements.txt"])
-        if status == 0:
-            print("Launcher requirements installed successfully")
-            print("Please relaunch the launcher once it exits")
-            exit(InstallerExitCodes.SUCCESS)
+    if args.install_reqs:
+        if pip is None:
+            print("It appears pip is not installed! I need pip for installing requirements!")
+            exit(InstallerExitCodes.NOPIP)
+        if not IS_WINDOWS and not IS_MAC and distro is None:
+            print("You are missing some requirements for using the launcher!")
+            print("Attempting to fix this now...")
+            status = pip.main(["install", "-U", "-r", "launcher-requirements.txt"])
+            if status == 0:
+                print("Launcher requirements installed successfully")
+                print("Please relaunch the launcher once it exits")
+                exit(InstallerExitCodes.SUCCESS)
+            else:
+                print("Error with installing requirements, error code {}".format(status))
+                exit(InstallerExitCodes.PIPFAILED)
+        if IS_WINDOWS:
+            print(
+                "In order to properly install requirements on Windows, "
+                "you need to use the powershell script (launch-install-win.ps1)"
+            )
+        elif IS_MAC:
+            do_mac_install()
         else:
-            print("Error with installing requirements, error code {}".format(status))
-            exit(InstallerExitCodes.PIPFAILED)
-    if IS_WINDOWS:
-        do_windows_install()
-    elif IS_MAC:
-        do_mac_install()
-    else:
-        do_linux_install()
+            do_linux_install()
+    if args.setup_red and args.update_red:
+        print("Conflicting arguments --setup-red and --update-red! I can't do both at the same time!")
+        exit(InstallerExitCodes.ARGCONFLICT)
+
+    if args.setup_red:
+        pass
+    elif args.update_red:
+        pass
