@@ -115,7 +115,7 @@ if __name__ == '__main__':
         ask_sentry(red)
 
     if red.db.enable_sentry():
-        init_sentry_logging(sentry_log)
+        init_sentry_logging(red, sentry_log)
 
     loop = asyncio.get_event_loop()
     cleanup_tasks = True
