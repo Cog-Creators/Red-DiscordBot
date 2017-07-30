@@ -24,11 +24,11 @@ class NoModuleFound(CogManagerException):
 
 
 class CogManager:
-    def __init__(self, paths: Tuple[str]=()):
+    def __init__(self, paths: Tuple[str]=(), bot_dir: Path=Path.cwd()):
         self.conf = Config.get_conf(self, 2938473984732, True)
         self.conf.register_global(
             paths=(),
-            install_path="cogs"
+            install_path=str(bot_dir.resolve() / "cogs")
         )
 
         self._paths = set(list(self.conf.paths()) + list(paths))
