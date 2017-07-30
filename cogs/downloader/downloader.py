@@ -21,12 +21,6 @@ from .checks import install_agreement
 
 
 class Downloader:
-
-    COG_PATH = Path.cwd() / "cogs"
-    LIB_PATH = Path.cwd() / "lib"
-    SHAREDLIB_PATH = LIB_PATH / "cog_shared"
-    SHAREDLIB_INIT = SHAREDLIB_PATH / "__init__.py"
-
     def __init__(self, bot: Red):
         self.bot = bot
 
@@ -39,6 +33,11 @@ class Downloader:
         )
 
         self.already_agreed = False
+
+        self.COG_PATH = self.bot.cog_mgr.install_path
+        self.LIB_PATH = self.bot.main_dir / "lib"
+        self.SHAREDLIB_PATH = self.LIB_PATH / "cog_shared"
+        self.SHAREDLIB_INIT = self.SHAREDLIB_PATH / "__init__.py"
 
         self.LIB_PATH.mkdir(parents=True, exist_ok=True)
         self.SHAREDLIB_PATH.mkdir(parents=True, exist_ok=True)
