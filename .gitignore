@@ -1,0 +1,9 @@
+*.json
+*.pyc
+__pycache__
+*.exe
+*.dll
+*.log
+*.tmp
+.data
+lib/
