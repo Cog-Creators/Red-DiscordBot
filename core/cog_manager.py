@@ -41,7 +41,7 @@ class CogManager:
         """
         paths = [Path(p) for p in self._paths]
         if self.install_path not in paths:
-            paths.append(self.install_path)
+            paths.insert(0, self.install_path)
         return tuple(p.resolve() for p in paths if p.is_dir())
 
     @property
@@ -163,12 +163,17 @@ class CogManagerUI:
         """
         Lists current cog paths in order of priority.
         """
+        install_path = ctx.bot.cog_mgr.install_path
         cog_paths = ctx.bot.cog_mgr.paths
-        msg = []
-        for i, p in enumerate(cog_paths, start=1):
-            msg.append("{}. {}".format(i, p))
+        cog_paths = cog_paths[1:]  # Install path is always first
 
-        msg = "\n".join(msg)
+        msg = "Install Path: {}\n\n".format(install_path)
+
+        partial = []
+        for i, p in enumerate(cog_paths, start=1):
+            partial.append("{}. {}".format(i, p))
+
+        msg += "\n".join(partial)
         await ctx.send(box(msg))
 
     @commands.command()
