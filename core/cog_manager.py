@@ -39,7 +39,7 @@ class CogManager:
         This will return all currently valid path directories.
         :return:
         """
-        paths = [Path(p) for p in self._paths]
+        paths = [Path(p) for p in self._paths] + [self.install_path]
         return tuple(p.resolve() for p in paths if p.is_dir())
 
     @property
@@ -48,7 +48,7 @@ class CogManager:
         Returns the install path for 3rd party cogs.
         :return:
         """
-        p = self.conf.install_path()
+        p = Path(self.conf.install_path())
         return p.resolve()
 
     async def set_install_path(self, path: Path) -> Path:
@@ -61,7 +61,7 @@ class CogManager:
         if not path.is_dir():
             raise ValueError("The install path must be an existing directory.")
         resolved = path.resolve()
-        await self.conf.install_path.set(resolved)
+        await self.conf.install_path.set(str(resolved))
         return resolved
 
     @staticmethod
