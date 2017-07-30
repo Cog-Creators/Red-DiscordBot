@@ -336,7 +336,7 @@ class Economy:
 
     @commands.group()
     @commands.guild_only()
-    @checks.admin_or_permissions(manage_guild=True)
+    @check_global_setting_admin()
     async def economyset(self, ctx: commands.Context):
         """Changes economy module settings"""
         guild = ctx.guild
