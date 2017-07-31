@@ -187,6 +187,10 @@ def determine_main_folder() -> Path:
     return Path(os.path.dirname(__file__)).resolve().parent
 
 
+def setup_cog_install_location(red: Red):
+    pass
+
+
 def setup(cli_flags, bot_dir: Path) -> Tuple[Red, str, logging.Logger, logging.Logger]:
     log, sentry_log = init_loggers(cli_flags)
     description = "Red v3 - Alpha"
@@ -215,6 +219,8 @@ def setup(cli_flags, bot_dir: Path) -> Tuple[Red, str, logging.Logger, logging.L
             sys.exit(1)
 
     sentry_setup(red, sentry_log)
+
+    setup_cog_install_location(red)
     return red, token, log, sentry_log
 
 
@@ -254,6 +260,9 @@ def basic_setup():
 
     print("You have chosen {} to be your data directory."
           "".format(default_data_dir))
+    if not confirm("Please confirm (y/n):"):
+        print("Please start the process over.")
+        sys.exit(0)
 
     default_dirs = deepcopy(basic_config_default)
     default_dirs['DATA_PATH'] = str(default_data_dir.resolve())
