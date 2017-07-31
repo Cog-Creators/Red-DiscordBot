@@ -99,6 +99,9 @@ class CogManager:
         if not path.is_dir():
             raise InvalidPath("'{}' is not a valid directory.".format(path))
 
+        if path == self.install_path:
+            raise ValueError("Cannot add the install path as an additional path.")
+
         all_paths = set(self.paths + (path, ))
         # noinspection PyTypeChecker
         await self.set_paths(all_paths)
@@ -165,7 +168,7 @@ class CogManagerUI:
         """
         install_path = ctx.bot.cog_mgr.install_path
         cog_paths = ctx.bot.cog_mgr.paths
-        cog_paths = cog_paths[1:]  # Install path is always first
+        cog_paths = [p for p in cog_paths if p != install_path]
 
         msg = "Install Path: {}\n\n".format(install_path)
 
@@ -187,8 +190,12 @@ class CogManagerUI:
                            " point to a valid directory.")
             return
 
-        await ctx.bot.cog_mgr.add_path(path)
-        await ctx.send("Path successfully added.")
+        try:
+            await ctx.bot.cog_mgr.add_path(path)
+        except ValueError as e:
+            await ctx.send(str(e))
+        else:
+            await ctx.send("Path successfully added.")
 
     @commands.command()
     @checks.is_owner()
