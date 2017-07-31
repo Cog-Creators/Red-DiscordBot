@@ -22,7 +22,7 @@ def interactive_config(red, token_set, prefix_set):
                 print("That doesn't look like a valid token.")
                 token = ""
             if token:
-                loop.run_until_complete(red.db.set("token", token))
+                loop.run_until_complete(red.db.token.set(token))
 
     if not prefix_set:
         prefix = ""
@@ -39,7 +39,7 @@ def interactive_config(red, token_set, prefix_set):
                 if not confirm("> "):
                     prefix = ""
             if prefix:
-                loop.run_until_complete(red.db.set("prefix", [prefix]))
+                loop.run_until_complete(red.db.prefix.set([prefix]))
 
     ask_sentry(red)
 
@@ -55,9 +55,9 @@ def ask_sentry(red: Red):
           " found issues in a timely manner. If you wish to opt in\n"
           " the process please type \"yes\":\n")
     if not confirm("> "):
-        loop.run_until_complete(red.db.set("enable_sentry", False))
+        loop.run_until_complete(red.db.enable_sentry.set(False))
     else:
-        loop.run_until_complete(red.db.set("enable_sentry", True))
+        loop.run_until_complete(red.db.enable_sentry.set(True))
         print("\nThank you for helping us with the development process!")
 
 
