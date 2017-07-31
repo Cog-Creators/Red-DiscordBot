@@ -20,6 +20,9 @@ from core.sentry_setup import init_sentry_logging
 
 import appdirs
 
+_proj_name = "Red-DiscordBot"
+_author = "Twentysix26 et al."
+
 
 def confirm(m=""):
     return input(m).lower().strip() in ("y", "yes")
@@ -188,7 +191,15 @@ def determine_main_folder() -> Path:
 
 
 def setup_cog_install_location(red: Red):
-    pass
+    print("\nWe're now giving you the opportunity to choose your"
+          " cog install directory. This is the directory that our"
+          " Downloader cog will install 3rd party cogs to. We've tried"
+          " to provide a sane default below, if you don't want to change"
+          " it please press [ENTER] otherwise enter your desired"
+          " cog install path.\n\n")
+
+    data_path = core_data_path() / "installed_cogs"
+    print("Default: {}".format(data_path))
 
 
 def setup(cli_flags, bot_dir: Path) -> Tuple[Red, str, logging.Logger, logging.Logger]:
@@ -229,10 +240,8 @@ def basic_setup():
     Creates the data storage folder.
     :return:
     """
-    proj_name = "Red-DiscordBot"
-    author = "Twentysix26 et al."
 
-    default_data_dir = Path(appdirs.user_data_dir(proj_name, author))
+    default_data_dir = Path(appdirs.user_data_dir(_proj_name, _author))
 
     print("Hello! Before we begin the full configuration process we need to"
           " gather some initial information about where you'd like us"
@@ -275,7 +284,7 @@ def basic_setup():
     print("Your configuration file has been saved to this directory:"
           "\n\n{}\n\nFrom here on out you must run Red with the"
           " configuration file as a positional argument. You may"
-          " move the configuration file wherever you wish.".format(
+          " move the configuration file wherever you wish.\n".format(
               conf_path
           ))
 
