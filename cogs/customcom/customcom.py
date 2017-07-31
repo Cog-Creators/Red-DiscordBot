@@ -19,7 +19,7 @@ class CustomCommands:
         self.key = 414589031223512
         self.config = Config.get_conf(self.__class__.__name__,
                                       self.key)
-        self.config.register_guild()
+        self.config.register_guild(commands={})
 
     @commands.group(aliases=["cc"], no_pm=True)
     @commands.guild_only()
@@ -45,8 +45,8 @@ class CustomCommands:
         # self.config.register_guild() takes care of this
         # if guild.id not in self.c_commands:
         #     self.c_commands[guild.id] = {}
-        if not self.config.guild(ctx.guild).get(command):
-            await self.config.guild(ctx.guild).set(command, text)
+        if not self.config.guild(ctx.guild).commands.get_attr(command):
+            await self.config.guild(ctx.guild).commands.set_attr(command, text)
             await ctx.send("Custom command successfully added.")
         else:
             await ctx.send("This command already exists. Use "
@@ -63,8 +63,8 @@ class CustomCommands:
         guild = ctx.message.guild
         command = command.lower()
         cmdlist = self.c_commands[guild.id]
-        if self.config.guild(ctx.guild).get(command):
-            await self.config.guild(ctx.guild).set(command, text)
+        if self.config.guild(ctx.guild).commands.get_attr(command):
+            await self.config.guild(ctx.guild).commands.set_attr(command, text)
             await ctx.send("Custom command successfully edited.")
         else:
             await ctx.send("That command doesn't exist. Use "
@@ -85,8 +85,8 @@ class CustomCommands:
         guild = ctx.message.guild
         command = command.lower()
 
-        if self.config.guild(ctx.guild).get(command):
-            await self.config.guild(ctx.guild).set(command, None)
+        if self.config.guild(ctx.guild).commands.get_attr(command):
+            await self.config.guild(ctx.guild).commands.set_attr(command, None)
             await ctx.send("Custom command successfully deleted.")
         else:
             await ctx.send("That command doesn't exist.")
@@ -99,6 +99,8 @@ class CustomCommands:
     async def cc_list(self, ctx):
         """Shows custom commands list"""
 
+        await ctx.send(str(self.config.guild(ctx.guild).commands()))
+
         await ctx.send("Not available yet. Sorry.")
 
         return
@@ -107,7 +109,7 @@ class CustomCommands:
 
         # Need info on grabbing whole config for guild
 
-        commands = self.c_commands.get(guild.id, {})
+        commands = self.config.guild(ctx.guild).commands(None)
 
         if not commands:
             await ctx.send("There are no custom commands in this guild."
@@ -130,10 +132,12 @@ class CustomCommands:
             return
 
         guild = message.guild
-        prefixes = self.bot.db.guild(message.guild).get('prefix')
+        prefixes = self.bot.db.guild(message.guild).get_attr('prefix')
 
         if len(prefixes) < 1:
-            return
+            def_prefixes = await self.bot.get_prefix(message)
+            for prefix in def_prefixes:
+                prefixes.append(prefix)
 
         # user_allowed check, will be replaced with self.bot.user_allowed or
         # something similar once it's added
@@ -148,8 +152,12 @@ class CustomCommands:
 
         if user_allowed:
             cmd = message.content[len(prefix):]
-            regular = self.config.guild(message.guild).get(cmd)
-            lowercase = self.config.guild(message.guild).get(cmd.lower())
+            regular = self.config.guild(message.guild).commands.get_attr(cmd)
+            lowercase = self.config.guild(
+                message.guild
+            ).commands.get_attr(
+                cmd.lower()
+            )
             if regular:
                 cmd = regular
                 cmd = self.format_cc(cmd, message)
