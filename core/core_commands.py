@@ -41,7 +41,7 @@ class Core:
             await ctx.send("Failed to load package. Check your console or "
                            "logs for details.")
         else:
-            await ctx.bot.save_packages_status()
+            await ctx.bot.add_loaded_package(cog_name)
             await ctx.send("Done.")
 
     @commands.group()
@@ -50,7 +50,7 @@ class Core:
         """Unloads a package"""
         if cog_name in ctx.bot.extensions:
             ctx.bot.unload_extension(cog_name)
-            await ctx.bot.save_packages_status()
+            await ctx.bot.remove_loaded_package(cog_name)
             await ctx.send("Done.")
         else:
             await ctx.send("That extension is not loaded.")

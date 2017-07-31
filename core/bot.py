@@ -99,15 +99,19 @@ class Red(commands.Bot):
         """Lists packages present in the cogs the folder"""
         return os.listdir("cogs")
 
-    async def save_packages_status(self):
-        # TODO: This is going to have to change.
-        """
-        loaded = []
-        for package in self.extensions:
-            if package.startswith("cogs."):
-                loaded.append(package)
-        await self.db.packages.set(loaded)
-        """
+    async def save_packages_status(self, packages):
+        await self.db.packages.set(packages)
+
+    async def add_loaded_package(self, pkg_name: str):
+        curr_pkgs = self.db.packages()
+        if pkg_name not in curr_pkgs:
+            curr_pkgs.append(pkg_name)
+            await self.save_packages_status(curr_pkgs)
+
+    async def remove_loaded_package(self, pkg_name: str):
+        curr_pkgs = self.db.packages()
+        if pkg_name in curr_pkgs:
+            await self.save_packages_status([p for p in curr_pkgs if p != pkg_name])
 
     def load_extension(self, spec: ModuleSpec):
         name = spec.name.split('.')[-1]
