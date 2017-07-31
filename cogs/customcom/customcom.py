@@ -7,7 +7,53 @@ from core.utils.chat_formatting import box
 import os
 import re
 
-# ASK HOW TO RETREIVE THE WHOLE CONFIG!!!!!
+
+class CCError(Exception):
+    pass
+
+
+class NotFound(CCError):
+    pass
+
+
+class AlreadyExists(CCError):
+    pass
+
+
+class CommandObj:
+
+    def __init__(self, **kwargs):
+        self.bot = kwargs.get('bot')
+        self.command = kwargs.get('command')
+        self.response = kwargs.get('response', None)
+        self.author = kwargs.get('author', None)
+        self.guild = kwargs.get('guild')
+        self.editor = kwargs.get('editor', None)
+        config = kwargs.get('config')
+        self.db = config.guild(self.guild).commands
+
+    @staticmethod
+    async def get_commands(config):
+        commands = config.commands()
+        return str({k: v for k, v in commands.items() if commands[k]})
+
+    async def create(self):
+        if self.db.get_attr(self.command):
+            raise AlreadyExists()
+        await self.db.set_attr(self.command,
+                               self.response)
+
+    async def edit(self, response):
+        if not self.db.get_attr(self.command):
+            raise NotFound()
+        await self.db.set_attr(self.command,
+                               response)
+
+    async def delete(self):
+        if not self.db.get_attr(self.command):
+            raise NotFound()
+        await self.db.set_attr(self.command,
+                               None)
 
 
 class CustomCommands:
@@ -37,18 +83,21 @@ class CustomCommands:
         CCs can be enhanced with arguments:
         https://twentysix26.github.io/Red-Docs/red_guide_command_args/
         """
-        guild = ctx.message.guild
+        guild = ctx.guild
         command = command.lower()
         if command in self.bot.all_commands:
             await ctx.send("That command is already a standard command.")
             return
-        # self.config.register_guild() takes care of this
-        # if guild.id not in self.c_commands:
-        #     self.c_commands[guild.id] = {}
-        if not self.config.guild(ctx.guild).commands.get_attr(command):
-            await self.config.guild(ctx.guild).commands.set_attr(command, text)
+        customcom = CommandObj(bot=self.bot,
+                               command=command,
+                               response=text,
+                               author=ctx.message.author,
+                               guild=ctx.guild,
+                               config=self.config)
+        try:
+            await customcom.create()
             await ctx.send("Custom command successfully added.")
-        else:
+        except AlreadyExists:
             await ctx.send("This command already exists. Use "
                            "`{}customcom edit` to edit it."
                            "".format(ctx.prefix))
@@ -62,19 +111,19 @@ class CustomCommands:
         """
         guild = ctx.message.guild
         command = command.lower()
-        cmdlist = self.c_commands[guild.id]
-        if self.config.guild(ctx.guild).commands.get_attr(command):
-            await self.config.guild(ctx.guild).commands.set_attr(command, text)
+        customcom = CommandObj(bot=self.bot,
+                               command=command,
+                               response=text,
+                               editor=ctx.message.author,
+                               guild=ctx.guild,
+                               config=self.config)
+        try:
+            await customcom.edit(text)
             await ctx.send("Custom command successfully edited.")
-        else:
+        except NotFound:
             await ctx.send("That command doesn't exist. Use "
                            "`{}customcom add` to add it."
                            "".format(ctx.prefix))
-
-        # If there are no custom commands in this guild
-        # await ctx.send("There are no custom commands in this guild."
-        #                " Use `{}customcom add` to start adding some."
-        #                "".format(ctx.prefix))
 
     @customcom.command(name="delete")
     @checks.mod_or_permissions(administrator=True)
@@ -84,24 +133,24 @@ class CustomCommands:
         [p]customcom delete yourcommand"""
         guild = ctx.message.guild
         command = command.lower()
+        customcom = CommandObj(bot=self.bot,
+                               command=command,
+                               guild=ctx.guild,
+                               config=self.config)
 
-        if self.config.guild(ctx.guild).commands.get_attr(command):
-            await self.config.guild(ctx.guild).commands.set_attr(command, None)
+        try:
+            await customcom.delete()
             await ctx.send("Custom command successfully deleted.")
-        else:
+        except NotFound:
             await ctx.send("That command doesn't exist.")
-        # If there are no custom commands in this guild
-        # await ctx.send("There are no custom commands in this guild."
-        #                " Use `{}customcom add` to start adding some."
-        #                "".format(ctx.prefix))
 
     @customcom.command(name="list")
     async def cc_list(self, ctx):
         """Shows custom commands list"""
 
-        await ctx.send(str(self.config.guild(ctx.guild).commands()))
+        response = await CommandObj.get_commands(self.config.guild(ctx.guild))
 
-        await ctx.send("Not available yet. Sorry.")
+        await ctx.send(response)
 
         return
 
