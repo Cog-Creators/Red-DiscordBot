@@ -198,8 +198,27 @@ def setup_cog_install_location(red: Red):
           " it please press [ENTER] otherwise enter your desired"
           " cog install path.\n\n")
 
-    data_path = core_data_path() / "installed_cogs"
-    print("Default: {}".format(data_path))
+    data_path = core_data_path().parent / "installed_cogs"
+    print("Default: {}\n".format(data_path))
+
+    new_path = input('> ')
+
+    if new_path != '':
+        new_path = Path(new_path)
+        data_path = new_path
+
+    if not data_path.exists():
+        try:
+            data_path.mkdir(parents=True, exist_ok=True)
+        except OSError:
+            print("We were unable to create your chosen directory."
+                  " You may need to restart this process with admin"
+                  " privileges.\n\nFor now we'll be using the built-in"
+                  " 'cogs' folder as your install folder.")
+            data_path = determine_main_folder() / 'cogs'
+
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(red.cog_mgr.set_install_path(data_path))
 
 
 def setup(cli_flags, bot_dir: Path) -> Tuple[Red, str, logging.Logger, logging.Logger]:
