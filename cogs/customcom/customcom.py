@@ -41,7 +41,7 @@ class CommandObj:
 
     async def get(self,
                   message: discord.Message,
-                  command: str)
+                  command: str):
         ccinfo = self.db(message.guild).commands.get_attr(command)
         if not ccinfo:
             raise NotFound
