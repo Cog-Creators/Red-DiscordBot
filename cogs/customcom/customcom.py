@@ -3,6 +3,8 @@ from discord.ext import commands
 from core import Config, checks
 from core.utils.chat_formatting import box
 
+from datetime import datetime
+
 
 import os
 import re
@@ -23,37 +25,78 @@ class AlreadyExists(CCError):
 class CommandObj:
 
     def __init__(self, **kwargs):
-        self.bot = kwargs.get('bot')
-        self.command = kwargs.get('command')
-        self.response = kwargs.get('response', None)
-        self.author = kwargs.get('author', None)
-        self.guild = kwargs.get('guild')
-        self.editor = kwargs.get('editor', None)
         config = kwargs.get('config')
-        self.db = config.guild(self.guild).commands
+        self.db = config.guild
 
     @staticmethod
     async def get_commands(config):
         commands = config.commands()
-        return str({k: v for k, v in commands.items() if commands[k]})
+        customcommands = {k: v for k, v in commands.items() if commands[k]}
+        return str(customcommands)
 
-    async def create(self):
-        if self.db.get_attr(self.command):
+    def get_now(self):
+        # Get current time as a string, for 'created_at' and 'edited_at' fields
+        # in the ccinfo dict
+        return '{:%d/%m/%Y %H:%M:%S}'.format(datetime.utcnow())
+
+    async def get(self,
+                  message: discord.Message,
+                  command: str)
+        ccinfo = self.db(message.guild).commands.get_attr(command)
+        if not ccinfo:
+            raise NotFound
+        else:
+            return ccinfo['response']
+
+    async def create(self,
+                     ctx: commands.Context,
+                     command: str,
+                     response):
+        """Create a customcommand"""
+        # Check if this command is already registered as a customcommand
+        if self.db(ctx.guild).commands.get_attr(command):
             raise AlreadyExists()
-        await self.db.set_attr(self.command,
-                               self.response)
+        author = ctx.message.author
+        ccinfo = {
+            'author': {
+                'id': author.id,
+                'name': author.name
+            },
+            'command': command,
+            'created_at': self.get_now(),
+            'editors': [],
+            'response': response
 
-    async def edit(self, response):
-        if not self.db.get_attr(self.command):
-            raise NotFound()
-        await self.db.set_attr(self.command,
-                               response)
+        }
+        await self.db(ctx.guild).commands.set_attr(command,
+                                                   ccinfo)
 
-    async def delete(self):
-        if not self.db.get_attr(self.command):
+    async def edit(self,
+                   ctx: commands.Context,
+                   command: str,
+                   response):
+        # Check if this command is registered
+        if not self.db(ctx.guild).commands.get_attr(command):
             raise NotFound()
-        await self.db.set_attr(self.command,
-                               None)
+        author = ctx.message.author
+        ccinfo = self.db(ctx.guild).commands.get_attr(command)
+        ccinfo['response'] = response
+        ccinfo['edited_at'] = self.get_now()
+        if author.id not in ccinfo['editors']:
+            ccinfo['editors'].append(
+                author.id
+            )
+        await self.db(ctx.guild).commands.set_attr(command,
+                                                   ccinfo)
+
+    async def delete(self,
+                     ctx: commands.Context,
+                     command: str):
+        # Check if this command is registered
+        if not self.db(ctx.guild).commands.get_attr(command):
+            raise NotFound()
+        await self.db(ctx.guild).commands.set_attr(command,
+                                                   None)
 
 
 class CustomCommands:
@@ -66,6 +109,7 @@ class CustomCommands:
         self.config = Config.get_conf(self.__class__.__name__,
                                       self.key)
         self.config.register_guild(commands={})
+        self.commandobj = CommandObj(config=self.config)
 
     @commands.group(aliases=["cc"], no_pm=True)
     @commands.guild_only()
@@ -88,14 +132,10 @@ class CustomCommands:
         if command in self.bot.all_commands:
             await ctx.send("That command is already a standard command.")
             return
-        customcom = CommandObj(bot=self.bot,
-                               command=command,
-                               response=text,
-                               author=ctx.message.author,
-                               guild=ctx.guild,
-                               config=self.config)
         try:
-            await customcom.create()
+            await self.commandobj.create(ctx=ctx,
+                                         command=command,
+                                         response=text)
             await ctx.send("Custom command successfully added.")
         except AlreadyExists:
             await ctx.send("This command already exists. Use "
@@ -111,14 +151,11 @@ class CustomCommands:
         """
         guild = ctx.message.guild
         command = command.lower()
-        customcom = CommandObj(bot=self.bot,
-                               command=command,
-                               response=text,
-                               editor=ctx.message.author,
-                               guild=ctx.guild,
-                               config=self.config)
+
         try:
-            await customcom.edit(text)
+            await self.commandobj.edit(ctx=ctx,
+                                       command=command,
+                                       response=text)
             await ctx.send("Custom command successfully edited.")
         except NotFound:
             await ctx.send("That command doesn't exist. Use "
@@ -133,13 +170,9 @@ class CustomCommands:
         [p]customcom delete yourcommand"""
         guild = ctx.message.guild
         command = command.lower()
-        customcom = CommandObj(bot=self.bot,
-                               command=command,
-                               guild=ctx.guild,
-                               config=self.config)
-
         try:
-            await customcom.delete()
+            await self.commandobj.delete(ctx=ctx,
+                                         command=command)
             await ctx.send("Custom command successfully deleted.")
         except NotFound:
             await ctx.send("That command doesn't exist.")
@@ -201,20 +234,13 @@ class CustomCommands:
 
         if user_allowed:
             cmd = message.content[len(prefix):]
-            regular = self.config.guild(message.guild).commands.get_attr(cmd)
-            lowercase = self.config.guild(
-                message.guild
-            ).commands.get_attr(
-                cmd.lower()
-            )
-            if regular:
-                cmd = regular
-                cmd = self.format_cc(cmd, message)
-                await message.channel.send(cmd)
-            elif lowercase:
-                cmd = lowercase
-                cmd = self.format_cc(cmd, message)
-                await message.channel.send(cmd)
+            try:
+                await self.commandobj.get(message=message,
+                                          command=cmd)
+            except NotFound:
+                return
+            response = self.format_cc(command, message)
+            await message.channel.send(response)
 
     def format_cc(self, command, message):
         results = re.findall("\{([^}]+)\}", command)
