@@ -44,7 +44,6 @@ youtube_dl_options = {
     'format': 'bestaudio/best',
     'extractaudio': True,
     'audioformat': "mp3",
-    'outtmpl': '%(id)s',
     'nocheckcertificate': True,
     'ignoreerrors': True,
     'quiet': True,
@@ -194,7 +193,6 @@ class Playlist:
                     is_server_owner,
                     is_admin,
                     is_mod))
-
 
     # def __del__() ?
 
@@ -1192,17 +1190,19 @@ class Audio:
         dumped = self._dump_cache()
         await self.bot.say("Dumped {:.3f} MB of audio files.".format(dumped))
 
-    @cache.command(name="minimum")
-    async def cache_minimum(self):
-        """Current minimum cache size, based on server count."""
-        await self.bot.say("The cache will be at least {:.3f} MB".format(
-            self._cache_min()))
-
-    @cache.command(name="size")
-    async def cache_size(self):
-        """Current size of the cache."""
-        await self.bot.say("Cache is currently at {:.3f} MB.".format(
-            self._cache_size()))
+    @cache.command(name='stats')
+    async def cache_stats(self):
+        """Reports info about the cache.
+            - Current size of the cache.
+            - Maximum cache size. User setting or minimum, whichever is higher.
+            - Minimum cache size. Automatically determined by number of servers Red is running on.
+        """
+        await self.bot.say("Cache stats:\n"
+                           "Current size: {:.2f} MB\n"
+                           "Maximum: {:.1f} MB\n"
+                           "Minimum: {:.1f} MB".format(self._cache_size(),
+                                                       self._cache_max(),
+                                                       self._cache_min()))
 
     @commands.group(pass_context=True, hidden=True, no_pm=True)
     @checks.is_owner()
@@ -1564,7 +1564,6 @@ class Audio:
         self._delete_playlist(server, name)
         await self.bot.say("Playlist deleted.")
 
-
     @playlist.command(pass_context=True, no_pm=True, name="start")
     async def playlist_start(self, ctx, name):
         """Plays a playlist."""
@@ -1831,7 +1830,6 @@ class Audio:
         is_server_owner = member == server.owner
         is_admin = discord.utils.get(member.roles, name=admin_role) is not None
         is_mod = discord.utils.get(member.roles, name=mod_role) is not None
-
 
         nonbots = sum(not m.bot for m in member.voice_channel.voice_members)
         alone = nonbots <= 1
@@ -2199,6 +2197,7 @@ def check_files():
                         "Adding " + str(key) + " field to audio settings.json")
             dataIO.save_json(settings_path, current)
 
+
 def verify_ffmpeg_avconv():
     try:
         subprocess.call(["ffmpeg", "-version"], stdout=subprocess.DEVNULL)
@@ -2213,6 +2212,7 @@ def verify_ffmpeg_avconv():
         return False
     else:
         return "avconv"
+
 
 def setup(bot):
     check_folders()
@@ -2237,10 +2237,10 @@ def setup(bot):
         else:
             msg = "Neither ffmpeg nor avconv are installed"
         raise RuntimeError(
-          "{}.\nConsult the guide for your operating system "
-          "and do ALL the steps in order.\n"
-          "https://twentysix26.github.io/Red-Docs/\n"
-          "".format(msg))
+            "{}.\nConsult the guide for your operating system "
+            "and do ALL the steps in order.\n"
+            "https://twentysix26.github.io/Red-Docs/\n"
+            "".format(msg))
 
     n = Audio(bot, player=player)  # Praise 26
     bot.add_cog(n)
