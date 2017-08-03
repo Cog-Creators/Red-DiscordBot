@@ -422,7 +422,7 @@ class Streams:
             session = aiohttp.ClientSession()
             url = base_url + ",".join(streams_list)
             async with session.get(url, headers=header) as r:
-                data = await r.json()
+                data = await r.json(encoding='utf-8')
             if r.status == 200:
                 results.extend(data["users"])
             elif r.status == 400:
