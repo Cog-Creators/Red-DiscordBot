@@ -44,8 +44,14 @@ async def test_add_path(cog_mgr, tmpdir):
 @pytest.mark.asyncio
 async def test_add_path_already_install_path(cog_mgr, tmpdir):
     path = Path(str(tmpdir))
-
     await cog_mgr.set_install_path(path)
-
     with pytest.raises(ValueError):
         await cog_mgr.add_path(path)
+
+
+@pytest.mark.asyncio
+async def test_remove_path(cog_mgr, tmpdir):
+    path = Path(str(tmpdir))
+    await cog_mgr.add_path(path)
+    await cog_mgr.remove_path(path)
+    assert path not in cog_mgr.paths
