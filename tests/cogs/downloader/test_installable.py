@@ -5,7 +5,7 @@ from cogs.downloader.installable import Installable, InstallableType
 from pathlib import Path
 
 INFO_JSON = {
-    "_author": (
+    "author": (
         "tekulvw",
     ),
     "bot_version": (3, 0, 0),
