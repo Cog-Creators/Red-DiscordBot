@@ -9,8 +9,9 @@ import datetime
 import time
 import aiohttp
 import asyncio
-
-settings = {"POLL_DURATION" : 60}
+import os
+from .utils import checks
+from .utils.dataIO import dataIO
 
 
 class RPS(Enum):
@@ -37,6 +38,7 @@ class General:
 
     def __init__(self, bot):
         self.bot = bot
+        self.settings = dataIO.load_json("data/general/settings.json")
         self.stopwatches = {}
         self.ball = ["As I see it, yes", "It is certain", "It is decidedly so", "Most likely", "Outlook good",
                      "Signs point to yes", "Without a doubt", "Yes", "Yes – definitely", "You may rely on it", "Reply hazy, try again",
@@ -348,6 +350,24 @@ class General:
         else:
             await self.bot.say("A poll is already ongoing in this channel.")
 
+    @checks.mod_or_permissions(manage_messages=True)
+    @commands.group(pass_context=True)
+    async def genset(self, ctx):
+        """Settings for general commands"""
+        if ctx.invoked_subcommand is None:
+            await self.bot.send_cmd_help(ctx)
+
+    @genset.command(pass_context=True, name="polltime")
+    async def genset_polltime(self, ctx, time: int):
+        """Set the length of time to run a poll for"""
+        server = ctx.message.server
+        if server.id not in self.settings:
+            self.settings[server.id] = {}
+        if time:
+            self.settings[server.id]["POLL_DURATION"] = time
+        await self.bot.say("Poll time set!")
+        dataIO.save_json("data/general/settings.json", self.settings)
+
     async def endpoll(self, message):
         if self.getPollByChannel(message):
             p = self.getPollByChannel(message)
@@ -379,8 +399,10 @@ class General:
 class NewPoll():
     def __init__(self, message, text, main):
         self.channel = message.channel
+        self.server = message.server
         self.author = message.author.id
         self.client = main.bot
+        self.settings = main.settings
         self.poll_sessions = main.poll_sessions
         msg = [ans.strip() for ans in text.split(";")]
         if len(msg) < 2: # Needs at least one question and 2 choices
@@ -403,7 +425,8 @@ class NewPoll():
             msg += "{}. *{}*\n".format(id, data["ANSWER"])
         msg += "\nType the number to vote!"
         await self.client.send_message(self.channel, msg)
-        await asyncio.sleep(settings["POLL_DURATION"])
+        sleep_time = self.settings[self.server.id]["POLL_DURATION"] if self.server.id in self.settings else self.settings["DEFAULT"]["POLL_DURATION"]
+        await asyncio.sleep(sleep_time)
         if self.valid:
             await self.endPoll()
 
@@ -427,7 +450,20 @@ class NewPoll():
         except ValueError:
             pass
 
+
+def check_folder():
+    if not os.path.isdir("data/general"):
+        os.mkdir("data/general")
+
+
+def check_file():
+    if not dataIO.is_valid_json("data/general/settings.json"):
+        dataIO.save_json("data/general/settings.json", {"DEFAULT": {"POLL_DURATION": 60}})
+
+
 def setup(bot):
+    check_folder()
+    check_file()
     n = General(bot)
     bot.add_listener(n.check_poll_votes, "on_message")
     bot.add_cog(n)
