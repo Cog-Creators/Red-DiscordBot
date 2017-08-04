@@ -390,6 +390,10 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
         else:
             bot.logger.exception(type(error).__name__, exc_info=error)
 
+    @bot.event
+    async def on_error(error_event, *args, **kwargs):
+        bot.logger.error("Error in event: {}".format(error_event), exc_info=sys.exc_info())
+
     return bot
 
 
