@@ -219,6 +219,7 @@ def setup_cog_install_location(red: Red):
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(red.cog_mgr.set_install_path(data_path))
+    loop.run_until_complete(red.cog_mgr.conf.install_path_set.set(True))
 
 
 def setup(cli_flags, bot_dir: Path) -> Tuple[Red, str, logging.Logger, logging.Logger]:
@@ -250,7 +251,8 @@ def setup(cli_flags, bot_dir: Path) -> Tuple[Red, str, logging.Logger, logging.L
 
     sentry_setup(red, sentry_log)
 
-    setup_cog_install_location(red)
+    if not red.cog_mgr.conf.install_path_set():
+        setup_cog_install_location(red)
     return red, token, log, sentry_log
 
 

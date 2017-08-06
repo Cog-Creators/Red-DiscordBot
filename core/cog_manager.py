@@ -28,7 +28,8 @@ class CogManager:
         self.conf = Config.get_conf(self, 2938473984732, True)
         self.conf.register_global(
             paths=(),
-            install_path=str(bot_dir.resolve() / "cogs")
+            install_path=str(bot_dir.resolve() / "cogs"),
+            install_path_set=False
         )
 
         self._paths = set(list(self.conf.paths()) + list(paths))
