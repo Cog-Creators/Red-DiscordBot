@@ -130,6 +130,13 @@ class Group(Value):
 
     def all(self) -> dict:
         """
+        Gets all data from current User/Member/Guild etc.
+        :return:
+        """
+        return self()
+
+    def all_from_kind(self) -> dict:
+        """
         Gets all entries of the given kind. If this kind is member
             then this method returns all members from the same
             server.
