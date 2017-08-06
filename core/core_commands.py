@@ -69,7 +69,7 @@ class Core:
             await ctx.send("Failed to reload package. Check your console or "
                            "logs for details.")
         else:
-            await ctx.bot.save_packages_status()
+            await ctx.bot.remove_loaded_package(cog_name)
             await ctx.send("Done.")
 
     def cleanup_and_refresh_modules(self, module_name: str):
