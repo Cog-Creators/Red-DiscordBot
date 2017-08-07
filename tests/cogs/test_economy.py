@@ -7,6 +7,7 @@ def bank(config):
     Config.get_conf = lambda *args, **kwargs: config
 
     from core import bank
+    bank._register_defaults()
     return bank
 
 

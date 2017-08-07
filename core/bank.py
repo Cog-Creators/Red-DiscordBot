@@ -38,10 +38,16 @@ _bank_type = type("Bank", (object,), {})
 Account = namedtuple("Account", "name balance created_at")
 
 _conf = Config.get_conf(_bank_type(), 384734293238749, force_registration=True)
-_conf.register_global(**_DEFAULT_GLOBAL)
-_conf.register_guild(**_DEFAULT_GUILD)
-_conf.register_member(**_DEFAULT_MEMBER)
-_conf.register_user(**_DEFAULT_USER)
+
+
+def _register_defaults():
+    _conf.register_global(**_DEFAULT_GLOBAL)
+    _conf.register_guild(**_DEFAULT_GUILD)
+    _conf.register_member(**_DEFAULT_MEMBER)
+    _conf.register_user(**_DEFAULT_USER)
+
+
+_register_defaults()
 
 
 def _encoded_current_time() -> int:
