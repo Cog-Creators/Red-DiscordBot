@@ -173,11 +173,9 @@ def download_ffmpeg():
     else:
         url = "{1}{0}/static/ffmpeg-latest-{0}-static.zip".format("win32", FFMPEG_BUILDS_URL)
         filename = "ffmpeg-latest-{0}-static.zip".format("win32")
-
+    print(url)
     print("Downloading FFmpeg...")
-    with urllib.request.urlopen(url) as data:
-        with open(filename, "wb") as f:
-            f.write(data.read())
+    subprocess.call(["powershell", "wget", url, "-OutFile", filename])
     print("Extracting the needed files...")
     with zipfile.ZipFile(filename) as ffzip:
         with ffzip.open("{}/bin/ffmpeg.exe".format(filename[:-4])) as f:
@@ -189,7 +187,7 @@ def download_ffmpeg():
         with ffzip.open("{}/bin/ffprobe.exe".format(filename[:-4])) as f:
             with open(os.path.join(os.getcwd(), "ffprobe.exe"), "wb") as fout:
                 fout.write(f.read())
-    os.remove(os.path.join(os.getcwd, filename))
+    os.remove(os.path.join(os.getcwd(), filename))
     print("Done downloading FFmpeg")
 
 
