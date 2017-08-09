@@ -8,7 +8,7 @@ try:                                        # Older Pythons lack this
 except ImportError:
     pass
 import platform
-import webbrowser
+import zipfile
 import hashlib
 import argparse
 import shutil
@@ -34,12 +34,6 @@ IS_MAC = sys.platform == "darwin"
 IS_64BIT = platform.machine().endswith("64")
 INTERACTIVE_MODE = not len(sys.argv) > 1  # CLI flags = non-interactive
 PYTHON_OK = sys.version_info >= (3, 5)
-
-FFMPEG_FILES = {
-    "ffmpeg.exe"  : "e0d60f7c0d27ad9d7472ddf13e78dc89",
-    "ffplay.exe"  : "d100abe8281cbcc3e6aebe550c675e09",
-    "ffprobe.exe" : "0e84b782c0346a98434ed476e937764f"
-}
 
 
 def parse_cli_arguments():
@@ -170,48 +164,33 @@ def reset_red(reqs=False, data=False, cogs=False, git_reset=False):
             print("The repair has failed.")
 
 
-def download_ffmpeg(bitness):
+def download_ffmpeg():
     clear_screen()
-    repo = "https://github.com/Twentysix26/Red-DiscordBot/raw/master/"
-    verified = []
 
-    if bitness == "32bit":
-        print("Please download 'ffmpeg 32bit static' from the page that "
-              "is about to open.\nOnce done, open the 'bin' folder located "
-              "inside the zip.\nThere should be 3 files: ffmpeg.exe, "
-              "ffplay.exe, ffprobe.exe.\nPut all three of them into the "
-              "bot's main folder.")
-        time.sleep(4)
-        webbrowser.open(FFMPEG_BUILDS_URL)
-        return
+    if IS_64BIT:
+        url = "{1}{0}/static/ffmpeg-latest-{0}-static.zip".format("win64", FFMPEG_BUILDS_URL)
+        filename = "ffmpeg-latest-{0}-static.zip".format("win64")
+    else:
+        url = "{1}{0}/static/ffmpeg-latest-{0}-static.zip".format("win32", FFMPEG_BUILDS_URL)
+        filename = "ffmpeg-latest-{0}-static.zip".format("win32")
 
-    for filename in FFMPEG_FILES:
-        if os.path.isfile(filename):
-            print("{} already present. Verifying integrity... "
-                  "".format(filename), end="")
-            _hash = calculate_md5(filename)
-            if _hash == FFMPEG_FILES[filename]:
-                verified.append(filename)
-                print("Ok")
-                continue
-            else:
-                print("Hash mismatch. Redownloading.")
-        print("Downloading {}... Please wait.".format(filename))
-        with urllib.request.urlopen(repo + filename) as data:
-            with open(filename, "wb") as f:
-                f.write(data.read())
-        print("Download completed.")
-
-    for filename, _hash in FFMPEG_FILES.items():
-        if filename in verified:
-            continue
-        print("Verifying {}... ".format(filename), end="")
-        if not calculate_md5(filename) != _hash:
-            print("Passed.")
-        else:
-            print("Hash mismatch. Please redownload.")
-
-    print("\nAll files have been downloaded.")
+    print("Downloading FFmpeg...")
+    with urllib.request.urlopen(url) as data:
+        with open(filename, "wb") as f:
+            f.write(data.read())
+    print("Extracting the needed files...")
+    with zipfile.ZipFile(filename) as ffzip:
+        with ffzip.open("{}/bin/ffmpeg.exe".format(filename[:-4])) as f:
+            with open(os.path.join(os.getcwd(), "ffmpeg.exe"), "wb") as fout:
+                fout.write(f.read())
+        with ffzip.open("{}/bin/ffplay.exe".format(filename[:-4])) as f:
+            with open(os.path.join(os.getcwd(), "ffplay.exe"), "wb") as fout:
+                fout.write(f.read())
+        with ffzip.open("{}/bin/ffprobe.exe".format(filename[:-4])) as f:
+            with open(os.path.join(os.getcwd(), "ffprobe.exe"), "wb") as fout:
+                fout.write(f.read())
+    os.remove(os.path.join(os.getcwd, filename))
+    print("Done downloading FFmpeg")
 
 
 def verify_requirements():
@@ -246,9 +225,7 @@ def requirements_menu():
         print("2. Install basic requirements")
         if IS_WINDOWS:
             print("\nffmpeg (required for audio):")
-            print("3. Install ffmpeg 32bit")
-            if IS_64BIT:
-                print("4. Install ffmpeg 64bit (recommended on Windows 64bit)")
+            print("3. Install ffmpeg")
         print("\n0. Go back")
         choice = user_choice()
         if choice == "1":
@@ -258,10 +235,7 @@ def requirements_menu():
             install_reqs(audio=False)
             wait()
         elif choice == "3" and IS_WINDOWS:
-            download_ffmpeg(bitness="32bit")
-            wait()
-        elif choice == "4" and (IS_WINDOWS and IS_64BIT):
-            download_ffmpeg(bitness="64bit")
+            download_ffmpeg()
             wait()
         elif choice == "0":
             break
