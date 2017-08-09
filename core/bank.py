@@ -209,8 +209,9 @@ def get_guild_accounts(guild: discord.Guild) -> Generator[Account, None, None]:
 
     accs = _conf.member(guild.owner).all()
     for user_id, acc in accs.items():
-        acc['created_at'] = _decode_time(acc['created_at'])
-        yield Account(**acc)
+        acc_data = acc.copy()  # There ya go kowlin
+        acc_data['created_at'] = _decode_time(acc_data['created_at'])
+        yield Account(**acc_data)
 
 
 def get_global_accounts(user: discord.User) -> Generator[Account, None, None]:
@@ -226,8 +227,9 @@ def get_global_accounts(user: discord.User) -> Generator[Account, None, None]:
 
     accs = _conf.user(user).all()  # this is a dict of user -> acc
     for user_id, acc in accs.items():
-        acc['created_at'] = _decode_time(acc['created_at'])
-        yield Account(**acc)
+        acc_data = acc.copy()
+        acc_data['created_at'] = _decode_time(acc_data['created_at'])
+        yield Account(**acc_data)
 
 
 def get_account(member: Union[discord.Member, discord.User]) -> Account:
@@ -237,11 +239,11 @@ def get_account(member: Union[discord.Member, discord.User]) -> Account:
     :return:
     """
     if is_global():
-        acc_data = deepcopy(_conf.user(member)())
-        default = deepcopy(_DEFAULT_USER)
+        acc_data = _conf.user(member)().copy()
+        default = _DEFAULT_USER.copy()
     else:
-        acc_data = deepcopy(_conf.member(member)())
-        default = deepcopy(_DEFAULT_MEMBER)
+        acc_data = _conf.member(member)().copy()
+        default = _DEFAULT_MEMBER.copy()
 
     if acc_data == {}:
         acc_data = default
