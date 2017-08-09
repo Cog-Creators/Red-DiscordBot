@@ -8,7 +8,7 @@ import discord
 from discord.ext import commands
 
 from cogs.mod.common import is_admin_or_superior
-from core import Config, checks
+from core import Config, checks, modlog
 from core.bot import Red
 from .errors import UnauthorizedCaseEdit, CaseMessageNotFound, NoModLogChannel, \
     NoModLogAccess, CaseTypeNotEnabled, InvalidCaseType
@@ -212,20 +212,22 @@ class ModLog:
                        mod: discord.Member=None, user: discord.abc.User,
                        reason: str=None, until: datetime=None, channel: discord.TextChannel=None) -> bool:
         """Creates a new case in the mod log
-        :param server
-        :param action
-        :param mod
-        :param user
-        :param reason
-        :param until
-        :param channel
+        :param discord.Guild server: the server this case is to be associated with
+        :param str action: The action taken for this case
+        :param discord.Member mod: The moderator that took this action
+        :param discord.abc.User user: The user the action was taken against
+        :param str reason: The reason this action was taken
+        :param datetime until: When this action expires
+        :param discord.TextChannel channel: The channel this action applies to
 
-        :return bool
+        :return: True if creating the case was successful, otherwise False
+        :rtype bool:
 
-        :raises cogs.modlog.errors.InvalidCaseType
-        :raises cogs.modlog.errors.CaseTypeNotEnabled
-        :raises cogs.modlog.errors.NoModLogChannel
-        :raises discord.Forbidden"""
+        :raises cogs.modlog.errors.InvalidCaseType: if the case type is invalid
+        :raises cogs.modlog.errors.CaseTypeNotEnabled: if the case type is not enabled for this server
+        :raises cogs.modlog.errors.NoModLogChannel: if no mod log channel has been set for this server
+        :raises discord.Forbidden: if the bot does not have permissions to post the mod log message
+        """
         # Check if case type has been registered; if it hasn't, raise an exception
         action_name = action.__name__
         if action_name not in self.settings.get("casetypes"):
@@ -310,7 +312,7 @@ class ModLog:
           should default to being on or off. If False, new cases will not be created by default
         It is recommended to trigger this in __init__ for the cog that needs a new casetype and
         to only register if it hasn't been registered previously.
-        :returns: bool
+        :return: True on success
         :raises: InvalidCaseType
         """
         action_module = action.__module__

@@ -1,5 +1,6 @@
 import discord
 from core import Config
+from core.utils.chat_formatting import bold
 from collections import namedtuple
 from typing import List
 from datetime import datetime
@@ -21,11 +22,6 @@ _DEFAULT_GUILD = {
 
 _modlog_type = type("ModLog", (object,), {})
 
-Case = namedtuple(
-    "Case",
-    "guild case_number action_type created_at modified_at channel "
-    "reason until user moderator amended_by"
-)
 
 _conf = Config.get_conf(_modlog_type(), 1354799444)
 
@@ -38,7 +34,7 @@ def _register_defaults():
 _register_defaults()
 
 
-def get_case(case_number: int) -> Case:
+def get_case(case_number: int) -> None:
     """
     Gets the case with the associated case number
     :param int case_number: The case number for the case to get
@@ -53,7 +49,7 @@ async def create_case(guild: discord.Guild, created_at: datetime,
                       action_type: str, user: discord.User,
                       moderator: discord.Member, reason: str=None,
                       until: datetime=None, channel: discord.TextChannel=None
-                      ) -> Case:
+                      ) -> bool:
     """
     Creates a new case
     :param discord.Guild guild: The guild the action was taken in
@@ -64,8 +60,8 @@ async def create_case(guild: discord.Guild, created_at: datetime,
     :param str reason: The reason the action was taken
     :param datetime until: The time the action is in effect until
     :param discord.TextChannel channel: The channel the action was taken in
-    :return: the created case
-    :rtype: Case
+    :return: True if successful
+    :rtype: bool
     :raises RuntimeError: if the action type is not registered or the mod log channel doesn't exist
     """
     data = {
@@ -76,7 +72,9 @@ async def create_case(guild: discord.Guild, created_at: datetime,
         "moderator": moderator.id,
         "reason": reason,
         "until": until,
-        "channel": channel.id if hasattr(channel, "id") else None
+        "channel": channel.id if hasattr(channel, "id") else None,
+        "message": None,
+        "modified_at": None
     }
 
     try:
@@ -86,6 +84,69 @@ async def create_case(guild: discord.Guild, created_at: datetime,
     if not is_casetype(action_type):
         raise RuntimeError("That action type is not registered!")
 
+    next_case_number = len(_conf.guild(guild).cases()) + 1
+    data["case_number"] = next_case_number
+    to_send = _format_case_msg(
+        next_case_number, action_type, user,
+        moderator, int(created_at.timestamp()), int(until.timestamp()),
+        None, reason, None)
+    msg = await mod_channel.send(to_send)
+    data["message"] = msg.id
+    await _conf.guild(guild).cases.set_attr(str(next_case_number), data)
+    return True
+
+
+def _format_case_msg(
+        case_number: int, action_type: str, user: discord.User,
+        moderator: discord.Member, created_at: int, until: int,
+        amended_by: discord.Member=None, reason: str=None,
+        modified_at: int=None) -> str:
+    """
+    Format a case message from info provided. Should never be called
+        outside of :func create_case: and :func edit_case:
+    :param case_number:
+    :param action_type:
+    :param user:
+    :param moderator:
+    :param created_at:
+    :param until:
+    :param amended_by:
+    :param reason:
+    :param modified_at:
+    :return:
+    """
+    case_type = ""
+    case_type += "{} | {}\n".format(
+        bold("Case #{}".format(case_number)),
+        get_case_type_repr(action_type))
+    case_type += "**User:** {}#{} ({})\n".format(
+        user.name, user.discriminator, user.id)
+    case_type += "**Moderator:** {}#{} ({})\n".format(
+        moderator.name, moderator.discriminator, moderator.id
+    )
+
+    if until:
+        start = datetime.fromtimestamp(created_at)
+        end = datetime.fromtimestamp(until)
+        end_fmt = end.strftime('%Y-%m-%d %H:%M:%S UTC')
+        duration = end - start
+        dur_fmt = _strfdelta(duration)
+        case_type += ("**Until:** {}\n"
+                      "**Duration:** {}\n").format(end_fmt, dur_fmt)
+    if amended_by:
+        case_type += "**Amended by:** {}#{} ({})\n".format(
+            amended_by.name, amended_by.discriminator, amended_by.id)
+    if modified_at:
+        case_type += "**Last modified**: {}\n".format(
+            datetime.fromtimestamp(
+                modified_at
+            ).strftime('%Y-%m-%d %H:%M:%S UTC')
+        )
+    if reason:
+        case_type += "**Reason:** {}".format(reason)
+    else:
+        case_type += "**Reason:** Type [p]reason {} <reason> to add it".format(case)
+    return case_type
 
 
 async def edit_case(case_number: int, new_data: dict) -> Case:
@@ -119,6 +180,11 @@ async def register_casetype(new_type: dict) -> bool:
     """
     case_name = new_type["name"]
     default_setting = new_type["default"]
+    case_repr = new_type["type_image"]
+    data = {
+        "default_setting": default_setting,
+        "image": case_repr
+    }
     if is_casetype(case_name):
         raise RuntimeError(
             "A case type with that name has already been registered!"
@@ -193,11 +259,19 @@ def get_case_type_status(case_type: str, guild: discord.Guild) -> bool:
     :raises RuntimeError: if the specified case type is not registered
     """
     if is_casetype(case_type):
-        return _conf.guild(guild).casetypes.get_attr(
-            case_type, _conf.casetypes.get_attr(case_type)
-        )
+        default = _conf.casetypes.get_attr(case_type, resolve=False).default_setting()
+        return _conf.guild(guild).casetypes.get_attr(case_type, default)
     else:
         raise RuntimeError("That case type is not registered!")
+
+
+def get_case_type_repr(case_type: str) -> str:
+    """
+    Gets the string representation of a case type
+    :param str case_type: the case type to get the representation of
+    :return: The case type's representation
+    """
+    return _conf.casetypes.get_attr(case_type, resolve=False).image()
 
 
 async def reset_cases(guild: discord.Guild) -> bool:
@@ -208,3 +282,24 @@ async def reset_cases(guild: discord.Guild) -> bool:
     """
     await _conf.guild(guild).cases.set({})
     return True
+
+
+def _strfdelta(delta):
+    s = []
+    if delta.days:
+        ds = '%i day' % delta.days
+        if delta.days > 1:
+            ds += 's'
+        s.append(ds)
+    hrs, rem = divmod(delta.seconds, 60*60)
+    if hrs:
+        hs = '%i hr' % hrs
+        if hrs > 1:
+            hs += 's'
+        s.append(hs)
+    mins, secs = divmod(rem, 60)
+    if mins:
+        s.append('%i min' % mins)
+    if secs:
+        s.append('%i sec' % secs)
+    return ' '.join(s)
