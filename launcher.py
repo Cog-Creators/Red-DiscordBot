@@ -175,7 +175,10 @@ def download_ffmpeg():
         filename = "ffmpeg-latest-{0}-static.zip".format("win32")
     print(url)
     print("Downloading FFmpeg...")
-    subprocess.call(["powershell", "wget", url, "-OutFile", filename])
+    req = urllib.request.Request(url, headers={'User-Agent': 'Red-DiscordBotLauncher/v2'})
+    with urllib.request.urlopen(req) as r:
+        with open(filename, "wb") as fout:
+            fout.write(r.read())
     print("Extracting the needed files...")
     with zipfile.ZipFile(filename) as ffzip:
         with ffzip.open("{}/bin/ffmpeg.exe".format(filename[:-4])) as f:
