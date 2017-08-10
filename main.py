@@ -1,15 +1,10 @@
-from core.bot import Red, ExitCodes
-from core.global_checks import init_global_checks
-from core.events import init_events
-from core.sentry_setup import init_sentry_logging
-from core.cli import interactive_config, confirm, parse_cli_flags, ask_sentry
-from core.core_commands import Core
-from core.dev_commands import Dev
+from pathlib import Path
+
+from core.bot import ExitCodes
+from core.data_manager import load_basic_configuration
+from core.cli import confirm, parse_cli_flags, setup, basic_setup, determine_main_folder
 import asyncio
 import discord
-import logging.handlers
-import logging
-import os
 import sys
 
 #
@@ -25,78 +20,15 @@ if discord.version_info.major < 1:
     sys.exit(1)
 
 
-def init_loggers(cli_flags):
-    # d.py stuff
-    dpy_logger = logging.getLogger("discord")
-    dpy_logger.setLevel(logging.WARNING)
-    console = logging.StreamHandler()
-    console.setLevel(logging.WARNING)
-    dpy_logger.addHandler(console)
-
-    # Red stuff
-
-    logger = logging.getLogger("red")
-
-    red_format = logging.Formatter(
-        '%(asctime)s %(levelname)s %(module)s %(funcName)s %(lineno)d: '
-        '%(message)s',
-        datefmt="[%d/%m/%Y %H:%M]")
-
-    stdout_handler = logging.StreamHandler(sys.stdout)
-    stdout_handler.setFormatter(red_format)
-
-    if cli_flags.debug:
-        os.environ['PYTHONASYNCIODEBUG'] = '1'
-        logger.setLevel(logging.DEBUG)
-    else:
-        logger.setLevel(logging.WARNING)
-
-    fhandler = logging.handlers.RotatingFileHandler(
-        filename='red.log', encoding='utf-8', mode='a',
-        maxBytes=10**7, backupCount=5)
-    fhandler.setFormatter(red_format)
-
-    logger.addHandler(fhandler)
-    logger.addHandler(stdout_handler)
-
-    # Sentry stuff
-    sentry_logger = logging.getLogger("red.sentry")
-    sentry_logger.setLevel(logging.WARNING)
-
-    return logger, sentry_logger
-
-
 if __name__ == '__main__':
     cli_flags = parse_cli_flags()
-    log, sentry_log = init_loggers(cli_flags)
-    description = "Red v3 - Alpha"
-    red = Red(cli_flags, description=description, pm_help=None)
-    init_global_checks(red)
-    init_events(red, cli_flags)
 
-    red.add_cog(Core())
+    if cli_flags.config:
+        load_basic_configuration(Path(cli_flags.config).resolve())
+    else:
+        basic_setup()
 
-    if cli_flags.dev:
-        red.add_cog(Dev())
-
-    token = os.environ.get("RED_TOKEN", red.db.token())
-    prefix = cli_flags.prefix or red.db.prefix()
-
-    if token is None or not prefix:
-        if cli_flags.no_prompt is False:
-            new_token = interactive_config(red, token_set=bool(token),
-                                           prefix_set=bool(prefix))
-            if new_token:
-                token = new_token
-        else:
-            log.critical("Token and prefix must be set in order to login.")
-            sys.exit(1)
-
-    if red.db.enable_sentry() is None:
-        ask_sentry(red)
-
-    if red.db.enable_sentry():
-        init_sentry_logging(sentry_log)
+    red, token, log, sentry_log = setup(cli_flags, determine_main_folder())
 
     loop = asyncio.get_event_loop()
     cleanup_tasks = True

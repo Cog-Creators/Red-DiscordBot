@@ -21,12 +21,6 @@ from .checks import install_agreement
 
 
 class Downloader:
-
-    COG_PATH = Path.cwd() / "cogs"
-    LIB_PATH = Path.cwd() / "lib"
-    SHAREDLIB_PATH = LIB_PATH / "cog_shared"
-    SHAREDLIB_INIT = SHAREDLIB_PATH / "__init__.py"
-
     def __init__(self, bot: Red):
         self.bot = bot
 
@@ -40,6 +34,10 @@ class Downloader:
 
         self.already_agreed = False
 
+        self.LIB_PATH = self.bot.main_dir / "lib"
+        self.SHAREDLIB_PATH = self.LIB_PATH / "cog_shared"
+        self.SHAREDLIB_INIT = self.SHAREDLIB_PATH / "__init__.py"
+
         self.LIB_PATH.mkdir(parents=True, exist_ok=True)
         self.SHAREDLIB_PATH.mkdir(parents=True, exist_ok=True)
         if not self.SHAREDLIB_INIT.exists():
@@ -50,6 +48,14 @@ class Downloader:
             syspath.insert(1, str(self.LIB_PATH))
 
         self._repo_manager = RepoManager(self.conf)
+
+    @property
+    def cog_install_path(self):
+        """
+        Returns the current cog install path.
+        :return:
+        """
+        return self.bot.cog_mgr.install_path
 
     @property
     def installed_cogs(self) -> Tuple[Installable]:
@@ -96,7 +102,7 @@ class Downloader:
         """
         failed = []
         for cog in cogs:
-            if not await cog.copy_to(self.COG_PATH):
+            if not await cog.copy_to(self.cog_install_path):
                 failed.append(cog)
 
         # noinspection PyTypeChecker
@@ -243,7 +249,7 @@ class Downloader:
                            " `{}`: `{}`".format(cog.name, cog.requirements))
             return
 
-        await repo_name.install_cog(cog, self.COG_PATH)
+        await repo_name.install_cog(cog, self.cog_install_path)
 
         await self._add_to_installed(cog)
 
@@ -260,7 +266,7 @@ class Downloader:
         # noinspection PyUnresolvedReferences,PyProtectedMember
         real_name = cog_name.name
 
-        poss_installed_path = self.COG_PATH / real_name
+        poss_installed_path = self.cog_install_path / real_name
         if poss_installed_path.exists():
             await self._delete_cog(poss_installed_path)
             # noinspection PyTypeChecker

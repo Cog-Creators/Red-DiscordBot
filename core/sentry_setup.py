@@ -1,9 +1,6 @@
 from raven import Client, breadcrumbs
 from raven.versioning import fetch_git_sha
-from raven.conf import setup_logging
 from raven.handlers.logging import SentryHandler
-
-from pathlib import Path
 
 __all__ = ("init_sentry_logging", "should_log")
 
@@ -27,12 +24,12 @@ include_paths = (
 client = None
 
 
-def init_sentry_logging(logger):
+def init_sentry_logging(bot, logger):
     global client
     client = Client(
         dsn=("https://27f3915ba0144725a53ea5a99c9ae6f3:87913fb5d0894251821dcf06e5e9cfe6@"
              "sentry.telemetry.red/19?verify_ssl=0"),
-        release=fetch_git_sha(str(Path.cwd()))
+        release=fetch_git_sha(str(bot.main_dir))
     )
 
     breadcrumbs.ignore_logger("websockets")
