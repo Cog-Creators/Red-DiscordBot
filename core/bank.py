@@ -207,7 +207,7 @@ def get_guild_accounts(guild: discord.Guild) -> Generator[Account, None, None]:
     if is_global():
         raise RuntimeError("The bank is currently global.")
 
-    accs = _conf.member(guild.owner).all()
+    accs = _conf.member(guild.owner).all_from_kind()
     for user_id, acc in accs.items():
         acc_data = acc.copy()  # There ya go kowlin
         acc_data['created_at'] = _decode_time(acc_data['created_at'])
@@ -225,7 +225,7 @@ def get_global_accounts(user: discord.User) -> Generator[Account, None, None]:
     if not is_global():
         raise RuntimeError("The bank is not currently global.")
 
-    accs = _conf.user(user).all()  # this is a dict of user -> acc
+    accs = _conf.user(user).all_from_kind()  # this is a dict of user -> acc
     for user_id, acc in accs.items():
         acc_data = acc.copy()
         acc_data['created_at'] = _decode_time(acc_data['created_at'])
