@@ -61,7 +61,7 @@ class Dev:
             'ctx': ctx,
             'channel': ctx.channel,
             'author': ctx.author,
-            'server': ctx.guild,
+            'guild': ctx.guild,
             'message': ctx.message
         }
 
@@ -102,7 +102,7 @@ class Dev:
             'ctx': ctx,
             'channel': ctx.channel,
             'author': ctx.author,
-            'server': ctx.guild,
+            'guild': ctx.guild,
             'message': ctx.message,
             '_': self._last_result
         }
@@ -152,7 +152,7 @@ class Dev:
             'ctx': ctx,
             'bot': ctx.bot,
             'message': ctx.message,
-            'server': ctx.guild,
+            'guild': ctx.guild,
             'channel': ctx.channel,
             'author': ctx.author,
             '_': None,

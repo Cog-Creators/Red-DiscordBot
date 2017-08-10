@@ -17,21 +17,27 @@ def monkeysession(request):
     mpatch.undo()
 
 
-@pytest.fixture(scope="module")
+@pytest.fixture()
 def json_driver(tmpdir_factory):
+    import uuid
+    rand = str(uuid.uuid4())
+    path = Path(str(tmpdir_factory.mktemp(rand)))
     driver = red_json.JSON(
         "PyTest",
-        data_path_override=Path(str(tmpdir_factory.getbasetemp()))
+        data_path_override=path
     )
     return driver
 
 
 @pytest.fixture()
 def config(json_driver):
-    return Config(
+    import uuid
+    conf = Config(
         cog_name="PyTest",
-        unique_identifier=0,
+        unique_identifier=str(uuid.uuid4()),
         driver_spawn=json_driver)
+    yield conf
+    conf.defaults = {}
 
 
 @pytest.fixture()
@@ -39,19 +45,32 @@ def config_fr(json_driver):
     """
     Mocked config object with force_register enabled.
     """
-    return Config(
+    import uuid
+    conf = Config(
         cog_name="PyTest",
-        unique_identifier=0,
+        unique_identifier=str(uuid.uuid4()),
         driver_spawn=json_driver,
         force_registration=True
     )
+    yield conf
+    conf.defaults = {}
 
 
 #region Dpy Mocks
-@pytest.fixture(scope="module")
-def empty_guild():
+@pytest.fixture()
+def guild_factory():
     mock_guild = namedtuple("Guild", "id members")
-    return mock_guild(random.randint(1, 999999999), [])
+
+    class GuildFactory:
+        def get(self):
+            return mock_guild(random.randint(1, 999999999), [])
+
+    return GuildFactory()
+
+
+@pytest.fixture()
+def empty_guild(guild_factory):
+    return guild_factory.get()
 
 
 @pytest.fixture(scope="module")
@@ -66,16 +85,40 @@ def empty_role():
     return mock_role(random.randint(1, 999999999))
 
 
-@pytest.fixture(scope="module")
-def empty_member(empty_guild):
-    mock_member = namedtuple("Member", "id guild")
-    return mock_member(random.randint(1, 999999999), empty_guild)
+@pytest.fixture()
+def member_factory(guild_factory):
+    mock_member = namedtuple("Member", "id guild display_name")
+
+    class MemberFactory:
+        def get(self):
+            return mock_member(
+                random.randint(1, 999999999),
+                guild_factory.get(),
+                'Testing_Name')
+
+    return MemberFactory()
 
 
-@pytest.fixture(scope="module")
-def empty_user():
+@pytest.fixture()
+def empty_member(member_factory):
+    return member_factory.get()
+
+
+@pytest.fixture()
+def user_factory():
     mock_user = namedtuple("User", "id")
-    return mock_user(random.randint(1, 999999999))
+
+    class UserFactory:
+        def get(self):
+            return mock_user(
+                random.randint(1, 999999999))
+
+    return UserFactory()
+
+
+@pytest.fixture()
+def empty_user(user_factory):
+    return user_factory.get()
 
 
 @pytest.fixture(scope="module")
@@ -84,7 +127,7 @@ def empty_message():
     return mock_msg("No content.")
 
 
-@pytest.fixture
+@pytest.fixture()
 def ctx(empty_member, empty_channel, red):
     mock_ctx = namedtuple("Context", "author guild channel message bot")
     return mock_ctx(empty_member, empty_member.guild, empty_channel,
@@ -93,15 +136,14 @@ def ctx(empty_member, empty_channel, red):
 
 
 #region Red Mock
-@pytest.fixture
-def red(monkeysession, config_fr):
+@pytest.fixture()
+def red(config_fr):
     from core.cli import parse_cli_flags
     cli_flags = parse_cli_flags()
 
     description = "Red v3 - Alpha"
 
-    monkeysession.setattr("core.config.Config.get_core_conf",
-                          lambda *args, **kwargs: config_fr)
+    Config.get_core_conf = (lambda *args, **kwargs: config_fr)
 
     red = Red(cli_flags, description=description, pm_help=None)
 

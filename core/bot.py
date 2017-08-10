@@ -10,13 +10,13 @@ class Red(commands.Bot):
     def __init__(self, cli_flags, **kwargs):
         self._shutdown_mode = ExitCodes.CRITICAL
         self.db = Config.get_core_conf(force_registration=True)
+        self._co_owners = cli_flags.co_owner
 
         self.db.register_global(
             token=None,
             prefix=[],
             packages=[],
             owner=None,
-            coowners=[],
             whitelist=[],
             blacklist=[],
             enable_sentry=None
@@ -43,15 +43,18 @@ class Red(commands.Bot):
         if "command_prefix" not in kwargs:
             kwargs["command_prefix"] = prefix_manager
 
+        if cli_flags.owner and "owner_id" not in kwargs:
+            kwargs["owner_id"] = cli_flags.owner
+
         if "owner_id" not in kwargs:
-            kwargs["owner_id"] = self.db.get("owner")
+            kwargs["owner_id"] = self.db.owner()
 
         self.counter = Counter()
         self.uptime = None
         super().__init__(**kwargs)
 
     async def is_owner(self, user):
-        if user.id in self.db.coowners():
+        if user.id in self._co_owners:
             return True
         return await super().is_owner(user)
 
@@ -86,7 +89,7 @@ class Red(commands.Bot):
         for package in self.extensions:
             if package.startswith("cogs."):
                 loaded.append(package)
-        await self.db.set("packages", loaded)
+        await self.db.packages.set(loaded)
 
 
 class ExitCodes(Enum):
