@@ -47,7 +47,7 @@ class Red(commands.Bot):
             kwargs["owner_id"] = cli_flags.owner
 
         if "owner_id" not in kwargs:
-            kwargs["owner_id"] = self.db.get("owner")
+            kwargs["owner_id"] = self.db.owner()
 
         self.counter = Counter()
         self.uptime = None
@@ -89,7 +89,7 @@ class Red(commands.Bot):
         for package in self.extensions:
             if package.startswith("cogs."):
                 loaded.append(package)
-        await self.db.set("packages", loaded)
+        await self.db.packages.set(loaded)
 
 
 class ExitCodes(Enum):

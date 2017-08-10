@@ -99,7 +99,7 @@ class Core:
     @commands.guild_only()
     async def adminrole(self, ctx, *, role: discord.Role):
         """Sets the admin role for this server"""
-        await ctx.bot.db.guild(ctx.guild).set("admin_role", role.id)
+        await ctx.bot.db.guild(ctx.guild).admin_role.set(role.id)
         await ctx.send("The admin role for this server has been set.")
 
     @_set.command()
@@ -107,7 +107,7 @@ class Core:
     @commands.guild_only()
     async def modrole(self, ctx, *, role: discord.Role):
         """Sets the mod role for this server"""
-        await ctx.bot.db.guild(ctx.guild).set("mod_role", role.id)
+        await ctx.bot.db.guild(ctx.guild).mod_role.set(role.id)
         await ctx.send("The mod role for this server has been set.")
 
     @_set.command()
@@ -226,7 +226,7 @@ class Core:
             await ctx.bot.send_cmd_help(ctx)
             return
         prefixes = sorted(prefixes, reverse=True)
-        await ctx.bot.db.set("prefix", prefixes)
+        await ctx.bot.db.prefix.set(prefixes)
         await ctx.send("Prefix set.")
 
     @_set.command(aliases=["serverprefixes"])
@@ -235,11 +235,11 @@ class Core:
     async def serverprefix(self, ctx, *prefixes):
         """Sets Red's server prefix(es)"""
         if not prefixes:
-            await ctx.bot.db.guild(ctx.guild).set("prefix", [])
+            await ctx.bot.db.guild(ctx.guild).prefix.set([])
             await ctx.send("Server prefixes have been reset.")
             return
         prefixes = sorted(prefixes, reverse=True)
-        await ctx.bot.db.guild(ctx.guild).set("prefix", prefixes)
+        await ctx.bot.db.guild(ctx.guild).prefix.set(prefixes)
         await ctx.send("Prefix set.")
 
     @_set.command()
@@ -277,7 +277,7 @@ class Core:
         else:
             if message.content.strip() == token:
                 self.owner.reset_cooldown(ctx)
-                await ctx.bot.db.set("owner", ctx.author.id)
+                await ctx.bot.db.owner.set(ctx.author.id)
                 ctx.bot.owner_id = ctx.author.id
                 await ctx.send("You have been set as owner.")
             else:
