@@ -87,13 +87,14 @@ def empty_role():
 
 @pytest.fixture()
 def member_factory(guild_factory):
-    mock_member = namedtuple("Member", "id guild")
+    mock_member = namedtuple("Member", "id guild display_name")
 
     class MemberFactory:
         def get(self):
             return mock_member(
                 random.randint(1, 999999999),
-                guild_factory.get())
+                guild_factory.get(),
+                'Testing_Name')
 
     return MemberFactory()
 

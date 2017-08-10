@@ -118,17 +118,29 @@ class Group(Value):
 
         return not isinstance(default, dict)
 
-    def get_attr(self, item: str, default=None):
+    def get_attr(self, item: str, default=None, resolve=True):
         """
         You should avoid this function whenever possible.
         :param item:
         :param default:
+        :param resolve:
+            If this is True, actual data will be returned, if false a Group/Value will be returned.
         :return:
         """
         value = getattr(self, item)
-        return value(default=default)
+        if resolve:
+            return value(default=default)
+        else:
+            return value
 
     def all(self) -> dict:
+        """
+        Gets all data from current User/Member/Guild etc.
+        :return:
+        """
+        return self()
+
+    def all_from_kind(self) -> dict:
         """
         Gets all entries of the given kind. If this kind is member
             then this method returns all members from the same

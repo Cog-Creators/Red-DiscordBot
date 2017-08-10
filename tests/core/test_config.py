@@ -278,12 +278,20 @@ async def test_member_clear_all(config, member_factory):
 
 # Get All testing
 @pytest.mark.asyncio
-async def test_user_get_all(config, user_factory):
+async def test_user_get_all_from_kind(config, user_factory):
     for _ in range(5):
         user = user_factory.get()
         await config.user(user).foo.set(True)
 
     user = user_factory.get()
-    all_data = config.user(user).all()
+    all_data = config.user(user).all_from_kind()
 
     assert len(all_data) == 5
+
+
+@pytest.mark.asyncio
+async def test_user_getalldata(config, user_factory):
+    user = user_factory.get()
+    await config.user(user).foo.set(False)
+
+    assert "foo" in config.user(user).all()
