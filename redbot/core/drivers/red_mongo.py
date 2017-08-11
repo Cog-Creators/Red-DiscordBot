@@ -1,6 +1,6 @@
 from typing import Tuple
 
-import pymongo as m
+import motor.motor_asyncio
 from .red_base import BaseDriver
 
 
@@ -11,7 +11,7 @@ class Mongo(BaseDriver):
     def __init__(self, cog_name, host, port=27017, admin_user=None, admin_pass=None,
                  **kwargs):
         super().__init__(cog_name)
-        self.conn = m.MongoClient(host=host, port=port, **kwargs)
+        self.conn = motor.motor_asyncio.AsyncIOMotorClient(host=host, port=port)
 
         self.admin_user = admin_user
         self.admin_pass = admin_pass
