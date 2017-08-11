@@ -38,14 +38,12 @@ def init_events(bot, cli_flags):
 
             for package in packages:
                 try:
-                    bot.load_extension(package)
+                    spec = bot.cog_mgr.find_cog(package)
+                    bot.load_extension(spec)
                 except Exception as e:
                     log.exception("Failed to load package {}".format(package),
                                   exc_info=e)
-                    failed.append(package)
-
-            if failed:
-                await bot.save_packages_status()
+                    await bot.remove_loaded_package(package)
             if packages:
                 print("Loaded packages: " + ", ".join(packages))
 
