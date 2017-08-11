@@ -7,6 +7,17 @@ from .red_base import BaseDriver
 
 
 class JSON(BaseDriver):
+    """
+    Subclass of :py:class:`.red_base.BaseDriver`.
+
+    .. py:attribute:: file_name
+
+        The name of the file in which to store JSON data.
+
+    .. py:attribute:: data_path
+
+        The path in which to store the file indicated by :py:attr:`file_name`.
+    """
     def __init__(self, cog_name, *, data_path_override: Path=None,
                  file_name_override: str="settings.json"):
         super().__init__(cog_name)

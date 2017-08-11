@@ -5,6 +5,9 @@ from .red_base import BaseDriver
 
 
 class Mongo(BaseDriver):
+    """
+    Subclass of :py:class:`.red_base.BaseDriver`.
+    """
     def __init__(self, cog_name, host, port=27017, admin_user=None, admin_pass=None,
                  **kwargs):
         super().__init__(cog_name)
