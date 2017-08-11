@@ -39,59 +39,6 @@ Bank
 ======
 
 .. automodule:: core.bank
+    :members:
 
 .. autoclass:: Account
-
-
-.. autofunction:: get_balance
-
-
-.. autocofunction:: set_balance
-
-
-.. autocofunction:: withdraw_credits
-
-
-.. autocofunction:: deposit_credits
-
-
-.. autocofunction:: transfer_credits(from_, to, amount)
-
-
-.. autofunction:: can_spend
-
-
-.. autocofunction:: wipe_bank
-
-
-.. autofunction:: get_guild_accounts
-
-
-.. autofunction:: get_global_accounts
-
-
-.. autofunction:: get_account
-
-
-.. autofunction:: is_global
-
-
-.. autocofunction:: set_global
-
-
-.. autofunction:: get_bank_name
-
-
-.. autocofunction:: set_bank_name
-
-
-.. autofunction:: get_currency_name
-
-
-.. autocofunction:: set_currency_name
-
-
-.. autofunction:: get_default_balance
-
-
-.. autocofunction:: set_default_balance
