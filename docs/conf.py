@@ -96,6 +96,14 @@ html_theme = 'sphinx_rtd_theme'
 #
 # html_theme_options = {}
 
+html_context = {
+    # Enable the "Edit in GitHub link within the header of each page.
+    'display_github': True,
+    'github_user': 'Cog-Creators',
+    'github_repo': 'Red-DiscordBot',
+    'github_version': 'V3/develop/docs/'
+}
+
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
