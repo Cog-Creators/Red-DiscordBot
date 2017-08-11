@@ -222,7 +222,40 @@ class MemberGroup(Group):
         # noinspection PyTypeChecker
         return self._guild_group()
 
+
 class Config:
+    """
+    You should always use :func:`get_conf` or :func:`get_core_conf` to initialize a Config object.
+
+    .. important::
+        Most config data should be accessed through its respective group method (e.g. :py:meth:`guild`)
+        however the process for accessing global data is a bit different. There is no :python:`global` method
+        because global data is accessed by normal attribute access::
+
+            conf.foo()
+
+    .. py:attribute:: cog_name
+
+        The name of the cog that has requested a :py:class:`.Config` object.
+
+    .. py:attribute:: unique_identifier
+
+        Unique identifier provided to differentiate cog data when name conflicts occur.
+
+    .. py:attribute:: spawner
+
+        A callable object that returns some driver that implements :py:class:`.drivers.red_base.BaseDriver`.
+
+    .. py:attribute:: force_registration
+
+        A boolean that determines if :py:class:`.Config` should throw an error if a cog attempts to access an attribute
+        which has not been previously registered.
+
+        .. note::
+
+            **You should use this.** By enabling force registration you give :py:class:`.Config` the ability to alert
+            you instantly if you've made a typo when attempting to access data.
+    """
     GLOBAL = "GLOBAL"
     GUILD = "GUILD"
     CHANNEL = "TEXTCHANNEL"
@@ -246,13 +279,17 @@ class Config:
                  force_registration=False):
         """
         Returns a Config instance based on a simplified set of initial
-            variables.
+        variables.
+
         :param cog_instance:
-        :param identifier: Any random integer, used to keep your data
+        :param identifier:
+            Any random integer, used to keep your data
             distinct from any other cog with the same name.
-        :param force_registration: Should config require registration
+        :param force_registration:
+            Should config require registration
             of data keys before allowing you to get/set values?
         :return:
+            A new config object.
         """
         cog_name = cog_instance.__class__.__name__
         uuid = str(hash(identifier))
@@ -264,6 +301,16 @@ class Config:
 
     @classmethod
     def get_core_conf(cls, force_registration: bool=False):
+        """
+        All core modules that require a config instance should use this classmethod instead of
+        :py:meth:`get_conf`
+
+        :param int identifier:
+            See :py:meth:`get_conf`
+        :param force_registration:
+            See :py:attr:`force_registration`
+        :type force_registration: Optional[bool]
+        """
         core_data_path = Path.cwd() / 'core' / '.data'
         driver_spawn = JSONDriver("Core", data_path_override=core_data_path)
         return cls(cog_name="Core", driver_spawn=driver_spawn,
@@ -340,22 +387,74 @@ class Config:
             self._update_defaults(to_add, self.defaults[key])
 
     def register_global(self, **kwargs):
+        """
+        Registers default values for attributes you wish to store in :py:class:`.Config` at a global level.
+
+        You can register a single value or multiple values::
+
+            conf.register_global(
+                foo=True
+            )
+
+            conf.register_global(
+                bar=False,
+                baz=None
+            )
+
+        You can also now register nested values::
+
+            defaults = {
+                "foo": {
+                    "bar": True,
+                    "baz": False
+                }
+            }
+
+            # Will register `foo.bar` == True and `foo.baz` == False
+            conf.register_global(
+                **defaults
+            )
+
+        You can do the same thing without a :python:`defaults` dict by using double underscore as a variable
+        name separator::
+
+            # This is equivalent to the previous example
+            conf.register_global(
+                foo__bar=True,
+                foo__baz=False
+            )
+        """
         self._register_default(self.GLOBAL, **kwargs)
 
     def register_guild(self, **kwargs):
+        """
+        Registers default values on a per-guild level. See :py:meth:`register_global` for more details.
+        """
         self._register_default(self.GUILD, **kwargs)
 
     def register_channel(self, **kwargs):
+        """
+        Registers default values on a per-guild level. See :py:meth:`register_global` for more details.
+        """
         # We may need to add a voice channel category later
         self._register_default(self.CHANNEL, **kwargs)
 
     def register_role(self, **kwargs):
+        """
+        Registers default values on a per-guild level. See :py:meth:`register_global` for more details.
+        """
         self._register_default(self.ROLE, **kwargs)
 
     def register_user(self, **kwargs):
+        """
+        Registers default values on a per-guild level. See :py:meth:`register_global` for more details.
+        """
         self._register_default(self.USER, **kwargs)
 
     def register_member(self, **kwargs):
+        """
+        Registers default values on a per-guild level. See :py:meth:`register_global` for more details.
+        """
         self._register_default(self.MEMBER, **kwargs)
 
     def _get_base_group(self, key: str, *identifiers: str,
@@ -369,18 +468,44 @@ class Config:
         )
 
     def guild(self, guild: discord.Guild) -> Group:
+        """
+        Returns a :py:class:`.Group` for the given guild.
+
+        :param discord.Guild guild: A discord.py guild object.
+        """
         return self._get_base_group(self.GUILD, guild.id)
 
     def channel(self, channel: discord.TextChannel) -> Group:
+        """
+        Returns a :py:class:`.Group` for the given channel. This does not currently support differences between
+        text and voice channels.
+
+        :param discord.TextChannel channel: A discord.py text channel object.
+        """
         return self._get_base_group(self.CHANNEL, channel.id)
 
     def role(self, role: discord.Role) -> Group:
+        """
+        Returns a :py:class:`.Group` for the given role.
+
+        :param discord.Role role: A discord.py role object.
+        """
         return self._get_base_group(self.ROLE, role.id)
 
     def user(self, user: discord.User) -> Group:
+        """
+        Returns a :py:class:`.Group` for the given user.
+
+        :param discord.User user: A discord.py user object.
+        """
         return self._get_base_group(self.USER, user.id)
 
     def member(self, member: discord.Member) -> MemberGroup:
+        """
+        Returns a :py:class:`.MemberGroup` for the given member.
+
+        :param discord.Member member: A discord.py member object.
+        """
         return self._get_base_group(self.MEMBER, member.guild.id, member.id,
                                     group_class=MemberGroup)
 
