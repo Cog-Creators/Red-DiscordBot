@@ -9,8 +9,7 @@ from .red_base import BaseDriver
 class JSON(BaseDriver):
     def __init__(self, cog_name, *, data_path_override: Path=None,
                  file_name_override: str="settings.json"):
-        super().__init__()
-        self.cog_name = cog_name
+        super().__init__(cog_name)
         self.file_name = file_name_override
         if data_path_override:
             self.data_path = data_path_override
