@@ -7,7 +7,7 @@ from copy import deepcopy
 
 from core import Config
 
-__all__ = ["get_balance", "set_balance", "withdraw_credits", "deposit_credits",
+__all__ = ["Account", "get_balance", "set_balance", "withdraw_credits", "deposit_credits",
            "can_spend", "transfer_credits", "wipe_bank", "get_guild_accounts",
            "get_global_accounts", "get_account", "is_global", "set_global",
            "get_bank_name", "set_bank_name", "get_currency_name", "set_currency_name",

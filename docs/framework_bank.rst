@@ -40,5 +40,3 @@ Bank
 
 .. automodule:: core.bank
     :members:
-
-.. autoclass:: Account
