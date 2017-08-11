@@ -38,6 +38,14 @@ class Value:
     def identifiers(self):
         return tuple(str(i) for i in self._identifiers)
 
+    async def _get(self, default):
+        driver = self.spawner.get_driver()
+        try:
+            ret = await driver.get(self.identifiers)
+        except KeyError:
+            return default or self.default
+        return ret
+
     def __call__(self, default=None):
         """
         Each :py:class:`Value` object is created by the :py:meth:`Group.__getattr__` method.
@@ -58,13 +66,10 @@ class Value:
             This argument acts as an override for the registered default provided by :py:attr:`default`. This argument
             is ignored if its value is :python:`None`.
         :type default: Optional[object]
+        :return:
+            A coroutine object that must be awaited.
         """
-        driver = self.spawner.get_driver()
-        try:
-            ret = driver.get(self.identifiers)
-        except KeyError:
-            return default or self.default
-        return ret
+        return self._get(default)
 
     async def set(self, value):
         """
@@ -182,7 +187,7 @@ class Group(Value):
 
         return not isinstance(default, dict)
 
-    def get_attr(self, item: str, default=None, resolve=True):
+    async def get_attr(self, item: str, default=None, resolve=True):
         """
         This is available to use as an alternative to using normal Python attribute access. It is required if you find
         a need for dynamic attribute access.
@@ -211,20 +216,20 @@ class Group(Value):
         """
         value = getattr(self, item)
         if resolve:
-            return value(default=default)
+            return await value(default=default)
         else:
             return value
 
-    def all(self) -> dict:
+    async def all(self) -> dict:
         """
         This method allows you to get "all" of a particular group of data. It will return the dictionary of all data
         for a particular Guild/Channel/Role/User/Member etc.
 
         :rtype: dict
         """
-        return self()
+        return await self()
 
-    def all_from_kind(self) -> dict:
+    async def all_from_kind(self) -> dict:
         """
         This method allows you to get all data from all entries in a given Kind. It will return a dictionary of Kind
         ID's -> data.
@@ -232,7 +237,7 @@ class Group(Value):
         :rtype: dict
         """
         # noinspection PyTypeChecker
-        return self._super_group()
+        return await self._super_group()
 
     async def set(self, value):
         if not isinstance(value, dict):
@@ -292,18 +297,18 @@ class MemberGroup(Group):
         )
         return group_obj
 
-    def all_guilds(self) -> dict:
+    async def all_guilds(self) -> dict:
         """
         Returns a dict of :code:`GUILD_ID -> MEMBER_ID -> data`.
 
         :rtype: dict
         """
         # noinspection PyTypeChecker
-        return self._super_group()
+        return await self._super_group()
 
-    def all(self) -> dict:
+    async def all(self) -> dict:
         # noinspection PyTypeChecker
-        return self._guild_group()
+        return await self._guild_group()
 
 
 class Config:
