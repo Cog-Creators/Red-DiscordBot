@@ -6,25 +6,17 @@
 Welcome to Red - Discord Bot's documentation!
 =============================================
 
-
-=============
-Cog Reference
-=============
-
 .. toctree::
     :maxdepth: 2
-    :caption: Contents:
+    :caption: Cog Reference:
 
     cog_downloader
 
-
-===================================
-Red Development Framework Reference
-===================================
 .. toctree::
     :maxdepth: 2
-    :caption: Contents:
+    :caption: Red Development Framework Reference:
 
+    framework_downloader
 
 
 Indices and tables
