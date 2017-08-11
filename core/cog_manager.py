@@ -10,20 +10,15 @@ from core import checks
 from core.config import Config
 from core.utils.chat_formatting import box
 
-
-class CogManagerException(Exception):
-    pass
-
-
-class InvalidPath(CogManagerException):
-    pass
-
-
-class NoModuleFound(CogManagerException):
-    pass
+__all__ = ["CogManager"]
 
 
 class CogManager:
+    """
+    This module allows you to load cogs from multiple directories and even from outside the bot
+    directory. You may also set a directory for downloader to install new cogs to, the default
+    being the :code:`cogs/` folder in the root bot directory.
+    """
     def __init__(self, paths: Tuple[str]=(), bot_dir: Path=Path.cwd()):
         self.conf = Config.get_conf(self, 2938473984732, True)
         self.conf.register_global(
@@ -36,8 +31,7 @@ class CogManager:
     @property
     def paths(self) -> Tuple[Path, ...]:
         """
-        This will return all currently valid path directories.
-        :return:
+        All currently valid path directories.
         """
         paths = [Path(p) for p in self._paths]
         if self.install_path not in paths:
@@ -47,8 +41,7 @@ class CogManager:
     @property
     def install_path(self) -> Path:
         """
-        Returns the install path for 3rd party cogs.
-        :return:
+        The install path for 3rd party cogs.
         """
         p = Path(self.conf.install_path())
         return p.resolve()
@@ -56,9 +49,17 @@ class CogManager:
     async def set_install_path(self, path: Path) -> Path:
         """
         Install path setter, will return the absolute path to
-            the given path.
-        :param path:
-        :return:
+        the given path.
+
+        .. note::
+
+            The bot will not remember your old cog install path which means
+            that ALL PREVIOUSLY INSTALLED COGS will now be unfindable.
+
+        :param pathlib.Path path:
+            The new directory for cog installs.
+        :raises ValueError:
+            If :code:`path` is not an existing directory.
         """
         if not path.is_dir():
             raise ValueError("The install path must be an existing directory.")
@@ -70,8 +71,12 @@ class CogManager:
     def _ensure_path_obj(path: Union[Path, str]) -> Path:
         """
         Guarantees an object will be a path object.
+
         :param path:
-        :return:
+        :type path:
+            pathlib.Path or str
+        :rtype:
+            pathlib.Path
         """
         try:
             path.exists()
@@ -82,13 +87,15 @@ class CogManager:
     async def add_path(self, path: Union[Path, str]):
         """
         Adds a cog path to current list, will ignore duplicates. Does have
-            a side effect of removing all invalid paths from the saved path
-            list.
+        a side effect of removing all invalid paths from the saved path
+        list.
 
-        Will raise InvalidPath if given anything that does not resolve to
-            a directory.
         :param path:
-        :return:
+            Path to add.
+        :type path:
+            pathlib.Path or str
+        :raises ValueError:
+            If :code:`path` does not resolve to an existing directory.
         """
         path = self._ensure_path_obj(path)
 
@@ -97,7 +104,7 @@ class CogManager:
         path = path.resolve()
 
         if not path.is_dir():
-            raise InvalidPath("'{}' is not a valid directory.".format(path))
+            raise ValueError("'{}' is not a valid directory.".format(path))
 
         if path == self.install_path:
             raise ValueError("Cannot add the install path as an additional path.")
@@ -109,8 +116,13 @@ class CogManager:
     async def remove_path(self, path: Union[Path, str]) -> Tuple[Path, ...]:
         """
         Removes a path from the current paths list.
-        :param path:
+
+        :param path: Path to remove.
+        :type path:
+            pathlib.Path or str
         :return:
+            Tuple of new valid paths.
+        :rtype: tuple
         """
         path = self._ensure_path_obj(path)
         all_paths = list(self.paths)
@@ -122,8 +134,9 @@ class CogManager:
     async def set_paths(self, paths_: List[Path]):
         """
         Sets the current paths list.
-        :param paths_:
-        :return:
+
+        :param List[pathlib.Path] paths_:
+            List of paths to set.
         """
         self._paths = paths_
         str_paths = [str(p) for p in paths_]
@@ -131,11 +144,16 @@ class CogManager:
 
     def find_cog(self, name: str) -> ModuleSpec:
         """
-        Finds a cog in the list of available path.
+        Finds a cog in the list of available paths.
 
-        Raises NoModuleFound if unavailable.
         :param name:
+            Name of the cog to find.
+        :raises RuntimeError:
+            If there is no cog with the given name.
         :return:
+            A module spec to be used for specialized cog loading.
+        :rtype:
+            importlib.machinery.ModuleSpec
         """
         resolved_paths = [str(p.resolve()) for p in self.paths]
         for finder, module_name, _ in pkgutil.iter_modules(resolved_paths):
@@ -144,17 +162,16 @@ class CogManager:
                 if spec:
                     return spec
 
-        raise NoModuleFound("No module by the name of '{}' was found"
-                            " in any available path.".format(name))
+        raise RuntimeError("No module by the name of '{}' was found"
+                           " in any available path.".format(name))
 
     @staticmethod
     def invalidate_caches():
         """
         This is an alias for an importlib internal and should be called
-            any time that a new module has been installed to a cog directory.
+        any time that a new module has been installed to a cog directory.
 
-            *I think.*
-        :return:
+        *I think.*
         """
         invalidate_caches()
 
