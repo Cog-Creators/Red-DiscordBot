@@ -13,6 +13,21 @@ log = logging.getLogger("red.config")
 
 
 class Value:
+    """
+    A singular "value" of data.
+
+    .. py:attribute:: identifiers
+
+        This attribute provides all the keys necessary to get a specific data element from a json document.
+
+    .. py:attribute:: default
+
+        The default value for the data element that :py:attr:`identifiers` points at.
+
+    .. py:attribute:: spawner
+
+        A reference to :py:attr:`.Config.spawner`.
+    """
     def __init__(self, identifiers: Tuple[str], default_value, spawner):
         self._identifiers = identifiers
         self.default = default_value
@@ -24,6 +39,26 @@ class Value:
         return tuple(str(i) for i in self._identifiers)
 
     def __call__(self, default=None):
+        """
+        Each :py:class:`Value` object is created by the :py:meth:`Group.__getattr__` method.
+        The "real" data of the :py:class:`Value` object is accessed by this method. It is a replacement for a
+        :python:`get()` method.
+
+        For example::
+
+            foo = conf.guild(some_guild).foo()
+
+            # Is equivalent to this
+
+            group_obj = conf.guild(some_guild)
+            value_obj = conf.foo
+            foo = value_obj()
+
+        :param default:
+            This argument acts as an override for the registered default provided by :py:attr:`default`. This argument
+            is ignored if its value is :python:`None`.
+        :type default: Optional[object]
+        """
         driver = self.spawner.get_driver()
         try:
             ret = driver.get(self.identifiers)
@@ -32,6 +67,17 @@ class Value:
         return ret
 
     async def set(self, value):
+        """
+        Sets the value of the data element indicate by :py:attr:`identifiers`.
+
+        For example::
+
+            # Sets global value "foo" to False
+            await conf.foo.set(False)
+
+            # Sets guild specific value of "bar" to True
+            await conf.guild(some_guild).bar.set(True)
+        """
         driver = self.spawner.get_driver()
         await driver.set(self.identifiers, value)
 
@@ -248,7 +294,7 @@ class MemberGroup(Group):
 
     def all_guilds(self) -> dict:
         """
-        Returns a dict of :code:`MEMBER_ID -> data`.
+        Returns a dict of :code:`GUILD_ID -> MEMBER_ID -> data`.
 
         :rtype: dict
         """

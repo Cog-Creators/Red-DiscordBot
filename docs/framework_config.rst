@@ -55,6 +55,7 @@ API Reference
 
 .. autoclass:: Value
     :members:
+    :special-members: __call__
 
 
 ****************
@@ -62,3 +63,6 @@ Driver Reference
 ****************
 
 .. automodule:: core.drivers
+
+.. autoclass:: red_base.BaseDriver
+    :members:
