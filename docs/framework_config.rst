@@ -48,6 +48,10 @@ API Reference
 
 .. autoclass:: Group
     :members:
+    :special-members:
+
+.. autoclass:: MemberGroup
+    :members:
 
 .. autoclass:: Value
     :members:

@@ -37,6 +37,18 @@ class Value:
 
 
 class Group(Value):
+    """
+    A "group" of data, inherits from :py:class:`.Value` which means that all of the attributes and methods available
+    in :py:class:`.Value` are also available when working with a :py:class:`.Group` object.
+
+    .. py:attribute:: defaults
+
+        A dictionary of registered default values for this :py:class:`Group`.
+
+    .. py:attribute:: force_registration
+
+        See :py:attr:`.Config.force_registration`.
+    """
     def __init__(self, identifiers: Tuple[str],
                  defaults: dict,
                  spawner,
@@ -50,13 +62,17 @@ class Group(Value):
     # noinspection PyTypeChecker
     def __getattr__(self, item: str) -> Union["Group", Value]:
         """
-        Takes in the next accessible item. If it's found to be a Group
-            we return another Group object. If it's found to be a Value
-            we return a Value object. If it is not found and
-            force_registration is True then we raise AttributeException,
-            otherwise return a Value object.
-        :param item:
-        :return:
+        Takes in the next accessible item.
+
+         1. If it's found to be a group of data we return another :py:class:`Group` object.
+         2. If it's found to be a data value we return a :py:class:`.Value` object.
+         3. If it is not found and :py:attr:`force_registration` is :python:`True` then we raise
+            :py:exc:`AttributeError`.
+         4. Otherwise return a :py:class:`.Value` object.
+
+        :param str item:
+            The name of the item a cog is attempting to access through normal Python attribute
+            access.
         """
         is_group = self.is_group(item)
         is_value = not is_group and self.is_value(item)
@@ -98,18 +114,20 @@ class Group(Value):
 
     def is_group(self, item: str) -> bool:
         """
-        Determines if an attribute access is pointing at a registered group.
-        :param item:
-        :return:
+        A helper method for :py:meth:`__getattr__`. Most developers will have no need to use this.
+
+        :param str item:
+            See :py:meth:`__getattr__`.
         """
         default = self.defaults.get(item)
         return isinstance(default, dict)
 
     def is_value(self, item: str) -> bool:
         """
-        Determines if an attribute access is pointing at a registered value.
-        :param item:
-        :return:
+        A helper method for :py:meth:`__getattr__`. Most developers will have no need to use this.
+
+        :param str item:
+            See :py:meth:`__getattr__`.
         """
         try:
             default = self.defaults[item]
@@ -120,12 +138,30 @@ class Group(Value):
 
     def get_attr(self, item: str, default=None, resolve=True):
         """
-        You should avoid this function whenever possible.
-        :param item:
+        This is available to use as an alternative to using normal Python attribute access. It is required if you find
+        a need for dynamic attribute access.
+
+        .. note::
+
+            Use of this method should be avoided wherever possible.
+
+        A possible use case::
+
+            @commands.command()
+            async def some_command(self, ctx, item: str):
+                user = ctx.author
+
+                # Where the value of item is the name of the data field in Config
+                await ctx.send(self.conf.user(user).get_attr(item))
+
+        :param str item:
+            The name of the data field in :py:class:`.Config`.
         :param default:
+            This is an optional override to the registered default for this item.
         :param resolve:
-            If this is True, actual data will be returned, if false a Group/Value will be returned.
-        :return:
+            If this is :code:`True` this function will return a "real" data value, if :code:`False` this
+            function will return an instance of :py:class:`Group` or :py:class:`Value` depending on the
+            type of the "real" data value.
         """
         value = getattr(self, item)
         if resolve:
@@ -135,17 +171,19 @@ class Group(Value):
 
     def all(self) -> dict:
         """
-        Gets all data from current User/Member/Guild etc.
-        :return:
+        This method allows you to get "all" of a particular group of data. It will return the dictionary of all data
+        for a particular Guild/Channel/Role/User/Member etc.
+
+        :rtype: dict
         """
         return self()
 
     def all_from_kind(self) -> dict:
         """
-        Gets all entries of the given kind. If this kind is member
-            then this method returns all members from the same
-            server.
-        :return:
+        This method allows you to get all data from all entries in a given Kind. It will return a dictionary of Kind
+        ID's -> data.
+
+        :rtype: dict
         """
         # noinspection PyTypeChecker
         return self._super_group()
@@ -159,31 +197,35 @@ class Group(Value):
 
     async def set_attr(self, item: str, value):
         """
-        You should avoid this function whenever possible.
-        :param item:
-        :param value:
-        :return:
+        Please see :py:meth:`get_attr` for more information.
+
+        .. note::
+
+            Use of this method should be avoided wherever possible.
         """
         value_obj = getattr(self, item)
         await value_obj.set(value)
 
     async def clear(self):
         """
-        Wipes out data for the given entry in this category
-            e.g. Guild/Role/User
-        :return:
+        Wipes all data from the given Guild/Channel/Role/Member/User. If used on a global group, it will wipe all global
+        data.
         """
         await self.set({})
 
     async def clear_all(self):
         """
-        Removes all data from all entries.
-        :return:
+        Wipes all data from all Guilds/Channels/Roles/Members/Users. If used on a global group, this method wipes all
+        data from everything.
         """
         await self._super_group.set({})
 
 
 class MemberGroup(Group):
+    """
+    A specific group class for use with member data only. Inherits from :py:class:`.Group`. In this group data is
+    stored as :code:`GUILD_ID -> MEMBER_ID -> data`.
+    """
     @property
     def _super_group(self) -> Group:
         new_identifiers = self.identifiers[:2]
@@ -206,19 +248,14 @@ class MemberGroup(Group):
 
     def all_guilds(self) -> dict:
         """
-        Gets a dict of all guilds and members.
+        Returns a dict of :code:`MEMBER_ID -> data`.
 
-        REMEMBER: ID's are stored in these dicts as STRINGS.
-        :return:
+        :rtype: dict
         """
         # noinspection PyTypeChecker
         return self._super_group()
 
     def all(self) -> dict:
-        """
-        Returns the dict of all members in the same guild.
-        :return:
-        """
         # noinspection PyTypeChecker
         return self._guild_group()
 
