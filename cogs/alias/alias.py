@@ -38,26 +38,26 @@ class Alias:
         self._aliases.register_global(**self.default_global_settings)
         self._aliases.register_guild(**self.default_guild_settings)
 
-    def unloaded_aliases(self, guild: discord.Guild) -> Generator[AliasEntry, None, None]:
-        return (AliasEntry.from_json(d) for d in self._aliases.guild(guild).entries())
+    async def unloaded_aliases(self, guild: discord.Guild) -> Generator[AliasEntry, None, None]:
+        return (AliasEntry.from_json(d) for d in (await self._aliases.guild(guild).entries()))
 
-    def unloaded_global_aliases(self) -> Generator[AliasEntry, None, None]:
-        return (AliasEntry.from_json(d) for d in self._aliases.entries())
+    async def unloaded_global_aliases(self) -> Generator[AliasEntry, None, None]:
+        return (AliasEntry.from_json(d) for d in (await self._aliases.entries()))
 
-    def loaded_aliases(self, guild: discord.Guild) -> Generator[AliasEntry, None, None]:
+    async def loaded_aliases(self, guild: discord.Guild) -> Generator[AliasEntry, None, None]:
         return (AliasEntry.from_json(d, bot=self.bot)
-                for d in self._aliases.guild(guild).entries())
+                for d in (await self._aliases.guild(guild).entries()))
 
-    def loaded_global_aliases(self) -> Generator[AliasEntry, None, None]:
-        return (AliasEntry.from_json(d, bot=self.bot) for d in self._aliases.entries())
+    async def loaded_global_aliases(self) -> Generator[AliasEntry, None, None]:
+        return (AliasEntry.from_json(d, bot=self.bot) for d in (await self._aliases.entries()))
 
-    def is_alias(self, guild: discord.Guild, alias_name: str,
+    async def is_alias(self, guild: discord.Guild, alias_name: str,
                  server_aliases: Iterable[AliasEntry]=()) -> (bool, AliasEntry):
 
         if not server_aliases:
-            server_aliases = self.unloaded_aliases(guild)
+            server_aliases = await self.unloaded_aliases(guild)
 
-        global_aliases = self.unloaded_global_aliases()
+        global_aliases = await self.unloaded_global_aliases()
 
         for aliases in (server_aliases, global_aliases):
             for alias in aliases:
@@ -79,11 +79,11 @@ class Alias:
         alias = AliasEntry(alias_name, command, ctx.author, global_=global_)
 
         if global_:
-            curr_aliases = self._aliases.entries()
+            curr_aliases = await self._aliases.entries()
             curr_aliases.append(alias.to_json())
             await self._aliases.entries.set(curr_aliases)
         else:
-            curr_aliases = self._aliases.guild(ctx.guild).entries()
+            curr_aliases = await self._aliases.guild(ctx.guild).entries()
 
             curr_aliases.append(alias.to_json())
             await self._aliases.guild(ctx.guild).entries.set(curr_aliases)
@@ -94,10 +94,10 @@ class Alias:
     async def delete_alias(self, ctx: commands.Context, alias_name: str,
                            global_: bool=False) -> bool:
         if global_:
-            aliases = self.unloaded_global_aliases()
+            aliases = await self.unloaded_global_aliases()
             setter_func = self._aliases.entries.set
         else:
-            aliases = self.unloaded_aliases(ctx.guild)
+            aliases = await self.unloaded_aliases(ctx.guild)
             setter_func = self._aliases.guild(ctx.guild).entries.set
 
         did_delete_alias = False
@@ -161,7 +161,7 @@ class Alias:
         except IndexError:
             return False
 
-        is_alias, alias = self.is_alias(message.guild, potential_alias, server_aliases=aliases)
+        is_alias, alias = await self.is_alias(message.guild, potential_alias, server_aliases=aliases)
 
         if is_alias:
             await self.call_alias(message, prefix, alias)
@@ -206,7 +206,7 @@ class Alias:
                             " name is already a command on this bot.").format(alias_name))
             return
 
-        is_alias, _ = self.is_alias(ctx.guild, alias_name)
+        is_alias, _ = await self.is_alias(ctx.guild, alias_name)
         if is_alias:
             await ctx.send(("You attempted to create a new alias"
                             " with the name {} but that"
@@ -285,7 +285,7 @@ class Alias:
     @commands.guild_only()
     async def _show_alias(self, ctx: commands.Context, alias_name: str):
         """Shows what command the alias executes."""
-        is_alias, alias = self.is_alias(ctx.guild, alias_name)
+        is_alias, alias = await self.is_alias(ctx.guild, alias_name)
 
         if is_alias:
             await ctx.send(("The `{}` alias will execute the"
@@ -299,7 +299,7 @@ class Alias:
         """
         Deletes an existing alias on this server.
         """
-        aliases = self.unloaded_aliases(ctx.guild)
+        aliases = await self.unloaded_aliases(ctx.guild)
         try:
             next(aliases)
         except StopIteration:
@@ -317,7 +317,7 @@ class Alias:
         """
         Deletes an existing global alias.
         """
-        aliases = self.unloaded_global_aliases()
+        aliases = await self.unloaded_global_aliases()
         try:
             next(aliases)
         except StopIteration:
@@ -336,7 +336,7 @@ class Alias:
         """
         Lists the available aliases on this server.
         """
-        names = ["Aliases:", ] + sorted(["+ " + a.name for a in self.unloaded_aliases(ctx.guild)])
+        names = ["Aliases:", ] + sorted(["+ " + a.name for a in (await self.unloaded_aliases(ctx.guild))])
         if len(names) == 0:
             await ctx.send("There are no aliases on this server.")
         else:
@@ -347,16 +347,16 @@ class Alias:
         """
         Lists the available global aliases on this bot.
         """
-        names = ["Aliases:", ] + sorted(["+ " + a.name for a in self.unloaded_global_aliases()])
+        names = ["Aliases:", ] + sorted(["+ " + a.name for a in await self.unloaded_global_aliases()])
         if len(names) == 0:
             await ctx.send("There are no aliases on this server.")
         else:
             await ctx.send(box("\n".join(names), "diff"))
 
     async def on_message(self, message: discord.Message):
-        aliases = list(self.unloaded_global_aliases())
+        aliases = list(await self.unloaded_global_aliases())
         if message.guild is not None:
-            aliases = aliases + list(self.unloaded_aliases(message.guild))
+            aliases = aliases + list(await self.unloaded_aliases(message.guild))
 
         if len(aliases) == 0:
             return
