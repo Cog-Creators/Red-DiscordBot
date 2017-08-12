@@ -523,7 +523,7 @@ class RepoManager:
     async def _load_repos(self, set=False) -> MutableMapping[str, Repo]:
         ret = {
             name: Repo.from_json(data) for name, data in
-            await self.downloader_config.repos().items()
+            (await self.downloader_config.repos()).items()
         }
         if set:
             self._repos = ret
