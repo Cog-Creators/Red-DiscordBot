@@ -253,7 +253,7 @@ async def create_case(guild: discord.Guild, created_at: datetime, action_type: s
     if not await get_case_type_status(action_type, guild):
         raise RuntimeError("Case creation is disabled for that action")
 
-    next_case_number = len(_conf.guild(guild).cases()) + 1
+    next_case_number = len(await _conf.guild(guild).cases()) + 1
 
     case = Case(guild, int(created_at.timestamp()), action_type, user, moderator,
                 next_case_number, reason, until, channel, amended_by=None,
