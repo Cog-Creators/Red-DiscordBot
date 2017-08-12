@@ -6,7 +6,7 @@ from core.bot import Red  # Only used for type hints
 
 def check_global_setting_guildowner():
     async def pred(ctx: commands.Context):
-        if bank.is_global():
+        if await bank.is_global():
             return checks.is_owner()
         else:
             return checks.guildowner_or_permissions(administrator=True)
@@ -15,7 +15,7 @@ def check_global_setting_guildowner():
 
 def check_global_setting_admin():
     async def pred(ctx: commands.Context):
-        if bank.is_global():
+        if await bank.is_global():
             return checks.is_owner()
         else:
             return checks.admin_or_permissions(manage_guild=True)
@@ -43,7 +43,7 @@ class Bank:
         """Toggles whether the bank is global or not
         If the bank is global, it will become per-guild
         If the bank is per-guild, it will become global"""
-        cur_setting = bank.is_global()
+        cur_setting = await bank.is_global()
         await bank.set_global(not cur_setting, ctx.author)
 
         word = "per-guild" if cur_setting else "global"
