@@ -34,11 +34,11 @@ def init_events(bot, cli_flags):
         if cli_flags.no_cogs is False:
             print("Loading packages...")
             failed = []
-            packages = bot.db.packages()
+            packages = await bot.db.packages()
 
             for package in packages:
                 try:
-                    spec = bot.cog_mgr.find_cog(package)
+                    spec = await bot.cog_mgr.find_cog(package)
                     bot.load_extension(spec)
                 except Exception as e:
                     log.exception("Failed to load package {}".format(package),

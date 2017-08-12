@@ -1,3 +1,4 @@
+import asyncio
 import importlib.util
 from importlib.machinery import ModuleSpec
 
@@ -39,14 +40,14 @@ class Red(commands.Bot):
             mod_role=None
         )
 
-        def prefix_manager(bot, message):
+        async def prefix_manager(bot, message):
             if not cli_flags.prefix:
-                global_prefix = self.db.prefix()
+                global_prefix = await bot.db.prefix()
             else:
                 global_prefix = cli_flags.prefix
             if message.guild is None:
                 return global_prefix
-            server_prefix = self.db.guild(message.guild).prefix()
+            server_prefix = await bot.db.guild(message.guild).prefix()
             return server_prefix if server_prefix else global_prefix
 
         if "command_prefix" not in kwargs:
@@ -56,7 +57,8 @@ class Red(commands.Bot):
             kwargs["owner_id"] = cli_flags.owner
 
         if "owner_id" not in kwargs:
-            kwargs["owner_id"] = self.db.owner()
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(self._dict_abuse(kwargs))
 
         self.counter = Counter()
         self.uptime = None
@@ -67,6 +69,15 @@ class Red(commands.Bot):
                                   bot_dir=self.main_dir)
 
         super().__init__(**kwargs)
+
+    async def _dict_abuse(self, indict):
+        """
+        Please blame <@269933075037814786> for this.
+        :param indict:
+        :return:
+        """
+
+        indict['owner_id'] = await self.db.owner()
 
     async def is_owner(self, user):
         if user.id in self._co_owners:
@@ -103,13 +114,13 @@ class Red(commands.Bot):
         await self.db.packages.set(packages)
 
     async def add_loaded_package(self, pkg_name: str):
-        curr_pkgs = self.db.packages()
+        curr_pkgs = await self.db.packages()
         if pkg_name not in curr_pkgs:
             curr_pkgs.append(pkg_name)
             await self.save_packages_status(curr_pkgs)
 
     async def remove_loaded_package(self, pkg_name: str):
-        curr_pkgs = self.db.packages()
+        curr_pkgs = await self.db.packages()
         if pkg_name in curr_pkgs:
             await self.save_packages_status([p for p in curr_pkgs if p != pkg_name])
 

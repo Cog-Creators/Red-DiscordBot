@@ -49,22 +49,20 @@ class Downloader:
 
         self._repo_manager = RepoManager(self.conf)
 
-    @property
-    def cog_install_path(self):
+    async def cog_install_path(self):
         """
         Returns the current cog install path.
         :return:
         """
-        return self.bot.cog_mgr.install_path
+        return await self.bot.cog_mgr.install_path()
 
-    @property
-    def installed_cogs(self) -> Tuple[Installable]:
+    async def installed_cogs(self) -> Tuple[Installable]:
         """
         Returns the dictionary mapping cog name to install location
             and repo name.
         :return:
         """
-        installed = self.conf.installed()
+        installed = await self.conf.installed()
         # noinspection PyTypeChecker
         return tuple(Installable.from_json(v) for v in installed)
 
@@ -74,7 +72,7 @@ class Downloader:
         :param cog:
         :return:
         """
-        installed = self.conf.installed()
+        installed = await self.conf.installed()
         cog_json = cog.to_json()
 
         if cog_json not in installed:
@@ -87,7 +85,7 @@ class Downloader:
         :param cog:
         :return:
         """
-        installed = self.conf.installed()
+        installed = await self.conf.installed()
         cog_json = cog.to_json()
 
         if cog_json in installed:
@@ -102,7 +100,7 @@ class Downloader:
         """
         failed = []
         for cog in cogs:
-            if not await cog.copy_to(self.cog_install_path):
+            if not await cog.copy_to(await self.cog_install_path()):
                 failed.append(cog)
 
         # noinspection PyTypeChecker
@@ -249,7 +247,7 @@ class Downloader:
                            " `{}`: `{}`".format(cog.name, cog.requirements))
             return
 
-        await repo_name.install_cog(cog, self.cog_install_path)
+        await repo_name.install_cog(cog, await self.cog_install_path())
 
         await self._add_to_installed(cog)
 
@@ -266,7 +264,7 @@ class Downloader:
         # noinspection PyUnresolvedReferences,PyProtectedMember
         real_name = cog_name.name
 
-        poss_installed_path = self.cog_install_path / real_name
+        poss_installed_path = (await self.cog_install_path()) / real_name
         if poss_installed_path.exists():
             await self._delete_cog(poss_installed_path)
             # noinspection PyTypeChecker
@@ -284,7 +282,7 @@ class Downloader:
         """
         if cog_name is None:
             updated = await self._repo_manager.update_all_repos()
-            installed_cogs = set(self.installed_cogs)
+            installed_cogs = set(await self.installed_cogs())
             updated_cogs = set(cog for repo in updated.keys() for cog in repo.available_cogs)
 
             installed_and_updated = updated_cogs & installed_cogs
@@ -325,14 +323,14 @@ class Downloader:
         msg = "Information on {}:\n{}".format(cog.name, cog.description or "")
         await ctx.send(box(msg))
 
-    def is_installed(self, cog_name: str) -> (bool, Union[Installable, None]):
+    async def is_installed(self, cog_name: str) -> (bool, Union[Installable, None]):
         """
         Checks to see if a cog with the given name was installed
             through Downloader.
         :param cog_name:
         :return: is_installed, Installable
         """
-        for installable in self.installed_cogs:
+        for installable in await self.installed_cogs():
             if installable.name == cog_name:
                 return True, installable
         return False, None
@@ -384,7 +382,7 @@ class Downloader:
 
         # Check if in installed cogs
         cog_name = self.cog_name_from_instance(command.instance)
-        installed, cog_installable = self.is_installed(cog_name)
+        installed, cog_installable = await self.is_installed(cog_name)
         if installed:
             msg = self.format_findcog_info(command_name, cog_installable)
         else:
