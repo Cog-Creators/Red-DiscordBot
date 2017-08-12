@@ -207,7 +207,7 @@ class Group(Value):
                 user = ctx.author
 
                 # Where the value of item is the name of the data field in Config
-                await ctx.send(self.conf.user(user).get_attr(item))
+                await ctx.send(await self.conf.user(user).get_attr(item))
 
         :param str item:
             The name of the data field in :py:class:`.Config`.
