@@ -19,6 +19,7 @@ Welcome to Red - Discord Bot's documentation!
     framework_bank
     framework_config
     framework_downloader
+    framework_modlog
 
 
 Indices and tables
