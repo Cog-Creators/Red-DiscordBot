@@ -430,7 +430,10 @@ class RepoManager:
 
         self.repos_folder = Path(__file__).parent / 'repos'
 
-        self._repos = self._load_repos()  # str_name: Repo
+        self._repos = {}
+
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._load_repos(set=True))  # str_name: Repo
 
     def does_repo_exist(self, name: str) -> bool:
         return name in self._repos
@@ -494,7 +497,6 @@ class RepoManager:
 
         shutil.rmtree(str(repo.folder_path))
 
-        repos = self.downloader_config.repos()
         try:
             del self._repos[name]
         except KeyError:
@@ -518,11 +520,14 @@ class RepoManager:
         await self._save_repos()
         return ret
 
-    def _load_repos(self) -> MutableMapping[str, Repo]:
-        return {
+    async def _load_repos(self, set=False) -> MutableMapping[str, Repo]:
+        ret = {
             name: Repo.from_json(data) for name, data in
-            self.downloader_config.repos().items()
+            await self.downloader_config.repos().items()
         }
+        if set:
+            self._repos = ret
+        return ret
 
     async def _save_repos(self):
         repo_json_info = {name: r.to_json() for name, r in self._repos.items()}
