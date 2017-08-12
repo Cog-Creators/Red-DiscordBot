@@ -1,6 +1,6 @@
 import datetime
 from collections import namedtuple
-from typing import Tuple, Generator, Union
+from typing import Tuple, Generator, Union, List
 
 import discord
 from copy import deepcopy
@@ -86,7 +86,7 @@ def _decode_time(time: int) -> datetime.datetime:
     return datetime.datetime.utcfromtimestamp(time)
 
 
-def get_balance(member: discord.Member) -> int:
+async def get_balance(member: discord.Member) -> int:
     """
     Gets the current balance of a member.
 
@@ -97,11 +97,11 @@ def get_balance(member: discord.Member) -> int:
     :rtype: 
         int
     """
-    acc = get_account(member)
+    acc = await get_account(member)
     return acc.balance
 
 
-def can_spend(member: discord.Member, amount: int) -> bool:
+async def can_spend(member: discord.Member, amount: int) -> bool:
     """
     Determines if a member can spend the given amount.
 
@@ -116,7 +116,7 @@ def can_spend(member: discord.Member, amount: int) -> bool:
     """
     if _invalid_amount(amount):
         return False
-    return get_balance(member) > amount
+    return await get_balance(member) > amount
 
 
 async def set_balance(member: discord.Member, amount: int) -> int:
@@ -138,17 +138,17 @@ async def set_balance(member: discord.Member, amount: int) -> int:
     """
     if amount < 0:
         raise ValueError("Not allowed to have negative balance.")
-    if is_global():
+    if await is_global():
         group = _conf.user(member)
     else:
         group = _conf.member(member)
     await group.balance.set(amount)
 
-    if group.created_at() == 0:
+    if await group.created_at() == 0:
         time = _encoded_current_time()
         await group.created_at.set(time)
 
-    if group.name() == "":
+    if await group.name() == "":
         await group.name.set(member.display_name)
 
     return amount
@@ -179,7 +179,7 @@ async def withdraw_credits(member: discord.Member, amount: int) -> int:
     if _invalid_amount(amount):
         raise ValueError("Invalid withdrawal amount {} <= 0".format(amount))
 
-    bal = get_balance(member)
+    bal = await get_balance(member)
     if amount > bal:
         raise ValueError("Insufficient funds {} > {}".format(amount, bal))
 
@@ -206,7 +206,7 @@ async def deposit_credits(member: discord.Member, amount: int) -> int:
     if _invalid_amount(amount):
         raise ValueError("Invalid withdrawal amount {} <= 0".format(amount))
 
-    bal = get_balance(member)
+    bal = await get_balance(member)
     return await set_balance(member, amount + bal)
 
 
@@ -251,13 +251,13 @@ async def wipe_bank(user: Union[discord.User, discord.Member]):
     :type user:
         discord.User or discord.Member
     """
-    if is_global():
+    if await is_global():
         await _conf.user(user).clear()
     else:
         await _conf.member(user).clear()
 
 
-def get_guild_accounts(guild: discord.Guild) -> Generator[Account, None, None]:
+async def get_guild_accounts(guild: discord.Guild) -> List[Account]:
     """
     Gets all account data for the given guild.
 
@@ -275,14 +275,16 @@ def get_guild_accounts(guild: discord.Guild) -> Generator[Account, None, None]:
     if is_global():
         raise RuntimeError("The bank is currently global.")
 
-    accs = _conf.member(guild.owner).all_from_kind()
+    ret = []
+    accs = await _conf.member(guild.owner).all_from_kind()
     for user_id, acc in accs.items():
         acc_data = acc.copy()  # There ya go kowlin
         acc_data['created_at'] = _decode_time(acc_data['created_at'])
-        yield Account(**acc_data)
+        ret.append(Account(**acc_data))
+    return ret
 
 
-def get_global_accounts(user: discord.User) -> Generator[Account, None, None]:
+async def get_global_accounts(user: discord.User) -> List[Account]:
     """
     Gets all global account data.
 
@@ -300,14 +302,17 @@ def get_global_accounts(user: discord.User) -> Generator[Account, None, None]:
     if not is_global():
         raise RuntimeError("The bank is not currently global.")
 
-    accs = _conf.user(user).all_from_kind()  # this is a dict of user -> acc
+    ret = []
+    accs = await _conf.user(user).all_from_kind()  # this is a dict of user -> acc
     for user_id, acc in accs.items():
         acc_data = acc.copy()
         acc_data['created_at'] = _decode_time(acc_data['created_at'])
-        yield Account(**acc_data)
+        ret.append(Account(**acc_data))
+
+    return ret
 
 
-def get_account(member: Union[discord.Member, discord.User]) -> Account:
+async def get_account(member: Union[discord.Member, discord.User]) -> Account:
     """
     Gets the appropriate account for the given user or member. A member is
     required if the bank is currently guild specific.
@@ -321,26 +326,26 @@ def get_account(member: Union[discord.Member, discord.User]) -> Account:
     :rtype: 
         :py:class:`Account`
     """
-    if is_global():
-        acc_data = _conf.user(member)().copy()
+    if await is_global():
+        acc_data = (await _conf.user(member)()).copy()
         default = _DEFAULT_USER.copy()
     else:
-        acc_data = _conf.member(member)().copy()
+        acc_data = (await _conf.member(member)()).copy()
         default = _DEFAULT_MEMBER.copy()
 
     if acc_data == {}:
         acc_data = default
         acc_data['name'] = member.display_name
         try:
-            acc_data['balance'] = get_default_balance(member.guild)
+            acc_data['balance'] = await get_default_balance(member.guild)
         except AttributeError:
-            acc_data['balance'] = get_default_balance()
+            acc_data['balance'] = await get_default_balance()
 
     acc_data['created_at'] = _decode_time(acc_data['created_at'])
     return Account(**acc_data)
 
 
-def is_global() -> bool:
+async def is_global() -> bool:
     """
     Determines if the bank is currently global.
 
@@ -349,7 +354,7 @@ def is_global() -> bool:
     :rtype: 
         bool
     """
-    return _conf.is_global()
+    return await _conf.is_global()
 
 
 async def set_global(global_: bool, user: Union[discord.User, discord.Member]) -> bool:
@@ -372,7 +377,7 @@ async def set_global(global_: bool, user: Union[discord.User, discord.Member]) -
     :raises RuntimeError:
         If bank is becoming global and :py:class:`discord.Member` was not provided.
     """
-    if is_global() is global_:
+    if (await is_global()) is global_:
         return global_
 
     if is_global():
@@ -387,7 +392,7 @@ async def set_global(global_: bool, user: Union[discord.User, discord.Member]) -
     return global_
 
 
-def get_bank_name(guild: discord.Guild=None) -> str:
+async def get_bank_name(guild: discord.Guild=None) -> str:
     """
     Gets the current bank name. If the bank is guild-specific the
     guild parameter is required.
@@ -403,10 +408,10 @@ def get_bank_name(guild: discord.Guild=None) -> str:
     :raises RuntimeError: 
         If the bank is guild-specific and guild was not provided.
     """
-    if is_global():
-        return _conf.bank_name()
+    if await is_global():
+        return await _conf.bank_name()
     elif guild is not None:
-        return _conf.guild(guild).bank_name()
+        return await _conf.guild(guild).bank_name()
     else:
         raise RuntimeError("Guild parameter is required and missing.")
 
@@ -429,7 +434,7 @@ async def set_bank_name(name: str, guild: discord.Guild=None) -> str:
     :raises RuntimeError: 
         If the bank is guild-specific and guild was not provided.
     """
-    if is_global():
+    if await is_global():
         await _conf.bank_name.set(name)
     elif guild is not None:
         await _conf.guild(guild).bank_name.set(name)
@@ -439,7 +444,7 @@ async def set_bank_name(name: str, guild: discord.Guild=None) -> str:
     return name
 
 
-def get_currency_name(guild: discord.Guild=None) -> str:
+async def get_currency_name(guild: discord.Guild=None) -> str:
     """
     Gets the currency name of the bank. The guild parameter is required if
     the bank is guild-specific.
@@ -455,10 +460,10 @@ def get_currency_name(guild: discord.Guild=None) -> str:
     :raises RuntimeError: 
         If the bank is guild-specific and guild was not provided.
     """
-    if is_global():
-        return _conf.currency()
+    if await is_global():
+        return await _conf.currency()
     elif guild is not None:
-        return _conf.guild(guild).currency()
+        return await _conf.guild(guild).currency()
     else:
         raise RuntimeError("Guild must be provided.")
 
@@ -481,7 +486,7 @@ async def set_currency_name(name: str, guild: discord.Guild=None) -> str:
     :raises RuntimeError: 
         If the bank is guild-specific and guild was not provided.
     """
-    if is_global():
+    if await is_global():
         await _conf.currency.set(name)
     elif guild is not None:
         await _conf.guild(guild).currency.set(name)
@@ -491,7 +496,7 @@ async def set_currency_name(name: str, guild: discord.Guild=None) -> str:
     return name
 
 
-def get_default_balance(guild: discord.Guild=None) -> int:
+async def get_default_balance(guild: discord.Guild=None) -> int:
     """
     Gets the current default balance amount. If the bank is guild-specific
     you must pass guild.
@@ -507,10 +512,10 @@ def get_default_balance(guild: discord.Guild=None) -> int:
     :raises RuntimeError: 
         If the bank is guild-specific and guild was not provided.
     """
-    if is_global():
-        return _conf.default_balance()
+    if await is_global():
+        return await _conf.default_balance()
     elif guild is not None:
-        return _conf.guild(guild).default_balance()
+        return await _conf.guild(guild).default_balance()
     else:
         raise RuntimeError("Guild is missing and required!")
 
@@ -541,9 +546,11 @@ async def set_default_balance(amount: int, guild: discord.Guild=None) -> int:
     if amount < 0:
         raise ValueError("Amount must be greater than zero.")
 
-    if is_global():
+    if await is_global():
         await _conf.default_balance.set(amount)
     elif guild is not None:
         await _conf.guild(guild).default_balance.set(amount)
     else:
         raise RuntimeError("Guild is missing and required.")
+
+    return amount

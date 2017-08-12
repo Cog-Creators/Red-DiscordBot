@@ -29,7 +29,7 @@ class Core:
     async def load(self, ctx, *, cog_name: str):
         """Loads a package"""
         try:
-            spec = ctx.bot.cog_mgr.find_cog(cog_name)
+            spec = await ctx.bot.cog_mgr.find_cog(cog_name)
         except NoModuleFound:
             await ctx.send("No module by that name was found in any"
                            " cog path.")
@@ -63,7 +63,7 @@ class Core:
         ctx.bot.unload_extension(cog_name)
         self.cleanup_and_refresh_modules(cog_name)
         try:
-            spec = ctx.bot.cog_mgr.find_cog(cog_name)
+            spec = await ctx.bot.cog_mgr.find_cog(cog_name)
             ctx.bot.load_extension(spec)
         except Exception as e:
             log.exception("Package reloading failed", exc_info=e)

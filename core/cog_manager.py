@@ -31,26 +31,29 @@ class CogManager:
             install_path=str(bot_dir.resolve() / "cogs")
         )
 
-        self._paths = set(list(self.conf.paths()) + list(paths))
+        self._paths = list(paths)
 
-    @property
-    def paths(self) -> Tuple[Path, ...]:
+    async def paths(self) -> Tuple[Path, ...]:
         """
         This will return all currently valid path directories.
         :return:
         """
-        paths = [Path(p) for p in self._paths]
+        conf_paths = await self.conf.paths()
+        other_paths = self._paths
+
+        all_paths = set(list(conf_paths) + list(other_paths))
+
+        paths = [Path(p) for p in all_paths]
         if self.install_path not in paths:
-            paths.insert(0, self.install_path)
+            paths.insert(0, await self.install_path())
         return tuple(p.resolve() for p in paths if p.is_dir())
 
-    @property
-    def install_path(self) -> Path:
+    async def install_path(self) -> Path:
         """
         Returns the install path for 3rd party cogs.
         :return:
         """
-        p = Path(self.conf.install_path())
+        p = Path(await self.conf.install_path())
         return p.resolve()
 
     async def set_install_path(self, path: Path) -> Path:
@@ -99,10 +102,10 @@ class CogManager:
         if not path.is_dir():
             raise InvalidPath("'{}' is not a valid directory.".format(path))
 
-        if path == self.install_path:
+        if path == await self.install_path():
             raise ValueError("Cannot add the install path as an additional path.")
 
-        all_paths = set(self.paths + (path, ))
+        all_paths = set(await self.paths() + (path, ))
         # noinspection PyTypeChecker
         await self.set_paths(all_paths)
 
@@ -113,7 +116,7 @@ class CogManager:
         :return:
         """
         path = self._ensure_path_obj(path)
-        all_paths = list(self.paths)
+        all_paths = list(await self.paths())
         if path in all_paths:
             all_paths.remove(path)  # Modifies in place
             await self.set_paths(all_paths)
@@ -125,11 +128,10 @@ class CogManager:
         :param paths_:
         :return:
         """
-        self._paths = paths_
         str_paths = [str(p) for p in paths_]
         await self.conf.paths.set(str_paths)
 
-    def find_cog(self, name: str) -> ModuleSpec:
+    async def find_cog(self, name: str) -> ModuleSpec:
         """
         Finds a cog in the list of available path.
 
@@ -137,7 +139,7 @@ class CogManager:
         :param name:
         :return:
         """
-        resolved_paths = [str(p.resolve()) for p in self.paths]
+        resolved_paths = [str(p.resolve()) for p in await self.paths()]
         for finder, module_name, _ in pkgutil.iter_modules(resolved_paths):
             if name == module_name:
                 spec = finder.find_spec(name)
@@ -166,7 +168,7 @@ class CogManagerUI:
         """
         Lists current cog paths in order of priority.
         """
-        install_path = ctx.bot.cog_mgr.install_path
+        install_path = await ctx.bot.cog_mgr.install_path()
         cog_paths = ctx.bot.cog_mgr.paths
         cog_paths = [p for p in cog_paths if p != install_path]
 
@@ -204,7 +206,7 @@ class CogManagerUI:
         Removes a path from the available cog paths given the path_number
             from !paths
         """
-        cog_paths = ctx.bot.cog_mgr.paths
+        cog_paths = await ctx.bot.cog_mgr.paths()
         try:
             to_remove = cog_paths[path_number]
         except IndexError:
@@ -224,7 +226,7 @@ class CogManagerUI:
         from_ -= 1
         to -= 1
 
-        all_paths = list(ctx.bot.cog_mgr.paths)
+        all_paths = list(await ctx.bot.cog_mgr.paths())
         try:
             to_move = all_paths.pop(from_)
         except IndexError:
@@ -257,6 +259,6 @@ class CogManagerUI:
                 await ctx.send("That path does not exist.")
                 return
 
-        install_path = ctx.bot.cog_mgr.install_path
+        install_path = await ctx.bot.cog_mgr.install_path()
         await ctx.send("The bot will install new cogs to the `{}`"
                        " directory.".format(install_path))
