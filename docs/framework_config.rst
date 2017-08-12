@@ -191,6 +191,7 @@ Driver Reference
 ****************
 
 .. automodule:: redbot.core.drivers
+    :members:
 
 .. autoclass:: core.drivers.red_base.BaseDriver
     :members:

@@ -11,6 +11,7 @@ class BaseDriver:
     async def get(self, identifiers: Tuple[str]):
         """
         Finds the value indicate by the given identifiers.
+
         :param identifiers:
             A list of identifiers that correspond to nested dict accesses.
         :return:
@@ -20,7 +21,8 @@ class BaseDriver:
 
     async def set(self, identifiers: Tuple[str], value):
         """
-        Sets the value of the key indicated by the given identifiers
+        Sets the value of the key indicated by the given identifiers.
+
         :param identifiers:
             A list of identifiers that correspond to nested dict accesses.
         :param value:
