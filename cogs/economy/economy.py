@@ -401,7 +401,7 @@ class Economy:
         guild = ctx.guild
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
-            if bank.is_global():
+            if await bank.is_global():
                 slot_min = await self.config.SLOT_MIN()
                 slot_max = await self.config.SLOT_MAX()
                 slot_time = await self.config.SLOT_TIME()
