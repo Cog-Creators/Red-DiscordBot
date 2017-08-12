@@ -54,13 +54,17 @@ class Value:
 
         For example::
 
-            foo = conf.guild(some_guild).foo()
+            foo = await conf.guild(some_guild).foo()
 
             # Is equivalent to this
 
             group_obj = conf.guild(some_guild)
             value_obj = conf.foo
-            foo = value_obj()
+            foo = await value_obj()
+
+        .. important::
+
+            This is now, for all intents and purposes, a coroutine.
 
         :param default:
             This argument acts as an override for the registered default provided by :py:attr:`default`. This argument
