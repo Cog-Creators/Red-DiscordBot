@@ -11,8 +11,6 @@ import discord
 import aiohttp
 import asyncio
 
-from core.cog_manager import NoModuleFound
-
 log = logging.getLogger("red")
 
 OWNER_DISCLAIMER = ("⚠ **Only** the person who is hosting Red should be "
@@ -30,7 +28,7 @@ class Core:
         """Loads a package"""
         try:
             spec = await ctx.bot.cog_mgr.find_cog(cog_name)
-        except NoModuleFound:
+        except RuntimeError:
             await ctx.send("No module by that name was found in any"
                            " cog path.")
             return
