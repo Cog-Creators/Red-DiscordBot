@@ -2,13 +2,14 @@ import discord
 from core import Config
 from core.bot import Red
 from core.utils.chat_formatting import bold
-from collections import namedtuple
 from typing import List, Union
 from datetime import datetime
 
 __all__ = [
-    "get_case", "create_case", "edit_case", "is_casetype",
-    "register_casetype", "register_casetypes"
+    "Case", "get_case", "create_case", "edit_case", "is_casetype",
+    "register_casetype", "register_casetypes", "get_modlog_channel",
+    "set_modlog_channel", "toggle_case_type", "get_case_type_status",
+    "get_case_type_repr", "reset_cases"
 ]
 
 _DEFAULT_GLOBAL = {
