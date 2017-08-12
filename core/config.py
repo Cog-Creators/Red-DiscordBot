@@ -324,7 +324,7 @@ class Config:
         however the process for accessing global data is a bit different. There is no :python:`global` method
         because global data is accessed by normal attribute access::
 
-            conf.foo()
+            await conf.foo()
 
     .. py:attribute:: cog_name
 
