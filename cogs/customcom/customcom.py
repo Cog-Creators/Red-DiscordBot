@@ -41,7 +41,7 @@ class CommandObj:
     async def get(self,
                   message: discord.Message,
                   command: str) -> str:
-        ccinfo = self.db(message.guild).commands.get_attr(command)
+        ccinfo = await self.db(message.guild).commands.get_attr(command)
         if not ccinfo:
             raise NotFound
         else:
@@ -53,7 +53,7 @@ class CommandObj:
                      response):
         """Create a customcommand"""
         # Check if this command is already registered as a customcommand
-        if self.db(ctx.guild).commands.get_attr(command):
+        if await self.db(ctx.guild).commands.get_attr(command):
             raise AlreadyExists()
         author = ctx.message.author
         ccinfo = {
@@ -76,11 +76,11 @@ class CommandObj:
                    response):
         """Edit an already existing custom command"""
         # Check if this command is registered
-        if not self.db(ctx.guild).commands.get_attr(command):
+        if not await self.db(ctx.guild).commands.get_attr(command):
             raise NotFound()
 
         author = ctx.message.author
-        ccinfo = self.db(ctx.guild).commands.get_attr(command)
+        ccinfo = await self.db(ctx.guild).commands.get_attr(command)
 
         ccinfo['response'] = response
         ccinfo['edited_at'] = self.get_now()
@@ -99,7 +99,7 @@ class CommandObj:
                      command: str):
         """Delete an already exisiting custom command"""
         # Check if this command is registered
-        if not self.db(ctx.guild).commands.get_attr(command):
+        if not await self.db(ctx.guild).commands.get_attr(command):
             raise NotFound()
         await self.db(ctx.guild).commands.set_attr(command,
                                                    None)
@@ -122,16 +122,52 @@ class CustomCommands:
     async def customcom(self,
                         ctx: commands.Context):
         """Custom commands management"""
-        if ctx.invoked_subcommand is None:
+        if not ctx.invoked_subcommand:
             await self.bot.send_cmd_help(ctx)
 
-    @customcom.command(name="add")
+    @customcom.group(name="add")
     @checks.mod_or_permissions(administrator=True)
     async def cc_add(self,
-                     ctx,
-                     command: str,
-                     *,
-                     text):
+                     ctx: commands.Context):
+        if not ctx.invoked_subcommand or isinstance(ctx.invoked_subcommand,
+                                                    commands.Group):
+            await self.bot.send_cmd_help(ctx)
+
+    @cc_add.command(name='random')
+    @checks.mod_or_permissions(administrator=True)
+    async def cc_add_random(self,
+                            ctx: commands.Context,
+                            command: str):
+        channel = ctx.channel
+        responses = []
+
+        intro = ("Welcome to the interactive random customcommand maker!\n"
+                 "Every message you send will be added as one of the random "
+                 "response to choose from once this customcommand is "
+                 "triggered. To exit this interactive menu, type `exit()`")
+        await ctx.send(intro)
+
+        def check(m):
+            return m.channel == channel
+
+        while True:
+            await ctx.send("What do you want to add as a random response?")
+            msg = await self.bot.wait_for('message', check=check)
+
+            if msg.content.lower() == 'exit()':
+                break
+            else:
+                responses.append(msg.content)
+
+        # await ctx.send(str(responses))
+
+    @cc_add.command(name="simple")
+    @checks.mod_or_permissions(administrator=True)
+    async def cc_add_simple(self,
+                            ctx,
+                            command: str,
+                            *,
+                            text):
         """Adds a custom command
         Example:
         [p]customcom add yourcommand Text you want
@@ -229,7 +265,7 @@ class CustomCommands:
             return
 
         guild = message.guild
-        prefixes = self.bot.db.guild(message.guild).get_attr('prefix')
+        prefixes = await self.bot.db.guild(message.guild).get_attr('prefix')
 
         if len(prefixes) < 1:
             def_prefixes = await self.bot.get_prefix(message)
