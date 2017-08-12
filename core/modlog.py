@@ -2,14 +2,14 @@ import discord
 from core import Config
 from core.bot import Red
 from core.utils.chat_formatting import bold
-from typing import List, Union
+from typing import List, Union, Generator
 from datetime import datetime
 
 __all__ = [
-    "Case", "get_case", "create_case", "edit_case", "is_casetype",
-    "register_casetype", "register_casetypes", "get_modlog_channel",
-    "set_modlog_channel", "toggle_case_type", "get_case_type_status",
-    "get_case_type_repr", "reset_cases"
+    "Case", "get_case", "create_case", "edit_case", "get_all_casetypes",
+    "is_casetype", "register_casetype", "register_casetypes",
+    "get_modlog_channel", "set_modlog_channel", "toggle_case_type",
+    "get_case_type_status", "get_case_type_repr", "reset_cases"
 ]
 
 _DEFAULT_GLOBAL = {
@@ -50,53 +50,67 @@ class Case:
         self.case_number = case_number
         self.message = message
 
-    def __str__(self):
+    async def get_case_msg_content(self):
         """
         Format a case message
 
-        :return: A string representing a case message
-        :rtype: str
+        :return:
+            A rich embed representing a case message
+        :rtype:
+            discord.Embed
         """
-        case_type = ""
-        case_type += "{} | {}\n".format(
-            bold("Case #{}".format(self.case_number)),
-            get_case_type_repr(self.action_type))
-        case_type += "**User:** {}#{} ({})\n".format(
-            self.user.name, self.user.discriminator, self.user.id)
-        case_type += "**Moderator:** {}#{} ({})\n".format(
+        title = "{}".format(bold("Case #{}".format(self.case_number)))
+
+        if self.reason:
+            reason = "**Reason:** {}".format(self.reason)
+        else:
+            reason = \
+                "**Reason:** Type [p]reason {} <reason> to add it".format(
+                    self.case_number
+                )
+
+        emb = discord.Embed(title=title, description=reason)
+
+        img_url = await get_case_type_repr(self.action_type)
+        emb.set_image(url=img_url)
+        moderator = "{}#{} ({})\n".format(
             self.moderator.name,
             self.moderator.discriminator,
             self.moderator.id
         )
-
+        emb.set_author(name=moderator, icon_url=self.moderator.avatar_url)
+        user = "{}#{} ({})\n".format(
+            self.user.name, self.user.discriminator, self.user.id)
+        emb.add_field(name="User", value=user)
         if self.until:
             start = datetime.fromtimestamp(self.created_at)
             end = datetime.fromtimestamp(self.until)
             end_fmt = end.strftime('%Y-%m-%d %H:%M:%S UTC')
             duration = end - start
             dur_fmt = _strfdelta(duration)
-            case_type += ("**Until:** {}\n"
-                          "**Duration:** {}\n").format(end_fmt, dur_fmt)
+            until = end_fmt
+            duration = dur_fmt
+            emb.add_field(name="Until", value=until)
+            emb.add_field(name="Duration", value=duration)
+
+        if self.channel:
+            emb.add_field(name="Channel", value=self.channel.name)
         if self.amended_by:
-            case_type += "**Amended by:** {}#{} ({})\n".format(
+            amended_by = "{}#{} ({})".format(
                 self.amended_by.name,
                 self.amended_by.discriminator,
                 self.amended_by.id
             )
+            emb.add_field(name="Amended by", value=amended_by)
         if self.modified_at:
-            case_type += "**Last modified**: {}\n".format(
+            last_modified = "{}".format(
                 datetime.fromtimestamp(
                     self.modified_at
                 ).strftime('%Y-%m-%d %H:%M:%S UTC')
             )
-        if self.reason:
-            case_type += "**Reason:** {}".format(self.reason)
-        else:
-            case_type += \
-                "**Reason:** Type [p]reason {} <reason> to add it".format(
-                    self.case_number
-                )
-        return case_type
+            emb.add_field(name="Last modified at", value=last_modified)
+
+        return emb
 
     def to_json(self) -> dict:
         """Transform the object to a dict
@@ -222,7 +236,10 @@ async def create_case(guild: discord.Guild, created_at: datetime, action_type: s
     :rtype:
         :py:class:`Case`
     :raises RuntimeError:
-        If the action type is not registered or the mod log channel doesn't exist
+        If:
+            the action type is not registered OR
+            the mod log channel doesn't exist OR
+            case creation for the action type is disabled
     """
     try:
         mod_channel = get_modlog_channel(guild)
@@ -233,12 +250,16 @@ async def create_case(guild: discord.Guild, created_at: datetime, action_type: s
     if not await is_casetype(action_type):
         raise RuntimeError("That action type is not registered!")
 
+    if not await get_case_type_status(action_type, guild):
+        raise RuntimeError("Case creation is disabled for that action")
+
     next_case_number = len(_conf.guild(guild).cases()) + 1
 
     case = Case(guild, int(created_at.timestamp()), action_type, user, moderator,
                 next_case_number, reason, until, channel, amended_by=None,
                 modified_at=None, message=None)
-    msg = await mod_channel.send(case)
+    case_emb = await case.get_case_msg_content()
+    msg = await mod_channel.send(embed=case_emb)
     case.message = msg
     await _conf.guild(guild).cases.set_attr(str(next_case_number), case.to_json)
     return case
@@ -265,8 +286,8 @@ async def edit_case(case_number: int, guild: discord.Guild, bot: Red,
     case = await get_case(case_number, guild, bot)
     for item in list(new_data.keys()):
         setattr(case, item, new_data[item])
-
-    case.message.edit(case)
+    case_emb = await case.get_case_msg_content()
+    case.message.edit(embed=case_emb)
 
     await _conf.guild(guild).cases.set_attr(str(case_number), case.to_json())
     return case
@@ -287,6 +308,19 @@ async def is_casetype(case_type: str) -> bool:
     """
     case_types = await _conf.casetypes()
     return case_type in case_types
+
+
+async def get_all_casetypes() -> List[str]:
+    """
+    Get all currently registered case types
+
+    :return:
+        A list of case type names
+    :rtype:
+        list
+    """
+    casetypes = await _conf.get_attr("casetypes")
+    return list(casetypes.keys())
 
 
 async def register_casetype(new_type: dict) -> bool:
@@ -316,7 +350,7 @@ async def register_casetype(new_type: dict) -> bool:
             "A case type with that name has already been registered!"
         )
     else:
-        await _conf.casetypes.setattr(case_name, default_setting)
+        await _conf.casetypes.set_attr(case_name, data)
         return True
 
 
@@ -344,7 +378,8 @@ async def register_casetypes(new_types: List[dict]) -> bool:
         return True
 
 
-async def get_modlog_channel(guild: discord.Guild) -> discord.TextChannel:
+async def get_modlog_channel(guild: discord.Guild
+                             ) -> Union[discord.TextChannel, None]:
     """
     Get the current modlog channel
 
@@ -355,7 +390,7 @@ async def get_modlog_channel(guild: discord.Guild) -> discord.TextChannel:
     :return:
         The channel object representing the modlog channel
     :rtype:
-        discord.TextChannel
+        discord.TextChannel or None
     :raises RuntimeError:
         If the modlog channel is not found
     """
@@ -365,20 +400,22 @@ async def get_modlog_channel(guild: discord.Guild) -> discord.TextChannel:
     return channel
 
 
-async def set_modlog_channel(channel: discord.TextChannel) -> bool:
+async def set_modlog_channel(channel: Union[discord.TextChannel, None]) -> bool:
     """
     Changes the modlog channel
 
     :param channel:
         The channel to be set as modlog channel
     :type channel:
-        discord.TextChannel
+        discord.TextChannel or None
     :return:
         :code:`True` if successful
     :rtype:
         bool
     """
-    await _conf.guild(channel.guild).mod_log.set(channel.id)
+    await _conf.guild(channel.guild).mod_log.set(
+        channel.id if hasattr(channel, "id") else None
+    )
     return True
 
 
