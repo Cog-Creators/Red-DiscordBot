@@ -1,13 +1,12 @@
-import discord
-from discord.ext import commands
-from core import Config, checks
-from core.utils.chat_formatting import box
-
-from datetime import datetime
-
-
 import os
 import re
+from datetime import datetime
+
+import discord
+from discord.ext import commands
+
+from core import Config, checks
+from core.utils.chat_formatting import box
 
 
 class CCError(Exception):
@@ -29,19 +28,19 @@ class CommandObj:
         self.db = config.guild
 
     @staticmethod
-    async def get_commands(config):
+    def get_commands(config) -> dict:
         commands = config.commands()
         customcommands = {k: v for k, v in commands.items() if commands[k]}
-        return str(customcommands)
+        return customcommands
 
-    def get_now(self):
+    def get_now(self) -> str:
         # Get current time as a string, for 'created_at' and 'edited_at' fields
         # in the ccinfo dict
         return '{:%d/%m/%Y %H:%M:%S}'.format(datetime.utcnow())
 
     async def get(self,
                   message: discord.Message,
-                  command: str):
+                  command: str) -> str:
         ccinfo = self.db(message.guild).commands.get_attr(command)
         if not ccinfo:
             raise NotFound
@@ -75,14 +74,20 @@ class CommandObj:
                    ctx: commands.Context,
                    command: str,
                    response):
+        """Edit an already existing custom command"""
         # Check if this command is registered
         if not self.db(ctx.guild).commands.get_attr(command):
             raise NotFound()
+
         author = ctx.message.author
         ccinfo = self.db(ctx.guild).commands.get_attr(command)
+
         ccinfo['response'] = response
         ccinfo['edited_at'] = self.get_now()
+
         if author.id not in ccinfo['editors']:
+            # Add the person who invoked the `edit` coroutine to the list of
+            # editors, if the person is not yet in there
             ccinfo['editors'].append(
                 author.id
             )
@@ -92,6 +97,7 @@ class CommandObj:
     async def delete(self,
                      ctx: commands.Context,
                      command: str):
+        """Delete an already exisiting custom command"""
         # Check if this command is registered
         if not self.db(ctx.guild).commands.get_attr(command):
             raise NotFound()
@@ -113,14 +119,19 @@ class CustomCommands:
 
     @commands.group(aliases=["cc"], no_pm=True)
     @commands.guild_only()
-    async def customcom(self, ctx: commands.Context):
+    async def customcom(self,
+                        ctx: commands.Context):
         """Custom commands management"""
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
 
     @customcom.command(name="add")
     @checks.mod_or_permissions(administrator=True)
-    async def cc_add(self, ctx, command: str, *, text):
+    async def cc_add(self,
+                     ctx,
+                     command: str,
+                     *,
+                     text):
         """Adds a custom command
         Example:
         [p]customcom add yourcommand Text you want
@@ -144,7 +155,11 @@ class CustomCommands:
 
     @customcom.command(name="edit")
     @checks.mod_or_permissions(administrator=True)
-    async def cc_edit(self, ctx, command: str, *, text):
+    async def cc_edit(self,
+                      ctx,
+                      command: str,
+                      *,
+                      text):
         """Edits a custom command
         Example:
         [p]customcom edit yourcommand Text you want
@@ -164,7 +179,9 @@ class CustomCommands:
 
     @customcom.command(name="delete")
     @checks.mod_or_permissions(administrator=True)
-    async def cc_delete(self, ctx, command: str):
+    async def cc_delete(self,
+                        ctx,
+                        command: str):
         """Deletes a custom command
         Example:
         [p]customcom delete yourcommand"""
@@ -178,16 +195,13 @@ class CustomCommands:
             await ctx.send("That command doesn't exist.")
 
     @customcom.command(name="list")
-    async def cc_list(self, ctx):
+    async def cc_list(self,
+                      ctx):
         """Shows custom commands list"""
 
-        response = await CommandObj.get_commands(self.config.guild(ctx.guild))
+        response = CommandObj.get_commands(self.config.guild(ctx.guild))
 
         await ctx.send(response)
-
-        return
-
-        guild = ctx.message.guild
 
         # Need info on grabbing whole config for guild
 
@@ -208,7 +222,8 @@ class CustomCommands:
             for page in pagify(commands, delims=[" ", "\n"]):
                 await self.bot.whisper(box(page))
 
-    async def on_message(self, message):
+    async def on_message(self,
+                         message):
         is_private = isinstance(message.channel, discord.abc.PrivateChannel)
         if len(message.content) < 2 or is_private:
             return
@@ -242,14 +257,18 @@ class CustomCommands:
             response = self.format_cc(command, message)
             await message.channel.send(response)
 
-    def format_cc(self, command, message):
+    def format_cc(self,
+                  command,
+                  message) -> str:
         results = re.findall("\{([^}]+)\}", command)
         for result in results:
             param = self.transform_parameter(result, message)
             command = command.replace("{" + result + "}", param)
         return command
 
-    def transform_parameter(self, result, message):
+    def transform_parameter(self,
+                            result,
+                            message) -> str:
         """
         For security reasons only specific objects are allowed
         Internals are ignored
