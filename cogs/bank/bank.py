@@ -15,7 +15,7 @@ def check_global_setting_guildowner():
 
 def check_global_setting_admin():
     async def pred(ctx: commands.Context):
-        if bank.is_global():
+        if await bank.is_global():
             return checks.is_owner()
         else:
             return checks.admin_or_permissions(manage_guild=True)
