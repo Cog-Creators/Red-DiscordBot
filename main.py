@@ -73,6 +73,17 @@ def determine_main_folder() -> Path:
     return Path(os.path.dirname(__file__)).resolve()
 
 
+async def _get_prefix_and_token(red, indict):
+    """
+    Again, please blame <@269933075037814786> for this.
+    :param indict:
+    :return:
+    """
+    indict['token'] = await red.db.token()
+    indict['prefix'] = await red.db.prefix()
+    indict['enable_sentry'] = await red.db.enable_sentry()
+
+
 if __name__ == '__main__':
     cli_flags = parse_cli_flags()
     log, sentry_log = init_loggers(cli_flags)
@@ -89,8 +100,13 @@ if __name__ == '__main__':
     if cli_flags.dev:
         red.add_cog(Dev())
 
-    token = os.environ.get("RED_TOKEN", red.db.token())
-    prefix = cli_flags.prefix or red.db.prefix()
+    loop = asyncio.get_event_loop()
+    tmp_data = {}
+    loop.run_until_complete(_get_prefix_and_token(red, tmp_data))
+
+    token = os.environ.get("RED_TOKEN", tmp_data['token'])
+    prefix = cli_flags.prefix or tmp_data['prefix']
+    enable_sentry = tmp_data['enable_sentry']
 
     if token is None or not prefix:
         if cli_flags.no_prompt is False:
@@ -102,13 +118,14 @@ if __name__ == '__main__':
             log.critical("Token and prefix must be set in order to login.")
             sys.exit(1)
 
-    if red.db.enable_sentry() is None:
+    if enable_sentry is None:
         ask_sentry(red)
 
-    if red.db.enable_sentry():
+    loop.run_until_complete(_get_prefix_and_token(red, tmp_data))
+
+    if tmp_data['enable_sentry']:
         init_sentry_logging(sentry_log)
 
-    loop = asyncio.get_event_loop()
     cleanup_tasks = True
 
     try:
