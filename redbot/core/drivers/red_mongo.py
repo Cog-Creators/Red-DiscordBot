@@ -20,7 +20,7 @@ class Mongo(BaseDriver):
             self.db.authenticate(self.admin_user, self.admin_pass)
 
     @property
-    def db(self) -> m.database.Database:
+    def db(self) -> motor.core.Database:
         """
         Gets the mongo database for this cog's name.
 
@@ -35,7 +35,7 @@ class Mongo(BaseDriver):
         """
         return self.conn[self.cog_name]
 
-    def get_collection(self, collection_name) -> m.collection.Collection:
+    def get_collection(self, collection_name) -> motor.core.Collection:
         """
         Gets a specified collection within the PyMongo database for this cog.
 
