@@ -5,7 +5,7 @@ from typing import Callable, Union, Tuple
 import discord
 
 from .data_manager import cog_data_path, core_data_path
-from .drivers.red_json import JSON as JSONDriver
+from .drivers import get_driver
 
 log = logging.getLogger("red.config")
 
@@ -434,7 +434,7 @@ class Config:
         cog_name = cog_path_override.stem
         uuid = str(hash(identifier))
 
-        spawner = JSONDriver(cog_name, data_path_override=cog_path_override)
+        spawner = get_driver('json', cog_name)
         return cls(cog_name=cog_name, unique_identifier=uuid,
                    force_registration=force_registration,
                    driver_spawn=spawner)
@@ -451,7 +451,8 @@ class Config:
             See :py:attr:`force_registration`
         :type force_registration: Optional[bool]
         """
-        driver_spawn = JSONDriver("Core", data_path_override=core_data_path())
+        core_path = core_data_path()
+        driver_spawn = get_driver('json', "Core", data_path_override=core_path)
         return cls(cog_name="Core", driver_spawn=driver_spawn,
                    unique_identifier='0',
                    force_registration=force_registration)
