@@ -88,4 +88,3 @@ Mod log
 
 .. automodule:: core.modlog
     :members:
-    :special-members: __str__
