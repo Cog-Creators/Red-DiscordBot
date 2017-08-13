@@ -246,8 +246,8 @@ class Admin:
         if guild is None:
             guild = ctx.guild
 
-        ignored = self.conf.guild(guild).announce_ignore()
-        await self.conf.guild(guild).set("announce_ignore", not ignored)
+        ignored = await self.conf.guild(guild).announce_ignore()
+        await self.conf.guild(guild).announce_ignore.set(not ignored)
 
         verb = "will" if ignored else "will not"
 
@@ -261,14 +261,14 @@ class Admin:
         :param guild:
         :return:
         """
-        selfrole_ids = set(self.conf.guild(guild).selfroles())
+        selfrole_ids = set(await self.conf.guild(guild).selfroles())
         guild_roles = guild.roles
 
         valid_roles = tuple(r for r in guild_roles if r.id in selfrole_ids)
         valid_role_ids = set(r.id for r in valid_roles)
 
         if selfrole_ids != valid_role_ids:
-            await self.conf.guild(guild).set("selfroles", valid_role_ids)
+            await self.conf.guild(guild).selfroles.set(valid_role_ids)
 
         # noinspection PyTypeChecker
         return valid_roles
@@ -296,10 +296,10 @@ class Admin:
         """
         Add a role to the list of available selfroles.
         """
-        curr_selfroles = self.conf.guild(ctx.guild).selfroles()
+        curr_selfroles = await self.conf.guild(ctx.guild).selfroles()
         if role.id not in curr_selfroles:
             curr_selfroles.append(role.id)
-            await self.conf.guild(ctx.guild).set("selfroles", curr_selfroles)
+            await self.conf.guild(ctx.guild).selfroles.set(curr_selfroles)
 
         await ctx.send("The selfroles list has been successfully modified.")
 
@@ -309,9 +309,9 @@ class Admin:
         """
         Removes a role from the list of available selfroles.
         """
-        curr_selfroles = self.conf.guild(ctx.guild).selfroles()
+        curr_selfroles = await self.conf.guild(ctx.guild).selfroles()
         curr_selfroles.remove(role.id)
-        await self.conf.guild(ctx.guild).set("selfroles", curr_selfroles)
+        await self.conf.guild(ctx.guild).selfroles.set(curr_selfroles)
 
         await ctx.send("The selfroles list has been successfully modified.")
 
@@ -332,7 +332,7 @@ class Admin:
         :param guild:
         :return: True if locked and left server
         """
-        if self.conf.serverlocked():
+        if await self.conf.serverlocked():
             await guild.leave()
             return True
         return False
@@ -343,8 +343,8 @@ class Admin:
         """
         Locks a bot to it's current servers only.
         """
-        serverlocked = self.conf.serverlocked()
-        await self.conf.set("serverlocked", not serverlocked)
+        serverlocked = await self.conf.serverlocked()
+        await self.conf.serverlocked.set(not serverlocked)
 
         verb = "is now" if not serverlocked else "is no longer"
 
