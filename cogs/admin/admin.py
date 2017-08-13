@@ -25,6 +25,13 @@ HIERARCHY_ISSUE = (
     "try again."
 )
 
+USER_HIERARCHY_ISSUE = (
+    "I tried to add {role.name} to {member.display_name} but that role"
+    " is higher than your highest role in the Discord heirarchy so I was"
+    " unable to successfully add it. Please get a higher role and "
+    "try again."
+)
+
 RUNNING_ANNOUNCEMENT = (
     "I am already announcing something. If you would like to make a"
     " different announcement please use `{prefix}announce cancel`"
@@ -81,6 +88,17 @@ class Admin:
         """
         return ctx.guild.me.top_role > role
 
+    @staticmethod
+    def pass_user_heirarchy_check(ctx: commands.Context,
+                                  role: discord.Role) -> bool:
+        """
+        Determines if a user is allowed to add/remove/edit the given role.
+        :param ctx:
+        :param role:
+        :return:
+        """
+        return ctx.author.top_role > role
+
     async def _addrole(self, ctx: commands.Context, member: discord.Member,
                        role: discord.Role):
         try:
@@ -122,10 +140,11 @@ class Admin:
         Adds a role to a user. If user is left blank it defaults to the
             author of the command.
         """
-        # So I'm an idiot.
-
-        # noinspection PyTypeChecker
-        await self._addrole(ctx, user, rolename)
+        if self.pass_user_heirarchy_check(ctx, rolename):
+            # noinspection PyTypeChecker
+            await self._addrole(ctx, user, rolename)
+        else:
+            await self.complain(ctx, USER_HIERARCHY_ISSUE)
 
     @commands.command()
     @commands.guild_only()
@@ -136,8 +155,11 @@ class Admin:
         Removes a role from a user. If user is left blank it defaults to the
             author of the command.
         """
-        # noinspection PyTypeChecker
-        await self._removerole(ctx, user, rolename)
+        if self.pass_user_heirarchy_check(ctx, rolename):
+            # noinspection PyTypeChecker
+            await self._removerole(ctx, user, rolename)
+        else:
+            await self.complain(ctx, USER_HIERARCHY_ISSUE)
 
     @commands.group()
     @commands.guild_only()
@@ -161,6 +183,11 @@ class Admin:
         author = ctx.author
         reason = "{}({}) changed the colour of role '{}'".format(
             author.name, author.id, role.name)
+
+        if not self.pass_user_heirarchy_check(ctx, role):
+            await self.complain(ctx, USER_HIERARCHY_ISSUE)
+            return
+
         try:
             await role.edit(reason=reason, color=value)
         except discord.Forbidden:
@@ -181,6 +208,11 @@ class Admin:
         old_name = role.name
         reason = "{}({}) changed the name of role '{}' to '{}'".format(
             author.name, author.id, old_name, name)
+
+        if not self.pass_user_heirarchy_check(ctx, role):
+            await self.complain(ctx, USER_HIERARCHY_ISSUE)
+            return
+
         try:
             await role.edit(reason=reason, name=name)
         except discord.Forbidden:
