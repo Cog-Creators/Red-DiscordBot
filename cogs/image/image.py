@@ -1,27 +1,31 @@
 from discord.ext import commands
 from random import shuffle
 import aiohttp
-from core.utils.helpers import JsonDB
-from core import checks
 
-CLIENT_ID = "1fd3ef04daf8cab"
-CLIENT_SECRET = "f963e574e8e3c17993c933af4f0522e1dc01e230"
+from core import checks, Config
+
 GIPHY_API_KEY = "dc6zaTOxFJmzC"
 
 
 class Image:
     """Image related commands."""
+    default_global = {
+        "imgur_client_id": None
+    }
 
     def __init__(self, bot):
         self.bot = bot
-        self.settings = JsonDB("data/settings.json")
+        self.settings = Config.get_conf(self, identifier=2652104208, force_registration=True)
         self.session = aiohttp.ClientSession()
         self.imgur_base_url = "https://api.imgur.com/3/"
 
     @commands.group(name="imgur")
     @commands.guild_only()
     async def _imgur(self, ctx):
-        """Retrieves pictures from imgur"""
+        """Retrieves pictures from imgur
+
+        Make sure to set the client ID using
+        [p]imgurcreds"""
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
 
@@ -30,7 +34,7 @@ class Image:
         """Searches Imgur for the specified term and returns up to 3 results"""
         url = self.imgur_base_url + "time/all/0"
         params = {"q": term}
-        headers = {"Authorization": "Client-ID {}".format(self.settings.get("imgur_client_id"))}
+        headers = {"Authorization": "Client-ID {}".format(await self.settings.imgur_client_id())}
         async with self.session.get(url, headers=headers, data=params) as search_get:
             data = await search_get.json()
 
@@ -70,7 +74,7 @@ class Image:
             sort = "top"
 
         links = []
-        headers = {"Authorization": "Client-ID {}".format(self.settings.get("imgur_client_id"))}
+        headers = {"Authorization": "Client-ID {}".format(await self.settings.imgur_client_id())}
         url = self.imgur_base_url + "r/{}/{}/{}/0".format(subreddit, sort, window)
 
         async with self.session.get(url, headers=headers) as sub_get:
@@ -92,9 +96,17 @@ class Image:
 
     @checks.is_owner()
     @commands.command()
-    async def imgurclientid(self, ctx, imgur_client_id: str):
-        """Sets the imgur client id"""
-        await self.settings.set("imgur_client_id", imgur_client_id)
+    async def imgurcreds(self, ctx, imgur_client_id: str):
+        """Sets the imgur client id
+        You will need an account on Imgur to get this
+
+        You can get these by visiting https://api.imgur.com/oauth2/addclient
+        and filling out the form. Enter a name for the application, select
+        'Anonymous usage without user authorization' for the auth type,
+        leave the app website blank, enter a valid email address, and
+        enter a description. Check the box for the captcha, then click Next.
+        Your client ID will be on the page that loads"""
+        await self.settings.imgur_client_id.set(imgur_client_id)
         await ctx.send("Set the imgur client id!")
 
     @commands.command(pass_context=True, no_pm=True)
@@ -140,10 +152,3 @@ class Image:
                     await ctx.send("No results found.")
             else:
                 await ctx.send("Error contacting the API")
-
-    async def set_keys(self):
-        if not self.settings.get("giphy_key"):
-            await self.settings.set("giphy_key", GIPHY_API_KEY)
-        if not self.settings.get("imgur_client_id"):
-            await self.settings.set("imgur_client_id", CLIENT_ID)
-
