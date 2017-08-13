@@ -7,6 +7,7 @@ Install for Windows
 -------------------
 
 1) Install `MongoDB Community Server for Windows`_ with SSL support.
+
 _MonogoDB Community Server for Windows : https://www.mongodb.com/download-center#community
 
 2) Locate the file just downloaded (often in /Downloads), run the .msi file and follow the steps for installation
