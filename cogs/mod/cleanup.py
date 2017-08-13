@@ -18,6 +18,7 @@ class Cleanup:
         global logger
         logger = logging.getLogger("mod")
         # Prevents the logger from being loaded again in case of module reload
+        """
         if logger.level == 0:
             logger.setLevel(logging.INFO)
             handler = logging.FileHandler(
@@ -25,6 +26,7 @@ class Cleanup:
             handler.setFormatter(
                 logging.Formatter('%(asctime)s %(message)s', datefmt="[%d/%m/%Y %H:%M]"))
             logger.addHandler(handler)
+        """
 
     @commands.group()
     @checks.mod_or_permissions(manage_messages=True)

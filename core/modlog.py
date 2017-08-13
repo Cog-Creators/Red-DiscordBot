@@ -339,11 +339,13 @@ async def register_casetype(new_type: dict) -> bool:
         If the case type is already registered
     """
     case_name = new_type["name"]
-    default_setting = new_type["default"]
-    case_repr = new_type["type_image"]
+    default_setting = new_type["default_setting"]
+    case_repr = new_type["image"]
+    case_str = new_type["case_str"]
     data = {
         "default_setting": default_setting,
-        "image": case_repr
+        "image": case_repr,
+        "case_str": case_str
     }
     if await is_casetype(case_name):
         raise RuntimeError(
@@ -370,10 +372,11 @@ async def register_casetypes(new_types: List[dict]) -> bool:
         If one of the case types couldn't be registered
     """
     for new_type in new_types:
-        try:
-            await register_casetype(new_type)
-        except RuntimeError:
-            raise
+        if not await is_casetype(new_type["name"]):
+            try:
+                await register_casetype(new_type)
+            except RuntimeError:
+                raise
     else:
         return True
 
