@@ -18,7 +18,7 @@ def announcer(admin):
 
 @pytest.mark.asyncio
 async def test_serverlock_check(admin, coroutine):
-    await admin.conf.set("serverlocked", True)
+    await admin.conf.serverlocked.set(True)
     guild = MagicMock()
     guild.leave = coroutine
 
@@ -42,7 +42,7 @@ def test_announcer_start(announcer):
 
 @pytest.mark.asyncio
 async def test_announcer_ignore(announcer, empty_guild, empty_channel):
-    await announcer.config.guild(empty_guild).set("announce_channel", empty_channel.id)
+    await announcer.config.guild(empty_guild).announce_channel.set(empty_channel.id)
 
     guild = MagicMock()
     guild.id = empty_guild.id
