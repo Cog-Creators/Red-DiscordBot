@@ -1,6 +1,6 @@
 import logging
 
-from typing import Callable, Union, Tuple
+from typing import Callable, Union, Tuple, Coroutine
 
 import discord
 from copy import deepcopy
@@ -191,7 +191,7 @@ class Group(Value):
 
         return not isinstance(default, dict)
 
-    async def get_attr(self, item: str, default=None, resolve=True):
+    def get_attr(self, item: str, default=None, resolve=True) -> Union[Value, Coroutine]:
         """
         This is available to use as an alternative to using normal Python attribute access. It is required if you find
         a need for dynamic attribute access.
@@ -214,13 +214,15 @@ class Group(Value):
         :param default:
             This is an optional override to the registered default for this item.
         :param resolve:
-            If this is :code:`True` this function will return a "real" data value, if :code:`False` this
-            function will return an instance of :py:class:`Group` or :py:class:`Value` depending on the
-            type of the "real" data value.
+            If this is :code:`True` this function will return a coroutine that resolves to a "real" data value,
+            if :code:`False` this function will return an instance of :py:class:`Group` or :py:class:`Value`
+            depending on the type of the "real" data value.
+        :rtype:
+            Coroutine or Value
         """
         value = getattr(self, item)
         if resolve:
-            return await value(default=default)
+            return value(default=default)
         else:
             return value
 
