@@ -48,14 +48,29 @@ API Reference
 
 .. automodule:: cogs.downloader.installable
 
+Installable
+^^^^^^^^^^^
+
 .. autoclass:: Installable
     :members:
 
 .. automodule:: cogs.downloader.repo_manager
 
+Repo
+^^^^
+
 .. autoclass:: Repo
     :members:
 
+Repo Manager
+^^^^^^^^^^^^
+
 .. autoclass:: RepoManager
+    :members:
+
+Exceptions
+^^^^^^
+
+.. automodule:: cogs.downloader.errors
     :members:
 
