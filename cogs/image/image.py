@@ -16,6 +16,7 @@ class Image:
     def __init__(self, bot):
         self.bot = bot
         self.settings = Config.get_conf(self, identifier=2652104208, force_registration=True)
+        self.settings.register_global(**self.default_global)
         self.session = aiohttp.ClientSession()
         self.imgur_base_url = "https://api.imgur.com/3/"
 
