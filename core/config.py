@@ -332,7 +332,7 @@ class MemberGroup(Group):
         :rtype: dict
         """
         # noinspection PyTypeChecker
-        return await self._super_group()
+        return await super().all_from_kind()
 
     async def all_from_kind(self) -> dict:
         """
