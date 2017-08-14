@@ -262,7 +262,8 @@ class Downloader(threading.Thread):
             self.hit_max_length.set()
         except OSError as e:
             log.warning("An operating system error occurred while downloading URL '{}':\n'{}'".format(self.url, str(e)))
-            error = str(e)
+            if(e.__cause__ is youtube_dl.utils.ExtractorError or e.__cause__ is youtube_dl.utils.GeoRestrictedError):
+                error = str(e.__cause__)
         self.done.set()
 
     def download(self):
