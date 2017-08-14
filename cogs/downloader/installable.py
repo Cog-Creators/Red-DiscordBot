@@ -102,7 +102,7 @@ class Installable(RepoJSONMixin):
         information into this object.
 
         :type info_file_path:
-        :param info_file_path: Optional path to information file, defaults to `self.__info_file`
+        :param info_file_path: Optional path to information file, _defaults to `self.__info_file`
         :return: Raw information dictionary
         """
         info_file_path = info_file_path or self._info_file
