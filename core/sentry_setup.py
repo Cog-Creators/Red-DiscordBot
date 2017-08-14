@@ -1,4 +1,4 @@
-from raven import Client
+from raven import Client, breadcrumbs
 from raven.versioning import fetch_git_sha
 from raven.conf import setup_logging
 from raven.handlers.logging import SentryHandler
@@ -35,6 +35,8 @@ def init_sentry_logging(logger):
         release=fetch_git_sha(str(Path.cwd()))
     )
 
+    breadcrumbs.ignore_logger("websockets")
+    breadcrumbs.ignore_logger("websockets.protocol")
     handler = SentryHandler(client)
     logger.addHandler(handler)
 

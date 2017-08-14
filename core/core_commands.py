@@ -2,6 +2,7 @@ from discord.ext import commands
 from core import checks
 from string import ascii_letters, digits
 from random import SystemRandom
+from collections import namedtuple
 import logging
 import importlib
 import os
@@ -11,10 +12,10 @@ import asyncio
 
 log = logging.getLogger("red")
 
-OWNER_DISCLAIMER = ("Setting as owner people who do not have access to "
-                    "the system that is hosting Red is **extremely "
-                    "dangerous**.\n**Owners and co owners are able to access "
-                    "any data that is present on the host system.**")
+OWNER_DISCLAIMER = ("⚠ **Only** the person who is hosting Red should be "
+                    "owner. **This has SERIOUS security implications. The "
+                    "owner can access any data that is present on the host "
+                    "system.** ⚠")
 
 
 class Core:
@@ -98,7 +99,7 @@ class Core:
     @commands.guild_only()
     async def adminrole(self, ctx, *, role: discord.Role):
         """Sets the admin role for this server"""
-        await ctx.bot.db.guild(ctx.guild).set("admin_role", role.id)
+        await ctx.bot.db.guild(ctx.guild).admin_role.set(role.id)
         await ctx.send("The admin role for this server has been set.")
 
     @_set.command()
@@ -106,7 +107,7 @@ class Core:
     @commands.guild_only()
     async def modrole(self, ctx, *, role: discord.Role):
         """Sets the mod role for this server"""
-        await ctx.bot.db.guild(ctx.guild).set("mod_role", role.id)
+        await ctx.bot.db.guild(ctx.guild).mod_role.set(role.id)
         await ctx.send("The mod role for this server has been set.")
 
     @_set.command()
@@ -225,7 +226,7 @@ class Core:
             await ctx.bot.send_cmd_help(ctx)
             return
         prefixes = sorted(prefixes, reverse=True)
-        await ctx.bot.db.set("prefix", prefixes)
+        await ctx.bot.db.prefix.set(prefixes)
         await ctx.send("Prefix set.")
 
     @_set.command(aliases=["serverprefixes"])
@@ -234,11 +235,11 @@ class Core:
     async def serverprefix(self, ctx, *prefixes):
         """Sets Red's server prefix(es)"""
         if not prefixes:
-            await ctx.bot.db.guild(ctx.guild).set("prefix", [])
+            await ctx.bot.db.guild(ctx.guild).prefix.set([])
             await ctx.send("Server prefixes have been reset.")
             return
         prefixes = sorted(prefixes, reverse=True)
-        await ctx.bot.db.guild(ctx.guild).set("prefix", prefixes)
+        await ctx.bot.db.guild(ctx.guild).prefix.set(prefixes)
         await ctx.send("Prefix set.")
 
     @_set.command()
@@ -276,43 +277,93 @@ class Core:
         else:
             if message.content.strip() == token:
                 self.owner.reset_cooldown(ctx)
-                await ctx.bot.db.set("owner", ctx.author.id)
+                await ctx.bot.db.owner.set(ctx.author.id)
                 ctx.bot.owner_id = ctx.author.id
                 await ctx.send("You have been set as owner.")
             else:
                 await ctx.send("Invalid token.")
 
-    @_set.command(aliases=["coowners"])
-    @checks.is_owner()
-    @commands.guild_only()
-    async def coowner(self, ctx, *coowners: discord.Member):
-        """Sets Red's coowner(s)
+    @commands.command()
+    @commands.cooldown(1, 60, commands.BucketType.user)
+    async def contact(self, ctx, *, message: str):
+        """Sends a message to the owner"""
+        guild = ctx.message.guild
+        owner = discord.utils.get(ctx.bot.get_all_members(),
+                                  id=ctx.bot.owner_id)
+        author = ctx.message.author
+        footer = "User ID: %s" % author.id
 
-        Leave empty to reset"""
-        def check(m):
-            return m.author == ctx.author and m.channel == ctx.channel
+        if ctx.guild is None:
+            source = "through DM"
+        else:
+            source = "from {}".format(guild)
+            footer += " | Server ID: %s" % guild.id
 
-        coowners = [m.id for m in coowners]
+        # We need to grab the DM command prefix (global)
+        # Since it can also be set through cli flags, bot.db is not a reliable
+        # source. So we'll just mock a DM message instead.
+        fake_message = namedtuple('Message', 'guild')
+        prefix = ctx.bot.command_prefix(ctx.bot, fake_message(guild=None))[0]
 
-        if not coowners:
-            await ctx.bot.db.set("coowners", [])
-            await ctx.send("Coowners list cleared.")
-            return
+        content = ("Use `{}dm {} <text>` to reply to this user"
+                   "".format(prefix, author.id))
 
-        await ctx.send("Remember:\n" + OWNER_DISCLAIMER)
-        await asyncio.sleep(5)
+        if isinstance(author, discord.Member):
+            colour = author.colour
+        else:
+            colour = discord.Colour.red()
 
-        await ctx.send("Type `I understand` if you have read and understand "
-                       "the above message.")
+        description = "Sent by {} {}".format(author, source)
+
+        e = discord.Embed(colour=colour, description=message)
+        if author.avatar_url:
+            e.set_author(name=description, icon_url=author.avatar_url)
+        else:
+            e.set_author(name=description)
+        e.set_footer(text=footer)
 
         try:
-            message = await ctx.bot.wait_for("message", check=check,
-                                             timeout=60)
-        except asyncio.TimeoutError:
-            await ctx.send("The set owner request has timed out.")
+            await owner.send(content, embed=e)
+        except discord.InvalidArgument:
+            await ctx.send("I cannot send your message, I'm unable to find "
+                           "my owner... *sigh*")
+        except:
+            await ctx.send("I'm unable to deliver your message. Sorry.")
         else:
-            if message.content.lower().strip() == "i understand":
-                await ctx.bot.db.set("coowners", coowners)
-                await ctx.send("{} coowner(s) set.".format(len(coowners)))
-            else:
-                await ctx.send("Set coowner request aborted.")
+            await ctx.send("Your message has been sent.")
+
+    @commands.command()
+    @checks.is_owner()
+    async def dm(self, ctx, user_id: int, *, message: str):
+        """Sends a DM to a user
+
+        This command needs a user id to work.
+        To get a user id enable 'developer mode' in Discord's
+        settings, 'appearance' tab. Then right click a user
+        and copy their id"""
+        destination = discord.utils.get(ctx.bot.get_all_members(),
+                                        id=user_id)
+        if destination is None:
+            await ctx.send("Invalid ID or user not found. You can only "
+                           "send messages to people I share a server "
+                           "with.")
+            return
+
+        e = discord.Embed(colour=discord.Colour.red(), description=message)
+        description = "Owner of %s" % ctx.bot.user
+        fake_message = namedtuple('Message', 'guild')
+        prefix = ctx.bot.command_prefix(ctx.bot, fake_message(guild=None))[0]
+        e.set_footer(text=("You can reply to this message with %scontact"
+                           "" % prefix))
+        if ctx.bot.user.avatar_url:
+            e.set_author(name=description, icon_url=ctx.bot.user.avatar_url)
+        else:
+            e.set_author(name=description)
+
+        try:
+            await destination.send(embed=e)
+        except:
+            await ctx.send("Sorry, I couldn't deliver your message "
+                           "to %s" % destination)
+        else:
+            await ctx.send("Message delivered to %s" % destination)

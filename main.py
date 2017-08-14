@@ -113,7 +113,7 @@ if __name__ == '__main__':
         if db_token and not cli_flags.no_prompt:
             print("\nDo you want to reset the token? (y/n)")
             if confirm("> "):
-                loop.run_until_complete(red.db.set("token", ""))
+                loop.run_until_complete(red.db.token.set(""))
                 print("Token has been reset.")
     except KeyboardInterrupt:
         log.info("Keyboard interrupt detected. Quitting...")
