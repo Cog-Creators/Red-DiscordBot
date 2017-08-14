@@ -1,6 +1,6 @@
 import logging
 
-from typing import Callable, Union, Tuple, Coroutine
+from typing import Callable, Union, Tuple
 
 import discord
 from copy import deepcopy
@@ -195,7 +195,7 @@ class Group(Value):
 
         return not isinstance(default, dict)
 
-    def get_attr(self, item: str, default=None, resolve=True) -> Union[Value, Coroutine]:
+    def get_attr(self, item: str, default=None, resolve=True):
         """
         This is available to use as an alternative to using normal Python attribute access. It is required if you find
         a need for dynamic attribute access.
