@@ -52,7 +52,7 @@ def pagify(text, delims=["\n"], *, escape_mass_mentions=True, shorten_by=8,
             yield to_send
         in_text = in_text[closest_delim:]
 
-    if len(in_text.strip()) > 0
+    if len(in_text.strip()) > 0:
         if escape_mass_mentions:
             yield escape(in_text, mass_mentions=True)
         else:
