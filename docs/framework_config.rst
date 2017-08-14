@@ -43,15 +43,27 @@ API Reference
 
 .. automodule:: core.config
 
+Config
+^^^^^^
+
 .. autoclass:: Config
     :members:
+
+Group
+^^^^^
 
 .. autoclass:: Group
     :members:
     :special-members:
 
+MemberGroup
+^^^^^^^^^^^
+
 .. autoclass:: MemberGroup
     :members:
+
+Value
+^^^^^
 
 .. autoclass:: Value
     :members:

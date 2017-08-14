@@ -69,7 +69,7 @@ Repo Manager
     :members:
 
 Exceptions
-^^^^^^
+^^^^^^^^^^
 
 .. automodule:: cogs.downloader.errors
     :members:
