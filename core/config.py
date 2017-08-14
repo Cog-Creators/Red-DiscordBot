@@ -251,6 +251,11 @@ class Group(Value):
         This method allows you to get all data from all entries in a given Kind. It will return a dictionary of Kind
         ID's -> data.
 
+        .. note::
+
+            Any values that have not been set from the registered defaults will have their default values
+            added to the dictionary that this method returns.
+
         .. important::
 
             This method is overridden in :py:meth:`.MemberGroup.all_from_kind` and functions slightly differently.
@@ -329,6 +334,11 @@ class MemberGroup(Group):
         """
         Returns a dict of :code:`GUILD_ID -> MEMBER_ID -> data`.
 
+        .. note::
+
+            Any values that have not been set from the registered defaults will have their default values
+            added to the dictionary that this method returns.
+
         :rtype: dict
         """
         # noinspection PyTypeChecker
@@ -337,6 +347,11 @@ class MemberGroup(Group):
     async def all_from_kind(self) -> dict:
         """
         Returns a dict of all members from the same guild as the given one.
+
+        .. note::
+
+            Any values that have not been set from the registered defaults will have their default values
+            added to the dictionary that this method returns.
 
         :rtype: dict
         """
