@@ -1,10 +1,9 @@
 """Package for Trivia cog."""
-import logging
 from core.bot import Red
 from .trivia import Trivia
 
-LOG = logging.getLogger("red.trivia")
-
 def setup(bot: Red):
     """Load Trivia."""
-    bot.add_cog(Trivia(bot))
+    cog = Trivia(bot)
+    bot.add_listener(cog.end_session, "on_trivia_end")
+    bot.add_cog(cog)

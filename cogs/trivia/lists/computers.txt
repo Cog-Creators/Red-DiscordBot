@@ -1,0 +1,164 @@
+How many layers are present in TCP/IP model?`Seven`7
+What is a program which translates from one high-level to a machine level?`Compiler
+A computer which links several PCs together in a network is called a...?`Server
+Which device allows your computer to talk to other computers over a telephone line as well as access the internet?`Modem
+How many logical drives is it possible to fit onto a physical disk?`Twenty-four`twentyfour`24`twenty four
+According to ISO, HDLC means...?`High-level Data Link Control`highlevel data link control`high level data link control
+How much information can a CD (Compact Disc) usually store?`650 Mb
+The cabinet containing the computer’s working parts is known as the...?`Workstation`Case
+IP Addresses have ________ bytes?`Four`4
+Older networks often use another type of cable, called ...?`Coaxial cable
+When a key is pressed on the keyboard, which standard is used for converting the keystroke into the corresponding bits?`ANSI
+This unit of a computer system is the unit where the actual execution of instructions takes place during processing operation?`Arithmetic Logic Unit`Arithmetic Logic
+What is the name of the software that allows us to browse through web pages called?`Browser
+What is the battery used to change date/time of system?`BIOS battery`BIOS
+What is the address given to a computer connected to a network called?`IP Address`IP
+What does UPS stand for?`Uninterruptible Power Supply
+A computer that is on the network is a...?`Node
+What does HTML stand for?`Hyper text markup language
+A server that can perform no other task besides network services is called...?`Dedicated server
+What password is cleared by changing the jumper setting in the motherboard?`CMOS
+Small portable disk inside a plastic cover. It’s thicker than the floppy and needs a special drive connected to the computer?`Zip Disk`zip drive`zip disc
+Blank optical disk where you can save only once, even when not the whole space available is used?`Compact Disc-Recordable`CD-R`cd r`Compact Disk-Recordable`Compact Disc RecordableCompact Disk Recordable
+Amount of data a Floppy Disk can store?`1.4 MB
+Removable and rewritable electronic data storage device that can be plugged into almost any PC?`USB
+Rewritable optical disk where you can save and erase data several times?`Compact Disc-Rewritable`CD-RW`CD RW`Compact Disc Rewritable``Compact Disk Rewritable`Compact Disk-Rewritable
+A compact disc containing permanently stored data that cannot be altered?`Compact Disc Read-Only Memory`CD-ROM`CD ROM`Compact Disc-Read-Only Memory``Compact Disk Read-Only Memory``Compact Disc Read Only Memory``Compact Disk Read Only Memory
+Solid electronic data storage device used in cameras, telephones, laptops, music players and video games consoles?`Memory Card
+What is the internal storage of a computer?`Hard Disk`hard drive`hard disc
+What is the basic unit of measurement storage in computer science?`Byte
+The input device that rolls on a desktop and controls the position of the cursor on then on the screen is called a...?`Mouse
+The scanning technology, used in banks, to read the numbers at the bottom of checks is...?`MICR
+The input device that has the monitor screen covered with a flexible layer is the...?`Touch Screen`touchscreen
+What is a rigid, magnetically sensitive disk that spins rapidly and continuously inside the computer chassis or in a separate box connected to the computer housing?`Hard Disk`hard drive`hard disc
+When an application fires up, the application is loaded into...?`RAM
+The OSPF Type 1 packet is the _________ packet.`Hello
+Which value represents the “trustworthiness” of a route and is used to determine which route to install into the routing table when there are multiple routes toward the same destination?`Administrative distance
+The default administrative distance for a static route is...?`One`1
+Static routes are configured by the use of the global configuration command...?`IP Route
+Which subnet mask would be used as the classful mask for the IP address 128.107.52.27?`255.255.0.0
+Which subnet mask would be used as the classful mask for the IP address 192.135.250.27?`255.255.255.0
+The buffers for packet processing and the running configuration file are temporarily stored in which type of router memory?`RAM
+A network technician is configuring port security on switches. The interfaces on the switches are configured in such a way that when a violation occurs, packets with unknown source address are dropped and no notification is sent. Which violation mode is configured on the interfaces?`Protect
+To enable RIP routing for a specific subnet, the configuration command network 192.168.5.64 was entered by the network administrator. What address, if any, appears in the running configuration file to identify this network?`192.168.5.0
+What is the phrase for how often your screen's image is redrawn?`Refresh Rate
+The small program which allows a piece of computer hardware to work with the operating system is called what?`driver
+What is the maximum number of peripheral devices which can be connected through a single USB port?`127
+Who invented the computer mouse?`Douglas Engelbart
+Between CRT and LCD monitors, which uses less power?`LCD
+If one of your peripherals is not functioning properly, where in the Windows XP operating system would you check its status?`device manager
+What type of keyboard is used to transmit digital signals which correspond to sample sounds?`MIDI
+What do you call "suction like cups for attaching a phone handset to computer equipment"?`acoustic coupler
+What numeric base system was used by the Honeywell-800?`octal
+What is the largest piece of the computer; it is also the one that has the fewest electronic components?`Case
+When you look at a processor, you normally see a plastic or ceramic case with metal pins and possibly other metal parts. However, the active component inside is made of a different material - which one?`silicon
+One of the most important performance-enhancing concepts of a modern processor is called speculative execution. What other concept is this tightly associated with?`Pipelining
+The moment you turn on your computer, it begins to access its memory. BIOS, the software that boots up your computer, is located in which type of memory?`ROM
+When looking at your computer's memory, you will come across the storage hierarchy, which separates storage into primary, secondary, and tertiary. Primary storage refers to memory that is directly accessible to the CPU. What is another name for primary storage?`Main Memory`Main
+A computer's cache will hold data that is used most often to make it faster to access. There are various levels of cache, the first of which is a small amount of memory found inside the what?`CPU`Central processing unit
+RAM stands for random access memory and it can be static (SRAM) or dynamic (DRAM). SRAM stores a bit of data using which type of circuit?`Flip-Flop`flip flop`flipflop
+The memory stored in the capacitor in a __ circuit has to be constantly refreshed, and this happens several times in a second because the capacitor leaks.`DRAM
+Virtual memory acts like RAM, but it is actually a process or program that creates a paging file to move items from RAM into that file. Where does it create the paging file?`hard disk`hard drive`hard disc
+Secondary storage, like the hard drive, isn't directly accessible to the CPU like primary storage. What is another name for secondary storage?`auxiliary storage`auxiliary
+Data can come from information stored in the computer's permanent storage, or it can come from peripheral devices, such as keyboards. Regardless of whether it is input through a peripheral device or taken from storage, which type of memory does most data go through first?`RAM
+The first hard disks, created in the 1950s, could be up to 20 inches in diameter. Which company invented the hard disk?`IBM
+Inside the hard disk drive, where is the data actually stored?`platter
+In one pixel, how many different colours of light are there?`Three`3
+In what year was DOS created?`1981
+What is CIH also known as?`Chernobyl Virus
+Video-sharing site that was founded by three former PayPal employees in February 2005.`YouTube
+In which year was ASCII formed?`1963
+In which year was the Personal Computer featured as the Times 'Man of the Year'?`1982
+What is the name of Linux's Mascot?`Tux
+What was the original name of Netscape Navigator?`Mozilla
+What was the first ARPANET message?`lo
+What error is "Site Access Forbidden/Password Protected"?`Error 403`403
+Early web search engine founded in 1995. Purchased by Yahoo! in 2003 which shut it down in 2013?`AltaVista
+Often blocked file sharing site using the BitTorrent protocol, founded in Sweden in 2003?`The Pirate Bay
+Internet-based network of content, providing articles and videos about various topics, authored by experts. Founded in 1997?`About.com
+Social and visual discovery tool, founded by Ben Silbermann, Evan Sharp and Paul Sciarra in 2010?`Pinterest
+Crowdfunding platform founded in 2009 by Perry Chen, Yancey Strickler and Charles Adler?`Kickstarter
+Provider of on-demand Internet streaming media since 1997. Started its own original programming in 2011 with the series House of Cards?`Netflix
+Business-oriented social networking service, co-founded by Reid Hoffman in 2003?`LinkedIn
+Internet domain registrar and web hosting company, founded by Bob Parsons in 1997?`Go Daddy
+Social networking service co-founded by Mark Zuckerberg in 2004?`Facebook
+E-commerce business founded in 1998 and focuses on money transfers to be made through the Internet?`PayPal
+Quattro Pro, Paradox and Trellix are part of which office suite?`Corel WordPerfect
+In what year did ARPANET became operational?`1969
+Which company first produced the 3 1/2 inch floppy disk?`Sony
+In which year was MIDI introduced?`1983
+What does CE in Windows CE, OS from Microsoft for palmtops, stand for?`Consumer Electronics
+Which company invented the floppy disk?`IBM
+Which company first manufactured CDs?`Philips
+In what year was the "@" chosen for its use in e-mail addresses?`1972
+What error is "Site not found -in HTTP"?`Error 404`404
+TCP port number 80 is usually reserved for?`HTTP
+What is commonly regarded as the first inexpensive and commercially available computer with GUI and Mouse?`Apple Lisa
+In what year was the Domain Name System created?`1983
+What error is "Internal error/server-configuration problems"?`Error 500`500
+[Input/Output]Monitor?`Output
+[Input/Output]Keyboard?`Input
+[Input/Output]Scanner?`Input
+[Input/Output]Graphics Tablet?`Input
+[Input/Output]Trackball?`Input
+[Input/Output]Laser Printer?`Output
+[Input/Output]Mouse?`Input
+[Input/Output]Speakers?`Output
+[Input/Output]Inkjet Printer?`Output
+[Input/Output]Digital Camera?`Input
+[Input/Output]Touchpad?`Input
+[Acronyms]What does ISP stand for?`Internet Service Provider
+[Acronyms]What does IP stand for?`Internet Protocol
+[Acronyms]What does ISO stand for?`International Standard Organization
+[Acronyms]What does LPT stand for?`Line Printer
+[Acronyms]What does CD-ROM stand for?`Compact Disc-Read Only Memory`Compact Disc Read Only Memory`Compact Disk-Read Only Memory`Compact Disk Read Only Memory
+[Acronyms]What does CD-R stand for?`Compact Disc-Recordable`Compact Disc Recordable`Compact Disk-Recordable`Compact Disk Recordable
+[Acronyms]What does CD-RW stand for?`Compact Disc-Rewritable`Compact Disc Rewritable`Compact Disk-Rewritable`Compact Disk Rewritable
+[Acronyms]What does www stand for?`World Wide Web
+[Acronyms]What does Spool stand for?`Simultaneous Peripheral Output On-Line`Simultaneous Peripheral Output On Line
+[Acronyms]What does NIC stand for?`Network Interface Card
+[Acronyms]What does PAN stand for?`Personal Area Network
+[Acronyms]What does SDLC stand for in Networking protocol?`Synchronous Data Link Control
+[Acronyms]What does EOF stand for?`End of File
+[Acronyms]What does SCSI port (pronounced skuzzy) stand for?`Small Computer System Interface
+[Acronyms]What does RAM stand for?`Random Access Memory
+[Acronyms]What does SCSI stand for?`Small Computer System Interface
+[Acronyms]What does MTBF stand for?`Mean Time Between Failures
+[Acronyms]What does CPU stand for?`Central Processing Unit
+[Acronyms]What does LCD stand for?`Liquid Crystal Display
+[Acronyms]What does VDU stand for?`Visual Display Unit
+[Acronyms]What does USB stand for?`Universal Serial Bus
+[Acronyms]What does TCP stand for?`Transmission Control Protocol
+[Acronyms]What does CRT stand for?`Cathode Ray Tube
+[Acronyms]What does DVI stand for?`Digital Visual Interface
+[Acronyms]What does modem stand for?`Modulator Demodulater
+[Acronyms]What does SDRAM stand for?`Synchronous Dynamic Random Access Memory
+[Acronyms]What does ROM stand for?`Read Only Memory
+[Programming Languages]One of the oldest high-level programming languages in widespread use today. It was designed by John McCarthy in 1958 and quickly became a favored programming language for artificial intelligence`LISP
+[Programming Languages]Purely functional programming language since 1990. It was named after US mathematician and logican H. Curry and uses the Greek letter lambda as its logo.`Haskell
+[Programming Languages]Influential programming language, published in 1970 by Niklaus Wirth as a small and efficient language intended to encourage good programming practices using structured programming and data structuring.`Pascal
+[Programming Languages]Educational programming language, designed in 1967 and modeled on the LISP programming language.`Logo
+[Programming Languages]Multi-paradigm, high level programming language launched by Microsoft in 2002 to make programs for Windows in a an 'drag-and-drop' interface.`Visual Basic .NET
+[Programming Languages]One of the first programming languages, designed by Kemeny and Kurtz in 1964. Its design philosophy emphasizes ease of use and became widespread on microcomputers in the mid-1970s and 1980s.`BASIC
+[Programming Languages]Language that appeared in 1985, originally to create database and business programs operated primarily under DOS.`Clipper
+[Programming Languages]Programming language and web application development platform invented in 1995 and purchased by Adobe in 2006. It was originally designed to connect simple HTML pages to a database.`ColdFusion
+[Programming Languages]Popular high-level, general-purpose, interpreted, dynamic programming language created by Larry Wall in 1987. It is often used in CGI and text processing (e.g. parsing).`Perl
+[Programming Languages]Server-side script engine that uses the VBScript or JScript languages for dynamically generated web pages. It was created by Microsoft in the mid 1990s and succeeded by a .NET version in 2002.`ASP
+[Programming Languages]Compiled computer programming language created in 1959 and primarily used in business, finance, and administrative systems.`COBOL
+[Programming Languages]Not a programming language, but a popular group of interrelated client-side web development techniques to exchange data without full webpage reloads.`Ajax
+[Programming Languages]The most widespread logic programming language, desgined by Alain Colmerauer in 1972. Unlike many programming languages, it's declarative.`Prolog
+[Programming Languages]Computer language since 1982 for creating vector graphics, best known for its use as a page description language in the electronic and desktop publishing areas.`Postscript
+[Programming Languages]One of the most widely used and influentual programming languages of all time. It is an imperative and compiled language, initially developed by Dennis Ritchie and Ken Thompson between 1969 and 1973 at AT&T Bell Labs.`C
+[Programming Languages]General-purpose, object-oriented programming language designed by Brad Cox and Tom Love. It is the main programming language used by Apple for the OS X and iOS operating systems,and their application programming interfaces.`Objective-C`objective c`objectivec
+[Programming Languages]Language originally developed by Borland as a rapid application development tool for Windows as a successor to Borland Pascal.`Delphi
+[Programming Languages]Widely used general-purpose, high-level programming language created by Guido van Rossum in 1991. Its design philosophy emphasizes code readability and its syntax allows to express concepts in relatively few lines of code.`Python
+[Programming Languages]Very popular general-purpose, imperative programming language in high-performance computing (e.g. scientific use and supercomputers). It was initiated by John Backus and IBM in 1957.`Fortran
+[Programming Languages]One of the most popular programming languages, created by James Gosling at Sun Microsystems in 1995. It is platform independent and based upon C and C++.`Java
+[Programming Languages]A popular scripting language for computers, often run in web browsers to create or alter dynamic content. It was developed by Brendan Eich for Netscape in 1995.`Javascript
+[Programming Languages]Multi-paradigm numerical computing environment and fourth-generation programming language since the late 70s, primarily intended for numerical computing.`MATLAB
+[Programming Languages]Interpreted programming language for text processing and data extraction and was very popular in the late 1970s and 1980s. It is a standard feature of most Unix-like operating systems.`AWK
+[Programming Languages]Scripting and object-oriented programming language developed by John H. Thompson for use in Adobe Director`Lingo
+[Programming Languages]Programming language and software environment for statistical computing and graphics. It was introduced in 1993 and has become popular among statisticians and data miners.`R
+[Programming Languages]Widely used programming language designed for managing data held in a relational database management system. It was initially developed Chamberlin and Boyce at IBM in the early 1970s.`SQL
+[Programming Languages]Dynamic, object-oriented, general-purpose programming language with a focus on shortness and ease of use. It was influenced by Perl, Ada and Lisp and designed by Yukihiro Matsumoto in 1995.`Ruby
+[Programming Languages]Computer scripting language originally developed by Macromedia Inc., now primarily used in Adobe Flash Player`ActionScript
