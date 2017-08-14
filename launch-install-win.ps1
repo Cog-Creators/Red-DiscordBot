@@ -3,10 +3,42 @@ $filename = $NULL
 
 # Powershell version check because ConvertFrom-JSON was introduced in
 # v3 and is required for getting the latest Git for Windows version
+# Powershell 3+ is only default on Windows 8 and up.
 if ($PSVersionTable.PSVersion.Major -lt 3)
 {
-    echo "You need at least PowerShell 3.0 to run me!"
-    return
+    $winver = [System.Environment]::OSVersion.Version
+    if($winver.Major -lt 6) # Yes, this is a check for Windows XP
+    {
+        echo "Sorry, Python 3.5 does not support Windows versions before Vista!"
+        return
+    }
+    elseif(($winver.Major -eq 6) -and ($winver.Minor -lt 1)) # Check for Windows Vista
+    {
+        echo "Windows Vista cannot run Powershell 3.0, so I can't be used for installing Red! Please install the requirements manually"
+        return
+    }
+    elseif(($winver.Major -eq 6) -and ($winver.Minor -eq 1) -and ($winver.Build -lt 7601)) # Check for Windows 7 without service pack 1
+    {
+        echo "I need Windows 7 SP1 to be able to use Powershell 3!"
+        return
+    }
+    elseif(($winver.Major -eq 6) -and ($winver.Minor -eq 1) -and ($winver.Build -eq 7601)) # Check for Windows 7 SP1
+    {
+        echo "Powershell 3 is not installed! Opening a web browser to point you to download it"
+        echo "On the page that loads, click download"
+        if($procarch -eq "AMD64")
+        {
+            echo "When prompted to select a file for download, select Windows6.1-KB2506143-x64.msu"
+        }
+        else
+        {
+            echo "When prompted to select a file for download, select Windows6.1-KB2506143-x86.msu"
+        }
+        echo "Opening the link now. Please install the downloaded file, following any instructions given (including rebooting your computer)"
+        sleep 5
+        (New-Object -Com Shell.Application).Open("https://www.microsoft.com/en-us/download/details.aspx?id=34595")
+        return
+    }
 }
 
 # Install python
