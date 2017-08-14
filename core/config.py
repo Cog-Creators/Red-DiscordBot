@@ -96,7 +96,7 @@ class Group(Value):
     A "group" of data, inherits from :py:class:`.Value` which means that all of the attributes and methods available
     in :py:class:`.Value` are also available when working with a :py:class:`.Group` object.
 
-    .. py:attribute:: _defaults
+    .. py:attribute:: defaults
 
         A dictionary of registered default values for this :py:class:`Group`.
 
