@@ -193,15 +193,6 @@ class Trivia:
             return
         await ctx.send(msg)
 
-    async def on_message(self, message):
-        """Fires when a message is sent and checks if
-         it is an answer to a question.
-        """
-        if message.author != message.guild.me:
-            session = self._get_trivia_session(message.channel)
-            if session:
-                await session.check_answer(message)
-
     async def end_session(self, session: TriviaSession):
         """Fires when a trivia session ends, and
          removes it from this cog's sessions.
