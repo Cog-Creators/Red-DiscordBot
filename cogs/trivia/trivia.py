@@ -1,5 +1,4 @@
 """Module for Trivia cog."""
-from collections import namedtuple
 from typing import List
 import pathlib
 import chardet
@@ -13,14 +12,13 @@ from .session import TriviaSession
 
 UNIQUE_ID = 0xb3c0e453
 
-TriviaLine = namedtuple("TriviaLine", "question answers")
-
-def _parse_trivia_list(path: str) -> List[TriviaLine]:
+def parse_trivia_list(path: str) -> List[tuple]:
+    """Parse the trivia list file at the given file path."""
     ret = []
     with open(path, "rb") as file_:
         try:
             encoding = chardet.detect(file_.read())["encoding"]
-        except:
+        except (KeyError, TypeError):
             encoding = "ISO-8859-1"
 
     with open(path, "r", encoding=encoding) as file_:
@@ -36,8 +34,7 @@ def _parse_trivia_list(path: str) -> List[TriviaLine]:
         for ans in line[1:]:
             answers.append(ans.strip())
         if len(line) >= 2 and question and answers:
-            line = TriviaLine(question=question, answers=answers)
-            ret.append(line)
+            ret.append((question, answers))
 
     if not ret:
         raise ValueError("Empty trivia list")
@@ -143,10 +140,10 @@ class Trivia:
             return
         trivia_list = self.get_trivia_list(category)
         settings = self.conf.guild(ctx.guild)
-        session = TriviaSession(self.bot, trivia_list, ctx.message, settings)
+        session = TriviaSession(ctx, trivia_list, settings)
         self.trivia_sessions.append(session)
         LOG.debug("New trivia session; #%s in %s", ctx.channel, ctx.guild)
-        await session.new_question()
+        await session.run()
 
     @trivia.command(name="stop")
     async def trivia_stop(self, ctx: commands.Context):
@@ -166,7 +163,7 @@ class Trivia:
         is_staff = mod_role in author.roles or admin_role in author.roles
         is_guild_owner = author == ctx.guild.owner
         is_authorized = is_staff or is_owner or is_guild_owner
-        if author == session.starter or is_authorized:
+        if author == session.ctx.author or is_authorized:
             await session.end_game()
             await ctx.send("Trivia stopped.")
         else:
@@ -197,12 +194,12 @@ class Trivia:
         """Fires when a trivia session ends, and
          removes it from this cog's sessions.
         """
-        channel = session.channel
+        channel = session.ctx.channel
         LOG.debug("Ending trivia session; #%s in %s", channel, channel.guild)
         if session in self.trivia_sessions:
             self.trivia_sessions.remove(session)
 
-    def get_trivia_list(self, category: str) -> List[TriviaLine]:
+    def get_trivia_list(self, category: str) -> List[tuple]:
         """Get the trivia list corresponding to the given category.
 
         :param str category:
@@ -215,11 +212,11 @@ class Trivia:
             return
         filename = "{}.txt".format(category)
         path = self._get_lists_path() / filename
-        return _parse_trivia_list(str(path))
+        return parse_trivia_list(str(path))
 
     def _get_trivia_session(self, channel: discord.TextChannel) -> TriviaSession:
         return next((session for session in self.trivia_sessions
-                     if session.channel == channel), None)
+                     if session.ctx.channel == channel), None)
 
     def _get_lists_path(self) -> pathlib.Path:
         # Once the bot data path is configurable,
