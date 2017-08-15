@@ -8,20 +8,26 @@ import asyncio
 import time
 from random import choice
 from collections import Counter
+import discord
+from core import config as real_config
+from core.bot import Red
 from core.utils.chat_formatting import box
+
+_REVEAL_MESSAGES = ("I know this one! {}!",
+                    "Easy: {}.",
+                    "Oh really? It's {} of course.")
+
+_FAIL_MESSAGES = ("To the next one I guess...",
+                  "Moving on...",
+                  "I'm sure you'll know the answer of the next one.",
+                  "\N{PENSIVE FACE} Next one.")
 
 class TriviaSession():
     """A Trivia Session."""
 
-    def __init__(self, bot, trivia_list, message, settings):
+    def __init__(self, bot: Red, trivia_list, message: discord.Message,
+                 settings: real_config.Group):
         self.bot = bot
-        self.reveal_messages = ("I know this one! {}!",
-                                "Easy: {}.",
-                                "Oh really? It's {} of course.")
-        self.fail_messages = ("To the next one I guess...",
-                              "Moving on...",
-                              "I'm sure you'll know the answer of the next one.",
-                              "\N{PENSIVE FACE} Next one.")
         self.current_line = None # {"QUESTION" : "String", "ANSWERS" : []}
         self.question_list = trivia_list
         self.channel = message.channel
@@ -44,7 +50,7 @@ class TriviaSession():
 
     async def new_question(self):
         for score in self.scores.values():
-            if score == self.settings["max_score"]:
+            if score == await self.settings.max_score():
                 await self.end_game()
                 return True
         if self.question_list == []:
@@ -58,8 +64,9 @@ class TriviaSession():
         msg = "**Question number {}!**\n\n{}".format(self.count, self.current_line.question)
         await self.channel.send(msg)
 
-        while self.status != "correct answer" and abs(self.timer - int(time.perf_counter())) <= self.settings["delay"]:
-            if abs(self.timeout - int(time.perf_counter())) >= self.settings["timeout"]:
+        delay = await self.settings.delay()
+        while self.status != "correct answer" and abs(self.timer - int(time.perf_counter())) <= delay:
+            if abs(self.timeout - int(time.perf_counter())) >= await self.settings.timeout():
                 await self.channel.send("Guys...? Well, I guess I'll stop then.")
                 await self.stop_trivia()
                 return True
@@ -72,11 +79,11 @@ class TriviaSession():
         elif self.status == "stop":
             return True
         else:
-            if self.settings["reveal_answer"]:
-                msg = choice(self.reveal_messages).format(self.current_line.answers[0])
+            if await self.settings.reveal_answer():
+                msg = choice(_REVEAL_MESSAGES).format(self.current_line.answers[0])
             else:
-                msg = choice(self.fail_messages)
-            if self.settings["bot_plays"]:
+                msg = choice(_FAIL_MESSAGES)
+            if await self.settings.bot_plays():
                 msg += " **+1** for me!"
                 self.scores[self.bot.user] += 1
             self.current_line = None

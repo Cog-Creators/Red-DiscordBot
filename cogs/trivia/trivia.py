@@ -143,8 +143,7 @@ class Trivia:
             return
         trivia_list = self.get_trivia_list(category)
         settings = self.conf.guild(ctx.guild)
-        settings_dict = await settings.all()
-        session = TriviaSession(self.bot, trivia_list, ctx.message, settings_dict)
+        session = TriviaSession(self.bot, trivia_list, ctx.message, settings)
         self.trivia_sessions.append(session)
         LOG.debug("New trivia session; #%s in %s", ctx.channel, ctx.guild)
         await session.new_question()
