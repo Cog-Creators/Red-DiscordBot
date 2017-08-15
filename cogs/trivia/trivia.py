@@ -71,8 +71,7 @@ class Trivia:
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
             settings = self.conf.guild(ctx.guild)
-            settings_dict = settings.defaults
-            settings_dict.update(await settings.all())
+            settings_dict = await settings.all()
             msg = box("**Current settings**\n"
                       "Red gains points: {bot_plays}\n"
                       "Seconds to answer: {delay}\n"
@@ -144,8 +143,7 @@ class Trivia:
             return
         trivia_list = self.get_trivia_list(category)
         settings = self.conf.guild(ctx.guild)
-        settings_dict = settings.defaults
-        settings_dict.update(await settings.all())
+        settings_dict = await settings.all()
         session = TriviaSession(self.bot, trivia_list, ctx.message, settings_dict)
         self.trivia_sessions.append(session)
         LOG.debug("New trivia session; #%s in %s", ctx.channel, ctx.guild)
