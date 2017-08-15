@@ -1,6 +1,7 @@
 import asyncio
 import os
 import sys
+import shlex
 sys.path.insert(0, "lib")
 import logging
 import logging.handlers
@@ -198,6 +199,8 @@ class Bot(commands.Bot):
         if interpreter is None:
             raise RuntimeError("Couldn't find Python's interpreter")
 
+        # Quote name to prevent remote code execution exploits
+        name = shlex.quote(name)
         args = [
             interpreter, "-m",
             "pip", "install",
