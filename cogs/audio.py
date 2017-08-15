@@ -50,7 +50,8 @@ youtube_dl_options = {
     'quiet': True,
     'no_warnings': True,
     'outtmpl': "data/audio/cache/%(id)s",
-    'default_search': 'auto'
+    'default_search': 'auto',
+    'encoding': 'utf-8'
 }
 
 
@@ -262,8 +263,6 @@ class Downloader(threading.Thread):
             self.hit_max_length.set()
         except OSError as e:
             log.warning("An operating system error occurred while downloading URL '{}':\n'{}'".format(self.url, str(e)))
-            if(isinstance(e.__cause__, youtube_dl.utils.ExtractorError) or isinstance(e.__cause__, youtube_dl.utils.GeoRestrictedError)):
-                error = str(e.__cause__)
         self.done.set()
 
     def download(self):
