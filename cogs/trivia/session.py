@@ -63,8 +63,6 @@ class TriviaSession():
         delay = await self.settings.delay()
         timeout = await self.settings.timeout()
         for question, answers in self.question_list:
-            async with self.ctx.typing():
-                await asyncio.sleep(3)
             self.count += 1
             msg = "**Question number {}!**\n\n{}".format(self.count, question)
             await self.ctx.send(msg)
@@ -74,6 +72,8 @@ class TriviaSession():
             if any(score >= max_score for score in self.scores.values()):
                 await self.end_game()
                 break
+            async with self.ctx.typing():
+                await asyncio.sleep(3)
         else:
             await self.ctx.send("There are no more questions!")
             await self.end_game()
