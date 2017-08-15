@@ -18,42 +18,19 @@ class InstallableType(Enum):
 class Installable(RepoJSONMixin):
     """
     Base class for anything the Downloader cog can install.
-        - Modules
-        - Repo Libraries
-        - Other stuff?
+    - Modules
+    - Repo Libraries
+    - Other stuff?
     """
 
     INFO_FILE_DESCRIPTION = """
-    The info.json file may exist inside every package folder in the repo,
-    it is optional however. This string describes the valid keys within
-    an info file (and maybe how the Downloader cog uses them).
     
-    KEYS (case sensitive):
-        author (list of strings) - list of names of authors of the cog
-        bot_version (list of integer) - Min version number of Red in the
-            format (MAJOR, MINOR, PATCH)
-        description (string) - A long description of the cog that appears
-            when a user executes `!cog info`
-        hidden (bool) - Determines if a cog is available for install.
-        install_msg (string) - The message that gets displayed when a cog is
-            installed
-        required_cogs (map of cogname to repo URL) - A map of required cogs
-            that this cog depends on. Downloader will not deal with this
-            functionality but it may be useful for other cogs.
-        requirements (list of strings) - list of required libraries that are
-            passed to pip on cog install. SHARED_LIBRARIES do NOT go in this
-            list.
-        short (string) - A short description of the cog that appears when
-            a user executes `!cog list`
-        tags (list of strings) - A list of strings that are related to the
-            functionality of the cog. Used to aid in searching.
-        type (string) - Optional, defaults to COG. Must be either COG or
-            SHARED_LIBRARY. If SHARED_LIBRARY then HIDDEN will be True.
     """
 
     def __init__(self, location: Path):
         """
         Base installable initializer.
+
         :param location: Location (file or folder) to the installable.
         """
         super().__init__(location)
@@ -90,9 +67,11 @@ class Installable(RepoJSONMixin):
     async def copy_to(self, target_dir: Path) -> bool:
         """
         Copies this cog/shared_lib to the given directory. This
-            will overwrite any files in the target directory
-        :param target_dir: The installation directory to install to.
-        :return: bool - status of installation
+        will overwrite any files in the target directory.
+
+        :param pathlib.Path target_dir: The installation directory to install to.
+        :return: Status of installation
+        :rtype: bool
         """
         if self._location.is_file():
             copy_func = shutil.copy2
@@ -120,7 +99,8 @@ class Installable(RepoJSONMixin):
     def _process_info_file(self, info_file_path: Path=None) -> MutableMapping[str, Any]:
         """
         Processes an information file. Loads dependencies among other
-            information into this object.
+        information into this object.
+
         :type info_file_path:
         :param info_file_path: Optional path to information file, defaults to `self.__info_file`
         :return: Raw information dictionary
