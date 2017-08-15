@@ -132,7 +132,53 @@ def ubuntu_install():
 
 
 def raspbian_install():
-    pass
+    print("Installing prerequisite packages...")
+    print("If prompted for your password, enter it.")
+    package_list = [
+        'libbz2-dev', 'libopus-dev', 'liblzma-dev', 'libsqlite3-dev',
+        'libncurses5-dev', 'libgdbm-dev', 'zlib1g-dev', 'libreadline-dev',
+        'git', 'unzip', 'libssl-dev', 'tk-dev', 'build-essential',
+        'libffi-dev', 'libav-tools'
+    ]
+    try:
+        aptupres = check_output(
+            ["sudo", "-K", "apt-get", "update"],
+            stderr=STDOUT
+        )
+    except CalledProcessError as e:
+        print("Error while doing apt-get update! Output:\n\n")
+        print(e.output.decode())
+        print("\n\nProcess returned code {}".format(e.returncode))
+        exit(InstallerExitCodes.REQFAIL)
+    else:
+        print(aptupres.decode())
+
+    try:
+        aptugres = check_output(
+            ["sudo", "-K", "apt-get", "upgrade"],
+            stderr=STDOUT
+        )
+    except CalledProcessError as e:
+        print("Error while upgrading packages! Output:\n\n")
+        print(e.output.decode())
+        print("\n\nProcess returned code {}".format(e.returncode))
+        exit(InstallerExitCodes.REQFAIL)
+    else:
+        print(aptugres.decode())
+
+    try:
+        aptres = check_output(
+            ["sudo", "-K", "apt-get", "install", " ".join(package_list), "-y"],
+            stderr=STDOUT
+        )
+    except CalledProcessError as e:
+        print("Error while installing requirements! Output:\n\n")
+        print(e.output.decode())
+        print("\n\nProcess returned code {}".format(e.returncode))
+        exit(InstallerExitCodes.REQFAIL)
+    else:
+        print(aptres.decode())
+        print("\n\nRequirements installed successfully.\n")
 
 
 def debian_install():
