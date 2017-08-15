@@ -57,7 +57,8 @@ class Trivia:
             timeout=120,
             delay=15,
             bot_plays=False,
-            reveal_answer=True
+            reveal_answer=True,
+            payout_multiplier=0.0
         )
 
     @commands.group()
@@ -74,6 +75,7 @@ class Trivia:
                       "Seconds to answer: {delay}\n"
                       "Points to win: {max_score}\n"
                       "Reveal answer on timeout: {reveal_answer}\n"
+                      "Payout multiplier: {payout_multiplier}"
                       "".format(**settings_dict), lang="py")
             await ctx.send(msg)
 
@@ -124,6 +126,21 @@ class Trivia:
         await ctx.send("I'll reveal the answer if no one knows it."
                        if enabled else
                        "I won't reveal the answer to the questions anymore.")
+
+    @triviaset.command(name="payout")
+    async def triviaset_payout_multiplier(self, ctx: commands.Context, multiplier: float):
+        """Set the payout multiplier.
+
+        <multiplier> can be any positive decimal number. If a user wins trivia when at least 3
+         members are playing, they will receive credits. The number of credits is determined by
+         multiplying their total score by this multiplier.
+        """
+        settings = self.conf.guild(ctx.guild)
+        if multiplier < 0:
+            await ctx.send("Multiplier must be at least 0.")
+            return
+        await settings.payout_multiplier.set(multiplier)
+        await ctx.send("Payout multiplier set to {}.".format(multiplier))
 
     @commands.group(invoke_without_command=True)
     @commands.guild_only()
