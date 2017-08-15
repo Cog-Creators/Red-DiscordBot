@@ -108,11 +108,15 @@ class Group(Value):
                  defaults: dict,
                  spawner,
                  force_registration: bool=False):
-        self.defaults = defaults
+        self._defaults = defaults
         self.force_registration = force_registration
         self.spawner = spawner
 
         super().__init__(identifiers, {}, self.spawner)
+
+    @property
+    def defaults(self):
+        return self._defaults.copy()
 
     # noinspection PyTypeChecker
     def __getattr__(self, item: str) -> Union["Group", Value]:
@@ -135,14 +139,14 @@ class Group(Value):
         if is_group:
             return Group(
                 identifiers=new_identifiers,
-                defaults=self.defaults[item],
+                defaults=self._defaults[item],
                 spawner=self.spawner,
                 force_registration=self.force_registration
             )
         elif is_value:
             return Value(
                 identifiers=new_identifiers,
-                default_value=self.defaults[item],
+                default_value=self._defaults[item],
                 spawner=self.spawner
             )
         elif self.force_registration:
@@ -174,7 +178,7 @@ class Group(Value):
         :param str item:
             See :py:meth:`__getattr__`.
         """
-        default = self.defaults.get(item)
+        default = self._defaults.get(item)
         return isinstance(default, dict)
 
     def is_value(self, item: str) -> bool:
@@ -185,13 +189,13 @@ class Group(Value):
             See :py:meth:`__getattr__`.
         """
         try:
-            default = self.defaults[item]
+            default = self._defaults[item]
         except KeyError:
             return False
 
         return not isinstance(default, dict)
 
-    async def get_attr(self, item: str, default=None, resolve=True):
+    def get_attr(self, item: str, default=None, resolve=True):
         """
         This is available to use as an alternative to using normal Python attribute access. It is required if you find
         a need for dynamic attribute access.
@@ -214,13 +218,15 @@ class Group(Value):
         :param default:
             This is an optional override to the registered default for this item.
         :param resolve:
-            If this is :code:`True` this function will return a "real" data value, if :code:`False` this
-            function will return an instance of :py:class:`Group` or :py:class:`Value` depending on the
-            type of the "real" data value.
+            If this is :code:`True` this function will return a coroutine that resolves to a "real" data value,
+            if :code:`False` this function will return an instance of :py:class:`Group` or :py:class:`Value`
+            depending on the type of the "real" data value.
+        :rtype:
+            Coroutine or Value
         """
         value = getattr(self, item)
         if resolve:
-            return await value(default=default)
+            return value(default=default)
         else:
             return value
 
@@ -229,19 +235,42 @@ class Group(Value):
         This method allows you to get "all" of a particular group of data. It will return the dictionary of all data
         for a particular Guild/Channel/Role/User/Member etc.
 
+        .. note::
+
+            Any values that have not been set from the registered defaults will have their default values
+            added to the dictionary that this method returns.
+
         :rtype: dict
         """
-        return await self()
+        defaults = self.defaults
+        defaults.update(await self())
+        return defaults
 
     async def all_from_kind(self) -> dict:
         """
         This method allows you to get all data from all entries in a given Kind. It will return a dictionary of Kind
         ID's -> data.
 
+        .. note::
+
+            Any values that have not been set from the registered defaults will have their default values
+            added to the dictionary that this method returns.
+
+        .. important::
+
+            This method is overridden in :py:meth:`.MemberGroup.all_from_kind` and functions slightly differently.
+
         :rtype: dict
         """
         # noinspection PyTypeChecker
-        return await self._super_group()
+        all_from_kind = await self._super_group()
+
+        for k, v in all_from_kind.items():
+            defaults = self.defaults
+            defaults.update(v)
+            all_from_kind[k] = defaults
+
+        return all_from_kind
 
     async def set(self, value):
         if not isinstance(value, dict):
@@ -305,14 +334,29 @@ class MemberGroup(Group):
         """
         Returns a dict of :code:`GUILD_ID -> MEMBER_ID -> data`.
 
+        .. note::
+
+            Any values that have not been set from the registered defaults will have their default values
+            added to the dictionary that this method returns.
+
         :rtype: dict
         """
         # noinspection PyTypeChecker
-        return await self._super_group()
+        return await super().all_from_kind()
 
-    async def all(self) -> dict:
-        # noinspection PyTypeChecker
-        return await self._guild_group()
+    async def all_from_kind(self) -> dict:
+        """
+        Returns a dict of all members from the same guild as the given one.
+
+        .. note::
+
+            Any values that have not been set from the registered defaults will have their default values
+            added to the dictionary that this method returns.
+
+        :rtype: dict
+        """
+        guild_member = await super().all_from_kind()
+        return guild_member.get(self.identifiers[-2], {})
 
 
 class Config:
@@ -364,7 +408,11 @@ class Config:
 
         self.spawner = driver_spawn
         self.force_registration = force_registration
-        self.defaults = defaults or {}
+        self._defaults = defaults or {}
+
+    @property
+    def defaults(self):
+        return self._defaults.copy()
 
     @classmethod
     def get_conf(cls, cog_instance, identifier: int,
@@ -423,7 +471,7 @@ class Config:
     def _get_defaults_dict(key: str, value) -> dict:
         """
         Since we're allowing nested config stuff now, not storing the
-            defaults as a flat dict sounds like a good idea. May turn
+            _defaults as a flat dict sounds like a good idea. May turn
             out to be an awful one but we'll see.
         :param key:
         :param value:
@@ -445,7 +493,7 @@ class Config:
     @staticmethod
     def _update_defaults(to_add: dict, _partial: dict):
         """
-        This tries to update the defaults dictionary with the nested
+        This tries to update the _defaults dictionary with the nested
             partial dict generated by _get_defaults_dict. This WILL
             throw an error if you try to have both a value and a group
             registered under the same name.
@@ -469,14 +517,14 @@ class Config:
                 _partial[k] = v
 
     def _register_default(self, key: str, **kwargs):
-        if key not in self.defaults:
-            self.defaults[key] = {}
+        if key not in self._defaults:
+            self._defaults[key] = {}
 
         data = deepcopy(kwargs)
 
         for k, v in data.items():
             to_add = self._get_defaults_dict(k, v)
-            self._update_defaults(to_add, self.defaults[key])
+            self._update_defaults(to_add, self._defaults[key])
 
     def register_global(self, **kwargs):
         """
@@ -495,7 +543,7 @@ class Config:
 
         You can also now register nested values::
 
-            defaults = {
+            _defaults = {
                 "foo": {
                     "bar": True,
                     "baz": False
@@ -504,10 +552,10 @@ class Config:
 
             # Will register `foo.bar` == True and `foo.baz` == False
             conf.register_global(
-                **defaults
+                **_defaults
             )
 
-        You can do the same thing without a :python:`defaults` dict by using double underscore as a variable
+        You can do the same thing without a :python:`_defaults` dict by using double underscore as a variable
         name separator::
 
             # This is equivalent to the previous example
@@ -554,7 +602,7 @@ class Config:
         # noinspection PyTypeChecker
         return group_class(
             identifiers=(self.unique_identifier, key) + identifiers,
-            defaults=self.defaults.get(key, {}),
+            defaults=self._defaults.get(key, {}),
             spawner=self.spawner,
             force_registration=self.force_registration
         )

@@ -11,8 +11,6 @@ import discord
 import aiohttp
 import asyncio
 
-from core.cog_manager import NoModuleFound
-
 log = logging.getLogger("red")
 
 OWNER_DISCLAIMER = ("⚠ **Only** the person who is hosting Red should be "
@@ -30,7 +28,7 @@ class Core:
         """Loads a package"""
         try:
             spec = await ctx.bot.cog_mgr.find_cog(cog_name)
-        except NoModuleFound:
+        except RuntimeError:
             await ctx.send("No module by that name was found in any"
                            " cog path.")
             return
@@ -72,6 +70,19 @@ class Core:
         else:
             await ctx.bot.save_packages_status()
             await ctx.send("Done.")
+
+    @commands.command(name="shutdown")
+    @checks.is_owner()
+    async def _shutdown(self, ctx, silently: bool=False):
+        """Shuts down the bot"""
+        wave = "\N{WAVING HAND SIGN}"
+        skin = "\N{EMOJI MODIFIER FITZPATRICK TYPE-3}"
+        try:  # We don't want missing perms to stop our shutdown
+            if not silently:
+                await ctx.send("Shutting down... " + wave + skin)
+        except:
+            pass
+        await ctx.bot.shutdown()
 
     def cleanup_and_refresh_modules(self, module_name: str):
         """Interally reloads modules so that changes are detected"""
