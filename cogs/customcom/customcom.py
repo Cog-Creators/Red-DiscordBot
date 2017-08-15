@@ -25,13 +25,28 @@ class CommandObj:
 
     def __init__(self, **kwargs):
         config = kwargs.get('config')
+        self.bot = kwargs.get('bot')
         self.db = config.guild
 
     @staticmethod
-    def get_commands(config) -> dict:
-        commands = config.commands()
+    async def get_commands(config) -> dict:
+        commands = await config.commands()
         customcommands = {k: v for k, v in commands.items() if commands[k]}
         return customcommands
+
+    async def get_responses(self, ctx):
+        def check(m):
+            return m.channel == ctx.channel and m.author == ctx.message.author
+        responses = []
+        while True:
+            await ctx.send("What do you want to add as a random response?")
+            msg = await self.bot.wait_for('message', check=check)
+
+            if msg.content.lower() == 'exit()':
+                break
+            else:
+                responses.append(msg.content)
+        return responses
 
     def get_now(self) -> str:
         # Get current time as a string, for 'created_at' and 'edited_at' fields
@@ -73,7 +88,7 @@ class CommandObj:
     async def edit(self,
                    ctx: commands.Context,
                    command: str,
-                   response):
+                   response: None):
         """Edit an already existing custom command"""
         # Check if this command is registered
         if not await self.db(ctx.guild).commands.get_attr(command):
@@ -81,6 +96,20 @@ class CommandObj:
 
         author = ctx.message.author
         ccinfo = await self.db(ctx.guild).commands.get_attr(command)
+
+        def check(m):
+            return m.channel == ctx.channel and m.author == ctx.message.author
+
+        if not response:
+            await ctx.send("Do you want to create a 'randomized' cc? y/n")
+            msg = await self.bot.wait_for('message', check=check)
+            if msg.content.lower() == 'y':
+                response = await self.get_responses(ctx=ctx)
+            else:
+                await ctx.send("What response do you want?")
+                response = (await self.bot.wait_for(
+                    'message', check=check)
+                ).content
 
         ccinfo['response'] = response
         ccinfo['edited_at'] = self.get_now()
@@ -91,6 +120,7 @@ class CommandObj:
             ccinfo['editors'].append(
                 author.id
             )
+
         await self.db(ctx.guild).commands.set_attr(command,
                                                    ccinfo)
 
@@ -115,7 +145,8 @@ class CustomCommands:
         self.config = Config.get_conf(self.__class__.__name__,
                                       self.key)
         self.config.register_guild(commands={})
-        self.commandobj = CommandObj(config=self.config)
+        self.commandobj = CommandObj(config=self.config,
+                                     bot=self.bot)
 
     @commands.group(aliases=["cc"], no_pm=True)
     @commands.guild_only()
@@ -147,17 +178,15 @@ class CustomCommands:
                  "triggered. To exit this interactive menu, type `exit()`")
         await ctx.send(intro)
 
-        def check(m):
-            return m.channel == channel
-
-        while True:
-            await ctx.send("What do you want to add as a random response?")
-            msg = await self.bot.wait_for('message', check=check)
-
-            if msg.content.lower() == 'exit()':
-                break
-            else:
-                responses.append(msg.content)
+        responses = await self.commandobj.get_responses(ctx=ctx)
+        try:
+            await self.commandobj.create(ctx=ctx,
+                                         command=command,
+                                         response=responses)
+        except AlreadyExists:
+            await ctx.send("This command already exists. Use "
+                           "`{}customcom edit` to edit it."
+                           "".format(ctx.prefix))
 
         # await ctx.send(str(responses))
 
@@ -170,7 +199,7 @@ class CustomCommands:
                             text):
         """Adds a custom command
         Example:
-        [p]customcom add yourcommand Text you want
+        [p]customcom add simple yourcommand Text you want
         CCs can be enhanced with arguments:
         https://twentysix26.github.io/Red-Docs/red_guide_command_args/
         """
@@ -195,7 +224,7 @@ class CustomCommands:
                       ctx,
                       command: str,
                       *,
-                      text):
+                      text=None):
         """Edits a custom command
         Example:
         [p]customcom edit yourcommand Text you want
@@ -235,13 +264,13 @@ class CustomCommands:
                       ctx):
         """Shows custom commands list"""
 
-        response = CommandObj.get_commands(self.config.guild(ctx.guild))
+        response = await CommandObj.get_commands(self.config.guild(ctx.guild))
 
         await ctx.send(response)
 
         # Need info on grabbing whole config for guild
-
-        commands = self.config.guild(ctx.guild).commands(None)
+        return
+        commands = await self.config.guild(ctx.guild).commands(None)
 
         if not commands:
             await ctx.send("There are no custom commands in this guild."
