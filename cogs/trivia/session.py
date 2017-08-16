@@ -7,7 +7,9 @@ from typing import List
 import discord
 from discord.ext.commands import Context
 from core import config as realconfig
+from core.bank import deposit_credits
 from core.utils.chat_formatting import box
+from .log import LOG
 
 _REVEAL_MESSAGES = ("I know this one! {}!",
                     "Easy: {}.",
@@ -56,6 +58,29 @@ class TriviaSession():
         if self.scores:
             await self.send_table()
         self.stop_trivia()
+        multiplier = await self.settings.payout_multiplier()
+        if multiplier > 0:
+            await self.pay_winner(multiplier)
+
+    async def pay_winner(self, multiplier: float):
+        """Pays the winner of this trivia session.
+
+        The winner is only payed if there are at least 3 human contestants.
+
+        :param float multiplier:
+            The coefficient of the winner's score, used to determine the amount paid.
+        """
+        (winner, score) = next((tup for tup in self.scores.most_common(1)), (None, None))
+        me_ = self.ctx.guild.me
+        if winner is not None and winner != me_ and score > 0:
+            contestants = list(self.scores.elements())
+            if me_ in contestants:
+                contestants.remove(me_)
+            if len(contestants) >= 3:
+                amount = int(multiplier * score)
+                if amount > 0:
+                    LOG.debug("Paying trivia winner: %d credits --> %s", amount, str(winner))
+                    await deposit_credits(winner, int(multiplier * score))
 
     async def run(self):
         """Run the trivia session."""
