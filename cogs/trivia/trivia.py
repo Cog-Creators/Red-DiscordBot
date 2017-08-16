@@ -7,6 +7,7 @@ from discord.ext import commands
 from core import Config, checks
 from core.bot import Red
 from core.utils.chat_formatting import box
+from cogs.bank import check_global_setting_admin
 from .log import LOG
 from .session import TriviaSession
 
@@ -128,6 +129,7 @@ class Trivia:
                        "I won't reveal the answer to the questions anymore.")
 
     @triviaset.command(name="payout")
+    @check_global_setting_admin()
     async def triviaset_payout_multiplier(self, ctx: commands.Context, multiplier: float):
         """Set the payout multiplier.
 
