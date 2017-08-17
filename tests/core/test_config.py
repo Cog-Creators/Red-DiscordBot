@@ -242,7 +242,7 @@ async def test_membergroup_allguilds(config, empty_member):
 async def test_membergroup_allmembers(config, empty_member):
     await config.member(empty_member).foo.set(False)
 
-    all_members = await config.member(empty_member).all()
+    all_members = await config.member(empty_member).all_from_kind()
     assert str(empty_member.id) in all_members
 
 
@@ -301,6 +301,10 @@ async def test_member_clear_all(config, member_factory):
 # Get All testing
 @pytest.mark.asyncio
 async def test_user_get_all_from_kind(config, user_factory):
+    config.register_user(
+        foo=False,
+        bar=True
+    )
     for _ in range(5):
         user = user_factory.get()
         await config.user(user).foo.set(True)
@@ -310,10 +314,23 @@ async def test_user_get_all_from_kind(config, user_factory):
 
     assert len(all_data) == 5
 
+    for _, v in all_data.items():
+        assert v['foo'] is True
+        assert v['bar'] is True
+
 
 @pytest.mark.asyncio
 async def test_user_getalldata(config, user_factory):
     user = user_factory.get()
+    config.register_user(
+        foo=True,
+        bar=False
+    )
     await config.user(user).foo.set(False)
 
-    assert "foo" in await config.user(user).all()
+    all_data = await config.user(user).all()
+
+    assert "foo" in all_data
+    assert "bar" in all_data
+
+    assert config.user(user).defaults['foo'] is True

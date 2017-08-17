@@ -68,8 +68,22 @@ class Core:
             await ctx.send("Failed to reload package. Check your console or "
                            "logs for details.")
         else:
-            await ctx.bot.save_packages_status()
+            curr_pkgs = await ctx.bot.db.packages()
+            await ctx.bot.save_packages_status(curr_pkgs)
             await ctx.send("Done.")
+
+    @commands.command(name="shutdown")
+    @checks.is_owner()
+    async def _shutdown(self, ctx, silently: bool=False):
+        """Shuts down the bot"""
+        wave = "\N{WAVING HAND SIGN}"
+        skin = "\N{EMOJI MODIFIER FITZPATRICK TYPE-3}"
+        try:  # We don't want missing perms to stop our shutdown
+            if not silently:
+                await ctx.send("Shutting down... " + wave + skin)
+        except:
+            pass
+        await ctx.bot.shutdown()
 
     def cleanup_and_refresh_modules(self, module_name: str):
         """Interally reloads modules so that changes are detected"""
