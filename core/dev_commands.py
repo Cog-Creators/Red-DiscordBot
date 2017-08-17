@@ -247,3 +247,21 @@ class Dev:
 
         ctx.message.author = old_author
         ctx.message.content = old_content
+
+    @commands.command(name="mockmsg")
+    @checks.is_owner()
+    async def mock_msg(self, ctx, user: discord.Member, *, content: str):
+        """Bot receives a message is if it were sent by a different user.
+
+        Only reads the raw content of the message. Attachments, embeds etc. are ignored."""
+        old_author = ctx.author
+        old_content = ctx.message.content
+        ctx.message.author = user
+        ctx.message.content = content
+
+        ctx.bot.dispatch("message", ctx.message)
+
+        await asyncio.sleep(2) # If we change the author and content back too quickly,
+                               #  the bot won't process the mocked message in time.
+        ctx.message.author = old_author
+        ctx.message.content = old_content
