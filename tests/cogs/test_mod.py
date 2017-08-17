@@ -28,14 +28,6 @@ async def test_modlog_register_casetype(mod, ctx):
 
 @pytest.mark.asyncio
 async def test_modlog_case_create(mod, ctx, member_factory):
-    await mod.register_casetype(
-        {
-            "name": "ban",
-            "default_setting": True,
-            "image": "https://twemoji.maxcdn.com/2/72x72/1f528.png",
-            "case_str": "Ban"
-        }
-    )
     from datetime import datetime as dt
     usr = member_factory.get()
     guild = ctx.guild
