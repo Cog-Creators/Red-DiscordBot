@@ -129,6 +129,13 @@ class Song:
         self.webpage_url = kwargs.pop('webpage_url', "")
         self.duration = kwargs.pop('duration', 60)
 
+        m, s = divmod(self.duration, 60)
+        h, m = divmod(m, 60)
+        if h:
+            self.pretty_duration = "{0}:{1:0>2}:{2:0>2}".format(h, m, s)
+        else:
+            self.pretty_duration = "{0}:{1:0>2}".format(m, s)
+
 
 class Playlist:
     def __init__(self, server=None, sid=None, name=None, author=None, url=None,
@@ -1660,24 +1667,24 @@ class Audio:
             log.debug("queueing to the actual queue for sid {}".format(
                 server.id))
             self._add_to_queue(server, url)
-        await self.bot.say("Queued.")
+        msg = await self.bot.say("Queued.")
+
+        song = await self._download_all([url])
+        song = song[0]
+        await self.bot.edit_message(msg, "{} queued: {.title}. <{.webpage_url}> ({.pretty_duration})".format(ctx.message.author, song, song, song))
 
     async def _queue_list(self, ctx):
         """Not a command, use `queue` with no args to call this."""
         server = ctx.message.server
-        if server.id not in self.queue:
-            await self.bot.say("Nothing playing on this server!")
-            return
-        elif len(self.queue[server.id]["QUEUE"]) == 0:
-            await self.bot.say("Nothing queued on this server.")
+        now_playing = self._get_queue_nowplaying(server)
+        if not now_playing:
+            await self.bot.say("Nothing playing on this server.")
             return
 
         msg = ""
 
-        now_playing = self._get_queue_nowplaying(server)
-
         if now_playing is not None:
-            msg += "\n***Now playing:***\n{}\n".format(now_playing.title)
+            msg += "\n***Now playing:***\n{} ({})\n".format(now_playing.title, now_playing.pretty_duration)
 
         queue_url_list = self._get_queue(server, 5)
         tempqueue_url_list = self._get_queue_tempqueue(server, 5)
@@ -1688,19 +1695,14 @@ class Audio:
         tempqueue_song_list = await self._download_all(tempqueue_url_list)
 
         song_info = []
-        for num, song in enumerate(tempqueue_song_list, 1):
-            try:
-                song_info.append("{}. {.title}".format(num, song))
-            except AttributeError:
-                song_info.append("{}. {.webpage_url}".format(num, song))
-
-        for num, song in enumerate(queue_song_list, len(song_info) + 1):
+        for num, song in enumerate(tempqueue_song_list + queue_song_list, 1):
             if num > 5:
                 break
             try:
-                song_info.append("{}. {.title}".format(num, song))
+                song_info.append("{}. {.title} ({.pretty_duration})".format(num, song, song))
             except AttributeError:
-                song_info.append("{}. {.webpage_url}".format(num, song))
+                song_info.append("{}. {.webpage_url} ({.pretty_duration})".format(num, song, song))
+
         msg += "\n***Next up:***\n" + "\n".join(song_info)
 
         await self.bot.say(msg)
@@ -1860,19 +1862,10 @@ class Audio:
                 song.view_count = None
             if not hasattr(song, 'uploader'):
                 song.uploader = None
-            if hasattr(song, 'duration'):
-                m, s = divmod(song.duration, 60)
-                h, m = divmod(m, 60)
-                if h:
-                    dur = "{0}:{1:0>2}:{2:0>2}".format(h, m, s)
-                else:
-                    dur = "{0}:{1:0>2}".format(m, s)
-            else:
-                dur = None
             msg = ("\n**Title:** {}\n**Author:** {}\n**Uploader:** {}\n"
                    "**Views:** {}\n**Duration:** {}\n\n<{}>".format(
                        song.title, song.creator, song.uploader,
-                       song.view_count, dur, song.webpage_url))
+                       song.view_count, song.pretty_duration, song.webpage_url))
             await self.bot.say(msg.replace("**Author:** None\n", "")
                                   .replace("**Views:** None\n", "")
                                   .replace("**Uploader:** None\n", "")
