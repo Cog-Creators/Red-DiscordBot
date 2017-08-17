@@ -167,7 +167,7 @@ class TriviaSession():
         (winner, score) = next((tup for tup in self.scores.most_common(1)), (None, None))
         me_ = self.ctx.guild.me
         if winner is not None and winner != me_ and score > 0:
-            contestants = list(self.scores.elements())
+            contestants = list(self.scores.keys())
             if me_ in contestants:
                 contestants.remove(me_)
             if len(contestants) >= 3:

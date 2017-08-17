@@ -230,7 +230,7 @@ class Trivia:
         if path is None:
             return
         filename = "{}.txt".format(category)
-        path = self._get_lists_path() / filename
+        path = path / filename
         return parse_trivia_list(str(path))
 
     def _get_trivia_session(self, channel: discord.TextChannel) -> TriviaSession:
@@ -246,5 +246,8 @@ class Trivia:
 
     def _category_exists(self, category: str) -> bool:
         filename = "{}.txt".format(category)
-        path = pathlib.Path(self._get_lists_path() / filename)
+        path = self._get_lists_path()
+        if path is None:
+            return
+        path = pathlib.Path(path / filename)
         return path.is_file()
