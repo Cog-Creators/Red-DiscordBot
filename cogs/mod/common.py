@@ -18,21 +18,21 @@ mute_unmute_issues = {
 
 
 async def mass_purge(messages: List[discord.Message],
-                     channel: discord.TextChannel, reason: str):
+                     channel: discord.TextChannel):
     while messages:
         if len(messages) > 1:
-            await channel.delete_messages(messages[:100], reason=reason)
+            await channel.delete_messages(messages[:100])
             messages = messages[100:]
         else:
-            await messages[0].delete(reason=reason)
+            await messages[0].delete()
             messages = []
         await asyncio.sleep(1.5)
 
 
-async def slow_deletion(messages: List[discord.Message], reason: str):
+async def slow_deletion(messages: List[discord.Message]):
     for message in messages:
         try:
-            await message.delete(reason=reason)
+            await message.delete()
         except discord.HTTPException:
             pass
 
@@ -45,11 +45,12 @@ def get_audit_reason(author: discord.Member, reason: str = None):
         "Action requested by {} (ID {}).".format(author, author.id)
 
 
-def is_allowed_by_hierarchy(bot: Red, settings: Config, server: discord.Guild,
-                            mod: discord.Member, user: discord.Member):
-    if not settings.guild(server).respect_hierarchy():
+async def is_allowed_by_hierarchy(
+        bot: Red, settings: Config, server: discord.Guild,
+        mod: discord.Member, user: discord.Member):
+    if not await settings.guild(server).respect_hierarchy():
         return True
-    is_special = mod == server.owner or bot.is_owner(mod)
+    is_special = mod == server.owner or await bot.is_owner(mod)
     return mod.top_role.position > user.top_role.position or is_special
 
 
@@ -65,14 +66,16 @@ async def is_mod_or_superior(bot: Red, obj: discord.Message or discord.Member or
         raise TypeError('Only messages, members or roles may be passed')
 
     server = obj.guild
-    admin_role = bot.db.guild(server).admin_role()
-    mod_role = bot.db.guild(server).mod_role()
+    admin_role_id = await bot.db.guild(server).admin_role()
+    mod_role_id = await bot.db.guild(server).mod_role()
 
     if isinstance(obj, discord.Role):
-        return obj.name in [admin_role, mod_role]
+        return obj.id in [admin_role_id, mod_role_id]
 
-    app_info = await bot.application_info()
-    if user and user.id == app_info.owner.id:
+    mod_role = [r for r in server.roles if r.id == mod_role_id][0]
+    admin_role = [r for r in server.roles if r.id == admin_role_id][0]
+
+    if user and user == await bot.is_owner(user):
         return True
     elif discord.utils.get(user.roles, name=admin_role):
         return True
@@ -115,13 +118,14 @@ async def is_admin_or_superior(bot: Red, obj: discord.Message or discord.Role or
         raise TypeError('Only messages, members or roles may be passed')
 
     server = obj.guild
-    admin_role = bot.db.guild(server).admin_role()
+    admin_role_id = await bot.db.guild(server).admin_role()
 
     if isinstance(obj, discord.Role):
-        return obj.name == admin_role
+        return obj.id == admin_role_id
 
-    app_info = await bot.application_info()
-    if user.id == app_info.owner.id:
+    admin_role = [r for r in server.roles if r.id == admin_role_id][0]
+
+    if user and await bot.is_owner(user):
         return True
     elif discord.utils.get(user.roles, name=admin_role):
         return True

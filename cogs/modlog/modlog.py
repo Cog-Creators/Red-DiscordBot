@@ -91,6 +91,7 @@ class ModLog:
             case = await modlog.get_case(number, ctx.guild, self.bot)
         except RuntimeError:
             await ctx.send("That case does not exist for that guild")
+            return
         else:
             await ctx.send(embed=await case.get_case_msg_content())
 

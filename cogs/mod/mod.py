@@ -156,11 +156,11 @@ class Mod:
             await self.bot.send_cmd_help(ctx)
 
             # Display current settings
-            delete_repeats = self.settings.guild(server).delete_repeats()
-            ban_mention_spam = self.settings.guild(server).ban_mention_spam()
-            respect_hierarchy = self.settings.guild(server).respect_hierarchy()
-            delete_delay = self.settings.guild(server).delete_delay()
-            reinvite_on_unban = self.settings.guild(server).reinvite_on_unban()
+            delete_repeats = await self.settings.guild(server).delete_repeats()
+            ban_mention_spam = await self.settings.guild(server).ban_mention_spam()
+            respect_hierarchy = await self.settings.guild(server).respect_hierarchy()
+            delete_delay = await self.settings.guild(server).delete_delay()
+            reinvite_on_unban = await self.settings.guild(server).reinvite_on_unban()
             msg = ""
             msg += "Delete repeats: {}\n".format("Yes" if delete_repeats else "No")
             msg += "Ban mention spam: {}\n".format(
@@ -178,13 +178,13 @@ class Mod:
     async def hierarchy(self, ctx: commands.Context):
         """Toggles role hierarchy check for mods / admins"""
         server = ctx.guild
-        toggled = self.settings.guild(server).respect_hierarchy()
+        toggled = await self.settings.guild(server).respect_hierarchy()
         if not toggled:
-            await self.settings.guild(server).set("respect_hierarchy", True)
+            await self.settings.guild(server).respect_hierarchy.set(True)
             await ctx.send("Role hierarchy will be checked when "
                            "moderation commands are issued.")
         else:
-            await self.settings.guild(server).set("respect_hierarchy", False)
+            await self.settings.guild(server).respect_hierarchy.set(False)
             await ctx.send("Role hierarchy will be ignored when "
                            "moderation commands are issued.")
 
@@ -198,7 +198,7 @@ class Mod:
         if max_mentions:
             if max_mentions < 5:
                 max_mentions = 5
-            await self.settings.guild(server).set("ban_mention_spam", max_mentions)
+            await self.settings.guild(server).ban_mention_spam.set(max_mentions)
             await ctx.send("Autoban for mention spam enabled. "
                            "Anyone mentioning {} or more different people "
                            "in a single message will be autobanned."
@@ -216,13 +216,13 @@ class Mod:
     async def deleterepeats(self, ctx: commands.Context):
         """Enables auto deletion of repeated messages"""
         server = ctx.guild
-        cur_setting = self.settings.guild(server).delete_repeats()
+        cur_setting = await self.settings.guild(server).delete_repeats()
         if not cur_setting:
-            await self.settings.guild(server).set("delete_repeats", True)
+            await self.settings.guild(server).delete_repeats.set(True)
             await ctx.send("Messages repeated up to 3 times will "
                            "be deleted.")
         else:
-            await self.settings.guild(server).set("delete_repeats", False)
+            await self.settings.guild(server).delete_repeats.set(False)
             await ctx.send("Repeated messages will be ignored.")
 
     @modset.command()
@@ -235,14 +235,14 @@ class Mod:
         server = ctx.guild
         if time is not None:
             time = min(max(time, -1), 60)  # Enforces the time limits
-            await self.settings.guild(server).set("delete_delay", time)
+            await self.settings.guild(server).delete_delay.set("delete_delay")
             if time == -1:
                 await ctx.send("Command deleting disabled.")
             else:
                 await ctx.send("Delete delay set to {}"
                                " seconds.".format(time))
         else:
-            delay = self.settings.guild(server).delete_delay()
+            delay = await self.settings.guild(server).delete_delay()
             if delay != -1:
                 await ctx.send("Bot will delete command messages after"
                                " {} seconds. Set this value to -1 to"
@@ -258,12 +258,12 @@ class Mod:
         attempt to create and send a single-use invite to the
         newly-unbanned user"""
         server = ctx.guild
-        cur_setting = self.settings.guild(server).reinvite_on_unban()
+        cur_setting = await self.settings.guild(server).reinvite_on_unban()
         if not cur_setting:
-            await self.settings.guild(server).set("reinvite_on_unban", True)
+            await self.settings.guild(server).reinvite_on_unban.set(True)
             await ctx.send("Users unbanned with [p]unban will be reinvited.")
         else:
-            await self.settings.guild(server).set("reinvite_on_unban", False)
+            await self.settings.guild(server).reinvite_on_unban.set(False)
             await ctx.send("Users unbanned with [p]unban will not be reinvited.")
 
     @commands.command()

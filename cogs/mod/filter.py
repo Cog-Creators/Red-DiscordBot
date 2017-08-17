@@ -21,12 +21,12 @@ class Filter:
         }
         self.settings.register_guild(**default_guild_settings)
         global logger
-        logger = logging.getLogger("mod")
+        logger = logging.getLogger("mod.filter")
         # Prevents the logger from being loaded again in case of module reload
         if logger.level == 0:
             logger.setLevel(logging.INFO)
             handler = logging.FileHandler(
-                filename='mod.log', encoding='utf-8', mode='a')
+                filename='cogs/.data/Mod/filter.log', encoding='utf-8', mode='a')
             handler.setFormatter(
                 logging.Formatter('%(asctime)s %(message)s', datefmt="[%d/%m/%Y %H:%M]"))
             logger.addHandler(handler)
@@ -84,7 +84,7 @@ class Filter:
             await self.bot.send_cmd_help(ctx)
             return
         server = ctx.guild
-        removed = self.remove_from_filter(server, words)
+        removed = await self.remove_from_filter(server, words)
         if removed:
             await ctx.send("Words removed from filter.")
         else:
@@ -92,38 +92,38 @@ class Filter:
 
     async def add_to_filter(self, server: discord.Guild, *words: tuple) -> bool:
         added = 0
-        cur_list = self.settings.guild(server).filter()
+        cur_list = await self.settings.guild(server).filter()
         for w in words:
             if w.lower() not in cur_list and w != "":
                 cur_list.append(w.lower())
                 added += 1
         if added:
-            await self.settings.guild(server).set("filter", cur_list)
+            await self.settings.guild(server).filter.set(cur_list)
             return True
         else:
             return False
 
     async def remove_from_filter(self, server: discord.Guild, *words: tuple) -> bool:
         removed = 0
-        cur_list = self.settings.guild(server).filter()
+        cur_list = await self.settings.guild(server).filter()
         for w in words:
             if w.lower() in cur_list:
                 cur_list.remove(w.lower())
                 removed += 1
         if removed:
-            await self.settings.guild(server).set("filter", cur_list)
+            await self.settings.guild(server).filter.set(cur_list)
             return True
         else:
             return False
 
     async def check_filter(self, message: discord.Message):
         server = message.guild
-        word_list = self.settings.guild(server).filter()
+        word_list = await self.settings.guild(server).filter()
         if word_list:
             for w in word_list:
                 if w in message.content.lower():
                     try:
-                        await message.delete(reason="Filtered: {}".format(w))
+                        await message.delete()
                     except:
                         pass
 

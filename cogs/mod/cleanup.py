@@ -16,17 +16,15 @@ class Cleanup:
     def __init__(self, bot: Red):
         self.bot = bot
         global logger
-        logger = logging.getLogger("mod")
+        logger = logging.getLogger("mod.cleanup")
         # Prevents the logger from being loaded again in case of module reload
-        """
         if logger.level == 0:
             logger.setLevel(logging.INFO)
             handler = logging.FileHandler(
-                filename='cogs/.data/Mod/mod.log', encoding='utf-8', mode='a')
+                filename='cogs/.data/Mod/cleanup.log', encoding='utf-8', mode='a')
             handler.setFormatter(
                 logging.Formatter('%(asctime)s %(message)s', datefmt="[%d/%m/%Y %H:%M]"))
             logger.addHandler(handler)
-        """
 
     @commands.group()
     @checks.mod_or_permissions(manage_messages=True)
