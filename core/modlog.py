@@ -264,7 +264,7 @@ async def create_case(guild: discord.Guild, created_at: datetime, action_type: s
         case_emb = await case.get_case_msg_content()
         msg = await mod_channel.send(embed=case_emb)
         case.message = msg
-    await _conf.guild(guild).cases.set_attr(str(next_case_number), case.to_json)
+    await _conf.guild(guild).cases.set_attr(str(next_case_number), case.to_json())
     return case
 
 
@@ -400,16 +400,24 @@ async def get_modlog_channel(guild: discord.Guild
     :raises RuntimeError:
         If the modlog channel is not found
     """
-    channel = guild.get_channel(await _conf.guild(guild))
+    if hasattr(guild, "get_channel"):
+        channel = guild.get_channel(await _conf.guild(guild).mod_log())
+    else:
+        channel = await _conf.guild(guild).mod_log()
     if channel is None:
         raise RuntimeError("Failed to get the mod log channel!")
     return channel
 
 
-async def set_modlog_channel(channel: Union[discord.TextChannel, None]) -> bool:
+async def set_modlog_channel(guild: discord.Guild,
+                             channel: Union[discord.TextChannel, None]) -> bool:
     """
     Changes the modlog channel
 
+    :param guild:
+        The guild to set a mod log channel for
+    :type guild:
+        discord.Guild
     :param channel:
         The channel to be set as modlog channel
     :type channel:
@@ -419,7 +427,7 @@ async def set_modlog_channel(channel: Union[discord.TextChannel, None]) -> bool:
     :rtype:
         bool
     """
-    await _conf.guild(channel.guild).mod_log.set(
+    await _conf.guild(guild).mod_log.set(
         channel.id if hasattr(channel, "id") else None
     )
     return True
@@ -467,7 +475,7 @@ async def get_case_type_status(case_type: str, guild: discord.Guild) -> bool:
         If the specified case type is not registered
     """
     if await is_casetype(case_type):
-        default = await _conf.casetypes.get_attr(case_type, resolve=False).default_setting()
+        default = await _conf.casetypes.get_attr(case_type)
         return await _conf.guild(guild).casetypes.get_attr(case_type, default)
     else:
         raise RuntimeError("That case type is not registered!")

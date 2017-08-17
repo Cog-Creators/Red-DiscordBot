@@ -35,6 +35,7 @@ async def test_modlog_case_create(mod, ctx, member_factory):
     moderator = ctx.author
     reason = "Test 12345"
     created_at = dt.utcnow()
+
     case = await mod.create_case(
         guild, created_at, case_type, usr, moderator, reason
     )
@@ -42,10 +43,10 @@ async def test_modlog_case_create(mod, ctx, member_factory):
     assert case.action_type == case_type
     assert case.moderator == moderator
     assert case.reason == reason
-    assert case.created_at == created_at.timestamp()
+    assert case.created_at == int(created_at.timestamp())
 
 
 @pytest.mark.asyncio
 async def test_modlog_set_modlog_channel(mod, ctx):
-    await mod.set_modlog_channel(ctx.channel)
-    assert mod.get_modlog_channel == ctx.channel
+    await mod.set_modlog_channel(ctx.guild, ctx.channel)
+    assert await mod.get_modlog_channel(ctx.guild) == ctx.channel.id
