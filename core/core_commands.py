@@ -1,10 +1,12 @@
+import itertools
 from discord.ext import commands
 from core import checks
 from string import ascii_letters, digits
 from random import SystemRandom
+from collections import namedtuple
 import logging
 import importlib
-import os
+import sys
 import discord
 import aiohttp
 import asyncio
@@ -24,29 +26,30 @@ class Core:
     @checks.is_owner()
     async def load(self, ctx, *, cog_name: str):
         """Loads a package"""
-        if not cog_name.startswith("cogs."):
-            cog_name = "cogs." + cog_name
+        try:
+            spec = await ctx.bot.cog_mgr.find_cog(cog_name)
+        except RuntimeError:
+            await ctx.send("No module by that name was found in any"
+                           " cog path.")
+            return
 
         try:
-            ctx.bot.load_extension(cog_name)
+            ctx.bot.load_extension(spec)
         except Exception as e:
             log.exception("Package loading failed", exc_info=e)
             await ctx.send("Failed to load package. Check your console or "
                            "logs for details.")
         else:
-            await ctx.bot.save_packages_status()
+            await ctx.bot.add_loaded_package(cog_name)
             await ctx.send("Done.")
 
     @commands.group()
     @checks.is_owner()
     async def unload(self, ctx, *, cog_name: str):
         """Unloads a package"""
-        if not cog_name.startswith("cogs."):
-            cog_name = "cogs." + cog_name
-
         if cog_name in ctx.bot.extensions:
             ctx.bot.unload_extension(cog_name)
-            await ctx.bot.save_packages_status()
+            await ctx.bot.remove_loaded_package(cog_name)
             await ctx.send("Done.")
         else:
             await ctx.send("That extension is not loaded.")
@@ -55,37 +58,52 @@ class Core:
     @checks.is_owner()
     async def _reload(self, ctx, *, cog_name: str):
         """Reloads a package"""
-        if cog_name == "downloader":
-            await ctx.send("DONT RELOAD DOWNLOADER.")
-            return
-
-        if not cog_name.startswith("cogs."):
-            cog_name = "cogs." + cog_name
-
+        ctx.bot.unload_extension(cog_name)
+        self.cleanup_and_refresh_modules(cog_name)
         try:
-            self.refresh_modules(cog_name)
-            ctx.bot.unload_extension(cog_name)
-            ctx.bot.load_extension(cog_name)
+            spec = await ctx.bot.cog_mgr.find_cog(cog_name)
+            ctx.bot.load_extension(spec)
         except Exception as e:
             log.exception("Package reloading failed", exc_info=e)
             await ctx.send("Failed to reload package. Check your console or "
                            "logs for details.")
         else:
-            await ctx.bot.save_packages_status()
+            curr_pkgs = await ctx.bot.db.packages()
+            await ctx.bot.save_packages_status(curr_pkgs)
             await ctx.send("Done.")
 
-    def refresh_modules(self, module):
+    @commands.command(name="shutdown")
+    @checks.is_owner()
+    async def _shutdown(self, ctx, silently: bool=False):
+        """Shuts down the bot"""
+        wave = "\N{WAVING HAND SIGN}"
+        skin = "\N{EMOJI MODIFIER FITZPATRICK TYPE-3}"
+        try:  # We don't want missing perms to stop our shutdown
+            if not silently:
+                await ctx.send("Shutting down... " + wave + skin)
+        except:
+            pass
+        await ctx.bot.shutdown()
+
+    def cleanup_and_refresh_modules(self, module_name: str):
         """Interally reloads modules so that changes are detected"""
-        module = module.replace(".", os.sep)
-        for root, dirs, files in os.walk(module):
-            for name in files:
-                if name.endswith(".py"):
-                    path = os.path.join(root, name)
-                    path, _ = os.path.splitext(path)
-                    path = ".".join(path.split(os.sep))
-                    print("Reloading " + path)
-                    m = importlib.import_module(path)
-                    importlib.reload(m)
+        splitted = module_name.split('.')
+
+        def maybe_reload(new_name):
+            try:
+                lib = sys.modules[new_name]
+            except KeyError:
+                pass
+            else:
+                importlib._bootstrap._exec(lib.__spec__, lib)
+
+        modules = itertools.accumulate(splitted, lambda old, next: "{}.{}".format(old, next))
+        for m in modules:
+            maybe_reload(m)
+
+        children = {name: lib for name, lib in sys.modules.items() if name.startswith(module_name)}
+        for child_name, lib in children.items():
+            importlib._bootstrap._exec(lib.__spec__, lib)
 
     @commands.group(name="set")
     async def _set(self, ctx):
@@ -281,3 +299,88 @@ class Core:
                 await ctx.send("You have been set as owner.")
             else:
                 await ctx.send("Invalid token.")
+
+    @commands.command()
+    @commands.cooldown(1, 60, commands.BucketType.user)
+    async def contact(self, ctx, *, message: str):
+        """Sends a message to the owner"""
+        guild = ctx.message.guild
+        owner = discord.utils.get(ctx.bot.get_all_members(),
+                                  id=ctx.bot.owner_id)
+        author = ctx.message.author
+        footer = "User ID: %s" % author.id
+
+        if ctx.guild is None:
+            source = "through DM"
+        else:
+            source = "from {}".format(guild)
+            footer += " | Server ID: %s" % guild.id
+
+        # We need to grab the DM command prefix (global)
+        # Since it can also be set through cli flags, bot.db is not a reliable
+        # source. So we'll just mock a DM message instead.
+        fake_message = namedtuple('Message', 'guild')
+        prefix = ctx.bot.command_prefix(ctx.bot, fake_message(guild=None))[0]
+
+        content = ("Use `{}dm {} <text>` to reply to this user"
+                   "".format(prefix, author.id))
+
+        if isinstance(author, discord.Member):
+            colour = author.colour
+        else:
+            colour = discord.Colour.red()
+
+        description = "Sent by {} {}".format(author, source)
+
+        e = discord.Embed(colour=colour, description=message)
+        if author.avatar_url:
+            e.set_author(name=description, icon_url=author.avatar_url)
+        else:
+            e.set_author(name=description)
+        e.set_footer(text=footer)
+
+        try:
+            await owner.send(content, embed=e)
+        except discord.InvalidArgument:
+            await ctx.send("I cannot send your message, I'm unable to find "
+                           "my owner... *sigh*")
+        except:
+            await ctx.send("I'm unable to deliver your message. Sorry.")
+        else:
+            await ctx.send("Your message has been sent.")
+
+    @commands.command()
+    @checks.is_owner()
+    async def dm(self, ctx, user_id: int, *, message: str):
+        """Sends a DM to a user
+
+        This command needs a user id to work.
+        To get a user id enable 'developer mode' in Discord's
+        settings, 'appearance' tab. Then right click a user
+        and copy their id"""
+        destination = discord.utils.get(ctx.bot.get_all_members(),
+                                        id=user_id)
+        if destination is None:
+            await ctx.send("Invalid ID or user not found. You can only "
+                           "send messages to people I share a server "
+                           "with.")
+            return
+
+        e = discord.Embed(colour=discord.Colour.red(), description=message)
+        description = "Owner of %s" % ctx.bot.user
+        fake_message = namedtuple('Message', 'guild')
+        prefix = ctx.bot.command_prefix(ctx.bot, fake_message(guild=None))[0]
+        e.set_footer(text=("You can reply to this message with %scontact"
+                           "" % prefix))
+        if ctx.bot.user.avatar_url:
+            e.set_author(name=description, icon_url=ctx.bot.user.avatar_url)
+        else:
+            e.set_author(name=description)
+
+        try:
+            await destination.send(embed=e)
+        except:
+            await ctx.send("Sorry, I couldn't deliver your message "
+                           "to %s" % destination)
+        else:
+            await ctx.send("Message delivered to %s" % destination)

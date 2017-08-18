@@ -37,7 +37,7 @@ def config(json_driver):
         unique_identifier=str(uuid.uuid4()),
         driver_spawn=json_driver)
     yield conf
-    conf.defaults = {}
+    conf._defaults = {}
 
 
 @pytest.fixture()
@@ -53,7 +53,7 @@ def config_fr(json_driver):
         force_registration=True
     )
     yield conf
-    conf.defaults = {}
+    conf._defaults = {}
 
 
 #region Dpy Mocks
@@ -87,13 +87,14 @@ def empty_role():
 
 @pytest.fixture()
 def member_factory(guild_factory):
-    mock_member = namedtuple("Member", "id guild")
+    mock_member = namedtuple("Member", "id guild display_name")
 
     class MemberFactory:
         def get(self):
             return mock_member(
                 random.randint(1, 999999999),
-                guild_factory.get())
+                guild_factory.get(),
+                'Testing_Name')
 
     return MemberFactory()
 
