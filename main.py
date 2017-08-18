@@ -1,3 +1,13 @@
+# Discord Version check
+
+import discord
+
+if discord.version_info.major < 1:
+    print("You are not running the rewritten version of discord.py.\n\n"
+          "In order to use Red v3 you MUST be running d.py version"
+          " >= 1.0.0.")
+    sys.exit(1)
+
 from core.bot import Red, ExitCodes
 from core.global_checks import init_global_checks
 from core.events import init_events
@@ -6,7 +16,6 @@ from core.cli import interactive_config, confirm, parse_cli_flags, ask_sentry
 from core.core_commands import Core
 from core.dev_commands import Dev
 import asyncio
-import discord
 import logging.handlers
 import logging
 import os
@@ -17,12 +26,6 @@ import sys
 #
 #         Made by Twentysix, improved by many
 #
-
-if discord.version_info.major < 1:
-    print("You are not running the rewritten version of discord.py.\n\n"
-          "In order to use Red v3 you MUST be running d.py version"
-          " >= 1.0.0.")
-    sys.exit(1)
 
 
 def init_loggers(cli_flags):
