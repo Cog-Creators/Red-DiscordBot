@@ -1664,7 +1664,11 @@ class Audio:
             url = "[SEARCH:]" + url
 
         if "[SEARCH:]" not in url and "youtube" in url:
-            url = url.split("&")[0]  # Temp fix for the &list issue
+            parsed_url = urllib.parse.urlparse(url)
+            query = urllib.parse.parse_qs(parsed_url.query)
+            query.pop("list", None)
+            parsed_url = parsed_url._replace(query=urllib.parse.urlencode(query, True))
+            url = urllib.parse.urlunparse(parsed_url)
 
         # We have a queue to modify
         if self.queue[server.id]["PLAYLIST"]:
