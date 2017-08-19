@@ -138,7 +138,7 @@ Ubuntu
 
     sudo service mongod start
 
-6. Check MongoDB had successfully
+6. Check MongoDB if had successfully started
 
 ::
 
@@ -147,5 +147,77 @@ Ubuntu
 If you see the line
 ``[initandlisten] waiting for connections on port <port>``, then MongoDB
 is running on your computer!
+
+Arch Linux
+~~~~~~~~~~
+
+1. Install the packages by typing this command in the shell
+
+::
+    pacman -S mongodb mongodb-tools
+
+2. Start and enable the daemon service
+
+::
+    sudo systemctl start mongodb.service
+    sudo systemctl enable mongodb.service
+
+3. Check if MongoDB is running
+
+::
+    sudo systemctl status mongodb.service
+
+Raspbian
+~~~~~~~~
+
+Install the packages by typing this command in the shell
+
+::
+    sudo apt-get install mongodb
+
+2. Start and enable the daemon service
+   
+:: 
+    sudo systemctl start mongodb.service
+    sudo systemctl enable mongodb.service
+
+3. Check if MongoDB is running
+
+::
+    sudo systemctl status mongodb.service
+
+Debian 8
+~~~~~~~~
+
+1. Import the public key by typing this command
+
+::
+    sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 0C49F3730359A14518585931BC711F9BA15703C6
+
+2. Creates MongoDB required files
+
+::
+    echo "deb http://repo.mongodb.org/apt/debian jessie/mongodb-org/3.4 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.4.list
+
+3. Reload database
+
+::
+    sudo apt-get update
+
+4. Install MongoDB
+
+::
+    sudo apt-get install -y mongodb-org
+
+5. Start and enable the daemon service
+
+::
+    sudo systemctl start mongodb.service
+    sudo systemctl enable mongodb.service
+
+6. Check if MongoDB is running
+
+::
+    sudo systemctl status mongodb.service
 
 .. _MongoDB Community Server for Windows: https://www.mongodb.com/download-center#community
