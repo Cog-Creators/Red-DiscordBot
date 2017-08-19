@@ -1,6 +1,7 @@
 # Discord Version check
 
 import discord
+import sys
 
 if discord.version_info.major < 1:
     print("You are not running the rewritten version of discord.py.\n\n"
@@ -21,7 +22,6 @@ import logging.handlers
 import logging
 import os
 from pathlib import Path
-import sys
 
 #
 #               Red - Discord Bot v3
