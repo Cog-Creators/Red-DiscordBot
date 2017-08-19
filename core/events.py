@@ -4,8 +4,10 @@ import datetime
 import logging
 from discord.ext import commands
 from core.utils.chat_formatting import inline
+from core.sentry_setup import should_log
 
 log = logging.getLogger("red")
+sentry_log = logging.getLogger("red.sentry")
 
 INTRO = ("{0}===================\n"
          "{0} Red - Discord Bot \n"
@@ -32,18 +34,16 @@ def init_events(bot, cli_flags):
         if cli_flags.no_cogs is False:
             print("Loading packages...")
             failed = []
-            packages = bot.db.packages()
+            packages = await bot.db.packages()
 
             for package in packages:
                 try:
-                    bot.load_extension(package)
+                    spec = await bot.cog_mgr.find_cog(package)
+                    bot.load_extension(spec)
                 except Exception as e:
                     log.exception("Failed to load package {}".format(package),
                                   exc_info=e)
-                    failed.append(package)
-
-            if failed:
-                await bot.save_packages_status()
+                    await bot.remove_loaded_package(package)
             if packages:
                 print("Loaded packages: " + ", ".join(packages))
 
@@ -100,6 +100,12 @@ def init_events(bot, cli_flags):
                                      error, error.__traceback__))
             bot._last_exception = exception_log
             await ctx.send(inline(message))
+
+            module = ctx.command.module
+            if should_log(module):
+                sentry_log.exception("Exception in command '{}'"
+                                     "".format(ctx.command.qualified_name),
+                                     exc_info=error.original)
         elif isinstance(error, commands.CommandNotFound):
             pass
         elif isinstance(error, commands.CheckFailure):

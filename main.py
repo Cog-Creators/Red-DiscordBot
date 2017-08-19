@@ -1,15 +1,27 @@
+# Discord Version check
+
+import discord
+import sys
+
+if discord.version_info.major < 1:
+    print("You are not running the rewritten version of discord.py.\n\n"
+          "In order to use Red v3 you MUST be running d.py version"
+          " >= 1.0.0.")
+    sys.exit(1)
+
 from core.bot import Red, ExitCodes
+from core.cog_manager import CogManagerUI
 from core.global_checks import init_global_checks
 from core.events import init_events
-from core.cli import interactive_config, confirm, parse_cli_flags
+from core.sentry_setup import init_sentry_logging
+from core.cli import interactive_config, confirm, parse_cli_flags, ask_sentry
 from core.core_commands import Core
 from core.dev_commands import Dev
 import asyncio
-import discord
 import logging.handlers
 import logging
 import os
-import sys
+from pathlib import Path
 
 #
 #               Red - Discord Bot v3
@@ -19,11 +31,14 @@ import sys
 
 
 def init_loggers(cli_flags):
+    # d.py stuff
     dpy_logger = logging.getLogger("discord")
     dpy_logger.setLevel(logging.WARNING)
     console = logging.StreamHandler()
     console.setLevel(logging.WARNING)
     dpy_logger.addHandler(console)
+
+    # Red stuff
 
     logger = logging.getLogger("red")
 
@@ -49,23 +64,51 @@ def init_loggers(cli_flags):
     logger.addHandler(fhandler)
     logger.addHandler(stdout_handler)
 
-    return logger
+    # Sentry stuff
+    sentry_logger = logging.getLogger("red.sentry")
+    sentry_logger.setLevel(logging.WARNING)
+
+    return logger, sentry_logger
+
+
+def determine_main_folder() -> Path:
+    return Path(os.path.dirname(__file__)).resolve()
+
+
+async def _get_prefix_and_token(red, indict):
+    """
+    Again, please blame <@269933075037814786> for this.
+    :param indict:
+    :return:
+    """
+    indict['token'] = await red.db.token()
+    indict['prefix'] = await red.db.prefix()
+    indict['enable_sentry'] = await red.db.enable_sentry()
 
 
 if __name__ == '__main__':
     cli_flags = parse_cli_flags()
-    log = init_loggers(cli_flags)
+    log, sentry_log = init_loggers(cli_flags)
     description = "Red v3 - Alpha"
-    red = Red(cli_flags, description=description, pm_help=None)
+    bot_dir = determine_main_folder()
+    red = Red(cli_flags, description=description, pm_help=None,
+              bot_dir=bot_dir)
     init_global_checks(red)
     init_events(red, cli_flags)
+
     red.add_cog(Core())
+    red.add_cog(CogManagerUI())
 
     if cli_flags.dev:
         red.add_cog(Dev())
 
-    token = os.environ.get("RED_TOKEN", red.db.token())
-    prefix = cli_flags.prefix or red.db.prefix()
+    loop = asyncio.get_event_loop()
+    tmp_data = {}
+    loop.run_until_complete(_get_prefix_and_token(red, tmp_data))
+
+    token = os.environ.get("RED_TOKEN", tmp_data['token'])
+    prefix = cli_flags.prefix or tmp_data['prefix']
+    enable_sentry = tmp_data['enable_sentry']
 
     if token is None or not prefix:
         if cli_flags.no_prompt is False:
@@ -77,7 +120,14 @@ if __name__ == '__main__':
             log.critical("Token and prefix must be set in order to login.")
             sys.exit(1)
 
-    loop = asyncio.get_event_loop()
+    if enable_sentry is None:
+        ask_sentry(red)
+
+    loop.run_until_complete(_get_prefix_and_token(red, tmp_data))
+
+    if tmp_data['enable_sentry']:
+        init_sentry_logging(sentry_log)
+
     cleanup_tasks = True
 
     try:
@@ -92,7 +142,7 @@ if __name__ == '__main__':
         if db_token and not cli_flags.no_prompt:
             print("\nDo you want to reset the token? (y/n)")
             if confirm("> "):
-                loop.run_until_complete(red.db.set("token", ""))
+                loop.run_until_complete(red.db.token.set(""))
                 print("Token has been reset.")
     except KeyboardInterrupt:
         log.info("Keyboard interrupt detected. Quitting...")
@@ -100,6 +150,7 @@ if __name__ == '__main__':
         red._shutdown_mode = ExitCodes.SHUTDOWN
     except Exception as e:
         log.critical("Fatal exception", exc_info=e)
+        sentry_log.critical("Fatal Exception", exc_info=e)
         loop.run_until_complete(red.logout())
     finally:
         if cleanup_tasks:

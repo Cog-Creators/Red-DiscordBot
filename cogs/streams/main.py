@@ -1,6 +1,8 @@
+import discord
 from discord.ext import commands
 from core.config import Config
-from core.utils.chat_formatting import pagify
+from core.bot import Red
+from core.utils.chat_formatting import pagify, box
 from core import checks
 from core.bot import Red
 from .streams import TwitchStream, HitboxStream, MixerStream, PicartoStream, TwitchCommunity
@@ -13,19 +15,30 @@ CHECK_DELAY = 60
 
 
 class Streams:
+
+    global_defaults = {
+        "tokens": {},
+        "streams": []
+    }
+
+    guild_defaults = {
+        "autodelete": False,
+        "mention_everyone": False,
+        "mention_here": False
+    }
+
+    role_defaults = {
+        "mention": False
+    }
+
     def __init__(self, bot: Red):
         self.db = Config.get_conf(self, 26262626, force_registration=True)
 
-        self.db.register_global(
-            tokens={},
-            streams=[],
-            communities=[]
-        )
+        self.db.register_global(**self.global_defaults)
 
-        self.db.register_guild(
-            autodelete=False,
-            mention=""
-        )
+        self.db.register_guild(**self.guild_defaults)
+
+        self.db.register_role(**self.role_defaults)
 
         self.streams = self.load_streams()
         self.communities = self.load_communities()
@@ -203,10 +216,61 @@ class Streams:
         await self.db.set("tokens", tokens)
         await ctx.send("Twitch token set.")
 
-    @streamset.command()
+    @streamset.group()
     @commands.guild_only()
-    async def mention(self, ctx, mention_type: str):
-        ...
+    async def mention(self, ctx):
+        """Sets mentions for stream alerts
+        Types: everyone, here, role, none"""
+        if ctx.invoked_subcommand is None:
+            await self.bot.send_cmd_help(ctx)
+
+    @mention.command()
+    @commands.guild_only()
+    async def all(self, ctx):
+        """Toggles everyone mention"""
+        guild = ctx.guild
+        current_setting = await self.db.guild(guild).mention_everyone()
+        if current_setting:
+            await self.db.guild(guild).mention_everyone.set(False)
+            await ctx.send("@\u200beveryone will no longer be mentioned "
+                           "for a stream alert.")
+        else:
+            await self.db.guild(guild).mention_everyone.set(True)
+            await ctx.send("When a stream configured for stream alerts "
+                           "comes online, @\u200beveryone will be mentioned")
+
+    @mention.command()
+    @commands.guild_only()
+    async def online(self, ctx):
+        """Toggles here mention"""
+        guild = ctx.guild
+        current_setting = await self.db.guild(guild).mention_here()
+        if current_setting:
+            await self.db.guild(guild).mention_here.set(False)
+            await ctx.send("@\u200bhere will no longer be mentioned "
+                           "for a stream alert.")
+        else:
+            await self.db.guild(guild).mention_here.set(True)
+            await ctx.send("When a stream configured for stream alerts "
+                           "comes online, @\u200bhere will be mentioned")
+
+    @mention.command()
+    @commands.guild_only()
+    async def role(self, ctx, role: discord.Role):
+        """Toggles role mention"""
+        current_setting = await self.db.role(role).mention()
+        if not role.mentionable:
+            await ctx.send("That role is not mentionable!")
+            return
+        if current_setting:
+            await self.db.role(role).mention.set(False)
+            await ctx.send("@\u200b{} will no longer be mentioned "
+                           "for a stream alert".format(role.name))
+        else:
+            await self.db.role(role).mention.set(True)
+            await ctx.send("When a stream configured for stream alerts "
+                           "comes online, @\u200b{} will be mentioned"
+                           "".format(role.name))
 
     @streamset.command()
     @commands.guild_only()
@@ -309,12 +373,48 @@ class Streams:
                     continue
                 for channel_id in stream.channels:
                     channel = self.bot.get_channel(channel_id)
-                    try:
-                        m = await channel.send("%s is online!" % stream.name,
-                                               embed=embed)
-                        stream._messages_cache.append(m)
-                    except:
-                        pass
+                    mention_everyone = await self.db.guild(channel.guild).mention_everyone()
+                    mention_here = await self.db.guild(channel.guild).mention_here()
+                    mention_roles = []
+                    for r in channel.guild.roles:
+                        to_append = {
+                            "role": r,
+                            "enabled": await self.db.role(r).mention()
+                        }
+                        mention_roles.append(to_append)
+                    mention = None
+                    if mention_everyone or mention_here or any(mention_roles):
+                        mention = True
+                    if mention:
+                        mention_str = ""
+                        if mention_everyone:
+                            mention_str += "@everyone "
+                        if mention_here:
+                            mention_str += "@here "
+                        if any(mention_roles):
+                            mention_str += " ".join(
+                                [
+                                    r["role"].mention for r in mention_roles
+                                    if r["role"].mentionable and r["enabled"]
+                                ]
+                            )
+                        mention_str = mention_str.strip()
+                        try:
+                            m = await channel.send(
+                                "{}, {} is online!".format(
+                                    mention_str, stream.name
+                                ), embed=embed
+                            )
+                            stream._messages_cache.append(m)
+                        except:
+                            pass
+                    else:
+                        try:
+                            m = await channel.send("%s is online!" % stream.name,
+                                                   embed=embed)
+                            stream._messages_cache.append(m)
+                        except:
+                            pass
 
     async def check_communities(self):
         for community in self.communities:
