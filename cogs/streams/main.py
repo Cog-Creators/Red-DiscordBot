@@ -40,15 +40,16 @@ class Streams:
 
         self.db.register_role(**self.role_defaults)
 
-        self.streams = self.load_streams()
-        self.communities = self.load_communities()
-        self.task = bot.loop.create_task(self._stream_alerts())
         self.bot = bot
+
+        self.streams = self.bot.loop.create_task(self.load_streams())
+        self.communities = self.bot.loop.create_task(self.load_communities())
+        self.task = self.bot.loop.create_task(self._stream_alerts())
 
     @commands.command()
     async def twitch(self, ctx, channel_name: str):
         """Checks if a Twitch channel is streaming"""
-        token = self.db.tokens().get(TwitchStream.__name__)
+        token = await self.db.tokens.get_attr(TwitchStream.__name__)
         stream = TwitchStream(name=channel_name,
                               token=token)
         await self.check_online(ctx, stream)
@@ -180,7 +181,7 @@ class Streams:
     async def stream_alert(self, ctx, _class, channel_name):
         stream = self.get_stream(_class, channel_name)
         if not stream:
-            token = self.db.tokens().get(_class.__name__)
+            token = await self.db.tokens.get_attr(_class.__name__)
             stream = _class(name=channel_name,
                             token=token)
             if not await self.check_exists(stream):
@@ -192,7 +193,7 @@ class Streams:
     async def community_alert(self, ctx, _class, community_name):
         community = self.get_community(_class, community_name)
         if not community:
-            token = self.db.tokens().get(_class.__name__)
+            token = await self.db.tokens.get_attr(_class.__name__)
             community = _class(name=community_name, token=token)
             try:
                 await community.get_community_streams()
@@ -210,10 +211,10 @@ class Streams:
     @streamset.command()
     @checks.is_owner()
     async def twitchtoken(self, ctx, token: str):
-        tokens = self.db.tokens()
+        tokens = await self.db.tokens()
         tokens["TwitchStream"] = token
         tokens["TwitchCommunity"] = token
-        await self.db.set("tokens", tokens)
+        await self.db.tokens.set(tokens)
         await ctx.send("Twitch token set.")
 
     @streamset.group()
@@ -276,7 +277,7 @@ class Streams:
     @commands.guild_only()
     async def autodelete(self, ctx, on_off: bool):
         """Toggles automatic deletion of notifications for streams that go offline"""
-        await self.db.guild(ctx.guild).set("autodelete", on_off)
+        await self.db.guild(ctx.guild).autodelete.set(on_off)
         if on_off:
             await ctx.send("The notifications will be deleted once "
                            "streams go offline.")
@@ -444,28 +445,28 @@ class Streams:
                             chn = self.bot.get_channel(channel)
                             await chn.send(embed=emb)
 
-    def load_streams(self):
+    async def load_streams(self):
         streams = []
 
-        for raw_stream in self.db.streams():
+        for raw_stream in await self.db.streams():
             _class = getattr(StreamClasses, raw_stream["type"], None)
             if not _class:
                 continue
 
-            token = self.db.tokens().get(_class.__name__)
+            token = await self.db.tokens.get_attr(_class.__name__)
             streams.append(_class(token=token, **raw_stream))
 
         return streams
 
-    def load_communities(self):
+    async def load_communities(self):
         communities = []
 
-        for raw_community in self.db.communities():
+        for raw_community in await self.db.communities():
             _class = getattr(StreamClasses, raw_community["type"], None)
             if not _class:
                 continue
 
-            token = self.db.tokens().get(_class.__name__)
+            token = await self.db.tokens.get_attr(_class.__name__)
             communities.append(_class(token=token, **raw_community))
 
         return communities
@@ -475,14 +476,14 @@ class Streams:
         for stream in self.streams:
             raw_streams.append(stream.export())
 
-        await self.db.set("streams", raw_streams)
+        await self.db.streams.set(raw_streams)
 
     async def save_communities(self):
         raw_communities = []
         for community in self.communities:
             raw_communities.append(community.export())
 
-        await self.db.set("communities", raw_communities)
+        await self.db.communities.set(raw_communities)
 
     def __unload(self):
         self.task.cancel()
