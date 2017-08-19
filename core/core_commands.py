@@ -68,7 +68,8 @@ class Core:
             await ctx.send("Failed to reload package. Check your console or "
                            "logs for details.")
         else:
-            await ctx.bot.save_packages_status()
+            curr_pkgs = await ctx.bot.db.packages()
+            await ctx.bot.save_packages_status(curr_pkgs)
             await ctx.send("Done.")
 
     @commands.command(name="shutdown")
