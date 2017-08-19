@@ -2188,7 +2188,7 @@ class Audio:
                         temp_queue.popleft()
                     elif len(queue) > 0:
                         queue.popleft()
-                    clean_url = self._clean_url(url)
+                    clean_url = self._clean_url(next_url)
                     await self.bot.send_message(next_channel, "I'm unable to play '{}' "
                                                 "because of an error:\n"
                                                 "'{}'".format(clean_url, str(e)))
