@@ -69,6 +69,9 @@ class TwitchCommunity:
                 data[k] = v
         return data
 
+    def __repr__(self):
+        return "<{0.__class__.__name__}: {0.name}>".format(self)
+
 
 class Stream:
     def __init__(self, **kwargs):
