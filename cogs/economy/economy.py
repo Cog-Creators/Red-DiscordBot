@@ -179,7 +179,7 @@ class Economy:
             bank set @Twentysix +2 - Increases balance by 2
             bank set @Twentysix -6 - Decreases balance by 6"""
         author = ctx.author
-        currency = bank.get_currency_name(ctx.guild)
+        currency = await bank.get_currency_name(ctx.guild)
 
         if creds.operation == "deposit":
             await bank.deposit_credits(to, creds.sum)
