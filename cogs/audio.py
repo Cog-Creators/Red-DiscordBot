@@ -5,7 +5,7 @@ import os
 from random import shuffle, choice
 from cogs.utils.dataIO import dataIO
 from cogs.utils import checks
-from cogs.utils.chat_formatting import pagify
+from cogs.utils.chat_formatting import pagify, escape
 from urllib.parse import urlparse
 from __main__ import send_cmd_help, settings
 from json import JSONDecodeError
@@ -864,13 +864,16 @@ class Audio:
             try:
                 song = await self._guarantee_downloaded(server, url)
             except YouTubeDlError as e:
-                await self.bot.send_message(channel, "I'm unable to play '{}' "
-                                            "because of an error:\n"
-                                            "'{}'".format(clean_url, str(e)))
+                message = ("I'm unable to play '{}' because of an error:\n"
+                          "'{}'".format(clean_url, str(e)))
+                message = escape(message, mass_mentions=True)
+                await self.bot.send_message(channel, message)
                 return
             except MaximumLength:
-                await self.bot.send_message(channel, "I'm unable to play '{}' "
-                                            "because it exceeds the maximum audio length.".format(clean_url))
+                message = ("I'm unable to play '{}' because it exceeds the "
+                          "maximum audio length.".format(clean_url))
+                message = escape(message, mass_mentions=True)
+                await self.bot.send_message(channel, message)
                 return
             local = False
         else:  # Assume local
@@ -2189,9 +2192,10 @@ class Audio:
                     elif len(queue) > 0:
                         queue.popleft()
                     clean_url = self._clean_url(next_url)
-                    await self.bot.send_message(next_channel, "I'm unable to play '{}' "
-                                                "because of an error:\n"
-                                                "'{}'".format(clean_url, str(e)))
+                    message = ("I'm unable to play '{}' because of an "
+                              "error:\n'{}'".format(clean_url, str(e)))
+                    message = escape(message, mass_mentions=True)
+                    await self.bot.send_message(next_channel, message)
 
     async def queue_scheduler(self):
         while self == self.bot.get_cog('Audio'):
