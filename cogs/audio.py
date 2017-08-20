@@ -1790,6 +1790,7 @@ class Audio:
     async def _queue_list(self, ctx):
         """Not a command, use `queue` with no args to call this."""
         server = ctx.message.server
+        channel = ctx.message.channel
         now_playing = self._get_queue_nowplaying(server)
         if not now_playing:
             await self.bot.say("Nothing playing on this server.")
