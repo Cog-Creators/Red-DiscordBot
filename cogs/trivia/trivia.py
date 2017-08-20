@@ -239,7 +239,11 @@ class Trivia:
             return
         filename = "{}.txt".format(category)
         path = path / filename
-        return parse_trivia_list(str(path))
+        try:
+            list_ = parse_trivia_list(str(path))
+        except (FileNotFoundError, ValueError):
+            list_ = []
+        return list_
 
     def _get_trivia_session(self, channel: discord.TextChannel) -> TriviaSession:
         return next((session for session in self.trivia_sessions
