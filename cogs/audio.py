@@ -1667,11 +1667,19 @@ class Audio:
             log.debug("queueing to the actual queue for sid {}".format(
                 server.id))
             self._add_to_queue(server, url)
-        msg = await self.bot.say("Queued.")
-
+        
+        message = await self.bot.say("Queued.")
         song = await self._download_all([url])
         song = song[0]
-        await self.bot.edit_message(msg, "{} queued: {.title}. <{.webpage_url}> ({.pretty_duration})".format(ctx.message.author, song, song, song))
+        info = ("{author} queued:\n{song.title} ({song.pretty_duration})\n"
+                "<{song.webpage_url}> ".format(author=ctx.message.author,
+                                               song=song))
+        await self.bot.edit_message(message, info)
+
+        try:
+            await self.bot.delete_message(ctx.message)
+        except discord.Forbidden:
+            pass
 
     async def _queue_list(self, ctx):
         """Not a command, use `queue` with no args to call this."""
