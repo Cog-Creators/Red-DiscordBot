@@ -38,7 +38,7 @@ def parse_trivia_list(path: str) -> List[tuple]:
             ret.append((question, answers))
 
     if not ret:
-        raise ValueError("Empty trivia list")
+        raise ValueError("Empty trivia list.")
 
     return ret
 
@@ -94,7 +94,7 @@ class Trivia:
     async def triviaset_delay(self, ctx: commands.Context, seconds: int):
         """Maximum seconds to answer a question."""
         if seconds < 4:
-            await ctx.send("Must be greater than 4 seconds.")
+            await ctx.send("Must be at least 4 seconds.")
             return
         settings = self.conf.guild(ctx.guild)
         await settings.delay.set(seconds)
@@ -146,18 +146,26 @@ class Trivia:
 
     @commands.group(invoke_without_command=True)
     @commands.guild_only()
-    async def trivia(self, ctx: commands.Context, category: str):
-        """Start trivia session on the specified category."""
-        category = category.lower()
+    async def trivia(self, ctx: commands.Context, *categories: str):
+        """Start trivia session on the specified categor(y/ies)."""
+        if not categories:
+            await self.bot.send_cmd_help(ctx)
+            return
+        categories = [c.lower() for c in categories]
         session = self._get_trivia_session(ctx.channel)
         if session is not None:
             await ctx.send("There is already an ongoing trivia session in this channel.")
             return
-        if not self._category_exists(category):
-            await ctx.send("Invalid category. See `{}trivia list` for a list of trivia"
-                           " categories.".format(ctx.prefix))
+        trivia_list = []
+        for category in categories:
+            if not self._category_exists(category):
+                await ctx.send("Invalid category `{0}`. See `{1}trivia list` for a list of trivia"
+                               " categories.".format(category, ctx.prefix))
+                return
+            trivia_list += self.get_trivia_list(category)
+        if not trivia_list:
+            await ctx.send("Empty trivia list.")
             return
-        trivia_list = self.get_trivia_list(category)
         settings = self.conf.guild(ctx.guild)
         session = TriviaSession(ctx, trivia_list, settings)
         self.trivia_sessions.append(session)
