@@ -23,6 +23,7 @@ import logging.handlers
 import logging
 import os
 from pathlib import Path
+from warnings import warn
 
 #
 #               Red - Discord Bot v3
@@ -95,9 +96,18 @@ if __name__ == '__main__':
     if cli_flags.config:
         load_basic_configuration(Path(cli_flags.config).resolve())
     else:
-        raise RuntimeError("You need to create a basic configuration file,"
-                           " this error will disappear when the launcher has"
-                           " been rewritten.")
+        warn("Soon you will need to change the way you load the bot."
+             " The new method of loading has yet to be decided upon but"
+             " will be made clear in announcements from the support server"
+             " and from documentation.",
+             category=FutureWarning)
+        import core.data_manager
+        defaults = core.data_manager.basic_config_default.copy()
+        defaults['DATA_PATH'] = str(determine_main_folder())
+        defaults['CORE_PATH_APPEND'] = 'core/.data'
+        defaults['COG_PATH_APPEND'] = 'cogs/.data'
+
+        core.data_manager.basic_config = defaults
 
     log, sentry_log = init_loggers(cli_flags)
     description = "Red v3 - Alpha"
@@ -137,7 +147,7 @@ if __name__ == '__main__':
     loop.run_until_complete(_get_prefix_and_token(red, tmp_data))
 
     if tmp_data['enable_sentry']:
-        init_sentry_logging(sentry_log)
+        init_sentry_logging(red, sentry_log)
 
     cleanup_tasks = True
 
