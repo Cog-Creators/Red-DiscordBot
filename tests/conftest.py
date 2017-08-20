@@ -17,6 +17,13 @@ def monkeysession(request):
     mpatch.undo()
 
 
+@pytest.fixture(autouse=True)
+def override_data_path(tmpdir):
+    from core import data_manager
+    data_manager.basic_config = data_manager.basic_config_default
+    data_manager.basic_config['DATA_PATH'] = str(tmpdir)
+
+
 @pytest.fixture()
 def json_driver(tmpdir_factory):
     import uuid
