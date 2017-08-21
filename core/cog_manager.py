@@ -270,6 +270,8 @@ class CogManagerUI:
         No installed cogs will be transferred in the process.
         """
         if path:
+            if not path.is_absolute():
+                path = (ctx.bot.main_dir / path).resolve()
             try:
                 await ctx.bot.cog_mgr.set_install_path(path)
             except ValueError:

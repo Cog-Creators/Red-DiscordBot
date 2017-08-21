@@ -8,6 +8,7 @@ from copy import deepcopy
 from pathlib import Path
 
 from .drivers.red_json import JSON as JSONDriver
+from core.data_manager import cog_data_path, core_data_path
 
 log = logging.getLogger("red.config")
 
@@ -359,6 +360,7 @@ class MemberGroup(Group):
         return guild_member.get(self.identifiers[-2], {})
 
 
+
 class Config:
     """
     You should always use :func:`get_conf` or :func:`get_core_conf` to initialize a Config object.
@@ -431,10 +433,11 @@ class Config:
         :return:
             A new config object.
         """
-        cog_name = cog_instance.__class__.__name__
+        cog_path_override = cog_data_path(cog_instance)
+        cog_name = cog_path_override.stem
         uuid = str(hash(identifier))
 
-        spawner = JSONDriver(cog_name)
+        spawner = JSONDriver(cog_name, data_path_override=cog_path_override)
         return cls(cog_name=cog_name, unique_identifier=uuid,
                    force_registration=force_registration,
                    driver_spawn=spawner)
@@ -451,8 +454,7 @@ class Config:
             See :py:attr:`force_registration`
         :type force_registration: Optional[bool]
         """
-        core_data_path = Path.cwd() / 'core' / '.data'
-        driver_spawn = JSONDriver("Core", data_path_override=core_data_path)
+        driver_spawn = JSONDriver("Core", data_path_override=core_data_path())
         return cls(cog_name="Core", driver_spawn=driver_spawn,
                    unique_identifier='0',
                    force_registration=force_registration)
