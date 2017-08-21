@@ -1,0 +1,55 @@
+What is the USA state capital of Alabama?`Montgomery
+What is the USA state capital of Montana?`Helena
+What is the USA state capital of Alaska?`Juneau
+What is the USA state capital of Nebraska?`Lincoln
+What is the USA state capital of Arizona?`Phoenix
+What is the USA state capital of Nevada?`Carson City
+What is the USA state capital of Arkansas?`Little Rock
+What is the USA state capital of New Hampshire?`Concord
+What is the USA state capital of California?`Sacramento
+What is the USA state capital of New Jersey?`Trenton
+What is the USA state capital of Colorado?`Denver
+What is the USA state capital of New Mexico?`Santa Fe
+What is the USA state capital of Connecticut?`Hartford
+What is the USA state capital of New York?`Albany
+What is the USA state capital of Delaware?`Dover
+What is the USA state capital of North Carolina?`Raleigh
+What is the USA state capital of Florida?`Tallahassee
+What is the USA state capital of North Dakota?`Bismarck
+What is the USA state capital of Georgia?`Atlanta
+What is the USA state capital of Ohio?`Columbus
+What is the USA state capital of Hawaii?`Honolulu
+What is the USA state capital of Oklahoma?`Oklahoma City
+What is the USA state capital of Idaho?`Boise
+What is the USA state capital of Oregon?`Salem
+What is the USA state capital of Illinois?`Springfield
+What is the USA state capital of Pennsylvania?`Harrisburg
+What is the USA state capital of Indiana?`Indianapolis
+What is the USA state capital of Rhode Island?`Providence
+What is the USA state capital of Iowa?`Des Moines
+What is the USA state capital of South Carolina?`Columbia
+What is the USA state capital of Kansas?`Topeka
+What is the USA state capital of South Dakota?`Pierre
+What is the USA state capital of Kentucky?`Frankfort
+What is the USA state capital of Tennessee?`Nashville
+What is the USA state capital of Louisiana?`Baton Rouge
+What is the USA state capital of Texas?`Austin
+What is the USA state capital of Maine?`Augusta
+What is the USA state capital of Utah?`Salt Lake City
+What is the USA state capital of Maryland?`Annapolis
+What is the USA state capital of Vermont?`Montpelier
+What is the USA state capital of Massachusetts?`Boston
+What is the USA state capital of Virginia?`Richmond
+What is the USA state capital of Michigan?`Lansing
+What is the USA state capital of Washington?`Olympia
+What is the USA state capital of Minnesota?`St. Paul
+What is the USA state capital of West Virginia?`Charleston
+What is the USA state capital of Mississippi?`Jackson
+What is the USA state capital of Wisconsin?`Madison
+What is the USA state capital of Missouri?`Jefferson City
+What is the USA state capital of Wyoming?`Cheyenne
+What is the USA territory capital of American Samoa?`Pago Pago
+What is the USA territory capital of Guam?`Hagatna`Agana
+What is the USA territory capital of Northern Mariana Islands?`Capitol Hill
+What is the USA territory capital of Puerto Rico?`San Juan
+What is the USA territory capital of U.S. Virgin Islands?`Charlotte Amalie

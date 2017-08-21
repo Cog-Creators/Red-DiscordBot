@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 dist: trusty
 language: python
 python:
@@ -11,3 +12,17 @@ script:
 cache: pip
 notifications:
   email: false
+=======
+language: python
+python:
+  - "3.5.2"
+install:
+  - pip install -r requirements.txt
+script:
+  - python -m compileall ./red.py
+  - python -m compileall ./cogs
+  - python ./red.py --no-prompt --no-cogs --dry-run
+cache: pip
+notifications:
+  email: false
+>>>>>>> c998b2356fff09c854a6ad90b4b4a409cf6c49e5
