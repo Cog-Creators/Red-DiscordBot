@@ -1477,7 +1477,7 @@ class Audio:
             url = url.split("&")[0]  # Temp fix for the &list issue
 
         message = await self.bot.say("Queued.")
-        song = await self._download_all([url])
+        song = await self._download_all([Song(url=url)], channel)
         song = song[0]
         info = ("{author} queued:\n{song.title} ({song.pretty_duration})\n"
                 "<{song.webpage_url}> ".format(author=ctx.message.author,
@@ -1775,7 +1775,7 @@ class Audio:
             self._add_to_queue(server, url, channel)
         
         message = await self.bot.say("Queued.")
-        song = await self._download_all([url])
+        song = await self._download_all([Song(url=url)], channel)
         song = song[0]
         info = ("{author} queued:\n{song.title} ({song.pretty_duration})\n"
                 "<{song.webpage_url}> ".format(author=ctx.message.author,
