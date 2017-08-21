@@ -1,4 +1,5 @@
 *.json
+<<<<<<< HEAD
 *.exe
 *.dll
 .data
@@ -154,3 +155,12 @@ ENV/
 # mypy
 .mypy_cache/
 
+=======
+*.pyc
+__pycache__
+data
+!data/trivia/*
+!data/audio/playlists/*
+*.exe
+*.dll
+>>>>>>> c998b2356fff09c854a6ad90b4b4a409cf6c49e5

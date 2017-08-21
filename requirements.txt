@@ -1,6 +1,13 @@
+<<<<<<< HEAD
 git+https://github.com/Rapptz/discord.py@rewrite#egg=discord.py[voice]
 youtube_dl
 pytest
 git+https://github.com/pytest-dev/pytest-asyncio
 pymongo
 git+https://github.com/getsentry/raven-python
+=======
+pip
+git+git://github.com/Rapptz/discord.py.git#egg=discord.py[voice]
+youtube_dl
+imgurpython
+>>>>>>> c998b2356fff09c854a6ad90b4b4a409cf6c49e5
