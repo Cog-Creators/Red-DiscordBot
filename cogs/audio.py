@@ -1486,7 +1486,7 @@ class Audio:
 
         try:
             await self.bot.delete_message(ctx.message)
-        except discord.Forbidden:
+        except (discord.Forbidden, discord.NotFound):
             pass
 
         self._stop_player(server)
