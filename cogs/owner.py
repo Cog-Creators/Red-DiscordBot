@@ -554,6 +554,38 @@ class Owner:
         else:
             await self.bot.say("User is not blacklisted.")
 
+    @blacklist.command(name="hackadd", pass_context=True)
+    async def _blacklist_hackadd(self, ctx, user):
+        """Adds user to Red's global blacklist using its ID."""
+
+        test = discord.utils.get(ctx.message.server.members, id=user)
+        if test is None:
+            await self.bot.say("User not found. Are you sure you provided the good user ID?")
+            return
+        else:
+            if user not in self.global_ignores["blacklist"]:
+                self.global_ignores["blacklist"].append(user)
+                self.save_global_ignores()
+                await self.bot.say("User has been blacklisted.")
+            else:
+                await self.bot.say("User is already blacklisted.")
+
+    @blacklist.command(name="hackremove", pass_context=True)
+    async def _blacklist_hackremove(self, ctx, user):
+        """Remove user to Red's global blacklist using its ID."""
+
+        test = discord.utils.get(ctx.message.server.members, id=user)
+        if test is None:
+            await self.bot.say("User not found. Are you sure you provided the good user ID?")
+            return
+        else:
+            if user not in self.global_ignores["blacklist"]:
+                self.global_ignores["blacklist"].remove(user)
+                self.save_global_ignores()
+                await self.bot.say("User has been removed from the blacklist.")
+            else:
+                await self.bot.say("User is not blacklisted.")
+
     @blacklist.command(name="list")
     async def _blacklist_list(self):
         """Lists users on the blacklist"""
