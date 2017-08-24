@@ -558,7 +558,7 @@ class Owner:
     async def _blacklist_hackadd(self, ctx, user):
         """Adds user to Red's global blacklist using its ID."""
 
-        test = discord.utils.get(ctx.message.server.members, id=user)
+        test = discord.utils.get(self.bot.get_all_members(), id=user)
         if test is None:
             await self.bot.say("User not found. Are you sure you provided the good user ID?")
             return
@@ -574,12 +574,12 @@ class Owner:
     async def _blacklist_hackremove(self, ctx, user):
         """Remove user to Red's global blacklist using its ID."""
 
-        test = discord.utils.get(ctx.message.server.members, id=user)
+        test = discord.utils.get(self.bot.get_all_members(), id=user)
         if test is None:
             await self.bot.say("User not found. Are you sure you provided the good user ID?")
             return
         else:
-            if user not in self.global_ignores["blacklist"]:
+            if user in self.global_ignores["blacklist"]:
                 self.global_ignores["blacklist"].remove(user)
                 self.save_global_ignores()
                 await self.bot.say("User has been removed from the blacklist.")
