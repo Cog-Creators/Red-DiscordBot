@@ -31,7 +31,7 @@ def patch_relative_to(monkeysession):
 def repo_manager(tmpdir_factory, config):
     config.register_global(repos={})
     rm = RepoManager(config)
-    rm.repos_folder = Path(str(tmpdir_factory.getbasetemp())) / 'repos'
+    # rm.repos_folder = Path(str(tmpdir_factory.getbasetemp())) / 'repos'
     return rm
 
 
