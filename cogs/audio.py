@@ -1798,6 +1798,13 @@ class Audio:
 
         await self.bot.say(msg)
 
+    @commands.command(pass_context=True, no_pm=True)
+    async def clearqueue(self, ctx):
+        """Clears music queue"""
+        server = ctx.message.server
+        self._clear_queue(server)
+        await self.bot.say("Queue cleared!")
+
     @commands.group(pass_context=True, no_pm=True)
     async def repeat(self, ctx):
         """Toggles REPEAT"""
