@@ -6,7 +6,10 @@ from typing import Generator, Tuple, Iterable
 from core import Config
 from core.bot import Red
 from core.utils.chat_formatting import box
+from core.i18n import CogI18n
 from .alias_entry import AliasEntry
+
+_ = CogI18n("Alias", __file__)
 
 
 class Alias:
@@ -132,7 +135,7 @@ class Alias:
         for p in prefixes:
             if content.startswith(p):
                 return p
-        raise ValueError("No prefix found.")
+        raise ValueError(_("No prefix found."))
 
     def get_extra_args_from_alias(self, message: discord.Message, prefix: str,
                                   alias: AliasEntry) -> str:
@@ -228,8 +231,8 @@ class Alias:
 
         await self.add_alias(ctx, alias_name, command)
 
-        await ctx.send(("A new alias with the trigger `{}`"
-                        " has been created.").format(alias_name))
+        await ctx.send(_("A new alias with the trigger `{}`"
+                         " has been created.").format(alias_name))
 
     @global_.command(name="add")
     async def _add_global_alias(self, ctx: commands.Context,
@@ -264,8 +267,8 @@ class Alias:
 
         await self.add_alias(ctx, alias_name, command, global_=True)
 
-        await ctx.send(("A new global alias with the trigger `{}`"
-                        " has been created.").format(alias_name))
+        await ctx.send(_("A new global alias with the trigger `{}`"
+                         " has been created.").format(alias_name))
 
     @alias.command(name="help")
     @commands.guild_only()
@@ -279,7 +282,7 @@ class Alias:
             new_msg.content = "{}help {}".format(ctx.prefix, base_cmd)
             await self.bot.process_commands(new_msg)
         else:
-            ctx.send("No such alias exists.")
+            ctx.send(_("No such alias exists."))
 
     @alias.command(name="show")
     @commands.guild_only()
@@ -288,10 +291,10 @@ class Alias:
         is_alias, alias = await self.is_alias(ctx.guild, alias_name)
 
         if is_alias:
-            await ctx.send(("The `{}` alias will execute the"
-                            " command `{}`").format(alias_name, alias.command))
+            await ctx.send(_("The `{}` alias will execute the"
+                             " command `{}`").format(alias_name, alias.command))
         else:
-            await ctx.send("There is no alias with the name `{}`".format(alias_name))
+            await ctx.send(_("There is no alias with the name `{}`").format(alias_name))
 
     @alias.command(name="del")
     @commands.guild_only()
@@ -303,14 +306,14 @@ class Alias:
         try:
             next(aliases)
         except StopIteration:
-            await ctx.send("There are no aliases on this guild.")
+            await ctx.send(_("There are no aliases on this guild."))
             return
 
         if await self.delete_alias(ctx, alias_name):
-            await ctx.send(("Alias with the name `{}` was successfully"
-                            " deleted.").format(alias_name))
+            await ctx.send(_("Alias with the name `{}` was successfully"
+                             " deleted.").format(alias_name))
         else:
-            await ctx.send("Alias with name `{}` was not found.".format(alias_name))
+            await ctx.send(_("Alias with name `{}` was not found.").format(alias_name))
 
     @global_.command(name="del")
     async def _del_global_alias(self, ctx: commands.Context, alias_name: str):
@@ -321,14 +324,14 @@ class Alias:
         try:
             next(aliases)
         except StopIteration:
-            await ctx.send("There are no aliases on this bot.")
+            await ctx.send(_("There are no aliases on this bot."))
             return
 
         if await self.delete_alias(ctx, alias_name, global_=True):
-            await ctx.send(("Alias with the name `{}` was successfully"
-                            " deleted.").format(alias_name))
+            await ctx.send(_("Alias with the name `{}` was successfully"
+                             " deleted.").format(alias_name))
         else:
-            await ctx.send("Alias with name `{}` was not found.".format(alias_name))
+            await ctx.send(_("Alias with name `{}` was not found.").format(alias_name))
 
     @alias.command(name="list")
     @commands.guild_only()
@@ -336,9 +339,9 @@ class Alias:
         """
         Lists the available aliases on this server.
         """
-        names = ["Aliases:", ] + sorted(["+ " + a.name for a in (await self.unloaded_aliases(ctx.guild))])
+        names = [_("Aliases:"), ] + sorted(["+ " + a.name for a in (await self.unloaded_aliases(ctx.guild))])
         if len(names) == 0:
-            await ctx.send("There are no aliases on this server.")
+            await ctx.send(_("There are no aliases on this server."))
         else:
             await ctx.send(box("\n".join(names), "diff"))
 
@@ -347,9 +350,9 @@ class Alias:
         """
         Lists the available global aliases on this bot.
         """
-        names = ["Aliases:", ] + sorted(["+ " + a.name for a in await self.unloaded_global_aliases()])
+        names = [_("Aliases:"), ] + sorted(["+ " + a.name for a in await self.unloaded_global_aliases()])
         if len(names) == 0:
-            await ctx.send("There are no aliases on this server.")
+            await ctx.send(_("There are no aliases on this server."))
         else:
             await ctx.send(box("\n".join(names), "diff"))
 
