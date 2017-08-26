@@ -3,6 +3,10 @@ from discord.ext import commands
 
 from core import checks, modlog
 from core.bot import Red
+from core.i18n import CogI18n
+from core.utils.chat_formatting import box
+
+_ = CogI18n('ModLog', __file__)
 
 
 class ModLog:
@@ -28,19 +32,22 @@ class ModLog:
         if channel:
             if channel.permissions_for(guild.me).send_messages:
                 await modlog.set_modlog_channel(channel)
-                await ctx.send("Mod events will be sent to {}"
-                               "".format(channel.mention))
+                await ctx.send(
+                    _("Mod events will be sent to {}").format(
+                        channel.mention
+                    )
+                )
             else:
                 await ctx.send(
-                    "I do not have permissions to "
-                    "send messages in {}!".format(channel.mention)
+                    _("I do not have permissions to "
+                      "send messages in {}!").format(channel.mention)
                 )
         else:
             if await modlog.get_modlog_channel(guild) is None:
                 await self.bot.send_cmd_help(ctx)
                 return
             await modlog.set_modlog_channel(None)
-            await ctx.send("Mod log deactivated.")
+            await ctx.send(_("Mod log deactivated."))
 
     @modlogset.command(name='cases')
     @commands.guild_only()
@@ -53,25 +60,27 @@ class ModLog:
         if action is None:  # No args given
             casetypes = await modlog.get_all_casetypes()
             await self.bot.send_cmd_help(ctx)
-            msg = "Current settings:\n```\n"
+            title = _("Current settings:")
+            msg = ""
             for key in casetypes:
                 enabled = await modlog.get_case_type_status(key, guild)
                 value = 'enabled' if enabled else 'disabled'
                 msg += '%s : %s\n' % (key, value)
 
-            msg += '```'
+            msg = title + "\n" + box(msg)
             await ctx.send(msg)
 
         elif not await modlog.is_casetype(action):
-            await ctx.send("That action is not registered")
+            await ctx.send(_("That action is not registered"))
 
         else:
 
             new_setting = await modlog.toggle_case_type(action, guild)
 
             msg = (
-                'Case creation for %s actions %s %s.' %
-                (action, 'is now', 'enabled' if new_setting else 'disabled')
+                _('Case creation for {} actions is now {}.').format(
+                    action, 'enabled' if new_setting else 'disabled'
+                )
             )
             await ctx.send(msg)
 
@@ -81,7 +90,7 @@ class ModLog:
         """Resets modlog's cases"""
         guild = ctx.guild
         await modlog.reset_cases(guild)
-        await ctx.send("Cases have been reset.")
+        await ctx.send(_("Cases have been reset."))
 
     @commands.command()
     @commands.guild_only()
@@ -90,7 +99,7 @@ class ModLog:
         try:
             case = await modlog.get_case(number, ctx.guild, self.bot)
         except RuntimeError:
-            await ctx.send("That case does not exist for that guild")
+            await ctx.send(_("That case does not exist for that guild"))
             return
         else:
             await ctx.send(embed=await case.get_case_msg_content())
@@ -107,7 +116,7 @@ class ModLog:
         try:
             case_before = await modlog.get_case(case, guild, self.bot)
         except RuntimeError:
-            await ctx.send("That case does not exist!")
+            await ctx.send(_("That case does not exist!"))
             return
         to_modify = {
             "reason": reason,
