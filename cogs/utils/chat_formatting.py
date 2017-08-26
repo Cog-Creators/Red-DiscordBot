@@ -35,14 +35,15 @@ def pagify(text, delims=["\n"], *, escape=True, shorten_by=8,
            page_length=2000):
     """DOES NOT RESPECT MARKDOWN BOXES OR INLINE CODE"""
     in_text = text
-    if escape:
-        num_mentions = text.count("@here") + text.count("@everyone")
-        shorten_by += num_mentions
     page_length -= shorten_by
     while len(in_text) > page_length:
-        closest_delim = max([in_text.rfind(d, 0, page_length)
+        this_page_len = page_length
+        if escape:
+            this_page_len -= (in_text.count("@here", 0, page_length) +
+                              in_text.count("@everyone", 0, page_length))
+        closest_delim = max([in_text.rfind(d, 0, this_page_len)
                              for d in delims])
-        closest_delim = closest_delim if closest_delim != -1 else page_length
+        closest_delim = closest_delim if closest_delim != -1 else this_page_len
         if escape:
             to_send = escape_mass_mentions(in_text[:closest_delim])
         else:
