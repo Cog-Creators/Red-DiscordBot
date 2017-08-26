@@ -5,81 +5,80 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2017-08-26 16:35-0400\n"
-"PO-Revision-Date: 2017-08-26 16:42-0400\n"
-"Language-Team: \n"
+"POT-Creation-Date: 2017-08-26 16:31+EDT\n"
+"PO-Revision-Date: 2017-08-26 17:00-0400\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
+"Last-Translator: tekulvw\n"
+"Language-Team: \n"
+"Language: de\n"
 "X-Generator: Poedit 1.8.7.1\n"
-"Last-Translator: \n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Language: nl\n"
 
 #: ../downloader.py:202
 msgid "That git repo has already been added under another name."
-msgstr ""
+msgstr "Diese git repo wurder bereist unter einem anderem Namen hinzugefügt."
 
 #: ../downloader.py:204 ../downloader.py:205
 msgid "Something went wrong during the cloning process."
-msgstr ""
+msgstr "Etwas ist beim klonen schief gelaufen."
 
 #: ../downloader.py:207
 msgid "Repo `{}` successfully added."
-msgstr ""
+msgstr "Repo `{}` erfolgreich hinzugefÃ¼gt."
 
 #: ../downloader.py:216
 msgid "The repo `{}` has been deleted successfully."
-msgstr ""
+msgstr "Die Repo `{}` wurde erfolgreich gelöscht."
 
 #: ../downloader.py:224
 msgid "Installed Repos:\n"
-msgstr ""
+msgstr "Installierte Repos:\n"
 
 #: ../downloader.py:244
 msgid "Error, there is no cog by the name of `{}` in the `{}` repo."
-msgstr ""
+msgstr "Fehler: kein Cog mit dem Namen `{}` in der Repo `{}`."
 
 #: ../downloader.py:249
 msgid "Failed to install the required libraries for `{}`: `{}`"
-msgstr ""
+msgstr "Installation erforderliche Abhängigkeiten für`{}` fehlgeschlagen: `{}`"
 
 #: ../downloader.py:259
 msgid "`{}` cog successfully installed."
-msgstr ""
+msgstr "`{}` Cog erfolgreich installiert."
 
 #: ../downloader.py:275
 msgid "`{}` was successfully removed."
-msgstr ""
+msgstr "`{}` erfolgreich entfernt."
 
 #: ../downloader.py:277
-msgid ""
-"That cog was installed but can no longer be located. You may need to remove "
-"it's files manually if it is still usable."
-msgstr ""
+msgid "That cog was installed but can no longer be located. You may need to remove it's files manually if it is still usable."
+msgstr "Diese Cog ist installiert konnte aber nicht gefunden werden. Wenn es noch benutzbar ist kann es sein das du die Dateien manuell löschen musst."
 
 #: ../downloader.py:301
 msgid "Cog update completed successfully."
-msgstr ""
+msgstr "Cog Update erfolgreich."
 
 #: ../downloader.py:309
 msgid "Available Cogs:\n"
-msgstr ""
+msgstr "Vorhandene Cogs:\n"
 
 #: ../downloader.py:321
 msgid "There is no cog `{}` in the repo `{}`"
-msgstr ""
+msgstr "Kein Cog namens `{}` in der Repo `{}"
 
 #: ../downloader.py:326
 msgid ""
 "Information on {}:\n"
 "{}"
 msgstr ""
+"Information zu {}:\n"
+"{}"
 
 #: ../downloader.py:350
 msgid "Missing from info.json"
-msgstr ""
+msgstr "Nicht in info.json"
 
 #: ../downloader.py:359
 msgid ""
@@ -88,7 +87,11 @@ msgid ""
 "Repo: {}\n"
 "Cog name: {}"
 msgstr ""
+"Befehl: {}\n"
+"Von: {}\n"
+"Repo: {}\n"
+"Cog Name: {}"
 
 #: ../downloader.py:383
 msgid "That command doesn't seem to exist."
-msgstr ""
+msgstr "Dieser Befehl existiert nicht."

@@ -4,18 +4,16 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
-"POT-Creation-Date: 2017-08-26 16:35-0400\n"
-"PO-Revision-Date: 2017-08-26 16:42-0400\n"
-"Language-Team: \n"
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2017-08-26 16:30+EDT\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
 "Generated-By: pygettext.py 1.5\n"
-"X-Generator: Poedit 1.8.7.1\n"
-"Last-Translator: \n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"Language: nl\n"
+
 
 #: ../downloader.py:202
 msgid "That git repo has already been added under another name."
@@ -34,7 +32,8 @@ msgid "The repo `{}` has been deleted successfully."
 msgstr ""
 
 #: ../downloader.py:224
-msgid "Installed Repos:\n"
+msgid ""
+"Installed Repos:\n"
 msgstr ""
 
 #: ../downloader.py:244
@@ -54,9 +53,7 @@ msgid "`{}` was successfully removed."
 msgstr ""
 
 #: ../downloader.py:277
-msgid ""
-"That cog was installed but can no longer be located. You may need to remove "
-"it's files manually if it is still usable."
+msgid "That cog was installed but can no longer be located. You may need to remove it's files manually if it is still usable."
 msgstr ""
 
 #: ../downloader.py:301
@@ -64,7 +61,8 @@ msgid "Cog update completed successfully."
 msgstr ""
 
 #: ../downloader.py:309
-msgid "Available Cogs:\n"
+msgid ""
+"Available Cogs:\n"
 msgstr ""
 
 #: ../downloader.py:321
@@ -92,3 +90,4 @@ msgstr ""
 #: ../downloader.py:383
 msgid "That command doesn't seem to exist."
 msgstr ""
+

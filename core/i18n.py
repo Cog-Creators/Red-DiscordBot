@@ -69,9 +69,7 @@ def _parse(translation_file):
             step = WAITING_FOR_MSGSTR
 
         if step is WAITING_FOR_MSGSTR and line.startswith(MSGSTR):
-            # I don't know why this is here and it's fucking stuff up
-            # data = line[len(MSGSTR):-1]
-            data = line[len(MSGSTR):]
+            data = line[len(MSGSTR):-1]
             if len(data) == 0:  # Multiline mode
                 step = IN_MSGSTR
             else:
