@@ -1,0 +1,199 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2017-08-26 17:40+EDT\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: ../economy.py:38
+msgid "JACKPOT! 226! Your bid has been multiplied * 2500!"
+msgstr ""
+
+#: ../economy.py:42
+msgid "4LC! +1000!"
+msgstr ""
+
+#: ../economy.py:46
+msgid "Three cherries! +800!"
+msgstr ""
+
+#: ../economy.py:50
+msgid "2 6! Your bid has been multiplied * 4!"
+msgstr ""
+
+#: ../economy.py:54
+msgid "Two cherries! Your bid has been multiplied * 3!"
+msgstr ""
+
+#: ../economy.py:58
+msgid "Three symbols! +500!"
+msgstr ""
+
+#: ../economy.py:62
+msgid "Two consecutive symbols! Your bid has been multiplied * 2!"
+msgstr ""
+
+#: ../economy.py:66
+msgid ""
+"Slot machine payouts:\n"
+"{two.value} {two.value} {six.value} Bet * 2500\n"
+"{flc.value} {flc.value} {flc.value} +1000\n"
+"{cherries.value} {cherries.value} {cherries.value} +800\n"
+"{two.value} {six.value} Bet * 4\n"
+"{cherries.value} {cherries.value} Bet * 3\n"
+"\n"
+"Three symbols: +500\n"
+"Two symbols: Bet * 2"
+msgstr ""
+
+#: ../economy.py:155
+msgid "{}'s balance is {} {}"
+msgstr ""
+
+#: ../economy.py:169
+msgid "{} transferred {} {} to {}"
+msgstr ""
+
+#: ../economy.py:189
+msgid "{} added {} {} to {}'s account."
+msgstr ""
+
+#: ../economy.py:194
+msgid "{} removed {} {} from {}'s account."
+msgstr ""
+
+#: ../economy.py:199
+msgid "{} set {}'s account to {} {}."
+msgstr ""
+
+#: ../economy.py:210
+msgid ""
+"This will delete all bank accounts for {}.\n"
+"If you're sure, type {}bank reset yes"
+msgstr ""
+
+#: ../economy.py:227
+msgid "All bank accounts of this guild have been deleted."
+msgstr ""
+
+#: ../economy.py:246 ../economy.py:266
+msgid "{} Here, take some {}. Enjoy! (+{} {}!)"
+msgstr ""
+
+#: ../economy.py:256 ../economy.py:274
+msgid "{} Too soon. For your next payday you have to wait {}."
+msgstr ""
+
+#: ../economy.py:311
+msgid "There are no accounts in the bank."
+msgstr ""
+
+#: ../economy.py:337
+msgid "You're on cooldown, try again in a bit."
+msgstr ""
+
+#: ../economy.py:340
+msgid "That's an invalid bid amount, sorry :/"
+msgstr ""
+
+#: ../economy.py:343
+msgid "You ain't got enough money, friend."
+msgstr ""
+
+#: ../economy.py:389
+msgid ""
+"{}\n"
+"{} {}\n"
+"\n"
+"Your bid: {}\n"
+"{} → {}!"
+msgstr ""
+
+#: ../economy.py:396
+msgid ""
+"{}\n"
+"{} Nothing!\n"
+"Your bid: {}\n"
+"{} → {}!"
+msgstr ""
+
+#: ../economy.py:421
+msgid ""
+"Minimum slot bid: {}\n"
+"Maximum slot bid: {}\n"
+"Slot cooldown: {}\n"
+"Payday amount: {}\n"
+"Payday cooldown: {}\n"
+"Amount given at account registration: {}"
+msgstr ""
+
+#: ../economy.py:431
+msgid "Current Economy settings:"
+msgstr ""
+
+#: ../economy.py:439
+msgid "Invalid min bid amount."
+msgstr ""
+
+#: ../economy.py:447
+msgid "Minimum bid is now {} {}."
+msgstr ""
+
+#: ../economy.py:454
+msgid "Invalid slotmax bid amount. Must be greater than slotmin."
+msgstr ""
+
+#: ../economy.py:463
+msgid "Maximum bid is now {} {}."
+msgstr ""
+
+#: ../economy.py:473
+msgid "Cooldown is now {} seconds."
+msgstr ""
+
+#: ../economy.py:483
+msgid "Value modified. At least {} seconds must pass between each payday."
+msgstr ""
+
+#: ../economy.py:492
+msgid "Har har so funny."
+msgstr ""
+
+#: ../economy.py:498
+msgid "Every payday will now give {} {}."
+msgstr ""
+
+#: ../economy.py:509
+msgid "Registering an account will now give {} {}."
+msgstr ""
+
+#: ../economy.py:515
+msgid "weeks"
+msgstr ""
+
+#: ../economy.py:516
+msgid "days"
+msgstr ""
+
+#: ../economy.py:517
+msgid "hours"
+msgstr ""
+
+#: ../economy.py:518
+msgid "minutes"
+msgstr ""
+
+#: ../economy.py:519
+msgid "seconds"
+msgstr ""
+
