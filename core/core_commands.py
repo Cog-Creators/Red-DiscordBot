@@ -19,6 +19,8 @@ OWNER_DISCLAIMER = ("⚠ **Only** the person who is hosting Red should be "
                     "owner can access any data that is present on the host "
                     "system.** ⚠")
 
+_ = i18n.CogI18n("Core", __file__)
+
 
 class Core:
     """Commands related to core functions"""
@@ -30,19 +32,19 @@ class Core:
         try:
             spec = await ctx.bot.cog_mgr.find_cog(cog_name)
         except RuntimeError:
-            await ctx.send("No module by that name was found in any"
-                           " cog path.")
+            await ctx.send(_("No module by that name was found in any"
+                             " cog path."))
             return
 
         try:
             ctx.bot.load_extension(spec)
         except Exception as e:
             log.exception("Package loading failed", exc_info=e)
-            await ctx.send("Failed to load package. Check your console or "
-                           "logs for details.")
+            await ctx.send(_("Failed to load package. Check your console or "
+                             "logs for details."))
         else:
             await ctx.bot.add_loaded_package(cog_name)
-            await ctx.send("Done.")
+            await ctx.send(_("Done."))
 
     @commands.group()
     @checks.is_owner()
@@ -51,9 +53,9 @@ class Core:
         if cog_name in ctx.bot.extensions:
             ctx.bot.unload_extension(cog_name)
             await ctx.bot.remove_loaded_package(cog_name)
-            await ctx.send("Done.")
+            await ctx.send(_("Done."))
         else:
-            await ctx.send("That extension is not loaded.")
+            await ctx.send(_("That extension is not loaded."))
 
     @commands.command(name="reload")
     @checks.is_owner()
@@ -66,12 +68,12 @@ class Core:
             ctx.bot.load_extension(spec)
         except Exception as e:
             log.exception("Package reloading failed", exc_info=e)
-            await ctx.send("Failed to reload package. Check your console or "
-                           "logs for details.")
+            await ctx.send(_("Failed to reload package. Check your console or "
+                             "logs for details."))
         else:
             curr_pkgs = await ctx.bot.db.packages()
             await ctx.bot.save_packages_status(curr_pkgs)
-            await ctx.send("Done.")
+            await ctx.send(_("Done."))
 
     @commands.command(name="shutdown")
     @checks.is_owner()
@@ -81,7 +83,7 @@ class Core:
         skin = "\N{EMOJI MODIFIER FITZPATRICK TYPE-3}"
         try:  # We don't want missing perms to stop our shutdown
             if not silently:
-                await ctx.send("Shutting down... " + wave + skin)
+                await ctx.send(_("Shutting down... ") + wave + skin)
         except:
             pass
         await ctx.bot.shutdown()
@@ -118,7 +120,7 @@ class Core:
     async def adminrole(self, ctx, *, role: discord.Role):
         """Sets the admin role for this server"""
         await ctx.bot.db.guild(ctx.guild).admin_role.set(role.id)
-        await ctx.send("The admin role for this server has been set.")
+        await ctx.send(_("The admin role for this guild has been set."))
 
     @_set.command()
     @checks.guildowner()
@@ -126,7 +128,7 @@ class Core:
     async def modrole(self, ctx, *, role: discord.Role):
         """Sets the mod role for this server"""
         await ctx.bot.db.guild(ctx.guild).mod_role.set(role.id)
-        await ctx.send("The mod role for this server has been set.")
+        await ctx.send(_("The mod role for this guild has been set."))
 
     @_set.command()
     @checks.is_owner()
@@ -140,13 +142,13 @@ class Core:
         try:
             await ctx.bot.user.edit(avatar=data)
         except discord.HTTPException:
-            await ctx.send("Failed. Remember that you can edit my avatar "
-                           "up to two times a hour. The URL must be a "
-                           "direct link to a JPG / PNG.")
+            await ctx.send(_("Failed. Remember that you can edit my avatar "
+                             "up to two times a hour. The URL must be a "
+                             "direct link to a JPG / PNG."))
         except discord.InvalidArgument:
-            await ctx.send("JPG / PNG format only.")
+            await ctx.send(_("JPG / PNG format only."))
         else:
-            await ctx.send("Done.")
+            await ctx.send(_("Done."))
 
     @_set.command(name="game")
     @checks.is_owner()
@@ -156,7 +158,7 @@ class Core:
         status = ctx.me.status
         game = discord.Game(name=game)
         await ctx.bot.change_presence(status=status, game=game)
-        await ctx.send("Game set.")
+        await ctx.send(_("Game set."))
 
     @_set.command()
     @checks.is_owner()
@@ -185,7 +187,7 @@ class Core:
         else:
             await ctx.bot.change_presence(status=status,
                                           game=game)
-            await ctx.send("Status changed to %s." % status)
+            await ctx.send(_("Status changed to %s.") % status)
 
     @_set.command()
     @checks.is_owner()
@@ -207,7 +209,7 @@ class Core:
             return
         else:
             await ctx.bot.change_presence(game=None, status=status)
-        await ctx.send("Done.")
+        await ctx.send(_("Done."))
 
     @_set.command(name="username", aliases=["name"])
     @checks.is_owner()
@@ -216,12 +218,12 @@ class Core:
         try:
             await ctx.bot.user.edit(username=username)
         except discord.HTTPException:
-            await ctx.send("Failed to change name. Remember that you can "
-                           "only do it up to 2 times an hour. Use "
-                           "nicknames if you need frequent changes. "
-                           "`{}set nickname`".format(ctx.prefix))
+            await ctx.send(_("Failed to change name. Remember that you can "
+                             "only do it up to 2 times an hour. Use "
+                             "nicknames if you need frequent changes. "
+                             "`{}set nickname`").format(ctx.prefix))
         else:
-            await ctx.send("Done.")
+            await ctx.send(_("Done."))
 
     @_set.command(name="nickname")
     @checks.admin()
@@ -231,8 +233,8 @@ class Core:
         try:
             await ctx.bot.user.edit(nick=nickname)
         except discord.Forbidden:
-            await ctx.send("I lack the permissions to change my own "
-                           "nickname.")
+            await ctx.send(_("I lack the permissions to change my own "
+                             "nickname."))
         else:
             await ctx.send("Done.")
 
@@ -245,7 +247,7 @@ class Core:
             return
         prefixes = sorted(prefixes, reverse=True)
         await ctx.bot.db.prefix.set(prefixes)
-        await ctx.send("Prefix set.")
+        await ctx.send(_("Prefix set."))
 
     @_set.command(aliases=["serverprefixes"])
     @checks.admin()
@@ -254,11 +256,11 @@ class Core:
         """Sets Red's server prefix(es)"""
         if not prefixes:
             await ctx.bot.db.guild(ctx.guild).prefix.set([])
-            await ctx.send("Server prefixes have been reset.")
+            await ctx.send(_("Guild prefixes have been reset."))
             return
         prefixes = sorted(prefixes, reverse=True)
         await ctx.bot.db.guild(ctx.guild).prefix.set(prefixes)
-        await ctx.send("Prefix set.")
+        await ctx.send(_("Prefix set."))
 
     @_set.command()
     @commands.cooldown(1, 60 * 10, commands.BucketType.default)
@@ -277,29 +279,29 @@ class Core:
             token += random.choice(chars)
         log.info("{0} ({0.id}) requested to be set as owner."
                  "".format(ctx.author))
-        print("\nVerification token:")
+        print(_("\nVerification token:"))
         print(token)
 
-        await ctx.send("Remember:\n" + OWNER_DISCLAIMER)
+        await ctx.send(_("Remember:\n") + OWNER_DISCLAIMER)
         await asyncio.sleep(5)
 
-        await ctx.send("I have printed a one-time token in the console. "
-                       "Copy and paste it here to confirm you are the owner.")
+        await ctx.send(_("I have printed a one-time token in the console. "
+                         "Copy and paste it here to confirm you are the owner."))
 
         try:
             message = await ctx.bot.wait_for("message", check=check,
                                              timeout=60)
         except asyncio.TimeoutError:
             self.owner.reset_cooldown(ctx)
-            await ctx.send("The set owner request has timed out.")
+            await ctx.send(_("The set owner request has timed out."))
         else:
             if message.content.strip() == token:
                 self.owner.reset_cooldown(ctx)
                 await ctx.bot.db.owner.set(ctx.author.id)
                 ctx.bot.owner_id = ctx.author.id
-                await ctx.send("You have been set as owner.")
+                await ctx.send(_("You have been set as owner."))
             else:
-                await ctx.send("Invalid token.")
+                await ctx.send(_("Invalid token."))
 
     @_set.command()
     @checks.is_owner()
@@ -308,7 +310,7 @@ class Core:
         Changes bot locale.
         """
         i18n.set_locale(locale_name)
-        await ctx.send("Locale has been set.")
+        await ctx.send(_("Locale has been set."))
 
     @commands.command()
     @commands.cooldown(1, 60, commands.BucketType.user)
@@ -318,13 +320,13 @@ class Core:
         owner = discord.utils.get(ctx.bot.get_all_members(),
                                   id=ctx.bot.owner_id)
         author = ctx.message.author
-        footer = "User ID: %s" % author.id
+        footer = _("User ID: %s") % author.id
 
         if ctx.guild is None:
-            source = "through DM"
+            source = _("through DM")
         else:
-            source = "from {}".format(guild)
-            footer += " | Server ID: %s" % guild.id
+            source = _("from {}").format(guild)
+            footer += _(" | Server ID: %s") % guild.id
 
         # We need to grab the DM command prefix (global)
         # Since it can also be set through cli flags, bot.db is not a reliable
@@ -332,15 +334,15 @@ class Core:
         fake_message = namedtuple('Message', 'guild')
         prefix = ctx.bot.command_prefix(ctx.bot, fake_message(guild=None))[0]
 
-        content = ("Use `{}dm {} <text>` to reply to this user"
-                   "".format(prefix, author.id))
+        content = _("Use `{}dm {} <text>` to reply to this user"
+                    "").format(prefix, author.id)
 
         if isinstance(author, discord.Member):
             colour = author.colour
         else:
             colour = discord.Colour.red()
 
-        description = "Sent by {} {}".format(author, source)
+        description = _("Sent by {} {}").format(author, source)
 
         e = discord.Embed(colour=colour, description=message)
         if author.avatar_url:
@@ -352,12 +354,12 @@ class Core:
         try:
             await owner.send(content, embed=e)
         except discord.InvalidArgument:
-            await ctx.send("I cannot send your message, I'm unable to find "
-                           "my owner... *sigh*")
+            await ctx.send(_("I cannot send your message, I'm unable to find "
+                             "my owner... *sigh*"))
         except:
-            await ctx.send("I'm unable to deliver your message. Sorry.")
+            await ctx.send(_("I'm unable to deliver your message. Sorry."))
         else:
-            await ctx.send("Your message has been sent.")
+            await ctx.send(_("Your message has been sent."))
 
     @commands.command()
     @checks.is_owner()
@@ -371,17 +373,17 @@ class Core:
         destination = discord.utils.get(ctx.bot.get_all_members(),
                                         id=user_id)
         if destination is None:
-            await ctx.send("Invalid ID or user not found. You can only "
-                           "send messages to people I share a server "
-                           "with.")
+            await ctx.send(_("Invalid ID or user not found. You can only "
+                             "send messages to people I share a server "
+                             "with."))
             return
 
         e = discord.Embed(colour=discord.Colour.red(), description=message)
-        description = "Owner of %s" % ctx.bot.user
+        description = _("Owner of %s") % ctx.bot.user
         fake_message = namedtuple('Message', 'guild')
         prefix = ctx.bot.command_prefix(ctx.bot, fake_message(guild=None))[0]
-        e.set_footer(text=("You can reply to this message with %scontact"
-                           "" % prefix))
+        e.set_footer(text=_("You can reply to this message with %scontact"
+                            "") % prefix)
         if ctx.bot.user.avatar_url:
             e.set_author(name=description, icon_url=ctx.bot.user.avatar_url)
         else:
@@ -390,7 +392,7 @@ class Core:
         try:
             await destination.send(embed=e)
         except:
-            await ctx.send("Sorry, I couldn't deliver your message "
-                           "to %s" % destination)
+            await ctx.send(_("Sorry, I couldn't deliver your message "
+                             "to %s") % destination)
         else:
-            await ctx.send("Message delivered to %s" % destination)
+            await ctx.send(_("Message delivered to %s") % destination)

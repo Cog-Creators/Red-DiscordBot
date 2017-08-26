@@ -9,6 +9,7 @@ from discord.ext import commands
 from core import checks
 from core.config import Config
 from core.utils.chat_formatting import box
+from core.i18n import CogI18n
 
 __all__ = ["CogManager"]
 
@@ -178,6 +179,9 @@ class CogManager:
         invalidate_caches()
 
 
+_ = CogI18n("CogManagerUI", __file__)
+
+
 class CogManagerUI:
     @commands.command()
     @checks.is_owner()
@@ -189,7 +193,7 @@ class CogManagerUI:
         cog_paths = ctx.bot.cog_mgr.paths
         cog_paths = [p for p in cog_paths if p != install_path]
 
-        msg = "Install Path: {}\n\n".format(install_path)
+        msg = _("Install Path: {}\n\n").format(install_path)
 
         partial = []
         for i, p in enumerate(cog_paths, start=1):
@@ -205,8 +209,8 @@ class CogManagerUI:
         Add a path to the list of available cog paths.
         """
         if not path.is_dir():
-            await ctx.send("That path is does not exist or does not"
-                           " point to a valid directory.")
+            await ctx.send(_("That path is does not exist or does not"
+                             " point to a valid directory."))
             return
 
         try:
@@ -214,7 +218,7 @@ class CogManagerUI:
         except ValueError as e:
             await ctx.send(str(e))
         else:
-            await ctx.send("Path successfully added.")
+            await ctx.send(_("Path successfully added."))
 
     @commands.command()
     @checks.is_owner()
@@ -227,11 +231,11 @@ class CogManagerUI:
         try:
             to_remove = cog_paths[path_number]
         except IndexError:
-            await ctx.send("That is an invalid path number.")
+            await ctx.send(_("That is an invalid path number."))
             return
 
         await ctx.bot.cog_mgr.remove_path(to_remove)
-        await ctx.send("Path successfully removed.")
+        await ctx.send(_("Path successfully removed."))
 
     @commands.command()
     @checks.is_owner()
@@ -247,17 +251,17 @@ class CogManagerUI:
         try:
             to_move = all_paths.pop(from_)
         except IndexError:
-            await ctx.send("Invalid 'from' index.")
+            await ctx.send(_("Invalid 'from' index."))
             return
 
         try:
             all_paths.insert(to, to_move)
         except IndexError:
-            await ctx.send("Invalid 'to' index.")
+            await ctx.send(_("Invalid 'to' index."))
             return
 
         await ctx.bot.cog_mgr.set_paths(all_paths)
-        await ctx.send("Paths reordered.")
+        await ctx.send(_("Paths reordered."))
 
     @commands.command()
     @checks.is_owner()
@@ -275,9 +279,9 @@ class CogManagerUI:
             try:
                 await ctx.bot.cog_mgr.set_install_path(path)
             except ValueError:
-                await ctx.send("That path does not exist.")
+                await ctx.send(_("That path does not exist."))
                 return
 
         install_path = await ctx.bot.cog_mgr.install_path()
-        await ctx.send("The bot will install new cogs to the `{}`"
-                       " directory.".format(install_path))
+        await ctx.send(_("The bot will install new cogs to the `{}`"
+                         " directory.").format(install_path))
