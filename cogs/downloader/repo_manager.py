@@ -13,6 +13,7 @@ import functools
 from discord.ext import commands
 
 from core import Config
+from core import data_manager
 from .errors import *
 from .installable import Installable, InstallableType
 from .log import log
@@ -443,12 +444,15 @@ class RepoManager:
     def __init__(self, downloader_config: Config):
         self.downloader_config = downloader_config
 
-        self.repos_folder = Path(__file__).parent / 'repos'
-
         self._repos = {}
 
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._load_repos(set=True))  # str_name: Repo
+        loop.create_task(self._load_repos(set=True))  # str_name: Repo
+
+    @property
+    def repos_folder(self) -> Path:
+        data_folder = data_manager.cog_data_path(self)
+        return data_folder / 'repos'
 
     def does_repo_exist(self, name: str) -> bool:
         return name in self._repos
