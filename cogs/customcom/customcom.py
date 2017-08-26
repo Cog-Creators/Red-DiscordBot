@@ -1,5 +1,6 @@
 import os
 import re
+import random
 from datetime import datetime
 
 import discord
@@ -35,11 +36,17 @@ class CommandObj:
         return customcommands
 
     async def get_responses(self, ctx):
+        intro = ("Welcome to the interactive random customcommand maker!\n"
+                 "Every message you send will be added as one of the random "
+                 "response to choose from once this customcommand is "
+                 "triggered. To exit this interactive menu, type `exit()`")
+        await ctx.send(intro)
+
         def check(m):
             return m.channel == ctx.channel and m.author == ctx.message.author
         responses = []
         while True:
-            await ctx.send("What do you want to add as a random response?")
+            await ctx.send("Add a random response:")
             msg = await self.bot.wait_for('message', check=check)
 
             if msg.content.lower() == 'exit()':
@@ -102,6 +109,7 @@ class CommandObj:
 
         if not response:
             await ctx.send("Do you want to create a 'randomized' cc? y/n")
+
             msg = await self.bot.wait_for('message', check=check)
             if msg.content.lower() == 'y':
                 response = await self.get_responses(ctx=ctx)
@@ -160,6 +168,10 @@ class CustomCommands:
     @checks.mod_or_permissions(administrator=True)
     async def cc_add(self,
                      ctx: commands.Context):
+        """
+        CCs can be enhanced with arguments:
+        https: // twentysix26.github.io / Red - Docs / red_guide_command_args/
+        """
         if not ctx.invoked_subcommand or isinstance(ctx.invoked_subcommand,
                                                     commands.Group):
             await self.bot.send_cmd_help(ctx)
@@ -169,20 +181,19 @@ class CustomCommands:
     async def cc_add_random(self,
                             ctx: commands.Context,
                             command: str):
+        """
+        Create a CC where it will randomly choose a response!
+        Note: This is interactive
+        """
         channel = ctx.channel
         responses = []
-
-        intro = ("Welcome to the interactive random customcommand maker!\n"
-                 "Every message you send will be added as one of the random "
-                 "response to choose from once this customcommand is "
-                 "triggered. To exit this interactive menu, type `exit()`")
-        await ctx.send(intro)
 
         responses = await self.commandobj.get_responses(ctx=ctx)
         try:
             await self.commandobj.create(ctx=ctx,
                                          command=command,
                                          response=responses)
+            await ctx.send("Custom command successfully added.")
         except AlreadyExists:
             await ctx.send("This command already exists. Use "
                            "`{}customcom edit` to edit it."
@@ -197,11 +208,9 @@ class CustomCommands:
                             command: str,
                             *,
                             text):
-        """Adds a custom command
+        """Adds a simple custom command
         Example:
         [p]customcom add simple yourcommand Text you want
-        CCs can be enhanced with arguments:
-        https://twentysix26.github.io/Red-Docs/red_guide_command_args/
         """
         guild = ctx.guild
         command = command.lower()
@@ -315,8 +324,14 @@ class CustomCommands:
         if user_allowed:
             cmd = message.content[len(prefix):]
             try:
-                await self.commandobj.get(message=message,
-                                          command=cmd)
+                c = await self.commandobj.get(message=message,
+                                              command=cmd)
+                if isinstance(c, list):
+                    command = random.choice(c)
+                elif isinstance(c, str):
+                    command = c
+                else:
+                    raise NotFound()
             except NotFound:
                 return
             response = self.format_cc(command, message)
