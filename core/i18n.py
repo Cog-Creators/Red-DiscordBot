@@ -1,4 +1,3 @@
-import inspect
 import re
 from pathlib import Path
 
@@ -70,7 +69,9 @@ def _parse(translation_file):
             step = WAITING_FOR_MSGSTR
 
         if step is WAITING_FOR_MSGSTR and line.startswith(MSGSTR):
-            data = line[len(MSGSTR):-1]
+            # I don't know why this is here and it's fucking stuff up
+            # data = line[len(MSGSTR):-1]
+            data = line[len(MSGSTR):]
             if len(data) == 0:  # Multiline mode
                 step = IN_MSGSTR
             else:
@@ -143,7 +144,7 @@ def get_locale_path(cog_folder: Path, extension: str) -> Path:
     :return:
         Path of possible localization file, it may not exist.
     """
-    return cog_folder / "{}.{}".format(get_locale(), extension)
+    return cog_folder / 'locales' / "{}.{}".format(get_locale(), extension)
 
 
 class CogI18n:
@@ -164,13 +165,18 @@ class CogI18n:
 
         self.load_translations()
 
-    def __call__(self):
-        pass
+    def __call__(self, untranslated: str):
+        normalized_untranslated = _normalize(untranslated, True)
+        try:
+            return self.translations[normalized_untranslated]
+        except KeyError:
+            return untranslated
 
     def load_translations(self):
         """
         Loads the current translations for this cog.
         """
+        self.translations = {}
         translation_file = None
         locale_path = get_locale_path(self.cog_folder, 'po')
         try:

@@ -1,6 +1,7 @@
 import itertools
 from discord.ext import commands
 from core import checks
+from core import i18n
 from string import ascii_letters, digits
 from random import SystemRandom
 from collections import namedtuple
@@ -299,6 +300,15 @@ class Core:
                 await ctx.send("You have been set as owner.")
             else:
                 await ctx.send("Invalid token.")
+
+    @_set.command()
+    @checks.is_owner()
+    async def locale(self, ctx: commands.Context, locale_name: str):
+        """
+        Changes bot locale.
+        """
+        i18n.set_locale(locale_name)
+        await ctx.send("Locale has been set.")
 
     @commands.command()
     @commands.cooldown(1, 60, commands.BucketType.user)

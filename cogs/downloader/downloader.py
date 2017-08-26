@@ -11,6 +11,7 @@ from core import Config
 from core.bot import Red
 from core import checks
 from core.utils.chat_formatting import box
+from core.i18n import CogI18n
 
 from .repo_manager import RepoManager, Repo
 from .installable import Installable
@@ -18,6 +19,8 @@ from .converters import RepoName, InstalledCog
 from .log import log
 from .errors import CloningError, ExistingGitRepo
 from .checks import install_agreement
+
+_ = CogI18n('Downloader', __file__)
 
 
 class Downloader:
@@ -295,7 +298,7 @@ class Downloader:
 
             # noinspection PyTypeChecker
             await self._reinstall_libraries(installed_and_updated)
-        await ctx.send("Cog update completed successfully.")
+        await ctx.send(_("Cog update completed successfully."))
 
     @cog.command(name="list")
     async def _cog_list(self, ctx, repo_name: Repo):
@@ -320,7 +323,7 @@ class Downloader:
             ))
             return
 
-        msg = "Information on {}:\n{}".format(cog.name, cog.description or "")
+        msg = _("Information on {}:\n{}").format(cog.name, cog.description or "")
         await ctx.send(box(msg))
 
     async def is_installed(self, cog_name: str) -> (bool, Union[Installable, None]):
