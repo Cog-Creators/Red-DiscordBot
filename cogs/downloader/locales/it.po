@@ -1,0 +1,6 @@
+# downloader.py: 301
+msgid "Cog update completed successfully."
+msgstr "L'aggiornamento degli ingranaggi è stato completato con successo."
+
+msgid "Information on {}:\n{}"
+msgstr "Informazioni su {}:\n{}"

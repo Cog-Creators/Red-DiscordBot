@@ -1,0 +1,6 @@
+# downloader.py: 301
+msgid "Cog update completed successfully."
+msgstr "Cog update is afgerond."
+
+msgid "Information on {}:\n{}"
+msgstr "Informatie voor {}:\n{}"
