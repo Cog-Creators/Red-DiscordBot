@@ -1,6 +1,5 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR ORGANIZATION
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# Copyright (C) 2017 Red-DiscordBot
+# UltimatePancake <pier.gaetani@gmail.com>, 2017.
 #
 msgid ""
 msgstr ""
@@ -11,7 +10,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
-"Last-Translator: UlimatePancake <pier.gaetani@gmail.com>\n"
+"Last-Translator: UltimatePancake <pier.gaetani@gmail.com>\n"
 "Language-Team: \n"
 "Language: es\n"
 "X-Generator: Poedit 2.0.3\n"
