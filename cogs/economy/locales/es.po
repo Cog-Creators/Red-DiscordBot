@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2017-08-26 17:40+EDT\n"
-"PO-Revision-Date: 2017-08-26 20:09-0600\n"
+"PO-Revision-Date: 2017-08-26 20:48-0600\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -18,7 +18,6 @@ msgstr ""
 "Language: es\n"
 
 #: ../economy.py:38
-#, fuzzy
 msgid "JACKPOT! 226! Your bid has been multiplied * 2500!"
 msgstr "PREMIO MAYOR! 226! Apuesta multiplicada por 2500!"
 
@@ -126,31 +125,29 @@ msgstr "No tienes suficiente dinero, amigo."
 
 # dafuq is {} â {}!
 #: ../economy.py:389
-#, fuzzy
 msgid ""
 "{}\n"
 "{} {}\n"
 "\n"
 "Your bid: {}\n"
-"{} â {}!"
+"{} → {}!"
 msgstr ""
 "{}\n"
 "{} {}\n"
 "Tu apuesta: {}\n"
-"{} â {}!"
+"{} → {}!"
 
 #: ../economy.py:396
-#, fuzzy
 msgid ""
 "{}\n"
 "{} Nothing!\n"
 "Your bid: {}\n"
-"{} â {}!"
+"{} → {}!"
 msgstr ""
 "{}\n"
 "{} Nada!\n"
 "Tu apuesta: {}\n"
-"{} â {}!"
+"{} → {}!"
 
 #: ../economy.py:421
 msgid ""
