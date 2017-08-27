@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "POT-Creation-Date: 2017-08-26 16:31+EDT\n"
-"PO-Revision-Date: 2017-08-26 18:49-0600\n"
+"PO-Revision-Date: 2017-08-26 20:44-0600\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -30,7 +30,7 @@ msgstr "Repositorio `{}` agregado exitósamente."
 
 #: ../downloader.py:216
 msgid "The repo `{}` has been deleted successfully."
-msgstr "Repositorio `` eliminado exitósamente."
+msgstr "Repositorio `{}` eliminado exitósamente."
 
 #: ../downloader.py:224
 msgid "Installed Repos:\n"
