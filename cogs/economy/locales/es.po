@@ -18,31 +18,31 @@ msgstr ""
 
 #: ../economy.py:38
 msgid "JACKPOT! 226! Your bid has been multiplied * 2500!"
-msgstr "PREMIO MAYOR! 226! Apuesta multiplicada por 2500!"
+msgstr "¡PREMIO MAYOR! ¡226! ¡Apuesta multiplicada por 2500!"
 
 #: ../economy.py:42
 msgid "4LC! +1000!"
-msgstr "4 tréboles! +1000!"
+msgstr "¡4 tréboles! ¡+1000!"
 
 #: ../economy.py:46
 msgid "Three cherries! +800!"
-msgstr "Triple cereza! +800!"
+msgstr "¡Triple cereza! ¡+800!"
 
 #: ../economy.py:50
 msgid "2 6! Your bid has been multiplied * 4!"
-msgstr "2 6! Apuesta multiplicada por 4!"
+msgstr "¡2 6! ¡Apuesta multiplicada por 4!"
 
 #: ../economy.py:54
 msgid "Two cherries! Your bid has been multiplied * 3!"
-msgstr "Doble cereza! Apuesta multiplicada por 3!"
+msgstr "¡Doble cereza! ¡Apuesta multiplicada por 3!"
 
 #: ../economy.py:58
 msgid "Three symbols! +500!"
-msgstr "Tres símbolos! +500!"
+msgstr "¡Tres símbolos! ¡+500!"
 
 #: ../economy.py:62
 msgid "Two consecutive symbols! Your bid has been multiplied * 2!"
-msgstr "Dos símbolos consecutivos! Apuesta multiplicada por 2!"
+msgstr "¡Dos símbolos consecutivos! ¡Apuesta multiplicada por 2!"
 
 #: ../economy.py:66
 msgid ""
