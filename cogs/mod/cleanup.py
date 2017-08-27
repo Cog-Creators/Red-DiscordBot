@@ -8,6 +8,9 @@ from discord.ext import commands
 from core import checks
 from core.bot import Red
 from .common import slow_deletion, mass_purge
+from core.i18n import CogI18n
+
+_ = CogI18n("Cleanup", __file__)
 
 
 class Cleanup:
@@ -154,14 +157,14 @@ class Cleanup:
         is_bot = self.bot.user.bot
 
         if not is_bot:
-            await ctx.send("This command can only be used on bots with "
-                           "bot accounts.")
+            await ctx.send(_("This command can only be used on bots with "
+                           "bot accounts."))
             return
 
         after = await channel.get_message(message_id)
 
         if not after:
-            await ctx.send("Message not found.")
+            await ctx.send(_("Message not found."))
             return
 
         to_delete = []
@@ -232,7 +235,7 @@ class Cleanup:
             prefixes = [prefixes]
         elif callable(prefixes):
             if asyncio.iscoroutine(prefixes):
-                await ctx.send('Coroutine prefixes not yet implemented.')
+                await ctx.send(_('Coroutine prefixes not yet implemented.'))
                 return
             prefixes = prefixes(self.bot, ctx.message)
 

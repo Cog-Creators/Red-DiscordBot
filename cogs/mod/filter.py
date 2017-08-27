@@ -8,6 +8,9 @@ from core import checks, Config
 from core.bot import Red
 from core.utils.chat_formatting import pagify
 from .common import is_allowed_by_hierarchy, is_mod_or_superior
+from core.i18n import CogI18n
+
+_ = CogI18n("Filter", __file__)
 
 
 class Filter:
@@ -47,12 +50,12 @@ class Filter:
             word_list = self.settings.guild(server).filter()
             if word_list:
                 words = ", ".join(word_list)
-                words = "Filtered in this server:\n\n" + words
+                words = _("Filtered in this server:") + "\n\n" + words
                 try:
                     for page in pagify(words, delims=[" ", "\n"], shorten_by=8):
                         await author.send(page)
                 except discord.Forbidden:
-                    await ctx.send("I can't send direct messages to you.")
+                    await ctx.send(_("I can't send direct messages to you."))
 
     @_filter.command(name="add")
     async def filter_add(self, ctx: commands.Context, *words: str):
@@ -68,9 +71,9 @@ class Filter:
         server = ctx.guild
         added = await self.add_to_filter(server, words)
         if added:
-            await ctx.send("Words added to filter.")
+            await ctx.send(_("Words added to filter."))
         else:
-            await ctx.send("Words already in the filter.")
+            await ctx.send(_("Words already in the filter."))
 
     @_filter.command(name="remove")
     async def filter_remove(self, ctx: commands.Context, *words: str):
@@ -86,9 +89,9 @@ class Filter:
         server = ctx.guild
         removed = await self.remove_from_filter(server, words)
         if removed:
-            await ctx.send("Words removed from filter.")
+            await ctx.send(_("Words removed from filter."))
         else:
-            await ctx.send("Those words weren't in the filter.")
+            await ctx.send(_("Those words weren't in the filter."))
 
     async def add_to_filter(self, server: discord.Guild, *words: tuple) -> bool:
         added = 0

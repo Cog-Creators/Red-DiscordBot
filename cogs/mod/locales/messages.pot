@@ -1,0 +1,306 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2017-08-26 16:56-0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=cp1252\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: ..\cleanup.py:160
+msgid "This command can only be used on bots with bot accounts."
+msgstr ""
+
+#: ..\cleanup.py:167
+msgid "Message not found."
+msgstr ""
+
+#: ..\cleanup.py:238
+msgid "Coroutine prefixes not yet implemented."
+msgstr ""
+
+#: ..\filter.py:53
+msgid "Filtered in this server:"
+msgstr ""
+
+#: ..\filter.py:58
+msgid "I can't send direct messages to you."
+msgstr ""
+
+#: ..\filter.py:74
+msgid "Words added to filter."
+msgstr ""
+
+#: ..\filter.py:76
+msgid "Words already in the filter."
+msgstr ""
+
+#: ..\filter.py:92
+msgid "Words removed from filter."
+msgstr ""
+
+#: ..\filter.py:94
+msgid "Those words weren't in the filter."
+msgstr ""
+
+#: ..\mod.py:187
+msgid "Role hierarchy will be checked when moderation commands are issued."
+msgstr ""
+
+#: ..\mod.py:191
+msgid "Role hierarchy will be ignored when moderation commands are issued."
+msgstr ""
+
+#: ..\mod.py:206
+msgid "Autoban for mention spam enabled. Anyone mentioning {} or more different people in a single message will be autobanned."
+msgstr ""
+
+#: ..\mod.py:218
+msgid "Autoban for mention spam disabled."
+msgstr ""
+
+#: ..\mod.py:228
+msgid "Messages repeated up to 3 times will be deleted."
+msgstr ""
+
+#: ..\mod.py:232
+msgid "Repeated messages will be ignored."
+msgstr ""
+
+#: ..\mod.py:246
+msgid "Command deleting disabled."
+msgstr ""
+
+#: ..\mod.py:249
+msgid "Delete delay set to {} seconds."
+msgstr ""
+
+#: ..\mod.py:254
+msgid "Bot will delete command messages after {} seconds. Set this value to -1 to stop deleting messages"
+msgstr ""
+
+#: ..\mod.py:258
+msgid "I will not delete command messages."
+msgstr ""
+
+#: ..\mod.py:271
+msgid "Users unbanned with {} will be reinvited."
+msgstr ""
+
+#: ..\mod.py:274
+msgid "Users unbanned with {} will not be reinvited."
+msgstr ""
+
+#: ..\mod.py:288 ..\mod.py:328 ..\mod.py:427
+msgid "I cannot let you do that. Self-harm is bad {}"
+msgstr ""
+
+#: ..\mod.py:292 ..\mod.py:332 ..\mod.py:431
+msgid "I cannot let you do that. You are not higher than the user in the role hierarchy."
+msgstr ""
+
+#: ..\mod.py:302 ..\mod.py:356 ..\mod.py:482
+msgid "I'm not allowed to do that."
+msgstr ""
+
+#: ..\mod.py:311
+msgid "Done. That felt good."
+msgstr ""
+
+#: ..\mod.py:348
+msgid "Invalid days. Must be between 0 and 7."
+msgstr ""
+
+#: ..\mod.py:365
+msgid "Done. It was about time."
+msgstr ""
+
+#: ..\mod.py:385
+msgid "User is already banned."
+msgstr ""
+
+#: ..\mod.py:399
+msgid "User not found. Have you provided the correct user ID?"
+msgstr ""
+
+#: ..\mod.py:402
+msgid "I lack the permissions to do this."
+msgstr ""
+
+#: ..\mod.py:410
+msgid "Done. The user will not be able to join this guild."
+msgstr ""
+
+#: ..\mod.py:447
+msgid ""
+"You have been banned and then unbanned as a quick way to delete your messages.\n"
+"You can now join the guild again.{}"
+msgstr ""
+
+#: ..\mod.py:472
+msgid "Done. Enough chaos."
+msgstr ""
+
+#: ..\mod.py:476
+msgid "My role is not high enough to softban that user."
+msgstr ""
+
+#: ..\mod.py:498
+msgid "Couldn't find a user with that ID!"
+msgstr ""
+
+#: ..\mod.py:504
+msgid "It seems that user isn't banned!"
+msgstr ""
+
+#: ..\mod.py:510
+msgid "Something went wrong while attempting to unban that user"
+msgstr ""
+
+#: ..\mod.py:527
+msgid ""
+"You've been unbanned from {}.\n"
+"Here is an invite for that guild: {}"
+msgstr ""
+
+#: ..\mod.py:531
+msgid ""
+"I failed to send an invite to that user. Perhaps you may be able to send it for me?\n"
+"Here's the invite link: {}"
+msgstr ""
+
+#: ..\mod.py:537
+msgid "Something went wrong when attempting to send that useran invite. Here's the link so you can try: {}"
+msgstr ""
+
+#: ..\mod.py:540
+msgid "Unbanned that user from this guild"
+msgstr ""
+
+#: ..\mod.py:578
+msgid "No voice state for that user!"
+msgstr ""
+
+#: ..\mod.py:592
+msgid "That user is already muted and deafened guild-wide!"
+msgstr ""
+
+#: ..\mod.py:604
+msgid "User has been banned from speaking or listening in voice channels"
+msgstr ""
+
+#: ..\mod.py:625
+msgid "That user isn't muted or deafened by the guild!"
+msgstr ""
+
+#: ..\mod.py:638
+msgid "User is now allowed to speak and listen in voice channels"
+msgstr ""
+
+#: ..\mod.py:658
+msgid "I cannot do that, I lack the '{}' permission."
+msgstr ""
+
+#: ..\mod.py:695
+msgid "Muted {}#{} in channel {}"
+msgstr ""
+
+#: ..\mod.py:702
+msgid "That user is already muted in {}!"
+msgstr ""
+
+#: ..\mod.py:705 ..\mod.py:845
+msgid "That user is not in a voice channel right now!"
+msgstr ""
+
+#: ..\mod.py:707 ..\mod.py:847
+msgid "No voice state for the target!"
+msgstr ""
+
+#: ..\mod.py:735
+msgid "User has been muted in this channel."
+msgstr ""
+
+#: ..\mod.py:773
+msgid "User has been muted in this guild."
+msgstr ""
+
+#: ..\mod.py:835
+msgid "Unmuted {}#{} in channel {}"
+msgstr ""
+
+#: ..\mod.py:842
+msgid "That user is already unmuted in {}!"
+msgstr ""
+
+#: ..\mod.py:870
+msgid "User unmuted in this channel."
+msgstr ""
+
+#: ..\mod.py:872
+msgid "Unmute failed. Reason: {}"
+msgstr ""
+
+#: ..\mod.py:904
+msgid "User has been unmuted in this guild."
+msgstr ""
+
+#: ..\mod.py:961
+msgid "Channel added to ignore list."
+msgstr ""
+
+#: ..\mod.py:963
+msgid "Channel already in ignore list."
+msgstr ""
+
+#: ..\mod.py:971
+msgid "This guild has been added to the ignore list."
+msgstr ""
+
+#: ..\mod.py:973
+msgid "This guild is already being ignored."
+msgstr ""
+
+#: ..\mod.py:994
+msgid "Channel removed from ignore list."
+msgstr ""
+
+#: ..\mod.py:996
+msgid "That channel is not in the ignore list."
+msgstr ""
+
+#: ..\mod.py:1004
+msgid "This guild has been removed from the ignore list."
+msgstr ""
+
+#: ..\mod.py:1006
+msgid "This guild is not in the ignore list."
+msgstr ""
+
+#: ..\mod.py:1018
+msgid ""
+"Currently ignoring:\n"
+"{} channels\n"
+"{} guilds\n"
+msgstr ""
+
+#: ..\mod.py:1029
+msgid "**Past 20 names**:"
+msgstr ""
+
+#: ..\mod.py:1036
+msgid "**Past 20 nicknames**:"
+msgstr ""
+
+#: ..\mod.py:1042
+msgid "That user doesn't have any recorded name or nickname change."
+msgstr ""
+
