@@ -49,9 +49,8 @@ msgid "Yes"
 msgstr "Sí"
 
 #: ../general.py:42
-#, fuzzy
-msgid "Yes â definitely"
-msgstr "Si, definitivamente â"
+msgid "Yes – definitely"
+msgstr "Sí – definitivamente"
 
 #: ../general.py:42
 msgid "You may rely on it"
@@ -106,15 +105,15 @@ msgid "{} :game_die: {} :game_die:"
 msgstr "{} :game_die: {} :game_die:"
 
 #: ../general.py:79
-msgid "{} Maybe higher than 1? ;P"
-msgstr "{} Tal vez mas que 1? ;P"
+msgid "{} ¿Maybe higher than 1? ;P"
+msgstr "{} ¿Tal vez más que 1? ;P"
 
 #: ../general.py:91
 msgid ""
 "Nice try. You think this is funny?How about *this* instead:\n"
 "\n"
 msgstr ""
-"Buen intento. Te parece gracioso? Qué tal *esto* mejor:\n"
+"Buen intento. ¿Te parece gracioso? Qué tal *esto* mejor:\n"
 "\n"
 "\n"
 
@@ -124,23 +123,23 @@ msgstr "*tira una moneda y..."
 
 #: ../general.py:104
 msgid "HEADS!*"
-msgstr "CARA!*"
+msgstr "¡CARA!*"
 
 #: ../general.py:104
 msgid "TAILS!*"
-msgstr "CRUZ!*"
+msgstr "¡CRUZ!*"
 
 #: ../general.py:128
 msgid "{} You win {}!"
-msgstr "{} Ganas {}!"
+msgstr "{} ¡Ganas {}!"
 
 #: ../general.py:132
 msgid "{} You lose {}!"
-msgstr "{} Pierdes {}!"
+msgstr "{} ¡Pierdes {}!"
 
 #: ../general.py:136
 msgid "{} We're square {}!"
-msgstr "{} Empates {}!"
+msgstr "{} ¡Empates {}!"
 
 #: ../general.py:149
 msgid "That doesn't look like a question."
@@ -148,11 +147,11 @@ msgstr "Eso no parece pregunta."
 
 #: ../general.py:157
 msgid " Stopwatch started!"
-msgstr " Cronómetro comenzado!"
+msgstr " ¡Cronómetro comenzado!"
 
 #: ../general.py:161
 msgid " Stopwatch stopped! Time: **"
-msgstr " Cronómetro detenido! Tiempo: **"
+msgstr " ¡Cronómetro detenido! Tiempo: **"
 
 #: ../general.py:214 ../general.py:215
 msgid ""
