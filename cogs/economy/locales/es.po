@@ -61,10 +61,10 @@ msgstr ""
 "{flc.value} {flc.value} {flc.value} +1000\n"
 "{cherries.value} {cherries.value} {cherries.value} +800\n"
 "{two.value} {six.value} Apuesta * 4\n"
-"{cherries.value} {cherries.value} Bet * 3\n"
+"{cherries.value} {cherries.value} Apuesta * 3\n"
 "\n"
 "Tres símbolos: +500\n"
-"Dos símbolos: Bet * 2"
+"Dos símbolos: Apuesta * 2"
 
 #: ../economy.py:155
 msgid "{}'s balance is {} {}"
