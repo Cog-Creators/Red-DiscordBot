@@ -115,7 +115,6 @@ msgid ""
 msgstr ""
 "Buen intento. ¿Te parece gracioso? Qué tal *esto* mejor:\n"
 "\n"
-"\n"
 
 #: ../general.py:104
 msgid "*flips a coin and... "
