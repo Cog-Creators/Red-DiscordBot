@@ -1,0 +1,223 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2017-08-26 18:11+EDT\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+
+
+#: ../cog_manager.py:196
+msgid ""
+"Install Path: {}\n"
+"\n"
+msgstr ""
+
+#: ../cog_manager.py:212
+msgid "That path is does not exist or does not point to a valid directory."
+msgstr ""
+
+#: ../cog_manager.py:221
+msgid "Path successfully added."
+msgstr ""
+
+#: ../cog_manager.py:234
+msgid "That is an invalid path number."
+msgstr ""
+
+#: ../cog_manager.py:238
+msgid "Path successfully removed."
+msgstr ""
+
+#: ../cog_manager.py:254
+msgid "Invalid 'from' index."
+msgstr ""
+
+#: ../cog_manager.py:260
+msgid "Invalid 'to' index."
+msgstr ""
+
+#: ../cog_manager.py:264
+msgid "Paths reordered."
+msgstr ""
+
+#: ../cog_manager.py:282
+msgid "That path does not exist."
+msgstr ""
+
+#: ../cog_manager.py:286
+msgid "The bot will install new cogs to the `{}` directory."
+msgstr ""
+
+#: ../core_commands.py:35
+msgid "No module by that name was found in any cog path."
+msgstr ""
+
+#: ../core_commands.py:43
+msgid "Failed to load package. Check your console or logs for details."
+msgstr ""
+
+#: ../core_commands.py:47 ../core_commands.py:56 ../core_commands.py:76
+#: ../core_commands.py:151 ../core_commands.py:212 ../core_commands.py:226
+msgid "Done."
+msgstr ""
+
+#: ../core_commands.py:58
+msgid "That extension is not loaded."
+msgstr ""
+
+#: ../core_commands.py:71
+msgid "Failed to reload package. Check your console or logs for details."
+msgstr ""
+
+#: ../core_commands.py:86
+msgid "Shutting down... "
+msgstr ""
+
+#: ../core_commands.py:123
+msgid "The admin role for this guild has been set."
+msgstr ""
+
+#: ../core_commands.py:131
+msgid "The mod role for this guild has been set."
+msgstr ""
+
+#: ../core_commands.py:145
+msgid "Failed. Remember that you can edit my avatar up to two times a hour. The URL must be a direct link to a JPG / PNG."
+msgstr ""
+
+#: ../core_commands.py:149
+msgid "JPG / PNG format only."
+msgstr ""
+
+#: ../core_commands.py:161
+msgid "Game set."
+msgstr ""
+
+#: ../core_commands.py:190
+msgid "Status changed to %s."
+msgstr ""
+
+#: ../core_commands.py:221
+msgid "Failed to change name. Remember that you can only do it up to 2 times an hour. Use nicknames if you need frequent changes. `{}set nickname`"
+msgstr ""
+
+#: ../core_commands.py:236
+msgid "I lack the permissions to change my own nickname."
+msgstr ""
+
+#: ../core_commands.py:250 ../core_commands.py:263
+msgid "Prefix set."
+msgstr ""
+
+#: ../core_commands.py:259
+msgid "Guild prefixes have been reset."
+msgstr ""
+
+#: ../core_commands.py:282
+msgid ""
+"\n"
+"Verification token:"
+msgstr ""
+
+#: ../core_commands.py:285
+msgid ""
+"Remember:\n"
+msgstr ""
+
+#: ../core_commands.py:288
+msgid "I have printed a one-time token in the console. Copy and paste it here to confirm you are the owner."
+msgstr ""
+
+#: ../core_commands.py:296
+msgid "The set owner request has timed out."
+msgstr ""
+
+#: ../core_commands.py:302
+msgid "You have been set as owner."
+msgstr ""
+
+#: ../core_commands.py:304
+msgid "Invalid token."
+msgstr ""
+
+#: ../core_commands.py:313
+msgid "Locale has been set."
+msgstr ""
+
+#: ../core_commands.py:323
+msgid "User ID: %s"
+msgstr ""
+
+#: ../core_commands.py:326
+msgid "through DM"
+msgstr ""
+
+#: ../core_commands.py:328
+msgid "from {}"
+msgstr ""
+
+#: ../core_commands.py:329
+msgid " | Server ID: %s"
+msgstr ""
+
+#: ../core_commands.py:337
+msgid "Use `{}dm {} <text>` to reply to this user"
+msgstr ""
+
+#: ../core_commands.py:345
+msgid "Sent by {} {}"
+msgstr ""
+
+#: ../core_commands.py:357
+msgid "I cannot send your message, I'm unable to find my owner... *sigh*"
+msgstr ""
+
+#: ../core_commands.py:360
+msgid "I'm unable to deliver your message. Sorry."
+msgstr ""
+
+#: ../core_commands.py:362
+msgid "Your message has been sent."
+msgstr ""
+
+#: ../core_commands.py:376
+msgid "Invalid ID or user not found. You can only send messages to people I share a server with."
+msgstr ""
+
+#: ../core_commands.py:382
+msgid "Owner of %s"
+msgstr ""
+
+#: ../core_commands.py:385
+msgid "You can reply to this message with %scontact"
+msgstr ""
+
+#: ../core_commands.py:395
+msgid "Sorry, I couldn't deliver your message to %s"
+msgstr ""
+
+#: ../core_commands.py:398
+msgid "Message delivered to %s"
+msgstr ""
+
+#: ../dev_commands.py:165
+msgid "Already running a REPL session in this channel. Exit it with `quit`."
+msgstr ""
+
+#: ../dev_commands.py:169
+msgid "Enter code to execute or evaluate. `exit()` or `quit` to exit."
+msgstr ""
+
+#: ../dev_commands.py:234
+msgid "Unexpected error: `{}`"
+msgstr ""
+

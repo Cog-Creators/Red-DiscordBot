@@ -2,6 +2,9 @@ from discord.ext import commands
 
 from core import checks, bank
 from core.bot import Red  # Only used for type hints
+from core.i18n import CogI18n
+
+_ = CogI18n('Bank', __file__)
 
 
 def check_global_setting_guildowner():
@@ -62,22 +65,22 @@ class Bank:
         cur_setting = await bank.is_global()
         await bank.set_global(not cur_setting, ctx.author)
 
-        word = "per-guild" if cur_setting else "global"
+        word = _("per-guild") if cur_setting else _("global")
 
-        await ctx.send("The bank is now {}.".format(word))
+        await ctx.send(_("The bank is now {}.").format(word))
 
     @bankset.command(name="bankname")
     @check_global_setting_guildowner()
     async def bankset_bankname(self, ctx: commands.Context, *, name: str):
         """Set the bank's name"""
         await bank.set_bank_name(name, ctx.guild)
-        await ctx.send("Bank's name has been set to {}".format(name))
+        await ctx.send(_("Bank's name has been set to {}").format(name))
 
     @bankset.command(name="creditsname")
     @check_global_setting_guildowner()
     async def bankset_creditsname(self, ctx: commands.Context, *, name: str):
         """Set the name for the bank's currency"""
         await bank.set_currency_name(name, ctx.guild)
-        await ctx.send("Currency name has been set to {}".format(name))
+        await ctx.send(_("Currency name has been set to {}").format(name))
 
     # ENDSECTION
