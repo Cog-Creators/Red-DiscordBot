@@ -1,0 +1,229 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: 2017-08-26 17:40+EDT\n"
+"PO-Revision-Date: 2017-08-26 20:09-0600\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: pygettext.py 1.5\n"
+"X-Generator: Poedit 2.0.3\n"
+"Last-Translator: UlimatePancake <pier.gaetani@gmail.com>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: es\n"
+
+#: ../economy.py:38
+#, fuzzy
+msgid "JACKPOT! 226! Your bid has been multiplied * 2500!"
+msgstr "PREMIO MAYOR! 226! Apuesta multiplicada por 2500!"
+
+#: ../economy.py:42
+msgid "4LC! +1000!"
+msgstr "4 tréboles! +1000!"
+
+#: ../economy.py:46
+msgid "Three cherries! +800!"
+msgstr "Triple cereza! +800!"
+
+#: ../economy.py:50
+msgid "2 6! Your bid has been multiplied * 4!"
+msgstr "2 6! Apuesta multiplicada por 4!"
+
+#: ../economy.py:54
+msgid "Two cherries! Your bid has been multiplied * 3!"
+msgstr "Doble cereza! Apuesta multiplicada por 3!"
+
+#: ../economy.py:58
+msgid "Three symbols! +500!"
+msgstr "Tres símbolos! +500!"
+
+#: ../economy.py:62
+msgid "Two consecutive symbols! Your bid has been multiplied * 2!"
+msgstr "Dos símbolos consecutivos! Apuesta multiplicada por 2!"
+
+#: ../economy.py:66
+msgid ""
+"Slot machine payouts:\n"
+"{two.value} {two.value} {six.value} Bet * 2500\n"
+"{flc.value} {flc.value} {flc.value} +1000\n"
+"{cherries.value} {cherries.value} {cherries.value} +800\n"
+"{two.value} {six.value} Bet * 4\n"
+"{cherries.value} {cherries.value} Bet * 3\n"
+"\n"
+"Three symbols: +500\n"
+"Two symbols: Bet * 2"
+msgstr ""
+"Premios de tragaperras:\n"
+"{two.value} {two.value} {six.value} Apuesta * 2500\n"
+"{flc.value} {flc.value} {flc.value} +1000\n"
+"{cherries.value} {cherries.value} {cherries.value} +800\n"
+"{two.value} {six.value} Apuesta * 4\n"
+"{cherries.value} {cherries.value} Bet * 3\n"
+"\n"
+"Tres símbolos: +500\n"
+"Dos símbolos: Bet * 2"
+
+#: ../economy.py:155
+msgid "{}'s balance is {} {}"
+msgstr "El balance de {} es {} {}"
+
+#: ../economy.py:169
+msgid "{} transferred {} {} to {}"
+msgstr "{} ha transferido {} {} a {}"
+
+#: ../economy.py:189
+msgid "{} added {} {} to {}'s account."
+msgstr "{} agregó {} {} a la cuenta de {}."
+
+#: ../economy.py:194
+msgid "{} removed {} {} from {}'s account."
+msgstr "{} quitó {} {} de la cuenta de {}."
+
+#: ../economy.py:199
+msgid "{} set {}'s account to {} {}."
+msgstr "{} puso la cuenta de {} a {} {}."
+
+#: ../economy.py:210
+msgid ""
+"This will delete all bank accounts for {}.\n"
+"If you're sure, type {}bank reset yes"
+msgstr ""
+"Esto eliminará todas las cuentas bancarias de {}.\n"
+"Si estás seguro, escribe {}bank reset yes"
+
+#: ../economy.py:227
+msgid "All bank accounts of this guild have been deleted."
+msgstr "Todas las cuentas bancarias de este gremio han sido eliminadas."
+
+#: ../economy.py:246 ../economy.py:266
+msgid "{} Here, take some {}. Enjoy! (+{} {}!)"
+msgstr "{}, toma, unos {}. Difruta! (+{} {}!)"
+
+#: ../economy.py:256 ../economy.py:274
+msgid "{} Too soon. For your next payday you have to wait {}."
+msgstr "{} Muy pronto. Tu siguiente dia de pago es en {}."
+
+#: ../economy.py:311
+msgid "There are no accounts in the bank."
+msgstr "No existen cuentas en el banco."
+
+#: ../economy.py:337
+msgid "You're on cooldown, try again in a bit."
+msgstr "Estás en tiempo de espera, intenta de nuevo más tarde."
+
+#: ../economy.py:340
+msgid "That's an invalid bid amount, sorry :/"
+msgstr "Cantidad de apuesta inválida, lo siento :/"
+
+#: ../economy.py:343
+msgid "You ain't got enough money, friend."
+msgstr "No tienes suficiente dinero, amigo."
+
+# dafuq is {} â {}!
+#: ../economy.py:389
+#, fuzzy
+msgid ""
+"{}\n"
+"{} {}\n"
+"\n"
+"Your bid: {}\n"
+"{} â {}!"
+msgstr ""
+"{}\n"
+"{} {}\n"
+"Tu apuesta: {}\n"
+"{} â {}!"
+
+#: ../economy.py:396
+#, fuzzy
+msgid ""
+"{}\n"
+"{} Nothing!\n"
+"Your bid: {}\n"
+"{} â {}!"
+msgstr ""
+"{}\n"
+"{} Nada!\n"
+"Tu apuesta: {}\n"
+"{} â {}!"
+
+#: ../economy.py:421
+msgid ""
+"Minimum slot bid: {}\n"
+"Maximum slot bid: {}\n"
+"Slot cooldown: {}\n"
+"Payday amount: {}\n"
+"Payday cooldown: {}\n"
+"Amount given at account registration: {}"
+msgstr ""
+"Apuesta mínima para tragaperras: {}\n"
+"Apuesta máxima para tragaperras: {}\n"
+"Tiempo de espera para tragaperras: {}\n"
+"Cantidad para día de pago: {}\n"
+"Tiempo de espera para día de pago: {}\n"
+"Cantidad al registrar: {}"
+
+#: ../economy.py:431
+msgid "Current Economy settings:"
+msgstr "Configuración de economía actual:"
+
+#: ../economy.py:439
+msgid "Invalid min bid amount."
+msgstr "Cantidad mínima de apuesta inválida."
+
+#: ../economy.py:447
+msgid "Minimum bid is now {} {}."
+msgstr "Apuesta mínima es ahora {} {}."
+
+#: ../economy.py:454
+msgid "Invalid slotmax bid amount. Must be greater than slotmin."
+msgstr "Cantidad de apuesta máxima para tragaperras inválido. Debe ser mayor al mínimo."
+
+#: ../economy.py:463
+msgid "Maximum bid is now {} {}."
+msgstr "Apuesta máxima es ahora {} {}."
+
+#: ../economy.py:473
+msgid "Cooldown is now {} seconds."
+msgstr "Tiempo de espera es ahora {} segundos."
+
+#: ../economy.py:483
+msgid "Value modified. At least {} seconds must pass between each payday."
+msgstr "Valor modificado. Al menos {} segundos deben de pasar entre cada día de pago."
+
+#: ../economy.py:492
+msgid "Har har so funny."
+msgstr "Muy gracioso..."
+
+#: ../economy.py:498
+msgid "Every payday will now give {} {}."
+msgstr "Cada día de pago ahora dará {} {}."
+
+#: ../economy.py:509
+msgid "Registering an account will now give {} {}."
+msgstr "Registrar una cuenta bancaria ahora dará {} {}."
+
+#: ../economy.py:515
+msgid "weeks"
+msgstr "semanas"
+
+#: ../economy.py:516
+msgid "days"
+msgstr "días"
+
+#: ../economy.py:517
+msgid "hours"
+msgstr "horas"
+
+#: ../economy.py:518
+msgid "minutes"
+msgstr "minutos"
+
+#: ../economy.py:519
+msgid "seconds"
+msgstr "segundos"
