@@ -1,3 +1,8 @@
+__all__ = ["DownloaderException", "GitException", "InvalidRepoName", "ExistingGitRepo",
+           "MissingGitRepo", "CloningError", "CurrentHashError", "HardResetError",
+           "UpdateError", "GitDiffError", "PipError"]
+
+
 class DownloaderException(Exception):
     """
     Base class for Downloader exceptions.
@@ -14,7 +19,7 @@ class GitException(DownloaderException):
 class InvalidRepoName(DownloaderException):
     """
     Throw when a repo name is invalid. Check
-        the message for a more detailed reason.
+    the message for a more detailed reason.
     """
     pass
 
@@ -22,7 +27,7 @@ class InvalidRepoName(DownloaderException):
 class ExistingGitRepo(DownloaderException):
     """
     Thrown when trying to clone into a folder where a
-        git repo already exists.
+    git repo already exists.
     """
     pass
 
@@ -30,7 +35,7 @@ class ExistingGitRepo(DownloaderException):
 class MissingGitRepo(DownloaderException):
     """
     Thrown when a git repo is expected to exist but
-        does not.
+    does not.
     """
     pass
 
@@ -45,7 +50,7 @@ class CloningError(GitException):
 class CurrentHashError(GitException):
     """
     Thrown when git returns a non zero exit code attempting
-        to determine the current commit hash.
+    to determine the current commit hash.
     """
     pass
 
@@ -53,7 +58,7 @@ class CurrentHashError(GitException):
 class HardResetError(GitException):
     """
     Thrown when there is an issue trying to execute a hard reset
-        (usually prior to a repo update).
+    (usually prior to a repo update).
     """
     pass
 

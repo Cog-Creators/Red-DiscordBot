@@ -3,7 +3,7 @@ import json
 import os
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
-from typing import Tuple, MutableMapping
+from typing import Tuple, MutableMapping, Union
 from subprocess import run as sp_run, PIPE
 from sys import executable
 import pkgutil
@@ -13,6 +13,7 @@ import functools
 from discord.ext import commands
 
 from core import Config
+from core import data_manager
 from .errors import *
 from .installable import Installable, InstallableType
 from .log import log
@@ -166,7 +167,8 @@ class Repo(RepoJSONMixin):
     async def clone(self) -> Tuple[str]:
         """
         Clones a new repo.
-        :return: List of available modules from this repo.
+
+        :return: List of available module names from this repo.
         """
         exists, path = self._existing_git_repo()
         if exists:
@@ -203,6 +205,7 @@ class Repo(RepoJSONMixin):
     async def current_branch(self) -> str:
         """
         Determines the current branch using git commands.
+
         :return: Current branch name
         """
         exists, _ = self._existing_git_repo()
@@ -226,6 +229,7 @@ class Repo(RepoJSONMixin):
     async def current_commit(self, branch: str=None) -> str:
         """
         Determines the current commit hash of the repo.
+
         :param branch: Override for repo's branch attribute
         :return: Commit hash string
         """
@@ -253,8 +257,8 @@ class Repo(RepoJSONMixin):
     async def hard_reset(self, branch: str=None) -> None:
         """
         Performs a hard reset on the current repo.
+
         :param branch: Override for repo branch attribute.
-        :return:
         """
         if branch is None:
             branch = self.branch
@@ -280,8 +284,9 @@ class Repo(RepoJSONMixin):
     async def update(self) -> (str, str):
         """
         Updates the current branch of this repo.
-        :return: Old commit hash
-        :return: New commit hash
+
+        :return: tuple of (old commit hash, new commit hash)
+        :rtype: tuple
         """
         curr_branch = await self.current_branch()
         old_commit = await self.current_commit(branch=curr_branch)
@@ -308,9 +313,11 @@ class Repo(RepoJSONMixin):
     async def install_cog(self, cog: Installable, target_dir: Path) -> bool:
         """
         Copies a cog to the target directory.
-        :param cog:
-        :param target_dir:
-        :return: bool - if installation succeeded
+
+        :param Installable cog: Cog to install.
+        :param pathlib.Path target_dir: Directory to install the cog in.
+        :return: Installation success status.
+        :rtype: bool
         """
         if cog not in self.available_cogs:
             raise DownloaderException("That cog does not exist in this repo")
@@ -326,10 +333,12 @@ class Repo(RepoJSONMixin):
     async def install_libraries(self, target_dir: Path, libraries: Tuple[Installable]=()) -> bool:
         """
         Copies all shared libraries (or a given subset) to the target
-            directory.
-        :param target_dir:
-        :param libraries: A subset of available libraries
-        :return: bool - all copies succeeded
+        directory.
+
+        :param pathlib.Path target_dir: Directory to install shared libraries to.
+        :param tuple(Installable) libraries: A subset of available libraries.
+        :return: Status of all installs.
+        :rtype: bool
         """
         if libraries:
             if not all([i in self.available_libraries for i in libraries]):
@@ -344,11 +353,13 @@ class Repo(RepoJSONMixin):
     async def install_requirements(self, cog: Installable, target_dir: Path) -> bool:
         """
         Installs the requirements defined by the requirements
-            attribute on the cog object and puts them in the given
-            target directory.
-        :param cog:
-        :param target_dir:
-        :return:
+        attribute on the cog object and puts them in the given
+        target directory.
+
+        :param Installable cog: Cog for which to install requirements.
+        :param pathlib.Path target_dir: Path to which to install requirements.
+        :return: Status of requirements install.
+        :rtype: bool
         """
         if not target_dir.is_dir():
             raise ValueError("Target directory is not a directory.")
@@ -359,10 +370,12 @@ class Repo(RepoJSONMixin):
     async def install_raw_requirements(self, requirements: Tuple[str], target_dir: Path) -> bool:
         """
         Installs a list of requirements using pip and places them into
-            the given target directory.
-        :param requirements:
-        :param target_dir:
-        :return:
+        the given target directory.
+
+        :param tuple(str) requirements: List of requirement names to install via pip.
+        :param pathlib.Path target_dir: Directory to install requirements to.
+        :return: Status of all requirements install.
+        :rtype: bool
         """
         if len(requirements) == 0:
             return True
@@ -388,7 +401,8 @@ class Repo(RepoJSONMixin):
     def available_cogs(self) -> Tuple[Installable]:
         """
         Returns a list of available cogs (not shared libraries and not hidden).
-        :return: tuple(installable)
+
+        :rtype: tuple(Installable)
         """
         # noinspection PyTypeChecker
         return tuple(
@@ -400,6 +414,8 @@ class Repo(RepoJSONMixin):
     def available_libraries(self) -> Tuple[Installable]:
         """
         Returns a list of available shared libraries in this repo.
+
+        :rtype: tuple(Installable)
         """
         # noinspection PyTypeChecker
         return tuple(
@@ -428,9 +444,15 @@ class RepoManager:
     def __init__(self, downloader_config: Config):
         self.downloader_config = downloader_config
 
-        self.repos_folder = Path(__file__).parent / 'repos'
+        self._repos = {}
 
-        self._repos = self._load_repos()  # str_name: Repo
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._load_repos(set=True))  # str_name: Repo
+
+    @property
+    def repos_folder(self) -> Path:
+        data_folder = data_manager.cog_data_path(self)
+        return data_folder / 'repos'
 
     def does_repo_exist(self, name: str) -> bool:
         return name in self._repos
@@ -444,10 +466,12 @@ class RepoManager:
     async def add_repo(self, url: str, name: str, branch: str="master") -> Repo:
         """
         Adds a repo and clones it.
-        :param url:
-        :param name:
-        :param branch:
-        :return:
+
+        :param url: URL of git repo to clone.
+        :param name: Internal name of repo.
+        :param branch: Branch to clone.
+        :return: New repo object representing cloned repo.
+        :rtype: Repo
         """
         name = self.validate_and_normalize_repo_name(name)
         if self.does_repo_exist(name):
@@ -466,27 +490,31 @@ class RepoManager:
 
         return r
 
-    def get_repo(self, name: str) -> Repo:
+    def get_repo(self, name: str) -> Union[Repo, None]:
         """
         Returns a repo object with the given name.
+
         :param name: Repo name
-        :return: Repo object or None
+        :return: Repo object or ``None`` if repo does not exist.
+        :rtype: Union[Repo, None]
         """
         return self._repos.get(name, None)
 
     def get_all_repo_names(self) -> Tuple[str]:
         """
         Returns a tuple of all repo names
-        :return:
+
+        :rtype: tuple(str)
         """
         # noinspection PyTypeChecker
         return tuple(self._repos.keys())
 
     async def delete_repo(self, name: str):
         """
-        Deletes a repo and its' folders with the given name.
-        :param name:
-        :return:
+        Deletes a repo and its folders with the given name.
+
+        :param name: Name of the repo to delete.
+        :raises MissingGitRepo: If the repo does not exist.
         """
         repo = self.get_repo(name)
         if repo is None:
@@ -494,7 +522,6 @@ class RepoManager:
 
         shutil.rmtree(str(repo.folder_path))
 
-        repos = self.downloader_config.repos()
         try:
             del self._repos[name]
         except KeyError:
@@ -504,10 +531,11 @@ class RepoManager:
 
     async def update_all_repos(self) -> MutableMapping[Repo, Tuple[str, str]]:
         """
-        Calls repo.update() on all repos, returns a mapping of repos
-            that received new commits to a tuple containing old and
-            new commit hashes.
+        Calls :py:meth:`Repo.update` on all repos.
+
         :return:
+            A mapping of :py:class:`Repo` objects that received new commits to a tuple containing old and
+            new commit hashes.
         """
         ret = {}
         for _, repo in self._repos.items():
@@ -518,11 +546,14 @@ class RepoManager:
         await self._save_repos()
         return ret
 
-    def _load_repos(self) -> MutableMapping[str, Repo]:
-        return {
+    async def _load_repos(self, set=False) -> MutableMapping[str, Repo]:
+        ret = {
             name: Repo.from_json(data) for name, data in
-            self.downloader_config.repos().items()
+            (await self.downloader_config.repos()).items()
         }
+        if set:
+            self._repos = ret
+        return ret
 
     async def _save_repos(self):
         repo_json_info = {name: r.to_json() for name, r in self._repos.items()}

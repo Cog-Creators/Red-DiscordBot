@@ -24,8 +24,9 @@ def mod_or_permissions(**perms):
         if ctx.guild is None:
             return has_perms_or_is_owner
         author = ctx.author
-        mod_role_id = ctx.bot.db.guild(ctx.guild).mod_role()
-        admin_role_id = ctx.bot.db.guild(ctx.guild).admin_role()
+        settings = ctx.bot.db.guild(ctx.guild)
+        mod_role_id = await settings.mod_role()
+        admin_role_id = await settings.admin_role()
 
         mod_role = discord.utils.get(ctx.guild.roles, id=mod_role_id)
         admin_role = discord.utils.get(ctx.guild.roles, id=admin_role_id)
@@ -45,7 +46,8 @@ def admin_or_permissions(**perms):
             return has_perms_or_is_owner
         author = ctx.author
         is_guild_owner = author == ctx.guild.owner
-        admin_role = ctx.bot.db.guild(ctx.guild).admin_role()
+        admin_role_id = await ctx.bot.db.guild(ctx.guild).admin_role()
+        admin_role = discord.utils.get(ctx.guild.roles, id=admin_role_id)
 
         return admin_role in author.roles or has_perms_or_is_owner or is_guild_owner
 

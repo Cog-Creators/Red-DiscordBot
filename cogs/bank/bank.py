@@ -5,20 +5,36 @@ from core.bot import Red  # Only used for type hints
 
 
 def check_global_setting_guildowner():
+    """
+    Command decorator. If the bank is not global, it checks if the author is
+     either the guildowner or has the administrator permission.
+    """
     async def pred(ctx: commands.Context):
-        if bank.is_global():
-            return checks.is_owner()
-        else:
-            return checks.guildowner_or_permissions(administrator=True)
+        author = ctx.author
+        if await ctx.bot.is_owner(author):
+            return True
+        if not await bank.is_global():
+            permissions = ctx.channel.permissions_for(author)
+            return author == ctx.guild.owner or permissions.administrator
+
     return commands.check(pred)
 
 
 def check_global_setting_admin():
+    """
+    Command decorator. If the bank is not global, it checks if the author is
+     either a bot admin or has the manage_guild permission.
+    """
     async def pred(ctx: commands.Context):
-        if bank.is_global():
-            return checks.is_owner()
-        else:
-            return checks.admin_or_permissions(manage_guild=True)
+        author = ctx.author
+        if await ctx.bot.is_owner(author):
+            return True
+        if not await bank.is_global():
+            permissions = ctx.channel.permissions_for(author)
+            is_guild_owner = author == ctx.guild.owner
+            admin_role = await ctx.bot.db.guild(ctx.guild).admin_role()
+            return admin_role in author.roles or is_guild_owner or permissions.manage_guild
+
     return commands.check(pred)
 
 
@@ -43,7 +59,7 @@ class Bank:
         """Toggles whether the bank is global or not
         If the bank is global, it will become per-guild
         If the bank is per-guild, it will become global"""
-        cur_setting = bank.is_global()
+        cur_setting = await bank.is_global()
         await bank.set_global(not cur_setting, ctx.author)
 
         word = "per-guild" if cur_setting else "global"

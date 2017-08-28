@@ -17,6 +17,13 @@ def monkeysession(request):
     mpatch.undo()
 
 
+@pytest.fixture(autouse=True)
+def override_data_path(tmpdir):
+    from core import data_manager
+    data_manager.basic_config = data_manager.basic_config_default
+    data_manager.basic_config['DATA_PATH'] = str(tmpdir)
+
+
 @pytest.fixture()
 def json_driver(tmpdir_factory):
     import uuid
@@ -37,7 +44,7 @@ def config(json_driver):
         unique_identifier=str(uuid.uuid4()),
         driver_spawn=json_driver)
     yield conf
-    conf.defaults = {}
+    conf._defaults = {}
 
 
 @pytest.fixture()
@@ -53,7 +60,7 @@ def config_fr(json_driver):
         force_registration=True
     )
     yield conf
-    conf.defaults = {}
+    conf._defaults = {}
 
 
 #region Dpy Mocks

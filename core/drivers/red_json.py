@@ -32,7 +32,7 @@ class JSON(BaseDriver):
     def get_driver(self):
         return self
 
-    def get(self, identifiers: Tuple[str]):
+    async def get(self, identifiers: Tuple[str]):
         partial = self.data
         for i in identifiers:
             partial = partial[i]
