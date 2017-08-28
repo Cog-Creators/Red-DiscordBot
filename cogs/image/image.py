@@ -3,6 +3,9 @@ from random import shuffle
 import aiohttp
 
 from core import checks, Config
+from core.i18n import CogI18n
+
+_ = CogI18n("Image", __file__)
 
 GIPHY_API_KEY = "dc6zaTOxFJmzC"
 
@@ -42,16 +45,16 @@ class Image:
         if data["success"]:
             results = data["data"]
             if not results:
-                await ctx.send("Your search returned no results")
+                await ctx.send(_("Your search returned no results"))
                 return
             shuffle(results)
-            msg = "Search results...\n"
+            msg = _("Search results...\n")
             for r in results[:3]:
                 msg += r["gifv"] if "gifv" in r else r["link"]
                 msg += "\n"
             await ctx.send(msg)
         else:
-            await ctx.send("Something went wrong. Error code is {}".format(data["status"]))
+            await ctx.send(_("Something went wrong. Error code is {}").format(data["status"]))
 
     @_imgur.command(name="subreddit")
     async def imgur_subreddit(self, ctx, subreddit: str, sort_type: str="top", window: str="day"):
@@ -63,7 +66,7 @@ class Image:
         window = window.lower()
 
         if sort_type not in ("new", "top"):
-            await ctx.send("Only 'new' and 'top' are a valid sort type.")
+            await ctx.send(_("Only 'new' and 'top' are a valid sort type."))
             return
         elif window not in ("day", "week", "month", "year", "all"):
             await self.bot.send_cmd_help(ctx)
@@ -91,9 +94,9 @@ class Image:
                 if links:
                     await ctx.send("\n".join(links))
             else:
-                await ctx.send("No results found.")
+                await ctx.send(_("No results found."))
         else:
-            await ctx.send("Something went wrong. Error code is {}".format(data["status"]))
+            await ctx.send(_("Something went wrong. Error code is {}").format(data["status"]))
 
     @checks.is_owner()
     @commands.command()
@@ -108,7 +111,7 @@ class Image:
         enter a description. Check the box for the captcha, then click Next.
         Your client ID will be on the page that loads"""
         await self.settings.imgur_client_id.set(imgur_client_id)
-        await ctx.send("Set the imgur client id!")
+        await ctx.send(_("Set the imgur client id!"))
 
     @commands.command(pass_context=True, no_pm=True)
     async def gif(self, ctx, *keywords):
@@ -128,9 +131,9 @@ class Image:
                 if result["data"]:
                     await ctx.send(result["data"][0]["url"])
                 else:
-                    await ctx.send("No results found.")
+                    await ctx.send(_("No results found."))
             else:
-                await ctx.send("Error contacting the API")
+                await ctx.send(_("Error contacting the API"))
 
     @commands.command(pass_context=True, no_pm=True)
     async def gifr(self, ctx, *keywords):
@@ -150,6 +153,6 @@ class Image:
                 if result["data"]:
                     await ctx.send(result["data"]["url"])
                 else:
-                    await ctx.send("No results found.")
+                    await ctx.send(_("No results found."))
             else:
-                await ctx.send("Error contacting the API")
+                await ctx.send(_("Error contacting the API"))
