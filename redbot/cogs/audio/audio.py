@@ -20,6 +20,10 @@ class NoVoiceClient(Exception):
     pass
 
 
+class QueueError(Exception):
+    pass
+
+
 class VoiceManager:
 
     def __init__(self, ctx):
@@ -41,6 +45,16 @@ class VoiceManager:
             self.voice_client.source.mix(source)
         else:
             self.voice_client.play(MixedSource(source))
+
+    def skip(self):
+        try:
+            if isinstance(self.voice_client.source.sources[0], YTDLSource):
+                self.voice_client.source.sources[0].cleanup()
+                self.voice_client.source.sources.pop(0)
+            else:
+                raise QueueError("I'm not playing any music.")
+        except (AttributeError, IndexError):
+            raise QueueError("I'm not playing anything.")
 
     def restart(self):
         if self.task.done():
@@ -135,6 +149,13 @@ class Audio:
             manager.restart()
         return manager
 
+    def check_voice(self, ctx):
+        if ctx.author.voice is None:
+            raise NoVoiceClient("You are not in a voice channel.")
+        if ctx.guild.voice_client is None:
+            raise NoVoiceClient("I'm not in a voice channel.")
+        return self.managers.get(ctx.guild.id, None)   
+
     @commands.command()
     async def local(self, ctx, *, filename: str):
         """Play a local file"""
@@ -194,6 +215,18 @@ class Audio:
             await ctx.send("Resumed audio.")
         else:
             await ctx.send("I'm not even connected to a voice channel!")
+
+    @commands.command()
+    async def skip(self, ctx):
+        """Skips the current song"""
+        try:
+            manager = self.check_voice(ctx)
+            manager.skip()
+            await ctx.send("Skipping song...")
+        except NoVoiceClient as e:
+            await ctx.send(e)
+        except QueueError as e:
+            await ctx.send(e)
 
     @commands.group(name='cache')
     async def cache(self, ctx):
