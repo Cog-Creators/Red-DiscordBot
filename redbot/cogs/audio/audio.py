@@ -8,12 +8,73 @@ from concurrent.futures import ThreadPoolExecutor
 
 import discord
 import youtube_dl
-from core import Config
+from core import Config, checks
 from core.data_manager import cog_data_path
 from discord import FFmpegPCMAudio, PCMVolumeTransformer
 from discord.ext import commands
 
 log = logging.getLogger("red.audio")
+
+
+class NoVoiceClient(Exception):
+    pass
+
+
+class VoiceManager:
+
+    def __init__(self, ctx):
+        self.guild = ctx.guild
+        self.text_channel = ctx.message.channel
+        self.voice_client = None
+        self.disc_timer = 0
+        self.timeout = 10
+        self.queue = []
+        self.loop = asyncio.get_event_loop()
+        self.task = self.loop.create_task(self.queue_manager())
+
+    def enqueue(self, source: discord.AudioSource):
+        self.queue.append(source)
+
+    def mix(self, source: discord.AudioSource):
+        # Check if voice client is already playing
+        if self.is_busy(self.voice_client):
+            self.voice_client.source.mix(source)
+        else:
+            self.voice_client.play(MixedSource(source))
+
+    def restart(self):
+        if self.task.done():
+            self.disc_timer = 0
+            self.task = self.loop.create_task(self.queue_manager())
+
+    def set_voice_client(self, voice_client: discord.VoiceClient):
+        self.voice_client = voice_client
+
+    async def queue_manager(self):
+        while True:
+            await asyncio.sleep(1)
+            self.disc_timer += 1
+            if self.is_busy(self.voice_client):
+                self.disc_timer = 0
+            if self.disc_timer > self.timeout:
+                await self.voice_client.disconnect()
+                # This kills the task
+                return
+            if not self.queue:
+                continue
+            if self.queue[0].done:
+                # current song is done
+                self.queue.pop(0)
+            if self.voice_client is None:
+                # can put some reconnect logic here later
+                # or at least an error message
+                continue
+            if self.queue and not self.is_busy(self.voice_client):
+                # ok to play new song
+                self.voice_client.play(MixedSource(self.queue[0]))
+
+    def is_busy(self, voice_client: discord.VoiceClient):
+        return voice_client.is_playing() or voice_client.is_paused()
 
 
 class Audio:
@@ -42,94 +103,69 @@ class Audio:
         self.downloader = Downloader(self.downloader_path)
         if not os.path.exists(self.local_path):
             os.makedirs(self.local_path)
-        self.queues = {}
-        self.queue_task = asyncio.get_event_loop().create_task(self._queue_manager())
+        self.managers = {}
 
-    async def enqueue(self, vchan: discord.VoiceChannel, source: discord.AudioSource):
-
-        guild = vchan.guild
-
-        # Check for existence of voice client
-        if guild.voice_client is None:
-            voice_client = await vchan.connect()
-        else:
-            voice_client = guild.voice_client
-
-        # Check if a queue exists for the guild
-        if guild.id in self.queues:
-            self.queues[guild.id].append(source)
-        else:
-            self.queues[guild.id] = [source]
-
-    async def mix(self, vchan: discord.VoiceChannel, source: discord.AudioSource):
-
-        guild = vchan.guild
-
-        # Check for existence of voice client
-        if guild.voice_client is None:
-            voice_client = await vchan.connect()
-        else:
-            voice_client = guild.voice_client
-
-        # Check that voice client is in correct channel
-        if voice_client.channel != vchan:
-            if not voice_client.is_playing():
-                await voice_client.move_to(ctx.author.voice)
+    async def ensure_voice(self, ctx):
+        if ctx.author.voice is None:
+            raise NoVoiceClient("You are not in a voice channel.")
+        # Need to see if checking voice_client.is_connected() is beneficial
+        voice_client = ctx.guild.voice_client
+        if voice_client is None:
+            try:
+                voice_client = await ctx.author.voice.channel.connect()
+            except asyncio.TimeoutError:
+                raise NoVoiceClient("Timed out trying to connect to voice channel.")
+            except:
+                raise NoVoiceClient("Could not connect to voice channel.")
+        elif voice_client.channel != ctx.author.voice.channel:
+            # Check if it's ok to try to move channels
+            if not voice_client.is_playing() and not voice_client.is_paused():
+                await voice_client.move_to(ctx.author.voice.channel)
+                await ctx.send('Moving voice channels.')
             else:
-                # Voice client is busy in different channel,
-                # add error handling
-                return
-
-        # Check if voice client is already playing
-        if voice_client.is_playing():
-            voice_client.source.mix(source)
-        else:
-            voice_client.play(MixedSource(source))
-
-    async def _queue_manager(self):
-        await self.bot.wait_until_ready()
-        while True:
-            for guild in self.queues:
-                vc = discord.utils.get(self.bot.guilds, id=guild).voice_client
-                if not self.queues[guild]:
-                    continue
-                if self.queues[guild][0].done:
-                    # current song is done
-                    self.queues[guild].pop(0)
-                if vc is None:
-                    # can put some reconnect logic here later
-                    # or at least an error message
-                    continue
-                if self.queues[guild] and not vc.is_playing():
-                    # ok to play new song
-                    vc.play(MixedSource(self.queues[guild][0]))
-                    # How do we determine which text channel to post an alert to?
-            await asyncio.sleep(1)   
+                raise NoVoiceClient("Voice client is busy in another channel.")
+        # Check for existing voice manager
+        manager = self.managers.get(ctx.guild.id, None)
+        if manager is None:
+            # Create a voice manager
+            manager = VoiceManager(ctx)
+            self.managers[ctx.guild.id] = manager
+        manager.set_voice_client(voice_client)
+        if manager.task.done():
+            manager.restart()
+        return manager
 
     @commands.command()
     async def local(self, ctx, *, filename: str):
         """Play a local file"""
-        if ctx.author.voice is None:
-            await ctx.send("Join a voice channel first!")
-            return
 
         path = self.search_local(filename)
         if path is None:
             await ctx.send("Couldn't find a unique file by that name.")
             return
 
-        await self.mix(ctx.author.voice.channel, FFmpegPCMAudio(path))
+        try:
+            manager = await self.ensure_voice(ctx)
+        except NoVoiceClient as e:
+            await ctx.send(e)
+            return
+
+        source = FFmpegPCMAudio(path)
+        manager.mix(source)
         await ctx.send("{} is playing local file `{}`.".format(ctx.author, filename))
 
     @commands.command()
     async def play(self, ctx, url: str):
         """Play from url"""
-        if ctx.author.voice is None:
-            await ctx.send("Join a voice channel first!")
+
+        try:
+            manager = await self.ensure_voice(ctx)
+        except NoVoiceClient as e:
+            await ctx.send(e)
             return
 
         source = await YTDLSource.from_url(url, self.downloader)
-        await self.enqueue(ctx.author.voice.channel, source)
+        manager.enqueue(source)
         await ctx.send("{} is queueing a downloaded file...".format(ctx.author))
 
     @commands.command()
@@ -166,6 +202,7 @@ class Audio:
             await self.bot.send_cmd_help(ctx)
 
     @cache.command(name='dump')
+    @checks.is_owner()
     async def cache_dump(self, ctx):
         """Dump the audio cache"""
         count = 0
@@ -185,7 +222,8 @@ class Audio:
             if vc.source:
                 vc.source.cleanup()
             self.bot.loop.create_task(vc.disconnect())
-        self.queue_task.cancel()
+        for manager in self.managers:
+            self.managers[manager].task.cancel()
 
     def search_local(self, filename: str):
         f = glob.glob(os.path.join(
