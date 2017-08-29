@@ -1,21 +1,25 @@
 from __future__ import print_function  # Used to allow python2 to run this
 import os
 import sys
-from subprocess import call, check_output, CalledProcessError, STDOUT
+from subprocess import check_output, CalledProcessError, STDOUT
 from enum import Enum
 import platform
-import getpass
-import fire
+import shutil
+import tarfile
+import zipfile
 from time import sleep
 try:
     import pip
 except ImportError:
     pip = None
-
-if sys.version_info.major == 2:
-    from urllib import urlretrieve
-elif sys.version_info.major == 3:
-    from urllib.request import urlretrieve
+try:
+    import requests
+except ImportError:
+    requests = None
+try:
+    import fire
+except ImportError:
+    fire = None
 
 
 IS_WINDOWS = os.name == "nt"
@@ -28,8 +32,9 @@ if IS_WINDOWS:
 else:
     PYTHON_OK = sys.version_info >= (3, 5)
 
-
-if not IS_WINDOWS and not IS_MAC:  # On linux, so import distro to help determine distro
+if IS_WINDOWS and PYTHON_OK:
+    from winreg import *
+if not IS_WINDOWS and not IS_MAC:  # need distro to determine distro
     try:
         import distro
     except ImportError:
@@ -234,8 +239,109 @@ def do_linux_install():
         exit(InstallerExitCodes.UNSUPPORTEDLINUX)
 
 
+def do_windows_install():
+    print("Installing Windows requirements")
+    which = shutil.which
+    if not PYTHON_OK:
+        print("You do not have the correct version of Python installed!")
+        print("Please use the Powershell script (launch-install-win.ps1) "
+              "to install the correct version of Python and try again.")
+        exit(InstallerExitCodes.IMPROPERPYVER)
+
+    if not which("git.exe"):
+        print("Downloading Git")
+        download_git()
+
+    if not which("ffmpeg.exe")\
+            or not which("ffplay.exe")\
+            or not which("ffprobe.exe"):
+        print("Downloading ffmpeg")
+        download_ffmpeg()
+    print("\n")
+    print("Finished installing necessary requirements. You may now run:\n")
+    print("python install.py setup\n")
+    print("to continue with setting up Red")
+
+
+def download_git():
+    print("Finding the latest git download")
+    ver_r = requests.get("https://api.github.com/repos/git-for-windows/git/releases/latest")
+    ver_data = ver_r.json()
+    git_url = ""
+    filename = ""
+    file_ending = "64-bit.tar.bz2" if IS_64BIT else "32-bit.tar.bz2"
+    for item in ver_data["assets"]:
+        if item["name"].endswith(file_ending):
+            git_url = item["browser_download_url"]
+            filename = item["name"]
+            break
+    else:
+        print("Something went wrong while finding a git download!")
+        exit(InstallerExitCodes.REQFAIL)
+    print("Downloading Git. This may take a while "
+          "depending on your connection speed")
+    git_r = requests.get(git_url)
+    with open(filename, "wb") as fout:
+        fout.write(git_r.content)
+    print("Finished downloading Git. Extracting...")
+    with tarfile.open(filename, "r") as ext_git:
+        ext_dir = os.path.join(os.getenv("LOCALAPPDATA"), "Programs", "Git")
+        ext_git.extractall(ext_dir)
+        exe_dir = os.path.join(ext_dir, "bin")
+    print("Finished extracting Git")
+
+    pathvar = os.environ["PATH"]
+    if exe_dir not in pathvar:
+        print("Adding Git to the path")
+        key = OpenKey(HKEY_CURRENT_USER, "Environment", 0, KEY_ALL_ACCESS)
+        current_path = QueryValueEx(key, "Path")[0]
+        new_path = "{}{}{};".format(current_path, ";" if not current_path.endswith(";") else "", exe_dir)
+        SetValueEx(key, "Path", 0, REG_SZ, new_path)
+        CloseKey(key)
+    print("Done installing git")
+
+
+def download_ffmpeg():
+    ffurl = ("https://ffmpeg.zeranoe.com/builds"
+             "/{0}/static/ffmpeg-latest-{0}-static.zip"
+             "").format("win64" if IS_64BIT else "win32")
+    ff_file =\
+        "ffmpeg-latest-{}-static.zip".format("win64" if IS_64BIT else "win32")
+    ff_r = requests.get(ffurl)
+    with open(ff_file, "wb") as fout:
+        fout.write(ff_r.content)
+    print("Finished downloading ffmpeg. Extracting...")
+    target_path = os.path.join(os.getenv("LOCALAPPDATA"), "Programs")
+    with zipfile.ZipFile(ff_file, "r") as ff_zip:
+        ff_zip.extractall(target_path)
+    cur_dir = os.getcwd()
+    os.chdir(target_path)
+    os.rename(ff_file[:-4], "ffmpeg")
+    os.chdir(cur_dir)
+    bin_path = os.path.join(target_path, "ffmpeg", "bin")
+    path = os.environ["Path"]
+    if bin_path not in path:
+        print("Adding ffmpeg to the path")
+        key = OpenKey(HKEY_CURRENT_USER, "Environment", 0, KEY_ALL_ACCESS)
+        current_path = QueryValueEx(key, "Path")[0]
+        new_path = "{}{}{};".format(current_path, ";" if not current_path.endswith(";") else "", bin_path)
+        SetValueEx(key, "Path", 0, REG_SZ, new_path)
+        CloseKey(key)
+    print("Done installing ffmpeg")
+
+
 def download_pip():
-    urlretrieve("https://bootstrap.pypa.io/get-pip.py", "get-pip.py")
+    print("Downloading pip, please wait...")
+    r = requests.get("https://bootstrap.pypa.io/get-pip.py")
+    with open("get-pip.py", "w") as fout:
+        fout.write(r.text)
+    try:
+        pip_install = check_output([sys.executable, "get-pip.py"], stderr=STDOUT)
+    except CalledProcessError as e:
+        print(e.output.decode())
+    else:
+        print(pip_install.decode())
+        print("\n\nDone installing pip!")
 
 
 def setup_red():
@@ -247,6 +353,7 @@ def update_red():
 
 
 def install_requirements():
+    print("Launching requirements install")
     if not IS_WINDOWS and not IS_MAC and distro is None:
         if distro is None:
             if pip is None:  # Installer requirements on Linux need pip
@@ -264,11 +371,12 @@ def install_requirements():
                 print("Error with installing requirements, error code {}".format(status))
                 exit(InstallerExitCodes.PIPFAILED)
     if IS_WINDOWS:
-        print(
-            "In order to properly install requirements on Windows, "
-            "you need to use the powershell script (launch-install-win.ps1)"
-        )
-        # exit(0)
+        if requests is None:
+            if pip is None:
+                raise RuntimeError("Pip is not installed!")
+            else:
+                pip.main(["install", "requests"])
+        do_windows_install()
     elif IS_MAC:
         do_mac_install()
     else:

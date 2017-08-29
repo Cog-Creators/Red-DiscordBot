@@ -1,3 +1,4 @@
 pip
 fire
 distro;sys_platform.startswith("linux")
+requests
