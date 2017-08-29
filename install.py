@@ -117,7 +117,8 @@ def ubuntu_install():
     package_list = [
         "python3.5-dev", "python3-pip",
         "build-essential", "libssl-dev",
-        "libffi-dev", "git", "unzip"
+        "libffi-dev", "git", "ffmpeg",
+        "libopus-dev", "unzip"
     ]
     # Use -K here so we ask the user to
     # enter their password every time it is needed
@@ -235,7 +236,9 @@ def do_linux_install():
         pass
     else:
         print(UNSUPPORTED_LINUX_TEXT)
-        sleep(120)  # Give enough time to read the above text before exiting
+        sleep(5)
+        while input("Press enter after reading the above text: "):
+            pass
         exit(InstallerExitCodes.UNSUPPORTEDLINUX)
 
 
@@ -269,7 +272,7 @@ def download_git():
     ver_data = ver_r.json()
     git_url = ""
     filename = ""
-    file_ending = "64-bit.tar.bz2" if IS_64BIT else "32-bit.tar.bz2"
+    file_ending = "64-bit.exe" if IS_64BIT else "32-bit.exe"
     for item in ver_data["assets"]:
         if item["name"].endswith(file_ending):
             git_url = item["browser_download_url"]
@@ -283,22 +286,16 @@ def download_git():
     git_r = requests.get(git_url)
     with open(filename, "wb") as fout:
         fout.write(git_r.content)
-    print("Finished downloading Git. Extracting...")
-    with tarfile.open(filename, "r") as ext_git:
-        ext_dir = os.path.join(os.getenv("LOCALAPPDATA"), "Programs", "Git")
-        ext_git.extractall(ext_dir)
-        exe_dir = os.path.join(ext_dir, "bin")
-    print("Finished extracting Git")
-
-    pathvar = os.environ["PATH"]
-    if exe_dir not in pathvar:
-        print("Adding Git to the path")
-        key = OpenKey(HKEY_CURRENT_USER, "Environment", 0, KEY_ALL_ACCESS)
-        current_path = QueryValueEx(key, "Path")[0]
-        new_path = "{}{}{};".format(current_path, ";" if not current_path.endswith(";") else "", exe_dir)
-        SetValueEx(key, "Path", 0, REG_SZ, new_path)
-        CloseKey(key)
+    print("Finished downloading Git. Installing...")
+    try:
+        git_inst = check_output([filename, "/VERYSILENT", "/NORESTART", "/NOCANCEL", "/NOCLOSEAPPLICATIONS"], stderr=STDOUT)
+    except CalledProcessError as e:
+        print(e.output.decode())
+        exit(InstallerExitCodes.REQFAIL)
+    else:
+        print(git_inst.decode())
     print("Done installing git")
+    os.remove(filename)
 
 
 def download_ffmpeg():
@@ -328,6 +325,7 @@ def download_ffmpeg():
         SetValueEx(key, "Path", 0, REG_SZ, new_path)
         CloseKey(key)
     print("Done installing ffmpeg")
+    os.remove(ff_file)
 
 
 def download_pip():
