@@ -112,6 +112,9 @@ def do_mac_install():
 
 
 def ubuntu_install():
+    """
+    Installs requirements for Ubuntu 16.04
+    """
     print("Installing prerequisite packages...")
     print("If prompted for your password, enter it.")
     package_list = [
@@ -138,13 +141,15 @@ def ubuntu_install():
 
 
 def raspbian_install():
+    """
+    Installs requirements for Raspbian Stretch
+    :return:
+    """
     print("Installing prerequisite packages...")
     print("If prompted for your password, enter it.")
     package_list = [
-        'libbz2-dev', 'libopus-dev', 'liblzma-dev', 'libsqlite3-dev',
-        'libncurses5-dev', 'libgdbm-dev', 'zlib1g-dev', 'libreadline-dev',
-        'git', 'unzip', 'libssl-dev', 'tk-dev', 'build-essential',
-        'libffi-dev', 'libav-tools'
+        'python3-dev', 'python3-pip', 'git', 'unzip', 'libssl-dev', 'tk-dev',
+        'build-essential', 'libffi-dev', 'libav-tools'
     ]
     try:
         aptupres = check_output(
@@ -196,10 +201,16 @@ def debian_install():
         exit(InstallerExitCodes.REQFAIL)
     else:
         print(aar_install.decode())
-    sources_list_add = "deb http://httpredir.debian.org/debian stretch-backports main contrib non-free"
+    sources_list_add = \
+        "deb http://httpredir.debian.org/debian " \
+        "stretch-backports main contrib non-free"
 
     try:
-        add_backports = check_output(["sudo", "add-apt-repository", sources_list_add], stderr=STDOUT)
+        add_backports = check_output(
+            [
+                "sudo", "add-apt-repository", sources_list_add
+            ], stderr=STDOUT
+        )
     except CalledProcessError as e:
         print("Error while adding stretch-backports to sources! Output:\n\n")
         print(e.output.decode())
@@ -216,22 +227,51 @@ def debian_install():
     else:
         print(apt_update.decode())
 
-    package_list = ["python3", ""]
+    package_list = [
+        "python3-dev", "build-essential", "libssl-dev",
+        "libffi-dev", "git", "ffmpeg", "libopus-dev", "unzip"
+    ]
+    try:
+        apt_upgrade = check_output(["sudo", "-K", "apt", "upgrade"])
+    except CalledProcessError as e:
+        print("Error while running apt upgrade! Output:\n\n")
+        print(e.output.decode())
+        exit(InstallerExitCodes.REQFAIL)
+    else:
+        print(apt_upgrade.decode())
+
+    try:
+        apt_install = check_output(
+            [
+                "sudo", "-K", "apt", "install",
+                " ".join(package_list).strip(),
+                "-y"
+            ]
+        )
+    except CalledProcessError as e:
+        print("Error while running apt install! Output:\n\n")
+        print(e.output.decode())
+        exit(InstallerExitCodes.REQFAIL)
+    else:
+        print(apt_install.decode())
+    print("\n\nFinished installing requirements for Debian.")
 
 
 def amazon_linux_install():
-    pass
+    raise NotImplementedError(
+        "Installing on Amazon Linux has not been implemented yet!")
 
 
 def do_linux_install():
     distro_id = distro.id()
     distro_version = [int(part) for part in distro.version().split(".")]
-    if distro_id == "ubuntu" and distro_version[0] == 16 and distro_version[1] == 4:
-        pass
+    if distro_id == "ubuntu" and distro_version[0] == 16 \
+            and distro_version[1] == 4:
+        ubuntu_install()
     elif distro_id == "debian" and distro_version[0] == 9:
-        pass
+        debian_install()
     elif distro_id == "raspbian":
-        pass
+        raspbian_install()
     elif distro_id == "amazon":
         pass
     else:
@@ -268,7 +308,8 @@ def do_windows_install():
 
 def download_git():
     print("Finding the latest git download")
-    ver_r = requests.get("https://api.github.com/repos/git-for-windows/git/releases/latest")
+    ver_r = requests.get(
+        "https://api.github.com/repos/git-for-windows/git/releases/latest")
     ver_data = ver_r.json()
     git_url = ""
     filename = ""
@@ -288,7 +329,12 @@ def download_git():
         fout.write(git_r.content)
     print("Finished downloading Git. Installing...")
     try:
-        git_inst = check_output([filename, "/VERYSILENT", "/NORESTART", "/NOCANCEL", "/NOCLOSEAPPLICATIONS"], stderr=STDOUT)
+        git_inst = check_output(
+            [
+                filename, "/VERYSILENT", "/NORESTART", "/NOCANCEL",
+                "/NOCLOSEAPPLICATIONS"
+            ], stderr=STDOUT
+        )
     except CalledProcessError as e:
         print(e.output.decode())
         exit(InstallerExitCodes.REQFAIL)
@@ -321,7 +367,10 @@ def download_ffmpeg():
         print("Adding ffmpeg to the path")
         key = OpenKey(HKEY_CURRENT_USER, "Environment", 0, KEY_ALL_ACCESS)
         current_path = QueryValueEx(key, "Path")[0]
-        new_path = "{}{}{};".format(current_path, ";" if not current_path.endswith(";") else "", bin_path)
+        new_path = "{}{}{};".format(
+            current_path, ";" if not current_path.endswith(";") else "",
+            bin_path
+        )
         SetValueEx(key, "Path", 0, REG_SZ, new_path)
         CloseKey(key)
     print("Done installing ffmpeg")
@@ -334,7 +383,8 @@ def download_pip():
     with open("get-pip.py", "w") as fout:
         fout.write(r.text)
     try:
-        pip_install = check_output([sys.executable, "get-pip.py"], stderr=STDOUT)
+        pip_install = check_output(
+            [sys.executable, "get-pip.py"], stderr=STDOUT)
     except CalledProcessError as e:
         print(e.output.decode())
     else:
@@ -360,13 +410,16 @@ def install_requirements():
 
             print("You are missing some requirements for using the launcher!")
             print("Attempting to fix this now...")
-            status = pip.main(["install", "-U", "-r", "launcher-requirements.txt"])
+            status = pip.main(
+                ["install", "-U", "-r", "launcher-requirements.txt"])
             if status == 0:
                 print("Launcher requirements installed successfully")
                 print("Please relaunch the launcher once it exits")
                 exit(InstallerExitCodes.SUCCESS)
             else:
-                print("Error with installing requirements, error code {}".format(status))
+                print(
+                    "Error with installing "
+                    "requirements, error code {}".format(status))
                 exit(InstallerExitCodes.PIPFAILED)
     if IS_WINDOWS:
         if requests is None:
