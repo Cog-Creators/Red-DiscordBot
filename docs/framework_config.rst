@@ -83,7 +83,7 @@ After we've gotten that, we need to register default values:
 As seen in the example above, we can set up our defaults in dicts and then use those in
 the appropriate :code:`register` function. As seen above, there's :code:`register_global`
 and :code:`register_guild`, but there's also :code:`register_member`, :code:`register_role`,
-:code:`register_user`, and :code`register_channel`. Note that :code:`member` stores based on
+:code:`register_user`, and :code:`register_channel`. Note that :code:`member` stores based on
 guild id AND the user's id.
 
 Once we have our defaults registered and we have the object, we can now use those values
