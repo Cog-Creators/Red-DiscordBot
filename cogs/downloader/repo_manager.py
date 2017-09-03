@@ -447,7 +447,7 @@ class RepoManager:
         self._repos = {}
 
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._load_repos(set=True))  # str_name: Repo
+        loop.create_task(self._load_repos(set=True))  # str_name: Repo
 
     @property
     def repos_folder(self) -> Path:
