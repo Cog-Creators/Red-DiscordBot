@@ -11,6 +11,7 @@ from core import Config
 from core.bot import Red
 from core import checks
 from core.utils.chat_formatting import box
+from core.i18n import CogI18n
 
 from .repo_manager import RepoManager, Repo
 from .installable import Installable
@@ -18,6 +19,8 @@ from .converters import RepoName, InstalledCog
 from .log import log
 from .errors import CloningError, ExistingGitRepo
 from .checks import install_agreement
+
+_ = CogI18n('Downloader', __file__)
 
 
 class Downloader:
@@ -196,12 +199,12 @@ class Downloader:
                 branch=branch
             )
         except ExistingGitRepo:
-            await ctx.send("That git repo has already been added under another name.")
+            await ctx.send(_("That git repo has already been added under another name."))
         except CloningError:
-            await ctx.send("Something went wrong during the cloning process.")
-            log.exception("Something went wrong during the cloning process.")
+            await ctx.send(_("Something went wrong during the cloning process."))
+            log.exception(_("Something went wrong during the cloning process."))
         else:
-            await ctx.send("Repo `{}` successfully added.".format(name))
+            await ctx.send(_("Repo `{}` successfully added.").format(name))
 
     @repo.command(name="delete")
     async def _repo_del(self, ctx, repo_name: Repo):
@@ -210,7 +213,7 @@ class Downloader:
         """
         await self._repo_manager.delete_repo(repo_name.name)
 
-        await ctx.send("The repo `{}` has been deleted successfully.".format(repo_name.name))
+        await ctx.send(_("The repo `{}` has been deleted successfully.").format(repo_name.name))
 
     @repo.command(name="list")
     async def _repo_list(self, ctx):
@@ -218,7 +221,7 @@ class Downloader:
         Lists all installed repos.
         """
         repos = self._repo_manager.get_all_repo_names()
-        joined = "Installed Repos:\n" + "\n".join(["+ " + r for r in repos])
+        joined = _("Installed Repos:\n") + "\n".join(["+ " + r for r in repos])
 
         await ctx.send(box(joined, lang="diff"))
 
@@ -238,13 +241,13 @@ class Downloader:
         """
         cog = discord.utils.get(repo_name.available_cogs, name=cog_name)
         if cog is None:
-            await ctx.send("Error, there is no cog by the name of"
-                           " `{}` in the `{}` repo.".format(cog_name, repo_name.name))
+            await ctx.send(_("Error, there is no cog by the name of"
+                           " `{}` in the `{}` repo.").format(cog_name, repo_name.name))
             return
 
         if not await repo_name.install_requirements(cog, self.LIB_PATH):
-            await ctx.send("Failed to install the required libraries for"
-                           " `{}`: `{}`".format(cog.name, cog.requirements))
+            await ctx.send(_("Failed to install the required libraries for"
+                           " `{}`: `{}`").format(cog.name, cog.requirements))
             return
 
         await repo_name.install_cog(cog, await self.cog_install_path())
@@ -253,7 +256,7 @@ class Downloader:
 
         await repo_name.install_libraries(self.SHAREDLIB_PATH)
 
-        await ctx.send("`{}` cog successfully installed.".format(cog_name))
+        await ctx.send(_("`{}` cog successfully installed.").format(cog_name))
 
     @cog.command(name="uninstall")
     async def _cog_uninstall(self, ctx, cog_name: InstalledCog):
@@ -269,11 +272,11 @@ class Downloader:
             await self._delete_cog(poss_installed_path)
             # noinspection PyTypeChecker
             await self._remove_from_installed(cog_name)
-            await ctx.send("`{}` was successfully removed.".format(real_name))
+            await ctx.send(_("`{}` was successfully removed.").format(real_name))
         else:
-            await ctx.send("That cog was installed but can no longer"
+            await ctx.send(_("That cog was installed but can no longer"
                            " be located. You may need to remove it's"
-                           " files manually if it is still usable.")
+                           " files manually if it is still usable."))
 
     @cog.command(name="update")
     async def _cog_update(self, ctx, cog_name: InstalledCog=None):
@@ -295,7 +298,7 @@ class Downloader:
 
             # noinspection PyTypeChecker
             await self._reinstall_libraries(installed_and_updated)
-        await ctx.send("Cog update completed successfully.")
+        await ctx.send(_("Cog update completed successfully."))
 
     @cog.command(name="list")
     async def _cog_list(self, ctx, repo_name: Repo):
@@ -303,7 +306,7 @@ class Downloader:
         Lists all available cogs from a single repo.
         """
         cogs = repo_name.available_cogs
-        cogs = "Available Cogs:\n" + "\n".join(
+        cogs = _("Available Cogs:\n") + "\n".join(
             ["+ {}: {}".format(c.name, c.short or "") for c in cogs])
 
         await ctx.send(box(cogs, lang="diff"))
@@ -315,12 +318,12 @@ class Downloader:
         """
         cog = discord.utils.get(repo_name.available_cogs, name=cog_name)
         if cog is None:
-            await ctx.send("There is no cog `{}` in the repo `{}`".format(
+            await ctx.send(_("There is no cog `{}` in the repo `{}`").format(
                 cog_name, repo_name.name
             ))
             return
 
-        msg = "Information on {}:\n{}".format(cog.name, cog.description or "")
+        msg = _("Information on {}:\n{}").format(cog.name, cog.description or "")
         await ctx.send(box(msg))
 
     async def is_installed(self, cog_name: str) -> (bool, Union[Installable, None]):
@@ -344,7 +347,7 @@ class Downloader:
         :return: str
         """
         if isinstance(cog_installable, Installable):
-            made_by = ", ".join(cog_installable.author) or "Missing from info.json"
+            made_by = ", ".join(cog_installable.author) or _("Missing from info.json")
             repo = self._repo_manager.get_repo(cog_installable.repo_name)
             repo_url = repo.url
             cog_name = cog_installable.name
@@ -353,7 +356,7 @@ class Downloader:
             repo_url = "https://github.com/Twentysix26/Red-DiscordBot"
             cog_name = cog_installable.__class__.__name__
 
-        msg = "Command: {}\nMade by: {}\nRepo: {}\nCog name: {}"
+        msg = _("Command: {}\nMade by: {}\nRepo: {}\nCog name: {}")
 
         return msg.format(command_name, made_by, repo_url, cog_name)
 
@@ -377,7 +380,7 @@ class Downloader:
         command = ctx.bot.all_commands.get(command_name)
 
         if command is None:
-            await ctx.send("That command doesn't seem to exist.")
+            await ctx.send(_("That command doesn't seem to exist."))
             return
 
         # Check if in installed cogs

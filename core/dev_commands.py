@@ -1,6 +1,7 @@
 from discord.ext import commands
 from core.utils.chat_formatting import box, pagify
 from core import checks
+from core.i18n import CogI18n
 import asyncio
 import discord
 import traceback
@@ -17,6 +18,8 @@ Notice:
 
 https://github.com/Rapptz/RoboDanny/blob/master/cogs/repl.py
 """
+
+_ = CogI18n("Dev", __file__)
 
 
 class Dev:
@@ -159,11 +162,11 @@ class Dev:
         }
 
         if ctx.channel.id in self.sessions:
-            await ctx.send('Already running a REPL session in this channel. Exit it with `quit`.')
+            await ctx.send(_('Already running a REPL session in this channel. Exit it with `quit`.'))
             return
 
         self.sessions.add(ctx.channel.id)
-        await ctx.send('Enter code to execute or evaluate. `exit()` or `quit` to exit.')
+        await ctx.send(_('Enter code to execute or evaluate. `exit()` or `quit` to exit.'))
 
         def msg_check(m):
             return m.author == ctx.author and m.channel == ctx.channel and \
@@ -228,7 +231,7 @@ class Dev:
             except discord.Forbidden:
                 pass
             except discord.HTTPException as e:
-                await ctx.send('Unexpected error: `{}`'.format(e))
+                await ctx.send(_('Unexpected error: `{}`').format(e))
 
     @commands.command()
     @checks.is_owner()
