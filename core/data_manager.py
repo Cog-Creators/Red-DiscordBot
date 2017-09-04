@@ -13,7 +13,7 @@ basic_config_default = {
     "CORE_PATH_APPEND": "core"
 }
 
-config_dir = Path(appdirs.AppDirs("Red-DiscordBot").user_config_dir())
+config_dir = Path(appdirs.AppDirs("Red-DiscordBot").user_config_dir)
 config_file = config_dir / 'config.json'
 
 
