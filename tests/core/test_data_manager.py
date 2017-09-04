@@ -1,8 +1,9 @@
 import json
 from pathlib import Path
 
-from core import data_manager
 import pytest
+
+from redbot.core import data_manager
 
 
 @pytest.fixture(autouse=True)

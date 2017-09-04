@@ -1,7 +1,7 @@
-from core.config import Config
-from subprocess import run, PIPE
 from collections import namedtuple
-from main import determine_main_folder
+from subprocess import run, PIPE
+
+from .config import Config
 
 __all__ = ["Config", "__version__"]
 version_info = namedtuple("VersionInfo", "major minor patch")
@@ -10,12 +10,10 @@ BASE_VERSION = version_info(3, 0, 0)
 
 
 def get_latest_version():
-    main_folder = determine_main_folder()
     try:
         p = run(
             "git describe --abbrev=0 --tags".split(),
-            stdout=PIPE,
-            cwd=str(main_folder)
+            stdout=PIPE
         )
     except FileNotFoundError:
         # No git

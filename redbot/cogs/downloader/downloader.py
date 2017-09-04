@@ -1,24 +1,23 @@
 import os
 import shutil
+from pathlib import Path
+from sys import path as syspath
 from typing import Tuple, Union
 
 import discord
+from redbot.core import Config
+from redbot.core import checks
+from redbot.core.i18n import CogI18n
+from redbot.core.utils.chat_formatting import box
 from discord.ext import commands
-from pathlib import Path
-from sys import path as syspath
 
-from core import Config
-from core.bot import Red
-from core import checks
-from core.utils.chat_formatting import box
-from core.i18n import CogI18n
-
-from .repo_manager import RepoManager, Repo
-from .installable import Installable
-from .converters import RepoName, InstalledCog
-from .log import log
-from .errors import CloningError, ExistingGitRepo
+from redbot.core.bot import Red
 from .checks import install_agreement
+from .converters import RepoName, InstalledCog
+from .errors import CloningError, ExistingGitRepo
+from .installable import Installable
+from .log import log
+from .repo_manager import RepoManager, Repo
 
 _ = CogI18n('Downloader', __file__)
 

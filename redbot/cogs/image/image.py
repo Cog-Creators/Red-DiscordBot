@@ -1,9 +1,10 @@
-from discord.ext import commands
 from random import shuffle
-import aiohttp
 
-from core import checks, Config
-from core.i18n import CogI18n
+import aiohttp
+from discord.ext import commands
+
+from redbot.core.i18n import CogI18n
+from redbot.core import checks, Config
 
 _ = CogI18n("Image", __file__)
 

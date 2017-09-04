@@ -1,9 +1,9 @@
+from pathlib import Path
 from typing import Tuple
 
-from core.drivers.red_base import BaseDriver
-from core.json_io import JsonIO
+from ..json_io import JsonIO
 
-from pathlib import Path
+from .red_base import BaseDriver
 
 
 class JSON(BaseDriver):

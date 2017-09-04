@@ -1,5 +1,5 @@
+from redbot.core.bot import Red
 from .economy import Economy
-from core.bot import Red
 
 
 def setup(bot: Red):

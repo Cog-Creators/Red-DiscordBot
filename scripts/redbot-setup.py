@@ -1,13 +1,12 @@
+import sys
+from copy import deepcopy
 from pathlib import Path
 
 import appdirs
-import sys
 
-from copy import deepcopy
-
-from core.cli import confirm
-from core.data_manager import basic_config_default
-from core.json_io import JsonIO
+from redbot.core import JsonIO
+from redbot.core import basic_config_default
+from redbot.core import confirm
 
 appdir = appdirs.AppDirs("Red-DiscordBot")
 config_dir = Path(appdir.user_config_dir())

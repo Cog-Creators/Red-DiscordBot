@@ -1,4 +1,4 @@
-import core
+from redbot import core
 
 
 def test_version_working():

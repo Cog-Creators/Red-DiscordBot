@@ -1,23 +1,22 @@
 import asyncio
-import json
+import functools
 import os
-from concurrent.futures import ThreadPoolExecutor
-from pathlib import Path
-from typing import Tuple, MutableMapping, Union
-from subprocess import run as sp_run, PIPE
-from sys import executable
 import pkgutil
 import shutil
-import functools
+from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
+from subprocess import run as sp_run, PIPE
+from sys import executable
+from typing import Tuple, MutableMapping, Union
 
 from discord.ext import commands
 
-from core import Config
-from core import data_manager
+from redbot.core import Config
+from redbot.core import data_manager
 from .errors import *
 from .installable import Installable, InstallableType
-from .log import log
 from .json_mixins import RepoJSONMixin
+from .log import log
 
 
 class Repo(RepoJSONMixin):

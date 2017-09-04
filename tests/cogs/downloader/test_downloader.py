@@ -1,9 +1,10 @@
 from collections import namedtuple
-from raven.versioning import fetch_git_sha
+from pathlib import Path
 
 import pytest
-from cogs.downloader.repo_manager import RepoManager, Repo
-from pathlib import Path
+from raven.versioning import fetch_git_sha
+
+from redbot.cogs import RepoManager, Repo
 
 
 async def fake_run(*args, **kwargs):
@@ -37,7 +38,7 @@ def repo_manager(tmpdir_factory, config):
 
 @pytest.fixture
 def repo(tmpdir):
-    from cogs.downloader.repo_manager import Repo
+    from redbot.cogs import Repo
 
     repo_folder = Path(str(tmpdir)) / 'repos' / 'squid'
     repo_folder.mkdir(parents=True, exist_ok=True)
@@ -69,7 +70,7 @@ def bot_repo(event_loop):
 
 
 def test_existing_git_repo(tmpdir):
-    from cogs.downloader.repo_manager import Repo
+    from redbot.cogs import Repo
 
     repo_folder = Path(str(tmpdir)) / 'repos' / 'squid' / '.git'
     repo_folder.mkdir(parents=True, exist_ok=True)

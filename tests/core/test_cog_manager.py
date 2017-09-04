@@ -1,7 +1,8 @@
 from pathlib import Path
 
 import pytest
-from core import cog_manager
+
+from redbot.core import cog_manager
 
 
 @pytest.fixture()

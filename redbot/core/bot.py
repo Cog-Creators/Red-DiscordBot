@@ -1,19 +1,17 @@
 import asyncio
+import os
+from collections import Counter
+from enum import Enum
 from importlib.machinery import ModuleSpec
+from pathlib import Path
 
 import discord
 from discord.ext import commands
-from collections import Counter
-
 from discord.ext.commands import GroupMixin
-from pathlib import Path
 
-from core import Config
-from enum import Enum
-import os
-
-from core.cog_manager import CogManager
-from core import i18n
+from .cog_manager import CogManager
+from . import Config
+from . import i18n
 
 
 class Red(commands.Bot):

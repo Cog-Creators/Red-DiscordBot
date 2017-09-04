@@ -1,15 +1,15 @@
 import pkgutil
 from importlib import invalidate_caches
 from importlib.machinery import ModuleSpec
-from typing import Tuple, Union, List
 from pathlib import Path
+from typing import Tuple, Union, List
 
+from . import checks
+from .config import Config
+from .i18n import CogI18n
 from discord.ext import commands
 
-from core import checks
-from core.config import Config
-from core.utils.chat_formatting import box
-from core.i18n import CogI18n
+from .utils.chat_formatting import box
 
 __all__ = ["CogManager"]
 

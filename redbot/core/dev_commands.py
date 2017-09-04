@@ -1,15 +1,16 @@
-from discord.ext import commands
-from core.utils.chat_formatting import box, pagify
-from core import checks
-from core.i18n import CogI18n
 import asyncio
-import discord
-import traceback
 import inspect
-import textwrap
-from contextlib import redirect_stdout
 import io
+import textwrap
+import traceback
+from contextlib import redirect_stdout
 
+import discord
+from . import checks
+from .i18n import CogI18n
+from discord.ext import commands
+
+from .utils.chat_formatting import box, pagify
 
 """
 Notice:

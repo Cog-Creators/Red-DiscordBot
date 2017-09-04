@@ -1,13 +1,15 @@
-from discord.ext import commands
-from core.utils.chat_formatting import escape, italics, pagify
-from core.i18n import CogI18n
-from random import randint, choice
-from enum import Enum
-from urllib.parse import quote_plus
-import discord
 import datetime
 import time
+from enum import Enum
+from random import randint, choice
+from urllib.parse import quote_plus
+
 import aiohttp
+import discord
+from redbot.core.i18n import CogI18n
+from discord.ext import commands
+
+from redbot.core.utils.chat_formatting import escape, italics, pagify
 
 _ = CogI18n("General", __file__)
 

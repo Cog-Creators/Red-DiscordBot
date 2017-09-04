@@ -1,10 +1,10 @@
 import datetime
-from typing import Union, List
 import os
+from typing import Union, List
 
 import discord
 
-from core import Config
+from redbot.core import Config
 
 __all__ = ["Account", "get_balance", "set_balance", "withdraw_credits", "deposit_credits",
            "can_spend", "transfer_credits", "wipe_bank", "get_guild_accounts",

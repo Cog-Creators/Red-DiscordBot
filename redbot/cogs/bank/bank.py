@@ -1,8 +1,8 @@
+from redbot.core import checks, bank
+from redbot.core.i18n import CogI18n
 from discord.ext import commands
 
-from core import checks, bank
-from core.bot import Red  # Only used for type hints
-from core.i18n import CogI18n
+from redbot.core.bot import Red  # Only used for type hints
 
 _ = CogI18n('Bank', __file__)
 

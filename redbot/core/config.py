@@ -1,14 +1,11 @@
 import logging
-
+from copy import deepcopy
 from typing import Callable, Union, Tuple
 
 import discord
-from copy import deepcopy
 
-from pathlib import Path
-
+from .data_manager import cog_data_path, core_data_path
 from .drivers.red_json import JSON as JSONDriver
-from core.data_manager import cog_data_path, core_data_path
 
 log = logging.getLogger("red.config")
 

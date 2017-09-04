@@ -1,10 +1,12 @@
-import discord
-import traceback
 import datetime
 import logging
+import traceback
+
+import discord
+from .sentry_setup import should_log
 from discord.ext import commands
-from core.utils.chat_formatting import inline
-from core.sentry_setup import should_log
+
+from .utils.chat_formatting import inline
 
 log = logging.getLogger("red")
 sentry_log = logging.getLogger("red.sentry")

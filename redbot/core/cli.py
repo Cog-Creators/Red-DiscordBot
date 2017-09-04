@@ -1,7 +1,7 @@
 import argparse
 import asyncio
 
-from core.bot import Red
+from redbot.core.bot import Red
 
 
 def confirm(m=""):

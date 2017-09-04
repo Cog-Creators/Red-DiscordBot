@@ -1,8 +1,9 @@
-from pathlib import Path
-import appdirs
 import sys
+from pathlib import Path
 
-from core.json_io import JsonIO
+import appdirs
+
+from .json_io import JsonIO
 
 jsonio = None
 basic_config = None

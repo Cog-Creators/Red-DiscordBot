@@ -1,7 +1,8 @@
 # Discord Version check
 
-import discord
 import sys
+
+import discord
 
 if discord.version_info.major < 1:
     print("You are not running the rewritten version of discord.py.\n\n"
@@ -9,21 +10,21 @@ if discord.version_info.major < 1:
           " >= 1.0.0.")
     sys.exit(1)
 
-from core.bot import Red, ExitCodes
-from core.cog_manager import CogManagerUI
-from core.data_manager import load_basic_configuration
-from core.global_checks import init_global_checks
-from core.events import init_events
-from core.sentry_setup import init_sentry_logging
-from core.cli import interactive_config, confirm, parse_cli_flags, ask_sentry
-from core.core_commands import Core
-from core.dev_commands import Dev
+from redbot.core.bot import Red, ExitCodes
+from redbot.core.cog_manager import CogManagerUI
+from redbot.core.data_manager import load_basic_configuration
+from redbot.core.global_checks import init_global_checks
+from redbot.core.events import init_events
+from redbot.core.sentry_setup import init_sentry_logging
+from redbot.core.cli import interactive_config, confirm, parse_cli_flags, ask_sentry
+from redbot.core.core_commands import Core
+from redbot.core.dev_commands import Dev
 import asyncio
 import logging.handlers
 import logging
 import os
 from pathlib import Path
-from warnings import warn
+
 
 #
 #               Red - Discord Bot v3
@@ -58,7 +59,7 @@ def init_loggers(cli_flags):
     else:
         logger.setLevel(logging.WARNING)
 
-    from core.data_manager import core_data_path
+    from redbot.core.data_manager import core_data_path
     logfile_path = core_data_path() / 'red.log'
     fhandler = logging.handlers.RotatingFileHandler(
         filename=str(logfile_path), encoding='utf-8', mode='a',
@@ -73,10 +74,6 @@ def init_loggers(cli_flags):
     sentry_logger.setLevel(logging.WARNING)
 
     return logger, sentry_logger
-
-
-def determine_main_folder() -> Path:
-    return Path(os.path.dirname(__file__)).resolve()
 
 
 async def _get_prefix_and_token(red, indict):
