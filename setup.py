@@ -35,6 +35,7 @@ setup(
         'Topic :: Documentation :: Sphinx'
     ],
     scripts=[
+        'scripts/redbot.py',
         'scripts/redbot-setup.py'
     ]
 )
