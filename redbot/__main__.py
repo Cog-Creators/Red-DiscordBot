@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 # Discord Version check
 
@@ -88,33 +88,24 @@ async def _get_prefix_and_token(red, indict):
     indict['enable_sentry'] = await red.db.enable_sentry()
 
 
-if __name__ == '__main__':
+def main():
     cli_flags = parse_cli_flags()
-
     load_basic_configuration(cli_flags.instance_name)
-
     log, sentry_log = init_loggers(cli_flags)
     description = "Red v3 - Alpha"
-    bot_dir = determine_main_folder()
-    red = Red(cli_flags, description=description, pm_help=None,
-              bot_dir=bot_dir)
+    red = Red(cli_flags, description=description, pm_help=None)
     init_global_checks(red)
     init_events(red, cli_flags)
-
     red.add_cog(Core())
     red.add_cog(CogManagerUI())
-
     if cli_flags.dev:
         red.add_cog(Dev())
-
     loop = asyncio.get_event_loop()
     tmp_data = {}
     loop.run_until_complete(_get_prefix_and_token(red, tmp_data))
-
     token = os.environ.get("RED_TOKEN", tmp_data['token'])
     prefix = cli_flags.prefix or tmp_data['prefix']
     enable_sentry = tmp_data['enable_sentry']
-
     if token is None or not prefix:
         if cli_flags.no_prompt is False:
             new_token = interactive_config(red, token_set=bool(token),
@@ -124,17 +115,12 @@ if __name__ == '__main__':
         else:
             log.critical("Token and prefix must be set in order to login.")
             sys.exit(1)
-
     if enable_sentry is None:
         ask_sentry(red)
-
     loop.run_until_complete(_get_prefix_and_token(red, tmp_data))
-
     if tmp_data['enable_sentry']:
         init_sentry_logging(red, sentry_log)
-
     cleanup_tasks = True
-
     try:
         loop.run_until_complete(red.start(token, bot=not cli_flags.not_bot))
     except discord.LoginFailure:
@@ -166,3 +152,7 @@ if __name__ == '__main__':
             gathered.exception()
 
         sys.exit(red._shutdown_mode.value)
+
+
+if __name__ == '__main__':
+    main()

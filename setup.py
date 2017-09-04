@@ -66,8 +66,9 @@ setup(
         'Topic :: Communications :: Chat :: Discord',
         'Topic :: Documentation :: Sphinx'
     ],
-    scripts=[
-        'scripts/redbot.py',
-        'scripts/redbot-setup.py'
-    ]
+    entry_points={
+        'console_scripts': [
+            'redbot=redbot.__main__:main',
+            'redbot-setup=redbot.setup:basic_setup']
+    },
 )

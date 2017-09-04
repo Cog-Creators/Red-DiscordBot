@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 import sys
 from copy import deepcopy
@@ -6,12 +6,12 @@ from pathlib import Path
 
 import appdirs
 
-from redbot.core import JsonIO
-from redbot.core import basic_config_default
-from redbot.core import confirm
+from redbot.core.json_io import JsonIO
+from redbot.core.data_manager import basic_config_default
+from redbot.core.cli import confirm
 
 appdir = appdirs.AppDirs("Red-DiscordBot")
-config_dir = Path(appdir.user_config_dir())
+config_dir = Path(appdir.user_config_dir)
 config_dir.mkdir(parents=True, exist_ok=True)
 config_file = config_dir / 'config.json'
 
@@ -35,7 +35,7 @@ def basic_setup():
     :return:
     """
 
-    default_data_dir = Path(appdir.user_data_dir())
+    default_data_dir = Path(appdir.user_data_dir)
 
     print("Hello! Before we begin the full configuration process we need to"
           " gather some initial information about where you'd like us"
