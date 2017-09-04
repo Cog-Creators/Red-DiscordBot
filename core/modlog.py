@@ -1,4 +1,6 @@
 import discord
+import os
+
 from core import Config
 from core.bot import Red
 from core.utils.chat_formatting import bold
@@ -25,7 +27,13 @@ _DEFAULT_GUILD = {
 _modlog_type = type("ModLog", (object,), {})
 
 
-_conf = Config.get_conf(_modlog_type(), 1354799444)
+def _register_defaults():
+    _conf.register_global(**_DEFAULT_GLOBAL)
+    _conf.register_guild(**_DEFAULT_GUILD)
+
+if not os.environ.get('BUILDING_DOCS'):
+    _conf = Config.get_conf(_modlog_type(), 1354799444)
+    _register_defaults()
 
 
 class Case:
@@ -159,14 +167,6 @@ class Case:
             until=data["until"], channel=channel, amended_by=amended_by,
             modified_at=data["modified_at"], message=message
         )
-
-
-def _register_defaults():
-    _conf.register_global(**_DEFAULT_GLOBAL)
-    _conf.register_guild(**_DEFAULT_GUILD)
-
-
-_register_defaults()
 
 
 async def get_case(case_number: int, guild: discord.Guild,
