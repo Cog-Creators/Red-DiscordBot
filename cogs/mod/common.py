@@ -71,15 +71,16 @@ async def is_mod_or_superior(bot: Red, obj: discord.Message or discord.Member or
 
     if isinstance(obj, discord.Role):
         return obj.id in [admin_role_id, mod_role_id]
-
-    mod_role = [r for r in server.roles if r.id == mod_role_id][0]
-    admin_role = [r for r in server.roles if r.id == admin_role_id][0]
+    mod_roles = [r for r in server.roles if r.id == mod_role_id]
+    mod_role = mod_roles[0] if len(mod_roles) > 0 else None
+    admin_roles = [r for r in server.roles if r.id == admin_role_id]
+    admin_role = admin_roles[0] if len(admin_roles) > 0 else None
 
     if user and user == await bot.is_owner(user):
         return True
-    elif discord.utils.get(user.roles, name=admin_role):
+    elif admin_role and discord.utils.get(user.roles, name=admin_role):
         return True
-    elif discord.utils.get(user.roles, name=mod_role):
+    elif mod_role and discord.utils.get(user.roles, name=mod_role):
         return True
     else:
         return False
@@ -122,12 +123,12 @@ async def is_admin_or_superior(bot: Red, obj: discord.Message or discord.Role or
 
     if isinstance(obj, discord.Role):
         return obj.id == admin_role_id
-
-    admin_role = [r for r in server.roles if r.id == admin_role_id][0]
+    admin_roles = [r for r in server.roles if r.id == admin_role_id]
+    admin_role = admin_roles[0] if len(admin_roles) > 0 else None
 
     if user and await bot.is_owner(user):
         return True
-    elif discord.utils.get(user.roles, name=admin_role):
+    elif admin_roles and discord.utils.get(user.roles, name=admin_role):
         return True
     else:
         return False
