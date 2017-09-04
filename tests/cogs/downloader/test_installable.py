@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from redbot.cogs import Installable, InstallableType
+from redbot.cogs.downloader.installable import Installable, InstallableType
 
 INFO_JSON = {
     "author": (

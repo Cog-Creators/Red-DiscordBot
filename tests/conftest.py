@@ -4,8 +4,8 @@ from pathlib import Path
 
 import pytest
 from _pytest.monkeypatch import MonkeyPatch
-from core import Config
-from core.bot import Red
+from redbot.core import Config
+from redbot.core.bot import Red
 
 from redbot.core.drivers import red_json
 
@@ -145,7 +145,7 @@ def ctx(empty_member, empty_channel, red):
 #region Red Mock
 @pytest.fixture()
 def red(config_fr):
-    from redbot.core import parse_cli_flags
+    from redbot.core.cli import parse_cli_flags
     cli_flags = parse_cli_flags()
 
     description = "Red v3 - Alpha"
