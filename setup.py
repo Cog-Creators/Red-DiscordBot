@@ -1,5 +1,7 @@
 from distutils.core import setup
+from pathlib import Path
 
+import os
 from setuptools import find_packages
 
 from redbot.core import __version__
@@ -14,10 +16,40 @@ def get_version():
     return "{}.{}.{}".format(*__version__)
 
 
+def find_locale_folders():
+    """
+    Ignore this tomfoolery in the desire for automation. It works, that's
+    all you gotta know. Don't fuck with this unless you really know what
+    you're doing, otherwise we lose all translations.
+    """
+    def glob_locale_files(path: Path):
+        msgs = path.glob("*.po")
+
+        parents = path.parents
+
+        return [str(m.relative_to(parents[0])) for m in msgs]
+
+    ret = {
+        'redbot.core': glob_locale_files(Path('redbot/core/locales'))
+    }
+
+    cogs_path = Path('redbot/cogs')
+
+    for cog_folder in cogs_path.iterdir():
+        locales_folder = cog_folder / 'locales'
+        if not locales_folder.is_dir():
+            continue
+
+        pkg_name = str(cog_folder).replace('/', '.')
+        ret[pkg_name] = glob_locale_files(locales_folder)
+
+    return ret
+
 setup(
     name='Red-DiscordBot',
     version=get_version(),
     packages=get_package_list(),
+    package_data=find_locale_folders(),
     url='https://github.com/Cog-Creators/Red-DiscordBot',
     license='GPLv3',
     author='Cog-Creators',
