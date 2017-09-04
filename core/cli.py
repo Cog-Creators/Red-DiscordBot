@@ -102,9 +102,9 @@ def parse_cli_flags():
     parser.add_argument("--dev",
                         action="store_true",
                         help="Enables developer mode")
-    parser.add_argument("config",
+    parser.add_argument("instance_name",
                         nargs='?',
-                        help="Path to config generated on initial setup.")
+                        help="Name of the bot instance created during `redbot-setup`.")
 
     args = parser.parse_args()
 

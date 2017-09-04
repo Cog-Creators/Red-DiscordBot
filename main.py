@@ -93,22 +93,7 @@ async def _get_prefix_and_token(red, indict):
 if __name__ == '__main__':
     cli_flags = parse_cli_flags()
 
-    if cli_flags.config:
-        load_basic_configuration(Path(cli_flags.config).resolve())
-    else:
-        warn("Soon you will need to change the way you load the bot."
-             " The new method of loading has yet to be decided upon but"
-             " will be made clear in announcements from the support server"
-             " and from documentation. Please see issue #938 for further"
-             " discussion on this topic.",
-             category=FutureWarning)
-        import core.data_manager
-        defaults = core.data_manager.basic_config_default.copy()
-        defaults['DATA_PATH'] = str(determine_main_folder())
-        defaults['CORE_PATH_APPEND'] = 'core/.data'
-        defaults['COG_PATH_APPEND'] = 'cogs/.data'
-
-        core.data_manager.basic_config = defaults
+    load_basic_configuration(cli_flags.instance_name)
 
     log, sentry_log = init_loggers(cli_flags)
     description = "Red v3 - Alpha"

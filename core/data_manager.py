@@ -1,4 +1,6 @@
 from pathlib import Path
+import appdirs
+import sys
 
 from core.json_io import JsonIO
 
@@ -11,13 +13,23 @@ basic_config_default = {
     "CORE_PATH_APPEND": "core"
 }
 
+config_dir = Path(appdirs.AppDirs("Red-DiscordBot").user_config_dir())
+config_file = config_dir / 'config.json'
 
-def load_basic_configuration(path: Path):
+
+def load_basic_configuration(instance_name: str):
     global jsonio
     global basic_config
 
-    jsonio = JsonIO(path)
-    basic_config = jsonio._load_json()
+    jsonio = JsonIO(config_file)
+
+    try:
+        config = jsonio._load_json()
+        basic_config = config[instance_name]
+    except (FileNotFoundError, KeyError):
+        print("You need to configure the bot instance using `redbot-setup`"
+              " prior to running the bot.")
+        sys.exit(1)
 
 
 def _base_data_path() -> Path:
