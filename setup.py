@@ -19,9 +19,27 @@ setup(
     name='Red-DiscordBot',
     version=get_version(),
     packages=get_package_list(),
+    package_dir={
+        'redbot': 'core',
+        'redbot.cogs': 'cogs'
+    },
     url='https://github.com/Cog-Creators/Red-DiscordBot',
     license='GPLv3',
     author='Cog-Creators',
     author_email='',
-    description='A highly customizable Discord bot'
+    description='A highly customizable Discord bot',
+    classifiers=[
+        'Development Status :: 4 - Beta',
+        'Framework :: AsyncIO',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
+        'Topic :: Communications :: Chat :: Discord',
+        'Topic :: Documentation :: Sphinx'
+    ],
+    scripts=[
+        'scripts/redbot-setup.py'
+    ]
 )
