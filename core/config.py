@@ -44,7 +44,7 @@ class Value:
         try:
             ret = await driver.get(self.identifiers)
         except KeyError:
-            return default or self.default
+            return default if default is not None else self.default
         return ret
 
     def __call__(self, default=None):

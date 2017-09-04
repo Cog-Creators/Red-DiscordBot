@@ -310,6 +310,9 @@ class Core:
         Changes bot locale.
         """
         i18n.set_locale(locale_name)
+
+        await ctx.bot.db.locale.set(locale_name)
+
         await ctx.send(_("Locale has been set."))
 
     @commands.command()
