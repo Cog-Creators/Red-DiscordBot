@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # Discord Version check
 
 import sys
@@ -23,7 +25,6 @@ import asyncio
 import logging.handlers
 import logging
 import os
-from pathlib import Path
 
 
 #

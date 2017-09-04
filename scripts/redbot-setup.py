@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import sys
 from copy import deepcopy
 from pathlib import Path
