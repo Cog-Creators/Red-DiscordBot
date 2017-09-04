@@ -1,5 +1,4 @@
 import asyncio
-import importlib.util
 from importlib.machinery import ModuleSpec
 
 import discord
@@ -29,7 +28,8 @@ class Red(commands.Bot):
             owner=None,
             whitelist=[],
             blacklist=[],
-            enable_sentry=None
+            enable_sentry=None,
+            language='en'
         )
 
         self.db.register_guild(
