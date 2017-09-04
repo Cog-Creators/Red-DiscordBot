@@ -1,5 +1,4 @@
 import asyncio
-import importlib.util
 from importlib.machinery import ModuleSpec
 
 import discord
@@ -14,6 +13,7 @@ from enum import Enum
 import os
 
 from core.cog_manager import CogManager
+from core import i18n
 
 
 class Red(commands.Bot):
@@ -29,7 +29,8 @@ class Red(commands.Bot):
             owner=None,
             whitelist=[],
             blacklist=[],
-            enable_sentry=None
+            enable_sentry=None,
+            locale='en'
         )
 
         self.db.register_guild(
@@ -73,11 +74,13 @@ class Red(commands.Bot):
     async def _dict_abuse(self, indict):
         """
         Please blame <@269933075037814786> for this.
+
         :param indict:
         :return:
         """
 
         indict['owner_id'] = await self.db.owner()
+        i18n.set_locale(await self.db.locale())
 
     async def is_owner(self, user):
         if user.id in self._co_owners:
