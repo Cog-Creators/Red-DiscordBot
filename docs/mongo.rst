@@ -24,13 +24,13 @@ Install for Windows
 
 ::
 
-    "C:Program FilesMongoDBServer3.4binmongod.exe"
+    "C:\Program Files\MongoDBServer\3.4\bin\mongod.exe"
 
 5. Connect to MongoDB by opening another Command Prompt and type
 
 ::
 
-    "C:Program FilesMongoDBServer3.4binmongod.exe"
+    "C:\Program Files\MongoDBServer\3.4\bin\mongod.exe"
 
 MongoDB is now running on your computer!
 
