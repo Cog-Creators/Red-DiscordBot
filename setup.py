@@ -71,4 +71,20 @@ setup(
             'redbot=redbot.__main__:main',
             'redbot-setup=redbot.setup:basic_setup']
     },
+    python_requires='>=3.5',
+    install_requires=[
+        'discord.py>=1.0[voice]',
+        'appdirs',
+        'youtube_dl',
+        'raven'
+    ],
+    dependency_links=[
+        'git+https://github.com/Rapptz/discord.py@rewrite#egg=discord.py-1.0',
+        'git+https://github.com/pytest-dev/pytest-asyncio#egg=pytest-asyncio'
+    ],
+    extras_require={
+        'test': ['pytest>=3', 'pytest-asyncio'],
+        'mongo': ['pymongo', 'motor'],
+        'docs': ['sphinx', 'sphinxcontrib-asyncio', 'sphinx_rtd_theme']
+    }
 )
