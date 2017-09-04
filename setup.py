@@ -47,7 +47,7 @@ def find_locale_folders():
 
 setup(
     name='Red-DiscordBot',
-    version=get_version(),
+    version="3.0.0a1",  # get_version(),
     packages=get_package_list(),
     package_data=find_locale_folders(),
     url='https://github.com/Cog-Creators/Red-DiscordBot',
@@ -63,7 +63,7 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
-        'Topic :: Communications :: Chat :: Discord',
+        'Topic :: Communications :: Chat',
         'Topic :: Documentation :: Sphinx'
     ],
     entry_points={
