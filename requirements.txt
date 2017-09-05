@@ -1,7 +1,4 @@
 appdirs
-git+https://github.com/Rapptz/discord.py@rewrite#egg=discord.py[voice]
+discord.py>=1.0.0a0
 youtube_dl
-pytest
-git+https://github.com/pytest-dev/pytest-asyncio
-pymongo
-git+https://github.com/getsentry/raven-python
+raven

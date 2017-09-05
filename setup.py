@@ -1,19 +1,23 @@
 from distutils.core import setup
 from pathlib import Path
 
-import os
 from setuptools import find_packages
 
-from redbot.core import __version__
-
+# from redbot.core import __version__
 
 def get_package_list():
     core = find_packages(include=['redbot', 'redbot.*'])
     return core
 
 
-def get_version():
-    return "{}.{}.{}".format(*__version__)
+def get_requirements():
+    with open('requirements.txt') as f:
+        requirements = f.read().splitlines()
+    return requirements
+
+
+# def get_version():
+#    return "{}.{}.{}".format(*__version__)
 
 
 def find_locale_folders():
@@ -47,7 +51,7 @@ def find_locale_folders():
 
 setup(
     name='Red-DiscordBot',
-    version="3.0.0a1",  # get_version(),
+    version="3.0.0a11",  # get_version(),
     packages=get_package_list(),
     package_data=find_locale_folders(),
     url='https://github.com/Cog-Creators/Red-DiscordBot',
@@ -72,15 +76,10 @@ setup(
             'redbot-setup=redbot.setup:basic_setup']
     },
     python_requires='>=3.5',
-    install_requires=[
-        'discord.py>=1.0[voice]',
-        'appdirs',
-        'youtube_dl',
-        'raven'
-    ],
+    setup_requires=get_requirements(),
+    install_requires=get_requirements(),
     dependency_links=[
-        'git+https://github.com/Rapptz/discord.py@rewrite#egg=discord.py-1.0',
-        'git+https://github.com/pytest-dev/pytest-asyncio#egg=pytest-asyncio'
+        'https://github.com/Rapptz/discord.py/tarball/rewrite#egg=discord.py-1.0'
     ],
     extras_require={
         'test': ['pytest>=3', 'pytest-asyncio'],
