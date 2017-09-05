@@ -33,6 +33,8 @@ class CommandObj:
     async def get_commands(config) -> dict:
         commands = await config.commands()
         customcommands = {k: v for k, v in commands.items() if commands[k]}
+        if len(customcommands) == 0:
+            return None
         return customcommands
 
     async def get_responses(self, ctx):
@@ -275,20 +277,26 @@ class CustomCommands:
 
         response = await CommandObj.get_commands(self.config.guild(ctx.guild))
 
-        await ctx.send(response)
-
-        # Need info on grabbing whole config for guild
-        return
-        commands = await self.config.guild(ctx.guild).commands(None)
-
-        if not commands:
+        if not response:
             await ctx.send("There are no custom commands in this guild."
                            " Use `{}customcom add` to start adding some."
                            "".format(ctx.prefix))
             return
 
-        commands = ", ".join([ctx.prefix + c for c in sorted(commands)])
-        commands = "Custom commands:\n\n" + commands
+        results = []
+
+        for command, body in response.items():
+            responses = body['response']
+            if isinstance(responses, list):
+                result = ", ".join(responses)
+            elif isinstance(responses, str):
+                result = responses
+            else:
+                continue
+            results.append("{command:<15} : {result}".format(command=command,
+                                                             result=result))
+
+        commands = "\n".join(results)
 
         if len(commands) < 1500:
             await ctx.send(box(commands))
@@ -371,8 +379,3 @@ class CustomCommands:
         else:
             return raw_result
         return str(getattr(first, second, raw_result))
-
-
-def setup(bot):
-
-    bot.add_cog(CustomCommands(bot))
