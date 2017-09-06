@@ -2,9 +2,9 @@ import asyncio
 import audioop
 import glob
 import logging
-import os
 import threading
 from concurrent.futures import ThreadPoolExecutor
+from pathlib import Path
 
 import discord
 import youtube_dl
@@ -16,15 +16,31 @@ from discord.ext import commands
 log = logging.getLogger("red.audio")
 
 
-class NoVoiceClient(Exception):
+class AudioError(Exception):
     pass
 
 
-class QueueError(Exception):
+class AuthorNotInVoice(AudioError):
     pass
 
 
-class VoiceManager:
+class NoVoiceClient(AudioError):
+    pass
+
+
+class VoiceClientBusy(AudioError):
+    pass
+
+
+class QueueError(AudioError):
+    pass
+
+
+class DownloadError(AudioError):
+    pass
+
+
+class AudioManager:
 
     def __init__(self, ctx):
         self.guild = ctx.guild
@@ -33,11 +49,12 @@ class VoiceManager:
         self.disc_timer = 0
         self.timeout = 10
         self.queue = []
+        self.current = None
         self.loop = asyncio.get_event_loop()
         self.task = self.loop.create_task(self.queue_manager())
 
-    def enqueue(self, source: discord.AudioSource):
-        self.queue.append(source)
+    def enqueue(self, song):
+        self.queue.append(song)
 
     def mix(self, source: discord.AudioSource):
         # Check if voice client is already playing
@@ -65,27 +82,37 @@ class VoiceManager:
         self.voice_client = voice_client
 
     async def queue_manager(self):
+        log.debug('Queue manager started on guild ' + str(self.guild.id))
         while True:
             await asyncio.sleep(1)
             self.disc_timer += 1
+            if self.voice_client is None:
+                # can put some reconnect logic here later
+                # or at least an error message
+                break
+            try:
+                if not self.queue[0].is_downloaded():
+                    # It's ok to block the loop here and wait for download
+                    await self.queue[0].download()
+                    log.debug('Downloading song ' + self.queue[0].data.get('title', '[no title]'))
+                else:
+                    if (self.current is None or self.current.source.done) and not self.is_busy(self.voice_client):
+                        log.debug('Playing song ' + self.queue[0].data.get('title', '[no title]'))
+                        self.current = self.queue.pop(0)
+                        self.voice_client.play(MixedSource(self.current.source))
+
+            except IndexError:
+                # Queue is empty
+                pass
+
             if self.is_busy(self.voice_client):
                 self.disc_timer = 0
             if self.disc_timer > self.timeout:
                 await self.voice_client.disconnect()
                 # This kills the task
-                return
-            if not self.queue:
-                continue
-            if self.queue[0].done:
-                # current song is done
-                self.queue.pop(0)
-            if self.voice_client is None:
-                # can put some reconnect logic here later
-                # or at least an error message
-                continue
-            if self.queue and not self.is_busy(self.voice_client):
-                # ok to play new song
-                self.voice_client.play(MixedSource(self.queue[0]))
+                break
+        self.queue.clear()
+        log.debug('Queue manager stopped on guild ' + str(self.guild.id))
 
     def is_busy(self, voice_client: discord.VoiceClient):
         return voice_client.is_playing() or voice_client.is_paused()
@@ -111,50 +138,47 @@ class Audio:
         self.conf.register_guild(
             **self.default_guild_settings
         )
-        self.data_path = cog_data_path(self)
-        self.local_path = os.path.join(self.data_path, 'local')
-        self.downloader_path = os.path.join(self.data_path, 'cache')
+        self.data_path = Path(cog_data_path(self))
+        self.local_path = self.data_path / 'local'
+        self.downloader_path = self.data_path / 'cache'
         self.downloader = Downloader(self.downloader_path)
-        if not os.path.exists(self.local_path):
-            os.makedirs(self.local_path)
         self.managers = {}
 
-    async def ensure_voice(self, ctx):
-        if ctx.author.voice is None:
-            raise NoVoiceClient("You are not in a voice channel.")
-        # Need to see if checking voice_client.is_connected() is beneficial
-        voice_client = ctx.guild.voice_client
-        if voice_client is None:
-            try:
-                voice_client = await ctx.author.voice.channel.connect()
-            except asyncio.TimeoutError:
-                raise NoVoiceClient("Timed out trying to connect to voice channel.")
-            except:
-                raise NoVoiceClient("Could not connect to voice channel.")
-        elif voice_client.channel != ctx.author.voice.channel:
-            # Check if it's ok to try to move channels
-            if not voice_client.is_playing() and not voice_client.is_paused():
-                await voice_client.move_to(ctx.author.voice.channel)
-                await ctx.send('Moving voice channels.')
-            else:
-                raise NoVoiceClient("Voice client is busy in another channel.")
-        # Check for existing voice manager
-        manager = self.managers.get(ctx.guild.id, None)
-        if manager is None:
-            # Create a voice manager
-            manager = VoiceManager(ctx)
-            self.managers[ctx.guild.id] = manager
-        manager.set_voice_client(voice_client)
-        if manager.task.done():
-            manager.restart()
-        return manager
+        self.local_path.mkdir(exist_ok=True)
+        self.downloader_path.mkdir(exist_ok=True)
 
-    def check_voice(self, ctx):
-        if ctx.author.voice is None:
-            raise NoVoiceClient("You are not in a voice channel.")
-        if ctx.guild.voice_client is None:
-            raise NoVoiceClient("I'm not in a voice channel.")
-        return self.managers.get(ctx.guild.id, None)   
+    async def get_manager(self, ctx, connect: bool=False):
+        # Returns a reference to the audio manager
+        # and ensures a connection if required
+        manager = self.managers.get(ctx.guild.id, None)
+        voice_client = manager.voice_client if manager else ctx.guild.voice_client
+
+        if connect:
+            if ctx.author.voice is None:
+                raise AuthorNotInVoice("You are not in a voice channel.")            
+            if voice_client is None or not voice_client.is_connected():
+                try:
+                    voice_client = await ctx.author.voice.channel.connect()
+                except asyncio.TimeoutError:
+                    raise NoVoiceClient("Timed out trying to connect to voice channel.")
+                except:
+                    raise NoVoiceClient("Could not connect to voice channel.")
+            elif voice_client.channel != ctx.author.voice.channel:
+                # Check if it's ok to try to move channels
+                if not voice_client.is_playing() and not voice_client.is_paused():
+                    await voice_client.move_to(ctx.author.voice.channel)
+                    await ctx.send('Moving voice channels.')
+                else:
+                    raise VoiceClientBusy("Voice client is busy in another channel.")
+
+            if manager is None:
+                manager = AudioManager(ctx)
+                self.managers[ctx.guild.id] = manager
+            manager.set_voice_client(voice_client)
+            if manager.task.done():
+                manager.restart()
+
+        return manager
 
     @commands.command()
     async def local(self, ctx, *, filename: str):
@@ -166,13 +190,14 @@ class Audio:
             return
 
         try:
-            manager = await self.ensure_voice(ctx)
-        except NoVoiceClient as e:
+            manager = await self.get_manager(ctx, connect=True)
+        except AudioError as e:
             await ctx.send(e)
             return
 
-        source = FFmpegPCMAudio(path)
+        source = FFmpegPCMAudio(str(path))
         manager.mix(source)
+        log.debug('Playing file ' + str(path))
         await ctx.send("{} is playing local file `{}`.".format(ctx.author, filename))
 
     @commands.command()
@@ -180,57 +205,78 @@ class Audio:
         """Play from url"""
 
         try:
-            manager = await self.ensure_voice(ctx)
-        except NoVoiceClient as e:
+            manager = await self.get_manager(ctx, connect=True)
+        except AudioError as e:
             await ctx.send(e)
             return
 
-        source = await YTDLSource.from_url(url, self.downloader)
-        manager.enqueue(source)
-        await ctx.send("{} is queueing a downloaded file...".format(ctx.author))
+        song = YTDLSong(url, self.downloader)
+        await song.extract()
+        manager.enqueue(song)
+        title = song.data.get('title', '[no title]')
+        await ctx.send("{} is queueing {}...".format(ctx.author.display_name, title))
 
     @commands.command()
     async def stop(self, ctx):
         """Stops the music and disconnects"""
-        if ctx.voice_client:
-            await ctx.voice_client.disconnect()
-            await ctx.send("Stopped audio.")
-        else:
-            await ctx.send("I'm not even connected to a voice channel!")
+
+        manager = await self.get_manager(ctx)
+
+        if manager is None or manager.voice_client is None:
+            await ctx.send("I'm not playing anything!")
+            return
+
+        await manager.voice_client.disconnect()
+        await ctx.send("Stopping audio.")
 
     @commands.command()
     async def pause(self, ctx):
         """Pauses the music"""
-        if ctx.voice_client:
-            ctx.voice_client.pause()
-            await ctx.send("Paused audio.")
-        else:
-            await ctx.send("I'm not even connected to a voice channel!")
+
+        manager = await self.get_manager(ctx)
+
+        if manager is None or manager.voice_client is None:
+            await ctx.send("I'm not playing anything!")
+            return
+
+        manager.voice_client.pause()
+        await ctx.send("Pausing audio.")
 
     @commands.command()
     async def resume(self, ctx):
         """Resumes the music"""
-        if ctx.voice_client:
-            ctx.voice_client.resume()
-            await ctx.send("Resumed audio.")
+
+        manager = await self.get_manager(ctx)
+
+        if manager is None or manager.voice_client is None:
+            await ctx.send("Nothing to play!")
+            return
+
+        if manager.voice_client.is_paused():
+            manager.voice_client.resume()
+            await ctx.send("Resuming audio.")
         else:
-            await ctx.send("I'm not even connected to a voice channel!")
+            await ctx.send("I wasn't paused!")
 
     @commands.command()
     async def skip(self, ctx):
         """Skips the current song"""
+
+        manager = await self.get_manager(ctx)
+
+        if manager is None:
+            await ctx.send("I'm not playing anything!")
+            return
         try:
-            manager = self.check_voice(ctx)
             manager.skip()
             await ctx.send("Skipping song...")
-        except NoVoiceClient as e:
-            await ctx.send(e)
-        except QueueError as e:
+        except AudioError as e:
             await ctx.send(e)
 
     @commands.group(name='cache')
     async def cache(self, ctx):
         """Audio cache management"""
+
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
 
@@ -238,19 +284,16 @@ class Audio:
     @checks.is_owner()
     async def cache_dump(self, ctx):
         """Dump the audio cache"""
-        count = 0
-        files = glob.glob(os.path.join(self.downloader_path, "*"))
-        for f in files:
-            try:
-                os.remove(f)
-                count += 1
-            except PermissionError:
-                print("Could not delete file '{}'. "
-                      "Check your file permissions.".format(f))
 
-        await ctx.send("Dumped {} file(s).".format(count))
+        for child in self.downloader_path.iterdir():
+            if child_isdir():
+                child.rmdir()
+            else:
+                child.unlink()
 
-    def __unload(self):
+        await ctx.send("Dumped audio cache.")
+
+    def __unload(self):        
         for vc in self.bot.voice_clients:
             if vc.source:
                 vc.source.cleanup()
@@ -259,8 +302,7 @@ class Audio:
             self.managers[manager].task.cancel()
 
     def search_local(self, filename: str):
-        f = glob.glob(os.path.join(
-            self.local_path, filename + ".*"))
+        f = sorted(self.local_path.glob(filename + ".*"))
 
         if len(f) == 1:
             return f[0]
@@ -309,7 +351,7 @@ class MixedSource(discord.AudioSource):
 
 
 class Downloader:
-    # Thanks to imayhaveborkedit for offering this downloader code
+    # Thanks to imayhaveborkedit for this downloader code
     ytdl_format_options = {
         'format': 'bestaudio/best',
         'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
@@ -324,16 +366,15 @@ class Downloader:
         'source_address': '0.0.0.0'  # ipv6 addresses cause issues sometimes
     }
 
-    def __init__(self, dl_folder=None, loop=None):
-        self.dl_folder = dl_folder
+    def __init__(self, download_path, loop=None):
+        self.download_path = download_path
         self.loop = loop or asyncio.get_event_loop()
 
         self.thread_pool = ThreadPoolExecutor(max_workers=2)
         self.ytdl = youtube_dl.YoutubeDL(self.ytdl_format_options)
 
-        if dl_folder:
-            otmpl = self.ytdl.params['outtmpl']
-            self.ytdl.params['outtmpl'] = os.path.join(dl_folder, otmpl)
+        otmpl = self.ytdl.params['outtmpl']
+        self.ytdl.params['outtmpl'] = str(self.download_path / otmpl)
 
     async def extract_info(self, *args, **kwargs):
         return await self.loop.run_in_executor(
@@ -341,27 +382,43 @@ class Downloader:
 
 
 class YTDLSource(discord.PCMVolumeTransformer):
-    # Thanks to imayhaveborkedit for starter code again
-    def __init__(self, source, *, data, volume=0.5):
+    def __init__(self, source, *, volume=0.5):
         super().__init__(source, volume)
         self.done = False
-        self.data = data
-
-        self.title = data.get('title', '[no title]')
-        self.url = data.get('url', '[no url]')
-        # TODO: extract properties from data (title, duration, etc)
 
     def cleanup(self):
         super().cleanup()
         self.done = True
 
-    @classmethod
-    async def from_url(cls, url, downloader):
-        data = await downloader.extract_info(url)
-        if 'entries' in data:
-            # playlist stuff
-            data = data['entries'][0]
 
-        filename = downloader.ytdl.prepare_filename(data)
-        return cls(discord.FFmpegPCMAudio(
-            filename, before_options='-nostdin', options='-vn'), data=data)
+class YTDLSong:
+    def __init__(self, url, downloader):
+        self.url = url
+        self.downloader = downloader
+        self.data = None
+        self.source = None
+
+    async def extract(self):
+        # Only extracts data, doesn't download yet
+        self.data = await self.downloader.extract_info(self.url, download=False)
+        if 'entries' in self.data:
+            # For now, just grab the first song of a playlist.
+            self.data = data['entries'][0]
+
+    async def download(self):
+        # After skimming the youtube_dl source a bit, it seems like calling
+        # extract_info again might be the best way to download. Could lead to
+        # some odd behavior if the source has changed since the initial data
+        # extraction. Will look into this.
+        self.data = await self.downloader.extract_info(self.url)
+        if 'entries' in self.data:
+            # Tried to download a whole playlist. We should handle this in the
+            # extract method first so this doesn't happen.
+            raise DownloadError('Tried to download a playlist.')
+
+        filename = self.downloader.ytdl.prepare_filename(self.data)
+        self.source = YTDLSource(discord.FFmpegPCMAudio(
+            filename, before_options='-nostdin', options='-vn'))
+
+    def is_downloaded(self):
+        return True if self.source else False
