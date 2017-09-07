@@ -105,7 +105,6 @@ def main():
     loop.run_until_complete(_get_prefix_and_token(red, tmp_data))
     token = os.environ.get("RED_TOKEN", tmp_data['token'])
     prefix = cli_flags.prefix or tmp_data['prefix']
-    enable_sentry = tmp_data['enable_sentry']
     if token is None or not prefix:
         if cli_flags.no_prompt is False:
             new_token = interactive_config(red, token_set=bool(token),
@@ -115,8 +114,6 @@ def main():
         else:
             log.critical("Token and prefix must be set in order to login.")
             sys.exit(1)
-    if enable_sentry is None:
-        ask_sentry(red)
     loop.run_until_complete(_get_prefix_and_token(red, tmp_data))
     if tmp_data['enable_sentry']:
         init_sentry_logging(sentry_log)
