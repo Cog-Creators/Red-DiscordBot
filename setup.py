@@ -1,9 +1,9 @@
 from distutils.core import setup
 from pathlib import Path
+from subprocess import run, PIPE
 
 from setuptools import find_packages
 
-# from redbot.core import __version__
 
 def get_package_list():
     core = find_packages(include=['redbot', 'redbot.*'])
@@ -16,8 +16,30 @@ def get_requirements():
     return requirements
 
 
-# def get_version():
-#    return "{}.{}.{}".format(*__version__)
+def get_version():
+    try:
+        p = run(
+            "git describe --abbrev=0 --tags".split(),
+            stdout=PIPE
+        )
+    except FileNotFoundError:
+        # No git
+        return 3, 0, 0
+
+    if p.returncode != 0:
+        return 3, 0, 0
+
+    stdout = p.stdout.strip().decode()
+    if stdout.startswith("v"):
+        numbers = stdout[1:].split('.')
+        args = [0, 0, 0]
+        for i in range(3):
+            try:
+                args[i] = int(numbers[i])
+            except (IndexError, ValueError):
+                args[i] = 0
+        return args
+    return 3, 0, 0
 
 
 def find_locale_folders():
@@ -51,7 +73,7 @@ def find_locale_folders():
 
 setup(
     name='Red-DiscordBot',
-    version="3.0.0a11",  # get_version(),
+    version="{}.{}.{}a12".format(*get_version()),
     packages=get_package_list(),
     package_data=find_locale_folders(),
     url='https://github.com/Cog-Creators/Red-DiscordBot',

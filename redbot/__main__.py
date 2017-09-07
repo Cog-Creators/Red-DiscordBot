@@ -119,7 +119,7 @@ def main():
         ask_sentry(red)
     loop.run_until_complete(_get_prefix_and_token(red, tmp_data))
     if tmp_data['enable_sentry']:
-        init_sentry_logging(red, sentry_log)
+        init_sentry_logging(sentry_log)
     cleanup_tasks = True
     try:
         loop.run_until_complete(red.start(token, bot=not cli_flags.not_bot))

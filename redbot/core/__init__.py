@@ -1,38 +1,7 @@
-from collections import namedtuple
-from subprocess import run, PIPE
+import pkg_resources
 
 from .config import Config
 
 __all__ = ["Config", "__version__"]
-version_info = namedtuple("VersionInfo", "major minor patch")
 
-BASE_VERSION = version_info(3, 0, 0)
-
-
-def get_latest_version():
-    try:
-        p = run(
-            "git describe --abbrev=0 --tags".split(),
-            stdout=PIPE
-        )
-    except FileNotFoundError:
-        # No git
-        return BASE_VERSION
-
-    if p.returncode != 0:
-        return BASE_VERSION
-
-    stdout = p.stdout.strip().decode()
-    if stdout.startswith("v"):
-        numbers = stdout[1:].split('.')
-        args = [0, 0, 0]
-        for i in range(3):
-            try:
-                args[i] = int(numbers[i])
-            except (IndexError, ValueError):
-                args[i] = 0
-        return version_info(*args)
-    return BASE_VERSION
-
-__version__ = get_latest_version()
-
+__version__ = version = pkg_resources.require("Red-DiscordBot")[0].version
