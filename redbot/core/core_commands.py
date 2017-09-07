@@ -337,7 +337,8 @@ class Core:
         # Since it can also be set through cli flags, bot.db is not a reliable
         # source. So we'll just mock a DM message instead.
         fake_message = namedtuple('Message', 'guild')
-        prefix = ctx.bot.command_prefix(ctx.bot, fake_message(guild=None))[0]
+        prefixes = await ctx.bot.command_prefix(ctx.bot, fake_message(guild=None))
+        prefix = prefixes[0]
 
         content = _("Use `{}dm {} <text>` to reply to this user"
                     "").format(prefix, author.id)
@@ -386,7 +387,8 @@ class Core:
         e = discord.Embed(colour=discord.Colour.red(), description=message)
         description = _("Owner of %s") % ctx.bot.user
         fake_message = namedtuple('Message', 'guild')
-        prefix = ctx.bot.command_prefix(ctx.bot, fake_message(guild=None))[0]
+        prefixes = await ctx.bot.command_prefix(ctx.bot, fake_message(guild=None))
+        prefix = prefixes[0]
         e.set_footer(text=_("You can reply to this message with %scontact"
                             "") % prefix)
         if ctx.bot.user.avatar_url:
