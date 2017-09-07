@@ -7,6 +7,7 @@ from typing import Tuple, Union, List
 from . import checks
 from .config import Config
 from .i18n import CogI18n
+from .data_manager import cog_data_path
 from discord.ext import commands
 
 from .utils.chat_formatting import box
@@ -20,11 +21,11 @@ class CogManager:
     directory. You may also set a directory for downloader to install new cogs to, the default
     being the :code:`cogs/` folder in the root bot directory.
     """
-    def __init__(self, paths: Tuple[str]=(), bot_dir: Path=Path.cwd()):
+    def __init__(self, paths: Tuple[str]=()):
         self.conf = Config.get_conf(self, 2938473984732, True)
         self.conf.register_global(
             paths=(),
-            install_path=str(bot_dir.resolve() / "cogs")
+            install_path=str(cog_data_path(self) / "cogs")
         )
 
         self._paths = list(paths)

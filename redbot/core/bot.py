@@ -64,8 +64,7 @@ class Red(commands.Bot):
 
         self.main_dir = bot_dir
 
-        self.cog_mgr = CogManager(paths=(str(self.main_dir / 'cogs'),),
-                                  bot_dir=self.main_dir)
+        self.cog_mgr = CogManager(paths=(str(self.main_dir / 'cogs'),))
 
         super().__init__(**kwargs)
 
