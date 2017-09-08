@@ -1,9 +1,8 @@
 import datetime
-from collections import namedtuple
-from typing import Tuple, Generator, Union, List
+from typing import Union, List
+import os
 
 import discord
-from copy import deepcopy
 
 from core import Config
 
@@ -36,8 +35,6 @@ _DEFAULT_USER = _DEFAULT_MEMBER
 
 _bank_type = type("Bank", (object,), {})
 
-_conf = Config.get_conf(_bank_type(), 384734293238749, force_registration=True)
-
 
 class Account:
     """A single account. This class should ONLY be instantiated by the bank itself."""
@@ -54,8 +51,9 @@ def _register_defaults():
     _conf.register_member(**_DEFAULT_MEMBER)
     _conf.register_user(**_DEFAULT_USER)
 
-
-_register_defaults()
+if not os.environ.get('BUILDING_DOCS'):
+    _conf = Config.get_conf(_bank_type(), 384734293238749, force_registration=True)
+    _register_defaults()
 
 
 def _encoded_current_time() -> int:
