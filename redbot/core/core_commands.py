@@ -16,12 +16,29 @@ from redbot.core import i18n
 
 import redbot.cogs  # Don't remove this line or core cogs won't load
 
+__all__ = ["find_spec", "Core"]
+
 log = logging.getLogger("red")
 
 OWNER_DISCLAIMER = ("⚠ **Only** the person who is hosting Red should be "
                     "owner. **This has SERIOUS security implications. The "
                     "owner can access any data that is present on the host "
                     "system.** ⚠")
+
+
+async def find_spec(bot, cog_name: str):
+    try:
+        spec = await bot.cog_mgr.find_cog(cog_name)
+    except RuntimeError:
+        real_name = ".{}".format(cog_name)
+        try:
+            mod = importlib.import_module(real_name, package='redbot.cogs')
+        except ImportError:
+            spec = None
+        else:
+            spec = mod.__spec__
+    return spec
+
 
 _ = i18n.CogI18n("Core", __file__)
 
@@ -33,17 +50,11 @@ class Core:
     @checks.is_owner()
     async def load(self, ctx, *, cog_name: str):
         """Loads a package"""
-        try:
-            spec = await ctx.bot.cog_mgr.find_cog(cog_name)
-        except RuntimeError:
-            real_name = ".{}".format(cog_name)
-            try:
-                mod = importlib.import_module(real_name, package='redbot.cogs')
-            except ImportError as e:
-                await ctx.send(_("No module by that name was found in any"
-                                 " cog path."))
-                return
-            spec = mod.__spec__
+        spec = await find_spec(ctx.bot, cog_name)
+        if spec is None:
+            await ctx.send(_("No module by that name was found in any"
+                             " cog path."))
+            return
 
         try:
             ctx.bot.load_extension(spec)
