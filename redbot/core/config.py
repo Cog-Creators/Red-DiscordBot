@@ -434,7 +434,7 @@ class Config:
         cog_name = cog_path_override.stem
         uuid = str(hash(identifier))
 
-        spawner = get_driver('json', cog_name)
+        spawner = get_driver('json', cog_name, data_path_override=cog_path_override)
         return cls(cog_name=cog_name, unique_identifier=uuid,
                    force_registration=force_registration,
                    driver_spawn=spawner)
