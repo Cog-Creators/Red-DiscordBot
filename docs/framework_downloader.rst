@@ -41,12 +41,12 @@ KEYS (case sensitive):
 API Reference
 *************
 
-.. automodule:: cogs.downloader.json_mixins
+.. automodule:: redbot.cogs.downloader.json_mixins
 
 .. autoclass RepoJSONMixin
     :members
 
-.. automodule:: cogs.downloader.installable
+.. automodule:: redbot.cogs.downloader.installable
 
 Installable
 ^^^^^^^^^^^
@@ -54,7 +54,7 @@ Installable
 .. autoclass:: Installable
     :members:
 
-.. automodule:: cogs.downloader.repo_manager
+.. automodule:: redbot.cogs.downloader.repo_manager
 
 Repo
 ^^^^
@@ -71,6 +71,6 @@ Repo Manager
 Exceptions
 ^^^^^^^^^^
 
-.. automodule:: cogs.downloader.errors
+.. automodule:: redbot.cogs.downloader.errors
     :members:
 

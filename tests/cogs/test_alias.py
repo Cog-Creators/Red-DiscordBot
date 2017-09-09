@@ -1,12 +1,13 @@
-from cogs.alias import Alias
 import pytest
+
+from redbot.cogs.alias import Alias
 
 
 @pytest.fixture()
 def alias(config):
-    import cogs.alias.alias
+    import redbot.cogs.alias.alias
 
-    cogs.alias.alias.Config.get_conf = lambda *args, **kwargs: config
+    redbot.cogs.alias.alias.Config.get_conf = lambda *args, **kwargs: config
 
     return Alias(None)
 

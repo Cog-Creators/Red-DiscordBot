@@ -1,6 +1,6 @@
-import core
+from redbot import core
 
 
 def test_version_working():
     assert hasattr(core, '__version__')
-    assert core.__version__ >= (3, 0, 0)
+    assert core.__version__[0] == "3"

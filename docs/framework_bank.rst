@@ -38,5 +38,5 @@ API Reference
 Bank
 ======
 
-.. automodule:: core.bank
+.. automodule:: redbot.core.bank
     :members:

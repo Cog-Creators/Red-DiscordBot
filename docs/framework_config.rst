@@ -35,7 +35,7 @@ Basic Usage
 Tutorial
 ********
 
-.. py:currentmodule:: core.config
+.. py:currentmodule:: redbot.core.config
 
 This tutorial will walk you through how to use Config.
 
@@ -157,7 +157,7 @@ API Reference
     inside the bot itself! Simply take a peek inside of the :code:`tests/core/test_config.py` file for examples of using
     Config in all kinds of ways.
 
-.. automodule:: core.config
+.. automodule:: redbot.core.config
 
 Config
 ^^^^^^
@@ -190,7 +190,7 @@ Value
 Driver Reference
 ****************
 
-.. automodule:: core.drivers
+.. automodule:: redbot.core.drivers
 
 .. autoclass:: red_base.BaseDriver
     :members:
