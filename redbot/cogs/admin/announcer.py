@@ -35,8 +35,8 @@ class Announcer:
         """
         self.active = False
 
-    def _get_announce_channel(self, guild: discord.Guild) -> discord.TextChannel:
-        channel_id = self.config.guild(guild).announce_channel()
+    async def _get_announce_channel(self, guild: discord.Guild) -> discord.TextChannel:
+        channel_id = await self.config.guild(guild).announce_channel()
         channel = None
 
         if channel_id is not None:
@@ -57,7 +57,7 @@ class Announcer:
             if self.config.guild(g).announce_ignore():
                 continue
 
-            channel = self._get_announce_channel(g)
+            channel = await self._get_announce_channel(g)
 
             try:
                 await channel.send(self.message)

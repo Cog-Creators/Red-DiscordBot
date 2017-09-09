@@ -51,7 +51,7 @@ async def test_announcer_ignore(announcer, empty_guild, empty_channel):
 
     guild.get_channel.return_value = empty_channel
 
-    ret = announcer._get_announce_channel(guild)
+    ret = await announcer._get_announce_channel(guild)
 
     assert guild.get_channel.called
     assert ret == empty_channel
