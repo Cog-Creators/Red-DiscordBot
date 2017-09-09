@@ -13,6 +13,7 @@ def get_package_list():
 def get_requirements():
     with open('requirements.txt') as f:
         requirements = f.read().splitlines()
+    requirements.append('discord.py>=1.0.0a0')  # Because RTD
     return requirements
 
 
