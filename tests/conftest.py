@@ -1,13 +1,13 @@
+import random
 from collections import namedtuple
 from pathlib import Path
 
 import pytest
-import random
-
-from core.bot import Red
 from _pytest.monkeypatch import MonkeyPatch
-from core.drivers import red_json
-from core import Config
+from redbot.core import Config
+from redbot.core.bot import Red
+
+from redbot.core.drivers import red_json
 
 
 @pytest.fixture(scope="session")
@@ -19,7 +19,7 @@ def monkeysession(request):
 
 @pytest.fixture(autouse=True)
 def override_data_path(tmpdir):
-    from core import data_manager
+    from redbot.core import data_manager
     data_manager.basic_config = data_manager.basic_config_default
     data_manager.basic_config['DATA_PATH'] = str(tmpdir)
 
@@ -145,8 +145,8 @@ def ctx(empty_member, empty_channel, red):
 #region Red Mock
 @pytest.fixture()
 def red(config_fr):
-    from core.cli import parse_cli_flags
-    cli_flags = parse_cli_flags()
+    from redbot.core.cli import parse_cli_flags
+    cli_flags = parse_cli_flags(["ignore_me"])
 
     description = "Red v3 - Alpha"
 

@@ -1,8 +1,9 @@
-import pytest
 import json
-
-from cogs.downloader.installable import Installable, InstallableType
 from pathlib import Path
+
+import pytest
+
+from redbot.cogs.downloader.installable import Installable, InstallableType
 
 INFO_JSON = {
     "author": (
