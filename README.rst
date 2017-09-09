@@ -1,11 +1,20 @@
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
+.. image:: https://readthedocs.org/projects/red-discordbot/badge/?version=v3-develop
+    :target: http://red-discordbot.readthedocs.io/en/v3-develop/?badge=v3-develop
+    :alt: Documentation Status
 
-## Red - Discord Bot v3
+.. image:: https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square
+    :target: http://makeapullrequest.com
+    :alt: PRs Welcome
+
+********************
+Red - Discord Bot v3
+********************
 
 **This is alpha and very much a work in progress. Regular use is not recommended.
 There will not be any effort not to break current installations.**
 
-### How to install
+How to install
+^^^^^^^^^^^^^^
 
 Using python3 pip::
 
