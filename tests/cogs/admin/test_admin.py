@@ -1,7 +1,9 @@
 from unittest.mock import MagicMock
+
 import pytest
-from cogs.admin.admin import Admin
-from cogs.admin.announcer import Announcer
+
+from redbot.cogs.admin import Admin
+from redbot.cogs.admin.announcer import Announcer
 
 
 @pytest.fixture()

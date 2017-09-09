@@ -1,5 +1,4 @@
 import asyncio
-from typing import MutableMapping
 
 import discord
 from discord.ext import commands

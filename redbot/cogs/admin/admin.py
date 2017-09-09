@@ -3,11 +3,11 @@ from typing import Tuple
 import discord
 from discord.ext import commands
 
-from core import Config, checks
+from redbot.core import Config, checks
 
 import logging
 
-from core.utils.chat_formatting import box
+from redbot.core.utils.chat_formatting import box
 from .announcer import Announcer
 from .converters import MemberDefaultAuthor, SelfRole
 
