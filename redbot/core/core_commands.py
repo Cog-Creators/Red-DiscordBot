@@ -14,6 +14,8 @@ from discord.ext import commands
 from redbot.core import checks
 from redbot.core import i18n
 
+import redbot.cogs  # Don't remove this line or core cogs won't load
+
 log = logging.getLogger("red")
 
 OWNER_DISCLAIMER = ("⚠ **Only** the person who is hosting Red should be "
@@ -34,9 +36,14 @@ class Core:
         try:
             spec = await ctx.bot.cog_mgr.find_cog(cog_name)
         except RuntimeError:
-            await ctx.send(_("No module by that name was found in any"
-                             " cog path."))
-            return
+            real_name = ".{}".format(cog_name)
+            try:
+                mod = importlib.import_module(real_name, package='redbot.cogs')
+            except ImportError as e:
+                await ctx.send(_("No module by that name was found in any"
+                                 " cog path."))
+                return
+            spec = mod.__spec__
 
         try:
             ctx.bot.load_extension(spec)

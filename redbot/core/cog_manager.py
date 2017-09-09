@@ -23,9 +23,11 @@ class CogManager:
     """
     def __init__(self, paths: Tuple[str]=()):
         self.conf = Config.get_conf(self, 2938473984732, True)
+        tmp_cog_install_path = cog_data_path(self) / "cogs"
+        tmp_cog_install_path.mkdir(parents=True, exist_ok=True)
         self.conf.register_global(
             paths=(),
-            install_path=str(cog_data_path(self) / "cogs")
+            install_path=str(tmp_cog_install_path)
         )
 
         self._paths = list(paths)
