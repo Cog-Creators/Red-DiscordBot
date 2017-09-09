@@ -89,7 +89,7 @@ async def _get_prefix_and_token(red, indict):
 
 
 def main():
-    cli_flags = parse_cli_flags()
+    cli_flags = parse_cli_flags(sys.argv[1:])
     load_basic_configuration(cli_flags.instance_name)
     log, sentry_log = init_loggers(cli_flags)
     description = "Red v3 - Alpha"

@@ -146,7 +146,7 @@ def ctx(empty_member, empty_channel, red):
 @pytest.fixture()
 def red(config_fr):
     from redbot.core.cli import parse_cli_flags
-    cli_flags = parse_cli_flags()
+    cli_flags = parse_cli_flags(["ignore_me"])
 
     description = "Red v3 - Alpha"
 

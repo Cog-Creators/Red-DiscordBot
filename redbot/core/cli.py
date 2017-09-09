@@ -61,7 +61,7 @@ def ask_sentry(red: Red):
         print("\nThank you for helping us with the development process!")
 
 
-def parse_cli_flags():
+def parse_cli_flags(args):
     parser = argparse.ArgumentParser(description="Red - Discord Bot")
     parser.add_argument("--owner", type=int,
                         help="ID of the owner. Only who hosts "
@@ -105,7 +105,7 @@ def parse_cli_flags():
     parser.add_argument("instance_name",
                         help="Name of the bot instance created during `redbot-setup`.")
 
-    args = parser.parse_args()
+    args = parser.parse_args(args)
 
     if args.prefix:
         args.prefix = sorted(args.prefix, reverse=True)
