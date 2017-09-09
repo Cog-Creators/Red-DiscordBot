@@ -3,7 +3,7 @@
 Downloader Cog Reference
 ========================
 
-.. automodule:: cogs.downloader
+.. automodule:: redbot.cogs.downloader
 
-.. autoclass:: cogs.downloader.downloader.Downloader
+.. autoclass:: redbot.cogs.downloader.downloader.Downloader
     :members:
