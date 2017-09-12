@@ -66,7 +66,8 @@ class Dev:
             'channel': ctx.channel,
             'author': ctx.author,
             'guild': ctx.guild,
-            'message': ctx.message
+            'message': ctx.message,
+            'discord': discord
         }
 
         code = self.cleanup_code(code)
@@ -77,7 +78,9 @@ class Dev:
             await ctx.send(self.get_syntax_error(e))
             return
         except Exception as e:
-            await ctx.send('```py\n{}: {}```'.format(type(e).__name__, str(e)), )
+            await ctx.send(box(
+                '{}: {!s}'.format(type(e).__name__, e),
+                lang='py'))
             return
 
         if asyncio.iscoroutine(result):
