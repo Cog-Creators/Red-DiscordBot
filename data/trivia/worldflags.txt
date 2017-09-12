@@ -132,7 +132,7 @@ What country is represented by this flag? https://i.imgur.com/Vbr5Tam.png `Panam
 What country is represented by this flag? https://i.imgur.com/y5PJwXq.png `Papua New Guinea
 What country is represented by this flag? https://i.imgur.com/jKRkoe5.png `Paraguay
 What country is represented by this flag? https://i.imgur.com/CEetl8W.png `Peru
-What country is represented by this flag? https://i.imgur.com/3H3Lfat.png `Philippines
+What country is represented by this flag? https://i.imgur.com/3H3Lfat.png `Republic of the Philippines`Philippines
 What country is represented by this flag? https://i.imgur.com/Acc9xZt.png `Poland
 What country is represented by this flag? https://i.imgur.com/3rcX6U2.png `Portugal
 What country is represented by this flag? https://i.imgur.com/njfbYnM.png `Qatar
