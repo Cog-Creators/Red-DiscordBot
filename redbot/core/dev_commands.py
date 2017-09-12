@@ -67,14 +67,13 @@ class Dev:
             'channel': ctx.channel,
             'author': ctx.author,
             'guild': ctx.guild,
-            'message': ctx.message,
-            'discord': discord
+            'message': ctx.message
         }
 
         code = self.cleanup_code(code)
 
         try:
-            result = eval(code, env, locals())
+            result = eval(code, env, globals())
         except SyntaxError as e:
             await ctx.send(self.get_syntax_error(e))
             return
