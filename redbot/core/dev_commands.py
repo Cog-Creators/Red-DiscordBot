@@ -49,8 +49,7 @@ class Dev:
     def sanitize_output(ctx: commands.Context, input_: str) -> str:
         token = ctx.bot.http.token
         r = "[EXPUNGED]"
-        result = str(input_)
-        result = result.replace(token, r)
+        result = input_.replace(token, r)
         result = result.replace(token.lower(), r)
         result = result.replace(token.upper(), r)
         return result
@@ -67,13 +66,14 @@ class Dev:
             'channel': ctx.channel,
             'author': ctx.author,
             'guild': ctx.guild,
-            'message': ctx.message
+            'message': ctx.message,
+            '_': self._last_result
         }
 
         code = self.cleanup_code(code)
 
         try:
-            result = eval(code, env, globals())
+            result = eval(code, globals(), env)
         except SyntaxError as e:
             await ctx.send(self.get_syntax_error(e))
             return
@@ -86,9 +86,9 @@ class Dev:
         if asyncio.iscoroutine(result):
             result = await result
 
-        result = str(result)
+        self._last_result = result
 
-        result = self.sanitize_output(ctx, result)
+        result = self.sanitize_output(ctx, str(result))
 
         await ctx.send(box(result, lang="py"))
 
@@ -110,11 +110,11 @@ class Dev:
             'channel': ctx.channel,
             'author': ctx.author,
             'guild': ctx.guild,
-            'message': ctx.message,
-            '_': self._last_result
+            'message': ctx.message
         }
 
         env.update(globals())
+        env['_'] = self._last_result # Now that we're using this for I18n
 
         body = self.cleanup_code(body)
         stdout = io.StringIO()
@@ -136,17 +136,17 @@ class Dev:
         else:
             value = stdout.getvalue()
             try:
-                await ctx.bot.add_reaction(ctx.message, '\u2705')
+                await ctx.message.add_reaction('\N{White Heavy Check Mark}')
             except:
                 pass
 
             if ret is None:
                 if value:
-                    value = self.sanitize_output(ctx, value)
+                    value = self.sanitize_output(ctx, str(value))
                     await ctx.send(box(value, lang="py"))
             else:
-                ret = self.sanitize_output(ctx, ret)
                 self._last_result = ret
+                ret = self.sanitize_output(ctx, str(ret))
                 await ctx.send(box("{}{}".format(value, ret), lang="py"))
 
     @commands.command()
