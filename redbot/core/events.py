@@ -7,6 +7,7 @@ from .sentry_setup import should_log
 from discord.ext import commands
 
 from .utils.chat_formatting import inline
+from .core_commands import find_spec
 
 log = logging.getLogger("red")
 sentry_log = logging.getLogger("red.sentry")
@@ -40,7 +41,7 @@ def init_events(bot, cli_flags):
 
             for package in packages:
                 try:
-                    spec = await bot.cog_mgr.find_cog(package)
+                    spec = await find_spec(bot, package)
                     bot.load_extension(spec)
                 except Exception as e:
                     log.exception("Failed to load package {}".format(package),
