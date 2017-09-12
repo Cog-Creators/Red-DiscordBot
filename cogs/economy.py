@@ -8,14 +8,19 @@ from .utils import checks
 from cogs.utils.chat_formatting import pagify, box
 from enum import Enum
 from __main__ import send_cmd_help
+import sys
+import re
 import os
 import time
 import logging
 import random
+from urllib.request import Request, urlopen
+from urllib.error import URLError
+from bs4 import BeautifulSoup
 
-default_settings = {"PAYDAY_TIME": 300, "PAYDAY_CREDITS": 120,
-                    "SLOT_MIN": 5, "SLOT_MAX": 100, "SLOT_TIME": 0,
-                    "REGISTER_CREDITS": 0}
+default_settings = {"PAYDAY_TIME": 300, "PAYDAY_CREDITS": 100,
+                    "SLOT_MIN": 5, "SLOT_MAX": 100, "SLOT_TIME": 5,
+                    "REGISTER_CREDITS": 25}
 
 
 class EconomyError(Exception):
@@ -55,36 +60,52 @@ class SameSenderAndReceiver(BankError):
 
 
 NUM_ENC = "\N{COMBINING ENCLOSING KEYCAP}"
+SLOTS_CHANNEL = "353262349244956682"
+LEADERBOARD_URL = "https://mee6.xyz/levels/258990595723231232"
 
 
 class SMReel(Enum):
     cherries  = "\N{CHERRIES}"
     cookie    = "\N{COOKIE}"
-    two       = "\N{DIGIT TWO}" + NUM_ENC
+    #one       = "\N{DIGIT ONE}" + NUM_ENC
+    #two       = "\N{DIGIT TWO}" + NUM_ENC
+    #three     = "\N{DIGIT THREE}" + NUM_ENC
+    #four      = "\N{DIGIT FOUR}" + NUM_ENC
+    #five      = "\N{DIGIT FIVE}" + NUM_ENC
+    #six       = "\N{DIGIT SIX}" + NUM_ENC
+    #seven     = "\N{DIGIT SEVEN}" + NUM_ENC
+    #eight     = "\N{DIGIT EIGHT}" + NUM_ENC
+    #nine      = "\N{DIGIT NINE}" + NUM_ENC
+    #zero      = "\N{DIGIT ZERO}" + NUM_ENC
     flc       = "\N{FOUR LEAF CLOVER}"
-    cyclone   = "\N{CYCLONE}"
+    #cyclone   = "\N{CYCLONE}"
     sunflower = "\N{SUNFLOWER}"
-    six       = "\N{DIGIT SIX}" + NUM_ENC
-    mushroom  = "\N{MUSHROOM}"
-    heart     = "\N{HEAVY BLACK HEART}"
+    #mushroom  = "\N{MUSHROOM}"
+    #heart     = "\N{HEAVY BLACK HEART}"
     snowflake = "\N{SNOWFLAKE}"
+    smith     = "<:smithscream:260216228482777088>"
+    regi      = "<:regi:260165156464623617>"
+    saef      = "<:staysaef:305076370885836801>"
+    boots     = "<:bluefox:321124064947208192>"
+    melee     = "<:Melee:260154755706257408>"
+    fivenine  = "<:buschice:331871719671332866>"
 
 PAYOUTS = {
-    (SMReel.two, SMReel.two, SMReel.six) : {
-        "payout" : lambda x: x * 2500 + x,
-        "phrase" : "JACKPOT! 226! Your bid has been multiplied * 2500!"
+    (SMReel.fivenine, SMReel.fivenine, SMReel.fivenine) : {
+        "payout" : lambda x: math.ceil(x * 5.9 + x),
+        "phrase" : "The Dern Best! Your bid has been multiplied * 5.9!"
     },
     (SMReel.flc, SMReel.flc, SMReel.flc) : {
         "payout" : lambda x: x + 1000,
-        "phrase" : "4LC! +1000!"
+        "phrase" : "Lucky! +1000!"
+    },
+    (SMReel.smith, SMReel.saef, SMReel.regi) : {
+        "payout" : lambda x: x * 50,
+        "phrase" : "The Trifecta of Slots! Your bid was multiplied by 50!!"
     },
     (SMReel.cherries, SMReel.cherries, SMReel.cherries) : {
-        "payout" : lambda x: x + 800,
-        "phrase" : "Three cherries! +800!"
-    },
-    (SMReel.two, SMReel.six) : {
-        "payout" : lambda x: x * 4 + x,
-        "phrase" : "2 6! Your bid has been multiplied * 4!"
+        "payout" : lambda x: x + 500,
+        "phrase" : "Three cherries! +500!"
     },
     (SMReel.cherries, SMReel.cherries) : {
         "payout" : lambda x: x * 3 + x,
@@ -96,19 +117,19 @@ PAYOUTS = {
     },
     "2 symbols" : {
         "payout" : lambda x: x * 2 + x,
-        "phrase" : "Two consecutive symbols! Your bid has been multiplied * 2!"
+        "phrase" : "Two symbols! Your bid has been multiplied * 2!"
     },
 }
 
-SLOT_PAYOUTS_MSG = ("Slot machine payouts:\n"
-                    "{two.value} {two.value} {six.value} Bet * 2500\n"
+SLOT_PAYOUTS_MSG = (
+                    "Slot machine payouts:\n"
+                    "{smith.value} {saef.value} {regi.value} Bet * 2000\n"
+                    "{fivenine.value} {fivenine.value} {fivenine.value} Bet * 590\n"
                     "{flc.value} {flc.value} {flc.value} +1000\n"
                     "{cherries.value} {cherries.value} {cherries.value} +800\n"
-                    "{two.value} {six.value} Bet * 4\n"
                     "{cherries.value} {cherries.value} Bet * 3\n\n"
                     "Three symbols: +500\n"
                     "Two symbols: Bet * 2".format(**SMReel.__dict__))
-
 
 class Bank:
 
@@ -279,6 +300,80 @@ class SetParser:
         else:
             raise
 
+class Experience:
+    """Experience
+
+    Tracks mee6 ranks and integrates it into Economy"""
+
+    def __init__(self, bot, file_path):
+        self.leaderboard = dataIO.load_json(file_path)
+        self.file_path = file_path
+        self.bot = bot
+        
+    async def update_leaderboard(self):
+        req = Request(LEADERBOARD_URL, headers={'User-Agent': 'Mozilla/5.0'})
+        try:
+            html = urlopen(req).read()
+        except URLError as e:
+            if hasattr(e, 'reason'):
+                print('We failed to reach a server.')
+                print('Reason: ', e.reason)
+                sys.exit(1)
+            elif hasattr(e, 'code'):
+                print('The server couldn\'t fulfill the request.')
+                print('Error code: ', e.code)
+                sys.exit(1)
+
+        soup = BeautifulSoup(html, 'html.parser')
+
+        table = soup.find("div", { "class" : "list-group" } )
+
+        plaintext = ""
+
+        for entry in table.find_all("h3"):
+           plaintext += entry.get_text()+"\n"
+        
+        fixedtext = os.linesep.join([s for s in plaintext.splitlines() if s])
+        fixedtext = re.sub(r'(\s)(#\d{4})', r'\2', fixedtext)
+
+        length = (((fixedtext.count('\n')+1)/3))
+
+        for index in range(int(length)):
+            rank = re.sub('#', '', fixedtext.splitlines()[index*3])
+            user = fixedtext.splitlines()[(index*3)+1]
+            level = re.sub('Level ', '', fixedtext.splitlines()[(index*3)+2])
+            if user not in self.leaderboard:
+                self.leaderboard[user] = {}
+            self.leaderboard[user]["level"] = int(level)
+            self.leaderboard[user]["rank"] = int(rank)
+
+        dataIO.save_json(self.file_path, self.leaderboard)
+        await self.bot.say("Internal leaderboards have been updated.")
+
+    def get_payday_multiplier(self, user):
+        acc = self._get_user(user)
+        if 1 <= acc["rank"] <= 10:
+            return 10
+        if acc["level"] < 5:
+            return 1
+        if 5 <= acc["level"] < 10:
+            return 2
+        if 10 <= acc["level"] < 20:
+            return 3
+        if 20 <= acc["level"] < 30:
+            return 4
+        if 30 <= acc["level"] < 40:
+            return 5
+        if 40 <= acc["level"] < 50:
+            return 6
+        if 50 <= acc["level"]:
+            return 7
+
+    def _get_user(self, user):
+        try:
+            return deepcopy(self.leaderboard[user])
+        except KeyError:
+            raise NoAccount()
 
 class Economy:
     """Economy
@@ -289,6 +384,7 @@ class Economy:
         global default_settings
         self.bot = bot
         self.bank = Bank(bot, "data/economy/bank.json")
+        self.xp = Experience(bot, "data/economy/experience.json")
         self.file_path = "data/economy/settings.json"
         self.settings = dataIO.load_json(self.file_path)
         if "PAYDAY_TIME" in self.settings:  # old format
@@ -297,7 +393,17 @@ class Economy:
         self.settings = defaultdict(lambda: default_settings, self.settings)
         self.payday_register = defaultdict(dict)
         self.slot_register = defaultdict(dict)
-
+    
+    def is_slots():
+        def predicate(ctx):
+            return ctx.message.channel.id == SLOTS_CHANNEL
+        return commands.check(predicate)
+       
+    @commands.command(name="update_xp_table", pass_context=True, no_pm=False)
+    #@check.role_or_permissions("BOT") TODO
+    async def updateXPTable(self, ctx):
+        await self.xp.update_leaderboard()
+ 
     @commands.group(name="bank", pass_context=True)
     async def _bank(self, ctx):
         """Bank operations"""
@@ -306,7 +412,7 @@ class Economy:
 
     @_bank.command(pass_context=True, no_pm=True)
     async def register(self, ctx):
-        """Registers an account at the Twentysix bank"""
+        """Registers an account at the bank"""
         settings = self.settings[ctx.message.server.id]
         author = ctx.message.author
         credits = 0
@@ -318,7 +424,7 @@ class Economy:
                                "".format(author.mention, account.balance))
         except AccountAlreadyExists:
             await self.bot.say("{} You already have an account at the"
-                               " Twentysix bank.".format(author.mention))
+                               " NC Melee bank.".format(author.mention))
 
     @_bank.command(pass_context=True)
     async def balance(self, ctx, user: discord.Member=None):
@@ -332,7 +438,7 @@ class Economy:
                     user.mention, self.bank.get_balance(user)))
             except NoAccount:
                 await self.bot.say("{} You don't have an account at the"
-                                   " Twentysix bank. Type `{}bank register`"
+                                   " NC Melee bank. Type `{}bank register`"
                                    " to open one.".format(user.mention,
                                                           ctx.prefix))
         else:
@@ -411,7 +517,44 @@ class Economy:
             await self.bot.say("All bank accounts of this server have been "
                                "deleted.")
 
+    async def _payday(self, server, author, id):
+        multiplier = self.xp.get_payday_multiplier(str(author))
+        now = datetime.now()
+        midnight = now.replace(hour=0, minute=0, second=0, microsecond=0)
+
+        if ((now - midnight).total_seconds() % 9) == 0:
+            self.bank.deposit_credits(author, self.settings[
+                                      server.id]["PAYDAY_CREDITS"]*100)
+            self.payday_register[server.id][
+                id] = int(time.perf_counter())
+            await self.bot.say(
+                "$Mike has blessed {} with a bonus payday! (+{}"
+                " credits! (x100 $Mike bonus!!)".format(
+                    author.mention,
+                    str(self.settings[server.id]["PAYDAY_CREDITS"])))
+        else:
+            self.bank.deposit_credits(author, self.settings[
+                                      server.id]["PAYDAY_CREDITS"]*multiplier)
+            self.payday_register[server.id][
+                id] = int(time.perf_counter())
+            if multiplier == 10:
+                await self.bot.say(
+                    "{} Here, take some credits. Enjoy! (+{}"
+                    " credits!)\n_x{} bonus for being in the top 10!_"
+                    " Use !levels for current Mee6 ranks!))".format(
+                        author.mention,
+                        str(self.settings[server.id]["PAYDAY_CREDITS"]*multiplier),
+                        str(multiplier)))
+            else:
+                await self.bot.say(
+                    "{} Here, take some credits. Enjoy! (+{}"
+                    " credits! (x{} !rank bonus))".format(
+                        author.mention,
+                        str(self.settings[server.id]["PAYDAY_CREDITS"]*multiplier),
+                        str(multiplier)))
+
     @commands.command(pass_context=True, no_pm=True)
+    @is_slots()
     async def payday(self, ctx):  # TODO
         """Get some free credits"""
         author = ctx.message.author
@@ -422,15 +565,7 @@ class Economy:
                 seconds = abs(self.payday_register[server.id][
                               id] - int(time.perf_counter()))
                 if seconds >= self.settings[server.id]["PAYDAY_TIME"]:
-                    self.bank.deposit_credits(author, self.settings[
-                                              server.id]["PAYDAY_CREDITS"])
-                    self.payday_register[server.id][
-                        id] = int(time.perf_counter())
-                    await self.bot.say(
-                        "{} Here, take some credits. Enjoy! (+{}"
-                        " credits!)".format(
-                            author.mention,
-                            str(self.settings[server.id]["PAYDAY_CREDITS"])))
+                    await self._payday(server, author, id)
                 else:
                     dtime = self.display_time(
                         self.settings[server.id]["PAYDAY_TIME"] - seconds)
@@ -439,12 +574,7 @@ class Economy:
                         " wait {}.".format(author.mention, dtime))
             else:
                 self.payday_register[server.id][id] = int(time.perf_counter())
-                self.bank.deposit_credits(author, self.settings[
-                                          server.id]["PAYDAY_CREDITS"])
-                await self.bot.say(
-                    "{} Here, take some credits. Enjoy! (+{} credits!)".format(
-                        author.mention,
-                        str(self.settings[server.id]["PAYDAY_CREDITS"])))
+                await self._payday(server, author, id)
         else:
             await self.bot.say("{} You need an account to receive credits."
                                " Type `{}bank register` to open one.".format(
@@ -524,11 +654,13 @@ class Economy:
         return False
 
     @commands.command()
+    @is_slots()
     async def payouts(self):
         """Shows slot machine payouts"""
-        await self.bot.whisper(SLOT_PAYOUTS_MSG)
+        await self.bot.say(SLOT_PAYOUTS_MSG)
 
     @commands.command(pass_context=True, no_pm=True)
+    @is_slots()
     async def slot(self, ctx, bid: int):
         """Play the slot machine"""
         author = ctx.message.author
@@ -718,7 +850,11 @@ def check_files():
     if not dataIO.is_valid_json(f):
         print("Creating empty bank.json...")
         dataIO.save_json(f, {})
-
+    
+    f = "data/economy/experience.json"
+    if not dataIO.is_valid_json(f):
+        print("Creating empty experience.json...")
+        dataIO.save_json(f, {})
 
 def setup(bot):
     global logger
