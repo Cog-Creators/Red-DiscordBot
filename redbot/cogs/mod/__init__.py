@@ -1,4 +1,4 @@
-from core.bot import Red
+from redbot.core.bot import Red
 from .cleanup import Cleanup
 from .filter import Filter
 from .mod import Mod

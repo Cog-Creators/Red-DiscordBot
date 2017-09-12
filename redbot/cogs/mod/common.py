@@ -3,8 +3,8 @@ from typing import List
 
 import discord
 
-from core import Config
-from core.bot import Red
+from redbot.core import Config
+from redbot.core.bot import Red
 
 mute_unmute_issues = {
     "already_muted": "That user can't send messages in this channel.",

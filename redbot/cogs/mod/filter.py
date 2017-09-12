@@ -4,11 +4,11 @@ from typing import Tuple
 import discord
 from discord.ext import commands
 
-from core import checks, Config
-from core.bot import Red
-from core.utils.chat_formatting import pagify
+from redbot.core import checks, Config
+from redbot.core.bot import Red
+from redbot.core.utils.chat_formatting import pagify
 from .common import is_allowed_by_hierarchy, is_mod_or_superior
-from core.i18n import CogI18n
+from redbot.core.i18n import CogI18n
 
 _ = CogI18n("Filter", __file__)
 

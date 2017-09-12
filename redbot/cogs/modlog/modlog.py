@@ -1,10 +1,10 @@
 import discord
 from discord.ext import commands
 
-from core import checks, modlog
-from core.bot import Red
-from core.i18n import CogI18n
-from core.utils.chat_formatting import box
+from redbot.core import checks, modlog
+from redbot.core.bot import Red
+from redbot.core.i18n import CogI18n
+from redbot.core.utils.chat_formatting import box
 
 _ = CogI18n('ModLog', __file__)
 

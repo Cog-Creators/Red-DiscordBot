@@ -1,9 +1,9 @@
 import discord
 import os
 
-from core import Config
-from core.bot import Red
-from core.utils.chat_formatting import bold
+from redbot.core import Config
+from redbot.core.bot import Red
+from redbot.core.utils.chat_formatting import bold
 from typing import List, Union, Generator
 from datetime import datetime
 
@@ -30,6 +30,7 @@ _modlog_type = type("ModLog", (object,), {})
 def _register_defaults():
     _conf.register_global(**_DEFAULT_GLOBAL)
     _conf.register_guild(**_DEFAULT_GUILD)
+
 
 if not os.environ.get('BUILDING_DOCS'):
     _conf = Config.get_conf(_modlog_type(), 1354799444)

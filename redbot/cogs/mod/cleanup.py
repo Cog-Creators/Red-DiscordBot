@@ -5,10 +5,10 @@ import re
 import discord
 from discord.ext import commands
 
-from core import checks
-from core.bot import Red
+from redbot.core import checks
+from redbot.core.bot import Red
 from .common import slow_deletion, mass_purge
-from core.i18n import CogI18n
+from redbot.core.i18n import CogI18n
 
 _ = CogI18n("Cleanup", __file__)
 

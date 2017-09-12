@@ -5,13 +5,13 @@ from collections import deque, defaultdict
 import discord
 from discord.ext import commands
 
-from cogs.mod.common import is_mod_or_superior, is_allowed_by_hierarchy,\
+from .common import is_mod_or_superior, is_allowed_by_hierarchy,\
     mute_unmute_issues, get_audit_reason
 from .checks import mod_or_voice_permissions, admin_or_voice_permissions, bot_has_voice_permissions
-from core import checks, Config, modlog
-from core.bot import Red
-from core.utils.chat_formatting import box, escape
-from core.i18n import CogI18n
+from redbot.core import checks, Config, modlog
+from redbot.core.bot import Red
+from redbot.core.utils.chat_formatting import box, escape
+from redbot.core.i18n import CogI18n
 
 _ = CogI18n("Mod", __file__)
 
