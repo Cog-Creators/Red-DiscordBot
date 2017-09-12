@@ -3,11 +3,11 @@ import pytest
 
 @pytest.fixture
 def mod(config):
-    from core import Config
+    from redbot.core import Config
 
     Config.get_conf = lambda *args, **kwargs: config
 
-    from core import modlog
+    from redbot.core import modlog
 
     modlog._register_defaults()
     return modlog
