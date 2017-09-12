@@ -46,10 +46,11 @@ class Dev:
         return '```py\n{0.text}{1:>{0.offset}}\n{2}: {0}```'.format(e, '^', type(e).__name__)
 
     @staticmethod
-    def sanitize_output(ctx: commands.Context, input: str) -> str:
+    def sanitize_output(ctx: commands.Context, input_: str) -> str:
         token = ctx.bot.http.token
         r = "[EXPUNGED]"
-        result = input.replace(token, r)
+        result = str(input_)
+        result = result.replace(token, r)
         result = result.replace(token.lower(), r)
         result = result.replace(token.upper(), r)
         return result
