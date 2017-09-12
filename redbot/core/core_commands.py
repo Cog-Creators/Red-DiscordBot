@@ -115,7 +115,7 @@ class Core:
     def cleanup_and_refresh_modules(self, module_name: str):
         """Interally reloads modules so that changes are detected"""
         splitted = module_name.split('.')
-        
+
         def maybe_reload(new_name):
             try:
                 lib = sys.modules[new_name]
