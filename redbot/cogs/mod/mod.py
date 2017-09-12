@@ -7,8 +7,10 @@ from discord.ext import commands
 
 from .common import is_mod_or_superior, is_allowed_by_hierarchy,\
     mute_unmute_issues, get_audit_reason
+from .log import log
 from .checks import mod_or_voice_permissions, admin_or_voice_permissions, bot_has_voice_permissions
 from redbot.core import checks, Config, modlog
+from redbot.core.data_manager import cog_data_path
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import box, escape
 from redbot.core.i18n import CogI18n
@@ -138,16 +140,6 @@ class Mod:
         self.bot.loop.create_task(modlog.register_casetypes(casetypes_to_register))
 
         self.last_case = defaultdict(dict)
-        global logger
-        logger = logging.getLogger("mod")
-        # Prevents the logger from being loaded again in case of module reload
-        if logger.level == 0:
-            logger.setLevel(logging.INFO)
-            handler = logging.FileHandler(
-                filename='cogs/.data/Mod/mod.log', encoding='utf-8', mode='a')
-            handler.setFormatter(
-                logging.Formatter('%(asctime)s %(message)s', datefmt="[%d/%m/%Y %H:%M]"))
-            logger.addHandler(handler)
 
     @commands.group()
     @commands.guild_only()
@@ -296,7 +288,7 @@ class Mod:
         audit_reason = get_audit_reason(author, reason)
         try:
             await guild.kick(user, reason=audit_reason)
-            logger.info("{}({}) kicked {}({})".format(
+            log.info("{}({}) kicked {}({})".format(
                 author.name, author.id, user.name, user.id))
         except discord.errors.Forbidden:
             await ctx.send(_("I'm not allowed to do that."))
@@ -350,7 +342,7 @@ class Mod:
 
         try:
             await guild.ban(user, reason=audit_reason, delete_message_days=days)
-            logger.info("{}({}) banned {}({}), deleting {} days worth of messages".format(
+            log.info("{}({}) banned {}({}), deleting {} days worth of messages".format(
                 author.name, author.id, user.name, user.id, str(days)))
         except discord.Forbidden:
             await ctx.send(_("I'm not allowed to do that."))
@@ -393,7 +385,7 @@ class Mod:
 
         try:
             await guild.ban(user, reason=audit_reason)
-            logger.info("{}({}) hackbanned {}"
+            log.info("{}({}) hackbanned {}"
                         "".format(author.name, author.id, user_id))
         except discord.NotFound:
             await ctx.send(_("User not found. Have you provided the "
@@ -454,7 +446,7 @@ class Mod:
                     pass
                 self.current_softban["user"] = user
                 await guild.ban(user, reason=audit_reason, delete_message_days=1)
-                logger.info(
+                log.info(
                     "{}({}) softbanned {}({}), deleting 1 day worth "
                     "of messages".format(
                         author.name, author.id, user.name, user.id
@@ -1073,7 +1065,7 @@ class Mod:
                 try:
                     await guild.ban(author, reason="Mention spam (Autoban)")
                 except discord.HTTPException:
-                    logger.info("Failed to ban member for mention spam in "
+                    log.info("Failed to ban member for mention spam in "
                                 "guild {}.".format(guild.id))
                 else:
                     try:
@@ -1100,7 +1092,7 @@ class Mod:
         async def _delete_helper(m):
             try:
                 await m.delete()
-                logger.debug("Deleted command msg {}".format(m.id))
+                log.debug("Deleted command msg {}".format(m.id))
             except:
                 pass  # We don't really care if it fails or not
 

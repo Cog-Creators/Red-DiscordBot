@@ -23,16 +23,6 @@ class Filter:
             "filter": []
         }
         self.settings.register_guild(**default_guild_settings)
-        global logger
-        logger = logging.getLogger("mod.filter")
-        # Prevents the logger from being loaded again in case of module reload
-        if logger.level == 0:
-            logger.setLevel(logging.INFO)
-            handler = logging.FileHandler(
-                filename='cogs/.data/Mod/filter.log', encoding='utf-8', mode='a')
-            handler.setFormatter(
-                logging.Formatter('%(asctime)s %(message)s', datefmt="[%d/%m/%Y %H:%M]"))
-            logger.addHandler(handler)
 
     @commands.group(name="filter")
     @commands.guild_only()

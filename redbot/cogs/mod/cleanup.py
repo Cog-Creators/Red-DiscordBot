@@ -8,6 +8,7 @@ from discord.ext import commands
 from redbot.core import checks
 from redbot.core.bot import Red
 from .common import slow_deletion, mass_purge
+from .log import log
 from redbot.core.i18n import CogI18n
 
 _ = CogI18n("Cleanup", __file__)
@@ -18,16 +19,6 @@ class Cleanup:
 
     def __init__(self, bot: Red):
         self.bot = bot
-        global logger
-        logger = logging.getLogger("mod.cleanup")
-        # Prevents the logger from being loaded again in case of module reload
-        if logger.level == 0:
-            logger.setLevel(logging.INFO)
-            handler = logging.FileHandler(
-                filename='cogs/.data/Mod/cleanup.log', encoding='utf-8', mode='a')
-            handler.setFormatter(
-                logging.Formatter('%(asctime)s %(message)s', datefmt="[%d/%m/%Y %H:%M]"))
-            logger.addHandler(handler)
 
     @commands.group()
     @checks.mod_or_permissions(manage_messages=True)
@@ -80,7 +71,7 @@ class Cleanup:
         reason = "{}({}) deleted {} messages "\
                  " containing '{}' in channel {}".format(author.name,
                                                          author.id, len(to_delete), text, channel.id)
-        logger.info(reason)
+        log.info(reason)
 
         if is_bot:
             await mass_purge(to_delete, channel, reason)
@@ -131,7 +122,7 @@ class Cleanup:
                  " made by {}({}) in channel {}"\
                  "".format(author.name, author.id, len(to_delete),
                            user.name, user.id, channel.name)
-        logger.info(reason)
+        log.info(reason)
 
         if is_bot:
             # For whatever reason the purge endpoint requires manage_messages
@@ -178,7 +169,7 @@ class Cleanup:
         reason = "{}({}) deleted {} messages in channel {}"\
                  "".format(author.name, author.id,
                            len(to_delete), channel.name)
-        logger.info(reason)
+        log.info(reason)
 
         await mass_purge(to_delete, channel, reason)
 
@@ -213,7 +204,7 @@ class Cleanup:
         reason = "{}({}) deleted {} messages in channel {}"\
                  "".format(author.name, author.id,
                            number, channel.name)
-        logger.info(reason)
+        log.info(reason)
 
         if is_bot:
             await mass_purge(to_delete, channel, reason)
@@ -274,7 +265,7 @@ class Cleanup:
                  " command messages in channel {}"\
                  "".format(author.name, author.id, len(to_delete),
                            channel.name)
-        logger.info(reason)
+        log.info(reason)
 
         if is_bot:
             await mass_purge(to_delete, channel, reason)
@@ -356,7 +347,7 @@ class Cleanup:
                  "sent by the bot in {}"\
                  "".format(author.name, author.id, len(to_delete),
                            channel_name)
-        logger.info(reason)
+        log.info(reason)
 
         if is_bot and can_mass_purge:
             await mass_purge(to_delete, channel, reason)
