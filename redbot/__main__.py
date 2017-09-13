@@ -88,12 +88,12 @@ async def _get_prefix_and_token(red, indict):
     indict['enable_sentry'] = await red.db.enable_sentry()
 
 
-def main():
+def main(bot_class=Red):
     cli_flags = parse_cli_flags(sys.argv[1:])
     load_basic_configuration(cli_flags.instance_name)
     log, sentry_log = init_loggers(cli_flags)
     description = "Red v3 - Alpha"
-    red = Red(cli_flags, description=description, pm_help=None)
+    red = bot_class(cli_flags, description=description, pm_help=None)
     init_global_checks(red)
     init_events(red, cli_flags)
     red.add_cog(Core())
