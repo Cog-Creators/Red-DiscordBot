@@ -10,15 +10,15 @@ if discord.version_info.major < 1:
           " >= 1.0.0.")
     sys.exit(1)
 
-from redbot.core.bot import Red, ExitCodes
-from redbot.core.cog_manager import CogManagerUI
-from redbot.core.data_manager import load_basic_configuration
-from redbot.core.global_checks import init_global_checks
-from redbot.core.events import init_events
-from redbot.core.sentry_setup import init_sentry_logging
-from redbot.core.cli import interactive_config, confirm, parse_cli_flags
-from redbot.core.core_commands import Core
-from redbot.core.dev_commands import Dev
+from .bot import Red, ExitCodes
+from .cog_manager import CogManagerUI
+from .data_manager import load_basic_configuration
+from .global_checks import init_global_checks
+from .events import init_events
+from .sentry_setup import init_sentry_logging
+from .cli import interactive_config, confirm, parse_cli_flags
+from .core_commands import Core
+from .dev_commands import Dev
 import asyncio
 import logging.handlers
 import logging
