@@ -87,6 +87,16 @@ async def _get_prefix_and_token(red, indict):
 
 
 def main(bot_class=Red):
+    """
+    Runs Red.
+
+    Runs an interactive configuration setup in the terminal if
+    the prefix and/or token is not set.
+
+    :param bot_class:
+        The class which will be used to instantiate the bot. Must implement
+        :class:`.core.bot.Red`'s interface.
+    """
     cli_flags = parse_cli_flags(sys.argv[1:])
     load_basic_configuration(cli_flags.instance_name)
     log, sentry_log = init_loggers(cli_flags)
