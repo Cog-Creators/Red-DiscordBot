@@ -26,7 +26,7 @@ REQS_NO_AUDIO_TXT = "requirements_no_audio.txt"
 FFMPEG_BUILDS_URL = "https://ffmpeg.zeranoe.com/builds/"
 
 INTRO = ("==========================\n"
-         "Red Discord Bot - Launcher\n"
+         "Red Discord Bot - Nep Nep Edition\n"
          "==========================\n")
 
 IS_WINDOWS = os.name == "nt"
@@ -43,15 +43,15 @@ FFMPEG_FILES = {
 
 
 def parse_cli_arguments():
-    parser = argparse.ArgumentParser(description="Red - Discord Bot's launcher")
+    parser = argparse.ArgumentParser(description="Neptune's launcher")
     parser.add_argument("--start", "-s",
-                        help="Starts Red",
+                        help="Starts NepNep",
                         action="store_true")
     parser.add_argument("--auto-restart",
-                        help="Autorestarts Red in case of issues",
+                        help="Autorestarts NepNep in case of issues",
                         action="store_true")
     parser.add_argument("--update-red",
-                        help="Updates Red (git)",
+                        help="Updates NepNep via git",
                         action="store_true")
     parser.add_argument("--update-reqs",
                         help="Updates requirements (w/ audio)",

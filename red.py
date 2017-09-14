@@ -13,8 +13,8 @@ try:
     import discord
 except ImportError:
     print("Discord.py is not installed.\n"
-          "Consult the guide for your operating system "
-          "and do ALL the steps in order.\n"
+          "go to the guide for your operating system "
+          "and do ALL the steps in order. unless you are like me, then you're screwed!\n"
           "https://twentysix26.github.io/Red-Docs/\n")
     sys.exit(1)
 
@@ -37,7 +37,7 @@ from io import TextIOWrapper
 #                 https://github.com/Rapptz/RoboDanny/
 #
 
-description = "Red - A multifunction Discord bot by Twentysix"
+description = "Red - A multifunction Discord bot by Twentysix is mostly right, but i'm not red, Im NepNep!"
 
 
 class Bot(commands.Bot):
@@ -302,7 +302,7 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
         owner = await set_bot_owner()
 
         print("-----------------")
-        print("Red - Discord Bot")
+        print("NepNep - Discord Bot")
         print("-----------------")
         print(str(bot.user))
         print("\nConnected to:")
@@ -324,7 +324,7 @@ def initialize(bot_class=Bot, formatter_class=Formatter):
             bot.oauth_url = url
             print(url)
 
-        print("\nOfficial server: https://discord.gg/red")
+        print("\n the Twentysix26 guy's Official server for the non forked version of me: https://discord.gg/red")
 
         print("Make sure to keep your bot updated. Select the 'Update' "
               "option from the launcher.")
@@ -405,7 +405,7 @@ def interactive_setup(settings):
     first_run = settings.bot_settings == settings.default_settings
 
     if first_run:
-        print("Red - First run configuration\n")
+        print("First run configuration\n")
         print("If you haven't already, create a new account:\n"
               "https://twentysix26.github.io/Red-Docs/red_guide_bot_accounts/"
               "#creating-a-new-bot-account")
@@ -421,7 +421,7 @@ def interactive_setup(settings):
                 settings.email = choice
                 settings.password = input("\nPassword> ")
             else:
-                print("That doesn't look like a valid token.")
+                print("That doesn't really look like a valid token.")
         settings.save_settings()
 
     if not settings.prefixes:
@@ -544,8 +544,8 @@ def load_cogs(bot):
     bot.load_extension('cogs.owner')
     owner_cog = bot.get_cog('Owner')
     if owner_cog is None:
-        print("The owner cog is missing. It contains core functions without "
-              "which Red cannot function. Reinstall.")
+        print("The owner cog is missing~ It contains core functions without "
+              "which Red cannot function. Reinstall please~")
         exit(1)
 
     if bot.settings._no_cogs:
@@ -591,7 +591,7 @@ def main(bot):
         bot._shutdown_mode = True
         exit(0)
 
-    print("Logging into Discord...")
+    print("Logging into Discord... *whistles*")
     bot.uptime = datetime.datetime.utcnow()
 
     if bot.settings.login_credentials:
