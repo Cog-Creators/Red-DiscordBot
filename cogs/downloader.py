@@ -26,7 +26,8 @@ DISCLAIMER = ("You're about to add a 3rd party repository. The creator of Red"
               "damage that the content of 3rd party repositories might cause."
               "\nBy typing 'I agree' you declare to have read and understand "
               "the above message. This message won't be shown again until the"
-              " next reboot.")
+              " next reboot. basically, dont break me because "
+              "i dont want to be a broken CPU thats mean")
 
 
 class UpdateError(Exception):

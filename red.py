@@ -1,12 +1,17 @@
 import asyncio
 import os
 import sys
-sys.path.insert(0, "lib")
 import logging
 import logging.handlers
 import traceback
 import datetime
 import subprocess
+from cogs.utils.settings import Settings
+from cogs.utils.dataIO import dataIO
+from cogs.utils.chat_formatting import inline
+from collections import Counter
+from io import TextIOWrapper
+sys.path.insert(0, "lib")
 
 try:
     from discord.ext import commands
@@ -14,15 +19,10 @@ try:
 except ImportError:
     print("Discord.py is not installed.\n"
           "go to the guide for your operating system "
-          "and do ALL the steps in order. unless you are like me, then you're screwed!\n"
+          "and do ALL the steps in order. unless you are like me, "
+          "then you're screwed!\n"
           "https://twentysix26.github.io/Red-Docs/\n")
     sys.exit(1)
-
-from cogs.utils.settings import Settings
-from cogs.utils.dataIO import dataIO
-from cogs.utils.chat_formatting import inline
-from collections import Counter
-from io import TextIOWrapper
 
 #
 # Red, a Discord bot by Twentysix, based on discord.py and its command
@@ -37,7 +37,7 @@ from io import TextIOWrapper
 #                 https://github.com/Rapptz/RoboDanny/
 #
 
-description = "Red - A multifunction Discord bot by Twentysix is mostly right, but i'm not red, Im NepNep!"
+description = "Red - A multifunction Discord bot by Twentysix is mostly right, but i'm not red, Im NepNep"
 
 
 class Bot(commands.Bot):
@@ -206,7 +206,7 @@ class Bot(commands.Bot):
             name
         ]
 
-        if IS_MAC: # --target is a problem on Homebrew. See PR #552
+        if IS_MAC:   # --target is a problem on Homebrew. See PR #552
             args.remove("--target")
             args.remove("lib")
 
