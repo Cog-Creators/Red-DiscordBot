@@ -1,4 +1,4 @@
-# This is a Fork of Red, that i have customised a bit to fit my needs a bit better.
+# This is a Fork of Red, that i have customised a bit to fit Nep Nep a bit better.
 ![intro](http://i.imgur.com/RgGlNpQ.jpg)
 # Red - A fully customizable Discord bot
 #### *Music, admin, trivia, fun commands and much more!*
