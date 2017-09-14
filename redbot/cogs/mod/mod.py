@@ -939,7 +939,7 @@ class Mod:
         """Adds guilds/channels to ignorelist"""
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
-            await ctx.send(self.count_ignored())
+            await ctx.send(await self.count_ignored())
 
     @ignore.command(name="channel")
     async def ignore_channel(self, ctx: commands.Context, channel: discord.TextChannel=None):
@@ -971,7 +971,7 @@ class Mod:
         """Removes guilds/channels from ignorelist"""
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
-            await ctx.send(self.count_ignored())
+            await ctx.send(await self.count_ignored())
 
     @unignore.command(name="channel")
     async def unignore_channel(self, ctx: commands.Context, channel: discord.TextChannel=None):
@@ -997,13 +997,13 @@ class Mod:
         else:
             await ctx.send(_("This guild is not in the ignore list."))
 
-    def count_ignored(self):
+    async def count_ignored(self):
         ch_count = 0
         svr_count = 0
         for guild in self.bot.guilds:
-            if not self.settings.guild(guild).ignored():
+            if not await self.settings.guild(guild).ignored():
                 for channel in guild.text_channels:
-                    if self.settings.channel(channel).ignored():
+                    if await self.settings.channel(channel).ignored():
                         ch_count += 1
             else:
                 svr_count += 1
@@ -1013,8 +1013,8 @@ class Mod:
     @commands.command()
     async def names(self, ctx: commands.Context, user: discord.Member):
         """Show previous names/nicknames of a user"""
-        names = self.settings.user(user).past_names()
-        nicks = self.settings.member(user).past_nicks()
+        names = await self.settings.user(user).past_names()
+        nicks = await self.settings.member(user).past_nicks()
         msg = ""
         if names:
             names = [escape(name, mass_mentions=True) for name in names]
@@ -1037,9 +1037,8 @@ class Mod:
     async def check_duplicates(self, message):
         guild = message.guild
         author = message.author
-        if guild.id not in self.settings:
-            return False
-        if self.settings[guild.id]["delete_repeats"]:
+
+        if await self.settings.guild(guild).delete_repeats():
             if not message.content:
                 return False
             self.cache[author].append(message)
@@ -1056,10 +1055,9 @@ class Mod:
     async def check_mention_spam(self, message):
         guild = message.guild
         author = message.author
-        if guild.id not in self.settings:
-            return False
-        if self.settings[guild.id]["ban_mention_spam"]:
-            max_mentions = self.settings[guild.id]["ban_mention_spam"]
+
+        if await self.settings.guild(guild).ban_mention_spam():
+            max_mentions = await self.settings.guild(guild).ban_mention_spam()
             mentions = set(message.mentions)
             if len(mentions) >= max_mentions:
                 try:
@@ -1079,12 +1077,12 @@ class Mod:
                     return True
         return False
 
-    async def on_command(self, command, ctx: commands.Context):
+    async def on_command(self, ctx: commands.Context):
         """Currently used for:
             * delete delay"""
         guild = ctx.guild
         message = ctx.message
-        delay = self.settings.guild(guild).delete_delay()
+        delay = await self.settings.guild(guild).delete_delay()
 
         if delay == -1:
             return
@@ -1156,18 +1154,18 @@ class Mod:
 
     async def on_member_update(self, before, after):
         if before.name != after.name:
-            name_list = self.settings.user(before).past_names()
+            name_list = await self.settings.user(before).past_names()
             if after.name not in name_list:
                 names = deque(name_list, maxlen=20)
                 names.append(after.name)
-                await self.settings.user(before).set("past_names", list(names))
+                await self.settings.user(before).past_names.set(list(names))
 
         if before.nick != after.nick and after.nick is not None:
-            nick_list = self.settings.member(before).past_nicks()
+            nick_list = await self.settings.member(before).past_nicks()
             nicks = deque(nick_list, maxlen=20)
             if after.nick not in nicks:
                 nicks.append(after.nick)
-                self.settings.member(before).set("past_nicks", list(nicks))
+                await self.settings.member(before).past_nicks.set(list(nicks))
 
     @staticmethod
     def are_overwrites_empty(overwrites):

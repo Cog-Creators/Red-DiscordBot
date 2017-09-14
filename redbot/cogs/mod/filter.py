@@ -37,7 +37,7 @@ class Filter:
             await self.bot.send_cmd_help(ctx)
             server = ctx.guild
             author = ctx.author
-            word_list = self.settings.guild(server).filter()
+            word_list = await self.settings.guild(server).filter()
             if word_list:
                 words = ", ".join(word_list)
                 words = _("Filtered in this server:") + "\n\n" + words
