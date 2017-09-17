@@ -49,7 +49,7 @@ class Trivia:
 
     def __init__(self, bot: Red):
         self.bot = bot
-        self.trivia_sessions = []
+        self.trivia_sessions = {}
         self.lists_dir = "redbot/cogs/trivia/lists"  # Temporary solution
         self.conf = Config.get_conf(
             self, identifier=UNIQUE_ID, force_registration=True)
@@ -174,9 +174,9 @@ class Trivia:
             return
         settings = self.conf.guild(ctx.guild)
         session = TriviaSession(ctx, trivia_list, settings)
-        self.trivia_sessions.append(session)
+        task = ctx.bot.loop.create_task(session.run())
+        self.trivia_sessions[session] = task
         LOG.debug("New trivia session; #%s in %s", ctx.channel, ctx.guild)
-        await session.run()
 
     @trivia.command(name="stop")
     async def trivia_stop(self, ctx: commands.Context):
@@ -233,7 +233,8 @@ class Trivia:
         channel = session.ctx.channel
         LOG.debug("Ending trivia session; #%s in %s", channel, channel.guild)
         if session in self.trivia_sessions:
-            self.trivia_sessions.remove(session)
+            self.trivia_sessions[session].cancel()
+            self.trivia_sessions.pop(session)
 
     def get_trivia_list(self, category: str) -> List[tuple]:
         """Get the trivia list corresponding to the given category.
