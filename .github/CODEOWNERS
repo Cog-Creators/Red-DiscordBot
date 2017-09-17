@@ -6,9 +6,13 @@ core/config.py              @tekulvw
 core/cog_manager.py         @tekulvw
 core/data_manager.py        @tekulvw
 core/drivers/*              @tekulvw
+core/i18n.py                @tekulvw
 core/sentry_setup.py        @Kowlin @tekulvw
 
 # Cogs
 cogs/alias/*                @tekulvw
 cogs/downloader/*           @tekulvw
 cogs/general/*              @palmtree5
+
+# Docs
+docs/*                      @tekulvw @palmtree5
