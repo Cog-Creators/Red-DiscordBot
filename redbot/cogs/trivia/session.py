@@ -6,39 +6,40 @@ from collections import Counter
 from typing import List
 import discord
 from discord.ext.commands import Context
-from core import config as realconfig
-from core.bank import deposit_credits
-from core.utils.chat_formatting import box
+from redbot.core import config as realconfig
+from redbot.core.bank import deposit_credits
+from redbot.core.utils.chat_formatting import box
 from .log import LOG
 
-_REVEAL_MESSAGES = ("I know this one! {}!",
-                    "Easy: {}.",
+_REVEAL_MESSAGES = ("I know this one! {}!", "Easy: {}.",
                     "Oh really? It's {} of course.")
-_FAIL_MESSAGES = ("To the next one I guess...",
-                  "Moving on...",
+_FAIL_MESSAGES = ("To the next one I guess...", "Moving on...",
                   "I'm sure you'll know the answer of the next one.",
                   "\N{PENSIVE FACE} Next one.")
 
+
 class TriviaSession():
-    """A Trivia Session. After being instantiated, it can be run with :func:`run`
-     and force stopped with :func:`stop_trivia`.
+    """A Trivia Session. After being instantiated, it can be run with :func:`TriviaSesson.run`
+    and force stopped with :func:`TriviaSesson.stop`.
 
-    .. py:attribute:: ctx
-
-        Context object from which this session will be run. It assumes the session was started
-         in `ctx.channel` by `ctx.author`.
-
-    .. py:attribute:: trivia_list
-
-        List of tuples containing `(question, answers)` pairs. `question` must be a single string,
-         where as `answers` is a list of strings.
-
-    .. py:attribute:: settings
-
-        A :py:class:`.core.config.Group` object which contains the settings for the trivia session.
+    Attributes
+    ----------
+    ctx: Context
+        Context object from which this session will be run.
+        This object assumes the session was started in `ctx.channel`
+        by `ctx.author`.
+    trivia_list: List[tuple]
+        List of tuples containing `(question, answers)` pairs. `question`
+        must be a single string, where as `answers` is a list of strings.
+    settings: realconfig.Group
+        A :py:class:`redbot.core.config.Group` object which contains the
+        settings for the trivia session.
     """
 
-    def __init__(self, ctx: Context, trivia_list: List[tuple], settings: realconfig.Group):
+    def __init__(self,
+                 ctx: Context,
+                 trivia_list: List[tuple],
+                 settings: realconfig.Group):
         self.ctx = ctx
         shuffle(trivia_list)
         self.question_list = trivia_list
@@ -69,11 +70,14 @@ class TriviaSession():
             await self.ctx.send("There are no more questions!")
             await self.end_game()
 
-    async def wait_for_answer(self, answers: List[str], delay: float, timeout: int):
+    async def wait_for_answer(self,
+                              answers: List[str],
+                              delay: float,
+                              timeout: int):
         """Waits for an answer.
 
         Returns False if waiting was cancelled; a user probably forced the trivia
-         session to stop.
+        session to stop.
 
         :param List[str] answers:
             A list of valid answers.
@@ -86,13 +90,12 @@ class TriviaSession():
         :rtype: bool
         """
         try:
-            message = await self.ctx.bot.wait_for("message",
-                                                  check=self.check_answer(answers),
-                                                  timeout=delay)
+            message = await self.ctx.bot.wait_for(
+                "message", check=self.check_answer(answers), timeout=delay)
         except asyncio.TimeoutError:
             if abs(self.last_response - int(time.perf_counter())) >= timeout:
                 await self.ctx.send("Guys...? Well, I guess I'll stop then.")
-                await self.stop_trivia()
+                await self.stop()
             if self.stopped:
                 return False
             if await self.settings.reveal_answer():
@@ -105,7 +108,8 @@ class TriviaSession():
             await self.ctx.send(reply)
         else:
             self.scores[message.author] += 1
-            reply = "You got it {}! **+1** to you!".format(message.author.display_name)
+            reply = "You got it {}! **+1** to you!".format(
+                message.author.display_name)
             await self.ctx.send(reply)
 
         if self.stopped:
@@ -113,10 +117,12 @@ class TriviaSession():
         return True
 
     def check_answer(self, answers: List[str]):
-        """Returns a `discord.Message` predicate to check for the given answers."""
+        """Returns predicate for a `discord.Message` checking if it contains any
+        of the given answers."""
+
         def _pred(message: discord.Message):
-            early_exit = (message.channel != self.ctx.channel or
-                          message.author == self.ctx.guild.me)
+            early_exit = (message.channel != self.ctx.channel
+                          or message.author == self.ctx.guild.me)
             if early_exit:
                 return False
 
@@ -133,11 +139,12 @@ class TriviaSession():
                     if answer in guess:
                         return True
             return False
+
         return _pred
 
     async def end_game(self):
         """Ends the trivia session and displays scrores."""
-        self.stop_trivia()
+        self.stop()
         if self.scores:
             await self.send_table()
         multiplier = await self.settings.payout_multiplier()
@@ -151,7 +158,7 @@ class TriviaSession():
             table += "+ {}\t{}\n".format(user, score)
         await self.ctx.send(box(table, lang="diff"))
 
-    def stop_trivia(self):
+    def stop(self):
         """Stops the trivia session, without showing scores."""
         self.stopped = True
         self.ctx.bot.dispatch("trivia_end", self)
@@ -164,7 +171,8 @@ class TriviaSession():
         :param float multiplier:
             The coefficient of the winner's score, used to determine the amount paid.
         """
-        (winner, score) = next((tup for tup in self.scores.most_common(1)), (None, None))
+        (winner, score) = next((tup for tup in self.scores.most_common(1)),
+                               (None, None))
         me_ = self.ctx.guild.me
         if winner is not None and winner != me_ and score > 0:
             contestants = list(self.scores.keys())
@@ -173,7 +181,10 @@ class TriviaSession():
             if len(contestants) >= 3:
                 amount = int(multiplier * score)
                 if amount > 0:
-                    LOG.debug("Paying trivia winner: %d credits --> %s", amount, str(winner))
+                    LOG.debug("Paying trivia winner: %d credits --> %s",
+                              amount, str(winner))
                     await deposit_credits(winner, int(multiplier * score))
-                    await self.ctx.send("Congratulations, {0}, you have received {1} credits"
-                                        " for coming first.".format(winner.display_name, amount))
+                    await self.ctx.send(
+                        "Congratulations, {0}, you have received {1} credits"
+                        " for coming first.".format(winner.display_name,
+                                                    amount))
