@@ -206,7 +206,7 @@ class Mod:
             if cur_setting is False:
                 await self.bot.send_cmd_help(ctx)
                 return
-            await self.settings.guild(guild).set("ban_mention_spam", False)
+            await self.settings.guild(guild).ban_mention_spam.set(False)
             await ctx.send(_("Autoban for mention spam disabled."))
 
     @modset.command()
@@ -280,7 +280,7 @@ class Mod:
             await ctx.send(_("I cannot let you do that. Self-harm is "
                            "bad {}").format("\N{PENSIVE FACE}"))
             return
-        elif not is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
+        elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
             await ctx.send(_("I cannot let you do that. You are "
                            "not higher than the user in the role "
                            "hierarchy."))
@@ -296,7 +296,7 @@ class Mod:
             print(e)
 
         try:
-            case = await modlog.create_case(
+            await modlog.create_case(
                 guild, ctx.message.created_at, "Kick", user, author,
                 reason, until=None, channel=None
             )
@@ -320,7 +320,7 @@ class Mod:
             await ctx.send(_("I cannot let you do that. Self-harm is "
                            "bad {}").format("\N{PENSIVE FACE}"))
             return
-        elif not is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
+        elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
             await ctx.send(_("I cannot let you do that. You are "
                            "not higher than the user in the role "
                            "hierarchy."))
@@ -419,7 +419,7 @@ class Mod:
             await ctx.send(_("I cannot let you do that. Self-harm is "
                            "bad {}").format("\N{PENSIVE FACE}"))
             return
-        elif not is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
+        elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
             await ctx.send(_("I cannot let you do that. You are "
                            "not higher than the user in the role "
                            "hierarchy."))
@@ -485,7 +485,7 @@ class Mod:
         finding the user, right-clicking, and selecting 'Copy ID'"""
         guild = ctx.guild
         author = ctx.author
-        user = await self.bot.get_user(user_id)
+        user = self.bot.get_user(user_id)
         if not user:
             await ctx.send(_("Couldn't find a user with that ID!"))
             return
@@ -604,6 +604,9 @@ class Mod:
     async def voiceunban(self, ctx: commands.Context, user: discord.Member, *, reason: str=None):
         """Unbans the user from speaking/listening in the guild's voice channels"""
         user_voice_state = user.voice
+        if user_voice_state is None:
+            await ctx.send(_("No voice state for that user!"))
+            return
         needs_unmute = True if user_voice_state.mute else False
         needs_undeafen = True if user_voice_state.deaf else False
         audit_reason = get_audit_reason(ctx.author, reason)
@@ -771,12 +774,12 @@ class Mod:
         """Mutes the specified user in the specified channel"""
         overwrites = channel.overwrites_for(user)
         permissions = channel.permissions_for(user)
-        perms_cache = self.settings.member(user).perms_cache()
+        perms_cache = await self.settings.member(user).perms_cache()
 
         if overwrites.send_messages is False or permissions.send_messages is False:
             return False, mute_unmute_issues["already_muted"]
 
-        elif not is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
+        elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
             return False, mute_unmute_issues["hierarchy_problem"]
 
         perms_cache[str(channel.id)] = overwrites.send_messages
@@ -786,7 +789,7 @@ class Mod:
         except discord.Forbidden:
             return False, mute_unmute_issues["permissions_issue"]
         else:
-            await self.settings.member(user).set("perms_cache", perms_cache)
+            await self.settings.member(user).perms_cache.set(perms_cache)
             return True, None
 
     @commands.group()
@@ -901,12 +904,12 @@ class Mod:
                           user: discord.Member) -> (bool, str):
         overwrites = channel.overwrites_for(user)
         permissions = channel.permissions_for(user)
-        perms_cache = self.settings.member(user).perms_cache()
+        perms_cache = await self.settings.member(user).perms_cache()
 
         if overwrites.send_messages or permissions.send_messages:
             return False, mute_unmute_issues["already_unmuted"]
 
-        elif not is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
+        elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
             return False, mute_unmute_issues["hierarchy_problem"]
         
         if channel.id in perms_cache:
@@ -929,7 +932,7 @@ class Mod:
             except KeyError:
                 pass
             else:
-                await self.settings.member(user).set("perms_cache", perms_cache)
+                await self.settings.member(user).perms_cache.set(perms_cache)
             return True, None
 
     @commands.group()
@@ -948,8 +951,8 @@ class Mod:
         Defaults to current one"""
         if not channel:
             channel = ctx.channel
-        if not self.settings.channel(channel).ignored():
-            await self.settings.channel(channel).set("ignored", True)
+        if not await self.settings.channel(channel).ignored():
+            await self.settings.channel(channel).ignored.set(True)
             await ctx.send(_("Channel added to ignore list."))
         else:
             await ctx.send(_("Channel already in ignore list."))
@@ -958,8 +961,8 @@ class Mod:
     async def ignore_guild(self, ctx: commands.Context):
         """Ignores current guild"""
         guild = ctx.guild
-        if not self.settings.guild(guild).ignored():
-            await self.settings.guild(guild).set("ignored", True)
+        if not await self.settings.guild(guild).ignored():
+            await self.settings.guild(guild).ignored.set(True)
             await ctx.send(_("This guild has been added to the ignore list."))
         else:
             await ctx.send(_("This guild is already being ignored."))
@@ -981,8 +984,8 @@ class Mod:
         if not channel:
             channel = ctx.channel
 
-        if self.settings.channel(channel).ignored():
-            await self.settings.channel(channel).set("ignored", False)
+        if await self.settings.channel(channel).ignored():
+            await self.settings.channel(channel).ignored.set(False)
             await ctx.send(_("Channel removed from ignore list."))
         else:
             await ctx.send(_("That channel is not in the ignore list."))
@@ -991,8 +994,8 @@ class Mod:
     async def unignore_guild(self, ctx: commands.Context):
         """Removes current guild from ignore list"""
         guild = ctx.message.guild
-        if self.settings.guild(guild).ignored():
-            await self.settings.guild(guild).set("ignored", False)
+        if await self.settings.guild(guild).ignored():
+            await self.settings.guild(guild).ignored.set(False)
             await ctx.send(_("This guild has been removed from the ignore list."))
         else:
             await ctx.send(_("This guild is not in the ignore list."))
@@ -1137,20 +1140,20 @@ class Mod:
             if entry.target == user:
                 audit_case = entry
                 break
-        if audit_case:
-            mod = audit_case.user
-            reason = audit_case.reason
-
-            if "Reason:" in reason:  # Would be the case if event is triggered by a command
-                return
-
-            try:
-                await modlog.create_case(guild, audit_case.created_at, "Unban",
-                                         user, mod, reason if reason else None)
-            except RuntimeError as e:
-                print(e)
         else:
             return
+        mod = audit_case.user
+        reason = audit_case.reason
+
+        if reason is not None and "Reason:" in reason:
+            # Would be the case if event is triggered by a command
+            return
+
+        try:
+            await modlog.create_case(guild, audit_case.created_at, "Unban",
+                                     user, mod, reason if reason else None)
+        except RuntimeError as e:
+            print(e)
 
     async def on_member_update(self, before, after):
         if before.name != after.name:

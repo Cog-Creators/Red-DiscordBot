@@ -133,7 +133,7 @@ class Filter:
 
     async def on_message_edit(self, _, message):
         author = message.author
-        if message.server is None or self.bot.user == author:
+        if message.guild is None or self.bot.user == author:
             return
 
         valid_user = isinstance(author, discord.Member) and not author.bot
