@@ -31,7 +31,7 @@ class ModLog:
         guild = ctx.guild
         if channel:
             if channel.permissions_for(guild.me).send_messages:
-                await modlog.set_modlog_channel(channel)
+                await modlog.set_modlog_channel(guild, channel)
                 await ctx.send(
                     _("Mod events will be sent to {}").format(
                         channel.mention
@@ -46,7 +46,7 @@ class ModLog:
             if await modlog.get_modlog_channel(guild) is None:
                 await self.bot.send_cmd_help(ctx)
                 return
-            await modlog.set_modlog_channel(None)
+            await modlog.set_modlog_channel(guild, None)
             await ctx.send(_("Mod log deactivated."))
 
     @modlogset.command(name='cases')
