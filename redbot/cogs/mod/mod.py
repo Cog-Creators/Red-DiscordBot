@@ -438,7 +438,7 @@ class Mod:
                     msg = await user.send(
                         _("You have been banned and "
                         "then unbanned as a quick way to delete your messages.\n"
-                        "You can now join the guild again.{}").format(invite)
+                        "You can now join the guild again. {}").format(invite)
                     )
                 except discord.Forbidden:
                     pass
@@ -537,27 +537,31 @@ class Mod:
         to send the newly unbanned user
         :returns: :class:`Invite`"""
         guild = ctx.guild
-        permissions = guild.default_channel.permissions_for(guild.me)
-        if not permissions.create_instant_invite and not permissions.manage_guild:
-            return None
-        if "VANITY_URL" in guild.features:  # guild has a vanity url so use it as the one to send
+        if "VANITY_URL" in guild.features and guild.me.permissions.manage_guild:
+            # guild has a vanity url so use it as the one to send
             return await guild.vanity_invite()
         invites = await guild.invites()
         for inv in invites:  # Loop through the invites for the guild
-            if inv.channel == guild.default_channel \
-                    and not inv.max_uses and not inv.max_age \
-                    and not inv.temporary:
+            if not (inv.max_uses or inv.max_age or inv.temporary):
                 # Invite is for the guild's default channel,
                 # has unlimited uses, doesn't expire, and
                 # doesn't grant temporary membership
                 # (i.e. they won't be kicked on disconnect)
                 return inv
         else:  # No existing invite found that is valid
+            channels_and_perms = zip(
+                guild.text_channels,
+                map(guild.me.permissions_in, guild.text_channels))
+            channel = next((
+                channel for channel, perms in channels_and_perms
+                if perms.create_instant_invite), None)
+            if channel is None:
+                return
             try:
                 # Create invite that expires after 1 day
-                return await guild.create_invite(max_age=86400)
+                return await channel.create_invite(max_age=86400)
             except discord.HTTPException:
-                return None
+                return
 
     @commands.command()
     @commands.guild_only()
