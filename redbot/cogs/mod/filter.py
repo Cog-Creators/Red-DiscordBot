@@ -121,6 +121,8 @@ class Filter:
                         pass
 
     async def on_message(self, message: discord.Message):
+        if isinstance(message.channel, discord.abc.PrivateChannel):
+            return
         author = message.author
         valid_user = isinstance(author, discord.Member) and not author.bot
 
@@ -133,7 +135,7 @@ class Filter:
 
     async def on_message_edit(self, _, message):
         author = message.author
-        if message.server is None or self.bot.user == author:
+        if message.guild is None or self.bot.user == author:
             return
 
         valid_user = isinstance(author, discord.Member) and not author.bot

@@ -245,7 +245,7 @@ async def create_case(guild: discord.Guild, created_at: datetime, action_type: s
     mod_channel = None
     if hasattr(guild, "owner"):  # Fairly arbitrary, but it doesn't really matter since we don't need the modlog channel in tests
         try:
-            mod_channel = get_modlog_channel(guild)
+            mod_channel = await get_modlog_channel(guild)
         except RuntimeError:
             raise RuntimeError(
                 "No mod log channel set for guild {}".format(guild.name)

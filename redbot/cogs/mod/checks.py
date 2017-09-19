@@ -30,7 +30,7 @@ def admin_or_voice_permissions(**perms):
     async def pred(ctx: commands.Context):
         author = ctx.author
         guild = ctx.guild
-        if ctx.bot.is_owner(author) or guild.owner == author:
+        if await ctx.bot.is_owner(author) or guild.owner == author:
             return True
         admin_role = discord.utils.get(guild.roles, id=await ctx.bot.db.guild(guild).admin_role())
         if admin_role in author.roles:
