@@ -143,7 +143,7 @@ class Case:
         return data
 
     @classmethod
-    def from_json(cls, mod_channel: discord.TextChannel, bot: Red, data: dict):
+    async def from_json(cls, mod_channel: discord.TextChannel, bot: Red, data: dict):
         """Get a Case object from the provided information
 
         :param discord.TextChannel mod_channel:
@@ -156,13 +156,14 @@ class Case:
             The case object for the requested case
         :rtype: Case"""
         guild = mod_channel.guild
-        message = mod_channel.get_message(data["message"])
-        user = bot.get_user(data["user"])
+        message = await mod_channel.get_message(data["message"])
+        user = await bot.get_user_info(data["user"])
         moderator = guild.get_member(data["moderator"])
         channel = guild.get_channel(data["channel"])
         amended_by = guild.get_member(data["amended_by"])
+        case_guild = bot.get_guild(data["guild"])
         return cls(
-            guild=data["guild"], created_at=data["created_at"],
+            guild=case_guild, created_at=data["created_at"],
             action_type=data["action_type"], user=user, moderator=moderator,
             case_number=data["case_number"], reason=data["reason"],
             until=data["until"], channel=channel, amended_by=amended_by,
@@ -189,7 +190,7 @@ async def get_case(case_number: int, guild: discord.Guild,
             "That case does not exist for guild {}".format(guild.name)
         )
     mod_channel = await get_modlog_channel(guild)
-    return Case.from_json(mod_channel, bot, case)
+    return await Case.from_json(mod_channel, bot, case)
 
 
 async def create_case(guild: discord.Guild, created_at: datetime, action_type: str,
@@ -291,7 +292,7 @@ async def edit_case(case_number: int, guild: discord.Guild, bot: Red,
     for item in list(new_data.keys()):
         setattr(case, item, new_data[item])
     case_emb = await case.get_case_msg_content()
-    case.message.edit(embed=case_emb)
+    await case.message.edit(embed=case_emb)
 
     await _conf.guild(guild).cases.set_attr(str(case_number), case.to_json())
     return case
@@ -495,7 +496,7 @@ async def get_case_type_repr(case_type: str) -> str:
     :rtype:
         str
     """
-    return await _conf.casetypes.get_attr(case_type, resolve=False).image()
+    return (await _conf.casetypes.get_attr(case_type)).get("image")
 
 
 async def reset_cases(guild: discord.Guild) -> bool:
