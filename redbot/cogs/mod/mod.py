@@ -198,8 +198,7 @@ class Mod:
                 _("Autoban for mention spam enabled. "
                   "Anyone mentioning {} or more different people "
                   "in a single message will be autobanned.").format(
-                    max_mentions
-                )
+                  max_mentions)
             )
         else:
             cur_setting = self.settings.guild(guild).ban_mention_spam()
@@ -218,7 +217,7 @@ class Mod:
         if not cur_setting:
             await self.settings.guild(guild).delete_repeats.set(True)
             await ctx.send(_("Messages repeated up to 3 times will "
-                           "be deleted."))
+                             "be deleted."))
         else:
             await self.settings.guild(guild).delete_repeats.set(False)
             await ctx.send(_("Repeated messages will be ignored."))
@@ -282,8 +281,8 @@ class Mod:
             return
         elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
             await ctx.send(_("I cannot let you do that. You are "
-                           "not higher than the user in the role "
-                           "hierarchy."))
+                             "not higher than the user in the role "
+                             "hierarchy."))
             return
         audit_reason = get_audit_reason(author, reason)
         try:
@@ -294,16 +293,16 @@ class Mod:
             await ctx.send(_("I'm not allowed to do that."))
         except Exception as e:
             print(e)
+        else:
+            await ctx.send(_("Done. That felt good."))
 
         try:
             await modlog.create_case(
                 guild, ctx.message.created_at, "Kick", user, author,
                 reason, until=None, channel=None
             )
-            await ctx.send(_("Done. That felt good."))
         except RuntimeError as e:
             await ctx.send(e)
-            return
 
     @commands.command()
     @commands.guild_only()
@@ -318,12 +317,12 @@ class Mod:
 
         if author == user:
             await ctx.send(_("I cannot let you do that. Self-harm is "
-                           "bad {}").format("\N{PENSIVE FACE}"))
+                             "bad {}").format("\N{PENSIVE FACE}"))
             return
         elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
             await ctx.send(_("I cannot let you do that. You are "
-                           "not higher than the user in the role "
-                           "hierarchy."))
+                             "not higher than the user in the role "
+                             "hierarchy."))
             return
 
         if days:
@@ -348,16 +347,16 @@ class Mod:
             await ctx.send(_("I'm not allowed to do that."))
         except Exception as e:
             print(e)
+        else:
+            await ctx.send(_("Done. It was about time."))
 
         try:
-            case = await modlog.create_case(
+            await modlog.create_case(
                 guild, ctx.message.created_at, "Ban", user, author,
                 reason, until=None, channel=None
             )
-            await ctx.send(_("Done. It was about time."))
-        except RuntimeError as e:
+        except RuntimeError as edit:
             await ctx.send(e)
-            return
 
     @commands.command()
     @commands.guild_only()
@@ -386,24 +385,24 @@ class Mod:
         try:
             await guild.ban(user, reason=audit_reason)
             log.info("{}({}) hackbanned {}"
-                        "".format(author.name, author.id, user_id))
+                     "".format(author.name, author.id, user_id))
         except discord.NotFound:
             await ctx.send(_("User not found. Have you provided the "
-                           "correct user ID?"))
+                             "correct user ID?"))
         except discord.Forbidden:
             await ctx.send(_("I lack the permissions to do this."))
+        else:
+            await ctx.send(_("Done. The user will not be able to join this "
+                             "guild."))
 
         user_info = await self.bot.get_user_info(user_id)
         try:
-            case = await modlog.create_case(
+            await modlog.create_case(
                 guild, ctx.message.created_at, "Hackban", user_info, author,
                 reason, until=None, channel=None
             )
-            await ctx.send(_("Done. The user will not be able to join this "
-                           "guild."))
         except RuntimeError as e:
             await ctx.send(e)
-            return
 
     @commands.command()
     @commands.guild_only()
@@ -417,12 +416,12 @@ class Mod:
 
         if author == user:
             await ctx.send(_("I cannot let you do that. Self-harm is "
-                           "bad {}").format("\N{PENSIVE FACE}"))
+                             "bad {}").format("\N{PENSIVE FACE}"))
             return
         elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
             await ctx.send(_("I cannot let you do that. You are "
-                           "not higher than the user in the role "
-                           "hierarchy."))
+                             "not higher than the user in the role "
+                             "hierarchy."))
             return
 
         audit_reason = get_audit_reason(author, reason)
@@ -432,44 +431,47 @@ class Mod:
             invite = ""
 
         if can_ban:
-            msg = None
+            try:  # We don't want blocked DMs preventing us from banning
+                msg = await user.send(
+                    _("You have been banned and "
+                      "then unbanned as a quick way to delete your messages.\n"
+                      "You can now join the guild again. {}").format(invite))
+            except discord.HTTPException:
+                msg = None
+            self.current_softban["user"] = user
             try:
-                try:  # We don't want blocked DMs preventing us from banning
-                    msg = await user.send(
-                        _("You have been banned and "
-                        "then unbanned as a quick way to delete your messages.\n"
-                        "You can now join the guild again. {}").format(invite)
-                    )
-                except discord.Forbidden:
-                    pass
-                except discord.HTTPException:
-                    pass
-                self.current_softban["user"] = user
-                await guild.ban(user, reason=audit_reason, delete_message_days=1)
-                log.info(
-                    "{}({}) softbanned {}({}), deleting 1 day worth "
-                    "of messages".format(
-                        author.name, author.id, user.name, user.id
-                    )
-                )
+                await guild.ban(
+                    user, reason=audit_reason, delete_message_days=1)
+                await guild.unban(user)
+            except discord.errors.Forbidden:
+                await ctx.send(
+                    _("My role is not high enough to softban that user."))
+                if msg is not None:
+                    await msg.delete()
+                return
+            except discord.HTTPException as e:
+                print(e)
+                return
+            else:
+                await ctx.send(_("Done. Enough chaos."))
+                log.info("{}({}) softbanned {}({}), deleting 1 day worth "
+                         "of messages".format(author.name, author.id,
+                                              user.name, user.id))
                 try:
-                    case = await modlog.create_case(
-                        guild, ctx.message.created_at, "Softban", user, author,
-                        reason, until=None, channel=None
-                    )
+                    await modlog.create_case(
+                        guild,
+                        ctx.message.created_at,
+                        "Softban",
+                        user,
+                        author,
+                        reason,
+                        until=None,
+                        channel=None)
                 except RuntimeError as e:
                     await ctx.send(e)
-                    return
-                await guild.unban(user)
-                await ctx.send(_("Done. Enough chaos."))
-                asyncio.sleep(5)
+            finally:
+                await asyncio.sleep(5)
                 self.current_softban = {}
-            except discord.errors.Forbidden:
-                await ctx.send(_("My role is not high enough to softban that user."))
-                if msg:
-                    await msg.delete()
-            except Exception as e:
-                print(e)
         else:
             await ctx.send(_("I'm not allowed to do that."))
 
@@ -501,15 +503,16 @@ class Mod:
         except discord.HTTPException:
             await ctx.send(_("Something went wrong while attempting to unban that user"))
             return
+        else:
+            await ctx.send(_("Unbanned that user from this guild"))
+
         try:
-            case = await modlog.create_case(
+            await modlog.create_case(
                 guild, ctx.message.created_at, "Unban", user, author,
                 reason, until=None, channel=None
             )
-
         except RuntimeError as e:
             await ctx.send(e)
-            return
 
         if self.settings.guild(guild).reinvite_on_unban():
             invite = await self.get_invite_for_reinvite(ctx)
@@ -521,15 +524,14 @@ class Mod:
                 except discord.Forbidden:
                     await ctx.send(
                         _("I failed to send an invite to that user. "
-                        "Perhaps you may be able to send it for me?\n"
-                        "Here's the invite link: {}").format(invite.url)
+                          "Perhaps you may be able to send it for me?\n"
+                          "Here's the invite link: {}").format(invite.url)
                     )
                 except discord.HTTPException:
                     await ctx.send(
                         _("Something went wrong when attempting to send that user"
-                        "an invite. Here's the link so you can try: {}").format(invite.url)
-                    )
-        await ctx.send(_("Unbanned that user from this guild"))
+                          "an invite. Here's the link so you can try: {}")
+                        .format(invite.url))
 
     @staticmethod
     async def get_invite_for_reinvite(ctx: commands.Context):
@@ -587,19 +589,18 @@ class Mod:
         else:
             await ctx.send(_("That user is already muted and deafened guild-wide!"))
             return
+        await ctx.send(
+            _("User has been banned from speaking or "
+              "listening in voice channels")
+        )
 
         try:
-            case = await modlog.create_case(
+            await modlog.create_case(
                 guild, ctx.message.created_at, "voiceban", user, author,
                 reason, until=None, channel=None
             )
         except RuntimeError as e:
             await ctx.send(e)
-            return
-        await ctx.send(
-            _("User has been banned from speaking or "
-              "listening in voice channels")
-        )
 
     @commands.command()
     @commands.guild_only()
@@ -623,19 +624,18 @@ class Mod:
         else:
             await ctx.send(_("That user isn't muted or deafened by the guild!"))
             return
+        await ctx.send(
+            _("User is now allowed to speak and listen in voice channels")
+        )
         guild = ctx.guild
         author = ctx.author
         try:
-            case = await modlog.create_case(
+            await modlog.create_case(
                 guild, ctx.message.created_at, "voiceunban", user, author,
                 reason, until=None, channel=None
             )
         except RuntimeError as e:
             await ctx.send(e)
-            return
-        await ctx.send(
-            _("User is now allowed to speak and listen in voice channels")
-        )
 
     @commands.command()
     @commands.guild_only()
@@ -682,20 +682,19 @@ class Mod:
                 overwrites.speak = False
                 audit_reason = get_audit_reason(ctx.author, reason)
                 await channel.set_permissions(user, overwrite=overwrites, reason=audit_reason)
-                try:
-                    case = await modlog.create_case(
-                        guild, ctx.message.created_at, "Voicemute", user, author,
-                        reason, until=None, channel=channel
-                    )
-                except RuntimeError as e:
-                    await ctx.send(e)
-                    return
                 await ctx.send(
                     _("Muted {}#{} in channel {}").format(
                         user.name, user.discriminator,
                         channel.name
                     )
                 )
+                try:
+                    await modlog.create_case(
+                        guild, ctx.message.created_at, "Voicemute", user, author,
+                        reason, until=None, channel=channel
+                    )
+                except RuntimeError as e:
+                    await ctx.send(e)
                 return
             elif channel.permissions_for(user).speak is False:
                 await ctx.send(_("That user is already muted in {}!").format(channel.name))
@@ -723,15 +722,14 @@ class Mod:
         success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
 
         if success:
+            await channel.send(_("User has been muted in this channel."))
             try:
-                case = await modlog.create_case(
+                await modlog.create_case(
                     guild, ctx.message.created_at, "CMute", user, author,
                     reason, until=None, channel=channel
                 )
             except RuntimeError as e:
                 await ctx.send(e)
-                return
-            await channel.send(_("User has been muted in this channel."))
         else:
             await channel.send(issue)
 
@@ -760,16 +758,14 @@ class Mod:
                 success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
                 mute_success.append((success, issue))
             await asyncio.sleep(0.1)
-
+        await ctx.send(_("User has been muted in this guild."))
         try:
-            case = await modlog.create_case(
+            await modlog.create_case(
                 guild, ctx.message.created_at, "SMute", user, author,
                 reason, until=None, channel=None
             )
         except RuntimeError as e:
             await ctx.send(e)
-            return
-        await ctx.send(_("User has been muted in this guild."))
 
     async def mute_user(self, guild: discord.Guild,
                         channel: discord.TextChannel,
@@ -822,21 +818,16 @@ class Mod:
                 await channel.set_permissions(user, overwrite=overwrites, reason=audit_reason)
                 author = ctx.author
                 guild = ctx.guild
+                await ctx.send(
+                    _("Unmuted {}#{} in channel {}").format(
+                        user.name, user.discriminator, channel.name))
                 try:
-                    case = await modlog.create_case(
+                    await modlog.create_case(
                         guild, ctx.message.created_at, "Voiceunmute", user, author,
                         reason, until=None, channel=channel
                     )
                 except RuntimeError as e:
                     await ctx.send(e)
-                    return
-                await ctx.send(
-                    _("Unmuted {}#{} in channel {}").format(
-                        user.name, user.discriminator,
-                        channel.name
-                    )
-                )
-                return
             elif channel.permissions_for(user).speak:
                 await ctx.send(_("That user is already unmuted in {}!").format(channel.name))
                 return
@@ -849,7 +840,7 @@ class Mod:
     @checks.mod_or_permissions(administrator=True)
     @unmute.command(name="channel")
     @commands.guild_only()
-    async def channel_unmute(self, ctx: commands.Context, user : discord.Member, *, reason: str=None):
+    async def channel_unmute(self, ctx: commands.Context, user: discord.Member, *, reason: str=None):
         """Unmutes user in the current channel"""
         channel = ctx.channel
         author = ctx.author
@@ -858,15 +849,14 @@ class Mod:
         success, message = await self.unmute_user(guild, channel, author, user)
 
         if success:
+            await ctx.send(_("User unmuted in this channel."))
             try:
-                case = await modlog.create_case(
+                await modlog.create_case(
                     guild, ctx.message.created_at, "CUnmute", user, author,
                     reason, until=None, channel=channel
                 )
             except RuntimeError as e:
                 await ctx.send(e)
-                return
-            await ctx.send(_("User unmuted in this channel."))
         else:
             await ctx.send(_("Unmute failed. Reason: {}").format(message))
 
@@ -885,22 +875,20 @@ class Mod:
                 if channel.permissions_for(user).speak is False:
                     overwrites = channel.overwrites_for(user)
                     overwrites.speak = None
-                    audit_reason = get_audit_reason(ctx.author, reason)
+                    audit_reason = get_audit_reason(author, reason)
                     await channel.set_permissions(
-                        user, overwrite=overwrites, reason=get_audit_reason(author, reason))
+                        user, overwrite=overwrites, reason=audit_reason)
             success, message = await self.unmute_user(guild, channel, author, user)
             unmute_success.append((success, message))
             await asyncio.sleep(0.1)
-
+        await ctx.send(_("User has been unmuted in this guild."))
         try:
-            case = await modlog.create_case(
+            await modlog.create_case(
                 guild, ctx.message.created_at, "SUnmute", user, author,
                 reason, until=None, channel=channel
             )
         except RuntimeError as e:
             await ctx.send(e)
-            return
-        await ctx.send(_("User has been unmuted in this guild."))
 
     async def unmute_user(self, guild: discord.Guild,
                           channel: discord.TextChannel,
@@ -915,14 +903,14 @@ class Mod:
 
         elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
             return False, mute_unmute_issues["hierarchy_problem"]
-        
+
         if channel.id in perms_cache:
             old_value = perms_cache[channel.id]
         else:
             old_value = None
         overwrites.send_messages = old_value
         is_empty = self.are_overwrites_empty(overwrites)
-        
+
         try:
             if not is_empty:
                 await channel.set_permissions(user, overwrite=overwrites)
@@ -1058,7 +1046,7 @@ class Mod:
             await ctx.send(msg)
         else:
             await ctx.send(_("That user doesn't have any recorded name or "
-                           "nickname change."))
+                             "nickname change."))
 
     async def check_duplicates(self, message):
         guild = message.guild
@@ -1090,7 +1078,7 @@ class Mod:
                     await guild.ban(author, reason="Mention spam (Autoban)")
                 except discord.HTTPException:
                     log.info("Failed to ban member for mention spam in "
-                                "guild {}.".format(guild.id))
+                             "guild {}.".format(guild.id))
                 else:
                     try:
                         case = await modlog.create_case(
