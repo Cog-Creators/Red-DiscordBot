@@ -52,7 +52,7 @@ class Mod:
         self.settings.register_channel(**self.default_channel_settings)
         self.settings.register_member(**self.default_member_settings)
         self.settings.register_user(**self.default_user_settings)
-        self.current_softban = {}
+        self.current_softban = None
         self.ban_type = None
         self.cache = defaultdict(lambda: deque(maxlen=3))
 
@@ -438,7 +438,7 @@ class Mod:
                       "You can now join the guild again. {}").format(invite))
             except discord.HTTPException:
                 msg = None
-            self.current_softban["user"] = user
+            self.current_softban = user
             try:
                 await guild.ban(
                     user, reason=audit_reason, delete_message_days=1)
@@ -471,7 +471,7 @@ class Mod:
                     await ctx.send(e)
             finally:
                 await asyncio.sleep(5)
-                self.current_softban = {}
+                self.current_softban = None
         else:
             await ctx.send(_("I'm not allowed to do that."))
 
@@ -1126,6 +1126,8 @@ class Mod:
             deleted = await self.check_mention_spam(message)
 
     async def on_member_ban(self, guild: discord.Guild, member: discord.Member):
+        if self.current_softban == member:
+            return
         audit_case = None
         async for entry in guild.audit_logs(action=discord.AuditLogAction.ban):
             if entry.target == member:
@@ -1144,7 +1146,7 @@ class Mod:
             return
 
     async def on_member_unban(self, guild: discord.Guild, user: discord.User):
-        if self.current_softban:
+        if self.current_softban and self.current_softban.id == user.id:
             return
         audit_case = None
         async for entry in guild.audit_logs(action=discord.AuditLogAction.unban):
