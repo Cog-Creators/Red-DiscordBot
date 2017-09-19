@@ -962,6 +962,7 @@ class Mod:
             await ctx.send(_("Channel already in ignore list."))
 
     @ignore.command(name="guild")
+    @commands.has_permissions(manage_guild=True)
     async def ignore_guild(self, ctx: commands.Context):
         """Ignores current guild"""
         guild = ctx.guild
@@ -995,6 +996,7 @@ class Mod:
             await ctx.send(_("That channel is not in the ignore list."))
 
     @unignore.command(name="guild")
+    @commands.has_permissions(manage_guild=True)
     async def unignore_guild(self, ctx: commands.Context):
         """Removes current guild from ignore list"""
         guild = ctx.message.guild
@@ -1016,6 +1018,22 @@ class Mod:
                 svr_count += 1
         msg = _("Currently ignoring:\n{} channels\n{} guilds\n").format(ch_count, svr_count)
         return box(msg)
+
+    async def __global_check(self, ctx):
+        """Global check to see if a channel or guild is ignored.
+
+        Any users who have permission to use the `ignore` or `unignore` commands
+        surpass the check."""
+        surpass_ignore = (isinstance(ctx.channel, discord.abc.PrivateChannel) or
+                          await ctx.bot.is_owner(ctx.author) or
+                          await ctx.bot.is_admin(ctx.author))
+        if surpass_ignore:
+            return True
+        chann_ignored = await self.settings.channel(ctx.channel).ignored()
+        guild_ignored = await self.settings.channel(ctx.guild).ignored()
+        perms = ctx.channel.permissions_for(ctx.author)
+        return not (guild_ignored and not perms.manage_guild or
+                    chann_ignored and not perms.manage_channels)
 
     @commands.command()
     async def names(self, ctx: commands.Context, user: discord.Member):
