@@ -355,7 +355,7 @@ class Mod:
                 guild, ctx.message.created_at, "Ban", user, author,
                 reason, until=None, channel=None
             )
-        except RuntimeError as edit:
+        except RuntimeError as e:
             await ctx.send(e)
 
     @commands.command()
