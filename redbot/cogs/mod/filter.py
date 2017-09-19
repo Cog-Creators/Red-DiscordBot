@@ -121,6 +121,8 @@ class Filter:
                         pass
 
     async def on_message(self, message: discord.Message):
+        if message.channel.guild is None:
+            return
         author = message.author
         valid_user = isinstance(author, discord.Member) and not author.bot
 
