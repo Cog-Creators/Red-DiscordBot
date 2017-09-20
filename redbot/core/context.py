@@ -1,14 +1,24 @@
+"""The purpose of this module is to allow for Red to
+further customise the command invocation context provided
+by discord.py.
+"""
+
 import discord
 from discord.ext import commands
+
+__all__ = ["RedContext"]
 
 TICK = "\N{WHITE HEAVY CHECK MARK}"
 
 
 class RedContext(commands.Context):
     """
-    Command invokation context for Red.
+    Command invocation context for Red.
 
-    :show-inheritance:
+    All context passed into commands will be of this type.
+
+    This class inherits from
+    :py:class:`commands.Context <discord.ext.commands.Context>`.
     """
 
     async def send_help(self):
@@ -21,10 +31,8 @@ class RedContext(commands.Context):
     async def tick(self):
         """Add a tick reaction to the command message.
 
-        Returns
-        -------
-        bool
-            ``True`` if adding the reaction succeeded.
+        :return: ``True`` if adding the reaction succeeded.
+        :rtype: bool
         """
         try:
             await self.message.add_reaction(TICK)
