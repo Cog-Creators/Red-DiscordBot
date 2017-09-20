@@ -32,7 +32,7 @@ class Image:
         Make sure to set the client ID using
         [p]imgurcreds"""
         if ctx.invoked_subcommand is None:
-            await self.bot.send_cmd_help(ctx)
+            await ctx.send_help()
 
     @_imgur.command(name="search")
     async def imgur_search(self, ctx, *, term: str):
@@ -70,7 +70,7 @@ class Image:
             await ctx.send(_("Only 'new' and 'top' are a valid sort type."))
             return
         elif window not in ("day", "week", "month", "year", "all"):
-            await self.bot.send_cmd_help(ctx)
+            await ctx.send_help()
             return
 
         if sort_type == "new":
@@ -120,7 +120,7 @@ class Image:
         if keywords:
             keywords = "+".join(keywords)
         else:
-            await self.bot.send_cmd_help(ctx)
+            await ctx.send_help()
             return
 
         url = ("http://api.giphy.com/v1/gifs/search?&api_key={}&q={}"
@@ -142,7 +142,7 @@ class Image:
         if keywords:
             keywords = "+".join(keywords)
         else:
-            await self.bot.send_cmd_help(ctx)
+            await ctx.send_help()
             return
 
         url = ("http://api.giphy.com/v1/gifs/random?&api_key={}&tag={}"
