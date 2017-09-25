@@ -6,6 +6,7 @@ from __main__ import send_cmd_help, settings
 from datetime import datetime
 from collections import deque, defaultdict
 from cogs.utils.chat_formatting import escape_mass_mentions, box, pagify
+from .admin import Admin
 import os
 import re
 import logging
@@ -332,7 +333,34 @@ class Mod:
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(ban_members=True)
-    async def ban(self, ctx, user: discord.Member, days: str = None, *, reason: str = None):
+    async def ban(self, ctx, user: discord.Member, *, reason: str = None):
+        """Bans user by adding him to the banned role.
+
+        Does not delete the user's messages."""
+        author = ctx.message.author
+        server = author.server
+        admin = Admin(self.bot)
+        banned = admin._role_from_string(server, "banned")
+
+        try:
+            self.temp_cache.add(user, server, "BAN")
+            await self.bot.add_roles(user, banned)
+            logger.info("{}({}) banned {}({})".format(
+                author.name, author.id, user.name, user.id))
+            await self.new_case(server,
+                                action="BAN",
+                                mod=author,
+                                user=user,
+                                reason=reason)
+            await self.bot.say("#gtab. It was about time.")
+        except discord.errors.Forbidden:
+            await self.bot.say("I'm not allowed to do that.")
+        except Exception as e:
+            print(e)
+
+    @commands.command(no_pm=True, pass_context=True)
+    @checks.admin_or_permissions(ban_members=True)
+    async def hardban(self, ctx, user: discord.Member, days: str = None, *, reason: str = None):
         """Bans user and deletes last X days worth of messages.
 
         If days is not a number, it's treated as the first word of the reason.
