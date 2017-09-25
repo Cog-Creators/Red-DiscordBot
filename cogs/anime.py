@@ -13,7 +13,7 @@ from .utils.async import Route
 from .utils.sync import ResponseError
 
 ### Globals ###
-API_KEY = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJTSjQzMnY2Y1oiLCJ0b2tlbklkIjoiUzFQTlR3cDViIiwiaWF0IjoxNTA1NzUwMzE4fQ.YUbO3VqsULq6oql7WO0SE-raZ49sEjVVP1rnUsLt6C6OY8_Lo_1h2-EgMwpPnRv7M5om-6MLDrfSpleBijWAJBkxu79bRThJ4pg3EZLd0Vq8v10Z0PLFWIemAp46n-MJQ1fRl8TQJ0bsRvwHUJxJZoJfrNlzm7chg93Ws29umkmH3Cy0nOVDwRcga-4cA6sjCUMAXKqPVPC20FNZ0EwzQwcOHkxkRkW5-C7QmVmYnoaFowCnvSKWhOa6VXWzZlWqqfNF-EV8d4YR6zWRG7gJ1B5TmorGnk5tgEKSGBuGlBNS5OukRC2L1QauL98wNF3AOdEttxE156jJQ7aOvnwIhw"
+API_KEY = ""
 # This list intentionally left blank.
 TYPES=[]
 
