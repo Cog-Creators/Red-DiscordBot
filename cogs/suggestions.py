@@ -20,7 +20,7 @@ class Suggestions:
         # The structure should be:
         #   { User : { timestamp : { BACKLOG_STATE : suggestion_string } } }
         #   { BACKLOG_STATE : { User : { timestamp : Suggestion_string } } } <-- probably better?
-
+        
         user = str(ctx.message.author)
         suggestion_string = ctx.message.content
         if user not in self.suggestions:
