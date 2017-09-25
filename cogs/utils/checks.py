@@ -36,6 +36,15 @@ def check_permissions(ctx, perms):
     resolved = ch.permissions_for(author)
     return all(getattr(resolved, name, None) == value for name, value in perms.items())
 
+def role(check):
+    def predicate(ctx):
+        server = ctx.message.server
+        mod_role = settings.get_server_mod(server).lower()
+        admin_role = settings.get_server_admin(server).lower()
+        return role_or_permissions(ctx, lambda r: r.name.lower() in (mod_role,admin_role,check))
+
+    return commands.check(predicate)
+
 def role_or_permissions(ctx, check, **perms):
     if check_permissions(ctx, perms):
         return True
