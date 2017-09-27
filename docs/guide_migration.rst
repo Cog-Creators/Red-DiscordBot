@@ -24,7 +24,8 @@ V3, this becomes :code:`from redbot.core.utils.chat_formatting import pagify`)
 Cogs as packages
 ----------------
 
-V3 makes cogs into packages. 
+V3 makes cogs into packages. See `the cog creation guide </guide_cog_creation>`_
+for more on how to create packages for V3
 
 ------
 Config
