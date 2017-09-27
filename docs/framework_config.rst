@@ -43,7 +43,7 @@ First, you need to import Config:
 
 .. code-block:: python
 
-    from core import Config
+    from redbot.core import Config
 
 Then, in the class's :code:`__init__` function, you need to get a config instance:
 
