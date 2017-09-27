@@ -16,6 +16,7 @@ Welcome to Red - Discord Bot's documentation!
     :maxdepth: 2
     :caption: Red Development Framework Reference:
 
+    guide_migration
     framework_bank
     framework_cogmanager
     framework_config
