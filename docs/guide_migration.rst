@@ -20,6 +20,12 @@ should be done (for example, to import :code:`pagify` in V2, one
 would do :code:`from .utils.chat_formatting import pagify`; in
 V3, this becomes :code:`from redbot.core.utils.chat_formatting import pagify`)
 
+----------------
+Cogs as packages
+----------------
+
+V3 makes cogs into packages. 
+
 ------
 Config
 ------
