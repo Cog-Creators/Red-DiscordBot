@@ -1,8 +1,9 @@
-from core import sentry_setup
 import logging
 
+from redbot.core import sentry_setup
 
-def test_sentry_capture():
+
+def test_sentry_capture(red):
     log = logging.getLogger(__name__)
     sentry_setup.init_sentry_logging(log)
 
