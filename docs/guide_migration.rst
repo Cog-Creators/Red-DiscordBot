@@ -52,4 +52,5 @@ Mod Log
 -------
 
 V3 introduces Mod Log as an API, thus allowing for cogs to add custom case
-types that will appear in a server's mod log channel. 
+types that will appear in a server's mod log channel. Be sure to checkout
+:doc:`/framework_modlog` for more on Mod Log` 
