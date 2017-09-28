@@ -31,7 +31,7 @@ class ModLog:
         guild = ctx.guild
         if channel:
             if channel.permissions_for(guild.me).send_messages:
-                await modlog.set_modlog_channel(channel)
+                await modlog.set_modlog_channel(guild, channel)
                 await ctx.send(
                     _("Mod events will be sent to {}").format(
                         channel.mention
@@ -43,11 +43,13 @@ class ModLog:
                       "send messages in {}!").format(channel.mention)
                 )
         else:
-            if await modlog.get_modlog_channel(guild) is None:
+            try:
+                await modlog.get_modlog_channel(guild)
+            except RuntimeError:
                 await self.bot.send_cmd_help(ctx)
-                return
-            await modlog.set_modlog_channel(None)
-            await ctx.send(_("Mod log deactivated."))
+            else:
+                await modlog.set_modlog_channel(guild, None)
+                await ctx.send(_("Mod log deactivated."))
 
     @modlogset.command(name='cases')
     @commands.guild_only()
@@ -125,3 +127,4 @@ class ModLog:
             to_modify["amended_by"] = author
             to_modify["modified_at"] = ctx.message.created_at.timestamp()
         case = await modlog.edit_case(case, guild, self.bot, to_modify)
+        await ctx.send(_("Reason has been updated."))

@@ -84,6 +84,19 @@ class Red(commands.Bot):
             return True
         return await super().is_owner(user)
 
+    async def is_admin(self, member: discord.Member):
+        """Checks if a member is an admin of their guild."""
+        admin_role = await self.db.guild(member.guild).admin_role()
+        return (not admin_role or
+                any(role.id == admin_role for role in member.roles))
+
+    async def is_mod(self, member: discord.Member):
+        """Checks if a member is a mod or admin of their guild."""
+        mod_role = await self.db.guild(member.guild).mod_role()
+        admin_role = await self.db.guild(member.guild).admin_role()
+        return (not (admin_role or mod_role) or
+                any(role.id in (mod_role, admin_role) for role in member.roles))
+
     async def send_cmd_help(self, ctx):
         if ctx.invoked_subcommand:
             pages = await self.formatter.format_help_for(ctx, ctx.invoked_subcommand)
