@@ -81,7 +81,7 @@ console to add it to a server (note that you must have the
 :code:`Manage Server` (or :code:`Administrator`) permission to add bots
 to a server). Once it's been added to a server, find the full path
 to the directory where your cog package is located. In Discord, do
-:code:`[p]addpath <path_where_your_package_is_located`, then do
+:code:`[p]addpath <path_to_folder_containing_package>`, then do
 :code:`[p]load mycog`. Once the cog is loaded, do :code:`[p]mycom`
 The bot should respond with :code:`I can do stuff!`. If it did, you
 have successfully created a cog!
