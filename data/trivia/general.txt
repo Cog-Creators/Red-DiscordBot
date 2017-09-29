@@ -159,7 +159,7 @@ What is a perfect game scoring in bowling?`300
 What is Sherlock Holmes's brother called?`Mycroft
 What is the chemical symbol for gold?`Au
 What is the French word for Thank You?`Merci
-What is the integral of cos(x)?`-sin(x)
+What is the integral of cos(x)?`sin(x)+c
 What is the largest planet in the solar system?`Jupiter
 What is the last name of the family in the TV series 'Family Guy'?`Griffin
 What is the name given to a word or phrase that reads the same backward and forward?`Palindrome
@@ -334,9 +334,9 @@ What's the official language of Brazil?`Portuguese
 What does the koala eat exclusively?`Eucalyptus
 What's the most abundant element on earth?`Oxygen
 
-The Shatt-el-Arab (River of Arabia) is the confluence of which two other rivers? `TIGRIS and EUPHRATES`euphrates and tigris
-Name the two families in Romeo and Juliet? `MONTAGUE & CAPULET`montague and capulet`capulet and montague`capulet&montague
-Which singer joined Mel Gibson in the movie Mad Max: Beyond The Thunderdome?`TINA TURNER
+The Shatt-el-Arab (River of Arabia) is the confluence of which two other rivers?`Tigris and Euphrates`euphrates and tigris
+Name the two families in Romeo and Juliet?`MONTAGUE & CAPULET`montague and capulet`capulet and montague`capulet&montague
+Which singer joined Mel Gibson in the movie Mad Max: Beyond The Thunderdome?`Tina Turner
 Vodka, Galliano and orange juice are used to make which classic cocktail?`HARVEY WALLBANGER
 Which American state is nearest to the former Soviet Union? `ALASKA
 In which year did Foinavon win the Grand National? `1967
@@ -429,7 +429,7 @@ What is Canada's national animal? `BEAVER
 Which is the smallest member of the flute family? `PICCOLO
 Which Bond villain has been played by Telly Savalas, Donald Pleasance, Charles Gray, and Max Von Sydow? `BLOFELD
 'Mace is one of the spices obtained from the tree Myristica Fragrams - what is the other? `NUTMEG
-What is the colour of the bull of an archery target? `GOLD
+What is the colour of the bull of an archery target? `Gold
 UNHCR is the United Nation's High Commission for what? `REFUGEES
 A palmiped's feet are more commonly called what? `WEBBED
 Which animal is known as 'The Ship of the Desert'?`Camel

@@ -90,7 +90,7 @@ Which champion's ultimate is named: Emperor's Divide?`Azir
 Which champion's ultimate is named: Static Field?`Blitzcrank
 Which champion's ultimate is named: Stranglethorns?`Zyra
 Which champion's ultimate is named: Chum the Waters?`Fizz
-Which champion's ultimate is named: Agony's Embrace?`Evelynn
+Which champion's ultimate is named: Last Caress?`Evelynn
 Which champion's ultimate is named: Grand Skyfall?`Pantheon
 Which champion's ultimate is named: Shadow Dance?`Akali
 Which champion's ultimate is named: Highlander?`Master Yi
