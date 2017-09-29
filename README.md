@@ -24,7 +24,7 @@ Additionally, other modules (cogs) can be easily found and added from our growin
 * Reminders
 * Raffles
 * Leveler (increase levels for server participation)
-* DotA
+* Sound effects
 * And much, much more!
 
 Feel free to take a [peek](https://cogs.red/)!
