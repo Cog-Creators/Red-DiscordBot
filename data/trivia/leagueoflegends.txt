@@ -124,9 +124,11 @@ Who does Elise worship?`Vilemaw
 Who has a skill called "Neurotoxin"?`Elise
 What champion has the season 3 victorious skin?`Elise
 Who has a Masquerade skin?`Evelynn
-Who is also known as the "Widowmaker"?`Evelynn
-Who says "It takes a lot of effort to move like this in heels."?`Evelynn
-Who has a skill called "Dark Frenzy"?`Evelynn
+Whose title is the name of their old ultimate?`Evelynn (Agony's Embrace)`Evelynn
+Who calls Ahri a "skank" and a "floozy" when using taunts?`Evelynn
+Who killed Vayne's parents?`Evelynn
+Who does Vayne refer to as "the Horned Woman"?`Evelynn
+Who does Evelynn say "I can make you do a lot more than jingle, space man." in one of her taunts?`Bard
 Aside from Evelynn, which champion could theoretically stay stealthed forever?`Teemo
 Who found Wriggle's Lantern?`Ezreal
 Who is the hermit shopkeeper on the Howling Abyss related to?`Ezreal

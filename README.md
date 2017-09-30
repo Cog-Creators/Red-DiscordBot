@@ -12,7 +12,7 @@ The default set of modules includes and is not limited to:
 * Moderation features (kick/ban/softban/hackban, mod-log, filter, chat cleanup)
 * Trivia (lists are included and can be easily added)
 * Music features (YouTube, SoundCloud, local files, playlists, queues)
-* Stream alerts (Twitch, Hitbox, Beam)
+* Stream alerts (Twitch, Mixer, Smashcast)
 * Slot machines
 * Custom commands
 * Imgur/gif search
@@ -24,7 +24,7 @@ Additionally, other modules (cogs) can be easily found and added from our growin
 * Reminders
 * Raffles
 * Leveler (increase levels for server participation)
-* DotA
+* Sound effects
 * And much, much more!
 
 Feel free to take a [peek](https://cogs.red/)!

@@ -7,50 +7,49 @@ Which metal band has a mascot named "Eddie"?`Iron Maiden
 Whose motto is 'We are a legion. We don't forgive. We don't forget'?`Anonymous
 Whose painting is used on Woody Allen's 'Midnight in Paris' movie poster?`Van Gogh`Vincent van Gogh
 Whose quote is "fly like a butterfly sting like a bee"?`Muhammad Ali
-Who's the writer of 'Game of Thrones'?`George R.R. Martin`George R R  Martin`GRRM
+Who is the writer of 'Game of Thrones'?`George R.R. Martin`George R R  Martin`GRRM
 Whose album is ARTPOP?`Lady Gaga
-Who's the singer and leader of Radiohead?`Thom Yorke
-Who's the soccer player that has scored the most goals in the World Cups?`Klose
-Who's the swimmer that has won 71 medals?`Michael Phelps
-Who's the only person on The Simpsons that has 5 fingers?`God
-Who's the father of modern electromagnetism?`Maxwell
-Who's the main character in Grey's Anatomy?`Meredith
-Whos is Peeta Mellark in love with?`Katniss Everdeen`Katniss
-Whom is the famous phrase "I am your father" referred to?`Luke Skywalker
-Who worked with Jackie Chan in Rush Hour 2?`Chris Tucker
-Who won the FIFA World Cup of South Africa 2010?`Spain
+Who is the singer and leader of Radiohead?`Thom Yorke
+Who is the soccer player that has scored the most goals in the World Cups?`Klose
+Who is the swimmer that has won 28 Olympic medals?`Michael Phelps
+Who is the only person on The Simpsons that has 5 fingers?`God
+Who is the father of modern electromagnetism?`James Maxwell`maxwell
+Who is the main character in Grey's Anatomy?`Dr. Meredith Grey`Meredith grey`meredith
+Who is Peeta Mellark in love with?`Katniss Everdeen`Katniss
+Who is the famous phrase "I am your father" spoken to?`Luke Skywalker
+Who co-starred with Jackie Chan in Rush Hour 2?`Chris Tucker
+Who won the FIFA World Cup in South Africa 2010?`Spain
 Who won the FIFA World Cup in 2002?`Brazil
 Who won the 2012 Champions League?`Chelsea
 Who were the first users of papyrus?`Egyptians`Egyptian`Egypt
 Who was the philosopher who said 'I only know that I know nothing'?`Socrates
 Who was the only actor to win an Oscar afterhis death?`Heath Ledger
-Who was the number 23 for the Chicago Bulls?`Michael Jordan
+Who wore the number 23 for the Chicago Bulls?`Michael Jordan
 Who was the main actor in the movie Click?`Adam Sandler
-Who was Sam's girlfriend in the movie Transformers 1 and 2?`Megan Fox
-Who was JD's best friend in the TV series 'Scrubs'?`Turk
+What actress was Sam's girlfriend in the movie Transformers 1 and 2?`Megan Fox
+What character was JD's best friend in the TV series 'Scrubs'?`Turk
 Who was Brad Pitt's partner in the 1995 film 'Se7en'?`Morgan Freeman
 Who was Brad Pitt's first wife?`Jennifer Aniston
 Who voiced Woody in the "Toy Story" trilogy?`Tom Hanks
-Who sings the song "Love Story"?`Taylor Swift
 Who stars in the movie "I am legend"?`Will Smith
-Who says the famous salute "Live Long and Prosper"?`Spock
+What character says the famous salute "Live Long and Prosper"?`Mr. Spock`mr spock`spock
 Who said "Time is a flat circle"?`Nietzsche
 Who said that "objects which have no resultant force are either stationary or moving at constant velocity"?`Isaac Newton`Newton
 Who released the album 'AM'?`Arctic Monkeys
 Who plays the crazy person in the movie '12 Monkeys'?`Brad Pitt
 Who is Thor's Father?`Odin
-Who is the god of gods in Greek mythology?`Zeus
-Who is the creator of characters like Spider Man and The Fantastic Four?`Stan Lee
+Who is the king of the gods in Greek mythology?`Zeus
+Who is the creator of characters including Spider Man and The Fantastic Four?`Stan Lee
 Who is the creator of "Family Guy"?`Seth MacFarlane
 Who is the "black sheep" in Family Guy?`Meg
-Who is Superman' sweetheart?`Lois Lane
-Who is SpongeBob SquarePants' best friend?`Patrick
+Who is Superman's sweetheart?`Lois Lane
+Who is SpongeBob SquarePants' best friend?`Patrick Star`Patrick
 Who is Spider-Man?`Peter Parker
 Who is Mario's brother?`Luigi
 Who is Bart Simpson's best friend?`Milhouse
 Who is Bruce Wayne?`Batman
 Who is Ned Stark's youngest daughter in the TV series 'Game of Thrones'?`Arya Stark`Arya
-Who invented the telephone?`Bell
+Who invented the telephone?`Alexander Graham Bell`Bell
 Who invented the world's first successful airplane?`Wright brothers
 Who is the main character in "The Lion King"?`Simba
 Who created Mickey Mouse?`Walt Disney
@@ -65,8 +64,8 @@ Complete the title of the Oscar-nominated film starring Tom Cruise, 'The Last ..
 Diamonds are an allotropic form of what element?`Carbon
 Due to which element does acid become acidic?`Hydrogen
 Edmonton is the capital of which province in Canada?`Alberta
-Every how many years are the Winter Olympic Games celebrated?`Four`4
-Fe is the symbol for?`Iron
+The Winter Olympic Games are celebrated every how many years?`Four`4
+Fe is the symbol for which element?`Iron
 Fraser Island belongs to what country?`Australia
 Freddie Mercury was the singer of what band?`Queen
 French Fries originate from which country?`Belgium
@@ -74,15 +73,15 @@ Heliophobia is the fear of?`Sunlight`The Sun`Sun
 "15, 30, 40, game" is used for the scoring system of what sport?`Tennis
 How is the speed of boats measured?`Knots
 How many bytes are there in 1 kilobyte?`1024
-How many cards are there in a deck?`52
+How many cards are there in a deck of cards?`52
 How many chambers are there in the human heart?`Four`4
-How many fingers does a simpsons character have?`Four`4
-How many hearts does an octupus have?`Three`3
+How many fingers does a Simpsons character have?`Four`4
+How many hearts does an octopus have?`Three`3
 How many hours are there in a year?`8760
 How many players are there in a cricket game?`Eleven`11
 How many players are there in a Quidditch team?`Seven`7
 How much is 2 raised to tenth power?`1024
-How was Walter White known by the drug cartels in Breaking Bad?`Heisenberg
+What was Walter White known as by the drug cartels in Breaking Bad?`Heisenberg
 If you multiply the base by the height, and then divide by 2, you're calculating the area of what geometric figure?`Triangle
 If you want to go Stockholm, what country are you in?`Sweden
 In 'The Simpsons', what sort of animal is Itchy?`Mouse
@@ -90,7 +89,7 @@ In an e-mail, what does CC mean?`Carbon Copy
 In Breaking Bad, what colour are Marie's appliances?`Purple
 In chess, how many differents directions can the queen move if she is in one corner of the board?`Three`3
 In computer science, what does the acronym LAN stand for?`Local Area Network
-In Computer terms, what does CPU stand for?`Central Processing Unit
+In computer terms, what does CPU stand for?`Central Processing Unit
 In Disney's Tangled, what was the name of Repunzel's animal side kick?`Pascal
 In Divergent, what is the real name of the character named "Four"?`Tobias
 In Doctor Who, how many hearts does the doctor have?`Two`2
@@ -98,30 +97,29 @@ In Doctor Who, what is the name of the Doctor's tin dog?`K9
 In Greek mythology which monster is half goat, lion and snake?`Chimera
 In Greek mythology, who was the god of the Underworld?`Hades
 In tennis, what's the name of the point won directly with a serve?`Ace
-How many rings on the Olympic flag`Five`5
-What colour is Spock's blood`Green
-Whose nose grew when he told a lie`Pinocchio
-If you had pogonophobia what would you be afraid of`Beards
-Which country grows the most fruit`China
-Which company is owned by Bill Gates`Microsoft
-Triskadeccaphobia is the fear of what`The Number 13`13`Thirteen`Number 13
-Ictheologists study what`Fish
-Who or what lives in a formicarium`Ants
-Which part of the human body contains the most gold`Toenails`toenail
-La Giaconda is better known as what`Mona Lisa
-What is the largest state in the USA`Alaska
-Clyde Tonbaugh discovered what planet in 1930`Pluto
-In Japan what is Seppuku Hari Kari`suicide
-What martial arts name means gentle way`Judo
-In which country would you find the Negev desert`Israel
-Which character has been played by the most actors`Sherlock Holmes
-What element did Marie and Pierre Curie discover`Polonium & Radium`Polonium`Radium
-What are Sarte, Neitzsche, Russell and Decartes`Philosophers`Philosopher
-arry Allen was the alter ego of which DC comic superhero`The Flash`Flash
-Linus Torwalds invented and wrote what`Linux kernel`Linux
-What is the staple food of one third of the worlds population`Rice
-Jagger, Richards, Wyman, Jones, Watts, Stewart - which band`The Rolling Stones`Rolling Stones
-What digit does not exist in Roman Numerals`Zero`0
+How many rings is on the Olympic flag?`Five`5
+What colour is Spock's blood?`Green
+Whose nose grew when he told a lie?`Pinocchio
+If you had pogonophobia what would you be afraid of?`Beards
+Which country grows the most fruit?`China
+Which company is owned by Bill Gates?`Microsoft
+Triskadeccaphobia is the fear of what?`The Number 13`13`Thirteen`Number 13
+Ictheologists study what?`Fish
+Who or what lives in a formicarium?`Ants
+Which part of the human body contains the most gold?`Toenails`toenail
+La Giaconda is better known as what?`Mona Lisa
+What is the largest state by area in the USA?`Alaska
+What martial arts name means "gentle way"?`Judo
+In Japan what is Seppuku Hari Kari?`Suicide
+In which country would you find the Negev desert?`Israel
+Which character has been played by the most actors?`Sherlock Holmes
+Name an element Marie and Pierre Curie discovered?`Polonium & Radium`Polonium`Radium
+What are Sarte, Neitzsche, Russell and Decartes?`Philosophers`Philosopher
+Barry Allen was the alter ego of which DC comic superhero?`The Flash`Flash
+Linus Torwalds invented and wrote what?`Linux kernel`Linux
+What is the staple food of one third of the worlds population?`Rice
+Jagger, Richards, Wyman, Jones, Watts, Stewart - members of which band?`The Rolling Stones`Rolling Stones
+What digit does not exist in Roman Numerals?`Zero`0
 In Texas Hold'em, how many cards are dealt in 'The Flop'?`Three`3
 In the British sci-fi show "Doctor Who", what's the name of the spaceship that can travel through space and time?`TARDIS
 In the first Harry Potter film, what was the name of Neville Longbottom's pet toad?`Trevor
@@ -137,7 +135,6 @@ In which direction does the sun set?`West
 In which European city can you visit the Louvre Museum?`Paris
 On "Sponge Bob Square Pants", what kind of animal is Sandy?`Squirrel
 On the show "Spongebob Squarepants" Spongebob lives is which type of fruit?`Pineapple
-To which organ of the body does the adjective adrenal relate?`Kidney
 What is 26 in Roman numerals?`XXVI
 What chemical element gives red wine its color?`Iron
 What chess piece has the most freedom of movement?`Queen
@@ -153,13 +150,13 @@ What does RAM stand for?`Random Access Memory
 What does the Q in Q-tip stand for?`Quality
 What element has an atomic number of 69?`Thulium
 What famous author was known for "The Iliad" and "The Odyssey"?`Homer
-What hand is more valuable in poker?`Royal flush
+What hand is the most valuable in poker?`Royal flush
 What happens when a star explodes?`Supernova
 What is a perfect game scoring in bowling?`300
-What is Sherlock Holmes's brother called?`Mycroft
+What is Sherlock Holmes's brother's first name?`Mycroft
 What is the chemical symbol for gold?`Au
 What is the French word for Thank You?`Merci
-What is the integral of cos(x)?`-sin(x)
+What is the integral of cos(x)?`sin(x)+c
 What is the largest planet in the solar system?`Jupiter
 What is the last name of the family in the TV series 'Family Guy'?`Griffin
 What is the name given to a word or phrase that reads the same backward and forward?`Palindrome
@@ -212,7 +209,6 @@ What's the band that has won the most Grammy awards?`U2
 What's the biggest mammal?`Whale
 What's the chemical symbol of salt?`NaCl
 What's the name of Snoopy's owner?`Charlie Brown
-What's the name of Sponge Bob's best friend?`Patrick
 What's the name of the bar tender in The Simpsons?`Moe
 What's the name of the cup of the National Hockey League?`Stanley Cup`Stanley
 What's the name of the dance step popularized by Michael Jackson?`Moonwalk
@@ -226,8 +222,7 @@ What's the square root of 144?`12
 Which is Canada's largest province?`Quebec
 Which is the only bird that can fly backwards?`Hummingbird
 Which is the only mammal in the world unable to burp?`Horse
-Which of the original Spice Girls was the only one with a 'spice' nickname?`Geri Halliwell`Geri`Ginger
-Which organ is responsible of producing insulin?`Pancreas
+Which organ is responsible for producing insulin?`Pancreas
 Which real city is taken by Gotham city in Batman movies?`Chicago
 Which rock group is famous for the song "Stairway to Heaven"?`Led Zeppelin
 Which sea is known by its high levels of salt?`Dead Sea
@@ -235,14 +230,13 @@ Which sports brand uses as its slogan the phrase "Just do it"?`Nike
 Which state is known as the potato state?`Idaho
 What did the Scarecrow want from the Wizard of Oz?`A brain`brain
 What is Keanu Reeves character's Real name in "The Matrix" (1999)?`Thomas Anderson`Tom Anderson
-What is the name of Han Solo's ship in "Star Wars"?`The Millennium Falcon`millennium falcon`millenium falcon
+What is the name of Han Solo's ship in "Star Wars"?`The Millennium Falcon`millennium falcon
 What kind of car was used as a time machine in the "Back To The Future" movies?`A DeLorean`delorean
-What is the name of the sequel to "101 Dalmations"`102 Dalmations
+What is the name of the sequel to "101 Dalmations"?`102 Dalmations
 What was Indiana Jones's real first name?`Henry
-Who is famous for saying 'I'll be back'?`Arnold Schwarzenegger`Arnold
+What actor is famous for saying 'I'll be back'?`Arnold Schwarzenegger`schwarzenegger
 Who is famous for saying 'Make my day'?`Clint Eastwood`eastwood
 In what movie did we first hear 'May the force be with you'?`Star Wars
-How many tentacles does an octopus have?`Eight`8
 How many legs does a spider have?`Eight`8
 Where was the game of golf invented?`Scotland
 What U.S. city is also called 'The Windy City'?`Chicago
@@ -252,23 +246,23 @@ What is the Scottish word for lake?`Loch
 Which planet is closest to the sun?`Mercury
 How many moons does Mars have?`Two`2
 Where were the 2000 Olympics held?`Sydney`Australia
-What did Sir Galahad search for`The Holy Grail?`holy grail
+What did Sir Galahad search for?`The Holy Grail`holy grail
 What is the Spanish name for the South American capital which means 'good air'?`Buenos Aires
 What is the capital of Hungary?`Budapest
 What name is Paul Hewson better know as?`Bono
 How many members in the guy group N'SYNC?`Five`5
-Name a member of N'SYNC whose name does NOT start with the letter "J".`Chris or Lance`Chris`Lance
-What year was the movie Ben Hur with Charlton Heston made`1959
-What is a Wyvern`A Type of dragon`Type of dragon`dragon
+Name a member of N'SYNC whose name does NOT start with the letter "J"?`Chris or Lance`Chris`Lance
+What year was the movie Ben Hur with Charlton Heston made?`1959
+What is a Wyvern?`A Type of dragon`Type of dragon`dragon
 What year were PopTarts invented?`1964
 What African country is only 8 miles from Spain?`Morocco
 Which people created the sundial?`The Egyptians`Egyptians
 Who did Paris, the ruler of Troy, select as the most beautiful goddess?`Aphrodite
 What are Pyxis, Puppis, and Pavo?`constellations
 How many deserts are in or extend into the United States?`Five`5
-Name the 500,000 square mile desert that Mongolia and China share.`Gobi
+Name the 500,000 square mile desert that Mongolia and China share?`Gobi
 What is the type of computer virus that is named after a device of trickery used in a famous mythological war?`Trojan Horse`trojan
-When was the World Wide Web developed?`1990
+What year was the World Wide Web developed?`1990
 In what Swiss city was the World Wide Web first developed?`Geneva
 What color are the Majestic mountains in "America the Beautiful"?`Purple
 Who made his debut in Action Comics No.1?`Superman
@@ -277,25 +271,22 @@ How many of the seven dwarf's names do not end with "y"?`Two`2
 How many planets are between Earth and the sun?`Two`2
 What country covers an entire continent?`Australia
 Who was the first woman to win a Nobel Prize?`Marie Curie`Curie
-Who wrote LES MISERABLES?`Victor Hugo`Hugo
-Who wrote the novel NINETEEN EIGHTY-FOUR?`George Orwell`Orwell
+Who wrote Les Misérables?`Victor Hugo`Hugo
+Who wrote the novel Nineteen Eighty-Four?`George Orwell`Orwell
 How many stars are there on the Austrailian flag?`Six`6
 In the sequence 2, 3, 5, 7, 11, 13, what number comes next?`Seventeen`17
 What is the capital of Nova Scotia, Canada?`Halifax
 Which country uses a Yen for money?`Japan
 What country is the Aswan High Dam in?`Egypt
 What did they use for croquet mallets in "Alice in Wonderland"?`Flamingoes`flamingos
-What two gases are used in a welding torch?`Oxygen and Acetylene`oxygen`acetylene
 What is the closest star to the Earth?`The sun`sun
 What does a sphygmomanometer measure?`Blood pressure
 When measuring acidity and alkalinity, what does "pH" stand for?`per hydroxide
 Which poison smells like almonds?`Cyanide
-What was Sherlock Holmes' brother's name?`Mycroft Holmes`Mycroft
 Zeus created warriors called Myrmidons out of what creatures?`Ants`Ant
 Vulcan blood is based on what metal?`Copper
 What is the name given to the change in pitch accompanied by an approaching or receeding sound source?`Doppler Effect`Doppler
 Which Roman god had two faces?`Janus
-What was Dr. Who's phone booth called?`Tardis
 Name Captain Nemo's submarine?`Nautilus
 In what ancient city did Alexander the Great die?`Babylon
 What does HDD stand for?`Hard Disk Drive
@@ -313,9 +304,8 @@ How many times did Dorothy click her heels together?`Tree`3
 What color is Lisa's necklace on The Simpsons?`white
 What color is a giraffe's tongue?`black
 Curious George's friend was The Man in the what color hat?`yellow
-What color blood does Mr. Spock have?`green
-What nationality was Aladdin?`Chinese
 What's the capital of the Netherlands?`Amsterdam
+What nationality was Aladdin?`Chinese
 What Dr. Seuss character steals Christmas?`The Grinch`grinch
 What's the primary color with the shortest name?`Red
 What is the name for a male witch?`Warlock
@@ -323,7 +313,7 @@ What type of monster dies from a silver bullet?`Werewolf
 What is the name of Harry Potter's owl?`Hedwig
 Loch Ness is located in what country?`Scotland
 How many stones did David carry into battle with Goliath?`Five`5
-"I soiled my armor I was so scared!" is from which movie?`Monty Python and the Holy Grail`Holy Grail`Monty Python
+"I soiled my armor I was so scared!" is from which movie?`Monty Python and the Holy Grail`Monty Python
 "I've been dead once, already. It's very liberating." is from which movie?`Batman
 What's the only country to have played in every World Cup soccer tournament?`Brazil
 What's the common term for the layout of a computer keyboard?`QWERTY keyboard`qwerty
@@ -332,30 +322,31 @@ What unit of sound intensity commemorates an inventor's last name?`Decibel
 In blackjack, a hand of Ace and Nine can count as Ten or what?`Twenty`20
 What's the official language of Brazil?`Portuguese
 What does the koala eat exclusively?`Eucalyptus
-What's the most abundant element on earth?`Oxygen
-
-The Shatt-el-Arab (River of Arabia) is the confluence of which two other rivers? `TIGRIS and EUPHRATES`euphrates and tigris
-Name the two families in Romeo and Juliet? `MONTAGUE & CAPULET`montague and capulet`capulet and montague`capulet&montague
-Which singer joined Mel Gibson in the movie Mad Max: Beyond The Thunderdome?`TINA TURNER
-Vodka, Galliano and orange juice are used to make which classic cocktail?`HARVEY WALLBANGER
-Which American state is nearest to the former Soviet Union? `ALASKA
-In which year did Foinavon win the Grand National? `1967
-At which battle of 1314 did Robert The Bruce defeat the English forces? `BANNOCKBURN
-Consecrated in 1962, where is the Cathedral Church of St Michael? `COVENTRY
-On TV, who did the character Lurch work for? `ADDAMS FAMILY
-Which children's classic book was written by Anna Sewell? `BLACK BEAUTY
-How many tentacles does a squid have? `TEN
-Which reggae singing star died 11th May 1981? `BOB MARLEY
-Characters Charlie Allnut and Rosie Sayer appeared in which classic 1951 movie? `THE AFRICAN QUEEN
-What is converted into alcohol during brewing? `SUGAR
-Which river forms the eastern section of the border between England and Scotland? `TWEED
-Which Briton won an ice-skating Gold at the Lake Placid Olympics? `ROBIN COUSINS
-In what year was Prince Andrew born? `1960
-What is the national game of the Basques? `PELOTA
-TV commercials for Campari launched the career of which actress? `LORRAINE CHASE
-If cats are feline, what are sheep? `OVINE
+What's the most abundant element in the earth's crust?`Oxygen
+What's the most abundant element in the universe?`Hydrogen
+What's the most abundant element in the atmosphere?`Nitrogen
+The Shatt-el-Arab (River of Arabia) is the confluence of which two other rivers?`Tigris and Euphrates`euphrates and tigris
+Name the two families in Romeo and Juliet?`Montague & Capulet`montague and capulet`capulet and montague`capulet&montague
+Which singer joined Mel Gibson in the movie Mad Max: Beyond The Thunderdome?`Tina Turner
+Vodka, Galliano and orange juice are used to make which classic cocktail?`Harvey Wallbanger
+Which American state is nearest to the former Soviet Union?`Alaska
+In which year did Foinavon win the Grand National?`1967
+At which battle of 1314 did Robert The Bruce defeat the English forces?`Bannockburn
+Consecrated in 1962, what city is the Cathedral Church of St. Michael located in?`Coventry
+On TV, who did the character Lurch work for?`Addams Family
+Which children's classic book was written by Anna Sewell?`Black Beauty
+How many tentacles does a squid have?`Ten`10
+Which reggae singing star died 11th May 1981?`Bob Marley
+Characters Charlie Allnut and Rosie Sayer appeared in which classic 1951 movie?`The African Queen
+What is converted into alcohol during brewing?`Sugar
+Which river forms the eastern section of the border between England and Scotland?`Tweed
+Which Briton won an ice-skating Gold at the Lake Placid Olympics?`Robin Cousins
+In what year was Prince Andrew born?`1960
+What is the national game of the Basques?`Pelota
+TV commercials for Campari launched the career of which actress?`Lorraine Chase
+If cats are feline, what are sheep?`Ovine
 A red giant star typically evolves when its central hydrogen has converted to what gas?`Helium
-In the song, Heartbreak Hotel is on which street? `LONELY STREET
+In the song, Heartbreak Hotel is on which street?`Lonely Street
 What Greek mythological creature sprang from the blood of Medusa?`Pegasus
 What type of animal is a macaque?`Monkey
 ‘Blue Monday’, said to be the most depressing day of the year, falls during which month?`January
@@ -371,7 +362,7 @@ People born on April 17th have which sign of the Zodiac?`Aries
 Hinge, Saddle, Pivot and Gliding are all types of what in the human body?`Joint`joints
 Gimpo International Airport is located in which Asian city?`Seoul
 Siderodromophobia is the irrational fear of which mode of transport?`Trains`train
-What was S Vietnam’s Ho Chi Minh City called before 1976?`Saigon
+What was South Vietnam’s Ho Chi Minh City called before 1976?`Saigon
 A titi is what type of animal?`Monkey
 To what colour is the human eye most sensitive?`Green
 Gabel is German for which item of cutlery?`Fork
@@ -394,46 +385,44 @@ People born on the 1st March have which sign of the Zodiac?`Pisces
 Gorgonzola cheese is from which country?`Italy
 Dydd Sadwrn is Welsh for which day of the week?`Saturday
 What is the title of the 2001 film in which Russell Crowe plays mathematician John Nash?`A Beautiful Mind
-In April 1966, Bobbi Gibb became the first woman to run the entire distance of which marathon?`boston`Boston Marathon
-For his part in which 1953 film did Frank Sinatra receive a Best Supporting Actor Oscar? `FROM HERE TO ETERNITY
-For which fruit is the US state of Georgia famous? `PEACH
-Which is the financial centre and main city of Switzerland? `ZURICH
-Who is the only man (at 2009) to have won motorbike and F1 car World Championships? `JOHN SURTEES
-In which city was Martin Luther King assassinated in 1968? `MEMPHIS, TENNESSEE`memphis
-In which county is the UK prime minister's official country residence Chequers? `BUCKINGHAMSHIRE
-What is the word used to describe an animal/plant that is both male and female? `HERMAPHRODITE
-In which country did the Mau Mau uprising (1952-60) occur? `KENYA
-What does a numismatist study or collect? `COINS
-Who captained Jules Verne's submarine Nautilus?`CAPTAIN NEMO`nemo
-The llama belongs to the family of animals commonly called what?`CAMELS
-In which 1979 film was the spaceship called Nostromo?`ALIEN
-The Sheffield Shield is competed for in which sport?`CRICKET
-What is infant whale commonly called?`CALF
-Alan Minter was undisputed World boxing champion at which weight?`MIDDLEWEIGHT`middle weight
-Which Latin term, usually applied to legal evidence, means 'at first sight'?`PRIMA FACIE
-What is the alternative common name for a Black Leopard?`PANTHER
-In which bay is Alcatraz?`SAN FRANCISCO BAY`san francisco
-In which Dickens novel was Miss Havisham jilted on her wedding day? `GREAT EXPECTATIONS
-What is an otter's home called?`HOLT
-Who had a 1985 hit with Saving All My Love For You?`WHITNEY HOUSTON
-In Roman mythology, Neptune is the equivalent to which Greek god? `POSEIDON
-What is the only English language single word anagram of the word crouton? `CONTOUR
-Which TV character said, 'Live long and prosper'? `MR SPOCK`mr.spock`spock
-What is the other name for Wildebeest? `GNU
-What make of car was the time-machine in the film Back To The Future? `DE LOREAN
-In which State would you find the city of Birmingham? `ALABAMA
-Complete the name of the American Football team: 'Washington ...........'? `REDSKINS
-How old is a horse when it changes from a filly to a mare? `FOUR YEARS`4 years
-Robin Hood & Friar Tuck appear in which well-known novel, by Sir Walter Scott? `IVANHOE
-What is Canada's national animal? `BEAVER
-Which is the smallest member of the flute family? `PICCOLO
-Which Bond villain has been played by Telly Savalas, Donald Pleasance, Charles Gray, and Max Von Sydow? `BLOFELD
-'Mace is one of the spices obtained from the tree Myristica Fragrams - what is the other? `NUTMEG
-What is the colour of the bull of an archery target? `GOLD
-UNHCR is the United Nation's High Commission for what? `REFUGEES
-A palmiped's feet are more commonly called what? `WEBBED
+In April 1966, Bobbi Gibb became the first woman to run the entire distance of which marathon?`Boston Marathon`boston
+For his part in which 1953 film did Frank Sinatra receive a Best Supporting Actor Oscar?`From Here To Eternity
+For which fruit is the US state of Georgia famous?`Peach
+Which is the financial centre and main city of Switzerland?`Zurich
+Who is the only man (at 2009) to have won motorbike and F1 car World Championships?`John Surtees
+In which city was Martin Luther King assassinated in 1968?`Memphis, Tennessee`memphis`memphis tennessee
+In which county is the UK prime minister's official country residence Chequers?`Buckinghamshire
+What is the word used to describe an animal/plant that is both male and female?`Hermaphrodite
+In which country did the Mau Mau uprising (1952-60) occur?`Kenya
+What does a numismatist study or collect?`Coins
+Who captained Jules Verne's submarine Nautilus?`Captain Nemo`nemo
+The llama belongs to the family of animals commonly called what?`Camels
+In which 1979 film was the spaceship called Nostromo?`Alien
+The Sheffield Shield is competed for in which sport?`Cricket
+What is infant whale commonly called?`Calf
+Alan Minter was undisputed World boxing champion at which weight?`Middleweight`middle weight
+Which Latin term, usually applied to legal evidence, means 'at first sight'?`Prima Facie
+What is the alternative common name for a Black Leopard?`Panther
+In which bay is Alcatraz?`San Francisco Bay`san francisco
+In which Dickens novel was Miss Havisham jilted on her wedding day?`Great Expectations
+What is an otter's home called?`Holt
+Who had a 1985 hit with Saving All My Love For You?`Whitney Houston
+In Roman mythology, Neptune is the equivalent to which Greek god?`Poseidon
+What is the only English language single word anagram of the word crouton?`Contour
+What is the other name for Wildebeest?`Gnu
+In which State would you find the city of Birmingham?`Alabama
+Complete the name of the American Football team: 'Washington ...........'?`Redskins
+How old is a horse when it changes from a filly to a mare?`Four Years`4`four
+Robin Hood & Friar Tuck appear in which well-known novel, by Sir Walter Scott?`Ivanhoe
+What is Canada's national animal?`Beaver
+Which is the smallest member of the flute family?`Piccolo
+Which Bond villain has been played by Telly Savalas, Donald Pleasance, Charles Gray, and Max Von Sydow?`Blofeld
+Mace is one of the spices obtained from the tree Myristica Fragrams - what is the other?`Nutmeg
+What is the colour of the bull of an archery target?`Gold`yellow
+UNHCR is the United Nation's High Commission for what?`Refugees
+A palmiped's feet are more commonly called what?`Webbed
 Which animal is known as 'The Ship of the Desert'?`Camel
-How many red stripes are on the American national flag?`Seven
+How many red stripes are on the American national flag?`Seven`7
 In the children's television show, what is the name of the yellow Teletubby?`Laa-Laa`laa laa
 British athlete Duncan Goodhew is associated with which sport?`Swimming
 What colour rose is the title of a Thin Lizzy song?`Black
@@ -442,7 +431,6 @@ What is the name of the monster's creator in the 1818 novel of the same name by 
 How many seconds in an hour?`3600`Three thousand six hundred
 The Trafford Shopping Centre is in which English city?`Manchester
 Actress Gwyneth Paltrow named her first child after which fruit?`Apple
-Which is the largest state in the US?`Alaska
 What is the name of the blood-sucking worm sometimes used by doctors?`Leech
 Which country has the most time zones?`Russia
 Fictional characters Clark Kent, Lois Lane and Jimmy Olsen work for which newspaper?`The Daily Planet
@@ -453,13 +441,12 @@ What color is the 'Little Corvette' in the 1983 single by Prince?`Red
 The port of Dover is in which English county?`Kent
 During which month of the year is Hogmanay celebrated?`December
 Sir Christopher Wren designed which famous London cathedral?`St Paul’s`St. Paul`St paul`st. paul's
-How is the number ten written in Roman numerals?`x
+How is the number ten written in Roman numerals?`X
 Which sign of the Zodiac is represented by the fish?`Pisces
 What is 255 divided by 5?`51`fifty one
 Which fictional character uses the expression 'Eat my shorts'?`Bart Simpson
-In Greek mythology who is the messenger god?`Hermes
+In Greek mythology, who is the messenger god?`Hermes
 What is the capital of Hungary?`Budapest
-Which US city is known as The Windy City?`Chicago
 Which sport features line-outs, scrums and conversions?`Rugby
 Which spice is known as the 'Master Spice'?`Pepper
 Which 2009 animated film features a floating house suspended by helium balloons?`Up
@@ -473,8 +460,7 @@ Singer Beyonce Knowles married which rapper in 2008?`Jay-Z
 Who played Captain Jack Sparrow in the 'Pirates of the Caribbean' series of films?`Johnny Depp
 What is the 'lead' in pencils made from?`Graphite`carbon
 Pug, Boxer and Chow are all breeds of which animal?`Dog
-Which body of water connects England and France?`The English Channel
-What is the most common element in the Universe?`Hydrogen
+Which body of water connects England and France?`The English Channel`english channel
 What is the system of raised dots called which blind people use to read with their fingers?`Braille
 Oil of Cloves is traditionally used to treat the pain in which part of the human body?`Teeth`tooth
 What color 'Haze' is the title of a 1967 hit by Jimi Hendrix?`Purple
@@ -484,7 +470,7 @@ Who is the voice of Princess Fiona in the Shrek series of films?`Cameron Diaz
 Which US singer is known by the nickname J Lo?`Jennifer Lopez
 On which fictional planet was Superman born?`Krypton
 Who wrote the novel 'The Adventures of Huckleberry Finn'?`Mark Twain
-Which nuts are traditionally used to make pesto sauce?`pine`Pine nuts
+Which nuts are traditionally used to make pesto sauce?`Pine`Pine nuts
 The Sherlock Holmes Hotel is in which London street?`Baker Street`Baker
 What colour, traditionally, are cabs in New York?`Yellow
 Courgette is another name for which vegetable?`Zucchini
@@ -492,7 +478,6 @@ What is a group of lions called?`A pride`pride
 What does ET stand for in the 1982 Steven Spielberg film?`Extra Terrestrial`extraterrestrial
 Who was the first female Prime Minister of the UK?`Margaret Thatcher
 Isabella 'Bella' Swan is the lead character in which series of vampire books?`Twilight
-In Greek mythology, who was the ruler of the Olympian gods?`Zeus
 The terms Silver, Forked and Twister are all associated with which part of the body?`Tongue
 What is the name of a small, ground-dwelling songbird and something done for fun?`Lark
 Convict Magwitch appears in which novel by Charles Dickens?`Great Expectations
@@ -557,7 +542,7 @@ Which is the only bird in the Chinese Zodiac?`Rooster
 Which legendary English outlaw 'stole from the rich to give to the poor'?`Robin Hood
 Who played Han Solo in the 'Star Wars' series of films?`Harrison Ford
 Who sang at half time at the US Super Bowl in February 2013?`Beyonce
-In July 2013, who revealed that they were the secret author Robert Galbraith?`J K Rowling`j.k. rowling'j. k. rowling
+In July 2013, who revealed that they were the secret author Robert Galbraith?`J K Rowling`j.k. rowling'j. k. rowling`jk rowling
 What is the capital of Canada?`Ottawa
 What colour is Teletubby Po in the children's television series Teletubbies?`Red
 In the Harry Potter series of books, what animal does Sirius Black turn into?`Dog
@@ -573,13 +558,12 @@ What is Bill Clinton's middle name?`Jefferson
 In which country are the Sutherland Falls?`New Zealand
 What is the largest flat fish species?`Halibut
 What's the oldest university in the USA?`Harvard
-In architecture, what is a lancet?`window
+In architecture, what is a lancet?`Window
 Who invented jeans?`Levi Strauss`Levi
 Which European city had the Roman name Lutetia?`Paris
 What is the green pigment found in most plants that is responsible for absorbing light energy?`Chlorophyll
 Yeomen Warders at the Tower of London are commonly known by what other name?`Beefeaters
 What is the birthstone for April?`Diamond
-What does 'E' represent in E = MC2?`Energy
 Who invented the revolver (handgun)?`Samuel Colt`Colt
 In which ocean is Ascension Island?`Atlantic
 What is the USA state capital of California?`Sacramento
@@ -632,7 +616,6 @@ What creature's name is from Greek 'river horse'?`Hippopotamus`hippo
 What orange spice/colouring comes from the crocus plant, often associated with rice?`Saffron
 Wikipedia's spherical logo features what symbol for Greek W, also a fatty acid name?`Omega`Ω
 What hugely popular cereal crop has varieties including Arborio (Italy), Ambemohar (India), Doongara (Australia), and Uruchimai (Japan)?`Rice
-In US TV cartoon sitcom Family Guy which Griffin family member is the anthropomorphic dog?`Brian
 The human body's energy chemical is...?`Glucose
 Who created the 1970s persona Thin White Duke, and subsequent brands Glass Spider and Tin Machine?`David Bowie
 What was the Russian city of Stalingrad renamed in 1961, after Europe's longest river?`Volgograd
