@@ -52,6 +52,13 @@ class Settings:
         parser.add_argument("--owner", help="ID of the owner. Only who hosts "
                                             "Red should be owner, this has "
                                             "security implications")
+        parser.add_argument("--co-owner", action="append", default=[],
+                            help="ID of a co-owner. Only people who have "
+                                 "access to the system that is hosting Red "
+                                 "should be  co-owners, as this gives them "
+                                 "complete access to the system's data. "
+                                 "This has serious security implications if "
+                                 "misused. Can be multiple.")
         parser.add_argument("--prefix", "-p", action="append",
                             help="Global prefix. Can be multiple")
         parser.add_argument("--admin-role", help="Role seen as admin role by "
@@ -98,6 +105,7 @@ class Settings:
         self._no_cogs = args.no_cogs
         self.debug = args.debug
         self._dry_run = args.dry_run
+        self.co_owners = args.co_owner
 
         self.save_settings()
 
