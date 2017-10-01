@@ -69,8 +69,9 @@ class Case:
             discord.Embed
         """
         act_repr = await get_case_type_repr(self.action_type)
+        act_name = await get_case_type_name(self.action_type)
         title = "{}".format(bold("Case #{} | {} {}".format(
-            self.case_number, self.action_type, act_repr)))
+            self.case_number, act_name, act_repr)))
 
         if self.reason:
             reason = "**Reason:** {}".format(self.reason)
@@ -94,7 +95,7 @@ class Case:
         if self.until:
             start = datetime.fromtimestamp(self.created_at)
             end = datetime.fromtimestamp(self.until)
-            end_fmt = end.strftime('%Y-%m-%d %H:%M:%S UTC')
+            end_fmt = end.strftime('%Y-%m-%d %H:%M:%S')
             duration = end - start
             dur_fmt = _strfdelta(duration)
             until = end_fmt
@@ -115,10 +116,10 @@ class Case:
             last_modified = "{}".format(
                 datetime.fromtimestamp(
                     self.modified_at
-                ).strftime('%Y-%m-%d %H:%M:%S UTC')
+                ).strftime('%Y-%m-%d %H:%M:%S')
             )
             emb.add_field(name="Last modified at", value=last_modified)
-        emb.timestamp = self.created_at
+        emb.timestamp = datetime.fromtimestamp(self.created_at)
         return emb
 
     def to_json(self) -> dict:
@@ -497,6 +498,22 @@ async def get_case_type_repr(case_type: str) -> str:
         str
     """
     return (await _conf.casetypes.get_attr(case_type)).get("image")
+
+
+async def get_case_type_name(case_type: str) -> str:
+    """
+    Gets the name of the case type
+
+    :param case_type:
+        The case tpe to get the name of
+    :type case_type:
+        str
+    :return:
+        The case type's name
+    :rtype:
+        str
+    """
+    return (await _conf.casetypes.get_attr(case_type)).get("case_str")
 
 
 async def reset_cases(guild: discord.Guild) -> bool:
