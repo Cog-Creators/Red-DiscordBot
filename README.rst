@@ -28,4 +28,4 @@ To install requirements for voice::
 
 To install all requirements for docs and tests::
 
-    pip install --process-dependency-links -U git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=red-discordbot[tests,docs]
+    pip install --process-dependency-links -U git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=red-discordbot[test,docs]
