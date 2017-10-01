@@ -12,7 +12,7 @@ from .checks import mod_or_voice_permissions, admin_or_voice_permissions, bot_ha
 from redbot.core import checks, Config, modlog
 from redbot.core.data_manager import cog_data_path
 from redbot.core.bot import Red
-from redbot.core.utils.chat_formatting import box, escape
+from redbot.core.utils.chat_formatting import box, escape, pagify
 from redbot.core.i18n import CogI18n
 
 _ = CogI18n("Mod", __file__)
@@ -232,7 +232,7 @@ class Mod:
         guild = ctx.guild
         if time is not None:
             time = min(max(time, -1), 60)  # Enforces the time limits
-            await self.settings.guild(guild).delete_delay.set("delete_delay")
+            await self.settings.guild(guild).delete_delay.set(time)
             if time == -1:
                 await ctx.send(_("Command deleting disabled."))
             else:
@@ -369,8 +369,12 @@ class Mod:
         author = ctx.author
         guild = ctx.guild
 
+        is_banned = False
         ban_list = await guild.bans()
-        is_banned = discord.utils.get(ban_list, id=user_id)
+        for entry in ban_list:
+            if entry.user.id == user_id:
+                is_banned = True
+                break
 
         if is_banned:
             await ctx.send(_("User is already banned."))
@@ -514,7 +518,7 @@ class Mod:
         except RuntimeError as e:
             await ctx.send(e)
 
-        if self.settings.guild(guild).reinvite_on_unban():
+        if await self.settings.guild(guild).reinvite_on_unban():
             invite = await self.get_invite_for_reinvite(ctx)
             if invite:
                 try:

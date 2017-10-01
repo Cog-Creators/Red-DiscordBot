@@ -68,7 +68,7 @@ class Case:
         :rtype:
             discord.Embed
         """
-        title = "{}".format(bold("Case #{}".format(self.case_number)))
+        title = "{}".format(bold("Case #{} | {}".format(self.case_number, self.action_type)))
 
         if self.reason:
             reason = "**Reason:** {}".format(self.reason)
@@ -118,7 +118,7 @@ class Case:
                 ).strftime('%Y-%m-%d %H:%M:%S UTC')
             )
             emb.add_field(name="Last modified at", value=last_modified)
-
+        emb.set_footer(text="Created at {}".format(self.created_at))
         return emb
 
     def to_json(self) -> dict:
