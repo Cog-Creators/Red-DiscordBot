@@ -6,16 +6,6 @@ import discord
 from redbot.core import Config
 from redbot.core.bot import Red
 
-mute_unmute_issues = {
-    "already_muted": "That user can't send messages in this channel.",
-    "already_unmuted": "That user isn't muted in this channel!",
-    "hierarchy_problem": "I cannot let you do that. You are not higher than "
-                         "the user in the role hierarchy.",
-    "permissions_issue": "Failed to mute user. I need the manage roles "
-                         "permission and the user I'm muting must be "
-                         "lower than myself in the role hierarchy."
-}
-
 
 async def mass_purge(messages: List[discord.Message],
                      channel: discord.TextChannel):

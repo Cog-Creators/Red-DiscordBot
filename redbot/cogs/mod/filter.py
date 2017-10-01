@@ -1,14 +1,11 @@
-import logging
-from typing import Tuple
-
 import discord
 from discord.ext import commands
 
 from redbot.core import checks, Config
 from redbot.core.bot import Red
-from redbot.core.utils.chat_formatting import pagify
-from .common import is_allowed_by_hierarchy, is_mod_or_superior
 from redbot.core.i18n import CogI18n
+from redbot.core.utils.chat_formatting import pagify
+from redbot.core.utils.mod import is_mod_or_superior
 
 _ = CogI18n("Filter", __file__)
 

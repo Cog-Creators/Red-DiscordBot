@@ -47,7 +47,7 @@ To register a single case type:
             ban_case = {
                 "name": "Ban",
                 "default_setting": True,
-                "image": "https://twemoji.maxcdn.com/2/72x72/1f528.png"
+                "image": ":hammer:"
             }
             modlog.register_casetype(ban_case)
 
@@ -64,19 +64,18 @@ To register multiple case types:
                 {
                     "name": "Ban",
                     "default_setting": True,
-                    "image": "https://twemoji.maxcdn.com/2/72x72/1f528.png"
+                    "image": ":hammer:"
                 },
                 {
                     "name": "Kick",
                     "default_setting": True,
-                    "image": "https://twemoji.maxcdn.com/2/72x72/1f462.png"
+                    "image": ":boot:"
                 }
             ]
             modlog.register_casetypes(new_types)
 
 .. important::
-    To find an image for your case type, look through
-    http://twitter.github.io/twemoji/2/test/preview.html
+    Image should be the emoji you want to represent your case type with.
 
 
 *************

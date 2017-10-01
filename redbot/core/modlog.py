@@ -68,7 +68,9 @@ class Case:
         :rtype:
             discord.Embed
         """
-        title = "{}".format(bold("Case #{} | {}".format(self.case_number, self.action_type)))
+        act_repr = await get_case_type_repr(self.action_type)
+        title = "{}".format(bold("Case #{} | {} {}".format(
+            self.case_number, self.action_type, act_repr)))
 
         if self.reason:
             reason = "**Reason:** {}".format(self.reason)
@@ -80,8 +82,6 @@ class Case:
 
         emb = discord.Embed(title=title, description=reason)
 
-        img_url = await get_case_type_repr(self.action_type)
-        emb.set_image(url=img_url)
         moderator = "{}#{} ({})\n".format(
             self.moderator.name,
             self.moderator.discriminator,
@@ -118,7 +118,7 @@ class Case:
                 ).strftime('%Y-%m-%d %H:%M:%S UTC')
             )
             emb.add_field(name="Last modified at", value=last_modified)
-        emb.set_footer(text="Created at {}".format(self.created_at))
+        emb.timestamp = self.created_at
         return emb
 
     def to_json(self) -> dict:

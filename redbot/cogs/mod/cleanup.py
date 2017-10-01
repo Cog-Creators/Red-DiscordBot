@@ -1,5 +1,4 @@
 import asyncio
-import logging
 import re
 
 import discord
@@ -7,9 +6,9 @@ from discord.ext import commands
 
 from redbot.core import checks
 from redbot.core.bot import Red
-from .common import slow_deletion, mass_purge
-from .log import log
 from redbot.core.i18n import CogI18n
+from redbot.core.utils.mod import slow_deletion, mass_purge
+from .log import log
 
 _ = CogI18n("Cleanup", __file__)
 

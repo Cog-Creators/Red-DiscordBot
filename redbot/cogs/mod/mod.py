@@ -1,21 +1,20 @@
 import asyncio
-import logging
 from collections import deque, defaultdict
 
 import discord
 from discord.ext import commands
 
-from .common import is_mod_or_superior, is_allowed_by_hierarchy,\
-    mute_unmute_issues, get_audit_reason
-from .log import log
-from .checks import mod_or_voice_permissions, admin_or_voice_permissions, bot_has_voice_permissions
 from redbot.core import checks, Config, modlog
-from redbot.core.data_manager import cog_data_path
 from redbot.core.bot import Red
-from redbot.core.utils.chat_formatting import box, escape, pagify
 from redbot.core.i18n import CogI18n
+from redbot.core.utils.chat_formatting import box, escape
+from .checks import mod_or_voice_permissions, admin_or_voice_permissions, bot_has_voice_permissions
+from redbot.core.utils.mod import is_mod_or_superior, is_allowed_by_hierarchy, \
+    get_audit_reason
+from .log import log
 
 _ = CogI18n("Mod", __file__)
+
 
 
 class Mod:
@@ -60,79 +59,79 @@ class Mod:
             {
                 "name": "ban",
                 "default_setting": True,
-                "image": "https://twemoji.maxcdn.com/2/72x72/1f528.png",
+                "image": ":hammer:",
                 "case_str": "Ban"
             },
             {
                 "name": "kick",
                 "default_setting": True,
-                "image": "https://twemoji.maxcdn.com/2/72x72/1f462.png",
+                "image": ":boot:",
                 "case_str": "Kick"
             },
             {
                 "name": "hackban",
                 "default_setting": True,
-                "image": "https://twemoji.maxcdn.com/2/72x72/1f6b7.png",
+                "image": ":bust_in_silhouette: :hammer:",
                 "case_str": "Hackban"
             },
             {
                 "name": "softban",
                 "default_setting": True,
-                "image": "https://twemoji.maxcdn.com/2/72x72/26a0.png",
+                "image": ":dash: :hammer:",
                 "case_str": "Softban"
             },
             {
                 "name": "unban",
                 "default_setting": True,
-                "image": "https://twemoji.maxcdn.com/2/72x72/1f54a.png",
+                "image": ":dove:",
                 "case_str": "Unban"
             },
             {
                 "name": "voiceban",
                 "default_setting": True,
-                "image": "https://twemoji.maxcdn.com/2/72x72/1f4f4.png",
+                "image": ":mute:",
                 "case_str": "Voice Ban"
             },
             {
                 "name": "voiceunban",
                 "default_setting": True,
-                "image": "https://twemoji.maxcdn.com/2/72x72/1f4f3.png",
+                "image": ":speaker:",
                 "case_str": "Voice Unban"
             },
             {
                 "name": "vmute",
                 "default_setting": False,
-                "image": "https://twemoji.maxcdn.com/2/72x72/1f507.png",
+                "image": ":mute:",
                 "case_str": "Voice Mute"
             },
             {
                 "name": "cmute",
                 "default_setting": False,
-                "image": "https://twemoji.maxcdn.com/2/72x72/1f507.png",
+                "image": ":mute:",
                 "case_str": "Channel Mute"
             },
             {
                 "name": "smute",
                 "default_setting": True,
-                "image": "https://twemoji.maxcdn.com/2/72x72/1f507.png",
+                "image": ":mute:",
                 "case_str": "Guild Mute"
             },
             {
                 "name": "vunmute",
                 "default_setting": False,
-                "image": "https://twemoji.maxcdn.com/2/72x72/1f507.png",
+                "image": ":speaker:",
                 "case_str": "Voice Unmute"
             },
             {
                 "name": "cunmute",
                 "default_setting": False,
-                "image": "https://twemoji.maxcdn.com/2/72x72/1f507.png",
+                "image": ":speaker:",
                 "case_str": "Channel Unmute"
             },
             {
                 "name": "sunmute",
                 "default_setting": True,
-                "image": "https://twemoji.maxcdn.com/2/72x72/1f507.png",
+                "image": ":speaker:",
                 "case_str": "Guild Unmute"
             }
         ]
@@ -1193,3 +1192,14 @@ class Mod:
         PermissionOverwrite object is empty"""
         return [p for p in iter(overwrites)] ==\
                [p for p in iter(discord.PermissionOverwrite())]
+
+
+mute_unmute_issues = {
+    "already_muted": "That user can't send messages in this channel.",
+    "already_unmuted": "That user isn't muted in this channel!",
+    "hierarchy_problem": "I cannot let you do that. You are not higher than "
+                         "the user in the role hierarchy.",
+    "permissions_issue": "Failed to mute user. I need the manage roles "
+                         "permission and the user I'm muting must be "
+                         "lower than myself in the role hierarchy."
+}
