@@ -50,22 +50,19 @@ class Cleanup:
                 return False
 
         to_delete = [ctx.message]
-
-        tries_left = 5
+        too_old = False
         tmp = ctx.message
 
-        while tries_left and len(to_delete) - 1 < number:
+        while not too_old and len(to_delete) - 1 < number:
             async for message in channel.history(limit=100,
                                                  before=tmp):
                 if len(to_delete) - 1 < number and check(message) and\
                         (ctx.message.created_at - message.created_at).days < 14:
                     to_delete.append(message)
                 elif (ctx.message.created_at - message.created_at).days >= 14:
-                    tries_left = 0
+                    too_old = True
                     break
                 tmp = message
-            if tries_left:
-                tries_left -= 1
 
         reason = "{}({}) deleted {} messages "\
                  " containing '{}' in channel {}".format(author.name,
@@ -73,9 +70,9 @@ class Cleanup:
         log.info(reason)
 
         if is_bot:
-            await mass_purge(to_delete, channel, reason)
+            await mass_purge(to_delete, channel)
         else:
-            await slow_deletion(to_delete, reason)
+            await slow_deletion(to_delete)
 
     @cleanup.command()
     @commands.guild_only()
@@ -102,21 +99,19 @@ class Cleanup:
                 return False
 
         to_delete = []
-
-        tries_left = 5
+        too_old = False
         tmp = ctx.message
 
-        while tries_left and len(to_delete) - 1 < number:
+        while not too_old and len(to_delete) - 1 < number:
             async for message in channel.history(limit=100,
                                                  before=tmp):
                 if len(to_delete) - 1 < number and check(message) and\
                         (ctx.message.created_at - message.created_at).days < 14:
                     to_delete.append(message)
                 elif (ctx.message.created_at - message.created_at).days >= 14:
-                    tries_left = 0
+                    too_old = True
+                    break
                 tmp = message
-            if tries_left:  # triggers if not already 0 (which evals to False)
-                tries_left -= 1
         reason = "{}({}) deleted {} messages "\
                  " made by {}({}) in channel {}"\
                  "".format(author.name, author.id, len(to_delete),
@@ -125,9 +120,9 @@ class Cleanup:
 
         if is_bot:
             # For whatever reason the purge endpoint requires manage_messages
-            await mass_purge(to_delete, channel, reason)
+            await mass_purge(to_delete, channel)
         else:
-            await slow_deletion(to_delete, reason)
+            await slow_deletion(to_delete)
 
     @cleanup.command()
     @commands.guild_only()
@@ -148,7 +143,7 @@ class Cleanup:
 
         if not is_bot:
             await ctx.send(_("This command can only be used on bots with "
-                           "bot accounts."))
+                             "bot accounts."))
             return
 
         after = await channel.get_message(message_id)
@@ -170,7 +165,7 @@ class Cleanup:
                            len(to_delete), channel.name)
         log.info(reason)
 
-        await mass_purge(to_delete, channel, reason)
+        await mass_purge(to_delete, channel)
 
     @cleanup.command()
     @commands.guild_only()
@@ -193,7 +188,8 @@ class Cleanup:
 
         while len(to_delete) - 1 < number and not done:
             async for message in channel.history(limit=100, before=tmp):
-                if (ctx.message.created_at - message.created_at).days < 14:
+                if len(to_delete) - 1 < number and \
+                        (ctx.message.created_at - message.created_at).days < 14:
                     to_delete.append(message)
                 elif (ctx.message.created_at - message.created_at).days >= 14:
                     done = True
@@ -206,9 +202,9 @@ class Cleanup:
         log.info(reason)
 
         if is_bot:
-            await mass_purge(to_delete, channel, reason)
+            await mass_purge(to_delete, channel)
         else:
-            await slow_deletion(to_delete, reason)
+            await slow_deletion(to_delete)
 
     @cleanup.command(name='bot')
     @commands.guild_only()
@@ -244,21 +240,18 @@ class Cleanup:
             return False
 
         to_delete = [ctx.message]
-
-        tries_left = 5
+        too_old = False
         tmp = ctx.message
 
-        while tries_left and len(to_delete) - 1 < number:
+        while not too_old and len(to_delete) - 1 < number:
             async for message in channel.history(limit=100, before=tmp):
                 if len(to_delete) - 1 < number and check(message) and\
                                 (ctx.message.created_at - message.created_at).days < 14:
                     to_delete.append(message)
                 elif (ctx.message.created_at - message.created_at).days >= 14:
-                    tries_left = 0
+                    too_old = True
                     break
                 tmp = message
-            if tries_left:
-                tries_left -= 1
 
         reason = "{}({}) deleted {} "\
                  " command messages in channel {}"\
@@ -267,9 +260,9 @@ class Cleanup:
         log.info(reason)
 
         if is_bot:
-            await mass_purge(to_delete, channel, reason)
+            await mass_purge(to_delete, channel)
         else:
-            await slow_deletion(to_delete, reason)
+            await slow_deletion(to_delete)
 
     @cleanup.command(name='self')
     async def cleanup_self(self, ctx: commands.Context, number: int, match_pattern: str = None):
@@ -321,21 +314,18 @@ class Cleanup:
         if author == self.bot.user:
             to_delete.append(ctx.message)
             number += 1
-
-        tries_left = 5
+        too_old = False
         tmp = ctx.message
-        while tries_left and len(to_delete) < number:
+        while not too_old and len(to_delete) < number:
             async for message in channel.history(limit=100, before=tmp):
                 if len(to_delete) < number and check(message) and\
                         (ctx.message.created_at - message.created_at).days < 14:
                     to_delete.append(message)
                 elif (ctx.message.created_at - message.created_at).days >= 14:
                     # Found a message that is 14 or more days old, stop here
-                    tries_left = 0
+                    too_old = True
                     break
                 tmp = message
-            if tries_left:
-                tries_left -= 1
 
         if channel.name:
             channel_name = 'channel ' + channel.name
@@ -349,6 +339,6 @@ class Cleanup:
         log.info(reason)
 
         if is_bot and can_mass_purge:
-            await mass_purge(to_delete, channel, reason)
+            await mass_purge(to_delete, channel)
         else:
-            await slow_deletion(to_delete, reason)
+            await slow_deletion(to_delete)
