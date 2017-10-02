@@ -54,7 +54,7 @@ class Cleanup:
         tmp = ctx.message
 
         while not too_old and len(to_delete) - 1 < number:
-            async for message in channel.history(limit=100,
+            async for message in channel.history(limit=1000,
                                                  before=tmp):
                 if len(to_delete) - 1 < number and check(message) and\
                         (ctx.message.created_at - message.created_at).days < 14:
@@ -103,7 +103,7 @@ class Cleanup:
         tmp = ctx.message
 
         while not too_old and len(to_delete) - 1 < number:
-            async for message in channel.history(limit=100,
+            async for message in channel.history(limit=1000,
                                                  before=tmp):
                 if len(to_delete) - 1 < number and check(message) and\
                         (ctx.message.created_at - message.created_at).days < 14:
@@ -187,7 +187,7 @@ class Cleanup:
         done = False
 
         while len(to_delete) - 1 < number and not done:
-            async for message in channel.history(limit=100, before=tmp):
+            async for message in channel.history(limit=1000, before=tmp):
                 if len(to_delete) - 1 < number and \
                         (ctx.message.created_at - message.created_at).days < 14:
                     to_delete.append(message)
@@ -244,7 +244,7 @@ class Cleanup:
         tmp = ctx.message
 
         while not too_old and len(to_delete) - 1 < number:
-            async for message in channel.history(limit=100, before=tmp):
+            async for message in channel.history(limit=1000, before=tmp):
                 if len(to_delete) - 1 < number and check(message) and\
                                 (ctx.message.created_at - message.created_at).days < 14:
                     to_delete.append(message)
@@ -317,7 +317,7 @@ class Cleanup:
         too_old = False
         tmp = ctx.message
         while not too_old and len(to_delete) < number:
-            async for message in channel.history(limit=100, before=tmp):
+            async for message in channel.history(limit=1000, before=tmp):
                 if len(to_delete) < number and check(message) and\
                         (ctx.message.created_at - message.created_at).days < 14:
                     to_delete.append(message)
