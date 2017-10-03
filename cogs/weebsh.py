@@ -158,20 +158,6 @@ class Route:
     def __call__(self, url_params=None):
         return self.sync_query(url_params)
 
-class AsyncRoute(Route):
-    async def async_query(self, url_params=None):
-        async with aiohttp.ClientSession() as ses:
-            async with getattr(ses, self.method.lower())(
-                    self.base_url+self.path, headers=self.headers) as res:
-                if 200 <= res.status < 300:
-                    retval = await res.json()
-                    return retval
-                else:
-                    raise sync.ResponseError(
-                            "Expected a status code in range 200-299, got {}"
-                            .format(res.status))
-
-
 class ResponseError(BaseException):
     pass
 
