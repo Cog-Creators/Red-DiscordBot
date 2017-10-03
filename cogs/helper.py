@@ -7,103 +7,49 @@ from cogs.utils.dataIO import dataIO
 from copy import deepcopy
 from .utils import checks
 from __main__ import send_cmd_help
+from .utils.sync import Route
+import urllib
+from types import SimpleNamespace
 
-CHARACTERS = {
-    "doc" : "doc",
-    "doctormario" : "doc",
-    "dr.mario" : "doc",
-    "drmario" : "doc",
-    "mario" : "mario",
-    "luigi" : "luigi",
-    "bowser" : "bowser",
-    "koopa" : "bowser",
-    "turtle" : "bowser",
-    "peach" : "peach",
-    "princesspeach" : "peach",
-    "daisy" : "peach",
-    "yoshi" : "yoshi",
-    "donkeykong" : "dk",
-    "dk" : "dk",
-    "kong" : "dk",
-    "monkey" : "dk",
-    "falcon" : "falcon",
-    "captainfalcon" : "falcon",
-    "cf" : "falcon",
-    "cfalcon" : "falcon",
-    "capt" : "falcon",
-    "captain" : "falcon",
-    "c.falcon" : "falcon",
-    "douglas" : "falcon",
-    "douglasjfalcon" : "falcon",
-    "douglasjayfalcon" : "falcon",
-    "captaindouglasjfalcon": "falcon",
-    "captaindouglasjayfalcon" : "falcon",
-    "ganon" : "ganon",
-    "ganondorf" : "ganon",
-    "falco" : "falco",
-    "lombardi" : "falco",
-    "falcolombardi" : "falco",
-    "bird" : "falco",
-    "burd" : "falco",
-    "fox" : "fox",
-    "mccloud" : "fox",
-    "foxmccloud" : "fox",
-    "ics" : "ics",
-    "iceclimbers" : "ics",
-    "nana" : "ics",
-    "popo" : "ics",
-    "ness" : "ness",
-    "kirby" : "kirby",
-    "samus" : "samus",
-    "samusaran" : "samus",
-    "zelda" : "zelda",
-    "tetra" : "zelda",
-    "princesszelda" : "zelda",
-    "sheik" : "sheik",
-    "ninja" : "sheik",
-    "link" : "link",
-    "younglink" : "ylink",
-    "yl" : "ylink",
-    "ylink" : "ylink",
-    "pichu" : "pichu",
-    "pikachu" : "pika",
-    "pika" : "pika",
-    "rat" : "pika",
-    "jiggs" : "puff",
-    "puff" : "puff",
-    "jigglypuff" : "puff",
-    "jiggly" : "puff",
-    "rondoudou" : "puff",
-    "mewtwo" : "m2",
-    "m2" : "m2",
-    "gnw" : "gnw",
-    "gw" : "gnw",
-    "gameandwatch" : "gnw",
-    "g&w" : "gnw",
-    "gdubs" : "gnw",
-    "roy" : "roy",
-    "marth" : "marth"
-}
-
-RESOURCES = "data/resources/"
+RESOURCES = "data/smashing/"
+STATE = "northcarolina" 
 
 class Helper:
-    """Contains most static-based commands"""
+    """Contains most smash-based static commands"""
 
     def __init__(self, bot, resources_folder):
-        self.privilege = dataIO.load_json(RESOURCES+"character_privilege.json")
         self.bot = bot
-        self.moves = self._load_moves()
+        self.melee_chars = dataIO.load_json(RESOURCES+"melee_chars.json")
+        self.movelist = dataIO.load_json(RESOURCES+"movelist.json")
+        self.privilege = dataIO.load_json(RESOURCES+"character_privilege.json")
+        # notGARPR
+        # TODO Store data in JSON (cache players, rankings, tournaments, and last 50 player match datasets)
+        # TODO Reload players/rankings/tournaments data when the last tournaments.json != the last tournament from GarPR
+        self.garpr.rankings_uri = STATE+"/rankings"
+        self.garpr.players_uri = STATE+"/players"
+        self.garpr.matches_uri = STATE+"/matches/"
+        self.garpr.tournaments_uri = STATE+"/tournaments/"
+        self.garpr.data_url = "https://www.notgarpr.com:3001/"
+        self.garpr.players = Route(base_url=self.garpr.data_url,path=self.garpr.players_uri).sync_query()
+        self.garpr.rankings = Route(base_url=self.garpr.data_url,path=self.garpr.rankings_uri).sync_query()
+#        self.garpr.tournaments = Route(base_url=self.garpr.data_url,path=self.garpr.tournaments_uri).sync_query()
+#        self.garpr.rankings = dataIO.load_json(RESOURCES+"garpr_rankings.json")
+#        self.gatpr.players = dataIO.load_json(RESOURCES+"garpr_player_records.json")
+        self.garpr.url = "https://www.notgarpr.com/#/"
 
-    def _load_moves(self):
-        return {}
-
-    def _get_move(self, move, character):
-        print("getting: "+str(move))
+    def _get_move(self, move):
         try:
-            return deepcopy(self.moves.move)
-        except KeyError:
-            print("Couldn't find the move "+str(move))
+            move = self.movelist[re.sub(r"\s", "", move.lower())]
+            movedata = dataIO.load_json(RESOURCES+"frames/melee/"+move+".json")
+            return movedata
+        except:
+            raise KeyError("Couldn't find the move {}.".format(str(move)))
+
+    def _get_rankings(self):
+        try:
+            return deepcopy(self.rankings["ranking"])
+        except:
+            print("Helper.py: something went wrong when copying self.rankings")
 
     # Is guaranteed to be passed valid character names
     def _get_privilege(self, char):
@@ -118,13 +64,105 @@ class Helper:
 
     def _get_character(self, character):
         try:
-            return CHARACTERS[re.sub(r"\s", '', character.lower())]
+            return self.melee_chars[re.sub(r"\s", "", character.lower())]
         except:
-            print("Tried to find a character and failed (tried: \'"+str(character)+"\').")
-            raise
+            raise KeyError("Couldn't find the character {}.".format(str(character)))
 
     def _save_privilege(self):
         dataIO.save_json(RESOURCES+"character_privilege.json", self.privilege)
+    
+    async def _get_player_stats(self, playerid : str):
+        return Route(base_url=self.garpr.data_url,path=self.garpr.matches_uri+playerid).sync_query()
+
+    def _get_playerid(self, player : str):
+        for entry in self.garpr.players["players"]:
+            if player.lower() == entry["name"].lower():
+                return entry
+        raise KeyError("Player not found: "+player)
+
+    @commands.command(pass_context=True, no_pm=False)
+    async def stats(self, ctx, *, player : str):
+        """Gets garpr tournament statistics for a player.
+        
+        Use ~stats <player1> VS <player2> to get historical matchup stats, if they exist.
+
+        Be aware that GarPR is created with NC players in mind. If you want to check
+        the match history of an NC player vs an out-of-state player, the NC player should
+        be listed FIRST.
+        """
+        if any(delim in player for delim in [" vs ", " VS ", " vs. ", " VS. ", " Vs. ", " Vs "]):
+            p1,p2 = re.sub(r"( vs\. | VS\. | VS )", " vs ", player).split(" vs ")
+            try:
+                p1_info = self._get_playerid( p1 )
+                p1_matches = await self._get_player_stats( p1_info["id"] )
+                matchup = SimpleNamespace()
+                matchup.wins = matchup.losses = 0
+                matchup.last_tournament = None
+                matchup.since = None
+                for match in p1_matches["matches"]:
+                    if match["opponent_name"].lower() == p2.lower():
+                        if not matchup.since:
+                            matchup.since = match["tournament_date"]
+                        if match["result"] == "win":
+                            matchup.wins += 1
+                        else:
+                            matchup.losses += 1
+                        matchup.last_tournament = match["tournament_name"]
+                if not matchup.since:
+                    await self.bot.say("No data for "+p1+"/"+p2+". Use ~stats for more info.")
+                    return
+            except KeyError as e:
+                print(e)
+                return
+            message = p1+" is ("+str(matchup.wins)+"-"+str(matchup.losses)+") vs "+p2+", since "+str(matchup.since)+"."
+            if matchup.last_tournament:
+                message += "\nThey last played at "+matchup.last_tournament+"."
+            await self.bot.say(message)
+            return
+        try:
+            stats = await self._get_player_stats( self._get_playerid( player )["id"] )
+            if stats["losses"] == 0:
+                ratio = "∞"
+            else:
+                ratio = str(round(stats["wins"]/stats["losses"], 3))
+            await self.bot.say("I can see "+player+" has "+str(len(stats["matches"]))+" match "
+            "records, since "+stats["matches"][0]["tournament_date"]+"\n"
+            "This player has "+str(stats["wins"])+" wins "
+            "and "+str(stats["losses"])+" losses ("+ratio+")")
+        except KeyError as e:
+            print(e)
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def garpr(self, ctx, *, player : str=None):
+        """Returns the state garpr, or the ranking for a particular player."""
+        if not player:
+            await self.bot.say(self.garpr.url+self.garpr.rankings_uri)
+        else:
+            playerinfo = self._get_playerid( player )
+            stats = await self._get_player_stats( playerinfo["id"] )
+            rating = playerinfo["ratings"][STATE]["mu"]
+            sigma = playerinfo["ratings"][STATE]["sigma"]
+            data = discord.Embed(title=playerinfo["name"], url=self.garpr.url+self.garpr.players_uri+"/"+playerinfo["id"])
+            data.add_field(name="Adjusted rating:", value="*_"+str(round(rating-(3*sigma), 3))+"_*")
+            for guy in self.garpr.rankings["ranking"]:
+                if guy["name"] == playerinfo["name"]:
+                    data.add_field(name="rank", value=guy["rank"])
+                    if 1 == guy["rank"]:
+                        data.colour = discord.Colour.dark_green()
+                        data.set_field_at(index=1, name="Rank:", value=str(guy["rank"])+"<:champion:261390756898537473>")
+                    elif 1 < guy["rank"] < 11:
+                        data.colour = discord.Colour.gold()
+                        data.set_field_at(index=1, name="Rank:", value=str(guy["rank"])+":fire:")
+                    elif 11 <= guy["rank"] < 26:
+                        data.colour = discord.Colour.light_grey()
+                        data.set_field_at(index=1, name="Rank:", value=str(guy["rank"])+"<:Melee:260154755706257408>")
+                    elif 26 <= guy["rank"] < 51:
+                        data.colour = discord.Colour.purple()
+                        data.set_field_at(index=1, name="Rank:", value=str(guy["rank"])+":ok_hand:")
+                    elif 51 <= guy["rank"] < 101:
+                        data.colour = discord.Colour(0x998866)
+            data.set_footer(text="notgarpr-discord integration by Swann")
+            await self.bot.say(embed=data)
 
     @commands.group(pass_context=True, no_pm=True)
     @checks.mod_or_permissions()
@@ -133,10 +171,35 @@ class Helper:
         if ctx.invoked_subcommand is None:
             await send_cmd_help(ctx)
 
-    @smash.command(no_pm=False)
-    async def frames(self, character : str, move : str):
+    @smash.command(pass_context=True, no_pm=False)
+    @checks.is_owner()
+    async def frames(self, ctx, character : str, move : str):
         """Retrieve the frame data and gfy for a move"""
-        await self.bot.say("")
+        try:
+            char = self._get_character( character )
+            atk_data = self._get_move( move )[char]
+        except:
+            # Catch and fix swapped order of character and move
+            try:
+                char = self._get_character( move )
+                atk_data = self._get_move( character )[char]
+                move = character
+            except KeyError as e:
+                print(e)
+                return
+        print(atk_data)
+        required = ["Total Frames", "SAF", "Hits"]
+        data = discord.Embed(title="__Frame data and animation for: "+char+"'s "+move+"__")
+        data.set_image(url=atk_data["URL"])
+        for field in required:
+            data.add_field(name=field, value=atk_data[field], inline=True)
+        required.append("URL")
+        for key in atk_data:
+            if key not in required:
+                data.add_field(name=key, value=atk_data[key], inline=True)
+        data.set_footer(text="plugin by Swann, data by Stratocaster and SDM")
+        await self.bot.say(embed=data)
+        
 
     @commands.group(pass_context=True, no_pm=False, aliases=['fuck','f'], invoke_without_command=True)
     async def screw(self, ctx, *, character : str):
@@ -175,7 +238,7 @@ class Helper:
         info = self._get_privilege(char)
         self.privilege[char]["complaints"].append( { "entry" : answer } )
         self._save_privilege()
-        await self.bot.edit_message("Got it. I didn't realize you feel that way about "+char+".")
+        await self.bot.edit_message(msg, "Got it. I didn't realize you feel that way about "+char+".")
 
     @commands.group(pass_context=True, no_pm=False, aliases=['dyk'], invoke_without_command=True)
     async def fact(self, ctx, *, character : str):
@@ -217,14 +280,14 @@ class Helper:
         await self.bot.edit_message(msg, "Got it. Good to know, thanks.")
 
 def check_folders():
-    if not os.path.exists("data/resources"):
-        print("Creating data/resources folder...")
-        os.makedirs("data/resources")
+    if not os.path.exists(RESOURCES):
+        print("Creating smashing data folder...")
+        os.makedirs(RESOURCES)
 
 def check_files():
-    data_dir = "data/resources/"
-    melee = data_dir+"frames/melee/"
-    files = [data_dir+"character_privilege.json", melee+"chars.json", melee+"jab.json", melee+"da.json", melee+"grab.json", melee+"dtilt.json", melee+"ftilt.json", melee+"utilt.json",melee+"dsmash.json",melee+"fsmash.json",melee+"usmash.json",melee+"nair.json",melee+"dair.json",melee+"fair.json",melee+"uair.json",melee+"bair.json"]
+    garpr = RESOURCES+"garpr_rankings.json"
+    melee = RESOURCES+"frames/melee/"
+    files = [RESOURCES+"character_privilege.json", melee+"chars.json", melee+"jab.json", melee+"da.json", melee+"grab.json", melee+"dtilt.json", melee+"ftilt.json", melee+"utilt.json",melee+"dsmash.json",melee+"fsmash.json",melee+"usmash.json",melee+"nair.json",melee+"dair.json",melee+"fair.json",melee+"uair.json",melee+"bair.json", garpr]
     for path in files:
         if not dataIO.is_valid_json(path):
             print("Creating empty "+str(path)+"...")
