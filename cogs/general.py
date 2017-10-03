@@ -11,7 +11,12 @@ import aiohttp
 import asyncio
 
 settings = {"POLL_DURATION" : 60}
-
+RULE_1 = '```md\n* Don\'t be a jerk:\nWe\'re a competitive group, so we expect taunting, profanity, trash talk, etc.\nWe\'re mostly adults here. However, be aware that racism, sexism, bigotry, and harassment are not allowed.\n\nRegulation of this will be at the staff\'s discretion, and we will warn, mute, kick, or possibly ban you if we feel you are taking things too far.\n\nBe aware of your language and the topic at hand. We expect a certain level of maturity and tact in approaching hot topics--please discuss these sensibly but know we will step in if you spam or go into the categories above.\n\nSpeaking excessively in ALL CAPS is annoying. You will be warned.\nPosting other people\'s personal information in a public channel (outside of known factors: "Swann\'s real name is Swann" is fine) is a bannable offense. If you value your privacy, let others have theirs.```'
+RULE_2 = '```md\n* Arguing with a staff member\'s decision:\n@Mod and @Admin must make judgement calls in their day-to-day duties. We review evidence and must make a decision based upon that. Sometimes we will rule in your favor, other times not. During these times, we do not decide because we want to be unfair to you, but because we have to decide on what we think is most fair to everyone involved.\n\nOnce a decision has been reached, that decision is final, and continuing to bug us will only serve to annoy (and will likely work against you). Decisions are made on a case-by-case basis, and other people\'s cases are none of your concern.\n\nDon\'t complain when you get muted/kicked/banned. Please make your appeal in #gtab and allow the mod team to review your case.\n\nIf your repeal has been rejected, please do not constantly re-appeal.```'
+RULE_3 = '```md\n* Alternate Accounts:\nAlts are allowed within reason. We have certain functions in place that tie in to real-world tournament results, etc. Abusing multiple accounts is frustrating to deal with for our staff and if you are found to be using alts flippantly, expect them to be banned. Joke accounts (such as Waxing Crescent), and utility accounts (such as for testing bot functionality or administrating games) are allowed. It would be wise to talk to at least one @Admin and/or @Developer if you want to set something up without risking a ban.```'
+RULE_4 = '```md\n* Using channels appropriately:\nPlease keep sensitive content scoped to its appropriate channel. Example: anime discussion in #anime, Rocket League discussion in #other-games, tournament announcements in #tournaments...\n\nDo not post NSFW content in non-NSFW channels! If you must, please tag your post (Example: "news.com/nsfw-story NSFW!!").\n\nIf you do not know what a channel is for, please lurk, read the pinned posts, or ask someone.```'
+CHANNELS_INFO = '```md\n* Channels:\n#updates\n\tWhere staff can post server-wide announcements.\n#general\n\tFor general discussion. Try to stay relevant to the conversation. Excessive off-topic posts, spam, and trolling are obnoxious and you may be warned for them.\n#salt\n\tFor blowing off steam, complaining, etc. Very relaxed moderation. It is also sometimes used as #general overflow.\n#serious\n\tPrimarily useful for discussion topics that take time to talk about in an environment less crowded than #general. It is also sometimes used as #general overflow.\n#matchmaking\n\tFor netplay. \n#improvement\n\tFor smash discussion, especially to better your play, theorycraft, or ask for advice. Vod reviews are typically done here.\n#slots\n\tFor currency games.\n#memes\n\tFor shitposting.\n#vibe-exchange\n\tFor iposting about entertainment (music, movies, TV, youtube videos, albums, upcoming live shows, etc...\n#safety\n\tFor ensuring a safe environment in NC.```'
+RULE_5 = '```md\n* Other rules:*\nDo not use offensive names.\nDo not invite unofficial bots without @Developer approval. Unauthorized bots will be IMMEDIATELY BANNED without warning.\nPlease do not repeatedly switch voice channels. Try to reduce echoing/background noise if possible, and use push-to-talk if necessary.\nPlease do not spam commands excessively without reason.```'
 
 class RPS(Enum):
     rock     = "\N{MOYAI}"
@@ -43,6 +48,17 @@ class General:
                      "Ask again later", "Better not tell you now", "Cannot predict now", "Concentrate and ask again",
                      "Don't count on it", "My reply is no", "My sources say no", "Outlook not so good", "Very doubtful"]
         self.poll_sessions = []
+
+    @commands.command(pass_context=True)
+    async def rules(self, ctx):
+        """Prints the server rules. Responds in DM."""
+        await self.bot.whisper("```Server rules:\n```")
+        await self.bot.whisper(RULE_1)
+        await self.bot.whisper(RULE_2)
+        await self.bot.whisper(RULE_3)
+        await self.bot.whisper(RULE_4)
+        await self.bot.whisper(CHANNELS_INFO)
+        await self.bot.whisper(RULE_5)
 
     @commands.command(hidden=True)
     async def ping(self):
@@ -158,7 +174,7 @@ class General:
         await self.bot.say("https://lmgtfy.com/?q={}".format(search_terms))
 
     @commands.command(no_pm=True, hidden=True)
-    async def hug(self, user : discord.Member, intensity : int=1):
+    async def hug_user(self, user : discord.Member, intensity : int=1):
         """Because everyone likes hugs
 
         Up to 10 intensity levels."""
