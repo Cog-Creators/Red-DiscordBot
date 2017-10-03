@@ -167,6 +167,14 @@ class General:
             await self.bot.say(author.mention + " Stopwatch stopped! Time: **" + tmp + "**")
             self.stopwatches.pop(author.id, None)
 
+    @commands.command(pass_context=True)
+    async def garpr(self, ctx, *, player):
+        if player is None:
+            await self.bot.say("https://www.notgarpr.com/#/northcarolina/rankings")
+        elif player != "Swann":
+            await self.bot.say("Swann says: player search is on the way")
+
+
     @commands.command()
     async def lmgtfy(self, *, search_terms : str):
         """Creates a lmgtfy link"""
