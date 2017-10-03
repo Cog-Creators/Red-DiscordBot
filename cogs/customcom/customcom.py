@@ -6,8 +6,8 @@ from datetime import datetime
 import discord
 from discord.ext import commands
 
-from core import Config, checks
-from core.utils.chat_formatting import box
+from redbot.core import Config, checks
+from redbot.core.utils.chat_formatting import box
 
 
 class CCError(Exception):
