@@ -42,6 +42,10 @@ class Suggestions:
         for author in self.suggestions:
             backlog+="# "+re.sub(r'\#\d{4}','',author)+"\n"
             for entry in self.suggestions[author]:
+                if len(backlog)+len(self.suggestions[author][entry]) > 1500:
+                        backlog += "```"
+                        await self.bot.say(backlog)
+                        backlog = "```md\n"
                 backlog+="* "+self.suggestions[author][entry]+"\n" 
             backlog+="\n"
         backlog+= "```"
