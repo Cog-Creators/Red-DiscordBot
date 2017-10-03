@@ -11,6 +11,7 @@ from __main__ import send_cmd_help
 import sys
 import re
 import os
+import math
 import time
 import logging
 import random
@@ -309,8 +310,10 @@ class Experience:
         self.leaderboard = dataIO.load_json(file_path)
         self.file_path = file_path
         self.bot = bot
-        
-    async def update_leaderboard(self):
+       
+    #TODO recreate the functionality of mee6's ranks plugin and
+    #     demolish this horrible nonsense.
+    async def update_leaderboard(self, server):
         req = Request(LEADERBOARD_URL, headers={'User-Agent': 'Mozilla/5.0'})
         try:
             html = urlopen(req).read()
@@ -325,9 +328,7 @@ class Experience:
                 sys.exit(1)
 
         soup = BeautifulSoup(html, 'html.parser')
-
         table = soup.find("div", { "class" : "list-group" } )
-
         plaintext = ""
 
         for entry in table.find_all("h3"):
@@ -340,8 +341,16 @@ class Experience:
 
         for index in range(int(length)):
             rank = re.sub('#', '', fixedtext.splitlines()[index*3])
+            #Format from mee6: Nickname#dddd
             user = fixedtext.splitlines()[(index*3)+1]
             level = re.sub('Level ', '', fixedtext.splitlines()[(index*3)+2])
+            print(user+" rank: "+str(rank))
+            
+            members = server.members
+            for member in members:
+                fullname = member.name+"#"+str(member.discriminator)
+                if fullname == user:
+                    user = member.id
             if user not in self.leaderboard:
                 self.leaderboard[user] = {}
             self.leaderboard[user]["level"] = int(level)
@@ -402,7 +411,7 @@ class Economy:
     @commands.command(name="update_xp_table", pass_context=True, no_pm=False)
     #@check.role_or_permissions("BOT") TODO
     async def updateXPTable(self, ctx):
-        await self.xp.update_leaderboard()
+        await self.xp.update_leaderboard(ctx.message.server)
  
     @commands.group(name="bank", pass_context=True)
     async def _bank(self, ctx):
@@ -518,7 +527,7 @@ class Economy:
                                "deleted.")
 
     async def _payday(self, server, author, id):
-        multiplier = self.xp.get_payday_multiplier(str(author))
+        multiplier = self.xp.get_payday_multiplier(str(author.id))
         now = datetime.now()
         midnight = now.replace(hour=0, minute=0, second=0, microsecond=0)
 
@@ -540,7 +549,7 @@ class Economy:
             if multiplier == 10:
                 await self.bot.say(
                     "{} Here, take some credits. Enjoy! (+{}"
-                    " credits!)\n_x{} bonus for being in the top 10!_"
+                    " credits!\n_x{} bonus for being in the top 10!_"
                     " Use !levels for current Mee6 ranks!))".format(
                         author.mention,
                         str(self.settings[server.id]["PAYDAY_CREDITS"]*multiplier),
