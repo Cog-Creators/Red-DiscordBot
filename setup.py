@@ -107,6 +107,7 @@ setup(
     extras_require={
         'test': ['pytest>=3', 'pytest-asyncio'],
         'mongo': ['pymongo', 'motor'],
-        'docs': ['sphinx', 'sphinxcontrib-asyncio', 'sphinx_rtd_theme']
+        'docs': ['sphinx', 'sphinxcontrib-asyncio', 'sphinx_rtd_theme'],
+        'voice': ['PyNaCl']
     }
 )

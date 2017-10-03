@@ -193,7 +193,7 @@ class CogManagerUI:
         Lists current cog paths in order of priority.
         """
         install_path = await ctx.bot.cog_mgr.install_path()
-        cog_paths = ctx.bot.cog_mgr.paths
+        cog_paths = await ctx.bot.cog_mgr.paths()
         cog_paths = [p for p in cog_paths if p != install_path]
 
         msg = _("Install Path: {}\n\n").format(install_path)
