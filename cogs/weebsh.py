@@ -60,7 +60,7 @@ class WeebSh:
 
     # Inner method to create the request object. Invoke it with .sync_query()
     def _get(self, api, uri, http_headers):
-        return Route(base_url=api,path=uri,headers=http_headers)
+        return AsyncRoute(base_url=api,path=uri,headers=http_headers)
 
     # Responsible for invoking the request object and creating an Embed to post in the channel.
     # Uses embed.description instead of embed.title because apparently titles don't get 
@@ -157,6 +157,20 @@ class Route:
 
     def __call__(self, url_params=None):
         return self.sync_query(url_params)
+
+class AsyncRoute(Route):
+    async def async_query(self, url_params=None):
+        async with aiohttp.ClientSession() as ses:
+            async with getattr(ses, self.method.lower())(
+                    self.base_url+self.path, headers=self.headers) as res:
+                if 200 <= res.status < 300:
+                    retval = await res.json()
+                    return retval
+                else:
+                    raise sync.ResponseError(
+                            "Expected a status code in range 200-299, got {}"
+                            .format(res.status))
+
 
 class ResponseError(BaseException):
     pass
