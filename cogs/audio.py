@@ -403,7 +403,10 @@ class Audio:
             song_filename = os.path.join(self.cache_path, filename)
 
         use_avconv = self.settings["AVCONV"]
-
+        
+        if(voice_client.channel.bitrate == 128000):
+            log.debug("Detected partnered channel with 128k bitrate, setting ffmpeg bitrate and buffer to 128k")
+            options = '-b:a 128k -bufsize 128k'
         if(voice_client.channel.bitrate == 96000):
             log.debug("Detected high bitrate channel, setting ffmpeg bitrate and buffer to 96k")
             options = '-b:a 96k -bufsize 96k'
