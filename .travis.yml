@@ -4,9 +4,9 @@ python:
   - "3.5.3"
   - "3.6.1"
 install:
-  - pip install -r requirements.txt
+  - pip install --process-dependency-links -e .[test]
 script:
-  - python -m compileall ./cogs
+  - python -m compileall ./redbot/cogs
   - python -m pytest
 cache: pip
 notifications:
