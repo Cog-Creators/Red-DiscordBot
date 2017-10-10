@@ -10,6 +10,8 @@ from redbot.cogs.bank import check_global_setting_admin
 from .log import LOG
 from .session import TriviaSession
 
+__all__ = ["Trivia", "UNIQUE_ID", "parse_trivia_list"]
+
 UNIQUE_ID = 0xb3c0e453
 
 

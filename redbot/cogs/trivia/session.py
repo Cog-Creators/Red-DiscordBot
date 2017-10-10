@@ -9,6 +9,8 @@ from redbot.core.bank import deposit_credits
 from redbot.core.utils.chat_formatting import box
 from .log import LOG
 
+__all__ = ["TriviaSession"]
+
 _REVEAL_MESSAGES = ("I know this one! {}!", "Easy: {}.",
                     "Oh really? It's {} of course.")
 _FAIL_MESSAGES = ("To the next one I guess...", "Moving on...",
