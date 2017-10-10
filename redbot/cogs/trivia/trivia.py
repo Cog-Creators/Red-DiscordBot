@@ -5,7 +5,6 @@ import chardet
 import discord
 from discord.ext import commands
 from redbot.core import Config, checks
-from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import box
 from redbot.cogs.bank import check_global_setting_admin
 from .log import LOG
@@ -14,8 +13,17 @@ from .session import TriviaSession
 UNIQUE_ID = 0xb3c0e453
 
 
-def parse_trivia_list(path: str) -> List[tuple]:
-    """Parse the trivia list file at the given file path."""
+def parse_trivia_list(path):
+    """Parse the trivia list file at the given file path.
+
+    Parameters
+    ----------
+    path : str or pathlib.Path
+        The file path pointing to the trivia list.
+
+    """
+    if isinstance(path, pathlib.Path):
+        path = str(path)
     ret = []
     with open(path, "rb") as file_:
         try:
@@ -47,8 +55,7 @@ def parse_trivia_list(path: str) -> List[tuple]:
 class Trivia:
     """Play trivia with friends!"""
 
-    def __init__(self, bot: Red):
-        self.bot = bot
+    def __init__(self):
         self.trivia_sessions = {}
         self.lists_dir = "redbot/cogs/trivia/lists"  # Temporary solution
         self.conf = Config.get_conf(
@@ -68,12 +75,12 @@ class Trivia:
     async def triviaset(self, ctx: commands.Context):
         """Manage trivia settings."""
         if ctx.invoked_subcommand is None:
-            await self.bot.send_cmd_help(ctx)
+            await ctx.bot.send_cmd_help(ctx)
             settings = self.conf.guild(ctx.guild)
             settings_dict = await settings.all()
             msg = box(
                 "**Current settings**\n"
-                "Red gains points: {bot_plays}\n"
+                "Bot gains points: {bot_plays}\n"
                 "Seconds to answer: {delay}\n"
                 "Points to win: {max_score}\n"
                 "Reveal answer on timeout: {reveal_answer}\n"
@@ -84,7 +91,7 @@ class Trivia:
 
     @triviaset.command(name="maxscore")
     async def triviaset_max_score(self, ctx: commands.Context, score: int):
-        """Points required to win."""
+        """Set the total points required to win."""
         if score < 0:
             await ctx.send("Score must be greater than 0.")
             return
@@ -94,7 +101,7 @@ class Trivia:
 
     @triviaset.command(name="timelimit")
     async def triviaset_delay(self, ctx: commands.Context, seconds: int):
-        """Maximum seconds to answer a question."""
+        """Set the maximum seconds permitted to answer a question."""
         if seconds < 4:
             await ctx.send("Must be at least 4 seconds.")
             return
@@ -103,32 +110,34 @@ class Trivia:
         await ctx.send("Maximum seconds to answer set to {}.".format(seconds))
 
     @triviaset.command(name="botplays")
-    async def trivaset_bot_plays(self, ctx: commands.Context):
-        """Red gains points.
+    async def trivaset_bot_plays(self,
+                                 ctx: commands.Context,
+                                 true_or_false: bool):
+        """Set whether or not the bot gains points.
 
-        This is a toggle. If enabled, Red will gain a point if
-         no one guesses correctly.
+        If enabled, the bot will gain a point if no one guesses correctly.
         """
         settings = self.conf.guild(ctx.guild)
-        enabled = not await settings.bot_plays()
-        await settings.bot_plays.set(enabled)
-        await ctx.send("I'll gain a point everytime you don't answer in time."
-                       if enabled else
-                       "Alright, I won't embarass you at trivia anymore.")
+        await settings.bot_plays.set(true_or_false)
+        await ctx.send("Done. " +
+                       ("I'll gain a point if users don't answer in time."
+                        if true_or_false else
+                        "Alright, I won't embarass you at trivia anymore."))
 
     @triviaset.command(name="revealanswer")
-    async def trivaset_reveal_answer(self, ctx: commands.Context):
-        """Reveals answer to question on timeout.
+    async def trivaset_reveal_answer(self,
+                                     ctx: commands.Context,
+                                     true_or_false: bool):
+        """Set whether or not the answer is revealed.
 
-        This is a toggle. If enabled, Red will reveal the answer if no
-         one guesses correctly.
+        If enabled, the bot will reveal the answer if no one guesses correctly
+        in time.
         """
         settings = self.conf.guild(ctx.guild)
-        enabled = not await settings.reveal_answer()
-        await settings.reveal_answer.set(enabled)
-        await ctx.send("I'll reveal the answer if no one knows it."
-                       if enabled else
-                       "I won't reveal the answer to the questions anymore.")
+        await settings.reveal_answer.set(true_or_false)
+        await ctx.send("Done. " + (
+            "I'll reveal the answer if no one knows it." if true_or_false else
+            "I won't reveal the answer to the questions anymore."))
 
     @triviaset.command(name="payout")
     @check_global_setting_admin()
@@ -137,23 +146,33 @@ class Trivia:
                                           multiplier: float):
         """Set the payout multiplier.
 
-        <multiplier> can be any positive decimal number. If a user wins trivia when at least 3
-         members are playing, they will receive credits. The number of credits is determined by
-         multiplying their total score by this multiplier.
+        This can be any positive decimal number. If a user wins trivia
+        when at least 3 members are playing, they will receive credits.
+
+        The number of credits is determined by multiplying their total score by
+        this multiplier.
         """
         settings = self.conf.guild(ctx.guild)
         if multiplier < 0:
             await ctx.send("Multiplier must be at least 0.")
             return
         await settings.payout_multiplier.set(multiplier)
-        await ctx.send("Payout multiplier set to {}.".format(multiplier))
+        if not multiplier:
+            await ctx.send("Done. I will no longer reward the winner with a"
+                           " payout.")
+            return
+        await ctx.send("Done. Payout multiplier set to {}.".format(multiplier))
 
     @commands.group(invoke_without_command=True)
     @commands.guild_only()
     async def trivia(self, ctx: commands.Context, *categories: str):
-        """Start trivia session on the specified categor(y/ies)."""
+        """Start trivia session on the specified category.
+
+        You may list multiple categories, in which case the trivia will involve
+        questions from all of them.
+        """
         if not categories:
-            await self.bot.send_cmd_help(ctx)
+            await ctx.bot.send_cmd_help(ctx)
             return
         categories = [c.lower() for c in categories]
         session = self._get_trivia_session(ctx.channel)
@@ -180,11 +199,11 @@ class Trivia:
 
     @trivia.command(name="stop")
     async def trivia_stop(self, ctx: commands.Context):
-        """Stops an ongoing trivia session."""
+        """Stop an ongoing trivia session."""
         session = self._get_trivia_session(ctx.channel)
         if session is None:
-            await ctx.send("There's no ongoing trivia session in this channel."
-                           )
+            await ctx.send(
+                "There is no ongoing trivia session in this channel.")
             return
         author = ctx.author
         is_owner = await ctx.bot.is_owner(ctx.author)
@@ -205,7 +224,7 @@ class Trivia:
 
     @trivia.command(name="list")
     async def trivia_list(self, ctx: commands.Context):
-        """Lists available trivia categories."""
+        """List available trivia categories."""
         path = self._get_lists_path()
         if path is None:
             await ctx.send("There are no trivia lists available.")
@@ -227,8 +246,16 @@ class Trivia:
         await ctx.send(msg)
 
     async def on_trivia_end(self, session: TriviaSession):
-        """Fires when a trivia session ends, and
-         removes it from this cog's sessions.
+        """Event for a trivia session ending.
+
+        This method removes the session from this cog's sessions, and
+        cancels any tasks which it was running.
+
+        Parameters
+        ----------
+        session : TriviaSession
+            The session which has just ended.
+
         """
         channel = session.ctx.channel
         LOG.debug("Ending trivia session; #%s in %s", channel, channel.guild)
@@ -239,10 +266,17 @@ class Trivia:
     def get_trivia_list(self, category: str) -> List[tuple]:
         """Get the trivia list corresponding to the given category.
 
-        :param str category:
+        Parameters
+        ----------
+        category : str
             The desired category. Case sensitive.
-        :return:
-            A list of named tuples, with fields for `question` and `answers`.
+
+        Returns
+        -------
+        List[tuple]
+            A list of tuples, each in the form ``(question: str,
+            answers: List[str])``
+
         """
         path = self._get_lists_path()
         if path is None:
@@ -250,7 +284,7 @@ class Trivia:
         filename = "{}.txt".format(category)
         path = path / filename
         try:
-            list_ = parse_trivia_list(str(path))
+            list_ = parse_trivia_list(path)
         except (FileNotFoundError, ValueError):
             list_ = []
         return list_
