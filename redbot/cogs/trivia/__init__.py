@@ -1,9 +1,8 @@
 """Package for Trivia cog."""
-from redbot.core.bot import Red
 from .trivia import Trivia
 
 
-def setup(bot: Red):
+def setup(bot):
     """Load Trivia."""
-    cog = Trivia(bot)
+    cog = Trivia()
     bot.add_cog(cog)
