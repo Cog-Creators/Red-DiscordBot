@@ -26,8 +26,8 @@ IS_MAC = sys.platform == "darwin"
 
 def parse_cli_args():
     parser = argparse.ArgumentParser(description="Red - Discord Bot's launcher (V3)")
-    with open(config_file, "r") as fin:
-            instances = json.loads(fin.read())
+    with config_file.open("r") as fin:
+        instances = json.loads(fin.read())
     parser.add_argument("instancename", metavar="instancename", type=str,
                         nargs="?", help="The instance to run", choices=list(instances.keys()))
     parser.add_argument("--start", "-s",
@@ -102,7 +102,7 @@ def run_red(selected_instance, autorestart=False):
 
 
 def instance_menu():
-    with open(config_file, "r") as fin:
+    with config_file.open("r") as fin:
         instances = json.loads(fin.read())
     if not instances:
         print("No instances found!")
