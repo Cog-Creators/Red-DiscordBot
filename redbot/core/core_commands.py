@@ -111,6 +111,19 @@ class Core:
         except:
             pass
         await ctx.bot.shutdown()
+    
+    @commands.command(name="restart")
+    @checks.is_owner()
+    async def _restart(self, ctx, silently: bool=False):
+        """Restarts the bot"""
+        wave = "\N{WAVING HAND SIGN}"
+        skin = "\N{EMOJI MODIFIER FITZPATRICK TYPE-3}"
+        try:  # We don't want missing perms to stop our shutdown
+            if not silently:
+                await ctx.send(_("Restarting... ") + wave + skin)
+        except:
+            pass
+        await ctx.bot.shutdown(restart=True)
 
     def cleanup_and_refresh_modules(self, module_name: str):
         """Interally reloads modules so that changes are detected"""
