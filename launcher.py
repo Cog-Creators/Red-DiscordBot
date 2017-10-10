@@ -7,12 +7,15 @@ import os
 import platform
 import subprocess
 import sys
+import argparse
+import time
 
 import pkg_resources
 from redbot.core.data_manager import config_file
 from redbot.setup import basic_setup
 
 PYTHON_OK = sys.version_info >= (3, 5)
+INTERACTIVE_MODE = not len(sys.argv) > 1  # CLI flags = non-interactive
 
 INTRO = ("==========================\n"
          "Red Discord Bot - Launcher\n"
@@ -21,24 +24,76 @@ INTRO = ("==========================\n"
 IS_WINDOWS = os.name == "nt"
 IS_MAC = sys.platform == "darwin"
 
+def parse_cli_args():
+    parser = argparse.ArgumentParser(description="Red - Discord Bot's launcher (V3)")
+    with open(config_file, "r") as fin:
+            instances = json.loads(fin.read())
+    parser.add_argument("instancename", metavar="instancename", type=str,
+                        nargs="?", help="The instance to run", choices=list(instances.keys()))
+    parser.add_argument("--start", "-s",
+                        help="Starts Red",
+                        action="store_true")
+    parser.add_argument("--auto-restart",
+                        help="Autorestarts Red in case of issues",
+                        action="store_true")
+    parser.add_argument("--update",
+                        help="Updates Red",
+                        action="store_true")
+    parser.add_argument("--update-dev",
+                        help="Updates Red from the Github repo",
+                        action="store_true")
+    parser.add_argument("--voice",
+                        help="Installs extra 'voice' when updating",
+                        action="store_true")
+    parser.add_argument("--docs",
+                        help="Installs extra 'docs' when updating",
+                        action="store_true")
+    parser.add_argument("--test",
+                        help="Installs extra 'test' when updating",
+                        action="store_true")
+    parser.add_argument("--mongo",
+                        help="Installs extra 'mongo' when updating",
+                        action="store_true")
+    parser.add_argument("--debug",
+                        help="Prints basic debug info that would be useful for support",
+                        action="store_true")
+    return parser.parse_args()
+    
 
-def update_red():
+def update_red(dev=False, voice=False, mongo=False, docs=False, test=False):
     interpreter = sys.executable
     print("Updating Red...")
+    eggs = ""  # for installing extras (e.g. voice, docs, test, mongo)
+    egg_l = []
+    if voice:
+        egg_l.append("voice")
+    if mongo:
+        egg_l.append("mongo")
+    if docs:
+        egg_l.append("docs")
+    if test:
+        egg_l.append("test")
+    if dev:
+        package = "git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop"
+        if egg_l:
+            package += "#egg=Red-DiscordBot[{}]".format(", ".join(egg_l))
+    else:
+        package = "Red-DiscordBot"
+        if egg_l:
+            package += "[{}]".format(", ".join(egg_l))
     code = subprocess.call([
         interpreter, "-m",
         "pip", "install", "-U",
-        "Red-DiscordBot"
+        "--process-dependency-links",
+        package
     ])
-    print("Red has been updated")
+    if code == 0:
+        print("Red has been updated")
+    else:
+        print("Something went wrong while updating!")
 
 
-def run_red(autorestart=False):
-    with open(config_file, "r") as fin:
-        instances = json.loads(fin.read())
-    selected_instance = instance_menu(instances)
-    if not selected_instance:
-        return None
+def run_red(selected_instance, autorestart=False):
     while True:
         print("Starting {}...".format(selected_instance))
         status = subprocess.call(["redbot", selected_instance])
@@ -46,7 +101,9 @@ def run_red(autorestart=False):
             break
 
 
-def instance_menu(instances):
+def instance_menu():
+    with open(config_file, "r") as fin:
+        instances = json.loads(fin.read())
     if not instances:
         print("No instances found!")
         return None
@@ -63,11 +120,11 @@ def instance_menu(instances):
         selection = int(selection)
     except ValueError:
         print("Invalid input! Try again.")
-        return instance_menu(instances)
+        return None
     else:
         if selection not in list(range(1, counter+1)):
             print("Invalid selection! Please try again")
-            return instance_menu(instances)
+            return None
         else:
             return name_num_map[str(selection)]
 
@@ -77,6 +134,11 @@ def clear_screen():
         os.system("cls")
     else:
         os.system("clear")
+
+
+def wait():
+    if INTERACTIVE_MODE:
+        input("Press enter to continue.")
 
 
 def user_choice():
@@ -109,6 +171,8 @@ def debug_info():
 
 
 def main():
+    if IS_WINDOWS:
+        os.system("TITLE Red - Discord Bot V3 Launcher")
     while True:
         print(INTRO)
         print("1. Run Red w/ autorestart in case of issues")
@@ -119,19 +183,28 @@ def main():
         print("0. Exit")
         choice = user_choice()
         if choice == "1":
-            run_red(autorestart=True)
+            instance = instance_menu()
+            if instance:
+                run_red(instance, autorestart=True)
+            wait()
         elif choice == "2":
-            run_red(autorestart=False)
+            instance = instance_menu()
+            if instance:
+                run_red(instance, autorestart=False)
+            wait()
         elif choice == "3":
             update_red()
+            wait()
         elif choice == "4":
             basic_setup()
+            wait()
         elif choice == "5":
             debug_info()
         elif choice == "0":
             break
         clear_screen()
 
+args = parse_cli_args()
 
 if __name__ == "__main__":
     if not PYTHON_OK:
@@ -139,4 +212,27 @@ if __name__ == "__main__":
             "Red requires Python 3.5 or greater. "
             "Please install the correct version!"
         )
-    main()
+    if args.debug:  # Check first since the function triggers an exit
+        debug_info()
+    
+    if args.update and args.update_dev:  # Conflicting args, so error out
+        raise RuntimeError(
+            "\nUpdate requested but conflicting arguments provided.\n\n"
+            "Please try again using only one of --update or --update-dev"
+        )
+    if args.update:
+        update_red(
+            voice=args.voice, docs=args.docs, 
+            test=args.test, mongo=args.mongo
+        )
+    elif args.update_dev:
+        update_red(
+            dev=True, voice=args.voice, docs=args.docs, 
+            test=args.test, mongo=args.mongo
+        )
+
+    if INTERACTIVE_MODE:
+        main()
+    elif args.start:
+        print("Starting Red...")
+        run_red(args.instancename, autorestart=args.auto_restart)
