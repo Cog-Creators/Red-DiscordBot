@@ -66,7 +66,19 @@ def parse_cli_args():
 def update_red(dev=False, voice=False, mongo=False, docs=False, test=False):
     interpreter = sys.executable
     print("Updating Red...")
-    eggs = ""  # for installing extras (e.g. voice, docs, test, mongo)
+    # If the user ran redbot-launcher.exe, updating with pip will fail
+    # on windows since the file is open and pip will try to overwrite it.
+    # We have to rename redbot-launcher.exe in this case.
+    launcher_script = os.path.abspath(sys.argv[0])
+    old_name = launcher_script + ".exe"
+    new_name = launcher_script + ".old"
+    renamed = False
+    if "redbot-launcher" in launcher_script and IS_WINDOWS:
+        renamed = True
+        print("Renaming {} to {}".format(old_name, new_name))
+        if os.path.exists(new_name):
+            os.remove(new_name)
+        os.rename(old_name, new_name)
     egg_l = []
     if voice:
         egg_l.append("voice")
@@ -77,7 +89,7 @@ def update_red(dev=False, voice=False, mongo=False, docs=False, test=False):
     if test:
         egg_l.append("test")
     if dev:
-        package = "git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop"
+        package = "git+https://github.com/palmtree5/Red-DiscordBot@V3/launcher"
         if egg_l:
             package += "#egg=Red-DiscordBot[{}]".format(", ".join(egg_l))
     else:
@@ -94,6 +106,12 @@ def update_red(dev=False, voice=False, mongo=False, docs=False, test=False):
         print("Red has been updated")
     else:
         print("Something went wrong while updating!")
+
+    # If redbot wasn't updated, we renamed our .exe file and didn't replace it
+    scripts = os.listdir(os.path.dirname(launcher_script))
+    if renamed and "redbot-launcher.exe" not in scripts:
+        print("Renaming {} to {}".format(new_name, old_name))
+        os.rename(new_name, old_name)
 
 
 def run_red(selected_instance, autorestart=False):
