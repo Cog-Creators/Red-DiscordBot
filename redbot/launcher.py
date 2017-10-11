@@ -89,7 +89,7 @@ def update_red(dev=False, voice=False, mongo=False, docs=False, test=False):
     if test:
         egg_l.append("test")
     if dev:
-        package = "git+https://github.com/palmtree5/Red-DiscordBot@V3/launcher"
+        package = "git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop"
         if egg_l:
             package += "#egg=Red-DiscordBot[{}]".format(", ".join(egg_l))
     else:
