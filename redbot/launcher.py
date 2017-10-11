@@ -173,7 +173,7 @@ def debug_info():
     exit(0)
 
 
-def main():
+def main_menu():
     if IS_WINDOWS:
         os.system("TITLE Red - Discord Bot V3 Launcher")
     while True:
@@ -181,7 +181,7 @@ def main():
         print("1. Run Red w/ autorestart in case of issues")
         print("2. Run Red")
         print("3. Update Red")
-        # print("4. Create Instance")
+        print("4. Create Instance")
         print("5. Debug information (use this if having issues with the launcher or bot)")
         print("0. Exit")
         choice = user_choice()
@@ -207,9 +207,7 @@ def main():
             break
         clear_screen()
 
-args = parse_cli_args()
-
-if __name__ == "__main__":
+def main():
     if not PYTHON_OK:
         raise RuntimeError(
             "Red requires Python 3.5 or greater. "
@@ -235,7 +233,13 @@ if __name__ == "__main__":
         )
 
     if INTERACTIVE_MODE:
-        main()
+        main_menu()
     elif args.start:
         print("Starting Red...")
         run_red(args.instancename, autorestart=args.auto_restart)
+
+
+args = parse_cli_args()
+
+if __name__ == "__main__":
+    main()
