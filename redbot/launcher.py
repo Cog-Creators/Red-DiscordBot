@@ -181,8 +181,9 @@ def main_menu():
         print("1. Run Red w/ autorestart in case of issues")
         print("2. Run Red")
         print("3. Update Red")
-        print("4. Create Instance")
-        print("5. Debug information (use this if having issues with the launcher or bot)")
+        print("4. Update Red (development version")
+        print("5. Create Instance")
+        print("6. Debug information (use this if having issues with the launcher or bot)")
         print("0. Exit")
         choice = user_choice()
         if choice == "1":
@@ -196,12 +197,33 @@ def main_menu():
                 run_red(instance, autorestart=False)
             wait()
         elif choice == "3":
-            update_red(dev=True, voice=True)
+            print("Enter any extra requirements you want installed\n")
+            print("Options are: voice, docs, test, mongo\n")
+            selected = user_choice()
+            selected = selected.split()
+            update_red(
+                dev=False, voice=True if "voice" in selected else False,
+                docs=True if "docs" in selected else False,
+                test=True if "test" in selected else False,
+                mongo=True if "mongo" in selected else False
+            )
             wait()
         elif choice == "4":
-            basic_setup()
+            print("Enter any extra requirements you want installed\n")
+            print("Options are: voice, docs, test, mongo\n")
+            selected = user_choice()
+            selected = selected.split()
+            update_red(
+                dev=True, voice=True if "voice" in selected else False,
+                docs=True if "docs" in selected else False,
+                test=True if "test" in selected else False,
+                mongo=True if "mongo" in selected else False
+            )
             wait()
         elif choice == "5":
+            basic_setup()
+            wait()
+        elif choice == "6":
             debug_info()
         elif choice == "0":
             break
