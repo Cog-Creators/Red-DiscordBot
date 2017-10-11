@@ -8,11 +8,14 @@ import platform
 import subprocess
 import sys
 import argparse
-import time
+import appdirs
+from pathlib import Path
 
 import pkg_resources
-from redbot.core.data_manager import config_file
-from redbot.setup import basic_setup
+# from redbot.setup import basic_setup
+
+config_dir = Path(appdirs.AppDirs("Red-DiscordBot").user_config_dir)
+config_file = config_dir / 'config.json'
 
 PYTHON_OK = sys.version_info >= (3, 5)
 INTERACTIVE_MODE = not len(sys.argv) > 1  # CLI flags = non-interactive
@@ -58,7 +61,7 @@ def parse_cli_args():
                         help="Prints basic debug info that would be useful for support",
                         action="store_true")
     return parser.parse_args()
-    
+
 
 def update_red(dev=False, voice=False, mongo=False, docs=False, test=False):
     interpreter = sys.executable
@@ -178,7 +181,7 @@ def main():
         print("1. Run Red w/ autorestart in case of issues")
         print("2. Run Red")
         print("3. Update Red")
-        print("4. Create Instance")
+        # print("4. Create Instance")
         print("5. Debug information (use this if having issues with the launcher or bot)")
         print("0. Exit")
         choice = user_choice()
@@ -194,9 +197,6 @@ def main():
             wait()
         elif choice == "3":
             update_red()
-            wait()
-        elif choice == "4":
-            basic_setup()
             wait()
         elif choice == "5":
             debug_info()
