@@ -12,7 +12,7 @@ import appdirs
 from pathlib import Path
 
 import pkg_resources
-# from redbot.setup import basic_setup
+from redbot.setup import basic_setup
 
 config_dir = Path(appdirs.AppDirs("Red-DiscordBot").user_config_dir)
 config_file = config_dir / 'config.json'
@@ -196,7 +196,10 @@ def main():
                 run_red(instance, autorestart=False)
             wait()
         elif choice == "3":
-            update_red()
+            update_red(dev=True, voice=True)
+            wait()
+        elif choice == "4":
+            basic_setup()
             wait()
         elif choice == "5":
             debug_info()

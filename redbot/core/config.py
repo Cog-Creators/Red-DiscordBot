@@ -1,8 +1,9 @@
 import logging
 from copy import deepcopy
-from typing import Callable, Union, Tuple
+from typing import Callable, Union, Tuple, TYPE_CHECKING
 
-import discord
+if TYPE_CHECKING:
+    import discord
 
 from .data_manager import cog_data_path, core_data_path
 from .drivers.red_json import JSON as JSONDriver
@@ -606,7 +607,7 @@ class Config:
             force_registration=self.force_registration
         )
 
-    def guild(self, guild: discord.Guild) -> Group:
+    def guild(self, guild: "discord.Guild") -> Group:
         """
         Returns a :py:class:`.Group` for the given guild.
 
@@ -614,7 +615,7 @@ class Config:
         """
         return self._get_base_group(self.GUILD, guild.id)
 
-    def channel(self, channel: discord.TextChannel) -> Group:
+    def channel(self, channel: "discord.TextChannel") -> Group:
         """
         Returns a :py:class:`.Group` for the given channel. This does not currently support differences between
         text and voice channels.
@@ -623,7 +624,7 @@ class Config:
         """
         return self._get_base_group(self.CHANNEL, channel.id)
 
-    def role(self, role: discord.Role) -> Group:
+    def role(self, role: "discord.Role") -> Group:
         """
         Returns a :py:class:`.Group` for the given role.
 
@@ -631,7 +632,7 @@ class Config:
         """
         return self._get_base_group(self.ROLE, role.id)
 
-    def user(self, user: discord.User) -> Group:
+    def user(self, user: "discord.User") -> Group:
         """
         Returns a :py:class:`.Group` for the given user.
 
@@ -639,7 +640,7 @@ class Config:
         """
         return self._get_base_group(self.USER, user.id)
 
-    def member(self, member: discord.Member) -> MemberGroup:
+    def member(self, member: "discord.Member") -> MemberGroup:
         """
         Returns a :py:class:`.MemberGroup` for the given member.
 

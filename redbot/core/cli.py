@@ -1,7 +1,9 @@
 import argparse
 import asyncio
+import typing
 
-from redbot.core.bot import Red
+if typing.TYPE_CHECKING:
+    from redbot.core.bot import Red
 
 
 def confirm(m=""):
@@ -46,7 +48,7 @@ def interactive_config(red, token_set, prefix_set):
     return token
 
 
-def ask_sentry(red: Red):
+def ask_sentry(red: "Red"):
     loop = asyncio.get_event_loop()
     print("\nThank you for installing Red V3 alpha! The current version\n"
           " is not suited for production use and is aimed at testing\n"
