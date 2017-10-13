@@ -489,7 +489,7 @@ class Mod:
         finding the user, right-clicking, and selecting 'Copy ID'"""
         guild = ctx.guild
         author = ctx.author
-        user = self.bot.get_user(user_id)
+        user = self.bot.get_user_info(user_id)
         if not user:
             await ctx.send(_("Couldn't find a user with that ID!"))
             return
@@ -1169,7 +1169,7 @@ class Mod:
 
             cases = await modlog.get_all_cases(guild, self.bot)
             for case in sorted(cases, key=lambda x: x.case_number, reverse=True):
-                if case.moderator == mod and case.user == member\
+                if case.moderator == mod and case.user == user\
                         and case.action_type == "unban": 
                     break
             else:
