@@ -200,7 +200,7 @@ class Mod:
                   max_mentions)
             )
         else:
-            cur_setting = self.settings.guild(guild).ban_mention_spam()
+            cur_setting = await self.settings.guild(guild).ban_mention_spam()
             if cur_setting is False:
                 await self.bot.send_cmd_help(ctx)
                 return
