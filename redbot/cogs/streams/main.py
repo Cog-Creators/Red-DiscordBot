@@ -1,10 +1,8 @@
 import discord
 from discord.ext import commands
-from core.config import Config
-from core.bot import Red
-from core.utils.chat_formatting import pagify, box
-from core import checks
-from core.bot import Red
+from redbot.core import Config, checks
+from redbot.core.utils.chat_formatting import pagify, box
+from redbot.core.bot import Red
 from .streams import TwitchStream, HitboxStream, MixerStream, PicartoStream, TwitchCommunity
 from .errors import OfflineStream, StreamNotFound, APIError, InvalidCredentials, CommunityNotFound, OfflineCommunity
 from . import streams as StreamClasses
