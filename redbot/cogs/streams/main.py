@@ -94,7 +94,7 @@ class Streams:
     @streamalert.group(name="twitch")
     async def _twitch(self, ctx):
         """Twitch stream alerts"""
-        if ctx.invoked_subcommand is None:
+        if isinstance(ctx.invoked_subcommand, commands.Group):
             await self.bot.send_cmd_help(ctx)
 
     @_twitch.command(name="channel")
