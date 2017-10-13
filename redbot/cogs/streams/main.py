@@ -92,17 +92,17 @@ class Streams:
             await ctx.bot.send_cmd_help(ctx)
 
     @streamalert.group(name="twitch")
-    async def twitch(self, ctx):
+    async def _twitch(self, ctx):
         """Twitch stream alerts"""
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
 
-    @twitch.command(name="channel")
+    @_twitch.command(name="channel")
     async def twitch_alert_channel(self, ctx: commands.Context, channel_name: str):
         """Sets a Twitch stream alert notification in the channel"""
         await self.stream_alert(ctx, TwitchStream, channel_name)
 
-    @twitch.command(name="community")
+    @_twitch.command(name="community")
     async def twitch_alert_community(self, ctx: commands.Context, community: str):
         """Sets a Twitch stream alert notification in the channel
         for the specified community."""
