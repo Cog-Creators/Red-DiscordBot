@@ -194,6 +194,24 @@ async def get_case(case_number: int, guild: discord.Guild,
     return await Case.from_json(mod_channel, bot, case)
 
 
+async def get_all_cases(guild: discord.Guild, bot: Red) -> List[Case]:
+    """
+    Gets all cases for the specified guild
+
+    :param discord.Guild guild: The guild to get the cases from:
+    :param Red bot: The bot's instance
+
+    :return: A list of all cases for the guild
+    :rtype: list
+    """
+    cases = await _conf.guild(guild).get_attr("cases")
+    case_numbers = list(cases.keys())
+    case_list = []
+    for case in case_numbers:
+        case_list.append(await get_case(case, guild, bot))
+    return case_list
+
+
 async def create_case(guild: discord.Guild, created_at: datetime, action_type: str,
                       user: Union[discord.User, discord.Member],
                       moderator: discord.Member, reason: str=None,

@@ -441,7 +441,6 @@ class Mod:
                       "You can now join the guild again. {}").format(invite))
             except discord.HTTPException:
                 msg = None
-            self.current_softban = user
             try:
                 await guild.ban(
                     user, reason=audit_reason, delete_message_days=1)
@@ -1129,8 +1128,6 @@ class Mod:
             deleted = await self.check_mention_spam(message)
 
     async def on_member_ban(self, guild: discord.Guild, member: discord.Member):
-        if self.current_softban == member:
-            return
         audit_case = None
         async for entry in guild.audit_logs(action=discord.AuditLogAction.ban):
             if entry.target == member:
@@ -1140,11 +1137,19 @@ class Mod:
         if audit_case:
             mod = audit_case.user
             reason = audit_case.reason
-            try:
-                await modlog.create_case(guild, audit_case.created_at, "ban",
-                                         member, mod, reason if reason else None)
-            except RuntimeError as e:
-                print(e)
+            cases = await modlog.get_all_cases(guild, self.bot)
+            for case in sorted(cases, key=lambda x: x.case_number, reverse=True):
+                if case.moderator == mod and case.user == member\
+                        and case.action_type in ["ban", "softban", "hackban"]:
+                    if case.action_type == "softban":
+                        self.current_softban = member
+                    break
+            else:  # no ban, softban, or hackban case with the mod and user combo
+                try:
+                    await modlog.create_case(guild, audit_case.created_at, "ban",
+                                            member, mod, reason if reason else None)
+                except RuntimeError as e:
+                    print(e)
         else:
             return
 
@@ -1158,18 +1163,21 @@ class Mod:
                 break
         else:
             return
-        mod = audit_case.user
-        reason = audit_case.reason
+        if audit_case:
+            mod = audit_case.user
+            reason = audit_case.reason
 
-        if reason is not None and "Reason:" in reason:
-            # Would be the case if event is triggered by a command
-            return
-
-        try:
-            await modlog.create_case(guild, audit_case.created_at, "unban",
-                                     user, mod, reason if reason else None)
-        except RuntimeError as e:
-            print(e)
+            cases = await modlog.get_all_cases(guild, self.bot)
+            for case in sorted(cases, key=lambda x: x.case_number, reverse=True):
+                if case.moderator == mod and case.user == member\
+                        and case.action_type == "unban": 
+                    break
+            else:
+                try:
+                    await modlog.create_case(guild, audit_case.created_at, "unban",
+                                            user, mod, reason if reason else None)
+                except RuntimeError as e:
+                    print(e)
 
     async def on_member_update(self, before, after):
         if before.name != after.name:
