@@ -30,7 +30,7 @@ class Streams:
     }
 
     def __init__(self, bot: Red):
-        self.db = Config.get_conf(self, 26262626, force_registration=True)
+        self.db = Config.get_conf(self, 26262626)
 
         self.db.register_global(**self.global_defaults)
 
