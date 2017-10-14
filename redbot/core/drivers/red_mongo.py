@@ -54,14 +54,14 @@ class Mongo(BaseDriver):
         collection, identifiers = identifiers[0], identifiers[1:]
         return uuid, collection, identifiers
 
-    def get(self, identifiers: Tuple[str]):
+    async def get(self, identifiers: Tuple[str]):
         uuid, collection, identifiers = self._parse_identifiers(identifiers)
 
         mongo_collection = self.get_collection(collection)
 
         dot_identifiers = '.'.join(identifiers)
 
-        partial = mongo_collection.find_one(
+        partial = await mongo_collection.find_one(
             filter={'_id': uuid},
             projection={dot_identifiers: True}
         )
@@ -77,7 +77,7 @@ class Mongo(BaseDriver):
 
         mongo_collection = self.get_collection(collection)
 
-        mongo_collection.update_one(
+        await mongo_collection.update_one(
             {'_id': uuid},
             update={"$set": {dot_identifiers: value}},
             upsert=True
