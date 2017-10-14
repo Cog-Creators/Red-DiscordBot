@@ -22,7 +22,7 @@ class SelfRole(commands.Converter):
             raise commands.BadArgument("Admin is not loaded.")
 
         conf = admin.conf
-        selfroles = conf.guild(ctx.guild).selfroles()
+        selfroles = await conf.guild(ctx.guild).selfroles()
 
         role_converter = commands.RoleConverter()
         role = await role_converter.convert(ctx, arg)
