@@ -85,3 +85,21 @@ class Mongo(BaseDriver):
 
     def get_driver(self):
         return self
+
+    def get_config_details(self):
+        host = input("Enter host address: ")
+        port = input("Enter host port: ")
+
+        admin_uname = input("Enter login username: ")
+        admin_password = input("Enter login password: ")
+
+        if admin_uname == "":
+            admin_uname = admin_password = None
+
+        ret = {
+            'HOST': host,
+            'PORT': port,
+            'USERNAME': admin_uname,
+            'PASSWORD': admin_password
+        }
+        return ret

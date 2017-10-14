@@ -19,6 +19,16 @@ class BaseDriver:
         """
         raise NotImplementedError
 
+    def get_config_details(self):
+        """
+        Asks users for additional configuration information necessary
+        to use this config driver.
+
+        :return:
+            Dict of configuration details.
+        """
+        raise NotImplementedError
+
     async def set(self, identifiers: Tuple[str], value):
         """
         Sets the value of the key indicated by the given identifiers.
