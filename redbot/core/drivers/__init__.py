@@ -22,10 +22,10 @@ def get_driver(type, *args, **kwargs):
     :return:
         Subclass of :py:class:`.red_base.BaseDriver`.
     """
-    if type == "json":
+    if type == "JSON":
         from .red_json import JSON
         return JSON(*args, **kwargs)
-    elif type == "mongo":
+    elif type == "MongoDB":
         from .red_mongo import Mongo
         return Mongo(*args, **kwargs)
     raise RuntimeError("Invalid driver type: '{}'".format(type))

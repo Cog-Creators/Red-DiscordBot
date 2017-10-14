@@ -1,5 +1,7 @@
 from typing import Tuple
 
+import asyncio
+
 import motor.motor_asyncio
 from .red_base import BaseDriver
 
@@ -8,16 +10,24 @@ class Mongo(BaseDriver):
     """
     Subclass of :py:class:`.red_base.BaseDriver`.
     """
-    def __init__(self, cog_name, host, port=27017, admin_user=None, admin_pass=None,
-                 **kwargs):
+    def __init__(self, cog_name, **kwargs):
         super().__init__(cog_name)
+        host = kwargs['HOST']
+        port = kwargs['PORT']
+        admin_user = kwargs['USERNAME']
+        admin_pass = kwargs['PASSWORD']
+
         self.conn = motor.motor_asyncio.AsyncIOMotorClient(host=host, port=port)
 
         self.admin_user = admin_user
         self.admin_pass = admin_pass
 
-        if self.admin_user is not None and self.admin_pass is not None:
-            self.db.authenticate(self.admin_user, self.admin_pass)
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._authenticate())
+
+    async def _authenticate(self):
+        if None not in (self.admin_pass, self.admin_user):
+            await self.db.authenticate(self.admin_user, self.admin_pass)
 
     @property
     def db(self) -> motor.core.Database:

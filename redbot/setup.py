@@ -93,8 +93,9 @@ def basic_setup():
 
     if storage_dict.get(storage, 1) == "MongoDB":
         from redbot.core.drivers.red_mongo import get_config_details
+        default_dirs['STORAGE_DETAILS'] = get_config_details()
     else:
-        default_dirs['STORAGE_DATA'] = {}
+        default_dirs['STORAGE_DETAILS'] = {}
 
     name = ""
     while len(name) == 0:

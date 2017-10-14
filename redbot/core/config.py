@@ -6,6 +6,7 @@ import discord
 
 from .data_manager import cog_data_path, core_data_path
 from .drivers import get_driver
+from redbot.setup import load_existing_config
 
 log = logging.getLogger("red.config")
 
@@ -357,7 +358,6 @@ class MemberGroup(Group):
         return guild_member.get(self.identifiers[-2], {})
 
 
-
 class Config:
     """
     You should always use :func:`get_conf` or :func:`get_core_conf` to initialize a Config object.
@@ -434,7 +434,13 @@ class Config:
         cog_name = cog_path_override.stem
         uuid = str(hash(identifier))
 
-        spawner = get_driver('json', cog_name, data_path_override=cog_path_override)
+        basic_config = load_existing_config()
+
+        driver_name = basic_config.get('STORAGE_TYPE', 'JSON')
+        driver_details = basic_config.get('STORAGE_DETAILS', {})
+
+        spawner = get_driver(driver_name, cog_name, data_path_override=cog_path_override,
+                             **driver_details)
         return cls(cog_name=cog_name, unique_identifier=uuid,
                    force_registration=force_registration,
                    driver_spawn=spawner)
