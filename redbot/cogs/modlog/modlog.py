@@ -109,7 +109,9 @@ class ModLog:
     @commands.command()
     @commands.guild_only()
     async def reason(self, ctx: commands.Context, case: int, *, reason: str = ""):
-        """Lets you specify a reason for mod-log's cases"""
+        """Lets you specify a reason for mod-log's cases
+        Please note that you can only edit cases you are
+        the owner of unless you are a mod/admin or the guild owner"""
         author = ctx.author
         guild = ctx.guild
         if not reason:
