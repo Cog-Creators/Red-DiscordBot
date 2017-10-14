@@ -107,7 +107,6 @@ class ModLog:
             await ctx.send(embed=await case.get_case_msg_content())
 
     @commands.command()
-    @checks.mod_or_permissions(manage_messages=True)
     async def reason(self, ctx: commands.Context, case: int, *, reason: str = ""):
         """Lets you specify a reason for mod-log's cases"""
         author = ctx.author
@@ -120,11 +119,18 @@ class ModLog:
         except RuntimeError:
             await ctx.send(_("That case does not exist!"))
             return
-        to_modify = {
-            "reason": reason,
-        }
-        if case_before.moderator != author:
-            to_modify["amended_by"] = author
-            to_modify["modified_at"] = ctx.message.created_at.timestamp()
-        case = await modlog.edit_case(case, guild, self.bot, to_modify)
-        await ctx.send(_("Reason has been updated."))
+        else:
+            is_guild_owner = author == guild.owner
+            is_case_author = author == case_before.moderator
+            author_is_mod = await ctx.bot.is_mod(author)
+            if not (is_guild_owner or is_case_author or author_is_mod):
+                await ctx.send(_("You are not authorized to modify that case!"))
+                return
+            to_modify = {
+                "reason": reason,
+            }
+            if case_before.moderator != author:
+                to_modify["amended_by"] = author
+                to_modify["modified_at"] = ctx.message.created_at.timestamp()
+            case = await modlog.edit_case(case, guild, self.bot, to_modify)
+            await ctx.send(_("Reason has been updated."))
