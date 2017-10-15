@@ -4,6 +4,7 @@ from collections import Counter
 from enum import Enum
 from importlib.machinery import ModuleSpec
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import discord
 from discord.ext.commands.bot import BotBase
@@ -12,8 +13,17 @@ from discord.ext.commands import GroupMixin
 from .cog_manager import CogManager
 from . import Config, i18n, RedContext
 
+if TYPE_CHECKING:
+    from aiohttp_json_rpc import JsonRpc
 
-class RedBase(BotBase):
+
+# noinspection PyUnresolvedReferences
+class RpcMethodMixin:
+    async def rpc__cogs(self, request):
+        return list(self.cogs.keys())
+
+
+class RedBase(BotBase, RpcMethodMixin):
     """Mixin for the main bot class.
 
     This exists because `Red` inherits from `discord.AutoShardedClient`, which
@@ -193,6 +203,12 @@ class RedBase(BotBase):
             del lib
             del self.extensions[name]
             # del sys.modules[name]
+
+    def register_rpc_methods(self, rpc_server: "JsonRpc"):
+        rpc_server.add_methods(
+            ('', self.rpc__cogs),
+            prefix='bot'
+        )
 
 
 class Red(RedBase, discord.AutoShardedClient):

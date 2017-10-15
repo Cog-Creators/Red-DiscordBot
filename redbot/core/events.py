@@ -12,6 +12,7 @@ from discord.ext import commands
 from .data_manager import storage_type
 from .utils.chat_formatting import inline, bordered
 from colorama import Fore, Style
+from .rpc import initialize
 
 log = logging.getLogger("red")
 sentry_log = logging.getLogger("red.sentry")
@@ -124,6 +125,8 @@ def init_events(bot, cli_flags):
 
         if invite_url:
             print("\nInvite URL: {}\n".format(invite_url))
+
+        await initialize(bot)
 
     @bot.event
     async def on_command_error(ctx, error):
