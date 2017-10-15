@@ -6,7 +6,6 @@ import discord
 
 from .data_manager import cog_data_path, core_data_path
 from .drivers import get_driver
-from redbot.setup import load_existing_config
 
 log = logging.getLogger("red.config")
 
@@ -434,10 +433,15 @@ class Config:
         cog_name = cog_path_override.stem
         uuid = str(hash(identifier))
 
-        basic_config = load_existing_config()
+        # We have to import this here otherwise we have a circular dependency
+        from .data_manager import basic_config
+
+        log.debug("Basic config: \n\n{}".format(basic_config))
 
         driver_name = basic_config.get('STORAGE_TYPE', 'JSON')
         driver_details = basic_config.get('STORAGE_DETAILS', {})
+
+        log.debug("Using driver: '{}'".format(driver_name))
 
         spawner = get_driver(driver_name, cog_name, data_path_override=cog_path_override,
                              **driver_details)
@@ -458,7 +462,15 @@ class Config:
         :type force_registration: Optional[bool]
         """
         core_path = core_data_path()
-        driver_spawn = get_driver('json', "Core", data_path_override=core_path)
+
+        # We have to import this here otherwise we have a circular dependency
+        from .data_manager import basic_config
+
+        driver_name = basic_config.get('STORAGE_TYPE', 'JSON')
+        driver_details = basic_config.get('STORAGE_DETAILS', {})
+
+        driver_spawn = get_driver(driver_name, "Core", data_path_override=core_path,
+                                  **driver_details)
         return cls(cog_name="Core", driver_spawn=driver_spawn,
                    unique_identifier='0',
                    force_registration=force_registration)

@@ -378,7 +378,7 @@ async def set_global(global_: bool, user: Union[discord.User, discord.Member]) -
     if (await is_global()) is global_:
         return global_
 
-    if is_global():
+    if await is_global():
         await _conf.user(user).clear_all()
     elif isinstance(user, discord.Member):
         await _conf.member(user).clear_all()
