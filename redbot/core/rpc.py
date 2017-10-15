@@ -1,6 +1,7 @@
 from typing import NewType, TYPE_CHECKING
 
 import asyncio
+
 from aiohttp.web import Application
 from aiohttp_json_rpc import JsonRpc
 
@@ -12,26 +13,28 @@ if TYPE_CHECKING:
 log = logging.getLogger('red.rpc')
 JsonSerializable = NewType('JsonSerializable', dict)
 
-rpc = None  # type: JsonRpc
+_rpc = JsonRpc(logger=log)
 
-server = None  # type: asyncio.AbstractServer
+_rpc_server = None  # type: asyncio.AbstractServer
+
+_bot_reference = None  # type: Red
 
 
 async def initialize(bot: "Red"):
-    global rpc
-    global server
-    rpc = JsonRpc(logger=log)
+    global _rpc_server
+    global _bot_reference
+    _bot_reference = bot
 
     app = Application(loop=bot.loop)
-    app.router.add_route('*', '/rpc', rpc)
+    app.router.add_route('*', '/rpc', _rpc)
 
     handler = app.make_handler()
 
-    server = await bot.loop.create_server(handler, '127.0.0.1', 8080)
+    _rpc_server = await bot.loop.create_server(handler, '127.0.0.1', 8080)
 
-    log.debug('Created RPC server listener.')
+    log.debug('Created RPC _rpc_server listener.')
 
-    bot.register_rpc_methods(rpc)
+    bot.register_rpc_methods(_rpc)
 
     log.debug('Registered bot RPC methods.')
 
@@ -40,25 +43,15 @@ async def initialize(bot: "Red"):
     bot.dispatch('rpc_ready')
 
 
-def _ensure_initialized(func):
-    def partial(*args, **kwargs):
-        if rpc is None:
-            raise RuntimeError("RPC server not initalized.")
-        return func(*args, **kwargs)
-    return partial
-
-
-@_ensure_initialized
 def add_topic(topic_name: str):
     """
     Adds a topic for clients to listen to.
 
     :param topic_name:
     """
-    rpc.add_topics(topic_name)
+    _rpc.add_topics(topic_name)
 
 
-@_ensure_initialized
 def notify(topic_name: str, data: JsonSerializable):
     """
     Publishes a notification for the given topic name to all listening clients.
@@ -72,10 +65,9 @@ def notify(topic_name: str, data: JsonSerializable):
     :param topic_name:
     :param data:
     """
-    rpc.notify(topic_name, data)
+    _rpc.notify(topic_name, data)
 
 
-@_ensure_initialized
 def add_method(prefix, method):
     """
     Makes a method available to RPC clients. The name given to clients will be as
@@ -92,11 +84,11 @@ def add_method(prefix, method):
         MUST BE A COROUTINE OR OBJECT.
     :return:
     """
-    rpc.add_methods(
+    _rpc.add_methods(
         ('', method),
         prefix=prefix
     )
 
 
 async def on_shutdown():
-    server.close()
+    _rpc_server.close()

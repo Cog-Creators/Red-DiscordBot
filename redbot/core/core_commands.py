@@ -38,6 +38,10 @@ class Core:
     def __init__(self, bot):
         self.bot = bot  # type: Red
 
+        rpc.add_method('core', self.rpc_load)
+        rpc.add_method('core', self.rpc_unload)
+        rpc.add_method('core', self.rpc_reload)
+
     @commands.command()
     @checks.is_owner()
     async def load(self, ctx, *, cog_name: str):
@@ -440,7 +444,3 @@ class Core:
         await self.rpc_unload(request)
         await self.rpc_load(request)
 
-    async def on_rpc_ready(self):
-        rpc.add_method('core', self.rpc_load)
-        rpc.add_method('core', self.rpc_unload)
-        rpc.add_method('core', self.rpc_reload)
