@@ -38,10 +38,6 @@ async def initialize(bot: "Red"):
 
     log.debug('Registered bot RPC methods.')
 
-    bot.add_listener(on_shutdown)
-
-    bot.dispatch('rpc_ready')
-
 
 def add_topic(topic_name: str):
     """
