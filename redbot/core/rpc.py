@@ -37,11 +37,13 @@ async def initialize(bot: "Red"):
 
     bot.add_listener(on_shutdown)
 
+    bot.dispatch('rpc_ready')
+
 
 def _ensure_initialized(func):
     def partial(*args, **kwargs):
         if rpc is None:
-            raise IOError("RPC server not initalized.")
+            raise RuntimeError("RPC server not initalized.")
         return func(*args, **kwargs)
     return partial
 

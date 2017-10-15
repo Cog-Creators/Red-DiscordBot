@@ -96,7 +96,7 @@ def main():
     red = Red(cli_flags, description=description, pm_help=None)
     init_global_checks(red)
     init_events(red, cli_flags)
-    red.add_cog(Core())
+    red.add_cog(Core(red))
     red.add_cog(CogManagerUI())
     if cli_flags.dev:
         red.add_cog(Dev())
