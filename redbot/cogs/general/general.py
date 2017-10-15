@@ -202,54 +202,71 @@ class General:
         special_date = datetime.datetime(2016, 1, 10, 6, 8, 4, 443000)
         is_special = (user.id == 96130341705637888 and
                       guild.id == 133049272517001216)
-        
-        roles = sorted(user.roles)[1:]
-
-        joined_at = user.joined_at if not is_special else special_date
-        since_created = (ctx.message.created_at - user.created_at).days
-        since_joined = (ctx.message.created_at - joined_at).days
+        bot = self.bot
+        realname = str(user)
+        useravatarurl = user.avatar_url
+        joined_at = self.fetch_joined_at(user, server)
+        since_created = (ctx.message.timestamp - user.created_at).days
+        since_joined = (ctx.message.timestamp - joined_at).days
         user_joined = joined_at.strftime("%d %b %Y %H:%M")
         user_created = user.created_at.strftime("%d %b %Y %H:%M")
-        member_number = sorted(guild.members,
+        member_number = sorted(server.members,
                                key=lambda m: m.joined_at).index(user) + 1
 
-        created_on = _("{}\n({} days ago)").format(user_created, since_created)
-        joined_on = _("{}\n({} days ago)").format(user_joined, since_joined)
-
-        game = _("Chilling in {} status").format(user.status)
-
-        if user.game and user.game.name and user.game.url:
-            game = _("Streaming: [{}]({})").format(user.game, user.game.url)
-        elif user.game and user.game.name:
-            game = _("Playing {}").format(user.game)
-
+        created_on = "{}\n({} days ago)".format(user_created, since_created)
+        joined_on = "{}\n({} days ago)".format(user_joined, since_joined)
+        userid = user.id
+        highestrole = user.top_role
+        displayname = user.nick
+        author = ctx.message.author.name
+        server = ctx.message.server
+        joined = user.joined_at
+        userstatus = user.status
+        playinggame = user.game
+        userisbot = user.bot
+        roles = [x.name for x in user.roles if x.name != "@everyone"]
         if roles:
-            roles = ", ".join([x.name for x in roles])
+            roles = sorted(roles, key=[x.name for x in server.role_hierarchy
+                                       if x.name != "@everyone"].index)
+            roles = ", ".join(roles)
         else:
-            roles = _("None")
-
-        data = discord.Embed(description=game, colour=user.colour)
-        data.add_field(name=_("Joined Discord on"), value=created_on)
-        data.add_field(name=_("Joined this guild on"), value=joined_on)
-        data.add_field(name=_("Roles"), value=roles, inline=False)
-        data.set_footer(text=_("Member #{} | User ID: {}"
-                               "").format(member_number, user.id))
-
-        name = str(user)
-        name = " ~ ".join((name, user.nick)) if user.nick else name
-
-        if user.avatar:
-            data.set_author(name=name, url=user.avatar_url)
-            data.set_thumbnail(url=user.avatar_url)
+            roles = "None"
+        if user.bot is False:
+            userisbot = "Requested user is not a bot"
         else:
-            data.set_author(name=name)
-
-        try:
-            await ctx.send(embed=data)
+            userisbot = "Requested user is a bot"
+        if user.nick is None:
+            displayname = "User currently has no nickname"
+        else:
+            displayname = user.nick
+        if user.top_role is "@everyone":
+            highestrole = "User does not have any roles"
+        else:
+            highestrole = user.top_role
+        if user.game is None:
+            displayname = "User currently has no nickname"
+        else:
+            displayname = user.nick
+        color = ''.join([choice('0123456789ABCDEF') for x in range(6)])
+        color = int(color, 16)
+        embed=discord.Embed(title="Username", description=realname, color=color)
+        embed.set_thumbnail(url=str(useravatarurl))
+        embed.add_field(name="User's ID", value=userid, inline=False)
+        embed.add_field(name="Highest Role", value=highestrole, inline=False)
+        embed.add_field(name="All user roles", value=roles, inline=False)
+        embed.add_field(name="Current Nickname", value=displayname, inline=False)
+        embed.add_field(name="Status", value=userstatus, inline=False)
+        embed.add_field(name="User is a bot", value=userisbot, inline=False)
+        embed.add_field(name="Playing", value=playinggame, inline=False)
+        embed.add_field(name="Joined Discord on", value=created_on, inline=False)
+        embed.add_field(name="Joined this guild on", value=joined_on, inline=True)
+        embed.set_footer(text="Member #{} | User ID:{}"
+                             "".format(member_number, user.id))
+        try :
+            await self.bot.say(embed=embed)
         except discord.HTTPException:
-            await ctx.send(_("I need the `Embed links` permission "
-                             "to send this."))
-
+            await self.bot.say("I need the `Embed links` permission "
+                               "to send this")
     @commands.command()
     @commands.guild_only()
     async def serverinfo(self, ctx):
