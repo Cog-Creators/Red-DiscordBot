@@ -6,12 +6,10 @@ import traceback
 from contextlib import redirect_stdout
 
 import discord
+from discord.ext import commands
 from . import checks
 from .i18n import CogI18n
-from discord.ext import commands
-
 from .utils.chat_formatting import box, pagify
-
 """
 Notice:
 
@@ -24,7 +22,8 @@ _ = CogI18n("Dev", __file__)
 
 
 class Dev:
-    """Various development focused utilities"""
+    """Various development focused utilities."""
+
     def __init__(self):
         self._last_result = None
         self.sessions = set()
@@ -41,12 +40,20 @@ class Dev:
 
     @staticmethod
     def get_syntax_error(e):
+        """Format a syntax error to send to the user.
+
+        Returns a string representation of the error formatted as a codeblock.
+        """
         if e.text is None:
-            return '```py\n{0.__class__.__name__}: {0}\n```'.format(e)
-        return '```py\n{0.text}{1:>{0.offset}}\n{2}: {0}```'.format(e, '^', type(e).__name__)
+            return box('{0.__class__.__name__}: {0}'.format(e), lang="py")
+        return box(
+            '{0.text}{1:>{0.offset}}\n{2}: {0}'
+            ''.format(e, '^', type(e).__name__),
+            lang="py")
 
     @staticmethod
     def sanitize_output(ctx: commands.Context, input_: str) -> str:
+        """Hides the bot's token from a string."""
         token = ctx.bot.http.token
         r = "[EXPUNGED]"
         result = input_.replace(token, r)
@@ -57,8 +64,25 @@ class Dev:
     @commands.command()
     @checks.is_owner()
     async def debug(self, ctx, *, code):
-        """
-        Executes code and prints the result to discord.
+        """Evaluate a statement of python code.
+
+        The bot will always respond with the return value of the code.
+        If the return value of the code is a coroutine, it will be awaited,
+        and the result of that will be the bot's response.
+
+        Note: Only one statement may be evaluated. Using await, yield or
+        similar restricted keywords will result in a syntax error. For multiple
+        lines or asynchronous code, see [p]repl or [p]eval.
+
+        Environment Variables:
+            ctx      - command invokation context
+            bot      - bot object
+            channel  - the current channel object
+            author   - command author's member object
+            message  - the command's message object
+            discord  - discord.py library
+            commands - discord.py commands extension
+            _        - The result of the last dev command.
         """
         env = {
             'bot': ctx.bot,
@@ -67,20 +91,21 @@ class Dev:
             'author': ctx.author,
             'guild': ctx.guild,
             'message': ctx.message,
+            'discord': discord,
+            'commands': commands,
             '_': self._last_result
         }
 
         code = self.cleanup_code(code)
 
         try:
-            result = eval(code, globals(), env)
+            result = eval(code, env)
         except SyntaxError as e:
             await ctx.send(self.get_syntax_error(e))
             return
         except Exception as e:
-            await ctx.send(box(
-                '{}: {!s}'.format(type(e).__name__, e),
-                lang='py'))
+            await ctx.send(
+                box('{}: {!s}'.format(type(e).__name__, e), lang='py'))
             return
 
         if asyncio.iscoroutine(result):
@@ -95,14 +120,24 @@ class Dev:
     @commands.command(name='eval')
     @checks.is_owner()
     async def _eval(self, ctx, *, body: str):
-        """
-        Executes code as if it was the body of an async function
-            code MUST be in a code block using three ticks and
-            there MUST be a newline after the first set and
-            before the last set. This function will ONLY output
-            the return value of the function code AND anything
-            that is output to stdout (e.g. using a print()
-            statement).
+        """Execute asynchronous code.
+
+        This command wraps code into the body of an async function and then
+        calls and awaits it. The bot will respond with anything printed to
+        stdout, as well as the return value of the function.
+
+        The code can be within a codeblock, inline code or neither, as long
+        as they are not mixed and they are formatted correctly.
+
+        Environment Variables:
+            ctx      - command invokation context
+            bot      - bot object
+            channel  - the current channel object
+            author   - command author's member object
+            message  - the command's message object
+            discord  - discord.py library
+            commands - discord.py commands extension
+            _        - The result of the last dev command.
         """
         env = {
             'bot': ctx.bot,
@@ -110,11 +145,11 @@ class Dev:
             'channel': ctx.channel,
             'author': ctx.author,
             'guild': ctx.guild,
-            'message': ctx.message
+            'message': ctx.message,
+            'discord': discord,
+            'commands': commands,
+            '_': self._last_result
         }
-
-        env.update(globals())
-        env['_'] = self._last_result # Now that we're using this for I18n
 
         body = self.cleanup_code(body)
         stdout = io.StringIO()
@@ -132,7 +167,8 @@ class Dev:
                 ret = await func()
         except:
             value = stdout.getvalue()
-            await ctx.send(box('\n{}{}'.format(value, traceback.format_exc()), lang="py"))
+            await ctx.send(
+                box('\n{}{}'.format(value, traceback.format_exc()), lang="py"))
         else:
             value = stdout.getvalue()
             try:
@@ -152,8 +188,14 @@ class Dev:
     @commands.command()
     @checks.is_owner()
     async def repl(self, ctx):
-        """
-        Opens an interactive REPL.
+        """Open an interactive REPL.
+
+        The REPL will only recognise code as messages which start with a
+        backtick. This includes codeblocks, and as such multiple lines can be
+        evaluated.
+
+        You may not await any code in this REPL unless you define it inside an
+        async function.
         """
         variables = {
             'ctx': ctx,
@@ -166,20 +208,20 @@ class Dev:
         }
 
         if ctx.channel.id in self.sessions:
-            await ctx.send(_('Already running a REPL session in this channel. Exit it with `quit`.'))
+            await ctx.send(_('Already running a REPL session in this channel. '
+                             'Exit it with `quit`.'))
             return
 
         self.sessions.add(ctx.channel.id)
-        await ctx.send(_('Enter code to execute or evaluate. `exit()` or `quit` to exit.'))
+        await ctx.send(_('Enter code to execute or evaluate.'
+                         ' `exit()` or `quit` to exit.'))
 
-        def msg_check(m):
-            return m.author == ctx.author and m.channel == ctx.channel and \
-                m.content.startswith('`')
+        msg_check = lambda m: (m.author == ctx.author and
+                               m.channel == ctx.channel and
+                               m.content.startswith('`'))
 
         while True:
-            response = await ctx.bot.wait_for(
-                "message",
-                check=msg_check)
+            response = await ctx.bot.wait_for("message", check=msg_check)
 
             cleaned = self.cleanup_code(response.content)
 
@@ -240,9 +282,10 @@ class Dev:
     @commands.command()
     @checks.is_owner()
     async def mock(self, ctx, user: discord.Member, *, command):
-        """Runs a command as if it was issued by a different user
+        """Mock another user invoking a command.
 
-        The prefix must not be entered"""
+        The prefix must not be entered.
+        """
         # Since we have stateful objects now this might be pretty bad
         # Sorry Danny
         old_author = ctx.author
@@ -258,9 +301,11 @@ class Dev:
     @commands.command(name="mockmsg")
     @checks.is_owner()
     async def mock_msg(self, ctx, user: discord.Member, *, content: str):
-        """Bot receives a message is if it were sent by a different user.
+        """Dispatch a message event as if it were sent by a different user.
 
-        Only reads the raw content of the message. Attachments, embeds etc. are ignored."""
+        Only reads the raw content of the message. Attachments, embeds etc. are
+        ignored.
+        """
         old_author = ctx.author
         old_content = ctx.message.content
         ctx.message.author = user
@@ -268,7 +313,8 @@ class Dev:
 
         ctx.bot.dispatch("message", ctx.message)
 
-        await asyncio.sleep(2) # If we change the author and content back too quickly,
-                               #  the bot won't process the mocked message in time.
+        # If we change the author and content back too quickly,
+        # the bot won't process the mocked message in time.
+        await asyncio.sleep(2)
         ctx.message.author = old_author
         ctx.message.content = old_content
