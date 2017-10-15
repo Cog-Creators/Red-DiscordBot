@@ -17,13 +17,9 @@ _rpc = JsonRpc(logger=log)
 
 _rpc_server = None  # type: asyncio.AbstractServer
 
-_bot_reference = None  # type: Red
-
 
 async def initialize(bot: "Red"):
     global _rpc_server
-    global _bot_reference
-    _bot_reference = bot
 
     app = Application(loop=bot.loop)
     app.router.add_route('*', '/rpc', _rpc)
