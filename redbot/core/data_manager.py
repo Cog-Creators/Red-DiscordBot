@@ -5,6 +5,9 @@ import appdirs
 
 from .json_io import JsonIO
 
+__all__ = ['load_basic_configuration', 'cog_data_path', 'core_data_path',
+           'storage_details', 'storage_type']
+
 jsonio = None
 basic_config = None
 
