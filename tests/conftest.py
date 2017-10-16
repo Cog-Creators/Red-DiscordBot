@@ -25,6 +25,13 @@ def override_data_path(tmpdir):
 
 
 @pytest.fixture()
+def coroutine():
+    async def some_coro(*args, **kwargs):
+        return args, kwargs
+    return some_coro
+
+
+@pytest.fixture()
 def json_driver(tmpdir_factory):
     import uuid
     rand = str(uuid.uuid4())
