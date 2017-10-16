@@ -1,18 +1,18 @@
 # Default
-*                           @Twentysix26
+*                                   @Twentysix26
 
 # Core
-core/config.py              @tekulvw
-core/cog_manager.py         @tekulvw
-core/data_manager.py        @tekulvw
-core/drivers/*              @tekulvw
-core/i18n.py                @tekulvw
-core/sentry_setup.py        @Kowlin @tekulvw
+redbot/core/config.py               @tekulvw
+redbot/core/cog_manager.py          @tekulvw
+redbot/core/data_manager.py         @tekulvw
+redbot/core/drivers/*               @tekulvw
+redbot/core/i18n.py                 @tekulvw
+redbot/core/sentry_setup.py         @Kowlin @tekulvw
 
 # Cogs
-cogs/alias/*                @tekulvw
-cogs/downloader/*           @tekulvw
-cogs/general/*              @palmtree5
+redbot/cogs/alias/*                 @tekulvw
+redbot/cogs/downloader/*            @tekulvw
+redbot/cogs/general/*               @palmtree5
 
 # Docs
-docs/*                      @tekulvw @palmtree5
+docs/*                              @tekulvw @palmtree5
