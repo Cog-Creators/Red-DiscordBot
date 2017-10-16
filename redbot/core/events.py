@@ -74,9 +74,9 @@ def init_events(bot, cli_flags):
     @bot.event
     async def on_command_error(ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
-            await bot.send_cmd_help(ctx)
+            await ctx.send_help()
         elif isinstance(error, commands.BadArgument):
-            await bot.send_cmd_help(ctx)
+            await ctx.send_help()
         elif isinstance(error, commands.DisabledCommand):
             await ctx.send("That command is disabled.")
         elif isinstance(error, commands.CommandInvokeError):

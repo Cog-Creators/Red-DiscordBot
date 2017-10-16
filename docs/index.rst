@@ -31,6 +31,7 @@ Welcome to Red - Discord Bot's documentation!
     framework_cogmanager
     framework_config
     framework_downloader
+    framework_context
 
 
 Indices and tables

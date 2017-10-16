@@ -184,7 +184,7 @@ class Alias:
     async def alias(self, ctx: commands.Context):
         """Manage per-server aliases for commands"""
         if ctx.invoked_subcommand is None:
-            await self.bot.send_cmd_help(ctx)
+            await ctx.send_help()
 
     @alias.group(name="global")
     async def global_(self, ctx: commands.Context):
@@ -193,7 +193,7 @@ class Alias:
         """
         if ctx.invoked_subcommand is None or \
                 isinstance(ctx.invoked_subcommand, commands.Group):
-            await self.bot.send_cmd_help(ctx)
+            await ctx.send_help()
 
     @alias.command(name="add")
     @commands.guild_only()
