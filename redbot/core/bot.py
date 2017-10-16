@@ -9,6 +9,7 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import GroupMixin
 
+from .context import Context
 from .cog_manager import CogManager
 from . import Config
 from . import i18n
@@ -67,6 +68,14 @@ class Red(commands.Bot):
         self.cog_mgr = CogManager(paths=(str(self.main_dir / 'cogs'),))
 
         super().__init__(**kwargs)
+
+    async def process_commands(self, message):
+        ctx = await self.get_context(message, cls=Context)
+        if ctx.command is None:
+            return
+
+        async with ctx.acquire():
+            await self.invoke(ctx)
 
     async def _dict_abuse(self, indict):
         """
