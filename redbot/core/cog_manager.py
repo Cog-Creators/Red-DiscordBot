@@ -209,6 +209,18 @@ class CogManager:
         raise RuntimeError("No module by the name of '{}' was found"
                            " in any available path.".format(name))
 
+    async def available_modules(self) -> List[str]:
+        """
+        Finds the names of all available modules to load.
+        :return:
+        """
+        resolved_paths = [str(p.resolve()) for p in await self.paths()]
+
+        ret = []
+        for finder, module_name, _ in pkgutil.iter_modules(resolved_paths):
+            ret.append(module_name)
+        return ret
+
     @staticmethod
     def invalidate_caches():
         """Re-evaluate modules in the py cache.

@@ -185,6 +185,24 @@ class Downloader:
         elif target.is_file():
             os.remove(str(target))
 
+    @commands.command()
+    @checks.is_owner()
+    async def cogs(self, ctx):
+        """
+        Lists all loaded and available cogs.
+        """
+        loaded = set(self.bot.extensions.keys())
+
+        all = set(await self.bot.cog_mgr.available_modules())
+
+        unloaded = all - loaded
+
+        await ctx.send(
+            "{}\n\n{}".format(', '.join(loaded), ', '.join(unloaded))
+        )
+
+
+
     @commands.group()
     @checks.is_owner()
     async def repo(self, ctx):
