@@ -10,8 +10,7 @@ from discord.ext import commands
 from discord.ext.commands import GroupMixin
 
 from .cog_manager import CogManager
-from . import Config
-from . import i18n
+from . import Config, i18n, RedContext
 
 
 class Red(commands.Bot):
@@ -84,15 +83,8 @@ class Red(commands.Bot):
             return True
         return await super().is_owner(user)
 
-    async def send_cmd_help(self, ctx):
-        if ctx.invoked_subcommand:
-            pages = await self.formatter.format_help_for(ctx, ctx.invoked_subcommand)
-            for page in pages:
-                await ctx.send(page)
-        else:
-            pages = await self.formatter.format_help_for(ctx, ctx.command)
-            for page in pages:
-                await ctx.send(page)
+    async def get_context(self, message, *, cls=RedContext):
+        return await super().get_context(message, cls=cls)
 
     async def shutdown(self, *, restart=False):
         """Gracefully quits Red with exit code 0
