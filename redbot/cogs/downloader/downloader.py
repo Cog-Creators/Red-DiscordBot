@@ -179,7 +179,7 @@ class Downloader:
         Command group for managing Downloader repos.
         """
         if ctx.invoked_subcommand is None:
-            await self.bot.send_cmd_help(ctx)
+            await ctx.send_help()
 
     @repo.command(name="add")
     @install_agreement()
@@ -231,7 +231,7 @@ class Downloader:
         Command group for managing installable Cogs.
         """
         if ctx.invoked_subcommand is None:
-            await self.bot.send_cmd_help(ctx)
+            await ctx.send_help()
 
     @cog.command(name="install")
     async def _cog_install(self, ctx, repo_name: Repo, cog_name: str):
