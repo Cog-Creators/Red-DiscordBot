@@ -82,5 +82,5 @@ def add_method(prefix, method):
     )
 
 
-async def on_shutdown():
+def clean_up():
     _rpc_server.close()

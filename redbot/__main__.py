@@ -21,6 +21,7 @@ from redbot.core.sentry_setup import init_sentry_logging
 from redbot.core.cli import interactive_config, confirm, parse_cli_flags, ask_sentry
 from redbot.core.core_commands import Core
 from redbot.core.dev_commands import Dev
+from redbot.core import rpc
 import asyncio
 import logging.handlers
 import logging
@@ -141,7 +142,7 @@ def main():
         sentry_log.critical("Fatal Exception", exc_info=e)
         loop.run_until_complete(red.logout())
     finally:
-        red.dispatch('shutdown')
+        rpc.clean_up()
         if cleanup_tasks:
             pending = asyncio.Task.all_tasks(loop=red.loop)
             gathered = asyncio.gather(*pending, loop=red.loop)
