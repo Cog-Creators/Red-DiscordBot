@@ -574,26 +574,26 @@ class Config:
 
     def register_channel(self, **kwargs):
         """
-        Registers default values on a per-guild level. See :py:meth:`register_global` for more details.
+        Registers default values on a per-channel level. See :py:meth:`register_global` for more details.
         """
         # We may need to add a voice channel category later
         self._register_default(self.CHANNEL, **kwargs)
 
     def register_role(self, **kwargs):
         """
-        Registers default values on a per-guild level. See :py:meth:`register_global` for more details.
+        Registers default values on a per-role level. See :py:meth:`register_global` for more details.
         """
         self._register_default(self.ROLE, **kwargs)
 
     def register_user(self, **kwargs):
         """
-        Registers default values on a per-guild level. See :py:meth:`register_global` for more details.
+        Registers default values on a per-user level (i.e. server-independent). See :py:meth:`register_global` for more details.
         """
         self._register_default(self.USER, **kwargs)
 
     def register_member(self, **kwargs):
         """
-        Registers default values on a per-guild level. See :py:meth:`register_global` for more details.
+        Registers default values on a per-member level (i.e. server-dependent). See :py:meth:`register_global` for more details.
         """
         self._register_default(self.MEMBER, **kwargs)
 
