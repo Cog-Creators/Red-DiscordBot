@@ -36,7 +36,6 @@ class Alias:
 
     def __init__(self, bot: Red):
         self.bot = bot
-        self.file_path = "data/alias/aliases.json"
         self._aliases = Config.get_conf(self, 8927348724)
 
         self._aliases.register_global(**self.default_global_settings)
@@ -56,7 +55,7 @@ class Alias:
         return (AliasEntry.from_json(d, bot=self.bot) for d in (await self._aliases.entries()))
 
     async def is_alias(self, guild: discord.Guild, alias_name: str,
-                 server_aliases: Iterable[AliasEntry]=()) -> (bool, AliasEntry):
+                       server_aliases: Iterable[AliasEntry]=()) -> (bool, AliasEntry):
 
         if not server_aliases:
             server_aliases = await self.unloaded_aliases(guild)
@@ -119,7 +118,7 @@ class Alias:
 
         return did_delete_alias
 
-    def get_prefix(self, message: discord.Message) -> str:
+    async def get_prefix(self, message: discord.Message) -> str:
         """
         Tries to determine what prefix is used in a message object.
             Looks to identify from longest prefix to smallest.
@@ -128,9 +127,9 @@ class Alias:
         :param message: Message object
         :return:
         """
-        guild = message.guild
         content = message.content
-        prefixes = sorted(self.bot.command_prefix(self.bot, message),
+        prefix_list = await self.bot.command_prefix(self.bot, message)
+        prefixes = sorted(prefix_list,
                           key=lambda pfx: len(pfx),
                           reverse=True)
         for p in prefixes:
@@ -156,7 +155,7 @@ class Alias:
     async def maybe_call_alias(self, message: discord.Message,
                                aliases: Iterable[AliasEntry]=None):
         try:
-            prefix = self.get_prefix(message)
+            prefix = await self.get_prefix(message)
         except ValueError:
             return
 
@@ -202,30 +201,30 @@ class Alias:
         """
         Add an alias for a command.
         """
-#region Alias Add Validity Checking
+# region Alias Add Validity Checking
         is_command = self.is_command(alias_name)
         if is_command:
-            await ctx.send(("You attempted to create a new alias"
-                            " with the name {} but that"
-                            " name is already a command on this bot.").format(alias_name))
+            await ctx.send(_("You attempted to create a new alias"
+                             " with the name {} but that"
+                             " name is already a command on this bot.").format(alias_name))
             return
 
-        is_alias, _ = await self.is_alias(ctx.guild, alias_name)
+        is_alias, something_useless = await self.is_alias(ctx.guild, alias_name)
         if is_alias:
-            await ctx.send(("You attempted to create a new alias"
-                            " with the name {} but that"
-                            " alias already exists on this server.").format(alias_name))
+            await ctx.send(_("You attempted to create a new alias"
+                             " with the name {} but that"
+                             " alias already exists on this server.").format(alias_name))
             return
 
         is_valid_name = self.is_valid_alias_name(alias_name)
         if not is_valid_name:
-            await ctx.send(("You attempted to create a new alias"
-                            " with the name {} but that"
-                            " name is an invalid alias name. Alias"
-                            " names may only contain letters, numbers,"
-                            " and underscores and must start with a letter.").format(alias_name))
+            await ctx.send(_("You attempted to create a new alias"
+                             " with the name {} but that"
+                             " name is an invalid alias name. Alias"
+                             " names may only contain letters, numbers,"
+                             " and underscores and must start with a letter.").format(alias_name))
             return
-#endregion
+# endregion
 
         # At this point we know we need to make a new alias
         #   and that the alias name is valid.
@@ -244,25 +243,25 @@ class Alias:
 # region Alias Add Validity Checking
         is_command = self.is_command(alias_name)
         if is_command:
-            await ctx.send(("You attempted to create a new global alias"
-                            " with the name {} but that"
-                            " name is already a command on this bot.").format(alias_name))
+            await ctx.send(_("You attempted to create a new global alias"
+                             " with the name {} but that"
+                             " name is already a command on this bot.").format(alias_name))
             return
 
-        is_alias, _ = self.is_alias(ctx.guild, alias_name)
+        is_alias, something_useless = await self.is_alias(ctx.guild, alias_name)
         if is_alias:
-            await ctx.send(("You attempted to create a new alias"
-                            " with the name {} but that"
-                            " alias already exists on this server.").format(alias_name))
+            await ctx.send(_("You attempted to create a new global alias"
+                             " with the name {} but that"
+                             " alias already exists on this server.").format(alias_name))
             return
 
         is_valid_name = self.is_valid_alias_name(alias_name)
         if not is_valid_name:
-            await ctx.send(("You attempted to create a new alias"
-                            " with the name {} but that"
-                            " name is an invalid alias name. Alias"
-                            " names may only contain letters, numbers,"
-                            " and underscores and must start with a letter.").format(alias_name))
+            await ctx.send(_("You attempted to create a new global alias"
+                             " with the name {} but that"
+                             " name is an invalid alias name. Alias"
+                             " names may only contain letters, numbers,"
+                             " and underscores and must start with a letter.").format(alias_name))
             return
 # endregion
 
