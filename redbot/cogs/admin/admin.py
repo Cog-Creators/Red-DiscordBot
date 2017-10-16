@@ -167,7 +167,7 @@ class Admin:
     async def editrole(self, ctx: commands.Context):
         """Edits roles settings"""
         if ctx.invoked_subcommand is None:
-            await ctx.bot.send_cmd_help(ctx)
+            await ctx.send_help()
 
     @editrole.command(name="colour", aliases=["color", ])
     async def editrole_colour(self, ctx: commands.Context, role: discord.Role,
