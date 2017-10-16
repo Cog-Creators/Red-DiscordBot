@@ -25,7 +25,7 @@ class CustomCommands:
     @customcom.command(name="add", pass_context=True)
     @checks.mod_or_permissions(administrator=True)
     async def cc_add(self, ctx, command : str, *, text):
-        """Adds a custom command
+        """Adds a custom command for your Shenanigans
 
         Example:
         [p]customcom add yourcommand Text you want
@@ -36,7 +36,7 @@ class CustomCommands:
         server = ctx.message.server
         command = command.lower()
         if command in self.bot.commands:
-            await self.bot.say("That command is already a standard command.")
+            await self.bot.say("That command is already a standard command, get with the times man.")
             return
         if server.id not in self.c_commands:
             self.c_commands[server.id] = {}
@@ -45,7 +45,7 @@ class CustomCommands:
             cmdlist[command] = text
             self.c_commands[server.id] = cmdlist
             dataIO.save_json(self.file_path, self.c_commands)
-            await self.bot.say("Custom command successfully added.")
+            await self.bot.say("Success~ Custom Command added!")
         else:
             await self.bot.say("This command already exists. Use "
                                "`{}customcom edit` to edit it."
@@ -67,7 +67,7 @@ class CustomCommands:
                 cmdlist[command] = text
                 self.c_commands[server.id] = cmdlist
                 dataIO.save_json(self.file_path, self.c_commands)
-                await self.bot.say("Custom command successfully edited.")
+                await self.bot.say("Success~ Custom Command edited!")
             else:
                 await self.bot.say("That command doesn't exist. Use "
                                    "`{}customcom add` to add it."
@@ -92,9 +92,9 @@ class CustomCommands:
                 cmdlist.pop(command, None)
                 self.c_commands[server.id] = cmdlist
                 dataIO.save_json(self.file_path, self.c_commands)
-                await self.bot.say("Custom command successfully deleted.")
+                await self.bot.say("Success~ Custom Command deleted!")
             else:
-                await self.bot.say("That command doesn't exist.")
+                await self.bot.say("That command doesn't exist. kinda like the wall thats supposed to exist between me and you but, we both know there is nothing there.")
         else:
             await self.bot.say("There are no custom commands in this server."
                                " Use `{}customcom add` to start adding some."

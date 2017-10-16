@@ -332,8 +332,8 @@ class Economy:
                     user.mention, self.bank.get_balance(user)))
             except NoAccount:
                 await self.bot.say("{} You don't have an account at the"
-                                   " Twentysix bank. Type `{}bank register`"
-                                   " to open one.".format(user.mention,
+                                   " Planeptune bank, Type `{}bank register`"
+                                   " and open one pls.".format(user.mention,
                                                           ctx.prefix))
         else:
             try:
@@ -353,9 +353,9 @@ class Economy:
             await self.bot.say("{} credits have been transferred to {}'s"
                                " account.".format(sum, user.name))
         except NegativeValue:
-            await self.bot.say("You need to transfer at least 1 credit.")
+            await self.bot.say("You need to at least transfer 1 credit.")
         except SameSenderAndReceiver:
-            await self.bot.say("You can't transfer credits to yourself.")
+            await self.bot.say("You can't transfer credits to yourself silly.")
         except InsufficientBalance:
             await self.bot.say("You don't have that sum in your bank account.")
         except NoAccount:

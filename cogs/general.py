@@ -38,7 +38,7 @@ class General:
     def __init__(self, bot):
         self.bot = bot
         self.stopwatches = {}
-        self.ball = ["As I see it, yes", "It is certain", "It is decidedly so", "Most likely", "Outlook good",
+        self.ball = ["Probably", "It is certainly certain", "Most likely", "Outlook good",
                      "Signs point to yes", "Without a doubt", "Yes", "Yes – definitely", "You may rely on it", "Reply hazy, try again",
                      "Ask again later", "Better not tell you now", "Cannot predict now", "Concentrate and ask again",
                      "Don't count on it", "My reply is no", "My sources say no", "Outlook not so good", "Very doubtful"]
@@ -95,7 +95,7 @@ class General:
             name = name.translate(table)
             await self.bot.say(msg + "(╯°□°）╯︵ " + name[::-1])
         else:
-            await self.bot.say("*flips a coin and... " + choice(["HEADS!*", "TAILS!*"]))
+            await self.bot.say("*Flipping the coin and... " + "its "choice(["HEADS!*", "TAILS!*"]))
 
     @commands.command(pass_context=True)
     async def rps(self, ctx, your_choice : RPSParser):
@@ -124,7 +124,7 @@ class General:
             await self.bot.say("{} You lose {}!"
                                "".format(red_choice.value, author.mention))
         else:
-            await self.bot.say("{} We're square {}!"
+            await self.bot.say("{} We're square, or are we? {}!"
                                "".format(red_choice.value, author.mention))
 
     @commands.command(name="8", aliases=["8ball"])
@@ -136,7 +136,7 @@ class General:
         if question.endswith("?") and question != "?":
             await self.bot.say("`" + choice(self.ball) + "`")
         else:
-            await self.bot.say("That doesn't look like a question.")
+            await self.bot.say("That doesn't look like a question, try to make it more questiony.")
 
     @commands.command(aliases=["sw"], pass_context=True)
     async def stopwatch(self, ctx):
@@ -159,7 +159,7 @@ class General:
 
     @commands.command(no_pm=True, hidden=True)
     async def hug(self, user : discord.Member, intensity : int=1):
-        """Because everyone likes hugs
+        """Because everyone likes hugs, except Histy, and why do they look like faces Histy would make?
 
         Up to 10 intensity levels."""
         name = italics(user.display_name)

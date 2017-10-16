@@ -36,7 +36,7 @@ class Alias:
             return
         if self.part_of_existing_command(command, server.id):
             await self.bot.say('I can\'t safely add an alias that starts with '
-                               'an existing command or alias. Sry <3')
+                               'an existing command or alias. I tried, Sry~ <3')
             return
         prefix = self.get_prefix(server, to_execute)
         if prefix is not None:
