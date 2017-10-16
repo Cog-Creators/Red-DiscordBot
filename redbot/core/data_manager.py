@@ -72,3 +72,28 @@ def core_data_path() -> Path:
     core_path.mkdir(exist_ok=True, parents=True)
 
     return core_path.resolve()
+
+
+def storage_type() -> str:
+    """
+    Gets the storage type as a string.
+
+    :return:
+    """
+    try:
+        return basic_config['STORAGE_TYPE']
+    except KeyError as e:
+        raise RuntimeError('Bot basic config has not been loaded yet.') from e
+
+
+def storage_details() -> dict:
+    """
+    Gets any details necessary for config drivers to load.
+
+    These are set on setup.
+    :return:
+    """
+    try:
+        return basic_config['STORAGE_DETAILS']
+    except KeyError as e:
+        raise RuntimeError('Bot basic config has not been loaded yet.') from e
