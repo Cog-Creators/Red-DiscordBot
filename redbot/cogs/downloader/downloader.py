@@ -198,7 +198,12 @@ class Downloader:
         unloaded = all - loaded
 
         await ctx.send(
-            "{}\n\n{}".format(', '.join(loaded), ', '.join(unloaded))
+            box(
+                "+ Loaded\n{}\n- Unloaded\n{}".format(
+                    ', '.join(sorted(loaded)), ', '.join(sorted(unloaded))
+                ),
+                lang='diff'
+            )
         )
 
 
