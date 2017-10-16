@@ -141,7 +141,7 @@ class Economy:
     async def _bank(self, ctx: commands.Context):
         """Bank operations"""
         if ctx.invoked_subcommand is None:
-            await self.bot.send_cmd_help(ctx)
+            await ctx.send_help()
 
     @_bank.command()
     async def balance(self, ctx: commands.Context, user: discord.Member = None):
@@ -405,7 +405,7 @@ class Economy:
         """Changes economy module settings"""
         guild = ctx.guild
         if ctx.invoked_subcommand is None:
-            await self.bot.send_cmd_help(ctx)
+            await ctx.send_help()
             if await bank.is_global():
                 slot_min = await self.config.SLOT_MIN()
                 slot_max = await self.config.SLOT_MAX()

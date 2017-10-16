@@ -164,7 +164,7 @@ class CustomCommands:
                         ctx: commands.Context):
         """Custom commands management"""
         if not ctx.invoked_subcommand:
-            await self.bot.send_cmd_help(ctx)
+            await ctx.send_help()
 
     @customcom.group(name="add")
     @checks.mod_or_permissions(administrator=True)
@@ -176,7 +176,7 @@ class CustomCommands:
         """
         if not ctx.invoked_subcommand or isinstance(ctx.invoked_subcommand,
                                                     commands.Group):
-            await self.bot.send_cmd_help(ctx)
+            await ctx.send_help()
 
     @cc_add.command(name='random')
     @checks.mod_or_permissions(administrator=True)
