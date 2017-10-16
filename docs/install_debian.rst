@@ -10,9 +10,11 @@ Installing Red on Debian Stretch
 Installing pre-requirements
 ---------------------------
 
-:code:`echo "deb http://httpredir.debian.org/debian stretch-backports main contrib non-free" >> /etc/apt/sources.list`
-:code:`apt-get update`
-:code:`apt-get install python3.5-dev python3-pip build-essential libssl-dev libffi-dev git ffmpeg libopus-dev unzip -y`
+.. code-block:: none
+
+    echo "deb http://httpredir.debian.org/debian stretch-backports main contrib non-free" >> /etc/apt/sources.list
+    apt-get update
+    apt-get install python3.5-dev python3-pip build-essential libssl-dev libffi-dev git ffmpeg libopus-dev unzip -y
 
 ------------------
 Installing the bot

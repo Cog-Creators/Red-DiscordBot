@@ -9,14 +9,14 @@ Installing pre-requirements
 ---------------------------
 
 * Install Brew
-  * In Finder or Spotlight, search for and open terminal. In the window that will open, paste this:
-    :code:`/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
-    and press enter.
+    * In Finder or Spotlight, search for and open terminal. In the window that will open, paste this:
+      :code:`/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
+      and press enter.
 * After the installation, install the required packages by pasting the commands and pressing enter, one-by-one:
-  * :code:`brew install python3 --with-brewed-openssl`
-  * :code:`brew install git`
-  * :code:`brew install ffmpeg --with-ffplay`
-  * :code:`brew install opus`
+    * :code:`brew install python3 --with-brewed-openssl`
+    * :code:`brew install git`
+    * :code:`brew install ffmpeg --with-ffplay`
+    * :code:`brew install opus`
 
 --------------
 Installing Red

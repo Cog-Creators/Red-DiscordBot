@@ -8,7 +8,9 @@ Installing Red on Raspbian Stretch
 Installing pre-requirements
 ---------------------------
 
-:code:`sudo apt-get install python3.5-dev python3-pip build-essential libssl-dev libffi-dev git libav-tools libopus-dev unzip -y`
+.. code-block:: none
+
+    sudo apt-get install python3.5-dev python3-pip build-essential libssl-dev libffi-dev git libav-tools libopus-dev unzip -y
 
 --------------
 Installing Red

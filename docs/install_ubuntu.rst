@@ -10,7 +10,9 @@ Installing Red on Ubuntu 16.04
 Installing the pre-requirements
 -------------------------------
 
-:code:`apt-get install python3.5-dev python3-pip build-essential libssl-dev libffi-dev git ffmpeg libopus-dev unzip -y`
+.. code-block:: none
+
+    sudo apt install python3.5-dev python3-pip build-essential libssl-dev libffi-dev git ffmpeg libopus-dev unzip -y
 
 ------------------
 Installing the bot
