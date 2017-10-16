@@ -54,7 +54,7 @@ class Bank:
     async def bankset(self, ctx: commands.Context):
         """Base command for bank settings"""
         if ctx.invoked_subcommand is None:
-            await self.bot.send_cmd_help(ctx)
+            await ctx.send_help()
 
     @bankset.command(name="toggleglobal")
     @checks.is_owner()
