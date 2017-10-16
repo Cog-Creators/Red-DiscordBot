@@ -4,14 +4,20 @@ from collections import Counter
 from enum import Enum
 from importlib.machinery import ModuleSpec
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 import discord
 from discord.ext.commands.bot import BotBase
 from discord.ext.commands import GroupMixin
 
 from .cog_manager import CogManager
-from . import Config, i18n, RedContext
+from . import (
+    Config,
+    i18n,
+    RedContext,
+    rpc
+)
+
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from aiohttp_json_rpc import JsonRpc
@@ -21,6 +27,9 @@ if TYPE_CHECKING:
 class RpcMethodMixin:
     async def rpc__cogs(self, request):
         return list(self.cogs.keys())
+
+    async def rpc__extensions(self, request):
+        return list(self.extensions.keys())
 
 
 class RedBase(BotBase, RpcMethodMixin):
@@ -82,6 +91,8 @@ class RedBase(BotBase, RpcMethodMixin):
         self.main_dir = bot_dir
 
         self.cog_mgr = CogManager(paths=(str(self.main_dir / 'cogs'),))
+
+        self.register_rpc_methods()
 
         super().__init__(**kwargs)
 
@@ -204,11 +215,9 @@ class RedBase(BotBase, RpcMethodMixin):
             del self.extensions[name]
             # del sys.modules[name]
 
-    def register_rpc_methods(self, rpc_server: "JsonRpc"):
-        rpc_server.add_methods(
-            ('', self.rpc__cogs),
-            prefix='bot'
-        )
+    def register_rpc_methods(self):
+        rpc.add_method('bot', self.rpc__cogs)
+        rpc.add_method('bot', self.rpc__extensions)
 
 
 class Red(RedBase, discord.AutoShardedClient):
