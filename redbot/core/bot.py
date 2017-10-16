@@ -165,7 +165,9 @@ class RedBase(BotBase):
 
 
 class Red(RedBase, discord.AutoShardedClient):
-
+    """
+    You're welcome Caleb.
+    """
     async def shutdown(self, *, restart=False):
         """Gracefully quits Red with exit code 0
 
