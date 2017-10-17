@@ -1,5 +1,3 @@
-import itertools
-
 def error(text):
     return "\N{NO ENTRY SIGN} {}".format(text)
 
@@ -31,26 +29,6 @@ def inline(text):
 
 def italics(text):
     return "*{}*".format(text)
-
-
-def bordered(text1, text2):
-    lines1 = text1.splitlines()
-    lines2 = text2.splitlines()
-    width1 = max(len(s) + 9 for s in lines1)
-    width2 = max(len(s) + 9 for s in lines2)
-    res = ['┌{}┐{}┌{}┐'.format("─"*width1, " "*4, "─"*width2)]
-    flag = True
-    for x, y in itertools.zip_longest(lines1,lines2):
-        if y:
-            m = "│{}│{}│{}│".format((x + " " * width1)[:width1], " "*4, (y + " " * width2)[:width2])
-        elif x and flag and not y:
-            m = "│{}│{}└{}┘".format((x + " " * width1)[:width1], " " * 4, "─" * width2)
-            flag = False
-        else:
-            m = "│{}│".format((x + " " * width1)[:width1])
-        res.append(m)
-    res.append("└" + "─" * width1 + "┘")
-    return "\n".join(res)
 
 
 def pagify(text, delims=["\n"], *, escape_mass_mentions=True, shorten_by=8,
