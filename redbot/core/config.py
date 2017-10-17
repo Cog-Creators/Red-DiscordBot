@@ -244,32 +244,6 @@ class Group(Value):
         defaults.update(await self())
         return defaults
 
-    async def all_from_kind(self) -> dict:
-        """
-        This method allows you to get all data from all entries in a given Kind. It will return a dictionary of Kind
-        ID's -> data.
-
-        .. note::
-
-            Any values that have not been set from the registered defaults will have their default values
-            added to the dictionary that this method returns.
-
-        .. important::
-
-            This method is overridden in :py:meth:`.MemberGroup.all_from_kind` and functions slightly differently.
-
-        :rtype: dict
-        """
-        # noinspection PyTypeChecker
-        all_from_kind = await self._super_group()
-
-        for k, v in all_from_kind.items():
-            defaults = self.defaults
-            defaults.update(v)
-            all_from_kind[k] = defaults
-
-        return all_from_kind
-
     async def set(self, value):
         if not isinstance(value, dict):
             raise ValueError(
@@ -294,13 +268,6 @@ class Group(Value):
         data.
         """
         await self.set({})
-
-    async def clear_all(self):
-        """
-        Wipes all data from all Guilds/Channels/Roles/Members/Users. If used on a global group, this method wipes all
-        data from everything.
-        """
-        await self._super_group.set({})
 
 
 class MemberGroup(Group):
@@ -327,35 +294,6 @@ class MemberGroup(Group):
             spawner=self.spawner
         )
         return group_obj
-
-    async def all_guilds(self) -> dict:
-        """
-        Returns a dict of :code:`GUILD_ID -> MEMBER_ID -> data`.
-
-        .. note::
-
-            Any values that have not been set from the registered defaults will have their default values
-            added to the dictionary that this method returns.
-
-        :rtype: dict
-        """
-        # noinspection PyTypeChecker
-        return await super().all_from_kind()
-
-    async def all_from_kind(self) -> dict:
-        """
-        Returns a dict of all members from the same guild as the given one.
-
-        .. note::
-
-            Any values that have not been set from the registered defaults will have their default values
-            added to the dictionary that this method returns.
-
-        :rtype: dict
-        """
-        guild_member = await super().all_from_kind()
-        return guild_member.get(self.identifiers[-2], {})
-
 
 
 class Config:
@@ -781,3 +719,133 @@ class Config:
             guild_data = await group()
             ret = self._all_members_from_guild(group, guild_data)
         return ret
+
+    async def _clear_scope(self, *scopes: str):
+        """Clear all data in a particular scope.
+        
+        The only situation where a second scope should be passed in is if
+        member data from a specific guild is being cleared.
+
+        If no scopes are passed, then all data is cleared from every scope.
+
+        Parameters
+        ----------
+        *scopes : str, optional
+            The scope of the data. Generally only one scope needs to be
+            provided, a second only necessary for clearing member data
+            of a specific guild.
+
+            **Leaving blank removes all data from this Config instance.**
+
+        """
+        if not scopes:
+            group = Group(identifiers=(self.unique_identifier),
+                          defaults={},
+                          spawner=self.spawner)
+        else:
+            group = self._get_base_group(*scopes)
+        await group.set({})
+
+    def clear_all(self):
+        """Clear all data from this Config instance.
+
+        This resets all data to its registered defaults.
+
+        .. important::
+
+            This cannot be undone.
+
+        Returns
+        -------
+        types.coroutine
+            A coroutine which, when awaited, clears all data.
+
+        """
+        return self._clear_scope()
+
+    def clear_all_globals(self):
+        """Clear all global data.
+
+        This resets all global data to its registered defaults.
+
+        Returns
+        -------
+        types.coroutine
+            A coroutine which, when awaited, clears all global data.
+
+        """
+        return self._clear_scope(self.GLOBAL)
+
+    def clear_all_guilds(self):
+        """Clear all guild data.
+
+        This resets all guild data to its registered defaults.
+
+        Returns
+        -------
+        types.coroutine
+            A coroutine which, when awaited, clears all guild data.
+
+        """
+        return self._clear_scope(self.GUILD)
+
+    def clear_all_channels(self):
+        """Clear all channel data.
+
+        This resets all channel data to its registered defaults.
+
+        Returns
+        -------
+        types.coroutine
+            A coroutine which, when awaited, clears all channel data.
+
+        """
+        return self._clear_scope(self.CHANNEL)
+
+    def clear_all_roles(self):
+        """Clear all role data.
+
+        This resets all role data to its registered defaults.
+
+        Returns
+        -------
+        types.coroutine
+            A coroutine which, when awaited, clears all role data.
+
+        """
+        return self._clear_scope(self.ROLE)
+
+    def clear_all_users(self):
+        """Clear all user data.
+
+        This resets all user data to its registered defaults.
+
+        Returns
+        -------
+        types.coroutine
+            A coroutine which, when awaited, clears all user data.
+
+        """
+        return self._clear_scope(self.USER)
+
+    def clear_all_members(self, guild: discord.Guild=None):
+        """Clear all member data.
+
+        This resets all specified member data to its registered defaults.
+
+        Parameters
+        ----------
+        guild : `discord.Guild`, optional
+            The guild to clear member data from. Omit to clear member data from
+            all guilds.
+
+        Returns
+        -------
+        types.coroutine
+            A coroutine which, when awaited, clears all specified member data.
+
+        """
+        scopes = [self.MEMBER]
+        if guild is not None:
+            scopes.append(guild.id)
+        return self._clear_scope(*scopes)

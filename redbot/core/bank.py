@@ -274,7 +274,7 @@ async def get_guild_accounts(guild: discord.Guild) -> List[Account]:
         raise RuntimeError("The bank is currently global.")
 
     ret = []
-    accs = await _conf.member(guild.owner).all_from_kind()
+    accs = await _conf.all_members(guild)
     for user_id, acc in accs.items():
         acc_data = acc.copy()  # There ya go kowlin
         acc_data['created_at'] = _decode_time(acc_data['created_at'])
@@ -301,7 +301,7 @@ async def get_global_accounts(user: discord.User) -> List[Account]:
         raise RuntimeError("The bank is not currently global.")
 
     ret = []
-    accs = await _conf.user(user).all_from_kind()  # this is a dict of user -> acc
+    accs = await _conf.all_users()  # this is a dict of user -> acc
     for user_id, acc in accs.items():
         acc_data = acc.copy()
         acc_data['created_at'] = _decode_time(acc_data['created_at'])
@@ -355,19 +355,15 @@ async def is_global() -> bool:
     return await _conf.is_global()
 
 
-async def set_global(global_: bool, user: Union[discord.User, discord.Member]) -> bool:
+async def set_global(global_: bool) -> bool:
     """
-    Sets global status of the bank, requires the user parameter for technical reasons.
+    Sets global status of the bank.
     
     .. important::
         All accounts are reset when you switch!
 
     :param global_:
         :code:`True` will set bank to global mode.
-    :param user:
-        Must be a Member object if changing TO global mode.
-    :type user:
-        discord.User or discord.Member
     :return:
         New bank mode, :code:`True` is global.
     :rtype: 
@@ -379,12 +375,9 @@ async def set_global(global_: bool, user: Union[discord.User, discord.Member]) -
         return global_
 
     if is_global():
-        await _conf.user(user).clear_all()
-    elif isinstance(user, discord.Member):
-        await _conf.member(user).clear_all()
+        await _conf.clear_all_users()
     else:
-        raise RuntimeError("You must provide a member if you're changing to global"
-                           " bank mode.")
+        await _conf.clear_all_members()
 
     await _conf.is_global.set(global_)
     return global_
