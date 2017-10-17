@@ -20,7 +20,7 @@ class Value:
         element from a json document.
     default
         The default value for the data element that `identifiers` points at.
-    spawner : redbot.core.drivers.BaseDriver
+    spawner : `redbot.core.drivers.red_base.BaseDriver`
         A reference to `Config.spawner`.
 
     """
@@ -111,11 +111,11 @@ class Group(Value):
 
     Attributes
     ----------
-    defaults : dict
+    defaults : `dict`
         All registered default values for this Group.
-    force_registration : bool
+    force_registration : `bool`
         Same as `Config.force_registration`.
-    spawner : redbot.core.drivers.BaseDriver
+    spawner : `redbot.core.drivers.red_base.BaseDriver`
         A reference to `Config.spawner`.
 
     """
@@ -442,15 +442,15 @@ class Config:
 
     Attributes
     ----------
-    cog_name : str
+    cog_name : `str`
         The name of the cog that has requested a `Config` object.
-    unique_identifier : int
+    unique_identifier : `int`
         Unique identifier provided to differentiate cog data when name
         conflicts occur.
     spawner
         A callable object that returns some driver that implements
-        `redbot.core.drivers.BaseDriver`.
-    force_registration : bool
+        `redbot.core.drivers.red_base.BaseDriver`.
+    force_registration : `bool`
         Determines if Config should throw an error if a cog attempts to access
         an attribute which has not been previously registered.
 

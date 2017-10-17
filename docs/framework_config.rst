@@ -192,4 +192,4 @@ Driver Reference
 
 .. automodule:: redbot.core.drivers
 
-.. autoclass:: redbot.core.drivers.BaseDriver
+.. autoclass:: redbot.core.drivers.red_base.BaseDriver
