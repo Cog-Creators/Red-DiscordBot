@@ -7,6 +7,17 @@ Welcome to Red - Discord Bot's documentation!
 =============================================
 
 .. toctree::
+    :maxdepth: 1
+    :caption: Installation Guides:
+
+    install_windows
+    install_mac
+    install_ubuntu
+    install_debian
+    install_centos
+    install_raspbian
+
+.. toctree::
     :maxdepth: 2
     :caption: Cog Reference:
 
@@ -20,6 +31,7 @@ Welcome to Red - Discord Bot's documentation!
     framework_cogmanager
     framework_config
     framework_downloader
+    framework_context
 
 
 Indices and tables
