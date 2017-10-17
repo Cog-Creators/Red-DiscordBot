@@ -525,10 +525,6 @@ class Config:
             to_add = self._get_defaults_dict(k, v)
             self._update_defaults(to_add, self._defaults[key])
 
-    def _snowflake_dict(self, dict_: dict):
-        """Get a copy of the dict with the keys casted to ints."""
-        return {int(key): value for key, value in dict_.items()}
-
     def register_global(self, **kwargs):
         """
         Registers default values for attributes you wish to store in :py:class:`.Config` at a global level.
@@ -652,34 +648,136 @@ class Config:
         return self._get_base_group(self.MEMBER, member.guild.id, member.id,
                                     group_class=MemberGroup)
 
-    def all_globals(self) -> dict:
-        return self._get_base_group(self.GLOBAL)()
+    async def _all_from_scope(self, scope: str):
+        """Get a dict of all values from a particular scope of data.
 
-    async def all_guilds(self) -> dict:
-        dict_ = await self._get_base_group(self.GUILD)()
-        return self._snowflake_dict(dict_)
+        :code:`scope` must be one of the constants attributed to
+        this class, i.e. :code:`GUILD`, :code:`MEMBER` et cetera.
 
-    async def all_channels(self) -> dict:
-        dict_ = await self._get_base_group(self.CHANNEL)()
-        return self._snowflake_dict(dict_)
+        IDs as keys in the returned dict are casted to `int` for convenience.
 
-    async def all_roles(self) -> dict:
-        dict_ = await self._get_base_group(self.ROLE)()
-        return self._snowflake_dict(dict_)
+        Default values are also mixed into the data if they have not yet been
+        overwritten.
+        """
+        group = self._get_base_group(scope)
+        dict_ = await group()
+        ret = {}
+        for k, v in dict_.items():
+            data = group.defaults
+            data.update(v)
+            ret[int(k)] = data
+        return ret
 
-    async def all_users(self) -> dict:
-        dict_ = await self._get_base_group(self.USER)()
-        return self._snowflake_dict(dict_)
+    def all_guilds(self):
+        """Get all guild data as a dict.
+
+        Note
+        ----
+        The return value of this method will include registered defaults for
+        values which have not yet been set.
+
+        Returns
+        -------
+        types.coroutine
+            A coroutine object which must be awaited to yield a `dict` mapping
+            :code:`GUILD_ID -> data`.
+
+        """
+        return self._all_from_scope(self.GUILD)
+
+    def all_channels(self):
+        """Get all channel data as a dict.
+
+        Note
+        ----
+        The return value of this method will include registered defaults for
+        values which have not yet been set.
+
+        Returns
+        -------
+        types.coroutine
+            A coroutine object which must be awaited to yield a `dict` mapping
+            :code:`CHANNEL_ID -> data`.
+
+        """
+        return self._all_from_scope(self.CHANNEL)
+
+    def all_roles(self):
+        """Get all role data as a dict.
+
+        Note
+        ----
+        The return value of this method will include registered defaults for
+        values which have not yet been set.
+
+        Returns
+        -------
+        types.coroutine
+            A coroutine object which must be awaited to yield a `dict` mapping
+            :code:`ROLE_ID -> data`.
+
+        """
+        return self._all_from_scope(self.ROLE)
+
+    def all_users(self):
+        """Get all user data as a dict.
+
+        Note
+        ----
+        The return value of this method will include registered defaults for
+        values which have not yet been set.
+
+        Returns
+        -------
+        types.coroutine
+            A coroutine object which must be awaited to yield a `dict` mapping
+            :code:`USER_ID -> data`.
+
+        """
+        return self._all_from_scope(self.USER)
+
+    def _all_members_from_guild(self, group: Group, guild_data: dict) -> dict:
+        ret = {}
+        for member_id, member_data in guild_data.items():
+            new_member_data = group.defaults
+            new_member_data.update(member_data)
+            ret[int(member_id)] = new_member_data
+        return ret
 
     async def all_members(self, guild: discord.Guild=None) -> dict:
-        identifiers = [self.MEMBER]
-        if guild is None:
-            dict_ = await self._get_base_group(self.MEMBER,
-                                               group_class=MemberGroup)()
-            dict_ = {guild_id: self._snowflake_dict(data)
-                     for guild_id, data in dict_.items()}
-        else:
-            dict_ = await self._get_base_group(self.MEMBER, guild.id,
-                                               group_class=MemberGroup)()
+        """Get data for all members.
 
-        return self._snowflake_dict(dict_)
+        If :code:`guild` is specified, only the data for the members of that
+        guild will be returned. As such, the dict will map
+        :code:`MEMBER_ID -> data`. Otherwise, the dict maps
+        :code:`GUILD_ID -> MEMBER_ID -> data`.
+
+        Note
+        ----
+        The return value of this method will include registered defaults for
+        values which have not yet been set.
+
+        Parameters
+        ----------
+        guild : `discord.Guild`, optional
+            The guild to get the member data from. Can be omitted if data
+            from every member of all guilds is desired.
+
+        Returns
+        -------
+        dict
+            A dictionary of all member data from the given scope.
+
+        """
+        ret = {}
+        if guild is None:
+            group = self._get_base_group(self.MEMBER)
+            dict_ = await group()
+            for guild_id, guild_data in dict_.items():
+                ret[int(guild_id)] = self._all_members_from_guild(
+                    group, guild_data)
+        else:
+            group = self._get_base_group(self.MEMBER, guild.id)
+            guild_data = await group()
+            ret = self._all_members_from_guild(group, guild_data)
+        return ret
