@@ -234,7 +234,7 @@ async def test_get_dynamic_attr(config):
 async def test_membergroup_allguilds(config, empty_member):
     await config.member(empty_member).foo.set(False)
 
-    all_servers = await config.member(empty_member).all_guilds()
+    all_servers = await config.all_members()
     assert str(empty_member.guild.id) in all_servers
 
 
@@ -242,7 +242,7 @@ async def test_membergroup_allguilds(config, empty_member):
 async def test_membergroup_allmembers(config, empty_member):
     await config.member(empty_member).foo.set(False)
 
-    all_members = await config.member(empty_member).all_from_kind()
+    all_members = await config.all_members(empty_member.guild)
     assert str(empty_member.id) in all_members
 
 
@@ -291,11 +291,11 @@ async def test_member_clear_all(config, member_factory):
         server_ids.append(member.guild.id)
 
     member = member_factory.get()
-    assert len(await config.member(member).all_guilds()) == len(server_ids)
+    assert len(await config.all_members()) == len(server_ids)
 
-    await config.member(member).clear_all()
+    await config.clear_all_members()
 
-    assert len(await config.member(member).all_guilds()) == 0
+    assert len(await config.all_members()) == 0
 
 
 # Get All testing
@@ -309,8 +309,7 @@ async def test_user_get_all_from_kind(config, user_factory):
         user = user_factory.get()
         await config.user(user).foo.set(True)
 
-    user = user_factory.get()
-    all_data = await config.user(user).all_from_kind()
+    all_data = await config.all_users()
 
     assert len(all_data) == 5
 

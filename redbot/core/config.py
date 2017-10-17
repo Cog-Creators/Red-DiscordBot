@@ -845,7 +845,6 @@ class Config:
             A coroutine which, when awaited, clears all specified member data.
 
         """
-        scopes = [self.MEMBER]
         if guild is not None:
-            scopes.append(guild.id)
-        return self._clear_scope(*scopes)
+            return self._clear_scope(self.MEMBER, guild.id)
+        return self._clear_scope(self.MEMBER)
