@@ -525,6 +525,10 @@ class Config:
             to_add = self._get_defaults_dict(k, v)
             self._update_defaults(to_add, self._defaults[key])
 
+    def _snowflake_dict(self, dict_: dict):
+        """Get a copy of the dict with the keys casted to ints."""
+        return {int(key): value for key, value in dict_.items()}
+
     def register_global(self, **kwargs):
         """
         Registers default values for attributes you wish to store in :py:class:`.Config` at a global level.
@@ -648,3 +652,34 @@ class Config:
         return self._get_base_group(self.MEMBER, member.guild.id, member.id,
                                     group_class=MemberGroup)
 
+    def all_globals(self) -> dict:
+        return self._get_base_group(self.GLOBAL)()
+
+    async def all_guilds(self) -> dict:
+        dict_ = await self._get_base_group(self.GUILD)()
+        return self._snowflake_dict(dict_)
+
+    async def all_channels(self) -> dict:
+        dict_ = await self._get_base_group(self.CHANNEL)()
+        return self._snowflake_dict(dict_)
+
+    async def all_roles(self) -> dict:
+        dict_ = await self._get_base_group(self.ROLE)()
+        return self._snowflake_dict(dict_)
+
+    async def all_users(self) -> dict:
+        dict_ = await self._get_base_group(self.USER)()
+        return self._snowflake_dict(dict_)
+
+    async def all_members(self, guild: discord.Guild=None) -> dict:
+        identifiers = [self.MEMBER]
+        if guild is None:
+            dict_ = await self._get_base_group(self.MEMBER,
+                                               group_class=MemberGroup)()
+            dict_ = {guild_id: self._snowflake_dict(data)
+                     for guild_id, data in dict_.items()}
+        else:
+            dict_ = await self._get_base_group(self.MEMBER, guild.id,
+                                               group_class=MemberGroup)()
+
+        return self._snowflake_dict(dict_)
