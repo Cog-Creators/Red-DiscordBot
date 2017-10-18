@@ -37,6 +37,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
     'sphinx.ext.viewcode',
+    'sphinx.ext.napoleon',
     'sphinxcontrib.asyncio'
 ]
 
@@ -83,6 +84,9 @@ pygments_style = 'sphinx'
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
+
+# Role which is assigned when you make a simple reference within backticks
+default_role = "any"
 
 
 # -- Options for HTML output ----------------------------------------------

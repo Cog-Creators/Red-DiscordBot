@@ -11,20 +11,18 @@ log = logging.getLogger("red.config")
 
 
 class Value:
-    """
-    A singular "value" of data.
+    """A singular "value" of data.
 
-    .. py:attribute:: identifiers
+    Attributes
+    ----------
+    identifiers : `tuple` of `str`
+        This attribute provides all the keys necessary to get a specific data
+        element from a json document.
+    default
+        The default value for the data element that `identifiers` points at.
+    spawner : `redbot.core.drivers.red_base.BaseDriver`
+        A reference to `Config.spawner`.
 
-        This attribute provides all the keys necessary to get a specific data element from a json document.
-
-    .. py:attribute:: default
-
-        The default value for the data element that :py:attr:`identifiers` points at.
-
-    .. py:attribute:: spawner
-
-        A reference to :py:attr:`.Config.spawner`.
     """
     def __init__(self, identifiers: Tuple[str], default_value, spawner):
         self._identifiers = identifiers
@@ -45,12 +43,15 @@ class Value:
         return ret
 
     def __call__(self, default=None):
-        """
-        Each :py:class:`Value` object is created by the :py:meth:`Group.__getattr__` method.
-        The "real" data of the :py:class:`Value` object is accessed by this method. It is a replacement for a
-        :python:`get()` method.
+        """Get the literal value of this data element.
 
-        For example::
+        Each `Value` object is created by the `Group.__getattr__` method. The
+        "real" data of the `Value` object is accessed by this method. It is a
+        replacement for a :code:`get()` method.
+
+        Example
+        -------
+        ::
 
             foo = await conf.guild(some_guild).foo()
 
@@ -64,26 +65,39 @@ class Value:
 
             This is now, for all intents and purposes, a coroutine.
 
-        :param default:
-            This argument acts as an override for the registered default provided by :py:attr:`default`. This argument
-            is ignored if its value is :python:`None`.
-        :type default: Optional[object]
-        :return:
+        Parameters
+        ----------
+        default : `object`, optional
+            This argument acts as an override for the registered default
+            provided by `default`. This argument is ignored if its
+            value is :code:`None`.
+
+        Returns
+        -------
+        types.coroutine
             A coroutine object that must be awaited.
+
         """
         return self._get(default)
 
     async def set(self, value):
-        """
-        Sets the value of the data element indicate by :py:attr:`identifiers`.
+        """Set the value of the data elements pointed to by `identifiers`.
 
-        For example::
+        Example
+        -------
+        ::
 
             # Sets global value "foo" to False
             await conf.foo.set(False)
 
             # Sets guild specific value of "bar" to True
             await conf.guild(some_guild).bar.set(True)
+
+        Parameters
+        ----------
+        value
+            The new literal value of this attribute.
+
         """
         driver = self.spawner.get_driver()
         await driver.set(self.identifiers, value)
@@ -91,16 +105,20 @@ class Value:
 
 class Group(Value):
     """
-    A "group" of data, inherits from :py:class:`.Value` which means that all of the attributes and methods available
-    in :py:class:`.Value` are also available when working with a :py:class:`.Group` object.
+    Represents a group of data, composed of more `Group` or `Value` objects.
 
-    .. py:attribute:: defaults
+    Inherits from `Value` which means that all of the attributes and methods
+    available in `Value` are also available when working with a `Group` object.
 
-        A dictionary of registered default values for this :py:class:`Group`.
+    Attributes
+    ----------
+    defaults : `dict`
+        All registered default values for this Group.
+    force_registration : `bool`
+        Same as `Config.force_registration`.
+    spawner : `redbot.core.drivers.red_base.BaseDriver`
+        A reference to `Config.spawner`.
 
-    .. py:attribute:: force_registration
-
-        See :py:attr:`.Config.force_registration`.
     """
     def __init__(self, identifiers: Tuple[str],
                  defaults: dict,
@@ -118,18 +136,28 @@ class Group(Value):
 
     # noinspection PyTypeChecker
     def __getattr__(self, item: str) -> Union["Group", Value]:
-        """
-        Takes in the next accessible item.
+        """Get an attribute of this group.
+        
+        This special method is called whenever dot notation is used on this
+        object.
 
-         1. If it's found to be a group of data we return another :py:class:`Group` object.
-         2. If it's found to be a data value we return a :py:class:`.Value` object.
-         3. If it is not found and :py:attr:`force_registration` is :python:`True` then we raise
-            :py:exc:`AttributeError`.
-         4. Otherwise return a :py:class:`.Value` object.
+        Parameters
+        ----------
+        item : str
+            The name of the attribute being accessed.
+    
+        Returns
+        -------
+        `Group` or `Value`
+            A child value of this Group. This, of course, can be another
+            `Group`, due to Config's composite pattern.
+            
+        Raises
+        ------
+        AttributeError
+            If the attribute has not been registered and `force_registration`
+            is set to :code:`True`.
 
-        :param str item:
-            The name of the item a cog is attempting to access through normal Python attribute
-            access.
         """
         is_group = self.is_group(item)
         is_value = not is_group and self.is_value(item)
@@ -170,21 +198,27 @@ class Group(Value):
         return super_group
 
     def is_group(self, item: str) -> bool:
-        """
-        A helper method for :py:meth:`__getattr__`. Most developers will have no need to use this.
+        """A helper method for `__getattr__`. Most developers will have no need
+        to use this.
 
-        :param str item:
-            See :py:meth:`__getattr__`.
+        Parameters
+        ----------
+        item : str
+            See `__getattr__`.
+
         """
         default = self._defaults.get(item)
         return isinstance(default, dict)
 
     def is_value(self, item: str) -> bool:
-        """
-        A helper method for :py:meth:`__getattr__`. Most developers will have no need to use this.
+        """A helper method for `__getattr__`. Most developers will have no need
+        to use this.
 
-        :param str item:
-            See :py:meth:`__getattr__`.
+        Parameters
+        ----------
+        item : str
+            See `__getattr__`.
+
         """
         try:
             default = self._defaults[item]
@@ -194,14 +228,18 @@ class Group(Value):
         return not isinstance(default, dict)
 
     def get_attr(self, item: str, default=None, resolve=True):
-        """
-        This is available to use as an alternative to using normal Python attribute access. It is required if you find
-        a need for dynamic attribute access.
+        """Manually get an attribute of this Group.
 
-        .. note::
+        This is available to use as an alternative to using normal Python
+        attribute access. It is required if you find a need for dynamic
+        attribute access.
 
-            Use of this method should be avoided wherever possible.
+        Note
+        ----
+        Use of this method should be avoided wherever possible.
 
+        Example
+        -------
         A possible use case::
 
             @commands.command()
@@ -211,16 +249,24 @@ class Group(Value):
                 # Where the value of item is the name of the data field in Config
                 await ctx.send(await self.conf.user(user).get_attr(item))
 
-        :param str item:
-            The name of the data field in :py:class:`.Config`.
-        :param default:
-            This is an optional override to the registered default for this item.
-        :param resolve:
-            If this is :code:`True` this function will return a coroutine that resolves to a "real" data value,
-            if :code:`False` this function will return an instance of :py:class:`Group` or :py:class:`Value`
-            depending on the type of the "real" data value.
-        :rtype:
-            Coroutine or Value
+        Parameters
+        ----------
+        item : str
+            The name of the data field in `Config`.
+        default
+            This is an optional override to the registered default for this
+            item.
+        resolve : bool
+            If this is :code:`True` this function will return a coroutine that
+            resolves to a "real" data value when awaited. If :code:`False`,
+            this method acts the same as `__getattr__`.
+        
+        Returns
+        -------
+        `types.coroutine` or `Value` or `Group`
+            The attribute which was requested, its type depending on the value
+            of :code:`resolve`.
+
         """
         value = getattr(self, item)
         if resolve:
@@ -229,16 +275,18 @@ class Group(Value):
             return value
 
     async def all(self) -> dict:
-        """
-        This method allows you to get "all" of a particular group of data. It will return the dictionary of all data
-        for a particular Guild/Channel/Role/User/Member etc.
+        """Get a dictionary representation of this group's data.
 
-        .. note::
+        Note
+        ----
+        The return value of this method will include registered defaults for
+        values which have not yet been set.
 
-            Any values that have not been set from the registered defaults will have their default values
-            added to the dictionary that this method returns.
+        Returns
+        -------
+        dict
+            All of this Group's attributes, resolved as raw data values.
 
-        :rtype: dict
         """
         defaults = self.defaults
         defaults.update(await self())
@@ -252,28 +300,40 @@ class Group(Value):
         await super().set(value)
 
     async def set_attr(self, item: str, value):
-        """
-        Please see :py:meth:`get_attr` for more information.
+        """Set an attribute by its name.
+        
+        Similar to `get_attr` in the way it can be used to dynamically set
+        attributes by name.
 
-        .. note::
+        Note
+        ----
+        Use of this method should be avoided wherever possible.
+        
+        Parameters
+        ----------
+        item : str
+            The name of the attribute being set.
+        value
+            The raw data value to set the attribute as.
 
-            Use of this method should be avoided wherever possible.
         """
         value_obj = getattr(self, item)
         await value_obj.set(value)
 
     async def clear(self):
-        """
-        Wipes all data from the given Guild/Channel/Role/Member/User. If used on a global group, it will wipe all global
-        data.
+        """Wipe all data from this group.
+
+        If used on a global group, it will wipe all global data, but not
+        local data.
         """
         await self.set({})
 
 
 class MemberGroup(Group):
-    """
-    A specific group class for use with member data only. Inherits from :py:class:`.Group`. In this group data is
-    stored as :code:`GUILD_ID -> MEMBER_ID -> data`.
+    """A specific group class for use with member data only.
+    
+    Inherits from `Group`. In this group data is stored as
+    :code:`GUILD_ID -> MEMBER_ID -> data`.
     """
     @property
     def _super_group(self) -> Group:
@@ -297,8 +357,10 @@ class MemberGroup(Group):
 
 
 class Config:
-    """
-    You should always use :func:`get_conf` or :func:`get_core_conf` to initialize a Config object.
+    """Configuration manager for cogs and Red.
+
+    You should always use `get_conf` or to instantiate a Config object. Use
+    `get_core_conf` for Config used in the core package.
 
     .. important::
         Most config data should be accessed through its respective group method (e.g. :py:meth:`guild`)
@@ -307,27 +369,26 @@ class Config:
 
             await conf.foo()
 
-    .. py:attribute:: cog_name
+    Attributes
+    ----------
+    cog_name : `str`
+        The name of the cog that has requested a `Config` object.
+    unique_identifier : `int`
+        Unique identifier provided to differentiate cog data when name
+        conflicts occur.
+    spawner
+        A callable object that returns some driver that implements
+        `redbot.core.drivers.red_base.BaseDriver`.
+    force_registration : `bool`
+        Determines if Config should throw an error if a cog attempts to access
+        an attribute which has not been previously registered.
 
-        The name of the cog that has requested a :py:class:`.Config` object.
+        Note
+        ----
+        **You should use this.** By enabling force registration you give Config
+        the ability to alert you instantly if you've made a typo when
+        attempting to access data.
 
-    .. py:attribute:: unique_identifier
-
-        Unique identifier provided to differentiate cog data when name conflicts occur.
-
-    .. py:attribute:: spawner
-
-        A callable object that returns some driver that implements :py:class:`.drivers.red_base.BaseDriver`.
-
-    .. py:attribute:: force_registration
-
-        A boolean that determines if :py:class:`.Config` should throw an error if a cog attempts to access an attribute
-        which has not been previously registered.
-
-        .. note::
-
-            **You should use this.** By enabling force registration you give :py:class:`.Config` the ability to alert
-            you instantly if you've made a typo when attempting to access data.
     """
     GLOBAL = "GLOBAL"
     GUILD = "GUILD"
@@ -354,19 +415,26 @@ class Config:
     @classmethod
     def get_conf(cls, cog_instance, identifier: int,
                  force_registration=False):
-        """
-        Returns a Config instance based on a simplified set of initial
-        variables.
+        """Get a Config instance for your cog.
 
-        :param cog_instance:
-        :param identifier:
-            Any random integer, used to keep your data
-            distinct from any other cog with the same name.
-        :param force_registration:
-            Should config require registration
-            of data keys before allowing you to get/set values?
-        :return:
-            A new config object.
+        Parameters
+        ----------
+        cog_instance
+            This is an instance of your cog after it has been instantiated. If
+            you're calling this method from within your cog's :code:`__init__`,
+            this is just :code:`self`.
+        identifier : int
+            A (hard-coded) random integer, used to keep your data distinct from
+            any other cog with the same name.
+        force_registration : `bool`, optional
+            Should config require registration of data keys before allowing you
+            to get/set values? See `force_registration`.
+            
+        Returns
+        -------
+        Config
+            A new Config object.
+
         """
         cog_path_override = cog_data_path(cog_instance)
         cog_name = cog_path_override.stem
@@ -379,15 +447,14 @@ class Config:
 
     @classmethod
     def get_core_conf(cls, force_registration: bool=False):
-        """
-        All core modules that require a config instance should use this classmethod instead of
-        :py:meth:`get_conf`
+        """All core modules that require a config instance should use this
+        classmethod instead of `get_conf`.
 
-        :param int identifier:
-            See :py:meth:`get_conf`
-        :param force_registration:
-            See :py:attr:`force_registration`
-        :type force_registration: Optional[bool]
+        identifier : int
+            See `get_conf`.
+        force_registration : `bool`, optional
+            See `force_registration`.
+
         """
         driver_spawn = JSONDriver("Core", data_path_override=core_data_path())
         return cls(cog_name="Core", driver_spawn=driver_spawn,
@@ -395,11 +462,23 @@ class Config:
                    force_registration=force_registration)
 
     def __getattr__(self, item: str) -> Union[Group, Value]:
-        """
-        This is used to generate Value or Group objects for global
-            values.
-        :param item:
-        :return:
+        """Same as `group.__getattr__` except for global data.
+        
+        Parameters
+        ----------
+        item : str
+            The attribute you want to get.
+            
+        Returns
+        -------
+        `Group` or `Value`
+            The value for the attribute you want to retrieve
+            
+        Raises
+        ------
+        AttributeError
+            If there is no global attribute by the given name and
+            `force_registration` is set to :code:`True`.
         """
         global_group = self._get_base_group(self.GLOBAL)
         return getattr(global_group, item)
@@ -464,9 +543,11 @@ class Config:
             self._update_defaults(to_add, self._defaults[key])
 
     def register_global(self, **kwargs):
-        """
-        Registers default values for attributes you wish to store in :py:class:`.Config` at a global level.
+        """Register default values for attributes you wish to store in `Config`
+        at a global level.
 
+        Examples
+        --------
         You can register a single value or multiple values::
 
             conf.register_global(
@@ -500,37 +581,47 @@ class Config:
                 foo__bar=True,
                 foo__baz=False
             )
+
         """
         self._register_default(self.GLOBAL, **kwargs)
 
     def register_guild(self, **kwargs):
-        """
-        Registers default values on a per-guild level. See :py:meth:`register_global` for more details.
+        """Register default values on a per-guild level.
+        
+        See :py:meth:`register_global` for more details.
         """
         self._register_default(self.GUILD, **kwargs)
 
     def register_channel(self, **kwargs):
-        """
-        Registers default values on a per-channel level. See :py:meth:`register_global` for more details.
+        """Register default values on a per-channel level.
+
+        See `register_global` for more details.
         """
         # We may need to add a voice channel category later
         self._register_default(self.CHANNEL, **kwargs)
 
     def register_role(self, **kwargs):
-        """
-        Registers default values on a per-role level. See :py:meth:`register_global` for more details.
+        """Registers default values on a per-role level.
+
+        See `register_global` for more details.
         """
         self._register_default(self.ROLE, **kwargs)
 
     def register_user(self, **kwargs):
-        """
-        Registers default values on a per-user level (i.e. server-independent). See :py:meth:`register_global` for more details.
+        """Registers default values on a per-user level.
+        
+        This means that each user's data is guild-independent.
+        
+        See `register_global` for more details.
         """
         self._register_default(self.USER, **kwargs)
 
     def register_member(self, **kwargs):
-        """
-        Registers default values on a per-member level (i.e. server-dependent). See :py:meth:`register_global` for more details.
+        """Registers default values on a per-member level.
+        
+        This means that each user's data is guild-dependent.
+
+        See `register_global` for more details.
         """
         self._register_default(self.MEMBER, **kwargs)
 
@@ -545,43 +636,59 @@ class Config:
         )
 
     def guild(self, guild: discord.Guild) -> Group:
-        """
-        Returns a :py:class:`.Group` for the given guild.
+        """Returns a `Group` for the given guild.
 
-        :param discord.Guild guild: A discord.py guild object.
+        Parameters
+        ----------
+        guild : discord.Guild
+            A guild object.
+
         """
         return self._get_base_group(self.GUILD, guild.id)
 
     def channel(self, channel: discord.TextChannel) -> Group:
-        """
-        Returns a :py:class:`.Group` for the given channel. This does not currently support differences between
-        text and voice channels.
+        """Returns a `Group` for the given channel.
+        
+        This does not discriminate between text and voice channels.
 
-        :param discord.TextChannel channel: A discord.py text channel object.
+        Parameters
+        ----------
+        channel : `discord.abc.GuildChannel`
+            A channel object.
+
         """
         return self._get_base_group(self.CHANNEL, channel.id)
 
     def role(self, role: discord.Role) -> Group:
-        """
-        Returns a :py:class:`.Group` for the given role.
+        """Returns a `Group` for the given role.
 
-        :param discord.Role role: A discord.py role object.
+        Parameters
+        ----------
+        role : discord.Role
+            A role object.
+
         """
         return self._get_base_group(self.ROLE, role.id)
 
     def user(self, user: discord.User) -> Group:
-        """
-        Returns a :py:class:`.Group` for the given user.
+        """Returns a `Group` for the given user.
 
-        :param discord.User user: A discord.py user object.
+        Parameters
+        ----------
+        user : discord.User
+            A user object.
+
         """
         return self._get_base_group(self.USER, user.id)
 
     def member(self, member: discord.Member) -> MemberGroup:
-        """
-        Returns a :py:class:`.MemberGroup` for the given member.
+        """Returns a `Group` for the given member.
 
-        :param discord.Member member: A discord.py member object.
+        Parameters
+        ----------
+        member : discord.Member
+            A member object.
+
         """
         return self._get_base_group(self.MEMBER, member.guild.id, member.id,
                                     group_class=MemberGroup)

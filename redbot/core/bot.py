@@ -14,6 +14,14 @@ from . import Config, i18n, RedContext
 
 
 class RedBase(BotBase):
+    """Mixin for the main bot class.
+
+    This exists because `Red` inherits from `discord.AutoShardedClient`, which
+    is something other bot classes (namely selfbots) may not want to have as
+    a parent class.
+    
+    Selfbots should inherit from this mixin along with `discord.Client`.
+    """
     def __init__(self, cli_flags, bot_dir: Path=Path.cwd(), **kwargs):
         self._shutdown_mode = ExitCodes.CRITICAL
         self.db = Config.get_core_conf(force_registration=True)
@@ -168,11 +176,18 @@ class Red(RedBase, discord.AutoShardedClient):
     """
     You're welcome Caleb.
     """
-    async def shutdown(self, *, restart=False):
-        """Gracefully quits Red with exit code 0
+    async def shutdown(self, *, restart: bool=False):
+        """Gracefully quit Red.
+        
+        The program will exit with code :code:`0` by default.
 
-        If restart is True, the exit code will be 26 instead
-        Upon receiving that exit code, the launcher restarts Red"""
+        Parameters
+        ----------
+        restart : bool
+            If :code:`True`, the program will exit with code :code:`26`. If the
+            launcher sees this, it will attempt to restart the bot.
+
+        """
         if not restart:
             self._shutdown_mode = ExitCodes.SHUTDOWN
         else:
