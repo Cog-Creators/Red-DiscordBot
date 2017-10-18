@@ -6,14 +6,22 @@ from importlib.machinery import ModuleSpec
 from pathlib import Path
 
 import discord
-from discord.ext import commands
+from discord.ext.commands.bot import BotBase
 from discord.ext.commands import GroupMixin
 
 from .cog_manager import CogManager
 from . import Config, i18n, RedContext
 
 
-class Red(commands.Bot):
+class RedBase(BotBase):
+    """Mixin for the main bot class.
+
+    This exists because `Red` inherits from `discord.AutoShardedClient`, which
+    is something other bot classes (namely selfbots) may not want to have as
+    a parent class.
+    
+    Selfbots should inherit from this mixin along with `discord.Client`.
+    """
     def __init__(self, cli_flags, bot_dir: Path=Path.cwd(), **kwargs):
         self._shutdown_mode = ExitCodes.CRITICAL
         self.db = Config.get_core_conf(force_registration=True)
@@ -109,18 +117,6 @@ class Red(commands.Bot):
     async def get_context(self, message, *, cls=RedContext):
         return await super().get_context(message, cls=cls)
 
-    async def shutdown(self, *, restart=False):
-        """Gracefully quits Red with exit code 0
-
-        If restart is True, the exit code will be 26 instead
-        Upon receiving that exit code, the launcher restarts Red"""
-        if not restart:
-            self._shutdown_mode = ExitCodes.SHUTDOWN
-        else:
-            self._shutdown_mode = ExitCodes.RESTART
-
-        await self.logout()
-
     def list_packages(self):
         """Lists packages present in the cogs the folder"""
         return os.listdir("cogs")
@@ -197,6 +193,30 @@ class Red(commands.Bot):
             del lib
             del self.extensions[name]
             # del sys.modules[name]
+
+
+class Red(RedBase, discord.AutoShardedClient):
+    """
+    You're welcome Caleb.
+    """
+    async def shutdown(self, *, restart: bool=False):
+        """Gracefully quit Red.
+        
+        The program will exit with code :code:`0` by default.
+
+        Parameters
+        ----------
+        restart : bool
+            If :code:`True`, the program will exit with code :code:`26`. If the
+            launcher sees this, it will attempt to restart the bot.
+
+        """
+        if not restart:
+            self._shutdown_mode = ExitCodes.SHUTDOWN
+        else:
+            self._shutdown_mode = ExitCodes.RESTART
+
+        await self.logout()
 
 
 class ExitCodes(Enum):
