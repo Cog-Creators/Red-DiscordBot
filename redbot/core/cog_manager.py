@@ -221,7 +221,7 @@ class CogManager:
         Finds the names of all available modules to load.
         :return:
         """
-        paths = [await self.install_path()] + await self.core_paths()
+        paths = [await self.install_path()] + await self.paths()
         paths = [str(p) for p in paths]
 
         ret = []
