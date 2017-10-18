@@ -235,7 +235,7 @@ async def test_membergroup_allguilds(config, empty_member):
     await config.member(empty_member).foo.set(False)
 
     all_servers = await config.all_members()
-    assert str(empty_member.guild.id) in all_servers
+    assert empty_member.guild.id in all_servers
 
 
 @pytest.mark.asyncio
@@ -243,7 +243,7 @@ async def test_membergroup_allmembers(config, empty_member):
     await config.member(empty_member).foo.set(False)
 
     all_members = await config.all_members(empty_member.guild)
-    assert str(empty_member.id) in all_members
+    assert empty_member.id in all_members
 
 
 # Clearing testing
