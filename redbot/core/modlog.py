@@ -61,12 +61,13 @@ class Case:
 
     async def get_case_msg_content(self):
         """
-        Format a case message
+        Format a case message 
 
-        :return:
+        Returns
+        -------
+        discord.Embed
             A rich embed representing a case message
-        :rtype:
-            discord.Embed
+        
         """
         act_repr = await get_case_type_repr(self.action_type)
         act_name = await get_case_type_name(self.action_type)
@@ -125,8 +126,12 @@ class Case:
     def to_json(self) -> dict:
         """Transform the object to a dict
 
-        :return: The case in the form of a dict
-        :rtype: dict"""
+        Returns
+        -------
+        dict
+            The case in the form of a dict
+        
+        """
         data = {
             "case_number": self.case_number,
             "action_type": self.action_type,
@@ -147,15 +152,21 @@ class Case:
     async def from_json(cls, mod_channel: discord.TextChannel, bot: Red, data: dict):
         """Get a Case object from the provided information
 
-        :param discord.TextChannel mod_channel:
+        Parameters
+        ----------
+        mod_channel: discord.TextChannel
             The mod log channel for the guild
-        :param Red bot:
+        bot: Red
             The bot's instance. Needed to get the target user
-        :param dict data:
+        data: dict
             The JSON representation of the case to be gotten
-        :return:
+        
+        Returns
+        -------
+        Case
             The case object for the requested case
-        :rtype: Case"""
+        
+        """
         guild = mod_channel.guild
         message = await mod_channel.get_message(data["message"])
         user = await bot.get_user_info(data["user"])
@@ -177,13 +188,25 @@ async def get_case(case_number: int, guild: discord.Guild,
     """
     Gets the case with the associated case number
 
-    :param int case_number: The case number for the case to get
-    :param discord.Guild guild: The guild to get the case from
-    :param Red bot: The bot's instance
+    Parameters
+    ----------
+    case_number: int
+        The case number for the case to get
+    guild: discord.Guild
+        The guild to get the case from
+    bot: Red
+        The bot's instance
 
-    :return: The case associated with the case number
-    :rtype: Case
-    :raises RuntimeError: If there is no case for the specified number
+    Returns
+    -------
+    Case
+        The case associated with the case number
+    
+    Raises
+    ------
+    RuntimeError
+        If there is no case for the specified number
+
     """
     case = await _conf.guild(guild).cases.get_attr(str(case_number))
     if case is None:
@@ -198,11 +221,18 @@ async def get_all_cases(guild: discord.Guild, bot: Red) -> List[Case]:
     """
     Gets all cases for the specified guild
 
-    :param discord.Guild guild: The guild to get the cases from:
-    :param Red bot: The bot's instance
+    Parameters
+    ----------
+    guild: `discord.Guild`
+        The guild to get the cases from
+    bot: Red
+        The bot's instance
 
-    :return: A list of all cases for the guild
-    :rtype: list
+    Returns
+    -------
+    list
+        A list of all cases for the guild
+
     """
     cases = await _conf.guild(guild).get_attr("cases")
     case_numbers = list(cases.keys())
@@ -220,47 +250,38 @@ async def create_case(guild: discord.Guild, created_at: datetime, action_type: s
     """
     Creates a new case
 
-    :param guild:
+    Parameters
+    ----------
+    guild: `discord.Guild`
         The guild the action was taken in
-    :type guild:
-        discord.Guild
-    :param created_at:
+    created_at: datetime
         The time the action occurred at
-    :type created_at:
-        datetime
-    :param action_type:
+    action_type: str
         The type of action that was taken
-    :type action_type:
-        str
-    :param user:
+    user: `discord.User` or `discord.Member`
         The user target by the action
-    :type user:
-        discord.User or discord.Member
-    :param moderator:
+    moderator: `discord.Member`
         The moderator who took the action
-    :type moderator:
-        discord.Member
-    :param reason:
+    reason: str
         The reason the action was taken
-    :type reason:
-        str
-    :param until:
+    until: datetime
         The time the action is in effect until
-    :type until:
-        datetime
-    :param channel:
+    channel: `discord.TextChannel` or `discord.VoiceChannel`
         The channel the action was taken in
-    :type channel:
-        discord.TextChannel or discord.VoiceChannel
-    :return:
+    
+    Returns
+    -------
+    Case
         The newly created case
-    :rtype:
-        :py:class:`Case`
-    :raises RuntimeError:
+
+    Raises
+    ------
+    RuntimeError
         If:
             the action type is not registered OR
             the mod log channel doesn't exist OR
             case creation for the action type is disabled
+    
     """
     mod_channel = None
     if hasattr(guild, "owner"):  # Fairly arbitrary, but it doesn't really matter since we don't need the modlog channel in tests
@@ -294,18 +315,22 @@ async def edit_case(case_number: int, guild: discord.Guild, bot: Red,
     """
     Edits the specified case
 
-    :param int case_number:
+    Parameters
+    ----------
+    case_number: int
         The case to modify
-    :param discord.Guild guild:
+    guild: `discord.Guild`
         The guild to edit a case for
-    :param Red bot:
+    bot: Red
         The bot's instance
-    :param dict new_data:
+    new_data: dict
         The fields to edit
-    :return:
+    
+    Returns
+    -------
+    Case
         The edited case
-    :rtype:
-        :py:class:`Case`
+
     """
     case = await get_case(case_number, guild, bot)
     for item in list(new_data.keys()):
@@ -321,14 +346,16 @@ async def is_casetype(case_type: str) -> bool:
     """
     Checks if the specified casetype is registered or not
 
-    :param case_type:
+    Parameters
+    ----------
+    case_type: str
         The case type to check
-    :type case_type:
-        str
-    :return:
-        :code:`True` if the case type is registered, otherwise :code:`False`
-    :rtype:
-        bool
+    
+    Returns
+    -------
+    bool
+        `True` if the case type is registered, otherwise `False`
+
     """
     case_types = await _conf.casetypes()
     return case_type in case_types
@@ -338,10 +365,11 @@ async def get_all_casetypes() -> List[str]:
     """
     Get all currently registered case types
 
-    :return:
+    Returns
+    -------
+    list
         A list of case type names
-    :rtype:
-        list
+
     """
     casetypes = await _conf.get_attr("casetypes")
     return list(casetypes.keys())
@@ -351,16 +379,21 @@ async def register_casetype(new_type: dict) -> bool:
     """
     Registers a new case type
 
-    :param new_type:
+    Parameters
+    ----------
+    new_type: dict
         The new type to register
-    :type new_type:
-        dict
-    :return:
-        :code:`True` if registration was successful
-    :rtype:
-        bool
-    :raises RuntimeError:
+
+    Returns
+    -------
+    bool
+        `True` if registration was successful
+
+    Raises
+    ------
+    RuntimeError
         If the case type is already registered
+
     """
     case_name = new_type["name"]
     default_setting = new_type["default_setting"]
@@ -384,16 +417,21 @@ async def register_casetypes(new_types: List[dict]) -> bool:
     """
     Registers multiple case types
 
-    :param new_types:
+    Parameters
+    ----------
+    new_types: list
         The new types to register
-    :type new_types:
-        list
-    :return:
-        :code:`True` if all were registered successfully
-    :rtype:
-        bool
-    :raises RuntimeError:
+    
+    Returns
+    -------
+    bool
+        `True` if all were registered successfully
+    
+    Raises
+    ------
+    RuntimeError
         If one of the case types couldn't be registered
+    
     """
     for new_type in new_types:
         if not await is_casetype(new_type["name"]):
@@ -410,16 +448,21 @@ async def get_modlog_channel(guild: discord.Guild
     """
     Get the current modlog channel
 
-    :param guild:
+    Parameters
+    ----------
+    guild: `discord.Guild`
         The guild to get the modlog channel for
-    :type guild:
-        discord.Guild
-    :return:
+    
+    Returns
+    -------
+    `discord.TextChannel` or `None`
         The channel object representing the modlog channel
-    :rtype:
-        discord.TextChannel or None
-    :raises RuntimeError:
+
+    Raises
+    ------
+    RuntimeError
         If the modlog channel is not found
+
     """
     if hasattr(guild, "get_channel"):
         channel = guild.get_channel(await _conf.guild(guild).mod_log())
@@ -435,18 +478,18 @@ async def set_modlog_channel(guild: discord.Guild,
     """
     Changes the modlog channel
 
-    :param guild:
+    Parameters
+    ----------
+    guild: `discord.Guild`
         The guild to set a mod log channel for
-    :type guild:
-        discord.Guild
-    :param channel:
+    channel: `discord.TextChannel` or `None`
         The channel to be set as modlog channel
-    :type channel:
-        discord.TextChannel or None
-    :return:
-        :code:`True` if successful
-    :rtype:
-        bool
+    
+    Returns
+    -------
+    bool
+        `True` if successful
+
     """
     await _conf.guild(guild).mod_log.set(
         channel.id if hasattr(channel, "id") else None
@@ -458,18 +501,18 @@ async def toggle_case_type(case_type: str, guild: discord.Guild) -> bool:
     """
     Toggles the specified case type
 
-    :param case_type:
+    Parameters
+    ----------
+    case_type: str
         The case type to toggle
-    :type case_type:
-        str
-    :param guild:
+    guild: `discord.Guild`
         The guild to toggle case type for
-    :type guild:
-        discord.Guild
-    :return:
+
+    Returns
+    -------
+    bool
         The new setting for the specified case type
-    :rtype:
-        bool
+
     """
     new_setting = not await _conf.guild(guild).casetypes.get_attr(case_type)
     await _conf.guild(guild).casetypes.set_attr(case_type, new_setting)
@@ -480,20 +523,23 @@ async def get_case_type_status(case_type: str, guild: discord.Guild) -> bool:
     """
     Gets the status of the specified case type
 
-    :param case_type:
+    Parameters
+    ----------
+    case_type: str
         The case type to check
-    :type case_type:
-        str
-    :param guild:
+    guild: `discord.Guild`
         The guild to check the setting for
-    :type guild:
-        discord.Guild
-    :return:
+    
+    Returns
+    -------
+    bool
         The current setting for the specified case type
-    :rtype:
-        bool
-    :raises RuntimeError:
+
+    Raises
+    ------
+    RuntimeError
         If the specified case type is not registered
+    
     """
     if await is_casetype(case_type):
         default = await _conf.casetypes.get_attr(case_type)
@@ -506,14 +552,16 @@ async def get_case_type_repr(case_type: str) -> str:
     """
     Gets the image representation of a case type
 
-    :param case_type:
+    Parameters
+    ----------
+    case_type: str
         The case type to get the representation of
-    :type case_type:
-        str
-    :return:
+    
+    Returns
+    -------
+    str
         The case type's representation
-    :rtype:
-        str
+
     """
     return (await _conf.casetypes.get_attr(case_type)).get("image")
 
@@ -522,14 +570,16 @@ async def get_case_type_name(case_type: str) -> str:
     """
     Gets the name of the case type
 
-    :param case_type:
+    Parameters
+    ----------
+    case_type: str
         The case tpe to get the name of
-    :type case_type:
-        str
-    :return:
+    
+    Returns
+    -------
+    str
         The case type's name
-    :rtype:
-        str
+
     """
     return (await _conf.casetypes.get_attr(case_type)).get("case_str")
 
@@ -538,14 +588,16 @@ async def reset_cases(guild: discord.Guild) -> bool:
     """
     Wipes all modlog cases for the specified guild
 
-    :param guild:
+    Parameters
+    ----------
+    guild: `discord.Guild`
         The guild to reset cases for
-    :type guild:
-        discord.Guild
-    :return:
-        :code:`True` if successful
-    :rtype:
-        bool
+    
+    Returns
+    -------
+    bool
+        `True` if successful
+
     """
     await _conf.guild(guild).cases.set({})
     return True
