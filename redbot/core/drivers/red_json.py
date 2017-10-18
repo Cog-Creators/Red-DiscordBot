@@ -5,6 +5,8 @@ from ..json_io import JsonIO
 
 from .red_base import BaseDriver
 
+__all__ = ["JSON"]
+
 
 class JSON(BaseDriver):
     def __init__(self, cog_name, *, data_path_override: Path=None,
