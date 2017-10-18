@@ -2,6 +2,10 @@ import pymongo as m
 from .red_base import BaseDriver
 
 
+__all__ = ["Mongo", "RedMongoException", "MultipleMatches",
+           "MissingCollection"]
+
+
 class RedMongoException(Exception):
     """Base Red Mongo Exception class"""
     pass
