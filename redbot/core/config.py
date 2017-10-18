@@ -104,7 +104,8 @@ class Value:
 
 
 class Group(Value):
-    """Represents a "group" of data, composed of more Groups or `Value`s.
+    """
+    Represents a group of data, composed of more `Group` or `Value` objects.
 
     Inherits from `Value` which means that all of the attributes and methods
     available in `Value` are also available when working with a `Group` object.
