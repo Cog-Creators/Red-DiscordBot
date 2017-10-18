@@ -137,7 +137,7 @@ class Group(Value):
     # noinspection PyTypeChecker
     def __getattr__(self, item: str) -> Union["Group", Value]:
         """Get an attribute of this group.
-        
+
         This special method is called whenever dot notation is used on this
         object.
 
@@ -145,13 +145,13 @@ class Group(Value):
         ----------
         item : str
             The name of the attribute being accessed.
-    
+
         Returns
         -------
         `Group` or `Value`
             A child value of this Group. This, of course, can be another
             `Group`, due to Config's composite pattern.
-            
+
         Raises
         ------
         AttributeError
@@ -260,7 +260,7 @@ class Group(Value):
             If this is :code:`True` this function will return a coroutine that
             resolves to a "real" data value when awaited. If :code:`False`,
             this method acts the same as `__getattr__`.
-        
+
         Returns
         -------
         `types.coroutine` or `Value` or `Group`
@@ -301,14 +301,14 @@ class Group(Value):
 
     async def set_attr(self, item: str, value):
         """Set an attribute by its name.
-        
+
         Similar to `get_attr` in the way it can be used to dynamically set
         attributes by name.
 
         Note
         ----
         Use of this method should be avoided wherever possible.
-        
+
         Parameters
         ----------
         item : str
@@ -331,7 +331,7 @@ class Group(Value):
 
 class MemberGroup(Group):
     """A specific group class for use with member data only.
-    
+
     Inherits from `Group`. In this group data is stored as
     :code:`GUILD_ID -> MEMBER_ID -> data`.
     """
@@ -429,7 +429,7 @@ class Config:
         force_registration : `bool`, optional
             Should config require registration of data keys before allowing you
             to get/set values? See `force_registration`.
-            
+
         Returns
         -------
         Config
@@ -447,11 +447,13 @@ class Config:
 
     @classmethod
     def get_core_conf(cls, force_registration: bool=False):
-        """All core modules that require a config instance should use this
+        """Get a Config instance for a core module.
+
+        All core modules that require a config instance should use this
         classmethod instead of `get_conf`.
 
-        identifier : int
-            See `get_conf`.
+        Parameters
+        ----------
         force_registration : `bool`, optional
             See `force_registration`.
 
@@ -463,17 +465,17 @@ class Config:
 
     def __getattr__(self, item: str) -> Union[Group, Value]:
         """Same as `group.__getattr__` except for global data.
-        
+
         Parameters
         ----------
         item : str
             The attribute you want to get.
-            
+
         Returns
         -------
         `Group` or `Value`
             The value for the attribute you want to retrieve
-            
+
         Raises
         ------
         AttributeError
@@ -587,7 +589,7 @@ class Config:
 
     def register_guild(self, **kwargs):
         """Register default values on a per-guild level.
-        
+
         See :py:meth:`register_global` for more details.
         """
         self._register_default(self.GUILD, **kwargs)
@@ -609,16 +611,16 @@ class Config:
 
     def register_user(self, **kwargs):
         """Registers default values on a per-user level.
-        
+
         This means that each user's data is guild-independent.
-        
+
         See `register_global` for more details.
         """
         self._register_default(self.USER, **kwargs)
 
     def register_member(self, **kwargs):
         """Registers default values on a per-member level.
-        
+
         This means that each user's data is guild-dependent.
 
         See `register_global` for more details.
@@ -648,7 +650,7 @@ class Config:
 
     def channel(self, channel: discord.TextChannel) -> Group:
         """Returns a `Group` for the given channel.
-        
+
         This does not discriminate between text and voice channels.
 
         Parameters
@@ -713,7 +715,7 @@ class Config:
             ret[int(k)] = data
         return ret
 
-    def all_guilds(self):
+    async def all_guilds(self) -> dict:
         """Get all guild data as a dict.
 
         Note
@@ -723,14 +725,14 @@ class Config:
 
         Returns
         -------
-        types.coroutine
-            A coroutine object which must be awaited to yield a `dict` mapping
+        dict
+            A dictionary in the form {`int`: `dict`} mapping
             :code:`GUILD_ID -> data`.
 
         """
-        return self._all_from_scope(self.GUILD)
+        return await self._all_from_scope(self.GUILD)
 
-    def all_channels(self):
+    async def all_channels(self) -> dict:
         """Get all channel data as a dict.
 
         Note
@@ -740,14 +742,14 @@ class Config:
 
         Returns
         -------
-        types.coroutine
-            A coroutine object which must be awaited to yield a `dict` mapping
+        dict
+            A dictionary in the form {`int`: `dict`} mapping
             :code:`CHANNEL_ID -> data`.
 
         """
-        return self._all_from_scope(self.CHANNEL)
+        return await self._all_from_scope(self.CHANNEL)
 
-    def all_roles(self):
+    async def all_roles(self) -> dict:
         """Get all role data as a dict.
 
         Note
@@ -757,14 +759,14 @@ class Config:
 
         Returns
         -------
-        types.coroutine
-            A coroutine object which must be awaited to yield a `dict` mapping
+        dict
+            A dictionary in the form {`int`: `dict`} mapping
             :code:`ROLE_ID -> data`.
 
         """
-        return self._all_from_scope(self.ROLE)
+        return await self._all_from_scope(self.ROLE)
 
-    def all_users(self):
+    async def all_users(self) -> dict:
         """Get all user data as a dict.
 
         Note
@@ -774,12 +776,12 @@ class Config:
 
         Returns
         -------
-        types.coroutine
-            A coroutine object which must be awaited to yield a `dict` mapping
+        dict
+            A dictionary in the form {`int`: `dict`} mapping
             :code:`USER_ID -> data`.
 
         """
-        return self._all_from_scope(self.USER)
+        return await self._all_from_scope(self.USER)
 
     def _all_members_from_guild(self, group: Group, guild_data: dict) -> dict:
         ret = {}
@@ -811,7 +813,7 @@ class Config:
         Returns
         -------
         dict
-            A dictionary of all member data from the given scope.
+            A dictionary of all specified member data.
 
         """
         ret = {}
@@ -829,7 +831,7 @@ class Config:
 
     async def _clear_scope(self, *scopes: str):
         """Clear all data in a particular scope.
-        
+
         The only situation where a second scope should be passed in is if
         member data from a specific guild is being cleared.
 
@@ -853,7 +855,7 @@ class Config:
             group = self._get_base_group(*scopes)
         await group.set({})
 
-    def clear_all(self):
+    async def clear_all(self):
         """Clear all data from this Config instance.
 
         This resets all data to its registered defaults.
@@ -862,80 +864,45 @@ class Config:
 
             This cannot be undone.
 
-        Returns
-        -------
-        types.coroutine
-            A coroutine which, when awaited, clears all data.
-
         """
-        return self._clear_scope()
+        await self._clear_scope()
 
-    def clear_all_globals(self):
+    async def clear_all_globals(self):
         """Clear all global data.
 
         This resets all global data to its registered defaults.
-
-        Returns
-        -------
-        types.coroutine
-            A coroutine which, when awaited, clears all global data.
-
         """
-        return self._clear_scope(self.GLOBAL)
+        await self._clear_scope(self.GLOBAL)
 
-    def clear_all_guilds(self):
+    async def clear_all_guilds(self):
         """Clear all guild data.
 
         This resets all guild data to its registered defaults.
-
-        Returns
-        -------
-        types.coroutine
-            A coroutine which, when awaited, clears all guild data.
-
         """
-        return self._clear_scope(self.GUILD)
+        await self._clear_scope(self.GUILD)
 
-    def clear_all_channels(self):
+    async def clear_all_channels(self):
         """Clear all channel data.
 
         This resets all channel data to its registered defaults.
-
-        Returns
-        -------
-        types.coroutine
-            A coroutine which, when awaited, clears all channel data.
-
         """
-        return self._clear_scope(self.CHANNEL)
+        await self._clear_scope(self.CHANNEL)
 
-    def clear_all_roles(self):
+    async def clear_all_roles(self):
         """Clear all role data.
 
         This resets all role data to its registered defaults.
-
-        Returns
-        -------
-        types.coroutine
-            A coroutine which, when awaited, clears all role data.
-
         """
-        return self._clear_scope(self.ROLE)
+        await self._clear_scope(self.ROLE)
 
-    def clear_all_users(self):
+    async def clear_all_users(self):
         """Clear all user data.
 
         This resets all user data to its registered defaults.
-
-        Returns
-        -------
-        types.coroutine
-            A coroutine which, when awaited, clears all user data.
-
         """
-        return self._clear_scope(self.USER)
+        await self._clear_scope(self.USER)
 
-    def clear_all_members(self, guild: discord.Guild=None):
+    async def clear_all_members(self, guild: discord.Guild=None):
         """Clear all member data.
 
         This resets all specified member data to its registered defaults.
@@ -946,12 +913,8 @@ class Config:
             The guild to clear member data from. Omit to clear member data from
             all guilds.
 
-        Returns
-        -------
-        types.coroutine
-            A coroutine which, when awaited, clears all specified member data.
-
         """
         if guild is not None:
-            return self._clear_scope(self.MEMBER, guild.id)
-        return self._clear_scope(self.MEMBER)
+            await self._clear_scope(self.MEMBER, guild.id)
+            return
+        await self._clear_scope(self.MEMBER)
