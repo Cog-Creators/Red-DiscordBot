@@ -3,19 +3,18 @@ import logging
 import pkg_resources
 import traceback
 
+
 import discord
 from .sentry_setup import should_log
 from discord.ext import commands
 
-
-from . import data_manager
+from .data_manager import storage_type
 from .utils.chat_formatting import inline, bordered
 from .core_commands import find_spec
 from colorama import Fore, Style
 
 log = logging.getLogger("red")
 sentry_log = logging.getLogger("red.sentry")
-
 
 INTRO = """
 ______         _           ______ _                       _  ______       _   
@@ -83,15 +82,20 @@ def init_events(bot, cli_flags):
 
         INFO2 = []
         sentry = await bot.db.enable_sentry()
+        shards = bot.shard_count
         if sentry:
             INFO2.append("√ Report Errors")
         else:
             INFO2.append("X Report Errors")
 
-        if data_manager.basic_config['STORAGE_TYPE'] == "JSON":
+        if storage_type() == "JSON":
             INFO2.append("X MongoDB")
         else:
             INFO2.append("√ MongoDB")
+        if shards < 2:
+            INFO2.append("{} Shard".format(shards))
+        else:
+            INFO2.append("{} Shards".format(shards))
 
         print(Fore.RED + INTRO)
         print(Style.RESET_ALL)
