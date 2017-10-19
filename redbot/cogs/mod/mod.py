@@ -51,7 +51,7 @@ class Mod:
         self.settings.register_channel(**self.default_channel_settings)
         self.settings.register_member(**self.default_member_settings)
         self.settings.register_user(**self.default_user_settings)
-        self.current_softban = None
+        self.current_softban = {}
         self.ban_type = None
         self.cache = defaultdict(lambda: deque(maxlen=3))
 
@@ -434,6 +434,7 @@ class Mod:
             invite = ""
 
         if can_ban:
+            self.current_softban[str(guild.id)] = user
             try:  # We don't want blocked DMs preventing us from banning
                 msg = await user.send(
                     _("You have been banned and "
@@ -1128,56 +1129,130 @@ class Mod:
             deleted = await self.check_mention_spam(message)
 
     async def on_member_ban(self, guild: discord.Guild, member: discord.Member):
+        if str(guild.id) in self.current_softban and \
+                self.current_softban[str(guild.id)] == member:
+            return  # softban in progress, so a case will be created
+        try:
+            mod_ch = await modlog.get_modlog_channel(guild)
+        except RuntimeError:
+            return  # No modlog channel so no point in continuing
         audit_case = None
-        async for entry in guild.audit_logs(action=discord.AuditLogAction.ban):
-            if entry.target == member:
-                audit_case = entry
-                break
-
-        if audit_case:
-            mod = audit_case.user
-            reason = audit_case.reason
-            cases = await modlog.get_all_cases(guild, self.bot)
-            for case in sorted(cases, key=lambda x: x.case_number, reverse=True):
-                if case.moderator == mod and case.user == member\
-                        and case.action_type in ["ban", "softban", "hackban"]:
-                    if case.action_type == "softban":
-                        self.current_softban = member
+        permissions = guild.me.guild_permissions
+        modlog_cases = await modlog.get_all_cases(guild, self.bot)
+        if permissions.view_audit_logs:
+            async for entry in guild.audit_logs(action=discord.AuditLogAction.ban):
+                if entry.target == member:
+                    audit_case = entry
                     break
-            else:  # no ban, softban, or hackban case with the mod and user combo
-                try:
-                    await modlog.create_case(guild, audit_case.created_at, "ban",
-                                            member, mod, reason if reason else None)
-                except RuntimeError as e:
-                    print(e)
-        else:
-            return
+
+            if audit_case:
+                mod = audit_case.user
+                reason = audit_case.reason
+                for case in sorted(modlog_cases, key=lambda x: x.case_number, reverse=True):
+                    if case.moderator == mod and case.user == member\
+                            and case.action_type in ["ban", "softban", "hackban"]:
+                        if case.action_type == "softban":
+                            self.current_softban = member
+                        break
+                else:  # no ban, softban, or hackban case with the mod and user combo
+                    try:
+                        await modlog.create_case(guild, audit_case.created_at, "ban",
+                                                member, mod, reason if reason else None)
+                    except RuntimeError as e:
+                        print(e)
+            else:
+                return
+        else:  # No permissions to view audit logs, so message the guild owner
+            owner = guild.owner
+            try:
+                await owner.send(
+                    "Hi, I noticed that someone in your server "
+                    "(the server named {}) banned {}#{} (user ID {}). "
+                    "However, I don't have permissions to view audit logs, "
+                    "so I could not determine if a mod log case was created "
+                    "for that ban, meaning I could not create a case in "
+                    "the mod log. If you want me to be able to add cases "
+                    "to the mod log for bans done manually, I need the "
+                    "`View Audit Logs` permission.".format(
+                        guild.name,
+                        member.name,
+                        member.discriminator,
+                        member.id
+                    )
+                )
+            except discord.Forbidden:
+                log.warning(
+                    "I attempted to inform a guild owner of a lack of the "
+                    "'View Audit Log' permission but I am unable to send "
+                    "the guild owner the message!"
+                )
+            except discord.HTTPException:
+                log.warning(
+                    "Something else went wrong while attempting to "
+                    "message a guild owner."
+                )
 
     async def on_member_unban(self, guild: discord.Guild, user: discord.User):
-        if self.current_softban and self.current_softban.id == user.id:
-            return
+        if str(guild.id) in self.current_softban and \
+                self.current_softban[str(guild.id)] == user:
+            return  # softban in progress, so a case will be created
+        try:
+            mod_ch = await modlog.get_modlog_channel(guild)
+        except RuntimeError:
+            return  # No modlog channel so no point in continuing
         audit_case = None
-        async for entry in guild.audit_logs(action=discord.AuditLogAction.unban):
-            if entry.target == user:
-                audit_case = entry
-                break
-        else:
-            return
-        if audit_case:
-            mod = audit_case.user
-            reason = audit_case.reason
-
-            cases = await modlog.get_all_cases(guild, self.bot)
-            for case in sorted(cases, key=lambda x: x.case_number, reverse=True):
-                if case.moderator == mod and case.user == user\
-                        and case.action_type == "unban": 
+        permissions = guild.me.guild_permissions
+        if permissions.view_audit_logs:
+            async for entry in guild.audit_logs(action=discord.AuditLogAction.unban):
+                if entry.target == user:
+                    audit_case = entry
                     break
             else:
-                try:
-                    await modlog.create_case(guild, audit_case.created_at, "unban",
-                                            user, mod, reason if reason else None)
-                except RuntimeError as e:
-                    print(e)
+                return
+            if audit_case:
+                mod = audit_case.user
+                reason = audit_case.reason
+
+                cases = await modlog.get_all_cases(guild, self.bot)
+                for case in sorted(cases, key=lambda x: x.case_number, reverse=True):
+                    if case.moderator == mod and case.user == user\
+                            and case.action_type == "unban": 
+                        break
+                else:
+                    try:
+                        await modlog.create_case(guild, audit_case.created_at, "unban",
+                                                 user, mod, reason if reason else None)
+                    except RuntimeError as e:
+                        print(e)
+        else:  # No permissions to view audit logs, so message the guild owner
+            owner = guild.owner
+            try:
+                await owner.send(
+                    "Hi, I noticed that someone in your server "
+                    "(the server named {}) unbanned {}#{} (user ID {}). "
+                    "However, I don't have permissions to view audit logs, "
+                    "so I could not determine if a mod log case was created "
+                    "for that unban, meaning I could not create a case in "
+                    "the mod log. If you want me to be able to add cases "
+                    "to the mod log for unbans done manually, I need the "
+                    "`View Audit Logs` permission.".format(
+                        guild.name,
+                        member.name,
+                        member.discriminator,
+                        member.id
+                    )
+                )
+            except discord.Forbidden:
+                log.warning(
+                    "I attempted to inform a guild owner of a lack of the "
+                    "'View Audit Log' permission but I am unable to send "
+                    "the guild owner the message!"
+                )
+            except discord.HTTPException:
+                log.warning(
+                    "Something else went wrong while attempting to "
+                    "message a guild owner."
+                )
 
     async def on_member_update(self, before, after):
         if before.name != after.name:
