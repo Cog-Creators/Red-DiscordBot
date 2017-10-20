@@ -20,6 +20,7 @@ REPO_NONEX = 0x1
 REPO_CLONE = 0x2
 REPO_SAME = 0x4
 REPOS_LIST = "https://twentysix26.github.io/Red-Docs/red_cog_approved_repos/"
+WINDOWS_OS = os.name == 'nt'
 
 DISCLAIMER = ("You're about to add a 3rd party repository. The creator of Red"
               " and its community have no responsibility for any potential "
@@ -98,6 +99,15 @@ class Downloader:
             await self.bot.say("That repository link doesn't seem to be "
                                "valid.")
             del self.repos[repo_name]
+            return
+        except FileNotFoundError:
+            error_message = ("I couldn't find git. The downloader needs it "
+                             "for it to properly work.")
+            if WINDOWS_OS:
+                error_message += ("\nIf you just installed it you may need "
+                                  "a reboot for it to be seen into the PATH "
+                                  "environment variable.")
+            await self.bot.say(error_message)
             return
         self.populate_list(repo_name)
         self.save_repos()
