@@ -134,18 +134,21 @@ Notice a few things in the above examples:
     * :py:meth:`Config.role` which takes :py:class:`discord.Role`.
     * :py:meth:`Config.channel` which takes :py:class:`discord.TextChannel`.
 
-If you need to wipe data from the config, you want to look at :py:meth:`Group.clear` or :py:meth:`Group.clear_all`.
+If you need to wipe data from the config, you want to look at :py:meth:`Group.clear`, or :py:meth:`Config.clear_all`
+and similar methods, such as :py:meth:`Config.clear_all_guilds`.
 
-Which one you should use depends on what you want to do. If you're looking to clear data for a
-single guild/member/channel/role/user, you want to use :py:meth:`Group.clear` as that will clear the
-data only for the specified thing (though, if used on global, it will reset all of the data
-for keys registered with :py:meth:`Config.register_global`). If using :py:meth:`Group.clear_all`, it will reset
-all data for all guilds/members/channels/roles/users (or if used on a global, it will reset
-everything for all kinds).
+Which one you should use depends on what you want to do.
 
-.. note::
+If you're looking to clear data for a single guild/member/channel/role/user,
+you want to use :py:meth:`Group.clear` as that will clear the data only for the
+specified thing.
 
-    Members have a special clearing methods, see :py:class:`MemberGroup`
+If using :py:meth:`Config.clear_all`, it will reset all data everywhere. 
+
+There are other methods provided to reset data from a particular scope. For
+example, :py:meth:`Config.clear_all_guilds` resets all guild data. For member
+data, you can clear on both a per-guild and guild-independent basis, see
+:py:meth:`Config.clear_all_members` for more info.
 
 *************
 API Reference
@@ -171,12 +174,6 @@ Group
 .. autoclass:: Group
     :members:
     :special-members:
-
-MemberGroup
-^^^^^^^^^^^
-
-.. autoclass:: MemberGroup
-    :members:
 
 Value
 ^^^^^
