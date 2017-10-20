@@ -1,9 +1,9 @@
 from typing import Tuple
 
-import asyncio
-
 import motor.motor_asyncio
 from .red_base import BaseDriver
+
+__all__ = ["Mongo"]
 
 
 class Mongo(BaseDriver):

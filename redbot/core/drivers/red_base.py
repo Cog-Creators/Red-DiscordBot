@@ -1,5 +1,6 @@
 from typing import Tuple
 
+__all__ = ["BaseDriver"]
 
 class BaseDriver:
     def __init__(self, cog_name):

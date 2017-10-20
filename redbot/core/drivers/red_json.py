@@ -5,6 +5,8 @@ from ..json_io import JsonIO
 
 from .red_base import BaseDriver
 
+__all__ = ["JSON"]
+
 
 class JSON(BaseDriver):
     """

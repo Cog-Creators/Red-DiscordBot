@@ -54,7 +54,7 @@ class Bank:
     async def bankset(self, ctx: commands.Context):
         """Base command for bank settings"""
         if ctx.invoked_subcommand is None:
-            await self.bot.send_cmd_help(ctx)
+            await ctx.send_help()
 
     @bankset.command(name="toggleglobal")
     @checks.is_owner()
@@ -63,7 +63,7 @@ class Bank:
         If the bank is global, it will become per-guild
         If the bank is per-guild, it will become global"""
         cur_setting = await bank.is_global()
-        await bank.set_global(not cur_setting, ctx.author)
+        await bank.set_global(not cur_setting)
 
         word = _("per-guild") if cur_setting else _("global")
 

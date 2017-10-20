@@ -1,21 +1,30 @@
 import datetime
 import logging
 import traceback
+from pkg_resources import get_distribution
+from importlib.util import find_spec as find_package
+
 
 import discord
 from .sentry_setup import should_log
 from discord.ext import commands
 
-from .utils.chat_formatting import inline
+from .data_manager import storage_type
+from .utils.chat_formatting import inline, bordered
 from .core_commands import find_spec
+from colorama import Fore, Style
 
 log = logging.getLogger("red")
 sentry_log = logging.getLogger("red.sentry")
 
-INTRO = ("{0}===================\n"
-         "{0} Red - Discord Bot \n"
-         "{0}===================\n"
-         "".format(" " * 20))
+INTRO = """
+______         _           ______ _                       _  ______       _   
+| ___ \       | |          |  _  (_)                     | | | ___ \     | |  
+| |_/ /___  __| |  ______  | | | |_ ___  ___ ___  _ __ __| | | |_/ / ___ | |_ 
+|    // _ \/ _` | |______| | | | | / __|/ __/ _ \| '__/ _` | | ___ \/ _ \| __|
+| |\ \  __/ (_| |          | |/ /| \__ \ (_| (_) | | | (_| | | |_/ / (_) | |_ 
+\_| \_\___|\__,_|          |___/ |_|___/\___\___/|_|  \__,_| \____/ \___/ \__|
+"""
 
 
 def init_events(bot, cli_flags):
@@ -31,8 +40,6 @@ def init_events(bot, cli_flags):
             return
 
         bot.uptime = datetime.datetime.utcnow()
-
-        print(INTRO)
 
         if cli_flags.no_cogs is False:
             print("Loading packages...")
@@ -62,11 +69,52 @@ def init_events(bot, cli_flags):
             else:
                 invite_url = None
 
+        prefixes = await bot.db.prefix()
+        lang = await bot.db.locale()
+        INFO = [str(bot.user), "Prefixes: {}".format(', '.join(prefixes)),
+                'Language: {}'.format(lang),
+                "Red Bot Version: {}".format(get_distribution('Red_DiscordBot').version),
+                "Discord.py Version: {}".format(get_distribution('discord.py').version),
+                "Shards: {}".format(bot.shard_count)]
         if guilds:
-            print("Ready and operational on {} servers with a total of {} "
-                  "users.".format(guilds, users))
+            INFO.extend(("Servers: {}".format(guilds), "Users: {}".format(users)))
         else:
             print("Ready. I'm not in any server yet!")
+
+
+
+        INFO.append('{} cogs with {} commands'.format(len(bot.cogs), len(bot.commands)))
+
+        INFO2 = []
+        sentry = await bot.db.enable_sentry()
+        test_docs = all(find_package(x) for x in ['sphinx', 'sphinxcontrib', 'sphinx_rtd_theme',
+                                                  'pytest_asyncio', 'pytest'])
+        voice = find_package('PyNaCl')
+        
+        if sentry:
+            INFO2.append("√ Report Errors")
+        else:
+            INFO2.append("X Report Errors")
+
+        if storage_type() == "JSON":
+            INFO2.append("X MongoDB")
+        else:
+            INFO2.append("√ MongoDB")
+
+        if voice:
+            INFO2.append("√ Voice")
+        else:
+            INFO2.append("X Voice")
+
+        if test_docs:
+            INFO2.append("√ Tests and Docs")
+        else:
+            INFO2.append("X Tests and Docs")
+
+
+        print(Fore.RED + INTRO)
+        print(Style.RESET_ALL)
+        print(bordered(INFO, INFO2))
 
         if invite_url:
             print("\nInvite URL: {}\n".format(invite_url))
@@ -74,9 +122,9 @@ def init_events(bot, cli_flags):
     @bot.event
     async def on_command_error(ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
-            await bot.send_cmd_help(ctx)
+            await ctx.send_help()
         elif isinstance(error, commands.BadArgument):
-            await bot.send_cmd_help(ctx)
+            await ctx.send_help()
         elif isinstance(error, commands.DisabledCommand):
             await ctx.send("That command is disabled.")
         elif isinstance(error, commands.CommandInvokeError):
