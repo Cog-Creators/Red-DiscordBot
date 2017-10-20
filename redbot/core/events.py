@@ -1,7 +1,8 @@
 import datetime
 import logging
-import pkg_resources
 import traceback
+from pkg_resources import get_distribution
+from importlib.util import find_spec as find_package
 
 
 import discord
@@ -71,18 +72,25 @@ def init_events(bot, cli_flags):
         prefixes = await bot.db.prefix()
         lang = await bot.db.locale()
         INFO = [str(bot.user), "Prefixes: {}".format(', '.join(prefixes)),
-                "Version: {}".format(pkg_resources.get_distribution('Red_DiscordBot').version),
-                'Language: {}'.format(lang)]
+                'Language: {}'.format(lang),
+                "Red Bot Version: {}".format(get_distribution('Red_DiscordBot').version),
+                "Discord.py Version: {}".format(get_distribution('discord.py').version),
+                "Shards: {}".format(bot.shard_count)]
         if guilds:
             INFO.extend(("Servers: {}".format(guilds), "Users: {}".format(users)))
         else:
             print("Ready. I'm not in any server yet!")
 
+
+
         INFO.append('{} cogs with {} commands'.format(len(bot.cogs), len(bot.commands)))
 
         INFO2 = []
         sentry = await bot.db.enable_sentry()
-        shards = bot.shard_count
+        test_docs = all(find_package(x) for x in ['sphinx', 'sphinxcontrib', 'sphinx_rtd_theme',
+                                                  'pytest_asyncio', 'pytest'])
+        voice = find_package('PyNaCl')
+        
         if sentry:
             INFO2.append("√ Report Errors")
         else:
@@ -92,14 +100,21 @@ def init_events(bot, cli_flags):
             INFO2.append("X MongoDB")
         else:
             INFO2.append("√ MongoDB")
-        if shards < 2:
-            INFO2.append("{} Shard".format(shards))
+
+        if voice:
+            INFO2.append("√ Voice")
         else:
-            INFO2.append("{} Shards".format(shards))
+            INFO2.append("X Voice")
+
+        if test_docs:
+            INFO2.append("√ Tests and Docs")
+        else:
+            INFO2.append("X Tests and Docs")
+
 
         print(Fore.RED + INTRO)
         print(Style.RESET_ALL)
-        print(bordered('\n'.join(INFO), '\n'.join(INFO2)))
+        print(bordered(INFO, INFO2))
 
         if invite_url:
             print("\nInvite URL: {}\n".format(invite_url))
