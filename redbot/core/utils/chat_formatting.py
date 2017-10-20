@@ -65,7 +65,7 @@ def pagify(text, delims=["\n"], *, escape_mass_mentions=True, shorten_by=8,
                               in_text.count("@everyone", 0, page_length))
         closest_delim = max([in_text.rfind(d, 1, this_page_len)
                              for d in delims])
-        closest_delim = closest_delim if closest_delim != -1 else this_page_length
+        closest_delim = closest_delim if closest_delim != -1 else this_page_len
         if escape_mass_mentions:
             to_send = escape(in_text[:closest_delim], mass_mentions=True)
         else:

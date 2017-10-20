@@ -37,7 +37,9 @@ _bank_type = type("Bank", (object,), {})
 
 
 class Account:
-    """A single account. This class should ONLY be instantiated by the bank itself."""
+    """A single account.
+
+    This class should ONLY be instantiated by the bank itself."""
 
     def __init__(self, name: str, balance: int, created_at: datetime.datetime):
         self.name = name
@@ -57,60 +59,87 @@ if not os.environ.get('BUILDING_DOCS'):
 
 
 def _encoded_current_time() -> int:
-    """
-    Encoded current timestamp in UTC.
-    :return:
+    """Get the current UTC time as a timestamp.
+    
+    Returns
+    -------
+    int
+        The current UTC timestamp.
+
     """
     now = datetime.datetime.utcnow()
     return _encode_time(now)
 
 
 def _encode_time(time: datetime.datetime) -> int:
-    """
-    Goes from datetime object to serializable int.
-    :param time:
-    :return:
+    """Convert a datetime object to a serializable int.
+    
+    Parameters
+    ----------
+    time : datetime.datetime
+        The datetime to convert.
+        
+    Returns
+    -------
+    int
+        The timestamp of the datetime object.
+
     """
     ret = int(time.timestamp())
     return ret
 
 
 def _decode_time(time: int) -> datetime.datetime:
-    """
-    Returns decoded timestamp in UTC.
-    :param time:
-    :return:
+    """Convert a timestamp to a datetime object.
+    
+    Parameters
+    ----------
+    time : int
+        The timestamp to decode.
+        
+    Returns
+    -------
+    datetime.datetime
+        The datetime object from the timestamp.
+
     """
     return datetime.datetime.utcfromtimestamp(time)
 
 
 async def get_balance(member: discord.Member) -> int:
-    """
-    Gets the current balance of a member.
+    """Get the current balance of a member.
 
-    :param discord.Member member: 
+    Parameters
+    ----------
+    member : discord.Member
         The member whose balance to check.
-    :return: 
+
+    Returns
+    -------
+    int
         The member's balance
-    :rtype: 
-        int
+
     """
     acc = await get_account(member)
     return acc.balance
 
 
 async def can_spend(member: discord.Member, amount: int) -> bool:
-    """
-    Determines if a member can spend the given amount.
+    """Determine if a member can spend the given amount.
 
-    :param discord.Member member: 
+    Parameters
+    ----------
+    member : discord.Member
         The member wanting to spend.
-    :param int amount: 
+    amount : int
         The amount the member wants to spend.
-    :return: 
-        :code:`True` if the member has a sufficient balance to spend the amount, else :code:`False`.
-    :rtype: 
-        bool
+
+    Returns
+    -------
+    bool
+        :code:`True` if the member has a sufficient balance to spend the
+        amount, else :code:`False`.
+
     """
     if _invalid_amount(amount):
         return False
@@ -118,21 +147,25 @@ async def can_spend(member: discord.Member, amount: int) -> bool:
 
 
 async def set_balance(member: discord.Member, amount: int) -> int:
-    """
-    Sets an account balance.
+    """Set an account balance.
 
-    May raise ValueError if amount is invalid.
-
-    :param discord.Member member: 
+    Parameters
+    ----------
+    member : discord.Member
         The member whose balance to set.
-    :param int amount: 
+    amount : int
         The amount to set the balance to.
-    :return: 
+
+    Returns
+    -------
+    int
         New account balance.
-    :rtype: 
-        int
-    :raises ValueError: 
-        If attempting to set the balance to a negative number
+
+    Raises
+    ------
+    ValueError
+        If attempting to set the balance to a negative number.
+
     """
     if amount < 0:
         raise ValueError("Not allowed to have negative balance.")
@@ -157,22 +190,26 @@ def _invalid_amount(amount: int) -> bool:
 
 
 async def withdraw_credits(member: discord.Member, amount: int) -> int:
-    """
-    Removes a certain amount of credits from an account.
+    """Remove a certain amount of credits from an account.
 
-    May raise ValueError if the amount is invalid or if the account has
-    insufficient funds.
-
-    :param discord.Member member: 
+    Parameters
+    ----------
+    member : discord.Member
         The member to withdraw credits from.
-    :param int amount: 
+    amount : int
         The amount to withdraw.
-    :return: 
+
+    Returns
+    -------
+    int
         New account balance.
-    :rtype: 
-        int
-    :raises ValueError: 
-        if the withdrawal amount is invalid or if the account has insufficient funds
+
+    Raises
+    ------
+    ValueError
+        If the withdrawal amount is invalid or if the account has insufficient
+        funds.
+
     """
     if _invalid_amount(amount):
         raise ValueError("Invalid withdrawal amount {} <= 0".format(amount))
@@ -185,21 +222,25 @@ async def withdraw_credits(member: discord.Member, amount: int) -> int:
 
 
 async def deposit_credits(member: discord.Member, amount: int) -> int:
-    """
-    Adds a given amount of credits to an account.
+    """Add a given amount of credits to an account.
 
-    May raise ValueError if the amount is invalid.
-
-    :param discord.Member member: 
+    Parameters
+    ----------
+    member : discord.Member
         The member to deposit credits to.
-    :param int amount: 
+    amount : int
         The amount to deposit.
-    :return: 
-        The new balance
-    :rtype: 
-        int
-    :raises ValueError: 
+
+    Returns
+    -------
+    int
+        The new balance.
+
+    Raises
+    ------
+    ValueError
         If the deposit amount is invalid.
+
     """
     if _invalid_amount(amount):
         raise ValueError("Invalid withdrawal amount {} <= 0".format(amount))
@@ -209,24 +250,27 @@ async def deposit_credits(member: discord.Member, amount: int) -> int:
 
 
 async def transfer_credits(from_: discord.Member, to: discord.Member, amount: int):
-    """
-    Transfers a given amount of credits from one account to another.
+    """Transfer a given amount of credits from one account to another.
 
-    May raise ValueError if the amount is invalid or if the :code:`from_`
-    account has insufficient funds.
-
-    :param discord.Member from_: 
+    Parameters
+    ----------
+    from_: discord.Member
         The member to transfer from.
-    :param discord.Member to: 
+    to : discord.Member
         The member to transfer to.
-    :param int amount: 
+    amount : int
         The amount to transfer.
-    :return: 
+
+    Returns
+    -------
+    int
         The new balance.
-    :rtype: 
-        int
-    :raises ValueError: 
-        If the amount is invalid or if :code:`from_` has insufficient funds.
+
+    Raises
+    ------
+    ValueError
+        If the amount is invalid or if ``from_`` has insufficient funds.
+
     """
     if _invalid_amount(amount):
         raise ValueError("Invalid transfer amount {} <= 0".format(amount))
@@ -236,18 +280,18 @@ async def transfer_credits(from_: discord.Member, to: discord.Member, amount: in
 
 
 async def wipe_bank(user: Union[discord.User, discord.Member]):
-    """
-    Deletes all accounts from the bank.
+    """Delete all accounts from the bank.
 
     .. important::
 
         A member is required if the bank is currently guild specific.
 
-    :param user:
+    Parameters
+    ----------
+    user : `discord.User` or `discord.Member`
         A user to be used in clearing the bank, this is required for technical
         reasons and it does not matter which user/member is used.
-    :type user:
-        discord.User or discord.Member
+
     """
     if await is_global():
         await _conf.user(user).clear()
@@ -256,25 +300,29 @@ async def wipe_bank(user: Union[discord.User, discord.Member]):
 
 
 async def get_guild_accounts(guild: discord.Guild) -> List[Account]:
-    """
-    Gets all account data for the given guild.
+    """Get all account data for the given guild.
 
-    May raise RuntimeError if the bank is currently global.
-
-    :param discord.Guild guild: 
+    Parameters
+    ----------
+    guild : discord.Guild
         The guild to get accounts for.
-    :return: 
-        A generator for all guild accounts.
-    :rtype: 
-        generator
-    :raises RuntimeError: 
-        If the bank is global.
+
+    Returns
+    -------
+    `list` of `Account`
+        A list of all guild accounts.
+
+    Raises
+    ------
+    RuntimeError
+        If the bank is currently global.
+
     """
     if is_global():
         raise RuntimeError("The bank is currently global.")
 
     ret = []
-    accs = await _conf.member(guild.owner).all_from_kind()
+    accs = await _conf.all_members(guild)
     for user_id, acc in accs.items():
         acc_data = acc.copy()  # There ya go kowlin
         acc_data['created_at'] = _decode_time(acc_data['created_at'])
@@ -283,25 +331,29 @@ async def get_guild_accounts(guild: discord.Guild) -> List[Account]:
 
 
 async def get_global_accounts(user: discord.User) -> List[Account]:
-    """
-    Gets all global account data.
+    """Get all global account data.
 
-    May raise RuntimeError if the bank is currently guild specific.
-
-    :param discord.User user: 
+    Parameters
+    ----------
+    user : discord.User
         A user to be used for getting accounts.
-    :return: 
-        A generator of all global accounts.
-    :rtype: 
-        generator
-    :raises RuntimeError: 
-        If the bank is guild specific.
+
+    Returns
+    -------
+    `list` of `Account`
+        A list of all global accounts.
+
+    Raises
+    ------
+    RuntimeError
+        If the bank is currently guild specific.
+
     """
     if not is_global():
         raise RuntimeError("The bank is not currently global.")
 
     ret = []
-    accs = await _conf.user(user).all_from_kind()  # this is a dict of user -> acc
+    accs = await _conf.all_users()  # this is a dict of user -> acc
     for user_id, acc in accs.items():
         acc_data = acc.copy()
         acc_data['created_at'] = _decode_time(acc_data['created_at'])
@@ -311,18 +363,20 @@ async def get_global_accounts(user: discord.User) -> List[Account]:
 
 
 async def get_account(member: Union[discord.Member, discord.User]) -> Account:
-    """
-    Gets the appropriate account for the given user or member. A member is
-    required if the bank is currently guild specific.
+    """Get the appropriate account for the given user or member.
 
-    :param member:
+    A member is required if the bank is currently guild specific.
+
+    Parameters
+    ----------
+    member : `discord.User` or `discord.Member`
         The user whose account to get.
-    :type member:
-        discord.User or discord.Member
-    :return: 
+
+    Returns
+    -------
+    Account
         The user's account.
-    :rtype: 
-        :py:class:`Account`
+
     """
     if await is_global():
         acc_data = (await _conf.user(member)()).copy()
@@ -344,67 +398,71 @@ async def get_account(member: Union[discord.Member, discord.User]) -> Account:
 
 
 async def is_global() -> bool:
-    """
-    Determines if the bank is currently global.
+    """Determine if the bank is currently global.
 
-    :return: 
+    Returns
+    -------
+    bool
         :code:`True` if the bank is global, otherwise :code:`False`.
-    :rtype: 
-        bool
+
     """
     return await _conf.is_global()
 
 
 async def set_global(global_: bool, user: Union[discord.User, discord.Member]) -> bool:
-    """
-    Sets global status of the bank, requires the user parameter for technical reasons.
-    
+    """Set global status of the bank.
+
     .. important::
+
         All accounts are reset when you switch!
 
-    :param global_:
+    Parameters
+    ----------
+    global_ : bool
         :code:`True` will set bank to global mode.
-    :param user:
-        Must be a Member object if changing TO global mode.
-    :type user:
-        discord.User or discord.Member
-    :return:
+
+    Returns
+    -------
+    bool
         New bank mode, :code:`True` is global.
-    :rtype: 
-        bool
-    :raises RuntimeError:
-        If bank is becoming global and :py:class:`discord.Member` was not provided.
+
+    Raises
+    ------
+    RuntimeError
+        If bank is becoming global and a `discord.Member` was not provided.
+
     """
     if (await is_global()) is global_:
         return global_
 
     if is_global():
-        await _conf.user(user).clear_all()
-    elif isinstance(user, discord.Member):
-        await _conf.member(user).clear_all()
+        await _conf.clear_all_users()
     else:
-        raise RuntimeError("You must provide a member if you're changing to global"
-                           " bank mode.")
+        await _conf.clear_all_members()
 
     await _conf.is_global.set(global_)
     return global_
 
 
 async def get_bank_name(guild: discord.Guild=None) -> str:
-    """
-    Gets the current bank name. If the bank is guild-specific the
-    guild parameter is required.
+    """Get the current bank name.
 
-    May raise RuntimeError if guild is missing and required.
+    Parameters
+    ----------
+    guild : `discord.Guild`, optional
+        The guild to get the bank name for (required if bank is
+        guild-specific).
 
-    :param discord.Guild guild: 
-        The guild to get the bank name for (required if bank is guild-specific).
-    :return: 
+    Returns
+    -------
+    str
         The bank's name.
-    :rtype: 
-        str
-    :raises RuntimeError: 
+
+    Raises
+    ------
+    RuntimeError
         If the bank is guild-specific and guild was not provided.
+
     """
     if await is_global():
         return await _conf.bank_name()
@@ -415,22 +473,26 @@ async def get_bank_name(guild: discord.Guild=None) -> str:
 
 
 async def set_bank_name(name: str, guild: discord.Guild=None) -> str:
-    """
-    Sets the bank name, if bank is guild specific the guild parameter is
-    required.
+    """Set the bank name.
 
-    May throw RuntimeError if guild is required and missing.
+    Parameters
+    ----------
+    name : str
+        The new name for the bank.
+    guild : `discord.Guild`, optional
+        The guild to set the bank name for (required if bank is
+        guild-specific).
 
-    :param str name: 
+    Returns
+    -------
+    str
         The new name for the bank.
-    :param discord.Guild guild: 
-        The guild to set the bank name for (required if bank is guild-specific).
-    :return: 
-        The new name for the bank.
-    :rtype: 
-        str
-    :raises RuntimeError: 
+
+    Raises
+    ------
+    RuntimeError
         If the bank is guild-specific and guild was not provided.
+
     """
     if await is_global():
         await _conf.bank_name.set(name)
@@ -443,20 +505,24 @@ async def set_bank_name(name: str, guild: discord.Guild=None) -> str:
 
 
 async def get_currency_name(guild: discord.Guild=None) -> str:
-    """
-    Gets the currency name of the bank. The guild parameter is required if
-    the bank is guild-specific.
+    """Get the currency name of the bank.
 
-    May raise RuntimeError if the guild is missing and required.
+    Parameters
+    ----------
+    guild : `discord.Guild`, optional
+        The guild to get the currency name for (required if bank is
+        guild-specific).
 
-    :param discord.Guild guild: 
-        The guild to get the currency name for (required if bank is guild-specific).
-    :return: 
+    Returns
+    -------
+    str
         The currency name.
-    :rtype: 
-        str
-    :raises RuntimeError: 
+
+    Raises
+    ------
+    RuntimeError
         If the bank is guild-specific and guild was not provided.
+
     """
     if await is_global():
         return await _conf.currency()
@@ -467,22 +533,26 @@ async def get_currency_name(guild: discord.Guild=None) -> str:
 
 
 async def set_currency_name(name: str, guild: discord.Guild=None) -> str:
-    """
-    Sets the currency name for the bank, if bank is guild specific the
-    guild parameter is required.
+    """Set the currency name for the bank.
 
-    May raise RuntimeError if guild is missing and required.
+    Parameters
+    ----------
+    name : str
+        The new name for the currency.
+    guild : `discord.Guild`, optional
+        The guild to set the currency name for (required if bank is
+        guild-specific).
 
-    :param str name: 
+    Returns
+    -------
+    str
         The new name for the currency.
-    :param discord.Guild guild: 
-        The guild to set the currency name for (required if bank is guild-specific).
-    :return: 
-        The new name for the currency.
-    :rtype: 
-        str
-    :raises RuntimeError: 
+
+    Raises
+    ------
+    RuntimeError
         If the bank is guild-specific and guild was not provided.
+
     """
     if await is_global():
         await _conf.currency.set(name)
@@ -495,20 +565,24 @@ async def set_currency_name(name: str, guild: discord.Guild=None) -> str:
 
 
 async def get_default_balance(guild: discord.Guild=None) -> int:
-    """
-    Gets the current default balance amount. If the bank is guild-specific
-    you must pass guild.
+    """Get the current default balance amount.
 
-    May raise RuntimeError if guild is missing and required.
+    Parameters
+    ----------
+    guild : `discord.Guild`, optional
+        The guild to get the default balance for (required if bank is
+        guild-specific).
 
-    :param discord.Guild guild: 
-        The guild to get the default balance for (required if bank is guild-specific).
-    :return: 
+    Returns
+    -------
+    int
         The bank's default balance.
-    :rtype: 
-        str
-    :raises RuntimeError: 
+
+    Raises
+    ------
+    RuntimeError
         If the bank is guild-specific and guild was not provided.
+
     """
     if await is_global():
         return await _conf.default_balance()
@@ -519,26 +593,28 @@ async def get_default_balance(guild: discord.Guild=None) -> int:
 
 
 async def set_default_balance(amount: int, guild: discord.Guild=None) -> int:
-    """
-    Sets the default balance amount. Guild is required if the bank is
-    guild-specific.
+    """Set the default balance amount.
 
-    May raise RuntimeError if guild is missing and required.
-
-    May raise ValueError if amount is invalid.
-
-    :param int amount: 
+    Parameters
+    ----------
+    amount : int
         The new default balance.
-    :param discord.Guild guild: 
-        The guild to set the default balance for (required if bank is guild-specific).
-    :return: 
+    guild : `discord.Guild`, optional
+        The guild to set the default balance for (required if bank is
+        guild-specific).
+
+    Returns
+    -------
+    int
         The new default balance.
-    :rtype: 
-        str
-    :raises RuntimeError: 
+
+    Raises
+    ------
+    RuntimeError
         If the bank is guild-specific and guild was not provided.
-    :raises ValueError: 
+    ValueError
         If the amount is invalid.
+
     """
     amount = int(amount)
     if amount < 0:
