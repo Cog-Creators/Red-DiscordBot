@@ -1,3 +1,4 @@
 appdirs
 youtube_dl
 raven
+colorama

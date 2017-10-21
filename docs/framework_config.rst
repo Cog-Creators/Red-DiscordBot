@@ -191,6 +191,19 @@ Driver Reference
 ****************
 
 .. automodule:: redbot.core.drivers
+    :members:
 
-.. autoclass:: red_base.BaseDriver
+Base Driver
+^^^^^^^^^^^
+.. autoclass:: redbot.core.drivers.red_base.BaseDriver
+    :members:
+
+JSON Driver
+^^^^^^^^^^^
+.. autoclass:: redbot.core.drivers.red_json.JSON
+    :members:
+
+Mongo Driver
+^^^^^^^^^^^^
+.. autoclass:: redbot.core.drivers.red_mongo.Mongo
     :members:

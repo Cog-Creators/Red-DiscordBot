@@ -5,8 +5,13 @@ import appdirs
 
 from .json_io import JsonIO
 
+__all__ = ['load_basic_configuration', 'cog_data_path', 'core_data_path',
+           'storage_details', 'storage_type']
+
 jsonio = None
 basic_config = None
+
+instance_name = None
 
 basic_config_default = {
     "DATA_PATH": None,
@@ -18,11 +23,14 @@ config_dir = Path(appdirs.AppDirs("Red-DiscordBot").user_config_dir)
 config_file = config_dir / 'config.json'
 
 
-def load_basic_configuration(instance_name: str):
+def load_basic_configuration(instance_name_: str):
     global jsonio
     global basic_config
+    global instance_name
 
     jsonio = JsonIO(config_file)
+
+    instance_name = instance_name_
 
     try:
         config = jsonio._load_json()
@@ -72,3 +80,28 @@ def core_data_path() -> Path:
     core_path.mkdir(exist_ok=True, parents=True)
 
     return core_path.resolve()
+
+
+def storage_type() -> str:
+    """
+    Gets the storage type as a string.
+
+    :return:
+    """
+    try:
+        return basic_config['STORAGE_TYPE']
+    except KeyError as e:
+        raise RuntimeError('Bot basic config has not been loaded yet.') from e
+
+
+def storage_details() -> dict:
+    """
+    Gets any details necessary for config drivers to load.
+
+    These are set on setup.
+    :return:
+    """
+    try:
+        return basic_config['STORAGE_DETAILS']
+    except KeyError as e:
+        raise RuntimeError('Bot basic config has not been loaded yet.') from e
