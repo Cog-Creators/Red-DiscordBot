@@ -11,6 +11,8 @@ __all__ = ['load_basic_configuration', 'cog_data_path', 'core_data_path',
 jsonio = None
 basic_config = None
 
+instance_name = None
+
 basic_config_default = {
     "DATA_PATH": None,
     "COG_PATH_APPEND": "cogs",
@@ -21,11 +23,14 @@ config_dir = Path(appdirs.AppDirs("Red-DiscordBot").user_config_dir)
 config_file = config_dir / 'config.json'
 
 
-def load_basic_configuration(instance_name: str):
+def load_basic_configuration(instance_name_: str):
     global jsonio
     global basic_config
+    global instance_name
 
     jsonio = JsonIO(config_file)
+
+    instance_name = instance_name_
 
     try:
         config = jsonio._load_json()
