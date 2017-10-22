@@ -1,0 +1,13 @@
+dist: trusty
+language: python
+python:
+  - "3.5.3"
+  - "3.6.1"
+install:
+  - pip install --process-dependency-links -e .[test]
+script:
+  - python -m compileall ./redbot/cogs
+  - python -m pytest
+cache: pip
+notifications:
+  email: false

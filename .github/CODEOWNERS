@@ -1,0 +1,24 @@
+# Default
+*                                   @Twentysix26
+
+# Core
+redbot/core/config.py               @tekulvw
+redbot/core/cog_manager.py          @tekulvw
+redbot/core/data_manager.py         @tekulvw
+redbot/core/drivers/*               @tekulvw
+redbot/core/i18n.py                 @tekulvw
+redbot/core/sentry_setup.py         @Kowlin @tekulvw
+
+# Cogs
+redbot/cogs/admin/*                 @tekulvw
+redbot/cogs/alias/*                 @tekulvw
+redbot/cogs/audio/*                 @tekulvw
+redbot/cogs/bank/*                  @tekulvw
+redbot/cogs/customcom/*             @palmtree5
+redbot/cogs/downloader/*            @tekulvw
+redbot/cogs/economy/*               @palmtree5
+redbot/cogs/general/*               @palmtree5
+redbot/cogs/image/*                 @palmtree5
+
+# Docs
+docs/*                              @tekulvw @palmtree5
