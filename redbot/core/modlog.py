@@ -9,9 +9,9 @@ from datetime import datetime
 
 __all__ = [
     "Case", "CaseType", "get_next_case_number", "get_case", "get_all_cases",
-    "create_case", "edit_case", "get_casetype", "get_all_casetypes",
-    "register_casetype", "register_casetypes",  "get_modlog_channel",
-    "set_modlog_channel", "reset_cases"
+    "create_case", "get_casetype", "get_all_casetypes", "register_casetype",
+    "register_casetypes",  "get_modlog_channel", "set_modlog_channel",
+    "reset_cases"
 ]
 
 _DEFAULT_GLOBAL = {
@@ -234,6 +234,7 @@ class CaseType:
         self.guild = guild
 
     async def to_json(self):
+        """Transforms the case type into a dict and saves it"""
         data = {
             "default_setting": self.default_setting,
             "image": self.image,
@@ -243,12 +244,31 @@ class CaseType:
         await _conf.casetypes.set_attr(self.name, data)
 
     async def is_enabled(self) -> bool:
+        """
+        Determines if the case is enabled.
+        If the guild is not set, this will always return False
+
+        Returns
+        -------
+        bool:
+            True if the guild is set and the casetype is enabled for the guild
+
+            False if the guild is not set or if the guild is set and the type
+            is disabled
+        """
         if not self.guild:
             return False
         return await _conf.guild(self.guild).casetypes.get_attr(self.name,
                                                                 self.default_setting)
 
     async def set_enabled(self, enabled: bool):
+        """
+        Sets the case as enabled or disabled
+
+        Parameters
+        ----------
+        enabled: bool
+            True if the case should be enabled, otherwise False"""
         if not self.guild:
             return
         await _conf.guild(self.guild).casetypes.set_attr(self.name, enabled)

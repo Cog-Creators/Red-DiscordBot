@@ -25,7 +25,7 @@ Basic Usage
         async def ban(self, ctx, user: discord.Member, reason: str=None):
             await ctx.guild.ban(user)
             case = modlog.create_case(
-                ctx.guild, ctx.message.created_at, "Ban", user,
+                ctx.guild, ctx.message.created_at, "ban", user,
                 ctx.author, reason, until=None, channel=None
             )
             await ctx.send("Done. It was about time.")
@@ -45,11 +45,13 @@ To register a single case type:
     class MyCog:
         def __init__(self, bot):
             ban_case = {
-                "name": "Ban",
+                "name": "ban",
                 "default_setting": True,
-                "image": ":hammer:"
+                "image": ":hammer:",
+                "case_str": "Ban",
+                "audit_type": "ban"
             }
-            modlog.register_casetype(ban_case)
+            modlog.register_casetype(**ban_case)
 
 To register multiple case types:
 
@@ -62,14 +64,18 @@ To register multiple case types:
         def __init__(self, bot):
             new_types = [
                 {
-                    "name": "Ban",
+                    "name": "ban",
                     "default_setting": True,
-                    "image": ":hammer:"
+                    "image": ":hammer:",
+                    "case_str": "Ban",
+                    "audit_type": "ban"
                 },
                 {
-                    "name": "Kick",
+                    "name": "kick",
                     "default_setting": True,
-                    "image": ":boot:"
+                    "image": ":boot:",
+                    "case_str": "Kick",
+                    "audit_type": "kick"
                 }
             ]
             modlog.register_casetypes(new_types)
