@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-from redbot.core import checks, Config
+from redbot.core import checks, Config, modlog
 from redbot.core.bot import Red
 from redbot.core.i18n import CogI18n
 from redbot.core.utils.chat_formatting import pagify
@@ -17,9 +17,22 @@ class Filter:
         self.bot = bot
         self.settings = Config.get_conf(self, 4766951341)
         default_guild_settings = {
-            "filter": []
+            "filter": [],
+            "filterban_count": 0,
+            "filterban_time": 0
+        }
+        default_member_settings = {
+            "filter_count": 0,
+            "next_reset_time": 0
         }
         self.settings.register_guild(**default_guild_settings)
+        self.settings.register_member(**default_member_settings)
+        self.bot.loop.create_task(
+            modlog.register_casetype(
+                "filterban", False, ":filing_cabinet: :hammer:",
+                "Filter ban", "ban"
+            )
+        )
 
     @commands.group(name="filter")
     @commands.guild_only()
@@ -45,42 +58,91 @@ class Filter:
                     await ctx.send(_("I can't send direct messages to you."))
 
     @_filter.command(name="add")
-    async def filter_add(self, ctx: commands.Context, *words: str):
+    async def filter_add(self, ctx: commands.Context, *, words: str):
         """Adds words to the filter
 
         Use double quotes to add sentences
         Examples:
         filter add word1 word2 word3
         filter add \"This is a sentence\""""
-        if words == ():
-            await self.bot.send_cmd_help(ctx)
-            return
         server = ctx.guild
-        added = await self.add_to_filter(server, words)
+        split_words = words.split()
+        word_list = []
+        tmp = ""
+        for word in split_words:
+            if not word.startswith("\"")\
+                    and not word.endswith("\"") and not tmp:
+                word_list.append(word)
+            else:
+                if word.startswith("\""):
+                    tmp += word[1:]
+                elif word.endswith("\""):
+                    tmp += word[:-1]
+                    word_list.append(tmp)
+                    tmp = ""
+                else:
+                    tmp += word
+        added = await self.add_to_filter(server, word_list)
         if added:
             await ctx.send(_("Words added to filter."))
         else:
             await ctx.send(_("Words already in the filter."))
 
     @_filter.command(name="remove")
-    async def filter_remove(self, ctx: commands.Context, *words: str):
+    async def filter_remove(self, ctx: commands.Context, *, words: str):
         """Remove words from the filter
 
         Use double quotes to remove sentences
         Examples:
         filter remove word1 word2 word3
         filter remove \"This is a sentence\""""
-        if words == ():
-            await self.bot.send_cmd_help(ctx)
-            return
         server = ctx.guild
-        removed = await self.remove_from_filter(server, words)
+        split_words = words.split()
+        word_list = []
+        tmp = ""
+        for word in split_words:
+            if not word.startswith("\"")\
+                    and not word.endswith("\"") and not tmp:
+                word_list.append(word)
+            else:
+                if word.startswith("\""):
+                    tmp += word[1:]
+                elif word.endswith("\""):
+                    tmp += word[:-1]
+                    word_list.append(tmp)
+                    tmp = ""
+                else:
+                    tmp += word
+        removed = await self.remove_from_filter(server, word_list)
         if removed:
             await ctx.send(_("Words removed from filter."))
         else:
             await ctx.send(_("Those words weren't in the filter."))
 
-    async def add_to_filter(self, server: discord.Guild, *words: tuple) -> bool:
+    @_filter.command(name="ban")
+    async def filter_ban(
+            self, ctx: commands.Context, count: int, timeframe: int):
+        """
+        Sets up an autoban if the specified number of messages are
+        filtered in the specified amount of time (in seconds)
+        """
+        if (count <= 0) != (timeframe <= 0):
+            await ctx.send(
+                _("Count and timeframe either both need to be 0 "
+                  "or both need to be greater than 0!"
+                  )
+            )
+            return
+        elif count == 0 and timeframe == 0:
+            await self.settings.guild(ctx.guild).filterban_count.set(0)
+            await self.settings.guild(ctx.guild).filterban_time.set(0)
+            await ctx.send(_("Autoban disabled."))
+        else:
+            await self.settings.guild(ctx.guild).filterban_count.set(count)
+            await self.settings.guild(ctx.guild).filterban_time.set(timeframe)
+            await ctx.send(_("Count and time have been set."))
+
+    async def add_to_filter(self, server: discord.Guild, words: list) -> bool:
         added = 0
         cur_list = await self.settings.guild(server).filter()
         for w in words:
@@ -93,7 +155,7 @@ class Filter:
         else:
             return False
 
-    async def remove_from_filter(self, server: discord.Guild, *words: tuple) -> bool:
+    async def remove_from_filter(self, server: discord.Guild, words: list) -> bool:
         removed = 0
         cur_list = await self.settings.guild(server).filter()
         for w in words:
@@ -108,7 +170,22 @@ class Filter:
 
     async def check_filter(self, message: discord.Message):
         server = message.guild
+        author = message.author
         word_list = await self.settings.guild(server).filter()
+        filter_count = await self.settings.guild(server).filterban_count()
+        filter_time = await self.settings.guild(server).filterban_time()
+        user_count = await self.settings.member(author).filter_count()
+        next_reset_time = await self.settings.member(author).next_reset_time()
+        if filter_count > 0 and filter_time > 0:
+            if message.created_at.timestamp() >= next_reset_time:
+                next_reset_time = message.created_at.timestamp() + filter_time
+                await self.settings.member(author).next_reset_time.set(
+                    next_reset_time
+                )
+                if user_count > 0:
+                    user_count = 0
+                    await self.settings.member(author).filter_count.set(user_count)
+
         if word_list:
             for w in word_list:
                 if w in message.content.lower():
@@ -116,6 +193,22 @@ class Filter:
                         await message.delete()
                     except:
                         pass
+                    else:
+                        if filter_count > 0 and filter_time > 0:
+                            user_count += 1
+                            await self.settings.member(author).filter_count.set(user_count)
+                            if user_count >= filter_count and \
+                                    message.created_at.timestamp() < next_reset_time:
+                                reason = "Autoban (too many filtered messages)"
+                                try:
+                                    await server.ban(author, reason=reason)
+                                except:
+                                    pass
+                                else:
+                                    await modlog.create_case(
+                                        server, message.created_at, "filterban",
+                                        author, server.me, reason
+                                    )
 
     async def on_message(self, message: discord.Message):
         if isinstance(message.channel, discord.abc.PrivateChannel):
