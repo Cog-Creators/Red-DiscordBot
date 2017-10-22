@@ -408,11 +408,11 @@ class Owner:
 
         if game:
             game = game.strip()
-            await self.bot.change_presence(game=discord.Game(name=game),
-                                           status=current_status)
+            await self.bot.change_presence(game=discord.Game(name=game, type=0),
+                                           status=current_status, afk=False)
             log.debug('Status set to "{}" by owner'.format(game))
         else:
-            await self.bot.change_presence(game=None, status=current_status)
+            await self.bot.change_presence(game=None, status=current_status, afk=False)
             log.debug('status cleared by owner')
         await self.bot.say("Done.")
 
