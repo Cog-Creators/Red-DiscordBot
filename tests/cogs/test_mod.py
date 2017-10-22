@@ -15,15 +15,15 @@ def mod(config):
 
 @pytest.mark.asyncio
 async def test_modlog_register_casetype(mod, ctx):
-    await mod.register_casetype(
-        {
-            "name": "ban",
-            "default_setting": True,
-            "image": "https://twemoji.maxcdn.com/2/72x72/1f528.png",
-            "case_str": "Ban"
-        }
-    )
-    assert await mod.is_casetype("ban") is True
+    ct = {
+        "name": "ban",
+        "default_setting": True,
+        "image": ":hammer:",
+        "case_str": "Ban",
+        "audit_type": "ban"
+    }
+    casetype = await mod.register_casetype(**ct)
+    assert casetype is not None
 
 
 @pytest.mark.asyncio
@@ -36,9 +36,18 @@ async def test_modlog_case_create(mod, ctx, member_factory):
     reason = "Test 12345"
     created_at = dt.utcnow()
 
+    ct = {
+        "name": "ban",
+        "default_setting": True,
+        "image": ":hammer:",
+        "case_str": "Ban",
+        "audit_type": "ban"
+    }
+    await mod.register_casetype(**ct)
     case = await mod.create_case(
         guild, created_at, case_type, usr, moderator, reason
     )
+    assert case is not None
     assert case.user == usr
     assert case.action_type == case_type
     assert case.moderator == moderator

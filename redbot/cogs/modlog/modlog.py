@@ -123,6 +123,22 @@ class ModLog:
             await ctx.send(_("That case does not exist!"))
             return
         else:
+            if case_before.moderator is None:
+                # No mod set, so attempt to find out if the author
+                # triggered the case creation with an action
+                bot_perms = guild.me.guild_permissions
+                if bot_perms.view_audit_logs:
+                    case_type = await modlog.get_casetype(case_before.action_type, guild)
+                    audit_type = getattr(discord.AuditLogAction, case_type.audit_type)
+                    if audit_type:
+                        audit_case = None
+                        async for entry in guild.audit_logs(action=audit_type):
+                            if entry.target.id == case_before.user.id and \
+                                    entry.user.id == case_before.moderator.id:
+                                audit_case = entry
+                                break
+                        if audit_case:
+                            case_before.moderator = audit_case.user
             is_guild_owner = author == guild.owner
             is_case_author = author == case_before.moderator
             author_is_mod = await ctx.bot.is_mod(author)
@@ -134,6 +150,6 @@ class ModLog:
             }
             if case_before.moderator != author:
                 to_modify["amended_by"] = author
-                to_modify["modified_at"] = ctx.message.created_at.timestamp()
-            case = await modlog.edit_case(case, guild, self.bot, to_modify)
+            to_modify["modified_at"] = ctx.message.created_at.timestamp()
+            await case_before.edit(to_modify)
             await ctx.send(_("Reason has been updated."))

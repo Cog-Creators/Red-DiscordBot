@@ -4,14 +4,14 @@ import os
 from redbot.core import Config
 from redbot.core.bot import Red
 from redbot.core.utils.chat_formatting import bold
-from typing import List, Union, Generator
+from typing import List, Union
 from datetime import datetime
 
 __all__ = [
-    "Case", "get_case", "create_case", "edit_case", "get_all_casetypes",
-    "is_casetype", "register_casetype", "register_casetypes",
-    "get_modlog_channel", "set_modlog_channel", "toggle_case_type",
-    "get_case_type_status", "get_case_type_repr", "reset_cases"
+    "Case", "CaseType", "get_next_case_number", "get_case", "get_all_cases",
+    "create_case", "edit_case", "get_casetype", "get_all_casetypes",
+    "register_casetype", "register_casetypes",  "get_modlog_channel",
+    "set_modlog_channel", "reset_cases"
 ]
 
 _DEFAULT_GLOBAL = {
@@ -59,7 +59,29 @@ class Case:
         self.case_number = case_number
         self.message = message
 
-    async def get_case_msg_content(self):
+    async def edit(self, data: dict):
+        """
+        Edits a case
+
+        Parameters
+        ----------
+        data: dict
+            The attributes to change
+
+        Returns
+        -------
+
+        """
+        for item in list(data.keys()):
+            setattr(self, item, data[item])
+        case_emb = await self.message_content()
+        await self.message.edit(embed=case_emb)
+
+        await _conf.guild(self.guild).cases.set_attr(
+            str(self.case_number), self.to_json()
+        )
+
+    async def message_content(self):
         """
         Format a case message 
 
@@ -69,10 +91,9 @@ class Case:
             A rich embed representing a case message
         
         """
-        act_repr = await get_case_type_repr(self.action_type)
-        act_name = await get_case_type_name(self.action_type)
+        casetype = await get_casetype(self.action_type)
         title = "{}".format(bold("Case #{} | {} {}".format(
-            self.case_number, act_name, act_repr)))
+            self.case_number, casetype.case_str, casetype.image)))
 
         if self.reason:
             reason = "**Reason:** {}".format(self.reason)
@@ -183,6 +204,93 @@ class Case:
         )
 
 
+class CaseType:
+    """
+    A single case type
+
+    Attributes
+    ----------
+    name: str
+        The name of the case
+    default_setting: bool
+        Whether the case type should be on (if `True`)
+        or off (if `False`) by default
+    image: str
+        The emoji to use for the case type (for example, :boot:)
+    case_str: str
+        The string representation of the case (example: Ban)
+    audit_type: str
+        The action type of the action as it would appear in the
+        audit log
+    """
+    def __init__(
+            self, name: str, default_setting: bool, image: str,
+            case_str: str, audit_type: str, guild: discord.Guild = None):
+        self.name = name
+        self.default_setting = default_setting
+        self.image = image
+        self.case_str = case_str
+        self.audit_type = audit_type
+        self.guild = guild
+
+    async def to_json(self):
+        data = {
+            "default_setting": self.default_setting,
+            "image": self.image,
+            "case_str": self.case_str,
+            "audit_type": self.audit_type
+        }
+        await _conf.casetypes.set_attr(self.name, data)
+
+    async def is_enabled(self) -> bool:
+        if not self.guild:
+            return False
+        return await _conf.guild(self.guild).casetypes.get_attr(self.name)
+
+    async def set_enabled(self, enabled: bool):
+        if not self.guild:
+            return
+        await _conf.guild(self.guild).casetypes.set_attr(self.name, enabled)
+
+    @classmethod
+    def from_json(cls, data: dict):
+        """
+
+        Parameters
+        ----------
+        data: dict
+            The data to create an instance from
+
+        Returns
+        -------
+        CaseType
+
+        """
+        return cls(**data)
+
+
+async def get_next_case_number(guild: discord.Guild) -> str:
+    """
+    Gets the next case number
+
+    Parameters
+    ----------
+    guild: `discord.Guild`
+        The guild to get the next case number for
+
+    Returns
+    -------
+    str
+        The next case number
+
+    """
+    cases = sorted(
+        (await _conf.guild(guild).get_attr("cases")),
+        reverse=True
+    )
+    return str(int(cases[0]) + 1) if cases else "1"
+
+
 async def get_case(case_number: int, guild: discord.Guild,
                    bot: Red) -> Case:
     """
@@ -246,7 +354,7 @@ async def create_case(guild: discord.Guild, created_at: datetime, action_type: s
                       user: Union[discord.User, discord.Member],
                       moderator: discord.Member, reason: str=None,
                       until: datetime=None, channel: discord.TextChannel=None
-                      ) -> Case:
+                      ) -> Union[Case, None]:
     """
     Creates a new case
 
@@ -277,143 +385,169 @@ async def create_case(guild: discord.Guild, created_at: datetime, action_type: s
     Raises
     ------
     RuntimeError
-        If:
-            the action type is not registered OR
-            the mod log channel doesn't exist OR
-            case creation for the action type is disabled
+        If the mod log channel doesn't exist
     
     """
     mod_channel = None
-    if hasattr(guild, "owner"):  # Fairly arbitrary, but it doesn't really matter since we don't need the modlog channel in tests
+    if hasattr(guild, "owner"):
+        # Fairly arbitrary, but it doesn't really matter
+        # since we don't need the modlog channel in tests
         try:
             mod_channel = await get_modlog_channel(guild)
         except RuntimeError:
             raise RuntimeError(
                 "No mod log channel set for guild {}".format(guild.name)
             )
-    if not await is_casetype(action_type):
-        raise RuntimeError("That action type is not registered!")
+    case_type = await get_casetype(action_type, guild)
+    if case_type is None:
+        return None
 
-    if not await get_case_type_status(action_type, guild):
-        raise RuntimeError("Case creation is disabled for that action")
+    if not await case_type.is_enabled():
+        return None
 
-    next_case_number = len(await _conf.guild(guild).cases()) + 1
+    next_case_number = int(get_next_case_number(guild))
 
     case = Case(guild, int(created_at.timestamp()), action_type, user, moderator,
                 next_case_number, reason, until, channel, amended_by=None,
                 modified_at=None, message=None)
     if hasattr(mod_channel, "send"):  # Not going to be the case for tests
-        case_emb = await case.get_case_msg_content()
+        case_emb = await case.message_content()
         msg = await mod_channel.send(embed=case_emb)
         case.message = msg
     await _conf.guild(guild).cases.set_attr(str(next_case_number), case.to_json())
     return case
 
 
-async def edit_case(case_number: int, guild: discord.Guild, bot: Red,
-                    new_data: dict) -> Case:
+async def get_casetype(name: str, guild: discord.Guild=None) -> Union[CaseType, None]:
     """
-    Edits the specified case
+    Gets the case type
 
     Parameters
     ----------
-    case_number: int
-        The case to modify
-    guild: `discord.Guild`
-        The guild to edit a case for
-    bot: Red
-        The bot's instance
-    new_data: dict
-        The fields to edit
-    
+    name: str
+        The name of the case type to get
+    guild: discord.Guild
+        If provided, sets the case type's guild attribute to this guild
+
     Returns
     -------
-    Case
-        The edited case
-
+    CaseType or None
     """
-    case = await get_case(case_number, guild, bot)
-    for item in list(new_data.keys()):
-        setattr(case, item, new_data[item])
-    case_emb = await case.get_case_msg_content()
-    await case.message.edit(embed=case_emb)
-
-    await _conf.guild(guild).cases.set_attr(str(case_number), case.to_json())
-    return case
-
-
-async def is_casetype(case_type: str) -> bool:
-    """
-    Checks if the specified casetype is registered or not
-
-    Parameters
-    ----------
-    case_type: str
-        The case type to check
-    
-    Returns
-    -------
-    bool
-        `True` if the case type is registered, otherwise `False`
-
-    """
-    case_types = await _conf.casetypes()
-    return case_type in case_types
+    casetypes = await _conf.get_attr("casetypes")
+    if name in casetypes:
+        data = casetypes[name]
+        data["name"] = name
+        casetype = CaseType.from_json(data)
+        casetype.guild = guild
+    else:
+        return None
 
 
-async def get_all_casetypes() -> List[str]:
+async def get_all_casetypes(guild: discord.Guild=None) -> List[CaseType]:
     """
     Get all currently registered case types
 
     Returns
     -------
     list
-        A list of case type names
+        A list of case types
 
     """
     casetypes = await _conf.get_attr("casetypes")
-    return list(casetypes.keys())
+    typelist = []
+    for ct in casetypes.keys():
+        data = casetypes[ct]
+        data["name"] = ct
+        casetype = CaseType.from_json(data)
+        casetype.guild = guild
+        typelist.append(casetype)
+    return typelist
 
 
-async def register_casetype(new_type: dict) -> bool:
+async def register_casetype(
+        name: str, default_setting: bool,
+        image: str, case_str: str, audit_type: str) -> CaseType:
     """
-    Registers a new case type
+    Registers a case type. If the case type exists and
+    there are differences between the values passed and
+    what is stored already, the case type will be updated
+    with the new values
 
     Parameters
     ----------
-    new_type: dict
-        The new type to register
+    name: str
+        The name of the case
+    default_setting: bool
+        Whether the case type should be on (if `True`)
+        or off (if `False`) by default
+    image: str
+        The emoji to use for the case type (for example, :boot:)
+    case_str: str
+        The string representation of the case (example: Ban)
+    audit_type: str
+        The action type of the action as it would appear in the
+        audit log
 
     Returns
     -------
-    bool
-        `True` if registration was successful
+    CaseType
+        The case type that was registered
 
     Raises
     ------
     RuntimeError
         If the case type is already registered
+    TypeError:
+        If a parameter is missing
+    ValueError
+        If a parameter's value is not valid
+    AttributeError
+        If the audit_type is not an attribute of `discord.AuditLogAction`
 
     """
-    case_name = new_type["name"]
-    default_setting = new_type["default_setting"]
-    case_repr = new_type["image"]
-    case_str = new_type["case_str"]
-    data = {
-        "default_setting": default_setting,
-        "image": case_repr,
-        "case_str": case_str
-    }
-    if await is_casetype(case_name):
-        raise RuntimeError(
-            "A case type with that name has already been registered!"
-        )
+    if not isinstance(name, str):
+        raise ValueError("The 'name' is not a string! Check the value!")
+    if not isinstance(default_setting, bool):
+        raise ValueError("'default_setting' needs to be a bool!")
+    if not isinstance(image, str):
+        raise ValueError("The 'image' is not a string!")
+    if not isinstance(case_str, str):
+        raise ValueError("The 'case_str' is not a string!")
+    if not isinstance(audit_type, str):
+        raise ValueError("The 'audit_type' is not a string!")
+    try:
+        getattr(discord.AuditLogAction, audit_type)
+    except AttributeError:
+        raise
+    ct = await get_casetype(name)
+    if ct is None:
+        casetype = CaseType(name, default_setting, image, case_str, audit_type)
+        await casetype.to_json()
+        return casetype
     else:
-        await _conf.casetypes.set_attr(case_name, data)
-        return True
+        # Case type exists, so check for differences
+        # If no differences, raise RuntimeError
+        changed = False
+        if ct.default_setting != default_setting:
+            ct.default_setting = default_setting
+            changed = True
+        if ct.image != image:
+            ct.image = image
+            changed = True
+        if ct.case_str != case_str:
+            ct.case_str = case_str
+            changed = True
+        if ct.audit_type != audit_type:
+            ct.audit_type = audit_type
+            changed = True
+        if changed:
+            await ct.to_json()
+            return ct
+        else:
+            raise RuntimeError("That case type is already registered!")
 
 
-async def register_casetypes(new_types: List[dict]) -> bool:
+async def register_casetypes(new_types: List[dict]) -> List[CaseType]:
     """
     Registers multiple case types
 
@@ -430,17 +564,31 @@ async def register_casetypes(new_types: List[dict]) -> bool:
     Raises
     ------
     RuntimeError
-        If one of the case types couldn't be registered
+    KeyError
+    ValueError
+    AttributeError
+
+    See Also
+    --------
+    redbot.core.modlog.register_casetype
     
     """
+    type_list = []
     for new_type in new_types:
-        if not await is_casetype(new_type["name"]):
-            try:
-                await register_casetype(new_type)
-            except RuntimeError:
-                raise
+        try:
+            ct = await register_casetype(**new_type)
+        except RuntimeError:
+            raise
+        except ValueError:
+            raise
+        except AttributeError:
+            raise
+        except TypeError:
+            raise
+        else:
+            type_list.append(ct)
     else:
-        return True
+        return type_list
 
 
 async def get_modlog_channel(guild: discord.Guild
@@ -495,93 +643,6 @@ async def set_modlog_channel(guild: discord.Guild,
         channel.id if hasattr(channel, "id") else None
     )
     return True
-
-
-async def toggle_case_type(case_type: str, guild: discord.Guild) -> bool:
-    """
-    Toggles the specified case type
-
-    Parameters
-    ----------
-    case_type: str
-        The case type to toggle
-    guild: `discord.Guild`
-        The guild to toggle case type for
-
-    Returns
-    -------
-    bool
-        The new setting for the specified case type
-
-    """
-    new_setting = not await _conf.guild(guild).casetypes.get_attr(case_type)
-    await _conf.guild(guild).casetypes.set_attr(case_type, new_setting)
-    return new_setting
-
-
-async def get_case_type_status(case_type: str, guild: discord.Guild) -> bool:
-    """
-    Gets the status of the specified case type
-
-    Parameters
-    ----------
-    case_type: str
-        The case type to check
-    guild: `discord.Guild`
-        The guild to check the setting for
-    
-    Returns
-    -------
-    bool
-        The current setting for the specified case type
-
-    Raises
-    ------
-    RuntimeError
-        If the specified case type is not registered
-    
-    """
-    if await is_casetype(case_type):
-        default = await _conf.casetypes.get_attr(case_type)
-        return await _conf.guild(guild).casetypes.get_attr(case_type, default)
-    else:
-        raise RuntimeError("That case type is not registered!")
-
-
-async def get_case_type_repr(case_type: str) -> str:
-    """
-    Gets the image representation of a case type
-
-    Parameters
-    ----------
-    case_type: str
-        The case type to get the representation of
-    
-    Returns
-    -------
-    str
-        The case type's representation
-
-    """
-    return (await _conf.casetypes.get_attr(case_type)).get("image")
-
-
-async def get_case_type_name(case_type: str) -> str:
-    """
-    Gets the name of the case type
-
-    Parameters
-    ----------
-    case_type: str
-        The case tpe to get the name of
-    
-    Returns
-    -------
-    str
-        The case type's name
-
-    """
-    return (await _conf.casetypes.get_attr(case_type)).get("case_str")
 
 
 async def reset_cases(guild: discord.Guild) -> bool:
