@@ -245,7 +245,8 @@ class CaseType:
     async def is_enabled(self) -> bool:
         if not self.guild:
             return False
-        return await _conf.guild(self.guild).casetypes.get_attr(self.name)
+        return await _conf.guild(self.guild).casetypes.get_attr(self.name,
+                                                                self.default_setting)
 
     async def set_enabled(self, enabled: bool):
         if not self.guild:
@@ -405,7 +406,7 @@ async def create_case(guild: discord.Guild, created_at: datetime, action_type: s
     if not await case_type.is_enabled():
         return None
 
-    next_case_number = int(get_next_case_number(guild))
+    next_case_number = int(await get_next_case_number(guild))
 
     case = Case(guild, int(created_at.timestamp()), action_type, user, moderator,
                 next_case_number, reason, until, channel, amended_by=None,
@@ -439,6 +440,7 @@ async def get_casetype(name: str, guild: discord.Guild=None) -> Union[CaseType, 
         data["name"] = name
         casetype = CaseType.from_json(data)
         casetype.guild = guild
+        return casetype
     else:
         return None
 

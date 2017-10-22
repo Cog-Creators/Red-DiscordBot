@@ -1152,7 +1152,7 @@ class Mod:
         audit_case = None
         permissions = guild.me.guild_permissions
         modlog_cases = await modlog.get_all_cases(guild, self.bot)
-        if permissions.view_audit_logs:
+        if permissions.view_audit_log:
             async for entry in guild.audit_logs(action=discord.AuditLogAction.ban):
                 if entry.target == member:
                     audit_case = entry
@@ -1213,7 +1213,7 @@ class Mod:
             return  # No modlog channel so no point in continuing
         audit_case = None
         permissions = guild.me.guild_permissions
-        if permissions.view_audit_logs:
+        if permissions.view_audit_log:
             async for entry in guild.audit_logs(action=discord.AuditLogAction.unban):
                 if entry.target == user:
                     audit_case = entry

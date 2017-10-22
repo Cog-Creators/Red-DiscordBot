@@ -54,9 +54,7 @@ class ModLog:
     @modlogset.command(name='cases')
     @commands.guild_only()
     async def set_cases(self, ctx: commands.Context, action: str = None):
-        """Enables or disables case creation for each type of mod action
-
-        Enabled can be 'on' or 'off'"""
+        """Enables or disables case creation for each type of mod action"""
         guild = ctx.guild
 
         if action is None:  # No args given
@@ -64,24 +62,25 @@ class ModLog:
             await self.bot.send_cmd_help(ctx)
             title = _("Current settings:")
             msg = ""
-            for key in casetypes:
-                enabled = await modlog.get_case_type_status(key, guild)
+            for ct in casetypes:
+                enabled = await ct.is_enabled()
                 value = 'enabled' if enabled else 'disabled'
-                msg += '%s : %s\n' % (key, value)
+                msg += '%s : %s\n' % (ct.name, value)
 
             msg = title + "\n" + box(msg)
             await ctx.send(msg)
-
-        elif not await modlog.is_casetype(action):
+            return
+        casetype = await modlog.get_casetype(action, guild)
+        if not casetype:
             await ctx.send(_("That action is not registered"))
-
         else:
 
-            new_setting = await modlog.toggle_case_type(action, guild)
+            enabled = await casetype.is_enabled()
+            await casetype.set_enabled(True if not enabled else False)
 
             msg = (
                 _('Case creation for {} actions is now {}.').format(
-                    action, 'enabled' if new_setting else 'disabled'
+                    action, 'enabled' if not enabled else 'disabled'
                 )
             )
             await ctx.send(msg)
@@ -127,7 +126,7 @@ class ModLog:
                 # No mod set, so attempt to find out if the author
                 # triggered the case creation with an action
                 bot_perms = guild.me.guild_permissions
-                if bot_perms.view_audit_logs:
+                if bot_perms.view_audit_log:
                     case_type = await modlog.get_casetype(case_before.action_type, guild)
                     audit_type = getattr(discord.AuditLogAction, case_type.audit_type)
                     if audit_type:

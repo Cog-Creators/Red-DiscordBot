@@ -35,15 +35,6 @@ async def test_modlog_case_create(mod, ctx, member_factory):
     moderator = ctx.author
     reason = "Test 12345"
     created_at = dt.utcnow()
-
-    ct = {
-        "name": "ban",
-        "default_setting": True,
-        "image": ":hammer:",
-        "case_str": "Ban",
-        "audit_type": "ban"
-    }
-    await mod.register_casetype(**ct)
     case = await mod.create_case(
         guild, created_at, case_type, usr, moderator, reason
     )
