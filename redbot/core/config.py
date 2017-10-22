@@ -5,7 +5,7 @@ from typing import Callable, Union, Tuple
 import discord
 
 from .data_manager import cog_data_path, core_data_path
-from .drivers.red_json import JSON as JSONDriver
+from .drivers import get_driver
 
 log = logging.getLogger("red.config")
 
@@ -137,7 +137,7 @@ class Group(Value):
     # noinspection PyTypeChecker
     def __getattr__(self, item: str) -> Union["Group", Value]:
         """Get an attribute of this group.
-        
+
         This special method is called whenever dot notation is used on this
         object.
 
@@ -145,13 +145,13 @@ class Group(Value):
         ----------
         item : str
             The name of the attribute being accessed.
-    
+
         Returns
         -------
         `Group` or `Value`
             A child value of this Group. This, of course, can be another
             `Group`, due to Config's composite pattern.
-            
+
         Raises
         ------
         AttributeError
@@ -260,7 +260,7 @@ class Group(Value):
             If this is :code:`True` this function will return a coroutine that
             resolves to a "real" data value when awaited. If :code:`False`,
             this method acts the same as `__getattr__`.
-        
+
         Returns
         -------
         `types.coroutine` or `Value` or `Group`
@@ -292,36 +292,6 @@ class Group(Value):
         defaults.update(await self())
         return defaults
 
-    async def all_from_kind(self) -> dict:
-        """Get all data from this group and its siblings.
-
-        .. important::
-        
-            This method is overridden in `MemberGroup.all_from_kind` and
-            functions slightly differently.
-
-        Note
-        ----
-        The return value of this method will include registered defaults
-        for groups which have not had their values set.
-
-        Returns
-        -------
-        dict
-            A dict of :code:`ID -> data`, with the data being a dict
-            of the group's raw values.
-
-        """
-        # noinspection PyTypeChecker
-        all_from_kind = await self._super_group()
-
-        for k, v in all_from_kind.items():
-            defaults = self.defaults
-            defaults.update(v)
-            all_from_kind[k] = defaults
-
-        return all_from_kind
-
     async def set(self, value):
         if not isinstance(value, dict):
             raise ValueError(
@@ -331,14 +301,14 @@ class Group(Value):
 
     async def set_attr(self, item: str, value):
         """Set an attribute by its name.
-        
+
         Similar to `get_attr` in the way it can be used to dynamically set
         attributes by name.
 
         Note
         ----
         Use of this method should be avoided wherever possible.
-        
+
         Parameters
         ----------
         item : str
@@ -358,17 +328,10 @@ class Group(Value):
         """
         await self.set({})
 
-    async def clear_all(self):
-        """Wipe all data from this group and its siblings.
-
-        If used on a global group, this method wipes all data from all groups.
-        """
-        await self._super_group.set({})
-
 
 class MemberGroup(Group):
     """A specific group class for use with member data only.
-    
+
     Inherits from `Group`. In this group data is stored as
     :code:`GUILD_ID -> MEMBER_ID -> data`.
     """
@@ -391,41 +354,6 @@ class MemberGroup(Group):
             spawner=self.spawner
         )
         return group_obj
-
-    async def all_guilds(self) -> dict:
-        """Get a dict of :code:`GUILD_ID -> MEMBER_ID -> data`.
-
-        Note
-        ----
-        The return value of this method will include registered defaults
-        for groups which have not had their values set.
-
-        Returns
-        -------
-        dict
-            A dict of data from all members from all guilds.
-
-        """
-        # noinspection PyTypeChecker
-        return await super().all_from_kind()
-
-    async def all_from_kind(self) -> dict:
-        """Get a dict of all members from the same guild as the given one.
-
-        Note
-        ----
-        The return value of this method will include registered defaults
-        for groups which have not had their values set.
-
-        Returns
-        -------
-        dict
-            A dict of :code:`MEMBER_ID -> data`.
-
-        """
-        guild_member = await super().all_from_kind()
-        return guild_member.get(self.identifiers[-2], {})
-
 
 
 class Config:
@@ -501,7 +429,7 @@ class Config:
         force_registration : `bool`, optional
             Should config require registration of data keys before allowing you
             to get/set values? See `force_registration`.
-            
+
         Returns
         -------
         Config
@@ -512,40 +440,62 @@ class Config:
         cog_name = cog_path_override.stem
         uuid = str(hash(identifier))
 
-        spawner = JSONDriver(cog_name, data_path_override=cog_path_override)
+        # We have to import this here otherwise we have a circular dependency
+        from .data_manager import basic_config
+
+        log.debug("Basic config: \n\n{}".format(basic_config))
+
+        driver_name = basic_config.get('STORAGE_TYPE', 'JSON')
+        driver_details = basic_config.get('STORAGE_DETAILS', {})
+
+        log.debug("Using driver: '{}'".format(driver_name))
+
+        spawner = get_driver(driver_name, cog_name, data_path_override=cog_path_override,
+                             **driver_details)
         return cls(cog_name=cog_name, unique_identifier=uuid,
                    force_registration=force_registration,
                    driver_spawn=spawner)
 
     @classmethod
     def get_core_conf(cls, force_registration: bool=False):
-        """All core modules that require a config instance should use this
+        """Get a Config instance for a core module.
+
+        All core modules that require a config instance should use this
         classmethod instead of `get_conf`.
 
-        identifier : int
-            See `get_conf`.
+        Parameters
+        ----------
         force_registration : `bool`, optional
             See `force_registration`.
 
         """
-        driver_spawn = JSONDriver("Core", data_path_override=core_data_path())
+        core_path = core_data_path()
+
+        # We have to import this here otherwise we have a circular dependency
+        from .data_manager import basic_config
+
+        driver_name = basic_config.get('STORAGE_TYPE', 'JSON')
+        driver_details = basic_config.get('STORAGE_DETAILS', {})
+
+        driver_spawn = get_driver(driver_name, "Core", data_path_override=core_path,
+                                  **driver_details)
         return cls(cog_name="Core", driver_spawn=driver_spawn,
                    unique_identifier='0',
                    force_registration=force_registration)
 
     def __getattr__(self, item: str) -> Union[Group, Value]:
         """Same as `group.__getattr__` except for global data.
-        
+
         Parameters
         ----------
         item : str
             The attribute you want to get.
-            
+
         Returns
         -------
         `Group` or `Value`
             The value for the attribute you want to retrieve
-            
+
         Raises
         ------
         AttributeError
@@ -659,7 +609,7 @@ class Config:
 
     def register_guild(self, **kwargs):
         """Register default values on a per-guild level.
-        
+
         See :py:meth:`register_global` for more details.
         """
         self._register_default(self.GUILD, **kwargs)
@@ -681,16 +631,16 @@ class Config:
 
     def register_user(self, **kwargs):
         """Registers default values on a per-user level.
-        
+
         This means that each user's data is guild-independent.
-        
+
         See `register_global` for more details.
         """
         self._register_default(self.USER, **kwargs)
 
     def register_member(self, **kwargs):
         """Registers default values on a per-member level.
-        
+
         This means that each user's data is guild-dependent.
 
         See `register_global` for more details.
@@ -720,7 +670,7 @@ class Config:
 
     def channel(self, channel: discord.TextChannel) -> Group:
         """Returns a `Group` for the given channel.
-        
+
         This does not discriminate between text and voice channels.
 
         Parameters
@@ -765,3 +715,226 @@ class Config:
         return self._get_base_group(self.MEMBER, member.guild.id, member.id,
                                     group_class=MemberGroup)
 
+    async def _all_from_scope(self, scope: str):
+        """Get a dict of all values from a particular scope of data.
+
+        :code:`scope` must be one of the constants attributed to
+        this class, i.e. :code:`GUILD`, :code:`MEMBER` et cetera.
+
+        IDs as keys in the returned dict are casted to `int` for convenience.
+
+        Default values are also mixed into the data if they have not yet been
+        overwritten.
+        """
+        group = self._get_base_group(scope)
+        dict_ = await group()
+        ret = {}
+        for k, v in dict_.items():
+            data = group.defaults
+            data.update(v)
+            ret[int(k)] = data
+        return ret
+
+    async def all_guilds(self) -> dict:
+        """Get all guild data as a dict.
+
+        Note
+        ----
+        The return value of this method will include registered defaults for
+        values which have not yet been set.
+
+        Returns
+        -------
+        dict
+            A dictionary in the form {`int`: `dict`} mapping
+            :code:`GUILD_ID -> data`.
+
+        """
+        return await self._all_from_scope(self.GUILD)
+
+    async def all_channels(self) -> dict:
+        """Get all channel data as a dict.
+
+        Note
+        ----
+        The return value of this method will include registered defaults for
+        values which have not yet been set.
+
+        Returns
+        -------
+        dict
+            A dictionary in the form {`int`: `dict`} mapping
+            :code:`CHANNEL_ID -> data`.
+
+        """
+        return await self._all_from_scope(self.CHANNEL)
+
+    async def all_roles(self) -> dict:
+        """Get all role data as a dict.
+
+        Note
+        ----
+        The return value of this method will include registered defaults for
+        values which have not yet been set.
+
+        Returns
+        -------
+        dict
+            A dictionary in the form {`int`: `dict`} mapping
+            :code:`ROLE_ID -> data`.
+
+        """
+        return await self._all_from_scope(self.ROLE)
+
+    async def all_users(self) -> dict:
+        """Get all user data as a dict.
+
+        Note
+        ----
+        The return value of this method will include registered defaults for
+        values which have not yet been set.
+
+        Returns
+        -------
+        dict
+            A dictionary in the form {`int`: `dict`} mapping
+            :code:`USER_ID -> data`.
+
+        """
+        return await self._all_from_scope(self.USER)
+
+    def _all_members_from_guild(self, group: Group, guild_data: dict) -> dict:
+        ret = {}
+        for member_id, member_data in guild_data.items():
+            new_member_data = group.defaults
+            new_member_data.update(member_data)
+            ret[int(member_id)] = new_member_data
+        return ret
+
+    async def all_members(self, guild: discord.Guild=None) -> dict:
+        """Get data for all members.
+
+        If :code:`guild` is specified, only the data for the members of that
+        guild will be returned. As such, the dict will map
+        :code:`MEMBER_ID -> data`. Otherwise, the dict maps
+        :code:`GUILD_ID -> MEMBER_ID -> data`.
+
+        Note
+        ----
+        The return value of this method will include registered defaults for
+        values which have not yet been set.
+
+        Parameters
+        ----------
+        guild : `discord.Guild`, optional
+            The guild to get the member data from. Can be omitted if data
+            from every member of all guilds is desired.
+
+        Returns
+        -------
+        dict
+            A dictionary of all specified member data.
+
+        """
+        ret = {}
+        if guild is None:
+            group = self._get_base_group(self.MEMBER)
+            dict_ = await group()
+            for guild_id, guild_data in dict_.items():
+                ret[int(guild_id)] = self._all_members_from_guild(
+                    group, guild_data)
+        else:
+            group = self._get_base_group(self.MEMBER, guild.id)
+            guild_data = await group()
+            ret = self._all_members_from_guild(group, guild_data)
+        return ret
+
+    async def _clear_scope(self, *scopes: str):
+        """Clear all data in a particular scope.
+
+        The only situation where a second scope should be passed in is if
+        member data from a specific guild is being cleared.
+
+        If no scopes are passed, then all data is cleared from every scope.
+
+        Parameters
+        ----------
+        *scopes : str, optional
+            The scope of the data. Generally only one scope needs to be
+            provided, a second only necessary for clearing member data
+            of a specific guild.
+
+            **Leaving blank removes all data from this Config instance.**
+
+        """
+        if not scopes:
+            group = Group(identifiers=(self.unique_identifier, ),
+                          defaults={},
+                          spawner=self.spawner)
+        else:
+            group = self._get_base_group(*scopes)
+        await group.set({})
+
+    async def clear_all(self):
+        """Clear all data from this Config instance.
+
+        This resets all data to its registered defaults.
+
+        .. important::
+
+            This cannot be undone.
+
+        """
+        await self._clear_scope()
+
+    async def clear_all_globals(self):
+        """Clear all global data.
+
+        This resets all global data to its registered defaults.
+        """
+        await self._clear_scope(self.GLOBAL)
+
+    async def clear_all_guilds(self):
+        """Clear all guild data.
+
+        This resets all guild data to its registered defaults.
+        """
+        await self._clear_scope(self.GUILD)
+
+    async def clear_all_channels(self):
+        """Clear all channel data.
+
+        This resets all channel data to its registered defaults.
+        """
+        await self._clear_scope(self.CHANNEL)
+
+    async def clear_all_roles(self):
+        """Clear all role data.
+
+        This resets all role data to its registered defaults.
+        """
+        await self._clear_scope(self.ROLE)
+
+    async def clear_all_users(self):
+        """Clear all user data.
+
+        This resets all user data to its registered defaults.
+        """
+        await self._clear_scope(self.USER)
+
+    async def clear_all_members(self, guild: discord.Guild=None):
+        """Clear all member data.
+
+        This resets all specified member data to its registered defaults.
+
+        Parameters
+        ----------
+        guild : `discord.Guild`, optional
+            The guild to clear member data from. Omit to clear member data from
+            all guilds.
+
+        """
+        if guild is not None:
+            await self._clear_scope(self.MEMBER, guild.id)
+            return
+        await self._clear_scope(self.MEMBER)
