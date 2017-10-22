@@ -30,6 +30,8 @@ Installing Red
 
   * No audio: :code:`python -m pip install -U --process-dependency-links Red-DiscordBot`
   * Audio: :code:`python -m pip install -U --process-dependency-links Red-DiscordBot[voice]`
+  * Development version (without audio): :code:`python -m pip install -U --process-dependency-links git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=red-discordbot`
+  * Development version (with audio): :code:`python -m pip install -U --process-dependency-links git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=red-discordbot[voice]`
 
 3. Once that has completed, run :code:`redbot-setup` to set up your instance
 
