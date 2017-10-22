@@ -20,11 +20,11 @@ Installing the bot
 
 To install without audio:
 
-:code:`pip3 install red-discordbot`
+:code:`pip3 install -U --process-dependency-links red-discordbot`
 
 To install with audio:
 
-:code:`pip3 install red-discordbot[voice]`
+:code:`pip3 install -U --process-dependency-links red-discordbot[voice]`
 
 ------------------------
 Setting up your instance

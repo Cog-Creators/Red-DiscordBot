@@ -22,7 +22,7 @@ Installing pre-requirements
 Installing Red
 --------------
 
-To install Red, run :code:`pip3 install red-discordbot[voice]`
+To install Red, run :code:`pip3 install -U --process-dependency-links red-discordbot[voice]`
 
 ----------------------
 Setting up an instance
