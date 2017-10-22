@@ -60,79 +60,92 @@ class Mod:
                 "name": "ban",
                 "default_setting": True,
                 "image": ":hammer:",
-                "case_str": "Ban"
+                "case_str": "Ban",
+                "audit_type": "ban"
             },
             {
                 "name": "kick",
                 "default_setting": True,
                 "image": ":boot:",
-                "case_str": "Kick"
+                "case_str": "Kick",
+                "audit_type": "kick"
             },
             {
                 "name": "hackban",
                 "default_setting": True,
                 "image": ":bust_in_silhouette: :hammer:",
-                "case_str": "Hackban"
+                "case_str": "Hackban",
+                "audit_type": "ban"
             },
             {
                 "name": "softban",
                 "default_setting": True,
                 "image": ":dash: :hammer:",
-                "case_str": "Softban"
+                "case_str": "Softban",
+                "audit_type": "ban"
             },
             {
                 "name": "unban",
                 "default_setting": True,
                 "image": ":dove:",
-                "case_str": "Unban"
+                "case_str": "Unban",
+                "audit_type": "unban"
             },
             {
                 "name": "voiceban",
                 "default_setting": True,
                 "image": ":mute:",
-                "case_str": "Voice Ban"
+                "case_str": "Voice Ban",
+                "audit_type": "member_update"
             },
             {
                 "name": "voiceunban",
                 "default_setting": True,
                 "image": ":speaker:",
-                "case_str": "Voice Unban"
+                "case_str": "Voice Unban",
+                "audit_type": "member_update"
             },
             {
                 "name": "vmute",
                 "default_setting": False,
                 "image": ":mute:",
-                "case_str": "Voice Mute"
+                "case_str": "Voice Mute",
+                "audit_type": "overwrite_update"
             },
             {
                 "name": "cmute",
                 "default_setting": False,
                 "image": ":mute:",
-                "case_str": "Channel Mute"
+                "case_str": "Channel Mute",
+                "audit_type": "overwrite_update"
             },
             {
                 "name": "smute",
                 "default_setting": True,
                 "image": ":mute:",
-                "case_str": "Guild Mute"
+                "case_str": "Guild Mute",
+                "audit_type": "overwrite_update"
             },
             {
                 "name": "vunmute",
                 "default_setting": False,
                 "image": ":speaker:",
-                "case_str": "Voice Unmute"
+                "case_str": "Voice Unmute",
+                "audit_type": "overwrite_update"
             },
             {
                 "name": "cunmute",
                 "default_setting": False,
                 "image": ":speaker:",
-                "case_str": "Channel Unmute"
+                "case_str": "Channel Unmute",
+                "audit_type": "overwrite_update"
             },
             {
                 "name": "sunmute",
                 "default_setting": True,
                 "image": ":speaker:",
-                "case_str": "Guild Unmute"
+                "case_str": "Guild Unmute",
+                "audit_type": "overwrite_update"
             }
         ]
 
@@ -1150,9 +1163,7 @@ class Mod:
                 reason = audit_case.reason
                 for case in sorted(modlog_cases, key=lambda x: x.case_number, reverse=True):
                     if case.moderator == mod and case.user == member\
-                            and case.action_type in ["ban", "softban", "hackban"]:
-                        if case.action_type == "softban":
-                            self.current_softban = member
+                            and case.action_type in ["ban", "hackban"]:
                         break
                 else:  # no ban, softban, or hackban case with the mod and user combo
                     try:
@@ -1166,14 +1177,14 @@ class Mod:
             owner = guild.owner
             try:
                 await owner.send(
-                    "Hi, I noticed that someone in your server "
+                    _("Hi, I noticed that someone in your server "
                     "(the server named {}) banned {}#{} (user ID {}). "
                     "However, I don't have permissions to view audit logs, "
                     "so I could not determine if a mod log case was created "
                     "for that ban, meaning I could not create a case in "
                     "the mod log. If you want me to be able to add cases "
                     "to the mod log for bans done manually, I need the "
-                    "`View Audit Logs` permission.".format(
+                    "`View Audit Logs` permission.").format(
                         guild.name,
                         member.name,
                         member.discriminator,
@@ -1228,18 +1239,18 @@ class Mod:
             owner = guild.owner
             try:
                 await owner.send(
-                    "Hi, I noticed that someone in your server "
+                    _("Hi, I noticed that someone in your server "
                     "(the server named {}) unbanned {}#{} (user ID {}). "
                     "However, I don't have permissions to view audit logs, "
                     "so I could not determine if a mod log case was created "
                     "for that unban, meaning I could not create a case in "
                     "the mod log. If you want me to be able to add cases "
                     "to the mod log for unbans done manually, I need the "
-                    "`View Audit Logs` permission.".format(
+                    "`View Audit Logs` permission.").format(
                         guild.name,
-                        member.name,
-                        member.discriminator,
-                        member.id
+                        user.name,
+                        user.discriminator,
+                        user.id
                     )
                 )
             except discord.Forbidden:
