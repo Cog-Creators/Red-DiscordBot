@@ -219,7 +219,7 @@ class CogManager:
     async def available_modules(self) -> List[str]:
         """Finds the names of all available modules to load.
         """
-        paths = [await self.install_path()] + await self.paths()
+        paths = (await self.install_path(), ) + await self.paths()
         paths = [str(p) for p in paths]
 
         ret = []
