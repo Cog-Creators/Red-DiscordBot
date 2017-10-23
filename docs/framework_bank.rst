@@ -16,7 +16,7 @@ Basic Usage
 
 .. code-block:: python
 
-    from core import bank
+    from redbot.core import bank
 
     class MyCog:
         @commands.command()
