@@ -82,17 +82,21 @@ class Core:
     async def _reload(self, ctx, *, cog_name: str):
         """Reloads a package"""
         ctx.bot.unload_extension(cog_name)
-        self.cleanup_and_refresh_modules(cog_name)
+
+        spec = await find_spec(ctx.bot, cog_name)
+        if spec is None:
+            await ctx.send(_("No module by that name was found in any"
+                             " cog path."))
+            return
+
+        self.cleanup_and_refresh_modules(spec.name)
         try:
-            spec = await ctx.bot.cog_mgr.find_cog(cog_name)
             ctx.bot.load_extension(spec)
         except Exception as e:
             log.exception("Package reloading failed", exc_info=e)
             await ctx.send(_("Failed to reload package. Check your console or "
                              "logs for details."))
         else:
-            curr_pkgs = await ctx.bot.db.packages()
-            await ctx.bot.save_packages_status(curr_pkgs)
             await ctx.send(_("Done."))
 
     @commands.command(name="shutdown")
@@ -120,7 +124,7 @@ class Core:
             else:
                 importlib._bootstrap._exec(lib.__spec__, lib)
 
-        modules = itertools.accumulate(splitted, lambda old, next: "{}.{}".format(old, next))
+        modules = itertools.accumulate(splitted, "{}.{}".format)
         for m in modules:
             maybe_reload(m)
 
@@ -132,7 +136,7 @@ class Core:
     async def _set(self, ctx):
         """Changes Red's settings"""
         if ctx.invoked_subcommand is None:
-            await ctx.bot.send_cmd_help(ctx)
+            await ctx.send_help()
 
     @_set.command()
     @checks.guildowner()
@@ -203,7 +207,7 @@ class Core:
         try:
             status = statuses[status.lower()]
         except KeyError:
-            await ctx.bot.send_cmd_help(ctx)
+            await ctx.send_help()
         else:
             await ctx.bot.change_presence(status=status,
                                           game=game)
@@ -225,7 +229,7 @@ class Core:
             game = discord.Game(type=1, url=streamer, name=stream_title)
             await ctx.bot.change_presence(game=game, status=status)
         elif streamer is not None:
-            await ctx.bot.send_cmd_help(ctx)
+            await ctx.send_help()
             return
         else:
             await ctx.bot.change_presence(game=None, status=status)
@@ -263,7 +267,7 @@ class Core:
     async def prefix(self, ctx, *prefixes):
         """Sets Red's global prefix(es)"""
         if not prefixes:
-            await ctx.bot.send_cmd_help(ctx)
+            await ctx.send_help()
             return
         prefixes = sorted(prefixes, reverse=True)
         await ctx.bot.db.prefix.set(prefixes)
