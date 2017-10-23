@@ -58,7 +58,7 @@ class ModLog:
         guild = ctx.guild
 
         if action is None:  # No args given
-            casetypes = await modlog.get_all_casetypes()
+            casetypes = await modlog.get_all_casetypes(guild)
             await self.bot.send_cmd_help(ctx)
             title = _("Current settings:")
             msg = ""
