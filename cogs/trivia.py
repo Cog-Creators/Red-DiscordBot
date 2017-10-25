@@ -74,7 +74,7 @@ class Trivia:
             await self.bot.say("Alright, I won't embarass you at trivia anymore.")
         else:
             self.settings[server.id]["BOT_PLAYS"] = True
-            await self.bot.say("I'll gain a point everytime you don't answer in time.")
+            await self.bot.say("I'll gain a point every time you don't answer in time.")
         self.save_settings()
 
     @triviaset.command(pass_context=True)
