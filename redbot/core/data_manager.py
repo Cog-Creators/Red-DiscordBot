@@ -1,9 +1,13 @@
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import appdirs
 
 from .json_io import JsonIO
+
+if TYPE_CHECKING:
+    from . import Config
 
 __all__ = ['load_basic_configuration', 'cog_data_path', 'core_data_path',
            'storage_details', 'storage_type']
@@ -24,6 +28,19 @@ config_file = config_dir / 'config.json'
 
 
 def load_basic_configuration(instance_name_: str):
+    """Loads the basic bootstrap configuration necessary for `Config`
+    to know where to store or look for data.
+
+    .. important::
+        It is necessary to call this function BEFORE getting any `Config`
+        objects!
+
+    Parameters
+    ----------
+    instance_name_ : str
+        The instance name given by CLI argument and created during
+        redbot setup.
+    """
     global jsonio
     global basic_config
     global instance_name
@@ -50,12 +67,21 @@ def _base_data_path() -> Path:
 
 
 def cog_data_path(cog_instance=None) -> Path:
-    """
-    Gets the base cog data path. If you want to get the folder with
-        which to store your own cog's data please pass in an instance
-        of your cog class.
-    :param cog_instance:
-    :return:
+    """Gets the base cog data path. If you want to get the folder with
+    which to store your own cog's data please pass in an instance
+    of your cog class.
+
+    Parameters
+    ----------
+    cog_instance
+        The instance of the cog you wish to get a data path for.
+
+    Returns
+    -------
+    pathlib.Path
+        If ``cog_instance`` is provided it will return a path to a folder
+        dedicated to a given cog. Otherwise it will return a path to the
+        folder that contains data for all cogs.
     """
     try:
         base_data_path = Path(_base_data_path())
@@ -83,10 +109,11 @@ def core_data_path() -> Path:
 
 
 def storage_type() -> str:
-    """
-    Gets the storage type as a string.
+    """Gets the storage type as a string.
 
-    :return:
+    Returns
+    -------
+    str
     """
     try:
         return basic_config['STORAGE_TYPE']
@@ -95,11 +122,13 @@ def storage_type() -> str:
 
 
 def storage_details() -> dict:
-    """
-    Gets any details necessary for config drivers to load.
+    """Gets any details necessary for config drivers to load.
 
     These are set on setup.
-    :return:
+
+    Returns
+    -------
+    dict
     """
     try:
         return basic_config['STORAGE_DETAILS']

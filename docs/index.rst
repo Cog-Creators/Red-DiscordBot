@@ -31,8 +31,10 @@ Welcome to Red - Discord Bot's documentation!
     guide_cog_creation
     framework_bank
     framework_cogmanager
+    framework_datamanager
     framework_config
     framework_downloader
+    framework_i18n
     framework_modlog
     framework_context
 
