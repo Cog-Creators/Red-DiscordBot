@@ -4,6 +4,8 @@ from importlib.machinery import ModuleSpec
 from pathlib import Path
 from typing import Tuple, Union, List
 
+import redbot.cogs
+
 from . import checks
 from .config import Config
 from .i18n import CogI18n
@@ -45,13 +47,18 @@ class CogManager:
         """
         conf_paths = await self.conf.paths()
         other_paths = self._paths
+        core_paths = await self.core_paths()
 
-        all_paths = set(list(conf_paths) + list(other_paths))
+        all_paths = set(list(conf_paths) + list(other_paths) + core_paths)
 
         paths = [Path(p) for p in all_paths]
         if self.install_path not in paths:
             paths.insert(0, await self.install_path())
         return tuple(p.resolve() for p in paths if p.is_dir())
+
+    async def core_paths(self) -> List[Path]:
+        core_paths = [Path(p) for p in redbot.cogs.__path__]
+        return core_paths
 
     async def install_path(self) -> Path:
         """Get the install path for 3rd party cogs.
@@ -208,6 +215,17 @@ class CogManager:
 
         raise RuntimeError("No module by the name of '{}' was found"
                            " in any available path.".format(name))
+
+    async def available_modules(self) -> List[str]:
+        """Finds the names of all available modules to load.
+        """
+        paths = (await self.install_path(), ) + await self.paths()
+        paths = [str(p) for p in paths]
+
+        ret = []
+        for finder, module_name, _ in pkgutil.iter_modules(paths):
+            ret.append(module_name)
+        return ret
 
     @staticmethod
     def invalidate_caches():

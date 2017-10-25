@@ -286,7 +286,7 @@ class Economy:
         guild = ctx.guild
         if top < 1:
             top = 10
-        if bank.is_global():
+        if await bank.is_global():
             bank_sorted = sorted(await bank.get_global_accounts(ctx.author),
                                  key=lambda x: x.balance, reverse=True)
         else:
