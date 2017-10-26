@@ -93,34 +93,31 @@ def init_events(bot, cli_flags):
         INFO2 = []
 
         sentry = await bot.db.enable_sentry()
-        voice_reqs = [x.name for x in red_pkg._dep_map['voice']]
-        docs_reqs = [x.name for x in red_pkg._dep_map['docs']]
-        test_reqs = [x.name for x in red_pkg._dep_map['test']]
+        mongo_enabled = storage_type() != "JSON"
+        reqs_installed = {
+            "voice": None,
+            "docs": None,
+            "test": None
+        }
+        for key in reqs_installed.keys():
+            reqs = [x.name for x in red_pkg._dep_map[key]]
+            try:
+                pkg_resources.require(reqs)
+            except DistributionNotFound:
+                reqs_installed[key] = False
+            else:
+                reqs_installed[key] = True
 
-        if sentry:
-            INFO2.append("√ Report Errors")
-        else:
-            INFO2.append("X Report Errors")
-
-        if storage_type() == "JSON":
-            INFO2.append("X MongoDB")
-        else:
-            INFO2.append("√ MongoDB")
-
-        try:
-            pkg_resources.require(voice_reqs)
-        except DistributionNotFound:
-            INFO2.append("X Voice")
-        else:
-            INFO2.append("√ Voice")
-
-        try:
-            pkg_resources.require(docs_reqs)
-            pkg_resources.require(test_reqs)
-        except DistributionNotFound:
-            INFO2.append("X Tests and Docs")
-        else:
-            INFO2.append("√ Tests and Docs")
+        options = (
+            ("Error Reporting", sentry),
+            ("MongoDB", mongo_enabled),
+            ("Voice", reqs_installed["voice"]),
+            ("Docs", reqs_installed["docs"]),
+            ("Tests", reqs_installed["test"])
+        )
+        for option, enabled in options:
+            enabled = "X" if enabled else " "
+            INFO2.append("[{}] {}".format(enabled, option))
 
         print(Fore.RED + INTRO)
         print(Style.RESET_ALL)
