@@ -1,3 +1,5 @@
+import sys
+import codecs
 import datetime
 import logging
 import pkg_resources
@@ -115,9 +117,12 @@ def init_events(bot, cli_flags):
             ("Docs", reqs_installed["docs"]),
             ("Tests", reqs_installed["test"])
         )
+
+        on_symbol, off_symbol = _get_settings_symbols()
+
         for option, enabled in options:
-            enabled = "X" if enabled else " "
-            INFO2.append("[{}] {}".format(enabled, option))
+            enabled = on_symbol if enabled else off_symbol
+            INFO2.append("{} {}".format(enabled, option))
 
         print(Fore.RED + INTRO)
         print(Style.RESET_ALL)
@@ -192,3 +197,22 @@ def init_events(bot, cli_flags):
     @bot.event
     async def on_command(command):
         bot.counter["processed_commands"] += 1
+
+def _get_settings_symbols():
+    """Get symbols for displaying settings on stdout.
+
+    This is so we don't get encoding errors when trying to print unicode
+    emojis to stdout (particularly with Windows Command Prompt).
+    """
+    encoder = codecs.getencoder(sys.stdout.encoding)
+    check_mark = "\N{SQUARE ROOT}"
+    try:
+        encoder(check_mark)
+    except UnicodeEncodeError:
+        on_symbol = "[X]"
+        off_symbol = "[ ]"
+    else:
+        on_symbol = check_mark
+        off_symbol = "X"
+
+    return on_symbol, off_symbol
