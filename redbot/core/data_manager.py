@@ -129,11 +129,11 @@ def _find_data_files(init_location: str) -> (Path, List[Path]):
     if not init_file.is_file():
         return []
 
-    package_folder = init_file.parent
+    package_folder = init_file.parent.resolve() / 'data'
     if not package_folder.is_dir():
         return []
 
-    all_files = package_folder.glob("**")
+    all_files = list(package_folder.rglob("*"))
 
     return package_folder, [p.resolve()
                             for p in all_files
@@ -168,7 +168,7 @@ def _compare_and_copy(to_copy: List[Path], bundled_data_dir: Path, cog_data_dir:
     lookup = {p: cog_data_dir.joinpath(p.relative_to(bundled_data_dir))
               for p in to_copy}
 
-    for orig, poss_existing in lookup:
+    for orig, poss_existing in lookup.items():
         if not poss_existing.is_file():
             poss_existing.parent.mkdir(exist_ok=True, parents=True)
             exists_checksum = None
@@ -182,8 +182,8 @@ def _compare_and_copy(to_copy: List[Path], bundled_data_dir: Path, cog_data_dir:
                 orig.open('rb')), hashlib.sha256())
 
         if exists_checksum != orig_checksum:
-            # shutil.copy(str(orig), str(poss_existing))
-            log.debug("Attempting to copy {} to {}".format(
+            shutil.copy(str(orig), str(poss_existing))
+            log.debug("Copying {} to {}".format(
                 orig, poss_existing
             ))
 
