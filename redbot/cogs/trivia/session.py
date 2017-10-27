@@ -1,7 +1,7 @@
 """Module to manage trivia sessions."""
 import asyncio
 import time
-from random import choice, shuffle
+import random
 from collections import Counter
 from typing import List
 import discord
@@ -26,31 +26,29 @@ class TriviaSession():
 
     Attributes
     ----------
-    ctx : commands.Context
+    ctx : `commands.Context`
         Context object from which this session will be run.
         This object assumes the session was started in `ctx.channel`
         by `ctx.author`.
-    question_list : List[tuple]
-        List of tuples containing `(question, answers)` pairs. `question`
-        is a single string, where as `answers` is a list of strings.
-    settings : redbot.core.config.Group
+    question_list : `dict`
+        A dict mapping questions (`str`) to answers (`list` of `str`).
+    settings : `redbot.core.config.Group`
         Config for the trivia session.
-    scores : collections.Counter
+    scores : `collections.Counter`
         A counter with the players as keys, and their scores as values. The
         players are of type :py:class:`discord.Member`.
-    count : int
+    count : `int`
         The number of questions which have been asked.
-    stopped : bool
+    stopped : `bool`
         Whether or not the trivia session has been stopped.
 
     """
 
     def __init__(self,
                  ctx,
-                 question_list: List[tuple],
+                 question_list,
                  settings):
         self.ctx = ctx
-        shuffle(question_list)
         self.question_list = question_list
         self.settings = settings
         self.scores = Counter()
@@ -63,7 +61,7 @@ class TriviaSession():
         max_score = await self.settings.max_score()
         delay = await self.settings.delay()
         timeout = await self.settings.timeout()
-        for question, answers in self.question_list:
+        for question, answers in self._iter_questions():
             self.count += 1
             msg = "**Question number {}!**\n\n{}".format(self.count, question)
             await self.ctx.send(msg)
@@ -79,6 +77,11 @@ class TriviaSession():
             await self.ctx.send("There are no more questions!")
             await self.end_game()
 
+    def _iter_questions(self):
+        for _ in range(len(self.question_list)):
+            question = random.choice(self.question_list)
+            yield question, self.question_list.pop(question)
+
     async def wait_for_answer(self,
                               answers: List[str],
                               delay: float,
@@ -92,7 +95,7 @@ class TriviaSession():
 
         Parameters
         ----------
-        answers : List[str]
+        answers : `list` of `str`
             A list of valid answers to the current question.
         delay : float
             How long users have to respond (in seconds).
@@ -102,7 +105,7 @@ class TriviaSession():
         Returns
         -------
         bool
-            ``True`` if the session wasn't interrupted.
+            :code:`True` if the session wasn't interrupted.
 
         """
         try:
@@ -115,9 +118,9 @@ class TriviaSession():
             if self.stopped:
                 return False
             if await self.settings.reveal_answer():
-                reply = choice(_REVEAL_MESSAGES).format(answers[0])
+                reply = random.choice(_REVEAL_MESSAGES).format(answers[0])
             else:
-                reply = choice(_FAIL_MESSAGES)
+                reply = random.choice(_FAIL_MESSAGES)
             if await self.settings.bot_plays():
                 reply += " **+1** for me!"
                 self.scores[self.ctx.guild.me] += 1
@@ -141,7 +144,7 @@ class TriviaSession():
 
         Parameters
         ----------
-        answers : List[str]
+        answers : `list` of `str`
             The answers which the predicate must check for.
 
         Returns
@@ -175,12 +178,12 @@ class TriviaSession():
 
     async def end_game(self):
         """End the trivia session and display scrores."""
-        self.stop()
         if self.scores:
             await self.send_table()
         multiplier = await self.settings.payout_multiplier()
         if multiplier > 0:
             await self.pay_winner(multiplier)
+        self.stop()
 
     async def send_table(self):
         """Send a table of scores to the session's channel."""

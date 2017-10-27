@@ -2,6 +2,7 @@
 from typing import List
 import pathlib
 import chardet
+import yaml
 import discord
 from discord.ext import commands
 from redbot.core import Config, checks
@@ -10,48 +11,14 @@ from redbot.cogs.bank import check_global_setting_admin
 from .log import LOG
 from .session import TriviaSession
 
-__all__ = ["Trivia", "UNIQUE_ID", "parse_trivia_list"]
+__all__ = ["Trivia", "UNIQUE_ID"]
 
 UNIQUE_ID = 0xb3c0e453
 
 
-def parse_trivia_list(path):
-    """Parse the trivia list file at the given file path.
-
-    Parameters
-    ----------
-    path : str or pathlib.Path
-        The file path pointing to the trivia list.
-
-    """
-    if isinstance(path, pathlib.Path):
-        path = str(path)
-    ret = []
-    with open(path, "rb") as file_:
-        try:
-            encoding = chardet.detect(file_.read())["encoding"]
-        except (KeyError, TypeError):
-            encoding = "ISO-8859-1"
-
-    with open(path, "r", encoding=encoding) as file_:
-        trivia_list = file_.readlines()
-
-    for line in trivia_list:
-        if "`" not in line:
-            continue
-        line = line.replace("\n", "")
-        line = line.split("`")
-        question = line[0]
-        answers = []
-        for ans in line[1:]:
-            answers.append(ans.strip())
-        if len(line) >= 2 and question and answers:
-            ret.append((question, answers))
-
-    if not ret:
-        raise ValueError("Empty trivia list.")
-
-    return ret
+class InvalidListError(Exception):
+    """A Trivia list file is in invalid format."""
+    pass
 
 
 class Trivia:
@@ -59,7 +26,7 @@ class Trivia:
 
     def __init__(self):
         self.trivia_sessions = {}
-        self.lists_dir = "redbot/cogs/trivia/lists"  # Temporary solution
+        self.lists_dir = "redbot/cogs/trivia/yamls"  # Temporary solution
         self.conf = Config.get_conf(
             self, identifier=UNIQUE_ID, force_registration=True)
 
@@ -182,19 +149,28 @@ class Trivia:
             await ctx.send(
                 "There is already an ongoing trivia session in this channel.")
             return
-        trivia_list = []
+        trivia_dict = {}
         for category in categories:
-            if not self._category_exists(category):
-                await ctx.send(
-                    "Invalid category `{0}`. See `{1}trivia list` for a list of trivia"
-                    " categories.".format(category, ctx.prefix))
-                return
-            trivia_list += self.get_trivia_list(category)
-        if not trivia_list:
-            await ctx.send("Empty trivia list.")
+            try:
+                dict_ = self.get_trivia_list(category)
+            except FileNotFoundError:
+                await ctx.send("Invalid category `{0}`. See `{1}trivia list`"
+                               " for a list of trivia categories."
+                               "".format(category, ctx.prefix))
+            except InvalidListError:
+                await ctx.send("There was an error parsing the trivia list for"
+                               " the `{}` category. It may be formatted"
+                               " incorrectly.".format(category))
+            else:
+                trivia_dict.update(dict_)
+                continue
+            return
+        if not trivia_dict:
+            await ctx.send("The trivia list was parsed successfully, however"
+                           " it appears to be empty!")
             return
         settings = self.conf.guild(ctx.guild)
-        session = TriviaSession(ctx, trivia_list, settings)
+        session = TriviaSession(ctx, trivia_dict, settings)
         task = ctx.bot.loop.create_task(session.run())
         self.trivia_sessions[session] = task
         LOG.debug("New trivia session; #%s in %s", ctx.channel, ctx.guild)
@@ -231,18 +207,14 @@ class Trivia:
         if path is None:
             await ctx.send("There are no trivia lists available.")
             return
-        filenames = [p.name for p in path.iterdir()]
-        lists = [
-            l.replace(".txt", "") for l in filenames
-            if l.endswith(".txt") and " " not in l
-        ]
-        del filenames
+        lists = [p.name for p in path.iterdir()]
+        lists = [l[:-5] for l in lists if l.endswith(".yaml") and " " not in l]
         if not lists:
             await ctx.send("There are no trivia lists available.")
             return
         msg = box("**Available trivia lists**\n\n{}"
-                  "".format(", ".join(sorted(lists)), lang="diff"))
-        if len(lists) > 100:
+                  "".format(", ".join(sorted(lists))))
+        if len(msg) > 1000:
             await ctx.author.send(msg)
             return
         await ctx.send(msg)
@@ -265,7 +237,7 @@ class Trivia:
             self.trivia_sessions[session].cancel()
             self.trivia_sessions.pop(session)
 
-    def get_trivia_list(self, category: str) -> List[tuple]:
+    def get_trivia_list(self, category: str) -> dict:
         """Get the trivia list corresponding to the given category.
 
         Parameters
@@ -275,21 +247,25 @@ class Trivia:
 
         Returns
         -------
-        List[tuple]
-            A list of tuples, each in the form ``(question: str,
-            answers: List[str])``
+        `dict`
+            A dict mapping questions (`str`) to answers (`list` of `str`).
 
         """
         path = self._get_lists_path()
         if path is None:
             return
-        filename = "{}.txt".format(category)
+        filename = "{}.yaml".format(category)
         path = path / filename
-        try:
-            list_ = parse_trivia_list(path)
-        except (FileNotFoundError, ValueError):
-            list_ = []
-        return list_
+        if not path.is_file():
+            raise FileNotFoundError("Could not find the `{}` category"
+                                    "".format(category))
+        with path.open() as file:
+            try:
+                dict_ = yaml.load(file)
+            except yaml.error.YAMLError as exc:
+                raise InvalidListError("YAML parsing failed") from exc
+            else:
+                return dict_
 
     def _get_trivia_session(self,
                             channel: discord.TextChannel) -> TriviaSession:
@@ -304,9 +280,9 @@ class Trivia:
             return ret
 
     def _category_exists(self, category: str) -> bool:
-        filename = "{}.txt".format(category)
+        filename = "{}.yaml".format(category)
         path = self._get_lists_path()
         if path is None:
             return
-        path = pathlib.Path(path / filename)
+        path = path / filename
         return path.is_file()
