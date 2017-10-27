@@ -11,7 +11,6 @@ from discord.ext import commands
 
 from .data_manager import storage_type
 from .utils.chat_formatting import inline, bordered
-from .core_commands import find_spec
 from colorama import Fore, Style
 
 log = logging.getLogger("red")
@@ -48,7 +47,7 @@ def init_events(bot, cli_flags):
 
             for package in packages:
                 try:
-                    spec = await bot.cog_mgr.find_cog(bot, package)
+                    spec = await bot.cog_mgr.find_cog(package)
                     bot.load_extension(spec)
                 except Exception as e:
                     log.exception("Failed to load package {}".format(package),
