@@ -22,8 +22,8 @@ Small portable disk inside a plastic cover. It’s thicker than the floppy and n
 Blank optical disk where you can save only once, even when not the whole space available is used?`Compact Disc-Recordable`CD-R`cd r`Compact Disk-Recordable`Compact Disc RecordableCompact Disk Recordable
 Amount of data a Floppy Disk can store?`1.4 MB
 Removable and rewritable electronic data storage device that can be plugged into almost any PC?`USB
-Rewritable optical disk where you can save and erase data several times?`Compact Disc-Rewritable`CD-RW`CD RW`Compact Disc Rewritable``Compact Disk Rewritable`Compact Disk-Rewritable
-A compact disc containing permanently stored data that cannot be altered?`Compact Disc Read-Only Memory`CD-ROM`CD ROM`Compact Disc-Read-Only Memory``Compact Disk Read-Only Memory``Compact Disc Read Only Memory``Compact Disk Read Only Memory
+Rewritable optical disk where you can save and erase data several times?`Compact Disc-Rewritable`CD-RW`CD RW`Compact Disc Rewritable`Compact Disk Rewritable`Compact Disk-Rewritable
+A compact disc containing permanently stored data that cannot be altered?`Compact Disc Read-Only Memory`CD-ROM`CD ROM`Compact Disc-Read-Only Memory`Compact Disk Read-Only Memory`Compact Disc Read Only Memory`Compact Disk Read Only Memory
 Solid electronic data storage device used in cameras, telephones, laptops, music players and video games consoles?`Memory Card
 What is the internal storage of a computer?`Hard Disk`hard drive`hard disc
 What is the basic unit of measurement storage in computer science?`Byte
