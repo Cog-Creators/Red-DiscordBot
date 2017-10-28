@@ -78,8 +78,9 @@ class TriviaSession():
             await self.end_game()
 
     def _iter_questions(self):
-        for _ in range(len(self.question_list)):
-            question = random.choice(self.question_list)
+        questions = tuple(self.question_list.keys())
+        for _ in range(len(questions)):
+            question = random.choice(questions)
             yield question, self.question_list.pop(question)
 
     async def wait_for_answer(self,

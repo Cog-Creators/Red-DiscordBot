@@ -1,11 +1,10 @@
 """Module for Trivia cog."""
-from typing import List
-import pathlib
-import chardet
 import yaml
 import discord
 from discord.ext import commands
+import redbot.trivia
 from redbot.core import Config, checks
+from redbot.core.data_manager import cog_data_path
 from redbot.core.utils.chat_formatting import box
 from redbot.cogs.bank import check_global_setting_admin
 from .log import LOG
@@ -26,7 +25,6 @@ class Trivia:
 
     def __init__(self):
         self.trivia_sessions = {}
-        self.lists_dir = "redbot/cogs/trivia/yamls"  # Temporary solution
         self.conf = Config.get_conf(
             self, identifier=UNIQUE_ID, force_registration=True)
 
@@ -88,10 +86,9 @@ class Trivia:
         """
         settings = self.conf.guild(ctx.guild)
         await settings.bot_plays.set(true_or_false)
-        await ctx.send("Done. " +
-                       ("I'll gain a point if users don't answer in time."
-                        if true_or_false else
-                        "Alright, I won't embarass you at trivia anymore."))
+        await ctx.send("Done. " + (
+            "I'll gain a point if users don't answer in time." if true_or_false
+            else "Alright, I won't embarass you at trivia anymore."))
 
     @triviaset.command(name="revealanswer")
     async def trivaset_reveal_answer(self,
@@ -173,7 +170,7 @@ class Trivia:
         session = TriviaSession(ctx, trivia_dict, settings)
         task = ctx.bot.loop.create_task(session.run())
         self.trivia_sessions[session] = task
-        LOG.debug("New trivia session; #%s in %s", ctx.channel, ctx.guild)
+        LOG.debug("New trivia session; #%s in %d", ctx.channel, ctx.guild.id)
 
     @trivia.command(name="stop")
     async def trivia_stop(self, ctx: commands.Context):
@@ -184,17 +181,14 @@ class Trivia:
                 "There is no ongoing trivia session in this channel.")
             return
         author = ctx.author
-        is_owner = await ctx.bot.is_owner(ctx.author)
-        mod_role_id = await ctx.bot.db.guild(ctx.guild).mod_role()
-        admin_role_id = await ctx.bot.db.guild(ctx.guild).admin_role()
-
-        mod_role = discord.utils.get(ctx.guild.roles, id=mod_role_id)
-        admin_role = discord.utils.get(ctx.guild.roles, id=admin_role_id)
-
-        is_staff = mod_role in author.roles or admin_role in author.roles
-        is_guild_owner = author == ctx.guild.owner
-        is_authorized = is_staff or is_owner or is_guild_owner
-        if author == session.ctx.author or is_authorized:
+        auth_checks = (
+            await ctx.bot.is_owner(author),
+            await ctx.bot.is_mod(author),
+            await ctx.bot.is_admin(author),
+            author == ctx.guild.owner,
+            author == session.ctx.author
+        )
+        if any(auth_checks):
             await session.end_game()
             await ctx.send("Trivia stopped.")
         else:
@@ -203,15 +197,8 @@ class Trivia:
     @trivia.command(name="list")
     async def trivia_list(self, ctx: commands.Context):
         """List available trivia categories."""
-        path = self._get_lists_path()
-        if path is None:
-            await ctx.send("There are no trivia lists available.")
-            return
-        lists = [p.name for p in path.iterdir()]
-        lists = [l[:-5] for l in lists if l.endswith(".yaml") and " " not in l]
-        if not lists:
-            await ctx.send("There are no trivia lists available.")
-            return
+        lists = set(p.stem for p in self._all_lists())
+
         msg = box("**Available trivia lists**\n\n{}"
                   "".format(", ".join(sorted(lists))))
         if len(msg) > 1000:
@@ -232,7 +219,8 @@ class Trivia:
 
         """
         channel = session.ctx.channel
-        LOG.debug("Ending trivia session; #%s in %s", channel, channel.guild)
+        LOG.debug("Ending trivia session; #%s in %s", channel,
+                  channel.guild.id)
         if session in self.trivia_sessions:
             self.trivia_sessions[session].cancel()
             self.trivia_sessions.pop(session)
@@ -251,14 +239,12 @@ class Trivia:
             A dict mapping questions (`str`) to answers (`list` of `str`).
 
         """
-        path = self._get_lists_path()
-        if path is None:
-            return
-        filename = "{}.yaml".format(category)
-        path = path / filename
-        if not path.is_file():
+        try:
+            path = next(p for p in self._all_lists() if p.stem == category)
+        except StopIteration:
             raise FileNotFoundError("Could not find the `{}` category"
                                     "".format(category))
+
         with path.open() as file:
             try:
                 dict_ = yaml.load(file)
@@ -272,13 +258,6 @@ class Trivia:
         return next((session for session in self.trivia_sessions
                      if session.ctx.channel == channel), None)
 
-    def _get_lists_path(self) -> pathlib.Path:
-        # Once the bot data path is configurable,
-        #  we will get the path from the bot.
-        ret = pathlib.Path(self.lists_dir)
-        if ret.exists():
-            return ret
-
     def _category_exists(self, category: str) -> bool:
         filename = "{}.yaml".format(category)
         path = self._get_lists_path()
@@ -286,3 +265,9 @@ class Trivia:
             return
         path = path / filename
         return path.is_file()
+
+    def _all_lists(self):
+        personal_lists = tuple(p.resolve()
+                               for p in cog_data_path(self).glob("*.yaml"))
+
+        return personal_lists + tuple(redbot.trivia.lists())
