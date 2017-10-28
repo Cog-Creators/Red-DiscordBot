@@ -157,8 +157,6 @@ class Mod:
             await modlog.register_casetypes(casetypes_to_register)
         except RuntimeError:
             pass
-        except:
-            raise
 
     @commands.group()
     @commands.guild_only()
