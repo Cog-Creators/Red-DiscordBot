@@ -218,7 +218,7 @@ def load_bundled_data(cog_instance, init_location: str):
     """
     bundled_data_folder, to_copy = _find_data_files(init_location)
 
-    cog_data_folder = cog_data_path(cog_instance) / 'data'
+    cog_data_folder = cog_data_path(cog_instance) / 'bundled_data'
 
     _compare_and_copy(to_copy, bundled_data_folder, cog_data_folder)
 
@@ -226,6 +226,13 @@ def load_bundled_data(cog_instance, init_location: str):
 def bundled_data_path(cog_instance) -> Path:
     """
     The "data" directory that has been copied from installed cogs.
+
+    .. important::
+
+        You should *NEVER* write to this directory. Data manager will
+        overwrite files in this directory each time `load_bundled_data`
+        is called. You should instead write to the directory provided by
+        `cog_data_path`.
 
     Parameters
     ----------
@@ -242,7 +249,7 @@ def bundled_data_path(cog_instance) -> Path:
         If no bundled data folder exists or if it hasn't been loaded yet.
     """
 
-    bundled_path = cog_data_path(cog_instance) / 'data'
+    bundled_path = cog_data_path(cog_instance) / 'bundled_data'
 
     if not bundled_path.is_dir():
         raise FileNotFoundError("No such directory {}".format(
