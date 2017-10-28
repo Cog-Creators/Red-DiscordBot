@@ -206,7 +206,7 @@ def load_bundled_data(cog_instance, init_location: str):
     >>> def setup(bot):
     >>>     cog = MyCog()
     >>>     data_manager.load_bundled_data(cog, __file__)
-    >>>     bot.load_cog(cog)
+    >>>     bot.add_cog(cog)
 
     Parameters
     ----------
