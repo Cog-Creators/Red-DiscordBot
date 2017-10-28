@@ -9,9 +9,11 @@ import discord
 from .sentry_setup import should_log
 from discord.ext import commands
 
+from . import __version__
 from .data_manager import storage_type
 from .utils.chat_formatting import inline, bordered
 from colorama import Fore, Style
+from .rpc import initialize
 
 log = logging.getLogger("red")
 sentry_log = logging.getLogger("red.sentry")
@@ -70,12 +72,13 @@ def init_events(bot, cli_flags):
 
         prefixes = await bot.db.prefix()
         lang = await bot.db.locale()
-        red_pkg = pkg_resources.get_distribution('Red_DiscordBot')
-        dpy_version = pkg_resources.get_distribution('discord.py').version
+        red_version = __version__
+        red_pkg = pkg_resources.get_distribution("Red-DiscordBot")
+        dpy_version = discord.__version__
 
         INFO = [str(bot.user), "Prefixes: {}".format(', '.join(prefixes)),
                 'Language: {}'.format(lang),
-                "Red Bot Version: {}".format(red_pkg.version),
+                "Red Bot Version: {}".format(red_version),
                 "Discord.py Version: {}".format(dpy_version),
                 "Shards: {}".format(bot.shard_count)]
 
@@ -124,6 +127,9 @@ def init_events(bot, cli_flags):
 
         if invite_url:
             print("\nInvite URL: {}\n".format(invite_url))
+
+        if bot.rpc_enabled:
+            await initialize(bot)
 
     @bot.event
     async def on_command_error(ctx, error):
