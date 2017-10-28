@@ -55,6 +55,11 @@ class Mod:
         self.ban_type = None
         self.cache = defaultdict(lambda: deque(maxlen=3))
 
+        self.bot.loop.create_task(self._casetype_registration())
+
+        self.last_case = defaultdict(dict)
+
+    async def _casetype_registration(self):
         casetypes_to_register = [
             {
                 "name": "ban",
@@ -148,10 +153,10 @@ class Mod:
                 "audit_type": "overwrite_update"
             }
         ]
-
-        self.bot.loop.create_task(modlog.register_casetypes(casetypes_to_register))
-
-        self.last_case = defaultdict(dict)
+        try:
+            await modlog.register_casetypes(casetypes_to_register)
+        except RuntimeError:
+            pass
 
     @commands.group()
     @commands.guild_only()
