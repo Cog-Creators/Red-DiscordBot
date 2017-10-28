@@ -26,7 +26,7 @@ async def initialize(bot: "Red"):
 
     handler = app.make_handler()
 
-    _rpc_server = await bot.loop.create_server(handler, '127.0.0.1', 8080)
+    _rpc_server = await bot.loop.create_server(handler, '127.0.0.1', 6133)
 
     log.debug('Created RPC _rpc_server listener.')
 
