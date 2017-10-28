@@ -13,7 +13,8 @@ if TYPE_CHECKING:
     from . import Config
 
 __all__ = ['load_basic_configuration', 'cog_data_path', 'core_data_path',
-           'load_bundled_data', 'storage_details', 'storage_type']
+           'load_bundled_data', 'bundled_data_path', 'storage_details',
+           'storage_type']
 
 log = logging.getLogger("red.data_manager")
 
@@ -220,6 +221,35 @@ def load_bundled_data(cog_instance, init_location: str):
     cog_data_folder = cog_data_path(cog_instance) / 'data'
 
     _compare_and_copy(to_copy, bundled_data_folder, cog_data_folder)
+
+
+def bundled_data_path(cog_instance) -> Path:
+    """
+    The "data" directory that has been copied from installed cogs.
+
+    Parameters
+    ----------
+    cog_instance
+
+    Returns
+    -------
+    pathlib.Path
+        Path object to the bundled data folder.
+
+    Raises
+    ------
+    FileNotFoundError
+        If no bundled data folder exists or if it hasn't been loaded yet.
+    """
+
+    bundled_path = cog_data_path(cog_instance) / 'data'
+
+    if not bundled_path.is_dir():
+        raise FileNotFoundError("No such directory {}".format(
+            bundled_path
+        ))
+
+    return bundled_path
 
 
 def storage_type() -> str:
