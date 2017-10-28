@@ -210,7 +210,7 @@ class Economy:
         if confirmation is False:
             await ctx.send(
                 _("This will delete all bank accounts for {}.\nIf you're sure, type "
-                  "{}bank reset yes").format(
+                  "`{}bank reset yes`").format(
                     self.bot.user.name if await bank.is_global() else "this guild",
                     ctx.prefix
                 )
