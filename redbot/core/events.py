@@ -126,7 +126,8 @@ def init_events(bot, cli_flags):
         if invite_url:
             print("\nInvite URL: {}\n".format(invite_url))
 
-        await initialize(bot)
+        if bot.rpc_enabled:
+            await initialize(bot)
 
     @bot.event
     async def on_command_error(ctx, error):

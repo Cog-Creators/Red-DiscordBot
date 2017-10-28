@@ -30,10 +30,6 @@ async def initialize(bot: "Red"):
 
     log.debug('Created RPC _rpc_server listener.')
 
-    bot.register_rpc_methods(_rpc)
-
-    log.debug('Registered bot RPC methods.')
-
 
 def add_topic(topic_name: str):
     """
