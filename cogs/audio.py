@@ -2177,7 +2177,7 @@ class Audio:
                     return
                 if repeat and last_song:
                     queued_last_song = QueuedSong(last_song.webpage_url, last_song_channel)
-                    queue.append(last_song.webpage_url)
+                    queue.append(queued_last_song)
             else:
                 song = None
             self._set_queue_nowplaying(server, song, channel)
