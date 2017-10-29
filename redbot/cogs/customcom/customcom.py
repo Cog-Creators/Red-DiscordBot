@@ -7,7 +7,10 @@ import discord
 from discord.ext import commands
 
 from redbot.core import Config, checks
-from redbot.core.utils.chat_formatting import box
+from redbot.core.utils.chat_formatting import box, pagify
+from redbot.core.i18n import CogI18n
+
+_ = CogI18n("CustomCommands", __file__)
 
 
 class CCError(Exception):
@@ -38,17 +41,19 @@ class CommandObj:
         return customcommands
 
     async def get_responses(self, ctx):
-        intro = ("Welcome to the interactive random customcommand maker!\n"
+        intro = (_("Welcome to the interactive random {} maker!\n"
                  "Every message you send will be added as one of the random "
-                 "response to choose from once this customcommand is "
-                 "triggered. To exit this interactive menu, type `exit()`")
+                 "response to choose from once this {} is "
+                 "triggered. To exit this interactive menu, type `{}`").format(
+            "customcommand", "customcommand", "exit()"
+        ))
         await ctx.send(intro)
 
         def check(m):
             return m.channel == ctx.channel and m.author == ctx.message.author
         responses = []
         while True:
-            await ctx.send("Add a random response:")
+            await ctx.send(_("Add a random response:"))
             msg = await self.bot.wait_for('message', check=check)
 
             if msg.content.lower() == 'exit()':
@@ -110,13 +115,15 @@ class CommandObj:
             return m.channel == ctx.channel and m.author == ctx.message.author
 
         if not response:
-            await ctx.send("Do you want to create a 'randomized' cc? y/n")
+            await ctx.send(
+                _("Do you want to create a 'randomized' cc? {}").format("y/n")
+            )
 
             msg = await self.bot.wait_for('message', check=check)
             if msg.content.lower() == 'y':
                 response = await self.get_responses(ctx=ctx)
             else:
-                await ctx.send("What response do you want?")
+                await ctx.send(_("What response do you want?"))
                 response = (await self.bot.wait_for(
                     'message', check=check)
                 ).content
@@ -195,11 +202,13 @@ class CustomCommands:
             await self.commandobj.create(ctx=ctx,
                                          command=command,
                                          response=responses)
-            await ctx.send("Custom command successfully added.")
+            await ctx.send(_("Custom command successfully added."))
         except AlreadyExists:
-            await ctx.send("This command already exists. Use "
-                           "`{}customcom edit` to edit it."
-                           "".format(ctx.prefix))
+            await ctx.send(_(
+                "This command already exists. Use "
+                "`{}` to edit it.").format(
+                    "{}customcom edit".format(ctx.prefix)
+            ))
 
         # await ctx.send(str(responses))
 
@@ -217,17 +226,19 @@ class CustomCommands:
         guild = ctx.guild
         command = command.lower()
         if command in self.bot.all_commands:
-            await ctx.send("That command is already a standard command.")
+            await ctx.send(_("That command is already a standard command."))
             return
         try:
             await self.commandobj.create(ctx=ctx,
                                          command=command,
                                          response=text)
-            await ctx.send("Custom command successfully added.")
+            await ctx.send(_("Custom command successfully added."))
         except AlreadyExists:
-            await ctx.send("This command already exists. Use "
-                           "`{}customcom edit` to edit it."
-                           "".format(ctx.prefix))
+            await ctx.send(_(
+                "This command already exists. Use "
+                "`{}` to edit it.").format(
+                    "{}customcom edit".format(ctx.prefix)
+                ))
 
     @customcom.command(name="edit")
     @checks.mod_or_permissions(administrator=True)
@@ -247,11 +258,13 @@ class CustomCommands:
             await self.commandobj.edit(ctx=ctx,
                                        command=command,
                                        response=text)
-            await ctx.send("Custom command successfully edited.")
+            await ctx.send(_("Custom command successfully edited."))
         except NotFound:
-            await ctx.send("That command doesn't exist. Use "
-                           "`{}customcom add` to add it."
-                           "".format(ctx.prefix))
+            await ctx.send(_(
+                "That command doesn't exist. Use "
+                "`{}` to add it.").format(
+                    "{}customcom add".format(ctx.prefix)
+            ))
 
     @customcom.command(name="delete")
     @checks.mod_or_permissions(administrator=True)
@@ -266,9 +279,9 @@ class CustomCommands:
         try:
             await self.commandobj.delete(ctx=ctx,
                                          command=command)
-            await ctx.send("Custom command successfully deleted.")
+            await ctx.send(_("Custom command successfully deleted."))
         except NotFound:
-            await ctx.send("That command doesn't exist.")
+            await ctx.send(_("That command doesn't exist."))
 
     @customcom.command(name="list")
     async def cc_list(self,
@@ -278,9 +291,11 @@ class CustomCommands:
         response = await CommandObj.get_commands(self.config.guild(ctx.guild))
 
         if not response:
-            await ctx.send("There are no custom commands in this guild."
-                           " Use `{}customcom add` to start adding some."
-                           "".format(ctx.prefix))
+            await ctx.send(_(
+                "There are no custom commands in this guild."
+                " Use `{}` to start adding some.").format(
+                    "{}customcom add".format(ctx.prefix)
+            ))
             return
 
         results = []
