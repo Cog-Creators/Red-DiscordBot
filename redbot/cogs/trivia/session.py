@@ -3,7 +3,6 @@ import asyncio
 import time
 import random
 from collections import Counter
-from typing import List
 import discord
 from redbot.core.bank import deposit_credits
 from redbot.core.utils.chat_formatting import box
@@ -84,7 +83,7 @@ class TriviaSession():
             yield question, self.question_list.pop(question)
 
     async def wait_for_answer(self,
-                              answers: List[str],
+                              answers,
                               delay: float,
                               timeout: int):
         """Wait for a correct answer, and then respond.
@@ -136,7 +135,7 @@ class TriviaSession():
             return False
         return True
 
-    def check_answer(self, answers: List[str]):
+    def check_answer(self, answers):
         """Get a predicate to check for correct answers.
 
         The returned predicate takes a message as its only parameter,
@@ -154,7 +153,8 @@ class TriviaSession():
             The message predicate.
 
         """
-
+        ans_map = lambda s: str(s).lower()
+        answers = tuple(map(ans_map, answers))
         def _pred(message: discord.Message):
             early_exit = (message.channel != self.ctx.channel
                           or message.author == self.ctx.guild.me)
@@ -162,17 +162,13 @@ class TriviaSession():
                 return False
 
             self._last_response = time.perf_counter()
+            guess = message.content.lower()
             for answer in answers:
-                answer = answer.lower()
-                guess = message.content.lower()
-                if " " not in answer:  # Exact matching, issue #331
-                    guess = guess.split(" ")
-                    for word in guess:
-                        if word == answer:
-                            return True
-                else:  # The answer has spaces, we can't be as strict
-                    if answer in guess:
-                        return True
+                if " " in answer and answer in guess:
+                    # Exact matching, issue #331
+                    return True
+                elif any(word == answer for word in guess.split(" ")):
+                    return True
             return False
 
         return _pred

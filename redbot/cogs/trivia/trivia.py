@@ -258,16 +258,12 @@ class Trivia:
         return next((session for session in self.trivia_sessions
                      if session.ctx.channel == channel), None)
 
-    def _category_exists(self, category: str) -> bool:
-        filename = "{}.yaml".format(category)
-        path = self._get_lists_path()
-        if path is None:
-            return
-        path = path / filename
-        return path.is_file()
-
     def _all_lists(self):
         personal_lists = tuple(p.resolve()
                                for p in cog_data_path(self).glob("*.yaml"))
 
         return personal_lists + tuple(redbot.trivia.lists())
+
+    def __unload(self):
+        for task in self.trivia_sessions.values():
+            task.cancel()
