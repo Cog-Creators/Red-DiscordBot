@@ -20,8 +20,8 @@ _FAIL_MESSAGES = ("To the next one I guess...", "Moving on...",
 class TriviaSession():
     """Class to run a session of trivia with the user.
 
-    After being instantiated, it can be run with :py:func:`TriviaSession.run`
-    and force stopped with :py:func:`TriviaSession.stop`.
+    After being instantiated, it will be automatically run with
+    `TriviaSession.run` and can force stopped with `TriviaSession.stop`.
 
     Attributes
     ----------
@@ -50,19 +50,24 @@ class TriviaSession():
         self.settings = settings
         self.scores = Counter()
         self.count = 0
-        self._last_response = time.perf_counter()
+        self._last_response = time.time()
+        self._task = ctx.bot.loop.create_task(self.run())
 
     async def run(self):
-        """Run the trivia session."""
+        """Run the trivia session.
+
+        This is run as soon as the class is instantiated, and thus should not
+        be run directly.
+        """
         max_score = await self.settings.max_score()
         delay = await self.settings.delay()
-        timeout = await self.settings.timeout()
+        timeout = float(await self.settings.timeout())
         for question, answers in self._iter_questions():
             self.count += 1
             msg = "**Question number {}!**\n\n{}".format(self.count, question)
             await self.ctx.send(msg)
-            result = await self.wait_for_answer(answers, delay, timeout)
-            if result is False:
+            continue_ = await self.wait_for_answer(answers, delay, timeout)
+            if continue_ is False:
                 break
             if any(score >= max_score for score in self.scores.values()):
                 await self.end_game()
@@ -74,6 +79,18 @@ class TriviaSession():
             await self.end_game()
 
     def _iter_questions(self):
+        """Iterate over questions and answers for this session.
+
+        As questions are yielded, so too are they removed from
+        `TriviaSession.question_list`.
+
+        Yields
+        ------
+        `tuple`
+            A tuple containing the question (`str`) and the answers (`tuple` of
+            `str`).
+
+        """
         questions = tuple(self.question_list.keys())
         for _ in range(len(questions)):
             question = random.choice(questions)
@@ -82,7 +99,7 @@ class TriviaSession():
     async def wait_for_answer(self,
                               answers,
                               delay: float,
-                              timeout: int):
+                              timeout: float):
         """Wait for a correct answer, and then respond.
 
         Scores are also updated in this method.
@@ -96,7 +113,7 @@ class TriviaSession():
             A list of valid answers to the current question.
         delay : float
             How long users have to respond (in seconds).
-        timeout : int
+        timeout : float
             How long before the session ends due to no responses (in seconds).
 
         Returns
@@ -109,7 +126,7 @@ class TriviaSession():
             message = await self.ctx.bot.wait_for(
                 "message", check=self.check_answer(answers), timeout=delay)
         except asyncio.TimeoutError:
-            if abs(self._last_response - int(time.perf_counter())) >= timeout:
+            if time.time() - self._last_response >= timeout:
                 await self.ctx.send("Guys...? Well, I guess I'll stop then.")
                 self.stop()
                 return False
@@ -154,7 +171,7 @@ class TriviaSession():
             if early_exit:
                 return False
 
-            self._last_response = time.perf_counter()
+            self._last_response = time.time()
             guess = message.content.lower()
             for answer in answers:
                 if " " in answer and answer in guess:
@@ -184,6 +201,7 @@ class TriviaSession():
 
     def stop(self):
         """Stop the trivia session, without showing scores."""
+        self._task.cancel()
         self.ctx.bot.dispatch("trivia_end", self)
 
     async def pay_winner(self, multiplier: float):

@@ -24,7 +24,7 @@ class Trivia:
     """Play trivia with friends!"""
 
     def __init__(self):
-        self.trivia_sessions = {}
+        self.trivia_sessions = []
         self.conf = Config.get_conf(
             self, identifier=UNIQUE_ID, force_registration=True)
 
@@ -168,8 +168,7 @@ class Trivia:
             return
         settings = self.conf.guild(ctx.guild)
         session = TriviaSession(ctx, trivia_dict, settings)
-        task = ctx.bot.loop.create_task(session.run())
-        self.trivia_sessions[session] = task
+        self.trivia_sessions.append(session)
         LOG.debug("New trivia session; #%s in %d", ctx.channel, ctx.guild.id)
 
     @trivia.command(name="stop")
@@ -222,8 +221,7 @@ class Trivia:
         LOG.debug("Ending trivia session; #%s in %s", channel,
                   channel.guild.id)
         if session in self.trivia_sessions:
-            self.trivia_sessions[session].cancel()
-            self.trivia_sessions.pop(session)
+            self.trivia_sessions.remove(session)
 
     def get_trivia_list(self, category: str) -> dict:
         """Get the trivia list corresponding to the given category.
@@ -265,5 +263,5 @@ class Trivia:
         return personal_lists + tuple(redbot.trivia.lists())
 
     def __unload(self):
-        for task in self.trivia_sessions.values():
-            task.cancel()
+        for session in self.trivia_sessions:
+            session.stop()
