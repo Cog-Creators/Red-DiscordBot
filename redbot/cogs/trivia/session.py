@@ -114,7 +114,7 @@ class TriviaSession():
         except asyncio.TimeoutError:
             if abs(self._last_response - int(time.perf_counter())) >= timeout:
                 await self.ctx.send("Guys...? Well, I guess I'll stop then.")
-                await self.stop()
+                self.stop()
             if self.stopped:
                 return False
             if await self.settings.reveal_answer():
