@@ -38,8 +38,6 @@ class TriviaSession():
         players are of type :py:class:`discord.Member`.
     count : `int`
         The number of questions which have been asked.
-    stopped : `bool`
-        Whether or not the trivia session has been stopped.
 
     """
 
@@ -52,7 +50,6 @@ class TriviaSession():
         self.settings = settings
         self.scores = Counter()
         self.count = 0
-        self.stopped = False
         self._last_response = time.perf_counter()
 
     async def run(self):
@@ -115,7 +112,6 @@ class TriviaSession():
             if abs(self._last_response - int(time.perf_counter())) >= timeout:
                 await self.ctx.send("Guys...? Well, I guess I'll stop then.")
                 self.stop()
-            if self.stopped:
                 return False
             if await self.settings.reveal_answer():
                 reply = random.choice(_REVEAL_MESSAGES).format(answers[0])
@@ -130,9 +126,6 @@ class TriviaSession():
             reply = "You got it {}! **+1** to you!".format(
                 message.author.display_name)
             await self.ctx.send(reply)
-
-        if self.stopped:
-            return False
         return True
 
     def check_answer(self, answers):
@@ -191,7 +184,6 @@ class TriviaSession():
 
     def stop(self):
         """Stop the trivia session, without showing scores."""
-        self.stopped = True
         self.ctx.bot.dispatch("trivia_end", self)
 
     async def pay_winner(self, multiplier: float):
