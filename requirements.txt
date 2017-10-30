@@ -4,3 +4,4 @@ raven
 colorama
 aiohttp-json-rpc
 pyyaml
+Red-Trivia
