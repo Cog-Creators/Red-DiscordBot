@@ -94,7 +94,7 @@ class TriviaSession():
         questions = tuple(self.question_list.keys())
         for _ in range(len(questions)):
             question = random.choice(questions)
-            yield question, self.question_list.pop(question)
+            yield (question, _parse_answers(self.question_list.pop(question)))
 
     async def wait_for_answer(self,
                               answers,
@@ -109,7 +109,7 @@ class TriviaSession():
 
         Parameters
         ----------
-        answers : `list` of `str`
+        answers : `iterable` of `str`
             A list of valid answers to the current question.
         delay : float
             How long users have to respond (in seconds).
@@ -154,7 +154,7 @@ class TriviaSession():
 
         Parameters
         ----------
-        answers : `list` of `str`
+        answers : `iterable` of `str`
             The answers which the predicate must check for.
 
         Returns
@@ -163,8 +163,7 @@ class TriviaSession():
             The message predicate.
 
         """
-        ans_map = lambda s: str(s).lower()
-        answers = tuple(map(ans_map, answers))
+        answers = tuple(s.lower() for s in answers)
         def _pred(message: discord.Message):
             early_exit = (message.channel != self.ctx.channel
                           or message.author == self.ctx.guild.me)
@@ -233,3 +232,37 @@ class TriviaSession():
                         "Congratulations, {0}, you have received {1} credits"
                         " for coming first.".format(winner.display_name,
                                                     amount))
+
+
+def _parse_answers(answers):
+    """Parse the raw answers to readable strings.
+
+    The reason this exists is because of YAML's ambiguous syntax. For example,
+    if the answer to a question in YAML is ``yes``, YAML will load it as the
+    boolean value ``True``, which is not necessarily the desired answer. This
+    function aims to undo that for bools, and possibly for numbers in the
+    future too.
+
+    Parameters
+    ----------
+    answers : `iterable` of `str`
+        The raw answers loaded from YAML.
+
+    Returns
+    -------
+    `tuple` of `str`
+        The answers in readable/ guessable strings.
+
+    """
+    ret = []
+    for answer in answers:
+        if isinstance(answer, bool):
+            if answer is True:
+                ret.append("True", "Yes")
+            else:
+                ret.append("False", "No")
+        else:
+            ret.append(str(answer))
+    # Uniquify list
+    seen = set()
+    return tuple(x for x in ret if not (x in seen or seen.add(x)))
