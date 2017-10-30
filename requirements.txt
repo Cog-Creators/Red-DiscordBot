@@ -3,3 +3,4 @@ youtube_dl
 raven
 colorama
 aiohttp-json-rpc
+pyyaml
