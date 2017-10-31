@@ -34,7 +34,8 @@ class Trivia:
             delay=15.0,
             bot_plays=False,
             reveal_answer=True,
-            payout_multiplier=0.0)
+            payout_multiplier=0.0,
+            allow_override=True)
 
     @commands.group()
     @commands.guild_only()
@@ -48,10 +49,12 @@ class Trivia:
             msg = box(
                 "**Current settings**\n"
                 "Bot gains points: {bot_plays}\n"
-                "Seconds to answer: {delay}\n"
+                "Answer time limit: {delay} seconds\n"
+                "Lack of response timeout: {timeout} seconds\n"
                 "Points to win: {max_score}\n"
                 "Reveal answer on timeout: {reveal_answer}\n"
-                "Payout multiplier: {payout_multiplier}"
+                "Payout multiplier: {payout_multiplier}\n"
+                "Allow lists to override settings: {allow_override}"
                 "".format(**settings_dict),
                 lang="py")
             await ctx.send(msg)
@@ -64,17 +67,38 @@ class Trivia:
             return
         settings = self.conf.guild(ctx.guild)
         await settings.max_score.set(score)
-        await ctx.send("Points required to win set to {}.".format(score))
+        await ctx.send("Done. Points required to win set to {}.".format(score))
 
     @triviaset.command(name="timelimit")
-    async def triviaset_delay(self, ctx: commands.Context, seconds: float):
+    async def triviaset_timelimit(self, ctx: commands.Context, seconds: float):
         """Set the maximum seconds permitted to answer a question."""
         if seconds < 4.0:
             await ctx.send("Must be at least 4 seconds.")
             return
         settings = self.conf.guild(ctx.guild)
         await settings.delay.set(seconds)
-        await ctx.send("Maximum seconds to answer set to {}.".format(seconds))
+        await ctx.send("Done. Maximum seconds to answer set to {}."
+                       "".format(seconds))
+
+    @triviaset.command(name="stopafter")
+    async def triviaset_stopafter(self, ctx: commands.Context, seconds: float):
+        """Set how long until trivia stops due to no response."""
+        settings = self.conf.guild(ctx.guild)
+        if seconds < await settings.delay():
+            await ctx.send("Must be larger than the answer time limit.")
+            return
+        await settings.timeout.set(seconds)
+        await ctx.send("Done. Trivia sessions will now time out after {}"
+                       " seconds of no responses.".format(seconds))
+
+    @triviaset.command(name="override")
+    async def triviaset_allowoverride(self, ctx: commands.Context, enabled: bool):
+        """Allow/disallow trivia lists to override settings."""
+        settings = self.conf.guild(ctx.guild)
+        await settings.allow_override.set(enabled)
+        enabled = "now" if enabled else "no longer"
+        await ctx.send("Done. Trivia lists can {} override the trivia settings"
+                       " for this server.".format(enabled))
 
     @triviaset.command(name="botplays")
     async def trivaset_bot_plays(self,
@@ -168,6 +192,9 @@ class Trivia:
                            " it appears to be empty!")
             return
         settings = await self.conf.guild(ctx.guild).all()
+        if "CONFIG" in trivia_dict and settings["allow_override"]:
+            settings.update(trivia_dict.pop("CONFIG"))
+        del settings["allow_override"]
         session = TriviaSession.start(ctx, trivia_dict, settings)
         self.trivia_sessions.append(session)
         LOG.debug("New trivia session; #%s in %d", ctx.channel, ctx.guild.id)
