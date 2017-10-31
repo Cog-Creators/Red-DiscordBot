@@ -20,8 +20,8 @@ _FAIL_MESSAGES = ("To the next one I guess...", "Moving on...",
 class TriviaSession():
     """Class to run a session of trivia with the user.
 
-    After being instantiated, it will be automatically run with
-    `TriviaSession.run` and can force stopped with `TriviaSession.stop`.
+    To run the trivia session immediately, use `TriviaSession.start` instead of
+    instantiating directly.
 
     Attributes
     ----------
@@ -31,8 +31,15 @@ class TriviaSession():
         by `ctx.author`.
     question_list : `dict`
         A dict mapping questions (`str`) to answers (`list` of `str`).
-    settings : `redbot.core.config.Group`
-        Config for the trivia session.
+    settings : `dict`
+        Settings for the trivia session, with values for the following:
+         - ``max_score`` (`int`)
+         - ``delay`` (`float`)
+         - ``timeout`` (`float`)
+         - ``reveal_answer`` (`bool`)
+         - ``bot_plays`` (`bool`)
+         - ``allow_override`` (`bool`)
+         - ``payout_multiplier`` (`float`)
     scores : `collections.Counter`
         A counter with the players as keys, and their scores as values. The
         players are of type :py:class:`discord.Member`.
@@ -51,17 +58,44 @@ class TriviaSession():
         self.scores = Counter()
         self.count = 0
         self._last_response = time.time()
-        self._task = ctx.bot.loop.create_task(self.run())
+        self._task = None
+
+    @classmethod
+    def start(cls, ctx, question_list, settings):
+        """Create and start a trivia session.
+
+        This allows the session to manage the running and cancellation of its
+        own tasks.
+
+        Parameters
+        ----------
+        ctx : `commands.Context`
+            Same as `TriviaSession.ctx`
+        question_list : `dict`
+            Same as `TriviaSession.question_list`
+        settings : `dict`
+            Same as `TriviaSession.settings`
+
+        Returns
+        -------
+        TriviaSession
+            The new trivia session being run.
+
+        """
+        session = cls(ctx, question_list, settings)
+        loop = ctx.bot.loop
+        session._task = loop.create_task(session.run())
+        return session
 
     async def run(self):
         """Run the trivia session.
 
-        This is run as soon as the class is instantiated, and thus should not
-        be run directly.
+        In order for the trivia session to be stopped correctly, this should
+        only be called internally by `TriviaSession.start`.
         """
-        max_score = await self.settings.max_score()
-        delay = await self.settings.delay()
-        timeout = float(await self.settings.timeout())
+        max_score = self.settings["max_score"]
+        delay = self.settings["delay"]
+        timeout = self.settings["timeout"]
         for question, answers in self._iter_questions():
             self.count += 1
             msg = "**Question number {}!**\n\n{}".format(self.count, question)
@@ -130,11 +164,11 @@ class TriviaSession():
                 await self.ctx.send("Guys...? Well, I guess I'll stop then.")
                 self.stop()
                 return False
-            if await self.settings.reveal_answer():
+            if self.settings["reveal_answer"]:
                 reply = random.choice(_REVEAL_MESSAGES).format(answers[0])
             else:
                 reply = random.choice(_FAIL_MESSAGES)
-            if await self.settings.bot_plays():
+            if self.settings["bot_plays"]:
                 reply += " **+1** for me!"
                 self.scores[self.ctx.guild.me] += 1
             await self.ctx.send(reply)
@@ -186,7 +220,7 @@ class TriviaSession():
         """End the trivia session and display scrores."""
         if self.scores:
             await self.send_table()
-        multiplier = await self.settings.payout_multiplier()
+        multiplier = self.settings["payout_multiplier"]
         if multiplier > 0:
             await self.pay_winner(multiplier)
         self.stop()
@@ -200,7 +234,8 @@ class TriviaSession():
 
     def stop(self):
         """Stop the trivia session, without showing scores."""
-        self._task.cancel()
+        if self._task is not None:
+            self._task.cancel()
         self.ctx.bot.dispatch("trivia_end", self)
 
     async def pay_winner(self, multiplier: float):

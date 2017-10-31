@@ -30,8 +30,8 @@ class Trivia:
 
         self.conf.register_guild(
             max_score=10,
-            timeout=120,
-            delay=15,
+            timeout=120.0,
+            delay=15.0,
             bot_plays=False,
             reveal_answer=True,
             payout_multiplier=0.0)
@@ -67,9 +67,9 @@ class Trivia:
         await ctx.send("Points required to win set to {}.".format(score))
 
     @triviaset.command(name="timelimit")
-    async def triviaset_delay(self, ctx: commands.Context, seconds: int):
+    async def triviaset_delay(self, ctx: commands.Context, seconds: float):
         """Set the maximum seconds permitted to answer a question."""
-        if seconds < 4:
+        if seconds < 4.0:
             await ctx.send("Must be at least 4 seconds.")
             return
         settings = self.conf.guild(ctx.guild)
@@ -112,8 +112,9 @@ class Trivia:
                                           multiplier: float):
         """Set the payout multiplier.
 
-        This can be any positive decimal number. If a user wins trivia
-        when at least 3 members are playing, they will receive credits.
+        This can be any positive decimal number. If a user wins trivia when at
+        least 3 members are playing, they will receive credits. Set to 0 to
+        disable.
 
         The number of credits is determined by multiplying their total score by
         this multiplier.
@@ -166,8 +167,8 @@ class Trivia:
             await ctx.send("The trivia list was parsed successfully, however"
                            " it appears to be empty!")
             return
-        settings = self.conf.guild(ctx.guild)
-        session = TriviaSession(ctx, trivia_dict, settings)
+        settings = await self.conf.guild(ctx.guild).all()
+        session = TriviaSession.start(ctx, trivia_dict, settings)
         self.trivia_sessions.append(session)
         LOG.debug("New trivia session; #%s in %d", ctx.channel, ctx.guild.id)
 
