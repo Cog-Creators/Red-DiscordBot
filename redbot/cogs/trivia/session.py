@@ -125,9 +125,10 @@ class TriviaSession():
             `str`).
 
         """
-        questions = tuple(self.question_list.keys())
+        questions = list(self.question_list.keys())
         for _ in range(len(questions)):
             question = random.choice(questions)
+            questions.remove(question)
             yield (question, _parse_answers(self.question_list.pop(question)))
 
     async def wait_for_answer(self,

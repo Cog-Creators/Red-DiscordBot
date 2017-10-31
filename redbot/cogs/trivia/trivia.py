@@ -192,8 +192,10 @@ class Trivia:
                            " it appears to be empty!")
             return
         settings = await self.conf.guild(ctx.guild).all()
-        if "CONFIG" in trivia_dict and settings["allow_override"]:
-            settings.update(trivia_dict.pop("CONFIG"))
+        if "CONFIG" in trivia_dict:
+            config = trivia_dict.pop("CONFIG")
+            if settings["allow_override"]:
+                settings.update(config)
         del settings["allow_override"]
         session = TriviaSession.start(ctx, trivia_dict, settings)
         self.trivia_sessions.append(session)
