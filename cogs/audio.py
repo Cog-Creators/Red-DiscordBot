@@ -403,7 +403,15 @@ class Audio:
             song_filename = os.path.join(self.cache_path, filename)
 
         use_avconv = self.settings["AVCONV"]
-        options = '-b:a 64k -bufsize 64k'
+        
+        if(voice_client.channel.bitrate == 128000):
+            log.debug("Detected partnered channel with 128k bitrate, setting ffmpeg bitrate and buffer to 128k")
+            options = '-b:a 128k -bufsize 128k'
+        if(voice_client.channel.bitrate == 96000):
+            log.debug("Detected high bitrate channel, setting ffmpeg bitrate and buffer to 96k")
+            options = '-b:a 96k -bufsize 96k'
+        else:
+            options = '-b:a 64k -bufsize 64k'
 
         try:
             voice_client.audio_player.process.kill()
@@ -1625,6 +1633,10 @@ class Audio:
             added to the song loop (if running). If you use `queue` when a
             playlist is running, it will temporarily be played next and will
             NOT stay in the playlist loop."""
+        if not ctx.message.author.voice_channel:
+            await self.bot.say("You need to be in voice to do that >:I")
+            return
+        
         if url is None:
             return await self._queue_list(ctx)
         server = ctx.message.server
@@ -1774,15 +1786,16 @@ class Audio:
     @commands.command(pass_context=True, aliases=["next"], no_pm=True)
     async def skip(self, ctx):
         """Skips a song, using the set threshold if the requester isn't
-        a mod or admin. Mods, admins and bot owner are not counted in
-        the vote threshold."""
+        a mod or admin using 'force'."""
         msg = ctx.message
         server = ctx.message.server
         if self.is_playing(server):
             vchan = server.me.voice_channel
             vc = self.voice_client(server)
             if msg.author.voice_channel == vchan:
-                if self.can_instaskip(msg.author):
+                # Swann-Cogs: added test for instaskips so that mods can vote normally
+                #             if they want to.
+                if self.can_instaskip(msg.author) and "force" in ctx.message.content:
                     vc.audio_player.stop()
                     if self._get_queue_repeat(server) is False:
                         self._set_queue_nowplaying(server, None)
@@ -1796,8 +1809,11 @@ class Audio:
                         reply = "you voted to skip."
 
                     num_votes = len(self.skip_votes[server.id])
-                    # Exclude bots and non-plebs
-                    num_members = sum(not (m.bot or self.can_instaskip(m))
+                    # Exclude bots and non-plebs # Swann-Cogs: I changed this so mods
+                    #                              and admins can !skip force songs that
+                    #                              need to be skipped but can cast votes
+                    #                              in normal situations.
+                    num_members = sum(not (m.bot) #or self.can_instaskip(m))
                                       for m in vchan.voice_members)
                     vote = int(100 * num_votes / num_members)
                     thresh = self.get_server_settings(server)["VOTE_THRESHOLD"]
