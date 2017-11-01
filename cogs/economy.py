@@ -11,6 +11,7 @@ from __main__ import send_cmd_help
 import sys
 import re
 import os
+import math
 import time
 import logging
 import random
@@ -527,11 +528,9 @@ class Economy:
 
     async def _payday(self, server, author, id):
         multiplier = self.xp.get_payday_multiplier(str(author.id))
-        multiplier = 1
         now = datetime.now()
         midnight = now.replace(hour=0, minute=0, second=0, microsecond=0)
-
-        if ((now - midnight).total_seconds() % 9) == 0:
+        if (int((now - midnight).total_seconds()) % 9) == 0:
             self.bank.deposit_credits(author, self.settings[
                                       server.id]["PAYDAY_CREDITS"]*100)
             self.payday_register[server.id][
@@ -564,7 +563,7 @@ class Economy:
 
     @commands.command(pass_context=True, no_pm=True)
     @is_slots()
-    async def payday(self, ctx):  # TODO
+    async def payday(self, ctx): 
         """Get some free credits"""
         author = ctx.message.author
         server = author.server
