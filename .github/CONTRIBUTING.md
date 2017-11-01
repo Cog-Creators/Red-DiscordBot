@@ -8,8 +8,6 @@ Red is an open source project. This means that each and every one of the develop
 ### What kinds of contributions are we looking for?
 We love receiving contributions from our community. Any assistance you can provide with regards to bug fixes, feature enhancements, and documentation is more than welcome.
 
-However, please do **NOT** use the issue tracker for support questions. Any questions or comments of that nature can be answered on our support server located [here](https://discord.gg/red).
-
 # Ground Rules
 We've made a point to use [ZenHub](https://www.zenhub.com/) (a plugin for GitHub) as our main source of collaboration and coordination. Your experience contributing to Red will be greatly improved if you go get that plugin.
 1. Ensure cross compatibility for Windows, Mac OS and Linux.
