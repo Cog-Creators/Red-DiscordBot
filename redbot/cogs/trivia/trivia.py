@@ -37,6 +37,11 @@ class Trivia:
             payout_multiplier=0.0,
             allow_override=True)
 
+        self.conf.register_member(
+            wins=0,
+            games=0,
+            correct_answers=0)
+
     @commands.group()
     @commands.guild_only()
     @checks.mod_or_permissions(administrator=True)
@@ -253,6 +258,25 @@ class Trivia:
                   channel.guild.id)
         if session in self.trivia_sessions:
             self.trivia_sessions.remove(session)
+        await self.update_leaderboard(session.scores)
+
+    async def update_leaderboard(self, scores):
+        """Update the leaderboard with the given scores.
+
+        Parameters
+        ----------
+        scores : collections.Counter
+            The scores for a trivia session. See `TriviaSession.scores`.
+
+        """
+        max_score = max(scores.values())
+        for member, score in scores.items():
+            stats = await self.conf.member(member).all()
+            if score == max_score:
+                stats["wins"] += 1
+            stats["correct_answers"] += score
+            stats["games"] += 1
+            await self.conf.member(member).set(stats)
 
     def get_trivia_list(self, category: str) -> dict:
         """Get the trivia list corresponding to the given category.

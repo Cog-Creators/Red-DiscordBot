@@ -43,7 +43,7 @@ class TriviaSession():
          - ``payout_multiplier`` (`float`)
     scores : `collections.Counter`
         A counter with the players as keys, and their scores as values. The
-        players are of type :py:class:`discord.Member`.
+        players are of type `discord.Member`.
     count : `int`
         The number of questions which have been asked.
 
