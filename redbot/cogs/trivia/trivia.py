@@ -172,7 +172,9 @@ class Trivia:
                 "There is already an ongoing trivia session in this channel.")
             return
         trivia_dict = {}
-        for category in categories:
+        for category in reversed(categories):
+            # We reverse the categories so that the first list's config takes
+            # priority over the others.
             try:
                 dict_ = self.get_trivia_list(category)
             except FileNotFoundError:
@@ -192,11 +194,7 @@ class Trivia:
                            " it appears to be empty!")
             return
         settings = await self.conf.guild(ctx.guild).all()
-        if "CONFIG" in trivia_dict:
-            config = trivia_dict.pop("CONFIG")
-            if settings["allow_override"]:
-                settings.update(config)
-        del settings["allow_override"]
+        extract_config(settings, trivia_dict)
         session = TriviaSession.start(ctx, trivia_dict, settings)
         self.trivia_sessions.append(session)
         LOG.debug("New trivia session; #%s in %d", ctx.channel, ctx.guild.id)
@@ -219,6 +217,7 @@ class Trivia:
         )
         if any(auth_checks):
             await session.end_game()
+            session.force_stop()
             await ctx.send("Trivia stopped.")
         else:
             await ctx.send("You are not allowed to do that.")
@@ -294,4 +293,16 @@ class Trivia:
 
     def __unload(self):
         for session in self.trivia_sessions:
-            session.stop()
+            session.force_stop()
+
+def extract_config(settings, trivia_dict):
+    """Pop the config from this trivia list and mix them into ``settings``.
+
+    This modifies the ``settings`` dict in place, and returns None. It also
+    pops the config from the trivia_dict.
+
+    Sorry to anyone who doesn't like abuse of dict mutability :)
+    """
+    config = trivia_dict.pop("CONFIG", None)
+    if config and settings["allow_override"]:
+        settings.update(config)

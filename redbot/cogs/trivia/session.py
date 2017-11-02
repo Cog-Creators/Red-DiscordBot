@@ -30,7 +30,8 @@ class TriviaSession():
         This object assumes the session was started in `ctx.channel`
         by `ctx.author`.
     question_list : `dict`
-        A dict mapping questions (`str`) to answers (`list` of `str`).
+        A list of tuples mapping questions (`str`) to answers (`list` of
+        `str`).
     settings : `dict`
         Settings for the trivia session, with values for the following:
          - ``max_score`` (`int`)
@@ -50,10 +51,12 @@ class TriviaSession():
 
     def __init__(self,
                  ctx,
-                 question_list,
-                 settings):
+                 question_list: dict,
+                 settings: dict):
         self.ctx = ctx
-        self.question_list = question_list
+        list_ = list(question_list.items())
+        random.shuffle(list_)
+        self.question_list = list_
         self.settings = settings
         self.scores = Counter()
         self.count = 0
@@ -115,9 +118,6 @@ class TriviaSession():
     def _iter_questions(self):
         """Iterate over questions and answers for this session.
 
-        As questions are yielded, so too are they removed from
-        `TriviaSession.question_list`.
-
         Yields
         ------
         `tuple`
@@ -125,11 +125,9 @@ class TriviaSession():
             `str`).
 
         """
-        questions = list(self.question_list.keys())
-        for _ in range(len(questions)):
-            question = random.choice(questions)
-            questions.remove(question)
-            yield (question, _parse_answers(self.question_list.pop(question)))
+        for question, answers in self.question_list:
+            answers = _parse_answers(answers)
+            yield question, answers
 
     async def wait_for_answer(self,
                               answers,
@@ -235,9 +233,14 @@ class TriviaSession():
 
     def stop(self):
         """Stop the trivia session, without showing scores."""
-        if self._task is not None:
-            self._task.cancel()
         self.ctx.bot.dispatch("trivia_end", self)
+
+    def force_stop(self):
+        """Cancel whichever tasks this session is running."""
+        self._task.cancel()
+        channel = self.ctx.channel
+        LOG.debug("Force stopping trivia session; #%s in %s", channel,
+                  channel.guild.id)
 
     async def pay_winner(self, multiplier: float):
         """Pay the winner of this trivia session.
