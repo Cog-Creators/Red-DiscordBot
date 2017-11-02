@@ -79,4 +79,5 @@ def add_method(prefix, method):
 
 
 def clean_up():
-    _rpc_server.close()
+    if _rpc_server is not None:
+        _rpc_server.close()
