@@ -194,7 +194,9 @@ class Trivia:
                            " it appears to be empty!")
             return
         settings = await self.conf.guild(ctx.guild).all()
-        extract_config(settings, trivia_dict)
+        config = trivia_dict.pop("CONFIG", None)
+        if config and settings["allow_override"]:
+            settings.update(config)
         session = TriviaSession.start(ctx, trivia_dict, settings)
         self.trivia_sessions.append(session)
         LOG.debug("New trivia session; #%s in %d", ctx.channel, ctx.guild.id)
@@ -294,15 +296,3 @@ class Trivia:
     def __unload(self):
         for session in self.trivia_sessions:
             session.force_stop()
-
-def extract_config(settings, trivia_dict):
-    """Pop the config from this trivia list and mix them into ``settings``.
-
-    This modifies the ``settings`` dict in place, and returns None. It also
-    pops the config from the trivia_dict.
-
-    Sorry to anyone who doesn't like abuse of dict mutability :)
-    """
-    config = trivia_dict.pop("CONFIG", None)
-    if config and settings["allow_override"]:
-        settings.update(config)
