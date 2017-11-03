@@ -397,3 +397,25 @@ class CogManagerUI:
         install_path = await ctx.bot.cog_mgr.install_path()
         await ctx.send(_("The bot will install new cogs to the `{}`"
                          " directory.").format(install_path))
+
+    @commands.command()
+    @checks.is_owner()
+    async def cogs(self, ctx):
+        """
+        Lists all loaded and available cogs.
+        """
+        loaded = set(self.bot.extensions.keys())
+
+        all = set(await self.bot.cog_mgr.available_modules())
+
+        unloaded = all - loaded
+
+        msg = ("+ Loaded\n"
+               "{}\n\n"
+               "- Unloaded\n"
+               "{}"
+               "".format(", ".join(sorted(loaded)),
+                         ", ".join(sorted(unloaded)))
+               )
+        for page in pagify(msg, [" "], shorten_by=18):
+            await ctx.send(box(page.lstrip(" "), lang="diff"))
