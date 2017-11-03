@@ -419,3 +419,4 @@ class CogManagerUI:
                )
         for page in pagify(msg, [" "], shorten_by=18):
             await ctx.send(box(page.lstrip(" "), lang="diff"))
+
