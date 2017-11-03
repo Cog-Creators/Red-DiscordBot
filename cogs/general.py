@@ -226,7 +226,7 @@ class General:
         if user.avatar_url:
             avatar = user.avatar_url
             avatar = avatar.replace('webp', 'png')
-            data.set_author(name=name, url=avatar
+            data.set_author(name=name, url=avatar)
             data.set_thumbnail(url=avatar)
         else:
             data.set_author(name=name)
