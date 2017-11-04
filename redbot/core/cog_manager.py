@@ -404,9 +404,9 @@ class CogManagerUI:
         """
         Lists all loaded and available cogs.
         """
-        loaded = set(self.bot.extensions.keys())
+        loaded = set(ctx.bot.extensions.keys())
 
-        all = set(await self.bot.cog_mgr.available_modules())
+        all = set(await ctx.bot.cog_mgr.available_modules())
 
         unloaded = all - loaded
 
