@@ -6,6 +6,10 @@
     :target: http://makeapullrequest.com
     :alt: PRs Welcome
 
+.. image:: https://d322cqt584bo4o.cloudfront.net/red-discordbot/localized.svg
+    :target: https://crowdin.com/project/red-discordbot
+    :alt: Crowdin
+
 ********************
 Red - Discord Bot v3
 ********************

@@ -187,16 +187,6 @@ class Group(Value):
                 spawner=self.spawner
             )
 
-    @property
-    def _super_group(self) -> 'Group':
-        super_group = Group(
-            self.identifiers[:-1],
-            defaults={},
-            spawner=self.spawner,
-            force_registration=self.force_registration
-        )
-        return super_group
-
     def is_group(self, item: str) -> bool:
         """A helper method for `__getattr__`. Most developers will have no need
         to use this.
@@ -327,33 +317,6 @@ class Group(Value):
         local data.
         """
         await self.set({})
-
-
-class MemberGroup(Group):
-    """A specific group class for use with member data only.
-
-    Inherits from `Group`. In this group data is stored as
-    :code:`GUILD_ID -> MEMBER_ID -> data`.
-    """
-    @property
-    def _super_group(self) -> Group:
-        new_identifiers = self.identifiers[:2]
-        group_obj = Group(
-            identifiers=new_identifiers,
-            defaults={},
-            spawner=self.spawner
-        )
-        return group_obj
-
-    @property
-    def _guild_group(self) -> Group:
-        new_identifiers = self.identifiers[:3]
-        group_obj = Group(
-            identifiers=new_identifiers,
-            defaults={},
-            spawner=self.spawner
-        )
-        return group_obj
 
 
 class Config:
@@ -610,7 +573,7 @@ class Config:
     def register_guild(self, **kwargs):
         """Register default values on a per-guild level.
 
-        See :py:meth:`register_global` for more details.
+        See `register_global` for more details.
         """
         self._register_default(self.GUILD, **kwargs)
 
@@ -647,10 +610,9 @@ class Config:
         """
         self._register_default(self.MEMBER, **kwargs)
 
-    def _get_base_group(self, key: str, *identifiers: str,
-                        group_class=Group) -> Group:
+    def _get_base_group(self, key: str, *identifiers: str) -> Group:
         # noinspection PyTypeChecker
-        return group_class(
+        return Group(
             identifiers=(self.unique_identifier, key) + identifiers,
             defaults=self._defaults.get(key, {}),
             spawner=self.spawner,
@@ -665,6 +627,11 @@ class Config:
         guild : discord.Guild
             A guild object.
 
+        Returns
+        -------
+        Group
+            The guild's Group object.
+
         """
         return self._get_base_group(self.GUILD, guild.id)
 
@@ -678,6 +645,11 @@ class Config:
         channel : `discord.abc.GuildChannel`
             A channel object.
 
+        Returns
+        -------
+        Group
+            The channel's Group object.
+
         """
         return self._get_base_group(self.CHANNEL, channel.id)
 
@@ -688,6 +660,11 @@ class Config:
         ----------
         role : discord.Role
             A role object.
+
+        Returns
+        -------
+        Group
+            The role's Group object.
 
         """
         return self._get_base_group(self.ROLE, role.id)
@@ -700,10 +677,15 @@ class Config:
         user : discord.User
             A user object.
 
+        Returns
+        -------
+        Group
+            The user's Group object.
+
         """
         return self._get_base_group(self.USER, user.id)
 
-    def member(self, member: discord.Member) -> MemberGroup:
+    def member(self, member: discord.Member) -> Group:
         """Returns a `Group` for the given member.
 
         Parameters
@@ -711,9 +693,13 @@ class Config:
         member : discord.Member
             A member object.
 
+        Returns
+        -------
+        Group
+            The member's Group object.
+
         """
-        return self._get_base_group(self.MEMBER, member.guild.id, member.id,
-                                    group_class=MemberGroup)
+        return self._get_base_group(self.MEMBER, member.guild.id, member.id)
 
     async def _all_from_scope(self, scope: str):
         """Get a dict of all values from a particular scope of data.

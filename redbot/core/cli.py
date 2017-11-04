@@ -102,6 +102,10 @@ def parse_cli_flags(args):
     parser.add_argument("--dev",
                         action="store_true",
                         help="Enables developer mode")
+    parser.add_argument("--rpc",
+                        action="store_true",
+                        help="Enables the built-in RPC server. Please read the docs"
+                             "prior to enabling this!")
     parser.add_argument("instance_name",
                         help="Name of the bot instance created during `redbot-setup`.")
 

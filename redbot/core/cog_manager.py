@@ -1,8 +1,11 @@
+import contextlib
 import pkgutil
-from importlib import invalidate_caches
+from importlib import import_module, invalidate_caches
 from importlib.machinery import ModuleSpec
 from pathlib import Path
-from typing import Tuple, Union, List
+from typing import Tuple, Union, List, overload
+
+import redbot.cogs
 
 from . import checks
 from .config import Config
@@ -45,13 +48,18 @@ class CogManager:
         """
         conf_paths = await self.conf.paths()
         other_paths = self._paths
+        core_paths = await self.core_paths()
 
-        all_paths = set(list(conf_paths) + list(other_paths))
+        all_paths = set(list(conf_paths) + list(other_paths) + core_paths)
 
         paths = [Path(p) for p in all_paths]
         if self.install_path not in paths:
             paths.insert(0, await self.install_path())
         return tuple(p.resolve() for p in paths if p.is_dir())
+
+    async def core_paths(self) -> List[Path]:
+        core_paths = [Path(p) for p in redbot.cogs.__path__]
+        return core_paths
 
     async def install_path(self) -> Path:
         """Get the install path for 3rd party cogs.
@@ -180,6 +188,61 @@ class CogManager:
         str_paths = [str(p) for p in paths_]
         await self.conf.paths.set(str_paths)
 
+    async def _find_ext_cog(self, name: str) -> ModuleSpec:
+        """
+        Attempts to find a spec for a third party installed cog.
+
+        Parameters
+        ----------
+        name : str
+            Name of the cog package to look for.
+
+        Returns
+        -------
+        importlib.machinery.ModuleSpec
+            Module spec to be used for cog loading.
+
+        Raises
+        ------
+        RuntimeError
+            When no matching spec can be found.
+        """
+        resolved_paths = [str(p.resolve()) for p in await self.paths()]
+        for finder, module_name, _ in pkgutil.iter_modules(resolved_paths):
+            if name == module_name:
+                spec = finder.find_spec(name)
+                if spec:
+                    return spec
+
+        raise RuntimeError("No 3rd party module by the name of '{}' was found"
+                           " in any available path.".format(name))
+
+    async def _find_core_cog(self, name: str) -> ModuleSpec:
+        """
+        Attempts to find a spec for a core cog.
+
+        Parameters
+        ----------
+        name : str
+
+        Returns
+        -------
+        importlib.machinery.ModuleSpec
+
+        Raises
+        ------
+        RuntimeError
+            When no matching spec can be found.
+        """
+        real_name = ".{}".format(name)
+        try:
+            mod = import_module(real_name, package='redbot.cogs')
+        except ImportError as e:
+            raise RuntimeError("No core cog by the name of '{}' could"
+                               "be found.".format(name)) from e
+        return mod.__spec__
+
+    # noinspection PyUnreachableCode
     async def find_cog(self, name: str) -> ModuleSpec:
         """Find a cog in the list of available paths.
 
@@ -199,15 +262,24 @@ class CogManager:
             If there is no cog with the given name.
 
         """
-        resolved_paths = [str(p.resolve()) for p in await self.paths()]
-        for finder, module_name, _ in pkgutil.iter_modules(resolved_paths):
-            if name == module_name:
-                spec = finder.find_spec(name)
-                if spec:
-                    return spec
+        with contextlib.suppress(RuntimeError):
+            return await self._find_ext_cog(name)
 
-        raise RuntimeError("No module by the name of '{}' was found"
-                           " in any available path.".format(name))
+        with contextlib.suppress(RuntimeError):
+            return await self._find_core_cog(name)
+
+        raise RuntimeError("No cog with that name could be found.")
+
+    async def available_modules(self) -> List[str]:
+        """Finds the names of all available modules to load.
+        """
+        paths = (await self.install_path(), ) + await self.paths()
+        paths = [str(p) for p in paths]
+
+        ret = []
+        for finder, module_name, _ in pkgutil.iter_modules(paths):
+            ret.append(module_name)
+        return ret
 
     @staticmethod
     def invalidate_caches():

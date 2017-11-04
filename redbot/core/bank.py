@@ -318,7 +318,7 @@ async def get_guild_accounts(guild: discord.Guild) -> List[Account]:
         If the bank is currently global.
 
     """
-    if is_global():
+    if await is_global():
         raise RuntimeError("The bank is currently global.")
 
     ret = []
@@ -349,7 +349,7 @@ async def get_global_accounts(user: discord.User) -> List[Account]:
         If the bank is currently guild specific.
 
     """
-    if not is_global():
+    if not await is_global():
         raise RuntimeError("The bank is not currently global.")
 
     ret = []

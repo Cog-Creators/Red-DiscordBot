@@ -1,4 +1,6 @@
+aiohttp>=2.0.0,<2.3.0
 appdirs
 youtube_dl
 raven
 colorama
+aiohttp-json-rpc
