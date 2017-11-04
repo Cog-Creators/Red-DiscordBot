@@ -1,21 +1,31 @@
 import datetime
 import logging
+import pkg_resources
 import traceback
+from pkg_resources import DistributionNotFound
+
 
 import discord
 from .sentry_setup import should_log
 from discord.ext import commands
 
-from .utils.chat_formatting import inline
-from .core_commands import find_spec
+from . import __version__
+from .data_manager import storage_type
+from .utils.chat_formatting import inline, bordered
+from colorama import Fore, Style
+from .rpc import initialize
 
 log = logging.getLogger("red")
 sentry_log = logging.getLogger("red.sentry")
 
-INTRO = ("{0}===================\n"
-         "{0} Red - Discord Bot \n"
-         "{0}===================\n"
-         "".format(" " * 20))
+INTRO = """
+______         _           ______ _                       _  ______       _   
+| ___ \       | |          |  _  (_)                     | | | ___ \     | |  
+| |_/ /___  __| |  ______  | | | |_ ___  ___ ___  _ __ __| | | |_/ / ___ | |_ 
+|    // _ \/ _` | |______| | | | | / __|/ __/ _ \| '__/ _` | | ___ \/ _ \| __|
+| |\ \  __/ (_| |          | |/ /| \__ \ (_| (_) | | | (_| | | |_/ / (_) | |_ 
+\_| \_\___|\__,_|          |___/ |_|___/\___\___/|_|  \__,_| \____/ \___/ \__|
+"""
 
 
 def init_events(bot, cli_flags):
@@ -32,8 +42,6 @@ def init_events(bot, cli_flags):
 
         bot.uptime = datetime.datetime.utcnow()
 
-        print(INTRO)
-
         if cli_flags.no_cogs is False:
             print("Loading packages...")
             failed = []
@@ -41,7 +49,7 @@ def init_events(bot, cli_flags):
 
             for package in packages:
                 try:
-                    spec = await find_spec(bot, package)
+                    spec = await bot.cog_mgr.find_cog(package)
                     bot.load_extension(spec)
                 except Exception as e:
                     log.exception("Failed to load package {}".format(package),
@@ -62,14 +70,66 @@ def init_events(bot, cli_flags):
             else:
                 invite_url = None
 
+        prefixes = await bot.db.prefix()
+        lang = await bot.db.locale()
+        red_version = __version__
+        red_pkg = pkg_resources.get_distribution("Red-DiscordBot")
+        dpy_version = discord.__version__
+
+        INFO = [str(bot.user), "Prefixes: {}".format(', '.join(prefixes)),
+                'Language: {}'.format(lang),
+                "Red Bot Version: {}".format(red_version),
+                "Discord.py Version: {}".format(dpy_version),
+                "Shards: {}".format(bot.shard_count)]
+
         if guilds:
-            print("Ready and operational on {} servers with a total of {} "
-                  "users.".format(guilds, users))
+            INFO.extend(("Servers: {}".format(guilds), "Users: {}".format(users)))
         else:
             print("Ready. I'm not in any server yet!")
 
+        INFO.append('{} cogs with {} commands'.format(len(bot.cogs), len(bot.commands)))
+
+        INFO2 = []
+
+        sentry = await bot.db.enable_sentry()
+        voice_reqs = [x.name for x in red_pkg._dep_map['voice']]
+        docs_reqs = [x.name for x in red_pkg._dep_map['docs']]
+        test_reqs = [x.name for x in red_pkg._dep_map['test']]
+
+        if sentry:
+            INFO2.append("√ Report Errors")
+        else:
+            INFO2.append("X Report Errors")
+
+        if storage_type() == "JSON":
+            INFO2.append("X MongoDB")
+        else:
+            INFO2.append("√ MongoDB")
+
+        try:
+            pkg_resources.require(voice_reqs)
+        except DistributionNotFound:
+            INFO2.append("X Voice")
+        else:
+            INFO2.append("√ Voice")
+
+        try:
+            pkg_resources.require(docs_reqs)
+            pkg_resources.require(test_reqs)
+        except DistributionNotFound:
+            INFO2.append("X Tests and Docs")
+        else:
+            INFO2.append("√ Tests and Docs")
+
+        print(Fore.RED + INTRO)
+        print(Style.RESET_ALL)
+        print(bordered(INFO, INFO2))
+
         if invite_url:
             print("\nInvite URL: {}\n".format(invite_url))
+
+        if bot.rpc_enabled:
+            await initialize(bot)
 
     @bot.event
     async def on_command_error(ctx, error):

@@ -6,18 +6,46 @@ from importlib.machinery import ModuleSpec
 from pathlib import Path
 
 import discord
-from discord.ext import commands
+from discord.ext.commands.bot import BotBase
 from discord.ext.commands import GroupMixin
 
 from .cog_manager import CogManager
-from . import Config, i18n, RedContext
+from . import (
+    Config,
+    i18n,
+    RedContext,
+    rpc
+)
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from aiohttp_json_rpc import JsonRpc
 
 
-class Red(commands.Bot):
+# noinspection PyUnresolvedReferences
+class RpcMethodMixin:
+    async def rpc__cogs(self, request):
+        return list(self.cogs.keys())
+
+    async def rpc__extensions(self, request):
+        return list(self.extensions.keys())
+
+
+class RedBase(BotBase, RpcMethodMixin):
+    """Mixin for the main bot class.
+
+    This exists because `Red` inherits from `discord.AutoShardedClient`, which
+    is something other bot classes (namely selfbots) may not want to have as
+    a parent class.
+    
+    Selfbots should inherit from this mixin along with `discord.Client`.
+    """
     def __init__(self, cli_flags, bot_dir: Path=Path.cwd(), **kwargs):
         self._shutdown_mode = ExitCodes.CRITICAL
         self.db = Config.get_core_conf(force_registration=True)
         self._co_owners = cli_flags.co_owner
+        self.rpc_enabled = cli_flags.rpc
 
         self.db.register_global(
             token=None,
@@ -65,6 +93,8 @@ class Red(commands.Bot):
 
         self.cog_mgr = CogManager(paths=(str(self.main_dir / 'cogs'),))
 
+        self.register_rpc_methods()
+
         super().__init__(**kwargs)
 
     async def _dict_abuse(self, indict):
@@ -83,20 +113,31 @@ class Red(commands.Bot):
             return True
         return await super().is_owner(user)
 
+    async def is_admin(self, member: discord.Member):
+        """Checks if a member is an admin of their guild."""
+        admin_role = await self.db.guild(member.guild).admin_role()
+        return (not admin_role or
+                any(role.id == admin_role for role in member.roles))
+
+    async def is_mod(self, member: discord.Member):
+        """Checks if a member is a mod or admin of their guild."""
+        mod_role = await self.db.guild(member.guild).mod_role()
+        admin_role = await self.db.guild(member.guild).admin_role()
+        return (not (admin_role or mod_role) or
+                any(role.id in (mod_role, admin_role) for role in member.roles))
+
+    async def send_cmd_help(self, ctx):
+        if ctx.invoked_subcommand:
+            pages = await self.formatter.format_help_for(ctx, ctx.invoked_subcommand)
+            for page in pages:
+                await ctx.send(page)
+        else:
+            pages = await self.formatter.format_help_for(ctx, ctx.command)
+            for page in pages:
+                await ctx.send(page)
+
     async def get_context(self, message, *, cls=RedContext):
         return await super().get_context(message, cls=cls)
-
-    async def shutdown(self, *, restart=False):
-        """Gracefully quits Red with exit code 0
-
-        If restart is True, the exit code will be 26 instead
-        Upon receiving that exit code, the launcher restarts Red"""
-        if not restart:
-            self._shutdown_mode = ExitCodes.SHUTDOWN
-        else:
-            self._shutdown_mode = ExitCodes.RESTART
-
-        await self.logout()
 
     def list_packages(self):
         """Lists packages present in the cogs the folder"""
@@ -174,6 +215,34 @@ class Red(commands.Bot):
             del lib
             del self.extensions[name]
             # del sys.modules[name]
+
+    def register_rpc_methods(self):
+        rpc.add_method('bot', self.rpc__cogs)
+        rpc.add_method('bot', self.rpc__extensions)
+
+
+class Red(RedBase, discord.AutoShardedClient):
+    """
+    You're welcome Caleb.
+    """
+    async def shutdown(self, *, restart: bool=False):
+        """Gracefully quit Red.
+        
+        The program will exit with code :code:`0` by default.
+
+        Parameters
+        ----------
+        restart : bool
+            If :code:`True`, the program will exit with code :code:`26`. If the
+            launcher sees this, it will attempt to restart the bot.
+
+        """
+        if not restart:
+            self._shutdown_mode = ExitCodes.SHUTDOWN
+        else:
+            self._shutdown_mode = ExitCodes.RESTART
+
+        await self.logout()
 
 
 class ExitCodes(Enum):

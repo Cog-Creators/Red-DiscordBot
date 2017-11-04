@@ -74,7 +74,7 @@ def find_locale_folders():
 
 setup(
     name='Red-DiscordBot',
-    version="{}.{}.{}a13".format(*get_version()),
+    version="{}.{}.{}b1".format(*get_version()),
     packages=get_package_list(),
     package_data=find_locale_folders(),
     url='https://github.com/Cog-Creators/Red-DiscordBot',
@@ -106,7 +106,7 @@ setup(
     ],
     extras_require={
         'test': ['pytest>=3', 'pytest-asyncio'],
-        'mongo': ['pymongo', 'motor'],
+        'mongo': ['motor'],
         'docs': ['sphinx', 'sphinxcontrib-asyncio', 'sphinx_rtd_theme'],
         'voice': ['PyNaCl']
     }

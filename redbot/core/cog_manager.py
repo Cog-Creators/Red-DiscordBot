@@ -1,8 +1,11 @@
+import contextlib
 import pkgutil
-from importlib import invalidate_caches
+from importlib import import_module, invalidate_caches
 from importlib.machinery import ModuleSpec
 from pathlib import Path
-from typing import Tuple, Union, List
+from typing import Tuple, Union, List, overload
+
+import redbot.cogs
 
 from . import checks
 from .config import Config
@@ -16,10 +19,12 @@ __all__ = ["CogManager"]
 
 
 class CogManager:
-    """
-    This module allows you to load cogs from multiple directories and even from outside the bot
-    directory. You may also set a directory for downloader to install new cogs to, the default
-    being the :code:`cogs/` folder in the root bot directory.
+    """Directory manager for Red's cogs.
+
+    This module allows you to load cogs from multiple directories and even from
+    outside the bot directory. You may also set a directory for downloader to
+    install new cogs to, the default being the :code:`cogs/` folder in the root
+    bot directory.
     """
     def __init__(self, paths: Tuple[str]=()):
         self.conf = Config.get_conf(self, 2938473984732, True)
@@ -33,40 +38,64 @@ class CogManager:
         self._paths = list(paths)
 
     async def paths(self) -> Tuple[Path, ...]:
-        """
-        All currently valid path directories.
+        """Get all currently valid path directories.
+
+        Returns
+        -------
+        `tuple` of `pathlib.Path`
+            All valid cog paths.
+
         """
         conf_paths = await self.conf.paths()
         other_paths = self._paths
+        core_paths = await self.core_paths()
 
-        all_paths = set(list(conf_paths) + list(other_paths))
+        all_paths = set(list(conf_paths) + list(other_paths) + core_paths)
 
         paths = [Path(p) for p in all_paths]
         if self.install_path not in paths:
             paths.insert(0, await self.install_path())
         return tuple(p.resolve() for p in paths if p.is_dir())
 
+    async def core_paths(self) -> List[Path]:
+        core_paths = [Path(p) for p in redbot.cogs.__path__]
+        return core_paths
+
     async def install_path(self) -> Path:
-        """
-        The install path for 3rd party cogs.
+        """Get the install path for 3rd party cogs.
+
+        Returns
+        -------
+        pathlib.Path
+            The path to the directory where 3rd party cogs are stored.
+
         """
         p = Path(await self.conf.install_path())
         return p.resolve()
 
     async def set_install_path(self, path: Path) -> Path:
-        """
-        Install path setter, will return the absolute path to
-        the given path.
+        """Set the install path for 3rd party cogs.
 
-        .. note::
+        Note
+        ----
+        The bot will not remember your old cog install path which means
+        that **all previously installed cogs** will no longer be found.
 
-            The bot will not remember your old cog install path which means
-            that ALL PREVIOUSLY INSTALLED COGS will now be unfindable.
-
-        :param pathlib.Path path:
+        Parameters
+        ----------
+        path : pathlib.Path
             The new directory for cog installs.
-        :raises ValueError:
+
+        Returns
+        -------
+        pathlib.Path
+            Absolute path to the new install directory.
+
+        Raises
+        ------
+        ValueError
             If :code:`path` is not an existing directory.
+
         """
         if not path.is_dir():
             raise ValueError("The install path must be an existing directory.")
@@ -76,14 +105,16 @@ class CogManager:
 
     @staticmethod
     def _ensure_path_obj(path: Union[Path, str]) -> Path:
-        """
-        Guarantees an object will be a path object.
+        """Guarantee an object will be a path object.
 
-        :param path:
-        :type path:
-            pathlib.Path or str
-        :rtype:
-            pathlib.Path
+        Parameters
+        ----------
+        path : `pathlib.Path` or `str`
+
+        Returns
+        -------
+        pathlib.Path
+
         """
         try:
             path.exists()
@@ -92,17 +123,21 @@ class CogManager:
         return path
 
     async def add_path(self, path: Union[Path, str]):
-        """
-        Adds a cog path to current list, will ignore duplicates. Does have
-        a side effect of removing all invalid paths from the saved path
-        list.
+        """Add a cog path to current list.
 
-        :param path:
+        This will ignore duplicates. Does have a side effect of removing all
+        invalid paths from the saved path list.
+
+        Parameters
+        ----------
+        path : `pathlib.Path` or `str`
             Path to add.
-        :type path:
-            pathlib.Path or str
-        :raises ValueError:
+
+        Raises
+        ------
+        ValueError
             If :code:`path` does not resolve to an existing directory.
+
         """
         path = self._ensure_path_obj(path)
 
@@ -121,15 +156,18 @@ class CogManager:
         await self.set_paths(all_paths)
 
     async def remove_path(self, path: Union[Path, str]) -> Tuple[Path, ...]:
-        """
-        Removes a path from the current paths list.
+        """Remove a path from the current paths list.
 
-        :param path: Path to remove.
-        :type path:
-            pathlib.Path or str
-        :return:
+        Parameters
+        ----------
+        path : `pathlib.Path` or `str`
+            Path to remove.
+
+        Returns
+        -------
+        `tuple` of `pathlib.Path`
             Tuple of new valid paths.
-        :rtype: tuple
+
         """
         path = self._ensure_path_obj(path)
         all_paths = list(await self.paths())
@@ -139,27 +177,35 @@ class CogManager:
         return tuple(all_paths)
 
     async def set_paths(self, paths_: List[Path]):
-        """
-        Sets the current paths list.
+        """Set the current paths list.
 
-        :param List[pathlib.Path] paths_:
+        Parameters
+        ----------
+        paths_ : `list` of `pathlib.Path`
             List of paths to set.
+
         """
         str_paths = [str(p) for p in paths_]
         await self.conf.paths.set(str_paths)
 
-    async def find_cog(self, name: str) -> ModuleSpec:
+    async def _find_ext_cog(self, name: str) -> ModuleSpec:
         """
-        Finds a cog in the list of available paths.
+        Attempts to find a spec for a third party installed cog.
 
-        :param name:
-            Name of the cog to find.
-        :raises RuntimeError:
-            If there is no cog with the given name.
-        :return:
-            A module spec to be used for specialized cog loading.
-        :rtype:
-            importlib.machinery.ModuleSpec
+        Parameters
+        ----------
+        name : str
+            Name of the cog package to look for.
+
+        Returns
+        -------
+        importlib.machinery.ModuleSpec
+            Module spec to be used for cog loading.
+
+        Raises
+        ------
+        RuntimeError
+            When no matching spec can be found.
         """
         resolved_paths = [str(p.resolve()) for p in await self.paths()]
         for finder, module_name, _ in pkgutil.iter_modules(resolved_paths):
@@ -168,16 +214,79 @@ class CogManager:
                 if spec:
                     return spec
 
-        raise RuntimeError("No module by the name of '{}' was found"
+        raise RuntimeError("No 3rd party module by the name of '{}' was found"
                            " in any available path.".format(name))
+
+    async def _find_core_cog(self, name: str) -> ModuleSpec:
+        """
+        Attempts to find a spec for a core cog.
+
+        Parameters
+        ----------
+        name : str
+
+        Returns
+        -------
+        importlib.machinery.ModuleSpec
+
+        Raises
+        ------
+        RuntimeError
+            When no matching spec can be found.
+        """
+        real_name = ".{}".format(name)
+        try:
+            mod = import_module(real_name, package='redbot.cogs')
+        except ImportError as e:
+            raise RuntimeError("No core cog by the name of '{}' could"
+                               "be found.".format(name)) from e
+        return mod.__spec__
+
+    # noinspection PyUnreachableCode
+    async def find_cog(self, name: str) -> ModuleSpec:
+        """Find a cog in the list of available paths.
+
+        Parameters
+        ----------
+        name : str
+            Name of the cog to find.
+
+        Returns
+        -------
+        importlib.machinery.ModuleSpec
+            A module spec to be used for specialized cog loading.
+
+        Raises
+        ------
+        RuntimeError
+            If there is no cog with the given name.
+
+        """
+        with contextlib.suppress(RuntimeError):
+            return await self._find_ext_cog(name)
+
+        with contextlib.suppress(RuntimeError):
+            return await self._find_core_cog(name)
+
+        raise RuntimeError("No cog with that name could be found.")
+
+    async def available_modules(self) -> List[str]:
+        """Finds the names of all available modules to load.
+        """
+        paths = (await self.install_path(), ) + await self.paths()
+        paths = [str(p) for p in paths]
+
+        ret = []
+        for finder, module_name, _ in pkgutil.iter_modules(paths):
+            ret.append(module_name)
+        return ret
 
     @staticmethod
     def invalidate_caches():
-        """
+        """Re-evaluate modules in the py cache.
+
         This is an alias for an importlib internal and should be called
         any time that a new module has been installed to a cog directory.
-
-        *I think.*
         """
         invalidate_caches()
 

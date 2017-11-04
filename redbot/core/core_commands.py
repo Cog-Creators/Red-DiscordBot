@@ -13,10 +13,14 @@ from discord.ext import commands
 
 from redbot.core import checks
 from redbot.core import i18n
+from redbot.core import rpc
 
-import redbot.cogs  # Don't remove this line or core cogs won't load
+from typing import TYPE_CHECKING
 
-__all__ = ["find_spec", "Core"]
+if TYPE_CHECKING:
+    from redbot.core.bot import Red
+
+__all__ = ["Core"]
 
 log = logging.getLogger("red")
 
@@ -26,32 +30,25 @@ OWNER_DISCLAIMER = ("⚠ **Only** the person who is hosting Red should be "
                     "system.** ⚠")
 
 
-async def find_spec(bot, cog_name: str):
-    try:
-        spec = await bot.cog_mgr.find_cog(cog_name)
-    except RuntimeError:
-        real_name = ".{}".format(cog_name)
-        try:
-            mod = importlib.import_module(real_name, package='redbot.cogs')
-        except ImportError:
-            spec = None
-        else:
-            spec = mod.__spec__
-    return spec
-
-
 _ = i18n.CogI18n("Core", __file__)
 
 
 class Core:
     """Commands related to core functions"""
+    def __init__(self, bot):
+        self.bot = bot  # type: Red
+
+        rpc.add_method('core', self.rpc_load)
+        rpc.add_method('core', self.rpc_unload)
+        rpc.add_method('core', self.rpc_reload)
 
     @commands.command()
     @checks.is_owner()
     async def load(self, ctx, *, cog_name: str):
         """Loads a package"""
-        spec = await find_spec(ctx.bot, cog_name)
-        if spec is None:
+        try:
+            spec = await ctx.bot.cog_mgr.find_cog(cog_name)
+        except RuntimeError:
             await ctx.send(_("No module by that name was found in any"
                              " cog path."))
             return
@@ -83,7 +80,7 @@ class Core:
         """Reloads a package"""
         ctx.bot.unload_extension(cog_name)
 
-        spec = await find_spec(ctx.bot, cog_name)
+        spec = await ctx.bot.cog_mgr.find_cog(cog_name)
         if spec is None:
             await ctx.send(_("No module by that name was found in any"
                              " cog path."))
@@ -425,3 +422,25 @@ class Core:
                              "to %s") % destination)
         else:
             await ctx.send(_("Message delivered to %s") % destination)
+
+    # RPC handlers
+    async def rpc_load(self, request):
+        cog_name = request.params[0]
+
+        spec = await self.bot.cog_mgr.find_cog(cog_name)
+        if spec is None:
+            raise LookupError("No such cog found.")
+
+        self.cleanup_and_refresh_modules(spec.name)
+
+        self.bot.load_extension(spec)
+
+    async def rpc_unload(self, request):
+        cog_name = request.params[0]
+
+        self.bot.unload_extension(cog_name)
+
+    async def rpc_reload(self, request):
+        await self.rpc_unload(request)
+        await self.rpc_load(request)
+
