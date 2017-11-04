@@ -24,7 +24,8 @@ class InvalidListError(Exception):
 class Trivia:
     """Play trivia with friends!"""
 
-    def __init__(self):
+    def __init__(self, bot_id: int):
+        self.bot_id = bot_id # for identifying the bot when we don't have ctx
         self.trivia_sessions = []
         self.conf = Config.get_conf(
             self, identifier=UNIQUE_ID, force_registration=True)
@@ -289,6 +290,7 @@ class Trivia:
          - wins  : total wins
          - avg   : average score
          - total : total correct answers from all sessions
+         - games : total games played
 
         <top> is the number of ranks to show on the leaderboard.
         """
@@ -316,7 +318,7 @@ class Trivia:
 
     def _get_sort_key(self, key: str):
         key = key.lower()
-        if key in ("wins", "average_score", "total_score"):
+        if key in ("wins", "average_score", "total_score", "games"):
             return key
         elif key in ("avg", "average"):
             return "average_score"
@@ -375,7 +377,7 @@ class Trivia:
         priority.append(key)
         items = data.items()
         for key in priority:
-            items = sorted(items, key=lambda t: t[1][key])
+            items = sorted(items, key=lambda t: t[1][key], reverse=True)
         max_name_len = max(map(lambda m: len(str(m)), data.keys()))
         # Headers
         headers = ("Rank", "Member{}".format(" " * (max_name_len - 6)), "Wins",
@@ -431,6 +433,8 @@ class Trivia:
         """
         max_score = max(scores.values())
         for member, score in scores.items():
+            if member.id == self.bot_id:
+                continue
             stats = await self.conf.member(member).all()
             if score == max_score:
                 stats["wins"] += 1
