@@ -8,7 +8,7 @@ import discord
 from redbot.core import Config
 from redbot.core import checks
 from redbot.core.i18n import CogI18n
-from redbot.core.utils.chat_formatting import box
+from redbot.core.utils.chat_formatting import box, pagify
 from discord.ext import commands
 
 from redbot.core.bot import Red
@@ -197,15 +197,15 @@ class Downloader:
 
         unloaded = all - loaded
 
-        await ctx.send(
-            box(
-                "+ Loaded\n{}\n- Unloaded\n{}".format(
-                    ', '.join(sorted(loaded)), ', '.join(sorted(unloaded))
-                ),
-                lang='diff'
-            )
-        )
-
+        msg = ("+ Loaded\n"
+               "{}\n\n"
+               "- Unloaded\n"
+               "{}"
+               "".format(", ".join(sorted(loaded)),
+                         ", ".join(sorted(unloaded)))
+               )
+        for page in pagify(msg, [" "], shorten_by=18):
+            await ctx.send(box(page.lstrip(" "), lang="diff"))
 
 
     @commands.group()
@@ -258,7 +258,8 @@ class Downloader:
         repos = self._repo_manager.get_all_repo_names()
         joined = _("Installed Repos:\n") + "\n".join(["+ " + r for r in repos])
 
-        await ctx.send(box(joined, lang="diff"))
+        for page in pagify(joined, ["\n"], shorten_by=16):
+            await ctx.send(box(page.lstrip(" "), lang="diff"))
 
     @commands.group()
     @checks.is_owner()
