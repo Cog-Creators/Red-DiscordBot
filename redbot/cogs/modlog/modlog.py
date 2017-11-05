@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-from redbot.core import checks, modlog
+from redbot.core import checks, modlog, RedContext
 from redbot.core.bot import Red
 from redbot.core.i18n import CogI18n
 from redbot.core.utils.chat_formatting import box
@@ -17,14 +17,14 @@ class ModLog:
 
     @commands.group()
     @checks.guildowner_or_permissions(administrator=True)
-    async def modlogset(self, ctx: commands.Context):
+    async def modlogset(self, ctx: RedContext):
         """Settings for the mod log"""
         if ctx.invoked_subcommand is None:
-            await self.bot.send_cmd_help(ctx)
+            await ctx.send_help()
 
     @modlogset.command()
     @commands.guild_only()
-    async def modlog(self, ctx: commands.Context, channel: discord.TextChannel = None):
+    async def modlog(self, ctx: RedContext, channel: discord.TextChannel = None):
         """Sets a channel as mod log
 
         Leaving the channel parameter empty will deactivate it"""
@@ -46,20 +46,20 @@ class ModLog:
             try:
                 await modlog.get_modlog_channel(guild)
             except RuntimeError:
-                await self.bot.send_cmd_help(ctx)
+                await ctx.send_help()
             else:
                 await modlog.set_modlog_channel(guild, None)
                 await ctx.send(_("Mod log deactivated."))
 
     @modlogset.command(name='cases')
     @commands.guild_only()
-    async def set_cases(self, ctx: commands.Context, action: str = None):
+    async def set_cases(self, ctx: RedContext, action: str = None):
         """Enables or disables case creation for each type of mod action"""
         guild = ctx.guild
 
         if action is None:  # No args given
             casetypes = await modlog.get_all_casetypes(guild)
-            await self.bot.send_cmd_help(ctx)
+            await ctx.send_help()
             title = _("Current settings:")
             msg = ""
             for ct in casetypes:
@@ -87,7 +87,7 @@ class ModLog:
 
     @modlogset.command()
     @commands.guild_only()
-    async def resetcases(self, ctx: commands.Context):
+    async def resetcases(self, ctx: RedContext):
         """Resets modlog's cases"""
         guild = ctx.guild
         await modlog.reset_cases(guild)
@@ -95,7 +95,7 @@ class ModLog:
 
     @commands.command()
     @commands.guild_only()
-    async def case(self, ctx: commands.Context, number: int):
+    async def case(self, ctx: RedContext, number: int):
         """Shows the specified case"""
         try:
             case = await modlog.get_case(number, ctx.guild, self.bot)
@@ -107,14 +107,14 @@ class ModLog:
 
     @commands.command()
     @commands.guild_only()
-    async def reason(self, ctx: commands.Context, case: int, *, reason: str = ""):
+    async def reason(self, ctx: RedContext, case: int, *, reason: str = ""):
         """Lets you specify a reason for mod-log's cases
         Please note that you can only edit cases you are
         the owner of unless you are a mod/admin or the guild owner"""
         author = ctx.author
         guild = ctx.guild
         if not reason:
-            await self.bot.send_cmd_help(ctx)
+            await ctx.send_help()
             return
         try:
             case_before = await modlog.get_case(case, guild, self.bot)
