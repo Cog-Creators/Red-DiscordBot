@@ -50,7 +50,7 @@ def bordered(text1: list, text2: list):
     return "\n".join(res)
 
 
-def pagify(text, delims=["\n"], *, escape_mass_mentions=True, shorten_by=8,
+def pagify(text, delims=["\n"], *, priority=False, escape_mass_mentions=True, shorten_by=8,
            page_length=2000):
     """DOES NOT RESPECT MARKDOWN BOXES OR INLINE CODE"""
     in_text = text
@@ -60,8 +60,12 @@ def pagify(text, delims=["\n"], *, escape_mass_mentions=True, shorten_by=8,
         if escape_mass_mentions:
             this_page_len -= (in_text.count("@here", 0, page_length) +
                               in_text.count("@everyone", 0, page_length))
-        closest_delim = max([in_text.rfind(d, 1, this_page_len)
-                             for d in delims])
+        closest_delim = (in_text.rfind(d, 1, this_page_len)
+                         for d in delims)
+        if priority:
+            closest_delim = next((x for x in closest_delim if x > 0), -1)
+        else:
+            closest_delim = max(closest_delim)
         closest_delim = closest_delim if closest_delim != -1 else this_page_len
         if escape_mass_mentions:
             to_send = escape(in_text[:closest_delim], mass_mentions=True)
