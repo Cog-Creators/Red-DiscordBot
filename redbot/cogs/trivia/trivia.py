@@ -420,7 +420,8 @@ class Trivia:
                   channel.guild.id)
         if session in self.trivia_sessions:
             self.trivia_sessions.remove(session)
-        await self.update_leaderboard(session.scores)
+        if session.scores:
+            await self.update_leaderboard(session.scores)
 
     async def update_leaderboard(self, scores):
         """Update the leaderboard with the given scores.
