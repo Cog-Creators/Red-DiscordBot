@@ -13,7 +13,7 @@ from .i18n import CogI18n
 from .data_manager import cog_data_path
 from discord.ext import commands
 
-from .utils.chat_formatting import box
+from .utils.chat_formatting import box, pagify
 
 __all__ = ["CogManager"]
 
@@ -397,3 +397,26 @@ class CogManagerUI:
         install_path = await ctx.bot.cog_mgr.install_path()
         await ctx.send(_("The bot will install new cogs to the `{}`"
                          " directory.").format(install_path))
+
+    @commands.command()
+    @checks.is_owner()
+    async def cogs(self, ctx: commands.Context):
+        """
+        Lists all loaded and available cogs.
+        """
+        loaded = set(ctx.bot.extensions.keys())
+
+        all = set(await ctx.bot.cog_mgr.available_modules())
+
+        unloaded = all - loaded
+
+        msg = ("+ Loaded\n"
+               "{}\n\n"
+               "- Unloaded\n"
+               "{}"
+               "".format(", ".join(sorted(loaded)),
+                         ", ".join(sorted(unloaded)))
+               )
+        for page in pagify(msg, [" "], shorten_by=18):
+            await ctx.send(box(page.lstrip(" "), lang="diff"))
+
