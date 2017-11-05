@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-from redbot.core import checks, Config, modlog
+from redbot.core import checks, Config, modlog, RedContext
 from redbot.core.bot import Red
 from redbot.core.i18n import CogI18n
 from redbot.core.utils.chat_formatting import pagify
@@ -37,14 +37,14 @@ class Filter:
     @commands.group(name="filter")
     @commands.guild_only()
     @checks.mod_or_permissions(manage_messages=True)
-    async def _filter(self, ctx: commands.Context):
+    async def _filter(self, ctx: RedContext):
         """Adds/removes words from filter
 
         Use double quotes to add/remove sentences
         Using this command with no subcommands will send
         the list of the server's filtered words."""
         if ctx.invoked_subcommand is None:
-            await self.bot.send_cmd_help(ctx)
+            await ctx.send_help()
             server = ctx.guild
             author = ctx.author
             word_list = await self.settings.guild(server).filter()
