@@ -400,7 +400,7 @@ class CogManagerUI:
 
     @commands.command()
     @checks.is_owner()
-    async def cogs(self, ctx):
+    async def cogs(self, ctx: commands.Context):
         """
         Lists all loaded and available cogs.
         """
