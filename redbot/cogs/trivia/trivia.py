@@ -24,8 +24,7 @@ class InvalidListError(Exception):
 class Trivia:
     """Play trivia with friends!"""
 
-    def __init__(self, bot_id: int):
-        self.bot_id = bot_id # for identifying the bot when we don't have ctx
+    def __init__(self):
         self.trivia_sessions = []
         self.conf = Config.get_conf(
             self, identifier=UNIQUE_ID, force_registration=True)
@@ -421,20 +420,20 @@ class Trivia:
         if session in self.trivia_sessions:
             self.trivia_sessions.remove(session)
         if session.scores:
-            await self.update_leaderboard(session.scores)
+            await self.update_leaderboard(session)
 
-    async def update_leaderboard(self, scores):
+    async def update_leaderboard(self, session):
         """Update the leaderboard with the given scores.
 
         Parameters
         ----------
-        scores : collections.Counter
-            The scores for a trivia session. See `TriviaSession.scores`.
+        session : TriviaSession
+            The trivia session to update scores from.
 
         """
-        max_score = max(scores.values())
-        for member, score in scores.items():
-            if member.id == self.bot_id:
+        max_score = session.settings["max_score"]
+        for member, score in session.scores.items():
+            if member.id == session.ctx.bot.user.id:
                 continue
             stats = await self.conf.member(member).all()
             if score == max_score:
