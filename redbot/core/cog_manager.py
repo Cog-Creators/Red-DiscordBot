@@ -13,7 +13,7 @@ from .i18n import CogI18n
 from .data_manager import cog_data_path
 from discord.ext import commands
 
-from .utils.chat_formatting import box
+from .utils.chat_formatting import box, pagify
 
 __all__ = ["CogManager"]
 
