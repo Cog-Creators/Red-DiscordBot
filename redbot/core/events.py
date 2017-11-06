@@ -1,3 +1,5 @@
+import sys
+import codecs
 import datetime
 import logging
 import pkg_resources
@@ -12,11 +14,12 @@ from discord.ext import commands
 from . import __version__
 from .data_manager import storage_type
 from .utils.chat_formatting import inline, bordered
-from colorama import Fore, Style
 from .rpc import initialize
+from colorama import Fore, Style, init
 
 log = logging.getLogger("red")
 sentry_log = logging.getLogger("red.sentry")
+init()
 
 INTRO = """
 ______         _           ______ _                       _  ______       _   
@@ -92,34 +95,34 @@ def init_events(bot, cli_flags):
         INFO2 = []
 
         sentry = await bot.db.enable_sentry()
-        voice_reqs = [x.name for x in red_pkg._dep_map['voice']]
-        docs_reqs = [x.name for x in red_pkg._dep_map['docs']]
-        test_reqs = [x.name for x in red_pkg._dep_map['test']]
+        mongo_enabled = storage_type() != "JSON"
+        reqs_installed = {
+            "voice": None,
+            "docs": None,
+            "test": None
+        }
+        for key in reqs_installed.keys():
+            reqs = [x.name for x in red_pkg._dep_map[key]]
+            try:
+                pkg_resources.require(reqs)
+            except DistributionNotFound:
+                reqs_installed[key] = False
+            else:
+                reqs_installed[key] = True
 
-        if sentry:
-            INFO2.append("√ Report Errors")
-        else:
-            INFO2.append("X Report Errors")
+        options = (
+            ("Error Reporting", sentry),
+            ("MongoDB", mongo_enabled),
+            ("Voice", reqs_installed["voice"]),
+            ("Docs", reqs_installed["docs"]),
+            ("Tests", reqs_installed["test"])
+        )
 
-        if storage_type() == "JSON":
-            INFO2.append("X MongoDB")
-        else:
-            INFO2.append("√ MongoDB")
+        on_symbol, off_symbol = _get_settings_symbols()
 
-        try:
-            pkg_resources.require(voice_reqs)
-        except DistributionNotFound:
-            INFO2.append("X Voice")
-        else:
-            INFO2.append("√ Voice")
-
-        try:
-            pkg_resources.require(docs_reqs)
-            pkg_resources.require(test_reqs)
-        except DistributionNotFound:
-            INFO2.append("X Tests and Docs")
-        else:
-            INFO2.append("√ Tests and Docs")
+        for option, enabled in options:
+            enabled = on_symbol if enabled else off_symbol
+            INFO2.append("{} {}".format(enabled, option))
 
         print(Fore.RED + INTRO)
         print(Style.RESET_ALL)
@@ -194,3 +197,22 @@ def init_events(bot, cli_flags):
     @bot.event
     async def on_command(command):
         bot.counter["processed_commands"] += 1
+
+def _get_settings_symbols():
+    """Get symbols for displaying settings on stdout.
+
+    This is so we don't get encoding errors when trying to print unicode
+    emojis to stdout (particularly with Windows Command Prompt).
+    """
+    encoder = codecs.getencoder(sys.stdout.encoding)
+    check_mark = "\N{SQUARE ROOT}"
+    try:
+        encoder(check_mark)
+    except UnicodeEncodeError:
+        on_symbol = "[X]"
+        off_symbol = "[ ]"
+    else:
+        on_symbol = check_mark
+        off_symbol = "X"
+
+    return on_symbol, off_symbol

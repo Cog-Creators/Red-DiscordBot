@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from redbot.core import Config, checks
+from redbot.core import Config, checks, RedContext
 from redbot.core.utils.chat_formatting import pagify, box
 from redbot.core.bot import Red
 from .streams import TwitchStream, HitboxStream, MixerStream, PicartoStream, TwitchCommunity
@@ -89,21 +89,21 @@ class Streams:
     @checks.mod()
     async def streamalert(self, ctx):
         if ctx.invoked_subcommand is None:
-            await ctx.bot.send_cmd_help(ctx)
+            await ctx.send_help()
 
     @streamalert.group(name="twitch")
     async def _twitch(self, ctx):
         """Twitch stream alerts"""
         if isinstance(ctx.invoked_subcommand, commands.Group):
-            await self.bot.send_cmd_help(ctx)
+            await ctx.send_help()
 
     @_twitch.command(name="channel")
-    async def twitch_alert_channel(self, ctx: commands.Context, channel_name: str):
+    async def twitch_alert_channel(self, ctx: RedContext, channel_name: str):
         """Sets a Twitch stream alert notification in the channel"""
         await self.stream_alert(ctx, TwitchStream, channel_name)
 
     @_twitch.command(name="community")
-    async def twitch_alert_community(self, ctx: commands.Context, community: str):
+    async def twitch_alert_community(self, ctx: RedContext, community: str):
         """Sets a Twitch stream alert notification in the channel
         for the specified community."""
         await self.community_alert(ctx, TwitchCommunity, community)
@@ -204,7 +204,7 @@ class Streams:
     @checks.mod()
     async def streamset(self, ctx):
         if ctx.invoked_subcommand is None:
-            await ctx.bot.send_cmd_help(ctx)
+            await ctx.send_help()
 
     @streamset.command()
     @checks.is_owner()
@@ -221,7 +221,7 @@ class Streams:
         """Sets mentions for stream alerts
         Types: everyone, here, role, none"""
         if ctx.invoked_subcommand is None:
-            await self.bot.send_cmd_help(ctx)
+            await ctx.send_help()
 
     @mention.command()
     @commands.guild_only()

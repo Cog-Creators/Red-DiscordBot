@@ -9,6 +9,7 @@ from redbot.core.bot import Red
 from redbot.core.i18n import CogI18n
 from redbot.core.utils.mod import slow_deletion, mass_purge
 from redbot.cogs.mod.log import log
+from redbot.core.context import RedContext
 
 _ = CogI18n("Cleanup", __file__)
 
@@ -21,10 +22,10 @@ class Cleanup:
 
     @commands.group()
     @checks.mod_or_permissions(manage_messages=True)
-    async def cleanup(self, ctx: commands.Context):
+    async def cleanup(self, ctx: RedContext):
         """Deletes messages."""
         if ctx.invoked_subcommand is None:
-            await self.bot.send_cmd_help(ctx)
+            await ctx.send_help()
 
     @cleanup.command()
     @commands.guild_only()
