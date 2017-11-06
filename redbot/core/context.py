@@ -55,14 +55,15 @@ class RedContext(commands.Context):
         else:
             return True
 
-    async def send_pages_interactive(self,
-                                     pages: Iterable[str],
-                                     box_lang: str=None,
-                                     timeout: int=15) -> List[discord.Message]:
-        """Send pages interactively.
+    async def send_interactive(self,
+                               pages: Iterable[str],
+                               box_lang: str=None,
+                               timeout: int=15) -> List[discord.Message]:
+        """Send multiple messages interactively.
 
         The user will be prompted for whether or not they would like to view
-        the next page, one at a time.
+        the next message, one at a time. They will also be notified of how
+        many messages are remaining on each prompt.
 
         Parameters
         ----------

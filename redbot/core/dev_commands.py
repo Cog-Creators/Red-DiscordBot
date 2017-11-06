@@ -120,7 +120,7 @@ class Dev:
 
         result = self.sanitize_output(ctx, str(result))
 
-        await ctx.send_pages_interactive(self.get_pages(result), box_lang="py")
+        await ctx.send_interactive(self.get_pages(result), box_lang="py")
 
     @commands.command(name='eval')
     @checks.is_owner()
@@ -184,7 +184,7 @@ class Dev:
             msg = printed
         msg = self.sanitize_output(ctx, msg)
 
-        await ctx.send_pages_interactive(self.get_pages(msg), box_lang="py")
+        await ctx.send_interactive(self.get_pages(msg), box_lang="py")
 
     @commands.command()
     @checks.is_owner()
@@ -273,8 +273,7 @@ class Dev:
             msg = self.sanitize_output(ctx, msg)
 
             try:
-                await ctx.send_pages_interactive(
-                    self.get_pages(msg), box_lang="py")
+                await ctx.send_interactive(self.get_pages(msg), box_lang="py")
             except discord.Forbidden:
                 pass
             except discord.HTTPException as e:
