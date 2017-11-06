@@ -245,7 +245,8 @@ class General:
         total_users = len(server.members)
         text_channels = len([x for x in server.channels
                              if x.type == discord.ChannelType.text])
-        voice_channels = len(server.channels) - text_channels
+        voice_channels = len([x for x in server.channels
+                             if x.type == discord.ChannelType.voice])
         passed = (ctx.message.timestamp - server.created_at).days
         created_at = ("Since {}. That's over {} days ago!"
                       "".format(server.created_at.strftime("%d %b %Y %H:%M"),
