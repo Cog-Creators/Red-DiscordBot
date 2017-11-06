@@ -1167,8 +1167,9 @@ class Mod:
                 mod = audit_case.user
                 reason = audit_case.reason
                 for case in sorted(modlog_cases, key=lambda x: x.case_number, reverse=True):
-                    if case.moderator == mod and case.user == member\
+                    if mod == guild.me and case.user == member\
                             and case.action_type in ["ban", "hackban"]:
+                        log.info("Case already exists for ban of {}".format(member.name))
                         break
                 else:  # no ban, softban, or hackban case with the mod and user combo
                     try:
@@ -1231,8 +1232,9 @@ class Mod:
 
                 cases = await modlog.get_all_cases(guild, self.bot)
                 for case in sorted(cases, key=lambda x: x.case_number, reverse=True):
-                    if case.moderator == mod and case.user == user\
-                            and case.action_type == "unban": 
+                    if mod == guild.me and case.user == user\
+                            and case.action_type == "unban":
+                        log.info("Case already exists for unban of {}".format(user.name))
                         break
                 else:
                     try:
