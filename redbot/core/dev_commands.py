@@ -209,17 +209,17 @@ class Dev:
         }
 
         if ctx.channel.id in self.sessions:
-            await ctx.send(
-                _('Already running a REPL session in this channel. '
-                  'Exit it with `quit`.'))
+            await ctx.send(_('Already running a REPL session in this channel. '
+                             'Exit it with `quit`.'))
             return
 
         self.sessions.add(ctx.channel.id)
-        await ctx.send(
-            _('Enter code to execute or evaluate.'
-              ' `exit()` or `quit` to exit.'))
+        await ctx.send(_('Enter code to execute or evaluate.'
+                         ' `exit()` or `quit` to exit.'))
 
-        msg_check = lambda m: (m.author == ctx.author and m.channel == ctx.channel and m.content.startswith('`'))
+        msg_check = lambda m: (m.author == ctx.author and
+                               m.channel == ctx.channel and
+                               m.content.startswith('`'))
 
         while True:
             response = await ctx.bot.wait_for("message", check=msg_check)
