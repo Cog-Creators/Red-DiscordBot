@@ -8,7 +8,7 @@ import discord
 from redbot.core import Config
 from redbot.core import checks
 from redbot.core.i18n import CogI18n
-from redbot.core.utils.chat_formatting import box
+from redbot.core.utils.chat_formatting import box, pagify
 from discord.ext import commands
 
 from redbot.core.bot import Red
@@ -185,28 +185,6 @@ class Downloader:
         elif target.is_file():
             os.remove(str(target))
 
-    @commands.command()
-    @checks.is_owner()
-    async def cogs(self, ctx):
-        """
-        Lists all loaded and available cogs.
-        """
-        loaded = set(self.bot.extensions.keys())
-
-        all = set(await self.bot.cog_mgr.available_modules())
-
-        unloaded = all - loaded
-
-        await ctx.send(
-            box(
-                "+ Loaded\n{}\n- Unloaded\n{}".format(
-                    ', '.join(sorted(loaded)), ', '.join(sorted(unloaded))
-                ),
-                lang='diff'
-            )
-        )
-
-
 
     @commands.group()
     @checks.is_owner()
@@ -258,7 +236,8 @@ class Downloader:
         repos = self._repo_manager.get_all_repo_names()
         joined = _("Installed Repos:\n") + "\n".join(["+ " + r for r in repos])
 
-        await ctx.send(box(joined, lang="diff"))
+        for page in pagify(joined, ["\n"], shorten_by=16):
+            await ctx.send(box(page.lstrip(" "), lang="diff"))
 
     @commands.group()
     @checks.is_owner()
