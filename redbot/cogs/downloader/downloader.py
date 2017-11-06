@@ -8,7 +8,7 @@ import discord
 from redbot.core import Config
 from redbot.core import checks
 from redbot.core.i18n import CogI18n
-from redbot.core.utils.chat_formatting import box
+from redbot.core.utils.chat_formatting import box, pagify
 from discord.ext import commands
 
 from redbot.core.bot import Red
@@ -52,27 +52,37 @@ class Downloader:
         self._repo_manager = RepoManager(self.conf)
 
     async def cog_install_path(self):
-        """
-        Returns the current cog install path.
-        :return:
+        """Get the current cog install path.
+        
+        Returns
+        -------
+        pathlib.Path
+            The default cog install path.
+
         """
         return await self.bot.cog_mgr.install_path()
 
     async def installed_cogs(self) -> Tuple[Installable]:
-        """
-        Returns the dictionary mapping cog name to install location
-            and repo name.
-        :return:
+        """Get info on installed cogs.
+        
+        Returns
+        -------
+        `tuple` of `Installable`
+            All installed cogs / shared lib directories.
+
         """
         installed = await self.conf.installed()
         # noinspection PyTypeChecker
         return tuple(Installable.from_json(v) for v in installed)
 
     async def _add_to_installed(self, cog: Installable):
-        """
-        Marks a cog as installed.
-        :param cog:
-        :return:
+        """Mark a cog as installed.
+        
+        Parameters
+        ----------
+        cog : Installable
+            The cog to check off.
+
         """
         installed = await self.conf.installed()
         cog_json = cog.to_json()
@@ -82,10 +92,13 @@ class Downloader:
             await self.conf.installed.set(installed)
 
     async def _remove_from_installed(self, cog: Installable):
-        """
-        Removes a cog from the saved list of installed cogs.
-        :param cog:
-        :return:
+        """Remove a cog from the saved list of installed cogs.
+        
+        Parameters
+        ----------
+        cog : Installable
+            The cog to remove.
+
         """
         installed = await self.conf.installed()
         cog_json = cog.to_json()
@@ -172,6 +185,7 @@ class Downloader:
         elif target.is_file():
             os.remove(str(target))
 
+
     @commands.group()
     @checks.is_owner()
     async def repo(self, ctx):
@@ -222,7 +236,8 @@ class Downloader:
         repos = self._repo_manager.get_all_repo_names()
         joined = _("Installed Repos:\n") + "\n".join(["+ " + r for r in repos])
 
-        await ctx.send(box(joined, lang="diff"))
+        for page in pagify(joined, ["\n"], shorten_by=16):
+            await ctx.send(box(page.lstrip(" "), lang="diff"))
 
     @commands.group()
     @checks.is_owner()
@@ -326,11 +341,19 @@ class Downloader:
         await ctx.send(box(msg))
 
     async def is_installed(self, cog_name: str) -> (bool, Union[Installable, None]):
-        """
-        Checks to see if a cog with the given name was installed
-            through Downloader.
-        :param cog_name:
-        :return: is_installed, Installable
+        """Check to see if a cog has been installed through Downloader.
+
+        Parameters
+        ----------
+        cog_name : str
+            The name of the cog to check for.
+
+        Returns
+        -------
+        `tuple` of (`bool`, `Installable`)
+            :code:`(True, Installable)` if the cog is installed, else
+            :code:`(False, None)`.
+
         """
         for installable in await self.installed_cogs():
             if installable.name == cog_name:
@@ -339,11 +362,20 @@ class Downloader:
 
     def format_findcog_info(self, command_name: str,
                             cog_installable: Union[Installable, object]=None) -> str:
-        """
-        Formats the info for output to discord
-        :param command_name:
-        :param cog_installable: Can be an Installable instance or a Cog instance.
-        :return: str
+        """Format a cog's info for output to discord.
+
+        Parameters
+        ----------
+        command_name : str
+            Name of the command which belongs to the cog.
+        cog_installable : `Installable` or `object`
+            Can be an `Installable` instance or a Cog instance.
+            
+        Returns
+        -------
+        str
+            A formatted message for the user.
+
         """
         if isinstance(cog_installable, Installable):
             made_by = ", ".join(cog_installable.author) or _("Missing from info.json")
@@ -360,12 +392,20 @@ class Downloader:
         return msg.format(command_name, made_by, repo_url, cog_name)
 
     def cog_name_from_instance(self, instance: object) -> str:
-        """
-        Determines the cog name that Downloader knows from the cog instance.
+        """Determines the cog name that Downloader knows from the cog instance.
 
         Probably.
-        :param instance:
-        :return:
+        
+        Parameters
+        ----------
+        instance : object
+            The cog instance.
+            
+        Returns
+        -------
+        str
+            The name of the cog according to Downloader..
+
         """
         splitted = instance.__module__.split('.')
         return splitted[-2]

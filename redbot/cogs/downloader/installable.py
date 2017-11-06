@@ -16,11 +16,38 @@ class InstallableType(Enum):
 
 
 class Installable(RepoJSONMixin):
-    """
-    Base class for anything the Downloader cog can install.
-    - Modules
-    - Repo Libraries
-    - Other stuff?
+    """Base class for anything the Downloader cog can install.
+
+     - Modules
+     - Repo Libraries
+     - Other stuff?
+     
+    The attributes of this class will mostly come from the installation's
+    info.json.
+
+    Attributes
+    ----------
+    repo_name : `str`
+        Name of the repository which this package belongs to.
+    author : `tuple` of `str`, optional
+        Name(s) of the author(s).
+    bot_version : `tuple` of `int`
+        The minimum bot version required for this installation. Right now
+        this is always :code:`3.0.0`.
+    hidden : `bool`
+        Whether or not this cog will be hidden from the user when they use
+        `Downloader`'s commands.
+    required_cogs : `dict`
+        In the form :code:`{cog_name : repo_url}`, these are cogs which are
+        required for this installation.
+    requirements : `tuple` of `str`
+        Required libraries for this installation.
+    tags : `tuple` of `str`
+        List of tags to assist in searching.
+    type : `int`
+        The type of this installation, as specified by
+        :class:`InstallationType`.
+
     """
 
     INFO_FILE_DESCRIPTION = """
@@ -28,10 +55,13 @@ class Installable(RepoJSONMixin):
     """
 
     def __init__(self, location: Path):
-        """
-        Base installable initializer.
+        """Base installable initializer.
 
-        :param location: Location (file or folder) to the installable.
+        Parameters
+        ----------
+        location : pathlib.Path
+            Location (file or folder) to the installable.
+
         """
         super().__init__(location)
 
@@ -62,6 +92,7 @@ class Installable(RepoJSONMixin):
 
     @property
     def name(self):
+        """`str` : The name of this package."""
         return self._location.stem
 
     async def copy_to(self, target_dir: Path) -> bool:
