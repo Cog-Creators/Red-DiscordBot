@@ -56,7 +56,7 @@ class RedContext(commands.Context):
             return True
 
     async def send_interactive(self,
-                               pages: Iterable[str],
+                               messages: Iterable[str],
                                box_lang: str=None,
                                timeout: int=15) -> List[discord.Message]:
         """Send multiple messages interactively.
@@ -67,7 +67,7 @@ class RedContext(commands.Context):
 
         Parameters
         ----------
-        pages : `iterable` of `str`
+        messages : `iterable` of `str`
             The messages to send.
         box_lang : str
             If specified, each message will be contained within a codeblock of
@@ -77,20 +77,20 @@ class RedContext(commands.Context):
             After timing out, the bot deletes its prompt message.
 
         """
-        pages = tuple(pages)
+        messages = tuple(messages)
         ret = []
 
         more_check = lambda m: (m.author == self.author and
                                 m.channel == self.channel and
                                 m.content.lower() == "more")
 
-        for idx, page in enumerate(pages, 1):
+        for idx, page in enumerate(messages, 1):
             if box_lang is None:
                 msg = await self.send(page)
             else:
                 msg = await self.send(box(page, lang=box_lang))
             ret.append(msg)
-            n_remaining = len(pages) - idx
+            n_remaining = len(messages) - idx
             if n_remaining > 0:
                 if n_remaining == 1:
                     plural = ""
