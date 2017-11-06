@@ -1,3 +1,6 @@
+# Trivia list repo injection
+redbot/trivia/
+
 *.json
 *.exe
 *.dll
