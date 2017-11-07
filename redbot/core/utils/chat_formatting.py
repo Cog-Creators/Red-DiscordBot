@@ -1,26 +1,27 @@
 import itertools
+from typing import List
 
-def error(text):
+def error(text: str):
     """Get text prefixed with an error emoji."""
     return "\N{NO ENTRY SIGN} {}".format(text)
 
 
-def warning(text):
+def warning(text: str):
     """Get text prefixed with a warning emoji."""
     return "\N{WARNING SIGN} {}".format(text)
 
 
-def info(text):
+def info(text: str):
     """Get text prefixed with an info emoji."""
     return "\N{INFORMATION SOURCE} {}".format(text)
 
 
-def question(text):
+def question(text: str):
     """Get text prefixed with a question emoji."""
     return "\N{BLACK QUESTION MARK ORNAMENT} {}".format(text)
 
 
-def bold(text):
+def bold(text: str):
     """Get the given text in bold.
 
     Parameters
@@ -32,7 +33,7 @@ def bold(text):
     return "**{}**".format(text)
 
 
-def box(text, lang=""):
+def box(text: str, lang: str=""):
     """Get the given text in a code block.
 
     Parameters
@@ -47,7 +48,7 @@ def box(text, lang=""):
     return ret
 
 
-def inline(text):
+def inline(text: str):
     """Get the given text as inline code.
 
     Parameters
@@ -59,7 +60,7 @@ def inline(text):
     return "`{}`".format(text)
 
 
-def italics(text):
+def italics(text: str):
     """Get the given text in italics.
 
     Parameters
@@ -71,7 +72,7 @@ def italics(text):
     return "*{}*".format(text)
 
 
-def bordered(text1: list, text2: list):
+def bordered(text1: List[str], text2: List[str]):
     """Get two blocks of text in a borders.
 
     Note
@@ -102,8 +103,13 @@ def bordered(text1: list, text2: list):
     return "\n".join(res)
 
 
-def pagify(text, delims=["\n"], *, priority=False, escape_mass_mentions=True, shorten_by=8,
-           page_length=2000):
+def pagify(text: str,
+           delims: List[str]=["\n"],
+           *,
+           priority: bool=False,
+           escape_mass_mentions: bool=True,
+           shorten_by: int=8,
+           page_length: int=2000):
     """Generate multiple pages from the given text.
 
     Note
@@ -170,7 +176,7 @@ def pagify(text, delims=["\n"], *, priority=False, escape_mass_mentions=True, sh
             yield in_text
 
 
-def strikethrough(text):
+def strikethrough(text: str):
     """Get the given text with a strikethrough.
 
     Parameters
@@ -182,7 +188,7 @@ def strikethrough(text):
     return "~~{}~~".format(text)
 
 
-def underline(text):
+def underline(text: str):
     """Get the given text with an underline.
 
     Parameters
@@ -194,7 +200,7 @@ def underline(text):
     return "__{}__".format(text)
 
 
-def escape(text, *, mass_mentions=False, formatting=False):
+def escape(text: str, *, mass_mentions: bool=False, formatting: bool=False):
     """Get text with all mass mentions or markdown escaped.
 
     Parameters

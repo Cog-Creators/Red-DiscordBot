@@ -1,12 +1,11 @@
 import asyncio
-from typing import List, Iterable, Union, TYPE_CHECKING
+from datetime import timedelta
+from typing import List, Iterable, Union
 
 import discord
 
-if TYPE_CHECKING:
-    from datetime import timedelta
-    from redbot.core import Config
-    from redbot.core.bot import Red
+from redbot.core import Config
+from redbot.core.bot import Red
 
 
 async def mass_purge(messages: List[discord.Message],
@@ -86,8 +85,8 @@ def get_audit_reason(author: discord.Member, reason: str = None):
         "Action requested by {} (ID {}).".format(author, author.id)
 
 
-async def is_allowed_by_hierarchy(bot: "Red",
-                                  settings: "Config",
+async def is_allowed_by_hierarchy(bot: Red,
+                                  settings: Config,
                                   guild: discord.Guild,
                                   mod: discord.Member,
                                   user: discord.Member):
@@ -98,7 +97,7 @@ async def is_allowed_by_hierarchy(bot: "Red",
 
 
 async def is_mod_or_superior(
-    bot: "Red", obj: Union[discord.Message, discord.Member, discord.Role]):
+    bot: Red, obj: Union[discord.Message, discord.Member, discord.Role]):
     """Check if an object has mod or superior permissions.
 
     If a message is passed, its author's permissions are checked. If a role is
@@ -153,7 +152,7 @@ async def is_mod_or_superior(
         return False
 
 
-def strfdelta(delta: "timedelta"):
+def strfdelta(delta: timedelta):
     """Format a timedelta object to a message with time units.
 
     Parameters
@@ -188,7 +187,7 @@ def strfdelta(delta: "timedelta"):
 
 
 async def is_admin_or_superior(
-    bot: "Red", obj: Union[discord.Message, discord.Member, discord.Role]):
+    bot: Red, obj: Union[discord.Message, discord.Member, discord.Role]):
     """Same as `is_mod_or_superior` except for admin permissions.
 
     If a message is passed, its author's permissions are checked. If a role is
