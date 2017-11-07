@@ -1,5 +1,5 @@
 import itertools
-from typing import List, Generator
+from typing import List, Iterator
 
 def error(text: str) -> str:
     """Get text prefixed with an error emoji.
@@ -162,7 +162,7 @@ def pagify(text: str,
            priority: bool=False,
            escape_mass_mentions: bool=True,
            shorten_by: int=8,
-           page_length: int=2000) -> Generator[str]:
+           page_length: int=2000) -> Iterator[str]:
     """Generate multiple pages from the given text.
 
     Note
