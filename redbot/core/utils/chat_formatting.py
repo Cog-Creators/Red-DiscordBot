@@ -1,27 +1,55 @@
 import itertools
-from typing import List
+from typing import List, Generator
 
-def error(text: str):
-    """Get text prefixed with an error emoji."""
+def error(text: str) -> str:
+    """Get text prefixed with an error emoji.
+
+    Returns
+    -------
+    str
+        The new message.
+
+    """
     return "\N{NO ENTRY SIGN} {}".format(text)
 
 
-def warning(text: str):
-    """Get text prefixed with a warning emoji."""
+def warning(text: str) -> str:
+    """Get text prefixed with a warning emoji.
+
+    Returns
+    -------
+    str
+        The new message.
+
+    """
     return "\N{WARNING SIGN} {}".format(text)
 
 
-def info(text: str):
-    """Get text prefixed with an info emoji."""
+def info(text: str) -> str:
+    """Get text prefixed with an info emoji.
+
+    Returns
+    -------
+    str
+        The new message.
+
+    """
     return "\N{INFORMATION SOURCE} {}".format(text)
 
 
-def question(text: str):
-    """Get text prefixed with a question emoji."""
+def question(text: str) -> str:
+    """Get text prefixed with a question emoji.
+
+    Returns
+    -------
+    str
+        The new message.
+
+    """
     return "\N{BLACK QUESTION MARK ORNAMENT} {}".format(text)
 
 
-def bold(text: str):
+def bold(text: str) -> str:
     """Get the given text in bold.
 
     Parameters
@@ -29,11 +57,16 @@ def bold(text: str):
     text : str
         The text to be marked up.
 
+    Returns
+    -------
+    str
+        The marked up text.
+
     """
     return "**{}**".format(text)
 
 
-def box(text: str, lang: str=""):
+def box(text: str, lang: str="") -> str:
     """Get the given text in a code block.
 
     Parameters
@@ -43,12 +76,17 @@ def box(text: str, lang: str=""):
     lang : `str`, optional
         The syntax highlighting language for the codeblock.
 
+    Returns
+    -------
+    str
+        The marked up text.
+
     """
     ret = "```{}\n{}\n```".format(lang, text)
     return ret
 
 
-def inline(text: str):
+def inline(text: str) -> str:
     """Get the given text as inline code.
 
     Parameters
@@ -56,11 +94,16 @@ def inline(text: str):
     text : str
         The text to be marked up.
 
+    Returns
+    -------
+    str
+        The marked up text.
+
     """
     return "`{}`".format(text)
 
 
-def italics(text: str):
+def italics(text: str) -> str:
     """Get the given text in italics.
 
     Parameters
@@ -68,11 +111,16 @@ def italics(text: str):
     text : str
         The text to be marked up.
 
+    Returns
+    -------
+    str
+        The marked up text.
+
     """
     return "*{}*".format(text)
 
 
-def bordered(text1: List[str], text2: List[str]):
+def bordered(text1: List[str], text2: List[str]) -> str:
     """Get two blocks of text in a borders.
 
     Note
@@ -85,6 +133,11 @@ def bordered(text1: List[str], text2: List[str]):
         The 1st block of text, with each string being a new line.
     text2 : `list` of `str`
         The 2nd block of text. Should not be longer than ``text1``.
+
+    Returns
+    -------
+    str
+        The bordered text.
 
     """
     width1, width2 = max((len(s1) + 9, len(s2) + 9) for s1 in text1 for s2 in text2)
@@ -109,7 +162,7 @@ def pagify(text: str,
            priority: bool=False,
            escape_mass_mentions: bool=True,
            shorten_by: int=8,
-           page_length: int=2000):
+           page_length: int=2000) -> Generator[str]:
     """Generate multiple pages from the given text.
 
     Note
@@ -135,9 +188,7 @@ def pagify(text: str,
         If :code:`True`, any mass mentions (here or everyone) will be
         silenced.
     shorten_by : `int`
-        How much to shorten each page by. If not specified, this defaults
-        to either 6 + the number of chars in :code:`box_lang` if it is
-        specified, else 8.
+        How much to shorten each page by. Defaults to 8.
     page_length : `int`
         The maximum length of each page. Defaults to 2000.
 
@@ -176,7 +227,7 @@ def pagify(text: str,
             yield in_text
 
 
-def strikethrough(text: str):
+def strikethrough(text: str) -> str:
     """Get the given text with a strikethrough.
 
     Parameters
@@ -184,11 +235,16 @@ def strikethrough(text: str):
     text : str
         The text to be marked up.
 
+    Returns
+    -------
+    str
+        The marked up text.
+
     """
     return "~~{}~~".format(text)
 
 
-def underline(text: str):
+def underline(text: str) -> str:
     """Get the given text with an underline.
 
     Parameters
@@ -196,11 +252,17 @@ def underline(text: str):
     text : str
         The text to be marked up.
 
+    Returns
+    -------
+    str
+        The marked up text.
+
     """
     return "__{}__".format(text)
 
 
-def escape(text: str, *, mass_mentions: bool=False, formatting: bool=False):
+def escape(text: str, *, mass_mentions: bool=False,
+           formatting: bool=False) -> str:
     """Get text with all mass mentions or markdown escaped.
 
     Parameters
@@ -211,6 +273,11 @@ def escape(text: str, *, mass_mentions: bool=False, formatting: bool=False):
         Set to :code:`True` to escape mass mentions in the text.
     formatting : `bool`, optional
         Set to :code:`True` to escpae any markdown formatting in the text.
+
+    Returns
+    -------
+    str
+        The escaped text.
 
     """
     if mass_mentions:
