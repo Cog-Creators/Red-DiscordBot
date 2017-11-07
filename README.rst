@@ -33,3 +33,6 @@ To install requirements for voice::
 To install all requirements for docs and tests::
 
     pip install --process-dependency-links -U Red-DiscordBot[test,docs]
+
+For the latest git build, replace ``Red-DiscordBot`` in the above commands with
+``git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop``.
