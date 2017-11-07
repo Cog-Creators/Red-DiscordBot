@@ -1116,6 +1116,8 @@ class Mod:
         """Currently used for:
             * delete delay"""
         guild = ctx.guild
+        if guild is None:
+            return
         message = ctx.message
         delay = await self.settings.guild(guild).delete_delay()
 
