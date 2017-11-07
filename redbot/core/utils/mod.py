@@ -191,7 +191,7 @@ async def is_admin_or_superior(
     """Same as `is_mod_or_superior` except for admin permissions.
 
     If a message is passed, its author's permissions are checked. If a role is
-    passed, it simply checks if it is one of either the admin or mod roles.
+    passed, it simply checks if it is the admin role.
 
     Parameters
     ----------
