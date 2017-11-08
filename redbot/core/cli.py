@@ -102,6 +102,10 @@ def parse_cli_flags(args):
     parser.add_argument("--dev",
                         action="store_true",
                         help="Enables developer mode")
+    parser.add_argument("--mentionable",
+                        action="store_true",
+                        help="Allows mentioning the bot as an alternative "
+                             "to using the bot prefix")
     parser.add_argument("--rpc",
                         action="store_true",
                         help="Enables the built-in RPC server. Please read the docs"
