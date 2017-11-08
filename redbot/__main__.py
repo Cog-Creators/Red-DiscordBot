@@ -3,15 +3,7 @@
 # Discord Version check
 
 import sys
-
 import discord
-
-if discord.version_info.major < 1:
-    print("You are not running the rewritten version of discord.py.\n\n"
-          "In order to use Red v3 you MUST be running d.py version"
-          " >= 1.0.0.")
-    sys.exit(1)
-
 from redbot.core.bot import Red, ExitCodes
 from redbot.core.cog_manager import CogManagerUI
 from redbot.core.data_manager import load_basic_configuration
