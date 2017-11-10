@@ -92,28 +92,28 @@ class Case:
         
         """
         casetype = await get_casetype(self.action_type)
-        title = "{}".format(bold("Case #{} | {} {}".format(
-            self.case_number, casetype.case_str, casetype.image)))
+        title = "{}".format("Case #{} | {} {}".format(
+            self.case_number, casetype.case_str, casetype.image))
 
         if self.reason:
             reason = "**Reason:** {}".format(self.reason)
         else:
             reason = \
-                "**Reason:** Type [p]reason {} <reason> to add it".format(
+                "**Reason:** Use `[p]reason {} <reason>` to add it".format(
                     self.case_number
                 )
 
         emb = discord.Embed(title=title, description=reason)
+        user = "{}#{} ({})\n".format(
+            self.user.name, self.user.discriminator, self.user.id)
+        emb.set_author(name=user, icon_url=self.user.avatar_url)
 
         moderator = "{}#{} ({})\n".format(
             self.moderator.name,
             self.moderator.discriminator,
             self.moderator.id
         )
-        emb.set_author(name=moderator, icon_url=self.moderator.avatar_url)
-        user = "{}#{} ({})\n".format(
-            self.user.name, self.user.discriminator, self.user.id)
-        emb.add_field(name="User", value=user)
+        emb.add_field(name="Moderator", value=moderator, inline=False)
         if self.until:
             start = datetime.fromtimestamp(self.created_at)
             end = datetime.fromtimestamp(self.until)
@@ -126,7 +126,7 @@ class Case:
             emb.add_field(name="Duration", value=duration)
 
         if self.channel:
-            emb.add_field(name="Channel", value=self.channel.name)
+            emb.add_field(name="Channel", value=self.channel.name, inline=False)
         if self.amended_by:
             amended_by = "{}#{} ({})".format(
                 self.amended_by.name,
