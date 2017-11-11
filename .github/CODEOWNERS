@@ -9,6 +9,7 @@ redbot/core/data_manager.py         @tekulvw
 redbot/core/drivers/*               @tekulvw
 redbot/core/i18n.py                 @tekulvw
 redbot/core/modlog.py               @palmtree5
+redbot/core/rpc.py                  @tekulvw
 redbot/core/sentry_setup.py         @Kowlin @tekulvw
 redbot/core/utils/mod.py            @palmtree5
 
