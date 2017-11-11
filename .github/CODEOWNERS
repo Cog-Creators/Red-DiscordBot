@@ -4,21 +4,29 @@
 # Core
 redbot/core/config.py               @tekulvw
 redbot/core/cog_manager.py          @tekulvw
+redbot/core/context.py              @Tobotimus
 redbot/core/data_manager.py         @tekulvw
 redbot/core/drivers/*               @tekulvw
 redbot/core/i18n.py                 @tekulvw
+redbot/core/modlog.py               @palmtree5
 redbot/core/sentry_setup.py         @Kowlin @tekulvw
+redbot/core/utils/mod.py            @palmtree5
 
 # Cogs
 redbot/cogs/admin/*                 @tekulvw
 redbot/cogs/alias/*                 @tekulvw
 redbot/cogs/audio/*                 @tekulvw
 redbot/cogs/bank/*                  @tekulvw
+redbot/cogs/cleanup/*               @palmtree5
 redbot/cogs/customcom/*             @palmtree5
 redbot/cogs/downloader/*            @tekulvw
 redbot/cogs/economy/*               @palmtree5
+redbot/cogs/filter/*                @palmtree5
 redbot/cogs/general/*               @palmtree5
 redbot/cogs/image/*                 @palmtree5
+redbot/cogs/mod/*                   @palmtree5
+redbot/cogs/modlog/*                @palmtree5
+redbot/cogs/trivia/*                @Tobotimus
 
 # Docs
 docs/*                              @tekulvw @palmtree5
