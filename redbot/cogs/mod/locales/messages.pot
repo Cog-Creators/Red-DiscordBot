@@ -5,13 +5,276 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2017-10-22 16:33-0800\n"
+"POT-Creation-Date: 2017-11-14 13:34-0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=cp1252\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: pygettext.py 1.5\n"
 
+
+#: mod.py:196
+msgid "Role hierarchy will be checked when moderation commands are issued."
+msgstr ""
+
+#: mod.py:200
+msgid "Role hierarchy will be ignored when moderation commands are issued."
+msgstr ""
+
+#: mod.py:215
+msgid "Autoban for mention spam enabled. Anyone mentioning {} or more different people in a single message will be autobanned."
+msgstr ""
+
+#: mod.py:226
+msgid "Autoban for mention spam disabled."
+msgstr ""
+
+#: mod.py:236
+msgid "Messages repeated up to 3 times will be deleted."
+msgstr ""
+
+#: mod.py:240
+msgid "Repeated messages will be ignored."
+msgstr ""
+
+#: mod.py:254
+msgid "Command deleting disabled."
+msgstr ""
+
+#: mod.py:257
+msgid "Delete delay set to {} seconds."
+msgstr ""
+
+#: mod.py:262
+msgid "Bot will delete command messages after {} seconds. Set this value to -1 to stop deleting messages"
+msgstr ""
+
+#: mod.py:266
+msgid "I will not delete command messages."
+msgstr ""
+
+#: mod.py:279
+msgid "Users unbanned with {} will be reinvited."
+msgstr ""
+
+#: mod.py:282
+msgid "Users unbanned with {} will not be reinvited."
+msgstr ""
+
+#: mod.py:296 mod.py:336 mod.py:447
+msgid "I cannot let you do that. Self-harm is bad {}"
+msgstr ""
+
+#: mod.py:300 mod.py:340 mod.py:451
+msgid "I cannot let you do that. You are not higher than the user in the role hierarchy."
+msgstr ""
+
+#: mod.py:310 mod.py:364
+msgid "I'm not allowed to do that."
+msgstr ""
+
+#: mod.py:314
+msgid "Done. That felt good."
+msgstr ""
+
+#: mod.py:356
+msgid "Invalid days. Must be between 0 and 7."
+msgstr ""
+
+#: mod.py:368
+msgid "Done. It was about time."
+msgstr ""
+
+#: mod.py:397
+msgid "User is already banned."
+msgstr ""
+
+#: mod.py:411
+msgid "User not found. Have you provided the correct user ID?"
+msgstr ""
+
+#: mod.py:414
+msgid "I lack the permissions to do this."
+msgstr ""
+
+#: mod.py:416
+msgid "Done. The user will not be able to join this guild."
+msgstr ""
+
+#: mod.py:440
+msgid "0 days? I'm not going to have any messages to delete then. Try again by specifying a number of days above 0"
+msgstr ""
+
+#: mod.py:466
+msgid "Something went wrong while purging messages"
+msgstr ""
+
+#: mod.py:468
+msgid "Done. Enough chaos."
+msgstr ""
+
+#: mod.py:499
+msgid "Couldn't find a user with that ID!"
+msgstr ""
+
+#: mod.py:505
+msgid "It seems that user isn't banned!"
+msgstr ""
+
+#: mod.py:511
+msgid "Something went wrong while attempting to unban that user"
+msgstr ""
+
+#: mod.py:514
+msgid "Unbanned that user from this guild"
+msgstr ""
+
+#: mod.py:528
+msgid "I don't share any guilds with that user, so I will not attempt to send an invite to them!"
+msgstr ""
+
+#: mod.py:537
+msgid ""
+"You've been unbanned from {}.\n"
+"Here is an invite for that guild: {}"
+msgstr ""
+
+#: mod.py:541
+msgid ""
+"I failed to send an invite to that user. Perhaps you may be able to send it for me?\n"
+"Here's the invite link: {}"
+msgstr ""
+
+#: mod.py:547
+msgid "Something went wrong when attempting to send that useran invite. Here's the link so you can try: {}"
+msgstr ""
+
+#: mod.py:591 mod.py:628
+msgid "No voice state for that user!"
+msgstr ""
+
+#: mod.py:605
+msgid "That user is already muted and deafened guild-wide!"
+msgstr ""
+
+#: mod.py:608
+msgid "User has been banned from speaking or listening in voice channels"
+msgstr ""
+
+#: mod.py:640
+msgid "That user isn't muted or deafened by the guild!"
+msgstr ""
+
+#: mod.py:643
+msgid "User is now allowed to speak and listen in voice channels"
+msgstr ""
+
+#: mod.py:672
+msgid "I cannot do that, I lack the '{}' permission."
+msgstr ""
+
+#: mod.py:701
+msgid "Muted {}#{} in channel {}"
+msgstr ""
+
+#: mod.py:715
+msgid "That user is already muted in {}!"
+msgstr ""
+
+#: mod.py:718 mod.py:850
+msgid "That user is not in a voice channel right now!"
+msgstr ""
+
+#: mod.py:720 mod.py:852
+msgid "No voice state for the target!"
+msgstr ""
+
+#: mod.py:740
+msgid "User has been muted in this channel."
+msgstr ""
+
+#: mod.py:776
+msgid "User has been muted in this guild."
+msgstr ""
+
+#: mod.py:837
+msgid "Unmuted {}#{} in channel {}"
+msgstr ""
+
+#: mod.py:847
+msgid "That user is already unmuted in {}!"
+msgstr ""
+
+#: mod.py:867
+msgid "User unmuted in this channel."
+msgstr ""
+
+#: mod.py:876
+msgid "Unmute failed. Reason: {}"
+msgstr ""
+
+#: mod.py:899
+msgid "User has been unmuted in this guild."
+msgstr ""
+
+#: mod.py:963
+msgid "Channel added to ignore list."
+msgstr ""
+
+#: mod.py:965
+msgid "Channel already in ignore list."
+msgstr ""
+
+#: mod.py:974
+msgid "This guild has been added to the ignore list."
+msgstr ""
+
+#: mod.py:976
+msgid "This guild is already being ignored."
+msgstr ""
+
+#: mod.py:997
+msgid "Channel removed from ignore list."
+msgstr ""
+
+#: mod.py:999
+msgid "That channel is not in the ignore list."
+msgstr ""
+
+#: mod.py:1008
+msgid "This guild has been removed from the ignore list."
+msgstr ""
+
+#: mod.py:1010
+msgid "This guild is not in the ignore list."
+msgstr ""
+
+#: mod.py:1022
+msgid ""
+"Currently ignoring:\n"
+"{} channels\n"
+"{} guilds\n"
+msgstr ""
+
+#: mod.py:1050
+msgid "**Past 20 names**:"
+msgstr ""
+
+#: mod.py:1057
+msgid "**Past 20 nicknames**:"
+msgstr ""
+
+#: mod.py:1063
+msgid "That user doesn't have any recorded name or nickname change."
+msgstr ""
+
+#: mod.py:1177
+msgid "Hi, I noticed that someone in your server (the server named {}) banned {}#{} (user ID {}). However, I don't have permissions to view audit logs, so I could not determine if a mod log case was created for that ban, meaning I could not create a case in the mod log. If you want me to be able to add cases to the mod log for bans done manually, I need the `View Audit Logs` permission."
+msgstr ""
+
+#: mod.py:1237
+msgid "Hi, I noticed that someone in your server (the server named {}) unbanned {}#{} (user ID {}). However, I don't have permissions to view audit logs, so I could not determine if a mod log case was created for that unban, meaning I could not create a case in the mod log. If you want me to be able to add cases to the mod log for unbans done manually, I need the `View Audit Logs` permission."
+msgstr ""
 
