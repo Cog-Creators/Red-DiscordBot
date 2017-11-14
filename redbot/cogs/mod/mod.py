@@ -1,5 +1,6 @@
 import asyncio
 from collections import deque, defaultdict
+from datetime import datetime
 
 import discord
 from discord.ext import commands
@@ -51,7 +52,6 @@ class Mod:
         self.settings.register_channel(**self.default_channel_settings)
         self.settings.register_member(**self.default_member_settings)
         self.settings.register_user(**self.default_user_settings)
-        self.current_softban = {}
         self.ban_type = None
         self.cache = defaultdict(lambda: deque(maxlen=3))
 
@@ -427,13 +427,21 @@ class Mod:
 
     @commands.command()
     @commands.guild_only()
-    @checks.admin_or_permissions(ban_members=True)
-    async def softban(self, ctx: RedContext, user: discord.Member, *, reason: str = None):
-        """Kicks the user, deleting 1 day worth of messages."""
+    @checks.admin_or_permissions(manage_messages=True)
+    @commands.bot_has_permissions(manage_messages=True, read_message_history=True)
+    async def softban(self, ctx: RedContext, user: discord.Member, days: int=1, reason: str = None):
+        """Deletes all messages from the user in the specified timeframe"""
         guild = ctx.guild
-        channel = ctx.channel
-        can_ban = channel.permissions_for(guild.me).ban_members
         author = ctx.author
+        if days > 14:
+            # not deleting messages older than 14 days, so limit to 14 days
+            days = 14
+        if days == 0:
+            await ctx.send(_(
+                "0 days? I'm not going to have any messages to delete then. "
+                "Try again by specifying a number of days above 0"
+            ))
+        since = datetime.fromtimestamp(ctx.message.created_at.timestamp() - (86400 * days))
 
         if author == user:
             await ctx.send(_("I cannot let you do that. Self-harm is "
@@ -445,56 +453,34 @@ class Mod:
                              "hierarchy."))
             return
 
-        audit_reason = get_audit_reason(author, reason)
+        def message_author_is_specified_user(m):
+            return m.author == user
 
-        invite = await self.get_invite_for_reinvite(ctx)
-        if invite is None:
-            invite = ""
-
-        if can_ban:
-            self.current_softban[str(guild.id)] = user
-            try:  # We don't want blocked DMs preventing us from banning
-                msg = await user.send(
-                    _("You have been banned and "
-                      "then unbanned as a quick way to delete your messages.\n"
-                      "You can now join the guild again. {}").format(invite))
-            except discord.HTTPException:
-                msg = None
+        for channel in guild.text_channels:
             try:
-                await guild.ban(
-                    user, reason=audit_reason, delete_message_days=1)
-                await guild.unban(user)
-            except discord.errors.Forbidden:
-                await ctx.send(
-                    _("My role is not high enough to softban that user."))
-                if msg is not None:
-                    await msg.delete()
+                await channel.purge(
+                    limit=None, check=message_author_is_specified_user,
+                    after=since
+                )
+            except:
+                await ctx.send(_("Something went wrong while purging messages"))
                 return
-            except discord.HTTPException as e:
-                print(e)
-                return
-            else:
-                await ctx.send(_("Done. Enough chaos."))
-                log.info("{}({}) softbanned {}({}), deleting 1 day worth "
-                         "of messages".format(author.name, author.id,
-                                              user.name, user.id))
-                try:
-                    await modlog.create_case(
-                        guild,
-                        ctx.message.created_at,
-                        "softban",
-                        user,
-                        author,
-                        reason,
-                        until=None,
-                        channel=None)
-                except RuntimeError as e:
-                    await ctx.send(e)
-            finally:
-                await asyncio.sleep(5)
-                self.current_softban = None
-        else:
-            await ctx.send(_("I'm not allowed to do that."))
+        await ctx.send(_("Done. Enough chaos."))
+        log.info("{}({}) softbanned {}({}), deleting 1 day worth "
+                 "of messages".format(author.name, author.id,
+                                      user.name, user.id))
+        try:
+            await modlog.create_case(
+                guild,
+                ctx.message.created_at,
+                "softban",
+                user,
+                author,
+                reason,
+                until=None,
+                channel=None)
+        except RuntimeError as e:
+            await ctx.send(e)
 
     @commands.command()
     @commands.guild_only()
@@ -536,6 +522,14 @@ class Mod:
             await ctx.send(e)
 
         if await self.settings.guild(guild).reinvite_on_unban():
+            if not discord.utils.get(ctx.bot.get_all_members(), id=user_id):
+                # The bot doesn't share any guilds with the target
+                await ctx.send(
+                    _("I don't share any guilds with that user, so "
+                      "I will not attempt to send an invite to them!"
+                      )
+                )
+                return
             invite = await self.get_invite_for_reinvite(ctx)
             if invite:
                 try:
@@ -1147,9 +1141,6 @@ class Mod:
             deleted = await self.check_mention_spam(message)
 
     async def on_member_ban(self, guild: discord.Guild, member: discord.Member):
-        if str(guild.id) in self.current_softban and \
-                self.current_softban[str(guild.id)] == member:
-            return  # softban in progress, so a case will be created
         try:
             mod_ch = await modlog.get_modlog_channel(guild)
         except RuntimeError:
@@ -1171,7 +1162,7 @@ class Mod:
                             and case.action_type in ["ban", "hackban"]:
                         log.info("Case already exists for ban of {}".format(member.name))
                         break
-                else:  # no ban, softban, or hackban case with the mod and user combo
+                else:  # no ban or hackban case with the mod and user combo
                     try:
                         await modlog.create_case(guild, audit_case.created_at, "ban",
                                                 member, mod, reason if reason else None)
@@ -1210,9 +1201,6 @@ class Mod:
                 )
 
     async def on_member_unban(self, guild: discord.Guild, user: discord.User):
-        if str(guild.id) in self.current_softban and \
-                self.current_softban[str(guild.id)] == user:
-            return  # softban in progress, so a case will be created
         try:
             mod_ch = await modlog.get_modlog_channel(guild)
         except RuntimeError:
