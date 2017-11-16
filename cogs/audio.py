@@ -314,7 +314,7 @@ class Audio:
                                              "VOTE_THRESHOLD", "NOPPL_DISCONNECT"]
         self.cache_path = "data/audio/cache"
         self.local_playlist_path = "data/audio/localtracks"
-        self._old_wgame = False
+        self._old_game = False
 
         self.skip_votes = {}
 
