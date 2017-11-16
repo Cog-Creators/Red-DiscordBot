@@ -13,7 +13,7 @@ from redbot.core.sentry_setup import init_sentry_logging
 from redbot.core.cli import interactive_config, confirm, parse_cli_flags, ask_sentry
 from redbot.core.core_commands import Core
 from redbot.core.dev_commands import Dev
-from redbot.core import rpc
+from redbot.core import rpc, __version__
 import asyncio
 import logging.handlers
 import logging
@@ -85,7 +85,7 @@ def main():
     cli_flags = parse_cli_flags(sys.argv[1:])
     load_basic_configuration(cli_flags.instance_name)
     log, sentry_log = init_loggers(cli_flags)
-    description = "Red v3 - Alpha"
+    description = "Red - Version {}".format(__version__)
     red = Red(cli_flags, description=description, pm_help=None)
     init_global_checks(red)
     init_events(red, cli_flags)
