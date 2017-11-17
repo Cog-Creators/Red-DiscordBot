@@ -1,10 +1,30 @@
-import asyncio
-from typing import List
+from datetime import datetime
 
 import discord
 
 from redbot.core import Config
 from redbot.core.bot import Red
+
+
+def get_min_time():
+    now = datetime.utcnow().timestamp()
+    twoweeks = 14 * 86400
+    return datetime.fromtimestamp(now - twoweeks)
+
+
+async def check_purge(ctx, messages):
+    """Checks messages in the list, removing any
+    that don't pass the check or that are too old,
+    then deletes the remaining messages"""
+    # Sort from newest to oldest
+    to_delete = sorted(messages, key=lambda m: m.created_at, reverse=True)
+    if ctx.bot.user.bot:
+        while to_delete:
+            await ctx.channel.delete_messages(to_delete[:100])
+            to_delete = to_delete[100:]
+    else:  # Not a bot, so cannot bulk delete
+        for message in to_delete:
+            await message.delete()
 
 
 def get_audit_reason(author: discord.Member, reason: str = None):

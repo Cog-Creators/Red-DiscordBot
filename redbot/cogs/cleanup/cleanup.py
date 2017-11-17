@@ -8,6 +8,7 @@ from redbot.core import checks
 from redbot.core.i18n import CogI18n
 from redbot.cogs.mod.log import log
 from redbot.core.context import RedContext
+from redbot.core.utils.mod import check_purge, get_min_time
 
 _ = CogI18n("Cleanup", __file__)
 
@@ -36,15 +37,25 @@ class Cleanup:
         channel = ctx.channel
         author = ctx.author
 
+        min_time = get_min_time()
+
         def check(m):
             if text in m.content:
                 return True
             elif m == ctx.message:
                 return True
+            elif m.created_at < min_time:
+                return False
             else:
                 return False
+        to_delete = []
+        async for message in channel.history(limit=None):
+            if check(message):
+                to_delete.append(message)
+            if len(to_delete) == number + 1:
+                break
+        await check_purge(ctx, to_delete)
 
-        to_delete = await channel.purge(limit=number+1, check=check)
         reason = "{}({}) deleted {} messages "\
                  " containing '{}' in channel {}".format(author.name,
                                                          author.id, len(to_delete), text, channel.id)
@@ -62,6 +73,7 @@ class Cleanup:
 
         channel = ctx.channel
         author = ctx.author
+        min_time = get_min_time()
 
         def check(m):
             if isinstance(user, discord.Member) and m.author == user:
@@ -70,10 +82,19 @@ class Cleanup:
                 return True
             elif m == ctx.message:
                 return True
+            elif m.created_at < min_time:
+                return False
             else:
                 return False
 
-        to_delete = await channel.purge(limit=number, check=check)
+        to_delete = []
+        async for message in channel.history(limit=None):
+            if check(message):
+                to_delete.append(message)
+            if len(to_delete) == number + 1:
+                break
+        await check_purge(ctx, to_delete)
+
         reason = "{}({}) deleted {} messages "\
                  " made by {}({}) in channel {}"\
                  "".format(author.name, author.id, len(to_delete),
@@ -141,7 +162,6 @@ class Cleanup:
 
         channel = ctx.message.channel
         author = ctx.message.author
-        is_bot = ctx.bot.user.bot
 
         prefixes = ctx.bot.command_prefix
         if isinstance(prefixes, str):
@@ -152,6 +172,7 @@ class Cleanup:
                 return
             prefixes = prefixes(ctx.bot, ctx.message)
 
+        min_time = get_min_time()
         # In case some idiot sets a null prefix
         if '' in prefixes:
             prefixes.remove('')
@@ -161,12 +182,20 @@ class Cleanup:
                 return True
             elif m == ctx.message:
                 return True
+            elif m.created_at < min_time:
+                return False
             p = discord.utils.find(m.content.startswith, prefixes)
             if p and len(p) > 0:
                 return m.content[len(p):].startswith(tuple(ctx.bot.commands))
             return False
 
-        to_delete = await channel.purge(limit=number+1, check=check)
+        to_delete = []
+        async for message in channel.history(limit=None):
+            if check(message):
+                to_delete.append(message)
+            if len(to_delete) == number + 1:
+                break
+        await check_purge(ctx, to_delete)
 
         reason = "{}({}) deleted {} "\
                  " command messages in channel {}"\
@@ -205,14 +234,24 @@ class Cleanup:
             def content_match(_):
                 return True
 
+        min_time = get_min_time()
+
         def check(m):
             if m.author.id != ctx.bot.user.id:
                 return False
             elif content_match(m.content):
                 return True
+            elif m.created_at < min_time:
+                return False
             return False
 
-        to_delete = await channel.purge(limit=number, check=check)
+        to_delete = []
+        async for message in channel.history(limit=None):
+            if check(message):
+                to_delete.append(message)
+            if len(to_delete) == number + 1:
+                break
+        await check_purge(ctx, to_delete)
 
         if channel.name:
             channel_name = 'channel ' + channel.name
