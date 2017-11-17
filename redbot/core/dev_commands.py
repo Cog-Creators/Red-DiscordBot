@@ -115,7 +115,26 @@ class Dev:
 
         result = self.sanitize_output(ctx, str(result))
 
-        await ctx.send(box(result, lang="py"))
+        def check(m):
+            return m.content.lower() == "more"
+
+        pages = list(pagify(result, shorten_by=18))
+        for idx, page in enumerate(pages, 1):
+            if idx != 1:
+                last = await ctx.send(_("There are still {} messages. "
+                                        "Type `more` to continue."
+                                        "").format(len(pages) - (idx - 1)))
+
+                try:
+                    msg = await ctx.bot.wait_for('message', check=check, timeout=10)
+                except asyncio.TimeoutError:
+                    await ctx.send("Your msg timed out")
+                else:
+                    await ctx.channel.delete_messages([last, msg])
+                    await ctx.send(box(page, lang="py"))
+                finally:
+                    break
+            await ctx.send(box(page, lang="py"))
 
     @commands.command(name='eval')
     @checks.is_owner()
