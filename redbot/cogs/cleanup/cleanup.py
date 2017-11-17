@@ -6,7 +6,6 @@ from discord.ext import commands
 
 from redbot.core import checks
 from redbot.core.i18n import CogI18n
-from redbot.core.utils.mod import slow_deletion, mass_purge
 from redbot.cogs.mod.log import log
 from redbot.core.context import RedContext
 
@@ -36,7 +35,6 @@ class Cleanup:
 
         channel = ctx.channel
         author = ctx.author
-        is_bot = ctx.bot.user.bot
 
         def check(m):
             if text in m.content:
@@ -46,30 +44,11 @@ class Cleanup:
             else:
                 return False
 
-        to_delete = [ctx.message]
-        too_old = False
-        tmp = ctx.message
-
-        while not too_old and len(to_delete) - 1 < number:
-            async for message in channel.history(limit=1000,
-                                                 before=tmp):
-                if len(to_delete) - 1 < number and check(message) and\
-                        (ctx.message.created_at - message.created_at).days < 14:
-                    to_delete.append(message)
-                elif (ctx.message.created_at - message.created_at).days >= 14:
-                    too_old = True
-                    break
-                tmp = message
-
+        to_delete = await channel.purge(limit=number+1, check=check)
         reason = "{}({}) deleted {} messages "\
                  " containing '{}' in channel {}".format(author.name,
                                                          author.id, len(to_delete), text, channel.id)
         log.info(reason)
-
-        if is_bot:
-            await mass_purge(to_delete, channel)
-        else:
-            await slow_deletion(to_delete)
 
     @cleanup.command()
     @commands.guild_only()
@@ -83,7 +62,6 @@ class Cleanup:
 
         channel = ctx.channel
         author = ctx.author
-        is_bot = ctx.bot.user.bot
 
         def check(m):
             if isinstance(user, discord.Member) and m.author == user:
@@ -95,31 +73,12 @@ class Cleanup:
             else:
                 return False
 
-        to_delete = []
-        too_old = False
-        tmp = ctx.message
-
-        while not too_old and len(to_delete) - 1 < number:
-            async for message in channel.history(limit=1000,
-                                                 before=tmp):
-                if len(to_delete) - 1 < number and check(message) and\
-                        (ctx.message.created_at - message.created_at).days < 14:
-                    to_delete.append(message)
-                elif (ctx.message.created_at - message.created_at).days >= 14:
-                    too_old = True
-                    break
-                tmp = message
+        to_delete = await channel.purge(limit=number, check=check)
         reason = "{}({}) deleted {} messages "\
                  " made by {}({}) in channel {}"\
                  "".format(author.name, author.id, len(to_delete),
                            user.name, user.id, channel.name)
         log.info(reason)
-
-        if is_bot:
-            # For whatever reason the purge endpoint requires manage_messages
-            await mass_purge(to_delete, channel)
-        else:
-            await slow_deletion(to_delete)
 
     @cleanup.command()
     @commands.guild_only()
@@ -149,20 +108,12 @@ class Cleanup:
             await ctx.send(_("Message not found."))
             return
 
-        to_delete = []
-
-        async for message in channel.history(after=after):
-            if (ctx.message.created_at - message.created_at).days < 14:
-                # Only add messages that are less than
-                # 14 days old to the deletion queue
-                to_delete.append(message)
+        to_delete = await channel.purge(limit=None, after=after)
 
         reason = "{}({}) deleted {} messages in channel {}"\
                  "".format(author.name, author.id,
                            len(to_delete), channel.name)
         log.info(reason)
-
-        await mass_purge(to_delete, channel)
 
     @cleanup.command()
     @commands.guild_only()
@@ -176,32 +127,11 @@ class Cleanup:
         channel = ctx.channel
         author = ctx.author
 
-        is_bot = ctx.bot.user.bot
-
-        to_delete = []
-        tmp = ctx.message
-
-        done = False
-
-        while len(to_delete) - 1 < number and not done:
-            async for message in channel.history(limit=1000, before=tmp):
-                if len(to_delete) - 1 < number and \
-                        (ctx.message.created_at - message.created_at).days < 14:
-                    to_delete.append(message)
-                elif (ctx.message.created_at - message.created_at).days >= 14:
-                    done = True
-                    break
-                tmp = message
-
+        to_delete = await channel.purge(limit=number+1)
         reason = "{}({}) deleted {} messages in channel {}"\
                  "".format(author.name, author.id,
-                           number, channel.name)
+                           len(to_delete), channel.name)
         log.info(reason)
-
-        if is_bot:
-            await mass_purge(to_delete, channel)
-        else:
-            await slow_deletion(to_delete)
 
     @cleanup.command(name='bot')
     @commands.guild_only()
@@ -236,30 +166,13 @@ class Cleanup:
                 return m.content[len(p):].startswith(tuple(ctx.bot.commands))
             return False
 
-        to_delete = [ctx.message]
-        too_old = False
-        tmp = ctx.message
-
-        while not too_old and len(to_delete) - 1 < number:
-            async for message in channel.history(limit=1000, before=tmp):
-                if len(to_delete) - 1 < number and check(message) and\
-                                (ctx.message.created_at - message.created_at).days < 14:
-                    to_delete.append(message)
-                elif (ctx.message.created_at - message.created_at).days >= 14:
-                    too_old = True
-                    break
-                tmp = message
+        to_delete = await channel.purge(limit=number+1, check=check)
 
         reason = "{}({}) deleted {} "\
                  " command messages in channel {}"\
                  "".format(author.name, author.id, len(to_delete),
                            channel.name)
         log.info(reason)
-
-        if is_bot:
-            await mass_purge(to_delete, channel)
-        else:
-            await slow_deletion(to_delete)
 
     @cleanup.command(name='self')
     async def cleanup_self(self, ctx: commands.Context, number: int, match_pattern: str = None):
@@ -275,13 +188,6 @@ class Cleanup:
         """
         channel = ctx.channel
         author = ctx.message.author
-        is_bot = ctx.bot.user.bot
-
-        # You can always delete your own messages, this is needed to purge
-        can_mass_purge = False
-        if type(author) is discord.Member:
-            me = ctx.guild.me
-            can_mass_purge = channel.permissions_for(me).manage_messages
 
         use_re = (match_pattern and match_pattern.startswith('r(') and
                   match_pattern.endswith(')'))
@@ -306,23 +212,7 @@ class Cleanup:
                 return True
             return False
 
-        to_delete = []
-        # Selfbot convenience, delete trigger message
-        if author == ctx.bot.user:
-            to_delete.append(ctx.message)
-            number += 1
-        too_old = False
-        tmp = ctx.message
-        while not too_old and len(to_delete) < number:
-            async for message in channel.history(limit=1000, before=tmp):
-                if len(to_delete) < number and check(message) and\
-                        (ctx.message.created_at - message.created_at).days < 14:
-                    to_delete.append(message)
-                elif (ctx.message.created_at - message.created_at).days >= 14:
-                    # Found a message that is 14 or more days old, stop here
-                    too_old = True
-                    break
-                tmp = message
+        to_delete = await channel.purge(limit=number, check=check)
 
         if channel.name:
             channel_name = 'channel ' + channel.name
@@ -334,8 +224,3 @@ class Cleanup:
                  "".format(author.name, author.id, len(to_delete),
                            channel_name)
         log.info(reason)
-
-        if is_bot and can_mass_purge:
-            await mass_purge(to_delete, channel)
-        else:
-            await slow_deletion(to_delete)

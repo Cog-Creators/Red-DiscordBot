@@ -7,26 +7,6 @@ from redbot.core import Config
 from redbot.core.bot import Red
 
 
-async def mass_purge(messages: List[discord.Message],
-                     channel: discord.TextChannel):
-    while messages:
-        if len(messages) > 1:
-            await channel.delete_messages(messages[:100])
-            messages = messages[100:]
-        else:
-            await messages[0].delete()
-            messages = []
-        await asyncio.sleep(1.5)
-
-
-async def slow_deletion(messages: List[discord.Message]):
-    for message in messages:
-        try:
-            await message.delete()
-        except discord.HTTPException:
-            pass
-
-
 def get_audit_reason(author: discord.Member, reason: str = None):
     """Helper function to construct a reason to be provided
     as the reason to appear in the audit log."""
