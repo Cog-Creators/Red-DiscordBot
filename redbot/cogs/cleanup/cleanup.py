@@ -5,7 +5,6 @@ import discord
 from discord.ext import commands
 
 from redbot.core import checks
-from redbot.core.bot import Red
 from redbot.core.i18n import CogI18n
 from redbot.core.utils.mod import slow_deletion, mass_purge
 from redbot.cogs.mod.log import log
@@ -16,9 +15,6 @@ _ = CogI18n("Cleanup", __file__)
 
 class Cleanup:
     """Commands for cleaning messages"""
-
-    def __init__(self, bot: Red):
-        self.bot = bot
 
     @commands.group()
     @checks.mod_or_permissions(manage_messages=True)
@@ -40,7 +36,7 @@ class Cleanup:
 
         channel = ctx.channel
         author = ctx.author
-        is_bot = self.bot.user.bot
+        is_bot = ctx.bot.user.bot
 
         def check(m):
             if text in m.content:
@@ -87,7 +83,7 @@ class Cleanup:
 
         channel = ctx.channel
         author = ctx.author
-        is_bot = self.bot.user.bot
+        is_bot = ctx.bot.user.bot
 
         def check(m):
             if isinstance(user, discord.Member) and m.author == user:
@@ -140,7 +136,7 @@ class Cleanup:
 
         channel = ctx.channel
         author = ctx.author
-        is_bot = self.bot.user.bot
+        is_bot = ctx.bot.user.bot
 
         if not is_bot:
             await ctx.send(_("This command can only be used on bots with "
@@ -180,7 +176,7 @@ class Cleanup:
         channel = ctx.channel
         author = ctx.author
 
-        is_bot = self.bot.user.bot
+        is_bot = ctx.bot.user.bot
 
         to_delete = []
         tmp = ctx.message
@@ -215,29 +211,29 @@ class Cleanup:
 
         channel = ctx.message.channel
         author = ctx.message.author
-        is_bot = self.bot.user.bot
+        is_bot = ctx.bot.user.bot
 
-        prefixes = self.bot.command_prefix
+        prefixes = ctx.bot.command_prefix
         if isinstance(prefixes, str):
             prefixes = [prefixes]
         elif callable(prefixes):
             if asyncio.iscoroutine(prefixes):
                 await ctx.send(_('Coroutine prefixes not yet implemented.'))
                 return
-            prefixes = prefixes(self.bot, ctx.message)
+            prefixes = prefixes(ctx.bot, ctx.message)
 
         # In case some idiot sets a null prefix
         if '' in prefixes:
             prefixes.remove('')
 
         def check(m):
-            if m.author.id == self.bot.user.id:
+            if m.author.id == ctx.bot.user.id:
                 return True
             elif m == ctx.message:
                 return True
             p = discord.utils.find(m.content.startswith, prefixes)
             if p and len(p) > 0:
-                return m.content[len(p):].startswith(tuple(self.bot.commands))
+                return m.content[len(p):].startswith(tuple(ctx.bot.commands))
             return False
 
         to_delete = [ctx.message]
@@ -279,7 +275,7 @@ class Cleanup:
         """
         channel = ctx.channel
         author = ctx.message.author
-        is_bot = self.bot.user.bot
+        is_bot = ctx.bot.user.bot
 
         # You can always delete your own messages, this is needed to purge
         can_mass_purge = False
@@ -304,7 +300,7 @@ class Cleanup:
                 return True
 
         def check(m):
-            if m.author.id != self.bot.user.id:
+            if m.author.id != ctx.bot.user.id:
                 return False
             elif content_match(m.content):
                 return True
@@ -312,7 +308,7 @@ class Cleanup:
 
         to_delete = []
         # Selfbot convenience, delete trigger message
-        if author == self.bot.user:
+        if author == ctx.bot.user:
             to_delete.append(ctx.message)
             number += 1
         too_old = False
