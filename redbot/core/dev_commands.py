@@ -52,6 +52,11 @@ class Dev:
             lang="py")
 
     @staticmethod
+    def get_pages(msg: str):
+        """Pagify the given message for output to the user."""
+        return pagify(msg, delims=["\n", " "], priority=True, shorten_by=10)
+
+    @staticmethod
     def sanitize_output(ctx: commands.Context, input_: str) -> str:
         """Hides the bot's token from a string."""
         token = ctx.bot.http.token
@@ -115,7 +120,7 @@ class Dev:
 
         result = self.sanitize_output(ctx, str(result))
 
-        await ctx.send(box(result, lang="py"))
+        await ctx.send_interactive(self.get_pages(result), box_lang="py")
 
     @commands.command(name='eval')
     @checks.is_owner()
@@ -162,28 +167,24 @@ class Dev:
             return await ctx.send(self.get_syntax_error(e))
 
         func = env['func']
+        result = None
         try:
             with redirect_stdout(stdout):
-                ret = await func()
+                result = await func()
         except:
-            value = stdout.getvalue()
-            await ctx.send(
-                box('\n{}{}'.format(value, traceback.format_exc()), lang="py"))
+            printed = "{}{}".format(stdout.getvalue(), traceback.format_exc())
         else:
-            value = stdout.getvalue()
-            try:
-                await ctx.message.add_reaction('\N{White Heavy Check Mark}')
-            except:
-                pass
+            printed = stdout.getvalue()
+            await ctx.tick()
 
-            if ret is None:
-                if value:
-                    value = self.sanitize_output(ctx, str(value))
-                    await ctx.send(box(value, lang="py"))
-            else:
-                self._last_result = ret
-                ret = self.sanitize_output(ctx, str(ret))
-                await ctx.send(box("{}{}".format(value, ret), lang="py"))
+        if result is not None:
+            self._last_result = result
+            msg = "{}{}".format(printed, result)
+        else:
+            msg = printed
+        msg = self.sanitize_output(ctx, msg)
+
+        await ctx.send_interactive(self.get_pages(msg), box_lang="py")
 
     @commands.command()
     @checks.is_owner()
@@ -260,7 +261,6 @@ class Dev:
                         result = await result
             except:
                 value = stdout.getvalue()
-                value = self.sanitize_output(ctx, value)
                 msg = "{}{}".format(value, traceback.format_exc())
             else:
                 value = stdout.getvalue()
@@ -270,10 +270,10 @@ class Dev:
                 elif value:
                     msg = "{}".format(value)
 
+            msg = self.sanitize_output(ctx, msg)
+
             try:
-                for page in pagify(str(msg), shorten_by=12):
-                    page = self.sanitize_output(ctx, page)
-                    await ctx.send(box(page, "py"))
+                await ctx.send_interactive(self.get_pages(msg), box_lang="py")
             except discord.Forbidden:
                 pass
             except discord.HTTPException as e:
