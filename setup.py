@@ -21,10 +21,7 @@ def get_package_list():
 def get_requirements():
     with open('requirements.txt') as f:
         requirements = f.read().splitlines()
-    if IS_TRAVIS:
-        requirements.append(
-            'git+https://github.com/Rapptz/discord.py.git@rewrite#egg=discord.py[voice]')
-    else:
+    if not IS_TRAVIS:
         requirements.append('discord.py>=1.0.0a0')  # Because RTD
     return requirements
 
