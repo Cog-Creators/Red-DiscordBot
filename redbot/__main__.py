@@ -98,7 +98,7 @@ def list_instances():
     else:
         data = JsonIO(config_file)._load_json()
         text = "Configured Instances:\n\n"
-        for instance_name in data.keys():
+        for instance_name in sorted(data.keys()):
             text += "{}\n".format(instance_name)
         print(text)
         sys.exit(0)
