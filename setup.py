@@ -2,7 +2,15 @@ from distutils.core import setup
 from pathlib import Path
 from subprocess import run, PIPE
 
+import os
+
 from setuptools import find_packages
+
+IS_TRAVIS = 'TRAVIS' in os.environ
+
+dep_links = ['https://github.com/Rapptz/discord.py/tarball/rewrite#egg=discord.py-1.0']
+if IS_TRAVIS:
+    dep_links = []
 
 
 def get_package_list():
@@ -13,7 +21,8 @@ def get_package_list():
 def get_requirements():
     with open('requirements.txt') as f:
         requirements = f.read().splitlines()
-    requirements.append('discord.py>=1.0.0a0')  # Because RTD
+    if not IS_TRAVIS:
+        requirements.append('discord.py>=1.0.0a0')  # Because RTD
     return requirements
 
 
@@ -72,6 +81,7 @@ def find_locale_folders():
 
     return ret
 
+
 setup(
     name='Red-DiscordBot',
     version="{}.{}.{}b2".format(*get_version()),
@@ -101,11 +111,12 @@ setup(
     python_requires='>=3.5',
     setup_requires=get_requirements(),
     install_requires=get_requirements(),
-    dependency_links=[
-        'https://github.com/Rapptz/discord.py/tarball/rewrite#egg=discord.py-1.0'
-    ],
+    dependency_links=dep_links,
     extras_require={
-        'test': ['pytest>=3', 'pytest-asyncio'],
+        'test': [
+            'pytest>=3', 'pytest-asyncio',
+            'git+git://github.com/Rapptz/discord.py.git@rewrite#egg=discord.py[voice]'
+        ],
         'mongo': ['motor'],
         'docs': ['sphinx', 'sphinxcontrib-asyncio', 'sphinx_rtd_theme'],
         'voice': ['PyNaCl']
