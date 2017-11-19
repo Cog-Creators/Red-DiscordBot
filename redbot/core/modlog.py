@@ -1,11 +1,11 @@
-import discord
 import os
+from datetime import datetime
+from typing import List, Union
+
+import discord
 
 from redbot.core import Config
 from redbot.core.bot import Red
-from redbot.core.utils.chat_formatting import bold
-from typing import List, Union
-from datetime import datetime
 
 __all__ = [
     "Case", "CaseType", "get_next_case_number", "get_case", "get_all_cases",
@@ -83,37 +83,37 @@ class Case:
 
     async def message_content(self):
         """
-        Format a case message 
+        Format a case message
 
         Returns
         -------
         discord.Embed
             A rich embed representing a case message
-        
+
         """
         casetype = await get_casetype(self.action_type)
-        title = "{}".format(bold("Case #{} | {} {}".format(
-            self.case_number, casetype.case_str, casetype.image)))
+        title = "{}".format("Case #{} | {} {}".format(
+            self.case_number, casetype.case_str, casetype.image))
 
         if self.reason:
             reason = "**Reason:** {}".format(self.reason)
         else:
             reason = \
-                "**Reason:** Type [p]reason {} <reason> to add it".format(
+                "**Reason:** Use `[p]reason {} <reason>` to add it".format(
                     self.case_number
                 )
 
         emb = discord.Embed(title=title, description=reason)
-
-        moderator = "{}#{} ({})\n".format(
-            self.moderator.name,
-            self.moderator.discriminator,
-            self.moderator.id
-        )
-        emb.set_author(name=moderator, icon_url=self.moderator.avatar_url)
         user = "{}#{} ({})\n".format(
             self.user.name, self.user.discriminator, self.user.id)
-        emb.add_field(name="User", value=user)
+        emb.set_author(name=user, icon_url=self.user.avatar_url)
+        if self.moderator is not None:
+            moderator = "{}#{} ({})\n".format(
+                self.moderator.name,
+                self.moderator.discriminator,
+                self.moderator.id
+            )
+            emb.add_field(name="Moderator", value=moderator, inline=False)
         if self.until:
             start = datetime.fromtimestamp(self.created_at)
             end = datetime.fromtimestamp(self.until)
@@ -126,7 +126,7 @@ class Case:
             emb.add_field(name="Duration", value=duration)
 
         if self.channel:
-            emb.add_field(name="Channel", value=self.channel.name)
+            emb.add_field(name="Channel", value=self.channel.name, inline=False)
         if self.amended_by:
             amended_by = "{}#{} ({})".format(
                 self.amended_by.name,
@@ -151,15 +151,19 @@ class Case:
         -------
         dict
             The case in the form of a dict
-        
+
         """
+        if self.moderator is not None:
+            mod = self.moderator.id
+        else:
+            mod = None
         data = {
             "case_number": self.case_number,
             "action_type": self.action_type,
             "guild": self.guild.id,
             "created_at": self.created_at,
             "user": self.user.id,
-            "moderator": self.moderator.id,
+            "moderator": mod,
             "reason": self.reason,
             "until": self.until,
             "channel": self.channel.id if hasattr(self.channel, "id") else None,
@@ -181,12 +185,12 @@ class Case:
             The bot's instance. Needed to get the target user
         data: dict
             The JSON representation of the case to be gotten
-        
+
         Returns
         -------
         Case
             The case object for the requested case
-        
+
         """
         guild = mod_channel.guild
         message = await mod_channel.get_message(data["message"])
@@ -330,7 +334,7 @@ async def get_case(case_number: int, guild: discord.Guild,
     -------
     Case
         The case associated with the case number
-    
+
     Raises
     ------
     RuntimeError
@@ -373,7 +377,7 @@ async def get_all_cases(guild: discord.Guild, bot: Red) -> List[Case]:
 
 async def create_case(guild: discord.Guild, created_at: datetime, action_type: str,
                       user: Union[discord.User, discord.Member],
-                      moderator: discord.Member, reason: str=None,
+                      moderator: discord.Member=None, reason: str=None,
                       until: datetime=None, channel: discord.TextChannel=None
                       ) -> Union[Case, None]:
     """
@@ -397,7 +401,7 @@ async def create_case(guild: discord.Guild, created_at: datetime, action_type: s
         The time the action is in effect until
     channel: `discord.TextChannel` or `discord.VoiceChannel`
         The channel the action was taken in
-    
+
     Returns
     -------
     Case
@@ -407,7 +411,7 @@ async def create_case(guild: discord.Guild, created_at: datetime, action_type: s
     ------
     RuntimeError
         If the mod log channel doesn't exist
-    
+
     """
     mod_channel = None
     if hasattr(guild, "owner"):
@@ -577,12 +581,12 @@ async def register_casetypes(new_types: List[dict]) -> List[CaseType]:
     ----------
     new_types: list
         The new types to register
-    
+
     Returns
     -------
     bool
         `True` if all were registered successfully
-    
+
     Raises
     ------
     RuntimeError
@@ -593,7 +597,7 @@ async def register_casetypes(new_types: List[dict]) -> List[CaseType]:
     See Also
     --------
     redbot.core.modlog.register_casetype
-    
+
     """
     type_list = []
     for new_type in new_types:
@@ -622,7 +626,7 @@ async def get_modlog_channel(guild: discord.Guild
     ----------
     guild: `discord.Guild`
         The guild to get the modlog channel for
-    
+
     Returns
     -------
     `discord.TextChannel` or `None`
@@ -654,7 +658,7 @@ async def set_modlog_channel(guild: discord.Guild,
         The guild to set a mod log channel for
     channel: `discord.TextChannel` or `None`
         The channel to be set as modlog channel
-    
+
     Returns
     -------
     bool
@@ -675,7 +679,7 @@ async def reset_cases(guild: discord.Guild) -> bool:
     ----------
     guild: `discord.Guild`
         The guild to reset cases for
-    
+
     Returns
     -------
     bool
