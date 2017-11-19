@@ -4,6 +4,7 @@ python:
   - "3.5.3"
   - "3.6.1"
 install:
+  - pip install -U pip setuptools
   - pip install --process-dependency-links -e .[test]
 script:
   - python -m compileall ./redbot/cogs
