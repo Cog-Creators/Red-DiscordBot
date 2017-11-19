@@ -63,6 +63,9 @@ def ask_sentry(red: Red):
 
 def parse_cli_flags(args):
     parser = argparse.ArgumentParser(description="Red - Discord Bot")
+    parser.add_argument("--list-instances", action="store_true",
+                        help="List all instance names setup "
+                             "with 'redbot-setup'")
     parser.add_argument("--owner", type=int,
                         help="ID of the owner. Only who hosts "
                              "Red should be owner, this has "
@@ -106,7 +109,7 @@ def parse_cli_flags(args):
                         action="store_true",
                         help="Enables the built-in RPC server. Please read the docs"
                              "prior to enabling this!")
-    parser.add_argument("instance_name",
+    parser.add_argument("instance_name", nargs="?",
                         help="Name of the bot instance created during `redbot-setup`.")
 
     args = parser.parse_args(args)
