@@ -30,10 +30,10 @@ class RedContext(commands.Context):
 
         """
         command = self.invoked_subcommand or self.command
-        pages = await self.bot.formatter.format_help_for(self, command)
+        embeds = await self.bot.formatter.format_help_for(self, command)
         ret = []
-        for page in pages:
-            ret.append(await self.send(page))
+        for embed in embeds:
+            ret.append(await self.send(embed=embed))
         return ret
 
     async def tick(self):

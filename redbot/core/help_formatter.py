@@ -24,6 +24,8 @@ Experimental: compatibility with 0.16.8
 
 Copyrights to logic of code belong to Rapptz (Danny)
 Everything else credit to SirThane#1780"""
+from collections import namedtuple
+from typing import List
 
 import discord
 from discord.ext import commands
@@ -43,6 +45,8 @@ _mentions_transforms = {
 }
 
 _mention_pattern = re.compile('|'.join(_mentions_transforms.keys()))
+
+EmbedField = namedtuple('EmbedField', 'name value inline')
 
 
 class Help(formatter.HelpFormatter):
@@ -149,11 +153,7 @@ class Help(formatter.HelpFormatter):
                 value = self.command.help[name_length:].replace('[p]', self.clean_prefix)
                 if value == '':
                     value = EMPTY_STRING
-                field = {
-                    'name': name,
-                    'value': value,
-                    'inline': False
-                }
+                field = EmbedField(name, value, False)
                 emb['fields'].append(field)
 
             # end it here if it's just a regular command
@@ -172,29 +172,37 @@ class Help(formatter.HelpFormatter):
             # Get list of non-hidden commands for bot.
             data = sorted(filtered, key=category)
             for category, commands_ in itertools.groupby(data, key=category):
-                # there simply is no prettier way of doing this.
-                field = {
-                    'inline': False
-                }
                 commands_ = sorted(commands_)
                 if len(commands_) > 0:
-                    field['name'] = category
-                    field['value'] = self._add_subcommands(commands_)  # May need paginated
+                    field = EmbedField(category, self._add_subcommands(commands_), False)
                     emb['fields'].append(field)
 
         else:
             # Get list of commands for category
             filtered = sorted(filtered)
             if filtered:
-                field = {
-                    'name': '**__Commands:__**' if not self.is_bot() and self.is_cog() else '**__Subcommands:__**',
-                    'value': self._add_subcommands(filtered),  # May need paginated
-                    'inline': False
-                }
+                field = EmbedField(
+                    '**__Commands:__**' if not self.is_bot() and self.is_cog() else '**__Subcommands:__**',
+                    self._add_subcommands(filtered),  # May need paginated
+                    False)
 
                 emb['fields'].append(field)
 
         return emb
+
+    def group_fields(self, fields: List[EmbedField], max_chars=1000):
+        curr_group = []
+        ret = []
+        for f in fields:
+            curr_group.append(f)
+            if sum(len(f.value) for f in curr_group) > max_chars:
+                ret.append(curr_group)
+                curr_group = []
+
+        if len(curr_group) > 0:
+            ret.append(curr_group)
+
+        return ret
 
     async def format_help_for(self, ctx, command_or_bot, reason: str=None):
         """Formats the help page and handles the actual heavy lifting of how  ### WTF HAPPENED?
@@ -221,13 +229,18 @@ class Help(formatter.HelpFormatter):
         if reason:
             emb['embed']['title'] = "{0}".format(reason)
 
-        embed = discord.Embed(color=self.color, **emb['embed'])
-        embed.set_author(**self.author)
-        for field in emb['fields']:
-            embed.add_field(**field)
-        embed.set_footer(**emb['footer'])
+        ret = []
+        field_groups = self.group_fields(emb['fields'])
 
-        await self.destination.send(embed=embed)
+        for group in field_groups:
+            embed = discord.Embed(color=self.color, **emb['embed'])
+            embed.set_author(**self.author)
+            for field in group:
+                embed.add_field(**field._asdict())
+            embed.set_footer(**emb['footer'])
+            ret.append(embed)
+
+        return ret
 
     @staticmethod
     def simple_embed(ctx, title=None, description=None, color=None, author=None):
@@ -262,9 +275,7 @@ async def help(ctx, *cmds: str):
 
     # help by itself just lists our own commands.
     if len(cmds) == 0:
-        await ctx.bot.formatter.format_help_for(ctx, ctx.bot)
-        return
-
+        embeds = await ctx.bot.formatter.format_help_for(ctx, ctx.bot)
     elif len(cmds) == 1:
         # try to see if it is a cog name
         name = _mention_pattern.sub(repl, cmds[0])
@@ -278,7 +289,7 @@ async def help(ctx, *cmds: str):
                     embed=Help.cmd_not_found(ctx, name, ctx.bot.formatter.color))
                 return
 
-        await ctx.bot.formatter.format_help_for(ctx, command)
+        embeds = await ctx.bot.formatter.format_help_for(ctx, command)
     else:
         name = _mention_pattern.sub(repl, cmds[0])
         command = ctx.bot.all_commands.get(name)
@@ -303,7 +314,15 @@ async def help(ctx, *cmds: str):
                         author=ctx.author.display_name))
                 return
 
-        await ctx.bot.formatter.format_help_for(ctx, command)
+        embeds = await ctx.bot.formatter.format_help_for(ctx, command)
+
+    if len(embeds) > 2:
+        destination = ctx.author
+
+    for i, embed in enumerate(embeds, 1):
+        description = "{} *- Page {} of {}*".format(embed.description, i, len(embeds))
+        embed.description = description
+        await destination.send(embed=embed)
 
 
 @help.error
