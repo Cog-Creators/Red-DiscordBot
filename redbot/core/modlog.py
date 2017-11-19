@@ -107,13 +107,13 @@ class Case:
         user = "{}#{} ({})\n".format(
             self.user.name, self.user.discriminator, self.user.id)
         emb.set_author(name=user, icon_url=self.user.avatar_url)
-
-        moderator = "{}#{} ({})\n".format(
-            self.moderator.name,
-            self.moderator.discriminator,
-            self.moderator.id
-        )
-        emb.add_field(name="Moderator", value=moderator, inline=False)
+        if self.moderator is not None:
+            moderator = "{}#{} ({})\n".format(
+                self.moderator.name,
+                self.moderator.discriminator,
+                self.moderator.id
+            )
+            emb.add_field(name="Moderator", value=moderator, inline=False)
         if self.until:
             start = datetime.fromtimestamp(self.created_at)
             end = datetime.fromtimestamp(self.until)
@@ -153,13 +153,17 @@ class Case:
             The case in the form of a dict
 
         """
+        if self.moderator is not None:
+            mod = self.moderator.id
+        else:
+            mod = None
         data = {
             "case_number": self.case_number,
             "action_type": self.action_type,
             "guild": self.guild.id,
             "created_at": self.created_at,
             "user": self.user.id,
-            "moderator": self.moderator.id,
+            "moderator": mod,
             "reason": self.reason,
             "until": self.until,
             "channel": self.channel.id if hasattr(self.channel, "id") else None,
@@ -374,7 +378,7 @@ async def get_all_cases(guild: discord.Guild, bot: Red) -> List[Case]:
 
 async def create_case(guild: discord.Guild, created_at: datetime, action_type: str,
                       user: Union[discord.User, discord.Member],
-                      moderator: discord.Member, reason: str=None,
+                      moderator: discord.Member=None, reason: str=None,
                       until: datetime=None, channel: discord.TextChannel=None
                       ) -> Union[Case, None]:
     """
