@@ -80,8 +80,9 @@ class Core:
         """Reloads a package"""
         ctx.bot.unload_extension(cog_name)
 
-        spec = await ctx.bot.cog_mgr.find_cog(cog_name)
-        if spec is None:
+        try:
+            spec = await ctx.bot.cog_mgr.find_cog(cog_name)
+        except RuntimeError:
             await ctx.send(_("No module by that name was found in any"
                              " cog path."))
             return
