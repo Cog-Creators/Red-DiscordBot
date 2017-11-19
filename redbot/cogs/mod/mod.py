@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime
 from collections import deque, defaultdict
 
 import discord
@@ -1173,6 +1174,8 @@ class Mod:
             return  # No modlog channel so no point in continuing
         mod, reason, date = await self.get_audit_entry_info(
             guild, discord.AuditLogAction.ban, member)
+        if date is None:
+            date = datetime.now()
         try:
             await modlog.create_case(guild, date,
                                      "ban", member, mod,
@@ -1190,6 +1193,8 @@ class Mod:
             return  # No modlog channel so no point in continuing
         mod, reason, date = await self.get_audit_entry_info(
             guild, discord.AuditLogAction.unban, user)
+        if date is None:
+            date = datetime.now()
         try:
             await modlog.create_case(guild, date, "unban",
                                      user, mod, reason)
