@@ -48,7 +48,7 @@ def interactive_config(red, token_set, prefix_set):
 
 def ask_sentry(red: Red):
     loop = asyncio.get_event_loop()
-    print("\nThank you for installing Red V3 alpha! The current version\n"
+    print("\nThank you for installing Red V3 beta! The current version\n"
           " is not suited for production use and is aimed at testing\n"
           " the current and upcoming featureset, that's why we will\n"
           " also collect the fatal error logs to help us fix any new\n"

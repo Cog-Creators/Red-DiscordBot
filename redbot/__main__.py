@@ -3,15 +3,7 @@
 # Discord Version check
 
 import sys
-
 import discord
-
-if discord.version_info.major < 1:
-    print("You are not running the rewritten version of discord.py.\n\n"
-          "In order to use Red v3 you MUST be running d.py version"
-          " >= 1.0.0.")
-    sys.exit(1)
-
 from redbot.core.bot import Red, ExitCodes
 from redbot.core.cog_manager import CogManagerUI
 from redbot.core.data_manager import load_basic_configuration, config_file
@@ -22,7 +14,7 @@ from redbot.core.sentry_setup import init_sentry_logging
 from redbot.core.cli import interactive_config, confirm, parse_cli_flags, ask_sentry
 from redbot.core.core_commands import Core
 from redbot.core.dev_commands import Dev
-from redbot.core import rpc
+from redbot.core import rpc, __version__
 import asyncio
 import logging.handlers
 import logging
@@ -113,7 +105,7 @@ def main():
         sys.exit(1)
     load_basic_configuration(cli_flags.instance_name)
     log, sentry_log = init_loggers(cli_flags)
-    description = "Red v3 - Alpha"
+    description = "Red - Version {}".format(__version__)
     red = Red(cli_flags, description=description, pm_help=None)
     init_global_checks(red)
     init_events(red, cli_flags)
