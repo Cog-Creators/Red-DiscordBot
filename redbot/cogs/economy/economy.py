@@ -224,7 +224,7 @@ class Economy:
                 user = ctx.author
             else:
                 user = ctx.guild.owner
-            success = await bank.wipe_bank(user)
+            success = await bank.wipe_bank()
             if success:
                 await ctx.send(_("All bank accounts of this guild have been "
                                "deleted."))
@@ -287,7 +287,7 @@ class Economy:
         if top < 1:
             top = 10
         if await bank.is_global():
-            bank_sorted = sorted(await bank.get_global_accounts(ctx.author),
+            bank_sorted = sorted(await bank.get_global_accounts(),
                                  key=lambda x: x.balance, reverse=True)
         else:
             bank_sorted = sorted(await bank.get_guild_accounts(guild),

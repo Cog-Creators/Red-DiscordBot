@@ -4,7 +4,11 @@ python:
   - "3.5.3"
   - "3.6.1"
 install:
-  - pip install --process-dependency-links -e .[test]
+  - echo "pytest>3" >> requirements.txt
+  - echo "pytest-asyncio" >> requirements.txt
+  - echo "git+https://github.com/Rapptz/discord.py.git@rewrite#egg=discord.py[voice]" >> requirements.txt
+  - pip install -r requirements.txt
+  - pip install -e .
 script:
   - python -m compileall ./redbot/cogs
   - python -m pytest
