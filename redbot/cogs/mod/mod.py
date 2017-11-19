@@ -513,11 +513,12 @@ class Mod:
     @checks.admin_or_permissions(ban_members=True)
     @commands.bot_has_permissions(ban_members=True)
     async def unban(self, ctx: RedContext, user_id: int, *, reason: str = None):
-        """Unbans the target user. Requires specifying the target user's ID
-        (which can be found in the mod log channel (if logging was enabled for
-        the casetype associated with the command used to ban the user) or (if
-        developer mode is enabled) by looking in Bans in guild settings,
-        finding the user, right-clicking, and selecting 'Copy ID'"""
+        """Unbans the target user.
+        
+        Requires specifying the target user's ID. To find this, you may either:
+         1. Copy it from the mod log case (if one was created), or
+         2. enable developer mode, go to Bans in this server's settings, right-
+        click the user and select 'Copy ID'."""
         guild = ctx.guild
         author = ctx.author
         user = self.bot.get_user_info(user_id)
