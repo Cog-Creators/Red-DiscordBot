@@ -38,7 +38,7 @@ class RedBase(BotBase, RpcMethodMixin):
     This exists because `Red` inherits from `discord.AutoShardedClient`, which
     is something other bot classes (namely selfbots) may not want to have as
     a parent class.
-    
+
     Selfbots should inherit from this mixin along with `discord.Client`.
     """
     def __init__(self, cli_flags, bot_dir: Path=Path.cwd(), **kwargs):
@@ -62,8 +62,8 @@ class RedBase(BotBase, RpcMethodMixin):
             prefix=[],
             whitelist=[],
             blacklist=[],
-            admin_role=None,
-            mod_role=None
+            admin_role=[],
+            mod_role=[]
         )
 
         async def prefix_manager(bot, message):
@@ -115,16 +115,16 @@ class RedBase(BotBase, RpcMethodMixin):
 
     async def is_admin(self, member: discord.Member):
         """Checks if a member is an admin of their guild."""
-        admin_role = await self.db.guild(member.guild).admin_role()
+        admin_roles = await self.db.guild(member.guild).admin_role()
         return (not admin_role or
-                any(role.id == admin_role for role in member.roles))
+                any(role.id in admin_roles for role in member.roles))
 
     async def is_mod(self, member: discord.Member):
         """Checks if a member is a mod or admin of their guild."""
-        mod_role = await self.db.guild(member.guild).mod_role()
-        admin_role = await self.db.guild(member.guild).admin_role()
-        return (not (admin_role or mod_role) or
-                any(role.id in (mod_role, admin_role) for role in member.roles))
+        mod_roles = await self.db.guild(member.guild).mod_role()
+        admin_roles = await self.db.guild(member.guild).admin_role()
+        return (not (admin_roles or mod_roles) or
+                any(role.id in mod_roles.extend(admin_roles) for role in member.roles))
 
     async def get_context(self, message, *, cls=RedContext):
         return await super().get_context(message, cls=cls)
@@ -217,7 +217,7 @@ class Red(RedBase, discord.AutoShardedClient):
     """
     async def shutdown(self, *, restart: bool=False):
         """Gracefully quit Red.
-        
+
         The program will exit with code :code:`0` by default.
 
         Parameters

@@ -25,13 +25,13 @@ def mod_or_permissions(**perms):
             return has_perms_or_is_owner
         author = ctx.author
         settings = ctx.bot.db.guild(ctx.guild)
-        mod_role_id = await settings.mod_role()
-        admin_role_id = await settings.admin_role()
+        mod_role_ids = ctx.bot.db.guild(ctx.guild).mod_role()
+        admin_role_ids = ctx.bot.db.guild(ctx.guild).admin_role()
 
-        mod_role = discord.utils.get(ctx.guild.roles, id=mod_role_id)
-        admin_role = discord.utils.get(ctx.guild.roles, id=admin_role_id)
+        staff_roles = [r for r in ctx.guild.roles
+                       if r.id in mod_role_ids or r.id in admin_role_ids]
 
-        is_staff = mod_role in author.roles or admin_role in author.roles
+        is_staff = not set(staff_roles).isdisjoint(ctx.author.roles)
         is_guild_owner = author == ctx.guild.owner
 
         return is_staff or has_perms_or_is_owner or is_guild_owner
@@ -46,10 +46,11 @@ def admin_or_permissions(**perms):
             return has_perms_or_is_owner
         author = ctx.author
         is_guild_owner = author == ctx.guild.owner
-        admin_role_id = await ctx.bot.db.guild(ctx.guild).admin_role()
-        admin_role = discord.utils.get(ctx.guild.roles, id=admin_role_id)
+        admin_role_ids = ctx.bot.db.guild(ctx.guild).admin_role()
+        admin_roles = [r for r in ctx.guild.roles if r.id in admin_role_ids]
+        is_admin = not set(admin_roles).isdisjoint(ctx.author.roles)
 
-        return admin_role in author.roles or has_perms_or_is_owner or is_guild_owner
+        return is_admin in author.roles or has_perms_or_is_owner or is_guild_owner
 
     return commands.check(predicate)
 
