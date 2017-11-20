@@ -167,6 +167,14 @@ def user_choice():
     return input("> ").lower().strip()
 
 
+def extras_selector():
+    print("Enter any extra requirements you want installed\n")
+    print("Options are: voice, docs, test, mongo\n")
+    selected = user_choice()
+    selected = selected.split()
+    return selected
+
+
 def debug_info():
     pyver = sys.version
     redver = pkg_resources.get_distribution("Red-DiscordBot").version
@@ -216,10 +224,7 @@ def main_menu():
                 run_red(instance, autorestart=False)
             wait()
         elif choice == "3":
-            print("Enter any extra requirements you want installed\n")
-            print("Options are: voice, docs, test, mongo\n")
-            selected = user_choice()
-            selected = selected.split()
+            selected = extras_selector()
             update_red(
                 dev=False, voice=True if "voice" in selected else False,
                 docs=True if "docs" in selected else False,
@@ -228,10 +233,7 @@ def main_menu():
             )
             wait()
         elif choice == "4":
-            print("Enter any extra requirements you want installed\n")
-            print("Options are: voice, docs, test, mongo\n")
-            selected = user_choice()
-            selected = selected.split()
+            selected = extras_selector()
             update_red(
                 dev=True, voice=True if "voice" in selected else False,
                 docs=True if "docs" in selected else False,
@@ -247,6 +249,7 @@ def main_menu():
         elif choice == "0":
             break
         clear_screen()
+
 
 def main():
     if not PYTHON_OK:
