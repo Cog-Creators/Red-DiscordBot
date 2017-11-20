@@ -108,7 +108,9 @@ setup(
     entry_points={
         'console_scripts': [
             'redbot=redbot.__main__:main',
-            'redbot-setup=redbot.setup:basic_setup']
+            'redbot-setup=redbot.setup:basic_setup',
+            'redbot-launcher=redbot.launcher:main'
+        ]
     },
     python_requires='>=3.5',
     setup_requires=get_requirements(),
