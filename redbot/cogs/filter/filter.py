@@ -27,12 +27,16 @@ class Filter:
         }
         self.settings.register_guild(**default_guild_settings)
         self.settings.register_member(**default_member_settings)
-        self.bot.loop.create_task(
-            modlog.register_casetype(
+        self.bot.loop.create_task(self.register_filterban())
+
+    async def register_filterban(self):
+        try:
+            await modlog.register_casetype(
                 "filterban", False, ":filing_cabinet: :hammer:",
                 "Filter ban", "ban"
             )
-        )
+        except RuntimeError:
+            pass
 
     @commands.group(name="filter")
     @commands.guild_only()

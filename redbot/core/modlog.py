@@ -311,6 +311,7 @@ async def get_next_case_number(guild: discord.Guild) -> str:
     """
     cases = sorted(
         (await _conf.guild(guild).get_attr("cases")),
+        key=lambda x: int(x),
         reverse=True
     )
     return str(int(cases[0]) + 1) if cases else "1"

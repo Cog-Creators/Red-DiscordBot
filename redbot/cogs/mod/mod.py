@@ -522,7 +522,7 @@ class Mod:
         click the user and select 'Copy ID'."""
         guild = ctx.guild
         author = ctx.author
-        user = self.bot.get_user_info(user_id)
+        user = await self.bot.get_user_info(user_id)
         if not user:
             await ctx.send(_("Couldn't find a user with that ID!"))
             return
