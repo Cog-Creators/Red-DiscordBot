@@ -14,22 +14,25 @@
 Red - Discord Bot v3
 ********************
 
-**This is alpha and very much a work in progress. Regular use is not recommended.
-There will not be any effort not to break current installations.**
+**This is in beta and very much a work in progress. Regular use is not recommended.
+There will not be any effort made to prevent the breaking of current installations.**
 
 How to install
 ^^^^^^^^^^^^^^
 
 Using python3 pip::
 
-    pip install --process-dependency-links -U git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop
+    pip install --process-dependency-links -U Red-DiscordBot
     redbot-setup
     redbot <name>
 
 To install requirements for voice::
 
-    pip install --process-dependency-links -U git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=red-discordbot[voice]
+    pip install --process-dependency-links -U Red-DiscordBot[voice]
 
 To install all requirements for docs and tests::
 
-    pip install --process-dependency-links -U git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=red-discordbot[test,docs]
+    pip install --process-dependency-links -U Red-DiscordBot[test,docs]
+
+For the latest git build, replace ``Red-DiscordBot`` in the above commands with
+``git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop``.
