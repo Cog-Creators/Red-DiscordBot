@@ -1,0 +1,11 @@
+
+/*
+ * This overrides the style for the path to each object definition, whilst
+ * the name of the object remains unchanged.
+ *
+ * e.g. in the definition `redbot.core.Config`, `redbot.core` is the
+ * desclassname.
+ */
+code.descclassname {
+    font-weight: normal !important;
+}

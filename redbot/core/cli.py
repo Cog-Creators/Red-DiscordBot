@@ -48,7 +48,7 @@ def interactive_config(red, token_set, prefix_set):
 
 def ask_sentry(red: Red):
     loop = asyncio.get_event_loop()
-    print("\nThank you for installing Red V3 alpha! The current version\n"
+    print("\nThank you for installing Red V3 beta! The current version\n"
           " is not suited for production use and is aimed at testing\n"
           " the current and upcoming featureset, that's why we will\n"
           " also collect the fatal error logs to help us fix any new\n"
@@ -63,6 +63,9 @@ def ask_sentry(red: Red):
 
 def parse_cli_flags(args):
     parser = argparse.ArgumentParser(description="Red - Discord Bot")
+    parser.add_argument("--list-instances", action="store_true",
+                        help="List all instance names setup "
+                             "with 'redbot-setup'")
     parser.add_argument("--owner", type=int,
                         help="ID of the owner. Only who hosts "
                              "Red should be owner, this has "
@@ -106,7 +109,7 @@ def parse_cli_flags(args):
                         action="store_true",
                         help="Enables the built-in RPC server. Please read the docs"
                              "prior to enabling this!")
-    parser.add_argument("instance_name",
+    parser.add_argument("instance_name", nargs="?",
                         help="Name of the bot instance created during `redbot-setup`.")
 
     args = parser.parse_args(args)
