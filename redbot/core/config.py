@@ -686,7 +686,7 @@ class Config:
         """
         return self._get_base_group(self.USER, user.id)
 
-    def member(self, member: "discord.Member") -> MemberGroup:
+    def member(self, member: "discord.Member") -> Group:
         """Returns a `Group` for the given member.
 
         Parameters
