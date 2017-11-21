@@ -232,12 +232,20 @@ class Help(formatter.HelpFormatter):
         ret = []
         field_groups = self.group_fields(emb['fields'])
 
-        for group in field_groups:
+        for i, group in enumerate(field_groups, 1):
             embed = discord.Embed(color=self.color, **emb['embed'])
+
+            if len(field_groups) > 1:
+                description = "{} *- Page {} of {}*".format(embed.description, i, len(field_groups))
+                embed.description = description
+
             embed.set_author(**self.author)
+
             for field in group:
                 embed.add_field(**field._asdict())
+
             embed.set_footer(**emb['footer'])
+
             ret.append(embed)
 
         return ret
@@ -319,9 +327,7 @@ async def help(ctx, *cmds: str):
     if len(embeds) > 2:
         destination = ctx.author
 
-    for i, embed in enumerate(embeds, 1):
-        description = "{} *- Page {} of {}*".format(embed.description, i, len(embeds))
-        embed.description = description
+    for embed in embeds:
         await destination.send(embed=embed)
 
 
