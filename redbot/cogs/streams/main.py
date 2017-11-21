@@ -16,7 +16,8 @@ class Streams:
 
     global_defaults = {
         "tokens": {},
-        "streams": []
+        "streams": [],
+        "communities": []
     }
 
     guild_defaults = {
