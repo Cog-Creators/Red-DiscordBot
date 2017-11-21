@@ -20,6 +20,10 @@ class Image:
     def __init__(self, bot):
         self.bot = bot
         self.imgur = ImgurClient(CLIENT_ID, CLIENT_SECRET)
+        self.session = aiohttp.ClientSession()
+    
+    def __unload(self):
+        self.session.close()
 
     @commands.group(name="imgur", no_pm=True, pass_context=True)
     async def _imgur(self, ctx):
@@ -127,7 +131,7 @@ class Image:
         url = ("http://api.giphy.com/v1/gifs/search?&api_key={}&q={}"
                "".format(GIPHY_API_KEY, keywords))
 
-        async with aiohttp.get(url) as r:
+        async with self.session.get(url) as r:
             result = await r.json()
             if r.status == 200:
                 if result["data"]:
@@ -149,7 +153,7 @@ class Image:
         url = ("http://api.giphy.com/v1/gifs/random?&api_key={}&tag={}"
                "".format(GIPHY_API_KEY, keywords))
 
-        async with aiohttp.get(url) as r:
+        async with self.session.get(url) as r:
             result = await r.json()
             if r.status == 200:
                 if result["data"]:
