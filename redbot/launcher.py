@@ -14,6 +14,9 @@ from pathlib import Path
 import pkg_resources
 from redbot.setup import basic_setup
 
+if sys.platform == "linux":
+    import distro
+
 config_dir = Path(appdirs.AppDirs("Red-DiscordBot").user_config_dir)
 config_file = config_dir / 'config.json'
 
@@ -188,13 +191,14 @@ def debug_info():
         os_info = platform.mac_ver()
         osver = "Mac OSX {} {}".format(os_info[0], os_info[2])
     else:
-        os_info = platform.linux_distribution()  # pylint: disable=deprecated-method
-        osver = "{} {} {}".format(os_info[0], os_info[1], platform.machine())
+        os_info = distro.linux_distribution()
+        osver = "{} {}".format(os_info[0], os_info[1]).strip()
     user_who_ran = getpass.getuser()
     info = "Debug Info for Red\n\n" +\
         "Python version: {}\n".format(pyver) +\
         "Red version: {}\n".format(redver) +\
         "OS version: {}\n".format(osver) +\
+        "System arch: {}\n".format(platform.machine()) +\
         "User: {}\n".format(user_who_ran)
     print(info)
     exit(0)
