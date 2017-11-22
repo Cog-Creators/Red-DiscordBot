@@ -1139,8 +1139,9 @@ class Audio:
 
             # Set volume of playing audio
             vc = self.voice_client(server)
-            if vc:
-                vc.audio_player.volume = percent / 100
+            if self.is_playing(server):
+                if vc:
+                    vc.audio_player.volume = percent / 100
 
             self.save_settings()
         else:
@@ -1782,6 +1783,28 @@ class Audio:
         self._shuffle_temp_queue(server)
 
         await self.bot.say("Queues shuffled.")
+
+    @commands.command(pass_context=True, name="fade", no_pm=True)
+    @checks.mod_or_permissions(manage_messages=True)
+    async def fade_audio(self, ctx):
+        """Fades out instead of hard-skip"""
+        server = ctx.message.server
+        if self.is_playing(server):
+            vchan = server.me.voice_channel
+            vc = self.voice_client(server)
+            vol = self.get_server_settings(server)["VOLUME"]
+            if ctx.message.author.voice_channel == vchan:
+                while vol > 10:
+                    vol = int(vol/2)
+                    vc.audio_player.volume = vol / 100
+                    time.sleep(1)
+                vc.audio_player.stop()
+                if self._get_queue_repeat(server) is False:
+                    self._set_queue_nowplaying(server, None)
+            else:
+                await self.bot.say("You need to be in the voice channel to fade.")
+        else:
+            await self.bot.say("Can't fade out if I'm not playing.")
 
     @commands.command(pass_context=True, aliases=["next"], no_pm=True)
     async def skip(self, ctx):
