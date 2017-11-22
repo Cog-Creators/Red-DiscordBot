@@ -5,7 +5,7 @@ import aiohttp
 URL = "https://ozdq9jdti1.execute-api.us-east-2.amazonaws.com/prod/getViper"
 
 class RandomFromAlbum:
-    """Gets a random image from an Imgur album!"""
+    """Gets a random image from an Imgur album using an endpoint which returns some JSON"""
 
     def __init__(self, bot):
         self.bot = bot
