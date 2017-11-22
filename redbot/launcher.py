@@ -32,7 +32,9 @@ IS_MAC = sys.platform == "darwin"
 
 
 def parse_cli_args():
-    parser = argparse.ArgumentParser(description="Red - Discord Bot's launcher (V3)")
+    parser = argparse.ArgumentParser(
+        description="Red - Discord Bot's launcher (V3)", allow_abbrev=False
+    )
     with config_file.open("r") as fin:
         instances = json.loads(fin.read())
     parser.add_argument("instancename", metavar="instancename", type=str,
@@ -61,12 +63,10 @@ def parse_cli_args():
     parser.add_argument("--mongo",
                         help="Installs extra 'mongo' when updating",
                         action="store_true")
-    parser.add_argument("--cli-flags-list", type=str,
-                        help="A file containing a list of cli flags to be passed for running red")
-    parser.add_argument("--debug",
+    parser.add_argument("--debuginfo",
                         help="Prints basic debug info that would be useful for support",
                         action="store_true")
-    return parser.parse_args()
+    return parser.parse_known_args()
 
 
 def update_red(dev=False, voice=False, mongo=False, docs=False, test=False):
@@ -348,7 +348,7 @@ def main():
             "Red requires Python 3.5 or greater. "
             "Please install the correct version!"
         )
-    if args.debug:  # Check first since the function triggers an exit
+    if args.debuginfo:  # Check first since the function triggers an exit
         debug_info()
     
     if args.update and args.update_dev:  # Conflicting args, so error out
@@ -370,15 +370,11 @@ def main():
     if INTERACTIVE_MODE:
         main_menu()
     elif args.start:
-        flags = None
-        if args.cli_flags_list:
-            with open(args.cli_flags_list, "r") as fin:
-                flags = fin.read().splitlines()
         print("Starting Red...")
-        run_red(args.instancename, autorestart=args.auto_restart, cliflags=flags)
+        run_red(args.instancename, autorestart=args.auto_restart, cliflags=flags_to_pass)
 
 
-args = parse_cli_args()
+args, flags_to_pass = parse_cli_args()
 
 if __name__ == "__main__":
     main()
