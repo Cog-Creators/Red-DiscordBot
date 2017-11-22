@@ -344,7 +344,6 @@ class Experience:
             #Format from mee6: Nickname#dddd
             user = fixedtext.splitlines()[(index*3)+1]
             level = re.sub('Level ', '', fixedtext.splitlines()[(index*3)+2])
-            print(user+" rank: "+str(rank))
             
             members = server.members
             for member in members:
@@ -530,8 +529,7 @@ class Economy:
         multiplier = self.xp.get_payday_multiplier(str(author.id))
         now = datetime.now()
         midnight = now.replace(hour=0, minute=0, second=0, microsecond=0)
-
-        if ((now - midnight).total_seconds() % 9) == 0:
+        if (int((now - midnight).total_seconds()) % 9) == 0:
             self.bank.deposit_credits(author, self.settings[
                                       server.id]["PAYDAY_CREDITS"]*100)
             self.payday_register[server.id][
@@ -564,7 +562,7 @@ class Economy:
 
     @commands.command(pass_context=True, no_pm=True)
     @is_slots()
-    async def payday(self, ctx):  # TODO
+    async def payday(self, ctx): 
         """Get some free credits"""
         author = ctx.message.author
         server = author.server
