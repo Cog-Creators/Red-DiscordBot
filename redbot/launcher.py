@@ -61,6 +61,8 @@ def parse_cli_args():
     parser.add_argument("--mongo",
                         help="Installs extra 'mongo' when updating",
                         action="store_true")
+    parser.add_argument("--cli-flags-list", type=str,
+                        help="A file containing a list of cli flags to be passed for running red")
     parser.add_argument("--debug",
                         help="Prints basic debug info that would be useful for support",
                         action="store_true")
@@ -118,12 +120,95 @@ def update_red(dev=False, voice=False, mongo=False, docs=False, test=False):
         os.rename(new_name, old_name)
 
 
-def run_red(selected_instance, autorestart=False):
+def run_red(selected_instance, autorestart: bool=False, cliflags=None):
     while True:
         print("Starting {}...".format(selected_instance))
-        status = subprocess.call(["redbot", selected_instance])
+        cmd_list = ["redbot", selected_instance]
+        if cliflags:
+            cmd_list += cliflags
+        status = subprocess.call(cmd_list)
         if (not autorestart) or (autorestart and status != 26):
             break
+
+
+def cli_flag_getter():
+    print("Would you like to enter any cli flags to pass to redbot? (y/n)")
+    resp = user_choice()
+    if resp == "n":
+        return None
+    elif resp == "y":
+        flags = []
+        print("Ok, we will now walk through choosing cli flags")
+        print("Would you like to specify an owner? (y/n)")
+        choice = user_choice()
+        if choice == "y":
+            print("Enter the user id for the owner")
+            owner_id = user_choice()
+            flags.append("--owner {}".format(owner_id))
+        print("Would you like to specify any co-owners? (y/n)")
+        choice = user_choice()
+        if choice == "y":
+            print("Enter the user ids for the co-owners, separated by a space")
+            co_owner_ids = user_choice().split()
+            for co in co_owner_ids:
+                flags.append("--co-owner {}".format(co))
+        print("Would you like to specify any prefixes? (y/n)")
+        choice = user_choice()
+        if choice == "y":
+            print(
+                "Enter the prefixes, separated by a space (please note "
+                "that this will not handle prefixes containing a space)")
+            prefixes = user_choice().split()
+            for p in prefixes:
+                flags.append("-p {}".format(p))
+        print("Would you like to disable console input? (y/n)")
+        choice = user_choice()
+        if choice == "y":
+            flags.append("--no-prompt")
+        print("Would you like to start with no cogs loaded? (y/n)")
+        choice = user_choice()
+        if choice == "y":
+            flags.append("--no-cogs")
+        print("Is this a selfbot? (y/n)")
+        choice = user_choice()
+        if choice == "y":
+            print("Please note that selfbots are not allowed by Discord. See"
+                  "https://support.discordapp.com/hc/en-us/articles/115002192352-Automated-user-accounts-self-bots-"
+                  "for more information.")
+            flags.append("--self-bot")
+        print("Does this token belong to a user account rather than a bot account? (y/n)")
+        choice = user_choice()
+        if choice == "y":
+            flags.append("--not-bot")
+        print("Do you want to do a dry run? (y/n)")
+        choice = user_choice()
+        if choice == "y":
+            flags.append("--dry-run")
+        print("Do you want to set the log level to debug? (y/n)")
+        choice = user_choice()
+        if choice == "y":
+            flags.append("--debug")
+        print("Do you want the Dev cog loaded (thus enabling commands such as debug and repl)? (y/n)")
+        choice = user_choice()
+        if choice == "y":
+            flags.append("--dev")
+        print("Do you want to enable RPC? (y/n)")
+        choice = user_choice()
+        if choice == "y":
+            flags.append("--rpc")
+        print("You have selected the following cli flags:\n\n")
+        print("\n".join(flags))
+        print("\nIf this looks good to you, type y. If you wish to start over, type n")
+        choice = user_choice()
+        if choice == "y":
+            print("Done selecting cli flags")
+            return flags
+        else:
+            print("Starting over")
+            return cli_flag_getter()
+    else:
+        print("Invalid response! Let's try again")
+        return cli_flag_getter()
 
 
 def instance_menu():
@@ -219,13 +304,15 @@ def main_menu():
         choice = user_choice()
         if choice == "1":
             instance = instance_menu()
+            cli_flags = cli_flag_getter()
             if instance:
-                run_red(instance, autorestart=True)
+                run_red(instance, autorestart=True, cliflags=cli_flags)
             wait()
         elif choice == "2":
             instance = instance_menu()
+            cli_flags = cli_flag_getter()
             if instance:
-                run_red(instance, autorestart=False)
+                run_red(instance, autorestart=False, cliflags=cli_flags)
             wait()
         elif choice == "3":
             selected = extras_selector()
@@ -283,8 +370,12 @@ def main():
     if INTERACTIVE_MODE:
         main_menu()
     elif args.start:
+        flags = None
+        if args.cli_flags_list:
+            with open(args.cli_flags_list, "r") as fin:
+                flags = fin.read().splitlines()
         print("Starting Red...")
-        run_red(args.instancename, autorestart=args.auto_restart)
+        run_red(args.instancename, autorestart=args.auto_restart, cliflags=flags)
 
 
 args = parse_cli_args()
