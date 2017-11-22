@@ -6,3 +6,5 @@ data
 !data/audio/playlists/*
 *.exe
 *.dll
+lib
+start_*.sh
