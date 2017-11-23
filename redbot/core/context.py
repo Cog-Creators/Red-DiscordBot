@@ -109,5 +109,10 @@ class RedContext(commands.Context):
                     await query.delete()
                     break
                 else:
-                    await self.channel.delete_messages((query, resp))
+                    try:
+                        await self.channel.delete_messages((query, resp))
+                    except discord.HTTPException:
+                        # In case the bot can't delete other users' messages,
+                        # or is not a bot account
+                        await query.delete()
         return ret
