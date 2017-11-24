@@ -328,7 +328,11 @@ async def help(ctx, *cmds: str):
         destination = ctx.author
 
     for embed in embeds:
-        await destination.send(embed=embed)
+        try:
+            await destination.send(embed=embed)
+        except discord.HTTPException:
+            destination = ctx.author
+            await destination.send(embed=embed)
 
 
 @help.error
