@@ -1,0 +1,99 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ORGANIZATION
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2017-11-26 10:45+EST\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+
+#: redbot/core/cog_manager.py:301
+#, docstring
+msgid ""
+"Lists current cog paths in order of priority."
+msgstr ""
+
+#: redbot/core/cog_manager.py:320
+#, docstring
+msgid ""
+"Add a path to the list of available cog paths."
+msgstr ""
+
+#: redbot/core/cog_manager.py:339
+#, docstring
+msgid ""
+"Removes a path from the available cog paths given the path_number"
+" from !paths"
+msgstr ""
+
+#: redbot/core/cog_manager.py:355
+#, docstring
+msgid ""
+"Reorders paths internally to allow discovery of different cogs."
+msgstr ""
+
+#: redbot/core/cog_manager.py:381
+#, docstring
+msgid ""
+"Returns the current install path or sets it if one is provided."
+"The provided path must be absolute or relative to the bot's"
+"directory and it must already exist.\n"
+"\n"
+"No installed cogs will be transferred in the process."
+msgstr ""
+
+#: redbot/core/cog_manager.py:404
+#, docstring
+msgid ""
+"Lists all loaded and available cogs."
+msgstr ""
+
+#: redbot/core/cog_manager.py:308
+msgid ""
+"Install Path: {}\n"
+"\n"
+msgstr ""
+
+#: redbot/core/cog_manager.py:324
+msgid "That path is does not exist or does not point to a valid directory."
+msgstr ""
+
+#: redbot/core/cog_manager.py:333
+msgid "Path successfully added."
+msgstr ""
+
+#: redbot/core/cog_manager.py:346
+msgid "That is an invalid path number."
+msgstr ""
+
+#: redbot/core/cog_manager.py:350
+msgid "Path successfully removed."
+msgstr ""
+
+#: redbot/core/cog_manager.py:366
+msgid "Invalid 'from' index."
+msgstr ""
+
+#: redbot/core/cog_manager.py:372
+msgid "Invalid 'to' index."
+msgstr ""
+
+#: redbot/core/cog_manager.py:376
+msgid "Paths reordered."
+msgstr ""
+
+#: redbot/core/cog_manager.py:394
+msgid "That path does not exist."
+msgstr ""
+
+#: redbot/core/cog_manager.py:398
+msgid "The bot will install new cogs to the `{}` directory."
+msgstr ""
+
