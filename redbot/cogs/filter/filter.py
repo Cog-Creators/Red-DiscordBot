@@ -276,8 +276,6 @@ class Filter:
         await self.check_filter(message)
 
     async def on_member_update(self, before: discord.Member, after: discord.Member):
-        if before.name == after.name and before.nick == after.nick:
-            return
         if not after.guild.me.guild_permissions.manage_nicknames:
             return  # No permissions to manage nicknames, so can't do anything
         word_list = await self.settings.guild(after.guild).filter()
@@ -297,15 +295,33 @@ class Filter:
             if name_filtered and nick_filtered:  # Both true, so break from loop
                 break
 
-        if (name_filtered and nick_filtered) or name_filtered:
+        if name_filtered and after.nick is None:
             try:
                 await after.edit(nick=name_to_use, reason="Filtered name")
             except:
                 pass
-        elif nick_filtered and not name_filtered:
+        elif nick_filtered:
             try:
                 await after.edit(nick=None, reason="Filtered nickname")
             except:
                 pass
 
+    async def on_member_join(self, member: discord.Member):
+        guild = member.guild
+        if not guild.me.guild_permissions.manage_nicknames:
+            return
+        word_list = await self.settings.guild(guild).filter()
+        filter_names = await self.settings.guild(guild).filter_names()
+        name_to_use = await self.settings.guild(guild).filter_default_name
+
+        if not filter_names:
+            return
+
+        for w in word_list:
+            if w in member.name:
+                try:
+                    await member.edit(nick=name_to_use, reason="Filtered name")
+                except:
+                    pass
+                break
 
