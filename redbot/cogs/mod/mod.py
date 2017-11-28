@@ -451,11 +451,12 @@ class Mod:
         """Tempbans the user for the specified number of days"""
         guild = ctx.guild
         author = ctx.author
-        unban_time = datetime.utcnow() + timedelta(days=int(days))
+        days_delta = timedelta(days=int(days))
+        unban_time = datetime.utcnow() + days_delta
         channel = ctx.channel
         can_ban = channel.permissions_for(guild.me).ban_members
 
-        invite = await self.get_invite_for_reinvite(ctx)
+        invite = await self.get_invite_for_reinvite(ctx, int(days_delta.total_seconds() + 86400))
         if invite is None:
             invite = ""
 
@@ -468,20 +469,19 @@ class Mod:
 
             try:  # We don't want blocked DMs preventing us from banning
                 msg = await user.send(
-                    _("You have been banned and "
-                      "then unbanned as a quick way to delete your messages.\n"
-                      "You can now join the guild again. {}").format(invite))
+                    _("You have been temporarily banned from {} until {}. "
+                      "Here is an invite for when your ban expires: {}").format(invite))
             except discord.HTTPException:
                 msg = None
             self.ban_queue.append(queue_entry)
             try:
                 await guild.ban(user)
             except discord.Forbidden:
-                await ctx.send("I can't do that for some reason.")
+                await ctx.send(_("I can't do that for some reason."))
             except discord.HTTPException:
-                await ctx.send("Something went wrong while banning")
+                await ctx.send(_("Something went wrong while banning"))
             else:
-                await ctx.send("Done. Enough chaos for now")
+                await ctx.send(_("Done. Enough chaos for now"))
 
             try:
                 await modlog.create_case(
@@ -630,7 +630,7 @@ class Mod:
                         .format(invite.url))
 
     @staticmethod
-    async def get_invite_for_reinvite(ctx: RedContext):
+    async def get_invite_for_reinvite(ctx: RedContext, max_age: int=86400):
         """Handles the reinvite logic for getting an invite
         to send the newly unbanned user
         :returns: :class:`Invite`"""
@@ -656,8 +656,8 @@ class Mod:
             if channel is None:
                 return
             try:
-                # Create invite that expires after 1 day
-                return await channel.create_invite(max_age=86400)
+                # Create invite that expires after max_age
+                return await channel.create_invite(max_age=max_age)
             except discord.HTTPException:
                 return
 
