@@ -470,7 +470,8 @@ class Mod:
             try:  # We don't want blocked DMs preventing us from banning
                 msg = await user.send(
                     _("You have been temporarily banned from {} until {}. "
-                      "Here is an invite for when your ban expires: {}").format(invite))
+                      "Here is an invite for when your ban expires: {}").format(
+                        guild.name, unban_time.strftime("%m-%d-%Y %H:%M:%S"), invite))
             except discord.HTTPException:
                 msg = None
             self.ban_queue.append(queue_entry)
