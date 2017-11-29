@@ -63,6 +63,8 @@ class Cleanup:
                 elif (ctx.message.created_at - message.created_at).days >= 14:
                     too_old = True
                     break
+                elif len(to_delete) >= number:
+                    break
                 tmp = message
 
         reason = "{}({}) deleted {} messages "\
@@ -111,6 +113,8 @@ class Cleanup:
                     to_delete.append(message)
                 elif (ctx.message.created_at - message.created_at).days >= 14:
                     too_old = True
+                    break
+                elif len(to_delete) >= number:
                     break
                 tmp = message
         reason = "{}({}) deleted {} messages "\
@@ -252,6 +256,8 @@ class Cleanup:
                 elif (ctx.message.created_at - message.created_at).days >= 14:
                     too_old = True
                     break
+                elif len(to_delete) >= number:
+                    break
                 tmp = message
 
         reason = "{}({}) deleted {} "\
@@ -325,6 +331,8 @@ class Cleanup:
                 elif (ctx.message.created_at - message.created_at).days >= 14:
                     # Found a message that is 14 or more days old, stop here
                     too_old = True
+                    break
+                elif len(to_delete) >= number:
                     break
                 tmp = message
 
