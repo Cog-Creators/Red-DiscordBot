@@ -3,7 +3,7 @@ from .utils.chat_formatting import box
 from .utils.dataIO import dataIO
 from .utils import checks
 from __main__ import user_allowed, send_cmd_help
-from copy import deepcopy
+from copy import copy
 import os
 import discord
 
@@ -126,7 +126,7 @@ class Alias:
             if alias in self.aliases[server.id]:
                 new_command = self.aliases[server.id][alias]
                 args = message.content[len(prefix + alias):]
-                new_message = deepcopy(message)
+                new_message = copy(message)
                 new_message.content = prefix + new_command + args
                 await self.bot.process_commands(new_message)
 
