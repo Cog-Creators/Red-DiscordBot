@@ -60,7 +60,7 @@ class Cleanup:
                 if len(to_delete) - 1 < number and check(message) and\
                         (ctx.message.created_at - message.created_at).days < 14:
                     to_delete.append(message)
-                elif (ctx.message.created_at - message.created_at).days >= 14:
+                elif len(to_delete) == number or (ctx.message.created_at - message.created_at).days >= 14:
                     too_old = True
                     break
                 tmp = message
@@ -109,7 +109,7 @@ class Cleanup:
                 if len(to_delete) - 1 < number and check(message) and\
                         (ctx.message.created_at - message.created_at).days < 14:
                     to_delete.append(message)
-                elif (ctx.message.created_at - message.created_at).days >= 14:
+                elif len(to_delete) == number or (ctx.message.created_at - message.created_at).days >= 14:
                     too_old = True
                     break
                 tmp = message
@@ -192,7 +192,7 @@ class Cleanup:
                 if len(to_delete) - 1 < number and \
                         (ctx.message.created_at - message.created_at).days < 14:
                     to_delete.append(message)
-                elif (ctx.message.created_at - message.created_at).days >= 14:
+                elif len(to_delete) == number or (ctx.message.created_at - message.created_at).days >= 14:
                     done = True
                     break
                 tmp = message
@@ -249,7 +249,7 @@ class Cleanup:
                 if len(to_delete) - 1 < number and check(message) and\
                                 (ctx.message.created_at - message.created_at).days < 14:
                     to_delete.append(message)
-                elif (ctx.message.created_at - message.created_at).days >= 14:
+                elif len(to_delete) == number or (ctx.message.created_at - message.created_at).days >= 14:
                     too_old = True
                     break
                 tmp = message
@@ -322,7 +322,7 @@ class Cleanup:
                 if len(to_delete) < number and check(message) and\
                         (ctx.message.created_at - message.created_at).days < 14:
                     to_delete.append(message)
-                elif (ctx.message.created_at - message.created_at).days >= 14:
+                elif len(to_delete) == number or (ctx.message.created_at - message.created_at).days >= 14:
                     # Found a message that is 14 or more days old, stop here
                     too_old = True
                     break
