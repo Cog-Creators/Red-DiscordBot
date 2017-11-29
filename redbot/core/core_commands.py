@@ -17,6 +17,8 @@ from redbot.core import rpc
 
 from typing import TYPE_CHECKING
 
+from redbot.core.utils.chat_formatting import pagify, box
+
 if TYPE_CHECKING:
     from redbot.core.bot import Red
 
@@ -41,6 +43,98 @@ class Core:
         rpc.add_method('core', self.rpc_load)
         rpc.add_method('core', self.rpc_unload)
         rpc.add_method('core', self.rpc_reload)
+
+    @commands.command()
+    @checks.is_owner()
+    async def traceback(self, ctx, public: bool=False):
+        """Sends to the owner the last command exception that has occurred
+
+        If public (yes is specified), it will be sent to the chat instead"""
+        if not public:
+            destination = ctx.author
+        else:
+            destination = ctx.channel
+
+        if self.bot._last_exception:
+            for page in pagify(self.bot._last_exception):
+                await destination.send(box(page, lang="py"))
+        else:
+            await ctx.send("No exception has occurred yet")
+
+    @commands.command()
+    @checks.is_owner()
+    async def join(self, ctx):
+        """Show's Red's invite url"""
+        if self.bot.user.bot:
+            await ctx.author.send(discord.utils.oauth_url(self.bot.user.id))
+        else:
+            await ctx.send("I'm not a bot account. I have no invite URL.")
+
+    @commands.command()
+    @commands.guild_only()
+    @checks.is_owner()
+    async def leave(self, ctx):
+        """Leaves server"""
+        author = ctx.author
+        guild = ctx.guild
+
+        await ctx.send("Are you sure you want me to leave this server?"
+                       " Type yes to confirm.")
+
+        def conf_check(m):
+            return m.author == author
+
+        response = await self.bot.wait_for("message", check=conf_check)
+
+        if response.content.lower().strip() == "yes":
+            await ctx.send("Alright. Bye :wave:")
+            log.debug("Leaving '{}'".format(guild.name))
+            await guild.leave()
+
+    @commands.command()
+    @checks.is_owner()
+    async def servers(self, ctx):
+        """Lists and allows to leave servers"""
+        owner = ctx.author
+        guilds = sorted(list(self.bot.guilds),
+                        key=lambda s: s.name.lower())
+        msg = ""
+        for i, server in enumerate(guilds):
+            msg += "{}: {}\n".format(i, server.name)
+
+        msg += "\nTo leave a server, just type its number."
+
+        for page in pagify(msg, ['\n']):
+            await ctx.send(page)
+
+        def msg_check(m):
+            return m.author == owner
+
+        while msg is not None:
+            msg = await self.bot.wait_for("message", check=msg_check, timeout=15)
+            try:
+                msg = int(msg.content)
+                await self.leave_confirmation(guilds[msg], owner, ctx)
+                break
+            except (IndexError, ValueError, AttributeError):
+                pass
+
+    async def leave_confirmation(self, server, owner, ctx):
+        await ctx.send("Are you sure you want me to leave {}? (yes/no)".format(server.name))
+
+        def conf_check(m):
+            return m.author == owner
+
+        msg = await self.bot.wait_for("message", check=conf_check, timeout=15)
+
+        if msg is None:
+            await ctx.send("I guess not.")
+        elif msg.content.lower().strip() in ("yes", "y"):
+            await server.leave()
+            if server != ctx.guild:
+                await ctx.send("Done.")
+        else:
+            await ctx.send("Alright then.")
 
     @commands.command()
     @checks.is_owner()
