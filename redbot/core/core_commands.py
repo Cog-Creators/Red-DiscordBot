@@ -63,7 +63,7 @@ class Core:
 
     @commands.command()
     @checks.is_owner()
-    async def join(self, ctx):
+    async def invite(self, ctx):
         """Show's Red's invite url"""
         if self.bot.user.bot:
             await ctx.author.send(discord.utils.oauth_url(self.bot.user.id))
