@@ -11,6 +11,16 @@ log = logging.getLogger("red.config")
 
 
 class _ValueCtxManager:
+    """Context manager implementation of config values.
+
+    This class allows mutable config values to be both "get" and "set" from
+    within an async context manager.
+
+    The context manager can only be used to get and set a mutable data type,
+    i.e. `dict`s or `list`s. This is because this class's ``raw_value``
+    attribute must contain a reference to the object being modified within the
+    context manager.
+    """
 
     def __init__(self, value_obj, coro):
         self.value_obj = value_obj
