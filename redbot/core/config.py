@@ -10,6 +10,27 @@ from .drivers import get_driver
 log = logging.getLogger("red.config")
 
 
+class _ValueCtxManager:
+
+    def __init__(self, value_obj, coro):
+        self.value_obj = value_obj
+        self.coro = coro
+
+    def __await__(self):
+        return self.coro.__await__()
+
+    async def __aenter__(self):
+        self.raw_value =  await self
+        if not isinstance(self.raw_value, (list, dict)):
+            raise TypeError("Type of retrieved value must be mutable (i.e. "
+                            "list or dict) in order to use a config value as "
+                            "a context manager.")
+        return self.raw_value
+
+    async def __aexit__(self, *exc_info):
+        await self.value_obj.set(self.raw_value)
+
+
 class Value:
     """A singular "value" of data.
 
@@ -78,7 +99,7 @@ class Value:
             A coroutine object that must be awaited.
 
         """
-        return self._get(default)
+        return _ValueCtxManager(self, self._get(default))
 
     async def set(self, value):
         """Set the value of the data elements pointed to by `identifiers`.
