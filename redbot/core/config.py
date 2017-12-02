@@ -80,6 +80,11 @@ class Value:
         "real" data of the `Value` object is accessed by this method. It is a
         replacement for a :code:`get()` method.
 
+        The return value of this method can also be used as an asynchronous
+        context manager, i.e. with :code:`async with` syntax. This can only be
+        used on values which are mutable (namely lists and dicts), and will
+        set the value with its changes on exit of the context manager.
+
         Example
         -------
         ::
@@ -105,8 +110,10 @@ class Value:
 
         Returns
         -------
-        types.coroutine
-            A coroutine object that must be awaited.
+        `awaitable` mixed with `asynchronous context manager`
+            A coroutine object mixed in with an async context manager. When
+            awaited, this returns the raw data value. When used in :code:`async
+            with` syntax, on gets the value on entrance, and sets it on exit.
 
         """
         return _ValueCtxManager(self, self._get(default))
