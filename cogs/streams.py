@@ -524,9 +524,13 @@ class Streams:
     def enable_or_disable_if_active(self, streams, stream, channel, _id=None):
         """Returns True if enabled or False if disabled"""
         for i, s in enumerate(streams):
-            if s["NAME"] != stream:
-                continue
-
+            stream_id = s.get("ID")
+            if stream_id and _id:     # ID is available, matching by ID is
+                if stream_id != _id:  # preferable
+                    continue
+            else:  # ID unavailable, matching by name
+                if s["NAME"] != stream:
+                    continue
             if channel.id in s["CHANNELS"]:
                 streams[i]["CHANNELS"].remove(channel.id)
                 if not s["CHANNELS"]:
