@@ -82,41 +82,31 @@ class Alias:
         alias = AliasEntry(alias_name, command, ctx.author, global_=global_)
 
         if global_:
-            curr_aliases = await self._aliases.entries()
-            curr_aliases.append(alias.to_json())
-            await self._aliases.entries.set(curr_aliases)
+            settings = self._aliases
         else:
-            curr_aliases = await self._aliases.guild(ctx.guild).entries()
+            settings = self._aliases.guild(ctx.guild)
+            await settings.enabled.set(True)
 
+        async with settings.entries() as curr_aliases:
             curr_aliases.append(alias.to_json())
-            await self._aliases.guild(ctx.guild).entries.set(curr_aliases)
 
-            await self._aliases.guild(ctx.guild).enabled.set(True)
         return alias
 
     async def delete_alias(self, ctx: commands.Context, alias_name: str,
                            global_: bool=False) -> bool:
         if global_:
-            aliases = await self.unloaded_global_aliases()
-            setter_func = self._aliases.entries.set
+            settings = self._aliases
         else:
-            aliases = await self.unloaded_aliases(ctx.guild)
-            setter_func = self._aliases.guild(ctx.guild).entries.set
+            settings = self._aliases.guild(ctx.guild)
 
-        did_delete_alias = False
+        async with settings.entries() as aliases:
+            for alias in aliases:
+                alias_obj = AliasEntry.from_json(alias)
+                if alias_obj.name == alias_name:
+                    aliases.remove(alias)
+                    return True
 
-        to_keep = []
-        for alias in aliases:
-            if alias.name != alias_name:
-                to_keep.append(alias)
-            else:
-                did_delete_alias = True
-
-        await setter_func(
-            [a.to_json() for a in to_keep]
-        )
-
-        return did_delete_alias
+        return False
 
     async def get_prefix(self, message: discord.Message) -> str:
         """

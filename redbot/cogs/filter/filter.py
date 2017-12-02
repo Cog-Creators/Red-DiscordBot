@@ -147,30 +147,24 @@ class Filter:
             await ctx.send(_("Count and time have been set."))
 
     async def add_to_filter(self, server: discord.Guild, words: list) -> bool:
-        added = 0
-        cur_list = await self.settings.guild(server).filter()
-        for w in words:
-            if w.lower() not in cur_list and w != "":
-                cur_list.append(w.lower())
-                added += 1
-        if added:
-            await self.settings.guild(server).filter.set(cur_list)
-            return True
-        else:
-            return False
+        added = False
+        async with self.settings.guild(server).filter() as cur_list:
+            for w in words:
+                if w.lower() not in cur_list and w:
+                    cur_list.append(w.lower())
+                    added = True
+
+        return added
 
     async def remove_from_filter(self, server: discord.Guild, words: list) -> bool:
-        removed = 0
-        cur_list = await self.settings.guild(server).filter()
-        for w in words:
-            if w.lower() in cur_list:
-                cur_list.remove(w.lower())
-                removed += 1
-        if removed:
-            await self.settings.guild(server).filter.set(cur_list)
-            return True
-        else:
-            return False
+        removed = False
+        async with self.settings.guild(server).filter() as cur_list:
+            for w in words:
+                if w.lower() in cur_list:
+                    cur_list.remove(w.lower())
+                    removed = True
+
+        return removed
 
     async def check_filter(self, message: discord.Message):
         server = message.guild
