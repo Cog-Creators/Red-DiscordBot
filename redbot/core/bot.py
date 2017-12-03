@@ -16,6 +16,7 @@ from . import (
     RedContext,
     rpc
 )
+from .help_formatter import Help, help as help_
 
 from typing import TYPE_CHECKING
 
@@ -95,7 +96,11 @@ class RedBase(BotBase, RpcMethodMixin):
 
         self.register_rpc_methods()
 
-        super().__init__(**kwargs)
+        super().__init__(formatter=Help(), **kwargs)
+
+        self.remove_command('help')
+
+        self.add_command(help_)
 
     async def _dict_abuse(self, indict):
         """

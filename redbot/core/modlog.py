@@ -223,13 +223,13 @@ class CaseType:
         The emoji to use for the case type (for example, :boot:)
     case_str: str
         The string representation of the case (example: Ban)
-    audit_type: str
+    audit_type: `str`, optional
         The action type of the action as it would appear in the
         audit log
     """
     def __init__(
             self, name: str, default_setting: bool, image: str,
-            case_str: str, audit_type: str, guild: discord.Guild = None):
+            case_str: str, audit_type: str=None, guild: discord.Guild=None):
         self.name = name
         self.default_setting = default_setting
         self.image = image
@@ -493,7 +493,7 @@ async def get_all_casetypes(guild: discord.Guild=None) -> List[CaseType]:
 
 async def register_casetype(
         name: str, default_setting: bool,
-        image: str, case_str: str, audit_type: str) -> CaseType:
+        image: str, case_str: str, audit_type: str=None) -> CaseType:
     """
     Registers a case type. If the case type exists and
     there are differences between the values passed and
@@ -511,7 +511,7 @@ async def register_casetype(
         The emoji to use for the case type (for example, :boot:)
     case_str: str
         The string representation of the case (example: Ban)
-    audit_type: str
+    audit_type: `str`, optional
         The action type of the action as it would appear in the
         audit log
 
@@ -540,12 +540,13 @@ async def register_casetype(
         raise ValueError("The 'image' is not a string!")
     if not isinstance(case_str, str):
         raise ValueError("The 'case_str' is not a string!")
-    if not isinstance(audit_type, str):
-        raise ValueError("The 'audit_type' is not a string!")
-    try:
-        getattr(discord.AuditLogAction, audit_type)
-    except AttributeError:
-        raise
+    if audit_type is not None: 
+        if not isinstance(audit_type, str):
+            raise ValueError("The 'audit_type' is not a string!")
+        try:
+            getattr(discord.AuditLogAction, audit_type)
+        except AttributeError:
+            raise
     ct = await get_casetype(name)
     if ct is None:
         casetype = CaseType(name, default_setting, image, case_str, audit_type)
