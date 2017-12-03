@@ -28,8 +28,8 @@ client = None
 def init_sentry_logging(logger):
     global client
     client = Client(
-        dsn=("https://27f3915ba0144725a53ea5a99c9ae6f3:87913fb5d0894251821dcf06e5e9cfe6@"
-             "sentry.telemetry.red/19?verify_ssl=0"),
+        dsn=("https://c44012bfbdfb4002b6025936bb91696d:14f35ce5db344cd083506c628b9a146c@"
+             "sentry.io/253980"),
         release=__version__
     )
 
