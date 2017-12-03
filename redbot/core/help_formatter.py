@@ -250,23 +250,23 @@ class Help(formatter.HelpFormatter):
 
         return ret
 
-    @staticmethod
-    def simple_embed(ctx, title=None, description=None, color=None, author=None):
+    def simple_embed(self, ctx, title=None, description=None, color=None):
         # Shortcut
+        self.context = ctx
+        if color is None:
+            color = self.color
         embed = discord.Embed(title=title, description=description, color=color)
         embed.set_footer(text=ctx.bot.formatter.get_ending_note())
-        if author:
-            embed.set_author(**author)
+        embed.set_author(**self.author)
         return embed
 
-    @staticmethod
-    def cmd_not_found(ctx, cmd, color=0):
+    def cmd_not_found(self, ctx, cmd, color=None):
         # Shortcut for a shortcut. Sue me
-        embed = Help.simple_embed(
+        embed = self.simple_embed(
             ctx,
             title=ctx.bot.command_not_found.format(cmd),
             description='Commands are case sensitive. Please check your spelling and try again',
-            color=color, author=ctx.author)
+            color=color)
         return embed
 
 
@@ -294,7 +294,7 @@ async def help(ctx, *cmds: str):
             command = ctx.bot.all_commands.get(name)
             if command is None:
                 await destination.send(
-                    embed=Help.cmd_not_found(ctx, name, ctx.bot.formatter.color))
+                    embed=ctx.bot.formatter.cmd_not_found(ctx, name))
                 return
 
         embeds = await ctx.bot.formatter.format_help_for(ctx, command)
@@ -302,7 +302,8 @@ async def help(ctx, *cmds: str):
         name = _mention_pattern.sub(repl, cmds[0])
         command = ctx.bot.all_commands.get(name)
         if command is None:
-            await destination.send(embed=Help.cmd_not_found(ctx, name, ctx.bot.formatter.color))
+            await destination.send(
+                embed=ctx.bot.formatter.cmd_not_found(ctx, name))
             return
 
         for key in cmds[1:]:
@@ -311,11 +312,11 @@ async def help(ctx, *cmds: str):
                 command = command.all_commands.get(key)
                 if command is None:
                     await destination.send(
-                        embed=Help.cmd_not_found(ctx, key, ctx.bot.formatter.color))
+                        embed=ctx.bot.formatter.cmd_not_found(ctx, key))
                     return
             except AttributeError:
                 await destination.send(
-                    embed=Help.simple_embed(
+                    embed=ctx.bot.formatter.simple_embed(
                         ctx,
                         title='Command "{0.name}" has no subcommands.'.format(command),
                         color=ctx.bot.formatter.color,
