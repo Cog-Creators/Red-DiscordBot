@@ -334,11 +334,11 @@ class Admin:
             selfroles = self._settable_roles[server.id]
             if len(selfroles) == 2:
                 await self.bot.say("You can currently"
-                                   " give yourself\n{}."
+                                   " grant yourself\n{}."
                                    "".format(" and ".join(selfroles)))
             else:
                 await self.bot.say("You can currently"
-                                   "give yourself\n{}."
+                                   " grant yourself\n{}."
                                    "".format(", ".join(selfroles)))
 
     @commands.command(pass_context=True)
