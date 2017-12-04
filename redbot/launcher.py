@@ -145,13 +145,6 @@ def cli_flag_getter():
             print("Enter the user id for the owner")
             owner_id = user_choice()
             flags.append("--owner {}".format(owner_id))
-        print("Would you like to specify any co-owners? (y/n)")
-        choice = user_choice()
-        if choice == "y":
-            print("Enter the user ids for the co-owners, separated by a space")
-            co_owner_ids = user_choice().split()
-            for co in co_owner_ids:
-                flags.append("--co-owner {}".format(co))
         print("Would you like to specify any prefixes? (y/n)")
         choice = user_choice()
         if choice == "y":
