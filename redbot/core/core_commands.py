@@ -8,12 +8,15 @@ from random import SystemRandom
 from string import ascii_letters, digits
 
 import aiohttp
+import datetime
 import discord
 from discord.ext import commands
 
 from redbot.core import checks
 from redbot.core import i18n
 from redbot.core import rpc
+from redbot.core import __version__
+from redbot.core.context import RedContext
 
 from typing import TYPE_CHECKING
 
@@ -41,6 +44,47 @@ class Core:
         rpc.add_method('core', self.rpc_load)
         rpc.add_method('core', self.rpc_unload)
         rpc.add_method('core', self.rpc_reload)
+
+    @commands.command()
+    async def info(self, ctx: RedContext):
+        """Shows info about Red"""
+        author_repo = "https://github.com/Twentysix26"
+        org_repo = "https://github.com/Cog-Creators"
+        red_repo = org_repo + "/Red-DiscordBot"
+        red_pypi = "https://pypi.python.org/pypi/Red-DiscordBot"
+        support_server_url = "https://discord.gg/red"
+        dpy_repo = "https://github.com/Rapptz/discord.py"
+        python_url = "https://www.python.org/"
+        since = datetime.datetime(2016, 1, 2, 0, 0)
+        days_since = (datetime.datetime.utcnow() - since).days
+        dpy_version = "[{}]({})".format(discord.__version__, dpy_repo)
+        python_version = "[{}.{}.{}]({})".format(
+            *sys.version_info[:3], python_url
+        )
+        red_version = "[{}]({})".format(__version__, red_pypi)
+        app_info = await self.bot.application_info()
+        owner = app_info.owner
+
+        about = (
+            "This is an instance of [Red, an open source Discord bot]({}) "
+            "created by [Twentysix]({}) and [improved by many]({}).\n\n"
+            "Red is backed by a passionate community who contributes and "
+            "creates content for everyone to enjoy. [Join us today]({}) "
+            "and help us improve!\n\n"
+            "".format(red_repo, author_repo, org_repo, support_server_url))
+
+        embed = discord.Embed(color=discord.Color.red())
+        embed.add_field(name="Instance owned by", value=str(owner))
+        embed.add_field(name="Python", value=python_version)
+        embed.add_field(name="discord.py", value=dpy_version)
+        embed.add_field(name="Red version", value=red_version)
+        embed.add_field(name="About Red", value=about, inline=False)
+        embed.set_footer(text="Bringing joy since 02 Jan 2016 (over "
+                         "{} days ago!)".format(days_since))
+        try:
+            await ctx.send(embed=embed)
+        except discord.HTTPException:
+            await ctx.send("I need the `Embed links` permission to send this")
 
     @commands.command()
     @checks.is_owner()
