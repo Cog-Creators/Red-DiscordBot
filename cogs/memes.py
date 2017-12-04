@@ -10,19 +10,19 @@ class Memes:
     @commands.command(pass_context=True)
     async def hornet(self, ctx):
         """GIT GUD"""
-        with open('data/resources/hornet.png', 'rb') as f:
+        with open('data/memes/hornet.png', 'rb') as f:
             await self.bot.send_file(ctx.message.channel, f)
 
-    @commands.command(pass_context=True)
+#    @commands.command(pass_context=True)
     async def yay(self, ctx):
         """doens't count"""
-        with open('data/resources/doenst.png', 'rb') as f:
+        with open('data/memes/doenst.png', 'rb') as f:
             await self.bot.send_file(ctx.message.channel, f)
 
     @commands.command(pass_context=True)
     async def nugs(self, ctx):
         """Absolute garbage"""
-        with open('data/resources/nugs.jpg', 'rb') as f:
+        with open('data/memes/nugs.jpg', 'rb') as f:
             await self.bot.send_file(ctx.message.channel, f)
 
 def setup(bot):

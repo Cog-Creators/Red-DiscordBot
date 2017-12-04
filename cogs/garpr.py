@@ -55,6 +55,7 @@ class GarPR:
             self.matchup_cache = {}
             self.settings["tournaments on record"] = actualTournies
             dataIO.save_json(self.resources+"garpr_settings.json", self.settings)
+            dataIO.save_json(self.resources+"garpr_match_records.json", self.matchup_cache)
             return True
         return False
     
@@ -88,7 +89,7 @@ class GarPR:
         return playerdata
 
     def _get_playerid(self, player : str):
-        """Checks for a player in the garpr database given a playername."""
+        """Checks for a player in the cache, given a playername."""
         for entry in self.players["players"]:
             if player.lower() == entry["name"].lower():
                 return entry
@@ -340,7 +341,7 @@ def check_files(resources_folder):
                     "region" : "northcarolina",
                     "tournaments on record" : 0,
                     "rank emotes" : [":pineapple:", ":apple:", ":tangerine:", ":cherries:"],
-                    "rank colors" : [discord.Colour.dark_green().value,discord.Colour.gold().value,discord.Colour.light_grey().value,discord.Colour.purple().value,"a0522d"]
+                    "rank colors" : [discord.Colour.dark_green().value,discord.Colour.gold().value,discord.Colour.light_grey().value,discord.Colour.purple().value,10061926]
                 })
 
 def setup(bot):
