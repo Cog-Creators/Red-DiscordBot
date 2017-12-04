@@ -224,8 +224,10 @@ class General:
         name = " ~ ".join((name, user.nick)) if user.nick else name
 
         if user.avatar_url:
-            data.set_author(name=name, url=user.avatar_url)
-            data.set_thumbnail(url=user.avatar_url)
+            avatar = user.avatar_url
+            avatar = avatar.replace('webp', 'png')
+            data.set_author(name=name, url=avatar)
+            data.set_thumbnail(url=avatar)
         else:
             data.set_author(name=name)
 
