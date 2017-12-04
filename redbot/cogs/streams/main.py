@@ -44,8 +44,8 @@ class Streams:
         self.bot.loop.create_task(self._initialize_lists())
 
     async def _initialize_lists(self):
-        await self.bot.loop.create_task(self.load_streams())
-        await self.bot.loop.create_task(self.load_communities())
+        self.streams = await self.load_streams()
+        self.communities = await self.load_communities()
 
         self.task = self.bot.loop.create_task(self._stream_alerts())
 
@@ -459,7 +459,7 @@ class Streams:
             token = await self.db.tokens.get_attr(_class.__name__)
             streams.append(_class(token=token, **raw_stream))
 
-        self.streams = streams
+        return streams
 
     async def load_communities(self):
         communities = []
@@ -472,7 +472,7 @@ class Streams:
             token = await self.db.tokens.get_attr(_class.__name__)
             communities.append(_class(token=token, **raw_community))
 
-        self.communities = communities
+        return communities
 
     async def save_streams(self):
         raw_streams = []
