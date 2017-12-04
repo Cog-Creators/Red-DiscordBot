@@ -126,7 +126,9 @@ def run_red(selected_instance, autorestart: bool=False, cliflags=None):
         cmd_list = ["redbot", selected_instance]
         if cliflags:
             cmd_list += cliflags
-        status = subprocess.call(cmd_list)
+        try:
+            status = subprocess.call(cmd_list)
+        except KeyboardInterrupt:
         if (not autorestart) or (autorestart and status != 26):
             break
 
@@ -377,4 +379,7 @@ def main():
 args, flags_to_pass = parse_cli_args()
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("Exiting...")
