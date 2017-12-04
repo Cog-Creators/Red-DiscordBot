@@ -585,6 +585,8 @@ class Mod:
         for channel in server.channels:
             if channel.type != discord.ChannelType.text:
                 continue
+            if channel.permissions_for(member=user).send_messages is False:
+                continue
             overwrites = channel.overwrites_for(user)
             if overwrites.send_messages is False:
                 continue
@@ -593,10 +595,12 @@ class Mod:
             try:
                 await self.bot.edit_channel_permissions(channel, user,
                                                         overwrites)
-            except discord.Forbidden:
+            except discord.Forbidden as e:
                 await self.bot.say("Failed to mute user. I need the manage roles "
                                    "permission and the user I'm muting must be "
                                    "lower than myself in the role hierarchy.")
+                print(e)
+                print(channel.name)
                 return
             else:
                 await asyncio.sleep(0.1)
