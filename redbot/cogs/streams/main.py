@@ -41,9 +41,12 @@ class Streams:
 
         self.bot = bot
 
-        self.bot.loop.create_task(self.load_streams())
-        self.bot.loop.create_task(self.load_communities())
-        
+        self.bot.loop.create_task(self._initialize_lists())
+
+    async def _initialize_lists(self):
+        await self.bot.loop.create_task(self.load_streams())
+        await self.bot.loop.create_task(self.load_communities())
+
         self.task = self.bot.loop.create_task(self._stream_alerts())
 
     @commands.command()
