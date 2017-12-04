@@ -19,7 +19,9 @@ class Filter:
         default_guild_settings = {
             "filter": [],
             "filterban_count": 0,
-            "filterban_time": 0
+            "filterban_time": 0,
+            "filter_names": False,
+            "filter_default_name": "John Doe"
         }
         default_member_settings = {
             "filter_count": 0,
@@ -27,7 +29,10 @@ class Filter:
         }
         self.settings.register_guild(**default_guild_settings)
         self.settings.register_member(**default_member_settings)
-        self.bot.loop.create_task(self.register_filterban())
+        self.register_task = self.bot.loop.create_task(self.register_filterban())
+
+    def __unload(self):
+        self.register_task.cancel()
 
     async def register_filterban(self):
         try:
@@ -122,6 +127,37 @@ class Filter:
             await ctx.send(_("Words removed from filter."))
         else:
             await ctx.send(_("Those words weren't in the filter."))
+
+    @_filter.command(name="names")
+    async def filter_names(self, ctx: RedContext):
+        """
+        Toggles whether or not to check names and nicknames against the filter
+        This is disabled by default
+        """
+        guild = ctx.guild
+        current_setting = await self.settings.guild(guild).filter_names()
+        await self.settings.guild(guild).filter_names.set(not current_setting)
+        if current_setting:
+            await ctx.send(
+                _("Names and nicknames will no longer be "
+                  "checked against the filter")
+            )
+        else:
+            await ctx.send(
+                _("Names and nicknames will now be checked against "
+                  "the filter")
+            )
+
+    @_filter.command(name="defaultname")
+    async def filter_default_name(self, ctx: RedContext, name: str):
+        """
+        Sets the default name to use if filtering names is enabled
+        Note that this has no effect if filtering names is disabled
+        The default name used is John Doe
+        """
+        guild = ctx.guild
+        await self.settings.guild(guild).filter_default_name.set(name)
+        await ctx.send(_("The name to use on filtered names has been set"))
 
     @_filter.command(name="ban")
     async def filter_ban(
@@ -238,3 +274,54 @@ class Filter:
             return
 
         await self.check_filter(message)
+
+    async def on_member_update(self, before: discord.Member, after: discord.Member):
+        if not after.guild.me.guild_permissions.manage_nicknames:
+            return  # No permissions to manage nicknames, so can't do anything
+        word_list = await self.settings.guild(after.guild).filter()
+        filter_names = await self.settings.guild(after.guild).filter_names()
+        name_to_use = await self.settings.guild(after.guild).filter_default_name()
+        if not filter_names:
+            return
+
+        name_filtered = False
+        nick_filtered = False
+
+        for w in word_list:
+            if w in after.name:
+                name_filtered = True
+            if after.nick and w in after.nick:  # since Member.nick can be None
+                nick_filtered = True
+            if name_filtered and nick_filtered:  # Both true, so break from loop
+                break
+
+        if name_filtered and after.nick is None:
+            try:
+                await after.edit(nick=name_to_use, reason="Filtered name")
+            except:
+                pass
+        elif nick_filtered:
+            try:
+                await after.edit(nick=None, reason="Filtered nickname")
+            except:
+                pass
+
+    async def on_member_join(self, member: discord.Member):
+        guild = member.guild
+        if not guild.me.guild_permissions.manage_nicknames:
+            return
+        word_list = await self.settings.guild(guild).filter()
+        filter_names = await self.settings.guild(guild).filter_names()
+        name_to_use = await self.settings.guild(guild).filter_default_name
+
+        if not filter_names:
+            return
+
+        for w in word_list:
+            if w in member.name:
+                try:
+                    await member.edit(nick=name_to_use, reason="Filtered name")
+                except:
+                    pass
+                break
+
