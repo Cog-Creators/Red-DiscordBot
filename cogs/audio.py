@@ -31,7 +31,7 @@ except:
 
 try:
     if not discord.opus.is_loaded():
-        discord.opus.load_opus('libopus-0.dll')
+        discord.opus.load_opus('/usr/lib/x86_64-linux-gnu/libopus.so.0')
 except OSError:  # Incorrect bitness
     opus = False
 except:  # Missing opus
