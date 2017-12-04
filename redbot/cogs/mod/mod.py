@@ -1,6 +1,6 @@
 import asyncio
-from datetime import datetime
-from collections import deque, defaultdict
+from datetime import datetime, timedelta
+from collections import deque, defaultdict, namedtuple
 
 import discord
 from discord.ext import commands
@@ -27,7 +27,8 @@ class Mod:
         "ignored": False,
         "respect_hierarchy": True,
         "delete_delay": -1,
-        "reinvite_on_unban": False
+        "reinvite_on_unban": False,
+        "current_tempbans": []
     }
 
     default_channel_settings = {
@@ -56,9 +57,13 @@ class Mod:
         self.unban_queue = []
         self.cache = defaultdict(lambda: deque(maxlen=3))
 
-        self.bot.loop.create_task(self._casetype_registration())
-
+        self.registration_task = self.bot.loop.create_task(self._casetype_registration())
+        self.tban_expiry_task = self.bot.loop.create_task(self.check_tempban_expirations())
         self.last_case = defaultdict(dict)
+
+    def __unload(self):
+        self.registration_task.cancel()
+        self.tban_expiry_task.cancel()
 
     async def _casetype_registration(self):
         casetypes_to_register = [
@@ -81,6 +86,13 @@ class Mod:
                 "default_setting": True,
                 "image": "\N{BUST IN SILHOUETTE}\N{HAMMER}",
                 "case_str": "Hackban",
+                "audit_type": "ban"
+            },
+            {
+                "name": "tempban",
+                "default_setting": True,
+                "image": "\N{ALARM CLOCK}\N{HAMMER}",
+                "case_str": "Tempban",
                 "audit_type": "ban"
             },
             {
@@ -435,6 +447,54 @@ class Mod:
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
+    async def tempban(self, ctx: RedContext, user: discord.Member, days: int=1, *, reason: str=None):
+        """Tempbans the user for the specified number of days"""
+        guild = ctx.guild
+        author = ctx.author
+        days_delta = timedelta(days=int(days))
+        unban_time = datetime.utcnow() + days_delta
+        channel = ctx.channel
+        can_ban = channel.permissions_for(guild.me).ban_members
+
+        invite = await self.get_invite_for_reinvite(ctx, int(days_delta.total_seconds() + 86400))
+        if invite is None:
+            invite = ""
+
+        if can_ban:
+            queue_entry = (guild.id, user.id)
+            await self.settings.member(user).banned_until.set(unban_time.timestamp())
+            cur_tbans = await self.settings.guild(guild).current_tempbans()
+            cur_tbans.append(user.id)
+            await self.settings.guild(guild).current_tempbans.set(cur_tbans)
+
+            try:  # We don't want blocked DMs preventing us from banning
+                msg = await user.send(
+                    _("You have been temporarily banned from {} until {}. "
+                      "Here is an invite for when your ban expires: {}").format(
+                        guild.name, unban_time.strftime("%m-%d-%Y %H:%M:%S"), invite))
+            except discord.HTTPException:
+                msg = None
+            self.ban_queue.append(queue_entry)
+            try:
+                await guild.ban(user)
+            except discord.Forbidden:
+                await ctx.send(_("I can't do that for some reason."))
+            except discord.HTTPException:
+                await ctx.send(_("Something went wrong while banning"))
+            else:
+                await ctx.send(_("Done. Enough chaos for now"))
+
+            try:
+                await modlog.create_case(
+                    guild, ctx.message.created_at, "tempban",
+                    user, author, reason, unban_time
+                )
+            except RuntimeError as e:
+                await ctx.send(e)
+
+    @commands.command()
+    @commands.guild_only()
+    @checks.admin_or_permissions(ban_members=True)
     async def softban(self, ctx: RedContext, user: discord.Member, *, reason: str = None):
         """Kicks the user, deleting 1 day worth of messages."""
         guild = ctx.guild
@@ -571,7 +631,7 @@ class Mod:
                         .format(invite.url))
 
     @staticmethod
-    async def get_invite_for_reinvite(ctx: RedContext):
+    async def get_invite_for_reinvite(ctx: RedContext, max_age: int=86400):
         """Handles the reinvite logic for getting an invite
         to send the newly unbanned user
         :returns: :class:`Invite`"""
@@ -597,8 +657,8 @@ class Mod:
             if channel is None:
                 return
             try:
-                # Create invite that expires after 1 day
-                return await channel.create_invite(max_age=86400)
+                # Create invite that expires after max_age
+                return await channel.create_invite(max_age=max_age)
             except discord.HTTPException:
                 return
 
@@ -1084,6 +1144,31 @@ class Mod:
         else:
             await ctx.send(_("That user doesn't have any recorded name or "
                              "nickname change."))
+
+    async def check_tempban_expirations(self):
+        member = namedtuple("Member", "id guild")
+        while self == self.bot.get_cog("Mod"):
+            for guild in self.bot.guilds:
+                guild_tempbans = await self.settings.guild(guild).current_tempbans()
+                for uid in guild_tempbans:
+                    unban_time = datetime.utcfromtimestamp(
+                        await self.settings.member(
+                            member(uid, guild)
+                        ).banned_until()
+                    )
+                    now = datetime.utcnow()
+                    if now > unban_time:  # Time to unban the user
+                        user = await self.bot.get_user_info(uid)
+                        queue_entry = (guild.id, user.id)
+                        self.unban_queue.append(queue_entry)
+                        try:
+                            await guild.unban(user, reason="Tempban finished")
+                        except discord.Forbidden:
+                            self.unban_queue.remove(queue_entry)
+                            log.info("Failed to unban member due to permissions")
+                        except discord.HTTPException:
+                            self.unban_queue.remove(queue_entry)
+            await asyncio.sleep(60)
 
     async def check_duplicates(self, message):
         guild = message.guild
