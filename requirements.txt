@@ -6,3 +6,4 @@ colorama
 aiohttp-json-rpc
 pyyaml
 Red-Trivia
+distro; sys_platform == "linux"
