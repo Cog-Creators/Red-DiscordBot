@@ -288,8 +288,7 @@ class PicartoStream(Stream):
         avatar = rnd("https://picarto.tv/user_data/usrimg/{}/dsdefault.jpg"
                      "".format(data["name"].lower()))
         url = "https://picarto.tv/" + data["name"]
-        thumbnail = ("https://thumb.picarto.tv/thumbnail/{}.jpg"
-                     "".format(data["name"]))
+        thumbnail = data["thumbnails"]["web"]
         embed = discord.Embed(title=data["title"], url=url)
         embed.set_author(name=data["name"])
         embed.set_image(url=rnd(thumbnail))

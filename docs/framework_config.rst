@@ -29,7 +29,7 @@ Basic Usage
 
         @commands.command()
         async def return_some_data(self, ctx):
-            await ctx.send(config.foo())
+            await ctx.send(await config.foo())
 
 ********
 Tutorial
@@ -117,11 +117,36 @@ Notice a few things in the above examples:
 
 3. If you're getting the value, the syntax is::
 
-    self.config.<insert thing here, or nothing if global>.variable_name()
+    self.config.<insert scope here, or nothing if global>.variable_name()
 
 4. If setting, it's::
 
-    self.config.<insert thing here, or nothing if global>.variable_name.set(new_value)
+    self.config.<insert scope here, or nothing if global>.variable_name.set(new_value)
+
+It is also possible to use :code:`async with` syntax to get and set config
+values. When entering the statement, the config value is retreived, and on exit,
+it is saved. This puts a safeguard on any code within the :code:`async with`
+block such that if it breaks from the block in any way (whether it be from
+:code:`return`, :code:`break`, :code:`continue` or an exception), the value will
+still be saved.
+
+.. important::
+
+    Only mutable config values can be used in the :code:`async with` statement
+    (namely lists or dicts), and they must be modified *in place* for their
+    changes to be saved.
+
+Here is an example of the :code:`async with` syntax:
+
+.. code-block:: python
+
+    @commands.command()
+    async def addblah(self, ctx, new_blah):
+        guild_group = self.config.guild(ctx.guild)
+        async with guild_group.blah() as blah:
+            blah.append(new_blah)
+        await ctx.send("The new blah value has been added!")
+
 
 .. important::
 
