@@ -150,11 +150,12 @@ def cli_flag_getter():
         if choice == "y":
             print(
                 "Enter the prefixes, separated by a space (please note "
-                "that this will not handle prefixes containing a space)")
+                "that prefixes containing a space will need to be added with [p]set prefix)")
             prefixes = user_choice().split()
             for p in prefixes:
                 flags.append("-p {}".format(p))
-        print("Would you like to disable console input? (y/n)")
+        print("Would you like to disable console input? Please note that features "
+              "requiring console interaction may fail to work (y/n)")
         choice = user_choice()
         if choice == "y":
             flags.append("--no-prompt")
