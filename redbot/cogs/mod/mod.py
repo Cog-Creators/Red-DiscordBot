@@ -1347,18 +1347,21 @@ class Mod:
 
     async def on_member_update(self, before, after):
         if before.name != after.name:
-            name_list = await self.settings.user(before).past_names()
-            if after.name not in name_list:
-                names = deque(name_list, maxlen=20)
-                names.append(after.name)
-                await self.settings.user(before).past_names.set(list(names))
+            async with self.settings.user(before).past_names() as name_list:
+                if after.nick in name_list:
+                    # Ensure order is maintained without duplicates occuring
+                    name_list.remove(after.nick)
+                name_list.append(after.nick)
+                while len(name_list) > 20:
+                    name_list.pop(0)
 
         if before.nick != after.nick and after.nick is not None:
-            nick_list = await self.settings.member(before).past_nicks()
-            nicks = deque(nick_list, maxlen=20)
-            if after.nick not in nicks:
-                nicks.append(after.nick)
-                await self.settings.member(before).past_nicks.set(list(nicks))
+            async with self.settings.member(before).past_nicks() as nick_list:
+                if after.nick in nick_list:
+                    nick_list.remove(after.nick)
+                nick_list.append(after.nick)
+                while len(nick_list) > 20:
+                    nick_list.pop(0)
 
     @staticmethod
     def are_overwrites_empty(overwrites):
