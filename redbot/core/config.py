@@ -10,6 +10,37 @@ from .drivers import get_driver
 log = logging.getLogger("red.config")
 
 
+class _ValueCtxManager:
+    """Context manager implementation of config values.
+
+    This class allows mutable config values to be both "get" and "set" from
+    within an async context manager.
+
+    The context manager can only be used to get and set a mutable data type,
+    i.e. `dict`s or `list`s. This is because this class's ``raw_value``
+    attribute must contain a reference to the object being modified within the
+    context manager.
+    """
+
+    def __init__(self, value_obj, coro):
+        self.value_obj = value_obj
+        self.coro = coro
+
+    def __await__(self):
+        return self.coro.__await__()
+
+    async def __aenter__(self):
+        self.raw_value =  await self
+        if not isinstance(self.raw_value, (list, dict)):
+            raise TypeError("Type of retrieved value must be mutable (i.e. "
+                            "list or dict) in order to use a config value as "
+                            "a context manager.")
+        return self.raw_value
+
+    async def __aexit__(self, *exc_info):
+        await self.value_obj.set(self.raw_value)
+
+
 class Value:
     """A singular "value" of data.
 
@@ -49,6 +80,11 @@ class Value:
         "real" data of the `Value` object is accessed by this method. It is a
         replacement for a :code:`get()` method.
 
+        The return value of this method can also be used as an asynchronous
+        context manager, i.e. with :code:`async with` syntax. This can only be
+        used on values which are mutable (namely lists and dicts), and will
+        set the value with its changes on exit of the context manager.
+
         Example
         -------
         ::
@@ -74,11 +110,13 @@ class Value:
 
         Returns
         -------
-        types.coroutine
-            A coroutine object that must be awaited.
+        `awaitable` mixed with `asynchronous context manager`
+            A coroutine object mixed in with an async context manager. When
+            awaited, this returns the raw data value. When used in :code:`async
+            with` syntax, on gets the value on entrance, and sets it on exit.
 
         """
-        return self._get(default)
+        return _ValueCtxManager(self, self._get(default))
 
     async def set(self, value):
         """Set the value of the data elements pointed to by `identifiers`.
