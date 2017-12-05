@@ -13,7 +13,7 @@ class Memes:
         with open('data/memes/hornet.png', 'rb') as f:
             await self.bot.send_file(ctx.message.channel, f)
 
-#    @commands.command(pass_context=True)
+    @commands.command(pass_context=True)
     async def yay(self, ctx):
         """doens't count"""
         with open('data/memes/doenst.png', 'rb') as f:
