@@ -409,10 +409,9 @@ class Mod:
         try:
             await self.bot.http.ban(user_id, server.id, 0)
         except discord.NotFound:
-            await self.bot.say("User not found. Have you provided the "
-                               "correct user ID?")
+            await self.bot.say("I crashed into a wall while trying to find that User ID.")
         except discord.Forbidden:
-            await self.bot.say("I lack the permissions to do this.")
+            await self.bot.say("I crashed into a wall while trying to do this because I don't got permissions.")
         else:
             logger.info("{}({}) hackbanned {}"
                         "".format(author.name, author.id, user_id))
@@ -435,13 +434,10 @@ class Mod:
         author = ctx.message.author
 
         if author == user:
-            await self.bot.say("I cannot let you do that. Self-harm is "
-                               "bad \N{PENSIVE FACE}")
+            await self.bot.say("Remember kids, math before self-harm. \N{PENSIVE FACE}")
             return
         elif not self.is_allowed_by_hierarchy(server, author, user):
-            await self.bot.say("I cannot let you do that. You are "
-                               "not higher than the user in the role "
-                               "hierarchy.")
+            await self.bot.say("I crashed into a wall trying to do that because you are not high enough in the hierarchy.")
             return
 
         try:
@@ -471,12 +467,12 @@ class Mod:
                 await self.bot.unban(server, user)
                 await self.bot.say("Done. Enough chaos.")
             except discord.errors.Forbidden:
-                await self.bot.say("My role is not high enough to softban that user.")
+                await self.bot.say("I crashed into a wall trying to softban that person because my role is not high enough or I don't have perms.")
                 await self.bot.delete_message(msg)
             except Exception as e:
                 print(e)
         else:
-            await self.bot.say("I'm not allowed to do that.")
+            await self.bot.say("The traffic light blocked my path from doing that.")
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(manage_nicknames=True)
@@ -491,8 +487,7 @@ class Mod:
             await self.bot.change_nickname(user, nickname)
             await self.bot.say("Done.")
         except discord.Forbidden:
-            await self.bot.say("I cannot do that, I lack the "
-                               "\"Manage Nicknames\" permission.")
+            await self.bot.say("I crashed into a wall trying to rename that person either because I lack the `Manage Nicknames` perm or because they are a role higher than me.")
 
     @commands.group(pass_context=True, no_pm=True, invoke_without_command=True)
     @checks.mod_or_permissions(administrator=True)
@@ -517,9 +512,7 @@ class Mod:
                                "channel.")
             return
         elif not self.is_allowed_by_hierarchy(server, author, user):
-            await self.bot.say("I cannot let you do that. You are "
-                               "not higher than the user in the role "
-                               "hierarchy.")
+            await self.bot.say("I crashed into a wall trying to let you do that because you are not heigher up in the hierarchy than that person.")
             return
 
         self._perms_cache[user.id][channel.id] = overwrites.send_messages
@@ -527,9 +520,7 @@ class Mod:
         try:
             await self.bot.edit_channel_permissions(channel, user, overwrites)
         except discord.Forbidden:
-            await self.bot.say("Failed to mute user. I need the manage roles "
-                               "permission and the user I'm muting must be "
-                               "lower than myself in the role hierarchy.")
+            await self.bot.say("I crashed into a wall trying to mute that person because I don't have the proper perms or am not high enough the hierarchy.")
         else:
             dataIO.save_json("data/mod/perms_cache.json", self._perms_cache)
             await self.new_case(server,
@@ -538,7 +529,7 @@ class Mod:
                                 mod=author,
                                 user=user,
                                 reason=reason)
-            await self.bot.say("User has been muted in this channel.")
+            await self.bot.say("User has been silenced. Let the Twitter fight go on.")
 
     @checks.mod_or_permissions(administrator=True)
     @mute.command(name="server", pass_context=True, no_pm=True)
@@ -548,9 +539,7 @@ class Mod:
         server = ctx.message.server
 
         if not self.is_allowed_by_hierarchy(server, author, user):
-            await self.bot.say("I cannot let you do that. You are "
-                               "not higher than the user in the role "
-                               "hierarchy.")
+            await self.bot.say("I crashed into a wall trying to mute that person because I don't have the proper perms or am not high enough the hierarchy.")
             return
 
         register = {}
@@ -566,9 +555,7 @@ class Mod:
                 await self.bot.edit_channel_permissions(channel, user,
                                                         overwrites)
             except discord.Forbidden:
-                await self.bot.say("Failed to mute user. I need the manage roles "
-                                   "permission and the user I'm muting must be "
-                                   "lower than myself in the role hierarchy.")
+                await self.bot.say("I crashed into a wall trying to mute that person because I don't have the proper perms or am not high enough the hierarchy.")
                 return
             else:
                 await asyncio.sleep(0.1)

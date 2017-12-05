@@ -1,7 +1,1 @@
-### Type
-
-- [ ] Bugfix
-- [ ] Enhancement
-- [ ] New feature
-
-### Description of the changes
+Please don't send pull requests that directly change the bot's core. I keep my Blurpifier bot up-to-date with Red. For more info, read the README.

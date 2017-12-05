@@ -101,8 +101,7 @@ class Downloader:
             del self.repos[repo_name]
             return
         except FileNotFoundError:
-            error_message = ("I couldn't find git. The downloader needs it "
-                             "for it to properly work.")
+            error_message = ("I crashed into a wall while trying to find git.")
             if WINDOWS_OS:
                 error_message += ("\nIf you just installed it you may need "
                                   "a reboot for it to be seen into the PATH "
@@ -421,7 +420,7 @@ class Downloader:
         elif install_cog is False:
             await self.bot.say("Invalid cog. Installation aborted.")
         else:
-            await self.bot.say("That cog doesn't exist. Use cog list to see"
+            await self.bot.say("That cog seems to be non-existent. Use cog list to see"
                                " the full list.")
 
     async def install(self, repo_name, cog, *, notify_reqs=False,

@@ -1,8 +1,11 @@
 *.json
 *.pyc
 __pycache__
-data
+/data/*
 !data/trivia/*
 !data/audio/playlists/*
+/lib/*
+start_red.bat
+start_red_autorestart.bat
 *.exe
 *.dll

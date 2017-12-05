@@ -64,22 +64,21 @@ class Owner:
         try:
             self._load_cog(module)
         except CogNotFoundError:
-            await self.bot.say("That cog could not be found.")
+            await self.bot.say("That cog seems to be non-existent.")
         except CogLoadError as e:
             log.exception(e)
             traceback.print_exc()
-            await self.bot.say("There was an issue loading the cog. Check"
+            await self.bot.say("I crashed into a wall while loading that. Check"
                                " your console or logs for more information.")
         except Exception as e:
             log.exception(e)
             traceback.print_exc()
-            await self.bot.say('Cog was found and possibly loaded but '
-                               'something went wrong. Check your console '
+            await self.bot.say('I loaded it but something crashed into a wall. Check your console '
                                'or logs for more information.')
         else:
             set_cog(module, True)
             await self.disable_commands()
-            await self.bot.say("The cog has been loaded.")
+            await self.bot.say("The cog has been unleashed.")
 
     @commands.group(invoke_without_command=True)
     @checks.is_owner()
@@ -91,22 +90,19 @@ class Owner:
         if "cogs." not in module:
             module = "cogs." + module
         if not self._does_cogfile_exist(module):
-            await self.bot.say("That cog file doesn't exist. I will not"
-                               " turn off autoloading at start just in case"
-                               " this isn't supposed to happen.")
+            await self.bot.say("That cog file you requested seems to be non-existent.")
         else:
             set_cog(module, False)
         try:  # No matter what we should try to unload it
             self._unload_cog(module)
         except OwnerUnloadWithoutReloadError:
-            await self.bot.say("I cannot allow you to unload the Owner plugin"
-                               " unless you are in the process of reloading.")
+            await self.bot.say("Boi you can't unload the owner cog.")
         except CogUnloadError as e:
             log.exception(e)
             traceback.print_exc()
-            await self.bot.say('Unable to safely unload that cog.')
+            await self.bot.say('I crashed into a wall trying to unload that.')
         else:
-            await self.bot.say("The cog has been unloaded.")
+            await self.bot.say("Done. Can I has my coffee now?")
 
     @unload.command(name="all")
     @checks.is_owner()
@@ -129,7 +125,7 @@ class Owner:
             await self.bot.say("I was unable to unload some cogs: "
                 "{}".format(still_loaded))
         else:
-            await self.bot.say("All cogs are now unloaded.")
+            await self.bot.say("ALl cogs have been silenced. Goodnight...")
 
     @checks.is_owner()
     @commands.command(name="reload")
@@ -149,18 +145,18 @@ class Owner:
         try:
             self._load_cog(module)
         except CogNotFoundError:
-            await self.bot.say("That cog cannot be found.")
+            await self.bot.say("That cog seems to be non-existent.")
         except NoSetupError:
-            await self.bot.say("That cog does not have a setup function.")
+            await self.bot.say("I crashed into a wall trying to load that cog because I got no setup instructions.")
         except CogLoadError as e:
             log.exception(e)
             traceback.print_exc()
-            await self.bot.say("That cog could not be loaded. Check your"
+            await self.bot.say("I crashed into a wall trying to load that. Check your"
                                " console or logs for more information.")
         else:
             set_cog(module, True)
             await self.disable_commands()
-            await self.bot.say("The cog has been reloaded.")
+            await self.bot.say("That cog bit the dust and was ressurected.")
 
     @commands.command(name="cogs")
     @checks.is_owner()
@@ -633,7 +629,7 @@ class Owner:
         skin = "\N{EMOJI MODIFIER FITZPATRICK TYPE-3}"
         try: # We don't want missing perms to stop our shutdown
             if not silently:
-                await self.bot.say("Shutting down... " + wave + skin)
+                await self.bot.say("Gonna go back to my home planet of shrek the musical. " + wave + skin)
         except:
             pass
         await self.bot.shutdown()
@@ -648,7 +644,7 @@ class Owner:
         with by the process manager in use"""
         try:
             if not silently:
-                await self.bot.say("Restarting...")
+                await self.bot.say("brb gonna hate on Ajit Pai on Twitter...")
         except:
             pass
         await self.bot.shutdown(restart=True)
