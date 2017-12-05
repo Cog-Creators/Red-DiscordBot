@@ -24,7 +24,6 @@ def mod_or_permissions(**perms):
         if ctx.guild is None:
             return has_perms_or_is_owner
         author = ctx.author
-        settings = ctx.bot.db.guild(ctx.guild)
         mod_role_ids = ctx.bot.db.guild(ctx.guild).mod_role()
         admin_role_ids = ctx.bot.db.guild(ctx.guild).admin_role()
 
@@ -50,7 +49,7 @@ def admin_or_permissions(**perms):
         admin_roles = [r for r in ctx.guild.roles if r.id in admin_role_ids]
         is_admin = not set(admin_roles).isdisjoint(ctx.author.roles)
 
-        return is_admin in author.roles or has_perms_or_is_owner or is_guild_owner
+        return is_admin or has_perms_or_is_owner or is_guild_owner
 
     return commands.check(predicate)
 
