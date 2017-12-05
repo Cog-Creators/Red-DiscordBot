@@ -6,6 +6,6 @@ __pycache__
 !data/audio/playlists/*
 /lib/*
 start_red.bat
-start_red_autorestart.bet
+start_red_autorestart.bat
 *.exe
 *.dll
