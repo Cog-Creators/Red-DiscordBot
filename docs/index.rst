@@ -36,7 +36,7 @@ Welcome to Red - Discord Bot's documentation!
     framework_downloader
     framework_i18n
     framework_modlog
-    framework_context
+    framework_commands
     framework_utils
 
 
