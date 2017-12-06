@@ -1,6 +1,8 @@
 import re
 from pathlib import Path
 
+from . import commands
+
 __all__ = ['get_locale', 'set_locale', 'reload_locales', 'CogI18n']
 
 _current_locale = 'en_us'
@@ -169,6 +171,18 @@ class CogI18n:
             return self.translations[normalized_untranslated]
         except KeyError:
             return untranslated
+
+    def cog(self, cog_class: type):
+        """
+        Class decorator for cogs to internationalise command help strings.
+        """
+        cog_class.__translator__ = self
+        for name, attr in cog_class.__dict__.items():
+            if isinstance(attr, (commands.Group, commands.Command)):
+                if attr.translator is not None:
+                    attr.translator = self
+                    setattr(cog_class, name, attr)
+        return cog_class
 
     def load_translations(self):
         """
