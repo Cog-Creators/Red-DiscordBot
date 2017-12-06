@@ -9,7 +9,7 @@ from redbot.core.bot import Red
 from redbot.core.i18n import CogI18n
 from redbot.core.utils.mod import slow_deletion, mass_purge
 from redbot.cogs.mod.log import log
-from redbot.core.context import RedContext
+from redbot.core.commands import Context
 
 _ = CogI18n("Cleanup", __file__)
 
@@ -22,7 +22,7 @@ class Cleanup:
 
     @commands.group()
     @checks.mod_or_permissions(manage_messages=True)
-    async def cleanup(self, ctx: RedContext):
+    async def cleanup(self, ctx: Context):
         """Deletes messages."""
         if ctx.invoked_subcommand is None:
             await ctx.send_help()
@@ -30,7 +30,7 @@ class Cleanup:
     @cleanup.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def text(self, ctx: commands.Context, text: str, number: int):
+    async def text(self, ctx: Context, text: str, number: int):
         """Deletes last X messages matching the specified text.
 
         Example:
@@ -80,7 +80,7 @@ class Cleanup:
     @cleanup.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def user(self, ctx: commands.Context, user: discord.Member or int, number: int):
+    async def user(self, ctx: Context, user: discord.Member or int, number: int):
         """Deletes last X messages from specified user.
 
         Examples:
@@ -132,7 +132,7 @@ class Cleanup:
     @cleanup.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def after(self, ctx: commands.Context, message_id: int):
+    async def after(self, ctx: Context, message_id: int):
         """Deletes all messages after specified message
 
         To get a message id, enable developer mode in Discord's
@@ -175,7 +175,7 @@ class Cleanup:
     @cleanup.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def messages(self, ctx: commands.Context, number: int):
+    async def messages(self, ctx: Context, number: int):
         """Deletes last X messages.
 
         Example:
@@ -214,7 +214,7 @@ class Cleanup:
     @cleanup.command(name='bot')
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def cleanup_bot(self, ctx: commands.Context, number: int):
+    async def cleanup_bot(self, ctx: Context, number: int):
         """Cleans up command messages and messages from the bot"""
 
         channel = ctx.message.channel
@@ -272,7 +272,7 @@ class Cleanup:
             await slow_deletion(to_delete)
 
     @cleanup.command(name='self')
-    async def cleanup_self(self, ctx: commands.Context, number: int, match_pattern: str = None):
+    async def cleanup_self(self, ctx: Context, number: int, match_pattern: str = None):
         """Cleans up messages owned by the bot.
 
         By default, all messages are cleaned. If a third argument is specified,

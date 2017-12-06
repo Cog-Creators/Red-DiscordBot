@@ -1,11 +1,12 @@
 import discord
 from discord.ext import commands
 
-from redbot.core import checks, Config, modlog, RedContext
+from redbot.core import checks, Config, modlog
 from redbot.core.bot import Red
 from redbot.core.i18n import CogI18n
 from redbot.core.utils.chat_formatting import pagify
 from redbot.core.utils.mod import is_mod_or_superior
+from redbot.core.commands import Context
 
 _ = CogI18n("Filter", __file__)
 
@@ -46,7 +47,7 @@ class Filter:
     @commands.group(name="filter")
     @commands.guild_only()
     @checks.mod_or_permissions(manage_messages=True)
-    async def _filter(self, ctx: RedContext):
+    async def _filter(self, ctx: Context):
         """Adds/removes words from filter
 
         Use double quotes to add/remove sentences
@@ -129,7 +130,7 @@ class Filter:
             await ctx.send(_("Those words weren't in the filter."))
 
     @_filter.command(name="names")
-    async def filter_names(self, ctx: RedContext):
+    async def filter_names(self, ctx: Context):
         """
         Toggles whether or not to check names and nicknames against the filter
         This is disabled by default
@@ -149,7 +150,7 @@ class Filter:
             )
 
     @_filter.command(name="defaultname")
-    async def filter_default_name(self, ctx: RedContext, name: str):
+    async def filter_default_name(self, ctx: Context, name: str):
         """
         Sets the default name to use if filtering names is enabled
         Note that this has no effect if filtering names is disabled

@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
-from redbot.core import Config, checks, RedContext
+from redbot.core import Config, checks
+from redbot.core.commands import Context
 from redbot.core.utils.chat_formatting import pagify, box
 from redbot.core.bot import Red
 from .streams import TwitchStream, HitboxStream, MixerStream, PicartoStream, TwitchCommunity
@@ -99,12 +100,12 @@ class Streams:
             await ctx.send_help()
 
     @_twitch.command(name="channel")
-    async def twitch_alert_channel(self, ctx: RedContext, channel_name: str):
+    async def twitch_alert_channel(self, ctx: Context, channel_name: str):
         """Sets a Twitch stream alert notification in the channel"""
         await self.stream_alert(ctx, TwitchStream, channel_name)
 
     @_twitch.command(name="community")
-    async def twitch_alert_community(self, ctx: RedContext, community: str):
+    async def twitch_alert_community(self, ctx: Context, community: str):
         """Sets a Twitch stream alert notification in the channel
         for the specified community."""
         await self.community_alert(ctx, TwitchCommunity, community)
