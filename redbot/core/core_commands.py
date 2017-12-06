@@ -35,7 +35,7 @@ OWNER_DISCLAIMER = ("⚠ **Only** the person who is hosting Red should be "
                     "system.** ⚠")
 
 
-_ = i18n.CogI18n("Core", __file__)
+_ = i18n.Translator("Core", __file__)
 
 
 class Core:

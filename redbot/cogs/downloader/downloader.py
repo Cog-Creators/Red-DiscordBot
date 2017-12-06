@@ -7,7 +7,7 @@ from typing import Tuple, Union
 import discord
 from redbot.core import Config
 from redbot.core import checks
-from redbot.core.i18n import CogI18n
+from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box, pagify
 from discord.ext import commands
 
@@ -19,7 +19,7 @@ from .installable import Installable
 from .log import log
 from .repo_manager import RepoManager, Repo
 
-_ = CogI18n('Downloader', __file__)
+_ = Translator('Downloader', __file__)
 
 
 class Downloader:

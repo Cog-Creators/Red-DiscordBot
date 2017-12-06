@@ -8,9 +8,9 @@ from discord.ext import commands
 
 from redbot.core import Config, checks
 from redbot.core.utils.chat_formatting import box, pagify
-from redbot.core.i18n import CogI18n
+from redbot.core.i18n import Translator
 
-_ = CogI18n("CustomCommands", __file__)
+_ = Translator("CustomCommands", __file__)
 
 
 class CCError(Exception):

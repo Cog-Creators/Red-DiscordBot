@@ -3,7 +3,8 @@ from pathlib import Path
 
 from . import commands
 
-__all__ = ['get_locale', 'set_locale', 'reload_locales', 'CogI18n']
+__all__ = ['get_locale', 'set_locale', 'reload_locales', 'cog_i18n',
+           'Translator']
 
 _current_locale = 'en_us'
 
@@ -147,7 +148,7 @@ def get_locale_path(cog_folder: Path, extension: str) -> Path:
     return cog_folder / 'locales' / "{}.{}".format(get_locale(), extension)
 
 
-class CogI18n:
+class Translator:
     def __init__(self, name, file_location):
         """
         Initializes the internationalization object for a given cog.
@@ -171,17 +172,6 @@ class CogI18n:
             return self.translations[normalized_untranslated]
         except KeyError:
             return untranslated
-
-    def cog(self, cog_class: type):
-        """
-        Class decorator for cogs to internationalise command help strings.
-        """
-        cog_class.__translator__ = self
-        for name, attr in cog_class.__dict__.items():
-            if isinstance(attr, (commands.Group, commands.Command)):
-                attr.translator = self
-                setattr(cog_class, name, attr)
-        return cog_class
 
     def load_translations(self):
         """
@@ -214,3 +204,14 @@ class CogI18n:
         if translated:
             self.translations.update({untranslated: translated})
 
+
+def cog_i18n(translator: Translator):
+    """Get a class decorator to link the translator to this cog."""
+    def decorator(cog_class: type):
+        cog_class.__translator__ = translator
+        for name, attr in cog_class.__dict__.items():
+            if isinstance(attr, (commands.Group, commands.Command)):
+                attr.translator = translator
+                setattr(cog_class, name, attr)
+        return cog_class
+    return decorator

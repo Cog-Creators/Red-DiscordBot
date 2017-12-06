@@ -3,14 +3,14 @@ from typing import Generator, Tuple, Iterable
 
 import discord
 from redbot.core import Config
-from redbot.core.i18n import CogI18n
+from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box
 from discord.ext import commands
 
 from redbot.core.bot import Red
 from .alias_entry import AliasEntry
 
-_ = CogI18n("Alias", __file__)
+_ = Translator("Alias", __file__)
 
 
 class Alias:

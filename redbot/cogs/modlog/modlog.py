@@ -3,11 +3,11 @@ from discord.ext import commands
 
 from redbot.core import checks, modlog
 from redbot.core.bot import Red
-from redbot.core.i18n import CogI18n
+from redbot.core.i18n import Translator
 from redbot.core.commands import Context
 from redbot.core.utils.chat_formatting import box
 
-_ = CogI18n('ModLog', __file__)
+_ = Translator('ModLog', __file__)
 
 
 class ModLog:

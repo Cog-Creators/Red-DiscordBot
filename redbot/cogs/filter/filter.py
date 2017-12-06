@@ -3,12 +3,12 @@ from discord.ext import commands
 
 from redbot.core import checks, Config, modlog
 from redbot.core.bot import Red
-from redbot.core.i18n import CogI18n
+from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import pagify
 from redbot.core.utils.mod import is_mod_or_superior
 from redbot.core.commands import Context
 
-_ = CogI18n("Filter", __file__)
+_ = Translator("Filter", __file__)
 
 
 class Filter:

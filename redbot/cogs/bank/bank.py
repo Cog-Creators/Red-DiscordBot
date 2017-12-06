@@ -1,10 +1,10 @@
 from redbot.core import checks, bank
-from redbot.core.i18n import CogI18n
+from redbot.core.i18n import Translator
 from discord.ext import commands
 
 from redbot.core.bot import Red  # Only used for type hints
 
-_ = CogI18n('Bank', __file__)
+_ = Translator('Bank', __file__)
 
 
 def check_global_setting_guildowner():

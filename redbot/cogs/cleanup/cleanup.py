@@ -6,12 +6,12 @@ from discord.ext import commands
 
 from redbot.core import checks
 from redbot.core.bot import Red
-from redbot.core.i18n import CogI18n
+from redbot.core.i18n import Translator
 from redbot.core.utils.mod import slow_deletion, mass_purge
 from redbot.cogs.mod.log import log
 from redbot.core.commands import Context
 
-_ = CogI18n("Cleanup", __file__)
+_ = Translator("Cleanup", __file__)
 
 
 class Cleanup:

@@ -8,7 +8,7 @@ from contextlib import redirect_stdout
 import discord
 from discord.ext import commands
 from . import checks
-from .i18n import CogI18n
+from .i18n import Translator
 from .utils.chat_formatting import box, pagify
 """
 Notice:
@@ -18,7 +18,7 @@ Notice:
 https://github.com/Rapptz/RoboDanny/blob/master/cogs/repl.py
 """
 
-_ = CogI18n("Dev", __file__)
+_ = Translator("Dev", __file__)
 
 
 class Dev:

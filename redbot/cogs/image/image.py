@@ -3,10 +3,10 @@ from random import shuffle
 import aiohttp
 from discord.ext import commands
 
-from redbot.core.i18n import CogI18n
+from redbot.core.i18n import Translator
 from redbot.core import checks, Config
 
-_ = CogI18n("Image", __file__)
+_ = Translator("Image", __file__)
 
 GIPHY_API_KEY = "dc6zaTOxFJmzC"
 
