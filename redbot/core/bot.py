@@ -17,6 +17,7 @@ from . import (
     RedContext,
     rpc
 )
+from .help_formatter import Help, help as help_
 
 from typing import TYPE_CHECKING
 
@@ -47,7 +48,7 @@ class RedBase(BotBase, RpcMethodMixin):
         self.db = Config.get_core_conf(force_registration=True)
         self._co_owners = cli_flags.co_owner
         self.rpc_enabled = cli_flags.rpc
-
+        self._last_exception = None
         self.db.register_global(
             token=None,
             prefix=[],
@@ -101,7 +102,11 @@ class RedBase(BotBase, RpcMethodMixin):
 
         self.register_rpc_methods()
 
-        super().__init__(**kwargs)
+        super().__init__(formatter=Help(), **kwargs)
+
+        self.remove_command('help')
+
+        self.add_command(help_)
 
     async def _dict_abuse(self, indict):
         """
@@ -143,15 +148,14 @@ class RedBase(BotBase, RpcMethodMixin):
         await self.db.packages.set(packages)
 
     async def add_loaded_package(self, pkg_name: str):
-        curr_pkgs = await self.db.packages()
-        if pkg_name not in curr_pkgs:
-            curr_pkgs.append(pkg_name)
-            await self.save_packages_status(curr_pkgs)
+        async with self.db.packages() as curr_pkgs:
+            if pkg_name not in curr_pkgs:
+                curr_pkgs.append(pkg_name)
 
     async def remove_loaded_package(self, pkg_name: str):
-        curr_pkgs = await self.db.packages()
-        if pkg_name in curr_pkgs:
-            await self.save_packages_status([p for p in curr_pkgs if p != pkg_name])
+        async with self.db.packages() as curr_pkgs:
+            while pkg_name in curr_pkgs:
+                curr_pkgs.remove(pkg_name)
 
     def load_extension(self, spec: ModuleSpec):
         name = spec.name.split('.')[-1]

@@ -328,10 +328,9 @@ class Admin:
         """
         Add a role to the list of available selfroles.
         """
-        curr_selfroles = await self.conf.guild(ctx.guild).selfroles()
-        if role.id not in curr_selfroles:
-            curr_selfroles.append(role.id)
-            await self.conf.guild(ctx.guild).selfroles.set(curr_selfroles)
+        async with self.conf.guild(ctx.guild).selfroles() as curr_selfroles:
+            if role.id not in curr_selfroles:
+                curr_selfroles.append(role.id)
 
         await ctx.send("The selfroles list has been successfully modified.")
 
@@ -341,9 +340,8 @@ class Admin:
         """
         Removes a role from the list of available selfroles.
         """
-        curr_selfroles = await self.conf.guild(ctx.guild).selfroles()
-        curr_selfroles.remove(role.id)
-        await self.conf.guild(ctx.guild).selfroles.set(curr_selfroles)
+        async with self.conf.guild(ctx.guild).selfroles() as curr_selfroles:
+            curr_selfroles.remove(role.id)
 
         await ctx.send("The selfroles list has been successfully modified.")
 
