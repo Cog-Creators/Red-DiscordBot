@@ -33,10 +33,17 @@ class RedContext(commands.Context):
 
         """
         command = self.invoked_subcommand or self.command
-        pages = await self.bot.formatter.format_help_for(self, command)
+        embeds = await self.bot.formatter.format_help_for(self, command)
+        destination = self
         ret = []
-        for page in pages:
-            ret.append(await self.send(page))
+        for embed in embeds:
+            try:
+                m = await destination.send(embed=embed)
+            except discord.HTTPException:
+                destination = self.author
+                m = await destination.send(embed=embed)
+            ret.append(m)
+
         return ret
 
     async def tick(self) -> bool:

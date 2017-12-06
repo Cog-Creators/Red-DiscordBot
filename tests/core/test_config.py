@@ -333,3 +333,46 @@ async def test_user_getalldata(config, user_factory):
     assert "bar" in all_data
 
     assert config.user(user).defaults['foo'] is True
+
+@pytest.mark.asyncio
+async def test_value_ctxmgr(config):
+    config.register_global(foo_list=[])
+
+    async with config.foo_list() as foo_list:
+        foo_list.append('foo')
+
+    foo_list = await config.foo_list()
+
+    assert 'foo' in foo_list
+
+
+@pytest.mark.asyncio
+async def test_value_ctxmgr_saves(config):
+    config.register_global(bar_list=[])
+
+    try:
+        async with config.bar_list() as bar_list:
+            bar_list.append('bar')
+            raise RuntimeError()
+    except RuntimeError:
+        pass
+
+    bar_list = await config.bar_list()
+
+    assert 'bar' in bar_list
+
+
+@pytest.mark.asyncio
+async def test_value_ctxmgr_immutable(config):
+    config.register_global(foo=True)
+
+    try:
+        async with config.foo() as foo:
+            foo = False
+    except TypeError:
+        pass
+    else:
+        raise AssertionError
+
+    foo = await config.foo()
+    assert foo is True
