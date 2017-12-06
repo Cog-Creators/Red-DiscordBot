@@ -149,14 +149,20 @@ def get_locale_path(cog_folder: Path, extension: str) -> Path:
 
 
 class Translator:
+    """Function to get translated strings at runtime."""
+
     def __init__(self, name, file_location):
         """
-        Initializes the internationalization object for a given cog.
+        Initializes an internationalization object.
 
-        :param name: Your cog name.
-        :param file_location:
+        Parameters
+        ----------
+        name : str
+            Your cog name.
+        file_location : `str` or `pathlib.Path`
             This should always be ``__file__`` otherwise your localizations
             will not load.
+
         """
         self.cog_folder = Path(file_location).resolve().parent
         self.cog_name = name
@@ -167,6 +173,11 @@ class Translator:
         self.load_translations()
 
     def __call__(self, untranslated: str):
+        """Translate the given string.
+
+        This will look for the string in the translator's :code:`.pot` file,
+        with respect to the current locale.
+        """
         normalized_untranslated = _normalize(untranslated, True)
         try:
             return self.translations[normalized_untranslated]
@@ -175,7 +186,7 @@ class Translator:
 
     def load_translations(self):
         """
-        Loads the current translations for this cog.
+        Loads the current translations.
         """
         self.translations = {}
         translation_file = None
