@@ -179,9 +179,8 @@ class CogI18n:
         cog_class.__translator__ = self
         for name, attr in cog_class.__dict__.items():
             if isinstance(attr, (commands.Group, commands.Command)):
-                if attr.translator is not None:
-                    attr.translator = self
-                    setattr(cog_class, name, attr)
+                attr.translator = self
+                setattr(cog_class, name, attr)
         return cog_class
 
     def load_translations(self):
@@ -196,7 +195,7 @@ class CogI18n:
             try:
                 translation_file = locale_path.open('ru')
             except ValueError:  # We are using Windows
-                translation_file = locale_path.open('r')
+                translation_file = locale_path.open('r', encoding='utf-8')
             self._parse(translation_file)
         except (IOError, FileNotFoundError):  # The translation is unavailable
             pass

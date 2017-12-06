@@ -7,11 +7,10 @@ from typing import Tuple, Union, List, overload
 
 import redbot.cogs
 
-from . import checks
+from . import checks, commands
 from .config import Config
 from .i18n import CogI18n
 from .data_manager import cog_data_path
-from discord.ext import commands
 
 from .utils.chat_formatting import box, pagify
 
@@ -294,7 +293,10 @@ class CogManager:
 _ = CogI18n("CogManagerUI", __file__)
 
 
+@_.cog
 class CogManagerUI:
+    """Commands to interface with Red's cog manager."""
+
     @commands.command()
     @checks.is_owner()
     async def paths(self, ctx: commands.Context):

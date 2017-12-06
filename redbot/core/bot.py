@@ -13,7 +13,7 @@ from .cog_manager import CogManager
 from . import (
     Config,
     i18n,
-    RedContext,
+    commands,
     rpc
 )
 from .help_formatter import Help, help as help_
@@ -131,7 +131,7 @@ class RedBase(BotBase, RpcMethodMixin):
         return (not (admin_role or mod_role) or
                 any(role.id in (mod_role, admin_role) for role in member.roles))
 
-    async def get_context(self, message, *, cls=RedContext):
+    async def get_context(self, message, *, cls=commands.Context):
         return await super().get_context(message, cls=cls)
 
     def list_packages(self):

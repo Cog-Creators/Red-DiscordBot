@@ -16,7 +16,7 @@ from redbot.core import checks
 from redbot.core import i18n
 from redbot.core import rpc
 from redbot.core import __version__
-from redbot.core.context import RedContext
+from redbot.core.commands import Context
 
 from typing import TYPE_CHECKING
 
@@ -48,7 +48,7 @@ class Core:
         rpc.add_method('core', self.rpc_reload)
 
     @commands.command()
-    async def info(self, ctx: RedContext):
+    async def info(self, ctx: Context):
         """Shows info about Red"""
         author_repo = "https://github.com/Twentysix26"
         org_repo = "https://github.com/Cog-Creators"
