@@ -16,7 +16,7 @@ IN_MSGSTR = 4
 MSGID = 'msgid "'
 MSGSTR = 'msgstr "'
 
-_i18n_cogs = {}
+_translators = []
 
 
 def get_locale():
@@ -30,8 +30,8 @@ def set_locale(locale):
 
 
 def reload_locales():
-    for cog_name, i18n in _i18n_cogs.items():
-        i18n.load_translations()
+    for translator in _translators:
+        translator.load_translations()
 
 
 def _parse(translation_file):
@@ -168,7 +168,7 @@ class Translator:
         self.cog_name = name
         self.translations = {}
 
-        _i18n_cogs.update({self.cog_name: self})
+        _translators.append(self)
 
         self.load_translations()
 
