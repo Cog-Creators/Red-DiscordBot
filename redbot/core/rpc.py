@@ -5,13 +5,13 @@ from aiohttp_json_rpc import JsonRpc
 
 import logging
 
-from .utils import TYPE_CHECKING
+from .utils import TYPE_CHECKING, NewType
 
 if TYPE_CHECKING:
     from .bot import Red
 
 log = logging.getLogger('red.rpc')
-JsonSerializable = type('JsonSerializable', (dict,), {})
+JsonSerializable = NewType('JsonSerializable', dict)
 
 _rpc = JsonRpc(logger=log)
 
