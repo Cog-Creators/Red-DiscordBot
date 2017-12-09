@@ -361,7 +361,7 @@ class Heist:
         description = ["Heist Version {}".format(self.version), "Theme: {}".format(theme)]
         footer = "Heist was developed by Redjumpman for Red Bot."
 
-        embed = discord.Embed(colour=0x0066FF, description="\n".join(description))
+        embed = discord.Embed(colour=0x2ecc71, description="\n".join(description))
         embed.title = "{} Heist Settings".format(server.name)
         embed.add_field(name="Heist Cost", value=settings["Config"]["Heist Cost"])
         embed.add_field(name="Base {} Cost".format(t_bail), value=settings["Config"]["Bail Base"])
@@ -461,7 +461,7 @@ class Heist:
 
         rank = self.criminal_level(path["Criminal Level"])
 
-        embed = discord.Embed(colour=0x0066FF, description=rank)
+        embed = discord.Embed(colour=0x2ecc71, description=rank)
         embed.title = author.name
         embed.set_thumbnail(url=avatar)
         embed.add_field(name="Status", value=path["Status"])
