@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-from typing import TYPE_CHECKING, List
+from typing import List
 import hashlib
 import shutil
 import logging
@@ -8,6 +8,7 @@ import logging
 import appdirs
 
 from .json_io import JsonIO
+from .utils import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from . import Config
