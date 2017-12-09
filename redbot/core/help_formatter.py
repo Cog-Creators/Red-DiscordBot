@@ -133,7 +133,18 @@ class Help(formatter.HelpFormatter):
             'fields': []
         }
 
-        description = self.command.description if not self.is_cog() else inspect.getdoc(self.command)
+        try:
+            # This comes from a dynamic attribute added by the i18n module.
+            # It won't always exist so we have to do the AttributeError
+            # check here.
+            _ = self.command.translator
+        except AttributeError:
+            _ = lambda x: x
+
+        description = _(self.command.description)
+        if self.is_cog():
+            description = _(inspect.getdoc(self.command))
+
         if not description == '' and description is not None:
             description = '*{0}*'.format(description)
 
@@ -150,7 +161,7 @@ class Help(formatter.HelpFormatter):
             if self.command.help:
                 name = '__{0}__'.format(self.command.help.split('\n\n')[0])
                 name_length = len(name) - 4
-                value = self.command.help[name_length:].replace('[p]', self.clean_prefix)
+                value = _(self.command.help[name_length:]).replace('[p]', self.clean_prefix)
                 if value == '':
                     value = EMPTY_STRING
                 field = EmbedField(name, value, False)

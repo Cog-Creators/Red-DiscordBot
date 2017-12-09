@@ -146,16 +146,25 @@ def get_locale_path(cog_folder: Path, extension: str) -> Path:
 
 
 class CogI18n:
-    def __init__(self, name, file_location):
+    def __init__(self, name, file_location, locales_folder: Path=None):
         """
         Initializes the internationalization object for a given cog.
 
-        :param name: Your cog name.
-        :param file_location:
+        Parameters
+        ----------
+        name : str
+            The name of your cog.
+        file_location : str
             This should always be ``__file__`` otherwise your localizations
             will not load.
+        locales_folder : pathlib.Path
+            This is used for core cogs ONLY. It allows the i18n processor
+            to override the default location of locales which is necessary
+            to separate out the translation files for each of the core cogs.
         """
         self.cog_folder = Path(file_location).resolve().parent
+        self._locales_folder_override = locales_folder
+
         self.cog_name = name
         self.translations = {}
 
@@ -176,7 +185,7 @@ class CogI18n:
         """
         self.translations = {}
         translation_file = None
-        locale_path = get_locale_path(self.cog_folder, 'po')
+        locale_path = self._locales_folder_override or get_locale_path(self.cog_folder, 'po')
         try:
 
             try:
@@ -200,4 +209,23 @@ class CogI18n:
         translated = _normalize(translated)
         if translated:
             self.translations.update({untranslated: translated})
+
+    def i18n_decorator(self, command):
+        """
+        This function acts as a decorator and must be placed **ABOVE**
+        the command or group decorator from discord.py. You must use this
+        with no parentheses.
+
+        Internally this decorator creates a "translator" attribute on the
+        command object which links back to this i18n object. The custom
+        help formatter will use that attribute to translate the doc string
+        for that command object.
+
+        Parameters
+        ----------
+        command : discord.ext.commands.Command
+            discord.py command or group object.
+        """
+        command.translator = self
+        return command
 

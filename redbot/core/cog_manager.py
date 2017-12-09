@@ -291,10 +291,13 @@ class CogManager:
         invalidate_caches()
 
 
-_ = CogI18n("CogManagerUI", __file__)
+locales_dir = Path(__file__).parent / 'locales' / 'cog_manager'
+_ = CogI18n("CogManagerUI", __file__, locales_dir)
+i18n_command = _.i18n_decorator
 
 
 class CogManagerUI:
+    @i18n_command
     @commands.command()
     @checks.is_owner()
     async def paths(self, ctx: commands.Context):
@@ -314,6 +317,7 @@ class CogManagerUI:
         msg += "\n".join(partial)
         await ctx.send(box(msg))
 
+    @i18n_command
     @commands.command()
     @checks.is_owner()
     async def addpath(self, ctx: commands.Context, path: Path):
@@ -332,12 +336,13 @@ class CogManagerUI:
         else:
             await ctx.send(_("Path successfully added."))
 
+    @i18n_command
     @commands.command()
     @checks.is_owner()
     async def removepath(self, ctx: commands.Context, path_number: int):
         """
         Removes a path from the available cog paths given the path_number
-            from !paths
+        from !paths
         """
         cog_paths = await ctx.bot.cog_mgr.paths()
         try:
@@ -349,6 +354,7 @@ class CogManagerUI:
         await ctx.bot.cog_mgr.remove_path(to_remove)
         await ctx.send(_("Path successfully removed."))
 
+    @i18n_command
     @commands.command()
     @checks.is_owner()
     async def reorderpath(self, ctx: commands.Context, from_: int, to: int):
@@ -375,13 +381,14 @@ class CogManagerUI:
         await ctx.bot.cog_mgr.set_paths(all_paths)
         await ctx.send(_("Paths reordered."))
 
+    @i18n_command
     @commands.command()
     @checks.is_owner()
     async def installpath(self, ctx: commands.Context, path: Path=None):
         """
         Returns the current install path or sets it if one is provided.
-            The provided path must be absolute or relative to the bot's
-            directory and it must already exist.
+        The provided path must be absolute or relative to the bot's
+        directory and it must already exist.
 
         No installed cogs will be transferred in the process.
         """
@@ -398,6 +405,7 @@ class CogManagerUI:
         await ctx.send(_("The bot will install new cogs to the `{}`"
                          " directory.").format(install_path))
 
+    @i18n_command
     @commands.command()
     @checks.is_owner()
     async def cogs(self, ctx: commands.Context):
