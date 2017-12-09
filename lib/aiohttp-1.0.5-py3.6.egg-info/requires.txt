@@ -1,0 +1,3 @@
+chardet
+multidict>=2.0
+async_timeout
