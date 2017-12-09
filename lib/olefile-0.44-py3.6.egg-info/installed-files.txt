@@ -1,0 +1,14 @@
+..\OleFileIO_PL.py
+..\olefile\olefile.py
+..\olefile\__init__.py
+..\olefile\README.rst
+..\olefile\README.html
+..\olefile\LICENSE.txt
+..\olefile\CONTRIBUTORS.txt
+..\__pycache__\OleFileIO_PL.cpython-36.pyc
+..\olefile\__pycache__\olefile.cpython-36.pyc
+..\olefile\__pycache__\__init__.cpython-36.pyc
+dependency_links.txt
+PKG-INFO
+SOURCES.txt
+top_level.txt

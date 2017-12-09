@@ -1,0 +1,11 @@
+OleFileIO_PL.py
+olefile/CONTRIBUTORS.txt
+olefile/LICENSE.txt
+olefile/README.html
+olefile/README.rst
+olefile/__init__.py
+olefile/olefile.py
+olefile.egg-info/PKG-INFO
+olefile.egg-info/SOURCES.txt
+olefile.egg-info/dependency_links.txt
+olefile.egg-info/top_level.txt

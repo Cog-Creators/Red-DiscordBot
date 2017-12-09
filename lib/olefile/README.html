@@ -1,0 +1,66 @@
+<h1 id="olefile-formerly-olefileio_pl">olefile (formerly OleFileIO_PL)</h1>
+<p><a href="https://travis-ci.org/decalage2/olefile"><img src="https://travis-ci.org/decalage2/olefile.svg?branch=master" alt="Build Status" /></a> <a href="https://coveralls.io/github/decalage2/olefile?branch=master"><img src="https://coveralls.io/repos/github/decalage2/olefile/badge.svg?branch=master" alt="Coverage Status" /></a> <a href="http://olefile.readthedocs.io/en/latest/?badge=latest"><img src="http://readthedocs.org/projects/olefile/badge/?version=latest" alt="Documentation Status" /></a></p>
+<p><a href="https://www.decalage.info/olefile">olefile</a> is a Python package to parse, read and write <a href="http://en.wikipedia.org/wiki/Compound_File_Binary_Format">Microsoft OLE2 files</a> (also called Structured Storage, Compound File Binary Format or Compound Document File Format), such as Microsoft Office 97-2003 documents, vbaProject.bin in MS Office 2007+ files, Image Composer and FlashPix files, Outlook messages, StickyNotes, several Microscopy file formats, McAfee antivirus quarantine files, etc.</p>
+<p><strong>Quick links:</strong> <a href="https://www.decalage.info/olefile">Home page</a> - <a href="http://olefile.readthedocs.io/en/latest/Install.html">Download/Install</a> - <a href="http://olefile.readthedocs.io/en/latest">Documentation</a> - <a href="https://github.com/decalage2/olefile/issues">Report Issues/Suggestions/Questions</a> - <a href="https://www.decalage.info/contact">Contact the author</a> - <a href="https://github.com/decalage2/olefile">Repository</a> - <a href="https://twitter.com/decalage2">Updates on Twitter</a></p>
+<h2 id="news">News</h2>
+<p>Follow all updates and news on Twitter: <a href="https://twitter.com/decalage2" class="uri">https://twitter.com/decalage2</a></p>
+<ul>
+<li><strong>2017-01-06 v0.44</strong>: several bugfixes, removed support for Python 2.5 (olefile2), added support for incomplete streams and incorrect directory entries (to read malformed documents), added getclsid, improved <a href="http://olefile.readthedocs.io/en/latest">documentation</a> with API reference.</li>
+<li>2017-01-04: moved the documentation to <a href="http://olefile.readthedocs.io/en/latest">ReadTheDocs</a></li>
+<li>2016-05-20: moved olefile repository to <a href="https://github.com/decalage2/olefile">GitHub</a></li>
+<li>2016-02-02 v0.43: fixed issues <a href="https://github.com/decalage2/olefile/issues/26">#26</a> and <a href="https://github.com/decalage2/olefile/issues/27">#27</a>, better handling of malformed files, use python logging.</li>
+<li>2015-01-25 v0.42: improved handling of special characters in stream/storage names on Python 2.x (using UTF-8 instead of Latin-1), fixed bug in listdir with empty storages.</li>
+<li>2014-11-25 v0.41: OleFileIO.open and isOleFile now support OLE files stored in byte strings, fixed installer for python 3, added support for Jython (Niko Ehrenfeuchter)</li>
+<li>2014-10-01 v0.40: renamed OleFileIO_PL to olefile, added initial write support for streams &gt;4K, updated doc and license, improved the setup script.</li>
+<li>2014-07-27 v0.31: fixed support for large files with 4K sectors, thanks to Niko Ehrenfeuchter, Martijn Berger and Dave Jones. Added test scripts from Pillow (by hugovk). Fixed setup for Python 3 (Martin Panter)</li>
+<li>2014-02-04 v0.30: now compatible with Python 3.x, thanks to Martin Panter who did most of the hard work.</li>
+<li>2013-07-24 v0.26: added methods to parse stream/storage timestamps, improved listdir to include storages, fixed parsing of direntry timestamps</li>
+<li>2013-05-27 v0.25: improved metadata extraction, properties parsing and exception handling, fixed <a href="https://github.com/decalage2/olefile/issues/12">issue #12</a></li>
+<li>2013-05-07 v0.24: new features to extract metadata (get_metadata method and OleMetadata class), improved getproperties to convert timestamps to Python datetime</li>
+<li>2012-10-09: published <a href="https://www.decalage.info/python/oletools">python-oletools</a>, a package of analysis tools based on OleFileIO_PL</li>
+<li>2012-09-11 v0.23: added support for file-like objects, fixed <a href="https://github.com/decalage2/olefile/issues/8">issue #8</a></li>
+<li>2012-02-17 v0.22: fixed issues #7 (bug in getproperties) and #2 (added close method)</li>
+<li>2011-10-20: code hosted on bitbucket to ease contributions and bug tracking</li>
+<li>2010-01-24 v0.21: fixed support for big-endian CPUs, such as PowerPC Macs.</li>
+<li>2009-12-11 v0.20: small bugfix in OleFileIO.open when filename is not plain str.</li>
+<li>2009-12-10 v0.19: fixed support for 64 bits platforms (thanks to Ben G. and Martijn for reporting the bug)</li>
+<li>see changelog in source code for more info.</li>
+</ul>
+<h2 id="downloadinstall">Download/Install</h2>
+<p>If you have pip or setuptools installed (pip is included in Python 2.7.9+), you may simply run <strong>pip install olefile</strong> or <strong>easy_install olefile</strong> for the first installation.</p>
+<p>To update olefile, run <strong>pip install -U olefile</strong>.</p>
+<p>Otherwise, see http://olefile.readthedocs.io/en/latest/Install.html</p>
+<h2 id="features">Features</h2>
+<ul>
+<li>Parse, read and write any OLE file such as Microsoft Office 97-2003 legacy document formats (Word .doc, Excel .xls, PowerPoint .ppt, Visio .vsd, Project .mpp), Image Composer and FlashPix files, Outlook messages, StickyNotes, Zeiss AxioVision ZVI files, Olympus FluoView OIB files, etc</li>
+<li>List all the streams and storages contained in an OLE file</li>
+<li>Open streams as files</li>
+<li>Parse and read property streams, containing metadata of the file</li>
+<li>Portable, pure Python module, no dependency</li>
+</ul>
+<p>olefile can be used as an independent package or with PIL/Pillow.</p>
+<p>olefile is mostly meant for developers. If you are looking for tools to analyze OLE files or to extract data (especially for security purposes such as malware analysis and forensics), then please also check my <a href="https://www.decalage.info/python/oletools">python-oletools</a>, which are built upon olefile and provide a higher-level interface.</p>
+<h2 id="documentation">Documentation</h2>
+<p>Please see the <a href="http://olefile.readthedocs.io/en/latest">online documentation</a> for more information.</p>
+<h2 id="real-life-examples">Real-life examples</h2>
+<p>A real-life example: <a href="http://blog.gregback.net/2011/03/using-remnux-for-forensic-puzzle-6/">using OleFileIO_PL for malware analysis and forensics</a>.</p>
+<p>See also <a href="https://computer-forensics.sans.org/community/papers/gcfa/grow-forensic-tools-taxonomy-python-libraries-helpful-forensic-analysis_6879">this paper</a> about python tools for forensics, which features olefile.</p>
+<h2 id="license">License</h2>
+<p>olefile (formerly OleFileIO_PL) is copyright (c) 2005-2017 Philippe Lagadec (<a href="https://www.decalage.info" class="uri">https://www.decalage.info</a>)</p>
+<p>All rights reserved.</p>
+<p>Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:</p>
+<ul>
+<li>Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.</li>
+<li>Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.</li>
+</ul>
+<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</p>
+<hr />
+<p>olefile is based on source code from the OleFileIO module of the Python Imaging Library (PIL) published by Fredrik Lundh under the following license:</p>
+<p>The Python Imaging Library (PIL) is</p>
+<ul>
+<li>Copyright (c) 1997-2009 by Secret Labs AB</li>
+<li>Copyright (c) 1995-2009 by Fredrik Lundh</li>
+</ul>
+<p>By obtaining, using, and/or copying this software and/or its associated documentation, you agree that you have read, understood, and will comply with the following terms and conditions:</p>
+<p>Permission to use, copy, modify, and distribute this software and its associated documentation for any purpose and without fee is hereby granted, provided that the above copyright notice appears in all copies, and that both that copyright notice and this permission notice appear in supporting documentation, and that the name of Secret Labs AB or the author not be used in advertising or publicity pertaining to distribution of the software without specific, written prior permission.</p>
+<p>SECRET LABS AB AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL SECRET LABS AB OR THE AUTHOR BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.</p>
