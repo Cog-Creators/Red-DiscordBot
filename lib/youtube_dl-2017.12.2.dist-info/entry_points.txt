@@ -1,0 +1,3 @@
+[console_scripts]
+youtube-dl = youtube_dl:main
+

@@ -1,0 +1,19 @@
+Metadata-Version: 1.1
+Name: imgurpython
+Version: 1.1.7
+Summary: Official Imgur python library with OAuth2 and samples
+Home-page: https://github.com/Imgur/imgurpython
+Author: Imgur Inc.
+Author-email: api@imgur.com
+License: MIT
+Description: UNKNOWN
+Keywords: api,imgur,client
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.2
+Classifier: Programming Language :: Python :: 3.3
+Classifier: Programming Language :: Python :: 3.4
