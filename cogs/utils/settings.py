@@ -54,7 +54,7 @@ class Settings:
                                             "security implications")
         parser.add_argument("--co-owner", action="append", default=[],
                             help="ID of a co-owner. Only people who have "
-                                 "access to the system that is hosting Red "
+                                 "access to the system that is hosting Kermit "
                                  "should be  co-owners, as this gives them "
                                  "complete access to the system's data. "
                                  "This has serious security implications if "
@@ -62,7 +62,7 @@ class Settings:
         parser.add_argument("--prefix", "-p", action="append",
                             help="Global prefix. Can be multiple")
         parser.add_argument("--admin-role", help="Role seen as admin role by "
-                                                 "Red")
+                                                 "Kermit")
         parser.add_argument("--mod-role", help="Role seen as mod role by Red")
         parser.add_argument("--no-prompt",
                             action="store_true",
@@ -71,17 +71,17 @@ class Settings:
                                  "result")
         parser.add_argument("--no-cogs",
                             action="store_true",
-                            help="Starts Red with no cogs loaded, only core")
+                            help="Starts Kermit with no cogs loaded, only core")
         parser.add_argument("--self-bot",
                             action='store_true',
-                            help="Specifies if Red should log in as selfbot")
+                            help="Specifies if Kermit should log in as selfbot")
         parser.add_argument("--memory-only",
                             action="store_true",
                             help="Arguments passed and future edits to the "
                                  "settings will not be saved to disk")
         parser.add_argument("--dry-run",
                             action="store_true",
-                            help="Makes Red quit with code 0 just before the "
+                            help="Makes Kermit quit with code 0 just before the "
                                  "login. This is useful for testing the boot "
                                  "process.")
         parser.add_argument("--debug",

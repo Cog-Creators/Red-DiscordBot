@@ -62,7 +62,7 @@ class MaximumLength(Exception):
 
     def __str__(self):
         return self.message
-    
+
 
 class YouTubeDlError(Exception):
     def __init__(self, m):
@@ -70,7 +70,7 @@ class YouTubeDlError(Exception):
 
     def __str__(self):
         return self.message
-    
+
 
 class NotConnected(Exception):
     pass
@@ -494,9 +494,9 @@ class Audio:
 
         while any([d.is_alive() for d in downloaders]):
             await asyncio.sleep(0.1)
-            
+
         songs = [d.song for d in downloaders if d.song is not None and d.error is None]
-           
+
         invalid_downloads = [d for d in downloaders if d.error is not None]
         invalid_number = len(invalid_downloads)
         if(invalid_number > 0):
@@ -518,7 +518,7 @@ class Audio:
 
         while next_dl.is_alive():
             await asyncio.sleep(0.5)
-            
+
         error = next_dl.error
         if(error is not None):
             raise YouTubeDlError(error)
@@ -597,7 +597,7 @@ class Audio:
             return None
 
         return self.queue[server.id][QueueKey.NOW_PLAYING]
-		
+
     def _get_queue_nowplaying_channel(self, server):
         if server.id not in self.queue:
             return None
@@ -651,7 +651,7 @@ class Audio:
 
         # Getting info w/o download
         self.downloaders[server.id].done.wait()
-        
+
         # Youtube-DL threw an exception.
         error = self.downloaders[server.id].error
         if(error is not None):
@@ -910,7 +910,7 @@ class Audio:
         except AttributeError:
             songlist = playlist
             name = True
-            
+
         songlist = self._songlist_change_url_to_queued_song(songlist, channel)
 
         log.debug("setting up playlist {} on sid {}".format(name, server.id))
@@ -935,13 +935,13 @@ class Audio:
 
         ret_playlist = Playlist(server=server, name=name, playlist=ret)
         self._play_playlist(server, ret_playlist, channel)
-        
+
     def _songlist_change_url_to_queued_song(self, songlist, channel):
         queued_songlist = []
         for song in songlist:
             queued_song = QueuedSong(song, channel)
             queued_songlist.append(queued_song)
-            
+
         return queued_songlist
 
     def _player_count(self):
@@ -1118,11 +1118,11 @@ class Audio:
         if yt or sc:  # TODO: Add sc check
             return True
         return False
-    
+
     def _clean_url(self, url):
         if(self._valid_playable_url(url)):
             return "<{}>".format(url)
-        
+
         return url.replace("[SEARCH:]", "")
 
     @commands.group(pass_context=True)
@@ -1288,7 +1288,7 @@ class Audio:
         """Reports info about the cache.
             - Current size of the cache.
             - Maximum cache size. User setting or minimum, whichever is higher.
-            - Minimum cache size. Automatically determined by number of servers Red is running on.
+            - Minimum cache size. Automatically determined by number of servers Kermit is running on.
         """
         await self.bot.say("Cache stats:\n"
                            "Current size: {:.2f} MB\n"
@@ -1567,7 +1567,7 @@ class Audio:
                 await self.bot.say("An error occurred while enumerating the playlist:\n"
                                    "'{}'".format(str(e)))
                 return
-				
+
             playlist = self._make_playlist(author, url, songlist)
             # Returns a Playlist object
 
@@ -1950,7 +1950,7 @@ class Audio:
 
     @commands.command(pass_context=True, no_pm=True)
     async def sing(self, ctx):
-        """Makes Red sing one of her songs"""
+        """Makes Kermit sing one of his songs"""
         ids = ("zGTkAVsrfg8", "cGMWL8cOeAU", "vFrjMq4aL-g", "WROI5WYBU_A",
                "41tIUr_ex3g", "f9O2Rjn1azc")
         url = "https://www.youtube.com/watch?v={}".format(choice(ids))
@@ -2195,7 +2195,7 @@ class Audio:
             elif len(queue) > 0:
                 queued_next_song = queue.peekleft()
                 next_url = queued_next_song.url
-                next_channel = queued_next_song.channel	
+                next_channel = queued_next_song.channel
                 next_dl = Downloader(next_url, max_length)
             else:
                 next_dl = None

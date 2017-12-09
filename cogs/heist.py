@@ -10,7 +10,7 @@ import time
 from ast import literal_eval
 from operator import itemgetter
 
-# Discord / Red Bot
+# Discord / Kermit Bot
 import discord
 from discord.ext import commands
 from .utils.dataIO import dataIO
@@ -359,7 +359,7 @@ class Heist:
                        settings["Config"]["Sentence Base"], settings["Config"]["Death Timer"]]
         timers = list(map(self.time_format, time_values))
         description = ["Heist Version {}".format(self.version), "Theme: {}".format(theme)]
-        footer = "Heist was developed by Redjumpman for Red Bot."
+        footer = "Heist was developed by Redjumpman for Red-DiscordBot."
 
         embed = discord.Embed(colour=0x2ecc71, description="\n".join(description))
         embed.title = "{} Heist Settings".format(server.name)

@@ -14,14 +14,14 @@ numbs = {
 
 
 class Redportal:
-    """Interact with cogs.red through your bot"""
+    """Interact with cogs.red through Kermit"""
 
     def __init__(self, bot):
         self.bot = bot
 
     @commands.group(pass_context=True, aliases=['redp'])
     async def redportal(self, ctx):
-        """Interact with cogs.red through your bot"""
+        """Interact with cogs.red through Kermit"""
 
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)

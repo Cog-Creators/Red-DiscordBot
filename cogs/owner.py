@@ -310,7 +310,7 @@ class Owner:
     @_set.command(pass_context=True)
     @checks.is_owner()
     async def prefix(self, ctx, *prefixes):
-        """Sets Red's global prefixes
+        """Sets Kermit's global prefixes
 
         Accepts multiple prefixes separated by a space. Enclose in double
         quotes if a prefix contains spaces.
@@ -330,7 +330,7 @@ class Owner:
     @_set.command(pass_context=True, no_pm=True)
     @checks.serverowner_or_permissions(administrator=True)
     async def serverprefix(self, ctx, *prefixes):
-        """Sets Red's prefixes for this server
+        """Sets Kermit's prefixes for this server
 
         Accepts multiple prefixes separated by a space. Enclose in double
         quotes if a prefix contains spaces.
@@ -363,7 +363,7 @@ class Owner:
     @_set.command(pass_context=True)
     @checks.is_owner()
     async def name(self, ctx, *, name):
-        """Sets Red's name"""
+        """Sets Kermit's name"""
         name = name.strip()
         if name != "":
             try:
@@ -383,7 +383,7 @@ class Owner:
     @_set.command(pass_context=True, no_pm=True)
     @checks.is_owner()
     async def nickname(self, ctx, *, nickname=""):
-        """Sets Red's nickname
+        """Sets Kermit's nickname
 
         Leaving this empty will remove it."""
         nickname = nickname.strip()
@@ -399,7 +399,7 @@ class Owner:
     @_set.command(pass_context=True)
     @checks.is_owner()
     async def game(self, ctx, *, game=None):
-        """Sets Red's playing status
+        """Sets Kermit's playing status
 
         Leaving this empty will clear it."""
 
@@ -420,7 +420,7 @@ class Owner:
     @_set.command(pass_context=True)
     @checks.is_owner()
     async def status(self, ctx, *, status=None):
-        """Sets Red's status
+        """Sets Kermit's status
 
         Statuses:
             online
@@ -455,7 +455,7 @@ class Owner:
     @_set.command(pass_context=True)
     @checks.is_owner()
     async def stream(self, ctx, streamer=None, *, stream_title=None):
-        """Sets Red's streaming status
+        """Sets Kermit's streaming status
 
         Leaving both streamer and stream_title empty will clear it."""
 
@@ -481,7 +481,7 @@ class Owner:
     @_set.command()
     @checks.is_owner()
     async def avatar(self, url):
-        """Sets Red's avatar"""
+        """Sets Kermit's avatar"""
         try:
             async with self.session.get(url) as r:
                 data = await r.read()
@@ -497,7 +497,7 @@ class Owner:
     @_set.command(name="token")
     @checks.is_owner()
     async def _token(self, token):
-        """Sets Red's login token"""
+        """Sets Kermit's login token"""
         if len(token) < 50:
             await self.bot.say("Invalid token.")
         else:
@@ -537,7 +537,7 @@ class Owner:
 
     @blacklist.command(name="add")
     async def _blacklist_add(self, user: GlobalUser):
-        """Adds user to Red's global blacklist"""
+        """Adds user to Kermit's global blacklist"""
         if user.id not in self.global_ignores["blacklist"]:
             self.global_ignores["blacklist"].append(user.id)
             self.save_global_ignores()
@@ -547,7 +547,7 @@ class Owner:
 
     @blacklist.command(name="remove")
     async def _blacklist_remove(self, user: GlobalUser):
-        """Removes user from Red's global blacklist"""
+        """Removes user from Kermit's global blacklist"""
         if user.id in self.global_ignores["blacklist"]:
             self.global_ignores["blacklist"].remove(user.id)
             self.save_global_ignores()
@@ -579,13 +579,13 @@ class Owner:
         """Whitelist management commands
 
         If the whitelist is not empty, only whitelisted users will
-        be able to use Red"""
+        be able to use Kermit"""
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
 
     @whitelist.command(name="add")
     async def _whitelist_add(self, user: GlobalUser):
-        """Adds user to Red's global whitelist"""
+        """Adds user to Kermit's global whitelist"""
         if user.id not in self.global_ignores["whitelist"]:
             if not self.global_ignores["whitelist"]:
                 msg = "\nNon-whitelisted users will be ignored."
@@ -599,7 +599,7 @@ class Owner:
 
     @whitelist.command(name="remove")
     async def _whitelist_remove(self, user: GlobalUser):
-        """Removes user from Red's global whitelist"""
+        """Removes user from Kermit's global whitelist"""
         if user.id in self.global_ignores["whitelist"]:
             self.global_ignores["whitelist"].remove(user.id)
             self.save_global_ignores()
@@ -628,7 +628,7 @@ class Owner:
     @commands.command()
     @checks.is_owner()
     async def shutdown(self, silently : bool=False):
-        """Shuts down Red"""
+        """Shuts down Kermit"""
         wave = "\N{WAVING HAND SIGN}"
         skin = "\N{EMOJI MODIFIER FITZPATRICK TYPE-3}"
         try: # We don't want missing perms to stop our shutdown
@@ -641,7 +641,7 @@ class Owner:
     @commands.command()
     @checks.is_owner()
     async def restart(self, silently : bool=False):
-        """Attempts to restart Red
+        """Attempts to restart Kermit
 
         Makes Red quit with exit code 26
         The restart is not guaranteed: it must be dealt
@@ -727,7 +727,7 @@ class Owner:
     @commands.command()
     @checks.is_owner()
     async def join(self):
-        """Shows Red's invite URL"""
+        """Shows Kermit's invite URL"""
         if self.bot.user.bot:
             await self.bot.whisper("Invite URL: " + self.bot.oauth_url)
         else:
@@ -836,8 +836,8 @@ class Owner:
 
     @commands.command()
     async def info(self):
-        """Shows info about Red"""
-        author_repo = "https://github.com/Twentysix26"
+        """Shows info about Kermit"""
+        author_repo = "https://github.com/mrfizzl3"
         red_repo = author_repo + "/Red-DiscordBot"
         server_url = "https://discord.gg/red"
         dpy_repo = "https://github.com/Rapptz/discord.py"
@@ -884,7 +884,7 @@ class Owner:
 
     @commands.command()
     async def uptime(self):
-        """Shows Red's uptime"""
+        """Shows Kermit's uptime"""
         since = self.bot.uptime.strftime("%Y-%m-%d %H:%M:%S")
         passed = self.get_bot_uptime()
         await self.bot.say("Been up for: **{}** (since {} UTC)"
@@ -892,7 +892,7 @@ class Owner:
 
     @commands.command()
     async def version(self):
-        """Shows Red's current version"""
+        """Shows Kermit's current version"""
         response = self.bot.loop.run_in_executor(None, self._get_version)
         result = await asyncio.wait_for(response, timeout=10)
         try:
