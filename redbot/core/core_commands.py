@@ -313,10 +313,13 @@ class Core:
     @_set.command(name="game")
     @checks.is_owner()
     @commands.guild_only()
-    async def _game(self, ctx, *, game: str):
+    async def _game(self, ctx, *, game: str=None):
         """Sets Red's playing status"""
         status = ctx.me.status
-        game = discord.Game(name=game)
+        if game:
+            game = discord.Game(name=game)
+        else:
+            game = None
         await ctx.bot.change_presence(status=status, game=game)
         await ctx.send(_("Game set."))
 
