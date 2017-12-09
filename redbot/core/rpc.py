@@ -1,4 +1,4 @@
-from typing import NewType, TYPE_CHECKING
+from typing import NewType
 
 import asyncio
 
@@ -6,6 +6,8 @@ from aiohttp.web import Application
 from aiohttp_json_rpc import JsonRpc
 
 import logging
+
+from .utils import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .bot import Red
