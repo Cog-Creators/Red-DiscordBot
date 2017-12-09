@@ -1,0 +1,6 @@
+ipgetter.py
+setup.cfg
+ipgetter.egg-info/PKG-INFO
+ipgetter.egg-info/SOURCES.txt
+ipgetter.egg-info/dependency_links.txt
+ipgetter.egg-info/top_level.txt

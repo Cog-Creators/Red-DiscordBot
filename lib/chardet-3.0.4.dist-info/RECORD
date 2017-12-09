@@ -46,7 +46,7 @@ chardet-3.0.4.dist-info/WHEEL,sha256=o2k-Qa-RMNIJmUdIc7KU6VWR_ErNRbWNlxDIpl7lm34
 chardet-3.0.4.dist-info/entry_points.txt,sha256=fAMmhu5eJ-zAJ-smfqQwRClQ3-nozOCmvJ6-E8lgGJo,60
 chardet-3.0.4.dist-info/metadata.json,sha256=0htbRM18ujyGZDdfowgAqj6Hq2eQtwzwyhaEveKntgo,1375
 chardet-3.0.4.dist-info/top_level.txt,sha256=AowzBbZy4x8EirABDdJSLJZMkJ_53iIag8xfKR6D7kI,8
-../../bin/chardetect.exe,sha256=vm_BUiJerMcsWd72Ie5rCLk_CKD6nmqyFUm7nokubuk,89493
+../../bin/chardetect.exe,sha256=VuJX5uTW9AIpcBxBMophAMtiDSTWB6l3VXgtpt9Be7Y,89493
 chardet-3.0.4.dist-info/INSTALLER,sha256=zuuue4knoyJ-UwPPXg8fezS7VCrXJQrAP7zeNuwvFQg,4
 chardet/cli/__pycache__/chardetect.cpython-36.pyc,,
 chardet/cli/__pycache__/__init__.cpython-36.pyc,,

@@ -1,0 +1,22 @@
+Metadata-Version: 1.1
+Name: ipgetter
+Version: 0.6
+Summary: Utility to fetch your external IP address
+Home-page: https://github.com/phoemur/ipgetter
+Author: Fernando Giannasi <phoemur@gmail.com>
+Author-email: UNKNOWN
+License: WTFPL
+Download-URL: https://github.com/phoemur/ipgetter/tarball/0.6
+Description: This module is designed to fetch your external IP address from the internet. It is used mostly when behind a NAT. It picks your IP 
+        randomly from a serverlist to minimize request overhead on a single server
+        
+        If you want to add or remove your server from the list contact me on github
+Platform: UNKNOWN
+Classifier: Environment :: Console
+Classifier: License :: Public Domain
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 3
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Topic :: System :: Networking
+Classifier: Topic :: Utilities

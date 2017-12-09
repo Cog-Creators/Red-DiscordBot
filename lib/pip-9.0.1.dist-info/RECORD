@@ -253,9 +253,9 @@ pip-9.0.1.dist-info/WHEEL,sha256=o2k-Qa-RMNIJmUdIc7KU6VWR_ErNRbWNlxDIpl7lm34,110
 pip-9.0.1.dist-info/entry_points.txt,sha256=GWc-Wb9WUKZ1EuVWNz-G0l3BeIpbNJLx0OJbZ61AAV0,68
 pip-9.0.1.dist-info/metadata.json,sha256=aqvkETDy4mHUBob-2Fn5WWlXORi_M2OSfQ2HQCUU_Fk,1565
 pip-9.0.1.dist-info/top_level.txt,sha256=zuuue4knoyJ-UwPPXg8fezS7VCrXJQrAP7zeNuwvFQg,4
-../../bin/pip.exe,sha256=hyBYUf4jNl58eBFlJ80NllZrtp3WdqqadDC_rCkwlWY,89474
-../../bin/pip3.exe,sha256=hyBYUf4jNl58eBFlJ80NllZrtp3WdqqadDC_rCkwlWY,89474
-../../bin/pip3.6.exe,sha256=hyBYUf4jNl58eBFlJ80NllZrtp3WdqqadDC_rCkwlWY,89474
+../../bin/pip.exe,sha256=glWdYD683qFaU5tzb8NCcBt_R5S7xL_k4bzOT_BupKM,89474
+../../bin/pip3.exe,sha256=glWdYD683qFaU5tzb8NCcBt_R5S7xL_k4bzOT_BupKM,89474
+../../bin/pip3.6.exe,sha256=glWdYD683qFaU5tzb8NCcBt_R5S7xL_k4bzOT_BupKM,89474
 pip-9.0.1.dist-info/INSTALLER,sha256=zuuue4knoyJ-UwPPXg8fezS7VCrXJQrAP7zeNuwvFQg,4
 pip/commands/__pycache__/check.cpython-36.pyc,,
 pip/commands/__pycache__/completion.cpython-36.pyc,,

@@ -74,7 +74,7 @@ class Statistics:
 
     async def embed_statistics(self):
         stats = self.retrieve_statistics()
-        em = discord.Embed(description=u'\u2063\n', color=discord.Color.green())
+        em = discord.Embed(description=u'\u2063\n', color=discord.Color.red())
         avatar = self.bot.user.avatar_url if self.bot.user.avatar else self.bot.user.default_avatar_url
         em.set_author(name='Statistics of {}'.format(stats['name']), icon_url=avatar)
 
