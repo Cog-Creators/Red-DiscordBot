@@ -811,7 +811,7 @@ class Owner:
         if isinstance(author, discord.Member):
             colour = author.colour
         else:
-            colour = discord.Colour.red()
+            colour = discord.Colour.green()
 
         description = "Sent by {} {}".format(author, source)
 
@@ -842,7 +842,7 @@ class Owner:
         server_url = "https://discord.gg/red"
         dpy_repo = "https://github.com/Rapptz/discord.py"
         python_url = "https://www.python.org/"
-        since = datetime.datetime(2016, 1, 2, 0, 0)
+        since = datetime.datetime(2017, 12, 9, 0, 0)
         days_since = (datetime.datetime.utcnow() - since).days
         dpy_version = "[{}]({})".format(discord.__version__, dpy_repo)
         py_version = "[{}.{}.{}]({})".format(*os.sys.version_info[:3],
@@ -868,12 +868,12 @@ class Owner:
             "and help us improve!\n\n"
             "".format(red_repo, author_repo, server_url))
 
-        embed = discord.Embed(colour=discord.Colour.red())
+        embed = discord.Embed(colour=discord.Colour.green())
         embed.add_field(name="Instance owned by", value=str(owner))
         embed.add_field(name="Python", value=py_version)
         embed.add_field(name="discord.py", value=dpy_version)
         embed.add_field(name="About Red", value=about, inline=False)
-        embed.set_footer(text="Bringing joy since 02 Jan 2016 (over "
+        embed.set_footer(text="Sitting on that rock since 12/09/17 03:05:20 UTC (that's "
                          "{} days ago!)".format(days_since))
 
         try:
@@ -996,7 +996,7 @@ class Owner:
         if not os.path.isdir(".git"):
             msg = "This instance of Red hasn't been installed with git."
             e = discord.Embed(title=msg,
-                              colour=discord.Colour.red())
+                              colour=discord.Colour.green())
             return e
 
         commands = " && ".join((
@@ -1016,7 +1016,7 @@ class Owner:
 
         embed = discord.Embed(title="Updates of " + repo_name,
                               description="Last three updates",
-                              colour=discord.Colour.red(),
+                              colour=discord.Colour.green(),
                               url="{}/tree/{}".format(url, branch))
 
         for line in commits.split('\n'):

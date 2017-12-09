@@ -213,7 +213,7 @@ class General:
         else:
             roles = "None"
 
-        data = discord.Embed(description=game, colour=user.colour)
+        data = discord.Embed(description=game, colour=discord.Colour.green())
         data.add_field(name="Joined Discord on", value=created_on)
         data.add_field(name="Joined this server on", value=joined_on)
         data.add_field(name="Roles", value=roles, inline=False)
@@ -252,12 +252,9 @@ class General:
                       "".format(server.created_at.strftime("%d %b %Y %H:%M"),
                                 passed))
 
-        colour = ''.join([choice('0123456789ABCDEF') for x in range(6)])
-        colour = int(colour, 16)
-
         data = discord.Embed(
             description=created_at,
-            colour=discord.Colour(value=colour))
+            colour=discord.Colour.green()))
         data.add_field(name="Region", value=str(server.region))
         data.add_field(name="Users", value="{}/{}".format(online, total_users))
         data.add_field(name="Text Channels", value=text_channels)
