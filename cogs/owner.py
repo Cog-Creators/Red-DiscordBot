@@ -869,7 +869,7 @@ class Owner:
             "".format(red_repo, author_repo, server_url))
 
         embed = discord.Embed(colour=discord.Colour.green())
-        embed.add_field(name="Instance owned by", value=str(owner))
+        embed.add_field(name="Instance owned by", value="<@165581160783544320>")
         embed.add_field(name="Python", value=py_version)
         embed.add_field(name="discord.py", value=dpy_version)
         embed.add_field(name="About Red", value=about, inline=False)

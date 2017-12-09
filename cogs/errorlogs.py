@@ -56,7 +56,7 @@ class ErrorLogs():
         log = "".join(traceback.format_exception(type(error), error,
                                                     error.__traceback__))
         channel = ctx.message.channel
-        embed = discord.Embed(title=error_title, colour=discord.Colour.red(), timestamp=ctx.message.timestamp)
+        embed = discord.Embed(title=error_title, colour=discord.Colour.green(), timestamp=ctx.message.timestamp)
         embed.add_field(name="Invoker", value="{}\n({})".format(ctx.message.author.mention, str(ctx.message.author)))
         embed.add_field(name="Content", value=ctx.message.content)
         _channel_disp = "Private channel" if channel.is_private else "{}\n({})".format(channel.mention, channel.name)

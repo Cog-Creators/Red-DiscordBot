@@ -254,7 +254,7 @@ class General:
 
         data = discord.Embed(
             description=created_at,
-            colour=discord.Colour.green()))
+            colour=discord.Colour.green())
         data.add_field(name="Region", value=str(server.region))
         data.add_field(name="Users", value="{}/{}".format(online, total_users))
         data.add_field(name="Text Channels", value=text_channels)
