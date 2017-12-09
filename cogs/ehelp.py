@@ -47,7 +47,7 @@ class helpc:
                 command = self.bot.commands.get(name)
                 if command is None:
                     try:
-                        await self.bot.send_message(destination, embed = discord.Embed(title = "Error \U0000274e", description =  self.bot.command_not_found.format(name), colour =0x90181e))
+                        await self.bot.send_message(destination, embed = discord.Embed(title = "Error \U0000274e", description =  self.bot.command_not_found.format(name), colour =0x2ecc71))
                     except discord.Forbidden:
                         await self.bot.send_message(destination, self.bot.command_not_found.format(name))
                     return
@@ -58,7 +58,7 @@ class helpc:
             command = self.bot.commands.get(commands[0])
             if command is None:
                 try:
-                    await self.bot.send_message(destination, embed = discord.Embed(title = "Error \U0000274e", description =  self.bot.command_not_found.format(name), colour =0x90181e))
+                    await self.bot.send_message(destination, embed = discord.Embed(title = "Error \U0000274e", description =  self.bot.command_not_found.format(name), colour =0x2ecc71))
                 except discord.Forbidden:
                     await self.bot.send_message(destination, self.bot.command_not_found.format(name))
                 return
@@ -69,13 +69,13 @@ class helpc:
                     command = command.commands.get(key)
                     if command is None:
                         try:
-                            await self.bot.send_message(destination, embed = discord.Embed(title = "Error \U0000274e", description =  self.bot.command_not_found.format(key), colour =0x90181e))
+                            await self.bot.send_message(destination, embed = discord.Embed(title = "Error \U0000274e", description =  self.bot.command_not_found.format(key), colour =0x2ecc71))
                         except discord.Forbidden:
                             await self.bot.send_message(destination, self.bot.command_not_found.format(key))
                         return
                 except AttributeError:
                     try:
-                        await self.bot.send_message(destination, embed = discord.Embed(title = "Error \U0000274e", description =  self.bot.command_has_no_subcommands.format(command, key), colour =0x90181e))
+                        await self.bot.send_message(destination, embed = discord.Embed(title = "Error \U0000274e", description =  self.bot.command_has_no_subcommands.format(command, key), colour =0x2ecc71))
                     except discord.Forbidden:
                         await self.bot.send_message(destination, self.bot.command_has_no_subcommands.format(command, key))
                     return
@@ -92,7 +92,7 @@ class helpc:
         #consistency check. we don't want a blank help command do we
         if my.permissions_in(channel).embed_links:
             #now we have the help builder with everything defined
-            #all we need to check now is if the page is 1 or not 
+            #all we need to check now is if the page is 1 or not
             #so our embed builder can recognize it with ease
             if len(pages) == 1:
                 #it is either a command or a cog since we are recieving a page from the formatter
@@ -127,7 +127,7 @@ class helpc:
                     a.set_author(name = my.name, icon_url= my.avatar_url)
                     a.timestamp = ctx.message.timestamp
                     a.description = desc
-                    a.colour = 0x90181e
+                    a.colour = 0x2ecc71
                     a.set_footer(text = "Page: {0} of {1}".format(page_no, len(pages)))
                     await self.bot.send_message(destination, embed = a)
                     page_no += 1

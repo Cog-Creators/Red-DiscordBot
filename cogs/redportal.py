@@ -46,7 +46,7 @@ class Redportal:
                 embed = discord.Embed(title=cog['name'],
                                       url='https://cogs.red{}'.format(cog['links']['self']),
                                       description=((cog['description'] and len(cog['description']) > 175 and '{}...'.format(cog['description'][:175])) or cog['description']) or cog['short'],
-                                      color=0xfd0000)
+                                      color=0x2ecc71)
                 embed.add_field(name='Type', value=cog['repo']['type'], inline=True)
                 embed.add_field(name='Author', value=cog['author']['name'], inline=True)
                 embed.add_field(name='Repo', value=cog['repo']['name'], inline=True)
@@ -93,12 +93,12 @@ class Redportal:
         """menu control logic for this taken from
            https://github.com/Lunar-Dust/Dusty-Cogs/blob/master/menu/menu.py"""
         cog = cog_list[page]
-    
+
         is_owner_or_co = is_owner_check(ctx)
         if is_owner_or_co:
             expected = ["➡", "✅", "⬅", "❌"]
         else:
-            expected = ["➡", "⬅", "❌"] 
+            expected = ["➡", "⬅", "❌"]
 
         if not message:
             message =\

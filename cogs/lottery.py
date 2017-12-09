@@ -126,7 +126,7 @@ class Lottery:
                         "8 - Days on Server\n0 - Exit")
 
         while True:
-            embed = discord.Embed(title="Lottery Edit Menu", color=0x50bdfe)
+            embed = discord.Embed(title="Lottery Edit Menu", color=0x2ecc71)
             embed.add_field(name="=============", value=menu_content, inline=False)
             embed.set_footer(text="Type a number to edit a loadout setting.\nAdditionally, type"
                                   "{}cancel to exit at anytime.".format(ctx.prefix))
@@ -384,9 +384,9 @@ class Lottery:
     @checks.admin_or_permissions(manage_server=True)
     async def _end_lottery(self, ctx):
         """Manually ends a lottery. Use help on end lottery for more info
-        This command must be used on an active lottery that does not have a timer set 
+        This command must be used on an active lottery that does not have a timer set
         or you will be unable to start a new lottery. This command may also be used
-        to end a lottery which has a timer, early using this command.     
+        to end a lottery which has a timer, early using this command.
         """
         author = ctx.message.author
         settings = self.check_server_settings(author.server)
@@ -660,7 +660,7 @@ class Lottery:
         You must have the required role to sign-up for stat tracking.
         If you lose the role, or it changes your stats will still be tracked
         and the information can be viewed when you get the role again.
-        
+
         By default, anyone can sign up.
         """
         author = ctx.message.author
@@ -740,7 +740,7 @@ class Lottery:
         played = settings["Members"][author.id]["Entries"]
         won = settings["Members"][author.id]["Won"]
 
-        embed = discord.Embed(description="Lottery Stat Tracker", color=0x50bdfe)
+        embed = discord.Embed(description="Lottery Stat Tracker", color=0x2ecc71)
         embed.set_author(name=author.name)
         embed.set_thumbnail(url=author.avatar_url)
         embed.add_field(name="Entries", value=played, inline=True)
@@ -775,7 +775,7 @@ class Lottery:
             else:
                 desc = "You have **not** entered into this lottery yet."
 
-            embed = discord.Embed(title="Loadout {}".format(ld), description=desc, color=0x50bdfe)
+            embed = discord.Embed(title="Loadout {}".format(ld), description=desc, color=0x2ecc71)
             embed.set_author(name="Lottery System 3.0")
             embed.add_field(name="Prize", value=prize, inline=True)
             embed.add_field(name="Possible Winners", value=winners, inline=True)
@@ -826,7 +826,7 @@ class Lottery:
         start_msg = settings["Loadouts"][loadout]["Start Message"]
         end_msg = settings["Loadouts"][loadout]["End Message"]
 
-        embed = discord.Embed(title="Loadout {}".format(loadout), color=0x50bdfe)
+        embed = discord.Embed(title="Loadout {}".format(loadout), color=0x2ecc71)
         embed.add_field(name="Prize", value=prize, inline=True)
         embed.add_field(name="Number of Winners", value=winners, inline=True)
         embed.add_field(name="Role", value=role_req, inline=True)
@@ -874,7 +874,7 @@ class Lottery:
         you will need to update lottery with this command to the new role.
         Otherwise, no one will be able to view their stats, but it will still
         track if they were able to signup.
-        
+
         By default this command is set to @everyone, and anyone can join.
         """
         server = ctx.message.server
