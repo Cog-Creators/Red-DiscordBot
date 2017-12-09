@@ -1,0 +1,11 @@
+..\tabulate.py
+..\__pycache__\tabulate.cpython-36.pyc
+dependency_links.txt
+entry_points.txt
+PKG-INFO
+requires.txt
+SOURCES.txt
+top_level.txt
+..\..\..\bin\tabulate-script.py
+..\..\..\bin\tabulate.exe
+..\..\..\bin\tabulate.exe.manifest
