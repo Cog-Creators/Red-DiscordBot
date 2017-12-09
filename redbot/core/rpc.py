@@ -1,5 +1,3 @@
-from typing import NewType
-
 import asyncio
 
 from aiohttp.web import Application
@@ -13,7 +11,7 @@ if TYPE_CHECKING:
     from .bot import Red
 
 log = logging.getLogger('red.rpc')
-JsonSerializable = NewType('JsonSerializable', dict)
+JsonSerializable = type('JsonSerializable', (dict,), {})
 
 _rpc = JsonRpc(logger=log)
 
