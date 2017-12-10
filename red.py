@@ -7,6 +7,7 @@ import logging.handlers
 import traceback
 import datetime
 import subprocess
+import importlib
 
 try:
     from discord.ext import commands
@@ -70,6 +71,53 @@ class Bot(commands.Bot):
             if self.settings.self_bot:
                 kwargs['pm_help'] = False
         super().__init__(*args, command_prefix=prefix_manager, **kwargs)
+
+    def load_extension(self, name):
+        if name in self.extensions:
+            return
+
+        lib = importlib.import_module(name)
+        if not hasattr(lib, 'setup'):
+            del lib
+            del sys.modules[name]
+            raise discord.ClientException('extension does not have a setup function')
+
+        # Let's find the cog class...
+        cog = None
+        for value in lib.__dict__.values():
+            if not hasattr(value, "__dict__"):
+                continue
+            for v in value.__dict__.values():
+                if isinstance(v, commands.core.Command):
+                    cog = value
+                    break
+            if cog:
+                break
+
+        if cog:
+            # ...and rename any duplicate command name...
+            for command in cog.__dict__.values():
+                if not isinstance(command, commands.core.Command):
+                    continue
+                current_command_name = command.name
+                i = 0
+                while command.name in self.commands:
+                    i += 1
+                    command.name = "{}-{}".format(current_command_name, i)
+
+                # ...aliases too
+                new_aliases = []
+                for alias in command.aliases:
+                    i = 0
+                    current_alias = alias
+                    while alias in self.commands:
+                        i += 1
+                        alias = "{}-{}".format(current_alias, i)
+                    new_aliases.append(alias)
+                command.aliases = new_aliases
+
+        lib.setup(self)
+        self.extensions[name] = lib
 
     async def send_message(self, *args, **kwargs):
         if self._message_modifiers:
