@@ -291,7 +291,7 @@ def main_menu():
         print("1. Run Red w/ autorestart in case of issues")
         print("2. Run Red")
         print("3. Update Red")
-        print("4. Update Red (development version")
+        print("4. Update Red (development version)")
         print("5. Create Instance")
         print("6. Debug information (use this if having issues with the launcher or bot)")
         print("0. Exit")
