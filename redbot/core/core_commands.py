@@ -18,9 +18,8 @@ from redbot.core import rpc
 from redbot.core import __version__
 from redbot.core.context import RedContext
 
-from typing import TYPE_CHECKING
-
-from redbot.core.utils.chat_formatting import pagify, box
+from .utils import TYPE_CHECKING
+from .utils.chat_formatting import pagify, box
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
