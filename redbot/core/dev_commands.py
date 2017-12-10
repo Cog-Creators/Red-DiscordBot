@@ -4,6 +4,7 @@ import io
 import textwrap
 import traceback
 from contextlib import redirect_stdout
+from copy import copy
 
 import discord
 from discord.ext import commands
@@ -286,17 +287,11 @@ class Dev:
 
         The prefix must not be entered.
         """
-        # Since we have stateful objects now this might be pretty bad
-        # Sorry Danny
-        old_author = ctx.author
-        old_content = ctx.message.content
-        ctx.message.author = user
-        ctx.message.content = ctx.prefix + command
+        msg = copy(ctx.message)
+        msg.author = user
+        msg.content = ctx.prefix + command
 
-        await ctx.bot.process_commands(ctx.message)
-
-        ctx.message.author = old_author
-        ctx.message.content = old_content
+        ctx.bot.dispatch('message', msg)
 
     @commands.command(name="mockmsg")
     @checks.is_owner()
