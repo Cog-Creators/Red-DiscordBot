@@ -7,7 +7,7 @@ Who is the only player to score 100 points in a single game?`Wilt Chamberlain
 Who has the record for most points scored in a quarter?`Klay Thompson
 Who is the youngest player to be drafted?`Andrew Bynum
 Who is the oldest player to be drafted?`Bernard James
-Who is the youngest player to record a triple double?`LeBron James`Lebron
+Who is the youngest player to record a triple double?`Lonzo Ball
 Who is the youngest player to lead the league in scoring?`Kevin Durant 
 Which player had 5 consecutive 40+ point games in his rookie season?`Allen Iverson
 Who is the youngest player to score 60+ points in a game?`David Thompson
@@ -33,7 +33,7 @@ What franchise has the highest winning percentage in history?`San Antonio Spurs`
 Who has won the most MVP awards in NBA history?`Kareem Abdul-Jabbar
 Name one of the 2 players who won the DPOY award 4 times during their career?`Ben Wallace or Dikembe Mutombo`Ben Wallace`Dikembe Mutombo
 What player has won the most sixth man awards?`Jamal Crawford
-When was the Larry O’Brien trophy created?`1977
+When was the Larry Oâ€™Brien trophy created?`1977
 Who is the most recent player to win MVP in back to back seasons?`Stephen Curry
 How many MVP awards did Kobe Bryant win?`1`one
 Who won MVP in 1993?`Charles Barkley
@@ -52,7 +52,7 @@ Who is the first ever player to win ROTY?`Don Menieke
 With what team did Kevin Durant win ROTY?`Seattle Supersonics`Supersonics
 Who won ROTY in 2002?`Pau Gasol
 Who won ROTY in 1998?`Tim Duncan 
-Who won ROTY in 1993?`Shaquille O’Neal`Shaq
+Who won ROTY in 1993?`Shaquille Oâ€™Neal`Shaq
 Who won ROTY in 1987?`Chuck Person
 Who is the first ever player to win DPOY?`Sidney Moncrief
 Who is the only point guard to win DPOY?`Gary Payton
@@ -100,7 +100,7 @@ Phoenix ____?`Suns
 Portland _______?`Trailblazers
 Oklahoma City _____?`Thunder
 Utah ____?`Jazz
-Minnesota ______?`Timberwolves
+Minnesota ______?`Timberwolves`TWolves
 Denver _____?`Nuggets
 Indiana _____?`Pacers
 Cleveland ______?`Cavaliers`Cavs
@@ -139,7 +139,7 @@ What arena do the Minnesota Timberwolves play in?`Target Center
 What arena do the Oklahoma City Thunder play in?`Chesapeake Energy Arena
 What arena do the Indiana Pacers play in?`Bankers Life Fieldhouse Center
 What arena do the Cleveland Cavaliers play in?`Quicken Loans arena
-What arena do the Detroit Pistons play in?`The Palace of Auburn Hills
+What arena do the Detroit Pistons play in?`Little Caesars Arena
 What arena do the Milwaukee Bucks play in?`BMO Harris Bradley Center
 What arena do the Chicago Bulls play in?`United Center
 What arena do the Miami Heat play in?`American Airlines Arena
@@ -159,27 +159,32 @@ When was the most recent blow out in the NBA Finals?`2007
 In what year did the Dallas Mavericks win their first championship?`2011
 Who is the shortest player to ever play in the NBA?`Muggsy Bogues
 Who won the NBA championship in 1978?`Washington Bullets`Bullets
-In what year did the Los Angeles Lakers upset the New Jersey Net?`2002
+In what year did the Los Angeles Lakers upset the New Jersey Nets?`2002
 What team won a championship in 1989, 1990 and 2004?`Detroit Pistons`Pistons
 The Spurs won 5 championships and lost in 1 finals, what year did they lose?`2013
 How many championships have the Philadelphia 76ers won?`3`three
-What team lost in the 1981 and 1986 final?`Houston Rockets`rockets
+What team lost in the 1981 and 1986 final?`Houston Rockets`Rockets
 Who won the championship in 1983?`Philadelphia 76ers`76ers
 In what year did Tracy McGrady win Most Improved Player award?`2001
 Who won the Most Improved Player award in 2011?`Kevin Love
 Who is the first European player to win the Most Improved Player award?`Gheorghe Muresan
 Who is the first ever player to win the Most Improved Player award?`Alvin Robertson
-What team has the most players to win the Most Improved Player award with 5 winners?`Orlando Magic`magic
+What team has the most players to win the Most Improved Player award with 5 winners?`Orlando Magic`Magic
 Who is the first ever coach to win the Coach of the Year award?`Harry Gallatin
 Who is the Coach of the Year award names after?`Red Auerbach
 In what year did Phil Jackson win the Coach of the Year award after coaching the Bulls to a 72 wins season?`1996
 Who won Coach of the Year in the 2011 season?`Tom Thibodeau
 What coach won Coach of the Year and led the Nuggets to a  57-win season, without having an NBA-All Star?`George Karl
-How many coaches have won the Coach of the Year award 3 times?`3`three
+How many coaches have won the Coach of the Year award 3 times?`3`Three
 What coach won Coach of the Year award with a 33-48 record?`Johnny Kerr
-Who won the Coach of the year award 3x with one team?`Gregg Popovich
-Who is the greatest coach of all time according to Lebron James?`Gregg Popovich
+Who won the Coach of the year award 3x with one team?`Gregg Popovich`Coach Pop
+Who is the greatest coach of all time according to Lebron James?`Gregg Popovich`Coach Pop
 Who was selected first overall in the 2016 NBA Draft?`Ben Simmons
+Who was selected first overall in the 2017 NBA Draft?`Markelle Fultz
+Who was selected first overall in the 2011 NBA Draft?`Kyrie Irving
+Who was selected first overall in the 2003 NBA Draft?`LeBron James`LeBron
+Who was selected first overall in the 1996 NBA Draft?`Allen Iverson
+Who was selected first overall in the 1992 NBA Draft?`Shaquille O'Neal`Shaq
 Who was selected as a high school player in the first round of the 2016 NBA Draft?`Thon Maker
 Who is the only Canadian player that was selected in the 2016 NBA Draft?`Jamal Murray
 How many international players were selected in the 2016 NBA Draft?`28
@@ -199,6 +204,7 @@ Who was known as 'Agent Zero'?`Gilbert Arenas
 What was Glen Davis' nickname?`Big Baby
 Who was known as 'The Mailman'?`Karl Malone
 What is Vince Carter's nickname?`Vinsanity
+What is Paul George's nickname?`PG13
 Which team drafted Steve Francis 2nd overall in the 1999 draft, and traded him to the Rockets?`Vancouver Grizzlies`Grizzlies
 What team selected Julius Erving 12th in the 1972 draft?`Milwaukee Bucks`Bucks
 Who did the Boston Celtics draft 3rd overall in the 1997 draft?`Chauncey Billups
@@ -224,3 +230,8 @@ What college did Nate Robinson go to?`University of Washington`Washington
 What college did Dwayne Wade go to?`Marquette University`Marquette
 What college did Anthony Davis go to?`University of Kentucky`Kentucky
 What college did Jerry West go to?`West Virginia University`West Virginia
+What team had the longest NBA Playoff drought of 15 seasons?`Los Angeles Clippers`Clippers`LA Clippers
+In what year were the Vancouver Grizzlies and Toronto Raptors added to the NBA?`1995
+Who scored more points in their first 5 starts since 1976?`Jeremy Lin`Linsanity
+What player had an NBA career lasting 3.9 seconds?`JamesOn Curry
+What college has produced the most NBA players?`Kentucky`University of Kentucky`UK`Kentucky University
