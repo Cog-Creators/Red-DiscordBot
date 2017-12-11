@@ -19,11 +19,7 @@ def randomize_colour(embed: discord.Embed) -> discord.Embed:
         The embed with the color set to a random color
 
     """
-    embed.colour = discord.Color(
-        value=int(
-            ''.join([random.choice('0123456789ABCDEF') for x in range(6)]), 16
-        )
-    )
+    embed.colour = discord.Color(value=random.randint(0x000000, 0xFFFFFF))
     return embed
 
 
