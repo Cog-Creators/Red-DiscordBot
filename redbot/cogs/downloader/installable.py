@@ -5,6 +5,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Union, MutableMapping, Any
 
+from redbot.core import data_manager
 from .log import log
 from .json_mixins import RepoJSONMixin
 
@@ -191,11 +192,13 @@ class Installable(RepoJSONMixin):
         return info
 
     def to_json(self):
+        data_path = data_manager.cog_data_path()
         return {
-            "location": self._location.relative_to(Path.cwd()).parts
+            "location": self._location.relative_to(data_path).parts
         }
 
     @classmethod
     def from_json(cls, data: dict):
-        location = Path.cwd() / Path(*data["location"])
+        data_path = data_manager.cog_data_path()
+        location = data_path / Path(*data["location"])
         return cls(location=location)

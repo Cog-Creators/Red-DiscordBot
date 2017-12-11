@@ -19,7 +19,7 @@ from . import (
 )
 from .help_formatter import Help, help as help_
 
-from typing import TYPE_CHECKING
+from .utils import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from aiohttp_json_rpc import JsonRpc

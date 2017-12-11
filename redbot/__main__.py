@@ -157,10 +157,9 @@ def main():
         rpc.clean_up()
         if cleanup_tasks:
             pending = asyncio.Task.all_tasks(loop=red.loop)
-            gathered = asyncio.gather(*pending, loop=red.loop)
+            gathered = asyncio.gather(
+                *pending, loop=red.loop, return_exceptions=True)
             gathered.cancel()
-            red.loop.run_until_complete(gathered)
-            gathered.exception()
 
         sys.exit(red._shutdown_mode.value)
 
