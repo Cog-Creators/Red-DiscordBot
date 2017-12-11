@@ -23,7 +23,7 @@ What is the only team that doubled the points of their opponent in a regulation 
 What team had the largest margin of victory in a game?`Cleveland Cavaliers`Cavaliers`Cavs
 What team had the most assists in a game?`Milwaukee Bucks`Bucks
 What was the Golden State Warrior's record in the 2015-16 season?`73-9`73:9`73 to 9
-What team had the worst record of 7-59 in a regular season?`Charlotte Hornets`Hornets
+What team had the worst record of 7-59 in a regular season?`Charlotte Hornets`Hornets`Charlotte Bobcats`Bobcats
 What was the only number that Tim Duncan wore?`21
 When did the Spurs retire number 21(MMDDYY)?`December 18, 2015`12/18/2015`12182015
 What is Kawhi Leonard's career high points as of Jan 23, 2016?`41
@@ -158,7 +158,7 @@ What team has the most appearances in the NBA Finals?`Los Angeles Lakers`Lakers
 When was the most recent blow out in the NBA Finals?`2007
 In what year did the Dallas Mavericks win their first championship?`2011
 Who is the shortest player to ever play in the NBA?`Muggsy Bogues
-Who won the NBA championship in 1978?`Washington Bullets`Bullets
+Who won the NBA championship in 1978?`Washington Bullets`Bullets`Washington Wizards`Wizards
 In what year did the Los Angeles Lakers upset the New Jersey Nets?`2002
 What team won a championship in 1989, 1990 and 2004?`Detroit Pistons`Pistons
 The Spurs won 5 championships and lost in 1 finals, what year did they lose?`2013
@@ -228,3 +228,25 @@ What college did Jerry West go to?`West Virginia University`West Virginia
 What team has the longest NBA Conference Finals appearance drought with 47 seasons?`Los Angeles Clippers`Clippers`LA Clippers
 What team had the longest NBA Playoffs appearance drought with 15 seasons?`Los Angeles Clippers`Clippers`LA Clippers
 In what year were the Vancouver Grizzlies and Toronto Raptors added to the NBA?`1995
+What player's 89 points in his first three starts are the most by any NBA player since the NBA and ABA merged in 1976.`Jeremy Lin`Linsanity
+What player had an NBA career lasting 3.9 seconds?`JamesOn Curry
+What college has produced the most NBA players?`University of Kentucky`Kentucky
+How many teams are still waiting for their first finals win?`Twelve`12
+What team has the longest NBA Finals drought of 66 seasons?`Sacramento Kings`Kings
+What team drafted Kobe Bryant as the 13th pick in the 1996 Draft?`Charlotte Hornets`Hornets
+Who is the owner of the Charlotte Hornets?`Michael Jordan`Jordan
+During Hurricane Katrina, what city did the New Orleans Hornets move to?`Oklahoma City
+What is Ray Allen's first name?`Walter
+What is Stephen Curry's first name?`Wadell
+Who is Stephen and Seth Curry's father?`Dell Curry`Dell
+What former NBA player owns 10% of all 'Five Guys Burgers' restaurants in the US?`Dr. Shaquille O'Neal`Shaquille O'Neal`Shaq
+Who has the #1 all time miss count in the NBA?`Kobe Bryant`Kobe
+What player died of a cocaine overdose 2 days after his draft night where he was the #2 pick?`Len Bias
+How many 3 pointers did Shaq make over his whole career?`1`One
+What player was stabbed 11 times in the face, back, and neck and still played all 82 games of the 2000-2001 NBA Season?`Paul Pierce
+What team has won slightly more than one out of every four NBA Championships, making them the most successful sports franchise in North American history?`Boston Celtics`Celtics
+What country wanted to be paid in wheat for allowing a 7'8½" (2.35m) tall Ri Myung-Hun to play in the NBA?`North Korea`Democratic People's Republic of Korea
+In 1948, before the NBA had any black players, what exhibition basketball group beat the NBA Champion Lakers in a straight up game?`Harlem Globetrotters`Globetrotters
+After what player was diagnosed with HIV, many NBA players claimed he shouldn't play because there could be a risk of contamination if he had an open wound?`Magic Johnson
+The largest confirmed moose was 7'6" (2.33 m) tall at the shoulder, the same height as what Chinese NBA star?`Yao Ming`Ming Yao
+What city is home to the only NBA game to have been forfeited on account of rain?`Seattle
