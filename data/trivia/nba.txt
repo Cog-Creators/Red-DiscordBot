@@ -232,3 +232,6 @@ What college did Anthony Davis go to?`University of Kentucky`Kentucky
 What college did Jerry West go to?`West Virginia University`West Virginia
 What team had the longest NBA Playoff drought of 15 seasons?`Los Angeles Clippers`Clippers`LA Clippers
 In what year were the Vancouver Grizzlies and Toronto Raptors added to the NBA?`1995
+Who scored more points in their first 5 starts since 1976?`Jeremy Lin`Linsanity
+What player had an NBA career lasting 3.9 seconds?`JamesOn Curry
+What college has produced the most NBA players?`Kentucky`University of Kentucky`UK`Kentucky University
