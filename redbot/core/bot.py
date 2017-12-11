@@ -76,12 +76,15 @@ class RedBase(BotBase, RpcMethodMixin):
             if message.guild is None:
                 return global_prefix
             server_prefix = await bot.db.guild(message.guild).prefix()
+
             if cli_flags.mentionable:
-                return when_mentioned_or(*server_prefix)(bot, message) \
-                    if server_prefix else \
-                    when_mentioned_or(*global_prefix)(bot, message)
-            else:
-                return server_prefix if server_prefix else global_prefix
+                if server_prefix:
+                    return when_mentioned_or(*server_prefix)
+                return when_mentioned_or(*global_prefix)
+
+            if server_prefix:
+                return server_prefix
+            return global_prefix
 
         if "command_prefix" not in kwargs:
             kwargs["command_prefix"] = prefix_manager
