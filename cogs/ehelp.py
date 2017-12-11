@@ -99,15 +99,13 @@ class helpc:
                 # now to start the procedure
                 info = "".join(e for e in pages)
                 info = info.replace("`","")
-                colour = ''.join([randchoice('0123456789ABCDEF') for x in range(6)])
-                colour = int(colour, 16)
                 e = discord.Embed()
                 e.set_author(name = "Command Help", icon_url = my.avatar_url)
                 if len(commands) != 0 and commands[0] in self.bot.cogs:
                     e.title = "Category Help | {}".format(commands[0])
                 elif len(commands) != 0 and commands[0] in self.bot.commands:
                     e.title = "Command Help | {0}{1}".format(ctx.prefix, commands[0])
-                e.colour = colour
+                e.colour = 0x2ecc71
                 e.description = info
                 e.timestamp = ctx.message.timestamp
                 e.set_footer(text = "{} Help Command".format(my.name))
@@ -116,8 +114,6 @@ class helpc:
                 #this is where all the hecked up stuff happens
                 #since this is a dm, we will send a selfmade description
                 page_no = 1
-                colour = ''.join([randchoice('0123456789ABCDEF') for x in range(6)])
-                colour = int(colour, 16)
                 for page in pages:
                     desc = "".join(e for e in page)
                     desc = desc.replace("`","")
