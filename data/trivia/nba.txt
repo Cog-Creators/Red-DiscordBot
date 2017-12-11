@@ -33,7 +33,7 @@ What franchise has the highest winning percentage in history?`San Antonio Spurs`
 Who has won the most MVP awards in NBA history?`Kareem Abdul-Jabbar
 Name one of the 2 players who won the DPOY award 4 times during their career?`Ben Wallace or Dikembe Mutombo`Ben Wallace`Dikembe Mutombo
 What player has won the most sixth man awards?`Jamal Crawford
-When was the Larry O’Brien trophy created?`1977
+When was the Larry Oâ€™Brien trophy created?`1977
 Who is the most recent player to win MVP in back to back seasons?`Stephen Curry
 How many MVP awards did Kobe Bryant win?`1`one
 Who won MVP in 1993?`Charles Barkley
@@ -52,7 +52,7 @@ Who is the first ever player to win ROTY?`Don Menieke
 With what team did Kevin Durant win ROTY?`Seattle Supersonics`Supersonics
 Who won ROTY in 2002?`Pau Gasol
 Who won ROTY in 1998?`Tim Duncan 
-Who won ROTY in 1993?`Shaquille O’Neal`Shaq
+Who won ROTY in 1993?`Shaquille Oâ€™Neal`Shaq
 Who won ROTY in 1987?`Chuck Person
 Who is the first ever player to win DPOY?`Sidney Moncrief
 Who is the only point guard to win DPOY?`Gary Payton
@@ -225,5 +225,6 @@ What college did Nate Robinson go to?`University of Washington`Washington
 What college did Dwayne Wade go to?`Marquette University`Marquette
 What college did Anthony Davis go to?`University of Kentucky`Kentucky
 What college did Jerry West go to?`West Virginia University`West Virginia
-What team had the longest NBA Playoff drought of 47 years?`Los Angeles Clippers`Clippers`LA Clippers
+What team has the longest NBA Conference Finals appearance drought with 47 seasons?`Los Angeles Clippers`Clippers`LA Clippers
+What team had the longest NBA Playoffs appearance drought with 15 seasons?`Los Angeles Clippers`Clippers`LA Clippers
 In what year were the Vancouver Grizzlies and Toronto Raptors added to the NBA?`1995
