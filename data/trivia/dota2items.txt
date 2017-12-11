@@ -17,6 +17,7 @@ What item is this? http://i.imgur.com/NkYZgr5.png `Tango (Shared)`Tango Shared`S
 What item is this? http://i.imgur.com/cYj1mr0.png `Talisman of Evasion
 What item is this? http://i.imgur.com/DHILKex.png `Stout Shield
 What item is this? http://i.imgur.com/JUbevw4.png `Staff of Wizardry
+What item is this? http://i.imgur.com/kiXFzsz.png `Spirit Vessel
 What item is this? http://i.imgur.com/KFBNr2l.png `Soul Ring
 What item is this? http://i.imgur.com/kC1KzdQ.png `Soul Booster
 What item is this? http://i.imgur.com/AWxOnXw.png `Solar Crest
@@ -54,7 +55,7 @@ What item is this? http://i.imgur.com/haXACou.png `Power Treads
 What item is this? http://i.imgur.com/nXn8KhO.png `Power Treads (Strength)`Power Treads Strength
 What item is this? http://i.imgur.com/11IYBpl.png `Power Treads (Intelligence)`Power Treads Intelligence
 What item is this? http://i.imgur.com/XYIEKMi.png `Power Treads (Agility)`Power Treads Agility
-What item is this? http://i.imgur.com/hze6GhN.png `Poor Man's Shield`PMS
+What item is this? (removed from game) http://i.imgur.com/hze6GhN.png `Poor Man's Shield`PMS
 What item is this? http://i.imgur.com/Pote0DA.png `Point Booster
 What item is this? http://i.imgur.com/m0U0nlL.png `Platemail
 What item is this? http://i.imgur.com/jvUNnd1.png `Pipe of Insight
@@ -68,6 +69,7 @@ What item is this? http://i.imgur.com/h5Gu48S.png `Observer Ward
 What item is this? http://i.imgur.com/1dXNyaw.png `Observer and Sentry Wards
 What item is this? http://i.imgur.com/XGkphzs.png `Observer and Sentry Wards
 What item is this? http://i.imgur.com/cJ3dEwh.png `Oblivion Staff
+What item is this? http://i.imgur.com/3bVcC3l.png `Nullifier
 What item is this? http://i.imgur.com/oentyyC.png `Null Talisman
 What item is this? http://i.imgur.com/1GWm8o6.png `Necronomicon 3
 What item is this? http://i.imgur.com/gjofxoF.png `Necronomicon 2
@@ -78,6 +80,7 @@ What item is this? http://i.imgur.com/YsrEZDL.png `Moon Shard
 What item is this? http://i.imgur.com/Re67cR1.png `Monkey King Bar`MKB
 What item is this? http://i.imgur.com/lNuWIWP.png `Mjollnir
 What item is this? http://i.imgur.com/DHqdudG.png `Mithril Hammer
+What item is this? http://i.imgur.com/7eicbbk.png `Meteor Hammer
 What item is this? http://i.imgur.com/6aJkxtG.png `Mekansm
 What item is this? http://i.imgur.com/DEZQLXo.png `Medallion of Courage
 What item is this? http://i.imgur.com/KL6jON7.png `Mask of Madness
@@ -88,8 +91,9 @@ What item is this? http://i.imgur.com/unPnQTi.png `Magic Stick
 What item is this? http://i.imgur.com/6Bj6Eiz.png `Maelstrom
 What item is this? http://i.imgur.com/TmZVLYT.png `Lotus Orb
 What item is this? http://i.imgur.com/oLgqHaR.png `Linken's Sphere
+What item is this? http://i.imgur.com/RM3sSIz.png `Kaya
 What item is this? http://i.imgur.com/ZidkeLE.png `Javelin
-What item is this? http://i.imgur.com/vXFECRh.png `Iron Talon
+What item is this? (removed from game) http://i.imgur.com/vXFECRh.png `Iron Talon
 What item is this? http://i.imgur.com/Fk2AqPs.png `Iron Branch
 What item is this? http://i.imgur.com/3hwvY3U.png `Infused Raindrop
 What item is this? http://i.imgur.com/LkabC8q.png `Hyperstone
@@ -179,5 +183,6 @@ What item is this? http://i.imgur.com/VtNBM6g.png `Animal Courier (Radiant)`Cour
 What item is this? http://i.imgur.com/lzdpgK0.png `Animal Courier (Dire)`Courier Dire`Animal Courier Dire
 What item is this? http://i.imgur.com/5eeAXJC.png `Aghanim's Scepter
 What item is this? http://i.imgur.com/ZjhX5T8.png `Aether Lens
+What item is this? http://i.imgur.com/ks3ysLe.png `Aeon Disk
 What item is this? http://i.imgur.com/5dfDXym.png `Aegis of the Immortal
 What item is this? http://i.imgur.com/CEkN0FS.png `Abyssal Blade
