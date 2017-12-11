@@ -100,7 +100,7 @@ class SuggestionBox:
         self.save_json()
         dm = await self.bot.send_message(author,
                                          "Please respond to this message"
-                                         "with your suggestion.\nYour "
+                                         " with your suggestion.\nYour "
                                          "suggestion should be a single "
                                          "message")
         message = await self.bot.wait_for_message(channel=dm.channel,
@@ -126,7 +126,7 @@ class SuggestionBox:
             else author.default_avatar_url
 
         em = discord.Embed(description=suggestion,
-                           color=discord.Color.purple())
+                           color=discord.Color.green())
         em.set_author(name='Suggestion from {0.display_name}'.format(author),
                       icon_url=avatar)
         em.set_footer(text='{0.id}'.format(author))
