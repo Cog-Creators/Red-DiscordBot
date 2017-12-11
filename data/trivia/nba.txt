@@ -163,23 +163,28 @@ In what year did the Los Angeles Lakers upset the New Jersey Nets?`2002
 What team won a championship in 1989, 1990 and 2004?`Detroit Pistons`Pistons
 The Spurs won 5 championships and lost in 1 finals, what year did they lose?`2013
 How many championships have the Philadelphia 76ers won?`3`three
-What team lost in the 1981 and 1986 final?`Houston Rockets`rockets
+What team lost in the 1981 and 1986 final?`Houston Rockets`Rockets
 Who won the championship in 1983?`Philadelphia 76ers`76ers
 In what year did Tracy McGrady win Most Improved Player award?`2001
 Who won the Most Improved Player award in 2011?`Kevin Love
 Who is the first European player to win the Most Improved Player award?`Gheorghe Muresan
 Who is the first ever player to win the Most Improved Player award?`Alvin Robertson
-What team has the most players to win the Most Improved Player award with 5 winners?`Orlando Magic`magic
+What team has the most players to win the Most Improved Player award with 5 winners?`Orlando Magic`Magic
 Who is the first ever coach to win the Coach of the Year award?`Harry Gallatin
 Who is the Coach of the Year award names after?`Red Auerbach
 In what year did Phil Jackson win the Coach of the Year award after coaching the Bulls to a 72 wins season?`1996
 Who won Coach of the Year in the 2011 season?`Tom Thibodeau
 What coach won Coach of the Year and led the Nuggets to a  57-win season, without having an NBA-All Star?`George Karl
-How many coaches have won the Coach of the Year award 3 times?`3`three
+How many coaches have won the Coach of the Year award 3 times?`3`Three
 What coach won Coach of the Year award with a 33-48 record?`Johnny Kerr
-Who won the Coach of the year award 3x with one team?`Gregg Popovich
-Who is the greatest coach of all time according to Lebron James?`Gregg Popovich
+Who won the Coach of the year award 3x with one team?`Gregg Popovich`Coach Pop
+Who is the greatest coach of all time according to Lebron James?`Gregg Popovich`Coach Pop
 Who was selected first overall in the 2016 NBA Draft?`Ben Simmons
+Who was selected first overall in the 2017 NBA Draft?`Markelle Fultz
+Who was selected first overall in the 2011 NBA Draft?`Kyrie Irving
+Who was selected first overall in the 2003 NBA Draft?`LeBron James`LeBron
+Who was selected first overall in the 1996 NBA Draft?`Allen Iverson
+Who was selected first overall in the 1992 NBA Draft?`Shaquille O'Neal`Shaq
 Who was selected as a high school player in the first round of the 2016 NBA Draft?`Thon Maker
 Who is the only Canadian player that was selected in the 2016 NBA Draft?`Jamal Murray
 How many international players were selected in the 2016 NBA Draft?`28
