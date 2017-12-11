@@ -7,7 +7,7 @@ Who is the only player to score 100 points in a single game?`Wilt Chamberlain
 Who has the record for most points scored in a quarter?`Klay Thompson
 Who is the youngest player to be drafted?`Andrew Bynum
 Who is the oldest player to be drafted?`Bernard James
-Who is the youngest player to record a triple double?`LeBron James`Lebron
+Who is the youngest player to record a triple double?`Lonzo Ball
 Who is the youngest player to lead the league in scoring?`Kevin Durant 
 Which player had 5 consecutive 40+ point games in his rookie season?`Allen Iverson
 Who is the youngest player to score 60+ points in a game?`David Thompson
@@ -139,7 +139,7 @@ What arena do the Minnesota Timberwolves play in?`Target Center
 What arena do the Oklahoma City Thunder play in?`Chesapeake Energy Arena
 What arena do the Indiana Pacers play in?`Bankers Life Fieldhouse Center
 What arena do the Cleveland Cavaliers play in?`Quicken Loans arena
-What arena do the Detroit Pistons play in?`The Palace of Auburn Hills
+What arena do the Detroit Pistons play in?`Little Caesars Arena
 What arena do the Milwaukee Bucks play in?`BMO Harris Bradley Center
 What arena do the Chicago Bulls play in?`United Center
 What arena do the Miami Heat play in?`American Airlines Arena
@@ -159,7 +159,7 @@ When was the most recent blow out in the NBA Finals?`2007
 In what year did the Dallas Mavericks win their first championship?`2011
 Who is the shortest player to ever play in the NBA?`Muggsy Bogues
 Who won the NBA championship in 1978?`Washington Bullets`Bullets
-In what year did the Los Angeles Lakers upset the New Jersey Net?`2002
+In what year did the Los Angeles Lakers upset the New Jersey Nets?`2002
 What team won a championship in 1989, 1990 and 2004?`Detroit Pistons`Pistons
 The Spurs won 5 championships and lost in 1 finals, what year did they lose?`2013
 How many championships have the Philadelphia 76ers won?`3`three
@@ -199,6 +199,7 @@ Who was known as 'Agent Zero'?`Gilbert Arenas
 What was Glen Davis' nickname?`Big Baby
 Who was known as 'The Mailman'?`Karl Malone
 What is Vince Carter's nickname?`Vinsanity
+What is Paul George's nickname?`PG13
 Which team drafted Steve Francis 2nd overall in the 1999 draft, and traded him to the Rockets?`Vancouver Grizzlies`Grizzlies
 What team selected Julius Erving 12th in the 1972 draft?`Milwaukee Bucks`Bucks
 Who did the Boston Celtics draft 3rd overall in the 1997 draft?`Chauncey Billups
@@ -224,3 +225,5 @@ What college did Nate Robinson go to?`University of Washington`Washington
 What college did Dwayne Wade go to?`Marquette University`Marquette
 What college did Anthony Davis go to?`University of Kentucky`Kentucky
 What college did Jerry West go to?`West Virginia University`West Virginia
+What team had the longest NBA Playoff drought of 47 years?`Los Angeles Clippers`Clippers`LA Clippers
+In what year were the Vancouver Grizzlies and Toronto Raptors added to the NBA?`1995

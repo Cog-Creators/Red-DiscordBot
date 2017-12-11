@@ -136,3 +136,4 @@ Which champion's ultimate is named: The Quickness?`Rakan
 Which champion's ultimate is named: Featherstorm?`Xayah
 Which champion's ultimate is named: Umbral Trespass?`Kayn
 Which champion's ultimate is named: Call of the Forge God?`Ornn
+Which champion's ultimate is named: Portal Jump?`Zoe
