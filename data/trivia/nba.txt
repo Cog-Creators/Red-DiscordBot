@@ -146,7 +146,7 @@ What arena do the Utah Jazz play in?`Vivint Smart Home Arena
 What arena do the Minnesota Timberwolves play in?`Target Center
 What arena do the Oklahoma City Thunder play in?`Chesapeake Energy Arena
 What arena do the Indiana Pacers play in?`Bankers Life Fieldhouse Center
-What arena do the Cleveland Cavaliers play in?`Quicken Loans arena
+What arena do the Cleveland Cavaliers play in?`Quicken Loans arena`The Q
 What arena do the Detroit Pistons play in?`Little Caesars Arena
 What arena do the Milwaukee Bucks play in?`BMO Harris Bradley Center
 What arena do the Chicago Bulls play in?`United Center
