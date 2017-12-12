@@ -1,0 +1,203 @@
+[09/12/2017 03:05] ERROR red load_cogs 573: ffmpeg isn't installed.
+Consult the guide for your operating system and do ALL the steps in order.
+https://twentysix26.github.io/Red-Docs/
+Traceback (most recent call last):
+  File "red.py", line 570, in load_cogs
+    owner_cog._load_cog(extension)
+  File "C:\Users\Administrator\Desktop\Kermit\Red-DiscordBot\cogs\owner.py", line 948, in _load_cog
+    self.bot.load_extension(mod_obj.__name__)
+  File "lib\discord\ext\commands\bot.py", line 738, in load_extension
+    lib.setup(self)
+  File "C:\Users\Administrator\Desktop\Kermit\Red-DiscordBot\cogs\audio.py", line 2378, in setup
+    "".format(msg))
+RuntimeError: ffmpeg isn't installed.
+Consult the guide for your operating system and do ALL the steps in order.
+https://twentysix26.github.io/Red-Docs/
+
+[08/12/2017 23:19] ERROR red load_cogs 573: ('invalid syntax', ('C:\\Users\\Administrator\\Desktop\\Kermit\\Red-DiscordBot\\cogs\\general.py', 257, 43, '            colour=discord.Colour.green()))\n'))
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Desktop\Kermit\Red-DiscordBot\cogs\owner.py", line 946, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python36-32\lib\importlib\__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 978, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 961, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 950, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 655, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 674, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 781, in get_code
+  File "<frozen importlib._bootstrap_external>", line 741, in source_to_code
+  File "<frozen importlib._bootstrap>", line 205, in _call_with_frames_removed
+  File "C:\Users\Administrator\Desktop\Kermit\Red-DiscordBot\cogs\general.py", line 257
+    colour=discord.Colour.green()))
+                                  ^
+SyntaxError: invalid syntax
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "red.py", line 570, in load_cogs
+    owner_cog._load_cog(extension)
+  File "C:\Users\Administrator\Desktop\Kermit\Red-DiscordBot\cogs\owner.py", line 950, in _load_cog
+    raise CogLoadError(*e.args)
+cogs.owner.CogLoadError: ('invalid syntax', ('C:\\Users\\Administrator\\Desktop\\Kermit\\Red-DiscordBot\\cogs\\general.py', 257, 43, '            colour=discord.Colour.green()))\n'))
+[09/12/2017 10:05] ERROR owner load 69: ('invalid syntax', ('C:\\Users\\Administrator\\Desktop\\Kermit\\Red-DiscordBot\\cogs\\general.py', 257, 43, '            colour=discord.Colour.green()))\n'))
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Desktop\Kermit\Red-DiscordBot\cogs\owner.py", line 946, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python36-32\lib\importlib\__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 978, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 961, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 950, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 655, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 674, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 781, in get_code
+  File "<frozen importlib._bootstrap_external>", line 741, in source_to_code
+  File "<frozen importlib._bootstrap>", line 205, in _call_with_frames_removed
+  File "C:\Users\Administrator\Desktop\Kermit\Red-DiscordBot\cogs\general.py", line 257
+    colour=discord.Colour.green()))
+                                  ^
+SyntaxError: invalid syntax
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Desktop\Kermit\Red-DiscordBot\cogs\owner.py", line 65, in load
+    self._load_cog(module)
+  File "C:\Users\Administrator\Desktop\Kermit\Red-DiscordBot\cogs\owner.py", line 950, in _load_cog
+    raise CogLoadError(*e.args)
+cogs.owner.CogLoadError: ('invalid syntax', ('C:\\Users\\Administrator\\Desktop\\Kermit\\Red-DiscordBot\\cogs\\general.py', 257, 43, '            colour=discord.Colour.green()))\n'))
+[09/12/2017 10:51] ERROR red on_command_error 369: Exception in command 'statsrefresh'
+Traceback (most recent call last):
+  File "lib\discord\ext\commands\core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "C:\Users\Administrator\Desktop\Kermit\Red-DiscordBot\cogs\statistics.py", line 59, in statsrefresh
+    if not self.refresh_rate:  # If statement incase someone removes it or sets it to 0
+AttributeError: 'Statistics' object has no attribute 'refresh_rate'
+[09/12/2017 10:57] ERROR red <module> 634: Fatal exception, attempting graceful logout
+Traceback (most recent call last):
+  File "red.py", line 614, in <module>
+    loop.run_until_complete(main(bot))
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python36-32\lib\asyncio\base_events.py", line 464, in run_until_complete
+    raise RuntimeError('Event loop stopped before Future completed.')
+RuntimeError: Event loop stopped before Future completed.
+[09/12/2017 10:58] ERROR owner unload 105: 
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Desktop\Kermit\Red-DiscordBot\cogs\owner.py", line 959, in _unload_cog
+    self.bot.unload_extension(cogname)
+  File "lib\discord\ext\commands\bot.py", line 751, in unload_extension
+    self.remove_cog(cogname)
+  File "lib\discord\ext\commands\bot.py", line 722, in remove_cog
+    unloader()
+  File "C:\Users\Administrator\Desktop\Kermit\Red-DiscordBot\cogs\webserver.py", line 99, in __unload
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python36-32\lib\asyncio\base_events.py", line 454, in run_until_complete
+    self.run_forever()
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python36-32\lib\asyncio\base_events.py", line 408, in run_forever
+    raise RuntimeError('This event loop is already running')
+RuntimeError: This event loop is already running
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Desktop\Kermit\Red-DiscordBot\cogs\owner.py", line 100, in unload
+    self._unload_cog(module)
+  File "C:\Users\Administrator\Desktop\Kermit\Red-DiscordBot\cogs\owner.py", line 961, in _unload_cog
+    raise CogUnloadError
+cogs.owner.CogUnloadError
+[09/12/2017 10:58] ERROR red <module> 634: Fatal exception, attempting graceful logout
+Traceback (most recent call last):
+  File "red.py", line 614, in <module>
+    loop.run_until_complete(main(bot))
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python36-32\lib\asyncio\base_events.py", line 464, in run_until_complete
+    raise RuntimeError('Event loop stopped before Future completed.')
+RuntimeError: Event loop stopped before Future completed.
+[09/12/2017 10:58] ERROR red on_command_error 369: Exception in command 'cog uninstall'
+Traceback (most recent call last):
+  File "lib\discord\ext\commands\core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "C:\Users\Administrator\Desktop\Kermit\Red-DiscordBot\cogs\downloader.py", line 381, in uninstall
+    os.remove(os.path.join("cogs", cog + ".py"))
+FileNotFoundError: [WinError 2] The system cannot find the file specified: 'cogs\\webserver.py'
+[09/12/2017 11:03] INFO economy _set 393: mrfizzl3(165581160783544320) set 9999999999999999999999999999999999999 credits to mrfizzl3 (165581160783544320)
+[10/12/2017 21:38] ERROR red on_command_error 369: Exception in command 'strannounceset output'
+Traceback (most recent call last):
+  File "lib\discord\ext\commands\core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "C:\Users\Administrator\Desktop\Kermit\Red-DiscordBot\cogs\streamannouncer.py", line 46, in strset_output
+    await self.bot.say("Announcement channel selected.")
+  File "lib\discord\ext\commands\bot.py", line 309, in _augmented_msg
+    msg = yield from coro
+  File "red.py", line 92, in send_message
+    return await super().send_message(*args, **kwargs)
+  File "lib\discord\client.py", line 1151, in send_message
+    data = yield from self.http.send_message(channel_id, content, guild_id=guild_id, tts=tts, embed=embed)
+  File "lib\discord\http.py", line 196, in request
+    raise Forbidden(r, data)
+discord.errors.Forbidden: FORBIDDEN (status code: 403): Missing Permissions
+[10/12/2017 22:02] ERROR red on_command_error 369: Exception in command 'raise'
+Traceback (most recent call last):
+  File "lib\discord\ext\commands\core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "C:\Users\Administrator\Desktop\Kermit\Red-DiscordBot\cogs\errorlogs.py", line 47, in _raise
+    raise Exception()
+Exception
+[10/12/2017 22:03] ERROR red on_command_error 369: Exception in command 'raise'
+Traceback (most recent call last):
+  File "lib\discord\ext\commands\core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "C:\Users\Administrator\Desktop\Kermit\Red-DiscordBot\cogs\errorlogs.py", line 47, in _raise
+    raise Exception()
+Exception
+[10/12/2017 22:05] ERROR red on_command_error 369: Exception in command 'embedset toggleglobal'
+Traceback (most recent call last):
+  File "lib\discord\ext\commands\core.py", line 50, in wrapped
+    ret = yield from coro(*args, **kwargs)
+  File "C:\Users\Administrator\Desktop\Kermit\Red-DiscordBot\cogs\embedmaker.py", line 109, in global_embed_toggle
+    not self.settings['global']['inactive']
+KeyError: 'global'
+[10/12/2017 22:13] DEBUG logger _get_red_loggers 56: Logger list:
+	['red', 'red.economy', 'red.logger', 'red.owner', 'red.permissions']
+[10/12/2017 22:13] DEBUG logger _get_levels 38: Level list:
+	['Info', 'Info', 'Debug', 'Info', 'Info']
+[11/12/2017 03:39] ERROR red <module> 634: Fatal exception, attempting graceful logout
+Traceback (most recent call last):
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python36-32\lib\asyncio\selector_events.py", line 724, in _read_ready
+    data = self._sock.recv(self.max_size)
+ConnectionResetError: [WinError 10054] An existing connection was forcibly closed by the remote host
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "lib\aiohttp\client.py", line 202, in _request
+    yield from resp.start(conn, read_until_eof)
+  File "lib\aiohttp\client_reqrep.py", line 640, in start
+    message = yield from httpstream.read()
+  File "lib\aiohttp\streams.py", line 641, in read
+    result = yield from super().read()
+  File "lib\aiohttp\streams.py", line 476, in read
+    yield from self._waiter
+aiohttp.errors.ServerDisconnectedError
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "red.py", line 614, in <module>
+    loop.run_until_complete(main(bot))
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python36-32\lib\asyncio\base_events.py", line 466, in run_until_complete
+    return future.result()
+  File "red.py", line 603, in main
+    yield from bot.connect()
+  File "lib\discord\client.py", line 451, in connect
+    self.ws = yield from DiscordWebSocket.from_client(self, resume=True)
+  File "lib\discord\gateway.py", line 198, in from_client
+    gateway = yield from client.http.get_gateway()
+  File "lib\discord\http.py", line 633, in get_gateway
+    data = yield from self.request(Route('GET', '/gateway'))
+  File "lib\discord\http.py", line 137, in request
+    r = yield from self.session.request(method, url, **kwargs)
+  File "lib\aiohttp\client.py", line 555, in __iter__
+    resp = yield from self._coro
+  File "lib\aiohttp\client.py", line 209, in _request
+    raise aiohttp.ClientResponseError() from exc
+aiohttp.errors.ClientResponseError

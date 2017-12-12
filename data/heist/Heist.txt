@@ -1,0 +1,69 @@
+Jail = jail
+OOB = out on bail
+Police = Police
+Bail = bail
+Crew = crew
+Sentence = sentence
+Heist = heist
+Vault = vault
+
+|Good| "{} had the car gassed up and ready to go. +25 credits.", 25
+|Good| "{} cut the power to the bank. +50 credits.", 50
+|Good| "{} erased the video footage. +50 credits.", 50
+|Good| "{} hacked the security system and put it on a loop feed. +75 credits.", 75
+|Good| "{} stopped the teller from triggering the silent alarm. +50 credits.", 50
+|Good| "{} knocked out the local security. +50 credits.", 50
+|Good| "{} stopped a local from being a hero +50 credits.", 50
+|Good| "{} got the police negotiator to deliver everyone pizza. +25 credits.", 25
+|Good| "{} brought masks of former presidents to hide our identity. +25 credits.", 25
+|Good| "{} found an escape route. +25 credits.", 25
+|Good| "{} brought extra ammunition for the crew. +25 credits.", 25
+|Good| "{} cut through that safe like butter. +25 credits.", 25
+|Good| "{} kept the hostages under control. +25 credits.", 25
+|Good| "{} created a distraction to get the crew out. +50 credits.", 50
+|Good| "{} improvised under pressure and got the crew out. +50 credits.", 50
+|Good| "{} counter sniped a sniper. +100 credits.", 100
+|Good| "{} distracted the guard. +25 credits.", 25
+|Good| "{} brought a Go-Bag for the team. +25 credits.", 25
+|Good| "{} found a secret stash in the deposit box room. +50 credits.", 50
+|Good| "{} found a box of jewelry on a civilian. +25 credits.", 25
+|Good| "{} stayed focused and vigilant. +25 credits.", 25
+|Good| "{} spray painted the video cameras. +25 credits.", 25
+|Good| "{} located the vault manager. +25 credits.", 25
+|Good| "{} set a clever trap for the swat team. +50 credits.", 50
+|Good| "{} Planned the getaway route. +25 credits.", 25
+|Good| "{} Changed vehicles by stealing an old lady's car. +50 credits.", 50
+
+|Bad| "A shoot out with local authorities began and {0} was hit...but survived!", "Apprehended"
+|Bad| "The cops dusted for finger prints and later arrested {0}.", "Apprehended"
+|Bad| "{0} was gutted in a knife fight.", "Dead"
+|Bad| "{0} blew a tire in the getaway car.", "Apprehended"
+|Bad| "{0}'s gun jammed while fighting local security, and was knocked out.", "Apprehended"
+|Bad| "{0} held off the police while the crew was making their getaway.", "Apprehended"
+|Bad| "A hostage situation went south, and {0} was captured.", "Apprehended"
+|Bad| "{0} showed up to the heist high as kite, and was subsequently caught.", "Apprehended"
+|Bad| "{0}'s bag of money contained exploding blue ink and was later caught.", "Apprehended"
+|Bad| "{0} was sniped by a swat sniper.", "Dead"
+|Bad| "The crew decided to shaft {0}.", "Dead"
+|Bad| "Evidence was later found at {0}'s place' linking them to the heist.", "Apprehended"
+|Bad| "The crew missed a CCTV camera that identified {0} and they were caught.", "Apprehended"
+|Bad| "{0} forgot the escape plan, and took the route leading to the police.", "Apprehended"
+|Bad| "{0} was hit and killed by friendly fire.", "Dead"
+|Bad| "Security system's redundancies caused {0} to be identified.", "Apprehended"
+|Bad| "{0} accidentally revealed their identity to the teller.", "Apprehended"
+|Bad| "The swat team released sleeping gas, {0} is sleeping like a baby.", "Apprehended"
+|Bad| "'FLASH BANG OUT!', was the last thing {0} heard.", "Apprehended"
+|Bad| "'GRENADE OUT!', {0} is now sleeping with the fishes.", "Dead"
+|Bad| "{0} tripped a laser wire and was caught.", "Apprehended"
+|Bad| "One of the hostages later identified {0} from the heist.", "Apprehended"
+|Bad| "During the power outage, police caught {0} in the confusion.", "Apprehended"
+|Bad| "{0} was left behind for slowing down the crew, due to a leg wound.", "Apprehended"
+|Bad| "Someone snitched and {0} was arrested.", "Apprehended"
+|Bad| "Before the crew could intervene a guard tazed {0} and is now out cold.", "Apprehended"
+|Bad| "Swat came through the vents, and neutralized {0}.", "Apprehended"
+|Bad| "During a high-speed chase, {0} was shot by the cops.", "Dead"
+|Bad| "A fire was started in the bank, and {0} passed out from inhalation.", "Apprehended"
+|Bad| "{0} cut the wrong wire to the bank's systems and was electrocuted, but lived.", "Apprehended"
+|Bad| "During the escape, the crew left {0} behind.", "Apprehended"
+|Bad| "The crew knocked out {0} because they shot a hostage without cause.", "Apprehended"
+

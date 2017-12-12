@@ -1,0 +1,46 @@
+|Good| "{} battened down the hatches. +25 credits.", 25
+|Good| "{} plundered a barrel of rum. +50 credits.", 50
+|Good| "{} blew a hole in an enemy ship with a cannon. +50 credits.", 50
+|Good| "{} narrowly steered the ship clear of some rocks. +50 credits.", 50
+|Good| "ARG! {} cut down a man twice their size! +50 credits", 50
+|Good| "{}'s flintlock blew the head off a poor sod. +50 credits", 50
+|Good| "{} found where the X marked the spot and uncovered a treasure. +150 credits", 150
+|Good| "While pillaging, {} found some rare jewels. +75 credits", 75
+|Good| "{} sent an enemy to Davy Jones's locker! +50 credits", 50
+|Good| "{} found a replacement peg-leg. +25 credits", 25
+|Good| "{} found a shipment of rations. +25 credits", 25
+|Good| "Well blow me down! {} captured an enemy corsair! +50 credits", 50
+|Good| "Shiver me timbers! {} set fire to an enemy ship! +100 credits", 100
+|Good| "{} found some medical supplies. +25 credits", 25
+|Good| "{} found some medical supplies. +25 credits", 25
+|Good| "{} furled the sails in quick persuit. +25 credits", 25
+|Good| "{} prepared the water barrels for fires. +25 credits", 25
+|Good| "{} hoisted the flag and ordered all hands on deck. +25 credits", 25
+|Good| "{} hoisted the flag and ordered all hands on deck. +25 credits", 25
+|Good| "{} cut the sails of an enemy ship. +50 credits", 50
+
+|Bad| "Yarr! {0} lost a dishonest duel against the enemy.", "Apprehended"
+|Bad| "Blimey! {0} fell overboard!", "Apprehended"
+|Bad| "The scalliwag {0} walked the plank for inciting mutiny.", "Apprehended"
+|Bad| "The fighting on deck caused a collapse underneath, trapping {0}.", "Apprehended"
+|Bad| "{0} was too sea sick to fight.", "Apprehended"
+|Bad| "{0} was knocked out and taken prisoner.", "Apprehended"
+|Bad| "{0} was surrounded by the enemy and captured.", "Apprehended"
+|Bad| "The enemy sneaked up on {0} and was taken prisoner.", "Apprehended"
+|Bad| "{0} was covered in a net, and was unable to break free.", "Apprehended"
+|Bad| "{0} drank too much rum before the fight and passed out.", "Apprehended"
+|Bad| "A storm blew {0} off the crow's nest and fell to their death.", "Dead"
+|Bad| "{0} fought hard, but was unable to recover from their wounds due to scurvy.", "Dead"
+|Bad| "{0} was gutted in a sword fight.", "Dead"
+|Bad| "An explosion on board sent pieces of {0} flying everywhere.", "Dead"
+|Bad| "{0} lost his other leg to cannon fire and bled out.", "Dead"
+|Bad| "{0} drowned in a flooded sealed room.", "Dead"
+
+Jail = brig
+OOB = good will
+Police = Royal Navy
+Bail = bribe
+Crew = crew
+Sentence = punishment
+Heist = raid
+Vault = treasure
