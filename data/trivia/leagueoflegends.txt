@@ -103,6 +103,7 @@ Who says "Bring down the sun."?`Diana
 Who has a Lunar Goddess skin?`Diana
 Who is the antithesis to Diana?`Leona
 Who has an ability called "Pale Cascade"?`Diana
+Who is the Aspect of the Moon?`Diana
 Who is known as the "Madman of Zaun"?`Dr. Mundo`Mundo`dr mundo`drmundo
 What is Dr. Mundo's first name?`Edmundo
 Who has a Corporate skin?`Dr. Mundo`Mundo`dr mundo`drmundo
@@ -316,6 +317,7 @@ Who was Leona's childhood friend?`Pantheon
 Who has a skill called "Eclipse"?`Leona
 What accessory reduces the amount of damage done by Leona's passive by 1?`sunglasses
 What faction is Leona a part of?`The Solari`Solari
+Who is the Aspect of the Sun?`Leona
 What species is Lissandra?`Iceborn
 Who lives in the Frostguard Citadel?`Lissandra
 Aside from Lee Sin, who else is blind?`Lissandra
@@ -333,6 +335,7 @@ Who is the only champion with a Polymorph?`Lulu
 In the Bittersweet Lulu skin, what does her Whimsy turn her enemies into?`Cupcakes`cupcake
 Who says "Focus on the battle."?`Lux
 Who has an Imperial skin?`Lux
+Who considers Lux a rival in love?`Zoe
 Who was the original Star Guardian?`Lux
 Who is the only female with a commando skin?`Lux
 Who is Lux supposedly dating?`Ezreal
@@ -418,6 +421,8 @@ Who crafted Fizz's Seastone Trident?`Ornn
 What other profession has Pantheon always wanted to have?`Baker
 Who is also known as the "Artisan of War"?`Pantheon
 Whose weapons formerly belonged to someone named Zeonia?`Pantheon
+What is Pantheon's real name?`Atreus
+Who is the Aspect of War?`Pantheon
 Who is a member of the Rakkor tribe?`Pantheon
 Glaive Warrrior Pantheon was released to celebrate the server for which country?`Romania
 Who inspired Galio to leave his silent purgatory to fight for the will of Demacia?`Poppy
@@ -556,6 +561,7 @@ Who was Talon's old partner in crime?`Kavyn
 Who does Taric supposedly have a crush on?`Ezreal
 Who has an Emerald skin?`Taric
 Who is also known as "the Shield of Valoran"?`Taric
+Who is the Aspect of the Protecter?`Taric
 Who was punished with the Crown of Stone?`Taric
 Who has a passive called "Bravado"?`Taric
 Who is the smallest champion in the game itself?`Teemo
@@ -613,6 +619,7 @@ Whose name is the medical term for a joint deformity causing bowleggedness?`Varu
 Who has an owl insignia on his chest?`Varus
 Who guards the Pit of Pallas?`Varus
 Who says "I am forsaken" in game?`Varus
+Which champion is the formed from the fusion of two male lovers?`Varus
 What is Vayne's first name?`Shauna
 Who has an Aristocrat skin?`Vayne
 Whose occupation is "Night Hunter"?`Vayne
@@ -705,6 +712,12 @@ Who joined the league to find a cure for chrono-displasia?`Zilean
 Name a champion with only one damaging ability?`Tryndamere or Zilean`Tryndamere`Zilean
 Name a champion with a non-ultimate ability that cannot be taken at level 1?`Azir or Zilean`Azir`Zilean
 Who woke up Skarner?`Zilean
+Which character's walk cycles can be toggled in game?`Zoe
+Who is the Aspect of Twilight?`Zoe
+Aside from Diana, who else is a part of the Lunari?`Zoe
+What does Zoe like to eat?`Chocolate Mooncakes
+Which character displays heterochromia (not counting Lulu's Bittersweet skin)?`Zoe
+What does Zoe call Aurelion Sol?`Space Doggy
 Who gains +1 movement speed when on the same team as Zyra?`Maokai
 Who has a Wildfire skin?`Zyra
 Whose passive causes Zyra to grow larger?`Leona
