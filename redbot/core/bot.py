@@ -79,8 +79,8 @@ class RedBase(BotBase, RpcMethodMixin):
 
             if cli_flags.mentionable:
                 if server_prefix:
-                    return when_mentioned_or(*server_prefix)
-                return when_mentioned_or(*global_prefix)
+                    return when_mentioned_or(*server_prefix)(bot, message)
+                return when_mentioned_or(*global_prefix)(bot, message)
 
             if server_prefix:
                 return server_prefix
