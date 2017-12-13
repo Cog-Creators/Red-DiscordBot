@@ -387,6 +387,16 @@ def test_registering_restricted_key(config):
 
     assert error_raised
 
+def test_registering_restricted_subkey(config):
+    try:
+        config.register_global(foo__set=True)
+    except ValueError:
+        error_raised = True
+    else:
+        error_raised = False
+
+    assert error_raised
+
 @pytest.mark.asyncio
 async def test_setting_restricted_key(config):
     try:
