@@ -130,15 +130,13 @@ class RedBase(BotBase, RpcMethodMixin):
     async def is_admin(self, member: discord.Member):
         """Checks if a member is an admin of their guild."""
         admin_role = await self.db.guild(member.guild).admin_role()
-        return (not admin_role or
-                any(role.id == admin_role for role in member.roles))
+        return any(role.id == admin_role for role in member.roles)
 
     async def is_mod(self, member: discord.Member):
         """Checks if a member is a mod or admin of their guild."""
         mod_role = await self.db.guild(member.guild).mod_role()
         admin_role = await self.db.guild(member.guild).admin_role()
-        return (not (admin_role or mod_role) or
-                any(role.id in (mod_role, admin_role) for role in member.roles))
+        return any(role.id in (mod_role, admin_role) for role in member.roles)
 
     async def get_context(self, message, *, cls=RedContext):
         return await super().get_context(message, cls=cls)
