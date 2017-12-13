@@ -1047,7 +1047,6 @@ class Mod:
             await ctx.send(_("Channel already in ignore list."))
 
     @ignore.command(name="guild", aliases=["server"])
-    @commands.has_permissions(manage_guild=True)
     async def ignore_guild(self, ctx: RedContext):
         """Ignores current guild"""
         guild = ctx.guild
@@ -1081,7 +1080,6 @@ class Mod:
             await ctx.send(_("That channel is not in the ignore list."))
 
     @unignore.command(name="guild", aliases=["server"])
-    @commands.has_permissions(manage_guild=True)
     async def unignore_guild(self, ctx: RedContext):
         """Removes current guild from ignore list"""
         guild = ctx.message.guild
