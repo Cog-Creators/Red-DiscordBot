@@ -376,3 +376,24 @@ async def test_value_ctxmgr_immutable(config):
 
     foo = await config.foo()
     assert foo is True
+
+def test_registering_restricted_key(config):
+    try:
+        config.register_global(set=True)
+    except ValueError:
+        error_raised = True
+    else:
+        error_raised = False
+
+    assert error_raised
+
+@pytest.mark.asyncio
+async def test_setting_restricted_key(config):
+    try:
+        await config.set_attr('set', True)
+    except ValueError:
+        error_raised = True
+    else:
+        error_raised = False
+
+    assert error_raised
