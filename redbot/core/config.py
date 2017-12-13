@@ -55,6 +55,7 @@ class Value:
         A reference to `Config.spawner`.
 
     """
+
     def __init__(self, identifiers: Tuple[str], default_value, spawner):
         self._identifiers = identifiers
         self.default = default_value
@@ -296,6 +297,8 @@ class Group(Value):
             of :code:`resolve`.
 
         """
+        if item in dir(self):
+            raise ValueError("Cannot get config value for reserved key '{}'".format(item))
         value = getattr(self, item)
         if resolve:
             return value(default=default)
@@ -345,6 +348,8 @@ class Group(Value):
             The raw data value to set the attribute as.
 
         """
+        if item in dir(self):
+            raise ValueError("Cannot set config value for reserved key '{}'".format(item))
         value_obj = getattr(self, item)
         await value_obj.set(value)
 
@@ -355,6 +360,9 @@ class Group(Value):
         local data.
         """
         await self.set({})
+
+
+RESERVED_KEYS = set(dir(Group(None, None, None)))
 
 
 class Config:
@@ -555,6 +563,14 @@ class Config:
             else:
                 _partial[k] = v
 
+    def _find_reserved_keys(self, defaults: dict):
+        """Find all reserved keys in a dict and its sub-dicts."""
+        reserved = RESERVED_KEYS.intersection(set(defaults.keys()))
+        for value in defaults.values():
+            if isinstance(value, dict):
+                reserved.update(self._find_reserved_keys(value))
+        return reserved
+
     def _register_default(self, key: str, **kwargs):
         if key not in self._defaults:
             self._defaults[key] = {}
@@ -563,6 +579,10 @@ class Config:
 
         for k, v in data.items():
             to_add = self._get_defaults_dict(k, v)
+            reserved = self._find_reserved_keys(to_add)
+            if reserved:
+                raise ValueError("Cannot set config value for reserved key(s) '{}'"
+                                "".format("', '".join(reserved)))
             self._update_defaults(to_add, self._defaults[key])
 
     def register_global(self, **kwargs):
