@@ -1602,12 +1602,6 @@ class Audio:
         else:
             await self.bot.say("Done.")
 
-    @playlist.command(pass_context=True, no_pm=True, name="extend")
-    async def playlist_extend(self, ctx, playlist_url_or_name):
-        """Extends a playlist with a playlist link"""
-        # Need better wording ^
-        await self.bot.say("Not implemented yet.")
-
     @playlist.command(pass_context=True, no_pm=True, name="list")
     async def playlist_list(self, ctx):
         """Lists all available playlists"""
