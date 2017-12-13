@@ -253,7 +253,7 @@ class Dev:
 
             stdout = io.StringIO()
 
-            msg = None
+            msg = ""
 
             try:
                 with redirect_stdout(stdout):
