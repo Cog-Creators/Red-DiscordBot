@@ -171,7 +171,7 @@ class Group(Value):
 
     @property
     def defaults(self):
-        return self._defaults.copy()
+        return deepcopy(self._defaults)
 
     # noinspection PyTypeChecker
     def __getattr__(self, item: str) -> Union["Group", Value]:
@@ -324,11 +324,50 @@ class Group(Value):
         return defaults
 
     async def set(self, value):
-        if not isinstance(value, dict):
-            raise ValueError(
-                "You may only set the value of a group to be a dict."
-            )
-        await super().set(value)
+        try:
+            self.validate_group_data(value)
+        except (TypeError, ValueError):
+            raise
+        else:
+            await super().set(value)
+
+    def validate_group_data(self, group_data: dict):
+        """Scan data for invalid entries.
+
+        This checks for unregistered keys, and invalid data-types when setting
+        groups. It does so recursively with sub-groups, too.
+
+        This method is mostly for internal use, and is called from within `set`.
+
+        Parameters
+        ----------
+        group_data : dict
+            The data being set for the group.
+
+        Raises
+        ------
+        TypeError
+            If ``group_data`` is not a `dict`.
+        ValueError
+            If there are un-registered or reserved keys in ``group_data``.
+
+        """
+        if not isinstance(group_data, dict):
+            raise TypeError("You may only set the value of a group to be a dict.")
+        for item in group_data:
+            # Check for reserved key
+            if item in dir(self):
+                raise ValueError("Cannot set config value for reserved key '{}'".format(item))
+            # Getattr will raise if keys aren't registeredst
+            try:
+                value = getattr(self, item)
+            except AttributeError as err:
+                raise ValueError("Cannot set value for un-registered key '{}'"
+                                 "".format(item)) from err
+            else:
+                # Recurse over sub-groups
+                if isinstance(value, type(self)):
+                    value.validate_group_data(group_data[item])
 
     async def set_attr(self, item: str, value):
         """Set an attribute by its name.
