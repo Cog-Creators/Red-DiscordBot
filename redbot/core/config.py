@@ -55,7 +55,6 @@ class Value:
         A reference to `Config.spawner`.
 
     """
-
     def __init__(self, identifiers: Tuple[str], default_value, spawner):
         self._identifiers = identifiers
         self.default = default_value
