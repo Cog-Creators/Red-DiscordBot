@@ -996,8 +996,7 @@ class Owner:
         if not os.path.isdir(".git"):
             msg = ":bangbang::interrobang: This instance of Kermit is having a bit of trouble w/ git!"
             e = discord.Embed(title=msg,
-                              colour=discord.Colour.green()
-                              description="Please send a message, using ``k.contact``. Thanks! :wink:")
+                              colour=discord.Colour.green())
             return e
 
         commands = " && ".join((
