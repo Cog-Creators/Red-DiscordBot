@@ -36,7 +36,6 @@ class OfflineStream(StreamsError):
 
 class Streams:
     """Streams
-
     Alerts for a variety of streaming services"""
 
     def __init__(self, bot):
@@ -295,7 +294,6 @@ class Streams:
     @checks.is_owner()
     async def twitchtoken(self, token : str):
         """Sets the Client-ID for Twitch
-
         https://blog.twitch.tv/client-id-required-for-kraken-api-calls-afbb8e95f843"""
         self.settings["TWITCH_TOKEN"] = token
         dataIO.save_json("data/streams/settings.json", self.settings)
@@ -305,7 +303,6 @@ class Streams:
     @checks.admin()
     async def mention(self, ctx, *, mention_type : str):
         """Sets mentions for stream alerts
-
         Types: everyone, here, none"""
         server = ctx.message.server
         mention_type = mention_type.lower()
@@ -600,7 +597,7 @@ class Streams:
                             if channel is None:
                                 continue
                             mention = self.settings.get(channel.server.id, {}).get("MENTION", "")
-                            can_speak = channel.permissions_for(channel.server.me).send_messages
+                            can_speak = channel.permissions_for(channel.server.me).send_message
                             message = mention + " {} is live!".format(stream["NAME"])
                             if channel and can_speak:
                                 m = await self.bot.send_message(channel, message, embed=embed)
