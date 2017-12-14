@@ -86,7 +86,7 @@ async def test_nested_registration_and_changing(config):
 
     assert await config.foo.bar.baz() is False
 
-    with pytest.raises(ValueError):
+    with pytest.raises(TypeError):
         await config.foo.set(True)
 
 
@@ -364,46 +364,63 @@ async def test_value_ctxmgr_saves(config):
 
 @pytest.mark.asyncio
 async def test_value_ctxmgr_immutable(config):
+    """Test for TypeError being raised when using async-with syntax for an
+    immutable type."""
     config.register_global(foo=True)
 
-    try:
+    with pytest.raises(TypeError):
         async with config.foo() as foo:
             foo = False
-    except TypeError:
-        pass
-    else:
-        raise AssertionError
 
     foo = await config.foo()
     assert foo is True
 
 def test_registering_restricted_key(config):
-    try:
+    """Test for ValueError being raised when registering a restricted key."""
+    with pytest.raises(ValueError):
         config.register_global(set=True)
-    except ValueError:
-        error_raised = True
-    else:
-        error_raised = False
-
-    assert error_raised
 
 def test_registering_restricted_subkey(config):
-    try:
+    """Test for ValueError being raised when registering a restricted key in a
+    nested `Group`."""
+    with pytest.raises(ValueError):
         config.register_global(foo__set=True)
-    except ValueError:
-        error_raised = True
-    else:
-        error_raised = False
-
-    assert error_raised
 
 @pytest.mark.asyncio
 async def test_setting_restricted_key(config):
-    try:
+    """Test for ValueError being raised when setting a restricted key."""
+    with pytest.raises(ValueError):
         await config.set_attr('set', True)
-    except ValueError:
-        error_raised = True
-    else:
-        error_raised = False
 
-    assert error_raised
+@pytest.mark.asyncio
+async def test_group_key_validation(config_fr):
+    """Test for ValueError being raised for setting unregisted keys in a
+    `Group`."""
+    config_fr.register_global(foo__bar=True, foo__baz=False)
+    foo = await config_fr.foo.all()
+    foo['foobar'] = True
+    with pytest.raises(ValueError):
+        await config_fr.foo.set(foo)
+
+@pytest.mark.asyncio
+async def test_subgroup_key_validation(config_fr):
+    """Test for ValueError being raised when setting unregistered keys in a
+    nested `Group`."""
+    defaults = {'bar': {'baz': False}}
+    config_fr.register_global(foo=defaults)
+
+    foo = await config_fr.foo.all()
+    foo['bar']['foobar'] = True
+
+    with pytest.raises(ValueError):
+        await config_fr.foo.set(foo)
+
+@pytest.mark.asyncio
+async def test_immutable_default(config, empty_guild):
+    """Test immutability of defaults of a `Group` object."""
+    config.register_guild(foo__bar=True)
+    guild_data = await config.guild(empty_guild).all()
+    guild_data['foo']['baz'] = False
+
+    foo = await config.guild(empty_guild).foo.all()
+    assert 'baz' not in foo
