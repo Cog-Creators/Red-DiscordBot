@@ -601,7 +601,10 @@ class Streams:
                                 continue
                             mention = self.settings.get(channel.server.id, {}).get("MENTION", "")
                             can_speak = channel.permissions_for(channel.server.me).send_messages
-                            message = mention + " {} is live!".format(stream["NAME"])
+                            if stream["NAME"] = piano_tv
+                                message = mention + " <@180512508870656000> is live!"
+                            else
+                                message = mention + " {} is live!".format(stream["NAME"])
                             if channel and can_speak:
                                 m = await self.bot.send_message(channel, message, embed=embed)
                                 messages_sent.append(m)
