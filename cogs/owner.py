@@ -870,8 +870,8 @@ class Owner:
 
         embed = discord.Embed(colour=discord.Colour.green())
         embed.add_field(name="Instance owned by", value="<@165581160783544320>")
-        embed.add_field(name="Python", value=py_version)
-        embed.add_field(name="discord.py", value=dpy_version)
+        embed.add_field(name=":python_logo: Python", value=py_version)
+        embed.add_field(name=":discorddev_logo: discord.py", value=dpy_version)
         embed.add_field(name="About Red", value=about, inline=False)
         embed.set_footer(text="Sitting on that rock since 12/09/17 03:05:20 UTC (that's "
                          "{} days ago!)".format(days_since))
@@ -994,9 +994,10 @@ class Owner:
 
     def _get_version(self):
         if not os.path.isdir(".git"):
-            msg = "This instance of Red hasn't been installed with git."
+            msg = ":bangbang::interrobang: This instance of Kermit is having a bit of trouble w/ git!"
             e = discord.Embed(title=msg,
-                              colour=discord.Colour.green())
+                              colour=discord.Colour.green()
+                              description="Please send a message, using ``k.contact``. Thanks! :wink:")
             return e
 
         commands = " && ".join((
@@ -1014,8 +1015,8 @@ class Owner:
             url = 'https://{}/{}'.format(domain, resource)
         repo_name = url.split("/")[-1]
 
-        embed = discord.Embed(title="Updates of " + repo_name,
-                              description="Last three updates",
+        embed = discord.Embed(title=":gihub_logo: Updates of " + repo_name,
+                              description=":github_commit: Last three updates",
                               colour=discord.Colour.green(),
                               url="{}/tree/{}".format(url, branch))
 
@@ -1027,7 +1028,7 @@ class Owner:
             content = "[{}]({}) - {} ".format(chash[:6], commit_url, commit)
             embed.add_field(name=when, value=content, inline=False)
 
-        embed.set_footer(text="Total commits: " + ncommits)
+        embed.set_footer(text=":github_commit: Total commits: " + ncommits)
 
         return embed
 

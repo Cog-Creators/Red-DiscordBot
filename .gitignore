@@ -3,4 +3,4 @@
 __pycache__
 *.exe
 *.dll
-data
+data/
