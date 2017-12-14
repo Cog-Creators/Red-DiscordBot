@@ -444,9 +444,9 @@ class Streams:
             logo = "https://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_70x70.png"
         status = channel["status"]
         if not status:
-            status = "Untitled broadcast"
+            status = "Untitled broadcast on :twitch_logo:"
         embed = discord.Embed(title=status, url=url)
-        embed.set_author(name=channel["display_name"])
+        embed.set_author(name=":twitch_logo: - " + channel["display_name"])
         embed.add_field(name="Followers", value=channel["followers"])
         embed.add_field(name="Total views", value=channel["views"])
         embed.set_thumbnail(url=logo)
@@ -463,7 +463,7 @@ class Streams:
         channel = livestream["channel"]
         url = channel["channel_link"]
         embed = discord.Embed(title=livestream["media_status"], url=url)
-        embed.set_author(name=livestream["media_name"])
+        embed.set_author(name=":hitbox_logo - " + livestream["media_name"])
         embed.add_field(name="Followers", value=channel["followers"])
         #embed.add_field(name="Views", value=channel["views"])
         embed.set_thumbnail(url=base_url + channel["user_logo"])
@@ -479,7 +479,7 @@ class Streams:
         user = data["user"]
         url = "https://mixer.com/" + data["token"]
         embed = discord.Embed(title=data["name"], url=url)
-        embed.set_author(name=user["username"])
+        embed.set_author(name=":mixer_logo: - " + user["username"])
         embed.add_field(name="Followers", value=data["numFollowers"])
         embed.add_field(name="Total views", value=data["viewersTotal"])
         if user["avatarUrl"]:
@@ -500,7 +500,7 @@ class Streams:
         thumbnail = ("https://thumb.picarto.tv/thumbnail/{}.jpg"
                      "".format(data["name"]))
         embed = discord.Embed(title=data["title"], url=url)
-        embed.set_author(name=data["name"])
+        embed.set_author(name="picarto_logo: - " + data["name"])
         embed.set_image(url=thumbnail + self.rnd_attr())
         embed.add_field(name="Followers", value=data["followers"])
         embed.add_field(name="Total views", value=data["viewers_total"])
@@ -517,7 +517,7 @@ class Streams:
             data["adult"] = ""
 
         embed.color = 0x4C90F3
-        embed.set_footer(text="{adult}Category: {category} | Tags: {tags}"
+        embed.set_footer(text=":underage: - {adult}Category: {category} | Tags: {tags}"
                               "".format(**data))
         return embed
 
