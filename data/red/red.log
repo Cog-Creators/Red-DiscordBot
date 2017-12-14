@@ -201,3 +201,30 @@ Traceback (most recent call last):
   File "lib\aiohttp\client.py", line 209, in _request
     raise aiohttp.ClientResponseError() from exc
 aiohttp.errors.ClientResponseError
+[13/12/2017 22:41] ERROR red load_cogs 573: ('invalid syntax', ('C:\\Users\\Administrator\\Desktop\\Kermit\\Red-DiscordBot\\cogs\\streams.py', 604, 47, '                            if stream["NAME"] = piano_tv\n'))
+Traceback (most recent call last):
+  File "C:\Users\Administrator\Desktop\Kermit\Red-DiscordBot\cogs\owner.py", line 946, in _load_cog
+    mod_obj = importlib.import_module(cogname)
+  File "C:\Users\Administrator\AppData\Local\Programs\Python\Python36-32\lib\importlib\__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+  File "<frozen importlib._bootstrap>", line 978, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 961, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 950, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 655, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 674, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 781, in get_code
+  File "<frozen importlib._bootstrap_external>", line 741, in source_to_code
+  File "<frozen importlib._bootstrap>", line 205, in _call_with_frames_removed
+  File "C:\Users\Administrator\Desktop\Kermit\Red-DiscordBot\cogs\streams.py", line 604
+    if stream["NAME"] = piano_tv
+                      ^
+SyntaxError: invalid syntax
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "red.py", line 570, in load_cogs
+    owner_cog._load_cog(extension)
+  File "C:\Users\Administrator\Desktop\Kermit\Red-DiscordBot\cogs\owner.py", line 950, in _load_cog
+    raise CogLoadError(*e.args)
+cogs.owner.CogLoadError: ('invalid syntax', ('C:\\Users\\Administrator\\Desktop\\Kermit\\Red-DiscordBot\\cogs\\streams.py', 604, 47, '                            if stream["NAME"] = piano_tv\n'))

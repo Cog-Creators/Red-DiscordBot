@@ -3,5 +3,4 @@
 __pycache__
 *.exe
 *.dll
-data\red
-data\downloader
+data
