@@ -103,9 +103,6 @@ html_theme = 'sphinx_rtd_theme'
 # html_theme_options = {}
 
 html_context = {
-    'css_files': [
-        '_static/theme_overrides.css'
-    ],
     # Enable the "Edit in GitHub link within the header of each page.
     'display_github': True,
     'github_user': 'Cog-Creators',

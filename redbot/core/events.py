@@ -8,7 +8,6 @@ from pkg_resources import DistributionNotFound
 
 
 import discord
-from .sentry_setup import should_log
 from discord.ext import commands
 
 from . import __version__
@@ -135,6 +134,10 @@ def init_events(bot, cli_flags):
             await initialize(bot)
 
     @bot.event
+    async def on_error(event_method, *args, **kwargs):
+        sentry_log.exception("Exception in on_{}".format(event_method))
+
+    @bot.event
     async def on_command_error(ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send_help()
@@ -166,12 +169,6 @@ def init_events(bot, cli_flags):
                                      error, error.__traceback__))
             bot._last_exception = exception_log
             await ctx.send(inline(message))
-
-            module = ctx.command.module
-            if should_log(module):
-                sentry_log.exception("Exception in command '{}'"
-                                     "".format(ctx.command.qualified_name),
-                                     exc_info=error.original)
         elif isinstance(error, commands.CommandNotFound):
             pass
         elif isinstance(error, commands.CheckFailure):
@@ -184,6 +181,10 @@ def init_events(bot, cli_flags):
                            "".format(error.retry_after))
         else:
             log.exception(type(error).__name__, exc_info=error)
+
+        sentry_log.exception("Exception in command '{}'"
+                             "".format(ctx.command.qualified_name),
+                             exc_info=error.original)
 
     @bot.event
     async def on_message(message):

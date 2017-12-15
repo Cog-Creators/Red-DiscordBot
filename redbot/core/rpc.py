@@ -1,11 +1,11 @@
-from typing import NewType, TYPE_CHECKING
-
 import asyncio
 
 from aiohttp.web import Application
 from aiohttp_json_rpc import JsonRpc
 
 import logging
+
+from .utils import TYPE_CHECKING, NewType
 
 if TYPE_CHECKING:
     from .bot import Red

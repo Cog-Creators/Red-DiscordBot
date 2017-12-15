@@ -18,7 +18,7 @@ from . import (
 )
 from .help_formatter import Help, help as help_
 
-from typing import TYPE_CHECKING
+from .utils import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from aiohttp_json_rpc import JsonRpc
@@ -130,6 +130,7 @@ class RedBase(BotBase, RpcMethodMixin):
         admin_roles = await self.db.guild(member.guild).admin_role()
         return (not (admin_roles or mod_roles) or
                 any(role.id in mod_roles.extend(admin_roles) for role in member.roles))
+
 
     async def get_context(self, message, *, cls=RedContext):
         return await super().get_context(message, cls=cls)
