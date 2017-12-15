@@ -109,6 +109,7 @@ setup(
         'console_scripts': [
             'redbot=redbot.__main__:main',
             'redbot-setup=redbot.setup:basic_setup',
+            'redbot-setup-docker=redbot.setup:docker_setup',
             'redbot-launcher=redbot.launcher:main'
         ]
     },
