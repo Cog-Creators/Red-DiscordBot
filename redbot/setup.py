@@ -111,3 +111,22 @@ def basic_setup():
     print()
     print("Your basic configuration has been saved. Please run `redbot <name>` to"
           " continue your setup process and to run the bot.")
+
+
+def docker_setup():
+    """
+    Creates the data storage for docker
+    :return:
+    """
+
+    default_data_dir = Path('/data')
+    try:
+        default_data_dir.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        sys.exit(1)
+
+    default_dirs = deepcopy(basic_config_default)
+    default_dirs['DATA_PATH'] = str(default_data_dir.resolve())
+    default_dirs['STORAGE_TYPE'] = "JSON"
+    default_dirs['STORAGE_DETAILS'] = {}
+    save_config("red", default_dirs)
