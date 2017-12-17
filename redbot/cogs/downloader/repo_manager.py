@@ -468,19 +468,21 @@ class Repo(RepoJSONMixin):
         )
 
     def to_json(self):
+        data_path = data_manager.cog_data_path()
         return {
             "url": self.url,
             "name": self.name,
             "branch": self.branch,
-            "folder_path": self.folder_path.relative_to(Path.cwd()).parts,
+            "folder_path": self.folder_path.relative_to(data_path).parts,
             "available_modules": [m.to_json() for m in self.available_modules]
         }
 
     @classmethod
     def from_json(cls, data):
+        data_path = data_manager.cog_data_path()
         # noinspection PyTypeChecker
         return Repo(data['name'], data['url'], data['branch'],
-                    Path.cwd() / Path(*data['folder_path']),
+                    data_path / Path(*data['folder_path']),
                     tuple([Installable.from_json(m) for m in data['available_modules']]))
 
 

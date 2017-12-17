@@ -317,7 +317,7 @@ class CustomCommands:
             await ctx.send(box(commands))
         else:
             for page in pagify(commands, delims=[" ", "\n"]):
-                await self.bot.whisper(box(page))
+                await ctx.author.send(box(page))
 
     async def on_message(self,
                          message):
