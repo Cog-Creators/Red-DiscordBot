@@ -1122,7 +1122,7 @@ class Mod:
     @commands.command()
     async def names(self, ctx: RedContext, user: discord.Member):
         """Show previous names/nicknames of a user"""
-        names = await self.settings.user(user).past_names()
+        names = await self.settings.user(user._user).past_names()
         nicks = await self.settings.member(user).past_nicks()
         msg = ""
         if names:
