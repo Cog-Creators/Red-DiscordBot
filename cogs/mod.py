@@ -1157,7 +1157,8 @@ class Mod:
         Use double quotes to add sentences
         Examples:
         filter add word1 word2 word3
-        filter add \"This is a sentence\""""
+        filter add \"This is a sentence\"
+        """
         if words == ():
             await send_cmd_help(ctx)
             return
@@ -1182,7 +1183,8 @@ class Mod:
         Use double quotes to remove sentences
         Examples:
         filter remove word1 word2 word3
-        filter remove \"This is a sentence\""""
+        filter remove \"This is a sentence\"
+        """
         if words == ():
             await send_cmd_help(ctx)
             return
