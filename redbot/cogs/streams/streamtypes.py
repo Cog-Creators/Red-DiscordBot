@@ -36,9 +36,14 @@ class TwitchCommunity:
         async with session.get(TWITCH_COMMUNITIES_ENDPOINT, headers=headers, params=params) as r:
             data = await r.json()
         await session.close()
-        if "status" in data and data["status"] == 404:
+        if r.status == 200:
+            return data["_id"]
+        elif r.status == 400:
+            raise InvalidCredentials()
+        elif r.status == 404:
             raise CommunityNotFound()
-        return data["_id"]
+        else:
+            raise APIError()
 
     async def get_community_streams(self):
         if not self.id:
@@ -57,10 +62,17 @@ class TwitchCommunity:
         url = TWITCH_BASE_URL + "/kraken/streams"
         async with session.get(url, headers=headers, params=params) as r:
             data = await r.json()
-        if data["_total"] == 0:
-            raise OfflineCommunity()
+        if r.status == 200:
+            if data["_total"] == 0:
+                raise OfflineCommunity()
+            else:
+                return data["streams"]
+        elif r.status == 400:
+            raise InvalidCredentials()
+        elif r.status == 404:
+            raise CommunityNotFound()
         else:
-            return data["streams"]
+            raise APIError()
 
     def export(self):
         data = {}
