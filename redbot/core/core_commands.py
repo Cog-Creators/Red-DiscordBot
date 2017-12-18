@@ -564,6 +564,128 @@ class Core:
         else:
             await ctx.send(_("Message delivered to %s") % destination)
 
+    @commands.group()
+    @checks.is_owner()
+    async def whitelist(self, ctx):
+        """
+        Whitelist management commands.
+        """
+        if ctx.invoked_subcommand is None:
+            await ctx.send_help()
+
+    @whitelist.command(name='add')
+    async def whitelist_add(self, ctx, user: discord.User):
+        """
+        Adds a user to the whitelist.
+        """
+        async with ctx.bot.db.whitelist() as curr_list:
+            if user.id not in curr_list:
+                curr_list.append(user.id)
+
+        await ctx.send(_("User added to whitelist."))
+
+    @whitelist.command(name='list')
+    async def whitelist_list(self, ctx):
+        """
+        Lists whitelisted users.
+        """
+        curr_list = await ctx.bot.db.whitelist()
+
+        msg = _("Whitelisted Users:")
+        for user in curr_list:
+            msg.append("\n\t- {}".format(user))
+
+        for page in pagify(msg):
+            await ctx.send(box(page))
+
+    @whitelist.command(name='remove')
+    async def whitelist_remove(self, ctx, user: discord.User):
+        """
+        Removes user from whitelist.
+        """
+        removed = False
+
+        async with ctx.bot.db.whitelist() as curr_list:
+            if user.id in curr_list:
+                removed = True
+                curr_list.remove(user.id)
+
+        if removed:
+            await ctx.send(_("User has been removed from whitelist."))
+        else:
+            await ctx.send(_("User was not in the whitelist."))
+            
+    @whitelist.command(name='clear')
+    async def whitelist_clear(self, ctx):
+        """
+        Clears the whitelist.
+        """
+        await ctx.bot.db.whitelist.set([])
+        await ctx.send(_("Whitelist has been cleared."))
+
+    @commands.group()
+    @checks.is_owner()
+    async def blacklist(self, ctx):
+        """
+        blacklist management commands.
+        """
+        if ctx.invoked_subcommand is None:
+            await ctx.send_help()
+
+    @blacklist.command(name='add')
+    async def blacklist_add(self, ctx, user: discord.User):
+        """
+        Adds a user to the blacklist.
+        """
+        if await ctx.bot.is_owner(user):
+            ctx.send(_("You cannot blacklist an owner!"))
+            return
+
+        async with ctx.bot.db.blacklist() as curr_list:
+            if user.id not in curr_list:
+                curr_list.append(user.id)
+
+        await ctx.send(_("User added to blacklist."))
+
+    @blacklist.command(name='list')
+    async def blacklist_list(self, ctx):
+        """
+        Lists blacklisted users.
+        """
+        curr_list = await ctx.bot.db.blacklist()
+
+        msg = _("blacklisted Users:")
+        for user in curr_list:
+            msg.append("\n\t- {}".format(user))
+
+        for page in pagify(msg):
+            await ctx.send(box(page))
+
+    @blacklist.command(name='remove')
+    async def blacklist_remove(self, ctx, user: discord.User):
+        """
+        Removes user from blacklist.
+        """
+        removed = False
+
+        async with ctx.bot.db.blacklist() as curr_list:
+            if user.id in curr_list:
+                removed = True
+                curr_list.remove(user.id)
+
+        if removed:
+            await ctx.send(_("User has been removed from blacklist."))
+        else:
+            await ctx.send(_("User was not in the blacklist."))
+
+    @blacklist.command(name='clear')
+    async def blacklist_clear(self, ctx):
+        """
+        Clears the blacklist.
+        """
+        await ctx.bot.db.blacklist.set([])
+        await ctx.send(_("blacklist has been cleared."))
+
     # RPC handlers
     async def rpc_load(self, request):
         cog_name = request.params[0]

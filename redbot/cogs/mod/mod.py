@@ -1122,6 +1122,9 @@ class Mod:
     @commands.command()
     async def names(self, ctx: RedContext, user: discord.Member):
         """Show previous names/nicknames of a user"""
+        async with self.settings.user(user).past_names() as name_list:
+            while None in name_list:  # clean out null entries from a bug
+                name_list.remove(None)
         names = await self.settings.user(user).past_names()
         nicks = await self.settings.member(user).past_nicks()
         msg = ""
@@ -1343,13 +1346,15 @@ class Mod:
             if entry.target == target:
                 return entry
 
-    async def on_member_update(self, before, after):
+    async def on_member_update(self, before: discord.Member, after: discord.Member):
         if before.name != after.name:
             async with self.settings.user(before).past_names() as name_list:
-                if after.nick in name_list:
+                while None in name_list:  # clean out null entries from a bug
+                    name_list.remove(None)
+                if after.name in name_list:
                     # Ensure order is maintained without duplicates occuring
-                    name_list.remove(after.nick)
-                name_list.append(after.nick)
+                    name_list.remove(after.name)
+                name_list.append(after.name)
                 while len(name_list) > 20:
                     name_list.pop(0)
 
