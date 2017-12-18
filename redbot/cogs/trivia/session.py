@@ -96,10 +96,17 @@ class TriviaSession():
         In order for the trivia session to be stopped correctly, this should
         only be called internally by `TriviaSession.start`.
         """
+        try:
+            await self._send_startup_msg()
+        except:
+            import traceback
+            traceback.print_exc()
         max_score = self.settings["max_score"]
         delay = self.settings["delay"]
         timeout = self.settings["timeout"]
         for question, answers in self._iter_questions():
+            async with self.ctx.typing():
+                await asyncio.sleep(3)
             self.count += 1
             msg = "**Question number {}!**\n\n{}".format(self.count, question)
             await self.ctx.send(msg)
@@ -109,11 +116,14 @@ class TriviaSession():
             if any(score >= max_score for score in self.scores.values()):
                 await self.end_game()
                 break
-            async with self.ctx.typing():
-                await asyncio.sleep(3)
         else:
             await self.ctx.send("There are no more questions!")
             await self.end_game()
+
+    async def _send_startup_msg(self):
+        lists = self.settings["lists"].items()
+        titles = ("{} ({})".format(name, author) for name, author in lists)
+        await self.ctx.send("Starting Trivia: " + ", ".join(titles))
 
     def _iter_questions(self):
         """Iterate over questions and answers for this session.
