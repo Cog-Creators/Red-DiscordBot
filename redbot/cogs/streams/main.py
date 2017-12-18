@@ -4,7 +4,8 @@ from redbot.core import Config, checks, RedContext
 from redbot.core.utils.chat_formatting import pagify, box
 from redbot.core.bot import Red
 from .streams import TwitchStream, HitboxStream, MixerStream, PicartoStream, TwitchCommunity
-from .errors import OfflineStream, StreamNotFound, APIError, InvalidCredentials, CommunityNotFound, OfflineCommunity
+from .errors import (OfflineStream, StreamNotFound, APIError, InvalidCredentials,
+                     CommunityNotFound, OfflineCommunity, StreamsError)
 from . import streams as StreamClasses
 from collections import defaultdict
 import asyncio
@@ -83,9 +84,11 @@ class Streams:
         except StreamNotFound:
             await ctx.send("The channel doesn't seem to exist.")
         except InvalidCredentials:
-            await ctx.send("Invalid twitch token.")
+            await ctx.send("The twitch token is either invalid or has not been set. "
+                           "See `{}streamset twitchtoken`.".format(ctx.prefix))
         except APIError:
-            await ctx.send("Error contacting the API.")
+            await ctx.send("Something went wrong whilst trying to contact the "
+                           "stream service's API.")
         else:
             await ctx.send(embed=embed)
 
@@ -99,7 +102,7 @@ class Streams:
     @streamalert.group(name="twitch")
     async def _twitch(self, ctx):
         """Twitch stream alerts"""
-        if isinstance(ctx.invoked_subcommand, commands.Group):
+        if ctx.invoked_subcommand is None or ctx.invoked_subcommand == self._twitch:
             await ctx.send_help()
 
     @_twitch.command(name="channel")
@@ -187,9 +190,20 @@ class Streams:
             token = await self.db.tokens.get_attr(_class.__name__)
             stream = _class(name=channel_name,
                             token=token)
-            if not await self.check_exists(stream):
-                await ctx.send("That channel doesn't seem to exist.")
+            try:
+                exists = await self.check_exists(stream)
+            except InvalidCredentials:
+                await ctx.send("The twitch token is either invalid or has not been set. "
+                               "See `{}streamset twitchtoken`.".format(ctx.prefix))
                 return
+            except APIError:
+                await ctx.send("Something went wrong whilst trying to contact the "
+                               "stream service's API.")
+                return
+            else:
+                if not exists:
+                    await ctx.send("That channel doesn't seem to exist.")
+                    return
 
         await self.add_or_remove(ctx, stream)
 
@@ -200,9 +214,22 @@ class Streams:
             community = _class(name=community_name, token=token)
             try:
                 await community.get_community_streams()
-            except CommunityNotFound:
-                await ctx.send("That community doesn't seem to exist")
+            except InvalidCredentials:
+                await ctx.send(
+                    "The twitch token is either invalid or has not been set. "
+                    "See `{}streamset twitchtoken`.".format(ctx.prefix))
                 return
+            except CommunityNotFound:
+                await ctx.send("That community doesn't seem to exist.")
+                return
+            except APIError:
+                await ctx.send(
+                    "Something went wrong whilst trying to contact the "
+                    "stream service's API.")
+                return
+            except OfflineCommunity:
+                pass
+
         await self.add_or_remove_community(ctx, community)
 
     @commands.group()
@@ -214,6 +241,17 @@ class Streams:
     @streamset.command()
     @checks.is_owner()
     async def twitchtoken(self, ctx, token: str):
+        """Set the Client ID for twitch.
+
+        To do this, follow these steps:
+          1. Go to this page: https://dev.twitch.tv/dashboard/apps.
+          2. Click *Register Your Application*
+          3. Enter a name, set the OAuth Redirect URI to `http://localhost`, and
+             select an Application Category of your choosing.
+          4. Click *Register*, and on the following page, copy the Client ID.
+          5. Paste the Client ID into this command. Done!
+
+        """
         tokens = await self.db.tokens()
         tokens["TwitchStream"] = token
         tokens["TwitchCommunity"] = token
@@ -223,12 +261,11 @@ class Streams:
     @streamset.group()
     @commands.guild_only()
     async def mention(self, ctx):
-        """Sets mentions for stream alerts
-        Types: everyone, here, role, none"""
-        if ctx.invoked_subcommand is None:
+        """Sets mentions for stream alerts."""
+        if ctx.invoked_subcommand is None or ctx.invoked_subcommand == self.mention:
             await ctx.send_help()
 
-    @mention.command()
+    @mention.command(aliases=["everyone"])
     @commands.guild_only()
     async def all(self, ctx):
         """Toggles everyone mention"""
@@ -243,7 +280,7 @@ class Streams:
             await ctx.send("When a stream configured for stream alerts "
                            "comes online, @\u200beveryone will be mentioned")
 
-    @mention.command()
+    @mention.command(aliases=["here"])
     @commands.guild_only()
     async def online(self, ctx):
         """Toggles here mention"""
@@ -260,7 +297,7 @@ class Streams:
 
     @mention.command()
     @commands.guild_only()
-    async def role(self, ctx, role: discord.Role):
+    async def role(self, ctx, *, role: discord.Role):
         """Toggles role mention"""
         current_setting = await self.db.role(role).mention()
         if not role.mentionable:
@@ -341,8 +378,10 @@ class Streams:
             await stream.is_online()
         except OfflineStream:
             pass
-        except:
+        except StreamNotFound:
             return False
+        except StreamsError:
+            raise
         return True
 
     async def _stream_alerts(self):
