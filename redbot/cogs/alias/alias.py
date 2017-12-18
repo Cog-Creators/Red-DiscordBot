@@ -16,11 +16,11 @@ _ = CogI18n("Alias", __file__)
 class Alias:
     """
     Alias
-    
+
     Aliases are per server shortcuts for commands. They
         can act as both a lambda (storing arguments for repeated use)
         or as simply a shortcut to saying "x y z".
-    
+
     When run, aliases will accept any additional arguments
         and append them to the stored alias
     """
@@ -77,9 +77,42 @@ class Alias:
     def is_valid_alias_name(alias_name: str) -> bool:
         return alias_name.isidentifier()
 
+    async def alias_validity_check(self, ctx, alias_name: str, global_: bool=False) -> bool:
+        is_command = self.is_command(alias_name)
+        is_alias, something_useless = await self.is_alias(ctx.guild, alias_name)
+        is_valid_name = self.is_valid_alias_name(alias_name)
+
+        if is_command:
+            await ctx.send(_("You attempted to create a new{}alias"
+                             " with the name {} but that"
+                             " name is already a command on this bot.")
+                           .format(" global " if global_ else " ", alias_name))
+            return False
+
+        if is_alias:
+            await ctx.send(_("You attempted to create a new{}alias"
+                             " with the name {} but that"
+                             " alias already exists on this server.")
+                           .format(" global " if global_ else " ", alias_name))
+            return False
+
+        if not is_valid_name:
+            await ctx.send(_("You attempted to create a new{}alias"
+                             " with the name {} but that"
+                             " name is an invalid alias name. Alias"
+                             " names may only contain letters, numbers,"
+                             " and underscores and must start with a letter.")
+                           .format(" global " if global_ else " ", alias_name))
+            return False
+        return True
+
     async def add_alias(self, ctx: commands.Context, alias_name: str,
                         command: Tuple[str], global_: bool=False) -> AliasEntry:
         alias = AliasEntry(alias_name, command, ctx.author, global_=global_)
+
+        valid = await self.alias_validity_check(ctx, alias_name)
+        if not valid:
+            return None
 
         if global_:
             settings = self._aliases
@@ -133,10 +166,10 @@ class Alias:
         When an alias is executed by a user in chat this function tries
             to get any extra arguments passed in with the call.
             Whitespace will be trimmed from both ends.
-        :param message: 
-        :param prefix: 
-        :param alias: 
-        :return: 
+        :param message:
+        :param prefix:
+        :param alias:
+        :return:
         """
         known_content_length = len(prefix) + len(alias.name)
         extra = message.content[known_content_length:].strip()
@@ -191,35 +224,13 @@ class Alias:
         """
         Add an alias for a command.
         """
-# region Alias Add Validity Checking
-        is_command = self.is_command(alias_name)
-        if is_command:
-            await ctx.send(_("You attempted to create a new alias"
-                             " with the name {} but that"
-                             " name is already a command on this bot.").format(alias_name))
-            return
-
-        is_alias, something_useless = await self.is_alias(ctx.guild, alias_name)
-        if is_alias:
-            await ctx.send(_("You attempted to create a new alias"
-                             " with the name {} but that"
-                             " alias already exists on this server.").format(alias_name))
-            return
-
-        is_valid_name = self.is_valid_alias_name(alias_name)
-        if not is_valid_name:
-            await ctx.send(_("You attempted to create a new alias"
-                             " with the name {} but that"
-                             " name is an invalid alias name. Alias"
-                             " names may only contain letters, numbers,"
-                             " and underscores and must start with a letter.").format(alias_name))
-            return
-# endregion
 
         # At this point we know we need to make a new alias
         #   and that the alias name is valid.
 
-        await self.add_alias(ctx, alias_name, command)
+        alias_ = await self.add_alias(ctx, alias_name, command)
+        if not alias_:
+            return
 
         await ctx.send(_("A new alias with the trigger `{}`"
                          " has been created.").format(alias_name))
@@ -230,32 +241,10 @@ class Alias:
         """
         Add a global alias for a command.
         """
-# region Alias Add Validity Checking
-        is_command = self.is_command(alias_name)
-        if is_command:
-            await ctx.send(_("You attempted to create a new global alias"
-                             " with the name {} but that"
-                             " name is already a command on this bot.").format(alias_name))
-            return
 
-        is_alias, something_useless = await self.is_alias(ctx.guild, alias_name)
-        if is_alias:
-            await ctx.send(_("You attempted to create a new global alias"
-                             " with the name {} but that"
-                             " alias already exists on this server.").format(alias_name))
+        alias_ = await self.add_alias(ctx, alias_name, command, global_=True)
+        if not alias_:
             return
-
-        is_valid_name = self.is_valid_alias_name(alias_name)
-        if not is_valid_name:
-            await ctx.send(_("You attempted to create a new global alias"
-                             " with the name {} but that"
-                             " name is an invalid alias name. Alias"
-                             " names may only contain letters, numbers,"
-                             " and underscores and must start with a letter.").format(alias_name))
-            return
-# endregion
-
-        await self.add_alias(ctx, alias_name, command, global_=True)
 
         await ctx.send(_("A new global alias with the trigger `{}`"
                          " has been created.").format(alias_name))
