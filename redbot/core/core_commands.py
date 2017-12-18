@@ -637,6 +637,10 @@ class Core:
         """
         Adds a user to the blacklist.
         """
+        if await ctx.bot.is_owner(user):
+            ctx.send(_("You cannot blacklist an owner!"))
+            return
+
         async with ctx.bot.db.blacklist() as curr_list:
             if user.id not in curr_list:
                 curr_list.append(user.id)
