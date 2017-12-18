@@ -121,9 +121,24 @@ class TriviaSession():
             await self.end_game()
 
     async def _send_startup_msg(self):
-        lists = self.settings["lists"].items()
-        titles = ("{} ({})".format(name, author) for name, author in lists)
-        await self.ctx.send("Starting Trivia: " + ", ".join(titles))
+        list_names = []
+        for idx, tup in enumerate(self.settings["lists"].items()):
+            name, author = tup
+            if author:
+                title = "{} (by {})".format(name, author)
+            else:
+                title = name
+            list_names.append(title)
+        num_lists = len(list_names)
+        if num_lists > 2:
+            # at least 3 lists, join all but last with comma
+            msg = ", ".join(list_names[:num_lists-1])
+            # join onto last with "and"
+            msg = " and ".join((msg, list_names[num_lists-1]))
+        else:
+            # either 1 or 2 lists, join together with "and"
+            msg = " and ".join(list_names)
+        await self.ctx.send("Starting Trivia: " + msg)
 
     def _iter_questions(self):
         """Iterate over questions and answers for this session.
