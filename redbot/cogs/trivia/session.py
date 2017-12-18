@@ -96,11 +96,7 @@ class TriviaSession():
         In order for the trivia session to be stopped correctly, this should
         only be called internally by `TriviaSession.start`.
         """
-        try:
-            await self._send_startup_msg()
-        except:
-            import traceback
-            traceback.print_exc()
+        await self._send_startup_msg()
         max_score = self.settings["max_score"]
         delay = self.settings["delay"]
         timeout = self.settings["timeout"]
