@@ -135,7 +135,7 @@ def init_events(bot, cli_flags):
 
     @bot.event
     async def on_error(event_method, *args, **kwargs):
-        sentry_log.exception("Exception in on_{}".format(event_method))
+        sentry_log.exception("Exception in {}".format(event_method))
 
     @bot.event
     async def on_command_error(ctx, error):
