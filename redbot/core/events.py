@@ -135,7 +135,7 @@ def init_events(bot, cli_flags):
 
     @bot.event
     async def on_error(event_method, *args, **kwargs):
-        sentry_log.exception("Exception in on_{}".format(event_method))
+        sentry_log.exception("Exception in {}".format(event_method))
 
     @bot.event
     async def on_command_error(ctx, error):
@@ -160,6 +160,10 @@ def init_events(bot, cli_flags):
             log.exception("Exception in command '{}'"
                           "".format(ctx.command.qualified_name),
                           exc_info=error.original)
+            sentry_log.exception("Exception in command '{}'"
+                                 "".format(ctx.command.qualified_name),
+                                 exc_info=error.original)
+
             message = ("Error in command '{}'. Check your console or "
                        "logs for details."
                        "".format(ctx.command.qualified_name))
@@ -181,10 +185,13 @@ def init_events(bot, cli_flags):
                            "".format(error.retry_after))
         else:
             log.exception(type(error).__name__, exc_info=error)
+            try:
+                sentry_error = error.original
+            except AttributeError:
+                sentry_error = error
 
-        sentry_log.exception("Exception in command '{}'"
-                             "".format(ctx.command.qualified_name),
-                             exc_info=error.original)
+            sentry_log.exception("Unhandled command error.",
+                                 exc_info=sentry_error)
 
     @bot.event
     async def on_message(message):
