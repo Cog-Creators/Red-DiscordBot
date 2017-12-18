@@ -296,7 +296,7 @@ class Group(Value):
             of :code:`resolve`.
 
         """
-        if item in dir(self):
+        if item in RESERVED_KEYS:
             raise ValueError("Cannot get config value for reserved key '{}'".format(item))
         value = getattr(self, item)
         if resolve:
@@ -355,7 +355,7 @@ class Group(Value):
             raise TypeError("You may only set the value of a group to be a dict.")
         for item in group_data:
             # Check for reserved key
-            if item in dir(self):
+            if item in RESERVED_KEYS:
                 raise ValueError("Cannot set config value for reserved key '{}'".format(item))
             # Getattr will raise if keys aren't registeredst
             try:
@@ -386,7 +386,7 @@ class Group(Value):
             The raw data value to set the attribute as.
 
         """
-        if item in dir(self):
+        if item in RESERVED_KEYS:
             raise ValueError("Cannot set config value for reserved key '{}'".format(item))
         value_obj = getattr(self, item)
         await value_obj.set(value)
