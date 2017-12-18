@@ -1,24 +1,15 @@
-# pylint: disable=missing-docstring
-from __future__ import print_function
-
 import getpass
-import json
 import os
 import platform
 import subprocess
 import sys
 import argparse
-import appdirs
-from pathlib import Path
 
 import pkg_resources
-from redbot.setup import basic_setup
+from redbot.setup import basic_setup, load_existing_config
 
 if sys.platform == "linux":
     import distro
-
-config_dir = Path(appdirs.AppDirs("Red-DiscordBot").user_config_dir)
-config_file = config_dir / 'config.json'
 
 PYTHON_OK = sys.version_info >= (3, 5)
 INTERACTIVE_MODE = not len(sys.argv) > 1  # CLI flags = non-interactive
@@ -35,8 +26,7 @@ def parse_cli_args():
     parser = argparse.ArgumentParser(
         description="Red - Discord Bot's launcher (V3)", allow_abbrev=False
     )
-    with config_file.open("r") as fin:
-        instances = json.loads(fin.read())
+    instances = load_existing_config()
     parser.add_argument("instancename", metavar="instancename", type=str,
                         nargs="?", help="The instance to run", choices=list(instances.keys()))
     parser.add_argument("--start", "-s",
@@ -206,8 +196,7 @@ def cli_flag_getter():
 
 
 def instance_menu():
-    with config_file.open("r") as fin:
-        instances = json.loads(fin.read())
+    instances = load_existing_config()
     if not instances:
         print("No instances found!")
         return None
@@ -260,7 +249,6 @@ def extras_selector():
 def debug_info():
     pyver = sys.version
     redver = pkg_resources.get_distribution("Red-DiscordBot").version
-    osver = ""
     if IS_WINDOWS:
         os_info = platform.uname()
         osver = "{} {} (version {}) {}".format(
@@ -291,7 +279,7 @@ def main_menu():
         print("1. Run Red w/ autorestart in case of issues")
         print("2. Run Red")
         print("3. Update Red")
-        print("4. Update Red (development version")
+        print("4. Update Red (development version)")
         print("5. Create Instance")
         print("6. Debug information (use this if having issues with the launcher or bot)")
         print("0. Exit")

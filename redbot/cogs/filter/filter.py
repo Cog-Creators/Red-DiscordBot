@@ -307,7 +307,7 @@ class Filter:
             return
         word_list = await self.settings.guild(guild).filter()
         filter_names = await self.settings.guild(guild).filter_names()
-        name_to_use = await self.settings.guild(guild).filter_default_name
+        name_to_use = await self.settings.guild(guild).filter_default_name()
 
         if not filter_names:
             return
