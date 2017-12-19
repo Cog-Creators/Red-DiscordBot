@@ -202,24 +202,24 @@ def instance_menu():
         return None
     counter = 0
     print("Red instance menu\n")
-   
+
     name_num_map = {}
     for name in list(instances.keys()):
         print("{}. {}\n".format(counter+1, name))
         name_num_map[str(counter+1)] = name
         counter += 1
-    selection = user_choice()
-    try:
-        selection = int(selection)
-    except ValueError:
-        print("Invalid input! Try again.")
-        return None
-    else:
-        if selection not in list(range(1, counter+1)):
-            print("Invalid selection! Please try again")
-            return None
+
+    while True:
+        selection = user_choice()
+        try:
+            selection = int(selection)
+        except ValueError:
+            print("Invalid input! Please enter a number corresponding to an instance.")
         else:
-            return name_num_map[str(selection)]
+            if selection not in list(range(1, counter+1)):
+                print("Invalid selection! Please try again")
+            else:
+                return name_num_map[str(selection)]
 
 
 def clear_screen():
