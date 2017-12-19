@@ -75,7 +75,7 @@ class Alias:
 
     @staticmethod
     def is_valid_alias_name(alias_name: str) -> bool:
-        return alias_name.isidentifier()
+        return alias_name.isprintable()
 
     async def add_alias(self, ctx: commands.Context, alias_name: str,
                         command: Tuple[str], global_: bool=False) -> AliasEntry:
