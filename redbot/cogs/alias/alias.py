@@ -76,7 +76,7 @@ class Alias:
 
     @staticmethod
     def is_valid_alias_name(alias_name: str) -> bool:
-        return not bool(search(r'\s'), alias_name) and alias_name.isprintable()
+        return not bool(search(r'\s', alias_name)) and alias_name.isprintable()
 
     async def add_alias(self, ctx: commands.Context, alias_name: str,
                         command: Tuple[str], global_: bool=False) -> AliasEntry:
