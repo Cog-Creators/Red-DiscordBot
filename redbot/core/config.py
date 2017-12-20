@@ -323,12 +323,8 @@ class Group(Value):
         return defaults
 
     async def set(self, value):
-        try:
-            self.validate_group_data(value)
-        except (TypeError, ValueError):
-            raise
-        else:
-            await super().set(value)
+        self.validate_group_data(value)
+        await super().set(value)
 
     def validate_group_data(self, group_data: dict):
         """Scan data for invalid entries.
