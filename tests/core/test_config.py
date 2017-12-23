@@ -376,3 +376,10 @@ async def test_value_ctxmgr_immutable(config):
 
     foo = await config.foo()
     assert foo is True
+
+@pytest.mark.asyncio
+async def test_clear_value(config_fr):
+    config_fr.register_global(foo=False)
+    await config_fr.foo.set(True)
+    await config_fr.foo.clear()
+    assert await config_fr.foo() is False
