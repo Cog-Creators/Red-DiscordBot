@@ -1,4 +1,5 @@
 from collections import namedtuple
+from datetime import timedelta, datetime
 
 from discord.ext import commands
 import discord
@@ -31,6 +32,15 @@ class Warnings:
         self.config.register_guild(**self.default_guild)
         self.config.register_member(**self.default_member)
         self.bot = bot
+        self.bot.loop.create_task(self.register_warningtype())
+
+    async def register_warningtype(self):
+        try:
+            await modlog.register_casetype(
+                "warning", True, "\N{WARNING SIGN}", "Warning", None
+            )
+        except RuntimeError:
+            pass
 
     @commands.group()
     @commands.guild_only()
@@ -42,12 +52,12 @@ class Warnings:
 
     @warningset.group(name="action")
     @commands.guild_only()
-    async def action(self, ctx: RedContext):
+    async def ws_action(self, ctx: RedContext):
         """Manage actions to be taken at certain point levels"""
         if isinstance(ctx.invoked_subcommand, commands.Group):
             await ctx.send_help()
 
-    @action.command(name="add")
+    @ws_action.command(name="add")
     @commands.guild_only()
     async def action_add(self, ctx: RedContext, name: str, points: int, action: str):
         """Interactively create an action to be taken at a specified point count
@@ -103,15 +113,15 @@ class Warnings:
             for act in registered_actions:
                 if act["action_name"] == to_add["action_name"]:
                     await ctx.send(_("Duplicate action name found!"))
-                    return
+                    break
             else:
                 registered_actions.append(to_add)
                 # Sort in descending order by point count for ease in
                 # finding the highest possible action to take
                 registered_actions.sort(key=lambda a: a["point_count"], reverse=True)
-        await ctx.tick()
+                await ctx.tick()
 
-    @action.command(name="del")
+    @ws_action.command(name="del")
     @commands.guild_only()
     async def action_del(self, ctx: RedContext, action_name: str):
         """Delete the point count action with the specified name"""
@@ -175,7 +185,9 @@ class Warnings:
         """Allow or disallow custom reasons for a warning"""
         guild = ctx.guild
         await self.config.guild(guild).allow_custom_reasons.set(allowed)
-        await ctx.send(_("Custom reasons have been {}".format("enabled" if allowed else "disabled")))
+        await ctx.send(
+            _("Custom reasons have been {}".format("enabled" if allowed else "disabled"))
+        )
 
     @commands.command()
     @commands.guild_only()
@@ -214,16 +226,21 @@ class Warnings:
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
-    async def warn(self, ctx: RedContext, user: discord.Member, reason: str):
+    async def warn(self, ctx: RedContext, user: discord.Member, reason: str, expiry: str=None):
         """Warn the user for the specified reason
-        Reason must be a registered reason, or custom if custom reasons are allowed"""
+        Reason must be a registered reason, or custom if custom reasons are allowed
+        Expiry (optional) is the amount of time after which the warning should expire
+        For example: 8w 3d 12h 30m 10s
+        Leave it out if the warning should never expire automatically"""
         reason_type = {}
         if reason.lower() == "custom":
             custom_allowed = await self.config.guild(ctx.guild).allow_custom_reasons()
             if not custom_allowed:
                 await ctx.send(
-                    _("Custom reasons are not allowed! Please see {} for "
-                      "a complete list of valid reasons").format(
+                    _(
+                        "Custom reasons are not allowed! Please see {} for "
+                        "a complete list of valid reasons"
+                    ).format(
                         "`{}reasonlist`".format(ctx.prefix)
                     )
                 )
@@ -250,7 +267,7 @@ class Warnings:
             user_warnings.update(warning_to_add)
         current_point_count += reason_type["points"]
         await member_settings.total_points.set(current_point_count)
-        await self.warning_points_check(ctx, user, current_point_count)
+        await self.warning_points_add_check(ctx, user, current_point_count)
         await ctx.tick()
 
     @commands.command()
@@ -308,7 +325,7 @@ class Warnings:
                 user_warnings.pop(warn_id)
         await ctx.tick()
 
-    async def warning_points_check(self, ctx: RedContext, user: discord.Member, points: int):
+    async def warning_points_add_check(self, ctx: RedContext, user: discord.Member, points: int):
         """Handles any action that needs to be taken or not based on the points"""
         guild = ctx.guild
         guild_settings = self.config.guild(guild)
@@ -325,6 +342,10 @@ class Warnings:
             if action_to_take == "add_role":
                 role = discord.utils.get(guild.roles, id=act["role_id"])
                 await user.add_roles(role)
+                await modlog.create_case(
+                    guild, ctx.message.created_at, "warning", user,
+                    ctx.author, "Earned too many warning points"
+                )
             elif action_to_take == "kick":
                 if mod_loaded:
                     kick_cmd = self.bot.get_command("kick")
@@ -344,7 +365,8 @@ class Warnings:
                     tempban_cmd = self.bot.get_command("tempban")
                     tempban_length = act["tban_length"]
                     await ctx.invoke(
-                        tempban_cmd, user, days=tempban_length, reason="Earned too many warning points"
+                        tempban_cmd, user, days=tempban_length,
+                        reason="Earned too many warning points"
                     )
             elif action_to_take == "ban":
                 if mod_loaded:
@@ -386,3 +408,29 @@ class Warnings:
             return
         to_add["description"] = msg.content
         return to_add
+
+    @staticmethod
+    def get_expiry_time(expiredelta: str):
+        units = expiredelta.split()
+        weeks = 0
+        days = 0
+        hours = 0
+        minutes = 0
+        seconds = 0
+        for unit in units:
+            if unit[-1].lower() == "w":
+                weeks = int(unit[:-1])
+            elif unit[-1].lower() == "d":
+                days = int(unit[:-1])
+            elif unit[-1].lower() == "h":
+                hours = int(unit[:-1])
+            elif unit[-1].lower() == "m":
+                minutes = int(unit[:-1])
+            elif unit[-1].lower() == "s":
+                seconds = int(unit[:-1])
+            else:
+                return None  # invalid unit passed in, so no idea how to interpret it
+        return timedelta(
+            weeks=weeks, days=days, hours=hours,
+            minutes=minutes, seconds=seconds
+        )
