@@ -20,7 +20,7 @@ from . import (
 from .help_formatter import Help, help as help_
 
 from .utils import TYPE_CHECKING
-from .sentry_setup import SentryManager
+from .sentry import SentryManager
 
 if TYPE_CHECKING:
     from aiohttp_json_rpc import JsonRpc
