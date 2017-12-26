@@ -11,14 +11,14 @@ class SentryManager:
     """Simple class to manage sentry logging for Red."""
 
     def __init__(self, logger: logging.Logger):
-        client = Client(
+        self.client = Client(
             dsn=("https://62402161d4cd4ef18f83b16f3e22a020:9310ef55a502442598203205a84da2bb@"
                  "sentry.io/253983"),
             release=__version__,
             include_paths=['redbot'],
             enable_breadcrumbs=False
         )
-        self.handler = SentryHandler(client)
+        self.handler = SentryHandler(self.client)
         self.logger = logger
 
     def enable(self):
