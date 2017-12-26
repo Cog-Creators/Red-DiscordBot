@@ -18,9 +18,8 @@ from . import (
     rpc
 )
 from .help_formatter import Help, help as help_
-
-from .utils import TYPE_CHECKING
 from .sentry import SentryManager
+from .utils import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from aiohttp_json_rpc import JsonRpc
@@ -104,19 +103,19 @@ class RedBase(BotBase, RpcMethodMixin):
 
         self.add_command(help_)
 
-        self.sentry_mgr = None
+        self._sentry_mgr = None
 
     def enable_sentry(self):
-        if self.sentry_mgr is None:
+        if self._sentry_mgr is None:
             sentry_log = logging.getLogger('red.sentry')
             sentry_log.setLevel(logging.WARNING)
-            self.sentry_mgr = SentryManager(sentry_log)
-        self.sentry_mgr.enable()
+            self._sentry_mgr = SentryManager(sentry_log)
+        self._sentry_mgr.enable()
 
     def disable_sentry(self):
-        if self.sentry_mgr is None:
+        if self._sentry_mgr is None:
             return
-        self.sentry_mgr.disable()
+        self._sentry_mgr.disable()
 
     async def _dict_abuse(self, indict):
         """
