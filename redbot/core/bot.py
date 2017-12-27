@@ -106,6 +106,7 @@ class RedBase(BotBase, RpcMethodMixin):
         self._sentry_mgr = None
 
     def enable_sentry(self):
+        """Enable Sentry logging for Red."""
         if self._sentry_mgr is None:
             sentry_log = logging.getLogger('red.sentry')
             sentry_log.setLevel(logging.WARNING)
@@ -113,6 +114,7 @@ class RedBase(BotBase, RpcMethodMixin):
         self._sentry_mgr.enable()
 
     def disable_sentry(self):
+        """Disable Sentry logging for Red."""
         if self._sentry_mgr is None:
             return
         self._sentry_mgr.disable()
