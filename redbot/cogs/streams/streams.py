@@ -416,7 +416,7 @@ class Streams:
                     continue
                 for channel_id in stream.channels:
                     channel = self.bot.get_channel(channel_id)
-                    mention_str = self._get_mention_str(channel.guild)
+                    mention_str = await self._get_mention_str(channel.guild)
 
                     if mention_str:
                         content = "{}, {} is online!".format(mention_str, stream.name)
