@@ -1250,12 +1250,14 @@ class Audio:
         self.set_server_setting(server, "TIMER_DISCONNECT",
                                 not timer_disconnect)
         if not timer_disconnect:
-            await self.bot.say("If there is no one left in the voice channel"
-                               " the bot will automatically disconnect after"
-                               " five minutes.")
+            await self.bot.say("The bot will automatically disconnect after"
+                               " playback is stopped and five minutes have"
+                               " elapsed. Disable this setting to stop the"
+                               " bot from disconnecting with other music cogs"
+                               " playing.")
         else:
             await self.bot.say("The bot will no longer auto disconnect"
-                               " if the voice channel is empty.")
+                               " while other music cogs are playing.")
         self.save_settings()
 
     @audioset.command(pass_context=True, name="volume", no_pm=True)
