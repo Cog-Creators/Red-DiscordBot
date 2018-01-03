@@ -2361,7 +2361,7 @@ class Audio:
 
         colour = ''.join([choice('0123456789ABCDEF') for x in range(6)])
         em = discord.Embed(description="", colour=int(colour, 16))
-        if '\\' in song.webpage_url:
+        if 'http' not in song.webpage_url:
             em.set_author(name=song.title)
         else:
             em.set_author(name=song.title, url=song.webpage_url)
