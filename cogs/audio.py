@@ -1856,6 +1856,7 @@ class Audio:
 
         song_info = []
         for num, song in enumerate(tempqueue_song_list, 1):
+            str_duration = str(datetime.timedelta(seconds=song.duration))
             try:
                 song_info.append("**[{}]** {.title} ({})".format(num, song, str_duration))
             except AttributeError:
