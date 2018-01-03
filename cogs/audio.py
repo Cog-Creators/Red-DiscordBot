@@ -2238,9 +2238,9 @@ class Audio:
             play"""
         server = self.bot.get_server(sid)
         if self.get_server_settings(server)["NOTIFY"] is True:
-            notifychan = self.settings["SERVERS"][server.id]["NOTIFY_CHANNEL"]
+            notify_channel = self.settings["SERVERS"][server.id]["NOTIFY_CHANNEL"]
         if self.get_server_settings(server)["NOTIFY"] is False:
-            notifychan = None
+            notify_channel = None
         max_length = self.settings["MAX_LENGTH"]
 
         # This is a reference, or should be at least
@@ -2268,7 +2268,7 @@ class Audio:
                     url = queued_song.url
                     channel = queued_song.channel
                     song = await self._play(sid, url, channel)
-                    await self.disp_now_playing(server, song, notifychan)
+                    await self.display_now_playing(server, song, notify_channel)
                 except MaximumLength:
                     return
             elif len(queue) > 0:  # We're in the normal queue
@@ -2278,7 +2278,7 @@ class Audio:
                 log.debug("calling _play on the normal queue")
                 try:
                     song = await self._play(sid, url, channel)
-                    await self.disp_now_playing(server, song, notifychan)
+                    await self.display_now_playing(server, song, notify_channel)
                 except MaximumLength:
                     return
                 if repeat and last_song:
@@ -2322,35 +2322,33 @@ class Audio:
                     message = escape(message, mass_mentions=True)
                     await self.bot.send_message(next_channel, message)
 
-    async def disp_now_playing(self, server, song, notifychan:int):
-        channel = discord.utils.get(server.channels, id=notifychan)
-        if channel != None:
-            if song.title != None:
-                if self.bot.user.bot:
-                    def to_delete(m):
-                        if "Now Playing" in m.content:
-                            return True
-                        else:
-                            return False
-                    try:
-                        await self.bot.purge_from(channel, limit=50, check=to_delete)
-                    except discord.errors.Forbidden:
-                        await self.bot.say("I need permissions to manage messages "
-                                                   "in this channel.")
-
-                msg = ("**Author:** `{}`\n**Uploader:** `{}`\n"
-                        "**Duration:** `{}`\n**Rating: **`{:.2f}`\n**Views:** `{}`".format(
-                        song.creator, song.uploader, str(datetime.timedelta(seconds=song.duration)), song.rating, song.view_count))
-
-                colour = ''.join([choice('0123456789ABCDEF') for x in range(6)])
-                em = discord.Embed(description="", colour=int(colour, 16))
-                em.set_author(name=song.title, url=song.webpage_url)
-                em.set_thumbnail(url=song.thumbnail)
-                em.description = msg.replace('None', '-')
-
-                await self.bot.send_message(channel, "**Now Playing:**", embed=em)
+    async def display_now_playing(self, server, song, notify_channel:int):
+        channel = discord.utils.get(server.channels, id=notify_channel)
+        if channel is None:
+            return
+        if song.title is None:
+            return
+        def to_delete(m):
+            if "Now Playing" in m.content and m.author == self.bot.user:
+                return True
             else:
-                await self.bot.send_message(channel, "Playing unknown song")
+                return False
+        try:
+            await self.bot.purge_from(channel, limit=50, check=to_delete)
+        except discord.errors.Forbidden:
+            await self.bot.say("I need permissions to manage messages in this channel.")
+
+        msg = ("**Author:** `{}`\n**Uploader:** `{}`\n"
+                "**Duration:** `{}`\n**Rating: **`{:.2f}`\n**Views:** `{}`".format(
+                song.creator, song.uploader, str(datetime.timedelta(seconds=song.duration)), song.rating, song.view_count))
+
+        colour = ''.join([choice('0123456789ABCDEF') for x in range(6)])
+        em = discord.Embed(description="", colour=int(colour, 16))
+        em.set_author(name=song.title, url=song.webpage_url)
+        em.set_thumbnail(url=song.thumbnail)
+        em.description = msg.replace('None', '-')
+
+        await self.bot.send_message(channel, "**Now Playing:**", embed=em)
 
     async def queue_scheduler(self):
         while self == self.bot.get_cog('Audio'):
