@@ -1858,7 +1858,10 @@ class Audio:
         for num, song in enumerate(tempqueue_song_list, 1):
             str_duration = str(datetime.timedelta(seconds=song.duration))
             try:
-                song_info.append("**[{}]** {.title} ({})".format(num, song, str_duration))
+                if song.title is None:
+                    song_info.append("**[{}]** {.webpage_url} ({})".format(num, song, str_duration))
+                else:
+                    song_info.append("**[{}]** {.title} ({})".format(num, song, str_duration))
             except AttributeError:
                 song_info.append("**[{}]** {.webpage_url} ({})".format(num, song, str_duration))
 
@@ -1867,13 +1870,16 @@ class Audio:
             if num > 10:
                 break
             try:
-                song_info.append("**[{}]** {.title} ({})".format(num, song, str_duration))
-                more_songs = len(self.queue[server.id][QueueKey.QUEUE]) - 10
+                if song.title is None:
+                    song_info.append("**[{}]** {.webpage_url} ({})".format(num, song, str_duration))
+                else:
+                    song_info.append("**[{}]** {.title} ({})".format(num, song, str_duration))
             except AttributeError:
                 song_info.append("**[{}]** {.webpage_url} ({})".format(num, song, str_duration))
 
         msg += "\n***Next up:***\n" + "\n".join(song_info)
         em.description = msg.replace('None', '-')
+        more_songs = len(self.queue[server.id][QueueKey.QUEUE]) - 10
         if more_songs > 0:
             em.set_footer(text="And {} more songs...".format(more_songs))
         await self.bot.say(embed=em)
@@ -2339,13 +2345,26 @@ class Audio:
         except discord.errors.Forbidden:
             await self.bot.say("I need permissions to manage messages in this channel.")
 
+        if song:
+            if not hasattr(song, 'creator'):
+                song.creator = None
+            if not hasattr(song, 'uploader'):
+                song.uploader = None
+            if song.rating is None:
+                song.rating = 0
+            if song.thumbnail is None:
+                song.thumbnail = (self.bot.user.avatar_url).replace('webp', 'png')
+
         msg = ("**Author:** `{}`\n**Uploader:** `{}`\n"
                 "**Duration:** `{}`\n**Rating: **`{:.2f}`\n**Views:** `{}`".format(
                 song.creator, song.uploader, str(datetime.timedelta(seconds=song.duration)), song.rating, song.view_count))
 
         colour = ''.join([choice('0123456789ABCDEF') for x in range(6)])
         em = discord.Embed(description="", colour=int(colour, 16))
-        em.set_author(name=song.title, url=song.webpage_url)
+        if '\\' in song.webpage_url:
+            em.set_author(name=song.title)
+        else:
+            em.set_author(name=song.title, url=song.webpage_url)
         em.set_thumbnail(url=song.thumbnail)
         em.description = msg.replace('None', '-')
 
