@@ -1874,7 +1874,6 @@ class Audio:
         msg += "\n***Next up:***\n" + "\n".join(song_info)
         em.description = msg.replace('None', '-')
         if more_songs > 0:
-            msg += "\n\n**And {} more songs...**".format(more_songs)
             em.set_footer(text="And {} more songs...".format(more_songs))
         await self.bot.say(embed=em)
 
