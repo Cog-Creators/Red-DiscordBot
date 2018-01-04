@@ -1844,6 +1844,8 @@ class Audio:
             msg += "\n***Currently playing:***\n{} ({})\n".format(now_playing.title,
                 str(datetime.timedelta(seconds=now_playing.duration)))
             msg += self._draw_play(now_playing) + "\n"  # draw play thing
+            if now_playing.thumbnail is None:
+                now_playing.thumbnail = (self.bot.user.avatar_url).replace('webp', 'png')
             em.set_thumbnail(url=now_playing.thumbnail)
 
         queued_song_list = self._get_queue(server, 10)
@@ -2062,6 +2064,10 @@ class Audio:
                 song.view_count = None
             if not hasattr(song, 'uploader'):
                 song.uploader = None
+            if song.rating is None:
+                song.rating = 0
+            if song.thumbnail is None:
+                song.thumbnail = (self.bot.user.avatar_url).replace('webp', 'png')
             if hasattr(song, 'duration'):
                 m, s = divmod(song.duration, 60)
                 h, m = divmod(m, 60)
@@ -2079,7 +2085,10 @@ class Audio:
             msg += self._draw_play(song) + "\n"
             colour = ''.join([choice('0123456789ABCDEF') for x in range(6)])
             em = discord.Embed(description="", colour=int(colour, 16))
-            em.set_author(name=song.title, url=song.webpage_url)
+            if 'http' not in song.webpage_url:
+                em.set_author(name=song.title)
+            else:
+                em.set_author(name=song.title, url=song.webpage_url)
             em.set_thumbnail(url=song.thumbnail)
             em.description = msg.replace('None', '-')
 
