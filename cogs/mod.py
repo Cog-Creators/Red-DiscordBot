@@ -1518,10 +1518,10 @@ class Mod:
                 return False
             if author.id not in self.cache:
                 self.cache[author.id] = deque(maxlen=3)
-            if len(self.cache) > 100000:
+            self.cache.move_to_end(author.id)
+            while len(self.cache) > 100000:
                 self.cache.popitem(last=False) # the oldest gets discarded
             self.cache[author.id].append(message.content)
-            self.cache.move_to_end(author.id)
             msgs = self.cache[author.id]
             if len(msgs) == 3 and msgs[0] == msgs[1] == msgs[2]:
                 try:
