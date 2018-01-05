@@ -4,7 +4,7 @@ from .utils.dataIO import dataIO
 from .utils import checks
 from __main__ import send_cmd_help, settings
 from datetime import datetime
-from collections import deque, defaultdict
+from collections import deque, defaultdict, OrderedDict
 from cogs.utils.chat_formatting import escape_mass_mentions, box, pagify
 import os
 import re
@@ -100,7 +100,7 @@ class Mod:
         self.past_nicknames = dataIO.load_json("data/mod/past_nicknames.json")
         settings = dataIO.load_json("data/mod/settings.json")
         self.settings = defaultdict(lambda: default_settings.copy(), settings)
-        self.cache = defaultdict(lambda: deque(maxlen=3))
+        self.cache = OrderedDict()
         self.cases = dataIO.load_json("data/mod/modlog.json")
         self.last_case = defaultdict(dict)
         self.temp_cache = TempCache(bot)
@@ -1516,10 +1516,14 @@ class Mod:
         if self.settings[server.id]["delete_repeats"]:
             if not message.content:
                 return False
-            self.cache[author].append(message)
-            msgs = self.cache[author]
-            if len(msgs) == 3 and \
-                    msgs[0].content == msgs[1].content == msgs[2].content:
+            if author.id not in self.cache:
+                self.cache[author.id] = deque(maxlen=3)
+            self.cache.move_to_end(author.id)
+            while len(self.cache) > 100000:
+                self.cache.popitem(last=False) # the oldest gets discarded
+            self.cache[author.id].append(message.content)
+            msgs = self.cache[author.id]
+            if len(msgs) == 3 and msgs[0] == msgs[1] == msgs[2]:
                 try:
                     await self.bot.delete_message(message)
                     return True
