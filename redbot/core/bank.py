@@ -215,7 +215,7 @@ async def withdraw_credits(member: discord.Member, amount: int) -> int:
         raise ValueError("Invalid withdrawal amount {} <= 0".format(amount))
 
     bal = await get_balance(member)
-    if amount > bal:
+    if amount >= bal:
         raise ValueError("Insufficient funds {} > {}".format(amount, bal))
 
     return await set_balance(member, bal - amount)
