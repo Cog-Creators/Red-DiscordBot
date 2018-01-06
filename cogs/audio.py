@@ -1213,6 +1213,7 @@ class Audio:
         else:
             await self.bot.say("No longer notifying when a new track plays.")
         self.save_settings()
+
     @audioset.command(name="player")
     @checks.is_owner()
     async def audioset_player(self):
@@ -1894,9 +1895,9 @@ class Audio:
         sections = 12
         loc_time = round((elapsed_time/total_time) * sections)  # 10 sections
 
-        bar_char = '━'
-        seek_char = ':radio_button:'
-        play_char = ':arrow_forward:'
+        bar_char = '\N{BOX DRAWINGS HEAVY HORIZONTAL}'
+        seek_char = '\N{RADIO BUTTON}'
+        play_char = '\N{BLACK RIGHT-POINTING TRIANGLE}'
 
         msg = "\n" + play_char + " "
 
