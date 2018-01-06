@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import sys
+import os
 from copy import deepcopy
 from pathlib import Path
 
@@ -11,8 +12,18 @@ from redbot.core.data_manager import basic_config_default
 from redbot.core.cli import confirm
 
 appdir = appdirs.AppDirs("Red-DiscordBot")
-config_dir = Path(appdir.user_config_dir)
-config_dir.mkdir(parents=True, exist_ok=True)
+if sys.platform == 'linux':
+    if os.getuid() < 1000:
+        config_dir = Path(appdir.site_data_dir)
+if not config_dir:
+    config_dir = Path(appdir.user_config_dir)
+try:
+    config_dir.mkdir(parents=True, exist_ok=True)
+except PermissionError:
+    print(
+        "You don't have permission to write to "
+        "'{}'\nExiting...".format(config_dir))
+    sys.exit(1)
 config_file = config_dir / 'config.json'
 
 
