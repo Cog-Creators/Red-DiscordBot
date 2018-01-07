@@ -31,6 +31,7 @@ basic_config_default = {
     "CORE_PATH_APPEND": "core"
 }
 
+config_dir = None
 appdir = appdirs.AppDirs("Red-DiscordBot")
 if sys.platform == 'linux':
     if os.getuid() < 1000:

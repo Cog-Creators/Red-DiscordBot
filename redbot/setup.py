@@ -11,6 +11,7 @@ from redbot.core.json_io import JsonIO
 from redbot.core.data_manager import basic_config_default
 from redbot.core.cli import confirm
 
+config_dir = None
 appdir = appdirs.AppDirs("Red-DiscordBot")
 if sys.platform == 'linux':
     if os.getuid() < 1000:
