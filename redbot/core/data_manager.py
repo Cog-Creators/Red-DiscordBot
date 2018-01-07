@@ -30,7 +30,12 @@ basic_config_default = {
     "CORE_PATH_APPEND": "core"
 }
 
-config_dir = Path(appdirs.AppDirs("Red-DiscordBot").user_config_dir)
+appdir = appdirs.AppDirs("Red-DiscordBot")
+if sys.platform == 'linux':
+    if os.getuid() < 1000:
+        config_dir = Path(appdir.site_data_dir)
+if not config_dir:
+    config_dir = Path(appdir.user_config_dir)
 config_file = config_dir / 'config.json'
 
 
