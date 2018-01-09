@@ -1828,10 +1828,11 @@ class Audio:
         """Not a command, use `queue` with no args to call this."""
         server = ctx.message.server
         channel = ctx.message.channel
-        if server.id not in self.queue:
+        now_playing = self._get_queue_nowplaying(server)
+        if server.id not in self.queue and now_playing is None:
             await self.bot.say("Nothing playing on this server!")
             return
-        elif len(self.queue[server.id][QueueKey.QUEUE]) == 0:
+        if len(self.queue[server.id][QueueKey.QUEUE]) == 0 and not self.is_playing(server):
             await self.bot.say("Nothing queued on this server.")
             return
 
@@ -1839,12 +1840,9 @@ class Audio:
         em = discord.Embed(description="", colour=int(colour, 16))
         msg = ""
 
-        now_playing = self._get_queue_nowplaying(server)
-
-        if now_playing is not None:
-            msg += "\n***Currently playing:***\n{} ({})\n".format(now_playing.title,
-                str(datetime.timedelta(seconds=now_playing.duration)))
-            msg += self._draw_play(now_playing) + "\n"  # draw play thing
+        if self.is_playing(server):
+            msg += "\n***Currently playing:***\n{}\n".format(now_playing.title)
+            msg += self._draw_play(now_playing, server) + "\n"  # draw play thing
             if now_playing.thumbnail is None:
                 now_playing.thumbnail = (self.bot.user.avatar_url).replace('webp', 'png')
             em.set_thumbnail(url=now_playing.thumbnail)
@@ -1880,14 +1878,15 @@ class Audio:
             except AttributeError:
                 song_info.append("**[{}]** {.webpage_url} ({})".format(num, song, str_duration))
 
-        msg += "\n***Next up:***\n" + "\n".join(song_info)
+        if song_info:
+            msg += "\n***Next up:***\n" + "\n".join(song_info)
         em.description = msg.replace('None', '-')
         more_songs = len(self.queue[server.id][QueueKey.QUEUE]) - 10
         if more_songs > 0:
             em.set_footer(text="And {} more songs...".format(more_songs))
         await self.bot.say(embed=em)
 
-    def _draw_play(self, song):
+    def _draw_play(self, song, server):
         song_start_time = song.song_start_time
         total_time = datetime.timedelta(seconds=song.duration)
         current_time = datetime.datetime.now()
@@ -1898,6 +1897,14 @@ class Audio:
         bar_char = '\N{BOX DRAWINGS HEAVY HORIZONTAL}'
         seek_char = '\N{RADIO BUTTON}'
         play_char = '\N{BLACK RIGHT-POINTING TRIANGLE}'
+
+        try:
+            if self.voice_client(server).audio_player.is_playing():
+                play_char = '\N{BLACK RIGHT-POINTING TRIANGLE}'
+            else:
+                play_char = '\N{DOUBLE VERTICAL BAR}'
+        except AttributeError:
+            pass
 
         msg = "\n" + play_char + " "
 
@@ -2083,7 +2090,7 @@ class Audio:
                     "**Duration:** `{}`\n**Rating: **`{:.2f}`\n**Views:** `{}`".format(
                     song.creator, song.uploader, str(datetime.timedelta(seconds=song.duration)), song.rating,
                     song.view_count))
-            msg += self._draw_play(song) + "\n"
+            msg += self._draw_play(song, server) + "\n"
             colour = ''.join([choice('0123456789ABCDEF') for x in range(6)])
             em = discord.Embed(description="", colour=int(colour, 16))
             if 'http' not in song.webpage_url:
