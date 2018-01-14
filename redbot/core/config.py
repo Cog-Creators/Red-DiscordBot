@@ -1,4 +1,5 @@
 import logging
+import collections
 from copy import deepcopy
 from typing import Callable, Union, Tuple
 
@@ -316,9 +317,19 @@ class Group(Value):
             All of this Group's attributes, resolved as raw data values.
 
         """
-        defaults = self.defaults
-        defaults.update(await self())
-        return defaults
+        return self.nested_update(self.defaults, await self())
+
+    def nested_update(self, defaults, current):
+        """Robust updater for nested dictionaries"""
+        defaults_copy = deepcopy(defaults)
+
+        for key, value in current.items():
+            if isinstance(value, collections.Mapping) and value:
+                result = self.nested_update(defaults_copy.get(key, {}), value)
+                defaults_copy[key] = result
+            else:
+                defaults_copy[key] = deepcopy(current[key])
+        return defaults_copy
 
     async def set(self, value):
         if not isinstance(value, dict):
