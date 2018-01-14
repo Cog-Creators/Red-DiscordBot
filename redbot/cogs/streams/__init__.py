@@ -1,4 +1,4 @@
-from .main import Streams
+from .streams import Streams
 
 
 def setup(bot):
