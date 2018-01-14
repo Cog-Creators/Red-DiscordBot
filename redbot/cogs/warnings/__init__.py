@@ -1,4 +1,4 @@
-from .warning import Warnings
+from .warnings import Warnings
 
 
 def setup(bot):
