@@ -22,8 +22,10 @@ class Warnings:
         "reasons": {},
         "allow_custom_reasons": False
     }
+
     default_member = {
         "total_points": 0,
+        "status": "",
         "warnings": {}
     }
 
@@ -50,17 +52,28 @@ class Warnings:
         if ctx.invoked_subcommand is None:
             await ctx.send_help()
 
-    @warningset.group(name="action")
+    @warningset.command()
     @commands.guild_only()
-    async def ws_action(self, ctx: RedContext):
-        """Manage actions to be taken at certain point levels"""
-        if isinstance(ctx.invoked_subcommand, commands.Group):
+    async def allowcustomreasons(self, ctx: RedContext, allowed: bool):
+        """Allow or disallow custom reasons for a warning"""
+        guild = ctx.guild
+        await self.config.guild(guild).allow_custom_reasons.set(allowed)
+        await ctx.send(
+            _("Custom reasons have been {}".format("enabled" if allowed else "disabled"))
+        )
+
+    @commands.group()
+    @commands.guild_only()
+    @checks.guildowner_or_permissions(administrator=True)
+    async def warnaction(self, ctx: RedContext):
+        """Action management"""
+        if ctx.invoked_subcommand is None:
             await ctx.send_help()
 
-    @ws_action.command(name="add")
+    @warnaction.command(name="add")
     @commands.guild_only()
     async def action_add(self, ctx: RedContext, name: str, points: int, action: str):
-        """Interactively create an action to be taken at a specified point count
+        """Create an action to be taken at a specified point count
         Duplicate action names are not allowed"""
         guild = ctx.guild
 
@@ -121,7 +134,7 @@ class Warnings:
                 registered_actions.sort(key=lambda a: a["point_count"], reverse=True)
                 await ctx.tick()
 
-    @ws_action.command(name="del")
+    @warnaction.command(name="del")
     @commands.guild_only()
     async def action_del(self, ctx: RedContext, action_name: str):
         """Delete the point count action with the specified name"""
@@ -136,15 +149,17 @@ class Warnings:
             if to_remove:
                 registered_actions.remove(to_remove)
 
-    @warningset.group(name="reason")
+    @commands.group()
     @commands.guild_only()
-    async def ws_reason(self, ctx: RedContext):
+    @checks.guildowner_or_permissions(administrator=True)
+    async def warnreason(self, ctx: RedContext):
         """Add reasons for warnings"""
         if isinstance(ctx.invoked_subcommand, commands.Group):
             await ctx.send_help()
 
-    @ws_reason.command(name="add")
+    @warnreason.command(name="add")
     @commands.guild_only()
+    @checks.guildowner_or_permissions(administrator=True)
     async def reason_add(self, ctx: RedContext, name: str, points: int, *, description: str):
         """Add a reason to be available for warnings"""
         guild = ctx.guild
@@ -167,7 +182,7 @@ class Warnings:
 
         await ctx.send(_("That reason has been registered"))
 
-    @ws_reason.command(name="del")
+    @warnreason.command(name="del")
     @commands.guild_only()
     async def reason_del(self, ctx: RedContext, reason_name: str):
         """Delete the reason with the specified name"""
@@ -178,16 +193,6 @@ class Warnings:
                 await ctx.send(_("Removed reason {}").format(reason_name))
             else:
                 await ctx.send(_("That is not a registered reason name"))
-
-    @warningset.command()
-    @commands.guild_only()
-    async def allowcustomreasons(self, ctx: RedContext, allowed: bool):
-        """Allow or disallow custom reasons for a warning"""
-        guild = ctx.guild
-        await self.config.guild(guild).allow_custom_reasons.set(allowed)
-        await ctx.send(
-            _("Custom reasons have been {}".format("enabled" if allowed else "disabled"))
-        )
 
     @commands.command()
     @commands.guild_only()
@@ -226,12 +231,9 @@ class Warnings:
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
-    async def warn(self, ctx: RedContext, user: discord.Member, reason: str, expiry: str=None):
+    async def warn(self, ctx: RedContext, user: discord.Member, reason: str):
         """Warn the user for the specified reason
-        Reason must be a registered reason, or custom if custom reasons are allowed
-        Expiry (optional) is the amount of time after which the warning should expire
-        For example: 8w 3d 12h 30m 10s
-        Leave it out if the warning should never expire automatically"""
+        Reason must be a registered reason, or custom if custom reasons are allowed"""
         reason_type = {}
         if reason.lower() == "custom":
             custom_allowed = await self.config.guild(ctx.guild).allow_custom_reasons()
@@ -272,36 +274,52 @@ class Warnings:
 
     @commands.command()
     @commands.guild_only()
-    async def warnings(self, ctx: RedContext, user: discord.Member=None):
+    async def warnings(self, ctx: RedContext, userid: int=None):
         """Show warnings for the specified user.
-        If user is None, show warnings for the person running the command
+        If userid is None, show warnings for the person running the command
         Note that showing warnings for users other than yourself requires
         appropriate permissions"""
-        if user is None:
+        if userid is None:
             user = ctx.author
         else:
-            if not is_admin_or_superior(self.bot, user):
+            if not is_admin_or_superior(self.bot, ctx.author):
                 await ctx.send(
-                    warning("You are not allowed to check warnings for other users")
+                    warning(
+                        _("You are not allowed to check "
+                          "warnings for other users!")
+                    )
                 )
                 return
+            else:
+                user = ctx.guild.get_member(userid)
+                if user is None:  # user not in guild
+                    user = namedtuple("Member", "id guild")(userid, ctx.guild)
         msg = ""
         member_settings = self.config.member(user)
         async with member_settings.warnings() as user_warnings:
-            for key in user_warnings.keys():
-                mod = ctx.guild.get_member(user_warnings[key]["mod"])
-                if mod is None:
-                    mod = discord.utils.get(
-                        self.bot.get_all_members(), id=user_warnings[key]["mod"])
+            if not user_warnings.keys():  # no warnings for the user
+                await ctx.send(_("That user has no warnings!"))
+            else:
+                for key in user_warnings.keys():
+                    mod = ctx.guild.get_member(user_warnings[key]["mod"])
                     if mod is None:
-                        mod = await self.bot.get_user_info(user_warnings[key]["mod"])
-                msg += "{} point warning {} issued by {} for {}\n".format(
-                    user_warnings[key]["points"],
-                    key,
-                    mod,
-                    user_warnings[key]["description"]
+                        mod = discord.utils.get(
+                            self.bot.get_all_members(),
+                            id=user_warnings[key]["mod"]
+                        )
+                        if mod is None:
+                            mod = await self.bot.get_user_info(
+                                user_warnings[key]["mod"]
+                            )
+                    msg += "{} point warning {} issued by {} for {}\n".format(
+                        user_warnings[key]["points"],
+                        key,
+                        mod,
+                        user_warnings[key]["description"]
+                    )
+                await ctx.send_interactive(
+                    pagify(msg), box_lang="Warnings for {}".format(user)
                 )
-        await ctx.send_interactive(pagify(msg), box_lang="Warnings for {}".format(user))
 
     @commands.command()
     @commands.guild_only()
@@ -310,7 +328,7 @@ class Warnings:
         """Removes the specified warning from the user specified"""
         guild = ctx.guild
         member = guild.get_member(user_id)
-        if member is None:  # no longer part of the guild, but we need a "member" object
+        if member is None:  # no longer in guild, but need a "member" object
             member = namedtuple("Member", "guild id")(guild, user_id)
         member_settings = self.config.member(member)
 
