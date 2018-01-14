@@ -1,8 +1,8 @@
 from collections import namedtuple
-from datetime import timedelta, datetime
 
 from discord.ext import commands
 import discord
+import asyncio
 
 from redbot.core import Config, modlog, checks
 from redbot.core.bot import Red
@@ -34,7 +34,8 @@ class Warnings:
         self.config.register_guild(**self.default_guild)
         self.config.register_member(**self.default_member)
         self.bot = bot
-        self.bot.loop.create_task(self.register_warningtype())
+        loop = asyncio.get_event_loop()
+        loop.create_task(self.register_warningtype())
 
     async def register_warningtype(self):
         try:
@@ -159,7 +160,6 @@ class Warnings:
 
     @warnreason.command(name="add")
     @commands.guild_only()
-    @checks.guildowner_or_permissions(administrator=True)
     async def reason_add(self, ctx: RedContext, name: str, points: int, *, description: str):
         """Add a reason to be available for warnings"""
         guild = ctx.guild
@@ -390,7 +390,7 @@ class Warnings:
                 if mod_loaded:
                     ban_cmd = self.bot.get_command("ban")
                     await ctx.invoke(
-                        ban_cmd, user, 1, reason="Earned too many warning points"
+                        ban_cmd, user, 0, reason="Earned too many warning points"
                     )
 
     async def custom_warning_reason(self, ctx: RedContext):
@@ -426,29 +426,3 @@ class Warnings:
             return
         to_add["description"] = msg.content
         return to_add
-
-    @staticmethod
-    def get_expiry_time(expiredelta: str):
-        units = expiredelta.split()
-        weeks = 0
-        days = 0
-        hours = 0
-        minutes = 0
-        seconds = 0
-        for unit in units:
-            if unit[-1].lower() == "w":
-                weeks = int(unit[:-1])
-            elif unit[-1].lower() == "d":
-                days = int(unit[:-1])
-            elif unit[-1].lower() == "h":
-                hours = int(unit[:-1])
-            elif unit[-1].lower() == "m":
-                minutes = int(unit[:-1])
-            elif unit[-1].lower() == "s":
-                seconds = int(unit[:-1])
-            else:
-                return None  # invalid unit passed in, so no idea how to interpret it
-        return timedelta(
-            weeks=weeks, days=days, hours=hours,
-            minutes=minutes, seconds=seconds
-        )
