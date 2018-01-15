@@ -1,5 +1,6 @@
 import asyncio
 import os
+import logging
 from collections import Counter
 from enum import Enum
 from importlib.machinery import ModuleSpec
@@ -17,7 +18,7 @@ from . import (
     rpc
 )
 from .help_formatter import Help, help as help_
-
+from .sentry import SentryManager
 from .utils import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -101,6 +102,22 @@ class RedBase(BotBase, RpcMethodMixin):
         self.remove_command('help')
 
         self.add_command(help_)
+
+        self._sentry_mgr = None
+
+    def enable_sentry(self):
+        """Enable Sentry logging for Red."""
+        if self._sentry_mgr is None:
+            sentry_log = logging.getLogger('red.sentry')
+            sentry_log.setLevel(logging.WARNING)
+            self._sentry_mgr = SentryManager(sentry_log)
+        self._sentry_mgr.enable()
+
+    def disable_sentry(self):
+        """Disable Sentry logging for Red."""
+        if self._sentry_mgr is None:
+            return
+        self._sentry_mgr.disable()
 
     async def _dict_abuse(self, indict):
         """
