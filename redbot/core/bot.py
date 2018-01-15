@@ -9,6 +9,7 @@ from pathlib import Path
 import discord
 from discord.ext.commands.bot import BotBase
 from discord.ext.commands import GroupMixin
+from discord.ext.commands import when_mentioned_or
 
 from .cog_manager import CogManager
 from . import (
@@ -40,7 +41,7 @@ class RedBase(BotBase, RpcMethodMixin):
     This exists because `Red` inherits from `discord.AutoShardedClient`, which
     is something other bot classes (namely selfbots) may not want to have as
     a parent class.
-    
+
     Selfbots should inherit from this mixin along with `discord.Client`.
     """
     def __init__(self, cli_flags, bot_dir: Path=Path.cwd(), **kwargs):
@@ -76,7 +77,15 @@ class RedBase(BotBase, RpcMethodMixin):
             if message.guild is None:
                 return global_prefix
             server_prefix = await bot.db.guild(message.guild).prefix()
-            return server_prefix if server_prefix else global_prefix
+
+            if cli_flags.mentionable:
+                if server_prefix:
+                    return when_mentioned_or(server_prefix)(bot, message)
+                return when_mentioned_or(global_prefix)(bot, message)
+
+            if server_prefix:
+                return server_prefix
+            return global_prefix
 
         if "command_prefix" not in kwargs:
             kwargs["command_prefix"] = prefix_manager
@@ -236,7 +245,7 @@ class Red(RedBase, discord.AutoShardedClient):
     """
     async def shutdown(self, *, restart: bool=False):
         """Gracefully quit Red.
-        
+
         The program will exit with code :code:`0` by default.
 
         Parameters
