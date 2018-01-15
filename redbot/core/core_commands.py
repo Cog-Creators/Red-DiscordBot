@@ -293,10 +293,9 @@ class Core:
     @checks.is_owner()
     async def avatar(self, ctx, url: str):
         """Sets Red's avatar"""
-        session = aiohttp.ClientSession()
-        async with session.get(url) as r:
-            data = await r.read()
-        await session.close()
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as r:
+                data = await r.read()
 
         try:
             await ctx.bot.user.edit(avatar=data)
