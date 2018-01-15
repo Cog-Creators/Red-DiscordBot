@@ -224,8 +224,8 @@ class Core:
                              " cog path."))
             return
 
-        self.cleanup_and_refresh_modules(spec.name)
         try:
+            self.cleanup_and_refresh_modules(spec.name)
             ctx.bot.load_extension(spec)
         except Exception as e:
             log.exception("Package reloading failed", exc_info=e)
