@@ -1,4 +1,5 @@
 from copy import copy
+from re import search
 from typing import Generator, Tuple, Iterable
 
 import discord
@@ -75,48 +76,38 @@ class Alias:
 
     @staticmethod
     def is_valid_alias_name(alias_name: str) -> bool:
-        return alias_name.isidentifier()
+        return not bool(search(r'\s', alias_name)) and alias_name.isprintable()
 
     async def add_alias(self, ctx: commands.Context, alias_name: str,
                         command: Tuple[str], global_: bool=False) -> AliasEntry:
         alias = AliasEntry(alias_name, command, ctx.author, global_=global_)
 
         if global_:
-            curr_aliases = await self._aliases.entries()
-            curr_aliases.append(alias.to_json())
-            await self._aliases.entries.set(curr_aliases)
+            settings = self._aliases
         else:
-            curr_aliases = await self._aliases.guild(ctx.guild).entries()
+            settings = self._aliases.guild(ctx.guild)
+            await settings.enabled.set(True)
 
+        async with settings.entries() as curr_aliases:
             curr_aliases.append(alias.to_json())
-            await self._aliases.guild(ctx.guild).entries.set(curr_aliases)
 
-            await self._aliases.guild(ctx.guild).enabled.set(True)
         return alias
 
     async def delete_alias(self, ctx: commands.Context, alias_name: str,
                            global_: bool=False) -> bool:
         if global_:
-            aliases = await self.unloaded_global_aliases()
-            setter_func = self._aliases.entries.set
+            settings = self._aliases
         else:
-            aliases = await self.unloaded_aliases(ctx.guild)
-            setter_func = self._aliases.guild(ctx.guild).entries.set
+            settings = self._aliases.guild(ctx.guild)
 
-        did_delete_alias = False
+        async with settings.entries() as aliases:
+            for alias in aliases:
+                alias_obj = AliasEntry.from_json(alias)
+                if alias_obj.name == alias_name:
+                    aliases.remove(alias)
+                    return True
 
-        to_keep = []
-        for alias in aliases:
-            if alias.name != alias_name:
-                to_keep.append(alias)
-            else:
-                did_delete_alias = True
-
-        await setter_func(
-            [a.to_json() for a in to_keep]
-        )
-
-        return did_delete_alias
+        return False
 
     async def get_prefix(self, message: discord.Message) -> str:
         """
@@ -221,8 +212,7 @@ class Alias:
             await ctx.send(_("You attempted to create a new alias"
                              " with the name {} but that"
                              " name is an invalid alias name. Alias"
-                             " names may only contain letters, numbers,"
-                             " and underscores and must start with a letter.").format(alias_name))
+                             " names may not contain spaces.").format(alias_name))
             return
 # endregion
 
@@ -260,8 +250,7 @@ class Alias:
             await ctx.send(_("You attempted to create a new global alias"
                              " with the name {} but that"
                              " name is an invalid alias name. Alias"
-                             " names may only contain letters, numbers,"
-                             " and underscores and must start with a letter.").format(alias_name))
+                             " names may not contain spaces.").format(alias_name))
             return
 # endregion
 

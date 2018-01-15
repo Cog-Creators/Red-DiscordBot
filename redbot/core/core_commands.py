@@ -8,14 +8,18 @@ from random import SystemRandom
 from string import ascii_letters, digits
 
 import aiohttp
+import datetime
 import discord
 from discord.ext import commands
 
 from redbot.core import checks
 from redbot.core import i18n
 from redbot.core import rpc
+from redbot.core import __version__
+from redbot.core.context import RedContext
 
-from typing import TYPE_CHECKING
+from .utils import TYPE_CHECKING
+from .utils.chat_formatting import pagify, box
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -41,6 +45,139 @@ class Core:
         rpc.add_method('core', self.rpc_load)
         rpc.add_method('core', self.rpc_unload)
         rpc.add_method('core', self.rpc_reload)
+
+    @commands.command()
+    async def info(self, ctx: RedContext):
+        """Shows info about Red"""
+        author_repo = "https://github.com/Twentysix26"
+        org_repo = "https://github.com/Cog-Creators"
+        red_repo = org_repo + "/Red-DiscordBot"
+        red_pypi = "https://pypi.python.org/pypi/Red-DiscordBot"
+        support_server_url = "https://discord.gg/red"
+        dpy_repo = "https://github.com/Rapptz/discord.py"
+        python_url = "https://www.python.org/"
+        since = datetime.datetime(2016, 1, 2, 0, 0)
+        days_since = (datetime.datetime.utcnow() - since).days
+        dpy_version = "[{}]({})".format(discord.__version__, dpy_repo)
+        python_version = "[{}.{}.{}]({})".format(
+            *sys.version_info[:3], python_url
+        )
+        red_version = "[{}]({})".format(__version__, red_pypi)
+        app_info = await self.bot.application_info()
+        owner = app_info.owner
+
+        about = (
+            "This is an instance of [Red, an open source Discord bot]({}) "
+            "created by [Twentysix]({}) and [improved by many]({}).\n\n"
+            "Red is backed by a passionate community who contributes and "
+            "creates content for everyone to enjoy. [Join us today]({}) "
+            "and help us improve!\n\n"
+            "".format(red_repo, author_repo, org_repo, support_server_url))
+
+        embed = discord.Embed(color=discord.Color.red())
+        embed.add_field(name="Instance owned by", value=str(owner))
+        embed.add_field(name="Python", value=python_version)
+        embed.add_field(name="discord.py", value=dpy_version)
+        embed.add_field(name="Red version", value=red_version)
+        embed.add_field(name="About Red", value=about, inline=False)
+        embed.set_footer(text="Bringing joy since 02 Jan 2016 (over "
+                         "{} days ago!)".format(days_since))
+        try:
+            await ctx.send(embed=embed)
+        except discord.HTTPException:
+            await ctx.send("I need the `Embed links` permission to send this")
+
+    @commands.command()
+    @checks.is_owner()
+    async def traceback(self, ctx, public: bool=False):
+        """Sends to the owner the last command exception that has occurred
+
+        If public (yes is specified), it will be sent to the chat instead"""
+        if not public:
+            destination = ctx.author
+        else:
+            destination = ctx.channel
+
+        if self.bot._last_exception:
+            for page in pagify(self.bot._last_exception):
+                await destination.send(box(page, lang="py"))
+        else:
+            await ctx.send("No exception has occurred yet")
+
+    @commands.command()
+    @checks.is_owner()
+    async def invite(self, ctx):
+        """Show's Red's invite url"""
+        if self.bot.user.bot:
+            await ctx.author.send(discord.utils.oauth_url(self.bot.user.id))
+        else:
+            await ctx.send("I'm not a bot account. I have no invite URL.")
+
+    @commands.command()
+    @commands.guild_only()
+    @checks.is_owner()
+    async def leave(self, ctx):
+        """Leaves server"""
+        author = ctx.author
+        guild = ctx.guild
+
+        await ctx.send("Are you sure you want me to leave this server?"
+                       " Type yes to confirm.")
+
+        def conf_check(m):
+            return m.author == author
+
+        response = await self.bot.wait_for("message", check=conf_check)
+
+        if response.content.lower().strip() == "yes":
+            await ctx.send("Alright. Bye :wave:")
+            log.debug("Leaving '{}'".format(guild.name))
+            await guild.leave()
+
+    @commands.command()
+    @checks.is_owner()
+    async def servers(self, ctx):
+        """Lists and allows to leave servers"""
+        owner = ctx.author
+        guilds = sorted(list(self.bot.guilds),
+                        key=lambda s: s.name.lower())
+        msg = ""
+        for i, server in enumerate(guilds):
+            msg += "{}: {}\n".format(i, server.name)
+
+        msg += "\nTo leave a server, just type its number."
+
+        for page in pagify(msg, ['\n']):
+            await ctx.send(page)
+
+        def msg_check(m):
+            return m.author == owner
+
+        while msg is not None:
+            msg = await self.bot.wait_for("message", check=msg_check, timeout=15)
+            try:
+                msg = int(msg.content)
+                await self.leave_confirmation(guilds[msg], owner, ctx)
+                break
+            except (IndexError, ValueError, AttributeError):
+                pass
+
+    async def leave_confirmation(self, server, owner, ctx):
+        await ctx.send("Are you sure you want me to leave {}? (yes/no)".format(server.name))
+
+        def conf_check(m):
+            return m.author == owner
+
+        msg = await self.bot.wait_for("message", check=conf_check, timeout=15)
+
+        if msg is None:
+            await ctx.send("I guess not.")
+        elif msg.content.lower().strip() in ("yes", "y"):
+            await server.leave()
+            if server != ctx.guild:
+                await ctx.send("Done.")
+        else:
+            await ctx.send("Alright then.")
 
     @commands.command()
     @checks.is_owner()
@@ -80,14 +217,15 @@ class Core:
         """Reloads a package"""
         ctx.bot.unload_extension(cog_name)
 
-        spec = await ctx.bot.cog_mgr.find_cog(cog_name)
-        if spec is None:
+        try:
+            spec = await ctx.bot.cog_mgr.find_cog(cog_name)
+        except RuntimeError:
             await ctx.send(_("No module by that name was found in any"
                              " cog path."))
             return
 
-        self.cleanup_and_refresh_modules(spec.name)
         try:
+            self.cleanup_and_refresh_modules(spec.name)
             ctx.bot.load_extension(spec)
         except Exception as e:
             log.exception("Package reloading failed", exc_info=e)
@@ -155,10 +293,9 @@ class Core:
     @checks.is_owner()
     async def avatar(self, ctx, url: str):
         """Sets Red's avatar"""
-        session = aiohttp.ClientSession()
-        async with session.get(url) as r:
-            data = await r.read()
-        await session.close()
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as r:
+                data = await r.read()
 
         try:
             await ctx.bot.user.edit(avatar=data)
@@ -174,10 +311,13 @@ class Core:
     @_set.command(name="game")
     @checks.is_owner()
     @commands.guild_only()
-    async def _game(self, ctx, *, game: str):
+    async def _game(self, ctx, *, game: str=None):
         """Sets Red's playing status"""
         status = ctx.me.status
-        game = discord.Game(name=game)
+        if game:
+            game = discord.Game(name=game)
+        else:
+            game = None
         await ctx.bot.change_presence(status=status, game=game)
         await ctx.send(_("Game set."))
 
@@ -336,6 +476,23 @@ class Core:
 
         await ctx.send(_("Locale has been set."))
 
+    @_set.command()
+    @checks.is_owner()
+    async def sentry(self, ctx: commands.Context, on_or_off: bool):
+        """Enable or disable Sentry logging.
+
+        Sentry is the service Red uses to manage error reporting. This should
+        be disabled if you have made your own modifications to the redbot
+        package.
+        """
+        await ctx.bot.db.enable_sentry.set(on_or_off)
+        if on_or_off:
+            ctx.bot.enable_sentry()
+            await ctx.send(_("Done. Sentry logging is now enabled."))
+        else:
+            ctx.bot.disable_sentry()
+            await ctx.send(_("Done. Sentry logging is now disabled."))
+
     @commands.command()
     @commands.cooldown(1, 60, commands.BucketType.user)
     async def contact(self, ctx, *, message: str):
@@ -423,6 +580,128 @@ class Core:
         else:
             await ctx.send(_("Message delivered to %s") % destination)
 
+    @commands.group()
+    @checks.is_owner()
+    async def whitelist(self, ctx):
+        """
+        Whitelist management commands.
+        """
+        if ctx.invoked_subcommand is None:
+            await ctx.send_help()
+
+    @whitelist.command(name='add')
+    async def whitelist_add(self, ctx, user: discord.User):
+        """
+        Adds a user to the whitelist.
+        """
+        async with ctx.bot.db.whitelist() as curr_list:
+            if user.id not in curr_list:
+                curr_list.append(user.id)
+
+        await ctx.send(_("User added to whitelist."))
+
+    @whitelist.command(name='list')
+    async def whitelist_list(self, ctx):
+        """
+        Lists whitelisted users.
+        """
+        curr_list = await ctx.bot.db.whitelist()
+
+        msg = _("Whitelisted Users:")
+        for user in curr_list:
+            msg.append("\n\t- {}".format(user))
+
+        for page in pagify(msg):
+            await ctx.send(box(page))
+
+    @whitelist.command(name='remove')
+    async def whitelist_remove(self, ctx, user: discord.User):
+        """
+        Removes user from whitelist.
+        """
+        removed = False
+
+        async with ctx.bot.db.whitelist() as curr_list:
+            if user.id in curr_list:
+                removed = True
+                curr_list.remove(user.id)
+
+        if removed:
+            await ctx.send(_("User has been removed from whitelist."))
+        else:
+            await ctx.send(_("User was not in the whitelist."))
+            
+    @whitelist.command(name='clear')
+    async def whitelist_clear(self, ctx):
+        """
+        Clears the whitelist.
+        """
+        await ctx.bot.db.whitelist.set([])
+        await ctx.send(_("Whitelist has been cleared."))
+
+    @commands.group()
+    @checks.is_owner()
+    async def blacklist(self, ctx):
+        """
+        blacklist management commands.
+        """
+        if ctx.invoked_subcommand is None:
+            await ctx.send_help()
+
+    @blacklist.command(name='add')
+    async def blacklist_add(self, ctx, user: discord.User):
+        """
+        Adds a user to the blacklist.
+        """
+        if await ctx.bot.is_owner(user):
+            ctx.send(_("You cannot blacklist an owner!"))
+            return
+
+        async with ctx.bot.db.blacklist() as curr_list:
+            if user.id not in curr_list:
+                curr_list.append(user.id)
+
+        await ctx.send(_("User added to blacklist."))
+
+    @blacklist.command(name='list')
+    async def blacklist_list(self, ctx):
+        """
+        Lists blacklisted users.
+        """
+        curr_list = await ctx.bot.db.blacklist()
+
+        msg = _("blacklisted Users:")
+        for user in curr_list:
+            msg.append("\n\t- {}".format(user))
+
+        for page in pagify(msg):
+            await ctx.send(box(page))
+
+    @blacklist.command(name='remove')
+    async def blacklist_remove(self, ctx, user: discord.User):
+        """
+        Removes user from blacklist.
+        """
+        removed = False
+
+        async with ctx.bot.db.blacklist() as curr_list:
+            if user.id in curr_list:
+                removed = True
+                curr_list.remove(user.id)
+
+        if removed:
+            await ctx.send(_("User has been removed from blacklist."))
+        else:
+            await ctx.send(_("User was not in the blacklist."))
+
+    @blacklist.command(name='clear')
+    async def blacklist_clear(self, ctx):
+        """
+        Clears the blacklist.
+        """
+        await ctx.bot.db.blacklist.set([])
+        await ctx.send(_("blacklist has been cleared."))
+
     # RPC handlers
     async def rpc_load(self, request):
         cog_name = request.params[0]
@@ -443,4 +722,3 @@ class Core:
     async def rpc_reload(self, request):
         await self.rpc_unload(request)
         await self.rpc_load(request)
-

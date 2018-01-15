@@ -8,7 +8,6 @@ from pkg_resources import DistributionNotFound
 
 
 import discord
-from .sentry_setup import should_log
 from discord.ext import commands
 
 from . import __version__
@@ -118,7 +117,7 @@ def init_events(bot, cli_flags):
             ("Tests", reqs_installed["test"])
         )
 
-        on_symbol, off_symbol = _get_settings_symbols()
+        on_symbol, off_symbol, ascii_border = _get_startup_screen_specs()
 
         for option, enabled in options:
             enabled = on_symbol if enabled else off_symbol
@@ -126,13 +125,17 @@ def init_events(bot, cli_flags):
 
         print(Fore.RED + INTRO)
         print(Style.RESET_ALL)
-        print(bordered(INFO, INFO2))
+        print(bordered(INFO, INFO2, ascii_border=ascii_border))
 
         if invite_url:
             print("\nInvite URL: {}\n".format(invite_url))
 
         if bot.rpc_enabled:
             await initialize(bot)
+
+    @bot.event
+    async def on_error(event_method, *args, **kwargs):
+        sentry_log.exception("Exception in {}".format(event_method))
 
     @bot.event
     async def on_command_error(ctx, error):
@@ -157,6 +160,10 @@ def init_events(bot, cli_flags):
             log.exception("Exception in command '{}'"
                           "".format(ctx.command.qualified_name),
                           exc_info=error.original)
+            sentry_log.exception("Exception in command '{}'"
+                                 "".format(ctx.command.qualified_name),
+                                 exc_info=error.original)
+
             message = ("Error in command '{}'. Check your console or "
                        "logs for details."
                        "".format(ctx.command.qualified_name))
@@ -166,12 +173,6 @@ def init_events(bot, cli_flags):
                                      error, error.__traceback__))
             bot._last_exception = exception_log
             await ctx.send(inline(message))
-
-            module = ctx.command.module
-            if should_log(module):
-                sentry_log.exception("Exception in command '{}'"
-                                     "".format(ctx.command.qualified_name),
-                                     exc_info=error.original)
         elif isinstance(error, commands.CommandNotFound):
             pass
         elif isinstance(error, commands.CheckFailure):
@@ -184,6 +185,13 @@ def init_events(bot, cli_flags):
                            "".format(error.retry_after))
         else:
             log.exception(type(error).__name__, exc_info=error)
+            try:
+                sentry_error = error.original
+            except AttributeError:
+                sentry_error = error
+
+            sentry_log.exception("Unhandled command error.",
+                                 exc_info=sentry_error)
 
     @bot.event
     async def on_message(message):
@@ -198,11 +206,18 @@ def init_events(bot, cli_flags):
     async def on_command(command):
         bot.counter["processed_commands"] += 1
 
-def _get_settings_symbols():
-    """Get symbols for displaying settings on stdout.
+def _get_startup_screen_specs():
+    """Get specs for displaying the startup screen on stdout.
 
     This is so we don't get encoding errors when trying to print unicode
     emojis to stdout (particularly with Windows Command Prompt).
+
+    Returns
+    -------
+    `tuple`
+        Tuple in the form (`str`, `str`, `bool`) containing (in order) the
+        on symbol, off symbol and whether or not the border should be pure ascii.
+
     """
     encoder = codecs.getencoder(sys.stdout.encoding)
     check_mark = "\N{SQUARE ROOT}"
@@ -215,4 +230,11 @@ def _get_settings_symbols():
         on_symbol = check_mark
         off_symbol = "X"
 
-    return on_symbol, off_symbol
+    try:
+        encoder('┌┐└┘─│')  # border symbols
+    except UnicodeEncodeError:
+        ascii_border = True
+    else:
+        ascii_border = False
+
+    return on_symbol, off_symbol, ascii_border

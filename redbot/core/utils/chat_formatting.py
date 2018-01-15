@@ -1,58 +1,232 @@
 import itertools
+from typing import Sequence, Iterator
 
-def error(text):
+def error(text: str) -> str:
+    """Get text prefixed with an error emoji.
+
+    Returns
+    -------
+    str
+        The new message.
+
+    """
     return "\N{NO ENTRY SIGN} {}".format(text)
 
 
-def warning(text):
+def warning(text: str) -> str:
+    """Get text prefixed with a warning emoji.
+
+    Returns
+    -------
+    str
+        The new message.
+
+    """
     return "\N{WARNING SIGN} {}".format(text)
 
 
-def info(text):
+def info(text: str) -> str:
+    """Get text prefixed with an info emoji.
+
+    Returns
+    -------
+    str
+        The new message.
+
+    """
     return "\N{INFORMATION SOURCE} {}".format(text)
 
 
-def question(text):
+def question(text: str) -> str:
+    """Get text prefixed with a question emoji.
+
+    Returns
+    -------
+    str
+        The new message.
+
+    """
     return "\N{BLACK QUESTION MARK ORNAMENT} {}".format(text)
 
 
-def bold(text):
+def bold(text: str) -> str:
+    """Get the given text in bold.
+
+    Parameters
+    ----------
+    text : str
+        The text to be marked up.
+
+    Returns
+    -------
+    str
+        The marked up text.
+
+    """
     return "**{}**".format(text)
 
 
-def box(text, lang=""):
+def box(text: str, lang: str="") -> str:
+    """Get the given text in a code block.
+
+    Parameters
+    ----------
+    text : str
+        The text to be marked up.
+    lang : `str`, optional
+        The syntax highlighting language for the codeblock.
+
+    Returns
+    -------
+    str
+        The marked up text.
+
+    """
     ret = "```{}\n{}\n```".format(lang, text)
     return ret
 
 
-def inline(text):
+def inline(text: str) -> str:
+    """Get the given text as inline code.
+
+    Parameters
+    ----------
+    text : str
+        The text to be marked up.
+
+    Returns
+    -------
+    str
+        The marked up text.
+
+    """
     return "`{}`".format(text)
 
 
-def italics(text):
+def italics(text: str) -> str:
+    """Get the given text in italics.
+
+    Parameters
+    ----------
+    text : str
+        The text to be marked up.
+
+    Returns
+    -------
+    str
+        The marked up text.
+
+    """
     return "*{}*".format(text)
 
 
-def bordered(text1: list, text2: list):
-    width1, width2 = max((len(s1) + 9, len(s2) + 9) for s1 in text1 for s2 in text2)
-    res = ['┌{}┐{}┌{}┐'.format("─"*width1, " "*4, "─"*width2)]
-    flag = True
-    for x, y in itertools.zip_longest(text1, text2):
-        if y:
-            m = "│{}│{}│{}│".format((x + " " * width1)[:width1], " "*4, (y + " " * width2)[:width2])
-        elif x and flag and not y:
-            m = "│{}│{}└{}┘".format((x + " " * width1)[:width1], " "*4, "─" *  width2)
-            flag = False
+def bordered(*columns: Sequence[str], ascii_border: bool=False) -> str:
+    """Get two blocks of text in a borders.
+
+    Note
+    ----
+    This will only work with a monospaced font.
+
+    Parameters
+    ----------
+    *columns : `sequence` of `str`
+        The columns of text, each being a list of lines in that column.
+    ascii_border : bool
+        Whether or not the border should be pure ASCII.
+
+    Returns
+    -------
+    str
+        The bordered text.
+
+    """
+    borders = {
+        'TL': '-' if ascii_border else '┌',  # Top-left
+        'TR': '-' if ascii_border else '┐',  # Top-right
+        'BL': '-' if ascii_border else '└',  # Bottom-left
+        'BR': '-' if ascii_border else '┘',  # Bottom-right
+        'HZ': '-' if ascii_border else '─',  # Horizontal
+        'VT': '|' if ascii_border else '│',  # Vertical
+    }
+
+    sep = ' ' * 4  # Separator between boxes
+    widths = tuple(max(len(row) for row in column) + 9 for column in columns)  # width of each col
+    colsdone = [False] * len(columns)  # whether or not each column is done
+    lines = [sep.join('{TL}' + '{HZ}'*width + '{TR}' for width in widths)]
+
+    for line in itertools.zip_longest(*columns):
+        row = []
+        for colidx, column in enumerate(line):
+            width = widths[colidx]
+            done = colsdone[colidx]
+            if column is None:
+                if not done:
+                    # bottom border of column
+                    column = '{HZ}' * width
+                    row.append('{BL}' + column + '{BR}')
+                    colsdone[colidx] = True  # mark column as done
+                else:
+                    # leave empty
+                    row.append(' ' * (width + 2))
+            else:
+                column += ' ' * (width - len(column))  # append padded spaces
+                row.append('{VT}' + column + '{VT}')
+
+        lines.append(sep.join(row))
+
+    final_row = []
+    for width, done in zip(widths, colsdone):
+        if not done:
+            final_row.append('{BL}' + '{HZ}' * width + '{BR}')
         else:
-            m = "│{}│".format((x + " " * width1)[:width1])
-        res.append(m)
-    res.append("└" + "─" * width1 + "┘")
-    return "\n".join(res)
+            final_row.append(' ' * (width + 2))
+    lines.append(sep.join(final_row))
+
+    return "\n".join(lines).format(**borders)
 
 
-def pagify(text, delims=["\n"], *, priority=False, escape_mass_mentions=True, shorten_by=8,
-           page_length=2000):
-    """DOES NOT RESPECT MARKDOWN BOXES OR INLINE CODE"""
+def pagify(text: str,
+           delims: Sequence[str]=["\n"],
+           *,
+           priority: bool=False,
+           escape_mass_mentions: bool=True,
+           shorten_by: int=8,
+           page_length: int=2000) -> Iterator[str]:
+    """Generate multiple pages from the given text.
+
+    Note
+    ----
+    This does not respect code blocks or inline code.
+
+    Parameters
+    ----------
+    text : str
+        The content to pagify and send.
+    delims : `sequence` of `str`, optional
+        Characters where page breaks will occur. If no delimiters are found
+        in a page, the page will break after ``page_length`` characters.
+        By default this only contains the newline.
+
+    Other Parameters
+    ----------------
+    priority : `bool`
+        Set to :code:`True` to choose the page break delimiter based on the
+        order of ``delims``. Otherwise, the page will always break at the
+        last possible delimiter.
+    escape_mass_mentions : `bool`
+        If :code:`True`, any mass mentions (here or everyone) will be
+        silenced.
+    shorten_by : `int`
+        How much to shorten each page by. Defaults to 8.
+    page_length : `int`
+        The maximum length of each page. Defaults to 2000.
+
+    Yields
+    ------
+    `str`
+        Pages of the given text.
+
+    """
     in_text = text
     page_length -= shorten_by
     while len(in_text) > page_length:
@@ -82,15 +256,59 @@ def pagify(text, delims=["\n"], *, priority=False, escape_mass_mentions=True, sh
             yield in_text
 
 
-def strikethrough(text):
+def strikethrough(text: str) -> str:
+    """Get the given text with a strikethrough.
+
+    Parameters
+    ----------
+    text : str
+        The text to be marked up.
+
+    Returns
+    -------
+    str
+        The marked up text.
+
+    """
     return "~~{}~~".format(text)
 
 
-def underline(text):
+def underline(text: str) -> str:
+    """Get the given text with an underline.
+
+    Parameters
+    ----------
+    text : str
+        The text to be marked up.
+
+    Returns
+    -------
+    str
+        The marked up text.
+
+    """
     return "__{}__".format(text)
 
 
-def escape(text, *, mass_mentions=False, formatting=False):
+def escape(text: str, *, mass_mentions: bool=False,
+           formatting: bool=False) -> str:
+    """Get text with all mass mentions or markdown escaped.
+
+    Parameters
+    ----------
+    text : str
+        The text to be escaped.
+    mass_mentions : `bool`, optional
+        Set to :code:`True` to escape mass mentions in the text.
+    formatting : `bool`, optional
+        Set to :code:`True` to escpae any markdown formatting in the text.
+
+    Returns
+    -------
+    str
+        The escaped text.
+
+    """
     if mass_mentions:
         text = text.replace("@everyone", "@\u200beveryone")
         text = text.replace("@here", "@\u200bhere")

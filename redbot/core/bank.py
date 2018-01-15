@@ -143,7 +143,7 @@ async def can_spend(member: discord.Member, amount: int) -> bool:
     """
     if _invalid_amount(amount):
         return False
-    return await get_balance(member) > amount
+    return await get_balance(member) >= amount
 
 
 async def set_balance(member: discord.Member, amount: int) -> int:
@@ -279,24 +279,12 @@ async def transfer_credits(from_: discord.Member, to: discord.Member, amount: in
     return await deposit_credits(to, amount)
 
 
-async def wipe_bank(user: Union[discord.User, discord.Member]):
-    """Delete all accounts from the bank.
-
-    .. important::
-
-        A member is required if the bank is currently guild specific.
-
-    Parameters
-    ----------
-    user : `discord.User` or `discord.Member`
-        A user to be used in clearing the bank, this is required for technical
-        reasons and it does not matter which user/member is used.
-
-    """
+async def wipe_bank():
+    """Delete all accounts from the bank."""
     if await is_global():
-        await _conf.user(user).clear()
+        await _conf.clear_all_users()
     else:
-        await _conf.member(user).clear()
+        await _conf.clear_all_members()
 
 
 async def get_guild_accounts(guild: discord.Guild) -> List[Account]:
@@ -330,13 +318,8 @@ async def get_guild_accounts(guild: discord.Guild) -> List[Account]:
     return ret
 
 
-async def get_global_accounts(user: discord.User) -> List[Account]:
+async def get_global_accounts() -> List[Account]:
     """Get all global account data.
-
-    Parameters
-    ----------
-    user : discord.User
-        A user to be used for getting accounts.
 
     Returns
     -------
@@ -409,7 +392,7 @@ async def is_global() -> bool:
     return await _conf.is_global()
 
 
-async def set_global(global_: bool, user: Union[discord.User, discord.Member]) -> bool:
+async def set_global(global_: bool) -> bool:
     """Set global status of the bank.
 
     .. important::

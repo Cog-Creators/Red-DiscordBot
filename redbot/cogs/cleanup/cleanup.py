@@ -63,6 +63,8 @@ class Cleanup:
                 elif (ctx.message.created_at - message.created_at).days >= 14:
                     too_old = True
                     break
+                elif len(to_delete) >= number:
+                    break
                 tmp = message
 
         reason = "{}({}) deleted {} messages "\
@@ -111,6 +113,8 @@ class Cleanup:
                     to_delete.append(message)
                 elif (ctx.message.created_at - message.created_at).days >= 14:
                     too_old = True
+                    break
+                elif len(to_delete) >= number:
                     break
                 tmp = message
         reason = "{}({}) deleted {} messages "\
@@ -217,14 +221,9 @@ class Cleanup:
         author = ctx.message.author
         is_bot = self.bot.user.bot
 
-        prefixes = self.bot.command_prefix
+        prefixes = await self.bot.get_prefix(ctx.message) # This returns all server prefixes
         if isinstance(prefixes, str):
             prefixes = [prefixes]
-        elif callable(prefixes):
-            if asyncio.iscoroutine(prefixes):
-                await ctx.send(_('Coroutine prefixes not yet implemented.'))
-                return
-            prefixes = prefixes(self.bot, ctx.message)
 
         # In case some idiot sets a null prefix
         if '' in prefixes:
@@ -237,7 +236,8 @@ class Cleanup:
                 return True
             p = discord.utils.find(m.content.startswith, prefixes)
             if p and len(p) > 0:
-                return m.content[len(p):].startswith(tuple(self.bot.commands))
+                cmd_name = m.content[len(p):].split(' ')[0]
+                return bool(self.bot.get_command(cmd_name))
             return False
 
         to_delete = [ctx.message]
@@ -251,6 +251,8 @@ class Cleanup:
                     to_delete.append(message)
                 elif (ctx.message.created_at - message.created_at).days >= 14:
                     too_old = True
+                    break
+                elif len(to_delete) >= number:
                     break
                 tmp = message
 
@@ -325,6 +327,8 @@ class Cleanup:
                 elif (ctx.message.created_at - message.created_at).days >= 14:
                     # Found a message that is 14 or more days old, stop here
                     too_old = True
+                    break
+                elif len(to_delete) >= number:
                     break
                 tmp = message
 

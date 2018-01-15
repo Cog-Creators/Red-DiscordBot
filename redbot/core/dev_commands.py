@@ -4,6 +4,7 @@ import io
 import textwrap
 import traceback
 from contextlib import redirect_stdout
+from copy import copy
 
 import discord
 from discord.ext import commands
@@ -50,6 +51,11 @@ class Dev:
             '{0.text}{1:>{0.offset}}\n{2}: {0}'
             ''.format(e, '^', type(e).__name__),
             lang="py")
+
+    @staticmethod
+    def get_pages(msg: str):
+        """Pagify the given message for output to the user."""
+        return pagify(msg, delims=["\n", " "], priority=True, shorten_by=10)
 
     @staticmethod
     def sanitize_output(ctx: commands.Context, input_: str) -> str:
@@ -115,7 +121,7 @@ class Dev:
 
         result = self.sanitize_output(ctx, str(result))
 
-        await ctx.send(box(result, lang="py"))
+        await ctx.send_interactive(self.get_pages(result), box_lang="py")
 
     @commands.command(name='eval')
     @checks.is_owner()
@@ -162,28 +168,24 @@ class Dev:
             return await ctx.send(self.get_syntax_error(e))
 
         func = env['func']
+        result = None
         try:
             with redirect_stdout(stdout):
-                ret = await func()
+                result = await func()
         except:
-            value = stdout.getvalue()
-            await ctx.send(
-                box('\n{}{}'.format(value, traceback.format_exc()), lang="py"))
+            printed = "{}{}".format(stdout.getvalue(), traceback.format_exc())
         else:
-            value = stdout.getvalue()
-            try:
-                await ctx.message.add_reaction('\N{White Heavy Check Mark}')
-            except:
-                pass
+            printed = stdout.getvalue()
+            await ctx.tick()
 
-            if ret is None:
-                if value:
-                    value = self.sanitize_output(ctx, str(value))
-                    await ctx.send(box(value, lang="py"))
-            else:
-                self._last_result = ret
-                ret = self.sanitize_output(ctx, str(ret))
-                await ctx.send(box("{}{}".format(value, ret), lang="py"))
+        if result is not None:
+            self._last_result = result
+            msg = "{}{}".format(printed, result)
+        else:
+            msg = printed
+        msg = self.sanitize_output(ctx, msg)
+
+        await ctx.send_interactive(self.get_pages(msg), box_lang="py")
 
     @commands.command()
     @checks.is_owner()
@@ -251,7 +253,7 @@ class Dev:
 
             stdout = io.StringIO()
 
-            msg = None
+            msg = ""
 
             try:
                 with redirect_stdout(stdout):
@@ -260,7 +262,6 @@ class Dev:
                         result = await result
             except:
                 value = stdout.getvalue()
-                value = self.sanitize_output(ctx, value)
                 msg = "{}{}".format(value, traceback.format_exc())
             else:
                 value = stdout.getvalue()
@@ -270,10 +271,10 @@ class Dev:
                 elif value:
                     msg = "{}".format(value)
 
+            msg = self.sanitize_output(ctx, msg)
+
             try:
-                for page in pagify(str(msg), shorten_by=12):
-                    page = self.sanitize_output(ctx, page)
-                    await ctx.send(box(page, "py"))
+                await ctx.send_interactive(self.get_pages(msg), box_lang="py")
             except discord.Forbidden:
                 pass
             except discord.HTTPException as e:
@@ -286,17 +287,11 @@ class Dev:
 
         The prefix must not be entered.
         """
-        # Since we have stateful objects now this might be pretty bad
-        # Sorry Danny
-        old_author = ctx.author
-        old_content = ctx.message.content
-        ctx.message.author = user
-        ctx.message.content = ctx.prefix + command
+        msg = copy(ctx.message)
+        msg.author = user
+        msg.content = ctx.prefix + command
 
-        await ctx.bot.process_commands(ctx.message)
-
-        ctx.message.author = old_author
-        ctx.message.content = old_content
+        ctx.bot.dispatch('message', msg)
 
     @commands.command(name="mockmsg")
     @checks.is_owner()

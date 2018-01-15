@@ -1,5 +1,6 @@
 import asyncio
-from collections import deque, defaultdict
+from datetime import datetime, timedelta
+from collections import deque, defaultdict, namedtuple
 
 import discord
 from discord.ext import commands
@@ -26,7 +27,8 @@ class Mod:
         "ignored": False,
         "respect_hierarchy": True,
         "delete_delay": -1,
-        "reinvite_on_unban": False
+        "reinvite_on_unban": False,
+        "current_tempbans": []
     }
 
     default_channel_settings = {
@@ -51,104 +53,115 @@ class Mod:
         self.settings.register_channel(**self.default_channel_settings)
         self.settings.register_member(**self.default_member_settings)
         self.settings.register_user(**self.default_user_settings)
-        self.current_softban = {}
-        self.ban_type = None
+        self.ban_queue = []
+        self.unban_queue = []
         self.cache = defaultdict(lambda: deque(maxlen=3))
 
-        self.bot.loop.create_task(self._casetype_registration())
-
+        self.registration_task = self.bot.loop.create_task(self._casetype_registration())
+        self.tban_expiry_task = self.bot.loop.create_task(self.check_tempban_expirations())
         self.last_case = defaultdict(dict)
+
+    def __unload(self):
+        self.registration_task.cancel()
+        self.tban_expiry_task.cancel()
 
     async def _casetype_registration(self):
         casetypes_to_register = [
             {
                 "name": "ban",
                 "default_setting": True,
-                "image": ":hammer:",
+                "image": "\N{HAMMER}",
                 "case_str": "Ban",
                 "audit_type": "ban"
             },
             {
                 "name": "kick",
                 "default_setting": True,
-                "image": ":boot:",
+                "image": "\N{WOMANS BOOTS}",
                 "case_str": "Kick",
                 "audit_type": "kick"
             },
             {
                 "name": "hackban",
                 "default_setting": True,
-                "image": ":bust_in_silhouette: :hammer:",
+                "image": "\N{BUST IN SILHOUETTE}\N{HAMMER}",
                 "case_str": "Hackban",
+                "audit_type": "ban"
+            },
+            {
+                "name": "tempban",
+                "default_setting": True,
+                "image": "\N{ALARM CLOCK}\N{HAMMER}",
+                "case_str": "Tempban",
                 "audit_type": "ban"
             },
             {
                 "name": "softban",
                 "default_setting": True,
-                "image": ":dash: :hammer:",
+                "image": "\N{DASH SYMBOL}\N{HAMMER}",
                 "case_str": "Softban",
                 "audit_type": "ban"
             },
             {
                 "name": "unban",
                 "default_setting": True,
-                "image": ":dove:",
+                "image": "\N{DOVE OF PEACE}",
                 "case_str": "Unban",
                 "audit_type": "unban"
             },
             {
                 "name": "voiceban",
                 "default_setting": True,
-                "image": ":mute:",
+                "image": "\N{SPEAKER WITH CANCELLATION STROKE}",
                 "case_str": "Voice Ban",
                 "audit_type": "member_update"
             },
             {
                 "name": "voiceunban",
                 "default_setting": True,
-                "image": ":speaker:",
+                "image": "\N{SPEAKER}",
                 "case_str": "Voice Unban",
                 "audit_type": "member_update"
             },
             {
                 "name": "vmute",
                 "default_setting": False,
-                "image": ":mute:",
+                "image": "\N{SPEAKER WITH CANCELLATION STROKE}",
                 "case_str": "Voice Mute",
                 "audit_type": "overwrite_update"
             },
             {
                 "name": "cmute",
                 "default_setting": False,
-                "image": ":mute:",
+                "image": "\N{SPEAKER WITH CANCELLATION STROKE}",
                 "case_str": "Channel Mute",
                 "audit_type": "overwrite_update"
             },
             {
                 "name": "smute",
                 "default_setting": True,
-                "image": ":mute:",
+                "image": "\N{SPEAKER WITH CANCELLATION STROKE}",
                 "case_str": "Guild Mute",
                 "audit_type": "overwrite_update"
             },
             {
                 "name": "vunmute",
                 "default_setting": False,
-                "image": ":speaker:",
+                "image": "\N{SPEAKER}",
                 "case_str": "Voice Unmute",
                 "audit_type": "overwrite_update"
             },
             {
                 "name": "cunmute",
                 "default_setting": False,
-                "image": ":speaker:",
+                "image": "\N{SPEAKER}",
                 "case_str": "Channel Unmute",
                 "audit_type": "overwrite_update"
             },
             {
                 "name": "sunmute",
                 "default_setting": True,
-                "image": ":speaker:",
+                "image": "\N{SPEAKER}",
                 "case_str": "Guild Unmute",
                 "audit_type": "overwrite_update"
             }
@@ -355,14 +368,17 @@ class Mod:
         if days < 0 or days > 7:
             await ctx.send(_("Invalid days. Must be between 0 and 7."))
             return
-
+        queue_entry = (guild.id, user.id)
+        self.ban_queue.append(queue_entry)
         try:
             await guild.ban(user, reason=audit_reason, delete_message_days=days)
             log.info("{}({}) banned {}({}), deleting {} days worth of messages".format(
                 author.name, author.id, user.name, user.id, str(days)))
         except discord.Forbidden:
+            self.ban_queue.remove(queue_entry)
             await ctx.send(_("I'm not allowed to do that."))
         except Exception as e:
+            self.ban_queue.remove(queue_entry)
             print(e)
         else:
             await ctx.send(_("Done. It was about time."))
@@ -402,15 +418,18 @@ class Mod:
             user = discord.Object(id=user_id)  # User not in the guild, but
 
         audit_reason = get_audit_reason(author, reason)
-
+        queue_entry = (guild.id, user_id)
+        self.ban_queue.append(queue_entry)
         try:
             await guild.ban(user, reason=audit_reason)
             log.info("{}({}) hackbanned {}"
                      "".format(author.name, author.id, user_id))
         except discord.NotFound:
+            self.ban_queue.remove(queue_entry)
             await ctx.send(_("User not found. Have you provided the "
                              "correct user ID?"))
         except discord.Forbidden:
+            self.ban_queue.remove(queue_entry)
             await ctx.send(_("I lack the permissions to do this."))
         else:
             await ctx.send(_("Done. The user will not be able to join this "
@@ -424,6 +443,54 @@ class Mod:
             )
         except RuntimeError as e:
             await ctx.send(e)
+
+    @commands.command()
+    @commands.guild_only()
+    @checks.admin_or_permissions(ban_members=True)
+    async def tempban(self, ctx: RedContext, user: discord.Member, days: int=1, *, reason: str=None):
+        """Tempbans the user for the specified number of days"""
+        guild = ctx.guild
+        author = ctx.author
+        days_delta = timedelta(days=int(days))
+        unban_time = datetime.utcnow() + days_delta
+        channel = ctx.channel
+        can_ban = channel.permissions_for(guild.me).ban_members
+
+        invite = await self.get_invite_for_reinvite(ctx, int(days_delta.total_seconds() + 86400))
+        if invite is None:
+            invite = ""
+
+        if can_ban:
+            queue_entry = (guild.id, user.id)
+            await self.settings.member(user).banned_until.set(unban_time.timestamp())
+            cur_tbans = await self.settings.guild(guild).current_tempbans()
+            cur_tbans.append(user.id)
+            await self.settings.guild(guild).current_tempbans.set(cur_tbans)
+
+            try:  # We don't want blocked DMs preventing us from banning
+                msg = await user.send(
+                    _("You have been temporarily banned from {} until {}. "
+                      "Here is an invite for when your ban expires: {}").format(
+                        guild.name, unban_time.strftime("%m-%d-%Y %H:%M:%S"), invite))
+            except discord.HTTPException:
+                msg = None
+            self.ban_queue.append(queue_entry)
+            try:
+                await guild.ban(user)
+            except discord.Forbidden:
+                await ctx.send(_("I can't do that for some reason."))
+            except discord.HTTPException:
+                await ctx.send(_("Something went wrong while banning"))
+            else:
+                await ctx.send(_("Done. Enough chaos for now"))
+
+            try:
+                await modlog.create_case(
+                    guild, ctx.message.created_at, "tempban",
+                    user, author, reason, unban_time
+                )
+            except RuntimeError as e:
+                await ctx.send(e)
 
     @commands.command()
     @commands.guild_only()
@@ -452,7 +519,7 @@ class Mod:
             invite = ""
 
         if can_ban:
-            self.current_softban[str(guild.id)] = user
+            queue_entry = (guild.id, user.id)
             try:  # We don't want blocked DMs preventing us from banning
                 msg = await user.send(
                     _("You have been banned and "
@@ -460,17 +527,26 @@ class Mod:
                       "You can now join the guild again. {}").format(invite))
             except discord.HTTPException:
                 msg = None
+            self.ban_queue.append(queue_entry)
             try:
                 await guild.ban(
                     user, reason=audit_reason, delete_message_days=1)
-                await guild.unban(user)
             except discord.errors.Forbidden:
+                self.ban_queue.remove(queue_entry)
                 await ctx.send(
                     _("My role is not high enough to softban that user."))
                 if msg is not None:
                     await msg.delete()
                 return
             except discord.HTTPException as e:
+                self.ban_queue.remove(queue_entry)
+                print(e)
+                return
+            self.unban_queue.append(queue_entry)
+            try:
+                await guild.unban(user)
+            except discord.HTTPException as e:
+                self.unban_queue.remove(queue_entry)
                 print(e)
                 return
             else:
@@ -490,9 +566,6 @@ class Mod:
                         channel=None)
                 except RuntimeError as e:
                     await ctx.send(e)
-            finally:
-                await asyncio.sleep(5)
-                self.current_softban = None
         else:
             await ctx.send(_("I'm not allowed to do that."))
 
@@ -501,14 +574,15 @@ class Mod:
     @checks.admin_or_permissions(ban_members=True)
     @commands.bot_has_permissions(ban_members=True)
     async def unban(self, ctx: RedContext, user_id: int, *, reason: str = None):
-        """Unbans the target user. Requires specifying the target user's ID
-        (which can be found in the mod log channel (if logging was enabled for
-        the casetype associated with the command used to ban the user) or (if
-        developer mode is enabled) by looking in Bans in guild settings,
-        finding the user, right-clicking, and selecting 'Copy ID'"""
+        """Unbans the target user.
+        
+        Requires specifying the target user's ID. To find this, you may either:
+         1. Copy it from the mod log case (if one was created), or
+         2. enable developer mode, go to Bans in this server's settings, right-
+        click the user and select 'Copy ID'."""
         guild = ctx.guild
         author = ctx.author
-        user = self.bot.get_user_info(user_id)
+        user = await self.bot.get_user_info(user_id)
         if not user:
             await ctx.send(_("Couldn't find a user with that ID!"))
             return
@@ -518,10 +592,12 @@ class Mod:
         if user not in bans:
             await ctx.send(_("It seems that user isn't banned!"))
             return
-
+        queue_entry = (guild.id, user.id)
+        self.unban_queue.append(queue_entry)
         try:
             await guild.unban(user, reason=reason)
         except discord.HTTPException:
+            self.unban_queue.remove(queue_entry)
             await ctx.send(_("Something went wrong while attempting to unban that user"))
             return
         else:
@@ -555,7 +631,7 @@ class Mod:
                         .format(invite.url))
 
     @staticmethod
-    async def get_invite_for_reinvite(ctx: RedContext):
+    async def get_invite_for_reinvite(ctx: RedContext, max_age: int=86400):
         """Handles the reinvite logic for getting an invite
         to send the newly unbanned user
         :returns: :class:`Invite`"""
@@ -581,8 +657,8 @@ class Mod:
             if channel is None:
                 return
             try:
-                # Create invite that expires after 1 day
-                return await channel.create_invite(max_age=86400)
+                # Create invite that expires after max_age
+                return await channel.create_invite(max_age=max_age)
             except discord.HTTPException:
                 return
 
@@ -971,7 +1047,6 @@ class Mod:
             await ctx.send(_("Channel already in ignore list."))
 
     @ignore.command(name="guild", aliases=["server"])
-    @commands.has_permissions(manage_guild=True)
     async def ignore_guild(self, ctx: RedContext):
         """Ignores current guild"""
         guild = ctx.guild
@@ -1005,7 +1080,6 @@ class Mod:
             await ctx.send(_("That channel is not in the ignore list."))
 
     @unignore.command(name="guild", aliases=["server"])
-    @commands.has_permissions(manage_guild=True)
     async def unignore_guild(self, ctx: RedContext):
         """Removes current guild from ignore list"""
         guild = ctx.message.guild
@@ -1048,6 +1122,9 @@ class Mod:
     @commands.command()
     async def names(self, ctx: RedContext, user: discord.Member):
         """Show previous names/nicknames of a user"""
+        async with self.settings.user(user).past_names() as name_list:
+            while None in name_list:  # clean out null entries from a bug
+                name_list.remove(None)
         names = await self.settings.user(user).past_names()
         nicks = await self.settings.member(user).past_nicks()
         msg = ""
@@ -1068,6 +1145,31 @@ class Mod:
         else:
             await ctx.send(_("That user doesn't have any recorded name or "
                              "nickname change."))
+
+    async def check_tempban_expirations(self):
+        member = namedtuple("Member", "id guild")
+        while self == self.bot.get_cog("Mod"):
+            for guild in self.bot.guilds:
+                guild_tempbans = await self.settings.guild(guild).current_tempbans()
+                for uid in guild_tempbans:
+                    unban_time = datetime.utcfromtimestamp(
+                        await self.settings.member(
+                            member(uid, guild)
+                        ).banned_until()
+                    )
+                    now = datetime.utcnow()
+                    if now > unban_time:  # Time to unban the user
+                        user = await self.bot.get_user_info(uid)
+                        queue_entry = (guild.id, user.id)
+                        self.unban_queue.append(queue_entry)
+                        try:
+                            await guild.unban(user, reason="Tempban finished")
+                        except discord.Forbidden:
+                            self.unban_queue.remove(queue_entry)
+                            log.info("Failed to unban member due to permissions")
+                        except discord.HTTPException:
+                            self.unban_queue.remove(queue_entry)
+            await asyncio.sleep(60)
 
     async def check_duplicates(self, message):
         guild = message.guild
@@ -1116,6 +1218,8 @@ class Mod:
         """Currently used for:
             * delete delay"""
         guild = ctx.guild
+        if guild is None:
+            return
         message = ctx.message
         delay = await self.settings.guild(guild).delete_delay()
 
@@ -1147,145 +1251,120 @@ class Mod:
             deleted = await self.check_mention_spam(message)
 
     async def on_member_ban(self, guild: discord.Guild, member: discord.Member):
-        if str(guild.id) in self.current_softban and \
-                self.current_softban[str(guild.id)] == member:
-            return  # softban in progress, so a case will be created
+        if (guild.id, member.id) in self.ban_queue:
+            self.ban_queue.remove((guild.id, member.id))
+            return
         try:
-            mod_ch = await modlog.get_modlog_channel(guild)
+            await modlog.get_modlog_channel(guild)
         except RuntimeError:
             return  # No modlog channel so no point in continuing
-        audit_case = None
-        permissions = guild.me.guild_permissions
-        modlog_cases = await modlog.get_all_cases(guild, self.bot)
-        if permissions.view_audit_log:
-            async for entry in guild.audit_logs(action=discord.AuditLogAction.ban):
-                if entry.target == member:
-                    audit_case = entry
-                    break
-
-            if audit_case:
-                mod = audit_case.user
-                reason = audit_case.reason
-                for case in sorted(modlog_cases, key=lambda x: x.case_number, reverse=True):
-                    if mod == guild.me and case.user == member\
-                            and case.action_type in ["ban", "hackban"]:
-                        log.info("Case already exists for ban of {}".format(member.name))
-                        break
-                else:  # no ban, softban, or hackban case with the mod and user combo
-                    try:
-                        await modlog.create_case(guild, audit_case.created_at, "ban",
-                                                member, mod, reason if reason else None)
-                    except RuntimeError as e:
-                        print(e)
-            else:
-                return
-        else:  # No permissions to view audit logs, so message the guild owner
-            owner = guild.owner
-            try:
-                await owner.send(
-                    _("Hi, I noticed that someone in your server "
-                    "(the server named {}) banned {}#{} (user ID {}). "
-                    "However, I don't have permissions to view audit logs, "
-                    "so I could not determine if a mod log case was created "
-                    "for that ban, meaning I could not create a case in "
-                    "the mod log. If you want me to be able to add cases "
-                    "to the mod log for bans done manually, I need the "
-                    "`View Audit Logs` permission.").format(
-                        guild.name,
-                        member.name,
-                        member.discriminator,
-                        member.id
-                    )
-                )
-            except discord.Forbidden:
-                log.warning(
-                    "I attempted to inform a guild owner of a lack of the "
-                    "'View Audit Log' permission but I am unable to send "
-                    "the guild owner the message!"
-                )
-            except discord.HTTPException:
-                log.warning(
-                    "Something else went wrong while attempting to "
-                    "message a guild owner."
-                )
+        mod, reason, date = await self.get_audit_entry_info(
+            guild, discord.AuditLogAction.ban, member)
+        if date is None:
+            date = datetime.now()
+        try:
+            await modlog.create_case(guild, date,
+                                     "ban", member, mod,
+                                     reason if reason else None)
+        except RuntimeError as e:
+            print(e)
 
     async def on_member_unban(self, guild: discord.Guild, user: discord.User):
-        if str(guild.id) in self.current_softban and \
-                self.current_softban[str(guild.id)] == user:
-            return  # softban in progress, so a case will be created
+        if (guild.id, user.id) in self.unban_queue:
+            self.unban_queue.remove((guild.id, user.id))
+            return
         try:
-            mod_ch = await modlog.get_modlog_channel(guild)
+            await modlog.get_modlog_channel(guild)
         except RuntimeError:
             return  # No modlog channel so no point in continuing
-        audit_case = None
-        permissions = guild.me.guild_permissions
-        if permissions.view_audit_log:
-            async for entry in guild.audit_logs(action=discord.AuditLogAction.unban):
-                if entry.target == user:
-                    audit_case = entry
-                    break
-            else:
-                return
-            if audit_case:
-                mod = audit_case.user
-                reason = audit_case.reason
+        mod, reason, date = await self.get_audit_entry_info(
+            guild, discord.AuditLogAction.unban, user)
+        if date is None:
+            date = datetime.now()
+        try:
+            await modlog.create_case(guild, date, "unban",
+                                     user, mod, reason)
+        except RuntimeError as e:
+            print(e)
 
-                cases = await modlog.get_all_cases(guild, self.bot)
-                for case in sorted(cases, key=lambda x: x.case_number, reverse=True):
-                    if mod == guild.me and case.user == user\
-                            and case.action_type == "unban":
-                        log.info("Case already exists for unban of {}".format(user.name))
-                        break
-                else:
-                    try:
-                        await modlog.create_case(guild, audit_case.created_at, "unban",
-                                                 user, mod, reason if reason else None)
-                    except RuntimeError as e:
-                        print(e)
-        else:  # No permissions to view audit logs, so message the guild owner
-            owner = guild.owner
-            try:
-                await owner.send(
-                    _("Hi, I noticed that someone in your server "
-                    "(the server named {}) unbanned {}#{} (user ID {}). "
-                    "However, I don't have permissions to view audit logs, "
-                    "so I could not determine if a mod log case was created "
-                    "for that unban, meaning I could not create a case in "
-                    "the mod log. If you want me to be able to add cases "
-                    "to the mod log for unbans done manually, I need the "
-                    "`View Audit Logs` permission.").format(
-                        guild.name,
-                        user.name,
-                        user.discriminator,
-                        user.id
-                    )
-                )
-            except discord.Forbidden:
-                log.warning(
-                    "I attempted to inform a guild owner of a lack of the "
-                    "'View Audit Log' permission but I am unable to send "
-                    "the guild owner the message!"
-                )
-            except discord.HTTPException:
-                log.warning(
-                    "Something else went wrong while attempting to "
-                    "message a guild owner."
-                )
+    async def get_audit_entry_info(self,
+                                   guild: discord.Guild,
+                                   action: int,
+                                   target):
+        """Get info about an audit log entry.
 
-    async def on_member_update(self, before, after):
+        Parameters
+        ----------
+        guild : discord.Guild
+            Same as ``guild`` in `get_audit_log_entry`.
+        action : int
+            Same as ``action`` in `get_audit_log_entry`.
+        target : `discord.User` or `discord.Member`
+            Same as ``target`` in `get_audit_log_entry`.
+
+        Returns
+        -------
+        tuple
+            A tuple in the form``(mod: discord.Member, reason: str,
+            date_created: datetime.datetime)``. Returns ``(None, None, None)``
+            if the audit log entry could not be found.
+        """
+        try:
+            entry = await self.get_audit_log_entry(
+                guild, action=action, target=target)
+        except discord.HTTPException:
+            entry = None
+        if entry is None:
+            return None, None, None
+        return entry.user, entry.reason, entry.created_at
+
+    async def get_audit_log_entry(self,
+                                  guild: discord.Guild,
+                                  action: int,
+                                  target):
+        """Get an audit log entry.
+
+        Any exceptions encountered when looking through the audit log will be
+        propogated out of this function.
+
+        Parameters
+        ----------
+        guild : discord.Guild
+            The guild for the audit log.
+        action : int
+            The audit log action (see `discord.AuditLogAction`).
+        target : `discord.Member` or `discord.User`
+            The target of the audit log action.
+
+        Returns
+        -------
+        discord.AuditLogEntry
+            The audit log entry. Returns ``None`` if not found.
+
+        """
+        async for entry in guild.audit_logs(action=action):
+            if entry.target == target:
+                return entry
+
+    async def on_member_update(self, before: discord.Member, after: discord.Member):
         if before.name != after.name:
-            name_list = await self.settings.user(before).past_names()
-            if after.name not in name_list:
-                names = deque(name_list, maxlen=20)
-                names.append(after.name)
-                await self.settings.user(before).past_names.set(list(names))
+            async with self.settings.user(before).past_names() as name_list:
+                while None in name_list:  # clean out null entries from a bug
+                    name_list.remove(None)
+                if after.name in name_list:
+                    # Ensure order is maintained without duplicates occuring
+                    name_list.remove(after.name)
+                name_list.append(after.name)
+                while len(name_list) > 20:
+                    name_list.pop(0)
 
         if before.nick != after.nick and after.nick is not None:
-            nick_list = await self.settings.member(before).past_nicks()
-            nicks = deque(nick_list, maxlen=20)
-            if after.nick not in nicks:
-                nicks.append(after.nick)
-                await self.settings.member(before).past_nicks.set(list(nicks))
+            async with self.settings.member(before).past_nicks() as nick_list:
+                if after.nick in nick_list:
+                    nick_list.remove(after.nick)
+                nick_list.append(after.nick)
+                while len(nick_list) > 20:
+                    nick_list.pop(0)
 
     @staticmethod
     def are_overwrites_empty(overwrites):

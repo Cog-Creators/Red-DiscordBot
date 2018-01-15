@@ -1,5 +1,6 @@
 import asyncio
 import os
+import logging
 from collections import Counter
 from enum import Enum
 from importlib.machinery import ModuleSpec
@@ -17,8 +18,9 @@ from . import (
     RedContext,
     rpc
 )
-
-from typing import TYPE_CHECKING
+from .help_formatter import Help, help as help_
+from .sentry import SentryManager
+from .utils import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from aiohttp_json_rpc import JsonRpc
@@ -47,7 +49,7 @@ class RedBase(BotBase, RpcMethodMixin):
         self.db = Config.get_core_conf(force_registration=True)
         self._co_owners = cli_flags.co_owner
         self.rpc_enabled = cli_flags.rpc
-
+        self._last_exception = None
         self.db.register_global(
             token=None,
             prefix=[],
@@ -101,7 +103,27 @@ class RedBase(BotBase, RpcMethodMixin):
 
         self.register_rpc_methods()
 
-        super().__init__(**kwargs)
+        super().__init__(formatter=Help(), **kwargs)
+
+        self.remove_command('help')
+
+        self.add_command(help_)
+
+        self._sentry_mgr = None
+
+    def enable_sentry(self):
+        """Enable Sentry logging for Red."""
+        if self._sentry_mgr is None:
+            sentry_log = logging.getLogger('red.sentry')
+            sentry_log.setLevel(logging.WARNING)
+            self._sentry_mgr = SentryManager(sentry_log)
+        self._sentry_mgr.enable()
+
+    def disable_sentry(self):
+        """Disable Sentry logging for Red."""
+        if self._sentry_mgr is None:
+            return
+        self._sentry_mgr.disable()
 
     async def _dict_abuse(self, indict):
         """
@@ -122,15 +144,13 @@ class RedBase(BotBase, RpcMethodMixin):
     async def is_admin(self, member: discord.Member):
         """Checks if a member is an admin of their guild."""
         admin_role = await self.db.guild(member.guild).admin_role()
-        return (not admin_role or
-                any(role.id == admin_role for role in member.roles))
+        return any(role.id == admin_role for role in member.roles)
 
     async def is_mod(self, member: discord.Member):
         """Checks if a member is a mod or admin of their guild."""
         mod_role = await self.db.guild(member.guild).mod_role()
         admin_role = await self.db.guild(member.guild).admin_role()
-        return (not (admin_role or mod_role) or
-                any(role.id in (mod_role, admin_role) for role in member.roles))
+        return any(role.id in (mod_role, admin_role) for role in member.roles)
 
     async def get_context(self, message, *, cls=RedContext):
         return await super().get_context(message, cls=cls)
@@ -143,15 +163,14 @@ class RedBase(BotBase, RpcMethodMixin):
         await self.db.packages.set(packages)
 
     async def add_loaded_package(self, pkg_name: str):
-        curr_pkgs = await self.db.packages()
-        if pkg_name not in curr_pkgs:
-            curr_pkgs.append(pkg_name)
-            await self.save_packages_status(curr_pkgs)
+        async with self.db.packages() as curr_pkgs:
+            if pkg_name not in curr_pkgs:
+                curr_pkgs.append(pkg_name)
 
     async def remove_loaded_package(self, pkg_name: str):
-        curr_pkgs = await self.db.packages()
-        if pkg_name in curr_pkgs:
-            await self.save_packages_status([p for p in curr_pkgs if p != pkg_name])
+        async with self.db.packages() as curr_pkgs:
+            while pkg_name in curr_pkgs:
+                curr_pkgs.remove(pkg_name)
 
     def load_extension(self, spec: ModuleSpec):
         name = spec.name.split('.')[-1]
