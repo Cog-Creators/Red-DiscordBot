@@ -416,48 +416,30 @@ class Streams:
                     continue
                 for channel_id in stream.channels:
                     channel = self.bot.get_channel(channel_id)
-                    mention_everyone = await self.db.guild(channel.guild).mention_everyone()
-                    mention_here = await self.db.guild(channel.guild).mention_here()
-                    mention_roles = []
-                    for r in channel.guild.roles:
-                        to_append = {
-                            "role": r,
-                            "enabled": await self.db.role(r).mention()
-                        }
-                        mention_roles.append(to_append)
-                    mention = None
-                    if mention_everyone or mention_here or any(mention_roles):
-                        mention = True
-                    if mention:
-                        mention_str = ""
-                        if mention_everyone:
-                            mention_str += "@everyone "
-                        if mention_here:
-                            mention_str += "@here "
-                        if any(mention_roles):
-                            mention_str += " ".join(
-                                [
-                                    r["role"].mention for r in mention_roles
-                                    if r["role"].mentionable and r["enabled"]
-                                ]
-                            )
-                        mention_str = mention_str.strip()
-                        try:
-                            m = await channel.send(
-                                "{}, {} is online!".format(
-                                    mention_str, stream.name
-                                ), embed=embed
-                            )
-                            stream._messages_cache.append(m)
-                        except:
-                            pass
+                    mention_str = await self._get_mention_str(channel.guild)
+
+                    if mention_str:
+                        content = "{}, {} is online!".format(mention_str, stream.name)
                     else:
-                        try:
-                            m = await channel.send("%s is online!" % stream.name,
-                                                   embed=embed)
-                            stream._messages_cache.append(m)
-                        except:
-                            pass
+                        content = "{} is online!".format(stream.name)
+
+                    try:
+                        m = await channel.send(content, embed=embed)
+                        stream._messages_cache.append(m)
+                    except:
+                        pass
+
+    async def _get_mention_str(self, guild: discord.Guild):
+        settings = self.db.guild(guild)
+        mentions = []
+        if await settings.mention_everyone():
+            mentions.append('@everyone')
+        if await settings.mention_here():
+            mentions.append('@here')
+        for role in guild.roles:
+            if await self.db.role(role).mention():
+                mentions.append(role.mention)
+        return ' '.join(mentions)
 
     async def check_communities(self):
         for community in self.communities:

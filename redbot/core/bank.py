@@ -143,7 +143,7 @@ async def can_spend(member: discord.Member, amount: int) -> bool:
     """
     if _invalid_amount(amount):
         return False
-    return await get_balance(member) > amount
+    return await get_balance(member) >= amount
 
 
 async def set_balance(member: discord.Member, amount: int) -> int:
