@@ -10,7 +10,6 @@ from redbot.core.data_manager import load_basic_configuration, config_file
 from redbot.core.json_io import JsonIO
 from redbot.core.global_checks import init_global_checks
 from redbot.core.events import init_events
-from redbot.core.sentry_setup import init_sentry_logging
 from redbot.core.cli import interactive_config, confirm, parse_cli_flags, ask_sentry
 from redbot.core.core_commands import Core
 from redbot.core.dev_commands import Dev
@@ -129,7 +128,7 @@ def main():
             sys.exit(1)
     loop.run_until_complete(_get_prefix_and_token(red, tmp_data))
     if tmp_data['enable_sentry']:
-        init_sentry_logging(sentry_log)
+        red.enable_sentry()
     cleanup_tasks = True
     try:
         loop.run_until_complete(red.start(token, bot=not cli_flags.not_bot))
