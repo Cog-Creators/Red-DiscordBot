@@ -117,7 +117,7 @@ def init_events(bot, cli_flags):
             ("Tests", reqs_installed["test"])
         )
 
-        on_symbol, off_symbol = _get_settings_symbols()
+        on_symbol, off_symbol, ascii_border = _get_startup_screen_specs()
 
         for option, enabled in options:
             enabled = on_symbol if enabled else off_symbol
@@ -125,7 +125,7 @@ def init_events(bot, cli_flags):
 
         print(Fore.RED + INTRO)
         print(Style.RESET_ALL)
-        print(bordered(INFO, INFO2))
+        print(bordered(INFO, INFO2, ascii_border=ascii_border))
 
         if invite_url:
             print("\nInvite URL: {}\n".format(invite_url))
@@ -206,11 +206,18 @@ def init_events(bot, cli_flags):
     async def on_command(command):
         bot.counter["processed_commands"] += 1
 
-def _get_settings_symbols():
-    """Get symbols for displaying settings on stdout.
+def _get_startup_screen_specs():
+    """Get specs for displaying the startup screen on stdout.
 
     This is so we don't get encoding errors when trying to print unicode
     emojis to stdout (particularly with Windows Command Prompt).
+
+    Returns
+    -------
+    `tuple`
+        Tuple in the form (`str`, `str`, `bool`) containing (in order) the
+        on symbol, off symbol and whether or not the border should be pure ascii.
+
     """
     encoder = codecs.getencoder(sys.stdout.encoding)
     check_mark = "\N{SQUARE ROOT}"
@@ -223,4 +230,11 @@ def _get_settings_symbols():
         on_symbol = check_mark
         off_symbol = "X"
 
-    return on_symbol, off_symbol
+    try:
+        encoder('┌┐└┘─│')  # border symbols
+    except UnicodeEncodeError:
+        ascii_border = True
+    else:
+        ascii_border = False
+
+    return on_symbol, off_symbol, ascii_border
