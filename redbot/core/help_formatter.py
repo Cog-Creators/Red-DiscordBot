@@ -337,6 +337,7 @@ async def help(ctx, *cmds: str):
 
 
 @help.error
-async def help_error(self, error, ctx):
-    await self.destination.send('{0.__name__}: {1}'.format(type(error), error))
+async def help_error(ctx, error):
+    destination = ctx.author if ctx.bot.pm_help else ctx
+    await destination.send('{0.__name__}: {1}'.format(type(error), error))
     traceback.print_tb(error.original.__traceback__, file=sys.stderr)
