@@ -118,8 +118,9 @@ class RedContext(commands.Context):
                 else:
                     try:
                         await self.channel.delete_messages((query, resp))
-                    except discord.HTTPException:
+                    except (discord.HTTPException, AttributeError):
                         # In case the bot can't delete other users' messages,
                         # or is not a bot account
+                        # or chanel is a DM
                         await query.delete()
         return ret

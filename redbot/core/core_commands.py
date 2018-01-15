@@ -224,8 +224,8 @@ class Core:
                              " cog path."))
             return
 
-        self.cleanup_and_refresh_modules(spec.name)
         try:
+            self.cleanup_and_refresh_modules(spec.name)
             ctx.bot.load_extension(spec)
         except Exception as e:
             log.exception("Package reloading failed", exc_info=e)
@@ -293,10 +293,9 @@ class Core:
     @checks.is_owner()
     async def avatar(self, ctx, url: str):
         """Sets Red's avatar"""
-        session = aiohttp.ClientSession()
-        async with session.get(url) as r:
-            data = await r.read()
-        await session.close()
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as r:
+                data = await r.read()
 
         try:
             await ctx.bot.user.edit(avatar=data)

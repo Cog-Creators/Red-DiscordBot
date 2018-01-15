@@ -108,13 +108,13 @@ class Streams:
     @_twitch.command(name="channel")
     async def twitch_alert_channel(self, ctx: RedContext, channel_name: str):
         """Sets a Twitch stream alert notification in the channel"""
-        await self.stream_alert(ctx, TwitchStream, channel_name)
+        await self.stream_alert(ctx, TwitchStream, channel_name.lower())
 
     @_twitch.command(name="community")
     async def twitch_alert_community(self, ctx: RedContext, community: str):
         """Sets a Twitch stream alert notification in the channel
         for the specified community."""
-        await self.community_alert(ctx, TwitchCommunity, community)
+        await self.community_alert(ctx, TwitchCommunity, community.lower())
 
     @streamalert.command(name="hitbox")
     async def hitbox_alert(self, ctx, channel_name: str):
@@ -171,7 +171,7 @@ class Streams:
         for stream in self.streams:
             for channel_id in stream.channels:
                 if channel_id in guild_channels_ids:
-                    streams_list[channel_id].append(stream.name)
+                    streams_list[channel_id].append(stream.name.lower())
 
         if not streams_list:
             await ctx.send("There are no active stream alerts in this server.")
@@ -185,7 +185,7 @@ class Streams:
             await ctx.send(page)
 
     async def stream_alert(self, ctx, _class, channel_name):
-        stream = self.get_stream(_class, channel_name)
+        stream = self.get_stream(_class, channel_name.lower())
         if not stream:
             token = await self.db.tokens.get_attr(_class.__name__)
             stream = _class(name=channel_name,
@@ -365,12 +365,12 @@ class Streams:
             # isinstance will always return False
             # As a workaround, we'll compare the class' name instead.
             # Good enough.
-            if stream.type == _class.__name__ and stream.name == name:
+            if stream.type == _class.__name__ and stream.name.lower() == name.lower():
                 return stream
 
     def get_community(self, _class, name):
         for community in self.communities:
-            if community.type == _class.__name__ and community.name == name:
+            if community.type == _class.__name__ and community.name.lower() == name.lower():
                 return community
 
     async def check_exists(self, stream):
@@ -416,48 +416,30 @@ class Streams:
                     continue
                 for channel_id in stream.channels:
                     channel = self.bot.get_channel(channel_id)
-                    mention_everyone = await self.db.guild(channel.guild).mention_everyone()
-                    mention_here = await self.db.guild(channel.guild).mention_here()
-                    mention_roles = []
-                    for r in channel.guild.roles:
-                        to_append = {
-                            "role": r,
-                            "enabled": await self.db.role(r).mention()
-                        }
-                        mention_roles.append(to_append)
-                    mention = None
-                    if mention_everyone or mention_here or any(mention_roles):
-                        mention = True
-                    if mention:
-                        mention_str = ""
-                        if mention_everyone:
-                            mention_str += "@everyone "
-                        if mention_here:
-                            mention_str += "@here "
-                        if any(mention_roles):
-                            mention_str += " ".join(
-                                [
-                                    r["role"].mention for r in mention_roles
-                                    if r["role"].mentionable and r["enabled"]
-                                ]
-                            )
-                        mention_str = mention_str.strip()
-                        try:
-                            m = await channel.send(
-                                "{}, {} is online!".format(
-                                    mention_str, stream.name
-                                ), embed=embed
-                            )
-                            stream._messages_cache.append(m)
-                        except:
-                            pass
+                    mention_str = await self._get_mention_str(channel.guild)
+
+                    if mention_str:
+                        content = "{}, {} is online!".format(mention_str, stream.name)
                     else:
-                        try:
-                            m = await channel.send("%s is online!" % stream.name,
-                                                   embed=embed)
-                            stream._messages_cache.append(m)
-                        except:
-                            pass
+                        content = "{} is online!".format(stream.name)
+
+                    try:
+                        m = await channel.send(content, embed=embed)
+                        stream._messages_cache.append(m)
+                    except:
+                        pass
+
+    async def _get_mention_str(self, guild: discord.Guild):
+        settings = self.db.guild(guild)
+        mentions = []
+        if await settings.mention_everyone():
+            mentions.append('@everyone')
+        if await settings.mention_here():
+            mentions.append('@here')
+        for role in guild.roles:
+            if await self.db.role(role).mention():
+                mentions.append(role.mention)
+        return ' '.join(mentions)
 
     async def check_communities(self):
         for community in self.communities:
@@ -498,7 +480,14 @@ class Streams:
             token = await self.db.tokens.get_attr(_class.__name__)
             streams.append(_class(token=token, **raw_stream))
 
-        return streams
+        # issue 1191 extended resolution: Remove this after suitable period
+        # Fast dedupe below
+        seen = set()
+        seen_add = seen.add
+        return [x for x in streams
+                if not (x.name.lower() in seen or seen_add(x.name.lower()))]
+
+        # return streams
 
     async def load_communities(self):
         communities = []
@@ -511,7 +500,13 @@ class Streams:
             token = await self.db.tokens.get_attr(_class.__name__)
             communities.append(_class(token=token, **raw_community))
 
-        return communities
+        # issue 1191 extended resolution: Remove this after suitable period
+        # Fast dedupe below
+        seen = set()
+        seen_add = seen.add
+        return [x for x in communities
+                if not (x.name.lower() in seen or seen_add(x.name.lower()))]
+        # return communities
 
     async def save_streams(self):
         raw_streams = []

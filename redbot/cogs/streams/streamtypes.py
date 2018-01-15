@@ -25,7 +25,6 @@ class TwitchCommunity:
         self.type = self.__class__.__name__
 
     async def get_community_id(self):
-        session = aiohttp.ClientSession()
         headers = {
             "Accept": "application/vnd.twitchtv.v5+json",
             "Client-ID": str(self._token)
@@ -33,9 +32,9 @@ class TwitchCommunity:
         params = {
             "name": self.name
         }
-        async with session.get(TWITCH_COMMUNITIES_ENDPOINT, headers=headers, params=params) as r:
-            data = await r.json()
-        await session.close()
+        async with aiohttp.ClientSession() as session:
+            async with session.get(TWITCH_COMMUNITIES_ENDPOINT, headers=headers, params=params) as r:
+                data = await r.json()
         if r.status == 200:
             return data["_id"]
         elif r.status == 400:
@@ -51,7 +50,6 @@ class TwitchCommunity:
                 self.id = await self.get_community_id()
             except CommunityNotFound:
                 raise
-        session = aiohttp.ClientSession()
         headers = {
             "Accept": "application/vnd.twitchtv.v5+json",
             "Client-ID": str(self._token)
@@ -60,8 +58,9 @@ class TwitchCommunity:
             "community_id": self.id
         }
         url = TWITCH_BASE_URL + "/kraken/streams"
-        async with session.get(url, headers=headers, params=params) as r:
-            data = await r.json()
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, headers=headers, params=params) as r:
+                data = await r.json()
         if r.status == 200:
             if data["_total"] == 0:
                 raise OfflineCommunity()
@@ -120,16 +119,15 @@ class TwitchStream(Stream):
         if not self.id:
             self.id = await self.fetch_id()
 
-        session = aiohttp.ClientSession()
         url = TWITCH_STREAMS_ENDPOINT + self.id
         header = {
             'Client-ID': str(self._token),
             'Accept': 'application/vnd.twitchtv.v5+json'
         }
 
-        async with session.get(url, headers=header) as r:
-            data = await r.json(encoding='utf-8')
-        await session.close()
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, headers=header) as r:
+                data = await r.json(encoding='utf-8')
         if r.status == 200:
             if data["stream"] is None:
                 #self.already_online = False
@@ -151,11 +149,10 @@ class TwitchStream(Stream):
             'Accept': 'application/vnd.twitchtv.v5+json'
         }
         url = TWITCH_ID_ENDPOINT + self.name
-        session = aiohttp.ClientSession()
 
-        async with session.get(url, headers=header) as r:
-            data = await r.json()
-        await session.close()
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, headers=header) as r:
+                data = await r.json()
 
         if r.status == 200:
             if not data["users"]:
@@ -195,13 +192,12 @@ class TwitchStream(Stream):
 
 class HitboxStream(Stream):
     async def is_online(self):
-        session = aiohttp.ClientSession()
         url = "https://api.hitbox.tv/media/live/" + self.name
 
-        async with session.get(url) as r:
-            #data = await r.json(encoding='utf-8')
-            data = await r.text()
-        await session.close()
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as r:
+                #data = await r.json(encoding='utf-8')
+                data = await r.text()
         data = json.loads(data, strict=False)
         if "livestream" not in data:
             raise StreamNotFound()
@@ -235,11 +231,10 @@ class MixerStream(Stream):
     async def is_online(self):
         url = "https://mixer.com/api/v1/channels/" + self.name
 
-        session = aiohttp.ClientSession()
-        async with session.get(url) as r:
-            #data = await r.json(encoding='utf-8')
-            data = await r.text(encoding='utf-8')
-        await session.close()
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as r:
+                #data = await r.json(encoding='utf-8')
+                data = await r.text(encoding='utf-8')
         if r.status == 200:
             data = json.loads(data, strict=False)
             if data["online"] is True:
@@ -278,11 +273,9 @@ class PicartoStream(Stream):
     async def is_online(self):
         url = "https://api.picarto.tv/v1/channel/name/" + self.name
 
-        session = aiohttp.ClientSession()
-
-        async with session.get(url) as r:
-            data = await r.text(encoding='utf-8')
-        await session.close()
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as r:
+                data = await r.text(encoding='utf-8')
         if r.status == 200:
             data = json.loads(data)
             if data["online"] is True:
