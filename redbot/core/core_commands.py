@@ -276,18 +276,18 @@ class Core:
     @_set.command()
     @checks.guildowner()
     @commands.guild_only()
-    async def adminrole(self, ctx, *, role: discord.Role):
-        """Sets the admin role for this server"""
-        await ctx.bot.db.guild(ctx.guild).admin_role.set(role.id)
-        await ctx.send(_("The admin role for this guild has been set."))
+    async def adminrole(self, ctx, *roles: discord.Role):
+        """Sets the admin role(s) for this server"""
+        await ctx.bot.db.guild(ctx.guild).admin_role.set([r.id for r in roles])
+        await ctx.send(_("The admin roles for this guild has been set."))
 
     @_set.command()
     @checks.guildowner()
     @commands.guild_only()
-    async def modrole(self, ctx, *, role: discord.Role):
+    async def modrole(self, ctx, *roles: discord.Role):
         """Sets the mod role for this server"""
-        await ctx.bot.db.guild(ctx.guild).mod_role.set(role.id)
-        await ctx.send(_("The mod role for this guild has been set."))
+        await ctx.bot.db.guild(ctx.guild).mod_role.set([r.id for r in roles])
+        await ctx.send(_("The mod role(s) for this guild has been set."))
 
     @_set.command()
     @checks.is_owner()

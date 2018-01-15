@@ -57,155 +57,169 @@ msgstr ""
 msgid "The bot will install new cogs to the `{}` directory."
 msgstr ""
 
-#: ../core_commands.py:35
+#: ../core_commands.py:52 ../core_commands.py:86
 msgid "No module by that name was found in any cog path."
 msgstr ""
 
-#: ../core_commands.py:43
+#: ../core_commands.py:60
 msgid "Failed to load package. Check your console or logs for details."
 msgstr ""
 
-#: ../core_commands.py:47 ../core_commands.py:56 ../core_commands.py:76
-#: ../core_commands.py:151 ../core_commands.py:212 ../core_commands.py:226
+#: ../core_commands.py:64 ../core_commands.py:73 ../core_commands.py:98
+#: ../core_commands.py:173 ../core_commands.py:234 ../core_commands.py:248
 msgid "Done."
 msgstr ""
 
-#: ../core_commands.py:58
+#: ../core_commands.py:75
 msgid "That extension is not loaded."
 msgstr ""
 
-#: ../core_commands.py:71
+#: ../core_commands.py:95
 msgid "Failed to reload package. Check your console or logs for details."
 msgstr ""
 
-#: ../core_commands.py:86
+#: ../core_commands.py:108
 msgid "Shutting down... "
 msgstr ""
 
-#: ../core_commands.py:123
-msgid "The admin role for this guild has been set."
-msgstr ""
-
-#: ../core_commands.py:131
-msgid "The mod role for this guild has been set."
-msgstr ""
-
 #: ../core_commands.py:145
-msgid "Failed. Remember that you can edit my avatar up to two times a hour. The URL must be a direct link to a JPG / PNG."
+msgid "The admin roles for this guild has been set."
 msgstr ""
 
-#: ../core_commands.py:149
+#: ../core_commands.py:153
+msgid "The mod role(s) for this guild has been set."
+msgstr ""
+
+#: ../core_commands.py:167
+msgid ""
+"Failed. Remember that you can edit my avatar up to two times a hour. The URL "
+"must be a direct link to a JPG / PNG."
+msgstr ""
+
+#: ../core_commands.py:171
 msgid "JPG / PNG format only."
 msgstr ""
 
-#: ../core_commands.py:161
+#: ../core_commands.py:183
 msgid "Game set."
 msgstr ""
 
-#: ../core_commands.py:190
+#: ../core_commands.py:212
+#, python-format
 msgid "Status changed to %s."
 msgstr ""
 
-#: ../core_commands.py:221
-msgid "Failed to change name. Remember that you can only do it up to 2 times an hour. Use nicknames if you need frequent changes. `{}set nickname`"
+#: ../core_commands.py:243
+msgid ""
+"Failed to change name. Remember that you can only do it up to 2 times an "
+"hour. Use nicknames if you need frequent changes. `{}set nickname`"
 msgstr ""
 
-#: ../core_commands.py:236
+#: ../core_commands.py:258
 msgid "I lack the permissions to change my own nickname."
 msgstr ""
 
-#: ../core_commands.py:250 ../core_commands.py:263
+#: ../core_commands.py:272 ../core_commands.py:285
 msgid "Prefix set."
 msgstr ""
 
-#: ../core_commands.py:259
+#: ../core_commands.py:281
 msgid "Guild prefixes have been reset."
 msgstr ""
 
-#: ../core_commands.py:282
+#: ../core_commands.py:304
 msgid ""
 "\n"
 "Verification token:"
 msgstr ""
 
-#: ../core_commands.py:285
+#: ../core_commands.py:307
+msgid "Remember:\n"
+msgstr ""
+
+#: ../core_commands.py:310
 msgid ""
-"Remember:\n"
+"I have printed a one-time token in the console. Copy and paste it here to "
+"confirm you are the owner."
 msgstr ""
 
-#: ../core_commands.py:288
-msgid "I have printed a one-time token in the console. Copy and paste it here to confirm you are the owner."
-msgstr ""
-
-#: ../core_commands.py:296
+#: ../core_commands.py:318
 msgid "The set owner request has timed out."
 msgstr ""
 
-#: ../core_commands.py:302
+#: ../core_commands.py:324
 msgid "You have been set as owner."
 msgstr ""
 
-#: ../core_commands.py:304
+#: ../core_commands.py:326
 msgid "Invalid token."
 msgstr ""
 
-#: ../core_commands.py:313
+#: ../core_commands.py:338
 msgid "Locale has been set."
 msgstr ""
 
-#: ../core_commands.py:323
+#: ../core_commands.py:348
+#, python-format
 msgid "User ID: %s"
 msgstr ""
 
-#: ../core_commands.py:326
+#: ../core_commands.py:351
 msgid "through DM"
 msgstr ""
 
-#: ../core_commands.py:328
+#: ../core_commands.py:353
 msgid "from {}"
 msgstr ""
 
-#: ../core_commands.py:329
+#: ../core_commands.py:354
+#, python-format
 msgid " | Server ID: %s"
 msgstr ""
 
-#: ../core_commands.py:337
+#: ../core_commands.py:363
 msgid "Use `{}dm {} <text>` to reply to this user"
 msgstr ""
 
-#: ../core_commands.py:345
+#: ../core_commands.py:371
 msgid "Sent by {} {}"
 msgstr ""
 
-#: ../core_commands.py:357
+#: ../core_commands.py:383
 msgid "I cannot send your message, I'm unable to find my owner... *sigh*"
 msgstr ""
 
-#: ../core_commands.py:360
+#: ../core_commands.py:386
 msgid "I'm unable to deliver your message. Sorry."
 msgstr ""
 
-#: ../core_commands.py:362
+#: ../core_commands.py:388
 msgid "Your message has been sent."
 msgstr ""
 
-#: ../core_commands.py:376
-msgid "Invalid ID or user not found. You can only send messages to people I share a server with."
+#: ../core_commands.py:402
+msgid ""
+"Invalid ID or user not found. You can only send messages to people I share a "
+"server with."
 msgstr ""
 
-#: ../core_commands.py:382
+#: ../core_commands.py:408
+#, python-format
 msgid "Owner of %s"
 msgstr ""
 
-#: ../core_commands.py:385
+#: ../core_commands.py:412
+#, python-format
 msgid "You can reply to this message with %scontact"
 msgstr ""
 
-#: ../core_commands.py:395
+#: ../core_commands.py:422
+#, python-format
 msgid "Sorry, I couldn't deliver your message to %s"
 msgstr ""
 
-#: ../core_commands.py:398
+#: ../core_commands.py:425
+#, python-format
 msgid "Message delivered to %s"
 msgstr ""
 
