@@ -1,5 +1,5 @@
 import itertools
-from typing import List, Iterator
+from typing import Sequence, Iterator
 
 def error(text: str) -> str:
     """Get text prefixed with an error emoji.
@@ -120,7 +120,7 @@ def italics(text: str) -> str:
     return "*{}*".format(text)
 
 
-def bordered(text1: List[str], text2: List[str]) -> str:
+def bordered(*columns: Sequence[str], ascii_border: bool=False) -> str:
     """Get two blocks of text in a borders.
 
     Note
@@ -129,10 +129,10 @@ def bordered(text1: List[str], text2: List[str]) -> str:
 
     Parameters
     ----------
-    text1 : `list` of `str`
-        The 1st block of text, with each string being a new line.
-    text2 : `list` of `str`
-        The 2nd block of text. Should not be longer than ``text1``.
+    *columns : `sequence` of `str`
+        The columns of text, each being a list of lines in that column.
+    ascii_border : bool
+        Whether or not the border should be pure ASCII.
 
     Returns
     -------
@@ -140,24 +140,53 @@ def bordered(text1: List[str], text2: List[str]) -> str:
         The bordered text.
 
     """
-    width1, width2 = max((len(s1) + 9, len(s2) + 9) for s1 in text1 for s2 in text2)
-    res = ['┌{}┐{}┌{}┐'.format("─"*width1, " "*4, "─"*width2)]
-    flag = True
-    for x, y in itertools.zip_longest(text1, text2):
-        if y:
-            m = "│{}│{}│{}│".format((x + " " * width1)[:width1], " "*4, (y + " " * width2)[:width2])
-        elif x and flag and not y:
-            m = "│{}│{}└{}┘".format((x + " " * width1)[:width1], " "*4, "─" *  width2)
-            flag = False
+    borders = {
+        'TL': '-' if ascii_border else '┌',  # Top-left
+        'TR': '-' if ascii_border else '┐',  # Top-right
+        'BL': '-' if ascii_border else '└',  # Bottom-left
+        'BR': '-' if ascii_border else '┘',  # Bottom-right
+        'HZ': '-' if ascii_border else '─',  # Horizontal
+        'VT': '|' if ascii_border else '│',  # Vertical
+    }
+
+    sep = ' ' * 4  # Separator between boxes
+    widths = tuple(max(len(row) for row in column) + 9 for column in columns)  # width of each col
+    colsdone = [False] * len(columns)  # whether or not each column is done
+    lines = [sep.join('{TL}' + '{HZ}'*width + '{TR}' for width in widths)]
+
+    for line in itertools.zip_longest(*columns):
+        row = []
+        for colidx, column in enumerate(line):
+            width = widths[colidx]
+            done = colsdone[colidx]
+            if column is None:
+                if not done:
+                    # bottom border of column
+                    column = '{HZ}' * width
+                    row.append('{BL}' + column + '{BR}')
+                    colsdone[colidx] = True  # mark column as done
+                else:
+                    # leave empty
+                    row.append(' ' * (width + 2))
+            else:
+                column += ' ' * (width - len(column))  # append padded spaces
+                row.append('{VT}' + column + '{VT}')
+
+        lines.append(sep.join(row))
+
+    final_row = []
+    for width, done in zip(widths, colsdone):
+        if not done:
+            final_row.append('{BL}' + '{HZ}' * width + '{BR}')
         else:
-            m = "│{}│".format((x + " " * width1)[:width1])
-        res.append(m)
-    res.append("└" + "─" * width1 + "┘")
-    return "\n".join(res)
+            final_row.append(' ' * (width + 2))
+    lines.append(sep.join(final_row))
+
+    return "\n".join(lines).format(**borders)
 
 
 def pagify(text: str,
-           delims: List[str]=["\n"],
+           delims: Sequence[str]=["\n"],
            *,
            priority: bool=False,
            escape_mass_mentions: bool=True,
@@ -173,7 +202,7 @@ def pagify(text: str,
     ----------
     text : str
         The content to pagify and send.
-    delims : `list` of `str`, optional
+    delims : `sequence` of `str`, optional
         Characters where page breaks will occur. If no delimiters are found
         in a page, the page will break after ``page_length`` characters.
         By default this only contains the newline.

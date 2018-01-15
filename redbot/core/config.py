@@ -215,7 +215,7 @@ class Group(Value):
             )
         elif self.force_registration:
             raise AttributeError(
-                "'{}' is not a valid registered Group"
+                "'{}' is not a valid registered Group "
                 "or value.".format(item)
             )
         else:
