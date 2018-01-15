@@ -224,8 +224,8 @@ class Core:
                              " cog path."))
             return
 
-        self.cleanup_and_refresh_modules(spec.name)
         try:
+            self.cleanup_and_refresh_modules(spec.name)
             ctx.bot.load_extension(spec)
         except Exception as e:
             log.exception("Package reloading failed", exc_info=e)
@@ -310,10 +310,9 @@ class Core:
     @checks.is_owner()
     async def avatar(self, ctx, url: str):
         """Sets Red's avatar"""
-        session = aiohttp.ClientSession()
-        async with session.get(url) as r:
-            data = await r.read()
-        await session.close()
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as r:
+                data = await r.read()
 
         try:
             await ctx.bot.user.edit(avatar=data)
@@ -493,6 +492,23 @@ class Core:
         await ctx.bot.db.locale.set(locale_name)
 
         await ctx.send(_("Locale has been set."))
+
+    @_set.command()
+    @checks.is_owner()
+    async def sentry(self, ctx: commands.Context, on_or_off: bool):
+        """Enable or disable Sentry logging.
+
+        Sentry is the service Red uses to manage error reporting. This should
+        be disabled if you have made your own modifications to the redbot
+        package.
+        """
+        await ctx.bot.db.enable_sentry.set(on_or_off)
+        if on_or_off:
+            ctx.bot.enable_sentry()
+            await ctx.send(_("Done. Sentry logging is now enabled."))
+        else:
+            ctx.bot.disable_sentry()
+            await ctx.send(_("Done. Sentry logging is now disabled."))
 
     @commands.command()
     @commands.cooldown(1, 60, commands.BucketType.user)
@@ -723,4 +739,3 @@ class Core:
     async def rpc_reload(self, request):
         await self.rpc_unload(request)
         await self.rpc_load(request)
-
