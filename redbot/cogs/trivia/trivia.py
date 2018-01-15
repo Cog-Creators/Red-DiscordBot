@@ -178,6 +178,7 @@ class Trivia:
                 "There is already an ongoing trivia session in this channel.")
             return
         trivia_dict = {}
+        authors = []
         for category in reversed(categories):
             # We reverse the categories so that the first list's config takes
             # priority over the others.
@@ -193,6 +194,7 @@ class Trivia:
                                " incorrectly.".format(category))
             else:
                 trivia_dict.update(dict_)
+                authors.append(trivia_dict.pop("AUTHOR", None))
                 continue
             return
         if not trivia_dict:
@@ -203,6 +205,7 @@ class Trivia:
         config = trivia_dict.pop("CONFIG", None)
         if config and settings["allow_override"]:
             settings.update(config)
+        settings["lists"] = dict(zip(categories, reversed(authors)))
         session = TriviaSession.start(ctx, trivia_dict, settings)
         self.trivia_sessions.append(session)
         LOG.debug("New trivia session; #%s in %d", ctx.channel, ctx.guild.id)
