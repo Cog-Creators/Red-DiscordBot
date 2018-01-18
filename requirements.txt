@@ -1,3 +1,4 @@
+yarl==0.18.0
 aiohttp>=2.0.0,<2.3.0
 appdirs
 youtube_dl
