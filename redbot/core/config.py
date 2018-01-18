@@ -324,7 +324,7 @@ class Group(Value):
         defaults_copy = deepcopy(defaults)
 
         for key, value in current.items():
-            if isinstance(value, collections.Mapping) and value:
+            if isinstance(value, collections.Mapping):
                 result = self.nested_update(defaults_copy.get(key, {}), value)
                 defaults_copy[key] = result
             else:
