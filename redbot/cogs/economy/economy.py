@@ -144,6 +144,7 @@ class Economy:
             await ctx.send_help()
 
     @_bank.command()
+    @guild_only_check()
     async def balance(self, ctx: commands.Context, user: discord.Member = None):
         """Shows balance of user.
 
@@ -158,6 +159,7 @@ class Economy:
             user.display_name, bal, currency))
 
     @_bank.command()
+    @guild_only_check()
     async def transfer(self, ctx: commands.Context, to: discord.Member, amount: int):
         """Transfer currency to other users"""
         from_ = ctx.author
@@ -173,6 +175,7 @@ class Economy:
         ))
 
     @_bank.command(name="set")
+    @guild_only_check()
     @check_global_setting_admin()
     async def _set(self, ctx: commands.Context, to: discord.Member, creds: SetParser):
         """Sets balance of user's bank account. See help for more operations
