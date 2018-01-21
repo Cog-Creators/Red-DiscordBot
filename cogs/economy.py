@@ -294,7 +294,7 @@ class Economy:
         if "PAYDAY_TIME" in self.settings:  # old format
             default_settings = self.settings
             self.settings = {}
-        self.settings = defaultdict(lambda: default_settings, self.settings)
+        self.settings = defaultdict(default_settings.copy, self.settings)
         self.payday_register = defaultdict(dict)
         self.slot_register = defaultdict(dict)
 
