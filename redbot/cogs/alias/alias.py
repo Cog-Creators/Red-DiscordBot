@@ -1,4 +1,5 @@
 from copy import copy
+from re import search
 from typing import Generator, Tuple, Iterable
 
 import discord
@@ -75,7 +76,7 @@ class Alias:
 
     @staticmethod
     def is_valid_alias_name(alias_name: str) -> bool:
-        return alias_name.isidentifier()
+        return not bool(search(r'\s', alias_name)) and alias_name.isprintable()
 
     async def add_alias(self, ctx: commands.Context, alias_name: str,
                         command: Tuple[str], global_: bool=False) -> AliasEntry:
@@ -211,8 +212,7 @@ class Alias:
             await ctx.send(_("You attempted to create a new alias"
                              " with the name {} but that"
                              " name is an invalid alias name. Alias"
-                             " names may only contain letters, numbers,"
-                             " and underscores and must start with a letter.").format(alias_name))
+                             " names may not contain spaces.").format(alias_name))
             return
 # endregion
 
@@ -250,8 +250,7 @@ class Alias:
             await ctx.send(_("You attempted to create a new global alias"
                              " with the name {} but that"
                              " name is an invalid alias name. Alias"
-                             " names may only contain letters, numbers,"
-                             " and underscores and must start with a letter.").format(alias_name))
+                             " names may not contain spaces.").format(alias_name))
             return
 # endregion
 
