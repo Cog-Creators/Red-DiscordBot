@@ -141,6 +141,10 @@ class Value:
         driver = self.spawner.get_driver()
         await driver.set(self.identifiers, value)
 
+    async def clear(self):
+        """Set this value back to its default."""
+        await self.set(self.default)
+
 
 class Group(Value):
     """
@@ -366,9 +370,9 @@ class Group(Value):
         await value_obj.set(value)
 
     async def clear(self):
-        """Wipe all data from this group.
+        """Reset this group's data to its defaults.
 
-        If used on a global group, it will wipe all global data, but not
+        If used on a global group, it will reset all global data, but not
         local data.
         """
         await self.set({})
