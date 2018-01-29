@@ -96,10 +96,13 @@ class TriviaSession():
         In order for the trivia session to be stopped correctly, this should
         only be called internally by `TriviaSession.start`.
         """
+        await self._send_startup_msg()
         max_score = self.settings["max_score"]
         delay = self.settings["delay"]
         timeout = self.settings["timeout"]
         for question, answers in self._iter_questions():
+            async with self.ctx.typing():
+                await asyncio.sleep(3)
             self.count += 1
             msg = "**Question number {}!**\n\n{}".format(self.count, question)
             await self.ctx.send(msg)
@@ -109,11 +112,29 @@ class TriviaSession():
             if any(score >= max_score for score in self.scores.values()):
                 await self.end_game()
                 break
-            async with self.ctx.typing():
-                await asyncio.sleep(3)
         else:
             await self.ctx.send("There are no more questions!")
             await self.end_game()
+
+    async def _send_startup_msg(self):
+        list_names = []
+        for idx, tup in enumerate(self.settings["lists"].items()):
+            name, author = tup
+            if author:
+                title = "{} (by {})".format(name, author)
+            else:
+                title = name
+            list_names.append(title)
+        num_lists = len(list_names)
+        if num_lists > 2:
+            # at least 3 lists, join all but last with comma
+            msg = ", ".join(list_names[:num_lists-1])
+            # join onto last with "and"
+            msg = " and ".join((msg, list_names[num_lists-1]))
+        else:
+            # either 1 or 2 lists, join together with "and"
+            msg = " and ".join(list_names)
+        await self.ctx.send("Starting Trivia: " + msg)
 
     def _iter_questions(self):
         """Iterate over questions and answers for this session.
