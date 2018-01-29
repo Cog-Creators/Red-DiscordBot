@@ -246,6 +246,21 @@ class Core:
         except:
             pass
         await ctx.bot.shutdown()
+    
+    @commands.command(name="restart")
+    @checks.is_owner()
+    async def _restart(self, ctx, silently: bool=False):
+        """Attempts to restart Red
+
+        Makes Red quit with exit code 26
+        The restart is not guaranteed: it must be dealt
+        with by the process manager in use"""
+        try:
+            if not silently:
+                await ctx.send(_("Restarting..."))
+        except:
+            pass
+        await ctx.bot.shutdown(restart=True)
 
     def cleanup_and_refresh_modules(self, module_name: str):
         """Interally reloads modules so that changes are detected"""
