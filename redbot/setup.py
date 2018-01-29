@@ -17,7 +17,7 @@ from redbot.core.json_io import JsonIO
 config_dir = None
 appdir = appdirs.AppDirs("Red-DiscordBot")
 if sys.platform == 'linux':
-    if os.getuid() < 1000:
+    if 0 < os.getuid() < 1000:
         config_dir = Path(appdir.site_data_dir)
 if not config_dir:
     config_dir = Path(appdir.user_config_dir)
