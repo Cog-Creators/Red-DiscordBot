@@ -88,6 +88,37 @@ class Core:
             await ctx.send("I need the `Embed links` permission to send this")
 
     @commands.command()
+    async def uptime(self, ctx: RedContext):
+        """Shows Red's uptime"""
+        since = ctx.bot.uptime.strftime("%Y-%m-%d %H:%M:%S")
+        passed = self.get_bot_uptime()
+        await ctx.send(
+            "Been up for: **{}** (since {} UTC)".format(
+                passed, since
+            )
+        )
+    
+    def get_bot_uptime(self, *, brief=False):
+        # Courtesy of Danny
+        now = datetime.datetime.utcnow()
+        delta = now - self.bot.uptime
+        hours, remainder = divmod(int(delta.total_seconds()), 3600)
+        minutes, seconds = divmod(remainder, 60)
+        days, hours = divmod(hours, 24)
+
+        if not brief:
+            if days:
+                fmt = '{d} days, {h} hours, {m} minutes, and {s} seconds'
+            else:
+                fmt = '{h} hours, {m} minutes, and {s} seconds'
+        else:
+            fmt = '{h}h {m}m {s}s'
+            if days:
+                fmt = '{d}d ' + fmt
+
+        return fmt.format(d=days, h=hours, m=minutes, s=seconds)
+
+    @commands.command()
     @checks.is_owner()
     async def traceback(self, ctx, public: bool=False):
         """Sends to the owner the last command exception that has occurred
@@ -224,8 +255,8 @@ class Core:
                              " cog path."))
             return
 
-        self.cleanup_and_refresh_modules(spec.name)
         try:
+            self.cleanup_and_refresh_modules(spec.name)
             ctx.bot.load_extension(spec)
         except Exception as e:
             log.exception("Package reloading failed", exc_info=e)
@@ -293,10 +324,9 @@ class Core:
     @checks.is_owner()
     async def avatar(self, ctx, url: str):
         """Sets Red's avatar"""
-        session = aiohttp.ClientSession()
-        async with session.get(url) as r:
-            data = await r.read()
-        await session.close()
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as r:
+                data = await r.read()
 
         try:
             await ctx.bot.user.edit(avatar=data)
@@ -476,6 +506,23 @@ class Core:
         await ctx.bot.db.locale.set(locale_name)
 
         await ctx.send(_("Locale has been set."))
+
+    @_set.command()
+    @checks.is_owner()
+    async def sentry(self, ctx: commands.Context, on_or_off: bool):
+        """Enable or disable Sentry logging.
+
+        Sentry is the service Red uses to manage error reporting. This should
+        be disabled if you have made your own modifications to the redbot
+        package.
+        """
+        await ctx.bot.db.enable_sentry.set(on_or_off)
+        if on_or_off:
+            ctx.bot.enable_sentry()
+            await ctx.send(_("Done. Sentry logging is now enabled."))
+        else:
+            ctx.bot.disable_sentry()
+            await ctx.send(_("Done. Sentry logging is now disabled."))
 
     @commands.command()
     @commands.cooldown(1, 60, commands.BucketType.user)
@@ -706,4 +753,3 @@ class Core:
     async def rpc_reload(self, request):
         await self.rpc_unload(request)
         await self.rpc_load(request)
-

@@ -62,15 +62,16 @@ def ask_sentry(red: Red):
 
 
 def parse_cli_flags(args):
-    parser = argparse.ArgumentParser(description="Red - Discord Bot")
+    parser = argparse.ArgumentParser(description="Red - Discord Bot",
+                                     usage="redbot <instance_name> [arguments]")
     parser.add_argument("--list-instances", action="store_true",
                         help="List all instance names setup "
                              "with 'redbot-setup'")
     parser.add_argument("--owner", type=int,
                         help="ID of the owner. Only who hosts "
                              "Red should be owner, this has "
-                             "serious security implications.")
-    parser.add_argument("--co-owner", type=int, action="append", default=[],
+                             "serious security implications if misused.")
+    parser.add_argument("--co-owner", type=int, default=[], nargs="*",
                         help="ID of a co-owner. Only people who have access "
                              "to the system that is hosting Red should be  "
                              "co-owners, as this gives them complete access "
@@ -79,8 +80,7 @@ def parse_cli_flags(args):
                              "multiple.")
     parser.add_argument("--prefix", "-p", action="append",
                         help="Global prefix. Can be multiple")
-    parser.add_argument("--no-prompt",
-                        action="store_true",
+    parser.add_argument("--no-prompt", action="store_true",
                         help="Disables console inputs. Features requiring "
                              "console interaction could be disabled as a "
                              "result")
@@ -105,6 +105,10 @@ def parse_cli_flags(args):
     parser.add_argument("--dev",
                         action="store_true",
                         help="Enables developer mode")
+    parser.add_argument("--mentionable",
+                        action="store_true",
+                        help="Allows mentioning the bot as an alternative "
+                             "to using the bot prefix")
     parser.add_argument("--rpc",
                         action="store_true",
                         help="Enables the built-in RPC server. Please read the docs"

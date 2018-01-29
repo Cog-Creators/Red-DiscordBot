@@ -1,4 +1,5 @@
 import logging
+import collections
 from copy import deepcopy
 from typing import Callable, Union, Tuple
 
@@ -219,7 +220,7 @@ class Group(Value):
             )
         elif self.force_registration:
             raise AttributeError(
-                "'{}' is not a valid registered Group"
+                "'{}' is not a valid registered Group "
                 "or value.".format(item)
             )
         else:
@@ -320,8 +321,24 @@ class Group(Value):
             All of this Group's attributes, resolved as raw data values.
 
         """
-        defaults = self.defaults
-        defaults.update(await self())
+        return self.nested_update(await self())
+
+    def nested_update(self, current, defaults=None):
+        """Robust updater for nested dictionaries
+
+        If no defaults are passed, then the instance attribute 'defaults'
+        will be used.
+
+        """
+        if not defaults:
+            defaults = deepcopy(self.defaults)
+
+        for key, value in current.items():
+            if isinstance(value, collections.Mapping):
+                result = self.nested_update(value, defaults.get(key, {}))
+                defaults[key] = result
+            else:
+                defaults[key] = deepcopy(current[key])
         return defaults
 
     async def set(self, value):
