@@ -88,6 +88,37 @@ class Core:
             await ctx.send("I need the `Embed links` permission to send this")
 
     @commands.command()
+    async def uptime(self, ctx: RedContext):
+        """Shows Red's uptime"""
+        since = ctx.bot.uptime.strftime("%Y-%m-%d %H:%M:%S")
+        passed = self.get_bot_uptime()
+        await ctx.send(
+            "Been up for: **{}** (since {} UTC)".format(
+                passed, since
+            )
+        )
+    
+    def get_bot_uptime(self, *, brief=False):
+        # Courtesy of Danny
+        now = datetime.datetime.utcnow()
+        delta = now - self.bot.uptime
+        hours, remainder = divmod(int(delta.total_seconds()), 3600)
+        minutes, seconds = divmod(remainder, 60)
+        days, hours = divmod(hours, 24)
+
+        if not brief:
+            if days:
+                fmt = '{d} days, {h} hours, {m} minutes, and {s} seconds'
+            else:
+                fmt = '{h} hours, {m} minutes, and {s} seconds'
+        else:
+            fmt = '{h}h {m}m {s}s'
+            if days:
+                fmt = '{d}d ' + fmt
+
+        return fmt.format(d=days, h=hours, m=minutes, s=seconds)
+
+    @commands.command()
     @checks.is_owner()
     async def traceback(self, ctx, public: bool=False):
         """Sends to the owner the last command exception that has occurred
