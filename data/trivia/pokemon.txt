@@ -207,7 +207,7 @@ What was Blizzard's accuracy in Generation 1?`90%`ninety`90
 What Generation introduced the most new moves?`1`one`I
 What is the lowest Accuracy for any ghost move?`100%`100
 What type besides Normal was immune to Ghost in Generation 1?`Psychic
-What is Super Effective against besides Psychic and Ground in Generation 1?`Bug
+What is Super Effective against Poison besides Psychic and Ground in Generation 1?`Bug
 What type of Pokémon can always escape from trapping moves and abilities?`Ghost
 What determines whether you successfully run away from a battle?`Speed Stat`Speed`Spe
 What Pokémon can evolve twice without leveling up?`Porygon
