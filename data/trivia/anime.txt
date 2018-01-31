@@ -20,6 +20,9 @@ What genre of anime covers female to female sexual relationships?`Yuri
 What genre of anime covers male to male sexual relationships?`Yaoi
 Which Hayao Miyazaki movie was based off of a book by a British author named Dianna Wynne Jones?`Castle in the sky
 As of 2015, among all the 17 long anime movies Hayao Miyazaki participated in, how many did he direct?`11`eleven
+(Angel Sanctuary) Who was the first demon to contact Setsuna?`Kurai
+(Angel Sanctuary) Who is the first angel that Setsuna meets?`Rosiel
+(Angel Sanctuary) Which angel is assigned to serve as Setsuna's guardian angel?`Jibril`Gabriel
 (Attack on Titan) Who is the main character?`Eren Yeager`Eren
 (Attack on Titan) Which character loves to eat?`Sasha Blouse`Sasha
 (Attack on Titan) What is the outer wall named (The one taken by the titans)?`Wall Maria`Maria
@@ -38,9 +41,11 @@ As of 2015, among all the 17 long anime movies Hayao Miyazaki participated in, h
 (Attack on Titan) What did Carla do for a living before she met Grisha?`waitress
 (Attack on Titan) "I just don't want those charred bones I saw to be disappointed in me. I... I know what I have to do now." Who said this?`Jean
 (Attack on Titan) Who would become the commander of the Scouting Legion if something were to happen to Erwin?`Hange
+(Beserk) When you first are introduced to the main character, Guts, he refers to himself by what name?`The Black Swordsman`Black Swordsman
 (Beyblade) What is the name of Emily's bitbeast?`Trygator
 English name of Kuroshitsuji?`Black Butler
 (Black Butler) Who is the British monarch in Black Butler's time period?`Victoria I`Queen Victoria I
+(Black Butler) Which character is the head of the Phantomhive household?`Ciel Phantomhive`Ciel
 (Black Cat) How many members of Chronos were there originally?`13`thirteen
 (Black Cat) Out of which material are Train Heartnet's gun and bullets mainly made of?`orichalcum
 (Black Cat) Who is the main character?`Train Heartnet
@@ -60,6 +65,7 @@ Which series features a location called the Soul Society?`Bleach
 (Bleach) Jigokucho which are used as messengers in Soul Society are what type of animal?`Butterfly
 (Bleach) What are the artificial bodies used by Shinigami in the World of the Living?`Gigai
 (Bleach) What is the name of Karin's twin?`Yuzu
+(Blue Exorcist) What is the name of Rin Okumura's twin brother?`Yukio Okumura`Yukio
 In what CLAMP anime is there a little Persocon named Chii?`Chobits
 (Chobits) What is the first thing that came on the screen in episode 1?`cow
 (Code Geass) The character Li Xingke is a member of which group?`the chinese federation`chinese federation
@@ -111,6 +117,7 @@ In what CLAMP anime is there a little Persocon named Chii?`Chobits
 (Cowboy Bebop) What is the villan Vicious's weapon of choice?`katana
 (Cowboy Bebop) Who dies?`Spike
 Which anime involves a Corgi hound named Ein as one of the characters?`cowboy bebop
+(Crimson Hero) Who is the first girl to join Nobara as she tries to form a volleyball team?`Ayako Mochida`Ayako
 (Death Note) Who is the second Kira?`Misa Amane`misa
 (Death Note) Who is the first Kira?`Light Yagami`Light
 (Death Note) Who is the third Kira?`Kyosuke Higuchi`Kyosuke
@@ -132,9 +139,13 @@ Which anime involves a Corgi hound named Ein as one of the characters?`cowboy be
 (Death Note) What does L hate?`Socks
 (Death Note) What is the character Mello (Mihael Keehl) addicted to eating?`Chocolate
 (Death Note) If L sits normally, he claims his deductive reasoning reasoning will drop by what percent?`40`Forty
+(Demon Diary) Who is the current Demon Lord in the series?`Raenef V
+(Demon Diary) Who is Raenef's demon tutor?`Eclipse
 (Detective Conan) What is Shinichi Kudo's best sport?`soccer`football
+(Detective Conan) Who is Tooru Amuro?`Bourbon`Rei Furuya
 (Digimon) Which year was the American adaptation of Digimon: The Movie released?`2000
 (Digimon) What was Taichi Kamiya's first Digimon?`Botamon
+(Doubt) At the end, who was is actual wolf?`Rei Hazama`Rei
 (Dragon Ball Z) How many dragon balls are there?`7`seven
 (Dragon Ball Z) Who does a complete set of dragon balls summon?`Shenron
 (Dragon Ball Z) What race is Piccolo?`Namekian`Nameks
@@ -223,10 +234,14 @@ For which anime were these songs written: "Cha La Head Cha La" and "Boku-tachi w
 After Watase Yuu's creation of "Fushigi Yuugi", which famous shoujo anime did she make?`Ayashi no Ceres
 (Fushigi Yuugi) Miaka is the priestess of what?`Suzaku
 (Fushigi Yuugi) The world of Fushigi Yuugi is based on the ancient form of what country?`China
+(Fushigi Yuugi: Genbu Kaiden) After being sucked into the book, who is the first person Takiko meets?`Female Uruki`Uruki
+(Gakuen Alice) What color is Mikan's Alice stone?`Mandarin orange
 (Gundam) How many rounds of ammunition does Gundam Wing Zero Custom's Buster Rifle have?`3`three
 (Gundam) What is the original Gundam?`RX-78
 (Gundam) What is the name of the final Gundam used by Shiro in 08th MS Team?`Ez-8
-(Hellsing) What country does it take place in?`England
+(Hellsing) What country does the series take place in?`England
+(Hellsing) What is the name of Alucard's silver gun?`Hellsing ARMS .454 Casull Auto`Casull`.454 Casull Auto
+(Hellsing) What is the name of Alucard's black gun?`Hellsing ARMS 13mm Auto Anti-Freak Combat Pistol: Jackal`Jackal`Hellsing ARMS 13mm Auto Anti-Freak Combat Pistol Jackal`13mm Auto Anti-Freak Combat Pistol: Jackal
 (Hetalia) Who did America grow up with?`England
 (Hetalia) Who does Holy Rome have a crush on?`Italy
 (Highschool Of The Dead) What are zombie's sensitive to?`sound
@@ -237,11 +252,18 @@ After Watase Yuu's creation of "Fushigi Yuugi", which famous shoujo anime did sh
 (InuYasha) Inuyasha's sword is called what?`Tessaiga`Tetsusaiga
 (InuYasha) What is the name of the baby that Naraku holds his human heart in?`Hakudoshi
 (InuYasha) Who does Inuyasha mistake Kagome for?`Kikyo
+(Kamikaze Kaito Jeanne) Who is the new student who moves next door to Maron?`Chiaki
+(Kekkaishi) What are the demons/yokai of the series called?`Ayakashi
+(Kodomo no Omocha) How old are Sana and her friends at the start of the series?`11`Eleven  
 Basketball Anime that came out in 2012?`Kuroko No Basket
 (Love Hina) What was the samurai girl's name?`Aoyama `Aoyama Motoko
 (Love Hina) In the Christmas special, what did Keitarou buy Naru?`Coat`jacket
+(Love Hina) At the beginning of the series, how many times has Keitaro failed the Tokyo University entrance exam?`2`Two
+(Love Stage!!) Izumi Sena, the main protagonist, is a college student and the youngest child of a family in the entertainment industry. Unlike his family, Izumi does not want to go into show business. What does he dream of becoming instead?`mangaka`manga artist`manga author
 (Magic Knight Rayearth) Thee three heroines, Hikaru, Umi and Fuu, have powers associated with different elements. What kind of elemental spells does Umi use?`water
-(Mew Mew Power) What type of animal power does Kiki have?`monkey
+(Mamotte! Lollipop) Who is the main protagonist?`Nina Yamada`Nina
+(Mamotte! Lollipop) Which wizard in training is forced to cross-dress on several occasions by his teammate?`Forte
+(Midnight Secretary) Who is the main female character?`Kaya Satozuka`Kaya
 (Naruto) What is the relationship between Hinata and Hanabi Hyuga?`sisters`sister
 (Naruto) Who is Negi's cousin?`Hinata Hyuga`Hinata
 Sakura, Sasuke, Rock Lee, and Kakashi are all characters from which anime?`Naruto
@@ -411,6 +433,7 @@ Sakura, Sasuke, Rock Lee, and Kakashi are all characters from which anime?`Narut
 (One Punch Man) Who is the leader of the Monster Association?`Psykos
 (One Punch Man) What is Dr. Bofoi's hero name?`Metal Knight
 (Ouran High School Host Club) Who is mistaken for a boy in the anime?`Haruhi
+(Ouran High School Host Club) Where is the host club located?`Music Room #3`Music Room 3`Third Music Room`3rd Music Room
 (Pokemon) In the original Japanese version, what is Ash Ketchum's name?`Satoshi
 (Pokemon) Pokemon was created by Stoshi Tajiri in which year?`1996
 (Pokemon) What starter pokemon did Ash Ketchum originally intend to choose?`Squirtle
@@ -436,6 +459,8 @@ Which 2011 magical girl anime features Grief Seeds, witches, a mysterious white 
 (Rave Master) Who is a known pervert?`Griffon Kato`Griffon
 (Rave Master) What is Haru's last name?`Glory
 (Rave Master) What was Elie's old name?`Resha
+(Rave Master) What is the name of Haru's sword?`Ten Commandments
+(Rave Master) Who was the Rave Master before Haru?`Shiba
 (Rurouni Kenshin) What is the name of the principle of "swords that give life"?`katsujinken
 (Rurouni Kenshin) What is the name of the principle of "swords that kill"?`satsujinken
 What was the other name of the popular anime known as Samurai X?`Rurouni Kenshin
@@ -456,6 +481,7 @@ What was the other name of the popular anime known as Samurai X?`Rurouni Kenshin
 (Rurouni Kenshin) What was Yahiko before he was rescued?`Pickpocket
 (Rurouni Kenshin) What is the name of Kenshin's sword style?`Hiten Mitsurugi
 (Rurouni Kenshin) What is the name of Kenshin's master?`Hiko
+(Rurouni Kenshin) What is Sanosuke's last name?`Sagara`Higashidani
 Usagi Tsukino is better known as...?`Sailor Moon
 (Sailor Moon) Who was Minako's crime-fighting alter ego before she became Sailor Venus?`sailor v
 (Sailor Moon) What are the Sailor Senshi named after?`Planets
@@ -465,6 +491,7 @@ What anime is about samurai swordsmen in a hip hop setting?`Samurai Champloo
 (Samurai Champloo) What is the name of Fuu's flying squirrel?`Momo
 (Samurai Champloo) What is Mugen's totem?`Rooster
 (Samurai Champloo) What is Jin's totem?`Koi Fish`Koi
+(Shinshi Doumei Kurosu) Who is the main female character?`Haine Otomiya`Haine
 (Shokugeki no Soma) Who is the 7th seat on the Elite Ten Council?`Satoshi Isshiki`Isshiki
 (Shokugeki no Soma) Who is the 10th seat on the Elite Ten Council?`Erina Nakiri`Erina
 (Shokugeki no Soma) What was Joichiro Yukihira's original name?`Joichiro Saiba`Saiba Joichiro`Saiba
@@ -495,11 +522,15 @@ Maka Albarn is from what anime?`soul eater
 (Sword Art Online) What is the second game Kirito goes into?`Alfheim Online`Alfheim
 (The Last Airbender) What is the name of Aang's flying bison?`Appa
 (The Last Airbender) What is the name of the evil prince that tries to capture Aang?`prince zuko`zuko
+(Tokyo Mew Mew) Who was the Blue Knight?`Masaya
+(Tokyo Mew Mew) What type of animal power does Bu-Ling have?`Golden Lion Tamarin
 (Trigun) What was Vash's brother called?`Knife
 Sakura Kinamoto is the heroine of 'Cardcaptor Sakura'. In which CLAMP manga/anime does she also appear?`Tsubasa: Reservoir Chronicle`Tsubasa`Tsubasa Reservoir Chronicle`Tsubasa - Reservoir Chronicle
 (Tsubasa Chronicle) What does the gang needed to collect?`Princess Sakura's feathers`feathers
 Which manga made by CLAMP was named after a plant?`clover
 What is name for the rabbit-like creatures from CLAMP?`mokona
+What is the one CLAMP manga that does not crossover with 'Tsubasa: Reservoir Chronicles'?`Wish
+(Ultra Maniac) What is the name of the main character who is also a witch?`Nina Sakura`Nina
 What is Kazuki Takahashi best known as the creator of?`yu-gi-oh`yu-gi-oh!
 (Yu Yu Hakusho) What level computer does Mitari have to fight in Game Master's territory?`7`seven
 (Yu Yu Hakasho) What is Yuskey's close advisor and ghost friend?`Botan
