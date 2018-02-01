@@ -369,7 +369,6 @@ class Core:
         
     @_set.command(name="listening")
     @checks.is_owner()
-    @commands.guild_only()
     async def _listening(self, ctx, *, listening: str=None):
         """Sets Red's listening status"""
         status = ctx.me.status
@@ -382,7 +381,6 @@ class Core:
         
     @_set.command(name="watching")
     @checks.is_owner()
-    @commands.guild_only()
     async def _watching(self, ctx, *, watching: str=None):
         """Sets Red's watching status"""
         status = ctx.me.status
