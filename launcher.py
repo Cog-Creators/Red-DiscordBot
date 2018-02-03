@@ -146,6 +146,7 @@ def reset_red(reqs=False, data=False, cogs=False, git_reset=False):
         try:
             shutil.rmtree("data", onerror=remove_readonly)
             print("'data' folder has been wiped.")
+            
         except FileNotFoundError:
             pass
         except Exception as e:
@@ -155,6 +156,7 @@ def reset_red(reqs=False, data=False, cogs=False, git_reset=False):
     if cogs:
         try:
             shutil.rmtree("cogs", onerror=remove_readonly)
+            subprocess.call(("git", "checkout", "--", "data/trivia/"))
             print("'cogs' folder has been wiped.")
         except FileNotFoundError:
             pass
