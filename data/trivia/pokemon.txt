@@ -248,7 +248,7 @@ Which Pokémon was originally intended to be the mascot (which is now Pikachu)?`
 Which Pokémon is the only Ground type Psuedo-Legendary?`Garchomp
 Which Psuedo-Legendary has more than one immunity?`Hydreigon
 Which Psuedo-Legendary has the highest Special Defense stat?`Goodra
-Which Shadow Pokén was owned by Evice (final boss) in Pokémon Colosseum?`Tyranitar
+Which Shadow Pokémon was owned by Evice (final boss) in Pokémon Colosseum?`Tyranitar
 Which Psuedo-Legendary's pre-evolution changes its type upon evolution to the final stage?`Dragonite`Tyranitar
 What is the most common typing across all fossil pokémon?`Rock
 Z Bug move is called what?`Savage Spin-Out`savage spinout`savage spin out
@@ -273,7 +273,7 @@ What NPC Trainer has used the most unique Pokémon species in the series?`N
 What NPC is noted as speaking 'very fast', and has his text speed always set to fast?`N
 Which Pokémon game(s) have multiple difficulty levels?`Black and White 2`White and black 2`Black 2 and white 2`black 2`white 2`BW2`black white 2`white black 2
 Beast Balls have a catch rate multiplier of what when not used on an Ultra Beast?`x0.1`0.1`0.1x`10%`1/10
-Which Pokén joined Lucario as the second Steel and Fighting type?`Cobalion
+Which Pokémon joined Lucario as the second Steel and Fighting type?`Cobalion
 What is the only Ice move with negative priority?`Avalanche
 To do the MissingNo. glitch in Gen 1, who must you talk to first?`Old Man`Oldman
 How many Unown forms are there?`28
