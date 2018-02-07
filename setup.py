@@ -86,7 +86,7 @@ def find_locale_folders():
 
 setup(
     name='Red-DiscordBot',
-    version="{}.{}.{}b6".format(*get_version()),
+    version="{}.{}.{}b7".format(*get_version()),
     packages=get_package_list(),
     package_data=find_locale_folders(),
     url='https://github.com/Cog-Creators/Red-DiscordBot',
@@ -108,7 +108,7 @@ setup(
     entry_points={
         'console_scripts': [
             'redbot=redbot.__main__:main',
-            'redbot-setup=redbot.setup:basic_setup',
+            'redbot-setup=redbot.setup:main',
             'redbot-launcher=redbot.launcher:main'
         ]
     },

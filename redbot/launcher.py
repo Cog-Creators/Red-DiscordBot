@@ -6,7 +6,7 @@ import sys
 import argparse
 
 import pkg_resources
-from redbot.setup import basic_setup, load_existing_config
+from redbot.setup import basic_setup, load_existing_config, remove_instance
 
 if sys.platform == "linux":
     import distro
@@ -281,7 +281,8 @@ def main_menu():
         print("3. Update Red")
         print("4. Update Red (development version)")
         print("5. Create Instance")
-        print("6. Debug information (use this if having issues with the launcher or bot)")
+        print("6. Remove Instance")
+        print("7. Debug information (use this if having issues with the launcher or bot)")
         print("0. Exit")
         choice = user_choice()
         if choice == "1":
@@ -318,6 +319,9 @@ def main_menu():
             basic_setup()
             wait()
         elif choice == "6":
+            remove_instance()
+            wait()
+        elif choice == "7":
             debug_info()
         elif choice == "0":
             break
