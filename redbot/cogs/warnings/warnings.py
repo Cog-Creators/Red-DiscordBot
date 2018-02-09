@@ -4,6 +4,8 @@ from discord.ext import commands
 import discord
 import asyncio
 
+from redbot.cogs.warnings.helpers import warning_points_add_check, get_command_for_exceeded_points, \
+    get_command_for_dropping_points
 from redbot.core import Config, modlog, checks
 from redbot.core.bot import Red
 from redbot.core.context import RedContext
@@ -37,7 +39,8 @@ class Warnings:
         loop = asyncio.get_event_loop()
         loop.create_task(self.register_warningtype())
 
-    async def register_warningtype(self):
+    @staticmethod
+    async def register_warningtype():
         try:
             await modlog.register_casetype(
                 "warning", True, "\N{WARNING SIGN}", "Warning", None
@@ -73,53 +76,37 @@ class Warnings:
 
     @warnaction.command(name="add")
     @commands.guild_only()
-    async def action_add(self, ctx: RedContext, name: str, points: int, action: str):
+    async def action_add(self, ctx: RedContext, name: str, points: int):
         """Create an action to be taken at a specified point count
         Duplicate action names are not allowed"""
         guild = ctx.guild
 
-        if action.lower() not in ("add_role", "kick", "softban", "tempban", "ban"):
-            await ctx.send("Invalid action specified!")
-            return
-        to_add = {
-            "point_count": points,
-            "action": action.lower(),
-            "action_name": name
-        }
+        await ctx.send("Would you like to enter commands to be run? (y/n)")
 
         def same_author_check(m):
             return m.author == ctx.author
 
-        if action.lower() == "add_role":
-            await ctx.send(_("Type the ID of the role that should be added"))
-            msg = await self.bot.wait_for("message", check=same_author_check, timeout=30)
-            if msg is None:
-                await ctx.send(_("Ok then"))
+        msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=30)
+        if msg is None:
+            await ctx.send("Ok then.")
+            return None
+
+        if msg.content.lower() == "y":
+            exceed_command = await get_command_for_exceeded_points(ctx)
+            if exceed_command is None:
                 return
-            try:
-                int(msg.content)
-            except ValueError:
-                await ctx.send(_("That isn't an ID"))
+            drop_command = await get_command_for_dropping_points(ctx)
+            if drop_command is None:
                 return
-            else:
-                role = discord.utils.get(guild.roles, id=int(msg.content))
-                if role is None:
-                    await ctx.send(_("That role doesn't exist!"))
-                    return
-                to_add["role_id"] = int(msg.content)
-        elif action.lower() == "tempban":
-            await ctx.send(_("Type the number of days the user should be banned for"))
-            msg = await self.bot.wait_for("message", check=same_author_check, timeout=30)
-            if msg is None:
-                await ctx.send(_("Ok then"))
-                return
-            try:
-                int(msg.content)
-            except ValueError:
-                await ctx.send("That isn't a number!")
-                return
-            else:
-                to_add["tban_length"] = int(msg.content)
+        else:
+            exceed_command = None
+            drop_command = None
+        to_add = {
+            "action_name": name,
+            "points": points,
+            "exceed_command": exceed_command,
+            "drop_command": drop_command
+        }
 
         # Have all details for the action, now save the action
         guild_settings = self.config.guild(guild)
@@ -155,7 +142,7 @@ class Warnings:
     @checks.guildowner_or_permissions(administrator=True)
     async def warnreason(self, ctx: RedContext):
         """Add reasons for warnings"""
-        if isinstance(ctx.invoked_subcommand, commands.Group):
+        if ctx.invoked_subcommand is None:
             await ctx.send_help()
 
     @warnreason.command(name="add")
@@ -196,7 +183,7 @@ class Warnings:
 
     @commands.command()
     @commands.guild_only()
-    @checks.admin_or_permissions(ban_member=True)
+    @checks.admin_or_permissions(ban_members=True)
     async def reasonlist(self, ctx: RedContext):
         """List all configured reasons for warnings"""
         guild = ctx.guild
@@ -269,8 +256,9 @@ class Warnings:
             user_warnings.update(warning_to_add)
         current_point_count += reason_type["points"]
         await member_settings.total_points.set(current_point_count)
-        await self.warning_points_add_check(ctx, user, current_point_count)
-        await ctx.tick()
+        success = await warning_points_add_check(self.config, ctx, user, current_point_count)
+        if success:
+            await ctx.tick()
 
     @commands.command()
     @commands.guild_only()
@@ -343,57 +331,8 @@ class Warnings:
                 user_warnings.pop(warn_id)
         await ctx.tick()
 
-    async def warning_points_add_check(self, ctx: RedContext, user: discord.Member, points: int):
-        """Handles any action that needs to be taken or not based on the points"""
-        guild = ctx.guild
-        guild_settings = self.config.guild(guild)
-        act = {}
-        async with guild_settings.actions() as registered_actions:
-            for a in registered_actions.keys():
-                if points >= registered_actions[a]["point_count"]:
-                    act = registered_actions[a]
-                else:
-                    break
-        mod_loaded = self.bot.get_cog("Mod")
-        if points >= act["point_count"]:
-            action_to_take = act["action"]
-            if action_to_take == "add_role":
-                role = discord.utils.get(guild.roles, id=act["role_id"])
-                await user.add_roles(role)
-                await modlog.create_case(
-                    guild, ctx.message.created_at, "warning", user,
-                    ctx.author, "Earned too many warning points"
-                )
-            elif action_to_take == "kick":
-                if mod_loaded:
-                    kick_cmd = self.bot.get_command("kick")
-                    if kick_cmd:
-                        await ctx.invoke(
-                            kick_cmd, user, reason="Earned too many warning points"
-                        )
-            elif action_to_take == "softban":
-                if mod_loaded:
-                    softban_cmd = self.bot.get_command("softban")
-                    if softban_cmd:
-                        await ctx.invoke(
-                            softban_cmd, user, reason="Earned too many warning points"
-                        )
-            elif action_to_take == "tempban":
-                if mod_loaded:
-                    tempban_cmd = self.bot.get_command("tempban")
-                    tempban_length = act["tban_length"]
-                    await ctx.invoke(
-                        tempban_cmd, user, days=tempban_length,
-                        reason="Earned too many warning points"
-                    )
-            elif action_to_take == "ban":
-                if mod_loaded:
-                    ban_cmd = self.bot.get_command("ban")
-                    await ctx.invoke(
-                        ban_cmd, user, 0, reason="Earned too many warning points"
-                    )
-
-    async def custom_warning_reason(self, ctx: RedContext):
+    @staticmethod
+    async def custom_warning_reason(ctx: RedContext):
         """Handles getting description and points for custom reasons"""
         to_add = {
             "points": 0,
@@ -404,7 +343,7 @@ class Warnings:
             return m.author == ctx.author
 
         await ctx.send(_("How many points should be given for this reason?"))
-        msg = await self.bot.wait_for("message", check=same_author_check, timeout=30)
+        msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=30)
         if msg is None:
             await ctx.send(_("Ok then"))
             return
@@ -420,7 +359,7 @@ class Warnings:
             to_add["points"] = int(msg.content)
 
         await ctx.send(_("Enter a description for this reason"))
-        msg = await self.bot.wait_for("message", check=same_author_check, timeout=30)
+        msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=30)
         if msg is None:
             await ctx.send(_("Ok then"))
             return
