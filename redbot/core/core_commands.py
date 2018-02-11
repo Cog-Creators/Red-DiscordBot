@@ -276,6 +276,7 @@ class Core:
                 await ctx.send(_("Shutting down... ") + wave + skin)
         except:
             pass
+
         await ctx.bot.shutdown()
     
     @commands.command(name="restart")
@@ -292,6 +293,22 @@ class Core:
         except:
             pass
         await ctx.bot.shutdown(restart=True)
+
+    @commands.command(name="restart")
+    @checks.is_owner()
+    async def _restart(self, ctx, silently: bool=False):
+
+        try: # We don't want missing perms to stop our restart
+            if not silently:
+                await ctx.send('Restarting...')
+                
+        except Exception as e:
+            # await ctx.send('Could not restart' + e)
+            pass
+
+        await self.bot.shutdown(restart=True)
+
+
 
     def cleanup_and_refresh_modules(self, module_name: str):
         """Interally reloads modules so that changes are detected"""
