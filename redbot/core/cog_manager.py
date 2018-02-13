@@ -411,15 +411,15 @@ class CogManagerUI:
 
         unloaded = all - loaded
 
-        items = {0 : {'cogs': sorted(loaded),
-                      'msg' : '**{} loaded:**\n'.format(len(loaded)),
-                      'colour': discord.Colour.dark_green()
-                      },
-                 1 : {'cogs': sorted(unloaded),
-                      'msg' : '**{} unloaded:**\n'.format(len(unloaded)),
-                      'colour': discord.Colour.dark_red()
-                      }
-                }
-        for index, em in enumerate(items):
-            e = discord.Embed(description=items[index]['msg'] + ", ".join(items[index]['cogs']), colour=items[index]['colour'])
+        loaded = ('**{} loaded:**\n').format(len(loaded)) + ", ".join(loaded)
+        unloaded = ('**{} unloaded:**\n').format(len(unloaded)) + ", ".join(unloaded)
+
+        for page in pagify(loaded, delims=[', ', '\n'], page_length=1000):
+            e = discord.Embed(description=page,
+                              colour=discord.Colour.dark_green())
+            await ctx.send(embed=e)
+
+        for page in pagify(unloaded, delims=[', ', '\n'], page_length=1000):
+            e = discord.Embed(description=page,
+                              colour=discord.Colour.dark_red())
             await ctx.send(embed=e)
