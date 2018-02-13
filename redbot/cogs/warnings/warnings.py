@@ -5,7 +5,7 @@ import discord
 import asyncio
 
 from redbot.cogs.warnings.helpers import warning_points_add_check, get_command_for_exceeded_points, \
-    get_command_for_dropping_points
+    get_command_for_dropping_points, warning_points_remove_check
 from redbot.core import Config, modlog, checks
 from redbot.core.bot import Red
 from redbot.core.context import RedContext
@@ -86,10 +86,11 @@ class Warnings:
         def same_author_check(m):
             return m.author == ctx.author
 
-        msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=30)
-        if msg is None:
-            await ctx.send("Ok then.")
-            return None
+        try:
+            msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=30)
+        except asyncio.TimeoutError:
+            await ctx.send(_("Ok then"))
+            return
 
         if msg.content.lower() == "y":
             exceed_command = await get_command_for_exceeded_points(ctx)
@@ -256,9 +257,9 @@ class Warnings:
             user_warnings.update(warning_to_add)
         current_point_count += reason_type["points"]
         await member_settings.total_points.set(current_point_count)
-        success = await warning_points_add_check(self.config, ctx, user, current_point_count)
-        if success:
-            await ctx.tick()
+
+        await warning_points_add_check(self.config, ctx, user, current_point_count)
+        await ctx.tick()
 
     @commands.command()
     @commands.guild_only()
@@ -321,6 +322,7 @@ class Warnings:
         member_settings = self.config.member(member)
 
         current_point_count = await member_settings.total_points()
+        await warning_points_remove_check(self.config, ctx, member, current_point_count)
         async with member_settings.warnings() as user_warnings:
             if warn_id not in user_warnings.keys():
                 await ctx.send("That warning doesn't exist!")
@@ -343,8 +345,9 @@ class Warnings:
             return m.author == ctx.author
 
         await ctx.send(_("How many points should be given for this reason?"))
-        msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=30)
-        if msg is None:
+        try:
+            msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=30)
+        except asyncio.TimeoutError:
             await ctx.send(_("Ok then"))
             return
         try:
@@ -359,8 +362,9 @@ class Warnings:
             to_add["points"] = int(msg.content)
 
         await ctx.send(_("Enter a description for this reason"))
-        msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=30)
-        if msg is None:
+        try:
+            msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=30)
+        except asyncio.TimeoutError:
             await ctx.send(_("Ok then"))
             return
         to_add["description"] = msg.content
