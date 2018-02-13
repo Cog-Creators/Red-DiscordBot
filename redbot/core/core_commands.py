@@ -3,6 +3,7 @@ import importlib
 import itertools
 import logging
 import sys
+import traceback
 from collections import namedtuple
 from random import SystemRandom
 from string import ascii_letters, digits
@@ -225,6 +226,13 @@ class Core:
             ctx.bot.load_extension(spec)
         except Exception as e:
             log.exception("Package loading failed", exc_info=e)
+
+            exception_log = ("Exception in command '{}'\n"
+                             "".format(ctx.command.qualified_name))
+            exception_log += "".join(traceback.format_exception(type(e),
+                                     e, e.__traceback__))
+            self.bot._last_exception = exception_log
+
             await ctx.send(_("Failed to load package. Check your console or "
                              "logs for details."))
         else:
@@ -260,6 +268,13 @@ class Core:
             ctx.bot.load_extension(spec)
         except Exception as e:
             log.exception("Package reloading failed", exc_info=e)
+
+            exception_log = ("Exception in command '{}'\n"
+                             "".format(ctx.command.qualified_name))
+            exception_log += "".join(traceback.format_exception(type(e),
+                                     e, e.__traceback__))
+            self.bot._last_exception = exception_log
+
             await ctx.send(_("Failed to reload package. Check your console or "
                              "logs for details."))
         else:
