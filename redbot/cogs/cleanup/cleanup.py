@@ -42,6 +42,15 @@ class Cleanup:
         author = ctx.author
         is_bot = self.bot.user.bot
 
+        if number > 100:
+            await ctx.send('Are you sure you want to delete {} messages? (y/n)'.format(number))
+            response = await self.bot.wait_for('message')
+
+            if response.content.startswith('y'):
+                await ctx.send('Continuing..')
+            else:
+                return await ctx.send('Cancelled.')
+
         def check(m):
             if text in m.content:
                 return True
@@ -90,6 +99,15 @@ class Cleanup:
         channel = ctx.channel
         author = ctx.author
         is_bot = self.bot.user.bot
+       
+        if number > 100:
+            await ctx.send('Are you sure you want to delete {} messages? (y/n)'.format(number))
+            response = await self.bot.wait_for('message')
+
+            if response.content.startswith('y'):
+                await ctx.send('Continuing..')
+            else:
+                return await ctx.send('Cancelled.')
 
         def check(m):
             if isinstance(user, discord.Member) and m.author == user:
@@ -185,6 +203,15 @@ class Cleanup:
         author = ctx.author
 
         is_bot = self.bot.user.bot
+        
+        if number > 100:
+            await ctx.send('Are you sure you want to delete {} messages? (y/n)'.format(number))
+            response = await self.bot.wait_for('message')
+
+            if response.content.startswith('y'):
+                await ctx.send('Continuing..')
+            else:
+                return await ctx.send('Cancelled.')
 
         to_delete = []
         tmp = ctx.message
@@ -220,6 +247,15 @@ class Cleanup:
         channel = ctx.message.channel
         author = ctx.message.author
         is_bot = self.bot.user.bot
+
+        if number > 100:
+            await ctx.send('Are you sure you want to delete {} messages? (y/n)'.format(number))
+            response = await self.bot.wait_for('message')
+
+            if response.content.startswith('y'):
+                await ctx.send('Continuing..')
+            else:
+                return await ctx.send('Cancelled.')
 
         prefixes = await self.bot.get_prefix(ctx.message) # This returns all server prefixes
         if isinstance(prefixes, str):
@@ -282,6 +318,15 @@ class Cleanup:
         channel = ctx.channel
         author = ctx.message.author
         is_bot = self.bot.user.bot
+
+        if number > 100:
+            await ctx.send('Are you sure you want to delete {} messages? (y/n)'.format(number))
+            response = await self.bot.wait_for('message')
+
+            if response.content.startswith('y'):
+                await ctx.send('Continuing..')
+            else:
+                return await ctx.send('Cancelled.')
 
         # You can always delete your own messages, this is needed to purge
         can_mass_purge = False
