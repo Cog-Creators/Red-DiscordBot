@@ -31,7 +31,7 @@ class _ValueCtxManager:
         return self.coro.__await__()
 
     async def __aenter__(self):
-        self.raw_value =  await self
+        self.raw_value = deepcopy(await self)
         if not isinstance(self.raw_value, (list, dict)):
             raise TypeError("Type of retrieved value must be mutable (i.e. "
                             "list or dict) in order to use a config value as "
