@@ -171,7 +171,7 @@ class Group(Value):
 
     @property
     def defaults(self):
-        return self._defaults.copy()
+        return deepcopy(self._defaults)
 
     # noinspection PyTypeChecker
     def __getattr__(self, item: str) -> Union["Group", Value]:
