@@ -185,7 +185,11 @@ class Core:
             return m.author == owner
 
         while msg is not None:
-            msg = await self.bot.wait_for("message", check=msg_check, timeout=15)
+            try:
+                msg = await self.bot.wait_for("message", check=msg_check, timeout=15)
+            except asyncio.TimeoutError:
+                await ctx.send("I guess not.")
+                break
             try:
                 msg = int(msg.content)
                 await self.leave_confirmation(guilds[msg], owner, ctx)
@@ -199,16 +203,16 @@ class Core:
         def conf_check(m):
             return m.author == owner
 
-        msg = await self.bot.wait_for("message", check=conf_check, timeout=15)
-
-        if msg is None:
+        try:
+            msg = await self.bot.wait_for("message", check=conf_check, timeout=15)
+            if msg.content.lower().strip() in ("yes", "y"):
+                await server.leave()
+                if server != ctx.guild:
+                    await ctx.send("Done.")
+            else:
+                await ctx.send("Alright then.")
+        except asyncio.TimeoutError:
             await ctx.send("I guess not.")
-        elif msg.content.lower().strip() in ("yes", "y"):
-            await server.leave()
-            if server != ctx.guild:
-                await ctx.send("Done.")
-        else:
-            await ctx.send("Alright then.")
 
     @commands.command()
     @checks.is_owner()
