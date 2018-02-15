@@ -370,7 +370,31 @@ class Core:
             game = None
         await ctx.bot.change_presence(status=status, game=game)
         await ctx.send(_("Game set."))
-
+        
+    @_set.command(name="listening")
+    @checks.is_owner()
+    async def _listening(self, ctx, *, listening: str=None):
+        """Sets Red's listening status"""
+        status = ctx.me.status
+        if listening:
+            listening = discord.Game(name=listening, type=2)
+        else:
+            listening = None
+        await ctx.bot.change_presence(status=status, game=listening)
+        await ctx.send(_("Listening set."))
+        
+    @_set.command(name="watching")
+    @checks.is_owner()
+    async def _watching(self, ctx, *, watching: str=None):
+        """Sets Red's watching status"""
+        status = ctx.me.status
+        if watching:
+            watching = discord.Game(name=watching, type=3)
+        else:
+            watching = None
+        await ctx.bot.change_presence(status=status, game=watching)
+        await ctx.send(_("Watching set."))
+        
     @_set.command()
     @checks.is_owner()
     @commands.guild_only()
