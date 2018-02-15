@@ -380,7 +380,7 @@ class Core:
             listening = discord.Game(name=listening, type=2)
         else:
             listening = None
-        await ctx.bot.change_presence(status=status, listening=listening)
+        await ctx.bot.change_presence(status=status, game=listening)
         await ctx.send(_("Listening set."))
         
     @_set.command(name="watching")
@@ -392,7 +392,7 @@ class Core:
             watching = discord.Game(name=watching, type=3)
         else:
             watching = None
-        await ctx.bot.change_presence(status=status, watching=watching)
+        await ctx.bot.change_presence(status=status, game=watching)
         await ctx.send(_("Watching set."))
         
     @_set.command()
