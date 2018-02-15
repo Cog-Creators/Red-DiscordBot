@@ -373,7 +373,7 @@ class Core:
         """Sets Red's listening status"""
         status = ctx.me.status
         if listening:
-            listening = discord.Game(name=game, type=2)
+            listening = discord.Game(name=listening, type=2)
         else:
             listening = None
         await ctx.bot.change_presence(status=status, listening=listening)
@@ -385,7 +385,7 @@ class Core:
         """Sets Red's watching status"""
         status = ctx.me.status
         if watching:
-            watching = discord.Game(name=game, type=3)
+            watching = discord.Game(name=watching, type=3)
         else:
             watching = None
         await ctx.bot.change_presence(status=status, watching=watching)
