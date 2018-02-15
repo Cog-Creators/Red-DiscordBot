@@ -321,7 +321,7 @@ class CogManagerUI:
         Add a path to the list of available cog paths.
         """
         if not path.is_dir():
-            await ctx.send(_("That path is does not exist or does not"
+            await ctx.send(_("That path does not exist or does not"
                              " point to a valid directory."))
             return
 
