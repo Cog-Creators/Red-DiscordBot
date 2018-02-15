@@ -30,6 +30,7 @@ class Repo(RepoJSONMixin):
                             " {old_hash} {new_hash}")
     GIT_LOG = ("git -C {path} log --relative-date --reverse {old_hash}.."
                " {relative_file_path}")
+    GIT_DISCOVER_REMOTE_URL = "git -C {path} config --get remote.origin.url"
 
     PIP_INSTALL = "{python} -m pip install -U -t {target_dir} {reqs}"
 
@@ -266,6 +267,39 @@ class Repo(RepoJSONMixin):
 
         return p.stdout.decode().strip()
 
+    async def current_url(self, folder: Path=None) -> str:
+        """
+        Discovers the FETCH URL for a Git repo.
+
+        Parameters
+        ----------
+        folder : pathlib.Path
+            The folder to search for a URL.
+
+        Returns
+        -------
+        str
+            The FETCH URL.
+
+        Raises
+        ------
+        RuntimeError
+            When the folder does not contain a git repo with a FETCH URL.
+        """
+        if folder is None:
+            folder = self.folder_path
+
+        p = await self._run(
+            Repo.GIT_DISCOVER_REMOTE_URL.format(
+                path=folder
+            ).split()
+        )
+
+        if p.returncode != 0:
+            raise RuntimeError("Unable to discover a repo URL.")
+
+        return p.stdout.decode().strip()
+
     async def hard_reset(self, branch: str=None) -> None:
         """Perform a hard reset on the current repo.
 
@@ -467,23 +501,13 @@ class Repo(RepoJSONMixin):
              if m.type == InstallableType.SHARED_LIBRARY]
         )
 
-    def to_json(self):
-        data_path = data_manager.cog_data_path()
-        return {
-            "url": self.url,
-            "name": self.name,
-            "branch": self.branch,
-            "folder_path": self.folder_path.relative_to(data_path).parts,
-            "available_modules": [m.to_json() for m in self.available_modules]
-        }
-
     @classmethod
-    def from_json(cls, data):
-        data_path = data_manager.cog_data_path()
-        # noinspection PyTypeChecker
-        return Repo(data['name'], data['url'], data['branch'],
-                    data_path / Path(*data['folder_path']),
-                    tuple([Installable.from_json(m) for m in data['available_modules']]))
+    async def from_folder(cls, folder: Path):
+        repo = cls(name=folder.stem, branch="", url="", folder_path=folder)
+        repo.branch = await repo.current_branch()
+        repo.url = await repo.current_url()
+        repo._update_available_modules()
+        return repo
 
 
 class RepoManager:
@@ -540,7 +564,6 @@ class RepoManager:
         await r.clone()
 
         self._repos[name] = r
-        await self._save_repos()
 
         return r
 
@@ -596,7 +619,10 @@ class RepoManager:
         except KeyError:
             pass
 
-        await self._save_repos()
+    async def update_repo(self, repo_name: str) -> MutableMapping[Repo, Tuple[str, str]]:
+        repo = self._repos[repo_name]
+        old, new = await repo.update()
+        return {repo: (old, new)}
 
     async def update_all_repos(self) -> MutableMapping[Repo, Tuple[str, str]]:
         """Call `Repo.update` on all repositories.
@@ -609,23 +635,23 @@ class RepoManager:
 
         """
         ret = {}
-        for _, repo in self._repos.items():
-            old, new = await repo.update()
+        for repo_name, _ in self._repos.items():
+            repo, (old, new) = await self.update_repo(repo_name)
             if old != new:
                 ret[repo] = (old, new)
-
-        await self._save_repos()
         return ret
 
     async def _load_repos(self, set=False) -> MutableMapping[str, Repo]:
-        ret = {
-            name: Repo.from_json(data) for name, data in
-            (await self.downloader_config.repos()).items()
-        }
+        ret = {}
+        for folder in self.repos_folder.iterdir():
+            if not folder.is_dir():
+                continue
+            try:
+                ret[folder.stem] = await Repo.from_folder(folder)
+            except RuntimeError:
+                # Thrown when there's no findable git remote URL
+                pass
+
         if set:
             self._repos = ret
         return ret
-
-    async def _save_repos(self):
-        repo_json_info = {name: r.to_json() for name, r in self._repos.items()}
-        await self.downloader_config.repos.set(repo_json_info)
