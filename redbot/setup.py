@@ -190,12 +190,22 @@ def remove_instance():
                 )
             )
             print("Removing the instance...")
-            shutil.rmtree(str(pth))
+            try:
+                shutil.rmtree(str(pth))
+            except FileNotFoundError:
+                pass  # data dir was removed manually
             save_config(selected, {}, remove=True)
             print("The instance has been removed")
             return
     elif yesno.lower() == "n":
-        print("Ok then")
+        pth = Path(instance_data["DATA_PATH"])
+        print("Removing the instance...")
+        try:
+            shutil.rmtree(str(pth))
+        except FileNotFoundError:
+            pass  # data dir was removed manually
+        save_config(selected, {}, remove=True)
+        print("The instance has been removed")
         return
     else:
         print("That's not a valid option!")

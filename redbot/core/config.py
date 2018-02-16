@@ -31,7 +31,7 @@ class _ValueCtxManager:
         return self.coro.__await__()
 
     async def __aenter__(self):
-        self.raw_value =  await self
+        self.raw_value = await self
         if not isinstance(self.raw_value, (list, dict)):
             raise TypeError("Type of retrieved value must be mutable (i.e. "
                             "list or dict) in order to use a config value as "
@@ -171,7 +171,7 @@ class Group(Value):
 
     @property
     def defaults(self):
-        return self._defaults.copy()
+        return deepcopy(self._defaults)
 
     # noinspection PyTypeChecker
     def __getattr__(self, item: str) -> Union["Group", Value]:
@@ -428,7 +428,7 @@ class Config:
 
     @property
     def defaults(self):
-        return self._defaults.copy()
+        return deepcopy(self._defaults)
 
     @classmethod
     def get_conf(cls, cog_instance, identifier: int,
@@ -669,7 +669,7 @@ class Config:
         # noinspection PyTypeChecker
         return Group(
             identifiers=(self.unique_identifier, key) + identifiers,
-            defaults=self._defaults.get(key, {}),
+            defaults=self.defaults.get(key, {}),
             spawner=self.spawner,
             force_registration=self.force_registration
         )

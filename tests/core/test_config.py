@@ -376,3 +376,15 @@ async def test_value_ctxmgr_immutable(config):
 
     foo = await config.foo()
     assert foo is True
+
+
+@pytest.mark.asyncio
+async def test_ctxmgr_no_shared_default(config, member_factory):
+    config.register_member(foo=[])
+    m1 = member_factory.get()
+    m2 = member_factory.get()
+
+    async with config.member(m1).foo() as foo:
+        foo.append(1)
+
+    assert 1 not in await config.member(m2).foo()
