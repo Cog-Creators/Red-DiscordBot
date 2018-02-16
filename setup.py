@@ -3,6 +3,7 @@ from pathlib import Path
 from subprocess import run, PIPE
 
 import os
+import sys
 
 from setuptools import find_packages
 
@@ -25,6 +26,8 @@ def get_requirements():
         requirements.remove('git+https://github.com/Rapptz/discord.py.git@rewrite#egg=discord.py[voice]')
     else:
         requirements.append('discord.py>=1.0.0a0')  # Because RTD
+    if sys.platform.startswith("linux"):
+        requirements.append("distro")
     return requirements
 
 
