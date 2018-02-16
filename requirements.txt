@@ -4,6 +4,6 @@ appdirs
 youtube_dl
 raven
 colorama
-aiohttp-json-rpc
+aiohttp-json-rpc<=0.8.7
 pyyaml
 Red-Trivia
