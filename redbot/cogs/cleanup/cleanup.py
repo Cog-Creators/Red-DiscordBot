@@ -41,15 +41,20 @@ class Cleanup:
         channel = ctx.channel
         author = ctx.author
         is_bot = self.bot.user.bot
+        
+        def author_check(message):
+            return message.author == author
 
         if number > 100:
             await ctx.send('Are you sure you want to delete {} messages? (y/n)'.format(number))
-            response = await self.bot.wait_for('message')
+            response = await self.bot.wait_for('message', check=author_check)
 
             if response.content.startswith('y'):
-                await ctx.send('Continuing..')
+                tmp = await ctx.send('Continuing..')
+                await tmp.delete()
             else:
                 return await ctx.send('Cancelled.')
+        await tmp.delete()
 
         def check(m):
             if text in m.content:
@@ -100,12 +105,16 @@ class Cleanup:
         author = ctx.author
         is_bot = self.bot.user.bot
        
+        def author_check(message):
+            return message.author == author
+
         if number > 100:
             await ctx.send('Are you sure you want to delete {} messages? (y/n)'.format(number))
-            response = await self.bot.wait_for('message')
+            response = await self.bot.wait_for('message', check=author_check)
 
             if response.content.startswith('y'):
-                await ctx.send('Continuing..')
+                tmp = await ctx.send('Continuing..')
+                await tmp.delete()
             else:
                 return await ctx.send('Cancelled.')
 
@@ -204,17 +213,20 @@ class Cleanup:
 
         is_bot = self.bot.user.bot
         
+        def author_check(message):
+            return message.author == author
+
         if number > 100:
             await ctx.send('Are you sure you want to delete {} messages? (y/n)'.format(number))
-            response = await self.bot.wait_for('message')
+            response = await self.bot.wait_for('message', check=author_check)
 
             if response.content.startswith('y'):
-                await ctx.send('Continuing..')
+                tmp = await ctx.send('Continuing..')
+                await tmp.delete()              
             else:
                 return await ctx.send('Cancelled.')
 
         to_delete = []
-        tmp = ctx.message
 
         done = False
 
@@ -248,12 +260,16 @@ class Cleanup:
         author = ctx.message.author
         is_bot = self.bot.user.bot
 
+        def author_check(message):
+            return message.author == author
+
         if number > 100:
             await ctx.send('Are you sure you want to delete {} messages? (y/n)'.format(number))
-            response = await self.bot.wait_for('message')
+            response = await self.bot.wait_for('message', check=author_check)
 
             if response.content.startswith('y'):
-                await ctx.send('Continuing..')
+                tmp = await ctx.send('Continuing..')
+                await tmp.delete()
             else:
                 return await ctx.send('Cancelled.')
 
@@ -319,12 +335,16 @@ class Cleanup:
         author = ctx.message.author
         is_bot = self.bot.user.bot
 
+        def author_check(message):
+            return message.author == author
+
         if number > 100:
             await ctx.send('Are you sure you want to delete {} messages? (y/n)'.format(number))
-            response = await self.bot.wait_for('message')
+            response = await self.bot.wait_for('message', check=author_check)
 
             if response.content.startswith('y'):
-                await ctx.send('Continuing..')
+                tmp = await ctx.send('Continuing..')
+                await tmp.delete()
             else:
                 return await ctx.send('Cancelled.')
 
