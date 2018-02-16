@@ -54,8 +54,7 @@ class Cleanup:
                 await tmp.delete()
             else:
                 return await ctx.send('Cancelled.')
-        await tmp.delete()
-
+    
         def check(m):
             if text in m.content:
                 return True
