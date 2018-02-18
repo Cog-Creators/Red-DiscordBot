@@ -1,12 +1,17 @@
 import logging
 import collections
 from copy import deepcopy
-from typing import Callable, Union, Tuple
+from typing import Union, Tuple
 
 import discord
 
 from .data_manager import cog_data_path, core_data_path
 from .drivers import get_driver
+
+from .utils import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .drivers.red_base import BaseDriver
 
 log = logging.getLogger("red.config")
 
@@ -413,7 +418,7 @@ class Config:
     MEMBER = "MEMBER"
 
     def __init__(self, cog_name: str, unique_identifier: str,
-                 driver: Callable,
+                 driver: "BaseDriver",
                  force_registration: bool=False,
                  defaults: dict=None):
         self.cog_name = cog_name
