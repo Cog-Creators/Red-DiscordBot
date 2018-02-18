@@ -306,6 +306,10 @@ class Group(Value):
         else:
             return value
 
+    async def get_raw(self, *nested_path: str):
+        path = [str(p) for p in nested_path]
+        return await self.driver.get(*self.identifiers, *path)
+
     async def all(self) -> dict:
         """Get a dictionary representation of this group's data.
 
@@ -367,6 +371,10 @@ class Group(Value):
         """
         value_obj = getattr(self, item)
         await value_obj.set(value)
+
+    async def set_raw(self, *nested_path: str, value=None):
+        path = [str(p) for p in nested_path]
+        await self.driver.set(*self.identifiers, *path, value=value)
 
     async def clear(self):
         """Wipe all data from this group.
