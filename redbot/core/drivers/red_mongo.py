@@ -106,9 +106,6 @@ class Mongo(BaseDriver):
             upsert=True
         )
 
-    def get_driver(self):
-        return self
-
 
 def get_config_details():
     host = input("Enter host address: ")

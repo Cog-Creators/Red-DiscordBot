@@ -2,12 +2,10 @@ from typing import Tuple
 
 __all__ = ["BaseDriver"]
 
+
 class BaseDriver:
     def __init__(self, cog_name):
         self.cog_name = cog_name
-
-    def get_driver(self):
-        raise NotImplementedError
 
     async def get(self, identifiers: Tuple[str]):
         """

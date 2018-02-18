@@ -41,9 +41,6 @@ class JSON(BaseDriver):
             self.data = {}
             self.jsonIO._save_json(self.data)
 
-    def get_driver(self):
-        return self
-
     async def get(self, identifiers: Tuple[str]):
         partial = self.data
         for i in identifiers:

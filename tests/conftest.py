@@ -49,7 +49,7 @@ def config(json_driver):
     conf = Config(
         cog_name="PyTest",
         unique_identifier=str(uuid.uuid4()),
-        driver_spawn=json_driver)
+        driver=json_driver)
     yield conf
     conf._defaults = {}
 
@@ -63,7 +63,7 @@ def config_fr(json_driver):
     conf = Config(
         cog_name="PyTest",
         unique_identifier=str(uuid.uuid4()),
-        driver_spawn=json_driver,
+        driver=json_driver,
         force_registration=True
     )
     yield conf
