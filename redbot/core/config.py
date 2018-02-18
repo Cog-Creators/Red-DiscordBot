@@ -73,7 +73,7 @@ class Value:
 
     async def _get(self, default):
         try:
-            ret = await self.driver.get(self.identifiers)
+            ret = await self.driver.get(*self.identifiers)
         except KeyError:
             return default if default is not None else self.default
         return ret
@@ -142,7 +142,7 @@ class Value:
             The new literal value of this attribute.
 
         """
-        await self.driver.set(self.identifiers, value)
+        await self.driver.set(*self.identifiers, value=value)
 
 
 class Group(Value):

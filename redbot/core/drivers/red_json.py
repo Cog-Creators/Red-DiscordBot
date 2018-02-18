@@ -41,14 +41,14 @@ class JSON(BaseDriver):
             self.data = {}
             self.jsonIO._save_json(self.data)
 
-    async def get(self, identifiers: Tuple[str]):
+    async def get(self, *identifiers: Tuple[str]):
         partial = self.data
         full_identifiers = (self.unique_cog_identifier, *identifiers)
         for i in full_identifiers:
             partial = partial[i]
         return partial
 
-    async def set(self, identifiers, value):
+    async def set(self, *identifiers: str, value=None):
         partial = self.data
         full_identifiers = (self.unique_cog_identifier, *identifiers)
         for i in full_identifiers[:-1]:

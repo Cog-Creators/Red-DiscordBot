@@ -71,7 +71,7 @@ class Mongo(BaseDriver):
         uuid, identifiers = identifiers[0], identifiers[1:]
         return uuid, identifiers
 
-    async def get(self, identifiers: Tuple[str]):
+    async def get(self, *identifiers: Tuple[str]):
         await self._ensure_connected()
 
         mongo_collection = self.get_collection()
@@ -91,7 +91,7 @@ class Mongo(BaseDriver):
             partial = partial[i]
         return partial
 
-    async def set(self, identifiers: Tuple[str], value):
+    async def set(self, *identifiers: str, value=None):
         await self._ensure_connected()
 
         dot_identifiers = '.'.join(identifiers)
