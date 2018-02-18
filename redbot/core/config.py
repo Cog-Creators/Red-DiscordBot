@@ -419,7 +419,7 @@ class Config:
         self.cog_name = cog_name
         self.unique_identifier = unique_identifier
 
-        self.driver = driver
+        self._driver = driver
         self.force_registration = force_registration
         self._defaults = defaults or {}
 
@@ -667,7 +667,7 @@ class Config:
         return Group(
             identifiers=(self.unique_identifier, key) + identifiers,
             defaults=self.defaults.get(key, {}),
-            driver=self.driver,
+            driver=self._driver,
             force_registration=self.force_registration
         )
 
@@ -908,7 +908,7 @@ class Config:
         if not scopes:
             group = Group(identifiers=(self.unique_identifier, ),
                           defaults={},
-                          driver=self.driver)
+                          driver=self._driver)
         else:
             group = self._get_base_group(*scopes)
         await group.set({})
