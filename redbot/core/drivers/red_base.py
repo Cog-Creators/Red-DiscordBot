@@ -6,6 +6,7 @@ __all__ = ["BaseDriver"]
 class BaseDriver:
     def __init__(self, cog_name):
         self.cog_name = cog_name
+        self.unique_cog_identifier = None  # This is set by Config's init method
 
     async def get(self, identifiers: Tuple[str]):
         """

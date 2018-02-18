@@ -2,6 +2,7 @@ import logging
 import collections
 from copy import deepcopy
 from typing import Callable, Union, Tuple
+from functools import partial
 
 import discord
 
@@ -419,7 +420,8 @@ class Config:
         self.cog_name = cog_name
         self.unique_identifier = unique_identifier
 
-        self._driver = driver
+        self.driver = driver
+        self.driver.unique_cog_identifier = self.unique_identifier
         self.force_registration = force_registration
         self._defaults = defaults or {}
 
@@ -665,9 +667,9 @@ class Config:
     def _get_base_group(self, key: str, *identifiers: str) -> Group:
         # noinspection PyTypeChecker
         return Group(
-            identifiers=(self.unique_identifier, key) + identifiers,
+            identifiers=(key, *identifiers),
             defaults=self.defaults.get(key, {}),
-            driver=self._driver,
+            driver=self.driver,
             force_registration=self.force_registration
         )
 
@@ -908,7 +910,7 @@ class Config:
         if not scopes:
             group = Group(identifiers=(self.unique_identifier, ),
                           defaults={},
-                          driver=self._driver)
+                          driver=self.driver)
         else:
             group = self._get_base_group(*scopes)
         await group.set({})

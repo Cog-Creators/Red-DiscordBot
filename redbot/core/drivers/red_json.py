@@ -43,16 +43,18 @@ class JSON(BaseDriver):
 
     async def get(self, identifiers: Tuple[str]):
         partial = self.data
-        for i in identifiers:
+        full_identifiers = (self.unique_cog_identifier, *identifiers)
+        for i in full_identifiers:
             partial = partial[i]
         return partial
 
     async def set(self, identifiers, value):
         partial = self.data
-        for i in identifiers[:-1]:
+        full_identifiers = (self.unique_cog_identifier, *identifiers)
+        for i in full_identifiers[:-1]:
             if i not in partial:
                 partial[i] = {}
             partial = partial[i]
 
-        partial[identifiers[-1]] = value
+        partial[full_identifiers[-1]] = value
         await self.jsonIO._threadsafe_save_json(self.data)
