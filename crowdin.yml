@@ -1,3 +1,6 @@
+api_key_env: CROWDIN_API_KEY
+project_identifier_env: CROWDIN_PROJECT_ID
+base_path_env: CROWDIN_BASE_PATH
 files:
   - source: /**/*.pot
-    translation: /%original_path%/%two_letters_code%.po
+    translation: /%original_path%/%locale%.po
