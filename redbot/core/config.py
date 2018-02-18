@@ -472,7 +472,7 @@ class Config:
         log.debug("Using driver: '{}'".format(driver_name))
 
         driver = get_driver(driver_name, cog_name, data_path_override=cog_path_override,
-                             **driver_details)
+                            **driver_details)
         return cls(cog_name=cog_name, unique_identifier=uuid,
                    force_registration=force_registration,
                    driver=driver)
@@ -498,9 +498,9 @@ class Config:
         driver_name = basic_config.get('STORAGE_TYPE', 'JSON')
         driver_details = basic_config.get('STORAGE_DETAILS', {})
 
-        driver_spawn = get_driver(driver_name, "Core", data_path_override=core_path,
-                                  **driver_details)
-        return cls(cog_name="Core", driver_spawn=driver_spawn,
+        driver = get_driver(driver_name, "Core", data_path_override=core_path,
+                            **driver_details)
+        return cls(cog_name="Core", driver=driver,
                    unique_identifier='0',
                    force_registration=force_registration)
 
