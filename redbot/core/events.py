@@ -52,7 +52,7 @@ def init_events(bot, cli_flags):
             for package in packages:
                 try:
                     spec = await bot.cog_mgr.find_cog(package)
-                    bot.load_extension(spec)
+                    await bot.load_extension(spec)
                 except Exception as e:
                     log.exception("Failed to load package {}".format(package),
                                   exc_info=e)
