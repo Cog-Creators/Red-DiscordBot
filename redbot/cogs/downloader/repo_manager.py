@@ -407,14 +407,17 @@ class Repo(RepoJSONMixin):
             The success of the installation.
 
         """
-        if libraries:
+        if len(libraries) > 0:
             if not all([i in self.available_libraries for i in libraries]):
                 raise ValueError("Some given libraries are not available in this repo.")
         else:
             libraries = self.available_libraries
 
-        if libraries:
-            return all([lib.copy_to(target_dir=target_dir) for lib in libraries])
+        if len(libraries) > 0:
+            ret = True
+            for lib in libraries:
+                ret = ret and await lib.copy_to(target_dir=target_dir)
+            return ret
         return True
 
     async def install_requirements(self, cog: Installable, target_dir: Path) -> bool:

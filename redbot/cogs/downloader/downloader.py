@@ -7,6 +7,7 @@ from typing import Tuple, Union
 import discord
 from redbot.core import Config
 from redbot.core import checks
+from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import CogI18n
 from redbot.core.utils.chat_formatting import box, pagify
 from discord.ext import commands
@@ -35,7 +36,7 @@ class Downloader:
 
         self.already_agreed = False
 
-        self.LIB_PATH = self.bot.main_dir / "lib"
+        self.LIB_PATH = cog_data_path(self) / "lib"
         self.SHAREDLIB_PATH = self.LIB_PATH / "cog_shared"
         self.SHAREDLIB_INIT = self.SHAREDLIB_PATH / "__init__.py"
 
