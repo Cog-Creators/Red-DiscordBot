@@ -18,11 +18,14 @@ before_deploy:
   - sudo apt-get update -qq
   - sudo apt-get install -y crowdin
 deploy:
+  skip_cleanup: true
   provider: script
   script: python3 ./generate_strings.py
   on:
+    repo: Cog-Creators/Red-DiscordBot
     branch: V3/develop
     python: 3.5.3
+    tag: true
 cache: pip
 notifications:
   email: false
