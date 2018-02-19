@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2017-08-26 17:23+EDT\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,51 +15,75 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: ../alias.py:138
+#: ../alias.py:129
 msgid "No prefix found."
 msgstr ""
 
-#: ../alias.py:234
+#: ../alias.py:198
+msgid "You attempted to create a new alias with the name {} but that name is already a command on this bot."
+msgstr ""
+
+#: ../alias.py:205
+msgid "You attempted to create a new alias with the name {} but that alias already exists on this server."
+msgstr ""
+
+#: ../alias.py:212
+msgid "You attempted to create a new alias with the name {} but that name is an invalid alias name. Alias names may not contain spaces."
+msgstr ""
+
+#: ../alias.py:224
 msgid "A new alias with the trigger `{}` has been created."
 msgstr ""
 
-#: ../alias.py:270
+#: ../alias.py:236
+msgid "You attempted to create a new global alias with the name {} but that name is already a command on this bot."
+msgstr ""
+
+#: ../alias.py:243
+msgid "You attempted to create a new global alias with the name {} but that alias already exists on this server."
+msgstr ""
+
+#: ../alias.py:250
+msgid "You attempted to create a new global alias with the name {} but that name is an invalid alias name. Alias names may not contain spaces."
+msgstr ""
+
+#: ../alias.py:259
 msgid "A new global alias with the trigger `{}` has been created."
 msgstr ""
 
-#: ../alias.py:285
+#: ../alias.py:274
 msgid "No such alias exists."
 msgstr ""
 
-#: ../alias.py:294
+#: ../alias.py:283
 msgid "The `{}` alias will execute the command `{}`"
 msgstr ""
 
-#: ../alias.py:297
+#: ../alias.py:286
 msgid "There is no alias with the name `{}`"
 msgstr ""
 
-#: ../alias.py:309
+#: ../alias.py:298
 msgid "There are no aliases on this guild."
 msgstr ""
 
-#: ../alias.py:313 ../alias.py:331
+#: ../alias.py:302 ../alias.py:320
 msgid "Alias with the name `{}` was successfully deleted."
 msgstr ""
 
-#: ../alias.py:316 ../alias.py:334
+#: ../alias.py:305 ../alias.py:323
 msgid "Alias with name `{}` was not found."
 msgstr ""
 
-#: ../alias.py:327
+#: ../alias.py:316
 msgid "There are no aliases on this bot."
 msgstr ""
 
-#: ../alias.py:342 ../alias.py:353
+#: ../alias.py:331 ../alias.py:342
 msgid "Aliases:"
 msgstr ""
 
-#: ../alias.py:344 ../alias.py:355
+#: ../alias.py:333 ../alias.py:344
 msgid "There are no aliases on this server."
 msgstr ""
 
