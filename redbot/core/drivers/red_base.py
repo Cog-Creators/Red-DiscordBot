@@ -2,14 +2,13 @@ from typing import Tuple
 
 __all__ = ["BaseDriver"]
 
+
 class BaseDriver:
     def __init__(self, cog_name):
         self.cog_name = cog_name
+        self.unique_cog_identifier = None  # This is set by Config's init method
 
-    def get_driver(self):
-        raise NotImplementedError
-
-    async def get(self, identifiers: Tuple[str]):
+    async def get(self, *identifiers: Tuple[str]):
         """
         Finds the value indicate by the given identifiers.
 
@@ -30,7 +29,7 @@ class BaseDriver:
         """
         raise NotImplementedError
 
-    async def set(self, identifiers: Tuple[str], value):
+    async def set(self, *identifiers: Tuple[str], value=None):
         """
         Sets the value of the key indicated by the given identifiers.
 
