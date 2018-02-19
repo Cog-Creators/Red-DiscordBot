@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2017-08-26 17:50+EDT\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,219 +15,227 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: ../general.py:40
+#: ../general.py:42
 msgid "As I see it, yes"
 msgstr ""
 
-#: ../general.py:40
+#: ../general.py:42
 msgid "It is certain"
 msgstr ""
 
-#: ../general.py:40
+#: ../general.py:42
 msgid "It is decidedly so"
 msgstr ""
 
-#: ../general.py:41
+#: ../general.py:43
 msgid "Most likely"
 msgstr ""
 
-#: ../general.py:41
+#: ../general.py:43
 msgid "Outlook good"
 msgstr ""
 
-#: ../general.py:41
+#: ../general.py:43
 msgid "Signs point to yes"
 msgstr ""
 
-#: ../general.py:42
+#: ../general.py:44
 msgid "Without a doubt"
 msgstr ""
 
-#: ../general.py:42
+#: ../general.py:44
 msgid "Yes"
 msgstr ""
 
-#: ../general.py:42
+#: ../general.py:44
 msgid "Yes – definitely"
 msgstr ""
 
-#: ../general.py:42
+#: ../general.py:44
 msgid "You may rely on it"
 msgstr ""
 
-#: ../general.py:43
+#: ../general.py:45
 msgid "Ask again later"
 msgstr ""
 
-#: ../general.py:43
+#: ../general.py:45
 msgid "Reply hazy, try again"
 msgstr ""
 
-#: ../general.py:44
+#: ../general.py:46
 msgid "Better not tell you now"
 msgstr ""
 
-#: ../general.py:44
+#: ../general.py:46
 msgid "Cannot predict now"
 msgstr ""
 
-#: ../general.py:45
+#: ../general.py:47
 msgid "Concentrate and ask again"
 msgstr ""
 
-#: ../general.py:45
+#: ../general.py:47
 msgid "Don't count on it"
 msgstr ""
 
-#: ../general.py:45
+#: ../general.py:47
 msgid "My reply is no"
 msgstr ""
 
-#: ../general.py:46
+#: ../general.py:48
 msgid "My sources say no"
 msgstr ""
 
-#: ../general.py:46
+#: ../general.py:48
 msgid "Outlook not so good"
 msgstr ""
 
-#: ../general.py:46
+#: ../general.py:48
 msgid "Very doubtful"
 msgstr ""
 
-#: ../general.py:62
+#: ../general.py:64
 msgid "Not enough choices to pick from."
 msgstr ""
 
-#: ../general.py:76
+#: ../general.py:78
 msgid "{} :game_die: {} :game_die:"
 msgstr ""
 
-#: ../general.py:79
+#: ../general.py:81
 msgid "{} Maybe higher than 1? ;P"
 msgstr ""
 
-#: ../general.py:91
+#: ../general.py:93
 msgid ""
 "Nice try. You think this is funny?How about *this* instead:\n"
 "\n"
 msgstr ""
 
-#: ../general.py:104
+#: ../general.py:106
 msgid "*flips a coin and... "
 msgstr ""
 
-#: ../general.py:104
+#: ../general.py:106
 msgid "HEADS!*"
 msgstr ""
 
-#: ../general.py:104
+#: ../general.py:106
 msgid "TAILS!*"
 msgstr ""
 
-#: ../general.py:128
+#: ../general.py:130
 msgid "{} You win {}!"
 msgstr ""
 
-#: ../general.py:132
+#: ../general.py:134
 msgid "{} You lose {}!"
 msgstr ""
 
-#: ../general.py:136
+#: ../general.py:138
 msgid "{} We're square {}!"
 msgstr ""
 
-#: ../general.py:149
+#: ../general.py:151
 msgid "That doesn't look like a question."
 msgstr ""
 
-#: ../general.py:157
+#: ../general.py:159
 msgid " Stopwatch started!"
 msgstr ""
 
-#: ../general.py:161
+#: ../general.py:163
 msgid " Stopwatch stopped! Time: **"
 msgstr ""
 
-#: ../general.py:214 ../general.py:215
+#: ../general.py:216 ../general.py:217
 msgid ""
 "{}\n"
 "({} days ago)"
 msgstr ""
 
-#: ../general.py:217
+#: ../general.py:219
 msgid "Chilling in {} status"
 msgstr ""
 
-#: ../general.py:220
-msgid "Streaming: [{}]({})"
-msgstr ""
-
-#: ../general.py:222
+#: ../general.py:223
 msgid "Playing {}"
 msgstr ""
 
+#: ../general.py:225
+msgid "Streaming [{}]({})"
+msgstr ""
+
 #: ../general.py:227
+msgid "Listening to {}"
+msgstr ""
+
+#: ../general.py:229
+msgid "Watching {}"
+msgstr ""
+
+#: ../general.py:234
 msgid "None"
 msgstr ""
 
-#: ../general.py:230
+#: ../general.py:237
 msgid "Joined Discord on"
 msgstr ""
 
-#: ../general.py:231
+#: ../general.py:238
 msgid "Joined this guild on"
 msgstr ""
 
-#: ../general.py:232 ../general.py:277
+#: ../general.py:239 ../general.py:286
 msgid "Roles"
 msgstr ""
 
-#: ../general.py:233
+#: ../general.py:240
 msgid "Member #{} | User ID: {}"
 msgstr ""
 
-#: ../general.py:248 ../general.py:290
+#: ../general.py:257 ../general.py:299
 msgid "I need the `Embed links` permission to send this."
 msgstr ""
 
-#: ../general.py:263
+#: ../general.py:272
 msgid "Since {}. That's over {} days ago!"
 msgstr ""
 
-#: ../general.py:273
+#: ../general.py:282
 msgid "Region"
 msgstr ""
 
-#: ../general.py:274
+#: ../general.py:283
 msgid "Users"
 msgstr ""
 
-#: ../general.py:275
+#: ../general.py:284
 msgid "Text Channels"
 msgstr ""
 
-#: ../general.py:276
+#: ../general.py:285
 msgid "Voice Channels"
 msgstr ""
 
-#: ../general.py:278
+#: ../general.py:287
 msgid "Owner"
 msgstr ""
 
-#: ../general.py:279
+#: ../general.py:288
 msgid "Guild ID: "
 msgstr ""
 
-#: ../general.py:334
+#: ../general.py:343
 msgid "Your search terms gave no results."
 msgstr ""
 
-#: ../general.py:336
+#: ../general.py:345
 msgid "There is no definition #{}"
 msgstr ""
 
-#: ../general.py:338
+#: ../general.py:347
 msgid "Error."
 msgstr ""
 

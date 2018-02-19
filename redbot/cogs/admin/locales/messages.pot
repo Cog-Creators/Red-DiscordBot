@@ -15,11 +15,3 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: ../cleanup.py:150
-msgid "This command can only be used on bots with bot accounts."
-msgstr ""
-
-#: ../cleanup.py:157
-msgid "Message not found."
-msgstr ""
-
