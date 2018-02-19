@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Tuple, Union, List, overload
 
 import redbot.cogs
+import discord
 
 from . import checks
 from .config import Config
@@ -410,13 +411,15 @@ class CogManagerUI:
 
         unloaded = all - loaded
 
-        msg = ("+ Loaded\n"
-               "{}\n\n"
-               "- Unloaded\n"
-               "{}"
-               "".format(", ".join(sorted(loaded)),
-                         ", ".join(sorted(unloaded)))
-               )
-        for page in pagify(msg, [" "], shorten_by=18):
-            await ctx.send(box(page.lstrip(" "), lang="diff"))
+        loaded = ('**{} loaded:**\n').format(len(loaded)) + ", ".join(loaded)
+        unloaded = ('**{} unloaded:**\n').format(len(unloaded)) + ", ".join(unloaded)
 
+        for page in pagify(loaded, delims=[', ', '\n'], page_length=1000):
+            e = discord.Embed(description=page,
+                              colour=discord.Colour.dark_green())
+            await ctx.send(embed=e)
+
+        for page in pagify(unloaded, delims=[', ', '\n'], page_length=1000):
+            e = discord.Embed(description=page,
+                              colour=discord.Colour.dark_red())
+            await ctx.send(embed=e)
