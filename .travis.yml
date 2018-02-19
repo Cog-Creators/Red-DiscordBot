@@ -1,5 +1,9 @@
 dist: trusty
 language: python
+cache: pip
+notifications:
+  email: false
+
 python:
 - 3.5.3
 - 3.6.1
@@ -17,6 +21,7 @@ script:
 jobs:
   include:
     - stage: Deployment
+      if: tag IS present
       python: 3.5.3
       env:
         - DEPLOYING=true
@@ -44,6 +49,3 @@ jobs:
             branch: V3/develop
             python: 3.5.3
             tags: true
-cache: pip
-notifications:
-  email: false
