@@ -773,6 +773,9 @@ class Config:
         """
         return self._get_base_group(self.MEMBER, member.guild.id, member.id)
 
+    def custom(self, group_identifier: str, *identifiers: str):
+        return self._get_base_group(group_identifier, *identifiers)
+
     async def _all_from_scope(self, scope: str):
         """Get a dict of all values from a particular scope of data.
 
