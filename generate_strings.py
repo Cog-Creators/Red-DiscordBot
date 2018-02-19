@@ -25,6 +25,8 @@ def main():
     retval = subprocess.run([interpreter, "regen_messages.py"])
     if retval.returncode != 0:
         exit(1)
+    os.chdir(root_dir)
+    subprocess.run(["crowdin", "upload"])
 
 
 if __name__ == "__main__":
