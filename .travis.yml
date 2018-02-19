@@ -25,7 +25,7 @@ jobs:
       python: 3.5.3
       env:
         - DEPLOYING=true
-      before_depoyment:
+      before_deployment:
       - curl https://artifacts.crowdin.com/repo/GPG-KEY-crowdin | sudo apt-key add -
       - echo "deb https://artifacts.crowdin.com/repo/deb/ /" | sudo tee -a /etc/apt/sources.list
       - sudo apt-get update -qq
