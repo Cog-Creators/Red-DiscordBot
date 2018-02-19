@@ -682,6 +682,13 @@ class Config:
         """
         self._register_default(self.MEMBER, **kwargs)
 
+    def register_custom(self, group_identifier: str, **kwargs):
+        """Registers default values for a custom group.
+
+        See `register_global` for more details.
+        """
+        self._register_default(group_identifier, **kwargs)
+
     def _get_base_group(self, key: str, *identifiers: str) -> Group:
         # noinspection PyTypeChecker
         return Group(
@@ -769,11 +776,26 @@ class Config:
         -------
         Group
             The member's Group object.
-
         """
         return self._get_base_group(self.MEMBER, member.guild.id, member.id)
 
     def custom(self, group_identifier: str, *identifiers: str):
+        """Returns a `Group` for the given custom group.
+
+        Parameters
+        ----------
+        group_identifier : str
+            Used to identify the custom group.
+
+        identifiers : str
+            The attributes necessary to uniquely identify an entry in the
+            custom group.
+
+        Returns
+        -------
+        Group
+            The custom group's Group object.
+        """
         return self._get_base_group(group_identifier, *identifiers)
 
     async def _all_from_scope(self, scope: str):
@@ -999,3 +1021,10 @@ class Config:
             await self._clear_scope(self.MEMBER, guild.id)
             return
         await self._clear_scope(self.MEMBER)
+
+    async def clear_all_custom(self, group_identifier: str):
+        """Clear all custom group data.
+
+        This resets all custom group data to its registered defaults.
+        """
+        await self._clear_scope(group_identifier)
