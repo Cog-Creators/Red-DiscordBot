@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2017-08-26 17:57+EDT\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,32 +15,32 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: ../image.py:48
+#: ../image.py:49
 msgid "Your search returned no results"
 msgstr ""
 
-#: ../image.py:51
+#: ../image.py:52
 msgid ""
 "Search results...\n"
 msgstr ""
 
-#: ../image.py:57 ../image.py:99
+#: ../image.py:58 ../image.py:100
 msgid "Something went wrong. Error code is {}"
 msgstr ""
 
-#: ../image.py:69
+#: ../image.py:70
 msgid "Only 'new' and 'top' are a valid sort type."
 msgstr ""
 
-#: ../image.py:97 ../image.py:134 ../image.py:156
+#: ../image.py:98 ../image.py:135 ../image.py:157
 msgid "No results found."
 msgstr ""
 
-#: ../image.py:114
+#: ../image.py:115
 msgid "Set the imgur client id!"
 msgstr ""
 
-#: ../image.py:136 ../image.py:158
+#: ../image.py:137 ../image.py:159
 msgid "Error contacting the API"
 msgstr ""
 

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-01-28 15:46+AKST\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,7 +22,7 @@ msgid ""
 msgstr ""
 
 #: ../cog_manager.py:324
-msgid "That path is does not exist or does not point to a valid directory."
+msgid "That path does not exist or does not point to a valid directory."
 msgstr ""
 
 #: ../cog_manager.py:333
@@ -57,211 +57,219 @@ msgstr ""
 msgid "The bot will install new cogs to the `{}` directory."
 msgstr ""
 
-#: ../core_commands.py:189 ../core_commands.py:223
+#: ../core_commands.py:224 ../core_commands.py:258
 msgid "No module by that name was found in any cog path."
 msgstr ""
 
-#: ../core_commands.py:197
+#: ../core_commands.py:232
 msgid "Failed to load package. Check your console or logs for details."
 msgstr ""
 
-#: ../core_commands.py:201 ../core_commands.py:210 ../core_commands.py:235
-#: ../core_commands.py:324 ../core_commands.py:388 ../core_commands.py:402
+#: ../core_commands.py:236 ../core_commands.py:245 ../core_commands.py:270
+#: ../core_commands.py:359 ../core_commands.py:447 ../core_commands.py:461
 msgid "Done."
 msgstr ""
 
-#: ../core_commands.py:212
+#: ../core_commands.py:247
 msgid "That extension is not loaded."
 msgstr ""
 
-#: ../core_commands.py:232
+#: ../core_commands.py:267
 msgid "Failed to reload package. Check your console or logs for details."
 msgstr ""
 
-#: ../core_commands.py:245
+#: ../core_commands.py:280
 msgid "Shutting down... "
 msgstr ""
 
-#: ../core_commands.py:260
+#: ../core_commands.py:295
 msgid "Restarting..."
 msgstr ""
 
-#: ../core_commands.py:297
+#: ../core_commands.py:332
 msgid "The admin role for this guild has been set."
 msgstr ""
 
-#: ../core_commands.py:305
+#: ../core_commands.py:340
 msgid "The mod role for this guild has been set."
 msgstr ""
 
-#: ../core_commands.py:318
+#: ../core_commands.py:353
 msgid "Failed. Remember that you can edit my avatar up to two times a hour. The URL must be a direct link to a JPG / PNG."
 msgstr ""
 
-#: ../core_commands.py:322
+#: ../core_commands.py:357
 msgid "JPG / PNG format only."
 msgstr ""
 
-#: ../core_commands.py:337
+#: ../core_commands.py:372
 msgid "Game set."
 msgstr ""
 
-#: ../core_commands.py:366
+#: ../core_commands.py:384
+msgid "Listening set."
+msgstr ""
+
+#: ../core_commands.py:396
+msgid "Watching set."
+msgstr ""
+
+#: ../core_commands.py:425
 msgid "Status changed to %s."
 msgstr ""
 
-#: ../core_commands.py:397
+#: ../core_commands.py:456
 msgid "Failed to change name. Remember that you can only do it up to 2 times an hour. Use nicknames if you need frequent changes. `{}set nickname`"
 msgstr ""
 
-#: ../core_commands.py:412
+#: ../core_commands.py:471
 msgid "I lack the permissions to change my own nickname."
 msgstr ""
 
-#: ../core_commands.py:426 ../core_commands.py:439
+#: ../core_commands.py:485 ../core_commands.py:498
 msgid "Prefix set."
 msgstr ""
 
-#: ../core_commands.py:435
+#: ../core_commands.py:494
 msgid "Guild prefixes have been reset."
 msgstr ""
 
-#: ../core_commands.py:458
+#: ../core_commands.py:517
 msgid ""
 "\n"
 "Verification token:"
 msgstr ""
 
-#: ../core_commands.py:461
+#: ../core_commands.py:520
 msgid ""
 "Remember:\n"
 msgstr ""
 
-#: ../core_commands.py:464
+#: ../core_commands.py:523
 msgid "I have printed a one-time token in the console. Copy and paste it here to confirm you are the owner."
 msgstr ""
 
-#: ../core_commands.py:472
+#: ../core_commands.py:531
 msgid "The set owner request has timed out."
 msgstr ""
 
-#: ../core_commands.py:478
+#: ../core_commands.py:537
 msgid "You have been set as owner."
 msgstr ""
 
-#: ../core_commands.py:480
+#: ../core_commands.py:539
 msgid "Invalid token."
 msgstr ""
 
-#: ../core_commands.py:492
+#: ../core_commands.py:551
 msgid "Locale has been set."
 msgstr ""
 
-#: ../core_commands.py:506
+#: ../core_commands.py:565
 msgid "Done. Sentry logging is now enabled."
 msgstr ""
 
-#: ../core_commands.py:509
+#: ../core_commands.py:568
 msgid "Done. Sentry logging is now disabled."
 msgstr ""
 
-#: ../core_commands.py:519
+#: ../core_commands.py:578
 msgid "User ID: %s"
 msgstr ""
 
-#: ../core_commands.py:522
+#: ../core_commands.py:581
 msgid "through DM"
 msgstr ""
 
-#: ../core_commands.py:524
+#: ../core_commands.py:583
 msgid "from {}"
 msgstr ""
 
-#: ../core_commands.py:525
+#: ../core_commands.py:584
 msgid " | Server ID: %s"
 msgstr ""
 
-#: ../core_commands.py:534
+#: ../core_commands.py:593
 msgid "Use `{}dm {} <text>` to reply to this user"
 msgstr ""
 
-#: ../core_commands.py:542
+#: ../core_commands.py:601
 msgid "Sent by {} {}"
 msgstr ""
 
-#: ../core_commands.py:554
+#: ../core_commands.py:613
 msgid "I cannot send your message, I'm unable to find my owner... *sigh*"
 msgstr ""
 
-#: ../core_commands.py:557
+#: ../core_commands.py:616
 msgid "I'm unable to deliver your message. Sorry."
 msgstr ""
 
-#: ../core_commands.py:559
+#: ../core_commands.py:618
 msgid "Your message has been sent."
 msgstr ""
 
-#: ../core_commands.py:573
+#: ../core_commands.py:632
 msgid "Invalid ID or user not found. You can only send messages to people I share a server with."
 msgstr ""
 
-#: ../core_commands.py:579
+#: ../core_commands.py:638
 msgid "Owner of %s"
 msgstr ""
 
-#: ../core_commands.py:583
+#: ../core_commands.py:642
 msgid "You can reply to this message with %scontact"
 msgstr ""
 
-#: ../core_commands.py:593
+#: ../core_commands.py:652
 msgid "Sorry, I couldn't deliver your message to %s"
 msgstr ""
 
-#: ../core_commands.py:596
+#: ../core_commands.py:655
 msgid "Message delivered to %s"
 msgstr ""
 
-#: ../core_commands.py:616
+#: ../core_commands.py:675
 msgid "User added to whitelist."
 msgstr ""
 
-#: ../core_commands.py:625
+#: ../core_commands.py:684
 msgid "Whitelisted Users:"
 msgstr ""
 
-#: ../core_commands.py:645
+#: ../core_commands.py:704
 msgid "User has been removed from whitelist."
 msgstr ""
 
-#: ../core_commands.py:647
+#: ../core_commands.py:706
 msgid "User was not in the whitelist."
 msgstr ""
 
-#: ../core_commands.py:655
+#: ../core_commands.py:714
 msgid "Whitelist has been cleared."
 msgstr ""
 
-#: ../core_commands.py:672
+#: ../core_commands.py:731
 msgid "You cannot blacklist an owner!"
 msgstr ""
 
-#: ../core_commands.py:679
+#: ../core_commands.py:738
 msgid "User added to blacklist."
 msgstr ""
 
-#: ../core_commands.py:688
+#: ../core_commands.py:747
 msgid "blacklisted Users:"
 msgstr ""
 
-#: ../core_commands.py:708
+#: ../core_commands.py:767
 msgid "User has been removed from blacklist."
 msgstr ""
 
-#: ../core_commands.py:710
+#: ../core_commands.py:769
 msgid "User was not in the blacklist."
 msgstr ""
 
-#: ../core_commands.py:718
+#: ../core_commands.py:777
 msgid "blacklist has been cleared."
 msgstr ""
 
