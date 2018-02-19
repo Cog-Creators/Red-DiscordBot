@@ -4,6 +4,10 @@ import os
 import youtube_dl
 import discord
 
+from redbot.core.i18n import CogI18n
+
+_ = CogI18n("Audio", __file__)
+
 
 # Just a little experimental audio cog not meant for final release
 
@@ -18,7 +22,7 @@ class Audio:
     async def local(self, ctx, *, filename: str):
         """Play mp3"""
         if ctx.author.voice is None:
-            await ctx.send("Join a voice channel first!")
+            await ctx.send(_("Join a voice channel first!"))
             return
 
         if ctx.voice_client:
@@ -26,22 +30,22 @@ class Audio:
                 await ctx.voice_client.disconnect()
         path = os.path.join("cogs", "audio", "songs", filename + ".mp3")
         if not os.path.isfile(path):
-            await ctx.send("Let's play a file that exists pls")
+            await ctx.send(_("Let's play a file that exists pls"))
             return
         player = PCMVolumeTransformer(FFmpegPCMAudio(path), volume=1)
         voice = await ctx.author.voice.channel.connect()
         voice.play(player)
-        await ctx.send("{} is playing a song...".format(ctx.author))
+        await ctx.send(_("{} is playing a song...").format(ctx.author))
 
     @commands.command()
     async def play(self, ctx, url: str):
         """Play youtube url"""
         url = url.strip("<").strip(">")
         if ctx.author.voice is None:
-            await ctx.send("Join a voice channel first!")
+            await ctx.send(_("Join a voice channel first!"))
             return
         elif "youtube.com" not in url.lower():
-            await ctx.send("Youtube links pls")
+            await ctx.send(_("Youtube links pls"))
             return
 
         if ctx.voice_client:
@@ -51,7 +55,7 @@ class Audio:
         player = PCMVolumeTransformer(yt, volume=1)
         voice = await ctx.author.voice.channel.connect()
         voice.play(player)
-        await ctx.send("{} is playing a song...".format(ctx.author))
+        await ctx.send(_("{} is playing a song...").format(ctx.author))
 
     @commands.command()
     async def stop(self, ctx):
@@ -60,7 +64,7 @@ class Audio:
             ctx.voice_client.source.cleanup()
             await ctx.voice_client.disconnect()
         else:
-            await ctx.send("I'm not even connected to a voice channel!", delete_after=2)
+            await ctx.send(_("I'm not even connected to a voice channel!"), delete_after=2)
         await ctx.message.delete()
 
     @commands.command()
@@ -70,7 +74,7 @@ class Audio:
             ctx.voice_client.pause()
             await ctx.send("👌", delete_after=2)
         else:
-            await ctx.send("I'm not even connected to a voice channel!", delete_after=2)
+            await ctx.send(_("I'm not even connected to a voice channel!"), delete_after=2)
         await ctx.message.delete()
 
     @commands.command()
@@ -80,7 +84,7 @@ class Audio:
             ctx.voice_client.resume()
             await ctx.send("👌", delete_after=2)
         else:
-            await ctx.send("I'm not even connected to a voice channel!", delete_after=2)
+            await ctx.send(_("I'm not even connected to a voice channel!"), delete_after=2)
         await ctx.message.delete()
 
     @commands.command(hidden=True)
@@ -88,9 +92,9 @@ class Audio:
         """Sets the volume"""
         if ctx.voice_client:
             ctx.voice_client.source.volume = n
-            await ctx.send("Volume set.", delete_after=2)
+            await ctx.send(_("Volume set."), delete_after=2)
         else:
-            await ctx.send("I'm not even connected to a voice channel!", delete_after=2)
+            await ctx.send(_("I'm not even connected to a voice channel!"), delete_after=2)
         await ctx.message.delete()
 
     def __unload(self):
