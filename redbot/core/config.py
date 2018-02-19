@@ -306,9 +306,15 @@ class Group(Value):
         else:
             return value
 
-    async def get_raw(self, *nested_path: str):
+    async def get_raw(self, *nested_path: str, default=...):
         path = [str(p) for p in nested_path]
-        return await self.driver.get(*self.identifiers, *path)
+
+        try:
+            return await self.driver.get(*self.identifiers, *path)
+        except KeyError:
+            if default is not ...:
+                return default
+            raise
 
     async def all(self) -> dict:
         """Get a dictionary representation of this group's data.
