@@ -16,7 +16,7 @@ script:
 
 jobs:
   include:
-      - stage: Deployment
+    - stage: Deployment
       python: 3.5.3
       env:
         - DEPLOYING=true
