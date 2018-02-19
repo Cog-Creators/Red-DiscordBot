@@ -7,6 +7,7 @@ from typing import Tuple, Union
 import discord
 from redbot.core import Config
 from redbot.core import checks
+from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import CogI18n
 from redbot.core.utils.chat_formatting import box, pagify
 from discord.ext import commands
@@ -30,13 +31,12 @@ class Downloader:
                                     force_registration=True)
 
         self.conf.register_global(
-            repos={},
             installed=[]
         )
 
         self.already_agreed = False
 
-        self.LIB_PATH = self.bot.main_dir / "lib"
+        self.LIB_PATH = cog_data_path(self) / "lib"
         self.SHAREDLIB_PATH = self.LIB_PATH / "cog_shared"
         self.SHAREDLIB_INIT = self.SHAREDLIB_PATH / "__init__.py"
 
@@ -73,7 +73,7 @@ class Downloader:
         """
         installed = await self.conf.installed()
         # noinspection PyTypeChecker
-        return tuple(Installable.from_json(v) for v in installed)
+        return tuple(Installable.from_json(v, self._repo_manager) for v in installed)
 
     async def _add_to_installed(self, cog: Installable):
         """Mark a cog as installed.
@@ -289,29 +289,37 @@ class Downloader:
             await ctx.send(_("`{}` was successfully removed.").format(real_name))
         else:
             await ctx.send(_("That cog was installed but can no longer"
-                           " be located. You may need to remove it's"
-                           " files manually if it is still usable."))
+                             " be located. You may need to remove it's"
+                             " files manually if it is still usable."))
 
     @cog.command(name="update")
     async def _cog_update(self, ctx, cog_name: InstalledCog=None):
         """
         Updates all cogs or one of your choosing.
         """
+        installed_cogs = set(await self.installed_cogs())
+
         if cog_name is None:
             updated = await self._repo_manager.update_all_repos()
-            installed_cogs = set(await self.installed_cogs())
-            updated_cogs = set(cog for repo in updated.keys() for cog in repo.available_cogs)
 
-            installed_and_updated = updated_cogs & installed_cogs
+        else:
+            try:
+                updated = await self._repo_manager.update_repo(cog_name.repo_name)
+            except KeyError:
+                # Thrown if the repo no longer exists
+                updated = {}
 
-            # noinspection PyTypeChecker
-            await self._reinstall_requirements(installed_and_updated)
+        updated_cogs = set(cog for repo in updated.keys() for cog in repo.available_cogs)
+        installed_and_updated = updated_cogs & installed_cogs
 
-            # noinspection PyTypeChecker
-            await self._reinstall_cogs(installed_and_updated)
+        # noinspection PyTypeChecker
+        await self._reinstall_requirements(installed_and_updated)
 
-            # noinspection PyTypeChecker
-            await self._reinstall_libraries(installed_and_updated)
+        # noinspection PyTypeChecker
+        await self._reinstall_cogs(installed_and_updated)
+
+        # noinspection PyTypeChecker
+        await self._reinstall_libraries(installed_and_updated)
         await ctx.send(_("Cog update completed successfully."))
 
     @cog.command(name="list")

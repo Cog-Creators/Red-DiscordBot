@@ -3,11 +3,14 @@ import distutils.dir_util
 import shutil
 from enum import Enum
 from pathlib import Path
-from typing import Union, MutableMapping, Any
+from typing import MutableMapping, Any
 
-from redbot.core import data_manager
+from redbot.core.utils import TYPE_CHECKING
 from .log import log
 from .json_mixins import RepoJSONMixin
+
+if TYPE_CHECKING:
+    from .repo_manager import RepoManager
 
 
 class InstallableType(Enum):
@@ -50,11 +53,6 @@ class Installable(RepoJSONMixin):
         :class:`InstallationType`.
 
     """
-
-    INFO_FILE_DESCRIPTION = """
-    
-    """
-
     def __init__(self, location: Path):
         """Base installable initializer.
 
@@ -192,13 +190,22 @@ class Installable(RepoJSONMixin):
         return info
 
     def to_json(self):
-        data_path = data_manager.cog_data_path()
         return {
-            "location": self._location.relative_to(data_path).parts
+            "repo_name": self.repo_name,
+            "cog_name": self.name
         }
 
     @classmethod
-    def from_json(cls, data: dict):
-        data_path = data_manager.cog_data_path()
-        location = data_path / Path(*data["location"])
+    def from_json(cls, data: dict, repo_mgr: "RepoManager"):
+        repo_name = data['repo_name']
+        cog_name = data['cog_name']
+
+        repo = repo_mgr.get_repo(repo_name)
+        if repo is not None:
+            repo_folder = repo.folder_path
+        else:
+            repo_folder = repo_mgr.repos_folder / "MISSING_REPO"
+
+        location = repo_folder / cog_name
+
         return cls(location=location)
