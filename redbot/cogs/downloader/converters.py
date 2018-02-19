@@ -15,7 +15,7 @@ class InstalledCog(commands.Converter):
         if downloader is None:
             raise commands.CommandError("Downloader not loaded.")
 
-        cog = discord.utils.get(downloader.installed_cogs, name=arg)
+        cog = discord.utils.get(await downloader.installed_cogs(), name=arg)
         if cog is None:
             raise commands.BadArgument(
                 "That cog is not installed"
