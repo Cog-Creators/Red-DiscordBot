@@ -226,7 +226,7 @@ class Core:
             return
 
         try:
-            ctx.bot.load_extension(spec)
+            await ctx.bot.load_extension(spec)
         except Exception as e:
             log.exception("Package loading failed", exc_info=e)
             await ctx.send(_("Failed to load package. Check your console or "
@@ -261,7 +261,7 @@ class Core:
 
         try:
             self.cleanup_and_refresh_modules(spec.name)
-            ctx.bot.load_extension(spec)
+            await ctx.bot.load_extension(spec)
         except Exception as e:
             log.exception("Package reloading failed", exc_info=e)
             await ctx.send(_("Failed to reload package. Check your console or "

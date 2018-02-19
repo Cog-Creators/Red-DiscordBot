@@ -15,11 +15,27 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: ../cleanup.py:150
-msgid "This command can only be used on bots with bot accounts."
+#: ../audio.py:25 ../audio.py:45
+msgid "Join a voice channel first!"
 msgstr ""
 
-#: ../cleanup.py:157
-msgid "Message not found."
+#: ../audio.py:33
+msgid "Let's play a file that exists pls"
+msgstr ""
+
+#: ../audio.py:38 ../audio.py:58
+msgid "{} is playing a song..."
+msgstr ""
+
+#: ../audio.py:48
+msgid "Youtube links pls"
+msgstr ""
+
+#: ../audio.py:67 ../audio.py:77 ../audio.py:87 ../audio.py:97
+msgid "I'm not even connected to a voice channel!"
+msgstr ""
+
+#: ../audio.py:95
+msgid "Volume set."
 msgstr ""
 
