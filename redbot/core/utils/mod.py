@@ -124,7 +124,7 @@ async def is_mod_or_superior(
     user = None
     if isinstance(obj, discord.Message):
         user = obj.author
-    elif isinstance(obj, discord.Member) or isinstance(obj, discord.User):
+    elif isinstance(obj, discord.Member):
         user = obj
     elif isinstance(obj, discord.Role):
         pass
@@ -214,7 +214,7 @@ async def is_admin_or_superior(
     user = None
     if isinstance(obj, discord.Message):
         user = obj.author
-    elif isinstance(obj, discord.Member) or isinstance(obj, discord.User):
+    elif isinstance(obj, discord.Member):
         user = obj
     elif isinstance(obj, discord.Role):
         pass
