@@ -216,6 +216,7 @@ class General:
         created_on = _("{}\n({} days ago)").format(user_created, since_created)
         joined_on = _("{}\n({} days ago)").format(user_joined, since_joined)
 
+        
         if user.game is None:  # Default status
             game = _("Chilling in {} status").format(user.status)
         elif user.game.type == 0:  # "Playing" status
@@ -226,6 +227,8 @@ class General:
             game = _("Listening to {}").format(user.game.name)
         elif user.game.type == 3:  # "Watching" status
             game = _("Watching {}").format(user.game.name)
+        else:
+            game = "please go bother <@111655405708455936> as somehow something broke"
 
         if roles:
             roles = ", ".join([x.name for x in roles])
