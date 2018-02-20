@@ -375,10 +375,14 @@ class Core:
 
     @_set.command(name="game")
     @checks.is_owner()
-    @commands.guild_only()
     async def _game(self, ctx, *, game: str=None):
-        """Sets Red's playing status"""
-        status = ctx.me.status
+        """Sets Red's playing status
+
+        Can only be run if the bot is in a server."""
+        if len(ctx.bot.guilds) == 0:
+            await ctx.send_help()
+            return
+        status = ctx.bot.guilds[0].me.status
         if game:
             game = discord.Game(name=game)
         else:
@@ -388,12 +392,14 @@ class Core:
         
     @_set.command(name="listening")
     @checks.is_owner()
-    @commands.guild_only()
     async def _listening(self, ctx, *, listening: str=None):
         """Sets Red's listening status
 
-        Can only be run in a server."""
-        status = ctx.me.status
+        Can only be run if the bot is in a server."""
+        if len(ctx.bot.guilds) == 0:
+            await ctx.send_help()
+            return
+        status = ctx.bot.guilds[0].me.status
         if listening:
             listening = discord.Game(name=listening, type=2)
         else:
@@ -403,12 +409,14 @@ class Core:
         
     @_set.command(name="watching")
     @checks.is_owner()
-    @commands.guild_only()
     async def _watching(self, ctx, *, watching: str=None):
         """Sets Red's watching status
 
-        Can only be run in a server."""
-        status = ctx.me.status
+        Can only be run if the bot is in a server."""
+        if len(ctx.bot.guilds) == 0:
+            await ctx.send_help()
+            return
+        status = ctx.bot.guilds[0].me.status
         if watching:
             watching = discord.Game(name=watching, type=3)
         else:
@@ -418,23 +426,27 @@ class Core:
         
     @_set.command()
     @checks.is_owner()
-    @commands.guild_only()
     async def status(self, ctx, *, status: str):
         """Sets Red's status
         Available statuses:
             online
             idle
             dnd
-            invisible"""
+            invisible
+
+        Can only be run if the bot is in a server."""
 
         statuses = {
-                    "online"    : discord.Status.online,
-                    "idle"      : discord.Status.idle,
-                    "dnd"       : discord.Status.dnd,
-                    "invisible" : discord.Status.invisible
-                   }
+            "online": discord.Status.online,
+            "idle": discord.Status.idle,
+            "dnd": discord.Status.dnd,
+            "invisible": discord.Status.invisible
+        }
 
-        game = ctx.me.game
+        if len(ctx.bot.guilds) == 0:
+            await ctx.send_help()
+            return
+        game = ctx.bot.guilds[0].me.game
 
         try:
             status = statuses[status.lower()]
@@ -447,12 +459,14 @@ class Core:
 
     @_set.command()
     @checks.is_owner()
-    @commands.guild_only()
     async def stream(self, ctx, streamer=None, *, stream_title=None):
         """Sets Red's streaming status
         Leaving both streamer and stream_title empty will clear it."""
 
-        status = ctx.me.status
+        if len(ctx.bot.guilds) == 0:
+            await ctx.send_help()
+            return
+        status = ctx.bot.guilds[0].me.status
 
         if stream_title:
             stream_title = stream_title.strip()
