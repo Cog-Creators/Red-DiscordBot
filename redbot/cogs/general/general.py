@@ -215,11 +215,11 @@ class General:
 
         created_on = _("{}\n({} days ago)").format(user_created, since_created)
         joined_on = _("{}\n({} days ago)").format(user_joined, since_joined)
-
+        
         game = _("Chilling in {} status").format(user.status)
-
-        # Check if the user has a special status
-        if user.game.type == 0:  # "Playing" status
+        if user.game is None:  # Default status
+            pass
+        elif user.game.type == 0:  # "Playing" status
             game = _("Playing {}").format(user.game.name)
         elif user.game.type == 1:  # "Streaming" status
             game = _("Streaming [{}]({})").format(user.game.name, user.game.url)
