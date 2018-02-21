@@ -428,6 +428,7 @@ class Core:
     @checks.is_owner()
     async def status(self, ctx, *, status: str):
         """Sets Red's status
+
         Available statuses:
             online
             idle
