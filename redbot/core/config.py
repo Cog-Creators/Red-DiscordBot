@@ -1,3 +1,4 @@
+import contextlib
 import logging
 import collections
 from weakref import ref
@@ -466,7 +467,7 @@ class Config:
         cog_name = cog_path_override.stem
         uuid = str(hash(identifier))
 
-        if cog_name in _config_cogrefs and _config_cogrefs[cog_name]() is not None:
+        with contextlib.suppress(KeyError):
             return _config_cogrefs[cog_name]()
 
         # We have to import this here otherwise we have a circular dependency
