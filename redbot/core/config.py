@@ -502,7 +502,7 @@ class Config:
 
         """
         global _config_coreref
-        if _config_coreref() is not None:
+        if _config_coreref is not None and _config_coreref() is not None:
             return _config_coreref()
 
         core_path = core_data_path()
