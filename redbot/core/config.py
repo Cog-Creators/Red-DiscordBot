@@ -509,7 +509,7 @@ class Config:
 
     @classmethod
     def get_conf(cls, cog_instance, identifier: int,
-                 force_registration=False):
+                 force_registration=False, cog_name=None):
         """Get a Config instance for your cog.
 
         Parameters
@@ -524,6 +524,10 @@ class Config:
         force_registration : `bool`, optional
             Should config require registration of data keys before allowing you
             to get/set values? See `force_registration`.
+        cog_name : str, optional
+            Config normally uses ``cog_instance`` to determine tha name of your cog.
+            If you wish you may pass ``None`` to ``cog_instance`` and directly specify
+            the name of your cog here.
 
         Returns
         -------
@@ -531,7 +535,11 @@ class Config:
             A new Config object.
 
         """
-        cog_path_override = cog_data_path(cog_instance)
+        if cog_instance is None and not cog_name is None:
+            cog_path_override = cog_data_path(raw_name=cog_name)
+        else:
+            cog_path_override = cog_data_path(cog_instance=cog_instance)
+
         cog_name = cog_path_override.stem
         uuid = str(hash(identifier))
 
