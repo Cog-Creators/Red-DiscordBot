@@ -307,6 +307,39 @@ class Group(Value):
             return value
 
     async def get_raw(self, *nested_path: str, default=...):
+        """
+        Allows a developer to access data as if it was stored in a standard
+        Python dictionary.
+
+        For example::
+
+            d = await conf.get_raw("foo", "bar")
+
+            # is equivalent to
+
+            data = {"foo": {"bar": "baz"}}
+            d = data["foo"]["bar"]
+
+        Parameters
+        ----------
+        nested_path : str
+            Multiple arguments that mirror the arguments passed in for nested
+            dict access.
+        default
+            Default argument for the value attempting to be accessed. If the
+            value does not exist the default will be returned.
+
+        Returns
+        -------
+        Any
+            The value of the path requested.
+
+        Raises
+        ------
+        KeyError
+            If the value does not exist yet in Config's internal storage.
+
+        """
         path = [str(p) for p in nested_path]
 
         try:
@@ -379,6 +412,27 @@ class Group(Value):
         await value_obj.set(value)
 
     async def set_raw(self, *nested_path: str, value=None):
+        """
+        Allows a developer to set data as if it was stored in a standard
+        Python dictionary.
+
+        For example::
+
+            await conf.set_raw("foo", "bar", value="baz")
+
+            # is equivalent to
+
+            data = {"foo": {"bar": None}}
+            d["foo"]["bar"] = "baz"
+
+        Parameters
+        ----------
+        nested_path : str
+            Multiple arguments that mirror the arguments passed in for nested
+            dict access.
+        value
+            The value to store.
+        """
         path = [str(p) for p in nested_path]
         await self.driver.set(*self.identifiers, *path, value=value)
 
