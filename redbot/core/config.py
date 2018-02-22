@@ -1,5 +1,6 @@
 import logging
 import collections
+from weakref import ref
 from copy import deepcopy
 from typing import Union, Tuple
 
@@ -377,6 +378,10 @@ class Group(Value):
         await self.set({})
 
 
+_config_cogrefs = {}
+_config_coreref = None
+
+
 class Config:
     """Configuration manager for cogs and Red.
 
@@ -461,6 +466,9 @@ class Config:
         cog_name = cog_path_override.stem
         uuid = str(hash(identifier))
 
+        if cog_name in _config_cogrefs and _config_cogrefs[cog_name] is not None:
+            return _config_cogrefs[cog_name]
+
         # We have to import this here otherwise we have a circular dependency
         from .data_manager import basic_config
 
@@ -473,9 +481,11 @@ class Config:
 
         driver = get_driver(driver_name, cog_name, data_path_override=cog_path_override,
                             **driver_details)
-        return cls(cog_name=cog_name, unique_identifier=uuid,
+        conf = cls(cog_name=cog_name, unique_identifier=uuid,
                    force_registration=force_registration,
                    driver=driver)
+        _config_cogrefs[cog_name] = ref(conf)
+        return conf
 
     @classmethod
     def get_core_conf(cls, force_registration: bool=False):
@@ -490,6 +500,10 @@ class Config:
             See `force_registration`.
 
         """
+        global _config_coreref
+        if _config_coreref is not None:
+            return _config_coreref
+
         core_path = core_data_path()
 
         # We have to import this here otherwise we have a circular dependency
@@ -500,9 +514,11 @@ class Config:
 
         driver = get_driver(driver_name, "Core", data_path_override=core_path,
                             **driver_details)
-        return cls(cog_name="Core", driver=driver,
+        conf = cls(cog_name="Core", driver=driver,
                    unique_identifier='0',
                    force_registration=force_registration)
+        _config_coreref = ref(conf)
+        return conf
 
     def __getattr__(self, item: str) -> Union[Group, Value]:
         """Same as `group.__getattr__` except for global data.
