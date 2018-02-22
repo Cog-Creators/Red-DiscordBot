@@ -466,8 +466,8 @@ class Config:
         cog_name = cog_path_override.stem
         uuid = str(hash(identifier))
 
-        if cog_name in _config_cogrefs and _config_cogrefs[cog_name] is not None:
-            return _config_cogrefs[cog_name]
+        if cog_name in _config_cogrefs and _config_cogrefs[cog_name]() is not None:
+            return _config_cogrefs[cog_name]()
 
         # We have to import this here otherwise we have a circular dependency
         from .data_manager import basic_config
@@ -501,8 +501,8 @@ class Config:
 
         """
         global _config_coreref
-        if _config_coreref is not None:
-            return _config_coreref
+        if _config_coreref() is not None:
+            return _config_coreref()
 
         core_path = core_data_path()
 
