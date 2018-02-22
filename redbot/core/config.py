@@ -468,7 +468,9 @@ class Config:
         uuid = str(hash(identifier))
 
         with contextlib.suppress(KeyError):
-            return _config_cogrefs[cog_name]()
+            conf = _config_cogrefs[cog_name]()
+            if conf is not None:
+                return conf
 
         # We have to import this here otherwise we have a circular dependency
         from .data_manager import basic_config
