@@ -1,5 +1,7 @@
+import contextlib
 import logging
 import collections
+from weakref import ref
 from copy import deepcopy
 from typing import Union, Tuple
 
@@ -306,6 +308,49 @@ class Group(Value):
         else:
             return value
 
+    async def get_raw(self, *nested_path: str, default=...):
+        """
+        Allows a developer to access data as if it was stored in a standard
+        Python dictionary.
+
+        For example::
+
+            d = await conf.get_raw("foo", "bar")
+
+            # is equivalent to
+
+            data = {"foo": {"bar": "baz"}}
+            d = data["foo"]["bar"]
+
+        Parameters
+        ----------
+        nested_path : str
+            Multiple arguments that mirror the arguments passed in for nested
+            dict access.
+        default
+            Default argument for the value attempting to be accessed. If the
+            value does not exist the default will be returned.
+
+        Returns
+        -------
+        Any
+            The value of the path requested.
+
+        Raises
+        ------
+        KeyError
+            If the value does not exist yet in Config's internal storage.
+
+        """
+        path = [str(p) for p in nested_path]
+
+        try:
+            return deepcopy(await self.driver.get(*self.identifiers, *path))
+        except KeyError:
+            if default is not ...:
+                return default
+            raise
+
     async def all(self) -> dict:
         """Get a dictionary representation of this group's data.
 
@@ -368,6 +413,31 @@ class Group(Value):
         value_obj = getattr(self, item)
         await value_obj.set(value)
 
+    async def set_raw(self, *nested_path: str, value):
+        """
+        Allows a developer to set data as if it was stored in a standard
+        Python dictionary.
+
+        For example::
+
+            await conf.set_raw("foo", "bar", value="baz")
+
+            # is equivalent to
+
+            data = {"foo": {"bar": None}}
+            d["foo"]["bar"] = "baz"
+
+        Parameters
+        ----------
+        nested_path : str
+            Multiple arguments that mirror the arguments passed in for nested
+            dict access.
+        value
+            The value to store.
+        """
+        path = [str(p) for p in nested_path]
+        await self.driver.set(*self.identifiers, *path, value=value)
+
     async def clear(self):
         """Wipe all data from this group.
 
@@ -375,6 +445,10 @@ class Group(Value):
         local data.
         """
         await self.set({})
+
+
+_config_cogrefs = {}
+_config_coreref = None
 
 
 class Config:
@@ -435,7 +509,7 @@ class Config:
 
     @classmethod
     def get_conf(cls, cog_instance, identifier: int,
-                 force_registration=False):
+                 force_registration=False, cog_name=None):
         """Get a Config instance for your cog.
 
         Parameters
@@ -450,6 +524,10 @@ class Config:
         force_registration : `bool`, optional
             Should config require registration of data keys before allowing you
             to get/set values? See `force_registration`.
+        cog_name : str, optional
+            Config normally uses ``cog_instance`` to determine tha name of your cog.
+            If you wish you may pass ``None`` to ``cog_instance`` and directly specify
+            the name of your cog here.
 
         Returns
         -------
@@ -457,9 +535,18 @@ class Config:
             A new Config object.
 
         """
-        cog_path_override = cog_data_path(cog_instance)
+        if cog_instance is None and not cog_name is None:
+            cog_path_override = cog_data_path(raw_name=cog_name)
+        else:
+            cog_path_override = cog_data_path(cog_instance=cog_instance)
+
         cog_name = cog_path_override.stem
         uuid = str(hash(identifier))
+
+        with contextlib.suppress(KeyError):
+            conf = _config_cogrefs[cog_name]()
+            if conf is not None:
+                return conf
 
         # We have to import this here otherwise we have a circular dependency
         from .data_manager import basic_config
@@ -473,9 +560,11 @@ class Config:
 
         driver = get_driver(driver_name, cog_name, data_path_override=cog_path_override,
                             **driver_details)
-        return cls(cog_name=cog_name, unique_identifier=uuid,
+        conf = cls(cog_name=cog_name, unique_identifier=uuid,
                    force_registration=force_registration,
                    driver=driver)
+        _config_cogrefs[cog_name] = ref(conf)
+        return conf
 
     @classmethod
     def get_core_conf(cls, force_registration: bool=False):
@@ -490,6 +579,10 @@ class Config:
             See `force_registration`.
 
         """
+        global _config_coreref
+        if _config_coreref is not None and _config_coreref() is not None:
+            return _config_coreref()
+
         core_path = core_data_path()
 
         # We have to import this here otherwise we have a circular dependency
@@ -500,9 +593,11 @@ class Config:
 
         driver = get_driver(driver_name, "Core", data_path_override=core_path,
                             **driver_details)
-        return cls(cog_name="Core", driver=driver,
+        conf = cls(cog_name="Core", driver=driver,
                    unique_identifier='0',
                    force_registration=force_registration)
+        _config_coreref = ref(conf)
+        return conf
 
     def __getattr__(self, item: str) -> Union[Group, Value]:
         """Same as `group.__getattr__` except for global data.
@@ -668,6 +763,13 @@ class Config:
         """
         self._register_default(self.MEMBER, **kwargs)
 
+    def register_custom(self, group_identifier: str, **kwargs):
+        """Registers default values for a custom group.
+
+        See `register_global` for more details.
+        """
+        self._register_default(group_identifier, **kwargs)
+
     def _get_base_group(self, key: str, *identifiers: str) -> Group:
         # noinspection PyTypeChecker
         return Group(
@@ -755,9 +857,27 @@ class Config:
         -------
         Group
             The member's Group object.
-
         """
         return self._get_base_group(self.MEMBER, member.guild.id, member.id)
+
+    def custom(self, group_identifier: str, *identifiers: str):
+        """Returns a `Group` for the given custom group.
+
+        Parameters
+        ----------
+        group_identifier : str
+            Used to identify the custom group.
+
+        identifiers : str
+            The attributes necessary to uniquely identify an entry in the
+            custom group.
+
+        Returns
+        -------
+        Group
+            The custom group's Group object.
+        """
+        return self._get_base_group(group_identifier, *identifiers)
 
     async def _all_from_scope(self, scope: str):
         """Get a dict of all values from a particular scope of data.
@@ -982,3 +1102,10 @@ class Config:
             await self._clear_scope(self.MEMBER, guild.id)
             return
         await self._clear_scope(self.MEMBER)
+
+    async def clear_all_custom(self, group_identifier: str):
+        """Clear all custom group data.
+
+        This resets all custom group data to its registered defaults.
+        """
+        await self._clear_scope(group_identifier)
