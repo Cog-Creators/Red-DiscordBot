@@ -308,6 +308,49 @@ class Group(Value):
         else:
             return value
 
+    async def get_raw(self, *nested_path: str, default=...):
+        """
+        Allows a developer to access data as if it was stored in a standard
+        Python dictionary.
+
+        For example::
+
+            d = await conf.get_raw("foo", "bar")
+
+            # is equivalent to
+
+            data = {"foo": {"bar": "baz"}}
+            d = data["foo"]["bar"]
+
+        Parameters
+        ----------
+        nested_path : str
+            Multiple arguments that mirror the arguments passed in for nested
+            dict access.
+        default
+            Default argument for the value attempting to be accessed. If the
+            value does not exist the default will be returned.
+
+        Returns
+        -------
+        Any
+            The value of the path requested.
+
+        Raises
+        ------
+        KeyError
+            If the value does not exist yet in Config's internal storage.
+
+        """
+        path = [str(p) for p in nested_path]
+
+        try:
+            return deepcopy(await self.driver.get(*self.identifiers, *path))
+        except KeyError:
+            if default is not ...:
+                return default
+            raise
+
     async def all(self) -> dict:
         """Get a dictionary representation of this group's data.
 
@@ -369,6 +412,31 @@ class Group(Value):
         """
         value_obj = getattr(self, item)
         await value_obj.set(value)
+
+    async def set_raw(self, *nested_path: str, value):
+        """
+        Allows a developer to set data as if it was stored in a standard
+        Python dictionary.
+
+        For example::
+
+            await conf.set_raw("foo", "bar", value="baz")
+
+            # is equivalent to
+
+            data = {"foo": {"bar": None}}
+            d["foo"]["bar"] = "baz"
+
+        Parameters
+        ----------
+        nested_path : str
+            Multiple arguments that mirror the arguments passed in for nested
+            dict access.
+        value
+            The value to store.
+        """
+        path = [str(p) for p in nested_path]
+        await self.driver.set(*self.identifiers, *path, value=value)
 
     async def clear(self):
         """Wipe all data from this group.
@@ -687,6 +755,13 @@ class Config:
         """
         self._register_default(self.MEMBER, **kwargs)
 
+    def register_custom(self, group_identifier: str, **kwargs):
+        """Registers default values for a custom group.
+
+        See `register_global` for more details.
+        """
+        self._register_default(group_identifier, **kwargs)
+
     def _get_base_group(self, key: str, *identifiers: str) -> Group:
         # noinspection PyTypeChecker
         return Group(
@@ -774,9 +849,27 @@ class Config:
         -------
         Group
             The member's Group object.
-
         """
         return self._get_base_group(self.MEMBER, member.guild.id, member.id)
+
+    def custom(self, group_identifier: str, *identifiers: str):
+        """Returns a `Group` for the given custom group.
+
+        Parameters
+        ----------
+        group_identifier : str
+            Used to identify the custom group.
+
+        identifiers : str
+            The attributes necessary to uniquely identify an entry in the
+            custom group.
+
+        Returns
+        -------
+        Group
+            The custom group's Group object.
+        """
+        return self._get_base_group(group_identifier, *identifiers)
 
     async def _all_from_scope(self, scope: str):
         """Get a dict of all values from a particular scope of data.
@@ -1001,3 +1094,10 @@ class Config:
             await self._clear_scope(self.MEMBER, guild.id)
             return
         await self._clear_scope(self.MEMBER)
+
+    async def clear_all_custom(self, group_identifier: str):
+        """Clear all custom group data.
+
+        This resets all custom group data to its registered defaults.
+        """
+        await self._clear_scope(group_identifier)
