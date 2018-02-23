@@ -343,7 +343,7 @@ class Group(Value):
         path = [str(p) for p in nested_path]
 
         try:
-            return await self.driver.get(*self.identifiers, *path)
+            return await deepcopy(self.driver.get(*self.identifiers, *path))
         except KeyError:
             if default is not ...:
                 return default
@@ -411,7 +411,7 @@ class Group(Value):
         value_obj = getattr(self, item)
         await value_obj.set(value)
 
-    async def set_raw(self, *nested_path: str, value=None):
+    async def set_raw(self, *nested_path: str, value=...):
         """
         Allows a developer to set data as if it was stored in a standard
         Python dictionary.
@@ -432,7 +432,14 @@ class Group(Value):
             dict access.
         value
             The value to store.
+
+        Raises
+        ------
+        TypeError
+            If no value is provided.
         """
+        if value is ...:
+            raise TypeError("You must provide a value.")
         path = [str(p) for p in nested_path]
         await self.driver.set(*self.identifiers, *path, value=value)
 
