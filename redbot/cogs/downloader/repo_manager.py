@@ -639,7 +639,7 @@ class RepoManager:
         """
         ret = {}
         for repo_name, _ in self._repos.items():
-            repo, (old, new) = await self.update_repo(repo_name)
+            repo, (old, new) = (await self.update_repo(repo_name)).popitem()
             if old != new:
                 ret[repo] = (old, new)
         return ret
