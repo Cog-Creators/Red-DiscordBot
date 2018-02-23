@@ -343,7 +343,7 @@ class Group(Value):
         path = [str(p) for p in nested_path]
 
         try:
-            return await deepcopy(self.driver.get(*self.identifiers, *path))
+            return deepcopy(await self.driver.get(*self.identifiers, *path))
         except KeyError:
             if default is not ...:
                 return default
