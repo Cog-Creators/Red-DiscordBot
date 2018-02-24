@@ -337,6 +337,16 @@ class Group(Value):
         """
         path = [str(p) for p in nested_path]
 
+        if default is ...:
+            poss_default = self.defaults
+            for ident in path:
+                try:
+                    poss_default = poss_default[ident]
+                except KeyError:
+                    break
+            else:
+                default = poss_default
+
         try:
             return deepcopy(await self.driver.get(*self.identifiers, *path))
         except KeyError:
