@@ -226,7 +226,7 @@ async def test_set_dynamic_attr(config):
 
 @pytest.mark.asyncio
 async def test_get_dynamic_attr(config):
-    assert await config.get_attr("foobaz", True) is True
+    assert await config.get_raw("foobaz", default=True) is True
 
 
 # Member Group testing
