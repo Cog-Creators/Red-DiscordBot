@@ -68,4 +68,4 @@ class JSON(BaseDriver):
             partial = partial[i]
         else:
             del partial[identifiers[-1]]
-        await self.jsonIO._threadsafe_load_json(self.data)
+        await self.jsonIO._threadsafe_save_json(self.data)
