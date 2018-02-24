@@ -175,6 +175,72 @@ example, :py:meth:`Config.clear_all_guilds` resets all guild data. For member
 data, you can clear on both a per-guild and guild-independent basis, see
 :py:meth:`Config.clear_all_members` for more info.
 
+**************
+Advanced Usage
+**************
+
+Config makes it extremely easy to organize data that can easily fit into one of the standard categories (global,
+guild, user etc.) but there may come a time when your data does not work with the existing categories. There are now
+features within Config to enable developers to work with data how they wish.
+
+This usage guide will cover the following features:
+
+- :py:meth:`Config.custom`
+- :py:meth:`Group.get_raw`
+- :py:meth:`Group.set_raw`
+
+For this example let's suppose that we're creating a cog that allows users to buy and own multiple pets using
+the built-in Economy credits::
+
+    from redbot.core import bank
+    from redbot.core import Config
+    from discord.ext import commands
+
+    class Pets:
+        def __init__(self):
+            self.conf = Config.get_conf(self, 1234567890)
+
+            # Here we'll assign some default costs for the pets
+            self.conf.register_global(
+                dog=100,
+                cat=100,
+                bird=50
+             )
+
+And now that the cog is set up we'll need to create some commands that allow users to purchase these pets::
+
+    @commands.command()
+    async def get_pet(self, ctx, pet_type: str, pet_name: str):
+        """
+        Purchase a pet.
+
+        Pet type must be one of: dog, cat, bird
+        """
+        # Now we need to determine what the cost of the pet is and
+        # if the user has enough credits to purchase it. There are
+        # multiple ways to go about doing this and we'll demonstrate
+        # two of them.
+
+        # Old method
+        if pet_type in ('dog', 'cat', 'bird'):
+            cost = await self.conf.get_attr(pet_type)
+        else:
+            await ctx.send("Bad pet type, try again.")
+            return
+
+        # New method using "get_raw"
+        try:
+            cost = await self.conf.get_raw(pet_type)
+        except KeyError:
+            # KeyError is thrown whenever the data you try to access does not
+            # exist in the registered defaults or in the saved data.
+            await ctx.send("Bad pet type, try again.")
+            return
+
+        # Now we check to see if the author has the credits to buy a pet
+        if await bank.can_spend(ctx.author, cost):
+            # Now what?
+
 *************
 API Reference
 *************
