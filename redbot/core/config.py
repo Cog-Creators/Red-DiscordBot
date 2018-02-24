@@ -395,27 +395,6 @@ class Group(Value):
             )
         await super().set(value)
 
-    async def set_attr(self, item: str, value):
-        """Set an attribute by its name.
-
-        Similar to `get_attr` in the way it can be used to dynamically set
-        attributes by name.
-
-        Note
-        ----
-        Use of this method should be avoided wherever possible.
-
-        Parameters
-        ----------
-        item : str
-            The name of the attribute being set.
-        value
-            The raw data value to set the attribute as.
-
-        """
-        value_obj = getattr(self, item)
-        await value_obj.set(value)
-
     async def set_raw(self, *nested_path: str, value):
         """
         Allows a developer to set data as if it was stored in a standard

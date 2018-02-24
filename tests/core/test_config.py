@@ -219,7 +219,7 @@ async def test_set_channel_no_register(config, empty_channel):
 # Dynamic attribute testing
 @pytest.mark.asyncio
 async def test_set_dynamic_attr(config):
-    await config.set_attr("foobar", True)
+    await config.set_raw("foobar", value=True)
 
     assert await config.foobar() is True
 

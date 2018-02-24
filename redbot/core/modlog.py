@@ -77,8 +77,8 @@ class Case:
         case_emb = await self.message_content()
         await self.message.edit(embed=case_emb)
 
-        await _conf.guild(self.guild).cases.set_attr(
-            str(self.case_number), self.to_json()
+        await _conf.guild(self.guild).cases.set_raw(
+            str(self.case_number), value=self.to_json()
         )
 
     async def message_content(self):
@@ -245,7 +245,7 @@ class CaseType:
             "case_str": self.case_str,
             "audit_type": self.audit_type
         }
-        await _conf.casetypes.set_attr(self.name, data)
+        await _conf.casetypes.set_raw(self.name, value=data)
 
     async def is_enabled(self) -> bool:
         """
@@ -275,7 +275,7 @@ class CaseType:
             True if the case should be enabled, otherwise False"""
         if not self.guild:
             return
-        await _conf.guild(self.guild).casetypes.set_attr(self.name, enabled)
+        await _conf.guild(self.guild).casetypes.set_raw(self.name, value=enabled)
 
     @classmethod
     def from_json(cls, data: dict):
@@ -441,7 +441,7 @@ async def create_case(guild: discord.Guild, created_at: datetime, action_type: s
         case_emb = await case.message_content()
         msg = await mod_channel.send(embed=case_emb)
         case.message = msg
-    await _conf.guild(guild).cases.set_attr(str(next_case_number), case.to_json())
+    await _conf.guild(guild).cases.set_raw(str(next_case_number), value=case.to_json())
     return case
 
 

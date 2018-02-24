@@ -96,8 +96,8 @@ class CommandObj:
             'response': response
 
         }
-        await self.db(ctx.guild).commands.set_attr(command,
-                                                   ccinfo)
+        await self.db(ctx.guild).commands.set_raw(
+            command, value=ccinfo)
 
     async def edit(self,
                    ctx: commands.Context,
@@ -138,8 +138,8 @@ class CommandObj:
                 author.id
             )
 
-        await self.db(ctx.guild).commands.set_attr(command,
-                                                   ccinfo)
+        await self.db(ctx.guild).commands.set_raw(
+            command, value=ccinfo)
 
     async def delete(self,
                      ctx: commands.Context,
