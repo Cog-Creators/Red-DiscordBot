@@ -224,6 +224,8 @@ class Cleanup:
                 await tmp.delete()              
             else:
                 return await ctx.send('Cancelled.')
+        else:
+            tmp = ctx.message
 
         to_delete = []
 

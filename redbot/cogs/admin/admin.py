@@ -140,11 +140,13 @@ class Admin:
         Adds a role to a user. If user is left blank it defaults to the
             author of the command.
         """
+        if user is None:
+            user = ctx.author
         if self.pass_user_heirarchy_check(ctx, rolename):
             # noinspection PyTypeChecker
             await self._addrole(ctx, user, rolename)
         else:
-            await self.complain(ctx, USER_HIERARCHY_ISSUE)
+            await self.complain(ctx, USER_HIERARCHY_ISSUE, member=ctx.author)
 
     @commands.command()
     @commands.guild_only()
@@ -155,6 +157,8 @@ class Admin:
         Removes a role from a user. If user is left blank it defaults to the
             author of the command.
         """
+        if user is None:
+            user = ctx.author
         if self.pass_user_heirarchy_check(ctx, rolename):
             # noinspection PyTypeChecker
             await self._removerole(ctx, user, rolename)
