@@ -249,10 +249,12 @@ class Filter:
             return
         author = message.author
         valid_user = isinstance(author, discord.Member) and not author.bot
-
+        if not valid_user:
+            return
+        
         #  Bots and mods or superior are ignored from the filter
         mod_or_superior = await is_mod_or_superior(self.bot, obj=author)
-        if not valid_user or mod_or_superior:
+        if mod_or_superior:
             return
 
         await self.check_filter(message)
@@ -261,10 +263,13 @@ class Filter:
         author = message.author
         if message.guild is None or self.bot.user == author:
             return
-
         valid_user = isinstance(author, discord.Member) and not author.bot
+        if not valid_user:
+            return
+        
+        #  Bots and mods or superior are ignored from the filter
         mod_or_superior = await is_mod_or_superior(self.bot, obj=author)
-        if not valid_user or mod_or_superior:
+        if mod_or_superior:
             return
 
         await self.check_filter(message)

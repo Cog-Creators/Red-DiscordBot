@@ -639,13 +639,14 @@ class RepoManager:
         """
         ret = {}
         for repo_name, _ in self._repos.items():
-            repo, (old, new) = await self.update_repo(repo_name)
+            repo, (old, new) = (await self.update_repo(repo_name)).popitem()
             if old != new:
                 ret[repo] = (old, new)
         return ret
 
     async def _load_repos(self, set=False) -> MutableMapping[str, Repo]:
         ret = {}
+        self.repos_folder.mkdir(parents=True, exist_ok=True)
         for folder in self.repos_folder.iterdir():
             if not folder.is_dir():
                 continue

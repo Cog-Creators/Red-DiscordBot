@@ -175,6 +175,163 @@ example, :py:meth:`Config.clear_all_guilds` resets all guild data. For member
 data, you can clear on both a per-guild and guild-independent basis, see
 :py:meth:`Config.clear_all_members` for more info.
 
+**************
+Advanced Usage
+**************
+
+Config makes it extremely easy to organize data that can easily fit into one of the standard categories (global,
+guild, user etc.) but there may come a time when your data does not work with the existing categories. There are now
+features within Config to enable developers to work with data how they wish.
+
+This usage guide will cover the following features:
+
+- :py:meth:`Group.get_raw`
+- :py:meth:`Group.set_raw`
+
+For this example let's suppose that we're creating a cog that allows users to buy and own multiple pets using
+the built-in Economy credits::
+
+    from redbot.core import bank
+    from redbot.core import Config
+    from discord.ext import commands
+
+
+    class Pets:
+        def __init__(self):
+            self.conf = Config.get_conf(self, 1234567890)
+
+            # Here we'll assign some default costs for the pets
+            self.conf.register_global(
+                dog=100,
+                cat=100,
+                bird=50
+            )
+            self.conf.register_user(
+                pets={}
+            )
+
+And now that the cog is set up we'll need to create some commands that allow users to purchase these pets::
+
+    # continued
+        @commands.command()
+        async def get_pet(self, ctx, pet_type: str, pet_name: str):
+            """
+            Purchase a pet.
+
+            Pet type must be one of: dog, cat, bird
+            """
+            # Now we need to determine what the cost of the pet is and
+            # if the user has enough credits to purchase it.
+
+            # We will need to use "get_raw"
+            try:
+                cost = await self.conf.get_raw(pet_type)
+            except KeyError:
+                # KeyError is thrown whenever the data you try to access does not
+                # exist in the registered defaults or in the saved data.
+                await ctx.send("Bad pet type, try again.")
+                return
+
+After we've determined the cost of the pet we need to check if the user has enough credits and then we'll need to
+assign a new pet to the user. This is very easily done using the V3 bank API and :py:meth:`Group.set_raw`::
+
+    # continued
+            if await bank.can_spend(ctx.author, cost):
+                await self.conf.user(ctx.author).pets.set_raw(
+                    pet_name, value={'cost': cost, 'hunger': 0}
+                )
+
+                # this is equivalent to doing the following
+
+                pets = await self.conf.user(ctx.author).pets()
+                pets[pet_name] = {'cost': cost, 'hunger': 0}
+                await self.conf.user(ctx.author).pets.set(pets)
+
+Since the pets can get hungry we're gonna need a command that let's pet owners check how hungry their pets are::
+
+    # continued
+        @commands.command()
+        async def hunger(self, ctx, pet_name: str):
+            try:
+                hunger = await self.conf.user(ctx.author).pets.get_raw(pet_name, 'hunger')
+            except KeyError:
+                # Remember, this is thrown if something in the provided identifiers
+                # is not found in the saved data or the defaults.
+                await ctx.send("You don't own that pet!")
+                return
+
+            await ctx.send("Your pet has {}/100 hunger".format(hunger))
+
+We're responsible pet owners here, so we've also got to have a way to feed our pets::
+
+    # continued
+        @commands.command()
+        async def feed(self, ctx, pet_name: str, food: int):
+            # This is a bit more complicated because we need to check if the pet is
+            # owned first.
+            try:
+                pet = await self.conf.user(ctx.author).pets.get_raw(pet_name)
+            except KeyError:
+                # If the given pet name doesn't exist in our data
+                await ctx.send("You don't own that pet!")
+                return
+
+            hunger = pet.get("hunger")
+
+            # Determine the new hunger and make sure it doesn't go negative
+            new_hunger = max(hunger - food, 0)
+
+            await self.conf.user(ctx.author).pets.set_raw(
+                pet_name, 'hunger', value=new_hunger
+            )
+
+            # We could accomplish the same thing a slightly different way
+            await self.conf.user(ctx.author).pets.get_attr(pet_name).hunger.set(new_hunger)
+
+            await ctx.send("Your pet is now at {}/100 hunger!".format(new_hunger)
+
+*************
+V2 Data Usage
+*************
+There has been much conversation on how to bring V2 data into V3 and, officially, we recommend that cog developers
+make use of the public interface in Config (using the categories as described in these docs) rather than simply
+copying and pasting your V2 data into V3. Using Config as recommended will result in a much better experience for
+you in the long run and will simplify cog creation and maintenance.
+
+However.
+
+We realize that many of our cog creators have expressed disinterest in writing converters for V2 to V3 style data.
+As a result we have opened up config to take standard V2 data and allow cog developers to manipulate it in V3 in
+much the same way they would in V2. The following examples will demonstrate how to accomplish this.
+
+.. warning::
+
+    By following this method to use V2 data in V3 you may be at risk of data corruption if your cog is used on a bot
+    with multiple shards. USE AT YOUR OWN RISK.
+
+.. code-block:: python
+
+    from redbot.core import Config
+
+
+    class ExampleCog:
+        def __init__(self):
+            self.conf = Config.get_conf(self, 1234567890)
+
+            self.data = {}
+
+        async def load_data(self):
+            self.data = await self.conf.custom("V2", "V2").all()
+
+        async def save_data(self):
+            await self.conf.custom("V2", "V2").set(self.data)
+
+
+    async def setup(bot):
+        cog = ExampleCog()
+        await cog.load_data()
+        bot.add_cog(cog)
+
 *************
 API Reference
 *************
