@@ -18,7 +18,8 @@ class Cleanup:
     def __init__(self, bot: Red):
         self.bot = bot
 
-    async def check_100_plus(self, ctx: RedContext, number: int) -> bool:
+    @staticmethod
+    async def check_100_plus(ctx: RedContext, number: int) -> bool:
         """
         Called when trying to delete more than 100 messages at once
 
@@ -28,7 +29,7 @@ class Cleanup:
             return message.author == ctx.author
 
         await ctx.send(_('Are you sure you want to delete {} messages? (y/n)').format(number))
-        response = await self.bot.wait_for('message', check=author_check)
+        response = await ctx.bot.wait_for('message', check=author_check)
 
         if response.content.lower().startswith('y'):
             tmp = await ctx.send(_('Continuing..'))
