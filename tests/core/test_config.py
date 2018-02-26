@@ -299,13 +299,12 @@ async def test_member_clear_all(config, member_factory):
 
 
 @pytest.mark.asyncio
-async def test_clear_value(config_fr):
-    config_fr.register_global(foo=False)
-    await config_fr.foo.set(True)
-    await config_fr.foo.clear()
+async def test_clear_value(config):
+    await config.foo.set(True)
+    await config.foo.clear()
 
     with pytest.raises(KeyError):
-        await config_fr.get_raw('foo')
+        await config.get_raw('foo')
 
 
 # Get All testing
