@@ -615,11 +615,11 @@ class Core:
         async with ctx.channel.typing():
             red_dist = pkg_resources.get_distribution("red-discordbot")
             red_path = Path(red_dist.location) / "redbot"
-            locale_list = set([loc.stem for loc in list(red_path.glob("**/*.po"))])
+            locale_list = sorted(set([loc.stem for loc in list(red_path.glob("**/*.po"))]))
             pages = pagify("\n".join(locale_list))
 
         await ctx.send_interactive(
-            pages, box_lang="Available Locales"
+            pages, box_lang="Available Locales:"
         )
 
     @commands.command()
