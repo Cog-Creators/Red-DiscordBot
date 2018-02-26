@@ -267,16 +267,12 @@ class Group(Value):
 
         return not isinstance(default, dict)
 
-    def get_attr(self, item: str, default=None, resolve=True):
+    def get_attr(self, item: str):
         """Manually get an attribute of this Group.
 
         This is available to use as an alternative to using normal Python
-        attribute access. It is required if you find a need for dynamic
+        attribute access. It may be required if you find a need for dynamic
         attribute access.
-
-        Note
-        ----
-        Use of this method should be avoided wherever possible.
 
         Example
         -------
@@ -287,32 +283,20 @@ class Group(Value):
                 user = ctx.author
 
                 # Where the value of item is the name of the data field in Config
-                await ctx.send(await self.conf.user(user).get_attr(item))
+                await ctx.send(await self.conf.user(user).get_attr(item).foo())
 
         Parameters
         ----------
         item : str
             The name of the data field in `Config`.
-        default
-            This is an optional override to the registered default for this
-            item.
-        resolve : bool
-            If this is :code:`True` this function will return a coroutine that
-            resolves to a "real" data value when awaited. If :code:`False`,
-            this method acts the same as `__getattr__`.
 
         Returns
         -------
-        `types.coroutine` or `Value` or `Group`
-            The attribute which was requested, its type depending on the value
-            of :code:`resolve`.
+        `Value` or `Group`
+            The attribute which was requested.
 
         """
-        value = getattr(self, item)
-        if resolve:
-            return value(default=default)
-        else:
-            return value
+        return self.__getattr__(item)
 
     async def get_raw(self, *nested_path: str, default=...):
         """
@@ -349,6 +333,16 @@ class Group(Value):
 
         """
         path = [str(p) for p in nested_path]
+
+        if default is ...:
+            poss_default = self.defaults
+            for ident in path:
+                try:
+                    poss_default = poss_default[ident]
+                except KeyError:
+                    break
+            else:
+                default = poss_default
 
         try:
             return deepcopy(await self.driver.get(*self.identifiers, *path))
@@ -397,27 +391,6 @@ class Group(Value):
                 "You may only set the value of a group to be a dict."
             )
         await super().set(value)
-
-    async def set_attr(self, item: str, value):
-        """Set an attribute by its name.
-
-        Similar to `get_attr` in the way it can be used to dynamically set
-        attributes by name.
-
-        Note
-        ----
-        Use of this method should be avoided wherever possible.
-
-        Parameters
-        ----------
-        item : str
-            The name of the attribute being set.
-        value
-            The raw data value to set the attribute as.
-
-        """
-        value_obj = getattr(self, item)
-        await value_obj.set(value)
 
     async def set_raw(self, *nested_path: str, value):
         """
