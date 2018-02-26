@@ -71,7 +71,7 @@ class Mongo(BaseDriver):
         uuid, identifiers = identifiers[0], identifiers[1:]
         return uuid, identifiers
 
-    async def get(self, *identifiers: Tuple[str]):
+    async def get(self, *identifiers: str):
         await self._ensure_connected()
 
         mongo_collection = self.get_collection()
@@ -102,6 +102,17 @@ class Mongo(BaseDriver):
             {'_id': self.unique_cog_identifier},
             update={"$set": {dot_identifiers: value}},
             upsert=True
+        )
+
+    async def clear(self, *identifiers: str):
+        await self._ensure_connected()
+
+        dot_identifiers = '.'.join(identifiers)
+        mongo_collection = self.get_collection()
+
+        await mongo_collection.update_one(
+            {'_id': self.unique_cog_identifier},
+            update={"$unset": {dot_identifiers: 1}}
         )
 
 
