@@ -149,6 +149,14 @@ class Song:
         self.start_time = kwargs.pop('start_time', None)
         self.end_time = kwargs.pop('end_time', None)
 
+
+        m, s = divmod(self.duration, 60)
+        h, m = divmod(m, 60)
+        if h:
+            self.pretty_duration = "{0}:{1:0>2}:{2:0>2}".format(h, m, s)
+        else:
+            self.pretty_duration = "{0}:{1:0>2}".format(m, s)
+
 class QueuedSong:
     def __init__(self, url, channel):
         self.url = url
@@ -1483,6 +1491,19 @@ class Audio:
             parsed_url = parsed_url._replace(query=urllib.parse.urlencode(query, True))
             url = urllib.parse.urlunparse(parsed_url)
 
+        message = await self.bot.say("Queued.")
+        song = await self._download_all([Song(url=url)], channel)
+        song = song[0]
+        info = ("{author} queued:\n{song.title} ({song.pretty_duration})\n"
+                "<{song.webpage_url}> ".format(author=ctx.message.author,
+                                               song=song))
+        await self.bot.edit_message(message, info)
+
+        try:
+            await self.bot.delete_message(ctx.message)
+        except (discord.Forbidden, discord.NotFound):
+            pass
+
         self._stop_player(server)
         self._clear_queue(server)
         self._add_to_queue(server, url, channel)
@@ -1765,25 +1786,33 @@ class Audio:
             log.debug("queueing to the actual queue for sid {}".format(
                 server.id))
             self._add_to_queue(server, url, channel)
-        await self.bot.say("Queued.")
+        
+        message = await self.bot.say("Queued.")
+        song = await self._download_all([Song(url=url)], channel)
+        song = song[0]
+        info = ("{author} queued:\n{song.title} ({song.pretty_duration})\n"
+                "<{song.webpage_url}> ".format(author=ctx.message.author,
+                                               song=song))
+        await self.bot.edit_message(message, info)
+
+        try:
+            await self.bot.delete_message(ctx.message)
+        except discord.Forbidden:
+            pass
 
     async def _queue_list(self, ctx):
         """Not a command, use `queue` with no args to call this."""
         server = ctx.message.server
         channel = ctx.message.channel
-        if server.id not in self.queue:
-            await self.bot.say("Nothing playing on this server!")
-            return
-        elif len(self.queue[server.id][QueueKey.QUEUE]) == 0:
-            await self.bot.say("Nothing queued on this server.")
+        now_playing = self._get_queue_nowplaying(server)
+        if not now_playing:
+            await self.bot.say("Nothing playing on this server.")
             return
 
         msg = ""
 
-        now_playing = self._get_queue_nowplaying(server)
-
         if now_playing is not None:
-            msg += "\n***Now playing:***\n{}\n".format(now_playing.title)
+            msg += "\n***Now playing:***\n{} ({})\n".format(now_playing.title, now_playing.pretty_duration)
 
         queued_song_list = self._get_queue(server, 5)
         tempqueued_song_list = self._get_queue_tempqueue(server, 5)
@@ -1794,19 +1823,14 @@ class Audio:
         tempqueue_song_list = await self._download_all(tempqueued_song_list, channel)
 
         song_info = []
-        for num, song in enumerate(tempqueue_song_list, 1):
-            try:
-                song_info.append("{}. {.title}".format(num, song))
-            except AttributeError:
-                song_info.append("{}. {.webpage_url}".format(num, song))
-
-        for num, song in enumerate(queue_song_list, len(song_info) + 1):
+        for num, song in enumerate(tempqueue_song_list + queue_song_list, 1):
             if num > 5:
                 break
             try:
-                song_info.append("{}. {.title}".format(num, song))
+                song_info.append("{}. {.title} ({.pretty_duration})".format(num, song, song))
             except AttributeError:
-                song_info.append("{}. {.webpage_url}".format(num, song))
+                song_info.append("{}. {.webpage_url} ({.pretty_duration})".format(num, song, song))
+
         msg += "\n***Next up:***\n" + "\n".join(song_info)
 
         await self.bot.say(msg)
@@ -1966,19 +1990,10 @@ class Audio:
                 song.view_count = None
             if not hasattr(song, 'uploader'):
                 song.uploader = None
-            if hasattr(song, 'duration'):
-                m, s = divmod(song.duration, 60)
-                h, m = divmod(m, 60)
-                if h:
-                    dur = "{0}:{1:0>2}:{2:0>2}".format(h, m, s)
-                else:
-                    dur = "{0}:{1:0>2}".format(m, s)
-            else:
-                dur = None
             msg = ("\n**Title:** {}\n**Author:** {}\n**Uploader:** {}\n"
                    "**Views:** {}\n**Duration:** {}\n\n<{}>".format(
                        song.title, song.creator, song.uploader,
-                       song.view_count, dur, song.webpage_url))
+                       song.view_count, song.pretty_duration, song.webpage_url))
             await self.bot.say(msg.replace("**Author:** None\n", "")
                                   .replace("**Views:** None\n", "")
                                   .replace("**Uploader:** None\n", "")
