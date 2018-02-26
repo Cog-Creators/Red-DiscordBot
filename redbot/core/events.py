@@ -30,6 +30,21 @@ ______         _           ______ _                       _  ______       _
 """
 
 
+def should_log_sentry(exception) -> bool:
+    e = exception
+    while e.__cause__ is not None:
+        e = e.__cause__
+
+    tb = e.__traceback__
+    tb_frame = None
+    while tb is not None:
+        tb_frame = tb.tb_frame
+        tb = tb.tb_next
+
+    module = tb_frame.f_globals.get('__name__')
+    return module.startswith('redbot')
+
+
 def init_events(bot, cli_flags):
 
     @bot.event
@@ -160,9 +175,10 @@ def init_events(bot, cli_flags):
             log.exception("Exception in command '{}'"
                           "".format(ctx.command.qualified_name),
                           exc_info=error.original)
-            sentry_log.exception("Exception in command '{}'"
-                                 "".format(ctx.command.qualified_name),
-                                 exc_info=error.original)
+            if should_log_sentry(error):
+                sentry_log.exception("Exception in command '{}'"
+                                     "".format(ctx.command.qualified_name),
+                                     exc_info=error.original)
 
             message = ("Error in command '{}'. Check your console or "
                        "logs for details."
@@ -191,8 +207,9 @@ def init_events(bot, cli_flags):
             except AttributeError:
                 sentry_error = error
 
-            sentry_log.exception("Unhandled command error.",
-                                 exc_info=sentry_error)
+            if should_log_sentry(sentry_error):
+                sentry_log.exception("Unhandled command error.",
+                                     exc_info=sentry_error)
 
     @bot.event
     async def on_message(message):
