@@ -1,0 +1,94 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-19 03:59+UTC\n"
+"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Polish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=4; plural=((n == 1) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || n%10 == 1 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 12 && n%100 <= 14)) ? 2 : 3));\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: pl\n"
+"X-Crowdin-File: /cogs/downloader/locales/messages.pot\n"
+"Language: pl_PL\n"
+
+#: ../downloader.py:215
+msgid "That git repo has already been added under another name."
+msgstr "To repozytorium git dodano już pod inną nazwą."
+
+#: ../downloader.py:217 ../downloader.py:218
+msgid "Something went wrong during the cloning process."
+msgstr "Coś poszło nie tak podczas procesu klonowania."
+
+#: ../downloader.py:220
+msgid "Repo `{}` successfully added."
+msgstr "Repozytorium `{}` zostało dodane pomyślnie."
+
+#: ../downloader.py:229
+msgid "The repo `{}` has been deleted successfully."
+msgstr "Repozytorium `{}` zostało pomyślnie usunięte."
+
+#: ../downloader.py:237
+msgid "Installed Repos:\n"
+msgstr "Zainstalowane repozytoria:\n"
+
+#: ../downloader.py:258
+msgid "Error, there is no cog by the name of `{}` in the `{}` repo."
+msgstr "Błąd, nie istnieje żadne rozszerzenie o nazwie `{}` w repozytorium `{}`."
+
+#: ../downloader.py:263
+msgid "Failed to install the required libraries for `{}`: `{}`"
+msgstr "Nie można zainstalować wymaganych bibliotek dla `{}`: `{}`"
+
+#: ../downloader.py:273
+msgid "`{}` cog successfully installed."
+msgstr "Rozszerzenie `{}` zostało zainstalowane pomyślnie."
+
+#: ../downloader.py:289
+msgid "`{}` was successfully removed."
+msgstr "Rozszerzenie `{}` zostało usunięte pomyślnie."
+
+#: ../downloader.py:291
+msgid "That cog was installed but can no longer be located. You may need to remove it's files manually if it is still usable."
+msgstr "To rozszerzenie było zainstalowane, ale nie można go już znaleźć. Musisz usunąć jego pliki ręcznie, jeśli wciąż jest używalne."
+
+#: ../downloader.py:323
+msgid "Cog update completed successfully."
+msgstr "Aktualizacja rozszerzenia przebiegła pomyślnie."
+
+#: ../downloader.py:331
+msgid "Available Cogs:\n"
+msgstr "Dostępne rozszerzenia:\n"
+
+#: ../downloader.py:343
+msgid "There is no cog `{}` in the repo `{}`"
+msgstr "Nie istnieje żadne rozszerzenie o nazwie `{}` w repozytorium `{}`"
+
+#: ../downloader.py:348
+msgid "Information on {}:\n"
+"{}"
+msgstr "Informacje dla {}:\n"
+"{}"
+
+#: ../downloader.py:389
+msgid "Missing from info.json"
+msgstr "Brakujący z info.json"
+
+#: ../downloader.py:398
+msgid "Command: {}\n"
+"Made by: {}\n"
+"Repo: {}\n"
+"Cog name: {}"
+msgstr "Komenda: {}\n"
+"Wykonane przez: {}\n"
+"Repozytorium: {}\n"
+"Rozszerzenie o nazwie: {}"
+
+#: ../downloader.py:430
+msgid "That command doesn't seem to exist."
+msgstr "Ta komenda nie istnieje."
+

@@ -1,0 +1,240 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
+"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Russian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: ru\n"
+"X-Crowdin-File: /cogs/general/locales/messages.pot\n"
+"Language: ru_RU\n"
+
+#: ../general.py:42
+msgid "As I see it, yes"
+msgstr "Как я вижу, да"
+
+#: ../general.py:42
+msgid "It is certain"
+msgstr "Это точно"
+
+#: ../general.py:42
+msgid "It is decidedly so"
+msgstr "Это так решительно"
+
+#: ../general.py:43
+msgid "Most likely"
+msgstr "Скорее всего"
+
+#: ../general.py:43
+msgid "Outlook good"
+msgstr "Хорошие перспективы"
+
+#: ../general.py:43
+msgid "Signs point to yes"
+msgstr "Знаки указывают - да"
+
+#: ../general.py:44
+msgid "Without a doubt"
+msgstr "Без сомнения"
+
+#: ../general.py:44
+msgid "Yes"
+msgstr "Да"
+
+#: ../general.py:44
+msgid "Yes – definitely"
+msgstr "Да – определенно"
+
+#: ../general.py:44
+msgid "You may rely on it"
+msgstr "Вы можете положиться на него"
+
+#: ../general.py:45
+msgid "Ask again later"
+msgstr "Спросите позже"
+
+#: ../general.py:45
+msgid "Reply hazy, try again"
+msgstr "Туманный ответ, попробуйте еще раз"
+
+#: ../general.py:46
+msgid "Better not tell you now"
+msgstr "Лучше не рассказывать тебе сейчас"
+
+#: ../general.py:46
+msgid "Cannot predict now"
+msgstr "Невозможно предсказать сейчас"
+
+#: ../general.py:47
+msgid "Concentrate and ask again"
+msgstr "Сконцентрируйся и спроси еще раз"
+
+#: ../general.py:47
+msgid "Don't count on it"
+msgstr "Не рассчитывай на это"
+
+#: ../general.py:47
+msgid "My reply is no"
+msgstr "Мой ответ - нет"
+
+#: ../general.py:48
+msgid "My sources say no"
+msgstr "Мои источники говорят - нет"
+
+#: ../general.py:48
+msgid "Outlook not so good"
+msgstr "Outlook не так хорош"
+
+#: ../general.py:48
+msgid "Very doubtful"
+msgstr "Весьма сомнительно"
+
+#: ../general.py:64
+msgid "Not enough choices to pick from."
+msgstr "Недостаточно вариантов чтобы выбрать из."
+
+#: ../general.py:78
+msgid "{} :game_die: {} :game_die:"
+msgstr "{} :game_die: {} :game_die:"
+
+#: ../general.py:81
+msgid "{} Maybe higher than 1? ;P"
+msgstr "{} Возможно больше чем 1? ;P"
+
+#: ../general.py:93
+msgid "Nice try. You think this is funny?How about *this* instead:\n\n"
+msgstr "Хорошая попытка. Вы думаете, что это смешно? Как насчет * этого * вместо:\n\n"
+
+#: ../general.py:106
+msgid "*flips a coin and... "
+msgstr "*бросок монетки и... "
+
+#: ../general.py:106
+msgid "HEADS!*"
+msgstr "ГОЛОВЫ!*"
+
+#: ../general.py:106
+msgid "TAILS!*"
+msgstr "ХВОСТЫ!*"
+
+#: ../general.py:130
+msgid "{} You win {}!"
+msgstr "{} Вы выиграли {}!"
+
+#: ../general.py:134
+msgid "{} You lose {}!"
+msgstr "{} Вы проиграли {}!"
+
+#: ../general.py:138
+msgid "{} We're square {}!"
+msgstr "{} Мы квадратные {}!"
+
+#: ../general.py:151
+msgid "That doesn't look like a question."
+msgstr "Это не выглядит как вопрос."
+
+#: ../general.py:159
+msgid " Stopwatch started!"
+msgstr " Секундомер включен!"
+
+#: ../general.py:163
+msgid " Stopwatch stopped! Time: **"
+msgstr " Секундомер отключен! Время: **"
+
+#: ../general.py:216 ../general.py:217
+msgid "{}\n"
+"({} days ago)"
+msgstr "{}\n"
+"({} дней назад)"
+
+#: ../general.py:219
+msgid "Chilling in {} status"
+msgstr "Расслабляется в {} статусе"
+
+#: ../general.py:223
+msgid "Playing {}"
+msgstr "Играет {}"
+
+#: ../general.py:225
+msgid "Streaming [{}]({})"
+msgstr ""
+
+#: ../general.py:227
+msgid "Listening to {}"
+msgstr ""
+
+#: ../general.py:229
+msgid "Watching {}"
+msgstr ""
+
+#: ../general.py:234
+msgid "None"
+msgstr "Нет"
+
+#: ../general.py:237
+msgid "Joined Discord on"
+msgstr "Присоединение к Discord - включено"
+
+#: ../general.py:238
+msgid "Joined this guild on"
+msgstr "Присоединение к этому серверу - включено"
+
+#: ../general.py:239 ../general.py:286
+msgid "Roles"
+msgstr "Роли"
+
+#: ../general.py:240
+msgid "Member #{} | User ID: {}"
+msgstr "Пользователь #{} | User ID: {}"
+
+#: ../general.py:257 ../general.py:299
+msgid "I need the `Embed links` permission to send this."
+msgstr "Мне нужно разрешение \"Встраивать ссылки\" чтобы отправить это."
+
+#: ../general.py:272
+msgid "Since {}. That's over {} days ago!"
+msgstr "Начиная с {}. Это закончилось {} дней назад!"
+
+#: ../general.py:282
+msgid "Region"
+msgstr "Регион"
+
+#: ../general.py:283
+msgid "Users"
+msgstr "Пользователи"
+
+#: ../general.py:284
+msgid "Text Channels"
+msgstr "Текстовые каналы"
+
+#: ../general.py:285
+msgid "Voice Channels"
+msgstr "Голосовые каналы"
+
+#: ../general.py:287
+msgid "Owner"
+msgstr "Владелец"
+
+#: ../general.py:288
+msgid "Guild ID: "
+msgstr "ID Сервера: "
+
+#: ../general.py:343
+msgid "Your search terms gave no results."
+msgstr "Поиск не дал результатов."
+
+#: ../general.py:345
+msgid "There is no definition #{}"
+msgstr "Нет определения #{}"
+
+#: ../general.py:347
+msgid "Error."
+msgstr "Ошибка."
+

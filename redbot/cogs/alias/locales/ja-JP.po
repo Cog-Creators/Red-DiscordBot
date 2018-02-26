@@ -1,0 +1,90 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
+"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: ja\n"
+"X-Crowdin-File: /cogs/alias/locales/messages.pot\n"
+"Language: ja_JP\n"
+
+#: ../alias.py:129
+msgid "No prefix found."
+msgstr "プレフィックスが見つかりません。"
+
+#: ../alias.py:198
+msgid "You attempted to create a new alias with the name {} but that name is already a command on this bot."
+msgstr ""
+
+#: ../alias.py:205
+msgid "You attempted to create a new alias with the name {} but that alias already exists on this server."
+msgstr ""
+
+#: ../alias.py:212
+msgid "You attempted to create a new alias with the name {} but that name is an invalid alias name. Alias names may not contain spaces."
+msgstr ""
+
+#: ../alias.py:224
+msgid "A new alias with the trigger `{}` has been created."
+msgstr "`{}`という新しいエイリアスが作成されました。"
+
+#: ../alias.py:236
+msgid "You attempted to create a new global alias with the name {} but that name is already a command on this bot."
+msgstr ""
+
+#: ../alias.py:243
+msgid "You attempted to create a new global alias with the name {} but that alias already exists on this server."
+msgstr ""
+
+#: ../alias.py:250
+msgid "You attempted to create a new global alias with the name {} but that name is an invalid alias name. Alias names may not contain spaces."
+msgstr ""
+
+#: ../alias.py:259
+msgid "A new global alias with the trigger `{}` has been created."
+msgstr "`{}`という新しいグローバルエイリアスが作成されました。"
+
+#: ../alias.py:274
+msgid "No such alias exists."
+msgstr "そのようなエイリアスはありません。"
+
+#: ../alias.py:283
+msgid "The `{}` alias will execute the command `{}`"
+msgstr "`{}`のエイリアスは`{}`コマンドを実行します。"
+
+#: ../alias.py:286
+msgid "There is no alias with the name `{}`"
+msgstr "`{}`という名前のエイリアスはありません。"
+
+#: ../alias.py:298
+msgid "There are no aliases on this guild."
+msgstr "このギルドにはエイリアスはありません。"
+
+#: ../alias.py:302 ../alias.py:320
+msgid "Alias with the name `{}` was successfully deleted."
+msgstr "`{}`という名前のエイリアスは削除されました。"
+
+#: ../alias.py:305 ../alias.py:323
+msgid "Alias with name `{}` was not found."
+msgstr "`{}`という名前のエイリアスが見つかりませんでした。"
+
+#: ../alias.py:316
+msgid "There are no aliases on this bot."
+msgstr "このボットにはエイリアスはありません。"
+
+#: ../alias.py:331 ../alias.py:342
+msgid "Aliases:"
+msgstr "アリアス："
+
+#: ../alias.py:333 ../alias.py:344
+msgid "There are no aliases on this server."
+msgstr "このサーバにエイリアスはありません。"
+

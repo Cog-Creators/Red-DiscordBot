@@ -1,0 +1,285 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-19 03:59+UTC\n"
+"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Dutch\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: nl\n"
+"X-Crowdin-File: /core/locales/messages.pot\n"
+"Language: nl_NL\n"
+
+#: ../cog_manager.py:309
+msgid "Install Path: {}\n\n"
+msgstr "Installatie pad: {}\n\n"
+
+#: ../cog_manager.py:325
+msgid "That path does not exist or does not point to a valid directory."
+msgstr ""
+
+#: ../cog_manager.py:334
+msgid "Path successfully added."
+msgstr "Pad toegevoegd."
+
+#: ../cog_manager.py:347
+msgid "That is an invalid path number."
+msgstr "Dat is geen geldig pad-nummer."
+
+#: ../cog_manager.py:351
+msgid "Path successfully removed."
+msgstr "Pad verwijderd."
+
+#: ../cog_manager.py:367
+msgid "Invalid 'from' index."
+msgstr "Ongeldige 'van' index."
+
+#: ../cog_manager.py:373
+msgid "Invalid 'to' index."
+msgstr "Ongeldige 'naar' index."
+
+#: ../cog_manager.py:377
+msgid "Paths reordered."
+msgstr "Paden opnieuw geordend."
+
+#: ../cog_manager.py:395
+msgid "That path does not exist."
+msgstr "Dit pad bestaat niet."
+
+#: ../cog_manager.py:399
+msgid "The bot will install new cogs to the `{}` directory."
+msgstr "De bot zal nieuwe cogs installeren naar de `{}` map."
+
+#: ../core_commands.py:225 ../core_commands.py:266
+msgid "No module by that name was found in any cog path."
+msgstr "Er is geen module gevonden met deze naam in alle beschikbare cog paden."
+
+#: ../core_commands.py:240
+msgid "Failed to load package. Check your console or logs for details."
+msgstr "Er is een fout opgetreden tijdens het laden van deze module. Bekijk je tekstterminal of logbestanden voor details."
+
+#: ../core_commands.py:244 ../core_commands.py:253 ../core_commands.py:285
+#: ../core_commands.py:374 ../core_commands.py:462 ../core_commands.py:476
+msgid "Done."
+msgstr "Klaar."
+
+#: ../core_commands.py:255
+msgid "That extension is not loaded."
+msgstr "Die extensie is niet geladen."
+
+#: ../core_commands.py:282
+msgid "Failed to reload package. Check your console or logs for details."
+msgstr "Er is een fout opgetreden tijdens het herladen van de module. Bekijk je tekstterminal of logbestanden voor details."
+
+#: ../core_commands.py:295
+msgid "Shutting down... "
+msgstr "Afsluiten... "
+
+#: ../core_commands.py:310
+msgid "Restarting..."
+msgstr ""
+
+#: ../core_commands.py:347
+msgid "The admin role for this guild has been set."
+msgstr "De admin rol voor deze server is opgeslagen."
+
+#: ../core_commands.py:355
+msgid "The mod role for this guild has been set."
+msgstr "De mod rol voor deze server is opgeslagen."
+
+#: ../core_commands.py:368
+msgid "Failed. Remember that you can edit my avatar up to two times a hour. The URL must be a direct link to a JPG / PNG."
+msgstr "Fout. Je kunt je avatar maar twee keer per uur veranderen. De URL moet een directe link zijn naar een JPG / PNG bestand."
+
+#: ../core_commands.py:372
+msgid "JPG / PNG format only."
+msgstr "Je kan alleen het JPG / PNG formaat gebruiken."
+
+#: ../core_commands.py:387
+msgid "Game set."
+msgstr "Spel opgeslagen."
+
+#: ../core_commands.py:399
+msgid "Listening set."
+msgstr ""
+
+#: ../core_commands.py:411
+msgid "Watching set."
+msgstr ""
+
+#: ../core_commands.py:440
+msgid "Status changed to %s."
+msgstr "Status veranderd naar %s."
+
+#: ../core_commands.py:471
+msgid "Failed to change name. Remember that you can only do it up to 2 times an hour. Use nicknames if you need frequent changes. `{}set nickname`"
+msgstr "Kon de gebruikersnaam niet veranderen. Je kunt maximaal twee keer per uur je naam veranderen. Gebruik nicknames als je het vaak moet veranderen met `{}set nickname`"
+
+#: ../core_commands.py:486
+msgid "I lack the permissions to change my own nickname."
+msgstr "Ik heb niet de juiste bevoegdheden om mijn nickname te veranderen."
+
+#: ../core_commands.py:500 ../core_commands.py:513
+msgid "Prefix set."
+msgstr "Prefix opgeslagen."
+
+#: ../core_commands.py:509
+msgid "Guild prefixes have been reset."
+msgstr "Server prefixes zijn gereset."
+
+#: ../core_commands.py:532
+msgid "\n"
+"Verification token:"
+msgstr "\n"
+"Verificatietoken:"
+
+#: ../core_commands.py:535
+msgid "Remember:\n"
+msgstr "Onthoud:\n"
+
+#: ../core_commands.py:538
+msgid "I have printed a one-time token in the console. Copy and paste it here to confirm you are the owner."
+msgstr "Ik heb een eenmalig bruikbare token in de tekstterminal geplaatst. Kopieer en plak deze naar dit tekstkanaal om te bevestigen dat je de eigenaar bent."
+
+#: ../core_commands.py:546
+msgid "The set owner request has timed out."
+msgstr "De aanvraag is verlopen."
+
+#: ../core_commands.py:552
+msgid "You have been set as owner."
+msgstr "Je bent nu de eigenaar."
+
+#: ../core_commands.py:554
+msgid "Invalid token."
+msgstr "Ongeldige token."
+
+#: ../core_commands.py:566
+msgid "Locale has been set."
+msgstr "Taal is veranderd."
+
+#: ../core_commands.py:580
+msgid "Done. Sentry logging is now enabled."
+msgstr ""
+
+#: ../core_commands.py:583
+msgid "Done. Sentry logging is now disabled."
+msgstr ""
+
+#: ../core_commands.py:593
+msgid "User ID: %s"
+msgstr "Gebruikers-ID: %s"
+
+#: ../core_commands.py:596
+msgid "through DM"
+msgstr "met een persoonlijk bericht"
+
+#: ../core_commands.py:598
+msgid "from {}"
+msgstr "van {}"
+
+#: ../core_commands.py:599
+msgid " | Server ID: %s"
+msgstr " | Server-ID: %s"
+
+#: ../core_commands.py:608
+msgid "Use `{}dm {} <text>` to reply to this user"
+msgstr "Gebruik `{}dm {} <text>` om te reageren op deze gebruiker"
+
+#: ../core_commands.py:616
+msgid "Sent by {} {}"
+msgstr "Verzonden door {} {}"
+
+#: ../core_commands.py:628
+msgid "I cannot send your message, I'm unable to find my owner... *sigh*"
+msgstr "Dit bericht kan ik niet versturen. Het lijkt erop dat ik mijn eigenaar niet kan vinden... *zucht*"
+
+#: ../core_commands.py:631
+msgid "I'm unable to deliver your message. Sorry."
+msgstr "Ik kan dit bericht niet afleveren."
+
+#: ../core_commands.py:633
+msgid "Your message has been sent."
+msgstr "Je bericht is verzonden."
+
+#: ../core_commands.py:647
+msgid "Invalid ID or user not found. You can only send messages to people I share a server with."
+msgstr "Ongeldig ID of gebruiker niet gevonden. Je kan alleen berichten sturen naar mensen die ik ken van een server."
+
+#: ../core_commands.py:653
+msgid "Owner of %s"
+msgstr "Eigenaar van %s"
+
+#: ../core_commands.py:657
+msgid "You can reply to this message with %scontact"
+msgstr "Je kan reageren op dit bericht met %scontact"
+
+#: ../core_commands.py:667
+msgid "Sorry, I couldn't deliver your message to %s"
+msgstr "Sorry, ik kon je bericht naar %s niet verzenden"
+
+#: ../core_commands.py:670
+msgid "Message delivered to %s"
+msgstr "Bericht verzonden naar %s"
+
+#: ../core_commands.py:690
+msgid "User added to whitelist."
+msgstr ""
+
+#: ../core_commands.py:699
+msgid "Whitelisted Users:"
+msgstr ""
+
+#: ../core_commands.py:719
+msgid "User has been removed from whitelist."
+msgstr ""
+
+#: ../core_commands.py:721
+msgid "User was not in the whitelist."
+msgstr ""
+
+#: ../core_commands.py:729
+msgid "Whitelist has been cleared."
+msgstr ""
+
+#: ../core_commands.py:746
+msgid "You cannot blacklist an owner!"
+msgstr ""
+
+#: ../core_commands.py:753
+msgid "User added to blacklist."
+msgstr ""
+
+#: ../core_commands.py:762
+msgid "blacklisted Users:"
+msgstr ""
+
+#: ../core_commands.py:782
+msgid "User has been removed from blacklist."
+msgstr ""
+
+#: ../core_commands.py:784
+msgid "User was not in the blacklist."
+msgstr ""
+
+#: ../core_commands.py:792
+msgid "blacklist has been cleared."
+msgstr ""
+
+#: ../dev_commands.py:213
+msgid "Already running a REPL session in this channel. Exit it with `quit`."
+msgstr "Er is al een REPL sessie gaande in dit kanaal. Stop deze met `quit`."
+
+#: ../dev_commands.py:218
+msgid "Enter code to execute or evaluate. `exit()` or `quit` to exit."
+msgstr "Voer code in om dit uit te voeren. `exit()` of `quit` to om te stoppen."
+
+#: ../dev_commands.py:281
+msgid "Unexpected error: `{}`"
+msgstr "Onverwachte fout: `{}`"
+

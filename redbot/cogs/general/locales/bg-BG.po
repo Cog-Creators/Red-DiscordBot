@@ -1,0 +1,240 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
+"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Bulgarian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: bg\n"
+"X-Crowdin-File: /cogs/general/locales/messages.pot\n"
+"Language: bg_BG\n"
+
+#: ../general.py:42
+msgid "As I see it, yes"
+msgstr "Мисля, че да"
+
+#: ../general.py:42
+msgid "It is certain"
+msgstr "Естествено"
+
+#: ../general.py:42
+msgid "It is decidedly so"
+msgstr "Разбира се"
+
+#: ../general.py:43
+msgid "Most likely"
+msgstr "Най-вероятно"
+
+#: ../general.py:43
+msgid "Outlook good"
+msgstr "Изглежда добре"
+
+#: ../general.py:43
+msgid "Signs point to yes"
+msgstr "Знаците сочат към да"
+
+#: ../general.py:44
+msgid "Without a doubt"
+msgstr "Без съмнение"
+
+#: ../general.py:44
+msgid "Yes"
+msgstr "Да"
+
+#: ../general.py:44
+msgid "Yes – definitely"
+msgstr "Да - определено"
+
+#: ../general.py:44
+msgid "You may rely on it"
+msgstr "Може да разчитате на него"
+
+#: ../general.py:45
+msgid "Ask again later"
+msgstr "Попитайте отново по-късно"
+
+#: ../general.py:45
+msgid "Reply hazy, try again"
+msgstr "Отговорът е мъглив, опитайте отново"
+
+#: ../general.py:46
+msgid "Better not tell you now"
+msgstr "По-добре да не Ви кажа сега"
+
+#: ../general.py:46
+msgid "Cannot predict now"
+msgstr "Не може да се предскаже сега"
+
+#: ../general.py:47
+msgid "Concentrate and ask again"
+msgstr "Концентрирайте се и попитайте отново"
+
+#: ../general.py:47
+msgid "Don't count on it"
+msgstr "Не разчитайте на това"
+
+#: ../general.py:47
+msgid "My reply is no"
+msgstr "Моят отговор е не"
+
+#: ../general.py:48
+msgid "My sources say no"
+msgstr "Моите източници казват не"
+
+#: ../general.py:48
+msgid "Outlook not so good"
+msgstr "Не ми изглежда добре на вид"
+
+#: ../general.py:48
+msgid "Very doubtful"
+msgstr "Много съмнително"
+
+#: ../general.py:64
+msgid "Not enough choices to pick from."
+msgstr "Няма достатъчно опции за избор."
+
+#: ../general.py:78
+msgid "{} :game_die: {} :game_die:"
+msgstr "{} :game_die: {} :game_die:"
+
+#: ../general.py:81
+msgid "{} Maybe higher than 1? ;P"
+msgstr "{}, Може би по-високо от 1? ;P"
+
+#: ../general.py:93
+msgid "Nice try. You think this is funny?How about *this* instead:\n\n"
+msgstr "Добър опит. Мислите си, че е забавно? Е, както ще кажете пък за *това*:\n\n"
+
+#: ../general.py:106
+msgid "*flips a coin and... "
+msgstr "*хвърляме монета и... "
+
+#: ../general.py:106
+msgid "HEADS!*"
+msgstr "ЕЗИ!*"
+
+#: ../general.py:106
+msgid "TAILS!*"
+msgstr "ТУРА!*"
+
+#: ../general.py:130
+msgid "{} You win {}!"
+msgstr "{} Вие печелите {}!"
+
+#: ../general.py:134
+msgid "{} You lose {}!"
+msgstr "{} Вие губите {}!"
+
+#: ../general.py:138
+msgid "{} We're square {}!"
+msgstr "{} Ние сме квадратни {}!"
+
+#: ../general.py:151
+msgid "That doesn't look like a question."
+msgstr "Това не прилича на въпрос."
+
+#: ../general.py:159
+msgid " Stopwatch started!"
+msgstr " Хронометърът - стартиран!"
+
+#: ../general.py:163
+msgid " Stopwatch stopped! Time: **"
+msgstr " Хронометърът спря! Време: **"
+
+#: ../general.py:216 ../general.py:217
+msgid "{}\n"
+"({} days ago)"
+msgstr "{}\n"
+"(преди {} дни)"
+
+#: ../general.py:219
+msgid "Chilling in {} status"
+msgstr "Охлаждане в {} статут"
+
+#: ../general.py:223
+msgid "Playing {}"
+msgstr "Играе {}"
+
+#: ../general.py:225
+msgid "Streaming [{}]({})"
+msgstr ""
+
+#: ../general.py:227
+msgid "Listening to {}"
+msgstr ""
+
+#: ../general.py:229
+msgid "Watching {}"
+msgstr ""
+
+#: ../general.py:234
+msgid "None"
+msgstr "Няма"
+
+#: ../general.py:237
+msgid "Joined Discord on"
+msgstr "Присъединил се в Discord на"
+
+#: ../general.py:238
+msgid "Joined this guild on"
+msgstr "Присъединил се в тази гилдия на"
+
+#: ../general.py:239 ../general.py:286
+msgid "Roles"
+msgstr "Роли"
+
+#: ../general.py:240
+msgid "Member #{} | User ID: {}"
+msgstr "Член #{} | Потребителски номер: {}"
+
+#: ../general.py:257 ../general.py:299
+msgid "I need the `Embed links` permission to send this."
+msgstr "Трябва ми пълномощното за `Вграждане на връзки` за да изпратя това."
+
+#: ../general.py:272
+msgid "Since {}. That's over {} days ago!"
+msgstr "От {}. Това е от преди {} дни!"
+
+#: ../general.py:282
+msgid "Region"
+msgstr "Регион"
+
+#: ../general.py:283
+msgid "Users"
+msgstr "Потребители"
+
+#: ../general.py:284
+msgid "Text Channels"
+msgstr "Текстови канали"
+
+#: ../general.py:285
+msgid "Voice Channels"
+msgstr "Гласови канали"
+
+#: ../general.py:287
+msgid "Owner"
+msgstr "Собственик"
+
+#: ../general.py:288
+msgid "Guild ID: "
+msgstr "Номер на гилдията: "
+
+#: ../general.py:343
+msgid "Your search terms gave no results."
+msgstr "Термините за търсене, посочени от Вас, не дадоха никакви резултати."
+
+#: ../general.py:345
+msgid "There is no definition #{}"
+msgstr "Няма никакво определение #{}"
+
+#: ../general.py:347
+msgid "Error."
+msgstr "Грешка."
+
