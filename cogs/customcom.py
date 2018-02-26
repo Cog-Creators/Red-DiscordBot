@@ -1,7 +1,7 @@
 from discord.ext import commands
 from .utils.dataIO import dataIO
 from .utils import checks
-from .utils.chat_formatting import pagify, box
+from .utils.chat_formatting import pagify, box, escape
 import os
 import re
 
@@ -120,6 +120,27 @@ class CustomCommands:
         else:
             for page in pagify(commands, delims=[" ", "\n"]):
                 await self.bot.whisper(box(page))
+    
+    @customcom.command(name="show", pass_context=True)
+    async def cc_show(self, ctx, command : str):
+        """Shows raw markdown of a command
+        
+        Example:
+        [p]customcom show yourcommand"""
+        server = ctx.message.server
+        command = command.lower()
+        if server.id in self.c_commands:
+            cmdlist = self.c_commands[server.id]
+            if command in cmdlist:
+                cmd = cmdlist.get(command)
+                await self.bot.say(escape(cmd, formatting=True))
+            else:
+                await self.bot.say("That command doesn't exist.")
+        else:
+            await self.bot.say("There are no custom commands in this server."
+                               " Use `{}customcom add` to start adding some."
+                               "".format(ctx.prefix))
+        
 
     async def on_message(self, message):
         if len(message.content) < 2 or message.channel.is_private:
