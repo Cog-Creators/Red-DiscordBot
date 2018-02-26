@@ -580,6 +580,10 @@ class Core:
     async def locale(self, ctx: commands.Context, locale_name: str):
         """
         Changes bot locale.
+
+        Use [p]listlocales to get a list of available locales.
+
+        To reset to English, use "en-US".
         """
         i18n.set_locale(locale_name)
 
