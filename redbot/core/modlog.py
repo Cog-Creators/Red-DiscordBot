@@ -77,8 +77,8 @@ class Case:
         case_emb = await self.message_content()
         await self.message.edit(embed=case_emb)
 
-        await _conf.guild(self.guild).cases.set_attr(
-            str(self.case_number), self.to_json()
+        await _conf.guild(self.guild).cases.set_raw(
+            str(self.case_number), value=self.to_json()
         )
 
     async def message_content(self):
@@ -245,7 +245,7 @@ class CaseType:
             "case_str": self.case_str,
             "audit_type": self.audit_type
         }
-        await _conf.casetypes.set_attr(self.name, data)
+        await _conf.casetypes.set_raw(self.name, value=data)
 
     async def is_enabled(self) -> bool:
         """
@@ -262,8 +262,8 @@ class CaseType:
         """
         if not self.guild:
             return False
-        return await _conf.guild(self.guild).casetypes.get_attr(self.name,
-                                                                self.default_setting)
+        return await _conf.guild(self.guild).casetypes.get_raw(
+            self.name, default=self.default_setting)
 
     async def set_enabled(self, enabled: bool):
         """
@@ -275,7 +275,7 @@ class CaseType:
             True if the case should be enabled, otherwise False"""
         if not self.guild:
             return
-        await _conf.guild(self.guild).casetypes.set_attr(self.name, enabled)
+        await _conf.guild(self.guild).casetypes.set_raw(self.name, value=enabled)
 
     @classmethod
     def from_json(cls, data: dict):
@@ -310,7 +310,7 @@ async def get_next_case_number(guild: discord.Guild) -> str:
 
     """
     cases = sorted(
-        (await _conf.guild(guild).get_attr("cases")),
+        (await _conf.guild(guild).get_raw("cases")),
         key=lambda x: int(x),
         reverse=True
     )
@@ -342,11 +342,12 @@ async def get_case(case_number: int, guild: discord.Guild,
         If there is no case for the specified number
 
     """
-    case = await _conf.guild(guild).cases.get_attr(str(case_number))
-    if case is None:
+    try:
+        case = await _conf.guild(guild).cases.get_raw(str(case_number))
+    except KeyError as e:
         raise RuntimeError(
             "That case does not exist for guild {}".format(guild.name)
-        )
+        ) from e
     mod_channel = await get_modlog_channel(guild)
     return await Case.from_json(mod_channel, bot, case)
 
@@ -368,7 +369,7 @@ async def get_all_cases(guild: discord.Guild, bot: Red) -> List[Case]:
         A list of all cases for the guild
 
     """
-    cases = await _conf.guild(guild).get_attr("cases")
+    cases = await _conf.guild(guild).get_raw("cases")
     case_numbers = list(cases.keys())
     case_list = []
     for case in case_numbers:
@@ -440,7 +441,7 @@ async def create_case(guild: discord.Guild, created_at: datetime, action_type: s
         case_emb = await case.message_content()
         msg = await mod_channel.send(embed=case_emb)
         case.message = msg
-    await _conf.guild(guild).cases.set_attr(str(next_case_number), case.to_json())
+    await _conf.guild(guild).cases.set_raw(str(next_case_number), value=case.to_json())
     return case
 
 
@@ -459,7 +460,7 @@ async def get_casetype(name: str, guild: discord.Guild=None) -> Union[CaseType, 
     -------
     CaseType or None
     """
-    casetypes = await _conf.get_attr("casetypes")
+    casetypes = await _conf.get_raw("casetypes")
     if name in casetypes:
         data = casetypes[name]
         data["name"] = name
@@ -480,7 +481,7 @@ async def get_all_casetypes(guild: discord.Guild=None) -> List[CaseType]:
         A list of case types
 
     """
-    casetypes = await _conf.get_attr("casetypes")
+    casetypes = await _conf.get_raw("casetypes", default={})
     typelist = []
     for ct in casetypes.keys():
         data = casetypes[ct]

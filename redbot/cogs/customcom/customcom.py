@@ -70,7 +70,7 @@ class CommandObj:
     async def get(self,
                   message: discord.Message,
                   command: str) -> str:
-        ccinfo = await self.db(message.guild).commands.get_attr(command)
+        ccinfo = await self.db(message.guild).commands.get_raw(command, default=None)
         if not ccinfo:
             raise NotFound
         else:
@@ -82,7 +82,7 @@ class CommandObj:
                      response):
         """Create a customcommand"""
         # Check if this command is already registered as a customcommand
-        if await self.db(ctx.guild).commands.get_attr(command):
+        if await self.db(ctx.guild).commands.get_raw(command, default=None):
             raise AlreadyExists()
         author = ctx.message.author
         ccinfo = {
@@ -96,8 +96,8 @@ class CommandObj:
             'response': response
 
         }
-        await self.db(ctx.guild).commands.set_attr(command,
-                                                   ccinfo)
+        await self.db(ctx.guild).commands.set_raw(
+            command, value=ccinfo)
 
     async def edit(self,
                    ctx: commands.Context,
@@ -105,11 +105,11 @@ class CommandObj:
                    response: None):
         """Edit an already existing custom command"""
         # Check if this command is registered
-        if not await self.db(ctx.guild).commands.get_attr(command):
+        if not await self.db(ctx.guild).commands.get_raw(command, default=None):
             raise NotFound()
 
         author = ctx.message.author
-        ccinfo = await self.db(ctx.guild).commands.get_attr(command)
+        ccinfo = await self.db(ctx.guild).commands.get_raw(command, default=None)
 
         def check(m):
             return m.channel == ctx.channel and m.author == ctx.message.author
@@ -138,18 +138,18 @@ class CommandObj:
                 author.id
             )
 
-        await self.db(ctx.guild).commands.set_attr(command,
-                                                   ccinfo)
+        await self.db(ctx.guild).commands.set_raw(
+            command, value=ccinfo)
 
     async def delete(self,
                      ctx: commands.Context,
                      command: str):
         """Delete an already exisiting custom command"""
         # Check if this command is registered
-        if not await self.db(ctx.guild).commands.get_attr(command):
+        if not await self.db(ctx.guild).commands.get_raw(command, default=None):
             raise NotFound()
-        await self.db(ctx.guild).commands.set_attr(command,
-                                                   None)
+        await self.db(ctx.guild).commands.set_raw(
+            command, value=None)
 
 
 class CustomCommands:
@@ -326,7 +326,7 @@ class CustomCommands:
             return
 
         guild = message.guild
-        prefixes = await self.bot.db.guild(message.guild).get_attr('prefix')
+        prefixes = await self.bot.db.guild(guild).get_raw('prefix', default=[])
 
         if len(prefixes) < 1:
             def_prefixes = await self.bot.get_prefix(message)
