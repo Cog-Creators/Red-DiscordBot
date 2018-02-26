@@ -1,24 +1,25 @@
 import asyncio
+import datetime
 import importlib
 import itertools
 import logging
 import sys
 import traceback
 from collections import namedtuple
+from pathlib import Path
 from random import SystemRandom
 from string import ascii_letters, digits
 
 import aiohttp
-import datetime
 import discord
+import pkg_resources
 from discord.ext import commands
 
+from redbot.core import __version__
 from redbot.core import checks
 from redbot.core import i18n
 from redbot.core import rpc
-from redbot.core import __version__
 from redbot.core.context import RedContext
-
 from .utils import TYPE_CHECKING
 from .utils.chat_formatting import pagify, box
 
@@ -602,6 +603,24 @@ class Core:
         else:
             ctx.bot.disable_sentry()
             await ctx.send(_("Done. Sentry logging is now disabled."))
+
+    @commands.command()
+    @checks.is_owner()
+    async def listlocales(self, ctx: RedContext):
+        """
+        Lists all available locales
+
+        Use `[p]set locale` to set a locale
+        """
+        async with ctx.channel.typing():
+            red_dist = pkg_resources.get_distribution("red-discordbot")
+            red_path = Path(red_dist.location) / "redbot"
+            locale_list = set([loc.stem for loc in list(red_path.glob("**/*.po"))])
+            pages = pagify("\n".join(locale_list))
+
+        await ctx.send_interactive(
+            pages, box_lang="Available Locales"
+        )
 
     @commands.command()
     @commands.cooldown(1, 60, commands.BucketType.user)
