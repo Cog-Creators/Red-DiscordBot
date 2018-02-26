@@ -185,6 +185,20 @@ class Downloader:
         elif target.is_file():
             os.remove(str(target))
 
+    @commands.command()
+    @checks.is_owner()
+    async def pipinstall(self, ctx, *deps: str):
+        """
+        Installs a group of dependencies using pip.
+        """
+        repo = Repo("", "", "", Path.cwd(), loop=ctx.bot.loop)
+        success = await repo.install_raw_requirements(deps, self.SHAREDLIB_PATH)
+
+        if success:
+            await ctx.send(_("Libraries installed."))
+        else:
+            await ctx.send(_("Some libraries failed to install. Please check"
+                             " your logs for a complete list."))
 
     @commands.group()
     @checks.is_owner()
