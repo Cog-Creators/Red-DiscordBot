@@ -267,11 +267,11 @@ class Group(Value):
 
         return not isinstance(default, dict)
 
-    def get_attr(self, item: str, default=None):
+    def get_attr(self, item: str):
         """Manually get an attribute of this Group.
 
         This is available to use as an alternative to using normal Python
-        attribute access. It is required if you find a need for dynamic
+        attribute access. It may be required if you find a need for dynamic
         attribute access.
 
         Example
@@ -289,9 +289,6 @@ class Group(Value):
         ----------
         item : str
             The name of the data field in `Config`.
-        default
-            This is an optional override to the registered default for this
-            item.
 
         Returns
         -------
@@ -299,7 +296,7 @@ class Group(Value):
             The attribute which was requested.
 
         """
-        return getattr(self, item)
+        return self.__getattr__(item)
 
     async def get_raw(self, *nested_path: str, default=...):
         """
