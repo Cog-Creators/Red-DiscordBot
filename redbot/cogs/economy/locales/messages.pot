@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2017-08-26 17:40+EDT\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,35 +15,35 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: ../economy.py:38
+#: ../economy.py:40
 msgid "JACKPOT! 226! Your bid has been multiplied * 2500!"
 msgstr ""
 
-#: ../economy.py:42
+#: ../economy.py:44
 msgid "4LC! +1000!"
 msgstr ""
 
-#: ../economy.py:46
+#: ../economy.py:48
 msgid "Three cherries! +800!"
 msgstr ""
 
-#: ../economy.py:50
+#: ../economy.py:52
 msgid "2 6! Your bid has been multiplied * 4!"
 msgstr ""
 
-#: ../economy.py:54
+#: ../economy.py:56
 msgid "Two cherries! Your bid has been multiplied * 3!"
 msgstr ""
 
-#: ../economy.py:58
+#: ../economy.py:60
 msgid "Three symbols! +500!"
 msgstr ""
 
-#: ../economy.py:62
+#: ../economy.py:64
 msgid "Two consecutive symbols! Your bid has been multiplied * 2!"
 msgstr ""
 
-#: ../economy.py:66
+#: ../economy.py:68
 msgid ""
 "Slot machine payouts:\n"
 "{two.value} {two.value} {six.value} Bet * 2500\n"
@@ -56,61 +56,61 @@ msgid ""
 "Two symbols: Bet * 2"
 msgstr ""
 
-#: ../economy.py:155
+#: ../economy.py:157
 msgid "{}'s balance is {} {}"
 msgstr ""
 
-#: ../economy.py:169
+#: ../economy.py:171
 msgid "{} transferred {} {} to {}"
 msgstr ""
 
-#: ../economy.py:189
+#: ../economy.py:191
 msgid "{} added {} {} to {}'s account."
 msgstr ""
 
-#: ../economy.py:194
+#: ../economy.py:196
 msgid "{} removed {} {} from {}'s account."
 msgstr ""
 
-#: ../economy.py:199
+#: ../economy.py:201
 msgid "{} set {}'s account to {} {}."
 msgstr ""
 
-#: ../economy.py:210
+#: ../economy.py:212
 msgid ""
 "This will delete all bank accounts for {}.\n"
-"If you're sure, type {}bank reset yes"
+"If you're sure, type `{}bank reset yes`"
 msgstr ""
 
-#: ../economy.py:227
+#: ../economy.py:229
 msgid "All bank accounts of this guild have been deleted."
 msgstr ""
 
-#: ../economy.py:246 ../economy.py:266
+#: ../economy.py:248 ../economy.py:268
 msgid "{} Here, take some {}. Enjoy! (+{} {}!)"
 msgstr ""
 
-#: ../economy.py:256 ../economy.py:274
+#: ../economy.py:258 ../economy.py:276
 msgid "{} Too soon. For your next payday you have to wait {}."
 msgstr ""
 
-#: ../economy.py:311
+#: ../economy.py:313
 msgid "There are no accounts in the bank."
 msgstr ""
 
-#: ../economy.py:337
+#: ../economy.py:339
 msgid "You're on cooldown, try again in a bit."
 msgstr ""
 
-#: ../economy.py:340
+#: ../economy.py:342
 msgid "That's an invalid bid amount, sorry :/"
 msgstr ""
 
-#: ../economy.py:343
+#: ../economy.py:345
 msgid "You ain't got enough money, friend."
 msgstr ""
 
-#: ../economy.py:389
+#: ../economy.py:391
 msgid ""
 "{}\n"
 "{} {}\n"
@@ -119,7 +119,7 @@ msgid ""
 "{} → {}!"
 msgstr ""
 
-#: ../economy.py:396
+#: ../economy.py:398
 msgid ""
 "{}\n"
 "{} Nothing!\n"
@@ -127,7 +127,7 @@ msgid ""
 "{} → {}!"
 msgstr ""
 
-#: ../economy.py:421
+#: ../economy.py:423
 msgid ""
 "Minimum slot bid: {}\n"
 "Maximum slot bid: {}\n"
@@ -137,63 +137,63 @@ msgid ""
 "Amount given at account registration: {}"
 msgstr ""
 
-#: ../economy.py:431
+#: ../economy.py:433
 msgid "Current Economy settings:"
 msgstr ""
 
-#: ../economy.py:439
+#: ../economy.py:441
 msgid "Invalid min bid amount."
 msgstr ""
 
-#: ../economy.py:447
+#: ../economy.py:449
 msgid "Minimum bid is now {} {}."
 msgstr ""
 
-#: ../economy.py:454
+#: ../economy.py:456
 msgid "Invalid slotmax bid amount. Must be greater than slotmin."
 msgstr ""
 
-#: ../economy.py:463
+#: ../economy.py:465
 msgid "Maximum bid is now {} {}."
 msgstr ""
 
-#: ../economy.py:473
+#: ../economy.py:475
 msgid "Cooldown is now {} seconds."
 msgstr ""
 
-#: ../economy.py:483
+#: ../economy.py:485
 msgid "Value modified. At least {} seconds must pass between each payday."
 msgstr ""
 
-#: ../economy.py:492
+#: ../economy.py:494
 msgid "Har har so funny."
 msgstr ""
 
-#: ../economy.py:498
+#: ../economy.py:500
 msgid "Every payday will now give {} {}."
 msgstr ""
 
-#: ../economy.py:509
+#: ../economy.py:511
 msgid "Registering an account will now give {} {}."
 msgstr ""
 
-#: ../economy.py:515
+#: ../economy.py:517
 msgid "weeks"
 msgstr ""
 
-#: ../economy.py:516
+#: ../economy.py:518
 msgid "days"
 msgstr ""
 
-#: ../economy.py:517
+#: ../economy.py:519
 msgid "hours"
 msgstr ""
 
-#: ../economy.py:518
+#: ../economy.py:520
 msgid "minutes"
 msgstr ""
 
-#: ../economy.py:519
+#: ../economy.py:521
 msgid "seconds"
 msgstr ""
 

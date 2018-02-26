@@ -3,6 +3,7 @@ import importlib
 import itertools
 import logging
 import sys
+import traceback
 from collections import namedtuple
 from random import SystemRandom
 from string import ascii_letters, digits
@@ -185,7 +186,11 @@ class Core:
             return m.author == owner
 
         while msg is not None:
-            msg = await self.bot.wait_for("message", check=msg_check, timeout=15)
+            try:
+                msg = await self.bot.wait_for("message", check=msg_check, timeout=15)
+            except asyncio.TimeoutError:
+                await ctx.send("I guess not.")
+                break
             try:
                 msg = int(msg.content)
                 await self.leave_confirmation(guilds[msg], owner, ctx)
@@ -199,16 +204,16 @@ class Core:
         def conf_check(m):
             return m.author == owner
 
-        msg = await self.bot.wait_for("message", check=conf_check, timeout=15)
-
-        if msg is None:
+        try:
+            msg = await self.bot.wait_for("message", check=conf_check, timeout=15)
+            if msg.content.lower().strip() in ("yes", "y"):
+                await server.leave()
+                if server != ctx.guild:
+                    await ctx.send("Done.")
+            else:
+                await ctx.send("Alright then.")
+        except asyncio.TimeoutError:
             await ctx.send("I guess not.")
-        elif msg.content.lower().strip() in ("yes", "y"):
-            await server.leave()
-            if server != ctx.guild:
-                await ctx.send("Done.")
-        else:
-            await ctx.send("Alright then.")
 
     @commands.command()
     @checks.is_owner()
@@ -222,9 +227,16 @@ class Core:
             return
 
         try:
-            ctx.bot.load_extension(spec)
+            await ctx.bot.load_extension(spec)
         except Exception as e:
             log.exception("Package loading failed", exc_info=e)
+
+            exception_log = ("Exception in command '{}'\n"
+                             "".format(ctx.command.qualified_name))
+            exception_log += "".join(traceback.format_exception(type(e),
+                                     e, e.__traceback__))
+            self.bot._last_exception = exception_log
+
             await ctx.send(_("Failed to load package. Check your console or "
                              "logs for details."))
         else:
@@ -257,9 +269,16 @@ class Core:
 
         try:
             self.cleanup_and_refresh_modules(spec.name)
-            ctx.bot.load_extension(spec)
+            await ctx.bot.load_extension(spec)
         except Exception as e:
             log.exception("Package reloading failed", exc_info=e)
+
+            exception_log = ("Exception in command '{}'\n"
+                             "".format(ctx.command.qualified_name))
+            exception_log += "".join(traceback.format_exception(type(e),
+                                     e, e.__traceback__))
+            self.bot._last_exception = exception_log
+
             await ctx.send(_("Failed to reload package. Check your console or "
                              "logs for details."))
         else:
@@ -356,36 +375,79 @@ class Core:
 
     @_set.command(name="game")
     @checks.is_owner()
-    @commands.guild_only()
     async def _game(self, ctx, *, game: str=None):
-        """Sets Red's playing status"""
-        status = ctx.me.status
+        """Sets Red's playing status
+
+        Can only be run if the bot is in a server."""
+        if len(ctx.bot.guilds) == 0:
+            await ctx.send_help()
+            return
+        status = ctx.bot.guilds[0].me.status
         if game:
             game = discord.Game(name=game)
         else:
             game = None
         await ctx.bot.change_presence(status=status, game=game)
         await ctx.send(_("Game set."))
+        
+    @_set.command(name="listening")
+    @checks.is_owner()
+    async def _listening(self, ctx, *, listening: str=None):
+        """Sets Red's listening status
 
+        Can only be run if the bot is in a server."""
+        if len(ctx.bot.guilds) == 0:
+            await ctx.send_help()
+            return
+        status = ctx.bot.guilds[0].me.status
+        if listening:
+            listening = discord.Game(name=listening, type=2)
+        else:
+            listening = None
+        await ctx.bot.change_presence(status=status, game=listening)
+        await ctx.send(_("Listening set."))
+        
+    @_set.command(name="watching")
+    @checks.is_owner()
+    async def _watching(self, ctx, *, watching: str=None):
+        """Sets Red's watching status
+
+        Can only be run if the bot is in a server."""
+        if len(ctx.bot.guilds) == 0:
+            await ctx.send_help()
+            return
+        status = ctx.bot.guilds[0].me.status
+        if watching:
+            watching = discord.Game(name=watching, type=3)
+        else:
+            watching = None
+        await ctx.bot.change_presence(status=status, game=watching)
+        await ctx.send(_("Watching set."))
+        
     @_set.command()
     @checks.is_owner()
-    @commands.guild_only()
     async def status(self, ctx, *, status: str):
         """Sets Red's status
+
         Available statuses:
             online
             idle
             dnd
-            invisible"""
+            invisible
+
+        Can only be run if the bot is in a server."""
 
         statuses = {
-                    "online"    : discord.Status.online,
-                    "idle"      : discord.Status.idle,
-                    "dnd"       : discord.Status.dnd,
-                    "invisible" : discord.Status.invisible
-                   }
+            "online": discord.Status.online,
+            "idle": discord.Status.idle,
+            "dnd": discord.Status.dnd,
+            "invisible": discord.Status.invisible
+        }
 
-        game = ctx.me.game
+        if len(ctx.bot.guilds) == 0:
+            await ctx.send_help()
+            return
+        game = ctx.bot.guilds[0].me.game
 
         try:
             status = statuses[status.lower()]
@@ -398,12 +460,14 @@ class Core:
 
     @_set.command()
     @checks.is_owner()
-    @commands.guild_only()
     async def stream(self, ctx, streamer=None, *, stream_title=None):
         """Sets Red's streaming status
         Leaving both streamer and stream_title empty will clear it."""
 
-        status = ctx.me.status
+        if len(ctx.bot.guilds) == 0:
+            await ctx.send_help()
+            return
+        status = ctx.bot.guilds[0].me.status
 
         if stream_title:
             stream_title = stream_title.strip()

@@ -3,6 +3,7 @@ from pathlib import Path
 from subprocess import run, PIPE
 
 import os
+import sys
 
 from setuptools import find_packages
 
@@ -25,6 +26,8 @@ def get_requirements():
         requirements.remove('git+https://github.com/Rapptz/discord.py.git@rewrite#egg=discord.py[voice]')
     else:
         requirements.append('discord.py>=1.0.0a0')  # Because RTD
+    if sys.platform.startswith("linux"):
+        requirements.append("distro")
     return requirements
 
 
@@ -86,7 +89,7 @@ def find_locale_folders():
 
 setup(
     name='Red-DiscordBot',
-    version="{}.{}.{}b7".format(*get_version()),
+    version="{}.{}.{}b8".format(*get_version()),
     packages=get_package_list(),
     package_data=find_locale_folders(),
     url='https://github.com/Cog-Creators/Red-DiscordBot',

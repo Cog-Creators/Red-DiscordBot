@@ -71,16 +71,15 @@ class Mongo(BaseDriver):
         uuid, identifiers = identifiers[0], identifiers[1:]
         return uuid, identifiers
 
-    async def get(self, identifiers: Tuple[str]):
+    async def get(self, *identifiers: Tuple[str]):
         await self._ensure_connected()
-        uuid, identifiers = self._parse_identifiers(identifiers)
 
         mongo_collection = self.get_collection()
 
         dot_identifiers = '.'.join(identifiers)
 
         partial = await mongo_collection.find_one(
-            filter={'_id': uuid},
+            filter={'_id': self.unique_cog_identifier},
             projection={dot_identifiers: True}
         )
 
@@ -92,22 +91,18 @@ class Mongo(BaseDriver):
             partial = partial[i]
         return partial
 
-    async def set(self, identifiers: Tuple[str], value):
+    async def set(self, *identifiers: str, value=None):
         await self._ensure_connected()
-        uuid, identifiers = self._parse_identifiers(identifiers)
 
         dot_identifiers = '.'.join(identifiers)
 
         mongo_collection = self.get_collection()
 
         await mongo_collection.update_one(
-            {'_id': uuid},
+            {'_id': self.unique_cog_identifier},
             update={"$set": {dot_identifiers: value}},
             upsert=True
         )
-
-    def get_driver(self):
-        return self
 
 
 def get_config_details():

@@ -52,7 +52,7 @@ def init_events(bot, cli_flags):
             for package in packages:
                 try:
                     spec = await bot.cog_mgr.find_cog(package)
-                    bot.load_extension(spec)
+                    await bot.load_extension(spec)
                 except Exception as e:
                     log.exception("Failed to load package {}".format(package),
                                   exc_info=e)
@@ -172,7 +172,8 @@ def init_events(bot, cli_flags):
             exception_log += "".join(traceback.format_exception(type(error),
                                      error, error.__traceback__))
             bot._last_exception = exception_log
-            await ctx.send(inline(message))
+            if not hasattr(ctx.cog, "_{0.command.cog_name}__error".format(ctx)):
+                await ctx.send(inline(message))
         elif isinstance(error, commands.CommandNotFound):
             pass
         elif isinstance(error, commands.CheckFailure):
