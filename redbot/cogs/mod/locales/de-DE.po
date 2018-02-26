@@ -1,0 +1,288 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
+"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: German\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: de\n"
+"X-Crowdin-File: /cogs/mod/locales/messages.pot\n"
+"Language: de_DE\n"
+
+#: ../mod.py:209
+msgid "Role hierarchy will be checked when moderation commands are issued."
+msgstr "Die Rollenhierarchie wird überprüft, wenn Moderationsbefehle ausgegeben werden."
+
+#: ../mod.py:213
+msgid "Role hierarchy will be ignored when moderation commands are issued."
+msgstr "Die Rollenhierarchie wird ignoriert, wenn Moderationsbefehle ausgegeben werden."
+
+#: ../mod.py:228
+msgid "Autoban for mention spam enabled. Anyone mentioning {} or more different people in a single message will be autobanned."
+msgstr "Autoban für Erwähnung Spam aktiviert. Jeder, der {} oder mehrere verschiedene Personen in einer einzelnen Nachricht erwähnt, wird autobanned."
+
+#: ../mod.py:239
+msgid "Autoban for mention spam disabled."
+msgstr "Autoban für erwähnen Spam deaktiviert."
+
+#: ../mod.py:249
+msgid "Messages repeated up to 3 times will be deleted."
+msgstr "Nachrichten, die bis zu dreimal wiederholt wurden, werden gelöscht."
+
+#: ../mod.py:253
+msgid "Repeated messages will be ignored."
+msgstr "Wiederholte Nachrichten werden ignoriert."
+
+#: ../mod.py:267
+msgid "Command deleting disabled."
+msgstr "Befehl löschen deaktiviert."
+
+#: ../mod.py:270
+msgid "Delete delay set to {} seconds."
+msgstr "Löschverzögerung auf {} Sekunden eingestellt."
+
+#: ../mod.py:275
+msgid "Bot will delete command messages after {} seconds. Set this value to -1 to stop deleting messages"
+msgstr "Bot löscht Befehlsnachrichten nach {} Sekunden. Setzen Sie diesen Wert auf -1, um das Löschen von Nachrichten zu stoppen"
+
+#: ../mod.py:279
+msgid "I will not delete command messages."
+msgstr "Ich werde keine Befehlsnachrichten löschen."
+
+#: ../mod.py:292
+msgid "Users unbanned with {} will be reinvited."
+msgstr "Benutzer, die mit {} unbanned sind, werden erneut eingeladen."
+
+#: ../mod.py:295
+msgid "Users unbanned with {} will not be reinvited."
+msgstr "Benutzer, die nicht mit {} verknüpft sind, werden nicht erneut eingeladen."
+
+#: ../mod.py:309 ../mod.py:349 ../mod.py:506
+msgid "I cannot let you do that. Self-harm is bad {}"
+msgstr "Ich kann dich das nicht tun lassen. Selbstverletzung ist schlecht {}"
+
+#: ../mod.py:313 ../mod.py:353 ../mod.py:510
+msgid "I cannot let you do that. You are not higher than the user in the role hierarchy."
+msgstr "Ich kann dich das nicht tun lassen. Sie sind nicht höher als der Benutzer in der Rollenhierarchie."
+
+#: ../mod.py:323 ../mod.py:379 ../mod.py:570
+msgid "I'm not allowed to do that."
+msgstr "Ich darf das nicht."
+
+#: ../mod.py:327
+msgid "Done. That felt good."
+msgstr "Erledigt. Das fühlte sich gut an."
+
+#: ../mod.py:369
+msgid "Invalid days. Must be between 0 and 7."
+msgstr "Ungültige Tage Muss zwischen 0 und 7 liegen."
+
+#: ../mod.py:384
+msgid "Done. It was about time."
+msgstr "Erledigt. Es wurde Zeit."
+
+#: ../mod.py:413
+msgid "User is already banned."
+msgstr "Benutzer ist bereits gesperrt."
+
+#: ../mod.py:429
+msgid "User not found. Have you provided the correct user ID?"
+msgstr "Benutzer nicht gefunden. Haben Sie die richtige Benutzerkennung angegeben?"
+
+#: ../mod.py:433
+msgid "I lack the permissions to do this."
+msgstr "Mir fehlen die Berechtigungen, dies zu tun."
+
+#: ../mod.py:435
+msgid "Done. The user will not be able to join this guild."
+msgstr "Erledigt. Der Nutzer kann dieser Gilde nicht beitreten."
+
+#: ../mod.py:472
+msgid "You have been temporarily banned from {} until {}. Here is an invite for when your ban expires: {}"
+msgstr "Sie wurden vorübergehend von {} bis {} gesperrt. Hier ist eine Einladung zum Ablauf Ihres Verbots: {}"
+
+#: ../mod.py:481
+msgid "I can't do that for some reason."
+msgstr "Ich kann das aus irgendeinem Grund nicht tun."
+
+#: ../mod.py:483
+msgid "Something went wrong while banning"
+msgstr "Beim Verbot ist etwas schiefgelaufen"
+
+#: ../mod.py:485
+msgid "Done. Enough chaos for now"
+msgstr "Erledigt. Genug Chaos für jetzt"
+
+#: ../mod.py:525
+msgid "You have been banned and then unbanned as a quick way to delete your messages.\n"
+"You can now join the guild again. {}"
+msgstr "Du wurdest gesperrt und dann entbannt, um deine Nachrichten schnell zu löschen.\n"
+"Du kannst jetzt wieder der Gilde beitreten. {}"
+
+#: ../mod.py:537
+msgid "My role is not high enough to softban that user."
+msgstr "Meine Rolle ist nicht hoch genug, um diesen Benutzer zu softben."
+
+#: ../mod.py:553
+msgid "Done. Enough chaos."
+msgstr "Erledigt. Genug Chaos."
+
+#: ../mod.py:587
+msgid "Couldn't find a user with that ID!"
+msgstr "Es wurde kein Benutzer mit dieser ID gefunden!"
+
+#: ../mod.py:593
+msgid "It seems that user isn't banned!"
+msgstr "Es scheint, dass Benutzer nicht verboten ist!"
+
+#: ../mod.py:601
+msgid "Something went wrong while attempting to unban that user"
+msgstr "Beim Versuch, diesen Benutzer zu entsperren, ist ein Fehler aufgetreten"
+
+#: ../mod.py:604
+msgid "Unbanned that user from this guild"
+msgstr "Der Benutzer dieser Gilde wurde entbannt"
+
+#: ../mod.py:619
+msgid "You've been unbanned from {}.\n"
+"Here is an invite for that guild: {}"
+msgstr "Du wurdest von {} entbannt.\n"
+"Hier ist eine Einladung für diese Gilde: {}"
+
+#: ../mod.py:623
+msgid "I failed to send an invite to that user. Perhaps you may be able to send it for me?\n"
+"Here's the invite link: {}"
+msgstr "Ich habe keine Einladung an diesen Nutzer gesendet. Vielleicht kannst du es mir schicken?\n"
+"Hier ist der Einladungslink: {}"
+
+#: ../mod.py:629
+msgid "Something went wrong when attempting to send that useran invite. Here's the link so you can try: {}"
+msgstr "Beim Versuch, die Useran-Einladung zu senden, ist ein Fehler aufgetreten. Hier ist der Link, damit Sie versuchen können: {}"
+
+#: ../mod.py:673 ../mod.py:710
+msgid "No voice state for that user!"
+msgstr "Kein Sprachstatus für diesen Benutzer!"
+
+#: ../mod.py:687
+msgid "That user is already muted and deafened guild-wide!"
+msgstr "Dieser Nutzer ist bereits gruppenweit gedämpft und taub!"
+
+#: ../mod.py:690
+msgid "User has been banned from speaking or listening in voice channels"
+msgstr "Es wurde dem Benutzer untersagt, in Sprachkanälen zu sprechen oder zu hören"
+
+#: ../mod.py:722
+msgid "That user isn't muted or deafened by the guild!"
+msgstr "Dieser Benutzer wird von der Gilde nicht gedämpft oder taub gemacht!"
+
+#: ../mod.py:725
+msgid "User is now allowed to speak and listen in voice channels"
+msgstr "Der Benutzer darf nun in Sprachkanälen sprechen und hören"
+
+#: ../mod.py:754
+msgid "I cannot do that, I lack the '{}' permission."
+msgstr "Ich kann das nicht, mir fehlt die '{}' Erlaubnis."
+
+#: ../mod.py:783
+msgid "Muted {}#{} in channel {}"
+msgstr "Stummgeschaltet {} # {} im Kanal {}"
+
+#: ../mod.py:797
+msgid "That user is already muted in {}!"
+msgstr "Dieser Benutzer ist bereits in {}! Stummgeschaltet!"
+
+#: ../mod.py:800 ../mod.py:932
+msgid "That user is not in a voice channel right now!"
+msgstr "Dieser Benutzer ist gerade nicht in einem Sprachkanal!"
+
+#: ../mod.py:802 ../mod.py:934
+msgid "No voice state for the target!"
+msgstr "Kein Sprachzustand für das Ziel!"
+
+#: ../mod.py:822
+msgid "User has been muted in this channel."
+msgstr "Der Benutzer wurde in diesem Kanal stummgeschaltet."
+
+#: ../mod.py:858
+msgid "User has been muted in this guild."
+msgstr "Der Nutzer wurde in dieser Gilde stummgeschaltet."
+
+#: ../mod.py:919
+msgid "Unmuted {}#{} in channel {}"
+msgstr "Unmuted {} # {} im Channel {}"
+
+#: ../mod.py:929
+msgid "That user is already unmuted in {}!"
+msgstr "Dieser Benutzer ist bereits in {}!"
+
+#: ../mod.py:949
+msgid "User unmuted in this channel."
+msgstr "Der Benutzer ist in diesem Kanal nicht stumm geschaltet."
+
+#: ../mod.py:958
+msgid "Unmute failed. Reason: {}"
+msgstr "Unmute ist fehlgeschlagen. Grund: {}"
+
+#: ../mod.py:981
+msgid "User has been unmuted in this guild."
+msgstr "Der Nutzer wurde in dieser Gilde nicht angezeigt."
+
+#: ../mod.py:1045
+msgid "Channel added to ignore list."
+msgstr "Kanal hinzugefügt, um Liste zu ignorieren."
+
+#: ../mod.py:1047
+msgid "Channel already in ignore list."
+msgstr "Kanal ist bereits in der Ignorierliste."
+
+#: ../mod.py:1055
+msgid "This guild has been added to the ignore list."
+msgstr "Diese Gilde wurde zur Ignorierliste hinzugefügt."
+
+#: ../mod.py:1057
+msgid "This guild is already being ignored."
+msgstr "Diese Gilde wird bereits ignoriert."
+
+#: ../mod.py:1078
+msgid "Channel removed from ignore list."
+msgstr "Kanal aus der Ignorierliste entfernt."
+
+#: ../mod.py:1080
+msgid "That channel is not in the ignore list."
+msgstr "Dieser Kanal ist nicht in der Ignorierliste enthalten."
+
+#: ../mod.py:1088
+msgid "This guild has been removed from the ignore list."
+msgstr "Diese Gilde wurde aus der Ignorierliste entfernt."
+
+#: ../mod.py:1090
+msgid "This guild is not in the ignore list."
+msgstr "Diese Gilde ist nicht in der Ignorierliste enthalten."
+
+#: ../mod.py:1102
+msgid "Currently ignoring:\n"
+"{} channels\n"
+"{} guilds\n"
+msgstr "Derzeit ignorierend:\n"
+"{} Kanäle\n"
+"{} Gilden\n"
+
+#: ../mod.py:1133
+msgid "**Past 20 names**:"
+msgstr "** Vorige 20 Namen **:"
+
+#: ../mod.py:1140
+msgid "**Past 20 nicknames**:"
+msgstr "** Die letzten 20 Spitznamen **:"
+
+#: ../mod.py:1146
+msgid "That user doesn't have any recorded name or nickname change."
+msgstr "Dieser Nutzer hat keinen registrierten Namen oder eine geänderte Nickname."
+

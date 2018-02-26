@@ -1,0 +1,62 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
+"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: German\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: de\n"
+"X-Crowdin-File: /cogs/modlog/locales/messages.pot\n"
+"Language: de_DE\n"
+
+#: ../modlog.py:36
+msgid "Mod events will be sent to {}"
+msgstr "Mod-Ereignisse werden an {} gesendet"
+
+#: ../modlog.py:42
+msgid "I do not have permissions to send messages in {}!"
+msgstr "Ich habe keine Berechtigungen zum Senden von Nachrichten in {}!"
+
+#: ../modlog.py:52
+msgid "Mod log deactivated."
+msgstr "Mod log deaktiviert."
+
+#: ../modlog.py:63
+msgid "Current settings:"
+msgstr "Aktuelle Einstellungen:"
+
+#: ../modlog.py:75
+msgid "That action is not registered"
+msgstr "Diese Aktion ist nicht registriert"
+
+#: ../modlog.py:82
+msgid "Case creation for {} actions is now {}."
+msgstr "Fallerstellung für {} Aktionen ist jetzt {}."
+
+#: ../modlog.py:94
+msgid "Cases have been reset."
+msgstr "Fälle wurden zurückgesetzt."
+
+#: ../modlog.py:103
+msgid "That case does not exist for that guild"
+msgstr "Dieser Fall existiert für diese Gilde nicht"
+
+#: ../modlog.py:122
+msgid "That case does not exist!"
+msgstr "Dieser Fall existiert nicht!"
+
+#: ../modlog.py:146
+msgid "You are not authorized to modify that case!"
+msgstr "Sie sind nicht berechtigt, diesen Fall zu ändern!"
+
+#: ../modlog.py:155
+msgid "Reason has been updated."
+msgstr "Der Grund wurde aktualisiert."
+
