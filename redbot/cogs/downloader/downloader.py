@@ -14,7 +14,7 @@ from discord.ext import commands
 
 from redbot.core.bot import Red
 from .checks import install_agreement
-from .converters import RepoName, InstalledCog
+from .converters import InstalledCog
 from .errors import CloningError, ExistingGitRepo
 from .installable import Installable
 from .log import log
@@ -197,7 +197,7 @@ class Downloader:
 
     @repo.command(name="add")
     @install_agreement()
-    async def _repo_add(self, ctx, name: RepoName, repo_url: str, branch: str=None):
+    async def _repo_add(self, ctx, name: str, repo_url: str, branch: str=None):
         """
         Add a new repo to Downloader.
 

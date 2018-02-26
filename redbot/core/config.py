@@ -146,6 +146,12 @@ class Value:
         """
         await self.driver.set(*self.identifiers, value=value)
 
+    async def clear(self):
+        """
+        Clears the value from record for the data element pointed to by `identifiers`.
+        """
+        await self.driver.clear(*self.identifiers)
+
 
 class Group(Value):
     """
@@ -437,14 +443,6 @@ class Group(Value):
         """
         path = [str(p) for p in nested_path]
         await self.driver.set(*self.identifiers, *path, value=value)
-
-    async def clear(self):
-        """Wipe all data from this group.
-
-        If used on a global group, it will wipe all global data, but not
-        local data.
-        """
-        await self.set({})
 
 
 _config_cogrefs = {}
@@ -1037,7 +1035,7 @@ class Config:
                           driver=self.driver)
         else:
             group = self._get_base_group(*scopes)
-        await group.set({})
+        await group.clear()
 
     async def clear_all(self):
         """Clear all data from this Config instance.
