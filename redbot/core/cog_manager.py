@@ -208,8 +208,12 @@ class CogManager:
         RuntimeError
             When no matching spec can be found.
         """
-        resolved_paths = [str(p.resolve()) for p in await self.paths()]
-        for finder, module_name, _ in pkgutil.iter_modules(resolved_paths):
+        resolved_paths = set(await self.paths())
+        core_paths = set(await self.core_paths())
+
+        real_paths = [str(p) for p in (resolved_paths - core_paths)]
+
+        for finder, module_name, _ in pkgutil.iter_modules(real_paths):
             if name == module_name:
                 spec = finder.find_spec(name)
                 if spec:
