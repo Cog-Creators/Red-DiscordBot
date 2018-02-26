@@ -1,0 +1,211 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
+"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Russian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: ru\n"
+"X-Crowdin-File: /cogs/economy/locales/messages.pot\n"
+"Language: ru_RU\n"
+
+#: ../economy.py:40
+msgid "JACKPOT! 226! Your bid has been multiplied * 2500!"
+msgstr "ДЖЕКПОТ! 226! Ваша ставка была умножена на 2500!"
+
+#: ../economy.py:44
+msgid "4LC! +1000!"
+msgstr "Клевер! +1000!"
+
+#: ../economy.py:48
+msgid "Three cherries! +800!"
+msgstr "Три вишни! +800!"
+
+#: ../economy.py:52
+msgid "2 6! Your bid has been multiplied * 4!"
+msgstr "2 6! Ваша ставка была умножена на 4!"
+
+#: ../economy.py:56
+msgid "Two cherries! Your bid has been multiplied * 3!"
+msgstr "Две вишни! Ваша ставка была умножена на 3!"
+
+#: ../economy.py:60
+msgid "Three symbols! +500!"
+msgstr "Три символа! +500!"
+
+#: ../economy.py:64
+msgid "Two consecutive symbols! Your bid has been multiplied * 2!"
+msgstr "Два последовательных символа! Ваша ставка была умножена на 2!"
+
+#: ../economy.py:68
+msgid "Slot machine payouts:\n"
+"{two.value} {two.value} {six.value} Bet * 2500\n"
+"{flc.value} {flc.value} {flc.value} +1000\n"
+"{cherries.value} {cherries.value} {cherries.value} +800\n"
+"{two.value} {six.value} Bet * 4\n"
+"{cherries.value} {cherries.value} Bet * 3\n\n"
+"Three symbols: +500\n"
+"Two symbols: Bet * 2"
+msgstr "Выплаты слот-машины:\n"
+"{two.value} {two.value} {six.value} Ставка * 2500\n"
+"{flc.value} {flc.value} {flc.value} +1000\n"
+"{cherries.value} {cherries.value} {cherries.value} +800\n"
+"{two.value} {six.value} Ставка * 4\n"
+"{cherries.value} {cherries.value} Ставка * 3\n\n"
+"Три символа: +500\n"
+"Два символа: Ставка * 2"
+
+#: ../economy.py:157
+msgid "{}'s balance is {} {}"
+msgstr "Баланс {}: {} {}"
+
+#: ../economy.py:171
+msgid "{} transferred {} {} to {}"
+msgstr "{} перевел {} {} {}"
+
+#: ../economy.py:191
+msgid "{} added {} {} to {}'s account."
+msgstr "{} добавил {} {} к счету {}."
+
+#: ../economy.py:196
+msgid "{} removed {} {} from {}'s account."
+msgstr "{} снял {} {} со счета {}."
+
+#: ../economy.py:201
+msgid "{} set {}'s account to {} {}."
+msgstr "{} сделал счет {} равным {} {}."
+
+#: ../economy.py:212
+msgid "This will delete all bank accounts for {}.\n"
+"If you're sure, type `{}bank reset yes`"
+msgstr ""
+
+#: ../economy.py:229
+msgid "All bank accounts of this guild have been deleted."
+msgstr "Все счета этого сервера были удалены."
+
+#: ../economy.py:248 ../economy.py:268
+msgid "{} Here, take some {}. Enjoy! (+{} {}!)"
+msgstr "{}, лови {}. Не за что! (+{} {}!)"
+
+#: ../economy.py:258 ../economy.py:276
+msgid "{} Too soon. For your next payday you have to wait {}."
+msgstr "Слишком рано, {}. До следующей выплаты придется подождать {}."
+
+#: ../economy.py:313
+msgid "There are no accounts in the bank."
+msgstr "В банке нет счетов."
+
+#: ../economy.py:339
+msgid "You're on cooldown, try again in a bit."
+msgstr "Ты играешь слишком часто, попробуй чуть позже."
+
+#: ../economy.py:342
+msgid "That's an invalid bid amount, sorry :/"
+msgstr "К сожалению, это неправильная сумма ставки :/"
+
+#: ../economy.py:345
+msgid "You ain't got enough money, friend."
+msgstr "Слушай, у тебя нет столько денег."
+
+#: ../economy.py:391
+msgid "{}\n"
+"{} {}\n\n"
+"Your bid: {}\n"
+"{} → {}!"
+msgstr "{}\n"
+"{} {}\n\n"
+"Ваша ставка: {}\n"
+"{} → {}!"
+
+#: ../economy.py:398
+msgid "{}\n"
+"{} Nothing!\n"
+"Your bid: {}\n"
+"{} → {}!"
+msgstr "{}\n"
+"{} Пусто!\n"
+"Ваша ставка: {}\n"
+"{} → {}!"
+
+#: ../economy.py:423
+msgid "Minimum slot bid: {}\n"
+"Maximum slot bid: {}\n"
+"Slot cooldown: {}\n"
+"Payday amount: {}\n"
+"Payday cooldown: {}\n"
+"Amount given at account registration: {}"
+msgstr "Минимальная ставка: {}\n"
+"Максимальная ставка: {}\n"
+"Перерыв между играми: {}\n"
+"Объем выплат: {}\n"
+"Перерыв между выплатами: {}\n"
+"Сумма, выдающаяся при регистрации: {}"
+
+#: ../economy.py:433
+msgid "Current Economy settings:"
+msgstr "Текущие настройки Экономики:"
+
+#: ../economy.py:441
+msgid "Invalid min bid amount."
+msgstr "Неверная минимальная сумма ставки."
+
+#: ../economy.py:449
+msgid "Minimum bid is now {} {}."
+msgstr "Минимальная ставка теперь {} {}."
+
+#: ../economy.py:456
+msgid "Invalid slotmax bid amount. Must be greater than slotmin."
+msgstr "Неверная максимальная сумма ставки. Она должна быть больше минимальной."
+
+#: ../economy.py:465
+msgid "Maximum bid is now {} {}."
+msgstr "Максимальная ставка теперь {} {}."
+
+#: ../economy.py:475
+msgid "Cooldown is now {} seconds."
+msgstr "Перерыв между играми теперь {} секунд."
+
+#: ../economy.py:485
+msgid "Value modified. At least {} seconds must pass between each payday."
+msgstr "Значение изменено. Теперь между выплатами должно пройти как минимум {} секунд."
+
+#: ../economy.py:494
+msgid "Har har so funny."
+msgstr "Хах, смешно."
+
+#: ../economy.py:500
+msgid "Every payday will now give {} {}."
+msgstr "Каждая выплата теперь дает {} {}."
+
+#: ../economy.py:511
+msgid "Registering an account will now give {} {}."
+msgstr "Открытие счета теперь дает {} {}."
+
+#: ../economy.py:517
+msgid "weeks"
+msgstr "недель"
+
+#: ../economy.py:518
+msgid "days"
+msgstr "дней"
+
+#: ../economy.py:519
+msgid "hours"
+msgstr "часов"
+
+#: ../economy.py:520
+msgid "minutes"
+msgstr "минут"
+
+#: ../economy.py:521
+msgid "seconds"
+msgstr "секунд"
+

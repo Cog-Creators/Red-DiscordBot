@@ -1,0 +1,285 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-19 03:59+UTC\n"
+"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Norwegian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: no\n"
+"X-Crowdin-File: /core/locales/messages.pot\n"
+"Language: no_NO\n"
+
+#: ../cog_manager.py:309
+msgid "Install Path: {}\n\n"
+msgstr "Installasjonsted: {}\n\n"
+
+#: ../cog_manager.py:325
+msgid "That path does not exist or does not point to a valid directory."
+msgstr ""
+
+#: ../cog_manager.py:334
+msgid "Path successfully added."
+msgstr "Banen er lagt til."
+
+#: ../cog_manager.py:347
+msgid "That is an invalid path number."
+msgstr "Det er et ugyldig bane nummer."
+
+#: ../cog_manager.py:351
+msgid "Path successfully removed."
+msgstr "Banen ble fjernet."
+
+#: ../cog_manager.py:367
+msgid "Invalid 'from' index."
+msgstr "Ugyldig \"fra\" index."
+
+#: ../cog_manager.py:373
+msgid "Invalid 'to' index."
+msgstr "Ugyldig \"to\" index."
+
+#: ../cog_manager.py:377
+msgid "Paths reordered."
+msgstr "Baner forandret."
+
+#: ../cog_manager.py:395
+msgid "That path does not exist."
+msgstr "Denne banen finnes ikke."
+
+#: ../cog_manager.py:399
+msgid "The bot will install new cogs to the `{}` directory."
+msgstr "Bot'en vil installere nye cogs til \"{}\" mappen."
+
+#: ../core_commands.py:225 ../core_commands.py:266
+msgid "No module by that name was found in any cog path."
+msgstr "Ingen modul med det navnet ble funnet i cog banene."
+
+#: ../core_commands.py:240
+msgid "Failed to load package. Check your console or logs for details."
+msgstr "Kan ikke laste pakken. Sjekk konsollen eller loggene for detaljer."
+
+#: ../core_commands.py:244 ../core_commands.py:253 ../core_commands.py:285
+#: ../core_commands.py:374 ../core_commands.py:462 ../core_commands.py:476
+msgid "Done."
+msgstr "Ferdig."
+
+#: ../core_commands.py:255
+msgid "That extension is not loaded."
+msgstr "Utvidelsen er ikke lastet."
+
+#: ../core_commands.py:282
+msgid "Failed to reload package. Check your console or logs for details."
+msgstr "Kunne ikke laste pakken. Sjekk konsollen eller loggene for detaljer."
+
+#: ../core_commands.py:295
+msgid "Shutting down... "
+msgstr "Slår av... "
+
+#: ../core_commands.py:310
+msgid "Restarting..."
+msgstr ""
+
+#: ../core_commands.py:347
+msgid "The admin role for this guild has been set."
+msgstr "Administrator rollen for denne gruppen er satt."
+
+#: ../core_commands.py:355
+msgid "The mod role for this guild has been set."
+msgstr "Moderator rollen for denne gruppen er blitt satt."
+
+#: ../core_commands.py:368
+msgid "Failed. Remember that you can edit my avatar up to two times a hour. The URL must be a direct link to a JPG / PNG."
+msgstr "Mislyktes. Husk at du kan redigere avataren opptil to ganger i timen. URL-adressen må være en direkte kobling til JPG / PNG."
+
+#: ../core_commands.py:372
+msgid "JPG / PNG format only."
+msgstr "Bare JPG / PNG format."
+
+#: ../core_commands.py:387
+msgid "Game set."
+msgstr "Spillet er satt."
+
+#: ../core_commands.py:399
+msgid "Listening set."
+msgstr ""
+
+#: ../core_commands.py:411
+msgid "Watching set."
+msgstr ""
+
+#: ../core_commands.py:440
+msgid "Status changed to %s."
+msgstr "Status satt til %s."
+
+#: ../core_commands.py:471
+msgid "Failed to change name. Remember that you can only do it up to 2 times an hour. Use nicknames if you need frequent changes. `{}set nickname`"
+msgstr "Kan ikke endre navnet. Husk at du kan bare gjøre det opptil 2 ganger i timen. Bruk kallenavn hvis du trenger hyppige endringer. \"{} sett kallenavn\""
+
+#: ../core_commands.py:486
+msgid "I lack the permissions to change my own nickname."
+msgstr "Jeg mangler tillatelse til å endre mitt eget kallenavn."
+
+#: ../core_commands.py:500 ../core_commands.py:513
+msgid "Prefix set."
+msgstr "Prefiks satt."
+
+#: ../core_commands.py:509
+msgid "Guild prefixes have been reset."
+msgstr "Gruppe prefikser er tilbakestilt."
+
+#: ../core_commands.py:532
+msgid "\n"
+"Verification token:"
+msgstr "\n"
+"Kontrolltoken:"
+
+#: ../core_commands.py:535
+msgid "Remember:\n"
+msgstr "Husk:\n"
+
+#: ../core_commands.py:538
+msgid "I have printed a one-time token in the console. Copy and paste it here to confirm you are the owner."
+msgstr "Jeg har skrevet et engangspassord i konsollen. Kopier og lim det her for å bekrefte at du er eieren."
+
+#: ../core_commands.py:546
+msgid "The set owner request has timed out."
+msgstr "Angi eier forespørselen ble tidsavbrutt."
+
+#: ../core_commands.py:552
+msgid "You have been set as owner."
+msgstr "Du er angitt som eier."
+
+#: ../core_commands.py:554
+msgid "Invalid token."
+msgstr "Ugyldig nøkkel."
+
+#: ../core_commands.py:566
+msgid "Locale has been set."
+msgstr "Lokale innstillinger er angitt."
+
+#: ../core_commands.py:580
+msgid "Done. Sentry logging is now enabled."
+msgstr ""
+
+#: ../core_commands.py:583
+msgid "Done. Sentry logging is now disabled."
+msgstr ""
+
+#: ../core_commands.py:593
+msgid "User ID: %s"
+msgstr "Bruker-ID: %s"
+
+#: ../core_commands.py:596
+msgid "through DM"
+msgstr "gjennom DM"
+
+#: ../core_commands.py:598
+msgid "from {}"
+msgstr "fra {}"
+
+#: ../core_commands.py:599
+msgid " | Server ID: %s"
+msgstr " | Bruker-ID: %s"
+
+#: ../core_commands.py:608
+msgid "Use `{}dm {} <text>` to reply to this user"
+msgstr "Bruk '{} dm {} <text>' for å svare denne brukeren"
+
+#: ../core_commands.py:616
+msgid "Sent by {} {}"
+msgstr "Sendt av {} {}"
+
+#: ../core_commands.py:628
+msgid "I cannot send your message, I'm unable to find my owner... *sigh*"
+msgstr "Jeg kan ikke sende meldingen, jeg kan ikke finne eieren min... * sukk *"
+
+#: ../core_commands.py:631
+msgid "I'm unable to deliver your message. Sorry."
+msgstr "Jeg klarer ikke å levere meldingen. Unnskyld."
+
+#: ../core_commands.py:633
+msgid "Your message has been sent."
+msgstr "Din melding har blitt sendt."
+
+#: ../core_commands.py:647
+msgid "Invalid ID or user not found. You can only send messages to people I share a server with."
+msgstr "Ugyldig ID eller brukeren ble ikke funnet. Du kan bare sende meldinger til personer jeg deler en server med."
+
+#: ../core_commands.py:653
+msgid "Owner of %s"
+msgstr "Eier: %s"
+
+#: ../core_commands.py:657
+msgid "You can reply to this message with %scontact"
+msgstr "Du kan svare på denne meldingen med %scontact"
+
+#: ../core_commands.py:667
+msgid "Sorry, I couldn't deliver your message to %s"
+msgstr "Beklager, kunne ikke jeg levere meldingen til %s"
+
+#: ../core_commands.py:670
+msgid "Message delivered to %s"
+msgstr "Meldingen er levert til %s"
+
+#: ../core_commands.py:690
+msgid "User added to whitelist."
+msgstr ""
+
+#: ../core_commands.py:699
+msgid "Whitelisted Users:"
+msgstr ""
+
+#: ../core_commands.py:719
+msgid "User has been removed from whitelist."
+msgstr ""
+
+#: ../core_commands.py:721
+msgid "User was not in the whitelist."
+msgstr ""
+
+#: ../core_commands.py:729
+msgid "Whitelist has been cleared."
+msgstr ""
+
+#: ../core_commands.py:746
+msgid "You cannot blacklist an owner!"
+msgstr ""
+
+#: ../core_commands.py:753
+msgid "User added to blacklist."
+msgstr ""
+
+#: ../core_commands.py:762
+msgid "blacklisted Users:"
+msgstr ""
+
+#: ../core_commands.py:782
+msgid "User has been removed from blacklist."
+msgstr ""
+
+#: ../core_commands.py:784
+msgid "User was not in the blacklist."
+msgstr ""
+
+#: ../core_commands.py:792
+msgid "blacklist has been cleared."
+msgstr ""
+
+#: ../dev_commands.py:213
+msgid "Already running a REPL session in this channel. Exit it with `quit`."
+msgstr "Kjører allerede en REPL økt i denne kanalen. Avslutt den med \"avslutt\"."
+
+#: ../dev_commands.py:218
+msgid "Enter code to execute or evaluate. `exit()` or `quit` to exit."
+msgstr "Angi koden for å kjøre eller evaluere. \"exit()\" eller \"slutte\" for å avslutte."
+
+#: ../dev_commands.py:281
+msgid "Unexpected error: `{}`"
+msgstr "Uventet feil: \"{}\""
+

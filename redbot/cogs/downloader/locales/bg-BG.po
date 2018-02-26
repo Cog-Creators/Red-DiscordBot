@@ -1,0 +1,94 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-19 03:59+UTC\n"
+"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Bulgarian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: bg\n"
+"X-Crowdin-File: /cogs/downloader/locales/messages.pot\n"
+"Language: bg_BG\n"
+
+#: ../downloader.py:215
+msgid "That git repo has already been added under another name."
+msgstr "Това GIT хранилище вече е добавено под друго име."
+
+#: ../downloader.py:217 ../downloader.py:218
+msgid "Something went wrong during the cloning process."
+msgstr "Нещо се обърка при процеса на размножаване."
+
+#: ../downloader.py:220
+msgid "Repo `{}` successfully added."
+msgstr "Репозиторията `{}` е създадена успешно."
+
+#: ../downloader.py:229
+msgid "The repo `{}` has been deleted successfully."
+msgstr "Изтрихте успешно репозиторията `{}`."
+
+#: ../downloader.py:237
+msgid "Installed Repos:\n"
+msgstr "Инсталирани хранилища:\n"
+
+#: ../downloader.py:258
+msgid "Error, there is no cog by the name of `{}` in the `{}` repo."
+msgstr "Възникна грешка. Не съществува COG под името `{}` в хранилището `{}`."
+
+#: ../downloader.py:263
+msgid "Failed to install the required libraries for `{}`: `{}`"
+msgstr "Неуспешно инсталиране на библиотеките за `{}`: `{}`"
+
+#: ../downloader.py:273
+msgid "`{}` cog successfully installed."
+msgstr "`{}` COG е успешно инсталиран."
+
+#: ../downloader.py:289
+msgid "`{}` was successfully removed."
+msgstr "`{}` е успешно премахнат."
+
+#: ../downloader.py:291
+msgid "That cog was installed but can no longer be located. You may need to remove it's files manually if it is still usable."
+msgstr "Този COG, който беше инсталиран не може да се намери повече. Ще се наложи да изтриете собственоръчно файловете, ако е все още работоспособен."
+
+#: ../downloader.py:323
+msgid "Cog update completed successfully."
+msgstr "Актуализацията на COG е успешна."
+
+#: ../downloader.py:331
+msgid "Available Cogs:\n"
+msgstr "Налични COG-ове:\n"
+
+#: ../downloader.py:343
+msgid "There is no cog `{}` in the repo `{}`"
+msgstr "COG-ът `{}` няма в хранилището `{}`"
+
+#: ../downloader.py:348
+msgid "Information on {}:\n"
+"{}"
+msgstr "Информация за {}:\n"
+"{}"
+
+#: ../downloader.py:389
+msgid "Missing from info.json"
+msgstr "Липсващо от info.json"
+
+#: ../downloader.py:398
+msgid "Command: {}\n"
+"Made by: {}\n"
+"Repo: {}\n"
+"Cog name: {}"
+msgstr "Команда: {}\n"
+"Основоположник: {}\n"
+"Хранилище: {}\n"
+"Име на COG: {}"
+
+#: ../downloader.py:430
+msgid "That command doesn't seem to exist."
+msgstr "Няма такава команда."
+

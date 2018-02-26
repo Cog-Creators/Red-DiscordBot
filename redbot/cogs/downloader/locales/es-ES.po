@@ -1,0 +1,94 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-19 03:59+UTC\n"
+"PO-Revision-Date: 2018-02-25 21:32-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Spanish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: es-ES\n"
+"X-Crowdin-File: /cogs/downloader/locales/messages.pot\n"
+"Language: es_ES\n"
+
+#: ../downloader.py:215
+msgid "That git repo has already been added under another name."
+msgstr "Ese repositorio ya ha sido agregado con otro nombre."
+
+#: ../downloader.py:217 ../downloader.py:218
+msgid "Something went wrong during the cloning process."
+msgstr "Algo malo ha ocurrido durante la clonación."
+
+#: ../downloader.py:220
+msgid "Repo `{}` successfully added."
+msgstr "Repositorio `{}` agregado exitósamente."
+
+#: ../downloader.py:229
+msgid "The repo `{}` has been deleted successfully."
+msgstr "Repositorio `{}` eliminado exitósamente."
+
+#: ../downloader.py:237
+msgid "Installed Repos:\n"
+msgstr "Repositorios instalados:\n"
+
+#: ../downloader.py:258
+msgid "Error, there is no cog by the name of `{}` in the `{}` repo."
+msgstr "Error: No existe un cog llamado `{}` en el repositorio `{}`."
+
+#: ../downloader.py:263
+msgid "Failed to install the required libraries for `{}`: `{}`"
+msgstr "Error instalando las librerías requeridas para `{}`: `{}`"
+
+#: ../downloader.py:273
+msgid "`{}` cog successfully installed."
+msgstr "`{}` instalado exitósamente."
+
+#: ../downloader.py:289
+msgid "`{}` was successfully removed."
+msgstr "`{}` eliminado exitósamente."
+
+#: ../downloader.py:291
+msgid "That cog was installed but can no longer be located. You may need to remove it's files manually if it is still usable."
+msgstr "El cog fue instalado pero ya no se puede localizar. Puede ser necesario eliminar sus archivos manualmente si aun es utilizable."
+
+#: ../downloader.py:323
+msgid "Cog update completed successfully."
+msgstr "Cog actualizado exitósamente."
+
+#: ../downloader.py:331
+msgid "Available Cogs:\n"
+msgstr "Cogs disponibles:\n"
+
+#: ../downloader.py:343
+msgid "There is no cog `{}` in the repo `{}`"
+msgstr "No existe un cog `{}` en el repositorio `{}`"
+
+#: ../downloader.py:348
+msgid "Information on {}:\n"
+"{}"
+msgstr "Información sobre {}:\n"
+"{}"
+
+#: ../downloader.py:389
+msgid "Missing from info.json"
+msgstr "Ausente de info.json"
+
+#: ../downloader.py:398
+msgid "Command: {}\n"
+"Made by: {}\n"
+"Repo: {}\n"
+"Cog name: {}"
+msgstr "Comando: {}\n"
+"Creado por: {}\n"
+"Repositorio: {}\n"
+"Nombre del cog: {}"
+
+#: ../downloader.py:430
+msgid "That command doesn't seem to exist."
+msgstr "Ese comando no parece existir."
+
