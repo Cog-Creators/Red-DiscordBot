@@ -63,7 +63,7 @@ class Warnings:
         guild = ctx.guild
         await self.config.guild(guild).allow_custom_reasons.set(allowed)
         await ctx.send(
-            _("Custom reasons have been {}".format("enabled" if allowed else "disabled"))
+            _("Custom reasons have been {}").format(_("enabled") if allowed else _("disabled"))
         )
 
     @commands.group()
