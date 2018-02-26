@@ -4,28 +4,34 @@ from .red_base import BaseDriver
 __all__ = ["Mongo"]
 
 
+_conn = None
+
+
+def _initialize(**kwargs):
+    host = kwargs['HOST']
+    port = kwargs['PORT']
+    admin_user = kwargs['USERNAME']
+    admin_pass = kwargs['PASSWORD']
+    db_name = kwargs.get('DB_NAME', 'default_db')
+
+    url = "mongodb://{}:{}@{}:{}/{}".format(
+        admin_user, admin_pass, host, port,
+        db_name
+    )
+
+    global _conn
+    _conn = motor.motor_asyncio.AsyncIOMotorClient(url)
+
+
 class Mongo(BaseDriver):
     """
     Subclass of :py:class:`.red_base.BaseDriver`.
     """
     def __init__(self, cog_name, **kwargs):
         super().__init__(cog_name)
-        self.host = kwargs['HOST']
-        self.port = kwargs['PORT']
-        self.admin_user = kwargs['USERNAME']
-        self.admin_pass = kwargs['PASSWORD']
-        self.db_name = kwargs.get('DB_NAME', 'default_db')
 
-        from ..data_manager import instance_name
-
-        self.instance_name = instance_name
-
-        self.url = "mongodb://{}:{}@{}:{}/{}".format(
-            self.admin_user, self.admin_pass, self.host, self.port,
-            self.db_name
-        )
-
-        self.conn = motor.motor_asyncio.AsyncIOMotorClient(self.url)
+        if _conn is None:
+            _initialize(**kwargs)
 
     @property
     def db(self) -> motor.core.Database:
@@ -41,7 +47,7 @@ class Mongo(BaseDriver):
         :return:
             PyMongo Database object.
         """
-        return self.conn.get_database()
+        return _conn.get_database()
 
     def get_collection(self) -> motor.core.Collection:
         """
