@@ -23,9 +23,12 @@ def get_package_list():
 def get_requirements():
     with open('requirements.txt') as f:
         requirements = f.read().splitlines()
-    if IS_TRAVIS and not IS_DEPLOYING:
+    try:
         requirements.remove('git+https://github.com/Rapptz/discord.py.git@rewrite#egg=discord.py[voice]')
-    else:
+    except IndexError:
+        pass
+
+    if IS_DEPLOYING or not IS_TRAVIS:
         requirements.append('discord.py>=1.0.0a0')  # Because RTD
     if sys.platform.startswith("linux"):
         requirements.append("distro")
@@ -122,7 +125,7 @@ setup(
     dependency_links=dep_links,
     extras_require={
         'test': [
-            'pytest>=3', 'pytest-asyncio'
+            'pytest>3', 'pytest-asyncio'
         ],
         'mongo': ['motor'],
         'docs': ['sphinx', 'sphinxcontrib-asyncio', 'sphinx_rtd_theme'],
