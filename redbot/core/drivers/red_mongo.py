@@ -1,9 +1,26 @@
-from typing import Tuple
-
 import motor.motor_asyncio
 from .red_base import BaseDriver
 
 __all__ = ["Mongo"]
+
+
+_conn = None
+
+
+def _initialize(**kwargs):
+    host = kwargs['HOST']
+    port = kwargs['PORT']
+    admin_user = kwargs['USERNAME']
+    admin_pass = kwargs['PASSWORD']
+    db_name = kwargs.get('DB_NAME', 'default_db')
+
+    url = "mongodb://{}:{}@{}:{}/{}".format(
+        admin_user, admin_pass, host, port,
+        db_name
+    )
+
+    global _conn
+    _conn = motor.motor_asyncio.AsyncIOMotorClient(url)
 
 
 class Mongo(BaseDriver):
@@ -12,29 +29,9 @@ class Mongo(BaseDriver):
     """
     def __init__(self, cog_name, **kwargs):
         super().__init__(cog_name)
-        self.host = kwargs['HOST']
-        self.port = kwargs['PORT']
-        admin_user = kwargs['USERNAME']
-        admin_pass = kwargs['PASSWORD']
 
-        from ..data_manager import instance_name
-
-        self.instance_name = instance_name
-
-        self.conn = None
-
-        self.admin_user = admin_user
-        self.admin_pass = admin_pass
-
-    async def _authenticate(self):
-        self.conn = motor.motor_asyncio.AsyncIOMotorClient(host=self.host, port=self.port)
-
-        if None not in (self.admin_pass, self.admin_user):
-            await self.db.authenticate(self.admin_user, self.admin_pass)
-
-    async def _ensure_connected(self):
-        if self.conn is None:
-            await self._authenticate()
+        if _conn is None:
+            _initialize(**kwargs)
 
     @property
     def db(self) -> motor.core.Database:
@@ -50,8 +47,7 @@ class Mongo(BaseDriver):
         :return:
             PyMongo Database object.
         """
-        db_name = "RED_{}".format(self.instance_name)
-        return self.conn[db_name]
+        return _conn.get_database()
 
     def get_collection(self) -> motor.core.Collection:
         """
@@ -71,9 +67,7 @@ class Mongo(BaseDriver):
         uuid, identifiers = identifiers[0], identifiers[1:]
         return uuid, identifiers
 
-    async def get(self, *identifiers: Tuple[str]):
-        await self._ensure_connected()
-
+    async def get(self, *identifiers: str):
         mongo_collection = self.get_collection()
 
         dot_identifiers = '.'.join(identifiers)
@@ -92,8 +86,6 @@ class Mongo(BaseDriver):
         return partial
 
     async def set(self, *identifiers: str, value=None):
-        await self._ensure_connected()
-
         dot_identifiers = '.'.join(identifiers)
 
         mongo_collection = self.get_collection()
@@ -104,6 +96,15 @@ class Mongo(BaseDriver):
             upsert=True
         )
 
+    async def clear(self, *identifiers: str):
+        dot_identifiers = '.'.join(identifiers)
+        mongo_collection = self.get_collection()
+
+        await mongo_collection.update_one(
+            {'_id': self.unique_cog_identifier},
+            update={"$unset": {dot_identifiers: 1}}
+        )
+
 
 def get_config_details():
     host = input("Enter host address: ")
@@ -112,6 +113,8 @@ def get_config_details():
     admin_uname = input("Enter login username: ")
     admin_password = input("Enter login password: ")
 
+    db_name = input("Enter mongodb database name: ")
+
     if admin_uname == "":
         admin_uname = admin_password = None
 
@@ -119,6 +122,7 @@ def get_config_details():
         'HOST': host,
         'PORT': port,
         'USERNAME': admin_uname,
-        'PASSWORD': admin_password
+        'PASSWORD': admin_password,
+        'DB_NAME': db_name
     }
     return ret

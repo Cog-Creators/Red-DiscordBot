@@ -1,0 +1,66 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
+"PO-Revision-Date: 2018-02-25 21:34-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Swedish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: sv-SE\n"
+"X-Crowdin-File: /cogs/filter/locales/messages.pot\n"
+"Language: sv_SE\n"
+
+#: ../filter.py:62
+msgid "Filtered in this server:"
+msgstr "Filter i denna server:"
+
+#: ../filter.py:67
+msgid "I can't send direct messages to you."
+msgstr "Jag kan inte skicka direkt meddelanden till dig."
+
+#: ../filter.py:96
+msgid "Words added to filter."
+msgstr "Lagt till ord i filtret."
+
+#: ../filter.py:98
+msgid "Words already in the filter."
+msgstr "Orden finns redan i filtret."
+
+#: ../filter.py:127
+msgid "Words removed from filter."
+msgstr "Ord borttaget ur filtret."
+
+#: ../filter.py:129
+msgid "Those words weren't in the filter."
+msgstr "Dessa är var inte i filtret."
+
+#: ../filter.py:142
+msgid "Names and nicknames will no longer be checked against the filter"
+msgstr "Namn och smeknamn kommer ej längre att kontrolleras mot filtret"
+
+#: ../filter.py:147
+msgid "Names and nicknames will now be checked against the filter"
+msgstr "Namn och smeknamn kommer från och med nu att kontrolleras mot filtret"
+
+#: ../filter.py:160
+msgid "The name to use on filtered names has been set"
+msgstr "Namnet som används för filtrerade namn har nu angetts"
+
+#: ../filter.py:171
+msgid "Count and timeframe either both need to be 0 or both need to be greater than 0!"
+msgstr "Räknare och tidsram måste båda vara satta till 0 eller så måste båda vara höre än 0!"
+
+#: ../filter.py:179
+msgid "Autoban disabled."
+msgstr "Autoban inaktiv."
+
+#: ../filter.py:183
+msgid "Count and time have been set."
+msgstr "Räknare och tid har ställts in."
+

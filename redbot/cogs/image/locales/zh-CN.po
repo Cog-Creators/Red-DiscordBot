@@ -1,0 +1,46 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
+"PO-Revision-Date: 2018-02-25 21:34-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Chinese Simplified\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: zh-CN\n"
+"X-Crowdin-File: /cogs/image/locales/messages.pot\n"
+"Language: zh_CN\n"
+
+#: ../image.py:49
+msgid "Your search returned no results"
+msgstr "搜索未返回任何结果。"
+
+#: ../image.py:52
+msgid "Search results...\n"
+msgstr "搜索结果...\n"
+
+#: ../image.py:58 ../image.py:100
+msgid "Something went wrong. Error code is {}"
+msgstr "发生错误。错误代码为 {}"
+
+#: ../image.py:70
+msgid "Only 'new' and 'top' are a valid sort type."
+msgstr "只有 '新的' 和 '顶部' 是合法的排序类型。"
+
+#: ../image.py:98 ../image.py:135 ../image.py:157
+msgid "No results found."
+msgstr "没有找到任何结果。"
+
+#: ../image.py:115
+msgid "Set the imgur client id!"
+msgstr "设置 imgur 客户端 id！"
+
+#: ../image.py:137 ../image.py:159
+msgid "Error contacting the API"
+msgstr "和API联络时出错"
+

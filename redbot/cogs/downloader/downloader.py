@@ -14,7 +14,7 @@ from discord.ext import commands
 
 from redbot.core.bot import Red
 from .checks import install_agreement
-from .converters import RepoName, InstalledCog
+from .converters import InstalledCog
 from .errors import CloningError, ExistingGitRepo
 from .installable import Installable
 from .log import log
@@ -185,6 +185,20 @@ class Downloader:
         elif target.is_file():
             os.remove(str(target))
 
+    @commands.command()
+    @checks.is_owner()
+    async def pipinstall(self, ctx, *deps: str):
+        """
+        Installs a group of dependencies using pip.
+        """
+        repo = Repo("", "", "", Path.cwd(), loop=ctx.bot.loop)
+        success = await repo.install_raw_requirements(deps, self.SHAREDLIB_PATH)
+
+        if success:
+            await ctx.send(_("Libraries installed."))
+        else:
+            await ctx.send(_("Some libraries failed to install. Please check"
+                             " your logs for a complete list."))
 
     @commands.group()
     @checks.is_owner()
@@ -197,7 +211,7 @@ class Downloader:
 
     @repo.command(name="add")
     @install_agreement()
-    async def _repo_add(self, ctx, name: RepoName, repo_url: str, branch: str=None):
+    async def _repo_add(self, ctx, name: str, repo_url: str, branch: str=None):
         """
         Add a new repo to Downloader.
 

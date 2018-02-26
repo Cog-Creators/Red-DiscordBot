@@ -8,6 +8,7 @@ import sys
 from setuptools import find_packages
 
 IS_TRAVIS = 'TRAVIS' in os.environ
+IS_DEPLOYING = 'DEPLOYING' in os.environ
 
 dep_links = ['https://github.com/Rapptz/discord.py/tarball/rewrite#egg=discord.py-1.0']
 if IS_TRAVIS:
@@ -22,7 +23,7 @@ def get_package_list():
 def get_requirements():
     with open('requirements.txt') as f:
         requirements = f.read().splitlines()
-    if IS_TRAVIS:
+    if IS_TRAVIS and not IS_DEPLOYING:
         requirements.remove('git+https://github.com/Rapptz/discord.py.git@rewrite#egg=discord.py[voice]')
     else:
         requirements.append('discord.py>=1.0.0a0')  # Because RTD
