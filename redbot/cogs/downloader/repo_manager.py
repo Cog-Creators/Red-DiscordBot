@@ -554,7 +554,6 @@ class RepoManager:
             New Repo object representing the cloned repository.
 
         """
-        name = self.validate_and_normalize_repo_name(name)
         if self.does_repo_exist(name):
             raise InvalidRepoName(
                 "That repo name you provided already exists."
