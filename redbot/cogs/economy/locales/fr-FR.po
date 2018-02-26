@@ -1,0 +1,212 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
+"PO-Revision-Date: 2018-02-25 21:32-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: French\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: fr\n"
+"X-Crowdin-File: /cogs/economy/locales/messages.pot\n"
+"Language: fr_FR\n"
+
+#: ../economy.py:40
+msgid "JACKPOT! 226! Your bid has been multiplied * 2500!"
+msgstr "JACKPOT ! 226 ! Votre mise a été multipliée par 2500 !"
+
+#: ../economy.py:44
+msgid "4LC! +1000!"
+msgstr "Trèfle à quatre feuilles ! + 1000 !"
+
+#: ../economy.py:48
+msgid "Three cherries! +800!"
+msgstr "Trois cerises ! + 800 !"
+
+#: ../economy.py:52
+msgid "2 6! Your bid has been multiplied * 4!"
+msgstr "26 ! Votre mise a été multipliée par 4 !"
+
+#: ../economy.py:56
+msgid "Two cherries! Your bid has been multiplied * 3!"
+msgstr "Deux cerises ! Votre mise a été multipliée par 3 !"
+
+#: ../economy.py:60
+msgid "Three symbols! +500!"
+msgstr "Trois symboles ! + 500 !"
+
+#: ../economy.py:64
+msgid "Two consecutive symbols! Your bid has been multiplied * 2!"
+msgstr "Deux symboles consécutifs ! Votre mise a été multipliée par 2 !"
+
+#: ../economy.py:68
+msgid "Slot machine payouts:\n"
+"{two.value} {two.value} {six.value} Bet * 2500\n"
+"{flc.value} {flc.value} {flc.value} +1000\n"
+"{cherries.value} {cherries.value} {cherries.value} +800\n"
+"{two.value} {six.value} Bet * 4\n"
+"{cherries.value} {cherries.value} Bet * 3\n\n"
+"Three symbols: +500\n"
+"Two symbols: Bet * 2"
+msgstr "Gains de la machine à sous :\n"
+"{two.value} {two.value} {six.value} Mise x 2500\n"
+"{flc.value} {flc.value} {flc.value} + 1000\n"
+"{cherries.value} {cherries.value} {cherries.value} + 800\n"
+"{two.value} {six.value} Mise x 4\n"
+"{cherries.value} {cherries.value} Mise x 3\n\n"
+"Trois symboles : + 500\n"
+"Deux symboles : Mise x 2"
+
+#: ../economy.py:157
+msgid "{}'s balance is {} {}"
+msgstr "Le solde de {} est {} {}"
+
+#: ../economy.py:171
+msgid "{} transferred {} {} to {}"
+msgstr "{} transférés {} {} à {}"
+
+#: ../economy.py:191
+msgid "{} added {} {} to {}'s account."
+msgstr "{} ajoutés {} (} au compte de {}."
+
+#: ../economy.py:196
+msgid "{} removed {} {} from {}'s account."
+msgstr "{} retirés {} {} du compte de {}."
+
+#: ../economy.py:201
+msgid "{} set {}'s account to {} {}."
+msgstr "{} a réglé le compte de {} à {} {}."
+
+#: ../economy.py:212
+msgid "This will delete all bank accounts for {}.\n"
+"If you're sure, type `{}bank reset yes`"
+msgstr "Ceci va supprimer tous les comptes de banque de {}.\n"
+"Si vous en êtes certain, tapez `{}bank reset yes`"
+
+#: ../economy.py:229
+msgid "All bank accounts of this guild have been deleted."
+msgstr "Tous les comptes de banque de ce serveur ont été supprimés."
+
+#: ../economy.py:248 ../economy.py:268
+msgid "{} Here, take some {}. Enjoy! (+{} {}!)"
+msgstr "{} Tenez, prenez quelques {}. Profitez-en ! (+{} {} !)"
+
+#: ../economy.py:258 ../economy.py:276
+msgid "{} Too soon. For your next payday you have to wait {}."
+msgstr "{} Trop tôt. Pour le prochain payday, vous devez attendre {}."
+
+#: ../economy.py:313
+msgid "There are no accounts in the bank."
+msgstr "Il n'y a pas de comptes dans cette banque."
+
+#: ../economy.py:339
+msgid "You're on cooldown, try again in a bit."
+msgstr "Vous devez attendre, réessayez dans un moment."
+
+#: ../economy.py:342
+msgid "That's an invalid bid amount, sorry :/"
+msgstr "C'est un montant invalide pour une mise, désolé :/"
+
+#: ../economy.py:345
+msgid "You ain't got enough money, friend."
+msgstr "Vous n'avez pas assez d'argent, l'ami."
+
+#: ../economy.py:391
+msgid "{}\n"
+"{} {}\n\n"
+"Your bid: {}\n"
+"{} → {}!"
+msgstr "{}\n"
+"{} {}\n\n"
+"Votre mise : {}\n"
+"{} → {} !"
+
+#: ../economy.py:398
+msgid "{}\n"
+"{} Nothing!\n"
+"Your bid: {}\n"
+"{} → {}!"
+msgstr "{}\n"
+"{} Rien !\n"
+"Votre mise : {}\n"
+"{} → {} !"
+
+#: ../economy.py:423
+msgid "Minimum slot bid: {}\n"
+"Maximum slot bid: {}\n"
+"Slot cooldown: {}\n"
+"Payday amount: {}\n"
+"Payday cooldown: {}\n"
+"Amount given at account registration: {}"
+msgstr "Offre minimum requise : {}\n"
+"Offre maximum : {}\n"
+"Délai entre les paris : {}\n"
+"Montant du payday : {}\n"
+"Délai entre les payday : {}\n"
+"Somme donnée à la création d'un compte : {}"
+
+#: ../economy.py:433
+msgid "Current Economy settings:"
+msgstr "Réglages actuels du cog Economy :"
+
+#: ../economy.py:441
+msgid "Invalid min bid amount."
+msgstr "Le montant minimum de la mise est invalide."
+
+#: ../economy.py:449
+msgid "Minimum bid is now {} {}."
+msgstr "Le montant minimum pour un pari est désormais de {} {}."
+
+#: ../economy.py:456
+msgid "Invalid slotmax bid amount. Must be greater than slotmin."
+msgstr "Montant maximum de mise invalide. Il doit être plus grand que le montant minimum."
+
+#: ../economy.py:465
+msgid "Maximum bid is now {} {}."
+msgstr "Le montant maximum pour un pari est désormais de {} {}."
+
+#: ../economy.py:475
+msgid "Cooldown is now {} seconds."
+msgstr "Le temps d'attente est maintenant de {} secondes."
+
+#: ../economy.py:485
+msgid "Value modified. At least {} seconds must pass between each payday."
+msgstr "La valeur a été modifiée. Vous devez maintenant attendre au moins {} secondes entre chaque payday."
+
+#: ../economy.py:494
+msgid "Har har so funny."
+msgstr "Ha ha trop drôle."
+
+#: ../economy.py:500
+msgid "Every payday will now give {} {}."
+msgstr "Chaque jour de paie va désormais rapporter {} {}."
+
+#: ../economy.py:511
+msgid "Registering an account will now give {} {}."
+msgstr "Créer un compte va désormais donner {} {}."
+
+#: ../economy.py:517
+msgid "weeks"
+msgstr "semaines"
+
+#: ../economy.py:518
+msgid "days"
+msgstr "jours"
+
+#: ../economy.py:519
+msgid "hours"
+msgstr "heures"
+
+#: ../economy.py:520
+msgid "minutes"
+msgstr "minutes"
+
+#: ../economy.py:521
+msgid "seconds"
+msgstr "secondes"
+

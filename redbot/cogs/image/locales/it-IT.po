@@ -1,0 +1,46 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
+"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Italian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: it\n"
+"X-Crowdin-File: /cogs/image/locales/messages.pot\n"
+"Language: it_IT\n"
+
+#: ../image.py:49
+msgid "Your search returned no results"
+msgstr "La tua ricerca ha prodotto alcun risultato"
+
+#: ../image.py:52
+msgid "Search results...\n"
+msgstr "Risultati della ricerca...\n"
+
+#: ../image.py:58 ../image.py:100
+msgid "Something went wrong. Error code is {}"
+msgstr "Qualcosa è andato storto. Codice di errore è {}"
+
+#: ../image.py:70
+msgid "Only 'new' and 'top' are a valid sort type."
+msgstr "Un tipo di ordinamento valido solo 'new' e 'top'."
+
+#: ../image.py:98 ../image.py:135 ../image.py:157
+msgid "No results found."
+msgstr "Nessun risultato trovato."
+
+#: ../image.py:115
+msgid "Set the imgur client id!"
+msgstr "Impostare l'id del client imgur!"
+
+#: ../image.py:137 ../image.py:159
+msgid "Error contacting the API"
+msgstr "Errore contattare l'API"
+

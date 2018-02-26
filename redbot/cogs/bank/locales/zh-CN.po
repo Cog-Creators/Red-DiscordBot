@@ -1,0 +1,38 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
+"PO-Revision-Date: 2018-02-25 21:34-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Chinese Simplified\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: zh-CN\n"
+"X-Crowdin-File: /cogs/bank/locales/messages.pot\n"
+"Language: zh_CN\n"
+
+#: ../bank.py:68
+msgid "global"
+msgstr "全局"
+
+#: ../bank.py:68
+msgid "per-guild"
+msgstr "每行会"
+
+#: ../bank.py:70
+msgid "The bank is now {}."
+msgstr "银行现在 {}."
+
+#: ../bank.py:77
+msgid "Bank's name has been set to {}"
+msgstr "银行名称已设置为 {}"
+
+#: ../bank.py:84
+msgid "Currency name has been set to {}"
+msgstr "货币名称已被设置为 {}"
+

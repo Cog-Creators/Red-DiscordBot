@@ -1,0 +1,94 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-19 03:59+UTC\n"
+"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Russian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=4; plural=((n%10==1 && n%100!=11) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 11 && n%100 <= 14)) ? 2 : 3));\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: ru\n"
+"X-Crowdin-File: /cogs/downloader/locales/messages.pot\n"
+"Language: ru_RU\n"
+
+#: ../downloader.py:215
+msgid "That git repo has already been added under another name."
+msgstr "Этот репозиторий уже был добавлен под другим именем."
+
+#: ../downloader.py:217 ../downloader.py:218
+msgid "Something went wrong during the cloning process."
+msgstr "Что-то пошло не так во время клонирования."
+
+#: ../downloader.py:220
+msgid "Repo `{}` successfully added."
+msgstr "Репозиторий `{}` успешно добавлен."
+
+#: ../downloader.py:229
+msgid "The repo `{}` has been deleted successfully."
+msgstr "Репозиторий `{}` был удален."
+
+#: ../downloader.py:237
+msgid "Installed Repos:\n"
+msgstr "Установленные репозитории:\n"
+
+#: ../downloader.py:258
+msgid "Error, there is no cog by the name of `{}` in the `{}` repo."
+msgstr "Ошибка, кога `{}` не существует в репозитории `{}`."
+
+#: ../downloader.py:263
+msgid "Failed to install the required libraries for `{}`: `{}`"
+msgstr "Не удалось установить необходимые библиотеки для `{}`: `{}`"
+
+#: ../downloader.py:273
+msgid "`{}` cog successfully installed."
+msgstr "ког `{}` успешно установлен."
+
+#: ../downloader.py:289
+msgid "`{}` was successfully removed."
+msgstr "ког `{}` успешно удален."
+
+#: ../downloader.py:291
+msgid "That cog was installed but can no longer be located. You may need to remove it's files manually if it is still usable."
+msgstr "Этот ког был установлен, но мы не можем его найти. Возможно, вам придется вручную удалить его файлы, если он все еще работает."
+
+#: ../downloader.py:323
+msgid "Cog update completed successfully."
+msgstr "Обновление кога прошло успешно."
+
+#: ../downloader.py:331
+msgid "Available Cogs:\n"
+msgstr "Доступные Коги:\n"
+
+#: ../downloader.py:343
+msgid "There is no cog `{}` in the repo `{}`"
+msgstr "Кога `{}` не существует в репозитории `{}`"
+
+#: ../downloader.py:348
+msgid "Information on {}:\n"
+"{}"
+msgstr "Информация о {}:\n"
+"{}"
+
+#: ../downloader.py:389
+msgid "Missing from info.json"
+msgstr "Нет информации в info.json"
+
+#: ../downloader.py:398
+msgid "Command: {}\n"
+"Made by: {}\n"
+"Repo: {}\n"
+"Cog name: {}"
+msgstr "Команда: {}\n"
+"Создана: {}\n"
+"Репозиторий: {}\n"
+"Название кога: {}"
+
+#: ../downloader.py:430
+msgid "That command doesn't seem to exist."
+msgstr "Такой команды не существует."
+

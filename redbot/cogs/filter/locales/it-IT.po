@@ -1,0 +1,66 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
+"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Italian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: it\n"
+"X-Crowdin-File: /cogs/filter/locales/messages.pot\n"
+"Language: it_IT\n"
+
+#: ../filter.py:62
+msgid "Filtered in this server:"
+msgstr "Filtrato in questo server:"
+
+#: ../filter.py:67
+msgid "I can't send direct messages to you."
+msgstr "Io non riesco a inviare messaggi diretti a voi."
+
+#: ../filter.py:96
+msgid "Words added to filter."
+msgstr "Parole aggiunte al filtro."
+
+#: ../filter.py:98
+msgid "Words already in the filter."
+msgstr "Parole già nel filtro."
+
+#: ../filter.py:127
+msgid "Words removed from filter."
+msgstr "Parole rimossi dal filtro."
+
+#: ../filter.py:129
+msgid "Those words weren't in the filter."
+msgstr "Quelle parole non erano nel filtro."
+
+#: ../filter.py:142
+msgid "Names and nicknames will no longer be checked against the filter"
+msgstr "Nomi e soprannomi non saranno non più controllati rispetto al filtro"
+
+#: ../filter.py:147
+msgid "Names and nicknames will now be checked against the filter"
+msgstr "Nomi e soprannomi saranno ora controllati contro il filtro"
+
+#: ../filter.py:160
+msgid "The name to use on filtered names has been set"
+msgstr "Il nome da utilizzare sui nomi filtrati è stato impostato"
+
+#: ../filter.py:171
+msgid "Count and timeframe either both need to be 0 or both need to be greater than 0!"
+msgstr "Conteggio e timeframe entrambe devono essere 0 o entrambe devono essere maggiore di 0!"
+
+#: ../filter.py:179
+msgid "Autoban disabled."
+msgstr "Autoban disabilitato."
+
+#: ../filter.py:183
+msgid "Count and time have been set."
+msgstr "Conteggio e tempo sono state impostate."
+

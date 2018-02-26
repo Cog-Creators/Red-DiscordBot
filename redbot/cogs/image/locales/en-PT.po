@@ -1,0 +1,46 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
+"PO-Revision-Date: 2018-02-25 21:34-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Pirate English\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: en-PT\n"
+"X-Crowdin-File: /cogs/image/locales/messages.pot\n"
+"Language: en_PT\n"
+
+#: ../image.py:49
+msgid "Your search returned no results"
+msgstr "Thee search teams came back with no loot!"
+
+#: ../image.py:52
+msgid "Search results...\n"
+msgstr "Search results...\n"
+
+#: ../image.py:58 ../image.py:100
+msgid "Something went wrong. Error code is {}"
+msgstr "Yarr, we're sinking! Code {}! Code{}! Abandon ship!"
+
+#: ../image.py:70
+msgid "Only 'new' and 'top' are a valid sort type."
+msgstr "Yarrr, Only 'new' and 'top' arrr a valid sort type."
+
+#: ../image.py:98 ../image.py:135 ../image.py:157
+msgid "No results found."
+msgstr "Nothing was found, capt'n."
+
+#: ../image.py:115
+msgid "Set the imgur client id!"
+msgstr "Yarr, you must set thee Imgur client Id!"
+
+#: ../image.py:137 ../image.py:159
+msgid "Error contacting the API"
+msgstr "Error contacting the API, capt'n."
+
