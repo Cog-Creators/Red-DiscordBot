@@ -1,0 +1,46 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
+"PO-Revision-Date: 2018-02-25 21:32-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: French\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: fr\n"
+"X-Crowdin-File: /cogs/image/locales/messages.pot\n"
+"Language: fr_FR\n"
+
+#: ../image.py:49
+msgid "Your search returned no results"
+msgstr "Votre recherche n'a donné aucun résultat"
+
+#: ../image.py:52
+msgid "Search results...\n"
+msgstr "Résultats de la recherche...\n"
+
+#: ../image.py:58 ../image.py:100
+msgid "Something went wrong. Error code is {}"
+msgstr "Quelque chose s'est mal passé. Code d'erreur : {}"
+
+#: ../image.py:70
+msgid "Only 'new' and 'top' are a valid sort type."
+msgstr "Seulement 'new' et 'top' sont des types de tri valables."
+
+#: ../image.py:98 ../image.py:135 ../image.py:157
+msgid "No results found."
+msgstr "Aucun résultat trouvé."
+
+#: ../image.py:115
+msgid "Set the imgur client id!"
+msgstr "Réglez l'ID Imgur !"
+
+#: ../image.py:137 ../image.py:159
+msgid "Error contacting the API"
+msgstr "Erreur lors du contact avec l'API"
+

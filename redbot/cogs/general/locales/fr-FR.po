@@ -1,0 +1,240 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
+"PO-Revision-Date: 2018-02-25 21:32-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: French\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: fr\n"
+"X-Crowdin-File: /cogs/general/locales/messages.pot\n"
+"Language: fr_FR\n"
+
+#: ../general.py:42
+msgid "As I see it, yes"
+msgstr "Selon moi, oui"
+
+#: ../general.py:42
+msgid "It is certain"
+msgstr "C'est certain"
+
+#: ../general.py:42
+msgid "It is decidedly so"
+msgstr "Absolument"
+
+#: ../general.py:43
+msgid "Most likely"
+msgstr "Probablement"
+
+#: ../general.py:43
+msgid "Outlook good"
+msgstr "Ça semble correct"
+
+#: ../general.py:43
+msgid "Signs point to yes"
+msgstr "Tout semble l'indiquer"
+
+#: ../general.py:44
+msgid "Without a doubt"
+msgstr "Sans aucun doute"
+
+#: ../general.py:44
+msgid "Yes"
+msgstr "Oui"
+
+#: ../general.py:44
+msgid "Yes – definitely"
+msgstr "Oui, définitivement"
+
+#: ../general.py:44
+msgid "You may rely on it"
+msgstr "Tu peux compter dessus"
+
+#: ../general.py:45
+msgid "Ask again later"
+msgstr "Demandez plus tard"
+
+#: ../general.py:45
+msgid "Reply hazy, try again"
+msgstr "Réponse floue, essayez encore"
+
+#: ../general.py:46
+msgid "Better not tell you now"
+msgstr "C'est trop tôt pour le dire"
+
+#: ../general.py:46
+msgid "Cannot predict now"
+msgstr "Je ne peux pas le prédire pour le moment"
+
+#: ../general.py:47
+msgid "Concentrate and ask again"
+msgstr "Concentrez vous et posez la question à nouveau"
+
+#: ../general.py:47
+msgid "Don't count on it"
+msgstr "Ne compte pas là-dessus"
+
+#: ../general.py:47
+msgid "My reply is no"
+msgstr "Ma réponse est non"
+
+#: ../general.py:48
+msgid "My sources say no"
+msgstr "Mes sources me disent non"
+
+#: ../general.py:48
+msgid "Outlook not so good"
+msgstr "Ça s'annonce plutôt mal"
+
+#: ../general.py:48
+msgid "Very doubtful"
+msgstr "J'en doute fort"
+
+#: ../general.py:64
+msgid "Not enough choices to pick from."
+msgstr "Trop peu de possibilités pour faire un choix."
+
+#: ../general.py:78
+msgid "{} :game_die: {} :game_die:"
+msgstr "{} :game_die: {} :game_die:"
+
+#: ../general.py:81
+msgid "{} Maybe higher than 1? ;P"
+msgstr "{} Peut-être supérieur à 1 ? ;P"
+
+#: ../general.py:93
+msgid "Nice try. You think this is funny?How about *this* instead:\n\n"
+msgstr "Bien essayé. Tu penses que c'est drôle ? Que penses-tu de *ça* à la place :\n\n"
+
+#: ../general.py:106
+msgid "*flips a coin and... "
+msgstr "*lance une pièce et... "
+
+#: ../general.py:106
+msgid "HEADS!*"
+msgstr "PILE !*"
+
+#: ../general.py:106
+msgid "TAILS!*"
+msgstr "FACE !*"
+
+#: ../general.py:130
+msgid "{} You win {}!"
+msgstr "{} Vous avez gagné {} !"
+
+#: ../general.py:134
+msgid "{} You lose {}!"
+msgstr "{} Vous avez perdu {} !"
+
+#: ../general.py:138
+msgid "{} We're square {}!"
+msgstr "{} On est égalité {} !"
+
+#: ../general.py:151
+msgid "That doesn't look like a question."
+msgstr "Ça ne ressemble pas à une question."
+
+#: ../general.py:159
+msgid " Stopwatch started!"
+msgstr " Chronomètre démarré !"
+
+#: ../general.py:163
+msgid " Stopwatch stopped! Time: **"
+msgstr " Chronomètre arrêté ! Temps : **"
+
+#: ../general.py:216 ../general.py:217
+msgid "{}\n"
+"({} days ago)"
+msgstr "{}\n"
+"(il y a {} jours)"
+
+#: ../general.py:219
+msgid "Chilling in {} status"
+msgstr "Statut : {}"
+
+#: ../general.py:223
+msgid "Playing {}"
+msgstr "Joue à {}"
+
+#: ../general.py:225
+msgid "Streaming [{}]({})"
+msgstr "[{}]({}) en direct"
+
+#: ../general.py:227
+msgid "Listening to {}"
+msgstr "Écoute {}"
+
+#: ../general.py:229
+msgid "Watching {}"
+msgstr "Regarde {}"
+
+#: ../general.py:234
+msgid "None"
+msgstr "Rien"
+
+#: ../general.py:237
+msgid "Joined Discord on"
+msgstr "A rejoint Discord le"
+
+#: ../general.py:238
+msgid "Joined this guild on"
+msgstr "A rejoint ce serveur le"
+
+#: ../general.py:239 ../general.py:286
+msgid "Roles"
+msgstr "Rôles"
+
+#: ../general.py:240
+msgid "Member #{} | User ID: {}"
+msgstr "Membre #{} | ID utilisateur : {}"
+
+#: ../general.py:257 ../general.py:299
+msgid "I need the `Embed links` permission to send this."
+msgstr "J'ai besoin de la permission `Intégrer des liens` pour envoyer ceci."
+
+#: ../general.py:272
+msgid "Since {}. That's over {} days ago!"
+msgstr "Depuis {}. Ça fait {} jours !"
+
+#: ../general.py:282
+msgid "Region"
+msgstr "Région"
+
+#: ../general.py:283
+msgid "Users"
+msgstr "Utilisateurs"
+
+#: ../general.py:284
+msgid "Text Channels"
+msgstr "Salons textuels"
+
+#: ../general.py:285
+msgid "Voice Channels"
+msgstr "Salons vocaux"
+
+#: ../general.py:287
+msgid "Owner"
+msgstr "Possesseur"
+
+#: ../general.py:288
+msgid "Guild ID: "
+msgstr "ID du serveur : "
+
+#: ../general.py:343
+msgid "Your search terms gave no results."
+msgstr "Votre recherche n'a pas donné de résultats."
+
+#: ../general.py:345
+msgid "There is no definition #{}"
+msgstr "Il n'y a pas de définition #{}"
+
+#: ../general.py:347
+msgid "Error."
+msgstr "Erreur."
+

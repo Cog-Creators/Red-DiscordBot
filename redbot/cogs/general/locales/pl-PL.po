@@ -1,0 +1,240 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
+"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Polish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=4; plural=((n == 1) ? 0 : ((n%10 >= 2 && n%10 <=4 && (n%100 < 12 || n%100 > 14)) ? 1 : ((n%10 == 0 || n%10 == 1 || (n%10 >= 5 && n%10 <=9)) || (n%100 >= 12 && n%100 <= 14)) ? 2 : 3));\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: pl\n"
+"X-Crowdin-File: /cogs/general/locales/messages.pot\n"
+"Language: pl_PL\n"
+
+#: ../general.py:42
+msgid "As I see it, yes"
+msgstr "Moim zdaniem tak"
+
+#: ../general.py:42
+msgid "It is certain"
+msgstr "To pewne"
+
+#: ../general.py:42
+msgid "It is decidedly so"
+msgstr "Zdecydowanie tak jest"
+
+#: ../general.py:43
+msgid "Most likely"
+msgstr "Prawdopodobnie"
+
+#: ../general.py:43
+msgid "Outlook good"
+msgstr "Wygląda dobrze"
+
+#: ../general.py:43
+msgid "Signs point to yes"
+msgstr "Wszystko wskazuje, że tak"
+
+#: ../general.py:44
+msgid "Without a doubt"
+msgstr "Bez wątpienia"
+
+#: ../general.py:44
+msgid "Yes"
+msgstr "Tak"
+
+#: ../general.py:44
+msgid "Yes – definitely"
+msgstr "Tak - definitywnie"
+
+#: ../general.py:44
+msgid "You may rely on it"
+msgstr "Możesz na to liczyć"
+
+#: ../general.py:45
+msgid "Ask again later"
+msgstr "Spytaj ponownie później"
+
+#: ../general.py:45
+msgid "Reply hazy, try again"
+msgstr "Odpowiedź niejasna, spróbuj ponownie"
+
+#: ../general.py:46
+msgid "Better not tell you now"
+msgstr "Lepiej teraz nie mówić"
+
+#: ../general.py:46
+msgid "Cannot predict now"
+msgstr "Nie można teraz przewidzieć"
+
+#: ../general.py:47
+msgid "Concentrate and ask again"
+msgstr "Skoncentruj się i spytaj ponownie"
+
+#: ../general.py:47
+msgid "Don't count on it"
+msgstr "Nie licz na to"
+
+#: ../general.py:47
+msgid "My reply is no"
+msgstr "Moja odpowiedź brzmi nie"
+
+#: ../general.py:48
+msgid "My sources say no"
+msgstr "Moje źródła mówią, że nie"
+
+#: ../general.py:48
+msgid "Outlook not so good"
+msgstr "Nie wygląda to za dobrze"
+
+#: ../general.py:48
+msgid "Very doubtful"
+msgstr "Bardzo wątpliwe"
+
+#: ../general.py:64
+msgid "Not enough choices to pick from."
+msgstr "Za mało opcji, które można wybrać."
+
+#: ../general.py:78
+msgid "{} :game_die: {} :game_die:"
+msgstr "{} :game_die: {} :game_die:"
+
+#: ../general.py:81
+msgid "{} Maybe higher than 1? ;P"
+msgstr "{} Może więcej niż 1? ;P"
+
+#: ../general.py:93
+msgid "Nice try. You think this is funny?How about *this* instead:\n\n"
+msgstr "Niezła próba. Myślisz, że jesteś śmieszny? Może zamiast tego, to:\n\n"
+
+#: ../general.py:106
+msgid "*flips a coin and... "
+msgstr "*rzuca monetą i... "
+
+#: ../general.py:106
+msgid "HEADS!*"
+msgstr "ORZEŁ!*"
+
+#: ../general.py:106
+msgid "TAILS!*"
+msgstr "RESZKA!*"
+
+#: ../general.py:130
+msgid "{} You win {}!"
+msgstr "{} Wygrałeś {}!"
+
+#: ../general.py:134
+msgid "{} You lose {}!"
+msgstr "{} Przegrałeś {}!"
+
+#: ../general.py:138
+msgid "{} We're square {}!"
+msgstr "{} Jesteśmy rozliczeni {}!"
+
+#: ../general.py:151
+msgid "That doesn't look like a question."
+msgstr "To nie wygląda na pytanie."
+
+#: ../general.py:159
+msgid " Stopwatch started!"
+msgstr " Uruchomiono stoper!"
+
+#: ../general.py:163
+msgid " Stopwatch stopped! Time: **"
+msgstr " Stoper zatrzymano! Czas: **"
+
+#: ../general.py:216 ../general.py:217
+msgid "{}\n"
+"({} days ago)"
+msgstr "{}\n"
+"({} dni temu)"
+
+#: ../general.py:219
+msgid "Chilling in {} status"
+msgstr "Relaksuję się w statusie {}"
+
+#: ../general.py:223
+msgid "Playing {}"
+msgstr "Odtwarzanie {}"
+
+#: ../general.py:225
+msgid "Streaming [{}]({})"
+msgstr "Streamowanie [{}]({})"
+
+#: ../general.py:227
+msgid "Listening to {}"
+msgstr "Słuchasz {}"
+
+#: ../general.py:229
+msgid "Watching {}"
+msgstr "Oglądasz {}"
+
+#: ../general.py:234
+msgid "None"
+msgstr "Brak"
+
+#: ../general.py:237
+msgid "Joined Discord on"
+msgstr "Dołączył do Discorda"
+
+#: ../general.py:238
+msgid "Joined this guild on"
+msgstr "Dołączył do tej gildii"
+
+#: ../general.py:239 ../general.py:286
+msgid "Roles"
+msgstr "Role"
+
+#: ../general.py:240
+msgid "Member #{} | User ID: {}"
+msgstr "Członek #{} | ID użytkownika: {}"
+
+#: ../general.py:257 ../general.py:299
+msgid "I need the `Embed links` permission to send this."
+msgstr "Potrzebuję uprawnienia `Zamieszczanie linków\" by to wysłać."
+
+#: ../general.py:272
+msgid "Since {}. That's over {} days ago!"
+msgstr "Od {}. To ponad {} dni temu!"
+
+#: ../general.py:282
+msgid "Region"
+msgstr "Region"
+
+#: ../general.py:283
+msgid "Users"
+msgstr "Użytkownicy"
+
+#: ../general.py:284
+msgid "Text Channels"
+msgstr "Kanały Tekstowe"
+
+#: ../general.py:285
+msgid "Voice Channels"
+msgstr "Kanały Głosowe"
+
+#: ../general.py:287
+msgid "Owner"
+msgstr "Właściciel"
+
+#: ../general.py:288
+msgid "Guild ID: "
+msgstr "ID gildii: "
+
+#: ../general.py:343
+msgid "Your search terms gave no results."
+msgstr "Twoje słowa kluczowe nie zwróciły żadnych wyników."
+
+#: ../general.py:345
+msgid "There is no definition #{}"
+msgstr "Definicja #{} nie istnieje"
+
+#: ../general.py:347
+msgid "Error."
+msgstr "Błąd."
+
