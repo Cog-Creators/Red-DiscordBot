@@ -1,0 +1,94 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-19 03:59+UTC\n"
+"PO-Revision-Date: 2018-02-25 21:34-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Swedish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: sv-SE\n"
+"X-Crowdin-File: /cogs/downloader/locales/messages.pot\n"
+"Language: sv_SE\n"
+
+#: ../downloader.py:215
+msgid "That git repo has already been added under another name."
+msgstr "Denna git repo har redan lagts till med ett annat namn."
+
+#: ../downloader.py:217 ../downloader.py:218
+msgid "Something went wrong during the cloning process."
+msgstr "Något gick fel under kloningsprocessen."
+
+#: ../downloader.py:220
+msgid "Repo `{}` successfully added."
+msgstr "Repo `{}` lades till."
+
+#: ../downloader.py:229
+msgid "The repo `{}` has been deleted successfully."
+msgstr "Repo `{}` har tagits bort utan problem."
+
+#: ../downloader.py:237
+msgid "Installed Repos:\n"
+msgstr "Installerade repos:\n"
+
+#: ../downloader.py:258
+msgid "Error, there is no cog by the name of `{}` in the `{}` repo."
+msgstr "Ett fel har uppstått, det finns ingen cog med namnet `{}` i `{}` repo."
+
+#: ../downloader.py:263
+msgid "Failed to install the required libraries for `{}`: `{}`"
+msgstr "Det uppstod ett fel vid installation av de növändiga biblioteken för `{}`: `{}`"
+
+#: ../downloader.py:273
+msgid "`{}` cog successfully installed."
+msgstr "`{}` cog har installerats."
+
+#: ../downloader.py:289
+msgid "`{}` was successfully removed."
+msgstr "`{}` har tagits bort."
+
+#: ../downloader.py:291
+msgid "That cog was installed but can no longer be located. You may need to remove it's files manually if it is still usable."
+msgstr "Den cogen har installerats men kan ej längre lokaliseras. Du kan behöva ta bort dens filer manuellt om det fortfarande är användbar."
+
+#: ../downloader.py:323
+msgid "Cog update completed successfully."
+msgstr "Cog har uppdaterats."
+
+#: ../downloader.py:331
+msgid "Available Cogs:\n"
+msgstr "Tillgängliga Cogs:\n"
+
+#: ../downloader.py:343
+msgid "There is no cog `{}` in the repo `{}`"
+msgstr "Det finns inte en cog med namnet `{}` i repo `{}`"
+
+#: ../downloader.py:348
+msgid "Information on {}:\n"
+"{}"
+msgstr "Information om {}:\n"
+"{}"
+
+#: ../downloader.py:389
+msgid "Missing from info.json"
+msgstr "Saknar information från info.json"
+
+#: ../downloader.py:398
+msgid "Command: {}\n"
+"Made by: {}\n"
+"Repo: {}\n"
+"Cog name: {}"
+msgstr "Kommando: {}\n"
+"Skapad av: {}\n"
+"Repo: {}\n"
+"Cog namn: {}"
+
+#: ../downloader.py:430
+msgid "That command doesn't seem to exist."
+msgstr "Det kommandot verkar inte finnas."
+

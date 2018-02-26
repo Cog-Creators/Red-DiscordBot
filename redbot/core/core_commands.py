@@ -376,54 +376,48 @@ class Core:
     @_set.command(name="game")
     @checks.is_owner()
     async def _game(self, ctx, *, game: str=None):
-        """Sets Red's playing status
+        """Sets Red's playing status"""
 
-        Can only be run if the bot is in a server."""
-        if len(ctx.bot.guilds) == 0:
-            await ctx.send_help()
-            return
-        status = ctx.bot.guilds[0].me.status
         if game:
             game = discord.Game(name=game)
         else:
             game = None
-        await ctx.bot.change_presence(status=status, game=game)
+        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 \
+            else discord.Status.online
+        for shard in ctx.bot.shards:
+            await ctx.bot.change_presence(status=status, game=game)
         await ctx.send(_("Game set."))
-        
+
     @_set.command(name="listening")
     @checks.is_owner()
     async def _listening(self, ctx, *, listening: str=None):
-        """Sets Red's listening status
+        """Sets Red's listening status"""
 
-        Can only be run if the bot is in a server."""
-        if len(ctx.bot.guilds) == 0:
-            await ctx.send_help()
-            return
-        status = ctx.bot.guilds[0].me.status
+        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 \
+            else discord.Status.online
         if listening:
             listening = discord.Game(name=listening, type=2)
         else:
             listening = None
-        await ctx.bot.change_presence(status=status, game=listening)
+        for shard in ctx.bot.shards:
+            await ctx.bot.change_presence(status=status, game=listening)
         await ctx.send(_("Listening set."))
-        
+
     @_set.command(name="watching")
     @checks.is_owner()
     async def _watching(self, ctx, *, watching: str=None):
-        """Sets Red's watching status
+        """Sets Red's watching status"""
 
-        Can only be run if the bot is in a server."""
-        if len(ctx.bot.guilds) == 0:
-            await ctx.send_help()
-            return
-        status = ctx.bot.guilds[0].me.status
+        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 \
+            else discord.Status.online
         if watching:
             watching = discord.Game(name=watching, type=3)
         else:
             watching = None
-        await ctx.bot.change_presence(status=status, game=watching)
+        for shard in ctx.bot.shards:
+            await ctx.bot.change_presence(status=status, game=watching)
         await ctx.send(_("Watching set."))
-        
+
     @_set.command()
     @checks.is_owner()
     async def status(self, ctx, *, status: str):
@@ -434,8 +428,7 @@ class Core:
             idle
             dnd
             invisible
-
-        Can only be run if the bot is in a server."""
+        """
 
         statuses = {
             "online": discord.Status.online,
@@ -444,18 +437,14 @@ class Core:
             "invisible": discord.Status.invisible
         }
 
-        if len(ctx.bot.guilds) == 0:
-            await ctx.send_help()
-            return
-        game = ctx.bot.guilds[0].me.game
-
+        game = ctx.bot.guilds[0].me.game if len(ctx.bot.guilds) > 0 else None
         try:
             status = statuses[status.lower()]
         except KeyError:
             await ctx.send_help()
         else:
-            await ctx.bot.change_presence(status=status,
-                                          game=game)
+            for shard in ctx.bot.shards:
+                await ctx.bot.change_presence(status=status, game=game)
             await ctx.send(_("Status changed to %s.") % status)
 
     @_set.command()
@@ -464,22 +453,22 @@ class Core:
         """Sets Red's streaming status
         Leaving both streamer and stream_title empty will clear it."""
 
-        if len(ctx.bot.guilds) == 0:
-            await ctx.send_help()
-            return
-        status = ctx.bot.guilds[0].me.status
+        status = ctx.bot.guilds[0].me.status \
+            if len(ctx.bot.guilds) > 0 else None
 
         if stream_title:
             stream_title = stream_title.strip()
             if "twitch.tv/" not in streamer:
                 streamer = "https://www.twitch.tv/" + streamer
             game = discord.Game(type=1, url=streamer, name=stream_title)
-            await ctx.bot.change_presence(game=game, status=status)
+            for shard in ctx.bot.shards:
+                await ctx.bot.change_presence(status=status, game=game)
         elif streamer is not None:
             await ctx.send_help()
             return
         else:
-            await ctx.bot.change_presence(game=None, status=status)
+            for shard in ctx.bot.shards:
+                await ctx.bot.change_presence(game=None, status=status)
         await ctx.send(_("Done."))
 
     @_set.command(name="username", aliases=["name"])

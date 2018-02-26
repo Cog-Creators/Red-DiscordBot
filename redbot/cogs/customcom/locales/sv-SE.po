@@ -1,0 +1,69 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
+"PO-Revision-Date: 2018-02-25 21:34-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Swedish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: sv-SE\n"
+"X-Crowdin-File: /cogs/customcom/locales/messages.pot\n"
+"Language: sv_SE\n"
+
+#: ../customcom.py:44
+msgid "Welcome to the interactive random {} maker!\n"
+"Every message you send will be added as one of the random response to choose from once this {} is triggered. To exit this interactive menu, type `{}`"
+msgstr "Välkommen till den interaktiva slump {} makaren!\n"
+"Varje meddelande du skickar, kommer att läggas till som ett slumpmässigt svar i listan, för när {} utlöses.\n"
+"För att avsluta denna interaktiva meny, skriv `{}`"
+
+#: ../customcom.py:56
+msgid "Add a random response:"
+msgstr "Lägg till ett slumpmässigt svar:"
+
+#: ../customcom.py:119
+msgid "Do you want to create a 'randomized' cc? {}"
+msgstr "Vill du skapa ett 'slumpat' cc? {}"
+
+#: ../customcom.py:126
+msgid "What response do you want?"
+msgstr "Vilket svar vill du ha?"
+
+#: ../customcom.py:205 ../customcom.py:235
+msgid "Custom command successfully added."
+msgstr "Det anpassade kommandot har lagts till."
+
+#: ../customcom.py:207 ../customcom.py:237
+msgid "This command already exists. Use `{}` to edit it."
+msgstr "Detta kommando finns redan. Använd `{}` för att ändra det."
+
+#: ../customcom.py:229
+msgid "That command is already a standard command."
+msgstr "Detta kommando är redan ett standard kommando."
+
+#: ../customcom.py:261
+msgid "Custom command successfully edited."
+msgstr "Det anpassade kommandot har nu ändrats."
+
+#: ../customcom.py:263
+msgid "That command doesn't exist. Use `{}` to add it."
+msgstr "Det kommandot finns inte. Använd `{}`för att lägga till det."
+
+#: ../customcom.py:282
+msgid "Custom command successfully deleted."
+msgstr "Det anpassade kommandot är nu borttaget."
+
+#: ../customcom.py:284
+msgid "That command doesn't exist."
+msgstr "Det kommandot finns inte."
+
+#: ../customcom.py:294
+msgid "There are no custom commands in this guild. Use `{}` to start adding some."
+msgstr "Det finns inga anpassade kommandon i denna guild. Använd `{}`för att börja lägga till några."
+

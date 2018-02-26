@@ -1,0 +1,94 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-19 03:59+UTC\n"
+"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Italian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: it\n"
+"X-Crowdin-File: /cogs/downloader/locales/messages.pot\n"
+"Language: it_IT\n"
+
+#: ../downloader.py:215
+msgid "That git repo has already been added under another name."
+msgstr "Quel repo git è già stato aggiunto sotto un altro nome."
+
+#: ../downloader.py:217 ../downloader.py:218
+msgid "Something went wrong during the cloning process."
+msgstr "Qualcosa è andato storto durante il processo di clonazione."
+
+#: ../downloader.py:220
+msgid "Repo `{}` successfully added."
+msgstr "Repo `{}` aggiunto con successo."
+
+#: ../downloader.py:229
+msgid "The repo `{}` has been deleted successfully."
+msgstr "Il repo `{}` è stato cancellato con successo."
+
+#: ../downloader.py:237
+msgid "Installed Repos:\n"
+msgstr "Installato Repos:\n"
+
+#: ../downloader.py:258
+msgid "Error, there is no cog by the name of `{}` in the `{}` repo."
+msgstr "Errore, non c'è nessun ingranaggio con il nome di `{}` nel repository `{}`."
+
+#: ../downloader.py:263
+msgid "Failed to install the required libraries for `{}`: `{}`"
+msgstr "Impossibile installare le librerie necessarie per `{}`: `{}`"
+
+#: ../downloader.py:273
+msgid "`{}` cog successfully installed."
+msgstr "cog `{}` installato correttamente."
+
+#: ../downloader.py:289
+msgid "`{}` was successfully removed."
+msgstr "`{}` è stato rimosso correttamente."
+
+#: ../downloader.py:291
+msgid "That cog was installed but can no longer be located. You may need to remove it's files manually if it is still usable."
+msgstr "Quel dente è stato installato ma non è più possibile individuare. Potrebbe essere necessario rimuovere manualmente i file di esso se è ancora utilizzabile."
+
+#: ../downloader.py:323
+msgid "Cog update completed successfully."
+msgstr "Cog aggiornamento completato correttamente."
+
+#: ../downloader.py:331
+msgid "Available Cogs:\n"
+msgstr "Cogs disponibili:\n"
+
+#: ../downloader.py:343
+msgid "There is no cog `{}` in the repo `{}`"
+msgstr "Non c'è nessun dente `{}` nel repository `{}`"
+
+#: ../downloader.py:348
+msgid "Information on {}:\n"
+"{}"
+msgstr "Informazioni su {}:\n"
+"{}"
+
+#: ../downloader.py:389
+msgid "Missing from info.json"
+msgstr "Mancante da info.json"
+
+#: ../downloader.py:398
+msgid "Command: {}\n"
+"Made by: {}\n"
+"Repo: {}\n"
+"Cog name: {}"
+msgstr "Comando: {}\n"
+"fatta da: {} \n"
+"Repo: {}\n"
+"nome Cog: {}"
+
+#: ../downloader.py:430
+msgid "That command doesn't seem to exist."
+msgstr "Tale comando non sembra esistere."
+

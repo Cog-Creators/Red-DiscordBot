@@ -645,6 +645,7 @@ class RepoManager:
 
     async def _load_repos(self, set=False) -> MutableMapping[str, Repo]:
         ret = {}
+        self.repos_folder.mkdir(parents=True, exist_ok=True)
         for folder in self.repos_folder.iterdir():
             if not folder.is_dir():
                 continue
