@@ -1,0 +1,285 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-19 03:59+UTC\n"
+"PO-Revision-Date: 2018-02-25 21:34-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Swedish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: sv-SE\n"
+"X-Crowdin-File: /core/locales/messages.pot\n"
+"Language: sv_SE\n"
+
+#: ../cog_manager.py:309
+msgid "Install Path: {}\n\n"
+msgstr "Installationssökväg: {}\n\n"
+
+#: ../cog_manager.py:325
+msgid "That path does not exist or does not point to a valid directory."
+msgstr "Sökvägen finns inte eller pekar inte mot en giltig mapp."
+
+#: ../cog_manager.py:334
+msgid "Path successfully added."
+msgstr "Sökvägen har lagts till."
+
+#: ../cog_manager.py:347
+msgid "That is an invalid path number."
+msgstr "Detta är ett ogiltigt sökvägs nummer."
+
+#: ../cog_manager.py:351
+msgid "Path successfully removed."
+msgstr "Sökvägen är borttagen."
+
+#: ../cog_manager.py:367
+msgid "Invalid 'from' index."
+msgstr "Ogiltigt 'from' index."
+
+#: ../cog_manager.py:373
+msgid "Invalid 'to' index."
+msgstr "Ogiltigt 'to' index."
+
+#: ../cog_manager.py:377
+msgid "Paths reordered."
+msgstr "Sökvägarna omordnade."
+
+#: ../cog_manager.py:395
+msgid "That path does not exist."
+msgstr "Sökvägen finns inte."
+
+#: ../cog_manager.py:399
+msgid "The bot will install new cogs to the `{}` directory."
+msgstr "Boten kommer att installera nya cogar i `{}` mappen."
+
+#: ../core_commands.py:225 ../core_commands.py:266
+msgid "No module by that name was found in any cog path."
+msgstr "Ingen modul med det namnet kunde hittas i någon av cog sökvägarna."
+
+#: ../core_commands.py:240
+msgid "Failed to load package. Check your console or logs for details."
+msgstr "Fel uppstod vid laddningen av paketet. Kolla i konsolen eller i loggarna för detaljer."
+
+#: ../core_commands.py:244 ../core_commands.py:253 ../core_commands.py:285
+#: ../core_commands.py:374 ../core_commands.py:462 ../core_commands.py:476
+msgid "Done."
+msgstr "Klart."
+
+#: ../core_commands.py:255
+msgid "That extension is not loaded."
+msgstr "Den förlängningen är inte laddad."
+
+#: ../core_commands.py:282
+msgid "Failed to reload package. Check your console or logs for details."
+msgstr "Kunde inte läsa om paketet. Kolla i konsolen eller i loggarna för detaljer."
+
+#: ../core_commands.py:295
+msgid "Shutting down... "
+msgstr "Stänger ner... "
+
+#: ../core_commands.py:310
+msgid "Restarting..."
+msgstr "Startar om..."
+
+#: ../core_commands.py:347
+msgid "The admin role for this guild has been set."
+msgstr "Admin rollen för denna guild är nu vald."
+
+#: ../core_commands.py:355
+msgid "The mod role for this guild has been set."
+msgstr "Mod rollen för denna guild är nu vald."
+
+#: ../core_commands.py:368
+msgid "Failed. Remember that you can edit my avatar up to two times a hour. The URL must be a direct link to a JPG / PNG."
+msgstr "Fel uppstod. Kom ihåg att du kan ändra min avatar upp till två gånger per time. URLen måste vara en direkt länk till en JPT / PNG."
+
+#: ../core_commands.py:372
+msgid "JPG / PNG format only."
+msgstr "Endast JPG / PNG format."
+
+#: ../core_commands.py:387
+msgid "Game set."
+msgstr "Spelet ändrat."
+
+#: ../core_commands.py:399
+msgid "Listening set."
+msgstr "Lyssnar på inställt."
+
+#: ../core_commands.py:411
+msgid "Watching set."
+msgstr "Tittar på inställt."
+
+#: ../core_commands.py:440
+msgid "Status changed to %s."
+msgstr "Status ändrar till %s."
+
+#: ../core_commands.py:471
+msgid "Failed to change name. Remember that you can only do it up to 2 times an hour. Use nicknames if you need frequent changes. `{}set nickname`"
+msgstr "Fel uppstod vid ändring av namnet. Kom ihåg att du endast kan göra detta upp till 2 gånger per timme. Använd smeknamn om du behöver ändra ofta. `{}set nickname`"
+
+#: ../core_commands.py:486
+msgid "I lack the permissions to change my own nickname."
+msgstr "Jag saknar behörighet för att ändra mitt egna smeknamn."
+
+#: ../core_commands.py:500 ../core_commands.py:513
+msgid "Prefix set."
+msgstr "Prefix ändrat."
+
+#: ../core_commands.py:509
+msgid "Guild prefixes have been reset."
+msgstr "Guild prefix har rensats."
+
+#: ../core_commands.py:532
+msgid "\n"
+"Verification token:"
+msgstr "\n"
+"Verifikations token:"
+
+#: ../core_commands.py:535
+msgid "Remember:\n"
+msgstr "Kom ihåg:\n"
+
+#: ../core_commands.py:538
+msgid "I have printed a one-time token in the console. Copy and paste it here to confirm you are the owner."
+msgstr "Jag har skrivit ett engångs token i konsolen. Kopiera detta och klistra in det här för att konfirmera att du är ägare."
+
+#: ../core_commands.py:546
+msgid "The set owner request has timed out."
+msgstr "Tidsgränsen för ägarbytesförfrågan har överskridits."
+
+#: ../core_commands.py:552
+msgid "You have been set as owner."
+msgstr "Du är nu satt som ägare."
+
+#: ../core_commands.py:554
+msgid "Invalid token."
+msgstr "Ogiltigt token."
+
+#: ../core_commands.py:566
+msgid "Locale has been set."
+msgstr "Språket har ändrats."
+
+#: ../core_commands.py:580
+msgid "Done. Sentry logging is now enabled."
+msgstr "Klart. Sentry loggning är nu aktiverat."
+
+#: ../core_commands.py:583
+msgid "Done. Sentry logging is now disabled."
+msgstr "Klart. Sentry loggning är nu inaktiverat."
+
+#: ../core_commands.py:593
+msgid "User ID: %s"
+msgstr "User ID: %s"
+
+#: ../core_commands.py:596
+msgid "through DM"
+msgstr "genom DM"
+
+#: ../core_commands.py:598
+msgid "from {}"
+msgstr "från {}"
+
+#: ../core_commands.py:599
+msgid " | Server ID: %s"
+msgstr " | Server ID: %s"
+
+#: ../core_commands.py:608
+msgid "Use `{}dm {} <text>` to reply to this user"
+msgstr "Använd `{}dm {} <text>`för att svara användaren"
+
+#: ../core_commands.py:616
+msgid "Sent by {} {}"
+msgstr "Skickat av {} {}"
+
+#: ../core_commands.py:628
+msgid "I cannot send your message, I'm unable to find my owner... *sigh*"
+msgstr "Jag kan inte skicka ditt meddelande, Jag kan inte hitta min ägare... *suck*"
+
+#: ../core_commands.py:631
+msgid "I'm unable to deliver your message. Sorry."
+msgstr "Jag kan inte leverera ditt meddelande. Förlåt."
+
+#: ../core_commands.py:633
+msgid "Your message has been sent."
+msgstr "Ditt meddelande har sänts."
+
+#: ../core_commands.py:647
+msgid "Invalid ID or user not found. You can only send messages to people I share a server with."
+msgstr "Ogiltigt ID eller användaren kunde inte hittas. Du kan endast skicka meddelanden som jag delar server med."
+
+#: ../core_commands.py:653
+msgid "Owner of %s"
+msgstr "Ägare av %s"
+
+#: ../core_commands.py:657
+msgid "You can reply to this message with %scontact"
+msgstr "Du kan svara på detta meddelande med %scontact"
+
+#: ../core_commands.py:667
+msgid "Sorry, I couldn't deliver your message to %s"
+msgstr "Förlåt, men jag kunde inte leverera till meddelande till %s"
+
+#: ../core_commands.py:670
+msgid "Message delivered to %s"
+msgstr "Meddelandet levererat till %s"
+
+#: ../core_commands.py:690
+msgid "User added to whitelist."
+msgstr "Användaren är nu vitlistad."
+
+#: ../core_commands.py:699
+msgid "Whitelisted Users:"
+msgstr "Vitlistade användare:"
+
+#: ../core_commands.py:719
+msgid "User has been removed from whitelist."
+msgstr "Användaren är nu borttagen från vitlistan."
+
+#: ../core_commands.py:721
+msgid "User was not in the whitelist."
+msgstr "Användaren finns inte i vitlistan."
+
+#: ../core_commands.py:729
+msgid "Whitelist has been cleared."
+msgstr "Vitlistan har rensats."
+
+#: ../core_commands.py:746
+msgid "You cannot blacklist an owner!"
+msgstr "Du kan inte svartlista en ägare!"
+
+#: ../core_commands.py:753
+msgid "User added to blacklist."
+msgstr "Användaren är nu svartlistad."
+
+#: ../core_commands.py:762
+msgid "blacklisted Users:"
+msgstr "svartlistade användare:"
+
+#: ../core_commands.py:782
+msgid "User has been removed from blacklist."
+msgstr "Användaren borttagen från svartlistan."
+
+#: ../core_commands.py:784
+msgid "User was not in the blacklist."
+msgstr "Användaren är inte i svartlistan."
+
+#: ../core_commands.py:792
+msgid "blacklist has been cleared."
+msgstr "svartlistan är nu rensad."
+
+#: ../dev_commands.py:213
+msgid "Already running a REPL session in this channel. Exit it with `quit`."
+msgstr "Kör redan en REPL session i denna kanal, avsluta den med `quit`."
+
+#: ../dev_commands.py:218
+msgid "Enter code to execute or evaluate. `exit()` or `quit` to exit."
+msgstr "Skriv kod som ska köras eller utvärderas. `exit()` eller `quit` för att avsluta."
+
+#: ../dev_commands.py:281
+msgid "Unexpected error: `{}`"
+msgstr "Oväntat fel: `{}`"
+

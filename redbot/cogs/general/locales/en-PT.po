@@ -1,0 +1,240 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
+"PO-Revision-Date: 2018-02-25 21:34-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Pirate English\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: en-PT\n"
+"X-Crowdin-File: /cogs/general/locales/messages.pot\n"
+"Language: en_PT\n"
+
+#: ../general.py:42
+msgid "As I see it, yes"
+msgstr "As I see it, aye"
+
+#: ../general.py:42
+msgid "It is certain"
+msgstr "'tis certain"
+
+#: ../general.py:42
+msgid "It is decidedly so"
+msgstr "'tis decidedly so"
+
+#: ../general.py:43
+msgid "Most likely"
+msgstr "Most likely"
+
+#: ../general.py:43
+msgid "Outlook good"
+msgstr "Outlook good"
+
+#: ../general.py:43
+msgid "Signs point to yes"
+msgstr "Signs point t' aye"
+
+#: ../general.py:44
+msgid "Without a doubt"
+msgstr "Without a doubt"
+
+#: ../general.py:44
+msgid "Yes"
+msgstr "Aye"
+
+#: ../general.py:44
+msgid "Yes – definitely"
+msgstr "Aye - definitely"
+
+#: ../general.py:44
+msgid "You may rely on it"
+msgstr "Ye may rely on it"
+
+#: ../general.py:45
+msgid "Ask again later"
+msgstr "Arrr! Quit wasting my time."
+
+#: ../general.py:45
+msgid "Reply hazy, try again"
+msgstr "Reply hazy, try again"
+
+#: ../general.py:46
+msgid "Better not tell you now"
+msgstr "Better nah tell ye now"
+
+#: ../general.py:46
+msgid "Cannot predict now"
+msgstr "Cannot predict now"
+
+#: ../general.py:47
+msgid "Concentrate and ask again"
+msgstr "Concentrate capt'n, 'n ask again"
+
+#: ../general.py:47
+msgid "Don't count on it"
+msgstr "Don't count on it"
+
+#: ../general.py:47
+msgid "My reply is no"
+msgstr "Arrr! My parrot says no"
+
+#: ../general.py:48
+msgid "My sources say no"
+msgstr "Me sources say no"
+
+#: ../general.py:48
+msgid "Outlook not so good"
+msgstr "Arrr! Sea's not so good"
+
+#: ../general.py:48
+msgid "Very doubtful"
+msgstr "Mighty doubtful, capt'n"
+
+#: ../general.py:64
+msgid "Not enough choices to pick from."
+msgstr "Nah enough choices t' pick from."
+
+#: ../general.py:78
+msgid "{} :game_die: {} :game_die:"
+msgstr "{} :game_die: {} :game_die:"
+
+#: ../general.py:81
+msgid "{} Maybe higher than 1? ;P"
+msgstr "{} Maybe higher than 1, capt'n?"
+
+#: ../general.py:93
+msgid "Nice try. You think this is funny?How about *this* instead:\n\n"
+msgstr "Nice try. Ye reckon 'tis funny?How about *'tis* instead:\n\n"
+
+#: ../general.py:106
+msgid "*flips a coin and... "
+msgstr "*flips a shillin' and... "
+
+#: ../general.py:106
+msgid "HEADS!*"
+msgstr "HEADS!*"
+
+#: ../general.py:106
+msgid "TAILS!*"
+msgstr "TAILS!*"
+
+#: ../general.py:130
+msgid "{} You win {}!"
+msgstr "{} Ye win {}!"
+
+#: ../general.py:134
+msgid "{} You lose {}!"
+msgstr "{} Ye lose {}!"
+
+#: ../general.py:138
+msgid "{} We're square {}!"
+msgstr "{} We be square {}!"
+
+#: ../general.py:151
+msgid "That doesn't look like a question."
+msgstr "'tis not a question!"
+
+#: ../general.py:159
+msgid " Stopwatch started!"
+msgstr " Stopwatch started!"
+
+#: ../general.py:163
+msgid " Stopwatch stopped! Time: **"
+msgstr " Stopwatch stopped! Time: **"
+
+#: ../general.py:216 ../general.py:217
+msgid "{}\n"
+"({} days ago)"
+msgstr "{}\n"
+"({} days ago)"
+
+#: ../general.py:219
+msgid "Chilling in {} status"
+msgstr "Chillin' in {} status, capt'n"
+
+#: ../general.py:223
+msgid "Playing {}"
+msgstr "Bard is playing {}"
+
+#: ../general.py:225
+msgid "Streaming [{}]({})"
+msgstr ""
+
+#: ../general.py:227
+msgid "Listening to {}"
+msgstr ""
+
+#: ../general.py:229
+msgid "Watching {}"
+msgstr ""
+
+#: ../general.py:234
+msgid "None"
+msgstr "None"
+
+#: ../general.py:237
+msgid "Joined Discord on"
+msgstr "Joined Discord on"
+
+#: ../general.py:238
+msgid "Joined this guild on"
+msgstr "Joined this guild on"
+
+#: ../general.py:239 ../general.py:286
+msgid "Roles"
+msgstr "Duties"
+
+#: ../general.py:240
+msgid "Member #{} | User ID: {}"
+msgstr "Crew Member #{} |Crew ID: {}"
+
+#: ../general.py:257 ../general.py:299
+msgid "I need the `Embed links` permission to send this."
+msgstr "Yarrr, I needs th' `Embed links` permission t' send this."
+
+#: ../general.py:272
+msgid "Since {}. That's over {} days ago!"
+msgstr "Since {}. That's o'er {} days ago!"
+
+#: ../general.py:282
+msgid "Region"
+msgstr "Seas"
+
+#: ../general.py:283
+msgid "Users"
+msgstr "Crew members"
+
+#: ../general.py:284
+msgid "Text Channels"
+msgstr "Text Channels"
+
+#: ../general.py:285
+msgid "Voice Channels"
+msgstr "Speakin' Channels"
+
+#: ../general.py:287
+msgid "Owner"
+msgstr "Capt'n"
+
+#: ../general.py:288
+msgid "Guild ID: "
+msgstr "Guild ID: "
+
+#: ../general.py:343
+msgid "Your search terms gave no results."
+msgstr "Thee search teams found no loot."
+
+#: ../general.py:345
+msgid "There is no definition #{}"
+msgstr "#{} is not defined, capt'n!"
+
+#: ../general.py:347
+msgid "Error."
+msgstr "We have an issue, capt'n!"
+

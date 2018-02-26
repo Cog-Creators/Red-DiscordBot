@@ -1,0 +1,212 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
+"PO-Revision-Date: 2018-02-25 21:34-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Swedish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: sv-SE\n"
+"X-Crowdin-File: /cogs/economy/locales/messages.pot\n"
+"Language: sv_SE\n"
+
+#: ../economy.py:40
+msgid "JACKPOT! 226! Your bid has been multiplied * 2500!"
+msgstr "JACKPOT! 226! Din insats har multiplicerats * 2500!"
+
+#: ../economy.py:44
+msgid "4LC! +1000!"
+msgstr "4LC! +1000!"
+
+#: ../economy.py:48
+msgid "Three cherries! +800!"
+msgstr "Tre körsbär! +800!"
+
+#: ../economy.py:52
+msgid "2 6! Your bid has been multiplied * 4!"
+msgstr "2 6! Din insats har blivit multiplicerad * 4!"
+
+#: ../economy.py:56
+msgid "Two cherries! Your bid has been multiplied * 3!"
+msgstr "Två körsbär! Din insats har multiplicerats * 3!"
+
+#: ../economy.py:60
+msgid "Three symbols! +500!"
+msgstr "Tre symboler! +500!"
+
+#: ../economy.py:64
+msgid "Two consecutive symbols! Your bid has been multiplied * 2!"
+msgstr "Två på varandra lika följande symboler! Din insats har multiplicerats * 2!"
+
+#: ../economy.py:68
+msgid "Slot machine payouts:\n"
+"{two.value} {two.value} {six.value} Bet * 2500\n"
+"{flc.value} {flc.value} {flc.value} +1000\n"
+"{cherries.value} {cherries.value} {cherries.value} +800\n"
+"{two.value} {six.value} Bet * 4\n"
+"{cherries.value} {cherries.value} Bet * 3\n\n"
+"Three symbols: +500\n"
+"Two symbols: Bet * 2"
+msgstr "Spelautomatens utbetalningar:\n"
+"{two.value} {two.value} {six.value} Insats * 2500\n"
+"{flc.value} {flc.value} {flc.value} +1000\n"
+"{cherries.value} {cherries.value} {cherries.value} +800\n"
+"{two.value} {six.value} Insats * 4\n"
+"{cherries.value} {cherries.value} Insats * 3\n\n"
+"Tre symboler: +500\n"
+"Två symboler: Insats *2"
+
+#: ../economy.py:157
+msgid "{}'s balance is {} {}"
+msgstr "{}'s saldo är {} {}"
+
+#: ../economy.py:171
+msgid "{} transferred {} {} to {}"
+msgstr "{} förde över {} {} till {}"
+
+#: ../economy.py:191
+msgid "{} added {} {} to {}'s account."
+msgstr "{} adderade {} {} till {}'s konto."
+
+#: ../economy.py:196
+msgid "{} removed {} {} from {}'s account."
+msgstr "{} tog bort {} {} från {}'s konto."
+
+#: ../economy.py:201
+msgid "{} set {}'s account to {} {}."
+msgstr "{} ändrade {}'s kontosaldo till {} {}."
+
+#: ../economy.py:212
+msgid "This will delete all bank accounts for {}.\n"
+"If you're sure, type `{}bank reset yes`"
+msgstr "Detta kommer att radera alla bank konton för {}.\n"
+"Om du är säker, skriv `{}bank reset yes`"
+
+#: ../economy.py:229
+msgid "All bank accounts of this guild have been deleted."
+msgstr "Alla bank konton för denna guild har blivit raderade."
+
+#: ../economy.py:248 ../economy.py:268
+msgid "{} Here, take some {}. Enjoy! (+{} {}!)"
+msgstr "{} Här, ta lite {}. Njut! (+{} {}!)"
+
+#: ../economy.py:258 ../economy.py:276
+msgid "{} Too soon. For your next payday you have to wait {}."
+msgstr "{} För tidigt. För nästa utbetalning måste du vänta {}."
+
+#: ../economy.py:313
+msgid "There are no accounts in the bank."
+msgstr "Det finns inga konton i banken."
+
+#: ../economy.py:339
+msgid "You're on cooldown, try again in a bit."
+msgstr "Du är på cooldown, försök igen om en liten stund."
+
+#: ../economy.py:342
+msgid "That's an invalid bid amount, sorry :/"
+msgstr "Det är inte en giltig insats summa, förlåt :/"
+
+#: ../economy.py:345
+msgid "You ain't got enough money, friend."
+msgstr "Du har inte tillräckligt med pengar, kompis."
+
+#: ../economy.py:391
+msgid "{}\n"
+"{} {}\n\n"
+"Your bid: {}\n"
+"{} → {}!"
+msgstr "{}\n"
+"{} {}\n\n"
+"Din insats: {}\n"
+"{} → {}!"
+
+#: ../economy.py:398
+msgid "{}\n"
+"{} Nothing!\n"
+"Your bid: {}\n"
+"{} → {}!"
+msgstr "{}\n"
+"{} Ingen vinst!\n"
+"Din insats: {}\n"
+"{} → {}!"
+
+#: ../economy.py:423
+msgid "Minimum slot bid: {}\n"
+"Maximum slot bid: {}\n"
+"Slot cooldown: {}\n"
+"Payday amount: {}\n"
+"Payday cooldown: {}\n"
+"Amount given at account registration: {}"
+msgstr "Minsta insats spelautomater: {}\n"
+"Högsta insats spelautomater: {}\n"
+"Spelautomats cooldown: {}\n"
+"Utbetalnings belopp: {}\n"
+"Utbetalnings cooldown: {}\n"
+"Summa pengar given vid kontoregistering: {}"
+
+#: ../economy.py:433
+msgid "Current Economy settings:"
+msgstr "Nuvarande Ekonomi inställningar:"
+
+#: ../economy.py:441
+msgid "Invalid min bid amount."
+msgstr "Ej giltig minsta insats summa."
+
+#: ../economy.py:449
+msgid "Minimum bid is now {} {}."
+msgstr "Den minsta möjliga insatsen är nu {} {}."
+
+#: ../economy.py:456
+msgid "Invalid slotmax bid amount. Must be greater than slotmin."
+msgstr "Ej giltig högsta spelautomatsinsats. Den måste vara högre än den minsta möjliga insatsen."
+
+#: ../economy.py:465
+msgid "Maximum bid is now {} {}."
+msgstr "Högsta möjlig insats är nu {} {}."
+
+#: ../economy.py:475
+msgid "Cooldown is now {} seconds."
+msgstr "Cooldown är nu satt till {} sekunder."
+
+#: ../economy.py:485
+msgid "Value modified. At least {} seconds must pass between each payday."
+msgstr "Siffran ändrad. Mins {} sekunder måste nu passera mellan utbetalningar."
+
+#: ../economy.py:494
+msgid "Har har so funny."
+msgstr "Har har så kul."
+
+#: ../economy.py:500
+msgid "Every payday will now give {} {}."
+msgstr "Varje utbetalning ger nu {} {}."
+
+#: ../economy.py:511
+msgid "Registering an account will now give {} {}."
+msgstr "Kontoregistreringar ger nu {} {}."
+
+#: ../economy.py:517
+msgid "weeks"
+msgstr "veckor"
+
+#: ../economy.py:518
+msgid "days"
+msgstr "dagar"
+
+#: ../economy.py:519
+msgid "hours"
+msgstr "timmar"
+
+#: ../economy.py:520
+msgid "minutes"
+msgstr "minuter"
+
+#: ../economy.py:521
+msgid "seconds"
+msgstr "sekunder"
+

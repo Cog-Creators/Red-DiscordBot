@@ -1,0 +1,93 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-19 03:59+UTC\n"
+"PO-Revision-Date: 2018-02-25 21:34-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Indonesian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: id\n"
+"X-Crowdin-File: /cogs/downloader/locales/messages.pot\n"
+"Language: id_ID\n"
+
+#: ../downloader.py:215
+msgid "That git repo has already been added under another name."
+msgstr "Repo git tersebut telah ditambahkan dengan nama yang lain."
+
+#: ../downloader.py:217 ../downloader.py:218
+msgid "Something went wrong during the cloning process."
+msgstr "Terjadi kesalahan pada proses kloning."
+
+#: ../downloader.py:220
+msgid "Repo `{}` successfully added."
+msgstr "Repo '{}' berhasil ditambahkan."
+
+#: ../downloader.py:229
+msgid "The repo `{}` has been deleted successfully."
+msgstr "Repo '{}' telah berhasil dihapus."
+
+#: ../downloader.py:237
+msgid "Installed Repos:\n"
+msgstr "Repo terpasang:\n"
+
+#: ../downloader.py:258
+msgid "Error, there is no cog by the name of `{}` in the `{}` repo."
+msgstr "Galat, tidak ada cog dengan nama `{}` pada repo `{}`."
+
+#: ../downloader.py:263
+msgid "Failed to install the required libraries for `{}`: `{}`"
+msgstr "Gagal memasang persyaratan pustaka untuk '{}': '{}'"
+
+#: ../downloader.py:273
+msgid "`{}` cog successfully installed."
+msgstr "Cog `{}` telah berhasil dipasang."
+
+#: ../downloader.py:289
+msgid "`{}` was successfully removed."
+msgstr "'{}' berhasil dihapus."
+
+#: ../downloader.py:291
+msgid "That cog was installed but can no longer be located. You may need to remove it's files manually if it is still usable."
+msgstr "Cog tersebut pernah terpasang namun tidak dapat ditemukan. Anda mungkin perlu menghapus filenya secara manual jika masih digunakan."
+
+#: ../downloader.py:323
+msgid "Cog update completed successfully."
+msgstr "Pembaruan cog selesai dengan sukses."
+
+#: ../downloader.py:331
+msgid "Available Cogs:\n"
+msgstr "Cog tersedia:\n"
+
+#: ../downloader.py:343
+msgid "There is no cog `{}` in the repo `{}`"
+msgstr "Tidak ada cog `{}` pada repo `{}`"
+
+#: ../downloader.py:348
+msgid "Information on {}:\n"
+"{}"
+msgstr "Informasi tentang {}: {}"
+
+#: ../downloader.py:389
+msgid "Missing from info.json"
+msgstr "Hilang dari info.json"
+
+#: ../downloader.py:398
+msgid "Command: {}\n"
+"Made by: {}\n"
+"Repo: {}\n"
+"Cog name: {}"
+msgstr "Perintah: {} \n"
+"Dibuat oleh: {} \n"
+"Repo: {} \n"
+"Nama Cog: {}"
+
+#: ../downloader.py:430
+msgid "That command doesn't seem to exist."
+msgstr "Perintah tersebut tidak ada."
+

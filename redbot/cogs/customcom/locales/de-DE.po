@@ -1,0 +1,68 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
+"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: German\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: de\n"
+"X-Crowdin-File: /cogs/customcom/locales/messages.pot\n"
+"Language: de_DE\n"
+
+#: ../customcom.py:44
+msgid "Welcome to the interactive random {} maker!\n"
+"Every message you send will be added as one of the random response to choose from once this {} is triggered. To exit this interactive menu, type `{}`"
+msgstr "Wilkommen zu dem interaktiven zufällig {} ersteller!\n"
+"Jede von von Ihnen gesendete nachricht, wird als zufällige nachricht zur Auswahl für den {} auslöser hinzugefügt. Um das Interaktive Menü zu verlassen, geben Sie `{}`"
+
+#: ../customcom.py:56
+msgid "Add a random response:"
+msgstr "Fügen Sie eine zufällige Antwort:"
+
+#: ../customcom.py:119
+msgid "Do you want to create a 'randomized' cc? {}"
+msgstr "Möchten Sie eine \"zufällige\" cc erstellen? {}"
+
+#: ../customcom.py:126
+msgid "What response do you want?"
+msgstr "Welche Reaktion willst du?"
+
+#: ../customcom.py:205 ../customcom.py:235
+msgid "Custom command successfully added."
+msgstr "Benutzerdefinierten Commands erfolgreich hinzugefügt."
+
+#: ../customcom.py:207 ../customcom.py:237
+msgid "This command already exists. Use `{}` to edit it."
+msgstr "Dieser Command ist bereits vorhanden. Verwenden Sie \"{}\", um ihn zu bearbeiten."
+
+#: ../customcom.py:229
+msgid "That command is already a standard command."
+msgstr "Dieser Befehl ist bereits ein Standart Command."
+
+#: ../customcom.py:261
+msgid "Custom command successfully edited."
+msgstr "Benutzerdefinierten Command erfolgreich bearbeitet."
+
+#: ../customcom.py:263
+msgid "That command doesn't exist. Use `{}` to add it."
+msgstr "Dieser Command ist nicht vorhanden. Verwenden Sie \"{}\", um ihn hinzuzufügen."
+
+#: ../customcom.py:282
+msgid "Custom command successfully deleted."
+msgstr "Benutzerdefinierten Command erfolgreich gelöscht."
+
+#: ../customcom.py:284
+msgid "That command doesn't exist."
+msgstr "Dieser Command ist nicht vorhanden."
+
+#: ../customcom.py:294
+msgid "There are no custom commands in this guild. Use `{}` to start adding some."
+msgstr "Es gibt keine benutzerdefinierte Commands auf diesem Server. Verwenden Sie \"{}\" um welche zu erstellen."
+

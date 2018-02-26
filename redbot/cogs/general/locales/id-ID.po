@@ -1,0 +1,239 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
+"PO-Revision-Date: 2018-02-25 21:34-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Indonesian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: id\n"
+"X-Crowdin-File: /cogs/general/locales/messages.pot\n"
+"Language: id_ID\n"
+
+#: ../general.py:42
+msgid "As I see it, yes"
+msgstr "Seperti yang saya lihat, ya"
+
+#: ../general.py:42
+msgid "It is certain"
+msgstr "Sudah pasti"
+
+#: ../general.py:42
+msgid "It is decidedly so"
+msgstr "Jelas begitu"
+
+#: ../general.py:43
+msgid "Most likely"
+msgstr "Most likely"
+
+#: ../general.py:43
+msgid "Outlook good"
+msgstr "Melihat keluar bagus"
+
+#: ../general.py:43
+msgid "Signs point to yes"
+msgstr "Tanda menunjuk ke ya"
+
+#: ../general.py:44
+msgid "Without a doubt"
+msgstr "Tanpa keraguan"
+
+#: ../general.py:44
+msgid "Yes"
+msgstr "Ya"
+
+#: ../general.py:44
+msgid "Yes – definitely"
+msgstr "Iya tentu saja"
+
+#: ../general.py:44
+msgid "You may rely on it"
+msgstr "Kamu mungkin bergantung padanya"
+
+#: ../general.py:45
+msgid "Ask again later"
+msgstr "Tanya lagi nanti"
+
+#: ../general.py:45
+msgid "Reply hazy, try again"
+msgstr "Balas kabur, coba lagi"
+
+#: ../general.py:46
+msgid "Better not tell you now"
+msgstr "Lebih baik tidak memberitahumu sekarang"
+
+#: ../general.py:46
+msgid "Cannot predict now"
+msgstr "Tidak bisa diprediksi sekarang"
+
+#: ../general.py:47
+msgid "Concentrate and ask again"
+msgstr "Konsentrasilah dan tanyakan lagi"
+
+#: ../general.py:47
+msgid "Don't count on it"
+msgstr "Jangan mengandalkannya"
+
+#: ../general.py:47
+msgid "My reply is no"
+msgstr "Jawaban saya adalah no"
+
+#: ../general.py:48
+msgid "My sources say no"
+msgstr "Sumber saya bilang tidak"
+
+#: ../general.py:48
+msgid "Outlook not so good"
+msgstr "Lihat keluar tidak begitu bagus"
+
+#: ../general.py:48
+msgid "Very doubtful"
+msgstr "Sangat ragu"
+
+#: ../general.py:64
+msgid "Not enough choices to pick from."
+msgstr "Tidak cukup pilihan untuk memilih dari."
+
+#: ../general.py:78
+msgid "{} :game_die: {} :game_die:"
+msgstr "{} : permainan_die: {} : permainan_die:"
+
+#: ../general.py:81
+msgid "{} Maybe higher than 1? ;P"
+msgstr "{} Mungkin lebih tinggi dari 1?"
+
+#: ../general.py:93
+msgid "Nice try. You think this is funny?How about *this* instead:\n\n"
+msgstr "Coba bagus Anda pikir ini lucu? Bagaimana dengan * ini * sebagai gantinya:\n\n"
+
+#: ../general.py:106
+msgid "*flips a coin and... "
+msgstr "* membalik koin dan... "
+
+#: ../general.py:106
+msgid "HEADS!*"
+msgstr "KEPALA! *"
+
+#: ../general.py:106
+msgid "TAILS!*"
+msgstr "EKOR! *"
+
+#: ../general.py:130
+msgid "{} You win {}!"
+msgstr "{} Kamu menang {}!"
+
+#: ../general.py:134
+msgid "{} You lose {}!"
+msgstr "{} Kamu kalah {}!"
+
+#: ../general.py:138
+msgid "{} We're square {}!"
+msgstr "{} Kami persegi {}!"
+
+#: ../general.py:151
+msgid "That doesn't look like a question."
+msgstr "Itu tidak seperti pertanyaan."
+
+#: ../general.py:159
+msgid " Stopwatch started!"
+msgstr " Stopwatch dimulai!"
+
+#: ../general.py:163
+msgid " Stopwatch stopped! Time: **"
+msgstr " Stopwatch berhenti! Waktu: **"
+
+#: ../general.py:216 ../general.py:217
+msgid "{}\n"
+"({} days ago)"
+msgstr "{} ({} beberapa hari yang lalu)"
+
+#: ../general.py:219
+msgid "Chilling in {} status"
+msgstr "Mengisi status {}"
+
+#: ../general.py:223
+msgid "Playing {}"
+msgstr "Bermain {}"
+
+#: ../general.py:225
+msgid "Streaming [{}]({})"
+msgstr ""
+
+#: ../general.py:227
+msgid "Listening to {}"
+msgstr ""
+
+#: ../general.py:229
+msgid "Watching {}"
+msgstr ""
+
+#: ../general.py:234
+msgid "None"
+msgstr "Tak satupun"
+
+#: ../general.py:237
+msgid "Joined Discord on"
+msgstr "Bergabung dengan Discord on"
+
+#: ../general.py:238
+msgid "Joined this guild on"
+msgstr "Bergabung ini serikat pada"
+
+#: ../general.py:239 ../general.py:286
+msgid "Roles"
+msgstr "Peran"
+
+#: ../general.py:240
+msgid "Member #{} | User ID: {}"
+msgstr "Anggota # {} | ID pengguna: {}"
+
+#: ../general.py:257 ../general.py:299
+msgid "I need the `Embed links` permission to send this."
+msgstr "Saya butuh izin `Embed links` untuk mengirim ini."
+
+#: ../general.py:272
+msgid "Since {}. That's over {} days ago!"
+msgstr "Sejak {}. Itu sudah berakhir {} hari yang lalu!"
+
+#: ../general.py:282
+msgid "Region"
+msgstr "Wilayah"
+
+#: ../general.py:283
+msgid "Users"
+msgstr "Pengguna"
+
+#: ../general.py:284
+msgid "Text Channels"
+msgstr "Saluran Teks"
+
+#: ../general.py:285
+msgid "Voice Channels"
+msgstr "Saluran Suara"
+
+#: ../general.py:287
+msgid "Owner"
+msgstr "Pemilik"
+
+#: ../general.py:288
+msgid "Guild ID: "
+msgstr "ID Persekutuan: "
+
+#: ../general.py:343
+msgid "Your search terms gave no results."
+msgstr "Istilah pencarian Anda tidak memberi hasil."
+
+#: ../general.py:345
+msgid "There is no definition #{}"
+msgstr "Tidak ada definisi # {}"
+
+#: ../general.py:347
+msgid "Error."
+msgstr "Kesalahan."
+
