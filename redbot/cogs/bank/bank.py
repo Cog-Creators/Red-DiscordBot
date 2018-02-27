@@ -1,6 +1,5 @@
-from redbot.core import checks, bank
-from redbot.core.i18n import Translator
-from discord.ext import commands
+from redbot.core import checks, bank, commands
+from redbot.core.i18n import Translator, cog_i18n
 
 from redbot.core.bot import Red  # Only used for type hints
 
@@ -41,6 +40,7 @@ def check_global_setting_admin():
     return commands.check(pred)
 
 
+@cog_i18n(_)
 class Bank:
     """Bank"""
 

@@ -10,13 +10,12 @@ from string import ascii_letters, digits
 import aiohttp
 import datetime
 import discord
-from discord.ext import commands
 
 from redbot.core import checks
 from redbot.core import i18n
 from redbot.core import rpc
 from redbot.core import __version__
-from redbot.core.commands import Context
+from redbot.core import commands
 
 from .utils import TYPE_CHECKING
 from .utils.chat_formatting import pagify, box
@@ -47,7 +46,7 @@ class Core:
         rpc.add_method('core', self.rpc_reload)
 
     @commands.command()
-    async def info(self, ctx: Context):
+    async def info(self, ctx: commands.Context):
         """Shows info about Red"""
         author_repo = "https://github.com/Twentysix26"
         org_repo = "https://github.com/Cog-Creators"

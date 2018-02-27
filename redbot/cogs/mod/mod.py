@@ -3,11 +3,10 @@ from datetime import datetime, timedelta
 from collections import deque, defaultdict, namedtuple
 
 import discord
-from discord.ext import commands
 
-from redbot.core import checks, Config, modlog
+from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
-from redbot.core.i18n import Translator
+from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.commands import Context
 from redbot.core.utils.chat_formatting import box, escape
 from .checks import mod_or_voice_permissions, admin_or_voice_permissions, bot_has_voice_permissions
@@ -18,7 +17,7 @@ from .log import log
 _ = Translator("Mod", __file__)
 
 
-
+@cog_i18n(_)
 class Mod:
     """Moderation tools."""
 

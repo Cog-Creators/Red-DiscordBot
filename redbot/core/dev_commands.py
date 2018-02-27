@@ -7,8 +7,7 @@ from contextlib import redirect_stdout
 from copy import copy
 
 import discord
-from discord.ext import commands
-from . import checks
+from . import checks, commands
 from .i18n import Translator
 from .utils.chat_formatting import box, pagify
 """

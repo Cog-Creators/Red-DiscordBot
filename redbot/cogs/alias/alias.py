@@ -3,10 +3,9 @@ from re import search
 from typing import Generator, Tuple, Iterable
 
 import discord
-from redbot.core import Config
-from redbot.core.i18n import Translator
+from redbot.core import Config, commands
+from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
-from discord.ext import commands
 
 from redbot.core.bot import Red
 from .alias_entry import AliasEntry
@@ -14,6 +13,7 @@ from .alias_entry import AliasEntry
 _ = Translator("Alias", __file__)
 
 
+@cog_i18n(_)
 class Alias:
     """
     Alias

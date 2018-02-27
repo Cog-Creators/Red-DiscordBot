@@ -28,13 +28,14 @@ from collections import namedtuple
 from typing import List
 
 import discord
-from discord.ext import commands
 from discord.ext.commands import formatter
 import inspect
 import itertools
 import re
 import sys
 import traceback
+
+from . import commands
 
 
 EMPTY_STRING = u'\u200b'

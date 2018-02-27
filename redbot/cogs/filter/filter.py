@@ -1,9 +1,8 @@
 import discord
-from discord.ext import commands
 
-from redbot.core import checks, Config, modlog
+from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
-from redbot.core.i18n import Translator
+from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import pagify
 from redbot.core.utils.mod import is_mod_or_superior
 from redbot.core.commands import Context
@@ -11,6 +10,7 @@ from redbot.core.commands import Context
 _ = Translator("Filter", __file__)
 
 
+@cog_i18n(_)
 class Filter:
     """Filter-related commands"""
 
