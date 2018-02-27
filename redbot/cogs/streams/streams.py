@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from redbot.core import Config, checks, RedContext
+from redbot.core import Config, checks
 from redbot.core.utils.chat_formatting import pagify, box
 from redbot.core.bot import Red
 from .streamtypes import TwitchStream, HitboxStream, MixerStream, PicartoStream, TwitchCommunity
@@ -53,7 +53,7 @@ class Streams:
     @commands.command()
     async def twitch(self, ctx, channel_name: str):
         """Checks if a Twitch channel is streaming"""
-        token = await self.db.tokens.get_attr(TwitchStream.__name__)
+        token = await self.db.tokens.get_raw(TwitchStream.__name__, default=None)
         stream = TwitchStream(name=channel_name,
                               token=token)
         await self.check_online(ctx, stream)
@@ -106,12 +106,12 @@ class Streams:
             await ctx.send_help()
 
     @_twitch.command(name="channel")
-    async def twitch_alert_channel(self, ctx: RedContext, channel_name: str):
+    async def twitch_alert_channel(self, ctx: commands.Context, channel_name: str):
         """Sets a Twitch stream alert notification in the channel"""
         await self.stream_alert(ctx, TwitchStream, channel_name.lower())
 
     @_twitch.command(name="community")
-    async def twitch_alert_community(self, ctx: RedContext, community: str):
+    async def twitch_alert_community(self, ctx: commands.Context, community: str):
         """Sets a Twitch stream alert notification in the channel
         for the specified community."""
         await self.community_alert(ctx, TwitchCommunity, community.lower())
@@ -187,7 +187,7 @@ class Streams:
     async def stream_alert(self, ctx, _class, channel_name):
         stream = self.get_stream(_class, channel_name.lower())
         if not stream:
-            token = await self.db.tokens.get_attr(_class.__name__)
+            token = await self.db.tokens.get_raw(_class.__name__, default=None)
             stream = _class(name=channel_name,
                             token=token)
             try:
@@ -210,7 +210,7 @@ class Streams:
     async def community_alert(self, ctx, _class, community_name):
         community = self.get_community(_class, community_name)
         if not community:
-            token = await self.db.tokens.get_attr(_class.__name__)
+            token = await self.db.tokens.get_raw(_class.__name__, default=None)
             community = _class(name=community_name, token=token)
             try:
                 await community.get_community_streams()
@@ -477,7 +477,7 @@ class Streams:
             if not _class:
                 continue
 
-            token = await self.db.tokens.get_attr(_class.__name__)
+            token = await self.db.tokens.get_raw(_class.__name__)
             streams.append(_class(token=token, **raw_stream))
 
         # issue 1191 extended resolution: Remove this after suitable period
@@ -497,7 +497,7 @@ class Streams:
             if not _class:
                 continue
 
-            token = await self.db.tokens.get_attr(_class.__name__)
+            token = await self.db.tokens.get_raw(_class.__name__, default=None)
             communities.append(_class(token=token, **raw_community))
 
         # issue 1191 extended resolution: Remove this after suitable period

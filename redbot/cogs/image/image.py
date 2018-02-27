@@ -24,6 +24,9 @@ class Image:
         self.session = aiohttp.ClientSession()
         self.imgur_base_url = "https://api.imgur.com/3/"
 
+    def __unload(self):
+        self.session.close()
+
     @commands.group(name="imgur")
     @commands.guild_only()
     async def _imgur(self, ctx):

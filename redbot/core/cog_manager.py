@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Tuple, Union, List, overload
 
 import redbot.cogs
+import discord
 
 from . import checks, commands
 from .config import Config
@@ -206,8 +207,12 @@ class CogManager:
         RuntimeError
             When no matching spec can be found.
         """
-        resolved_paths = [str(p.resolve()) for p in await self.paths()]
-        for finder, module_name, _ in pkgutil.iter_modules(resolved_paths):
+        resolved_paths = set(await self.paths())
+        core_paths = set(await self.core_paths())
+
+        real_paths = [str(p) for p in (resolved_paths - core_paths)]
+
+        for finder, module_name, _ in pkgutil.iter_modules(real_paths):
             if name == module_name:
                 spec = finder.find_spec(name)
                 if spec:
@@ -323,7 +328,7 @@ class CogManagerUI:
         Add a path to the list of available cog paths.
         """
         if not path.is_dir():
-            await ctx.send(_("That path is does not exist or does not"
+            await ctx.send(_("That path does not exist or does not"
                              " point to a valid directory."))
             return
 
@@ -412,13 +417,15 @@ class CogManagerUI:
 
         unloaded = all - loaded
 
-        msg = ("+ Loaded\n"
-               "{}\n\n"
-               "- Unloaded\n"
-               "{}"
-               "".format(", ".join(sorted(loaded)),
-                         ", ".join(sorted(unloaded)))
-               )
-        for page in pagify(msg, [" "], shorten_by=18):
-            await ctx.send(box(page.lstrip(" "), lang="diff"))
+        loaded = ('**{} loaded:**\n').format(len(loaded)) + ", ".join(loaded)
+        unloaded = ('**{} unloaded:**\n').format(len(unloaded)) + ", ".join(unloaded)
 
+        for page in pagify(loaded, delims=[', ', '\n'], page_length=1000):
+            e = discord.Embed(description=page,
+                              colour=discord.Colour.dark_green())
+            await ctx.send(embed=e)
+
+        for page in pagify(unloaded, delims=[', ', '\n'], page_length=1000):
+            e = discord.Embed(description=page,
+                              colour=discord.Colour.dark_red())
+            await ctx.send(embed=e)

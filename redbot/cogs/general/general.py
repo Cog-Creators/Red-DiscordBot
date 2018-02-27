@@ -203,7 +203,7 @@ class General:
         special_date = datetime.datetime(2016, 1, 10, 6, 8, 4, 443000)
         is_special = (user.id == 96130341705637888 and
                       guild.id == 133049272517001216)
-        
+
         roles = sorted(user.roles)[1:]
 
         joined_at = user.joined_at if not is_special else special_date
@@ -216,13 +216,18 @@ class General:
 
         created_on = _("{}\n({} days ago)").format(user_created, since_created)
         joined_on = _("{}\n({} days ago)").format(user_joined, since_joined)
-
+        
         game = _("Chilling in {} status").format(user.status)
-
-        if user.game and user.game.name and user.game.url:
-            game = _("Streaming: [{}]({})").format(user.game, user.game.url)
-        elif user.game and user.game.name:
-            game = _("Playing {}").format(user.game)
+        if user.game is None:  # Default status
+            pass
+        elif user.game.type == 0:  # "Playing" status
+            game = _("Playing {}").format(user.game.name)
+        elif user.game.type == 1:  # "Streaming" status
+            game = _("Streaming [{}]({})").format(user.game.name, user.game.url)
+        elif user.game.type == 2:  # "Listening" status
+            game = _("Listening to {}").format(user.game.name)
+        elif user.game.type == 3:  # "Watching" status
+            game = _("Watching {}").format(user.game.name)
 
         if roles:
             roles = ", ".join([x.name for x in roles])

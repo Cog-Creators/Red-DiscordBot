@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2017-08-26 16:24+EDT\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,71 +15,71 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: ../downloader.py:202
+#: ../downloader.py:215
 msgid "That git repo has already been added under another name."
 msgstr ""
 
-#: ../downloader.py:204 ../downloader.py:205
+#: ../downloader.py:217 ../downloader.py:218
 msgid "Something went wrong during the cloning process."
 msgstr ""
 
-#: ../downloader.py:207
+#: ../downloader.py:220
 msgid "Repo `{}` successfully added."
 msgstr ""
 
-#: ../downloader.py:216
+#: ../downloader.py:229
 msgid "The repo `{}` has been deleted successfully."
 msgstr ""
 
-#: ../downloader.py:224
+#: ../downloader.py:237
 msgid ""
 "Installed Repos:\n"
 msgstr ""
 
-#: ../downloader.py:244
+#: ../downloader.py:258
 msgid "Error, there is no cog by the name of `{}` in the `{}` repo."
 msgstr ""
 
-#: ../downloader.py:249
+#: ../downloader.py:263
 msgid "Failed to install the required libraries for `{}`: `{}`"
 msgstr ""
 
-#: ../downloader.py:259
+#: ../downloader.py:273
 msgid "`{}` cog successfully installed."
 msgstr ""
 
-#: ../downloader.py:275
+#: ../downloader.py:289
 msgid "`{}` was successfully removed."
 msgstr ""
 
-#: ../downloader.py:277
+#: ../downloader.py:291
 msgid "That cog was installed but can no longer be located. You may need to remove it's files manually if it is still usable."
 msgstr ""
 
-#: ../downloader.py:301
+#: ../downloader.py:315
 msgid "Cog update completed successfully."
 msgstr ""
 
-#: ../downloader.py:309
+#: ../downloader.py:323
 msgid ""
 "Available Cogs:\n"
 msgstr ""
 
-#: ../downloader.py:321
+#: ../downloader.py:335
 msgid "There is no cog `{}` in the repo `{}`"
 msgstr ""
 
-#: ../downloader.py:326
+#: ../downloader.py:340
 msgid ""
 "Information on {}:\n"
 "{}"
 msgstr ""
 
-#: ../downloader.py:350
+#: ../downloader.py:381
 msgid "Missing from info.json"
 msgstr ""
 
-#: ../downloader.py:359
+#: ../downloader.py:390
 msgid ""
 "Command: {}\n"
 "Made by: {}\n"
@@ -87,7 +87,7 @@ msgid ""
 "Cog name: {}"
 msgstr ""
 
-#: ../downloader.py:383
+#: ../downloader.py:422
 msgid "That command doesn't seem to exist."
 msgstr ""
 

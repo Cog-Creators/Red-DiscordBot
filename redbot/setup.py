@@ -1,20 +1,23 @@
 #!/usr/bin/env python
 
-import sys
+import argparse
 import os
+import shutil
+import sys
+import tarfile
 from copy import deepcopy
+from datetime import datetime as dt
 from pathlib import Path
 
 import appdirs
-
-from redbot.core.json_io import JsonIO
-from redbot.core.data_manager import basic_config_default
 from redbot.core.cli import confirm
+from redbot.core.data_manager import basic_config_default
+from redbot.core.json_io import JsonIO
 
 config_dir = None
 appdir = appdirs.AppDirs("Red-DiscordBot")
 if sys.platform == 'linux':
-    if os.getuid() < 1000:
+    if 0 < os.getuid() < 1000:
         config_dir = Path(appdir.site_data_dir)
 if not config_dir:
     config_dir = Path(appdir.user_config_dir)
@@ -28,6 +31,18 @@ except PermissionError:
 config_file = config_dir / 'config.json'
 
 
+def parse_cli_args():
+    parser = argparse.ArgumentParser(
+        description="Red - Discord Bot's instance manager (V3)"
+    )
+    parser.add_argument(
+        "--delete", "-d",
+        help="Interactively delete an instance",
+        action="store_true"
+    )
+    return parser.parse_known_args()
+
+
 def load_existing_config():
     if not config_file.exists():
         return {}
@@ -35,9 +50,12 @@ def load_existing_config():
     return JsonIO(config_file)._load_json()
 
 
-def save_config(name, data):
+def save_config(name, data, remove=False):
     config = load_existing_config()
-    config[name] = data
+    if remove and name in config:
+        config.pop(name)
+    else:
+        config[name] = data
     JsonIO(config_file)._save_json(config)
 
 
@@ -123,3 +141,92 @@ def basic_setup():
     print()
     print("Your basic configuration has been saved. Please run `redbot <name>` to"
           " continue your setup process and to run the bot.")
+
+
+def remove_instance():
+    instance_list = load_existing_config()
+    if not instance_list:
+        print("No instances have been set up!")
+        return
+
+    print(
+        "You have chosen to remove an instance. The following "
+        "is a list of instances that currently exist:\n"
+    )
+    for instance in instance_list.keys():
+        print("{}\n".format(instance))
+    print("Please select one of the above by entering its name")
+    selected = input("> ")
+    
+    if selected not in instance_list.keys():
+        print("That isn't a valid instance!")
+        return
+    instance_data = instance_list[selected]
+    print(
+        "Would you like to make a backup of "
+        "the data for this instance (y/n)?"
+    )
+    yesno = input("> ")
+    if yesno.lower() == "y":
+        if instance_data["STORAGE_TYPE"] == "MongoDB":
+            raise NotImplementedError(
+                "Support for removing instances with MongoDB as the storage "
+                "is not implemented at this time due to backup support."
+            )
+        else:
+            print("Backing up the instance's data...")
+            backup_filename = "redv3-{}-{}.tar.gz".format(
+                selected, dt.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+            )
+            pth = Path(instance_data["DATA_PATH"])
+            home = pth.home()
+            backup_file = home / backup_filename
+            os.chdir(str(pth.parent))  # str is used here because 3.5 support
+            with tarfile.open(str(backup_file), "w:gz") as tar:
+                tar.add(pth.stem)  # add all files in that directory
+            print(
+                "A backup of {} has been made. It is at {}".format(
+                    selected, backup_file
+                )
+            )
+            print("Removing the instance...")
+            try:
+                shutil.rmtree(str(pth))
+            except FileNotFoundError:
+                pass  # data dir was removed manually
+            save_config(selected, {}, remove=True)
+            print("The instance has been removed")
+            return
+    elif yesno.lower() == "n":
+        pth = Path(instance_data["DATA_PATH"])
+        print("Removing the instance...")
+        try:
+            shutil.rmtree(str(pth))
+        except FileNotFoundError:
+            pass  # data dir was removed manually
+        save_config(selected, {}, remove=True)
+        print("The instance has been removed")
+        return
+    else:
+        print("That's not a valid option!")
+        return
+
+
+def main():
+    if args.delete:
+        try:
+            remove_instance()
+        except NotImplementedError as e:
+            print(str(e))
+    else:
+        basic_setup()
+
+args, _ = parse_cli_args()
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("Exiting...")
+    else:
+        print("Exiting...")

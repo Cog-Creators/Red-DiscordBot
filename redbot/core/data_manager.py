@@ -34,7 +34,7 @@ basic_config_default = {
 config_dir = None
 appdir = appdirs.AppDirs("Red-DiscordBot")
 if sys.platform == 'linux':
-    if os.getuid() < 1000:
+    if 0 < os.getuid() < 1000:
         config_dir = Path(appdir.site_data_dir)
 if not config_dir:
     config_dir = Path(appdir.user_config_dir)
@@ -80,15 +80,19 @@ def _base_data_path() -> Path:
     return Path(path).resolve()
 
 
-def cog_data_path(cog_instance=None) -> Path:
+def cog_data_path(cog_instance=None, raw_name: str=None) -> Path:
     """Gets the base cog data path. If you want to get the folder with
     which to store your own cog's data please pass in an instance
     of your cog class.
+
+    Either ``cog_instance`` or ``raw_name`` will be used, not both.
 
     Parameters
     ----------
     cog_instance
         The instance of the cog you wish to get a data path for.
+    raw_name : str
+        The name of the cog to get a data path for.
 
     Returns
     -------
@@ -103,7 +107,10 @@ def cog_data_path(cog_instance=None) -> Path:
         raise RuntimeError("You must load the basic config before you"
                            " can get the cog data path.") from e
     cog_path = base_data_path / basic_config['COG_PATH_APPEND']
-    if cog_instance:
+
+    if raw_name is not None:
+        cog_path = cog_path / raw_name
+    elif cog_instance is not None:
         cog_path = cog_path / cog_instance.__class__.__name__
     cog_path.mkdir(exist_ok=True, parents=True)
 

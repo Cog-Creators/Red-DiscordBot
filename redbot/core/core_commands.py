@@ -1,22 +1,24 @@
 import asyncio
+import datetime
 import importlib
 import itertools
 import logging
 import sys
+import traceback
 from collections import namedtuple
+from pathlib import Path
 from random import SystemRandom
 from string import ascii_letters, digits
 
 import aiohttp
-import datetime
 import discord
+import pkg_resources
 
+from redbot.core import __version__
 from redbot.core import checks
 from redbot.core import i18n
 from redbot.core import rpc
-from redbot.core import __version__
 from redbot.core import commands
-
 from .utils import TYPE_CHECKING
 from .utils.chat_formatting import pagify, box
 
@@ -36,6 +38,7 @@ OWNER_DISCLAIMER = ("⚠ **Only** the person who is hosting Red should be "
 _ = i18n.Translator("Core", __file__)
 
 
+@i18n.cog_i18n(_)
 class Core:
     """Commands related to core functions"""
     def __init__(self, bot):
@@ -85,6 +88,37 @@ class Core:
             await ctx.send(embed=embed)
         except discord.HTTPException:
             await ctx.send("I need the `Embed links` permission to send this")
+
+    @commands.command()
+    async def uptime(self, ctx: commands.Context):
+        """Shows Red's uptime"""
+        since = ctx.bot.uptime.strftime("%Y-%m-%d %H:%M:%S")
+        passed = self.get_bot_uptime()
+        await ctx.send(
+            "Been up for: **{}** (since {} UTC)".format(
+                passed, since
+            )
+        )
+    
+    def get_bot_uptime(self, *, brief=False):
+        # Courtesy of Danny
+        now = datetime.datetime.utcnow()
+        delta = now - self.bot.uptime
+        hours, remainder = divmod(int(delta.total_seconds()), 3600)
+        minutes, seconds = divmod(remainder, 60)
+        days, hours = divmod(hours, 24)
+
+        if not brief:
+            if days:
+                fmt = '{d} days, {h} hours, {m} minutes, and {s} seconds'
+            else:
+                fmt = '{h} hours, {m} minutes, and {s} seconds'
+        else:
+            fmt = '{h}h {m}m {s}s'
+            if days:
+                fmt = '{d}d ' + fmt
+
+        return fmt.format(d=days, h=hours, m=minutes, s=seconds)
 
     @commands.command()
     @checks.is_owner()
@@ -153,7 +187,11 @@ class Core:
             return m.author == owner
 
         while msg is not None:
-            msg = await self.bot.wait_for("message", check=msg_check, timeout=15)
+            try:
+                msg = await self.bot.wait_for("message", check=msg_check, timeout=15)
+            except asyncio.TimeoutError:
+                await ctx.send("I guess not.")
+                break
             try:
                 msg = int(msg.content)
                 await self.leave_confirmation(guilds[msg], owner, ctx)
@@ -167,16 +205,16 @@ class Core:
         def conf_check(m):
             return m.author == owner
 
-        msg = await self.bot.wait_for("message", check=conf_check, timeout=15)
-
-        if msg is None:
+        try:
+            msg = await self.bot.wait_for("message", check=conf_check, timeout=15)
+            if msg.content.lower().strip() in ("yes", "y"):
+                await server.leave()
+                if server != ctx.guild:
+                    await ctx.send("Done.")
+            else:
+                await ctx.send("Alright then.")
+        except asyncio.TimeoutError:
             await ctx.send("I guess not.")
-        elif msg.content.lower().strip() in ("yes", "y"):
-            await server.leave()
-            if server != ctx.guild:
-                await ctx.send("Done.")
-        else:
-            await ctx.send("Alright then.")
 
     @commands.command()
     @checks.is_owner()
@@ -190,9 +228,16 @@ class Core:
             return
 
         try:
-            ctx.bot.load_extension(spec)
+            await ctx.bot.load_extension(spec)
         except Exception as e:
             log.exception("Package loading failed", exc_info=e)
+
+            exception_log = ("Exception in command '{}'\n"
+                             "".format(ctx.command.qualified_name))
+            exception_log += "".join(traceback.format_exception(type(e),
+                                     e, e.__traceback__))
+            self.bot._last_exception = exception_log
+
             await ctx.send(_("Failed to load package. Check your console or "
                              "logs for details."))
         else:
@@ -225,9 +270,16 @@ class Core:
 
         try:
             self.cleanup_and_refresh_modules(spec.name)
-            ctx.bot.load_extension(spec)
+            await ctx.bot.load_extension(spec)
         except Exception as e:
             log.exception("Package reloading failed", exc_info=e)
+
+            exception_log = ("Exception in command '{}'\n"
+                             "".format(ctx.command.qualified_name))
+            exception_log += "".join(traceback.format_exception(type(e),
+                                     e, e.__traceback__))
+            self.bot._last_exception = exception_log
+
             await ctx.send(_("Failed to reload package. Check your console or "
                              "logs for details."))
         else:
@@ -245,6 +297,21 @@ class Core:
         except:
             pass
         await ctx.bot.shutdown()
+    
+    @commands.command(name="restart")
+    @checks.is_owner()
+    async def _restart(self, ctx, silently: bool=False):
+        """Attempts to restart Red
+
+        Makes Red quit with exit code 26
+        The restart is not guaranteed: it must be dealt
+        with by the process manager in use"""
+        try:
+            if not silently:
+                await ctx.send(_("Restarting..."))
+        except:
+            pass
+        await ctx.bot.shutdown(restart=True)
 
     def cleanup_and_refresh_modules(self, module_name: str):
         """Interally reloads modules so that changes are detected"""
@@ -309,66 +376,100 @@ class Core:
 
     @_set.command(name="game")
     @checks.is_owner()
-    @commands.guild_only()
     async def _game(self, ctx, *, game: str=None):
         """Sets Red's playing status"""
-        status = ctx.me.status
+
         if game:
             game = discord.Game(name=game)
         else:
             game = None
-        await ctx.bot.change_presence(status=status, game=game)
+        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 \
+            else discord.Status.online
+        for shard in ctx.bot.shards:
+            await ctx.bot.change_presence(status=status, game=game)
         await ctx.send(_("Game set."))
+
+    @_set.command(name="listening")
+    @checks.is_owner()
+    async def _listening(self, ctx, *, listening: str=None):
+        """Sets Red's listening status"""
+
+        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 \
+            else discord.Status.online
+        if listening:
+            listening = discord.Game(name=listening, type=2)
+        else:
+            listening = None
+        for shard in ctx.bot.shards:
+            await ctx.bot.change_presence(status=status, game=listening)
+        await ctx.send(_("Listening set."))
+
+    @_set.command(name="watching")
+    @checks.is_owner()
+    async def _watching(self, ctx, *, watching: str=None):
+        """Sets Red's watching status"""
+
+        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 \
+            else discord.Status.online
+        if watching:
+            watching = discord.Game(name=watching, type=3)
+        else:
+            watching = None
+        for shard in ctx.bot.shards:
+            await ctx.bot.change_presence(status=status, game=watching)
+        await ctx.send(_("Watching set."))
 
     @_set.command()
     @checks.is_owner()
-    @commands.guild_only()
     async def status(self, ctx, *, status: str):
         """Sets Red's status
+
         Available statuses:
             online
             idle
             dnd
-            invisible"""
+            invisible
+        """
 
         statuses = {
-                    "online"    : discord.Status.online,
-                    "idle"      : discord.Status.idle,
-                    "dnd"       : discord.Status.dnd,
-                    "invisible" : discord.Status.invisible
-                   }
+            "online": discord.Status.online,
+            "idle": discord.Status.idle,
+            "dnd": discord.Status.dnd,
+            "invisible": discord.Status.invisible
+        }
 
-        game = ctx.me.game
-
+        game = ctx.bot.guilds[0].me.game if len(ctx.bot.guilds) > 0 else None
         try:
             status = statuses[status.lower()]
         except KeyError:
             await ctx.send_help()
         else:
-            await ctx.bot.change_presence(status=status,
-                                          game=game)
+            for shard in ctx.bot.shards:
+                await ctx.bot.change_presence(status=status, game=game)
             await ctx.send(_("Status changed to %s.") % status)
 
     @_set.command()
     @checks.is_owner()
-    @commands.guild_only()
     async def stream(self, ctx, streamer=None, *, stream_title=None):
         """Sets Red's streaming status
         Leaving both streamer and stream_title empty will clear it."""
 
-        status = ctx.me.status
+        status = ctx.bot.guilds[0].me.status \
+            if len(ctx.bot.guilds) > 0 else None
 
         if stream_title:
             stream_title = stream_title.strip()
             if "twitch.tv/" not in streamer:
                 streamer = "https://www.twitch.tv/" + streamer
             game = discord.Game(type=1, url=streamer, name=stream_title)
-            await ctx.bot.change_presence(game=game, status=status)
+            for shard in ctx.bot.shards:
+                await ctx.bot.change_presence(status=status, game=game)
         elif streamer is not None:
             await ctx.send_help()
             return
         else:
-            await ctx.bot.change_presence(game=None, status=status)
+            for shard in ctx.bot.shards:
+                await ctx.bot.change_presence(game=None, status=status)
         await ctx.send(_("Done."))
 
     @_set.command(name="username", aliases=["name"])
@@ -468,6 +569,10 @@ class Core:
     async def locale(self, ctx: commands.Context, locale_name: str):
         """
         Changes bot locale.
+
+        Use [p]listlocales to get a list of available locales.
+
+        To reset to English, use "en-US".
         """
         i18n.set_locale(locale_name)
 
@@ -491,6 +596,24 @@ class Core:
         else:
             ctx.bot.disable_sentry()
             await ctx.send(_("Done. Sentry logging is now disabled."))
+
+    @commands.command()
+    @checks.is_owner()
+    async def listlocales(self, ctx: commands.Context):
+        """
+        Lists all available locales
+
+        Use `[p]set locale` to set a locale
+        """
+        async with ctx.channel.typing():
+            red_dist = pkg_resources.get_distribution("red-discordbot")
+            red_path = Path(red_dist.location) / "redbot"
+            locale_list = sorted(set([loc.stem for loc in list(red_path.glob("**/*.po"))]))
+            pages = pagify("\n".join(locale_list))
+
+        await ctx.send_interactive(
+            pages, box_lang="Available Locales:"
+        )
 
     @commands.command()
     @commands.cooldown(1, 60, commands.BucketType.user)

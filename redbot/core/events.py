@@ -30,6 +30,21 @@ ______         _           ______ _                       _  ______       _
 """
 
 
+def should_log_sentry(exception) -> bool:
+    e = exception
+    while e.__cause__ is not None:
+        e = e.__cause__
+
+    tb = e.__traceback__
+    tb_frame = None
+    while tb is not None:
+        tb_frame = tb.tb_frame
+        tb = tb.tb_next
+
+    module = tb_frame.f_globals.get('__name__')
+    return module.startswith('redbot')
+
+
 def init_events(bot, cli_flags):
 
     @bot.event
@@ -52,7 +67,7 @@ def init_events(bot, cli_flags):
             for package in packages:
                 try:
                     spec = await bot.cog_mgr.find_cog(package)
-                    bot.load_extension(spec)
+                    await bot.load_extension(spec)
                 except Exception as e:
                     log.exception("Failed to load package {}".format(package),
                                   exc_info=e)
@@ -160,9 +175,10 @@ def init_events(bot, cli_flags):
             log.exception("Exception in command '{}'"
                           "".format(ctx.command.qualified_name),
                           exc_info=error.original)
-            sentry_log.exception("Exception in command '{}'"
-                                 "".format(ctx.command.qualified_name),
-                                 exc_info=error.original)
+            if should_log_sentry(error):
+                sentry_log.exception("Exception in command '{}'"
+                                     "".format(ctx.command.qualified_name),
+                                     exc_info=error.original)
 
             message = ("Error in command '{}'. Check your console or "
                        "logs for details."
@@ -172,7 +188,8 @@ def init_events(bot, cli_flags):
             exception_log += "".join(traceback.format_exception(type(error),
                                      error, error.__traceback__))
             bot._last_exception = exception_log
-            await ctx.send(inline(message))
+            if not hasattr(ctx.cog, "_{0.command.cog_name}__error".format(ctx)):
+                await ctx.send(inline(message))
         elif isinstance(error, commands.CommandNotFound):
             pass
         elif isinstance(error, commands.CheckFailure):
@@ -190,8 +207,9 @@ def init_events(bot, cli_flags):
             except AttributeError:
                 sentry_error = error
 
-            sentry_log.exception("Unhandled command error.",
-                                 exc_info=sentry_error)
+            if should_log_sentry(sentry_error):
+                sentry_log.exception("Unhandled command error.",
+                                     exc_info=sentry_error)
 
     @bot.event
     async def on_message(message):

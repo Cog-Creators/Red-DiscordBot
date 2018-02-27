@@ -172,7 +172,7 @@ class RedBase(BotBase, RpcMethodMixin):
             while pkg_name in curr_pkgs:
                 curr_pkgs.remove(pkg_name)
 
-    def load_extension(self, spec: ModuleSpec):
+    async def load_extension(self, spec: ModuleSpec):
         name = spec.name.split('.')[-1]
         if name in self.extensions:
             return
@@ -182,7 +182,11 @@ class RedBase(BotBase, RpcMethodMixin):
             del lib
             raise discord.ClientException('extension does not have a setup function')
 
-        lib.setup(self)
+        if asyncio.iscoroutinefunction(lib.setup):
+            await lib.setup(self)
+        else:
+            lib.setup(self)
+
         self.extensions[name] = lib
 
     def unload_extension(self, name):

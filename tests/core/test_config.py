@@ -219,14 +219,14 @@ async def test_set_channel_no_register(config, empty_channel):
 # Dynamic attribute testing
 @pytest.mark.asyncio
 async def test_set_dynamic_attr(config):
-    await config.set_attr("foobar", True)
+    await config.set_raw("foobar", value=True)
 
     assert await config.foobar() is True
 
 
 @pytest.mark.asyncio
 async def test_get_dynamic_attr(config):
-    assert await config.get_attr("foobaz", True) is True
+    assert await config.get_raw("foobaz", default=True) is True
 
 
 # Member Group testing
@@ -296,6 +296,15 @@ async def test_member_clear_all(config, member_factory):
     await config.clear_all_members()
 
     assert len(await config.all_members()) == 0
+
+
+@pytest.mark.asyncio
+async def test_clear_value(config):
+    await config.foo.set(True)
+    await config.foo.clear()
+
+    with pytest.raises(KeyError):
+        await config.get_raw('foo')
 
 
 # Get All testing
@@ -376,3 +385,15 @@ async def test_value_ctxmgr_immutable(config):
 
     foo = await config.foo()
     assert foo is True
+
+
+@pytest.mark.asyncio
+async def test_ctxmgr_no_shared_default(config, member_factory):
+    config.register_member(foo=[])
+    m1 = member_factory.get()
+    m2 = member_factory.get()
+
+    async with config.member(m1).foo() as foo:
+        foo.append(1)
+
+    assert 1 not in await config.member(m2).foo()

@@ -40,7 +40,20 @@ class Cleanup:
         channel = ctx.channel
         author = ctx.author
         is_bot = self.bot.user.bot
+        
+        def author_check(message):
+            return message.author == author
 
+        if number > 100:
+            await ctx.send('Are you sure you want to delete {} messages? (y/n)'.format(number))
+            response = await self.bot.wait_for('message', check=author_check)
+
+            if response.content.startswith('y'):
+                tmp = await ctx.send('Continuing..')
+                await tmp.delete()
+            else:
+                return await ctx.send('Cancelled.')
+    
         def check(m):
             if text in m.content:
                 return True
@@ -89,6 +102,19 @@ class Cleanup:
         channel = ctx.channel
         author = ctx.author
         is_bot = self.bot.user.bot
+       
+        def author_check(message):
+            return message.author == author
+
+        if number > 100:
+            await ctx.send('Are you sure you want to delete {} messages? (y/n)'.format(number))
+            response = await self.bot.wait_for('message', check=author_check)
+
+            if response.content.startswith('y'):
+                tmp = await ctx.send('Continuing..')
+                await tmp.delete()
+            else:
+                return await ctx.send('Cancelled.')
 
         def check(m):
             if isinstance(user, discord.Member) and m.author == user:
@@ -184,9 +210,23 @@ class Cleanup:
         author = ctx.author
 
         is_bot = self.bot.user.bot
+        
+        def author_check(message):
+            return message.author == author
+
+        if number > 100:
+            await ctx.send('Are you sure you want to delete {} messages? (y/n)'.format(number))
+            response = await self.bot.wait_for('message', check=author_check)
+
+            if response.content.startswith('y'):
+                tmp = await ctx.send('Continuing..')
+                await tmp.delete()              
+            else:
+                return await ctx.send('Cancelled.')
+        else:
+            tmp = ctx.message
 
         to_delete = []
-        tmp = ctx.message
 
         done = False
 
@@ -219,6 +259,19 @@ class Cleanup:
         channel = ctx.message.channel
         author = ctx.message.author
         is_bot = self.bot.user.bot
+
+        def author_check(message):
+            return message.author == author
+
+        if number > 100:
+            await ctx.send('Are you sure you want to delete {} messages? (y/n)'.format(number))
+            response = await self.bot.wait_for('message', check=author_check)
+
+            if response.content.startswith('y'):
+                tmp = await ctx.send('Continuing..')
+                await tmp.delete()
+            else:
+                return await ctx.send('Cancelled.')
 
         prefixes = await self.bot.get_prefix(ctx.message) # This returns all server prefixes
         if isinstance(prefixes, str):
@@ -281,6 +334,19 @@ class Cleanup:
         channel = ctx.channel
         author = ctx.message.author
         is_bot = self.bot.user.bot
+
+        def author_check(message):
+            return message.author == author
+
+        if number > 100:
+            await ctx.send('Are you sure you want to delete {} messages? (y/n)'.format(number))
+            response = await self.bot.wait_for('message', check=author_check)
+
+            if response.content.startswith('y'):
+                tmp = await ctx.send('Continuing..')
+                await tmp.delete()
+            else:
+                return await ctx.send('Cancelled.')
 
         # You can always delete your own messages, this is needed to purge
         can_mass_purge = False

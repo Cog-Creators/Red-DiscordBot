@@ -66,6 +66,6 @@ def test_repo_name(installable):
 
 def test_serialization(installable):
     data = installable.to_json()
-    location = data["location"]
+    cog_name = data["cog_name"]
 
-    assert location[-1] == "test_cog"
+    assert cog_name == "test_cog"
