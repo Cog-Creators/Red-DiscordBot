@@ -140,7 +140,10 @@ def init_events(bot, cli_flags):
 
         print(Fore.RED + INTRO)
         print(Style.RESET_ALL)
-        print(bordered(INFO, INFO2, ascii_border=ascii_border))
+        print(
+            bordered(INFO, INFO2, ascii_border=ascii_border).encode(
+                'utf-8', errors='ignore')
+        )
 
         if invite_url:
             print("\nInvite URL: {}\n".format(invite_url))
