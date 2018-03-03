@@ -579,7 +579,10 @@ class Audio:
             else:
                 time_sec = seconds * 1000
                 seek = player.position + time_sec
-                await self._embed_msg(ctx, 'Moved {}s to {}'.format(seconds, lavalink.Utils.format_time(seek)))
+                if abs(time_sec) > player.position:
+                    await self._embed_msg(ctx, 'Moved {}s to 00:00:00'.format(seconds))
+                else:
+                    await self._embed_msg(ctx, 'Moved {}s to {}'.format(seconds, lavalink.Utils.format_time(seek)))
                 return await player.seek(seek)
 
     @commands.command()
