@@ -75,10 +75,14 @@ class Audio:
             c = player.fetch('channel')
             if c:
                 c = self.bot.get_channel(c)
-                if c:
-                    embed = discord.Embed(colour=c.guild.me.top_role.colour, title='Now Playing',
-                                          description='**[{}]({})**'.format(player.current.title, player.current.uri))
-                    await c.send(embed=embed)
+                if player.fetch('notify_message') is not None:
+                    try:
+                        await player.fetch('notify_message').delete()
+                    except discord.errors.NotFound:
+                        pass
+                embed = discord.Embed(colour=c.guild.me.top_role.colour, title='Now Playing', description='**[{}]({})**'.format(player.current.title, player.current.uri))
+                notify_message = await c.send(embed=embed)
+                player.store('notify_message', notify_message)
 
         if event == 'TrackStartEvent' and status:
             if playing_servers > 1:
