@@ -9,7 +9,7 @@ import math
 from discord.ext import commands
 from redbot.core import Config, checks
 
-__version__ = "2.0.2.9.a"
+__version__ = "2.0.2.9.b"
 __author__ = ["aikaterna", "billy/bollo/ati"]
 
 
