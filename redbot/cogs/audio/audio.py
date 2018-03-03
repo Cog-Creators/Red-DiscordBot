@@ -1,6 +1,7 @@
 # Lavalink.py cog for Red v3 beta 7+
 # Cog base thanks to Kromatic's example cog.
 import asyncio
+import datetime
 import discord
 import heapq
 import lavalink
@@ -159,12 +160,18 @@ class Audio:
         server_num = await self._get_playing()
         server_ids = self.bot.lavalink.players._players
         server_list = []
+
         for k, v in server_ids.items():
             guild_id = k
             player = v
+            connect_start = v.fetch('connect')
             try:
-                server_list.append(
-                    self.bot.get_guild(guild_id).name + ': **[{}]({})**'.format(v.current.title, v.current.uri))
+                connect_dur = self._dynamic_time((datetime.datetime.utcnow() - connect_start).seconds)
+            except TypeError:
+                connect_dur = 0
+            try:
+                server_list.append('{} [`{}`]: **[{}]({})**'.format(self.bot.get_guild(guild_id).name, connect_dur, 
+                                   v.current.title, v.current.uri))
             except AttributeError:
                 pass
             servers = '\n'.join(server_list)
@@ -331,6 +338,7 @@ class Audio:
         await self._data_check(ctx)
 
         if not player.is_connected:
+            player.store('connect', datetime.datetime.utcnow())
             await player.connect(ctx.author.voice.channel.id)
 
         query = query.strip('<>')
@@ -471,6 +479,7 @@ class Audio:
         if not ctx.author.voice or (player.is_connected and ctx.author.voice.channel.id != int(player.channel_id)):
             return await self._embed_msg(ctx, 'You must be in the voice channel to enqueue songs.')
         if not player.is_connected:
+            player.store('connect', datetime.datetime.utcnow())
             await player.connect(ctx.author.voice.channel.id)
 
         query = query.strip('<>')
@@ -724,6 +733,31 @@ class Audio:
             else:
                 msg += bar
         return msg
+
+    def _dynamic_time(self, time):
+        m, s = divmod(time, 60)
+        h, m = divmod(m, 60)
+        d, h = divmod(h, 24)
+
+        if d > 0:
+            msg = "{0}d"
+            if h > 0 and m > 0 and s > 0:
+                msg += " {1}h"
+            elif m > 0 and d == 0 and h == 0 and s == 0:
+                pass
+            elif s > 0 and d == 0 and h == 0 and m == 0:
+                pass
+            elif d == 0 and m == 0 and h == 0 and s == 0:
+                pass
+            else:
+                msg += " {1}h"
+        elif d == 0 and h > 0:
+            msg = "{1}h 0m" if m == 0 else "{1}h {2}m"
+        elif d == 0 and h == 0 and m > 0:
+            msg = "{2}m 0s" if s == 0 else "{2}m {3}s"
+        elif d == 0 and h == 0 and m == 0 and s > 0:
+            msg = "{3}s"
+        return msg.format(d, h, m, s)
 
     async def _embed_msg(self, ctx, title):
         embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title=title)
