@@ -220,9 +220,15 @@ class Audio:
             req_user = self.bot.get_user(player.current.requester)
             song = '**[{}]({})**\nRequested by: **{}**\n\n{}`{}`/`{}`'.format(player.current.title, player.current.uri,
                                                                               req_user, arrow, pos, dur)
+        if player.fetch('np_message') is not None:
+            try:
+                await player.fetch('np_message').delete()
+            except discord.errors.NotFound:
+                pass
 
         embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='Now Playing', description=song)
         message = await ctx.send(embed=embed)
+        player.store('np_message', message)
 
         def check(r, u):
             return r.message.id == message.id and u == ctx.message.author
