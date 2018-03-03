@@ -80,7 +80,8 @@ class Audio:
                         await player.fetch('notify_message').delete()
                     except discord.errors.NotFound:
                         pass
-                embed = discord.Embed(colour=c.guild.me.top_role.colour, title='Now Playing', description='**[{}]({})**'.format(player.current.title, player.current.uri))
+                embed = discord.Embed(colour=c.guild.me.top_role.colour, title='Now Playing',
+                                      description='**[{}]({})**'.format(player.current.title, player.current.uri))
                 notify_message = await c.send(embed=embed)
                 player.store('notify_message', notify_message)
 
