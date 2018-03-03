@@ -22,7 +22,7 @@ class Audio:
 
         default_global = {
             "host": 'localhost',
-            "port": '80',
+            "port": '2332',
             "passw": 'youshallnotpass',
             "status": False
         }
