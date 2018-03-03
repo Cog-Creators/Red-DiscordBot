@@ -414,13 +414,12 @@ class Audio:
         if not ctx.author.voice or (player.is_connected and ctx.author.voice.channel.id != int(player.channel_id)):
             return await self._embed_msg(ctx, 'You must be in the voice channel to toggle repeat.')
 
-        if not player.is_playing:
-            return await self._embed_msg(ctx, 'Nothing playing.')
-
         repeat = await self.config.guild(ctx.guild).repeat()
         await self.config.guild(ctx.guild).repeat.set(not repeat)
-        get_repeat = await self.config.guild(ctx.guild).repeat()
-        await self._embed_msg(ctx, 'Repeat songs: {}.'.format(get_repeat))
+        repeat = await self.config.guild(ctx.guild).repeat()
+        if player.repeat != repeat:
+            player.repeat = repeat
+        await self._embed_msg(ctx, 'Repeat songs: {}.'.format(repeat))
 
     @commands.command()
     async def remove(self, ctx, index: int):
