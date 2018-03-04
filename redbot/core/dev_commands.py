@@ -3,6 +3,7 @@ import inspect
 import io
 import textwrap
 import traceback
+import os
 from contextlib import redirect_stdout
 from copy import copy
 
