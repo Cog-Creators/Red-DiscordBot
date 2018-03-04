@@ -2,6 +2,9 @@ import sys
 import codecs
 import datetime
 import logging
+from distutils.version import StrictVersion
+
+import aiohttp
 import pkg_resources
 import traceback
 from pkg_resources import DistributionNotFound
@@ -105,6 +108,15 @@ def init_events(bot, cli_flags):
             print("Ready. I'm not in any server yet!")
 
         INFO.append('{} cogs with {} commands'.format(len(bot.cogs), len(bot.commands)))
+
+        async with aiohttp.ClientSession() as session:
+            async with session.get("http://pypi.python.org/pypi/red-discordbot/json") as r:
+                data = await r.json()
+        if StrictVersion(data["info"]["version"]) > StrictVersion(__version__):
+            INFO.append(
+                "Outdated version! {} is available "
+                "but you're using {}".format(data["info"]["version"], __version__)
+            )
 
         INFO2 = []
 
