@@ -41,7 +41,7 @@ class Audio:
         self._lavalink = None
         self._lavalink_build_url = (
             "https://ci.fredboat.com/repository/download/"
-            "Lavalink_Build/{}:id/Lavalink.jar"
+            "Lavalink_Build/{}:id/Lavalink.jar?guest=1"
         ).format(LAVALINK_BUILD)
 
     async def init_config(self):
