@@ -112,12 +112,21 @@ def init_events(bot, cli_flags):
         async with aiohttp.ClientSession() as session:
             async with session.get("http://pypi.python.org/pypi/red-discordbot/json") as r:
                 data = await r.json()
-        if StrictVersion(data["info"]["version"]) > StrictVersion(__version__):
+        if StrictVersion(data["info"]["version"]) > StrictVersion(red_version):
             INFO.append(
                 "Outdated version! {} is available "
-                "but you're using {}".format(data["info"]["version"], __version__)
+                "but you're using {}".format(data["info"]["version"], red_version)
             )
-
+            owner = discord.utils.get(bot.get_all_members(), id=bot.owner_id)
+            try:
+                await owner.send(
+                    "Your Red instance is out of date! {} is the current "
+                    "version, however you are using {}!".format(
+                        data["info"]["version"], red_version
+                    )
+                )
+            except:
+                pass
         INFO2 = []
 
         sentry = await bot.db.enable_sentry()
