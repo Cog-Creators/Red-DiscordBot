@@ -253,9 +253,9 @@ class Economy:
                     )
                 )
                 await ctx.send(
-                    _("You currently have {} {}.".format(
+                    _("You currently have {} {}.").format(
                         str((await bank.get_balance(author))), credits_name
-                    ))
+                    )
                 )
                 if await bank.is_global():
                     bank_sorted = sorted(await bank.get_global_accounts(),
