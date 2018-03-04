@@ -64,7 +64,7 @@ class Audio:
         notify = await self.config.guild(self.bot.get_guild(player.fetch('guild'))).notify()
         status = await self.config.status()
         playing_servers = await self._get_playing()
-        get_players = [p for p in self._lavalink.players._players.values() if p.is_playing]
+        get_players = [p for _, p in self._lavalink.players if p.is_playing]
         try:
             get_single_title = get_players[0].current.title
         except IndexError:
@@ -156,24 +156,22 @@ class Audio:
     async def audiostats(self, ctx):
         """Audio stats."""
         server_num = await self._get_playing()
-        server_ids = self._lavalink.players._players
         server_list = []
 
-        for k, v in server_ids.items():
-            guild_id = k
-            player = v
-            connect_start = v.fetch('connect')
+        for guild_id, player in self._lavalink.players:
+            connect_start = player.fetch('connect')
             try:
                 connect_dur = self._dynamic_time((datetime.datetime.utcnow() - connect_start).seconds)
             except TypeError:
                 connect_dur = 0
             try:
                 server_list.append('{} [`{}`]: **[{}]({})**'.format(self.bot.get_guild(guild_id).name, connect_dur, 
-                                   v.current.title, v.current.uri))
+                                   player.current.title, player.current.uri))
             except AttributeError:
                 pass
             servers = '\n'.join(server_list)
-        if server_list == []:
+
+        if not server_list:
             servers = 'Not connected anywhere.'
         embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='Playing in {} servers:'.format(server_num),
                               description=servers)
@@ -765,7 +763,7 @@ class Audio:
         await ctx.send(embed=embed)
 
     async def _get_playing(self):
-        return len([p for p in self._lavalink.players._players.values() if p.is_playing])
+        return len([p for _, p in self._lavalink.players if p.is_playing])
 
     async def _queue_duration(self, ctx):
         player = self._lavalink.players.get(ctx.guild.id)
