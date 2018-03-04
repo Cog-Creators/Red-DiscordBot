@@ -10,7 +10,7 @@ Installing pre-requirements
 
 .. code-block:: none
 
-    sudo apt-get install python3.5-dev python3-pip build-essential libssl-dev libffi-dev git libav-tools libopus-dev unzip -y
+    sudo apt-get install python3.5-dev python3-pip build-essential libssl-dev libffi-dev git libav-tools libopus-dev unzip default-jre -y
 
 --------------
 Installing Red
