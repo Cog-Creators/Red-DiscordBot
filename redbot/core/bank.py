@@ -243,7 +243,7 @@ async def deposit_credits(member: discord.Member, amount: int) -> int:
 
     """
     if _invalid_amount(amount):
-        raise ValueError("Invalid withdrawal amount {} <= 0".format(amount))
+        raise ValueError("Invalid deposit amount {} <= 0".format(amount))
 
     bal = await get_balance(member)
     return await set_balance(member, amount + bal)

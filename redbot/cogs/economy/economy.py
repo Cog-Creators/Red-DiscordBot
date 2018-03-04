@@ -252,6 +252,27 @@ class Economy:
                         credits_name
                     )
                 )
+                await ctx.send(
+                    _("You currently have {} {}.".format(
+                        str((await bank.get_balance(author))), credits_name
+                    ))
+                )
+                if await bank.is_global():
+                    bank_sorted = sorted(await bank.get_global_accounts(),
+                                         key=lambda x: x.balance, reverse=True)
+                else:
+                    bank_sorted = sorted(await bank.get_guild_accounts(guild),
+                                         key=lambda x: x.balance, reverse=True)
+                topten = bank_sorted[:10]
+                pos = 1
+                for acc in topten:
+                    if acc.name == author.display_name:
+                        await ctx.send(_(
+                            "You are currently {} on the leaderboard!"
+                        ).format("#{}".format(pos)))
+                        break
+                    else:
+                        pos += 1
             else:
                 dtime = self.display_time(next_payday - cur_time)
                 await ctx.send(
