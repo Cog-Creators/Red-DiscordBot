@@ -25,7 +25,7 @@ def get_requirements():
         requirements = f.read().splitlines()
     try:
         requirements.remove('git+https://github.com/Rapptz/discord.py.git@rewrite#egg=discord.py[voice]')
-    except IndexError:
+    except ValueError:
         pass
 
     if IS_DEPLOYING or not IS_TRAVIS:
