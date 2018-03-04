@@ -1,8 +1,10 @@
 from pathlib import Path
 from aiohttp import ClientSession
 import shutil
+import asyncio
 
 from .audio import Audio
+from .manager import start_lavalink_server
 from discord.ext import commands
 from redbot.core.data_manager import cog_data_path
 
@@ -45,5 +47,11 @@ async def maybe_download_lavalink(loop, cog):
 async def setup(bot: commands.Bot):
     cog = Audio(bot)
     await maybe_download_lavalink(bot.loop, cog)
-    await cog.init_config()
-    bot.add_cog(cog)
+    await start_lavalink_server(bot.loop)
+
+    async def _finish():
+        await asyncio.sleep(10)
+        await cog.init_config()
+        bot.add_cog(cog)
+
+    bot.loop.create_task(_finish())

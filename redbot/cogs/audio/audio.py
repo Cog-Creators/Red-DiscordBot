@@ -9,6 +9,8 @@ import math
 from discord.ext import commands
 from redbot.core import Config, checks
 
+from .manager import shutdown_lavalink_server
+
 __version__ = "2.0.2.9.b"
 __author__ = ["aikaterna", "billy/bollo/ati"]
 
@@ -816,4 +818,6 @@ class Audio:
         return queue_total_duration
 
     def __unload(self):
+        self.bot.lavalink.ws._ws.close()
         self.bot.lavalink.client.destroy()
+        shutdown_lavalink_server()
