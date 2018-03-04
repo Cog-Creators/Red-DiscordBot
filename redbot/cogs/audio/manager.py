@@ -1,6 +1,7 @@
 import shlex
 import asyncio
 from subprocess import Popen, DEVNULL
+import os
 
 proc = None
 SHUTDOWN = asyncio.Event()
@@ -22,8 +23,11 @@ async def start_lavalink_server(loop):
     start_cmd = "java -jar {}".format(LAVALINK_JAR_FILE.resolve())
 
     global proc
-    proc = Popen(shlex.split(start_cmd), cwd=str(LAVALINK_DOWNLOAD_DIR),
-                 stdout=DEVNULL, stderr=DEVNULL)
+    proc = Popen(
+        shlex.split(start_cmd, posix=os.name == 'posix'),
+        cwd=str(LAVALINK_DOWNLOAD_DIR),
+        stdout=DEVNULL, stderr=DEVNULL
+    )
 
     print("Lavalink jar started. PID: {}".format(proc.pid))
 
