@@ -322,7 +322,7 @@ class Mod:
         except discord.errors.Forbidden:
             await ctx.send(_("I'm not allowed to do that."))
         except Exception as e:
-            print(str(e, encoding='utf-8', errors='replace'))
+            print(e)
         else:
             await ctx.send(_("Done. That felt good."))
 
@@ -379,7 +379,7 @@ class Mod:
             await ctx.send(_("I'm not allowed to do that."))
         except Exception as e:
             self.ban_queue.remove(queue_entry)
-            print(str(e, encoding='utf-8', errors='replace'))
+            print(e)
         else:
             await ctx.send(_("Done. It was about time."))
 
@@ -540,14 +540,14 @@ class Mod:
                 return
             except discord.HTTPException as e:
                 self.ban_queue.remove(queue_entry)
-                print(str(e, encoding='utf-8', errors='replace'))
+                print(e)
                 return
             self.unban_queue.append(queue_entry)
             try:
                 await guild.unban(user)
             except discord.HTTPException as e:
                 self.unban_queue.remove(queue_entry)
-                print(str(e, encoding='utf-8', errors='replace'))
+                print(e)
                 return
             else:
                 await ctx.send(_("Done. Enough chaos."))
@@ -1209,7 +1209,7 @@ class Mod:
                             "Mention spam (Autoban)", until=None, channel=None
                         )
                     except RuntimeError as e:
-                        print(str(e, encoding='utf-8', errors='replace'))
+                        print(e)
                         return False
                     return True
         return False
@@ -1269,7 +1269,7 @@ class Mod:
                                      "ban", member, mod,
                                      reason if reason else None)
         except RuntimeError as e:
-            print(str(e, encoding='utf-8', errors='replace'))
+            print(e)
 
     async def on_member_unban(self, guild: discord.Guild, user: discord.User):
         if (guild.id, user.id) in self.unban_queue:
@@ -1287,7 +1287,7 @@ class Mod:
             await modlog.create_case(guild, date, "unban",
                                      user, mod, reason)
         except RuntimeError as e:
-            print(str(e, encoding='utf-8', errors='replace'))
+            print(e)
 
     async def get_audit_entry_info(self,
                                    guild: discord.Guild,
