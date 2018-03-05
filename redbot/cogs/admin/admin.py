@@ -227,7 +227,7 @@ class Admin:
 
     @commands.group(invoke_without_command=True)
     @checks.is_owner()
-    async def announce(self, ctx: commands.Context, message: str):
+    async def announce(self, ctx: commands.Context, *, message: str):
         """
         Announces a message to all servers the bot is in.
         """
