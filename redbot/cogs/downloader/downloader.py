@@ -43,7 +43,7 @@ class Downloader:
         self.LIB_PATH.mkdir(parents=True, exist_ok=True)
         self.SHAREDLIB_PATH.mkdir(parents=True, exist_ok=True)
         if not self.SHAREDLIB_INIT.exists():
-            with self.SHAREDLIB_INIT.open(mode='w', encoding='utf-8') as _:
+            with self.SHAREDLIB_INIT.open(mode='w') as _:
                 pass
 
         if str(self.LIB_PATH) not in syspath:

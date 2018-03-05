@@ -465,7 +465,7 @@ class Trivia:
             raise FileNotFoundError("Could not find the `{}` category"
                                     "".format(category))
 
-        with path.open(encoding='utf-8') as file:
+        with path.open() as file:
             try:
                 dict_ = yaml.load(file)
             except yaml.error.YAMLError as exc:
