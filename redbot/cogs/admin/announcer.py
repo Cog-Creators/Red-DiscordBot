@@ -37,15 +37,7 @@ class Announcer:
 
     async def _get_announce_channel(self, guild: discord.Guild) -> discord.TextChannel:
         channel_id = await self.config.guild(guild).announce_channel()
-        channel = None
-
-        if channel_id is not None:
-            channel = guild.get_channel(channel_id)
-
-        if channel is None:
-            channel = guild.default_channel
-
-        return channel
+        return guild.get_channel(channel_id)
 
     async def announcer(self):
         guild_list = self.ctx.bot.guilds
@@ -58,6 +50,9 @@ class Announcer:
                 continue
 
             channel = await self._get_announce_channel(g)
+
+            if channel is None:
+                continue
 
             try:
                 await channel.send(self.message)
