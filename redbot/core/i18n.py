@@ -194,7 +194,7 @@ class Translator:
         try:
 
             try:
-                translation_file = locale_path.open('ru')
+                translation_file = locale_path.open('ru', encoding='utf-8')
             except ValueError:  # We are using Windows
                 translation_file = locale_path.open('r', encoding='utf-8')
             self._parse(translation_file)
