@@ -166,7 +166,7 @@ class Audio:
             player = v
             connect_start = v.fetch('connect')
             try:
-                connect_dur = self._dynamic_time((datetime.datetime.utcnow() - connect_start).seconds)
+                connect_dur = self._dynamic_time(int((datetime.datetime.utcnow() - connect_start).total_seconds()))
             except TypeError:
                 connect_dur = 0
             try:
@@ -743,21 +743,11 @@ class Audio:
         d, h = divmod(h, 24)
 
         if d > 0:
-            msg = "{0}d"
-            if h > 0 and m > 0 and s > 0:
-                msg += " {1}h"
-            elif m > 0 and d == 0 and h == 0 and s == 0:
-                pass
-            elif s > 0 and d == 0 and h == 0 and m == 0:
-                pass
-            elif d == 0 and m == 0 and h == 0 and s == 0:
-                pass
-            else:
-                msg += " {1}h"
+            msg = "{0}d {1}h"
         elif d == 0 and h > 0:
-            msg = "{1}h 0m" if m == 0 else "{1}h {2}m"
+            msg = "{1}h {2}m"
         elif d == 0 and h == 0 and m > 0:
-            msg = "{2}m 0s" if s == 0 else "{2}m {3}s"
+            msg = "{2}m {3}s"
         elif d == 0 and h == 0 and m == 0 and s > 0:
             msg = "{3}s"
         return msg.format(d, h, m, s)
