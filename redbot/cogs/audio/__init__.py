@@ -1,5 +1,8 @@
 from .audio import Audio
+from discord.ext import commands
 
 
-def setup(bot):
-    bot.add_cog(Audio(bot))
+async def setup(bot: commands.Bot):
+    cog = Audio(bot)
+    await cog.init_config()
+    bot.add_cog(cog)
