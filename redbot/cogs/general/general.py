@@ -219,13 +219,13 @@ class General:
         activity = _("Chilling in {} status").format(user.status)
         if user.activity is None:  # Default status
             pass
-        elif user.activity.type == 0:  # "Playing" status
+        elif user.activity.type == discord.ActivityType.playing:
             activity = _("Playing {}").format(user.activity.name)
-        elif user.activity.type == 1:  # "Streaming" status
+        elif user.activity.type == discord.ActivityType.streaming:
             activity = _("Streaming [{}]({})").format(user.activity.name, user.activity.url)
-        elif user.activity.type == 2:  # "Listening" status
+        elif user.activity.type == discord.ActivityType.listening:
             activity = _("Listening to {}").format(user.activity.name)
-        elif user.activity.type == 3:  # "Watching" status
+        elif user.activity.type == discord.ActivityType.watching:
             activity = _("Watching {}").format(user.activity.name)
 
         if roles:
