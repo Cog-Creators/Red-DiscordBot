@@ -139,7 +139,7 @@ class Help(formatter.HelpFormatter):
 
         if description:
             # <description> portion
-            emb['embed']['description'] = description
+            emb['embed']['description'] = description[:2046]
 
         if isinstance(self.command, discord.ext.commands.core.Command):
             # <signature portion>
@@ -149,11 +149,11 @@ class Help(formatter.HelpFormatter):
             # <long doc> section
             if self.command.help:
                 name = '__{0}__'.format(self.command.help.split('\n\n')[0])
-                name_length = len(name) - 4
+                name_length = len(name)
                 value = self.command.help[name_length:].replace('[p]', self.clean_prefix)
                 if value == '':
                     value = EMPTY_STRING
-                field = EmbedField(name, value, False)
+                field = EmbedField(name[:252], value[:1024], False)
                 emb['fields'].append(field)
 
             # end it here if it's just a regular command
