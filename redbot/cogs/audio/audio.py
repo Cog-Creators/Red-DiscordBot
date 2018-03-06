@@ -604,6 +604,8 @@ class Audio:
         queue_total_duration = lavalink.Utils.format_time(queue_duration)
         if not shuffle:
             embed.set_footer(text='{} until track playback'.format(queue_total_duration))
+        if not player.is_playing:
+            await player.play()
         return await ctx.send(embed=embed)
 
     @commands.command()
