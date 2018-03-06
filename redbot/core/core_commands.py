@@ -9,6 +9,7 @@ from collections import namedtuple
 from pathlib import Path
 from random import SystemRandom
 from string import ascii_letters, digits
+from distutils.version import StrictVersion
 
 import aiohttp
 import discord
@@ -68,6 +69,10 @@ class Core:
         app_info = await self.bot.application_info()
         owner = app_info.owner
 
+        async with aiohttp.ClientSession() as session:
+            async with session.get("http://pypi.python.org/pypi/red-discordbot/json") as r:
+                data = await r.json()
+        outdated = StrictVersion(data["info"]["version"]) > StrictVersion(__version__)
         about = (
             "This is an instance of [Red, an open source Discord bot]({}) "
             "created by [Twentysix]({}) and [improved by many]({}).\n\n"
@@ -81,7 +86,13 @@ class Core:
         embed.add_field(name="Python", value=python_version)
         embed.add_field(name="discord.py", value=dpy_version)
         embed.add_field(name="Red version", value=red_version)
+        if outdated:
+            embed.add_field(name="Outdated", value="Yes, {} is available".format(
+                    data["info"]["version"]
+                )
+            )
         embed.add_field(name="About Red", value=about, inline=False)
+
         embed.set_footer(text="Bringing joy since 02 Jan 2016 (over "
                          "{} days ago!)".format(days_since))
         try:
