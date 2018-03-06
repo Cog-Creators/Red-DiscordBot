@@ -72,6 +72,14 @@ class Audio:
         except IndexError:
             pass
 
+        if event == 'TrackStartEvent':
+            playing_song = player.fetch('playing_song')
+            requester = player.fetch('requester')
+            player.store('prev_song', playing_song)
+            player.store('prev_requester', requester)
+            player.store('playing_song', self.bot.lavalink.players.get(player.fetch('guild')).current.uri)
+            player.store('requester', self.bot.get_user(self.bot.lavalink.players.get(player.fetch('guild')).current.requester))
+
         if event == 'TrackStartEvent' and notify:
             c = player.fetch('channel')
             if c:
@@ -204,7 +212,10 @@ class Audio:
         player = self.bot.lavalink.players.get(ctx.guild.id)
         await player.disconnect()
         player.queue.clear()
-        player.store('song', None)
+        player.store('connect', None)
+        player.store('prev_requester', None)
+        player.store('prev_song', None)
+        player.store('playing_song', None)
         player.store('requester', None)
         await self.bot.lavalink.client._trigger_event("QueueEndEvent", ctx.guild.id)
 
@@ -371,6 +382,34 @@ class Audio:
 
         if not player.is_playing:
             await player.play()
+
+    @commands.command()
+    async def prev(self, ctx):
+        """Skips to the start of the previously played track."""
+        player = self.bot.lavalink.players.get(ctx.guild.id)
+        shuffle = await self.config.guild(ctx.guild).shuffle()
+
+        if not ctx.author.voice or (player.is_connected and ctx.author.voice.channel.id != int(player.channel_id)):
+            return await self._embed_msg(ctx, 'You must be in the voice channel to skip the music.')
+
+        if shuffle:
+            return await self._embed_msg(ctx, 'Turn shuffle off to use this command.')
+
+        if player.current is None:
+            return await self._embed_msg(ctx, 'The player is stopped.')
+
+        if player.fetch('prev_song') is None:
+            return await self._embed_msg(ctx, 'No previous track.')
+        else:
+            last_track = await self.bot.lavalink.client.get_tracks(player.fetch('prev_song'))
+            player.add(player.fetch('prev_requester').id, last_track[0])
+            queue_len = len(self.bot.lavalink.players.get(ctx.guild.id).queue)
+            bump_song = self.bot.lavalink.players.get(ctx.guild.id).queue[queue_len - 1]
+            player.queue.insert(0, bump_song)
+            player.queue.pop(queue_len)
+            await player.skip()
+            embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='Replaying Track', description='**[{}]({})**'.format(player.current.title, player.current.uri))
+            await ctx.send(embed=embed)
 
     @commands.command(aliases=['q'])
     async def queue(self, ctx, page: int = 1):
@@ -642,7 +681,9 @@ class Audio:
             await self._embed_msg(ctx, 'Stopping...')
             player.queue.clear()
             await player.stop()
-            player.store('song', None)
+            player.store('prev_requester', None)
+            player.store('prev_song', None)
+            player.store('playing_song', None)
             player.store('requester', None)
             await self.bot.lavalink.client._trigger_event("QueueEndEvent", ctx.guild.id)
 
