@@ -208,7 +208,7 @@ class Warnings:
         guild_settings = self.config.guild(guild)
         msg_list = []
         async with guild_settings.actions() as registered_actions:
-            for r in registered_actions.keys():
+            for r in registered_actions:
                 msg_list.append(
                     "Name: {}\nPoints: {}\nDescription: {}".format(
                         r, r["points"], r["description"]
