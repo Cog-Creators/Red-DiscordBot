@@ -216,18 +216,9 @@ class Economy:
                 )
             )
         else:
-            if await bank.is_global():
-                # Bank being global means that the check would cause only
-                # the owner and any co-owners to be able to run the command
-                # so if we're in the function, it's safe to assume that the
-                # author is authorized to use owner-only commands
-                user = ctx.author
-            else:
-                user = ctx.guild.owner
-            success = await bank.wipe_bank()
-            if success:
-                await ctx.send(_("All bank accounts of this guild have been "
-                               "deleted."))
+            await bank.wipe_bank()
+            await ctx.send(_("All bank accounts of this guild have been "
+                             "deleted."))
 
     @commands.command()
     @guild_only_check()
