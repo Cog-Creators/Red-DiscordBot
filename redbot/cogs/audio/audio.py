@@ -107,7 +107,7 @@ class Audio:
             if playing_servers == 1:
                 await self.bot.change_presence(activity=discord.Activity(name=get_single_title, type=discord.ActivityType.listening))
             if playing_servers > 1:
-                await self.bot.change_presence(activity=discord.Activity(name='music in {} servers'.format(playing_servers), type=discord.ActivityType.listening))
+                await self.bot.change_presence(activity=discord.Activity(name='music in {} servers'.format(playing_servers)))
 
     @commands.group()
     @checks.is_owner()
