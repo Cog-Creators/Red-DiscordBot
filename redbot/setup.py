@@ -179,37 +179,41 @@ def remove_instance():
                 selected, dt.utcnow().strftime("%Y-%m-%d %H:%M:%S")
             )
             pth = Path(instance_data["DATA_PATH"])
-            home = pth.home()
-            backup_file = home / backup_filename
-            os.chdir(str(pth.parent))  # str is used here because 3.5 support
-            with tarfile.open(str(backup_file), "w:gz") as tar:
-                tar.add(pth.stem)  # add all files in that directory
-            print(
-                "A backup of {} has been made. It is at {}".format(
-                    selected, backup_file
+            if pth.exists():
+                home = pth.home()
+                backup_file = home / backup_filename
+                os.chdir(str(pth.parent))  # str is used here because 3.5 support
+                with tarfile.open(str(backup_file), "w:gz") as tar:
+                    tar.add(pth.stem)  # add all files in that directory
+                print(
+                    "A backup of {} has been made. It is at {}".format(
+                        selected, backup_file
+                    )
                 )
-            )
-            print("Removing the instance...")
-            try:
-                shutil.rmtree(str(pth))
-            except FileNotFoundError:
-                pass  # data dir was removed manually
+                print("Removing the instance...")
+                do_delete(pth)
             save_config(selected, {}, remove=True)
             print("The instance has been removed")
             return
     elif yesno.lower() == "n":
         pth = Path(instance_data["DATA_PATH"])
         print("Removing the instance...")
-        try:
-            shutil.rmtree(str(pth))
-        except FileNotFoundError:
-            pass  # data dir was removed manually
+        do_delete(pth)
         save_config(selected, {}, remove=True)
         print("The instance has been removed")
         return
     else:
         print("That's not a valid option!")
         return
+
+
+def do_delete(pth: Path):
+    if pth.exists():
+        for root, dirs, files in os.walk(str(pth)):
+            os.chmod(root, 0o755)
+            for d in dirs:
+                os.chmod(os.path.join(root, d), 0o755)
+        shutil.rmtree(str(pth), ignore_errors=True)
 
 
 def main():
