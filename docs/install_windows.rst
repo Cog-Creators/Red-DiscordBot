@@ -21,6 +21,10 @@ Needed Software
 
 .. attention:: Please choose the option to "Run Git from the Windows Command Prompt" in Git's setup
 
+* `Java <https://java.com/en/download/manual.jsp>`_ - needed for Audio
+
+.. attention:: Please choose the "Windows Online" installer
+
 --------------
 Installing Red
 --------------
