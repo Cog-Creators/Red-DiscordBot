@@ -96,9 +96,9 @@ class Audio:
 
         if event == 'TrackStartEvent' and status:
             if playing_servers > 1:
-                await self.bot.change_presence(game=discord.Game(name='music in {} servers'.format(playing_servers)))
+                await self.bot.change_presence(activity=discord.Activity(name='music in {} servers'.format(playing_servers), type=discord.ActivityType.playing))
             else:
-                await self.bot.change_presence(game=discord.Game(name=get_single_title, type=2))
+                await self.bot.change_presence(activity=discord.Activity(name=get_single_title, type=discord.ActivityType.listening))
 
         if event == 'QueueEndEvent' and notify:
             c = player.fetch('channel')
@@ -111,11 +111,11 @@ class Audio:
         if event == 'QueueEndEvent' and status:
             await asyncio.sleep(1)
             if playing_servers == 0:
-                await self.bot.change_presence(game=None)
+                await self.bot.change_presence(activity=None)
             if playing_servers == 1:
-                await self.bot.change_presence(game=discord.Game(name=get_single_title, type=2))
+                await self.bot.change_presence(activity=discord.Activity(name=get_single_title, type=discord.ActivityType.listening))
             if playing_servers > 1:
-                await self.bot.change_presence(game=discord.Game(name='music in {} servers'.format(playing_servers)))
+                await self.bot.change_presence(activity=discord.Activity(name='music in {} servers'.format(playing_servers), type=discord.ActivityType.playing))
 
     @commands.group()
     @checks.is_owner()
