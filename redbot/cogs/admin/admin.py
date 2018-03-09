@@ -134,7 +134,7 @@ class Admin:
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(manage_roles=True)
-    async def addrole(self, ctx: commands.Context, rolename: discord.Role,
+    async def addrole(self, ctx: commands.Context, rolename: discord.Role, *,
                       user: MemberDefaultAuthor=None):
         """
         Adds a role to a user. If user is left blank it defaults to the
@@ -151,7 +151,7 @@ class Admin:
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(manage_roles=True)
-    async def removerole(self, ctx: commands.Context, rolename: discord.Role,
+    async def removerole(self, ctx: commands.Context, rolename: discord.Role, *,
                          user: MemberDefaultAuthor=None):
         """
         Removes a role from a user. If user is left blank it defaults to the
@@ -227,7 +227,7 @@ class Admin:
 
     @commands.group(invoke_without_command=True)
     @checks.is_owner()
-    async def announce(self, ctx: commands.Context, message: str):
+    async def announce(self, ctx: commands.Context, *, message: str):
         """
         Announces a message to all servers the bot is in.
         """
@@ -259,7 +259,7 @@ class Admin:
     @announce.command(name="channel")
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
-    async def announce_channel(self, ctx, channel: discord.TextChannel=None):
+    async def announce_channel(self, ctx, *, channel: discord.TextChannel=None):
         """
         Changes the channel on which the bot makes announcements.
         """
@@ -274,7 +274,7 @@ class Admin:
     @announce.command(name="ignore")
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
-    async def announce_ignore(self, ctx, guild: discord.Guild=None):
+    async def announce_ignore(self, ctx, *, guild: discord.Guild=None):
         """
         Toggles whether the announcements will ignore the given server.
             Defaults to the current server if none is provided.
@@ -310,7 +310,7 @@ class Admin:
         return valid_roles
 
     @commands.group(invoke_without_command=True)
-    async def selfrole(self, ctx: commands.Context, selfrole: SelfRole):
+    async def selfrole(self, ctx: commands.Context, *, selfrole: SelfRole):
         """
         Add a role to yourself that server admins have configured as
             user settable.
@@ -319,7 +319,7 @@ class Admin:
         await self._addrole(ctx, ctx.author, selfrole)
 
     @selfrole.command(name="remove")
-    async def selfrole_remove(self, ctx: commands.Context, selfrole: SelfRole):
+    async def selfrole_remove(self, ctx: commands.Context, *, selfrole: SelfRole):
         """
         Removes a selfrole from yourself.
         """
@@ -328,7 +328,7 @@ class Admin:
 
     @selfrole.command(name="add")
     @commands.has_permissions(manage_roles=True)
-    async def selfrole_add(self, ctx: commands.Context, role: discord.Role):
+    async def selfrole_add(self, ctx: commands.Context, *, role: discord.Role):
         """
         Add a role to the list of available selfroles.
         """
@@ -340,7 +340,7 @@ class Admin:
 
     @selfrole.command(name="delete")
     @commands.has_permissions(manage_roles=True)
-    async def selfrole_delete(self, ctx: commands.Context, role: SelfRole):
+    async def selfrole_delete(self, ctx: commands.Context, *, role: SelfRole):
         """
         Removes a role from the list of available selfroles.
         """
