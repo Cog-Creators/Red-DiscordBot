@@ -47,12 +47,9 @@ class Audio:
         passw = await self.config.passw()
         port = await self.config.port()
 
-        try:
-            self._lavalink = lavalink.Client(
-                bot=self.bot, password=passw, host=host, ws_port=port, loop=self.bot.loop
-            )
-        except RuntimeError:
-            pass
+        self._lavalink = lavalink.Client(
+            bot=self.bot, password=passw, host=host, ws_port=port, loop=self.bot.loop
+        )
 
         self._lavalink.register_hook(self.track_hook)
 
@@ -217,11 +214,11 @@ class Audio:
         song = 'Nothing'
         if player.current:
             arrow = await self._draw_time(ctx)
-            pos = lavalink.Utils.format_time(player.position)
+            pos = lavalink.format_time(player.position)
             if player.current.stream:
                 dur = 'LIVE'
             else:
-                dur = lavalink.Utils.format_time(player.current.duration)
+                dur = lavalink.format_time(player.current.duration)
         if not player.current:
             song = 'Nothing.'
         else:
@@ -346,7 +343,7 @@ class Audio:
             return await self._embed_msg(ctx, 'Nothing found 👀')
 
         queue_duration = await self._queue_duration(ctx)
-        queue_total_duration = lavalink.Utils.format_time(queue_duration)
+        queue_total_duration = lavalink.format_time(queue_duration)
 
         if 'list' in query and 'ytsearch:' not in query:
             for track in tracks:
@@ -387,12 +384,12 @@ class Audio:
 
         queue_list = ''
         arrow = await self._draw_time(ctx)
-        pos = lavalink.Utils.format_time(player.position)
+        pos = lavalink.format_time(player.position)
 
         if player.current.stream:
             dur = 'LIVE'
         else:
-            dur = lavalink.Utils.format_time(player.current.duration)
+            dur = lavalink.format_time(player.current.duration)
 
         if player.current.stream:
             queue_list += '**Currently livestreaming:** [**{}**]({})\nRequested by: **{}**\n\n{}`{}`/`{}`\n\n'.format(
@@ -413,7 +410,7 @@ class Audio:
                               description=queue_list)
 
         queue_duration = await self._queue_duration(ctx)
-        queue_total_duration = lavalink.Utils.format_time(queue_duration)
+        queue_total_duration = lavalink.format_time(queue_duration)
         text = 'Page {}/{} | {} tracks, {} remaining'.format(page, pages, len(player.queue), queue_total_duration)
         if repeat:
             text += ' | Repeat: \N{WHITE HEAVY CHECK MARK}'
@@ -539,7 +536,7 @@ class Audio:
             songembed = discord.Embed(colour=ctx.guild.me.top_role.colour,
                                       title='Queued {} track(s).'.format(len(tracks)))
             queue_duration = await self._queue_duration(ctx)
-            queue_total_duration = lavalink.Utils.format_time(queue_duration)
+            queue_total_duration = lavalink.format_time(queue_duration)
             if not shuffle and queue_duration > 0:
                 songembed.set_footer(text='{} until start of search playback'.format(queue_total_duration))
             for track in tracks:
@@ -558,7 +555,7 @@ class Audio:
         embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='Track Enqueued',
                               description='[**{}**]({})'.format(track_title, track_url))
         queue_duration = await self._queue_duration(ctx)
-        queue_total_duration = lavalink.Utils.format_time(queue_duration)
+        queue_total_duration = lavalink.format_time(queue_duration)
         if not shuffle:
             embed.set_footer(text='{} until track playback'.format(queue_total_duration))
         return await ctx.send(embed=embed)
@@ -578,7 +575,7 @@ class Audio:
                 if abs(time_sec) > player.position:
                     await self._embed_msg(ctx, 'Moved {}s to 00:00:00'.format(seconds))
                 else:
-                    await self._embed_msg(ctx, 'Moved {}s to {}'.format(seconds, lavalink.Utils.format_time(seek)))
+                    await self._embed_msg(ctx, 'Moved {}s to {}'.format(seconds, lavalink.format_time(seek)))
                 return await player.seek(seek)
 
     @commands.command()
@@ -607,7 +604,7 @@ class Audio:
             pos = player.position
             dur = player.current.duration
             remain = dur - pos
-            time_remain = lavalink.Utils.format_time(remain)
+            time_remain = lavalink.format_time(remain)
             if player.current.stream:
                 embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='There\'s nothing in the queue.')
                 embed.set_footer(text='Currently livestreaming {}'.format(player.current.title))
@@ -785,5 +782,6 @@ class Audio:
         return queue_total_duration
 
     def __unload(self):
-        self._lavalink.destroy()
+        self._lavalink.unregister_hook(self.track_hook)
+        self.bot.loop.create_task(self._lavalink.destroy())
         shutdown_lavalink_server()
