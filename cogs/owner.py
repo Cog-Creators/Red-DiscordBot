@@ -96,17 +96,17 @@ class Owner:
                                " this isn't supposed to happen.")
         else:
             set_cog(module, False)
-        try:  # No matter what we should try to unload it
-            self._unload_cog(module)
-        except OwnerUnloadWithoutReloadError:
-            await self.bot.say("I cannot allow you to unload the Owner plugin"
-                               " unless you are in the process of reloading.")
-        except CogUnloadError as e:
-            log.exception(e)
-            traceback.print_exc()
-            await self.bot.say('Unable to safely unload that cog.')
-        else:
-            await self.bot.say("The cog has been unloaded.")
+            try:  # No matter what we should try to unload it
+                self._unload_cog(module)
+            except OwnerUnloadWithoutReloadError:
+                await self.bot.say("I cannot allow you to unload the Owner plugin"
+                                   " unless you are in the process of reloading.")
+            except CogUnloadError as e:
+                log.exception(e)
+                traceback.print_exc()
+                await self.bot.say('Unable to safely unload that cog.')
+            else:
+                await self.bot.say("The cog has been unloaded.")
 
     @unload.command(name="all")
     @checks.is_owner()
