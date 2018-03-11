@@ -185,7 +185,7 @@ class WebSocket:
         for x in range(5):
             delay = backoff.delay()
             log.debug("Reconnecting in {} seconds".format(delay))
-            await asyncio.sleep(backoff.delay())
+            await asyncio.sleep(delay)
 
             try:
                 await self.connect()
@@ -194,6 +194,8 @@ class WebSocket:
             else:
                 log.debug("Reconnect successful.")
                 break
+        else:
+            log.debug("Failed to reconnect, please reinitialize lavalink when ready.")
 
     async def disconnect(self):
         """
