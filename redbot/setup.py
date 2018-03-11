@@ -240,7 +240,7 @@ async def edit_instance():
                         for ident in list(cog_data.keys()):
                             cog_m.unique_cog_identifier = int(ident)
                             await cog_c.update_one(
-                                {"_id", cog_m.unique_cog_identifier},
+                                {"_id": cog_m.unique_cog_identifier},
                                 update={"$set": cog_data[ident]}
                             )
         else:
