@@ -16,6 +16,22 @@ _event_listeners = []
 
 
 async def initialize(bot: "Red", host, password, rest_port, ws_port):
+    """
+    Initializes the websocket connection to the lavalink player.
+
+    .. important::
+
+        This function must only be called AFTER the bot has received its
+        "on_ready" event!
+
+    Parameters
+    ----------
+    bot
+    host : str
+    password : str
+    rest_port : int
+    ws_port : int
+    """
     player_manager.user_id = bot.user.id
     player_manager.channel_finder_func = bot.get_channel
     register_event_listener(player_manager.handle_event)
@@ -51,9 +67,16 @@ def register_event_listener(coro):
         _event_listeners.append(coro)
 
 
-def unregister_event_listener(func):
+def unregister_event_listener(coro):
+    """
+    Unregisters coroutines from being event listeners.
+
+    Parameters
+    ----------
+    coro
+    """
     try:
-        _event_listeners.remove(func)
+        _event_listeners.remove(coro)
     except ValueError:
         pass
 
@@ -64,6 +87,9 @@ def dispatch(op, data, raw_data):
 
 
 async def close():
+    """
+    Closes the lavalink connection completely.
+    """
     unregister_event_listener(player_manager.handle_event)
     await player_manager.disconnect()
     await websocket.disconnect()

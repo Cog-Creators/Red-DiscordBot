@@ -10,6 +10,15 @@ _uri = ''
 _headers = {}
 
 def initialize(host, port, password):
+    """
+    Does initialization for the Lavalink REST client.
+
+    Parameters
+    ----------
+    host : str
+    port : int
+    password : str
+    """
     global _session
     global _uri
 
@@ -20,16 +29,49 @@ def initialize(host, port, password):
 
 
 async def get_tracks(query):
+    """
+    Gets tracks from lavalink.
+
+    Parameters
+    ----------
+    query : str
+
+    Returns
+    -------
+    list of dict
+    """
     url = _uri + str(query)
     async with _session.get(url, headers=_headers) as resp:
         return await resp.json(content_type=None)
 
 
 async def search_yt(query):
+    """
+    Gets track results from YouTube from Lavalink.
+
+    Parameters
+    ----------
+    query : str
+
+    Returns
+    -------
+    list of dict
+    """
     return await get_tracks('ytsearch:{}'.format(query))
 
 
 async def search_sc(query):
+    """
+    Gets track results from SoundCloud from Lavalink.
+
+    Parameters
+    ----------
+    query : str
+
+    Returns
+    -------
+    list of dict
+    """
     return await get_tracks('scsearch:{}'.format(query))
 
 

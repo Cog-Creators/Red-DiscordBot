@@ -131,6 +131,9 @@ def _get_connect_headers(password, user_id, num_shards):
 
 
 async def listener():
+    """
+    Listener task for receiving ops from Lavalink.
+    """
     while _lavalink_ws.open and not SHUTDOWN.is_set():
         try:
             data = json.loads(await _lavalink_ws.recv())
@@ -181,12 +184,23 @@ async def _reconnect():
 
 
 async def disconnect():
+    """
+    Shuts down and disconnects the websocket.
+    """
     SHUTDOWN.set()
     await _lavalink_ws.close()
     log.debug("Shutdown Lavalink WS.")
 
 
 async def join_voice(guild_id: int, channel_id: int):
+    """
+    Joins a voice channel by ID's.
+
+    Parameters
+    ----------
+    guild_id : int
+    channel_id : int
+    """
     ws = _voice_ws_func(guild_id)
     await ws.voice_state(guild_id, channel_id)
 
