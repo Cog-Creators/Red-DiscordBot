@@ -207,19 +207,22 @@ async def edit_instance():
     if confirm("Would you like to change the data location? (y/n)"):
         default_data_dir = get_data_dir()
         default_dirs["DATA_PATH"] = str(default_data_dir.resolve())
+    else:
+        default_dirs["DATA_PATH"] = current_data_dir
 
     if confirm("Would you like to change the storage type? (y/n):"):
         storage = get_storage_type()
 
-        default_dirs["STORAGE_TYPE"] = storage
         storage_dict = {
             1: "JSON",
             2: "MongoDB"
         }
+        default_dirs["STORAGE_TYPE"] = storage_dict[storage]
         if storage_dict.get(storage, 1) == "MongoDB":
             from redbot.core.drivers.red_mongo import get_config_details, Mongo
             storage_details = get_config_details()
             default_dirs["STORAGE_DETAILS"] = storage_details
+
             if instance_data["STORAGE_TYPE"] == "JSON":
                 if confirm("Would you like to import your data? (y/n)"):
                     core_data_file = list(current_data_dir.glob("core/settings.json"))[0]
