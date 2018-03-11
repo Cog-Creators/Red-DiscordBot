@@ -246,7 +246,22 @@ async def edit_instance():
         else:
             default_dirs["STORAGE_DETAILS"] = {}
             if instance_data["STORAGE_TYPE"] == "MongoDB":
-                pass
+                from redbot.core.drivers.red_mongo import Mongo
+                from redbot.core.drivers.red_json import JSON
+                m = Mongo("Core", **instance_data["STORAGE_DETAILS"])
+                db = m.db
+                collection_names = await db.collection_names(include_system_collections=False)
+                for c_name in collection_names:
+                    if c_name == "Core":
+                        c_data_path = current_data_dir / "core"
+                    else:
+                        c_data_path = current_data_dir / "cogs/{}".format(c_name)
+                    output = {}
+                    for item in db[c_name].find():
+                        item_id = str(item.pop("_id"))
+                        output[item_id] = item
+                    target = JSON(c_name, data_path_override=c_data_path)
+                    await target.jsonIO._threadsafe_save_json(output)
 
     if name != selected:
         save_config(selected, {}, remove=True)
