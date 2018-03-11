@@ -1,6 +1,5 @@
 from aiohttp import ClientSession
 
-from .websocket import loop
 from . import log
 
 __all__ = ['initialize', 'get_tracks', 'search_yt', 'search_sc']
@@ -9,7 +8,7 @@ _session = None  # type: ClientSession
 _uri = ''
 _headers = {}
 
-def initialize(host, port, password):
+def initialize(loop, host, port, password):
     """
     Does initialization for the Lavalink REST client.
 
