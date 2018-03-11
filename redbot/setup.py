@@ -233,7 +233,8 @@ async def edit_instance():
                     collection = m.get_collection()
                     await collection.update_one(
                         {'_id': m.unique_cog_identifier},
-                        update={"$set": core_data["0"]}
+                        update={"$set": core_data["0"]},
+                        upsert=True
                     )
                     for p in current_data_dir.glob("cogs/**/settings.json"):
                         cog_m = Mongo(p.parent.stem, **storage_details)
@@ -244,7 +245,8 @@ async def edit_instance():
                             cog_m.unique_cog_identifier = int(ident)
                             await cog_c.update_one(
                                 {"_id": cog_m.unique_cog_identifier},
-                                update={"$set": cog_data[ident]}
+                                update={"$set": cog_data[ident]},
+                                upsert=True
                             )
         else:
             default_dirs["STORAGE_DETAILS"] = {}
