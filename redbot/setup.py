@@ -208,7 +208,7 @@ async def edit_instance():
         default_data_dir = get_data_dir()
         default_dirs["DATA_PATH"] = str(default_data_dir.resolve())
     else:
-        default_dirs["DATA_PATH"] = current_data_dir
+        default_dirs["DATA_PATH"] = str(current_data_dir.resolve())
 
     if confirm("Would you like to change the storage type? (y/n):"):
         storage = get_storage_type()
