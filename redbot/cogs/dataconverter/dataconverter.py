@@ -35,11 +35,15 @@ class DataConverter:
                   "installation path?")
             )
         while resolver.available:
-            pass  # TODO
-            # interactive logic from resolver available
-            # should call `await resolver.convert(key)`
-            # where key is in resolver.availble and chosen by user
-            # use a break if an exit is asked for
+            menu = _("Please select a set of data to import by number.")
+            for index, entry in enumerate(
+                sorted(resolver.available), 1
+            ):
+                menu += "\n{}. {}".format(index, entry)
+                # TODO: redo the menu logic in a similar fashion as my bansync
+                # cog or something logic I was using was convoluted and bad
         else:
-            pass  # TODO
-            # Should inform the user nothing else is available to be converted
+            return await ctx.send(
+                _("There isn't anything else I know how to convert here."
+                  "\nThere might be more things I can convert in the future.")
+            )

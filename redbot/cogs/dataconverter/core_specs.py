@@ -29,7 +29,7 @@ class SpecResolver(object):
             'Mod Log Cases': {
                 'cfg': ('ModLog', None, 1354799444),
                 'file': self.v2path / 'data' / 'mod' / 'modlog.json',
-                'converter': None
+                'converter': None  # prevents from showing as available
             },
             'Filter': {
                 'cfg': ('Filter', 'settings', 4766951341),
@@ -57,7 +57,7 @@ class SpecResolver(object):
     def available(self):
         return set(
             k for k, v in self.available_core_conversions.items()
-            if v['file'].is_file and v['converter'] is not None
+            if v['file'].is_file() and v['converter'] is not None
             and k not in self.resolved
         )
 
@@ -118,7 +118,7 @@ class SpecResolver(object):
         return ret
 
     def mod_log_cases(self, data: dict):
-        raise NotImplementedError()
+        raise NotImplementedError("This one isn't ready yet")
 
     def filter_conv_spec(self, data: dict):
         return {
