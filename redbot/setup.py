@@ -262,7 +262,7 @@ async def edit_instance():
                     else:
                         c_data_path = current_data_dir / "cogs/{}".format(c_name)
                     output = {}
-                    for item in db[c_name].find():
+                    for item in db[c_name].find().to_list(None):
                         item_id = str(item.pop("_id"))
                         output[item_id] = item
                     target = JSON(c_name, data_path_override=c_data_path)
