@@ -397,7 +397,7 @@ class Core:
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 \
             else discord.Status.online
         for shard in ctx.bot.shards:
-            await ctx.bot.change_presence(status=status, game=game)
+            await ctx.bot.change_presence(status=status, activity=game)
         await ctx.send(_("Game set."))
 
     @_set.command(name="listening")
@@ -408,11 +408,11 @@ class Core:
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 \
             else discord.Status.online
         if listening:
-            listening = discord.Game(name=listening, type=2)
+            activity = discord.Activity(name=listening, type=discord.ActivityType.listening)
         else:
-            listening = None
+            activity = None
         for shard in ctx.bot.shards:
-            await ctx.bot.change_presence(status=status, game=listening)
+            await ctx.bot.change_presence(status=status, activity=activity)
         await ctx.send(_("Listening set."))
 
     @_set.command(name="watching")
@@ -423,11 +423,11 @@ class Core:
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 \
             else discord.Status.online
         if watching:
-            watching = discord.Game(name=watching, type=3)
+            activity = discord.Activity(name=watching, type=discord.ActivityType.watching)
         else:
-            watching = None
+            activity = None
         for shard in ctx.bot.shards:
-            await ctx.bot.change_presence(status=status, game=watching)
+            await ctx.bot.change_presence(status=status, activity=activity)
         await ctx.send(_("Watching set."))
 
     @_set.command()
@@ -449,14 +449,14 @@ class Core:
             "invisible": discord.Status.invisible
         }
 
-        game = ctx.bot.guilds[0].me.game if len(ctx.bot.guilds) > 0 else None
+        game = ctx.bot.guilds[0].me.activity if len(ctx.bot.guilds) > 0 else None
         try:
             status = statuses[status.lower()]
         except KeyError:
             await ctx.send_help()
         else:
             for shard in ctx.bot.shards:
-                await ctx.bot.change_presence(status=status, game=game)
+                await ctx.bot.change_presence(status=status, activity=game)
             await ctx.send(_("Status changed to %s.") % status)
 
     @_set.command()
@@ -472,15 +472,15 @@ class Core:
             stream_title = stream_title.strip()
             if "twitch.tv/" not in streamer:
                 streamer = "https://www.twitch.tv/" + streamer
-            game = discord.Game(type=1, url=streamer, name=stream_title)
+            activity = discord.Streaming(url=streamer, name=stream_title)
             for shard in ctx.bot.shards:
-                await ctx.bot.change_presence(status=status, game=game)
+                await ctx.bot.change_presence(status=status, activity=activity)
         elif streamer is not None:
             await ctx.send_help()
             return
         else:
             for shard in ctx.bot.shards:
-                await ctx.bot.change_presence(game=None, status=status)
+                await ctx.bot.change_presence(activity=None, status=status)
         await ctx.send(_("Done."))
 
     @_set.command(name="username", aliases=["name"])
