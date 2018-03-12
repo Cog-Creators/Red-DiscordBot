@@ -93,7 +93,7 @@ class TwitchCommunity:
         title = "Channels currently streaming to {}".format(data["display_name"])
         url = "https://www.twitch.tv/communities/{}".format(self.name)
         embed = discord.Embed(title=title, url=url)
-        embed.set_image(avatar)
+        embed.set_image(url=avatar)
         for stream in streams[:20]:
             name = "[{}]({})".format(
                 stream["channel"]["display_name"], stream["channel"]["url"]
