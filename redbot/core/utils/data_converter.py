@@ -11,7 +11,8 @@ class DataConverter:
     def __init__(self, config_instance: Config):
         self.config = config_instance
 
-    def json_load(self, file_path: Path):
+    @staticmethod
+    def json_load(file_path: Path):
         try:
             with open(file_path, mode='r') as f:
                 data = json.load(f)

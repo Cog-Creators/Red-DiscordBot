@@ -28,7 +28,7 @@ class DataConverter:
 
         Takes the path where the v2 install is
         """
-        resolver = SpecResolver(Path(v2path))
+        resolver = SpecResolver(Path(v2path.strip()))
 
         if not resolver.available:
             return await ctx.send(
@@ -69,7 +69,7 @@ class DataConverter:
                 else:
                     try:
                         async with ctx.typing():
-                            await resolver.convert(to_conv)
+                            await resolver.convert(self.bot, to_conv)
                     # except AttributeError:
                     #     # TODO: After this has been tested, uncomment
                     except Exception:

@@ -55,11 +55,11 @@ class SpecResolver(object):
 
     @property
     def available(self):
-        return list(
+        return sorted(
             k for k, v in self.available_core_conversions.items()
             if v['file'].is_file() and v['converter'] is not None
             and k not in self.resolved
-        ).sort()
+        )
 
     def unpack(self, parent_key, parent_value):
         """Unpack one level of nesting in a dictionary"""
@@ -108,13 +108,13 @@ class SpecResolver(object):
         return ret
 
     def economy_conv_spec(self, data: dict):
+        flatscoped = self.apply_scope('GUILD', self.flatten_dict(data))
         ret = {}
-        for k, v in data.items():
-            scoped_key = ('GUILD', k)
-            if scoped_key not in ret:
-                ret[scoped_key] = {}
-            for setting, value in v:
-                ret.update({(setting,): value})
+        for k, v in flatscoped.items():
+            outerkey, innerkey = (*k[:-1],), (k[-1],)
+            if outerkey not in ret:
+                ret[outerkey] = {}
+            ret[outerkey].update({innerkey: v})
         return ret
 
     def mod_log_cases(self, data: dict):
@@ -172,8 +172,8 @@ class SpecResolver(object):
         (cogname, attr, _id) = info['cfg']
         try:
             config = getattr(bot.get_cog(cogname), attr)
-        except AttributeError:
-            config = Config(cog_name=cogname, unique_identifier=_id)
+        except (TypeError, AttributeError):
+            config = Config.get_conf(cogname, _id)
 
         try:
             items = converter(dc.json_load(filepath))
