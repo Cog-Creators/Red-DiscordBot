@@ -444,7 +444,7 @@ class Streams:
     async def check_communities(self):
         for community in self.communities:
             try:
-                streams = await community.get_community_streams()
+                stream_list = await community.get_community_streams()
             except OfflineCommunity:
                 for message in community._messages_cache:
                     try:
@@ -459,6 +459,7 @@ class Streams:
             else:
                 for channel in community.channels:
                     chn = self.bot.get_channel(channel)
+                    streams = await self.filter_streams(stream_list, chn)
                     emb = await community.make_embed(streams)
                     chn_msg = [m for m in community._messages_cache if m.channel == chn]
                     if not chn_msg:
@@ -470,6 +471,18 @@ class Streams:
                         community._messages_cache.remove(chn_msg)
                         await chn_msg.edit(embed=emb)
                         community._messages_cache.append(chn_msg)
+
+    async def filter_streams(self, streams: list, channel: discord.TextChannel) -> list:
+        filtered = []
+        for stream in streams:
+            tw_id = str(stream["_id"])
+            for alert in self.streams:
+                if alert.id == tw_id:
+                    if channel.id in alert.channels:
+                        break
+            else:
+                filtered.append(stream)
+        return filtered
 
 
     async def load_streams(self):
