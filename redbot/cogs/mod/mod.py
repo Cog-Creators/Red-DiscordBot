@@ -359,6 +359,10 @@ class Mod:
             if days.isdigit():
                 days = int(days)
             else:
+                if reason:
+                    reason = "{} {}".format(days, reason)
+                else:
+                    reason = days
                 days = 0
         else:
             days = 0
