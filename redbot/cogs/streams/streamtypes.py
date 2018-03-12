@@ -1,3 +1,5 @@
+from typing import List
+
 from .errors import StreamNotFound, APIError, InvalidCredentials, OfflineStream, CommunityNotFound, OfflineCommunity
 from random import choice
 from string import ascii_letters
@@ -21,6 +23,7 @@ class TwitchCommunity:
         self.name = kwargs.pop("name")
         self.id = kwargs.pop("id", None)
         self.channels = kwargs.pop("channels", [])
+        self._messages_cache = {}
         self._token = kwargs.pop("token", None)
         self.type = self.__class__.__name__
 
@@ -72,6 +75,30 @@ class TwitchCommunity:
             raise CommunityNotFound()
         else:
             raise APIError()
+
+    def make_embed(self, stream: dict) -> discord.Embed:
+        channel = stream["channel"]
+        url = channel["url"]
+        logo = channel["logo"]
+        if logo is None:
+            logo = ("https://static-cdn.jtvnw.net/"
+                    "jtv_user_pictures/xarth/404_user_70x70.png")
+        status = channel["status"]
+        if not status:
+            status = "Untitled broadcast"
+        desc = "Streaming to the {} community".format(self.name)
+        embed = discord.Embed(title=status, description=desc, url=url)
+        embed.set_author(name=channel["display_name"])
+        embed.add_field(name="Followers", value=channel["followers"])
+        embed.add_field(name="Total views", value=channel["views"])
+        embed.set_thumbnail(url=logo)
+        if stream["preview"]["medium"]:
+            embed.set_image(url=rnd(stream["preview"]["medium"]))
+        if channel["game"]:
+            embed.set_footer(text="Playing: " + channel["game"])
+        embed.color = 0x6441A4
+
+        return embed
 
     def export(self):
         data = {}
