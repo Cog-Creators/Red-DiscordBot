@@ -55,11 +55,11 @@ class SpecResolver(object):
 
     @property
     def available(self):
-        return set(
+        return list(
             k for k, v in self.available_core_conversions.items()
             if v['file'].is_file() and v['converter'] is not None
             and k not in self.resolved
-        )
+        ).sort()
 
     def unpack(self, parent_key, parent_value):
         """Unpack one level of nesting in a dictionary"""
@@ -169,7 +169,7 @@ class SpecResolver(object):
 
         info = self.available_core_conversions[prettyname]
         filepath, converter = info['file'], info['converter']
-        cogname, attr, _id = info['cfg']
+        (cogname, attr, _id) = info['cfg']
         try:
             config = getattr(bot.get_cog(cogname), attr)
         except AttributeError:
