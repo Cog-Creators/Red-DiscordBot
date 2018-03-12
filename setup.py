@@ -96,6 +96,7 @@ setup(
     version="{}.{}.{}b9".format(*get_version()),
     packages=get_package_list(),
     package_data=find_locale_folders(),
+    include_package_data=True,
     url='https://github.com/Cog-Creators/Red-DiscordBot',
     license='GPLv3',
     author='Cog-Creators',

@@ -9,11 +9,10 @@ import math
 from discord.ext import commands
 from redbot.core import Config, checks
 
+from .manager import shutdown_lavalink_server
+
 __version__ = "2.0.2.9.b"
 __author__ = ["aikaterna", "billy/bollo/ati"]
-
-
-LAVALINK_BUILD = 3065
 
 
 class Audio:
@@ -25,7 +24,8 @@ class Audio:
             "host": 'localhost',
             "port": '2332',
             "passw": 'youshallnotpass',
-            "status": False
+            "status": False,
+            "current_build": 0
         }
 
         default_guild = {
@@ -39,10 +39,6 @@ class Audio:
         self.config.register_global(**default_global)
 
         self._lavalink = None
-        self._lavalink_build_url = (
-            "https://ci.fredboat.com/repository/download/"
-            "Lavalink_Build/{}:id/Lavalink.jar"
-        ).format(LAVALINK_BUILD)
 
     async def init_config(self):
         host = await self.config.host()
@@ -822,4 +818,6 @@ class Audio:
         return queue_total_duration
 
     def __unload(self):
+        self.bot.lavalink.ws._ws.close()
         self.bot.lavalink.client.destroy()
+        shutdown_lavalink_server()
