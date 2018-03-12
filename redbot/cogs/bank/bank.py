@@ -1,3 +1,5 @@
+import discord
+
 from redbot.core import checks, bank
 from redbot.core.i18n import CogI18n
 from discord.ext import commands
@@ -17,6 +19,8 @@ def check_global_setting_guildowner():
         if await ctx.bot.is_owner(author):
             return True
         if not await bank.is_global():
+            if not isinstance(ctx.channel, discord.abc.GuildChannel):
+                return False
             permissions = ctx.channel.permissions_for(author)
             return author == ctx.guild.owner or permissions.administrator
 
@@ -33,6 +37,8 @@ def check_global_setting_admin():
         if await ctx.bot.is_owner(author):
             return True
         if not await bank.is_global():
+            if not isinstance(ctx.channel, discord.abc.GuildChannel):
+                return False
             permissions = ctx.channel.permissions_for(author)
             is_guild_owner = author == ctx.guild.owner
             admin_role = await ctx.bot.db.guild(ctx.guild).admin_role()
