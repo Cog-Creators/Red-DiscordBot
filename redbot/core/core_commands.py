@@ -574,6 +574,16 @@ class Core:
                 await ctx.send(_("You have been set as owner."))
             else:
                 await ctx.send(_("Invalid token."))
+                
+    @_set.command()
+    @checks.is_owner()
+    async def token(self, ctx, token: str):
+        """Change bot token."""
+        if not token:
+            await ctx.send_help()
+            return
+        await ctx.bot.db.token.set(token)
+        await ctx.send("Token set. Restart me.")
 
     @_set.command()
     @checks.is_owner()
