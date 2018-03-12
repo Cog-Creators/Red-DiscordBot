@@ -81,13 +81,10 @@ class TwitchCommunity:
             "Accept": "application/vnd.twitchtv.v5+json",
             "Client-ID": str(self._token)
         }
-        params = {
-            "name": self.name
-        }
         async with aiohttp.ClientSession() as session:
             async with session.get(
                     "{}/communities/{}".format(TWITCH_COMMUNITIES_ENDPOINT, self.id),
-                    headers=headers, params=params) as r:
+                    headers=headers) as r:
                 data = await r.json()
         avatar = data["avatar_image_url"]
         title = "Channels currently streaming to {}".format(data["display_name"])
