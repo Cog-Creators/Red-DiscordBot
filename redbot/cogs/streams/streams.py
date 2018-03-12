@@ -450,7 +450,7 @@ class Streams:
                     for message in community._messages_cache[cid]:
                         try:
                             autodelete = await self.db.guild(message.guild).autodelete()
-                            if autodelete():
+                            if autodelete:
                                 await message.delete()
                         except:
                             pass
@@ -476,6 +476,13 @@ class Streams:
                         community._messages_cache[str(stream["_id"])].append(msg)
                 for cache_id in community._messages_cache.keys():
                     if int(cache_id) not in current_ids:
+                        for message in community._messages_cache[cache_id]:
+                            try:
+                                autodelete = await self.db.guild(message.guild).autodelete()
+                                if autodelete:
+                                    await message.delete()
+                            except:
+                                pass
                         del community._messages_cache[cache_id]
 
     async def load_streams(self):
