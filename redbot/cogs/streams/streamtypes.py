@@ -58,7 +58,8 @@ class TwitchCommunity:
             "Client-ID": str(self._token)
         }
         params = {
-            "community_id": self.id
+            "community_id": self.id,
+            "limit": 100
         }
         url = TWITCH_BASE_URL + "/kraken/streams"
         async with aiohttp.ClientSession() as session:
@@ -96,7 +97,7 @@ class TwitchCommunity:
             name = "[{}]({})".format(
                 stream["channel"]["display_name"], stream["channel"]["url"]
             )
-            embed.add_field(name=stream["channel"]["status"], value=name, inline=False)
+            embed.add_field(name=stream["channel"]["status"], value=name)
         embed.color = 0x6441A4
 
         return embed
