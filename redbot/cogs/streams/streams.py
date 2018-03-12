@@ -446,44 +446,31 @@ class Streams:
             try:
                 streams = await community.get_community_streams()
             except OfflineCommunity:
-                for cid in community._messages_cache:
-                    for message in community._messages_cache[cid]:
-                        try:
-                            autodelete = await self.db.guild(message.guild).autodelete()
-                            if autodelete:
-                                await message.delete()
-                        except:
-                            pass
+                for message in community._messages_cache:
+                    try:
+                        autodelete = await self.db.guild(message.guild).autodelete()
+                        if autodelete:
+                            await message.delete()
+                    except:
+                        pass
                 community._messages_cache.clear()
             except:
                 pass
             else:
                 for channel in community.channels:
                     chn = self.bot.get_channel(channel)
-                    await chn.send("Online streams for {}".format(community.name))
-                current_ids = []
-                for stream in streams:
-                    if str(stream["_id"]) in community._messages_cache:
-                        continue
-                    if stream["_id"] not in current_ids:
-                        current_ids.append(stream["_id"])
-                    emb = community.make_embed(stream)
-                    for channel in community.channels:
-                        chn = self.bot.get_channel(channel)
-                        msg = await chn.send(embed=emb)
-                        if str(stream["_id"]) not in community._messages_cache:
-                            community._messages_cache[str(stream["_id"])] = []
-                        community._messages_cache[str(stream["_id"])].append(msg)
-                for cache_id in community._messages_cache.keys():
-                    if int(cache_id) not in current_ids:
-                        for message in community._messages_cache[cache_id]:
-                            try:
-                                autodelete = await self.db.guild(message.guild).autodelete()
-                                if autodelete:
-                                    await message.delete()
-                            except:
-                                pass
-                        del community._messages_cache[cache_id]
+                    emb = await community.make_embed(streams)
+                    chn_msg = [m for m in community._messages_cache if m.channel == chn]
+                    if not chn_msg:
+                        mentions = await self._get_mention_str(chn.guild)
+                        msg = await chn.send(mentions, embed=emb)
+                        community._messages_cache.append(msg)
+                    else:
+                        chn_msg = sorted(chn_msg, key=lambda x: x.created_at, reverse=True)[0]
+                        community._messages_cache.remove(chn_msg)
+                        await chn_msg.edit(embed=emb)
+                        community._messages_cache.append(chn_msg)
+
 
     async def load_streams(self):
         streams = []

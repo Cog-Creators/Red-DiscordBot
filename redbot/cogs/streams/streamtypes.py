@@ -23,7 +23,7 @@ class TwitchCommunity:
         self.name = kwargs.pop("name")
         self.id = kwargs.pop("id", None)
         self.channels = kwargs.pop("channels", [])
-        self._messages_cache = {}
+        self._messages_cache = []
         self._token = kwargs.pop("token", None)
         self.type = self.__class__.__name__
 
@@ -76,26 +76,30 @@ class TwitchCommunity:
         else:
             raise APIError()
 
-    def make_embed(self, stream: dict) -> discord.Embed:
-        channel = stream["channel"]
-        url = channel["url"]
-        logo = channel["logo"]
-        if logo is None:
-            logo = ("https://static-cdn.jtvnw.net/"
-                    "jtv_user_pictures/xarth/404_user_70x70.png")
-        status = channel["status"]
-        if not status:
-            status = "Untitled broadcast"
-        desc = "Streaming to the {} community".format(self.name)
-        embed = discord.Embed(title=status, description=desc, url=url)
-        embed.set_author(name=channel["display_name"])
-        embed.add_field(name="Followers", value=channel["followers"])
-        embed.add_field(name="Total views", value=channel["views"])
-        embed.set_thumbnail(url=logo)
-        if stream["preview"]["medium"]:
-            embed.set_image(url=rnd(stream["preview"]["medium"]))
-        if channel["game"]:
-            embed.set_footer(text="Playing: " + channel["game"])
+    async def make_embed(self, streams: dict) -> discord.Embed:
+        headers = {
+            "Accept": "application/vnd.twitchtv.v5+json",
+            "Client-ID": str(self._token)
+        }
+        params = {
+            "name": self.name
+        }
+        async with aiohttp.ClientSession() as session:
+            async with session.get(
+                    "{}/communities/{}".format(TWITCH_COMMUNITIES_ENDPOINT, self.id),
+                    headers=headers, params=params) as r:
+                data = await r.json()
+        avatar = data["avatar_image_url"]
+        title = "Channels currently streaming to {}".format(data["display_name"])
+        url = "https://www.twitch.tv/communities/{}".format(self.name)
+        embed = discord.Embed(title=title, url=url)
+        embed.set_image(avatar)
+        for stream in streams[:20]:
+            name = "[{}]({})".format(
+                stream["channel"]["display_name"], stream["channel"]["url"]
+            )
+            value = stream["game"]
+            embed.add_field(name=name, value=value, inline=False)
         embed.color = 0x6441A4
 
         return embed
