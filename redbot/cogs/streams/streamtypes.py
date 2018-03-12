@@ -96,7 +96,7 @@ class TwitchCommunity:
             name = "[{}]({})".format(
                 stream["channel"]["display_name"], stream["channel"]["url"]
             )
-            embed.add_field(name="User", value=name, inline=False)
+            embed.add_field(name=stream["channel"]["status"], value=name, inline=False)
         embed.color = 0x6441A4
 
         return embed
