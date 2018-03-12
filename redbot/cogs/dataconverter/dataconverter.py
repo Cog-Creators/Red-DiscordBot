@@ -7,7 +7,7 @@ from redbot.core import checks, RedContext
 from redbot.core.bot import Red
 from redbot.core.i18n import CogI18n
 from redbot.cogs.dataconverter.core_specs import SpecResolver
-from redbot.core.utils.chat_formatting import box, pagify
+from redbot.core.utils.chat_formatting import box
 
 _ = CogI18n('DataConverter', __file__)
 
@@ -41,8 +41,8 @@ class DataConverter:
                      ", or '-1' to quit")
             for index, entry in enumerate(resolver.available, 1):
                 menu += "\n{}. {}".format(index, entry)
-            for page in pagify(menu, delims=["\n"]):
-                await ctx.send(box(page))
+
+            menu_message = await ctx.send(box(menu))
 
             def pred(m):
                 return m.channel == ctx.channel and m.author == ctx.author
@@ -67,15 +67,10 @@ class DataConverter:
                     )
                     continue
                 else:
-                    try:
-                        async with ctx.typing():
-                            await resolver.convert(self.bot, to_conv)
-                    # except AttributeError:
-                    #     # TODO: After this has been tested, uncomment
-                    except Exception:
-                        raise  # TODO: After this has been tested, remove block
-                    else:
-                        await ctx.send(_("{} converted.").format(to_conv))
+                    async with ctx.typing():
+                        await resolver.convert(self.bot, to_conv)
+                    await ctx.send(_("{} converted.").format(to_conv))
+            await menu_message.delete()
         else:
             return await ctx.send(
                 _("There isn't anything else I know how to convert here."
