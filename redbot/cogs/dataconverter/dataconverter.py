@@ -41,7 +41,7 @@ class DataConverter:
             )
         while resolver.available:
             menu = _("Please select a set of data to import by number"
-                     ", or '-1' to quit")
+                     ", or 'exit' to exit")
             for index, entry in enumerate(resolver.available, 1):
                 menu += "\n{}. {}".format(index, entry)
 
@@ -58,12 +58,13 @@ class DataConverter:
                 return await ctx.send(
                     _('Try this again when you are more ready'))
             else:
+                if message.content.strip().lower() in [
+                    'quit', 'exit', '-1', 'q', 'cancel'
+                ]:
+                    return await ctx.tick()
                 try:
                     message = int(message.content.strip())
-                    if message == -1:
-                        return await ctx.tick()
-                    else:
-                        to_conv = resolver.available[message - 1]
+                    to_conv = resolver.available[message - 1]
                 except (ValueError, IndexError):
                     await ctx.send(
                         _("That wasn't a valid choice.")

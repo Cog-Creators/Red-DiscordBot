@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2018-03-12 02:36+EDT\n"
+"POT-Creation-Date: 2018-03-12 04:35+EDT\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,22 +20,22 @@ msgid "There don't seem to be any data files I know how to handle here. Are you 
 msgstr ""
 
 #: ../dataconverter.py:43
-msgid "Please select a set of data to import by number, or '-1' to quit"
+msgid "Please select a set of data to import by number, or 'exit' to exit"
 msgstr ""
 
 #: ../dataconverter.py:59
 msgid "Try this again when you are more ready"
 msgstr ""
 
-#: ../dataconverter.py:69
+#: ../dataconverter.py:70
 msgid "That wasn't a valid choice."
 msgstr ""
 
-#: ../dataconverter.py:75
+#: ../dataconverter.py:76
 msgid "{} converted."
 msgstr ""
 
-#: ../dataconverter.py:79
+#: ../dataconverter.py:80
 msgid ""
 "There isn't anything else I know how to convert here.\n"
 "There might be more things I can convert in the future."
