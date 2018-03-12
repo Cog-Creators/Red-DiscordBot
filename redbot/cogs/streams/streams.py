@@ -475,7 +475,7 @@ class Streams:
     async def filter_streams(self, streams: list, channel: discord.TextChannel) -> list:
         filtered = []
         for stream in streams:
-            tw_id = str(stream["_id"])
+            tw_id = str(stream["channel"]["_id"])
             for alert in self.streams:
                 if alert.id == tw_id:
                     if channel.id in alert.channels:
@@ -483,7 +483,6 @@ class Streams:
             else:
                 filtered.append(stream)
         return filtered
-
 
     async def load_streams(self):
         streams = []
