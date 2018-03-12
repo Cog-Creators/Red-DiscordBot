@@ -579,8 +579,8 @@ class Core:
     @checks.is_owner()
     async def token(self, ctx, token: str):
         """Change bot token."""
-        if not token:
-            await ctx.send_help()
+        if not not isinstance(ctx.channel, discord.DMChannel):
+            await ctx.send("Please use that command in DM.")
             return
         await ctx.bot.db.token.set(token)
         await ctx.send("Token set. Restart me.")
