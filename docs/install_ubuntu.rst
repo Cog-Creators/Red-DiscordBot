@@ -12,7 +12,7 @@ Installing the pre-requirements
 
 .. code-block:: none
 
-    sudo apt install python3.5-dev python3-pip build-essential libssl-dev libffi-dev git ffmpeg libopus-dev unzip -y
+    sudo apt install python3.5-dev python3-pip build-essential libssl-dev libffi-dev git ffmpeg libopus-dev unzip default-jre -y
 
 ------------------
 Installing the bot

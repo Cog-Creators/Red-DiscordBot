@@ -26,7 +26,7 @@ redbot/core/utils/data_converter.py      @mikeshardmind
 # Cogs
 redbot/cogs/admin/*                 @tekulvw
 redbot/cogs/alias/*                 @tekulvw
-redbot/cogs/audio/*                 @tekulvw
+redbot/cogs/audio/*                 @aikaterna @atiwiex
 redbot/cogs/bank/*                  @tekulvw
 redbot/cogs/cleanup/*               @palmtree5
 redbot/cogs/customcom/*             @palmtree5
