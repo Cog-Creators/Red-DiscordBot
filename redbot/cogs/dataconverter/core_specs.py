@@ -177,7 +177,7 @@ class SpecResolver(object):
 
         try:
             items = converter(dc.json_load(filepath))
-            await dc(config).alternative_convert(items)
+            await dc(config).dict_import(items)
         except Exception:
             raise
         else:
