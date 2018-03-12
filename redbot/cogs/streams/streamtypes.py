@@ -83,9 +83,10 @@ class TwitchCommunity:
         }
         async with aiohttp.ClientSession() as session:
             async with session.get(
-                    "{}/communities/{}".format(TWITCH_COMMUNITIES_ENDPOINT, self.id),
+                    "{}/{}".format(TWITCH_COMMUNITIES_ENDPOINT, self.id),
                     headers=headers) as r:
                 data = await r.json()
+
         avatar = data["avatar_image_url"]
         title = "Channels currently streaming to {}".format(data["display_name"])
         url = "https://www.twitch.tv/communities/{}".format(self.name)
