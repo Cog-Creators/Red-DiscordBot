@@ -27,6 +27,9 @@ class DataConverter:
         Interactive prompt for importing data from Red v2
 
         Takes the path where the v2 install is
+
+        Overwrites values which have entries in both v2 and v3,
+        use with caution.
         """
         resolver = SpecResolver(Path(v2path.strip()))
 
