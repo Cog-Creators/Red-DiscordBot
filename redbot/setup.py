@@ -307,7 +307,7 @@ def remove_instance():
         else:
             print("Backing up the instance's data...")
             backup_filename = "redv3-{}-{}.tar.gz".format(
-                selected, dt.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+                selected, dt.utcnow().strftime("%Y-%m-%d %H-%M-%S")
             )
             pth = Path(instance_data["DATA_PATH"])
             home = pth.home()
