@@ -477,7 +477,7 @@ class Streams:
         for stream in streams:
             tw_id = str(stream["channel"]["_id"])
             for alert in self.streams:
-                if alert.id == tw_id:
+                if isinstance(alert, TwitchStream) and alert.id == tw_id:
                     if channel.id in alert.channels:
                         break
             else:
