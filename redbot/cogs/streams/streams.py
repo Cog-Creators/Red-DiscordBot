@@ -464,7 +464,10 @@ class Streams:
                     chn_msg = [m for m in community._messages_cache if m.channel == chn]
                     if not chn_msg:
                         mentions = await self._get_mention_str(chn.guild)
-                        msg = await chn.send(mentions, embed=emb)
+                        if mentions:
+                            msg = await chn.send(mentions, embed=emb)
+                        else:
+                            msg = await chn.send(embed=emb)
                         community._messages_cache.append(msg)
                     else:
                         chn_msg = sorted(chn_msg, key=lambda x: x.created_at, reverse=True)[0]
