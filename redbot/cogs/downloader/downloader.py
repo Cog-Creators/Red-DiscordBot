@@ -248,6 +248,7 @@ class Downloader:
         Lists all installed repos.
         """
         repos = self._repo_manager.get_all_repo_names()
+        repos = sorted(repos, key=str.lower)
         joined = _("Installed Repos:\n") + "\n".join(["+ " + r for r in repos])
 
         for page in pagify(joined, ["\n"], shorten_by=16):
