@@ -51,7 +51,10 @@ class General:
     @commands.command(hidden=True)
     async def ping(self, ctx):
         """Pong."""
-        await ctx.send("Pong.")
+        pingtime = time.time()
+        pingmsg = await ctx.send("Pinging...")
+        pingresponse = (time.time() - pingtime) * 1000
+        await ctx.Message.edit(pingmsg, "Pong! :ping_pong:  My response time is `%dms`" % pingresponse)
 
     @commands.command()
     async def choose(self, ctx, *choices):
