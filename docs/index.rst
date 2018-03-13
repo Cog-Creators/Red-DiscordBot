@@ -16,6 +16,7 @@ Welcome to Red - Discord Bot's documentation!
     install_debian
     install_centos
     install_raspbian
+    cog_dataconverter
 
 .. toctree::
     :maxdepth: 2
@@ -29,6 +30,7 @@ Welcome to Red - Discord Bot's documentation!
 
     guide_migration
     guide_cog_creation
+    guide_data_conversion
     framework_bank
     framework_cogmanager
     framework_datamanager
