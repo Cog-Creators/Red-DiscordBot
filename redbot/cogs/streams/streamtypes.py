@@ -1,7 +1,7 @@
 from typing import List
 
 from .errors import StreamNotFound, APIError, InvalidCredentials, OfflineStream, CommunityNotFound, OfflineCommunity
-from random import choice
+from random import choice, sample
 from string import ascii_letters
 import discord
 import aiohttp
@@ -77,7 +77,7 @@ class TwitchCommunity:
         else:
             raise APIError()
 
-    async def make_embed(self, streams: dict) -> discord.Embed:
+    async def make_embed(self, streams: list) -> discord.Embed:
         headers = {
             "Accept": "application/vnd.twitchtv.v5+json",
             "Client-ID": str(self._token)
@@ -93,11 +93,15 @@ class TwitchCommunity:
         url = "https://www.twitch.tv/communities/{}".format(self.name)
         embed = discord.Embed(title=title, url=url)
         embed.set_image(url=avatar)
-        for stream in streams[:20]:
+        if len(streams) >= 10:
+            stream_list = sample(streams, 10)
+        else:
+            stream_list = streams
+        for stream in stream_list:
             name = "[{}]({})".format(
                 stream["channel"]["display_name"], stream["channel"]["url"]
             )
-            embed.add_field(name=stream["channel"]["status"], value=name)
+            embed.add_field(name=stream["channel"]["status"], value=name, inline=False)
         embed.color = 0x6441A4
 
         return embed
