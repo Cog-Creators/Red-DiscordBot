@@ -32,8 +32,6 @@ class Cleanup:
         response = await ctx.bot.wait_for('message', check=author_check)
 
         if response.content.lower().startswith('y'):
-            tmp = await ctx.send(_('Continuing..'))
-            await tmp.delete()
             return True
         else:
             await ctx.send(_('Cancelled.'))
@@ -45,7 +43,7 @@ class Cleanup:
             check=lambda x: True, limit=100, before=None, after=None
     ) -> list:
         """
-        Gets a list of messages meeting the requirements to be deleted
+        Gets a list of messages meeting the requirements to be deleted.
 
         Generally, the requirements are:
         - We don't have the number of messages to be deleted already
@@ -110,7 +108,7 @@ class Cleanup:
             ctx, channel, number, check=check, limit=1000, before=ctx.message)
 
         reason = "{}({}) deleted {} messages "\
-                 " containing '{}' in channel {}".format(author.name,
+                 " containing '{}' in channel {}.".format(author.name,
                                                          author.id, len(to_delete), text, channel.id)
         log.info(reason)
 
@@ -152,7 +150,7 @@ class Cleanup:
             ctx, channel, number, check=check, limit=1000, before=ctx.message
         )
         reason = "{}({}) deleted {} messages "\
-                 " made by {}({}) in channel {}"\
+                 " made by {}({}) in channel {}."\
                  "".format(author.name, author.id, len(to_delete),
                            user.name, user.id, channel.name)
         log.info(reason)
@@ -167,7 +165,7 @@ class Cleanup:
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
     async def after(self, ctx: RedContext, message_id: int):
-        """Deletes all messages after specified message
+        """Deletes all messages after specified message.
 
         To get a message id, enable developer mode in Discord's
         settings, 'appearance' tab. Then right click a message
@@ -195,7 +193,7 @@ class Cleanup:
             ctx, channel, 0, limit=None, after=after
         )
 
-        reason = "{}({}) deleted {} messages in channel {}"\
+        reason = "{}({}) deleted {} messages in channel {}."\
                  "".format(author.name, author.id,
                            len(to_delete), channel.name)
         log.info(reason)
@@ -225,7 +223,7 @@ class Cleanup:
             ctx, channel, number, limit=1000, before=ctx.message
         )
 
-        reason = "{}({}) deleted {} messages in channel {}"\
+        reason = "{}({}) deleted {} messages in channel {}."\
                  "".format(author.name, author.id,
                            number, channel.name)
         log.info(reason)
@@ -239,7 +237,7 @@ class Cleanup:
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
     async def cleanup_bot(self, ctx: RedContext, number: int):
-        """Cleans up command messages and messages from the bot"""
+        """Cleans up command messages and messages from the bot."""
 
         channel = ctx.message.channel
         author = ctx.message.author
@@ -274,7 +272,7 @@ class Cleanup:
         )
 
         reason = "{}({}) deleted {} "\
-                 " command messages in channel {}"\
+                 " command messages in channel {}."\
                  "".format(author.name, author.id, len(to_delete),
                            channel.name)
         log.info(reason)
@@ -348,7 +346,7 @@ class Cleanup:
             channel_name = str(channel)
 
         reason = "{}({}) deleted {} messages "\
-                 "sent by the bot in {}"\
+                 "sent by the bot in {}."\
                  "".format(author.name, author.id, len(to_delete),
                            channel_name)
         log.info(reason)
