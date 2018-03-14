@@ -135,6 +135,7 @@ class Audio:
         status = await self.config.status()
         shuffle = await self.config.guild(ctx.guild).shuffle()
         repeat = await self.config.guild(ctx.guild).repeat()
+        jarbuild = await self.config.current_build()
 
         msg = '```ini\n'
         msg += '----Guild Settings----\n'
@@ -144,7 +145,8 @@ class Audio:
         msg += 'Shuffle:         [{}]\n'.format(shuffle)
         msg += '---Lavalink Settings---\n'
         msg += 'Cog version: {}\n'.format(__version__)
-        msg += 'Pip version: {}\n```'.format(lavalink.__version__)
+        msg += 'Pip version: {}\n'.format(lavalink.__version__)
+        msg += 'Jar build:   {}\n```'.format(jarbuild)
 
         embed = discord.Embed(colour=ctx.guild.me.top_role.colour, description=msg)
         return await ctx.send(embed=embed)
