@@ -268,8 +268,7 @@ class Economy:
                       " wait {}.").format(author.mention, dtime))
 
     @commands.command()
-    @guild_only_check()
-    async def leaderboard(self, ctx: commands.Context, top: int = 10):
+    async def leaderboard(self, ctx: commands.Context, top: int = 10, check_global: bool=False):
         """Prints out the leaderboard
 
         Defaults to top 10"""
@@ -278,24 +277,30 @@ class Economy:
         if top < 1:
             top = 10
         if await bank.is_global():
-            bank_sorted = sorted(await bank.get_global_accounts(),
-                                 key=lambda x: x.balance, reverse=True)
+            bank_sorted = sorted(await bank.get_global_accounts(ctx.bot),
+                                 key=lambda x: x[1].balance, reverse=True)
+            if not check_global:
+                if guild is not None:
+                    bank_sorted = [x for x in bank_sorted if guild.get_member(x[0].id)]
         else:
-            bank_sorted = sorted(await bank.get_guild_accounts(guild),
-                                 key=lambda x: x.balance, reverse=True)
+            if guild is None:
+                await ctx.send(_("Bank is per-guild so this command cannot be used in DMs!"))
+                return
+            bank_sorted = sorted(await bank.get_guild_accounts(guild, ctx.bot),
+                                 key=lambda x: x[1].balance, reverse=True)
         if len(bank_sorted) < top:
             top = len(bank_sorted)
         topten = bank_sorted[:top]
         highscore = ""
         place = 1
         for acc in topten:
-            dname = str(acc.name)
-            if len(dname) >= 23 - len(str(acc.balance)):
-                dname = dname[:(23 - len(str(acc.balance))) - 3]
+            dname = str(acc[0].display_name)
+            if len(dname) >= 23 - len(str(acc[1].balance)):
+                dname = dname[:(23 - len(str(acc[1].balance))) - 3]
                 dname += "... "
             highscore += str(place).ljust(len(str(top)) + 1)
-            highscore += dname.ljust(23 - len(str(acc.balance)))
-            highscore += str(acc.balance) + "\n"
+            highscore += dname.ljust(23 - len(str(acc[1].balance)))
+            highscore += str(acc[1].balance) + "\n"
             place += 1
         if highscore != "":
             for page in pagify(highscore, shorten_by=12):
