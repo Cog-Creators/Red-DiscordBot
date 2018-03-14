@@ -1,4 +1,5 @@
-from .errors import StreamNotFound, APIError, InvalidCredentials, OfflineStream, CommunityNotFound, OfflineCommunity
+from .errors import StreamNotFound, APIError, OfflineStream, CommunityNotFound, OfflineCommunity, \
+    InvalidYoutubeCredentials, InvalidTwitchCredentials
 from random import choice
 from string import ascii_letters
 import discord
@@ -9,6 +10,11 @@ TWITCH_BASE_URL = "https://api.twitch.tv"
 TWITCH_ID_ENDPOINT = TWITCH_BASE_URL + "/kraken/users?login="
 TWITCH_STREAMS_ENDPOINT = TWITCH_BASE_URL + "/kraken/streams/"
 TWITCH_COMMUNITIES_ENDPOINT = TWITCH_BASE_URL + "/kraken/communities"
+
+YOUTUBE_BASE_URL = "https://www.googleapis.com/youtube/v3"
+YOUTUBE_CHANNELS_ENDPOINT = YOUTUBE_BASE_URL + "/channels"
+YOUTUBE_SEARCH_ENDPOINT = YOUTUBE_BASE_URL + "/search"
+YOUTUBE_VIDEOS_ENDPOINT = YOUTUBE_BASE_URL + "/videos"
 
 
 def rnd(url):
@@ -38,7 +44,7 @@ class TwitchCommunity:
         if r.status == 200:
             return data["_id"]
         elif r.status == 400:
-            raise InvalidCredentials()
+            raise InvalidTwitchCredentials()
         elif r.status == 404:
             raise CommunityNotFound()
         else:
@@ -67,7 +73,7 @@ class TwitchCommunity:
             else:
                 return data["streams"]
         elif r.status == 400:
-            raise InvalidCredentials()
+            raise InvalidTwitchCredentials()
         elif r.status == 404:
             raise CommunityNotFound()
         else:
@@ -86,7 +92,7 @@ class TwitchCommunity:
 
 class Stream:
     def __init__(self, **kwargs):
-        self.name = kwargs.pop("name")
+        self.name = kwargs.pop("name", None)
         self.channels = kwargs.pop("channels", [])
         #self.already_online = kwargs.pop("already_online", False)
         self._messages_cache = []
@@ -107,6 +113,75 @@ class Stream:
 
     def __repr__(self):
         return "<{0.__class__.__name__}: {0.name}>".format(self)
+
+
+class YoutubeStream(Stream):
+    def __init__(self, **kwargs):
+        self.id = kwargs.pop("id", None)
+        self._token = kwargs.pop("token", None)
+        super().__init__(**kwargs)
+
+    async def is_online(self):
+        if not self.id:
+            self.id = await self.fetch_id()
+        url = YOUTUBE_SEARCH_ENDPOINT
+        params = {
+            "key": self._token,
+            "part": "snippet",
+            "channelId": self.id,
+            "type": "video",
+            "eventType": "live"
+        }
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, params=params) as r:
+                data = await r.json()
+        if "items" in data and len(data["items"]) == 0:
+            raise OfflineStream()
+        elif "items" in data:
+            vid_id = data["items"][0]["id"]["videoId"]
+            params = {
+                "key": self._token,
+                "id": vid_id,
+                "part": "snippet"
+            }
+            async with aiohttp.ClientSession() as session:
+                async with session.get(YOUTUBE_VIDEOS_ENDPOINT, params=params) as r:
+                    data = await r.json()
+            return self.make_embed(data)
+
+    def make_embed(self, data):
+        vid_data = data["items"][0]
+        video_url = "https://youtube.com/watch?v={}".format(vid_data["id"])
+        title = vid_data["snippet"]["title"]
+        thumbnail = vid_data["snippet"]["thumbnails"]["default"]["url"]
+        channel_title = data["snippet"]["channelTitle"]
+        embed = discord.Embed(title=title, url=video_url)
+        embed.set_author(name=channel_title)
+        embed.set_image(url=rnd(thumbnail))
+        embed.colour = 0x9255A5
+        return embed
+
+    async def fetch_id(self):
+        params = {
+            "key": self._token,
+            "forUsername": self.name,
+            "part": "id"
+        }
+        async with aiohttp.ClientSession() as session:
+            async with session.get(YOUTUBE_CHANNELS_ENDPOINT, params=params) as r:
+                data = await r.json()
+
+        if "error" in data and data["error"]["code"] == 400 and\
+                data["error"]["errors"][0]["reason"] == "keyInvalid":
+            raise InvalidYoutubeCredentials()
+        elif "items" in data and len(data["items"]) == 0:
+            raise StreamNotFound()
+        elif "items" in data:
+            return data["items"][0]["id"]
+        raise APIError()
+
+    def __repr__(self):
+        return "<{0.__class__.__name__}: {0.name} (ID: {0.id})>".format(self)
 
 
 class TwitchStream(Stream):
@@ -137,7 +212,7 @@ class TwitchStream(Stream):
             self.name = data["stream"]["channel"]["name"]
             return self.make_embed(data)
         elif r.status == 400:
-            raise InvalidCredentials()
+            raise InvalidTwitchCredentials()
         elif r.status == 404:
             raise StreamNotFound()
         else:
@@ -159,7 +234,7 @@ class TwitchStream(Stream):
                 raise StreamNotFound()
             return data["users"][0]["_id"]
         elif r.status == 400:
-            raise InvalidCredentials()
+            raise InvalidTwitchCredentials()
         else:
             raise APIError()
 
