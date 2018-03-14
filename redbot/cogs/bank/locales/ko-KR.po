@@ -1,0 +1,38 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
+"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Korean\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: ko\n"
+"X-Crowdin-File: /cogs/bank/locales/messages.pot\n"
+"Language: ko_KR\n"
+
+#: ../bank.py:68
+msgid "global"
+msgstr "글로벌"
+
+#: ../bank.py:68
+msgid "per-guild"
+msgstr "길드마다"
+
+#: ../bank.py:70
+msgid "The bank is now {}."
+msgstr "은행 잔고는 `{}`입니다."
+
+#: ../bank.py:77
+msgid "Bank's name has been set to {}"
+msgstr "계좌 이름이 {} 로 설정 되었습니다."
+
+#: ../bank.py:84
+msgid "Currency name has been set to {}"
+msgstr "통화 이름이 {} 로 설정 되었습니다."
+

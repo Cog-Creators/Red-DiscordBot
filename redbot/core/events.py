@@ -2,6 +2,9 @@ import sys
 import codecs
 import datetime
 import logging
+from distutils.version import StrictVersion
+
+import aiohttp
 import pkg_resources
 import traceback
 from pkg_resources import DistributionNotFound
@@ -28,6 +31,21 @@ ______         _           ______ _                       _  ______       _
 | |\ \  __/ (_| |          | |/ /| \__ \ (_| (_) | | | (_| | | |_/ / (_) | |_ 
 \_| \_\___|\__,_|          |___/ |_|___/\___\___/|_|  \__,_| \____/ \___/ \__|
 """
+
+
+def should_log_sentry(exception) -> bool:
+    e = exception
+    while e.__cause__ is not None:
+        e = e.__cause__
+
+    tb = e.__traceback__
+    tb_frame = None
+    while tb is not None:
+        tb_frame = tb.tb_frame
+        tb = tb.tb_next
+
+    module = tb_frame.f_globals.get('__name__')
+    return module.startswith('redbot')
 
 
 def init_events(bot, cli_flags):
@@ -91,6 +109,24 @@ def init_events(bot, cli_flags):
 
         INFO.append('{} cogs with {} commands'.format(len(bot.cogs), len(bot.commands)))
 
+        async with aiohttp.ClientSession() as session:
+            async with session.get("http://pypi.python.org/pypi/red-discordbot/json") as r:
+                data = await r.json()
+        if StrictVersion(data["info"]["version"]) > StrictVersion(red_version):
+            INFO.append(
+                "Outdated version! {} is available "
+                "but you're using {}".format(data["info"]["version"], red_version)
+            )
+            owner = discord.utils.get(bot.get_all_members(), id=bot.owner_id)
+            try:
+                await owner.send(
+                    "Your Red instance is out of date! {} is the current "
+                    "version, however you are using {}!".format(
+                        data["info"]["version"], red_version
+                    )
+                )
+            except:
+                pass
         INFO2 = []
 
         sentry = await bot.db.enable_sentry()
@@ -160,9 +196,10 @@ def init_events(bot, cli_flags):
             log.exception("Exception in command '{}'"
                           "".format(ctx.command.qualified_name),
                           exc_info=error.original)
-            sentry_log.exception("Exception in command '{}'"
-                                 "".format(ctx.command.qualified_name),
-                                 exc_info=error.original)
+            if should_log_sentry(error):
+                sentry_log.exception("Exception in command '{}'"
+                                     "".format(ctx.command.qualified_name),
+                                     exc_info=error.original)
 
             message = ("Error in command '{}'. Check your console or "
                        "logs for details."
@@ -191,8 +228,9 @@ def init_events(bot, cli_flags):
             except AttributeError:
                 sentry_error = error
 
-            sentry_log.exception("Unhandled command error.",
-                                 exc_info=sentry_error)
+            if should_log_sentry(sentry_error):
+                sentry_log.exception("Unhandled command error.",
+                                     exc_info=sentry_error)
 
     @bot.event
     async def on_message(message):

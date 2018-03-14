@@ -1,0 +1,285 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-19 03:59+UTC\n"
+"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Italian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: it\n"
+"X-Crowdin-File: /core/locales/messages.pot\n"
+"Language: it_IT\n"
+
+#: ../cog_manager.py:309
+msgid "Install Path: {}\n\n"
+msgstr "Percorso di installazione: {}\n\n"
+
+#: ../cog_manager.py:325
+msgid "That path does not exist or does not point to a valid directory."
+msgstr ""
+
+#: ../cog_manager.py:334
+msgid "Path successfully added."
+msgstr "Percorso aggiunto con successo."
+
+#: ../cog_manager.py:347
+msgid "That is an invalid path number."
+msgstr "Il numero di percorso inserito non è valido."
+
+#: ../cog_manager.py:351
+msgid "Path successfully removed."
+msgstr "Percorso rimosso con successo."
+
+#: ../cog_manager.py:367
+msgid "Invalid 'from' index."
+msgstr "Parametro 'from' non valido."
+
+#: ../cog_manager.py:373
+msgid "Invalid 'to' index."
+msgstr "Parametro 'to' non valido."
+
+#: ../cog_manager.py:377
+msgid "Paths reordered."
+msgstr "I percorsi sono stati riordinati."
+
+#: ../cog_manager.py:395
+msgid "That path does not exist."
+msgstr "Questo percorso non esiste."
+
+#: ../cog_manager.py:399
+msgid "The bot will install new cogs to the `{}` directory."
+msgstr "In futuro i cogs verranno installati nella directory '{}'."
+
+#: ../core_commands.py:225 ../core_commands.py:266
+msgid "No module by that name was found in any cog path."
+msgstr "Nessun modulo con questo nome è stato trovato nei percorsi impostati."
+
+#: ../core_commands.py:240
+msgid "Failed to load package. Check your console or logs for details."
+msgstr "Impossibile caricare il pacchetto. Controlla la tua console o registri per i dettagli."
+
+#: ../core_commands.py:244 ../core_commands.py:253 ../core_commands.py:285
+#: ../core_commands.py:374 ../core_commands.py:462 ../core_commands.py:476
+msgid "Done."
+msgstr "Fatto."
+
+#: ../core_commands.py:255
+msgid "That extension is not loaded."
+msgstr "Questa estensione non è caricata."
+
+#: ../core_commands.py:282
+msgid "Failed to reload package. Check your console or logs for details."
+msgstr "Impossibile ricaricare il pacchetto. Controlla la tua console o registri per i dettagli."
+
+#: ../core_commands.py:295
+msgid "Shutting down... "
+msgstr "Arresto in corso... "
+
+#: ../core_commands.py:310
+msgid "Restarting..."
+msgstr ""
+
+#: ../core_commands.py:347
+msgid "The admin role for this guild has been set."
+msgstr "Il ruolo di admin per questa gilda è stato impostato."
+
+#: ../core_commands.py:355
+msgid "The mod role for this guild has been set."
+msgstr "Il ruolo di mod per questa gilda è stato impostato."
+
+#: ../core_commands.py:368
+msgid "Failed. Remember that you can edit my avatar up to two times a hour. The URL must be a direct link to a JPG / PNG."
+msgstr "Operazione fallita. Ricordati che è possibile modificare il mio avatar fino a due volte l'ora. L'URL deve essere un link diretto a un file JPG / PNG."
+
+#: ../core_commands.py:372
+msgid "JPG / PNG format only."
+msgstr "I formati file permessi sono JPG / PNG."
+
+#: ../core_commands.py:387
+msgid "Game set."
+msgstr "Il 'game' status è stato impostato."
+
+#: ../core_commands.py:399
+msgid "Listening set."
+msgstr ""
+
+#: ../core_commands.py:411
+msgid "Watching set."
+msgstr ""
+
+#: ../core_commands.py:440
+msgid "Status changed to %s."
+msgstr "Status modificato a %s."
+
+#: ../core_commands.py:471
+msgid "Failed to change name. Remember that you can only do it up to 2 times an hour. Use nicknames if you need frequent changes. `{}set nickname`"
+msgstr "Non sono riuscito a cambiare il mio nome. Ricordati che è possibile farlo fino a 2 volte ogni ora. Se hai bisogno di frequenti modifiche è consigliato l'utilizzo dei nicknames. `{}set nickname`"
+
+#: ../core_commands.py:486
+msgid "I lack the permissions to change my own nickname."
+msgstr "Non ho i permessi necessari per cambiare il mio nickname."
+
+#: ../core_commands.py:500 ../core_commands.py:513
+msgid "Prefix set."
+msgstr "Il prefisso è stato impostato."
+
+#: ../core_commands.py:509
+msgid "Guild prefixes have been reset."
+msgstr "I prefissi di Gilda sono stati ripristinati."
+
+#: ../core_commands.py:532
+msgid "\n"
+"Verification token:"
+msgstr "\n"
+"Codice di verifica:"
+
+#: ../core_commands.py:535
+msgid "Remember:\n"
+msgstr "Ricorda:\n"
+
+#: ../core_commands.py:538
+msgid "I have printed a one-time token in the console. Copy and paste it here to confirm you are the owner."
+msgstr "Ho stampato un token temporaneo nella console. Copia e incollalo in questa chat per confermare che sei il proprietario."
+
+#: ../core_commands.py:546
+msgid "The set owner request has timed out."
+msgstr "La richiesta 'set owner' è scaduta."
+
+#: ../core_commands.py:552
+msgid "You have been set as owner."
+msgstr "Sei stato impostato come proprietario."
+
+#: ../core_commands.py:554
+msgid "Invalid token."
+msgstr "Token non valido."
+
+#: ../core_commands.py:566
+msgid "Locale has been set."
+msgstr "Impostazioni locali sono stata impostata."
+
+#: ../core_commands.py:580
+msgid "Done. Sentry logging is now enabled."
+msgstr ""
+
+#: ../core_commands.py:583
+msgid "Done. Sentry logging is now disabled."
+msgstr ""
+
+#: ../core_commands.py:593
+msgid "User ID: %s"
+msgstr "ID utente: %s"
+
+#: ../core_commands.py:596
+msgid "through DM"
+msgstr "attraverso il DM"
+
+#: ../core_commands.py:598
+msgid "from {}"
+msgstr "da {}"
+
+#: ../core_commands.py:599
+msgid " | Server ID: %s"
+msgstr " | ID del server: %s"
+
+#: ../core_commands.py:608
+msgid "Use `{}dm {} <text>` to reply to this user"
+msgstr "Utilizzare `{}dm {} <text>` per rispondere a questo utente"
+
+#: ../core_commands.py:616
+msgid "Sent by {} {}"
+msgstr "Inviato da {} {}"
+
+#: ../core_commands.py:628
+msgid "I cannot send your message, I'm unable to find my owner... *sigh*"
+msgstr "Non posso inviare il vostro messaggio, non riesco a trovare il mio proprietario... *sospiro*"
+
+#: ../core_commands.py:631
+msgid "I'm unable to deliver your message. Sorry."
+msgstr "Non sono in grado di consegnare il messaggio. Mi dispiace."
+
+#: ../core_commands.py:633
+msgid "Your message has been sent."
+msgstr "Il tuo messaggio è stato inviato."
+
+#: ../core_commands.py:647
+msgid "Invalid ID or user not found. You can only send messages to people I share a server with."
+msgstr "ID non valido o utente non trovato. È possibile inviare messaggi solo alle persone condividono un server con."
+
+#: ../core_commands.py:653
+msgid "Owner of %s"
+msgstr "Proprietario di %s"
+
+#: ../core_commands.py:657
+msgid "You can reply to this message with %scontact"
+msgstr "È possibile rispondere a questo messaggio con %scontact"
+
+#: ../core_commands.py:667
+msgid "Sorry, I couldn't deliver your message to %s"
+msgstr "Mi dispiace, non sono riuscito a consegnare il messaggio a %s"
+
+#: ../core_commands.py:670
+msgid "Message delivered to %s"
+msgstr "Messaggio recapitato a %s"
+
+#: ../core_commands.py:690
+msgid "User added to whitelist."
+msgstr ""
+
+#: ../core_commands.py:699
+msgid "Whitelisted Users:"
+msgstr ""
+
+#: ../core_commands.py:719
+msgid "User has been removed from whitelist."
+msgstr ""
+
+#: ../core_commands.py:721
+msgid "User was not in the whitelist."
+msgstr ""
+
+#: ../core_commands.py:729
+msgid "Whitelist has been cleared."
+msgstr ""
+
+#: ../core_commands.py:746
+msgid "You cannot blacklist an owner!"
+msgstr ""
+
+#: ../core_commands.py:753
+msgid "User added to blacklist."
+msgstr ""
+
+#: ../core_commands.py:762
+msgid "blacklisted Users:"
+msgstr ""
+
+#: ../core_commands.py:782
+msgid "User has been removed from blacklist."
+msgstr ""
+
+#: ../core_commands.py:784
+msgid "User was not in the blacklist."
+msgstr ""
+
+#: ../core_commands.py:792
+msgid "blacklist has been cleared."
+msgstr ""
+
+#: ../dev_commands.py:213
+msgid "Already running a REPL session in this channel. Exit it with `quit`."
+msgstr "E' già in esecuzione una sessione REPL in questo canale. Puoi terminarla scrivendo `quit`."
+
+#: ../dev_commands.py:218
+msgid "Enter code to execute or evaluate. `exit()` or `quit` to exit."
+msgstr "Inserire il codice da eseguire oppure valutare. `exit()` o `quit` per uscire."
+
+#: ../dev_commands.py:281
+msgid "Unexpected error: `{}`"
+msgstr "Errore imprevisto: `{}`"
+

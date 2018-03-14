@@ -1,0 +1,90 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
+"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Dutch\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: nl\n"
+"X-Crowdin-File: /cogs/alias/locales/messages.pot\n"
+"Language: nl_NL\n"
+
+#: ../alias.py:129
+msgid "No prefix found."
+msgstr "Geen prefix gevonden."
+
+#: ../alias.py:198
+msgid "You attempted to create a new alias with the name {} but that name is already a command on this bot."
+msgstr "U probeert een nieuwe alias maken met de naam {}, maar is al een opdracht op de bot."
+
+#: ../alias.py:205
+msgid "You attempted to create a new alias with the name {} but that alias already exists on this server."
+msgstr "U probeert een nieuwe alias met de naam {} maken. Maar die alias bestaat al op deze server."
+
+#: ../alias.py:212
+msgid "You attempted to create a new alias with the name {} but that name is an invalid alias name. Alias names may not contain spaces."
+msgstr "U probeert een nieuwe alias maken met de naam {}, maar dat is een ongeldige alias naam. Alias namen mogen geen spaties bevatten."
+
+#: ../alias.py:224
+msgid "A new alias with the trigger `{}` has been created."
+msgstr "Een nieuwe alias met de trigger `{}`is aangemaakt."
+
+#: ../alias.py:236
+msgid "You attempted to create a new global alias with the name {} but that name is already a command on this bot."
+msgstr "U probeert een nieuwe globale alias met de naam {} te maken, maar die alias al een commando op deze bot."
+
+#: ../alias.py:243
+msgid "You attempted to create a new global alias with the name {} but that alias already exists on this server."
+msgstr "U probeert een nieuwe globale alias met de naam {} te maken, maar die alias al bestaat op deze server."
+
+#: ../alias.py:250
+msgid "You attempted to create a new global alias with the name {} but that name is an invalid alias name. Alias names may not contain spaces."
+msgstr "U probeert een nieuwe globale alias maken met de naam {}, maar die naam is de naam van een ongeldige alias. Alias namen mogen geen spaties bevatten."
+
+#: ../alias.py:259
+msgid "A new global alias with the trigger `{}` has been created."
+msgstr "Een nieuwe globale alias met de trigger `{}` is aangemaakt."
+
+#: ../alias.py:274
+msgid "No such alias exists."
+msgstr "Deze alias bestaat niet."
+
+#: ../alias.py:283
+msgid "The `{}` alias will execute the command `{}`"
+msgstr "Het alias `{}` zal het commando `{}` uitvoeren"
+
+#: ../alias.py:286
+msgid "There is no alias with the name `{}`"
+msgstr "Er is geen alias met de naam `{}`"
+
+#: ../alias.py:298
+msgid "There are no aliases on this guild."
+msgstr "Er zijn geen aliases in deze server."
+
+#: ../alias.py:302 ../alias.py:320
+msgid "Alias with the name `{}` was successfully deleted."
+msgstr "Alias met de naam `{}` is met success verwijderd."
+
+#: ../alias.py:305 ../alias.py:323
+msgid "Alias with name `{}` was not found."
+msgstr "Alias met de naam `{}` is niet gevonden."
+
+#: ../alias.py:316
+msgid "There are no aliases on this bot."
+msgstr "Er zijn geen aliases op deze bot."
+
+#: ../alias.py:331 ../alias.py:342
+msgid "Aliases:"
+msgstr "Aliassen:"
+
+#: ../alias.py:333 ../alias.py:344
+msgid "There are no aliases on this server."
+msgstr "Er zijn geen aliases in deze server."
+

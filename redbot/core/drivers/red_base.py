@@ -1,5 +1,3 @@
-from typing import Tuple
-
 __all__ = ["BaseDriver"]
 
 
@@ -8,13 +6,18 @@ class BaseDriver:
         self.cog_name = cog_name
         self.unique_cog_identifier = None  # This is set by Config's init method
 
-    async def get(self, *identifiers: Tuple[str]):
+    async def get(self, *identifiers: str):
         """
         Finds the value indicate by the given identifiers.
 
-        :param identifiers:
+        Parameters
+        ----------
+        identifiers
             A list of identifiers that correspond to nested dict accesses.
-        :return:
+
+        Returns
+        -------
+        Any
             Stored value.
         """
         raise NotImplementedError
@@ -24,18 +27,34 @@ class BaseDriver:
         Asks users for additional configuration information necessary
         to use this config driver.
 
-        :return:
+        Returns
+        -------
             Dict of configuration details.
         """
         raise NotImplementedError
 
-    async def set(self, *identifiers: Tuple[str], value=None):
+    async def set(self, *identifiers: str, value=None):
         """
         Sets the value of the key indicated by the given identifiers.
 
-        :param identifiers:
+        Parameters
+        ----------
+        identifiers
             A list of identifiers that correspond to nested dict accesses.
-        :param value:
+        value
             Any JSON serializable python object.
+        """
+        raise NotImplementedError
+
+    async def clear(self, *identifiers: str):
+        """
+        Clears out the value specified by the given identifiers.
+
+        Equivalent to using ``del`` on a dict.
+
+        Parameters
+        ----------
+        identifiers
+            A list of identifiers that correspond to nested dict accesses.
         """
         raise NotImplementedError

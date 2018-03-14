@@ -1,24 +1,26 @@
 import asyncio
+import datetime
 import importlib
 import itertools
 import logging
 import sys
 import traceback
 from collections import namedtuple
+from pathlib import Path
 from random import SystemRandom
 from string import ascii_letters, digits
+from distutils.version import StrictVersion
 
 import aiohttp
-import datetime
 import discord
+import pkg_resources
 from discord.ext import commands
 
+from redbot.core import __version__
 from redbot.core import checks
 from redbot.core import i18n
 from redbot.core import rpc
-from redbot.core import __version__
 from redbot.core.context import RedContext
-
 from .utils import TYPE_CHECKING
 from .utils.chat_formatting import pagify, box
 
@@ -67,6 +69,10 @@ class Core:
         app_info = await self.bot.application_info()
         owner = app_info.owner
 
+        async with aiohttp.ClientSession() as session:
+            async with session.get("http://pypi.python.org/pypi/red-discordbot/json") as r:
+                data = await r.json()
+        outdated = StrictVersion(data["info"]["version"]) > StrictVersion(__version__)
         about = (
             "This is an instance of [Red, an open source Discord bot]({}) "
             "created by [Twentysix]({}) and [improved by many]({}).\n\n"
@@ -80,7 +86,13 @@ class Core:
         embed.add_field(name="Python", value=python_version)
         embed.add_field(name="discord.py", value=dpy_version)
         embed.add_field(name="Red version", value=red_version)
+        if outdated:
+            embed.add_field(name="Outdated", value="Yes, {} is available".format(
+                    data["info"]["version"]
+                )
+            )
         embed.add_field(name="About Red", value=about, inline=False)
+
         embed.set_footer(text="Bringing joy since 02 Jan 2016 (over "
                          "{} days ago!)".format(days_since))
         try:
@@ -376,54 +388,48 @@ class Core:
     @_set.command(name="game")
     @checks.is_owner()
     async def _game(self, ctx, *, game: str=None):
-        """Sets Red's playing status
+        """Sets Red's playing status"""
 
-        Can only be run if the bot is in a server."""
-        if len(ctx.bot.guilds) == 0:
-            await ctx.send_help()
-            return
-        status = ctx.bot.guilds[0].me.status
         if game:
             game = discord.Game(name=game)
         else:
             game = None
-        await ctx.bot.change_presence(status=status, game=game)
+        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 \
+            else discord.Status.online
+        for shard in ctx.bot.shards:
+            await ctx.bot.change_presence(status=status, activity=game)
         await ctx.send(_("Game set."))
-        
+
     @_set.command(name="listening")
     @checks.is_owner()
     async def _listening(self, ctx, *, listening: str=None):
-        """Sets Red's listening status
+        """Sets Red's listening status"""
 
-        Can only be run if the bot is in a server."""
-        if len(ctx.bot.guilds) == 0:
-            await ctx.send_help()
-            return
-        status = ctx.bot.guilds[0].me.status
+        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 \
+            else discord.Status.online
         if listening:
-            listening = discord.Game(name=listening, type=2)
+            activity = discord.Activity(name=listening, type=discord.ActivityType.listening)
         else:
-            listening = None
-        await ctx.bot.change_presence(status=status, game=listening)
+            activity = None
+        for shard in ctx.bot.shards:
+            await ctx.bot.change_presence(status=status, activity=activity)
         await ctx.send(_("Listening set."))
-        
+
     @_set.command(name="watching")
     @checks.is_owner()
     async def _watching(self, ctx, *, watching: str=None):
-        """Sets Red's watching status
+        """Sets Red's watching status"""
 
-        Can only be run if the bot is in a server."""
-        if len(ctx.bot.guilds) == 0:
-            await ctx.send_help()
-            return
-        status = ctx.bot.guilds[0].me.status
+        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 \
+            else discord.Status.online
         if watching:
-            watching = discord.Game(name=watching, type=3)
+            activity = discord.Activity(name=watching, type=discord.ActivityType.watching)
         else:
-            watching = None
-        await ctx.bot.change_presence(status=status, game=watching)
+            activity = None
+        for shard in ctx.bot.shards:
+            await ctx.bot.change_presence(status=status, activity=activity)
         await ctx.send(_("Watching set."))
-        
+
     @_set.command()
     @checks.is_owner()
     async def status(self, ctx, *, status: str):
@@ -434,8 +440,7 @@ class Core:
             idle
             dnd
             invisible
-
-        Can only be run if the bot is in a server."""
+        """
 
         statuses = {
             "online": discord.Status.online,
@@ -444,18 +449,14 @@ class Core:
             "invisible": discord.Status.invisible
         }
 
-        if len(ctx.bot.guilds) == 0:
-            await ctx.send_help()
-            return
-        game = ctx.bot.guilds[0].me.game
-
+        game = ctx.bot.guilds[0].me.activity if len(ctx.bot.guilds) > 0 else None
         try:
             status = statuses[status.lower()]
         except KeyError:
             await ctx.send_help()
         else:
-            await ctx.bot.change_presence(status=status,
-                                          game=game)
+            for shard in ctx.bot.shards:
+                await ctx.bot.change_presence(status=status, activity=game)
             await ctx.send(_("Status changed to %s.") % status)
 
     @_set.command()
@@ -464,22 +465,22 @@ class Core:
         """Sets Red's streaming status
         Leaving both streamer and stream_title empty will clear it."""
 
-        if len(ctx.bot.guilds) == 0:
-            await ctx.send_help()
-            return
-        status = ctx.bot.guilds[0].me.status
+        status = ctx.bot.guilds[0].me.status \
+            if len(ctx.bot.guilds) > 0 else None
 
         if stream_title:
             stream_title = stream_title.strip()
             if "twitch.tv/" not in streamer:
                 streamer = "https://www.twitch.tv/" + streamer
-            game = discord.Game(type=1, url=streamer, name=stream_title)
-            await ctx.bot.change_presence(game=game, status=status)
+            activity = discord.Streaming(url=streamer, name=stream_title)
+            for shard in ctx.bot.shards:
+                await ctx.bot.change_presence(status=status, activity=activity)
         elif streamer is not None:
             await ctx.send_help()
             return
         else:
-            await ctx.bot.change_presence(game=None, status=status)
+            for shard in ctx.bot.shards:
+                await ctx.bot.change_presence(activity=None, status=status)
         await ctx.send(_("Done."))
 
     @_set.command(name="username", aliases=["name"])
@@ -579,6 +580,10 @@ class Core:
     async def locale(self, ctx: commands.Context, locale_name: str):
         """
         Changes bot locale.
+
+        Use [p]listlocales to get a list of available locales.
+
+        To reset to English, use "en-US".
         """
         i18n.set_locale(locale_name)
 
@@ -602,6 +607,24 @@ class Core:
         else:
             ctx.bot.disable_sentry()
             await ctx.send(_("Done. Sentry logging is now disabled."))
+
+    @commands.command()
+    @checks.is_owner()
+    async def listlocales(self, ctx: RedContext):
+        """
+        Lists all available locales
+
+        Use `[p]set locale` to set a locale
+        """
+        async with ctx.channel.typing():
+            red_dist = pkg_resources.get_distribution("red-discordbot")
+            red_path = Path(red_dist.location) / "redbot"
+            locale_list = sorted(set([loc.stem for loc in list(red_path.glob("**/*.po"))]))
+            pages = pagify("\n".join(locale_list))
+
+        await ctx.send_interactive(
+            pages, box_lang="Available Locales:"
+        )
 
     @commands.command()
     @commands.cooldown(1, 60, commands.BucketType.user)

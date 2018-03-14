@@ -1,0 +1,240 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
+"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Dutch\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: nl\n"
+"X-Crowdin-File: /cogs/general/locales/messages.pot\n"
+"Language: nl_NL\n"
+
+#: ../general.py:42
+msgid "As I see it, yes"
+msgstr "Zoals ik het zie wel"
+
+#: ../general.py:42
+msgid "It is certain"
+msgstr "Zeker"
+
+#: ../general.py:42
+msgid "It is decidedly so"
+msgstr "Absoluut"
+
+#: ../general.py:43
+msgid "Most likely"
+msgstr "Zeer waarschijnlijk"
+
+#: ../general.py:43
+msgid "Outlook good"
+msgstr "Ziet er goed uit"
+
+#: ../general.py:43
+msgid "Signs point to yes"
+msgstr "Het ziet er naar uit"
+
+#: ../general.py:44
+msgid "Without a doubt"
+msgstr "Zonder twijfel"
+
+#: ../general.py:44
+msgid "Yes"
+msgstr "Ja"
+
+#: ../general.py:44
+msgid "Yes – definitely"
+msgstr "Ja - zeker"
+
+#: ../general.py:44
+msgid "You may rely on it"
+msgstr "Je kan er op rekenen"
+
+#: ../general.py:45
+msgid "Ask again later"
+msgstr "Vraag het later weer"
+
+#: ../general.py:45
+msgid "Reply hazy, try again"
+msgstr "Wazig antwoord, probeer het opnieuw"
+
+#: ../general.py:46
+msgid "Better not tell you now"
+msgstr "Dat kan ik je nu beter niet vertellen"
+
+#: ../general.py:46
+msgid "Cannot predict now"
+msgstr "Ik kan het nu niet voorspellen"
+
+#: ../general.py:47
+msgid "Concentrate and ask again"
+msgstr "Concentreer en vraag opnieuw"
+
+#: ../general.py:47
+msgid "Don't count on it"
+msgstr "Reken er maar niet op"
+
+#: ../general.py:47
+msgid "My reply is no"
+msgstr "Ik zeg nee"
+
+#: ../general.py:48
+msgid "My sources say no"
+msgstr "Mijn bronnen zeggen van niet"
+
+#: ../general.py:48
+msgid "Outlook not so good"
+msgstr "Het ziet er niet goed uit"
+
+#: ../general.py:48
+msgid "Very doubtful"
+msgstr "Onwaarschijnlijk"
+
+#: ../general.py:64
+msgid "Not enough choices to pick from."
+msgstr "Niet genoeg mogelijkheden om van te kiezen."
+
+#: ../general.py:78
+msgid "{} :game_die: {} :game_die:"
+msgstr "{} :game_die: {} :game_die:"
+
+#: ../general.py:81
+msgid "{} Maybe higher than 1? ;P"
+msgstr "{} Misschien hoger dan 1? ;P"
+
+#: ../general.py:93
+msgid "Nice try. You think this is funny?How about *this* instead:\n\n"
+msgstr "Goed geprobeerd. Denk je dat dit grappig is? Wat denk je *hier van*:\n\n"
+
+#: ../general.py:106
+msgid "*flips a coin and... "
+msgstr "*tost een munt en... "
+
+#: ../general.py:106
+msgid "HEADS!*"
+msgstr "KOP!*"
+
+#: ../general.py:106
+msgid "TAILS!*"
+msgstr "MUNT!*"
+
+#: ../general.py:130
+msgid "{} You win {}!"
+msgstr "{} Jij wint {}!"
+
+#: ../general.py:134
+msgid "{} You lose {}!"
+msgstr "{} Jij verliest {}!"
+
+#: ../general.py:138
+msgid "{} We're square {}!"
+msgstr "{} We staan gelijk {}!"
+
+#: ../general.py:151
+msgid "That doesn't look like a question."
+msgstr "Dat ziet er niet als een vraag uit."
+
+#: ../general.py:159
+msgid " Stopwatch started!"
+msgstr " Stopwatch gestart!"
+
+#: ../general.py:163
+msgid " Stopwatch stopped! Time: **"
+msgstr " Stopwatch gestopt! Tijd: **"
+
+#: ../general.py:216 ../general.py:217
+msgid "{}\n"
+"({} days ago)"
+msgstr "{}\n"
+"({} dagen geleden)"
+
+#: ../general.py:219
+msgid "Chilling in {} status"
+msgstr "Chillen in {} status"
+
+#: ../general.py:223
+msgid "Playing {}"
+msgstr "Speelt {}"
+
+#: ../general.py:225
+msgid "Streaming [{}]({})"
+msgstr ""
+
+#: ../general.py:227
+msgid "Listening to {}"
+msgstr ""
+
+#: ../general.py:229
+msgid "Watching {}"
+msgstr ""
+
+#: ../general.py:234
+msgid "None"
+msgstr "Niks"
+
+#: ../general.py:237
+msgid "Joined Discord on"
+msgstr "Gebruikt Discord sinds"
+
+#: ../general.py:238
+msgid "Joined this guild on"
+msgstr "Op deze server sinds"
+
+#: ../general.py:239 ../general.py:286
+msgid "Roles"
+msgstr "Rollen"
+
+#: ../general.py:240
+msgid "Member #{} | User ID: {}"
+msgstr "Lid #{} | Gebruikers-ID: {}"
+
+#: ../general.py:257 ../general.py:299
+msgid "I need the `Embed links` permission to send this."
+msgstr "Ik heb de `Embed links` permissie nodig om dit te kunnen versturen."
+
+#: ../general.py:272
+msgid "Since {}. That's over {} days ago!"
+msgstr "Sinds {}. Dat is meer dan {} dagen geleden!"
+
+#: ../general.py:282
+msgid "Region"
+msgstr "Regio"
+
+#: ../general.py:283
+msgid "Users"
+msgstr "Gebruikers"
+
+#: ../general.py:284
+msgid "Text Channels"
+msgstr "Tekstkanalen"
+
+#: ../general.py:285
+msgid "Voice Channels"
+msgstr "Spraakkanalen"
+
+#: ../general.py:287
+msgid "Owner"
+msgstr "Eigenaar"
+
+#: ../general.py:288
+msgid "Guild ID: "
+msgstr "Server-ID: "
+
+#: ../general.py:343
+msgid "Your search terms gave no results."
+msgstr "De zoektermen hebben geen resultaten opgeleverd."
+
+#: ../general.py:345
+msgid "There is no definition #{}"
+msgstr "Er is geen definitie #{}"
+
+#: ../general.py:347
+msgid "Error."
+msgstr "Fout."
+

@@ -1,0 +1,240 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: red-discordbot\n"
+"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
+"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"Last-Translator: Kowlin <boxedpp@gmail.com>\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: ENCODING\n"
+"Generated-By: pygettext.py 1.5\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: red-discordbot\n"
+"X-Crowdin-Language: ja\n"
+"X-Crowdin-File: /cogs/general/locales/messages.pot\n"
+"Language: ja_JP\n"
+
+#: ../general.py:42
+msgid "As I see it, yes"
+msgstr "私がそれを見ると、イエス"
+
+#: ../general.py:42
+msgid "It is certain"
+msgstr "確かです"
+
+#: ../general.py:42
+msgid "It is decidedly so"
+msgstr "もしろん確かです"
+
+#: ../general.py:43
+msgid "Most likely"
+msgstr "最も可能性が高い"
+
+#: ../general.py:43
+msgid "Outlook good"
+msgstr "見通しが良い"
+
+#: ../general.py:43
+msgid "Signs point to yes"
+msgstr "サインはイエスを指す"
+
+#: ../general.py:44
+msgid "Without a doubt"
+msgstr "疑いなく"
+
+#: ../general.py:44
+msgid "Yes"
+msgstr "イエス"
+
+#: ../general.py:44
+msgid "Yes – definitely"
+msgstr "イエス、もちろん"
+
+#: ../general.py:44
+msgid "You may rely on it"
+msgstr "頼るかもしれない"
+
+#: ../general.py:45
+msgid "Ask again later"
+msgstr "後でもう一度聞いて"
+
+#: ../general.py:45
+msgid "Reply hazy, try again"
+msgstr "返信が見にくい、もう一度聞いて"
+
+#: ../general.py:46
+msgid "Better not tell you now"
+msgstr "今言いえないのほうがいい"
+
+#: ../general.py:46
+msgid "Cannot predict now"
+msgstr "今予測できない"
+
+#: ../general.py:47
+msgid "Concentrate and ask again"
+msgstr "集中してもう一度聞いて"
+
+#: ../general.py:47
+msgid "Don't count on it"
+msgstr "当てにしてはいけない"
+
+#: ../general.py:47
+msgid "My reply is no"
+msgstr "私の答えはノー"
+
+#: ../general.py:48
+msgid "My sources say no"
+msgstr "情報筋はノーと言っている"
+
+#: ../general.py:48
+msgid "Outlook not so good"
+msgstr "見通しが悪い"
+
+#: ../general.py:48
+msgid "Very doubtful"
+msgstr "かなり怪しい"
+
+#: ../general.py:64
+msgid "Not enough choices to pick from."
+msgstr "十分な選択肢ではありません。"
+
+#: ../general.py:78
+msgid "{} :game_die: {} :game_die:"
+msgstr "{} :game_die: {} :game_die:"
+
+#: ../general.py:81
+msgid "{} Maybe higher than 1? ;P"
+msgstr "１より高いかもしれない？"
+
+#: ../general.py:93
+msgid "Nice try. You think this is funny?How about *this* instead:\n\n"
+msgstr "ざんねんでしたね。そうはさせない。これでどうだ：\n\n"
+
+#: ../general.py:106
+msgid "*flips a coin and... "
+msgstr "コイントスすると… "
+
+#: ../general.py:106
+msgid "HEADS!*"
+msgstr "表！"
+
+#: ../general.py:106
+msgid "TAILS!*"
+msgstr "裏！"
+
+#: ../general.py:130
+msgid "{} You win {}!"
+msgstr "{}が勝った！"
+
+#: ../general.py:134
+msgid "{} You lose {}!"
+msgstr "{}が負けった！"
+
+#: ../general.py:138
+msgid "{} We're square {}!"
+msgstr "相子！{}"
+
+#: ../general.py:151
+msgid "That doesn't look like a question."
+msgstr "それは質問に見えません。"
+
+#: ../general.py:159
+msgid " Stopwatch started!"
+msgstr " ストップウォッチが始まった！"
+
+#: ../general.py:163
+msgid " Stopwatch stopped! Time: **"
+msgstr " ストップウォッチが止まった！時間："
+
+#: ../general.py:216 ../general.py:217
+msgid "{}\n"
+"({} days ago)"
+msgstr "{}\n"
+"({}日前)"
+
+#: ../general.py:219
+msgid "Chilling in {} status"
+msgstr ""
+
+#: ../general.py:223
+msgid "Playing {}"
+msgstr "{}をプレイ中"
+
+#: ../general.py:225
+msgid "Streaming [{}]({})"
+msgstr ""
+
+#: ../general.py:227
+msgid "Listening to {}"
+msgstr ""
+
+#: ../general.py:229
+msgid "Watching {}"
+msgstr ""
+
+#: ../general.py:234
+msgid "None"
+msgstr "無い"
+
+#: ../general.py:237
+msgid "Joined Discord on"
+msgstr "Discordに参加した日： {}"
+
+#: ../general.py:238
+msgid "Joined this guild on"
+msgstr "こギルドに参加した日： {}"
+
+#: ../general.py:239 ../general.py:286
+msgid "Roles"
+msgstr "役職"
+
+#: ../general.py:240
+msgid "Member #{} | User ID: {}"
+msgstr "会員番号： {}｜ユーザー番号： {}"
+
+#: ../general.py:257 ../general.py:299
+msgid "I need the `Embed links` permission to send this."
+msgstr "送るには「リンクを埋め込み」の許可が必要です。"
+
+#: ../general.py:272
+msgid "Since {}. That's over {} days ago!"
+msgstr "{}から。それは{}日以上前よ！"
+
+#: ../general.py:282
+msgid "Region"
+msgstr "地域"
+
+#: ../general.py:283
+msgid "Users"
+msgstr "人 のユーザー"
+
+#: ../general.py:284
+msgid "Text Channels"
+msgstr "テキストチャネル"
+
+#: ../general.py:285
+msgid "Voice Channels"
+msgstr "音声チャネル"
+
+#: ../general.py:287
+msgid "Owner"
+msgstr "オーナー"
+
+#: ../general.py:288
+msgid "Guild ID: "
+msgstr "ギルドID: "
+
+#: ../general.py:343
+msgid "Your search terms gave no results."
+msgstr "検索結果は見つかりませんでした"
+
+#: ../general.py:345
+msgid "There is no definition #{}"
+msgstr ""
+
+#: ../general.py:347
+msgid "Error."
+msgstr "エラー。"
+

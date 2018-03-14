@@ -58,3 +58,15 @@ class JSON(BaseDriver):
 
         partial[full_identifiers[-1]] = value
         await self.jsonIO._threadsafe_save_json(self.data)
+
+    async def clear(self, *identifiers: str):
+        partial = self.data
+        full_identifiers = (self.unique_cog_identifier, *identifiers)
+        try:
+            for i in full_identifiers[:-1]:
+                partial = partial[i]
+            del partial[identifiers[-1]]
+        except KeyError:
+            pass
+        else:
+            await self.jsonIO._threadsafe_save_json(self.data)
