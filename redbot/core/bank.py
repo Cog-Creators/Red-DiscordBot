@@ -5,6 +5,7 @@ from typing import Union, List
 import discord
 
 from redbot.core import Config
+from redbot.core.bot import Red
 
 __all__ = ["Account", "get_balance", "set_balance", "withdraw_credits", "deposit_credits",
            "can_spend", "transfer_credits", "wipe_bank", "get_guild_accounts",
@@ -287,18 +288,20 @@ async def wipe_bank():
         await _conf.clear_all_members()
 
 
-async def get_guild_accounts(guild: discord.Guild) -> List[Account]:
+async def get_guild_accounts(guild: discord.Guild, bot: Red) -> List[tuple]:
     """Get all account data for the given guild.
 
     Parameters
     ----------
     guild : discord.Guild
         The guild to get accounts for.
+    bot : Red
+        The bot instance (needed as a fallback for getting user objects)
 
     Returns
     -------
-    `list` of `Account`
-        A list of all guild accounts.
+    `list` of `tuple`
+        A list of tuples containing a member or user and their account.
 
     Raises
     ------
@@ -312,19 +315,27 @@ async def get_guild_accounts(guild: discord.Guild) -> List[Account]:
     ret = []
     accs = await _conf.all_members(guild)
     for user_id, acc in accs.items():
+        member = guild.get_member(user_id)
+        if member is None:
+            member = await bot.get_user_info(user_id)
         acc_data = acc.copy()  # There ya go kowlin
         acc_data['created_at'] = _decode_time(acc_data['created_at'])
-        ret.append(Account(**acc_data))
+        ret.append((member, Account(**acc_data)))
     return ret
 
 
-async def get_global_accounts() -> List[Account]:
+async def get_global_accounts(bot: Red) -> List[tuple]:
     """Get all global account data.
+
+    Parameters
+    ----------
+    bot : Red
+        The bot instance (needed for getting user objects)
 
     Returns
     -------
-    `list` of `Account`
-        A list of all global accounts.
+    `list` of `tuple`
+        A list of tuples containing a user and their account.
 
     Raises
     ------
@@ -338,9 +349,10 @@ async def get_global_accounts() -> List[Account]:
     ret = []
     accs = await _conf.all_users()  # this is a dict of user -> acc
     for user_id, acc in accs.items():
+        user = await bot.get_user_info(user_id)
         acc_data = acc.copy()
         acc_data['created_at'] = _decode_time(acc_data['created_at'])
-        ret.append(Account(**acc_data))
+        ret.append((user, Account(**acc_data)))
 
     return ret
 
