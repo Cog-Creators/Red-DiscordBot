@@ -9,11 +9,10 @@ import math
 from discord.ext import commands
 from redbot.core import Config, checks
 
+from .manager import shutdown_lavalink_server
+
 __version__ = "2.0.2.9.b"
 __author__ = ["aikaterna", "billy/bollo/ati"]
-
-
-LAVALINK_BUILD = 3065
 
 
 class Audio:
@@ -25,7 +24,8 @@ class Audio:
             "host": 'localhost',
             "port": '2332',
             "passw": 'youshallnotpass',
-            "status": False
+            "status": False,
+            "current_build": 0
         }
 
         default_guild = {
@@ -39,10 +39,6 @@ class Audio:
         self.config.register_global(**default_global)
 
         self._lavalink = None
-        self._lavalink_build_url = (
-            "https://ci.fredboat.com/repository/download/"
-            "Lavalink_Build/{}:id/Lavalink.jar"
-        ).format(LAVALINK_BUILD)
 
     async def init_config(self):
         host = await self.config.host()
@@ -72,6 +68,14 @@ class Audio:
         except IndexError:
             pass
 
+        if event == 'TrackStartEvent':
+            playing_song = player.fetch('playing_song')
+            requester = player.fetch('requester')
+            player.store('prev_song', playing_song)
+            player.store('prev_requester', requester)
+            player.store('playing_song', self.bot.lavalink.players.get(player.fetch('guild')).current.uri)
+            player.store('requester', self.bot.get_user(self.bot.lavalink.players.get(player.fetch('guild')).current.requester))
+
         if event == 'TrackStartEvent' and notify:
             c = player.fetch('channel')
             if c:
@@ -88,9 +92,9 @@ class Audio:
 
         if event == 'TrackStartEvent' and status:
             if playing_servers > 1:
-                await self.bot.change_presence(game=discord.Game(name='music in {} servers'.format(playing_servers)))
+                await self.bot.change_presence(activity=discord.Activity(name='music in {} servers'.format(playing_servers), type=discord.ActivityType.playing))
             else:
-                await self.bot.change_presence(game=discord.Game(name=get_single_title, type=2))
+                await self.bot.change_presence(activity=discord.Activity(name=get_single_title, type=discord.ActivityType.listening))
 
         if event == 'QueueEndEvent' and notify:
             c = player.fetch('channel')
@@ -103,11 +107,11 @@ class Audio:
         if event == 'QueueEndEvent' and status:
             await asyncio.sleep(1)
             if playing_servers == 0:
-                await self.bot.change_presence(game=None)
+                await self.bot.change_presence(activity=None)
             if playing_servers == 1:
-                await self.bot.change_presence(game=discord.Game(name=get_single_title, type=2))
+                await self.bot.change_presence(activity=discord.Activity(name=get_single_title, type=discord.ActivityType.listening))
             if playing_servers > 1:
-                await self.bot.change_presence(game=discord.Game(name='music in {} servers'.format(playing_servers)))
+                await self.bot.change_presence(activity=discord.Activity(name='music in {} servers'.format(playing_servers), type=discord.ActivityType.playing))
 
     @commands.group()
     @checks.is_owner()
@@ -166,7 +170,7 @@ class Audio:
             player = v
             connect_start = v.fetch('connect')
             try:
-                connect_dur = self._dynamic_time((datetime.datetime.utcnow() - connect_start).seconds)
+                connect_dur = self._dynamic_time(int((datetime.datetime.utcnow() - connect_start).total_seconds()))
             except TypeError:
                 connect_dur = 0
             try:
@@ -204,7 +208,10 @@ class Audio:
         player = self.bot.lavalink.players.get(ctx.guild.id)
         await player.disconnect()
         player.queue.clear()
-        player.store('song', None)
+        player.store('connect', None)
+        player.store('prev_requester', None)
+        player.store('prev_song', None)
+        player.store('playing_song', None)
         player.store('requester', None)
         await self.bot.lavalink.client._trigger_event("QueueEndEvent", ctx.guild.id)
 
@@ -371,6 +378,34 @@ class Audio:
 
         if not player.is_playing:
             await player.play()
+
+    @commands.command()
+    async def prev(self, ctx):
+        """Skips to the start of the previously played track."""
+        player = self.bot.lavalink.players.get(ctx.guild.id)
+        shuffle = await self.config.guild(ctx.guild).shuffle()
+
+        if not ctx.author.voice or (player.is_connected and ctx.author.voice.channel.id != int(player.channel_id)):
+            return await self._embed_msg(ctx, 'You must be in the voice channel to skip the music.')
+
+        if shuffle:
+            return await self._embed_msg(ctx, 'Turn shuffle off to use this command.')
+
+        if player.current is None:
+            return await self._embed_msg(ctx, 'The player is stopped.')
+
+        if player.fetch('prev_song') is None:
+            return await self._embed_msg(ctx, 'No previous track.')
+        else:
+            last_track = await self.bot.lavalink.client.get_tracks(player.fetch('prev_song'))
+            player.add(player.fetch('prev_requester').id, last_track[0])
+            queue_len = len(self.bot.lavalink.players.get(ctx.guild.id).queue)
+            bump_song = self.bot.lavalink.players.get(ctx.guild.id).queue[queue_len - 1]
+            player.queue.insert(0, bump_song)
+            player.queue.pop(queue_len)
+            await player.skip()
+            embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='Replaying Track', description='**[{}]({})**'.format(player.current.title, player.current.uri))
+            await ctx.send(embed=embed)
 
     @commands.command(aliases=['q'])
     async def queue(self, ctx, page: int = 1):
@@ -565,6 +600,8 @@ class Audio:
         queue_total_duration = lavalink.Utils.format_time(queue_duration)
         if not shuffle:
             embed.set_footer(text='{} until track playback'.format(queue_total_duration))
+        if not player.is_playing:
+            await player.play()
         return await ctx.send(embed=embed)
 
     @commands.command()
@@ -642,7 +679,9 @@ class Audio:
             await self._embed_msg(ctx, 'Stopping...')
             player.queue.clear()
             await player.stop()
-            player.store('song', None)
+            player.store('prev_requester', None)
+            player.store('prev_song', None)
+            player.store('playing_song', None)
             player.store('requester', None)
             await self.bot.lavalink.client._trigger_event("QueueEndEvent", ctx.guild.id)
 
@@ -743,21 +782,11 @@ class Audio:
         d, h = divmod(h, 24)
 
         if d > 0:
-            msg = "{0}d"
-            if h > 0 and m > 0 and s > 0:
-                msg += " {1}h"
-            elif m > 0 and d == 0 and h == 0 and s == 0:
-                pass
-            elif s > 0 and d == 0 and h == 0 and m == 0:
-                pass
-            elif d == 0 and m == 0 and h == 0 and s == 0:
-                pass
-            else:
-                msg += " {1}h"
+            msg = "{0}d {1}h"
         elif d == 0 and h > 0:
-            msg = "{1}h 0m" if m == 0 else "{1}h {2}m"
+            msg = "{1}h {2}m"
         elif d == 0 and h == 0 and m > 0:
-            msg = "{2}m 0s" if s == 0 else "{2}m {3}s"
+            msg = "{2}m {3}s"
         elif d == 0 and h == 0 and m == 0 and s > 0:
             msg = "{3}s"
         return msg.format(d, h, m, s)
@@ -789,4 +818,6 @@ class Audio:
         return queue_total_duration
 
     def __unload(self):
+        self.bot.lavalink.ws._ws.close()
         self.bot.lavalink.client.destroy()
+        shutdown_lavalink_server()
