@@ -276,18 +276,32 @@ class Economy:
         guild = ctx.guild
         if top < 1:
             top = 10
+        accounts = []
         if await bank.is_global():
-            bank_sorted = sorted(await bank.get_global_accounts(ctx.bot),
-                                 key=lambda x: x[1].balance, reverse=True)
-            if not check_global:
-                if guild is not None:
-                    bank_sorted = [x for x in bank_sorted if guild.get_member(x[0].id)]
+            raw_accounts = await bank._conf.all_users()
+
+            for uid, raw_account in enumerate(raw_accounts):
+                user = await ctx.bot.get_user_info(uid)
+                if user is None:
+                    continue
+                if guild is not None and not check_global:
+                    if not guild.get_member(uid):
+                        continue
+                accounts.append((user, raw_account["balance"]))
+            bank_sorted = sorted(accounts, key=lambda x: x[1], reverse=True)
         else:
             if guild is None:
                 await ctx.send(_("Bank is per-guild so this command cannot be used in DMs!"))
                 return
-            bank_sorted = sorted(await bank.get_guild_accounts(guild, ctx.bot),
-                                 key=lambda x: x[1].balance, reverse=True)
+            raw_accounts = await bank._conf.all_members(guild)
+            for uid, raw_account in enumerate(raw_accounts):
+                member = guild.get_member(uid)
+                if member is None:
+                    member = await ctx.bot.get_user_info(uid)
+                    if member is None:
+                        continue
+                accounts.append((member, raw_account["balance"]))
+            bank_sorted = sorted(accounts, key=lambda x: x[1], reverse=True)
         if len(bank_sorted) < top:
             top = len(bank_sorted)
         topten = bank_sorted[:top]
@@ -295,12 +309,12 @@ class Economy:
         place = 1
         for acc in topten:
             dname = str(acc[0].name)
-            if len(dname) >= 23 - len(str(acc[1].balance)):
-                dname = dname[:(23 - len(str(acc[1].balance))) - 3]
+            if len(dname) >= 23 - len(str(acc[1])):
+                dname = dname[:(23 - len(str(acc[1]))) - 3]
                 dname += "... "
             highscore += str(place).ljust(len(str(top)) + 1)
-            highscore += dname.ljust(23 - len(str(acc[1].balance)))
-            highscore += str(acc[1].balance) + "\n"
+            highscore += dname.ljust(23 - len(str(acc[1])))
+            highscore += str(acc[1]) + "\n"
             place += 1
         if highscore != "":
             for page in pagify(highscore, shorten_by=12):
