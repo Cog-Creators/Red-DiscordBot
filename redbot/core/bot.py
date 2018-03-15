@@ -58,7 +58,8 @@ class RedBase(BotBase, RpcMethodMixin):
             whitelist=[],
             blacklist=[],
             enable_sentry=None,
-            locale='en'
+            locale='en',
+            embeds=True
         )
 
         self.db.register_guild(
@@ -66,7 +67,12 @@ class RedBase(BotBase, RpcMethodMixin):
             whitelist=[],
             blacklist=[],
             admin_role=None,
-            mod_role=None
+            mod_role=None,
+            embeds=None
+        )
+
+        self.db.register_user(
+            embeds=None
         )
 
         async def prefix_manager(bot, message):
