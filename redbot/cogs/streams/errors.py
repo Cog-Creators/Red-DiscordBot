@@ -14,7 +14,11 @@ class APIError(StreamsError):
     pass
 
 
-class InvalidCredentials(StreamsError):
+class InvalidTwitchCredentials(StreamsError):
+    pass
+
+
+class InvalidYoutubeCredentials(StreamsError):
     pass
 
 
