@@ -294,7 +294,7 @@ class Economy:
         highscore = ""
         place = 1
         for acc in topten:
-            dname = str(acc[0].display_name)
+            dname = str(acc[0].name)
             if len(dname) >= 23 - len(str(acc[1].balance)):
                 dname = dname[:(23 - len(str(acc[1].balance))) - 3]
                 dname += "... "
