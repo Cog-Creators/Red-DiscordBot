@@ -287,62 +287,71 @@ async def wipe_bank():
         await _conf.clear_all_members()
 
 
-async def get_guild_accounts(guild: discord.Guild) -> List[Account]:
-    """Get all account data for the given guild.
+async def get_leaderboard(positions: int=None, guild: discord.Guild=None) -> List[tuple]:
+    """
+    Gets the bank's leaderboard
 
     Parameters
     ----------
+    positions : `int`
+        The number of positions to get
     guild : discord.Guild
-        The guild to get accounts for.
+        The guild to get the leaderboard of (only applicable if the bank is not global)
 
     Returns
     -------
-    `list` of `Account`
-        A list of all guild accounts.
+    `list` of `tuple`
+        The sorted leaderboard in the form of :code:`(user_id, raw_account)`
 
     Raises
     ------
-    RuntimeError
-        If the bank is currently global.
+    TypeError
+        If the bank is guild-specific and no guild was specified
 
     """
     if await is_global():
-        raise RuntimeError("The bank is currently global.")
+        raw_accounts = await _conf.all_users()
+    else:
+        if guild is None:
+            raise TypeError("Expected a guild, got NoneType object instead!")
+        raw_accounts = await _conf.all_members(guild)
+    sorted_acc = sorted(raw_accounts.items(), key=lambda x: x[1]['balance'], reverse=True)
+    if positions is None:
+        return sorted_acc
+    else:
+        return sorted_acc[:positions]
 
-    ret = []
-    accs = await _conf.all_members(guild)
-    for user_id, acc in accs.items():
-        acc_data = acc.copy()  # There ya go kowlin
-        acc_data['created_at'] = _decode_time(acc_data['created_at'])
-        ret.append(Account(**acc_data))
-    return ret
 
+async def get_leaderboard_position(member: Union[discord.User, discord.Member]) -> Union[int, None]:
+    """
+    Get the leaderboard position for the specified user
 
-async def get_global_accounts() -> List[Account]:
-    """Get all global account data.
+    Parameters
+    ----------
+    member : `discord.User` or `discord.Member`
+        The user to get the leaderboard position of
 
     Returns
     -------
-    `list` of `Account`
-        A list of all global accounts.
+    `int`
+        The position of the user on the leaderboard
 
     Raises
     ------
-    RuntimeError
-        If the bank is currently guild specific.
+    TypeError
+        If the bank is currently guild-specific and a `discord.User` object was passed in
 
     """
-    if not await is_global():
-        raise RuntimeError("The bank is not currently global.")
-
-    ret = []
-    accs = await _conf.all_users()  # this is a dict of user -> acc
-    for user_id, acc in accs.items():
-        acc_data = acc.copy()
-        acc_data['created_at'] = _decode_time(acc_data['created_at'])
-        ret.append(Account(**acc_data))
-
-    return ret
+    try:
+        leaderboard = await get_leaderboard(None, member.guild if hasattr(member, "guild") else None)
+    except TypeError:
+        raise
+    else:
+        pos = discord.utils.find(lambda x: x[1][0] == member.id, enumerate(leaderboard, 1))
+        if pos is None:
+            return None
+        else:
+            return pos[1]
 
 
 async def get_account(member: Union[discord.Member, discord.User]) -> Account:
