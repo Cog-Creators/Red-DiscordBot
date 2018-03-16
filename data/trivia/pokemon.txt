@@ -347,7 +347,7 @@ In Ruby/Sapphire/Emerald Pokéblock feeders in the Safari Zone attract Pokémon 
 What is the only Baby Pokémon with a branched evolution?`Tyrogue
 Which one of the following is NOT defined as a baby pokémon: Budew, Riolu, Tyrogue, Chingling, Eevee, Togepi?`Eevee
 Which Pokémon has the highest base HP of all Fire-type Pokémon?`Entei
-"It's found crawling on beaches and seafloors. The coral that grows on Corsolas head is as good as a five-star banquet to this Pokémon." What pokémon is this?`Mareanie
+"It's found crawling on beaches and seafloors. The coral that grows on Corsola's head is as good as a five-star banquet to this Pokémon." What pokémon is this?`Mareanie
 Roark's father is the Gym leader of what city?`Canalave city`canalave
 How many Rock-type Gym leaders are there in total (including all generations)?`4`four
 What is Blaine's strongest Pokémon in Red/Blue/Yellow?`Arcanine
