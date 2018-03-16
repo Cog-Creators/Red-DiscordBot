@@ -257,22 +257,14 @@ class Economy:
                         str((await bank.get_balance(author))), credits_name
                     )
                 )
-                if await bank.is_global():
-                    bank_sorted = sorted(await bank.get_global_accounts(),
-                                         key=lambda x: x.balance, reverse=True)
-                else:
-                    bank_sorted = sorted(await bank.get_guild_accounts(guild),
-                                         key=lambda x: x.balance, reverse=True)
-                topten = bank_sorted[:10]
-                pos = 1
-                for acc in topten:
-                    if acc.name == author.display_name:
-                        await ctx.send(_(
-                            "You are currently {} on the leaderboard!"
-                        ).format("#{}".format(pos)))
-                        break
-                    else:
-                        pos += 1
+                raw_accounts = bank._conf.all_users()
+                sorted_acc = sorted(raw_accounts.items(), key=lambda x: x[1]['balance'], reverse=True)
+                acc_ids = [acc[0] for acc in sorted_acc]
+                pos = bank.get_leaderboard_position(author)
+                await ctx.send(_(
+                    "You are currently {} on the leaderboard!"
+                ).format("#{}".format(pos)))
+
             else:
                 dtime = self.display_time(next_payday - cur_time)
                 await ctx.send(
@@ -291,6 +283,10 @@ class Economy:
                         author.mention, credits_name,
                         str(await self.config.guild(guild).PAYDAY_CREDITS()),
                         credits_name))
+                pos = await bank.get_leaderboard_position(author)
+                await ctx.send(_(
+                    "You are currently {} on the leaderboard!"
+                ).format("#{}".format(pos)))
             else:
                 dtime = self.display_time(next_payday - cur_time)
                 await ctx.send(
@@ -307,26 +303,18 @@ class Economy:
         guild = ctx.guild
         if top < 1:
             top = 10
-        if await bank.is_global():
-            bank_sorted = sorted(await bank.get_global_accounts(),
-                                 key=lambda x: x.balance, reverse=True)
-        else:
-            bank_sorted = sorted(await bank.get_guild_accounts(guild),
-                                 key=lambda x: x.balance, reverse=True)
+        bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
         if len(bank_sorted) < top:
             top = len(bank_sorted)
-        topten = bank_sorted[:top]
         highscore = ""
-        place = 1
-        for acc in topten:
-            dname = str(acc.name)
-            if len(dname) >= 23 - len(str(acc.balance)):
-                dname = dname[:(23 - len(str(acc.balance))) - 3]
+        for pos, acc in enumerate(bank_sorted, 1):
+            dname = str(acc[1]["name"])
+            if len(dname) >= 23 - len(str(acc[1]["balance"])):
+                dname = dname[:(23 - len(str(acc[1]["balance"]))) - 3]
                 dname += "... "
-            highscore += str(place).ljust(len(str(top)) + 1)
-            highscore += dname.ljust(23 - len(str(acc.balance)))
-            highscore += str(acc.balance) + "\n"
-            place += 1
+            highscore += str(pos).ljust(len(str(top)) + 1)
+            highscore += dname.ljust(23 - len(str(acc[1]["balance"])))
+            highscore += str(acc[1]["balance"]) + "\n"
         if highscore != "":
             for page in pagify(highscore, shorten_by=12):
                 await ctx.send(box(page, lang="py"))
