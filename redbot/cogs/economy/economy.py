@@ -268,8 +268,7 @@ class Economy:
                       " wait {}.").format(author.mention, dtime))
 
     @commands.command()
-    @guild_only_check()
-    async def leaderboard(self, ctx: commands.Context, top: int = 10):
+    async def leaderboard(self, ctx: commands.Context, top: int = 10, check_global: bool=False):
         """Prints out the leaderboard
 
         Defaults to top 10"""
@@ -277,25 +276,45 @@ class Economy:
         guild = ctx.guild
         if top < 1:
             top = 10
+        accounts = []
         if await bank.is_global():
-            bank_sorted = sorted(await bank.get_global_accounts(),
-                                 key=lambda x: x.balance, reverse=True)
+            raw_accounts = await bank._conf.all_users()
+
+            for uid, raw_account in enumerate(raw_accounts):
+                user = await ctx.bot.get_user_info(uid)
+                if user is None:
+                    continue
+                if guild is not None and not check_global:
+                    if not guild.get_member(uid):
+                        continue
+                accounts.append((user, raw_account["balance"]))
+            bank_sorted = sorted(accounts, key=lambda x: x[1], reverse=True)
         else:
-            bank_sorted = sorted(await bank.get_guild_accounts(guild),
-                                 key=lambda x: x.balance, reverse=True)
+            if guild is None:
+                await ctx.send(_("Bank is per-guild so this command cannot be used in DMs!"))
+                return
+            raw_accounts = await bank._conf.all_members(guild)
+            for uid, raw_account in enumerate(raw_accounts):
+                member = guild.get_member(uid)
+                if member is None:
+                    member = await ctx.bot.get_user_info(uid)
+                    if member is None:
+                        continue
+                accounts.append((member, raw_account["balance"]))
+            bank_sorted = sorted(accounts, key=lambda x: x[1], reverse=True)
         if len(bank_sorted) < top:
             top = len(bank_sorted)
         topten = bank_sorted[:top]
         highscore = ""
         place = 1
         for acc in topten:
-            dname = str(acc.name)
-            if len(dname) >= 23 - len(str(acc.balance)):
-                dname = dname[:(23 - len(str(acc.balance))) - 3]
+            dname = str(acc[0].name)
+            if len(dname) >= 23 - len(str(acc[1])):
+                dname = dname[:(23 - len(str(acc[1]))) - 3]
                 dname += "... "
             highscore += str(place).ljust(len(str(top)) + 1)
-            highscore += dname.ljust(23 - len(str(acc.balance)))
-            highscore += str(acc.balance) + "\n"
+            highscore += dname.ljust(23 - len(str(acc[1])))
+            highscore += str(acc[1]) + "\n"
             place += 1
         if highscore != "":
             for page in pagify(highscore, shorten_by=12):

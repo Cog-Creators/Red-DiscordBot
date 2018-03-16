@@ -5,6 +5,7 @@ from typing import Union, List
 import discord
 
 from redbot.core import Config
+from redbot.core.bot import Red
 
 __all__ = ["Account", "get_balance", "set_balance", "withdraw_credits", "deposit_credits",
            "can_spend", "transfer_credits", "wipe_bank", "get_guild_accounts",
@@ -285,64 +286,6 @@ async def wipe_bank():
         await _conf.clear_all_users()
     else:
         await _conf.clear_all_members()
-
-
-async def get_guild_accounts(guild: discord.Guild) -> List[Account]:
-    """Get all account data for the given guild.
-
-    Parameters
-    ----------
-    guild : discord.Guild
-        The guild to get accounts for.
-
-    Returns
-    -------
-    `list` of `Account`
-        A list of all guild accounts.
-
-    Raises
-    ------
-    RuntimeError
-        If the bank is currently global.
-
-    """
-    if await is_global():
-        raise RuntimeError("The bank is currently global.")
-
-    ret = []
-    accs = await _conf.all_members(guild)
-    for user_id, acc in accs.items():
-        acc_data = acc.copy()  # There ya go kowlin
-        acc_data['created_at'] = _decode_time(acc_data['created_at'])
-        ret.append(Account(**acc_data))
-    return ret
-
-
-async def get_global_accounts() -> List[Account]:
-    """Get all global account data.
-
-    Returns
-    -------
-    `list` of `Account`
-        A list of all global accounts.
-
-    Raises
-    ------
-    RuntimeError
-        If the bank is currently guild specific.
-
-    """
-    if not await is_global():
-        raise RuntimeError("The bank is not currently global.")
-
-    ret = []
-    accs = await _conf.all_users()  # this is a dict of user -> acc
-    for user_id, acc in accs.items():
-        acc_data = acc.copy()
-        acc_data['created_at'] = _decode_time(acc_data['created_at'])
-        ret.append(Account(**acc_data))
-
-    return ret
 
 
 async def get_account(member: Union[discord.Member, discord.User]) -> Account:
