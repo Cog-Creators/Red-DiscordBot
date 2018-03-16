@@ -43,7 +43,10 @@ class Announcer:
             channel = guild.get_channel(channel_id)
 
         if channel is None:
-            channel = guild.default_channel
+            channel = guild.system_channel
+
+        if channel is None:
+            channel = guild.text_channels[0]
 
         return channel
 
