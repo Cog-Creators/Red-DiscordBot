@@ -386,6 +386,7 @@ class Core:
             await ctx.send(_("Done."))
 
     @_set.command(name="game")
+    @self.bot_in_a_guild()
     @checks.is_owner()
     async def _game(self, ctx, *, game: str=None):
         """Sets Red's playing status"""
@@ -396,11 +397,11 @@ class Core:
             game = None
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 \
             else discord.Status.online
-        for shard in ctx.bot.shards:
-            await ctx.bot.change_presence(status=status, activity=game)
+        await ctx.bot.change_presence(status=status, activity=game)
         await ctx.send(_("Game set."))
 
     @_set.command(name="listening")
+    @self.bot_in_a_guild()
     @checks.is_owner()
     async def _listening(self, ctx, *, listening: str=None):
         """Sets Red's listening status"""
@@ -411,11 +412,11 @@ class Core:
             activity = discord.Activity(name=listening, type=discord.ActivityType.listening)
         else:
             activity = None
-        for shard in ctx.bot.shards:
-            await ctx.bot.change_presence(status=status, activity=activity)
+        await ctx.bot.change_presence(status=status, activity=activity)
         await ctx.send(_("Listening set."))
 
     @_set.command(name="watching")
+    @self.bot_in_a_guild()
     @checks.is_owner()
     async def _watching(self, ctx, *, watching: str=None):
         """Sets Red's watching status"""
@@ -426,11 +427,11 @@ class Core:
             activity = discord.Activity(name=watching, type=discord.ActivityType.watching)
         else:
             activity = None
-        for shard in ctx.bot.shards:
-            await ctx.bot.change_presence(status=status, activity=activity)
+        await ctx.bot.change_presence(status=status, activity=activity)
         await ctx.send(_("Watching set."))
 
     @_set.command()
+    @self.bot_in_a_guild()
     @checks.is_owner()
     async def status(self, ctx, *, status: str):
         """Sets Red's status
@@ -455,11 +456,11 @@ class Core:
         except KeyError:
             await ctx.send_help()
         else:
-            for shard in ctx.bot.shards:
-                await ctx.bot.change_presence(status=status, activity=game)
+            await ctx.bot.change_presence(status=status, activity=game)
             await ctx.send(_("Status changed to %s.") % status)
 
     @_set.command()
+    @self.bot_in_a_guild()
     @checks.is_owner()
     async def stream(self, ctx, streamer=None, *, stream_title=None):
         """Sets Red's streaming status
@@ -473,14 +474,12 @@ class Core:
             if "twitch.tv/" not in streamer:
                 streamer = "https://www.twitch.tv/" + streamer
             activity = discord.Streaming(url=streamer, name=stream_title)
-            for shard in ctx.bot.shards:
-                await ctx.bot.change_presence(status=status, activity=activity)
+            await ctx.bot.change_presence(status=status, activity=activity)
         elif streamer is not None:
             await ctx.send_help()
             return
         else:
-            for shard in ctx.bot.shards:
-                await ctx.bot.change_presence(activity=None, status=status)
+            await ctx.bot.change_presence(activity=None, status=status)
         await ctx.send(_("Done."))
 
     @_set.command(name="username", aliases=["name"])
@@ -834,6 +833,11 @@ class Core:
         """
         await ctx.bot.db.blacklist.set([])
         await ctx.send(_("blacklist has been cleared."))
+
+    async def bot_in_a_guild(self, **kwargs):
+        async def check(ctx):
+            return bool(ctx.bot.guilds)
+        return commands.check
 
     # RPC handlers
     async def rpc_load(self, request):
