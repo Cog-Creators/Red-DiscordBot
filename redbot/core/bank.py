@@ -358,7 +358,7 @@ async def get_leaderboard_position(member: Union[discord.User, discord.Member]) 
         if pos is None:
             return None
         else:
-            return pos[1]
+            return pos[0]
 
 
 async def get_account(member: Union[discord.Member, discord.User]) -> Account:
