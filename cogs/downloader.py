@@ -654,7 +654,13 @@ class Downloader:
                             continue
 
                         status, _, cogpath = f.partition('\t')
-                        cogname = os.path.split(cogpath)[-1][:-3]  # strip .py
+                        split = os.path.split(cogpath)
+                        cogdir, cogname = split[-2:]
+                        cogname = cogname[:-3]  # strip .py
+
+                        if len(split) != 2 or cogdir != cogname:
+                            continue
+
                         if status not in ret:
                             ret[status] = []
                         ret[status].append(cogname)
