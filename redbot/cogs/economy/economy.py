@@ -293,11 +293,9 @@ class Economy:
             pos = pos
             poswidth = 2
             name = acc[1]["name"]
-            namewidth = 25
-            if len(name) > namewidth:
-                name = name[:namewidth - 6] + "..."
+            namewidth = 35 - len(name)
             balance = acc[1]["balance"]
-            balwidth = len(str(balance)) + 5
+            balwidth = 2
             highscore += "{pos: <{poswidth}} {name: <{namewidth}s} {balance: >{balwidth}}\n".format(
                 pos=pos, poswidth=poswidth, name=name, namewidth=namewidth,
                 balance=balance, balwidth=balwidth
