@@ -293,7 +293,7 @@ class Economy:
             pos = pos
             poswidth = 2
             name = acc[1]["name"]
-            namewidth = 35 - len(name)
+            namewidth = 35
             balance = acc[1]["balance"]
             balwidth = 2
             highscore += "{pos: <{poswidth}} {name: <{namewidth}s} {balance: >{balwidth}}\n".format(
