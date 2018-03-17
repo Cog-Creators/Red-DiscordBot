@@ -235,23 +235,16 @@ class Economy:
                 await bank.deposit_credits(author, await self.config.PAYDAY_CREDITS())
                 next_payday = cur_time + await self.config.PAYDAY_TIME()
                 await self.config.user(author).next_payday.set(next_payday)
-                await ctx.send(
-                    _("{} Here, take some {}. Enjoy! (+{}"
-                      " {}!)").format(
-                        author.mention, credits_name,
-                        str(await self.config.PAYDAY_CREDITS()),
-                        credits_name
-                    )
-                )
-                await ctx.send(
-                    _("You currently have {} {}.").format(
-                        str((await bank.get_balance(author))), credits_name
-                    )
-                )
+
                 pos = await bank.get_leaderboard_position(author)
                 await ctx.send(_(
-                    "You are currently {} on the leaderboard!"
-                ).format("#{}".format(pos)))
+                    "{0.mention} Here, take some {1}. Enjoy! (+{2}\n\n"
+                    "You currently have {3} {1}.\n\n"
+                    "You are currently #{4} on the leaderboard!"
+                ).format(
+                    author, credits_name, str(await self.config.PAYDAY_CREDITS()),
+                    str(await bank.get_balance(author)), pos
+                ))
 
             else:
                 dtime = self.display_time(next_payday - cur_time)
@@ -265,16 +258,15 @@ class Economy:
                 await bank.deposit_credits(author, await self.config.guild(guild).PAYDAY_CREDITS())
                 next_payday = cur_time + await self.config.guild(guild).PAYDAY_TIME()
                 await self.config.member(author).next_payday.set(next_payday)
-                await ctx.send(
-                    _("{} Here, take some {}. Enjoy! (+{}"
-                      " {}!)").format(
-                        author.mention, credits_name,
-                        str(await self.config.guild(guild).PAYDAY_CREDITS()),
-                        credits_name))
                 pos = await bank.get_leaderboard_position(author)
                 await ctx.send(_(
-                    "You are currently {} on the leaderboard!"
-                ).format("#{}".format(pos)))
+                    "{0.mention} Here, take some {1}. Enjoy! (+{2}\n\n"
+                    "You currently have {3} {1}.\n\n"
+                    "You are currently #{4} on the leaderboard!"
+                ).format(
+                    author, credits_name, str(await self.config.PAYDAY_CREDITS()),
+                    str(await bank.get_balance(author)), pos
+                ))
             else:
                 dtime = self.display_time(next_payday - cur_time)
                 await ctx.send(
