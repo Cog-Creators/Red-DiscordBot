@@ -251,7 +251,7 @@ class Economy:
                 raw_accounts = bank._conf.all_users()
                 sorted_acc = sorted(raw_accounts.items(), key=lambda x: x[1]['balance'], reverse=True)
                 acc_ids = [acc[0] for acc in sorted_acc]
-                pos = bank.get_leaderboard_position(author)
+                pos = await bank.get_leaderboard_position(author)
                 await ctx.send(_(
                     "You are currently {} on the leaderboard!"
                 ).format("#{}".format(pos)))
