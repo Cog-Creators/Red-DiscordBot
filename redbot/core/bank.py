@@ -345,8 +345,12 @@ async def get_leaderboard_position(member: Union[discord.User, discord.Member]) 
         If the bank is currently guild-specific and a `discord.User` object was passed in
 
     """
+    if await is_global():
+        guild = None
+    else:
+        guild = member.guild if hasattr(member, "guild") else None
     try:
-        leaderboard = await get_leaderboard(None, member.guild if hasattr(member, "guild") else None)
+        leaderboard = await get_leaderboard(None, guild)
     except TypeError:
         raise
     else:
