@@ -290,13 +290,18 @@ class Economy:
             top = len(bank_sorted)
         highscore = ""
         for pos, acc in enumerate(bank_sorted, 1):
-            dname = str(acc[1]["name"])
-            if len(dname) >= 23 - len(str(acc[1]["balance"])):
-                dname = dname[:(23 - len(str(acc[1]["balance"]))) - 3]
-                dname += "... "
-            highscore += str(pos).ljust(len(str(top)) + 1)
-            highscore += dname.ljust(23 - len(str(acc[1]["balance"])))
-            highscore += str(acc[1]["balance"]) + "\n"
+            pos = pos
+            poswidth = 2
+            name = acc[1]["name"]
+            namewidth = 25
+            if len(name) > namewidth:
+                name = name[:namewidth - 6] + "..."
+            balance = acc[1]["balance"]
+            balwidth = len(str(balance)) + 5
+            highscore += "{pos: <{poswidth}} {name: <{namewidth}s} {balance: >{balwidth}}\n".format(
+                pos=pos, poswidth=poswidth, name=name, namewidth=namewidth,
+                balance=balance, balwidth=balwidth
+            )
         if highscore != "":
             for page in pagify(highscore, shorten_by=12):
                 await ctx.send(box(page, lang="py"))
