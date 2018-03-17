@@ -1358,7 +1358,9 @@ class Mod:
 
     async def new_case(self, server, *, action, mod=None, user, reason=None, until=None, channel=None, force_create=False):
         action_type = action.lower() + "_cases"
-        if not force_create and not self.settings.get(server.id, {}).get(action_type, default_settings.get(action_type)):
+        
+        enabled_case = self.settings.get(server.id, {}).get(action_type, default_settings.get(action_type))
+        if not force_create and not enabled_case:
             return False
 
         mod_channel = server.get_channel(self.settings[server.id]["mod-log"])
