@@ -295,7 +295,7 @@ class Economy:
 
     @commands.command()
     @guild_only_check()
-    async def leaderboard(self, ctx: commands.Context, top: int = 10):
+    async def leaderboard(self, ctx: commands.Context, top: int = 10, show_global: bool=False):
         """Prints out the leaderboard
 
         Defaults to top 10"""
@@ -303,6 +303,8 @@ class Economy:
         guild = ctx.guild
         if top < 1:
             top = 10
+        if await bank.is_global() and show_global:  # show_global is only applicable if bank is global
+            guild = None
         bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
         if len(bank_sorted) < top:
             top = len(bank_sorted)

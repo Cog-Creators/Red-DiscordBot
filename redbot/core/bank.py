@@ -296,7 +296,8 @@ async def get_leaderboard(positions: int=None, guild: discord.Guild=None) -> Lis
     positions : `int`
         The number of positions to get
     guild : discord.Guild
-        The guild to get the leaderboard of (only applicable if the bank is not global)
+        The guild to get the leaderboard of. If the bank is global and this
+        is provided, get only guild members on the leaderboard
 
     Returns
     -------
@@ -311,6 +312,8 @@ async def get_leaderboard(positions: int=None, guild: discord.Guild=None) -> Lis
     """
     if await is_global():
         raw_accounts = await _conf.all_users()
+        if guild is not None:
+            raw_accounts = [acc for acc in raw_accounts if guild.get_member(acc[0])]
     else:
         if guild is None:
             raise TypeError("Expected a guild, got NoneType object instead!")
