@@ -313,7 +313,10 @@ async def get_leaderboard(positions: int=None, guild: discord.Guild=None) -> Lis
     if await is_global():
         raw_accounts = await _conf.all_users()
         if guild is not None:
-            raw_accounts = [acc for acc in raw_accounts if guild.get_member(acc[0])]
+            tmp = raw_accounts.copy()
+            for acc in tmp:
+                if not guild.get_member(acc):
+                    del raw_accounts[acc]
     else:
         if guild is None:
             raise TypeError("Expected a guild, got NoneType object instead!")
