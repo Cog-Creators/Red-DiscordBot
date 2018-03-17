@@ -9,6 +9,10 @@
 .. image:: https://d322cqt584bo4o.cloudfront.net/red-discordbot/localized.svg
     :target: https://crowdin.com/project/red-discordbot
     :alt: Crowdin
+    
+.. image:: https://img.shields.io/badge/Support-Red!-orange.svg
+    :target: https://www.patreon.com/Red_Devs
+    :alt: Patreon
 
 ********************
 Red - Discord Bot v3
