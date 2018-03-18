@@ -44,7 +44,7 @@ else:
 
 youtube_dl_options = {
     'source_address': '0.0.0.0',
-    'format': 'bestaudio/best',
+    'format': 'best',
     'extractaudio': True,
     'audioformat': "mp3",
     'nocheckcertificate': True,

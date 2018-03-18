@@ -4,7 +4,7 @@ from .utils.dataIO import dataIO
 from .utils import checks
 from __main__ import send_cmd_help, settings
 from datetime import datetime
-from collections import deque, defaultdict
+from collections import deque, defaultdict, OrderedDict
 from cogs.utils.chat_formatting import escape_mass_mentions, box, pagify
 import os
 import re
@@ -100,7 +100,7 @@ class Mod:
         self.past_nicknames = dataIO.load_json("data/mod/past_nicknames.json")
         settings = dataIO.load_json("data/mod/settings.json")
         self.settings = defaultdict(lambda: default_settings.copy(), settings)
-        self.cache = defaultdict(lambda: deque(maxlen=3))
+        self.cache = OrderedDict()
         self.cases = dataIO.load_json("data/mod/modlog.json")
         self.last_case = defaultdict(dict)
         self.temp_cache = TempCache(bot)
@@ -1356,14 +1356,16 @@ class Mod:
         else:
             return mod.top_role.position > user.top_role.position or is_special
 
-    async def new_case(self, server, *, action, mod=None, user, reason=None, until=None, channel=None):
+    async def new_case(self, server, *, action, mod=None, user, reason=None, until=None, channel=None, force_create=False):
         action_type = action.lower() + "_cases"
-        if not self.settings[server.id].get(action_type, default_settings[action_type]):
-            return
+        
+        enabled_case = self.settings.get(server.id, {}).get(action_type, default_settings.get(action_type))
+        if not force_create and not enabled_case:
+            return False
 
         mod_channel = server.get_channel(self.settings[server.id]["mod-log"])
         if mod_channel is None:
-            return
+            return None
 
         if server.id not in self.cases:
             self.cases[server.id] = {}
@@ -1384,7 +1386,7 @@ class Mod:
             "amended_by"   : None,
             "amended_id"   : None,
             "message"      : None,
-            "until"        : None,
+            "until"        : until.timestamp() if until else None,
         }
 
         case_msg = self.format_case_msg(case)
@@ -1401,6 +1403,8 @@ class Mod:
             self.last_case[server.id][mod.id] = case_n
 
         dataIO.save_json("data/mod/modlog.json", self.cases)
+
+        return case_n
 
     async def update_case(self, server, *, case, mod=None, reason=None,
                           until=False):
@@ -1516,10 +1520,14 @@ class Mod:
         if self.settings[server.id]["delete_repeats"]:
             if not message.content:
                 return False
-            self.cache[author].append(message)
-            msgs = self.cache[author]
-            if len(msgs) == 3 and \
-                    msgs[0].content == msgs[1].content == msgs[2].content:
+            if author.id not in self.cache:
+                self.cache[author.id] = deque(maxlen=3)
+            self.cache.move_to_end(author.id)
+            while len(self.cache) > 100000:
+                self.cache.popitem(last=False) # the oldest gets discarded
+            self.cache[author.id].append(message.content)
+            msgs = self.cache[author.id]
+            if len(msgs) == 3 and msgs[0] == msgs[1] == msgs[2]:
                 try:
                     await self.bot.delete_message(message)
                     return True
