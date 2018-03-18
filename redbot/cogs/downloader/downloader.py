@@ -192,7 +192,7 @@ class Downloader:
         Installs a group of dependencies using pip.
         """
         repo = Repo("", "", "", Path.cwd(), loop=ctx.bot.loop)
-        success = await repo.install_raw_requirements(deps, self.SHAREDLIB_PATH)
+        success = await repo.install_raw_requirements(deps, self.LIB_PATH)
 
         if success:
             await ctx.send(_("Libraries installed."))
