@@ -230,71 +230,144 @@ class Core:
     @commands.command()
     @checks.is_owner()
     async def load(self, ctx, *, cog_name: str):
-        """Loads a package"""
-        try:
-            spec = await ctx.bot.cog_mgr.find_cog(cog_name)
-        except RuntimeError:
-            await ctx.send(_("No module by that name was found in any"
-                             " cog path."))
+        """Loads packages"""
+
+        failed_packages = []
+        loaded_packages = []
+        notfound_packages = []
+
+        cognames = [c.strip() for c in cog_name.split(' ')]
+        cogspecs = []
+
+        for c in cognames:
+            try:
+                spec = await ctx.bot.cog_mgr.find_cog(c)
+                cogspecs.append((spec, c))
+            except RuntimeError:
+                notfound_packages.append(inline(c))
+
+        if len(cogspecs) == 0:
             return
 
-        try:
-            await ctx.bot.load_extension(spec)
-        except Exception as e:
-            log.exception("Package loading failed", exc_info=e)
+        for spec, name  in cogspecs:
+            try:
+                await ctx.bot.load_extension(spec)
+            except Exception as e:
+                log.exception("Package loading failed", exc_info=e)
 
-            exception_log = ("Exception in command '{}'\n"
-                             "".format(ctx.command.qualified_name))
-            exception_log += "".join(traceback.format_exception(type(e),
-                                     e, e.__traceback__))
-            self.bot._last_exception = exception_log
+                exception_log = ("Exception in command '{}'\n"
+                                 "".format(ctx.command.qualified_name))
+                exception_log += "".join(traceback.format_exception(type(e),
+                                         e, e.__traceback__))
+                self.bot._last_exception = exception_log
+                failed_packages.append(inline(name))
+            else:
+                await ctx.bot.add_loaded_package(name)
+                loaded_packages.append(inline(name))
 
-            await ctx.send(_("Failed to load package. Check your console or "
-                             "logs for details."))
-        else:
-            await ctx.bot.add_loaded_package(cog_name)
-            await ctx.send(_("Done."))
+        if loaded_packages:
+            use_and = '' if len(loaded_packages) == 1 else ' and '
+            packages = ', '.join(loaded_packages[:-1]) + use_and + loaded_packages[-1]
+            await ctx.send(_("Loaded {}".format(packages)))
+        if failed_packages:
+            plural     = 's' if len(failed_packages) > 1 else ''
+            use_and  = '' if len(failed_packages) == 1 else ' and '
+            packages = ', '.join(failed_packages[:-1]) + use_and + failed_packages[-1]
+
+            complete  =  ("Failed to load package{} {}. Check your console or "
+                         "logs for details.").format(plural, packages)
+            await ctx.send(_(complete))
+        if notfound_packages:
+            plural = 's' if len(notfound_packages) > 1 else ''
+            use_and, were_was = ('','was') if len(notfound_packages) == 1 else (' and ', 'were')
+            packages = ', '.join(notfound_packages[:-1]) + use_and + notfound_packages[-1]
+            await ctx.send('The package{} {} {} not found in any cog path.'.format(plural, packages, were_was))
 
     @commands.group()
     @checks.is_owner()
     async def unload(self, ctx, *, cog_name: str):
-        """Unloads a package"""
-        if cog_name in ctx.bot.extensions:
-            ctx.bot.unload_extension(cog_name)
-            await ctx.bot.remove_loaded_package(cog_name)
-            await ctx.send(_("Done."))
-        else:
-            await ctx.send(_("That extension is not loaded."))
+        """Unload packages"""
+        cognames = [c.strip() for c in cog_name.split(' ')]
+        failed_packages = []
+        unloaded_packages = []
+
+        for c in cognames:
+            if c in ctx.bot.extensions:
+                ctx.bot.unload_extension(c)
+                await ctx.bot.remove_loaded_package(c)
+                unloaded_packages.append(inline(c))
+            else:
+                failed_packages.append(inline(c))
+
+        if unloaded_packages:
+            plural = 's' if len(unloaded_packages) > 1 else ''
+            use_and, were_was = ('','was') if len(unloaded_packages) == 1 else (' and ', 'were')
+            packages = ', '.join(unloaded_packages[:-1]) + use_and + unloaded_packages[-1]
+            await ctx.send(_("Package{} {} {} unloaded.".format(plural, packages, were_was)))
+
+        if failed_packages:
+            plural  = 's' if len(failed_packages) > 1 else ''
+            use_and, are_is = ('','is') if len(failed_packages) == 1 else (' and ', 'are')
+            packages = ', '.join(failed_packages[:-1]) + use_and + failed_packages[-1]
+            await ctx.send(_("The package{} {} {} not loaded.".format(plural, packages, are_is)))
 
     @commands.command(name="reload")
     @checks.is_owner()
     async def _reload(self, ctx, *, cog_name: str):
-        """Reloads a package"""
-        ctx.bot.unload_extension(cog_name)
+        """Reload packages"""
 
-        try:
-            spec = await ctx.bot.cog_mgr.find_cog(cog_name)
-        except RuntimeError:
-            await ctx.send(_("No module by that name was found in any"
-                             " cog path."))
-            return
+        cognames = [c.strip() for c in cog_name.split(' ')]
+        
+        for c in cognames:
+            ctx.bot.unload_extension(c)
 
-        try:
-            self.cleanup_and_refresh_modules(spec.name)
-            await ctx.bot.load_extension(spec)
-        except Exception as e:
-            log.exception("Package reloading failed", exc_info=e)
+        cogspecs = []
+        failed_packages = []
+        loaded_packages = []
+        notfound_packages = []
 
-            exception_log = ("Exception in command '{}'\n"
-                             "".format(ctx.command.qualified_name))
-            exception_log += "".join(traceback.format_exception(type(e),
-                                     e, e.__traceback__))
-            self.bot._last_exception = exception_log
+        for c in cognames:
+            try:
+                spec = await ctx.bot.cog_mgr.find_cog(c)
+                cogspecs.append((spec, c))
+            except RuntimeError:
+                notfound_packages.append(inline(c))
 
-            await ctx.send(_("Failed to reload package. Check your console or "
-                             "logs for details."))
-        else:
-            await ctx.send(_("Done."))
+        for spec, name in cogspecs: 
+            try:
+                self.cleanup_and_refresh_modules(spec.name)
+                await ctx.bot.load_extension(spec)
+                loaded_packages.append(inline(name))
+            except Exception as e:
+                log.exception("Package reloading failed", exc_info=e)
+
+                exception_log = ("Exception in command '{}'\n"
+                                 "".format(ctx.command.qualified_name))
+                exception_log += "".join(traceback.format_exception(type(e),
+                                         e, e.__traceback__))
+                self.bot._last_exception = exception_log
+
+                failed_packages.append(inline(name))
+
+        if loaded_packages:
+            numpacks = len(loaded_packages)
+            correct = "Packages {} were reloaded." if numpacks > 1 else "Pacakge {} was reloaded."
+            use_and = '' if numpacks == 1 else ' and '
+            packages = ', '.join(loaded_packages[:-1]) + use_and + loaded_packages[-1]
+            await ctx.send(_(correct.format(packages)))
+
+        if failed_packages:
+            plural  = 's' if len(failed_packages) > 1 else ''
+            use_and= '' if len(failed_packages) == 1 else ' and '
+            packages = ', '.join(failed_packages[:-1]) + use_and + failed_packages[-1]
+            await ctx.send(_("Failed to reload package{} {}. Check your "
+                             "logs for details".format(plural, packages)))
+
+        if notfound_packages:
+            plural = 's' if len(notfound_packages) > 1 else ''
+            use_and, were_was = ('','was') if len(notfound_packages) == 1 else (' and ', 'were')
+            packages = ', '.join(notfound_packages[:-1]) + use_and + notfound_packages[-1]
+            await ctx.send('The package{} {} {} not found in any cog path.'.format(plural, packages, were_was))
 
     @commands.command(name="shutdown")
     @checks.is_owner()
