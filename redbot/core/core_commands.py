@@ -386,7 +386,7 @@ class Core:
             await ctx.send(_("Done."))
 
     @_set.command(name="game")
-    @self.bot_in_a_guild()
+    @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _game(self, ctx, *, game: str=None):
         """Sets Red's playing status"""
@@ -401,7 +401,7 @@ class Core:
         await ctx.send(_("Game set."))
 
     @_set.command(name="listening")
-    @self.bot_in_a_guild()
+    @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _listening(self, ctx, *, listening: str=None):
         """Sets Red's listening status"""
@@ -416,7 +416,7 @@ class Core:
         await ctx.send(_("Listening set."))
 
     @_set.command(name="watching")
-    @self.bot_in_a_guild()
+    @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _watching(self, ctx, *, watching: str=None):
         """Sets Red's watching status"""
@@ -431,7 +431,7 @@ class Core:
         await ctx.send(_("Watching set."))
 
     @_set.command()
-    @self.bot_in_a_guild()
+    @checks.bot_in_a_guild()
     @checks.is_owner()
     async def status(self, ctx, *, status: str):
         """Sets Red's status
@@ -460,7 +460,7 @@ class Core:
             await ctx.send(_("Status changed to %s.") % status)
 
     @_set.command()
-    @self.bot_in_a_guild()
+    @checks.bot_in_a_guild()
     @checks.is_owner()
     async def stream(self, ctx, streamer=None, *, stream_title=None):
         """Sets Red's streaming status
@@ -833,11 +833,6 @@ class Core:
         """
         await ctx.bot.db.blacklist.set([])
         await ctx.send(_("blacklist has been cleared."))
-
-    async def bot_in_a_guild(self, **kwargs):
-        async def check(ctx):
-            return bool(ctx.bot.guilds)
-        return commands.check
 
     # RPC handlers
     async def rpc_load(self, request):
