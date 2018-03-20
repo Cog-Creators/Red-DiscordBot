@@ -1,6 +1,6 @@
 from .errors import StreamNotFound, APIError, OfflineStream, CommunityNotFound, OfflineCommunity, \
     InvalidYoutubeCredentials, InvalidTwitchCredentials
-from random import choice
+from random import choice, sample
 from string import ascii_letters
 import discord
 import aiohttp
@@ -27,6 +27,7 @@ class TwitchCommunity:
         self.name = kwargs.pop("name")
         self.id = kwargs.pop("id", None)
         self.channels = kwargs.pop("channels", [])
+        self._messages_cache = []
         self._token = kwargs.pop("token", None)
         self.type = self.__class__.__name__
 
@@ -61,7 +62,8 @@ class TwitchCommunity:
             "Client-ID": str(self._token)
         }
         params = {
-            "community_id": self.id
+            "community_id": self.id,
+            "limit": 100
         }
         url = TWITCH_BASE_URL + "/kraken/streams"
         async with aiohttp.ClientSession() as session:
@@ -78,6 +80,35 @@ class TwitchCommunity:
             raise CommunityNotFound()
         else:
             raise APIError()
+
+    async def make_embed(self, streams: list) -> discord.Embed:
+        headers = {
+            "Accept": "application/vnd.twitchtv.v5+json",
+            "Client-ID": str(self._token)
+        }
+        async with aiohttp.ClientSession() as session:
+            async with session.get(
+                    "{}/{}".format(TWITCH_COMMUNITIES_ENDPOINT, self.id),
+                    headers=headers) as r:
+                data = await r.json()
+
+        avatar = data["avatar_image_url"]
+        title = "Channels currently streaming to {}".format(data["display_name"])
+        url = "https://www.twitch.tv/communities/{}".format(self.name)
+        embed = discord.Embed(title=title, url=url)
+        embed.set_image(url=avatar)
+        if len(streams) >= 10:
+            stream_list = sample(streams, 10)
+        else:
+            stream_list = streams
+        for stream in stream_list:
+            name = "[{}]({})".format(
+                stream["channel"]["display_name"], stream["channel"]["url"]
+            )
+            embed.add_field(name=stream["channel"]["status"], value=name, inline=False)
+        embed.color = 0x6441A4
+
+        return embed
 
     def export(self):
         data = {}
