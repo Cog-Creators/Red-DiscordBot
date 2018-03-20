@@ -230,7 +230,7 @@ class Core:
     @commands.command()
     @checks.is_owner()
     async def load(self, ctx, *, cog_name: str):
-        """Load packages"""
+        """Loads packages"""
 
         failed_packages = []
         loaded_packages = []
@@ -312,7 +312,7 @@ class Core:
     @commands.command(name="reload")
     @checks.is_owner()
     async def _reload(self, ctx, *, cog_name: str):
-        """Reload packages"""
+        """Reloads packages"""
 
         cognames = [c.strip() for c in cog_name.split(' ')]
         
