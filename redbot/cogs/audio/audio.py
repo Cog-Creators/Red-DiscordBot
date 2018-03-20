@@ -344,8 +344,9 @@ class Audio:
             return await self._embed_msg(ctx, 'You must be in the voice channel to use the play command.')
         if not self._player_check(ctx):
             await lavalink.connect(ctx.author.voice.channel)
+            player = lavalink.get_player(ctx.guild.id)
+            player.store('connect', datetime.datetime.utcnow())
         player = lavalink.get_player(ctx.guild.id)
-        player.store('connect', datetime.datetime.utcnow())
         shuffle = await self.config.guild(ctx.guild).shuffle()
         player.store('channel', ctx.channel.id)
         player.store('guild', ctx.guild.id)
@@ -518,8 +519,9 @@ class Audio:
             return await self._embed_msg(ctx, 'You must be in the voice channel to enqueue songs.')
         if not self._player_check(ctx):
             await lavalink.connect(ctx.author.voice.channel)
+            player = lavalink.get_player(ctx.guild.id)
+            player.store('connect', datetime.datetime.utcnow())
         player = lavalink.get_player(ctx.guild.id)
-        player.store('connect', datetime.datetime.utcnow())
         shuffle = await self.config.guild(ctx.guild).shuffle()
         player.store('channel', ctx.channel.id)
         player.store('guild', ctx.guild.id)
