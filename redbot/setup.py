@@ -15,6 +15,7 @@ import appdirs
 from redbot.core.cli import confirm
 from redbot.core.data_manager import basic_config_default
 from redbot.core.json_io import JsonIO
+from redbot.core.utils import safe_delete
 
 config_dir = None
 appdir = appdirs.AppDirs("Red-DiscordBot")
@@ -310,31 +311,26 @@ def remove_instance():
                 selected, dt.utcnow().strftime("%Y-%m-%d %H-%M-%S")
             )
             pth = Path(instance_data["DATA_PATH"])
-            home = pth.home()
-            backup_file = home / backup_filename
-            os.chdir(str(pth.parent))  # str is used here because 3.5 support
-            with tarfile.open(str(backup_file), "w:gz") as tar:
-                tar.add(pth.stem)  # add all files in that directory
-            print(
-                "A backup of {} has been made. It is at {}".format(
-                    selected, backup_file
+            if pth.exists():
+                home = pth.home()
+                backup_file = home / backup_filename
+                os.chdir(str(pth.parent))  # str is used here because 3.5 support
+                with tarfile.open(str(backup_file), "w:gz") as tar:
+                    tar.add(pth.stem)  # add all files in that directory
+                print(
+                    "A backup of {} has been made. It is at {}".format(
+                        selected, backup_file
+                    )
                 )
-            )
-            print("Removing the instance...")
-            try:
-                shutil.rmtree(str(pth))
-            except FileNotFoundError:
-                pass  # data dir was removed manually
+                print("Removing the instance...")
+                safe_delete(pth)
             save_config(selected, {}, remove=True)
             print("The instance has been removed")
             return
     else:
         pth = Path(instance_data["DATA_PATH"])
         print("Removing the instance...")
-        try:
-            shutil.rmtree(str(pth))
-        except FileNotFoundError:
-            pass  # data dir was removed manually
+        safe_delete(pth)
         save_config(selected, {}, remove=True)
         print("The instance has been removed")
         return
