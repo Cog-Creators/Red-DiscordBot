@@ -230,7 +230,7 @@ class Core:
     @commands.command()
     @checks.is_owner()
     async def load(self, ctx, *, cog_name: str):
-        """Loads packages"""
+        """Load packages"""
 
         failed_packages = []
         loaded_packages = []
@@ -245,6 +245,8 @@ class Core:
                 cogspecs.append((spec, c))
             except RuntimeError:
                 notfound_packages.append(inline(c))
+                #await ctx.send(_("No module named '{}' was found in any"
+                #                 " cog path.").format(c))
 
         if len(cogspecs) == 0:
             return
@@ -266,27 +268,25 @@ class Core:
                 loaded_packages.append(inline(name))
 
         if loaded_packages:
-            use_and = '' if len(loaded_packages) == 1 else ' and '
-            packages = ', '.join(loaded_packages[:-1]) + use_and + loaded_packages[-1]
-            await ctx.send(_("Loaded {}".format(packages)))
-        if failed_packages:
-            plural     = 's' if len(failed_packages) > 1 else ''
-            use_and  = '' if len(failed_packages) == 1 else ' and '
-            packages = ', '.join(failed_packages[:-1]) + use_and + failed_packages[-1]
+            fmt = "Loaded {packs}"
+            formed = self.get_package_strings(loaded_packages, fmt)
+            await ctx.send(_(formed))
 
-            complete  =  ("Failed to load package{} {}. Check your console or "
-                         "logs for details.").format(plural, packages)
-            await ctx.send(_(complete))
+        if failed_packages:
+            fmt = ("Failed to load package{plural} {packs}. Check your console or "
+                   "logs for details.")
+            formed = self.get_package_strings(failed_packages, fmt)
+            await ctx.send(_(formed))
+
         if notfound_packages:
-            plural = 's' if len(notfound_packages) > 1 else ''
-            use_and, were_was = ('','was') if len(notfound_packages) == 1 else (' and ', 'were')
-            packages = ', '.join(notfound_packages[:-1]) + use_and + notfound_packages[-1]
-            await ctx.send('The package{} {} {} not found in any cog path.'.format(plural, packages, were_was))
+            fmt = 'The package{plural} {packs} {other} not found in any cog path.'
+            formed = self.get_package_strings(notfound_packages, fmt, ('was', 'were'))
+            await ctx.send(_(formed))
 
     @commands.group()
     @checks.is_owner()
     async def unload(self, ctx, *, cog_name: str):
-        """Unload packages"""
+        """Unloads packages"""
         cognames = [c.strip() for c in cog_name.split(' ')]
         failed_packages = []
         unloaded_packages = []
@@ -300,16 +300,14 @@ class Core:
                 failed_packages.append(inline(c))
 
         if unloaded_packages:
-            plural = 's' if len(unloaded_packages) > 1 else ''
-            use_and, were_was = ('','was') if len(unloaded_packages) == 1 else (' and ', 'were')
-            packages = ', '.join(unloaded_packages[:-1]) + use_and + unloaded_packages[-1]
-            await ctx.send(_("Package{} {} {} unloaded.".format(plural, packages, were_was)))
+            fmt = "Package{plural} {packs} {other} unloaded."
+            formed = self.get_package_strings(unloaded_packages, fmt, ('was', 'were'))
+            await ctx.send(_(formed))
 
         if failed_packages:
-            plural  = 's' if len(failed_packages) > 1 else ''
-            use_and, are_is = ('','is') if len(failed_packages) == 1 else (' and ', 'are')
-            packages = ', '.join(failed_packages[:-1]) + use_and + failed_packages[-1]
-            await ctx.send(_("The package{} {} {} not loaded.".format(plural, packages, are_is)))
+            fmt = "The package{plural} {packs} {other} not loaded."
+            formed = self.get_package_strings(failed_packages, fmt, ('is', 'are'))
+            await ctx.send(_(formed))
 
     @commands.command(name="reload")
     @checks.is_owner()
@@ -350,24 +348,37 @@ class Core:
                 failed_packages.append(inline(name))
 
         if loaded_packages:
-            numpacks = len(loaded_packages)
-            correct = "Packages {} were reloaded." if numpacks > 1 else "Pacakge {} was reloaded."
-            use_and = '' if numpacks == 1 else ' and '
-            packages = ', '.join(loaded_packages[:-1]) + use_and + loaded_packages[-1]
-            await ctx.send(_(correct.format(packages)))
+            fmt = "Package{plural} {packs} {other} reloaded."
+            formed = self.get_package_strings(loaded_packages, fmt, ('was', 'were'))
+            await ctx.send(_(formed))
 
         if failed_packages:
-            plural  = 's' if len(failed_packages) > 1 else ''
-            use_and= '' if len(failed_packages) == 1 else ' and '
-            packages = ', '.join(failed_packages[:-1]) + use_and + failed_packages[-1]
-            await ctx.send(_("Failed to reload package{} {}. Check your "
-                             "logs for details".format(plural, packages)))
+            fmt = ("Failed to reload package{plural} {packs}. Check your "
+                   "logs for details")
+            formed = self.get_package_strings(failed_packages, fmt)
+            await ctx.send(_(formed))
 
         if notfound_packages:
-            plural = 's' if len(notfound_packages) > 1 else ''
-            use_and, were_was = ('','was') if len(notfound_packages) == 1 else (' and ', 'were')
-            packages = ', '.join(notfound_packages[:-1]) + use_and + notfound_packages[-1]
-            await ctx.send('The package{} {} {} not found in any cog path.'.format(plural, packages, were_was))
+            fmt = 'The package{plural} {packs} {other} not found in any cog path.'
+            formed = self.get_package_strings(notfound_packages, fmt, ('was', 'were'))
+            await ctx.send(_(formed))
+
+    def get_package_strings(self, packages: list, fmt: str, other: tuple=None):
+        """
+        Gets the strings needed for the load, unload and reload commands
+        """
+        if other is None:
+            other = ('', '')
+        plural = 's' if len(packages) > 1 else ''
+        use_and, other = ('', other[0]) if len(packages) == 1 else (' and ', other[1])
+        packages_string = ', '.join(packages[:-1]) + use_and + packages[-1]
+
+        form = {'plural': plural,
+                'packs' : packages_string,
+                'other' : other
+                }
+        final_string = fmt.format(**form)
+        return final_string
 
     @commands.command(name="shutdown")
     @checks.is_owner()
