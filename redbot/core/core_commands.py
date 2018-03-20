@@ -580,8 +580,18 @@ class Core:
     async def token(self, ctx, token: str):
         """Change bot token."""
         if not not isinstance(ctx.channel, discord.DMChannel):
-            await ctx.send("Please use that command in DM.")
+            
+            try:
+                await ctx.message.delete()
+            except discord.errors.Forbidden:
+                pass
+            
+            await ctx.send(_("Please use that command in DM.n"
+                          "Since users probably saw your token, it is recommanded to reset it right now"
+                          "https://discordapp.com/developers/applications/me/{}".format(self.bot.user.id)
+                          """Select "Reveal token" then "Generate a new token?"."""))
             return
+        
         await ctx.bot.db.token.set(token)
         await ctx.send("Token set. Restart me.")
 
