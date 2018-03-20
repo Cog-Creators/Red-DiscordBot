@@ -142,6 +142,38 @@ class RedBase(BotBase, RpcMethodMixin):
         indict['owner_id'] = await self.db.owner()
         i18n.set_locale(await self.db.locale())
 
+    async def embed_requested(self, channel, user, command=None) -> bool:
+        """
+        Determine if an embed is requested for a response.
+
+        Parameters
+        ----------
+        channel : `discord.abc.GuildChannel` or `discord.abc.PrivateChannel`
+            The channel to check embed settings for.
+        user : `discord.abc.User`
+            The user to check embed settings for.
+        command
+            (Optional) the command ran.
+
+        Returns
+        -------
+        bool
+            :code:`True` if an embed is requested
+        """
+        if isinstance(channel, discord.abc.PrivateChannel) or (
+            command and command == self.get_command("help")
+        ):
+            user_setting = await self.db.user(user).embeds()
+            if user_setting is not None:
+                return user_setting
+        else:
+            guild_setting = await self.db.guild(channel.guild).embeds()
+            if command and command != self.get_command("help"):
+                if guild_setting is not None:
+                    return guild_setting
+        global_setting = await self.db.embeds()
+        return global_setting
+
     async def is_owner(self, user):
         if user.id in self._co_owners:
             return True

@@ -124,24 +124,3 @@ class RedContext(commands.Context):
                         # or chanel is a DM
                         await query.delete()
         return ret
-
-    async def embed_requested(self) -> bool:
-        """Determine if an embed is requested for the command response.
-
-        Returns
-        -------
-        bool
-            :code:`True` if an embed is requested
-        """
-        if isinstance(self.channel, discord.abc.PrivateChannel) or\
-                self.command == self.bot.get_command("help"):
-            user_setting = await self.bot.db.user(self.author).embeds()
-            if user_setting is not None:
-                return user_setting
-        else:
-            guild_setting = await self.bot.db.guild(self.guild).embeds()
-            if self.command == self.bot.get_command("help"):
-                if guild_setting is not None:
-                    return guild_setting
-        global_setting = await self.bot.db.embeds()
-        return global_setting
