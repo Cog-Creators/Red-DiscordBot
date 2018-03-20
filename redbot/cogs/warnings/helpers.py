@@ -16,7 +16,7 @@ async def warning_points_add_check(config: Config, ctx: RedContext, user: discor
     guild_settings = config.guild(guild)
     act = {}
     async with guild_settings.actions() as registered_actions:
-        for a in registered_actions.keys():
+        for a in registered_actions:
             if points >= registered_actions[a]["point_count"]:
                 act = registered_actions[a]
             else:
@@ -30,7 +30,7 @@ async def warning_points_remove_check(config: Config, ctx: RedContext, user: dis
     guild_settings = config.guild(guild)
     act = {}
     async with guild_settings.actions() as registered_actions:
-        for a in registered_actions.keys():
+        for a in registered_actions:
             if points >= registered_actions[a]["point_count"]:
                 act = registered_actions[a]
             else:
