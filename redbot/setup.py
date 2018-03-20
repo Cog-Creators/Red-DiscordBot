@@ -13,6 +13,7 @@ import appdirs
 from redbot.core.cli import confirm
 from redbot.core.data_manager import basic_config_default
 from redbot.core.json_io import JsonIO
+from redbot.core.utils import safe_delete
 
 config_dir = None
 appdir = appdirs.AppDirs("Red-DiscordBot")
@@ -191,29 +192,20 @@ def remove_instance():
                     )
                 )
                 print("Removing the instance...")
-                do_delete(pth)
+                safe_delete(pth)
             save_config(selected, {}, remove=True)
             print("The instance has been removed")
             return
     elif yesno.lower() == "n":
         pth = Path(instance_data["DATA_PATH"])
         print("Removing the instance...")
-        do_delete(pth)
+        safe_delete(pth)
         save_config(selected, {}, remove=True)
         print("The instance has been removed")
         return
     else:
         print("That's not a valid option!")
         return
-
-
-def do_delete(pth: Path):
-    if pth.exists():
-        for root, dirs, files in os.walk(str(pth)):
-            os.chmod(root, 0o755)
-            for d in dirs:
-                os.chmod(os.path.join(root, d), 0o755)
-        shutil.rmtree(str(pth), ignore_errors=True)
 
 
 def main():
