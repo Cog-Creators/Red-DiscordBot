@@ -579,7 +579,7 @@ class Core:
     @checks.is_owner()
     async def token(self, ctx, token: str):
         """Change bot token."""
-        if not not isinstance(ctx.channel, discord.DMChannel):
+        if not isinstance(ctx.channel, discord.DMChannel):
             
             try:
                 await ctx.message.delete()
