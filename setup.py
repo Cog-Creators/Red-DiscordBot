@@ -130,7 +130,7 @@ setup(
             'pytest>3', 'pytest-asyncio'
         ],
         'mongo': ['motor'],
-        'docs': ['sphinx', 'sphinxcontrib-asyncio', 'sphinx_rtd_theme'],
+        'docs': ['sphinx==1.6.5', 'sphinxcontrib-asyncio', 'sphinx_rtd_theme'],
         'voice': ['red-lavalink>=0.0.4']
     }
 )
