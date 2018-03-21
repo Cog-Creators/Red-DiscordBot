@@ -9,6 +9,7 @@ from setuptools import find_packages
 
 IS_TRAVIS = 'TRAVIS' in os.environ
 IS_DEPLOYING = 'DEPLOYING' in os.environ
+IS_RTD = 'READTHEDOCS' in os.environ
 
 dep_links = ['https://github.com/Rapptz/discord.py/tarball/rewrite#egg=discord.py-1.0']
 if IS_TRAVIS:
@@ -28,8 +29,8 @@ def get_requirements():
     except ValueError:
         pass
 
-    if IS_DEPLOYING or not IS_TRAVIS:
-        requirements.append('discord.py>=1.0.0a0')  # Because RTD
+    if IS_DEPLOYING or not (IS_TRAVIS or IS_RTD):
+        requirements.append('discord.py>=1.0.0a0')
     if sys.platform.startswith("linux"):
         requirements.append("distro")
     return requirements
