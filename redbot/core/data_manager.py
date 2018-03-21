@@ -7,6 +7,7 @@ import shutil
 import logging
 
 import appdirs
+import yaml
 
 from .json_io import JsonIO
 from .utils import TYPE_CHECKING
@@ -41,7 +42,7 @@ if not config_dir:
 config_file = config_dir / 'config.json'
 
 
-def load_basic_configuration(instance_name_: str):
+def load_basic_configuration(instance_name_: str=None, *, fp: str=None):
     """Loads the basic bootstrap configuration necessary for `Config`
     to know where to store or look for data.
 
@@ -54,18 +55,28 @@ def load_basic_configuration(instance_name_: str):
     instance_name_ : str
         The instance name given by CLI argument and created during
         redbot setup.
+
+    fp : str
+        The path for a config file to be used instead
     """
     global jsonio
     global basic_config
     global instance_name
 
-    jsonio = JsonIO(config_file)
-
-    instance_name = instance_name_
+    if fp is None:
+        jsonio = JsonIO(config_file)
+        instance_name = instance_name_
 
     try:
-        config = jsonio._load_json()
-        basic_config = config[instance_name]
+        if fp is None:
+            config = jsonio._load_json()
+            basic_config = config[instance_name]
+        else:
+            with open(fp, mode='r', encoding='utf-8') as f:
+                basic_config = yaml.load(f)
+                instance_name = (
+                    instance_name_ if instance_name_ else basic_config['name'])
+
     except (FileNotFoundError, KeyError):
         print("You need to configure the bot instance using `redbot-setup`"
               " prior to running the bot.")

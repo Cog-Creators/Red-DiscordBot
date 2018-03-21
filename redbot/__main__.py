@@ -97,12 +97,16 @@ def list_instances():
 
 def main():
     cli_flags = parse_cli_flags(sys.argv[1:])
-    if cli_flags.list_instances:
-        list_instances()
-    elif not cli_flags.instance_name:
-        print("Error: No instance name was provided!")
-        sys.exit(1)
-    load_basic_configuration(cli_flags.instance_name)
+
+    if not cli_flags.from_file:
+        if cli_flags.list_instances:
+            list_instances()
+        elif not cli_flags.instance_name:
+            print("Error: No instance name was provided!")
+            sys.exit(1)
+
+    load_basic_configuration(cli_flags.instance_name, file=cli_flags.fromfile)
+
     log, sentry_log = init_loggers(cli_flags)
     description = "Red - Version {}".format(__version__)
     red = Red(cli_flags, description=description, pm_help=None)
