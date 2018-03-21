@@ -1,3 +1,5 @@
+import discord
+
 from redbot.core import checks, bank, commands
 from redbot.core.i18n import Translator, cog_i18n
 
@@ -16,6 +18,8 @@ def check_global_setting_guildowner():
         if await ctx.bot.is_owner(author):
             return True
         if not await bank.is_global():
+            if not isinstance(ctx.channel, discord.abc.GuildChannel):
+                return False
             permissions = ctx.channel.permissions_for(author)
             return author == ctx.guild.owner or permissions.administrator
 
@@ -32,6 +36,8 @@ def check_global_setting_admin():
         if await ctx.bot.is_owner(author):
             return True
         if not await bank.is_global():
+            if not isinstance(ctx.channel, discord.abc.GuildChannel):
+                return False
             permissions = ctx.channel.permissions_for(author)
             is_guild_owner = author == ctx.guild.owner
             admin_role = await ctx.bot.db.guild(ctx.guild).admin_role()
@@ -58,16 +64,23 @@ class Bank:
 
     @bankset.command(name="toggleglobal")
     @checks.is_owner()
-    async def bankset_toggleglobal(self, ctx: commands.Context):
+    async def bankset_toggleglobal(self, ctx: commands.Context, confirm: bool=False):
         """Toggles whether the bank is global or not
         If the bank is global, it will become per-guild
         If the bank is per-guild, it will become global"""
         cur_setting = await bank.is_global()
-        await bank.set_global(not cur_setting)
 
         word = _("per-guild") if cur_setting else _("global")
-
-        await ctx.send(_("The bank is now {}.").format(word))
+        if confirm is False:
+            await ctx.send(
+                _("This will toggle the bank to be {}, deleting all accounts "
+                  "in the process! If you're sure, type `{}`").format(
+                    word, "{}bankset toggleglobal yes".format(ctx.prefix)
+                )
+            )
+        else:
+            await bank.set_global(not cur_setting)
+            await ctx.send(_("The bank is now {}.").format(word))
 
     @bankset.command(name="bankname")
     @check_global_setting_guildowner()

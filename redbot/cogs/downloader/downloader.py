@@ -193,7 +193,7 @@ class Downloader:
         Installs a group of dependencies using pip.
         """
         repo = Repo("", "", "", Path.cwd(), loop=ctx.bot.loop)
-        success = await repo.install_raw_requirements(deps, self.SHAREDLIB_PATH)
+        success = await repo.install_raw_requirements(deps, self.LIB_PATH)
 
         if success:
             await ctx.send(_("Libraries installed."))
@@ -249,6 +249,7 @@ class Downloader:
         Lists all installed repos.
         """
         repos = self._repo_manager.get_all_repo_names()
+        repos = sorted(repos, key=str.lower)
         joined = _("Installed Repos:\n") + "\n".join(["+ " + r for r in repos])
 
         for page in pagify(joined, ["\n"], shorten_by=16):

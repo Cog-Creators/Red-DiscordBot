@@ -17,6 +17,8 @@ Installing pre-requirements
     * :code:`brew install git`
     * :code:`brew install ffmpeg --with-ffplay`
     * :code:`brew install opus`
+    * :code:`brew tap caskroom/versions`
+    * :code:`brew cask install java8`
 
 --------------
 Installing Red

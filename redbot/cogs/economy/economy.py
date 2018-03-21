@@ -216,18 +216,9 @@ class Economy:
                 )
             )
         else:
-            if await bank.is_global():
-                # Bank being global means that the check would cause only
-                # the owner and any co-owners to be able to run the command
-                # so if we're in the function, it's safe to assume that the
-                # author is authorized to use owner-only commands
-                user = ctx.author
-            else:
-                user = ctx.guild.owner
-            success = await bank.wipe_bank()
-            if success:
-                await ctx.send(_("All bank accounts of this guild have been "
-                               "deleted."))
+            await bank.wipe_bank()
+            await ctx.send(_("All bank accounts of this guild have been "
+                             "deleted."))
 
     @commands.command()
     @guild_only_check()
@@ -244,14 +235,17 @@ class Economy:
                 await bank.deposit_credits(author, await self.config.PAYDAY_CREDITS())
                 next_payday = cur_time + await self.config.PAYDAY_TIME()
                 await self.config.user(author).next_payday.set(next_payday)
-                await ctx.send(
-                    _("{} Here, take some {}. Enjoy! (+{}"
-                      " {}!)").format(
-                        author.mention, credits_name,
-                        str(await self.config.PAYDAY_CREDITS()),
-                        credits_name
-                    )
-                )
+
+                pos = await bank.get_leaderboard_position(author)
+                await ctx.send(_(
+                    "{0.mention} Here, take some {1}. Enjoy! (+{2}\n\n"
+                    "You currently have {3} {1}.\n\n"
+                    "You are currently #{4} on the leaderboard!"
+                ).format(
+                    author, credits_name, str(await self.config.PAYDAY_CREDITS()),
+                    str(await bank.get_balance(author)), pos
+                ))
+
             else:
                 dtime = self.display_time(next_payday - cur_time)
                 await ctx.send(
@@ -264,12 +258,15 @@ class Economy:
                 await bank.deposit_credits(author, await self.config.guild(guild).PAYDAY_CREDITS())
                 next_payday = cur_time + await self.config.guild(guild).PAYDAY_TIME()
                 await self.config.member(author).next_payday.set(next_payday)
-                await ctx.send(
-                    _("{} Here, take some {}. Enjoy! (+{}"
-                      " {}!)").format(
-                        author.mention, credits_name,
-                        str(await self.config.guild(guild).PAYDAY_CREDITS()),
-                        credits_name))
+                pos = await bank.get_leaderboard_position(author)
+                await ctx.send(_(
+                    "{0.mention} Here, take some {1}. Enjoy! (+{2})\n\n"
+                    "You currently have {3} {1}.\n\n"
+                    "You are currently #{4} on the leaderboard!"
+                ).format(
+                    author, credits_name, str(await self.config.PAYDAY_CREDITS()),
+                    str(await bank.get_balance(author)), pos
+                ))
             else:
                 dtime = self.display_time(next_payday - cur_time)
                 await ctx.send(
@@ -278,7 +275,7 @@ class Economy:
 
     @commands.command()
     @guild_only_check()
-    async def leaderboard(self, ctx: commands.Context, top: int = 10):
+    async def leaderboard(self, ctx: commands.Context, top: int = 10, show_global: bool=False):
         """Prints out the leaderboard
 
         Defaults to top 10"""
@@ -286,26 +283,23 @@ class Economy:
         guild = ctx.guild
         if top < 1:
             top = 10
-        if await bank.is_global():
-            bank_sorted = sorted(await bank.get_global_accounts(),
-                                 key=lambda x: x.balance, reverse=True)
-        else:
-            bank_sorted = sorted(await bank.get_guild_accounts(guild),
-                                 key=lambda x: x.balance, reverse=True)
+        if await bank.is_global() and show_global:  # show_global is only applicable if bank is global
+            guild = None
+        bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
         if len(bank_sorted) < top:
             top = len(bank_sorted)
-        topten = bank_sorted[:top]
         highscore = ""
-        place = 1
-        for acc in topten:
-            dname = str(acc.name)
-            if len(dname) >= 23 - len(str(acc.balance)):
-                dname = dname[:(23 - len(str(acc.balance))) - 3]
-                dname += "... "
-            highscore += str(place).ljust(len(str(top)) + 1)
-            highscore += dname.ljust(23 - len(str(acc.balance)))
-            highscore += str(acc.balance) + "\n"
-            place += 1
+        for pos, acc in enumerate(bank_sorted, 1):
+            pos = pos
+            poswidth = 2
+            name = acc[1]["name"]
+            namewidth = 35
+            balance = acc[1]["balance"]
+            balwidth = 2
+            highscore += "{pos: <{poswidth}} {name: <{namewidth}s} {balance: >{balwidth}}\n".format(
+                pos=pos, poswidth=poswidth, name=name, namewidth=namewidth,
+                balance=balance, balwidth=balwidth
+            )
         if highscore != "":
             for page in pagify(highscore, shorten_by=12):
                 await ctx.send(box(page, lang="py"))
