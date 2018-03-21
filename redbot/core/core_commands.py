@@ -22,7 +22,7 @@ from redbot.core import i18n
 from redbot.core import rpc
 from redbot.core.context import RedContext
 from .utils import TYPE_CHECKING
-from .utils.chat_formatting import pagify, box
+from .utils.chat_formatting import pagify, box, inline
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
