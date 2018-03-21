@@ -131,6 +131,88 @@ class Core:
 
         return fmt.format(d=days, h=hours, m=minutes, s=seconds)
 
+    @commands.group(hidden=True)
+    async def embedset(self, ctx: RedContext):
+        """
+        Commands for toggling embeds on or off.
+
+        This setting determines whether or not to
+        use embeds as a response to a command (for
+        commands that support it). The default is to
+        use embeds.
+        """
+        if ctx.invoked_subcommand is None:
+            await ctx.send_help()
+
+    @embedset.command(name="global")
+    @checks.is_owner()
+    async def embedset_global(self, ctx: RedContext):
+        """
+        Toggle the global embed setting.
+
+        This is used as a fallback if the user
+        or guild hasn't set a preference. The
+        default is to use embeds.
+        """
+        current = await self.bot.db.embeds()
+        await self.bot.db.embeds.set(not current)
+        await ctx.send(
+            _("Embeds are now {} by default.").format(
+                "disabled" if current else "enabled"
+            )
+        )
+
+    @embedset.command(name="guild")
+    @checks.guildowner_or_permissions(administrator=True)
+    async def embedset_guild(self, ctx: RedContext, enabled: bool=None):
+        """
+        Toggle the guild's embed setting.
+
+        If enabled is None, the setting will be unset and
+        the global default will be used instead.
+
+        If set, this is used instead of the global default
+        to determine whether or not to use embeds. This is
+        used for all commands done in a guild channel except
+        for help commands.
+        """
+        await self.bot.db.guild(ctx.guild).embeds.set(enabled)
+        if enabled is None:
+            await ctx.send(
+                _("Embeds will now fall back to the global setting.")
+            )
+        else:
+            await ctx.send(
+                _("Embeds are now {} for this guild.").format(
+                    "enabled" if enabled else "disabled"
+                )
+            )
+
+    @embedset.command(name="user")
+    async def embedset_user(self, ctx: RedContext, enabled: bool=None):
+        """
+        Toggle the user's embed setting.
+
+        If enabled is None, the setting will be unset and
+        the global default will be used instead.
+
+        If set, this is used instead of the global default
+        to determine whether or not to use embeds. This is
+        used for all commands done in a DM with the bot, as
+        well as all help commands everywhere.
+        """
+        await self.bot.db.user(ctx.author).embeds.set(enabled)
+        if enabled is None:
+            await ctx.send(
+                _("Embeds will now fall back to the global setting.")
+            )
+        else:
+            await ctx.send(
+                _("Embeds are now {} for you.").format(
+                    "enabled" if enabled else "disabled"
+                )
+            )
+
     @commands.command()
     @checks.is_owner()
     async def traceback(self, ctx, public: bool=False):
