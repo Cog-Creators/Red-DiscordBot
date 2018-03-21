@@ -124,3 +124,16 @@ class RedContext(commands.Context):
                         # or chanel is a DM
                         await query.delete()
         return ret
+
+    async def embed_requested(self):
+        """
+        Simple helper to call bot.embed_requested
+
+        Returns
+        -------
+        bool:
+            :code:`True` if an embed is requested
+        """
+        return await self.bot.embed_requested(
+            self.channel, self.author, command=self.command
+        )

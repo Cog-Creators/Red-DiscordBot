@@ -54,6 +54,12 @@ def admin_or_permissions(**perms):
     return commands.check(predicate)
 
 
+def bot_in_a_guild(**kwargs):
+    async def predicate(ctx):
+        return len(ctx.bot.guilds) > 0
+    return commands.check(predicate)
+    
+
 def guildowner_or_permissions(**perms):
     async def predicate(ctx):
         has_perms_or_is_owner = await check_permissions(ctx, perms)

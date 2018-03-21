@@ -22,7 +22,7 @@ from redbot.core import i18n
 from redbot.core import rpc
 from redbot.core.context import RedContext
 from .utils import TYPE_CHECKING
-from .utils.chat_formatting import pagify, box
+from .utils.chat_formatting import pagify, box, inline
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -131,6 +131,88 @@ class Core:
 
         return fmt.format(d=days, h=hours, m=minutes, s=seconds)
 
+    @commands.group(hidden=True)
+    async def embedset(self, ctx: RedContext):
+        """
+        Commands for toggling embeds on or off.
+
+        This setting determines whether or not to
+        use embeds as a response to a command (for
+        commands that support it). The default is to
+        use embeds.
+        """
+        if ctx.invoked_subcommand is None:
+            await ctx.send_help()
+
+    @embedset.command(name="global")
+    @checks.is_owner()
+    async def embedset_global(self, ctx: RedContext):
+        """
+        Toggle the global embed setting.
+
+        This is used as a fallback if the user
+        or guild hasn't set a preference. The
+        default is to use embeds.
+        """
+        current = await self.bot.db.embeds()
+        await self.bot.db.embeds.set(not current)
+        await ctx.send(
+            _("Embeds are now {} by default.").format(
+                "disabled" if current else "enabled"
+            )
+        )
+
+    @embedset.command(name="guild")
+    @checks.guildowner_or_permissions(administrator=True)
+    async def embedset_guild(self, ctx: RedContext, enabled: bool=None):
+        """
+        Toggle the guild's embed setting.
+
+        If enabled is None, the setting will be unset and
+        the global default will be used instead.
+
+        If set, this is used instead of the global default
+        to determine whether or not to use embeds. This is
+        used for all commands done in a guild channel except
+        for help commands.
+        """
+        await self.bot.db.guild(ctx.guild).embeds.set(enabled)
+        if enabled is None:
+            await ctx.send(
+                _("Embeds will now fall back to the global setting.")
+            )
+        else:
+            await ctx.send(
+                _("Embeds are now {} for this guild.").format(
+                    "enabled" if enabled else "disabled"
+                )
+            )
+
+    @embedset.command(name="user")
+    async def embedset_user(self, ctx: RedContext, enabled: bool=None):
+        """
+        Toggle the user's embed setting.
+
+        If enabled is None, the setting will be unset and
+        the global default will be used instead.
+
+        If set, this is used instead of the global default
+        to determine whether or not to use embeds. This is
+        used for all commands done in a DM with the bot, as
+        well as all help commands everywhere.
+        """
+        await self.bot.db.user(ctx.author).embeds.set(enabled)
+        if enabled is None:
+            await ctx.send(
+                _("Embeds will now fall back to the global setting.")
+            )
+        else:
+            await ctx.send(
+                _("Embeds are now {} for you.").format(
+                    "enabled" if enabled else "disabled"
+                )
+            )
+
     @commands.command()
     @checks.is_owner()
     async def traceback(self, ctx, public: bool=False):
@@ -230,71 +312,155 @@ class Core:
     @commands.command()
     @checks.is_owner()
     async def load(self, ctx, *, cog_name: str):
-        """Loads a package"""
-        try:
-            spec = await ctx.bot.cog_mgr.find_cog(cog_name)
-        except RuntimeError:
-            await ctx.send(_("No module by that name was found in any"
-                             " cog path."))
+        """Loads packages"""
+
+        failed_packages = []
+        loaded_packages = []
+        notfound_packages = []
+
+        cognames = [c.strip() for c in cog_name.split(' ')]
+        cogspecs = []
+
+        for c in cognames:
+            try:
+                spec = await ctx.bot.cog_mgr.find_cog(c)
+                cogspecs.append((spec, c))
+            except RuntimeError:
+                notfound_packages.append(inline(c))
+                #await ctx.send(_("No module named '{}' was found in any"
+                #                 " cog path.").format(c))
+
+        if len(cogspecs) == 0:
             return
 
-        try:
-            await ctx.bot.load_extension(spec)
-        except Exception as e:
-            log.exception("Package loading failed", exc_info=e)
+        for spec, name  in cogspecs:
+            try:
+                await ctx.bot.load_extension(spec)
+            except Exception as e:
+                log.exception("Package loading failed", exc_info=e)
 
-            exception_log = ("Exception in command '{}'\n"
-                             "".format(ctx.command.qualified_name))
-            exception_log += "".join(traceback.format_exception(type(e),
-                                     e, e.__traceback__))
-            self.bot._last_exception = exception_log
+                exception_log = ("Exception in command '{}'\n"
+                                 "".format(ctx.command.qualified_name))
+                exception_log += "".join(traceback.format_exception(type(e),
+                                         e, e.__traceback__))
+                self.bot._last_exception = exception_log
+                failed_packages.append(inline(name))
+            else:
+                await ctx.bot.add_loaded_package(name)
+                loaded_packages.append(inline(name))
 
-            await ctx.send(_("Failed to load package. Check your console or "
-                             "logs for details."))
-        else:
-            await ctx.bot.add_loaded_package(cog_name)
-            await ctx.send(_("Done."))
+        if loaded_packages:
+            fmt = "Loaded {packs}"
+            formed = self.get_package_strings(loaded_packages, fmt)
+            await ctx.send(_(formed))
+
+        if failed_packages:
+            fmt = ("Failed to load package{plural} {packs}. Check your console or "
+                   "logs for details.")
+            formed = self.get_package_strings(failed_packages, fmt)
+            await ctx.send(_(formed))
+
+        if notfound_packages:
+            fmt = 'The package{plural} {packs} {other} not found in any cog path.'
+            formed = self.get_package_strings(notfound_packages, fmt, ('was', 'were'))
+            await ctx.send(_(formed))
 
     @commands.group()
     @checks.is_owner()
     async def unload(self, ctx, *, cog_name: str):
-        """Unloads a package"""
-        if cog_name in ctx.bot.extensions:
-            ctx.bot.unload_extension(cog_name)
-            await ctx.bot.remove_loaded_package(cog_name)
-            await ctx.send(_("Done."))
-        else:
-            await ctx.send(_("That extension is not loaded."))
+        """Unloads packages"""
+        cognames = [c.strip() for c in cog_name.split(' ')]
+        failed_packages = []
+        unloaded_packages = []
+
+        for c in cognames:
+            if c in ctx.bot.extensions:
+                ctx.bot.unload_extension(c)
+                await ctx.bot.remove_loaded_package(c)
+                unloaded_packages.append(inline(c))
+            else:
+                failed_packages.append(inline(c))
+
+        if unloaded_packages:
+            fmt = "Package{plural} {packs} {other} unloaded."
+            formed = self.get_package_strings(unloaded_packages, fmt, ('was', 'were'))
+            await ctx.send(_(formed))
+
+        if failed_packages:
+            fmt = "The package{plural} {packs} {other} not loaded."
+            formed = self.get_package_strings(failed_packages, fmt, ('is', 'are'))
+            await ctx.send(_(formed))
 
     @commands.command(name="reload")
     @checks.is_owner()
     async def _reload(self, ctx, *, cog_name: str):
-        """Reloads a package"""
-        ctx.bot.unload_extension(cog_name)
+        """Reloads packages"""
 
-        try:
-            spec = await ctx.bot.cog_mgr.find_cog(cog_name)
-        except RuntimeError:
-            await ctx.send(_("No module by that name was found in any"
-                             " cog path."))
-            return
+        cognames = [c.strip() for c in cog_name.split(' ')]
+        
+        for c in cognames:
+            ctx.bot.unload_extension(c)
 
-        try:
-            self.cleanup_and_refresh_modules(spec.name)
-            await ctx.bot.load_extension(spec)
-        except Exception as e:
-            log.exception("Package reloading failed", exc_info=e)
+        cogspecs = []
+        failed_packages = []
+        loaded_packages = []
+        notfound_packages = []
 
-            exception_log = ("Exception in command '{}'\n"
-                             "".format(ctx.command.qualified_name))
-            exception_log += "".join(traceback.format_exception(type(e),
-                                     e, e.__traceback__))
-            self.bot._last_exception = exception_log
+        for c in cognames:
+            try:
+                spec = await ctx.bot.cog_mgr.find_cog(c)
+                cogspecs.append((spec, c))
+            except RuntimeError:
+                notfound_packages.append(inline(c))
 
-            await ctx.send(_("Failed to reload package. Check your console or "
-                             "logs for details."))
-        else:
-            await ctx.send(_("Done."))
+        for spec, name in cogspecs: 
+            try:
+                self.cleanup_and_refresh_modules(spec.name)
+                await ctx.bot.load_extension(spec)
+                loaded_packages.append(inline(name))
+            except Exception as e:
+                log.exception("Package reloading failed", exc_info=e)
+
+                exception_log = ("Exception in command '{}'\n"
+                                 "".format(ctx.command.qualified_name))
+                exception_log += "".join(traceback.format_exception(type(e),
+                                         e, e.__traceback__))
+                self.bot._last_exception = exception_log
+
+                failed_packages.append(inline(name))
+
+        if loaded_packages:
+            fmt = "Package{plural} {packs} {other} reloaded."
+            formed = self.get_package_strings(loaded_packages, fmt, ('was', 'were'))
+            await ctx.send(_(formed))
+
+        if failed_packages:
+            fmt = ("Failed to reload package{plural} {packs}. Check your "
+                   "logs for details")
+            formed = self.get_package_strings(failed_packages, fmt)
+            await ctx.send(_(formed))
+
+        if notfound_packages:
+            fmt = 'The package{plural} {packs} {other} not found in any cog path.'
+            formed = self.get_package_strings(notfound_packages, fmt, ('was', 'were'))
+            await ctx.send(_(formed))
+
+    def get_package_strings(self, packages: list, fmt: str, other: tuple=None):
+        """
+        Gets the strings needed for the load, unload and reload commands
+        """
+        if other is None:
+            other = ('', '')
+        plural = 's' if len(packages) > 1 else ''
+        use_and, other = ('', other[0]) if len(packages) == 1 else (' and ', other[1])
+        packages_string = ', '.join(packages[:-1]) + use_and + packages[-1]
+
+        form = {'plural': plural,
+                'packs' : packages_string,
+                'other' : other
+                }
+        final_string = fmt.format(**form)
+        return final_string
 
     @commands.command(name="shutdown")
     @checks.is_owner()
@@ -386,6 +552,7 @@ class Core:
             await ctx.send(_("Done."))
 
     @_set.command(name="game")
+    @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _game(self, ctx, *, game: str=None):
         """Sets Red's playing status"""
@@ -396,11 +563,11 @@ class Core:
             game = None
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 \
             else discord.Status.online
-        for shard in ctx.bot.shards:
-            await ctx.bot.change_presence(status=status, game=game)
+        await ctx.bot.change_presence(status=status, activity=game)
         await ctx.send(_("Game set."))
 
     @_set.command(name="listening")
+    @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _listening(self, ctx, *, listening: str=None):
         """Sets Red's listening status"""
@@ -408,14 +575,14 @@ class Core:
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 \
             else discord.Status.online
         if listening:
-            listening = discord.Game(name=listening, type=2)
+            activity = discord.Activity(name=listening, type=discord.ActivityType.listening)
         else:
-            listening = None
-        for shard in ctx.bot.shards:
-            await ctx.bot.change_presence(status=status, game=listening)
+            activity = None
+        await ctx.bot.change_presence(status=status, activity=activity)
         await ctx.send(_("Listening set."))
 
     @_set.command(name="watching")
+    @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _watching(self, ctx, *, watching: str=None):
         """Sets Red's watching status"""
@@ -423,14 +590,14 @@ class Core:
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 \
             else discord.Status.online
         if watching:
-            watching = discord.Game(name=watching, type=3)
+            activity = discord.Activity(name=watching, type=discord.ActivityType.watching)
         else:
-            watching = None
-        for shard in ctx.bot.shards:
-            await ctx.bot.change_presence(status=status, game=watching)
+            activity = None
+        await ctx.bot.change_presence(status=status, activity=activity)
         await ctx.send(_("Watching set."))
 
     @_set.command()
+    @checks.bot_in_a_guild()
     @checks.is_owner()
     async def status(self, ctx, *, status: str):
         """Sets Red's status
@@ -449,17 +616,17 @@ class Core:
             "invisible": discord.Status.invisible
         }
 
-        game = ctx.bot.guilds[0].me.game if len(ctx.bot.guilds) > 0 else None
+        game = ctx.bot.guilds[0].me.activity if len(ctx.bot.guilds) > 0 else None
         try:
             status = statuses[status.lower()]
         except KeyError:
             await ctx.send_help()
         else:
-            for shard in ctx.bot.shards:
-                await ctx.bot.change_presence(status=status, game=game)
+            await ctx.bot.change_presence(status=status, activity=game)
             await ctx.send(_("Status changed to %s.") % status)
 
     @_set.command()
+    @checks.bot_in_a_guild()
     @checks.is_owner()
     async def stream(self, ctx, streamer=None, *, stream_title=None):
         """Sets Red's streaming status
@@ -472,15 +639,13 @@ class Core:
             stream_title = stream_title.strip()
             if "twitch.tv/" not in streamer:
                 streamer = "https://www.twitch.tv/" + streamer
-            game = discord.Game(type=1, url=streamer, name=stream_title)
-            for shard in ctx.bot.shards:
-                await ctx.bot.change_presence(status=status, game=game)
+            activity = discord.Streaming(url=streamer, name=stream_title)
+            await ctx.bot.change_presence(status=status, activity=activity)
         elif streamer is not None:
             await ctx.send_help()
             return
         else:
-            for shard in ctx.bot.shards:
-                await ctx.bot.change_presence(game=None, status=status)
+            await ctx.bot.change_presence(activity=None, status=status)
         await ctx.send(_("Done."))
 
     @_set.command(name="username", aliases=["name"])
@@ -574,6 +739,27 @@ class Core:
                 await ctx.send(_("You have been set as owner."))
             else:
                 await ctx.send(_("Invalid token."))
+                
+    @_set.command()
+    @checks.is_owner()
+    async def token(self, ctx, token: str):
+        """Change bot token."""
+        if not not isinstance(ctx.channel, discord.DMChannel):
+            
+            try:
+                await ctx.message.delete()
+            except discord.Forbidden:
+                pass
+            
+            await ctx.send(
+                _("Please use that command in DM. Since users probably saw your token,"
+                  " it is recommended to reset it right now. Go to the following link and"
+                  " select `Reveal Token` and `Generate a new token?`."
+                  "\n\nhttps://discordapp.com/developers/applications/me/{}").format(self.bot.user.id))
+            return
+        
+        await ctx.bot.db.token.set(token)
+        await ctx.send("Token set. Restart me.")
 
     @_set.command()
     @checks.is_owner()

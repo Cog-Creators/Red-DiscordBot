@@ -415,6 +415,9 @@ class CogManagerUI:
 
         unloaded = all - loaded
 
+        loaded = sorted(list(loaded), key=str.lower)
+        unloaded = sorted(list(unloaded), key=str.lower)
+
         loaded = ('**{} loaded:**\n').format(len(loaded)) + ", ".join(loaded)
         unloaded = ('**{} unloaded:**\n').format(len(unloaded)) + ", ".join(unloaded)
 

@@ -96,6 +96,7 @@ setup(
     version="{}.{}.{}b10".format(*get_version()),
     packages=get_package_list(),
     package_data=find_locale_folders(),
+    include_package_data=True,
     url='https://github.com/Cog-Creators/Red-DiscordBot',
     license='GPLv3',
     author='Cog-Creators',
@@ -129,6 +130,6 @@ setup(
         ],
         'mongo': ['motor'],
         'docs': ['sphinx', 'sphinxcontrib-asyncio', 'sphinx_rtd_theme'],
-        'voice': ['PyNaCl']
+        'voice': ['red-lavalink>=0.0.4']
     }
 )
