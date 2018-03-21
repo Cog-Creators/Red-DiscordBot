@@ -115,6 +115,8 @@ def parse_cli_flags(args):
                              "prior to enabling this!")
     parser.add_argument("instance_name", nargs="?",
                         help="Name of the bot instance created during `redbot-setup`.")
+    parser.add_argument("--fromfile", type=str, default=None,
+                        help="A config file to pull settings from.")
 
     args = parser.parse_args(args)
 
