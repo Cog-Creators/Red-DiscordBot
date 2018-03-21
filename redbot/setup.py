@@ -230,7 +230,7 @@ async def edit_instance():
                     m = Mongo("Core", **storage_details)
                     with core_data_file.open(mode="r") as f:
                         core_data = json.loads(f.read())
-                    m.unique_cog_identifier = 0
+                    m.unique_cog_identifier = "0"
                     collection = m.get_collection()
                     await collection.update_one(
                         {'_id': m.unique_cog_identifier},
@@ -243,7 +243,7 @@ async def edit_instance():
                         with p.open(mode="r") as f:
                             cog_data = json.loads(f.read())
                         for ident in list(cog_data.keys()):
-                            cog_m.unique_cog_identifier = int(ident)
+                            cog_m.unique_cog_identifier = ident
                             await cog_c.update_one(
                                 {"_id": cog_m.unique_cog_identifier},
                                 update={"$set": cog_data[ident]},
