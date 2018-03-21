@@ -131,6 +131,88 @@ class Core:
 
         return fmt.format(d=days, h=hours, m=minutes, s=seconds)
 
+    @commands.group(hidden=True)
+    async def embedset(self, ctx: RedContext):
+        """
+        Commands for toggling embeds on or off.
+
+        This setting determines whether or not to
+        use embeds as a response to a command (for
+        commands that support it). The default is to
+        use embeds.
+        """
+        if ctx.invoked_subcommand is None:
+            await ctx.send_help()
+
+    @embedset.command(name="global")
+    @checks.is_owner()
+    async def embedset_global(self, ctx: RedContext):
+        """
+        Toggle the global embed setting.
+
+        This is used as a fallback if the user
+        or guild hasn't set a preference. The
+        default is to use embeds.
+        """
+        current = await self.bot.db.embeds()
+        await self.bot.db.embeds.set(not current)
+        await ctx.send(
+            _("Embeds are now {} by default.").format(
+                "disabled" if current else "enabled"
+            )
+        )
+
+    @embedset.command(name="guild")
+    @checks.guildowner_or_permissions(administrator=True)
+    async def embedset_guild(self, ctx: RedContext, enabled: bool=None):
+        """
+        Toggle the guild's embed setting.
+
+        If enabled is None, the setting will be unset and
+        the global default will be used instead.
+
+        If set, this is used instead of the global default
+        to determine whether or not to use embeds. This is
+        used for all commands done in a guild channel except
+        for help commands.
+        """
+        await self.bot.db.guild(ctx.guild).embeds.set(enabled)
+        if enabled is None:
+            await ctx.send(
+                _("Embeds will now fall back to the global setting.")
+            )
+        else:
+            await ctx.send(
+                _("Embeds are now {} for this guild.").format(
+                    "enabled" if enabled else "disabled"
+                )
+            )
+
+    @embedset.command(name="user")
+    async def embedset_user(self, ctx: RedContext, enabled: bool=None):
+        """
+        Toggle the user's embed setting.
+
+        If enabled is None, the setting will be unset and
+        the global default will be used instead.
+
+        If set, this is used instead of the global default
+        to determine whether or not to use embeds. This is
+        used for all commands done in a DM with the bot, as
+        well as all help commands everywhere.
+        """
+        await self.bot.db.user(ctx.author).embeds.set(enabled)
+        if enabled is None:
+            await ctx.send(
+                _("Embeds will now fall back to the global setting.")
+            )
+        else:
+            await ctx.send(
+                _("Embeds are now {} for you.").format(
+                    "enabled" if enabled else "disabled"
+                )
+            )
+
     @commands.command()
     @checks.is_owner()
     async def traceback(self, ctx, public: bool=False):
@@ -470,6 +552,7 @@ class Core:
             await ctx.send(_("Done."))
 
     @_set.command(name="game")
+    @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _game(self, ctx, *, game: str=None):
         """Sets Red's playing status"""
@@ -480,11 +563,11 @@ class Core:
             game = None
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 \
             else discord.Status.online
-        for shard in ctx.bot.shards:
-            await ctx.bot.change_presence(status=status, activity=game)
+        await ctx.bot.change_presence(status=status, activity=game)
         await ctx.send(_("Game set."))
 
     @_set.command(name="listening")
+    @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _listening(self, ctx, *, listening: str=None):
         """Sets Red's listening status"""
@@ -495,11 +578,11 @@ class Core:
             activity = discord.Activity(name=listening, type=discord.ActivityType.listening)
         else:
             activity = None
-        for shard in ctx.bot.shards:
-            await ctx.bot.change_presence(status=status, activity=activity)
+        await ctx.bot.change_presence(status=status, activity=activity)
         await ctx.send(_("Listening set."))
 
     @_set.command(name="watching")
+    @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _watching(self, ctx, *, watching: str=None):
         """Sets Red's watching status"""
@@ -510,11 +593,11 @@ class Core:
             activity = discord.Activity(name=watching, type=discord.ActivityType.watching)
         else:
             activity = None
-        for shard in ctx.bot.shards:
-            await ctx.bot.change_presence(status=status, activity=activity)
+        await ctx.bot.change_presence(status=status, activity=activity)
         await ctx.send(_("Watching set."))
 
     @_set.command()
+    @checks.bot_in_a_guild()
     @checks.is_owner()
     async def status(self, ctx, *, status: str):
         """Sets Red's status
@@ -539,11 +622,11 @@ class Core:
         except KeyError:
             await ctx.send_help()
         else:
-            for shard in ctx.bot.shards:
-                await ctx.bot.change_presence(status=status, activity=game)
+            await ctx.bot.change_presence(status=status, activity=game)
             await ctx.send(_("Status changed to %s.") % status)
 
     @_set.command()
+    @checks.bot_in_a_guild()
     @checks.is_owner()
     async def stream(self, ctx, streamer=None, *, stream_title=None):
         """Sets Red's streaming status
@@ -557,14 +640,12 @@ class Core:
             if "twitch.tv/" not in streamer:
                 streamer = "https://www.twitch.tv/" + streamer
             activity = discord.Streaming(url=streamer, name=stream_title)
-            for shard in ctx.bot.shards:
-                await ctx.bot.change_presence(status=status, activity=activity)
+            await ctx.bot.change_presence(status=status, activity=activity)
         elif streamer is not None:
             await ctx.send_help()
             return
         else:
-            for shard in ctx.bot.shards:
-                await ctx.bot.change_presence(activity=None, status=status)
+            await ctx.bot.change_presence(activity=None, status=status)
         await ctx.send(_("Done."))
 
     @_set.command(name="username", aliases=["name"])
@@ -658,6 +739,27 @@ class Core:
                 await ctx.send(_("You have been set as owner."))
             else:
                 await ctx.send(_("Invalid token."))
+                
+    @_set.command()
+    @checks.is_owner()
+    async def token(self, ctx, token: str):
+        """Change bot token."""
+        if not not isinstance(ctx.channel, discord.DMChannel):
+            
+            try:
+                await ctx.message.delete()
+            except discord.Forbidden:
+                pass
+            
+            await ctx.send(
+                _("Please use that command in DM. Since users probably saw your token,"
+                  " it is recommended to reset it right now. Go to the following link and"
+                  " select `Reveal Token` and `Generate a new token?`."
+                  "\n\nhttps://discordapp.com/developers/applications/me/{}").format(self.bot.user.id))
+            return
+        
+        await ctx.bot.db.token.set(token)
+        await ctx.send("Token set. Restart me.")
 
     @_set.command()
     @checks.is_owner()

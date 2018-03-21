@@ -130,6 +130,6 @@ setup(
         ],
         'mongo': ['motor'],
         'docs': ['sphinx', 'sphinxcontrib-asyncio', 'sphinx_rtd_theme'],
-        'voice': ['PyNaCl']
+        'voice': ['red-lavalink>=0.0.4']
     }
 )

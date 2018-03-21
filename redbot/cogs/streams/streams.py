@@ -467,7 +467,7 @@ class Streams:
             except OfflineStream:
                 for message in stream._messages_cache:
                     try:
-                        autodelete = self.db.guild(message.guild).autodelete()
+                        autodelete = await self.db.guild(message.guild).autodelete()
                         if autodelete:
                             await message.delete()
                     except:
@@ -508,30 +508,51 @@ class Streams:
     async def check_communities(self):
         for community in self.communities:
             try:
-                streams = community.get_community_streams()
+                stream_list = await community.get_community_streams()
             except CommunityNotFound:
                 print(_("Community {} not found!").format(community.name))
                 continue
             except OfflineCommunity:
-                pass
-            else:
-                token = self.db.tokens().get(TwitchStream.__name__)
-                for channel in community.channels:
-                    chn = self.bot.get_channel(channel)
-                    await chn.send(_("Online streams for {}").format(community.name))
-                for stream in streams:
-                    stream_obj = TwitchStream(
-                        token=token, name=stream["channel"]["name"],
-                        id=stream["_id"]
-                    )
+                for message in community._messages_cache:
                     try:
-                        emb = await stream_obj.is_online()
+                        autodelete = await self.db.guild(message.guild).autodelete()
+                        if autodelete:
+                            await message.delete()
                     except:
                         pass
+                community._messages_cache.clear()
+            except:
+                pass
+            else:
+                for channel in community.channels:
+                    chn = self.bot.get_channel(channel)
+                    streams = await self.filter_streams(stream_list, chn)
+                    emb = await community.make_embed(streams)
+                    chn_msg = [m for m in community._messages_cache if m.channel == chn]
+                    if not chn_msg:
+                        mentions = await self._get_mention_str(chn.guild)
+                        if mentions:
+                            msg = await chn.send(mentions, embed=emb)
+                        else:
+                            msg = await chn.send(embed=emb)
+                        community._messages_cache.append(msg)
                     else:
-                        for channel in community.channels:
-                            chn = self.bot.get_channel(channel)
-                            await chn.send(embed=emb)
+                        chn_msg = sorted(chn_msg, key=lambda x: x.created_at, reverse=True)[0]
+                        community._messages_cache.remove(chn_msg)
+                        await chn_msg.edit(embed=emb)
+                        community._messages_cache.append(chn_msg)
+
+    async def filter_streams(self, streams: list, channel: discord.TextChannel) -> list:
+        filtered = []
+        for stream in streams:
+            tw_id = str(stream["channel"]["_id"])
+            for alert in self.streams:
+                if isinstance(alert, TwitchStream) and alert.id == tw_id:
+                    if channel.id in alert.channels:
+                        break
+            else:
+                filtered.append(stream)
+        return filtered
 
     async def load_streams(self):
         streams = []
