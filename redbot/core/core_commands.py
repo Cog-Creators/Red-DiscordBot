@@ -573,6 +573,27 @@ class Core:
                 await ctx.send(_("You have been set as owner."))
             else:
                 await ctx.send(_("Invalid token."))
+                
+    @_set.command()
+    @checks.is_owner()
+    async def token(self, ctx, token: str):
+        """Change bot token."""
+        if not not isinstance(ctx.channel, discord.DMChannel):
+            
+            try:
+                await ctx.message.delete()
+            except discord.Forbidden:
+                pass
+            
+            await ctx.send(
+                _("Please use that command in DM. Since users probably saw your token,"
+                  " it is recommended to reset it right now. Go to the following link and"
+                  " select `Reveal Token` and `Generate a new token?`."
+                  "\n\nhttps://discordapp.com/developers/applications/me/{}").format(self.bot.user.id))
+            return
+        
+        await ctx.bot.db.token.set(token)
+        await ctx.send("Token set. Restart me.")
 
     @_set.command()
     @checks.is_owner()
