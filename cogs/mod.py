@@ -331,7 +331,7 @@ class Mod:
                 await self.bot.say(":white_check_mark::boot: `Successfully kicked {}#{}` Begone ***T H O T !***".format(
                     user.name, user.discriminator))
             except discord.errors.Forbidden:
-                await self.bot.say(":warning: `Permissions not met` Make sure I have permission to kick members.")
+                await self.bot.say(":no_entry: `Unable to kick this member`")
             except Exception as e:
                 print(e)
 
@@ -352,7 +352,7 @@ class Mod:
             await self.bot.say(":x: `You cannot ban yourself from the guild` Why would you wanna do that?")
             return
         elif not self.is_allowed_by_hierarchy(server, author, user):
-            await self.bot.say(":no_entry: `Unable to ban this member due to their hierarchy status`")
+            await self.bot.say(":no_entry: `Unauthorized due to hierarchy status.`")
             return
 
         if days:
@@ -389,7 +389,7 @@ class Mod:
                 await self.bot.say(":white_check_mark::hammer: `Successfully banned {}#{}` l8r loser!".format(
                     user.name, user.discriminator))
             except discord.errors.Forbidden:
-                await self.bot.say(":warning: `Permissions not met` Make sure that I have permission to ban members.")
+                await self.bot.say(":no_entry: `Unable to ban this member`")
             except Exception as e:
                 print(e)
 
@@ -449,7 +449,7 @@ class Mod:
             await self.bot.say(":x: `You cannot softban yourself from the guild` Ok, but why though?")
             return
         elif not self.is_allowed_by_hierarchy(server, author, user):
-            await self.bot.say(":warning: `Unable to softban this member due to their hierarchy status`")
+            await self.bot.say(":no_entry: `Unable to softban this member due to their hierarchy status`")
             return
 
         try:
@@ -478,7 +478,7 @@ class Mod:
                 await self.bot.say(":white_check_mark::dash::hammer: `Successfully softbanned {}#{}` That post was complete trash...".format(
                     user.name, user.discriminator))
             except discord.errors.Forbidden:
-                await self.bot.say("My role is not high enough to softban that user.")
+                await self.bot.say(":no_entry: `Unable to softban this member")
                 await self.bot.delete_message(msg)
             except Exception as e:
                 print(e)
@@ -532,7 +532,7 @@ class Mod:
         try:
             await self.bot.edit_channel_permissions(channel, user, overwrites)
         except discord.Forbidden:
-            await self.bot.say(":warning: `Permissions and/or hierarchy status not met` Make sure that I have permission to manage members, and I have a higher hierarchy status than them.")
+            await self.bot.say(":warning: `Permissions and/or hierarchy status not met` Make sure that I have permission to manage roles, and I have a higher hierarchy status than them.")
         else:
             dataIO.save_json("data/mod/perms_cache.json", self._perms_cache)
             await self.new_case(server,
@@ -552,9 +552,7 @@ class Mod:
         server = ctx.message.server
 
         if not self.is_allowed_by_hierarchy(server, author, user):
-            await self.bot.say("I cannot let you do that. You are "
-                               "not higher than the user in the role "
-                               "hierarchy.")
+            await self.bot.say(":warning: ")
             return
 
         register = {}
@@ -570,9 +568,7 @@ class Mod:
                 await self.bot.edit_channel_permissions(channel, user,
                                                         overwrites)
             except discord.Forbidden:
-                await self.bot.say("Failed to mute user. I need the manage roles "
-                                   "permission and the user I'm muting must be "
-                                   "lower than myself in the role hierarchy.")
+                await self.bot.say(":warning: `Permissions and/or hierarchy status not met` Make sure that I have permission to manage roles, and I have a higher hierarchy status than them.")
                 return
             else:
                 await asyncio.sleep(0.1)
@@ -608,13 +604,11 @@ class Mod:
         overwrites = channel.overwrites_for(user)
 
         if overwrites.send_messages:
-            await self.bot.say("That user doesn't seem to be muted "
-                               "in this channel.")
+            await self.bot.say(":information_source: `That user doesn't seem to be muted "
+                               "in this channel.`")
             return
         elif not self.is_allowed_by_hierarchy(server, author, user):
-            await self.bot.say("I cannot let you do that. You are "
-                               "not higher than the user in the role "
-                               "hierarchy.")
+            await self.bot.say(":no_entry: `Unable to unmute this member due to their hierarchy status.`")
             return
 
         if user.id in self._perms_cache:
@@ -630,9 +624,7 @@ class Mod:
             else:
                 await self.bot.delete_channel_permissions(channel, user)
         except discord.Forbidden:
-            await self.bot.say("Failed to unmute user. I need the manage roles"
-                               " permission and the user I'm unmuting must be "
-                               "lower than myself in the role hierarchy.")
+            await self.bot.say(":warning: `Permissions and/or hierarchy status not met` Make sure that I have permission to manage roles, and I have a higher hierarchy status than them.")
         else:
             try:
                 del self._perms_cache[user.id][channel.id]
