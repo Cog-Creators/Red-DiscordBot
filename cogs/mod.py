@@ -524,7 +524,7 @@ class Mod:
                                "channel.`")
             return
         elif not self.is_allowed_by_hierarchy(server, author, user):
-            await self.bot.say(":no_entry: `Unable to mute member due to their hierarchy status`")
+            await self.bot.say(":no_entry: `Unable to mute this member due to their hierarchy status`")
             return
 
         self._perms_cache[user.id][channel.id] = overwrites.send_messages
@@ -541,8 +541,8 @@ class Mod:
                                 mod=author,
                                 user=user,
                                 reason=reason)
-            await self.bot.say(":white_check_mark::mute: `Channel Muted {}#{}` stfu dude! No one cares.".format(
-                user.name, user.discriminator))
+            await self.bot.say(":white_check_mark::mute: `{}#{}` has been muted in this channel | Reason: `{}`".format(
+                user.name, user.discriminator, reason))
 
     @checks.mod_or_permissions(administrator=True)
     @mute.command(name="server", pass_context=True, no_pm=True)
@@ -552,7 +552,7 @@ class Mod:
         server = ctx.message.server
 
         if not self.is_allowed_by_hierarchy(server, author, user):
-            await self.bot.say(":warning: ")
+            await self.bot.say(":warning: `Unable to mute this member due to their hierarchy status`")
             return
 
         register = {}
@@ -582,8 +582,8 @@ class Mod:
                             mod=author,
                             user=user,
                             reason=reason)
-        await self.bot.say(":white_check_mark::mute: `Server Muted {}#{}` stfu dude! No one cares.".format(
-            user.name, user.discriminator))
+        await self.bot.say(":white_check_mark::mute: `{}#{}` has been server muted. | Reason: `{}`".format(
+            user.name, user.discriminator, reason))
 
     @commands.group(pass_context=True, no_pm=True, invoke_without_command=True)
     @checks.mod_or_permissions(administrator=True)
@@ -633,7 +633,8 @@ class Mod:
             if user.id in self._perms_cache and not self._perms_cache[user.id]:
                 del self._perms_cache[user.id]  # cleanup
             dataIO.save_json("data/mod/perms_cache.json", self._perms_cache)
-            await self.bot.say("User has been unmuted in this channel.")
+            await self.bot.say(":white_check_mark::loud_sound: `{}#{}` has been unmuted in this channel.".format(
+                user.name, user.discriminator))
 
     @checks.mod_or_permissions(administrator=True)
     @unmute.command(name="server", pass_context=True, no_pm=True)
@@ -670,9 +671,7 @@ class Mod:
                     else:
                         await self.bot.delete_channel_permissions(channel, user)
                 except discord.Forbidden:
-                    await self.bot.say("Failed to unmute user. I need the manage roles"
-                                       " permission and the user I'm unmuting must be "
-                                       "lower than myself in the role hierarchy.")
+                    await self.bot.say(":warning: `Permissions and/or hierarchy status not met` Make sure that I have permission to manage roles, and I have a higher hierarchy status than them.")
                     return
                 else:
                     del self._perms_cache[user.id][channel.id]
@@ -680,7 +679,8 @@ class Mod:
         if user.id in self._perms_cache and not self._perms_cache[user.id]:
             del self._perms_cache[user.id]  # cleanup
         dataIO.save_json("data/mod/perms_cache.json", self._perms_cache)
-        await self.bot.say("User has been unmuted in this server.")
+        await self.bot.say(":white_check_mark::loud_sound: `{}#{}` has been server unmuted.".format(
+                user.name, user.discriminator))
 
     @commands.group(pass_context=True)
     @checks.mod_or_permissions(manage_messages=True)
