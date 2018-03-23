@@ -304,31 +304,36 @@ class Mod:
         """Kicks user."""
         author = ctx.message.author
         server = author.server
+        channel = ctx.message.channel
+        can_kick = channel.permissions_for(server.me).kick_members
 
         if author == user:
-            await self.bot.say("I cannot let you do that. Self-harm is "
-                               "bad \N{PENSIVE FACE}")
+            await self.bot.say(":x: `You cannot kick yourself from the guild` You trying to kick your own ass? lol")
             return
         elif not self.is_allowed_by_hierarchy(server, author, user):
-            await self.bot.say("I cannot let you do that. You are "
-                               "not higher than the user in the role "
-                               "hierarchy.")
+            await self.bot.say(":no_entry: `Unable to kick this member due to their hierarchy status`")
             return
 
-        try:
-            await self.bot.kick(user)
-            logger.info("{}({}) kicked {}({})".format(
-                author.name, author.id, user.name, user.id))
-            await self.new_case(server,
-                                action="KICK",
-                                mod=author,
-                                user=user,
-                                reason=reason)
-            await self.bot.say("Done. That felt good.")
-        except discord.errors.Forbidden:
-            await self.bot.say("I'm not allowed to do that.")
-        except Exception as e:
-            print(e)
+        if can_kick:
+            try:
+                try: # Messages the user that they have been kicked.
+                    msg = await self.bot.send_message(user, ":boot: ***Kicked*** | __Server__: {} | __Moderator__: {}#{} | __Reason__: {}".format(server.name, author.name, author.discriminator, reason))
+                except:
+                    pass
+                await self.bot.kick(user)
+                logger.info("{}({}) kicked {}({})".format(
+                    author.name, author.id, user.name, user.id))
+                await self.new_case(server,
+                                    action="KICK",
+                                    mod=author,
+                                    user=user,
+                                    reason=reason)
+                await self.bot.say(":white_check_mark::boot: `Successfully kicked {}#{}` Begone ***T H O T !***".format(
+                    user.name, user.discriminator))
+            except discord.errors.Forbidden:
+                await self.bot.say(":no_entry: `Unable to kick this member`")
+            except Exception as e:
+                print(e)
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(ban_members=True)
@@ -339,15 +344,15 @@ class Mod:
         Minimum 0 days, maximum 7. Defaults to 0."""
         author = ctx.message.author
         server = author.server
+        channel = ctx.message.channel
+        can_ban = channel.permissions_for(server.me).ban_members
+        
 
         if author == user:
-            await self.bot.say("I cannot let you do that. Self-harm is "
-                               "bad \N{PENSIVE FACE}")
+            await self.bot.say(":x: `You cannot ban yourself from the guild` Why would you wanna do that?")
             return
         elif not self.is_allowed_by_hierarchy(server, author, user):
-            await self.bot.say("I cannot let you do that. You are "
-                               "not higher than the user in the role "
-                               "hierarchy.")
+            await self.bot.say(":no_entry: `Unauthorized due to hierarchy status.`")
             return
 
         if days:
@@ -363,24 +368,30 @@ class Mod:
             days = 0
 
         if days < 0 or days > 7:
-            await self.bot.say("Invalid days. Must be between 0 and 7.")
+            await self.bot.say(":warning: `Invalid days. Must be between 0 and 7.`")
             return
 
-        try:
-            self.temp_cache.add(user, server, "BAN")
-            await self.bot.ban(user, days)
-            logger.info("{}({}) banned {}({}), deleting {} days worth of messages".format(
-                author.name, author.id, user.name, user.id, str(days)))
-            await self.new_case(server,
-                                action="BAN",
-                                mod=author,
-                                user=user,
-                                reason=reason)
-            await self.bot.say("Done. It was about time.")
-        except discord.errors.Forbidden:
-            await self.bot.say("I'm not allowed to do that.")
-        except Exception as e:
-            print(e)
+        if can_ban:
+            try:
+                try:  # Messages the user that they are banned.
+                    msg = await self.bot.send_message(user, ":hammer: ***Banned*** | __Server__: {} | __Moderator__ {}#{} | __Reason__: {} ".format(server.name, author.name, author.discriminator, reason))
+                except:
+                    pass
+                self.temp_cache.add(user, server, "BAN")
+                await self.bot.ban(user, days)
+                logger.info("{}({}) banned {}({}), deleting {} days worth of messages".format(
+                    author.name, author.id, user.name, user.id, str(days)))
+                await self.new_case(server,
+                                    action="BAN",
+                                    mod=author,
+                                    user=user,
+                                    reason=reason)
+                await self.bot.say(":white_check_mark::hammer: `Successfully banned {}#{}` l8r loser!".format(
+                    user.name, user.discriminator))
+            except discord.errors.Forbidden:
+                await self.bot.say(":no_entry: `Unable to ban this member`")
+            except Exception as e:
+                print(e)
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(ban_members=True)
@@ -398,7 +409,7 @@ class Mod:
         is_banned = discord.utils.get(ban_list, id=user_id)
 
         if is_banned:
-            await self.bot.say("User is already banned.")
+            await self.bot.say(":information_source: `User is already banned.`")
             return
 
         user = server.get_member(user_id)
@@ -409,10 +420,10 @@ class Mod:
         try:
             await self.bot.http.ban(user_id, server.id, 0)
         except discord.NotFound:
-            await self.bot.say("User not found. Have you provided the "
+            await self.bot.say(":warning: `User not found.` Have you provided the "
                                "correct user ID?")
         except discord.Forbidden:
-            await self.bot.say("I lack the permissions to do this.")
+            await self.bot.say(":warning: `Permissions not met` Make sure that I have permission to ban members.")
         else:
             logger.info("{}({}) hackbanned {}"
                         "".format(author.name, author.id, user_id))
@@ -422,8 +433,8 @@ class Mod:
                                 mod=author,
                                 user=user,
                                 reason=reason)
-            await self.bot.say("Done. The user will not be able to join this "
-                               "server.")
+            await self.bot.say(":white_check_mark::bust_in_silhouette::hammer: `Successfully hackbanned {}` Good luck trying to get into Mordor! It's already hard as is.".format(
+                user.id))
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(ban_members=True)
@@ -435,13 +446,10 @@ class Mod:
         author = ctx.message.author
 
         if author == user:
-            await self.bot.say("I cannot let you do that. Self-harm is "
-                               "bad \N{PENSIVE FACE}")
+            await self.bot.say(":x: `You cannot softban yourself from the guild` Ok, but why though?")
             return
         elif not self.is_allowed_by_hierarchy(server, author, user):
-            await self.bot.say("I cannot let you do that. You are "
-                               "not higher than the user in the role "
-                               "hierarchy.")
+            await self.bot.say(":no_entry: `Unable to softban this member due to their hierarchy status`")
             return
 
         try:
@@ -452,9 +460,7 @@ class Mod:
         if can_ban:
             try:
                 try:  # We don't want blocked DMs preventing us from banning
-                    msg = await self.bot.send_message(user, "You have been banned and "
-                              "then unbanned as a quick way to delete your messages.\n"
-                              "You can now join the server again.{}".format(invite))
+                    msg = await self.bot.send_message(user, ":dash::hammer: ***Softbanned*** | __Server__: {} | __Moderator__: {}#{} | __Reason__: {} | :information_source: **You dummy!** You just got softbanned! Don't worry though, you're not actually banned. I just kicked you so I can cleanup that filth you left behind. You can come back now! ;) {}".format(server.name, author.name, author.discriminator, reason, invite))
                 except:
                     pass
                 self.temp_cache.add(user, server, "BAN")
@@ -469,14 +475,15 @@ class Mod:
                                     reason=reason)
                 self.temp_cache.add(user, server, "UNBAN")
                 await self.bot.unban(server, user)
-                await self.bot.say("Done. Enough chaos.")
+                await self.bot.say(":white_check_mark::dash::hammer: `Successfully softbanned {}#{}` That post was complete trash...".format(
+                    user.name, user.discriminator))
             except discord.errors.Forbidden:
-                await self.bot.say("My role is not high enough to softban that user.")
+                await self.bot.say(":no_entry: `Unable to softban this member")
                 await self.bot.delete_message(msg)
             except Exception as e:
                 print(e)
         else:
-            await self.bot.say("I'm not allowed to do that.")
+            await self.bot.say(":warning: `Permissions not met` Make sure that I have permission to ban members.")
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(manage_nicknames=True)
@@ -513,13 +520,11 @@ class Mod:
         overwrites = channel.overwrites_for(user)
 
         if overwrites.send_messages is False:
-            await self.bot.say("That user can't send messages in this "
-                               "channel.")
+            await self.bot.say(":information_source: `That user can't send messages in this "
+                               "channel.`")
             return
         elif not self.is_allowed_by_hierarchy(server, author, user):
-            await self.bot.say("I cannot let you do that. You are "
-                               "not higher than the user in the role "
-                               "hierarchy.")
+            await self.bot.say(":no_entry: `Unable to mute this member due to their hierarchy status`")
             return
 
         self._perms_cache[user.id][channel.id] = overwrites.send_messages
@@ -527,9 +532,7 @@ class Mod:
         try:
             await self.bot.edit_channel_permissions(channel, user, overwrites)
         except discord.Forbidden:
-            await self.bot.say("Failed to mute user. I need the manage roles "
-                               "permission and the user I'm muting must be "
-                               "lower than myself in the role hierarchy.")
+            await self.bot.say(":warning: `Permissions and/or hierarchy status not met` Make sure that I have permission to manage roles, and I have a higher hierarchy status than them.")
         else:
             dataIO.save_json("data/mod/perms_cache.json", self._perms_cache)
             await self.new_case(server,
@@ -538,7 +541,8 @@ class Mod:
                                 mod=author,
                                 user=user,
                                 reason=reason)
-            await self.bot.say("User has been muted in this channel.")
+            await self.bot.say(":white_check_mark::mute: `{}#{}` has been muted in this channel | Reason: `{}`".format(
+                user.name, user.discriminator, reason))
 
     @checks.mod_or_permissions(administrator=True)
     @mute.command(name="server", pass_context=True, no_pm=True)
@@ -548,9 +552,7 @@ class Mod:
         server = ctx.message.server
 
         if not self.is_allowed_by_hierarchy(server, author, user):
-            await self.bot.say("I cannot let you do that. You are "
-                               "not higher than the user in the role "
-                               "hierarchy.")
+            await self.bot.say(":warning: `Unable to mute this member due to their hierarchy status`")
             return
 
         register = {}
@@ -566,14 +568,12 @@ class Mod:
                 await self.bot.edit_channel_permissions(channel, user,
                                                         overwrites)
             except discord.Forbidden:
-                await self.bot.say("Failed to mute user. I need the manage roles "
-                                   "permission and the user I'm muting must be "
-                                   "lower than myself in the role hierarchy.")
+                await self.bot.say(":warning: `Permissions and/or hierarchy status not met` Make sure that I have permission to manage roles, and I have a higher hierarchy status than them.")
                 return
             else:
                 await asyncio.sleep(0.1)
         if not register:
-            await self.bot.say("That user is already muted in all channels.")
+            await self.bot.say(":information_source: `That user is already muted in all channels.`")
             return
         self._perms_cache[user.id] = register
         dataIO.save_json("data/mod/perms_cache.json", self._perms_cache)
@@ -582,7 +582,8 @@ class Mod:
                             mod=author,
                             user=user,
                             reason=reason)
-        await self.bot.say("User has been muted in this server.")
+        await self.bot.say(":white_check_mark::mute: `{}#{}` has been server muted. | Reason: `{}`".format(
+            user.name, user.discriminator, reason))
 
     @commands.group(pass_context=True, no_pm=True, invoke_without_command=True)
     @checks.mod_or_permissions(administrator=True)
@@ -603,13 +604,11 @@ class Mod:
         overwrites = channel.overwrites_for(user)
 
         if overwrites.send_messages:
-            await self.bot.say("That user doesn't seem to be muted "
-                               "in this channel.")
+            await self.bot.say(":information_source: `That user doesn't seem to be muted "
+                               "in this channel.`")
             return
         elif not self.is_allowed_by_hierarchy(server, author, user):
-            await self.bot.say("I cannot let you do that. You are "
-                               "not higher than the user in the role "
-                               "hierarchy.")
+            await self.bot.say(":no_entry: `Unable to unmute this member due to their hierarchy status.`")
             return
 
         if user.id in self._perms_cache:
@@ -625,9 +624,7 @@ class Mod:
             else:
                 await self.bot.delete_channel_permissions(channel, user)
         except discord.Forbidden:
-            await self.bot.say("Failed to unmute user. I need the manage roles"
-                               " permission and the user I'm unmuting must be "
-                               "lower than myself in the role hierarchy.")
+            await self.bot.say(":warning: `Permissions and/or hierarchy status not met` Make sure that I have permission to manage roles, and I have a higher hierarchy status than them.")
         else:
             try:
                 del self._perms_cache[user.id][channel.id]
@@ -636,7 +633,8 @@ class Mod:
             if user.id in self._perms_cache and not self._perms_cache[user.id]:
                 del self._perms_cache[user.id]  # cleanup
             dataIO.save_json("data/mod/perms_cache.json", self._perms_cache)
-            await self.bot.say("User has been unmuted in this channel.")
+            await self.bot.say(":white_check_mark::loud_sound: `{}#{}` has been unmuted in this channel.".format(
+                user.name, user.discriminator))
 
     @checks.mod_or_permissions(administrator=True)
     @unmute.command(name="server", pass_context=True, no_pm=True)
@@ -673,9 +671,7 @@ class Mod:
                     else:
                         await self.bot.delete_channel_permissions(channel, user)
                 except discord.Forbidden:
-                    await self.bot.say("Failed to unmute user. I need the manage roles"
-                                       " permission and the user I'm unmuting must be "
-                                       "lower than myself in the role hierarchy.")
+                    await self.bot.say(":warning: `Permissions and/or hierarchy status not met` Make sure that I have permission to manage roles, and I have a higher hierarchy status than them.")
                     return
                 else:
                     del self._perms_cache[user.id][channel.id]
@@ -683,7 +679,8 @@ class Mod:
         if user.id in self._perms_cache and not self._perms_cache[user.id]:
             del self._perms_cache[user.id]  # cleanup
         dataIO.save_json("data/mod/perms_cache.json", self._perms_cache)
-        await self.bot.say("User has been unmuted in this server.")
+        await self.bot.say(":white_check_mark::loud_sound: `{}#{}` has been server unmuted.".format(
+                user.name, user.discriminator))
 
     @commands.group(pass_context=True)
     @checks.mod_or_permissions(manage_messages=True)
@@ -1356,16 +1353,14 @@ class Mod:
         else:
             return mod.top_role.position > user.top_role.position or is_special
 
-    async def new_case(self, server, *, action, mod=None, user, reason=None, until=None, channel=None, force_create=False):
+    async def new_case(self, server, *, action, mod=None, user, reason=None, until=None, channel=None):
         action_type = action.lower() + "_cases"
-        
-        enabled_case = self.settings.get(server.id, {}).get(action_type, default_settings.get(action_type))
-        if not force_create and not enabled_case:
-            return False
+        if not self.settings[server.id].get(action_type, default_settings[action_type]):
+            return
 
         mod_channel = server.get_channel(self.settings[server.id]["mod-log"])
         if mod_channel is None:
-            return None
+            return
 
         if server.id not in self.cases:
             self.cases[server.id] = {}
@@ -1386,7 +1381,7 @@ class Mod:
             "amended_by"   : None,
             "amended_id"   : None,
             "message"      : None,
-            "until"        : until.timestamp() if until else None,
+            "until"        : None,
         }
 
         case_msg = self.format_case_msg(case)
@@ -1403,8 +1398,6 @@ class Mod:
             self.last_case[server.id][mod.id] = case_n
 
         dataIO.save_json("data/mod/modlog.json", self.cases)
-
-        return case_n
 
     async def update_case(self, server, *, case, mod=None, reason=None,
                           until=False):
