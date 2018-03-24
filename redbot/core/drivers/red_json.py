@@ -1,11 +1,35 @@
 from pathlib import Path
 from typing import Tuple
+import weakref
+import logging
 
 from ..json_io import JsonIO
 
 from .red_base import BaseDriver
 
 __all__ = ["JSON"]
+
+
+_shared_datastore = {}
+_driver_counts = {}
+_finalizers = []
+
+log = logging.getLogger("redbot.json_driver")
+
+
+def finalize_driver(cog_name):
+    if cog_name not in _driver_counts:
+        return
+
+    _driver_counts[cog_name] -= 1
+
+    if _driver_counts[cog_name] == 0:
+        if cog_name in _shared_datastore:
+            del _shared_datastore[cog_name]
+
+    for f in _finalizers:
+        if not f.alive:
+            _finalizers.remove(f)
 
 
 class JSON(BaseDriver):
@@ -34,6 +58,26 @@ class JSON(BaseDriver):
         self.data_path = self.data_path / self.file_name
 
         self.jsonIO = JsonIO(self.data_path)
+
+        self._load_data()
+
+    @property
+    def data(self):
+        return _shared_datastore.get(self.cog_name)
+
+    @data.setter
+    def data(self, value):
+        _shared_datastore[self.cog_name] = value
+
+    def _load_data(self):
+        if self.cog_name not in _driver_counts:
+            _driver_counts[self.cog_name] = 0
+        _driver_counts[self.cog_name] += 1
+
+        _finalizers.append(weakref.finalize(self, finalize_driver, self.cog_name))
+
+        if self.data is not None:
+            return
 
         try:
             self.data = self.jsonIO._load_json()
@@ -70,3 +114,6 @@ class JSON(BaseDriver):
             pass
         else:
             await self.jsonIO._threadsafe_save_json(self.data)
+
+    def get_config_details(self):
+        return

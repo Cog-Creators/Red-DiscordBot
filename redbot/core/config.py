@@ -1,7 +1,5 @@
-import contextlib
 import logging
 import collections
-from weakref import ref
 from copy import deepcopy
 from typing import Union, Tuple
 
@@ -418,10 +416,6 @@ class Group(Value):
         await self.driver.set(*self.identifiers, *path, value=value)
 
 
-_config_cogrefs = {}
-_config_coreref = None
-
-
 class Config:
     """Configuration manager for cogs and Red.
 
@@ -470,7 +464,6 @@ class Config:
         self.unique_identifier = unique_identifier
 
         self.driver = driver
-        self.driver.unique_cog_identifier = self.unique_identifier
         self.force_registration = force_registration
         self._defaults = defaults or {}
 
@@ -482,6 +475,13 @@ class Config:
     def get_conf(cls, cog_instance, identifier: int,
                  force_registration=False, cog_name=None):
         """Get a Config instance for your cog.
+
+        .. warning::
+
+            If you are using this classmethod to get a second instance of an
+            existing Config object for a particular cog, you MUST provide the
+            correct identifier. If you do not, you *will* screw up all other
+            Config instances for that cog.
 
         Parameters
         ----------
@@ -514,11 +514,6 @@ class Config:
         cog_name = cog_path_override.stem
         uuid = str(hash(identifier))
 
-        with contextlib.suppress(KeyError):
-            conf = _config_cogrefs[cog_name]()
-            if conf is not None:
-                return conf
-
         # We have to import this here otherwise we have a circular dependency
         from .data_manager import basic_config
 
@@ -529,12 +524,11 @@ class Config:
 
         log.debug("Using driver: '{}'".format(driver_name))
 
-        driver = get_driver(driver_name, cog_name, data_path_override=cog_path_override,
+        driver = get_driver(driver_name, cog_name, uuid, data_path_override=cog_path_override,
                             **driver_details)
         conf = cls(cog_name=cog_name, unique_identifier=uuid,
                    force_registration=force_registration,
                    driver=driver)
-        _config_cogrefs[cog_name] = ref(conf)
         return conf
 
     @classmethod
@@ -550,10 +544,6 @@ class Config:
             See `force_registration`.
 
         """
-        global _config_coreref
-        if _config_coreref is not None and _config_coreref() is not None:
-            return _config_coreref()
-
         core_path = core_data_path()
 
         # We have to import this here otherwise we have a circular dependency
@@ -562,12 +552,11 @@ class Config:
         driver_name = basic_config.get('STORAGE_TYPE', 'JSON')
         driver_details = basic_config.get('STORAGE_DETAILS', {})
 
-        driver = get_driver(driver_name, "Core", data_path_override=core_path,
+        driver = get_driver(driver_name, "Core", '0', data_path_override=core_path,
                             **driver_details)
         conf = cls(cog_name="Core", driver=driver,
                    unique_identifier='0',
                    force_registration=force_registration)
-        _config_coreref = ref(conf)
         return conf
 
     def __getattr__(self, item: str) -> Union[Group, Value]:
