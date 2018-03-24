@@ -59,12 +59,14 @@ class Case:
         self.case_number = case_number
         self.message = message
 
-    async def edit(self, data: dict):
+    async def edit(self, bot, data: dict):
         """
         Edits a case
 
         Parameters
         ----------
+        bot: Red
+            The bot instance
         data: dict
             The attributes to change
 
@@ -74,21 +76,31 @@ class Case:
         """
         for item in list(data.keys()):
             setattr(self, item, data[item])
-        case_emb = await self.message_content()
-        await self.message.edit(embed=case_emb)
+
+        use_embed = await bot.embed_requested(self.message.channel, self.guild.me)
+        case_content = await self.message_content(use_embed)
+        if use_embed:
+            await self.message.edit(embed=case_content)
+        else:
+            await self.message.edit(case_content)
 
         await _conf.guild(self.guild).cases.set_raw(
             str(self.case_number), value=self.to_json()
         )
 
-    async def message_content(self):
+    async def message_content(self, embed: bool=True):
         """
         Format a case message
 
+        Parameters
+        ----------
+        embed: bool
+            Whether or not to get an embed
+
         Returns
         -------
-        discord.Embed
-            A rich embed representing a case message
+        discord.Embed or `str`
+            A rich embed or string representing a case message
 
         """
         casetype = await get_casetype(self.action_type)
@@ -103,17 +115,16 @@ class Case:
                     self.case_number
                 )
 
-        emb = discord.Embed(title=title, description=reason)
-        user = "{}#{} ({})\n".format(
-            self.user.name, self.user.discriminator, self.user.id)
-        emb.set_author(name=user, icon_url=self.user.avatar_url)
         if self.moderator is not None:
             moderator = "{}#{} ({})\n".format(
                 self.moderator.name,
                 self.moderator.discriminator,
                 self.moderator.id
             )
-            emb.add_field(name="Moderator", value=moderator, inline=False)
+        else:
+            moderator = "Unknown"
+        until = None
+        duration = None
         if self.until:
             start = datetime.fromtimestamp(self.created_at)
             end = datetime.fromtimestamp(self.until)
@@ -122,27 +133,57 @@ class Case:
             dur_fmt = _strfdelta(duration)
             until = end_fmt
             duration = dur_fmt
-            emb.add_field(name="Until", value=until)
-            emb.add_field(name="Duration", value=duration)
 
-        if self.channel:
-            emb.add_field(name="Channel", value=self.channel.name, inline=False)
+        amended_by = None
         if self.amended_by:
             amended_by = "{}#{} ({})".format(
                 self.amended_by.name,
                 self.amended_by.discriminator,
                 self.amended_by.id
             )
-            emb.add_field(name="Amended by", value=amended_by)
+
+        last_modified = None
         if self.modified_at:
             last_modified = "{}".format(
                 datetime.fromtimestamp(
                     self.modified_at
                 ).strftime('%Y-%m-%d %H:%M:%S')
             )
-            emb.add_field(name="Last modified at", value=last_modified)
-        emb.timestamp = datetime.fromtimestamp(self.created_at)
-        return emb
+
+        user = "{}#{} ({})\n".format(
+            self.user.name, self.user.discriminator, self.user.id)
+        if embed:
+            emb = discord.Embed(title=title, description=reason)
+
+            emb.set_author(name=user, icon_url=self.user.avatar_url)
+            emb.add_field(name="Moderator", value=moderator, inline=False)
+            if until and duration:
+                emb.add_field(name="Until", value=until)
+                emb.add_field(name="Duration", value=duration)
+
+            if self.channel:
+                emb.add_field(name="Channel", value=self.channel.name, inline=False)
+            if amended_by:
+                emb.add_field(name="Amended by", value=amended_by)
+            if last_modified:
+                emb.add_field(name="Last modified at", value=last_modified)
+            emb.timestamp = datetime.fromtimestamp(self.created_at)
+            return emb
+        else:
+            case_text = ""
+            case_text += "{}\n".format(title)
+            case_text += "**User:** {}\n".format(user)
+            case_text += "**Moderator:** {}\n".format(moderator)
+            case_text += "{}\n".format(reason)
+            if until and duration:
+                case_text += "**Until:** {}\n**Duration:** {}\n".format(until, duration)
+            if self.channel:
+                case_text += "**Channel**: {}\n".format(self.channel.name)
+            if amended_by:
+                case_text += "**Amended by:** {}\n".format(amended_by)
+            if last_modified:
+                case_text += "**Last modified at:** {}\n".format(last_modified)
+            return case_text.strip()
 
     def to_json(self) -> dict:
         """Transform the object to a dict
@@ -377,7 +418,7 @@ async def get_all_cases(guild: discord.Guild, bot: Red) -> List[Case]:
     return case_list
 
 
-async def create_case(guild: discord.Guild, created_at: datetime, action_type: str,
+async def create_case(bot: Red, guild: discord.Guild, created_at: datetime, action_type: str,
                       user: Union[discord.User, discord.Member],
                       moderator: discord.Member=None, reason: str=None,
                       until: datetime=None, channel: discord.TextChannel=None
@@ -387,6 +428,8 @@ async def create_case(guild: discord.Guild, created_at: datetime, action_type: s
 
     Parameters
     ----------
+    bot: `Red`
+        The bot object
     guild: `discord.Guild`
         The guild the action was taken in
     created_at: datetime
@@ -438,8 +481,12 @@ async def create_case(guild: discord.Guild, created_at: datetime, action_type: s
                 next_case_number, reason, until, channel, amended_by=None,
                 modified_at=None, message=None)
     if hasattr(mod_channel, "send"):  # Not going to be the case for tests
-        case_emb = await case.message_content()
-        msg = await mod_channel.send(embed=case_emb)
+        use_embeds = await bot.embed_requested(mod_channel, guild.me)
+        case_content = await case.message_content(use_embeds)
+        if use_embeds:
+            msg = await mod_channel.send(embed=case_content)
+        else:
+            msg = await mod_channel.send(case_content)
         case.message = msg
     await _conf.guild(guild).cases.set_raw(str(next_case_number), value=case.to_json())
     return case
