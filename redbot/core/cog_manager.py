@@ -422,12 +422,12 @@ class CogManagerUI:
             loaded = ('**{} loaded:**\n').format(len(loaded)) + ", ".join(loaded)
             unloaded = ('**{} unloaded:**\n').format(len(unloaded)) + ", ".join(unloaded)
 
-            for page in pagify(loaded, delims=[', ', '\n'], page_length=1000):
+            for page in pagify(loaded, delims=[', ', '\n'], page_length=1800):
                 e = discord.Embed(description=page,
                                   colour=discord.Colour.dark_green())
                 await ctx.send(embed=e)
 
-            for page in pagify(unloaded, delims=[', ', '\n'], page_length=1000):
+            for page in pagify(unloaded, delims=[', ', '\n'], page_length=1800):
                 e = discord.Embed(description=page,
                                   colour=discord.Colour.dark_red())
                 await ctx.send(embed=e)
@@ -436,11 +436,22 @@ class CogManagerUI:
             loaded = ", ".join(loaded)
             unloaded_count = '**{} unloaded:**\n'.format(len(unloaded))
             unloaded = ", ".join(unloaded)
+            loaded_count_sent = False
+            unloaded_count_sent = False
+            for page in pagify(loaded, delims=[", ", "\n"], page_length=1800):
+                if page.startswith(", "):
+                    page = page[2:]
+                if not loaded_count_sent:
+                    await ctx.send(loaded_count + box(page, lang="css"))
+                    loaded_count_sent = True
+                else:
+                    await ctx.send(box(page, lang="css"))
 
-            await ctx.send(loaded_count)
-            for page in pagify(loaded, delims=[", ", "\n"], page_length=1000):
-                await ctx.send(box(page, lang="css"))
-
-            await ctx.send(unloaded_count)
-            for page in pagify(unloaded, delims=[", ", "\n"], page_length=1000):
-                await ctx.send(box(page, lang="ldif"))
+            for page in pagify(unloaded, delims=[", ", "\n"], page_length=1800):
+                if page.startswith(", "):
+                    page = page[2:]
+                if not unloaded_count_sent:
+                    await ctx.send(unloaded_count + box(page, lang="ldif"))
+                    unloaded_count_sent = True
+                else:
+                    await ctx.send(box(page, lang="ldif"))
