@@ -32,8 +32,8 @@ class Mongo(BaseDriver):
     """
     Subclass of :py:class:`.red_base.BaseDriver`.
     """
-    def __init__(self, cog_name, **kwargs):
-        super().__init__(cog_name)
+    def __init__(self, cog_name, identifier, **kwargs):
+        super().__init__(cog_name, identifier)
 
         if _conn is None:
             _initialize(**kwargs)
