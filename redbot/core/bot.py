@@ -7,6 +7,7 @@ from importlib.machinery import ModuleSpec
 from pathlib import Path
 
 import discord
+import sys
 from discord.ext.commands.bot import BotBase
 from discord.ext.commands import GroupMixin
 from discord.ext.commands import when_mentioned_or
@@ -269,9 +270,15 @@ class RedBase(BotBase, RpcMethodMixin):
                 pass
         finally:
             # finally remove the import..
+            pkg_name = lib.__package__
             del lib
             del self.extensions[name]
-            # del sys.modules[name]
+            for m, _ in sys.modules.copy().items():
+                if m.startswith(pkg_name):
+                    del sys.modules[m]
+
+            if pkg_name.startswith('redbot.cogs'):
+                del sys.modules['redbot.cogs'].__dict__[name]
 
     def register_rpc_methods(self):
         rpc.add_method('bot', self.rpc__cogs)
