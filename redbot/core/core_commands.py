@@ -235,7 +235,8 @@ class Core:
     async def invite(self, ctx):
         """Show's Red's invite url"""
         if self.bot.user.bot:
-            await ctx.author.send(discord.utils.oauth_url(self.bot.user.id))
+            app_info = await self.bot.application_info()
+            await ctx.author.send(discord.utils.oauth_url(app_info.id))
         else:
             await ctx.send("I'm not a bot account. I have no invite URL.")
 
