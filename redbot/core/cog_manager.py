@@ -418,15 +418,29 @@ class CogManagerUI:
         loaded = sorted(list(loaded), key=str.lower)
         unloaded = sorted(list(unloaded), key=str.lower)
 
-        loaded = ('**{} loaded:**\n').format(len(loaded)) + ", ".join(loaded)
-        unloaded = ('**{} unloaded:**\n').format(len(unloaded)) + ", ".join(unloaded)
+        if await ctx.embed_requested():
+            loaded = ('**{} loaded:**\n').format(len(loaded)) + ", ".join(loaded)
+            unloaded = ('**{} unloaded:**\n').format(len(unloaded)) + ", ".join(unloaded)
 
-        for page in pagify(loaded, delims=[', ', '\n'], page_length=1000):
-            e = discord.Embed(description=page,
-                              colour=discord.Colour.dark_green())
-            await ctx.send(embed=e)
+            for page in pagify(loaded, delims=[', ', '\n'], page_length=1000):
+                e = discord.Embed(description=page,
+                                  colour=discord.Colour.dark_green())
+                await ctx.send(embed=e)
 
-        for page in pagify(unloaded, delims=[', ', '\n'], page_length=1000):
-            e = discord.Embed(description=page,
-                              colour=discord.Colour.dark_red())
-            await ctx.send(embed=e)
+            for page in pagify(unloaded, delims=[', ', '\n'], page_length=1000):
+                e = discord.Embed(description=page,
+                                  colour=discord.Colour.dark_red())
+                await ctx.send(embed=e)
+        else:
+            loaded_count = '**{} loaded:**\n'.format(len(loaded))
+            loaded = ", ".join(loaded)
+            unloaded_count = '**{} unloaded:**\n'.format(len(unloaded))
+            unloaded = ", ".join(unloaded)
+
+            await ctx.send(loaded_count)
+            for page in pagify(loaded, delims=[", ", "\n"], page_length=1000):
+                await ctx.send(box(page, lang="css"))
+
+            await ctx.send(unloaded_count)
+            for page in pagify(unloaded, delims=[", ", "\n"], page_length=1000):
+                await ctx.send(box(page, lang="ldif"))
