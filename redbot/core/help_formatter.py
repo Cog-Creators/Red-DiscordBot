@@ -148,9 +148,9 @@ class Help(formatter.HelpFormatter):
 
             # <long doc> section
             if self.command.help:
-                name = '__{0}__'.format(self.command.help.split('\n\n')[0])
-                name_length = len(name)
-                value = self.command.help[name_length:].replace('[p]', self.clean_prefix)
+                splitted = self.command.help.split('\n\n')
+                name = '__{0}__'.format(splitted[0])
+                value = '\n\n'.join(splitted[1:]).replace('[p]', self.clean_prefix)
                 if value == '':
                     value = EMPTY_STRING
                 field = EmbedField(name[:252], value[:1024], False)
