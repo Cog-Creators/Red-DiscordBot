@@ -839,29 +839,43 @@ class Core:
         content = _("Use `{}dm {} <text>` to reply to this user"
                     "").format(prefix, author.id)
 
+        description = _("Sent by {} {}").format(author, source)
+
         if isinstance(author, discord.Member):
             colour = author.colour
         else:
             colour = discord.Colour.red()
 
-        description = _("Sent by {} {}").format(author, source)
+        if await ctx.embed_requested():
+            e = discord.Embed(colour=colour, description=message)
+            if author.avatar_url:
+                e.set_author(name=description, icon_url=author.avatar_url)
+            else:
+                e.set_author(name=description)
+            e.set_footer(text=footer)
 
-        e = discord.Embed(colour=colour, description=message)
-        if author.avatar_url:
-            e.set_author(name=description, icon_url=author.avatar_url)
+            try:
+                await owner.send(content, embed=e)
+            except discord.InvalidArgument:
+                await ctx.send(_("I cannot send your message, I'm unable to find "
+                                 "my owner... *sigh*"))
+            except:
+                await ctx.send(_("I'm unable to deliver your message. Sorry."))
+            else:
+                await ctx.send(_("Your message has been sent."))
         else:
-            e.set_author(name=description)
-        e.set_footer(text=footer)
-
-        try:
-            await owner.send(content, embed=e)
-        except discord.InvalidArgument:
-            await ctx.send(_("I cannot send your message, I'm unable to find "
-                             "my owner... *sigh*"))
-        except:
-            await ctx.send(_("I'm unable to deliver your message. Sorry."))
-        else:
-            await ctx.send(_("Your message has been sent."))
+            msg_text = (
+                "{}\nMessage:\n\n{}\n{}".format(description, message, footer)
+            )
+            try:
+                await owner.send("{}\n{}".format(content, box(msg_text)))
+            except discord.InvalidArgument:
+                await ctx.send(_("I cannot send your message, I'm unable to find "
+                                 "my owner... *sigh*"))
+            except:
+                await ctx.send(_("I'm unable to deliver your message. Sorry."))
+            else:
+                await ctx.send(_("Your message has been sent."))
 
     @commands.command()
     @checks.is_owner()
@@ -880,25 +894,36 @@ class Core:
                              "with."))
             return
 
-        e = discord.Embed(colour=discord.Colour.red(), description=message)
-        description = _("Owner of %s") % ctx.bot.user
         fake_message = namedtuple('Message', 'guild')
         prefixes = await ctx.bot.command_prefix(ctx.bot, fake_message(guild=None))
         prefix = prefixes[0]
-        e.set_footer(text=_("You can reply to this message with %scontact"
-                            "") % prefix)
-        if ctx.bot.user.avatar_url:
-            e.set_author(name=description, icon_url=ctx.bot.user.avatar_url)
-        else:
-            e.set_author(name=description)
+        description = _("Owner of %s") % ctx.bot.user
+        content = _("You can reply to this message with %scontact") % prefix
+        if await ctx.embed_requested():
+            e = discord.Embed(colour=discord.Colour.red(), description=message)
 
-        try:
-            await destination.send(embed=e)
-        except:
-            await ctx.send(_("Sorry, I couldn't deliver your message "
-                             "to %s") % destination)
+            e.set_footer(text=content)
+            if ctx.bot.user.avatar_url:
+                e.set_author(name=description, icon_url=ctx.bot.user.avatar_url)
+            else:
+                e.set_author(name=description)
+
+            try:
+                await destination.send(embed=e)
+            except:
+                await ctx.send(_("Sorry, I couldn't deliver your message "
+                                 "to %s") % destination)
+            else:
+                await ctx.send(_("Message delivered to %s") % destination)
         else:
-            await ctx.send(_("Message delivered to %s") % destination)
+            response = "{}\nMessage:\n\n{}".format(description, message)
+            try:
+                await destination.send("{}\n{}".format(box(response), content))
+            except:
+                await ctx.send(_("Sorry, I couldn't deliver your message "
+                                 "to %s") % destination)
+            else:
+                await ctx.send(_("Message delivered to %s") % destination)
 
     @commands.group()
     @checks.is_owner()
