@@ -327,8 +327,8 @@ class Core:
                 cogspecs.append((spec, c))
             except RuntimeError:
                 notfound_packages.append(inline(c))
-                #await ctx.send(_("No module named '{}' was found in any"
-                #                 " cog path.").format(c))
+                await ctx.send(_("No module named '{}' was found in any"
+                                 " cog path.").format(c))
 
         if len(cogspecs) == 0:
             return
