@@ -3,7 +3,9 @@ import datetime
 import importlib
 import itertools
 import logging
+import os
 import sys
+import tarfile
 import traceback
 from collections import namedtuple
 from pathlib import Path
@@ -21,6 +23,9 @@ from redbot.core import checks
 from redbot.core import i18n
 from redbot.core import rpc
 from redbot.core.context import RedContext
+from redbot.core.data_manager import basic_config, instance_name
+from redbot.core.drivers.red_mongo import Mongo
+from redbot.core.drivers.red_json import JSON
 from .utils import TYPE_CHECKING
 from .utils.chat_formatting import pagify, box, inline
 
@@ -813,6 +818,42 @@ class Core:
         await ctx.send_interactive(
             pages, box_lang="Available Locales:"
         )
+
+    @commands.command()
+    @checks.is_owner()
+    async def backup(self, ctx):
+        """Creates a backup of all data for the instance."""
+        data_dir = Path(basic_config["DATA_PATH"])
+        if basic_config["STORAGE_TYPE"] == "MongoDB":
+            m = Mongo("Core", **basic_config["STORAGE_DETAILS"])
+            db = m.db
+            collection_names = await db.collection_names(include_system_collections=False)
+            for c_name in collection_names:
+                if c_name == "Core":
+                    c_data_path = data_dir / basic_config["CORE_PATH_APPEND"]
+                else:
+                    c_data_path = data_dir / basic_config["COG_PATH_APPEND"]
+                output = {}
+                docs = await db[c_name].find().to_list(None)
+                for item in docs:
+                    item_id = str(item.pop("_id"))
+                    output[item_id] = item
+                target = JSON(c_name, data_path_override=c_data_path)
+                await target.jsonIO._threadsafe_save_json(output)
+        backup_filename = "redv3-{}-{}.tar.gz".format(
+            instance_name, ctx.message.created_at.strftime("%Y-%m-%d %H-%M-%S")
+        )
+        if data_dir.exists():
+            home = data_dir.home()
+            backup_file = home / backup_filename
+            os.chdir(data_dir.parent)
+            with tarfile.open(str(backup_file), "w:gz") as tar:
+                tar.add(data_dir.stem)
+            await ctx.send(_("A backup has been made of this instance. It is at {}.").format(
+                backup_file
+            ))
+        else:
+            await ctx.send(_("That directory doesn't seem to exist..."))
 
     @commands.command()
     @commands.cooldown(1, 60, commands.BucketType.user)
