@@ -378,10 +378,8 @@ async def remove_instance():
 
 def main():
     if args.delete:
-        try:
-            remove_instance()
-        except NotImplementedError as e:
-            print(str(e))
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(remove_instance())
     elif args.edit:
         loop = asyncio.get_event_loop()
         loop.run_until_complete(edit_instance())
