@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - "./docker/data:/home/red/.local/share/Red-DiscordBot"
-    # restart: always
+    restart: always
     secrets:
       - RED_TOKEN
     command: ./run_red.sh
