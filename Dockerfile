@@ -17,5 +17,6 @@ WORKDIR /home/red
 
 COPY ./docker/basic-config.json /home/red/.config/Red-DiscordBot/config.json
 
+# This is overriden in compose.yml, but is needed in standalone
 CMD sudo chown -R red:red /home/red && \
     python3.6 -m redbot docker --no-prompt --dev --mentionable
