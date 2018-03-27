@@ -1,4 +1,4 @@
-version: "3"
+version: "3.3"
 
 services:
   redbot: 
@@ -7,7 +7,12 @@ services:
       dockerfile: Dockerfile
     volumes:
       - "./docker/data:/home/red/.local/share/Red-DiscordBot"
-    restart: always
-    env_file:
-      - ./docker/.env
-    command: python3.6 -m redbot docker --no-prompt --dev --mentionable --prefix ${PREFIX}
+    # restart: always
+    secrets:
+      - RED_TOKEN
+    command: ./run_red.sh
+    env_file: ./docker/.env
+
+secrets:
+  RED_TOKEN:
+    file: ./docker/RED_TOKEN
