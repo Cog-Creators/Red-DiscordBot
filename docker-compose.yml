@@ -9,5 +9,5 @@ services:
       - "./docker/data:/home/red/.local/share/Red-DiscordBot"
     restart: always
     env_file:
-      - .env
+      - ./docker/.env
     command: python3.6 -m redbot docker --no-prompt --dev --mentionable --prefix ${PREFIX}

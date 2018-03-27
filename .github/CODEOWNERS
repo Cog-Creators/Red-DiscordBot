@@ -47,3 +47,8 @@ setup.py                            @tekulvw
 redbot/__init__.py                  @tekulvw
 redbot/__main__.py                  @tekulvw
 redbot/setup.py                     @tekulvw
+
+# docker
+Dockerfile                          @mikeshardmind
+docker-compose.yml                  @mikeshardmind
+docker/*                            @mikeshardmind
