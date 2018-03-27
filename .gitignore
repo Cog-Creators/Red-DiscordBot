@@ -157,8 +157,9 @@ ENV/
 .mypy_cache/
 
 # dockerdata
-docker/*
+docker/data/
 *.env
+docker/RED_TOKEN
 # but we want the basic config
 !docker/basic-config.json
 !docker/entrypoint.sh
