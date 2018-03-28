@@ -992,7 +992,7 @@ class Config:
 
         """
         if not scopes:
-            group = Group(identifiers=(self.unique_identifier, ),
+            group = Group(identifiers=[],
                           defaults={},
                           driver=self.driver)
         else:

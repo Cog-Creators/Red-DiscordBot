@@ -109,7 +109,7 @@ class JSON(BaseDriver):
         try:
             for i in full_identifiers[:-1]:
                 partial = partial[i]
-            del partial[identifiers[-1]]
+            del partial[full_identifiers[-1]]
         except KeyError:
             pass
         else:

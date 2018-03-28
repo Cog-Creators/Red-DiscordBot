@@ -105,10 +105,15 @@ class Mongo(BaseDriver):
         dot_identifiers = '.'.join(identifiers)
         mongo_collection = self.get_collection()
 
-        await mongo_collection.update_one(
-            {'_id': self.unique_cog_identifier},
-            update={"$unset": {dot_identifiers: 1}}
-        )
+        if len(identifiers) > 0:
+            await mongo_collection.update_one(
+                {'_id': self.unique_cog_identifier},
+                update={"$unset": {dot_identifiers: 1}}
+            )
+        else:
+            await mongo_collection.delete_one(
+                {'_id': self.unique_cog_identifier}
+            )
 
 
 def get_config_details():
