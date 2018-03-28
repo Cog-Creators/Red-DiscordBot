@@ -16,8 +16,8 @@ from redbot.core.cli import confirm
 from redbot.core.data_manager import basic_config_default
 from redbot.core.json_io import JsonIO
 from redbot.core.utils import safe_delete
-from redbot.core.drivers.red_mongo import Mongo, get_config_details
 from redbot.core.drivers.red_json import JSON
+from redbot.core.drivers.red_mongo import get_config_details
 
 config_dir = None
 appdir = appdirs.AppDirs("Red-DiscordBot")
@@ -172,6 +172,7 @@ def basic_setup():
 
 
 async def json_to_mongo(current_data_dir: Path, storage_details: dict):
+    from redbot.core.drivers.red_mongo import Mongo
     core_data_file = list(current_data_dir.glob("core/settings.json"))[0]
     m = Mongo("Core", **storage_details)
     with core_data_file.open(mode="r") as f:
@@ -198,6 +199,7 @@ async def json_to_mongo(current_data_dir: Path, storage_details: dict):
 
 
 async def mongo_to_json(current_data_dir: Path, storage_details: dict):
+    from redbot.core.drivers.red_mongo import Mongo
     m = Mongo("Core", **storage_details)
     db = m.db
     collection_names = await db.collection_names(include_system_collections=False)
