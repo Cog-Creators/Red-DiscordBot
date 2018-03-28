@@ -63,6 +63,14 @@ def save_config(name, data, remove=False):
     if remove and name in config:
         config.pop(name)
     else:
+        if name in config:
+            print(
+                "WARNING: An instance already exists with this name. "
+                "Continuing will overwrite the existing instance config."
+            )
+            if not confirm("Are you absolutely certain you want to continue (y/n)? "):
+                print("Not continuing")
+                sys.exit(0)
         config[name] = data
     JsonIO(config_file)._save_json(config)
 
