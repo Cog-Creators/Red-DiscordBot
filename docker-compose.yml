@@ -15,4 +15,6 @@ services:
 
 secrets:
   RED_TOKEN:
-    file: ./docker/RED_TOKEN
+    file: ./docker/settings/TOKEN
+  PREFIX:
+    file: ./docker/settings/PREFIX

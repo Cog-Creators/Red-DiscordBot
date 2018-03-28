@@ -159,7 +159,7 @@ ENV/
 # dockerdata
 docker/data/
 *.env
-docker/RED_TOKEN
-# but we want the basic config
+docker/settings/*
+# but we want the basic config and templates
 !docker/basic-config.json
-!docker/entrypoint.sh
+!docker/settings/TOKEN.example
