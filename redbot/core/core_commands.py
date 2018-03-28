@@ -23,9 +23,6 @@ from redbot.core import checks
 from redbot.core import i18n
 from redbot.core import rpc
 from redbot.core.context import RedContext
-from redbot.core.data_manager import basic_config, instance_name
-from redbot.core.drivers.red_mongo import Mongo
-from redbot.core.drivers.red_json import JSON
 from .utils import TYPE_CHECKING
 from .utils.chat_formatting import pagify, box, inline
 
@@ -823,8 +820,11 @@ class Core:
     @checks.is_owner()
     async def backup(self, ctx):
         """Creates a backup of all data for the instance."""
+        from redbot.core.data_manager import basic_config, instance_name
+        from redbot.core.drivers.red_json import JSON
         data_dir = Path(basic_config["DATA_PATH"])
         if basic_config["STORAGE_TYPE"] == "MongoDB":
+            from redbot.core.drivers.red_mongo import Mongo
             m = Mongo("Core", **basic_config["STORAGE_DETAILS"])
             db = m.db
             collection_names = await db.collection_names(include_system_collections=False)
