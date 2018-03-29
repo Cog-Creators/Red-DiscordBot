@@ -17,7 +17,6 @@ from redbot.core.data_manager import basic_config_default
 from redbot.core.json_io import JsonIO
 from redbot.core.utils import safe_delete
 from redbot.core.drivers.red_json import JSON
-from redbot.core.drivers.red_mongo import get_config_details
 
 config_dir = None
 appdir = appdirs.AppDirs("Red-DiscordBot")
@@ -268,6 +267,7 @@ async def edit_instance():
         }
         default_dirs["STORAGE_TYPE"] = storage_dict[storage]
         if storage_dict.get(storage, 1) == "MongoDB":
+            from redbot.core.drivers.red_mongo import get_config_details
             storage_details = get_config_details()
             default_dirs["STORAGE_DETAILS"] = storage_details
 
