@@ -162,4 +162,4 @@ docker/data/
 docker/settings/*
 # but we want the basic config and templates
 !docker/basic-config.json
-!docker/settings/TOKEN.example
+!docker/settings/*.example

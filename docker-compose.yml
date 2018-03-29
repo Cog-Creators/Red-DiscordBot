@@ -10,8 +10,8 @@ services:
     restart: always
     secrets:
       - RED_TOKEN
+      - PREFIX
     command: ./run_red.sh
-    env_file: ./docker/.env
 
 secrets:
   RED_TOKEN:
