@@ -422,13 +422,13 @@ class Audio:
         if not self._player_check(ctx):
             try:
                 await lavalink.connect(ctx.author.voice.channel)
+                player = lavalink.get_player(ctx.guild.id)
+                player.store('connect', datetime.datetime.utcnow())
             except AttributeError:
                 return await self._embed_msg(ctx, 'Connect to a voice channel first.')
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
                 return await self._embed_msg(ctx, 'You need the DJ role to queue songs.')
-            player = lavalink.get_player(ctx.guild.id)
-            player.store('connect', datetime.datetime.utcnow())
         player = lavalink.get_player(ctx.guild.id)
         player.store('channel', ctx.channel.id)
         player.store('guild', ctx.guild.id)
@@ -614,10 +614,10 @@ class Audio:
         if not self._player_check(ctx):
             try:
                 await lavalink.connect(ctx.author.voice.channel)
+                player = lavalink.get_player(ctx.guild.id)
+                player.store('connect', datetime.datetime.utcnow())
             except AttributeError:
                 return await self._embed_msg(ctx, 'Connect to a voice channel first.')
-            player = lavalink.get_player(ctx.guild.id)
-            player.store('connect', datetime.datetime.utcnow())
         player = lavalink.get_player(ctx.guild.id)
         shuffle = await self.config.guild(ctx.guild).shuffle()
         player.store('channel', ctx.channel.id)
