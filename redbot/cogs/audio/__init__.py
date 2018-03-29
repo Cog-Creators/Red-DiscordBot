@@ -50,7 +50,7 @@ async def setup(bot: commands.Bot):
     await start_lavalink_server(bot.loop)
 
     async def _finish():
-        await asyncio.sleep(10)
+        await asyncio.sleep(50)
         await cog.init_config()
         bot.add_cog(cog)
 
