@@ -9,6 +9,7 @@ from setuptools import find_packages
 
 IS_TRAVIS = 'TRAVIS' in os.environ
 IS_DEPLOYING = 'DEPLOYING' in os.environ
+IS_RTD = 'READTHEDOCS' in os.environ
 
 dep_links = ['https://github.com/Rapptz/discord.py/tarball/rewrite#egg=discord.py-1.0']
 if IS_TRAVIS:
@@ -23,10 +24,13 @@ def get_package_list():
 def get_requirements():
     with open('requirements.txt') as f:
         requirements = f.read().splitlines()
-    if IS_TRAVIS and not IS_DEPLOYING:
+    try:
         requirements.remove('git+https://github.com/Rapptz/discord.py.git@rewrite#egg=discord.py[voice]')
-    else:
-        requirements.append('discord.py>=1.0.0a0')  # Because RTD
+    except ValueError:
+        pass
+
+    if IS_DEPLOYING or not (IS_TRAVIS or IS_RTD):
+        requirements.append('discord.py>=1.0.0a0')
     if sys.platform.startswith("linux"):
         requirements.append("distro")
     return requirements
@@ -90,9 +94,10 @@ def find_locale_folders():
 
 setup(
     name='Red-DiscordBot',
-    version="{}.{}.{}b9".format(*get_version()),
+    version="{}.{}.{}b10".format(*get_version()),
     packages=get_package_list(),
     package_data=find_locale_folders(),
+    include_package_data=True,
     url='https://github.com/Cog-Creators/Red-DiscordBot',
     license='GPLv3',
     author='Cog-Creators',
@@ -122,10 +127,10 @@ setup(
     dependency_links=dep_links,
     extras_require={
         'test': [
-            'pytest>=3', 'pytest-asyncio'
+            'pytest>3', 'pytest-asyncio'
         ],
         'mongo': ['motor'],
-        'docs': ['sphinx', 'sphinxcontrib-asyncio', 'sphinx_rtd_theme'],
-        'voice': ['PyNaCl']
+        'docs': ['sphinx==1.6.5', 'sphinxcontrib-asyncio', 'sphinx_rtd_theme'],
+        'voice': ['red-lavalink>=0.0.4']
     }
 )

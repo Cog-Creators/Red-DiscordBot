@@ -328,8 +328,8 @@ class Mod:
 
         try:
             await modlog.create_case(
-                guild, ctx.message.created_at, "kick", user, author,
-                reason, until=None, channel=None
+                self.bot, guild, ctx.message.created_at, "kick",
+                user, author, reason, until=None, channel=None
             )
         except RuntimeError as e:
             await ctx.send(e)
@@ -359,6 +359,10 @@ class Mod:
             if days.isdigit():
                 days = int(days)
             else:
+                if reason:
+                    reason = "{} {}".format(days, reason)
+                else:
+                    reason = days
                 days = 0
         else:
             days = 0
@@ -385,8 +389,8 @@ class Mod:
 
         try:
             await modlog.create_case(
-                guild, ctx.message.created_at, "ban", user, author,
-                reason, until=None, channel=None
+                self.bot, guild, ctx.message.created_at, "ban",
+                user, author, reason, until=None, channel=None
             )
         except RuntimeError as e:
             await ctx.send(e)
@@ -438,8 +442,8 @@ class Mod:
         user_info = await self.bot.get_user_info(user_id)
         try:
             await modlog.create_case(
-                guild, ctx.message.created_at, "hackban", user_info, author,
-                reason, until=None, channel=None
+                self.bot, guild, ctx.message.created_at, "hackban",
+                user_info, author, reason, until=None, channel=None
             )
         except RuntimeError as e:
             await ctx.send(e)
@@ -486,7 +490,7 @@ class Mod:
 
             try:
                 await modlog.create_case(
-                    guild, ctx.message.created_at, "tempban",
+                    self.bot, guild, ctx.message.created_at, "tempban",
                     user, author, reason, unban_time
                 )
             except RuntimeError as e:
@@ -556,6 +560,7 @@ class Mod:
                                               user.name, user.id))
                 try:
                     await modlog.create_case(
+                        self.bot,
                         guild,
                         ctx.message.created_at,
                         "softban",
@@ -605,8 +610,8 @@ class Mod:
 
         try:
             await modlog.create_case(
-                guild, ctx.message.created_at, "unban", user, author,
-                reason, until=None, channel=None
+                self.bot, guild, ctx.message.created_at, "unban",
+                user, author, reason, until=None, channel=None
             )
         except RuntimeError as e:
             await ctx.send(e)
@@ -693,8 +698,8 @@ class Mod:
 
         try:
             await modlog.create_case(
-                guild, ctx.message.created_at, "voiceban", user, author,
-                reason, until=None, channel=None
+                self.bot, guild, ctx.message.created_at, "voiceban",
+                user, author, reason, until=None, channel=None
             )
         except RuntimeError as e:
             await ctx.send(e)
@@ -728,8 +733,8 @@ class Mod:
         author = ctx.author
         try:
             await modlog.create_case(
-                guild, ctx.message.created_at, "voiceunban", user, author,
-                reason, until=None, channel=None
+                self.bot, guild, ctx.message.created_at, "voiceunban",
+                user, author, reason, until=None, channel=None
             )
         except RuntimeError as e:
             await ctx.send(e)
@@ -787,8 +792,8 @@ class Mod:
                 )
                 try:
                     await modlog.create_case(
-                        guild, ctx.message.created_at, "boicemute", user, author,
-                        reason, until=None, channel=channel
+                        self.bot, guild, ctx.message.created_at, "boicemute",
+                        user, author, reason, until=None, channel=channel
                     )
                 except RuntimeError as e:
                     await ctx.send(e)
@@ -822,8 +827,8 @@ class Mod:
             await channel.send(_("User has been muted in this channel."))
             try:
                 await modlog.create_case(
-                    guild, ctx.message.created_at, "cmute", user, author,
-                    reason, until=None, channel=channel
+                    self.bot, guild, ctx.message.created_at, "cmute",
+                    user, author, reason, until=None, channel=channel
                 )
             except RuntimeError as e:
                 await ctx.send(e)
@@ -858,8 +863,8 @@ class Mod:
         await ctx.send(_("User has been muted in this guild."))
         try:
             await modlog.create_case(
-                guild, ctx.message.created_at, "smute", user, author,
-                reason, until=None, channel=None
+                self.bot, guild, ctx.message.created_at, "smute",
+                user, author, reason, until=None, channel=None
             )
         except RuntimeError as e:
             await ctx.send(e)
@@ -920,8 +925,8 @@ class Mod:
                         user.name, user.discriminator, channel.name))
                 try:
                     await modlog.create_case(
-                        guild, ctx.message.created_at, "voiceunmute", user, author,
-                        reason, until=None, channel=channel
+                        self.bot, guild, ctx.message.created_at, "voiceunmute",
+                        user, author, reason, until=None, channel=channel
                     )
                 except RuntimeError as e:
                     await ctx.send(e)
@@ -949,8 +954,8 @@ class Mod:
             await ctx.send(_("User unmuted in this channel."))
             try:
                 await modlog.create_case(
-                    guild, ctx.message.created_at, "cunmute", user, author,
-                    reason, until=None, channel=channel
+                    self.bot, guild, ctx.message.created_at, "cunmute",
+                    user, author, reason, until=None, channel=channel
                 )
             except RuntimeError as e:
                 await ctx.send(e)
@@ -981,8 +986,8 @@ class Mod:
         await ctx.send(_("User has been unmuted in this guild."))
         try:
             await modlog.create_case(
-                guild, ctx.message.created_at, "sunmute", user, author,
-                reason, until=None, channel=channel
+                self.bot, guild, ctx.message.created_at, "sunmute",
+                user, author, reason, until=None, channel=channel
             )
         except RuntimeError as e:
             await ctx.send(e)
@@ -1205,8 +1210,8 @@ class Mod:
                 else:
                     try:
                         case = await modlog.create_case(
-                            guild, message.created_at, "ban", author, guild.me,
-                            "Mention spam (Autoban)", until=None, channel=None
+                            self.bot, guild, message.created_at, "ban", author,
+                            guild.me, "Mention spam (Autoban)", until=None, channel=None
                         )
                     except RuntimeError as e:
                         print(e)
@@ -1265,7 +1270,7 @@ class Mod:
         if date is None:
             date = datetime.now()
         try:
-            await modlog.create_case(guild, date,
+            await modlog.create_case(self.bot, guild, date,
                                      "ban", member, mod,
                                      reason if reason else None)
         except RuntimeError as e:
@@ -1284,7 +1289,7 @@ class Mod:
         if date is None:
             date = datetime.now()
         try:
-            await modlog.create_case(guild, date, "unban",
+            await modlog.create_case(self.bot, guild, date, "unban",
                                      user, mod, reason)
         except RuntimeError as e:
             print(e)
