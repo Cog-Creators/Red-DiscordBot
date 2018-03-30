@@ -377,7 +377,7 @@ class Audio:
         if player.paused and command == 'pause':
             return await self._embed_msg(ctx, 'Track is paused.')
         if player.current and command == 'resume':
-            return await self._embed_msg(ctx, 'Track is playing.'
+            return await self._embed_msg(ctx, 'Track is playing.')
         await self._embed_msg(ctx, 'Nothing playing.')
 
     @commands.command()
