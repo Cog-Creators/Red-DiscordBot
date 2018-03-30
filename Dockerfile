@@ -18,8 +18,11 @@ RUN echo "red:x:1000:1000::/home/red:" >> /etc/passwd && \
     echo "red:!:$(($(date +%s) / 60 / 60 / 24)):0:99999:7:::" >> /etc/shadow && \
     echo "red:x:1000:" >> /etc/group && \
     chmod +x /home/red/run_red.sh && \
+    mkdir /data && \
+    mkdir -p /home/red/.local/share && \
+    ln -s /data /home/red/.local/share/Red-DiscordBot && \
     chown red:red /home/red
 
 USER red
 
-CMD python3 -m redbot docker
+CMD python3 -m redbot docker --no-prompt --dev --mentionable --prefix ${PREFIX}
