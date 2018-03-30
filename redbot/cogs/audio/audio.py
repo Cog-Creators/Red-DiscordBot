@@ -350,7 +350,8 @@ class Audio:
             if not await self._can_instaskip(ctx, ctx.author):
                 return await self._embed_msg(ctx, 'You need the DJ role to pause songs.')
 
-        if player.current and not player.paused:
+        command = ctx.invoked_with
+        if player.current and not player.paused and command == 'pause':
             await player.pause()
             embed = discord.Embed(
                 colour=ctx.guild.me.top_role.colour, title='Track Paused',
@@ -361,7 +362,7 @@ class Audio:
             )
             return await ctx.send(embed=embed)
 
-        if player.paused:
+        if player.paused and command == 'resume':
             await player.pause(False)
             embed = discord.Embed(
                 colour=ctx.guild.me.top_role.colour,
@@ -372,6 +373,11 @@ class Audio:
                 )
             )
             return await ctx.send(embed=embed)
+
+        if player.paused and command == 'pause':
+            return await self._embed_msg(ctx, 'Track is paused.')
+        if player.current and command == 'resume':
+            return await self._embed_msg(ctx, 'Track is playing.'.format(command))
         await self._embed_msg(ctx, 'Nothing playing.')
 
     @commands.command()
