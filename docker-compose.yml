@@ -11,7 +11,7 @@ services:
     secrets:
       - RED_TOKEN
       - PREFIX
-    command: ./run_red.sh
+    command: /home/red/run_red.sh
 
 secrets:
   RED_TOKEN:
