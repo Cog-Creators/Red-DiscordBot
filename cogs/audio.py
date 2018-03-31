@@ -360,14 +360,15 @@ class Audio:
         self.queue[server.id][QueueKey.QUEUE].appendleft(queued_song)
 
     def _cache_desired_files(self):
-        filelist = []
+        filelist = set()
+
         for server in self.downloaders:
             song = self.downloaders[server].song
             try:
-                filelist.append(song.id)
+                filelist.add(song.id)
             except AttributeError:
                 pass
-        shuffle(filelist)
+
         return filelist
 
     def _cache_max(self):
@@ -380,13 +381,15 @@ class Audio:
 
     def _cache_required_files(self):
         queue = copy.deepcopy(self.queue)
-        filelist = []
+        filelist = set()
+
         for server in queue:
             now_playing = queue[server].get(QueueKey.NOW_PLAYING)
             try:
-                filelist.append(now_playing.id)
+                filelist.add(now_playing.id)
             except AttributeError:
                 pass
+
         return filelist
 
     def _cache_size(self):
@@ -552,16 +555,22 @@ class Audio:
         prev_size = self._cache_size()
 
         for file in os.listdir(self.cache_path):
-            if file not in reqd:
-                if ignore_desired or file not in opt:
-                    try:
-                        os.remove(os.path.join(self.cache_path, file))
-                    except OSError:
-                        # A directory got in the cache?
-                        pass
-                    except WindowsError:
-                        # Removing a file in use, reqd failed
-                        pass
+            if file in reqd:
+                continue
+            elif not ignore_desired:
+                if file in opt:
+                    continue
+                elif file.endswith('.part') and file[:-5] in opt:
+                    continue
+
+            try:
+                os.remove(os.path.join(self.cache_path, file))
+            except OSError:
+                # A directory got in the cache?
+                pass
+            except WindowsError:
+                # Removing a file in use, reqd failed
+                pass
 
         post_size = self._cache_size()
         dumped = prev_size - post_size
