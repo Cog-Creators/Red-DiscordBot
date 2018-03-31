@@ -164,9 +164,9 @@ class Reports:
 
         async with self.settings.guild(guild).reports() as report_dict:
             # JSON and integer keys don't mix
-            ticket_number = max(
+            ticket_number = int(max(
                 report_dict.keys(), default=0, key=lambda x: int(x)
-            ) + 1
+            )) + 1
             em.set_footer(text=_("Report #{}").format(ticket_number))
 
             channel_id = await self.settings.guild(guild).output_channel()

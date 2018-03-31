@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import Tuple
+from typing import Tuple, List
 from collections import namedtuple
 
 Interval = Tuple[timedelta, int]
@@ -29,7 +29,7 @@ class AntiSpam:
         (timedelta(days=1), 24)
     ]
 
-    def __init__(self, *intervals: Interval):
+    def __init__(self, intervals: List[Interval]):
         self.__event_timestamps = []
         _itvs = intervals if intervals else self.default_intervals
         self.__intervals = [
