@@ -5,7 +5,7 @@ import heapq
 import lavalink
 import math
 from discord.ext import commands
-from redbot.core import Config, checks
+from redbot.core import Config, checks, bank
 
 from .manager import shutdown_lavalink_server
 
@@ -30,6 +30,8 @@ class Audio:
         default_guild = {
             "dj_enabled": False,
             "dj_role": None,
+            "jukebox": False,
+            "jukebox_price": 0,
             "notify": False,
             "repeat": False,
             "shuffle": False,
@@ -153,6 +155,25 @@ class Audio:
         await self._embed_msg(ctx, 'DJ role set to: {}.'.format(dj_role_obj.name))
 
     @audioset.command()
+    @checks.mod_or_permissions(administrator=True)
+    async def jukebox(self, ctx, price: int):
+        """Set a price for queueing songs for non-mods. 0 to disable."""
+        jukebox = await self.config.guild(ctx.guild).jukebox()
+        jukebox_price = await self.config.guild(ctx.guild).jukebox_price()
+        if price < 0:
+            return await self._embed_msg(ctx, 'Can\'t be less than zero.')
+        if price == 0:
+            jukebox = False
+            await self._embed_msg(ctx, 'Jukebox mode disabled.')
+        else:
+            jukebox = True
+            await self._embed_msg(ctx, 'Track queueing command price set to {} {}.'.format(
+                                  price, await bank.get_currency_name(ctx.guild)))
+
+        await self.config.guild(ctx.guild).jukebox_price.set(price)
+        await self.config.guild(ctx.guild).jukebox.set(jukebox)
+
+    @audioset.command()
     @checks.mod_or_permissions(manage_messages=True)
     async def notify(self, ctx):
         """Toggle song announcement and other bot messages."""
@@ -166,19 +187,26 @@ class Audio:
         data = await self.config.guild(ctx.guild).all()
         dj_role_obj = discord.utils.get(ctx.guild.roles, id=data['dj_role'])
         dj_enabled = data['dj_enabled']
+        jukebox = data['jukebox']
+        jukebox_price = data['jukebox_price']
         status = await self.config.status()
+        vote_percent = data['vote_percent']
         msg = ('```ini\n'
                '----Guild Settings----\n')
         if dj_enabled:
             msg += 'DJ Role:          [{}]\n'.format(dj_role_obj.name)
+        if jukebox:
+            msg += 'Jukebox:          [{0}]\n'.format(jukebox)
+            msg += 'Command price:    [{0}]\n'.format(jukebox_price)
         msg += ('Repeat:           [{repeat}]\n'
                 'Shuffle:          [{shuffle}]\n'
                 'Song notify msgs: [{notify}]\n'
-                'Songs as status:  [{0}]\n'
-                'Vote skip:        [{vote_enabled}]\n'
-                'Skip percentage:  [{vote_percent}%]\n'
-                '---Lavalink Settings---\n'
-                'Cog version: {1}\n```'.format(status, __version__, **data))
+                'Songs as status:  [{0}]\n'.format(status, **data))
+        if vote_percent > 0:
+            msg += ('Vote skip:        [{vote_enabled}]\n'
+                    'Skip percentage:  [{vote_percent}%]\n').format(**data)
+        msg += ('---Lavalink Settings---\n'
+                'Cog version: {}\n```'.format(__version__))
 
         embed = discord.Embed(colour=ctx.guild.me.top_role.colour, description=msg)
         return await ctx.send(embed=embed)
@@ -424,6 +452,7 @@ class Audio:
     async def play(self, ctx, *, query):
         """Play a URL or search for a song."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        jukebox_price = await self.config.guild(ctx.guild).jukebox_price()
         shuffle = await self.config.guild(ctx.guild).shuffle()
         if not self._player_check(ctx):
             try:
@@ -435,6 +464,8 @@ class Audio:
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
                 return await self._embed_msg(ctx, 'You need the DJ role to queue songs.')
+        if not await self._currency_check(ctx, jukebox_price):
+            return
         player = lavalink.get_player(ctx.guild.id)
         player.store('channel', ctx.channel.id)
         player.store('guild', ctx.guild.id)
@@ -692,8 +723,11 @@ class Audio:
 
     async def _search_button(self, ctx, message, tracks, entry: int):
         player = lavalink.get_player(ctx.guild.id)
+        jukebox_price = await self.config.guild(ctx.guild).jukebox_price()
         shuffle = await self.config.guild(ctx.guild).shuffle()
         await self._clear_react(message)
+        if not await self._currency_check(ctx, jukebox_price):
+            return
         search_choice = tracks[entry]
         embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='Track Enqueued',
                               description='**[{}]({})**'.format(search_choice.title, search_choice.uri))
@@ -951,6 +985,19 @@ class Audio:
             await message.clear_reactions()
         except (discord.Forbidden, discord.HTTPException):
             return
+
+    async def _currency_check(self, ctx, jukebox_price: int):
+        jukebox = await self.config.guild(ctx.guild).jukebox()
+        if jukebox and not await self._can_instaskip(ctx, ctx.author):
+            try:
+                await bank.withdraw_credits(ctx.author, jukebox_price)
+                return True
+            except ValueError:
+                credits_name = await bank.get_currency_name(ctx.guild)
+                await self._embed_msg(ctx, 'Not enough {} ({} required).'.format(credits_name, jukebox_price))
+                return False
+        else:
+            return True
 
     async def _data_check(self, ctx):
         player = lavalink.get_player(ctx.guild.id)
