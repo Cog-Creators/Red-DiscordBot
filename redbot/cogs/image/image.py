@@ -48,7 +48,7 @@ class Image:
                     "`{}imgurcreds`".format(ctx.prefix)))
             return
         headers = {"Authorization": "Client-ID {}".format(imgur_client_id)}
-        async with self.session.get(url, headers=headers, data=params) as search_get:
+        async with self.session.get(url, headers=headers, params=params) as search_get:
             data = await search_get.json()
 
         if data["success"]:
