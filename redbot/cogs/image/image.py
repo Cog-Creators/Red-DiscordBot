@@ -39,7 +39,7 @@ class Image:
     @_imgur.command(name="search")
     async def imgur_search(self, ctx, *, term: str):
         """Searches Imgur for the specified term and returns up to 3 results"""
-        url = self.imgur_base_url + "time/all/0"
+        url = self.imgur_base_url + "gallery/search/time/all/0"
         params = {"q": term}
         imgur_client_id = await self.settings.imgur_client_id()
         if not imgur_client_id:
@@ -95,7 +95,7 @@ class Image:
 
         links = []
         headers = {"Authorization": "Client-ID {}".format(imgur_client_id)}
-        url = self.imgur_base_url + "r/{}/{}/{}/0".format(subreddit, sort, window)
+        url = self.imgur_base_url + "gallery/r/{}/{}/{}/0".format(subreddit, sort, window)
 
         async with self.session.get(url, headers=headers) as sub_get:
             data = await sub_get.json()
