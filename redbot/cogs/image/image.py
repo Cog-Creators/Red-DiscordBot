@@ -42,7 +42,13 @@ class Image:
         """Searches Imgur for the specified term and returns up to 3 results"""
         url = self.imgur_base_url + "time/all/0"
         params = {"q": term}
-        headers = {"Authorization": "Client-ID {}".format(await self.settings.imgur_client_id())}
+        imgur_client_id = await self.settings.imgur_client_id()
+        if not imgur_client_id:
+            await ctx.send(
+                _("A client ID has not been set! Please set one with {}").format(
+                    "`{}imgurcreds`".format(ctx.prefix)))
+            return
+        headers = {"Authorization": "Client-ID {}".format(imgur_client_id)}
         async with self.session.get(url, headers=headers, data=params) as search_get:
             data = await search_get.json()
 
@@ -81,8 +87,15 @@ class Image:
         elif sort_type == "top":
             sort = "top"
 
+        imgur_client_id = await self.settings.imgur_client_id()
+        if not imgur_client_id:
+            await ctx.send(
+                _("A client ID has not been set! Please set one with {}").format(
+                    "`{}imgurcreds`".format(ctx.prefix)))
+            return
+
         links = []
-        headers = {"Authorization": "Client-ID {}".format(await self.settings.imgur_client_id())}
+        headers = {"Authorization": "Client-ID {}".format(imgur_client_id)}
         url = self.imgur_base_url + "r/{}/{}/{}/0".format(subreddit, sort, window)
 
         async with self.session.get(url, headers=headers) as sub_get:
