@@ -28,7 +28,6 @@ class Image:
         self.session.close()
 
     @commands.group(name="imgur")
-    @commands.guild_only()
     async def _imgur(self, ctx):
         """Retrieves pictures from imgur
 
@@ -124,6 +123,7 @@ class Image:
         You can get these by visiting https://api.imgur.com/oauth2/addclient
         and filling out the form. Enter a name for the application, select
         'Anonymous usage without user authorization' for the auth type,
+        set the authorization callback url to 'https://localhost'
         leave the app website blank, enter a valid email address, and
         enter a description. Check the box for the captcha, then click Next.
         Your client ID will be on the page that loads"""
