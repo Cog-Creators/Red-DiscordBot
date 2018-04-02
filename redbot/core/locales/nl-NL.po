@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2018-02-19 03:59+UTC\n"
-"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"PO-Revision-Date: 2018-04-02 19:27-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -83,7 +83,7 @@ msgstr "Afsluiten... "
 
 #: ../core_commands.py:310
 msgid "Restarting..."
-msgstr ""
+msgstr "Herstarten..."
 
 #: ../core_commands.py:347
 msgid "The admin role for this guild has been set."
@@ -269,7 +269,7 @@ msgstr ""
 
 #: ../core_commands.py:792
 msgid "blacklist has been cleared."
-msgstr ""
+msgstr "de verbanningslijst is gewist."
 
 #: ../dev_commands.py:213
 msgid "Already running a REPL session in this channel. Exit it with `quit`."
