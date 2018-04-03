@@ -90,7 +90,7 @@ Here's an example of that in use:
             # list with identical results outside of memory usage
             def conversion_spec(v2data):
                 for guild_id in v2.data.keys():
-                    yield {('GUILD', guild_id): {('blacklisted',): True}}
+                    yield {(Config.GUILD, guild_id): {('blacklisted',): True}}
                     # This is yielding a dictionary that is designed for config's set_raw. 
                     # The keys should be a tuple of Config scopes + the needed Identifiers. The
                     # values should be another dictionary whose keys are tuples representing
@@ -131,17 +131,17 @@ scopes available in Config. This does not cover usage of custom scopes, though t
 data converter is compatible with those as well.
 
 Global::
-    :code:`('GLOBAL',)`
+    :code:`(Config.GLOBAL,)`
 Guild::
-    :code:`('GUILD', guild_id)`
+    :code:`(Config.GUILD, guild_id)`
 Channel::
-    :code:`('CHANNEL', channel_id)`
+    :code:`(Config.CHANNEL, channel_id)`
 User::
-    :code:`('USER', user_id)`
+    :code:`(Config.USER, user_id)`
 Member::
-    :code:`('MEMBER', guild_id, user_id)`
+    :code:`(Config.MEMBER, guild_id, user_id)`
 Role::
-    :code:`('ROLE', role_id)`
+    :code:`(Config.ROLE, role_id)`
 
 
 -----------------------------

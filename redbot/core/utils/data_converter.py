@@ -57,7 +57,7 @@ class DataConverter:
 
             .. code-block:: python
 
-                {('MEMBER', '133049272517001216', '78631113035100160'):
+                {(Config.MEMBER, '133049272517001216', '78631113035100160'):
                     {('balance',): 9001}}
 
 
@@ -110,7 +110,7 @@ class DataConverter:
 
             .. code-block:: python
 
-                {('MEMBER', '133049272517001216', '78631113035100160'):
+                {(Config.MEMBER, '133049272517001216', '78631113035100160'):
                     {('balance',): 9001}}
 
             This allows for any amount of entries at each level

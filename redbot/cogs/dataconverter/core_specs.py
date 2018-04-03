@@ -91,7 +91,7 @@ class SpecResolver(object):
         return {(scope,) + k: v for k, v in data.items()}
 
     def bank_accounts_conv_spec(self, data: dict):
-        flatscoped = self.apply_scope('MEMBER', self.flatten_dict(data))
+        flatscoped = self.apply_scope(Config.MEMBER, self.flatten_dict(data))
         ret = {}
         for k, v in flatscoped.items():
             outerkey, innerkey = tuple(k[:-1]), (k[-1],)
@@ -108,7 +108,7 @@ class SpecResolver(object):
         return ret
 
     def economy_conv_spec(self, data: dict):
-        flatscoped = self.apply_scope('GUILD', self.flatten_dict(data))
+        flatscoped = self.apply_scope(Config.GUILD, self.flatten_dict(data))
         ret = {}
         for k, v in flatscoped.items():
             outerkey, innerkey = (*k[:-1],), (k[-1],)
@@ -122,18 +122,18 @@ class SpecResolver(object):
 
     def filter_conv_spec(self, data: dict):
         return {
-            ('GUILD', k): {('filter',): v}
+            (Config.GUILD, k): {('filter',): v}
             for k, v in data.items()
         }
 
     def past_names_conv_spec(self, data: dict):
         return {
-            ('USER', k): {('past_names',): v}
+            (Config.USER, k): {('past_names',): v}
             for k, v in data.items()
         }
 
     def past_nicknames_conv_spec(self, data: dict):
-        flatscoped = self.apply_scope('MEMBER', self.flatten_dict(data))
+        flatscoped = self.apply_scope(Config.MEMBER, self.flatten_dict(data))
         ret = {}
         for k, v in flatscoped.items():
             outerkey, innerkey = (*k[:-1],), (k[-1],)
@@ -143,7 +143,7 @@ class SpecResolver(object):
         return ret
 
     def customcom_conv_spec(self, data: dict):
-        flatscoped = self.apply_scope('GUILD', self.flatten_dict(data))
+        flatscoped = self.apply_scope(Config.GUILD, self.flatten_dict(data))
         ret = {}
         for k, v in flatscoped.items():
             outerkey, innerkey = (*k[:-1],), ('commands', k[-1])
