@@ -342,24 +342,22 @@ class Core:
                 #await ctx.send(_("No module named '{}' was found in any"
                 #                 " cog path.").format(c))
 
-        if len(cogspecs) == 0:
-            return
+        if len(cogspecs) > 0:
+            for spec, name  in cogspecs:
+                try:
+                    await ctx.bot.load_extension(spec)
+                except Exception as e:
+                    log.exception("Package loading failed", exc_info=e)
 
-        for spec, name  in cogspecs:
-            try:
-                await ctx.bot.load_extension(spec)
-            except Exception as e:
-                log.exception("Package loading failed", exc_info=e)
-
-                exception_log = ("Exception in command '{}'\n"
-                                 "".format(ctx.command.qualified_name))
-                exception_log += "".join(traceback.format_exception(type(e),
-                                         e, e.__traceback__))
-                self.bot._last_exception = exception_log
-                failed_packages.append(inline(name))
-            else:
-                await ctx.bot.add_loaded_package(name)
-                loaded_packages.append(inline(name))
+                    exception_log = ("Exception in command '{}'\n"
+                                     "".format(ctx.command.qualified_name))
+                    exception_log += "".join(traceback.format_exception(type(e),
+                                             e, e.__traceback__))
+                    self.bot._last_exception = exception_log
+                    failed_packages.append(inline(name))
+                else:
+                    await ctx.bot.add_loaded_package(name)
+                    loaded_packages.append(inline(name))
 
         if loaded_packages:
             fmt = "Loaded {packs}"
