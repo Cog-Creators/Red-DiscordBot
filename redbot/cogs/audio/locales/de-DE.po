@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"PO-Revision-Date: 2018-02-27 01:49-0500\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -18,11 +18,11 @@ msgstr ""
 
 #: ../audio.py:25 ../audio.py:45
 msgid "Join a voice channel first!"
-msgstr "Du musst zuerst einem Sprach Kanal beitreten!"
+msgstr "Tritt zuerst einem Sprachkanal bei!"
 
 #: ../audio.py:33
 msgid "Let's play a file that exists pls"
-msgstr "Lassen Sie uns eine Datei spielen, die es gibt"
+msgstr "Lass uns eine Datei abspielen, die vorhanden ist"
 
 #: ../audio.py:38 ../audio.py:58
 msgid "{} is playing a song..."
