@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-02-25 21:34-0500\n"
+"PO-Revision-Date: 2018-04-02 19:27-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -18,25 +18,25 @@ msgstr ""
 
 #: ../audio.py:25 ../audio.py:45
 msgid "Join a voice channel first!"
-msgstr ""
+msgstr "Bergabung dengan channel suara dulu!"
 
 #: ../audio.py:33
 msgid "Let's play a file that exists pls"
-msgstr ""
+msgstr "Tolong memutar file yang ada"
 
 #: ../audio.py:38 ../audio.py:58
 msgid "{} is playing a song..."
-msgstr ""
+msgstr "{} sedang memainkan sebuah lagu..."
 
 #: ../audio.py:48
 msgid "Youtube links pls"
-msgstr ""
+msgstr "Link YouTube"
 
 #: ../audio.py:67 ../audio.py:77 ../audio.py:87 ../audio.py:97
 msgid "I'm not even connected to a voice channel!"
-msgstr ""
+msgstr "Saya belum memasuki channel suara!"
 
 #: ../audio.py:95
 msgid "Volume set."
-msgstr ""
+msgstr "Suara telah di atur."
 

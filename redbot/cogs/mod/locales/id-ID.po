@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-02-25 21:34-0500\n"
+"PO-Revision-Date: 2018-04-02 19:27-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -18,266 +18,270 @@ msgstr ""
 
 #: ../mod.py:209
 msgid "Role hierarchy will be checked when moderation commands are issued."
-msgstr ""
+msgstr "Peran hirarki akan diperiksa ketika mengeluarkan perintah moderasi."
 
 #: ../mod.py:213
 msgid "Role hierarchy will be ignored when moderation commands are issued."
-msgstr ""
+msgstr "Peran hirarki akan diabaikan ketika mengeluarkan perintah moderasi."
 
 #: ../mod.py:228
 msgid "Autoban for mention spam enabled. Anyone mentioning {} or more different people in a single message will be autobanned."
-msgstr ""
+msgstr "Autoban untuk penyebutan berulang diaktifkan. Siapa pun yang menyebutkan {} atau orang-orang yang lebih berbeda dalam satu pesan akan di autobanned."
 
 #: ../mod.py:239
 msgid "Autoban for mention spam disabled."
-msgstr ""
+msgstr "Autoban untuk penyebutan berulang dimatikan."
 
 #: ../mod.py:249
 msgid "Messages repeated up to 3 times will be deleted."
-msgstr ""
+msgstr "Pesan yang diulang sampai 3 kali akan dihapus."
 
 #: ../mod.py:253
 msgid "Repeated messages will be ignored."
-msgstr ""
+msgstr "Pesan yang diulang akan diabaikan."
 
 #: ../mod.py:267
 msgid "Command deleting disabled."
-msgstr ""
+msgstr "Perintah menghapus dinonaktifkan."
 
 #: ../mod.py:270
 msgid "Delete delay set to {} seconds."
-msgstr ""
+msgstr "Menghapus penundaan ditetapkan untuk {} detik."
 
 #: ../mod.py:275
 msgid "Bot will delete command messages after {} seconds. Set this value to -1 to stop deleting messages"
-msgstr ""
+msgstr "Bot akan menghapus pesan perintah setelah {} detik. Set nilai ini ke-1 untuk menghentikan menghapus pesan"
 
 #: ../mod.py:279
 msgid "I will not delete command messages."
-msgstr ""
+msgstr "Saya tidak akan menghapus pesan perintah."
 
 #: ../mod.py:292
 msgid "Users unbanned with {} will be reinvited."
-msgstr ""
+msgstr "Pengguna unbanned dengan {} akan diundang ulang."
 
 #: ../mod.py:295
 msgid "Users unbanned with {} will not be reinvited."
-msgstr ""
+msgstr "Pengguna unbanned dengan {} akan tidak diundang ulang."
 
 #: ../mod.py:309 ../mod.py:349 ../mod.py:506
 msgid "I cannot let you do that. Self-harm is bad {}"
-msgstr ""
+msgstr "Saya tidak dapat membiarkan Anda melakukan itu. Merugikan diri sendiri adalah buruk {}"
 
 #: ../mod.py:313 ../mod.py:353 ../mod.py:510
 msgid "I cannot let you do that. You are not higher than the user in the role hierarchy."
-msgstr ""
+msgstr "Saya tidak dapat membiarkan Anda melakukan itu. Anda tidak lebih tinggi daripada pengguna dalam peran hirarki."
 
 #: ../mod.py:323 ../mod.py:379 ../mod.py:570
 msgid "I'm not allowed to do that."
-msgstr ""
+msgstr "Saya tidak diizinkan untuk melakukan itu."
 
 #: ../mod.py:327
 msgid "Done. That felt good."
-msgstr ""
+msgstr "Selesai. Itu terasa baik."
 
 #: ../mod.py:369
 msgid "Invalid days. Must be between 0 and 7."
-msgstr ""
+msgstr "Hari-hari tidak sah. Harus antara 0 dan 7."
 
 #: ../mod.py:384
 msgid "Done. It was about time."
-msgstr ""
+msgstr "Selesai. Itu hanya masalah waktu."
 
 #: ../mod.py:413
 msgid "User is already banned."
-msgstr ""
+msgstr "Pengguna sudah dibanned."
 
 #: ../mod.py:429
 msgid "User not found. Have you provided the correct user ID?"
-msgstr ""
+msgstr "Pengguna tidak ditemukan. Sudahkah kamu memberikan ID pengguna yang benar?"
 
 #: ../mod.py:433
 msgid "I lack the permissions to do this."
-msgstr ""
+msgstr "Saya tidak memiliki izin untuk melakukan ini."
 
 #: ../mod.py:435
 msgid "Done. The user will not be able to join this guild."
-msgstr ""
+msgstr "Selesai. Pengguna tidak akan dapat bergabung dengan guild ini."
 
 #: ../mod.py:472
 msgid "You have been temporarily banned from {} until {}. Here is an invite for when your ban expires: {}"
-msgstr ""
+msgstr "Anda telah banned untuk sementara dari {} sampai {}. Berikut adalah undangan untuk ketika ban anda berakhir: {}"
 
 #: ../mod.py:481
 msgid "I can't do that for some reason."
-msgstr ""
+msgstr "Saya tidak bisa melakukan itu untuk beberapa alasan."
 
 #: ../mod.py:483
 msgid "Something went wrong while banning"
-msgstr ""
+msgstr "Terjadi suatu kesalahan saat banning"
 
 #: ../mod.py:485
 msgid "Done. Enough chaos for now"
-msgstr ""
+msgstr "Selesai. Cukup kekacauan untuk sekarang"
 
 #: ../mod.py:525
 msgid "You have been banned and then unbanned as a quick way to delete your messages.\n"
 "You can now join the guild again. {}"
-msgstr ""
+msgstr "Anda telah banned dan kemudian unbanned sebagai cara cepat untuk menghapus pesan anda.\n"
+"Anda sekarang dapat bergabung dengan guild lagi. {}"
 
 #: ../mod.py:537
 msgid "My role is not high enough to softban that user."
-msgstr ""
+msgstr "Hirarki saya tidak cukup tinggi untuk softban pengguna."
 
 #: ../mod.py:553
 msgid "Done. Enough chaos."
-msgstr ""
+msgstr "Selesai. Cukup kekacauan."
 
 #: ../mod.py:587
 msgid "Couldn't find a user with that ID!"
-msgstr ""
+msgstr "Tidak dapat menemukan pengguna dengan ID tersebut!"
 
 #: ../mod.py:593
 msgid "It seems that user isn't banned!"
-msgstr ""
+msgstr "Tampaknya bahwa pengguna tidak di banned!"
 
 #: ../mod.py:601
 msgid "Something went wrong while attempting to unban that user"
-msgstr ""
+msgstr "Terjadi kesalahan saat mencoba untuk mengunban pengguna"
 
 #: ../mod.py:604
 msgid "Unbanned that user from this guild"
-msgstr ""
+msgstr "Unbanned pengguna dari guild ini"
 
 #: ../mod.py:619
 msgid "You've been unbanned from {}.\n"
 "Here is an invite for that guild: {}"
-msgstr ""
+msgstr "Anda telah di unbanned dari {}. Berikut adalah undangan untuk bergabung ke guild: {}"
 
 #: ../mod.py:623
 msgid "I failed to send an invite to that user. Perhaps you may be able to send it for me?\n"
 "Here's the invite link: {}"
-msgstr ""
+msgstr "Saya gagal untuk mengirim undangan ke pengguna. Mungkin anda dapat mengirimkannya untuk saya?\n"
+"Berikut adalah link mengundang: {}"
 
 #: ../mod.py:629
 msgid "Something went wrong when attempting to send that useran invite. Here's the link so you can try: {}"
-msgstr ""
+msgstr "Terjadi kesalah saat mencoba untuk mengirim udangan ke pengguna. Ini adalah link yang bisa anda coba: {}"
 
 #: ../mod.py:673 ../mod.py:710
 msgid "No voice state for that user!"
-msgstr ""
+msgstr "Tidak ada sasaran pengguna suara!"
 
 #: ../mod.py:687
 msgid "That user is already muted and deafened guild-wide!"
-msgstr ""
+msgstr "Pengguna berhasil dibisukan dan ditulikan secara global!"
 
 #: ../mod.py:690
 msgid "User has been banned from speaking or listening in voice channels"
-msgstr ""
+msgstr "Pengguna telah di banned dari berbicara atau mendengarkan channel voice"
 
 #: ../mod.py:722
 msgid "That user isn't muted or deafened by the guild!"
-msgstr ""
+msgstr "Pengguna itu bisu atau tuli dari guild!"
 
 #: ../mod.py:725
 msgid "User is now allowed to speak and listen in voice channels"
-msgstr ""
+msgstr "Pengguna diizinkan untuk berbicara dan mendengarkan di channel voice"
 
 #: ../mod.py:754
 msgid "I cannot do that, I lack the '{}' permission."
-msgstr ""
+msgstr "Saya tidak dapat melakukan itu, saya tidak mempunyai izin '{}'."
 
 #: ../mod.py:783
 msgid "Muted {}#{} in channel {}"
-msgstr ""
+msgstr "Tidak diizinkan bersuara {}#{} di channel {}"
 
 #: ../mod.py:797
 msgid "That user is already muted in {}!"
-msgstr ""
+msgstr "Pengguna sudah dibisukan di {}!"
 
 #: ../mod.py:800 ../mod.py:932
 msgid "That user is not in a voice channel right now!"
-msgstr ""
+msgstr "Pengguna sedang tidak di dalam channel voice!"
 
 #: ../mod.py:802 ../mod.py:934
 msgid "No voice state for the target!"
-msgstr ""
+msgstr "Tidak ada sasaran target suara!"
 
 #: ../mod.py:822
 msgid "User has been muted in this channel."
-msgstr ""
+msgstr "Pengguna telah dibisukan di channel ini."
 
 #: ../mod.py:858
 msgid "User has been muted in this guild."
-msgstr ""
+msgstr "Pengguna telah dibisukan di guild ini."
 
 #: ../mod.py:919
 msgid "Unmuted {}#{} in channel {}"
-msgstr ""
+msgstr "Dizinkan bersuara {}#{} di channel {}"
 
 #: ../mod.py:929
 msgid "That user is already unmuted in {}!"
-msgstr ""
+msgstr "Pengguna sudah tidak dibisukan di {}!"
 
 #: ../mod.py:949
 msgid "User unmuted in this channel."
-msgstr ""
+msgstr "Pengguna diizinkan bersuara di channel ini."
 
 #: ../mod.py:958
 msgid "Unmute failed. Reason: {}"
-msgstr ""
+msgstr "Menghidupkan suara gagal. Alasan: {}"
 
 #: ../mod.py:981
 msgid "User has been unmuted in this guild."
-msgstr ""
+msgstr "Pengguna sudah diizinkan bersuara di guild ini."
 
 #: ../mod.py:1045
 msgid "Channel added to ignore list."
-msgstr ""
+msgstr "Saluran ditambahkan ke daftar abaikan."
 
 #: ../mod.py:1047
 msgid "Channel already in ignore list."
-msgstr ""
+msgstr "Saluran sudah ada didalam daftar abaikan."
 
 #: ../mod.py:1055
 msgid "This guild has been added to the ignore list."
-msgstr ""
+msgstr "Guild ini sudah di tambahkan ke dalam daftar abaikan."
 
 #: ../mod.py:1057
 msgid "This guild is already being ignored."
-msgstr ""
+msgstr "Guild ini sudah diabaikan."
 
 #: ../mod.py:1078
 msgid "Channel removed from ignore list."
-msgstr ""
+msgstr "Saluran di hapus dari dalam daftar abaikan."
 
 #: ../mod.py:1080
 msgid "That channel is not in the ignore list."
-msgstr ""
+msgstr "Saluran sedang tidak ada di dalam daftar abaikan."
 
 #: ../mod.py:1088
 msgid "This guild has been removed from the ignore list."
-msgstr ""
+msgstr "Guild ini sudah di hapus dari dalam daftar abaikan."
 
 #: ../mod.py:1090
 msgid "This guild is not in the ignore list."
-msgstr ""
+msgstr "Guild ini sedang tidak berada didalam daftar abaikan."
 
 #: ../mod.py:1102
 msgid "Currently ignoring:\n"
 "{} channels\n"
 "{} guilds\n"
-msgstr ""
+msgstr "Saat ini mengabaikan:\n"
+"{} saluran\n"
+"{} guilds\n"
 
 #: ../mod.py:1133
 msgid "**Past 20 names**:"
-msgstr ""
+msgstr "**20 nama terakhir**:"
 
 #: ../mod.py:1140
 msgid "**Past 20 nicknames**:"
-msgstr ""
+msgstr "**20 julukan terakhir**:"
 
 #: ../mod.py:1146
 msgid "That user doesn't have any recorded name or nickname change."
-msgstr ""
+msgstr "Pengguna tidak memiliki nama yang tercatat atau nama panggilan yang berubah."
 
