@@ -5,6 +5,8 @@ from sys import path as syspath
 from typing import Tuple, Union
 
 import discord
+import sys
+
 from redbot.core import Config
 from redbot.core import checks
 from redbot.core.data_manager import cog_data_path
@@ -274,6 +276,13 @@ class Downloader:
         if cog is None:
             await ctx.send(_("Error, there is no cog by the name of"
                            " `{}` in the `{}` repo.").format(cog_name, repo_name.name))
+            return
+        elif cog.min_python_version > sys.version_info:
+            await ctx.send(_(
+                "This cog requires at least python version {}, aborting install.".format(
+                    '.'.join([str(n) for n in cog.min_python_version])
+                )
+            ))
             return
 
         if not await repo_name.install_requirements(cog, self.LIB_PATH):
