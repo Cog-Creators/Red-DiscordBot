@@ -28,7 +28,7 @@ class DataConverter:
             The file isn't valid JSON
         """
         try:
-            with open(file_path, mode='r') as f:
+            with file_path.open(mode='r', encoding='urf-8') as f:
                 data = json.load(f)
         except (FileNotFoundError, json.JSONDecodeError):
             raise
