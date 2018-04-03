@@ -38,6 +38,9 @@ class Installable(RepoJSONMixin):
     bot_version : `tuple` of `int`
         The minimum bot version required for this installation. Right now
         this is always :code:`3.0.0`.
+    min_python_version : `tuple` of `int`
+        The minimum python version required for this cog. This field will not
+        apply to repo info.json's.
     hidden : `bool`
         Whether or not this cog will be hidden from the user when they use
         `Downloader`'s commands.
@@ -70,6 +73,7 @@ class Installable(RepoJSONMixin):
 
         self.author = ()
         self.bot_version = (3, 0, 0)
+        self.min_python_version = (3, 5, 1)
         self.hidden = False
         self.required_cogs = {}  # Cog name -> repo URL
         self.requirements = ()
@@ -159,8 +163,14 @@ class Installable(RepoJSONMixin):
         try:
             bot_version = tuple(info.get("bot_version", [3, 0, 0]))
         except ValueError:
-            bot_version = 2
+            bot_version = self.bot_version
         self.bot_version = bot_version
+
+        try:
+            min_python_version = tuple(info.get('min_python_version', [3, 5, 1]))
+        except ValueError:
+            min_python_version = self.min_python_version
+        self.min_python_version = min_python_version
 
         try:
             hidden = bool(info.get("hidden", False))

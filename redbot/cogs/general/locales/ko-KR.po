@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"PO-Revision-Date: 2018-04-02 19:26-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -18,222 +18,223 @@ msgstr ""
 
 #: ../general.py:42
 msgid "As I see it, yes"
-msgstr ""
+msgstr "내가 보기엔 그렇지!"
 
 #: ../general.py:42
 msgid "It is certain"
-msgstr ""
+msgstr "틀림없어요!"
 
 #: ../general.py:42
 msgid "It is decidedly so"
-msgstr ""
+msgstr "그건 확실히 그렇지!"
 
 #: ../general.py:43
 msgid "Most likely"
-msgstr ""
+msgstr "아마도 그럴걸?"
 
 #: ../general.py:43
 msgid "Outlook good"
-msgstr ""
+msgstr "오늘은 전망이 좋네요."
 
 #: ../general.py:43
 msgid "Signs point to yes"
-msgstr ""
+msgstr "소라고둥이 말씀하셨다! \"그래\""
 
 #: ../general.py:44
 msgid "Without a doubt"
-msgstr ""
+msgstr "틀림없어!"
 
 #: ../general.py:44
 msgid "Yes"
-msgstr ""
+msgstr "그래요!"
 
 #: ../general.py:44
 msgid "Yes – definitely"
-msgstr ""
+msgstr "그래요, 물론이죠!"
 
 #: ../general.py:44
 msgid "You may rely on it"
-msgstr ""
+msgstr "그걸 믿어도 좋아요!"
 
 #: ../general.py:45
 msgid "Ask again later"
-msgstr ""
+msgstr "나중에 다시 물어보세요!"
 
 #: ../general.py:45
 msgid "Reply hazy, try again"
-msgstr ""
+msgstr "의미심장하네요, 다시 시도해보세요."
 
 #: ../general.py:46
 msgid "Better not tell you now"
-msgstr ""
+msgstr "지금은 말해주지 않는게 좋겠어요."
 
 #: ../general.py:46
 msgid "Cannot predict now"
-msgstr ""
+msgstr "지금은 예측할 수 없죠."
 
 #: ../general.py:47
 msgid "Concentrate and ask again"
-msgstr ""
+msgstr "집중해서 다시 물어보세요."
 
 #: ../general.py:47
 msgid "Don't count on it"
-msgstr ""
+msgstr "그렇지 않을거예요."
 
 #: ../general.py:47
 msgid "My reply is no"
-msgstr ""
+msgstr "제 대답은 \"아뇨\"예요."
 
 #: ../general.py:48
 msgid "My sources say no"
-msgstr ""
+msgstr "제 진심이 말하길 \"아뇨\""
 
 #: ../general.py:48
 msgid "Outlook not so good"
-msgstr ""
+msgstr "오늘은 전망이 별로 좋지 않네요."
 
 #: ../general.py:48
 msgid "Very doubtful"
-msgstr ""
+msgstr "동작 그만, 밑장빼기냐?"
 
 #: ../general.py:64
 msgid "Not enough choices to pick from."
-msgstr ""
+msgstr "선택의 폭이 좁은걸?"
 
 #: ../general.py:78
 msgid "{} :game_die: {} :game_die:"
-msgstr ""
+msgstr "{} :game_die: {} :game_die:"
 
 #: ../general.py:81
 msgid "{} Maybe higher than 1? ;P"
-msgstr ""
+msgstr "{} 1보다 클수도 있죠? ;P"
 
 #: ../general.py:93
 msgid "Nice try. You think this is funny?How about *this* instead:\n\n"
-msgstr ""
+msgstr "시도는 좋았어요, 재밌을 것 같아요? 대신 *이건* 어때요? :"
 
 #: ../general.py:106
 msgid "*flips a coin and... "
-msgstr ""
+msgstr "*동전을 던지며..."
 
 #: ../general.py:106
 msgid "HEADS!*"
-msgstr ""
+msgstr "앞면!*"
 
 #: ../general.py:106
 msgid "TAILS!*"
-msgstr ""
+msgstr "뒷면!*"
 
 #: ../general.py:130
 msgid "{} You win {}!"
-msgstr ""
+msgstr "{} {} 을(를) 획득했어요!"
 
 #: ../general.py:134
 msgid "{} You lose {}!"
-msgstr ""
+msgstr "{} {} 을(를) 잃었어요!"
 
 #: ../general.py:138
 msgid "{} We're square {}!"
-msgstr ""
+msgstr "{} 우리는 사각형이에요 {}!"
 
 #: ../general.py:151
 msgid "That doesn't look like a question."
-msgstr ""
+msgstr "그건 질문으로 보이지 않아요."
 
 #: ../general.py:159
 msgid " Stopwatch started!"
-msgstr ""
+msgstr "스톱워치가 시작됐어요!"
 
 #: ../general.py:163
 msgid " Stopwatch stopped! Time: **"
-msgstr ""
+msgstr "스톱워치가 멈췄어요! 시간 : **"
 
 #: ../general.py:216 ../general.py:217
 msgid "{}\n"
 "({} days ago)"
-msgstr ""
+msgstr "{}\n"
+"({} 일 전에)"
 
 #: ../general.py:219
 msgid "Chilling in {} status"
-msgstr ""
+msgstr "{} 상태로 오싹해졌어요."
 
 #: ../general.py:223
 msgid "Playing {}"
-msgstr ""
+msgstr "재생 중 {}"
 
 #: ../general.py:225
 msgid "Streaming [{}]({})"
-msgstr ""
+msgstr "실시간 스트리밍 [{}]({})"
 
 #: ../general.py:227
 msgid "Listening to {}"
-msgstr ""
+msgstr "듣는 중 {}"
 
 #: ../general.py:229
 msgid "Watching {}"
-msgstr ""
+msgstr "보는 중 {}"
 
 #: ../general.py:234
 msgid "None"
-msgstr ""
+msgstr "읎어요."
 
 #: ../general.py:237
 msgid "Joined Discord on"
-msgstr ""
+msgstr "가입된 디스코드 켜짐"
 
 #: ../general.py:238
 msgid "Joined this guild on"
-msgstr ""
+msgstr "이 길드에 가입된"
 
 #: ../general.py:239 ../general.py:286
 msgid "Roles"
-msgstr ""
+msgstr "역할"
 
 #: ../general.py:240
 msgid "Member #{} | User ID: {}"
-msgstr ""
+msgstr "멤버 # {} | 사용자 ID : {}"
 
 #: ../general.py:257 ../general.py:299
 msgid "I need the `Embed links` permission to send this."
-msgstr ""
+msgstr "이걸 보내려면 'Embed links' 권한이 필요해요."
 
 #: ../general.py:272
 msgid "Since {}. That's over {} days ago!"
-msgstr ""
+msgstr "{} 이후, 그건 {} 일 전의 일이에요!"
 
 #: ../general.py:282
 msgid "Region"
-msgstr ""
+msgstr "지역"
 
 #: ../general.py:283
 msgid "Users"
-msgstr ""
+msgstr "사용자"
 
 #: ../general.py:284
 msgid "Text Channels"
-msgstr ""
+msgstr "텍스트 채널"
 
 #: ../general.py:285
 msgid "Voice Channels"
-msgstr ""
+msgstr "음성 채널"
 
 #: ../general.py:287
 msgid "Owner"
-msgstr ""
+msgstr "주인님"
 
 #: ../general.py:288
 msgid "Guild ID: "
-msgstr ""
+msgstr "길드 ID :"
 
 #: ../general.py:343
 msgid "Your search terms gave no results."
-msgstr ""
+msgstr "검색 조건에서 검색 결과가 없어요."
 
 #: ../general.py:345
 msgid "There is no definition #{}"
-msgstr ""
+msgstr "정의 #{} 이(가) 없어요."
 
 #: ../general.py:347
 msgid "Error."
-msgstr ""
+msgstr "에러."
 
