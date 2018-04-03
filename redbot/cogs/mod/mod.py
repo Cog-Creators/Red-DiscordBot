@@ -886,6 +886,7 @@ class Mod:
 
         perms_cache[str(channel.id)] = overwrites.send_messages
         overwrites.send_messages = False
+        overwrites.add_reactions = False
         try:
             await channel.set_permissions(user, overwrite=overwrites, reason=reason)
         except discord.Forbidden:
@@ -1011,6 +1012,7 @@ class Mod:
         else:
             old_value = None
         overwrites.send_messages = old_value
+        overwrites.add_reactions = True
         is_empty = self.are_overwrites_empty(overwrites)
 
         try:
