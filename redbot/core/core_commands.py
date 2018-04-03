@@ -144,6 +144,15 @@ class Core:
         use embeds.
         """
         if ctx.invoked_subcommand is None:
+            text = "Embed settings:\n\n"
+            global_default = await self.bot.db.embeds()
+            text += "Global default: {}\n".format(global_default)
+            if ctx.guild:
+                guild_setting = await self.bot.db.guild(ctx.guild).embeds()
+                text += "Guild setting: {}\n".format(guild_setting)
+            user_setting = await self.bot.db.user(ctx.author).embeds()
+            text += "User setting: {}".format(user_setting)
+            await ctx.send(box(text))
             await ctx.send_help()
 
     @embedset.command(name="global")
@@ -517,6 +526,27 @@ class Core:
     async def _set(self, ctx):
         """Changes Red's settings"""
         if ctx.invoked_subcommand is None:
+            admin_role_id = await ctx.bot.db.guild(ctx.guild).admin_role()
+            admin_role = discord.utils.get(ctx.guild.roles, id=admin_role_id)
+            mod_role_id = await ctx.bot.db.guild(ctx.guild).mod_role()
+            mod_role = discord.utils.get(ctx.guild.roles, id=mod_role_id)
+            prefixes = await ctx.bot.db.guild(ctx.guild).prefix()
+            if not prefixes:
+                prefixes = await ctx.bot.db.prefix()
+            locale = await ctx.bot.db.locale()
+
+            settings = (
+                "{} Settings:\n\n"
+                "Prefixes: {}\n"
+                "Admin role: {}\n"
+                "Mod role: {}\n"
+                "Locale: {}"
+                "".format(
+                    ctx.bot.user.name, " ".join(prefixes),
+                    admin_role.name, mod_role.name, locale
+                )
+            )
+            await ctx.send(box(settings))
             await ctx.send_help()
 
     @_set.command()
