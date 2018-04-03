@@ -700,7 +700,7 @@ class Core:
     async def _nickname(self, ctx, *, nickname: str):
         """Sets Red's nickname"""
         try:
-            await ctx.bot.user.edit(nick=nickname)
+            await ctx.guild.me.edit(nick=nickname)
         except discord.Forbidden:
             await ctx.send(_("I lack the permissions to change my own "
                              "nickname."))
