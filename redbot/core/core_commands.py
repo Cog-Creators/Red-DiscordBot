@@ -541,7 +541,8 @@ class Core:
                 "Locale: {}"
                 "".format(
                     ctx.bot.user.name, " ".join(prefixes),
-                    admin_role.name, mod_role.name, locale
+                    admin_role.name if admin_role else "Not set",
+                    mod_role.name if mod_role else "Not set", locale
                 )
             )
             await ctx.send(box(settings))
