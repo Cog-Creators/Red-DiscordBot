@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2018-02-19 03:59+UTC\n"
-"PO-Revision-Date: 2018-02-25 21:34-0500\n"
+"PO-Revision-Date: 2018-04-02 19:27-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -22,7 +22,7 @@ msgstr "Jalur Instalasi: {}\n\n"
 
 #: ../cog_manager.py:325
 msgid "That path does not exist or does not point to a valid directory."
-msgstr ""
+msgstr "Jalan itu tidak ada atau tidak mengarah ke direktori yang benar."
 
 #: ../cog_manager.py:334
 msgid "Path successfully added."
@@ -83,7 +83,7 @@ msgstr "Mematikan... "
 
 #: ../core_commands.py:310
 msgid "Restarting..."
-msgstr ""
+msgstr "Memulai ulang..."
 
 #: ../core_commands.py:347
 msgid "The admin role for this guild has been set."
@@ -107,11 +107,11 @@ msgstr "Set permainan."
 
 #: ../core_commands.py:399
 msgid "Listening set."
-msgstr ""
+msgstr "Mendengarkan set."
 
 #: ../core_commands.py:411
 msgid "Watching set."
-msgstr ""
+msgstr "Menonton set."
 
 #: ../core_commands.py:440
 msgid "Status changed to %s."
@@ -165,11 +165,11 @@ msgstr "Lokal telah ditetapkan."
 
 #: ../core_commands.py:580
 msgid "Done. Sentry logging is now enabled."
-msgstr ""
+msgstr "Selesai. Sentry log diaktifkan."
 
 #: ../core_commands.py:583
 msgid "Done. Sentry logging is now disabled."
-msgstr ""
+msgstr "Selesai. Sentry log di nonaktifkan."
 
 #: ../core_commands.py:593
 msgid "User ID: %s"
@@ -229,47 +229,47 @@ msgstr "Pesan dikirim ke % s"
 
 #: ../core_commands.py:690
 msgid "User added to whitelist."
-msgstr ""
+msgstr "Pengguna ditambahkan ke daftar abaikan."
 
 #: ../core_commands.py:699
 msgid "Whitelisted Users:"
-msgstr ""
+msgstr "Pengguna yang telah diabaikan:"
 
 #: ../core_commands.py:719
 msgid "User has been removed from whitelist."
-msgstr ""
+msgstr "Pengguna telah dihapus dari daftar abaikan."
 
 #: ../core_commands.py:721
 msgid "User was not in the whitelist."
-msgstr ""
+msgstr "Pengguna tidak ada di dalam daftar abaikan."
 
 #: ../core_commands.py:729
 msgid "Whitelist has been cleared."
-msgstr ""
+msgstr "Daftar abaikan telah di bersihkan."
 
 #: ../core_commands.py:746
 msgid "You cannot blacklist an owner!"
-msgstr ""
+msgstr "Anda tidak dapat memblokir pemilik!"
 
 #: ../core_commands.py:753
 msgid "User added to blacklist."
-msgstr ""
+msgstr "Pengguna ditambahkan ke daftar blokir."
 
 #: ../core_commands.py:762
 msgid "blacklisted Users:"
-msgstr ""
+msgstr "daftar hitam pengguna:"
 
 #: ../core_commands.py:782
 msgid "User has been removed from blacklist."
-msgstr ""
+msgstr "Pengguna telah dihapus dari daftar blokir."
 
 #: ../core_commands.py:784
 msgid "User was not in the blacklist."
-msgstr ""
+msgstr "Pengguna tidak ada di dalam daftar blokir."
 
 #: ../core_commands.py:792
 msgid "blacklist has been cleared."
-msgstr ""
+msgstr "daftar hitam telah ditebang."
 
 #: ../dev_commands.py:213
 msgid "Already running a REPL session in this channel. Exit it with `quit`."

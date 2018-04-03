@@ -169,9 +169,8 @@ class RedBase(BotBase, RpcMethodMixin):
                 return user_setting
         else:
             guild_setting = await self.db.guild(channel.guild).embeds()
-            if command and command != self.get_command("help"):
-                if guild_setting is not None:
-                    return guild_setting
+            if guild_setting is not None:
+                return guild_setting
         global_setting = await self.db.embeds()
         return global_setting
 
