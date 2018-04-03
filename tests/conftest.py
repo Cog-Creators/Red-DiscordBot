@@ -38,6 +38,7 @@ def json_driver(tmpdir_factory):
     path = Path(str(tmpdir_factory.mktemp(rand)))
     driver = red_json.JSON(
         "PyTest",
+        identifier=str(uuid.uuid4()),
         data_path_override=path
     )
     return driver
@@ -45,10 +46,9 @@ def json_driver(tmpdir_factory):
 
 @pytest.fixture()
 def config(json_driver):
-    import uuid
     conf = Config(
         cog_name="PyTest",
-        unique_identifier=str(uuid.uuid4()),
+        unique_identifier=json_driver.unique_cog_identifier,
         driver=json_driver)
     yield conf
     conf._defaults = {}
@@ -59,10 +59,9 @@ def config_fr(json_driver):
     """
     Mocked config object with force_register enabled.
     """
-    import uuid
     conf = Config(
         cog_name="PyTest",
-        unique_identifier=str(uuid.uuid4()),
+        unique_identifier=json_driver.unique_cog_identifier,
         driver=json_driver,
         force_registration=True
     )
