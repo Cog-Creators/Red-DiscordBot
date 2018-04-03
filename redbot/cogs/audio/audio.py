@@ -51,7 +51,7 @@ class Audio:
         ws_port = await self.config.ws_port()
 
         await lavalink.initialize(
-            bot=self.bot, host=host, password=password, rest_port=rest_port, ws_port=ws_port
+            bot=self.bot, host=host, password=password, rest_port=rest_port, ws_port=ws_port, timeout=60
         )
         lavalink.register_event_listener(self.event_handler)
 

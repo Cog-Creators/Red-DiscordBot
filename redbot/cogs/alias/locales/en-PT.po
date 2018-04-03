@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-02-25 21:34-0500\n"
+"PO-Revision-Date: 2018-04-02 19:27-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Pirate English\n"
 "MIME-Version: 1.0\n"
@@ -22,15 +22,15 @@ msgstr "Arrr, no prefix found capt'n!"
 
 #: ../alias.py:198
 msgid "You attempted to create a new alias with the name {} but that name is already a command on this bot."
-msgstr ""
+msgstr "Ye try and make a squeeky-clean alias with the name {} but 'she be taken by another order."
 
 #: ../alias.py:205
 msgid "You attempted to create a new alias with the name {} but that alias already exists on this server."
-msgstr ""
+msgstr "Ye try and make a Squeeky-clean alias with the name {} but 'she already be on the island."
 
 #: ../alias.py:212
 msgid "You attempted to create a new alias with the name {} but that name is an invalid alias name. Alias names may not contain spaces."
-msgstr ""
+msgstr "Ye try and make a Squeeky-clean alias with the name {} but 'she walk the plank! Spaces in an alias must walk the plank."
 
 #: ../alias.py:224
 msgid "A new alias with the trigger `{}` has been created."
@@ -38,15 +38,15 @@ msgstr "Arrr! A new alias with thee trigger `{}` has been created."
 
 #: ../alias.py:236
 msgid "You attempted to create a new global alias with the name {} but that name is already a command on this bot."
-msgstr ""
+msgstr "Ye try and make a squeeky-clean global alias with the name {} but 'she be taken by another order."
 
 #: ../alias.py:243
 msgid "You attempted to create a new global alias with the name {} but that alias already exists on this server."
-msgstr ""
+msgstr "Ye try and make a Squeeky-clean global alias with the name {} but 'she already be on the island."
 
 #: ../alias.py:250
 msgid "You attempted to create a new global alias with the name {} but that name is an invalid alias name. Alias names may not contain spaces."
-msgstr ""
+msgstr "Ye try and make a Squeeky-clean global alias with the name {} but 'she walk the plank! Spaces in an alias must walk the plank."
 
 #: ../alias.py:259
 msgid "A new global alias with the trigger `{}` has been created."

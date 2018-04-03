@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-02-25 21:34-0500\n"
+"PO-Revision-Date: 2018-04-02 19:27-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -30,11 +30,11 @@ msgstr "Jelas begitu"
 
 #: ../general.py:43
 msgid "Most likely"
-msgstr "Most likely"
+msgstr "Sewajarnya"
 
 #: ../general.py:43
 msgid "Outlook good"
-msgstr "Melihat keluar bagus"
+msgstr "Pandangan bagus"
 
 #: ../general.py:43
 msgid "Signs point to yes"
@@ -50,7 +50,7 @@ msgstr "Ya"
 
 #: ../general.py:44
 msgid "Yes – definitely"
-msgstr "Iya tentu saja"
+msgstr "Iya - tentu saja"
 
 #: ../general.py:44
 msgid "You may rely on it"
@@ -163,15 +163,15 @@ msgstr "Bermain {}"
 
 #: ../general.py:225
 msgid "Streaming [{}]({})"
-msgstr ""
+msgstr "Streaming [{}]({})"
 
 #: ../general.py:227
 msgid "Listening to {}"
-msgstr ""
+msgstr "Mendengarkan {}"
 
 #: ../general.py:229
 msgid "Watching {}"
-msgstr ""
+msgstr "Menonton {}"
 
 #: ../general.py:234
 msgid "None"
