@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"PO-Revision-Date: 2018-04-02 19:26-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -18,45 +18,45 @@ msgstr ""
 
 #: ../modlog.py:36
 msgid "Mod events will be sent to {}"
-msgstr ""
+msgstr "모드 이벤트가 {} 으로 전송됐어요."
 
 #: ../modlog.py:42
 msgid "I do not have permissions to send messages in {}!"
-msgstr ""
+msgstr "{} 에 메세지를 보낼 수 있는 권한이 없어요!"
 
 #: ../modlog.py:52
 msgid "Mod log deactivated."
-msgstr ""
+msgstr "모드 로그가 비활성화됐어요."
 
 #: ../modlog.py:63
 msgid "Current settings:"
-msgstr ""
+msgstr "현재 설정 :"
 
 #: ../modlog.py:75
 msgid "That action is not registered"
-msgstr ""
+msgstr "해당 작업이 등록되지 않았어요."
 
 #: ../modlog.py:82
 msgid "Case creation for {} actions is now {}."
-msgstr ""
+msgstr "이제 {}개의 작업에 대한 사례를 생성할 수 있습니다."
 
 #: ../modlog.py:94
 msgid "Cases have been reset."
-msgstr ""
+msgstr "사례들이 초기화됐어요."
 
 #: ../modlog.py:103
 msgid "That case does not exist for that guild"
-msgstr ""
+msgstr "해당 길드에 해당되는 사례가 없어요."
 
 #: ../modlog.py:122
 msgid "That case does not exist!"
-msgstr ""
+msgstr "해당 사례는 등록되어 있지 않아요."
 
 #: ../modlog.py:146
 msgid "You are not authorized to modify that case!"
-msgstr ""
+msgstr "사용자님은 해당 사례를 수정할 권한이 없어요!"
 
 #: ../modlog.py:155
 msgid "Reason has been updated."
-msgstr ""
+msgstr "이유가 업데이트됐어요."
 

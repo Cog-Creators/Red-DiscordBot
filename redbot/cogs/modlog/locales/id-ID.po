@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-02-25 21:34-0500\n"
+"PO-Revision-Date: 2018-04-02 19:27-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -18,45 +18,45 @@ msgstr ""
 
 #: ../modlog.py:36
 msgid "Mod events will be sent to {}"
-msgstr ""
+msgstr "Peristiwa mod akan dikirim ke {}"
 
 #: ../modlog.py:42
 msgid "I do not have permissions to send messages in {}!"
-msgstr ""
+msgstr "Saya tidak memiliki izin untuk mengirim pesan di {}!"
 
 #: ../modlog.py:52
 msgid "Mod log deactivated."
-msgstr ""
+msgstr "Mod log dinonaktifkan."
 
 #: ../modlog.py:63
 msgid "Current settings:"
-msgstr ""
+msgstr "Pengaturan saat ini:"
 
 #: ../modlog.py:75
 msgid "That action is not registered"
-msgstr ""
+msgstr "Tindakan tersebut tidak terdaftar"
 
 #: ../modlog.py:82
 msgid "Case creation for {} actions is now {}."
-msgstr ""
+msgstr "Penciptaan kasus untuk {} tindakan sekarang {}."
 
 #: ../modlog.py:94
 msgid "Cases have been reset."
-msgstr ""
+msgstr "Kasus telah di setel ulang."
 
 #: ../modlog.py:103
 msgid "That case does not exist for that guild"
-msgstr ""
+msgstr "Kasus untuk guild tersebut tidak ada"
 
 #: ../modlog.py:122
 msgid "That case does not exist!"
-msgstr ""
+msgstr "Kasus tersebut tidak ada!"
 
 #: ../modlog.py:146
 msgid "You are not authorized to modify that case!"
-msgstr ""
+msgstr "Anda tidak diizinkan untuk mengubah kasus tersebut!"
 
 #: ../modlog.py:155
 msgid "Reason has been updated."
-msgstr ""
+msgstr "Alasan telah di perbarui."
 

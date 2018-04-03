@@ -90,7 +90,7 @@ class General:
             msg = ""
             if user.id == ctx.bot.user.id:
                 user = ctx.author
-                msg = _("Nice try. You think this is funny?"
+                msg = _("Nice try. You think this is funny?\n"
                         "How about *this* instead:\n\n")
             char = "abcdefghijklmnopqrstuvwxyz"
             tran = "ɐqɔpǝɟƃɥᴉɾʞlɯuodbɹsʇnʌʍxʎz"
@@ -216,24 +216,24 @@ class General:
         created_on = _("{}\n({} days ago)").format(user_created, since_created)
         joined_on = _("{}\n({} days ago)").format(user_joined, since_joined)
         
-        game = _("Chilling in {} status").format(user.status)
-        if user.game is None:  # Default status
+        activity = _("Chilling in {} status").format(user.status)
+        if user.activity is None:  # Default status
             pass
-        elif user.game.type == 0:  # "Playing" status
-            game = _("Playing {}").format(user.game.name)
-        elif user.game.type == 1:  # "Streaming" status
-            game = _("Streaming [{}]({})").format(user.game.name, user.game.url)
-        elif user.game.type == 2:  # "Listening" status
-            game = _("Listening to {}").format(user.game.name)
-        elif user.game.type == 3:  # "Watching" status
-            game = _("Watching {}").format(user.game.name)
+        elif user.activity.type == discord.ActivityType.playing:
+            activity = _("Playing {}").format(user.activity.name)
+        elif user.activity.type == discord.ActivityType.streaming:
+            activity = _("Streaming [{}]({})").format(user.activity.name, user.activity.url)
+        elif user.activity.type == discord.ActivityType.listening:
+            activity = _("Listening to {}").format(user.activity.name)
+        elif user.activity.type == discord.ActivityType.watching:
+            activity = _("Watching {}").format(user.activity.name)
 
         if roles:
             roles = ", ".join([x.name for x in roles])
         else:
             roles = _("None")
 
-        data = discord.Embed(description=game, colour=user.colour)
+        data = discord.Embed(description=activity, colour=user.colour)
         data.add_field(name=_("Joined Discord on"), value=created_on)
         data.add_field(name=_("Joined this guild on"), value=joined_on)
         data.add_field(name=_("Roles"), value=roles, inline=False)

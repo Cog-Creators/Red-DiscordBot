@@ -8,7 +8,7 @@ from .manager import start_lavalink_server
 from discord.ext import commands
 from redbot.core.data_manager import cog_data_path
 
-LAVALINK_BUILD = 3065
+LAVALINK_BUILD = 3112
 LAVALINK_BUILD_URL = (
     "https://ci.fredboat.com/repository/download/"
     "Lavalink_Build/{}:id/Lavalink.jar?guest=1"
@@ -50,7 +50,6 @@ async def setup(bot: commands.Bot):
     await start_lavalink_server(bot.loop)
 
     async def _finish():
-        await asyncio.sleep(10)
         await cog.init_config()
         bot.add_cog(cog)
 
