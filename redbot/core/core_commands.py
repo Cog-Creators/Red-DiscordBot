@@ -697,7 +697,7 @@ class Core:
     @_set.command(name="nickname")
     @checks.admin()
     @commands.guild_only()
-    async def _nickname(self, ctx, *, nickname: str):
+    async def _nickname(self, ctx, *, nickname: str=None):
         """Sets Red's nickname"""
         try:
             await ctx.guild.me.edit(nick=nickname)
