@@ -478,8 +478,8 @@ async def create_case(bot: Red, guild: discord.Guild, created_at: datetime, acti
     next_case_number = int(await get_next_case_number(guild))
 
     case = Case(guild, int(created_at.timestamp()), action_type, user, moderator,
-                next_case_number, reason, until, channel, amended_by=None,
-                modified_at=None, message=None)
+                next_case_number, reason, int(until.timestamp()) if until else None,
+                channel, amended_by=None, modified_at=None, message=None)
     if hasattr(mod_channel, "send"):  # Not going to be the case for tests
         use_embeds = await bot.embed_requested(mod_channel, guild.me)
         case_content = await case.message_content(use_embeds)
