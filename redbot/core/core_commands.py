@@ -3,7 +3,9 @@ import datetime
 import importlib
 import itertools
 import logging
+import os
 import sys
+import tarfile
 import traceback
 from collections import namedtuple
 from pathlib import Path
@@ -235,7 +237,8 @@ class Core:
     async def invite(self, ctx):
         """Show's Red's invite url"""
         if self.bot.user.bot:
-            await ctx.author.send(discord.utils.oauth_url(self.bot.user.id))
+            app_info = await self.bot.application_info()
+            await ctx.author.send(discord.utils.oauth_url(app_info.id))
         else:
             await ctx.send("I'm not a bot account. I have no invite URL.")
 
@@ -623,7 +626,7 @@ class Core:
             await ctx.send_help()
         else:
             await ctx.bot.change_presence(status=status, activity=game)
-            await ctx.send(_("Status changed to %s.") % status)
+            await ctx.send(_("Status changed to {}.").format(status))
 
     @_set.command()
     @checks.bot_in_a_guild()
@@ -814,6 +817,45 @@ class Core:
         )
 
     @commands.command()
+    @checks.is_owner()
+    async def backup(self, ctx):
+        """Creates a backup of all data for the instance."""
+        from redbot.core.data_manager import basic_config, instance_name
+        from redbot.core.drivers.red_json import JSON
+        data_dir = Path(basic_config["DATA_PATH"])
+        if basic_config["STORAGE_TYPE"] == "MongoDB":
+            from redbot.core.drivers.red_mongo import Mongo
+            m = Mongo("Core", **basic_config["STORAGE_DETAILS"])
+            db = m.db
+            collection_names = await db.collection_names(include_system_collections=False)
+            for c_name in collection_names:
+                if c_name == "Core":
+                    c_data_path = data_dir / basic_config["CORE_PATH_APPEND"]
+                else:
+                    c_data_path = data_dir / basic_config["COG_PATH_APPEND"]
+                output = {}
+                docs = await db[c_name].find().to_list(None)
+                for item in docs:
+                    item_id = str(item.pop("_id"))
+                    output[item_id] = item
+                target = JSON(c_name, data_path_override=c_data_path)
+                await target.jsonIO._threadsafe_save_json(output)
+        backup_filename = "redv3-{}-{}.tar.gz".format(
+            instance_name, ctx.message.created_at.strftime("%Y-%m-%d %H-%M-%S")
+        )
+        if data_dir.exists():
+            home = data_dir.home()
+            backup_file = home / backup_filename
+            os.chdir(data_dir.parent)
+            with tarfile.open(str(backup_file), "w:gz") as tar:
+                tar.add(data_dir.stem)
+            await ctx.send(_("A backup has been made of this instance. It is at {}.").format(
+                backup_file
+            ))
+        else:
+            await ctx.send(_("That directory doesn't seem to exist..."))
+
+    @commands.command()
     @commands.cooldown(1, 60, commands.BucketType.user)
     async def contact(self, ctx, *, message: str):
         """Sends a message to the owner"""
@@ -821,13 +863,13 @@ class Core:
         owner = discord.utils.get(ctx.bot.get_all_members(),
                                   id=ctx.bot.owner_id)
         author = ctx.message.author
-        footer = _("User ID: %s") % author.id
+        footer = _("User ID: {}").format(author.id)
 
         if ctx.guild is None:
             source = _("through DM")
         else:
             source = _("from {}").format(guild)
-            footer += _(" | Server ID: %s") % guild.id
+            footer += _(" | Server ID: {}").format(guild.id)
 
         # We need to grab the DM command prefix (global)
         # Since it can also be set through cli flags, bot.db is not a reliable
@@ -839,29 +881,43 @@ class Core:
         content = _("Use `{}dm {} <text>` to reply to this user"
                     "").format(prefix, author.id)
 
+        description = _("Sent by {} {}").format(author, source)
+
         if isinstance(author, discord.Member):
             colour = author.colour
         else:
             colour = discord.Colour.red()
 
-        description = _("Sent by {} {}").format(author, source)
+        if await ctx.embed_requested():
+            e = discord.Embed(colour=colour, description=message)
+            if author.avatar_url:
+                e.set_author(name=description, icon_url=author.avatar_url)
+            else:
+                e.set_author(name=description)
+            e.set_footer(text=footer)
 
-        e = discord.Embed(colour=colour, description=message)
-        if author.avatar_url:
-            e.set_author(name=description, icon_url=author.avatar_url)
+            try:
+                await owner.send(content, embed=e)
+            except discord.InvalidArgument:
+                await ctx.send(_("I cannot send your message, I'm unable to find "
+                                 "my owner... *sigh*"))
+            except:
+                await ctx.send(_("I'm unable to deliver your message. Sorry."))
+            else:
+                await ctx.send(_("Your message has been sent."))
         else:
-            e.set_author(name=description)
-        e.set_footer(text=footer)
-
-        try:
-            await owner.send(content, embed=e)
-        except discord.InvalidArgument:
-            await ctx.send(_("I cannot send your message, I'm unable to find "
-                             "my owner... *sigh*"))
-        except:
-            await ctx.send(_("I'm unable to deliver your message. Sorry."))
-        else:
-            await ctx.send(_("Your message has been sent."))
+            msg_text = (
+                "{}\nMessage:\n\n{}\n{}".format(description, message, footer)
+            )
+            try:
+                await owner.send("{}\n{}".format(content, box(msg_text)))
+            except discord.InvalidArgument:
+                await ctx.send(_("I cannot send your message, I'm unable to find "
+                                 "my owner... *sigh*"))
+            except:
+                await ctx.send(_("I'm unable to deliver your message. Sorry."))
+            else:
+                await ctx.send(_("Your message has been sent."))
 
     @commands.command()
     @checks.is_owner()
@@ -880,25 +936,36 @@ class Core:
                              "with."))
             return
 
-        e = discord.Embed(colour=discord.Colour.red(), description=message)
-        description = _("Owner of %s") % ctx.bot.user
         fake_message = namedtuple('Message', 'guild')
         prefixes = await ctx.bot.command_prefix(ctx.bot, fake_message(guild=None))
         prefix = prefixes[0]
-        e.set_footer(text=_("You can reply to this message with %scontact"
-                            "") % prefix)
-        if ctx.bot.user.avatar_url:
-            e.set_author(name=description, icon_url=ctx.bot.user.avatar_url)
-        else:
-            e.set_author(name=description)
+        description = _("Owner of {}").format(ctx.bot.user)
+        content = _("You can reply to this message with {}contact").format(prefix)
+        if await ctx.embed_requested():
+            e = discord.Embed(colour=discord.Colour.red(), description=message)
 
-        try:
-            await destination.send(embed=e)
-        except:
-            await ctx.send(_("Sorry, I couldn't deliver your message "
-                             "to %s") % destination)
+            e.set_footer(text=content)
+            if ctx.bot.user.avatar_url:
+                e.set_author(name=description, icon_url=ctx.bot.user.avatar_url)
+            else:
+                e.set_author(name=description)
+
+            try:
+                await destination.send(embed=e)
+            except:
+                await ctx.send(_("Sorry, I couldn't deliver your message "
+                                 "to {}").format(destination))
+            else:
+                await ctx.send(_("Message delivered to {}").format(destination))
         else:
-            await ctx.send(_("Message delivered to %s") % destination)
+            response = "{}\nMessage:\n\n{}".format(description, message)
+            try:
+                await destination.send("{}\n{}".format(box(response), content))
+            except:
+                await ctx.send(_("Sorry, I couldn't deliver your message "
+                                 "to {}").format(destination))
+            else:
+                await ctx.send(_("Message delivered to {}").format(destination))
 
     @commands.group()
     @checks.is_owner()
