@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2018-02-19 03:59+UTC\n"
-"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"PO-Revision-Date: 2018-04-02 19:26-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -18,77 +18,77 @@ msgstr ""
 
 #: ../downloader.py:215
 msgid "That git repo has already been added under another name."
-msgstr "해당 git 저장소는 이미 다른 이름으로 저장 되어 있습니다."
+msgstr "해당 git 저장소는 이미 다른 이름으로 저장되어 있어요."
 
 #: ../downloader.py:217 ../downloader.py:218
 msgid "Something went wrong during the cloning process."
-msgstr "복제 작업중 에러가 발생했습니다."
+msgstr "복제하는 과정에서 뭔가 잘못됐어요."
 
 #: ../downloader.py:220
 msgid "Repo `{}` successfully added."
-msgstr "저장소 `{}` 가 성공적으로 추가 되었습니다."
+msgstr "저장소 `{}` 이(가) 성공적으로 추가됐어요."
 
 #: ../downloader.py:229
 msgid "The repo `{}` has been deleted successfully."
-msgstr "저장소 `{}` 가 성공적으로 삭제 되었습니다."
+msgstr "저장소 `{}` 이(가) 성공적으로 삭제됐어요."
 
 #: ../downloader.py:237
 msgid "Installed Repos:\n"
-msgstr "설치된 저장소 리스트:\n"
+msgstr "설치된 저장소 리스트 :"
 
 #: ../downloader.py:258
 msgid "Error, there is no cog by the name of `{}` in the `{}` repo."
-msgstr "에러, `{}` 저장소에 `{}` 로 해당된 cog가 없습니다."
+msgstr "에러, `{}` 저장소에 `{}` 으로 해당된 cog가 없어요."
 
 #: ../downloader.py:263
 msgid "Failed to install the required libraries for `{}`: `{}`"
-msgstr "`{}`에 필요한 라이브러리를 설치 실패 햇습니다: `{}`"
+msgstr "`{}` 에 필요한 라이브러리 설치를 실패했어요 : `{}`"
 
 #: ../downloader.py:273
 msgid "`{}` cog successfully installed."
-msgstr "`{}` cog가 성공적으로 설치 되었습니다."
+msgstr "`{}` cog가 성공적으로 설치됐어요."
 
 #: ../downloader.py:289
 msgid "`{}` was successfully removed."
-msgstr "`{}` 가 성공적으로 제거되었습니다."
+msgstr "`{}` 이(가) 성공적으로 제거됐어요."
 
 #: ../downloader.py:291
 msgid "That cog was installed but can no longer be located. You may need to remove it's files manually if it is still usable."
-msgstr "해당 cog가 설치되었지만 위치를 찾을수 없습니다. 만약 해당 cog가 사용 가능하다면 유저가 직접 파일들을 지워야 합니다."
+msgstr "해당 cog가 설치되었지만 더 이상 찾을 수 없어요. 그래도 사용할 수 있는 경우 수동으로 파일을 제거해야 해요."
 
 #: ../downloader.py:323
 msgid "Cog update completed successfully."
-msgstr "Cog가 성공적으로 업데이트 되었습니다."
+msgstr "Cog가 성공적으로 업데이트됐어요."
 
 #: ../downloader.py:331
 msgid "Available Cogs:\n"
-msgstr "사용가능한 Cogs:\n"
+msgstr "사용 가능한 Cogs :\n"
 
 #: ../downloader.py:343
 msgid "There is no cog `{}` in the repo `{}`"
-msgstr "저장소 `{}` 에 `{}`로 된 Cog가 없습니다."
+msgstr "저장소 `{}` 에 `{}` 으로 된 Cog가 없어요."
 
 #: ../downloader.py:348
 msgid "Information on {}:\n"
 "{}"
-msgstr "`{}`에 대한 정보:\n"
+msgstr "`{}` 에 대한 정보 :\n"
 "{}"
 
 #: ../downloader.py:389
 msgid "Missing from info.json"
-msgstr "Info.json에 정보가 없습니다."
+msgstr "Info.json 파일에서 누락됐어요."
 
 #: ../downloader.py:398
 msgid "Command: {}\n"
 "Made by: {}\n"
 "Repo: {}\n"
 "Cog name: {}"
-msgstr "명령어: {}\n"
-"작성자: {}\n"
-"저장소: {}\n"
-"Cog 이름: {}"
+msgstr "커맨드 : {}\n"
+"작성자 : {}\n"
+"저장소 : {}\n"
+"Cog 이름 : {}"
 
 #: ../downloader.py:430
 msgid "That command doesn't seem to exist."
-msgstr "해당 명령어가 존재하지 않습니다."
+msgstr "해당 커맨드가 등록되어 있지 않아요."
 
