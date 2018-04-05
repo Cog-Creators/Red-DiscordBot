@@ -1,11 +1,11 @@
-import pkg_resources
+from collections import namedtuple
 
 from .config import Config
 from .context import RedContext
 
 __all__ = ["Config", "RedContext", "__version__"]
 
-try:
-    __version__ = pkg_resources.get_distribution("Red-DiscordBot").version
-except pkg_resources.DistributionNotFound:
-    __version__ = "3.0.0"
+VersionInfo = namedtuple('VersionInfo', 'major minor micro releaselevel serial')
+
+__version__ = "3.0.0b11"
+version_info = VersionInfo(3, 0, 0, 'beta', 11)

@@ -6,15 +6,12 @@ from .audio import Audio
 from .manager import start_lavalink_server
 from discord.ext import commands
 from redbot.core.data_manager import cog_data_path
+import redbot.core
 
-LAVALINK_BUILD_URL = (
-    "https://ci.fredboat.com/app/rest/buildTypes/"
-    "id:Lavalink_Build/builds/status:SUCCESS/number?guest=1"
-)
 LAVALINK_DOWNLOAD_URL = (
-    "https://ci.fredboat.com/repository/download/"
-    "Lavalink_Build/.lastSuccessful/Lavalink.jar?guest=1"
-)
+    "https://github.com/Cog-Creators/Red-DiscordBot/"
+    "releases/download/{}/Lavalink.jar"
+).format(redbot.core.__version__)
 
 LAVALINK_DOWNLOAD_DIR = cog_data_path(raw_name="Audio")
 LAVALINK_JAR_FILE = LAVALINK_DOWNLOAD_DIR / "Lavalink.jar"
@@ -33,23 +30,16 @@ async def download_lavalink(session):
                 f.write(chunk)
 
 
-async def get_latest_build(session):
-    async with session.get(LAVALINK_BUILD_URL) as resp:
-        return int(await resp.text())
-
-
 async def maybe_download_lavalink(loop, cog):
     jar_exists = LAVALINK_JAR_FILE.exists()
     current_build = await cog.config.current_build()
 
     session = ClientSession(loop=loop)
 
-    latest_build = await get_latest_build(session)
-
-    if not jar_exists or current_build < latest_build:
+    if not jar_exists or current_build < redbot.core.__version__:
         LAVALINK_DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
         await download_lavalink(session)
-        await cog.config.current_build.set(latest_build)
+        await cog.config.current_build.set(redbot.core.__version__)
 
     session.close()
 
