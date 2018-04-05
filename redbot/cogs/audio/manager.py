@@ -48,12 +48,11 @@ async def get_java_version(loop):
     """
     This assumes we've already checked that java exists.
     """
-    proc = await loop.create_subprocess_exec(
-        *shlex.split("java -version", posix=os.name == 'posix'),
-        loop=loop,
+    proc = Popen(
+        shlex.split("java -version", posix=os.name == 'posix'),
         stdout=PIPE, stderr=PIPE
     )
-    _, err = await proc.communicate()
+    _, err = proc.communicate()
 
     version_info = str(err, encoding='utf-8')
 
