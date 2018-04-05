@@ -48,7 +48,7 @@ async def get_java_version(loop):
     """
     This assumes we've already checked that java exists.
     """
-    proc = await asyncio.create_subprocess_exec(
+    proc = await loop.create_subprocess_exec(
         *shlex.split("java -version", posix=os.name == 'posix'),
         loop=loop,
         stdout=PIPE, stderr=PIPE
