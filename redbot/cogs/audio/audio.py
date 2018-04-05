@@ -24,7 +24,7 @@ class Audio:
             "ws_port": '2332',
             "password": 'youshallnotpass',
             "status": False,
-            "current_build": 0,
+            "current_build": [3, 0, 0, 'alpha', 0],
             "use_external_lavalink": False
         }
 
