@@ -22,11 +22,8 @@ class VersionInfo:
     def __lt__(self, other):
         my_index = self._levels.index(self.releaselevel)
         other_index = self._levels.index(other.releaselevel)
-        return self.major < other.major or \
-            self.minor < other.minor or \
-            self.micro < other.micro or \
-            my_index < other_index or \
-            self.serial < other.serial
+        return (self.major, self.minor, self.micro, my_index, self.serial) < \
+               (other.major, other.minor, other.micro, other_index, other.serial)
 
     def __repr__(self):
         return "VersionInfo(major={}, minor={}, micro={}, releaselevel={}, serial={})".format(
