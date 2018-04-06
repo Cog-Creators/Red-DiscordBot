@@ -3,7 +3,7 @@ import pkgutil
 from importlib import import_module, invalidate_caches
 from importlib.machinery import ModuleSpec
 from pathlib import Path
-from typing import Tuple, Union, List, overload
+from typing import Tuple, Union, List
 
 import redbot.cogs
 import discord
@@ -17,6 +17,14 @@ from discord.ext import commands
 from .utils.chat_formatting import box, pagify
 
 __all__ = ["CogManager"]
+
+
+def _deduplicate(xs):
+    ret = []
+    for x in xs:
+        if x not in ret:
+            ret.append(x)
+    return ret
 
 
 class CogManager:
@@ -36,7 +44,7 @@ class CogManager:
             install_path=str(tmp_cog_install_path)
         )
 
-        self._paths = list(paths)
+        self._paths = [Path(p) for p in paths]
 
     async def paths(self) -> Tuple[Path, ...]:
         """Get all currently valid path directories.
@@ -47,16 +55,15 @@ class CogManager:
             All valid cog paths.
 
         """
-        conf_paths = await self.conf.paths()
+        conf_paths = [Path(p) for p in await self.conf.paths()]
         other_paths = self._paths
         core_paths = await self.core_paths()
 
-        all_paths = set(list(conf_paths) + list(other_paths) + core_paths)
+        all_paths = _deduplicate(list(conf_paths) + list(other_paths) + core_paths)
 
-        paths = [Path(p) for p in all_paths]
-        if self.install_path not in paths:
-            paths.insert(0, await self.install_path())
-        return tuple(p.resolve() for p in paths if p.is_dir())
+        if self.install_path not in all_paths:
+            all_paths.insert(0, await self.install_path())
+        return tuple(p.resolve() for p in all_paths if p.is_dir())
 
     async def core_paths(self) -> List[Path]:
         core_paths = [Path(p) for p in redbot.cogs.__path__]
@@ -152,7 +159,7 @@ class CogManager:
         if path == await self.install_path():
             raise ValueError("Cannot add the install path as an additional path.")
 
-        all_paths = set(await self.paths() + (path, ))
+        all_paths = _deduplicate(await self.paths() + (path, ))
         # noinspection PyTypeChecker
         await self.set_paths(all_paths)
 
@@ -208,10 +215,10 @@ class CogManager:
         RuntimeError
             When no matching spec can be found.
         """
-        resolved_paths = set(await self.paths())
-        core_paths = set(await self.core_paths())
+        resolved_paths = _deduplicate(await self.paths())
+        core_paths = _deduplicate(await self.core_paths())
 
-        real_paths = [str(p) for p in (resolved_paths - core_paths)]
+        real_paths = [str(p) for p in resolved_paths if p not in core_paths]
 
         for finder, module_name, _ in pkgutil.iter_modules(real_paths):
             if name == module_name:
@@ -300,6 +307,12 @@ _ = CogI18n("CogManagerUI", __file__)
 
 
 class CogManagerUI:
+    async def visible_paths(self, ctx):
+        install_path = await ctx.bot.cog_mgr.install_path()
+        cog_paths = await ctx.bot.cog_mgr.paths()
+        cog_paths = [p for p in cog_paths if p != install_path]
+        return cog_paths
+
     @commands.command()
     @checks.is_owner()
     async def paths(self, ctx: commands.Context):
@@ -364,7 +377,7 @@ class CogManagerUI:
         from_ -= 1
         to -= 1
 
-        all_paths = list(await ctx.bot.cog_mgr.paths())
+        all_paths = await self.visible_paths(ctx)
         try:
             to_move = all_paths.pop(from_)
         except IndexError:
