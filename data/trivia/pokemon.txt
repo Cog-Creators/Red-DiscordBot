@@ -142,7 +142,7 @@ The Special/Physical split happened in what generation?`4`Four
 Mew, Celebi, Jirachi, Arceus, Keldeo, and Diancie are all examples of what kind of pokémon?`Mythical pokemon`Mythical
 What is Heracross' Hidden Ability?`Moxie
 What is Exploud's Hidden Ability?`Scrappy
-What is the Hidden Ability of Durant?`Traunt
+What is the Hidden Ability of Durant?`Truant
 What item increases the amount of HP returned from HP-draining moves?`Big Root
 Which generation did not introduce any new fossils?`2 or 7`2`Two`7`Seven
 How many weaknesses does Bug/Steel have?`1`one

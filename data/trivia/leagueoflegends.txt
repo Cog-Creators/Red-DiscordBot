@@ -29,11 +29,14 @@ Who says "I shall endure." while attacking?`Anivia
 Whose name is derived from a Latin word meaning "snow white"?`Anivia
 Who froze Gnar?`Anivia
 Who has a skill called "Crystallize"?`Anivia
-Who is from the Voodoo Lands?`Annie
+What is Annie's last name?`Hastur
 Who has the skill with the largest AP ratio?`Annie
 Who is known as "The Dark Child"?`Annie
 Who has a skill called "Molten Shield"?`Annie or Tibbers`Annie`Tibbers
-Who is part of the faction "the Grey Order"?`Annie
+What is the name of Annie's step-sister?`Daisy
+Who is Gregori the Gray's daughter?`Annie
+Who made Tibbers?`Amoline
+What is Annie's passive skill named?`Pyromania
 Who is Avarosa' descendant?`Ashe
 Who is the champion in the tutorial?`Ashe
 Who says "I only need one shot!" while attacking?`Ashe
@@ -79,6 +82,7 @@ What is Camille's last name?`Ferros
 Whose family motto is "For family, I will give."?`Camille
 Who says "Precision is the difference between a butcher and a surgeon." when picked?`Camille
 Who does Cassiopeia betray?`Sivir
+What is the name of Cassiopeia and Katarina's father?`Marcus
 The Mythic Cassiopeia skin was released to celebrate the release of the server for which country?`Greece`Greek
 Who has a skill called "Miasma"?`Cassiopeia
 Who releases Renekton and Xerath?`Cassiopeia
@@ -98,6 +102,7 @@ Who is Darius' brother?`Draven
 Between "The Blood Brothers", who is older?`Darius
 Who is the "Hand of Noxus"?`Darius
 Who says "I do not tolerate cowardice."?`Darius
+Who is the Trifarix Leader of Might?`Darius
 Which faction did Diana belong to?`Lunari
 Who says "Bring down the sun."?`Diana
 Who has a Lunar Goddess skin?`Diana
@@ -196,10 +201,13 @@ Who created Master Yi's goggles?`Heimerdinger
 Who gets the buff Eureka! when they get a pentakill?`Heimerdinger
 Who has a Hazmat skin?`Heimerdinger
 Who is known as the "Revered Inventor"?`Heimerdinger
-If you were to destroy this champion's blades, he/she would die (according to lore)?`Irelia
-Who has the highest potential tenacity in the game?`Irelia
-Who is known as the "Will of the Blades"?`Irelia
-Who says "This battle will be won."?`Irelia
+If you were to destroy this champion's blades, he/she would die (according to old lore)?`Irelia
+Who was known as the "Will of the Blades"?`Irelia
+Who cut off Swain's hand?`Irelia
+Who was a silk dancer?`Irelia
+What is Irelia's family name?`Xan
+What is the range of Irelia's Bladesurge?`625
+What is Irelia's father's name?`Lito
 Name one of the champions that has the Mantle of Decorum?`Irelia or Karma`Irelia`Karma
 Who cannot damage any non-epic neutral monsters?`Ivern
 What is the name of Ivern's summoned sentinel?`Daisy
@@ -240,6 +248,11 @@ What is the name of Star Guardian Jinx's white gun?`Shiro
 What is the name of Star Guardian Jinx's black gun?`Kuro
 Who has a Firecracker skin?`Jinx
 Who used to have a crush on Jinx before she went crazy?`Ekko
+Who was the first champion to be released with Chroma variants?`Kai'sa`Kai sa`kaisa
+Who is Kassadin's daughter?`Kai'sa`Kaisa`Kai sa
+What type of food does Kai'sa prefer to eat?`Peaches`Peach
+What is Kai'sa's original name?`Kaisa
+Which of Kai'sa's stats is upgrading her Supercharge dependent on?`Bonus Attack Speed`attack speed
 Who is related to the Ruined King (Blade of the Ruined King)?`Kalista
 Who has the skill with the highest AD ratio in the game?`Kalista
 Name one of the two champions whose dance is a reference to Game of Thrones?`Kalista or Riven`Kalista`Riven
@@ -257,10 +270,10 @@ Who does Karthus follow (in a worshipping manner)?`Kindred
 Who has a Phantom skin?`Karthus
 Who has a skill called "Void Stone"?`Kassadin
 Who has followers called "The Preservers of Valoran"?`Kassadin
-Who is trying to protect Valoran from the Void?`Kassadin
-Who captured Kassadin's daughter?`Malzahar
+How many degrees is the angle of Kassadin's Force Pulse?`80
+Who caused Kassadin to lose his daughter?`Malzahar
 Who says "You are null and void."?`Kassadin
-Who is Katarina's sister?`Cassiopeia
+Who is Katarina's younger sister?`Cassiopeia
 Who is the head of the Du Couteau House?`Katarina
 Who does Katarina treat as an emotional punching bag?`Talon
 Who has a Red Card skin?`Katarina
@@ -285,7 +298,7 @@ Who is known as the "Voidreaver"?`Kha'zix`Khazix`kha zix
 Who has a skill called "Leap"?`Kha'zix`Khazix`kha zix
 Who is Kha'zix's rival?`Rengar
 Who says "change is good"?`Kha'zix`khazix`kha zix
-Who is the only Voidborn champion without a True Damage component to their skillset?`Kha'zix`Khazix`kha zix
+What species is Kha'zix?`Voidborn
 Who is part of the Spirits species?`Kindred
 Aside from Kindred, who else's champion design is based on the idea of "Yin and Yang"?`Karma
 Who has a Shadowfire skin?`Kindred
@@ -302,12 +315,13 @@ Who has a Reindeer skin?`Kog'maw`kogmaw`Kog maw
 Who is the "Mouth of the Abyss"?`Kog'maw`kogmaw`Kog maw
 Who has an ability called "Icathian Surprise"?`Kog'maw`kogmaw`Kog maw
 Whose dance is based on the Michigan J. Frog dance?`Kog'maw`kogmaw`Kog maw
-Who says "Time to make an appearance."?`Leblanc
-Whose name means "The White" in French?`Leblanc
-Whose real name is Evaine?`Leblanc
-Who is hunting Leblanc?`Kalista
-Whose passive makes them stealth for 1 second?`Leblanc
-What did Lee Sin want to become before he became a monk?`summoner
+Who says "Time to make an appearance."?`LeBlanc
+Whose name means "The White" in French?`LeBlanc
+Whose real name is Evaine?`LeBlanc
+Who is hunting LeBlanc?`Kalista
+Which champion shares a voice actress with Lux?`LeBlanc
+What is the name of the faction led by LeBlanc?`The Black Rose
+What did Lee Sin want to become before he became a monk?`Summoner
 Who lit themselves on fire to protest Noxus?`Lee Sin`leesin
 Who says "Their heartbeats quicken."?`Lee Sin`leesin
 Who has a passive skill called "Flurry"?`Lee Sin`leesin
@@ -320,6 +334,7 @@ What faction is Leona a part of?`The Solari`Solari
 Who is the Aspect of the Sun?`Leona
 What species is Lissandra?`Iceborn
 Who lives in the Frostguard Citadel?`Lissandra
+Who turned Lissandra into an Iceborn?`Watchers
 Aside from Lee Sin, who else is blind?`Lissandra
 Who has the only in-game monologue?`Lissandra
 Who is the only champion in game to have a target skill that can be self-cast but not ally-cast?`Lissandra
@@ -340,11 +355,15 @@ Who was the original Star Guardian?`Lux
 Who is the only female with a commando skin?`Lux
 Who is Lux supposedly dating?`Ezreal
 Whose ult was originally named "Finales Funkeln"?`Lux
-Who has a skin that is a reference to the anime Sailor Moon?`Lux
 Who is allied with Maokai?`Malphite
 Who has a skill called "Brutal Strikes"?`Malphite
 Who has the only skill in the game that does AD but scales with AP (and armor)?`Malphite
 Who says "I'm moving as fast as I can." in game?`Malphite
+Who is known as the "Prophet of the Void"?`Malzahar
+What is the name of the faction led by Malzahar?`The Cult of the Void`Cult of the void
+What is Malzahar's pet champion called?`Voidling
+Who did Malzahar lure into Runeterra?`Kog'maw`kog maw`kogmaw
+Who says "We demand sacrifice."?`Malzahar
 What species is Maokai?`Treant
 Who has the highest base AD at level 1?`Maokai
 Whose name is an anagram of "I am Oak"?`Maokai
@@ -476,7 +495,7 @@ Who is also known as the "Rune Mage"?`Ryze
 Who used to be known as the "Rogue Mage"?`Ryze
 Who was the first champion to have 2 Harrowing skins?`Ryze
 Who tells you to "Take this scroll and stick it somewhere safe."?`Ryze
-Whose occupation is Warlock?`Ryze
+Who has an ultimate ability that can only be ranked up twice?`Ryze
 Who was the first champion to have 9 skins?`Ryze
 Who has a skin that is a reference to Elminster Aumar from Dungeons and Dragons?`Ryze Whitebeard`Ryze
 What is the name of Sejuani's boar?`Bristle
@@ -519,7 +538,7 @@ Who is the Heir of Shurima?`Sivir
 Who has a skill called "Ricochet"?Sivir
 Who is also known as "The Crystal Vanguard"?`Skarner
 Who emerged from the Crystal Scar (Dominion map)?`Skarner
-Which champion is a member of the Brackerns species?`Skarner
+Which champion is a member of the Brackern species?`Skarner
 Who yells his own name after standing in a bush for a period of time (reference to Pokemon)?`Skarner
 Who has a skill called "Fracture"?`Skarner
 Who says "On all legs." in game?`Skarner
@@ -535,10 +554,11 @@ Who says "This is my path" in game?`Soraka
 Who has a Dryad skin?`Soraka
 Who has a skill called "Equinox"?`Soraka
 What is the name of Swain's raven?`Beatrice
-Who is the leader of Noxus?`Swain
+Who is the Noxian Grand General?`Swain
+Who is the Trifarix Leader of Vision?`Swain
 Whose personal warship is called the "Leviathan"?`Swain
 What is Swain's first name?`Jericho
-Who is also known as the "Master Tactician"?`Swain
+What is the range of Swain's Vision of Empire?`3500
 Who says "A whole world to toy with."?`Syndra
 Who is also known as the "Dark Sovereign"?`Syndra
 Who has a skill called "Scatter the Weak"?`Syndra
@@ -707,9 +727,10 @@ Who is the only champion who emotes without the player making them (i.e. laughin
 Who is the Dean of Demolitions at the Yordle Academy in Piltover?`Ziggs
 Who has a Master Arcanist skin?`Ziggs
 Who does Zilean have an antagonistic relationship with?`Volibear
-Who is from the country of Urtistan?`Zilean
+Name a champion from the Void destroyed city of Icathia?`Jax or Zilean`Jax`Zilean
 Who joined the league to find a cure for chrono-displasia?`Zilean
-Name a champion with only one damaging ability?`Tryndamere or Zilean`Tryndamere`Zilean
+Who has a Groovy skin?`Zilean
+How long does Zilean's ultimate ability's resurrection stasis last?`3 seconds 
 Name a champion with a non-ultimate ability that cannot be taken at level 1?`Azir or Zilean`Azir`Zilean
 Who woke up Skarner?`Zilean
 Which character's walk cycles can be toggled in game?`Zoe
@@ -750,5 +771,7 @@ What is Baron Nashor's movement speed?`300`three hundred
 What is the name of the type minion created by Banner of Command?`Anti-turret Cannon`antiturret cannon
 What is the name of the continent that League of Legends is located on?`Valoran
 Which champion is capable of having the most spell vamp?`Akali
-Which summoner spell has a 240 second cooldown?`Heal
 What is the name of the spider that lives in the Twisted Treeline?`Vilemaw
+Which summoner spell has a 240 second cooldown?`Clarity
+Which summoner spell has a 270 second cooldown?`Heal
+Who are the masters of the Void?`Watchers
