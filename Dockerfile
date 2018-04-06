@@ -14,9 +14,10 @@ RUN apk add --no-cache \
 COPY ./docker/basic-config.json /home/red/.config/Red-DiscordBot/config.json
 COPY ./docker/run_red.sh /home/red/run_red.sh
 
-RUN echo "red:x:1000:1000::/home/red:" >> /etc/passwd && \
+ENV UID 1000
+RUN echo "red:x:${UID}:${UID}::/home/red:" >> /etc/passwd && \
     echo "red:!:$(($(date +%s) / 60 / 60 / 24)):0:99999:7:::" >> /etc/shadow && \
-    echo "red:x:1000:" >> /etc/group && \
+    echo "red:x:{UID}:" >> /etc/group && \
     chmod +x /home/red/run_red.sh && \
     mkdir /data && \
     mkdir -p /home/red/.local/share && \
