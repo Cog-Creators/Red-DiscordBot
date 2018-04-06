@@ -14,7 +14,19 @@ Installing pre-requirements
 
     echo "deb http://httpredir.debian.org/debian stretch-backports main contrib non-free" >> /etc/apt/sources.list
     apt-get update
-    apt-get install python3.5-dev python3-pip build-essential libssl-dev libffi-dev git ffmpeg libopus-dev unzip default-jre -y
+    apt-get install python3.5-dev python3-pip build-essential libssl-dev libffi-dev git unzip default-jre -y
+
+--------------------------------
+Python Virtual Environment setup
+--------------------------------
+
+This section is optional, but recommended to avoid version conflicts.
+
+.. code-block:: none
+
+    RED_PATH=some/path/here
+    python3.5 -m venv ${RED_PATH}/venv
+    source ${RED_PATH}/venv/bin/activate
 
 ------------------
 Installing the bot
