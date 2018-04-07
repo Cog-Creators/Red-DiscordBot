@@ -15,6 +15,7 @@ Welcome to Red - Discord Bot's documentation!
     install_ubuntu
     install_debian
     install_centos
+    install_arch
     install_raspbian
     cog_dataconverter
 
