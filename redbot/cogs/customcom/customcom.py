@@ -179,7 +179,7 @@ class CustomCommands:
                      ctx: commands.Context):
         """
         CCs can be enhanced with arguments:
-        https: // twentysix26.github.io / Red - Docs / red_guide_command_args/
+        [Read the guide](https://twentysix26.github.io/Red-Docs/red_guide_command_args/)
         """
         if not ctx.invoked_subcommand or isinstance(ctx.invoked_subcommand,
                                                     commands.Group):
