@@ -4,6 +4,8 @@
 Installing Red on CentOS 7
 ==========================
 
+.. warning:: For safety reasons, DO NOT install Red with a root user. Instead, `make a new one <https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/4/html/Step_by_Step_Guide/s1-starting-create-account.html>`_.
+
 ---------------------------
 Installing pre-requirements
 ---------------------------
@@ -21,19 +23,19 @@ Installing Red
 
 Without audio:
 
-:code:`pip3 install -U --process-dependency-links red-discordbot`
+:code:`pip3 install -U --process-dependency-links red-discordbot --user`
 
 With audio:
 
-:code:`pip3 install -U --process-dependency-links red-discordbot[voice]`
+:code:`pip3 install -U --process-dependency-links red-discordbot[voice] --user`
 
 To install the development version (without audio):
 
-:code:`pip3 install -U --process-dependency-links git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=red-discordbot`
+:code:`pip3 install -U --process-dependency-links git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=red-discordbot --user`
 
 To install the development version (with audio):
 
-:code:`pip3 install -U --process-dependency-links git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=red-discordbot[voice]`
+:code:`pip3 install -U --process-dependency-links git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=red-discordbot[voice] --user`
 
 ----------------------
 Setting up an instance

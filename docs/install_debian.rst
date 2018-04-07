@@ -4,7 +4,7 @@
 Installing Red on Debian Stretch
 ================================
 
-.. warning:: For safety reasons, DO NOT install Red with a root user. Instead, make a new one.
+.. warning:: For safety reasons, DO NOT install Red with a root user. Instead, `make a new one <https://manpages.debian.org/stretch/adduser/adduser.8.en.html>`_.
 
 ---------------------------
 Installing pre-requirements
