@@ -16,9 +16,7 @@ COPY ./docker/basic-config.json /home/red/.config/Red-DiscordBot/config.json
 # Compose compatability (mongo later)
 COPY ./docker/run_red.sh /home/red/run_red.sh
 
-# Mounted FS Host Permissions. If you aren't running as the default user pass
-# -e UID=$(id -u)
-# to docker
+# Mounted FS Host Permissions.
 ENV UID 1000
 RUN echo "red:x:$UID:$UID::/home/red:" >> /etc/passwd && \
     echo "red:!:$(($(date +%s) / 60 / 60 / 24)):0:99999:7:::" >> /etc/shadow && \
