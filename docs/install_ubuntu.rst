@@ -22,6 +22,7 @@ This section is optional, but recommended to avoid version conflicts.
 
 .. code-block:: none
 
+    apt install python3-venv
     RED_PATH=some/path/here
     python3.5 -m venv ${RED_PATH}/venv
     source ${RED_PATH}/venv/bin/activate
