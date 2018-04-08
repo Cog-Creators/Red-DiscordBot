@@ -156,3 +156,10 @@ ENV/
 # mypy
 .mypy_cache/
 
+# dockerdata
+docker/data/
+*.env
+docker/settings/*
+# but we want the basic config and templates
+!docker/basic-config.json
+!docker/settings/*.example

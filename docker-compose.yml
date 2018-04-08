@@ -1,0 +1,20 @@
+version: "3.3"
+
+services:
+  redbot: 
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - "./docker/data:/data"
+    restart: always
+    secrets:
+      - RED_TOKEN
+      - PREFIX
+    command: /home/red/run_red.sh
+
+secrets:
+  RED_TOKEN:
+    file: ./docker/settings/TOKEN
+  PREFIX:
+    file: ./docker/settings/PREFIX
