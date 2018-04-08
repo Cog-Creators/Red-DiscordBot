@@ -283,7 +283,7 @@ async def edit_instance():
                 if confirm("Would you like to import your data? (y/n) "):
                     await json_to_mongo(current_data_dir, storage_details)
         else:
-            storage_details = default_dirs["STORAGE_DETAILS"]
+            storage_details = instance_data["STORAGE_DETAILS"]
             default_dirs["STORAGE_DETAILS"] = {}
             if instance_data["STORAGE_TYPE"] == "MongoDB":
                 if confirm("Would you like to import your data? (y/n) "):
