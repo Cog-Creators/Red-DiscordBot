@@ -173,7 +173,7 @@ class SpecResolver(object):
         try:
             config = getattr(bot.get_cog(cogname), attr)
         except (TypeError, AttributeError):
-            config = Config.get_conf(cogname, _id)
+            config = Config.get_conf(None, _id, cog_name=cogname)
 
         try:
             items = converter(dc.json_load(filepath))

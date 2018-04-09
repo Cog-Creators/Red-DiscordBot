@@ -24,8 +24,6 @@ _DEFAULT_GUILD = {
     "casetypes": {}
 }
 
-_modlog_type = type("ModLog", (object,), {})
-
 
 def _register_defaults():
     _conf.register_global(**_DEFAULT_GLOBAL)
@@ -33,7 +31,7 @@ def _register_defaults():
 
 
 if not os.environ.get('BUILDING_DOCS'):
-    _conf = Config.get_conf(_modlog_type(), 1354799444)
+    _conf = Config.get_conf(None, 1354799444, cog_name='ModLog')
     _register_defaults()
 
 
