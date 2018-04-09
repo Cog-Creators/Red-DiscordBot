@@ -21,7 +21,7 @@ Paste the following and replace all instances of :code:`username` with the usern
     After=multi-user.target
 
     [Service]
-    ExecStart=/home/username/.local/bin/redbot %I
+    ExecStart=/home/username/.local/bin/redbot %I --no-prompt
     User=username
     Group=username
     Type=idle
