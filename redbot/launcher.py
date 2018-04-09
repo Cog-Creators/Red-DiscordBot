@@ -319,7 +319,7 @@ def main_menu():
             basic_setup()
             wait()
         elif choice == "6":
-            remove_instance()
+            await remove_instance()
             wait()
         elif choice == "7":
             debug_info()
