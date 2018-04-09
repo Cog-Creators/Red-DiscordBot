@@ -18,18 +18,6 @@ Installing pre-requirements
     * :code:`brew tap caskroom/versions`
     * :code:`brew cask install java8`
 
---------------------------------
-Python Virtual Environment setup
---------------------------------
-
-This section is optional, but recommended to avoid version conflicts.
-
-.. code-block:: none
-
-    RED_PATH=some/path/here
-    python3 -m venv ${RED_PATH}/venv
-    source ${RED_PATH}/venv/bin/activate
-
 --------------
 Installing Red
 --------------

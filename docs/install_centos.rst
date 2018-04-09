@@ -15,19 +15,6 @@ Installing pre-requirements
     yum -y install yum-utils wget which python35u python35u-pip python35u-devel openssl-devel libffi-devel git java-1.8.0-openjdk
     sh -c "$(wget https://gist.githubusercontent.com/mustafaturan/7053900/raw/27f4c8bad3ee2bb0027a1a52dc8501bf1e53b270/latest-ffmpeg-centos6.sh -O -)"
 
-
---------------------------------
-Python Virtual Environment setup
---------------------------------
-
-This section is optional, but recommended to avoid version conflicts.
-
-.. code-block:: none
-
-    RED_PATH=some/path/here
-    python3.5 -m venv ${RED_PATH}/venv
-    source ${RED_PATH}/venv/bin/activate
-
 --------------
 Installing Red
 --------------
