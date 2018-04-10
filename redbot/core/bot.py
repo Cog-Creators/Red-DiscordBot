@@ -26,6 +26,7 @@ from .utils import TYPE_CHECKING
 if TYPE_CHECKING:
     from aiohttp_json_rpc import JsonRpc
 
+
 # noinspection PyUnresolvedReferences
 class RpcMethodMixin:
     async def rpc__cogs(self, request):
