@@ -836,7 +836,7 @@ class Mod:
             await channel.send(issue)
 
     @checks.mod_or_permissions(administrator=True)
-    @mute.command(name="server", aliases["guild"])
+    @mute.command(name="server", aliases=["guild"])
     @commands.guild_only()
     async def guild_mute(self, ctx: RedContext, user: discord.Member, *, reason: str = None):
         """Mutes user in the server"""
