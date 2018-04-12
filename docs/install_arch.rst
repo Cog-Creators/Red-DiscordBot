@@ -14,7 +14,7 @@ Installing the pre-requirements
 
 .. code-block:: none
 
-    sudo pacman -Sy python-pip git base-devel libsodium jre8-openjdk
+    sudo pacman -Sy python-pip git base-devel jre8-openjdk
 
 ------------------
 Installing the bot
