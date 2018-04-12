@@ -4,6 +4,7 @@
 
 import sys
 import discord
+import redbot
 from redbot.core.bot import Red, ExitCodes
 from redbot.core.cog_manager import CogManagerUI
 from redbot.core.data_manager import load_basic_configuration, config_file

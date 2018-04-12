@@ -12,10 +12,6 @@ from discord.ext.commands.bot import BotBase
 from discord.ext.commands import GroupMixin
 from discord.ext.commands import when_mentioned_or
 
-# This supresses the PyNaCl warning that isn't relevant here
-from discord.voice_client import VoiceClient
-VoiceClient.warn_nacl = False
-
 from .cog_manager import CogManager
 from . import (
     Config,
