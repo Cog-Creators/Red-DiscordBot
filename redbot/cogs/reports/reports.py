@@ -11,6 +11,7 @@ from redbot.core.utils.chat_formatting import pagify, box
 from redbot.core.utils.antispam import AntiSpam
 from redbot.core.bot import Red
 from redbot.core.i18n import CogI18n
+from redbot.core.utils.tunnel import Tunnel
 
 
 _ = CogI18n("Reports", __file__)
@@ -23,10 +24,15 @@ class Reports:
     default_guild_settings = {
         "output_channel": None,
         "active": False,
-        "reports": {}
+        "next_ticket": 1
     }
 
-    # This can be made configureable later if it makes sense
+    default_report = {
+        'report': {}
+    }
+
+    # This can be made configureable later if it
+    # becomes an issue.
     # Intervals should be a list of tuples in the form
     # (period: timedelta, max_frequency: int)
     # see redbot/core/utils/antispam.py for more details
@@ -40,11 +46,25 @@ class Reports:
 
     def __init__(self, bot: Red):
         self.bot = bot
-        self.settings = Config.get_conf(
+        self.config = Config.get_conf(
             self, 78631113035100160, force_registration=True)
-        self.settings.register_guild(**self.default_guild_settings)
+        self.config.register_guild(**self.default_guild_settings)
+        self.config.register_custom('REPORT', **self.default_report)
         self.antispam = {}
         self.user_cache = []
+        self.tunnel_store = {}
+        # (guild, ticket#):
+        #   {'tun': Tunnel, 'msgs': (messageid, messageid)}
+
+    @property
+    def tunnels(self):
+        return [
+            x['tun'] for x in self.tunnel_store.values()
+        ]
+
+    def __unload(self):
+        for tun in self.tunnels.values():
+            tun.close()
 
     @checks.admin_or_permissions(manage_guild=True)
     @commands.guild_only()
@@ -59,7 +79,7 @@ class Reports:
     @reportset.command(name="output")
     async def setoutput(self, ctx: RedContext, channel: discord.TextChannel):
         """sets the output channel"""
-        await self.settings.guild(ctx.guild).output_channel.set(channel.id)
+        await self.config.guild(ctx.guild).output_channel.set(channel.id)
         await ctx.send(_("Report Channel Set."))
 
     @checks.admin_or_permissions(manage_guild=True)
@@ -67,9 +87,9 @@ class Reports:
     async def report_toggle(self, ctx: RedContext):
         """Toggles whether the Reporting tool is enabled or not"""
 
-        active = await self.settings.guild(ctx.guild).active()
+        active = await self.config.guild(ctx.guild).active()
         active = not active
-        await self.settings.guild(ctx.guild).active.set(active)
+        await self.config.guild(ctx.guild).active.set(active)
         if active:
             await ctx.send(_("Reporting now enabled"))
         else:
@@ -162,27 +182,23 @@ class Reports:
             icon_url=avatar
         )
 
-        async with self.settings.guild(guild).reports() as report_dict:
-            # JSON and integer keys don't mix
-            ticket_number = int(max(
-                report_dict.keys(), default=0, key=lambda x: int(x)
-            )) + 1
-            em.set_footer(text=_("Report #{}").format(ticket_number))
+        ticket_number = await self.config.guild(guild).next_ticket()
+        await self.config.guild(guild).next_ticket.set(ticket_number + 1)
+        em.set_footer(text=_("Report #{}").format(ticket_number))
 
-            channel_id = await self.settings.guild(guild).output_channel()
-            channel = guild.get_channel(channel_id)
-            if channel is not None:
-                try:
-                    await channel.send(embed=em)
-                except (discord.Forbidden, discord.HTTPException):
-                    return None
-            else:
+        channel_id = await self.config.guild(guild).output_channel()
+        channel = guild.get_channel(channel_id)
+        if channel is not None:
+            try:
+                await channel.send(embed=em)
+            except (discord.Forbidden, discord.HTTPException):
                 return None
+        else:
+            return None
 
-            report_dict.update(
-                {str(ticket_number): {'userid': author.id, 'report': report}}
-            )
-
+        await self.config.custom('REPORT', guild.id, ticket_number).report.set(
+            {'user_id': author.id, 'report': report}
+        )
         return ticket_number
 
     @commands.group(name="report", invoke_without_command=True)
@@ -202,7 +218,7 @@ class Reports:
                 pass
         if guild is None:
             return
-        g_active = await self.settings.guild(guild).active()
+        g_active = await self.config.guild(guild).active()
         if not g_active:
             return await author.send(
                 _("Reporting has not been enabled for this server")
@@ -267,3 +283,84 @@ class Reports:
             self.antispam[guild.id][author.id].stamp()
 
         self.user_cache.remove(author.id)
+
+    async def on_raw_reaction_add(self, payload):
+        """
+        oh dear....
+        """
+        if not str(payload.emoji) == "\N{NEGATIVE SQUARED CROSS MARK}":
+            return
+
+        _id = payload.message_id
+        t = next(filter(
+            lambda x: _id in x[1]['msgs'],
+            self.tunnel_store.items()
+        ), None)
+
+        if t is None:
+            return
+        else:
+            await t[1].react_close(
+                uid=payload.user_id,
+                message=_("{closer} has closed the correspondence")
+            )
+            self.tunnel_store.pop(t[0], None)
+
+    async def on_message(self, message: discord.Message):
+        for k, t in self.tunnels.items:
+            topic = _("Re: ticket# {1} in {0.name}").format(*k)
+            # Tunnels won't forward unintended messages, this is safe
+            await t.communicate(message=message, topic=topic)
+
+    @checks.mod_or_permissions(manage_members=True)
+    @report.command(name='interact')
+    async def response(self, ctx, ticket_number: int):
+        """
+        opens a message tunnel between things you say in this channel
+        and the ticket opener's direct messages
+        """
+
+        # note, mod_or_permissions is an implicit guild_only
+        guild = ctx.guild
+        rec = await self.config.custom(
+            'REPORT', guild.id, ticket_number).report()
+
+        try:
+            user = guild.get_member(rec.get('user_id'))
+        except KeyError:
+            return await ctx.send(
+                _("That ticket doesn't seem to exist")
+            )
+
+        if user is None:
+            return await ctx.send(
+                _("That user isn't here anymore.")
+            )
+
+        tun = Tunnel(recipient=user, origin=ctx.channel, sender=ctx.author)
+
+        if tun is None:
+            return await ctx.send(
+                _("Either you or the user you are trying to reach already "
+                  "has an open communication.")
+            )
+
+        topic = _(
+            "A moderator in `{guild.name}` has opened a 2-way communication."
+            "about ticket number {ticketnum}. Anything you say or upload here "
+            "(8MB file size limitation on uploads) "
+            "will be forwarded to them until the communication is closed.\n"
+            "You can close a communication at any point "
+            "by reacting with the X to the last message recieved. "
+            "\nAny message succesfully forwarded with be marked with a check."
+            "\nTunnels are not persistent across bot restarts."
+        ).format(guild=guild, ticketnum=ticket_number)
+        try:
+            m = await tun.communicate(
+                message=ctx.message, topic=topic, skip_message_content=True
+            )
+        except discord.Forbidden:
+            await ctx.send(_("User has disabled DMs."))
+            tun.close()
+        else:
+            self.tunnel_store[(guild, ticket_number)] = {'tun': tun, 'msgs': m}

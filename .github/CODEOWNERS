@@ -22,6 +22,7 @@ redbot/core/sentry_setup.py              @Kowlin @tekulvw
 redbot/core/utils/chat_formatting.py     @tekulvw
 redbot/core/utils/mod.py                 @palmtree5
 redbot/core/utils/antispam.py            @mikeshardmind
+redbot/core/utils/tunnel.py              @mikeshardmind
 
 # Cogs
 redbot/cogs/admin/*                 @tekulvw
