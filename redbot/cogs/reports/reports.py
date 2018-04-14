@@ -350,8 +350,8 @@ class Reports:
                   "has an open communication.")
             )
 
-        topic = _(
-            "A moderator in `{guild.name}` has opened a 2-way communication."
+        big_topic = _(
+            "{who} opened a 2-way communication."
             "about ticket number {ticketnum}. Anything you say or upload here "
             "(8MB file size limitation on uploads) "
             "will be forwarded to them until the communication is closed.\n"
@@ -359,7 +359,11 @@ class Reports:
             "by reacting with the X to the last message recieved. "
             "\nAny message succesfully forwarded with be marked with a check."
             "\nTunnels are not persistent across bot restarts."
-        ).format(guild=guild, ticketnum=ticket_number)
+        )
+        topic = big_topic.format(
+            ticketnum=ticket_number,
+            who=_("A moderator in `{guild.name}` has").format(guild=guild)
+        )
         try:
             m = await tun.communicate(
                 message=ctx.message, topic=topic, skip_message_content=True
@@ -369,3 +373,6 @@ class Reports:
             tun.close()
         else:
             self.tunnel_store[(guild, ticket_number)] = {'tun': tun, 'msgs': m}
+            await ctx.send(
+                big_topic.format(who=_("You have"), ticketnum=ticket_number)
+            )
