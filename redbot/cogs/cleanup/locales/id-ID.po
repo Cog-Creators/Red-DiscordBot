@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2018-02-19 03:59+UTC\n"
-"PO-Revision-Date: 2018-02-25 21:34-0500\n"
+"PO-Revision-Date: 2018-04-02 19:27-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -18,9 +18,9 @@ msgstr ""
 
 #: ../cleanup.py:176
 msgid "This command can only be used on bots with bot accounts."
-msgstr ""
+msgstr "Perintah ini hanya bisa di gunakan kepada bot dengan akun bot."
 
 #: ../cleanup.py:183
 msgid "Message not found."
-msgstr ""
+msgstr "Pesan tidak ditemukan."
 
