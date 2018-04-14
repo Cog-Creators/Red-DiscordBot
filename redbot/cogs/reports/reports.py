@@ -58,6 +58,8 @@ class Reports:
 
     @property
     def tunnels(self):
+        # remove this later, it's here to help debug more easily
+        #  using eval
         return [
             x['tun'] for x in self.tunnel_store.values()
         ]
@@ -307,10 +309,10 @@ class Reports:
             self.tunnel_store.pop(t[0], None)
 
     async def on_message(self, message: discord.Message):
-        for k, t in self.tunnels.items:
+        for k, v in self.tunnel_store.items():
             topic = _("Re: ticket# {1} in {0.name}").format(*k)
             # Tunnels won't forward unintended messages, this is safe
-            await t.communicate(message=message, topic=topic)
+            await v['tun'].communicate(message=message, topic=topic)
 
     @checks.mod_or_permissions(manage_members=True)
     @report.command(name='interact')
@@ -318,6 +320,8 @@ class Reports:
         """
         opens a message tunnel between things you say in this channel
         and the ticket opener's direct messages
+
+        tunnels do not persist across bot restarts
         """
 
         # note, mod_or_permissions is an implicit guild_only
