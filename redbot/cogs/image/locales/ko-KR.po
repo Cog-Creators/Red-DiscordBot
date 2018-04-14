@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"PO-Revision-Date: 2018-04-02 19:26-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -18,29 +18,29 @@ msgstr ""
 
 #: ../image.py:49
 msgid "Your search returned no results"
-msgstr ""
+msgstr "검색 결과가 반환되지 않았어요."
 
 #: ../image.py:52
 msgid "Search results...\n"
-msgstr ""
+msgstr "검색 중..."
 
 #: ../image.py:58 ../image.py:100
 msgid "Something went wrong. Error code is {}"
-msgstr ""
+msgstr "뭔가 잘못됐어요, 오류 코드는 {} 이에요."
 
 #: ../image.py:70
 msgid "Only 'new' and 'top' are a valid sort type."
-msgstr ""
+msgstr "'new' 와 'top' 만이 사용 가능한 타입이에요."
 
 #: ../image.py:98 ../image.py:135 ../image.py:157
 msgid "No results found."
-msgstr ""
+msgstr "결과를 찾을 수 없어요."
 
 #: ../image.py:115
 msgid "Set the imgur client id!"
-msgstr ""
+msgstr "imgur 클라이언트 ID를 설정해야 해요!"
 
 #: ../image.py:137 ../image.py:159
 msgid "Error contacting the API"
-msgstr ""
+msgstr "API에 연결하는 동안 오류가 발생했어요."
 
