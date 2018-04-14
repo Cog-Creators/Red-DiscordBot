@@ -4,13 +4,14 @@ from redbot.core.utils.chat_formatting import pagify
 import io
 import sys
 
+_instances = {}
+
 
 class TunnelMeta(type):
     """
     lets prevent having multiple tunnels with the same
     places involved.
     """
-    _instances = {}
 
     def __call__(cls, *args, **kwargs):
         lockout_tuple = (
@@ -20,17 +21,17 @@ class TunnelMeta(type):
         if not (
             any(
                 lockout_tuple[0] == x[0]
-                for x in cls._instances.keys()
+                for x in _instances.keys()
             ) or any(
                 lockout_tuple[1] == x[1]
-                for x in cls._instances.keys()
+                for x in _instances.keys()
             )
         ):
-            cls._instances[lockout_tuple] = super(
+            _instances[lockout_tuple] = super(
                 TunnelMeta, cls).__call__(*args, **kwargs)
-            return cls._instances[lockout_tuple]
-        elif lockout_tuple in cls._instances:
-            return cls._instances[lockout_tuple]
+            return _instances[lockout_tuple]
+        elif lockout_tuple in _instances:
+            return _instances[lockout_tuple]
         else:
             return None
 
@@ -56,13 +57,13 @@ class Tunnel(metaclass=TunnelMeta):
 
     def __del__(self):
         lockout_tuple = ((self.sender, self.origin), self.recipient)
-        self._instances.pop(lockout_tuple)
+        _instances.pop(lockout_tuple, None)
 
     def close(self):
         self.__del__()
 
     async def react_close(self, *, uid: int, message: str):
-        send_to = self.recipient if uid == self.sender.id else self.sender
+        send_to = self.origin if uid == self.sender.id else self.sender
         closer = next(filter(
             lambda x: x.id == uid, (self.sender, self.recipient)), None)
         await send_to.send(
@@ -89,7 +90,7 @@ class Tunnel(metaclass=TunnelMeta):
                 and isinstance(message.channel, discord.DMChannel):
             send_to = self.origin
         else:
-            return
+            return None
 
         if not skip_message_content:
             content = "\n".join((topic, message.content)) if topic \
@@ -132,4 +133,4 @@ class Tunnel(metaclass=TunnelMeta):
         await message.add_reaction("\N{NEGATIVE SQUARED CROSS MARK}")
         self.last_interaction = datetime.utcnow()
         await rets[-1].add_reaction("\N{NEGATIVE SQUARED CROSS MARK}")
-        return (rets[-1], message)
+        return [rets[-1].id, message.id]

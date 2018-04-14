@@ -54,18 +54,16 @@ class Reports:
         self.user_cache = []
         self.tunnel_store = {}
         # (guild, ticket#):
-        #   {'tun': Tunnel, 'msgs': (messageid, messageid)}
+        #   {'tun': Tunnel, 'msgs': List[int]}
 
     @property
     def tunnels(self):
-        # remove this later, it's here to help debug more easily
-        #  using eval
         return [
             x['tun'] for x in self.tunnel_store.values()
         ]
 
     def __unload(self):
-        for tun in self.tunnels.values():
+        for tun in self.tunnels:
             tun.close()
 
     @checks.admin_or_permissions(manage_guild=True)
@@ -301,8 +299,9 @@ class Reports:
 
         if t is None:
             return
-        else:
-            await t[1].react_close(
+        tun = t[1]['tun']
+        if payload.user_id in [x.id for x in tun.members]:
+            await tun.react_close(
                 uid=payload.user_id,
                 message=_("{closer} has closed the correspondence")
             )
@@ -312,7 +311,9 @@ class Reports:
         for k, v in self.tunnel_store.items():
             topic = _("Re: ticket# {1} in {0.name}").format(*k)
             # Tunnels won't forward unintended messages, this is safe
-            await v['tun'].communicate(message=message, topic=topic)
+            msgs = await v['tun'].communicate(message=message, topic=topic)
+            if msgs:
+                self.tunnel_store[k]['msgs'] = msgs
 
     @checks.mod_or_permissions(manage_members=True)
     @report.command(name='interact')
