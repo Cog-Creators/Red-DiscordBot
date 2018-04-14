@@ -126,7 +126,6 @@ class Tunnel(metaclass=TunnelMeta):
                 await send_to.send(content, files=attach)
             )
             if attach:
-                _fp.close()
                 del attach
 
         await message.add_reaction("\N{WHITE HEAVY CHECK MARK}")
