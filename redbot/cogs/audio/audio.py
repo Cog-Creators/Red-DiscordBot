@@ -116,6 +116,17 @@ class Audio:
                 await self.bot.change_presence(activity=discord.Activity(name='music in {} servers'.format(playing_servers),
                                                type=discord.ActivityType.playing))
 
+        if event_type == lavalink.LavalinkEvents.TRACK_EXCEPTION:
+            message_channel = player.fetch('channel')
+            if message_channel:
+                message_channel = self.bot.get_channel(message_channel)
+                embed = discord.Embed(colour=message_channel.guild.me.top_role.colour, title='Track Error',
+                                      description='{}\n**[{}]({})**'.format(extra, player.current.title,
+                                      player.current.uri))
+                embed.set_footer(text='Skipping...')
+                await message_channel.send(embed=embed)
+                await player.skip()
+
     @commands.group()
     @commands.guild_only()
     async def audioset(self, ctx):
