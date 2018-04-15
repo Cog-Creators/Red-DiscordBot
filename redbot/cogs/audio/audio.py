@@ -181,16 +181,16 @@ class Audio:
         notify = await self.config.guild(ctx.guild).notify()
         await self.config.guild(ctx.guild).notify.set(not notify)
         await self._embed_msg(ctx, 'Verbose mode on: {}.'.format(not notify))
-
     @audioset.command()
     async def settings(self, ctx):
         """Show the current settings."""
         data = await self.config.guild(ctx.guild).all()
+        global_data = await self.config.all()
         dj_role_obj = discord.utils.get(ctx.guild.roles, id=data['dj_role'])
         dj_enabled = data['dj_enabled']
         jukebox = data['jukebox']
         jukebox_price = data['jukebox_price']
-        status = await self.config.status()
+
         vote_percent = data['vote_percent']
         msg = ('```ini\n'
                '----Guild Settings----\n')
@@ -202,12 +202,13 @@ class Audio:
         msg += ('Repeat:           [{repeat}]\n'
                 'Shuffle:          [{shuffle}]\n'
                 'Song notify msgs: [{notify}]\n'
-                'Songs as status:  [{0}]\n'.format(status, **data))
+                'Songs as status:  [{status}]\n'.format(**global_data, **data))
         if vote_percent > 0:
             msg += ('Vote skip:        [{vote_enabled}]\n'
                     'Skip percentage:  [{vote_percent}%]\n').format(**data)
         msg += ('---Lavalink Settings---\n'
-                'Cog version: {}\n```'.format(__version__))
+                'Cog version:      [{}]\n'
+                'External server:  [{use_external_lavalink}]```').format(__version__, **global_data)
 
         embed = discord.Embed(colour=ctx.guild.me.top_role.colour, description=msg)
         return await ctx.send(embed=embed)
