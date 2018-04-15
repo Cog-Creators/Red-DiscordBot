@@ -9,7 +9,7 @@ from redbot.core import Config, checks, bank
 
 from .manager import shutdown_lavalink_server
 
-__version__ = "0.0.4"
+__version__ = "0.0.5"
 __author__ = ["aikaterna", "billy/bollo/ati"]
 
 
@@ -957,28 +957,72 @@ class Audio:
             await ctx.send_help()
 
     @llsetup.command()
+    async def external(self, ctx):
+        """Toggles using external lavalink servers."""
+        external = await self.config.use_external_lavalink()
+        await self.config.use_external_lavalink.set(not external)
+        if external:
+            await self.config.host.set('localhost')
+            await self.config.password.set('youshallnotpass')
+            await self.config.rest_port.set(2333)
+            await self.config.ws_port.set(2332)
+            embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='External lavalink server: {}.'.format(not external))
+            embed.set_footer(text='Defaults reset.')
+            return await ctx.send(embed=embed)
+        else:
+            await self._embed_msg(ctx, 'External lavalink server: {}.'.format(not external))
+
+    @llsetup.command()
     async def host(self, ctx, host):
         """Set the lavalink server host."""
         await self.config.host.set(host)
-        await self._embed_msg(ctx, 'Host set to {}.'.format(host))
+        if await self._check_external():
+            embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='Host set to {}.'.format(host))
+            embed.set_footer(text='External lavalink server set to True.')
+            await ctx.send(embed=embed)
+        else:
+            await self._embed_msg(ctx, 'Host set to {}.'.format(host))
 
     @llsetup.command()
-    async def password(self, ctx, passw):
+    async def password(self, ctx, password):
         """Set the lavalink server password."""
-        await self.config.passw.set(str(passw))
-        await self._embed_msg(ctx, 'Server password set to {}.'.format(passw))
+        await self.config.password.set(str(password))
+        if await self._check_external():
+            embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='Server password set to {}.'.format(password))
+            embed.set_footer(text='External lavalink server set to True.')
+            await ctx.send(embed=embed)
+        else:
+            await self._embed_msg(ctx, 'Server password set to {}.'.format(password))
 
     @llsetup.command()
     async def restport(self, ctx, rest_port):
         """Set the lavalink REST server port."""
-        await self.config.rest_port.set(str(rest_port))
-        await self._embed_msg(ctx, 'REST port set to {}.'.format(rest_port))
+        await self.config.rest_port.set(rest_port)
+        if await self._check_external():
+            embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='REST port set to {}.'.format(rest_port))
+            embed.set_footer(text='External lavalink server set to True.')
+            await ctx.send(embed=embed)
+        else:
+            await self._embed_msg(ctx, 'REST port set to {}.'.format(rest_port))
 
     @llsetup.command()
-    async def wsport(self, ctx, rest_port):
+    async def wsport(self, ctx, ws_port):
         """Set the lavalink websocket server port."""
-        await self.config.ws_port.set(str(ws_port))
-        await self._embed_msg(ctx, 'Websocket port set to {}.'.format(ws_port))
+        await self.config.rest_port.set(ws_port)
+        if await self._check_external():
+            embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='Websocket port set to {}.'.format(ws_port))
+            embed.set_footer(text='External lavalink server set to True.')
+            await ctx.send(embed=embed)
+        else:
+            await self._embed_msg(ctx, 'Websocket port set to {}.'.format(ws_port))
+
+    async def _check_external(self):
+        external = await self.config.use_external_lavalink()
+        if not external:
+            await self.config.use_external_lavalink.set(True)
+            return True
+        else:
+            return False
 
     @staticmethod
     async def _clear_react(message):
