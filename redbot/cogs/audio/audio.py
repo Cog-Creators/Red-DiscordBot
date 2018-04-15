@@ -461,7 +461,7 @@ class Audio:
                               description=queue_user_list)
         await ctx.send(embed=embed)
 
-    @commands.command(aliases=['p'])
+    @commands.command()
     async def play(self, ctx, *, query):
         """Play a URL or search for a song."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
