@@ -33,6 +33,7 @@ class Audio:
             "dj_role": None,
             "jukebox": False,
             "jukebox_price": 0,
+            "playlists": {},
             "notify": False,
             "repeat": False,
             "shuffle": False,
@@ -518,6 +519,146 @@ class Audio:
             if not player.current:
                 await player.play()
         await ctx.send(embed=embed)
+
+    @commands.group()
+    @commands.guild_only()
+    async def playlist(self, ctx):
+        """Playlist configuration options."""
+        if ctx.invoked_subcommand is None:
+            await ctx.send_help()
+
+    @playlist.command(name='delete')
+    async def _playlist_delete(self, ctx, playlist_name):
+        """Delete a saved playlist."""
+        try:
+            async with self.config.guild(ctx.guild).playlists() as playlists:
+                del playlists[playlist_name]
+        except KeyError:
+            return await self._embed_msg(ctx, 'No playlist with that name.')
+        await self._embed_msg(ctx, '{} playlist removed.'.format(playlist_name))
+
+    @playlist.command(name='list')
+    async def _playlist_list(self, ctx):
+        """List saved playlists."""
+        playlists = await self.config.guild(ctx.guild).playlists.get_raw()
+        playlist_list = []
+        for playlist_name in playlists:
+            playlist_list.append(playlist_name)
+        abc_names = sorted(playlist_list, key=str.lower)
+        all_playlists = ', '.join(abc_names)
+        embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='Playlists for {}:'.format(ctx.guild.name),
+                              description=all_playlists)
+        await ctx.send(embed=embed)
+
+    @playlist.command(name='queue')
+    async def _playlist_queue(self, ctx, playlist_name=None):
+        """Save the queue to a playlist."""
+        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        if dj_enabled:
+            if not await self._can_instaskip(ctx, ctx.author):
+                return await self._embed_msg(ctx, 'You need the DJ role to save playlists.')
+        async with self.config.guild(ctx.guild).playlists() as playlists:
+            if playlist_name in playlists:
+                return await self._embed_msg(ctx, 'Playlist name already exists, try again with a different name.')
+            if not self._player_check(ctx):
+                return await self._embed_msg(ctx, 'Nothing playing.')
+        player = lavalink.get_player(ctx.guild.id)
+        tracklist = []
+        np_song = self._track_creator(ctx, player, 'np', None)
+        tracklist.append(np_song)
+        for track in player.queue:
+            queue_idx = player.queue.index(track)
+            track_obj = self._track_creator(ctx, player, queue_idx, None)
+            tracklist.append(track_obj)
+        if not playlist_name:
+            await self._embed_msg(ctx, 'Please enter a name for this playlist.')
+            def check(m):
+                return m.author == ctx.author
+            try:
+                playlist_name_msg = await ctx.bot.wait_for('message', timeout=15.0, check=check)
+                playlist_name = str(playlist_name_msg.content)
+                if len(playlist_name) > 20:
+                    return await self._embed_msg(ctx, 'Try the command again with a shorter name.')
+                if playlist_name in playlists:
+                    return await self._embed_msg(ctx, 'Playlist name already exists, try again with a different name.')
+            except asyncio.TimeoutError:
+                return await self._embed_msg(ctx, 'No playlist name entered, try again later.')
+
+        playlist_list = self._to_json(ctx, None, tracklist, playlist_name)
+        async with self.config.guild(ctx.guild).playlists() as playlists:
+            playlists[playlist_name] = playlist_list
+        await self._embed_msg(ctx, 'Playlist {} saved from current queue: {} tracks added.'.format(playlist_name, len(tracklist)))
+
+    @playlist.command(name='save')
+    async def _playlist_save(self, ctx, playlist_name, playlist_url):
+        """Save a playlist from a url."""
+        if not await self._playlist_check(ctx):
+            return
+        player = lavalink.get_player(ctx.guild.id)
+        tracks = await player.get_tracks(playlist_url)
+        if not tracks:
+            return await self._embed_msg(ctx, 'Nothing found.')
+        tracklist = []
+        for track in tracks:
+            track_obj = self._track_creator(ctx, player, None, track)
+            tracklist.append(track_obj)
+        playlist_list = self._to_json(ctx, playlist_url, tracklist, playlist_name)
+
+        async with self.config.guild(ctx.guild).playlists() as playlists:
+            playlists[playlist_name] = playlist_list
+            return await self._embed_msg(ctx, 'Playlist {} saved: {} tracks added.'.format(playlist_name, len(tracks)))
+
+    @playlist.command(name='start')
+    async def _playlist_start(self, ctx, playlist_name=None):
+        """Load a playlist into the queue."""
+        if not await self._playlist_check(ctx):
+            return
+        playlists = await self.config.guild(ctx.guild).playlists.get_raw()
+        try:
+            author_id = playlists[playlist_name]["author"]
+        except KeyError:
+            return await self._embed_msg(ctx, 'That playlist doesn\'t exist.')
+        author_obj = self.bot.get_user(author_id)
+        track_count = 0
+        try:
+            playlist_len = len(playlists[playlist_name]["tracks"])
+            player = lavalink.get_player(ctx.guild.id)
+            for track in playlists[playlist_name]["tracks"]:
+                player.add(author_obj, lavalink.rest_api.Track(data=track))
+                track_count = track_count + 1
+            embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='Playlist Enqueued',
+                                   description='Added {} tracks to the queue.'.format(track_count))
+            await ctx.send(embed=embed)
+            if not player.current:
+                await player.play()
+        except TypeError:
+            await ctx.invoke(self.play, query=playlists[playlist_name]["playlist_url"])
+
+    async def _playlist_check(self, ctx):
+        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        jukebox_price = await self.config.guild(ctx.guild).jukebox_price()
+        if dj_enabled:
+            if not await self._can_instaskip(ctx, ctx.author):
+                await self._embed_msg(ctx, 'You need the DJ role to use playlists.')
+                return False
+        if not self._player_check(ctx):
+            try:
+                await lavalink.connect(ctx.author.voice.channel)
+                player = lavalink.get_player(ctx.guild.id)
+                player.store('connect', datetime.datetime.utcnow())
+            except AttributeError:
+                await self._embed_msg(ctx, 'Connect to a voice channel first.')
+                return False
+        player = lavalink.get_player(ctx.guild.id)
+        player.store('channel', ctx.channel.id)
+        player.store('guild', ctx.guild.id)
+        if (ctx.author.voice.channel != player.channel and not await self._can_instaskip(ctx, ctx.author)):
+            await self._embed_msg(ctx, 'You must be in the voice channel to use the playlist command.')
+            return False
+        if not await self._currency_check(ctx, jukebox_price):
+            return False
+        await self._data_check(ctx)
+        return True
 
     @commands.command()
     async def prev(self, ctx):
@@ -1157,6 +1298,30 @@ class Audio:
             return True
         except KeyError:
             return False
+
+    def _to_json(self, ctx, playlist_url, tracklist, playlist_name):
+        playlist = {"author": ctx.author.id, "playlist_url": playlist_url, "tracks": tracklist}
+        return playlist
+
+    def _track_creator(self, ctx, player, position, other_track=None):
+        if position == 'np':
+            queued_track = player.current
+        elif position == None:
+            queued_track = other_track
+        else:
+            queued_track = player.queue[position]
+        track_keys = queued_track._info.keys()
+        track_values = queued_track._info.values()
+        track_id = queued_track.track_identifier
+        track_info = {}
+        for k, v in zip(track_keys, track_values):
+            track_info[k] = v
+        keys = ['track', 'info']
+        values = [track_id, track_info]
+        track_obj = {}
+        for key, value in zip(keys, values):
+            track_obj[key] = value
+        return track_obj
 
     async def on_voice_state_update(self, member, before, after):
         if after.channel != before.channel:
