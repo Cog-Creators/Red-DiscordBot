@@ -965,7 +965,7 @@ class Audio:
     @llsetup.command()
     async def password(self, ctx, password):
         """Set the lavalink server password."""
-        await self.config.password.set(str(passw))
+        await self.config.password.set(str(password))
         await self._embed_msg(ctx, 'Server password set to {}.'.format(password))
 
     @llsetup.command()
