@@ -527,7 +527,7 @@ class Audio:
         player = lavalink.get_player(ctx.guild.id)
         shuffle = await self.config.guild(ctx.guild).shuffle()
         if dj_enabled:
-            if not await self._can_instaskip(ctx, ctx.author):
+            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(ctx, ctx.author):
                 return await self._embed_msg(ctx, 'You need the DJ role to skip songs.')
         if ((not ctx.author.voice or ctx.author.voice.channel != player.channel) and not
             await self._can_instaskip(ctx, ctx.author)):
@@ -705,7 +705,7 @@ class Audio:
             message = await ctx.send(embed=embed)
             dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
             if dj_enabled:
-                if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(ctx, ctx.author):
+                if not await self._can_instaskip(ctx, ctx.author):
                     return
 
             def check(r, u):
