@@ -538,7 +538,7 @@ class Audio:
             return await self._embed_msg(ctx, 'No previous track.')
         else:
             last_track = await player.get_tracks(player.fetch('prev_song'))
-            player.add(player.fetch('prev_requester').id, last_track[0])
+            player.add(player.fetch('prev_requester'), last_track[0])
             queue_len = len(player.queue)
             bump_song = player.queue[-1]
             player.queue.insert(0, bump_song)
