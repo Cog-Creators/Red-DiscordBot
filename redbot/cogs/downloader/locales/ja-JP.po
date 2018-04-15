@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-02-19 03:59+UTC\n"
-"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"POT-Creation-Date: 2018-04-02 17:36+AKDT\n"
+"PO-Revision-Date: 2018-04-15 16:42-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -16,68 +16,76 @@ msgstr ""
 "X-Crowdin-File: /cogs/downloader/locales/messages.pot\n"
 "Language: ja_JP\n"
 
-#: ../downloader.py:215
+#: ../downloader.py:200
+msgid "Libraries installed."
+msgstr ""
+
+#: ../downloader.py:202
+msgid "Some libraries failed to install. Please check your logs for a complete list."
+msgstr ""
+
+#: ../downloader.py:231
 msgid "That git repo has already been added under another name."
 msgstr "そのギットレポはすでに別の名前で追加されています。"
 
-#: ../downloader.py:217 ../downloader.py:218
+#: ../downloader.py:233 ../downloader.py:234
 msgid "Something went wrong during the cloning process."
 msgstr "クローニングプロセス中に何か問題が発生しました。"
 
-#: ../downloader.py:220
+#: ../downloader.py:236
 msgid "Repo `{}` successfully added."
 msgstr "レポ`{}`が追加されました。"
 
-#: ../downloader.py:229
+#: ../downloader.py:247
 msgid "The repo `{}` has been deleted successfully."
 msgstr "レポ`{}`が削除されました。"
 
-#: ../downloader.py:237
+#: ../downloader.py:256
 msgid "Installed Repos:\n"
 msgstr "インストールされたレポ：\n"
 
-#: ../downloader.py:258
+#: ../downloader.py:277
 msgid "Error, there is no cog by the name of `{}` in the `{}` repo."
 msgstr "エラー、 `{}`レポの 中に`{}`の名前コグがありません。"
 
-#: ../downloader.py:263
+#: ../downloader.py:289
 msgid "Failed to install the required libraries for `{}`: `{}`"
 msgstr "`{}`: `{}`に必要なライブラリのインストールに失敗しました"
 
-#: ../downloader.py:273
+#: ../downloader.py:299
 msgid "`{}` cog successfully installed."
 msgstr "`{}` コッグがインストールされました。"
 
-#: ../downloader.py:289
+#: ../downloader.py:317
 msgid "`{}` was successfully removed."
 msgstr "`{}`は削除されました。"
 
-#: ../downloader.py:291
+#: ../downloader.py:319
 msgid "That cog was installed but can no longer be located. You may need to remove it's files manually if it is still usable."
 msgstr "そのコグは設置されていたが、もはや見つけられなかった。まだ使用可能な場合にファイルを手動で削除する必要があるかもしれません。"
 
-#: ../downloader.py:323
+#: ../downloader.py:351
 msgid "Cog update completed successfully."
 msgstr "コグアップデートが完了しました。"
 
-#: ../downloader.py:331
+#: ../downloader.py:359
 msgid "Available Cogs:\n"
 msgstr "利用可能なコグ:\n"
 
-#: ../downloader.py:343
+#: ../downloader.py:371
 msgid "There is no cog `{}` in the repo `{}`"
 msgstr "レポ`{}`にはコグ`{}`はありません。"
 
-#: ../downloader.py:348
+#: ../downloader.py:376
 msgid "Information on {}:\n"
 "{}"
 msgstr "{}の情報: {}"
 
-#: ../downloader.py:389
+#: ../downloader.py:417
 msgid "Missing from info.json"
 msgstr "info.jsonから行方不明"
 
-#: ../downloader.py:398
+#: ../downloader.py:426
 msgid "Command: {}\n"
 "Made by: {}\n"
 "Repo: {}\n"
@@ -87,7 +95,7 @@ msgstr "命令：{}\n"
 "レポ：｛｝\n"
 "コグの名前：{}"
 
-#: ../downloader.py:430
+#: ../downloader.py:458
 msgid "That command doesn't seem to exist."
 msgstr "そのコマンドはいないようです。"
 

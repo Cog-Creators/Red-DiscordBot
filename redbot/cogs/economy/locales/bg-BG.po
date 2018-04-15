@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"POT-Creation-Date: 2018-04-02 17:36+AKDT\n"
+"PO-Revision-Date: 2018-04-15 16:42-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Bulgarian\n"
 "MIME-Version: 1.0\n"
@@ -87,35 +87,43 @@ msgid "This will delete all bank accounts for {}.\n"
 "If you're sure, type `{}bank reset yes`"
 msgstr ""
 
-#: ../economy.py:229
+#: ../economy.py:220
 msgid "All bank accounts of this guild have been deleted."
 msgstr "Всички банкови сметки в тази гилдия са закрити."
 
-#: ../economy.py:248 ../economy.py:268
-msgid "{} Here, take some {}. Enjoy! (+{} {}!)"
-msgstr "{} Ето, заповядай {}. Радвай се! (+{} {}!)"
+#: ../economy.py:240
+msgid "{0.mention} Here, take some {1}. Enjoy! (+{2}\n\n"
+"You currently have {3} {1}.\n\n"
+"You are currently #{4} on the leaderboard!"
+msgstr ""
 
-#: ../economy.py:258 ../economy.py:276
+#: ../economy.py:252 ../economy.py:273
 msgid "{} Too soon. For your next payday you have to wait {}."
 msgstr "{} Опа, не бързай! Изчакайте за следващия си разлащателен ден {}."
 
-#: ../economy.py:313
+#: ../economy.py:262
+msgid "{0.mention} Here, take some {1}. Enjoy! (+{2})\n\n"
+"You currently have {3} {1}.\n\n"
+"You are currently #{4} on the leaderboard!"
+msgstr ""
+
+#: ../economy.py:307
 msgid "There are no accounts in the bank."
 msgstr "Няма открити банкови сметки."
 
-#: ../economy.py:339
+#: ../economy.py:333
 msgid "You're on cooldown, try again in a bit."
 msgstr "Отлага се, опитайте по-късно."
 
-#: ../economy.py:342
+#: ../economy.py:336
 msgid "That's an invalid bid amount, sorry :/"
 msgstr "Жалко, но това е невалидно количесто за залог. :/"
 
-#: ../economy.py:345
+#: ../economy.py:339
 msgid "You ain't got enough money, friend."
 msgstr "Вие не разполагате с достатъчно пари на разположение, другарю."
 
-#: ../economy.py:391
+#: ../economy.py:385
 msgid "{}\n"
 "{} {}\n\n"
 "Your bid: {}\n"
@@ -125,7 +133,7 @@ msgstr "{}\n"
 "Вашият залог: {}\n"
 "{} → {}!"
 
-#: ../economy.py:398
+#: ../economy.py:392
 msgid "{}\n"
 "{} Nothing!\n"
 "Your bid: {}\n"
@@ -135,7 +143,7 @@ msgstr "{}\n"
 "Вашият залог: {}\n"
 "{} → {}!"
 
-#: ../economy.py:423
+#: ../economy.py:417
 msgid "Minimum slot bid: {}\n"
 "Maximum slot bid: {}\n"
 "Slot cooldown: {}\n"
@@ -149,63 +157,63 @@ msgstr "Минимален залог положен на слотове: {}\n"
 "Време за отлагане на платен ден: {}\n"
 "Сумата дадена при счетоводната регистрация: {}"
 
-#: ../economy.py:433
+#: ../economy.py:427
 msgid "Current Economy settings:"
 msgstr "Текущите настройки на разполагаемите средства:"
 
-#: ../economy.py:441
+#: ../economy.py:435
 msgid "Invalid min bid amount."
 msgstr "Невалидна минимална сума за залог."
 
-#: ../economy.py:449
+#: ../economy.py:443
 msgid "Minimum bid is now {} {}."
 msgstr "Минималният залог сега е {{}}."
 
-#: ../economy.py:456
+#: ../economy.py:450
 msgid "Invalid slotmax bid amount. Must be greater than slotmin."
 msgstr "Невалидна стойност за залога към горната граница на залога. Трябва да е по-висока от тази на минималната."
 
-#: ../economy.py:465
+#: ../economy.py:459
 msgid "Maximum bid is now {} {}."
 msgstr "Максималният залог сега е {} {}."
 
-#: ../economy.py:475
+#: ../economy.py:469
 msgid "Cooldown is now {} seconds."
 msgstr "Отлагането е вече {} секунди."
 
-#: ../economy.py:485
+#: ../economy.py:479
 msgid "Value modified. At least {} seconds must pass between each payday."
 msgstr "Стойността е променена. Трябва да минат поне {} секунди между всеки ден на плащане."
 
-#: ../economy.py:494
+#: ../economy.py:488
 msgid "Har har so funny."
 msgstr "Хе-хе, много смешно."
 
-#: ../economy.py:500
+#: ../economy.py:494
 msgid "Every payday will now give {} {}."
 msgstr "Всеки ден за плащане вече ще дава {} {}."
 
-#: ../economy.py:511
+#: ../economy.py:505
 msgid "Registering an account will now give {} {}."
 msgstr "Регистрирането на сметка вече ще дава по {} {}."
 
-#: ../economy.py:517
+#: ../economy.py:511
 msgid "weeks"
 msgstr "семици"
 
-#: ../economy.py:518
+#: ../economy.py:512
 msgid "days"
 msgstr "дни"
 
-#: ../economy.py:519
+#: ../economy.py:513
 msgid "hours"
 msgstr "часове"
 
-#: ../economy.py:520
+#: ../economy.py:514
 msgid "minutes"
 msgstr "минути"
 
-#: ../economy.py:521
+#: ../economy.py:515
 msgid "seconds"
 msgstr "секунди"
 

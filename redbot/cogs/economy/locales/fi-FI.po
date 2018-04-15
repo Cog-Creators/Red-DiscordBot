@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"POT-Creation-Date: 2018-04-02 17:36+AKDT\n"
+"PO-Revision-Date: 2018-04-15 16:42-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Finnish\n"
 "MIME-Version: 1.0\n"
@@ -80,49 +80,57 @@ msgid "This will delete all bank accounts for {}.\n"
 "If you're sure, type `{}bank reset yes`"
 msgstr ""
 
-#: ../economy.py:229
+#: ../economy.py:220
 msgid "All bank accounts of this guild have been deleted."
 msgstr ""
 
-#: ../economy.py:248 ../economy.py:268
-msgid "{} Here, take some {}. Enjoy! (+{} {}!)"
+#: ../economy.py:240
+msgid "{0.mention} Here, take some {1}. Enjoy! (+{2}\n\n"
+"You currently have {3} {1}.\n\n"
+"You are currently #{4} on the leaderboard!"
 msgstr ""
 
-#: ../economy.py:258 ../economy.py:276
+#: ../economy.py:252 ../economy.py:273
 msgid "{} Too soon. For your next payday you have to wait {}."
 msgstr ""
 
-#: ../economy.py:313
+#: ../economy.py:262
+msgid "{0.mention} Here, take some {1}. Enjoy! (+{2})\n\n"
+"You currently have {3} {1}.\n\n"
+"You are currently #{4} on the leaderboard!"
+msgstr ""
+
+#: ../economy.py:307
 msgid "There are no accounts in the bank."
 msgstr ""
 
-#: ../economy.py:339
+#: ../economy.py:333
 msgid "You're on cooldown, try again in a bit."
 msgstr ""
 
-#: ../economy.py:342
+#: ../economy.py:336
 msgid "That's an invalid bid amount, sorry :/"
 msgstr ""
 
-#: ../economy.py:345
+#: ../economy.py:339
 msgid "You ain't got enough money, friend."
 msgstr ""
 
-#: ../economy.py:391
+#: ../economy.py:385
 msgid "{}\n"
 "{} {}\n\n"
 "Your bid: {}\n"
 "{} → {}!"
 msgstr ""
 
-#: ../economy.py:398
+#: ../economy.py:392
 msgid "{}\n"
 "{} Nothing!\n"
 "Your bid: {}\n"
 "{} → {}!"
 msgstr ""
 
-#: ../economy.py:423
+#: ../economy.py:417
 msgid "Minimum slot bid: {}\n"
 "Maximum slot bid: {}\n"
 "Slot cooldown: {}\n"
@@ -131,63 +139,63 @@ msgid "Minimum slot bid: {}\n"
 "Amount given at account registration: {}"
 msgstr ""
 
-#: ../economy.py:433
+#: ../economy.py:427
 msgid "Current Economy settings:"
 msgstr ""
 
-#: ../economy.py:441
+#: ../economy.py:435
 msgid "Invalid min bid amount."
 msgstr ""
 
-#: ../economy.py:449
+#: ../economy.py:443
 msgid "Minimum bid is now {} {}."
 msgstr ""
 
-#: ../economy.py:456
+#: ../economy.py:450
 msgid "Invalid slotmax bid amount. Must be greater than slotmin."
 msgstr ""
 
-#: ../economy.py:465
+#: ../economy.py:459
 msgid "Maximum bid is now {} {}."
 msgstr ""
 
-#: ../economy.py:475
+#: ../economy.py:469
 msgid "Cooldown is now {} seconds."
 msgstr ""
 
-#: ../economy.py:485
+#: ../economy.py:479
 msgid "Value modified. At least {} seconds must pass between each payday."
 msgstr ""
 
-#: ../economy.py:494
+#: ../economy.py:488
 msgid "Har har so funny."
 msgstr ""
 
-#: ../economy.py:500
+#: ../economy.py:494
 msgid "Every payday will now give {} {}."
 msgstr ""
 
-#: ../economy.py:511
+#: ../economy.py:505
 msgid "Registering an account will now give {} {}."
 msgstr ""
 
-#: ../economy.py:517
+#: ../economy.py:511
 msgid "weeks"
 msgstr ""
 
-#: ../economy.py:518
+#: ../economy.py:512
 msgid "days"
 msgstr ""
 
-#: ../economy.py:519
+#: ../economy.py:513
 msgid "hours"
 msgstr ""
 
-#: ../economy.py:520
+#: ../economy.py:514
 msgid "minutes"
 msgstr ""
 
-#: ../economy.py:521
+#: ../economy.py:515
 msgid "seconds"
 msgstr ""
 

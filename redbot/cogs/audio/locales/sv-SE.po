@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-02-25 21:34-0500\n"
+"POT-Creation-Date: 2018-04-02 17:36+AKDT\n"
+"PO-Revision-Date: 2018-04-15 16:43-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Swedish\n"
 "MIME-Version: 1.0\n"
@@ -15,28 +15,4 @@ msgstr ""
 "X-Crowdin-Language: sv-SE\n"
 "X-Crowdin-File: /cogs/audio/locales/messages.pot\n"
 "Language: sv_SE\n"
-
-#: ../audio.py:25 ../audio.py:45
-msgid "Join a voice channel first!"
-msgstr "Hoppa in i en röstkanal först!"
-
-#: ../audio.py:33
-msgid "Let's play a file that exists pls"
-msgstr "Spela en fil som finns tack"
-
-#: ../audio.py:38 ../audio.py:58
-msgid "{} is playing a song..."
-msgstr "{} spelar en låt..."
-
-#: ../audio.py:48
-msgid "Youtube links pls"
-msgstr "Youtube länkar tack"
-
-#: ../audio.py:67 ../audio.py:77 ../audio.py:87 ../audio.py:97
-msgid "I'm not even connected to a voice channel!"
-msgstr "Jag är inte ens ansluten till en röstkanal!"
-
-#: ../audio.py:95
-msgid "Volume set."
-msgstr "Volymnivån inställd."
 

@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-02-27 01:49-0500\n"
+"POT-Creation-Date: 2018-04-02 17:36+AKDT\n"
+"PO-Revision-Date: 2018-04-15 16:42-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -16,31 +16,35 @@ msgstr ""
 "X-Crowdin-File: /cogs/image/locales/messages.pot\n"
 "Language: de_DE\n"
 
-#: ../image.py:49
+#: ../image.py:47 ../image.py:92
+msgid "A client ID has not been set! Please set one with {}"
+msgstr ""
+
+#: ../image.py:57
 msgid "Your search returned no results"
 msgstr "Ihre Suche brachte keine Ergebnisse"
 
-#: ../image.py:52
+#: ../image.py:60
 msgid "Search results...\n"
 msgstr "Suchergebnisse..."
 
-#: ../image.py:58 ../image.py:100
+#: ../image.py:66 ../image.py:115
 msgid "Something went wrong. Error code is {}"
 msgstr "Etwas schief gelaufen. Fehlercode {}"
 
-#: ../image.py:70
+#: ../image.py:78
 msgid "Only 'new' and 'top' are a valid sort type."
 msgstr "Nur \"new\" und \"top\" sind eine gültige Sotierarten."
 
-#: ../image.py:98 ../image.py:135 ../image.py:157
+#: ../image.py:113 ../image.py:151 ../image.py:173
 msgid "No results found."
 msgstr "Keine Suchergebnisse gefunden."
 
-#: ../image.py:115
+#: ../image.py:131
 msgid "Set the imgur client id!"
 msgstr "Setzen sie ihre Imgur Client Id!"
 
-#: ../image.py:137 ../image.py:159
+#: ../image.py:153 ../image.py:175
 msgid "Error contacting the API"
 msgstr "Fehler bei der Kontaktaufnahme mit der API"
 
