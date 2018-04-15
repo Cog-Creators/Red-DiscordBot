@@ -28,7 +28,6 @@ class Image:
         self.session.close()
 
     @commands.group(name="imgur")
-    @commands.guild_only()
     async def _imgur(self, ctx):
         """Retrieves pictures from imgur
 
@@ -40,10 +39,16 @@ class Image:
     @_imgur.command(name="search")
     async def imgur_search(self, ctx, *, term: str):
         """Searches Imgur for the specified term and returns up to 3 results"""
-        url = self.imgur_base_url + "time/all/0"
+        url = self.imgur_base_url + "gallery/search/time/all/0"
         params = {"q": term}
-        headers = {"Authorization": "Client-ID {}".format(await self.settings.imgur_client_id())}
-        async with self.session.get(url, headers=headers, data=params) as search_get:
+        imgur_client_id = await self.settings.imgur_client_id()
+        if not imgur_client_id:
+            await ctx.send(
+                _("A client ID has not been set! Please set one with {}").format(
+                    "`{}imgurcreds`".format(ctx.prefix)))
+            return
+        headers = {"Authorization": "Client-ID {}".format(imgur_client_id)}
+        async with self.session.get(url, headers=headers, params=params) as search_get:
             data = await search_get.json()
 
         if data["success"]:
@@ -81,9 +86,16 @@ class Image:
         elif sort_type == "top":
             sort = "top"
 
+        imgur_client_id = await self.settings.imgur_client_id()
+        if not imgur_client_id:
+            await ctx.send(
+                _("A client ID has not been set! Please set one with {}").format(
+                    "`{}imgurcreds`".format(ctx.prefix)))
+            return
+
         links = []
-        headers = {"Authorization": "Client-ID {}".format(await self.settings.imgur_client_id())}
-        url = self.imgur_base_url + "r/{}/{}/{}/0".format(subreddit, sort, window)
+        headers = {"Authorization": "Client-ID {}".format(imgur_client_id)}
+        url = self.imgur_base_url + "gallery/r/{}/{}/{}/0".format(subreddit, sort, window)
 
         async with self.session.get(url, headers=headers) as sub_get:
             data = await sub_get.json()
@@ -111,6 +123,7 @@ class Image:
         You can get these by visiting https://api.imgur.com/oauth2/addclient
         and filling out the form. Enter a name for the application, select
         'Anonymous usage without user authorization' for the auth type,
+        set the authorization callback url to 'https://localhost'
         leave the app website blank, enter a valid email address, and
         enter a description. Check the box for the captcha, then click Next.
         Your client ID will be on the page that loads"""

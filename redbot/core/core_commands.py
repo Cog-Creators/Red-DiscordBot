@@ -144,6 +144,15 @@ class Core:
         use embeds.
         """
         if ctx.invoked_subcommand is None:
+            text = "Embed settings:\n\n"
+            global_default = await self.bot.db.embeds()
+            text += "Global default: {}\n".format(global_default)
+            if ctx.guild:
+                guild_setting = await self.bot.db.guild(ctx.guild).embeds()
+                text += "Guild setting: {}\n".format(guild_setting)
+            user_setting = await self.bot.db.user(ctx.author).embeds()
+            text += "User setting: {}".format(user_setting)
+            await ctx.send(box(text))
             await ctx.send_help()
 
     @embedset.command(name="global")
@@ -333,24 +342,22 @@ class Core:
                 #await ctx.send(_("No module named '{}' was found in any"
                 #                 " cog path.").format(c))
 
-        if len(cogspecs) == 0:
-            return
+        if len(cogspecs) > 0:
+            for spec, name  in cogspecs:
+                try:
+                    await ctx.bot.load_extension(spec)
+                except Exception as e:
+                    log.exception("Package loading failed", exc_info=e)
 
-        for spec, name  in cogspecs:
-            try:
-                await ctx.bot.load_extension(spec)
-            except Exception as e:
-                log.exception("Package loading failed", exc_info=e)
-
-                exception_log = ("Exception in command '{}'\n"
-                                 "".format(ctx.command.qualified_name))
-                exception_log += "".join(traceback.format_exception(type(e),
-                                         e, e.__traceback__))
-                self.bot._last_exception = exception_log
-                failed_packages.append(inline(name))
-            else:
-                await ctx.bot.add_loaded_package(name)
-                loaded_packages.append(inline(name))
+                    exception_log = ("Exception in command '{}'\n"
+                                     "".format(ctx.command.qualified_name))
+                    exception_log += "".join(traceback.format_exception(type(e),
+                                             e, e.__traceback__))
+                    self.bot._last_exception = exception_log
+                    failed_packages.append(inline(name))
+                else:
+                    await ctx.bot.add_loaded_package(name)
+                    loaded_packages.append(inline(name))
 
         if loaded_packages:
             fmt = "Loaded {packs}"
@@ -517,6 +524,28 @@ class Core:
     async def _set(self, ctx):
         """Changes Red's settings"""
         if ctx.invoked_subcommand is None:
+            admin_role_id = await ctx.bot.db.guild(ctx.guild).admin_role()
+            admin_role = discord.utils.get(ctx.guild.roles, id=admin_role_id)
+            mod_role_id = await ctx.bot.db.guild(ctx.guild).mod_role()
+            mod_role = discord.utils.get(ctx.guild.roles, id=mod_role_id)
+            prefixes = await ctx.bot.db.guild(ctx.guild).prefix()
+            if not prefixes:
+                prefixes = await ctx.bot.db.prefix()
+            locale = await ctx.bot.db.locale()
+
+            settings = (
+                "{} Settings:\n\n"
+                "Prefixes: {}\n"
+                "Admin role: {}\n"
+                "Mod role: {}\n"
+                "Locale: {}"
+                "".format(
+                    ctx.bot.user.name, " ".join(prefixes),
+                    admin_role.name if admin_role else "Not set",
+                    mod_role.name if mod_role else "Not set", locale
+                )
+            )
+            await ctx.send(box(settings))
             await ctx.send_help()
 
     @_set.command()
@@ -668,10 +697,10 @@ class Core:
     @_set.command(name="nickname")
     @checks.admin()
     @commands.guild_only()
-    async def _nickname(self, ctx, *, nickname: str):
+    async def _nickname(self, ctx, *, nickname: str=None):
         """Sets Red's nickname"""
         try:
-            await ctx.bot.user.edit(nick=nickname)
+            await ctx.guild.me.edit(nick=nickname)
         except discord.Forbidden:
             await ctx.send(_("I lack the permissions to change my own "
                              "nickname."))

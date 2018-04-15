@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"PO-Revision-Date: 2018-04-02 19:26-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -18,49 +18,49 @@ msgstr ""
 
 #: ../filter.py:62
 msgid "Filtered in this server:"
-msgstr ""
+msgstr "이 서버에서 필터링 된 항목 :"
 
 #: ../filter.py:67
 msgid "I can't send direct messages to you."
-msgstr ""
+msgstr "사용자님에게 직접 메시지를 보낼 수 없어요."
 
 #: ../filter.py:96
 msgid "Words added to filter."
-msgstr ""
+msgstr "필터링에 추가된 단어예요."
 
 #: ../filter.py:98
 msgid "Words already in the filter."
-msgstr ""
+msgstr "필터에 이미 있는 단어예요."
 
 #: ../filter.py:127
 msgid "Words removed from filter."
-msgstr ""
+msgstr "필터에서 제거된 단어예요."
 
 #: ../filter.py:129
 msgid "Those words weren't in the filter."
-msgstr ""
+msgstr "해당 단어들은 필터에 들어 있지 않아요."
 
 #: ../filter.py:142
 msgid "Names and nicknames will no longer be checked against the filter"
-msgstr ""
+msgstr "필터에 대한 이름 및 닉네임을 더 이상 확인할 수 없어요."
 
 #: ../filter.py:147
 msgid "Names and nicknames will now be checked against the filter"
-msgstr ""
+msgstr "이제 이름과 닉네임을 필터에서 개별적으로 인식해요."
 
 #: ../filter.py:160
 msgid "The name to use on filtered names has been set"
-msgstr ""
+msgstr "필터링 된 이름에 사용할 이름이 설정됐어요."
 
 #: ../filter.py:171
 msgid "Count and timeframe either both need to be 0 or both need to be greater than 0!"
-msgstr ""
+msgstr "개수와 시간은 모두 0이어야 하거나 0보다 커야 해요!"
 
 #: ../filter.py:179
 msgid "Autoban disabled."
-msgstr ""
+msgstr "자동 밴이 중지됐어요."
 
 #: ../filter.py:183
 msgid "Count and time have been set."
-msgstr ""
+msgstr "개수와 시간이 설정됐어요."
 

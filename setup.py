@@ -1,6 +1,6 @@
 from distutils.core import setup
 from pathlib import Path
-from subprocess import run, PIPE
+import re
 
 import os
 import sys
@@ -37,29 +37,9 @@ def get_requirements():
 
 
 def get_version():
-    try:
-        p = run(
-            "git describe --abbrev=0 --tags".split(),
-            stdout=PIPE
-        )
-    except FileNotFoundError:
-        # No git
-        return 3, 0, 0
-
-    if p.returncode != 0:
-        return 3, 0, 0
-
-    stdout = p.stdout.strip().decode()
-    if stdout.startswith("v"):
-        numbers = stdout[1:].split('.')
-        args = [0, 0, 0]
-        for i in range(3):
-            try:
-                args[i] = int(numbers[i])
-            except (IndexError, ValueError):
-                args[i] = 0
-        return args
-    return 3, 0, 0
+    with open('redbot/core/__init__.py') as f:
+        version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE).group(1)
+    return version
 
 
 def find_locale_folders():
@@ -94,7 +74,7 @@ def find_locale_folders():
 
 setup(
     name='Red-DiscordBot',
-    version="{}.{}.{}b10".format(*get_version()),
+    version=get_version(),
     packages=get_package_list(),
     package_data=find_locale_folders(),
     include_package_data=True,
