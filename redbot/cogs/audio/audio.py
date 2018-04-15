@@ -963,10 +963,10 @@ class Audio:
         await self._embed_msg(ctx, 'Host set to {}.'.format(host))
 
     @llsetup.command()
-    async def password(self, ctx, passw):
+    async def password(self, ctx, password):
         """Set the lavalink server password."""
-        await self.config.passw.set(str(passw))
-        await self._embed_msg(ctx, 'Server password set to {}.'.format(passw))
+        await self.config.password.set(str(passw))
+        await self._embed_msg(ctx, 'Server password set to {}.'.format(password))
 
     @llsetup.command()
     async def restport(self, ctx, rest_port):
@@ -975,7 +975,7 @@ class Audio:
         await self._embed_msg(ctx, 'REST port set to {}.'.format(rest_port))
 
     @llsetup.command()
-    async def wsport(self, ctx, rest_port):
+    async def wsport(self, ctx, ws_port):
         """Set the lavalink websocket server port."""
         await self.config.ws_port.set(str(ws_port))
         await self._embed_msg(ctx, 'Websocket port set to {}.'.format(ws_port))
