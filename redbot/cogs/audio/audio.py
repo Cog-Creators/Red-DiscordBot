@@ -497,6 +497,7 @@ class Audio:
 
         queue_duration = await self._queue_duration(ctx)
         queue_total_duration = lavalink.utils.format_time(queue_duration)
+        before_queue_length = len(player.queue) + 1
 
         if 'list' in query and 'ytsearch:' not in query:
             for track in tracks:
@@ -504,7 +505,7 @@ class Audio:
             embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='Playlist Enqueued',
                                   description='Added {} tracks to the queue.'.format(len(tracks)))
             if not shuffle and queue_duration > 0:
-                embed.set_footer(text='{} until start of playlist playback'.format(queue_total_duration))
+                embed.set_footer(text='{} until start of playlist playback: starts at #{} in queue'.format(queue_total_duration, before_queue_length))
             if not player.current:
                 await player.play()
         else:
@@ -513,7 +514,7 @@ class Audio:
             embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='Track Enqueued',
                                   description='**[{}]({})**'.format(single_track.title, single_track.uri))
             if not shuffle and queue_duration > 0:
-                embed.set_footer(text='{} until track playback'.format(queue_total_duration))
+                embed.set_footer(text='{} until track playback: #{} in queue'.format(queue_total_duration, before_queue_length))
             if not player.current:
                 await player.play()
         await ctx.send(embed=embed)
@@ -730,7 +731,7 @@ class Audio:
             queue_duration = await self._queue_duration(ctx)
             queue_total_duration = lavalink.utils.format_time(queue_duration)
             if not shuffle and queue_duration > 0:
-                songembed.set_footer(text='{} until start of search playback'.format(queue_total_duration))
+                songembed.set_footer(text='{} until start of search playback: starts at #{} in queue'.format(queue_total_duration, (len(player.queue) + 1)))
             for track in tracks:
                 player.add(ctx.author, track)
                 if not player.current:
@@ -750,7 +751,7 @@ class Audio:
         queue_duration = await self._queue_duration(ctx)
         queue_total_duration = lavalink.utils.format_time(queue_duration)
         if not shuffle and queue_duration > 0:
-            embed.set_footer(text='{} until track playback'.format(queue_total_duration))
+            embed.set_footer(text='{} until track playback: #{} in queue'.format(queue_total_duration, (len(player.queue) + 1)))
         player.add(ctx.author, search_choice)
         if not player.current:
             await player.play()
