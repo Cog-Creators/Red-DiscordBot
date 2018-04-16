@@ -531,11 +531,13 @@ class Audio:
     @playlist.command(name='delete')
     async def _playlist_delete(self, ctx, playlist_name):
         """Delete a saved playlist."""
-        try:
-            async with self.config.guild(ctx.guild).playlists() as playlists:
+        async with self.config.guild(ctx.guild).playlists() as playlists:
+            try:
+                if playlists[playlist_name]['author'] != ctx.author.id and not await self._can_instaskip(ctx, ctx.author):
+                    return await self._embed_msg(ctx, 'You are not the author of that playlist.')
                 del playlists[playlist_name]
-        except KeyError:
-            return await self._embed_msg(ctx, 'No playlist with that name.')
+            except KeyError:
+                return await self._embed_msg(ctx, 'No playlist with that name.')
         await self._embed_msg(ctx, '{} playlist removed.'.format(playlist_name))
 
     @playlist.command(name='list')
