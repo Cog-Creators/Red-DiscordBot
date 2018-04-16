@@ -375,7 +375,7 @@ class Admin:
     @checks.is_owner()
     async def serverlock(self, ctx: commands.Context):
         """
-        Locks a bot to it's current servers only.
+        Locks a bot to its current servers only.
         """
         serverlocked = await self.conf.serverlocked()
         await self.conf.serverlocked.set(not serverlocked)
