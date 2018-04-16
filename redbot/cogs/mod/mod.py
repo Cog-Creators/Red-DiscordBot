@@ -884,8 +884,12 @@ class Mod:
         elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
             return False, mute_unmute_issues["hierarchy_problem"]
 
-        perms_cache[str(channel.id)] = overwrites.send_messages
+        perms_cache[str(channel.id)] = {
+            "send_messages": overwrites.send_messages, 
+            "add_reactions": overwrites.add_reactions
+        }
         overwrites.send_messages = False
+        overwrites.add_reactions = False
         try:
             await channel.set_permissions(user, overwrite=overwrites, reason=reason)
         except discord.Forbidden:
@@ -1007,10 +1011,11 @@ class Mod:
             return False, mute_unmute_issues["hierarchy_problem"]
 
         if channel.id in perms_cache:
-            old_value = perms_cache[channel.id]
+            old_values = perms_cache[channel.id]
         else:
-            old_value = None
-        overwrites.send_messages = old_value
+            old_values = None
+        overwrites.send_messages = old_values["send_messages"]
+        overwrites.add_reactions = old_values["add_reactions"]
         is_empty = self.are_overwrites_empty(overwrites)
 
         try:
