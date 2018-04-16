@@ -17,6 +17,7 @@ Welcome to Red - Discord Bot's documentation!
     install_centos
     install_raspbian
     cog_dataconverter
+    autostart_systemd
 
 .. toctree::
     :maxdepth: 2
