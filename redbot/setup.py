@@ -396,7 +396,7 @@ async def remove_instance_interaction():
 def main():
     if args.delete:
         loop = asyncio.get_event_loop()
-        loop.run_until_complete(remove_instance())
+        loop.run_until_complete(remove_instance_interaction())
     elif args.edit:
         loop = asyncio.get_event_loop()
         loop.run_until_complete(edit_instance())
