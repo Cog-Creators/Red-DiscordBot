@@ -49,3 +49,7 @@ setup.py                            @tekulvw
 redbot/__init__.py                  @tekulvw
 redbot/__main__.py                  @tekulvw
 redbot/setup.py                     @tekulvw
+
+# Others
+.travis.yml                         @Kowlin
+crowdin.yml                         @Kowlin
