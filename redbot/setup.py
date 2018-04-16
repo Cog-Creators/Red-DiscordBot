@@ -194,10 +194,10 @@ async def json_to_mongo(current_data_dir: Path, storage_details: dict):
         with p.open(mode="r") as f:
             cog_data = json.loads(f.read())
         cog_i = None
- -        for ident in list(cog_data.keys()):
- -            cog_i = str(hash(ident))
- -        cog_m = Mongo(p.parent.stem, cog_i, **storage_details)
- -        cog_c = cog_m.get_collection()
+        for ident in list(cog_data.keys()):
+            cog_i = str(hash(ident))
+        cog_m = Mongo(p.parent.stem, cog_i, **storage_details)
+        cog_c = cog_m.get_collection()
         for ident in list(cog_data.keys()):
             await cog_c.update_one(
                 {"_id": cog_m.unique_cog_identifier},
@@ -221,8 +221,8 @@ async def mongo_to_json(current_data_dir: Path, storage_details: dict):
         c_id = None
         for item in docs:
             item_id = item.pop("_id")
- -          if not c_id:
- -              c_id = str(hash(item_id))
+            if not c_id:
+                c_id = str(hash(item_id))
             output[item_id] = item
         target = JSON(c_name, c_id, data_path_override=c_data_path)
         await target.jsonIO._threadsafe_save_json(output)
