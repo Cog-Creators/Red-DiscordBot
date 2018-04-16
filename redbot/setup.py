@@ -302,7 +302,7 @@ async def edit_instance():
     )
 
 
-async def remove_instance(index: int, data):
+async def remove_instance(selected, instance_data):
     instance_list = load_existing_config()
     if instance_data["STORAGE_TYPE"] == "MongoDB":
         m = Mongo("Core", **instance_data["STORAGE_DETAILS"])
@@ -314,8 +314,8 @@ async def remove_instance(index: int, data):
     else:
         pth = Path(instance_data["DATA_PATH"])
         safe_delete(pth)
-    save_config(index, {}, remove=True)
-    print("The instance {} has been removed".format(data))
+    save_config(selected, {}, remove=True)
+    print("The instance {} has been removed".format(selected))
 
 
 async def remove_instance_interaction():
