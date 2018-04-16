@@ -211,19 +211,22 @@ class Economy:
     @guild_only_check()
     @check_global_setting_guildowner()
     async def reset(self, ctx, confirmation: bool = False):
-        """Deletes all guild's bank accounts"""
+        """Deletes bank accounts"""
         if confirmation is False:
             await ctx.send(
                 _("This will delete all bank accounts for {}.\nIf you're sure, type "
                   "`{}bank reset yes`").format(
-                    self.bot.user.name if await bank.is_global() else "this guild",
+                    self.bot.user.name if await bank.is_global() else "this server",
                     ctx.prefix
                 )
             )
         else:
             await bank.wipe_bank()
-            await ctx.send(_("All bank accounts of this guild have been "
-                             "deleted."))
+            await ctx.send(_("All bank accounts for {} have been "
+                             "deleted.").format(
+                             self.bot.user.name if await bank.is_global() else "this server"
+                             )
+                            )
 
     @commands.command()
     @guild_only_check()
