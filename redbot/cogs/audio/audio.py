@@ -483,7 +483,8 @@ class Audio:
         player.store('channel', ctx.channel.id)
         player.store('guild', ctx.guild.id)
         await self._data_check(ctx)
-        if (ctx.author.voice.channel != player.channel and not await self._can_instaskip(ctx, ctx.author)):
+        if ((not ctx.author.voice or ctx.author.voice.channel != player.channel) and not
+            await self._can_instaskip(ctx, ctx.author)):
             return await self._embed_msg(ctx, 'You must be in the voice channel to use the play command.')
         if not await self._currency_check(ctx, jukebox_price):
             return
@@ -652,7 +653,8 @@ class Audio:
         player = lavalink.get_player(ctx.guild.id)
         player.store('channel', ctx.channel.id)
         player.store('guild', ctx.guild.id)
-        if (ctx.author.voice.channel != player.channel and not await self._can_instaskip(ctx, ctx.author)):
+        if ((not ctx.author.voice or ctx.author.voice.channel != player.channel) and not
+            await self._can_instaskip(ctx, ctx.author)):
             await self._embed_msg(ctx, 'You must be in the voice channel to use the playlist command.')
             return False
         if not await self._currency_check(ctx, jukebox_price):
