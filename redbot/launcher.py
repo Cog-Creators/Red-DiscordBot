@@ -4,6 +4,7 @@ import platform
 import subprocess
 import sys
 import argparse
+import asyncio
 
 import pkg_resources
 from redbot.setup import basic_setup, load_existing_config, remove_instance
@@ -319,7 +320,7 @@ def main_menu():
             basic_setup()
             wait()
         elif choice == "6":
-            remove_instance()
+            asyncio.get_event_loop().run_until_complete(remove_instance())
             wait()
         elif choice == "7":
             debug_info()
