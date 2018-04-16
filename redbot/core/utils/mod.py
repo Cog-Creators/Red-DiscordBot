@@ -72,7 +72,7 @@ def get_audit_reason(author: discord.Member, reason: str = None):
     author : discord.Member
         The author behind the audit log action.
     reason : str
-        The reason behidn the audit log action.
+        The reason behind the audit log action.
 
     Returns
     -------
