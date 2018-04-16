@@ -181,9 +181,10 @@ def basic_setup():
 async def json_to_mongo(current_data_dir: Path, storage_details: dict):
     from redbot.core.drivers.red_mongo import Mongo
     core_data_file = list(current_data_dir.glob("core/settings.json"))[0]
-    m = Mongo("Core", "0", **storage_details)
+    m = Mongo("Core", **storage_details)
     with core_data_file.open(mode="r") as f:
         core_data = json.loads(f.read())
+    m.unique_cog_identifier = "0"
     collection = m.get_collection()
     await collection.update_one(
         {'_id': m.unique_cog_identifier},
@@ -191,24 +192,22 @@ async def json_to_mongo(current_data_dir: Path, storage_details: dict):
         upsert=True
     )
     for p in current_data_dir.glob("cogs/**/settings.json"):
+        cog_m = Mongo(p.parent.stem, **storage_details)
+        cog_c = cog_m.get_collection()
         with p.open(mode="r") as f:
             cog_data = json.loads(f.read())
-        cog_i = None
         for ident in list(cog_data.keys()):
-            cog_i = str(hash(ident))
-        cog_m = Mongo(p.parent.stem, cog_i, **storage_details)
-        cog_c = cog_m.get_collection()
-        for ident in list(cog_data.keys()):
+            cog_m.unique_cog_identifier = ident
             await cog_c.update_one(
                 {"_id": cog_m.unique_cog_identifier},
-                update={"$set": cog_data[cog_i]},
+                update={"$set": cog_data[ident]},
                 upsert=True
             )
 
 
 async def mongo_to_json(current_data_dir: Path, storage_details: dict):
     from redbot.core.drivers.red_mongo import Mongo
-    m = Mongo("Core", "0", **storage_details)
+    m = Mongo("Core", **storage_details)
     db = m.db
     collection_names = await db.collection_names(include_system_collections=False)
     for c_name in collection_names:
@@ -218,13 +217,10 @@ async def mongo_to_json(current_data_dir: Path, storage_details: dict):
             c_data_path = current_data_dir / "cogs/{}".format(c_name)
         output = {}
         docs = await db[c_name].find().to_list(None)
-        c_id = None
         for item in docs:
-            item_id = item.pop("_id")
-            if not c_id:
-                c_id = str(hash(item_id))
+            item_id = str(item.pop("_id"))
             output[item_id] = item
-        target = JSON(c_name, c_id, data_path_override=c_data_path)
+        target = JSON(c_name, data_path_override=c_data_path)
         await target.jsonIO._threadsafe_save_json(output)
 
 
@@ -287,7 +283,7 @@ async def edit_instance():
                 if confirm("Would you like to import your data? (y/n) "):
                     await json_to_mongo(current_data_dir, storage_details)
         else:
-            storage_details = instance_data["STORAGE_DETAILS"]
+            storage_details = default_dirs["STORAGE_DETAILS"]
             default_dirs["STORAGE_DETAILS"] = {}
             if instance_data["STORAGE_TYPE"] == "MongoDB":
                 if confirm("Would you like to import your data? (y/n) "):
@@ -302,7 +298,23 @@ async def edit_instance():
     )
 
 
-async def remove_instance():
+async def remove_instance(index: int, data):
+    instance_list = load_existing_config()
+    if instance_data["STORAGE_TYPE"] == "MongoDB":
+        m = Mongo("Core", **instance_data["STORAGE_DETAILS"])
+        db = m.db
+        collections = await db.collection_names(include_system_collections=False)
+        for name in collections:
+            collection = await db.get_collection(name)
+            await collection.drop()
+    else:
+        pth = Path(instance_data["DATA_PATH"])
+        safe_delete(pth)
+    save_config(index, {}, remove=True)
+    print("The instance {} has been removed".format(data))
+
+
+async def remove_instance_interaction():
     instance_list = load_existing_config()
     if not instance_list:
         print("No instances have been set up!")
@@ -374,20 +386,7 @@ async def remove_instance():
             print("The instance has been removed")
             return
     else:
-        print("Removing the instance...")
-        if instance_data["STORAGE_TYPE"] == "MongoDB":
-            m = Mongo("Core", **instance_data["STORAGE_DETAILS"])
-            db = m.db
-            collections = await db.collection_names(include_system_collections=False)
-            for name in collections:
-                collection = await db.get_collection(name)
-                await collection.drop()
-        else:
-            pth = Path(instance_data["DATA_PATH"])
-            safe_delete(pth)
-        save_config(selected, {}, remove=True)
-        print("The instance has been removed")
-        return
+        remove_instance(selected, instance_data)
 
 
 def main():
