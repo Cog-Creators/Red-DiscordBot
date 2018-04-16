@@ -320,7 +320,7 @@ def main_menu():
             basic_setup()
             wait()
         elif choice == "6":
-            asyncio.get_event_loop.run_until_complete(remove_instance())
+            asyncio.get_event_loop().run_until_complete(remove_instance())
             wait()
         elif choice == "7":
             debug_info()
