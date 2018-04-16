@@ -65,7 +65,7 @@ class Announcer:
             try:
                 await channel.send(self.message)
             except discord.Forbidden:
-                await bot_owner.send("I could not announce to guild: {}".format(
+                await bot_owner.send("I could not announce to server: {}".format(
                                          g.id
                                      ))
             await asyncio.sleep(0.5)
