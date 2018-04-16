@@ -1,29 +1,30 @@
-.. raspbian install guide
+.. arch install guide
 
-==================================
-Installing Red on Raspbian Stretch
-==================================
+==============================
+Installing Red on Arch Linux
+==============================
 
-.. warning:: For safety reasons, DO NOT install Red with a root user. Instead, `make a new one <https://www.raspberrypi.org/documentation/linux/usage/users.md>`_.
+.. warning:: For safety reasons, DO NOT install Red with a root user. Instead, make a new one.
 
----------------------------
-Installing pre-requirements
----------------------------
+:code:`https://wiki.archlinux.org/index.php/Users_and_groups`
+
+-------------------------------
+Installing the pre-requirements
+-------------------------------
 
 .. code-block:: none
 
-    sudo apt-get install python3.5-dev python3-pip build-essential libssl-dev libffi-dev git unzip default-jre -y
+    sudo pacman -Sy python-pip git base-devel jre8-openjdk
 
+------------------
+Installing the bot
+------------------
 
---------------
-Installing Red
---------------
-
-Without audio:
+To install without audio:
 
 :code:`pip3 install -U --process-dependency-links red-discordbot --user`
 
-With audio:
+To install with audio:
 
 :code:`pip3 install -U --process-dependency-links red-discordbot[voice] --user`
 
@@ -35,9 +36,9 @@ To install the development version (with audio):
 
 :code:`pip3 install -U --process-dependency-links git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=red-discordbot[voice] --user`
 
-----------------------
-Setting up an instance
-----------------------
+------------------------
+Setting up your instance
+------------------------
 
 Run :code:`redbot-setup` and follow the prompts. It will ask first for where you want to
 store the data (the default is :code:`~/.local/share/Red-DiscordBot`) and will then ask
@@ -52,5 +53,3 @@ Running Red
 
 Run :code:`redbot <your instance name>` and run through the initial setup. This will ask for
 your token and a prefix.
-
-.. warning:: Audio will not work on Raspberry Pi's **below** 2B. This is a CPU problem and *cannot* be fixed.
