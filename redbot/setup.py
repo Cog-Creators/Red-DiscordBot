@@ -181,10 +181,9 @@ def basic_setup():
 async def json_to_mongo(current_data_dir: Path, storage_details: dict):
     from redbot.core.drivers.red_mongo import Mongo
     core_data_file = list(current_data_dir.glob("core/settings.json"))[0]
-    m = Mongo("Core", **storage_details)
+    m = Mongo("Core", "0", **storage_details)
     with core_data_file.open(mode="r") as f:
         core_data = json.loads(f.read())
-    m.unique_cog_identifier = "0"
     collection = m.get_collection()
     await collection.update_one(
         {'_id': m.unique_cog_identifier},
@@ -192,22 +191,24 @@ async def json_to_mongo(current_data_dir: Path, storage_details: dict):
         upsert=True
     )
     for p in current_data_dir.glob("cogs/**/settings.json"):
-        cog_m = Mongo(p.parent.stem, **storage_details)
-        cog_c = cog_m.get_collection()
         with p.open(mode="r") as f:
             cog_data = json.loads(f.read())
+        cog_i = None
         for ident in list(cog_data.keys()):
-            cog_m.unique_cog_identifier = ident
+            cog_i = str(hash(ident))
+        cog_m = Mongo(p.parent.stem, cog_i, **storage_details)
+        cog_c = cog_m.get_collection()
+        for ident in list(cog_data.keys()):
             await cog_c.update_one(
                 {"_id": cog_m.unique_cog_identifier},
-                update={"$set": cog_data[ident]},
+                update={"$set": cog_data[cog_i]},
                 upsert=True
             )
 
 
 async def mongo_to_json(current_data_dir: Path, storage_details: dict):
     from redbot.core.drivers.red_mongo import Mongo
-    m = Mongo("Core", **storage_details)
+    m = Mongo("Core", "0", **storage_details)
     db = m.db
     collection_names = await db.collection_names(include_system_collections=False)
     for c_name in collection_names:
@@ -217,10 +218,13 @@ async def mongo_to_json(current_data_dir: Path, storage_details: dict):
             c_data_path = current_data_dir / "cogs/{}".format(c_name)
         output = {}
         docs = await db[c_name].find().to_list(None)
+        c_id = None
         for item in docs:
-            item_id = str(item.pop("_id"))
+            item_id = item.pop("_id")
+            if not c_id:
+                c_id = str(hash(item_id))
             output[item_id] = item
-        target = JSON(c_name, data_path_override=c_data_path)
+        target = JSON(c_name, c_id, data_path_override=c_data_path)
         await target.jsonIO._threadsafe_save_json(output)
 
 
@@ -283,7 +287,7 @@ async def edit_instance():
                 if confirm("Would you like to import your data? (y/n) "):
                     await json_to_mongo(current_data_dir, storage_details)
         else:
-            storage_details = default_dirs["STORAGE_DETAILS"]
+            storage_details = instance_data["STORAGE_DETAILS"]
             default_dirs["STORAGE_DETAILS"] = {}
             if instance_data["STORAGE_TYPE"] == "MongoDB":
                 if confirm("Would you like to import your data? (y/n) "):
