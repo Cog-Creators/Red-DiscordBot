@@ -133,7 +133,7 @@ class Core:
 
         return fmt.format(d=days, h=hours, m=minutes, s=seconds)
 
-    @commands.group(hidden=True)
+    @commands.group()
     async def embedset(self, ctx: RedContext):
         """
         Commands for toggling embeds on or off.
