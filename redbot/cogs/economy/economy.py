@@ -513,7 +513,7 @@ class Economy:
         guild = ctx.guild
         credits_name = await bank.get_currency_name(guild)
         if await bank.is_global():
-            await ctx.send("The bank must be per-guild for per-role paydays to work.")
+            await ctx.send("The bank must be per-server for per-role paydays to work.")
         else:
             await self.config.role(role).PAYDAY_CREDITS.set(creds)
             await ctx.send(_("Every payday will now give {} {} to people with the role {}."
