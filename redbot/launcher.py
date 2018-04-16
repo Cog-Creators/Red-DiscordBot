@@ -4,6 +4,7 @@ import platform
 import subprocess
 import sys
 import argparse
+import asyncio
 
 import pkg_resources
 from redbot.setup import basic_setup, load_existing_config, remove_instance
@@ -287,14 +288,14 @@ def main_menu():
         choice = user_choice()
         if choice == "1":
             instance = instance_menu()
-            cli_flags = cli_flag_getter()
             if instance:
+                cli_flags = cli_flag_getter()
                 run_red(instance, autorestart=True, cliflags=cli_flags)
             wait()
         elif choice == "2":
             instance = instance_menu()
-            cli_flags = cli_flag_getter()
             if instance:
+                cli_flags = cli_flag_getter()
                 run_red(instance, autorestart=False, cliflags=cli_flags)
             wait()
         elif choice == "3":
@@ -319,7 +320,7 @@ def main_menu():
             basic_setup()
             wait()
         elif choice == "6":
-            remove_instance()
+            asyncio.get_event_loop().run_until_complete(remove_instance())
             wait()
         elif choice == "7":
             debug_info()

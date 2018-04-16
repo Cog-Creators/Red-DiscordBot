@@ -133,7 +133,7 @@ class Core:
 
         return fmt.format(d=days, h=hours, m=minutes, s=seconds)
 
-    @commands.group(hidden=True)
+    @commands.group()
     async def embedset(self, ctx: RedContext):
         """
         Commands for toggling embeds on or off.
@@ -541,7 +541,8 @@ class Core:
                 "Locale: {}"
                 "".format(
                     ctx.bot.user.name, " ".join(prefixes),
-                    admin_role.name, mod_role.name, locale
+                    admin_role.name if admin_role else "Not set",
+                    mod_role.name if mod_role else "Not set", locale
                 )
             )
             await ctx.send(box(settings))
@@ -696,10 +697,10 @@ class Core:
     @_set.command(name="nickname")
     @checks.admin()
     @commands.guild_only()
-    async def _nickname(self, ctx, *, nickname: str):
+    async def _nickname(self, ctx, *, nickname: str=None):
         """Sets Red's nickname"""
         try:
-            await ctx.bot.user.edit(nick=nickname)
+            await ctx.guild.me.edit(nick=nickname)
         except discord.Forbidden:
             await ctx.send(_("I lack the permissions to change my own "
                              "nickname."))

@@ -16,7 +16,7 @@ __author__ = ["aikaterna", "billy/bollo/ati"]
 class Audio:
     def __init__(self, bot):
         self.bot = bot
-        self.config = Config.get_conf(self, 2711759128, force_registration=True)
+        self.config = Config.get_conf(self, 2711759130, force_registration=True)
 
         default_global = {
             "host": 'localhost',
@@ -24,7 +24,8 @@ class Audio:
             "ws_port": '2332',
             "password": 'youshallnotpass',
             "status": False,
-            "current_build": 0
+            "current_build": [3, 0, 0, 'alpha', 0],
+            "use_external_lavalink": False
         }
 
         default_guild = {
@@ -192,7 +193,7 @@ class Audio:
         status = await self.config.status()
         vote_percent = data['vote_percent']
         msg = ('```ini\n'
-               '----Guild Settings----\n')
+               '----Server Settings----\n')
         if dj_enabled:
             msg += 'DJ Role:          [{}]\n'.format(dj_role_obj.name)
         if jukebox:
