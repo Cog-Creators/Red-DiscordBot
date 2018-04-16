@@ -540,6 +540,33 @@ class Audio:
                 return await self._embed_msg(ctx, 'No playlist with that name.')
         await self._embed_msg(ctx, '{} playlist removed.'.format(playlist_name))
 
+    @playlist.command(name='info')
+    async def _playlist_info(self, ctx, playlist_name):
+        """Retrieve information from a saved playlist."""
+        playlists = await self.config.guild(ctx.guild).playlists.get_raw()
+        try:
+            author_id = playlists[playlist_name]['author']
+        except KeyError:
+            return await self._embed_msg(ctx, 'No playlist with that name.')
+        author_obj = self.bot.get_user(author_id)
+        playlist_url = playlists[playlist_name]['playlist_url']
+        try:
+            track_len = len(playlists[playlist_name]['tracks'])
+        except TypeError:
+            track_len = 1
+        if playlist_url is None:
+            playlist_url = '**Not generated from a URL.**'
+        else:
+            playlist_url = 'URL: <{}>'.format(playlist_url)
+        embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='Playlist info for {}:'.format(playlist_name),
+                              description='Author: **{}**\n{}'.format(author_obj, 
+                              playlist_url))
+        if track_len > 1:
+            embed.set_footer(text='{} tracks'.format(track_len))
+        if track_len == 1:
+            embed.set_footer(text='{} track'.format(track_len))
+        await ctx.send(embed=embed)
+
     @playlist.command(name='list')
     async def _playlist_list(self, ctx):
         """List saved playlists."""
