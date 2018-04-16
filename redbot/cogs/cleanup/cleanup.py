@@ -94,12 +94,12 @@ class Cleanup:
         channel = ctx.channel
         author = ctx.author
         is_bot = self.bot.user.bot
-        
+
         if number > 100:
             cont = await self.check_100_plus(ctx, number)
             if not cont:
                 return
-    
+
         def check(m):
             if text in m.content:
                 return True
@@ -134,7 +134,7 @@ class Cleanup:
         channel = ctx.channel
         author = ctx.author
         is_bot = self.bot.user.bot
-       
+
         if number > 100:
             cont = await self.check_100_plus(ctx, number)
             if not cont:
@@ -217,7 +217,7 @@ class Cleanup:
         author = ctx.author
 
         is_bot = self.bot.user.bot
-        
+
         if number > 100:
             cont = await self.check_100_plus(ctx, number)
             if not cont:
@@ -252,7 +252,7 @@ class Cleanup:
             if not cont:
                 return
 
-        prefixes = await self.bot.get_prefix(ctx.message) # This returns all server prefixes
+        prefixes = await self.bot.get_prefix(ctx.message)  # This returns all server prefixes
         if isinstance(prefixes, str):
             prefixes = [prefixes]
 
