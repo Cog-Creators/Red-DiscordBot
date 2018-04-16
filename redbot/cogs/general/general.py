@@ -235,7 +235,7 @@ class General:
 
         data = discord.Embed(description=activity, colour=user.colour)
         data.add_field(name=_("Joined Discord on"), value=created_on)
-        data.add_field(name=_("Joined this guild on"), value=joined_on)
+        data.add_field(name=_("Joined this server on"), value=joined_on)
         data.add_field(name=_("Roles"), value=roles, inline=False)
         data.set_footer(text=_("Member #{} | User ID: {}"
                                "").format(member_number, user.id))
@@ -260,7 +260,7 @@ class General:
     @commands.command()
     @commands.guild_only()
     async def serverinfo(self, ctx):
-        """Shows guild's informations"""
+        """Shows server's informations"""
         guild = ctx.guild
         online = len([m.status for m in guild.members
                       if m.status == discord.Status.online or
@@ -285,7 +285,7 @@ class General:
         data.add_field(name=_("Voice Channels"), value=voice_channels)
         data.add_field(name=_("Roles"), value=len(guild.roles))
         data.add_field(name=_("Owner"), value=str(guild.owner))
-        data.set_footer(text=_("Guild ID: ") + str(guild.id))
+        data.set_footer(text=_("Server ID: ") + str(guild.id))
 
         if guild.icon_url:
             data.set_author(name=guild.name, url=guild.icon_url)
