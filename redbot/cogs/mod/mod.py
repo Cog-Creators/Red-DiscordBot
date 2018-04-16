@@ -141,7 +141,7 @@ class Mod:
                 "name": "smute",
                 "default_setting": True,
                 "image": "\N{SPEAKER WITH CANCELLATION STROKE}",
-                "case_str": "Guild Mute",
+                "case_str": "Server Mute",
                 "audit_type": "overwrite_update"
             },
             {
@@ -162,7 +162,7 @@ class Mod:
                 "name": "sunmute",
                 "default_setting": True,
                 "image": "\N{SPEAKER}",
-                "case_str": "Guild Unmute",
+                "case_str": "Server Unmute",
                 "audit_type": "overwrite_update"
             }
         ]
@@ -175,7 +175,7 @@ class Mod:
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     async def modset(self, ctx: RedContext):
-        """Manages guild administration settings."""
+        """Manages server administration settings."""
         if ctx.invoked_subcommand is None:
             guild = ctx.guild
             await ctx.send_help()
@@ -399,7 +399,7 @@ class Mod:
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
     async def hackban(self, ctx: RedContext, user_id: int, *, reason: str = None):
-        """Preemptively bans user from the guild
+        """Preemptively bans user from the server
 
         A user ID needs to be provided in order to ban
         using this command"""
@@ -437,7 +437,7 @@ class Mod:
             await ctx.send(_("I lack the permissions to do this."))
         else:
             await ctx.send(_("Done. The user will not be able to join this "
-                             "guild."))
+                             "server."))
 
         user_info = await self.bot.get_user_info(user_id)
         try:
@@ -528,7 +528,7 @@ class Mod:
                 msg = await user.send(
                     _("You have been banned and "
                       "then unbanned as a quick way to delete your messages.\n"
-                      "You can now join the guild again. {}").format(invite))
+                      "You can now join the server again. {}").format(invite))
             except discord.HTTPException:
                 msg = None
             self.ban_queue.append(queue_entry)
@@ -606,7 +606,7 @@ class Mod:
             await ctx.send(_("Something went wrong while attempting to unban that user"))
             return
         else:
-            await ctx.send(_("Unbanned that user from this guild"))
+            await ctx.send(_("Unbanned that user from this server"))
 
         try:
             await modlog.create_case(
@@ -622,7 +622,7 @@ class Mod:
                 try:
                     user.send(
                         _("You've been unbanned from {}.\n"
-                          "Here is an invite for that guild: {}").format(guild.name, invite.url))
+                          "Here is an invite for that server: {}").format(guild.name, invite.url))
                 except discord.Forbidden:
                     await ctx.send(
                         _("I failed to send an invite to that user. "
@@ -672,7 +672,7 @@ class Mod:
     @admin_or_voice_permissions(mute_members=True, deafen_members=True)
     @bot_has_voice_permissions(mute_members=True, deafen_members=True)
     async def voiceban(self, ctx: RedContext, user: discord.Member, *, reason: str=None):
-        """Bans the target user from speaking and listening in voice channels in the guild"""
+        """Bans the target user from speaking and listening in voice channels in the server"""
         user_voice_state = user.voice
         if user_voice_state is None:
             await ctx.send(_("No voice state for that user!"))
@@ -689,7 +689,7 @@ class Mod:
         elif needs_deafen:
             await user.edit(deafen=True, reason=audit_reason)
         else:
-            await ctx.send(_("That user is already muted and deafened guild-wide!"))
+            await ctx.send(_("That user is already muted and deafened server-wide!"))
             return
         await ctx.send(
             _("User has been banned from speaking or "
@@ -709,7 +709,7 @@ class Mod:
     @admin_or_voice_permissions(mute_members=True, deafen_members=True)
     @bot_has_voice_permissions(mute_members=True, deafen_members=True)
     async def voiceunban(self, ctx: RedContext, user: discord.Member, *, reason: str=None):
-        """Unbans the user from speaking/listening in the guild's voice channels"""
+        """Unbans the user from speaking/listening in the server's voice channels"""
         user_voice_state = user.voice
         if user_voice_state is None:
             await ctx.send(_("No voice state for that user!"))
@@ -724,7 +724,7 @@ class Mod:
         elif needs_undeafen:
             await user.edit(deafen=False, reason=audit_reason)
         else:
-            await ctx.send(_("That user isn't muted or deafened by the guild!"))
+            await ctx.send(_("That user isn't muted or deafened by the server!"))
             return
         await ctx.send(
             _("User is now allowed to speak and listen in voice channels")
@@ -763,7 +763,7 @@ class Mod:
     @commands.guild_only()
     @checks.mod_or_permissions(manage_channel=True)
     async def mute(self, ctx: RedContext):
-        """Mutes user in the channel/guild"""
+        """Mutes user in the channel/server"""
         if ctx.invoked_subcommand is None:
             await ctx.send_help()
 
@@ -836,17 +836,17 @@ class Mod:
             await channel.send(issue)
 
     @checks.mod_or_permissions(administrator=True)
-    @mute.command(name="guild")
+    @mute.command(name="server", aliases=["guild"])
     @commands.guild_only()
     async def guild_mute(self, ctx: RedContext, user: discord.Member, *, reason: str = None):
-        """Mutes user in the guild"""
+        """Mutes user in the server"""
         author = ctx.message.author
         guild = ctx.guild
         user_voice_state = user.voice
         if reason is None:
-            audit_reason = "guild mute requested by {} (ID {})".format(author, author.id)
+            audit_reason = "server mute requested by {} (ID {})".format(author, author.id)
         else:
-            audit_reason = "guild mute requested by {} (ID {}). Reason: {}".format(author, author.id, reason)
+            audit_reason = "server mute requested by {} (ID {}). Reason: {}".format(author, author.id, reason)
 
         mute_success = []
         for channel in guild.channels:
@@ -860,7 +860,7 @@ class Mod:
                 success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
                 mute_success.append((success, issue))
             await asyncio.sleep(0.1)
-        await ctx.send(_("User has been muted in this guild."))
+        await ctx.send(_("User has been muted in this server."))
         try:
             await modlog.create_case(
                 self.bot, guild, ctx.message.created_at, "smute",
@@ -898,7 +898,7 @@ class Mod:
     @commands.guild_only()
     @checks.mod_or_permissions(manage_channel=True)
     async def unmute(self, ctx: RedContext):
-        """Unmutes user in the channel/guild
+        """Unmutes user in the channel/server
 
         Defaults to channel"""
         if ctx.invoked_subcommand is None:
@@ -963,10 +963,10 @@ class Mod:
             await ctx.send(_("Unmute failed. Reason: {}").format(message))
 
     @checks.mod_or_permissions(administrator=True)
-    @unmute.command(name="guild")
+    @unmute.command(name="server", aliases=["guild"])
     @commands.guild_only()
     async def guild_unmute(self, ctx: RedContext, user: discord.Member, *, reason: str=None):
-        """Unmutes user in the guild"""
+        """Unmutes user in the server"""
         guild = ctx.guild
         author = ctx.author
         channel = ctx.channel
@@ -983,7 +983,7 @@ class Mod:
             success, message = await self.unmute_user(guild, channel, author, user)
             unmute_success.append((success, message))
             await asyncio.sleep(0.1)
-        await ctx.send(_("User has been unmuted in this guild."))
+        await ctx.send(_("User has been unmuted in this server."))
         try:
             await modlog.create_case(
                 self.bot, guild, ctx.message.created_at, "sunmute",
@@ -1033,7 +1033,7 @@ class Mod:
     @commands.guild_only()
     @checks.admin_or_permissions(manage_channels=True)
     async def ignore(self, ctx: RedContext):
-        """Adds guilds/channels to ignorelist"""
+        """Adds servers/channels to ignorelist"""
         if ctx.invoked_subcommand is None:
             await ctx.send_help()
             await ctx.send(await self.count_ignored())
@@ -1051,21 +1051,21 @@ class Mod:
         else:
             await ctx.send(_("Channel already in ignore list."))
 
-    @ignore.command(name="guild", aliases=["server"])
+    @ignore.command(name="server", aliases=["guild"])
     async def ignore_guild(self, ctx: RedContext):
-        """Ignores current guild"""
+        """Ignores current server"""
         guild = ctx.guild
         if not await self.settings.guild(guild).ignored():
             await self.settings.guild(guild).ignored.set(True)
-            await ctx.send(_("This guild has been added to the ignore list."))
+            await ctx.send(_("This server has been added to the ignore list."))
         else:
-            await ctx.send(_("This guild is already being ignored."))
+            await ctx.send(_("This server is already being ignored."))
 
     @commands.group()
     @commands.guild_only()
     @checks.admin_or_permissions(manage_channels=True)
     async def unignore(self, ctx: RedContext):
-        """Removes guilds/channels from ignorelist"""
+        """Removes servers/channels from ignorelist"""
         if ctx.invoked_subcommand is None:
             await ctx.send_help()
             await ctx.send(await self.count_ignored())
@@ -1084,15 +1084,15 @@ class Mod:
         else:
             await ctx.send(_("That channel is not in the ignore list."))
 
-    @unignore.command(name="guild", aliases=["server"])
+    @unignore.command(name="server", aliases=["guild"])
     async def unignore_guild(self, ctx: RedContext):
         """Removes current guild from ignore list"""
         guild = ctx.message.guild
         if await self.settings.guild(guild).ignored():
             await self.settings.guild(guild).ignored.set(False)
-            await ctx.send(_("This guild has been removed from the ignore list."))
+            await ctx.send(_("This server has been removed from the ignore list."))
         else:
-            await ctx.send(_("This guild is not in the ignore list."))
+            await ctx.send(_("This server is not in the ignore list."))
 
     async def count_ignored(self):
         ch_count = 0
@@ -1108,7 +1108,7 @@ class Mod:
         return box(msg)
 
     async def __global_check(self, ctx):
-        """Global check to see if a channel or guild is ignored.
+        """Global check to see if a channel or server is ignored.
 
         Any users who have permission to use the `ignore` or `unignore` commands
         surpass the check."""
@@ -1206,7 +1206,7 @@ class Mod:
                     await guild.ban(author, reason="Mention spam (Autoban)")
                 except discord.HTTPException:
                     log.info("Failed to ban member for mention spam in "
-                             "guild {}.".format(guild.id))
+                             "server {}.".format(guild.id))
                 else:
                     try:
                         case = await modlog.create_case(
