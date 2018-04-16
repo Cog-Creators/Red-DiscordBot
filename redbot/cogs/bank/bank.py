@@ -87,11 +87,11 @@ class Bank:
     @checks.is_owner()
     async def bankset_toggleglobal(self, ctx: commands.Context, confirm: bool=False):
         """Toggles whether the bank is global or not
-        If the bank is global, it will become per-guild
-        If the bank is per-guild, it will become global"""
+        If the bank is global, it will become per-server
+        If the bank is per-server, it will become global"""
         cur_setting = await bank.is_global()
 
-        word = _("per-guild") if cur_setting else _("global")
+        word = _("per-server") if cur_setting else _("global")
         if confirm is False:
             await ctx.send(
                 _("This will toggle the bank to be {}, deleting all accounts "
