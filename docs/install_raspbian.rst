@@ -4,13 +4,16 @@
 Installing Red on Raspbian Stretch
 ==================================
 
+.. warning:: For safety reasons, DO NOT install Red with a root user. Instead, `make a new one <https://www.raspberrypi.org/documentation/linux/usage/users.md>`_.
+
 ---------------------------
 Installing pre-requirements
 ---------------------------
 
 .. code-block:: none
 
-    sudo apt-get install python3.5-dev python3-pip build-essential libssl-dev libffi-dev git libav-tools libopus-dev unzip default-jre -y
+    sudo apt-get install python3.5-dev python3-pip build-essential libssl-dev libffi-dev git unzip default-jre -y
+
 
 --------------
 Installing Red
@@ -18,19 +21,19 @@ Installing Red
 
 Without audio:
 
-:code:`pip3 install -U --process-dependency-links red-discordbot`
+:code:`pip3 install -U --process-dependency-links red-discordbot --user`
 
 With audio:
 
-:code:`pip3 install -U --process-dependency-links red-discordbot[voice]`
+:code:`pip3 install -U --process-dependency-links red-discordbot[voice] --user`
 
 To install the development version (without audio):
 
-:code:`pip3 install -U --process-dependency-links git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=red-discordbot`
+:code:`pip3 install -U --process-dependency-links git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=red-discordbot --user`
 
 To install the development version (with audio):
 
-:code:`pip3 install -U --process-dependency-links git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=red-discordbot[voice]`
+:code:`pip3 install -U --process-dependency-links git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=red-discordbot[voice] --user`
 
 ----------------------
 Setting up an instance

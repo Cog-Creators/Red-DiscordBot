@@ -13,6 +13,7 @@ from discord.ext import commands
 
 from redbot.core import Config
 from redbot.core import data_manager
+from redbot.core.utils import safe_delete
 from .errors import *
 from .installable import Installable, InstallableType
 from .json_mixins import RepoJSONMixin
@@ -614,7 +615,7 @@ class RepoManager:
         if repo is None:
             raise MissingGitRepo("There is no repo with the name {}".format(name))
 
-        shutil.rmtree(str(repo.folder_path))
+        safe_delete(repo.folder_path)
 
         try:
             del self._repos[name]

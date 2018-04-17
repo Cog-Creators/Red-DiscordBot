@@ -31,12 +31,13 @@ async def test_modlog_case_create(mod, ctx, member_factory):
     from datetime import datetime as dt
     usr = member_factory.get()
     guild = ctx.guild
+    bot = ctx.bot
     case_type = "ban"
     moderator = ctx.author
     reason = "Test 12345"
     created_at = dt.utcnow()
     case = await mod.create_case(
-        guild, created_at, case_type, usr, moderator, reason
+        bot, guild, created_at, case_type, usr, moderator, reason
     )
     assert case is not None
     assert case.user == usr

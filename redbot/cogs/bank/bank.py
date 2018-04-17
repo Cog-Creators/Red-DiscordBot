@@ -1,4 +1,5 @@
 import discord
+from redbot.core.utils.chat_formatting import box
 
 from redbot.core import checks, bank
 from redbot.core.i18n import CogI18n
@@ -60,17 +61,37 @@ class Bank:
     async def bankset(self, ctx: commands.Context):
         """Base command for bank settings"""
         if ctx.invoked_subcommand is None:
+            if await bank.is_global():
+                bank_name = await bank._conf.bank_name()
+                currency_name = await bank._conf.currency()
+                default_balance = await bank._conf.default_balance()
+            else:
+                if not ctx.guild:
+                    await ctx.send_help()
+                    return
+                bank_name = await bank._conf.guild(ctx.guild).bank_name()
+                currency_name = await bank._conf.guild(ctx.guild).currency()
+                default_balance = await bank._conf.guild(ctx.guild).default_balance()
+
+            settings = (_(
+                "Bank settings:\n\n"
+                "Bank name: {}\n"
+                "Currency: {}\n"
+                "Default balance: {}"
+                "").format(bank_name, currency_name, default_balance)
+            )
+            await ctx.send(box(settings))
             await ctx.send_help()
 
     @bankset.command(name="toggleglobal")
     @checks.is_owner()
     async def bankset_toggleglobal(self, ctx: commands.Context, confirm: bool=False):
         """Toggles whether the bank is global or not
-        If the bank is global, it will become per-guild
-        If the bank is per-guild, it will become global"""
+        If the bank is global, it will become per-server
+        If the bank is per-server, it will become global"""
         cur_setting = await bank.is_global()
 
-        word = _("per-guild") if cur_setting else _("global")
+        word = _("per-server") if cur_setting else _("global")
         if confirm is False:
             await ctx.send(
                 _("This will toggle the bank to be {}, deleting all accounts "

@@ -3,7 +3,9 @@ import datetime
 import importlib
 import itertools
 import logging
+import os
 import sys
+import tarfile
 import traceback
 from collections import namedtuple
 from pathlib import Path
@@ -22,7 +24,7 @@ from redbot.core import i18n
 from redbot.core import rpc
 from redbot.core.context import RedContext
 from .utils import TYPE_CHECKING
-from .utils.chat_formatting import pagify, box
+from .utils.chat_formatting import pagify, box, inline
 
 if TYPE_CHECKING:
     from redbot.core.bot import Red
@@ -131,6 +133,97 @@ class Core:
 
         return fmt.format(d=days, h=hours, m=minutes, s=seconds)
 
+    @commands.group()
+    async def embedset(self, ctx: RedContext):
+        """
+        Commands for toggling embeds on or off.
+
+        This setting determines whether or not to
+        use embeds as a response to a command (for
+        commands that support it). The default is to
+        use embeds.
+        """
+        if ctx.invoked_subcommand is None:
+            text = "Embed settings:\n\n"
+            global_default = await self.bot.db.embeds()
+            text += "Global default: {}\n".format(global_default)
+            if ctx.guild:
+                guild_setting = await self.bot.db.guild(ctx.guild).embeds()
+                text += "Guild setting: {}\n".format(guild_setting)
+            user_setting = await self.bot.db.user(ctx.author).embeds()
+            text += "User setting: {}".format(user_setting)
+            await ctx.send(box(text))
+            await ctx.send_help()
+
+    @embedset.command(name="global")
+    @checks.is_owner()
+    async def embedset_global(self, ctx: RedContext):
+        """
+        Toggle the global embed setting.
+
+        This is used as a fallback if the user
+        or guild hasn't set a preference. The
+        default is to use embeds.
+        """
+        current = await self.bot.db.embeds()
+        await self.bot.db.embeds.set(not current)
+        await ctx.send(
+            _("Embeds are now {} by default.").format(
+                "disabled" if current else "enabled"
+            )
+        )
+
+    @embedset.command(name="guild")
+    @checks.guildowner_or_permissions(administrator=True)
+    async def embedset_guild(self, ctx: RedContext, enabled: bool=None):
+        """
+        Toggle the guild's embed setting.
+
+        If enabled is None, the setting will be unset and
+        the global default will be used instead.
+
+        If set, this is used instead of the global default
+        to determine whether or not to use embeds. This is
+        used for all commands done in a guild channel except
+        for help commands.
+        """
+        await self.bot.db.guild(ctx.guild).embeds.set(enabled)
+        if enabled is None:
+            await ctx.send(
+                _("Embeds will now fall back to the global setting.")
+            )
+        else:
+            await ctx.send(
+                _("Embeds are now {} for this guild.").format(
+                    "enabled" if enabled else "disabled"
+                )
+            )
+
+    @embedset.command(name="user")
+    async def embedset_user(self, ctx: RedContext, enabled: bool=None):
+        """
+        Toggle the user's embed setting.
+
+        If enabled is None, the setting will be unset and
+        the global default will be used instead.
+
+        If set, this is used instead of the global default
+        to determine whether or not to use embeds. This is
+        used for all commands done in a DM with the bot, as
+        well as all help commands everywhere.
+        """
+        await self.bot.db.user(ctx.author).embeds.set(enabled)
+        if enabled is None:
+            await ctx.send(
+                _("Embeds will now fall back to the global setting.")
+            )
+        else:
+            await ctx.send(
+                _("Embeds are now {} for you.").format(
+                    "enabled" if enabled else "disabled"
+                )
+            )
+
     @commands.command()
     @checks.is_owner()
     async def traceback(self, ctx, public: bool=False):
@@ -153,7 +246,8 @@ class Core:
     async def invite(self, ctx):
         """Show's Red's invite url"""
         if self.bot.user.bot:
-            await ctx.author.send(discord.utils.oauth_url(self.bot.user.id))
+            app_info = await self.bot.application_info()
+            await ctx.author.send(discord.utils.oauth_url(app_info.id))
         else:
             await ctx.send("I'm not a bot account. I have no invite URL.")
 
@@ -230,71 +324,153 @@ class Core:
     @commands.command()
     @checks.is_owner()
     async def load(self, ctx, *, cog_name: str):
-        """Loads a package"""
-        try:
-            spec = await ctx.bot.cog_mgr.find_cog(cog_name)
-        except RuntimeError:
-            await ctx.send(_("No module by that name was found in any"
-                             " cog path."))
-            return
+        """Loads packages"""
 
-        try:
-            await ctx.bot.load_extension(spec)
-        except Exception as e:
-            log.exception("Package loading failed", exc_info=e)
+        failed_packages = []
+        loaded_packages = []
+        notfound_packages = []
 
-            exception_log = ("Exception in command '{}'\n"
-                             "".format(ctx.command.qualified_name))
-            exception_log += "".join(traceback.format_exception(type(e),
-                                     e, e.__traceback__))
-            self.bot._last_exception = exception_log
+        cognames = [c.strip() for c in cog_name.split(' ')]
+        cogspecs = []
 
-            await ctx.send(_("Failed to load package. Check your console or "
-                             "logs for details."))
-        else:
-            await ctx.bot.add_loaded_package(cog_name)
-            await ctx.send(_("Done."))
+        for c in cognames:
+            try:
+                spec = await ctx.bot.cog_mgr.find_cog(c)
+                cogspecs.append((spec, c))
+            except RuntimeError:
+                notfound_packages.append(inline(c))
+                #await ctx.send(_("No module named '{}' was found in any"
+                #                 " cog path.").format(c))
+
+        if len(cogspecs) > 0:
+            for spec, name  in cogspecs:
+                try:
+                    await ctx.bot.load_extension(spec)
+                except Exception as e:
+                    log.exception("Package loading failed", exc_info=e)
+
+                    exception_log = ("Exception in command '{}'\n"
+                                     "".format(ctx.command.qualified_name))
+                    exception_log += "".join(traceback.format_exception(type(e),
+                                             e, e.__traceback__))
+                    self.bot._last_exception = exception_log
+                    failed_packages.append(inline(name))
+                else:
+                    await ctx.bot.add_loaded_package(name)
+                    loaded_packages.append(inline(name))
+
+        if loaded_packages:
+            fmt = "Loaded {packs}"
+            formed = self.get_package_strings(loaded_packages, fmt)
+            await ctx.send(_(formed))
+
+        if failed_packages:
+            fmt = ("Failed to load package{plural} {packs}. Check your console or "
+                   "logs for details.")
+            formed = self.get_package_strings(failed_packages, fmt)
+            await ctx.send(_(formed))
+
+        if notfound_packages:
+            fmt = 'The package{plural} {packs} {other} not found in any cog path.'
+            formed = self.get_package_strings(notfound_packages, fmt, ('was', 'were'))
+            await ctx.send(_(formed))
 
     @commands.group()
     @checks.is_owner()
     async def unload(self, ctx, *, cog_name: str):
-        """Unloads a package"""
-        if cog_name in ctx.bot.extensions:
-            ctx.bot.unload_extension(cog_name)
-            await ctx.bot.remove_loaded_package(cog_name)
-            await ctx.send(_("Done."))
-        else:
-            await ctx.send(_("That extension is not loaded."))
+        """Unloads packages"""
+        cognames = [c.strip() for c in cog_name.split(' ')]
+        failed_packages = []
+        unloaded_packages = []
+
+        for c in cognames:
+            if c in ctx.bot.extensions:
+                ctx.bot.unload_extension(c)
+                await ctx.bot.remove_loaded_package(c)
+                unloaded_packages.append(inline(c))
+            else:
+                failed_packages.append(inline(c))
+
+        if unloaded_packages:
+            fmt = "Package{plural} {packs} {other} unloaded."
+            formed = self.get_package_strings(unloaded_packages, fmt, ('was', 'were'))
+            await ctx.send(_(formed))
+
+        if failed_packages:
+            fmt = "The package{plural} {packs} {other} not loaded."
+            formed = self.get_package_strings(failed_packages, fmt, ('is', 'are'))
+            await ctx.send(_(formed))
 
     @commands.command(name="reload")
     @checks.is_owner()
     async def _reload(self, ctx, *, cog_name: str):
-        """Reloads a package"""
-        ctx.bot.unload_extension(cog_name)
+        """Reloads packages"""
 
-        try:
-            spec = await ctx.bot.cog_mgr.find_cog(cog_name)
-        except RuntimeError:
-            await ctx.send(_("No module by that name was found in any"
-                             " cog path."))
-            return
+        cognames = [c.strip() for c in cog_name.split(' ')]
+        
+        for c in cognames:
+            ctx.bot.unload_extension(c)
 
-        try:
-            self.cleanup_and_refresh_modules(spec.name)
-            await ctx.bot.load_extension(spec)
-        except Exception as e:
-            log.exception("Package reloading failed", exc_info=e)
+        cogspecs = []
+        failed_packages = []
+        loaded_packages = []
+        notfound_packages = []
 
-            exception_log = ("Exception in command '{}'\n"
-                             "".format(ctx.command.qualified_name))
-            exception_log += "".join(traceback.format_exception(type(e),
-                                     e, e.__traceback__))
-            self.bot._last_exception = exception_log
+        for c in cognames:
+            try:
+                spec = await ctx.bot.cog_mgr.find_cog(c)
+                cogspecs.append((spec, c))
+            except RuntimeError:
+                notfound_packages.append(inline(c))
 
-            await ctx.send(_("Failed to reload package. Check your console or "
-                             "logs for details."))
-        else:
-            await ctx.send(_("Done."))
+        for spec, name in cogspecs: 
+            try:
+                self.cleanup_and_refresh_modules(spec.name)
+                await ctx.bot.load_extension(spec)
+                loaded_packages.append(inline(name))
+            except Exception as e:
+                log.exception("Package reloading failed", exc_info=e)
+
+                exception_log = ("Exception in command '{}'\n"
+                                 "".format(ctx.command.qualified_name))
+                exception_log += "".join(traceback.format_exception(type(e),
+                                         e, e.__traceback__))
+                self.bot._last_exception = exception_log
+
+                failed_packages.append(inline(name))
+
+        if loaded_packages:
+            fmt = "Package{plural} {packs} {other} reloaded."
+            formed = self.get_package_strings(loaded_packages, fmt, ('was', 'were'))
+            await ctx.send(_(formed))
+
+        if failed_packages:
+            fmt = ("Failed to reload package{plural} {packs}. Check your "
+                   "logs for details")
+            formed = self.get_package_strings(failed_packages, fmt)
+            await ctx.send(_(formed))
+
+        if notfound_packages:
+            fmt = 'The package{plural} {packs} {other} not found in any cog path.'
+            formed = self.get_package_strings(notfound_packages, fmt, ('was', 'were'))
+            await ctx.send(_(formed))
+
+    def get_package_strings(self, packages: list, fmt: str, other: tuple=None):
+        """
+        Gets the strings needed for the load, unload and reload commands
+        """
+        if other is None:
+            other = ('', '')
+        plural = 's' if len(packages) > 1 else ''
+        use_and, other = ('', other[0]) if len(packages) == 1 else (' and ', other[1])
+        packages_string = ', '.join(packages[:-1]) + use_and + packages[-1]
+
+        form = {'plural': plural,
+                'packs' : packages_string,
+                'other' : other
+                }
+        final_string = fmt.format(**form)
+        return final_string
 
     @commands.command(name="shutdown")
     @checks.is_owner()
@@ -348,6 +524,28 @@ class Core:
     async def _set(self, ctx):
         """Changes Red's settings"""
         if ctx.invoked_subcommand is None:
+            admin_role_id = await ctx.bot.db.guild(ctx.guild).admin_role()
+            admin_role = discord.utils.get(ctx.guild.roles, id=admin_role_id)
+            mod_role_id = await ctx.bot.db.guild(ctx.guild).mod_role()
+            mod_role = discord.utils.get(ctx.guild.roles, id=mod_role_id)
+            prefixes = await ctx.bot.db.guild(ctx.guild).prefix()
+            if not prefixes:
+                prefixes = await ctx.bot.db.prefix()
+            locale = await ctx.bot.db.locale()
+
+            settings = (
+                "{} Settings:\n\n"
+                "Prefixes: {}\n"
+                "Admin role: {}\n"
+                "Mod role: {}\n"
+                "Locale: {}"
+                "".format(
+                    ctx.bot.user.name, " ".join(prefixes),
+                    admin_role.name if admin_role else "Not set",
+                    mod_role.name if mod_role else "Not set", locale
+                )
+            )
+            await ctx.send(box(settings))
             await ctx.send_help()
 
     @_set.command()
@@ -386,6 +584,7 @@ class Core:
             await ctx.send(_("Done."))
 
     @_set.command(name="game")
+    @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _game(self, ctx, *, game: str=None):
         """Sets Red's playing status"""
@@ -396,11 +595,11 @@ class Core:
             game = None
         status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 \
             else discord.Status.online
-        for shard in ctx.bot.shards:
-            await ctx.bot.change_presence(status=status, activity=game)
+        await ctx.bot.change_presence(status=status, activity=game)
         await ctx.send(_("Game set."))
 
     @_set.command(name="listening")
+    @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _listening(self, ctx, *, listening: str=None):
         """Sets Red's listening status"""
@@ -411,11 +610,11 @@ class Core:
             activity = discord.Activity(name=listening, type=discord.ActivityType.listening)
         else:
             activity = None
-        for shard in ctx.bot.shards:
-            await ctx.bot.change_presence(status=status, activity=activity)
+        await ctx.bot.change_presence(status=status, activity=activity)
         await ctx.send(_("Listening set."))
 
     @_set.command(name="watching")
+    @checks.bot_in_a_guild()
     @checks.is_owner()
     async def _watching(self, ctx, *, watching: str=None):
         """Sets Red's watching status"""
@@ -426,11 +625,11 @@ class Core:
             activity = discord.Activity(name=watching, type=discord.ActivityType.watching)
         else:
             activity = None
-        for shard in ctx.bot.shards:
-            await ctx.bot.change_presence(status=status, activity=activity)
+        await ctx.bot.change_presence(status=status, activity=activity)
         await ctx.send(_("Watching set."))
 
     @_set.command()
+    @checks.bot_in_a_guild()
     @checks.is_owner()
     async def status(self, ctx, *, status: str):
         """Sets Red's status
@@ -455,11 +654,11 @@ class Core:
         except KeyError:
             await ctx.send_help()
         else:
-            for shard in ctx.bot.shards:
-                await ctx.bot.change_presence(status=status, activity=game)
-            await ctx.send(_("Status changed to %s.") % status)
+            await ctx.bot.change_presence(status=status, activity=game)
+            await ctx.send(_("Status changed to {}.").format(status))
 
     @_set.command()
+    @checks.bot_in_a_guild()
     @checks.is_owner()
     async def stream(self, ctx, streamer=None, *, stream_title=None):
         """Sets Red's streaming status
@@ -473,14 +672,12 @@ class Core:
             if "twitch.tv/" not in streamer:
                 streamer = "https://www.twitch.tv/" + streamer
             activity = discord.Streaming(url=streamer, name=stream_title)
-            for shard in ctx.bot.shards:
-                await ctx.bot.change_presence(status=status, activity=activity)
+            await ctx.bot.change_presence(status=status, activity=activity)
         elif streamer is not None:
             await ctx.send_help()
             return
         else:
-            for shard in ctx.bot.shards:
-                await ctx.bot.change_presence(activity=None, status=status)
+            await ctx.bot.change_presence(activity=None, status=status)
         await ctx.send(_("Done."))
 
     @_set.command(name="username", aliases=["name"])
@@ -500,10 +697,10 @@ class Core:
     @_set.command(name="nickname")
     @checks.admin()
     @commands.guild_only()
-    async def _nickname(self, ctx, *, nickname: str):
+    async def _nickname(self, ctx, *, nickname: str=None):
         """Sets Red's nickname"""
         try:
-            await ctx.bot.user.edit(nick=nickname)
+            await ctx.guild.me.edit(nick=nickname)
         except discord.Forbidden:
             await ctx.send(_("I lack the permissions to change my own "
                              "nickname."))
@@ -574,6 +771,28 @@ class Core:
                 await ctx.send(_("You have been set as owner."))
             else:
                 await ctx.send(_("Invalid token."))
+                
+    @_set.command()
+    @checks.is_owner()
+    async def token(self, ctx, token: str):
+        """Change bot token."""
+
+        if not isinstance(ctx.channel, discord.DMChannel):
+            
+            try:
+                await ctx.message.delete()
+            except discord.Forbidden:
+                pass
+            
+            await ctx.send(
+                _("Please use that command in DM. Since users probably saw your token,"
+                  " it is recommended to reset it right now. Go to the following link and"
+                  " select `Reveal Token` and `Generate a new token?`."
+                  "\n\nhttps://discordapp.com/developers/applications/me/{}").format(self.bot.user.id))
+            return
+        
+        await ctx.bot.db.token.set(token)
+        await ctx.send("Token set. Restart me.")
 
     @_set.command()
     @checks.is_owner()
@@ -627,6 +846,45 @@ class Core:
         )
 
     @commands.command()
+    @checks.is_owner()
+    async def backup(self, ctx):
+        """Creates a backup of all data for the instance."""
+        from redbot.core.data_manager import basic_config, instance_name
+        from redbot.core.drivers.red_json import JSON
+        data_dir = Path(basic_config["DATA_PATH"])
+        if basic_config["STORAGE_TYPE"] == "MongoDB":
+            from redbot.core.drivers.red_mongo import Mongo
+            m = Mongo("Core", **basic_config["STORAGE_DETAILS"])
+            db = m.db
+            collection_names = await db.collection_names(include_system_collections=False)
+            for c_name in collection_names:
+                if c_name == "Core":
+                    c_data_path = data_dir / basic_config["CORE_PATH_APPEND"]
+                else:
+                    c_data_path = data_dir / basic_config["COG_PATH_APPEND"]
+                output = {}
+                docs = await db[c_name].find().to_list(None)
+                for item in docs:
+                    item_id = str(item.pop("_id"))
+                    output[item_id] = item
+                target = JSON(c_name, data_path_override=c_data_path)
+                await target.jsonIO._threadsafe_save_json(output)
+        backup_filename = "redv3-{}-{}.tar.gz".format(
+            instance_name, ctx.message.created_at.strftime("%Y-%m-%d %H-%M-%S")
+        )
+        if data_dir.exists():
+            home = data_dir.home()
+            backup_file = home / backup_filename
+            os.chdir(data_dir.parent)
+            with tarfile.open(str(backup_file), "w:gz") as tar:
+                tar.add(data_dir.stem)
+            await ctx.send(_("A backup has been made of this instance. It is at {}.").format(
+                backup_file
+            ))
+        else:
+            await ctx.send(_("That directory doesn't seem to exist..."))
+
+    @commands.command()
     @commands.cooldown(1, 60, commands.BucketType.user)
     async def contact(self, ctx, *, message: str):
         """Sends a message to the owner"""
@@ -634,13 +892,13 @@ class Core:
         owner = discord.utils.get(ctx.bot.get_all_members(),
                                   id=ctx.bot.owner_id)
         author = ctx.message.author
-        footer = _("User ID: %s") % author.id
+        footer = _("User ID: {}").format(author.id)
 
         if ctx.guild is None:
             source = _("through DM")
         else:
             source = _("from {}").format(guild)
-            footer += _(" | Server ID: %s") % guild.id
+            footer += _(" | Server ID: {}").format(guild.id)
 
         # We need to grab the DM command prefix (global)
         # Since it can also be set through cli flags, bot.db is not a reliable
@@ -652,29 +910,43 @@ class Core:
         content = _("Use `{}dm {} <text>` to reply to this user"
                     "").format(prefix, author.id)
 
+        description = _("Sent by {} {}").format(author, source)
+
         if isinstance(author, discord.Member):
             colour = author.colour
         else:
             colour = discord.Colour.red()
 
-        description = _("Sent by {} {}").format(author, source)
+        if await ctx.embed_requested():
+            e = discord.Embed(colour=colour, description=message)
+            if author.avatar_url:
+                e.set_author(name=description, icon_url=author.avatar_url)
+            else:
+                e.set_author(name=description)
+            e.set_footer(text=footer)
 
-        e = discord.Embed(colour=colour, description=message)
-        if author.avatar_url:
-            e.set_author(name=description, icon_url=author.avatar_url)
+            try:
+                await owner.send(content, embed=e)
+            except discord.InvalidArgument:
+                await ctx.send(_("I cannot send your message, I'm unable to find "
+                                 "my owner... *sigh*"))
+            except:
+                await ctx.send(_("I'm unable to deliver your message. Sorry."))
+            else:
+                await ctx.send(_("Your message has been sent."))
         else:
-            e.set_author(name=description)
-        e.set_footer(text=footer)
-
-        try:
-            await owner.send(content, embed=e)
-        except discord.InvalidArgument:
-            await ctx.send(_("I cannot send your message, I'm unable to find "
-                             "my owner... *sigh*"))
-        except:
-            await ctx.send(_("I'm unable to deliver your message. Sorry."))
-        else:
-            await ctx.send(_("Your message has been sent."))
+            msg_text = (
+                "{}\nMessage:\n\n{}\n{}".format(description, message, footer)
+            )
+            try:
+                await owner.send("{}\n{}".format(content, box(msg_text)))
+            except discord.InvalidArgument:
+                await ctx.send(_("I cannot send your message, I'm unable to find "
+                                 "my owner... *sigh*"))
+            except:
+                await ctx.send(_("I'm unable to deliver your message. Sorry."))
+            else:
+                await ctx.send(_("Your message has been sent."))
 
     @commands.command()
     @checks.is_owner()
@@ -693,25 +965,36 @@ class Core:
                              "with."))
             return
 
-        e = discord.Embed(colour=discord.Colour.red(), description=message)
-        description = _("Owner of %s") % ctx.bot.user
         fake_message = namedtuple('Message', 'guild')
         prefixes = await ctx.bot.command_prefix(ctx.bot, fake_message(guild=None))
         prefix = prefixes[0]
-        e.set_footer(text=_("You can reply to this message with %scontact"
-                            "") % prefix)
-        if ctx.bot.user.avatar_url:
-            e.set_author(name=description, icon_url=ctx.bot.user.avatar_url)
-        else:
-            e.set_author(name=description)
+        description = _("Owner of {}").format(ctx.bot.user)
+        content = _("You can reply to this message with {}contact").format(prefix)
+        if await ctx.embed_requested():
+            e = discord.Embed(colour=discord.Colour.red(), description=message)
 
-        try:
-            await destination.send(embed=e)
-        except:
-            await ctx.send(_("Sorry, I couldn't deliver your message "
-                             "to %s") % destination)
+            e.set_footer(text=content)
+            if ctx.bot.user.avatar_url:
+                e.set_author(name=description, icon_url=ctx.bot.user.avatar_url)
+            else:
+                e.set_author(name=description)
+
+            try:
+                await destination.send(embed=e)
+            except:
+                await ctx.send(_("Sorry, I couldn't deliver your message "
+                                 "to {}").format(destination))
+            else:
+                await ctx.send(_("Message delivered to {}").format(destination))
         else:
-            await ctx.send(_("Message delivered to %s") % destination)
+            response = "{}\nMessage:\n\n{}".format(description, message)
+            try:
+                await destination.send("{}\n{}".format(box(response), content))
+            except:
+                await ctx.send(_("Sorry, I couldn't deliver your message "
+                                 "to {}").format(destination))
+            else:
+                await ctx.send(_("Message delivered to {}").format(destination))
 
     @commands.group()
     @checks.is_owner()
