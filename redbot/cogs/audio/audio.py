@@ -223,7 +223,7 @@ class Audio:
                     'Skip percentage:  [{vote_percent}%]\n').format(**data)
         msg += ('---Lavalink Settings---\n'
                 'Cog version:      [{}]\n'
-                'Jar build:     [{}]\n'
+                'Jar build:        [{}]\n'
                 'External server:  [{use_external_lavalink}]```').format(__version__, jarbuild, **global_data)
 
         embed = discord.Embed(colour=ctx.guild.me.top_role.colour, description=msg)
@@ -562,7 +562,7 @@ class Audio:
         else:
             playlist_url = 'URL: <{}>'.format(playlist_url)
         embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='Playlist info for {}:'.format(playlist_name),
-                              description='Author: **{}**\n{}'.format(author_obj, 
+                              description='Author: **{}**\n{}'.format(author_obj,
                               playlist_url))
         if track_len > 1:
             embed.set_footer(text='{} tracks'.format(track_len))
