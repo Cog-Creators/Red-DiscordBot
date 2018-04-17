@@ -62,10 +62,6 @@ class Reports:
             x['tun'] for x in self.tunnel_store.values()
         ]
 
-    def __unload(self):
-        for tun in self.tunnels:
-            tun.close()
-
     @checks.admin_or_permissions(manage_guild=True)
     @commands.guild_only()
     @commands.group(name="reportset")
