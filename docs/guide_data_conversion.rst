@@ -82,7 +82,7 @@ Here's an example of that in use:
             need to be awaited
             """
 
-            # First we give the converter out cog's Config instance.
+            # First we give the converter our cog's Config instance.
             converter = dc(self.config)
             
             # next we design a way to get all of the data into Config's internal
