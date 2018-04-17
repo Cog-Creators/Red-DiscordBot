@@ -27,3 +27,9 @@ V2 Data Conversion
 
 .. automodule:: redbot.core.utils.data_converter
     :members: DataConverter
+
+Tunnel
+======
+
+.. automodule:: redbot.core.utils.tunnel
+    :members: Tunnel

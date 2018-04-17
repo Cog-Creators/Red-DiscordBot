@@ -55,7 +55,18 @@ class Tunnel(metaclass=TunnelMeta):
     A tunnel interface for messages
 
     This will return None on init if the destination
-    or source + origin pair is already in use
+    or source + origin pair is already in use, or the
+    existing tunnel object if one exists for the designated
+    parameters
+
+    Attributes
+    ----------
+    sender: `discord.Member`
+        The person who opened the tunnel
+    origin: `discord.TextChannel`
+        The channel in which it was opened
+    recipient: `discord.User`
+        The user on the other end of the tunnel
     """
 
     def __init__(self, *,
@@ -77,16 +88,43 @@ class Tunnel(metaclass=TunnelMeta):
 
     @property
     def members(self):
-        return (self.sender, self.recipient)
+        return self.sender, self.recipient
 
     @property
     def minutes_since(self):
-        return (self.last_interaction - datetime.utcnow()).minutes
+        return int((self.last_interaction - datetime.utcnow()).seconds / 60)
 
     async def communicate(self, *,
                           message: discord.Message,
                           topic: str=None,
                           skip_message_content: bool=False):
+        """
+        Forwards a message.
+
+        Parameters
+        ----------
+        message : `discord.Message`
+            The message to forward
+        topic : `str`
+            A string to prepend
+        skip_message_content : `bool`
+            If this flag is set, only the topic will be sent
+
+        Returns
+        -------
+        `int`, `int`
+            a pair of ints matching the ids of the
+            message which was forwarded
+            and the last message the bot sent to do that.
+            useful if waiting for reactions.
+
+        Raises
+        ------
+        discord.Forbidden
+            This should only happen if the user's DMs are disabled
+            the bot can't upload at the origin channel
+            or can't add reactions there.
+        """
         if message.channel == self.origin \
                 and message.author == self.sender:
             send_to = self.recipient
