@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-04-02 19:27-0400\n"
+"POT-Creation-Date: 2018-04-02 17:36+AKDT\n"
+"PO-Revision-Date: 2018-04-15 16:43-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -87,35 +87,43 @@ msgid "This will delete all bank accounts for {}.\n"
 "If you're sure, type `{}bank reset yes`"
 msgstr ""
 
-#: ../economy.py:229
+#: ../economy.py:220
 msgid "All bank accounts of this guild have been deleted."
 msgstr "Все счета этого сервера были удалены."
 
-#: ../economy.py:248 ../economy.py:268
-msgid "{} Here, take some {}. Enjoy! (+{} {}!)"
-msgstr "{}, лови {}. Не за что! (+{} {}!)"
+#: ../economy.py:240
+msgid "{0.mention} Here, take some {1}. Enjoy! (+{2}\n\n"
+"You currently have {3} {1}.\n\n"
+"You are currently #{4} on the leaderboard!"
+msgstr ""
 
-#: ../economy.py:258 ../economy.py:276
+#: ../economy.py:252 ../economy.py:273
 msgid "{} Too soon. For your next payday you have to wait {}."
 msgstr "Слишком рано, {}. До следующей выплаты придется подождать {}."
 
-#: ../economy.py:313
+#: ../economy.py:262
+msgid "{0.mention} Here, take some {1}. Enjoy! (+{2})\n\n"
+"You currently have {3} {1}.\n\n"
+"You are currently #{4} on the leaderboard!"
+msgstr ""
+
+#: ../economy.py:307
 msgid "There are no accounts in the bank."
 msgstr "В банке нет счетов."
 
-#: ../economy.py:339
+#: ../economy.py:333
 msgid "You're on cooldown, try again in a bit."
 msgstr "Ты играешь слишком часто, попробуй чуть позже."
 
-#: ../economy.py:342
+#: ../economy.py:336
 msgid "That's an invalid bid amount, sorry :/"
 msgstr "К сожалению, это неправильная сумма ставки :/"
 
-#: ../economy.py:345
+#: ../economy.py:339
 msgid "You ain't got enough money, friend."
 msgstr "Слушай, у тебя нет столько денег."
 
-#: ../economy.py:391
+#: ../economy.py:385
 msgid "{}\n"
 "{} {}\n\n"
 "Your bid: {}\n"
@@ -125,7 +133,7 @@ msgstr "{}\n"
 "Ваша ставка: {}\n"
 "{} → {}!"
 
-#: ../economy.py:398
+#: ../economy.py:392
 msgid "{}\n"
 "{} Nothing!\n"
 "Your bid: {}\n"
@@ -135,7 +143,7 @@ msgstr "{}\n"
 "Ваша ставка: {}\n"
 "{} → {}!"
 
-#: ../economy.py:423
+#: ../economy.py:417
 msgid "Minimum slot bid: {}\n"
 "Maximum slot bid: {}\n"
 "Slot cooldown: {}\n"
@@ -149,63 +157,63 @@ msgstr "Минимальная ставка: {}\n"
 "Перерыв между выплатами: {}\n"
 "Сумма, выдающаяся при регистрации: {}"
 
-#: ../economy.py:433
+#: ../economy.py:427
 msgid "Current Economy settings:"
 msgstr "Текущие настройки Экономики:"
 
-#: ../economy.py:441
+#: ../economy.py:435
 msgid "Invalid min bid amount."
 msgstr "Неверная минимальная сумма ставки."
 
-#: ../economy.py:449
+#: ../economy.py:443
 msgid "Minimum bid is now {} {}."
 msgstr "Минимальная ставка теперь {} {}."
 
-#: ../economy.py:456
+#: ../economy.py:450
 msgid "Invalid slotmax bid amount. Must be greater than slotmin."
 msgstr "Неверная максимальная сумма ставки. Она должна быть больше минимальной."
 
-#: ../economy.py:465
+#: ../economy.py:459
 msgid "Maximum bid is now {} {}."
 msgstr "Максимальная ставка теперь {} {}."
 
-#: ../economy.py:475
+#: ../economy.py:469
 msgid "Cooldown is now {} seconds."
 msgstr "Перерыв между играми теперь {} секунд."
 
-#: ../economy.py:485
+#: ../economy.py:479
 msgid "Value modified. At least {} seconds must pass between each payday."
 msgstr "Значение изменено. Теперь между выплатами должно пройти как минимум {} секунд."
 
-#: ../economy.py:494
+#: ../economy.py:488
 msgid "Har har so funny."
 msgstr "Хах, смешно."
 
-#: ../economy.py:500
+#: ../economy.py:494
 msgid "Every payday will now give {} {}."
 msgstr "Каждая выплата теперь дает {} {}."
 
-#: ../economy.py:511
+#: ../economy.py:505
 msgid "Registering an account will now give {} {}."
 msgstr "Открытие счета теперь дает {} {}."
 
-#: ../economy.py:517
+#: ../economy.py:511
 msgid "weeks"
 msgstr "недель"
 
-#: ../economy.py:518
+#: ../economy.py:512
 msgid "days"
 msgstr "дней"
 
-#: ../economy.py:519
+#: ../economy.py:513
 msgid "hours"
 msgstr "часов"
 
-#: ../economy.py:520
+#: ../economy.py:514
 msgid "minutes"
 msgstr "минут"
 
-#: ../economy.py:521
+#: ../economy.py:515
 msgid "seconds"
 msgstr "секунд"
 

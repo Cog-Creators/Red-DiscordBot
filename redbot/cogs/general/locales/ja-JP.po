@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"POT-Creation-Date: 2018-04-02 17:36+AKDT\n"
+"PO-Revision-Date: 2018-04-15 16:42-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -109,8 +109,9 @@ msgid "{} Maybe higher than 1? ;P"
 msgstr "１より高いかもしれない？"
 
 #: ../general.py:93
-msgid "Nice try. You think this is funny?How about *this* instead:\n\n"
-msgstr "ざんねんでしたね。そうはさせない。これでどうだ：\n\n"
+msgid "Nice try. You think this is funny?\n"
+"How about *this* instead:\n\n"
+msgstr ""
 
 #: ../general.py:106
 msgid "*flips a coin and... "

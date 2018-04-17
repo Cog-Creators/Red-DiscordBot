@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-02-25 21:34-0500\n"
+"POT-Creation-Date: 2018-04-02 17:36+AKDT\n"
+"PO-Revision-Date: 2018-04-15 16:43-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Chinese Simplified\n"
 "MIME-Version: 1.0\n"
@@ -16,23 +16,34 @@ msgstr ""
 "X-Crowdin-File: /cogs/bank/locales/messages.pot\n"
 "Language: zh_CN\n"
 
-#: ../bank.py:68
+#: ../bank.py:76
+msgid "Bank settings:\n\n"
+"Bank name: {}\n"
+"Currency: {}\n"
+"Default balance: {}"
+msgstr ""
+
+#: ../bank.py:94
 msgid "global"
 msgstr "全局"
 
-#: ../bank.py:68
+#: ../bank.py:94
 msgid "per-guild"
 msgstr "每行会"
 
-#: ../bank.py:70
+#: ../bank.py:97
+msgid "This will toggle the bank to be {}, deleting all accounts in the process! If you're sure, type `{}`"
+msgstr ""
+
+#: ../bank.py:104
 msgid "The bank is now {}."
 msgstr "银行现在 {}."
 
-#: ../bank.py:77
+#: ../bank.py:111
 msgid "Bank's name has been set to {}"
 msgstr "银行名称已设置为 {}"
 
-#: ../bank.py:84
+#: ../bank.py:118
 msgid "Currency name has been set to {}"
 msgstr "货币名称已被设置为 {}"
 

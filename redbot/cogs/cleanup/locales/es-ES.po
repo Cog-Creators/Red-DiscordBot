@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-02-19 03:59+UTC\n"
-"PO-Revision-Date: 2018-02-25 21:32-0500\n"
+"POT-Creation-Date: 2018-04-02 17:36+AKDT\n"
+"PO-Revision-Date: 2018-04-15 16:41-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -16,11 +16,19 @@ msgstr ""
 "X-Crowdin-File: /cogs/cleanup/locales/messages.pot\n"
 "Language: es_ES\n"
 
-#: ../cleanup.py:176
+#: ../cleanup.py:31
+msgid "Are you sure you want to delete {} messages? (y/n)"
+msgstr "¿Estás seguro que deseas borrar todos los mensajes? (y/n)"
+
+#: ../cleanup.py:37
+msgid "Cancelled."
+msgstr ""
+
+#: ../cleanup.py:182
 msgid "This command can only be used on bots with bot accounts."
 msgstr "Este comando puede utilizarse sólo en bots con cuentas de bot."
 
-#: ../cleanup.py:183
+#: ../cleanup.py:189
 msgid "Message not found."
 msgstr "Mensaje no encontrado."
 

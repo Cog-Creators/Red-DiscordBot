@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-04-02 19:26-0400\n"
+"POT-Creation-Date: 2018-04-02 17:36+AKDT\n"
+"PO-Revision-Date: 2018-04-15 16:42-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -64,15 +64,15 @@ msgstr "{} 으로 밴 처리된 사용자가 다시 초대됐어요."
 msgid "Users unbanned with {} will not be reinvited."
 msgstr "{} 으로 밴 처리된 사용자는 다시 초대되지 않아요."
 
-#: ../mod.py:309 ../mod.py:349 ../mod.py:506
+#: ../mod.py:309 ../mod.py:349 ../mod.py:510
 msgid "I cannot let you do that. Self-harm is bad {}"
 msgstr "그렇게 하게 둘 수는 없어요. 자해는 나빠요. {}"
 
-#: ../mod.py:313 ../mod.py:353 ../mod.py:510
+#: ../mod.py:313 ../mod.py:353 ../mod.py:514
 msgid "I cannot let you do that. You are not higher than the user in the role hierarchy."
 msgstr "그렇게 하게 둘 수는 없어요. 역할 계층의 사용자보다 높지 않아요."
 
-#: ../mod.py:323 ../mod.py:379 ../mod.py:570
+#: ../mod.py:323 ../mod.py:383 ../mod.py:575
 msgid "I'm not allowed to do that."
 msgstr "그렇게 하는 건 허용하지 않아요."
 
@@ -80,192 +80,192 @@ msgstr "그렇게 하는 건 허용하지 않아요."
 msgid "Done. That felt good."
 msgstr "다 했어요. 앙 기분 좋아."
 
-#: ../mod.py:369
+#: ../mod.py:373
 msgid "Invalid days. Must be between 0 and 7."
 msgstr "올바르지 않은 요일이에요. 0에서 7사이여야 해요."
 
-#: ../mod.py:384
+#: ../mod.py:388
 msgid "Done. It was about time."
 msgstr "다 했어요. 마피아는 고개를 들어주세요."
 
-#: ../mod.py:413
+#: ../mod.py:417
 msgid "User is already banned."
 msgstr "해당 사용자는 이미 밴 처리되어 있어요."
 
-#: ../mod.py:429
+#: ../mod.py:433
 msgid "User not found. Have you provided the correct user ID?"
 msgstr "사용자를 찾을 수 없어요. 올바른 사용자 ID를 입력했나요?"
 
-#: ../mod.py:433
+#: ../mod.py:437
 msgid "I lack the permissions to do this."
 msgstr "제게 행동할 수 있는 권한이 없어요."
 
-#: ../mod.py:435
+#: ../mod.py:439
 msgid "Done. The user will not be able to join this guild."
 msgstr "다 했어요. 사용자는 이 길드에 가입할 수 없어요."
 
-#: ../mod.py:472
+#: ../mod.py:476
 msgid "You have been temporarily banned from {} until {}. Here is an invite for when your ban expires: {}"
 msgstr "{} 부터 {} 까지 일시적으로 밴 처리됐어요. 다음은 사용자의 밴 처리가 만료되는 경우를 위한 초대예요 : {}"
 
-#: ../mod.py:481
+#: ../mod.py:485
 msgid "I can't do that for some reason."
 msgstr "왠지 모르겠어요."
 
-#: ../mod.py:483
+#: ../mod.py:487
 msgid "Something went wrong while banning"
 msgstr "밴 처리를 하는 동안 문제가 발생했어요."
 
-#: ../mod.py:485
+#: ../mod.py:489
 msgid "Done. Enough chaos for now"
 msgstr "다 했어요. 지금으로서는 충분히 혼란스러울 거예요."
 
-#: ../mod.py:525
+#: ../mod.py:529
 msgid "You have been banned and then unbanned as a quick way to delete your messages.\n"
 "You can now join the guild again. {}"
 msgstr "사용자님은 밴 처리됐어요, 하지만 사용자님의 밴 처리를 해제하려면 사용자님의 메세지를 빠르게 삭제해보세요. 이제 다시 길드에 가입할 수 있어요. {}"
 
-#: ../mod.py:537
+#: ../mod.py:541
 msgid "My role is not high enough to softban that user."
 msgstr "제 역할이 그 사용자를 밴 할 만큼 충분하지 않습니다."
 
-#: ../mod.py:553
+#: ../mod.py:557
 msgid "Done. Enough chaos."
 msgstr "다 했어요. 충분히 혼란스러워요."
 
-#: ../mod.py:587
+#: ../mod.py:592
 msgid "Couldn't find a user with that ID!"
 msgstr "해당 ID를 가진 사용자를 찾을 수 없어요."
 
-#: ../mod.py:593
+#: ../mod.py:598
 msgid "It seems that user isn't banned!"
 msgstr "사용자들이 밴 처리되지 않은 것 같아요!"
 
-#: ../mod.py:601
+#: ../mod.py:606
 msgid "Something went wrong while attempting to unban that user"
 msgstr "해당 사용자의 밴 처리를 해제하는 동안 문제가 발생했어요."
 
-#: ../mod.py:604
+#: ../mod.py:609
 msgid "Unbanned that user from this guild"
 msgstr "이 길드에서 해당 사용자의 차단이 해제됐어요."
 
-#: ../mod.py:619
+#: ../mod.py:624
 msgid "You've been unbanned from {}.\n"
 "Here is an invite for that guild: {}"
 msgstr "{} 에서의 차단이 해제됬어요.\n"
 "해당 길드 초대 링크 : {}"
 
-#: ../mod.py:623
+#: ../mod.py:628
 msgid "I failed to send an invite to that user. Perhaps you may be able to send it for me?\n"
 "Here's the invite link: {}"
 msgstr "해당 사용자에게 초대를 보내지 못했어요. 혹시 저를 위해 보내 주실 수 있나요?\n"
 "여기 초대 링크예요 : {}"
 
-#: ../mod.py:629
+#: ../mod.py:634
 msgid "Something went wrong when attempting to send that useran invite. Here's the link so you can try: {}"
 msgstr "사용자에게 초대를 보내려고 할 때 문제가 발생했어요. 여기 링크를 클릭하면 다시 시도할 수 있어요 : {}"
 
-#: ../mod.py:673 ../mod.py:710
+#: ../mod.py:678 ../mod.py:715
 msgid "No voice state for that user!"
 msgstr "해당 사용자에 대한 음성 상태가 없어요!"
 
-#: ../mod.py:687
+#: ../mod.py:692
 msgid "That user is already muted and deafened guild-wide!"
 msgstr "해당 사용자는 이미 음소거 상태이고 길드 전체가 음소거 돼서 아무것도 안 들려요!"
 
-#: ../mod.py:690
+#: ../mod.py:695
 msgid "User has been banned from speaking or listening in voice channels"
 msgstr "사용자가 음성 채널에서 말하거나 듣는 것이 금지됐어요."
 
-#: ../mod.py:722
+#: ../mod.py:727
 msgid "That user isn't muted or deafened by the guild!"
 msgstr "해당 사용자는 길드에 의해 음소거 되지 않았어요."
 
-#: ../mod.py:725
+#: ../mod.py:730
 msgid "User is now allowed to speak and listen in voice channels"
 msgstr "이제 사용자가 음성 채널에서 말하고 들을 수 있어요."
 
-#: ../mod.py:754
+#: ../mod.py:759
 msgid "I cannot do that, I lack the '{}' permission."
 msgstr "제게 '{}' 권한이 없어서 그리 할 수 없어요."
 
-#: ../mod.py:783
+#: ../mod.py:788
 msgid "Muted {}#{} in channel {}"
 msgstr "{}#{} 이(가) {} 채널에서 음소거 됐어요."
 
-#: ../mod.py:797
+#: ../mod.py:802
 msgid "That user is already muted in {}!"
 msgstr "해당 사용자가 {} 에서 이미 음소거된 상태예요!"
 
-#: ../mod.py:800 ../mod.py:932
+#: ../mod.py:805 ../mod.py:937
 msgid "That user is not in a voice channel right now!"
 msgstr "해당 사용자는 지금 음성 채널에 있지 않아요!"
 
-#: ../mod.py:802 ../mod.py:934
+#: ../mod.py:807 ../mod.py:939
 msgid "No voice state for the target!"
 msgstr "대상에 대한 음성 상태가 없어요!"
 
-#: ../mod.py:822
+#: ../mod.py:827
 msgid "User has been muted in this channel."
 msgstr "사용자가 이 채널에서 음소거 됐어요."
 
-#: ../mod.py:858
+#: ../mod.py:863
 msgid "User has been muted in this guild."
 msgstr "이 길드에서 해당 사용자가 음소거 됐어요."
 
-#: ../mod.py:919
+#: ../mod.py:924
 msgid "Unmuted {}#{} in channel {}"
 msgstr "{}#{} 이(가) {} 채널에서 음소거 해제됐어요."
 
-#: ../mod.py:929
+#: ../mod.py:934
 msgid "That user is already unmuted in {}!"
 msgstr "해당 사용자가 {} 에서 이미 음소거가 해제되어 있어요!"
 
-#: ../mod.py:949
+#: ../mod.py:954
 msgid "User unmuted in this channel."
 msgstr "사용자가 이 채널에서 음소거를 해제했어요."
 
-#: ../mod.py:958
+#: ../mod.py:963
 msgid "Unmute failed. Reason: {}"
 msgstr "음소거 해제를 실패했어요. 이유 : {}"
 
-#: ../mod.py:981
+#: ../mod.py:986
 msgid "User has been unmuted in this guild."
 msgstr "사용자가 이 길드에서 음소거 해제됐어요."
 
-#: ../mod.py:1045
+#: ../mod.py:1050
 msgid "Channel added to ignore list."
 msgstr "채널이 무시 목록에 추가됐어요."
 
-#: ../mod.py:1047
+#: ../mod.py:1052
 msgid "Channel already in ignore list."
 msgstr "채널이 이미 무시 목록에 포함되어 있어요."
 
-#: ../mod.py:1055
+#: ../mod.py:1060
 msgid "This guild has been added to the ignore list."
 msgstr "이 길드는 무시 목록에 추가됐어요."
 
-#: ../mod.py:1057
+#: ../mod.py:1062
 msgid "This guild is already being ignored."
 msgstr "이 길드는 이미 무시되고 있어요."
 
-#: ../mod.py:1078
+#: ../mod.py:1083
 msgid "Channel removed from ignore list."
 msgstr "채널이 무시 목록에서 제거됐어요."
 
-#: ../mod.py:1080
+#: ../mod.py:1085
 msgid "That channel is not in the ignore list."
 msgstr "해당 채널은 무시 목록에 없어요."
 
-#: ../mod.py:1088
+#: ../mod.py:1093
 msgid "This guild has been removed from the ignore list."
 msgstr "이 길드는 무시 목록에서 제거됐어요."
 
-#: ../mod.py:1090
+#: ../mod.py:1095
 msgid "This guild is not in the ignore list."
 msgstr "이 길드는 무시 목록에 포함되어 있지 않아요."
 
-#: ../mod.py:1102
+#: ../mod.py:1107
 msgid "Currently ignoring:\n"
 "{} channels\n"
 "{} guilds\n"
@@ -273,15 +273,15 @@ msgstr "현재 무시 중 :\n"
 "{}개의 채널\n"
 "{} 길드"
 
-#: ../mod.py:1133
+#: ../mod.py:1138
 msgid "**Past 20 names**:"
 msgstr "**20개의 이름 초과** :"
 
-#: ../mod.py:1140
+#: ../mod.py:1145
 msgid "**Past 20 nicknames**:"
 msgstr "**20개의 닉네임을 초과** :"
 
-#: ../mod.py:1146
+#: ../mod.py:1151
 msgid "That user doesn't have any recorded name or nickname change."
 msgstr "해당 사용자에게 기록된 이름이나 닉네임이 없어요."
 
