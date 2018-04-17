@@ -32,8 +32,6 @@ _DEFAULT_MEMBER = {
 
 _DEFAULT_USER = _DEFAULT_MEMBER
 
-_bank_type = type("Bank", (object,), {})
-
 
 class Account:
     """A single account.
@@ -53,7 +51,8 @@ def _register_defaults():
     _conf.register_user(**_DEFAULT_USER)
 
 if not os.environ.get('BUILDING_DOCS'):
-    _conf = Config.get_conf(_bank_type(), 384734293238749, force_registration=True)
+    _conf = Config.get_conf(
+        None, 384734293238749, cog_name="Bank", force_registration=True)
     _register_defaults()
 
 

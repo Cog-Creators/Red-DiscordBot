@@ -4,6 +4,7 @@ import discord
 import heapq
 import lavalink
 import math
+import redbot.core
 from discord.ext import commands
 from redbot.core import Config, checks, bank
 
@@ -203,6 +204,7 @@ class Audio:
         dj_enabled = data['dj_enabled']
         jukebox = data['jukebox']
         jukebox_price = data['jukebox_price']
+        jarbuild = redbot.core.__version__
 
         vote_percent = data['vote_percent']
         msg = ('```ini\n'
@@ -221,7 +223,8 @@ class Audio:
                     'Skip percentage:  [{vote_percent}%]\n').format(**data)
         msg += ('---Lavalink Settings---\n'
                 'Cog version:      [{}]\n'
-                'External server:  [{use_external_lavalink}]```').format(__version__, **global_data)
+                'Jar build:        [{}]\n'
+                'External server:  [{use_external_lavalink}]```').format(__version__, jarbuild, **global_data)
 
         embed = discord.Embed(colour=ctx.guild.me.top_role.colour, description=msg)
         return await ctx.send(embed=embed)
@@ -559,7 +562,7 @@ class Audio:
         else:
             playlist_url = 'URL: <{}>'.format(playlist_url)
         embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='Playlist info for {}:'.format(playlist_name),
-                              description='Author: **{}**\n{}'.format(author_obj, 
+                              description='Author: **{}**\n{}'.format(author_obj,
                               playlist_url))
         if track_len > 1:
             embed.set_footer(text='{} tracks'.format(track_len))
