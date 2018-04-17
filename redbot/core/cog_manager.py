@@ -357,9 +357,10 @@ class CogManagerUI:
         Removes a path from the available cog paths given the path_number
             from !paths
         """
-        cog_paths = await ctx.bot.cog_mgr.paths()
+        path_number -= 1
+        cog_paths = await self.visible_paths(ctx)
         try:
-            to_remove = cog_paths[path_number]
+            to_remove = cog_paths.pop(path_number)
         except IndexError:
             await ctx.send(_("That is an invalid path number."))
             return
