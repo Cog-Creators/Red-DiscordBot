@@ -3,8 +3,9 @@ from datetime import datetime
 from redbot.core.utils.chat_formatting import pagify
 import io
 import sys
+import weakref
 
-_instances = {}
+_instances = weakref.WeakValueDictionary({})
 
 
 class TunnelMeta(type):
@@ -18,22 +19,35 @@ class TunnelMeta(type):
             (kwargs.get('sender'), kwargs.get('origin')),
             kwargs.get('recipient')
         )
-        if not (
-            any(
-                lockout_tuple[0] == x[0]
-                for x in _instances.keys()
-            ) or any(
-                lockout_tuple[1] == x[1]
-                for x in _instances.keys()
-            )
-        ):
-            _instances[lockout_tuple] = super(
-                TunnelMeta, cls).__call__(*args, **kwargs)
+
+        if lockout_tuple in _instances:
             return _instances[lockout_tuple]
-        elif lockout_tuple in _instances:
-            return _instances[lockout_tuple]
-        else:
-            return None
+
+        # this is needed because weakvalue dicts can
+        # change size without warning if an object is discarded
+        # it can raise a runtime error, so ..
+        while True:
+            try:
+                if not (
+                    any(
+                        lockout_tuple[0] == x[0]
+                        for x in _instances.keys()
+                    ) or any(
+                        lockout_tuple[1] == x[1]
+                        for x in _instances.keys()
+                    )
+                ):
+                    # if this isn't temporarily stored, the weakref dict
+                    # will discard this before the return statement,
+                    # causing a key error
+                    temp = super(TunnelMeta, cls).__call__(*args, **kwargs)
+                    _instances[lockout_tuple] = temp
+                    return temp
+            except:  # NOQA: E722
+                # Am I really supposed to except a runtime error flake >.>
+                continue
+            else:
+                return None
 
 
 class Tunnel(metaclass=TunnelMeta):
@@ -42,8 +56,6 @@ class Tunnel(metaclass=TunnelMeta):
 
     This will return None on init if the destination
     or source + origin pair is already in use
-
-    You should close tunnels when done with them
     """
 
     def __init__(self, *,
@@ -55,13 +67,6 @@ class Tunnel(metaclass=TunnelMeta):
         self.recipient = recipient
         self.last_interaction = datetime.utcnow()
 
-    def __del__(self):
-        lockout_tuple = ((self.sender, self.origin), self.recipient)
-        _instances.pop(lockout_tuple, None)
-
-    def close(self):
-        self.__del__()
-
     async def react_close(self, *, uid: int, message: str):
         send_to = self.origin if uid == self.sender.id else self.sender
         closer = next(filter(
@@ -69,7 +74,6 @@ class Tunnel(metaclass=TunnelMeta):
         await send_to.send(
             message.format(closer=closer)
         )
-        self.close()
 
     @property
     def members(self):
