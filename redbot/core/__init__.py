@@ -33,5 +33,5 @@ class VersionInfo:
     def to_json(self):
         return [self.major, self.minor, self.micro, self.releaselevel, self.serial]
 
-__version__ = "3.0.0b11"
-version_info = VersionInfo(3, 0, 0, 'beta', 11)
+__version__ = "3.0.0b12"
+version_info = VersionInfo(3, 0, 0, 'beta', 12)

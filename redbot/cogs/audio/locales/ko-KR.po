@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-04-02 19:26-0400\n"
+"POT-Creation-Date: 2018-04-02 17:36+AKDT\n"
+"PO-Revision-Date: 2018-04-15 16:42-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -15,28 +15,4 @@ msgstr ""
 "X-Crowdin-Language: ko\n"
 "X-Crowdin-File: /cogs/audio/locales/messages.pot\n"
 "Language: ko_KR\n"
-
-#: ../audio.py:25 ../audio.py:45
-msgid "Join a voice channel first!"
-msgstr "커맨드를 사용하기 전에 음성 채널에 접속해야 해요!"
-
-#: ../audio.py:33
-msgid "Let's play a file that exists pls"
-msgstr "파일을 재생해볼게요!"
-
-#: ../audio.py:38 ../audio.py:58
-msgid "{} is playing a song..."
-msgstr "{}이(가) 음악을 재생하는 중..."
-
-#: ../audio.py:48
-msgid "Youtube links pls"
-msgstr "유튜브 링크를 부탁해요!"
-
-#: ../audio.py:67 ../audio.py:77 ../audio.py:87 ../audio.py:97
-msgid "I'm not even connected to a voice channel!"
-msgstr "제가 음성 채널에 접속할 수 없어요!"
-
-#: ../audio.py:95
-msgid "Volume set."
-msgstr "음량이 변경됐어요."
 

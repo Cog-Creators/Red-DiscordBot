@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-04-02 19:26-0400\n"
+"POT-Creation-Date: 2018-04-02 17:36+AKDT\n"
+"PO-Revision-Date: 2018-04-15 16:42-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -86,35 +86,43 @@ msgid "This will delete all bank accounts for {}.\n"
 msgstr "{} 에 대한 모든 은행 계정이 삭제될 거예요.\n"
 "확실한 경우 `{}bank reset yes` 를 입력해야 해요."
 
-#: ../economy.py:229
+#: ../economy.py:220
 msgid "All bank accounts of this guild have been deleted."
 msgstr "이 길드의 모든 은행 계정이 삭제됐어요."
 
-#: ../economy.py:248 ../economy.py:268
-msgid "{} Here, take some {}. Enjoy! (+{} {}!)"
-msgstr "{} 여기요, 조금의 {} 을(를) 받아요. 즐겨요! (+{} {}!)"
+#: ../economy.py:240
+msgid "{0.mention} Here, take some {1}. Enjoy! (+{2}\n\n"
+"You currently have {3} {1}.\n\n"
+"You are currently #{4} on the leaderboard!"
+msgstr ""
 
-#: ../economy.py:258 ../economy.py:276
+#: ../economy.py:252 ../economy.py:273
 msgid "{} Too soon. For your next payday you have to wait {}."
 msgstr "{} 너무 일러요. 다음 월급날을 위해서 {} 을(를) 기다려야 해요."
 
-#: ../economy.py:313
+#: ../economy.py:262
+msgid "{0.mention} Here, take some {1}. Enjoy! (+{2})\n\n"
+"You currently have {3} {1}.\n\n"
+"You are currently #{4} on the leaderboard!"
+msgstr ""
+
+#: ../economy.py:307
 msgid "There are no accounts in the bank."
 msgstr "은행에 등록된 계좌가 없어요."
 
-#: ../economy.py:339
+#: ../economy.py:333
 msgid "You're on cooldown, try again in a bit."
 msgstr "사용자님은 지금 쿨타임이에요. 잠시 후에 다시 시도해보세요."
 
-#: ../economy.py:342
+#: ../economy.py:336
 msgid "That's an invalid bid amount, sorry :/"
 msgstr "잘못된 입찰 금액이에요, 죄송해요. ;/"
 
-#: ../economy.py:345
+#: ../economy.py:339
 msgid "You ain't got enough money, friend."
 msgstr "동작 그만, 밑장빼기냐? 돈이 없잖아."
 
-#: ../economy.py:391
+#: ../economy.py:385
 msgid "{}\n"
 "{} {}\n\n"
 "Your bid: {}\n"
@@ -124,7 +132,7 @@ msgstr "{}\n"
 "사용자님의 입찰 금액 : {}\n"
 "{} → {}!"
 
-#: ../economy.py:398
+#: ../economy.py:392
 msgid "{}\n"
 "{} Nothing!\n"
 "Your bid: {}\n"
@@ -134,7 +142,7 @@ msgstr "{}\n"
 "사용자님의 입찰 금액 : {}\n"
 "{} → {}!"
 
-#: ../economy.py:423
+#: ../economy.py:417
 msgid "Minimum slot bid: {}\n"
 "Maximum slot bid: {}\n"
 "Slot cooldown: {}\n"
@@ -148,63 +156,63 @@ msgstr "최소 슬롯 입찰 수 : {}\n"
 "급여의 재사용 가능 시간 : {}\n"
 "계좌 등록 시 지급된 금액 : {}"
 
-#: ../economy.py:433
+#: ../economy.py:427
 msgid "Current Economy settings:"
 msgstr "현재 이코노미 설정 :"
 
-#: ../economy.py:441
+#: ../economy.py:435
 msgid "Invalid min bid amount."
 msgstr "최소 입찰 금액이 잘못됐어요."
 
-#: ../economy.py:449
+#: ../economy.py:443
 msgid "Minimum bid is now {} {}."
 msgstr "이제 최소 입찰가는 {} {} 이에요."
 
-#: ../economy.py:456
+#: ../economy.py:450
 msgid "Invalid slotmax bid amount. Must be greater than slotmin."
 msgstr "슬롯 최대 입찰 금액이 잘못됐어요. 슬롯 최솟값보다 커야 해요."
 
-#: ../economy.py:465
+#: ../economy.py:459
 msgid "Maximum bid is now {} {}."
 msgstr "이제 최대 입찰가는 {} {} 이에요."
 
-#: ../economy.py:475
+#: ../economy.py:469
 msgid "Cooldown is now {} seconds."
 msgstr "이제 쿨타임은 {} 초예요."
 
-#: ../economy.py:485
+#: ../economy.py:479
 msgid "Value modified. At least {} seconds must pass between each payday."
 msgstr "값이 수정됐어요. 각각의 월급날 사이에 적어도 {} 초가 지나야 해요."
 
-#: ../economy.py:494
+#: ../economy.py:488
 msgid "Har har so funny."
 msgstr "ㅋㅋㅋ 개 재밌다."
 
-#: ../economy.py:500
+#: ../economy.py:494
 msgid "Every payday will now give {} {}."
 msgstr "이제 월급날 때마다 {} {} 을(를) 줄 거예요."
 
-#: ../economy.py:511
+#: ../economy.py:505
 msgid "Registering an account will now give {} {}."
 msgstr "이제 계정을 등록하면 {} {} 이(가) 지급돼요."
 
-#: ../economy.py:517
+#: ../economy.py:511
 msgid "weeks"
 msgstr "주"
 
-#: ../economy.py:518
+#: ../economy.py:512
 msgid "days"
 msgstr "날"
 
-#: ../economy.py:519
+#: ../economy.py:513
 msgid "hours"
 msgstr "시간"
 
-#: ../economy.py:520
+#: ../economy.py:514
 msgid "minutes"
 msgstr "분"
 
-#: ../economy.py:521
+#: ../economy.py:515
 msgid "seconds"
 msgstr "초"
 
