@@ -123,7 +123,9 @@ class Reports:
         if isinstance(permissions, discord.Permissions):
             perms = permissions
         else:
-            permissions = discord.Permissions(**perms)
+            permissions = discord.Permissions(
+                **permissions if permissions else 0
+            )
 
         for guild in self.bot.guilds:
             x = guild.get_member(author.id)
@@ -205,8 +207,7 @@ class Reports:
         if guild is None:
             guild = await self.discover_guild(
                 author,
-                prompt=_("Select a server to make a report in by number."),
-                permissions=discord.Permissions(0)
+                prompt=_("Select a server to make a report in by number.")
             )
         else:
             try:
