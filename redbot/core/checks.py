@@ -66,10 +66,13 @@ def admin_or_permissions(**perms):
         admin_role = discord.utils.get(ctx.guild.roles, id=admin_role_id)
 
         override = await check_overrides(ctx, level='admin')
-        
+
         return (
             override if override is not None
-            admin_role in author.roles or has_perms_or_is_owner or is_guild_owner
+            else
+            admin_role in author.roles
+            or has_perms_or_is_owner
+            or is_guild_owner
         )
 
     return commands.check(predicate)
