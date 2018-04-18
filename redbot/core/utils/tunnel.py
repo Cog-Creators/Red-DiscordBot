@@ -4,6 +4,7 @@ from redbot.core.utils.chat_formatting import pagify
 import io
 import sys
 import weakref
+from typing import List
 
 _instances = weakref.WeakValueDictionary({})
 
@@ -94,6 +95,54 @@ class Tunnel(metaclass=TunnelMeta):
     def minutes_since(self):
         return int((self.last_interaction - datetime.utcnow()).seconds / 60)
 
+    @staticmethod
+    async def message_forwarder(
+            *, destination: discord.abc.Messageable,
+            content: str=None, embed=None, files=[]) -> List[discord.Message]:
+        """
+        This does the actual sending, use this instead of a full tunnel
+        if you are using command initiated reactions instead of persistent
+        event based ones
+        """
+        rets = []
+        files = files if files else None
+        if content:
+            for page in pagify(content):
+                rets.append(
+                    await destination.send(
+                        page, files=files, embed=embed)
+                )
+                if files:
+                    del files
+                if embed:
+                    del embed
+        elif embed or files:
+            rets.append(
+                await destination.send(files=files, embed=embed)
+            )
+        return rets
+
+    @staticmethod
+    async def files_from_attatch(m: discord.Message) -> List[discord.File]:
+        """
+        makes a list of discord.File from a message
+        returns an empty list if none, or if the sum of file sizes
+        is too large for the bot to send
+        """
+        files = []
+        size = 0
+        max_size = 8 * 1024 * 1024
+        for a in m.attachments:
+            _fp = io.BytesIO()
+            await a.save(_fp)
+            size += sys.getsizeof(_fp)
+            if size > max_size:
+                return []
+            files.append(
+                discord.File(_fp, filename=a.filename)
+            )
+        return files
+
     async def communicate(self, *,
                           message: discord.Message,
                           topic: str=None,
@@ -140,35 +189,22 @@ class Tunnel(metaclass=TunnelMeta):
         else:
             content = topic
 
-        attach = None
         if message.attachments:
-            files = []
-            size = 0
-            max_size = 8 * 1024 * 1024
-            for a in message.attachments:
-                _fp = io.BytesIO()
-                await a.save(_fp)
-                size += sys.getsizeof(_fp)
-                if size > max_size:
-                    await send_to.send(
-                        "Could not forward attatchments. "
-                        "Total size of attachments in a single "
-                        "message must be less than 8MB."
-                    )
-                    break
-                files.append(
-                    discord.File(_fp, filename=a.filename)
+            attach = self.files_from_attatch(message)
+            if not attach:
+                await message.channel.send(
+                    "Could not forward attatchments. "
+                    "Total size of attachments in a single "
+                    "message must be less than 8MB."
                 )
-            else:
-                attach = files
+        else:
+            attach = []
 
-        rets = []
-        for page in pagify(content):
-            rets.append(
-                await send_to.send(content, files=attach)
-            )
-            if attach:
-                del attach
+        rets = await self.message_forwarder(
+            destination=send_to,
+            content=content,
+            files=attach
+        )
 
         await message.add_reaction("\N{WHITE HEAVY CHECK MARK}")
         await message.add_reaction("\N{NEGATIVE SQUARED CROSS MARK}")
