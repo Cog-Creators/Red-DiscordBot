@@ -2,7 +2,8 @@ import logging
 import asyncio
 from typing import Union
 from datetime import timedelta
-
+from copy import copy
+import contextlib
 import discord
 from discord.ext import commands
 
@@ -200,8 +201,13 @@ class Reports:
         return ticket_number
 
     @commands.group(name="report", invoke_without_command=True)
-    async def report(self, ctx: RedContext):
-        "Follow the prompts to make a report"
+    async def report(self, ctx: RedContext, *, _report: str=""):
+        """
+        Follow the prompts to make a report
+
+        optionally use with a report message
+        to use it non interactively
+        """
         author = ctx.author
         guild = ctx.guild
         if guild is None:
@@ -245,31 +251,39 @@ class Reports:
                 pass
         self.user_cache.append(author.id)
 
-        try:
-            dm = await author.send(
-                _("Please respond to this message with your Report."
-                  "\nYour report should be a single message")
-            )
-        except discord.Forbidden:
-            await ctx.send(
-                _("This requires DMs enabled.")
-            )
-            self.user_cache.remove(author.id)
-            return
-
-        def pred(m):
-            return m.author == author and m.channel == dm.channel
-
-        try:
-            message = await self.bot.wait_for(
-                'message', check=pred, timeout=180
-            )
-        except asyncio.TimeoutError:
-            await author.send(
-                _("You took too long. Try again later.")
-            )
+        if _report:
+            _m = copy(ctx.message)
+            _m.content = _report
+            _m.content = _m.clean_content
+            val = await self.send_report(_m, guild)
         else:
-            val = await self.send_report(message, guild)
+            try:
+                dm = await author.send(
+                    _("Please respond to this message with your Report."
+                      "\nYour report should be a single message")
+                )
+            except discord.Forbidden:
+                await ctx.send(
+                    _("This requires DMs enabled.")
+                )
+                self.user_cache.remove(author.id)
+                return
+
+            def pred(m):
+                return m.author == author and m.channel == dm.channel
+
+            try:
+                message = await self.bot.wait_for(
+                    'message', check=pred, timeout=180
+                )
+            except asyncio.TimeoutError:
+                await author.send(
+                    _("You took too long. Try again later.")
+                )
+            else:
+                val = await self.send_report(message, guild)
+
+        with contextlib.suppress(discord.Forbidden, discord.HTTPException):
             if val is None:
                 await author.send(
                     _("There was an error sending your report.")
@@ -278,7 +292,7 @@ class Reports:
                 await author.send(
                     _("Your report was submitted. (Ticket #{})").format(val)
                 )
-            self.antispam[guild.id][author.id].stamp()
+        self.antispam[guild.id][author.id].stamp()
 
         self.user_cache.remove(author.id)
 
