@@ -124,9 +124,7 @@ class Reports:
         if isinstance(permissions, discord.Permissions):
             perms = permissions
         else:
-            permissions = discord.Permissions(
-                **permissions if permissions else 0
-            )
+            perms = discord.Permissions(**permissions)
 
         for guild in self.bot.guilds:
             x = guild.get_member(author.id)
