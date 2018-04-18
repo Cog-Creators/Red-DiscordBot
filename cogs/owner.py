@@ -15,6 +15,14 @@ import datetime
 import glob
 import os
 import aiohttp
+import socket
+from socket import AF_INET, SOCK_STREAM, SOCK_DGRAM
+
+try:
+    import psutil
+    psutilAvailable = True
+except ImportError:
+    psutilAvailable = False
 
 log = logging.getLogger("red.owner")
 
@@ -45,19 +53,20 @@ class Owner:
     def __init__(self, bot):
         self.bot = bot
         self.setowner_lock = False
-        self.disabled_commands = dataIO.load_json("data/red/disabled_commands.json")
-        self.global_ignores = dataIO.load_json("data/red/global_ignores.json")
+        self.disabled_commands = dataIO.load_json("data/b1rb/disabled_commands.json")
+        self.global_ignores = dataIO.load_json("data/b1rb/global_ignores.json")
         self.session = aiohttp.ClientSession(loop=self.bot.loop)
 
     def __unload(self):
         self.session.close()
-
-    @commands.command()
+    
+    @commands.command(pass_context=True)
     @checks.is_owner()
-    async def load(self, *, cog_name: str):
+    async def load(self, ctx, *, cog_name: str):
         """Loads a cog
 
         Example: load mod"""
+        author = ctx.message.author
         module = cog_name.strip()
         if "cogs." not in module:
             module = "cogs." + module
@@ -68,25 +77,24 @@ class Owner:
         except CogLoadError as e:
             log.exception(e)
             traceback.print_exc()
-            await self.bot.say("There was an issue loading the cog. Check"
-                               " your console or logs for more information.")
+            await self.bot.add_reaction(ctx.message, '❌')
+                               
         except Exception as e:
             log.exception(e)
             traceback.print_exc()
-            await self.bot.say('Cog was found and possibly loaded but '
-                               'something went wrong. Check your console '
-                               'or logs for more information.')
+            await self.bot.say('-~-\'')
         else:
             set_cog(module, True)
             await self.disable_commands()
-            await self.bot.say("The cog has been loaded.")
+            await self.bot.add_reaction(ctx.message, "✅")
 
-    @commands.group(invoke_without_command=True)
+    @commands.group(pass_context=True, invoke_without_command=True)
     @checks.is_owner()
-    async def unload(self, *, cog_name: str):
+    async def unload(self, ctx, *, cog_name: str):
         """Unloads a cog
 
         Example: unload mod"""
+        author = ctx.message.author
         module = cog_name.strip()
         if "cogs." not in module:
             module = "cogs." + module
@@ -106,7 +114,7 @@ class Owner:
             traceback.print_exc()
             await self.bot.say('Unable to safely unload that cog.')
         else:
-            await self.bot.say("The cog has been unloaded.")
+            await self.bot.add_reaction(ctx.message, "👌")
 
     @unload.command(name="all")
     @checks.is_owner()
@@ -132,11 +140,12 @@ class Owner:
             await self.bot.say("All cogs are now unloaded.")
 
     @checks.is_owner()
-    @commands.command(name="reload")
-    async def _reload(self, *, cog_name: str):
+    @commands.command(pass_context=True, name="reload", aliases=["re"])
+    async def _reload(self, ctx, cog_name: str):
         """Reloads a cog
 
         Example: reload audio"""
+        author = ctx.message.author
         module = cog_name.strip()
         if "cogs." not in module:
             module = "cogs." + module
@@ -149,18 +158,17 @@ class Owner:
         try:
             self._load_cog(module)
         except CogNotFoundError:
-            await self.bot.say("That cog cannot be found.")
+            await self.bot.say("What cog?")
         except NoSetupError:
             await self.bot.say("That cog does not have a setup function.")
         except CogLoadError as e:
             log.exception(e)
             traceback.print_exc()
-            await self.bot.say("That cog could not be loaded. Check your"
-                               " console or logs for more information.")
+            await self.bot.add_reaction(ctx.message, "❌")
         else:
             set_cog(module, True)
             await self.disable_commands()
-            await self.bot.say("The cog has been reloaded.")
+            await self.bot.add_reaction(ctx.message, "👌")
 
     @commands.command(name="cogs")
     @checks.is_owner()
@@ -213,8 +221,9 @@ class Owner:
         try:
             result = eval(code, global_vars, locals())
         except Exception as e:
-            await self.bot.say(box('{}: {}'.format(type(e).__name__, str(e)),
-                                   lang="py"))
+            lmao2 = discord.Embed(description="**omo:**\n" + box('{}: {}'.format(type(e).__name__, str(e)),
+                                   lang="py"), color=0xef1111)
+            await self.bot.say(embed=lmao2)
             return
 
         if asyncio.iscoroutine(result):
@@ -252,40 +261,19 @@ class Owner:
                         pass
                     finally:
                         break
-            await self.bot.say(box(page, lang="py"))
-
+            lmao = discord.Embed(description="**Returned Evaluation:**\n" + box(page, lang="py"), color=0x4aaae8)
+            await self.bot.say(embed=lmao)
+    
+         
+     
     @commands.group(name="set", pass_context=True)
+    @checks.is_owner()
     async def _set(self, ctx):
-        """Changes Red's core settings"""
+        """Changes my core settings"""
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
             return
-
-    @_set.command(pass_context=True)
-    async def owner(self, ctx):
-        """Sets owner"""
-        if self.bot.settings.no_prompt is True:
-            await self.bot.say("Console interaction is disabled. Start Red "
-                               "without the `--no-prompt` flag to use this "
-                               "command.")
-            return
-        if self.setowner_lock:
-            await self.bot.say("A set owner command is already pending.")
-            return
-
-        if self.bot.settings.owner is not None:
-            await self.bot.say(
-            "The owner is already set. Remember that setting the owner "
-            "to someone else other than who hosts the bot has security "
-            "repercussions and is *NOT recommended*. Proceed at your own risk."
-            )
-            await asyncio.sleep(3)
-
-        await self.bot.say("Confirm in the console that you're the owner.")
-        self.setowner_lock = True
-        t = threading.Thread(target=self._wait_for_answer,
-                             args=(ctx.message.author,))
-        t.start()
+ 
 
     @_set.command()
     @checks.is_owner()
@@ -310,7 +298,7 @@ class Owner:
     @_set.command(pass_context=True)
     @checks.is_owner()
     async def prefix(self, ctx, *prefixes):
-        """Sets Red's global prefixes
+        """Sets owo's global prefixes
 
         Accepts multiple prefixes separated by a space. Enclose in double
         quotes if a prefix contains spaces.
@@ -330,7 +318,7 @@ class Owner:
     @_set.command(pass_context=True, no_pm=True)
     @checks.serverowner_or_permissions(administrator=True)
     async def serverprefix(self, ctx, *prefixes):
-        """Sets Red's prefixes for this server
+        """Sets owo's prefixes for this server
 
         Accepts multiple prefixes separated by a space. Enclose in double
         quotes if a prefix contains spaces.
@@ -363,7 +351,7 @@ class Owner:
     @_set.command(pass_context=True)
     @checks.is_owner()
     async def name(self, ctx, *, name):
-        """Sets Red's name"""
+        """Sets the owo's name"""
         name = name.strip()
         if name != "":
             try:
@@ -383,7 +371,7 @@ class Owner:
     @_set.command(pass_context=True, no_pm=True)
     @checks.is_owner()
     async def nickname(self, ctx, *, nickname=""):
-        """Sets Red's nickname
+        """Sets owo's nickname
 
         Leaving this empty will remove it."""
         nickname = nickname.strip()
@@ -399,7 +387,7 @@ class Owner:
     @_set.command(pass_context=True)
     @checks.is_owner()
     async def game(self, ctx, *, game=None):
-        """Sets Red's playing status
+        """Sets owo's playing status
 
         Leaving this empty will clear it."""
 
@@ -409,18 +397,18 @@ class Owner:
 
         if game:
             game = game.strip()
-            await self.bot.change_presence(game=discord.Game(name=game),
-                                           status=current_status)
+            await self.bot.change_presence(game=discord.Game(name=game))
+                                
             log.debug('Status set to "{}" by owner'.format(game))
         else:
             await self.bot.change_presence(game=None, status=current_status)
             log.debug('status cleared by owner')
-        await self.bot.say("Done.")
+        await self.bot.say("\*poof*")
 
     @_set.command(pass_context=True)
     @checks.is_owner()
     async def status(self, ctx, *, status=None):
-        """Sets Red's status
+        """Sets my status
 
         Statuses:
             online
@@ -440,8 +428,7 @@ class Owner:
         current_game = server.me.game if server is not None else None
 
         if status is None:
-            await self.bot.change_presence(status=discord.Status.online,
-                                           game=current_game)
+            await self.bot.change_presence(game=current_game)
             await self.bot.say("Status reset.")
         else:
             status = statuses.get(status.lower(), None)
@@ -455,7 +442,7 @@ class Owner:
     @_set.command(pass_context=True)
     @checks.is_owner()
     async def stream(self, ctx, streamer=None, *, stream_title=None):
-        """Sets Red's streaming status
+        """Sets my streaming status
 
         Leaving both streamer and stream_title empty will clear it."""
 
@@ -480,14 +467,14 @@ class Owner:
 
     @_set.command()
     @checks.is_owner()
-    async def avatar(self, url):
-        """Sets Red's avatar"""
+    async def pfp(self, url):
+        """Sets my pfp"""
         try:
             async with self.session.get(url) as r:
                 data = await r.read()
             await self.bot.edit_profile(self.bot.settings.password, avatar=data)
-            await self.bot.say("Done.")
-            log.debug("changed avatar")
+            await self.bot.say("d-done.. how do i l-look..?")
+            log.debug("changed pfp")
         except Exception as e:
             await self.bot.say("Error, check your console or logs for "
                                "more information.")
@@ -497,7 +484,7 @@ class Owner:
     @_set.command(name="token")
     @checks.is_owner()
     async def _token(self, token):
-        """Sets Red's login token"""
+        """Sets my login token"""
         if len(token) < 50:
             await self.bot.say("Invalid token.")
         else:
@@ -537,7 +524,7 @@ class Owner:
 
     @blacklist.command(name="add")
     async def _blacklist_add(self, user: GlobalUser):
-        """Adds user to Red's global blacklist"""
+        """Adds user to owo's global blacklist"""
         if user.id not in self.global_ignores["blacklist"]:
             self.global_ignores["blacklist"].append(user.id)
             self.save_global_ignores()
@@ -547,7 +534,7 @@ class Owner:
 
     @blacklist.command(name="remove")
     async def _blacklist_remove(self, user: GlobalUser):
-        """Removes user from Red's global blacklist"""
+        """Removes user from owo's global blacklist"""
         if user.id in self.global_ignores["blacklist"]:
             self.global_ignores["blacklist"].remove(user.id)
             self.save_global_ignores()
@@ -579,13 +566,13 @@ class Owner:
         """Whitelist management commands
 
         If the whitelist is not empty, only whitelisted users will
-        be able to use Red"""
+        be able to use owo"""
         if ctx.invoked_subcommand is None:
             await self.bot.send_cmd_help(ctx)
 
     @whitelist.command(name="add")
     async def _whitelist_add(self, user: GlobalUser):
-        """Adds user to Red's global whitelist"""
+        """Adds user to owo's global whitelist"""
         if user.id not in self.global_ignores["whitelist"]:
             if not self.global_ignores["whitelist"]:
                 msg = "\nNon-whitelisted users will be ignored."
@@ -599,7 +586,7 @@ class Owner:
 
     @whitelist.command(name="remove")
     async def _whitelist_remove(self, user: GlobalUser):
-        """Removes user from Red's global whitelist"""
+        """Removes user from owo's global whitelist"""
         if user.id in self.global_ignores["whitelist"]:
             self.global_ignores["whitelist"].remove(user.id)
             self.save_global_ignores()
@@ -627,13 +614,13 @@ class Owner:
 
     @commands.command()
     @checks.is_owner()
-    async def shutdown(self, silently : bool=False):
-        """Shuts down Red"""
+    async def die(self, silently : bool=False):
+        """Shuts down owo"""
         wave = "\N{WAVING HAND SIGN}"
         skin = "\N{EMOJI MODIFIER FITZPATRICK TYPE-3}"
         try: # We don't want missing perms to stop our shutdown
             if not silently:
-                await self.bot.say("Shutting down... " + wave + skin)
+                await self.bot.say(":wave:XmX")
         except:
             pass
         await self.bot.shutdown()
@@ -641,14 +628,14 @@ class Owner:
     @commands.command()
     @checks.is_owner()
     async def restart(self, silently : bool=False):
-        """Attempts to restart Red
+        """Attempts to restart owo
 
-        Makes Red quit with exit code 26
+        Makes birb quit with exit code 26
         The restart is not guaranteed: it must be dealt
         with by the process manager in use"""
         try:
             if not silently:
-                await self.bot.say("Restarting...")
+                await self.bot.say("I'll brb...")
         except:
             pass
         await self.bot.shutdown(restart=True)
@@ -725,30 +712,12 @@ class Owner:
                 pass
 
     @commands.command()
-    @checks.is_owner()
-    async def join(self):
-        """Shows Red's invite URL"""
+    async def invite(self):
+        """Shows my invite URL"""
         if self.bot.user.bot:
             await self.bot.whisper("Invite URL: " + self.bot.oauth_url)
         else:
             await self.bot.say("I'm not a bot account. I have no invite URL.")
-
-    @commands.command(pass_context=True, no_pm=True)
-    @checks.is_owner()
-    async def leave(self, ctx):
-        """Leaves server"""
-        message = ctx.message
-
-        await self.bot.say("Are you sure you want me to leave this server?"
-                           " Type yes to confirm.")
-        response = await self.bot.wait_for_message(author=message.author)
-
-        if response.content.lower().strip() == "yes":
-            await self.bot.say("Alright. Bye :wave:")
-            log.debug('Leaving "{}"'.format(message.server.name))
-            await self.bot.leave_server(message.server)
-        else:
-            await self.bot.say("Ok I'll stay here then.")
 
     @commands.command(pass_context=True)
     @checks.is_owner()
@@ -759,7 +728,18 @@ class Owner:
                          key=lambda s: s.name.lower())
         msg = ""
         for i, server in enumerate(servers):
-            msg += "{}: {}\n".format(i, server.name)
+            members = set(server.members)
+            bots = filter(lambda m: m.bot, members)
+            bots = set(bots)
+            user = len(members) - len(bots)
+            sketchy = len(bots) > len(members)
+            if len(members) < 5:
+                msg += "`{}`: {} `{} members, {} bots` <:blobglare:433415186012176395>\n".format(i, server.name, user, len(bots))
+            elif sketchy:
+                msg +"`{}`: {} `{} members, {} bots` **Might be a bot farm.** <:blobglare:433415186012176395>\n".format(i, server.name, user, len(bots))
+            else:
+                msg += "`{}`: {} `{} members, {} bots`\n".format(i, server.name, user, len(bots))
+        msg += "```Total Servers: {}```\n".format(len(self.bot.servers))
         msg += "\nTo leave a server just type its number."
 
         for page in pagify(msg, ['\n']):
@@ -767,6 +747,7 @@ class Owner:
 
         while msg is not None:
             msg = await self.bot.wait_for_message(author=owner, timeout=15)
+            
             try:
                 msg = int(msg.content)
                 await self.leave_confirmation(servers[msg], owner, ctx)
@@ -835,71 +816,39 @@ class Owner:
             await self.bot.say("Your message has been sent.")
 
     @commands.command()
-    async def info(self):
-        """Shows info about Red"""
-        author_repo = "https://github.com/Twentysix26"
-        red_repo = author_repo + "/Red-DiscordBot"
-        server_url = "https://discord.gg/red"
-        dpy_repo = "https://github.com/Rapptz/discord.py"
-        python_url = "https://www.python.org/"
-        since = datetime.datetime(2016, 1, 2, 0, 0)
-        days_since = (datetime.datetime.utcnow() - since).days
-        dpy_version = "[{}]({})".format(discord.__version__, dpy_repo)
-        py_version = "[{}.{}.{}]({})".format(*os.sys.version_info[:3],
-                                             python_url)
-
-        owner_set = self.bot.settings.owner is not None
-        owner = self.bot.settings.owner if owner_set else None
-        if owner:
-            owner = discord.utils.get(self.bot.get_all_members(), id=owner)
-            if not owner:
-                try:
-                    owner = await self.bot.get_user_info(self.bot.settings.owner)
-                except:
-                    owner = None
-        if not owner:
-            owner = "Unknown"
-
-        about = (
-            "This is an instance of [Red, an open source Discord bot]({}) "
-            "created by [Twentysix]({}) and improved by many.\n\n"
-            "Red is backed by a passionate community who contributes and "
-            "creates content for everyone to enjoy. [Join us today]({}) "
-            "and help us improve!\n\n"
-            "".format(red_repo, author_repo, server_url))
-
-        embed = discord.Embed(colour=discord.Colour.red())
-        embed.add_field(name="Instance owned by", value=str(owner))
-        embed.add_field(name="Python", value=py_version)
-        embed.add_field(name="discord.py", value=dpy_version)
-        embed.add_field(name="About Red", value=about, inline=False)
-        embed.set_footer(text="Bringing joy since 02 Jan 2016 (over "
-                         "{} days ago!)".format(days_since))
-
-        try:
-            await self.bot.say(embed=embed)
-        except discord.HTTPException:
-            await self.bot.say("I need the `Embed links` permission "
-                               "to send this")
-
-    @commands.command()
     async def uptime(self):
-        """Shows Red's uptime"""
+        """Shows how long owo's been online"""
         since = self.bot.uptime.strftime("%Y-%m-%d %H:%M:%S")
         passed = self.get_bot_uptime()
         await self.bot.say("Been up for: **{}** (since {} UTC)"
                            "".format(passed, since))
 
     @commands.command()
-    async def version(self):
-        """Shows Red's current version"""
-        response = self.bot.loop.run_in_executor(None, self._get_version)
-        result = await asyncio.wait_for(response, timeout=10)
-        try:
-            await self.bot.say(embed=result)
-        except discord.HTTPException:
-            await self.bot.say("I need the `Embed links` permission "
-                               "to send this")
+    async def info(self):
+        """Info about owopup"""
+        owner = discord.utils.get(self.bot.get_all_members(),
+                                  id=self.bot.settings.owner)
+        botto = discord.utils.get(self.bot.get_all_members(),
+                                  id="365255872181567489")
+        prefix_label = 'Prefix'
+        if len(self.bot.settings.prefixes) > 1:
+            prefix_label += 'es'
+        prefix = self.bot.settings.prefixes
+        
+        binvite = "https://discordapp.com/api/oauth2/authorize?client_id=365255872181567489&permissions=8&scope=bot"
+        sinvite = "https://discord.gg/2tXPN98"
+        sinvite2 = 'https://discord.gg/c4vWDdd'
+        info = discord.Embed(title="Hello i'm {}!".format(botto), description="A Discord Bot made with love and millions of owos!\n= **Written in Python 3.5.6 using discord.py**\n- `Messages Read:` **{}**\n- `Commands Processed:` **{}**\n- `Servers:` **{}**\n- `Users:` **{}**\n- `Total Commands:` **{}**\n- `{}:` {}\n+ [**Invite me to your server!**]({})\n+ [**Join Skull's server!**]({})\n+ [**Join the support server if you have any questions.**]({}) ".format(self.bot.counter["messages_read"], self.bot.counter["processed_commands"], len(self.bot.servers), len(set(self.bot.get_all_members())), len(self.bot.commands), prefix_label, ", ".join(prefix)[:], binvite, sinvite, sinvite2), color=0x356a21)
+        info.set_footer(text="Owned by: {} ({})".format(owner, owner.id), icon_url=owner.avatar_url)
+        info.set_thumbnail(url=botto.avatar_url)
+        await self.bot.say(embed=info)
+
+    @commands.command(pass_context=True)
+    async def support(self, ctx):
+        """Sends the support server invite if you need help"""
+        sinvite = 'https://discord.gg/c4vWDdd'
+        sup = discord.Embed(description="**Need help? [Join the support server]({})**".format(sinvite), color=0x356a21)
+        await self.bot.say(embed=sup)
 
     @commands.command(pass_context=True)
     @checks.is_owner()
@@ -917,7 +866,7 @@ class Owner:
                 await self.bot.send_message(destination, box(page, lang="py"))
         else:
             await self.bot.say("No exception has occurred yet.")
-
+                              
     def _populate_list(self, _list):
         """Used for both whitelist / blacklist
 
@@ -971,68 +920,8 @@ class Owner:
             return False
         return True
 
-    def _wait_for_answer(self, author):
-        print(author.name + " requested to be set as owner. If this is you, "
-              "type 'yes'. Otherwise press enter.")
-        print()
-        print("*DO NOT* set anyone else as owner. This has security "
-              "repercussions.")
-
-        choice = "None"
-        while choice.lower() != "yes" and choice == "None":
-            choice = input("> ")
-
-        if choice == "yes":
-            self.bot.settings.owner = author.id
-            self.bot.settings.save_settings()
-            print(author.name + " has been set as owner.")
-            self.setowner_lock = False
-            self.owner.hidden = True
-        else:
-            print("The set owner request has been ignored.")
-            self.setowner_lock = False
-
-    def _get_version(self):
-        if not os.path.isdir(".git"):
-            msg = "This instance of Red hasn't been installed with git."
-            e = discord.Embed(title=msg,
-                              colour=discord.Colour.red())
-            return e
-
-        commands = " && ".join((
-            r'git config --get remote.origin.url',         # Remote URL
-            r'git rev-list --count HEAD',                  # Number of commits
-            r'git rev-parse --abbrev-ref HEAD',            # Branch name
-            r'git show -s -n 3 HEAD --format="%cr|%s|%H"'  # Last 3 commits
-        ))
-        result = os.popen(commands).read()
-        url, ncommits, branch, commits = result.split("\n", 3)
-        if url.endswith(".git"):
-            url = url[:-4]
-        if url.startswith("git@"):
-            domain, _, resource = url[4:].partition(':')
-            url = 'https://{}/{}'.format(domain, resource)
-        repo_name = url.split("/")[-1]
-
-        embed = discord.Embed(title="Updates of " + repo_name,
-                              description="Last three updates",
-                              colour=discord.Colour.red(),
-                              url="{}/tree/{}".format(url, branch))
-
-        for line in commits.split('\n'):
-            if not line:
-                continue
-            when, commit, chash = line.split("|")
-            commit_url = url + "/commit/" + chash
-            content = "[{}]({}) - {} ".format(chash[:6], commit_url, commit)
-            embed.add_field(name=when, value=content, inline=False)
-
-        embed.set_footer(text="Total commits: " + ncommits)
-
-        return embed
 
     def get_bot_uptime(self, *, brief=False):
-        # Courtesy of Danny
         now = datetime.datetime.utcnow()
         delta = now - self.bot.uptime
         hours, remainder = divmod(int(delta.total_seconds()), 3600)
@@ -1052,10 +941,10 @@ class Owner:
         return fmt.format(d=days, h=hours, m=minutes, s=seconds)
 
     def save_global_ignores(self):
-        dataIO.save_json("data/red/global_ignores.json", self.global_ignores)
+        dataIO.save_json("data/b1rb/global_ignores.json", self.global_ignores)
 
     def save_disabled_commands(self):
-        dataIO.save_json("data/red/disabled_commands.json", self.disabled_commands)
+        dataIO.save_json("data/b1rb/disabled_commands.json", self.disabled_commands)
 
 
 def _import_old_data(data):
@@ -1074,11 +963,11 @@ def _import_old_data(data):
 
 
 def check_files():
-    if not os.path.isfile("data/red/disabled_commands.json"):
+    if not os.path.isfile("data/b1rb/disabled_commands.json"):
         print("Creating empty disabled_commands.json...")
-        dataIO.save_json("data/red/disabled_commands.json", [])
+        dataIO.save_json("data/b1rb/disabled_commands.json", [])
 
-    if not os.path.isfile("data/red/global_ignores.json"):
+    if not os.path.isfile("data/b1rb/global_ignores.json"):
         print("Creating empty global_ignores.json...")
         data = {"blacklist": [], "whitelist": []}
         try:
@@ -1087,7 +976,7 @@ def check_files():
             log.error("Failed to migrate blacklist / whitelist data from "
                       "mod.py: {}".format(e))
 
-        dataIO.save_json("data/red/global_ignores.json", data)
+        dataIO.save_json("data/b1rb/global_ignores.json", data)
 
 
 def setup(bot):
