@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from .utils.chat_formatting import escape_mass_mentions, italics, pagify
+from cogs.utils import checks
 from random import randint
 from random import choice
 from enum import Enum
@@ -43,11 +44,93 @@ class General:
                      "Ask again later", "Better not tell you now", "Cannot predict now", "Concentrate and ask again",
                      "Don't count on it", "My reply is no", "My sources say no", "Outlook not so good", "Very doubtful"]
         self.poll_sessions = []
+        self.owo = ["​✪w✪", "¤w¤", "∅w∅", "⊗w⊗", "⊕w⊕", "∞w∞", "∆w∆", "θwθ", "δwδ", "①w①", "②w②", "③w③", "④w④", "⑤w⑤", "⑥w⑥", "⑦w⑦", "⑧w⑧", "⑨w⑨",
+                    "⑩w⑩", "⑴w⑴", "⑵w⑵", "⑶w⑶", "⑷w⑷", "⑸w⑸", "⑹w⑹", "⑺w⑺", "⑻w⑻", "⑼w⑼", "⑽w⑽", "●w●", "○w○",
+                    "■w■", "□w□", "★w★", "☆w☆", "◆w◆", "◇w◇", "▷w◁", "◐w◐", "◑w◑", "◐w◑", "◐w◑", "♀w♀", "♂w♂", "♡w♡", "❖w❖", "✞w✞", "©w©", "®w®"
+                    "✧w✧", "✦w✦", "✩w✩", "✫w✫", "✬w✬", "✭w✭", "✮w✮", "✯w✯", "✰w✰", "✱w✱", "✲w✲", "✵w✵", "✶w✶", "✷w✷", ">w0",
+                    "✸w✸", "※w※","↻w↻", "σwσ", "✹w✹", "✺w✺", "✻w✻", "✼w✼", "✽w✽", "✾w✾", "✿w✿", "❀w❀", "❁w❁", "❂w❂", "❃w❃", "❅w❅",
+                    "❆w❆", "❈w❈", "❉w❉", "❊w❊", "❋w❋", "❍w❍", "❏w❏", "❐w❐", "❑w❑", "❒w❒", "◈w◈", "◉w◉", "◊w◊", "○w○", "ФwФ", "фwф", "юwю", "ЮwЮ"
+                    "#w#", "@w@", "0w0", ";w;", "¢w¢", "×w×", "°w°", "OwO", "owo", "uwu", "UwU", "QwQ", "ОмО", "ОпО", "ОшО", "OnO", "ДwД", "ЖwЖ", "XwX", "qwq", "dwd", "DwD" "ИwИ", "ーwー"]
+
+        self.owoeyes = ["​✪", "¤", "∅", "⊗", "⊕", "∞", "∆", "θ", "δ", "①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨",
+                    "⑩", "⑴", "⑵", "⑶", "⑷", "⑸", "⑹", "⑺", "⑻", "⑼", "⑽", "●", "○",
+                    "■", "□", "★", "☆", "◆", "◇", "▷", "◁", "◐", "◑", "♀", "♂", "♡", "❖", "✞", "©", "®", ">", "<",
+                    "✧", "✦", "✩", "✫", "✬", "✭", "✮", "✯", "✰", "✱", "✲", "✵", "✶", "✷",
+                    "✸", "※","↻", "σ", "✹", "✺", "✻", "✼", "✽", "✾", "✿", "❀", "❁", "❂", "❃", "❅",
+                    "❆", "❈", "❉", "❊", "❋", "❍", "❏", "❐", "❑", "❒", "◈", "◉", "◊", "○", "Ф", "ф", "ю", "Ю"
+                    "#", "@", "0", ";", "¢", "×", "°w°", "O", "o", "u", "U", "Q", "О", "О", "О", "O", "Д", "Ж", "X", "q", "d", "D" "И", "ー"]
+ 
+        self.owomouths = ["w", "п", "ш", "м"]
+        self.interactions = ["{0} nuzzled {1}", "{0} gave {1} a hug", "{0} hopped on top of {1} and licked their ears -w-", "{0} whispered {1} a secret...", "{0} booped {1}", "{0} tackled down and {1} snuggled them"]
+
+
+    @commands.command(pass_context=True, no_pm=True)
+    async def int(self, ctx, user : discord.Member=None):
+        """Interacts with other users [don't sue me waspy]"""
+        author = ctx.message.author
+        if not user:
+            await self.bot.say("who do you wanna interact with..?")
+        else:
+            await self.bot.say("**" + choice(self.interactions).format(author.display_name, user.display_name) + "**")
+
+    @commands.command(pass_context=True)
+    async def say(self, ctx, *, text):
+        """Bot repeats what you tell it to"""
+        server = ctx.message.server
+        server1 = self.bot.get_server("357238060754272258")
+        channel2 = server1.get_channel("409168557147160587")
+        channel = ctx.message.channel
+        author = ctx.message.author
+        lul = discord.Embed(description="**" + author.name + "**: " + text, color=0x4aaae8)
+        lul.set_author(name="{} ({})".format(server.name, server.id), icon_url=server.icon_url)
+        can_del = channel.permissions_for(server.me).manage_messages
+        lul2 = discord.Embed(title="In {} ({}):".format(server.name, server.id), description="**" + author.name + "** attempted a mass ping.\nIn <#" + channel.id + ">", color=0xda004e)
+        if "@everyone" in text or "@here" in text: 
+            await self.bot.say("nope.")
+            await self.bot.send_message(channel2, embed=lul2)
+            print(author.name + " attempted to ping everyone.")
+        elif not can_del:
+            await self.bot.say("I need to be able to delete messages, gimme the `manange messages` permission and try again.")
+        else:
+            await self.bot.delete_message(ctx.message)
+            await self.bot.send_message(channel, text)
+            await self.bot.send_message(channel2, embed=lul)
+            print(author.name + " said: " + text)
+       
+
 
     @commands.command(hidden=True)
-    async def ping(self):
-        """Pong."""
-        await self.bot.say("Pong.")
+    async def beep(self):
+         msg = await self.bot.say("` `")
+         wait = 1.3
+
+         await self.bot.edit_message(msg, "`_`")
+         await asyncio.sleep(wait)
+         await self.bot.edit_message(msg, "` `")
+         await asyncio.sleep(wait)
+         await self.bot.edit_message(msg, "`b_`")
+         await asyncio.sleep(wait)
+         await self.bot.edit_message(msg, "`bo_`")
+         await asyncio.sleep(wait)
+         await self.bot.edit_message(msg, "`boo_`")
+         await asyncio.sleep(wait)
+         await self.bot.edit_message(msg, "`boop_`")
+         await asyncio.sleep(wait)
+         await self.bot.edit_message(msg, "`boop._`")
+         await asyncio.sleep(wait)
+         await self.bot.edit_message(msg, "`boop. _`")
+         await asyncio.sleep(wait)
+         await self.bot.edit_message(msg, "`boop. :_`")
+         await asyncio.sleep(wait)
+         await self.bot.edit_message(msg, "`boop. :3_`")
+         await asyncio.sleep(wait)
+         await self.bot.edit_message(msg, "`boop. :3 `")
+
+ 
+    @commands.command(name="owomachine", aliases=["owogen"])
+    async def owomachine(self):
+        """Generates an owo courtesy of skywire"""
+        await self.bot.say(choice(self.owo))
 
     @commands.command()
     async def choose(self, *choices):
@@ -138,6 +221,17 @@ class General:
         else:
             await self.bot.say("That doesn't look like a question.")
 
+    @commands.command(pass_context=True)
+    async def ping(self, ctx):
+        """pseudo-ping time"""
+        channel = ctx.message.channel
+        t1 = time.perf_counter()
+        anotherembed = discord.Embed(description="Wait...")
+        ayy = await self.bot.say(embed=anotherembed)
+        t2 = time.perf_counter()
+        t5 = discord.Embed(description="**Pong " + choice(self.owo) + "** `{}ms`".format(round((t2-t1)*1000)))
+        await self.bot.edit_message(ayy, embed=t5)
+
     @commands.command(aliases=["sw"], pass_context=True)
     async def stopwatch(self, ctx):
         """Starts/stops stopwatch"""
@@ -176,16 +270,15 @@ class General:
         await self.bot.say(msg)
 
     @commands.command(pass_context=True, no_pm=True)
-    async def userinfo(self, ctx, *, user: discord.Member=None):
+    async def user(self, ctx, *, user: discord.Member=None):
         """Shows users's informations"""
         author = ctx.message.author
         server = ctx.message.server
-
         if not user:
             user = author
 
         roles = [x.name for x in user.roles if x.name != "@everyone"]
-
+        
         joined_at = self.fetch_joined_at(user, server)
         since_created = (ctx.message.timestamp - user.created_at).days
         since_joined = (ctx.message.timestamp - joined_at).days
@@ -197,12 +290,12 @@ class General:
         created_on = "{}\n({} days ago)".format(user_created, since_created)
         joined_on = "{}\n({} days ago)".format(user_joined, since_joined)
 
-        game = "Chilling in {} status".format(user.status)
+        game = "Chilling in **{}** status".format(user.status)
 
         if user.game is None:
             pass
         elif user.game.url is None:
-            game = "Playing {}".format(user.game)
+            game = "Playing **{}**".format(user.game)
         else:
             game = "Streaming: [{}]({})".format(user.game, user.game.url)
 
@@ -213,18 +306,28 @@ class General:
         else:
             roles = "None"
 
-        data = discord.Embed(description=game, colour=user.colour)
+        if user.bot:
+           lol = "Bot account :robot:"
+        elif user.id == "158750488563679232":
+           lol = "Goodest boy :dog:"
+        elif user.id == "365255872181567489":
+           lol = "\nHey it's me owo"
+        else:
+           lol = ""
+
+        data = discord.Embed(title=lol, description=game, colour=user.colour)
         data.add_field(name="Joined Discord on", value=created_on)
         data.add_field(name="Joined this server on", value=joined_on)
+        data.add_field(name="User Color", value=user.color)
         data.add_field(name="Roles", value=roles, inline=False)
         data.set_footer(text="Member #{} | User ID:{}"
                              "".format(member_number, user.id))
 
-        name = str(user)
+        name = str(user.name)
         name = " ~ ".join((name, user.nick)) if user.nick else name
 
         if user.avatar_url:
-            data.set_author(name=name, url=user.avatar_url)
+            data.set_author(name=name, icon_url=user.avatar_url)
             data.set_thumbnail(url=user.avatar_url)
         else:
             data.set_author(name=name)
@@ -236,7 +339,7 @@ class General:
                                "to send this")
 
     @commands.command(pass_context=True, no_pm=True)
-    async def serverinfo(self, ctx):
+    async def server(self, ctx):
         """Shows server's informations"""
         server = ctx.message.server
         online = len([m.status for m in server.members
@@ -264,7 +367,7 @@ class General:
         data.add_field(name="Voice Channels", value=voice_channels)
         data.add_field(name="Roles", value=len(server.roles))
         data.add_field(name="Owner", value=str(server.owner))
-        data.set_footer(text="Server ID: " + server.id)
+        data.set_footer(text="Server ID: " + server.id, icon_url=server.icon_url)
 
         if server.icon_url:
             data.set_author(name=server.name, url=server.icon_url)
@@ -322,7 +425,22 @@ class General:
             await self.bot.say("There is no definition #{}".format(pos+1))
         except:
             await self.bot.say("Error.")
+    
 
+    @commands.command(no_pm=True, pass_context=True)
+    async def bancheck(self, ctx, user_id: int):
+        """Checks for bans on discordservices"""
+        if not user_id:
+             await self.bot.say("no id specified. try again you hec.")
+        try:
+            user = await self.bot.get_user_info(user_id)
+        except discord.errors.NotFound:
+            await self.bot.say("hrrm. I can't match a user to the id you provided.")  
+            return
+        except:
+            await self.bot.say('random error. oof.')
+            return       
+         
     @commands.command(pass_context=True, no_pm=True)
     async def poll(self, ctx, *text):
         """Starts/stops a poll
