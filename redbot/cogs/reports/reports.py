@@ -171,26 +171,40 @@ class Reports:
 
         author = guild.get_member(msg.author.id)
         report = msg.clean_content
-        avatar = author.avatar_url
-
-        em = discord.Embed(description=report)
-        em.set_author(
-            name=_('Report from {0.display_name}').format(author),
-            icon_url=avatar
-        )
-
-        ticket_number = await self.config.guild(guild).next_ticket()
-        await self.config.guild(guild).next_ticket.set(ticket_number + 1)
-        em.set_footer(text=_("Report #{}").format(ticket_number))
-
+        
         channel_id = await self.config.guild(guild).output_channel()
         channel = guild.get_channel(channel_id)
-        if channel is not None:
-            try:
-                await channel.send(embed=em)
-            except (discord.Forbidden, discord.HTTPException):
-                return None
+        if channel is None:
+            return None
+
+        files = await Tunnel.files_from_attatch(msg)
+        
+        ticket_number = await self.config.guild(guild).next_ticket()
+        await self.config.guild(guild).next_ticket.set(ticket_number + 1)
+
+        if await self.bot.embed_requested(channel, author):
+            em = discord.Embed(description=report)
+            em.set_author(
+                name=_('Report from {0.display_name}').format(author),
+                icon_url=author.avatar_url
+            )
+            em.set_footer(text=_("Report #{}").format(ticket_number))
+            send_content = None
         else:
+            em = None
+            send_content = _(
+                'Report from {author.mention} (Ticket #{number})'
+            ).format(author=author, number=ticket_number)
+            send_content += "\n" + report
+        
+        try:
+            await Tunnel.message_forwarder(
+                destination=channel,
+                content=send_content,
+                embed=em,
+                files=files
+            )
+        except (discord.Forbidden, discord.HTTPException):
             return None
 
         await self.config.custom('REPORT', guild.id, ticket_number).report.set(

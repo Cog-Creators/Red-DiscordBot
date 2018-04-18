@@ -190,7 +190,7 @@ class Tunnel(metaclass=TunnelMeta):
             content = topic
 
         if message.attachments:
-            attach = self.files_from_attatch(message)
+            attach = await self.files_from_attatch(message)
             if not attach:
                 await message.channel.send(
                     "Could not forward attatchments. "
