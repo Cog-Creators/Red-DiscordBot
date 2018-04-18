@@ -7,10 +7,9 @@ import discord
 from redbot.core import Config
 
 __all__ = ["Account", "get_balance", "set_balance", "withdraw_credits", "deposit_credits",
-           "can_spend", "transfer_credits", "wipe_bank", "get_guild_accounts",
-           "get_global_accounts", "get_account", "is_global", "set_global",
-           "get_bank_name", "set_bank_name", "get_currency_name", "set_currency_name",
-           "get_default_balance", "set_default_balance"]
+           "can_spend", "transfer_credits", "wipe_bank", "get_account", "is_global",
+           "set_global", "get_bank_name", "set_bank_name", "get_currency_name",
+           "set_currency_name", "get_default_balance", "set_default_balance"]
 
 _DEFAULT_GLOBAL = {
     "is_global": False,
@@ -33,8 +32,6 @@ _DEFAULT_MEMBER = {
 
 _DEFAULT_USER = _DEFAULT_MEMBER
 
-_bank_type = type("Bank", (object,), {})
-
 
 class Account:
     """A single account.
@@ -54,7 +51,8 @@ def _register_defaults():
     _conf.register_user(**_DEFAULT_USER)
 
 if not os.environ.get('BUILDING_DOCS'):
-    _conf = Config.get_conf(_bank_type(), 384734293238749, force_registration=True)
+    _conf = Config.get_conf(
+        None, 384734293238749, cog_name="Bank", force_registration=True)
     _register_defaults()
 
 

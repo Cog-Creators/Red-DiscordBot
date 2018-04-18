@@ -35,7 +35,9 @@ def add_topic(topic_name: str):
     """
     Adds a topic for clients to listen to.
 
-    :param topic_name:
+    Parameters
+    ----------
+    topic_name
     """
     _rpc.add_topics(topic_name)
 
@@ -50,8 +52,10 @@ def notify(topic_name: str, data: JsonSerializable):
 
         This method will fail silently.
 
-    :param topic_name:
-    :param data:
+    Parameters
+    ----------
+    topic_name
+    data
     """
     _rpc.notify(topic_name, data)
 
@@ -67,10 +71,11 @@ def add_method(prefix, method):
 
         This method will fail silently.
 
-    :param prefix:
-    :param method:
+    Parameters
+    ----------
+    prefix
+    method
         MUST BE A COROUTINE OR OBJECT.
-    :return:
     """
     _rpc.add_methods(
         ('', method),

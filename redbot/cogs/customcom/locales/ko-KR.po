@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"PO-Revision-Date: 2018-04-15 16:42-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -19,49 +19,50 @@ msgstr ""
 #: ../customcom.py:44
 msgid "Welcome to the interactive random {} maker!\n"
 "Every message you send will be added as one of the random response to choose from once this {} is triggered. To exit this interactive menu, type `{}`"
-msgstr ""
+msgstr "대화형 랜덤 {} 메이커에 오신 것을 환영해요!\n"
+"사용자님이 보내는 모든 메시지에 {} 이(가) 트리거 되면 선택할 임의의 대답 중 하나로 추가됍니다. 이 대화형 메뉴를 종료하려면 `{}` 을 입력해야 해요."
 
 #: ../customcom.py:56
 msgid "Add a random response:"
-msgstr ""
+msgstr "등록된 랜덤 대답 리스트 :"
 
 #: ../customcom.py:119
 msgid "Do you want to create a 'randomized' cc? {}"
-msgstr ""
+msgstr "'임의' CC를 생성할까요?"
 
 #: ../customcom.py:126
 msgid "What response do you want?"
-msgstr ""
+msgstr "어떤 대답을 원해요?"
 
 #: ../customcom.py:205 ../customcom.py:235
 msgid "Custom command successfully added."
-msgstr ""
+msgstr "커스텀 커맨드가 성공적으로 추가됐어요."
 
 #: ../customcom.py:207 ../customcom.py:237
 msgid "This command already exists. Use `{}` to edit it."
-msgstr ""
+msgstr "이 커맨드는 이미 추가되어 있어요. 편집하려면 `{}` 을(를) 사용해보세요."
 
 #: ../customcom.py:229
 msgid "That command is already a standard command."
-msgstr ""
+msgstr "해당 커맨드는 봇의 커맨드예요."
 
 #: ../customcom.py:261
 msgid "Custom command successfully edited."
-msgstr ""
+msgstr "커스텀 커맨드가 성공적으로 수정됐어요."
 
 #: ../customcom.py:263
 msgid "That command doesn't exist. Use `{}` to add it."
-msgstr ""
+msgstr "해당 커맨드는 추가되어 있지 않아요. 추가하려면 `{}` 을(를) 사용해보세요."
 
 #: ../customcom.py:282
 msgid "Custom command successfully deleted."
-msgstr ""
+msgstr "커스텀 커맨드가 성공적으로 삭제됐어요."
 
 #: ../customcom.py:284
 msgid "That command doesn't exist."
-msgstr ""
+msgstr "해당 커맨드는 추가되어 있지 않아요."
 
 #: ../customcom.py:294
 msgid "There are no custom commands in this guild. Use `{}` to start adding some."
-msgstr ""
+msgstr "이 길드에 등록된 커스텀 커맨드가 없어요. 추가하려면 `{}` 을(를) 사용해보세요."
 

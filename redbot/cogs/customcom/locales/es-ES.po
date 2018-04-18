@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-02-25 21:32-0500\n"
+"PO-Revision-Date: 2018-04-15 16:41-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -32,37 +32,37 @@ msgstr ""
 
 #: ../customcom.py:126
 msgid "What response do you want?"
-msgstr ""
+msgstr "¿Qué tipo de respuesta quieres?"
 
 #: ../customcom.py:205 ../customcom.py:235
 msgid "Custom command successfully added."
-msgstr ""
+msgstr "Comando personalizado añadido satifactoriamente."
 
 #: ../customcom.py:207 ../customcom.py:237
 msgid "This command already exists. Use `{}` to edit it."
-msgstr ""
+msgstr "Este comando ya existe. Utilice '{}' para editarlo."
 
 #: ../customcom.py:229
 msgid "That command is already a standard command."
-msgstr ""
+msgstr "Este comando es ya un comando estándar."
 
 #: ../customcom.py:261
 msgid "Custom command successfully edited."
-msgstr ""
+msgstr "Comando personalizado editado con éxito."
 
 #: ../customcom.py:263
 msgid "That command doesn't exist. Use `{}` to add it."
-msgstr ""
+msgstr "No existe este comando. Utilice '{}' para agregarlo."
 
 #: ../customcom.py:282
 msgid "Custom command successfully deleted."
-msgstr ""
+msgstr "Comando personalizado eliminado satifactoriamente."
 
 #: ../customcom.py:284
 msgid "That command doesn't exist."
-msgstr ""
+msgstr "Este comando no existe."
 
 #: ../customcom.py:294
 msgid "There are no custom commands in this guild. Use `{}` to start adding some."
-msgstr ""
+msgstr "Hay no hay comandos personalizados en este Servidor. Utilice '{}' para comenzar a añadir algunos."
 

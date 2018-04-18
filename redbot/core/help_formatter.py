@@ -154,9 +154,9 @@ class Help(formatter.HelpFormatter):
 
             # <long doc> section
             if self.command.help:
-                name = '__{0}__'.format(self.command.help.split('\n\n')[0])
-                name_length = len(name)
-                value = self.command.help[name_length:].replace('[p]', self.clean_prefix)
+                splitted = self.command.help.split('\n\n')
+                name = '__{0}__'.format(splitted[0])
+                value = '\n\n'.join(splitted[1:]).replace('[p]', self.clean_prefix)
                 if value == '':
                     value = EMPTY_STRING
                 field = EmbedField(name[:252], value[:1024], False)
@@ -286,10 +286,14 @@ async def help(ctx, *cmds: str):
 
     def repl(obj):
         return _mentions_transforms.get(obj.group(0), '')
-
+    use_embeds = await ctx.embed_requested()
+    f = formatter.HelpFormatter()
     # help by itself just lists our own commands.
     if len(cmds) == 0:
-        embeds = await ctx.bot.formatter.format_help_for(ctx, ctx.bot)
+        if use_embeds:
+            embeds = await ctx.bot.formatter.format_help_for(ctx, ctx.bot)
+        else:
+            embeds = await f.format_help_for(ctx, ctx.bot)
     elif len(cmds) == 1:
         # try to see if it is a cog name
         name = _mention_pattern.sub(repl, cmds[0])
@@ -299,17 +303,29 @@ async def help(ctx, *cmds: str):
         else:
             command = ctx.bot.all_commands.get(name)
             if command is None:
-                await destination.send(
-                    embed=ctx.bot.formatter.cmd_not_found(ctx, name))
+                if use_embeds:
+                    await destination.send(
+                        embed=ctx.bot.formatter.cmd_not_found(ctx, name))
+                else:
+                    await destination.send(
+                        ctx.bot.command_not_found.format(name)
+                    )
                 return
-
-        embeds = await ctx.bot.formatter.format_help_for(ctx, command)
+        if use_embeds:
+            embeds = await ctx.bot.formatter.format_help_for(ctx, command)
+        else:
+            embeds = await f.format_help_for(ctx, command)
     else:
         name = _mention_pattern.sub(repl, cmds[0])
         command = ctx.bot.all_commands.get(name)
         if command is None:
-            await destination.send(
-                embed=ctx.bot.formatter.cmd_not_found(ctx, name))
+            if use_embeds:
+                await destination.send(
+                    embed=ctx.bot.formatter.cmd_not_found(ctx, name))
+            else:
+                await destination.send(
+                    ctx.bot.command_not_found.format(name)
+                )
             return
 
         for key in cmds[1:]:
@@ -317,29 +333,48 @@ async def help(ctx, *cmds: str):
                 key = _mention_pattern.sub(repl, key)
                 command = command.all_commands.get(key)
                 if command is None:
-                    await destination.send(
-                        embed=ctx.bot.formatter.cmd_not_found(ctx, key))
+                    if use_embeds:
+                        await destination.send(
+                            embed=ctx.bot.formatter.cmd_not_found(ctx, key))
+                    else:
+                        await destination.send(
+                            ctx.bot.command_not_found.format(key)
+                        )
                     return
             except AttributeError:
-                await destination.send(
-                    embed=ctx.bot.formatter.simple_embed(
-                        ctx,
-                        title='Command "{0.name}" has no subcommands.'.format(command),
-                        color=ctx.bot.formatter.color,
-                        author=ctx.author.display_name))
+                if use_embeds:
+                    await destination.send(
+                        embed=ctx.bot.formatter.simple_embed(
+                            ctx,
+                            title='Command "{0.name}" has no subcommands.'.format(command),
+                            color=ctx.bot.formatter.color,
+                            author=ctx.author.display_name))
+                else:
+                    await destination.send(
+                        ctx.bot.command_has_no_subcommands.format(command)
+                    )
                 return
-
-        embeds = await ctx.bot.formatter.format_help_for(ctx, command)
+        if use_embeds:
+            embeds = await ctx.bot.formatter.format_help_for(ctx, command)
+        else:
+            embeds = await f.format_help_for(ctx, command)
 
     if len(embeds) > 2:
         destination = ctx.author
 
     for embed in embeds:
-        try:
-            await destination.send(embed=embed)
-        except discord.HTTPException:
-            destination = ctx.author
-            await destination.send(embed=embed)
+        if use_embeds:
+            try:
+                await destination.send(embed=embed)
+            except discord.HTTPException:
+                destination = ctx.author
+                await destination.send(embed=embed)
+        else:
+            try:
+                await destination.send(embed)
+            except discord.HTTPException:
+                destination = ctx.author
+                await destination.send(embed)
 
 
 @help.error

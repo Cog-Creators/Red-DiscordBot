@@ -7,9 +7,14 @@ from importlib.machinery import ModuleSpec
 from pathlib import Path
 
 import discord
+import sys
 from discord.ext.commands.bot import BotBase
 from discord.ext.commands import GroupMixin
 from discord.ext.commands import when_mentioned_or
+
+# This supresses the PyNaCl warning that isn't relevant here
+from discord.voice_client import VoiceClient
+VoiceClient.warn_nacl = False
 
 from .cog_manager import CogManager
 from . import (
@@ -24,7 +29,6 @@ from .utils import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from aiohttp_json_rpc import JsonRpc
-
 
 # noinspection PyUnresolvedReferences
 class RpcMethodMixin:
@@ -168,9 +172,8 @@ class RedBase(BotBase, RpcMethodMixin):
                 return user_setting
         else:
             guild_setting = await self.db.guild(channel.guild).embeds()
-            if command and command != self.get_command("help"):
-                if guild_setting is not None:
-                    return guild_setting
+            if guild_setting is not None:
+                return guild_setting
         global_setting = await self.db.embeds()
         return global_setting
 
@@ -269,9 +272,15 @@ class RedBase(BotBase, RpcMethodMixin):
                 pass
         finally:
             # finally remove the import..
+            pkg_name = lib.__package__
             del lib
             del self.extensions[name]
-            # del sys.modules[name]
+            for m, _ in sys.modules.copy().items():
+                if m.startswith(pkg_name):
+                    del sys.modules[m]
+
+            if pkg_name.startswith('redbot.cogs'):
+                del sys.modules['redbot.cogs'].__dict__[name]
 
     def register_rpc_methods(self):
         rpc.add_method('bot', self.rpc__cogs)

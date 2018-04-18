@@ -240,8 +240,8 @@ class Filter:
                                     pass
                                 else:
                                     await modlog.create_case(
-                                        server, message.created_at, "filterban",
-                                        author, server.me, reason
+                                        self.bot, server, message.created_at,
+                                        "filterban", author, server.me, reason
                                     )
 
     async def on_message(self, message: discord.Message):

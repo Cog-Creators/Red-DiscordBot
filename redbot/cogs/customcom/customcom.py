@@ -292,7 +292,7 @@ class CustomCommands:
 
         if not response:
             await ctx.send(_(
-                "There are no custom commands in this guild."
+                "There are no custom commands in this server."
                 " Use `{}` to start adding some.").format(
                     "{}customcom add".format(ctx.prefix)
             ))
@@ -381,7 +381,8 @@ class CustomCommands:
             "message": message,
             "author": message.author,
             "channel": message.channel,
-            "guild": message.guild
+            "guild": message.guild,
+            "server": message.guild
         }
         if result in objects:
             return str(objects[result])

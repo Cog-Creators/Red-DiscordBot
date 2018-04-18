@@ -15,7 +15,10 @@ Welcome to Red - Discord Bot's documentation!
     install_ubuntu
     install_debian
     install_centos
+    install_arch
     install_raspbian
+    cog_dataconverter
+    autostart_systemd
 
 .. toctree::
     :maxdepth: 2
@@ -29,14 +32,18 @@ Welcome to Red - Discord Bot's documentation!
 
     guide_migration
     guide_cog_creation
+    guide_data_conversion
     framework_bank
+    framework_bot
     framework_cogmanager
-    framework_datamanager
     framework_config
+    framework_datamanager
     framework_downloader
+    framework_events
     framework_i18n
     framework_modlog
     framework_commands
+    framework_rpc
     framework_utils
 
 

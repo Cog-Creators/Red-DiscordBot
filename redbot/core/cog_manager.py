@@ -3,7 +3,7 @@ import pkgutil
 from importlib import import_module, invalidate_caches
 from importlib.machinery import ModuleSpec
 from pathlib import Path
-from typing import Tuple, Union, List, overload
+from typing import Tuple, Union, List
 
 import redbot.cogs
 import discord
@@ -16,6 +16,14 @@ from .data_manager import cog_data_path
 from .utils.chat_formatting import box, pagify
 
 __all__ = ["CogManager"]
+
+
+def _deduplicate(xs):
+    ret = []
+    for x in xs:
+        if x not in ret:
+            ret.append(x)
+    return ret
 
 
 class CogManager:
@@ -35,7 +43,7 @@ class CogManager:
             install_path=str(tmp_cog_install_path)
         )
 
-        self._paths = list(paths)
+        self._paths = [Path(p) for p in paths]
 
     async def paths(self) -> Tuple[Path, ...]:
         """Get all currently valid path directories.
@@ -46,16 +54,15 @@ class CogManager:
             All valid cog paths.
 
         """
-        conf_paths = await self.conf.paths()
+        conf_paths = [Path(p) for p in await self.conf.paths()]
         other_paths = self._paths
         core_paths = await self.core_paths()
 
-        all_paths = set(list(conf_paths) + list(other_paths) + core_paths)
+        all_paths = _deduplicate(list(conf_paths) + list(other_paths) + core_paths)
 
-        paths = [Path(p) for p in all_paths]
-        if self.install_path not in paths:
-            paths.insert(0, await self.install_path())
-        return tuple(p.resolve() for p in paths if p.is_dir())
+        if self.install_path not in all_paths:
+            all_paths.insert(0, await self.install_path())
+        return tuple(p.resolve() for p in all_paths if p.is_dir())
 
     async def core_paths(self) -> List[Path]:
         core_paths = [Path(p) for p in redbot.cogs.__path__]
@@ -151,7 +158,7 @@ class CogManager:
         if path == await self.install_path():
             raise ValueError("Cannot add the install path as an additional path.")
 
-        all_paths = set(await self.paths() + (path, ))
+        all_paths = _deduplicate(await self.paths() + (path, ))
         # noinspection PyTypeChecker
         await self.set_paths(all_paths)
 
@@ -207,10 +214,10 @@ class CogManager:
         RuntimeError
             When no matching spec can be found.
         """
-        resolved_paths = set(await self.paths())
-        core_paths = set(await self.core_paths())
+        resolved_paths = _deduplicate(await self.paths())
+        core_paths = _deduplicate(await self.core_paths())
 
-        real_paths = [str(p) for p in (resolved_paths - core_paths)]
+        real_paths = [str(p) for p in resolved_paths if p not in core_paths]
 
         for finder, module_name, _ in pkgutil.iter_modules(real_paths):
             if name == module_name:
@@ -302,6 +309,12 @@ _ = Translator("CogManagerUI", __file__)
 class CogManagerUI:
     """Commands to interface with Red's cog manager."""
 
+    async def visible_paths(self, ctx):
+        install_path = await ctx.bot.cog_mgr.install_path()
+        cog_paths = await ctx.bot.cog_mgr.paths()
+        cog_paths = [p for p in cog_paths if p != install_path]
+        return cog_paths
+
     @commands.command()
     @checks.is_owner()
     async def paths(self, ctx: commands.Context):
@@ -346,9 +359,10 @@ class CogManagerUI:
         Removes a path from the available cog paths given the path_number
             from !paths
         """
-        cog_paths = await ctx.bot.cog_mgr.paths()
+        path_number -= 1
+        cog_paths = await self.visible_paths(ctx)
         try:
-            to_remove = cog_paths[path_number]
+            to_remove = cog_paths.pop(path_number)
         except IndexError:
             await ctx.send(_("That is an invalid path number."))
             return
@@ -366,7 +380,7 @@ class CogManagerUI:
         from_ -= 1
         to -= 1
 
-        all_paths = list(await ctx.bot.cog_mgr.paths())
+        all_paths = await self.visible_paths(ctx)
         try:
             to_move = all_paths.pop(from_)
         except IndexError:
@@ -420,15 +434,40 @@ class CogManagerUI:
         loaded = sorted(list(loaded), key=str.lower)
         unloaded = sorted(list(unloaded), key=str.lower)
 
-        loaded = ('**{} loaded:**\n').format(len(loaded)) + ", ".join(loaded)
-        unloaded = ('**{} unloaded:**\n').format(len(unloaded)) + ", ".join(unloaded)
+        if await ctx.embed_requested():
+            loaded = ('**{} loaded:**\n').format(len(loaded)) + ", ".join(loaded)
+            unloaded = ('**{} unloaded:**\n').format(len(unloaded)) + ", ".join(unloaded)
 
-        for page in pagify(loaded, delims=[', ', '\n'], page_length=1000):
-            e = discord.Embed(description=page,
-                              colour=discord.Colour.dark_green())
-            await ctx.send(embed=e)
+            for page in pagify(loaded, delims=[', ', '\n'], page_length=1800):
+                e = discord.Embed(description=page,
+                                  colour=discord.Colour.dark_green())
+                await ctx.send(embed=e)
 
-        for page in pagify(unloaded, delims=[', ', '\n'], page_length=1000):
-            e = discord.Embed(description=page,
-                              colour=discord.Colour.dark_red())
-            await ctx.send(embed=e)
+            for page in pagify(unloaded, delims=[', ', '\n'], page_length=1800):
+                e = discord.Embed(description=page,
+                                  colour=discord.Colour.dark_red())
+                await ctx.send(embed=e)
+        else:
+            loaded_count = '**{} loaded:**\n'.format(len(loaded))
+            loaded = ", ".join(loaded)
+            unloaded_count = '**{} unloaded:**\n'.format(len(unloaded))
+            unloaded = ", ".join(unloaded)
+            loaded_count_sent = False
+            unloaded_count_sent = False
+            for page in pagify(loaded, delims=[", ", "\n"], page_length=1800):
+                if page.startswith(", "):
+                    page = page[2:]
+                if not loaded_count_sent:
+                    await ctx.send(loaded_count + box(page, lang="css"))
+                    loaded_count_sent = True
+                else:
+                    await ctx.send(box(page, lang="css"))
+
+            for page in pagify(unloaded, delims=[", ", "\n"], page_length=1800):
+                if page.startswith(", "):
+                    page = page[2:]
+                if not unloaded_count_sent:
+                    await ctx.send(unloaded_count + box(page, lang="ldif"))
+                    unloaded_count_sent = True
+                else:
+                    await ctx.send(box(page, lang="ldif"))

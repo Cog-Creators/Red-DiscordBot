@@ -55,6 +55,7 @@ class Cleanup:
         too_old = False
 
         while not too_old and len(to_delete) - 1 < number:
+            message = None
             async for message in channel.history(limit=limit,
                                                  before=before,
                                                  after=after):
@@ -66,6 +67,9 @@ class Cleanup:
                     break
                 elif number and len(to_delete) >= number:
                     break
+            if message is None:
+                break
+            else:
                 before = message
         return to_delete
 
