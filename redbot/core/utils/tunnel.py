@@ -103,6 +103,29 @@ class Tunnel(metaclass=TunnelMeta):
         This does the actual sending, use this instead of a full tunnel
         if you are using command initiated reactions instead of persistent
         event based ones
+
+        Parameters
+        ----------
+        destination: `discord.abc.Messageable`
+            Where to send
+        content: `str`
+            The message content
+        embed: `discord.Embed`
+            The embed to send
+        files: `List[discord.Files]`
+            A list of files to send.
+        
+        Returns
+        -------
+        list of `discord.Message`
+            The `discord.Message`(s) sent as a result
+
+        Raises
+        ------
+        discord.Forbidden
+            see `discord.abc.Messageable.send`
+        discord.HTTPException
+            see `discord.abc.Messageable.send`
         """
         rets = []
         files = files if files else None
@@ -125,9 +148,20 @@ class Tunnel(metaclass=TunnelMeta):
     @staticmethod
     async def files_from_attatch(m: discord.Message) -> List[discord.File]:
         """
-        makes a list of discord.File from a message
+        makes a list of file objects from a message
         returns an empty list if none, or if the sum of file sizes
         is too large for the bot to send
+
+        Parameters
+        ---------
+        m: `discord.Message`
+            A message to get attachments from
+
+        Returns
+        -------
+        list of `discord.File`
+            A list of `discord.File` objects
+
         """
         files = []
         size = 0
