@@ -205,7 +205,8 @@ class Reports:
         if guild is None:
             guild = await self.discover_guild(
                 author,
-                prompt=_("Select a server to make a report in by number.")
+                prompt=_("Select a server to make a report in by number."),
+                permissions=discord.Permissions(0)
             )
         else:
             try:
@@ -353,7 +354,7 @@ class Reports:
             "will be forwarded to them until the communication is closed.\n"
             "You can close a communication at any point "
             "by reacting with the X to the last message recieved. "
-            "\nAny message succesfully forwarded with be marked with a check."
+            "\nAny message succesfully forwarded will be marked with a check."
             "\nTunnels are not persistent across bot restarts."
         )
         topic = big_topic.format(
