@@ -2,9 +2,20 @@ import discord
 from discord.ext import commands
 
 
+async def check_overrides(ctx, *, level):
+    perm_cog = ctx.bot.get_cog('Permissions')
+    if not perm_cog:
+        return None
+    return await perm_cog.check_overrides(ctx, level)
+
+
 def is_owner(**kwargs):
     async def check(ctx):
-        return await ctx.bot.is_owner(ctx.author, **kwargs)
+        override = await check_overrides(ctx, level='owner')
+        return (
+            await ctx.bot.is_owner(ctx.author, **kwargs)
+            if override is None else override
+        )
     return commands.check(check)
 
 
@@ -34,7 +45,12 @@ def mod_or_permissions(**perms):
         is_staff = mod_role in author.roles or admin_role in author.roles
         is_guild_owner = author == ctx.guild.owner
 
-        return is_staff or has_perms_or_is_owner or is_guild_owner
+        override = await check_overrides(ctx, level='mod')
+        
+        return (
+            override if override is not None
+            else is_staff or has_perms_or_is_owner or is_guild_owner
+        )
 
     return commands.check(predicate)
 
@@ -49,7 +65,12 @@ def admin_or_permissions(**perms):
         admin_role_id = await ctx.bot.db.guild(ctx.guild).admin_role()
         admin_role = discord.utils.get(ctx.guild.roles, id=admin_role_id)
 
-        return admin_role in author.roles or has_perms_or_is_owner or is_guild_owner
+        override = await check_overrides(ctx, level='admin')
+        
+        return (
+            override if override is not None
+            admin_role in author.roles or has_perms_or_is_owner or is_guild_owner
+        )
 
     return commands.check(predicate)
 
@@ -67,7 +88,11 @@ def guildowner_or_permissions(**perms):
             return has_perms_or_is_owner
         is_guild_owner = ctx.author == ctx.guild.owner
 
-        return is_guild_owner or has_perms_or_is_owner
+        override = await check_overrides(ctx, level='guildowner')
+        return (
+            override if override is not None
+            else is_guild_owner or has_perms_or_is_owner
+        )
 
     return commands.check(predicate)
 
