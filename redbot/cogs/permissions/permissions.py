@@ -1,6 +1,10 @@
-import discord
+import asyncio
 import contextlib
+import types
+
+import discord
 from discord.ext import commands
+
 from redbot.core import RedContext
 from redbot.core.bot import Red
 from redbot.core.i18n import CogI18n
@@ -12,10 +16,9 @@ _ = CogI18n('Permissions', __file__)
 # 1. Commands for configuring this
 # 2. Commands for displaying permissions (allowed / disallowed/ default)
 # 3. Verification of all permission logic (This going wrong is bad)
-# 4. Safeguards on debug, eval, repl
-#    (dont allow this outside of co-owner, even with perms)
-# 5. Very strong user facing warnings if trying to widen access to
+# 4. Very strong user facing warnings if trying to widen access to
 #    cog install / load
+# 5. API for additional checks
 
 
 class Permissions:
@@ -34,6 +37,8 @@ class Permissions:
             self, identifier=78631113035100160,
             force_registration=True
         )
+        self._before = []
+        self._after = []
 
     async def check_overrides(self, ctx: RedContext, *, level: str) -> bool:
         """
@@ -57,13 +62,59 @@ class Permissions:
         if await self.bot.is_owner(ctx.author):
             return True
 
+        # At this point, the person the override exists for should
+        # just be a co-owner.
+        if ctx.command.qualified_name in ('repl', 'debug', 'eval'):
+            return None
+
+        #  TODO: API for adding these additional checks
+        for check in self._before:
+            override = await self.val_if_check_is_valid(check)
+            if override is not None:
+                return override
+
         for model in self.resolution_order[level]:
             override_model = getattr(self, model + '_model', None)
             override = await override_model(ctx) if override_model else None
             if override is not None:
                 return override
 
+        for check in self._after:
+            override = await self.val_if_check_is_valid(check)
+            if override is not None:
+                return override
+
         return None
+
+    @staticmethod
+    async def val_if_check_is_valid(
+            *, ctx: RedContext, check: object, level: str) -> bool:
+        """
+        Returns the value from a check if it is valid
+        """
+
+        # Non staticmethods should not be run without their parent
+        # class, even if the parent class did not deregister them
+        if isinstance(check, types.FunctionType):
+            if next(
+                filter(
+                    lambda x: check.__module__ == x.__module__,
+                    ctx.bot.cogs
+                    ), None) is None:
+                return None
+
+        # support both sync and async funcs, because why not
+        # also, supress errors because we can't check know what
+        # third party checks might raise if improperly made
+        with contextlib.suppress(Exception):
+            val = None
+            if asyncio.iscoroutine(check) \
+                    or asyncio.iscoroutinefunction(check):
+                val = await check(ctx, level=level)
+            else:
+                val = check(ctx, level=level)
+
+        return val
 
     def resolve_models(self, *, ctx: RedContext, models: dict) -> bool:
 
@@ -111,12 +162,12 @@ class Permissions:
         ]
         roles = sorted(ctx.author.roles, reverse=True) if ctx.guild else []
         entries.extend([x.id for x in roles])
-        # entries now contains the following (in order) if applicable
+        # entries now contains the following (in order) (if applicable)
         # author.id
         # author.voice.voice_channel.id
         # channel.id
         # role.id for each role (highest to lowest)
-        # implicit guild.id because
+        # (implicitly) guild.id because
         #     the @everyone role shares an id with the guild
 
         for entry in entries:
