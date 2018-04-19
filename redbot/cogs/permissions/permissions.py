@@ -8,6 +8,15 @@ from redbot.core.config import Config
 
 _ = CogI18n('Permissions', __file__)
 
+# TODO: Block of stuff:
+# 1. Commands for configuring this
+# 2. Commands for displaying permissions (allowed / disallowed/ default)
+# 3. Verification of all permission logic (This going wrong is bad)
+# 4. Safeguards on debug, eval, repl
+#    (dont allow this outside of co-owner, even with perms)
+# 5. Very strong user facing warnings if trying to widen access to
+#    cog install / load
+
 
 class Permissions:
     """
@@ -56,6 +65,40 @@ class Permissions:
 
         return None
 
+    def resolve_models(self, *, ctx: RedContext, models: dict) -> bool:
+
+        cmd_name = ctx.command.qualified_name
+        cog_name = ctx.cog.__module__
+
+        blacklist = models.get('blacklist', [])
+        whitelist = models.get('whitelist', [])
+        resolved = self.resolve_lists(
+            ctx=ctx, whitelist=whitelist, blacklist=blacklist
+        )
+        if resolved is not None:
+            return resolved
+
+        if cmd_name in models['cmds']:
+            blacklist = models['cmds'][cmd_name].get('blacklist', [])
+            whitelist = models['cmds'][cmd_name].get('whitelist', [])
+            resolved = self.resolve_lists(
+                ctx=ctx, whitelist=whitelist, blacklist=blacklist
+            )
+            if resolved is not None:
+                return resolved
+
+        if cog_name in models['cogs']:
+            blacklist = models['cogs'][cmd_name].get('blacklist', [])
+            whitelist = models['cogs'][cmd_name].get('whitelist', [])
+            resolved = self.resolve_lists(
+                ctx=ctx, whitelist=whitelist, blacklist=blacklist
+            )
+            if resolved is not None:
+                return resolved
+
+        # default
+        return None
+
     def resolve_lists(self, *, ctx: RedContext,
                       whitelist: list, blacklist: list) -> bool:
 
@@ -88,80 +131,14 @@ class Permissions:
         """
         Handles owner level overrides
         """
-        cmd_name = ctx.command.qualified_name
-        cog_name = ctx.cog.__module__
 
         async with self.config.owner_models() as models:
-
-            blacklist = models.get('blacklist', [])
-            whitelist = models.get('whitelist', [])
-            resolved = self.resolve_lists(
-                ctx=ctx, whitelist=whitelist, blacklist=blacklist
-            )
-            if resolved is not None:
-                return resolved
-
-            if cmd_name in models['cmds']:
-                blacklist = models['cmds'][cmd_name].get('blacklist', [])
-                whitelist = models['cmds'][cmd_name].get('whitelist', [])
-                resolved = self.resolve_lists(
-                    ctx=ctx, whitelist=whitelist, blacklist=blacklist
-                )
-                if resolved is not None:
-                    return resolved
-
-            if cog_name in models['cogs']:
-                blacklist = models['cogs'][cmd_name].get('blacklist', [])
-                whitelist = models['cogs'][cmd_name].get('whitelist', [])
-                resolved = self.resolve_lists(
-                    ctx=ctx, whitelist=whitelist, blacklist=blacklist
-                )
-                if resolved is not None:
-                    return resolved
+            return self.resolve_models(ctx=ctx, models=models)
 
     async def guildowner_model(self, ctx: RedContext) -> bool:
         """
         Handles guild level overrides
         """
 
-        author = ctx.author
-        channel = ctx.channel
-        guild = ctx.guild
-        cmd_name = ctx.command.qualified_name
-        cog_name = ctx.cog.__module__
-        voice_channel = None
-        with contextlib.suppress(Exception):
-            voice_channel = ctx.author.voice.voice_channel
-
-        async with self.config.guild(guild).owner_models() as models:
-            basic_ids = [
-                x.id for x in (author, channel, voice_channel) if x
-            ]
-            if any(
-                x in models['whitelist']
-                for x in basic_ids
-            ):
-                return True
-            if any(
-                x in models['blacklist']
-                for x in basic_ids
-            ):
-                return False
-
-            if cmd_name in models['cmds']:
-                blacklist = models['cmds'][cmd_name].get('blacklist', [])
-                whitelist = models['cmds'][cmd_name].get('whitelist', [])
-                resolved = self.resolve_lists(
-                    ctx=ctx, whitelist=whitelist, blacklist=blacklist
-                )
-                if resolved is not None:
-                    return resolved
-
-            if cog_name in models['cogs']:
-                blacklist = models['cogs'][cmd_name].get('blacklist', [])
-                whitelist = models['cogs'][cmd_name].get('whitelist', [])
-                resolved = self.resolve_lists(
-                    ctx=ctx, whitelist=whitelist, blacklist=blacklist
-                )
-                if resolved is not None:
-                    return resolved
+        async with self.config.guild(ctx.guild).owner_models() as models:
+            return self.resolve_models(ctx=ctx, models=models)
