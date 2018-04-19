@@ -1,4 +1,5 @@
 import discord
+import contextlib
 from discord.ext import commands
 from redbot.core import RedContext
 from redbot.core.bot import Red
@@ -43,8 +44,13 @@ class Permissions:
             checks.py
         """
 
+        # never lock out an owner or co-owner
+        if await self.bot.is_owner(ctx.author):
+            return True
+
         for model in self.resolution_order[level]:
-            override = await getattr(self, model + '_model')(ctx)
+            override_model = getattr(self, model + '_model', None)
+            override = await override_model(ctx) if override_model else None
             if override is not None:
                 return override
 
@@ -53,14 +59,23 @@ class Permissions:
     def resolve_lists(self, *, ctx: RedContext,
                       whitelist: list, blacklist: list) -> bool:
 
+        voice_channel = None
+        with contextlib.suppress(Exception):
+            voice_channel = ctx.author.voice.voice_channel
+
         entries = [
-            ctx.author.id,
-            ctx.channel.id,
+            x for x in (ctx.author, voice_channel, ctx.channel) if x
         ]
-        roles = ctx.author.roles if ctx.guild else []
-        entries.extend(
-            [x.id for x in roles][::-1]
-        )  # @everyone.id == guild.id and roles[0] == @everyone
+        roles = sorted(ctx.author.roles, reverse=True) if ctx.guild else []
+        entries.extend([x.id for x in roles])
+        # entries now contains the following (in order) if applicable
+        # author.id
+        # author.voice.voice_channel.id
+        # channel.id
+        # role.id for each role (highest to lowest)
+        # implicit guild.id because
+        #     the @everyone role shares an id with the guild
+
         for entry in entries:
             if entry in whitelist:
                 return True
@@ -73,23 +88,65 @@ class Permissions:
         """
         Handles owner level overrides
         """
+        cmd_name = ctx.command.qualified_name
+        cog_name = ctx.cog.__module__
+
+        async with self.config.owner_models() as models:
+
+            blacklist = models.get('blacklist', [])
+            whitelist = models.get('whitelist', [])
+            resolved = self.resolve_lists(
+                ctx=ctx, whitelist=whitelist, blacklist=blacklist
+            )
+            if resolved is not None:
+                return resolved
+
+            if cmd_name in models['cmds']:
+                blacklist = models['cmds'][cmd_name].get('blacklist', [])
+                whitelist = models['cmds'][cmd_name].get('whitelist', [])
+                resolved = self.resolve_lists(
+                    ctx=ctx, whitelist=whitelist, blacklist=blacklist
+                )
+                if resolved is not None:
+                    return resolved
+
+            if cog_name in models['cogs']:
+                blacklist = models['cogs'][cmd_name].get('blacklist', [])
+                whitelist = models['cogs'][cmd_name].get('whitelist', [])
+                resolved = self.resolve_lists(
+                    ctx=ctx, whitelist=whitelist, blacklist=blacklist
+                )
+                if resolved is not None:
+                    return resolved
+
+    async def guildowner_model(self, ctx: RedContext) -> bool:
+        """
+        Handles guild level overrides
+        """
 
         author = ctx.author
         channel = ctx.channel
         guild = ctx.guild
         cmd_name = ctx.command.qualified_name
         cog_name = ctx.cog.__module__
+        voice_channel = None
+        with contextlib.suppress(Exception):
+            voice_channel = ctx.author.voice.voice_channel
 
-        if await self.bot.is_owner(author):
-            return True
-
-        async with self.config.owner_models() as models:
+        async with self.config.guild(guild).owner_models() as models:
+            basic_ids = [
+                x.id for x in (author, channel, voice_channel) if x
+            ]
+            if any(
+                x in models['whitelist']
+                for x in basic_ids
+            ):
+                return True
             if any(
                 x in models['blacklist']
-                for x in (author.id, guild.id, channel.id)
+                for x in basic_ids
             ):
                 return False
-                # corresponding whitelist would be equivalent to co-ownership
 
             if cmd_name in models['cmds']:
                 blacklist = models['cmds'][cmd_name].get('blacklist', [])
