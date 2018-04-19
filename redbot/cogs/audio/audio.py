@@ -8,7 +8,7 @@ import redbot.core
 from discord.ext import commands
 from redbot.core import Config, checks, bank
 
-from .manager import shutdown_lavalink_server
+from audio.manager import shutdown_lavalink_server
 
 __version__ = "0.0.5"
 __author__ = ["aikaterna", "billy/bollo/ati"]
