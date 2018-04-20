@@ -17,9 +17,7 @@ _ = CogI18n('Permissions', __file__)
 # 1. Commands for configuring this
 # 2. Commands for displaying permissions (allowed / disallowed/ default)
 # 3. Verification of all permission logic (This going wrong is bad)
-# 4. Very strong user facing warnings if trying to widen access to
-#    cog install / load
-# 5. API for additional checks
+# 4. API for additional checks
 
 
 class Permissions:
@@ -43,11 +41,6 @@ class Permissions:
         )
         self._before = []
         self._after = []
-
-    async def __local_check(self, ctx):
-        pass
-        # TODO: logic for preventing the checks in here from being bypassed by
-        # by this cog, otherwise all saftey measures in here are broken
 
     @staticmethod
     async def _send(ctx: RedContext, message: str) -> discord.Message:
@@ -80,11 +73,6 @@ class Permissions:
         # never lock out an owner or co-owner
         if await self.bot.is_owner(ctx.author):
             return True
-
-        # At this point, the person the override exists for should
-        # just be a co-owner.
-        if ctx.command.qualified_name in ('repl', 'debug', 'eval'):
-            return None
 
         #  TODO: API for adding these additional checks
         for check in self._before:
