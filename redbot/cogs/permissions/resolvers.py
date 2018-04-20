@@ -1,4 +1,5 @@
 import types
+import inspect
 import contextlib
 import asyncio
 from redbot.core import RedContext
@@ -12,13 +13,22 @@ async def val_if_check_is_valid(
 
     # Non staticmethods should not be run without their parent
     # class, even if the parent class did not deregister them
+    # the inspection is unfortunately neccessary thanks to assigning
+    # functions without them being class functions or static methods
+    # without it registering x after:
+    #
+    # def x(ctx, *, level):
+    #     return True if ctx.author.id in (id1, id2) else None
+    #
+    # would fail
     if isinstance(check, types.FunctionType):
-        if next(
-                filter(
-                    lambda x: check.__module__ == x.__module__,
-                    ctx.bot.cogs
-                ), None) is None:
-            return None
+        if 'self' in inspect.signature(check).parameters:
+            if next(
+                    filter(
+                        lambda x: check.__module__ == x.__module__,
+                        ctx.bot.cogs
+                    ), None) is None:
+                return None
 
     # support both sync and async funcs, because why not
     # also, supress errors because we can't check know what
