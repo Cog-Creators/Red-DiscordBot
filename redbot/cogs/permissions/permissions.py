@@ -49,6 +49,16 @@ class Permissions:
         # TODO: logic for preventing the checks in here from being bypassed by
         # by this cog, otherwise all saftey measures in here are broken
 
+    @staticmethod
+    async def _send(ctx: RedContext, message: str) -> discord.Message:
+        """
+        get rid of this and use ctx.maybe_send_embed() if PR for that is merged
+        """
+        if await ctx.embed_requested():
+            await ctx.send(embed=discord.Embed(description=message))
+        else:
+            await ctx.send(message)
+
     async def check_overrides(self, ctx: RedContext, *, level: str) -> bool:
         """
         This checks for any overrides in the permission model
@@ -163,10 +173,7 @@ class Permissions:
             "5. Rules about the guild a user is in (Owner level only)"
         )
 
-        if await ctx.embed_requested():
-            await ctx.send(embed=discord.Embed(description=message))
-        else:
-            await ctx.send(message)
+        await self._send(ctx, message)
 
     @permissions.command(name='canrun')
     async def _test_permission_model(
@@ -199,7 +206,24 @@ class Permissions:
                 'explorer using `{commandstring}`'
             ).format(commandstring='{0}permissions explore'.format(ctx.prefix))
 
-        if await ctx.embed_requested():
-            await ctx.send(embed=discord.Embed(description=message))
-        else:
-            await ctx.send(message)
+        await self._send(ctx, message)
+
+    @permissions.command()
+    async def explore(self, ctx: RedContext):
+        """
+        Interactive permission explorer
+        """
+
+        msg = await self._send(
+            _("Which of the following would you like to check rules for? "
+              "(Respond with a single message containing the "
+              "corresponding number(s))\n"
+              "\n1. User"
+              "\n2. Command"
+              "\n3. Channel"
+              "\n4. Voice Channel"
+              "\n6.Role"
+              "\n5. Guild"
+              )
+        )
+        # TODO: Finish this after reviewing the debug stuff added to .resolvers

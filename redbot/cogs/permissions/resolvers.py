@@ -4,7 +4,8 @@ import asyncio
 from redbot.core import RedContext
 
 
-async def val_if_check_is_valid(*, ctx: RedContext, check: object, level: str) -> bool:
+async def val_if_check_is_valid(
+        *, ctx: RedContext, check: object, level: str,) -> bool:
     """
     Returns the value from a check if it is valid
     """
@@ -33,42 +34,64 @@ async def val_if_check_is_valid(*, ctx: RedContext, check: object, level: str) -
     return val
 
 
-def resolve_models(*, ctx: RedContext, models: dict) -> bool:
+def resolve_models(
+        *, ctx: RedContext, models: dict, debug: bool=False) -> bool:
 
     cmd_name = ctx.command.qualified_name
     cog_name = ctx.cog.__module__
 
     blacklist = models.get('blacklist', [])
     whitelist = models.get('whitelist', [])
-    resolved = resolve_lists(
+
+    resolved = None
+    if debug:
+        debug_dict = {}
+
+    _resolved = resolve_lists(
         ctx=ctx, whitelist=whitelist, blacklist=blacklist
     )
-    if resolved is not None:
-        return resolved
+
+    if debug:
+        if resolved is None and _resolved[0] is not None:
+            resolved = _resolved[0]
+        debug_dict['g'] = _resolved[1]
+    elif _resolved is not None:
+        return _resolved
 
     if cmd_name in models['cmds']:
         blacklist = models['cmds'][cmd_name].get('blacklist', [])
         whitelist = models['cmds'][cmd_name].get('whitelist', [])
-        resolved = resolve_lists(
+        _resolved = resolve_lists(
             ctx=ctx, whitelist=whitelist, blacklist=blacklist
         )
-        if resolved is not None:
-            return resolved
+        if debug:
+            if resolved is None and _resolved[0] is not None:
+                resolved = _resolved[0]
+            debug_dict['cmd'] = _resolved[1]
+        elif _resolved is not None:
+            return _resolved
 
     if cog_name in models['cogs']:
         blacklist = models['cogs'][cmd_name].get('blacklist', [])
         whitelist = models['cogs'][cmd_name].get('whitelist', [])
-        resolved = resolve_lists(
+        _resolved = resolve_lists(
             ctx=ctx, whitelist=whitelist, blacklist=blacklist
         )
-        if resolved is not None:
-            return resolved
+        if debug:
+            if resolved is None and _resolved[0] is not None:
+                resolved = _resolved[0]
+            debug_dict['cog'] = _resolved[1]
+        elif _resolved is not None:
+            return _resolved
 
-    # default
-    return None
+    if debug:
+        return resolved, debug_dict
+    else:
+        return None
 
 
-def resolve_lists(*, ctx: RedContext, whitelist: list, blacklist: list) -> bool:
+def resolve_lists(*, ctx: RedContext, whitelist: list, blacklist: list,
+                  debug: bool=False) -> bool:
 
     voice_channel = None
     with contextlib.suppress(Exception):
@@ -87,10 +110,18 @@ def resolve_lists(*, ctx: RedContext, whitelist: list, blacklist: list) -> bool:
     # (implicitly) guild.id because
     #     the @everyone role shares an id with the guild
 
+    val = None
+    if debug:
+        debug_dict = {}
     for entry in entries:
         if entry in whitelist:
-            return True
+            val = True
         if entry in blacklist:
-            return False
+            val = False
+        if debug:
+            debug_dict[entry] = val
     else:
-        return None
+        if debug:
+            return val, debug_dict
+        else:
+            return val
