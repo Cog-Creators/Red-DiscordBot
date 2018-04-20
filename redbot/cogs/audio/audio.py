@@ -8,7 +8,7 @@ import redbot.core
 from discord.ext import commands
 from redbot.core import Config, checks, bank
 
-from audio.manager import shutdown_lavalink_server
+from . import manager
 
 __version__ = "0.0.5"
 __author__ = ["aikaterna", "billy/bollo/ati"]
@@ -1367,4 +1367,4 @@ class Audio:
     def __unload(self):
         lavalink.unregister_event_listener(self.event_handler)
         self.bot.loop.create_task(lavalink.close())
-        shutdown_lavalink_server()
+        manager.shutdown_lavalink_server()
