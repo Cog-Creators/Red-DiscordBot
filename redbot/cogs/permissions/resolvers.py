@@ -34,8 +34,8 @@ async def val_if_check_is_valid(
     return val
 
 
-def resolve_models(
-        *, ctx: RedContext, models: dict, debug: bool=False) -> bool:
+def resolve_models(*, ctx: RedContext, models: dict,
+                   debug: bool=False, debug_ids=[]) -> bool:
 
     cmd_name = ctx.command.qualified_name
     cog_name = ctx.cog.__module__
@@ -45,16 +45,16 @@ def resolve_models(
 
     resolved = None
     if debug:
-        debug_dict = {}
+        debug_list = []
 
     _resolved = resolve_lists(
-        ctx=ctx, whitelist=whitelist, blacklist=blacklist
+        ctx=ctx, whitelist=whitelist, blacklist=blacklist, debug_ids=debug_ids
     )
 
     if debug:
         if resolved is None and _resolved[0] is not None:
             resolved = _resolved[0]
-        debug_dict['g'] = _resolved[1]
+        debug_list.extend(_resolved[1])
     elif _resolved is not None:
         return _resolved
 
@@ -62,12 +62,13 @@ def resolve_models(
         blacklist = models['cmds'][cmd_name].get('blacklist', [])
         whitelist = models['cmds'][cmd_name].get('whitelist', [])
         _resolved = resolve_lists(
-            ctx=ctx, whitelist=whitelist, blacklist=blacklist
+            ctx=ctx, whitelist=whitelist, blacklist=blacklist,
+            debug_ids=debug_ids
         )
         if debug:
             if resolved is None and _resolved[0] is not None:
                 resolved = _resolved[0]
-            debug_dict['cmd'] = _resolved[1]
+            debug_list.extend(_resolved[1])
         elif _resolved is not None:
             return _resolved
 
@@ -75,53 +76,57 @@ def resolve_models(
         blacklist = models['cogs'][cmd_name].get('blacklist', [])
         whitelist = models['cogs'][cmd_name].get('whitelist', [])
         _resolved = resolve_lists(
-            ctx=ctx, whitelist=whitelist, blacklist=blacklist
+            ctx=ctx, whitelist=whitelist, blacklist=blacklist,
+            debug_ids=debug_ids
         )
         if debug:
             if resolved is None and _resolved[0] is not None:
                 resolved = _resolved[0]
-            debug_dict['cog'] = _resolved[1]
+            debug_list.extend(_resolved[1])
         elif _resolved is not None:
             return _resolved
 
     if debug:
-        return resolved, debug_dict
+        return resolved, debug_list
     else:
         return None
 
 
 def resolve_lists(*, ctx: RedContext, whitelist: list, blacklist: list,
-                  debug: bool=False) -> bool:
+                  debug: bool=False, debug_ids=[]) -> bool:
 
     voice_channel = None
     with contextlib.suppress(Exception):
         voice_channel = ctx.author.voice.voice_channel
 
-    entries = [
-        x for x in (ctx.author, voice_channel, ctx.channel) if x
-    ]
-    roles = sorted(ctx.author.roles, reverse=True) if ctx.guild else []
-    entries.extend([x.id for x in roles])
-    # entries now contains the following (in order) (if applicable)
-    # author.id
-    # author.voice.voice_channel.id
-    # channel.id
-    # role.id for each role (highest to lowest)
-    # (implicitly) guild.id because
-    #     the @everyone role shares an id with the guild
+    if debug and debug_ids:
+        entries = debug_ids
+    else:
+        entries = [
+            x for x in (ctx.author, voice_channel, ctx.channel) if x
+        ]
+        roles = sorted(ctx.author.roles, reverse=True) if ctx.guild else []
+        entries.extend([x.id for x in roles])
+        # entries now contains the following (in order) (if applicable)
+        # author.id
+        # author.voice.voice_channel.id
+        # channel.id
+        # role.id for each role (highest to lowest)
+        # (implicitly) guild.id because
+        #     the @everyone role shares an id with the guild
 
     val = None
     if debug:
-        debug_dict = {}
+        debug_list = []
     for entry in entries:
         if entry in whitelist:
             val = True
         if entry in blacklist:
             val = False
         if debug:
-            debug_dict[entry] = val
+            debug_list.append((val, entry))
     else:
         if debug:
-            return val, debug_dict
+            return val, debug_list
         else:
             return val
