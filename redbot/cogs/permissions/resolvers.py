@@ -37,7 +37,7 @@ async def val_if_check_is_valid(
 
 
 def resolve_models(*, ctx: RedContext, models: dict,
-                   debug: bool=False, debug_ids: list=[]) -> bool:
+                   debug: bool=False, debug_ids: list=None) -> bool:
 
     cmd_name = ctx.command.qualified_name
     cog_name = ctx.cog.__module__
@@ -95,7 +95,7 @@ def resolve_models(*, ctx: RedContext, models: dict,
 
 
 def resolve_lists(*, ctx: RedContext, whitelist: list, blacklist: list,
-                  debug: bool=False, debug_ids: list=[]) -> bool:
+                  debug: bool=False, debug_ids: list=None) -> bool:
 
     voice_channel = None
     with contextlib.suppress(Exception):
