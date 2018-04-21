@@ -110,10 +110,11 @@ class Reports:
         ret |= await self.bot.is_owner(m)
         return ret
 
-    async def discover_guild(self, author: discord.User, *,
-                             mod: bool=False,
-                             permissions: Union[discord.Permissions, dict]={},
-                             prompt: str=""):
+    async def discover_guild(
+        self, author: discord.User, *,
+            mod: bool=False,
+            permissions: Union[discord.Permissions, dict]=None,
+            prompt: str=""):
         """
         discovers which of shared guilds between the bot
         and provided user based on conditions (mod or permissions is an or)
@@ -121,7 +122,9 @@ class Reports:
         prompt is for providing a user prompt for selection
         """
         shared_guilds = []
-        if isinstance(permissions, discord.Permissions):
+        if permissions is None:
+            perms = discord.Permissions()
+        elif isinstance(permissions, discord.Permissions):
             perms = permissions
         else:
             perms = discord.Permissions(**permissions)
@@ -171,14 +174,14 @@ class Reports:
 
         author = guild.get_member(msg.author.id)
         report = msg.clean_content
-        
+
         channel_id = await self.config.guild(guild).output_channel()
         channel = guild.get_channel(channel_id)
         if channel is None:
             return None
 
         files = await Tunnel.files_from_attatch(msg)
-        
+
         ticket_number = await self.config.guild(guild).next_ticket()
         await self.config.guild(guild).next_ticket.set(ticket_number + 1)
 
@@ -196,7 +199,7 @@ class Reports:
                 'Report from {author.mention} (Ticket #{number})'
             ).format(author=author, number=ticket_number)
             send_content += "\n" + report
-        
+
         try:
             await Tunnel.message_forwarder(
                 destination=channel,
