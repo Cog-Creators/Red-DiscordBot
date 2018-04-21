@@ -55,7 +55,6 @@ class Cleanup:
         too_old = False
 
         while not too_old and len(to_delete) - 1 < number:
-            message = None
             async for message in channel.history(limit=limit,
                                                  before=before,
                                                  after=after):
@@ -67,9 +66,6 @@ class Cleanup:
                     break
                 elif number and len(to_delete) >= number:
                     break
-            if message is None:
-                break
-            else:
                 before = message
         return to_delete
 
@@ -230,6 +226,57 @@ class Cleanup:
         reason = "{}({}) deleted {} messages in channel {}."\
                  "".format(author.name, author.id,
                            number, channel.name)
+        log.info(reason)
+
+        if is_bot:
+            await mass_purge(to_delete, channel)
+        else:
+            await slow_deletion(to_delete)
+
+    @cleanup.command()
+    @commands.guild_only()
+    @commands.bot_has_permissions(manage_messages=True)
+    async def former(self, ctx: RedContext, number: int):
+        """Deletes last X messages from users who have left the server.
+
+        Example:
+        cleanup former 26"""
+
+        channel = ctx.message.channel
+        author = ctx.message.author
+        is_bot = self.bot.user.bot
+        members = ctx.message.guild.members
+
+        if number > 100:
+            cont = await self.check_100_plus(ctx, number)
+            if not cont:
+                return
+
+        prefixes = await self.bot.get_prefix(ctx.message)  # This returns all server prefixes
+        if isinstance(prefixes, str):
+            prefixes = [prefixes]
+
+        # In case some idiot sets a null prefix
+        if '' in prefixes:
+            prefixes.remove('')
+
+        def check(m):
+            for member in members:
+                if isinstance(member, discord.Member) and m.author == member:
+                    return False
+                elif m.author.id == member:  # Allow finding messages based on an ID
+                    return False
+            else:
+                return True
+
+        to_delete = await self.get_messages_for_deletion(
+            ctx, channel, number, check=check, limit=1000, before=ctx.message
+        )
+
+        reason = "{}({}) deleted {} " \
+                 " command messages in channel {}." \
+                 "".format(author.name, author.id, len(to_delete),
+                           channel.name)
         log.info(reason)
 
         if is_bot:
