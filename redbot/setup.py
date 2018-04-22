@@ -302,6 +302,44 @@ async def edit_instance():
     )
 
 
+async def create_backup(selected, instance_data):
+    if confirm("Would you like to make a backup of the data for this instance? (y/n)"):
+        if instance_data["STORAGE_TYPE"] == "MongoDB":
+            print("Backing up the instance's data...")
+            await mongo_to_json(instance_data["DATA_PATH"], instance_data["STORAGE_DETAILS"])
+            backup_filename = "redv3-{}-{}.tar.gz".format(
+                selected, dt.utcnow().strftime("%Y-%m-%d %H-%M-%S")
+            )
+            pth = Path(instance_data["DATA_PATH"])
+            if pth.exists():
+                home = pth.home()
+                backup_file = home / backup_filename
+                os.chdir(str(pth.parent))
+                with tarfile.open(str(backup_file), "w:gz") as tar:
+                    tar.add(pth.stem)
+                print("A backup of {} has been made. It is at {}".format(
+                    selected, backup_file
+                ))
+                
+        else:
+            print("Backing up the instance's data...")
+            backup_filename = "redv3-{}-{}.tar.gz".format(
+                selected, dt.utcnow().strftime("%Y-%m-%d %H-%M-%S")
+            )
+            pth = Path(instance_data["DATA_PATH"])
+            if pth.exists():
+                home = pth.home()
+                backup_file = home / backup_filename
+                os.chdir(str(pth.parent))  # str is used here because 3.5 support
+                with tarfile.open(str(backup_file), "w:gz") as tar:
+                    tar.add(pth.stem)  # add all files in that directory
+                print(
+                    "A backup of {} has been made. It is at {}".format(
+                        selected, backup_file
+                    )
+                )
+                
+
 async def remove_instance(selected, instance_data):
     instance_list = load_existing_config()
     if instance_data["STORAGE_TYPE"] == "MongoDB":
@@ -315,7 +353,7 @@ async def remove_instance(selected, instance_data):
         pth = Path(instance_data["DATA_PATH"])
         safe_delete(pth)
     save_config(selected, {}, remove=True)
-    print("The instance {} has been removed".format(selected))
+    print("The instance {} has been removed\n".format(selected))
 
 
 async def remove_instance_interaction():
@@ -337,60 +375,9 @@ async def remove_instance_interaction():
         print("That isn't a valid instance!")
         return
     instance_data = instance_list[selected]
-
-    if confirm("Would you like to make a backup of the data for this instance? (y/n)"):
-        if instance_data["STORAGE_TYPE"] == "MongoDB":
-            print("Backing up the instance's data...")
-            await mongo_to_json(instance_data["DATA_PATH"], instance_data["STORAGE_DETAILS"])
-            backup_filename = "redv3-{}-{}.tar.gz".format(
-                selected, dt.utcnow().strftime("%Y-%m-%d %H-%M-%S")
-            )
-            pth = Path(instance_data["DATA_PATH"])
-            if pth.exists():
-                home = pth.home()
-                backup_file = home / backup_filename
-                os.chdir(str(pth.parent))
-                with tarfile.open(str(backup_file), "w:gz") as tar:
-                    tar.add(pth.stem)
-                print("A backup of {} has been made. It is at {}".format(
-                    selected, backup_file
-                ))
-                print("Removing the instance...")
-
-                m = Mongo("Core", **instance_data["STORAGE_DETAILS"])
-                db = m.db
-                collections = await db.collection_names(include_system_collections=False)
-                for name in collections:
-                    collection = await db.get_collection(name)
-                    await collection.drop()
-                safe_delete(pth)
-            save_config(selected, {}, remove=True)
-            print("The instance has been removed.")
-            return
-        else:
-            print("Backing up the instance's data...")
-            backup_filename = "redv3-{}-{}.tar.gz".format(
-                selected, dt.utcnow().strftime("%Y-%m-%d %H-%M-%S")
-            )
-            pth = Path(instance_data["DATA_PATH"])
-            if pth.exists():
-                home = pth.home()
-                backup_file = home / backup_filename
-                os.chdir(str(pth.parent))  # str is used here because 3.5 support
-                with tarfile.open(str(backup_file), "w:gz") as tar:
-                    tar.add(pth.stem)  # add all files in that directory
-                print(
-                    "A backup of {} has been made. It is at {}".format(
-                        selected, backup_file
-                    )
-                )
-                print("Removing the instance...")
-                safe_delete(pth)
-            save_config(selected, {}, remove=True)
-            print("The instance has been removed")
-            return
-    else:
-        remove_instance(selected, instance_data)
+   
+    await create_backup(selected, instance_data)
+    await remove_instance(selected, instance_data)
 
 
 def main():

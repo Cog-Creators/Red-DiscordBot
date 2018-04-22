@@ -8,8 +8,9 @@ import asyncio
 
 import pkg_resources
 from pathlib import Path
-from redbot.setup import basic_setup, load_existing_config, remove_instance, remove_instance_interaction, save_config
+from redbot.setup import basic_setup, load_existing_config, remove_instance, remove_instance_interaction, create_backup, save_config
 from redbot.core.utils import safe_delete
+from redbot.core.cli import confirm
 
 if sys.platform == "linux":
     import distro
@@ -236,24 +237,32 @@ def instance_menu():
 
 async def reset_red():
     instances = load_existing_config()
+    
+    if not instances:
+        print("No instance to delete.\n")
+        return
     print("WARNING: You are about to remove ALL Red instances on this computer.")
     print("If you want to reset data of only one instance, "
         "please select option 5 in the launcher.")
     await asyncio.sleep(2)
-    print("\n")
-    print("If you continue you will remove these instanes.\n")
+    print("\nIf you continue you will remove these instanes.\n")
     for instance in list(instances.keys()):
         print("    - {}".format(instance))
-        await asyncio.sleep(3)
-    print("\n\n")
-    print('If you want to reset all instances, type "I agree".')
-    response = input("> ").lower().strip()
+    await asyncio.sleep(3)
+    print('\nIf you want to reset all instances, type "I agree".')
+    response = input("> ").strip()
     if response != "I agree":
         print("Cancelling...")
         return
     
-    for index, instance in instances.items:
-        await remove_instance(index, instance)
+    if confirm("\nDo you want to create a backup for an instance? (y/n) "):
+        for index, instance in instances.items():
+            print("\nRemoving {}...".format(index))
+            await create_backup(index, instance)
+            await remove_instance(index, instance)
+    else:
+        for index, instance in instances.items():
+            await remove_instance(index, instance)
     print("All instances have been removed.")
     
 
@@ -281,7 +290,7 @@ def extras_selector():
     return selected
 
 
-def development_choice():
+def development_choice(reinstall = False):
     while True:
         print("\n")
         print("Do you want to install stable or development version?")
@@ -292,7 +301,7 @@ def development_choice():
         selected = extras_selector()
         if choice == "1":
             update_red(
-                dev=False, reinstall=False, voice=True if "voice" in selected else False,
+                dev=False, reinstall=reinstall, voice=True if "voice" in selected else False,
                 docs=True if "docs" in selected else False,
                 test=True if "test" in selected else False,
                 mongo=True if "mongo" in selected else False
@@ -300,7 +309,7 @@ def development_choice():
             break
         elif choice == "2":
             update_red(
-                dev=True, reinstall=True, voice=True if "voice" in selected else False,
+                dev=True, reinstall=reinstall, voice=True if "voice" in selected else False,
                 docs=True if "docs" in selected else False,
                 test=True if "test" in selected else False,
                 mongo=True if "mongo" in selected else False
@@ -377,20 +386,20 @@ def main_menu():
                 clear_screen()
                 print("==== Reinstall Red ====")
                 print("1. Reinstall Red requirements (discard code changes, keep data and 3rd party cogs)")
-                print("3. Reset all data")
-                print("4. Factory reset (discard code changes, reset all data)")
+                print("2. Reset all data")
+                print("3. Factory reset (discard code changes, reset all data)")
                 print("\n")
                 print("0. Back")
-                choice = development_choice()
+                choice = user_choice()
                 if choice == "1":
-                    development_choice()
+                    development_choice(reinstall=True)
                     wait()
                 elif choice == "2":
-                    loop.run_until_complete(reset_red)
+                    loop.run_until_complete(reset_red())
                     wait()
                 elif choice == "3":
-                    development_choice()
-                    loop.run_until_complete(reset_red)
+                    loop.run_until_complete(reset_red())
+                    development_choice(reinstall=True)
                     wait()
                 elif choice == "0":
                     break
