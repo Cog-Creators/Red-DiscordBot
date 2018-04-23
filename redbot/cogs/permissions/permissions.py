@@ -1,4 +1,5 @@
 import copy
+import contextlib
 
 import discord
 from discord.ext import commands
@@ -41,6 +42,7 @@ class Permissions:
         )
         self._before = []
         self._after = []
+        self._internal_cache = {}
 
     @staticmethod
     async def _send(ctx: RedContext, message: str) -> discord.Message:
@@ -70,6 +72,16 @@ class Permissions:
             checks.py
         """
 
+        voice_channel = None
+        with contextlib.suppress(Exception):
+            voice_channel = ctx.author.voice.voice_channel
+        entries = [
+            x for x in (ctx.author, voice_channel, ctx.channel) if x
+        ]
+        roles = sorted(ctx.author.roles, reverse=True) if ctx.guild else []
+        entries.extend([x.id for x in roles])
+        id_tuple = tuple(entries)
+
         # never lock out an owner or co-owner
         if await self.bot.is_owner(ctx.author):
             return True
@@ -77,12 +89,17 @@ class Permissions:
         #  TODO: API for adding these additional checks
         for check in self._before:
             override = await val_if_check_is_valid(check)
-            if override is not None:
-                return override
+            # before overrides should never return True
+            if override is False:
+                return False
+
+        if self._internal_cache.get(id_tuple, None) is not None:
+            return self._internal_cache[id_tuple]
 
         for model in self.resolution_order[level]:
             override_model = getattr(self, model + '_model', None)
             override = await override_model(ctx) if override_model else None
+            self._internal_cache[id_tuple] = override
             if override is not None:
                 return override
 
