@@ -96,11 +96,11 @@ async def next_page(ctx: RedContext, pages: list,
         except discord.NotFound:
             pass
     if page == len(pages) - 1:
-        next_page = 0  # Loop around to the first item
+        page = 0  # Loop around to the first item
     else:
-        next_page = page + 1
+        page = page + 1
     return await menu(ctx, pages, controls, message=message,
-                      page=next_page, timeout=timeout)
+                      page=page, timeout=timeout)
 
 
 async def prev_page(ctx: RedContext, pages: list,
