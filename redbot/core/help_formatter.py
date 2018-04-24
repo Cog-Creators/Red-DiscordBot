@@ -269,6 +269,13 @@ class Help(formatter.HelpFormatter):
             color=color)
         return embed
 
+    def cmd_has_no_subcommands(self, ctx, cmd, color=None):
+        embed = self.simple_embed(
+            ctx,
+            title=ctx.bot.command_has_no_subcommands.format(cmd),
+            color=color
+        )
+        return embed
 
 @commands.command()
 async def help(ctx, *cmds: str):
@@ -338,11 +345,8 @@ async def help(ctx, *cmds: str):
             except AttributeError:
                 if use_embeds:
                     await destination.send(
-                        embed=ctx.bot.formatter.simple_embed(
-                            ctx,
-                            title='Command "{0.name}" has no subcommands.'.format(command),
-                            color=ctx.bot.formatter.color,
-                            author=ctx.author.display_name))
+                        embed=ctx.bot.formatter.cmd_has_no_subcommands(ctx, command)
+                    )
                 else:
                     await destination.send(
                         ctx.bot.command_has_no_subcommands.format(command)
