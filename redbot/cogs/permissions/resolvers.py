@@ -121,14 +121,23 @@ def resolve_lists(*, ctx: RedContext, whitelist: list, blacklist: list,
     if debug:
         debug_list = []
     for entry in entries:
+        val = None
         if entry in whitelist:
             val = True
+            if not debug:
+                return val
         if entry in blacklist:
             val = False
+            if not debug:
+                return val
         if debug:
             debug_list.append((val, entry))
     else:
         if debug:
+            val = next(
+                filter(lambda x: x[0] is not None, debug_list),
+                None
+            )
             return val, debug_list
         else:
-            return val
+            return None

@@ -9,8 +9,10 @@ from redbot.core.bot import Red
 from redbot.core.utils import checks
 from redbot.core.i18n import CogI18n
 from redbot.core.config import Config
-from .resolvers import val_if_check_is_valid, resolve_models
+from redbot.core.utils.chat_formatting import pagify
 
+from .resolvers import val_if_check_is_valid, resolve_models
+from .ux import build_tables, send
 
 _ = CogI18n('Permissions', __file__)
 
@@ -28,8 +30,7 @@ class Permissions:
 
     _models = ['owner', 'guildowner', 'admin', 'mod']
     # Not sure if we will use admin or mod models in core red
-    # but they are explicitly supported, even if tools for adding them
-    # through the commands aren't (see the additional checks API)
+    # but they are explicitly supported
     resolution_order = {
         k: _models[:i] for i, k in enumerate(_models, 1)
     }
@@ -43,16 +44,6 @@ class Permissions:
         self._before = []
         self._after = []
         self._internal_cache = {}
-
-    @staticmethod
-    async def _send(ctx: RedContext, message: str) -> discord.Message:
-        """
-        get rid of this and use ctx.maybe_send_embed() if PR for that is merged
-        """
-        if await ctx.embed_requested():
-            await ctx.send(embed=discord.Embed(description=message))
-        else:
-            await ctx.send(message)
 
     async def check_overrides(self, ctx: RedContext, *, level: str) -> bool:
         """
@@ -178,7 +169,7 @@ class Permissions:
             "5. Rules about the guild a user is in (Owner level only)"
         )
 
-        await self._send(ctx, message)
+        await send(ctx, message)
 
     @permissions.command(name='canrun')
     async def _test_permission_model(
@@ -211,24 +202,113 @@ class Permissions:
                 'explorer using `{commandstring}`'
             ).format(commandstring='{0}permissions explore'.format(ctx.prefix))
 
-        await self._send(ctx, message)
+        await send(ctx, message)
+
+    def object_finder(
+            self, ctx: RedContext, info: str, *, _all: bool=False):
+        """
+        Attempt to uniquely identify an object the bot can see from a str
+        """
+
+        objects = []
+
+        if _all or ctx.guild is None:
+            _guilds = self.bot.guilds
+        else:
+            _guilds = [ctx.guild]
+        for guild in _guilds:
+            objects.extend(
+                guild.members
+                + guild.channels
+                + guild.roles
+            )
+
+        try:
+            _id = int(info)
+        except ValueError:
+            obj = None
+            _id = -1
+
+        # actual unique stuff first
+        obj = discord.utils.find(
+            lambda x: x.mention == info or x.id == _id,
+            objects
+        )
+
+        if obj:
+            return obj
+
+        # This should catch User#1234 format
+        temp = list(filter(lambda x: str(x) == info, objects))
+        if len(temp) == 1:
+            return temp[0]
+
+        temp = list(filter(lambda x: x.name == info, objects))
+        if len(temp) == 1:
+            return temp[0]
+
+        # last ditch effort on unique after case sensitivity removal
+        temp = list(filter(
+            lambda x: x.name.lower() == info.lower(), objects
+        ))
+        if len(temp) == 1:
+            return temp[0]
+        return None
 
     @permissions.command()
-    async def explore(self, ctx: RedContext):
+    async def explore(self, ctx: RedContext, command: str, *things: str):
         """
-        Interactive permission explorer
+        Permission explorer
+
+        If your command includes spaces, enclose it in quotations
+
+        Things can be a list of mentions or ids to check
         """
 
-        msg = await self._send(
-            _("Which of the following would you like to check rules for? "
-              "(Respond with a single message containing the "
-              "corresponding number(s))\n"
-              "\n1. User"
-              "\n2. Command"
-              "\n3. Channel"
-              "\n4. Voice Channel"
-              "\n6.Role"
-              "\n5. Guild"
-              )
-        )
-        # TODO: Finish this after reviewing the debug stuff added to .resolvers
+        com = self.bot.get_command(command)
+        if com is None:
+            return await send(
+                ctx, _('No such command')
+            )
+
+        m = copy(ctx.message)
+        m.content = com
+        fctx = await self.bot.get_context(m, cls=RedContext)
+
+        _objs = [
+            self.object_finder(v) for v in things
+        ]
+        try:
+            ids = [o.id for o in _objs]
+        except AttributeError:
+            return await send(
+                ctx,
+                _("I could not find one or more of those, "
+                  "please try again with ids")
+            )
+
+        async with self.config.owner_models() as models:
+            o_val, o_info = resolve_models(
+                ctx=fctx, models=models, debug=True, debug_ids=ids
+            )
+
+        if ctx.guild:
+            async with self.config.guild(ctx.guild).owner_models() as models:
+                g_val, g_res = resolve_models(
+                    ctx=fctx, models=models, debug=True, debug_ids=ids
+                )
+        else:
+            g_val, g_info = None, []
+
+        allowance = o_val if o_val is not None else g_val
+        if allowance is None:
+            return await send(
+                send,
+                _("This command's allowed usage is not modified "
+                  "for any of these ids by the core permission cog")
+            )
+
+        msg = build_tables(_objs, o_info, guild=g_info)
+
+        for page in pagify(msg):
+            await send(ctx, msg)
