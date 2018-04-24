@@ -353,7 +353,7 @@ class Reports:
             "will be forwarded to them until the communication is closed.\n"
             "You can close a communication at any point "
             "by reacting with the X to the last message recieved. "
-            "\nAny message succesfully forwarded with be marked with a check."
+            "\nAny message succesfully forwarded will be marked with a check."
             "\nTunnels are not persistent across bot restarts."
         )
         topic = big_topic.format(
