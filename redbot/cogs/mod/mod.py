@@ -1013,7 +1013,7 @@ class Mod:
         if channel.id in perms_cache:
             old_values = perms_cache[channel.id]
         else:
-            old_values = None
+            old_values = {"send_messages": None, "add_reactions": None}
         overwrites.send_messages = old_values["send_messages"]
         overwrites.add_reactions = old_values["add_reactions"]
         is_empty = self.are_overwrites_empty(overwrites)
