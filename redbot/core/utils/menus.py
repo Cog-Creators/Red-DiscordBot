@@ -70,7 +70,7 @@ async def menu(ctx: RedContext, pages: list,
             await message.edit(content=current_page)
 
     def react_check(r, u):
-        return u == ctx.author and r.message == message and \
+        return u == ctx.author and r.message.id == message.id and \
                str(r.emoji) in controls.keys()
 
     try:
