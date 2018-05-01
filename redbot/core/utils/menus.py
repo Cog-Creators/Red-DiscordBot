@@ -1,4 +1,9 @@
-from typing import Union, List
+"""
+Original source of reaction-based menu idea from
+https://github.com/Lunar-Dust/Dusty-Cogs/blob/master/menu/menu.py
+
+Ported to Red V3 by Palm__ (https://github.com/palmtree5)
+"""
 import asyncio
 import discord
 
