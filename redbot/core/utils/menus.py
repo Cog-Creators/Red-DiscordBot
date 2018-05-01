@@ -65,7 +65,8 @@ async def menu(ctx: RedContext, pages: list,
             await message.edit(content=current_page)
 
     def react_check(r, u):
-        return u == ctx.author and str(r.emoji) in controls.keys()
+        return u == ctx.author and r.message == message and \
+               str(r.emoji) in controls.keys()
 
     try:
         react, user = await ctx.bot.wait_for(
