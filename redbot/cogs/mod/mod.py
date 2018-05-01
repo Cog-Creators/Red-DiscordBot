@@ -256,7 +256,8 @@ class Mod:
     @commands.guild_only()
     async def deletedelay(self, ctx: RedContext, time: int=None):
         """Sets the delay until the bot removes the command message.
-            Must be between -1 and 60.
+
+        Must be between -1 and 60.
 
         A delay of -1 means the bot will not remove the message."""
         guild = ctx.guild
@@ -281,10 +282,10 @@ class Mod:
     @modset.command()
     @commands.guild_only()
     async def reinvite(self, ctx: RedContext):
-        """Toggles whether an invite will be sent when a user
-        is unbanned via [p]unban. If this is True, the bot will
-        attempt to create and send a single-use invite to the
-        newly-unbanned user"""
+        """Toggles whether an invite will be sent when a user is unbanned via [p]unban.
+
+        If this is True, the bot will attempt to create and send a single-use invite
+        to the newly-unbanned user"""
         guild = ctx.guild
         cur_setting = await self.settings.guild(guild).reinvite_on_unban()
         if not cur_setting:
@@ -299,8 +300,8 @@ class Mod:
     @checks.admin_or_permissions(kick_members=True)
     async def kick(self, ctx: RedContext, user: discord.Member, *, reason: str = None):
         """Kicks user.
-        If a reason is specified, it
-        will be the reason that shows up
+
+        If a reason is specified, it will be the reason that shows up
         in the audit log"""
         author = ctx.author
         guild = ctx.guild
@@ -1013,7 +1014,7 @@ class Mod:
         if channel.id in perms_cache:
             old_values = perms_cache[channel.id]
         else:
-            old_values = {"send_messages": None, "add_reactions": None}
+            old_values = None
         overwrites.send_messages = old_values["send_messages"]
         overwrites.add_reactions = old_values["add_reactions"]
         is_empty = self.are_overwrites_empty(overwrites)
