@@ -129,7 +129,7 @@ async def close_menu(ctx: RedContext, pages: list,
 
 
 DEFAULT_CONTROLS = {
-    "➡": next_page,
     "⬅": prev_page,
     "❌": close_menu,
+    "➡": next_page
 }
