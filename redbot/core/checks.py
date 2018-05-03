@@ -22,14 +22,16 @@ async def check_permissions(ctx, perms):
         return False
     resolved = ctx.channel.permissions_for(ctx.author)
 
-    return all(getattr(resolved, name, None) == value for name, value in perms.items())
+    return all(
+        getattr(resolved, name, None) == value
+        for name, value in perms.items()
+    )
 
 
-def mod_or_permissions(**perms):
-    async def predicate(ctx):
-        has_perms_or_is_owner = await check_permissions(ctx, perms)
-        if ctx.guild is None:
-            return has_perms_or_is_owner
+async def is_mod_or_superior(ctx):
+    if ctx.guild is None:
+        return await ctx.bot.is_owner(ctx.author)
+    else:
         author = ctx.author
         settings = ctx.bot.db.guild(ctx.guild)
         mod_role_id = await settings.mod_role()
@@ -38,14 +40,37 @@ def mod_or_permissions(**perms):
         mod_role = discord.utils.get(ctx.guild.roles, id=mod_role_id)
         admin_role = discord.utils.get(ctx.guild.roles, id=admin_role_id)
 
-        is_staff = mod_role in author.roles or admin_role in author.roles
-        is_guild_owner = author == ctx.guild.owner
+        return (
+            await ctx.bot.is_owner(ctx.author)
+            or mod_role in author.roles
+            or admin_role in author.roles
+            or author == ctx.guild.owner
+        )
 
-        override = await check_overrides(ctx, level='mod')
+
+async def is_admin_or_superior(ctx):
+    if ctx.guild is None:
+        return await ctx.bot.is_owner(ctx.author)
+    else:
+        author = ctx.author
+        settings = ctx.bot.db.guild(ctx.guild)
+        admin_role_id = await settings.admin_role()
+        admin_role = discord.utils.get(ctx.guild.roles, id=admin_role_id)
 
         return (
+            await ctx.bot.is_owner(ctx.author)
+            or admin_role in author.roles
+            or author == ctx.guild.owner
+        )
+
+
+def mod_or_permissions(**perms):
+    async def predicate(ctx):
+        override = await check_overrides(ctx, level='mod')
+        return (
             override if override is not None
-            else is_staff or has_perms_or_is_owner or is_guild_owner
+            else await check_permissions(ctx, perms)
+            or await is_mod_or_superior(ctx)
         )
 
     return commands.check(predicate)
@@ -53,22 +78,11 @@ def mod_or_permissions(**perms):
 
 def admin_or_permissions(**perms):
     async def predicate(ctx):
-        has_perms_or_is_owner = await check_permissions(ctx, perms)
-        if ctx.guild is None:
-            return has_perms_or_is_owner
-        author = ctx.author
-        is_guild_owner = author == ctx.guild.owner
-        admin_role_id = await ctx.bot.db.guild(ctx.guild).admin_role()
-        admin_role = discord.utils.get(ctx.guild.roles, id=admin_role_id)
-
         override = await check_overrides(ctx, level='admin')
-
         return (
             override if override is not None
-            else
-            admin_role in author.roles
-            or has_perms_or_is_owner
-            or is_guild_owner
+            else await check_permissions(ctx, perms)
+            or await is_admin_or_superior(ctx)
         )
 
     return commands.check(predicate)
