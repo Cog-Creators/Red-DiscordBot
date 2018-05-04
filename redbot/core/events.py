@@ -110,7 +110,7 @@ def init_events(bot, cli_flags):
         INFO.append('{} cogs with {} commands'.format(len(bot.cogs), len(bot.commands)))
 
         async with aiohttp.ClientSession() as session:
-            async with session.get("http://pypi.python.org/pypi/red-discordbot/json") as r:
+            async with session.get("https://pypi.python.org/pypi/red-discordbot/json") as r:
                 data = await r.json()
         if StrictVersion(data["info"]["version"]) > StrictVersion(red_version):
             INFO.append(
