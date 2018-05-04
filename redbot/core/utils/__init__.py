@@ -22,4 +22,6 @@ def safe_delete(pth: Path):
             os.chmod(root, 0o755)
             for d in dirs:
                 os.chmod(os.path.join(root, d), 0o755)
+            for f in files:
+                os.chmod(os.path.join(root, f), 0o755)
         shutil.rmtree(str(pth), ignore_errors=True)

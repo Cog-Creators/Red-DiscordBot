@@ -345,8 +345,10 @@ async def help(ctx, *cmds: str):
             except AttributeError:
                 if use_embeds:
                     await destination.send(
-                        embed=ctx.bot.formatter.cmd_has_no_subcommands(ctx, command)
-                    )
+                        embed=ctx.bot.formatter.simple_embed(
+                            ctx,
+                            title='Command "{0.name}" has no subcommands.'.format(command),
+                            color=ctx.bot.formatter.color))
                 else:
                     await destination.send(
                         ctx.bot.command_has_no_subcommands.format(command)
