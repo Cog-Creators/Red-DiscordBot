@@ -269,6 +269,13 @@ class Help(formatter.HelpFormatter):
             color=color)
         return embed
 
+    def cmd_has_no_subcommands(self, ctx, cmd, color=None):
+        embed = self.simple_embed(
+            ctx,
+            title=ctx.bot.command_has_no_subcommands.format(cmd),
+            color=color
+        )
+        return embed
 
 @commands.command()
 async def help(ctx, *cmds: str):
