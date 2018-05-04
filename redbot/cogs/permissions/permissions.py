@@ -1,6 +1,8 @@
 import copy
 import contextlib
+import io
 
+import yaml
 import discord
 from discord.ext import commands
 
@@ -12,7 +14,6 @@ from redbot.core.config import Config
 from redbot.core.utils.chat_formatting import pagify
 
 from .resolvers import val_if_check_is_valid, resolve_models
-from .ux import build_tables, send
 
 _ = CogI18n('Permissions', __file__)
 
@@ -44,6 +45,21 @@ class Permissions:
         self._before = []
         self._after = []
         self._internal_cache = {}
+
+    async def __global_check(self, ctx):
+        """
+        Yes, this is needed on top of hooking into checks.py
+        to ensure that unchecked commands can still be managed by permissions
+        This should return True in the case of no overrides
+        defering to check logic
+        This works since all checks must be True to run
+        It's also part of why the caching layer is needed
+        """
+        v = await self.check_overrides(ctx, level='mod')
+
+        if v is False:
+            return False
+        return True
 
     async def check_overrides(self, ctx: RedContext, *, level: str) -> bool:
         """
@@ -167,9 +183,10 @@ class Permissions:
             "4. Rules about a role the user has "
             "(The highest role they have with a rule will be used)\n"
             "5. Rules about the guild a user is in (Owner level only)"
+            "\n\nFor more details, please read the official documentation."
         )
 
-        await send(ctx, message)
+        await ctx.maybe_send_embed(message)
 
     @permissions.command(name='canrun')
     async def _test_permission_model(
@@ -202,7 +219,7 @@ class Permissions:
                 'explorer using `{commandstring}`'
             ).format(commandstring='{0}permissions explore'.format(ctx.prefix))
 
-        await send(ctx, message)
+        await ctx.maybe_send_embed(message)
 
     def object_finder(
             self, ctx: RedContext, info: str, *, _all: bool=False):
@@ -255,60 +272,29 @@ class Permissions:
             return temp[0]
         return None
 
-    @permissions.command()
-    async def explore(self, ctx: RedContext, command: str, *things: str):
+    @checks.is_owner()
+    @permissions.command(name='setacl')
+    async def owner_set_acl(self, ctx: RedContext):
         """
-        Permission explorer
-
-        If your command includes spaces, enclose it in quotations
-
-        Things can be a list of mentions or ids to check
+        Take a YAML file upload to set permissions from
         """
+        if not ctx.message.attachments:
+            return await ctx.maybe_send_embed(_("You must upload a file"))
 
-        com = self.bot.get_command(command)
-        if com is None:
-            return await send(
-                ctx, _('No such command')
-            )
+        _fp = io.BytesIO()
+        await ctx.message.attachments[0].save(_fp)
 
-        m = copy(ctx.message)
-        m.content = com
-        fctx = await self.bot.get_context(m, cls=RedContext)
-
-        _objs = [
-            self.object_finder(v) for v in things
-        ]
         try:
-            ids = [o.id for o in _objs]
-        except AttributeError:
-            return await send(
-                ctx,
-                _("I could not find one or more of those, "
-                  "please try again with ids")
-            )
-
-        async with self.config.owner_models() as models:
-            o_val, o_info = resolve_models(
-                ctx=fctx, models=models, debug=True, debug_ids=ids
-            )
-
-        if ctx.guild:
-            async with self.config.guild(ctx.guild).owner_models() as models:
-                g_val, g_res = resolve_models(
-                    ctx=fctx, models=models, debug=True, debug_ids=ids
-                )
+            acl = yaml.safe_load(_fp)
+        except yaml.YAMLError:
+            return await ctx.maybe_send_embed(_("Inalid syntax"))
         else:
-            g_val, g_info = None, []
+            await self.set_owner_acl(acl)
 
-        allowance = o_val if o_val is not None else g_val
-        if allowance is None:
-            return await send(
-                send,
-                _("This command's allowed usage is not modified "
-                  "for any of these ids by the core permission cog")
-            )
-
-        msg = build_tables(_objs, o_info, guild=g_info)
-
-        for page in pagify(msg):
-            await send(ctx, msg)
+    @checks.is_owner()
+    @permissions.command(name='getacl')
+    async def owner_get_acl(self, ctx: RedContext):
+        """
+        Dumps a YAML file with the current owner level permissions
+        """
+        pass
