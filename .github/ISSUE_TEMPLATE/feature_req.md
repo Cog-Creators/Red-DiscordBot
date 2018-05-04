@@ -1,3 +1,9 @@
+---
+name: Feature request
+about: For feature requests regarding Red it self.
+
+---
+
 # Feature request
 
 <!-- This template is for feature requests. Please fill out the following: -->

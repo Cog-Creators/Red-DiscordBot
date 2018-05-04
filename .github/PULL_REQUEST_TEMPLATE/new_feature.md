@@ -1,6 +1,7 @@
 # New feature addition
 
 <!--
+THIS TEMPLATE IS CURRENTLY UNUSED DUE TO GITHUB LIMITATIONS!
 To be used for PRs which add a new feature
 Examples of this include new APIs, new core cogs, etc.
 -->
