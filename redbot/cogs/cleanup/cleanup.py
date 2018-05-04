@@ -124,26 +124,34 @@ class Cleanup:
     @cleanup.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def user(self, ctx: RedContext, user: discord.Member or int, number: int):
+    async def user(self, ctx: RedContext, user: str, number: int):
         """Deletes last X messages from specified user.
 
         Examples:
         cleanup user @\u200bTwentysix 2
         cleanup user Red 6"""
 
+        try:
+            member = await commands.converter.MemberConverter().convert(ctx, user)
+        except commands.BadArgument:
+            try:
+                _id = int(user)
+            except ValueError:
+                raise commands.BadArgument()
+        else:
+            _id = member.id
+
         channel = ctx.channel
         author = ctx.author
         is_bot = self.bot.user.bot
-       
+
         if number > 100:
             cont = await self.check_100_plus(ctx, number)
             if not cont:
                 return
 
         def check(m):
-            if isinstance(user, discord.Member) and m.author == user:
-                return True
-            elif m.author.id == user:  # Allow finding messages based on an ID
+            if m.author.id == _id:
                 return True
             elif m == ctx.message:
                 return True
@@ -156,7 +164,7 @@ class Cleanup:
         reason = "{}({}) deleted {} messages "\
                  " made by {}({}) in channel {}."\
                  "".format(author.name, author.id, len(to_delete),
-                           user.name, user.id, channel.name)
+                           member or '???', _id, channel.name)
         log.info(reason)
 
         if is_bot:
