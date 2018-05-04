@@ -4,14 +4,18 @@ from discord.ext import commands
 
 async def check_overrides(ctx, *, level):
     perm_cog = ctx.bot.get_cog('Permissions')
-    if not perm_cog:
+    if not perm_cog or ctx.cog == perm_cog:
         return None
     return await perm_cog.check_overrides(ctx, level)
 
 
 def is_owner(**kwargs):
     async def check(ctx):
-        return await ctx.bot.is_owner(ctx.author, **kwargs)
+        override = await check_overrides(ctx, level='owner')
+        return (
+            override if override is not None
+            else await ctx.bot.is_owner(ctx.author, **kwargs)
+        )
     return commands.check(check)
 
 
