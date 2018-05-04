@@ -878,7 +878,7 @@ class Core:
         if data_dir.exists():
             home = data_dir.home()
             backup_file = home / backup_filename
-            os.chdir(data_dir.parent)
+            os.chdir(str(data_dir.parent))
             with tarfile.open(str(backup_file), "w:gz") as tar:
                 tar.add(data_dir.stem)
             await ctx.send(_("A backup has been made of this instance. It is at {}.").format(
