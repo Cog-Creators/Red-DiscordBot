@@ -90,6 +90,6 @@ have successfully created a cog!
 Additional resources
 --------------------
 
-Be sure to check out the `migration guide </guide_migration>`_ for some resources
+Be sure to check out the :doc:`/guide_migration` for some resources
 on developing cogs for V3. This will also cover differences between V2 and V3 for
 those who developed cogs for V2.
