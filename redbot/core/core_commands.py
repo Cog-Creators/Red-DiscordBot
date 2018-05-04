@@ -72,7 +72,7 @@ class Core:
         owner = app_info.owner
 
         async with aiohttp.ClientSession() as session:
-            async with session.get("http://pypi.python.org/pypi/red-discordbot/json") as r:
+            async with session.get('{}/json'.format(red_pypi)) as r:
                 data = await r.json()
         outdated = StrictVersion(data["info"]["version"]) > StrictVersion(__version__)
         about = (
