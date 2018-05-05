@@ -11,17 +11,10 @@ from redbot.core.bot import Red
 from redbot.core.utils import checks
 from redbot.core.i18n import CogI18n
 from redbot.core.config import Config
-from redbot.core.utils.chat_formatting import pagify
 
 from .resolvers import val_if_check_is_valid, resolve_models
 
 _ = CogI18n('Permissions', __file__)
-
-# TODO: Block of stuff:
-# 1. Commands for configuring this
-# 2. Commands for displaying permissions (allowed / disallowed/ default)
-# 3. Verification of all permission logic (This going wrong is bad)
-# 4. API for additional checks
 
 
 class Permissions:
@@ -220,57 +213,6 @@ class Permissions:
             ).format(commandstring='{0}permissions explore'.format(ctx.prefix))
 
         await ctx.maybe_send_embed(message)
-
-    def object_finder(
-            self, ctx: RedContext, info: str, *, _all: bool=False):
-        """
-        Attempt to uniquely identify an object the bot can see from a str
-        """
-
-        objects = []
-
-        if _all or ctx.guild is None:
-            _guilds = self.bot.guilds
-        else:
-            _guilds = [ctx.guild]
-        for guild in _guilds:
-            objects.extend(
-                guild.members
-                + guild.channels
-                + guild.roles
-            )
-
-        try:
-            _id = int(info)
-        except ValueError:
-            obj = None
-            _id = -1
-
-        # actual unique stuff first
-        obj = discord.utils.find(
-            lambda x: x.mention == info or x.id == _id,
-            objects
-        )
-
-        if obj:
-            return obj
-
-        # This should catch User#1234 format
-        temp = list(filter(lambda x: str(x) == info, objects))
-        if len(temp) == 1:
-            return temp[0]
-
-        temp = list(filter(lambda x: x.name == info, objects))
-        if len(temp) == 1:
-            return temp[0]
-
-        # last ditch effort on unique after case sensitivity removal
-        temp = list(filter(
-            lambda x: x.name.lower() == info.lower(), objects
-        ))
-        if len(temp) == 1:
-            return temp[0]
-        return None
 
     @checks.is_owner()
     @permissions.command(name='setacl')

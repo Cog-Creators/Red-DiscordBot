@@ -2,6 +2,9 @@ import types
 import contextlib
 import asyncio
 from redbot.core import RedContext
+import logging
+
+log = logging.getLogger('redbot.cogs.permissions.resolvers')
 
 
 async def val_if_check_is_valid(
@@ -22,16 +25,17 @@ async def val_if_check_is_valid(
         ) is None:
             return None
 
-    # support both sync and async funcs, because why not
-    # also, supress errors because we can't check know what
-    # third party checks might raise if improperly made
-    with contextlib.suppress(Exception):
-        val = None
+    val = None
+    # let's not spam the console with improperly made 3rd party checks
+    try:
         if asyncio.iscoroutine(check) \
                 or asyncio.iscoroutinefunction(check):
             val = await check(ctx, level=level)
         else:
             val = check(ctx, level=level)
+    except Exception as e:
+        # but still provide a way to view it (run with debug flag)
+        log.debug(str(e))
 
     return val
 
@@ -75,8 +79,8 @@ def resolve_models(*, ctx: RedContext, models: dict,
             return _resolved
 
     if cog_name in models['cogs']:
-        blacklist = models['cogs'][cmd_name].get('blacklist', [])
-        whitelist = models['cogs'][cmd_name].get('whitelist', [])
+        blacklist = models['cogs'][cog_name].get('blacklist', [])
+        whitelist = models['cogs'][cog_name].get('whitelist', [])
         _resolved = resolve_lists(
             ctx=ctx, whitelist=whitelist, blacklist=blacklist,
             debug_ids=debug_ids
@@ -88,10 +92,16 @@ def resolve_models(*, ctx: RedContext, models: dict,
         elif _resolved is not None:
             return _resolved
 
+    if resolved is None:
+        resolved = (
+            models['cmds'][cmd_name].get('default', None)
+            or models['cogs'][cog_name].get('default', None)
+        )
+
     if debug:
         return resolved, debug_list
     else:
-        return None
+        return resolved
 
 
 def resolve_lists(*, ctx: RedContext, whitelist: list, blacklist: list,
