@@ -36,7 +36,6 @@ class Permissions:
         )
         self._before = []
         self._after = []
-        self._internal_cache = {}
         self.config.register_global(owner_models={})
         self.config.register_guild(owner_models={})
 
@@ -81,11 +80,6 @@ class Permissions:
         ]
         roles = sorted(ctx.author.roles, reverse=True) if ctx.guild else []
         entries.extend([x.id for x in roles])
-        id_tuple = tuple(entries)
-
-        # never lock out an owner or co-owner
-        if await self.bot.is_owner(ctx.author):
-            return True
 
         #  TODO: API for adding these additional checks
         for check in self._before:
@@ -94,13 +88,9 @@ class Permissions:
             if override is False:
                 return False
 
-        if self._internal_cache.get(id_tuple, None) is not None:
-            return self._internal_cache[id_tuple]
-
         for model in self.resolution_order[level]:
             override_model = getattr(self, model + '_model', None)
             override = await override_model(ctx) if override_model else None
-            self._internal_cache[id_tuple] = override
             if override is not None:
                 return override
 
@@ -194,22 +184,23 @@ class Permissions:
 
         message = copy(ctx.message)
         message.author = user
+        message.content = "{}{}".format(ctx.prefix, command)
 
         com = self.bot.get_command(command)
         if com is None:
-            message = _('No such command')
+            out = _('No such command')
         else:
             testcontext = await self.bot.get_context(message, cls=RedContext)
-
-            if await com.can_run(testcontext):
-                message = _('That user can run the specified command.')
+            try:
+                await com.can_run(testcontext)
+            except commands.CheckFailure:
+                out = _('That user can not run the specified command.')
             else:
-                message = _('That user can not run the specified command.')
-
-        await ctx.maybe_send_embed(message)
+                out = _('That user can run the specified command.')
+        await ctx.maybe_send_embed(out)
 
     @checks.is_owner()
-    @permissions.command(name='setacl')
+    @permissions.command(name='setglobalacl')
     async def owner_set_acl(self, ctx: RedContext):
         """
         Take a YAML file upload to set permissions from
@@ -227,9 +218,40 @@ class Permissions:
             await ctx.tick()
 
     @checks.is_owner()
-    @permissions.command(name='getacl')
+    @permissions.command(name='getglobalacl')
     async def owner_get_acl(self, ctx: RedContext):
         """
         Dumps a YAML file with the current owner level permissions
         """
         await yamlget_acl(ctx, config=self.config.owner_models)
+
+    @commands.guild_only()
+    @checks.guildowner_or_permissions(administrator=True)
+    @permissions.command(name='setguildacl')
+    async def guild_set_acl(self, ctx: RedContext):
+        """
+        Take a YAML file upload to set permissions from
+        """
+        if not ctx.message.attachments:
+            return await ctx.maybe_send_embed(_("You must upload a file"))
+
+        try:
+            await yamlset_acl(
+                ctx, config=self.config.guild(ctx.guild).owner_models,
+                update=False
+            )
+        except Exception as e:
+            print(e)
+            return await ctx.maybe_send_embed(_("Inalid syntax"))
+        else:
+            await ctx.tick()
+
+    @commands.guild_only()
+    @checks.guildowner_or_permissions(administrator=True)
+    @permissions.command(name='getglobalacl')
+    async def guild_get_acl(self, ctx: RedContext):
+        """
+        Dumps a YAML file with the current owner level permissions
+        """
+        await yamlget_acl(
+            ctx, config=self.config.guild(ctx.guild).owner_models)
