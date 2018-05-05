@@ -40,7 +40,8 @@ class Cleanup:
     @staticmethod
     async def get_messages_for_deletion(
             ctx: RedContext, channel: discord.TextChannel, number,
-            check=lambda x: True, limit=100, before=None, after=None
+            check=lambda x: True, limit=100, before=None, after=None,
+            delete_pinned=False
     ) -> list:
         """
         Gets a list of messages meeting the requirements to be deleted.
@@ -50,6 +51,7 @@ class Cleanup:
         - The message passes a provided check (if no check is provided,
           this is automatically true)
         - The message is less than 14 days old
+        - The message is not pinned
         """
         to_delete = []
         too_old = False
@@ -59,8 +61,12 @@ class Cleanup:
             async for message in channel.history(limit=limit,
                                                  before=before,
                                                  after=after):
-                if (not number or len(to_delete) - 1 < number) and check(message) \
-                        and (ctx.message.created_at - message.created_at).days < 14:
+                if (
+                    (not number or len(to_delete) - 1 < number)
+                    and check(message)
+                    and (ctx.message.created_at - message.created_at).days < 14
+                    and (delete_pinned or not message.pinned)
+                ):
                     to_delete.append(message)
                 elif (ctx.message.created_at - message.created_at).days >= 14:
                     too_old = True
@@ -99,7 +105,7 @@ class Cleanup:
             cont = await self.check_100_plus(ctx, number)
             if not cont:
                 return
-    
+
         def check(m):
             if text in m.content:
                 return True
