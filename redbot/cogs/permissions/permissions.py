@@ -71,7 +71,8 @@ class Permissions:
             a trinary value using None + bool to resolve permissions for
             checks.py
         """
-
+        if await ctx.bot.is_owner(ctx.author):
+            return True
         voice_channel = None
         with contextlib.suppress(Exception):
             voice_channel = ctx.author.voice.voice_channel
