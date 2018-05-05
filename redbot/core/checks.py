@@ -5,7 +5,6 @@ from discord.ext import commands
 async def check_overrides(ctx, *, level):
     if await ctx.bot.is_owner(ctx.author):
         return True
-    print('entering check_overrides')
     perm_cog = ctx.bot.get_cog('Permissions')
     if not perm_cog or ctx.cog == perm_cog:
         return None
@@ -13,7 +12,6 @@ async def check_overrides(ctx, *, level):
     # permissions that doesn't implement this
     func = getattr(perm_cog, 'check_overrides', None)
     val = None if func is None else await func(ctx, level)
-    print(val)
     return val
 
 
