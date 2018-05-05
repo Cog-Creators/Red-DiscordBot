@@ -1,8 +1,6 @@
 import copy
 import contextlib
-import io
 
-import yaml
 import discord
 from discord.ext import commands
 
@@ -13,6 +11,7 @@ from redbot.core.i18n import CogI18n
 from redbot.core.config import Config
 
 from .resolvers import val_if_check_is_valid, resolve_models
+from .yaml_handler import yamlset_acl, yamlget_acl
 
 _ = CogI18n('Permissions', __file__)
 
@@ -38,6 +37,8 @@ class Permissions:
         self._before = []
         self._after = []
         self._internal_cache = {}
+        self.register_global(owner_models={})
+        self.register_guild(guildowner_model={})
 
     async def __global_check(self, ctx):
         """
@@ -223,15 +224,13 @@ class Permissions:
         if not ctx.message.attachments:
             return await ctx.maybe_send_embed(_("You must upload a file"))
 
-        _fp = io.BytesIO()
-        await ctx.message.attachments[0].save(_fp)
-
         try:
-            acl = yaml.safe_load(_fp)
-        except yaml.YAMLError:
+            await yamlset_acl(
+                ctx, config=self.config.owner_models, update=False)
+        except Exception:
             return await ctx.maybe_send_embed(_("Inalid syntax"))
         else:
-            await self.set_owner_acl(acl)
+            await ctx.tick()
 
     @checks.is_owner()
     @permissions.command(name='getacl')
@@ -239,4 +238,4 @@ class Permissions:
         """
         Dumps a YAML file with the current owner level permissions
         """
-        pass
+        await yamlget_acl(ctx, config=self.config.owner_model)
