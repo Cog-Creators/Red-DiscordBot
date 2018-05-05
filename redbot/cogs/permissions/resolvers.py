@@ -50,7 +50,7 @@ def resolve_models(*, ctx: RedContext, models: dict,
     if debug:
         debug_list = []
 
-    if cmd_name in models['commands']:
+    if cmd_name in models.get('commands', {}):
         blacklist = models['commands'][cmd_name].get('deny', [])
         whitelist = models['commands'][cmd_name].get('allow', [])
         _resolved = resolve_lists(
@@ -64,7 +64,7 @@ def resolve_models(*, ctx: RedContext, models: dict,
         elif _resolved is not None:
             return _resolved
 
-    if cog_name in models['cogs']:
+    if cog_name in models.get('cogs', {}):
         blacklist = models['cogs'][cog_name].get('deny', [])
         whitelist = models['cogs'][cog_name].get('allow', [])
         _resolved = resolve_lists(
@@ -79,10 +79,11 @@ def resolve_models(*, ctx: RedContext, models: dict,
             return _resolved
 
     if resolved is None:
-        resolved = (
-            models['commands'][cmd_name].get('default', None)
-            or models['cogs'][cog_name].get('default', None)
-        )
+        with contextlib.suppress(KeyError):
+            resolved = models['commands'][cmd_name]['default']
+    if resolved is None:
+        with contextlib.suppress(KeyError):
+            resolved = models['cogs'][cog_name]['default']
 
     if debug:
         return resolved, debug_list

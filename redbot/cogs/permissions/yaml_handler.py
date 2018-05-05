@@ -22,23 +22,20 @@ async def yamlset_acl(ctx, *, config, update):
         del _fp
         raise
 
-    to_set = {}
-    to_set['cmds'] = data.get('commands', {})
-    to_set['cogs'] = data.get('cogs', {})
-
-    for outer, inner in to_set.items():
-        for k, v in inner.items():
-            if k == 'default':
-                to_set[outer][inner][k] = {
-                    'allow': True,
-                    'deny': False
-                }.get(v.lower(), None)
+    for outer, inner in data.items():
+        for ok, iv in inner.items():
+            for k, v in iv.items():
+                if k == 'default':
+                    data[outer][ok][k] = {
+                        'allow': True,
+                        'deny': False
+                    }.get(v.lower(), None)
 
     if update:
         async with config() as cfg:
-            cfg.update(to_set)
+            cfg.update(data)
     else:
-        await config.set(to_set)
+        await config.set(data)
 
 
 async def yamlget_acl(ctx, *, config):
@@ -46,24 +43,24 @@ async def yamlget_acl(ctx, *, config):
     removals = []
 
     for outer, inner in data.items():
-        for k, v in inner.items():
-            if k != 'default':
-                continue
-            if v is True:
-                data[outer][inner][k] = 'allow'
-            elif v is False:
-                data[outer][inner][k] = 'deny'
-            else:
-                removals.append((outer, inner, k))
+        for ok, iv in inner.items():
+            for k, v in iv.items():
+                if k != 'default':
+                    continue
+                if v is True:
+                    data[outer][ok][k] = 'allow'
+                elif v is False:
+                    data[outer][ok][k] = 'deny'
+                else:
+                    removals.append((outer, ok, k, v))
 
     for tup in removals:
         o, i, k = tup
         data[o][i].pop(k, None)
 
-    _fp = io.BytesIO()
-
-    yaml.dump(data, stream=_fp, default_flow_style=False)
+    _fp = io.BytesIO(yaml.dump(data, default_flow_style=False).encode())
     _fp.seek(0)
     await ctx.send(
         file=discord.File(_fp, filename='acl.yaml')
     )
+    _fp.close()

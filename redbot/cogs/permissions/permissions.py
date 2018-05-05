@@ -1,4 +1,4 @@
-import copy
+from copy import copy
 import contextlib
 
 import discord
@@ -6,7 +6,7 @@ from discord.ext import commands
 
 from redbot.core import RedContext
 from redbot.core.bot import Red
-from redbot.core.utils import checks
+from redbot.core import checks
 from redbot.core.i18n import CogI18n
 from redbot.core.config import Config
 
@@ -14,6 +14,7 @@ from .resolvers import val_if_check_is_valid, resolve_models
 from .yaml_handler import yamlset_acl, yamlget_acl
 
 _ = CogI18n('Permissions', __file__)
+_models = ['owner', 'guildowner', 'admin', 'mod']
 
 
 class Permissions:
@@ -21,7 +22,6 @@ class Permissions:
     A high level permission model
     """
 
-    _models = ['owner', 'guildowner', 'admin', 'mod']
     # Not sure if we will use admin or mod models in core red
     # but they are explicitly supported
     resolution_order = {
@@ -37,8 +37,8 @@ class Permissions:
         self._before = []
         self._after = []
         self._internal_cache = {}
-        self.register_global(owner_models={})
-        self.register_guild(guildowner_model={})
+        self.config.register_global(owner_models={})
+        self.config.register_guild(owner_models={})
 
     async def __global_check(self, ctx):
         """
@@ -49,13 +49,13 @@ class Permissions:
         This works since all checks must be True to run
         It's also part of why the caching layer is needed
         """
-        v = await self.check_overrides(ctx, level='mod')
+        v = await self.check_overrides(ctx, 'mod')
 
         if v is False:
             return False
         return True
 
-    async def check_overrides(self, ctx: RedContext, *, level: str) -> bool:
+    async def check_overrides(self, ctx: RedContext, level: str) -> bool:
         """
         This checks for any overrides in the permission model
 
@@ -184,7 +184,7 @@ class Permissions:
 
     @permissions.command(name='canrun')
     async def _test_permission_model(
-            self, ctx: RedContext, user: discord.User, *, command: str):
+            self, ctx: RedContext, user: discord.Member, *, command: str):
         """
         This checks if someone can run a command in the current location
         """
@@ -195,7 +195,7 @@ class Permissions:
         message = copy(ctx.message)
         message.author = user
 
-        com = self.bot.get_command(command.strip())
+        com = self.bot.get_command(command)
         if com is None:
             message = _('No such command')
         else:
@@ -205,13 +205,6 @@ class Permissions:
                 message = _('That user can run the specified command.')
             else:
                 message = _('That user can not run the specified command.')
-
-            message += _(
-                '\n\nIf this is not what you expected, '
-                'you can find what rules apply '
-                'to a given situation with the interactive '
-                'explorer using `{commandstring}`'
-            ).format(commandstring='{0}permissions explore'.format(ctx.prefix))
 
         await ctx.maybe_send_embed(message)
 
@@ -227,7 +220,8 @@ class Permissions:
         try:
             await yamlset_acl(
                 ctx, config=self.config.owner_models, update=False)
-        except Exception:
+        except Exception as e:
+            print(e)
             return await ctx.maybe_send_embed(_("Inalid syntax"))
         else:
             await ctx.tick()
@@ -238,4 +232,4 @@ class Permissions:
         """
         Dumps a YAML file with the current owner level permissions
         """
-        await yamlget_acl(ctx, config=self.config.owner_model)
+        await yamlget_acl(ctx, config=self.config.owner_models)

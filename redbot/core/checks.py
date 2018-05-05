@@ -6,8 +6,9 @@ async def check_overrides(ctx, *, level):
     perm_cog = ctx.bot.get_cog('Permissions')
     if not perm_cog or ctx.cog == perm_cog:
         return None
-    # don't break if someone loaded a cog named permissions that doesn't implement this
-    func = getattr(perm_cog, 'check_overrides', None) 
+    # don't break if someone loaded a cog named
+    # permissions that doesn't implement this
+    func = getattr(perm_cog, 'check_overrides', None)
     return (None if func is None else await func(ctx, level))
 
 
