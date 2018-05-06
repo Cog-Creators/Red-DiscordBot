@@ -15,9 +15,10 @@ from discord.ext import commands
 
 from . import __version__
 from .data_manager import storage_type
-from .utils.chat_formatting import inline, bordered
+from .utils.chat_formatting import inline, bordered, pagify
 from .rpc import initialize
 from colorama import Fore, Style, init
+from fuzzywuzzy import process
 
 log = logging.getLogger("red")
 sentry_log = logging.getLogger("red.sentry")
@@ -212,7 +213,14 @@ def init_events(bot, cli_flags):
             if not hasattr(ctx.cog, "_{0.command.cog_name}__error".format(ctx)):
                 await ctx.send(inline(message))
         elif isinstance(error, commands.CommandNotFound):
-            pass
+            term = ctx.invoked_with
+            out = ""
+            for extracted, pos in enumerate(
+                process.extract(term, bot.walk_commands(), limit=5), 1
+            ):
+                out += "{0}. {1.prefix}{2.qualified_name}"\
+                       " - {2.short_doc}\n".format(pos, ctx, extracted[0])
+            await ctx.send(pagify(out))
         elif isinstance(error, commands.CheckFailure):
             await ctx.send("⛔ You are not authorized to issue that command.")
         elif isinstance(error, commands.NoPrivateMessage):
