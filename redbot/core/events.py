@@ -110,7 +110,7 @@ def init_events(bot, cli_flags):
             print("Ready. I'm not in any server yet!")
 
         INFO.append('{} cogs with {} commands'.format(len(bot.cogs), len(bot.commands)))
-        
+
         INFO2 = []
 
         sentry = await bot.db.enable_sentry()
