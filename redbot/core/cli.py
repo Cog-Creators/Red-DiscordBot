@@ -64,6 +64,8 @@ def ask_sentry(red: Red):
 def parse_cli_flags(args):
     parser = argparse.ArgumentParser(description="Red - Discord Bot",
                                      usage="redbot <instance_name> [arguments]")
+    parser.add_argument("--version", "-V", action="store_true",
+                        help="Show Red's current version")
     parser.add_argument("--list-instances", action="store_true",
                         help="List all instance names setup "
                              "with 'redbot-setup'")
@@ -87,6 +89,9 @@ def parse_cli_flags(args):
     parser.add_argument("--no-cogs",
                         action="store_true",
                         help="Starts Red with no cogs loaded, only core")
+    parser.add_argument("--load-cogs", type=str, nargs="*",
+                        help="Force loading a cog from the installed packages. "
+                            "Bypass the --no-cogs flag.")
     parser.add_argument("--self-bot",
                         action='store_true',
                         help="Specifies if Red should log in as selfbot")
@@ -124,3 +129,4 @@ def parse_cli_flags(args):
         args.prefix = []
 
     return args
+
