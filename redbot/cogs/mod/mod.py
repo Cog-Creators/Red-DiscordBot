@@ -889,8 +889,8 @@ class Mod:
             "send_messages": overwrites.send_messages,
             "add_reactions": overwrites.add_reactions
         }
-        overwrites.updates(send_messages=False,
-                           add_reactions=False)
+        overwrites.update(send_messages=False,
+                          add_reactions=False)
         try:
             await channel.set_permissions(user, overwrite=overwrites, reason=reason)
         except discord.Forbidden:
