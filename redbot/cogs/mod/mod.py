@@ -581,7 +581,7 @@ class Mod:
     @commands.bot_has_permissions(ban_members=True)
     async def unban(self, ctx: RedContext, user_id: int, *, reason: str = None):
         """Unbans the target user.
-        
+
         Requires specifying the target user's ID. To find this, you may either:
          1. Copy it from the mod log case (if one was created), or
          2. enable developer mode, go to Bans in this server's settings, right-
@@ -886,11 +886,11 @@ class Mod:
             return False, mute_unmute_issues["hierarchy_problem"]
 
         perms_cache[str(channel.id)] = {
-            "send_messages": overwrites.send_messages, 
+            "send_messages": overwrites.send_messages,
             "add_reactions": overwrites.add_reactions
         }
-        overwrites.send_messages = False
-        overwrites.add_reactions = False
+        overwrites.update(send_messages=False,
+                          add_reactions=False)
         try:
             await channel.set_permissions(user, overwrite=overwrites, reason=reason)
         except discord.Forbidden:
@@ -1014,9 +1014,9 @@ class Mod:
         if channel.id in perms_cache:
             old_values = perms_cache[channel.id]
         else:
-            old_values = None
-        overwrites.send_messages = old_values["send_messages"]
-        overwrites.add_reactions = old_values["add_reactions"]
+            old_values = {"send_messages": None, "add_reactions": None}
+        overwrites.update(send_messages=old_values["send_messages"],
+                          add_reactions=old_values["add_reactions"])
         is_empty = self.are_overwrites_empty(overwrites)
 
         try:
@@ -1254,7 +1254,7 @@ class Mod:
         valid_user = isinstance(author, discord.Member) and not author.bot
         if not valid_user:
             return
-        
+
         #  Bots and mods or superior are ignored from the filter
         mod_or_superior = await is_mod_or_superior(self.bot, obj=author)
         if mod_or_superior:
