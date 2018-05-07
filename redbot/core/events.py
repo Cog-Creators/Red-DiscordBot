@@ -70,6 +70,7 @@ def init_events(bot, cli_flags):
             packages.extend(cli_flags.load_cogs)
 
         if packages:
+            to_remove = []
             print("Loading packages...")
             for package in packages:
                 try:
@@ -79,6 +80,9 @@ def init_events(bot, cli_flags):
                     log.exception("Failed to load package {}".format(package),
                                   exc_info=e)
                     await bot.remove_loaded_package(package)
+                    to_remove.append(package)
+            for package in to_remove:
+                packages.remove(package)
             if packages:
                 print("Loaded packages: " + ", ".join(packages))
 
