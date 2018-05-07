@@ -21,17 +21,24 @@ class Cleanup:
     @staticmethod
     async def check_100_plus(ctx: RedContext, number: int) -> bool:
         """
-        Called when trying to delete more than 100 messages at once
+        Called when trying to delete more than 100 messages at once.
 
-        Prompts the user to choose whether they want to continue or not
+        Prompts the user to choose whether they want to continue or not.
+
+        Tries its best to cleanup after itself if the response is positive.
         """
         def author_check(message):
             return message.author == ctx.author
 
-        await ctx.send(_('Are you sure you want to delete {} messages? (y/n)').format(number))
+        prompt = await ctx.send(_('Are you sure you want to delete {} messages? (y/n)').format(number))
         response = await ctx.bot.wait_for('message', check=author_check)
 
         if response.content.lower().startswith('y'):
+            await prompt.delete()
+            try:
+                await response.delete()
+            except:
+                pass
             return True
         else:
             await ctx.send(_('Cancelled.'))
@@ -94,12 +101,12 @@ class Cleanup:
         channel = ctx.channel
         author = ctx.author
         is_bot = self.bot.user.bot
-        
+
         if number > 100:
             cont = await self.check_100_plus(ctx, number)
             if not cont:
                 return
-    
+
         def check(m):
             if text in m.content:
                 return True
@@ -131,6 +138,7 @@ class Cleanup:
         cleanup user @\u200bTwentysix 2
         cleanup user Red 6"""
 
+        member = None
         try:
             member = await commands.converter.MemberConverter().convert(ctx, user)
         except commands.BadArgument:
@@ -225,7 +233,7 @@ class Cleanup:
         author = ctx.author
 
         is_bot = self.bot.user.bot
-        
+
         if number > 100:
             cont = await self.check_100_plus(ctx, number)
             if not cont:
@@ -234,6 +242,7 @@ class Cleanup:
         to_delete = await self.get_messages_for_deletion(
             ctx, channel, number, limit=1000, before=ctx.message
         )
+        to_delete.append(ctx.message)
 
         reason = "{}({}) deleted {} messages in channel {}."\
                  "".format(author.name, author.id,
@@ -282,6 +291,7 @@ class Cleanup:
         to_delete = await self.get_messages_for_deletion(
             ctx, channel, number, check=check, limit=1000, before=ctx.message
         )
+        to_delete.append(ctx.message)
 
         reason = "{}({}) deleted {} "\
                  " command messages in channel {}."\
