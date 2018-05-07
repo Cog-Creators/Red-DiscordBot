@@ -21,11 +21,14 @@ redbot/core/rpc.py                       @tekulvw
 redbot/core/sentry_setup.py              @Kowlin @tekulvw
 redbot/core/utils/chat_formatting.py     @tekulvw
 redbot/core/utils/mod.py                 @palmtree5
+redbot/core/utils/data_converter.py      @mikeshardmind
+redbot/core/utils/antispam.py            @mikeshardmind
+redbot/core/utils/tunnel.py              @mikeshardmind
 
 # Cogs
 redbot/cogs/admin/*                 @tekulvw
 redbot/cogs/alias/*                 @tekulvw
-redbot/cogs/audio/*                 @tekulvw
+redbot/cogs/audio/*                 @aikaterna @atiwiex
 redbot/cogs/bank/*                  @tekulvw
 redbot/cogs/cleanup/*               @palmtree5
 redbot/cogs/customcom/*             @palmtree5
@@ -38,6 +41,8 @@ redbot/cogs/mod/*                   @palmtree5
 redbot/cogs/modlog/*                @palmtree5
 redbot/cogs/streams/*               @Twentysix26 @palmtree5
 redbot/cogs/trivia/*                @Tobotimus
+redbot/cogs/dataconverter/*         @mikeshardmind
+redbot/cogs/reports/*               @mikeshardmind
 
 # Docs
 docs/*                              @tekulvw @palmtree5
@@ -47,3 +52,7 @@ setup.py                            @tekulvw
 redbot/__init__.py                  @tekulvw
 redbot/__main__.py                  @tekulvw
 redbot/setup.py                     @tekulvw
+
+# Others
+.travis.yml                         @Kowlin
+crowdin.yml                         @Kowlin

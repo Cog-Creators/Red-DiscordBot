@@ -8,27 +8,20 @@ python:
 - 3.5.3
 - 3.6.1
 install:
-- echo "pytest>3" >> requirements.txt
-- echo "pytest-asyncio" >> requirements.txt
 - echo "git+https://github.com/Rapptz/discord.py.git@rewrite#egg=discord.py[voice]" >> requirements.txt
 - pip install -r requirements.txt
-- pip install .
+- pip install .[test]
 script:
 - python -m compileall ./redbot/cogs
 - python -m pytest
 
 jobs:
   include:
-    - stage: Deployment
+    - stage: PyPi Deployment
       if: tag IS present
       python: 3.5.3
       env:
         - DEPLOYING=true
-      before_deployment:
-      - curl https://artifacts.crowdin.com/repo/GPG-KEY-crowdin | sudo apt-key add -
-      - echo "deb https://artifacts.crowdin.com/repo/deb/ /" | sudo tee -a /etc/apt/sources.list
-      - sudo apt-get update -qq
-      - sudo apt-get install -y crowdin
       deploy:
         - provider: pypi
           user: Red-DiscordBot
@@ -40,11 +33,22 @@ jobs:
             branch: V3/develop
             python: 3.5.3
             tags: true
-        - provider: script
-          script: python3 ./generate_strings.py
-          skip_cleanup: true
-          on:
-            repo: Cog-Creators/Red-DiscordBot
-            branch: V3/develop
-            python: 3.5.3
-            tags: true
+    - stage: Crowdin Deployment
+      if: tag IS present
+      python: 3.5.3
+      env:
+        - DEPLOYING=true
+      before_deployment:
+      - curl https://artifacts.crowdin.com/repo/GPG-KEY-crowdin | sudo apt-key add -
+      - echo "deb https://artifacts.crowdin.com/repo/deb/ /" | sudo tee -a /etc/apt/sources.list
+      - sudo apt-get update -qq
+      - sudo apt-get install -y crowdin
+      deploy:
+      - provider: script
+        script: python3 ./generate_strings.py
+        skip_cleanup: true
+        on:
+          repo: Cog-Creators/Red-DiscordBot
+          branch: V3/develop
+          python: 3.5.3
+          tags: true

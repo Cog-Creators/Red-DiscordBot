@@ -1,15 +1,13 @@
-import asyncio
 import re
 
 import discord
 from discord.ext import commands
 
-from redbot.core import checks
+from redbot.core import checks, RedContext
 from redbot.core.bot import Red
 from redbot.core.i18n import CogI18n
 from redbot.core.utils.mod import slow_deletion, mass_purge
 from redbot.cogs.mod.log import log
-from redbot.core.context import RedContext
 
 _ = CogI18n("Cleanup", __file__)
 
@@ -19,6 +17,61 @@ class Cleanup:
 
     def __init__(self, bot: Red):
         self.bot = bot
+
+    @staticmethod
+    async def check_100_plus(ctx: RedContext, number: int) -> bool:
+        """
+        Called when trying to delete more than 100 messages at once
+
+        Prompts the user to choose whether they want to continue or not
+        """
+        def author_check(message):
+            return message.author == ctx.author
+
+        await ctx.send(_('Are you sure you want to delete {} messages? (y/n)').format(number))
+        response = await ctx.bot.wait_for('message', check=author_check)
+
+        if response.content.lower().startswith('y'):
+            return True
+        else:
+            await ctx.send(_('Cancelled.'))
+            return False
+
+    @staticmethod
+    async def get_messages_for_deletion(
+            ctx: RedContext, channel: discord.TextChannel, number,
+            check=lambda x: True, limit=100, before=None, after=None
+    ) -> list:
+        """
+        Gets a list of messages meeting the requirements to be deleted.
+
+        Generally, the requirements are:
+        - We don't have the number of messages to be deleted already
+        - The message passes a provided check (if no check is provided,
+          this is automatically true)
+        - The message is less than 14 days old
+        """
+        to_delete = []
+        too_old = False
+
+        while not too_old and len(to_delete) - 1 < number:
+            message = None
+            async for message in channel.history(limit=limit,
+                                                 before=before,
+                                                 after=after):
+                if (not number or len(to_delete) - 1 < number) and check(message) \
+                        and (ctx.message.created_at - message.created_at).days < 14:
+                    to_delete.append(message)
+                elif (ctx.message.created_at - message.created_at).days >= 14:
+                    too_old = True
+                    break
+                elif number and len(to_delete) >= number:
+                    break
+            if message is None:
+                break
+            else:
+                before = message
+        return to_delete
 
     @commands.group()
     @checks.mod_or_permissions(manage_messages=True)
@@ -30,7 +83,7 @@ class Cleanup:
     @cleanup.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def text(self, ctx: commands.Context, text: str, number: int):
+    async def text(self, ctx: RedContext, text: str, number: int):
         """Deletes last X messages matching the specified text.
 
         Example:
@@ -42,18 +95,10 @@ class Cleanup:
         author = ctx.author
         is_bot = self.bot.user.bot
         
-        def author_check(message):
-            return message.author == author
-
         if number > 100:
-            await ctx.send('Are you sure you want to delete {} messages? (y/n)'.format(number))
-            response = await self.bot.wait_for('message', check=author_check)
-
-            if response.content.startswith('y'):
-                tmp = await ctx.send('Continuing..')
-                await tmp.delete()
-            else:
-                return await ctx.send('Cancelled.')
+            cont = await self.check_100_plus(ctx, number)
+            if not cont:
+                return
     
         def check(m):
             if text in m.content:
@@ -63,25 +108,11 @@ class Cleanup:
             else:
                 return False
 
-        to_delete = [ctx.message]
-        too_old = False
-        tmp = ctx.message
-
-        while not too_old and len(to_delete) - 1 < number:
-            async for message in channel.history(limit=1000,
-                                                 before=tmp):
-                if len(to_delete) - 1 < number and check(message) and\
-                        (ctx.message.created_at - message.created_at).days < 14:
-                    to_delete.append(message)
-                elif (ctx.message.created_at - message.created_at).days >= 14:
-                    too_old = True
-                    break
-                elif len(to_delete) >= number:
-                    break
-                tmp = message
+        to_delete = await self.get_messages_for_deletion(
+            ctx, channel, number, check=check, limit=1000, before=ctx.message)
 
         reason = "{}({}) deleted {} messages "\
-                 " containing '{}' in channel {}".format(author.name,
+                 " containing '{}' in channel {}.".format(author.name,
                                                          author.id, len(to_delete), text, channel.id)
         log.info(reason)
 
@@ -93,60 +124,47 @@ class Cleanup:
     @cleanup.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def user(self, ctx: commands.Context, user: discord.Member or int, number: int):
+    async def user(self, ctx: RedContext, user: str, number: int):
         """Deletes last X messages from specified user.
 
         Examples:
         cleanup user @\u200bTwentysix 2
         cleanup user Red 6"""
 
+        try:
+            member = await commands.converter.MemberConverter().convert(ctx, user)
+        except commands.BadArgument:
+            try:
+                _id = int(user)
+            except ValueError:
+                raise commands.BadArgument()
+        else:
+            _id = member.id
+
         channel = ctx.channel
         author = ctx.author
         is_bot = self.bot.user.bot
-       
-        def author_check(message):
-            return message.author == author
 
         if number > 100:
-            await ctx.send('Are you sure you want to delete {} messages? (y/n)'.format(number))
-            response = await self.bot.wait_for('message', check=author_check)
-
-            if response.content.startswith('y'):
-                tmp = await ctx.send('Continuing..')
-                await tmp.delete()
-            else:
-                return await ctx.send('Cancelled.')
+            cont = await self.check_100_plus(ctx, number)
+            if not cont:
+                return
 
         def check(m):
-            if isinstance(user, discord.Member) and m.author == user:
-                return True
-            elif m.author.id == user:  # Allow finding messages based on an ID
+            if m.author.id == _id:
                 return True
             elif m == ctx.message:
                 return True
             else:
                 return False
 
-        to_delete = []
-        too_old = False
-        tmp = ctx.message
-
-        while not too_old and len(to_delete) - 1 < number:
-            async for message in channel.history(limit=1000,
-                                                 before=tmp):
-                if len(to_delete) - 1 < number and check(message) and\
-                        (ctx.message.created_at - message.created_at).days < 14:
-                    to_delete.append(message)
-                elif (ctx.message.created_at - message.created_at).days >= 14:
-                    too_old = True
-                    break
-                elif len(to_delete) >= number:
-                    break
-                tmp = message
+        to_delete = await self.get_messages_for_deletion(
+            ctx, channel, number, check=check, limit=1000, before=ctx.message
+        )
         reason = "{}({}) deleted {} messages "\
-                 " made by {}({}) in channel {}"\
+                 " made by {}({}) in channel {}."\
                  "".format(author.name, author.id, len(to_delete),
-                           user.name, user.id, channel.name)
+                           member or '???', _id, channel.name)
         log.info(reason)
 
         if is_bot:
@@ -158,8 +176,8 @@ class Cleanup:
     @cleanup.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def after(self, ctx: commands.Context, message_id: int):
-        """Deletes all messages after specified message
+    async def after(self, ctx: RedContext, message_id: int):
+        """Deletes all messages after specified message.
 
         To get a message id, enable developer mode in Discord's
         settings, 'appearance' tab. Then right click a message
@@ -183,15 +201,11 @@ class Cleanup:
             await ctx.send(_("Message not found."))
             return
 
-        to_delete = []
+        to_delete = await self.get_messages_for_deletion(
+            ctx, channel, 0, limit=None, after=after
+        )
 
-        async for message in channel.history(after=after):
-            if (ctx.message.created_at - message.created_at).days < 14:
-                # Only add messages that are less than
-                # 14 days old to the deletion queue
-                to_delete.append(message)
-
-        reason = "{}({}) deleted {} messages in channel {}"\
+        reason = "{}({}) deleted {} messages in channel {}."\
                  "".format(author.name, author.id,
                            len(to_delete), channel.name)
         log.info(reason)
@@ -201,7 +215,7 @@ class Cleanup:
     @cleanup.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def messages(self, ctx: commands.Context, number: int):
+    async def messages(self, ctx: RedContext, number: int):
         """Deletes last X messages.
 
         Example:
@@ -212,36 +226,16 @@ class Cleanup:
 
         is_bot = self.bot.user.bot
         
-        def author_check(message):
-            return message.author == author
-
         if number > 100:
-            await ctx.send('Are you sure you want to delete {} messages? (y/n)'.format(number))
-            response = await self.bot.wait_for('message', check=author_check)
+            cont = await self.check_100_plus(ctx, number)
+            if not cont:
+                return
 
-            if response.content.startswith('y'):
-                tmp = await ctx.send('Continuing..')
-                await tmp.delete()              
-            else:
-                return await ctx.send('Cancelled.')
-        else:
-            tmp = ctx.message
+        to_delete = await self.get_messages_for_deletion(
+            ctx, channel, number, limit=1000, before=ctx.message
+        )
 
-        to_delete = []
-
-        done = False
-
-        while len(to_delete) - 1 < number and not done:
-            async for message in channel.history(limit=1000, before=tmp):
-                if len(to_delete) - 1 < number and \
-                        (ctx.message.created_at - message.created_at).days < 14:
-                    to_delete.append(message)
-                elif (ctx.message.created_at - message.created_at).days >= 14:
-                    done = True
-                    break
-                tmp = message
-
-        reason = "{}({}) deleted {} messages in channel {}"\
+        reason = "{}({}) deleted {} messages in channel {}."\
                  "".format(author.name, author.id,
                            number, channel.name)
         log.info(reason)
@@ -254,25 +248,17 @@ class Cleanup:
     @cleanup.command(name='bot')
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def cleanup_bot(self, ctx: commands.Context, number: int):
-        """Cleans up command messages and messages from the bot"""
+    async def cleanup_bot(self, ctx: RedContext, number: int):
+        """Cleans up command messages and messages from the bot."""
 
         channel = ctx.message.channel
         author = ctx.message.author
         is_bot = self.bot.user.bot
 
-        def author_check(message):
-            return message.author == author
-
         if number > 100:
-            await ctx.send('Are you sure you want to delete {} messages? (y/n)'.format(number))
-            response = await self.bot.wait_for('message', check=author_check)
-
-            if response.content.startswith('y'):
-                tmp = await ctx.send('Continuing..')
-                await tmp.delete()
-            else:
-                return await ctx.send('Cancelled.')
+            cont = await self.check_100_plus(ctx, number)
+            if not cont:
+                return
 
         prefixes = await self.bot.get_prefix(ctx.message) # This returns all server prefixes
         if isinstance(prefixes, str):
@@ -293,24 +279,12 @@ class Cleanup:
                 return bool(self.bot.get_command(cmd_name))
             return False
 
-        to_delete = [ctx.message]
-        too_old = False
-        tmp = ctx.message
-
-        while not too_old and len(to_delete) - 1 < number:
-            async for message in channel.history(limit=1000, before=tmp):
-                if len(to_delete) - 1 < number and check(message) and\
-                                (ctx.message.created_at - message.created_at).days < 14:
-                    to_delete.append(message)
-                elif (ctx.message.created_at - message.created_at).days >= 14:
-                    too_old = True
-                    break
-                elif len(to_delete) >= number:
-                    break
-                tmp = message
+        to_delete = await self.get_messages_for_deletion(
+            ctx, channel, number, check=check, limit=1000, before=ctx.message
+        )
 
         reason = "{}({}) deleted {} "\
-                 " command messages in channel {}"\
+                 " command messages in channel {}."\
                  "".format(author.name, author.id, len(to_delete),
                            channel.name)
         log.info(reason)
@@ -321,7 +295,7 @@ class Cleanup:
             await slow_deletion(to_delete)
 
     @cleanup.command(name='self')
-    async def cleanup_self(self, ctx: commands.Context, number: int, match_pattern: str = None):
+    async def cleanup_self(self, ctx: RedContext, number: int, match_pattern: str = None):
         """Cleans up messages owned by the bot.
 
         By default, all messages are cleaned. If a third argument is specified,
@@ -336,18 +310,10 @@ class Cleanup:
         author = ctx.message.author
         is_bot = self.bot.user.bot
 
-        def author_check(message):
-            return message.author == author
-
         if number > 100:
-            await ctx.send('Are you sure you want to delete {} messages? (y/n)'.format(number))
-            response = await self.bot.wait_for('message', check=author_check)
-
-            if response.content.startswith('y'):
-                tmp = await ctx.send('Continuing..')
-                await tmp.delete()
-            else:
-                return await ctx.send('Cancelled.')
+            cont = await self.check_100_plus(ctx, number)
+            if not cont:
+                return
 
         # You can always delete your own messages, this is needed to purge
         can_mass_purge = False
@@ -378,25 +344,13 @@ class Cleanup:
                 return True
             return False
 
-        to_delete = []
+        to_delete = await self.get_messages_for_deletion(
+            ctx, channel, number, check=check, limit=1000, before=ctx.message
+        )
+
         # Selfbot convenience, delete trigger message
         if author == self.bot.user:
             to_delete.append(ctx.message)
-            number += 1
-        too_old = False
-        tmp = ctx.message
-        while not too_old and len(to_delete) < number:
-            async for message in channel.history(limit=1000, before=tmp):
-                if len(to_delete) < number and check(message) and\
-                        (ctx.message.created_at - message.created_at).days < 14:
-                    to_delete.append(message)
-                elif (ctx.message.created_at - message.created_at).days >= 14:
-                    # Found a message that is 14 or more days old, stop here
-                    too_old = True
-                    break
-                elif len(to_delete) >= number:
-                    break
-                tmp = message
 
         if channel.name:
             channel_name = 'channel ' + channel.name
@@ -404,7 +358,7 @@ class Cleanup:
             channel_name = str(channel)
 
         reason = "{}({}) deleted {} messages "\
-                 "sent by the bot in {}"\
+                 "sent by the bot in {}."\
                  "".format(author.name, author.id, len(to_delete),
                            channel_name)
         log.info(reason)

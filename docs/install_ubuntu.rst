@@ -4,7 +4,7 @@
 Installing Red on Ubuntu 16.04
 ==============================
 
-.. warning:: For safety reasons, DO NOT install Red with a root user. Instead, make a new one.
+.. warning:: For safety reasons, DO NOT install Red with a root user. Instead, `make a new one <http://manpages.ubuntu.com/manpages/artful/man8/adduser.8.html>`_.
 
 -------------------------------
 Installing the pre-requirements
@@ -12,7 +12,8 @@ Installing the pre-requirements
 
 .. code-block:: none
 
-    sudo apt install python3.5-dev python3-pip build-essential libssl-dev libffi-dev git ffmpeg libopus-dev unzip -y
+    sudo apt install python3.5-dev python3-pip build-essential libssl-dev libffi-dev git unzip default-jre -y
+
 
 ------------------
 Installing the bot
@@ -20,19 +21,19 @@ Installing the bot
 
 To install without audio:
 
-:code:`pip3 install -U --process-dependency-links red-discordbot`
+:code:`pip3 install -U --process-dependency-links red-discordbot --user`
 
 To install with audio:
 
-:code:`pip3 install -U --process-dependency-links red-discordbot[voice]`
+:code:`pip3 install -U --process-dependency-links red-discordbot[voice] --user`
 
 To install the development version (without audio):
 
-:code:`pip3 install -U --process-dependency-links git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=red-discordbot`
+:code:`pip3 install -U --process-dependency-links git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=red-discordbot --user`
 
 To install the development version (with audio):
 
-:code:`pip3 install -U --process-dependency-links git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=red-discordbot[voice]`
+:code:`pip3 install -U --process-dependency-links git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=red-discordbot[voice] --user`
 
 ------------------------
 Setting up your instance

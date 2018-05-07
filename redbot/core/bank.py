@@ -7,10 +7,9 @@ import discord
 from redbot.core import Config
 
 __all__ = ["Account", "get_balance", "set_balance", "withdraw_credits", "deposit_credits",
-           "can_spend", "transfer_credits", "wipe_bank", "get_guild_accounts",
-           "get_global_accounts", "get_account", "is_global", "set_global",
-           "get_bank_name", "set_bank_name", "get_currency_name", "set_currency_name",
-           "get_default_balance", "set_default_balance"]
+           "can_spend", "transfer_credits", "wipe_bank", "get_account", "is_global",
+           "set_global", "get_bank_name", "set_bank_name", "get_currency_name",
+           "set_currency_name", "get_default_balance", "set_default_balance"]
 
 _DEFAULT_GLOBAL = {
     "is_global": False,
@@ -33,8 +32,6 @@ _DEFAULT_MEMBER = {
 
 _DEFAULT_USER = _DEFAULT_MEMBER
 
-_bank_type = type("Bank", (object,), {})
-
 
 class Account:
     """A single account.
@@ -54,7 +51,8 @@ def _register_defaults():
     _conf.register_user(**_DEFAULT_USER)
 
 if not os.environ.get('BUILDING_DOCS'):
-    _conf = Config.get_conf(_bank_type(), 384734293238749, force_registration=True)
+    _conf = Config.get_conf(
+        None, 384734293238749, cog_name="Bank", force_registration=True)
     _register_defaults()
 
 
@@ -243,7 +241,7 @@ async def deposit_credits(member: discord.Member, amount: int) -> int:
 
     """
     if _invalid_amount(amount):
-        raise ValueError("Invalid withdrawal amount {} <= 0".format(amount))
+        raise ValueError("Invalid deposit amount {} <= 0".format(amount))
 
     bal = await get_balance(member)
     return await set_balance(member, amount + bal)
@@ -287,62 +285,81 @@ async def wipe_bank():
         await _conf.clear_all_members()
 
 
-async def get_guild_accounts(guild: discord.Guild) -> List[Account]:
-    """Get all account data for the given guild.
+async def get_leaderboard(positions: int=None, guild: discord.Guild=None) -> List[tuple]:
+    """
+    Gets the bank's leaderboard
 
     Parameters
     ----------
+    positions : `int`
+        The number of positions to get
     guild : discord.Guild
-        The guild to get accounts for.
+        The guild to get the leaderboard of. If the bank is global and this
+        is provided, get only guild members on the leaderboard
 
     Returns
     -------
-    `list` of `Account`
-        A list of all guild accounts.
+    `list` of `tuple`
+        The sorted leaderboard in the form of :code:`(user_id, raw_account)`
 
     Raises
     ------
-    RuntimeError
-        If the bank is currently global.
+    TypeError
+        If the bank is guild-specific and no guild was specified
 
     """
     if await is_global():
-        raise RuntimeError("The bank is currently global.")
+        raw_accounts = await _conf.all_users()
+        if guild is not None:
+            tmp = raw_accounts.copy()
+            for acc in tmp:
+                if not guild.get_member(acc):
+                    del raw_accounts[acc]
+    else:
+        if guild is None:
+            raise TypeError("Expected a guild, got NoneType object instead!")
+        raw_accounts = await _conf.all_members(guild)
+    sorted_acc = sorted(raw_accounts.items(), key=lambda x: x[1]['balance'], reverse=True)
+    if positions is None:
+        return sorted_acc
+    else:
+        return sorted_acc[:positions]
 
-    ret = []
-    accs = await _conf.all_members(guild)
-    for user_id, acc in accs.items():
-        acc_data = acc.copy()  # There ya go kowlin
-        acc_data['created_at'] = _decode_time(acc_data['created_at'])
-        ret.append(Account(**acc_data))
-    return ret
 
+async def get_leaderboard_position(member: Union[discord.User, discord.Member]) -> Union[int, None]:
+    """
+    Get the leaderboard position for the specified user
 
-async def get_global_accounts() -> List[Account]:
-    """Get all global account data.
+    Parameters
+    ----------
+    member : `discord.User` or `discord.Member`
+        The user to get the leaderboard position of
 
     Returns
     -------
-    `list` of `Account`
-        A list of all global accounts.
+    `int`
+        The position of the user on the leaderboard
 
     Raises
     ------
-    RuntimeError
-        If the bank is currently guild specific.
+    TypeError
+        If the bank is currently guild-specific and a `discord.User` object was passed in
 
     """
-    if not await is_global():
-        raise RuntimeError("The bank is not currently global.")
-
-    ret = []
-    accs = await _conf.all_users()  # this is a dict of user -> acc
-    for user_id, acc in accs.items():
-        acc_data = acc.copy()
-        acc_data['created_at'] = _decode_time(acc_data['created_at'])
-        ret.append(Account(**acc_data))
-
-    return ret
+    if await is_global():
+        guild = None
+    else:
+        guild = member.guild if hasattr(member, "guild") else None
+    try:
+        leaderboard = await get_leaderboard(None, guild)
+    except TypeError:
+        raise
+    else:
+        pos = discord.utils.find(lambda x: x[1][0] == member.id, enumerate(leaderboard, 1))
+        if pos is None:
+            return None
+        else:
+            return pos[0]
 
 
 async def get_account(member: Union[discord.Member, discord.User]) -> Account:

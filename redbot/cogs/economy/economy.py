@@ -125,6 +125,10 @@ class Economy:
         "last_slot": 0
     }
 
+    default_role_settings = {
+        "PAYDAY_CREDITS": 0
+    }
+
     default_user_settings = default_member_settings
 
     def __init__(self, bot: Red):
@@ -135,6 +139,7 @@ class Economy:
         self.config.register_global(**self.default_global_settings)
         self.config.register_member(**self.default_member_settings)
         self.config.register_user(**self.default_user_settings)
+        self.config.register_role(**self.default_role_settings)
         self.slot_register = defaultdict(dict)
 
     @commands.group(name="bank")
@@ -206,28 +211,22 @@ class Economy:
     @guild_only_check()
     @check_global_setting_guildowner()
     async def reset(self, ctx, confirmation: bool = False):
-        """Deletes all guild's bank accounts"""
+        """Deletes bank accounts"""
         if confirmation is False:
             await ctx.send(
                 _("This will delete all bank accounts for {}.\nIf you're sure, type "
                   "`{}bank reset yes`").format(
-                    self.bot.user.name if await bank.is_global() else "this guild",
+                    self.bot.user.name if await bank.is_global() else "this server",
                     ctx.prefix
                 )
             )
         else:
-            if await bank.is_global():
-                # Bank being global means that the check would cause only
-                # the owner and any co-owners to be able to run the command
-                # so if we're in the function, it's safe to assume that the
-                # author is authorized to use owner-only commands
-                user = ctx.author
-            else:
-                user = ctx.guild.owner
-            success = await bank.wipe_bank()
-            if success:
-                await ctx.send(_("All bank accounts of this guild have been "
-                               "deleted."))
+            await bank.wipe_bank()
+            await ctx.send(_("All bank accounts for {} have been "
+                             "deleted.").format(
+                             self.bot.user.name if await bank.is_global() else "this server"
+                             )
+                            )
 
     @commands.command()
     @guild_only_check()
@@ -238,20 +237,23 @@ class Economy:
 
         cur_time = calendar.timegm(ctx.message.created_at.utctimetuple())
         credits_name = await bank.get_currency_name(ctx.guild)
-        if await bank.is_global():
+        if await bank.is_global():  # Role payouts will not be used
             next_payday = await self.config.user(author).next_payday()
             if cur_time >= next_payday:
                 await bank.deposit_credits(author, await self.config.PAYDAY_CREDITS())
                 next_payday = cur_time + await self.config.PAYDAY_TIME()
                 await self.config.user(author).next_payday.set(next_payday)
-                await ctx.send(
-                    _("{} Here, take some {}. Enjoy! (+{}"
-                      " {}!)").format(
-                        author.mention, credits_name,
-                        str(await self.config.PAYDAY_CREDITS()),
-                        credits_name
-                    )
-                )
+
+                pos = await bank.get_leaderboard_position(author)
+                await ctx.send(_(
+                    "{0.mention} Here, take some {1}. Enjoy! (+{2} {1}!)\n\n"
+                    "You currently have {3} {1}.\n\n"
+                    "You are currently #{4} on the leaderboard!"
+                ).format(
+                    author, credits_name, str(await self.config.PAYDAY_CREDITS()),
+                    str(await bank.get_balance(author)), pos
+                ))
+
             else:
                 dtime = self.display_time(next_payday - cur_time)
                 await ctx.send(
@@ -261,15 +263,23 @@ class Economy:
         else:
             next_payday = await self.config.member(author).next_payday()
             if cur_time >= next_payday:
-                await bank.deposit_credits(author, await self.config.guild(guild).PAYDAY_CREDITS())
+                credit_amount = await self.config.guild(guild).PAYDAY_CREDITS()
+                for role in author.roles:
+                    role_credits = await self.config.role(role).PAYDAY_CREDITS()  # Nice variable name
+                    if role_credits > credit_amount:
+                        credit_amount = role_credits
+                await bank.deposit_credits(author, credit_amount)
                 next_payday = cur_time + await self.config.guild(guild).PAYDAY_TIME()
                 await self.config.member(author).next_payday.set(next_payday)
-                await ctx.send(
-                    _("{} Here, take some {}. Enjoy! (+{}"
-                      " {}!)").format(
-                        author.mention, credits_name,
-                        str(await self.config.guild(guild).PAYDAY_CREDITS()),
-                        credits_name))
+                pos = await bank.get_leaderboard_position(author)
+                await ctx.send(_(
+                    "{0.mention} Here, take some {1}. Enjoy! (+{2} {1}!)\n\n"
+                    "You currently have {3} {1}.\n\n"
+                    "You are currently #{4} on the leaderboard!"
+                ).format(
+                    author, credits_name, credit_amount,
+                    str(await bank.get_balance(author)), pos
+                ))
             else:
                 dtime = self.display_time(next_payday - cur_time)
                 await ctx.send(
@@ -278,7 +288,7 @@ class Economy:
 
     @commands.command()
     @guild_only_check()
-    async def leaderboard(self, ctx: commands.Context, top: int = 10):
+    async def leaderboard(self, ctx: commands.Context, top: int = 10, show_global: bool=False):
         """Prints out the leaderboard
 
         Defaults to top 10"""
@@ -286,26 +296,23 @@ class Economy:
         guild = ctx.guild
         if top < 1:
             top = 10
-        if await bank.is_global():
-            bank_sorted = sorted(await bank.get_global_accounts(),
-                                 key=lambda x: x.balance, reverse=True)
-        else:
-            bank_sorted = sorted(await bank.get_guild_accounts(guild),
-                                 key=lambda x: x.balance, reverse=True)
+        if await bank.is_global() and show_global:  # show_global is only applicable if bank is global
+            guild = None
+        bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
         if len(bank_sorted) < top:
             top = len(bank_sorted)
-        topten = bank_sorted[:top]
         highscore = ""
-        place = 1
-        for acc in topten:
-            dname = str(acc.name)
-            if len(dname) >= 23 - len(str(acc.balance)):
-                dname = dname[:(23 - len(str(acc.balance))) - 3]
-                dname += "... "
-            highscore += str(place).ljust(len(str(top)) + 1)
-            highscore += dname.ljust(23 - len(str(acc.balance)))
-            highscore += str(acc.balance) + "\n"
-            place += 1
+        for pos, acc in enumerate(bank_sorted, 1):
+            pos = pos
+            poswidth = 2
+            name = acc[1]["name"]
+            namewidth = 35
+            balance = acc[1]["balance"]
+            balwidth = 2
+            highscore += "{pos: <{poswidth}} {name: <{namewidth}s} {balance: >{balwidth}}\n".format(
+                pos=pos, poswidth=poswidth, name=name, namewidth=namewidth,
+                balance=balance, balwidth=balwidth
+            )
         if highscore != "":
             for page in pagify(highscore, shorten_by=12):
                 await ctx.send(box(page, lang="py"))
@@ -499,6 +506,18 @@ class Economy:
             await self.config.guild(guild).PAYDAY_CREDITS.set(creds)
         await ctx.send(_("Every payday will now give {} {}."
                          "").format(creds, credits_name))
+
+    @economyset.command()
+    async def rolepaydayamount(self, ctx: commands.Context, role: discord.Role, creds: int):
+        """Amount earned each payday for a role"""
+        guild = ctx.guild
+        credits_name = await bank.get_currency_name(guild)
+        if await bank.is_global():
+            await ctx.send("The bank must be per-server for per-role paydays to work.")
+        else:
+            await self.config.role(role).PAYDAY_CREDITS.set(creds)
+            await ctx.send(_("Every payday will now give {} {} to people with the role {}."
+                             "").format(creds, credits_name, role.name))
 
     @economyset.command()
     async def registeramount(self, ctx: commands.Context, creds: int):

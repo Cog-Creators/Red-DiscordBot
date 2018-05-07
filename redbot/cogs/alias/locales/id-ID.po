@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-02-25 21:34-0500\n"
+"PO-Revision-Date: 2018-04-15 16:43-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -22,15 +22,15 @@ msgstr "Awalan tidak ditemukan."
 
 #: ../alias.py:198
 msgid "You attempted to create a new alias with the name {} but that name is already a command on this bot."
-msgstr ""
+msgstr "Anda mencoba untuk membuat sebuah alias baru dengan nama {} tetapi nama itu sudah menjadi perintah pada bot ini."
 
 #: ../alias.py:205
 msgid "You attempted to create a new alias with the name {} but that alias already exists on this server."
-msgstr ""
+msgstr "Anda mencoba untuk membuat sebuah alias baru dengan nama {} tetapi alias itu sudah ada pada server ini."
 
 #: ../alias.py:212
 msgid "You attempted to create a new alias with the name {} but that name is an invalid alias name. Alias names may not contain spaces."
-msgstr ""
+msgstr "Anda mencoba untuk membuat sebuah alias baru dengan nama {} tetapi nama itu adalah sebuah nama alias yang tidak berlaku. Nama alias tidak boleh berisi spasi."
 
 #: ../alias.py:224
 msgid "A new alias with the trigger `{}` has been created."
@@ -38,15 +38,15 @@ msgstr "Alias baru dengan pemicu '{}' telah dibuat."
 
 #: ../alias.py:236
 msgid "You attempted to create a new global alias with the name {} but that name is already a command on this bot."
-msgstr ""
+msgstr "Anda mencoba untuk membuat sebuah alias global baru dengan nama {} tetapi nama itu sudah menjadi sebuah perintah pada bot ini."
 
 #: ../alias.py:243
 msgid "You attempted to create a new global alias with the name {} but that alias already exists on this server."
-msgstr ""
+msgstr "Anda mencoba untuk membuat sebuah alias global baru dengan nama {} tetapi alias itu sudah ada pada server ini."
 
 #: ../alias.py:250
 msgid "You attempted to create a new global alias with the name {} but that name is an invalid alias name. Alias names may not contain spaces."
-msgstr ""
+msgstr "Anda mencoba untuk membuat sebuah alias global baru dengan nama {} tetapi nama itu adalah sebuah nama alias yang tidak berlaku. Nama alias tidak boleh berisi spasi."
 
 #: ../alias.py:259
 msgid "A new global alias with the trigger `{}` has been created."

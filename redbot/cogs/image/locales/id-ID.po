@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-02-25 21:34-0500\n"
+"POT-Creation-Date: 2018-04-02 17:36+AKDT\n"
+"PO-Revision-Date: 2018-04-15 16:43-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -16,31 +16,35 @@ msgstr ""
 "X-Crowdin-File: /cogs/image/locales/messages.pot\n"
 "Language: id_ID\n"
 
-#: ../image.py:49
+#: ../image.py:47 ../image.py:92
+msgid "A client ID has not been set! Please set one with {}"
+msgstr ""
+
+#: ../image.py:57
 msgid "Your search returned no results"
 msgstr "Pencarian Anda tidak menghasilkan apa-apa"
 
-#: ../image.py:52
+#: ../image.py:60
 msgid "Search results...\n"
 msgstr "Hasil Pencarian...\n"
 
-#: ../image.py:58 ../image.py:100
+#: ../image.py:66 ../image.py:115
 msgid "Something went wrong. Error code is {}"
 msgstr "Ada yang salah. Kode kesalahan adalah {}"
 
-#: ../image.py:70
+#: ../image.py:78
 msgid "Only 'new' and 'top' are a valid sort type."
 msgstr "Hanya 'baru' dan 'atas' adalah jenis jenis yang valid."
 
-#: ../image.py:98 ../image.py:135 ../image.py:157
+#: ../image.py:113 ../image.py:151 ../image.py:173
 msgid "No results found."
 msgstr "Tidak ada hasil yang ditemukan."
 
-#: ../image.py:115
+#: ../image.py:131
 msgid "Set the imgur client id!"
 msgstr "Tetapkan id klien imgur!"
 
-#: ../image.py:137 ../image.py:159
+#: ../image.py:153 ../image.py:175
 msgid "Error contacting the API"
 msgstr "Kesalahan saat menghubungi API"
 

@@ -100,7 +100,7 @@ class ModLog:
         try:
             case = await modlog.get_case(number, ctx.guild, self.bot)
         except RuntimeError:
-            await ctx.send(_("That case does not exist for that guild"))
+            await ctx.send(_("That case does not exist for that server"))
             return
         else:
             await ctx.send(embed=await case.get_case_msg_content())
@@ -110,7 +110,7 @@ class ModLog:
     async def reason(self, ctx: RedContext, case: int, *, reason: str = ""):
         """Lets you specify a reason for mod-log's cases
         Please note that you can only edit cases you are
-        the owner of unless you are a mod/admin or the guild owner"""
+        the owner of unless you are a mod/admin or the server owner"""
         author = ctx.author
         guild = ctx.guild
         if not reason:
@@ -151,5 +151,5 @@ class ModLog:
             if case_before.moderator != author:
                 to_modify["amended_by"] = author
             to_modify["modified_at"] = ctx.message.created_at.timestamp()
-            await case_before.edit(to_modify)
+            await case_before.edit(self.bot, to_modify)
             await ctx.send(_("Reason has been updated."))

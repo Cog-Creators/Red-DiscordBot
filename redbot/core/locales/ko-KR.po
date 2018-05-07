@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-02-19 03:59+UTC\n"
-"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"POT-Creation-Date: 2018-04-02 17:36+AKDT\n"
+"PO-Revision-Date: 2018-04-15 16:42-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -16,269 +16,281 @@ msgstr ""
 "X-Crowdin-File: /core/locales/messages.pot\n"
 "Language: ko_KR\n"
 
-#: ../cog_manager.py:309
+#: ../cog_manager.py:313
 msgid "Install Path: {}\n\n"
-msgstr ""
+msgstr "설치 경로 : {}"
 
-#: ../cog_manager.py:325
+#: ../cog_manager.py:329
 msgid "That path does not exist or does not point to a valid directory."
-msgstr ""
+msgstr "해당 경로가 없거나 올바른 디렉토리가 아니에요."
 
-#: ../cog_manager.py:334
+#: ../cog_manager.py:338
 msgid "Path successfully added."
-msgstr ""
-
-#: ../cog_manager.py:347
-msgid "That is an invalid path number."
-msgstr ""
+msgstr "경로가 성공적으로 추가됐어요."
 
 #: ../cog_manager.py:351
+msgid "That is an invalid path number."
+msgstr "해당 번호는 잘못된 경로 번호예요."
+
+#: ../cog_manager.py:355
 msgid "Path successfully removed."
-msgstr ""
+msgstr "경로가 성공적으로 제거됐어요."
 
-#: ../cog_manager.py:367
+#: ../cog_manager.py:371
 msgid "Invalid 'from' index."
-msgstr ""
-
-#: ../cog_manager.py:373
-msgid "Invalid 'to' index."
-msgstr ""
+msgstr "'from' 인덱스가 잘돗됐어요."
 
 #: ../cog_manager.py:377
-msgid "Paths reordered."
-msgstr ""
+msgid "Invalid 'to' index."
+msgstr "'to' 인덱스가 잘못됐어요."
 
-#: ../cog_manager.py:395
-msgid "That path does not exist."
-msgstr ""
+#: ../cog_manager.py:381
+msgid "Paths reordered."
+msgstr "경로들이 다시 정렬됐어요."
 
 #: ../cog_manager.py:399
+msgid "That path does not exist."
+msgstr "해당 경로는 존재하지 않아요."
+
+#: ../cog_manager.py:403
 msgid "The bot will install new cogs to the `{}` directory."
+msgstr "봇이 새로운 cogs를 '{}' 디렉토리에 설치해요."
+
+#: ../core_commands.py:171
+msgid "Embeds are now {} by default."
 msgstr ""
 
-#: ../core_commands.py:225 ../core_commands.py:266
-msgid "No module by that name was found in any cog path."
+#: ../core_commands.py:193 ../core_commands.py:218
+msgid "Embeds will now fall back to the global setting."
 msgstr ""
 
-#: ../core_commands.py:240
-msgid "Failed to load package. Check your console or logs for details."
+#: ../core_commands.py:197
+msgid "Embeds are now {} for this guild."
 msgstr ""
 
-#: ../core_commands.py:244 ../core_commands.py:253 ../core_commands.py:285
-#: ../core_commands.py:374 ../core_commands.py:462 ../core_commands.py:476
-msgid "Done."
+#: ../core_commands.py:222
+msgid "Embeds are now {} for you."
 msgstr ""
 
-#: ../core_commands.py:255
-msgid "That extension is not loaded."
-msgstr ""
-
-#: ../core_commands.py:282
-msgid "Failed to reload package. Check your console or logs for details."
-msgstr ""
-
-#: ../core_commands.py:295
+#: ../core_commands.py:483
 msgid "Shutting down... "
-msgstr ""
+msgstr "종료하는 중..."
 
-#: ../core_commands.py:310
+#: ../core_commands.py:498
 msgid "Restarting..."
-msgstr ""
+msgstr "다시 시작하는 중..."
 
-#: ../core_commands.py:347
+#: ../core_commands.py:556
 msgid "The admin role for this guild has been set."
-msgstr ""
+msgstr "해당 길드의 관리자 역할이 설정됐어요."
 
-#: ../core_commands.py:355
+#: ../core_commands.py:564
 msgid "The mod role for this guild has been set."
-msgstr ""
+msgstr "해당 길드의 모드 역할이 설정됐어요."
 
-#: ../core_commands.py:368
+#: ../core_commands.py:577
 msgid "Failed. Remember that you can edit my avatar up to two times a hour. The URL must be a direct link to a JPG / PNG."
-msgstr ""
+msgstr "실패했어요. 제 아바타는 한 시간에 두 번까지 편집할 수 있다는 걸 기억해요. URL은 JPG / PNG에 대한 다이렉트 링크여야 해요."
 
-#: ../core_commands.py:372
+#: ../core_commands.py:581
 msgid "JPG / PNG format only."
-msgstr ""
+msgstr "JPG / PNG 형식만 가능해요."
 
-#: ../core_commands.py:387
-msgid "Game set."
-msgstr ""
-
-#: ../core_commands.py:399
-msgid "Listening set."
-msgstr ""
-
-#: ../core_commands.py:411
-msgid "Watching set."
-msgstr ""
-
-#: ../core_commands.py:440
-msgid "Status changed to %s."
-msgstr ""
-
-#: ../core_commands.py:471
-msgid "Failed to change name. Remember that you can only do it up to 2 times an hour. Use nicknames if you need frequent changes. `{}set nickname`"
-msgstr ""
-
-#: ../core_commands.py:486
-msgid "I lack the permissions to change my own nickname."
-msgstr ""
-
-#: ../core_commands.py:500 ../core_commands.py:513
-msgid "Prefix set."
-msgstr ""
-
-#: ../core_commands.py:509
-msgid "Guild prefixes have been reset."
-msgstr ""
-
-#: ../core_commands.py:532
-msgid "\n"
-"Verification token:"
-msgstr ""
-
-#: ../core_commands.py:535
-msgid "Remember:\n"
-msgstr ""
-
-#: ../core_commands.py:538
-msgid "I have printed a one-time token in the console. Copy and paste it here to confirm you are the owner."
-msgstr ""
-
-#: ../core_commands.py:546
-msgid "The set owner request has timed out."
-msgstr ""
-
-#: ../core_commands.py:552
-msgid "You have been set as owner."
-msgstr ""
-
-#: ../core_commands.py:554
-msgid "Invalid token."
-msgstr ""
-
-#: ../core_commands.py:566
-msgid "Locale has been set."
-msgstr ""
-
-#: ../core_commands.py:580
-msgid "Done. Sentry logging is now enabled."
-msgstr ""
-
-#: ../core_commands.py:583
-msgid "Done. Sentry logging is now disabled."
-msgstr ""
-
-#: ../core_commands.py:593
-msgid "User ID: %s"
-msgstr ""
-
-#: ../core_commands.py:596
-msgid "through DM"
-msgstr ""
+#: ../core_commands.py:583 ../core_commands.py:680 ../core_commands.py:694
+msgid "Done."
+msgstr "다 했어요."
 
 #: ../core_commands.py:598
-msgid "from {}"
-msgstr ""
+msgid "Game set."
+msgstr "게임 상태가 설정됐어요."
 
-#: ../core_commands.py:599
-msgid " | Server ID: %s"
-msgstr ""
-
-#: ../core_commands.py:608
-msgid "Use `{}dm {} <text>` to reply to this user"
-msgstr ""
-
-#: ../core_commands.py:616
-msgid "Sent by {} {}"
-msgstr ""
+#: ../core_commands.py:613
+msgid "Listening set."
+msgstr "듣는 상태가 설정됐어요."
 
 #: ../core_commands.py:628
-msgid "I cannot send your message, I'm unable to find my owner... *sigh*"
-msgstr ""
-
-#: ../core_commands.py:631
-msgid "I'm unable to deliver your message. Sorry."
-msgstr ""
-
-#: ../core_commands.py:633
-msgid "Your message has been sent."
-msgstr ""
-
-#: ../core_commands.py:647
-msgid "Invalid ID or user not found. You can only send messages to people I share a server with."
-msgstr ""
-
-#: ../core_commands.py:653
-msgid "Owner of %s"
-msgstr ""
+msgid "Watching set."
+msgstr "보는 상태가 설정됐어요."
 
 #: ../core_commands.py:657
-msgid "You can reply to this message with %scontact"
+msgid "Status changed to {}."
 msgstr ""
 
-#: ../core_commands.py:667
-msgid "Sorry, I couldn't deliver your message to %s"
-msgstr ""
+#: ../core_commands.py:689
+msgid "Failed to change name. Remember that you can only do it up to 2 times an hour. Use nicknames if you need frequent changes. `{}set nickname`"
+msgstr "이름을 변경하지 못했어요. 한 시간에 2번까지만 할 수 있다는 것을 기억해요. 자주 변경해야 할 경우에는 닉네임을 변경해보세요. `{}set nickname`"
 
-#: ../core_commands.py:670
-msgid "Message delivered to %s"
-msgstr ""
+#: ../core_commands.py:704
+msgid "I lack the permissions to change my own nickname."
+msgstr "제 별명을 변경할 수 있는 권한이 없어요."
 
-#: ../core_commands.py:690
-msgid "User added to whitelist."
-msgstr ""
+#: ../core_commands.py:718 ../core_commands.py:731
+msgid "Prefix set."
+msgstr "프리픽스가 변경됐어요."
 
-#: ../core_commands.py:699
-msgid "Whitelisted Users:"
-msgstr ""
+#: ../core_commands.py:727
+msgid "Guild prefixes have been reset."
+msgstr "길드 프리픽스가 재설정됐어요."
 
-#: ../core_commands.py:719
-msgid "User has been removed from whitelist."
-msgstr ""
-
-#: ../core_commands.py:721
-msgid "User was not in the whitelist."
-msgstr ""
-
-#: ../core_commands.py:729
-msgid "Whitelist has been cleared."
-msgstr ""
-
-#: ../core_commands.py:746
-msgid "You cannot blacklist an owner!"
-msgstr ""
+#: ../core_commands.py:750
+msgid "\n"
+"Verification token:"
+msgstr "인증 코드 :"
 
 #: ../core_commands.py:753
+msgid "Remember:\n"
+msgstr "명심해요 :"
+
+#: ../core_commands.py:756
+msgid "I have printed a one-time token in the console. Copy and paste it here to confirm you are the owner."
+msgstr "콘솔에 토큰을 한번 출력했어요. 복사하고 붙여넣어 사용자님이 주인이라는 것을 확인해보세요."
+
+#: ../core_commands.py:764
+msgid "The set owner request has timed out."
+msgstr "설정된 주인 요청 시간이 초과됐어요."
+
+#: ../core_commands.py:770
+msgid "You have been set as owner."
+msgstr "사용자님은 저의 주인님이 되셨어요!"
+
+#: ../core_commands.py:772
+msgid "Invalid token."
+msgstr "잘못된 코드예요."
+
+#: ../core_commands.py:787
+msgid "Please use that command in DM. Since users probably saw your token, it is recommended to reset it right now. Go to the following link and select `Reveal Token` and `Generate a new token?`.\n\n"
+"https://discordapp.com/developers/applications/me/{}"
+msgstr ""
+
+#: ../core_commands.py:810
+msgid "Locale has been set."
+msgstr "로컬이 설정됐어요."
+
+#: ../core_commands.py:824
+msgid "Done. Sentry logging is now enabled."
+msgstr "다 했어요. 이제 센트리 로깅이 활성화됐어요."
+
+#: ../core_commands.py:827
+msgid "Done. Sentry logging is now disabled."
+msgstr "다 했어요. 이제 센트리 로깅이 비활성화됐어요."
+
+#: ../core_commands.py:880
+msgid "A backup has been made of this instance. It is at {}."
+msgstr ""
+
+#: ../core_commands.py:884
+msgid "That directory doesn't seem to exist..."
+msgstr ""
+
+#: ../core_commands.py:894
+msgid "User ID: {}"
+msgstr ""
+
+#: ../core_commands.py:897
+msgid "through DM"
+msgstr "다이렉트 메세지를 통해서"
+
+#: ../core_commands.py:899
+msgid "from {}"
+msgstr "{} 에서"
+
+#: ../core_commands.py:900
+msgid " | Server ID: {}"
+msgstr ""
+
+#: ../core_commands.py:909
+msgid "Use `{}dm {} <text>` to reply to this user"
+msgstr "해당 사용자에게 응답하려면 `{}dm {} <text>` 을 사용해야 해요."
+
+#: ../core_commands.py:912
+msgid "Sent by {} {}"
+msgstr "{} {} 의해 전송됐어요."
+
+#: ../core_commands.py:930 ../core_commands.py:943
+msgid "I cannot send your message, I'm unable to find my owner... *sigh*"
+msgstr "사용자님의 메세지를 보낼 수 없어요, 제 주인님을 찾을 수가 없어요... *º^º*"
+
+#: ../core_commands.py:933 ../core_commands.py:946
+msgid "I'm unable to deliver your message. Sorry."
+msgstr "사용자님의 메세지를 전송할 수 없어요. 미안해요."
+
+#: ../core_commands.py:935 ../core_commands.py:948
+msgid "Your message has been sent."
+msgstr "메세지가 전송됐어요."
+
+#: ../core_commands.py:962
+msgid "Invalid ID or user not found. You can only send messages to people I share a server with."
+msgstr "잘못된 ID이거나 사용자를 찾을 수 없어요. 서버에 같이 있는 사용자에게만 메세지를 보낼 수 있어요."
+
+#: ../core_commands.py:970
+msgid "Owner of {}"
+msgstr ""
+
+#: ../core_commands.py:971
+msgid "You can reply to this message with {}contact"
+msgstr ""
+
+#: ../core_commands.py:984 ../core_commands.py:993
+msgid "Sorry, I couldn't deliver your message to {}"
+msgstr ""
+
+#: ../core_commands.py:987 ../core_commands.py:996
+msgid "Message delivered to {}"
+msgstr ""
+
+#: ../core_commands.py:1016
+msgid "User added to whitelist."
+msgstr "사용자가 화이트리스트에 추가됐어요."
+
+#: ../core_commands.py:1025
+msgid "Whitelisted Users:"
+msgstr "화이트 리스트에 추가된 사용자 :"
+
+#: ../core_commands.py:1045
+msgid "User has been removed from whitelist."
+msgstr "사용자가 화이트리스트에서 제거됐어요."
+
+#: ../core_commands.py:1047
+msgid "User was not in the whitelist."
+msgstr "사용자가 화이트리스트에 포함되어 있지 않아요."
+
+#: ../core_commands.py:1055
+msgid "Whitelist has been cleared."
+msgstr "화이트 리스트가 지워졌어요."
+
+#: ../core_commands.py:1072
+msgid "You cannot blacklist an owner!"
+msgstr "우리 주인님은 블랙 리스트에 추가할 수 없어요!"
+
+#: ../core_commands.py:1079
 msgid "User added to blacklist."
-msgstr ""
+msgstr "사용자가 블랙 리스트에 추가됐어요."
 
-#: ../core_commands.py:762
+#: ../core_commands.py:1088
 msgid "blacklisted Users:"
-msgstr ""
+msgstr "블랙 리스트에 추가된 사용자 :"
 
-#: ../core_commands.py:782
+#: ../core_commands.py:1108
 msgid "User has been removed from blacklist."
-msgstr ""
+msgstr "사용자가 블랙 리스트에서 제거됐어요."
 
-#: ../core_commands.py:784
+#: ../core_commands.py:1110
 msgid "User was not in the blacklist."
-msgstr ""
+msgstr "사용자가 블랙 리스트에 등록되어 있지 않아요."
 
-#: ../core_commands.py:792
+#: ../core_commands.py:1118
 msgid "blacklist has been cleared."
-msgstr ""
+msgstr "블랙 리스트가 지워졌어요."
 
 #: ../dev_commands.py:213
 msgid "Already running a REPL session in this channel. Exit it with `quit`."
-msgstr ""
+msgstr "이 채널에서 이미 REPL 세션을 실행하고 있어요, `야메로`!"
 
 #: ../dev_commands.py:218
 msgid "Enter code to execute or evaluate. `exit()` or `quit` to exit."
-msgstr ""
+msgstr "실행하거나 평가할 코드를 입력해보세요. 종료하려면 `exit()` 또는 `quit` 를 눌러야 해요."
 
 #: ../dev_commands.py:281
 msgid "Unexpected error: `{}`"
-msgstr ""
+msgstr "예상치 못한 오류 : `{}`"
 

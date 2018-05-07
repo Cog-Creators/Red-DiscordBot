@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-02-25 21:34-0500\n"
+"POT-Creation-Date: 2018-04-02 17:36+AKDT\n"
+"PO-Revision-Date: 2018-04-15 16:43-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Swedish\n"
 "MIME-Version: 1.0\n"
@@ -88,35 +88,43 @@ msgid "This will delete all bank accounts for {}.\n"
 msgstr "Detta kommer att radera alla bank konton för {}.\n"
 "Om du är säker, skriv `{}bank reset yes`"
 
-#: ../economy.py:229
+#: ../economy.py:220
 msgid "All bank accounts of this guild have been deleted."
 msgstr "Alla bank konton för denna guild har blivit raderade."
 
-#: ../economy.py:248 ../economy.py:268
-msgid "{} Here, take some {}. Enjoy! (+{} {}!)"
-msgstr "{} Här, ta lite {}. Njut! (+{} {}!)"
+#: ../economy.py:240
+msgid "{0.mention} Here, take some {1}. Enjoy! (+{2}\n\n"
+"You currently have {3} {1}.\n\n"
+"You are currently #{4} on the leaderboard!"
+msgstr ""
 
-#: ../economy.py:258 ../economy.py:276
+#: ../economy.py:252 ../economy.py:273
 msgid "{} Too soon. For your next payday you have to wait {}."
 msgstr "{} För tidigt. För nästa utbetalning måste du vänta {}."
 
-#: ../economy.py:313
+#: ../economy.py:262
+msgid "{0.mention} Here, take some {1}. Enjoy! (+{2})\n\n"
+"You currently have {3} {1}.\n\n"
+"You are currently #{4} on the leaderboard!"
+msgstr ""
+
+#: ../economy.py:307
 msgid "There are no accounts in the bank."
 msgstr "Det finns inga konton i banken."
 
-#: ../economy.py:339
+#: ../economy.py:333
 msgid "You're on cooldown, try again in a bit."
 msgstr "Du är på cooldown, försök igen om en liten stund."
 
-#: ../economy.py:342
+#: ../economy.py:336
 msgid "That's an invalid bid amount, sorry :/"
 msgstr "Det är inte en giltig insats summa, förlåt :/"
 
-#: ../economy.py:345
+#: ../economy.py:339
 msgid "You ain't got enough money, friend."
 msgstr "Du har inte tillräckligt med pengar, kompis."
 
-#: ../economy.py:391
+#: ../economy.py:385
 msgid "{}\n"
 "{} {}\n\n"
 "Your bid: {}\n"
@@ -126,7 +134,7 @@ msgstr "{}\n"
 "Din insats: {}\n"
 "{} → {}!"
 
-#: ../economy.py:398
+#: ../economy.py:392
 msgid "{}\n"
 "{} Nothing!\n"
 "Your bid: {}\n"
@@ -136,7 +144,7 @@ msgstr "{}\n"
 "Din insats: {}\n"
 "{} → {}!"
 
-#: ../economy.py:423
+#: ../economy.py:417
 msgid "Minimum slot bid: {}\n"
 "Maximum slot bid: {}\n"
 "Slot cooldown: {}\n"
@@ -150,63 +158,63 @@ msgstr "Minsta insats spelautomater: {}\n"
 "Utbetalnings cooldown: {}\n"
 "Summa pengar given vid kontoregistering: {}"
 
-#: ../economy.py:433
+#: ../economy.py:427
 msgid "Current Economy settings:"
 msgstr "Nuvarande Ekonomi inställningar:"
 
-#: ../economy.py:441
+#: ../economy.py:435
 msgid "Invalid min bid amount."
 msgstr "Ej giltig minsta insats summa."
 
-#: ../economy.py:449
+#: ../economy.py:443
 msgid "Minimum bid is now {} {}."
 msgstr "Den minsta möjliga insatsen är nu {} {}."
 
-#: ../economy.py:456
+#: ../economy.py:450
 msgid "Invalid slotmax bid amount. Must be greater than slotmin."
 msgstr "Ej giltig högsta spelautomatsinsats. Den måste vara högre än den minsta möjliga insatsen."
 
-#: ../economy.py:465
+#: ../economy.py:459
 msgid "Maximum bid is now {} {}."
 msgstr "Högsta möjlig insats är nu {} {}."
 
-#: ../economy.py:475
+#: ../economy.py:469
 msgid "Cooldown is now {} seconds."
 msgstr "Cooldown är nu satt till {} sekunder."
 
-#: ../economy.py:485
+#: ../economy.py:479
 msgid "Value modified. At least {} seconds must pass between each payday."
 msgstr "Siffran ändrad. Mins {} sekunder måste nu passera mellan utbetalningar."
 
-#: ../economy.py:494
+#: ../economy.py:488
 msgid "Har har so funny."
 msgstr "Har har så kul."
 
-#: ../economy.py:500
+#: ../economy.py:494
 msgid "Every payday will now give {} {}."
 msgstr "Varje utbetalning ger nu {} {}."
 
-#: ../economy.py:511
+#: ../economy.py:505
 msgid "Registering an account will now give {} {}."
 msgstr "Kontoregistreringar ger nu {} {}."
 
-#: ../economy.py:517
+#: ../economy.py:511
 msgid "weeks"
 msgstr "veckor"
 
-#: ../economy.py:518
+#: ../economy.py:512
 msgid "days"
 msgstr "dagar"
 
-#: ../economy.py:519
+#: ../economy.py:513
 msgid "hours"
 msgstr "timmar"
 
-#: ../economy.py:520
+#: ../economy.py:514
 msgid "minutes"
 msgstr "minuter"
 
-#: ../economy.py:521
+#: ../economy.py:515
 msgid "seconds"
 msgstr "sekunder"
 

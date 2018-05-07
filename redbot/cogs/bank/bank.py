@@ -1,3 +1,6 @@
+import discord
+from redbot.core.utils.chat_formatting import box
+
 from redbot.core import checks, bank
 from redbot.core.i18n import CogI18n
 from discord.ext import commands
@@ -17,6 +20,8 @@ def check_global_setting_guildowner():
         if await ctx.bot.is_owner(author):
             return True
         if not await bank.is_global():
+            if not isinstance(ctx.channel, discord.abc.GuildChannel):
+                return False
             permissions = ctx.channel.permissions_for(author)
             return author == ctx.guild.owner or permissions.administrator
 
@@ -33,6 +38,8 @@ def check_global_setting_admin():
         if await ctx.bot.is_owner(author):
             return True
         if not await bank.is_global():
+            if not isinstance(ctx.channel, discord.abc.GuildChannel):
+                return False
             permissions = ctx.channel.permissions_for(author)
             is_guild_owner = author == ctx.guild.owner
             admin_role = await ctx.bot.db.guild(ctx.guild).admin_role()
@@ -54,20 +61,47 @@ class Bank:
     async def bankset(self, ctx: commands.Context):
         """Base command for bank settings"""
         if ctx.invoked_subcommand is None:
+            if await bank.is_global():
+                bank_name = await bank._conf.bank_name()
+                currency_name = await bank._conf.currency()
+                default_balance = await bank._conf.default_balance()
+            else:
+                if not ctx.guild:
+                    await ctx.send_help()
+                    return
+                bank_name = await bank._conf.guild(ctx.guild).bank_name()
+                currency_name = await bank._conf.guild(ctx.guild).currency()
+                default_balance = await bank._conf.guild(ctx.guild).default_balance()
+
+            settings = (_(
+                "Bank settings:\n\n"
+                "Bank name: {}\n"
+                "Currency: {}\n"
+                "Default balance: {}"
+                "").format(bank_name, currency_name, default_balance)
+            )
+            await ctx.send(box(settings))
             await ctx.send_help()
 
     @bankset.command(name="toggleglobal")
     @checks.is_owner()
-    async def bankset_toggleglobal(self, ctx: commands.Context):
+    async def bankset_toggleglobal(self, ctx: commands.Context, confirm: bool=False):
         """Toggles whether the bank is global or not
-        If the bank is global, it will become per-guild
-        If the bank is per-guild, it will become global"""
+        If the bank is global, it will become per-server
+        If the bank is per-server, it will become global"""
         cur_setting = await bank.is_global()
-        await bank.set_global(not cur_setting)
 
-        word = _("per-guild") if cur_setting else _("global")
-
-        await ctx.send(_("The bank is now {}.").format(word))
+        word = _("per-server") if cur_setting else _("global")
+        if confirm is False:
+            await ctx.send(
+                _("This will toggle the bank to be {}, deleting all accounts "
+                  "in the process! If you're sure, type `{}`").format(
+                    word, "{}bankset toggleglobal yes".format(ctx.prefix)
+                )
+            )
+        else:
+            await bank.set_global(not cur_setting)
+            await ctx.send(_("The bank is now {}.").format(word))
 
     @bankset.command(name="bankname")
     @check_global_setting_guildowner()

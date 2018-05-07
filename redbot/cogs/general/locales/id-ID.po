@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-02-25 21:34-0500\n"
+"POT-Creation-Date: 2018-04-02 17:36+AKDT\n"
+"PO-Revision-Date: 2018-04-15 16:43-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -30,11 +30,11 @@ msgstr "Jelas begitu"
 
 #: ../general.py:43
 msgid "Most likely"
-msgstr "Most likely"
+msgstr "Sewajarnya"
 
 #: ../general.py:43
 msgid "Outlook good"
-msgstr "Melihat keluar bagus"
+msgstr "Pandangan bagus"
 
 #: ../general.py:43
 msgid "Signs point to yes"
@@ -50,7 +50,7 @@ msgstr "Ya"
 
 #: ../general.py:44
 msgid "Yes – definitely"
-msgstr "Iya tentu saja"
+msgstr "Iya - tentu saja"
 
 #: ../general.py:44
 msgid "You may rely on it"
@@ -109,8 +109,9 @@ msgid "{} Maybe higher than 1? ;P"
 msgstr "{} Mungkin lebih tinggi dari 1?"
 
 #: ../general.py:93
-msgid "Nice try. You think this is funny?How about *this* instead:\n\n"
-msgstr "Coba bagus Anda pikir ini lucu? Bagaimana dengan * ini * sebagai gantinya:\n\n"
+msgid "Nice try. You think this is funny?\n"
+"How about *this* instead:\n\n"
+msgstr ""
 
 #: ../general.py:106
 msgid "*flips a coin and... "
@@ -163,15 +164,15 @@ msgstr "Bermain {}"
 
 #: ../general.py:225
 msgid "Streaming [{}]({})"
-msgstr ""
+msgstr "Streaming [{}]({})"
 
 #: ../general.py:227
 msgid "Listening to {}"
-msgstr ""
+msgstr "Mendengarkan {}"
 
 #: ../general.py:229
 msgid "Watching {}"
-msgstr ""
+msgstr "Menonton {}"
 
 #: ../general.py:234
 msgid "None"

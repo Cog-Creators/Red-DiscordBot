@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
 "POT-Creation-Date: 2018-02-18 14:42+AKST\n"
-"PO-Revision-Date: 2018-02-25 21:34-0500\n"
+"PO-Revision-Date: 2018-04-15 16:43-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Indonesian\n"
 "MIME-Version: 1.0\n"
@@ -18,49 +18,49 @@ msgstr ""
 
 #: ../filter.py:62
 msgid "Filtered in this server:"
-msgstr ""
+msgstr "Disaring pada server ini:"
 
 #: ../filter.py:67
 msgid "I can't send direct messages to you."
-msgstr ""
+msgstr "Saya tidak dapat mengirim pesan langsung kepada Anda."
 
 #: ../filter.py:96
 msgid "Words added to filter."
-msgstr ""
+msgstr "Kata-kata yang ditambahkan untuk disaring."
 
 #: ../filter.py:98
 msgid "Words already in the filter."
-msgstr ""
+msgstr "Kata-kata yang sudah di disaring."
 
 #: ../filter.py:127
 msgid "Words removed from filter."
-msgstr ""
+msgstr "Kata-kata dihapus dari penyaring."
 
 #: ../filter.py:129
 msgid "Those words weren't in the filter."
-msgstr ""
+msgstr "Kata-kata tidak dalam penyaring."
 
 #: ../filter.py:142
 msgid "Names and nicknames will no longer be checked against the filter"
-msgstr ""
+msgstr "Nama dan julukan tidak lagi dapat diperiksa terhadap penyaring"
 
 #: ../filter.py:147
 msgid "Names and nicknames will now be checked against the filter"
-msgstr ""
+msgstr "Nama dan julukan akan di periksa terhadap penyaring"
 
 #: ../filter.py:160
 msgid "The name to use on filtered names has been set"
-msgstr ""
+msgstr "Nama yang digunakan untuk penyaring telah ditetapkan"
 
 #: ../filter.py:171
 msgid "Count and timeframe either both need to be 0 or both need to be greater than 0!"
-msgstr ""
+msgstr "Count dan jangka waktu keduanya harus 0 atau keduanya harus lebih besar dari 0!"
 
 #: ../filter.py:179
 msgid "Autoban disabled."
-msgstr ""
+msgstr "Autoban dimatikan."
 
 #: ../filter.py:183
 msgid "Count and time have been set."
-msgstr ""
+msgstr "Jumlah dan waktu telah ditetapkan."
 

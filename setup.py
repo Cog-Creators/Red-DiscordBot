@@ -1,6 +1,6 @@
 from distutils.core import setup
 from pathlib import Path
-from subprocess import run, PIPE
+import re
 
 import os
 import sys
@@ -9,6 +9,7 @@ from setuptools import find_packages
 
 IS_TRAVIS = 'TRAVIS' in os.environ
 IS_DEPLOYING = 'DEPLOYING' in os.environ
+IS_RTD = 'READTHEDOCS' in os.environ
 
 dep_links = ['https://github.com/Rapptz/discord.py/tarball/rewrite#egg=discord.py-1.0']
 if IS_TRAVIS:
@@ -23,39 +24,22 @@ def get_package_list():
 def get_requirements():
     with open('requirements.txt') as f:
         requirements = f.read().splitlines()
-    if IS_TRAVIS and not IS_DEPLOYING:
+    try:
         requirements.remove('git+https://github.com/Rapptz/discord.py.git@rewrite#egg=discord.py[voice]')
-    else:
-        requirements.append('discord.py>=1.0.0a0')  # Because RTD
+    except ValueError:
+        pass
+
+    if IS_DEPLOYING or not (IS_TRAVIS or IS_RTD):
+        requirements.append('discord.py>=1.0.0a0')
     if sys.platform.startswith("linux"):
         requirements.append("distro")
     return requirements
 
 
 def get_version():
-    try:
-        p = run(
-            "git describe --abbrev=0 --tags".split(),
-            stdout=PIPE
-        )
-    except FileNotFoundError:
-        # No git
-        return 3, 0, 0
-
-    if p.returncode != 0:
-        return 3, 0, 0
-
-    stdout = p.stdout.strip().decode()
-    if stdout.startswith("v"):
-        numbers = stdout[1:].split('.')
-        args = [0, 0, 0]
-        for i in range(3):
-            try:
-                args[i] = int(numbers[i])
-            except (IndexError, ValueError):
-                args[i] = 0
-        return args
-    return 3, 0, 0
+    with open('redbot/core/__init__.py') as f:
+        version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE).group(1)
+    return version
 
 
 def find_locale_folders():
@@ -90,9 +74,10 @@ def find_locale_folders():
 
 setup(
     name='Red-DiscordBot',
-    version="{}.{}.{}b9".format(*get_version()),
+    version=get_version(),
     packages=get_package_list(),
     package_data=find_locale_folders(),
+    include_package_data=True,
     url='https://github.com/Cog-Creators/Red-DiscordBot',
     license='GPLv3',
     author='Cog-Creators',
@@ -122,10 +107,10 @@ setup(
     dependency_links=dep_links,
     extras_require={
         'test': [
-            'pytest>=3', 'pytest-asyncio'
+            'pytest>3', 'pytest-asyncio'
         ],
         'mongo': ['motor'],
-        'docs': ['sphinx', 'sphinxcontrib-asyncio', 'sphinx_rtd_theme'],
-        'voice': ['PyNaCl']
+        'docs': ['sphinx==1.6.5', 'sphinxcontrib-asyncio', 'sphinx_rtd_theme'],
+        'voice': ['red-lavalink>=0.0.4']
     }
 )

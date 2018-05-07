@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-02-19 03:59+UTC\n"
-"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"POT-Creation-Date: 2018-04-02 17:36+AKDT\n"
+"PO-Revision-Date: 2018-04-15 16:42-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Hungarian\n"
 "MIME-Version: 1.0\n"
@@ -16,75 +16,83 @@ msgstr ""
 "X-Crowdin-File: /cogs/downloader/locales/messages.pot\n"
 "Language: hu_HU\n"
 
-#: ../downloader.py:215
+#: ../downloader.py:200
+msgid "Libraries installed."
+msgstr ""
+
+#: ../downloader.py:202
+msgid "Some libraries failed to install. Please check your logs for a complete list."
+msgstr ""
+
+#: ../downloader.py:231
 msgid "That git repo has already been added under another name."
 msgstr ""
 
-#: ../downloader.py:217 ../downloader.py:218
+#: ../downloader.py:233 ../downloader.py:234
 msgid "Something went wrong during the cloning process."
 msgstr ""
 
-#: ../downloader.py:220
+#: ../downloader.py:236
 msgid "Repo `{}` successfully added."
 msgstr ""
 
-#: ../downloader.py:229
+#: ../downloader.py:247
 msgid "The repo `{}` has been deleted successfully."
 msgstr ""
 
-#: ../downloader.py:237
+#: ../downloader.py:256
 msgid "Installed Repos:\n"
 msgstr ""
 
-#: ../downloader.py:258
+#: ../downloader.py:277
 msgid "Error, there is no cog by the name of `{}` in the `{}` repo."
 msgstr ""
 
-#: ../downloader.py:263
+#: ../downloader.py:289
 msgid "Failed to install the required libraries for `{}`: `{}`"
 msgstr ""
 
-#: ../downloader.py:273
+#: ../downloader.py:299
 msgid "`{}` cog successfully installed."
 msgstr ""
 
-#: ../downloader.py:289
+#: ../downloader.py:317
 msgid "`{}` was successfully removed."
 msgstr ""
 
-#: ../downloader.py:291
+#: ../downloader.py:319
 msgid "That cog was installed but can no longer be located. You may need to remove it's files manually if it is still usable."
 msgstr ""
 
-#: ../downloader.py:323
+#: ../downloader.py:351
 msgid "Cog update completed successfully."
 msgstr ""
 
-#: ../downloader.py:331
+#: ../downloader.py:359
 msgid "Available Cogs:\n"
 msgstr ""
 
-#: ../downloader.py:343
+#: ../downloader.py:371
 msgid "There is no cog `{}` in the repo `{}`"
 msgstr ""
 
-#: ../downloader.py:348
+#: ../downloader.py:376
 msgid "Information on {}:\n"
 "{}"
 msgstr ""
 
-#: ../downloader.py:389
+#: ../downloader.py:417
 msgid "Missing from info.json"
 msgstr ""
 
-#: ../downloader.py:398
+#: ../downloader.py:426
 msgid "Command: {}\n"
 "Made by: {}\n"
 "Repo: {}\n"
 "Cog name: {}"
 msgstr ""
 
-#: ../downloader.py:430
+#: ../downloader.py:458
 msgid "That command doesn't seem to exist."
 msgstr ""
 

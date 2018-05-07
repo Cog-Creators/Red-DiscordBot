@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: red-discordbot\n"
-"POT-Creation-Date: 2018-02-19 03:59+UTC\n"
-"PO-Revision-Date: 2018-02-25 21:33-0500\n"
+"POT-Creation-Date: 2018-04-02 17:36+AKDT\n"
+"PO-Revision-Date: 2018-04-15 16:42-0400\n"
 "Last-Translator: Kowlin <boxedpp@gmail.com>\n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -16,68 +16,76 @@ msgstr ""
 "X-Crowdin-File: /cogs/downloader/locales/messages.pot\n"
 "Language: nl_NL\n"
 
-#: ../downloader.py:215
+#: ../downloader.py:200
+msgid "Libraries installed."
+msgstr ""
+
+#: ../downloader.py:202
+msgid "Some libraries failed to install. Please check your logs for a complete list."
+msgstr ""
+
+#: ../downloader.py:231
 msgid "That git repo has already been added under another name."
 msgstr "Deze git repo is al toegevoegd onder een andere naam."
 
-#: ../downloader.py:217 ../downloader.py:218
+#: ../downloader.py:233 ../downloader.py:234
 msgid "Something went wrong during the cloning process."
 msgstr "Er ging iets fout tijdens het klonen."
 
-#: ../downloader.py:220
+#: ../downloader.py:236
 msgid "Repo `{}` successfully added."
 msgstr "Repo `{}` toegevoegd."
 
-#: ../downloader.py:229
+#: ../downloader.py:247
 msgid "The repo `{}` has been deleted successfully."
 msgstr "Repo `{}` is verwijderd."
 
-#: ../downloader.py:237
+#: ../downloader.py:256
 msgid "Installed Repos:\n"
 msgstr "Geïnstalleerde repo's:\n"
 
-#: ../downloader.py:258
+#: ../downloader.py:277
 msgid "Error, there is no cog by the name of `{}` in the `{}` repo."
 msgstr "Fout, er is geen cog met de naam `{}`in de `{}` repo."
 
-#: ../downloader.py:263
+#: ../downloader.py:289
 msgid "Failed to install the required libraries for `{}`: `{}`"
 msgstr "Ik kon de nodige bibliotheken voor `{}` niet installeren: `{}`"
 
-#: ../downloader.py:273
+#: ../downloader.py:299
 msgid "`{}` cog successfully installed."
 msgstr "`{}` cog geïnstalleerd."
 
-#: ../downloader.py:289
+#: ../downloader.py:317
 msgid "`{}` was successfully removed."
 msgstr "`{}` is verwijderd."
 
-#: ../downloader.py:291
+#: ../downloader.py:319
 msgid "That cog was installed but can no longer be located. You may need to remove it's files manually if it is still usable."
 msgstr "Deze cog is geïnstalleerd maar kan niet meer gevonden worden. Waarschijnlijk moet je bestanden handmatig verwijderen als ze nog steeds bruikbaar zijn."
 
-#: ../downloader.py:323
+#: ../downloader.py:351
 msgid "Cog update completed successfully."
 msgstr "Cog update succesvol."
 
-#: ../downloader.py:331
+#: ../downloader.py:359
 msgid "Available Cogs:\n"
 msgstr "Beschikbare Cogs:\n"
 
-#: ../downloader.py:343
+#: ../downloader.py:371
 msgid "There is no cog `{}` in the repo `{}`"
 msgstr "Er is geen cog `{}` in de repo `{}`"
 
-#: ../downloader.py:348
+#: ../downloader.py:376
 msgid "Information on {}:\n"
 "{}"
 msgstr "Informatie over {}: {}"
 
-#: ../downloader.py:389
+#: ../downloader.py:417
 msgid "Missing from info.json"
 msgstr "Niet gevonden in info.json"
 
-#: ../downloader.py:398
+#: ../downloader.py:426
 msgid "Command: {}\n"
 "Made by: {}\n"
 "Repo: {}\n"
@@ -87,7 +95,7 @@ msgstr "Commando: {}\n"
 "Repo: {}\n"
 "Cognaam: {}"
 
-#: ../downloader.py:430
+#: ../downloader.py:458
 msgid "That command doesn't seem to exist."
 msgstr "Commando bestaat niet."
 

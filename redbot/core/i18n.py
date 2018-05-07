@@ -180,9 +180,9 @@ class CogI18n:
         try:
 
             try:
-                translation_file = locale_path.open('ru')
+                translation_file = locale_path.open('ru', encoding='utf-8')
             except ValueError:  # We are using Windows
-                translation_file = locale_path.open('r')
+                translation_file = locale_path.open('r', encoding='utf-8')
             self._parse(translation_file)
         except (IOError, FileNotFoundError):  # The translation is unavailable
             pass

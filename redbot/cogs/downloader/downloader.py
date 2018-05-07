@@ -5,6 +5,8 @@ from sys import path as syspath
 from typing import Tuple, Union
 
 import discord
+import sys
+
 from redbot.core import Config
 from redbot.core import checks
 from redbot.core.data_manager import cog_data_path
@@ -43,7 +45,7 @@ class Downloader:
         self.LIB_PATH.mkdir(parents=True, exist_ok=True)
         self.SHAREDLIB_PATH.mkdir(parents=True, exist_ok=True)
         if not self.SHAREDLIB_INIT.exists():
-            with self.SHAREDLIB_INIT.open(mode='w') as _:
+            with self.SHAREDLIB_INIT.open(mode='w', encoding='utf-8') as _:
                 pass
 
         if str(self.LIB_PATH) not in syspath:
@@ -192,7 +194,7 @@ class Downloader:
         Installs a group of dependencies using pip.
         """
         repo = Repo("", "", "", Path.cwd(), loop=ctx.bot.loop)
-        success = await repo.install_raw_requirements(deps, self.SHAREDLIB_PATH)
+        success = await repo.install_raw_requirements(deps, self.LIB_PATH)
 
         if success:
             await ctx.send(_("Libraries installed."))
@@ -220,7 +222,7 @@ class Downloader:
         """
         try:
             # noinspection PyTypeChecker
-            await self._repo_manager.add_repo(
+            repo = await self._repo_manager.add_repo(
                 name=name,
                 url=repo_url,
                 branch=branch
@@ -232,6 +234,8 @@ class Downloader:
             log.exception(_("Something went wrong during the cloning process."))
         else:
             await ctx.send(_("Repo `{}` successfully added.").format(name))
+            if repo.install_msg is not None:
+                await ctx.send(repo.install_msg)
 
     @repo.command(name="delete")
     async def _repo_del(self, ctx, repo_name: Repo):
@@ -248,6 +252,7 @@ class Downloader:
         Lists all installed repos.
         """
         repos = self._repo_manager.get_all_repo_names()
+        repos = sorted(repos, key=str.lower)
         joined = _("Installed Repos:\n") + "\n".join(["+ " + r for r in repos])
 
         for page in pagify(joined, ["\n"], shorten_by=16):
@@ -267,10 +272,17 @@ class Downloader:
         """
         Installs a cog from the given repo.
         """
-        cog = discord.utils.get(repo_name.available_cogs, name=cog_name)
+        cog = discord.utils.get(repo_name.available_cogs, name=cog_name)  # type: Installable
         if cog is None:
             await ctx.send(_("Error, there is no cog by the name of"
                            " `{}` in the `{}` repo.").format(cog_name, repo_name.name))
+            return
+        elif cog.min_python_version > sys.version_info:
+            await ctx.send(_(
+                "This cog requires at least python version {}, aborting install.".format(
+                    '.'.join([str(n) for n in cog.min_python_version])
+                )
+            ))
             return
 
         if not await repo_name.install_requirements(cog, self.LIB_PATH):
@@ -285,6 +297,8 @@ class Downloader:
         await repo_name.install_libraries(self.SHAREDLIB_PATH)
 
         await ctx.send(_("`{}` cog successfully installed.").format(cog_name))
+        if cog.install_msg is not None:
+            await ctx.send(cog.install_msg)
 
     @cog.command(name="uninstall")
     async def _cog_uninstall(self, ctx, cog_name: InstalledCog):

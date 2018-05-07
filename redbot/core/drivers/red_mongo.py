@@ -14,10 +14,15 @@ def _initialize(**kwargs):
     admin_pass = kwargs['PASSWORD']
     db_name = kwargs.get('DB_NAME', 'default_db')
 
-    url = "mongodb://{}:{}@{}:{}/{}".format(
-        admin_user, admin_pass, host, port,
-        db_name
-    )
+    if admin_user is not None and admin_pass is not None:
+        url = "mongodb://{}:{}@{}:{}/{}".format(
+            admin_user, admin_pass, host, port,
+            db_name
+        )
+    else:
+        url = "mongodb://{}:{}/{}".format(
+            host, port, db_name
+        )
 
     global _conn
     _conn = motor.motor_asyncio.AsyncIOMotorClient(url)
@@ -27,8 +32,8 @@ class Mongo(BaseDriver):
     """
     Subclass of :py:class:`.red_base.BaseDriver`.
     """
-    def __init__(self, cog_name, **kwargs):
-        super().__init__(cog_name)
+    def __init__(self, cog_name, identifier, **kwargs):
+        super().__init__(cog_name, identifier)
 
         if _conn is None:
             _initialize(**kwargs)
@@ -100,10 +105,15 @@ class Mongo(BaseDriver):
         dot_identifiers = '.'.join(identifiers)
         mongo_collection = self.get_collection()
 
-        await mongo_collection.update_one(
-            {'_id': self.unique_cog_identifier},
-            update={"$unset": {dot_identifiers: 1}}
-        )
+        if len(identifiers) > 0:
+            await mongo_collection.update_one(
+                {'_id': self.unique_cog_identifier},
+                update={"$unset": {dot_identifiers: 1}}
+            )
+        else:
+            await mongo_collection.delete_one(
+                {'_id': self.unique_cog_identifier}
+            )
 
 
 def get_config_details():

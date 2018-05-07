@@ -43,7 +43,10 @@ class Announcer:
             channel = guild.get_channel(channel_id)
 
         if channel is None:
-            channel = guild.default_channel
+            channel = guild.system_channel
+
+        if channel is None:
+            channel = guild.text_channels[0]
 
         return channel
 
@@ -62,7 +65,7 @@ class Announcer:
             try:
                 await channel.send(self.message)
             except discord.Forbidden:
-                await bot_owner.send("I could not announce to guild: {}".format(
+                await bot_owner.send("I could not announce to server: {}".format(
                                          g.id
                                      ))
             await asyncio.sleep(0.5)
