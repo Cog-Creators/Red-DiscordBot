@@ -62,15 +62,14 @@ def init_events(bot, cli_flags):
 
         bot.uptime = datetime.datetime.utcnow()
         packages = []
-        failed = []
 
         if cli_flags.no_cogs is False:
-            packages.append(await bot.db.packages())
+            packages.extend(await bot.db.packages())
 
         if cli_flags.load_cogs:
             packages.extend(cli_flags.load_cogs)
 
-        if not packages:
+        if packages:
             print("Loading packages...")
             for package in packages:
                 try:
