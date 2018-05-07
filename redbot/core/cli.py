@@ -90,8 +90,8 @@ def parse_cli_flags(args):
                         action="store_true",
                         help="Starts Red with no cogs loaded, only core")
     parser.add_argument("--load-cogs", type=str, nargs="*",
-                        help="Force loading a cog from the installed packages. "
-                            "Bypass the --no-cogs flag.")
+                        help="Force loading specified cogs from the installed packages. "
+                             "Can be used with the --no-cogs flag to load these cogs exclusively.")
     parser.add_argument("--self-bot",
                         action='store_true',
                         help="Specifies if Red should log in as selfbot")
