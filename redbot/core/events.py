@@ -61,12 +61,17 @@ def init_events(bot, cli_flags):
             return
 
         bot.uptime = datetime.datetime.utcnow()
+        packages = []
 
         if cli_flags.no_cogs is False:
-            print("Loading packages...")
-            failed = []
-            packages = await bot.db.packages()
+            packages.extend(await bot.db.packages())
 
+        if cli_flags.load_cogs:
+            packages.extend(cli_flags.load_cogs)
+
+        if packages:
+            to_remove = []
+            print("Loading packages...")
             for package in packages:
                 try:
                     spec = await bot.cog_mgr.find_cog(package)
@@ -75,6 +80,9 @@ def init_events(bot, cli_flags):
                     log.exception("Failed to load package {}".format(package),
                                   exc_info=e)
                     await bot.remove_loaded_package(package)
+                    to_remove.append(package)
+            for package in to_remove:
+                packages.remove(package)
             if packages:
                 print("Loaded packages: " + ", ".join(packages))
 
@@ -277,3 +285,4 @@ def _get_startup_screen_specs():
         ascii_border = False
 
     return on_symbol, off_symbol, ascii_border
+
