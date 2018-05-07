@@ -70,7 +70,7 @@ def init_events(bot, cli_flags):
         if cli_flags.load_cogs:
             packages.extend(cli_flags.load_cogs)
 
-        if packages != []:
+        if not packages:
             print("Loading packages...")
             for package in packages:
                 try:
