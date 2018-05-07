@@ -1,9 +1,8 @@
 import discord
-from discord.ext import commands
-from redbot.core import Config, checks
+from redbot.core import Config, checks, commands
 from redbot.core.utils.chat_formatting import pagify
 from redbot.core.bot import Red
-from redbot.core.i18n import CogI18n
+from redbot.core.i18n import Translator, cog_i18n
 from .streamtypes import TwitchStream, HitboxStream, MixerStream, PicartoStream, TwitchCommunity, YoutubeStream
 from .errors import (OfflineStream, StreamNotFound, APIError, InvalidYoutubeCredentials,
                      CommunityNotFound, OfflineCommunity, StreamsError, InvalidTwitchCredentials)
@@ -15,9 +14,10 @@ import re
 CHECK_DELAY = 60
 
 
-_ = CogI18n("Streams", __file__)
+_ = Translator("Streams", __file__)
 
 
+@cog_i18n(_)
 class Streams:
 
     global_defaults = {
@@ -64,7 +64,7 @@ class Streams:
         self.task = self.bot.loop.create_task(self._stream_alerts())
 
     @commands.command()
-    async def twitch(self, ctx, channel_name: str):
+    async def twitch(self, ctx: commands.Context, channel_name: str):
         """Checks if a Twitch channel is streaming"""
         token = await self.db.tokens.get_raw(TwitchStream.__name__, default=None)
         stream = TwitchStream(name=channel_name,
@@ -72,7 +72,7 @@ class Streams:
         await self.check_online(ctx, stream)
 
     @commands.command()
-    async def youtube(self, ctx, channel_id_or_name: str):
+    async def youtube(self, ctx: commands.Context, channel_id_or_name: str):
         """
         Checks if a Youtube channel is streaming
         """
@@ -85,24 +85,24 @@ class Streams:
         await self.check_online(ctx, stream)
 
     @commands.command()
-    async def hitbox(self, ctx, channel_name: str):
+    async def hitbox(self, ctx: commands.Context, channel_name: str):
         """Checks if a Hitbox channel is streaming"""
         stream = HitboxStream(name=channel_name)
         await self.check_online(ctx, stream)
 
     @commands.command()
-    async def mixer(self, ctx, channel_name: str):
+    async def mixer(self, ctx: commands.Context, channel_name: str):
         """Checks if a Mixer channel is streaming"""
         stream = MixerStream(name=channel_name)
         await self.check_online(ctx, stream)
 
     @commands.command()
-    async def picarto(self, ctx, channel_name: str):
+    async def picarto(self, ctx: commands.Context, channel_name: str):
         """Checks if a Picarto channel is streaming"""
         stream = PicartoStream(name=channel_name)
         await self.check_online(ctx, stream)
 
-    async def check_online(self, ctx, stream):
+    async def check_online(self, ctx: commands.Context, stream):
         try:
             embed = await stream.is_online()
         except OfflineStream:
@@ -124,12 +124,12 @@ class Streams:
     @commands.group()
     @commands.guild_only()
     @checks.mod()
-    async def streamalert(self, ctx):
+    async def streamalert(self, ctx: commands.Context):
         if ctx.invoked_subcommand is None:
             await ctx.send_help()
 
     @streamalert.group(name="twitch")
-    async def _twitch(self, ctx):
+    async def _twitch(self, ctx: commands.Context):
         """Twitch stream alerts"""
         if ctx.invoked_subcommand is None or ctx.invoked_subcommand == self._twitch:
             await ctx.send_help()
@@ -151,22 +151,22 @@ class Streams:
         await self.stream_alert(ctx, YoutubeStream, channel_name_or_id)
 
     @streamalert.command(name="hitbox")
-    async def hitbox_alert(self, ctx, channel_name: str):
+    async def hitbox_alert(self, ctx: commands.Context, channel_name: str):
         """Sets a Hitbox stream alert notification in the channel"""
         await self.stream_alert(ctx, HitboxStream, channel_name)
 
     @streamalert.command(name="mixer")
-    async def mixer_alert(self, ctx, channel_name: str):
+    async def mixer_alert(self, ctx: commands.Context, channel_name: str):
         """Sets a Mixer stream alert notification in the channel"""
         await self.stream_alert(ctx, MixerStream, channel_name)
 
     @streamalert.command(name="picarto")
-    async def picarto_alert(self, ctx, channel_name: str):
+    async def picarto_alert(self, ctx: commands.Context, channel_name: str):
         """Sets a Picarto stream alert notification in the channel"""
         await self.stream_alert(ctx, PicartoStream, channel_name)
 
     @streamalert.command(name="stop")
-    async def streamalert_stop(self, ctx, _all: bool=False):
+    async def streamalert_stop(self, ctx: commands.Context, _all: bool=False):
         """Stops all stream notifications in the channel
 
         Adding 'yes' will disable all notifications in the server"""
@@ -197,7 +197,7 @@ class Streams:
         await ctx.send(msg)
 
     @streamalert.command(name="list")
-    async def streamalert_list(self, ctx):
+    async def streamalert_list(self, ctx: commands.Context):
         streams_list = defaultdict(list)
         guild_channels_ids = [c.id for c in ctx.guild.channels]
         msg = _("Active stream alerts:\n\n")
@@ -218,7 +218,7 @@ class Streams:
         for page in pagify(msg):
             await ctx.send(page)
 
-    async def stream_alert(self, ctx, _class, channel_name):
+    async def stream_alert(self, ctx: commands.Context, _class, channel_name):
         stream = self.get_stream(_class, channel_name)
         if not stream:
             token = await self.db.tokens.get_raw(_class.__name__, default=None)
@@ -251,7 +251,7 @@ class Streams:
 
         await self.add_or_remove(ctx, stream)
 
-    async def community_alert(self, ctx, _class, community_name):
+    async def community_alert(self, ctx: commands.Context, _class, community_name):
         community = self.get_community(_class, community_name)
         if not community:
             token = await self.db.tokens.get_raw(_class.__name__, default=None)
@@ -278,13 +278,13 @@ class Streams:
 
     @commands.group()
     @checks.mod()
-    async def streamset(self, ctx):
+    async def streamset(self, ctx: commands.Context):
         if ctx.invoked_subcommand is None:
             await ctx.send_help()
 
     @streamset.command()
     @checks.is_owner()
-    async def twitchtoken(self, ctx, token: str):
+    async def twitchtoken(self, ctx: commands.Context, token: str):
         """Set the Client ID for twitch.
 
         To do this, follow these steps:
@@ -318,14 +318,14 @@ class Streams:
 
     @streamset.group()
     @commands.guild_only()
-    async def mention(self, ctx):
+    async def mention(self, ctx: commands.Context):
         """Sets mentions for stream alerts."""
         if ctx.invoked_subcommand is None or ctx.invoked_subcommand == self.mention:
             await ctx.send_help()
 
     @mention.command(aliases=["everyone"])
     @commands.guild_only()
-    async def all(self, ctx):
+    async def all(self, ctx: commands.Context):
         """Toggles everyone mention"""
         guild = ctx.guild
         current_setting = await self.db.guild(guild).mention_everyone()
@@ -340,7 +340,7 @@ class Streams:
 
     @mention.command(aliases=["here"])
     @commands.guild_only()
-    async def online(self, ctx):
+    async def online(self, ctx: commands.Context):
         """Toggles here mention"""
         guild = ctx.guild
         current_setting = await self.db.guild(guild).mention_here()
@@ -355,7 +355,7 @@ class Streams:
 
     @mention.command()
     @commands.guild_only()
-    async def role(self, ctx, *, role: discord.Role):
+    async def role(self, ctx: commands.Context, *, role: discord.Role):
         """Toggles role mention"""
         current_setting = await self.db.role(role).mention()
         if not role.mentionable:
@@ -373,7 +373,7 @@ class Streams:
 
     @streamset.command()
     @commands.guild_only()
-    async def autodelete(self, ctx, on_off: bool):
+    async def autodelete(self, ctx: commands.Context, on_off: bool):
         """Toggles automatic deletion of notifications for streams that go offline"""
         await self.db.guild(ctx.guild).autodelete.set(on_off)
         if on_off:
@@ -382,7 +382,7 @@ class Streams:
         else:
             await ctx.send("Notifications will never be deleted.")
 
-    async def add_or_remove(self, ctx, stream):
+    async def add_or_remove(self, ctx: commands.Context, stream):
         if ctx.channel.id not in stream.channels:
             stream.channels.append(ctx.channel.id)
             if stream not in self.streams:
@@ -398,7 +398,7 @@ class Streams:
 
         await self.save_streams()
 
-    async def add_or_remove_community(self, ctx, community):
+    async def add_or_remove_community(self, ctx: commands.Context, community):
         if ctx.channel.id not in community.channels:
             community.channels.append(ctx.channel.id)
             if community not in self.communities:

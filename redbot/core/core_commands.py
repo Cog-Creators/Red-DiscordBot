@@ -112,7 +112,7 @@ class Core:
                 passed, since
             )
         )
-    
+
     def get_bot_uptime(self, *, brief=False):
         # Courtesy of Danny
         now = datetime.datetime.utcnow()
@@ -134,7 +134,7 @@ class Core:
         return fmt.format(d=days, h=hours, m=minutes, s=seconds)
 
     @commands.group()
-    async def embedset(self, ctx: RedContext):
+    async def embedset(self, ctx: commands.Context):
         """
         Commands for toggling embeds on or off.
 
@@ -157,7 +157,7 @@ class Core:
 
     @embedset.command(name="global")
     @checks.is_owner()
-    async def embedset_global(self, ctx: RedContext):
+    async def embedset_global(self, ctx: commands.Context):
         """
         Toggle the global embed setting.
 
@@ -175,7 +175,7 @@ class Core:
 
     @embedset.command(name="guild")
     @checks.guildowner_or_permissions(administrator=True)
-    async def embedset_guild(self, ctx: RedContext, enabled: bool=None):
+    async def embedset_guild(self, ctx: commands.Context, enabled: bool=None):
         """
         Toggle the guild's embed setting.
 
@@ -200,7 +200,7 @@ class Core:
             )
 
     @embedset.command(name="user")
-    async def embedset_user(self, ctx: RedContext, enabled: bool=None):
+    async def embedset_user(self, ctx: commands.Context, enabled: bool=None):
         """
         Toggle the user's embed setting.
 
@@ -410,7 +410,7 @@ class Core:
         """Reloads packages"""
 
         cognames = [c.strip() for c in cog_name.split(' ')]
-        
+
         for c in cognames:
             ctx.bot.unload_extension(c)
 
@@ -426,7 +426,7 @@ class Core:
             except RuntimeError:
                 notfound_packages.append(inline(c))
 
-        for spec, name in cogspecs: 
+        for spec, name in cogspecs:
             try:
                 self.cleanup_and_refresh_modules(spec.name)
                 await ctx.bot.load_extension(spec)
@@ -487,7 +487,7 @@ class Core:
         except:
             pass
         await ctx.bot.shutdown()
-    
+
     @commands.command(name="restart")
     @checks.is_owner()
     async def _restart(self, ctx, silently: bool=False):
@@ -774,26 +774,26 @@ class Core:
                 await ctx.send(_("You have been set as owner."))
             else:
                 await ctx.send(_("Invalid token."))
-                
+
     @_set.command()
     @checks.is_owner()
     async def token(self, ctx, token: str):
         """Change bot token."""
 
         if not isinstance(ctx.channel, discord.DMChannel):
-            
+
             try:
                 await ctx.message.delete()
             except discord.Forbidden:
                 pass
-            
+
             await ctx.send(
                 _("Please use that command in DM. Since users probably saw your token,"
                   " it is recommended to reset it right now. Go to the following link and"
                   " select `Reveal Token` and `Generate a new token?`."
                   "\n\nhttps://discordapp.com/developers/applications/me/{}").format(self.bot.user.id))
             return
-        
+
         await ctx.bot.db.token.set(token)
         await ctx.send("Token set. Restart me.")
 
@@ -1049,7 +1049,7 @@ class Core:
             await ctx.send(_("User has been removed from whitelist."))
         else:
             await ctx.send(_("User was not in the whitelist."))
-            
+
     @whitelist.command(name='clear')
     async def whitelist_clear(self, ctx):
         """

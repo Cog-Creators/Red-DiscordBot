@@ -7,10 +7,10 @@ Ported to Red V3 by Palm__ (https://github.com/palmtree5)
 import asyncio
 import discord
 
-from redbot.core import RedContext
+from redbot.core import commands
 
 
-async def menu(ctx: RedContext, pages: list,
+async def menu(ctx: commands.Context, pages: list,
                controls: dict,
                message: discord.Message=None, page: int=0,
                timeout: float=30.0):
@@ -28,7 +28,7 @@ async def menu(ctx: RedContext, pages: list,
 
     Parameters
     ----------
-    ctx: RedContext
+    ctx: commands.Context
         The command context
     pages: `list` of `str` or `discord.Embed`
         The pages of the menu.
@@ -92,7 +92,7 @@ async def menu(ctx: RedContext, pages: list,
                                        timeout, react.emoji)
 
 
-async def next_page(ctx: RedContext, pages: list,
+async def next_page(ctx: commands.Context, pages: list,
                     controls: dict,  message: discord.Message, page: int,
                     timeout: float, emoji: str):
     perms = message.channel.permissions_for(ctx.guild.me)
@@ -109,7 +109,7 @@ async def next_page(ctx: RedContext, pages: list,
                       page=page, timeout=timeout)
 
 
-async def prev_page(ctx: RedContext, pages: list,
+async def prev_page(ctx: commands.Context, pages: list,
                     controls: dict,  message: discord.Message, page: int,
                     timeout: float, emoji: str):
     perms = message.channel.permissions_for(ctx.guild.me)
@@ -126,7 +126,7 @@ async def prev_page(ctx: RedContext, pages: list,
                       page=next_page, timeout=timeout)
 
 
-async def close_menu(ctx: RedContext, pages: list,
+async def close_menu(ctx: commands.Context, pages: list,
                      controls: dict,  message: discord.Message, page: int,
                      timeout: float, emoji: str):
     if message:
