@@ -119,7 +119,7 @@ class Warnings:
                 registered_actions.append(to_add)
                 # Sort in descending order by point count for ease in
                 # finding the highest possible action to take
-                registered_actions.sort(key=lambda a: a["point_count"], reverse=True)
+                registered_actions.sort(key=lambda a: a["points"], reverse=True)
                 await ctx.tick()
 
     @warnaction.command(name="del")
@@ -136,6 +136,11 @@ class Warnings:
                     break
             if to_remove:
                 registered_actions.remove(to_remove)
+                await ctx.tick()
+            else:
+                await ctx.send(
+                    _("No action named {} exists!").format(action_name)
+                )
 
     @commands.group()
     @commands.guild_only()
@@ -177,7 +182,7 @@ class Warnings:
         guild_settings = self.config.guild(guild)
         async with guild_settings.reasons() as registered_reasons:
             if registered_reasons.pop(reason_name.lower(), None):
-                await ctx.send(_("Removed reason {}").format(reason_name))
+                await ctx.tick()
             else:
                 await ctx.send(_("That is not a registered reason name"))
 
@@ -190,13 +195,16 @@ class Warnings:
         guild_settings = self.config.guild(guild)
         msg_list = []
         async with guild_settings.reasons() as registered_reasons:
-            for r in registered_reasons.keys():
+            for r, v in registered_reasons.items():
                 msg_list.append(
-                    "Name: {}\nPoints: {}\nAction: {}".format(
-                        r, r["points"], r["action"]
+                    "Name: {}\nPoints: {}\nDescription: {}".format(
+                        r, v["points"], v["description"]
                     )
                 )
-        await ctx.send_interactive(msg_list)
+        if msg_list:
+            await ctx.send_interactive(msg_list)
+        else:
+            await ctx.send(_("There are no reasons configured!"))
 
     @commands.command()
     @commands.guild_only()
@@ -209,11 +217,16 @@ class Warnings:
         async with guild_settings.actions() as registered_actions:
             for r in registered_actions:
                 msg_list.append(
-                    "Name: {}\nPoints: {}\nDescription: {}".format(
-                        r, r["points"], r["description"]
+                    "Name: {}\nPoints: {}\nExceed command: {}\n"
+                    "Drop command: {}".format(
+                        r["action_name"], r["points"], r["exceed_command"],
+                        r["drop_command"]
                     )
                 )
-        await ctx.send_interactive(msg_list)
+        if msg_list:
+            await ctx.send_interactive(msg_list)
+        else:
+            await ctx.send(_("There are no actions configured!"))
 
     @commands.command()
     @commands.guild_only()
@@ -270,7 +283,7 @@ class Warnings:
         if userid is None:
             user = ctx.author
         else:
-            if not is_admin_or_superior(self.bot, ctx.author):
+            if not await is_admin_or_superior(self.bot, ctx.author):
                 await ctx.send(
                     warning(
                         _("You are not allowed to check "

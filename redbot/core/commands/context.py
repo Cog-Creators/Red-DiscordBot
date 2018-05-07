@@ -134,3 +134,32 @@ class Context(commands.Context):
         return await self.bot.embed_requested(
             self.channel, self.author, command=self.command
         )
+
+    async def maybe_send_embed(self, message: str) -> discord.Message:
+        """
+        Simple helper to send a simple message to context
+        without manually checking ctx.embed_requested
+        This should only be used for simple messages.
+
+        Parameters
+        ----------
+        message: `str`
+            The string to send
+
+        Returns
+        -------
+        discord.Message:
+            the message which was sent
+
+        Raises
+        ------
+        discord.Forbidden
+            see `discord.abc.Messageable.send`
+        discord.HTTPException
+            see `discord.abc.Messageable.send`
+        """
+
+        if await self.embed_requested():
+            return await self.send(embed=discord.Embed(description=message))
+        else:
+            return await self.send(message)

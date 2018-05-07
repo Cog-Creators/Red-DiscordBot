@@ -72,7 +72,7 @@ class Core:
         owner = app_info.owner
 
         async with aiohttp.ClientSession() as session:
-            async with session.get("http://pypi.python.org/pypi/red-discordbot/json") as r:
+            async with session.get('{}/json'.format(red_pypi)) as r:
                 data = await r.json()
         outdated = StrictVersion(data["info"]["version"]) > StrictVersion(__version__)
         about = (
@@ -280,7 +280,7 @@ class Core:
         guilds = sorted(list(self.bot.guilds),
                         key=lambda s: s.name.lower())
         msg = ""
-        for i, server in enumerate(guilds):
+        for i, server in enumerate(guilds, 1):
             msg += "{}: {}\n".format(i, server.name)
 
         msg += "\nTo leave a server, just type its number."
@@ -313,6 +313,9 @@ class Core:
         try:
             msg = await self.bot.wait_for("message", check=conf_check, timeout=15)
             if msg.content.lower().strip() in ("yes", "y"):
+                if server.owner == ctx.bot.user:
+                    await ctx.send("I cannot leave a guild I am the owner of.")
+                    return
                 await server.leave()
                 if server != ctx.guild:
                     await ctx.send("Done.")
@@ -875,7 +878,7 @@ class Core:
         if data_dir.exists():
             home = data_dir.home()
             backup_file = home / backup_filename
-            os.chdir(data_dir.parent)
+            os.chdir(str(data_dir.parent))
             with tarfile.open(str(backup_file), "w:gz") as tar:
                 tar.add(data_dir.stem)
             await ctx.send(_("A backup has been made of this instance. It is at {}.").format(
