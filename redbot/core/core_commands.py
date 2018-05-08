@@ -58,7 +58,7 @@ class Core:
             i = int(sum(x[1] for x in ctx.bot.latencies) /
                     len(ctx.bot.latencies) * 1000)
             await ctx.maybe_send_embed("Avg latency: {}ms".format(i))
-        elif ctx.guild is None or ctx.guild.me.permissions.add_reactions:
+        elif ctx.guild is None or ctx.permissions_for(ctx.guild.me).add_reactions:
             await ctx.message.add_reaction("\U0001f3d3")  # ping pong paddle
         else:
             await ctx.maybe_send_embed("Pong.")
