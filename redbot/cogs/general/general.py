@@ -48,11 +48,6 @@ class General:
             _("My sources say no"), _("Outlook not so good"), _("Very doubtful")
         ]
 
-    @commands.command(hidden=True)
-    async def ping(self, ctx):
-        """Pong."""
-        await ctx.send("Pong.")
-
     @commands.command()
     async def choose(self, ctx, *choices):
         """Chooses between multiple choices.

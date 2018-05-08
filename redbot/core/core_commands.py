@@ -51,6 +51,16 @@ class Core:
         rpc.add_method('core', self.rpc_unload)
         rpc.add_method('core', self.rpc_reload)
 
+    @commands.command(hidden=True)
+    async def ping(self, ctx, verbose: bool=False):
+        """Pong."""
+        if verbose:
+            i = int(sum(x[1] for x in ctx.bot.latencies) /
+                    len(ctx.bot.latencies) * 1000)
+            await ctx.maybe_send_embed("Avg latency: {}ms".format(i))
+        else:
+            await ctx.message.add_reaction("\U0001f3d3")  # ping pong paddle
+
     @commands.command()
     async def info(self, ctx: RedContext):
         """Shows info about Red"""
