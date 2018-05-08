@@ -128,12 +128,15 @@ class RedContext(commands.Context):
     async def embed_requested(self):
         """
         Simple helper to call bot.embed_requested
+        with logic around if embed permissions are available
 
         Returns
         -------
         bool:
             :code:`True` if an embed is requested
         """
+        if self.guild and not self.channel.permissions_for(self.guild.me).embed_links:
+            return False
         return await self.bot.embed_requested(
             self.channel, self.author, command=self.command
         )
