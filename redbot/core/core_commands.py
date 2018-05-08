@@ -299,6 +299,8 @@ class Core:
                 break
             try:
                 msg = int(msg.content) - 1
+                if msg < 0:
+                    break
                 await self.leave_confirmation(guilds[msg], owner, ctx)
                 break
             except (IndexError, ValueError, AttributeError):
