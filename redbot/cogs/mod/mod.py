@@ -214,9 +214,7 @@ class Mod:
                 "Yes" if reinvite_on_unban else "No")
             if await ctx.embed_requested():
                 await ctx.send(
-                    discord.Embed(
-                        description=msg
-                    )
+                    embed=discord.Embed(description=msg)
                 )
             else:
                 await ctx.send(box(msg))
@@ -231,7 +229,8 @@ class Mod:
             await self.settings.guild(guild).respect_hierarchy.set(True)
             await ctx.maybe_send_embed(
                 _("Role hierarchy will be checked when "
-                  "moderation commands are issued."))
+                  "moderation commands are issued.")
+            )
         else:
             await self.settings.guild(guild).respect_hierarchy.set(False)
             await ctx.maybe_send_embed(
@@ -331,7 +330,8 @@ class Mod:
             await self.settings.guild(guild).reinvite_on_unban.set(False)
             await ctx.maybe_send_embed(
                 _("Users unbanned with {p}{c} will not be reinvited."
-                  ).format(p=ctx.prefix, c="unban"))
+                  ).format(p=ctx.prefix, c="unban")
+            )
 
     @commands.command()
     @commands.guild_only()
@@ -540,14 +540,18 @@ class Mod:
             await self.settings.guild(guild).current_tempbans.set(cur_tbans)
 
             try:  # We don't want blocked DMs preventing us from banning
-                await user.send(_(
+                msg = _(
                     "You have been temporarily banned from {g} until {t}. "
                     "Here is an invite for when your ban expires: {i}"
-                    ).format(
-                        g=guild.name,
-                        t=unban_time.strftime("%m-%d-%Y %H:%M:%S"),
-                        i=invite)
+                ).format(
+                    g=guild.name,
+                    t=unban_time.strftime("%m-%d-%Y %H:%M:%S"),
+                    i=invite
                 )
+                if await self.bot.embed_requested(user.dm_channel, user):
+                    await user.send(embed=discord.Embed(msg))
+                else:
+                    await user.send(msg)
             except discord.HTTPException:
                 pass
             self.ban_queue.append(queue_entry)
@@ -609,20 +613,25 @@ class Mod:
         if can_ban:
             queue_entry = (guild.id, user.id)
             try:  # We don't want blocked DMs preventing us from banning
-                msg = await user.send(
-                    _("You have been banned and "
+                msg = _("You have been banned and "
                       "then unbanned as a quick way to delete your messages.\n"
-                      "You can now join the server again. {}").format(invite))
+                      "You can now join the server again. {}").format(invite)
+                if self.bot.embed_requested(user.dm_channel, user):
+                    await user.send(embed=discord.Embed(description=msg))
+                else:
+                    await user.send(msg)
             except discord.HTTPException:
                 msg = None
             self.ban_queue.append(queue_entry)
             try:
                 await guild.ban(
-                    user, reason=audit_reason, delete_message_days=1)
+                    user, reason=audit_reason, delete_message_days=1
+                )
             except discord.errors.Forbidden:
                 self.ban_queue.remove(queue_entry)
                 await ctx.maybe_send_embed(
-                    _("My role is not high enough to softban that user."))
+                    _("My role is not high enough to softban that user.")
+                )
                 if msg is not None:
                     await msg.delete()
                 return
@@ -639,9 +648,10 @@ class Mod:
                 return
             else:
                 await ctx.maybe_send_embed(_("Done. Enough chaos."))
-                log.info("{}({}) softbanned {}({}), deleting 1 day worth "
-                         "of messages".format(author.name, author.id,
-                                              user.name, user.id))
+                log.info(
+                    "{a}({a.id}) softbanned {u}({u.id}), deleting 1 day worth "
+                    "of messages".format(a=author, u=user)
+                )
                 try:
                     await modlog.create_case(
                         self.bot,
@@ -688,7 +698,8 @@ class Mod:
         except discord.HTTPException:
             self.unban_queue.remove(queue_entry)
             await ctx.maybe_send_embed(
-                _("Something went wrong while attempting to unban that user"))
+                _("Something went wrong while attempting to unban that user")
+            )
             return
         else:
             await ctx.maybe_send_embed(
@@ -706,11 +717,16 @@ class Mod:
         if await self.settings.guild(guild).reinvite_on_unban():
             invite = await self.get_invite_for_reinvite(ctx)
             if invite:
+                msg = _("You've been unbanned from {g}.\n"
+                        "Here is an invite for that server: {i}"
+                        ).format(g=guild.name, i=invite.url)
                 try:
-                    user.send(
-                        _("You've been unbanned from {g}.\n"
-                          "Here is an invite for that server: {i}"
-                          ).format(g=guild.name, i=invite.url))
+                    if await self.bot.embed_requested(
+                        user.dm_channel, user
+                    ):
+                        user.send(embed=discord.Embed(description=msg))
+                    else:
+                        user.send(msg)
                 except discord.Forbidden:
                     await ctx.maybe_send_embed(
                         _("I failed to send an invite to that user. "
@@ -936,7 +952,9 @@ class Mod:
             guild, channel, author, user, audit_reason)
 
         if success:
-            await channel.send(_("User has been muted in this channel."))
+            await ctx.maybe_send_embed(
+                _("User has been muted in this channel.")
+            )
             try:
                 await modlog.create_case(
                     self.bot, guild, ctx.message.created_at, "cmute",
@@ -945,7 +963,7 @@ class Mod:
             except RuntimeError as e:
                 await ctx.maybe_send_embed(e)
         else:
-            await channel.send(issue)
+            await ctx.maybe_send_embed(issue)
 
     @checks.mod_or_permissions(administrator=True)
     @mute.command(name="server", aliases=["guild"])
