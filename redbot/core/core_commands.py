@@ -404,43 +404,51 @@ class Core:
             formed = self.get_package_strings(failed_packages, fmt, ('is', 'are'))
             await ctx.send(_(formed))
 
+    async def _reload_logic(self, *cognames: str) -> tuple:
+        cogspecs = []
+        failed_packages = []
+        loaded_packages = []
+        notfound_packages = []
+        for c in cognames:
+            try:
+                spec = await self.bot.cog_mgr.find_cog(c)
+                cogspecs.append((spec, c))
+            except RuntimeError:
+                notfound_packages.append(inline(c))
+
+        for spec, name in cogspecs:
+            try:
+                self.cleanup_and_refresh_modules(spec.name)
+                await self.bot.load_extension(spec)
+                loaded_packages.append(inline(name))
+            except Exception as e:
+                log.exception("Package reloading failed", exc_info=e)
+
+                exception_log = (
+                    "Exception in 'redbot.core.core_commands._reload logic'\n")
+                exception_log += "".join(
+                    traceback.format_exception(type(e),
+                    e, e.__traceback__)
+                )
+                self.bot._last_exception = exception_log
+
+                failed_packages.append(inline(name))
+        
+        return (loaded_packages, failed_packages, notfound_packages)
+
     @commands.command(name="reload")
     @checks.is_owner()
     async def _reload(self, ctx, *, cog_name: str):
         """Reloads packages"""
 
         cognames = [c.strip() for c in cog_name.split(' ')]
-        
+
+        (loaded_packages,
+         failed_packages,
+         notfound_packages) = await self.__reload_logic(*cognames)
+
         for c in cognames:
             ctx.bot.unload_extension(c)
-
-        cogspecs = []
-        failed_packages = []
-        loaded_packages = []
-        notfound_packages = []
-
-        for c in cognames:
-            try:
-                spec = await ctx.bot.cog_mgr.find_cog(c)
-                cogspecs.append((spec, c))
-            except RuntimeError:
-                notfound_packages.append(inline(c))
-
-        for spec, name in cogspecs: 
-            try:
-                self.cleanup_and_refresh_modules(spec.name)
-                await ctx.bot.load_extension(spec)
-                loaded_packages.append(inline(name))
-            except Exception as e:
-                log.exception("Package reloading failed", exc_info=e)
-
-                exception_log = ("Exception in command '{}'\n"
-                                 "".format(ctx.command.qualified_name))
-                exception_log += "".join(traceback.format_exception(type(e),
-                                         e, e.__traceback__))
-                self.bot._last_exception = exception_log
-
-                failed_packages.append(inline(name))
 
         if loaded_packages:
             fmt = "Package{plural} {packs} {other} reloaded."

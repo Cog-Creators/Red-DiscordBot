@@ -15,6 +15,7 @@ from redbot.core.utils.chat_formatting import box, pagify
 from discord.ext import commands
 
 from redbot.core.bot import Red
+from redbot.core.core_commands import _reload_logic
 from .checks import install_agreement
 from .converters import InstalledCog
 from .errors import CloningError, ExistingGitRepo
@@ -348,7 +349,36 @@ class Downloader:
 
         # noinspection PyTypeChecker
         await self._reinstall_libraries(installed_and_updated)
-        await ctx.send(_("Cog update completed successfully."))
+        await ctx.send(
+            _("Cog update completed successfully. "
+              " Would you like to reload {} now? (y/N"
+              ).format(
+                  "that cog" if len(installed_and_updated) == 1
+                  else "those cogs"
+              )
+        )
+
+        try:
+            def pred(m):
+                return m.author == ctx.author and m.channel == ctx.channel
+            m = await ctx.bot.wait_for('message', check=pred)
+        except Exception:
+            auto_reload = False
+        else:
+            auto_reload = m.content.lower().startswith('y')
+
+        if auto_reload:
+            await _reload_logic(*[c.name for c in installed_and_updated])
+            await ctx.send(
+                _("{} updated.").format(
+                    "Cogs" if len(installed_and_updated) > 1 else "Cog")
+            )
+        else:
+            await ctx.send(
+                _("Okay, you can update them later using `{}reload`").format(
+                    ctx.prefix)
+            )
+            
 
     @cog.command(name="list")
     async def _cog_list(self, ctx, repo_name: Repo):
