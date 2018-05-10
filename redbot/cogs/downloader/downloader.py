@@ -15,7 +15,7 @@ from redbot.core.utils.chat_formatting import box, pagify
 from discord.ext import commands
 
 from redbot.core.bot import Red
-from redbot.core.core_commands import _reload_logic
+from redbot.core.core_commands import 
 from .checks import install_agreement
 from .converters import InstalledCog
 from .errors import CloningError, ExistingGitRepo
@@ -368,11 +368,16 @@ class Downloader:
             auto_reload = m.content.lower().startswith('y')
 
         if auto_reload:
-            await _reload_logic(*[c.name for c in installed_and_updated])
-            await ctx.send(
-                _("{} updated.").format(
-                    "Cogs" if len(installed_and_updated) > 1 else "Cog")
+            success, failure, _ = await _reload_logic(
+                *[c.name for c in installed_and_updated]
             )
+            if failure:
+                await ctx.send(
+                    _("The following failed to reload:\n")
+                    + " ".join(failure)
+                )
+            else:
+                await m.add_reaction('\N{WHITE HEAVY CHECK MARK}')
         else:
             await ctx.send(
                 _("Okay, you can update them later using `{}reload`").format(
