@@ -420,7 +420,7 @@ class Downloader:
             cog_name = cog_installable.name
         else:
             made_by = "26 & co."
-            repo_url = "https://github.com/Twentysix26/Red-DiscordBot"
+            repo_url = "https://github.com/Cog-Creators/Red-DiscordBot"
             cog_name = cog_installable.__class__.__name__
 
         msg = _("Command: {}\nMade by: {}\nRepo: {}\nCog name: {}")
