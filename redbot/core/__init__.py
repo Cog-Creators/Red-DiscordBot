@@ -1,7 +1,6 @@
 from .config import Config
-from .context import RedContext
 
-__all__ = ["Config", "RedContext", "__version__"]
+__all__ = ["Config", "__version__"]
 
 
 class VersionInfo:

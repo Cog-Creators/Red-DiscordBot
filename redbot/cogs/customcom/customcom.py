@@ -4,13 +4,12 @@ import random
 from datetime import datetime
 
 import discord
-from discord.ext import commands
 
-from redbot.core import Config, checks
+from redbot.core import Config, checks, commands
 from redbot.core.utils.chat_formatting import box, pagify
-from redbot.core.i18n import CogI18n
+from redbot.core.i18n import Translator, cog_i18n
 
-_ = CogI18n("CustomCommands", __file__)
+_ = Translator("CustomCommands", __file__)
 
 
 class CCError(Exception):
@@ -152,6 +151,7 @@ class CommandObj:
             command, value=None)
 
 
+@cog_i18n(_)
 class CustomCommands:
     """Custom commands
     Creates commands used to display text"""

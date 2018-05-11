@@ -5,21 +5,21 @@ from datetime import timedelta
 from copy import copy
 import contextlib
 import discord
-from discord.ext import commands
 
-from redbot.core import Config, checks, RedContext
+from redbot.core import Config, checks, commands
 from redbot.core.utils.chat_formatting import pagify, box
 from redbot.core.utils.antispam import AntiSpam
 from redbot.core.bot import Red
-from redbot.core.i18n import CogI18n
+from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.tunnel import Tunnel
 
 
-_ = CogI18n("Reports", __file__)
+_ = Translator("Reports", __file__)
 
 log = logging.getLogger("red.reports")
 
 
+@cog_i18n(_)
 class Reports:
 
     default_guild_settings = {
@@ -66,7 +66,7 @@ class Reports:
     @checks.admin_or_permissions(manage_guild=True)
     @commands.guild_only()
     @commands.group(name="reportset")
-    async def reportset(self, ctx: RedContext):
+    async def reportset(self, ctx: commands.Context):
         """
         settings for reports
         """
@@ -74,14 +74,14 @@ class Reports:
 
     @checks.admin_or_permissions(manage_guild=True)
     @reportset.command(name="output")
-    async def setoutput(self, ctx: RedContext, channel: discord.TextChannel):
+    async def setoutput(self, ctx: commands.Context, channel: discord.TextChannel):
         """sets the output channel"""
         await self.config.guild(ctx.guild).output_channel.set(channel.id)
         await ctx.send(_("Report Channel Set."))
 
     @checks.admin_or_permissions(manage_guild=True)
     @reportset.command(name="toggleactive")
-    async def report_toggle(self, ctx: RedContext):
+    async def report_toggle(self, ctx: commands.Context):
         """Toggles whether the Reporting tool is enabled or not"""
 
         active = await self.config.guild(ctx.guild).active()
@@ -136,7 +136,6 @@ class Reports:
                     shared_guilds.append(guild)
         if len(shared_guilds) == 0:
             raise ValueError("No Qualifying Shared Guilds")
-            return
         if len(shared_guilds) == 1:
             return shared_guilds[0]
         output = ""
@@ -216,7 +215,7 @@ class Reports:
         return ticket_number
 
     @commands.group(name="report", invoke_without_command=True)
-    async def report(self, ctx: RedContext, *, _report: str=""):
+    async def report(self, ctx: commands.Context, *, _report: str=""):
         """
         Follow the prompts to make a report
 

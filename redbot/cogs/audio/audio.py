@@ -7,15 +7,19 @@ import lavalink
 import math
 import re
 import redbot.core
-from discord.ext import commands
 from redbot.core import Config, checks, bank
+from redbot.core import commands
+from redbot.core.i18n import Translator, cog_i18n
 
+_ = Translator("Audio", __file__)
 from .manager import shutdown_lavalink_server
 
 __version__ = "0.0.5a"
 __author__ = ["aikaterna", "billy/bollo/ati"]
 
 
+
+@cog_i18n(_)
 class Audio:
     def __init__(self, bot):
         self.bot = bot

@@ -10,9 +10,9 @@ import sys
 from redbot.core import Config
 from redbot.core import checks
 from redbot.core.data_manager import cog_data_path
-from redbot.core.i18n import CogI18n
+from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, pagify
-from discord.ext import commands
+from redbot.core import commands
 
 from redbot.core.bot import Red
 from .checks import install_agreement
@@ -22,9 +22,10 @@ from .installable import Installable
 from .log import log
 from .repo_manager import RepoManager, Repo
 
-_ = CogI18n('Downloader', __file__)
+_ = Translator('Downloader', __file__)
 
 
+@cog_i18n(_)
 class Downloader:
     def __init__(self, bot: Red):
         self.bot = bot
