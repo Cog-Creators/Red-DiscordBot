@@ -348,7 +348,41 @@ class Downloader:
 
         # noinspection PyTypeChecker
         await self._reinstall_libraries(installed_and_updated)
-        await ctx.send(_("Cog update completed successfully."))
+        await ctx.send(
+            _("Cog update completed successfully. "
+              " Would you like to reload {} now? (y/N"
+              ).format(
+                  "that cog" if len(installed_and_updated) == 1
+                  else "those cogs"
+              )
+        )
+
+        try:
+            def pred(m):
+                return m.author == ctx.author and m.channel == ctx.channel
+            m = await ctx.bot.wait_for('message', check=pred)
+        except Exception:
+            auto_reload = False
+        else:
+            auto_reload = m.content.lower().startswith('y')
+
+        if auto_reload:
+            success, failure, _ = await ctx.bot.get_cog_('Core')._reload_logic(
+                *[c.name for c in installed_and_updated]
+            )
+            if failure:
+                await ctx.send(
+                    _("The following failed to reload:\n")
+                    + " ".join(failure)
+                )
+            else:
+                await m.add_reaction('\N{WHITE HEAVY CHECK MARK}')
+        else:
+            await ctx.send(
+                _("Okay, you can update them later using `{}reload`").format(
+                    ctx.prefix)
+            )
+            
 
     @cog.command(name="list")
     async def _cog_list(self, ctx, repo_name: Repo):
