@@ -286,6 +286,7 @@ class Help(formatter.HelpFormatter):
 @commands.command()
 async def help(ctx, *cmds: str):
     """Shows help documentation.
+
     [p]**help**: Shows the help manual.
     [p]**help** command: Show help for a command
     [p]**help** Category: Show commands and description for a category"""

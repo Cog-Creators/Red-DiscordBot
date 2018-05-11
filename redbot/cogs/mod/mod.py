@@ -888,8 +888,8 @@ class Mod:
             "send_messages": overwrites.send_messages,
             "add_reactions": overwrites.add_reactions
         }
-        overwrites.send_messages = False
-        overwrites.add_reactions = False
+        overwrites.update(send_messages=False,
+                          add_reactions=False)
         try:
             await channel.set_permissions(user, overwrite=overwrites, reason=reason)
         except discord.Forbidden:
@@ -1013,9 +1013,9 @@ class Mod:
         if channel.id in perms_cache:
             old_values = perms_cache[channel.id]
         else:
-            old_values = None
-        overwrites.send_messages = old_values["send_messages"]
-        overwrites.add_reactions = old_values["add_reactions"]
+            old_values = {"send_messages": None, "add_reactions": None}
+        overwrites.update(send_messages=old_values["send_messages"],
+                          add_reactions=old_values["add_reactions"])
         is_empty = self.are_overwrites_empty(overwrites)
 
         try:

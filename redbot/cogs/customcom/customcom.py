@@ -179,7 +179,18 @@ class CustomCommands:
                      ctx: commands.Context):
         """
         CCs can be enhanced with arguments:
-        https: // twentysix26.github.io / Red - Docs / red_guide_command_args/
+
+        Argument    What it will be substituted with
+
+        {message}   message
+
+        {author}    message.author
+
+        {channel}   message.channel
+
+        {guild}     message.guild
+
+        {server}    message.guild
         """
         if not ctx.invoked_subcommand or isinstance(ctx.invoked_subcommand,
                                                     commands.Group):
