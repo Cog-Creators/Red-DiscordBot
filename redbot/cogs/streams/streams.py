@@ -561,7 +561,12 @@ class Streams:
             _class = getattr(StreamClasses, raw_stream["type"], None)
             if not _class:
                 continue
-
+            raw_msg_cache = raw_stream["messages"]
+            raw_stream["_messages_cache"] = []
+            for raw_msg in raw_msg_cache:
+                chn = self.bot.get_channel(raw_msg["channel"])
+                msg = await chn.get_message(raw_msg["message"])
+                raw_stream["_messages_cache"].append(msg)
             token = await self.db.tokens.get_raw(_class.__name__)
             streams.append(_class(token=token, **raw_stream))
 
@@ -581,7 +586,12 @@ class Streams:
             _class = getattr(StreamClasses, raw_community["type"], None)
             if not _class:
                 continue
-
+            raw_msg_cache = raw_community["messages"]
+            raw_community["_messages_cache"] = []
+            for raw_msg in raw_msg_cache:
+                chn = self.bot.get_channel(raw_msg["channel"])
+                msg = await chn.get_message(raw_msg["message"])
+                raw_community["_messages_cache"].append(msg)
             token = await self.db.tokens.get_raw(_class.__name__, default=None)
             communities.append(_class(token=token, **raw_community))
 
