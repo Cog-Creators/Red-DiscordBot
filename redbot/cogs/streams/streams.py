@@ -568,9 +568,7 @@ class Streams:
                 continue
             raw_msg_cache = raw_stream["messages"]
             raw_stream["_messages_cache"] = []
-            print(len(raw_msg_cache))
             for raw_msg in raw_msg_cache:
-                print(raw_msg)
                 chn = self.bot.get_channel(raw_msg["channel"])
                 msg = await chn.get_message(raw_msg["message"])
                 raw_stream["_messages_cache"].append(msg)
