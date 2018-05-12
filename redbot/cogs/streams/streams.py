@@ -473,6 +473,7 @@ class Streams:
                     except:
                         pass
                 stream._messages_cache.clear()
+                await self.save_streams()
             except:
                 pass
             else:
@@ -490,6 +491,7 @@ class Streams:
                     try:
                         m = await channel.send(content, embed=embed)
                         stream._messages_cache.append(m)
+                        await self.save_streams()
                     except:
                         pass
 
@@ -521,6 +523,7 @@ class Streams:
                     except:
                         pass
                 community._messages_cache.clear()
+                await self.save_communities()
             except:
                 pass
             else:
@@ -536,11 +539,13 @@ class Streams:
                         else:
                             msg = await chn.send(embed=emb)
                         community._messages_cache.append(msg)
+                        await self.save_communities()
                     else:
                         chn_msg = sorted(chn_msg, key=lambda x: x.created_at, reverse=True)[0]
                         community._messages_cache.remove(chn_msg)
                         await chn_msg.edit(embed=emb)
                         community._messages_cache.append(chn_msg)
+                        await self.save_communities()
 
     async def filter_streams(self, streams: list, channel: discord.TextChannel) -> list:
         filtered = []
