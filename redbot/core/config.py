@@ -749,7 +749,7 @@ class Config:
 
         Returns
         -------
-        Group
+        `Group <redbot.core.config.Group>`
             The guild's Group object.
 
         """
@@ -767,7 +767,7 @@ class Config:
 
         Returns
         -------
-        Group
+        `Group <redbot.core.config.Group>`
             The channel's Group object.
 
         """
@@ -783,7 +783,7 @@ class Config:
 
         Returns
         -------
-        Group
+        `Group <redbot.core.config.Group>`
             The role's Group object.
 
         """
@@ -799,7 +799,7 @@ class Config:
 
         Returns
         -------
-        Group
+        `Group <redbot.core.config.Group>`
             The user's Group object.
 
         """
@@ -815,7 +815,7 @@ class Config:
 
         Returns
         -------
-        Group
+        `Group <redbot.core.config.Group>`
             The member's Group object.
         """
         return self._get_base_group(self.MEMBER, member.guild.id, member.id)
@@ -834,7 +834,7 @@ class Config:
 
         Returns
         -------
-        Group
+        `Group <redbot.core.config.Group>`
             The custom group's Group object.
         """
         return self._get_base_group(group_identifier, *identifiers)
