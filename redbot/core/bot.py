@@ -25,21 +25,9 @@ from . import (
 )
 from .help_formatter import Help, help as help_
 from .sentry import SentryManager
-from .utils import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from aiohttp_json_rpc import JsonRpc
-
-# noinspection PyUnresolvedReferences
-class RpcMethodMixin:
-    async def rpc__cogs(self, request):
-        return list(self.cogs.keys())
-
-    async def rpc__extensions(self, request):
-        return list(self.extensions.keys())
 
 
-class RedBase(BotBase, RpcMethodMixin):
+class RedBase(BotBase):
     """Mixin for the main bot class.
 
     This exists because `Red` inherits from `discord.AutoShardedClient`, which
@@ -111,9 +99,10 @@ class RedBase(BotBase, RpcMethodMixin):
 
         self.cog_mgr = CogManager(paths=(str(self.main_dir / 'cogs'),))
 
-        self.register_rpc_methods()
-
         super().__init__(formatter=Help(), **kwargs)
+
+        if self.rpc_enabled:
+            self.rpc = rpc.RPC(self)
 
         self.remove_command('help')
 
@@ -281,10 +270,6 @@ class RedBase(BotBase, RpcMethodMixin):
 
             if pkg_name.startswith('redbot.cogs'):
                 del sys.modules['redbot.cogs'].__dict__[name]
-
-    def register_rpc_methods(self):
-        rpc.add_method('bot', self.rpc__cogs)
-        rpc.add_method('bot', self.rpc__extensions)
 
 
 class Red(RedBase, discord.AutoShardedClient):

@@ -47,10 +47,6 @@ class Core:
     def __init__(self, bot):
         self.bot = bot  # type: Red
 
-        rpc.add_method('core', self.rpc_load)
-        rpc.add_method('core', self.rpc_unload)
-        rpc.add_method('core', self.rpc_reload)
-
     @commands.command()
     async def info(self, ctx: commands.Context):
         """Shows info about Red"""

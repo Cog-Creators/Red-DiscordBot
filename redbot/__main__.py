@@ -156,7 +156,7 @@ def main():
         sentry_log.critical("Fatal Exception", exc_info=e)
         loop.run_until_complete(red.logout())
     finally:
-        rpc.clean_up()
+        red.rpc.close()
         if cleanup_tasks:
             pending = asyncio.Task.all_tasks(loop=red.loop)
             gathered = asyncio.gather(
