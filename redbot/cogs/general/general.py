@@ -6,12 +6,12 @@ from urllib.parse import quote_plus
 
 import aiohttp
 import discord
-from redbot.core.i18n import CogI18n
-from discord.ext import commands
+from redbot.core import commands
+from redbot.core.i18n import Translator, cog_i18n
 
 from redbot.core.utils.chat_formatting import escape, italics, pagify
 
-_ = CogI18n("General", __file__)
+_ = Translator("General", __file__)
 
 
 class RPS(Enum):
@@ -33,6 +33,7 @@ class RPSParser:
             raise
 
 
+@cog_i18n(_)
 class General:
     """General commands."""
 
