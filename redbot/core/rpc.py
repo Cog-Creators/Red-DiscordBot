@@ -6,25 +6,61 @@ import jsonrpcserver.aio
 import inspect
 import logging
 
+__all__ = ['methods', 'RPC', 'Methods']
+
 log = logging.getLogger('red.rpc')
 
 
 class Methods(jsonrpcserver.aio.AsyncMethods):
+    """
+    Container class for all registered RPC methods, please use the existing `methods`
+    attribute rather than creating a new instance of this class.
+
+    .. warning::
+
+        **NEVER** create a new instance of this class!
+    """
     def __init__(self):
         super().__init__()
 
         self._items = weakref.WeakValueDictionary()
 
-    def add(self, method, name=None):
+    def add(self, method, name: str=None):
+        """
+        Registers a method to the internal RPC server making it available for
+        RPC users to call.
+
+        .. important::
+
+            Any method added here must take ONLY JSON serializable parameters and
+            MUST return a JSON serializable object.
+
+        Parameters
+        ----------
+        method : function
+            A reference to the function to register.
+
+        name : str
+            Name of the function as seen by the RPC clients.
+        """
         if not inspect.iscoroutinefunction(method):
             raise TypeError("Method must be a coroutine.")
 
         if name is None:
             name = method.__qualname__
 
-        self._items[name] = method
+        self._items[str(name)] = method
 
-    def remove(self, *, name=None, method=None):
+    def remove(self, *, name: str=None, method=None):
+        """
+        Unregisters an RPC method. Either a name or reference to the method must
+        be provided and name will take priority.
+
+        Parameters
+        ----------
+        name : str
+        method : function
+        """
         if name and name in self._items:
             del self._items[name]
 
@@ -60,6 +96,9 @@ class BaseRPCMethodMixin:
 
 
 class RPC(BaseRPCMethodMixin):
+    """
+    RPC server manager.
+    """
     def __init__(self, bot):
         self.app = web.Application(loop=bot.loop)
         self.app.router.add_post('/rpc', self.handle)
@@ -71,10 +110,17 @@ class RPC(BaseRPCMethodMixin):
         super().__init__()
 
     async def initialize(self):
+        """
+        Finalizes the initialization of the RPC server and allows it to begin
+        accepting queries.
+        """
         self.server = await self.app.loop.create_server(self.app_handler, '127.0.0.1', 6133)
         log.debug('Created RPC server listener.')
 
     def close(self):
+        """
+        Closes the RPC server.
+        """
         self.server.close()
 
     async def handle(self, request):
