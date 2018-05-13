@@ -8,11 +8,10 @@ from typing import Tuple, Union, List
 import redbot.cogs
 import discord
 
-from . import checks
+from . import checks, commands
 from .config import Config
-from .i18n import CogI18n
+from .i18n import Translator, cog_i18n
 from .data_manager import cog_data_path
-from discord.ext import commands
 
 from .utils.chat_formatting import box, pagify
 
@@ -303,10 +302,13 @@ class CogManager:
         invalidate_caches()
 
 
-_ = CogI18n("CogManagerUI", __file__)
+_ = Translator("CogManagerUI", __file__)
 
 
+@cog_i18n(_)
 class CogManagerUI:
+    """Commands to interface with Red's cog manager."""
+
     async def visible_paths(self, ctx):
         install_path = await ctx.bot.cog_mgr.install_path()
         cog_paths = await ctx.bot.cog_mgr.paths()

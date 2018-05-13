@@ -7,14 +7,13 @@ from enum import Enum
 import discord
 
 from redbot.cogs.bank import check_global_setting_guildowner, check_global_setting_admin
-from redbot.core import Config, bank
-from redbot.core.i18n import CogI18n
+from redbot.core import Config, bank, commands
+from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import pagify, box
-from discord.ext import commands
 
 from redbot.core.bot import Red
 
-_ = CogI18n("Economy", __file__)
+_ = Translator("Economy", __file__)
 
 logger = logging.getLogger("red.economy")
 
@@ -104,6 +103,7 @@ class SetParser:
             raise RuntimeError
 
 
+@cog_i18n(_)
 class Economy:
     """Economy
 
