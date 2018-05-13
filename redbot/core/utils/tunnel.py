@@ -114,11 +114,11 @@ class Tunnel(metaclass=TunnelMeta):
             The embed to send
         files: `List[discord.Files]`
             A list of files to send.
-        
+
         Returns
         -------
         list of `discord.Message`
-            The `discord.Message`(s) sent as a result
+            The `discord.Message`\ (s) sent as a result
 
         Raises
         ------
