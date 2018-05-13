@@ -89,7 +89,7 @@ class Cleanup:
     @cleanup.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def text(self, ctx: commands.context, text: str, number: int, delete_pinned: bool=False):
+    async def text(self, ctx: commands.Context, text: str, number: int, delete_pinned: bool=False):
         """Deletes last X messages matching the specified text.
 
         Example:
