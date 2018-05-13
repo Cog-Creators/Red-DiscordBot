@@ -3,7 +3,7 @@ from collections import Counter
 import yaml
 import discord
 from discord.ext import commands
-import redbot.trivia
+from redbot.ext import trivia as ext_trivia
 from redbot.core import Config, checks
 from redbot.core.data_manager import cog_data_path
 from redbot.core.utils.chat_formatting import box, pagify
@@ -482,7 +482,7 @@ class Trivia:
         personal_lists = tuple(p.resolve()
                                for p in cog_data_path(self).glob("*.yaml"))
 
-        return personal_lists + tuple(redbot.trivia.lists())
+        return personal_lists + tuple(ext_trivia.lists())
 
     def __unload(self):
         for session in self.trivia_sessions:
