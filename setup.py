@@ -7,13 +7,9 @@ import sys
 
 from setuptools import find_packages
 
-IS_TRAVIS = 'TRAVIS' in os.environ
-IS_DEPLOYING = 'DEPLOYING' in os.environ
 IS_RTD = 'READTHEDOCS' in os.environ
 
 dep_links = ['https://github.com/Rapptz/discord.py/tarball/rewrite#egg=discord.py-1.0']
-if IS_TRAVIS:
-    dep_links = []
 
 
 def get_package_list():
@@ -24,15 +20,13 @@ def get_package_list():
 def get_requirements():
     with open('requirements.txt') as f:
         requirements = f.read().splitlines()
-    try:
-        requirements.remove('git+https://github.com/Rapptz/discord.py.git@rewrite#egg=discord.py[voice]')
-    except ValueError:
-        pass
 
-    if IS_DEPLOYING or not (IS_TRAVIS or IS_RTD):
-        requirements.append('discord.py>=1.0.0a0')
+    if IS_RTD:
+        requirements.remove('discord.py>=1.0.0a0')
+
     if sys.platform.startswith("linux"):
         requirements.append("distro")
+
     return requirements
 
 
