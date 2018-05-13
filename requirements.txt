@@ -5,4 +5,4 @@ raven==6.5.0
 colorama==0.3.9
 aiohttp-json-rpc==0.8.7
 pyyaml==3.12
-Red-Trivia
+Red-Trivia>=1.1.1

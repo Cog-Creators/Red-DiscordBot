@@ -61,12 +61,17 @@ def init_events(bot, cli_flags):
             return
 
         bot.uptime = datetime.datetime.utcnow()
+        packages = []
 
         if cli_flags.no_cogs is False:
-            print("Loading packages...")
-            failed = []
-            packages = await bot.db.packages()
+            packages.extend(await bot.db.packages())
 
+        if cli_flags.load_cogs:
+            packages.extend(cli_flags.load_cogs)
+
+        if packages:
+            to_remove = []
+            print("Loading packages...")
             for package in packages:
                 try:
                     spec = await bot.cog_mgr.find_cog(package)
@@ -75,6 +80,9 @@ def init_events(bot, cli_flags):
                     log.exception("Failed to load package {}".format(package),
                                   exc_info=e)
                     await bot.remove_loaded_package(package)
+                    to_remove.append(package)
+            for package in to_remove:
+                packages.remove(package)
             if packages:
                 print("Loaded packages: " + ", ".join(packages))
 
@@ -110,7 +118,7 @@ def init_events(bot, cli_flags):
         INFO.append('{} cogs with {} commands'.format(len(bot.cogs), len(bot.commands)))
 
         async with aiohttp.ClientSession() as session:
-            async with session.get("http://pypi.python.org/pypi/red-discordbot/json") as r:
+            async with session.get("https://pypi.python.org/pypi/red-discordbot/json") as r:
                 data = await r.json()
         if StrictVersion(data["info"]["version"]) > StrictVersion(red_version):
             INFO.append(
@@ -277,3 +285,4 @@ def _get_startup_screen_specs():
         ascii_border = False
 
     return on_symbol, off_symbol, ascii_border
+

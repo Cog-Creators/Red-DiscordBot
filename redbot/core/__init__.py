@@ -1,7 +1,6 @@
 from .config import Config
-from .context import RedContext
 
-__all__ = ["Config", "RedContext", "__version__"]
+__all__ = ["Config", "__version__"]
 
 
 class VersionInfo:
@@ -33,5 +32,5 @@ class VersionInfo:
     def to_json(self):
         return [self.major, self.minor, self.micro, self.releaselevel, self.serial]
 
-__version__ = "3.0.0b12"
-version_info = VersionInfo(3, 0, 0, 'beta', 12)
+__version__ = "3.0.0b13"
+version_info = VersionInfo(3, 0, 0, 'beta', 13)
