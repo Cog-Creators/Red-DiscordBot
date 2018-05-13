@@ -2,7 +2,7 @@
 Original source of reaction-based menu idea from
 https://github.com/Lunar-Dust/Dusty-Cogs/blob/master/menu/menu.py
 
-Ported to Red V3 by Palm__ (https://github.com/palmtree5)
+Ported to Red V3 by Palm\_\_ (https://github.com/palmtree5)
 """
 import asyncio
 import discord
