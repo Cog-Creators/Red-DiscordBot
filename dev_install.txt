@@ -1,0 +1,11 @@
+# This is a pip requirements file used to quickly set up a development
+# environment for Red. Make sure you're using a virtual environment, and
+# simply run `pip install -r dev_install.txt` to get set up.
+#
+# Red will be installed in "editable" or "develop" mode, meaning that
+# the package installation itself is actually located here, in this
+# project directory, and each time you run Red, it will run directly
+# from these sources.
+
+git+https://github.com/Rapptz/discord.py#egg=discord.py[voice]
+-e .[test,docs,voice,mongo]
