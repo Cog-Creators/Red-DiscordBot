@@ -9,12 +9,13 @@ import re
 import redbot.core
 from redbot.core import Config, checks, bank
 from redbot.core import commands
+from redbot.core.utils.menus import menu, DEFAULT_CONTROLS, prev_page, next_page, close_menu
 from redbot.core.i18n import Translator, cog_i18n
 
 _ = Translator("Audio", __file__)
 from .manager import shutdown_lavalink_server
 
-__version__ = "0.0.5a"
+__version__ = "0.0.6"
 __author__ = ["aikaterna", "billy/bollo/ati"]
 
 
@@ -891,17 +892,24 @@ class Audio:
         """Lists the queue."""
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, 'There\'s nothing in the queue.')
-        shuffle = await self.config.guild(ctx.guild).shuffle()
-        repeat = await self.config.guild(ctx.guild).repeat()
         player = lavalink.get_player(ctx.guild.id)
         if not player.queue:
             return await self._embed_msg(ctx, 'There\'s nothing in the queue.')
+        len_queue_pages = math.ceil(len(player.queue) / 10)
+        queue_page_list = []
+        for page_num in range(1, len_queue_pages + 1):
+            embed = await self._build_queue_page(ctx, player, page_num)
+            queue_page_list.append(embed)
+        if page > len_queue_pages:
+            page = len_queue_pages
+        await menu(ctx, queue_page_list, DEFAULT_CONTROLS, page=(page - 1))
 
-        items_per_page = 10
-        pages = math.ceil(len(player.queue) / items_per_page)
-        start = (page - 1) * items_per_page
-        end = start + items_per_page
-
+    async def _build_queue_page(self, ctx, player, page_num):
+        shuffle = await self.config.guild(ctx.guild).shuffle()
+        repeat = await self.config.guild(ctx.guild).repeat()
+        queue_num_pages = math.ceil(len(player.queue) / 10)
+        queue_idx_start = (page_num - 1) * 10
+        queue_idx_end = queue_idx_start + 10
         queue_list = ''
         try:
             arrow = await self._draw_time(ctx)
@@ -929,22 +937,27 @@ class Audio:
                 arrow, pos, dur
             )
 
-        for i, track in enumerate(player.queue[start:end], start=start):
+        for i, track in enumerate(player.queue[queue_idx_start:queue_idx_end], start=queue_idx_start):
+            if len(track.title) > 40:
+                track_title = str(track.title).replace('[', '')
+                track_title = '{}...'.format((track_title[:40]).rstrip(' '))
+            else:
+                track_title = track.title
             req_user = track.requester
-            _next = i + 1
-            queue_list += '`{}.` **[{}]({})**, requested by **{}**\n'.format(_next, track.title, track.uri, req_user)
+            track_idx = i + 1
+            queue_list += '`{}.` **[{}]({})**, requested by **{}**\n'.format(track_idx, track_title, track.uri, req_user)
 
         embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='Queue for ' + ctx.guild.name,
                               description=queue_list)
         queue_duration = await self._queue_duration(ctx)
         queue_total_duration = lavalink.utils.format_time(queue_duration)
-        text = 'Page {}/{} | {} tracks, {} remaining'.format(page, pages, len(player.queue) + 1, queue_total_duration)
+        text = 'Page {}/{} | {} tracks, {} remaining'.format(page_num, queue_num_pages, len(player.queue) + 1, queue_total_duration)
         if repeat:
             text += ' | Repeat: \N{WHITE HEAVY CHECK MARK}'
         if shuffle:
             text += ' | Shuffle: \N{WHITE HEAVY CHECK MARK}'
         embed.set_footer(text=text)
-        await ctx.send(embed=embed)
+        return embed
 
     @commands.command()
     async def repeat(self, ctx):
@@ -988,16 +1001,9 @@ class Audio:
     @commands.command()
     async def search(self, ctx, *, query):
         """Pick a song with a search.
-        Use [p]search list <search term> to queue all songs.
+        Use [p]search list <search term> to queue all songs found on YouTube.
+        [p]search sc <search term> will search SoundCloud instead of YouTube.
         """
-        expected = ("1⃣", "2⃣", "3⃣", "4⃣", "5⃣")
-        emoji = {
-            "one": "1⃣",
-            "two": "2⃣",
-            "three": "3⃣",
-            "four": "4⃣",
-            "five": "5⃣"
-        }
         if not self._player_check(ctx):
             try:
                 await lavalink.connect(ctx.author.voice.channel)
@@ -1012,53 +1018,14 @@ class Audio:
         if ((not ctx.author.voice or ctx.author.voice.channel != player.channel) and not
                 await self._can_instaskip(ctx, ctx.author)):
             return await self._embed_msg(ctx, 'You must be in the voice channel to enqueue songs.')
+        await self._data_check(ctx)
 
         query = query.strip('<>')
-        if query.startswith('sc '):
-            query = 'scsearch:{}'.format(query.strip('sc '))
-        elif not query.startswith('http') or query.startswith('sc '):
-            query = 'ytsearch:{}'.format(query)
-
-        tracks = await player.get_tracks(query)
-        if not tracks:
-            return await self._embed_msg(ctx, 'Nothing found 👀')
-        if 'list' not in query and 'ytsearch:' or 'scsearch:' in query:
-            page = 1
-            items_per_page = 5
-            pages = math.ceil(len(tracks) / items_per_page)
-            start = (page - 1) * items_per_page
-            end = start + items_per_page
-            search_list = ''
-            for i, track in enumerate(tracks[start:end], start=start):
-                _next = i + 1
-                search_list += '`{0}.` [**{1}**]({2})\n'.format(_next, track.title,
-                                                                track.uri)
-
-            embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='Tracks Found:', description=search_list)
-            embed.set_footer(text='Page {}/{} | {} search results'.format(page, pages, len(tracks)))
-            message = await ctx.send(embed=embed)
-            dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
-            if dj_enabled:
-                if not await self._can_instaskip(ctx, ctx.author):
-                    return
-
-            def check(r, u):
-                return r.message.id == message.id and u == ctx.message.author
-
-            for i in range(5):
-                await message.add_reaction(expected[i])
-            try:
-                (r, u) = await self.bot.wait_for('reaction_add', check=check, timeout=30.0)
-            except asyncio.TimeoutError:
-                await self._clear_react(message)
-                return
-            reacts = {v: k for k, v in emoji.items()}
-            react = reacts[r.emoji]
-            choice = {'one': 0, 'two': 1, 'three': 2, 'four': 3, 'five': 4}
-            await self._search_button(ctx, message, tracks, entry=choice[react])
-
-        else:
-            await self._data_check(ctx)
+        if query.startswith('list '):
+            query = 'ytsearch:{}'.format(query.lstrip('list '))
+            tracks = await player.get_tracks(query)
+            if not tracks:
+                return await self._embed_msg(ctx, 'Nothing found 👀')
             songembed = discord.Embed(colour=ctx.guild.me.top_role.colour,
                                       title='Queued {} track(s).'.format(len(tracks)))
             queue_duration = await self._queue_duration(ctx)
@@ -1070,27 +1037,97 @@ class Audio:
                 player.add(ctx.author, track)
                 if not player.current:
                     await player.play()
-            message = await ctx.send(embed=songembed)
+            return await ctx.send(embed=songembed)
+        if query.startswith('sc '):
+            query = 'scsearch:{}'.format(query.lstrip('sc '))
+        elif not query.startswith('http'):
+            query = 'ytsearch:{}'.format(query)
+        tracks = await player.get_tracks(query)
+        if not tracks:
+            return await self._embed_msg(ctx, 'Nothing found 👀')
 
-    async def _search_button(self, ctx, message, tracks, entry: int):
-        player = lavalink.get_player(ctx.guild.id)
-        jukebox_price = await self.config.guild(ctx.guild).jukebox_price()
-        shuffle = await self.config.guild(ctx.guild).shuffle()
-        await self._clear_react(message)
-        if not await self._currency_check(ctx, jukebox_price):
-            return
-        search_choice = tracks[entry]
-        embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='Track Enqueued',
-                              description='**[{}]({})**'.format(search_choice.title, search_choice.uri))
-        queue_duration = await self._queue_duration(ctx)
-        queue_total_duration = lavalink.utils.format_time(queue_duration)
-        if not shuffle and queue_duration > 0:
-            embed.set_footer(text='{} until track playback: #{} in queue'.format(queue_total_duration, (
-                    len(player.queue) + 1)))
-        player.add(ctx.author, search_choice)
-        if not player.current:
-            await player.play()
-        return await ctx.send(embed=embed)
+        len_search_pages = math.ceil(len(tracks) / 5)
+        search_page_list = []
+        for page_num in range(1, len_search_pages + 1):
+            embed = await self._build_search_page(ctx, tracks, page_num)
+            search_page_list.append(embed)
+
+        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        if dj_enabled:
+            if not await self._can_instaskip(ctx, ctx.author):
+                return await menu(ctx, search_page_list, DEFAULT_CONTROLS)
+
+        async def _search_menu(ctx: commands.Context, pages: list,
+                               controls: dict, message: discord.Message, page: int,
+                               timeout: float, emoji: str):
+            if message:
+                await _search_button_action(ctx, tracks, emoji, page)
+                await message.delete()
+                return None
+
+        SEARCH_CONTROLS = {
+            "1⃣": _search_menu,
+            "2⃣": _search_menu,
+            "3⃣": _search_menu,
+            "4⃣": _search_menu,
+            "5⃣": _search_menu,
+            "⬅": prev_page,
+            "❌": close_menu,
+            "➡": next_page
+            }
+
+        async def _search_button_action(ctx, tracks, emoji, page):
+            player = lavalink.get_player(ctx.guild.id)
+            jukebox_price = await self.config.guild(ctx.guild).jukebox_price()
+            shuffle = await self.config.guild(ctx.guild).shuffle()
+            if not await self._currency_check(ctx, jukebox_price):
+                return
+            try:
+                if emoji == "1⃣":
+                    search_choice = tracks[0 + (page * 5)]
+                if emoji == "2⃣":
+                    search_choice = tracks[1 + (page * 5)]
+                if emoji == "3⃣":
+                    search_choice = tracks[2 + (page * 5)]
+                if emoji == "4⃣":
+                    search_choice = tracks[3 + (page * 5)]
+                if emoji == "5⃣":
+                    search_choice = tracks[4 + (page * 5)]
+            except IndexError:
+                search_choice = tracks[-1]
+
+            embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='Track Enqueued',
+                                  description='**[{}]({})**'.format(search_choice.title, search_choice.uri))
+            queue_duration = await self._queue_duration(ctx)
+            queue_total_duration = lavalink.utils.format_time(queue_duration)
+            if not shuffle and queue_duration > 0:
+                embed.set_footer(text='{} until track playback: #{} in queue'.format(queue_total_duration, (
+                        len(player.queue) + 1)))
+            elif queue_duration > 0:
+                embed.set_footer(text='#{} in queue'.format(len(player.queue) + 1))
+
+            player.add(ctx.author, search_choice)
+            if not player.current:
+                await player.play()
+            await ctx.send(embed=embed)
+
+        await menu(ctx, search_page_list, SEARCH_CONTROLS)
+
+    async def _build_search_page(self, ctx, tracks, page_num):
+        search_num_pages = math.ceil(len(tracks) / 5)
+        search_idx_start = (page_num - 1) * 5
+        search_idx_end = search_idx_start + 5
+        search_list = ''
+        for i, track in enumerate(tracks[search_idx_start:search_idx_end], start=search_idx_start):
+            search_track_num = i + 1
+            if search_track_num > 5:
+                search_track_num = search_track_num % 5
+            if search_track_num == 0:
+                search_track_num = 5
+            search_list += '`{0}.` [**{1}**]({2})\n'.format(search_track_num, track.title, track.uri)
+        embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='Tracks Found:', description=search_list)
+        embed.set_footer(text='Page {}/{} | {} search results'.format(page_num, search_num_pages, len(tracks)))
+        return embed
 
     @commands.command()
     async def seek(self, ctx, seconds: int=30):
