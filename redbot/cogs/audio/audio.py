@@ -7,17 +7,15 @@ import lavalink
 import math
 import re
 import redbot.core
-from redbot.core import Config, checks, bank
-from redbot.core import commands
+from redbot.core import Config, commands, checks, bank
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS, prev_page, next_page, close_menu
 from redbot.core.i18n import Translator, cog_i18n
+from .manager import shutdown_lavalink_server
 
 _ = Translator("Audio", __file__)
-from .manager import shutdown_lavalink_server
 
 __version__ = "0.0.6"
 __author__ = ["aikaterna", "billy/bollo/ati"]
-
 
 
 @cog_i18n(_)
@@ -153,8 +151,10 @@ class Audio:
         dj_role_id = await self.config.guild(ctx.guild).dj_role()
         if dj_role_id is None:
             await self._embed_msg(ctx, 'Please set a role to use with DJ mode. Enter the role name now.')
+
             def check(m):
                 return m.author == ctx.author
+
             try:
                 dj_role = await ctx.bot.wait_for('message', timeout=15.0, check=check)
                 dj_role_obj = discord.utils.get(ctx.guild.roles, name=dj_role.content)
@@ -532,6 +532,8 @@ class Audio:
             if not shuffle and queue_duration > 0:
                 embed.set_footer(text='{} until track playback: #{} in queue'.format(
                     queue_total_duration, before_queue_length))
+            elif queue_duration > 0:
+                embed.set_footer(text='#{} in queue'.format(len(player.queue) + 1))
             if not player.current:
                 await player.play()
         await ctx.send(embed=embed)
@@ -746,8 +748,10 @@ class Audio:
             return
         player = lavalink.get_player(ctx.guild.id)
         await self._embed_msg(ctx, 'Please upload the playlist file. Any other message will cancel this operation.')
+
         def check(m):
             return m.author == ctx.author
+
         try:
             file_message = await ctx.bot.wait_for('message', timeout=30.0, check=check)
         except asyncio.TimeoutError:
