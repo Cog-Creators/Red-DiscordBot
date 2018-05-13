@@ -1,16 +1,16 @@
 from random import shuffle
 
 import aiohttp
-from discord.ext import commands
 
-from redbot.core.i18n import CogI18n
-from redbot.core import checks, Config
+from redbot.core.i18n import Translator, cog_i18n
+from redbot.core import checks, Config, commands
 
-_ = CogI18n("Image", __file__)
+_ = Translator("Image", __file__)
 
 GIPHY_API_KEY = "dc6zaTOxFJmzC"
 
 
+@cog_i18n(_)
 class Image:
     """Image related commands."""
     default_global = {

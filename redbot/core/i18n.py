@@ -1,7 +1,10 @@
 import re
 from pathlib import Path
 
-__all__ = ['get_locale', 'set_locale', 'reload_locales', 'CogI18n']
+from . import commands
+
+__all__ = ['get_locale', 'set_locale', 'reload_locales', 'cog_i18n',
+           'Translator']
 
 _current_locale = 'en_us'
 
@@ -13,7 +16,7 @@ IN_MSGSTR = 4
 MSGID = 'msgid "'
 MSGSTR = 'msgstr "'
 
-_i18n_cogs = {}
+_translators = []
 
 
 def get_locale():
@@ -27,8 +30,8 @@ def set_locale(locale):
 
 
 def reload_locales():
-    for cog_name, i18n in _i18n_cogs.items():
-        i18n.load_translations()
+    for translator in _translators:
+        translator.load_translations()
 
 
 def _parse(translation_file):
@@ -145,25 +148,36 @@ def get_locale_path(cog_folder: Path, extension: str) -> Path:
     return cog_folder / 'locales' / "{}.{}".format(get_locale(), extension)
 
 
-class CogI18n:
+class Translator:
+    """Function to get translated strings at runtime."""
+
     def __init__(self, name, file_location):
         """
-        Initializes the internationalization object for a given cog.
+        Initializes an internationalization object.
 
-        :param name: Your cog name.
-        :param file_location:
+        Parameters
+        ----------
+        name : str
+            Your cog name.
+        file_location : `str` or `pathlib.Path`
             This should always be ``__file__`` otherwise your localizations
             will not load.
+
         """
         self.cog_folder = Path(file_location).resolve().parent
         self.cog_name = name
         self.translations = {}
 
-        _i18n_cogs.update({self.cog_name: self})
+        _translators.append(self)
 
         self.load_translations()
 
     def __call__(self, untranslated: str):
+        """Translate the given string.
+
+        This will look for the string in the translator's :code:`.pot` file,
+        with respect to the current locale.
+        """
         normalized_untranslated = _normalize(untranslated, True)
         try:
             return self.translations[normalized_untranslated]
@@ -172,7 +186,7 @@ class CogI18n:
 
     def load_translations(self):
         """
-        Loads the current translations for this cog.
+        Loads the current translations.
         """
         self.translations = {}
         translation_file = None
@@ -201,3 +215,14 @@ class CogI18n:
         if translated:
             self.translations.update({untranslated: translated})
 
+
+def cog_i18n(translator: Translator):
+    """Get a class decorator to link the translator to this cog."""
+    def decorator(cog_class: type):
+        cog_class.__translator__ = translator
+        for name, attr in cog_class.__dict__.items():
+            if isinstance(attr, (commands.Group, commands.Command)):
+                attr.translator = translator
+                setattr(cog_class, name, attr)
+        return cog_class
+    return decorator

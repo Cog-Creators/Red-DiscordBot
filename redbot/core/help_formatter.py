@@ -28,13 +28,14 @@ from collections import namedtuple
 from typing import List
 
 import discord
-from discord.ext import commands
 from discord.ext.commands import formatter
 import inspect
 import itertools
 import re
 import sys
 import traceback
+
+from . import commands
 
 
 EMPTY_STRING = u'\u200b'
@@ -133,7 +134,12 @@ class Help(formatter.HelpFormatter):
             'fields': []
         }
 
-        description = self.command.description if not self.is_cog() else inspect.getdoc(self.command)
+        if self.is_cog():
+            translator = getattr(self.command, '__translator__', lambda s: s)
+            description = inspect.cleandoc(translator(self.command.__doc__))
+        else:
+            description = self.command.description
+
         if not description == '' and description is not None:
             description = '*{0}*'.format(description)
 
@@ -280,6 +286,7 @@ class Help(formatter.HelpFormatter):
 @commands.command()
 async def help(ctx, *cmds: str):
     """Shows help documentation.
+
     [p]**help**: Shows the help manual.
     [p]**help** command: Show help for a command
     [p]**help** Category: Show commands and description for a category"""

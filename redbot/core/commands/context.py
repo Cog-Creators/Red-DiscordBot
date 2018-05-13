@@ -1,26 +1,23 @@
-"""
-The purpose of this module is to allow for Red to further customise the command
-invocation context provided by discord.py.
-"""
+
 import asyncio
 from typing import Iterable, List
-
 import discord
 from discord.ext import commands
 
 from redbot.core.utils.chat_formatting import box
 
-__all__ = ["RedContext"]
 
 TICK = "\N{WHITE HEAVY CHECK MARK}"
 
+__all__ = ["Context"]
 
-class RedContext(commands.Context):
+
+class Context(commands.Context):
     """Command invocation context for Red.
 
     All context passed into commands will be of this type.
 
-    This class inherits from `commands.Context <discord.ext.commands.Context>`.
+    This class inherits from `discord.ext.commands.Context`.
     """
 
     async def send_help(self) -> List[discord.Message]:
@@ -128,12 +125,15 @@ class RedContext(commands.Context):
     async def embed_requested(self):
         """
         Simple helper to call bot.embed_requested
+        with logic around if embed permissions are available
 
         Returns
         -------
         bool:
             :code:`True` if an embed is requested
         """
+        if self.guild and not self.channel.permissions_for(self.guild.me).embed_links:
+            return False
         return await self.bot.embed_requested(
             self.channel, self.author, command=self.command
         )
