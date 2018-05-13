@@ -89,7 +89,7 @@ class Cleanup:
     @cleanup.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def text(self, ctx: RedContext, text: str, number: int):
+    async def text(self, ctx: RedContext, text: str, number: int, delete_pinned: bool=False):
         """Deletes last X messages matching the specified text.
 
         Example:
@@ -115,7 +115,8 @@ class Cleanup:
                 return False
 
         to_delete = await self.get_messages_for_deletion(
-            ctx, channel, number, check=check, limit=1000, before=ctx.message)
+            ctx, channel, number, check=check, limit=1000, before=ctx.message,
+            delete_pinned=delete_pinned)
 
         reason = "{}({}) deleted {} messages "\
                  " containing '{}' in channel {}.".format(author.name,
@@ -130,7 +131,7 @@ class Cleanup:
     @cleanup.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def user(self, ctx: RedContext, user: str, number: int):
+    async def user(self, ctx: RedContext, user: str, number: int, delete_pinned: bool=False):
         """Deletes last X messages from specified user.
 
         Examples:
@@ -165,7 +166,8 @@ class Cleanup:
                 return False
 
         to_delete = await self.get_messages_for_deletion(
-            ctx, channel, number, check=check, limit=1000, before=ctx.message
+            ctx, channel, number, check=check, limit=1000, before=ctx.message,
+            delete_pinned=delete_pinned
         )
         reason = "{}({}) deleted {} messages "\
                  " made by {}({}) in channel {}."\
@@ -182,7 +184,7 @@ class Cleanup:
     @cleanup.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def after(self, ctx: RedContext, message_id: int):
+    async def after(self, ctx: RedContext, message_id: int, delete_pinned: bool=False):
         """Deletes all messages after specified message.
 
         To get a message id, enable developer mode in Discord's
@@ -208,7 +210,7 @@ class Cleanup:
             return
 
         to_delete = await self.get_messages_for_deletion(
-            ctx, channel, 0, limit=None, after=after
+            ctx, channel, 0, limit=None, after=after, delete_pinned=delete_pinned
         )
 
         reason = "{}({}) deleted {} messages in channel {}."\
@@ -221,7 +223,7 @@ class Cleanup:
     @cleanup.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def messages(self, ctx: RedContext, number: int):
+    async def messages(self, ctx: RedContext, number: int, delete_pinned: bool=False):
         """Deletes last X messages.
 
         Example:
@@ -238,7 +240,8 @@ class Cleanup:
                 return
 
         to_delete = await self.get_messages_for_deletion(
-            ctx, channel, number, limit=1000, before=ctx.message
+            ctx, channel, number, limit=1000, before=ctx.message,
+            delete_pinned=delete_pinned
         )
 
         reason = "{}({}) deleted {} messages in channel {}."\
@@ -254,7 +257,7 @@ class Cleanup:
     @cleanup.command(name='bot')
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def cleanup_bot(self, ctx: RedContext, number: int):
+    async def cleanup_bot(self, ctx: RedContext, number: int, delete_pinned: bool=False):
         """Cleans up command messages and messages from the bot."""
 
         channel = ctx.message.channel
@@ -286,7 +289,8 @@ class Cleanup:
             return False
 
         to_delete = await self.get_messages_for_deletion(
-            ctx, channel, number, check=check, limit=1000, before=ctx.message
+            ctx, channel, number, check=check, limit=1000, before=ctx.message,
+            delete_pinned=delete_pinned
         )
 
         reason = "{}({}) deleted {} "\
@@ -301,7 +305,9 @@ class Cleanup:
             await slow_deletion(to_delete)
 
     @cleanup.command(name='self')
-    async def cleanup_self(self, ctx: RedContext, number: int, match_pattern: str = None):
+    async def cleanup_self(
+            self, ctx: RedContext, number: int,
+            match_pattern: str = None, delete_pinned: bool=False):
         """Cleans up messages owned by the bot.
 
         By default, all messages are cleaned. If a third argument is specified,
@@ -351,7 +357,8 @@ class Cleanup:
             return False
 
         to_delete = await self.get_messages_for_deletion(
-            ctx, channel, number, check=check, limit=1000, before=ctx.message
+            ctx, channel, number, check=check, limit=1000, before=ctx.message,
+            delete_pinned=delete_pinned
         )
 
         # Selfbot convenience, delete trigger message
