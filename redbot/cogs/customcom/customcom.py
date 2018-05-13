@@ -4,13 +4,12 @@ import random
 from datetime import datetime
 
 import discord
-from discord.ext import commands
 
-from redbot.core import Config, checks
+from redbot.core import Config, checks, commands
 from redbot.core.utils.chat_formatting import box, pagify
-from redbot.core.i18n import CogI18n
+from redbot.core.i18n import Translator, cog_i18n
 
-_ = CogI18n("CustomCommands", __file__)
+_ = Translator("CustomCommands", __file__)
 
 
 class CCError(Exception):
@@ -152,6 +151,7 @@ class CommandObj:
             command, value=None)
 
 
+@cog_i18n(_)
 class CustomCommands:
     """Custom commands
     Creates commands used to display text"""
@@ -179,7 +179,18 @@ class CustomCommands:
                      ctx: commands.Context):
         """
         CCs can be enhanced with arguments:
-        https: // twentysix26.github.io / Red - Docs / red_guide_command_args/
+
+        Argument    What it will be substituted with
+
+        {message}   message
+
+        {author}    message.author
+
+        {channel}   message.channel
+
+        {guild}     message.guild
+
+        {server}    message.guild
         """
         if not ctx.invoked_subcommand or isinstance(ctx.invoked_subcommand,
                                                     commands.Group):
