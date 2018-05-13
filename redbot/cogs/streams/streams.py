@@ -473,6 +473,7 @@ class Streams:
                     except:
                         pass
                 stream._messages_cache.clear()
+                await self.save_streams()
             except:
                 pass
             else:
@@ -490,6 +491,7 @@ class Streams:
                     try:
                         m = await channel.send(content, embed=embed)
                         stream._messages_cache.append(m)
+                        await self.save_streams()
                     except:
                         pass
 
@@ -521,6 +523,7 @@ class Streams:
                     except:
                         pass
                 community._messages_cache.clear()
+                await self.save_communities()
             except:
                 pass
             else:
@@ -536,11 +539,13 @@ class Streams:
                         else:
                             msg = await chn.send(embed=emb)
                         community._messages_cache.append(msg)
+                        await self.save_communities()
                     else:
                         chn_msg = sorted(chn_msg, key=lambda x: x.created_at, reverse=True)[0]
                         community._messages_cache.remove(chn_msg)
                         await chn_msg.edit(embed=emb)
                         community._messages_cache.append(chn_msg)
+                        await self.save_communities()
 
     async def filter_streams(self, streams: list, channel: discord.TextChannel) -> list:
         filtered = []
@@ -561,7 +566,12 @@ class Streams:
             _class = getattr(StreamClasses, raw_stream["type"], None)
             if not _class:
                 continue
-
+            raw_msg_cache = raw_stream["messages"]
+            raw_stream["_messages_cache"] = []
+            for raw_msg in raw_msg_cache:
+                chn = self.bot.get_channel(raw_msg["channel"])
+                msg = await chn.get_message(raw_msg["message"])
+                raw_stream["_messages_cache"].append(msg)
             token = await self.db.tokens.get_raw(_class.__name__)
             streams.append(_class(token=token, **raw_stream))
 
@@ -581,7 +591,12 @@ class Streams:
             _class = getattr(StreamClasses, raw_community["type"], None)
             if not _class:
                 continue
-
+            raw_msg_cache = raw_community["messages"]
+            raw_community["_messages_cache"] = []
+            for raw_msg in raw_msg_cache:
+                chn = self.bot.get_channel(raw_msg["channel"])
+                msg = await chn.get_message(raw_msg["message"])
+                raw_community["_messages_cache"].append(msg)
             token = await self.db.tokens.get_raw(_class.__name__, default=None)
             communities.append(_class(token=token, **raw_community))
 

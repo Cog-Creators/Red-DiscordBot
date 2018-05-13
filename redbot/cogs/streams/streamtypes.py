@@ -27,7 +27,7 @@ class TwitchCommunity:
         self.name = kwargs.pop("name")
         self.id = kwargs.pop("id", None)
         self.channels = kwargs.pop("channels", [])
-        self._messages_cache = []
+        self._messages_cache = kwargs.pop("_messages_cache", [])
         self._token = kwargs.pop("token", None)
         self.type = self.__class__.__name__
 
@@ -115,6 +115,9 @@ class TwitchCommunity:
         for k, v in self.__dict__.items():
             if not k.startswith("_"):
                 data[k] = v
+        data["messages"] = []
+        for m in self._messages_cache:
+            data["messages"].append({"channel": m.channel.id, "message": m.id})
         return data
 
     def __repr__(self):
@@ -126,7 +129,7 @@ class Stream:
         self.name = kwargs.pop("name", None)
         self.channels = kwargs.pop("channels", [])
         #self.already_online = kwargs.pop("already_online", False)
-        self._messages_cache = []
+        self._messages_cache = kwargs.pop("_messages_cache", [])
         self.type = self.__class__.__name__
 
     async def is_online(self):
@@ -140,6 +143,9 @@ class Stream:
         for k, v in self.__dict__.items():
             if not k.startswith("_"):
                 data[k] = v
+        data["messages"] = []
+        for m in self._messages_cache:
+            data["messages"].append({"channel": m.channel.id, "message": m.id})
         return data
 
     def __repr__(self):
