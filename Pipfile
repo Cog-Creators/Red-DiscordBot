@@ -1,0 +1,25 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+aiohttp = "*"
+appdirs = "*"
+raven = "*"
+aiohttp-json-rpc = "*"
+Red-Trivia = "*"
+"discord.py-1.0" = {file = "https://github.com/Rapptz/discord.py/tarball/rewrite"}
+red-lavalink = "*"
+motor = "*"
+colorama = "*"
+
+[dev-packages]
+pytest = "*"
+pytest-asyncio = "*"
+sphinx = "*"
+sphinxcontrib-asyncio = "*"
+sphinx-rtd-theme = "*"
+
+[requires]
+python_version = "3.6"
