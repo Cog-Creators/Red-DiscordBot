@@ -6,17 +6,28 @@ notifications:
 
 python:
 - 3.5.3
-- 3.6.1
+- 3.6.5
 install:
 - echo "git+https://github.com/Rapptz/discord.py.git@rewrite#egg=discord.py[voice]" >> requirements.txt
 - pip install -r requirements.txt
 - pip install .[test]
 script:
-- python -m compileall ./redbot/cogs
-- python -m pytest
+- tox
+env:
+- TOXENV=py
 
 jobs:
   include:
+    - stage: Documentation build test
+      python: 3.6.5
+      env:
+        - TOXENV=docs
+
+    - stage: Development install test
+      python: 3.6.5
+      env:
+        - TOXENV=dev
+
     - stage: PyPi Deployment
       if: tag IS present
       python: 3.5.3
@@ -33,12 +44,13 @@ jobs:
             branch: V3/develop
             python: 3.5.3
             tags: true
+
     - stage: Crowdin Deployment
       if: tag IS present
       python: 3.5.3
       env:
         - DEPLOYING=true
-      before_deployment:
+      before_deploy:
       - curl https://artifacts.crowdin.com/repo/GPG-KEY-crowdin | sudo apt-key add -
       - echo "deb https://artifacts.crowdin.com/repo/deb/ /" | sudo tee -a /etc/apt/sources.list
       - sudo apt-get update -qq
