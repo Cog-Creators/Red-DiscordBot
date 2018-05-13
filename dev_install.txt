@@ -7,5 +7,5 @@
 # project directory, and each time you run Red, it will run directly
 # from these sources.
 
-git+https://github.com/Rapptz/discord.py#egg=discord.py[voice]
+git+https://github.com/Rapptz/discord.py@rewrite#egg=discord.py[voice]
 -e .[test,docs,voice,mongo]
