@@ -305,7 +305,7 @@ class Audio:
         bump_song = player.queue[bump_index]
         player.queue.insert(0, bump_song)
         removed = player.queue.pop(index)
-        await self._embed_msg(ctx, 'Moved **' + removed.title + '** to the top of the queue.')
+        await self._embed_msg(ctx, 'Moved {} to the top of the queue.'.format(removed.title))
 
     @commands.command(aliases=['dc'])
     async def disconnect(self, ctx):
@@ -1001,7 +1001,7 @@ class Audio:
             return await self._embed_msg(ctx, 'Song number must be greater than 1 and within the queue limit.')
         index -= 1
         removed = player.queue.pop(index)
-        await self._embed_msg(ctx, 'Removed **' + removed.title + '** from the queue.')
+        await self._embed_msg(ctx, 'Removed {} from the queue.'.format(removed.title))
 
     @commands.command()
     async def search(self, ctx, *, query):
@@ -1129,7 +1129,7 @@ class Audio:
                 search_track_num = search_track_num % 5
             if search_track_num == 0:
                 search_track_num = 5
-            search_list += '`{0}.` [**{1}**]({2})\n'.format(search_track_num, track.title, track.uri)
+            search_list += '`{0}.` **[{1}]({2})**\n'.format(search_track_num, track.title, track.uri)
         embed = discord.Embed(colour=ctx.guild.me.top_role.colour, title='Tracks Found:', description=search_list)
         embed.set_footer(text='Page {}/{} | {} search results'.format(page_num, search_num_pages, len(tracks)))
         return embed
