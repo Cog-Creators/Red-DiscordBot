@@ -793,7 +793,8 @@ class Audio:
             if not track_list:
                 return await self._embed_msg(ctx, 'No tracks found.')
             playlist_list = self._to_json(ctx, v2_playlist_url, track_list)
-            v3_playlists[v2_playlist_name] = playlist_list
+            async with self.config.guild(ctx.guild).playlists() as v3_playlists:
+                v3_playlists[v2_playlist_name] = playlist_list
             if len(v2_playlist["playlist"]) != track_count:
                 bad_tracks = len(v2_playlist["playlist"]) - track_count
                 msg = ('Added {} tracks from the {} playlist. {} track(s) could not '
