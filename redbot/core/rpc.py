@@ -1,3 +1,5 @@
+import weakref
+
 from aiohttp import web
 import jsonrpcserver.aio
 
@@ -8,7 +10,11 @@ log = logging.getLogger('red.rpc')
 
 
 class Methods(jsonrpcserver.aio.AsyncMethods):
-    # noinspection PyMethodOverriding
+    def __init__(self):
+        super().__init__()
+
+        self._items = weakref.WeakValueDictionary()
+
     def add(self, method, name=None):
         if not inspect.iscoroutinefunction(method):
             raise TypeError("Method must be a coroutine.")
@@ -16,7 +22,20 @@ class Methods(jsonrpcserver.aio.AsyncMethods):
         if name is None:
             name = method.__qualname__
 
-        super(Methods, self).add(method, name=name)
+        self._items[name] = method
+
+    def remove(self, *, name=None, method=None):
+        if name and name in self._items:
+            del self._items[name]
+
+        elif method and method in  self._items.values():
+            to_remove = []
+            for name, val in self._items.items():
+                if method == val:
+                    to_remove.append(name)
+
+            for name in to_remove:
+                del self._items[name]
 
     def all_methods(self):
         """
