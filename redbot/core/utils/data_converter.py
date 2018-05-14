@@ -28,7 +28,7 @@ class DataConverter:
             The file isn't valid JSON
         """
         try:
-            with file_path.open(mode='r', encoding='utf-8') as f:
+            with file_path.open(mode="r", encoding="utf-8") as f:
                 data = json.load(f)
         except (FileNotFoundError, json.JSONDecodeError):
             raise
@@ -47,15 +47,11 @@ class DataConverter:
             This should be a function which takes a single argument argument
             (the loaded JSON) and from it either
             returns or yields one or more `dict`
-            whose items are in the form:
-
-            .. code-block:: python
+            whose items are in the form::
 
                 {(SCOPE, *IDENTIFIERS): {(key_tuple): value}}
 
-            an example of a possible entry of that dict:
-
-            .. code-block:: python
+            an example of a possible entry of that dict::
 
                 {(Config.MEMBER, '133049272517001216', '78631113035100160'):
                     {('balance',): 9001}}
@@ -100,15 +96,11 @@ class DataConverter:
             This should be a dictionary of values to set.
             This is provided as an alternative
             to providing a file and conversion specification
-            the dictionary should be in the following format
-
-            .. code-block:: python
+            the dictionary should be in the following format::
 
                 {(SCOPE, *IDENTIFIERS): {(key_tuple): value}}`
 
-            an example of a possible entry of that dict:
-
-            .. code-block:: python
+            an example of a possible entry of that dict::
 
                 {(Config.MEMBER, '133049272517001216', '78631113035100160'):
                     {('balance',): 9001}}

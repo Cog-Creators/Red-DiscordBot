@@ -37,12 +37,12 @@ Welcome to Red - Discord Bot's documentation!
     framework_bot
     framework_cogmanager
     framework_config
-    framework_context
     framework_datamanager
     framework_downloader
     framework_events
     framework_i18n
     framework_modlog
+    framework_commands
     framework_rpc
     framework_utils
 
