@@ -2,23 +2,24 @@ import logging
 import asyncio
 from typing import Union
 from datetime import timedelta
-
+from copy import copy
+import contextlib
 import discord
-from discord.ext import commands
 
-from redbot.core import Config, checks, RedContext
+from redbot.core import Config, checks, commands
 from redbot.core.utils.chat_formatting import pagify, box
 from redbot.core.utils.antispam import AntiSpam
 from redbot.core.bot import Red
-from redbot.core.i18n import CogI18n
+from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.tunnel import Tunnel
 
 
-_ = CogI18n("Reports", __file__)
+_ = Translator("Reports", __file__)
 
 log = logging.getLogger("red.reports")
 
 
+@cog_i18n(_)
 class Reports:
 
     default_guild_settings = {
@@ -65,7 +66,7 @@ class Reports:
     @checks.admin_or_permissions(manage_guild=True)
     @commands.guild_only()
     @commands.group(name="reportset")
-    async def reportset(self, ctx: RedContext):
+    async def reportset(self, ctx: commands.Context):
         """
         settings for reports
         """
@@ -73,14 +74,14 @@ class Reports:
 
     @checks.admin_or_permissions(manage_guild=True)
     @reportset.command(name="output")
-    async def setoutput(self, ctx: RedContext, channel: discord.TextChannel):
+    async def setoutput(self, ctx: commands.Context, channel: discord.TextChannel):
         """sets the output channel"""
         await self.config.guild(ctx.guild).output_channel.set(channel.id)
         await ctx.send(_("Report Channel Set."))
 
     @checks.admin_or_permissions(manage_guild=True)
     @reportset.command(name="toggleactive")
-    async def report_toggle(self, ctx: RedContext):
+    async def report_toggle(self, ctx: commands.Context):
         """Toggles whether the Reporting tool is enabled or not"""
 
         active = await self.config.guild(ctx.guild).active()
@@ -109,10 +110,11 @@ class Reports:
         ret |= await self.bot.is_owner(m)
         return ret
 
-    async def discover_guild(self, author: discord.User, *,
-                             mod: bool=False,
-                             permissions: Union[discord.Permissions, dict]={},
-                             prompt: str=""):
+    async def discover_guild(
+        self, author: discord.User, *,
+            mod: bool=False,
+            permissions: Union[discord.Permissions, dict]=None,
+            prompt: str=""):
         """
         discovers which of shared guilds between the bot
         and provided user based on conditions (mod or permissions is an or)
@@ -120,10 +122,12 @@ class Reports:
         prompt is for providing a user prompt for selection
         """
         shared_guilds = []
-        if isinstance(permissions, discord.Permissions):
+        if permissions is None:
+            perms = discord.Permissions()
+        elif isinstance(permissions, discord.Permissions):
             perms = permissions
         else:
-            permissions = discord.Permissions(**perms)
+            perms = discord.Permissions(**permissions)
 
         for guild in self.bot.guilds:
             x = guild.get_member(author.id)
@@ -132,7 +136,6 @@ class Reports:
                     shared_guilds.append(guild)
         if len(shared_guilds) == 0:
             raise ValueError("No Qualifying Shared Guilds")
-            return
         if len(shared_guilds) == 1:
             return shared_guilds[0]
         output = ""
@@ -170,26 +173,40 @@ class Reports:
 
         author = guild.get_member(msg.author.id)
         report = msg.clean_content
-        avatar = author.avatar_url
-
-        em = discord.Embed(description=report)
-        em.set_author(
-            name=_('Report from {0.display_name}').format(author),
-            icon_url=avatar
-        )
-
-        ticket_number = await self.config.guild(guild).next_ticket()
-        await self.config.guild(guild).next_ticket.set(ticket_number + 1)
-        em.set_footer(text=_("Report #{}").format(ticket_number))
 
         channel_id = await self.config.guild(guild).output_channel()
         channel = guild.get_channel(channel_id)
-        if channel is not None:
-            try:
-                await channel.send(embed=em)
-            except (discord.Forbidden, discord.HTTPException):
-                return None
+        if channel is None:
+            return None
+
+        files = await Tunnel.files_from_attatch(msg)
+
+        ticket_number = await self.config.guild(guild).next_ticket()
+        await self.config.guild(guild).next_ticket.set(ticket_number + 1)
+
+        if await self.bot.embed_requested(channel, author):
+            em = discord.Embed(description=report)
+            em.set_author(
+                name=_('Report from {0.display_name}').format(author),
+                icon_url=author.avatar_url
+            )
+            em.set_footer(text=_("Report #{}").format(ticket_number))
+            send_content = None
         else:
+            em = None
+            send_content = _(
+                'Report from {author.mention} (Ticket #{number})'
+            ).format(author=author, number=ticket_number)
+            send_content += "\n" + report
+
+        try:
+            await Tunnel.message_forwarder(
+                destination=channel,
+                content=send_content,
+                embed=em,
+                files=files
+            )
+        except (discord.Forbidden, discord.HTTPException):
             return None
 
         await self.config.custom('REPORT', guild.id, ticket_number).report.set(
@@ -198,8 +215,13 @@ class Reports:
         return ticket_number
 
     @commands.group(name="report", invoke_without_command=True)
-    async def report(self, ctx: RedContext):
-        "Follow the prompts to make a report"
+    async def report(self, ctx: commands.Context, *, _report: str=""):
+        """
+        Follow the prompts to make a report
+
+        optionally use with a report message
+        to use it non interactively
+        """
         author = ctx.author
         guild = ctx.guild
         if guild is None:
@@ -243,31 +265,39 @@ class Reports:
                 pass
         self.user_cache.append(author.id)
 
-        try:
-            dm = await author.send(
-                _("Please respond to this message with your Report."
-                  "\nYour report should be a single message")
-            )
-        except discord.Forbidden:
-            await ctx.send(
-                _("This requires DMs enabled.")
-            )
-            self.user_cache.remove(author.id)
-            return
-
-        def pred(m):
-            return m.author == author and m.channel == dm.channel
-
-        try:
-            message = await self.bot.wait_for(
-                'message', check=pred, timeout=180
-            )
-        except asyncio.TimeoutError:
-            await author.send(
-                _("You took too long. Try again later.")
-            )
+        if _report:
+            _m = copy(ctx.message)
+            _m.content = _report
+            _m.content = _m.clean_content
+            val = await self.send_report(_m, guild)
         else:
-            val = await self.send_report(message, guild)
+            try:
+                dm = await author.send(
+                    _("Please respond to this message with your Report."
+                      "\nYour report should be a single message")
+                )
+            except discord.Forbidden:
+                await ctx.send(
+                    _("This requires DMs enabled.")
+                )
+                self.user_cache.remove(author.id)
+                return
+
+            def pred(m):
+                return m.author == author and m.channel == dm.channel
+
+            try:
+                message = await self.bot.wait_for(
+                    'message', check=pred, timeout=180
+                )
+            except asyncio.TimeoutError:
+                await author.send(
+                    _("You took too long. Try again later.")
+                )
+            else:
+                val = await self.send_report(message, guild)
+
+        with contextlib.suppress(discord.Forbidden, discord.HTTPException):
             if val is None:
                 await author.send(
                     _("There was an error sending your report.")
@@ -276,7 +306,7 @@ class Reports:
                 await author.send(
                     _("Your report was submitted. (Ticket #{})").format(val)
                 )
-            self.antispam[guild.id][author.id].stamp()
+        self.antispam[guild.id][author.id].stamp()
 
         self.user_cache.remove(author.id)
 

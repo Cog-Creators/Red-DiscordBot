@@ -16,13 +16,12 @@ from distutils.version import StrictVersion
 import aiohttp
 import discord
 import pkg_resources
-from discord.ext import commands
 
 from redbot.core import __version__
 from redbot.core import checks
 from redbot.core import i18n
 from redbot.core import rpc
-from redbot.core.context import RedContext
+from redbot.core import commands
 from .utils import TYPE_CHECKING
 from .utils.chat_formatting import pagify, box, inline
 
@@ -39,9 +38,10 @@ OWNER_DISCLAIMER = ("⚠ **Only** the person who is hosting Red should be "
                     "system.** ⚠")
 
 
-_ = i18n.CogI18n("Core", __file__)
+_ = i18n.Translator("Core", __file__)
 
 
+@i18n.cog_i18n(_)
 class Core:
     """Commands related to core functions"""
     def __init__(self, bot):
@@ -51,8 +51,16 @@ class Core:
         rpc.add_method('core', self.rpc_unload)
         rpc.add_method('core', self.rpc_reload)
 
+    @commands.command(hidden=True)
+    async def ping(self, ctx):
+        """Pong."""
+        if ctx.guild is None or ctx.channel.permissions_for(ctx.guild.me).add_reactions:
+            await ctx.message.add_reaction("\U0001f3d3")  # ping pong paddle
+        else:
+            await ctx.maybe_send_embed("Pong.")
+
     @commands.command()
-    async def info(self, ctx: RedContext):
+    async def info(self, ctx: commands.Context):
         """Shows info about Red"""
         author_repo = "https://github.com/Twentysix26"
         org_repo = "https://github.com/Cog-Creators"
@@ -103,7 +111,7 @@ class Core:
             await ctx.send("I need the `Embed links` permission to send this")
 
     @commands.command()
-    async def uptime(self, ctx: RedContext):
+    async def uptime(self, ctx: commands.Context):
         """Shows Red's uptime"""
         since = ctx.bot.uptime.strftime("%Y-%m-%d %H:%M:%S")
         passed = self.get_bot_uptime()
@@ -112,7 +120,7 @@ class Core:
                 passed, since
             )
         )
-    
+
     def get_bot_uptime(self, *, brief=False):
         # Courtesy of Danny
         now = datetime.datetime.utcnow()
@@ -134,7 +142,7 @@ class Core:
         return fmt.format(d=days, h=hours, m=minutes, s=seconds)
 
     @commands.group()
-    async def embedset(self, ctx: RedContext):
+    async def embedset(self, ctx: commands.Context):
         """
         Commands for toggling embeds on or off.
 
@@ -157,7 +165,7 @@ class Core:
 
     @embedset.command(name="global")
     @checks.is_owner()
-    async def embedset_global(self, ctx: RedContext):
+    async def embedset_global(self, ctx: commands.Context):
         """
         Toggle the global embed setting.
 
@@ -175,7 +183,7 @@ class Core:
 
     @embedset.command(name="guild")
     @checks.guildowner_or_permissions(administrator=True)
-    async def embedset_guild(self, ctx: RedContext, enabled: bool=None):
+    async def embedset_guild(self, ctx: commands.Context, enabled: bool=None):
         """
         Toggle the guild's embed setting.
 
@@ -200,7 +208,7 @@ class Core:
             )
 
     @embedset.command(name="user")
-    async def embedset_user(self, ctx: RedContext, enabled: bool=None):
+    async def embedset_user(self, ctx: commands.Context, enabled: bool=None):
         """
         Toggle the user's embed setting.
 
@@ -280,7 +288,7 @@ class Core:
         guilds = sorted(list(self.bot.guilds),
                         key=lambda s: s.name.lower())
         msg = ""
-        for i, server in enumerate(guilds):
+        for i, server in enumerate(guilds, 1):
             msg += "{}: {}\n".format(i, server.name)
 
         msg += "\nTo leave a server, just type its number."
@@ -298,7 +306,9 @@ class Core:
                 await ctx.send("I guess not.")
                 break
             try:
-                msg = int(msg.content)
+                msg = int(msg.content) - 1
+                if msg < 0:
+                    break
                 await self.leave_confirmation(guilds[msg], owner, ctx)
                 break
             except (IndexError, ValueError, AttributeError):
@@ -313,6 +323,9 @@ class Core:
         try:
             msg = await self.bot.wait_for("message", check=conf_check, timeout=15)
             if msg.content.lower().strip() in ("yes", "y"):
+                if server.owner == ctx.bot.user:
+                    await ctx.send("I cannot leave a guild I am the owner of.")
+                    return
                 await server.leave()
                 if server != ctx.guild:
                     await ctx.send("Done.")
@@ -407,7 +420,7 @@ class Core:
         """Reloads packages"""
 
         cognames = [c.strip() for c in cog_name.split(' ')]
-        
+
         for c in cognames:
             ctx.bot.unload_extension(c)
 
@@ -423,7 +436,7 @@ class Core:
             except RuntimeError:
                 notfound_packages.append(inline(c))
 
-        for spec, name in cogspecs: 
+        for spec, name in cogspecs:
             try:
                 self.cleanup_and_refresh_modules(spec.name)
                 await ctx.bot.load_extension(spec)
@@ -484,7 +497,7 @@ class Core:
         except:
             pass
         await ctx.bot.shutdown()
-    
+
     @commands.command(name="restart")
     @checks.is_owner()
     async def _restart(self, ctx, silently: bool=False):
@@ -771,26 +784,26 @@ class Core:
                 await ctx.send(_("You have been set as owner."))
             else:
                 await ctx.send(_("Invalid token."))
-                
+
     @_set.command()
     @checks.is_owner()
     async def token(self, ctx, token: str):
         """Change bot token."""
 
         if not isinstance(ctx.channel, discord.DMChannel):
-            
+
             try:
                 await ctx.message.delete()
             except discord.Forbidden:
                 pass
-            
+
             await ctx.send(
                 _("Please use that command in DM. Since users probably saw your token,"
                   " it is recommended to reset it right now. Go to the following link and"
                   " select `Reveal Token` and `Generate a new token?`."
                   "\n\nhttps://discordapp.com/developers/applications/me/{}").format(self.bot.user.id))
             return
-        
+
         await ctx.bot.db.token.set(token)
         await ctx.send("Token set. Restart me.")
 
@@ -829,7 +842,7 @@ class Core:
 
     @commands.command()
     @checks.is_owner()
-    async def listlocales(self, ctx: RedContext):
+    async def listlocales(self, ctx: commands.Context):
         """
         Lists all available locales
 
@@ -875,7 +888,7 @@ class Core:
         if data_dir.exists():
             home = data_dir.home()
             backup_file = home / backup_filename
-            os.chdir(data_dir.parent)
+            os.chdir(str(data_dir.parent))
             with tarfile.open(str(backup_file), "w:gz") as tar:
                 tar.add(data_dir.stem)
             await ctx.send(_("A backup has been made of this instance. It is at {}.").format(
@@ -1046,7 +1059,7 @@ class Core:
             await ctx.send(_("User has been removed from whitelist."))
         else:
             await ctx.send(_("User was not in the whitelist."))
-            
+
     @whitelist.command(name='clear')
     async def whitelist_clear(self, ctx):
         """

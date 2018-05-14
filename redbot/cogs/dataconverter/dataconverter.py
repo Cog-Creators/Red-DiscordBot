@@ -1,17 +1,16 @@
 from pathlib import Path
 import asyncio
 
-from discord.ext import commands
-
-from redbot.core import checks, RedContext
+from redbot.core import checks, commands
 from redbot.core.bot import Red
-from redbot.core.i18n import CogI18n
+from redbot.core.i18n import Translator, cog_i18n
 from redbot.cogs.dataconverter.core_specs import SpecResolver
 from redbot.core.utils.chat_formatting import box
 
-_ = CogI18n('DataConverter', __file__)
+_ = Translator('DataConverter', __file__)
 
 
+@cog_i18n(_)
 class DataConverter:
     """
     Cog for importing Red v2 Data
@@ -22,7 +21,7 @@ class DataConverter:
 
     @checks.is_owner()
     @commands.command(name="convertdata")
-    async def dataconversioncommand(self, ctx: RedContext, v2path: str):
+    async def dataconversioncommand(self, ctx: commands.Context, v2path: str):
         """
         Interactive prompt for importing data from Red v2
 
