@@ -20,7 +20,7 @@ async def test_modlog_register_casetype(mod, ctx):
         "default_setting": True,
         "image": ":hammer:",
         "case_str": "Ban",
-        "audit_type": "ban"
+        "audit_type": "ban",
     }
     casetype = await mod.register_casetype(**ct)
     assert casetype is not None
@@ -29,6 +29,7 @@ async def test_modlog_register_casetype(mod, ctx):
 @pytest.mark.asyncio
 async def test_modlog_case_create(mod, ctx, member_factory):
     from datetime import datetime as dt
+
     usr = member_factory.get()
     guild = ctx.guild
     bot = ctx.bot
@@ -36,9 +37,7 @@ async def test_modlog_case_create(mod, ctx, member_factory):
     moderator = ctx.author
     reason = "Test 12345"
     created_at = dt.utcnow()
-    case = await mod.create_case(
-        bot, guild, created_at, case_type, usr, moderator, reason
-    )
+    case = await mod.create_case(bot, guild, created_at, case_type, usr, moderator, reason)
     assert case is not None
     assert case.user == usr
     assert case.action_type == case_type
