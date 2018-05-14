@@ -129,9 +129,6 @@ class Repo(RepoJSONMixin):
 
         return p.stdout.decode().strip()
 
-    def _module_error(self, name: str):
-        print("Error importing module {}".format(name))
-
     def _update_available_modules(self) -> Tuple[str]:
         """
         Updates the available modules attribute for this repo.
@@ -149,7 +146,7 @@ class Repo(RepoJSONMixin):
                         Installable(location=name)
                     )
         """
-        for file_finder, name, is_pkg in pkgutil.walk_packages(path=[str(self.folder_path), ], onerror=self._module_error):
+        for file_finder, name, is_pkg in pkgutil.walk_packages(path=[str(self.folder_path), ], onerror=lambda name: None):
             curr_modules.append(
                 Installable(location=self.folder_path / name)
             )
