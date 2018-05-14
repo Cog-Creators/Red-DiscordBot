@@ -1645,7 +1645,7 @@ class Audio:
             await self._embed_msg(ctx, "Server password set to {}.".format(password))
 
     @llsetup.command()
-    async def restport(self, ctx, rest_port):
+    async def restport(self, ctx, rest_port: int):
         """Set the lavalink REST server port."""
         await self.config.rest_port.set(rest_port)
         if await self._check_external():
@@ -1658,9 +1658,9 @@ class Audio:
             await self._embed_msg(ctx, "REST port set to {}.".format(rest_port))
 
     @llsetup.command()
-    async def wsport(self, ctx, ws_port):
+    async def wsport(self, ctx, ws_port: int):
         """Set the lavalink websocket server port."""
-        await self.config.rest_port.set(ws_port)
+        await self.config.ws_port.set(ws_port)
         if await self._check_external():
             embed = discord.Embed(
                 colour=ctx.guild.me.top_role.colour,
