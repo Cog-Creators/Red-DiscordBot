@@ -134,7 +134,7 @@ class ModLog:
                             audit_case = None
                             async for entry in guild.audit_logs(action=audit_type):
                                 if entry.target.id == case_before.user.id and \
-                                        entry.user.id == case_before.moderator.id:
+                                        entry.action == audit_type:
                                     audit_case = entry
                                     break
                             if audit_case:
