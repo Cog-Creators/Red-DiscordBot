@@ -14,9 +14,15 @@ from .utils import TYPE_CHECKING
 if TYPE_CHECKING:
     from . import Config
 
-__all__ = ['load_basic_configuration', 'cog_data_path', 'core_data_path',
-           'load_bundled_data', 'bundled_data_path', 'storage_details',
-           'storage_type']
+__all__ = [
+    "load_basic_configuration",
+    "cog_data_path",
+    "core_data_path",
+    "load_bundled_data",
+    "bundled_data_path",
+    "storage_details",
+    "storage_type",
+]
 
 log = logging.getLogger("red.data_manager")
 
@@ -25,20 +31,16 @@ basic_config = None
 
 instance_name = None
 
-basic_config_default = {
-    "DATA_PATH": None,
-    "COG_PATH_APPEND": "cogs",
-    "CORE_PATH_APPEND": "core"
-}
+basic_config_default = {"DATA_PATH": None, "COG_PATH_APPEND": "cogs", "CORE_PATH_APPEND": "core"}
 
 config_dir = None
 appdir = appdirs.AppDirs("Red-DiscordBot")
-if sys.platform == 'linux':
+if sys.platform == "linux":
     if 0 < os.getuid() < 1000:
         config_dir = Path(appdir.site_data_dir)
 if not config_dir:
     config_dir = Path(appdir.user_config_dir)
-config_file = config_dir / 'config.json'
+config_file = config_dir / "config.json"
 
 
 def load_basic_configuration(instance_name_: str):
@@ -67,20 +69,23 @@ def load_basic_configuration(instance_name_: str):
         config = jsonio._load_json()
         basic_config = config[instance_name]
     except (FileNotFoundError, KeyError):
-        print("You need to configure the bot instance using `redbot-setup`"
-              " prior to running the bot.")
+        print(
+            "You need to configure the bot instance using `redbot-setup`"
+            " prior to running the bot."
+        )
         sys.exit(1)
 
 
 def _base_data_path() -> Path:
     if basic_config is None:
-        raise RuntimeError("You must load the basic config before you"
-                           " can get the base data path.")
-    path = basic_config['DATA_PATH']
+        raise RuntimeError(
+            "You must load the basic config before you" " can get the base data path."
+        )
+    path = basic_config["DATA_PATH"]
     return Path(path).resolve()
 
 
-def cog_data_path(cog_instance=None, raw_name: str=None) -> Path:
+def cog_data_path(cog_instance=None, raw_name: str = None) -> Path:
     """Gets the base cog data path. If you want to get the folder with
     which to store your own cog's data please pass in an instance
     of your cog class.
@@ -104,9 +109,10 @@ def cog_data_path(cog_instance=None, raw_name: str=None) -> Path:
     try:
         base_data_path = Path(_base_data_path())
     except RuntimeError as e:
-        raise RuntimeError("You must load the basic config before you"
-                           " can get the cog data path.") from e
-    cog_path = base_data_path / basic_config['COG_PATH_APPEND']
+        raise RuntimeError(
+            "You must load the basic config before you" " can get the cog data path."
+        ) from e
+    cog_path = base_data_path / basic_config["COG_PATH_APPEND"]
 
     if raw_name is not None:
         cog_path = cog_path / raw_name
@@ -121,9 +127,10 @@ def core_data_path() -> Path:
     try:
         base_data_path = Path(_base_data_path())
     except RuntimeError as e:
-        raise RuntimeError("You must load the basic config before you"
-                           " can get the core data path.") from e
-    core_path = base_data_path / basic_config['CORE_PATH_APPEND']
+        raise RuntimeError(
+            "You must load the basic config before you" " can get the core data path."
+        ) from e
+    core_path = base_data_path / basic_config["CORE_PATH_APPEND"]
     core_path.mkdir(exist_ok=True, parents=True)
 
     return core_path.resolve()
@@ -145,15 +152,13 @@ def _find_data_files(init_location: str) -> (Path, List[Path]):
     if not init_file.is_file():
         return []
 
-    package_folder = init_file.parent.resolve() / 'data'
+    package_folder = init_file.parent.resolve() / "data"
     if not package_folder.is_dir():
         return []
 
     all_files = list(package_folder.rglob("*"))
 
-    return package_folder, [p.resolve()
-                            for p in all_files
-                            if p.is_file()]
+    return package_folder, [p.resolve() for p in all_files if p.is_file()]
 
 
 def _compare_and_copy(to_copy: List[Path], bundled_data_dir: Path, cog_data_dir: Path):
@@ -181,27 +186,24 @@ def _compare_and_copy(to_copy: List[Path], bundled_data_dir: Path, cog_data_dir:
                 yield block
                 block = afile.read(blocksize)
 
-    lookup = {p: cog_data_dir.joinpath(p.relative_to(bundled_data_dir))
-              for p in to_copy}
+    lookup = {p: cog_data_dir.joinpath(p.relative_to(bundled_data_dir)) for p in to_copy}
 
     for orig, poss_existing in lookup.items():
         if not poss_existing.is_file():
             poss_existing.parent.mkdir(exist_ok=True, parents=True)
             exists_checksum = None
         else:
-            exists_checksum = hash_bytestr_iter(file_as_blockiter(
-                poss_existing.open('rb')), hashlib.sha256())
+            exists_checksum = hash_bytestr_iter(
+                file_as_blockiter(poss_existing.open("rb")), hashlib.sha256()
+            )
 
         orig_checksum = ...
         if exists_checksum is not None:
-            orig_checksum = hash_bytestr_iter(file_as_blockiter(
-                orig.open('rb')), hashlib.sha256())
+            orig_checksum = hash_bytestr_iter(file_as_blockiter(orig.open("rb")), hashlib.sha256())
 
         if exists_checksum != orig_checksum:
             shutil.copy(str(orig), str(poss_existing))
-            log.debug("Copying {} to {}".format(
-                orig, poss_existing
-            ))
+            log.debug("Copying {} to {}".format(orig, poss_existing))
 
 
 def load_bundled_data(cog_instance, init_location: str):
@@ -233,7 +235,7 @@ def load_bundled_data(cog_instance, init_location: str):
     """
     bundled_data_folder, to_copy = _find_data_files(init_location)
 
-    cog_data_folder = cog_data_path(cog_instance) / 'bundled_data'
+    cog_data_folder = cog_data_path(cog_instance) / "bundled_data"
 
     _compare_and_copy(to_copy, bundled_data_folder, cog_data_folder)
 
@@ -264,12 +266,10 @@ def bundled_data_path(cog_instance) -> Path:
         If no bundled data folder exists or if it hasn't been loaded yet.
     """
 
-    bundled_path = cog_data_path(cog_instance) / 'bundled_data'
+    bundled_path = cog_data_path(cog_instance) / "bundled_data"
 
     if not bundled_path.is_dir():
-        raise FileNotFoundError("No such directory {}".format(
-            bundled_path
-        ))
+        raise FileNotFoundError("No such directory {}".format(bundled_path))
 
     return bundled_path
 
@@ -282,9 +282,9 @@ def storage_type() -> str:
     str
     """
     try:
-        return basic_config['STORAGE_TYPE']
+        return basic_config["STORAGE_TYPE"]
     except KeyError as e:
-        raise RuntimeError('Bot basic config has not been loaded yet.') from e
+        raise RuntimeError("Bot basic config has not been loaded yet.") from e
 
 
 def storage_details() -> dict:
@@ -297,6 +297,6 @@ def storage_details() -> dict:
     dict
     """
     try:
-        return basic_config['STORAGE_DETAILS']
+        return basic_config["STORAGE_DETAILS"]
     except KeyError as e:
-        raise RuntimeError('Bot basic config has not been loaded yet.') from e
+        raise RuntimeError("Bot basic config has not been loaded yet.") from e

@@ -1,6 +1,7 @@
 class BankError(Exception):
     pass
 
+
 class BankNotGlobal(BankError):
     pass
 

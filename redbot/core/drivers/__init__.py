@@ -24,8 +24,10 @@ def get_driver(type, *args, **kwargs):
     """
     if type == "JSON":
         from .red_json import JSON
+
         return JSON(*args, **kwargs)
     elif type == "MongoDB":
         from .red_mongo import Mongo
+
         return Mongo(*args, **kwargs)
     raise RuntimeError("Invalid driver type: '{}'".format(type))

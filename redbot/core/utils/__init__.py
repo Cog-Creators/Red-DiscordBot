@@ -1,4 +1,4 @@
-__all__ = ['TYPE_CHECKING', 'NewType', 'safe_delete']
+__all__ = ["TYPE_CHECKING", "NewType", "safe_delete"]
 
 from pathlib import Path
 import os
@@ -12,6 +12,7 @@ except ImportError:
 try:
     from typing import NewType
 except ImportError:
+
     def NewType(name, tp):
         return type(name, (tp,), {})
 

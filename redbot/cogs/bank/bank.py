@@ -6,7 +6,7 @@ from redbot.core.i18n import Translator, cog_i18n
 
 from redbot.core.bot import Red  # Only used for type hints
 
-_ = Translator('Bank', __file__)
+_ = Translator("Bank", __file__)
 
 
 def check_global_setting_guildowner():
@@ -14,6 +14,7 @@ def check_global_setting_guildowner():
     Command decorator. If the bank is not global, it checks if the author is
      either the guildowner or has the administrator permission.
     """
+
     async def pred(ctx: commands.Context):
         author = ctx.author
         if await ctx.bot.is_owner(author):
@@ -32,6 +33,7 @@ def check_global_setting_admin():
     Command decorator. If the bank is not global, it checks if the author is
      either a bot admin or has the manage_guild permission.
     """
+
     async def pred(ctx: commands.Context):
         author = ctx.author
         if await ctx.bot.is_owner(author):
@@ -73,19 +75,23 @@ class Bank:
                 currency_name = await bank._conf.guild(ctx.guild).currency()
                 default_balance = await bank._conf.guild(ctx.guild).default_balance()
 
-            settings = (_(
-                "Bank settings:\n\n"
-                "Bank name: {}\n"
-                "Currency: {}\n"
-                "Default balance: {}"
-                "").format(bank_name, currency_name, default_balance)
+            settings = (
+                _(
+                    "Bank settings:\n\n"
+                    "Bank name: {}\n"
+                    "Currency: {}\n"
+                    "Default balance: {}"
+                    ""
+                ).format(
+                    bank_name, currency_name, default_balance
+                )
             )
             await ctx.send(box(settings))
             await ctx.send_help()
 
     @bankset.command(name="toggleglobal")
     @checks.is_owner()
-    async def bankset_toggleglobal(self, ctx: commands.Context, confirm: bool=False):
+    async def bankset_toggleglobal(self, ctx: commands.Context, confirm: bool = False):
         """Toggles whether the bank is global or not
         If the bank is global, it will become per-server
         If the bank is per-server, it will become global"""
@@ -94,8 +100,10 @@ class Bank:
         word = _("per-server") if cur_setting else _("global")
         if confirm is False:
             await ctx.send(
-                _("This will toggle the bank to be {}, deleting all accounts "
-                  "in the process! If you're sure, type `{}`").format(
+                _(
+                    "This will toggle the bank to be {}, deleting all accounts "
+                    "in the process! If you're sure, type `{}`"
+                ).format(
                     word, "{}bankset toggleglobal yes".format(ctx.prefix)
                 )
             )
