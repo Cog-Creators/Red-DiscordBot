@@ -21,17 +21,24 @@ class Cleanup:
     @staticmethod
     async def check_100_plus(ctx: commands.Context, number: int) -> bool:
         """
-        Called when trying to delete more than 100 messages at once
+        Called when trying to delete more than 100 messages at once.
 
-        Prompts the user to choose whether they want to continue or not
+        Prompts the user to choose whether they want to continue or not.
+
+        Tries its best to cleanup after itself if the response is positive.
         """
         def author_check(message):
             return message.author == ctx.author
 
-        await ctx.send(_('Are you sure you want to delete {} messages? (y/n)').format(number))
+        prompt = await ctx.send(_('Are you sure you want to delete {} messages? (y/n)').format(number))
         response = await ctx.bot.wait_for('message', check=author_check)
 
         if response.content.lower().startswith('y'):
+            await prompt.delete()
+            try:
+                await response.delete()
+            except:
+                pass
             return True
         else:
             await ctx.send(_('Cancelled.'))
@@ -40,7 +47,8 @@ class Cleanup:
     @staticmethod
     async def get_messages_for_deletion(
             ctx: commands.Context, channel: discord.TextChannel, number,
-            check=lambda x: True, limit=100, before=None, after=None
+            check=lambda x: True, limit=100, before=None, after=None,
+            delete_pinned=False
     ) -> list:
         """
         Gets a list of messages meeting the requirements to be deleted.
@@ -50,6 +58,7 @@ class Cleanup:
         - The message passes a provided check (if no check is provided,
           this is automatically true)
         - The message is less than 14 days old
+        - The message is not pinned
         """
         to_delete = []
         too_old = False
@@ -59,8 +68,12 @@ class Cleanup:
             async for message in channel.history(limit=limit,
                                                  before=before,
                                                  after=after):
-                if (not number or len(to_delete) - 1 < number) and check(message) \
-                        and (ctx.message.created_at - message.created_at).days < 14:
+                if (
+                    (not number or len(to_delete) - 1 < number)
+                    and check(message)
+                    and (ctx.message.created_at - message.created_at).days < 14
+                    and (delete_pinned or not message.pinned)
+                ):
                     to_delete.append(message)
                 elif (ctx.message.created_at - message.created_at).days >= 14:
                     too_old = True
@@ -83,7 +96,7 @@ class Cleanup:
     @cleanup.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def text(self, ctx: commands.Context, text: str, number: int):
+    async def text(self, ctx: commands.Context, text: str, number: int, delete_pinned: bool=False):
         """Deletes last X messages matching the specified text.
 
         Example:
@@ -109,7 +122,8 @@ class Cleanup:
                 return False
 
         to_delete = await self.get_messages_for_deletion(
-            ctx, channel, number, check=check, limit=1000, before=ctx.message)
+            ctx, channel, number, check=check, limit=1000, before=ctx.message,
+            delete_pinned=delete_pinned)
 
         reason = "{}({}) deleted {} messages "\
                  " containing '{}' in channel {}.".format(author.name,
@@ -124,13 +138,14 @@ class Cleanup:
     @cleanup.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def user(self, ctx: commands.Context, user: str, number: int):
+    async def user(self, ctx: commands.Context, user: str, number: int, delete_pinned: bool=False):
         """Deletes last X messages from specified user.
 
         Examples:
         cleanup user @\u200bTwentysix 2
         cleanup user Red 6"""
 
+        member = None
         try:
             member = await commands.converter.MemberConverter().convert(ctx, user)
         except commands.BadArgument:
@@ -159,7 +174,8 @@ class Cleanup:
                 return False
 
         to_delete = await self.get_messages_for_deletion(
-            ctx, channel, number, check=check, limit=1000, before=ctx.message
+            ctx, channel, number, check=check, limit=1000, before=ctx.message,
+            delete_pinned=delete_pinned
         )
         reason = "{}({}) deleted {} messages "\
                  " made by {}({}) in channel {}."\
@@ -176,7 +192,7 @@ class Cleanup:
     @cleanup.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def after(self, ctx: commands.Context, message_id: int):
+    async def after(self, ctx: commands.Context, message_id: int, delete_pinned: bool=False):
         """Deletes all messages after specified message.
 
         To get a message id, enable developer mode in Discord's
@@ -202,7 +218,7 @@ class Cleanup:
             return
 
         to_delete = await self.get_messages_for_deletion(
-            ctx, channel, 0, limit=None, after=after
+            ctx, channel, 0, limit=None, after=after, delete_pinned=delete_pinned
         )
 
         reason = "{}({}) deleted {} messages in channel {}."\
@@ -215,7 +231,7 @@ class Cleanup:
     @cleanup.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def messages(self, ctx: commands.Context, number: int):
+    async def messages(self, ctx: commands.Context, number: int, delete_pinned: bool=False):
         """Deletes last X messages.
 
         Example:
@@ -232,8 +248,10 @@ class Cleanup:
                 return
 
         to_delete = await self.get_messages_for_deletion(
-            ctx, channel, number, limit=1000, before=ctx.message
+            ctx, channel, number, limit=1000, before=ctx.message,
+            delete_pinned=delete_pinned
         )
+        to_delete.append(ctx.message)
 
         reason = "{}({}) deleted {} messages in channel {}."\
                  "".format(author.name, author.id,
@@ -248,7 +266,7 @@ class Cleanup:
     @cleanup.command(name='bot')
     @commands.guild_only()
     @commands.bot_has_permissions(manage_messages=True)
-    async def cleanup_bot(self, ctx: commands.Context, number: int):
+    async def cleanup_bot(self, ctx: commands.Context, number: int, delete_pinned: bool=False):
         """Cleans up command messages and messages from the bot."""
 
         channel = ctx.message.channel
@@ -280,8 +298,10 @@ class Cleanup:
             return False
 
         to_delete = await self.get_messages_for_deletion(
-            ctx, channel, number, check=check, limit=1000, before=ctx.message
+            ctx, channel, number, check=check, limit=1000, before=ctx.message,
+            delete_pinned=delete_pinned
         )
+        to_delete.append(ctx.message)
 
         reason = "{}({}) deleted {} "\
                  " command messages in channel {}."\
@@ -295,7 +315,9 @@ class Cleanup:
             await slow_deletion(to_delete)
 
     @cleanup.command(name='self')
-    async def cleanup_self(self, ctx: commands.Context, number: int, match_pattern: str = None):
+    async def cleanup_self(
+            self, ctx: commands.Context, number: int,
+            match_pattern: str = None, delete_pinned: bool=False):
         """Cleans up messages owned by the bot.
 
         By default, all messages are cleaned. If a third argument is specified,
@@ -345,7 +367,8 @@ class Cleanup:
             return False
 
         to_delete = await self.get_messages_for_deletion(
-            ctx, channel, number, check=check, limit=1000, before=ctx.message
+            ctx, channel, number, check=check, limit=1000, before=ctx.message,
+            delete_pinned=delete_pinned
         )
 
         # Selfbot convenience, delete trigger message

@@ -124,6 +124,9 @@ def _normalize(string, remove_newline=False):
             s += ' '
         return s
 
+    if string is None:
+        return ""
+    
     string = string.replace('\\n\\n', '\n\n')
     string = string.replace('\\n', ' ')
     string = string.replace('\\"', '"')
