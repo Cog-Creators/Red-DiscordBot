@@ -38,7 +38,10 @@ class Command(commands.Command):
             translator = lambda s: s
         else:
             translator = self.translator
-        return inspect.cleandoc(translator(self.callback.__doc__))
+        command_doc = self.callback.__doc__
+        if command_doc is None:
+            return ''
+        return inspect.cleandoc(translator(command_doc))
 
     @help.setter
     def help(self, value):
