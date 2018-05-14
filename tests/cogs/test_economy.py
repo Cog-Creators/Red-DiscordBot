@@ -4,9 +4,11 @@ import pytest
 @pytest.fixture()
 def bank(config):
     from redbot.core import Config
+
     Config.get_conf = lambda *args, **kwargs: config
 
     from redbot.core import bank
+
     bank._register_defaults()
     return bank
 

@@ -1,7 +1,7 @@
 import pytest
 
 
-#region Register Tests
+# region Register Tests
 @pytest.mark.asyncio
 async def test_config_register_global(config):
     config.register_global(enabled=False)
@@ -61,7 +61,9 @@ async def test_config_force_register_global(config_fr):
 
     config_fr.register_global(enabled=True)
     assert await config_fr.enabled() is True
-#endregion
+
+
+# endregion
 
 
 # Test nested registration
@@ -73,7 +75,7 @@ async def test_nested_registration(config):
 
 @pytest.mark.asyncio
 async def test_nested_registration_asdict(config):
-    defaults = {'bar': {'baz': False}}
+    defaults = {"bar": {"baz": False}}
     config.register_global(foo=defaults)
 
     assert await config.foo.bar.baz() is False
@@ -81,7 +83,7 @@ async def test_nested_registration_asdict(config):
 
 @pytest.mark.asyncio
 async def test_nested_registration_and_changing(config):
-    defaults = {'bar': {'baz': False}}
+    defaults = {"bar": {"baz": False}}
     config.register_global(foo=defaults)
 
     assert await config.foo.bar.baz() is False
@@ -100,14 +102,7 @@ async def test_doubleset_default(config):
 
 @pytest.mark.asyncio
 async def test_nested_registration_multidict(config):
-    defaults = {
-        "foo": {
-            "bar": {
-                "baz": True
-            }
-        },
-        "blah": True
-    }
+    defaults = {"foo": {"bar": {"baz": True}}, "blah": True}
     config.register_global(**defaults)
 
     assert await config.foo.bar.baz() is True
@@ -122,7 +117,7 @@ def test_nested_group_value_badreg(config):
 
 @pytest.mark.asyncio
 async def test_nested_toplevel_reg(config):
-    defaults = {'bar': True, 'baz': False}
+    defaults = {"bar": True, "baz": False}
     config.register_global(foo=defaults)
 
     assert await config.foo.bar() is True
@@ -180,10 +175,12 @@ async def test_member_default_override(config, empty_member):
 @pytest.mark.asyncio
 async def test_user_default_override(config, empty_user):
     assert await config.user(empty_user).some_value(True) is True
-#endregion
 
 
-#region Setting Values
+# endregion
+
+
+# region Setting Values
 @pytest.mark.asyncio
 async def test_set_global(config):
     await config.enabled.set(True)
@@ -213,7 +210,9 @@ async def test_set_channel(config, empty_channel):
 async def test_set_channel_no_register(config, empty_channel):
     await config.channel(empty_channel).no_register.set(True)
     assert await config.channel(empty_channel).no_register() is True
-#endregion
+
+
+# endregion
 
 
 # Dynamic attribute testing
@@ -305,7 +304,7 @@ async def test_clear_all(config):
 
     await config.clear_all()
     with pytest.raises(KeyError):
-        await config.get_raw('foo')
+        await config.get_raw("foo")
 
 
 @pytest.mark.asyncio
@@ -314,16 +313,13 @@ async def test_clear_value(config):
     await config.foo.clear()
 
     with pytest.raises(KeyError):
-        await config.get_raw('foo')
+        await config.get_raw("foo")
 
 
 # Get All testing
 @pytest.mark.asyncio
 async def test_user_get_all_from_kind(config, user_factory):
-    config.register_user(
-        foo=False,
-        bar=True
-    )
+    config.register_user(foo=False, bar=True)
     for _ in range(5):
         user = user_factory.get()
         await config.user(user).foo.set(True)
@@ -333,17 +329,14 @@ async def test_user_get_all_from_kind(config, user_factory):
     assert len(all_data) == 5
 
     for _, v in all_data.items():
-        assert v['foo'] is True
-        assert v['bar'] is True
+        assert v["foo"] is True
+        assert v["bar"] is True
 
 
 @pytest.mark.asyncio
 async def test_user_getalldata(config, user_factory):
     user = user_factory.get()
-    config.register_user(
-        foo=True,
-        bar=False
-    )
+    config.register_user(foo=True, bar=False)
     await config.user(user).foo.set(False)
 
     all_data = await config.user(user).all()
@@ -351,18 +344,19 @@ async def test_user_getalldata(config, user_factory):
     assert "foo" in all_data
     assert "bar" in all_data
 
-    assert config.user(user).defaults['foo'] is True
+    assert config.user(user).defaults["foo"] is True
+
 
 @pytest.mark.asyncio
 async def test_value_ctxmgr(config):
     config.register_global(foo_list=[])
 
     async with config.foo_list() as foo_list:
-        foo_list.append('foo')
+        foo_list.append("foo")
 
     foo_list = await config.foo_list()
 
-    assert 'foo' in foo_list
+    assert "foo" in foo_list
 
 
 @pytest.mark.asyncio
@@ -371,14 +365,14 @@ async def test_value_ctxmgr_saves(config):
 
     try:
         async with config.bar_list() as bar_list:
-            bar_list.append('bar')
+            bar_list.append("bar")
             raise RuntimeError()
     except RuntimeError:
         pass
 
     bar_list = await config.bar_list()
 
-    assert 'bar' in bar_list
+    assert "bar" in bar_list
 
 
 @pytest.mark.asyncio

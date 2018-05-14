@@ -18,7 +18,7 @@ def default_dir(red):
 @pytest.mark.skip
 @pytest.mark.asyncio
 async def test_ensure_cogs_in_paths(cog_mgr, default_dir):
-    cogs_dir = default_dir / 'redbot' / 'cogs'
+    cogs_dir = default_dir / "redbot" / "cogs"
     assert cogs_dir in await cog_mgr.paths()
 
 
@@ -31,7 +31,7 @@ async def test_install_path_set(cog_mgr: cog_manager.CogManager, tmpdir):
 
 @pytest.mark.asyncio
 async def test_install_path_set_bad(cog_mgr):
-    path = Path('something')
+    path = Path("something")
 
     with pytest.raises(ValueError):
         await cog_mgr.set_install_path(path)
