@@ -101,7 +101,7 @@ setup(
             'redbot-launcher=redbot.launcher:main'
         ]
     },
-    python_requires='>=3.5',
+    python_requires='>=3.5,<3.7',
     setup_requires=get_requirements(),
     install_requires=get_requirements(),
     dependency_links=dep_links,
@@ -110,7 +110,7 @@ setup(
             'pytest>3', 'pytest-asyncio'
         ],
         'mongo': ['motor'],
-        'docs': ['sphinx==1.6.5', 'sphinxcontrib-asyncio', 'sphinx_rtd_theme'],
+        'docs': ['sphinx>=1.7', 'sphinxcontrib-asyncio', 'sphinx_rtd_theme'],
         'voice': ['red-lavalink>=0.0.4']
     }
 )

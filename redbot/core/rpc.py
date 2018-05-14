@@ -10,8 +10,8 @@ from .utils import TYPE_CHECKING, NewType
 if TYPE_CHECKING:
     from .bot import Red
 
-log = logging.getLogger('red.rpc')
-JsonSerializable = NewType('JsonSerializable', dict)
+log = logging.getLogger("red.rpc")
+JsonSerializable = NewType("JsonSerializable", dict)
 
 _rpc = JsonRpc(logger=log)
 
@@ -22,13 +22,13 @@ async def initialize(bot: "Red"):
     global _rpc_server
 
     app = Application(loop=bot.loop)
-    app.router.add_route('*', '/rpc', _rpc)
+    app.router.add_route("*", "/rpc", _rpc)
 
     handler = app.make_handler()
 
-    _rpc_server = await bot.loop.create_server(handler, '127.0.0.1', 6133)
+    _rpc_server = await bot.loop.create_server(handler, "127.0.0.1", 6133)
 
-    log.debug('Created RPC _rpc_server listener.')
+    log.debug("Created RPC _rpc_server listener.")
 
 
 def add_topic(topic_name: str):
@@ -77,10 +77,7 @@ def add_method(prefix, method):
     method
         MUST BE A COROUTINE OR OBJECT.
     """
-    _rpc.add_methods(
-        ('', method),
-        prefix=prefix
-    )
+    _rpc.add_methods(("", method), prefix=prefix)
 
 
 def clean_up():
