@@ -136,7 +136,11 @@ class Help(formatter.HelpFormatter):
 
         if self.is_cog():
             translator = getattr(self.command, '__translator__', lambda s: s)
-            description = inspect.cleandoc(translator(self.command.__doc__))
+            description = (
+                inspect.cleandoc(translator(self.command.__doc__))
+                if self.command.__doc__
+                else EMPTY_STRING
+            )
         else:
             description = self.command.description
 
