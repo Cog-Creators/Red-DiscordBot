@@ -8,21 +8,16 @@ _conn = None
 
 
 def _initialize(**kwargs):
-    host = kwargs['HOST']
-    port = kwargs['PORT']
-    admin_user = kwargs['USERNAME']
-    admin_pass = kwargs['PASSWORD']
-    db_name = kwargs.get('DB_NAME', 'default_db')
+    host = kwargs["HOST"]
+    port = kwargs["PORT"]
+    admin_user = kwargs["USERNAME"]
+    admin_pass = kwargs["PASSWORD"]
+    db_name = kwargs.get("DB_NAME", "default_db")
 
     if admin_user is not None and admin_pass is not None:
-        url = "mongodb://{}:{}@{}:{}/{}".format(
-            admin_user, admin_pass, host, port,
-            db_name
-        )
+        url = "mongodb://{}:{}@{}:{}/{}".format(admin_user, admin_pass, host, port, db_name)
     else:
-        url = "mongodb://{}:{}/{}".format(
-            host, port, db_name
-        )
+        url = "mongodb://{}:{}/{}".format(host, port, db_name)
 
     global _conn
     _conn = motor.motor_asyncio.AsyncIOMotorClient(url)
@@ -32,6 +27,7 @@ class Mongo(BaseDriver):
     """
     Subclass of :py:class:`.red_base.BaseDriver`.
     """
+
     def __init__(self, cog_name, identifier, **kwargs):
         super().__init__(cog_name, identifier)
 
@@ -75,45 +71,40 @@ class Mongo(BaseDriver):
     async def get(self, *identifiers: str):
         mongo_collection = self.get_collection()
 
-        dot_identifiers = '.'.join(identifiers)
+        dot_identifiers = ".".join(identifiers)
 
         partial = await mongo_collection.find_one(
-            filter={'_id': self.unique_cog_identifier},
-            projection={dot_identifiers: True}
+            filter={"_id": self.unique_cog_identifier}, projection={dot_identifiers: True}
         )
 
         if partial is None:
-            raise KeyError("No matching document was found and Config expects"
-                           " a KeyError.")
+            raise KeyError("No matching document was found and Config expects" " a KeyError.")
 
         for i in identifiers:
             partial = partial[i]
         return partial
 
     async def set(self, *identifiers: str, value=None):
-        dot_identifiers = '.'.join(identifiers)
+        dot_identifiers = ".".join(identifiers)
 
         mongo_collection = self.get_collection()
 
         await mongo_collection.update_one(
-            {'_id': self.unique_cog_identifier},
+            {"_id": self.unique_cog_identifier},
             update={"$set": {dot_identifiers: value}},
-            upsert=True
+            upsert=True,
         )
 
     async def clear(self, *identifiers: str):
-        dot_identifiers = '.'.join(identifiers)
+        dot_identifiers = ".".join(identifiers)
         mongo_collection = self.get_collection()
 
         if len(identifiers) > 0:
             await mongo_collection.update_one(
-                {'_id': self.unique_cog_identifier},
-                update={"$unset": {dot_identifiers: 1}}
+                {"_id": self.unique_cog_identifier}, update={"$unset": {dot_identifiers: 1}}
             )
         else:
-            await mongo_collection.delete_one(
-                {'_id': self.unique_cog_identifier}
-            )
+            await mongo_collection.delete_one({"_id": self.unique_cog_identifier})
 
 
 def get_config_details():
@@ -129,10 +120,10 @@ def get_config_details():
         admin_uname = admin_password = None
 
     ret = {
-        'HOST': host,
-        'PORT': port,
-        'USERNAME': admin_uname,
-        'PASSWORD': admin_password,
-        'DB_NAME': db_name
+        "HOST": host,
+        "PORT": port,
+        "USERNAME": admin_uname,
+        "PASSWORD": admin_password,
+        "DB_NAME": db_name,
     }
     return ret

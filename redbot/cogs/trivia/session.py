@@ -10,11 +10,13 @@ from .log import LOG
 
 __all__ = ["TriviaSession"]
 
-_REVEAL_MESSAGES = ("I know this one! {}!", "Easy: {}.",
-                    "Oh really? It's {} of course.")
-_FAIL_MESSAGES = ("To the next one I guess...", "Moving on...",
-                  "I'm sure you'll know the answer of the next one.",
-                  "\N{PENSIVE FACE} Next one.")
+_REVEAL_MESSAGES = ("I know this one! {}!", "Easy: {}.", "Oh really? It's {} of course.")
+_FAIL_MESSAGES = (
+    "To the next one I guess...",
+    "Moving on...",
+    "I'm sure you'll know the answer of the next one.",
+    "\N{PENSIVE FACE} Next one.",
+)
 
 
 class TriviaSession():
@@ -49,10 +51,7 @@ class TriviaSession():
 
     """
 
-    def __init__(self,
-                 ctx,
-                 question_list: dict,
-                 settings: dict):
+    def __init__(self, ctx, question_list: dict, settings: dict):
         self.ctx = ctx
         list_ = list(question_list.items())
         random.shuffle(list_)
@@ -128,9 +127,9 @@ class TriviaSession():
         num_lists = len(list_names)
         if num_lists > 2:
             # at least 3 lists, join all but last with comma
-            msg = ", ".join(list_names[:num_lists-1])
+            msg = ", ".join(list_names[:num_lists - 1])
             # join onto last with "and"
-            msg = " and ".join((msg, list_names[num_lists-1]))
+            msg = " and ".join((msg, list_names[num_lists - 1]))
         else:
             # either 1 or 2 lists, join together with "and"
             msg = " and ".join(list_names)
@@ -150,10 +149,7 @@ class TriviaSession():
             answers = _parse_answers(answers)
             yield question, answers
 
-    async def wait_for_answer(self,
-                              answers,
-                              delay: float,
-                              timeout: float):
+    async def wait_for_answer(self, answers, delay: float, timeout: float):
         """Wait for a correct answer, and then respond.
 
         Scores are also updated in this method.
@@ -178,7 +174,8 @@ class TriviaSession():
         """
         try:
             message = await self.ctx.bot.wait_for(
-                "message", check=self.check_answer(answers), timeout=delay)
+                "message", check=self.check_answer(answers), timeout=delay
+            )
         except asyncio.TimeoutError:
             if time.time() - self._last_response >= timeout:
                 await self.ctx.send("Guys...? Well, I guess I'll stop then.")
@@ -194,8 +191,7 @@ class TriviaSession():
             await self.ctx.send(reply)
         else:
             self.scores[message.author] += 1
-            reply = "You got it {}! **+1** to you!".format(
-                message.author.display_name)
+            reply = "You got it {}! **+1** to you!".format(message.author.display_name)
             await self.ctx.send(reply)
         return True
 
@@ -218,9 +214,11 @@ class TriviaSession():
 
         """
         answers = tuple(s.lower() for s in answers)
+
         def _pred(message: discord.Message):
-            early_exit = (message.channel != self.ctx.channel
-                          or message.author == self.ctx.guild.me)
+            early_exit = (
+                message.channel != self.ctx.channel or message.author == self.ctx.guild.me
+            )
             if early_exit:
                 return False
 
@@ -260,8 +258,7 @@ class TriviaSession():
         """Cancel whichever tasks this session is running."""
         self._task.cancel()
         channel = self.ctx.channel
-        LOG.debug("Force stopping trivia session; #%s in %s", channel,
-                  channel.guild.id)
+        LOG.debug("Force stopping trivia session; #%s in %s", channel, channel.guild.id)
 
     async def pay_winner(self, multiplier: float):
         """Pay the winner of this trivia session.
@@ -275,8 +272,7 @@ class TriviaSession():
             paid.
 
         """
-        (winner, score) = next((tup for tup in self.scores.most_common(1)),
-                               (None, None))
+        (winner, score) = next((tup for tup in self.scores.most_common(1)), (None, None))
         me_ = self.ctx.guild.me
         if winner is not None and winner != me_ and score > 0:
             contestants = list(self.scores.keys())
@@ -285,13 +281,12 @@ class TriviaSession():
             if len(contestants) >= 3:
                 amount = int(multiplier * score)
                 if amount > 0:
-                    LOG.debug("Paying trivia winner: %d credits --> %s",
-                              amount, str(winner))
+                    LOG.debug("Paying trivia winner: %d credits --> %s", amount, str(winner))
                     await deposit_credits(winner, int(multiplier * score))
                     await self.ctx.send(
                         "Congratulations, {0}, you have received {1} credits"
-                        " for coming first.".format(winner.display_name,
-                                                    amount))
+                        " for coming first.".format(winner.display_name, amount)
+                    )
 
 
 def _parse_answers(answers):

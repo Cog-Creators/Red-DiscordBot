@@ -8,21 +8,24 @@ from redbot.core import Config
 from redbot.core.bot import Red
 
 __all__ = [
-    "Case", "CaseType", "get_next_case_number", "get_case", "get_all_cases",
-    "create_case", "get_casetype", "get_all_casetypes", "register_casetype",
-    "register_casetypes",  "get_modlog_channel", "set_modlog_channel",
-    "reset_cases"
+    "Case",
+    "CaseType",
+    "get_next_case_number",
+    "get_case",
+    "get_all_cases",
+    "create_case",
+    "get_casetype",
+    "get_all_casetypes",
+    "register_casetype",
+    "register_casetypes",
+    "get_modlog_channel",
+    "set_modlog_channel",
+    "reset_cases",
 ]
 
-_DEFAULT_GLOBAL = {
-    "casetypes": {}
-}
+_DEFAULT_GLOBAL = {"casetypes": {}}
 
-_DEFAULT_GUILD = {
-    "mod_log": None,
-    "cases": {},
-    "casetypes": {}
-}
+_DEFAULT_GUILD = {"mod_log": None, "cases": {}, "casetypes": {}}
 
 
 def _register_defaults():
@@ -30,8 +33,8 @@ def _register_defaults():
     _conf.register_guild(**_DEFAULT_GUILD)
 
 
-if not os.environ.get('BUILDING_DOCS'):
-    _conf = Config.get_conf(None, 1354799444, cog_name='ModLog')
+if not os.environ.get("BUILDING_DOCS"):
+    _conf = Config.get_conf(None, 1354799444, cog_name="ModLog")
     _register_defaults()
 
 
@@ -39,11 +42,20 @@ class Case:
     """A single mod log case"""
 
     def __init__(
-            self, guild: discord.Guild, created_at: int, action_type: str,
-            user: discord.User, moderator: discord.Member, case_number: int,
-            reason: str=None, until: int=None,
-            channel: discord.TextChannel=None, amended_by: discord.Member=None,
-            modified_at: int=None, message: discord.Message=None):
+        self,
+        guild: discord.Guild,
+        created_at: int,
+        action_type: str,
+        user: discord.User,
+        moderator: discord.Member,
+        case_number: int,
+        reason: str = None,
+        until: int = None,
+        channel: discord.TextChannel = None,
+        amended_by: discord.Member = None,
+        modified_at: int = None,
+        message: discord.Message = None,
+    ):
         self.guild = guild
         self.created_at = created_at
         self.action_type = action_type
@@ -82,11 +94,9 @@ class Case:
         else:
             await self.message.edit(case_content)
 
-        await _conf.guild(self.guild).cases.set_raw(
-            str(self.case_number), value=self.to_json()
-        )
+        await _conf.guild(self.guild).cases.set_raw(str(self.case_number), value=self.to_json())
 
-    async def message_content(self, embed: bool=True):
+    async def message_content(self, embed: bool = True):
         """
         Format a case message
 
@@ -102,22 +112,18 @@ class Case:
 
         """
         casetype = await get_casetype(self.action_type)
-        title = "{}".format("Case #{} | {} {}".format(
-            self.case_number, casetype.case_str, casetype.image))
+        title = "{}".format(
+            "Case #{} | {} {}".format(self.case_number, casetype.case_str, casetype.image)
+        )
 
         if self.reason:
             reason = "**Reason:** {}".format(self.reason)
         else:
-            reason = \
-                "**Reason:** Use `[p]reason {} <reason>` to add it".format(
-                    self.case_number
-                )
+            reason = "**Reason:** Use `[p]reason {} <reason>` to add it".format(self.case_number)
 
         if self.moderator is not None:
             moderator = "{}#{} ({})\n".format(
-                self.moderator.name,
-                self.moderator.discriminator,
-                self.moderator.id
+                self.moderator.name, self.moderator.discriminator, self.moderator.id
             )
         else:
             moderator = "Unknown"
@@ -126,7 +132,7 @@ class Case:
         if self.until:
             start = datetime.fromtimestamp(self.created_at)
             end = datetime.fromtimestamp(self.until)
-            end_fmt = end.strftime('%Y-%m-%d %H:%M:%S')
+            end_fmt = end.strftime("%Y-%m-%d %H:%M:%S")
             duration = end - start
             dur_fmt = _strfdelta(duration)
             until = end_fmt
@@ -135,21 +141,16 @@ class Case:
         amended_by = None
         if self.amended_by:
             amended_by = "{}#{} ({})".format(
-                self.amended_by.name,
-                self.amended_by.discriminator,
-                self.amended_by.id
+                self.amended_by.name, self.amended_by.discriminator, self.amended_by.id
             )
 
         last_modified = None
         if self.modified_at:
             last_modified = "{}".format(
-                datetime.fromtimestamp(
-                    self.modified_at
-                ).strftime('%Y-%m-%d %H:%M:%S')
+                datetime.fromtimestamp(self.modified_at).strftime("%Y-%m-%d %H:%M:%S")
             )
 
-        user = "{}#{} ({})\n".format(
-            self.user.name, self.user.discriminator, self.user.id)
+        user = "{}#{} ({})\n".format(self.user.name, self.user.discriminator, self.user.id)
         if embed:
             emb = discord.Embed(title=title, description=reason)
 
@@ -208,7 +209,7 @@ class Case:
             "channel": self.channel.id if hasattr(self.channel, "id") else None,
             "amended_by": self.amended_by.id if hasattr(self.amended_by, "id") else None,
             "modified_at": self.modified_at,
-            "message": self.message.id if hasattr(self.message, "id") else None
+            "message": self.message.id if hasattr(self.message, "id") else None,
         }
         return data
 
@@ -239,11 +240,18 @@ class Case:
         amended_by = guild.get_member(data["amended_by"])
         case_guild = bot.get_guild(data["guild"])
         return cls(
-            guild=case_guild, created_at=data["created_at"],
-            action_type=data["action_type"], user=user, moderator=moderator,
-            case_number=data["case_number"], reason=data["reason"],
-            until=data["until"], channel=channel, amended_by=amended_by,
-            modified_at=data["modified_at"], message=message
+            guild=case_guild,
+            created_at=data["created_at"],
+            action_type=data["action_type"],
+            user=user,
+            moderator=moderator,
+            case_number=data["case_number"],
+            reason=data["reason"],
+            until=data["until"],
+            channel=channel,
+            amended_by=amended_by,
+            modified_at=data["modified_at"],
+            message=message,
         )
 
 
@@ -266,9 +274,16 @@ class CaseType:
         The action type of the action as it would appear in the
         audit log
     """
+
     def __init__(
-            self, name: str, default_setting: bool, image: str,
-            case_str: str, audit_type: str=None, guild: discord.Guild=None):
+        self,
+        name: str,
+        default_setting: bool,
+        image: str,
+        case_str: str,
+        audit_type: str = None,
+        guild: discord.Guild = None,
+    ):
         self.name = name
         self.default_setting = default_setting
         self.image = image
@@ -282,7 +297,7 @@ class CaseType:
             "default_setting": self.default_setting,
             "image": self.image,
             "case_str": self.case_str,
-            "audit_type": self.audit_type
+            "audit_type": self.audit_type,
         }
         await _conf.casetypes.set_raw(self.name, value=data)
 
@@ -302,7 +317,8 @@ class CaseType:
         if not self.guild:
             return False
         return await _conf.guild(self.guild).casetypes.get_raw(
-            self.name, default=self.default_setting)
+            self.name, default=self.default_setting
+        )
 
     async def set_enabled(self, enabled: bool):
         """
@@ -348,16 +364,11 @@ async def get_next_case_number(guild: discord.Guild) -> str:
         The next case number
 
     """
-    cases = sorted(
-        (await _conf.guild(guild).get_raw("cases")),
-        key=lambda x: int(x),
-        reverse=True
-    )
+    cases = sorted((await _conf.guild(guild).get_raw("cases")), key=lambda x: int(x), reverse=True)
     return str(int(cases[0]) + 1) if cases else "1"
 
 
-async def get_case(case_number: int, guild: discord.Guild,
-                   bot: Red) -> Case:
+async def get_case(case_number: int, guild: discord.Guild, bot: Red) -> Case:
     """
     Gets the case with the associated case number
 
@@ -384,9 +395,7 @@ async def get_case(case_number: int, guild: discord.Guild,
     try:
         case = await _conf.guild(guild).cases.get_raw(str(case_number))
     except KeyError as e:
-        raise RuntimeError(
-            "That case does not exist for guild {}".format(guild.name)
-        ) from e
+        raise RuntimeError("That case does not exist for guild {}".format(guild.name)) from e
     mod_channel = await get_modlog_channel(guild)
     return await Case.from_json(mod_channel, bot, case)
 
@@ -416,11 +425,17 @@ async def get_all_cases(guild: discord.Guild, bot: Red) -> List[Case]:
     return case_list
 
 
-async def create_case(bot: Red, guild: discord.Guild, created_at: datetime, action_type: str,
-                      user: Union[discord.User, discord.Member],
-                      moderator: discord.Member=None, reason: str=None,
-                      until: datetime=None, channel: discord.TextChannel=None
-                      ) -> Union[Case, None]:
+async def create_case(
+    bot: Red,
+    guild: discord.Guild,
+    created_at: datetime,
+    action_type: str,
+    user: Union[discord.User, discord.Member],
+    moderator: discord.Member = None,
+    reason: str = None,
+    until: datetime = None,
+    channel: discord.TextChannel = None,
+) -> Union[Case, None]:
     """
     Creates a new case
 
@@ -463,9 +478,7 @@ async def create_case(bot: Red, guild: discord.Guild, created_at: datetime, acti
         try:
             mod_channel = await get_modlog_channel(guild)
         except RuntimeError:
-            raise RuntimeError(
-                "No mod log channel set for guild {}".format(guild.name)
-            )
+            raise RuntimeError("No mod log channel set for guild {}".format(guild.name))
     case_type = await get_casetype(action_type, guild)
     if case_type is None:
         return None
@@ -475,9 +488,20 @@ async def create_case(bot: Red, guild: discord.Guild, created_at: datetime, acti
 
     next_case_number = int(await get_next_case_number(guild))
 
-    case = Case(guild, int(created_at.timestamp()), action_type, user, moderator,
-                next_case_number, reason, int(until.timestamp()) if until else None,
-                channel, amended_by=None, modified_at=None, message=None)
+    case = Case(
+        guild,
+        int(created_at.timestamp()),
+        action_type,
+        user,
+        moderator,
+        next_case_number,
+        reason,
+        int(until.timestamp()) if until else None,
+        channel,
+        amended_by=None,
+        modified_at=None,
+        message=None,
+    )
     if hasattr(mod_channel, "send"):  # Not going to be the case for tests
         use_embeds = await bot.embed_requested(mod_channel, guild.me)
         case_content = await case.message_content(use_embeds)
@@ -490,7 +514,7 @@ async def create_case(bot: Red, guild: discord.Guild, created_at: datetime, acti
     return case
 
 
-async def get_casetype(name: str, guild: discord.Guild=None) -> Union[CaseType, None]:
+async def get_casetype(name: str, guild: discord.Guild = None) -> Union[CaseType, None]:
     """
     Gets the case type
 
@@ -516,7 +540,7 @@ async def get_casetype(name: str, guild: discord.Guild=None) -> Union[CaseType, 
         return None
 
 
-async def get_all_casetypes(guild: discord.Guild=None) -> List[CaseType]:
+async def get_all_casetypes(guild: discord.Guild = None) -> List[CaseType]:
     """
     Get all currently registered case types
 
@@ -538,8 +562,8 @@ async def get_all_casetypes(guild: discord.Guild=None) -> List[CaseType]:
 
 
 async def register_casetype(
-        name: str, default_setting: bool,
-        image: str, case_str: str, audit_type: str=None) -> CaseType:
+    name: str, default_setting: bool, image: str, case_str: str, audit_type: str = None
+) -> CaseType:
     """
     Registers a case type. If the case type exists and
     there are differences between the values passed and
@@ -586,7 +610,7 @@ async def register_casetype(
         raise ValueError("The 'image' is not a string!")
     if not isinstance(case_str, str):
         raise ValueError("The 'case_str' is not a string!")
-    if audit_type is not None: 
+    if audit_type is not None:
         if not isinstance(audit_type, str):
             raise ValueError("The 'audit_type' is not a string!")
         try:
@@ -665,8 +689,7 @@ async def register_casetypes(new_types: List[dict]) -> List[CaseType]:
         return type_list
 
 
-async def get_modlog_channel(guild: discord.Guild
-                             ) -> Union[discord.TextChannel, None]:
+async def get_modlog_channel(guild: discord.Guild) -> Union[discord.TextChannel, None]:
     """
     Get the current modlog channel
 
@@ -695,8 +718,9 @@ async def get_modlog_channel(guild: discord.Guild
     return channel
 
 
-async def set_modlog_channel(guild: discord.Guild,
-                             channel: Union[discord.TextChannel, None]) -> bool:
+async def set_modlog_channel(
+    guild: discord.Guild, channel: Union[discord.TextChannel, None]
+) -> bool:
     """
     Changes the modlog channel
 
@@ -713,9 +737,7 @@ async def set_modlog_channel(guild: discord.Guild,
         `True` if successful
 
     """
-    await _conf.guild(guild).mod_log.set(
-        channel.id if hasattr(channel, "id") else None
-    )
+    await _conf.guild(guild).mod_log.set(channel.id if hasattr(channel, "id") else None)
     return True
 
 
@@ -741,19 +763,19 @@ async def reset_cases(guild: discord.Guild) -> bool:
 def _strfdelta(delta):
     s = []
     if delta.days:
-        ds = '%i day' % delta.days
+        ds = "%i day" % delta.days
         if delta.days > 1:
-            ds += 's'
+            ds += "s"
         s.append(ds)
-    hrs, rem = divmod(delta.seconds, 60*60)
+    hrs, rem = divmod(delta.seconds, 60 * 60)
     if hrs:
-        hs = '%i hr' % hrs
+        hs = "%i hr" % hrs
         if hrs > 1:
-            hs += 's'
+            hs += "s"
         s.append(hs)
     mins, secs = divmod(rem, 60)
     if mins:
-        s.append('%i min' % mins)
+        s.append("%i min" % mins)
     if secs:
-        s.append('%i sec' % secs)
-    return ' '.join(s)
+        s.append("%i sec" % secs)
+    return " ".join(s)

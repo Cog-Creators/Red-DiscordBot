@@ -11,13 +11,14 @@ from pathlib import Path
 
 log = logging.getLogger("red")
 
-PRETTY = {"indent": 4, "sort_keys": True, "separators": (',', ' : ')}
-MINIFIED = {"sort_keys": True, "separators": (',', ':')}
+PRETTY = {"indent": 4, "sort_keys": True, "separators": (",", " : ")}
+MINIFIED = {"sort_keys": True, "separators": (",", ":")}
 
 
 class JsonIO:
     """Basic functions for atomic saving / loading of json files"""
-    def __init__(self, path: Path=Path.cwd()):
+
+    def __init__(self, path: Path = Path.cwd()):
         """
         :param path: Full path to file.
         """
@@ -43,7 +44,7 @@ class JsonIO:
     # noinspection PyUnresolvedReferences
     def _load_json(self):
         log.debug("Reading file {}".format(self.path))
-        with self.path.open(encoding='utf-8', mode="r") as f:
+        with self.path.open(encoding="utf-8", mode="r") as f:
             data = json.load(f)
         return data
 
