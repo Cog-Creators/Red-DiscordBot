@@ -1,6 +1,5 @@
 dist: trusty
 language: python
-cache: pip
 notifications:
   email: false
 
