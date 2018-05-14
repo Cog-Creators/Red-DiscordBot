@@ -9,6 +9,7 @@ python:
 install:
 - pip install pipenv
 - pipenv install --skip-lock --dev
+- pipenv shell
 script:
 - tox
 env:
