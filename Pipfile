@@ -10,6 +10,6 @@ name = "pypi"
 [dev-packages]
 pytest = "*"
 pytest-asyncio = "*"
-sphinx = "==1.6.5"
+sphinx = ">1.7"
 sphinxcontrib-asyncio = "*"
 sphinx-rtd-theme = "*"
