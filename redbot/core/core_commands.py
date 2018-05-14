@@ -55,7 +55,11 @@ class Core:
     async def ping(self, ctx):
         """Pong."""
         if ctx.guild is None or ctx.channel.permissions_for(ctx.guild.me).add_reactions:
-            await ctx.message.add_reaction("\U0001f3d3")  # ping pong paddle
+            try:
+                await ctx.message.add_reaction("\U0001f3d3")  # ping pong paddle
+            except discord.errors.NotFound:
+                # this occurs if the message was deleted because of instant command delete
+                pass 
         else:
             await ctx.maybe_send_embed("Pong.")
 
