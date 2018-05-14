@@ -1,30 +1,32 @@
 dist: trusty
 language: python
+cache: pip
 notifications:
   email: false
 
-python:
-- 3.5.2
-- 3.6.5
 install:
 - pip install pipenv
 - pipenv install --skip-lock --pre --dev
 - pipenv shell
 script:
 - tox
-env:
-- TOXENV=py
-  PIPENV_IGNORE_VIRTUALENVS=1
 
 matrix:
   include:
     - python: 3.6.5
       env:
-        - TOXENV=docs
+      - TOXENV=py
+        PIPENV_IGNORE_VIRTUALENVS=1
+
+    - python: 3.5.2
+      env:
+      - TOXENV=py
+        PIPENV_IGNORE_VIRTUALENVS=1
 
     - python: 3.6.5
       env:
-        - TOXENV=style
+      - TOXENV=py
+        PIPENV_IGNORE_VIRTUALENVS=1
 
 jobs:
   include:
