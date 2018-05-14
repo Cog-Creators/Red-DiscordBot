@@ -14,6 +14,7 @@ pytest-asyncio = "*"
 sphinx = ">1.7"
 sphinxcontrib-asyncio = "*"
 sphinx-rtd-theme = "*"
+black = "*"
 
 [pipenv]
 allow_prereleases = true

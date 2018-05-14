@@ -22,6 +22,11 @@ jobs:
       env:
         - TOXENV=docs
 
+    - stage: Style check
+      python: 3.6.5
+      env:
+        - TOXENV=style
+
     - stage: PyPi Deployment
       if: tag IS present
       python: 3.5.3
