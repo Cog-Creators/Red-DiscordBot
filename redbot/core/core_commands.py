@@ -51,6 +51,14 @@ class Core:
         rpc.add_method('core', self.rpc_unload)
         rpc.add_method('core', self.rpc_reload)
 
+    @commands.command(hidden=True)
+    async def ping(self, ctx):
+        """Pong."""
+        if ctx.guild is None or ctx.channel.permissions_for(ctx.guild.me).add_reactions:
+            await ctx.message.add_reaction("\U0001f3d3")  # ping pong paddle
+        else:
+            await ctx.maybe_send_embed("Pong.")
+
     @commands.command()
     async def info(self, ctx: commands.Context):
         """Shows info about Red"""
