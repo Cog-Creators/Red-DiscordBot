@@ -298,8 +298,9 @@ def development_choice(reinstall = False):
         print("2. Development version")
         choice = user_choice()
         print("\n")
-        selected = extras_selector()
+        
         if choice == "1":
+            selected = extras_selector()
             update_red(
                 dev=False, reinstall=reinstall, voice=True if "voice" in selected else False,
                 docs=True if "docs" in selected else False,
@@ -308,6 +309,7 @@ def development_choice(reinstall = False):
             )
             break
         elif choice == "2":
+            selected = extras_selector()
             update_red(
                 dev=True, reinstall=reinstall, voice=True if "voice" in selected else False,
                 docs=True if "docs" in selected else False,
@@ -315,6 +317,7 @@ def development_choice(reinstall = False):
                 mongo=True if "mongo" in selected else False
             )
             break
+        clear_screen()
 
 
 def debug_info():
