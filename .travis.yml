@@ -8,7 +8,7 @@ python:
 - 3.6.5
 install:
 - pip install pipenv
-- pipenv install --skip-lock --dev
+- pipenv install --skip-lock --pre --dev
 - pipenv shell
 script:
 - tox
