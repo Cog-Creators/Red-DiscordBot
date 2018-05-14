@@ -5,9 +5,8 @@ from discord.ext import commands
 
 
 class Announcer:
-    def __init__(self, ctx: commands.Context,
-                 message: str,
-                 config=None):
+
+    def __init__(self, ctx: commands.Context, message: str, config=None):
         """
         :param ctx:
         :param message:
@@ -65,10 +64,7 @@ class Announcer:
             try:
                 await channel.send(self.message)
             except discord.Forbidden:
-                await bot_owner.send("I could not announce to server: {}".format(
-                                         g.id
-                                     ))
+                await bot_owner.send("I could not announce to server: {}".format(g.id))
             await asyncio.sleep(0.5)
 
         self.active = False
-

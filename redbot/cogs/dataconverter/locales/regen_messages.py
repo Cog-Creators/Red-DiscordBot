@@ -1,14 +1,10 @@
 import subprocess
 
-TO_TRANSLATE = [
-    '../dataconverter.py'
-]
+TO_TRANSLATE = ["../dataconverter.py"]
 
 
 def regen_messages():
-    subprocess.run(
-        ['pygettext', '-n'] + TO_TRANSLATE
-    )
+    subprocess.run(["pygettext", "-n"] + TO_TRANSLATE)
 
 
 if __name__ == "__main__":

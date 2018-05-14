@@ -6,29 +6,36 @@ import discord
 
 from redbot.core import Config
 
-__all__ = ["Account", "get_balance", "set_balance", "withdraw_credits", "deposit_credits",
-           "can_spend", "transfer_credits", "wipe_bank", "get_account", "is_global",
-           "set_global", "get_bank_name", "set_bank_name", "get_currency_name",
-           "set_currency_name", "get_default_balance", "set_default_balance"]
+__all__ = [
+    "Account",
+    "get_balance",
+    "set_balance",
+    "withdraw_credits",
+    "deposit_credits",
+    "can_spend",
+    "transfer_credits",
+    "wipe_bank",
+    "get_account",
+    "is_global",
+    "set_global",
+    "get_bank_name",
+    "set_bank_name",
+    "get_currency_name",
+    "set_currency_name",
+    "get_default_balance",
+    "set_default_balance",
+]
 
 _DEFAULT_GLOBAL = {
     "is_global": False,
     "bank_name": "Twentysix bank",
     "currency": "credits",
-    "default_balance": 100
+    "default_balance": 100,
 }
 
-_DEFAULT_GUILD = {
-    "bank_name": "Twentysix bank",
-    "currency": "credits",
-    "default_balance": 100
-}
+_DEFAULT_GUILD = {"bank_name": "Twentysix bank", "currency": "credits", "default_balance": 100}
 
-_DEFAULT_MEMBER = {
-    "name": "",
-    "balance": 0,
-    "created_at": 0
-}
+_DEFAULT_MEMBER = {"name": "", "balance": 0, "created_at": 0}
 
 _DEFAULT_USER = _DEFAULT_MEMBER
 
@@ -50,9 +57,9 @@ def _register_defaults():
     _conf.register_member(**_DEFAULT_MEMBER)
     _conf.register_user(**_DEFAULT_USER)
 
-if not os.environ.get('BUILDING_DOCS'):
-    _conf = Config.get_conf(
-        None, 384734293238749, cog_name="Bank", force_registration=True)
+
+if not os.environ.get("BUILDING_DOCS"):
+    _conf = Config.get_conf(None, 384734293238749, cog_name="Bank", force_registration=True)
     _register_defaults()
 
 
@@ -285,7 +292,7 @@ async def wipe_bank():
         await _conf.clear_all_members()
 
 
-async def get_leaderboard(positions: int=None, guild: discord.Guild=None) -> List[tuple]:
+async def get_leaderboard(positions: int = None, guild: discord.Guild = None) -> List[tuple]:
     """
     Gets the bank's leaderboard
 
@@ -319,14 +326,16 @@ async def get_leaderboard(positions: int=None, guild: discord.Guild=None) -> Lis
         if guild is None:
             raise TypeError("Expected a guild, got NoneType object instead!")
         raw_accounts = await _conf.all_members(guild)
-    sorted_acc = sorted(raw_accounts.items(), key=lambda x: x[1]['balance'], reverse=True)
+    sorted_acc = sorted(raw_accounts.items(), key=lambda x: x[1]["balance"], reverse=True)
     if positions is None:
         return sorted_acc
     else:
         return sorted_acc[:positions]
 
 
-async def get_leaderboard_position(member: Union[discord.User, discord.Member]) -> Union[int, None]:
+async def get_leaderboard_position(
+    member: Union[discord.User, discord.Member]
+) -> Union[int, None]:
     """
     Get the leaderboard position for the specified user
 
@@ -387,13 +396,13 @@ async def get_account(member: Union[discord.Member, discord.User]) -> Account:
 
     if acc_data == {}:
         acc_data = default
-        acc_data['name'] = member.display_name
+        acc_data["name"] = member.display_name
         try:
-            acc_data['balance'] = await get_default_balance(member.guild)
+            acc_data["balance"] = await get_default_balance(member.guild)
         except AttributeError:
-            acc_data['balance'] = await get_default_balance()
+            acc_data["balance"] = await get_default_balance()
 
-    acc_data['created_at'] = _decode_time(acc_data['created_at'])
+    acc_data["created_at"] = _decode_time(acc_data["created_at"])
     return Account(**acc_data)
 
 
@@ -444,7 +453,7 @@ async def set_global(global_: bool) -> bool:
     return global_
 
 
-async def get_bank_name(guild: discord.Guild=None) -> str:
+async def get_bank_name(guild: discord.Guild = None) -> str:
     """Get the current bank name.
 
     Parameters
@@ -472,7 +481,7 @@ async def get_bank_name(guild: discord.Guild=None) -> str:
         raise RuntimeError("Guild parameter is required and missing.")
 
 
-async def set_bank_name(name: str, guild: discord.Guild=None) -> str:
+async def set_bank_name(name: str, guild: discord.Guild = None) -> str:
     """Set the bank name.
 
     Parameters
@@ -499,12 +508,13 @@ async def set_bank_name(name: str, guild: discord.Guild=None) -> str:
     elif guild is not None:
         await _conf.guild(guild).bank_name.set(name)
     else:
-        raise RuntimeError("Guild must be provided if setting the name of a guild"
-                           "-specific bank.")
+        raise RuntimeError(
+            "Guild must be provided if setting the name of a guild" "-specific bank."
+        )
     return name
 
 
-async def get_currency_name(guild: discord.Guild=None) -> str:
+async def get_currency_name(guild: discord.Guild = None) -> str:
     """Get the currency name of the bank.
 
     Parameters
@@ -532,7 +542,7 @@ async def get_currency_name(guild: discord.Guild=None) -> str:
         raise RuntimeError("Guild must be provided.")
 
 
-async def set_currency_name(name: str, guild: discord.Guild=None) -> str:
+async def set_currency_name(name: str, guild: discord.Guild = None) -> str:
     """Set the currency name for the bank.
 
     Parameters
@@ -559,12 +569,13 @@ async def set_currency_name(name: str, guild: discord.Guild=None) -> str:
     elif guild is not None:
         await _conf.guild(guild).currency.set(name)
     else:
-        raise RuntimeError("Guild must be provided if setting the currency"
-                           " name of a guild-specific bank.")
+        raise RuntimeError(
+            "Guild must be provided if setting the currency" " name of a guild-specific bank."
+        )
     return name
 
 
-async def get_default_balance(guild: discord.Guild=None) -> int:
+async def get_default_balance(guild: discord.Guild = None) -> int:
     """Get the current default balance amount.
 
     Parameters
@@ -592,7 +603,7 @@ async def get_default_balance(guild: discord.Guild=None) -> int:
         raise RuntimeError("Guild is missing and required!")
 
 
-async def set_default_balance(amount: int, guild: discord.Guild=None) -> int:
+async def set_default_balance(amount: int, guild: discord.Guild = None) -> int:
     """Set the default balance amount.
 
     Parameters

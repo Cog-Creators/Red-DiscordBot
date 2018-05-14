@@ -1,15 +1,10 @@
 import subprocess
 
-TO_TRANSLATE = [
-    '../warnings.py',
-    '../helpers.py'
-]
+TO_TRANSLATE = ["../warnings.py", "../helpers.py"]
 
 
 def regen_messages():
-    subprocess.run(
-        ['pygettext', '-n'] + TO_TRANSLATE
-    )
+    subprocess.run(["pygettext", "-n"] + TO_TRANSLATE)
 
 
 if __name__ == "__main__":

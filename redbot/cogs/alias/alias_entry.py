@@ -1,12 +1,14 @@
 from typing import Tuple
-from discord.ext import commands
 
 import discord
+from redbot.core import commands
 
 
 class AliasEntry:
-    def __init__(self, name: str, command: Tuple[str],
-                 creator: discord.Member, global_: bool=False):
+
+    def __init__(
+        self, name: str, command: Tuple[str], creator: discord.Member, global_: bool = False
+    ):
         super().__init__()
         self.has_real_data = False
         self.name = name
@@ -43,13 +45,12 @@ class AliasEntry:
             "creator": creator,
             "guild": guild,
             "global": self.global_,
-            "uses": self.uses
+            "uses": self.uses,
         }
 
     @classmethod
-    def from_json(cls, data: dict, bot: commands.Bot=None):
-        ret = cls(data["name"], data["command"],
-                  data["creator"], global_=data["global"])
+    def from_json(cls, data: dict, bot: commands.Bot = None):
+        ret = cls(data["name"], data["command"], data["creator"], global_=data["global"])
 
         if bot:
             ret.has_real_data = True

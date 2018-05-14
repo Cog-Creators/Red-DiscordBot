@@ -10,10 +10,6 @@ Needed Software
 
 * `Python <https://python.org/downloads/>`_ - Red needs at least Python 3.5
 
-.. attention:: Please note that 3.6 has issues on some versions of Windows.
-               If you try using Red with 3.6 and experience issues, uninstall
-               Python 3.6 and install the latest version of Python 3.5
-
 .. note:: Please make sure that the box to add Python to PATH is CHECKED, otherwise
           you may run into issues when trying to run Red
 
