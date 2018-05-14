@@ -1,6 +1,16 @@
-__all__ = ["DownloaderException", "GitException", "InvalidRepoName", "ExistingGitRepo",
-           "MissingGitRepo", "CloningError", "CurrentHashError", "HardResetError",
-           "UpdateError", "GitDiffError", "PipError"]
+__all__ = [
+    "DownloaderException",
+    "GitException",
+    "InvalidRepoName",
+    "ExistingGitRepo",
+    "MissingGitRepo",
+    "CloningError",
+    "CurrentHashError",
+    "HardResetError",
+    "UpdateError",
+    "GitDiffError",
+    "PipError",
+]
 
 
 class DownloaderException(Exception):

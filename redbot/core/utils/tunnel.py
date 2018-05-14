@@ -16,10 +16,7 @@ class TunnelMeta(type):
     """
 
     def __call__(cls, *args, **kwargs):
-        lockout_tuple = (
-            (kwargs.get('sender'), kwargs.get('origin')),
-            kwargs.get('recipient')
-        )
+        lockout_tuple = ((kwargs.get("sender"), kwargs.get("origin")), kwargs.get("recipient"))
 
         if lockout_tuple in _instances:
             return _instances[lockout_tuple]
@@ -30,13 +27,8 @@ class TunnelMeta(type):
         while True:
             try:
                 if not (
-                    any(
-                        lockout_tuple[0] == x[0]
-                        for x in _instances.keys()
-                    ) or any(
-                        lockout_tuple[1] == x[1]
-                        for x in _instances.keys()
-                    )
+                    any(lockout_tuple[0] == x[0] for x in _instances.keys())
+                    or any(lockout_tuple[1] == x[1] for x in _instances.keys())
                 ):
                     # if this isn't temporarily stored, the weakref dict
                     # will discard this before the return statement,
@@ -70,10 +62,9 @@ class Tunnel(metaclass=TunnelMeta):
         The user on the other end of the tunnel
     """
 
-    def __init__(self, *,
-                 sender: discord.Member,
-                 origin: discord.TextChannel,
-                 recipient: discord.User):
+    def __init__(
+        self, *, sender: discord.Member, origin: discord.TextChannel, recipient: discord.User
+    ):
         self.sender = sender
         self.origin = origin
         self.recipient = recipient
@@ -81,11 +72,8 @@ class Tunnel(metaclass=TunnelMeta):
 
     async def react_close(self, *, uid: int, message: str):
         send_to = self.origin if uid == self.sender.id else self.sender
-        closer = next(filter(
-            lambda x: x.id == uid, (self.sender, self.recipient)), None)
-        await send_to.send(
-            message.format(closer=closer)
-        )
+        closer = next(filter(lambda x: x.id == uid, (self.sender, self.recipient)), None)
+        await send_to.send(message.format(closer=closer))
 
     @property
     def members(self):
@@ -97,8 +85,8 @@ class Tunnel(metaclass=TunnelMeta):
 
     @staticmethod
     async def message_forwarder(
-            *, destination: discord.abc.Messageable,
-            content: str=None, embed=None, files=[]) -> List[discord.Message]:
+        *, destination: discord.abc.Messageable, content: str = None, embed=None, files=[]
+    ) -> List[discord.Message]:
         """
         This does the actual sending, use this instead of a full tunnel
         if you are using command initiated reactions instead of persistent
@@ -131,18 +119,13 @@ class Tunnel(metaclass=TunnelMeta):
         files = files if files else None
         if content:
             for page in pagify(content):
-                rets.append(
-                    await destination.send(
-                        page, files=files, embed=embed)
-                )
+                rets.append(await destination.send(page, files=files, embed=embed))
                 if files:
                     del files
                 if embed:
                     del embed
         elif embed or files:
-            rets.append(
-                await destination.send(files=files, embed=embed)
-            )
+            rets.append(await destination.send(files=files, embed=embed))
         return rets
 
     @staticmethod
@@ -172,15 +155,12 @@ class Tunnel(metaclass=TunnelMeta):
             size += sys.getsizeof(_fp)
             if size > max_size:
                 return []
-            files.append(
-                discord.File(_fp, filename=a.filename)
-            )
+            files.append(discord.File(_fp, filename=a.filename))
         return files
 
-    async def communicate(self, *,
-                          message: discord.Message,
-                          topic: str=None,
-                          skip_message_content: bool=False):
+    async def communicate(
+        self, *, message: discord.Message, topic: str = None, skip_message_content: bool = False
+    ):
         """
         Forwards a message.
 
@@ -208,18 +188,15 @@ class Tunnel(metaclass=TunnelMeta):
             the bot can't upload at the origin channel
             or can't add reactions there.
         """
-        if message.channel == self.origin \
-                and message.author == self.sender:
+        if message.channel == self.origin and message.author == self.sender:
             send_to = self.recipient
-        elif message.author == self.recipient \
-                and isinstance(message.channel, discord.DMChannel):
+        elif message.author == self.recipient and isinstance(message.channel, discord.DMChannel):
             send_to = self.origin
         else:
             return None
 
         if not skip_message_content:
-            content = "\n".join((topic, message.content)) if topic \
-                else message.content
+            content = "\n".join((topic, message.content)) if topic else message.content
         else:
             content = topic
 
@@ -234,11 +211,7 @@ class Tunnel(metaclass=TunnelMeta):
         else:
             attach = []
 
-        rets = await self.message_forwarder(
-            destination=send_to,
-            content=content,
-            files=attach
-        )
+        rets = await self.message_forwarder(destination=send_to, content=content, files=attach)
 
         await message.add_reaction("\N{WHITE HEAVY CHECK MARK}")
         await message.add_reaction("\N{NEGATIVE SQUARED CROSS MARK}")

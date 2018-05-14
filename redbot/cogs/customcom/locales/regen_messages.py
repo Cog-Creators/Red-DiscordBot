@@ -1,14 +1,10 @@
 import subprocess
 
-TO_TRANSLATE = [
-    '../customcom.py'
-]
+TO_TRANSLATE = ["../customcom.py"]
 
 
 def regen_messages():
-    subprocess.run(
-        ['pygettext', '-n'] + TO_TRANSLATE
-    )
+    subprocess.run(["pygettext", "-n"] + TO_TRANSLATE)
 
 
 if __name__ == "__main__":

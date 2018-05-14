@@ -3,10 +3,9 @@ from pathlib import Path
 
 from . import commands
 
-__all__ = ['get_locale', 'set_locale', 'reload_locales', 'cog_i18n',
-           'Translator']
+__all__ = ["get_locale", "set_locale", "reload_locales", "cog_i18n", "Translator"]
 
-_current_locale = 'en_us'
+_current_locale = "en_us"
 
 WAITING_FOR_MSGID = 1
 IN_MSGID = 2
@@ -54,8 +53,8 @@ def _parse(translation_file):
 
         if line.startswith(MSGID):
             # Don't check if step is WAITING_FOR_MSGID
-            untranslated = ''
-            translated = ''
+            untranslated = ""
+            translated = ""
             data = line[len(MSGID):-1]
             if len(data) == 0:  # Multiline mode
                 step = IN_MSGID
@@ -63,10 +62,9 @@ def _parse(translation_file):
                 untranslated += data
                 step = WAITING_FOR_MSGSTR
 
-        elif step is IN_MSGID and line.startswith('"') and \
-                line.endswith('"'):
+        elif step is IN_MSGID and line.startswith('"') and line.endswith('"'):
             untranslated += line[1:-1]
-        elif step is IN_MSGID and untranslated == '':  # Empty MSGID
+        elif step is IN_MSGID and untranslated == "":  # Empty MSGID
             step = WAITING_FOR_MSGID
         elif step is IN_MSGID:  # the MSGID is finished
             step = WAITING_FOR_MSGSTR
@@ -79,16 +77,15 @@ def _parse(translation_file):
                 translations |= {(untranslated, data)}
                 step = WAITING_FOR_MSGID
 
-        elif step is IN_MSGSTR and line.startswith('"') and \
-                line.endswith('"'):
+        elif step is IN_MSGSTR and line.startswith('"') and line.endswith('"'):
             translated += line[1:-1]
         elif step is IN_MSGSTR:  # the MSGSTR is finished
             step = WAITING_FOR_MSGID
-            if translated == '':
+            if translated == "":
                 translated = untranslated
             translations |= {(untranslated, translated)}
     if step is IN_MSGSTR:
-        if translated == '':
+        if translated == "":
             translated = untranslated
         translations |= {(untranslated, translated)}
     return translations
@@ -107,33 +104,34 @@ def _normalize(string, remove_newline=False):
     :param remove_newline:
     :return:
     """
+
     def normalize_whitespace(s):
         """Normalizes the whitespace in a string; \s+ becomes one space."""
         if not s:
             return str(s)  # not the same reference
-        starts_with_space = (s[0] in ' \n\t\r')
-        ends_with_space = (s[-1] in ' \n\t\r')
+        starts_with_space = (s[0] in " \n\t\r")
+        ends_with_space = (s[-1] in " \n\t\r")
         if remove_newline:
-            newline_re = re.compile('[\r\n]+')
-            s = ' '.join(filter(bool, newline_re.split(s)))
-        s = ' '.join(filter(bool, s.split('\t')))
-        s = ' '.join(filter(bool, s.split(' ')))
+            newline_re = re.compile("[\r\n]+")
+            s = " ".join(filter(bool, newline_re.split(s)))
+        s = " ".join(filter(bool, s.split("\t")))
+        s = " ".join(filter(bool, s.split(" ")))
         if starts_with_space:
-            s = ' ' + s
+            s = " " + s
         if ends_with_space:
-            s += ' '
+            s += " "
         return s
 
     if string is None:
         return ""
-    
-    string = string.replace('\\n\\n', '\n\n')
-    string = string.replace('\\n', ' ')
+
+    string = string.replace("\\n\\n", "\n\n")
+    string = string.replace("\\n", " ")
     string = string.replace('\\"', '"')
-    string = string.replace("\'", "'")
+    string = string.replace("'", "'")
     string = normalize_whitespace(string)
-    string = string.strip('\n')
-    string = string.strip('\t')
+    string = string.strip("\n")
+    string = string.strip("\t")
     return string
 
 
@@ -148,7 +146,7 @@ def get_locale_path(cog_folder: Path, extension: str) -> Path:
     :return:
         Path of possible localization file, it may not exist.
     """
-    return cog_folder / 'locales' / "{}.{}".format(get_locale(), extension)
+    return cog_folder / "locales" / "{}.{}".format(get_locale(), extension)
 
 
 class Translator:
@@ -193,13 +191,13 @@ class Translator:
         """
         self.translations = {}
         translation_file = None
-        locale_path = get_locale_path(self.cog_folder, 'po')
+        locale_path = get_locale_path(self.cog_folder, "po")
         try:
 
             try:
-                translation_file = locale_path.open('ru', encoding='utf-8')
+                translation_file = locale_path.open("ru", encoding="utf-8")
             except ValueError:  # We are using Windows
-                translation_file = locale_path.open('r', encoding='utf-8')
+                translation_file = locale_path.open("r", encoding="utf-8")
             self._parse(translation_file)
         except (IOError, FileNotFoundError):  # The translation is unavailable
             pass
@@ -221,6 +219,7 @@ class Translator:
 
 def cog_i18n(translator: Translator):
     """Get a class decorator to link the translator to this cog."""
+
     def decorator(cog_class: type):
         cog_class.__translator__ = translator
         for name, attr in cog_class.__dict__.items():
@@ -228,4 +227,5 @@ def cog_i18n(translator: Translator):
                 attr.translator = translator
                 setattr(cog_class, name, attr)
         return cog_class
+
     return decorator
