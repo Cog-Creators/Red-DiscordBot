@@ -29,6 +29,7 @@ from typing import List
 
 import discord
 from discord.ext.commands import formatter
+from fuzzywuzzy import process
 import inspect
 import itertools
 import re
@@ -36,6 +37,7 @@ import sys
 import traceback
 
 from . import commands
+from .utils.chat_formatting import box
 
 
 EMPTY_STRING = u"\u200b"
@@ -267,10 +269,21 @@ class Help(formatter.HelpFormatter):
 
     def cmd_not_found(self, ctx, cmd, color=None):
         # Shortcut for a shortcut. Sue me
+        term = " ".join(ctx.args[1:])
+        out = ""
+        for pos, extracted in enumerate(
+            process.extract(term, ctx.bot.walk_commands(), limit=5), 1
+        ):
+            out += "{0}. {1.prefix}{2.qualified_name}{3}\n".format(
+                pos,
+                ctx,
+                extracted[0],
+                " - {}".format(extracted[0].short_doc) if extracted[0].short_doc else "",
+            )
         embed = self.simple_embed(
             ctx,
             title=ctx.bot.command_not_found.format(cmd),
-            description="Commands are case sensitive. Please check your spelling and try again",
+            description=box(out, lang="Perhaps you were looking for one of these?"),
             color=color,
         )
         return embed
