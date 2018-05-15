@@ -359,7 +359,8 @@ class Downloader:
         cogs = _("Available Cogs:\n") + "\n".join(
             ["+ {}: {}".format(c.name, c.short or "") for c in cogs])
 
-        await ctx.send(box(cogs, lang="diff"))
+        for page in pagify(cogs, ["\n"], shorten_by=16):
+            await ctx.send(box(page.lstrip(" "), lang="diff"))
 
     @cog.command(name="info")
     async def _cog_info(self, ctx, repo_name: Repo, cog_name: str):
