@@ -859,7 +859,7 @@ class Core:
 
     @commands.command()
     @checks.is_owner()
-    async def backup(self, ctx):
+    async def backup(self, ctx, backup_path: str=None):
         """Creates a backup of all data for the instance."""
         from redbot.core.data_manager import basic_config, instance_name
         from redbot.core.drivers.red_json import JSON
@@ -887,11 +887,20 @@ class Core:
             instance_name, ctx.message.created_at.strftime("%Y-%m-%d %H-%M-%S")
         )
         if data_dir.exists():
-            home = data_dir.home()
-            backup_file = home / backup_filename
-            os.chdir(str(data_dir.parent))
+            if not backup_path:
+                backup_pth = data_dir.home()
+            else:
+                backup_pth = Path(backup_path)
+            backup_file = backup_pth / backup_filename
+            
+            to_backup = []
+            exclusions = ["__pycache__", "Lavalink.jar", os.path.join("Downloader", "lib"), os.path.join("CogManager", "cogs"), os.path.join("RepoManager", "repos")]
+            for f in data_dir.glob("**/*"):
+                if not any(ex in str(f) for ex in exclusions):
+                    to_backup.append(f)
             with tarfile.open(str(backup_file), "w:gz") as tar:
-                tar.add(data_dir.stem)
+                for f in to_backup:
+                    tar.add(str(f), recursive=False)
             await ctx.send(
                 _("A backup has been made of this instance. It is at {}.").format(backup_file)
             )
