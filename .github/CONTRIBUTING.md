@@ -59,9 +59,9 @@ If you're not on Windows, you can optionally install [pyenv](https://github.com/
 We've recently started using [tox](https://github.com/tox-dev/tox) to run all of our tests. It's extremely simple to use, and if you followed the previous section correctly, it is already installed to your virtual environment.
 
 Currently, tox does the following, creating its own virtual environments for each stage:
-- Runs all of our unit tests with [pytest](https://github.com/pytest-dev/pytest) on both python 3.5 and 3.6 (test envronment `py35` and `py36` respectively)
-- Ensures documentation builds without warnings, and all hyperlinks have a valid destination (test envronment `docs`)
-- Ensures that the code meets our style guide with [black](https://github.com/ambv/black) (test envronment `style`)
+- Runs all of our unit tests with [pytest](https://github.com/pytest-dev/pytest) on both python 3.5 and 3.6 (test environments `py35` and `py36` respectively)
+- Ensures documentation builds without warnings, and all hyperlinks have a valid destination (test environment `docs`)
+- Ensures that the code meets our style guide with [black](https://github.com/ambv/black) (test environment `style`)
 
 To run all of these tests, just run the command `tox` in the project directory.
 
