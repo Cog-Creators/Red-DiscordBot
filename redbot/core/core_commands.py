@@ -922,6 +922,20 @@ class Core:
             await ctx.send(
                 _("A backup has been made of this instance. It is at {}.").format(backup_file)
             )
+            await ctx.send(_("Would you like to receive a copy via DM? (y/n)"))
+
+            def same_author_check(m):
+                return m.author == ctx.author and m.channel == ctx.channel
+
+            try:
+                msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=60)
+            except asyncio.TimeoutError:
+                await ctx.send(_("Ok then."))
+            else:
+                if msg.content.lower().strip() == "y":
+                    await ctx.author.send(
+                        _("Here's a copy of the backup"), file=discord.File(str(backup_file))
+                    )
         else:
             await ctx.send(_("That directory doesn't seem to exist..."))
 
