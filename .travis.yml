@@ -4,7 +4,6 @@ notifications:
   email: false
 
 python:
-- 3.5.2
 - 3.6.5
 install:
 - pip install --upgrade pip pipenv
@@ -12,26 +11,23 @@ install:
 script:
 - pipenv run tox
 env:
-- TOXENV=py
-  PIPENV_IGNORE_VIRTUALENVS=1
+  global:
+    PIPENV_IGNORE_VIRTUALENVS=1
+  matrix:
+    - TOXENV=py
+    - TOXENV=docs
+    - TOXENV=style
+
+matrix:
+  include:
+    - python: 3.5.2
+      env: TOXENV=py
 
 jobs:
   include:
-    - stage: Docs build test
-      python: 3.6.5
-      env:
-      - TOXENV=docs
-        PIPENV_IGNORE_VIRTUALENVS=1
-
-    - stage: Style check
-      python: 3.6.5
-      env:
-      - TOXENV=style
-        PIPENV_IGNORE_VIRTUALENVS=1
-
     - stage: PyPi Deployment
       if: tag IS present
-      python: 3.5.3
+      python: 3.6.5
       env:
         - DEPLOYING=true
       deploy:
@@ -48,7 +44,7 @@ jobs:
 
     - stage: Crowdin Deployment
       if: tag IS present
-      python: 3.5.3
+      python: 3.6.5
       env:
         - DEPLOYING=true
       before_deploy:
