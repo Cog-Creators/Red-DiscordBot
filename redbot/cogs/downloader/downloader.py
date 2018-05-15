@@ -389,7 +389,7 @@ class Downloader:
         msg = _("Information on {}:\n{}").format(cog.name, cog.description or "")
         await ctx.send(box(msg))
 
-    async def is_installed(self, cog_name: str) -> (bool, Union[Installable, None]):
+    async def is_installed(self, cog_name: str) -> Union[Tuple[bool, Installable], Tuple[bool, None]]:
         """Check to see if a cog has been installed through Downloader.
 
         Parameters
