@@ -860,7 +860,7 @@ class Core:
 
     @commands.command()
     @checks.is_owner()
-    async def backup(self, ctx, backup_path: str=None):
+    async def backup(self, ctx, backup_path: str = None):
         """Creates a backup of all data for the instance."""
         from redbot.core.data_manager import basic_config, instance_name
         from redbot.core.drivers.red_json import JSON
@@ -893,15 +893,23 @@ class Core:
             else:
                 backup_pth = Path(backup_path)
             backup_file = backup_pth / backup_filename
-            
+
             to_backup = []
-            exclusions = ["__pycache__", "Lavalink.jar", os.path.join("Downloader", "lib"), os.path.join("CogManager", "cogs"), os.path.join("RepoManager", "repos")]
+            exclusions = [
+                "__pycache__",
+                "Lavalink.jar",
+                os.path.join("Downloader", "lib"),
+                os.path.join("CogManager", "cogs"),
+                os.path.join("RepoManager", "repos"),
+            ]
             downloader_cog = ctx.bot.get_cog("Downloader")
             if downloader_cog and hasattr(downloader_cog, "_repo_manager"):
                 repo_output = []
                 repo_mgr = downloader_cog._repo_manager
                 for _, repo in repo_mgr._repos:
-                    repo_output.append({{"url": repo.url, "name": repo.name, "branch": repo.branch}})
+                    repo_output.append(
+                        {{"url": repo.url, "name": repo.name, "branch": repo.branch}}
+                    )
                 repo_filename = data_dir / "cogs" / "RepoManager" / "repos.json"
                 with open(str(repo_filename), "w") as f:
                     f.write(json.dumps(repo_output, indent=4))
