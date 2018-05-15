@@ -50,7 +50,7 @@ class Downloader:
         if str(self.LIB_PATH) not in syspath:
             syspath.insert(1, str(self.LIB_PATH))
 
-        self._repo_manager = RepoManager(self.conf)
+        self._repo_manager = RepoManager()
 
     async def cog_install_path(self):
         """Get the current cog install path.

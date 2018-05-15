@@ -296,11 +296,35 @@ async def create_backup(selected, instance_data):
             )
             pth = Path(instance_data["DATA_PATH"])
             if pth.exists():
-                home = pth.home()
-                backup_file = home / backup_filename
-                os.chdir(str(pth.parent))
+                backup_pth = pth.home()
+                backup_file = backup_pth / backup_filename
+
+                to_backup = []
+                exclusions = [
+                    "__pycache__",
+                    "Lavalink.jar",
+                    os.path.join("Downloader", "lib"),
+                    os.path.join("CogManager", "cogs"),
+                    os.path.join("RepoManager", "repos"),
+                ]
+                from redbot.cogs.downloader.repo_manager import RepoManager
+
+                if downloader_cog and hasattr(downloader_cog, "_repo_manager"):
+                    repo_output = []
+                    repo_mgr = downloader_cog._repo_manager
+                    for _, repo in repo_mgr._repos:
+                        repo_output.append(
+                            {{"url": repo.url, "name": repo.name, "branch": repo.branch}}
+                        )
+                    repo_filename = data_dir / "cogs" / "RepoManager" / "repos.json"
+                    with open(str(repo_filename), "w") as f:
+                        f.write(json.dumps(repo_output, indent=4))
+                for f in data_dir.glob("**/*"):
+                    if not any(ex in str(f) for ex in exclusions):
+                        to_backup.append(f)
                 with tarfile.open(str(backup_file), "w:gz") as tar:
-                    tar.add(pth.stem)
+                    for f in to_backup:
+                        tar.add(str(f), recursive=False)
                 print("A backup of {} has been made. It is at {}".format(selected, backup_file))
 
         else:

@@ -493,8 +493,7 @@ class Repo(RepoJSONMixin):
 
 class RepoManager:
 
-    def __init__(self, downloader_config: Config):
-        self.downloader_config = downloader_config
+    def __init__(self):
 
         self._repos = {}
 

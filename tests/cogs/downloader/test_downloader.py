@@ -30,9 +30,8 @@ def patch_relative_to(monkeysession):
 
 
 @pytest.fixture
-def repo_manager(tmpdir_factory, config):
-    config.register_global(repos={})
-    rm = RepoManager(config)
+def repo_manager(tmpdir_factory):
+    rm = RepoManager()
     # rm.repos_folder = Path(str(tmpdir_factory.getbasetemp())) / 'repos'
     return rm
 
