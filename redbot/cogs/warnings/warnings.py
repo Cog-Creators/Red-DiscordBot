@@ -65,9 +65,7 @@ class Warnings:
         """Allow or disable sending a message to the warned member"""
         guild = ctx.guild
         await self.config.guild(guild).send_dm.set(send)
-        await ctx.send(
-            _("Warn DMs have been {}").format(_("enabled") if send else _("disabled"))
-        )
+        await ctx.send(_("Warn DMs have been {}").format(_("enabled") if send else _("disabled")))
 
     @commands.group()
     @commands.guild_only()
@@ -109,7 +107,7 @@ class Warnings:
             "action_name": name,
             "points": points,
             "exceed_command": exceed_command,
-            "drop_command": drop_command
+            "drop_command": drop_command,
         }
 
         # Have all details for the action, now save the action
@@ -258,7 +256,7 @@ class Warnings:
             str(ctx.message.id): {
                 "points": reason_type["points"],
                 "description": reason_type["description"],
-                "mod": ctx.author.id
+                "mod": ctx.author.id,
             }
         }
         async with member_settings.warnings() as user_warnings:
