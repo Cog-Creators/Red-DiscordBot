@@ -10,6 +10,8 @@ env:
   global:
     PIPENV_IGNORE_VIRTUALENVS=1
   matrix:
+    # This is the environment for the main test jobs.
+    # This will run for all above specified versions of python
     TOXENV=py
 
 install:
