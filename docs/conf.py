@@ -19,9 +19,10 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('..'))
 
-os.environ['BUILDING_DOCS'] = "1"
+sys.path.insert(0, os.path.abspath(".."))
+
+os.environ["BUILDING_DOCS"] = "1"
 
 
 # -- General configuration ------------------------------------------------
@@ -34,35 +35,36 @@ os.environ['BUILDING_DOCS'] = "1"
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.autodoc',
-    'sphinx.ext.intersphinx',
-    'sphinx.ext.viewcode',
-    'sphinx.ext.napoleon',
-    'sphinxcontrib.asyncio'
+    "sphinx.ext.autodoc",
+    "sphinx.ext.intersphinx",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.napoleon",
+    "sphinxcontrib.asyncio",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 #
 # source_suffix = ['.rst', '.md']
-source_suffix = '.rst'
+source_suffix = ".rst"
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = "index"
 
 # General information about the project.
-project = 'Red - Discord Bot'
-copyright = '2018, Cog Creators'
-author = 'Cog Creators'
+project = "Red - Discord Bot"
+copyright = "2018, Cog Creators"
+author = "Cog Creators"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
 #
 from redbot.core import __version__
+
 # The short X.Y version.
 version = __version__
 # The full version, including alpha/beta/rc tags.
@@ -78,10 +80,10 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # The name of the Pygments (syntax highlighting) style to use.
-pygments_style = 'sphinx'
+pygments_style = "sphinx"
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = False
@@ -95,7 +97,7 @@ default_role = "any"
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinx_rtd_theme'
+html_theme = "sphinx_rtd_theme"
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -105,10 +107,10 @@ html_theme = 'sphinx_rtd_theme'
 
 html_context = {
     # Enable the "Edit in GitHub link within the header of each page.
-    'display_github': True,
-    'github_user': 'Cog-Creators',
-    'github_repo': 'Red-DiscordBot',
-    'github_version': 'V3/develop/docs/'
+    "display_github": True,
+    "github_user": "Cog-Creators",
+    "github_repo": "Red-DiscordBot",
+    "github_version": "V3/develop/docs/",
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
@@ -122,12 +124,12 @@ html_context = {
 # This is required for the alabaster theme
 # refs: http://alabaster.readthedocs.io/en/latest/installation.html#sidebars
 html_sidebars = {
-    '**': [
-        'about.html',
-        'navigation.html',
-        'relations.html',  # needs 'show_related': True theme option to display
-        'searchbox.html',
-        'donate.html',
+    "**": [
+        "about.html",
+        "navigation.html",
+        "relations.html",  # needs 'show_related': True theme option to display
+        "searchbox.html",
+        "donate.html",
     ]
 }
 
@@ -135,7 +137,7 @@ html_sidebars = {
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'Red-DiscordBotdoc'
+htmlhelp_basename = "Red-DiscordBotdoc"
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -144,15 +146,12 @@ latex_elements = {
     # The paper size ('letterpaper' or 'a4paper').
     #
     # 'papersize': 'letterpaper',
-
     # The font size ('10pt', '11pt' or '12pt').
     #
     # 'pointsize': '10pt',
-
     # Additional stuff for the LaTeX preamble.
     #
     # 'preamble': '',
-
     # Latex figure (float) alignment
     #
     # 'figure_align': 'htbp',
@@ -162,8 +161,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'Red-DiscordBot.tex', 'Red - Discord Bot Documentation',
-     'Cog Creators', 'manual'),
+    (master_doc, "Red-DiscordBot.tex", "Red - Discord Bot Documentation", "Cog Creators", "manual")
 ]
 
 
@@ -171,10 +169,7 @@ latex_documents = [
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
-man_pages = [
-    (master_doc, 'red-discordbot', 'Red - Discord Bot Documentation',
-     [author], 1)
-]
+man_pages = [(master_doc, "red-discordbot", "Red - Discord Bot Documentation", [author], 1)]
 
 
 # -- Options for Texinfo output -------------------------------------------
@@ -183,15 +178,21 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'Red-DiscordBot', 'Red - Discord Bot Documentation',
-     author, 'Red-DiscordBot', 'One line description of project.',
-     'Miscellaneous'),
+    (
+        master_doc,
+        "Red-DiscordBot",
+        "Red - Discord Bot Documentation",
+        author,
+        "Red-DiscordBot",
+        "One line description of project.",
+        "Miscellaneous",
+    )
 ]
 
 
-
-
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'python': ('https://docs.python.org/3.5', None),
-                       'dpy': ('https://discordpy.readthedocs.io/en/rewrite/', None),
-                       'motor': ('https://motor.readthedocs.io/en/stable/', None)}
+intersphinx_mapping = {
+    "python": ("https://docs.python.org/3.5", None),
+    "dpy": ("https://discordpy.readthedocs.io/en/rewrite/", None),
+    "motor": ("https://motor.readthedocs.io/en/stable/", None),
+}

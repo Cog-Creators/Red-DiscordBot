@@ -8,8 +8,7 @@ from redbot.core import Config
 from redbot.core.bot import Red
 
 
-async def mass_purge(messages: List[discord.Message],
-                     channel: discord.TextChannel):
+async def mass_purge(messages: List[discord.Message], channel: discord.TextChannel):
     """Bulk delete messages from a channel.
 
     If more than 100 messages are supplied, the bot will delete 100 messages at
@@ -80,24 +79,23 @@ def get_audit_reason(author: discord.Member, reason: str = None):
         The formatted audit log reason.
 
     """
-    return \
-        "Action requested by {} (ID {}). Reason: {}".format(author, author.id, reason) if reason else \
-        "Action requested by {} (ID {}).".format(author, author.id)
+    return "Action requested by {} (ID {}). Reason: {}".format(
+        author, author.id, reason
+    ) if reason else "Action requested by {} (ID {}).".format(
+        author, author.id
+    )
 
 
-async def is_allowed_by_hierarchy(bot: Red,
-                                  settings: Config,
-                                  guild: discord.Guild,
-                                  mod: discord.Member,
-                                  user: discord.Member):
+async def is_allowed_by_hierarchy(
+    bot: Red, settings: Config, guild: discord.Guild, mod: discord.Member, user: discord.Member
+):
     if not await settings.guild(guild).respect_hierarchy():
         return True
     is_special = mod == guild.owner or await bot.is_owner(mod)
     return mod.top_role.position > user.top_role.position or is_special
 
 
-async def is_mod_or_superior(
-    bot: Red, obj: Union[discord.Message, discord.Member, discord.Role]):
+async def is_mod_or_superior(bot: Red, obj: Union[discord.Message, discord.Member, discord.Role]):
     """Check if an object has mod or superior permissions.
 
     If a message is passed, its author's permissions are checked. If a role is
@@ -129,7 +127,7 @@ async def is_mod_or_superior(
     elif isinstance(obj, discord.Role):
         pass
     else:
-        raise TypeError('Only messages, members or roles may be passed')
+        raise TypeError("Only messages, members or roles may be passed")
 
     server = obj.guild
     admin_role_id = await bot.db.guild(server).admin_role()
@@ -168,26 +166,27 @@ def strfdelta(delta: timedelta):
     """
     s = []
     if delta.days:
-        ds = '%i day' % delta.days
+        ds = "%i day" % delta.days
         if delta.days > 1:
-            ds += 's'
+            ds += "s"
         s.append(ds)
-    hrs, rem = divmod(delta.seconds, 60*60)
+    hrs, rem = divmod(delta.seconds, 60 * 60)
     if hrs:
-        hs = '%i hr' % hrs
+        hs = "%i hr" % hrs
         if hrs > 1:
-            hs += 's'
+            hs += "s"
         s.append(hs)
     mins, secs = divmod(rem, 60)
     if mins:
-        s.append('%i min' % mins)
+        s.append("%i min" % mins)
     if secs:
-        s.append('%i sec' % secs)
-    return ' '.join(s)
+        s.append("%i sec" % secs)
+    return " ".join(s)
 
 
 async def is_admin_or_superior(
-    bot: Red, obj: Union[discord.Message, discord.Member, discord.Role]):
+    bot: Red, obj: Union[discord.Message, discord.Member, discord.Role]
+):
     """Same as `is_mod_or_superior` except for admin permissions.
 
     If a message is passed, its author's permissions are checked. If a role is
@@ -219,7 +218,7 @@ async def is_admin_or_superior(
     elif isinstance(obj, discord.Role):
         pass
     else:
-        raise TypeError('Only messages, members or roles may be passed')
+        raise TypeError("Only messages, members or roles may be passed")
 
     server = obj.guild
     admin_role_id = await bot.db.guild(server).admin_role()

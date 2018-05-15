@@ -56,6 +56,7 @@ class Installable(RepoJSONMixin):
         :class:`InstallationType`.
 
     """
+
     def __init__(self, location: Path):
         """Base installable initializer.
 
@@ -114,13 +115,9 @@ class Installable(RepoJSONMixin):
 
         # noinspection PyBroadException
         try:
-            copy_func(
-                src=str(self._location),
-                dst=str(target_dir / self._location.stem)
-            )
+            copy_func(src=str(self._location), dst=str(target_dir / self._location.stem))
         except:
-            log.exception("Error occurred when copying path:"
-                          " {}".format(self._location))
+            log.exception("Error occurred when copying path:" " {}".format(self._location))
             return False
         return True
 
@@ -130,7 +127,7 @@ class Installable(RepoJSONMixin):
         if self._info_file.exists():
             self._process_info_file()
 
-    def _process_info_file(self, info_file_path: Path=None) -> MutableMapping[str, Any]:
+    def _process_info_file(self, info_file_path: Path = None) -> MutableMapping[str, Any]:
         """
         Processes an information file. Loads dependencies among other
         information into this object.
@@ -144,13 +141,14 @@ class Installable(RepoJSONMixin):
             raise ValueError("No valid information file path was found.")
 
         info = {}
-        with info_file_path.open(encoding='utf-8') as f:
+        with info_file_path.open(encoding="utf-8") as f:
             try:
                 info = json.load(f)
             except json.JSONDecodeError:
                 info = {}
-                log.exception("Invalid JSON information file at path:"
-                              " {}".format(info_file_path))
+                log.exception(
+                    "Invalid JSON information file at path:" " {}".format(info_file_path)
+                )
             else:
                 self._info = info
 
@@ -167,7 +165,7 @@ class Installable(RepoJSONMixin):
         self.bot_version = bot_version
 
         try:
-            min_python_version = tuple(info.get('min_python_version', [3, 5, 1]))
+            min_python_version = tuple(info.get("min_python_version", [3, 5, 1]))
         except ValueError:
             min_python_version = self.min_python_version
         self.min_python_version = min_python_version
@@ -200,15 +198,12 @@ class Installable(RepoJSONMixin):
         return info
 
     def to_json(self):
-        return {
-            "repo_name": self.repo_name,
-            "cog_name": self.name
-        }
+        return {"repo_name": self.repo_name, "cog_name": self.name}
 
     @classmethod
     def from_json(cls, data: dict, repo_mgr: "RepoManager"):
-        repo_name = data['repo_name']
-        cog_name = data['cog_name']
+        repo_name = data["repo_name"]
+        cog_name = data["cog_name"]
 
         repo = repo_mgr.get_repo(repo_name)
         if repo is not None:

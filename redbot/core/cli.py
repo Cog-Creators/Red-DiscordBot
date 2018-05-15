@@ -26,16 +26,17 @@ def interactive_config(red, token_set, prefix_set):
 
     if not prefix_set:
         prefix = ""
-        print("\nPick a prefix. A prefix is what you type before a "
-              "command. Example:\n"
-              "!help\n^ The exclamation mark is the prefix in this case.\n"
-              "Can be multiple characters. You will be able to change it "
-              "later and add more of them.\nChoose your prefix:\n")
+        print(
+            "\nPick a prefix. A prefix is what you type before a "
+            "command. Example:\n"
+            "!help\n^ The exclamation mark is the prefix in this case.\n"
+            "Can be multiple characters. You will be able to change it "
+            "later and add more of them.\nChoose your prefix:\n"
+        )
         while not prefix:
             prefix = input("Prefix> ")
             if len(prefix) > 10:
-                print("Your prefix seems overly long. Are you sure it "
-                      "is correct? (y/n)")
+                print("Your prefix seems overly long. Are you sure it " "is correct? (y/n)")
                 if not confirm("> "):
                     prefix = ""
             if prefix:
@@ -48,12 +49,14 @@ def interactive_config(red, token_set, prefix_set):
 
 def ask_sentry(red: Red):
     loop = asyncio.get_event_loop()
-    print("\nThank you for installing Red V3 beta! The current version\n"
-          " is not suited for production use and is aimed at testing\n"
-          " the current and upcoming featureset, that's why we will\n"
-          " also collect the fatal error logs to help us fix any new\n"
-          " found issues in a timely manner. If you wish to opt in\n"
-          " the process please type \"yes\":\n")
+    print(
+        "\nThank you for installing Red V3 beta! The current version\n"
+        " is not suited for production use and is aimed at testing\n"
+        " the current and upcoming featureset, that's why we will\n"
+        " also collect the fatal error logs to help us fix any new\n"
+        " found issues in a timely manner. If you wish to opt in\n"
+        ' the process please type "yes":\n'
+    )
     if not confirm("> "):
         loop.run_until_complete(red.db.enable_sentry.set(False))
     else:
@@ -62,64 +65,82 @@ def ask_sentry(red: Red):
 
 
 def parse_cli_flags(args):
-    parser = argparse.ArgumentParser(description="Red - Discord Bot",
-                                     usage="redbot <instance_name> [arguments]")
-    parser.add_argument("--version", "-V", action="store_true",
-                        help="Show Red's current version")
-    parser.add_argument("--list-instances", action="store_true",
-                        help="List all instance names setup "
-                             "with 'redbot-setup'")
-    parser.add_argument("--owner", type=int,
-                        help="ID of the owner. Only who hosts "
-                             "Red should be owner, this has "
-                             "serious security implications if misused.")
-    parser.add_argument("--co-owner", type=int, default=[], nargs="*",
-                        help="ID of a co-owner. Only people who have access "
-                             "to the system that is hosting Red should be  "
-                             "co-owners, as this gives them complete access "
-                             "to the system's data. This has serious "
-                             "security implications if misused. Can be "
-                             "multiple.")
-    parser.add_argument("--prefix", "-p", action="append",
-                        help="Global prefix. Can be multiple")
-    parser.add_argument("--no-prompt", action="store_true",
-                        help="Disables console inputs. Features requiring "
-                             "console interaction could be disabled as a "
-                             "result")
-    parser.add_argument("--no-cogs",
-                        action="store_true",
-                        help="Starts Red with no cogs loaded, only core")
-    parser.add_argument("--load-cogs", type=str, nargs="*",
-                        help="Force loading specified cogs from the installed packages. "
-                             "Can be used with the --no-cogs flag to load these cogs exclusively.")
-    parser.add_argument("--self-bot",
-                        action='store_true',
-                        help="Specifies if Red should log in as selfbot")
-    parser.add_argument("--not-bot",
-                        action='store_true',
-                        help="Specifies if the token used belongs to a bot "
-                             "account.")
-    parser.add_argument("--dry-run",
-                        action="store_true",
-                        help="Makes Red quit with code 0 just before the "
-                             "login. This is useful for testing the boot "
-                             "process.")
-    parser.add_argument("--debug",
-                        action="store_true",
-                        help="Sets the loggers level as debug")
-    parser.add_argument("--dev",
-                        action="store_true",
-                        help="Enables developer mode")
-    parser.add_argument("--mentionable",
-                        action="store_true",
-                        help="Allows mentioning the bot as an alternative "
-                             "to using the bot prefix")
-    parser.add_argument("--rpc",
-                        action="store_true",
-                        help="Enables the built-in RPC server. Please read the docs"
-                             "prior to enabling this!")
-    parser.add_argument("instance_name", nargs="?",
-                        help="Name of the bot instance created during `redbot-setup`.")
+    parser = argparse.ArgumentParser(
+        description="Red - Discord Bot", usage="redbot <instance_name> [arguments]"
+    )
+    parser.add_argument("--version", "-V", action="store_true", help="Show Red's current version")
+    parser.add_argument(
+        "--list-instances",
+        action="store_true",
+        help="List all instance names setup " "with 'redbot-setup'",
+    )
+    parser.add_argument(
+        "--owner",
+        type=int,
+        help="ID of the owner. Only who hosts "
+        "Red should be owner, this has "
+        "serious security implications if misused.",
+    )
+    parser.add_argument(
+        "--co-owner",
+        type=int,
+        default=[],
+        nargs="*",
+        help="ID of a co-owner. Only people who have access "
+        "to the system that is hosting Red should be  "
+        "co-owners, as this gives them complete access "
+        "to the system's data. This has serious "
+        "security implications if misused. Can be "
+        "multiple.",
+    )
+    parser.add_argument("--prefix", "-p", action="append", help="Global prefix. Can be multiple")
+    parser.add_argument(
+        "--no-prompt",
+        action="store_true",
+        help="Disables console inputs. Features requiring "
+        "console interaction could be disabled as a "
+        "result",
+    )
+    parser.add_argument(
+        "--no-cogs", action="store_true", help="Starts Red with no cogs loaded, only core"
+    )
+    parser.add_argument(
+        "--load-cogs",
+        type=str,
+        nargs="*",
+        help="Force loading specified cogs from the installed packages. "
+        "Can be used with the --no-cogs flag to load these cogs exclusively.",
+    )
+    parser.add_argument(
+        "--self-bot", action="store_true", help="Specifies if Red should log in as selfbot"
+    )
+    parser.add_argument(
+        "--not-bot",
+        action="store_true",
+        help="Specifies if the token used belongs to a bot " "account.",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Makes Red quit with code 0 just before the "
+        "login. This is useful for testing the boot "
+        "process.",
+    )
+    parser.add_argument("--debug", action="store_true", help="Sets the loggers level as debug")
+    parser.add_argument("--dev", action="store_true", help="Enables developer mode")
+    parser.add_argument(
+        "--mentionable",
+        action="store_true",
+        help="Allows mentioning the bot as an alternative " "to using the bot prefix",
+    )
+    parser.add_argument(
+        "--rpc",
+        action="store_true",
+        help="Enables the built-in RPC server. Please read the docs" "prior to enabling this!",
+    )
+    parser.add_argument(
+        "instance_name", nargs="?", help="Name of the bot instance created during `redbot-setup`."
+    )
 
     args = parser.parse_args(args)
 
@@ -129,4 +150,3 @@ def parse_cli_flags(args):
         args.prefix = []
 
     return args
-
