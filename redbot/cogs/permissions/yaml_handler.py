@@ -5,7 +5,7 @@ import discord
 
 
 def yaml_template() -> dict:
-    template_fp = pathlib.Path(__file__).parent / 'template.yaml'
+    template_fp = pathlib.Path(__file__).parent / "template.yaml"
 
     with template_fp.open() as f:
         return yaml.safe_load(f)
@@ -25,11 +25,8 @@ async def yamlset_acl(ctx, *, config, update):
     for outer, inner in data.items():
         for ok, iv in inner.items():
             for k, v in iv.items():
-                if k == 'default':
-                    data[outer][ok][k] = {
-                        'allow': True,
-                        'deny': False
-                    }.get(v.lower(), None)
+                if k == "default":
+                    data[outer][ok][k] = {"allow": True, "deny": False}.get(v.lower(), None)
 
     if update:
         async with config() as cfg:
@@ -45,12 +42,12 @@ async def yamlget_acl(ctx, *, config):
     for outer, inner in data.items():
         for ok, iv in inner.items():
             for k, v in iv.items():
-                if k != 'default':
+                if k != "default":
                     continue
                 if v is True:
-                    data[outer][ok][k] = 'allow'
+                    data[outer][ok][k] = "allow"
                 elif v is False:
-                    data[outer][ok][k] = 'deny'
+                    data[outer][ok][k] = "deny"
                 else:
                     removals.append((outer, ok, k, v))
 
@@ -60,7 +57,5 @@ async def yamlget_acl(ctx, *, config):
 
     _fp = io.BytesIO(yaml.dump(data, default_flow_style=False).encode())
     _fp.seek(0)
-    await ctx.send(
-        file=discord.File(_fp, filename='acl.yaml')
-    )
+    await ctx.send(file=discord.File(_fp, filename="acl.yaml"))
     _fp.close()
