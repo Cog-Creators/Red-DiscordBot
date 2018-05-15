@@ -15,7 +15,7 @@ from discord.ext import commands
 
 from . import __version__
 from .data_manager import storage_type
-from .utils.chat_formatting import inline, bordered, pagify
+from .utils.chat_formatting import inline, bordered, pagify, box
 from .rpc import initialize
 from colorama import Fore, Style, init
 from fuzzywuzzy import process
@@ -225,13 +225,24 @@ def init_events(bot, cli_flags):
         elif isinstance(error, commands.CommandNotFound):
             term = ctx.invoked_with
             out = ""
-            for extracted, pos in enumerate(
+            for pos, extracted in enumerate(
                 process.extract(term, bot.walk_commands(), limit=5), 1
             ):
-                out += "{0}. {1.prefix}{2.qualified_name} - {2.short_doc}\n".format(
-                    pos, ctx, extracted[0]
+                out += "{0}. {1.prefix}{2.qualified_name}{3}\n".format(
+                    pos,
+                    ctx,
+                    extracted[0],
+                    " - {}".format(extracted[0].short_doc) if extracted[0].short_doc else "",
                 )
-            await ctx.send(pagify(out))
+            for page in pagify(out):
+                await ctx.maybe_send_embed(
+                    box(
+                        page,
+                        lang="Command {} does not exist. Perhaps you wanted one of the following?".format(
+                            term
+                        ),
+                    )
+                )
         elif isinstance(error, commands.CheckFailure):
             await ctx.send("⛔ You are not authorized to issue that command.")
         elif isinstance(error, commands.NoPrivateMessage):
