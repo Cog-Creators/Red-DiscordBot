@@ -101,9 +101,7 @@ async def test_clone_repo(repo_norun, capsys):
 
 @pytest.mark.asyncio
 async def test_add_repo(monkeypatch, repo_manager):
-    monkeypatch.setattr(
-        "redbot.cogs.downloader.repo_manager.Repo._run", fake_run_noprint
-    )
+    monkeypatch.setattr("redbot.cogs.downloader.repo_manager.Repo._run", fake_run_noprint)
 
     testcogs = await repo_manager.add_repo(
         url="https://github.com/bobloy/V3-testcogs", name="testcogs", branch="master"
