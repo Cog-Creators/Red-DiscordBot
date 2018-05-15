@@ -271,10 +271,7 @@ class Help(formatter.HelpFormatter):
         # Shortcut for a shortcut. Sue me
         out = fuzzy_command_search(ctx, " ".join(ctx.args[1:]))
         embed = self.simple_embed(
-            ctx,
-            title="Command {} not found.".format(cmd),
-            description=out,
-            color=color,
+            ctx, title="Command {} not found.".format(cmd), description=out, color=color
         )
         return embed
 
