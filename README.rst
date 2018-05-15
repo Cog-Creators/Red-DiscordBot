@@ -49,4 +49,4 @@ For the latest git build, replace ``Red-DiscordBot`` in the above commands with
 Contributing to Red
 ^^^^^^^^^^^^^^^^^^^
 
-See `CONTRIBUTING <.github/CONTRIBUTING.md>` for more information.
+See `CONTRIBUTING <.github/CONTRIBUTING.md>`_ for more information.
