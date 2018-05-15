@@ -30,10 +30,7 @@ class Repo(RepoJSONMixin):
     GIT_DIFF_FILE_STATUS = (
         "git -C {path} diff --no-commit-id --name-status" " {old_hash} {new_hash}"
     )
-    GIT_LOG = (
-        "git -C {path} log --relative-date --reverse {old_hash}.."
-        " {relative_file_path}"
-    )
+    GIT_LOG = ("git -C {path} log --relative-date --reverse {old_hash}.." " {relative_file_path}")
     GIT_DISCOVER_REMOTE_URL = "git -C {path} config --get remote.origin.url"
 
     PIP_INSTALL = "{python} -m pip install -U -t {target_dir} {reqs}"
@@ -77,9 +74,7 @@ class Repo(RepoJSONMixin):
         repo_manager = downloader_cog._repo_manager
         poss_repo = repo_manager.get_repo(argument)
         if poss_repo is None:
-            raise commands.BadArgument(
-                "Repo by the name {} does not exist.".format(argument)
-            )
+            raise commands.BadArgument("Repo by the name {} does not exist.".format(argument))
         return poss_repo
 
     def _existing_git_repo(self) -> (bool, Path):
@@ -103,9 +98,7 @@ class Repo(RepoJSONMixin):
         )
 
         if p.returncode != 0:
-            raise GitDiffError(
-                "Git diff failed for repo at path:" " {}".format(self.folder_path)
-            )
+            raise GitDiffError("Git diff failed for repo at path:" " {}".format(self.folder_path))
 
         stdout = p.stdout.strip().decode().split("\n")
 
@@ -118,9 +111,7 @@ class Repo(RepoJSONMixin):
 
         return ret
 
-    async def _get_commit_notes(
-        self, old_commit_hash: str, relative_file_path: str
-    ) -> str:
+    async def _get_commit_notes(self, old_commit_hash: str, relative_file_path: str) -> str:
         """
         Gets the commit notes from git log.
         :param old_commit_hash: Point in time to start getting messages
@@ -200,9 +191,7 @@ class Repo(RepoJSONMixin):
             )
         else:
             p = await self._run(
-                self.GIT_CLONE_NO_BRANCH.format(
-                    url=self.url, folder=self.folder_path
-                ).split()
+                self.GIT_CLONE_NO_BRANCH.format(url=self.url, folder=self.folder_path).split()
             )
 
         if p.returncode != 0:
@@ -226,18 +215,13 @@ class Repo(RepoJSONMixin):
         """
         exists, _ = self._existing_git_repo()
         if not exists:
-            raise MissingGitRepo(
-                "A git repo does not exist at path: {}".format(self.folder_path)
-            )
+            raise MissingGitRepo("A git repo does not exist at path: {}".format(self.folder_path))
 
-        p = await self._run(
-            self.GIT_CURRENT_BRANCH.format(path=self.folder_path).split()
-        )
+        p = await self._run(self.GIT_CURRENT_BRANCH.format(path=self.folder_path).split())
 
         if p.returncode != 0:
             raise GitException(
-                "Could not determine current branch"
-                " at path: {}".format(self.folder_path)
+                "Could not determine current branch" " at path: {}".format(self.folder_path)
             )
 
         return p.stdout.decode().strip()
@@ -261,9 +245,7 @@ class Repo(RepoJSONMixin):
 
         exists, _ = self._existing_git_repo()
         if not exists:
-            raise MissingGitRepo(
-                "A git repo does not exist at path: {}".format(self.folder_path)
-            )
+            raise MissingGitRepo("A git repo does not exist at path: {}".format(self.folder_path))
 
         p = await self._run(
             self.GIT_LATEST_COMMIT.format(path=self.folder_path, branch=branch).split()
@@ -317,9 +299,7 @@ class Repo(RepoJSONMixin):
 
         exists, _ = self._existing_git_repo()
         if not exists:
-            raise MissingGitRepo(
-                "A git repo does not exist at path: {}".format(self.folder_path)
-            )
+            raise MissingGitRepo("A git repo does not exist at path: {}".format(self.folder_path))
 
         p = await self._run(
             self.GIT_HARD_RESET.format(path=self.folder_path, branch=branch).split()
@@ -447,9 +427,7 @@ class Repo(RepoJSONMixin):
 
         return await self.install_raw_requirements(cog.requirements, target_dir)
 
-    async def install_raw_requirements(
-        self, requirements: Tuple[str], target_dir: Path
-    ) -> bool:
+    async def install_raw_requirements(self, requirements: Tuple[str], target_dir: Path) -> bool:
         """Install a list of requirements using pip.
 
         Parameters
@@ -493,11 +471,7 @@ class Repo(RepoJSONMixin):
         """
         # noinspection PyTypeChecker
         return tuple(
-            [
-                m
-                for m in self.available_modules
-                if m.type == InstallableType.COG and not m.hidden
-            ]
+            [m for m in self.available_modules if m.type == InstallableType.COG and not m.hidden]
         )
 
     @property
@@ -507,11 +481,7 @@ class Repo(RepoJSONMixin):
         """
         # noinspection PyTypeChecker
         return tuple(
-            [
-                m
-                for m in self.available_modules
-                if m.type == InstallableType.SHARED_LIBRARY
-            ]
+            [m for m in self.available_modules if m.type == InstallableType.SHARED_LIBRARY]
         )
 
     @classmethod
@@ -571,9 +541,7 @@ class RepoManager:
             )
 
         # noinspection PyTypeChecker
-        r = Repo(
-            url=url, name=name, branch=branch, folder_path=self.repos_folder / name
-        )
+        r = Repo(url=url, name=name, branch=branch, folder_path=self.repos_folder / name)
         await r.clone()
 
         self._repos[name] = r
@@ -632,9 +600,7 @@ class RepoManager:
         except KeyError:
             pass
 
-    async def update_repo(
-        self, repo_name: str
-    ) -> MutableMapping[Repo, Tuple[str, str]]:
+    async def update_repo(self, repo_name: str) -> MutableMapping[Repo, Tuple[str, str]]:
         repo = self._repos[repo_name]
         old, new = await repo.update()
         return {repo: (old, new)}
