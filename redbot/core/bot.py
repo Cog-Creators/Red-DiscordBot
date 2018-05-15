@@ -99,6 +99,9 @@ class RedBase(BotBase, RpcMethodMixin):
             loop = asyncio.get_event_loop()
             loop.run_until_complete(self._dict_abuse(kwargs))
 
+        if "command_not_found" not in kwargs:
+            kwargs["command_not_found"] = "Command {} not found.\n{}"
+
         self.counter = Counter()
         self.uptime = None
 
