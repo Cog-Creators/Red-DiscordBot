@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 "discord.py" = { git = 'git://github.com/Rapptz/discord.py', ref = 'rewrite', editable = true}
 "e1839a8" = {path = ".", editable = true}
+fuzzywuzzy = {extras = ["speedup"]}
 
 [dev-packages]
 tox = "*"
