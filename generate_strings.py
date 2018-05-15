@@ -12,7 +12,11 @@ def main():
         if "locales" in os.listdir(os.path.join("redbot/cogs", d)):
             os.chdir(os.path.join("redbot/cogs", d, "locales"))
             if "regen_messages.py" not in os.listdir(os.getcwd()):
-                print("Directory 'locales' exists for {} but no 'regen_messages.py' is available!".format(d))
+                print(
+                    "Directory 'locales' exists for {} but no 'regen_messages.py' is available!".format(
+                        d
+                    )
+                )
                 exit(1)
             else:
                 print("Running 'regen_messages.py' for {}".format(d))

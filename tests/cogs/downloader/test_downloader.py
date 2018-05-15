@@ -22,6 +22,7 @@ async def fake_run_noprint(*args, **kwargs):
 
 @pytest.fixture(scope="module", autouse=True)
 def patch_relative_to(monkeysession):
+
     def fake_relative_to(self, some_path: Path):
         return self
 
@@ -38,14 +39,14 @@ def repo_manager(tmpdir_factory, config):
 
 @pytest.fixture
 def repo(tmpdir):
-    repo_folder = Path(str(tmpdir)) / 'repos' / 'squid'
+    repo_folder = Path(str(tmpdir)) / "repos" / "squid"
     repo_folder.mkdir(parents=True, exist_ok=True)
 
     return Repo(
         url="https://github.com/tekulvw/Squid-Plugins",
         name="squid",
         branch="rewrite_cogs",
-        folder_path=repo_folder
+        folder_path=repo_folder,
     )
 
 
@@ -63,19 +64,19 @@ def bot_repo(event_loop):
         branch="WRONG",
         url="https://empty.com/something.git",
         folder_path=cwd,
-        loop=event_loop
+        loop=event_loop,
     )
 
 
 def test_existing_git_repo(tmpdir):
-    repo_folder = Path(str(tmpdir)) / 'repos' / 'squid' / '.git'
+    repo_folder = Path(str(tmpdir)) / "repos" / "squid" / ".git"
     repo_folder.mkdir(parents=True, exist_ok=True)
 
     r = Repo(
         url="https://github.com/tekulvw/Squid-Plugins",
         name="squid",
         branch="rewrite_cogs",
-        folder_path=repo_folder.parent
+        folder_path=repo_folder.parent,
     )
 
     exists, _ = r._existing_git_repo()
@@ -89,24 +90,21 @@ async def test_clone_repo(repo_norun, capsys):
 
     clone_cmd, _ = capsys.readouterr()
 
-    clone_cmd = clone_cmd.strip('[\']').split('\', \'')
-    assert clone_cmd[0] == 'git'
-    assert clone_cmd[1] == 'clone'
-    assert clone_cmd[2] == '-b'
-    assert clone_cmd[3] == 'rewrite_cogs'
+    clone_cmd = clone_cmd.strip("[']").split("', '")
+    assert clone_cmd[0] == "git"
+    assert clone_cmd[1] == "clone"
+    assert clone_cmd[2] == "-b"
+    assert clone_cmd[3] == "rewrite_cogs"
     assert clone_cmd[4] == repo_norun.url
-    assert 'repos/squid' in clone_cmd[5]
+    assert "repos/squid" in clone_cmd[5]
 
 
 @pytest.mark.asyncio
 async def test_add_repo(monkeypatch, repo_manager):
-    monkeypatch.setattr("redbot.cogs.downloader.repo_manager.Repo._run",
-                        fake_run_noprint)
+    monkeypatch.setattr("redbot.cogs.downloader.repo_manager.Repo._run", fake_run_noprint)
 
     squid = await repo_manager.add_repo(
-        url="https://github.com/tekulvw/Squid-Plugins",
-        name="squid",
-        branch="rewrite_cogs"
+        url="https://github.com/tekulvw/Squid-Plugins", name="squid", branch="rewrite_cogs"
     )
 
     assert squid.available_modules == []
