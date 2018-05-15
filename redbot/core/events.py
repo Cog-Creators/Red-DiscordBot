@@ -228,7 +228,9 @@ def init_events(bot, cli_flags):
             for extracted, pos in enumerate(
                 process.extract(term, bot.walk_commands(), limit=5), 1
             ):
-                out += "{0}. {1.prefix}{2.qualified_name} - {2.short_doc}\n".format(pos, ctx, extracted[0])
+                out += "{0}. {1.prefix}{2.qualified_name} - {2.short_doc}\n".format(
+                    pos, ctx, extracted[0]
+                )
             await ctx.send(pagify(out))
         elif isinstance(error, commands.CheckFailure):
             await ctx.send("⛔ You are not authorized to issue that command.")
