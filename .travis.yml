@@ -1,6 +1,5 @@
 dist: trusty
 language: python
-cache: pip
 notifications:
   email: false
 
@@ -9,10 +8,9 @@ python:
 - 3.6.5
 install:
 - pip install --upgrade pip pipenv
-- pipenv install --skip-lock --pre --dev
-- pipenv shell
+- pipenv install --dev
 script:
-- tox
+- pipenv run tox
 env:
 - TOXENV=py
   PIPENV_IGNORE_VIRTUALENVS=1
