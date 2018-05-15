@@ -14,7 +14,7 @@ from .manager import shutdown_lavalink_server
 
 _ = Translator("Audio", __file__)
 
-__version__ = "0.0.6"
+__version__ = "0.0.6a"
 __author__ = ["aikaterna", "billy/bollo/ati"]
 
 
