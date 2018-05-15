@@ -44,8 +44,8 @@ def should_log_sentry(exception) -> bool:
         tb_frame = tb.tb_frame
         tb = tb.tb_next
 
-    module = tb_frame.f_globals.get('__name__')
-    return module.startswith('redbot')
+    module = tb_frame.f_globals.get("__name__")
+    return module.startswith("redbot")
 
 
 def init_events(bot, cli_flags):
@@ -77,8 +77,7 @@ def init_events(bot, cli_flags):
                     spec = await bot.cog_mgr.find_cog(package)
                     await bot.load_extension(spec)
                 except Exception as e:
-                    log.exception("Failed to load package {}".format(package),
-                                  exc_info=e)
+                    log.exception("Failed to load package {}".format(package), exc_info=e)
                     await bot.remove_loaded_package(package)
                     to_remove.append(package)
             for package in to_remove:
@@ -104,18 +103,21 @@ def init_events(bot, cli_flags):
         red_pkg = pkg_resources.get_distribution("Red-DiscordBot")
         dpy_version = discord.__version__
 
-        INFO = [str(bot.user), "Prefixes: {}".format(', '.join(prefixes)),
-                'Language: {}'.format(lang),
-                "Red Bot Version: {}".format(red_version),
-                "Discord.py Version: {}".format(dpy_version),
-                "Shards: {}".format(bot.shard_count)]
+        INFO = [
+            str(bot.user),
+            "Prefixes: {}".format(", ".join(prefixes)),
+            "Language: {}".format(lang),
+            "Red Bot Version: {}".format(red_version),
+            "Discord.py Version: {}".format(dpy_version),
+            "Shards: {}".format(bot.shard_count),
+        ]
 
         if guilds:
             INFO.extend(("Servers: {}".format(guilds), "Users: {}".format(users)))
         else:
             print("Ready. I'm not in any server yet!")
 
-        INFO.append('{} cogs with {} commands'.format(len(bot.cogs), len(bot.commands)))
+        INFO.append("{} cogs with {} commands".format(len(bot.cogs), len(bot.commands)))
 
         async with aiohttp.ClientSession() as session:
             async with session.get("https://pypi.python.org/pypi/red-discordbot/json") as r:
@@ -139,11 +141,7 @@ def init_events(bot, cli_flags):
 
         sentry = await bot.db.enable_sentry()
         mongo_enabled = storage_type() != "JSON"
-        reqs_installed = {
-            "voice": None,
-            "docs": None,
-            "test": None
-        }
+        reqs_installed = {"voice": None, "docs": None, "test": None}
         for key in reqs_installed.keys():
             reqs = [x.name for x in red_pkg._dep_map[key]]
             try:
@@ -158,7 +156,7 @@ def init_events(bot, cli_flags):
             ("MongoDB", mongo_enabled),
             ("Voice", reqs_installed["voice"]),
             ("Docs", reqs_installed["docs"]),
-            ("Tests", reqs_installed["test"])
+            ("Tests", reqs_installed["test"]),
         )
 
         on_symbol, off_symbol, ascii_border = _get_startup_screen_specs()
@@ -201,21 +199,25 @@ def init_events(bot, cli_flags):
                 await ctx.send(msg)
                 return
             """
-            log.exception("Exception in command '{}'"
-                          "".format(ctx.command.qualified_name),
-                          exc_info=error.original)
+            log.exception(
+                "Exception in command '{}'" "".format(ctx.command.qualified_name),
+                exc_info=error.original,
+            )
             if should_log_sentry(error):
-                sentry_log.exception("Exception in command '{}'"
-                                     "".format(ctx.command.qualified_name),
-                                     exc_info=error.original)
+                sentry_log.exception(
+                    "Exception in command '{}'" "".format(ctx.command.qualified_name),
+                    exc_info=error.original,
+                )
 
-            message = ("Error in command '{}'. Check your console or "
-                       "logs for details."
-                       "".format(ctx.command.qualified_name))
-            exception_log = ("Exception in command '{}'\n"
-                             "".format(ctx.command.qualified_name))
-            exception_log += "".join(traceback.format_exception(type(error),
-                                     error, error.__traceback__))
+            message = (
+                "Error in command '{}'. Check your console or "
+                "logs for details."
+                "".format(ctx.command.qualified_name)
+            )
+            exception_log = ("Exception in command '{}'\n" "".format(ctx.command.qualified_name))
+            exception_log += "".join(
+                traceback.format_exception(type(error), error, error.__traceback__)
+            )
             bot._last_exception = exception_log
             if not hasattr(ctx.cog, "_{0.command.cog_name}__error".format(ctx)):
                 await ctx.send(inline(message))
@@ -226,9 +228,9 @@ def init_events(bot, cli_flags):
         elif isinstance(error, commands.NoPrivateMessage):
             await ctx.send("That command is not available in DMs.")
         elif isinstance(error, commands.CommandOnCooldown):
-            await ctx.send("This command is on cooldown. "
-                           "Try again in {:.2f}s"
-                           "".format(error.retry_after))
+            await ctx.send(
+                "This command is on cooldown. " "Try again in {:.2f}s" "".format(error.retry_after)
+            )
         else:
             log.exception(type(error).__name__, exc_info=error)
             try:
@@ -237,8 +239,7 @@ def init_events(bot, cli_flags):
                 sentry_error = error
 
             if should_log_sentry(sentry_error):
-                sentry_log.exception("Unhandled command error.",
-                                     exc_info=sentry_error)
+                sentry_log.exception("Unhandled command error.", exc_info=sentry_error)
 
     @bot.event
     async def on_message(message):
@@ -252,6 +253,7 @@ def init_events(bot, cli_flags):
     @bot.event
     async def on_command(command):
         bot.counter["processed_commands"] += 1
+
 
 def _get_startup_screen_specs():
     """Get specs for displaying the startup screen on stdout.
@@ -278,11 +280,10 @@ def _get_startup_screen_specs():
         off_symbol = "X"
 
     try:
-        encoder('┌┐└┘─│')  # border symbols
+        encoder("┌┐└┘─│")  # border symbols
     except UnicodeEncodeError:
         ascii_border = True
     else:
         ascii_border = False
 
     return on_symbol, off_symbol, ascii_border
-

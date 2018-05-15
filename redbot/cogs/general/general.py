@@ -6,21 +6,22 @@ from urllib.parse import quote_plus
 
 import aiohttp
 import discord
-from redbot.core.i18n import CogI18n
-from discord.ext import commands
+from redbot.core import commands
+from redbot.core.i18n import Translator, cog_i18n
 
 from redbot.core.utils.chat_formatting import escape, italics, pagify
 
-_ = CogI18n("General", __file__)
+_ = Translator("General", __file__)
 
 
 class RPS(Enum):
-    rock     = "\N{MOYAI}"
-    paper    = "\N{PAGE FACING UP}"
+    rock = "\N{MOYAI}"
+    paper = "\N{PAGE FACING UP}"
     scissors = "\N{BLACK SCISSORS}"
 
 
 class RPSParser:
+
     def __init__(self, argument):
         argument = argument.lower()
         if argument == "rock":
@@ -33,25 +34,34 @@ class RPSParser:
             raise
 
 
+@cog_i18n(_)
 class General:
     """General commands."""
 
     def __init__(self):
         self.stopwatches = {}
         self.ball = [
-            _("As I see it, yes"), _("It is certain"), _("It is decidedly so"),
-            _("Most likely"), _("Outlook good"), _("Signs point to yes"),
-            _("Without a doubt"), _("Yes"), _("Yes – definitely"), _("You may rely on it"),
-            _("Reply hazy, try again"), _("Ask again later"),
-            _("Better not tell you now"), _("Cannot predict now"),
-            _("Concentrate and ask again"), _("Don't count on it"), _("My reply is no"),
-            _("My sources say no"), _("Outlook not so good"), _("Very doubtful")
+            _("As I see it, yes"),
+            _("It is certain"),
+            _("It is decidedly so"),
+            _("Most likely"),
+            _("Outlook good"),
+            _("Signs point to yes"),
+            _("Without a doubt"),
+            _("Yes"),
+            _("Yes – definitely"),
+            _("You may rely on it"),
+            _("Reply hazy, try again"),
+            _("Ask again later"),
+            _("Better not tell you now"),
+            _("Cannot predict now"),
+            _("Concentrate and ask again"),
+            _("Don't count on it"),
+            _("My reply is no"),
+            _("My sources say no"),
+            _("Outlook not so good"),
+            _("Very doubtful"),
         ]
-
-    @commands.command(hidden=True)
-    async def ping(self, ctx):
-        """Pong."""
-        await ctx.send("Pong.")
 
     @commands.command()
     async def choose(self, ctx, *choices):
@@ -61,12 +71,12 @@ class General:
         """
         choices = [escape(c, mass_mentions=True) for c in choices]
         if len(choices) < 2:
-            await ctx.send(_('Not enough choices to pick from.'))
+            await ctx.send(_("Not enough choices to pick from."))
         else:
             await ctx.send(choice(choices))
 
     @commands.command()
-    async def roll(self, ctx, number : int = 100):
+    async def roll(self, ctx, number: int = 100):
         """Rolls random number (between 1 and user choice)
 
         Defaults to 100.
@@ -74,14 +84,12 @@ class General:
         author = ctx.author
         if number > 1:
             n = randint(1, number)
-            await ctx.send(
-                _("{} :game_die: {} :game_die:").format(author.mention, n)
-            )
+            await ctx.send(_("{} :game_die: {} :game_die:").format(author.mention, n))
         else:
             await ctx.send(_("{} Maybe higher than 1? ;P").format(author.mention))
 
     @commands.command()
-    async def flip(self, ctx, user: discord.Member=None):
+    async def flip(self, ctx, user: discord.Member = None):
         """Flips a coin... or a user.
 
         Defaults to coin.
@@ -90,8 +98,7 @@ class General:
             msg = ""
             if user.id == ctx.bot.user.id:
                 user = ctx.author
-                msg = _("Nice try. You think this is funny?\n"
-                        "How about *this* instead:\n\n")
+                msg = _("Nice try. You think this is funny?\n" "How about *this* instead:\n\n")
             char = "abcdefghijklmnopqrstuvwxyz"
             tran = "ɐqɔpǝɟƃɥᴉɾʞlɯuodbɹsʇnʌʍxʎz"
             table = str.maketrans(char, tran)
@@ -102,45 +109,37 @@ class General:
             name = name.translate(table)
             await ctx.send(msg + "(╯°□°）╯︵ " + name[::-1])
         else:
-            await ctx.send(
-                _("*flips a coin and... ") + choice([_("HEADS!*"), _("TAILS!*")])
-            )
+            await ctx.send(_("*flips a coin and... ") + choice([_("HEADS!*"), _("TAILS!*")]))
 
     @commands.command()
-    async def rps(self, ctx, your_choice : RPSParser):
+    async def rps(self, ctx, your_choice: RPSParser):
         """Play rock paper scissors"""
         author = ctx.author
         player_choice = your_choice.choice
         red_choice = choice((RPS.rock, RPS.paper, RPS.scissors))
         cond = {
-                (RPS.rock,     RPS.paper)    : False,
-                (RPS.rock,     RPS.scissors) : True,
-                (RPS.paper,    RPS.rock)     : True,
-                (RPS.paper,    RPS.scissors) : False,
-                (RPS.scissors, RPS.rock)     : False,
-                (RPS.scissors, RPS.paper)    : True
-               }
+            (RPS.rock, RPS.paper): False,
+            (RPS.rock, RPS.scissors): True,
+            (RPS.paper, RPS.rock): True,
+            (RPS.paper, RPS.scissors): False,
+            (RPS.scissors, RPS.rock): False,
+            (RPS.scissors, RPS.paper): True,
+        }
 
         if red_choice == player_choice:
-            outcome = None # Tie
+            outcome = None  # Tie
         else:
             outcome = cond[(player_choice, red_choice)]
 
         if outcome is True:
-            await ctx.send(_("{} You win {}!").format(
-                red_choice.value, author.mention
-            ))
+            await ctx.send(_("{} You win {}!").format(red_choice.value, author.mention))
         elif outcome is False:
-            await ctx.send(_("{} You lose {}!").format(
-                red_choice.value, author.mention
-            ))
+            await ctx.send(_("{} You lose {}!").format(red_choice.value, author.mention))
         else:
-            await ctx.send(_("{} We're square {}!").format(
-                red_choice.value, author.mention
-            ))
+            await ctx.send(_("{} We're square {}!").format(red_choice.value, author.mention))
 
     @commands.command(name="8", aliases=["8ball"])
-    async def _8ball(self, ctx, *, question : str):
+    async def _8ball(self, ctx, *, question: str):
         """Ask 8 ball a question
 
         Question must end with a question mark.
@@ -164,14 +163,14 @@ class General:
             self.stopwatches.pop(author.id, None)
 
     @commands.command()
-    async def lmgtfy(self, ctx, *, search_terms : str):
+    async def lmgtfy(self, ctx, *, search_terms: str):
         """Creates a lmgtfy link"""
         search_terms = escape(search_terms.replace(" ", "+"), mass_mentions=True)
         await ctx.send("https://lmgtfy.com/?q={}".format(search_terms))
 
     @commands.command(hidden=True)
     @commands.guild_only()
-    async def hug(self, ctx, user : discord.Member, intensity : int=1):
+    async def hug(self, ctx, user: discord.Member, intensity: int = 1):
         """Because everyone likes hugs
 
         Up to 10 intensity levels."""
@@ -190,7 +189,7 @@ class General:
 
     @commands.command()
     @commands.guild_only()
-    async def userinfo(self, ctx, *, user: discord.Member=None):
+    async def userinfo(self, ctx, *, user: discord.Member = None):
         """Shows users's informations"""
         author = ctx.author
         guild = ctx.guild
@@ -200,8 +199,7 @@ class General:
 
         #  A special case for a special someone :^)
         special_date = datetime.datetime(2016, 1, 10, 6, 8, 4, 443000)
-        is_special = (user.id == 96130341705637888 and
-                      guild.id == 133049272517001216)
+        is_special = (user.id == 96130341705637888 and guild.id == 133049272517001216)
 
         roles = sorted(user.roles)[1:]
 
@@ -210,12 +208,11 @@ class General:
         since_joined = (ctx.message.created_at - joined_at).days
         user_joined = joined_at.strftime("%d %b %Y %H:%M")
         user_created = user.created_at.strftime("%d %b %Y %H:%M")
-        member_number = sorted(guild.members,
-                               key=lambda m: m.joined_at).index(user) + 1
+        member_number = sorted(guild.members, key=lambda m: m.joined_at).index(user) + 1
 
         created_on = _("{}\n({} days ago)").format(user_created, since_created)
         joined_on = _("{}\n({} days ago)").format(user_joined, since_joined)
-        
+
         activity = _("Chilling in {} status").format(user.status)
         if user.activity is None:  # Default status
             pass
@@ -237,15 +234,14 @@ class General:
         data.add_field(name=_("Joined Discord on"), value=created_on)
         data.add_field(name=_("Joined this server on"), value=joined_on)
         data.add_field(name=_("Roles"), value=roles, inline=False)
-        data.set_footer(text=_("Member #{} | User ID: {}"
-                               "").format(member_number, user.id))
+        data.set_footer(text=_("Member #{} | User ID: {}" "").format(member_number, user.id))
 
         name = str(user)
         name = " ~ ".join((name, user.nick)) if user.nick else name
 
         if user.avatar:
             avatar = user.avatar_url
-            avatar = avatar.replace('webp', 'png')
+            avatar = avatar.replace("webp", "png")
             data.set_author(name=name, url=avatar)
             data.set_thumbnail(url=avatar)
         else:
@@ -254,31 +250,34 @@ class General:
         try:
             await ctx.send(embed=data)
         except discord.HTTPException:
-            await ctx.send(_("I need the `Embed links` permission "
-                             "to send this."))
+            await ctx.send(_("I need the `Embed links` permission " "to send this."))
 
     @commands.command()
     @commands.guild_only()
     async def serverinfo(self, ctx):
         """Shows server's informations"""
         guild = ctx.guild
-        online = len([m.status for m in guild.members
-                      if m.status == discord.Status.online or
-                      m.status == discord.Status.idle])
+        online = len(
+            [
+                m.status
+                for m in guild.members
+                if m.status == discord.Status.online or m.status == discord.Status.idle
+            ]
+        )
         total_users = len(guild.members)
         text_channels = len(guild.text_channels)
         voice_channels = len(guild.voice_channels)
         passed = (ctx.message.created_at - guild.created_at).days
-        created_at = (_("Since {}. That's over {} days ago!"
-                        "").format(guild.created_at.strftime("%d %b %Y %H:%M"),
-                                   passed))
+        created_at = (
+            _("Since {}. That's over {} days ago!" "").format(
+                guild.created_at.strftime("%d %b %Y %H:%M"), passed
+            )
+        )
 
-        colour = ''.join([choice('0123456789ABCDEF') for x in range(6)])
+        colour = "".join([choice("0123456789ABCDEF") for x in range(6)])
         colour = randint(0, 0xFFFFFF)
 
-        data = discord.Embed(
-            description=created_at,
-            colour=discord.Colour(value=colour))
+        data = discord.Embed(description=created_at, colour=discord.Colour(value=colour))
         data.add_field(name=_("Region"), value=str(guild.region))
         data.add_field(name=_("Users"), value="{}/{}".format(online, total_users))
         data.add_field(name=_("Text Channels"), value=text_channels)
@@ -296,16 +295,16 @@ class General:
         try:
             await ctx.send(embed=data)
         except discord.HTTPException:
-            await ctx.send(_("I need the `Embed links` permission "
-                             "to send this."))
+            await ctx.send(_("I need the `Embed links` permission " "to send this."))
 
     @commands.command()
-    async def urban(self, ctx, *, search_terms: str, definition_number: int=1):
+    async def urban(self, ctx, *, search_terms: str, definition_number: int = 1):
         """Urban Dictionary search
 
         Definition number must be between 1 and 10"""
+
         def encode(s):
-            return quote_plus(s, encoding='utf-8', errors='replace')
+            return quote_plus(s, encoding="utf-8", errors="replace")
 
         # definition_number is just there to show up in the help
         # all this mess is to avoid forcing double quotes on the user
@@ -317,8 +316,8 @@ class General:
                 search_terms = search_terms[:-1]
             else:
                 pos = 0
-            if pos not in range(0, 11): # API only provides the
-                pos = 0                 # top 10 definitions
+            if pos not in range(0, 11):  # API only provides the
+                pos = 0  # top 10 definitions
         except ValueError:
             pos = 0
 
@@ -330,18 +329,19 @@ class General:
                     result = await r.json()
             item_list = result["list"]
             if item_list:
-                definition = item_list[pos]['definition']
-                example = item_list[pos]['example']
+                definition = item_list[pos]["definition"]
+                example = item_list[pos]["example"]
                 defs = len(item_list)
-                msg = ("**Definition #{} out of {}:\n**{}\n\n"
-                       "**Example:\n**{}".format(pos+1, defs, definition,
-                                                 example))
+                msg = (
+                    "**Definition #{} out of {}:\n**{}\n\n"
+                    "**Example:\n**{}".format(pos + 1, defs, definition, example)
+                )
                 msg = pagify(msg, ["\n"])
                 for page in msg:
                     await ctx.send(page)
             else:
                 await ctx.send(_("Your search terms gave no results."))
         except IndexError:
-            await ctx.send(_("There is no definition #{}").format(pos+1))
+            await ctx.send(_("There is no definition #{}").format(pos + 1))
         except:
             await ctx.send(_("Error."))
