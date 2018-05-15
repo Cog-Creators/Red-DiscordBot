@@ -13,9 +13,7 @@ GIPHY_API_KEY = "dc6zaTOxFJmzC"
 @cog_i18n(_)
 class Image:
     """Image related commands."""
-    default_global = {
-        "imgur_client_id": None
-    }
+    default_global = {"imgur_client_id": None}
 
     def __init__(self, bot):
         self.bot = bot
@@ -45,7 +43,9 @@ class Image:
         if not imgur_client_id:
             await ctx.send(
                 _("A client ID has not been set! Please set one with {}").format(
-                    "`{}imgurcreds`".format(ctx.prefix)))
+                    "`{}imgurcreds`".format(ctx.prefix)
+                )
+            )
             return
         headers = {"Authorization": "Client-ID {}".format(imgur_client_id)}
         async with self.session.get(url, headers=headers, params=params) as search_get:
@@ -66,7 +66,9 @@ class Image:
             await ctx.send(_("Something went wrong. Error code is {}").format(data["status"]))
 
     @_imgur.command(name="subreddit")
-    async def imgur_subreddit(self, ctx, subreddit: str, sort_type: str="top", window: str="day"):
+    async def imgur_subreddit(
+        self, ctx, subreddit: str, sort_type: str = "top", window: str = "day"
+    ):
         """Gets images from the specified subreddit section
 
         Sort types: new, top
@@ -90,7 +92,9 @@ class Image:
         if not imgur_client_id:
             await ctx.send(
                 _("A client ID has not been set! Please set one with {}").format(
-                    "`{}imgurcreds`".format(ctx.prefix)))
+                    "`{}imgurcreds`".format(ctx.prefix)
+                )
+            )
             return
 
         links = []
@@ -139,8 +143,10 @@ class Image:
             await ctx.send_help()
             return
 
-        url = ("http://api.giphy.com/v1/gifs/search?&api_key={}&q={}"
-               "".format(GIPHY_API_KEY, keywords))
+        url = (
+            "http://api.giphy.com/v1/gifs/search?&api_key={}&q={}"
+            "".format(GIPHY_API_KEY, keywords)
+        )
 
         async with self.session.get(url) as r:
             result = await r.json()
@@ -161,8 +167,10 @@ class Image:
             await ctx.send_help()
             return
 
-        url = ("http://api.giphy.com/v1/gifs/random?&api_key={}&tag={}"
-               "".format(GIPHY_API_KEY, keywords))
+        url = (
+            "http://api.giphy.com/v1/gifs/random?&api_key={}&tag={}"
+            "".format(GIPHY_API_KEY, keywords)
+        )
 
         async with self.session.get(url) as r:
             result = await r.json()

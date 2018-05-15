@@ -10,6 +10,7 @@ import discord
 from . import checks, commands
 from .i18n import Translator
 from .utils.chat_formatting import box, pagify
+
 """
 Notice:
 
@@ -32,11 +33,11 @@ class Dev:
     def cleanup_code(content):
         """Automatically removes code blocks from the code."""
         # remove ```py\n```
-        if content.startswith('```') and content.endswith('```'):
-            return '\n'.join(content.split('\n')[1:-1])
+        if content.startswith("```") and content.endswith("```"):
+            return "\n".join(content.split("\n")[1:-1])
 
         # remove `foo`
-        return content.strip('` \n')
+        return content.strip("` \n")
 
     @staticmethod
     def get_syntax_error(e):
@@ -45,11 +46,10 @@ class Dev:
         Returns a string representation of the error formatted as a codeblock.
         """
         if e.text is None:
-            return box('{0.__class__.__name__}: {0}'.format(e), lang="py")
+            return box("{0.__class__.__name__}: {0}".format(e), lang="py")
         return box(
-            '{0.text}{1:>{0.offset}}\n{2}: {0}'
-            ''.format(e, '^', type(e).__name__),
-            lang="py")
+            "{0.text}{1:>{0.offset}}\n{2}: {0}" "".format(e, "^", type(e).__name__), lang="py"
+        )
 
     @staticmethod
     def get_pages(msg: str):
@@ -90,15 +90,15 @@ class Dev:
             _        - The result of the last dev command.
         """
         env = {
-            'bot': ctx.bot,
-            'ctx': ctx,
-            'channel': ctx.channel,
-            'author': ctx.author,
-            'guild': ctx.guild,
-            'message': ctx.message,
-            'discord': discord,
-            'commands': commands,
-            '_': self._last_result
+            "bot": ctx.bot,
+            "ctx": ctx,
+            "channel": ctx.channel,
+            "author": ctx.author,
+            "guild": ctx.guild,
+            "message": ctx.message,
+            "discord": discord,
+            "commands": commands,
+            "_": self._last_result,
         }
 
         code = self.cleanup_code(code)
@@ -109,8 +109,7 @@ class Dev:
             await ctx.send(self.get_syntax_error(e))
             return
         except Exception as e:
-            await ctx.send(
-                box('{}: {!s}'.format(type(e).__name__, e), lang='py'))
+            await ctx.send(box("{}: {!s}".format(type(e).__name__, e), lang="py"))
             return
 
         if asyncio.iscoroutine(result):
@@ -122,7 +121,7 @@ class Dev:
 
         await ctx.send_interactive(self.get_pages(result), box_lang="py")
 
-    @commands.command(name='eval')
+    @commands.command(name="eval")
     @checks.is_owner()
     async def _eval(self, ctx, *, body: str):
         """Execute asynchronous code.
@@ -145,28 +144,28 @@ class Dev:
             _        - The result of the last dev command.
         """
         env = {
-            'bot': ctx.bot,
-            'ctx': ctx,
-            'channel': ctx.channel,
-            'author': ctx.author,
-            'guild': ctx.guild,
-            'message': ctx.message,
-            'discord': discord,
-            'commands': commands,
-            '_': self._last_result
+            "bot": ctx.bot,
+            "ctx": ctx,
+            "channel": ctx.channel,
+            "author": ctx.author,
+            "guild": ctx.guild,
+            "message": ctx.message,
+            "discord": discord,
+            "commands": commands,
+            "_": self._last_result,
         }
 
         body = self.cleanup_code(body)
         stdout = io.StringIO()
 
-        to_compile = 'async def func():\n%s' % textwrap.indent(body, '  ')
+        to_compile = "async def func():\n%s" % textwrap.indent(body, "  ")
 
         try:
             exec(to_compile, env)
         except SyntaxError as e:
             return await ctx.send(self.get_syntax_error(e))
 
-        func = env['func']
+        func = env["func"]
         result = None
         try:
             with redirect_stdout(stdout):
@@ -199,43 +198,43 @@ class Dev:
         async function.
         """
         variables = {
-            'ctx': ctx,
-            'bot': ctx.bot,
-            'message': ctx.message,
-            'guild': ctx.guild,
-            'channel': ctx.channel,
-            'author': ctx.author,
-            '_': None,
+            "ctx": ctx,
+            "bot": ctx.bot,
+            "message": ctx.message,
+            "guild": ctx.guild,
+            "channel": ctx.channel,
+            "author": ctx.author,
+            "_": None,
         }
 
         if ctx.channel.id in self.sessions:
-            await ctx.send(_('Already running a REPL session in this channel. '
-                             'Exit it with `quit`.'))
+            await ctx.send(
+                _("Already running a REPL session in this channel. " "Exit it with `quit`.")
+            )
             return
 
         self.sessions.add(ctx.channel.id)
-        await ctx.send(_('Enter code to execute or evaluate.'
-                         ' `exit()` or `quit` to exit.'))
+        await ctx.send(_("Enter code to execute or evaluate." " `exit()` or `quit` to exit."))
 
-        msg_check = lambda m: (m.author == ctx.author and
-                               m.channel == ctx.channel and
-                               m.content.startswith('`'))
+        msg_check = lambda m: (
+            m.author == ctx.author and m.channel == ctx.channel and m.content.startswith("`")
+        )
 
         while True:
             response = await ctx.bot.wait_for("message", check=msg_check)
 
             cleaned = self.cleanup_code(response.content)
 
-            if cleaned in ('quit', 'exit', 'exit()'):
-                await ctx.send('Exiting.')
+            if cleaned in ("quit", "exit", "exit()"):
+                await ctx.send("Exiting.")
                 self.sessions.remove(ctx.channel.id)
                 return
 
             executor = exec
-            if cleaned.count('\n') == 0:
+            if cleaned.count("\n") == 0:
                 # single statement, potentially 'eval'
                 try:
-                    code = compile(cleaned, '<repl session>', 'eval')
+                    code = compile(cleaned, "<repl session>", "eval")
                 except SyntaxError:
                     pass
                 else:
@@ -243,12 +242,12 @@ class Dev:
 
             if executor is exec:
                 try:
-                    code = compile(cleaned, '<repl session>', 'exec')
+                    code = compile(cleaned, "<repl session>", "exec")
                 except SyntaxError as e:
                     await ctx.send(self.get_syntax_error(e))
                     continue
 
-            variables['message'] = response
+            variables["message"] = response
 
             stdout = io.StringIO()
 
@@ -266,7 +265,7 @@ class Dev:
                 value = stdout.getvalue()
                 if result is not None:
                     msg = "{}{}".format(value, result)
-                    variables['_'] = result
+                    variables["_"] = result
                 elif value:
                     msg = "{}".format(value)
 
@@ -277,7 +276,7 @@ class Dev:
             except discord.Forbidden:
                 pass
             except discord.HTTPException as e:
-                await ctx.send(_('Unexpected error: `{}`').format(e))
+                await ctx.send(_("Unexpected error: `{}`").format(e))
 
     @commands.command()
     @checks.is_owner()
@@ -290,7 +289,7 @@ class Dev:
         msg.author = user
         msg.content = ctx.prefix + command
 
-        ctx.bot.dispatch('message', msg)
+        ctx.bot.dispatch("message", msg)
 
     @commands.command(name="mockmsg")
     @checks.is_owner()
