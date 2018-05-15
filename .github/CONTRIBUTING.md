@@ -28,14 +28,60 @@ Unsure of how to get started contributing to Red? Please take a look at the Issu
 At this point you're ready to start making changes. Feel free to ask for help; everyone was a beginner at some point!
 
 # Getting Started
+
+Red's repository is configured to follow a particular development workflow, using various reputable tools. We kindly ask that you stick to this workflow when contributing to Red, by following the guides below. This will help you to easily produce quality code, identify errors early, and streamline the code review process.
+
+### Setting up your development environment
+The following requirements must be installed prior to setting up:
+ - Python 3.6
+ - git
+ - pip
+ - pipenv
+ 
+If you're not on Windows, you can optionally install [pyenv](https://github.com/pyenv/pyenv), which will help you run tests for different python versions.
+
+1. Fork and clone the repository to a directory on your local machine.
+2. Open a command line in that directory and execute the following commands:
+    ```bash
+    pip install pipenv
+    pipenv install --dev
+    ```
+    Red, it's dependencies, and all required development tools, are now installed to a virtual environment. Red is installed in editable mode, meaning that edits you make to the source code in the repository will be reflected when you run Red.
+3. Activate the new virtual environment with the command:
+    ```bash
+    pipenv shell
+    ```
+    From here onwards, we will assume you are executing commands from within this shell. Each time you open a new command line, you should execute this command first.
+ 
+ Note: If you haven't used `pipenv` before but are comfortable with virtualenvs, just run `pip install pipenv` in the virtualenv you're already using and invoke the command above from the cloned Red repo. It will do the correct thing.
+
 ### Testing
-We've recently started adding unit-testing into Red. All current tests can be found in the `tests/` directory at the root level of the repository. You will need `py.test` installed in order to run them (which is already in `requirement.txt`). Tests can be run by simply calling `pytest` once you've `cd`'d into the Red repository folder.
+We've recently started using [tox](https://github.com/tox-dev/tox) to run all of our tests. It's extremely simple to use, and if you followed the previous section correctly, it is already installed to your virtual environment.
+
+Currently, tox does the following, creating its own virtual environments for each stage:
+- Runs all of our unit tests with [pytest](https://github.com/pytest-dev/pytest) on both python 3.5 and 3.6 (test envronment `py35` and `py36` respectively)
+- Ensures documentation builds without warnings, and all hyperlinks have a valid destination (test envronment `docs`)
+- Ensures that the code meets our style guide with [black](https://github.com/ambv/black) (test envronment `style`)
+
+To run all of these tests, just run the command `tox` in the project directory.
+
+To run a subset of these tests, use the command `tox -e <env>`, where `<env>` is the test environment you want tox to run. The test environments are noted in the dot points above.
+
+Your PR will not be merged until all of these tests pass.
+
+### Style
+Our style checker of choice, [black](https://github.com/ambv/black), actually happens to be an auto-formatter. The checking functionality simply detects whether or not it would try to reformat something in your code, should you run the formatter on it. For this reason, we recommend using this tool as a formatter, regardless of any disagreements you might have with the style it enforces.
+
+Use the command `black --help` to see how to use this tool. The full style guide is explained in detail on [black's GitHub repository](https://github.com/ambv/black).
+
+Note: Python 3.6+ is required to install and run black. If you installed your development environment with Python 3.5, black will not be installed.
 
 ### To contribute changes
-1. Create your own fork of the Red repository.
-2. Make the changes in your own fork.
+
+1. Create a new branch on your fork
+2. Make the changes
 3. If you like the changes and think the main Red project could use it:
-    * Ensure your code follows (generally) the PEP8 Python style guide
+    * Run tests with `tox` to ensure your code is up to scratch
     * Create a Pull Request on GitHub with your changes
 
 ### How To Report A Bug

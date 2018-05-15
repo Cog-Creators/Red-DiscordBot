@@ -9,7 +9,7 @@
 .. image:: https://d322cqt584bo4o.cloudfront.net/red-discordbot/localized.svg
     :target: https://crowdin.com/project/red-discordbot
     :alt: Crowdin
-    
+
 .. image:: https://img.shields.io/badge/Support-Red!-orange.svg
     :target: https://www.patreon.com/Red_Devs
     :alt: Patreon
@@ -45,3 +45,8 @@ To install all requirements for docs and tests::
 
 For the latest git build, replace ``Red-DiscordBot`` in the above commands with
 ``git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop``.
+
+Contributing to Red
+^^^^^^^^^^^^^^^^^^^
+
+See `CONTRIBUTING <.github/CONTRIBUTING.md>` for more information.
