@@ -122,9 +122,7 @@ class Downloader:
         # noinspection PyTypeChecker
         return tuple(failed)
 
-    async def _reinstall_libraries(
-        self, cogs: Tuple[Installable]
-    ) -> Tuple[Installable]:
+    async def _reinstall_libraries(self, cogs: Tuple[Installable]) -> Tuple[Installable]:
         """
         Reinstalls any shared libraries from the repos of cogs that
             were updated.
@@ -227,13 +225,9 @@ class Downloader:
         """
         try:
             # noinspection PyTypeChecker
-            repo = await self._repo_manager.add_repo(
-                name=name, url=repo_url, branch=branch
-            )
+            repo = await self._repo_manager.add_repo(name=name, url=repo_url, branch=branch)
         except ExistingGitRepo:
-            await ctx.send(
-                _("That git repo has already been added under another name.")
-            )
+            await ctx.send(_("That git repo has already been added under another name."))
         except CloningError:
             await ctx.send(_("Something went wrong during the cloning process."))
             log.exception(_("Something went wrong during the cloning process."))
@@ -249,9 +243,7 @@ class Downloader:
         """
         await self._repo_manager.delete_repo(repo_name.name)
 
-        await ctx.send(
-            _("The repo `{}` has been deleted successfully.").format(repo_name.name)
-        )
+        await ctx.send(_("The repo `{}` has been deleted successfully.").format(repo_name.name))
 
     @repo.command(name="list")
     async def _repo_list(self, ctx):
@@ -279,14 +271,10 @@ class Downloader:
         """
         Installs a cog from the given repo.
         """
-        cog = discord.utils.get(
-            repo_name.available_cogs, name=cog_name
-        )  # type: Installable
+        cog = discord.utils.get(repo_name.available_cogs, name=cog_name)  # type: Installable
         if cog is None:
             await ctx.send(
-                _(
-                    "Error, there is no cog by the name of" " `{}` in the `{}` repo."
-                ).format(
+                _("Error, there is no cog by the name of" " `{}` in the `{}` repo.").format(
                     cog_name, repo_name.name
                 )
             )
@@ -360,9 +348,7 @@ class Downloader:
                 # Thrown if the repo no longer exists
                 updated = {}
 
-        updated_cogs = set(
-            cog for repo in updated.keys() for cog in repo.available_cogs
-        )
+        updated_cogs = set(cog for repo in updated.keys() for cog in repo.available_cogs)
         installed_and_updated = updated_cogs & installed_cogs
 
         # noinspection PyTypeChecker
@@ -396,9 +382,7 @@ class Downloader:
         cog = discord.utils.get(repo_name.available_cogs, name=cog_name)
         if cog is None:
             await ctx.send(
-                _("There is no cog `{}` in the repo `{}`").format(
-                    cog_name, repo_name.name
-                )
+                _("There is no cog `{}` in the repo `{}`").format(cog_name, repo_name.name)
             )
             return
 
