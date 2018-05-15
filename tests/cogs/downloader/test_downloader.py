@@ -39,13 +39,13 @@ def repo_manager(tmpdir_factory, config):
 
 @pytest.fixture
 def repo(tmpdir):
-    repo_folder = Path(str(tmpdir)) / "repos" / "squid"
+    repo_folder = Path(str(tmpdir)) / "repos" / "testcogs"
     repo_folder.mkdir(parents=True, exist_ok=True)
 
     return Repo(
-        url="https://github.com/tekulvw/Squid-Plugins",
-        name="squid",
-        branch="rewrite_cogs",
+        url="https://github.com/bobloy/V3-testcogs",
+        name="test",
+        branch="master",
         folder_path=repo_folder,
     )
 
@@ -69,13 +69,13 @@ def bot_repo(event_loop):
 
 
 def test_existing_git_repo(tmpdir):
-    repo_folder = Path(str(tmpdir)) / "repos" / "squid" / ".git"
+    repo_folder = Path(str(tmpdir)) / "repos" / "testcogs" / ".git"
     repo_folder.mkdir(parents=True, exist_ok=True)
 
     r = Repo(
-        url="https://github.com/tekulvw/Squid-Plugins",
-        name="squid",
-        branch="rewrite_cogs",
+        url="https://github.com/bobloy/V3-testcogs",
+        name="testcogs",
+        branch="master",
         folder_path=repo_folder.parent,
     )
 
@@ -94,20 +94,20 @@ async def test_clone_repo(repo_norun, capsys):
     assert clone_cmd[0] == "git"
     assert clone_cmd[1] == "clone"
     assert clone_cmd[2] == "-b"
-    assert clone_cmd[3] == "rewrite_cogs"
+    assert clone_cmd[3] == "master"
     assert clone_cmd[4] == repo_norun.url
-    assert "repos/squid" in clone_cmd[5]
+    assert "repos/testcogs" in clone_cmd[5] or "repos\\\\testcogs" in clone_cmd[5]
 
 
 @pytest.mark.asyncio
 async def test_add_repo(monkeypatch, repo_manager):
     monkeypatch.setattr("redbot.cogs.downloader.repo_manager.Repo._run", fake_run_noprint)
 
-    squid = await repo_manager.add_repo(
-        url="https://github.com/tekulvw/Squid-Plugins", name="squid", branch="rewrite_cogs"
+    testcogs = await repo_manager.add_repo(
+        url="https://github.com/bobloy/V3-testcogs", name="testcogs", branch="master"
     )
 
-    assert squid.available_modules == []
+    assert testcogs.available_modules == []
 
 
 @pytest.mark.asyncio
