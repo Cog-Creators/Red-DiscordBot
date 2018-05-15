@@ -1660,7 +1660,7 @@ class Audio:
     @llsetup.command()
     async def wsport(self, ctx, ws_port):
         """Set the lavalink websocket server port."""
-        await self.config.rest_port.set(ws_port)
+        await self.config.ws_port.set(ws_port)
         if await self._check_external():
             embed = discord.Embed(
                 colour=ctx.guild.me.top_role.colour,
