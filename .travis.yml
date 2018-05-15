@@ -14,26 +14,23 @@ install:
 script:
 - tox
 env:
-  - TOXENV=py
-    PIPENV_IGNORE_VIRTUALENVS=1
-  - TOXENV=docs
-    PIPENV_IGNORE_VIRTUALENVS=1
-  - TOXENV=style
-    PIPENV_IGNORE_VIRTUALENVS=1
+- TOXENV=py
+  PIPENV_IGNORE_VIRTUALENVS=1
 
-matrix:
-  exclude:
-    - python: 3.5.2
+jobs:
+  include:
+    - stage: Docs build test
+      python: 3.6.5
       env:
       - TOXENV=docs
         PIPENV_IGNORE_VIRTUALENVS=1
-    - python: 3.5.2
+
+    - stage: Style check
+      python: 3.6.5
       env:
       - TOXENV=style
         PIPENV_IGNORE_VIRTUALENVS=1
 
-jobs:
-  include:
     - stage: PyPi Deployment
       if: tag IS present
       python: 3.5.3
