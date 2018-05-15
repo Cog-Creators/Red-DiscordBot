@@ -1,27 +1,30 @@
-dist: trusty
+dist: xenial
 language: python
 notifications:
   email: false
 
 python:
 - 3.6.5
-install:
-- pip install --upgrade pip pipenv
-- pipenv install --skip-lock --dev
-script:
-- pipenv run tox
+- 3.5.2
 env:
   global:
     PIPENV_IGNORE_VIRTUALENVS=1
   matrix:
-    - TOXENV=py
-    - TOXENV=docs
-    - TOXENV=style
+    TOXENV=py
 
 matrix:
   include:
-    - python: 3.5.2
-      env: TOXENV=py
+    - python: 3.6.5
+      env: TOXENV=docs
+    - python: 3.6.5
+      env: TOXENV=style
+
+install:
+- pip install --upgrade pip pipenv
+- pipenv install --skip-lock --dev
+
+script:
+- pipenv run tox
 
 jobs:
   include:
