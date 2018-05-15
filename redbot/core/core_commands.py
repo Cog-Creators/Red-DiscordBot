@@ -2,6 +2,7 @@ import asyncio
 import datetime
 import importlib
 import itertools
+import json
 import logging
 import os
 import sys
@@ -895,6 +896,15 @@ class Core:
             
             to_backup = []
             exclusions = ["__pycache__", "Lavalink.jar", os.path.join("Downloader", "lib"), os.path.join("CogManager", "cogs"), os.path.join("RepoManager", "repos")]
+            downloader_cog = ctx.bot.get_cog("Downloader")
+            if downloader_cog and hasattr(downloader_cog, "_repo_manager"):
+                repo_output = []
+                repo_mgr = downloader_cog._repo_manager
+                for _, repo in repo_mgr._repos:
+                    repo_output.append({{"url": repo.url, "name": repo.name, "branch": repo.branch}})
+                repo_filename = data_dir / "cogs" / "RepoManager" / "repos.json"
+                with open(str(repo_filename), "w") as f:
+                    f.write(json.dumps(repo_output, indent=4))
             for f in data_dir.glob("**/*"):
                 if not any(ex in str(f) for ex in exclusions):
                     to_backup.append(f)
