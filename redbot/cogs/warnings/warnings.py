@@ -22,7 +22,7 @@ _ = Translator("Warnings", __file__)
 class Warnings:
     """A warning system for Red"""
 
-    default_guild = {"actions": [], "reasons": {}, "allow_custom_reasons": False}
+    default_guild = {"actions": [], "reasons": {}, "allow_custom_reasons": False, "semd_dm": False}
 
     default_member = {"total_points": 0, "status": "", "warnings": {}}
 
