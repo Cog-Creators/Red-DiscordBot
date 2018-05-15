@@ -46,7 +46,7 @@ If you're not on Windows, you can optionally install [pyenv](https://github.com/
     pip install pipenv
     pipenv install --dev
     ```
-    Red, it's dependencies, and all required development tools, are now installed to a virtual environment. Red is installed in editable mode, meaning that edits you make to the source code in the repository will be reflected when you run Red.
+    Red, its dependencies, and all required development tools, are now installed to a virtual environment. Red is installed in editable mode, meaning that edits you make to the source code in the repository will be reflected when you run Red.
 3. Activate the new virtual environment with the command:
     ```bash
     pipenv shell
