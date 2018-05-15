@@ -32,10 +32,12 @@ __all__ = ["Core"]
 
 log = logging.getLogger("red")
 
-OWNER_DISCLAIMER = ("⚠ **Only** the person who is hosting Red should be "
-                    "owner. **This has SERIOUS security implications. The "
-                    "owner can access any data that is present on the host "
-                    "system.** ⚠")
+OWNER_DISCLAIMER = (
+    "⚠ **Only** the person who is hosting Red should be "
+    "owner. **This has SERIOUS security implications. The "
+    "owner can access any data that is present on the host "
+    "system.** ⚠"
+)
 
 
 _ = i18n.Translator("Core", __file__)
@@ -44,12 +46,13 @@ _ = i18n.Translator("Core", __file__)
 @i18n.cog_i18n(_)
 class Core:
     """Commands related to core functions"""
+
     def __init__(self, bot):
         self.bot = bot  # type: Red
 
-        rpc.add_method('core', self.rpc_load)
-        rpc.add_method('core', self.rpc_unload)
-        rpc.add_method('core', self.rpc_reload)
+        rpc.add_method("core", self.rpc_load)
+        rpc.add_method("core", self.rpc_unload)
+        rpc.add_method("core", self.rpc_reload)
 
     @commands.command(hidden=True)
     async def ping(self, ctx):
@@ -76,15 +79,13 @@ class Core:
         since = datetime.datetime(2016, 1, 2, 0, 0)
         days_since = (datetime.datetime.utcnow() - since).days
         dpy_version = "[{}]({})".format(discord.__version__, dpy_repo)
-        python_version = "[{}.{}.{}]({})".format(
-            *sys.version_info[:3], python_url
-        )
+        python_version = "[{}.{}.{}]({})".format(*sys.version_info[:3], python_url)
         red_version = "[{}]({})".format(__version__, red_pypi)
         app_info = await self.bot.application_info()
         owner = app_info.owner
 
         async with aiohttp.ClientSession() as session:
-            async with session.get('{}/json'.format(red_pypi)) as r:
+            async with session.get("{}/json".format(red_pypi)) as r:
                 data = await r.json()
         outdated = StrictVersion(data["info"]["version"]) > StrictVersion(__version__)
         about = (
@@ -93,7 +94,8 @@ class Core:
             "Red is backed by a passionate community who contributes and "
             "creates content for everyone to enjoy. [Join us today]({}) "
             "and help us improve!\n\n"
-            "".format(red_repo, author_repo, org_repo, support_server_url))
+            "".format(red_repo, author_repo, org_repo, support_server_url)
+        )
 
         embed = discord.Embed(color=discord.Color.red())
         embed.add_field(name="Instance owned by", value=str(owner))
@@ -101,14 +103,14 @@ class Core:
         embed.add_field(name="discord.py", value=dpy_version)
         embed.add_field(name="Red version", value=red_version)
         if outdated:
-            embed.add_field(name="Outdated", value="Yes, {} is available".format(
-                    data["info"]["version"]
-                )
+            embed.add_field(
+                name="Outdated", value="Yes, {} is available".format(data["info"]["version"])
             )
         embed.add_field(name="About Red", value=about, inline=False)
 
-        embed.set_footer(text="Bringing joy since 02 Jan 2016 (over "
-                         "{} days ago!)".format(days_since))
+        embed.set_footer(
+            text="Bringing joy since 02 Jan 2016 (over " "{} days ago!)".format(days_since)
+        )
         try:
             await ctx.send(embed=embed)
         except discord.HTTPException:
@@ -119,11 +121,7 @@ class Core:
         """Shows Red's uptime"""
         since = ctx.bot.uptime.strftime("%Y-%m-%d %H:%M:%S")
         passed = self.get_bot_uptime()
-        await ctx.send(
-            "Been up for: **{}** (since {} UTC)".format(
-                passed, since
-            )
-        )
+        await ctx.send("Been up for: **{}** (since {} UTC)".format(passed, since))
 
     def get_bot_uptime(self, *, brief=False):
         # Courtesy of Danny
@@ -135,13 +133,13 @@ class Core:
 
         if not brief:
             if days:
-                fmt = '{d} days, {h} hours, {m} minutes, and {s} seconds'
+                fmt = "{d} days, {h} hours, {m} minutes, and {s} seconds"
             else:
-                fmt = '{h} hours, {m} minutes, and {s} seconds'
+                fmt = "{h} hours, {m} minutes, and {s} seconds"
         else:
-            fmt = '{h}h {m}m {s}s'
+            fmt = "{h}h {m}m {s}s"
             if days:
-                fmt = '{d}d ' + fmt
+                fmt = "{d}d " + fmt
 
         return fmt.format(d=days, h=hours, m=minutes, s=seconds)
 
@@ -180,14 +178,12 @@ class Core:
         current = await self.bot.db.embeds()
         await self.bot.db.embeds.set(not current)
         await ctx.send(
-            _("Embeds are now {} by default.").format(
-                "disabled" if current else "enabled"
-            )
+            _("Embeds are now {} by default.").format("disabled" if current else "enabled")
         )
 
     @embedset.command(name="guild")
     @checks.guildowner_or_permissions(administrator=True)
-    async def embedset_guild(self, ctx: commands.Context, enabled: bool=None):
+    async def embedset_guild(self, ctx: commands.Context, enabled: bool = None):
         """
         Toggle the guild's embed setting.
 
@@ -201,18 +197,14 @@ class Core:
         """
         await self.bot.db.guild(ctx.guild).embeds.set(enabled)
         if enabled is None:
-            await ctx.send(
-                _("Embeds will now fall back to the global setting.")
-            )
+            await ctx.send(_("Embeds will now fall back to the global setting."))
         else:
             await ctx.send(
-                _("Embeds are now {} for this guild.").format(
-                    "enabled" if enabled else "disabled"
-                )
+                _("Embeds are now {} for this guild.").format("enabled" if enabled else "disabled")
             )
 
     @embedset.command(name="user")
-    async def embedset_user(self, ctx: commands.Context, enabled: bool=None):
+    async def embedset_user(self, ctx: commands.Context, enabled: bool = None):
         """
         Toggle the user's embed setting.
 
@@ -226,19 +218,15 @@ class Core:
         """
         await self.bot.db.user(ctx.author).embeds.set(enabled)
         if enabled is None:
-            await ctx.send(
-                _("Embeds will now fall back to the global setting.")
-            )
+            await ctx.send(_("Embeds will now fall back to the global setting."))
         else:
             await ctx.send(
-                _("Embeds are now {} for you.").format(
-                    "enabled" if enabled else "disabled"
-                )
+                _("Embeds are now {} for you.").format("enabled" if enabled else "disabled")
             )
 
     @commands.command()
     @checks.is_owner()
-    async def traceback(self, ctx, public: bool=False):
+    async def traceback(self, ctx, public: bool = False):
         """Sends to the owner the last command exception that has occurred
 
         If public (yes is specified), it will be sent to the chat instead"""
@@ -271,8 +259,7 @@ class Core:
         author = ctx.author
         guild = ctx.guild
 
-        await ctx.send("Are you sure you want me to leave this server?"
-                       " Type yes to confirm.")
+        await ctx.send("Are you sure you want me to leave this server?" " Type yes to confirm.")
 
         def conf_check(m):
             return m.author == author
@@ -289,15 +276,14 @@ class Core:
     async def servers(self, ctx):
         """Lists and allows to leave servers"""
         owner = ctx.author
-        guilds = sorted(list(self.bot.guilds),
-                        key=lambda s: s.name.lower())
+        guilds = sorted(list(self.bot.guilds), key=lambda s: s.name.lower())
         msg = ""
         for i, server in enumerate(guilds, 1):
             msg += "{}: {}\n".format(i, server.name)
 
         msg += "\nTo leave a server, just type its number."
 
-        for page in pagify(msg, ['\n']):
+        for page in pagify(msg, ["\n"]):
             await ctx.send(page)
 
         def msg_check(m):
@@ -347,7 +333,7 @@ class Core:
         loaded_packages = []
         notfound_packages = []
 
-        cognames = [c.strip() for c in cog_name.split(' ')]
+        cognames = [c.strip() for c in cog_name.split(" ")]
         cogspecs = []
 
         for c in cognames:
@@ -356,20 +342,22 @@ class Core:
                 cogspecs.append((spec, c))
             except RuntimeError:
                 notfound_packages.append(inline(c))
-                #await ctx.send(_("No module named '{}' was found in any"
+                # await ctx.send(_("No module named '{}' was found in any"
                 #                 " cog path.").format(c))
 
         if len(cogspecs) > 0:
-            for spec, name  in cogspecs:
+            for spec, name in cogspecs:
                 try:
                     await ctx.bot.load_extension(spec)
                 except Exception as e:
                     log.exception("Package loading failed", exc_info=e)
 
-                    exception_log = ("Exception in command '{}'\n"
-                                     "".format(ctx.command.qualified_name))
-                    exception_log += "".join(traceback.format_exception(type(e),
-                                             e, e.__traceback__))
+                    exception_log = (
+                        "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
+                    )
+                    exception_log += "".join(
+                        traceback.format_exception(type(e), e, e.__traceback__)
+                    )
                     self.bot._last_exception = exception_log
                     failed_packages.append(inline(name))
                 else:
@@ -382,21 +370,23 @@ class Core:
             await ctx.send(_(formed))
 
         if failed_packages:
-            fmt = ("Failed to load package{plural} {packs}. Check your console or "
-                   "logs for details.")
+            fmt = (
+                "Failed to load package{plural} {packs}. Check your console or "
+                "logs for details."
+            )
             formed = self.get_package_strings(failed_packages, fmt)
             await ctx.send(_(formed))
 
         if notfound_packages:
-            fmt = 'The package{plural} {packs} {other} not found in any cog path.'
-            formed = self.get_package_strings(notfound_packages, fmt, ('was', 'were'))
+            fmt = "The package{plural} {packs} {other} not found in any cog path."
+            formed = self.get_package_strings(notfound_packages, fmt, ("was", "were"))
             await ctx.send(_(formed))
 
     @commands.group()
     @checks.is_owner()
     async def unload(self, ctx, *, cog_name: str):
         """Unloads packages"""
-        cognames = [c.strip() for c in cog_name.split(' ')]
+        cognames = [c.strip() for c in cog_name.split(" ")]
         failed_packages = []
         unloaded_packages = []
 
@@ -410,12 +400,12 @@ class Core:
 
         if unloaded_packages:
             fmt = "Package{plural} {packs} {other} unloaded."
-            formed = self.get_package_strings(unloaded_packages, fmt, ('was', 'were'))
+            formed = self.get_package_strings(unloaded_packages, fmt, ("was", "were"))
             await ctx.send(_(formed))
 
         if failed_packages:
             fmt = "The package{plural} {packs} {other} not loaded."
-            formed = self.get_package_strings(failed_packages, fmt, ('is', 'are'))
+            formed = self.get_package_strings(failed_packages, fmt, ("is", "are"))
             await ctx.send(_(formed))
 
     @commands.command(name="reload")
@@ -423,7 +413,7 @@ class Core:
     async def _reload(self, ctx, *, cog_name: str):
         """Reloads packages"""
 
-        cognames = [c.strip() for c in cog_name.split(' ')]
+        cognames = [c.strip() for c in cog_name.split(" ")]
 
         for c in cognames:
             ctx.bot.unload_extension(c)
@@ -448,50 +438,46 @@ class Core:
             except Exception as e:
                 log.exception("Package reloading failed", exc_info=e)
 
-                exception_log = ("Exception in command '{}'\n"
-                                 "".format(ctx.command.qualified_name))
-                exception_log += "".join(traceback.format_exception(type(e),
-                                         e, e.__traceback__))
+                exception_log = (
+                    "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
+                )
+                exception_log += "".join(traceback.format_exception(type(e), e, e.__traceback__))
                 self.bot._last_exception = exception_log
 
                 failed_packages.append(inline(name))
 
         if loaded_packages:
             fmt = "Package{plural} {packs} {other} reloaded."
-            formed = self.get_package_strings(loaded_packages, fmt, ('was', 'were'))
+            formed = self.get_package_strings(loaded_packages, fmt, ("was", "were"))
             await ctx.send(_(formed))
 
         if failed_packages:
-            fmt = ("Failed to reload package{plural} {packs}. Check your "
-                   "logs for details")
+            fmt = ("Failed to reload package{plural} {packs}. Check your " "logs for details")
             formed = self.get_package_strings(failed_packages, fmt)
             await ctx.send(_(formed))
 
         if notfound_packages:
-            fmt = 'The package{plural} {packs} {other} not found in any cog path.'
-            formed = self.get_package_strings(notfound_packages, fmt, ('was', 'were'))
+            fmt = "The package{plural} {packs} {other} not found in any cog path."
+            formed = self.get_package_strings(notfound_packages, fmt, ("was", "were"))
             await ctx.send(_(formed))
 
-    def get_package_strings(self, packages: list, fmt: str, other: tuple=None):
+    def get_package_strings(self, packages: list, fmt: str, other: tuple = None):
         """
         Gets the strings needed for the load, unload and reload commands
         """
         if other is None:
-            other = ('', '')
-        plural = 's' if len(packages) > 1 else ''
-        use_and, other = ('', other[0]) if len(packages) == 1 else (' and ', other[1])
-        packages_string = ', '.join(packages[:-1]) + use_and + packages[-1]
+            other = ("", "")
+        plural = "s" if len(packages) > 1 else ""
+        use_and, other = ("", other[0]) if len(packages) == 1 else (" and ", other[1])
+        packages_string = ", ".join(packages[:-1]) + use_and + packages[-1]
 
-        form = {'plural': plural,
-                'packs' : packages_string,
-                'other' : other
-                }
+        form = {"plural": plural, "packs": packages_string, "other": other}
         final_string = fmt.format(**form)
         return final_string
 
     @commands.command(name="shutdown")
     @checks.is_owner()
-    async def _shutdown(self, ctx, silently: bool=False):
+    async def _shutdown(self, ctx, silently: bool = False):
         """Shuts down the bot"""
         wave = "\N{WAVING HAND SIGN}"
         skin = "\N{EMOJI MODIFIER FITZPATRICK TYPE-3}"
@@ -504,7 +490,7 @@ class Core:
 
     @commands.command(name="restart")
     @checks.is_owner()
-    async def _restart(self, ctx, silently: bool=False):
+    async def _restart(self, ctx, silently: bool = False):
         """Attempts to restart Red
 
         Makes Red quit with exit code 26
@@ -519,7 +505,7 @@ class Core:
 
     def cleanup_and_refresh_modules(self, module_name: str):
         """Interally reloads modules so that changes are detected"""
-        splitted = module_name.split('.')
+        splitted = module_name.split(".")
 
         def maybe_reload(new_name):
             try:
@@ -557,9 +543,11 @@ class Core:
                 "Mod role: {}\n"
                 "Locale: {}"
                 "".format(
-                    ctx.bot.user.name, " ".join(prefixes),
+                    ctx.bot.user.name,
+                    " ".join(prefixes),
                     admin_role.name if admin_role else "Not set",
-                    mod_role.name if mod_role else "Not set", locale
+                    mod_role.name if mod_role else "Not set",
+                    locale,
                 )
             )
             await ctx.send(box(settings))
@@ -592,9 +580,13 @@ class Core:
         try:
             await ctx.bot.user.edit(avatar=data)
         except discord.HTTPException:
-            await ctx.send(_("Failed. Remember that you can edit my avatar "
-                             "up to two times a hour. The URL must be a "
-                             "direct link to a JPG / PNG."))
+            await ctx.send(
+                _(
+                    "Failed. Remember that you can edit my avatar "
+                    "up to two times a hour. The URL must be a "
+                    "direct link to a JPG / PNG."
+                )
+            )
         except discord.InvalidArgument:
             await ctx.send(_("JPG / PNG format only."))
         else:
@@ -603,26 +595,24 @@ class Core:
     @_set.command(name="game")
     @checks.bot_in_a_guild()
     @checks.is_owner()
-    async def _game(self, ctx, *, game: str=None):
+    async def _game(self, ctx, *, game: str = None):
         """Sets Red's playing status"""
 
         if game:
             game = discord.Game(name=game)
         else:
             game = None
-        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 \
-            else discord.Status.online
+        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         await ctx.bot.change_presence(status=status, activity=game)
         await ctx.send(_("Game set."))
 
     @_set.command(name="listening")
     @checks.bot_in_a_guild()
     @checks.is_owner()
-    async def _listening(self, ctx, *, listening: str=None):
+    async def _listening(self, ctx, *, listening: str = None):
         """Sets Red's listening status"""
 
-        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 \
-            else discord.Status.online
+        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if listening:
             activity = discord.Activity(name=listening, type=discord.ActivityType.listening)
         else:
@@ -633,11 +623,10 @@ class Core:
     @_set.command(name="watching")
     @checks.bot_in_a_guild()
     @checks.is_owner()
-    async def _watching(self, ctx, *, watching: str=None):
+    async def _watching(self, ctx, *, watching: str = None):
         """Sets Red's watching status"""
 
-        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 \
-            else discord.Status.online
+        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else discord.Status.online
         if watching:
             activity = discord.Activity(name=watching, type=discord.ActivityType.watching)
         else:
@@ -662,7 +651,7 @@ class Core:
             "online": discord.Status.online,
             "idle": discord.Status.idle,
             "dnd": discord.Status.dnd,
-            "invisible": discord.Status.invisible
+            "invisible": discord.Status.invisible,
         }
 
         game = ctx.bot.guilds[0].me.activity if len(ctx.bot.guilds) > 0 else None
@@ -681,8 +670,7 @@ class Core:
         """Sets Red's streaming status
         Leaving both streamer and stream_title empty will clear it."""
 
-        status = ctx.bot.guilds[0].me.status \
-            if len(ctx.bot.guilds) > 0 else None
+        status = ctx.bot.guilds[0].me.status if len(ctx.bot.guilds) > 0 else None
 
         if stream_title:
             stream_title = stream_title.strip()
@@ -704,23 +692,28 @@ class Core:
         try:
             await ctx.bot.user.edit(username=username)
         except discord.HTTPException:
-            await ctx.send(_("Failed to change name. Remember that you can "
-                             "only do it up to 2 times an hour. Use "
-                             "nicknames if you need frequent changes. "
-                             "`{}set nickname`").format(ctx.prefix))
+            await ctx.send(
+                _(
+                    "Failed to change name. Remember that you can "
+                    "only do it up to 2 times an hour. Use "
+                    "nicknames if you need frequent changes. "
+                    "`{}set nickname`"
+                ).format(
+                    ctx.prefix
+                )
+            )
         else:
             await ctx.send(_("Done."))
 
     @_set.command(name="nickname")
     @checks.admin()
     @commands.guild_only()
-    async def _nickname(self, ctx, *, nickname: str=None):
+    async def _nickname(self, ctx, *, nickname: str = None):
         """Sets Red's nickname"""
         try:
             await ctx.guild.me.edit(nick=nickname)
         except discord.Forbidden:
-            await ctx.send(_("I lack the permissions to change my own "
-                             "nickname."))
+            await ctx.send(_("I lack the permissions to change my own " "nickname."))
         else:
             await ctx.send("Done.")
 
@@ -752,6 +745,7 @@ class Core:
     @commands.cooldown(1, 60 * 10, commands.BucketType.default)
     async def owner(self, ctx):
         """Sets Red's main owner"""
+
         def check(m):
             return m.author == ctx.author and m.channel == ctx.channel
 
@@ -763,20 +757,22 @@ class Core:
 
         for i in range(length):
             token += random.choice(chars)
-        log.info("{0} ({0.id}) requested to be set as owner."
-                 "".format(ctx.author))
+        log.info("{0} ({0.id}) requested to be set as owner." "".format(ctx.author))
         print(_("\nVerification token:"))
         print(token)
 
         await ctx.send(_("Remember:\n") + OWNER_DISCLAIMER)
         await asyncio.sleep(5)
 
-        await ctx.send(_("I have printed a one-time token in the console. "
-                         "Copy and paste it here to confirm you are the owner."))
+        await ctx.send(
+            _(
+                "I have printed a one-time token in the console. "
+                "Copy and paste it here to confirm you are the owner."
+            )
+        )
 
         try:
-            message = await ctx.bot.wait_for("message", check=check,
-                                             timeout=60)
+            message = await ctx.bot.wait_for("message", check=check, timeout=60)
         except asyncio.TimeoutError:
             self.owner.reset_cooldown(ctx)
             await ctx.send(_("The set owner request has timed out."))
@@ -802,10 +798,15 @@ class Core:
                 pass
 
             await ctx.send(
-                _("Please use that command in DM. Since users probably saw your token,"
-                  " it is recommended to reset it right now. Go to the following link and"
-                  " select `Reveal Token` and `Generate a new token?`."
-                  "\n\nhttps://discordapp.com/developers/applications/me/{}").format(self.bot.user.id))
+                _(
+                    "Please use that command in DM. Since users probably saw your token,"
+                    " it is recommended to reset it right now. Go to the following link and"
+                    " select `Reveal Token` and `Generate a new token?`."
+                    "\n\nhttps://discordapp.com/developers/applications/me/{}"
+                ).format(
+                    self.bot.user.id
+                )
+            )
             return
 
         await ctx.bot.db.token.set(token)
@@ -858,9 +859,7 @@ class Core:
             locale_list = sorted(set([loc.stem for loc in list(red_path.glob("**/*.po"))]))
             pages = pagify("\n".join(locale_list))
 
-        await ctx.send_interactive(
-            pages, box_lang="Available Locales:"
-        )
+        await ctx.send_interactive(pages, box_lang="Available Locales:")
 
     @commands.command()
     @checks.is_owner()
@@ -868,9 +867,11 @@ class Core:
         """Creates a backup of all data for the instance."""
         from redbot.core.data_manager import basic_config, instance_name
         from redbot.core.drivers.red_json import JSON
+
         data_dir = Path(basic_config["DATA_PATH"])
         if basic_config["STORAGE_TYPE"] == "MongoDB":
             from redbot.core.drivers.red_mongo import Mongo
+
             m = Mongo("Core", **basic_config["STORAGE_DETAILS"])
             db = m.db
             collection_names = await db.collection_names(include_system_collections=False)
@@ -895,9 +896,9 @@ class Core:
             os.chdir(str(data_dir.parent))
             with tarfile.open(str(backup_file), "w:gz") as tar:
                 tar.add(data_dir.stem)
-            await ctx.send(_("A backup has been made of this instance. It is at {}.").format(
-                backup_file
-            ))
+            await ctx.send(
+                _("A backup has been made of this instance. It is at {}.").format(backup_file)
+            )
         else:
             await ctx.send(_("That directory doesn't seem to exist..."))
 
@@ -906,8 +907,7 @@ class Core:
     async def contact(self, ctx, *, message: str):
         """Sends a message to the owner"""
         guild = ctx.message.guild
-        owner = discord.utils.get(ctx.bot.get_all_members(),
-                                  id=ctx.bot.owner_id)
+        owner = discord.utils.get(ctx.bot.get_all_members(), id=ctx.bot.owner_id)
         author = ctx.message.author
         footer = _("User ID: {}").format(author.id)
 
@@ -920,12 +920,11 @@ class Core:
         # We need to grab the DM command prefix (global)
         # Since it can also be set through cli flags, bot.db is not a reliable
         # source. So we'll just mock a DM message instead.
-        fake_message = namedtuple('Message', 'guild')
+        fake_message = namedtuple("Message", "guild")
         prefixes = await ctx.bot.command_prefix(ctx.bot, fake_message(guild=None))
         prefix = prefixes[0]
 
-        content = _("Use `{}dm {} <text>` to reply to this user"
-                    "").format(prefix, author.id)
+        content = _("Use `{}dm {} <text>` to reply to this user" "").format(prefix, author.id)
 
         description = _("Sent by {} {}").format(author, source)
 
@@ -945,21 +944,21 @@ class Core:
             try:
                 await owner.send(content, embed=e)
             except discord.InvalidArgument:
-                await ctx.send(_("I cannot send your message, I'm unable to find "
-                                 "my owner... *sigh*"))
+                await ctx.send(
+                    _("I cannot send your message, I'm unable to find " "my owner... *sigh*")
+                )
             except:
                 await ctx.send(_("I'm unable to deliver your message. Sorry."))
             else:
                 await ctx.send(_("Your message has been sent."))
         else:
-            msg_text = (
-                "{}\nMessage:\n\n{}\n{}".format(description, message, footer)
-            )
+            msg_text = ("{}\nMessage:\n\n{}\n{}".format(description, message, footer))
             try:
                 await owner.send("{}\n{}".format(content, box(msg_text)))
             except discord.InvalidArgument:
-                await ctx.send(_("I cannot send your message, I'm unable to find "
-                                 "my owner... *sigh*"))
+                await ctx.send(
+                    _("I cannot send your message, I'm unable to find " "my owner... *sigh*")
+                )
             except:
                 await ctx.send(_("I'm unable to deliver your message. Sorry."))
             else:
@@ -974,15 +973,18 @@ class Core:
         To get a user id enable 'developer mode' in Discord's
         settings, 'appearance' tab. Then right click a user
         and copy their id"""
-        destination = discord.utils.get(ctx.bot.get_all_members(),
-                                        id=user_id)
+        destination = discord.utils.get(ctx.bot.get_all_members(), id=user_id)
         if destination is None:
-            await ctx.send(_("Invalid ID or user not found. You can only "
-                             "send messages to people I share a server "
-                             "with."))
+            await ctx.send(
+                _(
+                    "Invalid ID or user not found. You can only "
+                    "send messages to people I share a server "
+                    "with."
+                )
+            )
             return
 
-        fake_message = namedtuple('Message', 'guild')
+        fake_message = namedtuple("Message", "guild")
         prefixes = await ctx.bot.command_prefix(ctx.bot, fake_message(guild=None))
         prefix = prefixes[0]
         description = _("Owner of {}").format(ctx.bot.user)
@@ -999,8 +1001,9 @@ class Core:
             try:
                 await destination.send(embed=e)
             except:
-                await ctx.send(_("Sorry, I couldn't deliver your message "
-                                 "to {}").format(destination))
+                await ctx.send(
+                    _("Sorry, I couldn't deliver your message " "to {}").format(destination)
+                )
             else:
                 await ctx.send(_("Message delivered to {}").format(destination))
         else:
@@ -1008,8 +1011,9 @@ class Core:
             try:
                 await destination.send("{}\n{}".format(box(response), content))
             except:
-                await ctx.send(_("Sorry, I couldn't deliver your message "
-                                 "to {}").format(destination))
+                await ctx.send(
+                    _("Sorry, I couldn't deliver your message " "to {}").format(destination)
+                )
             else:
                 await ctx.send(_("Message delivered to {}").format(destination))
 
@@ -1022,7 +1026,7 @@ class Core:
         if ctx.invoked_subcommand is None:
             await ctx.send_help()
 
-    @whitelist.command(name='add')
+    @whitelist.command(name="add")
     async def whitelist_add(self, ctx, user: discord.User):
         """
         Adds a user to the whitelist.
@@ -1033,7 +1037,7 @@ class Core:
 
         await ctx.send(_("User added to whitelist."))
 
-    @whitelist.command(name='list')
+    @whitelist.command(name="list")
     async def whitelist_list(self, ctx):
         """
         Lists whitelisted users.
@@ -1047,7 +1051,7 @@ class Core:
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @whitelist.command(name='remove')
+    @whitelist.command(name="remove")
     async def whitelist_remove(self, ctx, user: discord.User):
         """
         Removes user from whitelist.
@@ -1064,7 +1068,7 @@ class Core:
         else:
             await ctx.send(_("User was not in the whitelist."))
 
-    @whitelist.command(name='clear')
+    @whitelist.command(name="clear")
     async def whitelist_clear(self, ctx):
         """
         Clears the whitelist.
@@ -1081,7 +1085,7 @@ class Core:
         if ctx.invoked_subcommand is None:
             await ctx.send_help()
 
-    @blacklist.command(name='add')
+    @blacklist.command(name="add")
     async def blacklist_add(self, ctx, user: discord.User):
         """
         Adds a user to the blacklist.
@@ -1096,7 +1100,7 @@ class Core:
 
         await ctx.send(_("User added to blacklist."))
 
-    @blacklist.command(name='list')
+    @blacklist.command(name="list")
     async def blacklist_list(self, ctx):
         """
         Lists blacklisted users.
@@ -1110,7 +1114,7 @@ class Core:
         for page in pagify(msg):
             await ctx.send(box(page))
 
-    @blacklist.command(name='remove')
+    @blacklist.command(name="remove")
     async def blacklist_remove(self, ctx, user: discord.User):
         """
         Removes user from blacklist.
@@ -1127,7 +1131,7 @@ class Core:
         else:
             await ctx.send(_("User was not in the blacklist."))
 
-    @blacklist.command(name='clear')
+    @blacklist.command(name="clear")
     async def blacklist_clear(self, ctx):
         """
         Clears the blacklist.

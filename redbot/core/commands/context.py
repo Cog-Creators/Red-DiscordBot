@@ -59,10 +59,9 @@ class Context(commands.Context):
         else:
             return True
 
-    async def send_interactive(self,
-                               messages: Iterable[str],
-                               box_lang: str=None,
-                               timeout: int=15) -> List[discord.Message]:
+    async def send_interactive(
+        self, messages: Iterable[str], box_lang: str = None, timeout: int = 15
+    ) -> List[discord.Message]:
         """Send multiple messages interactively.
 
         The user will be prompted for whether or not they would like to view
@@ -84,9 +83,9 @@ class Context(commands.Context):
         messages = tuple(messages)
         ret = []
 
-        more_check = lambda m: (m.author == self.author and
-                                m.channel == self.channel and
-                                m.content.lower() == "more")
+        more_check = lambda m: (
+            m.author == self.author and m.channel == self.channel and m.content.lower() == "more"
+        )
 
         for idx, page in enumerate(messages, 1):
             if box_lang is None:
@@ -105,10 +104,10 @@ class Context(commands.Context):
                 query = await self.send(
                     "There {} still {} message{} remaining. "
                     "Type `more` to continue."
-                    "".format(is_are, n_remaining, plural))
+                    "".format(is_are, n_remaining, plural)
+                )
                 try:
-                    resp = await self.bot.wait_for(
-                        'message', check=more_check, timeout=timeout)
+                    resp = await self.bot.wait_for("message", check=more_check, timeout=timeout)
                 except asyncio.TimeoutError:
                     await query.delete()
                     break
@@ -134,9 +133,7 @@ class Context(commands.Context):
         """
         if self.guild and not self.channel.permissions_for(self.guild.me).embed_links:
             return False
-        return await self.bot.embed_requested(
-            self.channel, self.author, command=self.command
-        )
+        return await self.bot.embed_requested(self.channel, self.author, command=self.command)
 
     async def maybe_send_embed(self, message: str) -> discord.Message:
         """

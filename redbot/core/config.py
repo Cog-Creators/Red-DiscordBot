@@ -38,9 +38,11 @@ class _ValueCtxManager:
     async def __aenter__(self):
         self.raw_value = await self
         if not isinstance(self.raw_value, (list, dict)):
-            raise TypeError("Type of retrieved value must be mutable (i.e. "
-                            "list or dict) in order to use a config value as "
-                            "a context manager.")
+            raise TypeError(
+                "Type of retrieved value must be mutable (i.e. "
+                "list or dict) in order to use a config value as "
+                "a context manager."
+            )
         return self.raw_value
 
     async def __aexit__(self, *exc_info):
@@ -61,6 +63,7 @@ class Value:
         A reference to `Config.driver`.
 
     """
+
     def __init__(self, identifiers: Tuple[str], default_value, driver):
         self._identifiers = identifiers
         self.default = default_value
@@ -168,10 +171,10 @@ class Group(Value):
         A reference to `Config.driver`.
 
     """
-    def __init__(self, identifiers: Tuple[str],
-                 defaults: dict,
-                 driver,
-                 force_registration: bool=False):
+
+    def __init__(
+        self, identifiers: Tuple[str], defaults: dict, driver, force_registration: bool = False
+    ):
         self._defaults = defaults
         self.force_registration = force_registration
         self.driver = driver
@@ -209,31 +212,22 @@ class Group(Value):
         """
         is_group = self.is_group(item)
         is_value = not is_group and self.is_value(item)
-        new_identifiers = self.identifiers + (item, )
+        new_identifiers = self.identifiers + (item,)
         if is_group:
             return Group(
                 identifiers=new_identifiers,
                 defaults=self._defaults[item],
                 driver=self.driver,
-                force_registration=self.force_registration
+                force_registration=self.force_registration,
             )
         elif is_value:
             return Value(
-                identifiers=new_identifiers,
-                default_value=self._defaults[item],
-                driver=self.driver
+                identifiers=new_identifiers, default_value=self._defaults[item], driver=self.driver
             )
         elif self.force_registration:
-            raise AttributeError(
-                "'{}' is not a valid registered Group "
-                "or value.".format(item)
-            )
+            raise AttributeError("'{}' is not a valid registered Group " "or value.".format(item))
         else:
-            return Value(
-                identifiers=new_identifiers,
-                default_value=None,
-                driver=self.driver
-            )
+            return Value(identifiers=new_identifiers, default_value=None, driver=self.driver)
 
     def is_group(self, item: str) -> bool:
         """A helper method for `__getattr__`. Most developers will have no need
@@ -385,9 +379,7 @@ class Group(Value):
 
     async def set(self, value):
         if not isinstance(value, dict):
-            raise ValueError(
-                "You may only set the value of a group to be a dict."
-            )
+            raise ValueError("You may only set the value of a group to be a dict.")
         await super().set(value)
 
     async def set_raw(self, *nested_path: str, value):
@@ -456,10 +448,14 @@ class Config:
     USER = "USER"
     MEMBER = "MEMBER"
 
-    def __init__(self, cog_name: str, unique_identifier: str,
-                 driver: "BaseDriver",
-                 force_registration: bool=False,
-                 defaults: dict=None):
+    def __init__(
+        self,
+        cog_name: str,
+        unique_identifier: str,
+        driver: "BaseDriver",
+        force_registration: bool = False,
+        defaults: dict = None,
+    ):
         self.cog_name = cog_name
         self.unique_identifier = unique_identifier
 
@@ -472,8 +468,7 @@ class Config:
         return deepcopy(self._defaults)
 
     @classmethod
-    def get_conf(cls, cog_instance, identifier: int,
-                 force_registration=False, cog_name=None):
+    def get_conf(cls, cog_instance, identifier: int, force_registration=False, cog_name=None):
         """Get a Config instance for your cog.
 
         .. warning::
@@ -519,20 +514,24 @@ class Config:
 
         log.debug("Basic config: \n\n{}".format(basic_config))
 
-        driver_name = basic_config.get('STORAGE_TYPE', 'JSON')
-        driver_details = basic_config.get('STORAGE_DETAILS', {})
+        driver_name = basic_config.get("STORAGE_TYPE", "JSON")
+        driver_details = basic_config.get("STORAGE_DETAILS", {})
 
         log.debug("Using driver: '{}'".format(driver_name))
 
-        driver = get_driver(driver_name, cog_name, uuid, data_path_override=cog_path_override,
-                            **driver_details)
-        conf = cls(cog_name=cog_name, unique_identifier=uuid,
-                   force_registration=force_registration,
-                   driver=driver)
+        driver = get_driver(
+            driver_name, cog_name, uuid, data_path_override=cog_path_override, **driver_details
+        )
+        conf = cls(
+            cog_name=cog_name,
+            unique_identifier=uuid,
+            force_registration=force_registration,
+            driver=driver,
+        )
         return conf
 
     @classmethod
-    def get_core_conf(cls, force_registration: bool=False):
+    def get_core_conf(cls, force_registration: bool = False):
         """Get a Config instance for a core module.
 
         All core modules that require a config instance should use this
@@ -549,14 +548,18 @@ class Config:
         # We have to import this here otherwise we have a circular dependency
         from .data_manager import basic_config
 
-        driver_name = basic_config.get('STORAGE_TYPE', 'JSON')
-        driver_details = basic_config.get('STORAGE_DETAILS', {})
+        driver_name = basic_config.get("STORAGE_TYPE", "JSON")
+        driver_details = basic_config.get("STORAGE_DETAILS", {})
 
-        driver = get_driver(driver_name, "Core", '0', data_path_override=core_path,
-                            **driver_details)
-        conf = cls(cog_name="Core", driver=driver,
-                   unique_identifier='0',
-                   force_registration=force_registration)
+        driver = get_driver(
+            driver_name, "Core", "0", data_path_override=core_path, **driver_details
+        )
+        conf = cls(
+            cog_name="Core",
+            driver=driver,
+            unique_identifier="0",
+            force_registration=force_registration,
+        )
         return conf
 
     def __getattr__(self, item: str) -> Union[Group, Value]:
@@ -593,7 +596,7 @@ class Config:
         """
         ret = {}
         partial = ret
-        splitted = key.split('__')
+        splitted = key.split("__")
         for i, k in enumerate(splitted, start=1):
             if not k.isidentifier():
                 raise RuntimeError("'{}' is an invalid config key.".format(k))
@@ -621,8 +624,9 @@ class Config:
                 existing_is_dict = isinstance(_partial[k], dict)
                 if val_is_dict != existing_is_dict:
                     # != is XOR
-                    raise KeyError("You cannot register a Group and a Value under"
-                                   " the same name.")
+                    raise KeyError(
+                        "You cannot register a Group and a Value under" " the same name."
+                    )
                 if val_is_dict:
                     Config._update_defaults(v, _partial=_partial[k])
                 else:
@@ -736,7 +740,7 @@ class Config:
             identifiers=(key, *identifiers),
             defaults=self.defaults.get(key, {}),
             driver=self.driver,
-            force_registration=self.force_registration
+            force_registration=self.force_registration,
         )
 
     def guild(self, guild: discord.Guild) -> Group:
@@ -935,7 +939,7 @@ class Config:
             ret[int(member_id)] = new_member_data
         return ret
 
-    async def all_members(self, guild: discord.Guild=None) -> dict:
+    async def all_members(self, guild: discord.Guild = None) -> dict:
         """Get data for all members.
 
         If :code:`guild` is specified, only the data for the members of that
@@ -965,8 +969,7 @@ class Config:
             group = self._get_base_group(self.MEMBER)
             dict_ = await group()
             for guild_id, guild_data in dict_.items():
-                ret[int(guild_id)] = self._all_members_from_guild(
-                    group, guild_data)
+                ret[int(guild_id)] = self._all_members_from_guild(group, guild_data)
         else:
             group = self._get_base_group(self.MEMBER, guild.id)
             guild_data = await group()
@@ -992,9 +995,7 @@ class Config:
 
         """
         if not scopes:
-            group = Group(identifiers=[],
-                          defaults={},
-                          driver=self.driver)
+            group = Group(identifiers=[], defaults={}, driver=self.driver)
         else:
             group = self._get_base_group(*scopes)
         await group.clear()
@@ -1046,7 +1047,7 @@ class Config:
         """
         await self._clear_scope(self.USER)
 
-    async def clear_all_members(self, guild: discord.Guild=None):
+    async def clear_all_members(self, guild: discord.Guild = None):
         """Clear all member data.
 
         This resets all specified member data to its registered defaults.

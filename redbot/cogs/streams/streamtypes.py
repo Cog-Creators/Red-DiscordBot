@@ -1,5 +1,12 @@
-from .errors import StreamNotFound, APIError, OfflineStream, CommunityNotFound, OfflineCommunity, \
-    InvalidYoutubeCredentials, InvalidTwitchCredentials
+from .errors import (
+    StreamNotFound,
+    APIError,
+    OfflineStream,
+    CommunityNotFound,
+    OfflineCommunity,
+    InvalidYoutubeCredentials,
+    InvalidTwitchCredentials,
+)
 from random import choice, sample
 from string import ascii_letters
 import discord
@@ -23,6 +30,7 @@ def rnd(url):
 
 
 class TwitchCommunity:
+
     def __init__(self, **kwargs):
         self.name = kwargs.pop("name")
         self.id = kwargs.pop("id", None)
@@ -32,15 +40,12 @@ class TwitchCommunity:
         self.type = self.__class__.__name__
 
     async def get_community_id(self):
-        headers = {
-            "Accept": "application/vnd.twitchtv.v5+json",
-            "Client-ID": str(self._token)
-        }
-        params = {
-            "name": self.name
-        }
+        headers = {"Accept": "application/vnd.twitchtv.v5+json", "Client-ID": str(self._token)}
+        params = {"name": self.name}
         async with aiohttp.ClientSession() as session:
-            async with session.get(TWITCH_COMMUNITIES_ENDPOINT, headers=headers, params=params) as r:
+            async with session.get(
+                TWITCH_COMMUNITIES_ENDPOINT, headers=headers, params=params
+            ) as r:
                 data = await r.json()
         if r.status == 200:
             return data["_id"]
@@ -57,14 +62,8 @@ class TwitchCommunity:
                 self.id = await self.get_community_id()
             except CommunityNotFound:
                 raise
-        headers = {
-            "Accept": "application/vnd.twitchtv.v5+json",
-            "Client-ID": str(self._token)
-        }
-        params = {
-            "community_id": self.id,
-            "limit": 100
-        }
+        headers = {"Accept": "application/vnd.twitchtv.v5+json", "Client-ID": str(self._token)}
+        params = {"community_id": self.id, "limit": 100}
         url = TWITCH_BASE_URL + "/kraken/streams"
         async with aiohttp.ClientSession() as session:
             async with session.get(url, headers=headers, params=params) as r:
@@ -82,14 +81,11 @@ class TwitchCommunity:
             raise APIError()
 
     async def make_embed(self, streams: list) -> discord.Embed:
-        headers = {
-            "Accept": "application/vnd.twitchtv.v5+json",
-            "Client-ID": str(self._token)
-        }
+        headers = {"Accept": "application/vnd.twitchtv.v5+json", "Client-ID": str(self._token)}
         async with aiohttp.ClientSession() as session:
             async with session.get(
-                    "{}/{}".format(TWITCH_COMMUNITIES_ENDPOINT, self.id),
-                    headers=headers) as r:
+                "{}/{}".format(TWITCH_COMMUNITIES_ENDPOINT, self.id), headers=headers
+            ) as r:
                 data = await r.json()
 
         avatar = data["avatar_image_url"]
@@ -102,9 +98,7 @@ class TwitchCommunity:
         else:
             stream_list = streams
         for stream in stream_list:
-            name = "[{}]({})".format(
-                stream["channel"]["display_name"], stream["channel"]["url"]
-            )
+            name = "[{}]({})".format(stream["channel"]["display_name"], stream["channel"]["url"])
             embed.add_field(name=stream["channel"]["status"], value=name, inline=False)
         embed.color = 0x6441A4
 
@@ -125,10 +119,11 @@ class TwitchCommunity:
 
 
 class Stream:
+
     def __init__(self, **kwargs):
         self.name = kwargs.pop("name", None)
         self.channels = kwargs.pop("channels", [])
-        #self.already_online = kwargs.pop("already_online", False)
+        # self.already_online = kwargs.pop("already_online", False)
         self._messages_cache = kwargs.pop("_messages_cache", [])
         self.type = self.__class__.__name__
 
@@ -153,6 +148,7 @@ class Stream:
 
 
 class YoutubeStream(Stream):
+
     def __init__(self, **kwargs):
         self.id = kwargs.pop("id", None)
         self._token = kwargs.pop("token", None)
@@ -167,7 +163,7 @@ class YoutubeStream(Stream):
             "part": "snippet",
             "channelId": self.id,
             "type": "video",
-            "eventType": "live"
+            "eventType": "live",
         }
         async with aiohttp.ClientSession() as session:
             async with session.get(url, params=params) as r:
@@ -176,11 +172,7 @@ class YoutubeStream(Stream):
             raise OfflineStream()
         elif "items" in data:
             vid_id = data["items"][0]["id"]["videoId"]
-            params = {
-                "key": self._token,
-                "id": vid_id,
-                "part": "snippet"
-            }
+            params = {"key": self._token, "id": vid_id, "part": "snippet"}
             async with aiohttp.ClientSession() as session:
                 async with session.get(YOUTUBE_VIDEOS_ENDPOINT, params=params) as r:
                     data = await r.json()
@@ -199,17 +191,16 @@ class YoutubeStream(Stream):
         return embed
 
     async def fetch_id(self):
-        params = {
-            "key": self._token,
-            "forUsername": self.name,
-            "part": "id"
-        }
+        params = {"key": self._token, "forUsername": self.name, "part": "id"}
         async with aiohttp.ClientSession() as session:
             async with session.get(YOUTUBE_CHANNELS_ENDPOINT, params=params) as r:
                 data = await r.json()
 
-        if "error" in data and data["error"]["code"] == 400 and\
-                data["error"]["errors"][0]["reason"] == "keyInvalid":
+        if (
+            "error" in data
+            and data["error"]["code"] == 400
+            and data["error"]["errors"][0]["reason"] == "keyInvalid"
+        ):
             raise InvalidYoutubeCredentials()
         elif "items" in data and len(data["items"]) == 0:
             raise StreamNotFound()
@@ -222,6 +213,7 @@ class YoutubeStream(Stream):
 
 
 class TwitchStream(Stream):
+
     def __init__(self, **kwargs):
         self.id = kwargs.pop("id", None)
         self._token = kwargs.pop("token", None)
@@ -232,19 +224,16 @@ class TwitchStream(Stream):
             self.id = await self.fetch_id()
 
         url = TWITCH_STREAMS_ENDPOINT + self.id
-        header = {
-            'Client-ID': str(self._token),
-            'Accept': 'application/vnd.twitchtv.v5+json'
-        }
+        header = {"Client-ID": str(self._token), "Accept": "application/vnd.twitchtv.v5+json"}
 
         async with aiohttp.ClientSession() as session:
             async with session.get(url, headers=header) as r:
-                data = await r.json(encoding='utf-8')
+                data = await r.json(encoding="utf-8")
         if r.status == 200:
             if data["stream"] is None:
-                #self.already_online = False
+                # self.already_online = False
                 raise OfflineStream()
-            #self.already_online = True
+            # self.already_online = True
             #  In case of rename
             self.name = data["stream"]["channel"]["name"]
             return self.make_embed(data)
@@ -256,10 +245,7 @@ class TwitchStream(Stream):
             raise APIError()
 
     async def fetch_id(self):
-        header = {
-            'Client-ID': str(self._token),
-            'Accept': 'application/vnd.twitchtv.v5+json'
-        }
+        header = {"Client-ID": str(self._token), "Accept": "application/vnd.twitchtv.v5+json"}
         url = TWITCH_ID_ENDPOINT + self.name
 
         async with aiohttp.ClientSession() as session:
@@ -280,8 +266,7 @@ class TwitchStream(Stream):
         url = channel["url"]
         logo = channel["logo"]
         if logo is None:
-            logo = ("https://static-cdn.jtvnw.net/"
-                    "jtv_user_pictures/xarth/404_user_70x70.png")
+            logo = ("https://static-cdn.jtvnw.net/" "jtv_user_pictures/xarth/404_user_70x70.png")
         status = channel["status"]
         if not status:
             status = "Untitled broadcast"
@@ -303,21 +288,22 @@ class TwitchStream(Stream):
 
 
 class HitboxStream(Stream):
+
     async def is_online(self):
         url = "https://api.hitbox.tv/media/live/" + self.name
 
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as r:
-                #data = await r.json(encoding='utf-8')
+                # data = await r.json(encoding='utf-8')
                 data = await r.text()
         data = json.loads(data, strict=False)
         if "livestream" not in data:
             raise StreamNotFound()
         elif data["livestream"][0]["media_is_live"] == "0":
-            #self.already_online = False
+            # self.already_online = False
             raise OfflineStream()
         elif data["livestream"][0]["media_is_live"] == "1":
-            #self.already_online = True
+            # self.already_online = True
             return self.make_embed(data)
 
         raise APIError()
@@ -340,20 +326,21 @@ class HitboxStream(Stream):
 
 
 class MixerStream(Stream):
+
     async def is_online(self):
         url = "https://mixer.com/api/v1/channels/" + self.name
 
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as r:
-                #data = await r.json(encoding='utf-8')
-                data = await r.text(encoding='utf-8')
+                # data = await r.json(encoding='utf-8')
+                data = await r.text(encoding="utf-8")
         if r.status == 200:
             data = json.loads(data, strict=False)
             if data["online"] is True:
-                #self.already_online = True
+                # self.already_online = True
                 return self.make_embed(data)
             else:
-                #self.already_online = False
+                # self.already_online = False
                 raise OfflineStream()
         elif r.status == 404:
             raise StreamNotFound()
@@ -361,8 +348,7 @@ class MixerStream(Stream):
             raise APIError()
 
     def make_embed(self, data):
-        default_avatar = ("https://mixer.com/_latest/assets/images/main/"
-                          "avatars/default.jpg")
+        default_avatar = ("https://mixer.com/_latest/assets/images/main/" "avatars/default.jpg")
         user = data["user"]
         url = "https://mixer.com/" + data["token"]
         embed = discord.Embed(title=data["name"], url=url)
@@ -382,19 +368,20 @@ class MixerStream(Stream):
 
 
 class PicartoStream(Stream):
+
     async def is_online(self):
         url = "https://api.picarto.tv/v1/channel/name/" + self.name
 
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as r:
-                data = await r.text(encoding='utf-8')
+                data = await r.text(encoding="utf-8")
         if r.status == 200:
             data = json.loads(data)
             if data["online"] is True:
-                #self.already_online = True
+                # self.already_online = True
                 return self.make_embed(data)
             else:
-                #self.already_online = False
+                # self.already_online = False
                 raise OfflineStream()
         elif r.status == 404:
             raise StreamNotFound()
@@ -402,8 +389,9 @@ class PicartoStream(Stream):
             raise APIError()
 
     def make_embed(self, data):
-        avatar = rnd("https://picarto.tv/user_data/usrimg/{}/dsdefault.jpg"
-                     "".format(data["name"].lower()))
+        avatar = rnd(
+            "https://picarto.tv/user_data/usrimg/{}/dsdefault.jpg" "".format(data["name"].lower())
+        )
         url = "https://picarto.tv/" + data["name"]
         thumbnail = data["thumbnails"]["web"]
         embed = discord.Embed(title=data["title"], url=url)
@@ -424,6 +412,5 @@ class PicartoStream(Stream):
             data["adult"] = ""
 
         embed.color = 0x4C90F3
-        embed.set_footer(text="{adult}Category: {category} | Tags: {tags}"
-                              "".format(**data))
+        embed.set_footer(text="{adult}Category: {category} | Tags: {tags}" "".format(**data))
         return embed
