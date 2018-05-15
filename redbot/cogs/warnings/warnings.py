@@ -294,7 +294,7 @@ class Warnings:
         else:
             if not await is_admin_or_superior(self.bot, ctx.author):
                 await ctx.send(
-                    warning(_("You are not allowed to check " "warnings for other users!"))
+                    warning(_("You are not allowed to check " "warnings for other users!")))
                 return
             else:
                 user = ctx.guild.get_member(userid)
