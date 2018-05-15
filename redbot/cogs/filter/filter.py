@@ -1,15 +1,15 @@
 import discord
-from discord.ext import commands
 
-from redbot.core import checks, Config, modlog, RedContext
+from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
-from redbot.core.i18n import CogI18n
+from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import pagify
 from redbot.core.utils.mod import is_mod_or_superior
 
-_ = CogI18n("Filter", __file__)
+_ = Translator("Filter", __file__)
 
 
+@cog_i18n(_)
 class Filter:
     """Filter-related commands"""
 
@@ -21,12 +21,9 @@ class Filter:
             "filterban_count": 0,
             "filterban_time": 0,
             "filter_names": False,
-            "filter_default_name": "John Doe"
+            "filter_default_name": "John Doe",
         }
-        default_member_settings = {
-            "filter_count": 0,
-            "next_reset_time": 0
-        }
+        default_member_settings = {"filter_count": 0, "next_reset_time": 0}
         self.settings.register_guild(**default_guild_settings)
         self.settings.register_member(**default_member_settings)
         self.register_task = self.bot.loop.create_task(self.register_filterban())
@@ -37,8 +34,7 @@ class Filter:
     async def register_filterban(self):
         try:
             await modlog.register_casetype(
-                "filterban", False, ":filing_cabinet: :hammer:",
-                "Filter ban", "ban"
+                "filterban", False, ":filing_cabinet: :hammer:", "Filter ban", "ban"
             )
         except RuntimeError:
             pass
@@ -46,7 +42,7 @@ class Filter:
     @commands.group(name="filter")
     @commands.guild_only()
     @checks.mod_or_permissions(manage_messages=True)
-    async def _filter(self, ctx: RedContext):
+    async def _filter(self, ctx: commands.Context):
         """Adds/removes words from filter
 
         Use double quotes to add/remove sentences
@@ -79,13 +75,12 @@ class Filter:
         word_list = []
         tmp = ""
         for word in split_words:
-            if not word.startswith("\"")\
-                    and not word.endswith("\"") and not tmp:
+            if not word.startswith('"') and not word.endswith('"') and not tmp:
                 word_list.append(word)
             else:
-                if word.startswith("\""):
+                if word.startswith('"'):
                     tmp += word[1:]
-                elif word.endswith("\""):
+                elif word.endswith('"'):
                     tmp += word[:-1]
                     word_list.append(tmp)
                     tmp = ""
@@ -110,13 +105,12 @@ class Filter:
         word_list = []
         tmp = ""
         for word in split_words:
-            if not word.startswith("\"")\
-                    and not word.endswith("\"") and not tmp:
+            if not word.startswith('"') and not word.endswith('"') and not tmp:
                 word_list.append(word)
             else:
-                if word.startswith("\""):
+                if word.startswith('"'):
                     tmp += word[1:]
-                elif word.endswith("\""):
+                elif word.endswith('"'):
                     tmp += word[:-1]
                     word_list.append(tmp)
                     tmp = ""
@@ -129,7 +123,7 @@ class Filter:
             await ctx.send(_("Those words weren't in the filter."))
 
     @_filter.command(name="names")
-    async def filter_names(self, ctx: RedContext):
+    async def filter_names(self, ctx: commands.Context):
         """
         Toggles whether or not to check names and nicknames against the filter
         This is disabled by default
@@ -139,17 +133,13 @@ class Filter:
         await self.settings.guild(guild).filter_names.set(not current_setting)
         if current_setting:
             await ctx.send(
-                _("Names and nicknames will no longer be "
-                  "checked against the filter")
+                _("Names and nicknames will no longer be " "checked against the filter")
             )
         else:
-            await ctx.send(
-                _("Names and nicknames will now be checked against "
-                  "the filter")
-            )
+            await ctx.send(_("Names and nicknames will now be checked against " "the filter"))
 
     @_filter.command(name="defaultname")
-    async def filter_default_name(self, ctx: RedContext, name: str):
+    async def filter_default_name(self, ctx: commands.Context, name: str):
         """
         Sets the default name to use if filtering names is enabled
         Note that this has no effect if filtering names is disabled
@@ -160,17 +150,17 @@ class Filter:
         await ctx.send(_("The name to use on filtered names has been set"))
 
     @_filter.command(name="ban")
-    async def filter_ban(
-            self, ctx: commands.Context, count: int, timeframe: int):
+    async def filter_ban(self, ctx: commands.Context, count: int, timeframe: int):
         """
         Sets up an autoban if the specified number of messages are
         filtered in the specified amount of time (in seconds)
         """
         if (count <= 0) != (timeframe <= 0):
             await ctx.send(
-                _("Count and timeframe either both need to be 0 "
-                  "or both need to be greater than 0!"
-                  )
+                _(
+                    "Count and timeframe either both need to be 0 "
+                    "or both need to be greater than 0!"
+                )
             )
             return
         elif count == 0 and timeframe == 0:
@@ -213,9 +203,7 @@ class Filter:
         if filter_count > 0 and filter_time > 0:
             if message.created_at.timestamp() >= next_reset_time:
                 next_reset_time = message.created_at.timestamp() + filter_time
-                await self.settings.member(author).next_reset_time.set(
-                    next_reset_time
-                )
+                await self.settings.member(author).next_reset_time.set(next_reset_time)
                 if user_count > 0:
                     user_count = 0
                     await self.settings.member(author).filter_count.set(user_count)
@@ -231,8 +219,10 @@ class Filter:
                         if filter_count > 0 and filter_time > 0:
                             user_count += 1
                             await self.settings.member(author).filter_count.set(user_count)
-                            if user_count >= filter_count and \
-                                    message.created_at.timestamp() < next_reset_time:
+                            if (
+                                user_count >= filter_count
+                                and message.created_at.timestamp() < next_reset_time
+                            ):
                                 reason = "Autoban (too many filtered messages)"
                                 try:
                                     await server.ban(author, reason=reason)
@@ -240,8 +230,13 @@ class Filter:
                                     pass
                                 else:
                                     await modlog.create_case(
-                                        self.bot, server, message.created_at,
-                                        "filterban", author, server.me, reason
+                                        self.bot,
+                                        server,
+                                        message.created_at,
+                                        "filterban",
+                                        author,
+                                        server.me,
+                                        reason,
                                     )
 
     async def on_message(self, message: discord.Message):
@@ -251,7 +246,7 @@ class Filter:
         valid_user = isinstance(author, discord.Member) and not author.bot
         if not valid_user:
             return
-        
+
         #  Bots and mods or superior are ignored from the filter
         mod_or_superior = await is_mod_or_superior(self.bot, obj=author)
         if mod_or_superior:
@@ -266,7 +261,7 @@ class Filter:
         valid_user = isinstance(author, discord.Member) and not author.bot
         if not valid_user:
             return
-        
+
         #  Bots and mods or superior are ignored from the filter
         mod_or_superior = await is_mod_or_superior(self.bot, obj=author)
         if mod_or_superior:
@@ -323,4 +318,3 @@ class Filter:
                 except:
                     pass
                 break
-

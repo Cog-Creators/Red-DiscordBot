@@ -1,12 +1,12 @@
 .. systemd service guide
 
-==========================
+==============================================
 Setting up auto-restart using systemd on Linux
-==========================
+==============================================
 
----------------------------
+-------------------------
 Creating the service file
----------------------------
+-------------------------
 
 Create the new service file:
 
@@ -33,9 +33,11 @@ Paste the following and replace all instances of :code:`username` with the usern
 
 Save and exit :code:`ctrl + O; enter; ctrl + x`
 
----------------------------
+---------------------------------
 Starting and enabling the service
----------------------------
+---------------------------------
+
+.. note:: This same file can be used to start as many instances of the bot as you wish, without creating more service files, just start and enable more services and add any bot instance name after the **@**
 
 To start the bot, run the service and add the instance name after the **@**:
 
@@ -45,4 +47,6 @@ To set the bot to start on boot, you must enable the service, again adding the i
 
 :code:`sudo systemctl enable red@instancename`
 
-.. note:: This same file can be used to start as many instances of the bot as you wish, without creating more service files, just start and enable more services and add any bot instance name after the **@**
+To view Red’s log, you can acccess through journalctl:
+
+:code:`sudo journalctl -u red@instancename`

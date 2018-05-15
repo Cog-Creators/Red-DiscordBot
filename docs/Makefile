@@ -14,6 +14,9 @@ help:
 
 .PHONY: help Makefile
 
+init:
+	cd .. && pipenv lock -r --dev > docs/requirements.txt && echo 'git+https://github.com/Rapptz/discord.py@rewrite#egg=discord.py-1.0' >> docs/requirements.txt
+
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile

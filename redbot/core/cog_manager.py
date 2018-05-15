@@ -8,11 +8,10 @@ from typing import Tuple, Union, List
 import redbot.cogs
 import discord
 
-from . import checks
+from . import checks, commands
 from .config import Config
-from .i18n import CogI18n
+from .i18n import Translator, cog_i18n
 from .data_manager import cog_data_path
-from discord.ext import commands
 
 from .utils.chat_formatting import box, pagify
 
@@ -35,14 +34,12 @@ class CogManager:
     install new cogs to, the default being the :code:`cogs/` folder in the root
     bot directory.
     """
-    def __init__(self, paths: Tuple[str]=()):
+
+    def __init__(self, paths: Tuple[str] = ()):
         self.conf = Config.get_conf(self, 2938473984732, True)
         tmp_cog_install_path = cog_data_path(self) / "cogs"
         tmp_cog_install_path.mkdir(parents=True, exist_ok=True)
-        self.conf.register_global(
-            paths=(),
-            install_path=str(tmp_cog_install_path)
-        )
+        self.conf.register_global(paths=(), install_path=str(tmp_cog_install_path))
 
         self._paths = [Path(p) for p in paths]
 
@@ -159,7 +156,7 @@ class CogManager:
         if path == await self.install_path():
             raise ValueError("Cannot add the install path as an additional path.")
 
-        all_paths = _deduplicate(await self.paths() + (path, ))
+        all_paths = _deduplicate(await self.paths() + (path,))
         # noinspection PyTypeChecker
         await self.set_paths(all_paths)
 
@@ -226,8 +223,10 @@ class CogManager:
                 if spec:
                     return spec
 
-        raise RuntimeError("No 3rd party module by the name of '{}' was found"
-                           " in any available path.".format(name))
+        raise RuntimeError(
+            "No 3rd party module by the name of '{}' was found"
+            " in any available path.".format(name)
+        )
 
     async def _find_core_cog(self, name: str) -> ModuleSpec:
         """
@@ -248,10 +247,11 @@ class CogManager:
         """
         real_name = ".{}".format(name)
         try:
-            mod = import_module(real_name, package='redbot.cogs')
+            mod = import_module(real_name, package="redbot.cogs")
         except ImportError as e:
-            raise RuntimeError("No core cog by the name of '{}' could"
-                               "be found.".format(name)) from e
+            raise RuntimeError(
+                "No core cog by the name of '{}' could" "be found.".format(name)
+            ) from e
         return mod.__spec__
 
     # noinspection PyUnreachableCode
@@ -285,7 +285,7 @@ class CogManager:
     async def available_modules(self) -> List[str]:
         """Finds the names of all available modules to load.
         """
-        paths = (await self.install_path(), ) + await self.paths()
+        paths = (await self.install_path(),) + await self.paths()
         paths = [str(p) for p in paths]
 
         ret = []
@@ -303,10 +303,13 @@ class CogManager:
         invalidate_caches()
 
 
-_ = CogI18n("CogManagerUI", __file__)
+_ = Translator("CogManagerUI", __file__)
 
 
+@cog_i18n(_)
 class CogManagerUI:
+    """Commands to interface with Red's cog manager."""
+
     async def visible_paths(self, ctx):
         install_path = await ctx.bot.cog_mgr.install_path()
         cog_paths = await ctx.bot.cog_mgr.paths()
@@ -339,8 +342,9 @@ class CogManagerUI:
         Add a path to the list of available cog paths.
         """
         if not path.is_dir():
-            await ctx.send(_("That path does not exist or does not"
-                             " point to a valid directory."))
+            await ctx.send(
+                _("That path does not exist or does not" " point to a valid directory.")
+            )
             return
 
         try:
@@ -396,7 +400,7 @@ class CogManagerUI:
 
     @commands.command()
     @checks.is_owner()
-    async def installpath(self, ctx: commands.Context, path: Path=None):
+    async def installpath(self, ctx: commands.Context, path: Path = None):
         """
         Returns the current install path or sets it if one is provided.
             The provided path must be absolute or relative to the bot's
@@ -414,8 +418,9 @@ class CogManagerUI:
                 return
 
         install_path = await ctx.bot.cog_mgr.install_path()
-        await ctx.send(_("The bot will install new cogs to the `{}`"
-                         " directory.").format(install_path))
+        await ctx.send(
+            _("The bot will install new cogs to the `{}`" " directory.").format(install_path)
+        )
 
     @commands.command()
     @checks.is_owner()
@@ -433,22 +438,20 @@ class CogManagerUI:
         unloaded = sorted(list(unloaded), key=str.lower)
 
         if await ctx.embed_requested():
-            loaded = ('**{} loaded:**\n').format(len(loaded)) + ", ".join(loaded)
-            unloaded = ('**{} unloaded:**\n').format(len(unloaded)) + ", ".join(unloaded)
+            loaded = ("**{} loaded:**\n").format(len(loaded)) + ", ".join(loaded)
+            unloaded = ("**{} unloaded:**\n").format(len(unloaded)) + ", ".join(unloaded)
 
-            for page in pagify(loaded, delims=[', ', '\n'], page_length=1800):
-                e = discord.Embed(description=page,
-                                  colour=discord.Colour.dark_green())
+            for page in pagify(loaded, delims=[", ", "\n"], page_length=1800):
+                e = discord.Embed(description=page, colour=discord.Colour.dark_green())
                 await ctx.send(embed=e)
 
-            for page in pagify(unloaded, delims=[', ', '\n'], page_length=1800):
-                e = discord.Embed(description=page,
-                                  colour=discord.Colour.dark_red())
+            for page in pagify(unloaded, delims=[", ", "\n"], page_length=1800):
+                e = discord.Embed(description=page, colour=discord.Colour.dark_red())
                 await ctx.send(embed=e)
         else:
-            loaded_count = '**{} loaded:**\n'.format(len(loaded))
+            loaded_count = "**{} loaded:**\n".format(len(loaded))
             loaded = ", ".join(loaded)
-            unloaded_count = '**{} unloaded:**\n'.format(len(unloaded))
+            unloaded_count = "**{} unloaded:**\n".format(len(unloaded))
             unloaded = ", ".join(unloaded)
             loaded_count_sent = False
             unloaded_count_sent = False

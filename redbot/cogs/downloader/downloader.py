@@ -10,9 +10,9 @@ import sys
 from redbot.core import Config
 from redbot.core import checks
 from redbot.core.data_manager import cog_data_path
-from redbot.core.i18n import CogI18n
+from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, pagify
-from discord.ext import commands
+from redbot.core import commands
 
 from redbot.core.bot import Red
 from .checks import install_agreement
@@ -22,19 +22,18 @@ from .installable import Installable
 from .log import log
 from .repo_manager import RepoManager, Repo
 
-_ = CogI18n('Downloader', __file__)
+_ = Translator("Downloader", __file__)
 
 
+@cog_i18n(_)
 class Downloader:
+
     def __init__(self, bot: Red):
         self.bot = bot
 
-        self.conf = Config.get_conf(self, identifier=998240343,
-                                    force_registration=True)
+        self.conf = Config.get_conf(self, identifier=998240343, force_registration=True)
 
-        self.conf.register_global(
-            installed=[]
-        )
+        self.conf.register_global(installed=[])
 
         self.already_agreed = False
 
@@ -45,7 +44,7 @@ class Downloader:
         self.LIB_PATH.mkdir(parents=True, exist_ok=True)
         self.SHAREDLIB_PATH.mkdir(parents=True, exist_ok=True)
         if not self.SHAREDLIB_INIT.exists():
-            with self.SHAREDLIB_INIT.open(mode='w', encoding='utf-8') as _:
+            with self.SHAREDLIB_INIT.open(mode="w", encoding="utf-8") as _:
                 pass
 
         if str(self.LIB_PATH) not in syspath:
@@ -169,7 +168,7 @@ class Downloader:
         for repo, reqs in has_reqs:
             for req in reqs:
                 # noinspection PyTypeChecker
-                ret = ret and await repo.install_raw_requirements([req, ], self.LIB_PATH)
+                ret = ret and await repo.install_raw_requirements([req], self.LIB_PATH)
         return ret
 
     @staticmethod
@@ -199,8 +198,12 @@ class Downloader:
         if success:
             await ctx.send(_("Libraries installed."))
         else:
-            await ctx.send(_("Some libraries failed to install. Please check"
-                             " your logs for a complete list."))
+            await ctx.send(
+                _(
+                    "Some libraries failed to install. Please check"
+                    " your logs for a complete list."
+                )
+            )
 
     @commands.group()
     @checks.is_owner()
@@ -213,7 +216,7 @@ class Downloader:
 
     @repo.command(name="add")
     @install_agreement()
-    async def _repo_add(self, ctx, name: str, repo_url: str, branch: str=None):
+    async def _repo_add(self, ctx, name: str, repo_url: str, branch: str = None):
         """
         Add a new repo to Downloader.
 
@@ -222,11 +225,7 @@ class Downloader:
         """
         try:
             # noinspection PyTypeChecker
-            repo = await self._repo_manager.add_repo(
-                name=name,
-                url=repo_url,
-                branch=branch
-            )
+            repo = await self._repo_manager.add_repo(name=name, url=repo_url, branch=branch)
         except ExistingGitRepo:
             await ctx.send(_("That git repo has already been added under another name."))
         except CloningError:
@@ -274,20 +273,28 @@ class Downloader:
         """
         cog = discord.utils.get(repo_name.available_cogs, name=cog_name)  # type: Installable
         if cog is None:
-            await ctx.send(_("Error, there is no cog by the name of"
-                           " `{}` in the `{}` repo.").format(cog_name, repo_name.name))
+            await ctx.send(
+                _("Error, there is no cog by the name of" " `{}` in the `{}` repo.").format(
+                    cog_name, repo_name.name
+                )
+            )
             return
         elif cog.min_python_version > sys.version_info:
-            await ctx.send(_(
-                "This cog requires at least python version {}, aborting install.".format(
-                    '.'.join([str(n) for n in cog.min_python_version])
+            await ctx.send(
+                _(
+                    "This cog requires at least python version {}, aborting install.".format(
+                        ".".join([str(n) for n in cog.min_python_version])
+                    )
                 )
-            ))
+            )
             return
 
         if not await repo_name.install_requirements(cog, self.LIB_PATH):
-            await ctx.send(_("Failed to install the required libraries for"
-                           " `{}`: `{}`").format(cog.name, cog.requirements))
+            await ctx.send(
+                _("Failed to install the required libraries for" " `{}`: `{}`").format(
+                    cog.name, cog.requirements
+                )
+            )
             return
 
         await repo_name.install_cog(cog, await self.cog_install_path())
@@ -316,12 +323,16 @@ class Downloader:
             await self._remove_from_installed(cog_name)
             await ctx.send(_("`{}` was successfully removed.").format(real_name))
         else:
-            await ctx.send(_("That cog was installed but can no longer"
-                             " be located. You may need to remove it's"
-                             " files manually if it is still usable."))
+            await ctx.send(
+                _(
+                    "That cog was installed but can no longer"
+                    " be located. You may need to remove it's"
+                    " files manually if it is still usable."
+                )
+            )
 
     @cog.command(name="update")
-    async def _cog_update(self, ctx, cog_name: InstalledCog=None):
+    async def _cog_update(self, ctx, cog_name: InstalledCog = None):
         """
         Updates all cogs or one of your choosing.
         """
@@ -357,7 +368,8 @@ class Downloader:
         """
         cogs = repo_name.available_cogs
         cogs = _("Available Cogs:\n") + "\n".join(
-            ["+ {}: {}".format(c.name, c.short or "") for c in cogs])
+            ["+ {}: {}".format(c.name, c.short or "") for c in cogs]
+        )
 
         await ctx.send(box(cogs, lang="diff"))
 
@@ -368,9 +380,9 @@ class Downloader:
         """
         cog = discord.utils.get(repo_name.available_cogs, name=cog_name)
         if cog is None:
-            await ctx.send(_("There is no cog `{}` in the repo `{}`").format(
-                cog_name, repo_name.name
-            ))
+            await ctx.send(
+                _("There is no cog `{}` in the repo `{}`").format(cog_name, repo_name.name)
+            )
             return
 
         msg = _("Information on {}:\n{}").format(cog.name, cog.description or "")
@@ -396,8 +408,9 @@ class Downloader:
                 return True, installable
         return False, None
 
-    def format_findcog_info(self, command_name: str,
-                            cog_installable: Union[Installable, object]=None) -> str:
+    def format_findcog_info(
+        self, command_name: str, cog_installable: Union[Installable, object] = None
+    ) -> str:
         """Format a cog's info for output to discord.
 
         Parameters
@@ -420,7 +433,7 @@ class Downloader:
             cog_name = cog_installable.name
         else:
             made_by = "26 & co."
-            repo_url = "https://github.com/Twentysix26/Red-DiscordBot"
+            repo_url = "https://github.com/Cog-Creators/Red-DiscordBot"
             cog_name = cog_installable.__class__.__name__
 
         msg = _("Command: {}\nMade by: {}\nRepo: {}\nCog name: {}")
@@ -443,7 +456,7 @@ class Downloader:
             The name of the cog according to Downloader..
 
         """
-        splitted = instance.__module__.split('.')
+        splitted = instance.__module__.split(".")
         return splitted[-2]
 
     @commands.command()

@@ -29,7 +29,7 @@ Basic Usage
 
         @commands.command()
         async def return_some_data(self, ctx):
-            await ctx.send(await config.foo())
+            await ctx.send(await self.config.foo())
 
 ********
 Tutorial

@@ -11,6 +11,7 @@ RedBase
 
 .. autoclass:: RedBase
     :members:
+    :exclude-members: get_context
 
 Red
 ^^^

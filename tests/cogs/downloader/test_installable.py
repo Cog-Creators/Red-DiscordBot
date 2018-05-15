@@ -6,23 +6,16 @@ import pytest
 from redbot.cogs.downloader.installable import Installable, InstallableType
 
 INFO_JSON = {
-    "author": (
-        "tekulvw",
-    ),
+    "author": ("tekulvw",),
     "bot_version": (3, 0, 0),
     "description": "A long description",
     "hidden": False,
     "install_msg": "A post-installation message",
     "required_cogs": {},
-    "requirements": (
-        "tabulate"
-    ),
+    "requirements": ("tabulate"),
     "short": "A short description",
-    "tags": (
-        "tag1",
-        "tag2"
-    ),
-    "type": "COG"
+    "tags": ("tag1", "tag2"),
+    "type": "COG",
 }
 
 
@@ -30,7 +23,7 @@ INFO_JSON = {
 def installable(tmpdir):
     cog_path = tmpdir.mkdir("test_repo").mkdir("test_cog")
     info_path = cog_path.join("info.json")
-    info_path.write_text(json.dumps(INFO_JSON), 'utf-8')
+    info_path.write_text(json.dumps(INFO_JSON), "utf-8")
 
     cog_info = Installable(Path(str(cog_path)))
     return cog_info
