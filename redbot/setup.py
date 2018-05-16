@@ -13,7 +13,7 @@ from pathlib import Path
 
 import appdirs
 from redbot.core.cli import confirm
-from redbot.core.data_manager import basic_config_default
+from redbot.core.data_manager import basic_config_default, load_basic_configuration
 from redbot.core.json_io import JsonIO
 from redbot.core.utils import safe_delete
 from redbot.core.drivers.red_json import JSON
@@ -288,6 +288,7 @@ async def edit_instance():
 
 async def create_backup(selected, instance_data):
     if confirm("Would you like to make a backup of the data for this instance? (y/n)"):
+        load_basic_configuration(selected)
         if instance_data["STORAGE_TYPE"] == "MongoDB":
             print("Backing up the instance's data...")
             await mongo_to_json(instance_data["DATA_PATH"], instance_data["STORAGE_DETAILS"])
@@ -309,16 +310,14 @@ async def create_backup(selected, instance_data):
                 ]
                 from redbot.cogs.downloader.repo_manager import RepoManager
 
-                if downloader_cog and hasattr(downloader_cog, "_repo_manager"):
-                    repo_output = []
-                    repo_mgr = downloader_cog._repo_manager
-                    for _, repo in repo_mgr._repos:
-                        repo_output.append(
-                            {{"url": repo.url, "name": repo.name, "branch": repo.branch}}
-                        )
-                    repo_filename = data_dir / "cogs" / "RepoManager" / "repos.json"
-                    with open(str(repo_filename), "w") as f:
-                        f.write(json.dumps(repo_output, indent=4))
+                repo_manager = RepoManager()
+                repo_output = []
+                repo_mgr = downloader_cog._repo_manager
+                for _, repo in repo_mgr._repos:
+                    repo_output.append({"url": repo.url, "name": repo.name, "branch": repo.branch})
+                repo_filename = data_dir / "cogs" / "RepoManager" / "repos.json"
+                with open(str(repo_filename), "w") as f:
+                    f.write(json.dumps(repo_output, indent=4))
                 for f in data_dir.glob("**/*"):
                     if not any(ex in str(f) for ex in exclusions):
                         to_backup.append(f)
