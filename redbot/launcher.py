@@ -321,7 +321,7 @@ def development_choice(reinstall=False, can_go_back=True):
             print("0. Go back")
         choice = user_choice()
         print("\n")
-        
+
         if choice == "1":
             selected = extras_selector()
             update_red(
