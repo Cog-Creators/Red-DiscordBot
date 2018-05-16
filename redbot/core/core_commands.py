@@ -906,21 +906,26 @@ class Core:
             if downloader_cog and hasattr(downloader_cog, "_repo_manager"):
                 repo_output = []
                 repo_mgr = downloader_cog._repo_manager
-                for _, repo in repo_mgr._repos:
+                for n, repo in repo_mgr._repos:
                     repo_output.append(
                         {{"url": repo.url, "name": repo.name, "branch": repo.branch}}
                     )
                 repo_filename = data_dir / "cogs" / "RepoManager" / "repos.json"
                 with open(str(repo_filename), "w") as f:
                     f.write(json.dumps(repo_output, indent=4))
+            instance_data = {instance_name: basic_config}
+            instance_file = data_dir / "instance.json"
+            with open(str(instance_file), "w") as instance_out:
+                instance_out.write(json.dumps(instance_data, indent=4))
             for f in data_dir.glob("**/*"):
                 if not any(ex in str(f) for ex in exclusions):
                     to_backup.append(f)
             with tarfile.open(str(backup_file), "w:gz") as tar:
                 for f in to_backup:
                     tar.add(str(f), recursive=False)
+            print(str(backup_file))
             await ctx.send(
-                _("A backup has been made of this instance. It is at {}.").format(backup_file)
+                _("A backup has been made of this instance. It is at {}.").format((backup_file))
             )
             await ctx.send(_("Would you like to receive a copy via DM? (y/n)"))
 

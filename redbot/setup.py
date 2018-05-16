@@ -13,7 +13,12 @@ from pathlib import Path
 
 import appdirs
 from redbot.core.cli import confirm
-from redbot.core.data_manager import basic_config_default, load_basic_configuration
+from redbot.core.data_manager import (
+    basic_config_default,
+    load_basic_configuration,
+    instance_name,
+    basic_config,
+)
 from redbot.core.json_io import JsonIO
 from redbot.core.utils import safe_delete
 from redbot.core.drivers.red_json import JSON
@@ -290,55 +295,44 @@ async def create_backup(selected, instance_data):
     if confirm("Would you like to make a backup of the data for this instance? (y/n)"):
         load_basic_configuration(selected)
         if instance_data["STORAGE_TYPE"] == "MongoDB":
-            print("Backing up the instance's data...")
             await mongo_to_json(instance_data["DATA_PATH"], instance_data["STORAGE_DETAILS"])
-            backup_filename = "redv3-{}-{}.tar.gz".format(
-                selected, dt.utcnow().strftime("%Y-%m-%d %H-%M-%S")
-            )
-            pth = Path(instance_data["DATA_PATH"])
-            if pth.exists():
-                backup_pth = pth.home()
-                backup_file = backup_pth / backup_filename
+        print("Backing up the instance's data...")
+        backup_filename = "redv3-{}-{}.tar.gz".format(
+            selected, dt.utcnow().strftime("%Y-%m-%d %H-%M-%S")
+        )
+        pth = Path(instance_data["DATA_PATH"])
+        if pth.exists():
+            backup_pth = pth.home()
+            backup_file = backup_pth / backup_filename
 
-                to_backup = []
-                exclusions = [
-                    "__pycache__",
-                    "Lavalink.jar",
-                    os.path.join("Downloader", "lib"),
-                    os.path.join("CogManager", "cogs"),
-                    os.path.join("RepoManager", "repos"),
-                ]
-                from redbot.cogs.downloader.repo_manager import RepoManager
+            to_backup = []
+            exclusions = [
+                "__pycache__",
+                "Lavalink.jar",
+                os.path.join("Downloader", "lib"),
+                os.path.join("CogManager", "cogs"),
+                os.path.join("RepoManager", "repos"),
+            ]
+            from redbot.cogs.downloader.repo_manager import RepoManager
 
-                repo_manager = RepoManager()
-                repo_output = []
-                repo_mgr = downloader_cog._repo_manager
-                for _, repo in repo_mgr._repos:
-                    repo_output.append({"url": repo.url, "name": repo.name, "branch": repo.branch})
-                repo_filename = data_dir / "cogs" / "RepoManager" / "repos.json"
-                with open(str(repo_filename), "w") as f:
-                    f.write(json.dumps(repo_output, indent=4))
-                for f in data_dir.glob("**/*"):
-                    if not any(ex in str(f) for ex in exclusions):
-                        to_backup.append(f)
-                with tarfile.open(str(backup_file), "w:gz") as tar:
-                    for f in to_backup:
-                        tar.add(str(f), recursive=False)
-                print("A backup of {} has been made. It is at {}".format(selected, backup_file))
-
-        else:
-            print("Backing up the instance's data...")
-            backup_filename = "redv3-{}-{}.tar.gz".format(
-                selected, dt.utcnow().strftime("%Y-%m-%d %H-%M-%S")
-            )
-            pth = Path(instance_data["DATA_PATH"])
-            if pth.exists():
-                home = pth.home()
-                backup_file = home / backup_filename
-                os.chdir(str(pth.parent))  # str is used here because 3.5 support
-                with tarfile.open(str(backup_file), "w:gz") as tar:
-                    tar.add(pth.stem)  # add all files in that directory
-                print("A backup of {} has been made. It is at {}".format(selected, backup_file))
+            repo_mgr = RepoManager()
+            repo_output = []
+            for _, repo in repo_mgr._repos:
+                repo_output.append({"url": repo.url, "name": repo.name, "branch": repo.branch})
+            repo_filename = pth / "cogs" / "RepoManager" / "repos.json"
+            with open(str(repo_filename), "w") as f:
+                f.write(json.dumps(repo_output, indent=4))
+            instance_data = {instance_name: basic_config}
+            instance_file = pth / "instance.json"
+            with open(str(instance_file), "w") as instance_out:
+                instance_out.write(json.dumps(instance_data, indent=4))
+            for f in pth.glob("**/*"):
+                if not any(ex in str(f) for ex in exclusions):
+                    to_backup.append(f)
+            with tarfile.open(str(backup_file), "w:gz") as tar:
+                for f in to_backup:
+                    tar.add(str(f), recursive=False)
+            print("A backup of {} has been made. It is at {}".format(selected, backup_file))
 
 
 async def remove_instance(selected, instance_data):
