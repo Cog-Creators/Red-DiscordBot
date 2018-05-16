@@ -59,8 +59,7 @@ class Core:
         """Pong."""
         if ctx.guild is None or ctx.channel.permissions_for(ctx.guild.me).add_reactions:
             await ctx.message.add_reaction("\U0001f3d3")  # ping pong paddle
-        else:
-            await ctx.maybe_send_embed("Pong.")
+            await ctx.send("Pong.") # Send a message as well because reacts are stupid.
 
     @commands.command()
     async def info(self, ctx: commands.Context):
