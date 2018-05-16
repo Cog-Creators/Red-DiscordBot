@@ -1,14 +1,14 @@
 import discord
-from discord.ext import commands
 
-from redbot.core import checks, modlog, RedContext
+from redbot.core import checks, modlog, commands
 from redbot.core.bot import Red
-from redbot.core.i18n import CogI18n
+from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
 
-_ = CogI18n('ModLog', __file__)
+_ = Translator("ModLog", __file__)
 
 
+@cog_i18n(_)
 class ModLog:
     """Log for mod actions"""
 
@@ -17,14 +17,14 @@ class ModLog:
 
     @commands.group()
     @checks.guildowner_or_permissions(administrator=True)
-    async def modlogset(self, ctx: RedContext):
+    async def modlogset(self, ctx: commands.Context):
         """Settings for the mod log"""
         if ctx.invoked_subcommand is None:
             await ctx.send_help()
 
     @modlogset.command()
     @commands.guild_only()
-    async def modlog(self, ctx: RedContext, channel: discord.TextChannel = None):
+    async def modlog(self, ctx: commands.Context, channel: discord.TextChannel = None):
         """Sets a channel as mod log
 
         Leaving the channel parameter empty will deactivate it"""
@@ -32,15 +32,12 @@ class ModLog:
         if channel:
             if channel.permissions_for(guild.me).send_messages:
                 await modlog.set_modlog_channel(guild, channel)
-                await ctx.send(
-                    _("Mod events will be sent to {}").format(
-                        channel.mention
-                    )
-                )
+                await ctx.send(_("Mod events will be sent to {}").format(channel.mention))
             else:
                 await ctx.send(
-                    _("I do not have permissions to "
-                      "send messages in {}!").format(channel.mention)
+                    _("I do not have permissions to " "send messages in {}!").format(
+                        channel.mention
+                    )
                 )
         else:
             try:
@@ -51,9 +48,9 @@ class ModLog:
                 await modlog.set_modlog_channel(guild, None)
                 await ctx.send(_("Mod log deactivated."))
 
-    @modlogset.command(name='cases')
+    @modlogset.command(name="cases")
     @commands.guild_only()
-    async def set_cases(self, ctx: RedContext, action: str = None):
+    async def set_cases(self, ctx: commands.Context, action: str = None):
         """Enables or disables case creation for each type of mod action"""
         guild = ctx.guild
 
@@ -64,8 +61,8 @@ class ModLog:
             msg = ""
             for ct in casetypes:
                 enabled = await ct.is_enabled()
-                value = 'enabled' if enabled else 'disabled'
-                msg += '%s : %s\n' % (ct.name, value)
+                value = "enabled" if enabled else "disabled"
+                msg += "%s : %s\n" % (ct.name, value)
 
             msg = title + "\n" + box(msg)
             await ctx.send(msg)
@@ -79,15 +76,15 @@ class ModLog:
             await casetype.set_enabled(True if not enabled else False)
 
             msg = (
-                _('Case creation for {} actions is now {}.').format(
-                    action, 'enabled' if not enabled else 'disabled'
+                _("Case creation for {} actions is now {}.").format(
+                    action, "enabled" if not enabled else "disabled"
                 )
             )
             await ctx.send(msg)
 
     @modlogset.command()
     @commands.guild_only()
-    async def resetcases(self, ctx: RedContext):
+    async def resetcases(self, ctx: commands.Context):
         """Resets modlog's cases"""
         guild = ctx.guild
         await modlog.reset_cases(guild)
@@ -95,7 +92,7 @@ class ModLog:
 
     @commands.command()
     @commands.guild_only()
-    async def case(self, ctx: RedContext, number: int):
+    async def case(self, ctx: commands.Context, number: int):
         """Shows the specified case"""
         try:
             case = await modlog.get_case(number, ctx.guild, self.bot)
@@ -107,7 +104,7 @@ class ModLog:
 
     @commands.command()
     @commands.guild_only()
-    async def reason(self, ctx: RedContext, case: int, *, reason: str = ""):
+    async def reason(self, ctx: commands.Context, case: int, *, reason: str = ""):
         """Lets you specify a reason for mod-log's cases
         Please note that you can only edit cases you are
         the owner of unless you are a mod/admin or the server owner"""
@@ -133,8 +130,10 @@ class ModLog:
                         if audit_type:
                             audit_case = None
                             async for entry in guild.audit_logs(action=audit_type):
-                                if entry.target.id == case_before.user.id and \
-                                        entry.user.id == case_before.moderator.id:
+                                if (
+                                    entry.target.id == case_before.user.id
+                                    and entry.action == audit_type
+                                ):
                                     audit_case = entry
                                     break
                             if audit_case:
@@ -145,9 +144,7 @@ class ModLog:
             if not (is_guild_owner or is_case_author or author_is_mod):
                 await ctx.send(_("You are not authorized to modify that case!"))
                 return
-            to_modify = {
-                "reason": reason,
-            }
+            to_modify = {"reason": reason}
             if case_before.moderator != author:
                 to_modify["amended_by"] = author
             to_modify["modified_at"] = ctx.message.created_at.timestamp()

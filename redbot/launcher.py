@@ -7,7 +7,17 @@ import argparse
 import asyncio
 
 import pkg_resources
-from redbot.setup import basic_setup, load_existing_config, remove_instance
+from pathlib import Path
+from redbot.setup import (
+    basic_setup,
+    load_existing_config,
+    remove_instance,
+    remove_instance_interaction,
+    create_backup,
+    save_config,
+)
+from redbot.core.utils import safe_delete
+from redbot.core.cli import confirm
 
 if sys.platform == "linux":
     import distro
@@ -15,9 +25,9 @@ if sys.platform == "linux":
 PYTHON_OK = sys.version_info >= (3, 5)
 INTERACTIVE_MODE = not len(sys.argv) > 1  # CLI flags = non-interactive
 
-INTRO = ("==========================\n"
-         "Red Discord Bot - Launcher\n"
-         "==========================\n")
+INTRO = (
+    "==========================\n" "Red Discord Bot - Launcher\n" "==========================\n"
+)
 
 IS_WINDOWS = os.name == "nt"
 IS_MAC = sys.platform == "darwin"
@@ -28,39 +38,39 @@ def parse_cli_args():
         description="Red - Discord Bot's launcher (V3)", allow_abbrev=False
     )
     instances = load_existing_config()
-    parser.add_argument("instancename", metavar="instancename", type=str,
-                        nargs="?", help="The instance to run", choices=list(instances.keys()))
-    parser.add_argument("--start", "-s",
-                        help="Starts Red",
-                        action="store_true")
-    parser.add_argument("--auto-restart",
-                        help="Autorestarts Red in case of issues",
-                        action="store_true")
-    parser.add_argument("--update",
-                        help="Updates Red",
-                        action="store_true")
-    parser.add_argument("--update-dev",
-                        help="Updates Red from the Github repo",
-                        action="store_true")
-    parser.add_argument("--voice",
-                        help="Installs extra 'voice' when updating",
-                        action="store_true")
-    parser.add_argument("--docs",
-                        help="Installs extra 'docs' when updating",
-                        action="store_true")
-    parser.add_argument("--test",
-                        help="Installs extra 'test' when updating",
-                        action="store_true")
-    parser.add_argument("--mongo",
-                        help="Installs extra 'mongo' when updating",
-                        action="store_true")
-    parser.add_argument("--debuginfo",
-                        help="Prints basic debug info that would be useful for support",
-                        action="store_true")
+    parser.add_argument(
+        "instancename",
+        metavar="instancename",
+        type=str,
+        nargs="?",
+        help="The instance to run",
+        choices=list(instances.keys()),
+    )
+    parser.add_argument("--start", "-s", help="Starts Red", action="store_true")
+    parser.add_argument(
+        "--auto-restart", help="Autorestarts Red in case of issues", action="store_true"
+    )
+    parser.add_argument("--update", help="Updates Red", action="store_true")
+    parser.add_argument(
+        "--update-dev", help="Updates Red from the Github repo", action="store_true"
+    )
+    parser.add_argument(
+        "--voice", help="Installs extra 'voice' when updating", action="store_true"
+    )
+    parser.add_argument("--docs", help="Installs extra 'docs' when updating", action="store_true")
+    parser.add_argument("--test", help="Installs extra 'test' when updating", action="store_true")
+    parser.add_argument(
+        "--mongo", help="Installs extra 'mongo' when updating", action="store_true"
+    )
+    parser.add_argument(
+        "--debuginfo",
+        help="Prints basic debug info that would be useful for support",
+        action="store_true",
+    )
     return parser.parse_known_args()
 
 
-def update_red(dev=False, voice=False, mongo=False, docs=False, test=False):
+def update_red(dev=False, reinstall=False, voice=False, mongo=False, docs=False, test=False):
     interpreter = sys.executable
     print("Updating Red...")
     # If the user ran redbot-launcher.exe, updating with pip will fail
@@ -93,12 +103,25 @@ def update_red(dev=False, voice=False, mongo=False, docs=False, test=False):
         package = "Red-DiscordBot"
         if egg_l:
             package += "[{}]".format(", ".join(egg_l))
-    code = subprocess.call([
-        interpreter, "-m",
-        "pip", "install", "-U",
-        "--process-dependency-links",
-        package
-    ])
+    if reinstall:
+        code = subprocess.call(
+            [
+                interpreter,
+                "-m",
+                "pip",
+                "install",
+                "-U",
+                "-I",
+                "--force-reinstall",
+                "--no-cache-dir",
+                "--process-dependency-links",
+                package,
+            ]
+        )
+    else:
+        code = subprocess.call(
+            [interpreter, "-m", "pip", "install", "-U", "--process-dependency-links", package]
+        )
     if code == 0:
         print("Red has been updated")
     else:
@@ -111,7 +134,7 @@ def update_red(dev=False, voice=False, mongo=False, docs=False, test=False):
         os.rename(new_name, old_name)
 
 
-def run_red(selected_instance, autorestart: bool=False, cliflags=None):
+def run_red(selected_instance, autorestart: bool = False, cliflags=None):
     while True:
         print("Starting {}...".format(selected_instance))
         cmd_list = ["redbot", selected_instance]
@@ -141,12 +164,15 @@ def cli_flag_getter():
         if choice == "y":
             print(
                 "Enter the prefixes, separated by a space (please note "
-                "that prefixes containing a space will need to be added with [p]set prefix)")
+                "that prefixes containing a space will need to be added with [p]set prefix)"
+            )
             prefixes = user_choice().split()
             for p in prefixes:
                 flags.append("-p {}".format(p))
-        print("Would you like to disable console input? Please note that features "
-              "requiring console interaction may fail to work (y/n)")
+        print(
+            "Would you like to disable console input? Please note that features "
+            "requiring console interaction may fail to work (y/n)"
+        )
         choice = user_choice()
         if choice == "y":
             flags.append("--no-prompt")
@@ -157,9 +183,11 @@ def cli_flag_getter():
         print("Is this a selfbot? (y/n)")
         choice = user_choice()
         if choice == "y":
-            print("Please note that selfbots are not allowed by Discord. See"
-                  "https://support.discordapp.com/hc/en-us/articles/115002192352-Automated-user-accounts-self-bots-"
-                  "for more information.")
+            print(
+                "Please note that selfbots are not allowed by Discord. See"
+                "https://support.discordapp.com/hc/en-us/articles/115002192352-Automated-user-accounts-self-bots-"
+                "for more information."
+            )
             flags.append("--self-bot")
         print("Does this token belong to a user account rather than a bot account? (y/n)")
         choice = user_choice()
@@ -173,7 +201,9 @@ def cli_flag_getter():
         choice = user_choice()
         if choice == "y":
             flags.append("--debug")
-        print("Do you want the Dev cog loaded (thus enabling commands such as debug and repl)? (y/n)")
+        print(
+            "Do you want the Dev cog loaded (thus enabling commands such as debug and repl)? (y/n)"
+        )
         choice = user_choice()
         if choice == "y":
             flags.append("--dev")
@@ -206,8 +236,8 @@ def instance_menu():
 
     name_num_map = {}
     for name in list(instances.keys()):
-        print("{}. {}\n".format(counter+1, name))
-        name_num_map[str(counter+1)] = name
+        print("{}. {}\n".format(counter + 1, name))
+        name_num_map[str(counter + 1)] = name
         counter += 1
 
     while True:
@@ -217,10 +247,43 @@ def instance_menu():
         except ValueError:
             print("Invalid input! Please enter a number corresponding to an instance.")
         else:
-            if selection not in list(range(1, counter+1)):
+            if selection not in list(range(1, counter + 1)):
                 print("Invalid selection! Please try again")
             else:
                 return name_num_map[str(selection)]
+
+
+async def reset_red():
+    instances = load_existing_config()
+
+    if not instances:
+        print("No instance to delete.\n")
+        return
+    print("WARNING: You are about to remove ALL Red instances on this computer.")
+    print(
+        "If you want to reset data of only one instance, "
+        "please select option 5 in the launcher."
+    )
+    await asyncio.sleep(2)
+    print("\nIf you continue you will remove these instanes.\n")
+    for instance in list(instances.keys()):
+        print("    - {}".format(instance))
+    await asyncio.sleep(3)
+    print('\nIf you want to reset all instances, type "I agree".')
+    response = input("> ").strip()
+    if response != "I agree":
+        print("Cancelling...")
+        return
+
+    if confirm("\nDo you want to create a backup for an instance? (y/n) "):
+        for index, instance in instances.items():
+            print("\nRemoving {}...".format(index))
+            await create_backup(index, instance)
+            await remove_instance(index, instance)
+    else:
+        for index, instance in instances.items():
+            await remove_instance(index, instance)
+    print("All instances have been removed.")
 
 
 def clear_screen():
@@ -247,6 +310,37 @@ def extras_selector():
     return selected
 
 
+def development_choice(reinstall=False):
+    while True:
+        print("\n")
+        print("Do you want to install stable or development version?")
+        print("1. Stable version")
+        print("2. Development version")
+        choice = user_choice()
+        print("\n")
+        selected = extras_selector()
+        if choice == "1":
+            update_red(
+                dev=False,
+                reinstall=reinstall,
+                voice=True if "voice" in selected else False,
+                docs=True if "docs" in selected else False,
+                test=True if "test" in selected else False,
+                mongo=True if "mongo" in selected else False,
+            )
+            break
+        elif choice == "2":
+            update_red(
+                dev=True,
+                reinstall=reinstall,
+                voice=True if "voice" in selected else False,
+                docs=True if "docs" in selected else False,
+                test=True if "test" in selected else False,
+                mongo=True if "mongo" in selected else False,
+            )
+            break
+
+
 def debug_info():
     pyver = sys.version
     redver = pkg_resources.get_distribution("Red-DiscordBot").version
@@ -262,12 +356,17 @@ def debug_info():
         os_info = distro.linux_distribution()
         osver = "{} {}".format(os_info[0], os_info[1]).strip()
     user_who_ran = getpass.getuser()
-    info = "Debug Info for Red\n\n" +\
-        "Python version: {}\n".format(pyver) +\
-        "Red version: {}\n".format(redver) +\
-        "OS version: {}\n".format(osver) +\
-        "System arch: {}\n".format(platform.machine()) +\
-        "User: {}\n".format(user_who_ran)
+    info = "Debug Info for Red\n\n" + "Python version: {}\n".format(
+        pyver
+    ) + "Red version: {}\n".format(
+        redver
+    ) + "OS version: {}\n".format(
+        osver
+    ) + "System arch: {}\n".format(
+        platform.machine()
+    ) + "User: {}\n".format(
+        user_who_ran
+    )
     print(info)
     exit(0)
 
@@ -275,55 +374,66 @@ def debug_info():
 def main_menu():
     if IS_WINDOWS:
         os.system("TITLE Red - Discord Bot V3 Launcher")
+    clear_screen()
     while True:
         print(INTRO)
         print("1. Run Red w/ autorestart in case of issues")
         print("2. Run Red")
         print("3. Update Red")
-        print("4. Update Red (development version)")
-        print("5. Create Instance")
-        print("6. Remove Instance")
-        print("7. Debug information (use this if having issues with the launcher or bot)")
+        print("4. Create Instance")
+        print("5. Remove Instance")
+        print("6. Debug information (use this if having issues with the launcher or bot)")
+        print("7. Reinstall Red")
         print("0. Exit")
         choice = user_choice()
         if choice == "1":
             instance = instance_menu()
+            cli_flags = cli_flag_getter()
             if instance:
-                cli_flags = cli_flag_getter()
                 run_red(instance, autorestart=True, cliflags=cli_flags)
             wait()
         elif choice == "2":
             instance = instance_menu()
+            cli_flags = cli_flag_getter()
             if instance:
-                cli_flags = cli_flag_getter()
                 run_red(instance, autorestart=False, cliflags=cli_flags)
             wait()
         elif choice == "3":
-            selected = extras_selector()
-            update_red(
-                dev=False, voice=True if "voice" in selected else False,
-                docs=True if "docs" in selected else False,
-                test=True if "test" in selected else False,
-                mongo=True if "mongo" in selected else False
-            )
+            development_choice()
             wait()
         elif choice == "4":
-            selected = extras_selector()
-            update_red(
-                dev=True, voice=True if "voice" in selected else False,
-                docs=True if "docs" in selected else False,
-                test=True if "test" in selected else False,
-                mongo=True if "mongo" in selected else False
-            )
-            wait()
-        elif choice == "5":
             basic_setup()
             wait()
-        elif choice == "6":
-            asyncio.get_event_loop().run_until_complete(remove_instance())
+        elif choice == "5":
+            asyncio.get_event_loop().run_until_complete(remove_instance_interaction())
             wait()
-        elif choice == "7":
+        elif choice == "6":
             debug_info()
+        elif choice == "7":
+            while True:
+                loop = asyncio.get_event_loop()
+                clear_screen()
+                print("==== Reinstall Red ====")
+                print(
+                    "1. Reinstall Red requirements (discard code changes, keep data and 3rd party cogs)"
+                )
+                print("2. Reset all data")
+                print("3. Factory reset (discard code changes, reset all data)")
+                print("\n")
+                print("0. Back")
+                choice = user_choice()
+                if choice == "1":
+                    development_choice(reinstall=True)
+                    wait()
+                elif choice == "2":
+                    loop.run_until_complete(reset_red())
+                    wait()
+                elif choice == "3":
+                    loop.run_until_complete(reset_red())
+                    development_choice(reinstall=True)
+                    wait()
+                elif choice == "0":
+                    break
         elif choice == "0":
             break
         clear_screen()
@@ -332,27 +442,20 @@ def main_menu():
 def main():
     if not PYTHON_OK:
         raise RuntimeError(
-            "Red requires Python 3.5 or greater. "
-            "Please install the correct version!"
+            "Red requires Python 3.5 or greater. " "Please install the correct version!"
         )
     if args.debuginfo:  # Check first since the function triggers an exit
         debug_info()
-    
+
     if args.update and args.update_dev:  # Conflicting args, so error out
         raise RuntimeError(
             "\nUpdate requested but conflicting arguments provided.\n\n"
             "Please try again using only one of --update or --update-dev"
         )
     if args.update:
-        update_red(
-            voice=args.voice, docs=args.docs, 
-            test=args.test, mongo=args.mongo
-        )
+        update_red(voice=args.voice, docs=args.docs, test=args.test, mongo=args.mongo)
     elif args.update_dev:
-        update_red(
-            dev=True, voice=args.voice, docs=args.docs, 
-            test=args.test, mongo=args.mongo
-        )
+        update_red(dev=True, voice=args.voice, docs=args.docs, test=args.test, mongo=args.mongo)
 
     if INTERACTIVE_MODE:
         main_menu()

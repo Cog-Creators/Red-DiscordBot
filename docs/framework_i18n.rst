@@ -13,11 +13,12 @@ Basic Usage
 
 .. code-block:: python
 
-    from discord.ext import commands
-    from redbot.core.i18n import CogI18n
+    from redbot.core import commands
+    from redbot.core.i18n import Translator, cog_i18n
     
-    _ = CogI18n("ExampleCog", __file__)
+    _ = Translator("ExampleCog", __file__)
 
+    @cog_i18n(_)
     class ExampleCog:
         """description"""
 
@@ -39,16 +40,19 @@ In a command prompt in your cog's package (where yourcog.py is),
 create a directory called "locales".
 Then do one of the following:
 
-Windows: :code:`python <your python install path>\Tools\i18n\pygettext.py -n -p locales`
+Windows: :code:`python <your python install path>\Tools\i18n\pygettext.py -D -n -p locales`
 
 Mac: ?
 
-Linux: :code:`pygettext3 -n -p locales`
+Linux: :code:`pygettext3 -D -n -p locales`
 
-This will generate a messages.pot file with strings to be translated
+This will generate a messages.pot file with strings to be translated, including
+docstrings.
 
 -------------
 API Reference
 -------------
 
 .. automodule:: redbot.core.i18n
+    :members:
+    :special-members: __call__

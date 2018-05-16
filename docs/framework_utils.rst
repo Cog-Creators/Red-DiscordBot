@@ -16,6 +16,12 @@ Embed Helpers
 .. automodule:: redbot.core.utils.embed
     :members:
 
+Menu Helpers
+============
+
+.. automodule:: redbot.core.utils.menus
+    :members:
+
 Mod Helpers
 ===========
 

@@ -1,26 +1,23 @@
-"""
-The purpose of this module is to allow for Red to further customise the command
-invocation context provided by discord.py.
-"""
+
 import asyncio
 from typing import Iterable, List
-
 import discord
 from discord.ext import commands
 
 from redbot.core.utils.chat_formatting import box
 
-__all__ = ["RedContext"]
 
 TICK = "\N{WHITE HEAVY CHECK MARK}"
 
+__all__ = ["Context"]
 
-class RedContext(commands.Context):
+
+class Context(commands.Context):
     """Command invocation context for Red.
 
     All context passed into commands will be of this type.
 
-    This class inherits from `commands.Context <discord.ext.commands.Context>`.
+    This class inherits from `discord.ext.commands.Context`.
     """
 
     async def send_help(self) -> List[discord.Message]:
@@ -62,10 +59,9 @@ class RedContext(commands.Context):
         else:
             return True
 
-    async def send_interactive(self,
-                               messages: Iterable[str],
-                               box_lang: str=None,
-                               timeout: int=15) -> List[discord.Message]:
+    async def send_interactive(
+        self, messages: Iterable[str], box_lang: str = None, timeout: int = 15
+    ) -> List[discord.Message]:
         """Send multiple messages interactively.
 
         The user will be prompted for whether or not they would like to view
@@ -87,9 +83,9 @@ class RedContext(commands.Context):
         messages = tuple(messages)
         ret = []
 
-        more_check = lambda m: (m.author == self.author and
-                                m.channel == self.channel and
-                                m.content.lower() == "more")
+        more_check = lambda m: (
+            m.author == self.author and m.channel == self.channel and m.content.lower() == "more"
+        )
 
         for idx, page in enumerate(messages, 1):
             if box_lang is None:
@@ -108,10 +104,10 @@ class RedContext(commands.Context):
                 query = await self.send(
                     "There {} still {} message{} remaining. "
                     "Type `more` to continue."
-                    "".format(is_are, n_remaining, plural))
+                    "".format(is_are, n_remaining, plural)
+                )
                 try:
-                    resp = await self.bot.wait_for(
-                        'message', check=more_check, timeout=timeout)
+                    resp = await self.bot.wait_for("message", check=more_check, timeout=timeout)
                 except asyncio.TimeoutError:
                     await query.delete()
                     break
@@ -128,12 +124,42 @@ class RedContext(commands.Context):
     async def embed_requested(self):
         """
         Simple helper to call bot.embed_requested
+        with logic around if embed permissions are available
 
         Returns
         -------
         bool:
             :code:`True` if an embed is requested
         """
-        return await self.bot.embed_requested(
-            self.channel, self.author, command=self.command
-        )
+        if self.guild and not self.channel.permissions_for(self.guild.me).embed_links:
+            return False
+        return await self.bot.embed_requested(self.channel, self.author, command=self.command)
+
+    async def maybe_send_embed(self, message: str) -> discord.Message:
+        """
+        Simple helper to send a simple message to context
+        without manually checking ctx.embed_requested
+        This should only be used for simple messages.
+
+        Parameters
+        ----------
+        message: `str`
+            The string to send
+
+        Returns
+        -------
+        discord.Message:
+            the message which was sent
+
+        Raises
+        ------
+        discord.Forbidden
+            see `discord.abc.Messageable.send`
+        discord.HTTPException
+            see `discord.abc.Messageable.send`
+        """
+
+        if await self.embed_requested():
+            return await self.send(embed=discord.Embed(description=message))
+        else:
+            return await self.send(message)

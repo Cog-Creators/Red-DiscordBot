@@ -5,7 +5,7 @@ from subprocess import Popen, DEVNULL, PIPE
 import os
 import logging
 
-log = logging.getLogger('red.audio.manager')
+log = logging.getLogger("red.audio.manager")
 
 proc = None
 SHUTDOWN = asyncio.Event()
@@ -13,7 +13,8 @@ SHUTDOWN = asyncio.Event()
 
 def has_java_error(pid):
     from . import LAVALINK_DOWNLOAD_DIR
-    poss_error_file = LAVALINK_DOWNLOAD_DIR / 'hs_err_pid{}.log'.format(pid)
+
+    poss_error_file = LAVALINK_DOWNLOAD_DIR / "hs_err_pid{}.log".format(pid)
     return poss_error_file.exists()
 
 
@@ -29,14 +30,14 @@ async def monitor_lavalink_server(loop):
             log.info("Restarting Lavalink jar.")
             await start_lavalink_server(loop)
         else:
-            log.error("Your Java is borked. Please find the hs_err_pid{}.log file"
-                      " in the Audio data folder and report this issue.".format(
-                proc.pid
-            ))
+            log.error(
+                "Your Java is borked. Please find the hs_err_pid{}.log file"
+                " in the Audio data folder and report this issue.".format(proc.pid)
+            )
 
 
 async def has_java(loop):
-    java_available = shutil.which('java') is not None
+    java_available = shutil.which("java") is not None
     if not java_available:
         return False
 
@@ -48,19 +49,17 @@ async def get_java_version(loop):
     """
     This assumes we've already checked that java exists.
     """
-    proc = Popen(
-        shlex.split("java -version", posix=os.name == 'posix'),
-        stdout=PIPE, stderr=PIPE
-    )
+    proc = Popen(shlex.split("java -version", posix=os.name == "posix"), stdout=PIPE, stderr=PIPE)
     _, err = proc.communicate()
 
-    version_info = str(err, encoding='utf-8')
+    version_info = str(err, encoding="utf-8")
 
-    version_line = version_info.split('\n')[0]
+    version_line = version_info.split("\n")[0]
     version_start = version_line.find('"')
     version_string = version_line[version_start + 1:-1]
-    major, minor = version_string.split('.')[:2]
+    major, minor = version_string.split(".")[:2]
     return int(major), int(minor)
+
 
 async def start_lavalink_server(loop):
     java_available, java_version = await has_java(loop)
@@ -72,13 +71,15 @@ async def start_lavalink_server(loop):
         extra_flags = "-Dsun.zip.disableMemoryMapping=true"
 
     from . import LAVALINK_DOWNLOAD_DIR, LAVALINK_JAR_FILE
+
     start_cmd = "java {} -jar {}".format(extra_flags, LAVALINK_JAR_FILE.resolve())
 
     global proc
     proc = Popen(
-        shlex.split(start_cmd, posix=os.name == 'posix'),
+        shlex.split(start_cmd, posix=os.name == "posix"),
         cwd=str(LAVALINK_DOWNLOAD_DIR),
-        stdout=DEVNULL, stderr=DEVNULL
+        stdout=DEVNULL,
+        stderr=DEVNULL,
     )
 
     log.info("Lavalink jar started. PID: {}".format(proc.pid))
@@ -92,4 +93,5 @@ def shutdown_lavalink_server():
     global proc
     if proc is not None:
         proc.terminate()
+        proc.wait()
         proc = None
