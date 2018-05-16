@@ -1,10 +1,10 @@
 # Contents
 * [1. Introduction](#1-introduction)
   * [1.1 Why do these guidelines exist?](#11-why-do-these-guidelines-exist)
-  * [1.2 What kinds of contributions are we looking for?](#12-what-kind-of-contributions-are-we-looking-for)
+  * [1.2 What kinds of contributions are we looking for?](#12-what-kinds-of-contributions-are-we-looking-for)
 * [2. Ground Rules](#2-ground-rules)
 * [3. Your First Contribution](#3-your-first-contribution)
-* [4. Getting Started]($4-getting-started)
+* [4. Getting Started](#4-getting-started)
   * [4.1 Setting up your development environment](#41-setting-up-your-development-environment)
   * [4.2 Testing](#42-testing)
   * [4.3 Style](#43-style)
@@ -12,7 +12,7 @@
 * [5. Code Review Process](#5-code-review-process)
   * [5.1 Issues](#51-issues)
   * [5.2 Pull Requests](#52-pull-requests)
-  * [5.3 Differences between "new features" and "improvements"](#53-difference-between-new-features-and-improvements)
+  * [5.3 Differences between "new features" and "improvements"](#53-differences-between-new-features-and-improvements)
 * [6. Community](#6-community)
 
 # 1. Introduction
