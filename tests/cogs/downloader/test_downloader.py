@@ -96,7 +96,7 @@ async def test_clone_repo(repo_norun, capsys):
     assert clone_cmd[2] == "-b"
     assert clone_cmd[3] == "rewrite_cogs"
     assert clone_cmd[4] == repo_norun.url
-    assert "repos/squid" in clone_cmd[5]
+    assert "repos/squid" in clone_cmd[5] or "repos\\\\squid" in clone_cmd[5]
 
 
 @pytest.mark.asyncio
