@@ -90,8 +90,7 @@ async def test_clone_repo(repo_norun, capsys):
     await repo_norun.clone()
 
     clone_cmd, _ = capsys.readouterr()
-
-    clone_cmd = clone_cmd.strip("[']").split("', '")
+    clone_cmd = clone_cmd.strip("[']\n").split("', '")
     assert clone_cmd[0] == "git"
     assert clone_cmd[1] == "clone"
     assert clone_cmd[2] == "-b"
