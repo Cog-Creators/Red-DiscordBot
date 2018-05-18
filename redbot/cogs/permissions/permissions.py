@@ -243,3 +243,42 @@ class Permissions:
         Dumps a YAML file with the current owner level permissions
         """
         await yamlget_acl(ctx, config=self.config.guild(ctx.guild).owner_models)
+
+    @commands.guild_only()
+    @checks.guildowner_or_permissions(administrator=True)
+    @permissions.command(name="updateguildacl")
+    async def guild_update_acl(self, ctx: RedContext):
+        """
+        Take a YAML file upload to update permissions from
+        
+        Use this to not lose existing rules
+        """
+        if not ctx.message.attachments:
+            return await ctx.maybe_send_embed(_("You must upload a file"))
+
+        try:
+            await yamlset_acl(ctx, config=self.config.guild(ctx.guild).owner_models, update=True)
+        except Exception as e:
+            print(e)
+            return await ctx.maybe_send_embed(_("Inalid syntax"))
+        else:
+            await ctx.tick()
+
+    @checks.is_owner()
+    @permissions.command(name="updateglobalacl")
+    async def owner_update_acl(self, ctx: RedContext):
+        """
+        Take a YAML file upload to set permissions from
+
+        Use this to not lose existing rules
+        """
+        if not ctx.message.attachments:
+            return await ctx.maybe_send_embed(_("You must upload a file"))
+
+        try:
+            await yamlset_acl(ctx, config=self.config.owner_models, update=True)
+        except Exception as e:
+            print(e)
+            return await ctx.maybe_send_embed(_("Inalid syntax"))
+        else:
+            await ctx.tick()
