@@ -22,7 +22,7 @@ async def yamlset_acl(ctx, *, config, update):
         del _fp
         raise
 
-    old_data = async config()
+    old_data = await config()
 
     for outer, inner in data.items():
         for ok, iv in inner.items():
