@@ -33,11 +33,11 @@ Which champion's ultimate is named: Chain of Corruption?`Varus
 Which champion's ultimate is named: GNAR!`Gnar
 Which champion's ultimate is named: Unstoppable Force?`Malphite
 Which champion's ultimate is named: Frozen Tomb?`Lissandra
-Which champion's ultimate is named: Ravenous Flock?`Swain
+Which champion's ultimate is named: Demonic Ascension?`Swain
 Which champion's ultimate is named: Summon: Tibbers?`Annie
 Which champion's ultimate is named: Riftwalk?`Kassadin
 Which champion's ultimate is named: Insanity Potion?`Singed
-Which champion's ultimate is named: Transcendent Blades?`Irelia
+Which champion's ultimate is named: Vanguard's Edge?`Irelia
 Which champion's ultimate is named: Super Mega Death Rocket!`Jinx
 Which champion's ultimate is named: Intervention?`Kayle
 Which champion's ultimate is named: Buster Shot?`Tristana
@@ -137,3 +137,4 @@ Which champion's ultimate is named: Featherstorm?`Xayah
 Which champion's ultimate is named: Umbral Trespass?`Kayn
 Which champion's ultimate is named: Call of the Forge God?`Ornn
 Which champion's ultimate is named: Portal Jump?`Zoe
+Which champion's ultimate is named: Killer Instinct?`Kai'sa`kaisa`kai sa
