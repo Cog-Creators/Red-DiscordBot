@@ -22,17 +22,23 @@ async def yamlset_acl(ctx, *, config, update):
         del _fp
         raise
 
+    old_data = async config()
+
     for outer, inner in data.items():
         for ok, iv in inner.items():
             for k, v in iv.items():
                 if k == "default":
                     data[outer][ok][k] = {"allow": True, "deny": False}.get(v.lower(), None)
 
-    if update:
-        async with config() as cfg:
-            cfg.update(data)
-    else:
-        await config.set(data)
+                if not update:
+                    continue
+                try:
+                    if isinstance(old_data[outer][ok][k], list):
+                        data[outer][ok][k].extend(old_data[outer][ok][k])
+                except KeyError:
+                    pass
+
+    await config.set(data)
 
 
 async def yamlget_acl(ctx, *, config):
