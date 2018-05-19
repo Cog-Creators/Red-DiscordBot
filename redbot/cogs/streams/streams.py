@@ -252,9 +252,7 @@ class Streams:
                 await ctx.send(
                     _(
                         "The Youtube API key is either invalid or has not been set. " "See {}."
-                    ).format(
-                        "`{}streamset youtubekey`".format(ctx.prefix)
-                    )
+                    ).format("`{}streamset youtubekey`".format(ctx.prefix))
                 )
                 return
             except APIError:
@@ -362,9 +360,7 @@ class Streams:
                 _(
                     "When a stream configured for stream alerts "
                     "comes online, {} will be mentioned"
-                ).format(
-                    "@\u200beveryone"
-                )
+                ).format("@\u200beveryone")
             )
 
     @mention.command(aliases=["here"])
@@ -384,9 +380,7 @@ class Streams:
                 _(
                     "When a stream configured for stream alerts "
                     "comes online, {} will be mentioned"
-                ).format(
-                    "@\u200bhere"
-                )
+                ).format("@\u200bhere")
             )
 
     @mention.command()
@@ -411,9 +405,7 @@ class Streams:
                     "When a stream configured for stream alerts "
                     "comes online, {} will be mentioned"
                     ""
-                ).format(
-                    "@\u200b{}".format(role.name)
-                )
+                ).format("@\u200b{}".format(role.name))
             )
 
     @streamset.command()
@@ -458,9 +450,7 @@ class Streams:
                     "I'll send a notification in this channel when a "
                     "channel is streaming to the {} community"
                     ""
-                ).format(
-                    community.name
-                )
+                ).format(community.name)
             )
         else:
             community.channels.remove(ctx.channel.id)
@@ -471,9 +461,7 @@ class Streams:
                     "I won't send notifications about channels streaming "
                     "to the {} community in this channel anymore"
                     ""
-                ).format(
-                    community.name
-                )
+                ).format(community.name)
             )
         await self.save_communities()
 
