@@ -39,13 +39,16 @@ PAYOUTS = {
         "phrase": _("JACKPOT! 226! Your bid has been multiplied * 2500!"),
     },
     (SMReel.flc, SMReel.flc, SMReel.flc): {
-        "payout": lambda x: x + 1000, "phrase": _("4LC! +1000!")
+        "payout": lambda x: x + 1000,
+        "phrase": _("4LC! +1000!"),
     },
     (SMReel.cherries, SMReel.cherries, SMReel.cherries): {
-        "payout": lambda x: x + 800, "phrase": _("Three cherries! +800!")
+        "payout": lambda x: x + 800,
+        "phrase": _("Three cherries! +800!"),
     },
     (SMReel.two, SMReel.six): {
-        "payout": lambda x: x * 4 + x, "phrase": _("2 6! Your bid has been multiplied * 4!")
+        "payout": lambda x: x * 4 + x,
+        "phrase": _("2 6! Your bid has been multiplied * 4!"),
     },
     (SMReel.cherries, SMReel.cherries): {
         "payout": lambda x: x * 3 + x,
@@ -67,9 +70,7 @@ SLOT_PAYOUTS_MSG = _(
     "{cherries.value} {cherries.value} Bet * 3\n\n"
     "Three symbols: +500\n"
     "Two symbols: Bet * 2"
-).format(
-    **SMReel.__dict__
-)
+).format(**SMReel.__dict__)
 
 
 def guild_only_check():
@@ -362,11 +363,11 @@ class Economy:
             slot_time = await self.config.SLOT_TIME()
             last_slot = await self.config.user(author).last_slot()
         else:
-            valid_bid = await self.config.guild(
-                guild
-            ).SLOT_MIN() <= bid <= await self.config.guild(
-                guild
-            ).SLOT_MAX()
+            valid_bid = (
+                await self.config.guild(guild).SLOT_MIN()
+                <= bid
+                <= await self.config.guild(guild).SLOT_MAX()
+            )
             slot_time = await self.config.guild(guild).SLOT_TIME()
             last_slot = await self.config.member(author).last_slot()
         now = calendar.timegm(ctx.message.created_at.utctimetuple())

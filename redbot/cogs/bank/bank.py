@@ -75,17 +75,9 @@ class Bank:
                 currency_name = await bank._conf.guild(ctx.guild).currency()
                 default_balance = await bank._conf.guild(ctx.guild).default_balance()
 
-            settings = (
-                _(
-                    "Bank settings:\n\n"
-                    "Bank name: {}\n"
-                    "Currency: {}\n"
-                    "Default balance: {}"
-                    ""
-                ).format(
-                    bank_name, currency_name, default_balance
-                )
-            )
+            settings = _(
+                "Bank settings:\n\n" "Bank name: {}\n" "Currency: {}\n" "Default balance: {}" ""
+            ).format(bank_name, currency_name, default_balance)
             await ctx.send(box(settings))
             await ctx.send_help()
 
@@ -103,9 +95,7 @@ class Bank:
                 _(
                     "This will toggle the bank to be {}, deleting all accounts "
                     "in the process! If you're sure, type `{}`"
-                ).format(
-                    word, "{}bankset toggleglobal yes".format(ctx.prefix)
-                )
+                ).format(word, "{}bankset toggleglobal yes".format(ctx.prefix))
             )
         else:
             await bank.set_global(not cur_setting)

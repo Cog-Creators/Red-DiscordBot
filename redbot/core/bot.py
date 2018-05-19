@@ -79,12 +79,10 @@ class RedBase(BotBase, RpcMethodMixin):
                 return global_prefix
             server_prefix = await bot.db.guild(message.guild).prefix()
             if cli_flags.mentionable:
-                return when_mentioned_or(*server_prefix)(
-                    bot, message
-                ) if server_prefix else when_mentioned_or(
-                    *global_prefix
-                )(
-                    bot, message
+                return (
+                    when_mentioned_or(*server_prefix)(bot, message)
+                    if server_prefix
+                    else when_mentioned_or(*global_prefix)(bot, message)
                 )
             else:
                 return server_prefix if server_prefix else global_prefix
@@ -159,9 +157,8 @@ class RedBase(BotBase, RpcMethodMixin):
         bool
             :code:`True` if an embed is requested
         """
-        if (
-            isinstance(channel, discord.abc.PrivateChannel)
-            or (command and command == self.get_command("help"))
+        if isinstance(channel, discord.abc.PrivateChannel) or (
+            command and command == self.get_command("help")
         ):
             user_setting = await self.db.user(user).embeds()
             if user_setting is not None:
