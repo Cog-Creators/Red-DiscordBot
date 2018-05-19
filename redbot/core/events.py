@@ -214,7 +214,7 @@ def init_events(bot, cli_flags):
                 "logs for details."
                 "".format(ctx.command.qualified_name)
             )
-            exception_log = ("Exception in command '{}'\n" "".format(ctx.command.qualified_name))
+            exception_log = "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
             exception_log += "".join(
                 traceback.format_exception(type(error), error, error.__traceback__)
             )
