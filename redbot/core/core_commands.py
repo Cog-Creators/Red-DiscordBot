@@ -348,8 +348,8 @@ class Core:
                 except Exception as e:
                     log.exception("Package loading failed", exc_info=e)
 
-                    exception_log = (
-                        "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
+                    exception_log = "Exception in command '{}'\n" "".format(
+                        ctx.command.qualified_name
                     )
                     exception_log += "".join(
                         traceback.format_exception(type(e), e, e.__traceback__)
@@ -434,9 +434,7 @@ class Core:
             except Exception as e:
                 log.exception("Package reloading failed", exc_info=e)
 
-                exception_log = (
-                    "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
-                )
+                exception_log = "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
                 exception_log += "".join(traceback.format_exception(type(e), e, e.__traceback__))
                 self.bot._last_exception = exception_log
 
@@ -448,7 +446,7 @@ class Core:
             await ctx.send(_(formed))
 
         if failed_packages:
-            fmt = ("Failed to reload package{plural} {packs}. Check your " "logs for details")
+            fmt = "Failed to reload package{plural} {packs}. Check your " "logs for details"
             formed = self.get_package_strings(failed_packages, fmt)
             await ctx.send(_(formed))
 
@@ -694,9 +692,7 @@ class Core:
                     "only do it up to 2 times an hour. Use "
                     "nicknames if you need frequent changes. "
                     "`{}set nickname`"
-                ).format(
-                    ctx.prefix
-                )
+                ).format(ctx.prefix)
             )
         else:
             await ctx.send(_("Done."))
@@ -799,9 +795,7 @@ class Core:
                     " it is recommended to reset it right now. Go to the following link and"
                     " select `Reveal Token` and `Generate a new token?`."
                     "\n\nhttps://discordapp.com/developers/applications/me/{}"
-                ).format(
-                    self.bot.user.id
-                )
+                ).format(self.bot.user.id)
             )
             return
 
@@ -948,7 +942,7 @@ class Core:
             else:
                 await ctx.send(_("Your message has been sent."))
         else:
-            msg_text = ("{}\nMessage:\n\n{}\n{}".format(description, message, footer))
+            msg_text = "{}\nMessage:\n\n{}\n{}".format(description, message, footer)
             try:
                 await owner.send("{}\n{}".format(content, box(msg_text)))
             except discord.InvalidArgument:

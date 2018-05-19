@@ -79,10 +79,10 @@ def get_audit_reason(author: discord.Member, reason: str = None):
         The formatted audit log reason.
 
     """
-    return "Action requested by {} (ID {}). Reason: {}".format(
-        author, author.id, reason
-    ) if reason else "Action requested by {} (ID {}).".format(
-        author, author.id
+    return (
+        "Action requested by {} (ID {}). Reason: {}".format(author, author.id, reason)
+        if reason
+        else "Action requested by {} (ID {}).".format(author, author.id)
     )
 
 

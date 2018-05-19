@@ -266,7 +266,7 @@ class TwitchStream(Stream):
         url = channel["url"]
         logo = channel["logo"]
         if logo is None:
-            logo = ("https://static-cdn.jtvnw.net/" "jtv_user_pictures/xarth/404_user_70x70.png")
+            logo = "https://static-cdn.jtvnw.net/" "jtv_user_pictures/xarth/404_user_70x70.png"
         status = channel["status"]
         if not status:
             status = "Untitled broadcast"
@@ -348,7 +348,7 @@ class MixerStream(Stream):
             raise APIError()
 
     def make_embed(self, data):
-        default_avatar = ("https://mixer.com/_latest/assets/images/main/" "avatars/default.jpg")
+        default_avatar = "https://mixer.com/_latest/assets/images/main/" "avatars/default.jpg"
         user = data["user"]
         url = "https://mixer.com/" + data["token"]
         embed = discord.Embed(title=data["name"], url=url)
