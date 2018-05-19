@@ -199,7 +199,7 @@ class General:
 
         #  A special case for a special someone :^)
         special_date = datetime.datetime(2016, 1, 10, 6, 8, 4, 443000)
-        is_special = (user.id == 96130341705637888 and guild.id == 133049272517001216)
+        is_special = user.id == 96130341705637888 and guild.id == 133049272517001216
 
         roles = sorted(user.roles)[1:]
 
@@ -268,10 +268,8 @@ class General:
         text_channels = len(guild.text_channels)
         voice_channels = len(guild.voice_channels)
         passed = (ctx.message.created_at - guild.created_at).days
-        created_at = (
-            _("Since {}. That's over {} days ago!" "").format(
-                guild.created_at.strftime("%d %b %Y %H:%M"), passed
-            )
+        created_at = _("Since {}. That's over {} days ago!" "").format(
+            guild.created_at.strftime("%d %b %Y %H:%M"), passed
         )
 
         colour = "".join([choice("0123456789ABCDEF") for x in range(6)])
@@ -332,9 +330,8 @@ class General:
                 definition = item_list[pos]["definition"]
                 example = item_list[pos]["example"]
                 defs = len(item_list)
-                msg = (
-                    "**Definition #{} out of {}:\n**{}\n\n"
-                    "**Example:\n**{}".format(pos + 1, defs, definition, example)
+                msg = "**Definition #{} out of {}:\n**{}\n\n" "**Example:\n**{}".format(
+                    pos + 1, defs, definition, example
                 )
                 msg = pagify(msg, ["\n"])
                 for page in msg:
