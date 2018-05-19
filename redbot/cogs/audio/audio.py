@@ -1589,7 +1589,7 @@ class Audio:
         await ctx.send(embed=embed)
 
     @commands.group(aliases=["llset"])
-    @commands.guild_only()	
+    @commands.guild_only()
     @checks.is_owner()
     async def llsetup(self, ctx):
         """Lavalink server configuration options."""
