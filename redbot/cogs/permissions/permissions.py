@@ -13,6 +13,8 @@ from .yaml_handler import yamlset_acl, yamlget_acl
 
 _models = ["owner", "guildowner", "admin", "mod"]
 
+_ = lambda x: x
+
 
 class Permissions:
     """
