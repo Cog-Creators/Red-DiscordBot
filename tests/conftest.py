@@ -156,7 +156,7 @@ def red(config_fr):
 
     description = "Red v3 - Alpha"
 
-    Config.get_core_conf = (lambda *args, **kwargs: config_fr)
+    Config.get_core_conf = lambda *args, **kwargs: config_fr
 
     red = Red(cli_flags, description=description, pm_help=None)
 

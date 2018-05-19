@@ -28,7 +28,11 @@ def install_agreement():
             return True
 
         def does_agree(msg: discord.Message):
-            return ctx.author == msg.author and ctx.channel == msg.channel and msg.content == "I agree"
+            return (
+                ctx.author == msg.author
+                and ctx.channel == msg.channel
+                and msg.content == "I agree"
+            )
 
         await ctx.send(REPO_INSTALL_MSG)
 
