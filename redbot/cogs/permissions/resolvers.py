@@ -1,13 +1,13 @@
 import types
 import contextlib
 import asyncio
-from redbot.core import RedContext
+from redbot.core import commands
 import logging
 
 log = logging.getLogger("redbot.cogs.permissions.resolvers")
 
 
-async def val_if_check_is_valid(*, ctx: RedContext, check: object, level: str) -> bool:
+async def val_if_check_is_valid(*, ctx: commands.Context, check: object, level: str) -> bool:
     """
     Returns the value from a check if it is valid
     """
@@ -33,7 +33,7 @@ async def val_if_check_is_valid(*, ctx: RedContext, check: object, level: str) -
 
 
 def resolve_models(
-    *, ctx: RedContext, models: dict, debug: bool = False, debug_ids: list = None
+    *, ctx: commands.Context, models: dict, debug: bool = False, debug_ids: list = None
 ) -> bool:
 
     cmd_name = ctx.command.qualified_name
@@ -84,7 +84,7 @@ def resolve_models(
 
 def resolve_lists(
     *,
-    ctx: RedContext,
+    ctx: commands.Context,
     whitelist: list,
     blacklist: list,
     debug: bool = False,

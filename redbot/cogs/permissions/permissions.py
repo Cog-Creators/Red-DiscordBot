@@ -2,18 +2,15 @@ from copy import copy
 import contextlib
 
 import discord
-from discord.ext import commands
+from redbot.core import commands
 
-from redbot.core import RedContext
 from redbot.core.bot import Red
 from redbot.core import checks
-from redbot.core.i18n import CogI18n
 from redbot.core.config import Config
 
 from .resolvers import val_if_check_is_valid, resolve_models
 from .yaml_handler import yamlset_acl, yamlget_acl
 
-_ = CogI18n("Permissions", __file__)
 _models = ["owner", "guildowner", "admin", "mod"]
 
 
@@ -49,13 +46,13 @@ class Permissions:
             return False
         return True
 
-    async def check_overrides(self, ctx: RedContext, level: str) -> bool:
+    async def check_overrides(self, ctx: commands.Context, level: str) -> bool:
         """
         This checks for any overrides in the permission model
 
         Parameters
         ----------
-        ctx: `redbot.core.context.RedContext`
+        ctx: `redbot.core.context.commands.Context`
             The context of the command
         level: `str`
             One of 'owner', 'guildowner', 'admin', 'mod'
@@ -95,7 +92,7 @@ class Permissions:
 
         return None
 
-    async def owner_model(self, ctx: RedContext) -> bool:
+    async def owner_model(self, ctx: commands.Context) -> bool:
         """
         Handles owner level overrides
         """
@@ -103,7 +100,7 @@ class Permissions:
         async with self.config.owner_models() as models:
             return resolve_models(ctx=ctx, models=models)
 
-    async def guildowner_model(self, ctx: RedContext) -> bool:
+    async def guildowner_model(self, ctx: commands.Context) -> bool:
         """
         Handles guild level overrides
         """
@@ -114,11 +111,11 @@ class Permissions:
     #   Either of the below function signatures could be used
     #   without any other modifications required at a later date
     #
-    #   async def admin_model(self, ctx: RedContext) -> bool:
-    #   async def mod_model(self, ctx: RedContext) -> bool:
+    #   async def admin_model(self, ctx: commands.Context) -> bool:
+    #   async def mod_model(self, ctx: commands.Context) -> bool:
 
     @commands.group()
-    async def permissions(self, ctx: RedContext):
+    async def permissions(self, ctx: commands.Context):
         """
         Permission management tools
         """
@@ -126,7 +123,7 @@ class Permissions:
             await ctx.send_help()
 
     @permissions.command()
-    async def explain(self, ctx: RedContext):
+    async def explain(self, ctx: commands.Context):
         """
         Provides a detailed explanation of how the permission model functions
         """
@@ -167,7 +164,7 @@ class Permissions:
         await ctx.maybe_send_embed(message)
 
     @permissions.command(name="canrun")
-    async def _test_permission_model(self, ctx: RedContext, user: discord.Member, *, command: str):
+    async def _test_permission_model(self, ctx: commands.Context, user: discord.Member, *, command: str):
         """
         This checks if someone can run a command in the current location
         """
@@ -183,7 +180,7 @@ class Permissions:
         if com is None:
             out = _("No such command")
         else:
-            testcontext = await self.bot.get_context(message, cls=RedContext)
+            testcontext = await self.bot.get_context(message, cls=commands.Context)
             try:
                 await com.can_run(testcontext)
             except commands.CheckFailure:
@@ -194,7 +191,7 @@ class Permissions:
 
     @checks.is_owner()
     @permissions.command(name="setglobalacl")
-    async def owner_set_acl(self, ctx: RedContext):
+    async def owner_set_acl(self, ctx: commands.Context):
         """
         Take a YAML file upload to set permissions from
         """
@@ -211,7 +208,7 @@ class Permissions:
 
     @checks.is_owner()
     @permissions.command(name="getglobalacl")
-    async def owner_get_acl(self, ctx: RedContext):
+    async def owner_get_acl(self, ctx: commands.Context):
         """
         Dumps a YAML file with the current owner level permissions
         """
@@ -220,7 +217,7 @@ class Permissions:
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     @permissions.command(name="setguildacl")
-    async def guild_set_acl(self, ctx: RedContext):
+    async def guild_set_acl(self, ctx: commands.Context):
         """
         Take a YAML file upload to set permissions from
         """
@@ -238,7 +235,7 @@ class Permissions:
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     @permissions.command(name="getglobalacl")
-    async def guild_get_acl(self, ctx: RedContext):
+    async def guild_get_acl(self, ctx: commands.Context):
         """
         Dumps a YAML file with the current owner level permissions
         """
@@ -247,7 +244,7 @@ class Permissions:
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     @permissions.command(name="updateguildacl")
-    async def guild_update_acl(self, ctx: RedContext):
+    async def guild_update_acl(self, ctx: commands.Context):
         """
         Take a YAML file upload to update permissions from
         
@@ -266,7 +263,7 @@ class Permissions:
 
     @checks.is_owner()
     @permissions.command(name="updateglobalacl")
-    async def owner_update_acl(self, ctx: RedContext):
+    async def owner_update_acl(self, ctx: commands.Context):
         """
         Take a YAML file upload to set permissions from
 
