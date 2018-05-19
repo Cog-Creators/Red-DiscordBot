@@ -151,7 +151,7 @@ class Alias:
             return
 
         try:
-            potential_alias = message.content[len(prefix):].split(" ")[0]
+            potential_alias = message.content[len(prefix) :].split(" ")[0]
         except IndexError:
             return False
 
@@ -199,9 +199,7 @@ class Alias:
                     "You attempted to create a new alias"
                     " with the name {} but that"
                     " name is already a command on this bot."
-                ).format(
-                    alias_name
-                )
+                ).format(alias_name)
             )
             return
 
@@ -212,9 +210,7 @@ class Alias:
                     "You attempted to create a new alias"
                     " with the name {} but that"
                     " alias already exists on this server."
-                ).format(
-                    alias_name
-                )
+                ).format(alias_name)
             )
             return
 
@@ -226,9 +222,7 @@ class Alias:
                     " with the name {} but that"
                     " name is an invalid alias name. Alias"
                     " names may not contain spaces."
-                ).format(
-                    alias_name
-                )
+                ).format(alias_name)
             )
             return
         # endregion
@@ -255,9 +249,7 @@ class Alias:
                     "You attempted to create a new global alias"
                     " with the name {} but that"
                     " name is already a command on this bot."
-                ).format(
-                    alias_name
-                )
+                ).format(alias_name)
             )
             return
 
@@ -268,9 +260,7 @@ class Alias:
                     "You attempted to create a new global alias"
                     " with the name {} but that"
                     " alias already exists on this server."
-                ).format(
-                    alias_name
-                )
+                ).format(alias_name)
             )
             return
 
@@ -282,9 +272,7 @@ class Alias:
                     " with the name {} but that"
                     " name is an invalid alias name. Alias"
                     " names may not contain spaces."
-                ).format(
-                    alias_name
-                )
+                ).format(alias_name)
             )
             return
         # endregion
