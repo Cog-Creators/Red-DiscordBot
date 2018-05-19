@@ -40,16 +40,12 @@ class CommandObj:
         return customcommands
 
     async def get_responses(self, ctx):
-        intro = (
-            _(
-                "Welcome to the interactive random {} maker!\n"
-                "Every message you send will be added as one of the random "
-                "response to choose from once this {} is "
-                "triggered. To exit this interactive menu, type `{}`"
-            ).format(
-                "customcommand", "customcommand", "exit()"
-            )
-        )
+        intro = _(
+            "Welcome to the interactive random {} maker!\n"
+            "Every message you send will be added as one of the random "
+            "response to choose from once this {} is "
+            "triggered. To exit this interactive menu, type `{}`"
+        ).format("customcommand", "customcommand", "exit()")
         await ctx.send(intro)
 
         def check(m):
@@ -263,9 +259,7 @@ class CustomCommands:
                 _(
                     "There are no custom commands in this server."
                     " Use `{}` to start adding some."
-                ).format(
-                    "{}customcom add".format(ctx.prefix)
-                )
+                ).format("{}customcom add".format(ctx.prefix))
             )
             return
 
@@ -314,7 +308,7 @@ class CustomCommands:
             return
 
         if user_allowed:
-            cmd = message.content[len(prefix):]
+            cmd = message.content[len(prefix) :]
             try:
                 c = await self.commandobj.get(message=message, command=cmd)
                 if isinstance(c, list):
