@@ -234,7 +234,7 @@ class Permissions:
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
-    @permissions.command(name="getglobalacl")
+    @permissions.command(name="getguildacl")
     async def guild_get_acl(self, ctx: commands.Context):
         """
         Dumps a YAML file with the current owner level permissions
