@@ -44,14 +44,21 @@ class JSON(BaseDriver):
 
         The path in which to store the file indicated by :py:attr:`file_name`.
     """
-    def __init__(self, cog_name, identifier, *, data_path_override: Path=None,
-                 file_name_override: str="settings.json"):
+
+    def __init__(
+        self,
+        cog_name,
+        identifier,
+        *,
+        data_path_override: Path = None,
+        file_name_override: str = "settings.json"
+    ):
         super().__init__(cog_name, identifier)
         self.file_name = file_name_override
         if data_path_override:
             self.data_path = data_path_override
         else:
-            self.data_path = Path.cwd() / 'cogs' / '.data' / self.cog_name
+            self.data_path = Path.cwd() / "cogs" / ".data" / self.cog_name
 
         self.data_path.mkdir(parents=True, exist_ok=True)
 

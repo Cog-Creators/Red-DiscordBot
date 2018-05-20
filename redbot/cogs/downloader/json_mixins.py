@@ -24,7 +24,7 @@ class RepoJSONMixin:
             return
 
         try:
-            with self._info_file.open(encoding='utf-8') as f:
+            with self._info_file.open(encoding="utf-8") as f:
                 info = json.load(f)
         except json.JSONDecodeError:
             return

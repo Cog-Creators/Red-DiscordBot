@@ -8,8 +8,13 @@ name = "pypi"
 "e1839a8" = {path = ".", editable = true}
 
 [dev-packages]
+tox = "*"
 pytest = "*"
 pytest-asyncio = "*"
 sphinx = ">1.7"
 sphinxcontrib-asyncio = "*"
 sphinx-rtd-theme = "*"
+black = {version = "*", python_version = ">= '3.6'"}
+
+[pipenv]
+allow_prereleases = true

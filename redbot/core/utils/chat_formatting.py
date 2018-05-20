@@ -1,6 +1,7 @@
 import itertools
 from typing import Sequence, Iterator
 
+
 def error(text: str) -> str:
     """Get text prefixed with an error emoji.
 
@@ -66,7 +67,7 @@ def bold(text: str) -> str:
     return "**{}**".format(text)
 
 
-def box(text: str, lang: str="") -> str:
+def box(text: str, lang: str = "") -> str:
     """Get the given text in a code block.
 
     Parameters
@@ -120,7 +121,7 @@ def italics(text: str) -> str:
     return "*{}*".format(text)
 
 
-def bordered(*columns: Sequence[str], ascii_border: bool=False) -> str:
+def bordered(*columns: Sequence[str], ascii_border: bool = False) -> str:
     """Get two blocks of text in a borders.
 
     Note
@@ -141,18 +142,18 @@ def bordered(*columns: Sequence[str], ascii_border: bool=False) -> str:
 
     """
     borders = {
-        'TL': '-' if ascii_border else '┌',  # Top-left
-        'TR': '-' if ascii_border else '┐',  # Top-right
-        'BL': '-' if ascii_border else '└',  # Bottom-left
-        'BR': '-' if ascii_border else '┘',  # Bottom-right
-        'HZ': '-' if ascii_border else '─',  # Horizontal
-        'VT': '|' if ascii_border else '│',  # Vertical
+        "TL": "-" if ascii_border else "┌",  # Top-left
+        "TR": "-" if ascii_border else "┐",  # Top-right
+        "BL": "-" if ascii_border else "└",  # Bottom-left
+        "BR": "-" if ascii_border else "┘",  # Bottom-right
+        "HZ": "-" if ascii_border else "─",  # Horizontal
+        "VT": "|" if ascii_border else "│",  # Vertical
     }
 
-    sep = ' ' * 4  # Separator between boxes
+    sep = " " * 4  # Separator between boxes
     widths = tuple(max(len(row) for row in column) + 9 for column in columns)  # width of each col
     colsdone = [False] * len(columns)  # whether or not each column is done
-    lines = [sep.join('{TL}' + '{HZ}'*width + '{TR}' for width in widths)]
+    lines = [sep.join("{TL}" + "{HZ}" * width + "{TR}" for width in widths)]
 
     for line in itertools.zip_longest(*columns):
         row = []
@@ -162,36 +163,38 @@ def bordered(*columns: Sequence[str], ascii_border: bool=False) -> str:
             if column is None:
                 if not done:
                     # bottom border of column
-                    column = '{HZ}' * width
-                    row.append('{BL}' + column + '{BR}')
+                    column = "{HZ}" * width
+                    row.append("{BL}" + column + "{BR}")
                     colsdone[colidx] = True  # mark column as done
                 else:
                     # leave empty
-                    row.append(' ' * (width + 2))
+                    row.append(" " * (width + 2))
             else:
-                column += ' ' * (width - len(column))  # append padded spaces
-                row.append('{VT}' + column + '{VT}')
+                column += " " * (width - len(column))  # append padded spaces
+                row.append("{VT}" + column + "{VT}")
 
         lines.append(sep.join(row))
 
     final_row = []
     for width, done in zip(widths, colsdone):
         if not done:
-            final_row.append('{BL}' + '{HZ}' * width + '{BR}')
+            final_row.append("{BL}" + "{HZ}" * width + "{BR}")
         else:
-            final_row.append(' ' * (width + 2))
+            final_row.append(" " * (width + 2))
     lines.append(sep.join(final_row))
 
     return "\n".join(lines).format(**borders)
 
 
-def pagify(text: str,
-           delims: Sequence[str]=["\n"],
-           *,
-           priority: bool=False,
-           escape_mass_mentions: bool=True,
-           shorten_by: int=8,
-           page_length: int=2000) -> Iterator[str]:
+def pagify(
+    text: str,
+    delims: Sequence[str] = ["\n"],
+    *,
+    priority: bool = False,
+    escape_mass_mentions: bool = True,
+    shorten_by: int = 8,
+    page_length: int = 2000
+) -> Iterator[str]:
     """Generate multiple pages from the given text.
 
     Note
@@ -232,10 +235,10 @@ def pagify(text: str,
     while len(in_text) > page_length:
         this_page_len = page_length
         if escape_mass_mentions:
-            this_page_len -= (in_text.count("@here", 0, page_length) +
-                              in_text.count("@everyone", 0, page_length))
-        closest_delim = (in_text.rfind(d, 1, this_page_len)
-                         for d in delims)
+            this_page_len -= in_text.count("@here", 0, page_length) + in_text.count(
+                "@everyone", 0, page_length
+            )
+        closest_delim = (in_text.rfind(d, 1, this_page_len) for d in delims)
         if priority:
             closest_delim = next((x for x in closest_delim if x > 0), -1)
         else:
@@ -290,8 +293,7 @@ def underline(text: str) -> str:
     return "__{}__".format(text)
 
 
-def escape(text: str, *, mass_mentions: bool=False,
-           formatting: bool=False) -> str:
+def escape(text: str, *, mass_mentions: bool = False, formatting: bool = False) -> str:
     """Get text with all mass mentions or markdown escaped.
 
     Parameters
@@ -313,8 +315,5 @@ def escape(text: str, *, mass_mentions: bool=False,
         text = text.replace("@everyone", "@\u200beveryone")
         text = text.replace("@here", "@\u200bhere")
     if formatting:
-        text = (text.replace("`", "\\`")
-                    .replace("*", "\\*")
-                    .replace("_", "\\_")
-                    .replace("~", "\\~"))
+        text = text.replace("`", "\\`").replace("*", "\\*").replace("_", "\\_").replace("~", "\\~")
     return text

@@ -2,6 +2,7 @@ __all__ = ["BaseDriver"]
 
 
 class BaseDriver:
+
     def __init__(self, cog_name, identifier):
         self.cog_name = cog_name
         self.unique_cog_identifier = identifier
