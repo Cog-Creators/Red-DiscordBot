@@ -166,7 +166,9 @@ class Permissions:
         await ctx.maybe_send_embed(message)
 
     @permissions.command(name="canrun")
-    async def _test_permission_model(self, ctx: commands.Context, user: discord.Member, *, command: str):
+    async def _test_permission_model(
+        self, ctx: commands.Context, user: discord.Member, *, command: str
+    ):
         """
         This checks if someone can run a command in the current location
         """
@@ -182,12 +184,17 @@ class Permissions:
         if com is None:
             out = _("No such command")
         else:
-            testcontext = await self.bot.get_context(message, cls=commands.Context)
-            can = await com.can_run(testcontext)
+            try:
+                testcontext = await self.bot.get_context(message, cls=commands.Context)
+                can = await com.can_run(testcontext)
             except commands.CheckFailure:
                 can = False
             else:
-                out = _("That user can run the specified command.") if can else out = _("That user can not run the specified command.")
+                out = (
+                    _("That user can run the specified command.")
+                    if can
+                    else _("That user can not run the specified command.")
+                )
         await ctx.maybe_send_embed(out)
 
     @checks.is_owner()
