@@ -189,12 +189,12 @@ class Permissions:
                 can = await com.can_run(testcontext)
             except commands.CheckFailure:
                 can = False
-            else:
-                out = (
-                    _("That user can run the specified command.")
-                    if can
-                    else _("That user can not run the specified command.")
-                )
+
+            out = (
+                _("That user can run the specified command.")
+                if can
+                else _("That user can not run the specified command.")
+            )
         await ctx.maybe_send_embed(out)
 
     @checks.is_owner()
