@@ -25,6 +25,12 @@ Then run the following command:
 
 This may take a long time to complete.
 
+After that is finished, run:
+
+.. code-block:: none
+
+    pyenv global 3.6.5
+
 ------------------
 Installing the bot
 ------------------
