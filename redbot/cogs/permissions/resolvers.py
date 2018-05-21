@@ -1,8 +1,8 @@
 import types
 import contextlib
 import asyncio
-from redbot.core import commands
 import logging
+from redbot.core import commands
 
 log = logging.getLogger("redbot.cogs.permissions.resolvers")
 
@@ -33,6 +33,9 @@ async def val_if_check_is_valid(*, ctx: commands.Context, check: object, level: 
 
 
 def resolve_models(*, ctx: commands.Context, models: dict) -> bool:
+    """
+    Resolves models in order.
+    """
 
     cmd_name = ctx.command.qualified_name
     cog_name = ctx.cog.__class__.__name__
@@ -56,6 +59,9 @@ def resolve_models(*, ctx: commands.Context, models: dict) -> bool:
 
 
 def resolve_lists(*, ctx: commands.Context, whitelist: list, blacklist: list) -> bool:
+    """
+    resolves specific lists
+    """
 
     voice_channel = None
     with contextlib.suppress(Exception):
@@ -77,5 +83,4 @@ def resolve_lists(*, ctx: commands.Context, whitelist: list, blacklist: list) ->
             return True
         if entry in blacklist:
             return False
-    else:
-        return None
+    return None

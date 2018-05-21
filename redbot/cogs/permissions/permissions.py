@@ -76,10 +76,9 @@ class Permissions:
 
         #  TODO: API for adding these additional checks
         for check in self._before:
-            override = await val_if_check_is_valid(check)
-            # before overrides should never return True
-            if override is False:
-                return False
+            override = await val_if_check_is_valid(check=check, ctx=ctx, level=level)
+            if override is not None:
+                return override
 
         for model in self.resolution_order[level]:
             override_model = getattr(self, model + "_model", None)
@@ -88,7 +87,7 @@ class Permissions:
                 return override
 
         for check in self._after:
-            override = await val_if_check_is_valid(check)
+            override = await val_if_check_is_valid(check=check, ctx=ctx, level=level)
             if override is not None:
                 return override
 
@@ -255,7 +254,7 @@ class Permissions:
     async def guild_update_acl(self, ctx: commands.Context):
         """
         Take a YAML file upload to update permissions from
-        
+
         Use this to not lose existing rules
         """
         if not ctx.message.attachments:
