@@ -1,6 +1,8 @@
 import sys
 import discord
+from colorama import init, Fore
 
+init()
 # Let's do all the dumb version checking in one place.
 
 if discord.version_info.major < 1:
@@ -12,8 +14,9 @@ if discord.version_info.major < 1:
     sys.exit(1)
 
 if sys.version_info < (3, 6, 0):
+    print(Fore.RED + "[DEPRECATION WARNING]")
     print(
-        "[DEPRECATION WARNING]\nYou are currently running Python 3.5."
+        Fore.RED + "You are currently running Python 3.5."
         " Support for Python 3.5 will end with the release of beta 16."
         " Please update your environment to Python 3.6 as soon as possible to avoid"
         " any interruptions after the beta 16 release.",
