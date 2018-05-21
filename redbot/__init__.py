@@ -19,6 +19,5 @@ if sys.version_info < (3, 6, 0):
         Back.RED + "You are currently running Python 3.5."
         " Support for Python 3.5 will end with the release of beta 16."
         " Please update your environment to Python 3.6 as soon as possible to avoid"
-        " any interruptions after the beta 16 release.",
-        file=sys.stderr,
+        " any interruptions after the beta 16 release."
     )
