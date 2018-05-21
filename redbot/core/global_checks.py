@@ -1,5 +1,5 @@
 """The checks in this module run on every command."""
-from discord.ext import commands
+from . import commands
 
 
 def init_global_checks(bot):

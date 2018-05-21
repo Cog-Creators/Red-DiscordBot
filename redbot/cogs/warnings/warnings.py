@@ -1,35 +1,30 @@
 from collections import namedtuple
 
-from discord.ext import commands
 import discord
 import asyncio
 
-from redbot.cogs.warnings.helpers import warning_points_add_check, get_command_for_exceeded_points, \
-    get_command_for_dropping_points, warning_points_remove_check
-from redbot.core import Config, modlog, checks
+from redbot.cogs.warnings.helpers import (
+    warning_points_add_check,
+    get_command_for_exceeded_points,
+    get_command_for_dropping_points,
+    warning_points_remove_check,
+)
+from redbot.core import Config, modlog, checks, commands
 from redbot.core.bot import Red
-from redbot.core.context import RedContext
-from redbot.core.i18n import CogI18n
+from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.mod import is_admin_or_superior
 from redbot.core.utils.chat_formatting import warning, pagify
 
-_ = CogI18n("Warnings", __file__)
+_ = Translator("Warnings", __file__)
 
 
+@cog_i18n(_)
 class Warnings:
     """A warning system for Red"""
 
-    default_guild = {
-        "actions": [],
-        "reasons": {},
-        "allow_custom_reasons": False
-    }
+    default_guild = {"actions": [], "reasons": {}, "allow_custom_reasons": False}
 
-    default_member = {
-        "total_points": 0,
-        "status": "",
-        "warnings": {}
-    }
+    default_member = {"total_points": 0, "status": "", "warnings": {}}
 
     def __init__(self, bot: Red):
         self.config = Config.get_conf(self, identifier=5757575755)
@@ -42,23 +37,21 @@ class Warnings:
     @staticmethod
     async def register_warningtype():
         try:
-            await modlog.register_casetype(
-                "warning", True, "\N{WARNING SIGN}", "Warning", None
-            )
+            await modlog.register_casetype("warning", True, "\N{WARNING SIGN}", "Warning", None)
         except RuntimeError:
             pass
 
     @commands.group()
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
-    async def warningset(self, ctx: RedContext):
+    async def warningset(self, ctx: commands.Context):
         """Warning settings"""
         if ctx.invoked_subcommand is None:
             await ctx.send_help()
 
     @warningset.command()
     @commands.guild_only()
-    async def allowcustomreasons(self, ctx: RedContext, allowed: bool):
+    async def allowcustomreasons(self, ctx: commands.Context, allowed: bool):
         """Allow or disallow custom reasons for a warning"""
         guild = ctx.guild
         await self.config.guild(guild).allow_custom_reasons.set(allowed)
@@ -69,14 +62,14 @@ class Warnings:
     @commands.group()
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
-    async def warnaction(self, ctx: RedContext):
+    async def warnaction(self, ctx: commands.Context):
         """Action management"""
         if ctx.invoked_subcommand is None:
             await ctx.send_help()
 
     @warnaction.command(name="add")
     @commands.guild_only()
-    async def action_add(self, ctx: RedContext, name: str, points: int):
+    async def action_add(self, ctx: commands.Context, name: str, points: int):
         """Create an action to be taken at a specified point count
         Duplicate action names are not allowed"""
         guild = ctx.guild
@@ -106,7 +99,7 @@ class Warnings:
             "action_name": name,
             "points": points,
             "exceed_command": exceed_command,
-            "drop_command": drop_command
+            "drop_command": drop_command,
         }
 
         # Have all details for the action, now save the action
@@ -125,7 +118,7 @@ class Warnings:
 
     @warnaction.command(name="del")
     @commands.guild_only()
-    async def action_del(self, ctx: RedContext, action_name: str):
+    async def action_del(self, ctx: commands.Context, action_name: str):
         """Delete the point count action with the specified name"""
         guild = ctx.guild
         guild_settings = self.config.guild(guild)
@@ -139,34 +132,27 @@ class Warnings:
                 registered_actions.remove(to_remove)
                 await ctx.tick()
             else:
-                await ctx.send(
-                    _("No action named {} exists!").format(action_name)
-                )
+                await ctx.send(_("No action named {} exists!").format(action_name))
 
     @commands.group()
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
-    async def warnreason(self, ctx: RedContext):
+    async def warnreason(self, ctx: commands.Context):
         """Add reasons for warnings"""
         if ctx.invoked_subcommand is None:
             await ctx.send_help()
 
     @warnreason.command(name="add")
     @commands.guild_only()
-    async def reason_add(self, ctx: RedContext, name: str, points: int, *, description: str):
+    async def reason_add(self, ctx: commands.Context, name: str, points: int, *, description: str):
         """Add a reason to be available for warnings"""
         guild = ctx.guild
 
         if name.lower() == "custom":
             await ctx.send("That cannot be used as a reason name!")
             return
-        to_add = {
-            "points": points,
-            "description": description
-        }
-        completed = {
-            name.lower(): to_add
-        }
+        to_add = {"points": points, "description": description}
+        completed = {name.lower(): to_add}
 
         guild_settings = self.config.guild(guild)
 
@@ -177,7 +163,7 @@ class Warnings:
 
     @warnreason.command(name="del")
     @commands.guild_only()
-    async def reason_del(self, ctx: RedContext, reason_name: str):
+    async def reason_del(self, ctx: commands.Context, reason_name: str):
         """Delete the reason with the specified name"""
         guild = ctx.guild
         guild_settings = self.config.guild(guild)
@@ -190,7 +176,7 @@ class Warnings:
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
-    async def reasonlist(self, ctx: RedContext):
+    async def reasonlist(self, ctx: commands.Context):
         """List all configured reasons for warnings"""
         guild = ctx.guild
         guild_settings = self.config.guild(guild)
@@ -210,7 +196,7 @@ class Warnings:
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
-    async def actionlist(self, ctx: RedContext):
+    async def actionlist(self, ctx: commands.Context):
         """List the actions to be taken at specific point values"""
         guild = ctx.guild
         guild_settings = self.config.guild(guild)
@@ -220,8 +206,7 @@ class Warnings:
                 msg_list.append(
                     "Name: {}\nPoints: {}\nExceed command: {}\n"
                     "Drop command: {}".format(
-                        r["action_name"], r["points"], r["exceed_command"],
-                        r["drop_command"]
+                        r["action_name"], r["points"], r["exceed_command"], r["drop_command"]
                     )
                 )
         if msg_list:
@@ -232,7 +217,7 @@ class Warnings:
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
-    async def warn(self, ctx: RedContext, user: discord.Member, reason: str):
+    async def warn(self, ctx: commands.Context, user: discord.Member, reason: str):
         """Warn the user for the specified reason
         Reason must be a registered reason, or custom if custom reasons are allowed"""
         reason_type = {}
@@ -243,9 +228,7 @@ class Warnings:
                     _(
                         "Custom reasons are not allowed! Please see {} for "
                         "a complete list of valid reasons"
-                    ).format(
-                        "`{}reasonlist`".format(ctx.prefix)
-                    )
+                    ).format("`{}reasonlist`".format(ctx.prefix))
                 )
                 return
             reason_type = await self.custom_warning_reason(ctx)
@@ -263,7 +246,7 @@ class Warnings:
             str(ctx.message.id): {
                 "points": reason_type["points"],
                 "description": reason_type["description"],
-                "mod": ctx.author.id
+                "mod": ctx.author.id,
             }
         }
         async with member_settings.warnings() as user_warnings:
@@ -276,7 +259,7 @@ class Warnings:
 
     @commands.command()
     @commands.guild_only()
-    async def warnings(self, ctx: RedContext, userid: int=None):
+    async def warnings(self, ctx: commands.Context, userid: int = None):
         """Show warnings for the specified user.
         If userid is None, show warnings for the person running the command
         Note that showing warnings for users other than yourself requires
@@ -286,10 +269,7 @@ class Warnings:
         else:
             if not await is_admin_or_superior(self.bot, ctx.author):
                 await ctx.send(
-                    warning(
-                        _("You are not allowed to check "
-                          "warnings for other users!")
-                    )
+                    warning(_("You are not allowed to check " "warnings for other users!"))
                 )
                 return
             else:
@@ -306,27 +286,19 @@ class Warnings:
                     mod = ctx.guild.get_member(user_warnings[key]["mod"])
                     if mod is None:
                         mod = discord.utils.get(
-                            self.bot.get_all_members(),
-                            id=user_warnings[key]["mod"]
+                            self.bot.get_all_members(), id=user_warnings[key]["mod"]
                         )
                         if mod is None:
-                            mod = await self.bot.get_user_info(
-                                user_warnings[key]["mod"]
-                            )
+                            mod = await self.bot.get_user_info(user_warnings[key]["mod"])
                     msg += "{} point warning {} issued by {} for {}\n".format(
-                        user_warnings[key]["points"],
-                        key,
-                        mod,
-                        user_warnings[key]["description"]
+                        user_warnings[key]["points"], key, mod, user_warnings[key]["description"]
                     )
-                await ctx.send_interactive(
-                    pagify(msg), box_lang="Warnings for {}".format(user)
-                )
+                await ctx.send_interactive(pagify(msg), box_lang="Warnings for {}".format(user))
 
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
-    async def unwarn(self, ctx: RedContext, user_id: int, warn_id: str):
+    async def unwarn(self, ctx: commands.Context, user_id: int, warn_id: str):
         """Removes the specified warning from the user specified"""
         guild = ctx.guild
         member = guild.get_member(user_id)
@@ -347,12 +319,9 @@ class Warnings:
         await ctx.tick()
 
     @staticmethod
-    async def custom_warning_reason(ctx: RedContext):
+    async def custom_warning_reason(ctx: commands.Context):
         """Handles getting description and points for custom reasons"""
-        to_add = {
-            "points": 0,
-            "description": ""
-        }
+        to_add = {"points": 0, "description": ""}
 
         def same_author_check(m):
             return m.author == ctx.author

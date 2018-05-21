@@ -9,8 +9,7 @@ from redbot.core.data_manager import cog_data_path
 import redbot.core
 
 LAVALINK_DOWNLOAD_URL = (
-    "https://github.com/Cog-Creators/Red-DiscordBot/"
-    "releases/download/{}/Lavalink.jar"
+    "https://github.com/Cog-Creators/Red-DiscordBot/" "releases/download/{}/Lavalink.jar"
 ).format(redbot.core.__version__)
 
 LAVALINK_DOWNLOAD_DIR = cog_data_path(raw_name="Audio")
@@ -21,7 +20,7 @@ BUNDLED_APP_YML_FILE = Path(__file__).parent / "application.yml"
 
 
 async def download_lavalink(session):
-    with LAVALINK_JAR_FILE.open(mode='wb') as f:
+    with LAVALINK_JAR_FILE.open(mode="wb") as f:
         async with session.get(LAVALINK_DOWNLOAD_URL) as resp:
             while True:
                 chunk = await resp.content.read(512)

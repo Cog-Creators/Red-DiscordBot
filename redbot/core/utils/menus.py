@@ -2,18 +2,22 @@
 Original source of reaction-based menu idea from
 https://github.com/Lunar-Dust/Dusty-Cogs/blob/master/menu/menu.py
 
-Ported to Red V3 by Palm__ (https://github.com/palmtree5)
+Ported to Red V3 by Palm\_\_ (https://github.com/palmtree5)
 """
 import asyncio
 import discord
 
-from redbot.core import RedContext
+from redbot.core import commands
 
 
-async def menu(ctx: RedContext, pages: list,
-               controls: dict,
-               message: discord.Message=None, page: int=0,
-               timeout: float=30.0):
+async def menu(
+    ctx: commands.Context,
+    pages: list,
+    controls: dict,
+    message: discord.Message = None,
+    page: int = 0,
+    timeout: float = 30.0,
+):
     """
     An emoji-based menu
 
@@ -28,7 +32,7 @@ async def menu(ctx: RedContext, pages: list,
 
     Parameters
     ----------
-    ctx: RedContext
+    ctx: commands.Context
         The command context
     pages: `list` of `str` or `discord.Embed`
         The pages of the menu.
@@ -48,8 +52,9 @@ async def menu(ctx: RedContext, pages: list,
     RuntimeError
         If either of the notes above are violated
     """
-    if not all(isinstance(x, discord.Embed) for x in pages) and\
-            not all(isinstance(x, str) for x in pages):
+    if not all(isinstance(x, discord.Embed) for x in pages) and not all(
+        isinstance(x, str) for x in pages
+    ):
         raise RuntimeError("All pages must be of the same type")
     for key, value in controls.items():
         if not asyncio.iscoroutinefunction(value):
@@ -70,15 +75,10 @@ async def menu(ctx: RedContext, pages: list,
             await message.edit(content=current_page)
 
     def react_check(r, u):
-        return u == ctx.author and r.message.id == message.id and \
-               str(r.emoji) in controls.keys()
+        return u == ctx.author and r.message.id == message.id and str(r.emoji) in controls.keys()
 
     try:
-        react, user = await ctx.bot.wait_for(
-            "reaction_add",
-            check=react_check,
-            timeout=timeout
-        )
+        react, user = await ctx.bot.wait_for("reaction_add", check=react_check, timeout=timeout)
     except asyncio.TimeoutError:
         try:
             await message.clear_reactions()
@@ -87,14 +87,18 @@ async def menu(ctx: RedContext, pages: list,
                 await message.remove_reaction(key, ctx.bot.user)
         return None
 
-    return await controls[react.emoji](ctx, pages, controls,
-                                       message, page,
-                                       timeout, react.emoji)
+    return await controls[react.emoji](ctx, pages, controls, message, page, timeout, react.emoji)
 
 
-async def next_page(ctx: RedContext, pages: list,
-                    controls: dict,  message: discord.Message, page: int,
-                    timeout: float, emoji: str):
+async def next_page(
+    ctx: commands.Context,
+    pages: list,
+    controls: dict,
+    message: discord.Message,
+    page: int,
+    timeout: float,
+    emoji: str,
+):
     perms = message.channel.permissions_for(ctx.guild.me)
     if perms.manage_messages:  # Can manage messages, so remove react
         try:
@@ -105,13 +109,18 @@ async def next_page(ctx: RedContext, pages: list,
         page = 0  # Loop around to the first item
     else:
         page = page + 1
-    return await menu(ctx, pages, controls, message=message,
-                      page=page, timeout=timeout)
+    return await menu(ctx, pages, controls, message=message, page=page, timeout=timeout)
 
 
-async def prev_page(ctx: RedContext, pages: list,
-                    controls: dict,  message: discord.Message, page: int,
-                    timeout: float, emoji: str):
+async def prev_page(
+    ctx: commands.Context,
+    pages: list,
+    controls: dict,
+    message: discord.Message,
+    page: int,
+    timeout: float,
+    emoji: str,
+):
     perms = message.channel.permissions_for(ctx.guild.me)
     if perms.manage_messages:  # Can manage messages, so remove react
         try:
@@ -122,20 +131,21 @@ async def prev_page(ctx: RedContext, pages: list,
         next_page = len(pages) - 1  # Loop around to the last item
     else:
         next_page = page - 1
-    return await menu(ctx, pages, controls, message=message,
-                      page=next_page, timeout=timeout)
+    return await menu(ctx, pages, controls, message=message, page=next_page, timeout=timeout)
 
 
-async def close_menu(ctx: RedContext, pages: list,
-                     controls: dict,  message: discord.Message, page: int,
-                     timeout: float, emoji: str):
+async def close_menu(
+    ctx: commands.Context,
+    pages: list,
+    controls: dict,
+    message: discord.Message,
+    page: int,
+    timeout: float,
+    emoji: str,
+):
     if message:
         await message.delete()
     return None
 
 
-DEFAULT_CONTROLS = {
-    "⬅": prev_page,
-    "❌": close_menu,
-    "➡": next_page
-}
+DEFAULT_CONTROLS = {"⬅": prev_page, "❌": close_menu, "➡": next_page}

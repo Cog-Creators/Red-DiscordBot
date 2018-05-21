@@ -3,19 +3,19 @@ from datetime import datetime, timedelta
 from collections import deque, defaultdict, namedtuple
 
 import discord
-from discord.ext import commands
 
-from redbot.core import checks, Config, modlog, RedContext
+from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
-from redbot.core.i18n import CogI18n
+from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, escape
 from .checks import mod_or_voice_permissions, admin_or_voice_permissions, bot_has_voice_permissions
 from redbot.core.utils.mod import is_mod_or_superior, is_allowed_by_hierarchy, get_audit_reason
 from .log import log
 
-_ = CogI18n("Mod", __file__)
+_ = Translator("Mod", __file__)
 
 
+@cog_i18n(_)
 class Mod:
     """Moderation tools."""
 
@@ -164,7 +164,7 @@ class Mod:
     @commands.group()
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
-    async def modset(self, ctx: RedContext):
+    async def modset(self, ctx: commands.Context):
         """Manages server administration settings."""
         if ctx.invoked_subcommand is None:
             guild = ctx.guild
@@ -195,7 +195,7 @@ class Mod:
 
     @modset.command()
     @commands.guild_only()
-    async def hierarchy(self, ctx: RedContext):
+    async def hierarchy(self, ctx: commands.Context):
         """Toggles role hierarchy check for mods / admins"""
         guild = ctx.guild
         toggled = await self.settings.guild(guild).respect_hierarchy()
@@ -212,7 +212,7 @@ class Mod:
 
     @modset.command()
     @commands.guild_only()
-    async def banmentionspam(self, ctx: RedContext, max_mentions: int = False):
+    async def banmentionspam(self, ctx: commands.Context, max_mentions: int = False):
         """Enables auto ban for messages mentioning X different people
 
         Accepted values: 5 or superior"""
@@ -238,7 +238,7 @@ class Mod:
 
     @modset.command()
     @commands.guild_only()
-    async def deleterepeats(self, ctx: RedContext):
+    async def deleterepeats(self, ctx: commands.Context):
         """Enables auto deletion of repeated messages"""
         guild = ctx.guild
         cur_setting = await self.settings.guild(guild).delete_repeats()
@@ -251,7 +251,7 @@ class Mod:
 
     @modset.command()
     @commands.guild_only()
-    async def deletedelay(self, ctx: RedContext, time: int = None):
+    async def deletedelay(self, ctx: commands.Context, time: int = None):
         """Sets the delay until the bot removes the command message.
 
         Must be between -1 and 60.
@@ -280,9 +280,8 @@ class Mod:
 
     @modset.command()
     @commands.guild_only()
-    async def reinvite(self, ctx: RedContext):
-        """Toggles whether an invite will be sent when
-        a user is unbanned via [p]unban.
+    async def reinvite(self, ctx: commands.Context):
+        """Toggles whether an invite will be sent when a user is unbanned via [p]unban.
 
         If this is True, the bot will attempt to create
         and send a single-use invite
@@ -305,7 +304,7 @@ class Mod:
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(kick_members=True)
-    async def kick(self, ctx: RedContext, user: discord.Member, *, reason: str = None):
+    async def kick(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
         """Kicks user.
 
         If a reason is specified, it will be the reason that shows up
@@ -357,7 +356,7 @@ class Mod:
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
     async def ban(
-        self, ctx: RedContext, user: discord.Member, days: str = None, *, reason: str = None
+        self, ctx: commands.Context, user: discord.Member, days: str = None, *, reason: str = None
     ):
         """Bans user and deletes last X days worth of messages.
 
@@ -433,7 +432,7 @@ class Mod:
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
-    async def hackban(self, ctx: RedContext, user_id: int, *, reason: str = None):
+    async def hackban(self, ctx: commands.Context, user_id: int, *, reason: str = None):
         """Preemptively bans user from the server
 
         A user ID needs to be provided in order to ban
@@ -493,7 +492,7 @@ class Mod:
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
     async def tempban(
-        self, ctx: RedContext, user: discord.Member, days: int = 1, *, reason: str = None
+        self, ctx: commands.Context, user: discord.Member, days: int = 1, *, reason: str = None
     ):
         """Tempbans the user for the specified number of days"""
         guild = ctx.guild
@@ -552,7 +551,7 @@ class Mod:
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
-    async def softban(self, ctx: RedContext, user: discord.Member, *, reason: str = None):
+    async def softban(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
         """Kicks the user, deleting 1 day worth of messages."""
         guild = ctx.guild
         channel = ctx.channel
@@ -641,7 +640,7 @@ class Mod:
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
     @commands.bot_has_permissions(ban_members=True)
-    async def unban(self, ctx: RedContext, user_id: int, *, reason: str = None):
+    async def unban(self, ctx: commands.Context, user_id: int, *, reason: str = None):
         """Unbans the target user.
 
         Requires specifying the target user's ID. To find this, you may either:
@@ -716,7 +715,7 @@ class Mod:
                     )
 
     @staticmethod
-    async def get_invite_for_reinvite(ctx: RedContext, max_age: int = 86400):
+    async def get_invite_for_reinvite(ctx: commands.Context, max_age: int = 86400):
         """Handles the reinvite logic for getting an invite
         to send the newly unbanned user
         :returns: :class:`Invite`"""
@@ -752,9 +751,8 @@ class Mod:
     @commands.guild_only()
     @admin_or_voice_permissions(mute_members=True, deafen_members=True)
     @bot_has_voice_permissions(mute_members=True, deafen_members=True)
-    async def voiceban(self, ctx: RedContext, user: discord.Member, *, reason: str = None):
-        """Bans the target user from speaking and
-        listening in voice channels in the server"""
+    async def voiceban(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
+        """Bans the target user from speaking and listening in voice channels in the server"""
         user_voice_state = user.voice
         if user_voice_state is None:
             await ctx.maybe_send_embed(_("No voice state for that user!"))
@@ -796,9 +794,8 @@ class Mod:
     @commands.guild_only()
     @admin_or_voice_permissions(mute_members=True, deafen_members=True)
     @bot_has_voice_permissions(mute_members=True, deafen_members=True)
-    async def voiceunban(self, ctx: RedContext, user: discord.Member, *, reason: str = None):
-        """Unbans the user from speaking/listening
-        in the server's voice channels"""
+    async def voiceunban(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
+        """Unbans the user from speaking/listening in the server's voice channels"""
         user_voice_state = user.voice
         if user_voice_state is None:
             await ctx.maybe_send_embed(_("No voice state for that user!"))
@@ -836,7 +833,7 @@ class Mod:
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(manage_nicknames=True)
-    async def rename(self, ctx: RedContext, user: discord.Member, *, nickname=""):
+    async def rename(self, ctx: commands.Context, user: discord.Member, *, nickname=""):
         """Changes user's nickname
 
         Leaving the nickname empty will remove it."""
@@ -854,7 +851,7 @@ class Mod:
     @commands.group()
     @commands.guild_only()
     @checks.mod_or_permissions(manage_channel=True)
-    async def mute(self, ctx: RedContext):
+    async def mute(self, ctx: commands.Context):
         """Mutes user in the channel/server"""
         if ctx.invoked_subcommand is None:
             await ctx.send_help()
@@ -863,7 +860,7 @@ class Mod:
     @commands.guild_only()
     @mod_or_voice_permissions(mute_members=True)
     @bot_has_voice_permissions(mute_members=True)
-    async def voice_mute(self, ctx: RedContext, user: discord.Member, *, reason: str = None):
+    async def voice_mute(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
         """Mutes the user in a voice channel"""
         user_voice_state = user.voice
         guild = ctx.guild
@@ -909,7 +906,9 @@ class Mod:
     @checks.mod_or_permissions(administrator=True)
     @mute.command(name="channel")
     @commands.guild_only()
-    async def channel_mute(self, ctx: RedContext, user: discord.Member, *, reason: str = None):
+    async def channel_mute(
+        self, ctx: commands.Context, user: discord.Member, *, reason: str = None
+    ):
         """Mutes user in the current channel"""
         author = ctx.message.author
         channel = ctx.message.channel
@@ -946,7 +945,7 @@ class Mod:
     @checks.mod_or_permissions(administrator=True)
     @mute.command(name="server", aliases=["guild"])
     @commands.guild_only()
-    async def guild_mute(self, ctx: RedContext, user: discord.Member, *, reason: str = None):
+    async def guild_mute(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
         """Mutes user in the server"""
         author = ctx.message.author
         guild = ctx.guild
@@ -1020,7 +1019,7 @@ class Mod:
     @commands.group()
     @commands.guild_only()
     @checks.mod_or_permissions(manage_channel=True)
-    async def unmute(self, ctx: RedContext):
+    async def unmute(self, ctx: commands.Context):
         """Unmutes user in the channel/server
 
         Defaults to channel"""
@@ -1031,7 +1030,9 @@ class Mod:
     @commands.guild_only()
     @mod_or_voice_permissions(mute_members=True)
     @bot_has_voice_permissions(mute_members=True)
-    async def voice_unmute(self, ctx: RedContext, user: discord.Member, *, reason: str = None):
+    async def voice_unmute(
+        self, ctx: commands.Context, user: discord.Member, *, reason: str = None
+    ):
         """Unmutes the user in a voice channel"""
         user_voice_state = user.voice
         if user_voice_state:
@@ -1076,7 +1077,9 @@ class Mod:
     @checks.mod_or_permissions(administrator=True)
     @unmute.command(name="channel")
     @commands.guild_only()
-    async def channel_unmute(self, ctx: RedContext, user: discord.Member, *, reason: str = None):
+    async def channel_unmute(
+        self, ctx: commands.Context, user: discord.Member, *, reason: str = None
+    ):
         """Unmutes user in the current channel"""
         channel = ctx.channel
         author = ctx.author
@@ -1106,7 +1109,9 @@ class Mod:
     @checks.mod_or_permissions(administrator=True)
     @unmute.command(name="server", aliases=["guild"])
     @commands.guild_only()
-    async def guild_unmute(self, ctx: RedContext, user: discord.Member, *, reason: str = None):
+    async def guild_unmute(
+        self, ctx: commands.Context, user: discord.Member, *, reason: str = None
+    ):
         """Unmutes user in the server"""
         guild = ctx.guild
         author = ctx.author
@@ -1184,14 +1189,14 @@ class Mod:
     @commands.group()
     @commands.guild_only()
     @checks.admin_or_permissions(manage_channels=True)
-    async def ignore(self, ctx: RedContext):
+    async def ignore(self, ctx: commands.Context):
         """Adds servers/channels to ignorelist"""
         if ctx.invoked_subcommand is None:
             await ctx.send_help()
             await ctx.maybe_send_embed(await self.count_ignored())
 
     @ignore.command(name="channel")
-    async def ignore_channel(self, ctx: RedContext, channel: discord.TextChannel = None):
+    async def ignore_channel(self, ctx: commands.Context, channel: discord.TextChannel = None):
         """Ignores channel
 
         Defaults to current one"""
@@ -1204,7 +1209,8 @@ class Mod:
             await ctx.maybe_send_embed(_("Channel already in ignore list."))
 
     @ignore.command(name="server", aliases=["guild"])
-    async def ignore_guild(self, ctx: RedContext):
+    @commands.has_permissions(manage_guild=True)
+    async def ignore_guild(self, ctx: commands.Context):
         """Ignores current server"""
         guild = ctx.guild
         if not await self.settings.guild(guild).ignored():
@@ -1216,14 +1222,14 @@ class Mod:
     @commands.group()
     @commands.guild_only()
     @checks.admin_or_permissions(manage_channels=True)
-    async def unignore(self, ctx: RedContext):
+    async def unignore(self, ctx: commands.Context):
         """Removes servers/channels from ignorelist"""
         if ctx.invoked_subcommand is None:
             await ctx.send_help()
             await ctx.maybe_send_embed(await self.count_ignored())
 
     @unignore.command(name="channel")
-    async def unignore_channel(self, ctx: RedContext, channel: discord.TextChannel = None):
+    async def unignore_channel(self, ctx: commands.Context, channel: discord.TextChannel = None):
         """Removes channel from ignore list
 
         Defaults to current one"""
@@ -1237,7 +1243,8 @@ class Mod:
             await ctx.maybe_send_embed(_("That channel is not in the ignore list."))
 
     @unignore.command(name="server", aliases=["guild"])
-    async def unignore_guild(self, ctx: RedContext):
+    @commands.has_permissions(manage_guild=True)
+    async def unignore_guild(self, ctx: commands.Context):
         """Removes current guild from ignore list"""
         guild = ctx.message.guild
         if await self.settings.guild(guild).ignored():
@@ -1279,11 +1286,8 @@ class Mod:
         return not (guild_ignored or chann_ignored and not perms.manage_channels)
 
     @commands.command()
-    async def names(self, ctx: RedContext, user: discord.Member):
+    async def names(self, ctx: commands.Context, user: discord.Member):
         """Show previous names/nicknames of a user"""
-        async with self.settings.user(user).past_names() as name_list:
-            while None in name_list:  # clean out null entries from a bug
-                name_list.remove(None)
         names = await self.settings.user(user).past_names()
         nicks = await self.settings.member(user).past_nicks()
         msg = ""
@@ -1362,7 +1366,7 @@ class Mod:
                     )
                 else:
                     try:
-                        await modlog.create_case(
+                        case = await modlog.create_case(
                             self.bot,
                             guild,
                             message.created_at,
@@ -1379,7 +1383,7 @@ class Mod:
                     return True
         return False
 
-    async def on_command(self, ctx: RedContext):
+    async def on_command(self, ctx: commands.Context):
         """Currently used for:
             * delete delay"""
         guild = ctx.guild
@@ -1507,15 +1511,13 @@ class Mod:
             if entry.target == target:
                 return entry
 
-    async def on_member_update(self, before: discord.Member, after: discord.Member):
+    async def on_member_update(self, before, after):
         if before.name != after.name:
             async with self.settings.user(before).past_names() as name_list:
-                while None in name_list:  # clean out null entries from a bug
-                    name_list.remove(None)
-                if after.name in name_list:
+                if after.nick in name_list:
                     # Ensure order is maintained without duplicates occuring
-                    name_list.remove(after.name)
-                name_list.append(after.name)
+                    name_list.remove(after.nick)
+                name_list.append(after.nick)
                 while len(name_list) > 20:
                     name_list.pop(0)
 

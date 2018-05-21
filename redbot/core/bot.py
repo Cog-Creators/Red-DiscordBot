@@ -14,15 +14,11 @@ from discord.ext.commands import when_mentioned_or
 
 # This supresses the PyNaCl warning that isn't relevant here
 from discord.voice_client import VoiceClient
+
 VoiceClient.warn_nacl = False
 
 from .cog_manager import CogManager
-from . import (
-    Config,
-    i18n,
-    RedContext,
-    rpc
-)
+from . import Config, i18n, commands, rpc
 from .help_formatter import Help, help as help_
 from .sentry import SentryManager
 from .utils import TYPE_CHECKING
@@ -32,6 +28,7 @@ if TYPE_CHECKING:
 
 # noinspection PyUnresolvedReferences
 class RpcMethodMixin:
+
     async def rpc__cogs(self, request):
         return list(self.cogs.keys())
 
@@ -48,7 +45,8 @@ class RedBase(BotBase, RpcMethodMixin):
 
     Selfbots should inherit from this mixin along with `discord.Client`.
     """
-    def __init__(self, cli_flags, bot_dir: Path=Path.cwd(), **kwargs):
+
+    def __init__(self, cli_flags, bot_dir: Path = Path.cwd(), **kwargs):
         self._shutdown_mode = ExitCodes.CRITICAL
         self.db = Config.get_core_conf(force_registration=True)
         self._co_owners = cli_flags.co_owner
@@ -62,22 +60,15 @@ class RedBase(BotBase, RpcMethodMixin):
             whitelist=[],
             blacklist=[],
             enable_sentry=None,
-            locale='en',
-            embeds=True
+            locale="en",
+            embeds=True,
         )
 
         self.db.register_guild(
-            prefix=[],
-            whitelist=[],
-            blacklist=[],
-            admin_role=None,
-            mod_role=None,
-            embeds=None
+            prefix=[], whitelist=[], blacklist=[], admin_role=None, mod_role=None, embeds=None
         )
 
-        self.db.register_user(
-            embeds=None
-        )
+        self.db.register_user(embeds=None)
 
         async def prefix_manager(bot, message):
             if not cli_flags.prefix:
@@ -88,9 +79,11 @@ class RedBase(BotBase, RpcMethodMixin):
                 return global_prefix
             server_prefix = await bot.db.guild(message.guild).prefix()
             if cli_flags.mentionable:
-                return when_mentioned_or(*server_prefix)(bot, message) \
-                    if server_prefix else \
-                    when_mentioned_or(*global_prefix)(bot, message)
+                return (
+                    when_mentioned_or(*server_prefix)(bot, message)
+                    if server_prefix
+                    else when_mentioned_or(*global_prefix)(bot, message)
+                )
             else:
                 return server_prefix if server_prefix else global_prefix
 
@@ -109,13 +102,13 @@ class RedBase(BotBase, RpcMethodMixin):
 
         self.main_dir = bot_dir
 
-        self.cog_mgr = CogManager(paths=(str(self.main_dir / 'cogs'),))
+        self.cog_mgr = CogManager(paths=(str(self.main_dir / "cogs"),))
 
         self.register_rpc_methods()
 
         super().__init__(formatter=Help(), **kwargs)
 
-        self.remove_command('help')
+        self.remove_command("help")
 
         self.add_command(help_)
 
@@ -124,7 +117,7 @@ class RedBase(BotBase, RpcMethodMixin):
     def enable_sentry(self):
         """Enable Sentry logging for Red."""
         if self._sentry_mgr is None:
-            sentry_log = logging.getLogger('red.sentry')
+            sentry_log = logging.getLogger("red.sentry")
             sentry_log.setLevel(logging.WARNING)
             self._sentry_mgr = SentryManager(sentry_log)
         self._sentry_mgr.enable()
@@ -143,7 +136,7 @@ class RedBase(BotBase, RpcMethodMixin):
         :return:
         """
 
-        indict['owner_id'] = await self.db.owner()
+        indict["owner_id"] = await self.db.owner()
         i18n.set_locale(await self.db.locale())
 
     async def embed_requested(self, channel, user, command=None) -> bool:
@@ -193,7 +186,7 @@ class RedBase(BotBase, RpcMethodMixin):
         admin_role = await self.db.guild(member.guild).admin_role()
         return any(role.id in (mod_role, admin_role) for role in member.roles)
 
-    async def get_context(self, message, *, cls=RedContext):
+    async def get_context(self, message, *, cls=commands.Context):
         return await super().get_context(message, cls=cls)
 
     def list_packages(self):
@@ -214,14 +207,14 @@ class RedBase(BotBase, RpcMethodMixin):
                 curr_pkgs.remove(pkg_name)
 
     async def load_extension(self, spec: ModuleSpec):
-        name = spec.name.split('.')[-1]
+        name = spec.name.split(".")[-1]
         if name in self.extensions:
             return
 
         lib = spec.loader.load_module()
-        if not hasattr(lib, 'setup'):
+        if not hasattr(lib, "setup"):
             del lib
-            raise discord.ClientException('extension does not have a setup function')
+            raise discord.ClientException("extension does not have a setup function")
 
         if asyncio.iscoroutinefunction(lib.setup):
             await lib.setup(self)
@@ -262,7 +255,7 @@ class RedBase(BotBase, RpcMethodMixin):
                 del event_list[index]
 
         try:
-            func = getattr(lib, 'teardown')
+            func = getattr(lib, "teardown")
         except AttributeError:
             pass
         else:
@@ -279,19 +272,20 @@ class RedBase(BotBase, RpcMethodMixin):
                 if m.startswith(pkg_name):
                     del sys.modules[m]
 
-            if pkg_name.startswith('redbot.cogs'):
-                del sys.modules['redbot.cogs'].__dict__[name]
+            if pkg_name.startswith("redbot.cogs"):
+                del sys.modules["redbot.cogs"].__dict__[name]
 
     def register_rpc_methods(self):
-        rpc.add_method('bot', self.rpc__cogs)
-        rpc.add_method('bot', self.rpc__extensions)
+        rpc.add_method("bot", self.rpc__cogs)
+        rpc.add_method("bot", self.rpc__extensions)
 
 
 class Red(RedBase, discord.AutoShardedClient):
     """
     You're welcome Caleb.
     """
-    async def shutdown(self, *, restart: bool=False):
+
+    async def shutdown(self, *, restart: bool = False):
         """Gracefully quit Red.
 
         The program will exit with code :code:`0` by default.
@@ -314,4 +308,4 @@ class Red(RedBase, discord.AutoShardedClient):
 class ExitCodes(Enum):
     CRITICAL = 1
     SHUTDOWN = 0
-    RESTART  = 26
+    RESTART = 26
