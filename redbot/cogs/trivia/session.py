@@ -19,7 +19,7 @@ _FAIL_MESSAGES = (
 )
 
 
-class TriviaSession():
+class TriviaSession:
     """Class to run a session of trivia with the user.
 
     To run the trivia session immediately, use `TriviaSession.start` instead of
@@ -127,7 +127,7 @@ class TriviaSession():
         num_lists = len(list_names)
         if num_lists > 2:
             # at least 3 lists, join all but last with comma
-            msg = ", ".join(list_names[:num_lists - 1])
+            msg = ", ".join(list_names[: num_lists - 1])
             # join onto last with "and"
             msg = " and ".join((msg, list_names[num_lists - 1]))
         else:
@@ -216,9 +216,7 @@ class TriviaSession():
         answers = tuple(s.lower() for s in answers)
 
         def _pred(message: discord.Message):
-            early_exit = (
-                message.channel != self.ctx.channel or message.author == self.ctx.guild.me
-            )
+            early_exit = message.channel != self.ctx.channel or message.author == self.ctx.guild.me
             if early_exit:
                 return False
 
