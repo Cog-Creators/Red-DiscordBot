@@ -183,12 +183,11 @@ class Permissions:
             out = _("No such command")
         else:
             testcontext = await self.bot.get_context(message, cls=commands.Context)
-            try:
-                await com.can_run(testcontext)
+            can = await com.can_run(testcontext)
             except commands.CheckFailure:
-                out = _("That user can not run the specified command.")
+                can = False
             else:
-                out = _("That user can run the specified command.")
+                out = _("That user can run the specified command.") if can else out = _("That user can not run the specified command.")
         await ctx.maybe_send_embed(out)
 
     @checks.is_owner()
