@@ -223,9 +223,7 @@ class Mod:
                     "Autoban for mention spam enabled. "
                     "Anyone mentioning {} or more different people "
                     "in a single message will be autobanned."
-                ).format(
-                    max_mentions
-                )
+                ).format(max_mentions)
             )
         else:
             cur_setting = await self.settings.guild(guild).ban_mention_spam()
@@ -272,9 +270,7 @@ class Mod:
                         "Bot will delete command messages after"
                         " {} seconds. Set this value to -1 to"
                         " stop deleting messages"
-                    ).format(
-                        delay
-                    )
+                    ).format(delay)
                 )
             else:
                 await ctx.send(_("I will not delete command messages."))
@@ -511,9 +507,7 @@ class Mod:
                     _(
                         "You have been temporarily banned from {} until {}. "
                         "Here is an invite for when your ban expires: {}"
-                    ).format(
-                        guild.name, unban_time.strftime("%m-%d-%Y %H:%M:%S"), invite
-                    )
+                    ).format(guild.name, unban_time.strftime("%m-%d-%Y %H:%M:%S"), invite)
                 )
             except discord.HTTPException:
                 msg = None
@@ -580,9 +574,7 @@ class Mod:
                         "You have been banned and "
                         "then unbanned as a quick way to delete your messages.\n"
                         "You can now join the server again. {}"
-                    ).format(
-                        invite
-                    )
+                    ).format(invite)
                 )
             except discord.HTTPException:
                 msg = None
@@ -686,9 +678,7 @@ class Mod:
                         _(
                             "You've been unbanned from {}.\n"
                             "Here is an invite for that server: {}"
-                        ).format(
-                            guild.name, invite.url
-                        )
+                        ).format(guild.name, invite.url)
                     )
                 except discord.Forbidden:
                     await ctx.send(
@@ -696,18 +686,14 @@ class Mod:
                             "I failed to send an invite to that user. "
                             "Perhaps you may be able to send it for me?\n"
                             "Here's the invite link: {}"
-                        ).format(
-                            invite.url
-                        )
+                        ).format(invite.url)
                     )
                 except discord.HTTPException:
                     await ctx.send(
                         _(
                             "Something went wrong when attempting to send that user"
                             "an invite. Here's the link so you can try: {}"
-                        ).format(
-                            invite.url
-                        )
+                        ).format(invite.url)
                     )
 
     @staticmethod
@@ -997,7 +983,8 @@ class Mod:
             return False, mute_unmute_issues["hierarchy_problem"]
 
         perms_cache[str(channel.id)] = {
-            "send_messages": overwrites.send_messages, "add_reactions": overwrites.add_reactions
+            "send_messages": overwrites.send_messages,
+            "add_reactions": overwrites.add_reactions,
         }
         overwrites.update(send_messages=False, add_reactions=False)
         try:

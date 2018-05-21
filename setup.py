@@ -42,9 +42,7 @@ def get_version():
     with open("redbot/core/__init__.py") as f:
         version = re.search(
             r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE
-        ).group(
-            1
-        )
+        ).group(1)
     return version
 
 

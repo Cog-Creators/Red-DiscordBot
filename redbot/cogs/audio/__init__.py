@@ -10,9 +10,7 @@ import redbot.core
 
 LAVALINK_DOWNLOAD_URL = (
     "https://github.com/Cog-Creators/Red-DiscordBot/" "releases/download/{}/Lavalink.jar"
-).format(
-    redbot.core.__version__
-)
+).format(redbot.core.__version__)
 
 LAVALINK_DOWNLOAD_DIR = cog_data_path(raw_name="Audio")
 LAVALINK_JAR_FILE = LAVALINK_DOWNLOAD_DIR / "Lavalink.jar"
