@@ -96,7 +96,7 @@ class RedBase(BotBase):
         if self.rpc_enabled:
             self.rpc = rpc.RPC(self)
 
-        self.remove_command('help')
+        self.remove_command("help")
 
         self.add_command(help_)
 
