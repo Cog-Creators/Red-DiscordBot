@@ -1,21 +1,22 @@
 from copy import copy
 import contextlib
-
 import discord
 from redbot.core import commands
-
 from redbot.core.bot import Red
 from redbot.core import checks
 from redbot.core.config import Config
+from redbot.core.i18n import Translator, cog_i18n
 
 from .resolvers import val_if_check_is_valid, resolve_models
 from .yaml_handler import yamlset_acl, yamlget_acl
+from .converters import CogOrCommand, RuleType
 
 _models = ["owner", "guildowner", "admin", "mod"]
 
-_ = lambda x: x
+_ = Translator("Permissions", __file__)
 
 
+@cog_i18n(_)
 class Permissions:
     """
     A high level permission model
@@ -40,7 +41,6 @@ class Permissions:
         This should return True in the case of no overrides
         defering to check logic
         This works since all checks must be True to run
-        It's also part of why the caching layer is needed
         """
         v = await self.check_overrides(ctx, "mod")
 
@@ -286,3 +286,207 @@ class Permissions:
             return await ctx.maybe_send_embed(_("Inalid syntax"))
         else:
             await ctx.tick()
+
+    @checks.is_owner()
+    @permissions.command(name="addglobalrule")
+    async def add_to_global_rule(
+        self,
+        ctx: commands.Context,
+        allow_or_deny: RuleType,
+        cog_or_command: CogOrCommand,
+        who_or_what: str,
+    ):
+        """
+        adds something to the rules
+
+        allow_or_deny: "allow" or "deny", depending on the rule to modify
+
+        cog_or_command: case sensitive cog or command name
+        nested commands should be space seperated, but enclosed in quotes
+
+        who_or_what: what to add to the rule list.
+        For best results, use an ID or mention
+        The bot will try to uniquely match even without,
+        but a failure to do so will raise an error
+        This can be a user, role, channel, or guild
+        """
+        obj = self.find_object_uniquely(who_or_what)
+        if not obj:
+            return await ctx.maybe_send_embed(_("No unique matches. Try using an ID or mention"))
+        model_type, type_name = cog_or_command
+        async with self.config.owner_models() as models:
+            data = {k: v for k, v in models.items()}
+            if model_type not in data:
+                data[model_type] = {}
+            if type_name not in data[model_type]:
+                data[model_type][type_name] = {}
+            if allow_or_deny not in data[model_type][type_name]:
+                data[model_type][type_name][allow_or_deny] = []
+
+            if who_or_what in data[model_type][type_name][allow_or_deny]:
+                return await ctx.maybe_send_embed(_("That rule already exists."))
+
+            data[model_type][type_name][allow_or_deny].append(who_or_what)
+            models.update(data)
+        await ctx.tick()
+
+    @commands.guild_only()
+    @checks.guildowner_or_permissions(administrator=True)
+    @permissions.command(name="addguildrule")
+    async def add_to_guild_rule(
+        self,
+        ctx: commands.Context,
+        allow_or_deny: RuleType,
+        cog_or_command: CogOrCommand,
+        who_or_what: str,
+    ):
+        """
+        adds something to the rules
+
+        allow_or_deny: "allow" or "deny", depending on the rule to modify
+
+        cog_or_command: case sensitive cog or command name
+        nested commands should be space seperated, but enclosed in quotes
+
+        who_or_what: what to add to the rule list.
+        For best results, use an ID or mention
+        The bot will try to uniquely match even without,
+        but a failure to do so will raise an error
+        This can be a user, role, channel, or guild
+        """
+        obj = self.find_object_uniquely(who_or_what)
+        if not obj:
+            return await ctx.maybe_send_embed(_("No unique matches. Try using an ID or mention"))
+        model_type, type_name = cog_or_command
+        async with self.config.guild(ctx.guild).owner_models() as models:
+            data = {k: v for k, v in models.items()}
+            if model_type not in data:
+                data[model_type] = {}
+            if type_name not in data[model_type]:
+                data[model_type][type_name] = {}
+            if allow_or_deny not in data[model_type][type_name]:
+                data[model_type][type_name][allow_or_deny] = []
+
+            if who_or_what in data[model_type][type_name][allow_or_deny]:
+                return await ctx.maybe_send_embed(_("That rule already exists."))
+
+            data[model_type][type_name][allow_or_deny].append(who_or_what)
+            models.update(data)
+        await ctx.tick()
+
+    @checks.is_owner()
+    @permissions.command(name="removeglobalrule")
+    async def rem_from_global_rule(
+        self,
+        ctx: commands.Context,
+        allow_or_deny: RuleType,
+        cog_or_command: CogOrCommand,
+        who_or_what: str,
+    ):
+        """
+        removes something from the rules
+
+        allow_or_deny: "allow" or "deny", depending on the rule to modify
+
+        cog_or_command: case sensitive cog or command name
+        nested commands should be space seperated, but enclosed in quotes
+
+        who_or_what: what to add to the rule list.
+        For best results, use an ID or mention
+        The bot will try to uniquely match even without,
+        but a failure to do so will raise an error
+        This can be a user, role, channel, or guild
+        """
+        obj = self.find_object_uniquely(who_or_what)
+        if not obj:
+            return await ctx.maybe_send_embed(_("No unique matches. Try using an ID or mention"))
+        model_type, type_name = cog_or_command
+        async with self.config.owner_models() as models:
+            data = {k: v for k, v in models.items()}
+            if model_type not in data:
+                data[model_type] = {}
+            if type_name not in data[model_type]:
+                data[model_type][type_name] = {}
+            if allow_or_deny not in data[model_type][type_name]:
+                data[model_type][type_name][allow_or_deny] = []
+
+            if who_or_what not in data[model_type][type_name][allow_or_deny]:
+                return await ctx.maybe_send_embed(_("That rule doesn't exist."))
+
+            data[model_type][type_name][allow_or_deny].remove(who_or_what)
+            models.update(data)
+        await ctx.tick()
+
+    @commands.guild_only()
+    @checks.guildowner_or_permissions(administrator=True)
+    @permissions.command(name="removeguildrule")
+    async def rem_from_guild_rule(
+        self,
+        ctx: commands.Context,
+        allow_or_deny: RuleType,
+        cog_or_command: CogOrCommand,
+        who_or_what: str,
+    ):
+        """
+        removes something from the rules
+
+        allow_or_deny: "allow" or "deny", depending on the rule to modify
+
+        cog_or_command: case sensitive cog or command name
+        nested commands should be space seperated, but enclosed in quotes
+
+        who_or_what: what to add to the rule list.
+        For best results, use an ID or mention
+        The bot will try to uniquely match even without,
+        but a failure to do so will raise an error
+        This can be a user, role, channel, or guild
+        """
+        obj = self.find_object_uniquely(who_or_what)
+        if not obj:
+            return await ctx.maybe_send_embed(_("No unique matches. Try using an ID or mention"))
+        model_type, type_name = cog_or_command
+        async with self.config.guild(ctx.guild).owner_models() as models:
+            data = {k: v for k, v in models.items()}
+            if model_type not in data:
+                data[model_type] = {}
+            if type_name not in data[model_type]:
+                data[model_type][type_name] = {}
+            if allow_or_deny not in data[model_type][type_name]:
+                data[model_type][type_name][allow_or_deny] = []
+
+            if who_or_what not in data[model_type][type_name][allow_or_deny]:
+                return await ctx.maybe_send_embed(_("That rule doesn't exist."))
+
+            data[model_type][type_name][allow_or_deny].remove(who_or_what)
+            models.update(data)
+        await ctx.tick()
+
+    def find_object_uniquely(self, info: str) -> int:
+        """
+        Finds an object uniquely, returns it's id or returns None
+        """
+        if info is None:
+            return None
+        objs = []
+
+        objs.extend(self.bot.users)
+        for guild in self.bot.guilds:
+            objs.extend(guild.roles)
+
+        try:
+            _id = int(info)
+        except ValueError:
+            _id = None
+
+        for function in (
+            lambda x: x.id == _id,
+            lambda x: x.mention == info,
+            lambda x: str(x) == info,
+            lambda x: x.name == info,
+            lambda x: (x.nick if x.nick else None) == info,
+        ):
+            canidates = list(filter(function, objs))
+            if len(canidates) == 1:
+                return canidates[0].id
+
+        return None

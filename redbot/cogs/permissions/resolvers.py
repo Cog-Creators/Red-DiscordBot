@@ -42,7 +42,7 @@ def resolve_models(*, ctx: commands.Context, models: dict) -> bool:
 
     resolved = None
 
-    to_iter = (("commands", cmd_name), ("cog", cog_name))
+    to_iter = (("commands", cmd_name), ("cogs", cog_name))
 
     for model_name, ctx_attr in to_iter:
         if cmd_name in models.get(model_name, {}):
