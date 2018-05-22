@@ -323,10 +323,10 @@ class Permissions:
             if allow_or_deny not in data[model_type][type_name]:
                 data[model_type][type_name][allow_or_deny] = []
 
-            if who_or_what in data[model_type][type_name][allow_or_deny]:
+            if obj in data[model_type][type_name][allow_or_deny]:
                 return await ctx.maybe_send_embed(_("That rule already exists."))
 
-            data[model_type][type_name][allow_or_deny].append(who_or_what)
+            data[model_type][type_name][allow_or_deny].append(obj)
             models.update(data)
         await ctx.tick()
 
@@ -367,10 +367,10 @@ class Permissions:
             if allow_or_deny not in data[model_type][type_name]:
                 data[model_type][type_name][allow_or_deny] = []
 
-            if who_or_what in data[model_type][type_name][allow_or_deny]:
+            if obj in data[model_type][type_name][allow_or_deny]:
                 return await ctx.maybe_send_embed(_("That rule already exists."))
 
-            data[model_type][type_name][allow_or_deny].append(who_or_what)
+            data[model_type][type_name][allow_or_deny].append(obj)
             models.update(data)
         await ctx.tick()
 
@@ -410,10 +410,10 @@ class Permissions:
             if allow_or_deny not in data[model_type][type_name]:
                 data[model_type][type_name][allow_or_deny] = []
 
-            if who_or_what not in data[model_type][type_name][allow_or_deny]:
+            if obj not in data[model_type][type_name][allow_or_deny]:
                 return await ctx.maybe_send_embed(_("That rule doesn't exist."))
 
-            data[model_type][type_name][allow_or_deny].remove(who_or_what)
+            data[model_type][type_name][allow_or_deny].remove(obj)
             models.update(data)
         await ctx.tick()
 
@@ -454,10 +454,10 @@ class Permissions:
             if allow_or_deny not in data[model_type][type_name]:
                 data[model_type][type_name][allow_or_deny] = []
 
-            if who_or_what not in data[model_type][type_name][allow_or_deny]:
+            if obj not in data[model_type][type_name][allow_or_deny]:
                 return await ctx.maybe_send_embed(_("That rule doesn't exist."))
 
-            data[model_type][type_name][allow_or_deny].remove(who_or_what)
+            data[model_type][type_name][allow_or_deny].remove(obj)
             models.update(data)
         await ctx.tick()
 
