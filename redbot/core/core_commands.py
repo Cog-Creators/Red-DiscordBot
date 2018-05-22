@@ -45,7 +45,8 @@ _ = i18n.Translator("Core", __file__)
 
 
 class CoreLogic:
-    async def _load(self, cog_names : list):
+
+    async def _load(self, cog_names: list):
         """
         Loads cogs by name.
         Parameters
@@ -80,9 +81,7 @@ class CoreLogic:
                 log.exception("Package loading failed", exc_info=e)
 
                 exception_log = "Exception during loading of cog\n"
-                exception_log += "".join(
-                    traceback.format_exception(type(e), e, e.__traceback__)
-                )
+                exception_log += "".join(traceback.format_exception(type(e), e, e.__traceback__))
                 bot._last_exception = exception_log
                 failed_packages.append(name)
             else:
@@ -126,7 +125,7 @@ class CoreLogic:
         final_string = fmt.format(**form)
         return final_string
 
-    async def _unload(self, cog_names : list):
+    async def _unload(self, cog_names: list):
         """
         Unloads cogs with the given names.
 
@@ -179,7 +178,7 @@ class CoreLogic:
             await meta.bot.user.edit(username=name)
 
         return meta.bot.user.name
-    
+
     async def _prefixes(self, prefixes: list = None):
         """
         Gets or sets the bot's global prefixes.
@@ -208,10 +207,7 @@ class CoreLogic:
         dict
             `redbot` and `discordpy` keys containing version information for both.
         """
-        return {
-            'redbot': __version__,
-            'discordpy': discord.__version__,
-        }
+        return {"redbot": __version__, "discordpy": discord.__version__}
 
     async def _invite_url(self):
         """
