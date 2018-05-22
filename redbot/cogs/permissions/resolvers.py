@@ -45,7 +45,7 @@ def resolve_models(*, ctx: commands.Context, models: dict) -> bool:
     to_iter = (("commands", cmd_name), ("cogs", cog_name))
 
     for model_name, ctx_attr in to_iter:
-        if cmd_name in models.get(model_name, {}):
+        if ctx_attr in models.get(model_name, {}):
             blacklist = models[model_name][ctx_attr].get("deny", [])
             whitelist = models[model_name][ctx_attr].get("allow", [])
             resolved = resolve_lists(ctx=ctx, whitelist=whitelist, blacklist=blacklist)
