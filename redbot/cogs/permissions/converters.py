@@ -18,13 +18,9 @@ class CogOrCommand(commands.Converter):
 class RuleType(commands.Converter):
 
     async def convert(self, ctx: commands.Context, arg: str) -> str:
-        if arg.lower() in (
-            "allow", "whitelist", "allowed"
-        ):
+        if arg.lower() in ("allow", "whitelist", "allowed"):
             return "allow"
-        if arg.lower() in (
-            "deny", "blacklist", "denied"
-        ):
+        if arg.lower() in ("deny", "blacklist", "denied"):
             return "deny"
 
         raise commands.BadArgument()
