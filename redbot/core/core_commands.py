@@ -22,7 +22,7 @@ from redbot.core import checks
 from redbot.core import i18n
 from redbot.core import rpc
 from redbot.core import commands
-from redbot.meta import bot
+from redbot import meta
 from .utils import TYPE_CHECKING
 from .utils.chat_formatting import pagify, box, inline
 
@@ -49,6 +49,8 @@ class CoreLogic:
         failed_packages = []
         loaded_packages = []
         notfound_packages = []
+
+        bot = meta.bot
 
         cognames = [c.strip() for c in cog_names.split(" ")]
         cogspecs = []
@@ -119,6 +121,8 @@ class CoreLogic:
         failed_packages = []
         unloaded_packages = []
 
+        bot = meta.bot
+
         for name in cognames:
             if name in bot.extensions:
                 bot.unload_extension(name)
@@ -135,6 +139,44 @@ class CoreLogic:
         loaded, load_failed, not_found = await self._load(cog_names)
 
         return loaded, load_failed, not_found
+
+    async def _name(self, name: str = None):
+        """
+        Gets or sets the bot's username.
+
+        Parameters
+        ----------
+        name : str
+            If passed, the bot will change it's username.
+
+        Returns
+        -------
+        str
+            The current (or new) username of the bot.
+        """
+        if name is not None:
+            await meta.bot.user.edit(username=name)
+
+        return meta.bot.user.name
+    
+    async def _prefixes(self, prefixes: list = None):
+        """
+        Gets or sets the bot's global prefixes.
+
+        Parameters
+        ----------
+        prefixes : list of str
+            If passed, the bot will set it's global prefixes.
+
+        Returns
+        -------
+        list of str
+            The current (or new) list of prefixes.
+        """
+        if prefixes:
+            prefixes = sorted(prefixes, reverse=True)
+            await meta.bot.db.prefix.set(prefixes)
+        return meta.bot.db.prefix()
 
 
 @i18n.cog_i18n(_)
@@ -465,17 +507,17 @@ class Core(CoreLogic):
 
         if loaded:
             fmt = "Package{plural} {packs} {other} reloaded."
-            formed = self.get_package_strings(loaded, fmt, ("was", "were"))
+            formed = self._get_package_strings(loaded, fmt, ("was", "were"))
             await ctx.send(formed)
 
         if failed:
             fmt = "Failed to reload package{plural} {packs}. Check your " "logs for details"
-            formed = self.get_package_strings(failed, fmt)
+            formed = self._get_package_strings(failed, fmt)
             await ctx.send(formed)
 
         if not_found:
             fmt = "The package{plural} {packs} {other} not found in any cog path."
-            formed = self.get_package_strings(not_found, fmt, ("was", "were"))
+            formed = self._get_package_strings(not_found, fmt, ("was", "were"))
             await ctx.send(formed)
 
     @commands.command(name="shutdown")
@@ -673,7 +715,7 @@ class Core(CoreLogic):
     async def _username(self, ctx, *, username: str):
         """Sets Red's username"""
         try:
-            await ctx.bot.user.edit(username=username)
+            await self._name(name=username)
         except discord.HTTPException:
             await ctx.send(
                 _(
@@ -705,8 +747,7 @@ class Core(CoreLogic):
         if not prefixes:
             await ctx.send_help()
             return
-        prefixes = sorted(prefixes, reverse=True)
-        await ctx.bot.db.prefix.set(prefixes)
+        await self._prefixes(prefixes)
         await ctx.send(_("Prefix set."))
 
     @_set.command(aliases=["serverprefixes"])
