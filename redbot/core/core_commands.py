@@ -45,17 +45,27 @@ _ = i18n.Translator("Core", __file__)
 
 
 class CoreLogic:
-    async def _load(self, cog_names):
+    async def _load(self, cog_names : list):
+        """
+        Loads cogs by name.
+        Parameters
+        ----------
+        cog_names : list of str
+
+        Returns
+        -------
+        tuple
+            3 element tuple of loaded, failed, and not found cogs.
+        """
         failed_packages = []
         loaded_packages = []
         notfound_packages = []
 
         bot = meta.bot
 
-        cognames = [c.strip() for c in cog_names.split(" ")]
         cogspecs = []
 
-        for name in cognames:
+        for name in cog_names:
             try:
                 spec = await bot.cog_mgr.find_cog(name)
                 cogspecs.append((spec, name))
@@ -64,7 +74,7 @@ class CoreLogic:
 
         for spec, name in cogspecs:
             try:
-                self.cleanup_and_refresh_modules(spec.name)
+                self._cleanup_and_refresh_modules(spec.name)
                 await bot.load_extension(spec)
             except Exception as e:
                 log.exception("Package loading failed", exc_info=e)
@@ -80,7 +90,7 @@ class CoreLogic:
                 loaded_packages.append(name)
         return loaded_packages, failed_packages, notfound_packages
 
-    def cleanup_and_refresh_modules(self, module_name: str):
+    def _cleanup_and_refresh_modules(self, module_name: str):
         """Interally reloads modules so that changes are detected"""
         splitted = module_name.split(".")
 
@@ -116,14 +126,25 @@ class CoreLogic:
         final_string = fmt.format(**form)
         return final_string
 
-    async def _unload(self, cog_names):
-        cognames = [c.strip() for c in cog_names.split(" ")]
+    async def _unload(self, cog_names : list):
+        """
+        Unloads cogs with the given names.
+
+        Parameters
+        ----------
+        cog_names : list of str
+
+        Returns
+        -------
+        tuple
+            2 element tuple of successful unloads and failed unloads.
+        """
         failed_packages = []
         unloaded_packages = []
 
         bot = meta.bot
 
-        for name in cognames:
+        for name in cog_names:
             if name in bot.extensions:
                 bot.unload_extension(name)
                 await bot.remove_loaded_package(name)
@@ -461,7 +482,8 @@ class Core(CoreLogic):
     async def load(self, ctx, *, cog_name: str):
         """Loads packages"""
 
-        loaded, failed, not_found = await self._load(cog_name)
+        cog_names = [c.strip() for c in cog_name.split(" ")]
+        loaded, failed, not_found = await self._load(cog_names)
 
         if loaded:
             fmt = "Loaded {packs}"
@@ -486,7 +508,9 @@ class Core(CoreLogic):
     async def unload(self, ctx, *, cog_name: str):
         """Unloads packages"""
 
-        unloaded, failed = await self._unload(cog_name)
+        cog_names = [c.strip() for c in cog_name.split(" ")]
+
+        unloaded, failed = await self._unload(cog_names)
 
         if unloaded:
             fmt = "Package{plural} {packs} {other} unloaded."
@@ -1167,7 +1191,7 @@ class Core(CoreLogic):
         if spec is None:
             raise LookupError("No such cog found.")
 
-        self.cleanup_and_refresh_modules(spec.name)
+        self._cleanup_and_refresh_modules(spec.name)
 
         self.bot.load_extension(spec)
 
