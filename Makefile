@@ -1,4 +1,4 @@
 reformat:
-	black -l 99 redbot tests setup.py generate_strings.py docs/conf.py
+	black -l 99 `git ls-files "*.py"`
 stylecheck:
-	black --check -l 99 redbot tests setup.py generate_strings.py docs/conf.py
+	black -l 99 --check `git ls-files "*.py"`
