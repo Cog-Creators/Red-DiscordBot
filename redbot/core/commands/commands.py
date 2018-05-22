@@ -20,7 +20,7 @@ class Command(commands.Command):
     """
 
     def __init__(self, *args, **kwargs):
-        self._help_override = kwargs.pop('help_override', None)
+        self._help_override = kwargs.pop("help_override", None)
         super().__init__(*args, **kwargs)
         self.translator = kwargs.pop("i18n", None)
 
@@ -38,7 +38,10 @@ class Command(commands.Command):
             translator = lambda s: s
         else:
             translator = self.translator
-        return inspect.cleandoc(translator(self.callback.__doc__))
+        command_doc = self.callback.__doc__
+        if command_doc is None:
+            return ""
+        return inspect.cleandoc(translator(command_doc))
 
     @help.setter
     def help(self, value):
@@ -56,6 +59,7 @@ class Group(Command, commands.Group):
 
 
 # decorators
+
 
 def command(name=None, cls=Command, **attrs):
     """A decorator which transforms an async function into a `Command`.

@@ -5,4 +5,5 @@ raven==6.5.0
 colorama==0.3.9
 jsonrpcserver
 pyyaml==3.12
-Red-Trivia<1.1.0
+Red-Trivia>=1.1.1
+async-timeout<3.0.0

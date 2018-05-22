@@ -40,24 +40,25 @@ def init_loggers(cli_flags):
     logger = logging.getLogger("red")
 
     red_format = logging.Formatter(
-        '%(asctime)s %(levelname)s %(module)s %(funcName)s %(lineno)d: '
-        '%(message)s',
-        datefmt="[%d/%m/%Y %H:%M]")
+        "%(asctime)s %(levelname)s %(module)s %(funcName)s %(lineno)d: " "%(message)s",
+        datefmt="[%d/%m/%Y %H:%M]",
+    )
 
     stdout_handler = logging.StreamHandler(sys.stdout)
     stdout_handler.setFormatter(red_format)
 
     if cli_flags.debug:
-        os.environ['PYTHONASYNCIODEBUG'] = '1'
+        os.environ["PYTHONASYNCIODEBUG"] = "1"
         logger.setLevel(logging.DEBUG)
     else:
         logger.setLevel(logging.WARNING)
 
     from redbot.core.data_manager import core_data_path
-    logfile_path = core_data_path() / 'red.log'
+
+    logfile_path = core_data_path() / "red.log"
     fhandler = logging.handlers.RotatingFileHandler(
-        filename=str(logfile_path), encoding='utf-8', mode='a',
-        maxBytes=10**7, backupCount=5)
+        filename=str(logfile_path), encoding="utf-8", mode="a", maxBytes=10 ** 7, backupCount=5
+    )
     fhandler.setFormatter(red_format)
 
     logger.addHandler(fhandler)
@@ -76,15 +77,17 @@ async def _get_prefix_and_token(red, indict):
     :param indict:
     :return:
     """
-    indict['token'] = await red.db.token()
-    indict['prefix'] = await red.db.prefix()
-    indict['enable_sentry'] = await red.db.enable_sentry()
+    indict["token"] = await red.db.token()
+    indict["prefix"] = await red.db.prefix()
+    indict["enable_sentry"] = await red.db.enable_sentry()
 
 
 def list_instances():
     if not config_file.exists():
-        print("No instances have been configured! Configure one "
-              "using `redbot-setup` before trying to run the bot!")
+        print(
+            "No instances have been configured! Configure one "
+            "using `redbot-setup` before trying to run the bot!"
+        )
         sys.exit(1)
     else:
         data = JsonIO(config_file)._load_json()
@@ -118,29 +121,30 @@ def main():
     loop = asyncio.get_event_loop()
     tmp_data = {}
     loop.run_until_complete(_get_prefix_and_token(red, tmp_data))
-    token = os.environ.get("RED_TOKEN", tmp_data['token'])
-    prefix = cli_flags.prefix or tmp_data['prefix']
+    token = os.environ.get("RED_TOKEN", tmp_data["token"])
+    prefix = cli_flags.prefix or tmp_data["prefix"]
     if token is None or not prefix:
         if cli_flags.no_prompt is False:
-            new_token = interactive_config(red, token_set=bool(token),
-                                           prefix_set=bool(prefix))
+            new_token = interactive_config(red, token_set=bool(token), prefix_set=bool(prefix))
             if new_token:
                 token = new_token
         else:
             log.critical("Token and prefix must be set in order to login.")
             sys.exit(1)
     loop.run_until_complete(_get_prefix_and_token(red, tmp_data))
-    if tmp_data['enable_sentry']:
+    if tmp_data["enable_sentry"]:
         red.enable_sentry()
     cleanup_tasks = True
     try:
         loop.run_until_complete(red.start(token, bot=not cli_flags.not_bot))
     except discord.LoginFailure:
         cleanup_tasks = False  # No login happened, no need for this
-        log.critical("This token doesn't seem to be valid. If it belongs to "
-                     "a user account, remember that the --not-bot flag "
-                     "must be used. For self-bot functionalities instead, "
-                     "--self-bot")
+        log.critical(
+            "This token doesn't seem to be valid. If it belongs to "
+            "a user account, remember that the --not-bot flag "
+            "must be used. For self-bot functionalities instead, "
+            "--self-bot"
+        )
         db_token = red.db.token()
         if db_token and not cli_flags.no_prompt:
             print("\nDo you want to reset the token? (y/n)")
@@ -159,12 +163,11 @@ def main():
         red.rpc.close()
         if cleanup_tasks:
             pending = asyncio.Task.all_tasks(loop=red.loop)
-            gathered = asyncio.gather(
-                *pending, loop=red.loop, return_exceptions=True)
+            gathered = asyncio.gather(*pending, loop=red.loop, return_exceptions=True)
             gathered.cancel()
 
         sys.exit(red._shutdown_mode.value)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
