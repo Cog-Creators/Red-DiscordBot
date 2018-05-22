@@ -7,10 +7,10 @@ class CogOrCommand(commands.Converter):
     async def convert(self, ctx: commands.Context, arg: str) -> Tuple[str]:
         ret = ctx.bot.get_cog(arg)
         if ret:
-            return "Cog", arg
+            return "cogs", arg
         ret = ctx.bot.get_command(arg)
         if ret:
-            return "Command", arg
+            return "commands", arg
 
         raise commands.BadArgument()
 
