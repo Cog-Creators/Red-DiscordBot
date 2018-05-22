@@ -5,8 +5,8 @@ if "%1"=="" goto help
 REM This allows us to expand variables at execution
 setlocal ENABLEDELAYEDEXPANSION
 
-rem This will set PYFILES as a list of tracked .py files
-REM PYFILES=
+REM This will set PYFILES as a list of tracked .py files
+set PYFILES=
 for /F "tokens=* USEBACKQ" %%A in (`git ls-files "*.py"`) do (
     set PYFILES=!PYFILES! %%A
 )
@@ -15,11 +15,11 @@ goto %1
 
 :reformat
 black -l 99 !PYFILES!
-EXIT /B %ERRORLEVEL%
+exit /B %ERRORLEVEL%
 
 :stylecheck
 black -l 99 --check !PYFILES!
-EXIT /B %ERRORLEVEL%
+exit /B %ERRORLEVEL%
 
 :help
 echo Usage:
