@@ -199,6 +199,34 @@ class CoreLogic:
             await meta.bot.db.prefix.set(prefixes)
         return meta.bot.db.prefix()
 
+    async def _version_info(self):
+        """
+        Version information for Red and discord.py
+
+        Returns
+        -------
+        dict
+            `redbot` and `discordpy` keys containing version information for both.
+        """
+        return {
+            'redbot': __version__,
+            'discordpy': discord.__version__,
+        }
+
+    async def _invite_url(self):
+        """
+        Generates the invite URL for the bot.
+
+        Returns
+        -------
+        str
+            Invite URL.
+        """
+        if meta.bot.user.bot:
+            app_info = await meta.bot.application_info()
+            return discord.utils.oauth_url(app_info.id)
+        return "Not a bot account!"
+
 
 @i18n.cog_i18n(_)
 class Core(CoreLogic):
@@ -399,8 +427,7 @@ class Core(CoreLogic):
     async def invite(self, ctx):
         """Show's Red's invite url"""
         if self.bot.user.bot:
-            app_info = await self.bot.application_info()
-            await ctx.author.send(discord.utils.oauth_url(app_info.id))
+            await ctx.author.send(await self._invite_url())
         else:
             await ctx.send("I'm not a bot account. I have no invite URL.")
 
