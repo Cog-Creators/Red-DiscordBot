@@ -536,8 +536,8 @@ class RepoManager:
 
         """
         if self.does_repo_exist(name):
-            raise InvalidRepoName(
-                "That repo name you provided already exists." " Please choose another."
+            raise ExistingGitRepo(
+                "That repo name you provided already exists. Please choose another."
             )
 
         # noinspection PyTypeChecker
