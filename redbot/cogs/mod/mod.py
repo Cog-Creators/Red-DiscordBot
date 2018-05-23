@@ -1116,7 +1116,6 @@ class Mod:
                 author,
                 reason,
                 until=None,
-                channel=channel,
             )
         except RuntimeError as e:
             await ctx.send(e)
