@@ -154,6 +154,11 @@ def cli_flag_getter():
         flags = []
         print("Ok, we will now walk through choosing cli flags")
         print("Would you like to specify an owner? (y/n)")
+        print(
+            "Please note that the owner is normally determined automatically from "
+            "the bot's token, so you should only use that if you want to specify a "
+            "user other than that one as the owner."
+        )
         choice = user_choice()
         if choice == "y":
             print("Enter the user id for the owner")
