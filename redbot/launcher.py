@@ -174,6 +174,10 @@ def cli_flag_getter():
             prefixes = user_choice().split()
             for p in prefixes:
                 flags.append("-p {}".format(p))
+        print("Would you like mentioning the bot to be a prefix? (y/n)")
+        choice = user_choice()
+        if choice == "y":
+            flags.append("--mentionable")
         print(
             "Would you like to disable console input? Please note that features "
             "requiring console interaction may fail to work (y/n)"
