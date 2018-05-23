@@ -252,10 +252,25 @@ class Downloader:
         """
         repos = self._repo_manager.get_all_repo_names()
         repos = sorted(repos, key=str.lower)
-        joined = _("Installed Repos:\n") + "\n".join(["+ " + r for r in repos])
+        joined = _("Installed Repos:\n\n")
+        for repo_name in repos:
+            repo = self._repo_manager.get_repo(repo_name)
+            joined += "+ {}: {}\n".format(repo.name, repo.short or "")
 
         for page in pagify(joined, ["\n"], shorten_by=16):
             await ctx.send(box(page.lstrip(" "), lang="diff"))
+
+    @repo.command(name="info")
+    async def _repo_info(self, ctx, repo_name: Repo):
+        """
+        Lists information about a single repo
+        """
+        if repo_name is None:
+            await ctx.send(_("There is no repo `{}`").format(repo_name.name))
+            return
+
+        msg = _("Information on {}:\n{}").format(repo_name.name, repo_name.description or "")
+        await ctx.send(box(msg))
 
     @commands.group()
     @checks.is_owner()
