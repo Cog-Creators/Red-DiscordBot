@@ -8,10 +8,11 @@
   * [4.1 Setting up your development environment](#41-setting-up-your-development-environment)
   * [4.2 Testing](#42-testing)
   * [4.3 Style](#43-style)
-  * [4.4 Keeping your dependencies up to date](#44-keeping-your-dependencies-up-to-date)
-  * [4.5 To contribute changes](#45-to-contribute-changes)
-  * [4.6 How To Report A Bug](#46-how-to-report-a-bug)
-  * [4.7 How To Suggest A Feature Or Enhancement](#47-how-to-suggest-a-feature-or-enhancement)
+  * [4.4 Make](#44-make)
+  * [4.5 Keeping your dependencies up to date](#45-keeping-your-dependencies-up-to-date)
+  * [4.6 To contribute changes](#46-to-contribute-changes)
+  * [4.7 How To Report A Bug](#47-how-to-report-a-bug)
+  * [4.8 How To Suggest A Feature Or Enhancement](#48-how-to-suggest-a-feature-or-enhancement)
 * [5. Code Review Process](#5-code-review-process)
   * [5.1 Issues](#51-issues)
   * [5.2 Pull Requests](#52-pull-requests)
@@ -95,10 +96,15 @@ Use the command `black --help` to see how to use this tool. The full style guide
 
 Note: Python 3.6+ is required to install and run black. If you installed your development environment with Python 3.5, black will not be installed.
 
-### 4.4 Keeping your dependencies up to date
+### 4.4 Make
+You may have noticed we have a `Makefile` and a `make.bat` in the top-level directory. For now, you can do two things with them:
+1. `make reformat`: Reformat all python files in the project with Black
+2. `make stylecheck`: Check if any `.py` files in the project need reformatting
+
+### 4.5 Keeping your dependencies up to date
 Whenever you pull from upstream (V3/develop on the main repository) and you notice the file `Pipfile.lock` has been changed, it usually means one of the package dependencies have been updated, added or removed. To make sure you're testing and formatting with the most up-to-date versions of our dependencies, run `pipenv install --dev` again.
 
-### 4.5 To contribute changes
+### 4.6 To contribute changes
 
 1. Create a new branch on your fork
 2. Make the changes
@@ -106,10 +112,10 @@ Whenever you pull from upstream (V3/develop on the main repository) and you noti
     * Run tests with `tox` to ensure your code is up to scratch
     * Create a Pull Request on GitHub with your changes
 
-### 4.6 How To Report A Bug
+### 4.7 How To Report A Bug
 Please see our **ISSUES.MD** for more information.
 
-### 4.7 How To Suggest A Feature Or Enhancement
+### 4.8 How To Suggest A Feature Or Enhancement
 The goal of Red is to be as useful to as many people as possible, this means that all features must be useful to anyone and any server that uses Red.
 
 If you find yourself wanting a feature that Red does not already have, you're probably not alone. There's bound to be a great number of users out there needing the same thing and a lot of the features that Red has today have been added because of the needs of our users. Open an issue on our issues list and describe the feature you would like to see, how you would use it, how it should work, and why it would be useful to the Red community as a whole.
