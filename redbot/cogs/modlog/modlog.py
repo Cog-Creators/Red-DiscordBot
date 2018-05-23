@@ -75,10 +75,8 @@ class ModLog:
             enabled = await casetype.is_enabled()
             await casetype.set_enabled(True if not enabled else False)
 
-            msg = (
-                _("Case creation for {} actions is now {}.").format(
-                    action, "enabled" if not enabled else "disabled"
-                )
+            msg = _("Case creation for {} actions is now {}.").format(
+                action, "enabled" if not enabled else "disabled"
             )
             await ctx.send(msg)
 

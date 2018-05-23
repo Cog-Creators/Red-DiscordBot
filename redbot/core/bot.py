@@ -21,22 +21,9 @@ from .cog_manager import CogManager
 from . import Config, i18n, commands, rpc
 from .help_formatter import Help, help as help_
 from .sentry import SentryManager
-from .utils import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from aiohttp_json_rpc import JsonRpc
-
-# noinspection PyUnresolvedReferences
-class RpcMethodMixin:
-
-    async def rpc__cogs(self, request):
-        return list(self.cogs.keys())
-
-    async def rpc__extensions(self, request):
-        return list(self.extensions.keys())
 
 
-class RedBase(BotBase, RpcMethodMixin):
+class RedBase(BotBase):
     """Mixin for the main bot class.
 
     This exists because `Red` inherits from `discord.AutoShardedClient`, which
@@ -62,6 +49,8 @@ class RedBase(BotBase, RpcMethodMixin):
             enable_sentry=None,
             locale="en",
             embeds=True,
+            help__page_char_limit=1000,
+            help__max_pages_in_guild=2,
         )
 
         self.db.register_guild(
@@ -79,12 +68,10 @@ class RedBase(BotBase, RpcMethodMixin):
                 return global_prefix
             server_prefix = await bot.db.guild(message.guild).prefix()
             if cli_flags.mentionable:
-                return when_mentioned_or(*server_prefix)(
-                    bot, message
-                ) if server_prefix else when_mentioned_or(
-                    *global_prefix
-                )(
-                    bot, message
+                return (
+                    when_mentioned_or(*server_prefix)(bot, message)
+                    if server_prefix
+                    else when_mentioned_or(*global_prefix)(bot, message)
                 )
             else:
                 return server_prefix if server_prefix else global_prefix
@@ -109,9 +96,10 @@ class RedBase(BotBase, RpcMethodMixin):
 
         self.cog_mgr = CogManager(paths=(str(self.main_dir / "cogs"),))
 
-        self.register_rpc_methods()
-
         super().__init__(formatter=Help(), **kwargs)
+
+        if self.rpc_enabled:
+            self.rpc = rpc.RPC(self)
 
         self.remove_command("help")
 
@@ -162,9 +150,8 @@ class RedBase(BotBase, RpcMethodMixin):
         bool
             :code:`True` if an embed is requested
         """
-        if (
-            isinstance(channel, discord.abc.PrivateChannel)
-            or (command and command == self.get_command("help"))
+        if isinstance(channel, discord.abc.PrivateChannel) or (
+            command and command == self.get_command("help")
         ):
             user_setting = await self.db.user(user).embeds()
             if user_setting is not None:
@@ -280,10 +267,6 @@ class RedBase(BotBase, RpcMethodMixin):
 
             if pkg_name.startswith("redbot.cogs"):
                 del sys.modules["redbot.cogs"].__dict__[name]
-
-    def register_rpc_methods(self):
-        rpc.add_method("bot", self.rpc__cogs)
-        rpc.add_method("bot", self.rpc__extensions)
 
 
 class Red(RedBase, discord.AutoShardedClient):
