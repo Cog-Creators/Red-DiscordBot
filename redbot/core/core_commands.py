@@ -851,7 +851,7 @@ class Core:
         The default value is 1000 characters.
         """
         if limit <= 0:
-            await ctx.send(_("Error: You must give a positive value!"))
+            await ctx.send(_("You must give a positive value!"))
             return
 
         await ctx.bot.db.help.page_char_limit.set(limit)
