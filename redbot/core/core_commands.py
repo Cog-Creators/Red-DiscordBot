@@ -852,6 +852,7 @@ class Core:
         """
         if limit <= 0:
             await ctx.send(_("Error: You must give a positive value!"))
+            return
 
         await ctx.bot.db.help.page_char_limit.set(limit)
         await ctx.send(_("Done. The character limit per page has been set to {}.").format(limit))
@@ -870,6 +871,7 @@ class Core:
         """
         if pages < 0:
             await ctx.send(_("You must give a value of zero or greater!"))
+            return
 
         await ctx.bot.db.help.max_pages_in_guild.set(pages)
         await ctx.send(_("Done. The page limit has been set to {}.").format(pages))
