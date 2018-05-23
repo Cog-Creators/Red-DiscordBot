@@ -155,7 +155,8 @@ class Repo(RepoJSONMixin):
         for file_finder, name, is_pkg in pkgutil.walk_packages(
             path=[str(self.folder_path)], onerror=lambda name: None
         ):
-            curr_modules.append(Installable(location=self.folder_path / name))
+            if is_pkg:
+                curr_modules.append(Installable(location=self.folder_path / name))
         self.available_modules = curr_modules
 
         # noinspection PyTypeChecker
@@ -536,8 +537,8 @@ class RepoManager:
 
         """
         if self.does_repo_exist(name):
-            raise InvalidRepoName(
-                "That repo name you provided already exists." " Please choose another."
+            raise ExistingGitRepo(
+                "That repo name you provided already exists. Please choose another."
             )
 
         # noinspection PyTypeChecker
