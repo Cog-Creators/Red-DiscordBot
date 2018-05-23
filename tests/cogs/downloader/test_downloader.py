@@ -3,9 +3,11 @@ from collections import namedtuple
 from pathlib import Path
 
 import pytest
+from unittest.mock import MagicMock
 from raven.versioning import fetch_git_sha
 
 from redbot.cogs.downloader.repo_manager import RepoManager, Repo
+from redbot.cogs.downloader.errors import ExistingGitRepo
 
 
 async def fake_run(*args, **kwargs):
@@ -129,3 +131,13 @@ async def test_current_hash(bot_repo):
     sentry_sha = fetch_git_sha(str(bot_repo.folder_path))
 
     assert sentry_sha == commit
+
+
+@pytest.mark.asyncio
+async def test_existing_repo(repo_manager):
+    repo_manager.does_repo_exist = MagicMock(return_value=True)
+
+    with pytest.raises(ExistingGitRepo):
+        await repo_manager.add_repo("http://test.com", "test")
+
+    repo_manager.does_repo_exist.assert_called_once_with("test")

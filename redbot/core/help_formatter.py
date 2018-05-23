@@ -236,7 +236,9 @@ class Help(formatter.HelpFormatter):
             emb["embed"]["title"] = "{0}".format(reason)
 
         ret = []
-        field_groups = self.group_fields(emb["fields"])
+
+        page_char_limit = await ctx.bot.db.help.page_char_limit()
+        field_groups = self.group_fields(emb["fields"], page_char_limit)
 
         for i, group in enumerate(field_groups, 1):
             embed = discord.Embed(color=self.color, **emb["embed"])
@@ -360,7 +362,8 @@ async def help(ctx, *cmds: str):
         else:
             embeds = await f.format_help_for(ctx, command)
 
-    if len(embeds) > 2:
+    max_pages_in_guild = await ctx.bot.db.help.max_pages_in_guild()
+    if len(embeds) > max_pages_in_guild:
         destination = ctx.author
 
     for embed in embeds:

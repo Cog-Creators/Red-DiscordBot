@@ -16,7 +16,6 @@ from discord.ext import commands
 from . import __version__
 from .data_manager import storage_type
 from .utils.chat_formatting import inline, bordered
-from .rpc import initialize
 from colorama import Fore, Style, init
 
 log = logging.getLogger("red")
@@ -173,7 +172,7 @@ def init_events(bot, cli_flags):
             print("\nInvite URL: {}\n".format(invite_url))
 
         if bot.rpc_enabled:
-            await initialize(bot)
+            await bot.rpc.initialize()
 
     @bot.event
     async def on_error(event_method, *args, **kwargs):
