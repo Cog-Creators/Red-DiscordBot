@@ -3,7 +3,7 @@ from re import search
 from typing import Generator, Tuple, Iterable
 
 import discord
-from redbot.core import Config, commands
+from redbot.core import Config, commands, checks
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
 
@@ -151,7 +151,7 @@ class Alias:
             return
 
         try:
-            potential_alias = message.content[len(prefix):].split(" ")[0]
+            potential_alias = message.content[len(prefix) :].split(" ")[0]
         except IndexError:
             return False
 
@@ -185,6 +185,7 @@ class Alias:
         if ctx.invoked_subcommand is None or isinstance(ctx.invoked_subcommand, commands.Group):
             await ctx.send_help()
 
+    @checks.mod_or_permissions(manage_guild=True)
     @alias.command(name="add")
     @commands.guild_only()
     async def _add_alias(self, ctx: commands.Context, alias_name: str, *, command):
@@ -199,9 +200,7 @@ class Alias:
                     "You attempted to create a new alias"
                     " with the name {} but that"
                     " name is already a command on this bot."
-                ).format(
-                    alias_name
-                )
+                ).format(alias_name)
             )
             return
 
@@ -212,9 +211,7 @@ class Alias:
                     "You attempted to create a new alias"
                     " with the name {} but that"
                     " alias already exists on this server."
-                ).format(
-                    alias_name
-                )
+                ).format(alias_name)
             )
             return
 
@@ -226,9 +223,7 @@ class Alias:
                     " with the name {} but that"
                     " name is an invalid alias name. Alias"
                     " names may not contain spaces."
-                ).format(
-                    alias_name
-                )
+                ).format(alias_name)
             )
             return
         # endregion
@@ -242,6 +237,7 @@ class Alias:
             _("A new alias with the trigger `{}`" " has been created.").format(alias_name)
         )
 
+    @checks.is_owner()
     @global_.command(name="add")
     async def _add_global_alias(self, ctx: commands.Context, alias_name: str, *, command):
         """
@@ -255,9 +251,7 @@ class Alias:
                     "You attempted to create a new global alias"
                     " with the name {} but that"
                     " name is already a command on this bot."
-                ).format(
-                    alias_name
-                )
+                ).format(alias_name)
             )
             return
 
@@ -268,9 +262,7 @@ class Alias:
                     "You attempted to create a new global alias"
                     " with the name {} but that"
                     " alias already exists on this server."
-                ).format(
-                    alias_name
-                )
+                ).format(alias_name)
             )
             return
 
@@ -282,9 +274,7 @@ class Alias:
                     " with the name {} but that"
                     " name is an invalid alias name. Alias"
                     " names may not contain spaces."
-                ).format(
-                    alias_name
-                )
+                ).format(alias_name)
             )
             return
         # endregion
@@ -324,6 +314,7 @@ class Alias:
         else:
             await ctx.send(_("There is no alias with the name `{}`").format(alias_name))
 
+    @checks.mod_or_permissions(manage_guild=True)
     @alias.command(name="del")
     @commands.guild_only()
     async def _del_alias(self, ctx: commands.Context, alias_name: str):
@@ -344,6 +335,7 @@ class Alias:
         else:
             await ctx.send(_("Alias with name `{}` was not found.").format(alias_name))
 
+    @checks.is_owner()
     @global_.command(name="del")
     async def _del_global_alias(self, ctx: commands.Context, alias_name: str):
         """
