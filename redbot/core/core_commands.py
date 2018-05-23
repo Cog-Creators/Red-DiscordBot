@@ -877,12 +877,15 @@ class Core:
         await ctx.send(_("Done. The page limit has been set to {}.").format(pages))
 
     @helpset.command(name="tagline")
-    async def helpset_tagline(self, ctx: commands.Context, *, tagline: str):
+    async def helpset_tagline(self, ctx: commands.Context, *, tagline: str = None):
         """
         Set the tagline to be used.
 
         This setting only applies to embedded help.
         """
+        if tagline is None:
+            await ctx.bot.db.help.tagline.set("")
+            return await ctx.send(_("The tagline has been reset."))
         old = await ctx.bot.db.help.tagline()
         if old:
             await ctx.bot.db.help.tagline.set("")
