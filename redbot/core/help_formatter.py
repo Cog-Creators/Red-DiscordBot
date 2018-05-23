@@ -121,11 +121,7 @@ class Help(formatter.HelpFormatter):
         """Formats command for output.
 
         Returns a dict used to build embed"""
-        emb = {
-            "embed": {"title": "", "description": ""},
-            "footer": {"text": self.get_ending_note()},
-            "fields": [],
-        }
+        emb = {"embed": {"title": "", "description": ""}, "footer": {"text": ""}, "fields": []}
 
         if self.is_cog():
             translator = getattr(self.command, "__translator__", lambda s: s)
@@ -143,6 +139,12 @@ class Help(formatter.HelpFormatter):
         if description:
             # <description> portion
             emb["embed"]["description"] = description[:2046]
+
+        footer = self.get_ending_note()
+        tagline = await self.context.bot.db.help.tagline()
+        if tagline:
+            footer += "\n\n{}".format(tagline)
+        emb["footer"]["text"] = footer
 
         if isinstance(self.command, discord.ext.commands.core.Command):
             # <signature portion>
