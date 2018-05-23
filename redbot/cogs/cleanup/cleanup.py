@@ -198,8 +198,10 @@ class Cleanup:
             before=ctx.message,
             delete_pinned=delete_pinned,
         )
-        reason = "{}({}) deleted {} messages " " made by {}({}) in channel {}." "".format(
-            author.name, author.id, len(to_delete), member or "???", _id, channel.name
+        reason = (
+            "{}({}) deleted {} messages "
+            " made by {}({}) in channel {}."
+            "".format(author.name, author.id, len(to_delete), member or "???", _id, channel.name)
         )
         log.info(reason)
 
@@ -311,7 +313,7 @@ class Cleanup:
                 return True
             p = discord.utils.find(m.content.startswith, prefixes)
             if p and len(p) > 0:
-                cmd_name = m.content[len(p):].split(" ")[0]
+                cmd_name = m.content[len(p) :].split(" ")[0]
                 return bool(self.bot.get_command(cmd_name))
             return False
 
@@ -326,8 +328,10 @@ class Cleanup:
         )
         to_delete.append(ctx.message)
 
-        reason = "{}({}) deleted {} " " command messages in channel {}." "".format(
-            author.name, author.id, len(to_delete), channel.name
+        reason = (
+            "{}({}) deleted {} "
+            " command messages in channel {}."
+            "".format(author.name, author.id, len(to_delete), channel.name)
         )
         log.info(reason)
 
@@ -369,7 +373,7 @@ class Cleanup:
             me = ctx.guild.me
             can_mass_purge = channel.permissions_for(me).manage_messages
 
-        use_re = (match_pattern and match_pattern.startswith("r(") and match_pattern.endswith(")"))
+        use_re = match_pattern and match_pattern.startswith("r(") and match_pattern.endswith(")")
 
         if use_re:
             match_pattern = match_pattern[1:]  # strip 'r'
@@ -414,8 +418,10 @@ class Cleanup:
         else:
             channel_name = str(channel)
 
-        reason = "{}({}) deleted {} messages " "sent by the bot in {}." "".format(
-            author.name, author.id, len(to_delete), channel_name
+        reason = (
+            "{}({}) deleted {} messages "
+            "sent by the bot in {}."
+            "".format(author.name, author.id, len(to_delete), channel_name)
         )
         log.info(reason)
 

@@ -50,10 +50,6 @@ class Core:
     def __init__(self, bot):
         self.bot = bot  # type: Red
 
-        rpc.add_method("core", self.rpc_load)
-        rpc.add_method("core", self.rpc_unload)
-        rpc.add_method("core", self.rpc_reload)
-
     @commands.command(hidden=True)
     async def ping(self, ctx):
         """Pong."""
@@ -348,8 +344,8 @@ class Core:
                 except Exception as e:
                     log.exception("Package loading failed", exc_info=e)
 
-                    exception_log = (
-                        "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
+                    exception_log = "Exception in command '{}'\n" "".format(
+                        ctx.command.qualified_name
                     )
                     exception_log += "".join(
                         traceback.format_exception(type(e), e, e.__traceback__)
@@ -434,9 +430,7 @@ class Core:
             except Exception as e:
                 log.exception("Package reloading failed", exc_info=e)
 
-                exception_log = (
-                    "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
-                )
+                exception_log = "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
                 exception_log += "".join(traceback.format_exception(type(e), e, e.__traceback__))
                 self.bot._last_exception = exception_log
 
@@ -448,7 +442,7 @@ class Core:
             await ctx.send(_(formed))
 
         if failed_packages:
-            fmt = ("Failed to reload package{plural} {packs}. Check your " "logs for details")
+            fmt = "Failed to reload package{plural} {packs}. Check your " "logs for details"
             formed = self.get_package_strings(failed_packages, fmt)
             await ctx.send(_(formed))
 
@@ -694,9 +688,7 @@ class Core:
                     "only do it up to 2 times an hour. Use "
                     "nicknames if you need frequent changes. "
                     "`{}set nickname`"
-                ).format(
-                    ctx.prefix
-                )
+                ).format(ctx.prefix)
             )
         else:
             await ctx.send(_("Done."))
@@ -799,9 +791,7 @@ class Core:
                     " it is recommended to reset it right now. Go to the following link and"
                     " select `Reveal Token` and `Generate a new token?`."
                     "\n\nhttps://discordapp.com/developers/applications/me/{}"
-                ).format(
-                    self.bot.user.id
-                )
+                ).format(self.bot.user.id)
             )
             return
 
@@ -840,6 +830,51 @@ class Core:
         else:
             ctx.bot.disable_sentry()
             await ctx.send(_("Done. Sentry logging is now disabled."))
+
+    @commands.group()
+    @checks.is_owner()
+    async def helpset(self, ctx: commands.Context):
+        """Manage settings for the help command."""
+        if ctx.invoked_subcommand is None:
+            await ctx.send_help()
+
+    @helpset.command(name="pagecharlimit")
+    async def helpset_pagecharlimt(self, ctx: commands.Context, limit: int):
+        """Set the character limit for each page in the help message.
+
+        This setting only applies to embedded help.
+
+        Please note that setting a relitavely small character limit may
+        mean some pages will exceed this limit. This is because categories
+        are never spread across multiple pages in the help message.
+
+        The default value is 1000 characters.
+        """
+        if limit <= 0:
+            await ctx.send(_("You must give a positive value!"))
+            return
+
+        await ctx.bot.db.help.page_char_limit.set(limit)
+        await ctx.send(_("Done. The character limit per page has been set to {}.").format(limit))
+
+    @helpset.command(name="maxpages")
+    async def helpset_maxpages(self, ctx: commands.Context, pages: int):
+        """Set the maximum number of help pages sent in a server channel.
+
+        This setting only applies to embedded help.
+
+        If a help message contains more pages than this value, the help message will
+        be sent to the command author via DM. This is to help reduce spam in server
+        text channels.
+
+        The default value is 2 pages.
+        """
+        if pages < 0:
+            await ctx.send(_("You must give a value of zero or greater!"))
+            return
+
+        await ctx.bot.db.help.max_pages_in_guild.set(pages)
+        await ctx.send(_("Done. The page limit has been set to {}.").format(pages))
 
     @commands.command()
     @checks.is_owner()
@@ -948,7 +983,7 @@ class Core:
             else:
                 await ctx.send(_("Your message has been sent."))
         else:
-            msg_text = ("{}\nMessage:\n\n{}\n{}".format(description, message, footer))
+            msg_text = "{}\nMessage:\n\n{}\n{}".format(description, message, footer)
             try:
                 await owner.send("{}\n{}".format(content, box(msg_text)))
             except discord.InvalidArgument:

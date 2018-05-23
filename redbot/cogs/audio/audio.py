@@ -14,7 +14,7 @@ from .manager import shutdown_lavalink_server
 
 _ = Translator("Audio", __file__)
 
-__version__ = "0.0.6"
+__version__ = "0.0.6a"
 __author__ = ["aikaterna", "billy/bollo/ati"]
 
 
@@ -247,7 +247,7 @@ class Audio:
         jarbuild = redbot.core.__version__
 
         vote_percent = data["vote_percent"]
-        msg = ("```ini\n" "----Server Settings----\n")
+        msg = "```ini\n" "----Server Settings----\n"
         if dj_enabled:
             msg += "DJ Role:          [{}]\n".format(dj_role_obj.name)
         if jukebox:
@@ -262,17 +262,13 @@ class Audio:
         if vote_percent > 0:
             msg += (
                 "Vote skip:        [{vote_enabled}]\n" "Skip percentage:  [{vote_percent}%]\n"
-            ).format(
-                **data
-            )
+            ).format(**data)
         msg += (
             "---Lavalink Settings---\n"
             "Cog version:      [{}]\n"
             "Jar build:        [{}]\n"
             "External server:  [{use_external_lavalink}]```"
-        ).format(
-            __version__, jarbuild, **global_data
-        )
+        ).format(__version__, jarbuild, **global_data)
 
         embed = discord.Embed(colour=ctx.guild.me.top_role.colour, description=msg)
         return await ctx.send(embed=embed)
@@ -306,6 +302,7 @@ class Audio:
         await self._embed_msg(ctx, "Song titles as status: {}.".format(not status))
 
     @commands.command()
+    @commands.guild_only()
     async def audiostats(self, ctx):
         """Audio stats."""
         server_num = len([p for p in lavalink.players if p.current is not None])
@@ -340,6 +337,7 @@ class Audio:
         await ctx.send(embed=embed)
 
     @commands.command()
+    @commands.guild_only()
     async def bump(self, ctx, index: int):
         """Bump a song number to the top of the queue."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -347,9 +345,8 @@ class Audio:
             return await self._embed_msg(ctx, "Nothing playing.")
         player = lavalink.get_player(ctx.guild.id)
         if (
-            (not ctx.author.voice or ctx.author.voice.channel != player.channel)
-            and not await self._can_instaskip(ctx, ctx.author)
-        ):
+            not ctx.author.voice or ctx.author.voice.channel != player.channel
+        ) and not await self._can_instaskip(ctx, ctx.author):
             return await self._embed_msg(ctx, "You must be in the voice channel to bump a song.")
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
@@ -366,6 +363,7 @@ class Audio:
         await self._embed_msg(ctx, "Moved {} to the top of the queue.".format(removed.title))
 
     @commands.command(aliases=["dc"])
+    @commands.guild_only()
     async def disconnect(self, ctx):
         """Disconnect from the voice channel."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -373,9 +371,8 @@ class Audio:
             if dj_enabled:
                 if not await self._can_instaskip(ctx, ctx.author):
                     return await self._embed_msg(ctx, "You need the DJ role to disconnect.")
-            if (
-                not await self._can_instaskip(ctx, ctx.author)
-                and not await self._is_alone(ctx, ctx.author)
+            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
+                ctx, ctx.author
             ):
                 return await self._embed_msg(ctx, "There are other people listening to music.")
             else:
@@ -383,6 +380,7 @@ class Audio:
                 return await lavalink.get_player(ctx.guild.id).disconnect()
 
     @commands.command(aliases=["np", "n", "song"])
+    @commands.guild_only()
     async def now(self, ctx):
         """Now playing."""
         if not self._player_check(ctx):
@@ -418,9 +416,8 @@ class Audio:
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         vote_enabled = await self.config.guild(ctx.guild).vote_enabled()
         if dj_enabled or vote_enabled:
-            if (
-                not await self._can_instaskip(ctx, ctx.author)
-                and not await self._is_alone(ctx, ctx.author)
+            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
+                ctx, ctx.author
             ):
                 return
 
@@ -451,6 +448,7 @@ class Audio:
             await ctx.invoke(self.skip)
 
     @commands.command(aliases=["resume"])
+    @commands.guild_only()
     async def pause(self, ctx):
         """Pause and resume."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -458,16 +456,14 @@ class Audio:
             return await self._embed_msg(ctx, "Nothing playing.")
         player = lavalink.get_player(ctx.guild.id)
         if (
-            (not ctx.author.voice or ctx.author.voice.channel != player.channel)
-            and not await self._can_instaskip(ctx, ctx.author)
-        ):
+            not ctx.author.voice or ctx.author.voice.channel != player.channel
+        ) and not await self._can_instaskip(ctx, ctx.author):
             return await self._embed_msg(
                 ctx, "You must be in the voice channel to pause the music."
             )
         if dj_enabled:
-            if (
-                not await self._can_instaskip(ctx, ctx.author)
-                and not await self._is_alone(ctx, ctx.author)
+            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
+                ctx, ctx.author
             ):
                 return await self._embed_msg(ctx, "You need the DJ role to pause songs.")
 
@@ -497,6 +493,7 @@ class Audio:
         await self._embed_msg(ctx, "Nothing playing.")
 
     @commands.command()
+    @commands.guild_only()
     async def percent(self, ctx):
         """Queue percentage."""
         if not self._player_check(ctx):
@@ -552,6 +549,7 @@ class Audio:
         await ctx.send(embed=embed)
 
     @commands.command()
+    @commands.guild_only()
     async def play(self, ctx, *, query):
         """Play a URL or search for a song."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -572,9 +570,8 @@ class Audio:
         player.store("guild", ctx.guild.id)
         await self._data_check(ctx)
         if (
-            (not ctx.author.voice or ctx.author.voice.channel != player.channel)
-            and not await self._can_instaskip(ctx, ctx.author)
-        ):
+            not ctx.author.voice or ctx.author.voice.channel != player.channel
+        ) and not await self._can_instaskip(ctx, ctx.author):
             return await self._embed_msg(
                 ctx, "You must be in the voice channel to use the play command."
             )
@@ -645,10 +642,9 @@ class Audio:
             return
         async with self.config.guild(ctx.guild).playlists() as playlists:
             try:
-                if (
-                    playlists[playlist_name]["author"] != ctx.author.id
-                    and not await self._can_instaskip(ctx, ctx.author)
-                ):
+                if playlists[playlist_name][
+                    "author"
+                ] != ctx.author.id and not await self._can_instaskip(ctx, ctx.author):
                     return await self._embed_msg(ctx, "You are not the author of that playlist.")
                 player = lavalink.get_player(ctx.guild.id)
                 to_append = await self._playlist_tracks(ctx, player, url)
@@ -693,10 +689,9 @@ class Audio:
         """Delete a saved playlist."""
         async with self.config.guild(ctx.guild).playlists() as playlists:
             try:
-                if (
-                    playlists[playlist_name]["author"] != ctx.author.id
-                    and not await self._can_instaskip(ctx, ctx.author)
-                ):
+                if playlists[playlist_name][
+                    "author"
+                ] != ctx.author.id and not await self._can_instaskip(ctx, ctx.author):
                     return await self._embed_msg(ctx, "You are not the author of that playlist.")
                 del playlists[playlist_name]
             except KeyError:
@@ -799,10 +794,9 @@ class Audio:
         """Remove a song from a playlist by url."""
         async with self.config.guild(ctx.guild).playlists() as playlists:
             try:
-                if (
-                    playlists[playlist_name]["author"] != ctx.author.id
-                    and not await self._can_instaskip(ctx, ctx.author)
-                ):
+                if playlists[playlist_name][
+                    "author"
+                ] != ctx.author.id and not await self._can_instaskip(ctx, ctx.author):
                     return await self._embed_msg(ctx, "You are not the author of that playlist.")
             except KeyError:
                 return await self._embed_msg(ctx, "No playlist with that name.")
@@ -977,9 +971,8 @@ class Audio:
         player.store("channel", ctx.channel.id)
         player.store("guild", ctx.guild.id)
         if (
-            (not ctx.author.voice or ctx.author.voice.channel != player.channel)
-            and not await self._can_instaskip(ctx, ctx.author)
-        ):
+            not ctx.author.voice or ctx.author.voice.channel != player.channel
+        ) and not await self._can_instaskip(ctx, ctx.author):
             await self._embed_msg(
                 ctx, "You must be in the voice channel to use the playlist command."
             )
@@ -1011,6 +1004,7 @@ class Audio:
         return tracklist
 
     @commands.command()
+    @commands.guild_only()
     async def prev(self, ctx):
         """Skips to the start of the previously played track."""
         if not self._player_check(ctx):
@@ -1019,15 +1013,13 @@ class Audio:
         player = lavalink.get_player(ctx.guild.id)
         shuffle = await self.config.guild(ctx.guild).shuffle()
         if dj_enabled:
-            if (
-                not await self._can_instaskip(ctx, ctx.author)
-                and not await self._is_alone(ctx, ctx.author)
+            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
+                ctx, ctx.author
             ):
                 return await self._embed_msg(ctx, "You need the DJ role to skip songs.")
         if (
-            (not ctx.author.voice or ctx.author.voice.channel != player.channel)
-            and not await self._can_instaskip(ctx, ctx.author)
-        ):
+            not ctx.author.voice or ctx.author.voice.channel != player.channel
+        ) and not await self._can_instaskip(ctx, ctx.author):
             return await self._embed_msg(
                 ctx, "You must be in the voice channel to skip the music."
             )
@@ -1051,6 +1043,7 @@ class Audio:
             await ctx.send(embed=embed)
 
     @commands.command(aliases=["q"])
+    @commands.guild_only()
     async def queue(self, ctx, page: int = 1):
         """Lists the queue."""
         if not self._player_check(ctx):
@@ -1126,13 +1119,13 @@ class Audio:
         return embed
 
     @commands.command()
+    @commands.guild_only()
     async def repeat(self, ctx):
         """Toggles repeat."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         if dj_enabled:
-            if (
-                not await self._can_instaskip(ctx, ctx.author)
-                and not await self._has_dj_role(ctx, ctx.author)
+            if not await self._can_instaskip(ctx, ctx.author) and not await self._has_dj_role(
+                ctx, ctx.author
             ):
                 return await self._embed_msg(ctx, "You need the DJ role to toggle repeat.")
         repeat = await self.config.guild(ctx.guild).repeat()
@@ -1142,15 +1135,15 @@ class Audio:
             await self._data_check(ctx)
             player = lavalink.get_player(ctx.guild.id)
             if (
-                (not ctx.author.voice or ctx.author.voice.channel != player.channel)
-                and not await self._can_instaskip(ctx, ctx.author)
-            ):
+                not ctx.author.voice or ctx.author.voice.channel != player.channel
+            ) and not await self._can_instaskip(ctx, ctx.author):
                 return await self._embed_msg(
                     ctx, "You must be in the voice channel to toggle repeat."
                 )
         await self._embed_msg(ctx, "Repeat songs: {}.".format(repeat))
 
     @commands.command()
+    @commands.guild_only()
     async def remove(self, ctx, index: int):
         """Remove a specific song number from the queue."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -1163,9 +1156,8 @@ class Audio:
             if not await self._can_instaskip(ctx, ctx.author):
                 return await self._embed_msg(ctx, "You need the DJ role to remove songs.")
         if (
-            (not ctx.author.voice or ctx.author.voice.channel != player.channel)
-            and not await self._can_instaskip(ctx, ctx.author)
-        ):
+            not ctx.author.voice or ctx.author.voice.channel != player.channel
+        ) and not await self._can_instaskip(ctx, ctx.author):
             return await self._embed_msg(
                 ctx, "You must be in the voice channel to manage the queue."
             )
@@ -1178,6 +1170,7 @@ class Audio:
         await self._embed_msg(ctx, "Removed {} from the queue.".format(removed.title))
 
     @commands.command()
+    @commands.guild_only()
     async def search(self, ctx, *, query):
         """Pick a song with a search.
         Use [p]search list <search term> to queue all songs found on YouTube.
@@ -1195,9 +1188,8 @@ class Audio:
         player.store("channel", ctx.channel.id)
         player.store("guild", ctx.guild.id)
         if (
-            (not ctx.author.voice or ctx.author.voice.channel != player.channel)
-            and not await self._can_instaskip(ctx, ctx.author)
-        ):
+            not ctx.author.voice or ctx.author.voice.channel != player.channel
+        ) and not await self._can_instaskip(ctx, ctx.author):
             return await self._embed_msg(ctx, "You must be in the voice channel to enqueue songs.")
         await self._data_check(ctx)
 
@@ -1334,6 +1326,7 @@ class Audio:
         return embed
 
     @commands.command()
+    @commands.guild_only()
     async def seek(self, ctx, seconds: int = 30):
         """Seeks ahead or behind on a track by seconds."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -1341,14 +1334,12 @@ class Audio:
             return await self._embed_msg(ctx, "Nothing playing.")
         player = lavalink.get_player(ctx.guild.id)
         if (
-            (not ctx.author.voice or ctx.author.voice.channel != player.channel)
-            and not await self._can_instaskip(ctx, ctx.author)
-        ):
+            not ctx.author.voice or ctx.author.voice.channel != player.channel
+        ) and not await self._can_instaskip(ctx, ctx.author):
             return await self._embed_msg(ctx, "You must be in the voice channel to use seek.")
         if dj_enabled:
-            if (
-                not await self._can_instaskip(ctx, ctx.author)
-                and not await self._is_alone(ctx, ctx.author)
+            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
+                ctx, ctx.author
             ):
                 return await self._embed_msg(ctx, "You need the DJ role to use seek.")
         if player.current:
@@ -1368,6 +1359,7 @@ class Audio:
             await self._embed_msg(ctx, "Nothing playing.")
 
     @commands.command()
+    @commands.guild_only()
     async def shuffle(self, ctx):
         """Toggles shuffle."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -1381,24 +1373,23 @@ class Audio:
             await self._data_check(ctx)
             player = lavalink.get_player(ctx.guild.id)
             if (
-                (not ctx.author.voice or ctx.author.voice.channel != player.channel)
-                and not await self._can_instaskip(ctx, ctx.author)
-            ):
+                not ctx.author.voice or ctx.author.voice.channel != player.channel
+            ) and not await self._can_instaskip(ctx, ctx.author):
                 return await self._embed_msg(
                     ctx, "You must be in the voice channel to toggle shuffle."
                 )
         await self._embed_msg(ctx, "Shuffle songs: {}.".format(shuffle))
 
     @commands.command(aliases=["forceskip", "fs"])
+    @commands.guild_only()
     async def skip(self, ctx):
         """Skips to the next track."""
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, "Nothing playing.")
         player = lavalink.get_player(ctx.guild.id)
         if (
-            (not ctx.author.voice or ctx.author.voice.channel != player.channel)
-            and not await self._can_instaskip(ctx, ctx.author)
-        ):
+            not ctx.author.voice or ctx.author.voice.channel != player.channel
+        ) and not await self._can_instaskip(ctx, ctx.author):
             return await self._embed_msg(
                 ctx, "You must be in the voice channel to skip the music."
             )
@@ -1450,13 +1441,21 @@ class Audio:
         is_owner = member.id == self.bot.owner_id
         is_server_owner = member.id == ctx.guild.owner_id
         is_coowner = any(x == member.id for x in self.bot._co_owners)
-        is_admin = discord.utils.get(
-            ctx.guild.get_member(member.id).roles, id=admin_role
-        ) is not None
+        is_admin = (
+            discord.utils.get(ctx.guild.get_member(member.id).roles, id=admin_role) is not None
+        )
         is_mod = discord.utils.get(ctx.guild.get_member(member.id).roles, id=mod_role) is not None
         is_bot = member.bot is True
 
-        return is_active_dj or is_owner or is_server_owner or is_coowner or is_admin or is_mod or is_bot
+        return (
+            is_active_dj
+            or is_owner
+            or is_server_owner
+            or is_coowner
+            or is_admin
+            or is_mod
+            or is_bot
+        )
 
     async def _is_alone(self, ctx, member):
         try:
@@ -1513,6 +1512,7 @@ class Audio:
         await player.skip()
 
     @commands.command(aliases=["s"])
+    @commands.guild_only()
     async def stop(self, ctx):
         """Stops playback and clears the queue."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -1521,16 +1521,14 @@ class Audio:
             return await self._embed_msg(ctx, "Nothing playing.")
         player = lavalink.get_player(ctx.guild.id)
         if (
-            (not ctx.author.voice or ctx.author.voice.channel != player.channel)
-            and not await self._can_instaskip(ctx, ctx.author)
-        ):
+            not ctx.author.voice or ctx.author.voice.channel != player.channel
+        ) and not await self._can_instaskip(ctx, ctx.author):
             return await self._embed_msg(
                 ctx, "You must be in the voice channel to stop the music."
             )
         if vote_enabled or vote_enabled and dj_enabled:
-            if (
-                not await self._can_instaskip(ctx, ctx.author)
-                and not await self._is_alone(ctx, ctx.author)
+            if not await self._can_instaskip(ctx, ctx.author) and not await self._is_alone(
+                ctx, ctx.author
             ):
                 return await self._embed_msg(
                     ctx, "There are other people listening - vote to skip instead."
@@ -1547,6 +1545,7 @@ class Audio:
             player.store("requester", None)
 
     @commands.command()
+    @commands.guild_only()
     async def volume(self, ctx, vol: int = None):
         """Sets the volume, 1% - 150%."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
@@ -1563,16 +1562,14 @@ class Audio:
         if self._player_check(ctx):
             player = lavalink.get_player(ctx.guild.id)
             if (
-                (not ctx.author.voice or ctx.author.voice.channel != player.channel)
-                and not await self._can_instaskip(ctx, ctx.author)
-            ):
+                not ctx.author.voice or ctx.author.voice.channel != player.channel
+            ) and not await self._can_instaskip(ctx, ctx.author):
                 return await self._embed_msg(
                     ctx, "You must be in the voice channel to change the volume."
                 )
         if dj_enabled:
-            if (
-                not await self._can_instaskip(ctx, ctx.author)
-                and not await self._has_dj_role(ctx, ctx.author)
+            if not await self._can_instaskip(ctx, ctx.author) and not await self._has_dj_role(
+                ctx, ctx.author
             ):
                 return await self._embed_msg(ctx, "You need the DJ role to change the volume.")
         if vol > 150:
@@ -1592,6 +1589,7 @@ class Audio:
         await ctx.send(embed=embed)
 
     @commands.group(aliases=["llset"])
+    @commands.guild_only()
     @checks.is_owner()
     async def llsetup(self, ctx):
         """Lavalink server configuration options."""
@@ -1645,7 +1643,7 @@ class Audio:
             await self._embed_msg(ctx, "Server password set to {}.".format(password))
 
     @llsetup.command()
-    async def restport(self, ctx, rest_port):
+    async def restport(self, ctx, rest_port: int):
         """Set the lavalink REST server port."""
         await self.config.rest_port.set(rest_port)
         if await self._check_external():
@@ -1658,9 +1656,9 @@ class Audio:
             await self._embed_msg(ctx, "REST port set to {}.".format(rest_port))
 
     @llsetup.command()
-    async def wsport(self, ctx, ws_port):
+    async def wsport(self, ctx, ws_port: int):
         """Set the lavalink websocket server port."""
-        await self.config.rest_port.set(ws_port)
+        await self.config.ws_port.set(ws_port)
         if await self._check_external():
             embed = discord.Embed(
                 colour=ctx.guild.me.top_role.colour,
