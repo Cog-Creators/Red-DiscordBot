@@ -235,8 +235,8 @@ def pagify(
     while len(in_text) > page_length:
         this_page_len = page_length
         if escape_mass_mentions:
-            this_page_len -= (
-                in_text.count("@here", 0, page_length) + in_text.count("@everyone", 0, page_length)
+            this_page_len -= in_text.count("@here", 0, page_length) + in_text.count(
+                "@everyone", 0, page_length
             )
         closest_delim = (in_text.rfind(d, 1, this_page_len) for d in delims)
         if priority:
@@ -315,7 +315,5 @@ def escape(text: str, *, mass_mentions: bool = False, formatting: bool = False) 
         text = text.replace("@everyone", "@\u200beveryone")
         text = text.replace("@here", "@\u200bhere")
     if formatting:
-        text = (
-            text.replace("`", "\\`").replace("*", "\\*").replace("_", "\\_").replace("~", "\\~")
-        )
+        text = text.replace("`", "\\`").replace("*", "\\*").replace("_", "\\_").replace("~", "\\~")
     return text

@@ -228,9 +228,7 @@ class Warnings:
                     _(
                         "Custom reasons are not allowed! Please see {} for "
                         "a complete list of valid reasons"
-                    ).format(
-                        "`{}reasonlist`".format(ctx.prefix)
-                    )
+                    ).format("`{}reasonlist`".format(ctx.prefix))
                 )
                 return
             reason_type = await self.custom_warning_reason(ctx)

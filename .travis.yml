@@ -17,7 +17,7 @@ env:
 
 install:
 - pip install --upgrade pip pipenv
-- pipenv install --skip-lock --dev
+- pipenv install --dev
 
 script:
 - pipenv run tox

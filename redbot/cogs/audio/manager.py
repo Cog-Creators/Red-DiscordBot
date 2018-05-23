@@ -56,7 +56,7 @@ async def get_java_version(loop):
 
     version_line = version_info.split("\n")[0]
     version_start = version_line.find('"')
-    version_string = version_line[version_start + 1:-1]
+    version_string = version_line[version_start + 1 : -1]
     major, minor = version_string.split(".")[:2]
     return int(major), int(minor)
 
