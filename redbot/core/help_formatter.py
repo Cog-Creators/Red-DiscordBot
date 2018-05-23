@@ -140,10 +140,11 @@ class Help(formatter.HelpFormatter):
             # <description> portion
             emb["embed"]["description"] = description[:2046]
 
-        footer = self.get_ending_note()
         tagline = await self.context.bot.db.help.tagline()
         if tagline:
-            footer += "\n\n{}".format(tagline)
+            footer = tagline
+        else:
+            footer = self.get_ending_note()
         emb["footer"]["text"] = footer
 
         if isinstance(self.command, discord.ext.commands.core.Command):

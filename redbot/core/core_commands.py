@@ -881,26 +881,20 @@ class Core:
         """
         Set the tagline to be used.
 
-        This setting only applies to embedded help.
+        This setting only applies to embedded help. If no tagline is 
+        specified, the default will be used instead.
         """
         if tagline is None:
             await ctx.bot.db.help.tagline.set("")
             return await ctx.send(_("The tagline has been reset."))
-        old = await ctx.bot.db.help.tagline()
-        if old:
-            await ctx.bot.db.help.tagline.set("")
-        embeds = await ctx.bot.formatter.format_help_for(ctx, ctx.command)
-        end_note = embeds[0].footer.text
-        char_count = len(tagline) + 2 + len(end_note)
-        if char_count > 2048:
+
+        if len(tagline) > 2048:
             await ctx.send(
                 _(
-                    "Your tagline is too long! Please shorten it so it "
-                    "is no more than {} characters long."
-                ).format(2046 - len(end_note))
+                    "Your tagline is too long! Please shorten it to be "
+                    "no more than 2048 characters long."
+                )
             )
-            if old:
-                await ctx.bot.db.help.tagline.set(old)
             return
 
         await ctx.bot.db.help.tagline.set(tagline)
