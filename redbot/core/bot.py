@@ -49,6 +49,8 @@ class RedBase(BotBase):
             enable_sentry=None,
             locale="en",
             embeds=True,
+            help__page_char_limit=1000,
+            help__max_pages_in_guild=2,
         )
 
         self.db.register_guild(
