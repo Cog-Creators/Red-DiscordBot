@@ -160,6 +160,7 @@ class Context(commands.Context):
         """
 
         if await self.embed_requested():
-            return await self.send(embed=discord.Embed(description=message))
+            color = self.guild.me.color if self.guild else None
+            return await self.send(embed=discord.Embed(description=message, color=color))
         else:
             return await self.send(message)
