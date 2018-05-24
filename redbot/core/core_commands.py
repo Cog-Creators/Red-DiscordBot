@@ -53,9 +53,9 @@ class Core:
     @commands.command(hidden=True)
     async def ping(self, ctx):
         """Pong."""
-        if ctx.guild is None or ctx.channel.permissions_for(ctx.guild.me).add_reactions:
+        try:
             await ctx.message.add_reaction("\U0001f3d3")  # ping pong paddle
-        else:
+        except [discord.errors.NotFound, discord.errors.Forbidden]:
             await ctx.maybe_send_embed("Pong.")
 
     @commands.command()
