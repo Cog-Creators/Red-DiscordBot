@@ -73,7 +73,7 @@ class Help(formatter.HelpFormatter):
     @property
     def color(self):
         if self.pm_check(self.context):
-            return 0
+            return self.context.bot.color
         else:
             return self.me.color
 

@@ -49,6 +49,7 @@ class RedBase(BotBase):
             enable_sentry=None,
             locale="en",
             embeds=True,
+            color=15158332,
             help__page_char_limit=1000,
             help__max_pages_in_guild=2,
         )
@@ -88,6 +89,7 @@ class RedBase(BotBase):
 
         self.counter = Counter()
         self.uptime = None
+        self.color = None
 
         self.main_dir = bot_dir
 
