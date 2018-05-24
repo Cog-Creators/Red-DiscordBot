@@ -25,6 +25,7 @@ Welcome to Red - Discord Bot's documentation!
     :caption: Cog Reference:
 
     cog_downloader
+    cog_permissions
 
 .. toctree::
     :maxdepth: 2
