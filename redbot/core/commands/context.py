@@ -24,6 +24,10 @@ class Context(commands.Context):
     def color(self):
         return self.guild.me.color if self.guild else self.bot.color or self.bot.color
 
+    @property
+    def colour(self):
+        return self.color
+
     async def send_help(self) -> List[discord.Message]:
         """Send the command help message.
 
