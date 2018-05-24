@@ -1,5 +1,6 @@
 from copy import copy
 import contextlib
+import asyncio
 import discord
 from redbot.core import commands
 from redbot.core.bot import Red
@@ -14,6 +15,8 @@ from .converters import CogOrCommand, RuleType
 _models = ["owner", "guildowner", "admin", "mod"]
 
 _ = Translator("Permissions", __file__)
+
+REACTS = {"\N{WHITE HEAVY CHECK MARK}": True, "\N{NEGATIVE SQUARED CROSS MARK}": False}
 
 
 @cog_i18n(_)
@@ -194,7 +197,7 @@ class Permissions:
                 if can
                 else _("That user can not run the specified command.")
             )
-        await ctx.maybe_send_embed(out)
+        await ctx.send(out)
 
     @checks.is_owner()
     @permissions.command(name="setglobalacl")
@@ -203,13 +206,13 @@ class Permissions:
         Take a YAML file upload to set permissions from
         """
         if not ctx.message.attachments:
-            return await ctx.maybe_send_embed(_("You must upload a file"))
+            return await ctx.send(_("You must upload a file"))
 
         try:
             await yamlset_acl(ctx, config=self.config.owner_models, update=False)
         except Exception as e:
             print(e)
-            return await ctx.maybe_send_embed(_("Inalid syntax"))
+            return await ctx.send(_("Inalid syntax"))
         else:
             await ctx.tick()
 
@@ -229,13 +232,13 @@ class Permissions:
         Take a YAML file upload to set permissions from
         """
         if not ctx.message.attachments:
-            return await ctx.maybe_send_embed(_("You must upload a file"))
+            return await ctx.send(_("You must upload a file"))
 
         try:
             await yamlset_acl(ctx, config=self.config.guild(ctx.guild).owner_models, update=False)
         except Exception as e:
             print(e)
-            return await ctx.maybe_send_embed(_("Inalid syntax"))
+            return await ctx.send(_("Inalid syntax"))
         else:
             await ctx.tick()
 
@@ -258,13 +261,13 @@ class Permissions:
         Use this to not lose existing rules
         """
         if not ctx.message.attachments:
-            return await ctx.maybe_send_embed(_("You must upload a file"))
+            return await ctx.send(_("You must upload a file"))
 
         try:
             await yamlset_acl(ctx, config=self.config.guild(ctx.guild).owner_models, update=True)
         except Exception as e:
             print(e)
-            return await ctx.maybe_send_embed(_("Inalid syntax"))
+            return await ctx.send(_("Inalid syntax"))
         else:
             await ctx.tick()
 
@@ -277,13 +280,13 @@ class Permissions:
         Use this to not lose existing rules
         """
         if not ctx.message.attachments:
-            return await ctx.maybe_send_embed(_("You must upload a file"))
+            return await ctx.send(_("You must upload a file"))
 
         try:
             await yamlset_acl(ctx, config=self.config.owner_models, update=True)
         except Exception as e:
             print(e)
-            return await ctx.maybe_send_embed(_("Inalid syntax"))
+            return await ctx.send(_("Inalid syntax"))
         else:
             await ctx.tick()
 
@@ -312,7 +315,7 @@ class Permissions:
         """
         obj = self.find_object_uniquely(who_or_what)
         if not obj:
-            return await ctx.maybe_send_embed(_("No unique matches. Try using an ID or mention"))
+            return await ctx.send(_("No unique matches. Try using an ID or mention"))
         model_type, type_name = cog_or_command
         async with self.config.owner_models() as models:
             data = {k: v for k, v in models.items()}
@@ -324,7 +327,7 @@ class Permissions:
                 data[model_type][type_name][allow_or_deny] = []
 
             if obj in data[model_type][type_name][allow_or_deny]:
-                return await ctx.maybe_send_embed(_("That rule already exists."))
+                return await ctx.send(_("That rule already exists."))
 
             data[model_type][type_name][allow_or_deny].append(obj)
             models.update(data)
@@ -356,7 +359,7 @@ class Permissions:
         """
         obj = self.find_object_uniquely(who_or_what)
         if not obj:
-            return await ctx.maybe_send_embed(_("No unique matches. Try using an ID or mention"))
+            return await ctx.send(_("No unique matches. Try using an ID or mention"))
         model_type, type_name = cog_or_command
         async with self.config.guild(ctx.guild).owner_models() as models:
             data = {k: v for k, v in models.items()}
@@ -368,7 +371,7 @@ class Permissions:
                 data[model_type][type_name][allow_or_deny] = []
 
             if obj in data[model_type][type_name][allow_or_deny]:
-                return await ctx.maybe_send_embed(_("That rule already exists."))
+                return await ctx.send(_("That rule already exists."))
 
             data[model_type][type_name][allow_or_deny].append(obj)
             models.update(data)
@@ -399,7 +402,7 @@ class Permissions:
         """
         obj = self.find_object_uniquely(who_or_what)
         if not obj:
-            return await ctx.maybe_send_embed(_("No unique matches. Try using an ID or mention"))
+            return await ctx.send(_("No unique matches. Try using an ID or mention"))
         model_type, type_name = cog_or_command
         async with self.config.owner_models() as models:
             data = {k: v for k, v in models.items()}
@@ -411,7 +414,7 @@ class Permissions:
                 data[model_type][type_name][allow_or_deny] = []
 
             if obj not in data[model_type][type_name][allow_or_deny]:
-                return await ctx.maybe_send_embed(_("That rule doesn't exist."))
+                return await ctx.send(_("That rule doesn't exist."))
 
             data[model_type][type_name][allow_or_deny].remove(obj)
             models.update(data)
@@ -443,7 +446,7 @@ class Permissions:
         """
         obj = self.find_object_uniquely(who_or_what)
         if not obj:
-            return await ctx.maybe_send_embed(_("No unique matches. Try using an ID or mention"))
+            return await ctx.send(_("No unique matches. Try using an ID or mention"))
         model_type, type_name = cog_or_command
         async with self.config.guild(ctx.guild).owner_models() as models:
             data = {k: v for k, v in models.items()}
@@ -455,11 +458,118 @@ class Permissions:
                 data[model_type][type_name][allow_or_deny] = []
 
             if obj not in data[model_type][type_name][allow_or_deny]:
-                return await ctx.maybe_send_embed(_("That rule doesn't exist."))
+                return await ctx.send(_("That rule doesn't exist."))
 
             data[model_type][type_name][allow_or_deny].remove(obj)
             models.update(data)
         await ctx.tick()
+
+    @commands.guild_only()
+    @checks.guildowner_or_permissions(administrator=True)
+    @permissions.command(name="setdefaultguildrule")
+    async def set_default_guild_rule(
+        self, ctx: commands.Context, cog_or_command: CogOrCommand, allow_or_deny: RuleType = None
+    ):
+        """
+        Sets the default behavior for a cog or command if no rule is set
+
+        Use with a cog or command and no setting to clear the default and defer to
+        normal check logic
+        """
+        if allow_or_deny:
+            val_to_set = {"allow": True, "deny": False}.get(allow_or_deny)
+        else:
+            val_to_set = None
+
+        model_type, type_name = cog_or_command
+        async with self.config.guild(ctx.guild).owner_models() as models:
+            data = {k: v for k, v in models.items()}
+            if model_type not in data:
+                data[model_type] = {}
+            if type_name not in data[model_type]:
+                data[model_type][type_name] = {}
+
+            data[model_type][type_name]["default"] = val_to_set
+
+            models.update(data)
+        await ctx.tick()
+
+    @checks.is_owner()
+    @permissions.command(name="setdefaultglobalrule")
+    async def set_default_global_rule(
+        self, ctx: commands.Context, cog_or_command: CogOrCommand, allow_or_deny: RuleType = None
+    ):
+        """
+        Sets the default behavior for a cog or command if no rule is set
+
+        Use with a cog or command and no setting to clear the default and defer to
+        normal check logic
+        """
+
+        if allow_or_deny:
+            val_to_set = {"allow": True, "deny": False}.get(allow_or_deny)
+        else:
+            val_to_set = None
+
+        model_type, type_name = cog_or_command
+        async with self.config.owner_models() as models:
+            data = {k: v for k, v in models.items()}
+            if model_type not in data:
+                data[model_type] = {}
+            if type_name not in data[model_type]:
+                data[model_type][type_name] = {}
+
+            data[model_type][type_name]["default"] = val_to_set
+
+            models.update(data)
+        await ctx.tick()
+
+    @checks.is_owner()
+    @permissions.command(name="clearglobalsettings")
+    async def clear_globals(self, ctx: commands.Context):
+        """
+        Clears all global rules.
+        """
+
+        m = await ctx.send("Are you sure?")
+        for r in REACTS.keys():
+            await m.add_reaction(r)
+        try:
+            reaction, user = await self.bot.wait_for(
+                "reaction_add", check=lambda r, u: u == ctx.author and str(r) in REACTS, timeout=30
+            )
+        except asyncio.TimeoutError:
+            return await ctx.send(_("Ok, try responding with an emoji next time."))
+
+        if REACTS.get(str(reaction)):
+            await self.config.owner_models.clear()
+            await ctx.send(_("Global settings cleared"))
+        else:
+            await ctx.send(_("Okay."))
+
+    @commands.guild_only()
+    @checks.guildowner_or_permissions(administrator=True)
+    @permissions.command(name="clearguildsettings")
+    async def clear_guild_settings(self, ctx: commands.Context):
+        """
+        Clears all guild rules.
+        """
+
+        m = await ctx.send("Are you sure?")
+        for r in REACTS.keys():
+            await m.add_reaction(r)
+        try:
+            reaction, user = await self.bot.wait_for(
+                "reaction_add", check=lambda r, u: u == ctx.author and str(r) in REACTS, timeout=30
+            )
+        except asyncio.TimeoutError:
+            return await ctx.send(_("Ok, try responding with an emoji next time."))
+
+        if REACTS.get(str(reaction)):
+            await self.config.guild(ctx.guild).owner_models.clear()
+            await ctx.send(_("Guild settings cleared"))
+        else:
+            await ctx.send(_("Okay."))
 
     def find_object_uniquely(self, info: str) -> int:
         """
