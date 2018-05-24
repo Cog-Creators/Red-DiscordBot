@@ -167,7 +167,7 @@ class Economy:
         try:
             await bank.transfer_credits(from_, to, amount)
         except ValueError as e:
-            await ctx.send(str(e))
+            return await ctx.send(str(e))
 
         await ctx.send(
             _("{} transferred {} {} to {}").format(
