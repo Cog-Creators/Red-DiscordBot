@@ -55,7 +55,13 @@ class RedBase(BotBase):
         )
 
         self.db.register_guild(
-            prefix=[], whitelist=[], blacklist=[], admin_role=None, mod_role=None, embeds=None
+            prefix=[],
+            whitelist=[],
+            blacklist=[],
+            admin_role=None,
+            mod_role=None,
+            embeds=None,
+            use_bot_color=False,
         )
 
         self.db.register_user(embeds=None)

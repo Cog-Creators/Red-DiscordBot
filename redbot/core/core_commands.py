@@ -559,6 +559,24 @@ class Core:
         await ctx.bot.db.guild(ctx.guild).mod_role.set(role.id)
         await ctx.send(_("The mod role for this guild has been set."))
 
+    @_set.command(aliases=["usebotcolor"])
+    @checks.guildowner()
+    @commands.guild_only()
+    async def usebotcolour(self, ctx):
+        """
+        Toggle whether to use the bot owner-configured colour for embeds.
+
+        Default is to not use the bot's configured colour, in which case the 
+        colour used will be the colour of the bot's top role.
+        """
+        current_setting = await ctx.bot.db.guild(ctx.guild).use_bot_color()
+        await ctx.bot.db.guild(ctx.guild).use_bot_color.set(not current_setting)
+        await ctx.send(
+            _("The bot {} use its configured color for embeds.").format(
+                _("will not") if current_setting else _("will")
+            )
+        )
+
     @_set.command(aliases=["color"])
     @checks.is_owner()
     async def colour(self, ctx, *, colour: discord.Colour = None):
