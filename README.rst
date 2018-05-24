@@ -2,7 +2,7 @@
 
    <h1 align="center">
      <br>
-     <a href="https://github.com/Cog-Creators/Red-DiscordBot/tree/V3/develop"><img src="https://media.discordapp.net/attachments/172519333036163072/436295282616041472/cool.png" alt="Red Discord Bot"></a>
+     <a href="https://github.com/Cog-Creators/Red-DiscordBot/tree/V3/develop"><img src="https://media.discordapp.net/attachments/172519333036163072/449045000056078347/1440x770.png?width=1043&height=558" alt="Red Discord Bot"></a>
      <br>
      Red Discord Bot
      <br>
