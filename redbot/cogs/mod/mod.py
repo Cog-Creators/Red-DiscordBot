@@ -519,7 +519,7 @@ class Mod:
                     "Here is an invite for when your ban expires: {i}"
                 ).format(g=guild.name, t=unban_time.strftime("%m-%d-%Y %H:%M:%S"), i=invite)
                 if await self.bot.embed_requested(user.dm_channel, user):
-                    await user.send(embed=discord.Embed(msg))
+                    await user.send(embed=discord.Embed(description=msg))
                 else:
                     await user.send(msg)
             except discord.HTTPException:
