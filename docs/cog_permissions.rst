@@ -43,3 +43,33 @@ roles will be checked individually in order from highest to lowest role the user
 Each role will be checked for whitelist, then blacklist. The first role with a setting
 found will be the one used.
 
+-------------------------
+Setting Rules from a file
+-------------------------
+
+The permissions cog can set rules from a yaml file:
+All entries are based on ID. 
+An example of the expected format is shown below.
+
+.. code-block:: yaml
+
+    cogs:
+      Admin:
+        allow:
+          - 78631113035100160
+        deny:
+          - 96733288462286848
+      Audio:
+        allow: 
+          - 133049272517001216
+        default: deny
+    commands:
+      cleanup bot:
+        allow:
+          - 78631113035100160
+        default: deny
+      ping:
+        deny:
+          - 96733288462286848
+        default: allow
+
