@@ -22,7 +22,7 @@ _ = Translator("Warnings", __file__)
 class Warnings:
     """A warning system for Red"""
 
-    default_guild = {"actions": [], "reasons": {}, "allow_custom_reasons": False}
+    default_guild = {"actions": [], "reasons": {}, "allow_custom_reasons": False, "semd_dm": False}
 
     default_member = {"total_points": 0, "status": "", "warnings": {}}
 
@@ -58,6 +58,14 @@ class Warnings:
         await ctx.send(
             _("Custom reasons have been {}").format(_("enabled") if allowed else _("disabled"))
         )
+
+    @warningset.command()
+    @commands.guild_only()
+    async def senddm(self, ctx: commands.Context, send: bool):
+        """Allow or disable sending a message to the warned member"""
+        guild = ctx.guild
+        await self.config.guild(guild).send_dm.set(send)
+        await ctx.send(_("Warn DMs have been {}").format(_("enabled") if send else _("disabled")))
 
     @commands.group()
     @commands.guild_only()
@@ -221,6 +229,7 @@ class Warnings:
         """Warn the user for the specified reason
         Reason must be a registered reason, or custom if custom reasons are allowed"""
         reason_type = {}
+        guild_settings = self.config.guild(ctx.guild)
         if reason.lower() == "custom":
             custom_allowed = await self.config.guild(ctx.guild).allow_custom_reasons()
             if not custom_allowed:
@@ -233,7 +242,6 @@ class Warnings:
                 return
             reason_type = await self.custom_warning_reason(ctx)
         else:
-            guild_settings = self.config.guild(ctx.guild)
             async with guild_settings.reasons() as registered_reasons:
                 if reason.lower() not in registered_reasons:
                     await ctx.send(_("That is not a registered reason!"))
@@ -253,6 +261,19 @@ class Warnings:
             user_warnings.update(warning_to_add)
         current_point_count += reason_type["points"]
         await member_settings.total_points.set(current_point_count)
+
+        dm_enabled = await guild_settings.send_dm()
+        if dm_enabled:
+            embed = discord.Embed()
+            embed.title = "You have been warned for: " + reason.lower()
+            embed.set_thumbnail(url=user.avatar_url)
+            embed.description = reason_type["description"]
+            embed.set_footer(text=ctx.guild.name, icon_url=ctx.guild.icon_url)
+            embed.color = ctx.guild.me.color
+            try:
+                await user.send(embed=embed)
+            except discord.errors.Forbidden:
+                pass
 
         await warning_points_add_check(self.config, ctx, user, current_point_count)
         await ctx.tick()
