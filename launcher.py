@@ -146,6 +146,7 @@ def reset_red(reqs=False, data=False, cogs=False, git_reset=False):
         try:
             shutil.rmtree("data", onerror=remove_readonly)
             print("'data' folder has been wiped.")
+            subprocess.call(("git", "checkout", "--", "data/trivia/"))
         except FileNotFoundError:
             pass
         except Exception as e:
