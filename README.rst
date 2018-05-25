@@ -73,7 +73,7 @@ This is also a *self-hosted bot* – meaning you will need to host and maintain 
 - Anilist
 - And much, much more!
 
-Feel free to take a `peek <http://dev.v3.cogs.red/>`_!
+Feel free to take a `peek <https://github.com/Cog-Creators/Red-DiscordBot/issues/1398>`_!
 
 ==============
 Installation
@@ -97,7 +97,7 @@ If `after reading the guides <https://red-discordbot.readthedocs.io/en/v3-develo
 Join the community!
 =====================
 
-**Red** is in continuous development, and it’s supported by an active community which produces new content (cogs/plugins) for everyone to enjoy. New features are constantly added. If you can’t `find <http://dev.v3.cogs.red/>`_ what you’re looking for, consult our `guide <https://red-discordbot.readthedocs.io/en/v3-develop/guide_cog_creation.html>`_ on building your own cogs! 
+**Red** is in continuous development, and it’s supported by an active community which produces new content (cogs/plugins) for everyone to enjoy. New features are constantly added. If you can’t `find <https://github.com/Cog-Creators/Red-DiscordBot/issues/1398>`_ what you’re looking for, consult our `guide <https://red-discordbot.readthedocs.io/en/v3-develop/guide_cog_creation.html>`_ on building your own cogs! 
 
 Join us on our `Official Discord Server <https://discord.gg/red>`_!
 
