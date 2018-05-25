@@ -47,7 +47,7 @@ class Permissions:
 
         and returning:
         None: do not interfere
-        True: command should be allowed even if they dont 
+        True: command should be allowed even if they dont
             have role or perm requirements for the check
         False: command should be blocked
 
