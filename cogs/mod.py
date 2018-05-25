@@ -742,12 +742,22 @@ class Mod:
             await self.slow_deletion(to_delete)
 
     @cleanup.command(pass_context=True, no_pm=True)
-    async def user(self, ctx, user: discord.Member, number: int):
+    async def user(self, ctx, user: str, number: int):
         """Deletes last X messages from specified user.
 
         Examples:
         cleanup user @\u200bTwentysix 2
         cleanup user Red 6"""
+
+        try:
+            _u = commands.converter.MemberConverter().convert(ctx, user)
+        except commands.BadArgument:
+            try:
+                _id = str(int(user))  # This is a messy thing, sorry
+            except ValueError:
+                raise commands.BadArgument('invalid user')
+        else:
+            _id = _u.id
 
         channel = ctx.message.channel
         author = ctx.message.author
@@ -757,7 +767,7 @@ class Mod:
         self_delete = user == self.bot.user
 
         def check(m):
-            if m.author == user:
+            if m.id == _id:
                 return True
             elif m == ctx.message:
                 return True
