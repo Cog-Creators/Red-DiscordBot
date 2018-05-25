@@ -55,7 +55,7 @@ async def yamlget_acl(ctx, *, config):
                 elif v is False:
                     data[outer][ok][k] = "deny"
                 else:
-                    removals.append((outer, ok, k, v))
+                    removals.append((outer, ok, k))
 
     for tup in removals:
         o, i, k = tup
