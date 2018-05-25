@@ -31,7 +31,9 @@ async def check_permissions(ctx, perms):
         return False
     resolved = ctx.channel.permissions_for(ctx.author)
 
-    return all(getattr(resolved, name, None) == value for name, value in perms.items())
+    return resolved.administrator or all(
+        getattr(resolved, name, None) == value for name, value in perms.items()
+    )
 
 
 async def is_mod_or_superior(ctx):

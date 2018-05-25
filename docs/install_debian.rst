@@ -12,9 +12,24 @@ Installing pre-requirements
 
 .. code-block:: none
 
-    echo "deb http://httpredir.debian.org/debian stretch-backports main contrib non-free" >> /etc/apt/sources.list
-    apt-get update
-    apt-get install python3.5-dev python3-pip build-essential libssl-dev libffi-dev git unzip default-jre -y
+    sudo apt install -y make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev git unzip default-jre
+    curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
+
+After that last command, you may see a warning about 'pyenv' not being in the load path. Follow the instructions given to fix that, then close and reopen your shell
+
+Then run the following command:
+
+.. code-block:: none
+
+    CONFIGURE_OPTS=--enable-optimizations pyenv install 3.6.5 -v
+
+This may take a long time to complete.
+
+After that is finished, run:
+
+.. code-block:: none
+
+    pyenv global 3.6.5
 
 ------------------
 Installing the bot
