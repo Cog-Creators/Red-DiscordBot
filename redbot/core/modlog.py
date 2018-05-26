@@ -71,32 +71,21 @@ class Case:
         self.case_number = case_number
         self.message = message
 
-    async def edit(self, bot, data: dict):
+    async def edit(self, data: dict):
         """
         Edits a case
 
         Parameters
         ----------
-        bot: Red
-            The bot instance
         data: dict
             The attributes to change
-
-        Returns
-        -------
 
         """
         for item in list(data.keys()):
             setattr(self, item, data[item])
 
-        use_embed = await bot.embed_requested(self.message.channel, self.guild.me)
-        case_content = await self.message_content(use_embed)
-        if use_embed:
-            await self.message.edit(embed=case_content)
-        else:
-            await self.message.edit(case_content)
-
         await _conf.guild(self.guild).cases.set_raw(str(self.case_number), value=self.to_json())
+        self.bot.dispatch("modlog_case_edit", self)
 
     async def message_content(self, embed: bool = True):
         """
@@ -474,14 +463,6 @@ async def create_case(
         If the mod log channel doesn't exist
 
     """
-    mod_channel = None
-    if hasattr(guild, "owner"):
-        # Fairly arbitrary, but it doesn't really matter
-        # since we don't need the modlog channel in tests
-        try:
-            mod_channel = await get_modlog_channel(guild)
-        except RuntimeError:
-            raise RuntimeError("No mod log channel set for guild {}".format(guild.name))
     case_type = await get_casetype(action_type, guild)
     if case_type is None:
         return None
@@ -506,16 +487,8 @@ async def create_case(
         modified_at=None,
         message=None,
     )
-    if hasattr(mod_channel, "send"):  # Not going to be the case for tests
-        use_embeds = await bot.embed_requested(mod_channel, guild.me)
-        case_content = await case.message_content(use_embeds)
-        if use_embeds:
-            msg = await mod_channel.send(embed=case_content)
-        else:
-            msg = await mod_channel.send(case_content)
-        case.message = msg
     await _conf.guild(guild).cases.set_raw(str(next_case_number), value=case.to_json())
-    return case
+    bot.dispatch("modlog_case_create", case)
 
 
 async def get_casetype(name: str, guild: discord.Guild = None) -> Union[CaseType, None]:
