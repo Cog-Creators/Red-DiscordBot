@@ -43,6 +43,7 @@ class Case:
 
     def __init__(
         self,
+        bot: Red,
         guild: discord.Guild,
         created_at: int,
         action_type: str,
@@ -56,6 +57,7 @@ class Case:
         modified_at: int = None,
         message: discord.Message = None,
     ):
+        self.bot = bot
         self.guild = guild
         self.created_at = created_at
         self.action_type = action_type
@@ -240,6 +242,7 @@ class Case:
         amended_by = guild.get_member(data["amended_by"])
         case_guild = bot.get_guild(data["guild"])
         return cls(
+            bot=bot,
             guild=case_guild,
             created_at=data["created_at"],
             action_type=data["action_type"],
@@ -489,6 +492,7 @@ async def create_case(
     next_case_number = int(await get_next_case_number(guild))
 
     case = Case(
+        bot,
         guild,
         int(created_at.timestamp()),
         action_type,
