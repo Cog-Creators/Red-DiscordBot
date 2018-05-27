@@ -126,7 +126,6 @@ class Permissions:
         roles = sorted(ctx.author.roles, reverse=True) if ctx.guild else []
         entries.extend([x.id for x in roles])
 
-        #  TODO: API for adding these additional checks
         for check in self._before:
             override = await val_if_check_is_valid(check=check, ctx=ctx, level=level)
             if override is not None:
@@ -318,7 +317,7 @@ class Permissions:
             print(e)
             return await ctx.send(_("Inalid syntax"))
         else:
-            await ctx.tick()
+            await ctx.send(_("Rules set."))
 
     @checks.is_owner()
     @permissions.command(name="updateglobalacl")
@@ -337,7 +336,7 @@ class Permissions:
             print(e)
             return await ctx.send(_("Inalid syntax"))
         else:
-            await ctx.tick()
+            await ctx.send(_("Rules set."))
 
     @checks.is_owner()
     @permissions.command(name="addglobalrule")
@@ -380,7 +379,7 @@ class Permissions:
 
             data[model_type][type_name][allow_or_deny].append(obj)
             models.update(data)
-        await ctx.tick()
+        await ctx.send(_("Rule added."))
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
@@ -424,7 +423,7 @@ class Permissions:
 
             data[model_type][type_name][allow_or_deny].append(obj)
             models.update(data)
-        await ctx.tick()
+        await ctx.send(_("Rule added."))
 
     @checks.is_owner()
     @permissions.command(name="removeglobalrule")
@@ -467,7 +466,7 @@ class Permissions:
 
             data[model_type][type_name][allow_or_deny].remove(obj)
             models.update(data)
-        await ctx.tick()
+        await ctx.send(_("Rule removed."))
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
@@ -511,7 +510,7 @@ class Permissions:
 
             data[model_type][type_name][allow_or_deny].remove(obj)
             models.update(data)
-        await ctx.tick()
+        await ctx.send(_("Rule removed."))
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
@@ -541,7 +540,7 @@ class Permissions:
             data[model_type][type_name]["default"] = val_to_set
 
             models.update(data)
-        await ctx.tick()
+        await ctx.send(_("Defualt set."))
 
     @checks.is_owner()
     @permissions.command(name="setdefaultglobalrule")
@@ -571,8 +570,9 @@ class Permissions:
             data[model_type][type_name]["default"] = val_to_set
 
             models.update(data)
-        await ctx.tick()
+        await ctx.send(_("Defualt set."))
 
+    @commands.bot_has_permissions(add_reactions=True)
     @checks.is_owner()
     @permissions.command(name="clearglobalsettings")
     async def clear_globals(self, ctx: commands.Context):
@@ -596,6 +596,7 @@ class Permissions:
         else:
             await ctx.send(_("Okay."))
 
+    @commands.bot_has_permissions(add_reactions=True)
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     @permissions.command(name="clearguildsettings")
@@ -642,7 +643,7 @@ class Permissions:
             lambda x: x.mention == info,
             lambda x: str(x) == info,
             lambda x: x.name == info,
-            lambda x: (x.nick if x.nick else None) == info,
+            lambda x: (x.nick if hasattr(x, "nick") else None) == info,
         ):
             canidates = list(filter(function, objs))
             if len(canidates) == 1:
