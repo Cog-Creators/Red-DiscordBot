@@ -489,6 +489,7 @@ async def create_case(
     )
     await _conf.guild(guild).cases.set_raw(str(next_case_number), value=case.to_json())
     bot.dispatch("modlog_case_create", case)
+    return case
 
 
 async def get_casetype(name: str, guild: discord.Guild = None) -> Union[CaseType, None]:
