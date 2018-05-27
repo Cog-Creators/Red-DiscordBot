@@ -71,7 +71,9 @@ class Warnings:
     @commands.guild_only()
     async def action_add(self, ctx: commands.Context, name: str, points: int):
         """Create an action to be taken at a specified point count
-        Duplicate action names are not allowed"""
+
+        Duplicate action names are not allowed
+        """
         guild = ctx.guild
 
         await ctx.send("Would you like to enter commands to be run? (y/n)")
@@ -219,8 +221,9 @@ class Warnings:
     @checks.admin_or_permissions(ban_members=True)
     async def warn(self, ctx: commands.Context, user: discord.Member, reason: str):
         """Warn the user for the specified reason
-        Reason must be a registered reason, or custom if custom reasons are allowed"""
-        reason_type = {}
+
+        Reason must be a registered reason, or "custom" if custom reasons are allowed
+        """
         if reason.lower() == "custom":
             custom_allowed = await self.config.guild(ctx.guild).allow_custom_reasons()
             if not custom_allowed:
@@ -237,6 +240,7 @@ class Warnings:
             async with guild_settings.reasons() as registered_reasons:
                 if reason.lower() not in registered_reasons:
                     await ctx.send(_("That is not a registered reason!"))
+                    return
                 else:
                     reason_type = registered_reasons[reason.lower()]
 
@@ -261,9 +265,11 @@ class Warnings:
     @commands.guild_only()
     async def warnings(self, ctx: commands.Context, userid: int = None):
         """Show warnings for the specified user.
+
         If userid is None, show warnings for the person running the command
         Note that showing warnings for users other than yourself requires
-        appropriate permissions"""
+        appropriate permissions
+        """
         if userid is None:
             user = ctx.author
         else:
