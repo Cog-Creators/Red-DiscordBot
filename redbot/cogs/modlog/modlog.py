@@ -146,5 +146,5 @@ class ModLog:
             if case_before.moderator != author:
                 to_modify["amended_by"] = author
             to_modify["modified_at"] = ctx.message.created_at.timestamp()
-            await case_before.edit(self.bot, to_modify)
+            await case_before.edit(to_modify)
             await ctx.send(_("Reason has been updated."))
