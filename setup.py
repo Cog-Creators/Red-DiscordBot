@@ -104,7 +104,7 @@ setup(
             "redbot-launcher=redbot.launcher:main",
         ]
     },
-    python_requires=">=3.5,<3.7",
+    python_requires=">=3.6,<3.7",
     setup_requires=get_requirements(),
     install_requires=get_requirements(),
     dependency_links=dep_links,
