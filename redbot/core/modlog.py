@@ -429,7 +429,9 @@ async def create_case(
     channel: discord.TextChannel = None,
 ) -> Union[Case, None]:
     """
-    Creates a new case
+    Creates a new case.
+
+    This fires an event `on_modlog_case_create`
 
     Parameters
     ----------
@@ -451,17 +453,6 @@ async def create_case(
         The time the action is in effect until
     channel: `discord.TextChannel` or `discord.VoiceChannel`
         The channel the action was taken in
-
-    Returns
-    -------
-    Case
-        The newly created case
-
-    Raises
-    ------
-    RuntimeError
-        If the mod log channel doesn't exist
-
     """
     case_type = await get_casetype(action_type, guild)
     if case_type is None:
