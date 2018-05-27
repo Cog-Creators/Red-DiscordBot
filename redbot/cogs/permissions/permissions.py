@@ -166,7 +166,7 @@ class Permissions:
     #   async def admin_model(self, ctx: commands.Context) -> bool:
     #   async def mod_model(self, ctx: commands.Context) -> bool:
 
-    @commands.group()
+    @commands.group(aliases=["p"])
     async def permissions(self, ctx: commands.Context):
         """
         Permission management tools
