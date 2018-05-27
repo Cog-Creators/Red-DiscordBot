@@ -237,6 +237,7 @@ class Warnings:
             async with guild_settings.reasons() as registered_reasons:
                 if reason.lower() not in registered_reasons:
                     await ctx.send(_("That is not a registered reason!"))
+                    return
                 else:
                     reason_type = registered_reasons[reason.lower()]
 
