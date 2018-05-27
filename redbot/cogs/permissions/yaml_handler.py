@@ -63,5 +63,5 @@ async def yamlget_acl(ctx, *, config):
 
     _fp = io.BytesIO(yaml.dump(data, default_flow_style=False).encode())
     _fp.seek(0)
-    await ctx.send(file=discord.File(_fp, filename="acl.yaml"))
+    await ctx.author.send(file=discord.File(_fp, filename="acl.yaml"))
     _fp.close()
