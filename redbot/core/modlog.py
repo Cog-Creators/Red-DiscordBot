@@ -431,7 +431,7 @@ async def create_case(
     """
     Creates a new case.
 
-    This fires an event `on_modlog_case_create`
+    This fires an event :code:`on_modlog_case_create`
 
     Parameters
     ----------
