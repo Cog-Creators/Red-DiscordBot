@@ -1440,7 +1440,7 @@ class Mod:
         mod_channel = await modlog.get_modlog_channel(case.guild)
         if mod_channel is None:
             return
-        use_embeds = await bot.embed_requested(mod_channel, guild.me)
+        use_embeds = await case.bot.embed_requested(mod_channel, guild.me)
         case_content = await case.message_content(use_embeds)
         if use_embeds:
             msg = await mod_channel.send(embed=case_content)
