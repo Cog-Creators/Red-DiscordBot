@@ -262,7 +262,7 @@ class Permissions:
             print(e)
             return await ctx.send(_("Inalid syntax"))
         else:
-            await ctx.tick()
+            await ctx.send(_("Rules set."))
 
     @checks.is_owner()
     @permissions.command(name="getglobalacl")
@@ -288,7 +288,7 @@ class Permissions:
             print(e)
             return await ctx.send(_("Inalid syntax"))
         else:
-            await ctx.tick()
+            await ctx.send(_("Rules set."))
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
