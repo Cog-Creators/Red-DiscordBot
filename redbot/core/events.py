@@ -15,7 +15,8 @@ from discord.ext import commands
 
 from . import __version__
 from .data_manager import storage_type
-from .utils.chat_formatting import inline, bordered
+from .utils.chat_formatting import inline, bordered, pagify, box
+from .utils import fuzzy_command_search
 from colorama import Fore, Style, init
 
 log = logging.getLogger("red")
@@ -171,6 +172,7 @@ def init_events(bot, cli_flags):
         if invite_url:
             print("\nInvite URL: {}\n".format(invite_url))
 
+        bot.color = discord.Colour(await bot.db.color())
         if bot.rpc_enabled:
             await bot.rpc.initialize()
 
@@ -221,9 +223,12 @@ def init_events(bot, cli_flags):
             if not hasattr(ctx.cog, "_{0.command.cog_name}__error".format(ctx)):
                 await ctx.send(inline(message))
         elif isinstance(error, commands.CommandNotFound):
-            pass
+            term = ctx.invoked_with + " "
+            if len(ctx.args) > 1:
+                term += " ".join(ctx.args[1:])
+            await ctx.maybe_send_embed(fuzzy_command_search(ctx, ctx.invoked_with))
         elif isinstance(error, commands.CheckFailure):
-            await ctx.send("⛔ You are not authorized to issue that command.")
+            pass
         elif isinstance(error, commands.NoPrivateMessage):
             await ctx.send("That command is not available in DMs.")
         elif isinstance(error, commands.CommandOnCooldown):
