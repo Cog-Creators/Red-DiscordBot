@@ -6,11 +6,9 @@
   
   
 .. class:: center
-  
   Music, Moderation, Trivia, Stream Alerts and fully customizable.
 
 .. class:: center
-
   .. image:: https://readthedocs.org/projects/red-discordbot/badge/?version=v3-develop
     :target: http://red-discordbot.readthedocs.io/en/v3-develop/?badge=v3-develop
     :alt: Documentation Status
