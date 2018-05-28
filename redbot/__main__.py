@@ -132,6 +132,10 @@ def main():
             log.critical("Token and prefix must be set in order to login.")
             sys.exit(1)
     loop.run_until_complete(_get_prefix_and_token(red, tmp_data))
+
+    if cli_flags.dry_run:
+        loop.run_until_complete(red.http.close())
+        sys.exit(0)
     if tmp_data["enable_sentry"]:
         red.enable_sentry()
     cleanup_tasks = True
