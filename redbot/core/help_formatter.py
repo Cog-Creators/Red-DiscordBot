@@ -36,6 +36,8 @@ import sys
 import traceback
 
 from . import commands
+from redbot.core.utils.chat_formatting import pagify, box
+from redbot.core.utils import fuzzy_command_search
 
 
 EMPTY_STRING = u"\u200b"
@@ -123,11 +125,7 @@ class Help(formatter.HelpFormatter):
         """Formats command for output.
 
         Returns a dict used to build embed"""
-        emb = {
-            "embed": {"title": "", "description": ""},
-            "footer": {"text": self.get_ending_note()},
-            "fields": [],
-        }
+        emb = {"embed": {"title": "", "description": ""}, "footer": {"text": ""}, "fields": []}
 
         if self.is_cog():
             translator = getattr(self.command, "__translator__", lambda s: s)
@@ -145,6 +143,13 @@ class Help(formatter.HelpFormatter):
         if description:
             # <description> portion
             emb["embed"]["description"] = description[:2046]
+
+        tagline = await self.context.bot.db.help.tagline()
+        if tagline:
+            footer = tagline
+        else:
+            footer = self.get_ending_note()
+        emb["footer"]["text"] = footer
 
         if isinstance(self.command, discord.ext.commands.core.Command):
             # <signature portion>
@@ -186,15 +191,19 @@ class Help(formatter.HelpFormatter):
             # Get list of commands for category
             filtered = sorted(filtered)
             if filtered:
-                field = EmbedField(
-                    "**__Commands:__**"
-                    if not self.is_bot() and self.is_cog()
-                    else "**__Subcommands:__**",
-                    self._add_subcommands(filtered),  # May need paginated
-                    False,
-                )
-
-                emb["fields"].append(field)
+                for i, page in enumerate(
+                    pagify(self._add_subcommands(filtered), page_length=1020)
+                ):
+                    title = (
+                        "**__Commands:__**"
+                        if not self.is_bot() and self.is_cog()
+                        else "**__Subcommands:__**"
+                    )
+                    if i > 0:
+                        title += " (continued)"
+                    field = EmbedField(title, page, False)
+                    # This will still break at 6k total chars, hope that isnt an issue later
+                    emb["fields"].append(field)
 
         return emb
 
@@ -274,11 +283,9 @@ class Help(formatter.HelpFormatter):
 
     async def cmd_not_found(self, ctx, cmd, color=None):
         # Shortcut for a shortcut. Sue me
-        embed = await self.simple_embed(
-            ctx,
-            title=ctx.bot.command_not_found.format(cmd),
-            description="Commands are case sensitive. Please check your spelling and try again",
-            color=color,
+        out = fuzzy_command_search(ctx, " ".join(ctx.args[1:]))
+        embed = self.simple_embed(
+            ctx, title="Command {} not found.".format(cmd), description=out, color=color
         )
         return embed
 
@@ -321,7 +328,9 @@ async def help(ctx, *cmds: str):
                 if use_embeds:
                     await destination.send(embed=await ctx.bot.formatter.cmd_not_found(ctx, name))
                 else:
-                    await destination.send(ctx.bot.command_not_found.format(name))
+                    await destination.send(
+                        ctx.bot.command_not_found.format(name, fuzzy_command_search(ctx, name))
+                    )
                 return
         if use_embeds:
             embeds = await ctx.bot.formatter.format_help_for(ctx, command)
@@ -334,7 +343,9 @@ async def help(ctx, *cmds: str):
             if use_embeds:
                 await destination.send(embed=await ctx.bot.formatter.cmd_not_found(ctx, name))
             else:
-                await destination.send(ctx.bot.command_not_found.format(name))
+                await destination.send(
+                    ctx.bot.command_not_found.format(name, fuzzy_command_search(ctx, name))
+                )
             return
 
         for key in cmds[1:]:
@@ -347,7 +358,9 @@ async def help(ctx, *cmds: str):
                             embed=await ctx.bot.formatter.cmd_not_found(ctx, key)
                         )
                     else:
-                        await destination.send(ctx.bot.command_not_found.format(key))
+                        await destination.send(
+                            ctx.bot.command_not_found.format(key, fuzzy_command_search(ctx, name))
+                        )
                     return
             except AttributeError:
                 if use_embeds:
