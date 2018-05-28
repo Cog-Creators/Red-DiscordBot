@@ -228,7 +228,7 @@ def init_events(bot, cli_flags):
                 term += " ".join(ctx.args[1:])
             await ctx.maybe_send_embed(fuzzy_command_search(ctx, ctx.invoked_with))
         elif isinstance(error, commands.CheckFailure):
-            await ctx.send("⛔ You are not authorized to issue that command.")
+            pass
         elif isinstance(error, commands.NoPrivateMessage):
             await ctx.send("That command is not available in DMs.")
         elif isinstance(error, commands.CommandOnCooldown):
