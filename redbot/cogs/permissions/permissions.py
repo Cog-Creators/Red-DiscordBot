@@ -12,7 +12,7 @@ from .resolvers import val_if_check_is_valid, resolve_models
 from .yaml_handler import yamlset_acl, yamlget_acl
 from .converters import CogOrCommand, RuleType
 
-_models = ["owner", "guildowner", "admin", "mod"]
+_models = ["owner", "guildowner", "admin", "mod", "all"]
 
 _ = Translator("Permissions", __file__)
 
@@ -94,7 +94,7 @@ class Permissions:
         defering to check logic
         This works since all checks must be True to run
         """
-        v = await self.check_overrides(ctx, "mod")
+        v = await self.check_overrides(ctx, "all")
 
         if v is False:
             return False
@@ -109,7 +109,7 @@ class Permissions:
         ctx: `redbot.core.context.commands.Context`
             The context of the command
         level: `str`
-            One of 'owner', 'guildowner', 'admin', 'mod'
+            One of 'owner', 'guildowner', 'admin', 'mod', 'all'
 
         Returns
         -------

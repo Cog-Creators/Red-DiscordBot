@@ -37,6 +37,7 @@ For each of those, settings have varying priorities (listed below, highest to lo
     7. Role settings (see below)
     8. Server whitelist
     9. Server blacklist
+    10. Default settings
 
 For the role whitelist and blacklist settings,
 roles will be checked individually in order from highest to lowest role the user has
@@ -73,3 +74,32 @@ An example of the expected format is shown below.
           - 96733288462286848
         default: allow
 
+----------------------
+Example configurations
+----------------------
+
+Locking Audio cog to approved server(s) as a bot owner
+
+.. code-block:: none
+
+    [p]permissions setglobaldefault Audio deny
+    [p]permissions addglobalrule allow Audio [server ID or name]
+
+Locking Audio to specific voice channel(s) as a serverowner or admin:
+
+.. code-block:: none
+
+    [p]permissions setguilddefault Audio deny
+    [p]permissions addguildrule allow Audio [voice channel ID or name]
+
+Allowing extra roles to use cleanup
+
+.. code-block:: none
+
+    [p]permissions addguildrule allow Cleanup [role ID]
+
+Preventing cleanup from being used in channels where message history is important:
+
+.. code-block:: none
+
+    [p]permissions addguildrule deny Cleanup [channel ID or mention]
