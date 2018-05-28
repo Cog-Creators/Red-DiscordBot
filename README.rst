@@ -1,46 +1,31 @@
-.. raw:: html
+.. class:: center
 
-   <h1 align="center">
-     <br>
-     <a href="https://github.com/Cog-Creators/Red-DiscordBot/tree/V3/develop"><img src="https://imgur.com/pY1WUFX.png" alt="Red Discord Bot"></a>
-     <br>
-     Red Discord Bot
-     <br>
-   </h1>
+  .. image:: https://imgur.com/pY1WUFX.png
+    :target: https://github.com/Cog-Creators/Red-DiscordBot/tree/V3/develop
+    :alt: Red Discord Bot
+  
+  
+.. class:: center
+  
+  Music, Moderation, Trivia, Stream Alerts and fully customizable.
 
-.. raw:: html
+.. class:: center
 
-   <h4 align="center">Music, Moderation, Trivia, Stream Alerts and fully customizable.</h4>
+  .. image:: https://readthedocs.org/projects/red-discordbot/badge/?version=v3-develop
+    :target: http://red-discordbot.readthedocs.io/en/v3-develop/?badge=v3-develop
+    :alt: Documentation Status
 
-.. raw:: html
+  .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+    :target: https://github.com/ambv/black
+    :alt: Code style: black
 
-   <p align="center">
-   <a href="https://discord.gg/red">
-         <img src="https://discordapp.com/api/guilds/133049272517001216/widget.png?style=shield">
-     </a>
-     <a href="https://www.patreon.com/Red_Devs">
-       <img src="https://img.shields.io/badge/Support-Red!-yellow.svg">
-     </a>
-     <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/Made%20With-Python%203.6-blue.svg?style=for-the-badge">
-   </a>
-   <a href="https://crowdin.com/project/red-discordbot">
-       <img src="https://d322cqt584bo4o.cloudfront.net/red-discordbot/localized.svg">
-     </a>
-     <a href="https://github.com/Rapptz/discord.py/tree/rewrite">
-         <img src="https://img.shields.io/badge/discord-py-blue.svg">
-     </a>
-   </p>
+  .. image:: https://d322cqt584bo4o.cloudfront.net/red-discordbot/localized.svg
+    :target: https://crowdin.com/project/red-discordbot
+    :alt: Crowdin
 
-.. raw:: html
-
-   <p align="center">
-     <a href="#overview">Overview</a> •
-     <a href="#installation">Installation</a> •
-     <a href="http://red-discordbot.readthedocs.io/en/v3-develop/index.html">Documentation</a>
-     <a href="#plugins"></a> •
-     <a href="#join-the-community">Community</a> •
-     <a href="#license">License</a>
-   </p>
+  .. image:: https://img.shields.io/badge/Support-Red!-orange.svg
+    :target: https://www.patreon.com/Red_Devs
+    :alt: Patreon
 
 ==========
 Overview
