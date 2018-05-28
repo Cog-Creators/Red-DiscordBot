@@ -21,7 +21,11 @@ class VersionInfo:
         my_index = self._levels.index(self.releaselevel)
         other_index = self._levels.index(other.releaselevel)
         return (self.major, self.minor, self.micro, my_index, self.serial) < (
-            other.major, other.minor, other.micro, other_index, other.serial
+            other.major,
+            other.minor,
+            other.micro,
+            other_index,
+            other.serial,
         )
 
     def __repr__(self):

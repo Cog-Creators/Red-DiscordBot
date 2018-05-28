@@ -30,7 +30,7 @@ class Repo(RepoJSONMixin):
     GIT_DIFF_FILE_STATUS = (
         "git -C {path} diff --no-commit-id --name-status" " {old_hash} {new_hash}"
     )
-    GIT_LOG = ("git -C {path} log --relative-date --reverse {old_hash}.." " {relative_file_path}")
+    GIT_LOG = "git -C {path} log --relative-date --reverse {old_hash}.." " {relative_file_path}"
     GIT_DISCOVER_REMOTE_URL = "git -C {path} config --get remote.origin.url"
 
     PIP_INSTALL = "{python} -m pip install -U -t {target_dir} {reqs}"
@@ -152,8 +152,11 @@ class Repo(RepoJSONMixin):
                         Installable(location=name)
                     )
         """
-        for file_finder, name, is_pkg in pkgutil.walk_packages(path=[str(self.folder_path)]):
-            curr_modules.append(Installable(location=self.folder_path / name))
+        for file_finder, name, is_pkg in pkgutil.walk_packages(
+            path=[str(self.folder_path)], onerror=lambda name: None
+        ):
+            if is_pkg:
+                curr_modules.append(Installable(location=self.folder_path / name))
         self.available_modules = curr_modules
 
         # noinspection PyTypeChecker
@@ -534,8 +537,8 @@ class RepoManager:
 
         """
         if self.does_repo_exist(name):
-            raise InvalidRepoName(
-                "That repo name you provided already exists." " Please choose another."
+            raise ExistingGitRepo(
+                "That repo name you provided already exists. Please choose another."
             )
 
         # noinspection PyTypeChecker

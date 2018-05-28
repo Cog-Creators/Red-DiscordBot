@@ -223,9 +223,7 @@ class Mod:
                     "Autoban for mention spam enabled. "
                     "Anyone mentioning {} or more different people "
                     "in a single message will be autobanned."
-                ).format(
-                    max_mentions
-                )
+                ).format(max_mentions)
             )
         else:
             cur_setting = await self.settings.guild(guild).ban_mention_spam()
@@ -272,9 +270,7 @@ class Mod:
                         "Bot will delete command messages after"
                         " {} seconds. Set this value to -1 to"
                         " stop deleting messages"
-                    ).format(
-                        delay
-                    )
+                    ).format(delay)
                 )
             else:
                 await ctx.send(_("I will not delete command messages."))
@@ -511,9 +507,7 @@ class Mod:
                     _(
                         "You have been temporarily banned from {} until {}. "
                         "Here is an invite for when your ban expires: {}"
-                    ).format(
-                        guild.name, unban_time.strftime("%m-%d-%Y %H:%M:%S"), invite
-                    )
+                    ).format(guild.name, unban_time.strftime("%m-%d-%Y %H:%M:%S"), invite)
                 )
             except discord.HTTPException:
                 msg = None
@@ -580,9 +574,7 @@ class Mod:
                         "You have been banned and "
                         "then unbanned as a quick way to delete your messages.\n"
                         "You can now join the server again. {}"
-                    ).format(
-                        invite
-                    )
+                    ).format(invite)
                 )
             except discord.HTTPException:
                 msg = None
@@ -686,9 +678,7 @@ class Mod:
                         _(
                             "You've been unbanned from {}.\n"
                             "Here is an invite for that server: {}"
-                        ).format(
-                            guild.name, invite.url
-                        )
+                        ).format(guild.name, invite.url)
                     )
                 except discord.Forbidden:
                     await ctx.send(
@@ -696,18 +686,14 @@ class Mod:
                             "I failed to send an invite to that user. "
                             "Perhaps you may be able to send it for me?\n"
                             "Here's the invite link: {}"
-                        ).format(
-                            invite.url
-                        )
+                        ).format(invite.url)
                     )
                 except discord.HTTPException:
                     await ctx.send(
                         _(
                             "Something went wrong when attempting to send that user"
                             "an invite. Here's the link so you can try: {}"
-                        ).format(
-                            invite.url
-                        )
+                        ).format(invite.url)
                     )
 
     @staticmethod
@@ -997,7 +983,8 @@ class Mod:
             return False, mute_unmute_issues["hierarchy_problem"]
 
         perms_cache[str(channel.id)] = {
-            "send_messages": overwrites.send_messages, "add_reactions": overwrites.add_reactions
+            "send_messages": overwrites.send_messages,
+            "add_reactions": overwrites.add_reactions,
         }
         overwrites.update(send_messages=False, add_reactions=False)
         try:
@@ -1275,18 +1262,92 @@ class Mod:
         return not (guild_ignored or chann_ignored and not perms.manage_channels)
 
     @commands.command()
+    @commands.guild_only()
+    async def userinfo(self, ctx, *, user: discord.Member = None):
+        """Shows users's informations"""
+        author = ctx.author
+        guild = ctx.guild
+
+        if not user:
+            user = author
+
+        #  A special case for a special someone :^)
+        special_date = datetime(2016, 1, 10, 6, 8, 4, 443000)
+        is_special = user.id == 96130341705637888 and guild.id == 133049272517001216
+
+        roles = sorted(user.roles)[1:]
+        names, nicks = await self.get_names_and_nicks(user)
+
+        joined_at = user.joined_at if not is_special else special_date
+        since_created = (ctx.message.created_at - user.created_at).days
+        since_joined = (ctx.message.created_at - joined_at).days
+        user_joined = joined_at.strftime("%d %b %Y %H:%M")
+        user_created = user.created_at.strftime("%d %b %Y %H:%M")
+        voice_state = user.voice
+        member_number = sorted(guild.members, key=lambda m: m.joined_at).index(user) + 1
+
+        created_on = _("{}\n({} days ago)").format(user_created, since_created)
+        joined_on = _("{}\n({} days ago)").format(user_joined, since_joined)
+
+        activity = _("Chilling in {} status").format(user.status)
+        if user.activity is None:  # Default status
+            pass
+        elif user.activity.type == discord.ActivityType.playing:
+            activity = _("Playing {}").format(user.activity.name)
+        elif user.activity.type == discord.ActivityType.streaming:
+            activity = _("Streaming [{}]({})").format(user.activity.name, user.activity.url)
+        elif user.activity.type == discord.ActivityType.listening:
+            activity = _("Listening to {}").format(user.activity.name)
+        elif user.activity.type == discord.ActivityType.watching:
+            activity = _("Watching {}").format(user.activity.name)
+
+        if roles:
+            roles = ", ".join([x.name for x in roles])
+        else:
+            roles = _("None")
+
+        data = discord.Embed(description=activity, colour=user.colour)
+        data.add_field(name=_("Joined Discord on"), value=created_on)
+        data.add_field(name=_("Joined this server on"), value=joined_on)
+        data.add_field(name=_("Roles"), value=roles, inline=False)
+        if names:
+            data.add_field(name=_("Previous Names"), value=", ".join(names), inline=False)
+        if nicks:
+            data.add_field(name=_("Previous Nicknames"), value=", ".join(nicks), inline=False)
+        if voice_state and voice_state.channel:
+            data.add_field(
+                name=_("Current voice channel"),
+                value="{0.name} (ID {0.id})".format(voice_state.channel),
+                inline=False,
+            )
+        data.set_footer(text=_("Member #{} | User ID: {}" "").format(member_number, user.id))
+
+        name = str(user)
+        name = " ~ ".join((name, user.nick)) if user.nick else name
+
+        if user.avatar:
+            avatar = user.avatar_url
+            avatar = avatar.replace("webp", "png")
+            data.set_author(name=name, url=avatar)
+            data.set_thumbnail(url=avatar)
+        else:
+            data.set_author(name=name)
+
+        try:
+            await ctx.send(embed=data)
+        except discord.HTTPException:
+            await ctx.send(_("I need the `Embed links` permission " "to send this."))
+
+    @commands.command()
     async def names(self, ctx: commands.Context, user: discord.Member):
         """Show previous names/nicknames of a user"""
-        names = await self.settings.user(user).past_names()
-        nicks = await self.settings.member(user).past_nicks()
+        names, nicks = await self.get_names_and_nicks(user)
         msg = ""
         if names:
-            names = [escape(name, mass_mentions=True) for name in names]
             msg += _("**Past 20 names**:")
             msg += "\n"
             msg += ", ".join(names)
         if nicks:
-            nicks = [escape(nick, mass_mentions=True) for nick in nicks]
             if msg:
                 msg += "\n\n"
             msg += _("**Past 20 nicknames**:")
@@ -1296,6 +1357,15 @@ class Mod:
             await ctx.send(msg)
         else:
             await ctx.send(_("That user doesn't have any recorded name or " "nickname change."))
+
+    async def get_names_and_nicks(self, user):
+        names = await self.settings.user(user).past_names()
+        nicks = await self.settings.member(user).past_nicks()
+        if names:
+            names = [escape(name, mass_mentions=True) for name in names]
+        if nicks:
+            nicks = [escape(nick, mass_mentions=True) for nick in nicks]
+        return names, nicks
 
     async def check_tempban_expirations(self):
         member = namedtuple("Member", "id guild")
