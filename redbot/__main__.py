@@ -132,6 +132,10 @@ def main():
             log.critical("Token and prefix must be set in order to login.")
             sys.exit(1)
     loop.run_until_complete(_get_prefix_and_token(red, tmp_data))
+
+    if cli_flags.dry_run:
+        loop.run_until_complete(red.http.close())
+        sys.exit(0)
     if tmp_data["enable_sentry"]:
         red.enable_sentry()
     cleanup_tasks = True
@@ -160,7 +164,6 @@ def main():
         sentry_log.critical("Fatal Exception", exc_info=e)
         loop.run_until_complete(red.logout())
     finally:
-        red.rpc.close()
         if cleanup_tasks:
             pending = asyncio.Task.all_tasks(loop=red.loop)
             gathered = asyncio.gather(*pending, loop=red.loop, return_exceptions=True)
