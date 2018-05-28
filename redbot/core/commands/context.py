@@ -20,14 +20,6 @@ class Context(commands.Context):
     This class inherits from `discord.ext.commands.Context`.
     """
 
-    @property
-    def color(self):
-        return self.guild.me.color if self.guild else self.bot.color or self.bot.color
-
-    @property
-    def colour(self):
-        return self.color
-
     async def send_help(self) -> List[discord.Message]:
         """Send the command help message.
 
@@ -168,6 +160,6 @@ class Context(commands.Context):
         """
 
         if await self.embed_requested():
-            return await self.send(embed=discord.Embed(description=message, color=self.color))
+            return await self.send(embed=discord.Embed(description=message, color=(await self.embed_colour)))
         else:
             return await self.send(message)
