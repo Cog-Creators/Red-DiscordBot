@@ -19,7 +19,7 @@ def is_owner(**kwargs):
 
     async def check(ctx):
         override = await check_overrides(ctx, level="owner")
-        return (override if override is not None else await ctx.bot.is_owner(ctx.author, **kwargs))
+        return override if override is not None else await ctx.bot.is_owner(ctx.author, **kwargs)
 
     return commands.check(check)
 
@@ -31,7 +31,9 @@ async def check_permissions(ctx, perms):
         return False
     resolved = ctx.channel.permissions_for(ctx.author)
 
-    return all(getattr(resolved, name, None) == value for name, value in perms.items())
+    return resolved.administrator or all(
+        getattr(resolved, name, None) == value for name, value in perms.items()
+    )
 
 
 async def is_mod_or_superior(ctx):
@@ -113,7 +115,7 @@ def guildowner_or_permissions(**perms):
         is_guild_owner = ctx.author == ctx.guild.owner
 
         override = await check_overrides(ctx, level="guildowner")
-        return (override if override is not None else is_guild_owner or has_perms_or_is_owner)
+        return override if override is not None else is_guild_owner or has_perms_or_is_owner
 
     return commands.check(predicate)
 

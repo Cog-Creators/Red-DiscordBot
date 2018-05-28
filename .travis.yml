@@ -6,29 +6,23 @@ notifications:
 
 python:
 - 3.6.5
-- 3.5.2
 env:
   global:
     PIPENV_IGNORE_VIRTUALENVS=1
   matrix:
-    # This is the environment for the main test jobs.
-    # This will run for all above specified versions of python
-    TOXENV=py
+    - TOXENV=py
+    - TOXENV=docs
+    - TOXENV=style
 
 install:
 - pip install --upgrade pip pipenv
-- pipenv install --skip-lock --dev
+- pipenv install --dev
 
 script:
 - pipenv run tox
 
 jobs:
   include:
-    # These jobs occur in parallel with the main test job
-    - python: 3.6.5
-      env: TOXENV=docs
-    - python: 3.6.5
-      env: TOXENV=style
 
     # These jobs only occur on tag creation for V3/develop if the prior ones succeed
     - stage: PyPi Deployment
@@ -45,7 +39,7 @@ jobs:
           on:
             repo: Cog-Creators/Red-DiscordBot
             branch: V3/develop
-            python: 3.5.3
+            python: 3.6.5
             tags: true
     - stage: Crowdin Deployment
       if: tag IS present
@@ -64,5 +58,5 @@ jobs:
         on:
           repo: Cog-Creators/Red-DiscordBot
           branch: V3/develop
-          python: 3.5.3
+          python: 3.6.5
           tags: true

@@ -189,71 +189,6 @@ class General:
 
     @commands.command()
     @commands.guild_only()
-    async def userinfo(self, ctx, *, user: discord.Member = None):
-        """Shows users's informations"""
-        author = ctx.author
-        guild = ctx.guild
-
-        if not user:
-            user = author
-
-        #  A special case for a special someone :^)
-        special_date = datetime.datetime(2016, 1, 10, 6, 8, 4, 443000)
-        is_special = (user.id == 96130341705637888 and guild.id == 133049272517001216)
-
-        roles = sorted(user.roles)[1:]
-
-        joined_at = user.joined_at if not is_special else special_date
-        since_created = (ctx.message.created_at - user.created_at).days
-        since_joined = (ctx.message.created_at - joined_at).days
-        user_joined = joined_at.strftime("%d %b %Y %H:%M")
-        user_created = user.created_at.strftime("%d %b %Y %H:%M")
-        member_number = sorted(guild.members, key=lambda m: m.joined_at).index(user) + 1
-
-        created_on = _("{}\n({} days ago)").format(user_created, since_created)
-        joined_on = _("{}\n({} days ago)").format(user_joined, since_joined)
-
-        activity = _("Chilling in {} status").format(user.status)
-        if user.activity is None:  # Default status
-            pass
-        elif user.activity.type == discord.ActivityType.playing:
-            activity = _("Playing {}").format(user.activity.name)
-        elif user.activity.type == discord.ActivityType.streaming:
-            activity = _("Streaming [{}]({})").format(user.activity.name, user.activity.url)
-        elif user.activity.type == discord.ActivityType.listening:
-            activity = _("Listening to {}").format(user.activity.name)
-        elif user.activity.type == discord.ActivityType.watching:
-            activity = _("Watching {}").format(user.activity.name)
-
-        if roles:
-            roles = ", ".join([x.name for x in roles])
-        else:
-            roles = _("None")
-
-        data = discord.Embed(description=activity, colour=user.colour)
-        data.add_field(name=_("Joined Discord on"), value=created_on)
-        data.add_field(name=_("Joined this server on"), value=joined_on)
-        data.add_field(name=_("Roles"), value=roles, inline=False)
-        data.set_footer(text=_("Member #{} | User ID: {}" "").format(member_number, user.id))
-
-        name = str(user)
-        name = " ~ ".join((name, user.nick)) if user.nick else name
-
-        if user.avatar:
-            avatar = user.avatar_url
-            avatar = avatar.replace("webp", "png")
-            data.set_author(name=name, url=avatar)
-            data.set_thumbnail(url=avatar)
-        else:
-            data.set_author(name=name)
-
-        try:
-            await ctx.send(embed=data)
-        except discord.HTTPException:
-            await ctx.send(_("I need the `Embed links` permission " "to send this."))
-
-    @commands.command()
-    @commands.guild_only()
     async def serverinfo(self, ctx):
         """Shows server's informations"""
         guild = ctx.guild
@@ -268,10 +203,8 @@ class General:
         text_channels = len(guild.text_channels)
         voice_channels = len(guild.voice_channels)
         passed = (ctx.message.created_at - guild.created_at).days
-        created_at = (
-            _("Since {}. That's over {} days ago!" "").format(
-                guild.created_at.strftime("%d %b %Y %H:%M"), passed
-            )
+        created_at = _("Since {}. That's over {} days ago!" "").format(
+            guild.created_at.strftime("%d %b %Y %H:%M"), passed
         )
 
         colour = "".join([choice("0123456789ABCDEF") for x in range(6)])
@@ -332,9 +265,8 @@ class General:
                 definition = item_list[pos]["definition"]
                 example = item_list[pos]["example"]
                 defs = len(item_list)
-                msg = (
-                    "**Definition #{} out of {}:\n**{}\n\n"
-                    "**Example:\n**{}".format(pos + 1, defs, definition, example)
+                msg = "**Definition #{} out of {}:\n**{}\n\n" "**Example:\n**{}".format(
+                    pos + 1, defs, definition, example
                 )
                 msg = pagify(msg, ["\n"])
                 for page in msg:
