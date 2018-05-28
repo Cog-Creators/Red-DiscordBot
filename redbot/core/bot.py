@@ -51,6 +51,7 @@ class RedBase(BotBase):
             embeds=True,
             help__page_char_limit=1000,
             help__max_pages_in_guild=2,
+            help__tagline="",
         )
 
         self.db.register_guild(
@@ -85,6 +86,9 @@ class RedBase(BotBase):
         if "owner_id" not in kwargs:
             loop = asyncio.get_event_loop()
             loop.run_until_complete(self._dict_abuse(kwargs))
+
+        if "command_not_found" not in kwargs:
+            kwargs["command_not_found"] = "Command {} not found.\n{}"
 
         self.counter = Counter()
         self.uptime = None
