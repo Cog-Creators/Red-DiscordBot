@@ -43,6 +43,7 @@ redbot/cogs/streams/*               @Twentysix26 @palmtree5
 redbot/cogs/trivia/*                @Tobotimus
 redbot/cogs/dataconverter/*         @mikeshardmind
 redbot/cogs/reports/*               @mikeshardmind
+redbot/cogs/permissions/*           @mikeshardmind
 
 # Docs
 docs/*                              @tekulvw @palmtree5

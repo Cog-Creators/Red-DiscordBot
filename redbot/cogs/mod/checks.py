@@ -19,7 +19,9 @@ def mod_or_voice_permissions(**perms):
 
         for vc in guild.voice_channels:
             resolved = vc.permissions_for(author)
-            good = all(getattr(resolved, name, None) == value for name, value in perms.items())
+            good = resolved.administrator or all(
+                getattr(resolved, name, None) == value for name, value in perms.items()
+            )
             if not good:
                 return False
         else:
@@ -40,7 +42,9 @@ def admin_or_voice_permissions(**perms):
             return True
         for vc in guild.voice_channels:
             resolved = vc.permissions_for(author)
-            good = all(getattr(resolved, name, None) == value for name, value in perms.items())
+            good = resolved.administrator or all(
+                getattr(resolved, name, None) == value for name, value in perms.items()
+            )
             if not good:
                 return False
         else:
@@ -55,7 +59,9 @@ def bot_has_voice_permissions(**perms):
         guild = ctx.guild
         for vc in guild.voice_channels:
             resolved = vc.permissions_for(guild.me)
-            good = all(getattr(resolved, name, None) == value for name, value in perms.items())
+            good = resolved.administrator or all(
+                getattr(resolved, name, None) == value for name, value in perms.items()
+            )
             if not good:
                 return False
         else:
