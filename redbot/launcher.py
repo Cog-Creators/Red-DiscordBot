@@ -319,16 +319,20 @@ def extras_selector():
     return selected
 
 
-def development_choice(reinstall=False):
+def development_choice(reinstall=False, can_go_back=True):
     while True:
         print("\n")
         print("Do you want to install stable or development version?")
         print("1. Stable version")
         print("2. Development version")
+        if can_go_back:
+            print("\n")
+            print("0. Go back")
         choice = user_choice()
         print("\n")
-        selected = extras_selector()
+
         if choice == "1":
+            selected = extras_selector()
             update_red(
                 dev=False,
                 reinstall=reinstall,
@@ -339,6 +343,7 @@ def development_choice(reinstall=False):
             )
             break
         elif choice == "2":
+            selected = extras_selector()
             update_red(
                 dev=True,
                 reinstall=reinstall,
@@ -348,6 +353,10 @@ def development_choice(reinstall=False):
                 mongo=True if "mongo" in selected else False,
             )
             break
+        elif choice == "0" and can_go_back:
+            return False
+        clear_screen()
+    return True
 
 
 def debug_info():
@@ -405,8 +414,8 @@ def main_menu():
                 run_red(instance, autorestart=False, cliflags=cli_flags)
             wait()
         elif choice == "3":
-            development_choice()
-            wait()
+            if development_choice():
+                wait()
         elif choice == "4":
             basic_setup()
             wait()
@@ -429,14 +438,14 @@ def main_menu():
                 print("0. Back")
                 choice = user_choice()
                 if choice == "1":
-                    development_choice(reinstall=True)
-                    wait()
+                    if development_choice(reinstall=True):
+                        wait()
                 elif choice == "2":
                     loop.run_until_complete(reset_red())
                     wait()
                 elif choice == "3":
                     loop.run_until_complete(reset_red())
-                    development_choice(reinstall=True)
+                    development_choice(reinstall=True, can_go_back=False)
                     wait()
                 elif choice == "0":
                     break

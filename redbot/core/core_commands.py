@@ -876,6 +876,30 @@ class Core:
         await ctx.bot.db.help.max_pages_in_guild.set(pages)
         await ctx.send(_("Done. The page limit has been set to {}.").format(pages))
 
+    @helpset.command(name="tagline")
+    async def helpset_tagline(self, ctx: commands.Context, *, tagline: str = None):
+        """
+        Set the tagline to be used.
+
+        This setting only applies to embedded help. If no tagline is 
+        specified, the default will be used instead.
+        """
+        if tagline is None:
+            await ctx.bot.db.help.tagline.set("")
+            return await ctx.send(_("The tagline has been reset."))
+
+        if len(tagline) > 2048:
+            await ctx.send(
+                _(
+                    "Your tagline is too long! Please shorten it to be "
+                    "no more than 2048 characters long."
+                )
+            )
+            return
+
+        await ctx.bot.db.help.tagline.set(tagline)
+        await ctx.send(_("The tagline has been set to {}.").format(tagline[:1900]))
+
     @commands.command()
     @checks.is_owner()
     async def listlocales(self, ctx: commands.Context):
