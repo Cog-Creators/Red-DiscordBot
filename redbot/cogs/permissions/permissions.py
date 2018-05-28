@@ -109,7 +109,7 @@ class Permissions:
         ctx: `redbot.core.context.commands.Context`
             The context of the command
         level: `str`
-            One of 'owner', 'guildowner', 'admin', 'mod'
+            One of 'owner', 'guildowner', 'admin', 'mod', 'all'
 
         Returns
         -------
