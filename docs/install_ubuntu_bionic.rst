@@ -1,30 +1,29 @@
-.. centos install guide
+.. ubuntu bionic install guide
 
-==========================
-Installing Red on CentOS 7
-==========================
+==============================
+Installing Red on Ubuntu 18.04
+==============================
 
-.. warning:: For safety reasons, DO NOT install Red with a root user. Instead, `make a new one <https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/4/html/Step_by_Step_Guide/s1-starting-create-account.html>`_.
+.. warning:: For safety reasons, DO NOT install Red with a root user. Instead, `make a new one <http://manpages.ubuntu.com/manpages/artful/man8/adduser.8.html>`_.
 
----------------------------
-Installing pre-requirements
----------------------------
+-------------------------------
+Installing the pre-requirements
+-------------------------------
 
 .. code-block:: none
 
-    yum -y groupinstall development
-    yum -y install https://centos7.iuscommunity.org/ius-release.rpm
-    yum -y install yum-utils wget which python36u python36u-pip python36u-devel openssl-devel libffi-devel git java-1.8.0-openjdk
+    sudo apt install python3.6-dev python3-pip build-essential libssl-dev libffi-dev git unzip default-jre -y
 
---------------
-Installing Red
---------------
 
-Without audio:
+------------------
+Installing the bot
+------------------
+
+To install without audio:
 
 :code:`pip3 install -U --process-dependency-links red-discordbot --user`
 
-With audio:
+To install with audio:
 
 :code:`pip3 install -U --process-dependency-links red-discordbot[voice] --user`
 
@@ -36,9 +35,9 @@ To install the development version (with audio):
 
 :code:`pip3 install -U --process-dependency-links git+https://github.com/Cog-Creators/Red-DiscordBot@V3/develop#egg=red-discordbot[voice] --user`
 
-----------------------
-Setting up an instance
-----------------------
+------------------------
+Setting up your instance
+------------------------
 
 Run :code:`redbot-setup` and follow the prompts. It will ask first for where you want to
 store the data (the default is :code:`~/.local/share/Red-DiscordBot`) and will then ask
