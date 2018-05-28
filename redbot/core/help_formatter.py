@@ -36,8 +36,8 @@ import sys
 import traceback
 
 from . import commands
-from .utils.chat_formatting import box
-from .utils import fuzzy_command_search
+from redbot.core.utils.chat_formatting import pagify, box
+from redbot.core.utils import fuzzy_command_search
 
 
 EMPTY_STRING = u"\u200b"
@@ -186,15 +186,19 @@ class Help(formatter.HelpFormatter):
             # Get list of commands for category
             filtered = sorted(filtered)
             if filtered:
-                field = EmbedField(
-                    "**__Commands:__**"
-                    if not self.is_bot() and self.is_cog()
-                    else "**__Subcommands:__**",
-                    self._add_subcommands(filtered),  # May need paginated
-                    False,
-                )
-
-                emb["fields"].append(field)
+                for i, page in enumerate(
+                    pagify(self._add_subcommands(filtered), page_length=1020)
+                ):
+                    title = (
+                        "**__Commands:__**"
+                        if not self.is_bot() and self.is_cog()
+                        else "**__Subcommands:__**"
+                    )
+                    if i > 0:
+                        title += " (continued)"
+                    field = EmbedField(title, page, False)
+                    # This will still break at 6k total chars, hope that isnt an issue later
+                    emb["fields"].append(field)
 
         return emb
 
