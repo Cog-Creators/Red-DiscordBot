@@ -4,7 +4,6 @@ import argparse
 import asyncio
 import json
 import os
-import shutil
 import sys
 import tarfile
 from copy import deepcopy
@@ -336,8 +335,9 @@ async def create_backup(selected, instance_data):
 
 
 async def remove_instance(selected, instance_data):
-    instance_list = load_existing_config()
     if instance_data["STORAGE_TYPE"] == "MongoDB":
+        from redbot.core.drivers.red_mongo import Mongo
+
         m = Mongo("Core", **instance_data["STORAGE_DETAILS"])
         db = m.db
         collections = await db.collection_names(include_system_collections=False)
