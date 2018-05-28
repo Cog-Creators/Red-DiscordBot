@@ -36,7 +36,8 @@ import sys
 import traceback
 
 from . import commands
-from redbot.core.utils.chat_formatting import pagify
+from redbot.core.utils.chat_formatting import pagify, box
+from redbot.core.utils import fuzzy_command_search
 
 
 EMPTY_STRING = u"\u200b"
@@ -277,11 +278,9 @@ class Help(formatter.HelpFormatter):
 
     def cmd_not_found(self, ctx, cmd, color=None):
         # Shortcut for a shortcut. Sue me
+        out = fuzzy_command_search(ctx, " ".join(ctx.args[1:]))
         embed = self.simple_embed(
-            ctx,
-            title=ctx.bot.command_not_found.format(cmd),
-            description="Commands are case sensitive. Please check your spelling and try again",
-            color=color,
+            ctx, title="Command {} not found.".format(cmd), description=out, color=color
         )
         return embed
 
@@ -324,7 +323,9 @@ async def help(ctx, *cmds: str):
                 if use_embeds:
                     await destination.send(embed=ctx.bot.formatter.cmd_not_found(ctx, name))
                 else:
-                    await destination.send(ctx.bot.command_not_found.format(name))
+                    await destination.send(
+                        ctx.bot.command_not_found.format(name, fuzzy_command_search(ctx, name))
+                    )
                 return
         if use_embeds:
             embeds = await ctx.bot.formatter.format_help_for(ctx, command)
@@ -337,7 +338,9 @@ async def help(ctx, *cmds: str):
             if use_embeds:
                 await destination.send(embed=ctx.bot.formatter.cmd_not_found(ctx, name))
             else:
-                await destination.send(ctx.bot.command_not_found.format(name))
+                await destination.send(
+                    ctx.bot.command_not_found.format(name, fuzzy_command_search(ctx, name))
+                )
             return
 
         for key in cmds[1:]:
@@ -348,7 +351,9 @@ async def help(ctx, *cmds: str):
                     if use_embeds:
                         await destination.send(embed=ctx.bot.formatter.cmd_not_found(ctx, key))
                     else:
-                        await destination.send(ctx.bot.command_not_found.format(key))
+                        await destination.send(
+                            ctx.bot.command_not_found.format(key, fuzzy_command_search(ctx, name))
+                        )
                     return
             except AttributeError:
                 if use_embeds:
