@@ -284,7 +284,7 @@ class Help(formatter.HelpFormatter):
     async def cmd_not_found(self, ctx, cmd, color=None):
         # Shortcut for a shortcut. Sue me
         out = fuzzy_command_search(ctx, " ".join(ctx.args[1:]))
-        embed = self.simple_embed(
+        embed = await self.simple_embed(
             ctx, title="Command {} not found.".format(cmd), description=out, color=color
         )
         return embed
