@@ -49,13 +49,20 @@ class RedBase(BotBase):
             enable_sentry=None,
             locale="en",
             embeds=True,
+            color=15158332,
             help__page_char_limit=1000,
             help__max_pages_in_guild=2,
             help__tagline="",
         )
 
         self.db.register_guild(
-            prefix=[], whitelist=[], blacklist=[], admin_role=None, mod_role=None, embeds=None
+            prefix=[],
+            whitelist=[],
+            blacklist=[],
+            admin_role=None,
+            mod_role=None,
+            embeds=None,
+            use_bot_color=False,
         )
 
         self.db.register_user(embeds=None)
@@ -92,6 +99,7 @@ class RedBase(BotBase):
 
         self.counter = Counter()
         self.uptime = None
+        self.color = None
 
         self.main_dir = bot_dir
 

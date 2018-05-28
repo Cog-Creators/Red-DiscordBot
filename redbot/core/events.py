@@ -172,6 +172,7 @@ def init_events(bot, cli_flags):
         if invite_url:
             print("\nInvite URL: {}\n".format(invite_url))
 
+        bot.color = discord.Colour(await bot.db.color())
         if bot.rpc_enabled:
             await bot.rpc.initialize()
 

@@ -72,12 +72,14 @@ class Help(formatter.HelpFormatter):
     def avatar(self):
         return self.context.bot.user.avatar_url_as(format="png")
 
-    @property
-    def color(self):
+    async def color(self):
         if self.pm_check(self.context):
-            return 0
+            return self.context.bot.color
         else:
-            return self.me.color
+            if await self.context.bot.db.guild(self.context.guild).use_bot_color():
+                return self.context.bot.color
+            else:
+                return self.me.color
 
     @property
     def destination(self):
@@ -250,7 +252,7 @@ class Help(formatter.HelpFormatter):
         field_groups = self.group_fields(emb["fields"], page_char_limit)
 
         for i, group in enumerate(field_groups, 1):
-            embed = discord.Embed(color=self.color, **emb["embed"])
+            embed = discord.Embed(color=await self.color(), **emb["embed"])
 
             if len(field_groups) > 1:
                 description = "{} *- Page {} of {}*".format(
@@ -269,26 +271,26 @@ class Help(formatter.HelpFormatter):
 
         return ret
 
-    def simple_embed(self, ctx, title=None, description=None, color=None):
+    async def simple_embed(self, ctx, title=None, description=None, color=None):
         # Shortcut
         self.context = ctx
         if color is None:
-            color = self.color
+            color = await self.color()
         embed = discord.Embed(title=title, description=description, color=color)
         embed.set_footer(text=ctx.bot.formatter.get_ending_note())
         embed.set_author(**self.author)
         return embed
 
-    def cmd_not_found(self, ctx, cmd, color=None):
+    async def cmd_not_found(self, ctx, cmd, color=None):
         # Shortcut for a shortcut. Sue me
         out = fuzzy_command_search(ctx, " ".join(ctx.args[1:]))
-        embed = self.simple_embed(
+        embed = await self.simple_embed(
             ctx, title="Command {} not found.".format(cmd), description=out, color=color
         )
         return embed
 
-    def cmd_has_no_subcommands(self, ctx, cmd, color=None):
-        embed = self.simple_embed(
+    async def cmd_has_no_subcommands(self, ctx, cmd, color=None):
+        embed = await self.simple_embed(
             ctx, title=ctx.bot.command_has_no_subcommands.format(cmd), color=color
         )
         return embed
@@ -324,7 +326,7 @@ async def help(ctx, *cmds: str):
             command = ctx.bot.all_commands.get(name)
             if command is None:
                 if use_embeds:
-                    await destination.send(embed=ctx.bot.formatter.cmd_not_found(ctx, name))
+                    await destination.send(embed=await ctx.bot.formatter.cmd_not_found(ctx, name))
                 else:
                     await destination.send(
                         ctx.bot.command_not_found.format(name, fuzzy_command_search(ctx, name))
@@ -339,7 +341,7 @@ async def help(ctx, *cmds: str):
         command = ctx.bot.all_commands.get(name)
         if command is None:
             if use_embeds:
-                await destination.send(embed=ctx.bot.formatter.cmd_not_found(ctx, name))
+                await destination.send(embed=await ctx.bot.formatter.cmd_not_found(ctx, name))
             else:
                 await destination.send(
                     ctx.bot.command_not_found.format(name, fuzzy_command_search(ctx, name))
@@ -352,7 +354,9 @@ async def help(ctx, *cmds: str):
                 command = command.all_commands.get(key)
                 if command is None:
                     if use_embeds:
-                        await destination.send(embed=ctx.bot.formatter.cmd_not_found(ctx, key))
+                        await destination.send(
+                            embed=await ctx.bot.formatter.cmd_not_found(ctx, key)
+                        )
                     else:
                         await destination.send(
                             ctx.bot.command_not_found.format(key, fuzzy_command_search(ctx, name))
@@ -361,10 +365,10 @@ async def help(ctx, *cmds: str):
             except AttributeError:
                 if use_embeds:
                     await destination.send(
-                        embed=ctx.bot.formatter.simple_embed(
+                        embed=await ctx.bot.formatter.simple_embed(
                             ctx,
                             title='Command "{0.name}" has no subcommands.'.format(command),
-                            color=ctx.bot.formatter.color,
+                            color=await ctx.bot.formatter.color(),
                         )
                     )
                 else:
