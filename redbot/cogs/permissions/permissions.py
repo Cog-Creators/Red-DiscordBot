@@ -206,10 +206,10 @@ class Permissions:
             "\n"
             "1. Rules about a user.\n"
             "2. Rules about the voice channel a user is in.\n"
-            "3. Rules about the text channel a command was issued in\n"
+            "3. Rules about the text channel a command was issued in.\n"
             "4. Rules about a role the user has "
-            "(The highest role they have with a rule will be used)\n"
-            "5. Rules about the guild a user is in (Owner level only)"
+            "(The highest role they have with a rule will be used).\n"
+            "5. Rules about the guild a user is in (Owner level only)."
             "\n\nFor more details, please read the official documentation."
         )
 
@@ -232,7 +232,7 @@ class Permissions:
 
         com = self.bot.get_command(command)
         if com is None:
-            out = _("No such command")
+            out = _("No such command.")
         else:
             try:
                 testcontext = await self.bot.get_context(message, cls=commands.Context)
@@ -254,13 +254,13 @@ class Permissions:
         Take a YAML file upload to set permissions from
         """
         if not ctx.message.attachments:
-            return await ctx.send(_("You must upload a file"))
+            return await ctx.send(_("You must upload a file."))
 
         try:
             await yamlset_acl(ctx, config=self.config.owner_models, update=False)
         except Exception as e:
             print(e)
-            return await ctx.send(_("Inalid syntax"))
+            return await ctx.send(_("Inalid syntax."))
         else:
             await ctx.send(_("Rules set."))
 
@@ -280,13 +280,13 @@ class Permissions:
         Take a YAML file upload to set permissions from
         """
         if not ctx.message.attachments:
-            return await ctx.send(_("You must upload a file"))
+            return await ctx.send(_("You must upload a file."))
 
         try:
             await yamlset_acl(ctx, config=self.config.guild(ctx.guild).owner_models, update=False)
         except Exception as e:
             print(e)
-            return await ctx.send(_("Inalid syntax"))
+            return await ctx.send(_("Inalid syntax."))
         else:
             await ctx.send(_("Rules set."))
 
@@ -309,13 +309,13 @@ class Permissions:
         Use this to not lose existing rules
         """
         if not ctx.message.attachments:
-            return await ctx.send(_("You must upload a file"))
+            return await ctx.send(_("You must upload a file."))
 
         try:
             await yamlset_acl(ctx, config=self.config.guild(ctx.guild).owner_models, update=True)
         except Exception as e:
             print(e)
-            return await ctx.send(_("Inalid syntax"))
+            return await ctx.send(_("Inalid syntax."))
         else:
             await ctx.send(_("Rules set."))
 
@@ -328,13 +328,13 @@ class Permissions:
         Use this to not lose existing rules
         """
         if not ctx.message.attachments:
-            return await ctx.send(_("You must upload a file"))
+            return await ctx.send(_("You must upload a file."))
 
         try:
             await yamlset_acl(ctx, config=self.config.owner_models, update=True)
         except Exception as e:
             print(e)
-            return await ctx.send(_("Inalid syntax"))
+            return await ctx.send(_("Inalid syntax."))
         else:
             await ctx.send(_("Rules set."))
 
@@ -363,7 +363,7 @@ class Permissions:
         """
         obj = self.find_object_uniquely(who_or_what)
         if not obj:
-            return await ctx.send(_("No unique matches. Try using an ID or mention"))
+            return await ctx.send(_("No unique matches. Try using an ID or mention."))
         model_type, type_name = cog_or_command
         async with self.config.owner_models() as models:
             data = {k: v for k, v in models.items()}
@@ -407,7 +407,7 @@ class Permissions:
         """
         obj = self.find_object_uniquely(who_or_what)
         if not obj:
-            return await ctx.send(_("No unique matches. Try using an ID or mention"))
+            return await ctx.send(_("No unique matches. Try using an ID or mention."))
         model_type, type_name = cog_or_command
         async with self.config.guild(ctx.guild).owner_models() as models:
             data = {k: v for k, v in models.items()}
@@ -450,7 +450,7 @@ class Permissions:
         """
         obj = self.find_object_uniquely(who_or_what)
         if not obj:
-            return await ctx.send(_("No unique matches. Try using an ID or mention"))
+            return await ctx.send(_("No unique matches. Try using an ID or mention."))
         model_type, type_name = cog_or_command
         async with self.config.owner_models() as models:
             data = {k: v for k, v in models.items()}
@@ -494,7 +494,7 @@ class Permissions:
         """
         obj = self.find_object_uniquely(who_or_what)
         if not obj:
-            return await ctx.send(_("No unique matches. Try using an ID or mention"))
+            return await ctx.send(_("No unique matches. Try using an ID or mention."))
         model_type, type_name = cog_or_command
         async with self.config.guild(ctx.guild).owner_models() as models:
             data = {k: v for k, v in models.items()}
@@ -540,7 +540,7 @@ class Permissions:
             data[model_type][type_name]["default"] = val_to_set
 
             models.update(data)
-        await ctx.send(_("Defualt set."))
+        await ctx.send(_("Default set."))
 
     @checks.is_owner()
     @permissions.command(name="setdefaultglobalrule")
@@ -570,7 +570,7 @@ class Permissions:
             data[model_type][type_name]["default"] = val_to_set
 
             models.update(data)
-        await ctx.send(_("Defualt set."))
+        await ctx.send(_("Default set."))
 
     @commands.bot_has_permissions(add_reactions=True)
     @checks.is_owner()
@@ -592,7 +592,7 @@ class Permissions:
 
         if REACTS.get(str(reaction)):
             await self.config.owner_models.clear()
-            await ctx.send(_("Global settings cleared"))
+            await ctx.send(_("Global settings cleared."))
         else:
             await ctx.send(_("Okay."))
 
@@ -617,7 +617,7 @@ class Permissions:
 
         if REACTS.get(str(reaction)):
             await self.config.guild(ctx.guild).owner_models.clear()
-            await ctx.send(_("Guild settings cleared"))
+            await ctx.send(_("Guild settings cleared."))
         else:
             await ctx.send(_("Okay."))
 
