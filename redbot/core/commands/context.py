@@ -138,6 +138,20 @@ class Context(commands.Context):
                         await query.delete()
         return ret
 
+    async def embed_colour(self):
+        """
+        Helper function to get the colour for an embed.
+
+        Returns
+        -------
+        discord.Colour:
+            The colour to be used
+        """
+        if self.guild and await self.bot.db.guild(self.guild).use_bot_color():
+            return self.guild.me.color
+        else:
+            return self.bot.color
+
     async def embed_requested(self):
         """
         Simple helper to call bot.embed_requested
