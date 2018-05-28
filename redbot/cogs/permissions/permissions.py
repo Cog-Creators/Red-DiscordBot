@@ -323,7 +323,7 @@ class Permissions:
     @permissions.command(name="updateglobalacl")
     async def owner_update_acl(self, ctx: commands.Context):
         """
-        Take a YAML file upload to set permissions from
+        Take a YAML file upload to update permissions from
 
         Use this to not lose existing rules
         """
