@@ -382,7 +382,7 @@ class Trivia:
         try:
             priority.remove(key)
         except ValueError:
-            raise ValueError("{} is not a valid key".format(key))
+            raise ValueError("{} is not a valid key.".format(key))
         # Put key last in reverse priority
         priority.append(key)
         items = data.items()
@@ -480,7 +480,7 @@ class Trivia:
         try:
             path = next(p for p in self._all_lists() if p.stem == category)
         except StopIteration:
-            raise FileNotFoundError("Could not find the `{}` category" "".format(category))
+            raise FileNotFoundError("Could not find the `{}` category.".format(category))
 
         with path.open(encoding="utf-8") as file:
             try:
