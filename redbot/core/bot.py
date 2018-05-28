@@ -51,6 +51,7 @@ class RedBase(BotBase):
             embeds=True,
             help__page_char_limit=1000,
             help__max_pages_in_guild=2,
+            help__tagline="",
         )
 
         self.db.register_guild(
