@@ -1,14 +1,16 @@
-.. class:: center
+.. align:: center
 
   .. image:: https://imgur.com/pY1WUFX.png
     :target: https://github.com/Cog-Creators/Red-DiscordBot/tree/V3/develop
     :alt: Red Discord Bot
   
   
-.. class:: center
+.. align:: center
+  
   Music, Moderation, Trivia, Stream Alerts and fully customizable.
 
-.. class:: center
+.. align:: center
+  
   .. image:: https://readthedocs.org/projects/red-discordbot/badge/?version=v3-develop
     :target: http://red-discordbot.readthedocs.io/en/v3-develop/?badge=v3-develop
     :alt: Documentation Status
