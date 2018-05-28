@@ -21,22 +21,9 @@ from .cog_manager import CogManager
 from . import Config, i18n, commands, rpc
 from .help_formatter import Help, help as help_
 from .sentry import SentryManager
-from .utils import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from aiohttp_json_rpc import JsonRpc
-
-# noinspection PyUnresolvedReferences
-class RpcMethodMixin:
-
-    async def rpc__cogs(self, request):
-        return list(self.cogs.keys())
-
-    async def rpc__extensions(self, request):
-        return list(self.extensions.keys())
 
 
-class RedBase(BotBase, RpcMethodMixin):
+class RedBase(BotBase):
     """Mixin for the main bot class.
 
     This exists because `Red` inherits from `discord.AutoShardedClient`, which
@@ -62,10 +49,20 @@ class RedBase(BotBase, RpcMethodMixin):
             enable_sentry=None,
             locale="en",
             embeds=True,
+            color=15158332,
+            help__page_char_limit=1000,
+            help__max_pages_in_guild=2,
+            help__tagline="",
         )
 
         self.db.register_guild(
-            prefix=[], whitelist=[], blacklist=[], admin_role=None, mod_role=None, embeds=None
+            prefix=[],
+            whitelist=[],
+            blacklist=[],
+            admin_role=None,
+            mod_role=None,
+            embeds=None,
+            use_bot_color=False,
         )
 
         self.db.register_user(embeds=None)
@@ -97,16 +94,21 @@ class RedBase(BotBase, RpcMethodMixin):
             loop = asyncio.get_event_loop()
             loop.run_until_complete(self._dict_abuse(kwargs))
 
+        if "command_not_found" not in kwargs:
+            kwargs["command_not_found"] = "Command {} not found.\n{}"
+
         self.counter = Counter()
         self.uptime = None
+        self.color = None
 
         self.main_dir = bot_dir
 
         self.cog_mgr = CogManager(paths=(str(self.main_dir / "cogs"),))
 
-        self.register_rpc_methods()
-
         super().__init__(formatter=Help(), **kwargs)
+
+        if self.rpc_enabled:
+            self.rpc = rpc.RPC(self)
 
         self.remove_command("help")
 
@@ -274,10 +276,6 @@ class RedBase(BotBase, RpcMethodMixin):
 
             if pkg_name.startswith("redbot.cogs"):
                 del sys.modules["redbot.cogs"].__dict__[name]
-
-    def register_rpc_methods(self):
-        rpc.add_method("bot", self.rpc__cogs)
-        rpc.add_method("bot", self.rpc__extensions)
 
 
 class Red(RedBase, discord.AutoShardedClient):
