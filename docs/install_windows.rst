@@ -8,7 +8,7 @@ Installing Red on Windows
 Needed Software
 ---------------
 
-* `Python <https://python.org/downloads/>`_ - Red needs at least Python 3.5
+* `Python <https://python.org/downloads/>`_ - Red needs Python 3.6
 
 .. note:: Please make sure that the box to add Python to PATH is CHECKED, otherwise
           you may run into issues when trying to run Red
