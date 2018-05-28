@@ -632,6 +632,7 @@ class Permissions:
         objs.extend(self.bot.users)
         for guild in self.bot.guilds:
             objs.extend(guild.roles)
+            objs.extend(guild.channels)
 
         try:
             _id = int(info)
