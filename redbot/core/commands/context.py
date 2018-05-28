@@ -30,16 +30,33 @@ class Context(commands.Context):
 
         """
         command = self.invoked_subcommand or self.command
-        embeds = await self.bot.formatter.format_help_for(self, command)
-        destination = self
+        embed_wanted = await self.bot.embed_requested(
+            self.channel, self.author, command=self.bot.get_command("help")
+        )
+        if self.guild and not self.channel.permissions_for(self.guild.me).embed_links:
+            embed_wanted = False
+
         ret = []
-        for embed in embeds:
-            try:
-                m = await destination.send(embed=embed)
-            except discord.HTTPException:
-                destination = self.author
-                m = await destination.send(embed=embed)
-            ret.append(m)
+        destination = self
+        if embed_wanted:
+            embeds = await self.bot.formatter.format_help_for(self, command)
+            for embed in embeds:
+                try:
+                    m = await destination.send(embed=embed)
+                except discord.HTTPException:
+                    destination = self.author
+                    m = await destination.send(embed=embed)
+                ret.append(m)
+        else:
+            f = commands.HelpFormatter()
+            msgs = await f.format_help_for(self, command)
+            for msg in msgs:
+                try:
+                    m = await destination.send(msg)
+                except discord.HTTPException:
+                    destination = self.author
+                    m = await destination.send(msg)
+                ret.append(m)
 
         return ret
 
@@ -121,6 +138,20 @@ class Context(commands.Context):
                         await query.delete()
         return ret
 
+    async def embed_colour(self):
+        """
+        Helper function to get the colour for an embed.
+
+        Returns
+        -------
+        discord.Colour:
+            The colour to be used
+        """
+        if self.guild and await self.bot.db.guild(self.guild).use_bot_color():
+            return self.guild.me.color
+        else:
+            return self.bot.color
+
     async def embed_requested(self):
         """
         Simple helper to call bot.embed_requested
@@ -160,6 +191,8 @@ class Context(commands.Context):
         """
 
         if await self.embed_requested():
-            return await self.send(embed=discord.Embed(description=message))
+            return await self.send(
+                embed=discord.Embed(description=message, color=(await self.embed_colour()))
+            )
         else:
             return await self.send(message)
