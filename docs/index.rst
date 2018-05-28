@@ -12,7 +12,8 @@ Welcome to Red - Discord Bot's documentation!
 
     install_windows
     install_mac
-    install_ubuntu
+    install_ubuntu_xenial
+    install_ubuntu_bionic
     install_debian
     install_centos
     install_arch
@@ -25,6 +26,7 @@ Welcome to Red - Discord Bot's documentation!
     :caption: Cog Reference:
 
     cog_downloader
+    cog_permissions
 
 .. toctree::
     :maxdepth: 2

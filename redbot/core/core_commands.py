@@ -2,6 +2,7 @@ import asyncio
 import datetime
 import importlib
 import itertools
+import json
 import logging
 import os
 import sys
@@ -53,10 +54,7 @@ class Core:
     @commands.command(hidden=True)
     async def ping(self, ctx):
         """Pong."""
-        if ctx.guild is None or ctx.channel.permissions_for(ctx.guild.me).add_reactions:
-            await ctx.message.add_reaction("\U0001f3d3")  # ping pong paddle
-        else:
-            await ctx.maybe_send_embed("Pong.")
+        await ctx.send("Pong.")
 
     @commands.command()
     async def info(self, ctx: commands.Context):
@@ -559,6 +557,42 @@ class Core:
         await ctx.bot.db.guild(ctx.guild).mod_role.set(role.id)
         await ctx.send(_("The mod role for this guild has been set."))
 
+    @_set.command(aliases=["usebotcolor"])
+    @checks.guildowner()
+    @commands.guild_only()
+    async def usebotcolour(self, ctx):
+        """
+        Toggle whether to use the bot owner-configured colour for embeds.
+
+        Default is to not use the bot's configured colour, in which case the 
+        colour used will be the colour of the bot's top role.
+        """
+        current_setting = await ctx.bot.db.guild(ctx.guild).use_bot_color()
+        await ctx.bot.db.guild(ctx.guild).use_bot_color.set(not current_setting)
+        await ctx.send(
+            _("The bot {} use its configured color for embeds.").format(
+                _("will not") if current_setting else _("will")
+            )
+        )
+
+    @_set.command(aliases=["color"])
+    @checks.is_owner()
+    async def colour(self, ctx, *, colour: discord.Colour = None):
+        """
+        Sets a default colour to be used for the bot's embeds.
+
+        Acceptable values cor the colour parameter can be found at:
+
+        http://discordpy.readthedocs.io/en/rewrite/ext/commands/api.html#discord.ext.commands.ColourConverter
+        """
+        if colour is None:
+            ctx.bot.color = discord.Color.red()
+            await ctx.bot.db.color.set(discord.Color.red().value)
+            return await ctx.send(_("The color has been reset."))
+        ctx.bot.color = colour
+        await ctx.bot.db.color.set(colour.value)
+        await ctx.send(_("The color has been set."))
+
     @_set.command()
     @checks.is_owner()
     async def avatar(self, ctx, url: str):
@@ -876,6 +910,30 @@ class Core:
         await ctx.bot.db.help.max_pages_in_guild.set(pages)
         await ctx.send(_("Done. The page limit has been set to {}.").format(pages))
 
+    @helpset.command(name="tagline")
+    async def helpset_tagline(self, ctx: commands.Context, *, tagline: str = None):
+        """
+        Set the tagline to be used.
+
+        This setting only applies to embedded help. If no tagline is 
+        specified, the default will be used instead.
+        """
+        if tagline is None:
+            await ctx.bot.db.help.tagline.set("")
+            return await ctx.send(_("The tagline has been reset."))
+
+        if len(tagline) > 2048:
+            await ctx.send(
+                _(
+                    "Your tagline is too long! Please shorten it to be "
+                    "no more than 2048 characters long."
+                )
+            )
+            return
+
+        await ctx.bot.db.help.tagline.set(tagline)
+        await ctx.send(_("The tagline has been set to {}.").format(tagline[:1900]))
+
     @commands.command()
     @checks.is_owner()
     async def listlocales(self, ctx: commands.Context):
@@ -894,7 +952,7 @@ class Core:
 
     @commands.command()
     @checks.is_owner()
-    async def backup(self, ctx):
+    async def backup(self, ctx, backup_path: str = None):
         """Creates a backup of all data for the instance."""
         from redbot.core.data_manager import basic_config, instance_name
         from redbot.core.drivers.red_json import JSON
@@ -922,14 +980,59 @@ class Core:
             instance_name, ctx.message.created_at.strftime("%Y-%m-%d %H-%M-%S")
         )
         if data_dir.exists():
-            home = data_dir.home()
-            backup_file = home / backup_filename
-            os.chdir(str(data_dir.parent))
+            if not backup_path:
+                backup_pth = data_dir.home()
+            else:
+                backup_pth = Path(backup_path)
+            backup_file = backup_pth / backup_filename
+
+            to_backup = []
+            exclusions = [
+                "__pycache__",
+                "Lavalink.jar",
+                os.path.join("Downloader", "lib"),
+                os.path.join("CogManager", "cogs"),
+                os.path.join("RepoManager", "repos"),
+            ]
+            downloader_cog = ctx.bot.get_cog("Downloader")
+            if downloader_cog and hasattr(downloader_cog, "_repo_manager"):
+                repo_output = []
+                repo_mgr = downloader_cog._repo_manager
+                for n, repo in repo_mgr._repos:
+                    repo_output.append(
+                        {{"url": repo.url, "name": repo.name, "branch": repo.branch}}
+                    )
+                repo_filename = data_dir / "cogs" / "RepoManager" / "repos.json"
+                with open(str(repo_filename), "w") as f:
+                    f.write(json.dumps(repo_output, indent=4))
+            instance_data = {instance_name: basic_config}
+            instance_file = data_dir / "instance.json"
+            with open(str(instance_file), "w") as instance_out:
+                instance_out.write(json.dumps(instance_data, indent=4))
+            for f in data_dir.glob("**/*"):
+                if not any(ex in str(f) for ex in exclusions):
+                    to_backup.append(f)
             with tarfile.open(str(backup_file), "w:gz") as tar:
-                tar.add(data_dir.stem)
+                for f in to_backup:
+                    tar.add(str(f), recursive=False)
+            print(str(backup_file))
             await ctx.send(
-                _("A backup has been made of this instance. It is at {}.").format(backup_file)
+                _("A backup has been made of this instance. It is at {}.").format((backup_file))
             )
+            await ctx.send(_("Would you like to receive a copy via DM? (y/n)"))
+
+            def same_author_check(m):
+                return m.author == ctx.author and m.channel == ctx.channel
+
+            try:
+                msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=60)
+            except asyncio.TimeoutError:
+                await ctx.send(_("Ok then."))
+            else:
+                if msg.content.lower().strip() == "y":
+                    await ctx.author.send(
+                        _("Here's a copy of the backup"), file=discord.File(str(backup_file))
+                    )
         else:
             await ctx.send(_("That directory doesn't seem to exist..."))
 
