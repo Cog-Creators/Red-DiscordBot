@@ -43,6 +43,7 @@ class Case:
 
     def __init__(
         self,
+        bot: Red,
         guild: discord.Guild,
         created_at: int,
         action_type: str,
@@ -56,6 +57,7 @@ class Case:
         modified_at: int = None,
         message: discord.Message = None,
     ):
+        self.bot = bot
         self.guild = guild
         self.created_at = created_at
         self.action_type = action_type
@@ -69,32 +71,21 @@ class Case:
         self.case_number = case_number
         self.message = message
 
-    async def edit(self, bot, data: dict):
+    async def edit(self, data: dict):
         """
         Edits a case
 
         Parameters
         ----------
-        bot: Red
-            The bot instance
         data: dict
             The attributes to change
-
-        Returns
-        -------
 
         """
         for item in list(data.keys()):
             setattr(self, item, data[item])
 
-        use_embed = await bot.embed_requested(self.message.channel, self.guild.me)
-        case_content = await self.message_content(use_embed)
-        if use_embed:
-            await self.message.edit(embed=case_content)
-        else:
-            await self.message.edit(case_content)
-
         await _conf.guild(self.guild).cases.set_raw(str(self.case_number), value=self.to_json())
+        self.bot.dispatch("modlog_case_edit", self)
 
     async def message_content(self, embed: bool = True):
         """
@@ -240,6 +231,7 @@ class Case:
         amended_by = guild.get_member(data["amended_by"])
         case_guild = bot.get_guild(data["guild"])
         return cls(
+            bot=bot,
             guild=case_guild,
             created_at=data["created_at"],
             action_type=data["action_type"],
@@ -437,7 +429,9 @@ async def create_case(
     channel: discord.TextChannel = None,
 ) -> Union[Case, None]:
     """
-    Creates a new case
+    Creates a new case.
+
+    This fires an event :code:`on_modlog_case_create`
 
     Parameters
     ----------
@@ -459,26 +453,7 @@ async def create_case(
         The time the action is in effect until
     channel: `discord.TextChannel` or `discord.VoiceChannel`
         The channel the action was taken in
-
-    Returns
-    -------
-    Case
-        The newly created case
-
-    Raises
-    ------
-    RuntimeError
-        If the mod log channel doesn't exist
-
     """
-    mod_channel = None
-    if hasattr(guild, "owner"):
-        # Fairly arbitrary, but it doesn't really matter
-        # since we don't need the modlog channel in tests
-        try:
-            mod_channel = await get_modlog_channel(guild)
-        except RuntimeError:
-            raise RuntimeError("No mod log channel set for guild {}".format(guild.name))
     case_type = await get_casetype(action_type, guild)
     if case_type is None:
         return None
@@ -489,6 +464,7 @@ async def create_case(
     next_case_number = int(await get_next_case_number(guild))
 
     case = Case(
+        bot,
         guild,
         int(created_at.timestamp()),
         action_type,
@@ -502,15 +478,8 @@ async def create_case(
         modified_at=None,
         message=None,
     )
-    if hasattr(mod_channel, "send"):  # Not going to be the case for tests
-        use_embeds = await bot.embed_requested(mod_channel, guild.me)
-        case_content = await case.message_content(use_embeds)
-        if use_embeds:
-            msg = await mod_channel.send(embed=case_content)
-        else:
-            msg = await mod_channel.send(case_content)
-        case.message = msg
     await _conf.guild(guild).cases.set_raw(str(next_case_number), value=case.to_json())
+    bot.dispatch("modlog_case_create", case)
     return case
 
 
