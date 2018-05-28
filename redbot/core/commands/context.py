@@ -30,16 +30,33 @@ class Context(commands.Context):
 
         """
         command = self.invoked_subcommand or self.command
-        embeds = await self.bot.formatter.format_help_for(self, command)
-        destination = self
+        embed_wanted = await self.bot.embed_requested(
+            self.channel, self.author, command=self.bot.get_command("help")
+        )
+        if self.guild and not self.channel.permissions_for(self.guild.me).embed_links:
+            embed_wanted = False
+
         ret = []
-        for embed in embeds:
-            try:
-                m = await destination.send(embed=embed)
-            except discord.HTTPException:
-                destination = self.author
-                m = await destination.send(embed=embed)
-            ret.append(m)
+        destination = self
+        if embed_wanted:
+            embeds = await self.bot.formatter.format_help_for(self, command)
+            for embed in embeds:
+                try:
+                    m = await destination.send(embed=embed)
+                except discord.HTTPException:
+                    destination = self.author
+                    m = await destination.send(embed=embed)
+                ret.append(m)
+        else:
+            f = commands.HelpFormatter()
+            msgs = await f.format_help_for(self, command)
+            for msg in msgs:
+                try:
+                    m = await destination.send(msg)
+                except discord.HTTPException:
+                    destination = self.author
+                    m = await destination.send(msg)
+                ret.append(m)
 
         return ret
 
