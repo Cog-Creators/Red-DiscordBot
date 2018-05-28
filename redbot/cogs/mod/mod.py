@@ -1116,7 +1116,6 @@ class Mod:
                 author,
                 reason,
                 until=None,
-                channel=channel,
             )
         except RuntimeError as e:
             await ctx.send(e)
@@ -1423,7 +1422,7 @@ class Mod:
                     )
                 else:
                     try:
-                        case = await modlog.create_case(
+                        await modlog.create_case(
                             self.bot,
                             guild,
                             message.created_at,
@@ -1515,6 +1514,34 @@ class Mod:
             await modlog.create_case(self.bot, guild, date, "unban", user, mod, reason)
         except RuntimeError as e:
             print(e)
+
+    async def on_modlog_case_create(self, case: modlog.Case):
+        """
+        An event for modlog case creation
+        """
+        mod_channel = await modlog.get_modlog_channel(case.guild)
+        if mod_channel is None:
+            return
+        use_embeds = await case.bot.embed_requested(mod_channel, case.guild.me)
+        case_content = await case.message_content(use_embeds)
+        if use_embeds:
+            msg = await mod_channel.send(embed=case_content)
+        else:
+            msg = await mod_channel.send(case_content)
+        await case.edit({"message": msg})
+
+    async def on_modlog_case_edit(self, case: modlog.Case):
+        """
+        Event for modlog case edits
+        """
+        if not case.message:
+            return
+        use_embed = await case.bot.embed_requested(case.message.channel, case.guild.me)
+        case_content = await case.message_content(use_embed)
+        if use_embed:
+            await case.message.edit(embed=case_content)
+        else:
+            await case.message.edit(content=case_content)
 
     async def get_audit_entry_info(self, guild: discord.Guild, action: int, target):
         """Get info about an audit log entry.
