@@ -43,8 +43,8 @@ class CommandObj:
         intro = _(
             "Welcome to the interactive random {} maker!\n"
             "Every message you send will be added as one of the random "
-            "response to choose from once this {} is "
-            "triggered. To exit this interactive menu, type `{}`"
+            "responses to choose from once this {} is "
+            "triggered. To exit this interactive menu, type `{}`."
         ).format("customcommand", "customcommand", "exit()")
         await ctx.send(intro)
 
@@ -174,6 +174,7 @@ class CustomCommands:
     async def cc_add_random(self, ctx: commands.Context, command: str):
         """
         Create a CC where it will randomly choose a response!
+
         Note: This is interactive
         """
         channel = ctx.channel
@@ -196,6 +197,7 @@ class CustomCommands:
     @checks.mod_or_permissions(administrator=True)
     async def cc_add_simple(self, ctx, command: str, *, text):
         """Adds a simple custom command
+
         Example:
         [p]customcom add simple yourcommand Text you want
         """
@@ -218,6 +220,7 @@ class CustomCommands:
     @checks.mod_or_permissions(administrator=True)
     async def cc_edit(self, ctx, command: str, *, text=None):
         """Edits a custom command
+
         Example:
         [p]customcom edit yourcommand Text you want
         """
@@ -238,6 +241,7 @@ class CustomCommands:
     @checks.mod_or_permissions(administrator=True)
     async def cc_delete(self, ctx, command: str):
         """Deletes a custom command
+
         Example:
         [p]customcom delete yourcommand"""
         guild = ctx.message.guild
