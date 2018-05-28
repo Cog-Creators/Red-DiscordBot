@@ -394,7 +394,7 @@ class Streams:
         if current_setting:
             await self.db.role(role).mention.set(False)
             await ctx.send(
-                _("{} will no longer be mentioned " "for a stream alert").format(
+                _("{} will no longer be mentioned " "for a stream alert.").format(
                     "@\u200b{}".format(role.name)
                 )
             )
@@ -448,8 +448,7 @@ class Streams:
             await ctx.send(
                 _(
                     "I'll send a notification in this channel when a "
-                    "channel is streaming to the {} community"
-                    ""
+                    "channel is streaming to the {} community."
                 ).format(community.name)
             )
         else:
@@ -459,8 +458,7 @@ class Streams:
             await ctx.send(
                 _(
                     "I won't send notifications about channels streaming "
-                    "to the {} community in this channel anymore"
-                    ""
+                    "to the {} community in this channel anymore."
                 ).format(community.name)
             )
         await self.save_communities()
