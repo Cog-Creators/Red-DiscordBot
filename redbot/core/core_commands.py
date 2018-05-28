@@ -53,10 +53,7 @@ class Core:
     @commands.command(hidden=True)
     async def ping(self, ctx):
         """Pong."""
-        if ctx.guild is None or ctx.channel.permissions_for(ctx.guild.me).add_reactions:
-            await ctx.message.add_reaction("\U0001f3d3")  # ping pong paddle
-        else:
-            await ctx.maybe_send_embed("Pong.")
+        await ctx.send("Pong.")
 
     @commands.command()
     async def info(self, ctx: commands.Context):
@@ -559,6 +556,42 @@ class Core:
         await ctx.bot.db.guild(ctx.guild).mod_role.set(role.id)
         await ctx.send(_("The mod role for this guild has been set."))
 
+    @_set.command(aliases=["usebotcolor"])
+    @checks.guildowner()
+    @commands.guild_only()
+    async def usebotcolour(self, ctx):
+        """
+        Toggle whether to use the bot owner-configured colour for embeds.
+
+        Default is to not use the bot's configured colour, in which case the 
+        colour used will be the colour of the bot's top role.
+        """
+        current_setting = await ctx.bot.db.guild(ctx.guild).use_bot_color()
+        await ctx.bot.db.guild(ctx.guild).use_bot_color.set(not current_setting)
+        await ctx.send(
+            _("The bot {} use its configured color for embeds.").format(
+                _("will not") if current_setting else _("will")
+            )
+        )
+
+    @_set.command(aliases=["color"])
+    @checks.is_owner()
+    async def colour(self, ctx, *, colour: discord.Colour = None):
+        """
+        Sets a default colour to be used for the bot's embeds.
+
+        Acceptable values cor the colour parameter can be found at:
+
+        http://discordpy.readthedocs.io/en/rewrite/ext/commands/api.html#discord.ext.commands.ColourConverter
+        """
+        if colour is None:
+            ctx.bot.color = discord.Color.red()
+            await ctx.bot.db.color.set(discord.Color.red().value)
+            return await ctx.send(_("The color has been reset."))
+        ctx.bot.color = colour
+        await ctx.bot.db.color.set(colour.value)
+        await ctx.send(_("The color has been set."))
+
     @_set.command()
     @checks.is_owner()
     async def avatar(self, ctx, url: str):
@@ -875,6 +908,30 @@ class Core:
 
         await ctx.bot.db.help.max_pages_in_guild.set(pages)
         await ctx.send(_("Done. The page limit has been set to {}.").format(pages))
+
+    @helpset.command(name="tagline")
+    async def helpset_tagline(self, ctx: commands.Context, *, tagline: str = None):
+        """
+        Set the tagline to be used.
+
+        This setting only applies to embedded help. If no tagline is 
+        specified, the default will be used instead.
+        """
+        if tagline is None:
+            await ctx.bot.db.help.tagline.set("")
+            return await ctx.send(_("The tagline has been reset."))
+
+        if len(tagline) > 2048:
+            await ctx.send(
+                _(
+                    "Your tagline is too long! Please shorten it to be "
+                    "no more than 2048 characters long."
+                )
+            )
+            return
+
+        await ctx.bot.db.help.tagline.set(tagline)
+        await ctx.send(_("The tagline has been set to {}.").format(tagline[:1900]))
 
     @commands.command()
     @checks.is_owner()
