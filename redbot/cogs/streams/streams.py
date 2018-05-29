@@ -350,7 +350,7 @@ class Streams:
         if current_setting:
             await self.db.guild(guild).mention_everyone.set(False)
             await ctx.send(
-                _("{} will no longer be mentioned " "for a stream alert.").format(
+                _("{} will no longer be mentioned for a stream alert.").format(
                     "@\u200beveryone"
                 )
             )
@@ -372,7 +372,7 @@ class Streams:
         if current_setting:
             await self.db.guild(guild).mention_here.set(False)
             await ctx.send(
-                _("{} will no longer be mentioned " "for a stream alert.").format("@\u200bhere")
+                _("{} will no longer be mentioned for a stream alert.").format("@\u200bhere")
             )
         else:
             await self.db.guild(guild).mention_here.set(True)
@@ -394,7 +394,7 @@ class Streams:
         if current_setting:
             await self.db.role(role).mention.set(False)
             await ctx.send(
-                _("{} will no longer be mentioned " "for a stream alert.").format(
+                _("{} will no longer be mentioned for a stream alert.").format(
                     "@\u200b{}".format(role.name)
                 )
             )
@@ -414,7 +414,7 @@ class Streams:
         """Toggles automatic deletion of notifications for streams that go offline"""
         await self.db.guild(ctx.guild).autodelete.set(on_off)
         if on_off:
-            await ctx.send("The notifications will be deleted once " "streams go offline.")
+            await ctx.send("The notifications will be deleted once streams go offline.")
         else:
             await ctx.send("Notifications will never be deleted.")
 
@@ -424,7 +424,7 @@ class Streams:
             if stream not in self.streams:
                 self.streams.append(stream)
             await ctx.send(
-                _("I'll send a notification in this channel when {} " "is online.").format(
+                _("I'll send a notification in this channel when {} is online.").format(
                     stream.name
                 )
             )
@@ -433,7 +433,7 @@ class Streams:
             if not stream.channels:
                 self.streams.remove(stream)
             await ctx.send(
-                _("I won't send notifications about {} in this " "channel anymore.").format(
+                _("I won't send notifications about {} in this channel anymore.").format(
                     stream.name
                 )
             )
