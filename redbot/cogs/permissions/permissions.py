@@ -260,7 +260,7 @@ class Permissions:
             await yamlset_acl(ctx, config=self.config.owner_models, update=False)
         except Exception as e:
             print(e)
-            return await ctx.send(_("Inalid syntax."))
+            return await ctx.send(_("Invalid syntax."))
         else:
             await ctx.send(_("Rules set."))
 
@@ -286,7 +286,7 @@ class Permissions:
             await yamlset_acl(ctx, config=self.config.guild(ctx.guild).owner_models, update=False)
         except Exception as e:
             print(e)
-            return await ctx.send(_("Inalid syntax."))
+            return await ctx.send(_("Invalid syntax."))
         else:
             await ctx.send(_("Rules set."))
 
@@ -315,7 +315,7 @@ class Permissions:
             await yamlset_acl(ctx, config=self.config.guild(ctx.guild).owner_models, update=True)
         except Exception as e:
             print(e)
-            return await ctx.send(_("Inalid syntax."))
+            return await ctx.send(_("Invalid syntax."))
         else:
             await ctx.send(_("Rules set."))
 
@@ -334,7 +334,7 @@ class Permissions:
             await yamlset_acl(ctx, config=self.config.owner_models, update=True)
         except Exception as e:
             print(e)
-            return await ctx.send(_("Inalid syntax."))
+            return await ctx.send(_("Invalid syntax."))
         else:
             await ctx.send(_("Rules set."))
 
