@@ -1,4 +1,9 @@
-__all__ = ["get_driver"]
+from .red_base import *
+from .red_json import *
+from .red_mongo import *
+
+
+__all__ = ["BaseDriver", "JSON", "Mongo", "get_driver"]
 
 
 def get_driver(type, *args, **kwargs):
@@ -23,11 +28,7 @@ def get_driver(type, *args, **kwargs):
         Subclass of :py:class:`.red_base.BaseDriver`.
     """
     if type == "JSON":
-        from .red_json import JSON
-
         return JSON(*args, **kwargs)
     elif type == "MongoDB":
-        from .red_mongo import Mongo
-
         return Mongo(*args, **kwargs)
     raise RuntimeError("Invalid driver type: '{}'".format(type))

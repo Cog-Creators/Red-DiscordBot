@@ -20,7 +20,7 @@ from redbot.core.data_manager import (
 )
 from redbot.core.json_io import JsonIO
 from redbot.core.utils import safe_delete
-from redbot.core.drivers.red_json import JSON
+from redbot.core.drivers import JSON, Mongo
 
 config_dir = None
 appdir = appdirs.AppDirs("Red-DiscordBot")
@@ -158,9 +158,7 @@ def basic_setup():
     default_dirs["STORAGE_TYPE"] = storage_dict.get(storage, 1)
 
     if storage_dict.get(storage, 1) == "MongoDB":
-        from redbot.core.drivers.red_mongo import get_config_details
-
-        default_dirs["STORAGE_DETAILS"] = get_config_details()
+        default_dirs["STORAGE_DETAILS"] = Mongo.get_config_details()
     else:
         default_dirs["STORAGE_DETAILS"] = {}
 
@@ -175,8 +173,6 @@ def basic_setup():
 
 
 async def json_to_mongo(current_data_dir: Path, storage_details: dict):
-    from redbot.core.drivers.red_mongo import Mongo
-
     core_data_file = list(current_data_dir.glob("core/settings.json"))[0]
     m = Mongo("Core", "0", **storage_details)
     with core_data_file.open(mode="r") as f:
@@ -200,8 +196,6 @@ async def json_to_mongo(current_data_dir: Path, storage_details: dict):
 
 
 async def mongo_to_json(current_data_dir: Path, storage_details: dict):
-    from redbot.core.drivers.red_mongo import Mongo
-
     m = Mongo("Core", "0", **storage_details)
     db = m.db
     collection_names = await db.collection_names(include_system_collections=False)
@@ -268,9 +262,7 @@ async def edit_instance():
         storage_dict = {1: "JSON", 2: "MongoDB"}
         default_dirs["STORAGE_TYPE"] = storage_dict[storage]
         if storage_dict.get(storage, 1) == "MongoDB":
-            from redbot.core.drivers.red_mongo import get_config_details
-
-            storage_details = get_config_details()
+            storage_details = Mongo.get_config_details()
             default_dirs["STORAGE_DETAILS"] = storage_details
 
             if instance_data["STORAGE_TYPE"] == "JSON":
@@ -336,8 +328,6 @@ async def create_backup(selected, instance_data):
 
 async def remove_instance(selected, instance_data):
     if instance_data["STORAGE_TYPE"] == "MongoDB":
-        from redbot.core.drivers.red_mongo import Mongo
-
         m = Mongo("Core", **instance_data["STORAGE_DETAILS"])
         db = m.db
         collections = await db.collection_names(include_system_collections=False)

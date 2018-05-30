@@ -6,6 +6,19 @@ class BaseDriver:
         self.cog_name = cog_name
         self.unique_cog_identifier = identifier
 
+    @staticmethod
+    def get_config_details():
+        """
+        Asks users for additional configuration information necessary
+        to use this config driver.
+
+        Returns
+        -------
+        dict
+            Dict of configuration details.
+        """
+        raise NotImplementedError
+
     async def get(self, *identifiers: str):
         """
         Finds the value indicate by the given identifiers.
@@ -19,17 +32,6 @@ class BaseDriver:
         -------
         Any
             Stored value.
-        """
-        raise NotImplementedError
-
-    def get_config_details(self):
-        """
-        Asks users for additional configuration information necessary
-        to use this config driver.
-
-        Returns
-        -------
-            Dict of configuration details.
         """
         raise NotImplementedError
 

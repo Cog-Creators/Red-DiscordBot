@@ -68,7 +68,6 @@ class JSON(BaseDriver):
         self.jsonIO = JsonIO(self.data_path)
 
         self._load_data()
-
     @property
     def data(self):
         return _shared_datastore.get(self.cog_name)
@@ -76,6 +75,10 @@ class JSON(BaseDriver):
     @data.setter
     def data(self, value):
         _shared_datastore[self.cog_name] = value
+
+    @staticmethod
+    def get_config_details():
+        return
 
     def _load_data(self):
         if self.cog_name not in _driver_counts:
@@ -122,6 +125,3 @@ class JSON(BaseDriver):
             pass
         else:
             await self.jsonIO._threadsafe_save_json(self.data)
-
-    def get_config_details(self):
-        return

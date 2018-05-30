@@ -1079,13 +1079,10 @@ class Core(CoreLogic):
     async def backup(self, ctx, backup_path: str = None):
         """Creates a backup of all data for the instance."""
         from redbot.core.data_manager import basic_config, instance_name
-        from redbot.core.drivers.red_json import JSON
 
         data_dir = Path(basic_config["DATA_PATH"])
         if basic_config["STORAGE_TYPE"] == "MongoDB":
-            from redbot.core.drivers.red_mongo import Mongo
-
-            m = Mongo("Core", **basic_config["STORAGE_DETAILS"])
+            m = drivers.Mongo("Core", **basic_config["STORAGE_DETAILS"])
             db = m.db
             collection_names = await db.collection_names(include_system_collections=False)
             for c_name in collection_names:
@@ -1098,7 +1095,7 @@ class Core(CoreLogic):
                 for item in docs:
                     item_id = str(item.pop("_id"))
                     output[item_id] = item
-                target = JSON(c_name, data_path_override=c_data_path)
+                target = drivers.JSON(c_name, data_path_override=c_data_path)
                 await target.jsonIO._threadsafe_save_json(output)
         backup_filename = "redv3-{}-{}.tar.gz".format(
             instance_name, ctx.message.created_at.strftime("%Y-%m-%d %H-%M-%S")

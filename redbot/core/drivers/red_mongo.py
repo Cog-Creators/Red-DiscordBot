@@ -1,14 +1,27 @@
-import motor.motor_asyncio
+
+try:
+    import motor.motor_asyncio
+except ImportError:
+    motor = None
+
 from .red_base import BaseDriver
 from urllib.parse import quote_plus
 
-__all__ = ["Mongo"]
+__all__ = ["Mongo", "MotorUnavailable"]
 
 
 _conn = None
 
 
+class MotorUnavailable(Exception):
+    """Required dependencies for Mongo storage are unavailable."""
+    pass
+
+
 def _initialize(**kwargs):
+    if motor is None:
+        raise MotorUnavailable("Motor is unavailable. Please reinstall Red with the [mongo] extra")
+
     host = kwargs["HOST"]
     port = kwargs["PORT"]
     admin_user = kwargs["USERNAME"]
@@ -38,7 +51,7 @@ class Mongo(BaseDriver):
             _initialize(**kwargs)
 
     @property
-    def db(self) -> motor.core.Database:
+    def db(self) -> "motor.core.Database":
         """
         Gets the mongo database for this cog's name.
 
@@ -53,7 +66,29 @@ class Mongo(BaseDriver):
         """
         return _conn.get_database()
 
-    def get_collection(self) -> motor.core.Collection:
+    @staticmethod
+    def get_config_details():
+        host = input("Enter host address: ")
+        port = int(input("Enter host port: "))
+
+        admin_uname = input("Enter login username: ")
+        admin_password = input("Enter login password: ")
+
+        db_name = input("Enter mongodb database name: ")
+
+        if admin_uname == "":
+            admin_uname = admin_password = None
+
+        ret = {
+            "HOST": host,
+            "PORT": port,
+            "USERNAME": admin_uname,
+            "PASSWORD": admin_password,
+            "DB_NAME": db_name,
+        }
+        return ret
+
+    def get_collection(self) -> "motor.core.Collection":
         """
         Gets a specified collection within the PyMongo database for this cog.
 
@@ -108,25 +143,3 @@ class Mongo(BaseDriver):
             )
         else:
             await mongo_collection.delete_one({"_id": self.unique_cog_identifier})
-
-
-def get_config_details():
-    host = input("Enter host address: ")
-    port = int(input("Enter host port: "))
-
-    admin_uname = input("Enter login username: ")
-    admin_password = input("Enter login password: ")
-
-    db_name = input("Enter mongodb database name: ")
-
-    if admin_uname == "":
-        admin_uname = admin_password = None
-
-    ret = {
-        "HOST": host,
-        "PORT": port,
-        "USERNAME": admin_uname,
-        "PASSWORD": admin_password,
-        "DB_NAME": db_name,
-    }
-    return ret
