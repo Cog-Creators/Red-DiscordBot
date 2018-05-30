@@ -89,7 +89,6 @@ methods = Methods()
 
 
 class BaseRPCMethodMixin:
-
     def __init__(self):
         methods.add(self.all_methods, name="all_methods")
 

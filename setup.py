@@ -113,6 +113,6 @@ setup(
         "mongo": ["motor"],
         "docs": ["sphinx>=1.7", "sphinxcontrib-asyncio", "sphinx_rtd_theme"],
         "voice": ["red-lavalink>=0.0.4"],
-        "style": ["black"],
+        "style": ["black==18.5b1"],
     },
 )

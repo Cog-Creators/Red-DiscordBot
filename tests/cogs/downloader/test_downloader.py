@@ -25,7 +25,6 @@ async def fake_run_noprint(*args, **kwargs):
 
 @pytest.fixture(scope="module", autouse=True)
 def patch_relative_to(monkeysession):
-
     def fake_relative_to(self, some_path: Path):
         return self
 

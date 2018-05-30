@@ -55,6 +55,7 @@ class Group(Command, commands.Group):
     This class inherits from `discord.ext.commands.Group`, with `Command` mixed
     in.
     """
+
     pass
 
 
