@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: For feature requests regarding Red it self.
+about: For feature requests regarding Red itself.
 
 ---
 
