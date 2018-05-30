@@ -55,7 +55,7 @@ class Image:
         if data["success"]:
             results = data["data"]
             if not results:
-                await ctx.send(_("Your search returned no results"))
+                await ctx.send(_("Your search returned no results."))
                 return
             shuffle(results)
             msg = _("Search results...\n")
@@ -123,6 +123,7 @@ class Image:
     @commands.command()
     async def imgurcreds(self, ctx, imgur_client_id: str):
         """Sets the imgur client id
+        
         You will need an account on Imgur to get this
 
         You can get these by visiting https://api.imgur.com/oauth2/addclient
@@ -179,4 +180,4 @@ class Image:
                 else:
                     await ctx.send(_("No results found."))
             else:
-                await ctx.send(_("Error contacting the API"))
+                await ctx.send(_("Error contacting the API."))
