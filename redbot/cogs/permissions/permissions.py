@@ -31,7 +31,9 @@ class Permissions:
 
     def __init__(self, bot: Red):
         self.bot = bot
-        self.config = Config.get_conf(self, identifier=78631113035100160, force_registration=True)
+        self.config = Config.get_conf(
+            self, identifier=78631113035100160, force_registration=True
+        )
         self._before = []
         self._after = []
         self.config.register_global(owner_models={})
@@ -283,7 +285,9 @@ class Permissions:
             return await ctx.send(_("You must upload a file."))
 
         try:
-            await yamlset_acl(ctx, config=self.config.guild(ctx.guild).owner_models, update=False)
+            await yamlset_acl(
+                ctx, config=self.config.guild(ctx.guild).owner_models, update=False
+            )
         except Exception as e:
             print(e)
             return await ctx.send(_("Invalid syntax."))
@@ -312,7 +316,9 @@ class Permissions:
             return await ctx.send(_("You must upload a file."))
 
         try:
-            await yamlset_acl(ctx, config=self.config.guild(ctx.guild).owner_models, update=True)
+            await yamlset_acl(
+                ctx, config=self.config.guild(ctx.guild).owner_models, update=True
+            )
         except Exception as e:
             print(e)
             return await ctx.send(_("Invalid syntax."))
@@ -516,7 +522,10 @@ class Permissions:
     @checks.guildowner_or_permissions(administrator=True)
     @permissions.command(name="setdefaultguildrule")
     async def set_default_guild_rule(
-        self, ctx: commands.Context, cog_or_command: CogOrCommand, allow_or_deny: RuleType = None
+        self,
+        ctx: commands.Context,
+        cog_or_command: CogOrCommand,
+        allow_or_deny: RuleType = None,
     ):
         """
         Sets the default behavior for a cog or command if no rule is set
@@ -545,7 +554,10 @@ class Permissions:
     @checks.is_owner()
     @permissions.command(name="setdefaultglobalrule")
     async def set_default_global_rule(
-        self, ctx: commands.Context, cog_or_command: CogOrCommand, allow_or_deny: RuleType = None
+        self,
+        ctx: commands.Context,
+        cog_or_command: CogOrCommand,
+        allow_or_deny: RuleType = None,
     ):
         """
         Sets the default behavior for a cog or command if no rule is set
@@ -585,7 +597,9 @@ class Permissions:
             await m.add_reaction(r)
         try:
             reaction, user = await self.bot.wait_for(
-                "reaction_add", check=lambda r, u: u == ctx.author and str(r) in REACTS, timeout=30
+                "reaction_add",
+                check=lambda r, u: u == ctx.author and str(r) in REACTS,
+                timeout=30,
             )
         except asyncio.TimeoutError:
             return await ctx.send(_("Ok, try responding with an emoji next time."))
@@ -610,7 +624,9 @@ class Permissions:
             await m.add_reaction(r)
         try:
             reaction, user = await self.bot.wait_for(
-                "reaction_add", check=lambda r, u: u == ctx.author and str(r) in REACTS, timeout=30
+                "reaction_add",
+                check=lambda r, u: u == ctx.author and str(r) in REACTS,
+                timeout=30,
             )
         except asyncio.TimeoutError:
             return await ctx.send(_("Ok, try responding with an emoji next time."))
