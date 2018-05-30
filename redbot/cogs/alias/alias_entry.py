@@ -5,7 +5,6 @@ from redbot.core import commands
 
 
 class AliasEntry:
-
     def __init__(
         self, name: str, command: Tuple[str], creator: discord.Member, global_: bool = False
     ):

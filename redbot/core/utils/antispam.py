@@ -18,6 +18,7 @@ class AntiSpam:
     Where quantity represents the maximum amount of times
     something should be allowed in an interval.
     """
+
     # TODO : Decorator interface for command check using `spammy`
     # with insertion of the antispam element into context
     # for manual stamping on succesful command completion

@@ -495,7 +495,6 @@ class Repo(RepoJSONMixin):
 
 
 class RepoManager:
-
     def __init__(self):
 
         self._repos = {}
