@@ -18,6 +18,7 @@ UNIQUE_ID = 0xb3c0e453
 
 class InvalidListError(Exception):
     """A Trivia list file is in invalid format."""
+
     pass
 
 

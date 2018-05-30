@@ -16,7 +16,6 @@ async def check_overrides(ctx, *, level):
 
 
 def is_owner(**kwargs):
-
     async def check(ctx):
         override = await check_overrides(ctx, level="owner")
         return override if override is not None else await ctx.bot.is_owner(ctx.author, **kwargs)
@@ -73,7 +72,6 @@ async def is_admin_or_superior(ctx):
 
 
 def mod_or_permissions(**perms):
-
     async def predicate(ctx):
         override = await check_overrides(ctx, level="mod")
         return (
@@ -86,7 +84,6 @@ def mod_or_permissions(**perms):
 
 
 def admin_or_permissions(**perms):
-
     async def predicate(ctx):
         override = await check_overrides(ctx, level="admin")
         return (
@@ -99,7 +96,6 @@ def admin_or_permissions(**perms):
 
 
 def bot_in_a_guild(**kwargs):
-
     async def predicate(ctx):
         return len(ctx.bot.guilds) > 0
 
@@ -107,7 +103,6 @@ def bot_in_a_guild(**kwargs):
 
 
 def guildowner_or_permissions(**perms):
-
     async def predicate(ctx):
         has_perms_or_is_owner = await check_permissions(ctx, perms)
         if ctx.guild is None:

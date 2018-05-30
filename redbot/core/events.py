@@ -49,7 +49,6 @@ def should_log_sentry(exception) -> bool:
 
 
 def init_events(bot, cli_flags):
-
     @bot.event
     async def on_connect():
         if bot.uptime is None:
