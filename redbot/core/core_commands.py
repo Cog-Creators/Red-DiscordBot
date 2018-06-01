@@ -46,7 +46,6 @@ _ = i18n.Translator("Core", __file__)
 
 
 class CoreLogic:
-
     async def _load(self, cog_names: list):
         """
         Loads cogs by name.
