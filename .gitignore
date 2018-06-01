@@ -9,6 +9,7 @@
 
 # User-specific stuff:
 .idea/
+*.iws
 
 ## Plugin-specific files:
 
