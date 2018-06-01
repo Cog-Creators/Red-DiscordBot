@@ -550,7 +550,9 @@ class Core(CoreLogic):
     async def reload_(self, ctx, *, cog_name: str):
         """Reloads packages"""
 
-        loaded, failed, not_found = await self._reload(cog_name)
+        cog_names = [c.strip() for c in cog_name.split(" ")]
+
+        loaded, failed, not_found = await self._reload(cog_names)
 
         if loaded:
             fmt = "Package{plural} {packs} {other} reloaded."
