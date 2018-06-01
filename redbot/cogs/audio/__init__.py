@@ -1,12 +1,15 @@
 from pathlib import Path
 from aiohttp import ClientSession
 import shutil
+import logging
 
 from .audio import Audio
 from .manager import start_lavalink_server
 from discord.ext import commands
 from redbot.core.data_manager import cog_data_path
 import redbot.core
+
+log = logging.getLogger('red.audio')
 
 LAVALINK_DOWNLOAD_URL = (
     "https://github.com/Cog-Creators/Red-DiscordBot/" "releases/download/{}/Lavalink.jar"
@@ -33,14 +36,12 @@ async def maybe_download_lavalink(loop, cog):
     jar_exists = LAVALINK_JAR_FILE.exists()
     current_build = redbot.core.VersionInfo(*await cog.config.current_build())
 
-    session = ClientSession(loop=loop)
-
     if not jar_exists or current_build < redbot.core.version_info:
+        log.info("Downloading Lavalink.jar")
         LAVALINK_DOWNLOAD_DIR.mkdir(parents=True, exist_ok=True)
-        await download_lavalink(session)
+        async with ClientSession(loop=loop) as session:
+            await download_lavalink(session)
         await cog.config.current_build.set(redbot.core.version_info.to_json())
-
-    session.close()
 
     shutil.copyfile(str(BUNDLED_APP_YML_FILE), str(APP_YML_FILE))
 
