@@ -9,7 +9,7 @@ from discord.ext import commands
 from redbot.core.data_manager import cog_data_path
 import redbot.core
 
-log = logging.getLogger('red.audio')
+log = logging.getLogger("red.audio")
 
 LAVALINK_DOWNLOAD_URL = (
     "https://github.com/Cog-Creators/Red-DiscordBot/" "releases/download/{}/Lavalink.jar"

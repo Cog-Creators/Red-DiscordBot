@@ -430,8 +430,12 @@ class Core:
                 except Exception as e:
                     log.exception("Package reloading failed", exc_info=e)
 
-                    exception_log = "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
-                    exception_log += "".join(traceback.format_exception(type(e), e, e.__traceback__))
+                    exception_log = "Exception in command '{}'\n" "".format(
+                        ctx.command.qualified_name
+                    )
+                    exception_log += "".join(
+                        traceback.format_exception(type(e), e, e.__traceback__)
+                    )
                     self.bot._last_exception = exception_log
 
                     failed_packages.append(inline(name))
