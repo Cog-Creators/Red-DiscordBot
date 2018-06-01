@@ -337,22 +337,23 @@ class Core:
 
         if len(cogspecs) > 0:
             for spec, name in cogspecs:
-                try:
-                    await ctx.bot.load_extension(spec)
-                except Exception as e:
-                    log.exception("Package loading failed", exc_info=e)
+                async with ctx.typing():
+                    try:
+                        await ctx.bot.load_extension(spec)
+                    except Exception as e:
+                        log.exception("Package loading failed", exc_info=e)
 
-                    exception_log = "Exception in command '{}'\n" "".format(
-                        ctx.command.qualified_name
-                    )
-                    exception_log += "".join(
-                        traceback.format_exception(type(e), e, e.__traceback__)
-                    )
-                    self.bot._last_exception = exception_log
-                    failed_packages.append(inline(name))
-                else:
-                    await ctx.bot.add_loaded_package(name)
-                    loaded_packages.append(inline(name))
+                        exception_log = "Exception in command '{}'\n" "".format(
+                            ctx.command.qualified_name
+                        )
+                        exception_log += "".join(
+                            traceback.format_exception(type(e), e, e.__traceback__)
+                        )
+                        self.bot._last_exception = exception_log
+                        failed_packages.append(inline(name))
+                    else:
+                        await ctx.bot.add_loaded_package(name)
+                        loaded_packages.append(inline(name))
 
         if loaded_packages:
             fmt = "Loaded {packs}"
@@ -421,18 +422,19 @@ class Core:
                 notfound_packages.append(inline(c))
 
         for spec, name in cogspecs:
-            try:
-                self.cleanup_and_refresh_modules(spec.name)
-                await ctx.bot.load_extension(spec)
-                loaded_packages.append(inline(name))
-            except Exception as e:
-                log.exception("Package reloading failed", exc_info=e)
+            async with ctx.typing():
+                try:
+                    self.cleanup_and_refresh_modules(spec.name)
+                    await ctx.bot.load_extension(spec)
+                    loaded_packages.append(inline(name))
+                except Exception as e:
+                    log.exception("Package reloading failed", exc_info=e)
 
-                exception_log = "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
-                exception_log += "".join(traceback.format_exception(type(e), e, e.__traceback__))
-                self.bot._last_exception = exception_log
+                    exception_log = "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
+                    exception_log += "".join(traceback.format_exception(type(e), e, e.__traceback__))
+                    self.bot._last_exception = exception_log
 
-                failed_packages.append(inline(name))
+                    failed_packages.append(inline(name))
 
         if loaded_packages:
             fmt = "Package{plural} {packs} {other} reloaded."
