@@ -221,6 +221,8 @@ the level of permission needed for a command.
     if want to restrict a cog or a command to a channel/member, you can use
     the :ref:`permissions <>` cog.
 
+.. _getting-started-hosting:
+
 -------
 Hosting
 -------
@@ -246,8 +248,7 @@ If you want to do it, follow these steps.
 1. **Find a host**
 
   You need to find a server to host Red. You can rent a VPS (it can be free)
-  on an online service. Please check `this list
-  <https://gist.github.com/Twentysix26/cb4401c6e507782aa6698e9e470243ed>`_ for
+  on an online service. Please check :ref:`this list <host-list>` for
   quality VPS providers.
 
   You can also buy a Raspberry Pi (~$20), which is a micro-computer that will
