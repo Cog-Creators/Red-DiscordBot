@@ -3,6 +3,8 @@
     You can adapt this file completely to your liking, but it should at least
     contain the root `toctree` directive.
 
+.. _main:
+
 Welcome to Red - Discord Bot's documentation!
 =============================================
 
@@ -20,6 +22,12 @@ Welcome to Red - Discord Bot's documentation!
     install_raspbian
     cog_dataconverter
     autostart_systemd
+
+.. toctree::
+    :maxdepth: 2
+    :caption: How to use
+
+    getting_started
 
 .. toctree::
     :maxdepth: 2
