@@ -25,9 +25,7 @@ if sys.platform == "linux":
 PYTHON_OK = sys.version_info >= (3, 5)
 INTERACTIVE_MODE = not len(sys.argv) > 1  # CLI flags = non-interactive
 
-INTRO = (
-    "==========================\nRed Discord Bot - Launcher\n==========================\n"
-)
+INTRO = "==========================\nRed Discord Bot - Launcher\n==========================\n"
 
 IS_WINDOWS = os.name == "nt"
 IS_MAC = sys.platform == "darwin"
