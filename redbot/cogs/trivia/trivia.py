@@ -161,7 +161,7 @@ class Trivia:
             return
         await settings.payout_multiplier.set(multiplier)
         if not multiplier:
-            await ctx.send("Done. I will no longer reward the winner with a" " payout.")
+            await ctx.send("Done. I will no longer reward the winner with a payout.")
             return
         await ctx.send("Done. Payout multiplier set to {}.".format(multiplier))
 
@@ -207,7 +207,7 @@ class Trivia:
             return
         if not trivia_dict:
             await ctx.send(
-                "The trivia list was parsed successfully, however" " it appears to be empty!"
+                "The trivia list was parsed successfully, however it appears to be empty!"
             )
             return
         settings = await self.conf.guild(ctx.guild).all()
@@ -383,7 +383,7 @@ class Trivia:
         try:
             priority.remove(key)
         except ValueError:
-            raise ValueError("{} is not a valid key".format(key))
+            raise ValueError("{} is not a valid key.".format(key))
         # Put key last in reverse priority
         priority.append(key)
         items = data.items()
@@ -481,13 +481,13 @@ class Trivia:
         try:
             path = next(p for p in self._all_lists() if p.stem == category)
         except StopIteration:
-            raise FileNotFoundError("Could not find the `{}` category" "".format(category))
+            raise FileNotFoundError("Could not find the `{}` category.".format(category))
 
         with path.open(encoding="utf-8") as file:
             try:
                 dict_ = yaml.load(file)
             except yaml.error.YAMLError as exc:
-                raise InvalidListError("YAML parsing failed") from exc
+                raise InvalidListError("YAML parsing failed.") from exc
             else:
                 return dict_
 
