@@ -20,14 +20,14 @@ GENERIC_FORBIDDEN = (
 
 HIERARCHY_ISSUE = (
     "I tried to add {role.name} to {member.display_name} but that role"
-    " is higher than my highest role in the Discord heirarchy so I was"
+    " is higher than my highest role in the Discord hierarchy so I was"
     " unable to successfully add it. Please give me a higher role and "
     "try again."
 )
 
 USER_HIERARCHY_ISSUE = (
     "I tried to add {role.name} to {member.display_name} but that role"
-    " is higher than your highest role in the Discord heirarchy so I was"
+    " is higher than your highest role in the Discord hierarchy so I was"
     " unable to successfully add it. Please get a higher role and "
     "try again."
 )
@@ -40,7 +40,6 @@ RUNNING_ANNOUNCEMENT = (
 
 
 class Admin:
-
     def __init__(self, config=Config):
         self.conf = config.get_conf(self, 8237492837454039, force_registration=True)
 
@@ -75,7 +74,7 @@ class Admin:
         return self.__current_announcer.active or False
 
     @staticmethod
-    def pass_heirarchy_check(ctx: commands.Context, role: discord.Role) -> bool:
+    def pass_hierarchy_check(ctx: commands.Context, role: discord.Role) -> bool:
         """
         Determines if the bot has a higher role than the given one.
         :param ctx:
@@ -85,7 +84,7 @@ class Admin:
         return ctx.guild.me.top_role > role
 
     @staticmethod
-    def pass_user_heirarchy_check(ctx: commands.Context, role: discord.Role) -> bool:
+    def pass_user_hierarchy_check(ctx: commands.Context, role: discord.Role) -> bool:
         """
         Determines if a user is allowed to add/remove/edit the given role.
         :param ctx:
@@ -98,7 +97,7 @@ class Admin:
         try:
             await member.add_roles(role)
         except discord.Forbidden:
-            if not self.pass_heirarchy_check(ctx, role):
+            if not self.pass_hierarchy_check(ctx, role):
                 await self.complain(ctx, HIERARCHY_ISSUE, role=role, member=member)
             else:
                 await self.complain(ctx, GENERIC_FORBIDDEN)
@@ -112,7 +111,7 @@ class Admin:
         try:
             await member.remove_roles(role)
         except discord.Forbidden:
-            if not self.pass_heirarchy_check(ctx, role):
+            if not self.pass_hierarchy_check(ctx, role):
                 await self.complain(ctx, HIERARCHY_ISSUE, role=role, member=member)
             else:
                 await self.complain(ctx, GENERIC_FORBIDDEN)
@@ -134,7 +133,7 @@ class Admin:
         """
         if user is None:
             user = ctx.author
-        if self.pass_user_heirarchy_check(ctx, rolename):
+        if self.pass_user_hierarchy_check(ctx, rolename):
             # noinspection PyTypeChecker
             await self._addrole(ctx, user, rolename)
         else:
@@ -152,7 +151,7 @@ class Admin:
         """
         if user is None:
             user = ctx.author
-        if self.pass_user_heirarchy_check(ctx, rolename):
+        if self.pass_user_hierarchy_check(ctx, rolename):
             # noinspection PyTypeChecker
             await self._removerole(ctx, user, rolename)
         else:
@@ -181,7 +180,7 @@ class Admin:
         author = ctx.author
         reason = "{}({}) changed the colour of role '{}'".format(author.name, author.id, role.name)
 
-        if not self.pass_user_heirarchy_check(ctx, role):
+        if not self.pass_user_hierarchy_check(ctx, role):
             await self.complain(ctx, USER_HIERARCHY_ISSUE)
             return
 
@@ -207,7 +206,7 @@ class Admin:
             author.name, author.id, old_name, name
         )
 
-        if not self.pass_user_heirarchy_check(ctx, role):
+        if not self.pass_user_hierarchy_check(ctx, role):
             await self.complain(ctx, USER_HIERARCHY_ISSUE)
             return
 

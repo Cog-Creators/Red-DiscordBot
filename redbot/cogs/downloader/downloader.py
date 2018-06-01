@@ -27,7 +27,6 @@ _ = Translator("Downloader", __file__)
 
 @cog_i18n(_)
 class Downloader:
-
     def __init__(self, bot: Red):
         self.bot = bot
 
@@ -50,7 +49,7 @@ class Downloader:
         if str(self.LIB_PATH) not in syspath:
             syspath.insert(1, str(self.LIB_PATH))
 
-        self._repo_manager = RepoManager(self.conf)
+        self._repo_manager = RepoManager()
 
     async def cog_install_path(self):
         """Get the current cog install path.
@@ -252,10 +251,25 @@ class Downloader:
         """
         repos = self._repo_manager.get_all_repo_names()
         repos = sorted(repos, key=str.lower)
-        joined = _("Installed Repos:\n") + "\n".join(["+ " + r for r in repos])
+        joined = _("Installed Repos:\n\n")
+        for repo_name in repos:
+            repo = self._repo_manager.get_repo(repo_name)
+            joined += "+ {}: {}\n".format(repo.name, repo.short or "")
 
         for page in pagify(joined, ["\n"], shorten_by=16):
             await ctx.send(box(page.lstrip(" "), lang="diff"))
+
+    @repo.command(name="info")
+    async def _repo_info(self, ctx, repo_name: Repo):
+        """
+        Lists information about a single repo
+        """
+        if repo_name is None:
+            await ctx.send(_("There is no repo `{}`").format(repo_name.name))
+            return
+
+        msg = _("Information on {}:\n{}").format(repo_name.name, repo_name.description or "")
+        await ctx.send(box(msg))
 
     @commands.group()
     @checks.is_owner()
@@ -371,7 +385,8 @@ class Downloader:
             ["+ {}: {}".format(c.name, c.short or "") for c in cogs]
         )
 
-        await ctx.send(box(cogs, lang="diff"))
+        for page in pagify(cogs, ["\n"], shorten_by=16):
+            await ctx.send(box(page.lstrip(" "), lang="diff"))
 
     @cog.command(name="info")
     async def _cog_info(self, ctx, repo_name: Repo, cog_name: str):
@@ -388,7 +403,9 @@ class Downloader:
         msg = _("Information on {}:\n{}").format(cog.name, cog.description or "")
         await ctx.send(box(msg))
 
-    async def is_installed(self, cog_name: str) -> (bool, Union[Installable, None]):
+    async def is_installed(
+        self, cog_name: str
+    ) -> Union[Tuple[bool, Installable], Tuple[bool, None]]:
         """Check to see if a cog has been installed through Downloader.
 
         Parameters

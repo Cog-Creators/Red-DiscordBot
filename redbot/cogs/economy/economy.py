@@ -74,7 +74,6 @@ SLOT_PAYOUTS_MSG = _(
 
 
 def guild_only_check():
-
     async def pred(ctx: commands.Context):
         if await bank.is_global():
             return True
@@ -87,7 +86,6 @@ def guild_only_check():
 
 
 class SetParser:
-
     def __init__(self, argument):
         allowed = ("+", "-")
         self.sum = int(argument)
@@ -167,7 +165,7 @@ class Economy:
         try:
             await bank.transfer_credits(from_, to, amount)
         except ValueError as e:
-            await ctx.send(str(e))
+            return await ctx.send(str(e))
 
         await ctx.send(
             _("{} transferred {} {} to {}").format(

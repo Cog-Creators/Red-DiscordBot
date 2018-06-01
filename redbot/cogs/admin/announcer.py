@@ -5,7 +5,6 @@ from discord.ext import commands
 
 
 class Announcer:
-
     def __init__(self, ctx: commands.Context, message: str, config=None):
         """
         :param ctx:

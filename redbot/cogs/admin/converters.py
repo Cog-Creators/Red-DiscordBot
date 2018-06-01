@@ -3,7 +3,6 @@ from discord.ext import commands
 
 
 class MemberDefaultAuthor(commands.Converter):
-
     async def convert(self, ctx: commands.Context, arg: str) -> discord.Member:
         member_converter = commands.MemberConverter()
         try:
@@ -17,7 +16,6 @@ class MemberDefaultAuthor(commands.Converter):
 
 
 class SelfRole(commands.Converter):
-
     async def convert(self, ctx: commands.Context, arg: str) -> discord.Role:
         admin = ctx.command.instance
         if admin is None:
