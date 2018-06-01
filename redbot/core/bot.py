@@ -99,7 +99,7 @@ class RedBase(BotBase):
 
         self.counter = Counter()
         self.uptime = None
-        self.color = None
+        self.color = discord.Embed.Empty  # This is needed or color ends up 0x000000
 
         self.main_dir = bot_dir
 
