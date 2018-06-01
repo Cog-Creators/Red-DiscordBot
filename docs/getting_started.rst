@@ -95,7 +95,7 @@ Just do so (notice the capitalization):
 
     [p]help YourCategory
 
-Help also shows **command groups**. They are a group of commands.
+Help also shows **command groups**. They are group of commands.
 To get the description of a subcommand, type this:
 
 .. code-block:: none
@@ -120,7 +120,7 @@ Red comes with 19 cogs containing the basic features, such
 as moderation, utility, music, streams...
 
 You can see your loaded and unloaded cogs with the ``[p]cogs``
-command. By default, all cogs will be unloaded. 
+command. By default, all cogs will be unloaded.
 
 You can load or unload a cog by using the load or unload command
 
@@ -148,18 +148,13 @@ There's an entire `community <https://discord.gg/red>`_ that contributes
 to Red. Those contibutors make additional cogs for you to use. You can
 download them using the downloader cog.
 
-.. warning:: The downloader cog is not loaded by default. Load it
-    by typing this command:
-
-    .. code-block:: none
-
-        [p]load downloader
+You can start using the downloader cog by loading it: ``[p]load downloader``
 
 You can find cogs by searching on `cogs.red <https://dev.v3.cogs.red>`_. Find whatever you want,
 there are hundreds of cogs available!
 
 .. note:: ``cogs.red``, the website that list all of the cogs is not
-    ready for v3 yet. For now, you can refer to `this issue 
+    ready for v3 yet. For now, you can refer to `this issue
     <https://github.com/Cog-Creators/Red-DiscordBot/issues/1398>`_.
 
 .. 26-cogs not available, let's use my repo :3
@@ -183,7 +178,7 @@ Then you can add the cog
     [p]cog install Laggrons-Dumb-Cogs say
 
 Now the cog is installed, but not loaded. You can load it using the ``[p]load``
-we talked about before.
+command we talked about before.
 
 For more informations about the downloader, check its :ref:`guide <>`.
 
