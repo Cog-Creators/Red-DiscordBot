@@ -56,7 +56,7 @@ class Warnings:
         guild = ctx.guild
         await self.config.guild(guild).allow_custom_reasons.set(allowed)
         await ctx.send(
-            _("Custom reasons have been {}").format(_("enabled") if allowed else _("disabled"))
+            _("Custom reasons have been {}.").format(_("enabled") if allowed else _("disabled"))
         )
 
     @commands.group()
@@ -84,7 +84,7 @@ class Warnings:
         try:
             msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=30)
         except asyncio.TimeoutError:
-            await ctx.send(_("Ok then"))
+            await ctx.send(_("Ok then."))
             return
 
         if msg.content.lower() == "y":
@@ -161,7 +161,7 @@ class Warnings:
         async with guild_settings.reasons() as registered_reasons:
             registered_reasons.update(completed)
 
-        await ctx.send(_("That reason has been registered"))
+        await ctx.send(_("That reason has been registered."))
 
     @warnreason.command(name="del")
     @commands.guild_only()
@@ -173,7 +173,7 @@ class Warnings:
             if registered_reasons.pop(reason_name.lower(), None):
                 await ctx.tick()
             else:
-                await ctx.send(_("That is not a registered reason name"))
+                await ctx.send(_("That is not a registered reason name."))
 
     @commands.command()
     @commands.guild_only()
@@ -230,7 +230,7 @@ class Warnings:
                 await ctx.send(
                     _(
                         "Custom reasons are not allowed! Please see {} for "
-                        "a complete list of valid reasons"
+                        "a complete list of valid reasons."
                     ).format("`{}reasonlist`".format(ctx.prefix))
                 )
                 return
@@ -275,7 +275,7 @@ class Warnings:
         else:
             if not await is_admin_or_superior(self.bot, ctx.author):
                 await ctx.send(
-                    warning(_("You are not allowed to check " "warnings for other users!"))
+                    warning(_("You are not allowed to check warnings for other users!"))
                 )
                 return
             else:
@@ -336,7 +336,7 @@ class Warnings:
         try:
             msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=30)
         except asyncio.TimeoutError:
-            await ctx.send(_("Ok then"))
+            await ctx.send(_("Ok then."))
             return
         try:
             int(msg.content)
@@ -349,11 +349,11 @@ class Warnings:
                 return
             to_add["points"] = int(msg.content)
 
-        await ctx.send(_("Enter a description for this reason"))
+        await ctx.send(_("Enter a description for this reason."))
         try:
             msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=30)
         except asyncio.TimeoutError:
-            await ctx.send(_("Ok then"))
+            await ctx.send(_("Ok then."))
             return
         to_add["description"] = msg.content
         return to_add

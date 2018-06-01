@@ -441,6 +441,7 @@ class Config:
         attempting to access data.
 
     """
+
     GLOBAL = "GLOBAL"
     GUILD = "GUILD"
     CHANNEL = "TEXTCHANNEL"

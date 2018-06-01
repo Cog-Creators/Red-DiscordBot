@@ -27,7 +27,6 @@ _ = Translator("Downloader", __file__)
 
 @cog_i18n(_)
 class Downloader:
-
     def __init__(self, bot: Red):
         self.bot = bot
 

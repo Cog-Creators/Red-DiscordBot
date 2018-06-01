@@ -25,7 +25,6 @@ class AlreadyExists(CCError):
 
 
 class CommandObj:
-
     def __init__(self, **kwargs):
         config = kwargs.get("config")
         self.bot = kwargs.get("bot")
@@ -43,7 +42,7 @@ class CommandObj:
         intro = _(
             "Welcome to the interactive random {} maker!\n"
             "Every message you send will be added as one of the random "
-            "response to choose from once this {} is "
+            "responses to choose from once this {} is "
             "triggered. To exit this interactive menu, type `{}`"
         ).format("customcommand", "customcommand", "exit()")
         await ctx.send(intro)
@@ -75,7 +74,7 @@ class CommandObj:
             return ccinfo["response"]
 
     async def create(self, ctx: commands.Context, command: str, response):
-        """Create a customcommand"""
+        """Create a custom command"""
         # Check if this command is already registered as a customcommand
         if await self.db(ctx.guild).commands.get_raw(command, default=None):
             raise AlreadyExists()
@@ -132,6 +131,7 @@ class CommandObj:
 @cog_i18n(_)
 class CustomCommands:
     """Custom commands
+
     Creates commands used to display text"""
 
     def __init__(self, bot):
@@ -174,6 +174,7 @@ class CustomCommands:
     async def cc_add_random(self, ctx: commands.Context, command: str):
         """
         Create a CC where it will randomly choose a response!
+
         Note: This is interactive
         """
         channel = ctx.channel
@@ -185,7 +186,7 @@ class CustomCommands:
             await ctx.send(_("Custom command successfully added."))
         except AlreadyExists:
             await ctx.send(
-                _("This command already exists. Use " "`{}` to edit it.").format(
+                _("This command already exists. Use `{}` to edit it.").format(
                     "{}customcom edit".format(ctx.prefix)
                 )
             )
@@ -196,6 +197,7 @@ class CustomCommands:
     @checks.mod_or_permissions(administrator=True)
     async def cc_add_simple(self, ctx, command: str, *, text):
         """Adds a simple custom command
+
         Example:
         [p]customcom add simple yourcommand Text you want
         """
@@ -218,6 +220,7 @@ class CustomCommands:
     @checks.mod_or_permissions(administrator=True)
     async def cc_edit(self, ctx, command: str, *, text=None):
         """Edits a custom command
+
         Example:
         [p]customcom edit yourcommand Text you want
         """

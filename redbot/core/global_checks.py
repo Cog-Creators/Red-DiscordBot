@@ -3,7 +3,6 @@ from . import commands
 
 
 def init_global_checks(bot):
-
     @bot.check
     async def global_perms(ctx):
         """Check the user is/isn't globally whitelisted/blacklisted."""

@@ -27,7 +27,6 @@ def override_data_path(tmpdir):
 
 @pytest.fixture()
 def coroutine():
-
     async def some_coro(*args, **kwargs):
         return args, kwargs
 
@@ -74,7 +73,6 @@ def guild_factory():
     mock_guild = namedtuple("Guild", "id members")
 
     class GuildFactory:
-
         def get(self):
             return mock_guild(random.randint(1, 999999999), [])
 
@@ -103,7 +101,6 @@ def member_factory(guild_factory):
     mock_member = namedtuple("Member", "id guild display_name")
 
     class MemberFactory:
-
         def get(self):
             return mock_member(random.randint(1, 999999999), guild_factory.get(), "Testing_Name")
 
@@ -120,7 +117,6 @@ def user_factory():
     mock_user = namedtuple("User", "id")
 
     class UserFactory:
-
         def get(self):
             return mock_user(random.randint(1, 999999999))
 

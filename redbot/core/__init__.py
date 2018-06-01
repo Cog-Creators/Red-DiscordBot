@@ -4,7 +4,6 @@ __all__ = ["Config", "__version__"]
 
 
 class VersionInfo:
-
     def __init__(self, major, minor, micro, releaselevel, serial):
         self._levels = ["alpha", "beta", "final"]
         self.major = major

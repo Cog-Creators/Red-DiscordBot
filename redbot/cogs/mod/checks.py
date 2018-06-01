@@ -3,7 +3,6 @@ import discord
 
 
 def mod_or_voice_permissions(**perms):
-
     async def pred(ctx: commands.Context):
         author = ctx.author
         guild = ctx.guild
@@ -31,7 +30,6 @@ def mod_or_voice_permissions(**perms):
 
 
 def admin_or_voice_permissions(**perms):
-
     async def pred(ctx: commands.Context):
         author = ctx.author
         guild = ctx.guild
@@ -54,7 +52,6 @@ def admin_or_voice_permissions(**perms):
 
 
 def bot_has_voice_permissions(**perms):
-
     async def pred(ctx: commands.Context):
         guild = ctx.guild
         for vc in guild.voice_channels:

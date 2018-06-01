@@ -20,7 +20,6 @@ __author__ = ["aikaterna", "billy/bollo/ati"]
 
 @cog_i18n(_)
 class Audio:
-
     def __init__(self, bot):
         self.bot = bot
         self.config = Config.get_conf(self, 2711759130, force_registration=True)
