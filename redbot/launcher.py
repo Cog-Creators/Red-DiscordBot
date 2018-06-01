@@ -26,7 +26,7 @@ PYTHON_OK = sys.version_info >= (3, 5)
 INTERACTIVE_MODE = not len(sys.argv) > 1  # CLI flags = non-interactive
 
 INTRO = (
-    "==========================\n" "Red Discord Bot - Launcher\n" "==========================\n"
+    "==========================\nRed Discord Bot - Launcher\n==========================\n"
 )
 
 IS_WINDOWS = os.name == "nt"
@@ -457,7 +457,7 @@ def main_menu():
 def main():
     if not PYTHON_OK:
         raise RuntimeError(
-            "Red requires Python 3.5 or greater. " "Please install the correct version!"
+            "Red requires Python 3.5 or greater. Please install the correct version!"
         )
     if args.debuginfo:  # Check first since the function triggers an exit
         debug_info()

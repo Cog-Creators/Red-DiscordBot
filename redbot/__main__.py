@@ -40,7 +40,7 @@ def init_loggers(cli_flags):
     logger = logging.getLogger("red")
 
     red_format = logging.Formatter(
-        "%(asctime)s %(levelname)s %(module)s %(funcName)s %(lineno)d: " "%(message)s",
+        "%(asctime)s %(levelname)s %(module)s %(funcName)s %(lineno)d: %(message)s",
         datefmt="[%d/%m/%Y %H:%M]",
     )
 
