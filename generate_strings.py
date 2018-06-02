@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import subprocess
 import os
 import sys
@@ -13,25 +14,24 @@ def main():
             os.chdir(os.path.join("redbot/cogs", d, "locales"))
             if "regen_messages.py" not in os.listdir(os.getcwd()):
                 print(
-                    "Directory 'locales' exists for {} but no 'regen_messages.py' is available!".format(
-                        d
-                    )
+                    f"Directory 'locales' exists for {d} but no 'regen_messages.py' is available!"
                 )
-                exit(1)
+                return 1
             else:
                 print("Running 'regen_messages.py' for {}".format(d))
                 retval = subprocess.run([interpreter, "regen_messages.py"])
                 if retval.returncode != 0:
-                    exit(1)
+                    return 1
                 os.chdir(root_dir)
     os.chdir("redbot/core/locales")
     print("Running 'regen_messages.py' for core")
     retval = subprocess.run([interpreter, "regen_messages.py"])
     if retval.returncode != 0:
-        exit(1)
+        return 1
     os.chdir(root_dir)
     subprocess.run(["crowdin", "upload"])
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
