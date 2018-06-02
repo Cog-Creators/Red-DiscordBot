@@ -500,7 +500,8 @@ class Core(CoreLogic):
         """Loads packages"""
 
         cog_names = [c.strip() for c in cog_name.split(" ")]
-        loaded, failed, not_found = await self._load(cog_names)
+        async with ctx.typing():
+            loaded, failed, not_found = await self._load(cog_names)
 
         if loaded:
             fmt = "Loaded {packs}"
@@ -545,8 +546,8 @@ class Core(CoreLogic):
         """Reloads packages"""
 
         cog_names = [c.strip() for c in cog_name.split(" ")]
-
-        loaded, failed, not_found = await self._reload(cog_names)
+        async with ctx.typing():
+            loaded, failed, not_found = await self._reload(cog_names)
 
         if loaded:
             fmt = "Package{plural} {packs} {other} reloaded."
