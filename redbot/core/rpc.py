@@ -10,14 +10,14 @@ log = logging.getLogger("red.rpc")
 
 
 class RedRpc(JsonRpc):
-    def _add_method(self, method, prefix=''):
+    def _add_method(self, method, prefix=""):
         if not asyncio.iscoroutinefunction(method):
             return
 
         name = method.__name__.strip("_")
 
         if prefix:
-            name = '{}__{}'.format(prefix, name)
+            name = "{}__{}".format(prefix, name)
 
         self.methods[name] = method
 
@@ -57,9 +57,7 @@ class RPC:
         if not asyncio.iscoroutinefunction(method):
             raise TypeError("RPC methods must be coroutines.")
 
-        self._rpc.add_methods(
-            (prefix, unpack_request_args(method))
-        )
+        self._rpc.add_methods((prefix, unpack_request_args(method)))
 
     def add_multi_method(self, *methods, prefix: str = None):
         if not all(asyncio.iscoroutinefunction(m) for m in methods):

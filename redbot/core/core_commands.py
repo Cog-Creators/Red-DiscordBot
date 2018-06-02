@@ -54,7 +54,7 @@ class CoreLogic:
             self._prefixes,
             self._version_info,
             self._invite_url,
-            prefix="core"
+            prefix="core",
         )
 
     async def _load(self, cog_names: list):
