@@ -4,8 +4,9 @@
 Commands Package
 ================
 
-This package acts almost identically to ``discord.ext.commands``; i.e. they both have the same
-attributes. Some of these attributes, however, have been slightly modified, as outlined below.
+This package acts almost identically to :doc:`discord.ext.commands <dpy:ext/commands/api>`; i.e.
+they both have the same attributes. Some of these attributes, however, have been slightly modified,
+as outlined below.
 
 .. autofunction:: redbot.core.commands.command
 
