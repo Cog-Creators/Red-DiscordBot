@@ -9,10 +9,6 @@ import logging
 import appdirs
 
 from .json_io import JsonIO
-from .utils import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from . import Config
 
 __all__ = [
     "load_basic_configuration",
