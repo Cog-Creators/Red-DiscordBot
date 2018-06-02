@@ -14,6 +14,7 @@ from redbot.core.cli import interactive_config, confirm, parse_cli_flags, ask_se
 from redbot.core.core_commands import Core
 from redbot.core.dev_commands import Dev
 from redbot.core import rpc, __version__
+import redbot.meta
 import asyncio
 import logging.handlers
 import logging
