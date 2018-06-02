@@ -271,6 +271,12 @@ class Admin:
         """
         if guild is None:
             guild = ctx.guild
+        
+        member = guild.get_member(ctx.author.id)    
+        if not (member.guild_permissions.administartor or \
+            self.bot.is_owner(ctx.author)):
+            await ctx.send("You are not allowed to do that on this guild!")
+            return
 
         ignored = await self.conf.guild(guild).announce_ignore()
         await self.conf.guild(guild).announce_ignore.set(not ignored)
