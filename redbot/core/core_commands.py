@@ -501,7 +501,8 @@ class Core(CoreLogic):
         """Loads packages"""
 
         cog_names = [c.strip() for c in cog_name.split(" ")]
-        loaded, failed, not_found = await self._load(cog_names)
+        async with ctx.typing():
+            loaded, failed, not_found = await self._load(cog_names)
 
         if loaded:
             fmt = "Loaded {packs}"
@@ -546,8 +547,8 @@ class Core(CoreLogic):
         """Reloads packages"""
 
         cog_names = [c.strip() for c in cog_name.split(" ")]
-
-        loaded, failed, not_found = await self._reload(cog_names)
+        async with ctx.typing():
+            loaded, failed, not_found = await self._reload(cog_names)
 
         if loaded:
             fmt = "Package{plural} {packs} {other} reloaded."
@@ -642,7 +643,7 @@ class Core(CoreLogic):
         """
         Toggle whether to use the bot owner-configured colour for embeds.
 
-        Default is to not use the bot's configured colour, in which case the 
+        Default is to not use the bot's configured colour, in which case the
         colour used will be the colour of the bot's top role.
         """
         current_setting = await ctx.bot.db.guild(ctx.guild).use_bot_color()
@@ -992,7 +993,7 @@ class Core(CoreLogic):
         """
         Set the tagline to be used.
 
-        This setting only applies to embedded help. If no tagline is 
+        This setting only applies to embedded help. If no tagline is
         specified, the default will be used instead.
         """
         if tagline is None:
