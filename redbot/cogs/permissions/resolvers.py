@@ -12,21 +12,10 @@ async def val_if_check_is_valid(*, ctx: commands.Context, check: object, level: 
     Returns the value from a check if it is valid
     """
 
-    # Non staticmethods should not be run without their parent
-    # class, even if the parent class did not deregister them
-    if check.__module__ is None:
-        pass
-    elif isinstance(check, types.FunctionType):
-        if (
-            next(filter(lambda x: check.__module__ == x.__module__, ctx.bot.cogs.values()), None)
-            is None
-        ):
-            return None
-
     val = None
     # let's not spam the console with improperly made 3rd party checks
     try:
-        if asyncio.iscoroutine(check) or asyncio.iscoroutinefunction(check):
+        if asyncio.iscoroutinefunction(check):
             val = await check(ctx, level=level)
         else:
             val = check(ctx, level=level)
