@@ -139,7 +139,6 @@ def main():
         sys.exit(0)
     if tmp_data["enable_sentry"]:
         red.enable_sentry()
-    cleanup_tasks = True
     try:
         loop.run_until_complete(red.start(token, bot=not cli_flags.not_bot))
     except discord.LoginFailure:
@@ -164,10 +163,9 @@ def main():
         sentry_log.critical("Fatal Exception", exc_info=e)
         loop.run_until_complete(red.logout())
     finally:
-        if cleanup_tasks:
-            pending = asyncio.Task.all_tasks(loop=red.loop)
-            gathered = asyncio.gather(*pending, loop=red.loop, return_exceptions=True)
-            gathered.cancel()
+        pending = asyncio.Task.all_tasks(loop=red.loop)
+        gathered = asyncio.gather(*pending, loop=red.loop, return_exceptions=True)
+        gathered.cancel()
 
         sys.exit(red._shutdown_mode.value)
 
