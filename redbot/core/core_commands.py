@@ -23,7 +23,6 @@ from redbot.core import checks
 from redbot.core import i18n
 from redbot.core import rpc
 from redbot.core import commands
-from redbot import meta
 from .utils import TYPE_CHECKING
 from .utils.chat_formatting import pagify, box, inline
 
@@ -46,6 +45,9 @@ _ = i18n.Translator("Core", __file__)
 
 
 class CoreLogic:
+    def __init__(self, bot: Red):
+        self.bot = bot
+
     async def _load(self, cog_names: list):
         """
         Loads cogs by name.
@@ -62,7 +64,7 @@ class CoreLogic:
         loaded_packages = []
         notfound_packages = []
 
-        bot = meta.bot
+        bot = self.bot
 
         cogspecs = []
 
@@ -141,7 +143,7 @@ class CoreLogic:
         failed_packages = []
         unloaded_packages = []
 
-        bot = meta.bot
+        bot = self.bot
 
         for name in cog_names:
             if name in bot.extensions:
@@ -175,9 +177,9 @@ class CoreLogic:
             The current (or new) username of the bot.
         """
         if name is not None:
-            await meta.bot.user.edit(username=name)
+            await self.bot.user.edit(username=name)
 
-        return meta.bot.user.name
+        return self.bot.user.name
 
     async def _prefixes(self, prefixes: list = None):
         """
@@ -195,8 +197,8 @@ class CoreLogic:
         """
         if prefixes:
             prefixes = sorted(prefixes, reverse=True)
-            await meta.bot.db.prefix.set(prefixes)
-        return meta.bot.db.prefix()
+            await self.bot.db.prefix.set(prefixes)
+        return self.bot.db.prefix()
 
     async def _version_info(self):
         """
@@ -218,8 +220,8 @@ class CoreLogic:
         str
             Invite URL.
         """
-        if meta.bot.user.bot:
-            app_info = await meta.bot.application_info()
+        if self.bot.user.bot:
+            app_info = await self.bot.application_info()
             return discord.utils.oauth_url(app_info.id)
         return "Not a bot account!"
 
@@ -229,7 +231,7 @@ class Core(CoreLogic):
     """Commands related to core functions"""
 
     def __init__(self, bot):
-        self.bot = bot  # type: Red
+        super().__init__(bot)
 
     @commands.command(hidden=True)
     async def ping(self, ctx):

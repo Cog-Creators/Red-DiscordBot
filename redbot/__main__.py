@@ -113,7 +113,6 @@ def main():
     load_basic_configuration(cli_flags.instance_name)
     log, sentry_log = init_loggers(cli_flags)
     red = Red(cli_flags, description=description, pm_help=None)
-    redbot.meta.bot = red
     init_global_checks(red)
     init_events(red, cli_flags)
     red.add_cog(Core(red))

@@ -3,5 +3,3 @@ This module will contain various attributes useful for testing and cog developme
 """
 
 testing = False
-
-bot = None
