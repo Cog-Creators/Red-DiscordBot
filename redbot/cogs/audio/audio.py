@@ -425,7 +425,11 @@ class Audio:
                 await message.add_reaction(expected[i])
 
         def check(r, u):
-            return r.message.id == message.id and u == ctx.message.author
+            return (
+                r.message.id == message.id
+                and u == ctx.message.author
+                and any(e in str(r.emoji) for e in expected)
+            )
 
         try:
             (r, u) = await self.bot.wait_for("reaction_add", check=check, timeout=10.0)

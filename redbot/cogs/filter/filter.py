@@ -124,8 +124,8 @@ class Filter:
 
     @_filter.command(name="names")
     async def filter_names(self, ctx: commands.Context):
-        """
-        Toggles whether or not to check names and nicknames against the filter
+        """Toggles whether or not to check names and nicknames against the filter
+
         This is disabled by default
         """
         guild = ctx.guild
@@ -133,27 +133,28 @@ class Filter:
         await self.settings.guild(guild).filter_names.set(not current_setting)
         if current_setting:
             await ctx.send(
-                _("Names and nicknames will no longer be " "checked against the filter")
+                _("Names and nicknames will no longer be " "checked against the filter.")
             )
         else:
-            await ctx.send(_("Names and nicknames will now be checked against " "the filter"))
+            await ctx.send(_("Names and nicknames will now be checked against the filter."))
 
     @_filter.command(name="defaultname")
     async def filter_default_name(self, ctx: commands.Context, name: str):
-        """
-        Sets the default name to use if filtering names is enabled
+        """Sets the default name to use if filtering names is enabled
+
         Note that this has no effect if filtering names is disabled
+
         The default name used is John Doe
         """
         guild = ctx.guild
         await self.settings.guild(guild).filter_default_name.set(name)
-        await ctx.send(_("The name to use on filtered names has been set"))
+        await ctx.send(_("The name to use on filtered names has been set."))
 
     @_filter.command(name="ban")
     async def filter_ban(self, ctx: commands.Context, count: int, timeframe: int):
-        """
-        Sets up an autoban if the specified number of messages are
-        filtered in the specified amount of time (in seconds)
+        """Autobans if the specified number of messages are filtered in the timeframe
+
+        The timeframe is represented by seconds.
         """
         if (count <= 0) != (timeframe <= 0):
             await ctx.send(
@@ -223,7 +224,7 @@ class Filter:
                                 user_count >= filter_count
                                 and message.created_at.timestamp() < next_reset_time
                             ):
-                                reason = "Autoban (too many filtered messages)"
+                                reason = "Autoban (too many filtered messages.)"
                                 try:
                                     await server.ban(author, reason=reason)
                                 except:
