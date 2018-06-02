@@ -40,6 +40,7 @@ RUNNING_ANNOUNCEMENT = (
 
 
 class Admin:
+
     def __init__(self, config=Config):
         self.conf = config.get_conf(self, 8237492837454039, force_registration=True)
 
@@ -271,6 +272,11 @@ class Admin:
         """
         if guild is None:
             guild = ctx.guild
+
+        member = guild.get_member(ctx.author.id)
+        if not (member.guild_permissions.administrator or self.bot.is_owner(ctx.author)):
+            await ctx.send("You are not allowed to do that on this guild!")
+            return
 
         ignored = await self.conf.guild(guild).announce_ignore()
         await self.conf.guild(guild).announce_ignore.set(not ignored)
