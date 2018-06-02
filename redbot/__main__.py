@@ -143,14 +143,13 @@ def main():
     try:
         loop.run_until_complete(red.start(token, bot=not cli_flags.not_bot))
     except discord.LoginFailure:
-        cleanup_tasks = False  # No login happened, no need for this
         log.critical(
             "This token doesn't seem to be valid. If it belongs to "
             "a user account, remember that the --not-bot flag "
             "must be used. For self-bot functionalities instead, "
             "--self-bot"
         )
-        db_token = red.db.token()
+        db_token = loop.run_until_complete(red.db.token())
         if db_token and not cli_flags.no_prompt:
             print("\nDo you want to reset the token? (y/n)")
             if confirm("> "):
