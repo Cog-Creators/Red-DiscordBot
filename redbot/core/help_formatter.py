@@ -296,7 +296,7 @@ class Help(formatter.HelpFormatter):
         return embed
 
 
-@commands.command()
+@commands.command(hidden=True)
 async def help(ctx, *cmds: str):
     """Shows help documentation.
 
