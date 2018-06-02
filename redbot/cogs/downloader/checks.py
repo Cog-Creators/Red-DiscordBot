@@ -23,7 +23,9 @@ def install_agreement():
             return True
         elif downloader.already_agreed:
             return True
-        elif ctx.invoked_subcommand is None or isinstance(ctx.invoked_subcommand, commands.Group):
+        elif ctx.invoked_subcommand is None or isinstance(
+            ctx.invoked_subcommand, discord.ext.commands.Group
+        ):
             return True
 
         def does_agree(msg: discord.Message):

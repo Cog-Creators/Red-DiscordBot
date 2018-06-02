@@ -166,7 +166,9 @@ class CustomCommands:
 
         {server}    message.guild
         """
-        if not ctx.invoked_subcommand or isinstance(ctx.invoked_subcommand, commands.Group):
+        if not ctx.invoked_subcommand or isinstance(
+            ctx.invoked_subcommand, discord.ext.commands.Group
+        ):
             await ctx.send_help()
 
     @cc_add.command(name="random")
