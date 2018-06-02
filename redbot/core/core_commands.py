@@ -45,7 +45,7 @@ _ = i18n.Translator("Core", __file__)
 
 
 class CoreLogic:
-    def __init__(self, bot: Red):
+    def __init__(self, bot: "Red"):
         self.bot = bot
 
     async def _load(self, cog_names: list):
@@ -642,7 +642,7 @@ class Core(CoreLogic):
         """
         Toggle whether to use the bot owner-configured colour for embeds.
 
-        Default is to not use the bot's configured colour, in which case the 
+        Default is to not use the bot's configured colour, in which case the
         colour used will be the colour of the bot's top role.
         """
         current_setting = await ctx.bot.db.guild(ctx.guild).use_bot_color()
@@ -992,7 +992,7 @@ class Core(CoreLogic):
         """
         Set the tagline to be used.
 
-        This setting only applies to embedded help. If no tagline is 
+        This setting only applies to embedded help. If no tagline is
         specified, the default will be used instead.
         """
         if tagline is None:
