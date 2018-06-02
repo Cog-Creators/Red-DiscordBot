@@ -3,9 +3,8 @@ import distutils.dir_util
 import shutil
 from enum import Enum
 from pathlib import Path
-from typing import MutableMapping, Any
+from typing import MutableMapping, Any, TYPE_CHECKING
 
-from redbot.core.utils import TYPE_CHECKING
 from .log import log
 from .json_mixins import RepoJSONMixin
 
@@ -25,7 +24,7 @@ class Installable(RepoJSONMixin):
      - Modules
      - Repo Libraries
      - Other stuff?
-     
+
     The attributes of this class will mostly come from the installation's
     info.json.
 

@@ -1,14 +1,12 @@
 import logging
 import collections
 from copy import deepcopy
-from typing import Union, Tuple
+from typing import Union, Tuple, TYPE_CHECKING
 
 import discord
 
 from .data_manager import cog_data_path, core_data_path
 from .drivers import get_driver
-
-from .utils import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .drivers.red_base import BaseDriver
