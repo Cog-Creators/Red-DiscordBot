@@ -4,6 +4,9 @@ import asyncio
 from subprocess import Popen, DEVNULL, PIPE
 import os
 import logging
+from typing import Optional, Tuple
+
+_JavaVersion = Tuple[int, int]
 
 log = logging.getLogger("red.audio.manager")
 
@@ -36,16 +39,16 @@ async def monitor_lavalink_server(loop):
             )
 
 
-async def has_java(loop):
+async def has_java(loop) -> Tuple[bool, Optional[_JavaVersion]]:
     java_available = shutil.which("java") is not None
     if not java_available:
-        return False
+        return False, None
 
     version = await get_java_version(loop)
     return version >= (1, 8), version
 
 
-async def get_java_version(loop):
+async def get_java_version(loop) -> _JavaVersion:
     """
     This assumes we've already checked that java exists.
     """
