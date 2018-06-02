@@ -1350,7 +1350,6 @@ class Core(CoreLogic):
         await ctx.bot.db.blacklist.set([])
         await ctx.send(_("blacklist has been cleared."))
 
-
     @commands.group()
     @checks.admin_or_permissions(administrator=True)
     async def localwhitelist(self, ctx):
