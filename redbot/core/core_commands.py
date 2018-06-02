@@ -1351,6 +1351,7 @@ class Core(CoreLogic):
         await ctx.send(_("blacklist has been cleared."))
 
     @commands.group()
+    @commands.guild_only()
     @checks.admin_or_permissions(administrator=True)
     async def localwhitelist(self, ctx):
         """
