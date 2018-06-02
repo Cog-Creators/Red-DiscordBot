@@ -196,3 +196,7 @@ intersphinx_mapping = {
     "dpy": ("https://discordpy.readthedocs.io/en/rewrite/", None),
     "motor": ("https://motor.readthedocs.io/en/stable/", None),
 }
+
+# Includes substitutions for all files
+with open('prolog.rst', 'r') as file:
+    rst_prolog = file.read()

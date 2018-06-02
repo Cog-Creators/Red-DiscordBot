@@ -1,0 +1,16 @@
+.. This file will be run at the beginning of all files.
+    You can add the subsitutions you need.
+
+.. These are the comments for perm locks
+
+.. |owner-lock| replace:: This command is locked to the
+    :ref:`bot owner <getting-started-permissions>`.
+
+.. |guildowner-lock| replace:: This command is locked to the
+    :ref:`server owner <getting-started-permissions>`.
+
+.. |admin-lock| replace:: This command is locked to the
+    :ref:`admin role <getting-started-permissions>`.
+
+.. |mod-lock| replace:: This command is locked to the
+    :ref:`mod role <getting-started-permissions>`.

@@ -29,6 +29,8 @@ Welcome to Red - Discord Bot's documentation!
 
     getting_started
 
+    admin
+
 .. toctree::
     :maxdepth: 2
     :caption: Cog Reference:
