@@ -15,8 +15,7 @@ async def val_if_check_is_valid(*, ctx: commands.Context, check: object, level: 
     val = None
     # let's not spam the console with improperly made 3rd party checks
     try:
-        # pretty sure this is redunant, but if it is, it will short circuit at or
-        if asyncio.iscoroutine(check) or asyncio.iscoroutinefunction(check):
+        if asyncio.iscoroutinefunction(check):
             val = await check(ctx, level=level)
         else:
             val = check(ctx, level=level)
