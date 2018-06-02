@@ -13,8 +13,7 @@ from redbot.core.events import init_events
 from redbot.core.cli import interactive_config, confirm, parse_cli_flags, ask_sentry
 from redbot.core.core_commands import Core
 from redbot.core.dev_commands import Dev
-from redbot.core import rpc, __version__
-import redbot.meta
+from redbot.core import __version__
 import asyncio
 import logging.handlers
 import logging
@@ -166,6 +165,8 @@ def main():
         pending = asyncio.Task.all_tasks(loop=red.loop)
         gathered = asyncio.gather(*pending, loop=red.loop, return_exceptions=True)
         gathered.cancel()
+
+        red.rpc.close()
 
         sys.exit(red._shutdown_mode.value)
 

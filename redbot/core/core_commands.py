@@ -46,6 +46,16 @@ _ = i18n.Translator("Core", __file__)
 class CoreLogic:
     def __init__(self, bot: "Red"):
         self.bot = bot
+        self.bot.rpc.add_multi_method(
+            self._load,
+            self._unload,
+            self._reload,
+            self._name,
+            self._prefixes,
+            self._version_info,
+            self._invite_url,
+            prefix="core"
+        )
 
     async def _load(self, cog_names: list):
         """
