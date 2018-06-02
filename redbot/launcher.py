@@ -383,7 +383,7 @@ def debug_info():
         + "User: {}\n".format(user_who_ran)
     )
     print(info)
-    exit(0)
+    sys.exit(0)
 
 
 def main_menu():
