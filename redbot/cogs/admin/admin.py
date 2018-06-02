@@ -273,7 +273,7 @@ class Admin:
             guild = ctx.guild
         
         member = guild.get_member(ctx.author.id)    
-        if not (member.guild_permissions.administartor or \
+        if not (member.guild_permissions.administrator or \
             self.bot.is_owner(ctx.author)):
             await ctx.send("You are not allowed to do that on this guild!")
             return
