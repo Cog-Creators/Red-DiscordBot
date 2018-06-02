@@ -302,6 +302,8 @@ class Admin:
         """
         Add a role to yourself that server admins have configured as
             user settable.
+
+        NOTE: The role is case sensitive!
         """
         # noinspection PyTypeChecker
         await self._addrole(ctx, ctx.author, selfrole)
@@ -310,6 +312,8 @@ class Admin:
     async def selfrole_remove(self, ctx: commands.Context, *, selfrole: SelfRole):
         """
         Removes a selfrole from yourself.
+
+        NOTE: The role is case sensitive!
         """
         # noinspection PyTypeChecker
         await self._removerole(ctx, ctx.author, selfrole)
@@ -319,6 +323,8 @@ class Admin:
     async def selfrole_add(self, ctx: commands.Context, *, role: discord.Role):
         """
         Add a role to the list of available selfroles.
+
+        NOTE: The role is case sensitive!
         """
         async with self.conf.guild(ctx.guild).selfroles() as curr_selfroles:
             if role.id not in curr_selfroles:
@@ -331,6 +337,8 @@ class Admin:
     async def selfrole_delete(self, ctx: commands.Context, *, role: SelfRole):
         """
         Removes a role from the list of available selfroles.
+
+        NOTE: The role is case sensitive!
         """
         async with self.conf.guild(ctx.guild).selfroles() as curr_selfroles:
             curr_selfroles.remove(role.id)
