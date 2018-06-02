@@ -32,59 +32,8 @@ class Permissions:
     def __init__(self, bot: Red):
         self.bot = bot
         self.config = Config.get_conf(self, identifier=78631113035100160, force_registration=True)
-        self._before = []
-        self._after = []
         self.config.register_global(owner_models={})
         self.config.register_guild(owner_models={})
-
-    def add_check(self, check_obj: object, before_or_after: str):
-        """
-        Adds a check to the check ordering
-
-        checks should be a function taking 2 arguments:
-        ctx: commands.Context
-        level: str
-
-        and returning:
-        None: do not interfere
-        True: command should be allowed even if they dont
-            have role or perm requirements for the check
-        False: command should be blocked
-
-        before_or_after:
-        Should literally be a str equaling 'before' or 'after'
-        This should be based on if this should take priority
-        over set rules or not
-
-        3rd party cogs adding checks using this should only allow
-        the owner to add checks before, and ensure only the owner
-        can add checks recieving the level 'owner'
-
-        3rd party cogs should keep a copy of of any checks they registered
-        and deregister then on unload
-        """
-
-        if before_or_after == "before":
-            self._before.append(check_obj)
-        elif before_or_after == "after":
-            self._after.append(check_obj)
-        else:
-            raise TypeError("RTFM")
-
-    def remove_check(self, check_obj: object, before_or_after: str):
-        """
-        Removes a previously registered check object
-
-        3rd party cogs should keep a copy of of any checks they registered
-        and deregister then on unload
-        """
-
-        if before_or_after == "before":
-            self._before.remove(check_obj)
-        elif before_or_after == "after":
-            self._after.remove(check_obj)
-        else:
-            raise TypeError("RTFM")
 
     async def __global_check(self, ctx):
         """
@@ -126,7 +75,13 @@ class Permissions:
         roles = sorted(ctx.author.roles, reverse=True) if ctx.guild else []
         entries.extend([x.id for x in roles])
 
-        for check in self._before:
+        before = [
+            getattr(cog, "_{0.__class__.__name__}__red_permissions_before".format(cog), None)
+            for cog in ctx.bot.cogs.values()
+        ]
+        for check in before:
+            if check is None:
+                continue
             override = await val_if_check_is_valid(check=check, ctx=ctx, level=level)
             if override is not None:
                 return override
@@ -137,7 +92,11 @@ class Permissions:
             if override is not None:
                 return override
 
-        for check in self._after:
+        after = [
+            getattr(cog, "_{0.__class__.__name__}__red_permissions_after".format(cog), None)
+            for cog in ctx.bot.cogs.values()
+        ]
+        for check in after:
             override = await val_if_check_is_valid(check=check, ctx=ctx, level=level)
             if override is not None:
                 return override
