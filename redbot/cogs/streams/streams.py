@@ -240,7 +240,7 @@ class Streams:
                 exists = await self.check_exists(stream)
             except InvalidTwitchCredentials:
                 await ctx.send(
-                    _("The twitch token is either invalid or has not been set. " "See {}.").format(
+                    _("The twitch token is either invalid or has not been set. See {}.").format(
                         "`{}streamset twitchtoken`".format(ctx.prefix)
                     )
                 )
@@ -248,7 +248,7 @@ class Streams:
             except InvalidYoutubeCredentials:
                 await ctx.send(
                     _(
-                        "The Youtube API key is either invalid or has not been set. " "See {}."
+                        "The Youtube API key is either invalid or has not been set. See {}."
                     ).format("`{}streamset youtubekey`".format(ctx.prefix))
                 )
                 return

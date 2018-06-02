@@ -307,7 +307,7 @@ class Alias:
 
         if is_alias:
             await ctx.send(
-                _("The `{}` alias will execute the" " command `{}`").format(
+                _("The `{}` alias will execute the command `{}`").format(
                     alias_name, alias.command
                 )
             )
@@ -330,7 +330,7 @@ class Alias:
 
         if await self.delete_alias(ctx, alias_name):
             await ctx.send(
-                _("Alias with the name `{}` was successfully" " deleted.").format(alias_name)
+                _("Alias with the name `{}` was successfully deleted.").format(alias_name)
             )
         else:
             await ctx.send(_("Alias with name `{}` was not found.").format(alias_name))
@@ -350,7 +350,7 @@ class Alias:
 
         if await self.delete_alias(ctx, alias_name, global_=True):
             await ctx.send(
-                _("Alias with the name `{}` was successfully" " deleted.").format(alias_name)
+                _("Alias with the name `{}` was successfully deleted.").format(alias_name)
             )
         else:
             await ctx.send(_("Alias with name `{}` was not found.").format(alias_name))

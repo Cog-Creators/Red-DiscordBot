@@ -97,7 +97,7 @@ class General:
             msg = ""
             if user.id == ctx.bot.user.id:
                 user = ctx.author
-                msg = _("Nice try. You think this is funny?\n" "How about *this* instead:\n\n")
+                msg = _("Nice try. You think this is funny?\n How about *this* instead:\n\n")
             char = "abcdefghijklmnopqrstuvwxyz"
             tran = "ɐqɔpǝɟƃɥᴉɾʞlɯuodbɹsʇnʌʍxʎz"
             table = str.maketrans(char, tran)
@@ -227,7 +227,7 @@ class General:
         try:
             await ctx.send(embed=data)
         except discord.HTTPException:
-            await ctx.send(_("I need the `Embed links` permission " "to send this."))
+            await ctx.send(_("I need the `Embed links` permission to send this."))
 
     @commands.command()
     async def urban(self, ctx, *, search_terms: str, definition_number: int = 1):

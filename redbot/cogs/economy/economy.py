@@ -226,7 +226,7 @@ class Economy:
         else:
             await bank.wipe_bank()
             await ctx.send(
-                _("All bank accounts for {} have been " "deleted.").format(
+                _("All bank accounts for {} have been deleted.").format(
                     self.bot.user.name if await bank.is_global() else "this server"
                 )
             )
@@ -265,7 +265,7 @@ class Economy:
             else:
                 dtime = self.display_time(next_payday - cur_time)
                 await ctx.send(
-                    _("{} Too soon. For your next payday you have to" " wait {}.").format(
+                    _("{} Too soon. For your next payday you have to wait {}.").format(
                         author.mention, dtime
                     )
                 )
@@ -299,7 +299,7 @@ class Economy:
             else:
                 dtime = self.display_time(next_payday - cur_time)
                 await ctx.send(
-                    _("{} Too soon. For your next payday you have to" " wait {}.").format(
+                    _("{} Too soon. For your next payday you have to wait {}.").format(
                         author.mention, dtime
                     )
                 )
@@ -495,7 +495,7 @@ class Economy:
         """Maximum slot machine bid"""
         slot_min = await self.config.SLOT_MIN()
         if bid < 1 or bid < slot_min:
-            await ctx.send(_("Invalid slotmax bid amount. Must be greater" " than slotmin."))
+            await ctx.send(_("Invalid slotmax bid amount. Must be greater than slotmin."))
             return
         guild = ctx.guild
         credits_name = await bank.get_currency_name(guild)
@@ -524,7 +524,7 @@ class Economy:
         else:
             await self.config.guild(guild).PAYDAY_TIME.set(seconds)
         await ctx.send(
-            _("Value modified. At least {} seconds must pass " "between each payday.").format(
+            _("Value modified. At least {} seconds must pass between each payday.").format(
                 seconds
             )
         )
