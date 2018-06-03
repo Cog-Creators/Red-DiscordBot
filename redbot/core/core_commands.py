@@ -1478,7 +1478,7 @@ class Core(CoreLogic):
 
         msg = _("blacklisted Users and Roles:")
         for obj in curr_list:
-            msg +="\n\t- {}".format(obj)
+            msg += "\n\t- {}".format(obj)
 
         for page in pagify(msg):
             await ctx.send(box(page))
