@@ -15,12 +15,11 @@ class ModLog:
     def __init__(self, bot: Red):
         self.bot = bot
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @checks.guildowner_or_permissions(administrator=True)
     async def modlogset(self, ctx: commands.Context):
         """Settings for the mod log"""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @modlogset.command()
     @commands.guild_only()

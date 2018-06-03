@@ -125,13 +125,12 @@ class Permissions:
     #   async def admin_model(self, ctx: commands.Context) -> bool:
     #   async def mod_model(self, ctx: commands.Context) -> bool:
 
-    @commands.group(aliases=["p"])
+    @commands.group(aliases=["p"], autohelp=True)
     async def permissions(self, ctx: commands.Context):
         """
         Permission management tools
         """
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @permissions.command()
     async def explain(self, ctx: commands.Context):

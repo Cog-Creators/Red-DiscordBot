@@ -314,7 +314,7 @@ class Core(CoreLogic):
 
         return fmt.format(d=days, h=hours, m=minutes, s=seconds)
 
-    @commands.group()
+    @commands.group(autohelp=True)
     async def embedset(self, ctx: commands.Context):
         """
         Commands for toggling embeds on or off.
@@ -334,7 +334,6 @@ class Core(CoreLogic):
             user_setting = await self.bot.db.user(ctx.author).embeds()
             text += "User setting: {}".format(user_setting)
             await ctx.send(box(text))
-            await ctx.send_help()
 
     @embedset.command(name="global")
     @checks.is_owner()
@@ -521,7 +520,7 @@ class Core(CoreLogic):
             formed = self._get_package_strings(not_found, fmt, ("was", "were"))
             await ctx.send(formed)
 
-    @commands.group()
+    @commands.command()
     @checks.is_owner()
     async def unload(self, ctx, *, cog_name: str):
         """Unloads packages"""
@@ -592,7 +591,7 @@ class Core(CoreLogic):
             pass
         await ctx.bot.shutdown(restart=True)
 
-    @commands.group(name="set")
+    @commands.group(name="set", autohelp=True)
     async def _set(self, ctx):
         """Changes Red's settings"""
         if ctx.invoked_subcommand is None:
@@ -617,7 +616,6 @@ class Core(CoreLogic):
                 f"Locale: {locale}"
             )
             await ctx.send(box(settings))
-            await ctx.send_help()
 
     @_set.command()
     @checks.guildowner()
@@ -942,12 +940,11 @@ class Core(CoreLogic):
             ctx.bot.disable_sentry()
             await ctx.send(_("Done. Sentry logging is now disabled."))
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @checks.is_owner()
     async def helpset(self, ctx: commands.Context):
         """Manage settings for the help command."""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @helpset.command(name="pagecharlimit")
     async def helpset_pagecharlimt(self, ctx: commands.Context, limit: int):
@@ -1228,14 +1225,13 @@ class Core(CoreLogic):
             else:
                 await ctx.send(_("Message delivered to {}").format(destination))
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @checks.is_owner()
     async def whitelist(self, ctx):
         """
         Whitelist management commands.
         """
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @whitelist.command(name="add")
     async def whitelist_add(self, ctx, user: discord.User):
@@ -1287,14 +1283,13 @@ class Core(CoreLogic):
         await ctx.bot.db.whitelist.set([])
         await ctx.send(_("Whitelist has been cleared."))
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @checks.is_owner()
     async def blacklist(self, ctx):
         """
         blacklist management commands.
         """
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @blacklist.command(name="add")
     async def blacklist_add(self, ctx, user: discord.User):

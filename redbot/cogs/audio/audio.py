@@ -163,12 +163,11 @@ class Audio:
                 await message_channel.send(embed=embed)
                 await player.skip()
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @commands.guild_only()
     async def audioset(self, ctx):
         """Music configuration options."""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @audioset.command()
     @checks.admin_or_permissions(manage_roles=True)
@@ -631,12 +630,11 @@ class Audio:
                 await player.play()
         await ctx.send(embed=embed)
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @commands.guild_only()
     async def playlist(self, ctx):
         """Playlist configuration options."""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @playlist.command(name="append")
     async def _playlist_append(self, ctx, playlist_name, *url):
@@ -1593,13 +1591,12 @@ class Audio:
             embed.set_footer(text="Nothing playing.")
         await ctx.send(embed=embed)
 
-    @commands.group(aliases=["llset"])
+    @commands.group(aliases=["llset"], autohelp=True)
     @commands.guild_only()
     @checks.is_owner()
     async def llsetup(self, ctx):
         """Lavalink server configuration options."""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @llsetup.command()
     async def external(self, ctx):
