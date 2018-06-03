@@ -1257,7 +1257,7 @@ class Core(CoreLogic):
 
         msg = _("Whitelisted Users:")
         for user in curr_list:
-            msg.append("\n\t- {}".format(user))
+            msg += "\n\t- {}".format(user)
 
         for page in pagify(msg):
             await ctx.send(box(page))
@@ -1320,7 +1320,7 @@ class Core(CoreLogic):
 
         msg = _("blacklisted Users:")
         for user in curr_list:
-            msg.append("\n\t- {}".format(user))
+            msg += "\n\t- {}".format(user)
 
         for page in pagify(msg):
             await ctx.send(box(page))
@@ -1389,7 +1389,7 @@ class Core(CoreLogic):
 
         msg = _("Whitelisted Users and roles:")
         for obj in curr_list:
-            msg.append("\n\t- {}".format(obj))
+            msg += "\n\t- {}".format(obj)
 
         for page in pagify(msg):
             await ctx.send(box(page))
@@ -1477,7 +1477,7 @@ class Core(CoreLogic):
 
         msg = _("blacklisted Users and Roles:")
         for obj in curr_list:
-            msg.append("\n\t- {}".format(obj))
+            msg +="\n\t- {}".format(obj)
 
         for page in pagify(msg):
             await ctx.send(box(page))
