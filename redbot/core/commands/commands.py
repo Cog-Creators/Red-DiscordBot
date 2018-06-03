@@ -53,6 +53,7 @@ class Command(commands.Command):
         the internal command list via :meth:`~.GroupMixin.add_command`.
         """
         cls = cls or self.__class__
+
         def decorator(func):
             result = command(*args, **kwargs)(func)
             self.add_command(result)
@@ -65,13 +66,14 @@ class Command(commands.Command):
         the internal command list via :meth:`~.GroupMixin.add_command`.
         """
         cls = None or Group
+
         def decorator(func):
             result = group(*args, **kwargs)(func)
             self.add_command(result)
             return result
 
-
         return decorator
+
 
 class Group(Command, commands.Group):
     """Group command class for Red.
