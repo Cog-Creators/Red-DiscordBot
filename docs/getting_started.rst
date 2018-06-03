@@ -228,8 +228,8 @@ Hosting
 -------
 
 If you are hosting Red on your personnal computer, you will soon notice that
-if you close the window or if you shut down you computer. He needs an
-environement to work and respond.
+if you close the window or if you shut down you computer, Red will be offline.
+He needs an environement to work and respond.
 
 You can try to host Red somewhere he will always be online, like on a virtual
 private server (VPS) or on a personnal server (e.g. Raspberry Pi).
@@ -271,8 +271,65 @@ If you want to do it, follow these steps.
 4. **Set up an auto-restart**
 
   Once you got Red running on your server, it will still shut down if you close
-  the Red window. You can set up an auto-restarting system that will create a
+  the window. You can set up an auto-restarting system that will create a
   side task and handle fatal errors, so you can just leave your server running
   and enjoy Red!
 
   For that, just follow :ref:`this guide <systemd-service-guide>`.
+
+.. _getting-started-userdocs:
+
+------------------
+User documentation
+------------------
+
+You will soon start using the Red core cogs. A detailled documentation is
+available for every core cog, under the :ref:`How to use <main>` section.
+
+The cog guides are formatted the same. They're divided into 3 sections:
+
+* **Guide**
+
+  This will introduct you to the cog and explain you how it works.
+
+* **Commands**
+
+  A list of the available commands, with details and arguments.
+  Each command guide will be formatted like this:
+
+  * **Syntax**
+
+    A line that will show how the command must be invoked, with the arguments.
+
+  * **Description**
+
+    A detailled description of what the command does, with details about how
+    it must be used.
+
+  * **Arguments**
+
+    A list of all arguments needed (or not) for the command, with more details.
+
+    .. tip::
+        Arguments enclosed in ``< >`` means that the argument is **necessary**
+        for the command to work.
+
+        Arguments enclosed in ``< >`` means that the command is **optional**
+        for the command; you can decide to use it or not.
+
+        Arguments followed by ``=something`` means that, if not specified,
+        the argument will be equal to ``something``.
+
+        For example, ``[days=1]`` in the ban command means that the number of
+        days to be deleted will be equal to ``1`` if not specified.
+
+        Other example, the argument ``[channel=ctx]`` from the :ref:`announce
+        channel <admin-command-announce-channel>` command means that if the
+        channel is not specfied, it will be equal to ``ctx``, short for
+        context (so the channel argument will be equal to the channel where
+        the command was invoked).
+
+* **Frequently asked questions**
+
+  A buch of questions frequently asked questions by the users about the cog.
+  These are written by the cog auhors.
