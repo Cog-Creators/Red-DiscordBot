@@ -1488,11 +1488,13 @@ class Audio:
         else:
             return False
 
-    @staticmethod
-    async def _skip_action(ctx):
+    async def _skip_action(self, ctx):
         player = lavalink.get_player(ctx.guild.id)
         if not player.queue:
-            pos, dur = player.position, player.current.length
+            try:
+                pos, dur = player.position, player.current.length
+            except AttributeError:
+                return await self._embed_msg(ctx, "There's nothing in the queue.")
             time_remain = lavalink.utils.format_time(dur - pos)
             if player.current.is_stream:
                 embed = discord.Embed(
