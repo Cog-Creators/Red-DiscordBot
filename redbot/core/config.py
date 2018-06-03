@@ -223,7 +223,7 @@ class Group(Value):
                 identifiers=new_identifiers, default_value=self._defaults[item], driver=self.driver
             )
         elif self.force_registration:
-            raise AttributeError("'{}' is not a valid registered Group " "or value.".format(item))
+            raise AttributeError("'{}' is not a valid registered Group or value.".format(item))
         else:
             return Value(identifiers=new_identifiers, default_value=None, driver=self.driver)
 
@@ -624,7 +624,7 @@ class Config:
                 if val_is_dict != existing_is_dict:
                     # != is XOR
                     raise KeyError(
-                        "You cannot register a Group and a Value under" " the same name."
+                        "You cannot register a Group and a Value under the same name."
                     )
                 if val_is_dict:
                     Config._update_defaults(v, _partial=_partial[k])

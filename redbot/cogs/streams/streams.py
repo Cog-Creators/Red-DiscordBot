@@ -199,7 +199,7 @@ class Streams:
         self.streams = streams
         await self.save_streams()
 
-        msg = _("All {}'s stream alerts have been disabled." "").format(
+        msg = _("All {}'s stream alerts have been disabled.").format(
             "server" if _all else "channel"
         )
 

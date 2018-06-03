@@ -242,7 +242,7 @@ class Cleanup:
             ctx, channel, 0, limit=None, after=after, delete_pinned=delete_pinned
         )
 
-        reason = "{}({}) deleted {} messages in channel {}." "".format(
+        reason = "{}({}) deleted {} messages in channel {}.".format(
             author.name, author.id, len(to_delete), channel.name
         )
         log.info(reason)
@@ -273,7 +273,7 @@ class Cleanup:
         )
         to_delete.append(ctx.message)
 
-        reason = "{}({}) deleted {} messages in channel {}." "".format(
+        reason = "{}({}) deleted {} messages in channel {}.".format(
             author.name, author.id, number, channel.name
         )
         log.info(reason)

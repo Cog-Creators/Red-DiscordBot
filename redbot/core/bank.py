@@ -509,7 +509,7 @@ async def set_bank_name(name: str, guild: discord.Guild = None) -> str:
         await _conf.guild(guild).bank_name.set(name)
     else:
         raise RuntimeError(
-            "Guild must be provided if setting the name of a guild" "-specific bank."
+            "Guild must be provided if setting the name of a guild-specific bank."
         )
     return name
 
@@ -570,7 +570,7 @@ async def set_currency_name(name: str, guild: discord.Guild = None) -> str:
         await _conf.guild(guild).currency.set(name)
     else:
         raise RuntimeError(
-            "Guild must be provided if setting the currency" " name of a guild-specific bank."
+            "Guild must be provided if setting the currency name of a guild-specific bank."
         )
     return name
 

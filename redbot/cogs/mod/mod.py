@@ -451,7 +451,7 @@ class Mod:
         self.ban_queue.append(queue_entry)
         try:
             await guild.ban(user, reason=audit_reason)
-            log.info("{}({}) hackbanned {}" "".format(author.name, author.id, user_id))
+            log.info("{}({}) hackbanned {}".format(author.name, author.id, user_id))
         except discord.NotFound:
             self.ban_queue.remove(queue_entry)
             await ctx.send(_("User not found. Have you provided the correct user ID?"))
@@ -825,7 +825,7 @@ class Mod:
             await ctx.send("Done.")
         except discord.Forbidden:
             await ctx.send(
-                _("I cannot do that, I lack the " "'{}' permission.").format("Manage Nicknames")
+                _("I cannot do that, I lack the '{}' permission.").format("Manage Nicknames")
             )
 
     @commands.group()
@@ -1319,7 +1319,7 @@ class Mod:
                 value="{0.name} (ID {0.id})".format(voice_state.channel),
                 inline=False,
             )
-        data.set_footer(text=_("Member #{} | User ID: {}" "").format(member_number, user.id))
+        data.set_footer(text=_("Member #{} | User ID: {}").format(member_number, user.id))
 
         name = str(user)
         name = " ~ ".join((name, user.nick)) if user.nick else name

@@ -425,7 +425,7 @@ class Economy:
             now = then - bid + pay
             await bank.set_balance(author, now)
             await channel.send(
-                _("{}\n{} {}\n\nYour bid: {}\n{} → {}!" "").format(
+                _("{}\n{} {}\n\nYour bid: {}\n{} → {}!").format(
                     slot, author.mention, payout["phrase"], bid, then, now
                 )
             )
@@ -434,7 +434,7 @@ class Economy:
             await bank.withdraw_credits(author, bid)
             now = then - bid
             await channel.send(
-                _("{}\n{} Nothing!\nYour bid: {}\n{} → {}!" "").format(
+                _("{}\n{} Nothing!\nYour bid: {}\n{} → {}!").format(
                     slot, author.mention, bid, then, now
                 )
             )
@@ -541,7 +541,7 @@ class Economy:
             await self.config.PAYDAY_CREDITS.set(creds)
         else:
             await self.config.guild(guild).PAYDAY_CREDITS.set(creds)
-        await ctx.send(_("Every payday will now give {} {}." "").format(creds, credits_name))
+        await ctx.send(_("Every payday will now give {} {}.").format(creds, credits_name))
 
     @economyset.command()
     async def rolepaydayamount(self, ctx: commands.Context, role: discord.Role, creds: int):
@@ -553,7 +553,7 @@ class Economy:
         else:
             await self.config.role(role).PAYDAY_CREDITS.set(creds)
             await ctx.send(
-                _("Every payday will now give {} {} to people with the role {}." "").format(
+                _("Every payday will now give {} {} to people with the role {}.").format(
                     creds, credits_name, role.name
                 )
             )
@@ -567,7 +567,7 @@ class Economy:
         credits_name = await bank.get_currency_name(guild)
         await bank.set_default_balance(creds, guild)
         await ctx.send(
-            _("Registering an account will now give {} {}." "").format(creds, credits_name)
+            _("Registering an account will now give {} {}.").format(creds, credits_name)
         )
 
     # What would I ever do without stackoverflow?

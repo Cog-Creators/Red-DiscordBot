@@ -30,7 +30,7 @@ class Repo(RepoJSONMixin):
     GIT_DIFF_FILE_STATUS = (
         "git -C {path} diff --no-commit-id --name-status {old_hash} {new_hash}"
     )
-    GIT_LOG = "git -C {path} log --relative-date --reverse {old_hash}.." " {relative_file_path}"
+    GIT_LOG = "git -C {path} log --relative-date --reverse {old_hash}.. {relative_file_path}"
     GIT_DISCOVER_REMOTE_URL = "git -C {path} config --get remote.origin.url"
 
     PIP_INSTALL = "{python} -m pip install -U -t {target_dir} {reqs}"
@@ -98,7 +98,7 @@ class Repo(RepoJSONMixin):
         )
 
         if p.returncode != 0:
-            raise GitDiffError("Git diff failed for repo at path:" " {}".format(self.folder_path))
+            raise GitDiffError("Git diff failed for repo at path: {}".format(self.folder_path))
 
         stdout = p.stdout.strip().decode().split("\n")
 

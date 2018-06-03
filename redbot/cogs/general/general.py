@@ -202,7 +202,7 @@ class General:
         text_channels = len(guild.text_channels)
         voice_channels = len(guild.voice_channels)
         passed = (ctx.message.created_at - guild.created_at).days
-        created_at = _("Since {}. That's over {} days ago!" "").format(
+        created_at = _("Since {}. That's over {} days ago!").format(
             guild.created_at.strftime("%d %b %Y %H:%M"), passed
         )
 
@@ -264,7 +264,7 @@ class General:
                 definition = item_list[pos]["definition"]
                 example = item_list[pos]["example"]
                 defs = len(item_list)
-                msg = "**Definition #{} out of {}:\n**{}\n\n" "**Example:\n**{}".format(
+                msg = "**Definition #{} out of {}:\n**{}\n\n**Example:\n**{}".format(
                     pos + 1, defs, definition, example
                 )
                 msg = pagify(msg, ["\n"])

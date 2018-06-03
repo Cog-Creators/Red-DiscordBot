@@ -234,7 +234,7 @@ class Alias:
         await self.add_alias(ctx, alias_name, command)
 
         await ctx.send(
-            _("A new alias with the trigger `{}`" " has been created.").format(alias_name)
+            _("A new alias with the trigger `{}` has been created.").format(alias_name)
         )
 
     @checks.is_owner()
@@ -282,7 +282,7 @@ class Alias:
         await self.add_alias(ctx, alias_name, command, global_=True)
 
         await ctx.send(
-            _("A new global alias with the trigger `{}`" " has been created.").format(alias_name)
+            _("A new global alias with the trigger `{}` has been created.").format(alias_name)
         )
 
     @alias.command(name="help")
