@@ -35,6 +35,7 @@ async def filter_commands(ctx: commands.Context, extracted: list):
         and not i[0].hidden
         and await i[0].can_run(ctx)
         and all([await p.can_run(ctx) for p in i[0].parents])
+        and not any([p.hidden for p in i[0].parents])
     ]
 
 
