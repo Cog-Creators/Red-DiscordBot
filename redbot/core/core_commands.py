@@ -653,6 +653,39 @@ class Core(CoreLogic):
             )
         )
 
+    @_set.command()
+    @checks.guildowner()
+    @commands.guild_only()
+    async def serverfuzzy(self, ctx):
+        """
+        Toggle whether to enable fuzzy command search for the server.
+
+        Default is for fuzzy command search to be disabled.
+        """
+        current_setting = await ctx.bot.db.guild(ctx.guild).fuzzy()
+        await ctx.bot.db.guild(ctx.guild).fuzzy.set(not current_setting)
+        await ctx.send(
+            _("Fuzzy command search has been {} for this server.").format(
+                _("disabled") if current_setting else _("enabled")
+            )
+        )
+
+    @_set.command()
+    @checks.is_owner()
+    async def fuzzy(self, ctx):
+        """
+        Toggle whether to enable fuzzy command search in DMs.
+
+        Default is for fuzzy command search to be disabled.
+        """
+        current_setting = await ctx.bot.db.fuzzy()
+        await ctx.bot.db.fuzzy.set(not current_setting)
+        await ctx.send(
+            _("Fuzzy command search has been {} in DMs.").format(
+                _("disabled") if current_setting else _("enabled")
+            )
+        )
+
     @_set.command(aliases=["color"])
     @checks.is_owner()
     async def colour(self, ctx, *, colour: discord.Colour = None):

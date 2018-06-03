@@ -50,6 +50,7 @@ class RedBase(BotBase):
             locale="en",
             embeds=True,
             color=15158332,
+            fuzzy=False,
             help__page_char_limit=1000,
             help__max_pages_in_guild=2,
             help__tagline="",
@@ -63,6 +64,7 @@ class RedBase(BotBase):
             mod_role=None,
             embeds=None,
             use_bot_color=False,
+            fuzzy=False,
         )
 
         self.db.register_user(embeds=None)
