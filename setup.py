@@ -1,6 +1,8 @@
 from distutils.core import setup
+from distutils import ccompiler
 from pathlib import Path
 import re
+import importlib
 
 import os
 import sys
@@ -21,6 +23,28 @@ def get_package_list():
     return core
 
 
+def check_compiler_available():
+    env_dirs = os.environ["PATH"]
+    comp_name = ccompiler.get_default_compiler()
+    comp_info = ccompiler.compiler_class[comp_name]
+
+    mod_name = ".".join(["distutils", comp_info[0]])
+    mod = importlib.import_module(mod_name)
+
+    comp_class = getattr(mod, comp_info[1])
+
+    for k, v in comp_class.executables.items():
+        if v is None:
+            continue
+        for pth in env_dirs:
+            p = Path(pth) / v[0]
+            if p.is_file():
+                break
+        else:
+            return False
+    return True
+
+
 def get_requirements():
     with open("requirements.txt") as f:
         requirements = f.read().splitlines()
@@ -31,6 +55,9 @@ def get_requirements():
     except ValueError:
         pass
 
+    if not check_compiler_available():  # Can't compile python-Levensthein, so drop extra
+        requirements.remove("fuzzywuzzy[speedup]<=0.16.0")
+        requirements.append("fuzzywuzzy<=0.16.0")
     if IS_DEPLOYING or not (IS_TRAVIS or IS_RTD):
         requirements.append("discord.py>=1.0.0a0")
     if sys.platform.startswith("linux"):
