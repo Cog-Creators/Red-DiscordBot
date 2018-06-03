@@ -14,6 +14,7 @@ from redbot.core.cli import interactive_config, confirm, parse_cli_flags, ask_se
 from redbot.core.core_commands import Core
 from redbot.core.dev_commands import Dev
 from redbot.core import rpc, __version__
+import redbot.meta
 import asyncio
 import logging.handlers
 import logging
@@ -40,7 +41,7 @@ def init_loggers(cli_flags):
     logger = logging.getLogger("red")
 
     red_format = logging.Formatter(
-        "%(asctime)s %(levelname)s %(module)s %(funcName)s %(lineno)d: " "%(message)s",
+        "%(asctime)s %(levelname)s %(module)s %(funcName)s %(lineno)d: %(message)s",
         datefmt="[%d/%m/%Y %H:%M]",
     )
 
@@ -138,18 +139,16 @@ def main():
         sys.exit(0)
     if tmp_data["enable_sentry"]:
         red.enable_sentry()
-    cleanup_tasks = True
     try:
         loop.run_until_complete(red.start(token, bot=not cli_flags.not_bot))
     except discord.LoginFailure:
-        cleanup_tasks = False  # No login happened, no need for this
         log.critical(
             "This token doesn't seem to be valid. If it belongs to "
             "a user account, remember that the --not-bot flag "
             "must be used. For self-bot functionalities instead, "
             "--self-bot"
         )
-        db_token = red.db.token()
+        db_token = loop.run_until_complete(red.db.token())
         if db_token and not cli_flags.no_prompt:
             print("\nDo you want to reset the token? (y/n)")
             if confirm("> "):
@@ -164,10 +163,9 @@ def main():
         sentry_log.critical("Fatal Exception", exc_info=e)
         loop.run_until_complete(red.logout())
     finally:
-        if cleanup_tasks:
-            pending = asyncio.Task.all_tasks(loop=red.loop)
-            gathered = asyncio.gather(*pending, loop=red.loop, return_exceptions=True)
-            gathered.cancel()
+        pending = asyncio.Task.all_tasks(loop=red.loop)
+        gathered = asyncio.gather(*pending, loop=red.loop, return_exceptions=True)
+        gathered.cancel()
 
         sys.exit(red._shutdown_mode.value)
 

@@ -12,7 +12,7 @@ from .resolvers import val_if_check_is_valid, resolve_models
 from .yaml_handler import yamlset_acl, yamlget_acl
 from .converters import CogOrCommand, RuleType
 
-_models = ["owner", "guildowner", "admin", "mod"]
+_models = ["owner", "guildowner", "admin", "mod", "all"]
 
 _ = Translator("Permissions", __file__)
 
@@ -32,59 +32,8 @@ class Permissions:
     def __init__(self, bot: Red):
         self.bot = bot
         self.config = Config.get_conf(self, identifier=78631113035100160, force_registration=True)
-        self._before = []
-        self._after = []
         self.config.register_global(owner_models={})
         self.config.register_guild(owner_models={})
-
-    def add_check(self, check_obj: object, before_or_after: str):
-        """
-        adds a check to the check ordering
-
-        checks should be a function taking 2 arguments:
-        ctx: commands.Context
-        level: str
-
-        and returning:
-        None: do not interfere
-        True: command should be allowed even if they dont
-            have role or perm requirements for the check
-        False: command should be blocked
-
-        before_or_after:
-        Should literally be a str equaling 'before' or 'after'
-        This should be based on if this should take priority
-        over set rules or not
-
-        3rd party cogs adding checks using this should only allow
-        the owner to add checks before, and ensure only the owner
-        can add checks recieving the level 'owner'
-
-        3rd party cogs should keep a copy of of any checks they registered
-        and deregister then on unload
-        """
-
-        if before_or_after == "before":
-            self._before.append(check_obj)
-        elif before_or_after == "after":
-            self._after.append(check_obj)
-        else:
-            raise TypeError("RTFM")
-
-    def remove_check(self, check_obj: object, before_or_after: str):
-        """
-        removes a previously registered check object
-
-        3rd party cogs should keep a copy of of any checks they registered
-        and deregister then on unload
-        """
-
-        if before_or_after == "before":
-            self._before.remove(check_obj)
-        elif before_or_after == "after":
-            self._after.remove(check_obj)
-        else:
-            raise TypeError("RTFM")
 
     async def __global_check(self, ctx):
         """
@@ -94,7 +43,7 @@ class Permissions:
         defering to check logic
         This works since all checks must be True to run
         """
-        v = await self.check_overrides(ctx, "mod")
+        v = await self.check_overrides(ctx, "all")
 
         if v is False:
             return False
@@ -109,7 +58,7 @@ class Permissions:
         ctx: `redbot.core.context.commands.Context`
             The context of the command
         level: `str`
-            One of 'owner', 'guildowner', 'admin', 'mod'
+            One of 'owner', 'guildowner', 'admin', 'mod', 'all'
 
         Returns
         -------
@@ -126,7 +75,13 @@ class Permissions:
         roles = sorted(ctx.author.roles, reverse=True) if ctx.guild else []
         entries.extend([x.id for x in roles])
 
-        for check in self._before:
+        before = [
+            getattr(cog, "_{0.__class__.__name__}__red_permissions_before".format(cog), None)
+            for cog in ctx.bot.cogs.values()
+        ]
+        for check in before:
+            if check is None:
+                continue
             override = await val_if_check_is_valid(check=check, ctx=ctx, level=level)
             if override is not None:
                 return override
@@ -137,7 +92,11 @@ class Permissions:
             if override is not None:
                 return override
 
-        for check in self._after:
+        after = [
+            getattr(cog, "_{0.__class__.__name__}__red_permissions_after".format(cog), None)
+            for cog in ctx.bot.cogs.values()
+        ]
+        for check in after:
             override = await val_if_check_is_valid(check=check, ctx=ctx, level=level)
             if override is not None:
                 return override
@@ -206,10 +165,10 @@ class Permissions:
             "\n"
             "1. Rules about a user.\n"
             "2. Rules about the voice channel a user is in.\n"
-            "3. Rules about the text channel a command was issued in\n"
+            "3. Rules about the text channel a command was issued in.\n"
             "4. Rules about a role the user has "
-            "(The highest role they have with a rule will be used)\n"
-            "5. Rules about the guild a user is in (Owner level only)"
+            "(The highest role they have with a rule will be used).\n"
+            "5. Rules about the guild a user is in (Owner level only)."
             "\n\nFor more details, please read the official documentation."
         )
 
@@ -254,13 +213,13 @@ class Permissions:
         Take a YAML file upload to set permissions from
         """
         if not ctx.message.attachments:
-            return await ctx.send(_("You must upload a file"))
+            return await ctx.send(_("You must upload a file."))
 
         try:
             await yamlset_acl(ctx, config=self.config.owner_models, update=False)
         except Exception as e:
             print(e)
-            return await ctx.send(_("Inalid syntax"))
+            return await ctx.send(_("Invalid syntax."))
         else:
             await ctx.send(_("Rules set."))
 
@@ -280,13 +239,13 @@ class Permissions:
         Take a YAML file upload to set permissions from
         """
         if not ctx.message.attachments:
-            return await ctx.send(_("You must upload a file"))
+            return await ctx.send(_("You must upload a file."))
 
         try:
             await yamlset_acl(ctx, config=self.config.guild(ctx.guild).owner_models, update=False)
         except Exception as e:
             print(e)
-            return await ctx.send(_("Inalid syntax"))
+            return await ctx.send(_("Invalid syntax."))
         else:
             await ctx.send(_("Rules set."))
 
@@ -309,13 +268,13 @@ class Permissions:
         Use this to not lose existing rules
         """
         if not ctx.message.attachments:
-            return await ctx.send(_("You must upload a file"))
+            return await ctx.send(_("You must upload a file."))
 
         try:
             await yamlset_acl(ctx, config=self.config.guild(ctx.guild).owner_models, update=True)
         except Exception as e:
             print(e)
-            return await ctx.send(_("Inalid syntax"))
+            return await ctx.send(_("Invalid syntax."))
         else:
             await ctx.send(_("Rules set."))
 
@@ -328,13 +287,13 @@ class Permissions:
         Use this to not lose existing rules
         """
         if not ctx.message.attachments:
-            return await ctx.send(_("You must upload a file"))
+            return await ctx.send(_("You must upload a file."))
 
         try:
             await yamlset_acl(ctx, config=self.config.owner_models, update=True)
         except Exception as e:
             print(e)
-            return await ctx.send(_("Inalid syntax"))
+            return await ctx.send(_("Invalid syntax."))
         else:
             await ctx.send(_("Rules set."))
 
@@ -348,7 +307,7 @@ class Permissions:
         who_or_what: str,
     ):
         """
-        adds something to the rules
+        Adds something to the rules
 
         allow_or_deny: "allow" or "deny", depending on the rule to modify
 
@@ -363,7 +322,7 @@ class Permissions:
         """
         obj = self.find_object_uniquely(who_or_what)
         if not obj:
-            return await ctx.send(_("No unique matches. Try using an ID or mention"))
+            return await ctx.send(_("No unique matches. Try using an ID or mention."))
         model_type, type_name = cog_or_command
         async with self.config.owner_models() as models:
             data = {k: v for k, v in models.items()}
@@ -392,7 +351,7 @@ class Permissions:
         who_or_what: str,
     ):
         """
-        adds something to the rules
+        Adds something to the rules
 
         allow_or_deny: "allow" or "deny", depending on the rule to modify
 
@@ -407,7 +366,7 @@ class Permissions:
         """
         obj = self.find_object_uniquely(who_or_what)
         if not obj:
-            return await ctx.send(_("No unique matches. Try using an ID or mention"))
+            return await ctx.send(_("No unique matches. Try using an ID or mention."))
         model_type, type_name = cog_or_command
         async with self.config.guild(ctx.guild).owner_models() as models:
             data = {k: v for k, v in models.items()}
@@ -450,7 +409,7 @@ class Permissions:
         """
         obj = self.find_object_uniquely(who_or_what)
         if not obj:
-            return await ctx.send(_("No unique matches. Try using an ID or mention"))
+            return await ctx.send(_("No unique matches. Try using an ID or mention."))
         model_type, type_name = cog_or_command
         async with self.config.owner_models() as models:
             data = {k: v for k, v in models.items()}
@@ -494,7 +453,7 @@ class Permissions:
         """
         obj = self.find_object_uniquely(who_or_what)
         if not obj:
-            return await ctx.send(_("No unique matches. Try using an ID or mention"))
+            return await ctx.send(_("No unique matches. Try using an ID or mention."))
         model_type, type_name = cog_or_command
         async with self.config.guild(ctx.guild).owner_models() as models:
             data = {k: v for k, v in models.items()}
@@ -540,7 +499,7 @@ class Permissions:
             data[model_type][type_name]["default"] = val_to_set
 
             models.update(data)
-        await ctx.send(_("Defualt set."))
+        await ctx.send(_("Default set."))
 
     @checks.is_owner()
     @permissions.command(name="setdefaultglobalrule")
@@ -570,7 +529,7 @@ class Permissions:
             data[model_type][type_name]["default"] = val_to_set
 
             models.update(data)
-        await ctx.send(_("Defualt set."))
+        await ctx.send(_("Default set."))
 
     @commands.bot_has_permissions(add_reactions=True)
     @checks.is_owner()
@@ -592,7 +551,7 @@ class Permissions:
 
         if REACTS.get(str(reaction)):
             await self.config.owner_models.clear()
-            await ctx.send(_("Global settings cleared"))
+            await ctx.send(_("Global settings cleared."))
         else:
             await ctx.send(_("Okay."))
 
@@ -617,7 +576,7 @@ class Permissions:
 
         if REACTS.get(str(reaction)):
             await self.config.guild(ctx.guild).owner_models.clear()
-            await ctx.send(_("Guild settings cleared"))
+            await ctx.send(_("Guild settings cleared."))
         else:
             await ctx.send(_("Okay."))
 

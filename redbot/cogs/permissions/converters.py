@@ -3,7 +3,6 @@ from typing import Tuple
 
 
 class CogOrCommand(commands.Converter):
-
     async def convert(self, ctx: commands.Context, arg: str) -> Tuple[str]:
         ret = ctx.bot.get_cog(arg)
         if ret:
@@ -16,7 +15,6 @@ class CogOrCommand(commands.Converter):
 
 
 class RuleType(commands.Converter):
-
     async def convert(self, ctx: commands.Context, arg: str) -> str:
         if arg.lower() in ("allow", "whitelist", "allowed"):
             return "allow"

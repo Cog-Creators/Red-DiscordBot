@@ -1,4 +1,4 @@
-__all__ = ["TYPE_CHECKING", "NewType", "safe_delete", "fuzzy_command_search"]
+__all__ = ["safe_delete", "fuzzy_command_search"]
 
 from pathlib import Path
 import os
@@ -6,18 +6,6 @@ import shutil
 from redbot.core import commands
 from fuzzywuzzy import process
 from .chat_formatting import box
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
-try:
-    from typing import NewType
-except ImportError:
-
-    def NewType(name, tp):
-        return type(name, (tp,), {})
 
 
 def safe_delete(pth: Path):

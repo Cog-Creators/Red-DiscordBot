@@ -21,7 +21,6 @@ class RPS(Enum):
 
 
 class RPSParser:
-
     def __init__(self, argument):
         argument = argument.lower()
         if argument == "rock":

@@ -32,7 +32,7 @@ if not config_dir:
 try:
     config_dir.mkdir(parents=True, exist_ok=True)
 except PermissionError:
-    print("You don't have permission to write to " "'{}'\nExiting...".format(config_dir))
+    print("You don't have permission to write to '{}'\nExiting...".format(config_dir))
     sys.exit(1)
 config_file = config_dir / "config.json"
 
@@ -101,7 +101,7 @@ def get_data_dir():
             )
             sys.exit(1)
 
-    print("You have chosen {} to be your data directory." "".format(default_data_dir))
+    print("You have chosen {} to be your data directory.".format(default_data_dir))
     if not confirm("Please confirm (y/n):"):
         print("Please start the process over.")
         sys.exit(0)

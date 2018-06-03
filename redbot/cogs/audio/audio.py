@@ -20,7 +20,6 @@ __author__ = ["aikaterna", "billy/bollo/ati"]
 
 @cog_i18n(_)
 class Audio:
-
     def __init__(self, bot):
         self.bot = bot
         self.config = Config.get_conf(self, 2711759130, force_registration=True)
@@ -426,7 +425,11 @@ class Audio:
                 await message.add_reaction(expected[i])
 
         def check(r, u):
-            return r.message.id == message.id and u == ctx.message.author
+            return (
+                r.message.id == message.id
+                and u == ctx.message.author
+                and any(e in str(r.emoji) for e in expected)
+            )
 
         try:
             (r, u) = await self.bot.wait_for("reaction_add", check=check, timeout=10.0)
@@ -1485,11 +1488,13 @@ class Audio:
         else:
             return False
 
-    @staticmethod
-    async def _skip_action(ctx):
+    async def _skip_action(self, ctx):
         player = lavalink.get_player(ctx.guild.id)
         if not player.queue:
-            pos, dur = player.position, player.current.length
+            try:
+                pos, dur = player.position, player.current.length
+            except AttributeError:
+                return await self._embed_msg(ctx, "There's nothing in the queue.")
             time_remain = lavalink.utils.format_time(dur - pos)
             if player.current.is_stream:
                 embed = discord.Embed(

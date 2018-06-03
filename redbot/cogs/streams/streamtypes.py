@@ -30,7 +30,6 @@ def rnd(url):
 
 
 class TwitchCommunity:
-
     def __init__(self, **kwargs):
         self.name = kwargs.pop("name")
         self.id = kwargs.pop("id", None)
@@ -119,7 +118,6 @@ class TwitchCommunity:
 
 
 class Stream:
-
     def __init__(self, **kwargs):
         self.name = kwargs.pop("name", None)
         self.channels = kwargs.pop("channels", [])
@@ -148,7 +146,6 @@ class Stream:
 
 
 class YoutubeStream(Stream):
-
     def __init__(self, **kwargs):
         self.id = kwargs.pop("id", None)
         self._token = kwargs.pop("token", None)
@@ -213,7 +210,6 @@ class YoutubeStream(Stream):
 
 
 class TwitchStream(Stream):
-
     def __init__(self, **kwargs):
         self.id = kwargs.pop("id", None)
         self._token = kwargs.pop("token", None)
@@ -288,7 +284,6 @@ class TwitchStream(Stream):
 
 
 class HitboxStream(Stream):
-
     async def is_online(self):
         url = "https://api.hitbox.tv/media/live/" + self.name
 
@@ -326,7 +321,6 @@ class HitboxStream(Stream):
 
 
 class MixerStream(Stream):
-
     async def is_online(self):
         url = "https://mixer.com/api/v1/channels/" + self.name
 
@@ -368,7 +362,6 @@ class MixerStream(Stream):
 
 
 class PicartoStream(Stream):
-
     async def is_online(self):
         url = "https://api.picarto.tv/v1/channel/name/" + self.name
 

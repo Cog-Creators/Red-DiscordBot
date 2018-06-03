@@ -49,7 +49,6 @@ def should_log_sentry(exception) -> bool:
 
 
 def init_events(bot, cli_flags):
-
     @bot.event
     async def on_connect():
         if bot.uptime is None:
@@ -97,7 +96,7 @@ def init_events(bot, cli_flags):
             else:
                 invite_url = None
 
-        prefixes = await bot.db.prefix()
+        prefixes = cli_flags.prefix or (await bot.db.prefix())
         lang = await bot.db.locale()
         red_version = __version__
         red_pkg = pkg_resources.get_distribution("Red-DiscordBot")
@@ -119,24 +118,24 @@ def init_events(bot, cli_flags):
 
         INFO.append("{} cogs with {} commands".format(len(bot.cogs), len(bot.commands)))
 
-        async with aiohttp.ClientSession() as session:
-            async with session.get("https://pypi.python.org/pypi/red-discordbot/json") as r:
-                data = await r.json()
-        if StrictVersion(data["info"]["version"]) > StrictVersion(red_version):
-            INFO.append(
-                "Outdated version! {} is available "
-                "but you're using {}".format(data["info"]["version"], red_version)
-            )
-            owner = discord.utils.get(bot.get_all_members(), id=bot.owner_id)
-            try:
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get("https://pypi.python.org/pypi/red-discordbot/json") as r:
+                    data = await r.json()
+            if StrictVersion(data["info"]["version"]) > StrictVersion(red_version):
+                INFO.append(
+                    "Outdated version! {} is available "
+                    "but you're using {}".format(data["info"]["version"], red_version)
+                )
+                owner = discord.utils.get(bot.get_all_members(), id=bot.owner_id)
                 await owner.send(
                     "Your Red instance is out of date! {} is the current "
                     "version, however you are using {}!".format(
                         data["info"]["version"], red_version
                     )
                 )
-            except:
-                pass
+        except:
+            pass
         INFO2 = []
 
         sentry = await bot.db.enable_sentry()
