@@ -30,6 +30,7 @@ Welcome to Red - Discord Bot's documentation!
     getting_started
 
     admin
+    alias
 
 .. toctree::
     :maxdepth: 2
