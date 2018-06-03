@@ -182,7 +182,7 @@ class Alias:
         """
         Manage global aliases.
         """
-        if ctx.invoked_subcommand is None or isinstance(ctx.invoked_subcommand, commands.Group):
+        if ctx.invoked_subcommand is None:
             await ctx.send_help()
 
     @checks.mod_or_permissions(manage_guild=True)
