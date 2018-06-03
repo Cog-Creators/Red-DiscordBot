@@ -317,7 +317,7 @@ class Mod:
             )
             return
         elif ctx.guild.me.top_role <= user.top_role or user == ctx.guild.owner:
-            await ctx.send(_("I cannot do that due to discord heirarchy rules"))
+            await ctx.send(_("I cannot do that due to discord hierarchy rules"))
             return
         audit_reason = get_audit_reason(author, reason)
         try:
@@ -373,7 +373,7 @@ class Mod:
             )
             return
         elif ctx.guild.me.top_role <= user.top_role or user == ctx.guild.owner:
-            await ctx.send(_("I cannot do that due to discord heirarchy rules"))
+            await ctx.send(_("I cannot do that due to discord hierarchy rules"))
             return
 
         if days:
