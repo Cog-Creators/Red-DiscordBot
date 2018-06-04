@@ -1,6 +1,7 @@
 from .config import Config
+from .cog_base import CogBase
 
-__all__ = ["Config", "__version__"]
+__all__ = ["Config", "__version__", "CogBase"]
 
 
 class VersionInfo:

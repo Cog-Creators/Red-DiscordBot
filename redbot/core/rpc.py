@@ -8,6 +8,8 @@ import logging
 
 log = logging.getLogger("red.rpc")
 
+__all__ = ["RPC", "add_method", "add_multi_method"]
+
 
 class RedRpc(JsonRpc):
     def _add_method(self, method, prefix=""):
@@ -20,6 +22,21 @@ class RedRpc(JsonRpc):
             name = "{}__{}".format(prefix, name)
 
         self.methods[name] = method
+
+    def remove_method(self, method):
+        new_methods = {}
+        for name, meth in self.methods.items():
+            if meth != method:
+                new_methods[name] = meth
+        self.methods = new_methods
+
+    def remove_methods(self, prefix: str):
+        new_methods = {}
+        for name, meth in self.methods.items():
+            splitted = name.split("__")
+            if len(splitted) < 2 or splitted[0] != prefix:
+                new_methods[name] = meth
+        self.methods = new_methods
 
 
 class RPC:
@@ -35,6 +52,16 @@ class RPC:
         self.app_handler = self.app.make_handler()
 
         self.server = None
+
+        global add_method
+        global add_multi_method
+        global remove_method
+        global remove_methods
+
+        add_method = self.add_method
+        add_multi_method = self.add_multi_method
+        remove_method = self.remove_method
+        remove_methods = self.remove_methods
 
     async def initialize(self):
         """
@@ -65,3 +92,16 @@ class RPC:
 
         for method in methods:
             self.add_method(method, prefix=prefix)
+
+    def remove_method(self, method):
+        self._rpc.remove_method(method)
+
+    def remove_methods(self, prefix: str):
+        self._rpc.remove_methods(prefix)
+
+
+# Do NOT remove these!
+add_method = None
+add_multi_method = None
+remove_method = None
+remove_methods = None
