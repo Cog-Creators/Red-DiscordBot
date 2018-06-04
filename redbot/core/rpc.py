@@ -39,9 +39,6 @@ class RedRpc(JsonRpc):
         self.methods = new_methods
 
 
-server: "RPC" = None
-
-
 class RPC:
     """
     RPC server manager.

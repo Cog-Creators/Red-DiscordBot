@@ -86,7 +86,7 @@ def init_events(bot, cli_flags):
                 print("Loaded packages: " + ", ".join(packages))
 
         if bot.rpc_enabled:
-            await rpc.server.initialize()
+            await bot.rpc.initialize()
 
         guilds = len(bot.guilds)
         users = len(set([m for m in bot.get_all_members()]))

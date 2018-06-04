@@ -14,7 +14,6 @@ from redbot.core.cli import interactive_config, confirm, parse_cli_flags, ask_se
 from redbot.core.core_commands import Core
 from redbot.core.dev_commands import Dev
 from redbot.core import __version__
-from redbot.core import rpc
 import asyncio
 import logging.handlers
 import logging
@@ -113,7 +112,6 @@ def main():
     load_basic_configuration(cli_flags.instance_name)
     log, sentry_log = init_loggers(cli_flags)
     red = Red(cli_flags, description=description, pm_help=None)
-    rpc.server = rpc.RPC(red)
     init_global_checks(red)
     init_events(red, cli_flags)
     red.add_cog(Core(red))
@@ -168,7 +166,7 @@ def main():
         gathered = asyncio.gather(*pending, loop=red.loop, return_exceptions=True)
         gathered.cancel()
 
-        rpc.server.close()
+        red.rpc.server.close()
 
         sys.exit(red._shutdown_mode.value)
 
