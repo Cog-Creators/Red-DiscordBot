@@ -76,8 +76,12 @@ class Bank:
                 default_balance = await bank._conf.guild(ctx.guild).default_balance()
 
             settings = _(
-                "Bank settings:\n\n" "Bank name: {}\n" "Currency: {}\n" "Default balance: {}" ""
-            ).format(bank_name, currency_name, default_balance)
+                "Bank settings:\n\n"
+                "Bank name: {bank}\n"
+                "Currency: {currency}\n"
+                "Default balance: {balance}"
+                ""
+            ).format(bank=bank_name, currency=currency_name, balance=default_balance)
             await ctx.send(box(settings))
             await ctx.send_help()
 
@@ -93,26 +97,26 @@ class Bank:
         if confirm is False:
             await ctx.send(
                 _(
-                    "This will toggle the bank to be {}, deleting all accounts "
-                    "in the process! If you're sure, type `{}`"
-                ).format(word, "{}bankset toggleglobal yes".format(ctx.prefix))
+                    "This will toggle the bank to be {banktype}, deleting all accounts "
+                    "in the process! If you're sure, type `{com}`"
+                ).format(banktype=word, com="{}bankset toggleglobal yes".format(ctx.prefix))
             )
         else:
             await bank.set_global(not cur_setting)
-            await ctx.send(_("The bank is now {}.").format(word))
+            await ctx.send(_("The bank is now {banktype}.").format(banktype=word))
 
     @bankset.command(name="bankname")
     @check_global_setting_guildowner()
     async def bankset_bankname(self, ctx: commands.Context, *, name: str):
         """Set the bank's name"""
         await bank.set_bank_name(name, ctx.guild)
-        await ctx.send(_("Bank's name has been set to {}").format(name))
+        await ctx.send(f'{_("Bank name has been set to")}: {name}')
 
     @bankset.command(name="creditsname")
     @check_global_setting_guildowner()
     async def bankset_creditsname(self, ctx: commands.Context, *, name: str):
         """Set the name for the bank's currency"""
         await bank.set_currency_name(name, ctx.guild)
-        await ctx.send(_("Currency name has been set to {}").format(name))
+        await ctx.send(f'{_("Currency name has been set to")}: {name}')
 
     # ENDSECTION

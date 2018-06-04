@@ -1,8 +1,8 @@
 from typing import Tuple
 
 import discord
-from discord.ext import commands
-
+from redbot.core import commands
+from redbot.core.i18n import Translator, cog_i18n
 from redbot.core import Config, checks
 
 import logging
@@ -13,32 +13,35 @@ from .converters import MemberDefaultAuthor, SelfRole
 
 log = logging.getLogger("red.admin")
 
-GENERIC_FORBIDDEN = (
+_ = Translator("Admin", __file__)
+
+GENERIC_FORBIDDEN = _(
     "I attempted to do something that Discord denied me permissions for."
     " Your command failed to successfully complete."
 )
 
-HIERARCHY_ISSUE = (
+HIERARCHY_ISSUE = _(
     "I tried to add {role.name} to {member.display_name} but that role"
     " is higher than my highest role in the Discord hierarchy so I was"
     " unable to successfully add it. Please give me a higher role and "
     "try again."
 )
 
-USER_HIERARCHY_ISSUE = (
+USER_HIERARCHY_ISSUE = _(
     "I tried to add {role.name} to {member.display_name} but that role"
     " is higher than your highest role in the Discord hierarchy so I was"
     " unable to successfully add it. Please get a higher role and "
     "try again."
 )
 
-RUNNING_ANNOUNCEMENT = (
+RUNNING_ANNOUNCEMENT = _(
     "I am already announcing something. If you would like to make a"
     " different announcement please use `{prefix}announce cancel`"
     " first."
 )
 
 
+@cog_i18n(_)
 class Admin:
     def __init__(self, config=Config):
         self.conf = config.get_conf(self, 8237492837454039, force_registration=True)
@@ -103,8 +106,9 @@ class Admin:
                 await self.complain(ctx, GENERIC_FORBIDDEN)
         else:
             await ctx.send(
-                "I successfully added {role.name} to"
-                " {member.display_name}".format(role=role, member=member)
+                _("I successfully added {role.name} to" " {member.display_name}").format(
+                    role=role, member=member
+                )
             )
 
     async def _removerole(self, ctx: commands.Context, member: discord.Member, role: discord.Role):
@@ -117,8 +121,9 @@ class Admin:
                 await self.complain(ctx, GENERIC_FORBIDDEN)
         else:
             await ctx.send(
-                "I successfully removed {role.name} from"
-                " {member.display_name}".format(role=role, member=member)
+                _("I successfully removed {role.name} from" " {member.display_name}").format(
+                    role=role, member=member
+                )
             )
 
     @commands.command()
@@ -190,7 +195,7 @@ class Admin:
             await self.complain(ctx, GENERIC_FORBIDDEN)
         else:
             log.info(reason)
-            await ctx.send("Done.")
+            await ctx.send(_("Done."))
 
     @editrole.command(name="name")
     @checks.admin_or_permissions(administrator=True)
@@ -216,7 +221,7 @@ class Admin:
             await self.complain(ctx, GENERIC_FORBIDDEN)
         else:
             log.info(reason)
-            await ctx.send("Done.")
+            await ctx.send(_("Done."))
 
     @commands.group(invoke_without_command=True)
     @checks.is_owner()
@@ -230,7 +235,7 @@ class Admin:
 
             self.__current_announcer = announcer
 
-            await ctx.send("The announcement has begun.")
+            await ctx.send(_("The announcement has begun."))
         else:
             prefix = ctx.prefix
             await self.complain(ctx, RUNNING_ANNOUNCEMENT, prefix=prefix)
@@ -246,7 +251,7 @@ class Admin:
         except AttributeError:
             pass
 
-        await ctx.send("The current announcement has been cancelled.")
+        await ctx.send(_("The current announcement has been cancelled."))
 
     @announce.command(name="channel")
     @commands.guild_only()
@@ -259,7 +264,9 @@ class Admin:
             channel = ctx.channel
         await self.conf.guild(ctx.guild).announce_channel.set(channel.id)
 
-        await ctx.send("The announcement channel has been set to {}".format(channel.mention))
+        await ctx.send(
+            _("The announcement channel has been set to {channel.mention}").format(channel=channel)
+        )
 
     @announce.command(name="ignore")
     @commands.guild_only()
@@ -271,9 +278,16 @@ class Admin:
         ignored = await self.conf.guild(ctx.guild).announce_ignore()
         await self.conf.guild(ctx.guild).announce_ignore.set(not ignored)
 
-        verb = "will" if ignored else "will not"
-
-        await ctx.send(f"The server {ctx.guild.name} {verb} receive announcements.")
+        if ignored:  # Keeping original logic....
+            await ctx.send(
+                _("The server {guild.name} will receive announcements.").format(guild=ctx.guild)
+            )
+        else:
+            await ctx.send(
+                _("The server {guild.name} will not receive announcements.").format(
+                    guild=ctx.guild
+                )
+            )
 
     async def _valid_selfroles(self, guild: discord.Guild) -> Tuple[discord.Role]:
         """
@@ -326,7 +340,7 @@ class Admin:
             if role.id not in curr_selfroles:
                 curr_selfroles.append(role.id)
 
-        await ctx.send("The selfroles list has been successfully modified.")
+        await ctx.send(_("The selfroles list has been successfully modified."))
 
     @selfrole.command(name="delete")
     @commands.has_permissions(manage_roles=True)
@@ -339,7 +353,7 @@ class Admin:
         async with self.conf.guild(ctx.guild).selfroles() as curr_selfroles:
             curr_selfroles.remove(role.id)
 
-        await ctx.send("The selfroles list has been successfully modified.")
+        await ctx.send(_("The selfroles list has been successfully modified."))
 
     @selfrole.command(name="list")
     async def selfrole_list(self, ctx: commands.Context):
@@ -349,7 +363,7 @@ class Admin:
         selfroles = await self._valid_selfroles(ctx.guild)
         fmt_selfroles = "\n".join(["+ " + r.name for r in selfroles])
 
-        msg = "Available Selfroles:\n{}".format(fmt_selfroles)
+        msg = f'{_("Available Selfroles")}:\n{fmt_selfroles}'
         await ctx.send(box(msg, "diff"))
 
     async def _serverlock_check(self, guild: discord.Guild) -> bool:
@@ -372,9 +386,10 @@ class Admin:
         serverlocked = await self.conf.serverlocked()
         await self.conf.serverlocked.set(not serverlocked)
 
-        verb = "is now" if not serverlocked else "is no longer"
-
-        await ctx.send("The bot {} serverlocked.".format(verb))
+        if serverlocked:  # again with original logic I'm not sure of
+            await ctx.send(_("The bot is no longer serverlocked."))
+        else:
+            await ctx.send(_("The bot is now serverlocked."))
 
     # region Event Handlers
     async def on_guild_join(self, guild: discord.Guild):

@@ -163,7 +163,7 @@ class Trivia:
         if not multiplier:
             await ctx.send("Done. I will no longer reward the winner with a payout.")
             return
-        await ctx.send("Done. Payout multiplier set to {}.".format(multiplier))
+        await ctx.send(f"Done. Payout multiplier set to {multiplier}.")
 
     @commands.group(invoke_without_command=True)
     @commands.guild_only()
@@ -190,9 +190,9 @@ class Trivia:
                 dict_ = self.get_trivia_list(category)
             except FileNotFoundError:
                 await ctx.send(
-                    "Invalid category `{0}`. See `{1}trivia list`"
+                    "Invalid category `{category}`. See `{com}`"
                     " for a list of trivia categories."
-                    "".format(category, ctx.prefix)
+                    "".format(category=category, com=f"{ctx.prefix}trivia list")
                 )
             except InvalidListError:
                 await ctx.send(
@@ -310,9 +310,9 @@ class Trivia:
         key = self._get_sort_key(sort_by)
         if key is None:
             await ctx.send(
-                "Unknown field `{}`, see `{}help trivia "
+                "Unknown field `{field}`, see `{com}`"
                 "leaderboard global` for valid fields to sort by."
-                "".format(sort_by, ctx.prefix)
+                "".format(field=sort_by, com=f"{ctx.prefix}help trivia")
             )
             return
         data = await self.conf.all_members()
@@ -438,7 +438,7 @@ class Trivia:
 
         """
         channel = session.ctx.channel
-        LOG.debug("Ending trivia session; #%s in %s", channel, channel.guild.id)
+        LOG.debug(f"Ending trivia session; #{channel} in {channel.guild}")
         if session in self.trivia_sessions:
             self.trivia_sessions.remove(session)
         if session.scores:
