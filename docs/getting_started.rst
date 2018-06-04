@@ -332,4 +332,4 @@ The cog guides are formatted the same. They're divided into 3 sections:
 * **Frequently asked questions**
 
   A buch of questions frequently asked questions by the users about the cog.
-  These are written by the cog auhors.
+  These are written by the cog authors.
