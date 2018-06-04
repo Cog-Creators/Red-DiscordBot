@@ -38,9 +38,9 @@ Here's a list of all commands available for this cog.
 
 .. _admin-command-selfrole:
 
-~~~~~~~~
+^^^^^^^^
 selfrole
-~~~~~~~~
+^^^^^^^^
 
 **Syntax**
 
@@ -60,9 +60,9 @@ by admins.
 
 .. _admin-command-selfrole-remove:
 
-~~~~~~~~~~~~~~~
+"""""""""""""""
 selfrole remove
-~~~~~~~~~~~~~~~
+"""""""""""""""
 
 **Syntax**
 
@@ -82,9 +82,9 @@ by admins.
 
 .. _admin-command-selfrole-list:
 
-~~~~~~~~~~~~~
+"""""""""""""
 selfrole list
-~~~~~~~~~~~~~
+"""""""""""""
 
 **Syntax**
 
@@ -98,9 +98,9 @@ List all of the available roles you can assign to yourself.
 
 .. _admin-command-selfrole-add:
 
-~~~~~~~~~~~~
+""""""""""""
 selfrole add
-~~~~~~~~~~~~
+""""""""""""
 
 This command is locked to the ``Manage roles`` permission.
 
@@ -125,9 +125,9 @@ Add a role to the list of available selfroles.
 
 .. _admin-command-selfrole-delete:
 
-~~~~~~~~~~~~~~~
+"""""""""""""""
 selfrole delete
-~~~~~~~~~~~~~~~
+"""""""""""""""
 
 This command is locked to the ``Manage roles`` permission.
 
@@ -148,9 +148,9 @@ Removes a role from the list of available selfroles.
 
 .. _admin-command-addrole:
 
-~~~~~~~
+^^^^^^^
 addrole
-~~~~~~~
+^^^^^^^
 
 |admin-lock|
 
@@ -177,9 +177,9 @@ as yourself, the command author.
 
 .. _admin-command-removerole:
 
-~~~~~~~~~~
+^^^^^^^^^^
 removerole
-~~~~~~~~~~
+^^^^^^^^^^
 
 |admin-lock|
 
@@ -206,9 +206,9 @@ as yourself, the command author.
 
 .. _admin-command-editrole:
 
-~~~~~~~~
+^^^^^^^^
 editrole
-~~~~~~~~
+^^^^^^^^
 
 |admin-lock|
 
@@ -224,9 +224,9 @@ Edits a role from the server.
 
 .. _admin-command-editrole-name:
 
-~~~~~~~~~~~~~
+"""""""""""""
 editrole name
-~~~~~~~~~~~~~
+"""""""""""""
 
 **Syntax**
 
@@ -249,9 +249,9 @@ Edit a role name from the guild.
 
 .. _admin-command-editrole-color:
 
-~~~~~~~~~~~~~~
+""""""""""""""
 editrole color
-~~~~~~~~~~~~~~
+""""""""""""""
 
 **Syntax**
 
@@ -283,9 +283,9 @@ Examples:
 
 .. _admin-command-announce:
 
-~~~~~~~~
+^^^^^^^^
 announce
-~~~~~~~~
+^^^^^^^^
 
 |owner-lock|
 
@@ -310,9 +310,9 @@ the bot will use the first one.
 
 .. _admin-command-announce-channel:
 
-~~~~~~~~~~~~~~~~
+""""""""""""""""
 announce channel
-~~~~~~~~~~~~~~~~
+""""""""""""""""
 
 |guildowner-lock|
 
@@ -333,9 +333,9 @@ Set the channel where the bot owner announcements will be done.
 
 .. _admin-command-announce-ignore:
 
-~~~~~~~~~~~~~~~
+"""""""""""""""
 announce ignore
-~~~~~~~~~~~~~~~
+"""""""""""""""
 
 |guildowner-lock|
 
@@ -358,9 +358,9 @@ Enable or disable the announcements on the selected guild.
 
 .. _admin-command-announce-cancel:
 
-~~~~~~~~~~~~~~~
+"""""""""""""""
 announce cancel
-~~~~~~~~~~~~~~~
+"""""""""""""""
 
 |owner-lock|
 

@@ -54,9 +54,9 @@ Commands
 
 .. _alias-command-alias:
 
-~~~~~
+^^^^^
 alias
-~~~~~
+^^^^^
 
 **Syntax**
 
@@ -71,9 +71,9 @@ It will be used for all other commands.
 
 .. _alias-command-alias-add:
 
-~~~~~~~~~
+"""""""""
 alias add
-~~~~~~~~~
+"""""""""
 
 |mod-lock|
 
@@ -98,9 +98,9 @@ Click :ref:`here <alias-usage>` for examples.
 
 .. _alias-command-alias-del:
 
-~~~~~~~~~
+"""""""""
 alias del
-~~~~~~~~~
+"""""""""
 
 |mod-lock|
 
@@ -120,9 +120,9 @@ Remove an alias from the list.
 
 .. _alias-command-alias-list:
 
-~~~~~~~~~~
+""""""""""
 alias list
-~~~~~~~~~~
+""""""""""
 
 **Syntax**
 
@@ -136,9 +136,9 @@ Show all of the existing aliases on the current server.
 
 .. _alias-command-alias-show:
 
-~~~~~~~~~~
+""""""""""
 alias show
-~~~~~~~~~~
+""""""""""
 
 **Syntax**
 
@@ -156,9 +156,9 @@ Show what command does the alias execute.
 
 .. _alias-command-alias-help:
 
-~~~~~~~~~~
+""""""""""
 alias help
-~~~~~~~~~~
+""""""""""
 
 **Syntax**
 
@@ -176,9 +176,9 @@ Shows the help message for an alias.
 
 .. _alias-command-alias-global:
 
-~~~~~~~~~~~~
+""""""""""""
 alias global
-~~~~~~~~~~~~
+""""""""""""
 
 |owner-lock|
 
