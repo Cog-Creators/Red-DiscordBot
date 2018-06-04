@@ -1,5 +1,6 @@
 from distutils.core import setup
 from distutils import ccompiler
+from distutils.errors import CCompilerError
 from pathlib import Path
 import re
 import importlib
@@ -24,24 +25,18 @@ def get_package_list():
 
 
 def check_compiler_available():
-    env_dirs = os.environ["PATH"]
-    comp_name = ccompiler.get_default_compiler()
-    comp_info = ccompiler.compiler_class[comp_name]
+    m = ccompiler.new_compiler()
+    if os.name == "nt":
+        m.initialize()
 
-    mod_name = ".".join(["distutils", comp_info[0]])
-    mod = importlib.import_module(mod_name)
-
-    comp_class = getattr(mod, comp_info[1])
-
-    for k, v in comp_class.executables.items():
-        if v is None:
-            continue
-        for pth in env_dirs:
-            p = Path(pth) / v[0]
-            if p.is_file():
-                break
-        else:
-            return False
+    with tempfile.TemporaryDirectory() as tdir:
+        with tempfile.NamedTemporaryFile(prefix="dummy", suffix=".c", dir=tdir) as tfile:
+            tfile.write(b"int main(int argc, char** argv) {return 0;}")
+            tfile.seek(0)
+            try:
+                m.compile([tfile.name])
+            except CCompilerError:
+                return False
     return True
 
 
