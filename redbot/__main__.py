@@ -124,7 +124,7 @@ def main():
     loop.run_until_complete(_get_prefix_and_token(red, tmp_data))
     token = os.environ.get("RED_TOKEN", tmp_data["token"])
     prefix = cli_flags.prefix or tmp_data["prefix"]
-    if not token or not prefix:
+    if not (token and prefix):
         if cli_flags.no_prompt is False:
             new_token = interactive_config(red, token_set=bool(token), prefix_set=bool(prefix))
             if new_token:
