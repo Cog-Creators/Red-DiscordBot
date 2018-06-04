@@ -1,5 +1,3 @@
-from redbot.core import rpc
-
 import typing
 
 if typing.TYPE_CHECKING:
