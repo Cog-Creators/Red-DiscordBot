@@ -46,6 +46,7 @@ _ = i18n.Translator("Core", __file__)
 
 class CoreLogic(CogBase):
     def __init__(self, bot: "Red"):
+        super().__init__()
         self.bot = bot
         self.add_rpc_methods(
             self._load,

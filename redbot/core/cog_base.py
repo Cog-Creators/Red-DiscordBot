@@ -2,7 +2,8 @@ from redbot.core import rpc
 
 
 class CogBase:
-    __rpc_methods = []
+    def __init__(self):
+        self.__rpc_methods = []
 
     def add_rpc_methods(self, *methods, prefix: str = None):
         to_add = [m for m in methods if m not in self.__rpc_methods]
