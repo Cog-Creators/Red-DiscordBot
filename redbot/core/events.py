@@ -18,6 +18,7 @@ from .data_manager import storage_type
 from .utils.chat_formatting import inline, bordered, pagify, box
 from .utils import fuzzy_command_search
 from colorama import Fore, Style, init
+from . import rpc
 
 log = logging.getLogger("red")
 sentry_log = logging.getLogger("red.sentry")
@@ -85,7 +86,7 @@ def init_events(bot, cli_flags):
                 print("Loaded packages: " + ", ".join(packages))
 
         if bot.rpc_enabled:
-            await bot.rpc.initialize()
+            await rpc.server.initialize()
 
         guilds = len(bot.guilds)
         users = len(set([m for m in bot.get_all_members()]))

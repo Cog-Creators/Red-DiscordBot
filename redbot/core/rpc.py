@@ -39,6 +39,9 @@ class RedRpc(JsonRpc):
         self.methods = new_methods
 
 
+server: "RPC" = None
+
+
 class RPC:
     """
     RPC server manager.
@@ -52,16 +55,6 @@ class RPC:
         self.app_handler = self.app.make_handler()
 
         self.server = None
-
-        global add_method
-        global add_multi_method
-        global remove_method
-        global remove_methods
-
-        add_method = self.add_method
-        add_multi_method = self.add_multi_method
-        remove_method = self.remove_method
-        remove_methods = self.remove_methods
 
     async def initialize(self):
         """
@@ -98,10 +91,3 @@ class RPC:
 
     def remove_methods(self, prefix: str):
         self._rpc.remove_methods(prefix)
-
-
-# Do NOT remove these!
-add_method = None
-add_multi_method = None
-remove_method = None
-remove_methods = None

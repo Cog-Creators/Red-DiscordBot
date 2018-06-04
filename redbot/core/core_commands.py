@@ -23,6 +23,7 @@ from redbot.core import __version__
 from redbot.core import checks
 from redbot.core import i18n
 from redbot.core import commands
+from redbot.core import CogBase
 from .utils.chat_formatting import pagify, box, inline
 
 if TYPE_CHECKING:
@@ -43,10 +44,10 @@ OWNER_DISCLAIMER = (
 _ = i18n.Translator("Core", __file__)
 
 
-class CoreLogic:
+class CoreLogic(CogBase):
     def __init__(self, bot: "Red"):
         self.bot = bot
-        self.bot.rpc.add_multi_method(
+        self.add_rpc_methods(
             self._load,
             self._unload,
             self._reload,
@@ -54,7 +55,6 @@ class CoreLogic:
             self._prefixes,
             self._version_info,
             self._invite_url,
-            prefix="core",
         )
 
     async def _load(self, cog_names: list):

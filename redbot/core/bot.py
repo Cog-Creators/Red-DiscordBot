@@ -109,9 +109,6 @@ class RedBase(BotBase):
 
         super().__init__(formatter=Help(), **kwargs)
 
-        if self.rpc_enabled:
-            self.rpc = rpc.RPC(self)
-
         self.remove_command("help")
 
         self.add_command(help_)
