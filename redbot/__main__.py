@@ -168,7 +168,7 @@ def main():
         gathered = asyncio.gather(*pending, loop=red.loop, return_exceptions=True)
         gathered.cancel()
 
-        red.rpc.close()
+        rpc.server.close()
 
         sys.exit(red._shutdown_mode.value)
 

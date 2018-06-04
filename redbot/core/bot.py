@@ -238,6 +238,14 @@ class RedBase(BotBase):
             if cog.__module__.startswith(lib_name):
                 self.remove_cog(cogname)
 
+                base_unload = "_CogBase__unload"
+                try:
+                    f = getattr(cog, base_unload)
+                except AttributeError:
+                    pass
+                else:
+                    f()
+
         # first remove all the commands from the module
         for cmd in self.all_commands.copy().values():
             if cmd.module.startswith(lib_name):
