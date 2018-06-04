@@ -4,6 +4,7 @@ from distutils.errors import CCompilerError
 from pathlib import Path
 import re
 import importlib
+import tempfile
 
 import os
 import sys
@@ -26,8 +27,6 @@ def get_package_list():
 
 def check_compiler_available():
     m = ccompiler.new_compiler()
-    if os.name == "nt":
-        m.initialize()
 
     with tempfile.TemporaryDirectory() as tdir:
         with tempfile.NamedTemporaryFile(prefix="dummy", suffix=".c", dir=tdir) as tfile:
