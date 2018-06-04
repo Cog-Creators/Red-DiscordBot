@@ -31,6 +31,7 @@ Welcome to Red - Discord Bot's documentation!
 
     admin
     alias
+    audio
 
 .. toctree::
     :maxdepth: 2
