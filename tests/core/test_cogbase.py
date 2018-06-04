@@ -9,9 +9,7 @@ class Cog(CogBase):
         self.bot = bot
         super().__init__(bot)
 
-        self.add_rpc_methods(
-            self.rpc_handler
-        )
+        self.add_rpc_methods(self.rpc_handler)
 
     async def rpc_handler(self):
         pass

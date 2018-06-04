@@ -21,6 +21,7 @@ def cog():
 
         def func(*args, **kwargs):
             pass
+
     return Cog()
 
 
