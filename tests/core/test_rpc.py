@@ -45,6 +45,15 @@ def test_add_method(rpc, cog):
     assert get_name(cog.cofunc) in rpc._rpc.methods
 
 
+def test_double_add(rpc, cog):
+    rpc.add_method(cog.cofunc)
+    count = len(rpc._rpc.methods)
+
+    rpc.add_method(cog.cofunc)
+
+    assert count == len(rpc._rpc.methods)
+
+
 def test_add_notcoro_method(rpc, cog):
     with pytest.raises(TypeError):
         rpc.add_method(cog.func)
