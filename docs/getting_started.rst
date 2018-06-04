@@ -314,14 +314,14 @@ The cog guides are formatted the same. They're divided into 3 sections:
         Arguments enclosed in ``< >`` means that the argument is **necessary**
         for the command to work.
 
-        Arguments enclosed in ``< >`` means that the command is **optional**
+        Arguments enclosed in ``[ ]`` means that the command is **optional**
         for the command; you can decide to use it or not.
 
         Arguments followed by ``=something`` means that, if not specified,
         the argument will be equal to ``something``.
 
         For example, ``[days=1]`` in the ban command means that the number of
-        days to be deleted will be equal to ``1`` if not specified.
+        days of messages to be deleted will be equal to ``1`` if not specified.
 
         Other example, the argument ``[channel=ctx]`` from the :ref:`announce
         channel <admin-command-announce-channel>` command means that if the
