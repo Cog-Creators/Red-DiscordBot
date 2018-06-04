@@ -39,6 +39,12 @@ def existing_multi_func(rpc, cog):
     return funcs
 
 
+def test_get_name(cog):
+    assert get_name(cog.cofunc) == "cog__cofunc"
+    assert get_name(cog.cofunc2) == "cog__cofunc2"
+    assert get_name(cog.func) == "cog__func"
+
+
 def test_add_method(rpc, cog):
     rpc.add_method(cog.cofunc)
 
