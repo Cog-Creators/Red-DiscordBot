@@ -177,17 +177,17 @@ class Mod:
             delete_delay = await self.settings.guild(guild).delete_delay()
             reinvite_on_unban = await self.settings.guild(guild).reinvite_on_unban()
             msg = ""
-            msg += "Delete repeats: {}\n".format("Yes" if delete_repeats else "No")
+            msg += f'Delete repeats: {"Yes" if delete_repeats else "No"}\n'
             msg += "Ban mention spam: {}\n".format(
                 "{} mentions".format(ban_mention_spam)
                 if isinstance(ban_mention_spam, int)
                 else "No"
             )
-            msg += "Respects hierarchy: {}\n".format("Yes" if respect_hierarchy else "No")
+            msg += f'Respects hierarchy: {"Yes" if respect_hierarchy else "No"}\n'
             msg += "Delete delay: {}\n".format(
                 "{} seconds".format(delete_delay) if delete_delay != -1 else "None"
             )
-            msg += "Reinvite on unban: {}".format("Yes" if reinvite_on_unban else "No")
+            msg += f'Reinvite on unban: {"Yes" if reinvite_on_unban else "No"}'
             await ctx.send(box(msg))
 
     @modset.command()
@@ -199,12 +199,12 @@ class Mod:
         if not toggled:
             await self.settings.guild(guild).respect_hierarchy.set(True)
             await ctx.send(
-                _("Role hierarchy will be checked when " "moderation commands are issued.")
+                _("Role hierarchy will be checked when moderation commands are issued.")
             )
         else:
             await self.settings.guild(guild).respect_hierarchy.set(False)
             await ctx.send(
-                _("Role hierarchy will be ignored when " "moderation commands are issued.")
+                _("Role hierarchy will be ignored when moderation commands are issued.")
             )
 
     @modset.command()
@@ -601,8 +601,8 @@ class Mod:
             else:
                 await ctx.send(_("Done. Enough chaos."))
                 log.info(
-                    "{}({}) softbanned {}({}), deleting 1 day worth "
-                    "of messages".format(author.name, author.id, user.name, user.id)
+                    f"{author.name}({author.id}) softbanned {user.name}({user.id})"
+                    ", deleting 1 day worth of messages"
                 )
                 try:
                     await modlog.create_case(
@@ -676,9 +676,9 @@ class Mod:
                 try:
                     user.send(
                         _(
-                            "You've been unbanned from {}.\n"
-                            "Here is an invite for that server: {}"
-                        ).format(guild.name, invite.url)
+                            "You've been unbanned from {server.name}.\n"
+                            "Here is an invite for that server: {invite.url}"
+                        ).format(server=guild, invite=invite)
                     )
                 except discord.Forbidden:
                     await ctx.send(
@@ -853,9 +853,7 @@ class Mod:
                 audit_reason = get_audit_reason(ctx.author, reason)
                 await channel.set_permissions(user, overwrite=overwrites, reason=audit_reason)
                 await ctx.send(
-                    _("Muted {}#{} in channel {}").format(
-                        user.name, user.discriminator, channel.name
-                    )
+                    _("Muted {user} in channel {channel.name}").format(user, channel=channel)
                 )
                 try:
                     await modlog.create_case(
@@ -893,10 +891,10 @@ class Mod:
         guild = ctx.guild
 
         if reason is None:
-            audit_reason = "Channel mute requested by {} (ID {})".format(author, author.id)
+            audit_reason = "Channel mute requested by {a} (ID {a.id})".format(a=author)
         else:
-            audit_reason = "Channel mute requested by {} (ID {}). Reason: {}".format(
-                author, author.id, reason
+            audit_reason = "Channel mute requested by {a} (ID {a.id}). Reason: {r}".format(
+                a=author, r=reason
             )
 
         success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
@@ -929,10 +927,10 @@ class Mod:
         guild = ctx.guild
         user_voice_state = user.voice
         if reason is None:
-            audit_reason = "server mute requested by {} (ID {})".format(author, author.id)
+            audit_reason = "server mute requested by {a} (ID {a.id})".format(a=author)
         else:
-            audit_reason = "server mute requested by {} (ID {}). Reason: {}".format(
-                author, author.id, reason
+            audit_reason = "server mute requested by {a} (ID {a.id}). Reason: {r}".format(
+                a=author, r=reason
             )
 
         mute_success = []

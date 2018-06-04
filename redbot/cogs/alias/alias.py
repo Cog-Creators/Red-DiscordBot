@@ -220,10 +220,10 @@ class Alias:
             await ctx.send(
                 _(
                     "You attempted to create a new alias"
-                    " with the name {} but that"
+                    " with the name {name} but that"
                     " name is an invalid alias name. Alias"
                     " names may not contain spaces."
-                ).format(alias_name)
+                ).format(name=alias_name)
             )
             return
         # endregion
@@ -234,7 +234,7 @@ class Alias:
         await self.add_alias(ctx, alias_name, command)
 
         await ctx.send(
-            _("A new alias with the trigger `{}`" " has been created.").format(alias_name)
+            _("A new alias with the trigger `{name}`" " has been created.").format(name=alias_name)
         )
 
     @checks.is_owner()
@@ -249,9 +249,9 @@ class Alias:
             await ctx.send(
                 _(
                     "You attempted to create a new global alias"
-                    " with the name {} but that"
+                    " with the name {name} but that"
                     " name is already a command on this bot."
-                ).format(alias_name)
+                ).format(name=alias_name)
             )
             return
 
@@ -260,9 +260,9 @@ class Alias:
             await ctx.send(
                 _(
                     "You attempted to create a new global alias"
-                    " with the name {} but that"
+                    " with the name {name} but that"
                     " alias already exists on this server."
-                ).format(alias_name)
+                ).format(name=alias_name)
             )
             return
 
@@ -271,10 +271,10 @@ class Alias:
             await ctx.send(
                 _(
                     "You attempted to create a new global alias"
-                    " with the name {} but that"
+                    " with the name {name} but that"
                     " name is an invalid alias name. Alias"
                     " names may not contain spaces."
-                ).format(alias_name)
+                ).format(name=alias_name)
             )
             return
         # endregion
@@ -282,7 +282,9 @@ class Alias:
         await self.add_alias(ctx, alias_name, command, global_=True)
 
         await ctx.send(
-            _("A new global alias with the trigger `{}`" " has been created.").format(alias_name)
+            _("A new global alias with the trigger `{name}`" " has been created.").format(
+                name=alias_name
+            )
         )
 
     @alias.command(name="help")
@@ -294,7 +296,9 @@ class Alias:
             base_cmd = alias.command[0]
 
             new_msg = copy(ctx.message)
-            new_msg.content = "{}help {}".format(ctx.prefix, base_cmd)
+            new_msg.content = _("{prefix}help {command}").format(
+                prefix=ctx.prefix, command=base_cmd
+            )
             await self.bot.process_commands(new_msg)
         else:
             ctx.send(_("No such alias exists."))
@@ -307,12 +311,12 @@ class Alias:
 
         if is_alias:
             await ctx.send(
-                _("The `{}` alias will execute the" " command `{}`").format(
-                    alias_name, alias.command
+                _("The `{name}` alias will execute the" " command `{command}`").format(
+                    name=alias_name, command=alias.command
                 )
             )
         else:
-            await ctx.send(_("There is no alias with the name `{}`").format(alias_name))
+            await ctx.send(_("There is no alias with the name `{name}`").format(name=alias_name))
 
     @checks.mod_or_permissions(manage_guild=True)
     @alias.command(name="del")
@@ -330,10 +334,10 @@ class Alias:
 
         if await self.delete_alias(ctx, alias_name):
             await ctx.send(
-                _("Alias with the name `{}` was successfully" " deleted.").format(alias_name)
+                _("Alias with the name `{name}` was successfully deleted.").format(name=alias_name)
             )
         else:
-            await ctx.send(_("Alias with name `{}` was not found.").format(alias_name))
+            await ctx.send(_("Alias with name `{name}` was not found.").format(name=alias_name))
 
     @checks.is_owner()
     @global_.command(name="del")
@@ -350,10 +354,12 @@ class Alias:
 
         if await self.delete_alias(ctx, alias_name, global_=True):
             await ctx.send(
-                _("Alias with the name `{}` was successfully" " deleted.").format(alias_name)
+                _("Alias with the name `{name}` was successfully" " deleted.").format(
+                    name=alias_name
+                )
             )
         else:
-            await ctx.send(_("Alias with name `{}` was not found.").format(alias_name))
+            await ctx.send(_("Alias with name `{name}` was not found.").format(name=alias_name))
 
     @alias.command(name="list")
     @commands.guild_only()

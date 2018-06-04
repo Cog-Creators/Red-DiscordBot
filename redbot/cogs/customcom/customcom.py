@@ -40,11 +40,11 @@ class CommandObj:
 
     async def get_responses(self, ctx):
         intro = _(
-            "Welcome to the interactive random {} maker!\n"
+            "Welcome to the interactive random {cc} maker!\n"
             "Every message you send will be added as one of the random "
             "responses to choose from once this {} is "
-            "triggered. To exit this interactive menu, type `{}`"
-        ).format("customcommand", "customcommand", "exit()")
+            "triggered. To exit this interactive menu, type `{quit}`"
+        ).format(cc="customcommand", quit="exit()")
         await ctx.send(intro)
 
         def check(m):
@@ -186,8 +186,8 @@ class CustomCommands:
             await ctx.send(_("Custom command successfully added."))
         except AlreadyExists:
             await ctx.send(
-                _("This command already exists. Use `{}` to edit it.").format(
-                    "{}customcom edit".format(ctx.prefix)
+                _("This command already exists. Use `{com}` to edit it.").format(
+                    com="{}customcom edit".format(ctx.prefix)
                 )
             )
 
@@ -211,8 +211,8 @@ class CustomCommands:
             await ctx.send(_("Custom command successfully added."))
         except AlreadyExists:
             await ctx.send(
-                _("This command already exists. Use " "`{}` to edit it.").format(
-                    "{}customcom edit".format(ctx.prefix)
+                _("This command already exists. Use " "`{com}` to edit it.").format(
+                    com="{}customcom edit".format(ctx.prefix)
                 )
             )
 
@@ -232,8 +232,8 @@ class CustomCommands:
             await ctx.send(_("Custom command successfully edited."))
         except NotFound:
             await ctx.send(
-                _("That command doesn't exist. Use " "`{}` to add it.").format(
-                    "{}customcom add".format(ctx.prefix)
+                _("That command doesn't exist. Use " "`{com}` to add it.").format(
+                    com="{}customcom add".format(ctx.prefix)
                 )
             )
 
@@ -261,8 +261,8 @@ class CustomCommands:
             await ctx.send(
                 _(
                     "There are no custom commands in this server."
-                    " Use `{}` to start adding some."
-                ).format("{}customcom add".format(ctx.prefix))
+                    " Use `{com}` to start adding some."
+                ).format(com="{}customcom add".format(ctx.prefix))
             )
             return
 

@@ -131,11 +131,23 @@ class General:
             outcome = cond[(player_choice, red_choice)]
 
         if outcome is True:
-            await ctx.send(_("{} You win {}!").format(red_choice.value, author.mention))
+            await ctx.send(
+                _("{choice} You win {author.mention}!").format(
+                    choice=red_choice.value, author=author
+                )
+            )
         elif outcome is False:
-            await ctx.send(_("{} You lose {}!").format(red_choice.value, author.mention))
+            await ctx.send(
+                _("{choice} You lose {author.mention}!").format(
+                    choice=red_choice.value, author=author
+                )
+            )
         else:
-            await ctx.send(_("{} We're square {}!").format(red_choice.value, author.mention))
+            await ctx.send(
+                _("{choice} We're square {author.mention}!").format(
+                    choice=red_choice.value, author=author
+                )
+            )
 
     @commands.command(name="8", aliases=["8ball"])
     async def _8ball(self, ctx, *, question: str):
@@ -165,7 +177,7 @@ class General:
     async def lmgtfy(self, ctx, *, search_terms: str):
         """Creates a lmgtfy link"""
         search_terms = escape(search_terms.replace(" ", "+"), mass_mentions=True)
-        await ctx.send("https://lmgtfy.com/?q={}".format(search_terms))
+        await ctx.send(f"https://lmgtfy.com/?q={search_terms}")
 
     @commands.command(hidden=True)
     @commands.guild_only()
@@ -202,8 +214,8 @@ class General:
         text_channels = len(guild.text_channels)
         voice_channels = len(guild.voice_channels)
         passed = (ctx.message.created_at - guild.created_at).days
-        created_at = _("Since {}. That's over {} days ago!" "").format(
-            guild.created_at.strftime("%d %b %Y %H:%M"), passed
+        created_at = _("Since {date}. That's over {number} days ago!" "").format(
+            date=guild.created_at.strftime("%d %b %Y %H:%M"), number=passed
         )
 
         colour = "".join([choice("0123456789ABCDEF") for x in range(6)])
@@ -211,7 +223,7 @@ class General:
 
         data = discord.Embed(description=created_at, colour=discord.Colour(value=colour))
         data.add_field(name=_("Region"), value=str(guild.region))
-        data.add_field(name=_("Users"), value="{}/{}".format(online, total_users))
+        data.add_field(name=_("Users"), value=f"{online}/{total_users}")
         data.add_field(name=_("Text Channels"), value=text_channels)
         data.add_field(name=_("Voice Channels"), value=voice_channels)
         data.add_field(name=_("Roles"), value=len(guild.roles))
@@ -264,8 +276,11 @@ class General:
                 definition = item_list[pos]["definition"]
                 example = item_list[pos]["example"]
                 defs = len(item_list)
-                msg = "**Definition #{} out of {}:\n**{}\n\n" "**Example:\n**{}".format(
-                    pos + 1, defs, definition, example
+                msg = (
+                    "**Definition #{current} out of {max}:\n**{definition}\n\n"
+                    "**Example:\n**{example}".format(
+                        current=(pos + 1), max=defs, definition=definition, example=example
+                    )
                 )
                 msg = pagify(msg, ["\n"])
                 for page in msg:
@@ -273,6 +288,6 @@ class General:
             else:
                 await ctx.send(_("Your search terms gave no results."))
         except IndexError:
-            await ctx.send(_("There is no definition #{}").format(pos + 1))
+            await ctx.send(_("There is no definition #{number}").format(numner=(pos + 1)))
         except:
             await ctx.send(_("Error."))

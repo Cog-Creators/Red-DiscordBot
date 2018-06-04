@@ -461,18 +461,13 @@ class Economy:
                 payday_amount = await self.config.guild(guild).PAYDAY_CREDITS()
             register_amount = await bank.get_default_balance(guild)
             msg = box(
-                _(
-                    "Minimum slot bid: {}\n"
-                    "Maximum slot bid: {}\n"
-                    "Slot cooldown: {}\n"
-                    "Payday amount: {}\n"
-                    "Payday cooldown: {}\n"
-                    "Amount given at account registration: {}"
-                    ""
-                ).format(
-                    slot_min, slot_max, slot_time, payday_amount, payday_time, register_amount
-                ),
-                _("Current Economy settings:"),
+                f'{_("Current Economy settings:")}'
+                f'{_("Minimum slot bid")}: {slot_min}\n'
+                f'{_("Maximum slot bid")}: {slot_max}\n'
+                f'{_("Slot cooldown")}: {slot_time}\n'
+                f'{_("Payday amount")}: {payday_amount}\n'
+                f'{_("Payday cooldown")}: {payday_time}\n'
+                f'{_("Amount given at account registration")}: {register_amount}'
             )
             await ctx.send(msg)
 
@@ -488,14 +483,16 @@ class Economy:
         else:
             await self.config.guild(guild).SLOT_MIN.set(bid)
         credits_name = await bank.get_currency_name(guild)
-        await ctx.send(_("Minimum bid is now {} {}.").format(bid, credits_name))
+        await ctx.send(
+            _("Minimum bid is now {bid} {credit_name}.").format(bid=bid, credit_name=credits_name)
+        )
 
     @economyset.command()
     async def slotmax(self, ctx: commands.Context, bid: int):
         """Maximum slot machine bid"""
         slot_min = await self.config.SLOT_MIN()
         if bid < 1 or bid < slot_min:
-            await ctx.send(_("Invalid slotmax bid amount. Must be greater" " than slotmin."))
+            await ctx.send(_("Invalid slotmax bid amount. Must be greater than slotmin."))
             return
         guild = ctx.guild
         credits_name = await bank.get_currency_name(guild)
@@ -503,7 +500,9 @@ class Economy:
             await self.config.SLOT_MAX.set(bid)
         else:
             await self.config.guild(guild).SLOT_MAX.set(bid)
-        await ctx.send(_("Maximum bid is now {} {}.").format(bid, credits_name))
+        await ctx.send(
+            _("Maximum bid is now {bid} {credit_name}.").format(bid=bid, credit_name=credits_name)
+        )
 
     @economyset.command()
     async def slottime(self, ctx: commands.Context, seconds: int):
@@ -513,7 +512,7 @@ class Economy:
             await self.config.SLOT_TIME.set(seconds)
         else:
             await self.config.guild(guild).SLOT_TIME.set(seconds)
-        await ctx.send(_("Cooldown is now {} seconds.").format(seconds))
+        await ctx.send(_("Cooldown is now {number} seconds.").format(number=seconds))
 
     @economyset.command()
     async def paydaytime(self, ctx: commands.Context, seconds: int):
@@ -524,9 +523,9 @@ class Economy:
         else:
             await self.config.guild(guild).PAYDAY_TIME.set(seconds)
         await ctx.send(
-            _("Value modified. At least {} seconds must pass " "between each payday.").format(
-                seconds
-            )
+            _(
+                "Value modified. At least {number} seconds must pass " "between each payday."
+            ).format(number=seconds)
         )
 
     @economyset.command()
@@ -541,7 +540,11 @@ class Economy:
             await self.config.PAYDAY_CREDITS.set(creds)
         else:
             await self.config.guild(guild).PAYDAY_CREDITS.set(creds)
-        await ctx.send(_("Every payday will now give {} {}." "").format(creds, credits_name))
+        await ctx.send(
+            _("Every payday will now give {number} {currency}.").format(
+                number=creds, currency=credits_name
+            )
+        )
 
     @economyset.command()
     async def rolepaydayamount(self, ctx: commands.Context, role: discord.Role, creds: int):
@@ -553,9 +556,10 @@ class Economy:
         else:
             await self.config.role(role).PAYDAY_CREDITS.set(creds)
             await ctx.send(
-                _("Every payday will now give {} {} to people with the role {}." "").format(
-                    creds, credits_name, role.name
-                )
+                _(
+                    "Every payday will now give {number} {currency} to people with the role {role.name}."
+                    ""
+                ).format(number=creds, currency=credits_name, role=role)
             )
 
     @economyset.command()
@@ -567,7 +571,9 @@ class Economy:
         credits_name = await bank.get_currency_name(guild)
         await bank.set_default_balance(creds, guild)
         await ctx.send(
-            _("Registering an account will now give {} {}." "").format(creds, credits_name)
+            _("Registering an account will now give {number} {currency}.").format(
+                number=creds, currency=credits_name
+            )
         )
 
     # What would I ever do without stackoverflow?

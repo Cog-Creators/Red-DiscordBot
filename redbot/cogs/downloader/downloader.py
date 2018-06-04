@@ -231,7 +231,7 @@ class Downloader:
             await ctx.send(_("Something went wrong during the cloning process."))
             log.exception(_("Something went wrong during the cloning process."))
         else:
-            await ctx.send(_("Repo `{}` successfully added.").format(name))
+            await ctx.send(_("Repo `{name}` successfully added.").format(name=name))
             if repo.install_msg is not None:
                 await ctx.send(repo.install_msg)
 
@@ -242,7 +242,9 @@ class Downloader:
         """
         await self._repo_manager.delete_repo(repo_name.name)
 
-        await ctx.send(_("The repo `{}` has been deleted successfully.").format(repo_name.name))
+        await ctx.send(
+            _("The repo `{name}` has been deleted successfully.").format(name=repo_name.name)
+        )
 
     @repo.command(name="list")
     async def _repo_list(self, ctx):
@@ -288,8 +290,8 @@ class Downloader:
         cog = discord.utils.get(repo_name.available_cogs, name=cog_name)  # type: Installable
         if cog is None:
             await ctx.send(
-                _("Error, there is no cog by the name of" " `{}` in the `{}` repo.").format(
-                    cog_name, repo_name.name
+                _("Error, there is no cog by the name of" " `{cog}` in the `{repo}` repo.").format(
+                    cog=cog_name, repo=repo_name.name
                 )
             )
             return
@@ -305,9 +307,9 @@ class Downloader:
 
         if not await repo_name.install_requirements(cog, self.LIB_PATH):
             await ctx.send(
-                _("Failed to install the required libraries for" " `{}`: `{}`").format(
-                    cog.name, cog.requirements
-                )
+                _(
+                    "Failed to install the required libraries for" " `{cog}`: `{requirements}`"
+                ).format(cog=cog.name, requirements=cog.requirements)
             )
             return
 
@@ -317,7 +319,7 @@ class Downloader:
 
         await repo_name.install_libraries(self.SHAREDLIB_PATH)
 
-        await ctx.send(_("`{}` cog successfully installed.").format(cog_name))
+        await ctx.send(f'`{cog_name}` {_("cog successfully installed.")}')
         if cog.install_msg is not None:
             await ctx.send(cog.install_msg)
 
@@ -335,7 +337,7 @@ class Downloader:
             await self._delete_cog(poss_installed_path)
             # noinspection PyTypeChecker
             await self._remove_from_installed(cog_name)
-            await ctx.send(_("`{}` was successfully removed.").format(real_name))
+            await ctx.send(f'`{real_name}` {_("was successfully removed.")}')
         else:
             await ctx.send(
                 _(
@@ -382,7 +384,7 @@ class Downloader:
         """
         cogs = repo_name.available_cogs
         cogs = _("Available Cogs:\n") + "\n".join(
-            ["+ {}: {}".format(c.name, c.short or "") for c in cogs]
+            ["+ {name}: {short}".format(name=c.name, short=(c.short or "")) for c in cogs]
         )
 
         for page in pagify(cogs, ["\n"], shorten_by=16):
@@ -396,11 +398,15 @@ class Downloader:
         cog = discord.utils.get(repo_name.available_cogs, name=cog_name)
         if cog is None:
             await ctx.send(
-                _("There is no cog `{}` in the repo `{}`").format(cog_name, repo_name.name)
+                _("There is no cog `{cog}` in the repo `{repo}`").format(
+                    cog=cog_name, repo=repo_name.name
+                )
             )
             return
 
-        msg = _("Information on {}:\n{}").format(cog.name, cog.description or "")
+        msg = _("Information on {cog}:\n{description}").format(
+            cog=cog.name, description=(cog.description or "")
+        )
         await ctx.send(box(msg))
 
     async def is_installed(
@@ -453,9 +459,9 @@ class Downloader:
             repo_url = "https://github.com/Cog-Creators/Red-DiscordBot"
             cog_name = cog_installable.__class__.__name__
 
-        msg = _("Command: {}\nMade by: {}\nRepo: {}\nCog name: {}")
+        msg = _("Command: {command}\nMade by: {author}\nRepo: {repo}\nCog name: {cog}")
 
-        return msg.format(command_name, made_by, repo_url, cog_name)
+        return msg.format(command=command_name, author=made_by, repo=repo_url, cog=cog_name)
 
     def cog_name_from_instance(self, instance: object) -> str:
         """Determines the cog name that Downloader knows from the cog instance.
