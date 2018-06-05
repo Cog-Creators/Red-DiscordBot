@@ -46,6 +46,10 @@ def test_get_name(cog):
     assert get_name(cog.func) == "cog__func"
 
 
+def test_internal_methods_exist(rpc):
+    assert "get_methods" in rpc._rpc.methods
+
+
 def test_add_method(rpc, cog):
     rpc.add_method(cog.cofunc)
 
