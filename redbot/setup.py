@@ -9,6 +9,7 @@ import tarfile
 from copy import deepcopy
 from datetime import datetime as dt
 from pathlib import Path
+from colorama import init, Back
 
 import appdirs
 from redbot.core.cli import confirm
@@ -141,11 +142,30 @@ def get_name():
     return name
 
 
-def basic_setup():
+async def basic_setup():
     """
     Creates the data storage folder.
     :return:
     """
+    
+    if os.geteuid() == 0:
+        print(Back.RED + "[SECURITY WARNING]")
+        print(
+            Back.RED + "You are about to install Red as a root user.\n"
+            "It is recommanded to exit now and install Red as a normal user. "
+            "This has serious security repercussion. The bot will have access to ALL files "
+            "and can lead to fatal damages on your computer."
+        )
+        print(
+            Back.RED + "Installing Red now will make files locked and you won't be able "
+            "to run Red without using sudo."
+        )
+        print(
+            Back.RED + "You have 10 seconds to exit redbot-setup. Passed this, we "
+            "won't be responsible for issues or damages."
+        )
+        await asyncio.sleep(10)
+        print("Running installer as root, you were warned.")
 
     default_data_dir = get_data_dir()
 
@@ -376,14 +396,13 @@ async def remove_instance_interaction():
 
 
 def main():
+    loop = asyncio.get_event_loop()
     if args.delete:
-        loop = asyncio.get_event_loop()
         loop.run_until_complete(remove_instance_interaction())
     elif args.edit:
-        loop = asyncio.get_event_loop()
         loop.run_until_complete(edit_instance())
     else:
-        basic_setup()
+        loop.run_until_complete(basic_setup())
 
 
 args, _ = parse_cli_args()
