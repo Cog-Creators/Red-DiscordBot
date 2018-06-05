@@ -1,4 +1,5 @@
 import sys
+import os
 import discord
 from colorama import init, Back
 
