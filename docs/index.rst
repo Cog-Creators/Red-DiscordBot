@@ -32,6 +32,8 @@ Welcome to Red - Discord Bot's documentation!
     admin
     alias
     audio
+    downloader
+    permissions
 
 .. toctree::
     :maxdepth: 2
@@ -60,6 +62,13 @@ Welcome to Red - Discord Bot's documentation!
     framework_rpc
     framework_utils
 
+.. These files need to be included or Travis will fail 
+
+.. toctree::
+    :maxdepth: 1
+    :caption: Various
+
+    host-list
 
 
 Indices and tables
