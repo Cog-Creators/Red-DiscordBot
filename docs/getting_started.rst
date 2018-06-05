@@ -148,7 +148,8 @@ There's an entire `community <https://discord.gg/red>`_ that contributes
 to Red. Those contibutors make additional cogs for you to use. You can
 download them using the downloader cog.
 
-You can start using the downloader cog by loading it: ``[p]load downloader``
+You can start using the :ref:`downloader <downloader>` cog by loading it:
+``[p]load downloader``
 
 You can find cogs by searching on `cogs.red <https://dev.v3.cogs.red>`_. Find whatever you want,
 there are hundreds of cogs available!
