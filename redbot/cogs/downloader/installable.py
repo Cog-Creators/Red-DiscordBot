@@ -42,7 +42,7 @@ class Installable(RepoJSONMixin):
         apply to repo info.json's.
     hidden : `bool`
         Whether or not this cog will be hidden from the user when they use
-        `Downloader`'s commands.
+        :class:`~redbot.cogs.downloader.downloader.Downloader`'s commands.
     required_cogs : `dict`
         In the form :code:`{cog_name : repo_url}`, these are cogs which are
         required for this installation.
