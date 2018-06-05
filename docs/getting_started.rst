@@ -192,27 +192,27 @@ Permissions
 Red works with different levels of permissions. Every cog defines
 the level of permission needed for a command.
 
-"""""""""
+~~~~~~~~~
 Bot owner
-"""""""""
+~~~~~~~~~
 
 The bot owner can access all commands on every guild. He can also use
 exclusive commands that can interact with the global settings
-or system files. 
+or system files.
 
 If it *you* by default. If not set, use ``[p]set owner``
 
-""""""""""""
+~~~~~~~~~~~~
 Server owner
-""""""""""""
+~~~~~~~~~~~~
 
 The server owner can access all commands on his guild, except the global
 ones or those who can interact with system files (available for the
 bot owner).
 
-"""""""""""""
+~~~~~~~~~~~~~
 Administrator
-"""""""""""""
+~~~~~~~~~~~~~
 
 The administrator is defined by its roles. You can set an admin role
 with ``[p]set adminrole``. 
@@ -220,9 +220,9 @@ with ``[p]set adminrole``.
 For example, in the mod cog, an admin can use the ``[p]modset`` command
 which defines the cog settings.
 
-"""""""""
+~~~~~~~~~
 Moderator
-"""""""""
+~~~~~~~~~
 
 A moderator is a step above the average users. You can set a moderator
 role with ``[p]set modrole``.
