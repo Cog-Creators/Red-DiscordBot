@@ -281,11 +281,10 @@ class Help(formatter.HelpFormatter):
         embed.set_author(**self.author)
         return embed
 
-    async def cmd_not_found(self, ctx, cmd, color=None):
+    async def cmd_not_found(self, ctx, cmd, description=None, color=None):
         # Shortcut for a shortcut. Sue me
-        out = fuzzy_command_search(ctx, " ".join(ctx.args[1:]))
         embed = await self.simple_embed(
-            ctx, title="Command {} not found.".format(cmd), description=out, color=color
+            ctx, title="Command {} not found.".format(cmd), description=description, color=color
         )
         return embed
 
@@ -326,11 +325,19 @@ async def help(ctx, *cmds: str):
             command = ctx.bot.all_commands.get(name)
             if command is None:
                 if use_embeds:
-                    await destination.send(embed=await ctx.bot.formatter.cmd_not_found(ctx, name))
+                    fuzzy_result = await fuzzy_command_search(ctx, name)
+                    if fuzzy_result is not None:
+                        await destination.send(
+                            embed=await ctx.bot.formatter.cmd_not_found(
+                                ctx, name, description=fuzzy_result
+                            )
+                        )
                 else:
-                    await destination.send(
-                        ctx.bot.command_not_found.format(name, fuzzy_command_search(ctx, name))
-                    )
+                    fuzzy_result = await fuzzy_command_search(ctx, name)
+                    if fuzzy_result is not None:
+                        await destination.send(
+                            ctx.bot.command_not_found.format(name, fuzzy_result)
+                        )
                 return
         if use_embeds:
             embeds = await ctx.bot.formatter.format_help_for(ctx, command)
@@ -341,11 +348,17 @@ async def help(ctx, *cmds: str):
         command = ctx.bot.all_commands.get(name)
         if command is None:
             if use_embeds:
-                await destination.send(embed=await ctx.bot.formatter.cmd_not_found(ctx, name))
+                fuzzy_result = await fuzzy_command_search(ctx, name)
+                if fuzzy_result is not None:
+                    await destination.send(
+                        embed=await ctx.bot.formatter.cmd_not_found(
+                            ctx, name, description=fuzzy_result
+                        )
+                    )
             else:
-                await destination.send(
-                    ctx.bot.command_not_found.format(name, fuzzy_command_search(ctx, name))
-                )
+                fuzzy_result = await fuzzy_command_search(ctx, name)
+                if fuzzy_result is not None:
+                    await destination.send(ctx.bot.command_not_found.format(name, fuzzy_result))
             return
 
         for key in cmds[1:]:
@@ -354,13 +367,19 @@ async def help(ctx, *cmds: str):
                 command = command.all_commands.get(key)
                 if command is None:
                     if use_embeds:
-                        await destination.send(
-                            embed=await ctx.bot.formatter.cmd_not_found(ctx, key)
-                        )
+                        fuzzy_result = await fuzzy_command_search(ctx, name)
+                        if fuzzy_result is not None:
+                            await destination.send(
+                                embed=await ctx.bot.formatter.cmd_not_found(
+                                    ctx, name, description=fuzzy_result
+                                )
+                            )
                     else:
-                        await destination.send(
-                            ctx.bot.command_not_found.format(key, fuzzy_command_search(ctx, name))
-                        )
+                        fuzzy_result = await fuzzy_command_search(ctx, name)
+                        if fuzzy_result is not None:
+                            await destination.send(
+                                ctx.bot.command_not_found.format(name, fuzzy_result)
+                            )
                     return
             except AttributeError:
                 if use_embeds:
