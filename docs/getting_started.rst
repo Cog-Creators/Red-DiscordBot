@@ -181,7 +181,7 @@ Then you can add the cog
 Now the cog is installed, but not loaded. You can load it using the ``[p]load``
 command we talked about before.
 
-For more informations about the downloader, check its :ref:`guide <>`.
+For more informations about the downloader, check its :ref:`guide <downloader>`.
 
 .. _getting-started-permissions:
 
@@ -233,7 +233,7 @@ but he won't be able to modify the cog settings with the ``[p]modset`` command.
 .. tip::
     If you don't like the default permission settings for some commands or
     if want to restrict a cog or a command to a channel/member, you can use
-    the :ref:`permissions <>` cog.
+    the :ref:`permissions <permissions>` cog.
 
 .. _getting-started-hosting:
 
