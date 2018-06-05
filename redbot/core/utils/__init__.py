@@ -3,9 +3,17 @@ __all__ = ["safe_delete", "fuzzy_command_search"]
 from pathlib import Path
 import os
 import shutil
+import logging
 from redbot.core import commands
 from fuzzywuzzy import process
 from .chat_formatting import box
+
+
+def fuzzy_filter(record):
+    return record.funcName != "extractWithoutOrder"
+
+
+logging.getLogger().addFilter(fuzzy_filter)
 
 
 def safe_delete(pth: Path):
@@ -19,9 +27,49 @@ def safe_delete(pth: Path):
         shutil.rmtree(str(pth), ignore_errors=True)
 
 
-def fuzzy_command_search(ctx: commands.Context, term: str):
+async def filter_commands(ctx: commands.Context, extracted: list):
+    return [
+        i
+        for i in extracted
+        if i[1] >= 90
+        and not i[0].hidden
+        and await i[0].can_run(ctx)
+        and all([await p.can_run(ctx) for p in i[0].parents])
+        and not any([p.hidden for p in i[0].parents])
+    ]
+
+
+async def fuzzy_command_search(ctx: commands.Context, term: str):
     out = ""
-    for pos, extracted in enumerate(process.extract(term, ctx.bot.walk_commands(), limit=5), 1):
+    if ctx.guild is not None:
+        enabled = await ctx.bot.db.guild(ctx.guild).fuzzy()
+    else:
+        enabled = await ctx.bot.db.fuzzy()
+    if not enabled:
+        return None
+    alias_cog = ctx.bot.get_cog("Alias")
+    if alias_cog is not None:
+        is_alias, alias = await alias_cog.is_alias(ctx.guild, term)
+        if is_alias:
+            return None
+
+    customcom_cog = ctx.bot.get_cog("CustomCommands")
+    if customcom_cog is not None:
+        cmd_obj = customcom_cog.commandobj
+        try:
+            ccinfo = await cmd_obj.get(ctx.message, term)
+        except:
+            pass
+        else:
+            return None
+    extracted_cmds = await filter_commands(
+        ctx, process.extract(term, ctx.bot.walk_commands(), limit=5)
+    )
+
+    if not extracted_cmds:
+        return None
+
+    for pos, extracted in enumerate(extracted_cmds, 1):
         out += "{0}. {1.prefix}{2.qualified_name}{3}\n".format(
             pos,
             ctx,

@@ -225,7 +225,9 @@ def init_events(bot, cli_flags):
             term = ctx.invoked_with + " "
             if len(ctx.args) > 1:
                 term += " ".join(ctx.args[1:])
-            await ctx.maybe_send_embed(fuzzy_command_search(ctx, ctx.invoked_with))
+            fuzzy_result = await fuzzy_command_search(ctx, ctx.invoked_with)
+            if fuzzy_result is not None:
+                await ctx.maybe_send_embed(fuzzy_result)
         elif isinstance(error, commands.CheckFailure):
             pass
         elif isinstance(error, commands.NoPrivateMessage):
