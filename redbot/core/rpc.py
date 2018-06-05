@@ -48,8 +48,8 @@ class RPC:
     RPC server manager.
     """
 
-    def __init__(self, bot):
-        self.app = web.Application(loop=bot.loop)
+    def __init__(self):
+        self.app = web.Application()
         self._rpc = RedRpc()
         self.app.router.add_route("*", "/", self._rpc)
 
@@ -92,3 +92,32 @@ class RPC:
 
     def remove_methods(self, prefix: str):
         self._rpc.remove_methods(prefix)
+
+
+class RPCMixin:
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.rpc = RPC()
+
+        self.rpc_handlers = {}  # Lowered cog name to method
+
+    def register_rpc_handler(self, method):
+        self.rpc.add_method(method)
+
+        cog_name = method.__self__.__class__.__name__.lower()
+        if cog_name not in self.rpc_handlers:
+            self.rpc_handlers[cog_name] = []
+
+        self.rpc_handlers[cog_name].append(method)
+
+    def unregister_rpc_handler(self, method):
+        self.rpc.remove_method(method)
+
+        name = get_name(method)
+        cog_name = name.split("__")
+
+        if cog_name in self.rpc_handlers:
+            try:
+                self.rpc_handlers[cog_name].remove(method)
+            except ValueError:
+                pass

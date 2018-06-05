@@ -4,7 +4,7 @@ from redbot.core.rpc import RPC, get_name
 
 @pytest.fixture()
 def rpc(red):
-    return RPC(red)
+    return RPC()
 
 
 @pytest.fixture()
