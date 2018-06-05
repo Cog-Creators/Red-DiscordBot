@@ -192,30 +192,43 @@ Permissions
 Red works with different levels of permissions. Every cog defines
 the level of permission needed for a command.
 
-* **Bot owner**
+"""""""""
+Bot owner
+"""""""""
 
-  The bot owner can access all commands on every guild. He can also use
-  exclusive commands that can interact with the global settings
-  or system files. If it *you* by default. If not set, use ``[p]set owner``
+The bot owner can access all commands on every guild. He can also use
+exclusive commands that can interact with the global settings
+or system files. 
 
-* **Server owner**
+If it *you* by default. If not set, use ``[p]set owner``
 
-  The server owner can access all commands on his guild, except the global
-  ones or those who can interact with system files (available for the
-  bot owner).
+""""""""""""
+Server owner
+""""""""""""
 
-* **Administrator**
+The server owner can access all commands on his guild, except the global
+ones or those who can interact with system files (available for the
+bot owner).
 
-  The administrator is defined by its roles. You can set an admin role
-  with ``[p]set adminrole``. For example, in the mod cog, an admin can
-  use the ``[p]modset`` command which defines the cog settings.
+"""""""""""""
+Administrator
+"""""""""""""
 
-* **Moderator**
+The administrator is defined by its roles. You can set an admin role
+with ``[p]set adminrole``. 
 
-  A moderator is a step above the average users. You can set a moderator
-  role with ``[p]set modrole``. For example, in the mod cog (again), a mod
-  will be able to mute, kick and ban; but he won't be able to modify the
-  cog settings with the ``[p]modset`` command.
+For example, in the mod cog, an admin can use the ``[p]modset`` command
+which defines the cog settings.
+
+"""""""""
+Moderator
+"""""""""
+
+A moderator is a step above the average users. You can set a moderator
+role with ``[p]set modrole``.
+
+For example, in the mod cog (again), a mod will be able to mute, kick and ban;
+but he won't be able to modify the cog settings with the ``[p]modset`` command.
 
 .. tip::
     If you don't like the default permission settings for some commands or
