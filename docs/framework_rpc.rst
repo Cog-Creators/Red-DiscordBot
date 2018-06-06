@@ -31,12 +31,12 @@ To access the server you must find a library that implements websocket based JSO
 
 There are a few built-in RPC methods to note:
 
-* ``get_methods`` - Returns a list of available RPC methods.
-* ``get_method_info`` - Will return the docstring for an available RPC method. Useful for finding information about the method's parameters and return values.
-* ``get_topics`` - Returns a list of available RPC message topics.
-* ``get_subscriptions`` - Returns a list of RPC subscriptions.
-* ``subscribe`` - Subscribes to an available RPC message topic.
-* ``unsubscribe`` - Unsubscribes from an RPC message topic.
+* ``GET_METHODS`` - Returns a list of available RPC methods.
+* ``GET_METHOD_INFO`` - Will return the docstring for an available RPC method. Useful for finding information about the method's parameters and return values.
+* ``GET_TOPIC`` - Returns a list of available RPC message topics.
+* ``GET_SUBSCRIPTIONS`` - Returns a list of RPC subscriptions.
+* ``SUBSCRIBE`` - Subscribes to an available RPC message topic.
+* ``UNSUBSCRIBE`` - Unsubscribes from an RPC message topic.
 
 All RPC methods accept a list of parameters.
 The built-in methods above expect their parameters to be in list format.
@@ -51,10 +51,10 @@ All cog-based methods expect their parameter list to take one argument, a JSON o
     ]
 
     # As an example, here's a call to "get_method_info"
-    rpc_call("get_method_info", ["get_methods",])
+    rpc_call("GET_METHOD_INFO", ["get_methods",])
 
     # And here's a call to "core__load"
-    rpc_call("core__load", [{"args": ["general", "economy", "downloader"], "kwargs": {}},])
+    rpc_call("CORE__LOAD", [{"args": ["general", "economy", "downloader"], "kwargs": {}},])
 
 *************
 API Reference

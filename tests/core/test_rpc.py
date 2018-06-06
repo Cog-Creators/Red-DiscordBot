@@ -3,7 +3,7 @@ from redbot.core.rpc import RPC, get_name
 
 
 @pytest.fixture()
-def rpc(red):
+def rpc():
     return RPC()
 
 
@@ -41,13 +41,13 @@ def existing_multi_func(rpc, cog):
 
 
 def test_get_name(cog):
-    assert get_name(cog.cofunc) == "cog__cofunc"
-    assert get_name(cog.cofunc2) == "cog__cofunc2"
-    assert get_name(cog.func) == "cog__func"
+    assert get_name(cog.cofunc) == "COG__COFUNC"
+    assert get_name(cog.cofunc2) == "COG__COFUNC2"
+    assert get_name(cog.func) == "COG__FUNC"
 
 
 def test_internal_methods_exist(rpc):
-    assert "get_methods" in rpc._rpc.methods
+    assert "GET_METHODS" in rpc._rpc.methods
 
 
 def test_add_method(rpc, cog):

@@ -15,8 +15,8 @@ def get_name(func, prefix=None):
     class_name = prefix or func.__self__.__class__.__name__.lower()
     func_name = func.__name__.strip("_")
     if class_name == "redrpc":
-        return func_name
-    return f"{class_name}__{func_name}"
+        return func_name.upper()
+    return f"{class_name}__{func_name}".upper()
 
 
 class RedRpc(JsonRpc):
