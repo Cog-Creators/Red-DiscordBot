@@ -605,6 +605,7 @@ class Core(CoreLogic):
                 guild_settings = f"Admin role: {admin_role}\nMod role: {mod_role}\n"
             else:
                 guild_settings = ""
+                prefixes = None  # This is correct. The below can happen in a guild.
             if not prefixes:
                 prefixes = await ctx.bot.db.prefix()
             locale = await ctx.bot.db.locale()
