@@ -54,7 +54,7 @@ All cog-based methods expect their parameter list to take one argument, a JSON o
     rpc_call("GET_METHOD_INFO", ["get_methods",])
 
     # And here's a call to "core__load"
-    rpc_call("CORE__LOAD", [{"args": ["general", "economy", "downloader"], "kwargs": {}},])
+    rpc_call("CORE__LOAD", {"args": [["general", "economy", "downloader"],], "kwargs": {}})
 
 *************
 API Reference
