@@ -16,6 +16,7 @@ from redbot.setup import (
     create_backup,
     save_config,
 )
+from redbot.core import __verison__
 from redbot.core.utils import safe_delete
 from redbot.core.cli import confirm
 
@@ -390,6 +391,7 @@ def main_menu():
     clear_screen()
     while True:
         print(INTRO)
+        print("Current version: {}".format(__version__)
         print("1. Run Red w/ autorestart in case of issues")
         print("2. Run Red")
         print("3. Update Red")
