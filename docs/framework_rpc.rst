@@ -38,6 +38,24 @@ There are a few built-in RPC methods to note:
 * ``subscribe`` - Subscribes to an available RPC message topic.
 * ``unsubscribe`` - Unsubscribes from an RPC message topic.
 
+All RPC methods accept a list of parameters.
+The built-in methods above expect their parameters to be in list format.
+
+All cog-based methods expect their parameter list to take one argument, a JSON object, in the following format::
+
+    params = [
+        {
+            "args": [],  # A list of positional arguments
+            "kwargs": {},  # A dictionary of keyword arguments
+        }
+    ]
+
+    # As an example, here's a call to "get_method_info"
+    rpc_call("get_method_info", ["get_methods",])
+
+    # And here's a call to "core__load"
+    rpc_call("core__load", [{"args": ["general", "economy", "downloader"], "kwargs": {}},])
+
 *************
 API Reference
 *************
