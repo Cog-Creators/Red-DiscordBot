@@ -104,6 +104,21 @@ class RPCMixin:
         self.rpc_handlers = {}  # Lowered cog name to method
 
     def register_rpc_handler(self, method):
+        """
+        Registers a method to act as an RPC handler if the internal RPC server is active.
+
+        When calling this method through the RPC server, use the naming scheme "cogname__methodname".
+
+        .. important::
+
+            All parameters to RPC handler methods must be JSON serializable objects.
+            The return value of handler methods must also be JSON serializable.
+
+        Parameters
+        ----------
+        method : coroutine
+            The method to register with the internal RPC server.
+        """
         self.rpc.add_method(method)
 
         cog_name = method.__self__.__class__.__name__.lower()
@@ -113,6 +128,17 @@ class RPCMixin:
         self.rpc_handlers[cog_name].append(method)
 
     def unregister_rpc_handler(self, method):
+        """
+        Unregisters an RPC method handler.
+
+        This will be called automatically for you on cog unload and will pass silently if the
+        method is not previously registered.
+
+        Parameters
+        ----------
+        method : coroutine
+            The method to unregister from the internal RPC server.
+        """
         self.rpc.remove_method(method)
 
         name = get_name(method)
