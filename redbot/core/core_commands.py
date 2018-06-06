@@ -197,7 +197,7 @@ class CoreLogic:
         if prefixes:
             prefixes = sorted(prefixes, reverse=True)
             await self.bot.db.prefix.set(prefixes)
-        return self.bot.db.prefix()
+        return await self.bot.db.prefix()
 
     async def _version_info(self):
         """
