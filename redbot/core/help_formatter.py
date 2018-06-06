@@ -187,7 +187,7 @@ class Help(formatter.HelpFormatter):
                     for i, page in enumerate(
                         pagify(self._add_subcommands(commands_), page_length=1000)
                     ):
-                        title = category if i < 0 else f"{category} (continued)"
+                        title = category if i < 1 else f"{category} (continued)"
                         field = EmbedField(title, page, False)
                         emb["fields"].append(field)
 
