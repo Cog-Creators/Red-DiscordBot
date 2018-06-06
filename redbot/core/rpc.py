@@ -20,6 +20,12 @@ def get_name(func, prefix=None):
 
 
 class RedRpc(JsonRpc):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.add_methods(
+            ('', self.get_method_info)
+        )
+
     def _add_method(self, method, prefix=""):
         if not asyncio.iscoroutinefunction(method):
             return
@@ -43,6 +49,12 @@ class RedRpc(JsonRpc):
             if len(splitted) < 2 or splitted[0] != prefix:
                 new_methods[name] = meth
         self.methods = new_methods
+
+    async def get_method_info(self, request):
+        method_name = request.params[0]
+        if method_name in self.methods:
+            return self.methods[method_name].__doc__
+        return "No docstring available."
 
 
 class RPC:
