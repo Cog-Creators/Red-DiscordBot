@@ -22,9 +22,7 @@ def get_name(func, prefix=None):
 class RedRpc(JsonRpc):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.add_methods(
-            ('', self.get_method_info)
-        )
+        self.add_methods(("", self.get_method_info))
 
     def _add_method(self, method, prefix=""):
         if not asyncio.iscoroutinefunction(method):
