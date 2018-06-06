@@ -40,7 +40,7 @@ from redbot.core.utils.chat_formatting import pagify, box
 from redbot.core.utils import fuzzy_command_search
 
 
-EMPTY_STRING = u"\u200b"
+EMPTY_STRING = "\u200b"
 
 _mentions_transforms = {"@everyone": "@\u200beveryone", "@here": "@\u200bhere"}
 
@@ -184,15 +184,19 @@ class Help(formatter.HelpFormatter):
             for category, commands_ in itertools.groupby(data, key=category):
                 commands_ = sorted(commands_)
                 if len(commands_) > 0:
-                    field = EmbedField(category, self._add_subcommands(commands_), False)
-                    emb["fields"].append(field)
+                    for i, page in enumerate(
+                        pagify(self._add_subcommands(commands_), page_length=1000)
+                    ):
+                        title = category if i < 0 else f"{category} (continued)"
+                        field = EmbedField(title, page, False)
+                        emb["fields"].append(field)
 
         else:
             # Get list of commands for category
             filtered = sorted(filtered)
             if filtered:
                 for i, page in enumerate(
-                    pagify(self._add_subcommands(filtered), page_length=1020)
+                    pagify(self._add_subcommands(filtered), page_length=1000)
                 ):
                     title = (
                         "**__Commands:__**"
@@ -202,7 +206,6 @@ class Help(formatter.HelpFormatter):
                     if i > 0:
                         title += " (continued)"
                     field = EmbedField(title, page, False)
-                    # This will still break at 6k total chars, hope that isnt an issue later
                     emb["fields"].append(field)
 
         return emb
