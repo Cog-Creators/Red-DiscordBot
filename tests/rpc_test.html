@@ -1,0 +1,21 @@
+<script src="https://code.jquery.com/jquery-2.2.1.js"></script>
+<script>
+  var ws = new WebSocket("ws://localhost:6133");
+  var message_id = 0;
+
+  ws.onmessage = function(event) {
+    console.log(JSON.parse(event.data));
+  }
+
+  function ws_call_method(method, params) {
+    var request = {
+      jsonrpc: "2.0",
+      id: message_id,
+      method: method,
+      params: params
+    }
+
+    ws.send(JSON.stringify(request));
+    message_id++;
+  }
+</script>
