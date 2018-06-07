@@ -244,7 +244,7 @@ class RedBase(BotBase, RPCMixin):
 
         # remove all rpc handlers
         for cogname in cog_names:
-            if cogname.lower() in self.rpc_handlers:
+            if cogname.upper() in self.rpc_handlers:
                 methods = self.rpc_handlers[cogname]
                 for meth in methods:
                     self.unregister_rpc_handler(meth)
