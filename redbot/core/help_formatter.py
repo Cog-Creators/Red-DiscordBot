@@ -64,10 +64,7 @@ class Help(formatter.HelpFormatter):
     def clean_prefix(self):
         maybe_member = self.context.guild.me if self.context.guild else self.context.bot.user
         pretty = f"@{maybe_member.display_name}"
-        clean = str(self.context.prefix)
-        for pattern in ("<@{}>", "<@!{}>", "<@&{}>"):
-            clean = clean.replace(pattern.format(maybe_member.id), pretty)
-        return clean
+        return self.context.prefix.replace(maybe_member.mention, pretty)
 
     @property
     def me(self):
