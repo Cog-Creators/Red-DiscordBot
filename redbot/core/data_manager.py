@@ -74,9 +74,7 @@ def load_basic_configuration(instance_name_: str):
 
 def _base_data_path() -> Path:
     if basic_config is None:
-        raise RuntimeError(
-            "You must load the basic config before you" " can get the base data path."
-        )
+        raise RuntimeError("You must load the basic config before you can get the base data path.")
     path = basic_config["DATA_PATH"]
     return Path(path).resolve()
 
@@ -106,7 +104,7 @@ def cog_data_path(cog_instance=None, raw_name: str = None) -> Path:
         base_data_path = Path(_base_data_path())
     except RuntimeError as e:
         raise RuntimeError(
-            "You must load the basic config before you" " can get the cog data path."
+            "You must load the basic config before you can get the cog data path."
         ) from e
     cog_path = base_data_path / basic_config["COG_PATH_APPEND"]
 
@@ -124,7 +122,7 @@ def core_data_path() -> Path:
         base_data_path = Path(_base_data_path())
     except RuntimeError as e:
         raise RuntimeError(
-            "You must load the basic config before you" " can get the core data path."
+            "You must load the basic config before you can get the core data path."
         ) from e
     core_path = base_data_path / basic_config["CORE_PATH_APPEND"]
     core_path.mkdir(exist_ok=True, parents=True)

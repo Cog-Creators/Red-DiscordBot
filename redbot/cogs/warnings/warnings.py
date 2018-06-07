@@ -52,7 +52,7 @@ class Warnings:
     @warningset.command()
     @commands.guild_only()
     async def allowcustomreasons(self, ctx: commands.Context, allowed: bool):
-        """Allow or disallow custom reasons for a warning"""
+        """Enable or Disable custom reasons for a warning"""
         guild = ctx.guild
         await self.config.guild(guild).allow_custom_reasons.set(allowed)
         await ctx.send(

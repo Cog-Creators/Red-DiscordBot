@@ -47,9 +47,7 @@ class Dev:
         """
         if e.text is None:
             return box("{0.__class__.__name__}: {0}".format(e), lang="py")
-        return box(
-            "{0.text}{1:>{0.offset}}\n{2}: {0}" "".format(e, "^", type(e).__name__), lang="py"
-        )
+        return box("{0.text}{1:>{0.offset}}\n{2}: {0}".format(e, "^", type(e).__name__), lang="py")
 
     @staticmethod
     def get_pages(msg: str):
@@ -209,12 +207,12 @@ class Dev:
 
         if ctx.channel.id in self.sessions:
             await ctx.send(
-                _("Already running a REPL session in this channel. " "Exit it with `quit`.")
+                _("Already running a REPL session in this channel. Exit it with `quit`.")
             )
             return
 
         self.sessions.add(ctx.channel.id)
-        await ctx.send(_("Enter code to execute or evaluate." " `exit()` or `quit` to exit."))
+        await ctx.send(_("Enter code to execute or evaluate. `exit()` or `quit` to exit."))
 
         msg_check = lambda m: (
             m.author == ctx.author and m.channel == ctx.channel and m.content.startswith("`")

@@ -145,7 +145,7 @@ class Image:
             await ctx.send_help()
             return
 
-        url = "http://api.giphy.com/v1/gifs/search?&api_key={}&q={}" "".format(
+        url = "http://api.giphy.com/v1/gifs/search?&api_key={}&q={}".format(
             GIPHY_API_KEY, keywords
         )
 
@@ -168,7 +168,7 @@ class Image:
             await ctx.send_help()
             return
 
-        url = "http://api.giphy.com/v1/gifs/random?&api_key={}&tag={}" "".format(
+        url = "http://api.giphy.com/v1/gifs/random?&api_key={}&tag={}".format(
             GIPHY_API_KEY, keywords
         )
 
