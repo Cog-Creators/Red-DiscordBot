@@ -70,6 +70,7 @@ async def menu(
             message = await ctx.send(embed=current_page)
         else:
             message = await ctx.send(current_page)
+        # Don't wait for reactions to be added (GH-1797)
         ctx.bot.loop.create_task(_add_menu_reactions(message, controls.keys()))
     else:
         if isinstance(current_page, discord.Embed):
