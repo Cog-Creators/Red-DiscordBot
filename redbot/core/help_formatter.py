@@ -40,7 +40,7 @@ from redbot.core.utils.chat_formatting import pagify, box
 from redbot.core.utils import fuzzy_command_search
 
 
-EMPTY_STRING = u"\u200b"
+EMPTY_STRING = "\u200b"
 
 _mentions_transforms = {"@everyone": "@\u200beveryone", "@here": "@\u200bhere"}
 
@@ -59,6 +59,15 @@ class Help(formatter.HelpFormatter):
 
     def pm_check(self, ctx):
         return isinstance(ctx.channel, discord.DMChannel)
+
+    @property
+    def clean_prefix(self):
+        maybe_member = self.context.guild.me if self.context.guild else self.context.bot.user
+        pretty = f"@{maybe_member.display_name}"
+        clean = str(self.context.prefix)
+        for pattern in ("<@{}>", "<@!{}>", "<@&{}>"):
+            clean = clean.replace(pattern.format(maybe_member.id), pretty)
+        return clean
 
     @property
     def me(self):
