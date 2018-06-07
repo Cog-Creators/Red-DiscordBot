@@ -225,7 +225,7 @@ class Economy:
         else:
             await bank.wipe_bank()
             await ctx.send(
-                _("All bank accounts for {} have been " "deleted.").format(
+                _("All bank accounts for {} have been deleted.").format(
                     self.bot.user.name if await bank.is_global() else "this server"
                 )
             )
@@ -264,7 +264,7 @@ class Economy:
             else:
                 dtime = self.display_time(next_payday - cur_time)
                 await ctx.send(
-                    _("{} Too soon. For your next payday you have to" " wait {}.").format(
+                    _("{} Too soon. For your next payday you have to wait {}.").format(
                         author.mention, dtime
                     )
                 )
@@ -298,7 +298,7 @@ class Economy:
             else:
                 dtime = self.display_time(next_payday - cur_time)
                 await ctx.send(
-                    _("{} Too soon. For your next payday you have to" " wait {}.").format(
+                    _("{} Too soon. For your next payday you have to wait {}.").format(
                         author.mention, dtime
                     )
                 )
@@ -424,7 +424,7 @@ class Economy:
             now = then - bid + pay
             await bank.set_balance(author, now)
             await channel.send(
-                _("{}\n{} {}\n\nYour bid: {}\n{} → {}!" "").format(
+                _("{}\n{} {}\n\nYour bid: {}\n{} → {}!").format(
                     slot, author.mention, payout["phrase"], bid, then, now
                 )
             )
@@ -433,7 +433,7 @@ class Economy:
             await bank.withdraw_credits(author, bid)
             now = then - bid
             await channel.send(
-                _("{}\n{} Nothing!\nYour bid: {}\n{} → {}!" "").format(
+                _("{}\n{} Nothing!\nYour bid: {}\n{} → {}!").format(
                     slot, author.mention, bid, then, now
                 )
             )
@@ -493,7 +493,7 @@ class Economy:
         """Maximum slot machine bid"""
         slot_min = await self.config.SLOT_MIN()
         if bid < 1 or bid < slot_min:
-            await ctx.send(_("Invalid slotmax bid amount. Must be greater" " than slotmin."))
+            await ctx.send(_("Invalid slotmax bid amount. Must be greater than slotmin."))
             return
         guild = ctx.guild
         credits_name = await bank.get_currency_name(guild)
@@ -522,9 +522,7 @@ class Economy:
         else:
             await self.config.guild(guild).PAYDAY_TIME.set(seconds)
         await ctx.send(
-            _("Value modified. At least {} seconds must pass " "between each payday.").format(
-                seconds
-            )
+            _("Value modified. At least {} seconds must pass between each payday.").format(seconds)
         )
 
     @economyset.command()
@@ -539,7 +537,7 @@ class Economy:
             await self.config.PAYDAY_CREDITS.set(creds)
         else:
             await self.config.guild(guild).PAYDAY_CREDITS.set(creds)
-        await ctx.send(_("Every payday will now give {} {}." "").format(creds, credits_name))
+        await ctx.send(_("Every payday will now give {} {}.").format(creds, credits_name))
 
     @economyset.command()
     async def rolepaydayamount(self, ctx: commands.Context, role: discord.Role, creds: int):
@@ -551,7 +549,7 @@ class Economy:
         else:
             await self.config.role(role).PAYDAY_CREDITS.set(creds)
             await ctx.send(
-                _("Every payday will now give {} {} to people with the role {}." "").format(
+                _("Every payday will now give {} {} to people with the role {}.").format(
                     creds, credits_name, role.name
                 )
             )
@@ -565,7 +563,7 @@ class Economy:
         credits_name = await bank.get_currency_name(guild)
         await bank.set_default_balance(creds, guild)
         await ctx.send(
-            _("Registering an account will now give {} {}." "").format(creds, credits_name)
+            _("Registering an account will now give {} {}.").format(creds, credits_name)
         )
 
     # What would I ever do without stackoverflow?

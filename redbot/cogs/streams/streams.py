@@ -197,7 +197,7 @@ class Streams:
         self.streams = streams
         await self.save_streams()
 
-        msg = _("All {}'s stream alerts have been disabled." "").format(
+        msg = _("All {}'s stream alerts have been disabled.").format(
             "server" if _all else "channel"
         )
 
@@ -238,16 +238,16 @@ class Streams:
                 exists = await self.check_exists(stream)
             except InvalidTwitchCredentials:
                 await ctx.send(
-                    _("The twitch token is either invalid or has not been set. " "See {}.").format(
+                    _("The twitch token is either invalid or has not been set. See {}.").format(
                         "`{}streamset twitchtoken`".format(ctx.prefix)
                     )
                 )
                 return
             except InvalidYoutubeCredentials:
                 await ctx.send(
-                    _(
-                        "The Youtube API key is either invalid or has not been set. " "See {}."
-                    ).format("`{}streamset youtubekey`".format(ctx.prefix))
+                    _("The Youtube API key is either invalid or has not been set. See {}.").format(
+                        "`{}streamset youtubekey`".format(ctx.prefix)
+                    )
                 )
                 return
             except APIError:

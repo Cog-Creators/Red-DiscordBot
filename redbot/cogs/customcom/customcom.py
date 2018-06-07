@@ -209,7 +209,7 @@ class CustomCommands:
             await ctx.send(_("Custom command successfully added."))
         except AlreadyExists:
             await ctx.send(
-                _("This command already exists. Use " "`{}` to edit it.").format(
+                _("This command already exists. Use `{}` to edit it.").format(
                     "{}customcom edit".format(ctx.prefix)
                 )
             )
@@ -230,7 +230,7 @@ class CustomCommands:
             await ctx.send(_("Custom command successfully edited."))
         except NotFound:
             await ctx.send(
-                _("That command doesn't exist. Use " "`{}` to add it.").format(
+                _("That command doesn't exist. Use `{}` to add it.").format(
                     "{}customcom add".format(ctx.prefix)
                 )
             )

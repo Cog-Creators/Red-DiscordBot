@@ -1,6 +1,10 @@
 from distutils.core import setup
+from distutils import ccompiler
+from distutils.errors import CCompilerError
 from pathlib import Path
 import re
+import importlib
+import tempfile
 
 import os
 import sys
@@ -21,6 +25,20 @@ def get_package_list():
     return core
 
 
+def check_compiler_available():
+    m = ccompiler.new_compiler()
+
+    with tempfile.TemporaryDirectory() as tdir:
+        with tempfile.NamedTemporaryFile(prefix="dummy", suffix=".c", dir=tdir) as tfile:
+            tfile.write(b"int main(int argc, char** argv) {return 0;}")
+            tfile.seek(0)
+            try:
+                m.compile([tfile.name])
+            except CCompilerError:
+                return False
+    return True
+
+
 def get_requirements():
     with open("requirements.txt") as f:
         requirements = f.read().splitlines()
@@ -31,6 +49,9 @@ def get_requirements():
     except ValueError:
         pass
 
+    if not check_compiler_available():  # Can't compile python-Levensthein, so drop extra
+        requirements.remove("fuzzywuzzy[speedup]<=0.16.0")
+        requirements.append("fuzzywuzzy<=0.16.0")
     if IS_DEPLOYING or not (IS_TRAVIS or IS_RTD):
         requirements.append("discord.py>=1.0.0a0")
     if sys.platform.startswith("linux"):

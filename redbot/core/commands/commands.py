@@ -48,6 +48,21 @@ class Command(commands.Command):
         # We don't want our help property to be overwritten, namely by super()
         pass
 
+    @property
+    def parents(self):
+        """
+        Returns all parent commands of this command.
+
+        This is a list, sorted by the length of :attr:`.qualified_name` from highest to lowest. 
+        If the command has no parents, this will be an empty list.
+        """
+        cmd = self.parent
+        entries = []
+        while cmd is not None:
+            entries.append(cmd)
+            cmd = cmd.parent
+        return sorted(entries, key=lambda x: len(x.qualified_name), reverse=True)
+
     def command(self, cls=None, *args, **kwargs):
         """A shortcut decorator that invokes :func:`.command` and adds it to
         the internal command list via :meth:`~.GroupMixin.add_command`.

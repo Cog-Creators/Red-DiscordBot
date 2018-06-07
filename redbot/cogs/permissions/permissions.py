@@ -194,7 +194,9 @@ class Permissions:
         else:
             try:
                 testcontext = await self.bot.get_context(message, cls=commands.Context)
-                can = await com.can_run(testcontext)
+                can = await com.can_run(testcontext) and all(
+                    [await p.can_run(testcontext) for p in com.parents]
+                )
             except commands.CheckFailure:
                 can = False
 

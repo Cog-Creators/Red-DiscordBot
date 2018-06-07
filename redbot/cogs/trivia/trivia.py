@@ -81,7 +81,7 @@ class Trivia:
             return
         settings = self.conf.guild(ctx.guild)
         await settings.delay.set(seconds)
-        await ctx.send("Done. Maximum seconds to answer set to {}." "".format(seconds))
+        await ctx.send("Done. Maximum seconds to answer set to {}.".format(seconds))
 
     @triviaset.command(name="stopafter")
     async def triviaset_stopafter(self, ctx: commands.Context, seconds: float):
@@ -245,7 +245,7 @@ class Trivia:
         """List available trivia categories."""
         lists = set(p.stem for p in self._all_lists())
 
-        msg = box("**Available trivia lists**\n\n{}" "".format(", ".join(sorted(lists))))
+        msg = box("**Available trivia lists**\n\n{}".format(", ".join(sorted(lists))))
         if len(msg) > 1000:
             await ctx.author.send(msg)
             return

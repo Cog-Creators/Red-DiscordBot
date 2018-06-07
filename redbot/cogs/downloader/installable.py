@@ -116,7 +116,7 @@ class Installable(RepoJSONMixin):
         try:
             copy_func(src=str(self._location), dst=str(target_dir / self._location.stem))
         except:
-            log.exception("Error occurred when copying path:" " {}".format(self._location))
+            log.exception("Error occurred when copying path: {}".format(self._location))
             return False
         return True
 
@@ -145,9 +145,7 @@ class Installable(RepoJSONMixin):
                 info = json.load(f)
             except json.JSONDecodeError:
                 info = {}
-                log.exception(
-                    "Invalid JSON information file at path:" " {}".format(info_file_path)
-                )
+                log.exception("Invalid JSON information file at path: {}".format(info_file_path))
             else:
                 self._info = info
 
