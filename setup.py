@@ -129,8 +129,5 @@ setup(
     setup_requires=get_requirements(),
     install_requires=get_requirements(),
     dependency_links=dep_links,
-    extras_require={
-        "mongo": ["motor"],
-        "voice": ["red-lavalink>=0.0.4"],
-    },
+    extras_require={"mongo": ["motor"], "voice": ["red-lavalink>=0.0.4"]},
 )
