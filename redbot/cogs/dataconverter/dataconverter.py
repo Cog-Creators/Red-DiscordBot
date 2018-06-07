@@ -41,7 +41,7 @@ class DataConverter:
                 )
             )
         while resolver.available:
-            menu = _("Please select a set of data to import by number" ", or 'exit' to exit")
+            menu = _("Please select a set of data to import by number, or 'exit' to exit")
             for index, entry in enumerate(resolver.available, 1):
                 menu += "\n{}. {}".format(index, entry)
 

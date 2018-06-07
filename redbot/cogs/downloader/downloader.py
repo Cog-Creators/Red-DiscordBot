@@ -288,7 +288,7 @@ class Downloader:
         cog = discord.utils.get(repo_name.available_cogs, name=cog_name)  # type: Installable
         if cog is None:
             await ctx.send(
-                _("Error, there is no cog by the name of" " `{}` in the `{}` repo.").format(
+                _("Error, there is no cog by the name of `{}` in the `{}` repo.").format(
                     cog_name, repo_name.name
                 )
             )
@@ -305,7 +305,7 @@ class Downloader:
 
         if not await repo_name.install_requirements(cog, self.LIB_PATH):
             await ctx.send(
-                _("Failed to install the required libraries for" " `{}`: `{}`").format(
+                _("Failed to install the required libraries for `{}`: `{}`").format(
                     cog.name, cog.requirements
                 )
             )

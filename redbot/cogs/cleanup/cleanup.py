@@ -139,7 +139,7 @@ class Cleanup:
             delete_pinned=delete_pinned,
         )
 
-        reason = "{}({}) deleted {} messages " " containing '{}' in channel {}.".format(
+        reason = "{}({}) deleted {} messages containing '{}' in channel {}.".format(
             author.name, author.id, len(to_delete), text, channel.id
         )
         log.info(reason)
@@ -229,7 +229,7 @@ class Cleanup:
         is_bot = self.bot.user.bot
 
         if not is_bot:
-            await ctx.send(_("This command can only be used on bots with " "bot accounts."))
+            await ctx.send(_("This command can only be used on bots with bot accounts."))
             return
 
         after = await channel.get_message(message_id)
@@ -242,7 +242,7 @@ class Cleanup:
             ctx, channel, 0, limit=None, after=after, delete_pinned=delete_pinned
         )
 
-        reason = "{}({}) deleted {} messages in channel {}." "".format(
+        reason = "{}({}) deleted {} messages in channel {}.".format(
             author.name, author.id, len(to_delete), channel.name
         )
         log.info(reason)
@@ -273,7 +273,7 @@ class Cleanup:
         )
         to_delete.append(ctx.message)
 
-        reason = "{}({}) deleted {} messages in channel {}." "".format(
+        reason = "{}({}) deleted {} messages in channel {}.".format(
             author.name, author.id, number, channel.name
         )
         log.info(reason)

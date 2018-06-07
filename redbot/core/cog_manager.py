@@ -250,7 +250,7 @@ class CogManager:
             mod = import_module(real_name, package="redbot.cogs")
         except ImportError as e:
             raise RuntimeError(
-                "No core cog by the name of '{}' could" "be found.".format(name)
+                "No core cog by the name of '{}' could be found.".format(name)
             ) from e
         return mod.__spec__
 
@@ -342,9 +342,7 @@ class CogManagerUI:
         Add a path to the list of available cog paths.
         """
         if not path.is_dir():
-            await ctx.send(
-                _("That path does not exist or does not" " point to a valid directory.")
-            )
+            await ctx.send(_("That path does not exist or does not point to a valid directory."))
             return
 
         try:
@@ -419,7 +417,7 @@ class CogManagerUI:
 
         install_path = await ctx.bot.cog_mgr.install_path()
         await ctx.send(
-            _("The bot will install new cogs to the `{}`" " directory.").format(install_path)
+            _("The bot will install new cogs to the `{}` directory.").format(install_path)
         )
 
     @commands.command()
