@@ -8,8 +8,6 @@ from pathlib import Path
 
 import discord
 import sys
-from discord.ext.commands.bot import BotBase
-from discord.ext.commands import GroupMixin
 from discord.ext.commands import when_mentioned_or
 
 # This supresses the PyNaCl warning that isn't relevant here
@@ -23,7 +21,7 @@ from .help_formatter import Help, help as help_
 from .sentry import SentryManager
 
 
-class RedBase(BotBase):
+class RedBase(commands.GroupMixin, commands.bot.BotBase):
     """Mixin for the main bot class.
 
     This exists because `Red` inherits from `discord.AutoShardedClient`, which
@@ -244,7 +242,7 @@ class RedBase(BotBase):
         # first remove all the commands from the module
         for cmd in self.all_commands.copy().values():
             if cmd.module.startswith(lib_name):
-                if isinstance(cmd, GroupMixin):
+                if isinstance(cmd, discord.ext.commands.GroupMixin):
                     cmd.recursively_remove_all_commands()
                 self.remove_command(cmd.name)
 

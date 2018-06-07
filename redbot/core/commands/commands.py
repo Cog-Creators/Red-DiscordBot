@@ -8,7 +8,7 @@ import inspect
 from discord.ext import commands
 
 
-__all__ = ["Command", "Group", "command", "group"]
+__all__ = ["Command", "GroupMixin", "Group", "command", "group"]
 
 
 class Command(commands.Command):
@@ -53,7 +53,7 @@ class Command(commands.Command):
         """
         Returns all parent commands of this command.
 
-        This is a list, sorted by the length of :attr:`.qualified_name` from highest to lowest. 
+        This is a list, sorted by the length of :attr:`.qualified_name` from highest to lowest.
         If the command has no parents, this will be an empty list.
         """
         cmd = self.parent
@@ -63,11 +63,17 @@ class Command(commands.Command):
             cmd = cmd.parent
         return sorted(entries, key=lambda x: len(x.qualified_name), reverse=True)
 
-    def command(self, cls=None, *args, **kwargs):
+
+class GroupMixin(commands.GroupMixin):
+    """Mixin for `Group` and `Red` classes.
+
+    This class inherits from `discord.ext.commands.GroupMixin`.
+    """
+
+    def command(self, *args, **kwargs):
         """A shortcut decorator that invokes :func:`.command` and adds it to
         the internal command list via :meth:`~.GroupMixin.add_command`.
         """
-        cls = cls or self.__class__
 
         def decorator(func):
             result = command(*args, **kwargs)(func)
@@ -76,11 +82,10 @@ class Command(commands.Command):
 
         return decorator
 
-    def group(self, cls=None, *args, **kwargs):
+    def group(self, *args, **kwargs):
         """A shortcut decorator that invokes :func:`.group` and adds it to
         the internal command list via :meth:`~.GroupMixin.add_command`.
         """
-        cls = None or Group
 
         def decorator(func):
             result = group(*args, **kwargs)(func)
@@ -90,11 +95,11 @@ class Command(commands.Command):
         return decorator
 
 
-class Group(Command, commands.Group):
+class Group(Command, GroupMixin, commands.Group):
     """Group command class for Red.
 
-    This class inherits from `discord.ext.commands.Group`, with `Command` mixed
-    in.
+    This class inherits from `Command`, with `GroupMixin` and  `discord.ext.commands.Group`
+    mixed in.
     """
 
     pass
