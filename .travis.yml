@@ -13,10 +13,11 @@ env:
     - TOXENV=style
 
 install:
-- pip install --upgrade pip tox
+- pip install --upgrade pip pipenv
+- pipenv install --dev
 
 script:
-- tox
+- pipenv run tox
 
 jobs:
   include:
