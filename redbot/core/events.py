@@ -11,9 +11,8 @@ from pkg_resources import DistributionNotFound
 
 
 import discord
-from discord.ext import commands
 
-from . import __version__
+from . import __version__, commands
 from .data_manager import storage_type
 from .utils.chat_formatting import inline, bordered, pagify, box
 from .utils import fuzzy_command_search
@@ -183,6 +182,11 @@ def init_events(bot, cli_flags):
     async def on_command_error(ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send_help()
+        elif isinstance(error, commands.ConversionFailure):
+            if error.args:
+                await ctx.send(error.args[0])
+            else:
+                await ctx.send_help()
         elif isinstance(error, commands.BadArgument):
             await ctx.send_help()
         elif isinstance(error, commands.DisabledCommand):

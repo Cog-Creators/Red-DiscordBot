@@ -11,7 +11,7 @@ class CogOrCommand(commands.Converter):
         if ret:
             return "commands", ret.qualified_name
 
-        raise commands.BadArgument()
+        raise commands.BadArgument('Cog or command "{arg}" not found.'.format(arg=arg))
 
 
 class RuleType(commands.Converter):
@@ -21,4 +21,4 @@ class RuleType(commands.Converter):
         if arg.lower() in ("deny", "blacklist", "denied"):
             return "deny"
 
-        raise commands.BadArgument()
+        raise commands.BadArgument('Rule type must be "allow"/"whitelist" or "deny"/"blacklist".')
