@@ -1,6 +1,9 @@
 dist: trusty
 language: python
-cache: pip
+cache:
+- pip
+- directories:
+  - .tox/docs_doctree
 notifications:
   email: false
 
