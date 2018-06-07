@@ -76,7 +76,7 @@ class Bank:
                 default_balance = await bank._conf.guild(ctx.guild).default_balance()
 
             settings = _(
-                "Bank settings:\n\n" "Bank name: {}\n" "Currency: {}\n" "Default balance: {}" ""
+                "Bank settings:\n\nBank name: {}\nCurrency: {}\nDefault balance: {}"
             ).format(bank_name, currency_name, default_balance)
             await ctx.send(box(settings))
             await ctx.send_help()
