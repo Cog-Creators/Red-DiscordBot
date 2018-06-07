@@ -212,15 +212,18 @@ class Reports:
             guild = await self.discover_guild(
                 author, prompt=_("Select a server to make a report in by number.")
             )
+            delete_later = False
         else:
-            try:
-                await ctx.message.delete()
-            except discord.Forbidden:
-                pass
+            delete_later = True
         if guild is None:
             return
         g_active = await self.config.guild(guild).active()
         if not g_active:
+            if delete_later:
+                try:
+                    await ctx.message.delete()
+                except discord.Forbidden:
+                    pass
             return await author.send(_("Reporting has not been enabled for this server"))
         if guild.id not in self.antispam:
             self.antispam[guild.id] = {}
@@ -236,15 +239,15 @@ class Reports:
             )
 
         if author.id in self.user_cache:
+            if delete_later:
+                try:
+                    await ctx.message.delete()
+                except discord.Forbidden:
+                    pass
             return await author.send(
                 _("Please finish making your prior report before making an additional one")
             )
 
-        if ctx.guild:
-            try:
-                await ctx.message.delete()
-            except (discord.Forbidden, discord.HTTPException):
-                pass
         self.user_cache.append(author.id)
 
         if _report:
@@ -263,6 +266,11 @@ class Reports:
             except discord.Forbidden:
                 await ctx.send(_("This requires DMs enabled."))
                 self.user_cache.remove(author.id)
+                if delete_later:
+                    try:
+                        await ctx.message.delete()
+                    except discord.Forbidden:
+                        pass
                 return
 
             def pred(m):
@@ -283,6 +291,11 @@ class Reports:
         self.antispam[guild.id][author.id].stamp()
 
         self.user_cache.remove(author.id)
+        if delete_later:
+            try:
+                await ctx.message.delete()
+            except discord.Forbidden:
+                pass
 
     async def on_raw_reaction_add(self, payload):
         """
