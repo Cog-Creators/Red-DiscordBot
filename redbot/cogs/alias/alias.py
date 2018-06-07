@@ -287,7 +287,7 @@ class Alias:
     @commands.guild_only()
     async def _help_alias(self, ctx: commands.Context, alias_name: str):
         """Tries to execute help for the base command of the alias"""
-        is_alias, alias = self.is_alias(ctx.guild, alias_name=alias_name)
+        is_alias, alias = await self.is_alias(ctx.guild, alias_name=alias_name)
         if is_alias:
             base_cmd = alias.command[0]
 
