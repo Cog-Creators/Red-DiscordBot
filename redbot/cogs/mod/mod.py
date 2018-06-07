@@ -1441,7 +1441,7 @@ class Mod:
 
     async def on_command_completion(self, ctx: commands.Context):
         await self._delete_delay(ctx)
-    
+
     async def on_command_error(self, ctx: commands.Context, error):
         await self._delete_delay(ctx)
 
