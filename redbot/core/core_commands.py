@@ -197,7 +197,7 @@ class CoreLogic:
         if prefixes:
             prefixes = sorted(prefixes, reverse=True)
             await self.bot.db.prefix.set(prefixes)
-        return self.bot.db.prefix()
+        return await self.bot.db.prefix()
 
     async def _version_info(self):
         """
@@ -650,6 +650,39 @@ class Core(CoreLogic):
         await ctx.send(
             _("The bot {} use its configured color for embeds.").format(
                 _("will not") if current_setting else _("will")
+            )
+        )
+
+    @_set.command()
+    @checks.guildowner()
+    @commands.guild_only()
+    async def serverfuzzy(self, ctx):
+        """
+        Toggle whether to enable fuzzy command search for the server.
+
+        Default is for fuzzy command search to be disabled.
+        """
+        current_setting = await ctx.bot.db.guild(ctx.guild).fuzzy()
+        await ctx.bot.db.guild(ctx.guild).fuzzy.set(not current_setting)
+        await ctx.send(
+            _("Fuzzy command search has been {} for this server.").format(
+                _("disabled") if current_setting else _("enabled")
+            )
+        )
+
+    @_set.command()
+    @checks.is_owner()
+    async def fuzzy(self, ctx):
+        """
+        Toggle whether to enable fuzzy command search in DMs.
+
+        Default is for fuzzy command search to be disabled.
+        """
+        current_setting = await ctx.bot.db.fuzzy()
+        await ctx.bot.db.fuzzy.set(not current_setting)
+        await ctx.send(
+            _("Fuzzy command search has been {} in DMs.").format(
+                _("disabled") if current_setting else _("enabled")
             )
         )
 
@@ -1257,7 +1290,7 @@ class Core(CoreLogic):
 
         msg = _("Whitelisted Users:")
         for user in curr_list:
-            msg.append("\n\t- {}".format(user))
+            msg += "\n\t- {}".format(user)
 
         for page in pagify(msg):
             await ctx.send(box(page))
@@ -1320,7 +1353,7 @@ class Core(CoreLogic):
 
         msg = _("blacklisted Users:")
         for user in curr_list:
-            msg.append("\n\t- {}".format(user))
+            msg += "\n\t- {}".format(user)
 
         for page in pagify(msg):
             await ctx.send(box(page))
@@ -1348,6 +1381,177 @@ class Core(CoreLogic):
         Clears the blacklist.
         """
         await ctx.bot.db.blacklist.set([])
+        await ctx.send(_("blacklist has been cleared."))
+
+    @commands.group()
+    @commands.guild_only()
+    @checks.admin_or_permissions(administrator=True)
+    async def localwhitelist(self, ctx):
+        """
+        Whitelist management commands.
+        """
+        if ctx.invoked_subcommand is None:
+            await ctx.send_help()
+
+    @localwhitelist.command(name="add")
+    async def localwhitelist_add(self, ctx, *, user_or_role: str):
+        """
+        Adds a user or role to the whitelist.
+        """
+        try:
+            obj = await commands.MemberConverter().convert(ctx, user_or_role)
+        except commands.BadArgument:
+            obj = await commands.RoleConverter().convert(ctx, user_or_role)
+            user = False
+        else:
+            user = True
+        async with ctx.bot.db.guild(ctx.guild).whitelist() as curr_list:
+            if obj.id not in curr_list:
+                curr_list.append(obj.id)
+
+        if user:
+            await ctx.send(_("User added to whitelist."))
+        else:
+            await ctx.send(_("Role added to whitelist."))
+
+    @localwhitelist.command(name="list")
+    async def localwhitelist_list(self, ctx):
+        """
+        Lists whitelisted users and roles.
+        """
+        curr_list = await ctx.bot.db.guild(ctx.guild).whitelist()
+
+        msg = _("Whitelisted Users and roles:")
+        for obj in curr_list:
+            msg += "\n\t- {}".format(obj)
+
+        for page in pagify(msg):
+            await ctx.send(box(page))
+
+    @localwhitelist.command(name="remove")
+    async def localwhitelist_remove(self, ctx, *, user_or_role: str):
+        """
+        Removes user or role from whitelist.
+        """
+        try:
+            obj = await commands.MemberConverter().convert(ctx, user_or_role)
+        except commands.BadArgument:
+            obj = await commands.RoleConverter().convert(ctx, user_or_role)
+            user = False
+        else:
+            user = True
+
+        removed = False
+        async with ctx.bot.db.guild(ctx.guild).whitelist() as curr_list:
+            if obj.id in curr_list:
+                removed = True
+                curr_list.remove(obj.id)
+
+        if removed:
+            if user:
+                await ctx.send(_("User has been removed from whitelist."))
+            else:
+                await ctx.send(_("Role has been removed from whitelist."))
+        else:
+            if user:
+                await ctx.send(_("User was not in the whitelist."))
+            else:
+                await ctx.send(_("Role was not in the whitelist."))
+
+    @localwhitelist.command(name="clear")
+    async def localwhitelist_clear(self, ctx):
+        """
+        Clears the whitelist.
+        """
+        await ctx.bot.db.guild(ctx.guild).whitelist.set([])
+        await ctx.send(_("Whitelist has been cleared."))
+
+    @commands.group()
+    @commands.guild_only()
+    @checks.admin_or_permissions(administrator=True)
+    async def localblacklist(self, ctx):
+        """
+        blacklist management commands.
+        """
+        if ctx.invoked_subcommand is None:
+            await ctx.send_help()
+
+    @localblacklist.command(name="add")
+    async def localblacklist_add(self, ctx, *, user_or_role: str):
+        """
+        Adds a user or role to the blacklist.
+        """
+        try:
+            obj = await commands.MemberConverter().convert(ctx, user_or_role)
+        except commands.BadArgument:
+            obj = await commands.RoleConverter().convert(ctx, user_or_role)
+            user = False
+        else:
+            user = True
+
+        if user and await ctx.bot.is_owner(obj):
+            ctx.send(_("You cannot blacklist an owner!"))
+            return
+
+        async with ctx.bot.db.guild(ctx.guild).blacklist() as curr_list:
+            if obj.id not in curr_list:
+                curr_list.append(obj.id)
+
+        if user:
+            await ctx.send(_("User added to blacklist."))
+        else:
+            await ctx.send(_("Role added to blacklist."))
+
+    @localblacklist.command(name="list")
+    async def localblacklist_list(self, ctx):
+        """
+        Lists blacklisted users and roles.
+        """
+        curr_list = await ctx.bot.db.guild(ctx.guild).blacklist()
+
+        msg = _("blacklisted Users and Roles:")
+        for obj in curr_list:
+            msg += "\n\t- {}".format(obj)
+
+        for page in pagify(msg):
+            await ctx.send(box(page))
+
+    @localblacklist.command(name="remove")
+    async def localblacklist_remove(self, ctx, *, user_or_role: str):
+        """
+        Removes user or role from blacklist.
+        """
+        removed = False
+        try:
+            obj = await commands.MemberConverter().convert(ctx, user_or_role)
+        except commands.BadArgument:
+            obj = await commands.RoleConverter().convert(ctx, user_or_role)
+            user = False
+        else:
+            user = True
+
+        async with ctx.bot.db.guild(ctx.guild).blacklist() as curr_list:
+            if obj.id in curr_list:
+                removed = True
+                curr_list.remove(obj.id)
+
+        if removed:
+            if user:
+                await ctx.send(_("User has been removed from blacklist."))
+            else:
+                await ctx.send(_("Role has been removed from blacklist."))
+        else:
+            if user:
+                await ctx.send(_("User was not in the blacklist."))
+            else:
+                await ctx.send(_("Role was not in the blacklist."))
+
+    @localblacklist.command(name="clear")
+    async def localblacklist_clear(self, ctx):
+        """
+        Clears the blacklist.
+        """
+        await ctx.bot.db.guild(ctx.guild).blacklist.set([])
         await ctx.send(_("blacklist has been cleared."))
 
     # RPC handlers
