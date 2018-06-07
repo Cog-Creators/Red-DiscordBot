@@ -7,19 +7,16 @@ notifications:
 python:
 - 3.6.5
 env:
-  global:
-    PIPENV_IGNORE_VIRTUALENVS=1
   matrix:
     - TOXENV=py
     - TOXENV=docs
     - TOXENV=style
 
 install:
-- pip install --upgrade pip pipenv
-- pipenv install --dev
+- pip install --upgrade pip tox
 
 script:
-- pipenv run tox
+- tox
 
 jobs:
   include:
