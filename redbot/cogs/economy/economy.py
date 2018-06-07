@@ -524,9 +524,7 @@ class Economy:
         else:
             await self.config.guild(guild).PAYDAY_TIME.set(seconds)
         await ctx.send(
-            _("Value modified. At least {} seconds must pass between each payday.").format(
-                seconds
-            )
+            _("Value modified. At least {} seconds must pass between each payday.").format(seconds)
         )
 
     @economyset.command()

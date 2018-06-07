@@ -132,9 +132,7 @@ class Filter:
         current_setting = await self.settings.guild(guild).filter_names()
         await self.settings.guild(guild).filter_names.set(not current_setting)
         if current_setting:
-            await ctx.send(
-                _("Names and nicknames will no longer be checked against the filter.")
-            )
+            await ctx.send(_("Names and nicknames will no longer be checked against the filter."))
         else:
             await ctx.send(_("Names and nicknames will now be checked against the filter."))
 

@@ -233,9 +233,7 @@ class Alias:
 
         await self.add_alias(ctx, alias_name, command)
 
-        await ctx.send(
-            _("A new alias with the trigger `{}` has been created.").format(alias_name)
-        )
+        await ctx.send(_("A new alias with the trigger `{}` has been created.").format(alias_name))
 
     @checks.is_owner()
     @global_.command(name="add")
@@ -307,9 +305,7 @@ class Alias:
 
         if is_alias:
             await ctx.send(
-                _("The `{}` alias will execute the command `{}`").format(
-                    alias_name, alias.command
-                )
+                _("The `{}` alias will execute the command `{}`").format(alias_name, alias.command)
             )
         else:
             await ctx.send(_("There is no alias with the name `{}`").format(alias_name))

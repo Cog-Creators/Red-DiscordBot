@@ -247,9 +247,9 @@ class Streams:
                 return
             except InvalidYoutubeCredentials:
                 await ctx.send(
-                    _(
-                        "The Youtube API key is either invalid or has not been set. See {}."
-                    ).format("`{}streamset youtubekey`".format(ctx.prefix))
+                    _("The Youtube API key is either invalid or has not been set. See {}.").format(
+                        "`{}streamset youtubekey`".format(ctx.prefix)
+                    )
                 )
                 return
             except APIError:

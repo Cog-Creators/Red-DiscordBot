@@ -35,9 +35,7 @@ class ModLog:
                 await ctx.send(_("Mod events will be sent to {}").format(channel.mention))
             else:
                 await ctx.send(
-                    _("I do not have permissions to send messages in {}!").format(
-                        channel.mention
-                    )
+                    _("I do not have permissions to send messages in {}!").format(channel.mention)
                 )
         else:
             try:

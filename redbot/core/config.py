@@ -623,9 +623,7 @@ class Config:
                 existing_is_dict = isinstance(_partial[k], dict)
                 if val_is_dict != existing_is_dict:
                     # != is XOR
-                    raise KeyError(
-                        "You cannot register a Group and a Value under the same name."
-                    )
+                    raise KeyError("You cannot register a Group and a Value under the same name.")
                 if val_is_dict:
                     Config._update_defaults(v, _partial=_partial[k])
                 else:

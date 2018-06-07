@@ -145,9 +145,7 @@ class Installable(RepoJSONMixin):
                 info = json.load(f)
             except json.JSONDecodeError:
                 info = {}
-                log.exception(
-                    "Invalid JSON information file at path: {}".format(info_file_path)
-                )
+                log.exception("Invalid JSON information file at path: {}".format(info_file_path))
             else:
                 self._info = info
 
