@@ -3,7 +3,7 @@ language: python
 cache:
 - pip
 - directories:
-  - .tox/docs_doctree
+  - .tox/$(TOXENV)_doctree
 notifications:
   email: false
 
