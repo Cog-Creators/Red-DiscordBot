@@ -513,7 +513,7 @@ class Core(CoreLogic):
                 "Failed to load package{plural} {packs}. Check your console or "
                 "logs for details."
             )
-            formed = self.get_package_strings(failed, fmt)
+            formed = self._get_package_strings(failed, fmt)
             await ctx.send(formed)
 
         if not_found:
