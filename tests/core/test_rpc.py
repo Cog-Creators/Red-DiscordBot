@@ -1,10 +1,19 @@
 import pytest
-from redbot.core.rpc import RPC, get_name
+from redbot.core.rpc import RPC, RPCMixin, get_name
+
+from unittest.mock import MagicMock
 
 
 @pytest.fixture()
 def rpc():
     return RPC()
+
+
+@pytest.fixture()
+def rpcmixin():
+    r = RPCMixin()
+    r.rpc = MagicMock(spec=RPC)
+    return r
 
 
 @pytest.fixture()
@@ -110,3 +119,27 @@ def test_remove_multi_method(rpc, existing_multi_func):
     names = [get_name(f) for f in existing_multi_func]
 
     assert not any(n in rpc._rpc.methods for n in names)
+
+
+def test_rpcmixin_register(rpcmixin, cog):
+    rpcmixin.register_rpc_handler(cog.cofunc)
+
+    assert rpcmixin.rpc.add_method.called_once_with(cog.cofunc)
+
+    name = get_name(cog.cofunc)
+    cogname = name.split("__")[0]
+
+    assert cogname in rpcmixin.rpc_handlers
+
+
+def test_rpcmixin_unregister(rpcmixin, cog):
+    rpcmixin.register_rpc_handler(cog.cofunc)
+    rpcmixin.unregister_rpc_handler(cog.cofunc)
+
+    assert rpcmixin.rpc.remove_method.called_once_with(cog.cofunc)
+
+    name = get_name(cog.cofunc)
+    cogname = name.split("__")[0]
+
+    if cogname in rpcmixin.rpc_handlers:
+        assert cog.cofunc not in rpcmixin.rpc_handlers[cogname]

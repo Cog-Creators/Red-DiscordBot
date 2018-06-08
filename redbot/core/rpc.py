@@ -8,7 +8,7 @@ import logging
 
 log = logging.getLogger("red.rpc")
 
-__all__ = ["RPC", "get_name"]
+__all__ = ["RPC", "RPCMixin", "get_name"]
 
 
 def get_name(func, prefix=None):
@@ -152,7 +152,7 @@ class RPCMixin:
         self.rpc.remove_method(method)
 
         name = get_name(method)
-        cog_name = name.split("__")
+        cog_name = name.split("__")[0]
 
         if cog_name in self.rpc_handlers:
             try:
