@@ -212,18 +212,10 @@ class Reports:
             guild = await self.discover_guild(
                 author, prompt=_("Select a server to make a report in by number.")
             )
-            delete_later = False
-        else:
-            delete_later = True
         if guild is None:
             return
         g_active = await self.config.guild(guild).active()
         if not g_active:
-            if delete_later:
-                try:
-                    await ctx.message.delete()
-                except discord.Forbidden:
-                    pass
             return await author.send(_("Reporting has not been enabled for this server"))
         if guild.id not in self.antispam:
             self.antispam[guild.id] = {}
@@ -237,17 +229,10 @@ class Reports:
                     "later."
                 )
             )
-
         if author.id in self.user_cache:
-            if delete_later:
-                try:
-                    await ctx.message.delete()
-                except discord.Forbidden:
-                    pass
             return await author.send(
                 _("Please finish making your prior report before making an additional one")
             )
-
         self.user_cache.append(author.id)
 
         if _report:
@@ -264,14 +249,7 @@ class Reports:
                     )
                 )
             except discord.Forbidden:
-                await ctx.send(_("This requires DMs enabled."))
-                self.user_cache.remove(author.id)
-                if delete_later:
-                    try:
-                        await ctx.message.delete()
-                    except discord.Forbidden:
-                        pass
-                return
+                return await ctx.send(_("This requires DMs enabled."))
 
             def pred(m):
                 return m.author == author and m.channel == dm.channel
@@ -279,7 +257,7 @@ class Reports:
             try:
                 message = await self.bot.wait_for("message", check=pred, timeout=180)
             except asyncio.TimeoutError:
-                await author.send(_("You took too long. Try again later."))
+                return await author.send(_("You took too long. Try again later."))
             else:
                 val = await self.send_report(message, guild)
 
@@ -288,14 +266,21 @@ class Reports:
                 await author.send(_("There was an error sending your report."))
             else:
                 await author.send(_("Your report was submitted. (Ticket #{})").format(val))
-        self.antispam[guild.id][author.id].stamp()
+                self.antispam[guild.id][author.id].stamp()
 
-        self.user_cache.remove(author.id)
-        if delete_later:
-            try:
-                await ctx.message.delete()
-            except discord.Forbidden:
-                pass
+    @report.after_invoke
+    async def report_cleanup(self, ctx: commands.Context):
+        """
+        The logic is cleaner this way
+        """
+        if ctx.author.id in self.user_cache:
+            self.user_cache.remove(ctx.author.id)
+        if ctx.guild and ctx.invoked_subcommand is None:
+            if ctx.channel.permissions_for(ctx.guild.me).manage_messages:
+                try:
+                    await ctx.message.delete()
+                except discord.NotFound:
+                    pass
 
     async def on_raw_reaction_add(self, payload):
         """
