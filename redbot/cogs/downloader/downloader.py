@@ -400,7 +400,9 @@ class Downloader:
             )
             return
 
-        msg = _("Information on {}:\n{}").format(cog.name, cog.description or "")
+        msg = _("Information on {}:\n{}\n\nRequirements: {}").format(
+            cog.name, cog.description or "", ", ".join(cog.requirements) or "None"
+        )
         await ctx.send(box(msg))
 
     async def is_installed(
