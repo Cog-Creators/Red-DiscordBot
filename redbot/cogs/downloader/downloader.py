@@ -382,7 +382,7 @@ class Downloader:
         """
         cogs = repo_name.available_cogs
         cogs = _("Available Cogs:\n") + "\n".join(
-            ["+ {}: {}".format(c.name, c.short or "") for c in cogs]
+            ["+ {}: {}".format(c.name, c.short or "") for c in cogs if not c.hidden]
         )
 
         for page in pagify(cogs, ["\n"], shorten_by=16):
