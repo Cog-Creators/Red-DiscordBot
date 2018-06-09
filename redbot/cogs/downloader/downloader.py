@@ -15,7 +15,7 @@ from redbot.core.utils.chat_formatting import box, pagify
 from redbot.core import commands
 
 from redbot.core.bot import Red
-from .checks import install_agreement
+from .checks import do_install_agreement
 from .converters import InstalledCog
 from .errors import CloningError, ExistingGitRepo
 from .installable import Installable
@@ -53,7 +53,7 @@ class Downloader:
 
     async def cog_install_path(self):
         """Get the current cog install path.
-        
+
         Returns
         -------
         pathlib.Path
@@ -64,7 +64,7 @@ class Downloader:
 
     async def installed_cogs(self) -> Tuple[Installable]:
         """Get info on installed cogs.
-        
+
         Returns
         -------
         `tuple` of `Installable`
@@ -77,7 +77,7 @@ class Downloader:
 
     async def _add_to_installed(self, cog: Installable):
         """Mark a cog as installed.
-        
+
         Parameters
         ----------
         cog : Installable
@@ -93,7 +93,7 @@ class Downloader:
 
     async def _remove_from_installed(self, cog: Installable):
         """Remove a cog from the saved list of installed cogs.
-        
+
         Parameters
         ----------
         cog : Installable
@@ -214,7 +214,6 @@ class Downloader:
             await ctx.send_help()
 
     @repo.command(name="add")
-    @install_agreement()
     async def _repo_add(self, ctx, name: str, repo_url: str, branch: str = None):
         """
         Add a new repo to Downloader.
@@ -222,6 +221,9 @@ class Downloader:
         Name can only contain characters A-z, numbers and underscore
         Branch will default to master if not specified
         """
+        agreed = await do_install_agreement(ctx)
+        if not agreed:
+            return
         try:
             # noinspection PyTypeChecker
             repo = await self._repo_manager.add_repo(name=name, url=repo_url, branch=branch)
@@ -392,7 +394,11 @@ class Downloader:
             )
         cogs = repo_name.available_cogs
         cogs = _("Available Cogs:\n") + "\n".join(
-            ["+ {}: {}".format(c.name, c.short or "") for c in cogs if c not in installed]
+            [
+                "+ {}: {}".format(c.name, c.short or "")
+                for c in cogs
+                if not (c.hidden or c in installed)
+            ]
         )
         cogs = cogs + "\n\n" + installed_str
         for page in pagify(cogs, ["\n"], shorten_by=16):
@@ -448,7 +454,7 @@ class Downloader:
             Name of the command which belongs to the cog.
         cog_installable : `Installable` or `object`
             Can be an `Installable` instance or a Cog instance.
-            
+
         Returns
         -------
         str
@@ -473,12 +479,12 @@ class Downloader:
         """Determines the cog name that Downloader knows from the cog instance.
 
         Probably.
-        
+
         Parameters
         ----------
         instance : object
             The cog instance.
-            
+
         Returns
         -------
         str
