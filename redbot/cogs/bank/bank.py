@@ -58,7 +58,7 @@ class Bank:
 
     # SECTION commands
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @checks.guildowner_or_permissions(administrator=True)
     async def bankset(self, ctx: commands.Context):
         """Base command for bank settings"""

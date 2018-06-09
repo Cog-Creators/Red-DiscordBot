@@ -204,7 +204,7 @@ class Downloader:
                 )
             )
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @checks.is_owner()
     async def repo(self, ctx):
         """
@@ -272,7 +272,7 @@ class Downloader:
         msg = _("Information on {}:\n{}").format(repo_name.name, repo_name.description or "")
         await ctx.send(box(msg))
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @checks.is_owner()
     async def cog(self, ctx):
         """

@@ -163,7 +163,7 @@ class Audio:
                 await message_channel.send(embed=embed)
                 await player.skip()
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @commands.guild_only()
     async def audioset(self, ctx):
         """Music configuration options."""
@@ -630,7 +630,7 @@ class Audio:
                 await player.play()
         await ctx.send(embed=embed)
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @commands.guild_only()
     async def playlist(self, ctx):
         """Playlist configuration options."""
@@ -1591,7 +1591,7 @@ class Audio:
             embed.set_footer(text="Nothing playing.")
         await ctx.send(embed=embed)
 
-    @commands.group(aliases=["llset"], autohelp=True)
+    @commands.group(aliases=["llset"])
     @commands.guild_only()
     @checks.is_owner()
     async def llsetup(self, ctx):
