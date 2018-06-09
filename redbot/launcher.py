@@ -391,7 +391,7 @@ def main_menu():
     clear_screen()
     while True:
         print(INTRO)
-        print("Current version: {}".format(__version__))
+        print("\033[4mCurrent version:\033[0m {}\n".format(__version__))
         print("1. Run Red w/ autorestart in case of issues")
         print("2. Run Red")
         print("3. Update Red")
