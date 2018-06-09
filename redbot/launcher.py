@@ -16,7 +16,7 @@ from redbot.setup import (
     create_backup,
     save_config,
 )
-from redbot.core import __verison__
+from redbot.core import __version__
 from redbot.core.utils import safe_delete
 from redbot.core.cli import confirm
 
