@@ -619,7 +619,7 @@ class Audio:
 
         queue_duration = await self._queue_duration(ctx)
         queue_total_duration = lavalink.utils.format_time(queue_duration)
-        before_queue_length = len(player.queue) + 1
+        before_queue_length = len(player.queue)
 
         if "list" in query and "ytsearch:" not in query:
             for track in tracks:
@@ -632,7 +632,7 @@ class Audio:
             if not shuffle and queue_duration > 0:
                 embed.set_footer(
                     text="{} until start of playlist playback: starts at #{} in queue".format(
-                        queue_total_duration, before_queue_length
+                        queue_total_duration, before_queue_length + 1
                     )
                 )
             if not player.current:
@@ -648,11 +648,11 @@ class Audio:
             if not shuffle and queue_duration > 0:
                 embed.set_footer(
                     text="{} until track playback: #{} in queue".format(
-                        queue_total_duration, before_queue_length
+                        queue_total_duration, before_queue_length + 1
                     )
                 )
             elif queue_duration > 0:
-                embed.set_footer(text="#{} in queue".format(len(player.queue) + 1))
+                embed.set_footer(text="#{} in queue".format(len(player.queue)))
             if not player.current:
                 await player.play()
         await ctx.send(embed=embed)
@@ -1223,10 +1223,10 @@ class Audio:
 
         query = query.strip("<>")
         if query.startswith("list "):
-            query = "ytsearch:{}".format(query.lstrip("list "))
+            query = "ytsearch:{}".format(query.replace("list ", ""))
             tracks = await player.get_tracks(query)
             if not tracks:
-                return await self._embed_msg(ctx, "Nothing found 👀")
+                return await self._embed_msg(ctx, "Nothing found.")
             songembed = discord.Embed(
                 colour=ctx.guild.me.top_role.colour,
                 title="Queued {} track(s).".format(len(tracks)),
@@ -1245,12 +1245,12 @@ class Audio:
                     await player.play()
             return await ctx.send(embed=songembed)
         if query.startswith("sc "):
-            query = "scsearch:{}".format(query.lstrip("sc "))
+            query = "scsearch:{}".format(query.replace("sc ", ""))
         elif not query.startswith("http"):
             query = "ytsearch:{}".format(query)
         tracks = await player.get_tracks(query)
         if not tracks:
-            return await self._embed_msg(ctx, "Nothing found 👀")
+            return await self._embed_msg(ctx, "Nothing found.")
 
         len_search_pages = math.ceil(len(tracks) / 5)
         search_page_list = []
