@@ -382,11 +382,21 @@ class Downloader:
         """
         Lists all available cogs from a single repo.
         """
+        installed = await self.installed_cogs()
+        installed_str = ""
+        if installed:
+            installed_str = _("Installed Cogs:\n") + "\n".join(
+                [
+                    "- {}{}".format(i.name, ": {}".format(i.short) if i.short else "")
+                    for i in installed
+                    if i.repo_name == repo_name.name
+                ]
+            )
         cogs = repo_name.available_cogs
         cogs = _("Available Cogs:\n") + "\n".join(
-            ["+ {}: {}".format(c.name, c.short or "") for c in cogs]
+            ["+ {}: {}".format(c.name, c.short or "") for c in cogs if c not in installed]
         )
-
+        cogs = cogs + "\n\n" + installed_str
         for page in pagify(cogs, ["\n"], shorten_by=16):
             await ctx.send(box(page.lstrip(" "), lang="diff"))
 
