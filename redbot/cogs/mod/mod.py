@@ -1362,9 +1362,9 @@ class Mod:
         names = await self.settings.user(user).past_names()
         nicks = await self.settings.member(user).past_nicks()
         if names:
-            names = [escape(name, mass_mentions=True) for name in names]
+            names = [escape(name, mass_mentions=True) for name in names if name]
         if nicks:
-            nicks = [escape(nick, mass_mentions=True) for nick in nicks]
+            nicks = [escape(nick, mass_mentions=True) for nick in nicks if nick]
         return names, nicks
 
     async def check_tempban_expirations(self):
