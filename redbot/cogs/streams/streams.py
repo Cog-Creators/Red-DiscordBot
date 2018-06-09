@@ -130,18 +130,16 @@ class Streams:
         else:
             await ctx.send(embed=embed)
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @commands.guild_only()
     @checks.mod()
     async def streamalert(self, ctx: commands.Context):
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
-    @streamalert.group(name="twitch")
+    @streamalert.group(name="twitch", autohelp=True)
     async def _twitch(self, ctx: commands.Context):
         """Twitch stream alerts"""
-        if ctx.invoked_subcommand is None or ctx.invoked_subcommand == self._twitch:
-            await ctx.send_help()
+        pass
 
     @_twitch.command(name="channel")
     async def twitch_alert_channel(self, ctx: commands.Context, channel_name: str):
@@ -199,7 +197,7 @@ class Streams:
         self.streams = streams
         await self.save_streams()
 
-        msg = _("All {}'s stream alerts have been disabled." "").format(
+        msg = _("All {}'s stream alerts have been disabled.").format(
             "server" if _all else "channel"
         )
 
@@ -240,16 +238,16 @@ class Streams:
                 exists = await self.check_exists(stream)
             except InvalidTwitchCredentials:
                 await ctx.send(
-                    _("The twitch token is either invalid or has not been set. " "See {}.").format(
+                    _("The twitch token is either invalid or has not been set. See {}.").format(
                         "`{}streamset twitchtoken`".format(ctx.prefix)
                     )
                 )
                 return
             except InvalidYoutubeCredentials:
                 await ctx.send(
-                    _(
-                        "The Youtube API key is either invalid or has not been set. " "See {}."
-                    ).format("`{}streamset youtubekey`".format(ctx.prefix))
+                    _("The Youtube API key is either invalid or has not been set. See {}.").format(
+                        "`{}streamset youtubekey`".format(ctx.prefix)
+                    )
                 )
                 return
             except APIError:
@@ -291,11 +289,10 @@ class Streams:
 
         await self.add_or_remove_community(ctx, community)
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @checks.mod()
     async def streamset(self, ctx: commands.Context):
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @streamset.command()
     @checks.is_owner()
@@ -331,12 +328,11 @@ class Streams:
         await self.db.tokens.set_raw("YoutubeStream", value=key)
         await ctx.send(_("Youtube key set."))
 
-    @streamset.group()
+    @streamset.group(autohelp=True)
     @commands.guild_only()
     async def mention(self, ctx: commands.Context):
         """Sets mentions for stream alerts."""
-        if ctx.invoked_subcommand is None or ctx.invoked_subcommand == self.mention:
-            await ctx.send_help()
+        pass
 
     @mention.command(aliases=["everyone"])
     @commands.guild_only()

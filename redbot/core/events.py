@@ -18,6 +18,7 @@ from .data_manager import storage_type
 from .utils.chat_formatting import inline, bordered, pagify, box
 from .utils import fuzzy_command_search
 from colorama import Fore, Style, init
+from . import rpc
 
 log = logging.getLogger("red")
 sentry_log = logging.getLogger("red.sentry")
@@ -83,6 +84,9 @@ def init_events(bot, cli_flags):
                 packages.remove(package)
             if packages:
                 print("Loaded packages: " + ", ".join(packages))
+
+        if bot.rpc_enabled:
+            await bot.rpc.initialize()
 
         guilds = len(bot.guilds)
         users = len(set([m for m in bot.get_all_members()]))
@@ -172,8 +176,6 @@ def init_events(bot, cli_flags):
             print("\nInvite URL: {}\n".format(invite_url))
 
         bot.color = discord.Colour(await bot.db.color())
-        if bot.rpc_enabled:
-            await bot.rpc.initialize()
 
     @bot.event
     async def on_error(event_method, *args, **kwargs):

@@ -56,7 +56,7 @@ class Reports:
 
     @checks.admin_or_permissions(manage_guild=True)
     @commands.guild_only()
-    @commands.group(name="reportset")
+    @commands.group(name="reportset", autohelp=True)
     async def reportset(self, ctx: commands.Context):
         """
         settings for reports
@@ -237,7 +237,7 @@ class Reports:
 
         if author.id in self.user_cache:
             return await author.send(
-                _("Finish making your prior report " "before making an additional one")
+                _("Please finish making your prior report before making an additional one")
             )
 
         if ctx.guild:

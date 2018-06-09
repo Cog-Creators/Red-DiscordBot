@@ -26,14 +26,13 @@ class Image:
     def __unload(self):
         self.session.close()
 
-    @commands.group(name="imgur")
+    @commands.group(name="imgur", autohelp=True)
     async def _imgur(self, ctx):
         """Retrieves pictures from imgur
 
         Make sure to set the client ID using
         [p]imgurcreds"""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @_imgur.command(name="search")
     async def imgur_search(self, ctx, *, term: str):
@@ -145,7 +144,7 @@ class Image:
             await ctx.send_help()
             return
 
-        url = "http://api.giphy.com/v1/gifs/search?&api_key={}&q={}" "".format(
+        url = "http://api.giphy.com/v1/gifs/search?&api_key={}&q={}".format(
             GIPHY_API_KEY, keywords
         )
 
@@ -168,7 +167,7 @@ class Image:
             await ctx.send_help()
             return
 
-        url = "http://api.giphy.com/v1/gifs/random?&api_key={}&tag={}" "".format(
+        url = "http://api.giphy.com/v1/gifs/random?&api_key={}&tag={}".format(
             GIPHY_API_KEY, keywords
         )
 

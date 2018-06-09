@@ -61,6 +61,12 @@ class Help(formatter.HelpFormatter):
         return isinstance(ctx.channel, discord.DMChannel)
 
     @property
+    def clean_prefix(self):
+        maybe_member = self.context.guild.me if self.context.guild else self.context.bot.user
+        pretty = f"@{maybe_member.display_name}"
+        return self.context.prefix.replace(maybe_member.mention, pretty)
+
+    @property
     def me(self):
         return self.context.me
 

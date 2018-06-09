@@ -46,6 +46,13 @@ _ = i18n.Translator("Core", __file__)
 class CoreLogic:
     def __init__(self, bot: "Red"):
         self.bot = bot
+        self.bot.register_rpc_handler(self._load)
+        self.bot.register_rpc_handler(self._unload)
+        self.bot.register_rpc_handler(self._reload)
+        self.bot.register_rpc_handler(self._name)
+        self.bot.register_rpc_handler(self._prefixes)
+        self.bot.register_rpc_handler(self._version_info)
+        self.bot.register_rpc_handler(self._invite_url)
 
     async def _load(self, cog_names: list):
         """
@@ -280,7 +287,7 @@ class Core(CoreLogic):
         embed.add_field(name="About Red", value=about, inline=False)
 
         embed.set_footer(
-            text="Bringing joy since 02 Jan 2016 (over " "{} days ago!)".format(days_since)
+            text="Bringing joy since 02 Jan 2016 (over {} days ago!)".format(days_since)
         )
         try:
             await ctx.send(embed=embed)
@@ -314,7 +321,7 @@ class Core(CoreLogic):
 
         return fmt.format(d=days, h=hours, m=minutes, s=seconds)
 
-    @commands.group()
+    @commands.group(autohelp=True)
     async def embedset(self, ctx: commands.Context):
         """
         Commands for toggling embeds on or off.
@@ -334,7 +341,6 @@ class Core(CoreLogic):
             user_setting = await self.bot.db.user(ctx.author).embeds()
             text += "User setting: {}".format(user_setting)
             await ctx.send(box(text))
-            await ctx.send_help()
 
     @embedset.command(name="global")
     @checks.is_owner()
@@ -429,7 +435,7 @@ class Core(CoreLogic):
         author = ctx.author
         guild = ctx.guild
 
-        await ctx.send("Are you sure you want me to leave this server?" " Type yes to confirm.")
+        await ctx.send("Are you sure you want me to leave this server? Type yes to confirm.")
 
         def conf_check(m):
             return m.author == author
@@ -513,7 +519,7 @@ class Core(CoreLogic):
                 "Failed to load package{plural} {packs}. Check your console or "
                 "logs for details."
             )
-            formed = self.get_package_strings(failed, fmt)
+            formed = self._get_package_strings(failed, fmt)
             await ctx.send(formed)
 
         if not_found:
@@ -521,7 +527,7 @@ class Core(CoreLogic):
             formed = self._get_package_strings(not_found, fmt, ("was", "were"))
             await ctx.send(formed)
 
-    @commands.group()
+    @commands.command()
     @checks.is_owner()
     async def unload(self, ctx, *, cog_name: str):
         """Unloads packages"""
@@ -555,7 +561,7 @@ class Core(CoreLogic):
             await ctx.send(formed)
 
         if failed:
-            fmt = "Failed to reload package{plural} {packs}. Check your " "logs for details"
+            fmt = "Failed to reload package{plural} {packs}. Check your logs for details"
             formed = self._get_package_strings(failed, fmt)
             await ctx.send(formed)
 
@@ -592,7 +598,7 @@ class Core(CoreLogic):
             pass
         await ctx.bot.shutdown(restart=True)
 
-    @commands.group(name="set")
+    @commands.group(name="set", autohelp=True)
     async def _set(self, ctx):
         """Changes Red's settings"""
         if ctx.invoked_subcommand is None:
@@ -605,6 +611,7 @@ class Core(CoreLogic):
                 guild_settings = f"Admin role: {admin_role}\nMod role: {mod_role}\n"
             else:
                 guild_settings = ""
+                prefixes = None  # This is correct. The below can happen in a guild.
             if not prefixes:
                 prefixes = await ctx.bot.db.prefix()
             locale = await ctx.bot.db.locale()
@@ -617,7 +624,6 @@ class Core(CoreLogic):
                 f"Locale: {locale}"
             )
             await ctx.send(box(settings))
-            await ctx.send_help()
 
     @_set.command()
     @checks.guildowner()
@@ -846,7 +852,7 @@ class Core(CoreLogic):
         try:
             await ctx.guild.me.edit(nick=nickname)
         except discord.Forbidden:
-            await ctx.send(_("I lack the permissions to change my own " "nickname."))
+            await ctx.send(_("I lack the permissions to change my own nickname."))
         else:
             await ctx.send("Done.")
 
@@ -889,7 +895,7 @@ class Core(CoreLogic):
 
         for i in range(length):
             token += random.choice(chars)
-        log.info("{0} ({0.id}) requested to be set as owner." "".format(ctx.author))
+        log.info("{0} ({0.id}) requested to be set as owner.".format(ctx.author))
         print(_("\nVerification token:"))
         print(token)
 
@@ -975,12 +981,11 @@ class Core(CoreLogic):
             ctx.bot.disable_sentry()
             await ctx.send(_("Done. Sentry logging is now disabled."))
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @checks.is_owner()
     async def helpset(self, ctx: commands.Context):
         """Manage settings for the help command."""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @helpset.command(name="pagecharlimit")
     async def helpset_pagecharlimt(self, ctx: commands.Context, limit: int):
@@ -1168,7 +1173,7 @@ class Core(CoreLogic):
         prefixes = await ctx.bot.command_prefix(ctx.bot, fake_message(guild=None))
         prefix = prefixes[0]
 
-        content = _("Use `{}dm {} <text>` to reply to this user" "").format(prefix, author.id)
+        content = _("Use `{}dm {} <text>` to reply to this user").format(prefix, author.id)
 
         description = _("Sent by {} {}").format(author, source)
 
@@ -1189,7 +1194,7 @@ class Core(CoreLogic):
                 await owner.send(content, embed=e)
             except discord.InvalidArgument:
                 await ctx.send(
-                    _("I cannot send your message, I'm unable to find " "my owner... *sigh*")
+                    _("I cannot send your message, I'm unable to find my owner... *sigh*")
                 )
             except:
                 await ctx.send(_("I'm unable to deliver your message. Sorry."))
@@ -1201,7 +1206,7 @@ class Core(CoreLogic):
                 await owner.send("{}\n{}".format(content, box(msg_text)))
             except discord.InvalidArgument:
                 await ctx.send(
-                    _("I cannot send your message, I'm unable to find " "my owner... *sigh*")
+                    _("I cannot send your message, I'm unable to find my owner... *sigh*")
                 )
             except:
                 await ctx.send(_("I'm unable to deliver your message. Sorry."))
@@ -1246,7 +1251,7 @@ class Core(CoreLogic):
                 await destination.send(embed=e)
             except:
                 await ctx.send(
-                    _("Sorry, I couldn't deliver your message " "to {}").format(destination)
+                    _("Sorry, I couldn't deliver your message to {}").format(destination)
                 )
             else:
                 await ctx.send(_("Message delivered to {}").format(destination))
@@ -1256,19 +1261,18 @@ class Core(CoreLogic):
                 await destination.send("{}\n{}".format(box(response), content))
             except:
                 await ctx.send(
-                    _("Sorry, I couldn't deliver your message " "to {}").format(destination)
+                    _("Sorry, I couldn't deliver your message to {}").format(destination)
                 )
             else:
                 await ctx.send(_("Message delivered to {}").format(destination))
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @checks.is_owner()
     async def whitelist(self, ctx):
         """
         Whitelist management commands.
         """
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @whitelist.command(name="add")
     async def whitelist_add(self, ctx, user: discord.User):
@@ -1320,14 +1324,13 @@ class Core(CoreLogic):
         await ctx.bot.db.whitelist.set([])
         await ctx.send(_("Whitelist has been cleared."))
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @checks.is_owner()
     async def blacklist(self, ctx):
         """
         blacklist management commands.
         """
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @blacklist.command(name="add")
     async def blacklist_add(self, ctx, user: discord.User):

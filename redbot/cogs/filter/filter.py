@@ -39,7 +39,7 @@ class Filter:
         except RuntimeError:
             pass
 
-    @commands.group(name="filter")
+    @commands.group(name="filter", autohelp=True)
     @commands.guild_only()
     @checks.mod_or_permissions(manage_messages=True)
     async def _filter(self, ctx: commands.Context):
@@ -49,7 +49,6 @@ class Filter:
         Using this command with no subcommands will send
         the list of the server's filtered words."""
         if ctx.invoked_subcommand is None:
-            await ctx.send_help()
             server = ctx.guild
             author = ctx.author
             word_list = await self.settings.guild(server).filter()
@@ -132,9 +131,7 @@ class Filter:
         current_setting = await self.settings.guild(guild).filter_names()
         await self.settings.guild(guild).filter_names.set(not current_setting)
         if current_setting:
-            await ctx.send(
-                _("Names and nicknames will no longer be " "checked against the filter.")
-            )
+            await ctx.send(_("Names and nicknames will no longer be checked against the filter."))
         else:
             await ctx.send(_("Names and nicknames will now be checked against the filter."))
 
