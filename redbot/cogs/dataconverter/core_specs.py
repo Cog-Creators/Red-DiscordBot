@@ -120,11 +120,9 @@ class SpecResolver(object):
         flatscoped = self.apply_scope(Config.MEMBER, self.flatten_dict(data))
         ret = {}
         for config_identifiers, v2data in flatscoped.items():
-            config_top_identifiers = config_identifiers[:-1]
-            config_bottom_identifier = config_identifiers[-1]
-            if config_top_identifiers not in ret:
-                ret[config_top_identifiers] = {}
-            ret[config_top_identifiers].update({config_bottom_identifier: {"past_nicks": v2data}})
+            if config_identifiers not in ret:
+                ret[config_identifiers] = {}
+            ret[config_identifiers].update({("past_nicks",): v2data})
         return ret
 
     def customcom_conv_spec(self, data: dict):
