@@ -1,9 +1,8 @@
 from typing import Tuple
 
 import discord
-from discord.ext import commands
 
-from redbot.core import Config, checks
+from redbot.core import Config, checks, commands
 
 import logging
 
@@ -157,13 +156,12 @@ class Admin:
         else:
             await self.complain(ctx, USER_HIERARCHY_ISSUE)
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @commands.guild_only()
     @checks.admin_or_permissions(manage_roles=True)
     async def editrole(self, ctx: commands.Context):
         """Edits roles settings"""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @editrole.command(name="colour", aliases=["color"])
     async def editrole_colour(
