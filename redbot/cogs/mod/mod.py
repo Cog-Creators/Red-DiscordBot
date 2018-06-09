@@ -1440,7 +1440,13 @@ class Mod:
                     return True
         return False
 
-    async def on_command(self, ctx: commands.Context):
+    async def on_command_completion(self, ctx: commands.Context):
+        await self._delete_delay(ctx)
+
+    async def on_command_error(self, ctx: commands.Context, error):
+        await self._delete_delay(ctx)
+
+    async def _delete_delay(self, ctx: commands.Context):
         """Currently used for:
             * delete delay"""
         guild = ctx.guild

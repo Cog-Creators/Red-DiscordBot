@@ -212,11 +212,6 @@ class Reports:
             guild = await self.discover_guild(
                 author, prompt=_("Select a server to make a report in by number.")
             )
-        else:
-            try:
-                await ctx.message.delete()
-            except discord.Forbidden:
-                pass
         if guild is None:
             return
         g_active = await self.config.guild(guild).active()
@@ -234,17 +229,10 @@ class Reports:
                     "later."
                 )
             )
-
         if author.id in self.user_cache:
             return await author.send(
                 _("Please finish making your prior report before making an additional one")
             )
-
-        if ctx.guild:
-            try:
-                await ctx.message.delete()
-            except (discord.Forbidden, discord.HTTPException):
-                pass
         self.user_cache.append(author.id)
 
         if _report:
@@ -261,9 +249,7 @@ class Reports:
                     )
                 )
             except discord.Forbidden:
-                await ctx.send(_("This requires DMs enabled."))
-                self.user_cache.remove(author.id)
-                return
+                return await ctx.send(_("This requires DMs enabled."))
 
             def pred(m):
                 return m.author == author and m.channel == dm.channel
@@ -271,7 +257,7 @@ class Reports:
             try:
                 message = await self.bot.wait_for("message", check=pred, timeout=180)
             except asyncio.TimeoutError:
-                await author.send(_("You took too long. Try again later."))
+                return await author.send(_("You took too long. Try again later."))
             else:
                 val = await self.send_report(message, guild)
 
@@ -280,9 +266,21 @@ class Reports:
                 await author.send(_("There was an error sending your report."))
             else:
                 await author.send(_("Your report was submitted. (Ticket #{})").format(val))
-        self.antispam[guild.id][author.id].stamp()
+                self.antispam[guild.id][author.id].stamp()
 
-        self.user_cache.remove(author.id)
+    @report.after_invoke
+    async def report_cleanup(self, ctx: commands.Context):
+        """
+        The logic is cleaner this way
+        """
+        if ctx.author.id in self.user_cache:
+            self.user_cache.remove(ctx.author.id)
+        if ctx.guild and ctx.invoked_subcommand is None:
+            if ctx.channel.permissions_for(ctx.guild.me).manage_messages:
+                try:
+                    await ctx.message.delete()
+                except discord.NotFound:
+                    pass
 
     async def on_raw_reaction_add(self, payload):
         """
