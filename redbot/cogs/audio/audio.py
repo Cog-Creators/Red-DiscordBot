@@ -6,6 +6,7 @@ import heapq
 import lavalink
 import math
 import re
+import time
 import redbot.core
 from redbot.core import Config, commands, checks, bank
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS, prev_page, next_page, close_menu
@@ -14,7 +15,7 @@ from .manager import shutdown_lavalink_server
 
 _ = Translator("Audio", __file__)
 
-__version__ = "0.0.6a"
+__version__ = "0.0.6b"
 __author__ = ["aikaterna", "billy/bollo/ati"]
 
 
@@ -37,6 +38,8 @@ class Audio:
         default_guild = {
             "dj_enabled": False,
             "dj_role": None,
+            "emptydc_enabled": False,
+            "emptydc_timer": 0,
             "jukebox": False,
             "jukebox_price": 0,
             "playlists": {},
@@ -196,6 +199,26 @@ class Audio:
         await self._embed_msg(ctx, "DJ role enabled: {}.".format(not dj_enabled))
 
     @audioset.command()
+    @checks.mod_or_permissions(administrator=True)
+    async def emptydisconnect(self, ctx, seconds: int):
+        """Auto-disconnection after x seconds while stopped. 0 to disable."""
+        if seconds < 0:
+            return await self._embed_msg(ctx, "Can't be less than zero.")
+        if seconds < 10 and seconds > 0:
+            seconds = 10
+        if seconds == 0:
+            enabled = False
+            await self._embed_msg(ctx, "Empty disconnect disabled.")
+        else:
+            enabled = True
+            await self._embed_msg(
+                ctx, "Empty disconnect timer set to {}.".format(self._dynamic_time(seconds))
+            )
+
+        await self.config.guild(ctx.guild).emptydc_timer.set(seconds)
+        await self.config.guild(ctx.guild).emptydc_enabled.set(enabled)
+
+    @audioset.command()
     @checks.admin_or_permissions(manage_roles=True)
     async def role(self, ctx, role_name: discord.Role):
         """Sets the role to use for DJ mode."""
@@ -240,12 +263,16 @@ class Audio:
         global_data = await self.config.all()
         dj_role_obj = discord.utils.get(ctx.guild.roles, id=data["dj_role"])
         dj_enabled = data["dj_enabled"]
+        emptydc_enabled = data["emptydc_enabled"]
+        emptydc_timer = data["emptydc_timer"]
         jukebox = data["jukebox"]
         jukebox_price = data["jukebox_price"]
         jarbuild = redbot.core.__version__
 
         vote_percent = data["vote_percent"]
         msg = "```ini\n" "----Server Settings----\n"
+        if emptydc_enabled:
+            msg += "Disconnect timer: [{0}]\n".format(self._dynamic_time(emptydc_timer))
         if dj_enabled:
             msg += "DJ Role:          [{}]\n".format(dj_role_obj.name)
         if jukebox:
@@ -1712,6 +1739,35 @@ class Audio:
             player.shuffle = shuffle
         if player.volume != volume:
             await player.set_volume(volume)
+
+    async def disconnect_timer(self):
+        stop_times = {}
+        stopped_players = [p for p in lavalink.players if p.current is None]
+
+        while self == self.bot.get_cog("Audio"):
+            for p in lavalink.players:
+                server = p.channel.guild
+
+                if server.id not in stop_times:
+                    stop_times[server.id] = None
+
+                if p.current is None and [self.bot.user] == p.channel.members:
+                    if stop_times[server.id] is None:
+                        stop_times[server.id] = int(time.time())
+
+            for sid in stop_times:
+                server_obj = self.bot.get_guild(sid)
+                emptydc_enabled = await self.config.guild(server_obj).emptydc_enabled()
+                if emptydc_enabled:
+                    if stop_times[sid] is not None and [self.bot.user] == p.channel.members:
+                        emptydc_timer = await self.config.guild(server_obj).emptydc_timer()
+                        if stop_times[sid] and (
+                            int(time.time()) - stop_times[sid] > emptydc_timer
+                        ):
+                            stop_times[sid] = None
+                            await lavalink.get_player(sid).disconnect()
+
+            await asyncio.sleep(5)
 
     @staticmethod
     async def _draw_time(ctx):
