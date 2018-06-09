@@ -4,6 +4,7 @@ from redbot.core.utils.chat_formatting import pagify
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from .streamtypes import (
+    Stream,
     TwitchStream,
     HitboxStream,
     MixerStream,
@@ -25,6 +26,7 @@ from . import streamtypes as StreamClasses
 from collections import defaultdict
 import asyncio
 import re
+from typing import Optional, List
 
 CHECK_DELAY = 60
 
@@ -50,9 +52,11 @@ class Streams:
 
         self.db.register_role(**self.role_defaults)
 
-        self.bot = bot
+        self.bot: Red = bot
 
-        self.bot.loop.create_task(self._initialize_lists())
+        self.streams: List[Stream] = []
+        self.communities: List[TwitchCommunity] = []
+        self.task: Optional[asyncio.Task] = None
 
         self.yt_cid_pattern = re.compile("^UC[-_A-Za-z0-9]{21}[AQgw]$")
 
@@ -62,7 +66,8 @@ class Streams:
             return True
         return False
 
-    async def _initialize_lists(self):
+    async def initialize(self) -> None:
+        """Should be called straight after cog instantiation."""
         self.streams = await self.load_streams()
         self.communities = await self.load_communities()
 
@@ -662,4 +667,5 @@ class Streams:
         await self.db.communities.set(raw_communities)
 
     def __unload(self):
-        self.task.cancel()
+        if self.task:
+            self.task.cancel()
