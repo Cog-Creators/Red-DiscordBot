@@ -120,7 +120,7 @@ class SpecResolver(object):
         flatscoped = self.apply_scope(Config.MEMBER, self.flatten_dict(data))
         ret = {}
         for k, v in flatscoped.items():
-            outerkey, innerkey = (*k[:-1],), (k[-1],)
+            outerkey, innerkey = (*k,), ("past_nicks",)
             if outerkey not in ret:
                 ret[outerkey] = {}
             ret[outerkey].update({innerkey: v})
