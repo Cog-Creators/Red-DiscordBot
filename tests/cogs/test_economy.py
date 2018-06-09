@@ -2,15 +2,15 @@ import pytest
 
 
 @pytest.fixture()
-def bank(config):
+def bank(config, monkeypatch):
     from redbot.core import Config
 
-    Config.get_conf = lambda *args, **kwargs: config
+    with monkeypatch.context() as m:
+        m.setattr(Config, "get_conf", lambda *args, **kwargs: config)
+        from redbot.core import bank
 
-    from redbot.core import bank
-
-    bank._register_defaults()
-    return bank
+        bank._register_defaults()
+        return bank
 
 
 @pytest.mark.asyncio
