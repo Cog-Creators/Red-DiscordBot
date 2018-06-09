@@ -1,5 +1,5 @@
 import discord
-from discord.ext import commands
+from redbot.core import commands
 
 
 async def check_overrides(ctx, *, level):

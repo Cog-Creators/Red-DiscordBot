@@ -46,6 +46,13 @@ _ = i18n.Translator("Core", __file__)
 class CoreLogic:
     def __init__(self, bot: "Red"):
         self.bot = bot
+        self.bot.register_rpc_handler(self._load)
+        self.bot.register_rpc_handler(self._unload)
+        self.bot.register_rpc_handler(self._reload)
+        self.bot.register_rpc_handler(self._name)
+        self.bot.register_rpc_handler(self._prefixes)
+        self.bot.register_rpc_handler(self._version_info)
+        self.bot.register_rpc_handler(self._invite_url)
 
     async def _load(self, cog_names: list):
         """
@@ -314,7 +321,7 @@ class Core(CoreLogic):
 
         return fmt.format(d=days, h=hours, m=minutes, s=seconds)
 
-    @commands.group()
+    @commands.group(autohelp=True)
     async def embedset(self, ctx: commands.Context):
         """
         Commands for toggling embeds on or off.
@@ -334,7 +341,6 @@ class Core(CoreLogic):
             user_setting = await self.bot.db.user(ctx.author).embeds()
             text += "User setting: {}".format(user_setting)
             await ctx.send(box(text))
-            await ctx.send_help()
 
     @embedset.command(name="global")
     @checks.is_owner()
@@ -513,7 +519,7 @@ class Core(CoreLogic):
                 "Failed to load package{plural} {packs}. Check your console or "
                 "logs for details."
             )
-            formed = self.get_package_strings(failed, fmt)
+            formed = self._get_package_strings(failed, fmt)
             await ctx.send(formed)
 
         if not_found:
@@ -521,7 +527,7 @@ class Core(CoreLogic):
             formed = self._get_package_strings(not_found, fmt, ("was", "were"))
             await ctx.send(formed)
 
-    @commands.group()
+    @commands.command()
     @checks.is_owner()
     async def unload(self, ctx, *, cog_name: str):
         """Unloads packages"""
@@ -592,7 +598,7 @@ class Core(CoreLogic):
             pass
         await ctx.bot.shutdown(restart=True)
 
-    @commands.group(name="set")
+    @commands.group(name="set", autohelp=True)
     async def _set(self, ctx):
         """Changes Red's settings"""
         if ctx.invoked_subcommand is None:
@@ -618,7 +624,6 @@ class Core(CoreLogic):
                 f"Locale: {locale}"
             )
             await ctx.send(box(settings))
-            await ctx.send_help()
 
     @_set.command()
     @checks.guildowner()
@@ -976,12 +981,11 @@ class Core(CoreLogic):
             ctx.bot.disable_sentry()
             await ctx.send(_("Done. Sentry logging is now disabled."))
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @checks.is_owner()
     async def helpset(self, ctx: commands.Context):
         """Manage settings for the help command."""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @helpset.command(name="pagecharlimit")
     async def helpset_pagecharlimt(self, ctx: commands.Context, limit: int):
@@ -1109,10 +1113,8 @@ class Core(CoreLogic):
             if downloader_cog and hasattr(downloader_cog, "_repo_manager"):
                 repo_output = []
                 repo_mgr = downloader_cog._repo_manager
-                for n, repo in repo_mgr._repos:
-                    repo_output.append(
-                        {{"url": repo.url, "name": repo.name, "branch": repo.branch}}
-                    )
+                for repo in repo_mgr._repos.values():
+                    repo_output.append({"url": repo.url, "name": repo.name, "branch": repo.branch})
                 repo_filename = data_dir / "cogs" / "RepoManager" / "repos.json"
                 with open(str(repo_filename), "w") as f:
                     f.write(json.dumps(repo_output, indent=4))
@@ -1262,14 +1264,13 @@ class Core(CoreLogic):
             else:
                 await ctx.send(_("Message delivered to {}").format(destination))
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @checks.is_owner()
     async def whitelist(self, ctx):
         """
         Whitelist management commands.
         """
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @whitelist.command(name="add")
     async def whitelist_add(self, ctx, user: discord.User):
@@ -1321,14 +1322,13 @@ class Core(CoreLogic):
         await ctx.bot.db.whitelist.set([])
         await ctx.send(_("Whitelist has been cleared."))
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @checks.is_owner()
     async def blacklist(self, ctx):
         """
         blacklist management commands.
         """
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @blacklist.command(name="add")
     async def blacklist_add(self, ctx, user: discord.User):

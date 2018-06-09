@@ -1,6 +1,5 @@
 import discord
-from discord.ext import commands
-from .repo_manager import RepoManager
+from redbot.core import commands
 from .installable import Installable
 
 

@@ -1,9 +1,8 @@
 from distutils.core import setup
 from distutils import ccompiler
-from distutils.errors import CCompilerError
+from distutils.errors import CCompilerError, DistutilsPlatformError
 from pathlib import Path
 import re
-import importlib
 import tempfile
 
 import os
@@ -34,7 +33,7 @@ def check_compiler_available():
             tfile.seek(0)
             try:
                 m.compile([tfile.name])
-            except CCompilerError:
+            except (CCompilerError, DistutilsPlatformError):
                 return False
     return True
 
