@@ -18,12 +18,13 @@ from discord.voice_client import VoiceClient
 VoiceClient.warn_nacl = False
 
 from .cog_manager import CogManager
-from . import Config, i18n, commands, rpc
+from . import Config, i18n, commands
+from .rpc import RPCMixin
 from .help_formatter import Help, help as help_
 from .sentry import SentryManager
 
 
-class RedBase(BotBase):
+class RedBase(BotBase, RPCMixin):
     """Mixin for the main bot class.
 
     This exists because `Red` inherits from `discord.AutoShardedClient`, which
@@ -33,7 +34,7 @@ class RedBase(BotBase):
     Selfbots should inherit from this mixin along with `discord.Client`.
     """
 
-    def __init__(self, cli_flags, bot_dir: Path = Path.cwd(), **kwargs):
+    def __init__(self, *args, cli_flags=None, bot_dir: Path = Path.cwd(), **kwargs):
         self._shutdown_mode = ExitCodes.CRITICAL
         self.db = Config.get_core_conf(force_registration=True)
         self._co_owners = cli_flags.co_owner
@@ -50,6 +51,7 @@ class RedBase(BotBase):
             locale="en",
             embeds=True,
             color=15158332,
+            fuzzy=False,
             help__page_char_limit=1000,
             help__max_pages_in_guild=2,
             help__tagline="",
@@ -63,6 +65,7 @@ class RedBase(BotBase):
             mod_role=None,
             embeds=None,
             use_bot_color=False,
+            fuzzy=False,
         )
 
         self.db.register_user(embeds=None)
@@ -105,10 +108,7 @@ class RedBase(BotBase):
 
         self.cog_mgr = CogManager(paths=(str(self.main_dir / "cogs"),))
 
-        super().__init__(formatter=Help(), **kwargs)
-
-        if self.rpc_enabled:
-            self.rpc = rpc.RPC(self)
+        super().__init__(*args, formatter=Help(), **kwargs)
 
         self.remove_command("help")
 
@@ -233,11 +233,23 @@ class RedBase(BotBase):
         lib_name = lib.__name__  # Thank you
 
         # find all references to the module
+        cog_names = []
 
         # remove the cogs registered from the module
         for cogname, cog in self.cogs.copy().items():
             if cog.__module__.startswith(lib_name):
                 self.remove_cog(cogname)
+
+                cog_names.append(cogname)
+
+        # remove all rpc handlers
+        for cogname in cog_names:
+            if cogname.upper() in self.rpc_handlers:
+                methods = self.rpc_handlers[cogname]
+                for meth in methods:
+                    self.unregister_rpc_handler(meth)
+
+                del self.rpc_handlers[cogname]
 
         # first remove all the commands from the module
         for cmd in self.all_commands.copy().values():

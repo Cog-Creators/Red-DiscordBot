@@ -3,7 +3,7 @@ aiohttp>=2.0.0,<2.3.0
 appdirs==1.4.3
 raven==6.5.0
 colorama==0.3.9
-jsonrpcserver
+aiohttp-json-rpc==0.8.7
 pyyaml==3.12
 fuzzywuzzy[speedup]<=0.16.0
 Red-Trivia>=1.1.1

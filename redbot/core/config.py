@@ -1,14 +1,12 @@
 import logging
 import collections
 from copy import deepcopy
-from typing import Union, Tuple
+from typing import Union, Tuple, TYPE_CHECKING
 
 import discord
 
 from .data_manager import cog_data_path, core_data_path
 from .drivers import get_driver
-
-from .utils import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .drivers.red_base import BaseDriver
@@ -225,7 +223,7 @@ class Group(Value):
                 identifiers=new_identifiers, default_value=self._defaults[item], driver=self.driver
             )
         elif self.force_registration:
-            raise AttributeError("'{}' is not a valid registered Group " "or value.".format(item))
+            raise AttributeError("'{}' is not a valid registered Group or value.".format(item))
         else:
             return Value(identifiers=new_identifiers, default_value=None, driver=self.driver)
 
@@ -625,9 +623,7 @@ class Config:
                 existing_is_dict = isinstance(_partial[k], dict)
                 if val_is_dict != existing_is_dict:
                     # != is XOR
-                    raise KeyError(
-                        "You cannot register a Group and a Value under" " the same name."
-                    )
+                    raise KeyError("You cannot register a Group and a Value under the same name.")
                 if val_is_dict:
                     Config._update_defaults(v, _partial=_partial[k])
                 else:

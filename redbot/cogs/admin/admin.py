@@ -1,9 +1,8 @@
 from typing import Tuple
 
 import discord
-from discord.ext import commands
 
-from redbot.core import Config, checks
+from redbot.core import Config, checks, commands
 
 import logging
 
@@ -157,13 +156,12 @@ class Admin:
         else:
             await self.complain(ctx, USER_HIERARCHY_ISSUE)
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @commands.guild_only()
     @checks.admin_or_permissions(manage_roles=True)
     async def editrole(self, ctx: commands.Context):
         """Edits roles settings"""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @editrole.command(name="colour", aliases=["color"])
     async def editrole_colour(
@@ -264,20 +262,16 @@ class Admin:
     @announce.command(name="ignore")
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
-    async def announce_ignore(self, ctx, *, guild: discord.Guild = None):
+    async def announce_ignore(self, ctx):
         """
-        Toggles whether the announcements will ignore the given server.
-            Defaults to the current server if none is provided.
+        Toggles whether the announcements will ignore the current server.
         """
-        if guild is None:
-            guild = ctx.guild
-
-        ignored = await self.conf.guild(guild).announce_ignore()
-        await self.conf.guild(guild).announce_ignore.set(not ignored)
+        ignored = await self.conf.guild(ctx.guild).announce_ignore()
+        await self.conf.guild(ctx.guild).announce_ignore.set(not ignored)
 
         verb = "will" if ignored else "will not"
 
-        await ctx.send("The server {} {} receive announcements.".format(guild.name, verb))
+        await ctx.send(f"The server {ctx.guild.name} {verb} receive announcements.")
 
     async def _valid_selfroles(self, guild: discord.Guild) -> Tuple[discord.Role]:
         """
