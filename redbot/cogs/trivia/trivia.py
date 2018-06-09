@@ -2,7 +2,7 @@
 from collections import Counter
 import yaml
 import discord
-from discord.ext import commands
+from redbot.core import commands
 from redbot.ext import trivia as ext_trivia
 from redbot.core import Config, checks
 from redbot.core.data_manager import cog_data_path

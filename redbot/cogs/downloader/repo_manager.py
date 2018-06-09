@@ -2,17 +2,13 @@ import asyncio
 import functools
 import os
 import pkgutil
-import shutil
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from subprocess import run as sp_run, PIPE
 from sys import executable
 from typing import Tuple, MutableMapping, Union
 
-from discord.ext import commands
-
-from redbot.core import Config
-from redbot.core import data_manager
+from redbot.core import data_manager, commands
 from redbot.core.utils import safe_delete
 from .errors import *
 from .installable import Installable, InstallableType
@@ -232,7 +228,7 @@ class Repo(RepoJSONMixin):
         ----------
         branch : `str`, optional
             Override for repo's branch attribute.
-            
+
         Returns
         -------
         str
@@ -381,7 +377,7 @@ class Repo(RepoJSONMixin):
             Directory to install shared libraries to.
         libraries : `tuple` of `Installable`
             A subset of available libraries.
- 
+
         Returns
         -------
         bool
@@ -403,7 +399,7 @@ class Repo(RepoJSONMixin):
 
     async def install_requirements(self, cog: Installable, target_dir: Path) -> bool:
         """Install a cog's requirements.
-        
+
         Requirements will be installed via pip directly into
         :code:`target_dir`.
 
@@ -465,7 +461,7 @@ class Repo(RepoJSONMixin):
     @property
     def available_cogs(self) -> Tuple[Installable]:
         """`tuple` of `installable` : All available cogs in this Repo.
-        
+
         This excludes hidden or shared packages.
         """
         # noinspection PyTypeChecker
