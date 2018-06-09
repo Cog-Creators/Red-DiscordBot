@@ -1113,10 +1113,8 @@ class Core(CoreLogic):
             if downloader_cog and hasattr(downloader_cog, "_repo_manager"):
                 repo_output = []
                 repo_mgr = downloader_cog._repo_manager
-                for n, repo in repo_mgr._repos:
-                    repo_output.append(
-                        {{"url": repo.url, "name": repo.name, "branch": repo.branch}}
-                    )
+                for repo in repo_mgr._repos.values():
+                    repo_output.append({"url": repo.url, "name": repo.name, "branch": repo.branch})
                 repo_filename = data_dir / "cogs" / "RepoManager" / "repos.json"
                 with open(str(repo_filename), "w") as f:
                     f.write(json.dumps(repo_output, indent=4))
