@@ -161,14 +161,12 @@ class Mod:
         except RuntimeError:
             pass
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     async def modset(self, ctx: commands.Context):
         """Manages server administration settings."""
         if ctx.invoked_subcommand is None:
-            guild = ctx.guild
-            await ctx.send_help()
 
             # Display current settings
             delete_repeats = await self.settings.guild(guild).delete_repeats()
@@ -834,13 +832,12 @@ class Mod:
                 _("I cannot do that, I lack the '{}' permission.").format("Manage Nicknames")
             )
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @commands.guild_only()
     @checks.mod_or_permissions(manage_channel=True)
     async def mute(self, ctx: commands.Context):
         """Mutes user in the channel/server"""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @mute.command(name="voice")
     @commands.guild_only()
@@ -1001,15 +998,14 @@ class Mod:
             await self.settings.member(user).perms_cache.set(perms_cache)
             return True, None
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @commands.guild_only()
     @checks.mod_or_permissions(manage_channel=True)
     async def unmute(self, ctx: commands.Context):
         """Unmutes user in the channel/server
 
         Defaults to channel"""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @unmute.command(name="voice")
     @commands.guild_only()
@@ -1168,7 +1164,7 @@ class Mod:
                 await self.settings.member(user).perms_cache.set(perms_cache)
             return True, None
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @commands.guild_only()
     @checks.admin_or_permissions(manage_channels=True)
     async def ignore(self, ctx: commands.Context):
@@ -1201,13 +1197,12 @@ class Mod:
         else:
             await ctx.send(_("This server is already being ignored."))
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @commands.guild_only()
     @checks.admin_or_permissions(manage_channels=True)
     async def unignore(self, ctx: commands.Context):
         """Removes servers/channels from ignorelist"""
         if ctx.invoked_subcommand is None:
-            await ctx.send_help()
             await ctx.send(await self.count_ignored())
 
     @unignore.command(name="channel")

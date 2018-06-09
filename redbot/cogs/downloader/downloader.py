@@ -204,14 +204,13 @@ class Downloader:
                 )
             )
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @checks.is_owner()
     async def repo(self, ctx):
         """
         Command group for managing Downloader repos.
         """
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @repo.command(name="add")
     async def _repo_add(self, ctx, name: str, repo_url: str, branch: str = None):
@@ -273,14 +272,13 @@ class Downloader:
         msg = _("Information on {}:\n{}").format(repo_name.name, repo_name.description or "")
         await ctx.send(box(msg))
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @checks.is_owner()
     async def cog(self, ctx):
         """
         Command group for managing installable Cogs.
         """
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @cog.command(name="install")
     async def _cog_install(self, ctx, repo_name: Repo, cog_name: str):

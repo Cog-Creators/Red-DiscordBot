@@ -137,11 +137,10 @@ class Economy:
         self.config.register_role(**self.default_role_settings)
         self.slot_register = defaultdict(dict)
 
-    @commands.group(name="bank")
+    @commands.group(name="bank", autohelp=True)
     async def _bank(self, ctx: commands.Context):
         """Bank operations"""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @_bank.command()
     async def balance(self, ctx: commands.Context, user: discord.Member = None):
@@ -439,14 +438,13 @@ class Economy:
                 )
             )
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @guild_only_check()
     @check_global_setting_admin()
     async def economyset(self, ctx: commands.Context):
         """Changes economy module settings"""
         guild = ctx.guild
         if ctx.invoked_subcommand is None:
-            await ctx.send_help()
             if await bank.is_global():
                 slot_min = await self.config.SLOT_MIN()
                 slot_max = await self.config.SLOT_MAX()
