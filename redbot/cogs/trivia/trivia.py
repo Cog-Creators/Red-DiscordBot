@@ -2,7 +2,7 @@
 from collections import Counter
 import yaml
 import discord
-from discord.ext import commands
+from redbot.core import commands
 from redbot.ext import trivia as ext_trivia
 from redbot.core import Config, checks
 from redbot.core.data_manager import cog_data_path
@@ -41,13 +41,12 @@ class Trivia:
 
         self.conf.register_member(wins=0, games=0, total_score=0)
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @commands.guild_only()
     @checks.mod_or_permissions(administrator=True)
     async def triviaset(self, ctx: commands.Context):
         """Manage trivia settings."""
         if ctx.invoked_subcommand is None:
-            await ctx.send_help()
             settings = self.conf.guild(ctx.guild)
             settings_dict = await settings.all()
             msg = box(
@@ -82,7 +81,7 @@ class Trivia:
             return
         settings = self.conf.guild(ctx.guild)
         await settings.delay.set(seconds)
-        await ctx.send("Done. Maximum seconds to answer set to {}." "".format(seconds))
+        await ctx.send("Done. Maximum seconds to answer set to {}.".format(seconds))
 
     @triviaset.command(name="stopafter")
     async def triviaset_stopafter(self, ctx: commands.Context, seconds: float):
@@ -246,13 +245,13 @@ class Trivia:
         """List available trivia categories."""
         lists = set(p.stem for p in self._all_lists())
 
-        msg = box("**Available trivia lists**\n\n{}" "".format(", ".join(sorted(lists))))
+        msg = box("**Available trivia lists**\n\n{}".format(", ".join(sorted(lists))))
         if len(msg) > 1000:
             await ctx.author.send(msg)
             return
         await ctx.send(msg)
 
-    @trivia.group(name="leaderboard", aliases=["lboard"])
+    @trivia.group(name="leaderboard", aliases=["lboard"], autohelp=False)
     async def trivia_leaderboard(self, ctx: commands.Context):
         """Leaderboard for trivia.
 

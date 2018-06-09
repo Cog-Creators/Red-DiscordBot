@@ -141,14 +141,13 @@ class CustomCommands:
         self.config.register_guild(commands={})
         self.commandobj = CommandObj(config=self.config, bot=self.bot)
 
-    @commands.group(aliases=["cc"], no_pm=True)
+    @commands.group(aliases=["cc"], autohelp=True)
     @commands.guild_only()
     async def customcom(self, ctx: commands.Context):
         """Custom commands management"""
-        if not ctx.invoked_subcommand:
-            await ctx.send_help()
+        pass
 
-    @customcom.group(name="add")
+    @customcom.group(name="add", autohelp=True)
     @checks.mod_or_permissions(administrator=True)
     async def cc_add(self, ctx: commands.Context):
         """
@@ -166,8 +165,7 @@ class CustomCommands:
 
         {server}    message.guild
         """
-        if not ctx.invoked_subcommand or isinstance(ctx.invoked_subcommand, commands.Group):
-            await ctx.send_help()
+        pass
 
     @cc_add.command(name="random")
     @checks.mod_or_permissions(administrator=True)
@@ -211,7 +209,7 @@ class CustomCommands:
             await ctx.send(_("Custom command successfully added."))
         except AlreadyExists:
             await ctx.send(
-                _("This command already exists. Use " "`{}` to edit it.").format(
+                _("This command already exists. Use `{}` to edit it.").format(
                     "{}customcom edit".format(ctx.prefix)
                 )
             )
@@ -232,7 +230,7 @@ class CustomCommands:
             await ctx.send(_("Custom command successfully edited."))
         except NotFound:
             await ctx.send(
-                _("That command doesn't exist. Use " "`{}` to add it.").format(
+                _("That command doesn't exist. Use `{}` to add it.").format(
                     "{}customcom add".format(ctx.prefix)
                 )
             )

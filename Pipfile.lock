@@ -32,6 +32,13 @@
             ],
             "version": "==2.2.5"
         },
+        "aiohttp-json-rpc": {
+            "hashes": [
+                "sha256:9ec69ea70ce49c4af445f0ac56ac728708ccfad8b214272d2cc7e75bc0b31327",
+                "sha256:e2b8b49779d5d9b811f3a94e98092b1fa14af6d9adbf71c3afa6b20c641fa5d5"
+            ],
+            "version": "==0.8.7"
+        },
         "appdirs": {
             "hashes": [
                 "sha256:9e5896d1372858f8dd3344faf4e5014d21849c756c8d5701f78f8a103b372d92",
@@ -76,13 +83,6 @@
             "editable": true,
             "path": "."
         },
-        "funcsigs": {
-            "hashes": [
-                "sha256:330cc27ccbf7f1e992e69fef78261dc7c6569012cf397db8d3de0234e6c937ca",
-                "sha256:a7bb0f2cf3a3fd1ab2732cb49eba4252c2af4240442415b4abce3b87022a8f50"
-            ],
-            "version": "==1.0.2"
-        },
         "fuzzywuzzy": {
             "hashes": [
                 "sha256:d40c22d2744dff84885b30bbfc07fab7875f641d070374331777a4d1808b8d4e",
@@ -96,19 +96,6 @@
                 "sha256:8c7309c718f94b3a625cb648ace320157ad16ff131ae0af362c9f21b80ef6ec4"
             ],
             "version": "==2.6"
-        },
-        "jsonrpcserver": {
-            "hashes": [
-                "sha256:ab8013cdee3f65d59c5d3f84c75be76a3492caa0b33ecaa3f0f69906cf3d9e92"
-            ],
-            "version": "==3.5.4"
-        },
-        "jsonschema": {
-            "hashes": [
-                "sha256:000e68abd33c972a5248544925a0cae7d1125f9bf6c58280d37546b946769a08",
-                "sha256:6ff5f3180870836cae40f06fa10419f557208175f13ad7bc26caa77beb1f6e02"
-            ],
-            "version": "==2.6.0"
         },
         "multidict": {
             "hashes": [
@@ -165,13 +152,6 @@
                 "sha256:39413b9fb3f9b9362d6de1dcf69a4bf635b0f3518243f7178299b96d26cbb6a7"
             ],
             "version": "==1.1.1"
-        },
-        "six": {
-            "hashes": [
-                "sha256:70e8a77beed4562e7f14fe23a786b54f6296e34344c23bc42f07b15018ff98e9",
-                "sha256:832dc0e10feb1aa2c68dcc57dbb658f1c7e65b9b61af69048abc87a2db00a0eb"
-            ],
-            "version": "==1.11.0"
         },
         "websockets": {
             "hashes": [

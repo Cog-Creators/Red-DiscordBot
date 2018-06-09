@@ -170,20 +170,18 @@ class Alias:
         new_message.content = "{}{} {}".format(prefix, alias.command, args)
         await self.bot.process_commands(new_message)
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @commands.guild_only()
     async def alias(self, ctx: commands.Context):
         """Manage per-server aliases for commands"""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
-    @alias.group(name="global")
+    @alias.group(name="global", autohelp=True)
     async def global_(self, ctx: commands.Context):
         """
         Manage global aliases.
         """
-        if ctx.invoked_subcommand is None or isinstance(ctx.invoked_subcommand, commands.Group):
-            await ctx.send_help()
+        pass
 
     @checks.mod_or_permissions(manage_guild=True)
     @alias.command(name="add")
@@ -233,9 +231,7 @@ class Alias:
 
         await self.add_alias(ctx, alias_name, command)
 
-        await ctx.send(
-            _("A new alias with the trigger `{}`" " has been created.").format(alias_name)
-        )
+        await ctx.send(_("A new alias with the trigger `{}` has been created.").format(alias_name))
 
     @checks.is_owner()
     @global_.command(name="add")
@@ -282,14 +278,14 @@ class Alias:
         await self.add_alias(ctx, alias_name, command, global_=True)
 
         await ctx.send(
-            _("A new global alias with the trigger `{}`" " has been created.").format(alias_name)
+            _("A new global alias with the trigger `{}` has been created.").format(alias_name)
         )
 
     @alias.command(name="help")
     @commands.guild_only()
     async def _help_alias(self, ctx: commands.Context, alias_name: str):
         """Tries to execute help for the base command of the alias"""
-        is_alias, alias = self.is_alias(ctx.guild, alias_name=alias_name)
+        is_alias, alias = await self.is_alias(ctx.guild, alias_name=alias_name)
         if is_alias:
             base_cmd = alias.command[0]
 
@@ -307,9 +303,7 @@ class Alias:
 
         if is_alias:
             await ctx.send(
-                _("The `{}` alias will execute the" " command `{}`").format(
-                    alias_name, alias.command
-                )
+                _("The `{}` alias will execute the command `{}`").format(alias_name, alias.command)
             )
         else:
             await ctx.send(_("There is no alias with the name `{}`").format(alias_name))
@@ -330,7 +324,7 @@ class Alias:
 
         if await self.delete_alias(ctx, alias_name):
             await ctx.send(
-                _("Alias with the name `{}` was successfully" " deleted.").format(alias_name)
+                _("Alias with the name `{}` was successfully deleted.").format(alias_name)
             )
         else:
             await ctx.send(_("Alias with name `{}` was not found.").format(alias_name))
@@ -350,7 +344,7 @@ class Alias:
 
         if await self.delete_alias(ctx, alias_name, global_=True):
             await ctx.send(
-                _("Alias with the name `{}` was successfully" " deleted.").format(alias_name)
+                _("Alias with the name `{}` was successfully deleted.").format(alias_name)
             )
         else:
             await ctx.send(_("Alias with name `{}` was not found.").format(alias_name))
