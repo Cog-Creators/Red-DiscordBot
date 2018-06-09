@@ -1303,12 +1303,13 @@ class Mod:
         if roles:
             roles = ", ".join([x.name for x in roles])
         else:
-            roles = _("None")
+            roles = None
 
         data = discord.Embed(description=activity, colour=user.colour)
         data.add_field(name=_("Joined Discord on"), value=created_on)
         data.add_field(name=_("Joined this server on"), value=joined_on)
-        data.add_field(name=_("Roles"), value=roles, inline=False)
+        if roles is not None:
+            data.add_field(name=_("Roles"), value=roles, inline=False)
         if names:
             data.add_field(name=_("Previous Names"), value=", ".join(names), inline=False)
         if nicks:
