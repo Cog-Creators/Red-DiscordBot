@@ -316,6 +316,9 @@ class Mod:
                 )
             )
             return
+        elif ctx.guild.me.top_role <= user.top_role or user == ctx.guild.owner:
+            await ctx.send(_("I cannot do that due to discord hierarchy rules"))
+            return
         audit_reason = get_audit_reason(author, reason)
         try:
             await guild.kick(user, reason=audit_reason)
@@ -368,6 +371,9 @@ class Mod:
                     "hierarchy."
                 )
             )
+            return
+        elif ctx.guild.me.top_role <= user.top_role or user == ctx.guild.owner:
+            await ctx.send(_("I cannot do that due to discord hierarchy rules"))
             return
 
         if days:

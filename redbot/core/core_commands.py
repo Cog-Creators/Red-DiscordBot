@@ -46,6 +46,13 @@ _ = i18n.Translator("Core", __file__)
 class CoreLogic:
     def __init__(self, bot: "Red"):
         self.bot = bot
+        self.bot.register_rpc_handler(self._load)
+        self.bot.register_rpc_handler(self._unload)
+        self.bot.register_rpc_handler(self._reload)
+        self.bot.register_rpc_handler(self._name)
+        self.bot.register_rpc_handler(self._prefixes)
+        self.bot.register_rpc_handler(self._version_info)
+        self.bot.register_rpc_handler(self._invite_url)
 
     async def _load(self, cog_names: list):
         """
@@ -513,7 +520,7 @@ class Core(CoreLogic):
                 "Failed to load package{plural} {packs}. Check your console or "
                 "logs for details."
             )
-            formed = self.get_package_strings(failed, fmt)
+            formed = self._get_package_strings(failed, fmt)
             await ctx.send(formed)
 
         if not_found:
