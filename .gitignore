@@ -132,7 +132,3 @@ ENV/
 
 # pytest
 .pytest_cache/
-
-# docs build
-.build
-_build
