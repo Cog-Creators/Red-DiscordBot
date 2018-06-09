@@ -461,6 +461,9 @@ async def create_case(
     if not await case_type.is_enabled():
         return None
 
+    if user == bot.user:
+        return None
+
     next_case_number = int(await get_next_case_number(guild))
 
     case = Case(
