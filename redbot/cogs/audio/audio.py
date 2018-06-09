@@ -1742,7 +1742,6 @@ class Audio:
 
     async def disconnect_timer(self):
         stop_times = {}
-        stopped_players = [p for p in lavalink.players if p.current is None]
 
         while self == self.bot.get_cog("Audio"):
             for p in lavalink.players:
