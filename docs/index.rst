@@ -8,6 +8,22 @@
 Welcome to Red - Discord Bot's documentation!
 =============================================
 
+.. image:: https://readthedocs.org/projects/red-discordbot/badge/?version=v3-develop
+  :target: http://red-discordbot.readthedocs.io/en/v3-develop/?badge=v3-develop
+  :alt: Documentation Status
+
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
+  :target: https://github.com/ambv/black
+  :alt: Code style: black
+
+.. image:: https://d322cqt584bo4o.cloudfront.net/red-discordbot/localized.svg
+  :target: https://crowdin.com/project/red-discordbot
+  :alt: Crowdin
+
+.. image:: https://img.shields.io/badge/Support-Red!-orange.svg
+  :target: https://www.patreon.com/Red_Devs
+  :alt: Patreon
+
 .. toctree::
     :maxdepth: 1
     :caption: Installation Guides:
@@ -33,6 +49,7 @@ Welcome to Red - Discord Bot's documentation!
     alias
     audio
     bank
+    economy
     downloader
     permissions
 
