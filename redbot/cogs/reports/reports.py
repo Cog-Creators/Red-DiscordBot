@@ -237,7 +237,7 @@ class Reports:
 
         if author.id in self.user_cache:
             return await author.send(
-                _("Finish making your prior report " "before making an additional one")
+                _("Please finish making your prior report before making an additional one")
             )
 
         if ctx.guild:

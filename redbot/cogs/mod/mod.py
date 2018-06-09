@@ -199,12 +199,12 @@ class Mod:
         if not toggled:
             await self.settings.guild(guild).respect_hierarchy.set(True)
             await ctx.send(
-                _("Role hierarchy will be checked when " "moderation commands are issued.")
+                _("Role hierarchy will be checked when moderation commands are issued.")
             )
         else:
             await self.settings.guild(guild).respect_hierarchy.set(False)
             await ctx.send(
-                _("Role hierarchy will be ignored when " "moderation commands are issued.")
+                _("Role hierarchy will be ignored when moderation commands are issued.")
             )
 
     @modset.command()
@@ -241,7 +241,7 @@ class Mod:
         cur_setting = await self.settings.guild(guild).delete_repeats()
         if not cur_setting:
             await self.settings.guild(guild).delete_repeats.set(True)
-            await ctx.send(_("Messages repeated up to 3 times will " "be deleted."))
+            await ctx.send(_("Messages repeated up to 3 times will be deleted."))
         else:
             await self.settings.guild(guild).delete_repeats.set(False)
             await ctx.send(_("Repeated messages will be ignored."))
@@ -304,7 +304,7 @@ class Mod:
 
         if author == user:
             await ctx.send(
-                _("I cannot let you do that. Self-harm is " "bad {}").format("\N{PENSIVE FACE}")
+                _("I cannot let you do that. Self-harm is bad {}").format("\N{PENSIVE FACE}")
             )
             return
         elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
@@ -360,7 +360,7 @@ class Mod:
 
         if author == user:
             await ctx.send(
-                _("I cannot let you do that. Self-harm is " "bad {}").format("\N{PENSIVE FACE}")
+                _("I cannot let you do that. Self-harm is bad {}").format("\N{PENSIVE FACE}")
             )
             return
         elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
@@ -457,15 +457,15 @@ class Mod:
         self.ban_queue.append(queue_entry)
         try:
             await guild.ban(user, reason=audit_reason)
-            log.info("{}({}) hackbanned {}" "".format(author.name, author.id, user_id))
+            log.info("{}({}) hackbanned {}".format(author.name, author.id, user_id))
         except discord.NotFound:
             self.ban_queue.remove(queue_entry)
-            await ctx.send(_("User not found. Have you provided the " "correct user ID?"))
+            await ctx.send(_("User not found. Have you provided the correct user ID?"))
         except discord.Forbidden:
             self.ban_queue.remove(queue_entry)
             await ctx.send(_("I lack the permissions to do this."))
         else:
-            await ctx.send(_("Done. The user will not be able to join this " "server."))
+            await ctx.send(_("Done. The user will not be able to join this server."))
 
         user_info = await self.bot.get_user_info(user_id)
         try:
@@ -553,7 +553,7 @@ class Mod:
 
         if author == user:
             await ctx.send(
-                _("I cannot let you do that. Self-harm is " "bad {}").format("\N{PENSIVE FACE}")
+                _("I cannot let you do that. Self-harm is bad {}").format("\N{PENSIVE FACE}")
             )
             return
         elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
@@ -759,7 +759,7 @@ class Mod:
         else:
             await ctx.send(_("That user is already muted and deafened server-wide!"))
             return
-        await ctx.send(_("User has been banned from speaking or " "listening in voice channels"))
+        await ctx.send(_("User has been banned from speaking or listening in voice channels"))
 
         try:
             await modlog.create_case(
@@ -831,7 +831,7 @@ class Mod:
             await ctx.send("Done.")
         except discord.Forbidden:
             await ctx.send(
-                _("I cannot do that, I lack the " "'{}' permission.").format("Manage Nicknames")
+                _("I cannot do that, I lack the '{}' permission.").format("Manage Nicknames")
             )
 
     @commands.group()
@@ -1325,7 +1325,7 @@ class Mod:
                 value="{0.name} (ID {0.id})".format(voice_state.channel),
                 inline=False,
             )
-        data.set_footer(text=_("Member #{} | User ID: {}" "").format(member_number, user.id))
+        data.set_footer(text=_("Member #{} | User ID: {}").format(member_number, user.id))
 
         name = str(user)
         name = " ~ ".join((name, user.nick)) if user.nick else name
@@ -1341,7 +1341,7 @@ class Mod:
         try:
             await ctx.send(embed=data)
         except discord.HTTPException:
-            await ctx.send(_("I need the `Embed links` permission " "to send this."))
+            await ctx.send(_("I need the `Embed links` permission to send this."))
 
     @commands.command()
     async def names(self, ctx: commands.Context, user: discord.Member):
@@ -1361,7 +1361,7 @@ class Mod:
         if msg:
             await ctx.send(msg)
         else:
-            await ctx.send(_("That user doesn't have any recorded name or " "nickname change."))
+            await ctx.send(_("That user doesn't have any recorded name or nickname change."))
 
     async def get_names_and_nicks(self, user):
         names = await self.settings.user(user).past_names()
@@ -1424,7 +1424,7 @@ class Mod:
                     await guild.ban(author, reason="Mention spam (Autoban)")
                 except discord.HTTPException:
                     log.info(
-                        "Failed to ban member for mention spam in " "server {}.".format(guild.id)
+                        "Failed to ban member for mention spam in server {}.".format(guild.id)
                     )
                 else:
                     try:
