@@ -5,9 +5,13 @@ https://github.com/Lunar-Dust/Dusty-Cogs/blob/master/menu/menu.py
 Ported to Red V3 by Palm\_\_ (https://github.com/palmtree5)
 """
 import asyncio
+import contextlib
+from typing import Union, Iterable
 import discord
 
 from redbot.core import commands
+
+_ReactableEmoji = Union[str, discord.Emoji]
 
 
 async def menu(
@@ -66,8 +70,8 @@ async def menu(
             message = await ctx.send(embed=current_page)
         else:
             message = await ctx.send(current_page)
-        for key in controls.keys():
-            await message.add_reaction(key)
+        # Don't wait for reactions to be added (GH-1797)
+        ctx.bot.loop.create_task(_add_menu_reactions(message, controls.keys()))
     else:
         if isinstance(current_page, discord.Embed):
             await message.edit(embed=current_page)
@@ -146,6 +150,14 @@ async def close_menu(
     if message:
         await message.delete()
     return None
+
+
+async def _add_menu_reactions(message: discord.Message, emojis: Iterable[_ReactableEmoji]):
+    """Add the reactions"""
+    # The task should exit silently if the message is deleted
+    with contextlib.suppress(discord.NotFound):
+        for emoji in emojis:
+            await message.add_reaction(emoji)
 
 
 DEFAULT_CONTROLS = {"⬅": prev_page, "❌": close_menu, "➡": next_page}
