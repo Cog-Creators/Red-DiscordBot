@@ -41,13 +41,12 @@ class Trivia:
 
         self.conf.register_member(wins=0, games=0, total_score=0)
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @commands.guild_only()
     @checks.mod_or_permissions(administrator=True)
     async def triviaset(self, ctx: commands.Context):
         """Manage trivia settings."""
         if ctx.invoked_subcommand is None:
-            await ctx.send_help()
             settings = self.conf.guild(ctx.guild)
             settings_dict = await settings.all()
             msg = box(
@@ -252,7 +251,7 @@ class Trivia:
             return
         await ctx.send(msg)
 
-    @trivia.group(name="leaderboard", aliases=["lboard"])
+    @trivia.group(name="leaderboard", aliases=["lboard"], autohelp=False)
     async def trivia_leaderboard(self, ctx: commands.Context):
         """Leaderboard for trivia.
 

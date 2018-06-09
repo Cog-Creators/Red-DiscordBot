@@ -39,7 +39,7 @@ class Filter:
         except RuntimeError:
             pass
 
-    @commands.group(name="filter")
+    @commands.group(name="filter", autohelp=True)
     @commands.guild_only()
     @checks.mod_or_permissions(manage_messages=True)
     async def _filter(self, ctx: commands.Context):
@@ -49,7 +49,6 @@ class Filter:
         Using this command with no subcommands will send
         the list of the server's filtered words."""
         if ctx.invoked_subcommand is None:
-            await ctx.send_help()
             server = ctx.guild
             author = ctx.author
             word_list = await self.settings.guild(server).filter()
