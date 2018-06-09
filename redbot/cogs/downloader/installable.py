@@ -75,6 +75,7 @@ class Installable(RepoJSONMixin):
         self.bot_version = (3, 0, 0)
         self.min_python_version = (3, 5, 1)
         self.hidden = False
+        self.disabled = False
         self.required_cogs = {}  # Cog name -> repo URL
         self.requirements = ()
         self.tags = ()
@@ -172,6 +173,12 @@ class Installable(RepoJSONMixin):
         except ValueError:
             hidden = False
         self.hidden = hidden
+
+        try:
+            disabled = bool(info.get("disabled", False))
+        except ValueError:
+            disabled = False
+        self.disabled = disabled
 
         self.required_cogs = info.get("required_cogs", {})
 

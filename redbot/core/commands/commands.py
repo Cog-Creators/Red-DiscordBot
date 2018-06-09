@@ -136,7 +136,27 @@ class Group(Command, commands.Group):
     in.
     """
 
-    pass
+    def __init__(self, *args, **kwargs):
+        self.autohelp = kwargs.pop("autohelp", False)
+        super().__init__(*args, **kwargs)
+
+    async def invoke(self, ctx):
+
+        view = ctx.view
+        previous = view.index
+        view.skip_ws()
+        trigger = view.get_word()
+        if trigger:
+            ctx.subcommand_passed = trigger
+            ctx.invoked_subcommand = self.all_commands.get(trigger, None)
+        view.index = previous
+        view.previous = previous
+
+        if ctx.invoked_subcommand is None or self == ctx.invoked_subcommand:
+            if self.autohelp and not self.invoke_without_command:
+                await ctx.send_help()
+
+        await super().invoke(ctx)
 
 
 # decorators

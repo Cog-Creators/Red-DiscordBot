@@ -466,7 +466,7 @@ class Repo(RepoJSONMixin):
         """
         # noinspection PyTypeChecker
         return tuple(
-            [m for m in self.available_modules if m.type == InstallableType.COG and not m.hidden]
+            [m for m in self.available_modules if m.type == InstallableType.COG and not m.disabled]
         )
 
     @property

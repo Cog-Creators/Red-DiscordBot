@@ -170,20 +170,18 @@ class Alias:
         new_message.content = "{}{} {}".format(prefix, alias.command, args)
         await self.bot.process_commands(new_message)
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @commands.guild_only()
     async def alias(self, ctx: commands.Context):
         """Manage per-server aliases for commands"""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
-    @alias.group(name="global")
+    @alias.group(name="global", autohelp=True)
     async def global_(self, ctx: commands.Context):
         """
         Manage global aliases.
         """
-        if ctx.invoked_subcommand is None or isinstance(ctx.invoked_subcommand, commands.Group):
-            await ctx.send_help()
+        pass
 
     @checks.mod_or_permissions(manage_guild=True)
     @alias.command(name="add")
