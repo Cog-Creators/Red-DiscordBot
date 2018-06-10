@@ -80,11 +80,11 @@ Welcome to Red - Discord Bot's documentation!
     framework_rpc
     framework_utils
 
-.. These files need to be included or Travis will fail 
+.. These files need to be included or Travis will fail
 
 .. toctree::
     :maxdepth: 1
-    :caption: Various
+    :caption: Other
 
     host-list
 

@@ -151,7 +151,7 @@ download them using the downloader cog.
 You can start using the :ref:`downloader <downloader>` cog by loading it:
 ``[p]load downloader``
 
-You can find cogs by searching on `cogs.red <https://dev.v3.cogs.red>`_. Find whatever you want,
+You can find cogs by searching on `cogs.red <https://cogs.red>`_. Find whatever you want,
 there are hundreds of cogs available!
 
 .. note:: ``cogs.red``, the website that list all of the cogs is not
@@ -270,8 +270,8 @@ If you want to do it, follow these steps.
 
 2. **Install Linux**
 
-  Most of the VPS providers has tools for installing Linux automatically. If
-  you're a beginner, we recommand **Ubuntu 16** which is easy to understand.
+  Most of the VPS providers have tools for installing Linux automatically. If
+  you're a beginner, we recommand **Ubuntu 16**.
 
   For Raspberry Pi users, just install `Raspbian
   <https://www.raspberrypi.org/downloads/raspbian/>`_ on a micro-SD card.
@@ -334,8 +334,9 @@ The cog guides are formatted the same. They're divided into 3 sections:
         Arguments followed by ``=something`` means that, if not specified,
         the argument will be equal to ``something``.
 
-        For example, ``[days=1]`` in the ban command means that the number of
-        days of messages to be deleted will be equal to ``1`` if not specified.
+        For example, ``[days=1]`` in the :ref:`ban <mod-command-ban>` command
+        means that the number of days of messages to be deleted will be equal
+        to ``1`` if not specified.
 
         Other example, the argument ``[channel=ctx]`` from the :ref:`announce
         channel <admin-command-announce-channel>` command means that if the

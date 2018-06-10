@@ -11,7 +11,7 @@ find detailled docs about the usage and the commands.
 
 .. note:: To use this cog, load it by typing this::
 
-        [p]load audio
+        [p]load bank
 
 .. _bank-usage:
 
