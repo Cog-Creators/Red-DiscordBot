@@ -642,7 +642,7 @@ class Mod:
         if not user:
             await ctx.send(_("Couldn't find a user with that ID!"))
             return
-        reason = get_audit_reason(ctx.author, reason)
+        audit_reason = get_audit_reason(ctx.author, reason)
         bans = await guild.bans()
         bans = [be.user for be in bans]
         if user not in bans:
@@ -651,7 +651,7 @@ class Mod:
         queue_entry = (guild.id, user.id)
         self.unban_queue.append(queue_entry)
         try:
-            await guild.unban(user, reason=reason)
+            await guild.unban(user, reason=audit_reason)
         except discord.HTTPException:
             self.unban_queue.remove(queue_entry)
             await ctx.send(_("Something went wrong while attempting to unban that user"))
