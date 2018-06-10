@@ -195,7 +195,7 @@ class General:
             [
                 m.status
                 for m in guild.members
-                if m.status == discord.Status.online or m.status == discord.Status.idle
+                if m.status != discord.Status.offline
             ]
         )
         total_users = len(guild.members)
