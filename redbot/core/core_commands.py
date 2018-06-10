@@ -8,13 +8,13 @@ import os
 import sys
 import tarfile
 import traceback
+import validators
 from collections import namedtuple
 from pathlib import Path
 from random import SystemRandom
 from string import ascii_letters, digits
 from distutils.version import StrictVersion
 from typing import TYPE_CHECKING
-from urllib import parse
 
 import aiohttp
 import discord
@@ -235,6 +235,11 @@ class CoreLogic:
             return discord.utils.oauth_url(app_info.id, permissions, redirect_uri=redirect)
         return "Not a bot account!"
 
+    async def _can_get_invite_url(ctx):
+        is_owner = await ctx.bot.is_owner(ctx.author)
+        is_invite_public = await ctx.bot.db.invite_public()
+        return is_owner or is_invite_public
+
 
 @i18n.cog_i18n(_)
 class Core(CoreLogic):
@@ -423,16 +428,15 @@ class Core(CoreLogic):
             await ctx.send("No exception has occurred yet")
 
     @commands.command()
+    @commands.check(CoreLogic._can_get_invite_url)
     async def invite(self, ctx):
         """Show's Red's invite url"""
-        if not self.bot.is_owner(ctx.author) and not self.bot.db.invite_public:
-            return
         if self.bot.user.bot:
             await ctx.author.send(await self._invite_url())
         else:
             await ctx.send("I'm not a bot account. I have no invite URL.")
 
-    @commands.command()
+    @commands.group()
     @checks.is_owner()
     async def inviteset(self, ctx):
         """Setup the bot's invite"""
@@ -440,7 +444,6 @@ class Core(CoreLogic):
             await ctx.send_help()
 
     @inviteset.command()
-    @checks.is_bot()
     async def public(self, ctx, confirm: bool = False):
         """
         Define if the command should be accessible
@@ -449,16 +452,16 @@ class Core(CoreLogic):
         if not self.bot.user.bot:
             await ctx.send("I'm not a bot account. I have no invite URL.")
             return
-        if not self.bot.db.invite_public:
+        if await self.bot.db.invite_public():
             await self.bot.db.invite_public.set(False)
             await ctx.send("The invite is now private.")
             return
-        app_info = self.bot.application_info()
+        app_info = await self.bot.application_info()
         if not app_info.bot_public:
             await ctx.send(
                 "I am not a public bot. That means that nobody except "
                 "you can invite me on new servers.\n\n"
-                'You can change this by ticking "Public bot" in '
+                "You can change this by ticking `Public bot` in "
                 "your token settings:"
                 "https://discordapp.com/developers/applications/me/{0}".format(self.bot.user.id)
             )
@@ -488,7 +491,7 @@ class Core(CoreLogic):
         Please note that you might need the two factor authentification for
         some permissions.
         """
-        await self.bot.db.invite_perm.set(int)
+        await self.bot.db.invite_perm.set(level)
         await ctx.send("The new permissions level has been set.")
 
     @inviteset.command()
@@ -501,14 +504,14 @@ class Core(CoreLogic):
 
         Give nothing to disable.
         """
-        if not redirect:
+        if not URL:
             await self.bot.db.invite_redirect.set(None)
             await ctx.send("The invite won't redirect to an URL anymore.")
             return
-        if parse(url).scheme != "":
+        if not validators.url(URL):
             await ctx.send("Invalid URL.")
         else:
-            await self.bot.db.invite_redirect.set(redirect)
+            await self.bot.db.invite_redirect.set(URL)
             await ctx.send("The invite link will now redirect to this URL.")
 
     @commands.command()
