@@ -462,7 +462,7 @@ class Core(CoreLogic):
                 "I am not a public bot. That means that nobody except "
                 "you can invite me on new servers.\n\n"
                 "You can change this by ticking `Public bot` in "
-                "your token settings:"
+                "your token settings: "
                 "https://discordapp.com/developers/applications/me/{0}".format(self.bot.user.id)
             )
             return
