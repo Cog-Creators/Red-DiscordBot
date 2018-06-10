@@ -240,8 +240,7 @@ class General:
         """Shows server's informations"""
         server = ctx.message.server
         online = len([m.status for m in server.members
-                      if m.status == discord.Status.online or
-                      m.status == discord.Status.idle])
+                      if m.status != discord.Status.offline])
         total_users = len(server.members)
         text_channels = len([x for x in server.channels
                              if x.type == discord.ChannelType.text])
