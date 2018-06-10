@@ -56,3 +56,27 @@ async def test_bank_can_spend(bank, member_factory):
     acc = await bank.get_account(mbr)
     canspendnow = await bank.can_spend(mbr, 100)
     assert canspendnow
+
+
+@pytest.mark.asyncio
+async def test_set_bank_name(bank, guild_factory):
+    guild = guild_factory.get()
+    await bank.set_bank_name("Test Bank", guild)
+    name = await bank.get_bank_name(guild)
+    assert name == "Test Bank"
+
+
+@pytest.mark.asyncio
+async def test_set_currency_name(bank, guild_factory):
+    guild = guild_factory.get()
+    await bank.set_currency_name("Coins", guild)
+    name = await bank.get_currency_name(guild)
+    assert name == "Coins"
+
+
+@pytest.mark.asyncio
+async def test_set_default_balance(bank, guild_factory):
+    guild = guild_factory.get()
+    await bank.set_default_balance(500, guild)
+    default_bal = await bank.get_default_balance(guild)
+    assert default_bal == 500
