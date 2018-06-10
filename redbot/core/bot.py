@@ -55,6 +55,9 @@ class RedBase(BotBase, RPCMixin):
             help__page_char_limit=1000,
             help__max_pages_in_guild=2,
             help__tagline="",
+            invite_public=False,
+            invite_perm=0,
+            invite_redirect=None,
         )
 
         self.db.register_guild(

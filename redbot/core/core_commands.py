@@ -14,6 +14,7 @@ from random import SystemRandom
 from string import ascii_letters, digits
 from distutils.version import StrictVersion
 from typing import TYPE_CHECKING
+from urllib import parse
 
 import aiohttp
 import discord
@@ -228,7 +229,10 @@ class CoreLogic:
         """
         if self.bot.user.bot:
             app_info = await self.bot.application_info()
-            return discord.utils.oauth_url(app_info.id)
+            perms_int = await self.bot.db.invite_perm()
+            redirect = await self.bot.db.invite_redirect()
+            permissions = discord.Permissions(perms_int)
+            return discord.utils.oauth_url(app_info.id, permissions, redirect_uri=redirect)
         return "Not a bot account!"
 
 
@@ -419,13 +423,93 @@ class Core(CoreLogic):
             await ctx.send("No exception has occurred yet")
 
     @commands.command()
-    @checks.is_owner()
     async def invite(self, ctx):
         """Show's Red's invite url"""
+        if not self.bot.is_owner(ctx.author) and not self.bot.db.invite_public:
+            return
         if self.bot.user.bot:
             await ctx.author.send(await self._invite_url())
         else:
             await ctx.send("I'm not a bot account. I have no invite URL.")
+
+    @commands.command()
+    @checks.is_owner()
+    async def inviteset(self, ctx):
+        """Setup the bot's invite"""
+        if not ctx.invoked_subcommand:
+            await ctx.send_help()
+
+    @inviteset.command()
+    @checks.is_bot()
+    async def public(self, ctx, confirm: bool = False):
+        """
+        Define if the command should be accessible
+        for the average users.
+        """
+        if not self.bot.user.bot:
+            await ctx.send("I'm not a bot account. I have no invite URL.")
+            return
+        if not self.bot.db.invite_public:
+            await self.bot.db.invite_public.set(False)
+            await ctx.send("The invite is now private.")
+            return
+        app_info = self.bot.application_info()
+        if not app_info.bot_public:
+            await ctx.send(
+                "I am not a public bot. That means that nobody except "
+                "you can invite me on new servers.\n\n"
+                'You can change this by ticking "Public bot" in '
+                "your token settings:"
+                "https://discordapp.com/developers/applications/me/{0}".format(self.bot.user.id)
+            )
+            return
+        if not confirm:
+            await ctx.send(
+                "You're about to make the `{0}invite` command public. "
+                "All users will be able to invite me on their server.\n\n"
+                "If you agree, you can type `{0}inviteset public yes`.".format(ctx.prefix)
+            )
+        else:
+            await self.bot.db.invite_public.set(True)
+            await ctx.send("The invite command is now public.")
+
+    @inviteset.command()
+    async def perms(self, ctx, level: int):
+        """
+        Make the bot create its own role with permissions on join.
+
+        The bot will create its own role with the desired permissions
+        when he join a new server. This is a special role that can't be
+        deleted or removed from the bot.
+
+        For that, you need to give a valid permissions level.
+        You can generate one [here](https://discordapi.com/permissions.html).
+
+        Please note that you might need the two factor authentification for
+        some permissions.
+        """
+        await self.bot.db.invite_perm.set(int)
+        await ctx.send("The new permissions level has been set.")
+
+    @inviteset.command()
+    async def redirect(self, ctx, URL: str = None):
+        """
+        Make the invite link redirect to a website.
+
+        If the bot was successfully added, discord will redirect
+        the user to the desired website.
+
+        Give nothing to disable.
+        """
+        if not redirect:
+            await self.bot.db.invite_redirect.set(None)
+            await ctx.send("The invite won't redirect to an URL anymore.")
+            return
+        if parse(url).scheme != "":
+            await ctx.send("Invalid URL.")
+        else:
+            await self.bot.db.invite_redirect.set(redirect)
+            await ctx.send("The invite link will now redirect to this URL.")
 
     @commands.command()
     @commands.guild_only()
