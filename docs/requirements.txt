@@ -34,4 +34,4 @@ tox==3.0.0
 urllib3==1.22
 virtualenv==16.0.0
 yarl==0.18.0
-git+https://github.com/Rapptz/discord.py@rewrite#egg=discord.py-1.0
+git+https://github.com/Rapptz/discord.py@7eb918b19e3e60b56eb9039eb267f8f3477c5e17#egg=discord.py-1.0
