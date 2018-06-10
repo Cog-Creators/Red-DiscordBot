@@ -3,7 +3,6 @@ from . import commands
 
 
 def init_global_checks(bot):
-
     @bot.check
     async def global_perms(ctx):
         """Check the user is/isn't globally whitelisted/blacklisted."""
@@ -27,10 +26,12 @@ def init_global_checks(bot):
         local_blacklist = await guild_settings.blacklist()
         local_whitelist = await guild_settings.whitelist()
 
+        _ids = [r.id for r in ctx.author.roles if not r.is_default]
+        _ids.append(ctx.author.id)
         if local_whitelist:
-            return ctx.author.id in local_whitelist
+            return any(i in local_whitelist for i in _ids)
 
-        return ctx.author.id not in local_blacklist
+        return not any(i in local_blacklist for i in _ids)
 
     @bot.check
     async def bots(ctx):

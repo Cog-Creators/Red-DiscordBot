@@ -4,6 +4,7 @@ from redbot.core.utils.chat_formatting import pagify
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from .streamtypes import (
+    Stream,
     TwitchStream,
     HitboxStream,
     MixerStream,
@@ -25,6 +26,7 @@ from . import streamtypes as StreamClasses
 from collections import defaultdict
 import asyncio
 import re
+from typing import Optional, List
 
 CHECK_DELAY = 60
 
@@ -50,9 +52,11 @@ class Streams:
 
         self.db.register_role(**self.role_defaults)
 
-        self.bot = bot
+        self.bot: Red = bot
 
-        self.bot.loop.create_task(self._initialize_lists())
+        self.streams: List[Stream] = []
+        self.communities: List[TwitchCommunity] = []
+        self.task: Optional[asyncio.Task] = None
 
         self.yt_cid_pattern = re.compile("^UC[-_A-Za-z0-9]{21}[AQgw]$")
 
@@ -62,7 +66,8 @@ class Streams:
             return True
         return False
 
-    async def _initialize_lists(self):
+    async def initialize(self) -> None:
+        """Should be called straight after cog instantiation."""
         self.streams = await self.load_streams()
         self.communities = await self.load_communities()
 
@@ -77,9 +82,7 @@ class Streams:
 
     @commands.command()
     async def youtube(self, ctx: commands.Context, channel_id_or_name: str):
-        """
-        Checks if a Youtube channel is streaming
-        """
+        """Checks if a Youtube channel is streaming"""
         apikey = await self.db.tokens.get_raw(YoutubeStream.__name__, default=None)
         is_name = self.check_name_or_id(channel_id_or_name)
         if is_name:
@@ -115,35 +118,33 @@ class Streams:
             await ctx.send(_("The channel doesn't seem to exist."))
         except InvalidTwitchCredentials:
             await ctx.send(
-                _("The twitch token is either invalid or has not been set. " "See `{}`.").format(
+                _("The twitch token is either invalid or has not been set. See `{}`.").format(
                     "{}streamset twitchtoken".format(ctx.prefix)
                 )
             )
         except InvalidYoutubeCredentials:
             await ctx.send(
-                _("The Youtube API key is either invalid or has not been set. " "See {}.").format(
+                _("The Youtube API key is either invalid or has not been set. See {}.").format(
                     "`{}streamset youtubekey`".format(ctx.prefix)
                 )
             )
         except APIError:
             await ctx.send(
-                _("Something went wrong whilst trying to contact the " "stream service's API.")
+                _("Something went wrong whilst trying to contact the stream service's API.")
             )
         else:
             await ctx.send(embed=embed)
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @commands.guild_only()
     @checks.mod()
     async def streamalert(self, ctx: commands.Context):
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
-    @streamalert.group(name="twitch")
+    @streamalert.group(name="twitch", autohelp=True)
     async def _twitch(self, ctx: commands.Context):
         """Twitch stream alerts"""
-        if ctx.invoked_subcommand is None or ctx.invoked_subcommand == self._twitch:
-            await ctx.send_help()
+        pass
 
     @_twitch.command(name="channel")
     async def twitch_alert_channel(self, ctx: commands.Context, channel_name: str):
@@ -152,8 +153,7 @@ class Streams:
 
     @_twitch.command(name="community")
     async def twitch_alert_community(self, ctx: commands.Context, community: str):
-        """Sets a Twitch stream alert notification in the channel
-        for the specified community."""
+        """Sets a Twitch stream alert notification in the channel for the specified community."""
         await self.community_alert(ctx, TwitchCommunity, community.lower())
 
     @streamalert.command(name="youtube")
@@ -202,7 +202,7 @@ class Streams:
         self.streams = streams
         await self.save_streams()
 
-        msg = _("All {}'s stream alerts have been disabled." "").format(
+        msg = _("All {}'s stream alerts have been disabled.").format(
             "server" if _all else "channel"
         )
 
@@ -243,21 +243,21 @@ class Streams:
                 exists = await self.check_exists(stream)
             except InvalidTwitchCredentials:
                 await ctx.send(
-                    _("The twitch token is either invalid or has not been set. " "See {}.").format(
+                    _("The twitch token is either invalid or has not been set. See {}.").format(
                         "`{}streamset twitchtoken`".format(ctx.prefix)
                     )
                 )
                 return
             except InvalidYoutubeCredentials:
                 await ctx.send(
-                    _(
-                        "The Youtube API key is either invalid or has not been set. " "See {}."
-                    ).format("`{}streamset youtubekey`".format(ctx.prefix))
+                    _("The Youtube API key is either invalid or has not been set. See {}.").format(
+                        "`{}streamset youtubekey`".format(ctx.prefix)
+                    )
                 )
                 return
             except APIError:
                 await ctx.send(
-                    _("Something went wrong whilst trying to contact the " "stream service's API.")
+                    _("Something went wrong whilst trying to contact the stream service's API.")
                 )
                 return
             else:
@@ -276,7 +276,7 @@ class Streams:
                 await community.get_community_streams()
             except InvalidTwitchCredentials:
                 await ctx.send(
-                    _("The twitch token is either invalid or has not been set. " "See {}.").format(
+                    _("The twitch token is either invalid or has not been set. See {}.").format(
                         "`{}streamset twitchtoken`".format(ctx.prefix)
                     )
                 )
@@ -286,7 +286,7 @@ class Streams:
                 return
             except APIError:
                 await ctx.send(
-                    _("Something went wrong whilst trying to contact the " "stream service's API.")
+                    _("Something went wrong whilst trying to contact the stream service's API.")
                 )
                 return
             except OfflineCommunity:
@@ -294,11 +294,10 @@ class Streams:
 
         await self.add_or_remove_community(ctx, community)
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @checks.mod()
     async def streamset(self, ctx: commands.Context):
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @streamset.command()
     @checks.is_owner()
@@ -334,12 +333,11 @@ class Streams:
         await self.db.tokens.set_raw("YoutubeStream", value=key)
         await ctx.send(_("Youtube key set."))
 
-    @streamset.group()
+    @streamset.group(autohelp=True)
     @commands.guild_only()
     async def mention(self, ctx: commands.Context):
         """Sets mentions for stream alerts."""
-        if ctx.invoked_subcommand is None or ctx.invoked_subcommand == self.mention:
-            await ctx.send_help()
+        pass
 
     @mention.command(aliases=["everyone"])
     @commands.guild_only()
@@ -350,16 +348,14 @@ class Streams:
         if current_setting:
             await self.db.guild(guild).mention_everyone.set(False)
             await ctx.send(
-                _("{} will no longer be mentioned " "for a stream alert.").format(
-                    "@\u200beveryone"
-                )
+                _("{} will no longer be mentioned for a stream alert.").format("@\u200beveryone")
             )
         else:
             await self.db.guild(guild).mention_everyone.set(True)
             await ctx.send(
                 _(
                     "When a stream configured for stream alerts "
-                    "comes online, {} will be mentioned"
+                    "comes online, {} will be mentioned."
                 ).format("@\u200beveryone")
             )
 
@@ -372,14 +368,14 @@ class Streams:
         if current_setting:
             await self.db.guild(guild).mention_here.set(False)
             await ctx.send(
-                _("{} will no longer be mentioned " "for a stream alert.").format("@\u200bhere")
+                _("{} will no longer be mentioned for a stream alert.").format("@\u200bhere")
             )
         else:
             await self.db.guild(guild).mention_here.set(True)
             await ctx.send(
                 _(
                     "When a stream configured for stream alerts "
-                    "comes online, {} will be mentioned"
+                    "comes online, {} will be mentioned."
                 ).format("@\u200bhere")
             )
 
@@ -394,7 +390,7 @@ class Streams:
         if current_setting:
             await self.db.role(role).mention.set(False)
             await ctx.send(
-                _("{} will no longer be mentioned " "for a stream alert").format(
+                _("{} will no longer be mentioned for a stream alert.").format(
                     "@\u200b{}".format(role.name)
                 )
             )
@@ -403,7 +399,7 @@ class Streams:
             await ctx.send(
                 _(
                     "When a stream configured for stream alerts "
-                    "comes online, {} will be mentioned"
+                    "comes online, {} will be mentioned."
                     ""
                 ).format("@\u200b{}".format(role.name))
             )
@@ -414,7 +410,7 @@ class Streams:
         """Toggles automatic deletion of notifications for streams that go offline"""
         await self.db.guild(ctx.guild).autodelete.set(on_off)
         if on_off:
-            await ctx.send("The notifications will be deleted once " "streams go offline.")
+            await ctx.send("The notifications will be deleted once streams go offline.")
         else:
             await ctx.send("Notifications will never be deleted.")
 
@@ -424,7 +420,7 @@ class Streams:
             if stream not in self.streams:
                 self.streams.append(stream)
             await ctx.send(
-                _("I'll send a notification in this channel when {} " "is online.").format(
+                _("I'll send a notification in this channel when {} is online.").format(
                     stream.name
                 )
             )
@@ -433,7 +429,7 @@ class Streams:
             if not stream.channels:
                 self.streams.remove(stream)
             await ctx.send(
-                _("I won't send notifications about {} in this " "channel anymore.").format(
+                _("I won't send notifications about {} in this channel anymore.").format(
                     stream.name
                 )
             )
@@ -448,7 +444,7 @@ class Streams:
             await ctx.send(
                 _(
                     "I'll send a notification in this channel when a "
-                    "channel is streaming to the {} community"
+                    "channel is streaming to the {} community."
                     ""
                 ).format(community.name)
             )
@@ -459,7 +455,7 @@ class Streams:
             await ctx.send(
                 _(
                     "I won't send notifications about channels streaming "
-                    "to the {} community in this channel anymore"
+                    "to the {} community in this channel anymore."
                     ""
                 ).format(community.name)
             )
@@ -671,4 +667,5 @@ class Streams:
         await self.db.communities.set(raw_communities)
 
     def __unload(self):
-        self.task.cancel()
+        if self.task:
+            self.task.cancel()

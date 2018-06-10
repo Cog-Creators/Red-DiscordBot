@@ -78,7 +78,7 @@ class Mongo(BaseDriver):
         )
 
         if partial is None:
-            raise KeyError("No matching document was found and Config expects" " a KeyError.")
+            raise KeyError("No matching document was found and Config expects a KeyError.")
 
         for i in identifiers:
             partial = partial[i]

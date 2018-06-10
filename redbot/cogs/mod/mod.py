@@ -161,14 +161,12 @@ class Mod:
         except RuntimeError:
             pass
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     async def modset(self, ctx: commands.Context):
         """Manages server administration settings."""
         if ctx.invoked_subcommand is None:
-            guild = ctx.guild
-            await ctx.send_help()
 
             # Display current settings
             delete_repeats = await self.settings.guild(guild).delete_repeats()
@@ -199,12 +197,12 @@ class Mod:
         if not toggled:
             await self.settings.guild(guild).respect_hierarchy.set(True)
             await ctx.send(
-                _("Role hierarchy will be checked when " "moderation commands are issued.")
+                _("Role hierarchy will be checked when moderation commands are issued.")
             )
         else:
             await self.settings.guild(guild).respect_hierarchy.set(False)
             await ctx.send(
-                _("Role hierarchy will be ignored when " "moderation commands are issued.")
+                _("Role hierarchy will be ignored when moderation commands are issued.")
             )
 
     @modset.command()
@@ -241,7 +239,7 @@ class Mod:
         cur_setting = await self.settings.guild(guild).delete_repeats()
         if not cur_setting:
             await self.settings.guild(guild).delete_repeats.set(True)
-            await ctx.send(_("Messages repeated up to 3 times will " "be deleted."))
+            await ctx.send(_("Messages repeated up to 3 times will be deleted."))
         else:
             await self.settings.guild(guild).delete_repeats.set(False)
             await ctx.send(_("Repeated messages will be ignored."))
@@ -304,7 +302,7 @@ class Mod:
 
         if author == user:
             await ctx.send(
-                _("I cannot let you do that. Self-harm is " "bad {}").format("\N{PENSIVE FACE}")
+                _("I cannot let you do that. Self-harm is bad {}").format("\N{PENSIVE FACE}")
             )
             return
         elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
@@ -315,6 +313,9 @@ class Mod:
                     "hierarchy."
                 )
             )
+            return
+        elif ctx.guild.me.top_role <= user.top_role or user == ctx.guild.owner:
+            await ctx.send(_("I cannot do that due to discord hierarchy rules"))
             return
         audit_reason = get_audit_reason(author, reason)
         try:
@@ -357,7 +358,7 @@ class Mod:
 
         if author == user:
             await ctx.send(
-                _("I cannot let you do that. Self-harm is " "bad {}").format("\N{PENSIVE FACE}")
+                _("I cannot let you do that. Self-harm is bad {}").format("\N{PENSIVE FACE}")
             )
             return
         elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
@@ -368,6 +369,9 @@ class Mod:
                     "hierarchy."
                 )
             )
+            return
+        elif ctx.guild.me.top_role <= user.top_role or user == ctx.guild.owner:
+            await ctx.send(_("I cannot do that due to discord hierarchy rules"))
             return
 
         if days:
@@ -451,15 +455,15 @@ class Mod:
         self.ban_queue.append(queue_entry)
         try:
             await guild.ban(user, reason=audit_reason)
-            log.info("{}({}) hackbanned {}" "".format(author.name, author.id, user_id))
+            log.info("{}({}) hackbanned {}".format(author.name, author.id, user_id))
         except discord.NotFound:
             self.ban_queue.remove(queue_entry)
-            await ctx.send(_("User not found. Have you provided the " "correct user ID?"))
+            await ctx.send(_("User not found. Have you provided the correct user ID?"))
         except discord.Forbidden:
             self.ban_queue.remove(queue_entry)
             await ctx.send(_("I lack the permissions to do this."))
         else:
-            await ctx.send(_("Done. The user will not be able to join this " "server."))
+            await ctx.send(_("Done. The user will not be able to join this server."))
 
         user_info = await self.bot.get_user_info(user_id)
         try:
@@ -547,7 +551,7 @@ class Mod:
 
         if author == user:
             await ctx.send(
-                _("I cannot let you do that. Self-harm is " "bad {}").format("\N{PENSIVE FACE}")
+                _("I cannot let you do that. Self-harm is bad {}").format("\N{PENSIVE FACE}")
             )
             return
         elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
@@ -753,7 +757,7 @@ class Mod:
         else:
             await ctx.send(_("That user is already muted and deafened server-wide!"))
             return
-        await ctx.send(_("User has been banned from speaking or " "listening in voice channels"))
+        await ctx.send(_("User has been banned from speaking or listening in voice channels"))
 
         try:
             await modlog.create_case(
@@ -825,16 +829,15 @@ class Mod:
             await ctx.send("Done.")
         except discord.Forbidden:
             await ctx.send(
-                _("I cannot do that, I lack the " "'{}' permission.").format("Manage Nicknames")
+                _("I cannot do that, I lack the '{}' permission.").format("Manage Nicknames")
             )
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @commands.guild_only()
     @checks.mod_or_permissions(manage_channel=True)
     async def mute(self, ctx: commands.Context):
         """Mutes user in the channel/server"""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @mute.command(name="voice")
     @commands.guild_only()
@@ -995,15 +998,14 @@ class Mod:
             await self.settings.member(user).perms_cache.set(perms_cache)
             return True, None
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @commands.guild_only()
     @checks.mod_or_permissions(manage_channel=True)
     async def unmute(self, ctx: commands.Context):
         """Unmutes user in the channel/server
 
         Defaults to channel"""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @unmute.command(name="voice")
     @commands.guild_only()
@@ -1116,7 +1118,6 @@ class Mod:
                 author,
                 reason,
                 until=None,
-                channel=channel,
             )
         except RuntimeError as e:
             await ctx.send(e)
@@ -1163,7 +1164,7 @@ class Mod:
                 await self.settings.member(user).perms_cache.set(perms_cache)
             return True, None
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @commands.guild_only()
     @checks.admin_or_permissions(manage_channels=True)
     async def ignore(self, ctx: commands.Context):
@@ -1196,13 +1197,12 @@ class Mod:
         else:
             await ctx.send(_("This server is already being ignored."))
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @commands.guild_only()
     @checks.admin_or_permissions(manage_channels=True)
     async def unignore(self, ctx: commands.Context):
         """Removes servers/channels from ignorelist"""
         if ctx.invoked_subcommand is None:
-            await ctx.send_help()
             await ctx.send(await self.count_ignored())
 
     @unignore.command(name="channel")
@@ -1320,7 +1320,7 @@ class Mod:
                 value="{0.name} (ID {0.id})".format(voice_state.channel),
                 inline=False,
             )
-        data.set_footer(text=_("Member #{} | User ID: {}" "").format(member_number, user.id))
+        data.set_footer(text=_("Member #{} | User ID: {}").format(member_number, user.id))
 
         name = str(user)
         name = " ~ ".join((name, user.nick)) if user.nick else name
@@ -1336,7 +1336,7 @@ class Mod:
         try:
             await ctx.send(embed=data)
         except discord.HTTPException:
-            await ctx.send(_("I need the `Embed links` permission " "to send this."))
+            await ctx.send(_("I need the `Embed links` permission to send this."))
 
     @commands.command()
     async def names(self, ctx: commands.Context, user: discord.Member):
@@ -1356,7 +1356,7 @@ class Mod:
         if msg:
             await ctx.send(msg)
         else:
-            await ctx.send(_("That user doesn't have any recorded name or " "nickname change."))
+            await ctx.send(_("That user doesn't have any recorded name or nickname change."))
 
     async def get_names_and_nicks(self, user):
         names = await self.settings.user(user).past_names()
@@ -1419,11 +1419,11 @@ class Mod:
                     await guild.ban(author, reason="Mention spam (Autoban)")
                 except discord.HTTPException:
                     log.info(
-                        "Failed to ban member for mention spam in " "server {}.".format(guild.id)
+                        "Failed to ban member for mention spam in server {}.".format(guild.id)
                     )
                 else:
                     try:
-                        case = await modlog.create_case(
+                        await modlog.create_case(
                             self.bot,
                             guild,
                             message.created_at,
@@ -1440,7 +1440,13 @@ class Mod:
                     return True
         return False
 
-    async def on_command(self, ctx: commands.Context):
+    async def on_command_completion(self, ctx: commands.Context):
+        await self._delete_delay(ctx)
+
+    async def on_command_error(self, ctx: commands.Context, error):
+        await self._delete_delay(ctx)
+
+    async def _delete_delay(self, ctx: commands.Context):
         """Currently used for:
             * delete delay"""
         guild = ctx.guild
@@ -1515,6 +1521,34 @@ class Mod:
             await modlog.create_case(self.bot, guild, date, "unban", user, mod, reason)
         except RuntimeError as e:
             print(e)
+
+    async def on_modlog_case_create(self, case: modlog.Case):
+        """
+        An event for modlog case creation
+        """
+        mod_channel = await modlog.get_modlog_channel(case.guild)
+        if mod_channel is None:
+            return
+        use_embeds = await case.bot.embed_requested(mod_channel, case.guild.me)
+        case_content = await case.message_content(use_embeds)
+        if use_embeds:
+            msg = await mod_channel.send(embed=case_content)
+        else:
+            msg = await mod_channel.send(case_content)
+        await case.edit({"message": msg})
+
+    async def on_modlog_case_edit(self, case: modlog.Case):
+        """
+        Event for modlog case edits
+        """
+        if not case.message:
+            return
+        use_embed = await case.bot.embed_requested(case.message.channel, case.guild.me)
+        case_content = await case.message_content(use_embed)
+        if use_embed:
+            await case.message.edit(embed=case_content)
+        else:
+            await case.message.edit(content=case_content)
 
     async def get_audit_entry_info(self, guild: discord.Guild, action: int, target):
         """Get info about an audit log entry.

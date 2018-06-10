@@ -13,6 +13,7 @@ GIPHY_API_KEY = "dc6zaTOxFJmzC"
 @cog_i18n(_)
 class Image:
     """Image related commands."""
+
     default_global = {"imgur_client_id": None}
 
     def __init__(self, bot):
@@ -25,14 +26,13 @@ class Image:
     def __unload(self):
         self.session.close()
 
-    @commands.group(name="imgur")
+    @commands.group(name="imgur", autohelp=True)
     async def _imgur(self, ctx):
         """Retrieves pictures from imgur
 
         Make sure to set the client ID using
         [p]imgurcreds"""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @_imgur.command(name="search")
     async def imgur_search(self, ctx, *, term: str):
@@ -42,7 +42,7 @@ class Image:
         imgur_client_id = await self.settings.imgur_client_id()
         if not imgur_client_id:
             await ctx.send(
-                _("A client ID has not been set! Please set one with {}").format(
+                _("A client ID has not been set! Please set one with {}.").format(
                     "`{}imgurcreds`".format(ctx.prefix)
                 )
             )
@@ -54,7 +54,7 @@ class Image:
         if data["success"]:
             results = data["data"]
             if not results:
-                await ctx.send(_("Your search returned no results"))
+                await ctx.send(_("Your search returned no results."))
                 return
             shuffle(results)
             msg = _("Search results...\n")
@@ -63,7 +63,7 @@ class Image:
                 msg += "\n"
             await ctx.send(msg)
         else:
-            await ctx.send(_("Something went wrong. Error code is {}").format(data["status"]))
+            await ctx.send(_("Something went wrong. Error code is {}.").format(data["status"]))
 
     @_imgur.command(name="subreddit")
     async def imgur_subreddit(
@@ -91,7 +91,7 @@ class Image:
         imgur_client_id = await self.settings.imgur_client_id()
         if not imgur_client_id:
             await ctx.send(
-                _("A client ID has not been set! Please set one with {}").format(
+                _("A client ID has not been set! Please set one with {}.").format(
                     "`{}imgurcreds`".format(ctx.prefix)
                 )
             )
@@ -116,12 +116,13 @@ class Image:
             else:
                 await ctx.send(_("No results found."))
         else:
-            await ctx.send(_("Something went wrong. Error code is {}").format(data["status"]))
+            await ctx.send(_("Something went wrong. Error code is {}.").format(data["status"]))
 
     @checks.is_owner()
     @commands.command()
     async def imgurcreds(self, ctx, imgur_client_id: str):
         """Sets the imgur client id
+
         You will need an account on Imgur to get this
 
         You can get these by visiting https://api.imgur.com/oauth2/addclient
@@ -130,7 +131,7 @@ class Image:
         set the authorization callback url to 'https://localhost'
         leave the app website blank, enter a valid email address, and
         enter a description. Check the box for the captcha, then click Next.
-        Your client ID will be on the page that loads"""
+        Your client ID will be on the page that loads."""
         await self.settings.imgur_client_id.set(imgur_client_id)
         await ctx.send(_("Set the imgur client id!"))
 
@@ -143,7 +144,7 @@ class Image:
             await ctx.send_help()
             return
 
-        url = "http://api.giphy.com/v1/gifs/search?&api_key={}&q={}" "".format(
+        url = "http://api.giphy.com/v1/gifs/search?&api_key={}&q={}".format(
             GIPHY_API_KEY, keywords
         )
 
@@ -155,7 +156,7 @@ class Image:
                 else:
                     await ctx.send(_("No results found."))
             else:
-                await ctx.send(_("Error contacting the API"))
+                await ctx.send(_("Error contacting the API."))
 
     @commands.command(pass_context=True, no_pm=True)
     async def gifr(self, ctx, *keywords):
@@ -166,7 +167,7 @@ class Image:
             await ctx.send_help()
             return
 
-        url = "http://api.giphy.com/v1/gifs/random?&api_key={}&tag={}" "".format(
+        url = "http://api.giphy.com/v1/gifs/random?&api_key={}&tag={}".format(
             GIPHY_API_KEY, keywords
         )
 
@@ -178,4 +179,4 @@ class Image:
                 else:
                     await ctx.send(_("No results found."))
             else:
-                await ctx.send(_("Error contacting the API"))
+                await ctx.send(_("Error contacting the API."))

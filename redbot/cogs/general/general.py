@@ -21,7 +21,6 @@ class RPS(Enum):
 
 
 class RPSParser:
-
     def __init__(self, argument):
         argument = argument.lower()
         if argument == "rock":
@@ -98,7 +97,7 @@ class General:
             msg = ""
             if user.id == ctx.bot.user.id:
                 user = ctx.author
-                msg = _("Nice try. You think this is funny?\n" "How about *this* instead:\n\n")
+                msg = _("Nice try. You think this is funny?\n How about *this* instead:\n\n")
             char = "abcdefghijklmnopqrstuvwxyz"
             tran = "ɐqɔpǝɟƃɥᴉɾʞlɯuodbɹsʇnʌʍxʎz"
             table = str.maketrans(char, tran)
@@ -203,7 +202,7 @@ class General:
         text_channels = len(guild.text_channels)
         voice_channels = len(guild.voice_channels)
         passed = (ctx.message.created_at - guild.created_at).days
-        created_at = _("Since {}. That's over {} days ago!" "").format(
+        created_at = _("Since {}. That's over {} days ago!").format(
             guild.created_at.strftime("%d %b %Y %H:%M"), passed
         )
 
@@ -228,7 +227,7 @@ class General:
         try:
             await ctx.send(embed=data)
         except discord.HTTPException:
-            await ctx.send(_("I need the `Embed links` permission " "to send this."))
+            await ctx.send(_("I need the `Embed links` permission to send this."))
 
     @commands.command()
     async def urban(self, ctx, *, search_terms: str, definition_number: int = 1):
@@ -265,7 +264,7 @@ class General:
                 definition = item_list[pos]["definition"]
                 example = item_list[pos]["example"]
                 defs = len(item_list)
-                msg = "**Definition #{} out of {}:\n**{}\n\n" "**Example:\n**{}".format(
+                msg = "**Definition #{} out of {}:\n**{}\n\n**Example:\n**{}".format(
                     pos + 1, defs, definition, example
                 )
                 msg = pagify(msg, ["\n"])

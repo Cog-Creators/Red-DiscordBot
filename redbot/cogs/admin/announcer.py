@@ -1,11 +1,10 @@
 import asyncio
 
 import discord
-from discord.ext import commands
+from redbot.core import commands
 
 
 class Announcer:
-
     def __init__(self, ctx: commands.Context, message: str, config=None):
         """
         :param ctx:

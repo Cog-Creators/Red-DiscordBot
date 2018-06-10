@@ -70,7 +70,7 @@ def get_command_from_input(bot, userinput: str):
     if any(inspect.getsource(x) in check_str for x in com.checks):
         # command the user specified has the is_owner check
         return None, _(
-            "That command requires bot owner. I can't " "allow you to use that for an action"
+            "That command requires bot owner. I can't allow you to use that for an action"
         )
     return "{prefix}" + orig, None
 

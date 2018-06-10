@@ -11,12 +11,13 @@ from pkg_resources import DistributionNotFound
 
 
 import discord
-from discord.ext import commands
 
-from . import __version__
+from . import __version__, commands
 from .data_manager import storage_type
-from .utils.chat_formatting import inline, bordered
+from .utils.chat_formatting import inline, bordered, pagify, box
+from .utils import fuzzy_command_search
 from colorama import Fore, Style, init
+from . import rpc
 
 log = logging.getLogger("red")
 sentry_log = logging.getLogger("red.sentry")
@@ -48,7 +49,6 @@ def should_log_sentry(exception) -> bool:
 
 
 def init_events(bot, cli_flags):
-
     @bot.event
     async def on_connect():
         if bot.uptime is None:
@@ -84,6 +84,9 @@ def init_events(bot, cli_flags):
             if packages:
                 print("Loaded packages: " + ", ".join(packages))
 
+        if bot.rpc_enabled:
+            await bot.rpc.initialize()
+
         guilds = len(bot.guilds)
         users = len(set([m for m in bot.get_all_members()]))
 
@@ -96,7 +99,7 @@ def init_events(bot, cli_flags):
             else:
                 invite_url = None
 
-        prefixes = await bot.db.prefix()
+        prefixes = cli_flags.prefix or (await bot.db.prefix())
         lang = await bot.db.locale()
         red_version = __version__
         red_pkg = pkg_resources.get_distribution("Red-DiscordBot")
@@ -118,24 +121,24 @@ def init_events(bot, cli_flags):
 
         INFO.append("{} cogs with {} commands".format(len(bot.cogs), len(bot.commands)))
 
-        async with aiohttp.ClientSession() as session:
-            async with session.get("https://pypi.python.org/pypi/red-discordbot/json") as r:
-                data = await r.json()
-        if StrictVersion(data["info"]["version"]) > StrictVersion(red_version):
-            INFO.append(
-                "Outdated version! {} is available "
-                "but you're using {}".format(data["info"]["version"], red_version)
-            )
-            owner = discord.utils.get(bot.get_all_members(), id=bot.owner_id)
-            try:
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get("https://pypi.python.org/pypi/red-discordbot/json") as r:
+                    data = await r.json()
+            if StrictVersion(data["info"]["version"]) > StrictVersion(red_version):
+                INFO.append(
+                    "Outdated version! {} is available "
+                    "but you're using {}".format(data["info"]["version"], red_version)
+                )
+                owner = discord.utils.get(bot.get_all_members(), id=bot.owner_id)
                 await owner.send(
                     "Your Red instance is out of date! {} is the current "
                     "version, however you are using {}!".format(
                         data["info"]["version"], red_version
                     )
                 )
-            except:
-                pass
+        except:
+            pass
         INFO2 = []
 
         sentry = await bot.db.enable_sentry()
@@ -171,8 +174,7 @@ def init_events(bot, cli_flags):
         if invite_url:
             print("\nInvite URL: {}\n".format(invite_url))
 
-        if bot.rpc_enabled:
-            await bot.rpc.initialize()
+        bot.color = discord.Colour(await bot.db.color())
 
     @bot.event
     async def on_error(event_method, *args, **kwargs):
@@ -182,6 +184,11 @@ def init_events(bot, cli_flags):
     async def on_command_error(ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send_help()
+        elif isinstance(error, commands.ConversionFailure):
+            if error.args:
+                await ctx.send(error.args[0])
+            else:
+                await ctx.send_help()
         elif isinstance(error, commands.BadArgument):
             await ctx.send_help()
         elif isinstance(error, commands.DisabledCommand):
@@ -221,9 +228,14 @@ def init_events(bot, cli_flags):
             if not hasattr(ctx.cog, "_{0.command.cog_name}__error".format(ctx)):
                 await ctx.send(inline(message))
         elif isinstance(error, commands.CommandNotFound):
-            pass
+            term = ctx.invoked_with + " "
+            if len(ctx.args) > 1:
+                term += " ".join(ctx.args[1:])
+            fuzzy_result = await fuzzy_command_search(ctx, ctx.invoked_with)
+            if fuzzy_result is not None:
+                await ctx.maybe_send_embed(fuzzy_result)
         elif isinstance(error, commands.CheckFailure):
-            await ctx.send("⛔ You are not authorized to issue that command.")
+            pass
         elif isinstance(error, commands.NoPrivateMessage):
             await ctx.send("That command is not available in DMs.")
         elif isinstance(error, commands.CommandOnCooldown):

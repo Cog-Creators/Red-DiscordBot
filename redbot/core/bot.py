@@ -18,12 +18,13 @@ from discord.voice_client import VoiceClient
 VoiceClient.warn_nacl = False
 
 from .cog_manager import CogManager
-from . import Config, i18n, commands, rpc
+from . import Config, i18n, commands
+from .rpc import RPCMixin
 from .help_formatter import Help, help as help_
 from .sentry import SentryManager
 
 
-class RedBase(BotBase):
+class RedBase(BotBase, RPCMixin):
     """Mixin for the main bot class.
 
     This exists because `Red` inherits from `discord.AutoShardedClient`, which
@@ -33,7 +34,7 @@ class RedBase(BotBase):
     Selfbots should inherit from this mixin along with `discord.Client`.
     """
 
-    def __init__(self, cli_flags, bot_dir: Path = Path.cwd(), **kwargs):
+    def __init__(self, *args, cli_flags=None, bot_dir: Path = Path.cwd(), **kwargs):
         self._shutdown_mode = ExitCodes.CRITICAL
         self.db = Config.get_core_conf(force_registration=True)
         self._co_owners = cli_flags.co_owner
@@ -49,12 +50,22 @@ class RedBase(BotBase):
             enable_sentry=None,
             locale="en",
             embeds=True,
+            color=15158332,
+            fuzzy=False,
             help__page_char_limit=1000,
             help__max_pages_in_guild=2,
+            help__tagline="",
         )
 
         self.db.register_guild(
-            prefix=[], whitelist=[], blacklist=[], admin_role=None, mod_role=None, embeds=None
+            prefix=[],
+            whitelist=[],
+            blacklist=[],
+            admin_role=None,
+            mod_role=None,
+            embeds=None,
+            use_bot_color=False,
+            fuzzy=False,
         )
 
         self.db.register_user(embeds=None)
@@ -86,17 +97,18 @@ class RedBase(BotBase):
             loop = asyncio.get_event_loop()
             loop.run_until_complete(self._dict_abuse(kwargs))
 
+        if "command_not_found" not in kwargs:
+            kwargs["command_not_found"] = "Command {} not found.\n{}"
+
         self.counter = Counter()
         self.uptime = None
+        self.color = discord.Embed.Empty  # This is needed or color ends up 0x000000
 
         self.main_dir = bot_dir
 
         self.cog_mgr = CogManager(paths=(str(self.main_dir / "cogs"),))
 
-        super().__init__(formatter=Help(), **kwargs)
-
-        if self.rpc_enabled:
-            self.rpc = rpc.RPC(self)
+        super().__init__(*args, formatter=Help(), **kwargs)
 
         self.remove_command("help")
 
@@ -221,11 +233,23 @@ class RedBase(BotBase):
         lib_name = lib.__name__  # Thank you
 
         # find all references to the module
+        cog_names = []
 
         # remove the cogs registered from the module
         for cogname, cog in self.cogs.copy().items():
             if cog.__module__.startswith(lib_name):
                 self.remove_cog(cogname)
+
+                cog_names.append(cogname)
+
+        # remove all rpc handlers
+        for cogname in cog_names:
+            if cogname.upper() in self.rpc_handlers:
+                methods = self.rpc_handlers[cogname]
+                for meth in methods:
+                    self.unregister_rpc_handler(meth)
+
+                del self.rpc_handlers[cogname]
 
         # first remove all the commands from the module
         for cmd in self.all_commands.copy().values():

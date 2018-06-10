@@ -1,9 +1,8 @@
 import discord
-from discord.ext import commands
+from redbot.core import commands
 
 
 class MemberDefaultAuthor(commands.Converter):
-
     async def convert(self, ctx: commands.Context, arg: str) -> discord.Member:
         member_converter = commands.MemberConverter()
         try:
@@ -17,7 +16,6 @@ class MemberDefaultAuthor(commands.Converter):
 
 
 class SelfRole(commands.Converter):
-
     async def convert(self, ctx: commands.Context, arg: str) -> discord.Role:
         admin = ctx.command.instance
         if admin is None:
@@ -30,5 +28,5 @@ class SelfRole(commands.Converter):
         role = await role_converter.convert(ctx, arg)
 
         if role.id not in selfroles:
-            raise commands.BadArgument("The provided role is not a valid" " selfrole.")
+            raise commands.BadArgument("The provided role is not a valid selfrole.")
         return role

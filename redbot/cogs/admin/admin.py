@@ -1,9 +1,8 @@
 from typing import Tuple
 
 import discord
-from discord.ext import commands
 
-from redbot.core import Config, checks
+from redbot.core import Config, checks, commands
 
 import logging
 
@@ -40,7 +39,6 @@ RUNNING_ANNOUNCEMENT = (
 
 
 class Admin:
-
     def __init__(self, config=Config):
         self.conf = config.get_conf(self, 8237492837454039, force_registration=True)
 
@@ -158,13 +156,12 @@ class Admin:
         else:
             await self.complain(ctx, USER_HIERARCHY_ISSUE)
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @commands.guild_only()
     @checks.admin_or_permissions(manage_roles=True)
     async def editrole(self, ctx: commands.Context):
         """Edits roles settings"""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @editrole.command(name="colour", aliases=["color"])
     async def editrole_colour(
@@ -265,20 +262,16 @@ class Admin:
     @announce.command(name="ignore")
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
-    async def announce_ignore(self, ctx, *, guild: discord.Guild = None):
+    async def announce_ignore(self, ctx):
         """
-        Toggles whether the announcements will ignore the given server.
-            Defaults to the current server if none is provided.
+        Toggles whether the announcements will ignore the current server.
         """
-        if guild is None:
-            guild = ctx.guild
-
-        ignored = await self.conf.guild(guild).announce_ignore()
-        await self.conf.guild(guild).announce_ignore.set(not ignored)
+        ignored = await self.conf.guild(ctx.guild).announce_ignore()
+        await self.conf.guild(ctx.guild).announce_ignore.set(not ignored)
 
         verb = "will" if ignored else "will not"
 
-        await ctx.send("The server {} {} receive announcements.".format(guild.name, verb))
+        await ctx.send(f"The server {ctx.guild.name} {verb} receive announcements.")
 
     async def _valid_selfroles(self, guild: discord.Guild) -> Tuple[discord.Role]:
         """
@@ -303,6 +296,8 @@ class Admin:
         """
         Add a role to yourself that server admins have configured as
             user settable.
+
+        NOTE: The role is case sensitive!
         """
         # noinspection PyTypeChecker
         await self._addrole(ctx, ctx.author, selfrole)
@@ -311,6 +306,8 @@ class Admin:
     async def selfrole_remove(self, ctx: commands.Context, *, selfrole: SelfRole):
         """
         Removes a selfrole from yourself.
+
+        NOTE: The role is case sensitive!
         """
         # noinspection PyTypeChecker
         await self._removerole(ctx, ctx.author, selfrole)
@@ -320,6 +317,8 @@ class Admin:
     async def selfrole_add(self, ctx: commands.Context, *, role: discord.Role):
         """
         Add a role to the list of available selfroles.
+
+        NOTE: The role is case sensitive!
         """
         async with self.conf.guild(ctx.guild).selfroles() as curr_selfroles:
             if role.id not in curr_selfroles:
@@ -332,6 +331,8 @@ class Admin:
     async def selfrole_delete(self, ctx: commands.Context, *, role: SelfRole):
         """
         Removes a role from the list of available selfroles.
+
+        NOTE: The role is case sensitive!
         """
         async with self.conf.guild(ctx.guild).selfroles() as curr_selfroles:
             curr_selfroles.remove(role.id)

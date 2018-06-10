@@ -25,7 +25,6 @@ async def fake_run_noprint(*args, **kwargs):
 
 @pytest.fixture(scope="module", autouse=True)
 def patch_relative_to(monkeysession):
-
     def fake_relative_to(self, some_path: Path):
         return self
 
@@ -33,9 +32,8 @@ def patch_relative_to(monkeysession):
 
 
 @pytest.fixture
-def repo_manager(tmpdir_factory, config):
-    config.register_global(repos={})
-    rm = RepoManager(config)
+def repo_manager(tmpdir_factory):
+    rm = RepoManager()
     # rm.repos_folder = Path(str(tmpdir_factory.getbasetemp())) / 'repos'
     return rm
 

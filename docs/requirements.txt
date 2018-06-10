@@ -26,4 +26,5 @@ sphinx==1.7.4
 sphinxcontrib-asyncio==0.2.0
 sphinxcontrib-websupport==1.0.1
 urllib3==1.22
+yarl==0.18.0
 git+https://github.com/Rapptz/discord.py@rewrite#egg=discord.py-1.0

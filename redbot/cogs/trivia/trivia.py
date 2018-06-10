@@ -2,7 +2,7 @@
 from collections import Counter
 import yaml
 import discord
-from discord.ext import commands
+from redbot.core import commands
 from redbot.ext import trivia as ext_trivia
 from redbot.core import Config, checks
 from redbot.core.data_manager import cog_data_path
@@ -18,6 +18,7 @@ UNIQUE_ID = 0xb3c0e453
 
 class InvalidListError(Exception):
     """A Trivia list file is in invalid format."""
+
     pass
 
 
@@ -40,13 +41,12 @@ class Trivia:
 
         self.conf.register_member(wins=0, games=0, total_score=0)
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @commands.guild_only()
     @checks.mod_or_permissions(administrator=True)
     async def triviaset(self, ctx: commands.Context):
         """Manage trivia settings."""
         if ctx.invoked_subcommand is None:
-            await ctx.send_help()
             settings = self.conf.guild(ctx.guild)
             settings_dict = await settings.all()
             msg = box(
@@ -81,7 +81,7 @@ class Trivia:
             return
         settings = self.conf.guild(ctx.guild)
         await settings.delay.set(seconds)
-        await ctx.send("Done. Maximum seconds to answer set to {}." "".format(seconds))
+        await ctx.send("Done. Maximum seconds to answer set to {}.".format(seconds))
 
     @triviaset.command(name="stopafter")
     async def triviaset_stopafter(self, ctx: commands.Context, seconds: float):
@@ -160,7 +160,7 @@ class Trivia:
             return
         await settings.payout_multiplier.set(multiplier)
         if not multiplier:
-            await ctx.send("Done. I will no longer reward the winner with a" " payout.")
+            await ctx.send("Done. I will no longer reward the winner with a payout.")
             return
         await ctx.send("Done. Payout multiplier set to {}.".format(multiplier))
 
@@ -206,7 +206,7 @@ class Trivia:
             return
         if not trivia_dict:
             await ctx.send(
-                "The trivia list was parsed successfully, however" " it appears to be empty!"
+                "The trivia list was parsed successfully, however it appears to be empty!"
             )
             return
         settings = await self.conf.guild(ctx.guild).all()
@@ -245,13 +245,13 @@ class Trivia:
         """List available trivia categories."""
         lists = set(p.stem for p in self._all_lists())
 
-        msg = box("**Available trivia lists**\n\n{}" "".format(", ".join(sorted(lists))))
+        msg = box("**Available trivia lists**\n\n{}".format(", ".join(sorted(lists))))
         if len(msg) > 1000:
             await ctx.author.send(msg)
             return
         await ctx.send(msg)
 
-    @trivia.group(name="leaderboard", aliases=["lboard"])
+    @trivia.group(name="leaderboard", aliases=["lboard"], autohelp=False)
     async def trivia_leaderboard(self, ctx: commands.Context):
         """Leaderboard for trivia.
 
@@ -382,7 +382,7 @@ class Trivia:
         try:
             priority.remove(key)
         except ValueError:
-            raise ValueError("{} is not a valid key".format(key))
+            raise ValueError("{} is not a valid key.".format(key))
         # Put key last in reverse priority
         priority.append(key)
         items = data.items()
@@ -480,13 +480,13 @@ class Trivia:
         try:
             path = next(p for p in self._all_lists() if p.stem == category)
         except StopIteration:
-            raise FileNotFoundError("Could not find the `{}` category" "".format(category))
+            raise FileNotFoundError("Could not find the `{}` category.".format(category))
 
         with path.open(encoding="utf-8") as file:
             try:
                 dict_ = yaml.load(file)
             except yaml.error.YAMLError as exc:
-                raise InvalidListError("YAML parsing failed") from exc
+                raise InvalidListError("YAML parsing failed.") from exc
             else:
                 return dict_
 

@@ -25,9 +25,7 @@ if sys.platform == "linux":
 PYTHON_OK = sys.version_info >= (3, 5)
 INTERACTIVE_MODE = not len(sys.argv) > 1  # CLI flags = non-interactive
 
-INTRO = (
-    "==========================\n" "Red Discord Bot - Launcher\n" "==========================\n"
-)
+INTRO = "==========================\nRed Discord Bot - Launcher\n==========================\n"
 
 IS_WINDOWS = os.name == "nt"
 IS_MAC = sys.platform == "darwin"
@@ -154,6 +152,11 @@ def cli_flag_getter():
         flags = []
         print("Ok, we will now walk through choosing cli flags")
         print("Would you like to specify an owner? (y/n)")
+        print(
+            "Please note that the owner is normally determined automatically from "
+            "the bot's token, so you should only use that if you want to specify a "
+            "user other than that one as the owner."
+        )
         choice = user_choice()
         if choice == "y":
             print("Enter the user id for the owner")
@@ -169,6 +172,10 @@ def cli_flag_getter():
             prefixes = user_choice().split()
             for p in prefixes:
                 flags.append("-p {}".format(p))
+        print("Would you like mentioning the bot to be a prefix? (y/n)")
+        choice = user_choice()
+        if choice == "y":
+            flags.append("--mentionable")
         print(
             "Would you like to disable console input? Please note that features "
             "requiring console interaction may fail to work (y/n)"
@@ -310,16 +317,20 @@ def extras_selector():
     return selected
 
 
-def development_choice(reinstall=False):
+def development_choice(reinstall=False, can_go_back=True):
     while True:
         print("\n")
         print("Do you want to install stable or development version?")
         print("1. Stable version")
         print("2. Development version")
+        if can_go_back:
+            print("\n")
+            print("0. Go back")
         choice = user_choice()
         print("\n")
-        selected = extras_selector()
+
         if choice == "1":
+            selected = extras_selector()
             update_red(
                 dev=False,
                 reinstall=reinstall,
@@ -330,6 +341,7 @@ def development_choice(reinstall=False):
             )
             break
         elif choice == "2":
+            selected = extras_selector()
             update_red(
                 dev=True,
                 reinstall=reinstall,
@@ -339,6 +351,10 @@ def development_choice(reinstall=False):
                 mongo=True if "mongo" in selected else False,
             )
             break
+        elif choice == "0" and can_go_back:
+            return False
+        clear_screen()
+    return True
 
 
 def debug_info():
@@ -365,7 +381,7 @@ def debug_info():
         + "User: {}\n".format(user_who_ran)
     )
     print(info)
-    exit(0)
+    sys.exit(0)
 
 
 def main_menu():
@@ -396,8 +412,8 @@ def main_menu():
                 run_red(instance, autorestart=False, cliflags=cli_flags)
             wait()
         elif choice == "3":
-            development_choice()
-            wait()
+            if development_choice():
+                wait()
         elif choice == "4":
             basic_setup()
             wait()
@@ -420,14 +436,14 @@ def main_menu():
                 print("0. Back")
                 choice = user_choice()
                 if choice == "1":
-                    development_choice(reinstall=True)
-                    wait()
+                    if development_choice(reinstall=True):
+                        wait()
                 elif choice == "2":
                     loop.run_until_complete(reset_red())
                     wait()
                 elif choice == "3":
                     loop.run_until_complete(reset_red())
-                    development_choice(reinstall=True)
+                    development_choice(reinstall=True, can_go_back=False)
                     wait()
                 elif choice == "0":
                     break
@@ -439,7 +455,7 @@ def main_menu():
 def main():
     if not PYTHON_OK:
         raise RuntimeError(
-            "Red requires Python 3.5 or greater. " "Please install the correct version!"
+            "Red requires Python 3.5 or greater. Please install the correct version!"
         )
     if args.debuginfo:  # Check first since the function triggers an exit
         debug_info()

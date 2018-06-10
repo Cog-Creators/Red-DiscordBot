@@ -2,17 +2,13 @@ import asyncio
 import functools
 import os
 import pkgutil
-import shutil
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from subprocess import run as sp_run, PIPE
 from sys import executable
 from typing import Tuple, MutableMapping, Union
 
-from discord.ext import commands
-
-from redbot.core import Config
-from redbot.core import data_manager
+from redbot.core import data_manager, commands
 from redbot.core.utils import safe_delete
 from .errors import *
 from .installable import Installable, InstallableType
@@ -27,10 +23,8 @@ class Repo(RepoJSONMixin):
     GIT_LATEST_COMMIT = "git -C {path} rev-parse {branch}"
     GIT_HARD_RESET = "git -C {path} reset --hard origin/{branch} -q"
     GIT_PULL = "git -C {path} pull -q --ff-only"
-    GIT_DIFF_FILE_STATUS = (
-        "git -C {path} diff --no-commit-id --name-status" " {old_hash} {new_hash}"
-    )
-    GIT_LOG = "git -C {path} log --relative-date --reverse {old_hash}.." " {relative_file_path}"
+    GIT_DIFF_FILE_STATUS = "git -C {path} diff --no-commit-id --name-status {old_hash} {new_hash}"
+    GIT_LOG = "git -C {path} log --relative-date --reverse {old_hash}.. {relative_file_path}"
     GIT_DISCOVER_REMOTE_URL = "git -C {path} config --get remote.origin.url"
 
     PIP_INSTALL = "{python} -m pip install -U -t {target_dir} {reqs}"
@@ -98,7 +92,7 @@ class Repo(RepoJSONMixin):
         )
 
         if p.returncode != 0:
-            raise GitDiffError("Git diff failed for repo at path:" " {}".format(self.folder_path))
+            raise GitDiffError("Git diff failed for repo at path: {}".format(self.folder_path))
 
         stdout = p.stdout.strip().decode().split("\n")
 
@@ -222,7 +216,7 @@ class Repo(RepoJSONMixin):
 
         if p.returncode != 0:
             raise GitException(
-                "Could not determine current branch" " at path: {}".format(self.folder_path)
+                "Could not determine current branch at path: {}".format(self.folder_path)
             )
 
         return p.stdout.decode().strip()
@@ -234,7 +228,7 @@ class Repo(RepoJSONMixin):
         ----------
         branch : `str`, optional
             Override for repo's branch attribute.
-            
+
         Returns
         -------
         str
@@ -383,7 +377,7 @@ class Repo(RepoJSONMixin):
             Directory to install shared libraries to.
         libraries : `tuple` of `Installable`
             A subset of available libraries.
- 
+
         Returns
         -------
         bool
@@ -405,7 +399,7 @@ class Repo(RepoJSONMixin):
 
     async def install_requirements(self, cog: Installable, target_dir: Path) -> bool:
         """Install a cog's requirements.
-        
+
         Requirements will be installed via pip directly into
         :code:`target_dir`.
 
@@ -467,12 +461,12 @@ class Repo(RepoJSONMixin):
     @property
     def available_cogs(self) -> Tuple[Installable]:
         """`tuple` of `installable` : All available cogs in this Repo.
-        
+
         This excludes hidden or shared packages.
         """
         # noinspection PyTypeChecker
         return tuple(
-            [m for m in self.available_modules if m.type == InstallableType.COG and not m.hidden]
+            [m for m in self.available_modules if m.type == InstallableType.COG and not m.disabled]
         )
 
     @property
@@ -495,9 +489,7 @@ class Repo(RepoJSONMixin):
 
 
 class RepoManager:
-
-    def __init__(self, downloader_config: Config):
-        self.downloader_config = downloader_config
+    def __init__(self):
 
         self._repos = {}
 

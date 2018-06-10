@@ -2,6 +2,7 @@ import asyncio
 import datetime
 import importlib
 import itertools
+import json
 import logging
 import os
 import sys
@@ -12,6 +13,7 @@ from pathlib import Path
 from random import SystemRandom
 from string import ascii_letters, digits
 from distutils.version import StrictVersion
+from typing import TYPE_CHECKING
 
 import aiohttp
 import discord
@@ -20,9 +22,7 @@ import pkg_resources
 from redbot.core import __version__
 from redbot.core import checks
 from redbot.core import i18n
-from redbot.core import rpc
 from redbot.core import commands
-from .utils import TYPE_CHECKING
 from .utils.chat_formatting import pagify, box, inline
 
 if TYPE_CHECKING:
@@ -43,20 +43,206 @@ OWNER_DISCLAIMER = (
 _ = i18n.Translator("Core", __file__)
 
 
+class CoreLogic:
+    def __init__(self, bot: "Red"):
+        self.bot = bot
+        self.bot.register_rpc_handler(self._load)
+        self.bot.register_rpc_handler(self._unload)
+        self.bot.register_rpc_handler(self._reload)
+        self.bot.register_rpc_handler(self._name)
+        self.bot.register_rpc_handler(self._prefixes)
+        self.bot.register_rpc_handler(self._version_info)
+        self.bot.register_rpc_handler(self._invite_url)
+
+    async def _load(self, cog_names: list):
+        """
+        Loads cogs by name.
+        Parameters
+        ----------
+        cog_names : list of str
+
+        Returns
+        -------
+        tuple
+            3 element tuple of loaded, failed, and not found cogs.
+        """
+        failed_packages = []
+        loaded_packages = []
+        notfound_packages = []
+
+        bot = self.bot
+
+        cogspecs = []
+
+        for name in cog_names:
+            try:
+                spec = await bot.cog_mgr.find_cog(name)
+                cogspecs.append((spec, name))
+            except RuntimeError:
+                notfound_packages.append(name)
+
+        for spec, name in cogspecs:
+            try:
+                self._cleanup_and_refresh_modules(spec.name)
+                await bot.load_extension(spec)
+            except Exception as e:
+                log.exception("Package loading failed", exc_info=e)
+
+                exception_log = "Exception during loading of cog\n"
+                exception_log += "".join(traceback.format_exception(type(e), e, e.__traceback__))
+                bot._last_exception = exception_log
+                failed_packages.append(name)
+            else:
+                await bot.add_loaded_package(name)
+                loaded_packages.append(name)
+        return loaded_packages, failed_packages, notfound_packages
+
+    def _cleanup_and_refresh_modules(self, module_name: str):
+        """Interally reloads modules so that changes are detected"""
+        splitted = module_name.split(".")
+
+        def maybe_reload(new_name):
+            try:
+                lib = sys.modules[new_name]
+            except KeyError:
+                pass
+            else:
+                importlib._bootstrap._exec(lib.__spec__, lib)
+
+        modules = itertools.accumulate(splitted, "{}.{}".format)
+        for m in modules:
+            maybe_reload(m)
+
+        children = {name: lib for name, lib in sys.modules.items() if name.startswith(module_name)}
+        for child_name, lib in children.items():
+            importlib._bootstrap._exec(lib.__spec__, lib)
+
+    def _get_package_strings(self, packages: list, fmt: str, other: tuple = None):
+        """
+        Gets the strings needed for the load, unload and reload commands
+        """
+        packages = [inline(name) for name in packages]
+
+        if other is None:
+            other = ("", "")
+        plural = "s" if len(packages) > 1 else ""
+        use_and, other = ("", other[0]) if len(packages) == 1 else (" and ", other[1])
+        packages_string = ", ".join(packages[:-1]) + use_and + packages[-1]
+
+        form = {"plural": plural, "packs": packages_string, "other": other}
+        final_string = fmt.format(**form)
+        return final_string
+
+    async def _unload(self, cog_names: list):
+        """
+        Unloads cogs with the given names.
+
+        Parameters
+        ----------
+        cog_names : list of str
+
+        Returns
+        -------
+        tuple
+            2 element tuple of successful unloads and failed unloads.
+        """
+        failed_packages = []
+        unloaded_packages = []
+
+        bot = self.bot
+
+        for name in cog_names:
+            if name in bot.extensions:
+                bot.unload_extension(name)
+                await bot.remove_loaded_package(name)
+                unloaded_packages.append(name)
+            else:
+                failed_packages.append(name)
+
+        return unloaded_packages, failed_packages
+
+    async def _reload(self, cog_names):
+        await self._unload(cog_names)
+
+        loaded, load_failed, not_found = await self._load(cog_names)
+
+        return loaded, load_failed, not_found
+
+    async def _name(self, name: str = None):
+        """
+        Gets or sets the bot's username.
+
+        Parameters
+        ----------
+        name : str
+            If passed, the bot will change it's username.
+
+        Returns
+        -------
+        str
+            The current (or new) username of the bot.
+        """
+        if name is not None:
+            await self.bot.user.edit(username=name)
+
+        return self.bot.user.name
+
+    async def _prefixes(self, prefixes: list = None):
+        """
+        Gets or sets the bot's global prefixes.
+
+        Parameters
+        ----------
+        prefixes : list of str
+            If passed, the bot will set it's global prefixes.
+
+        Returns
+        -------
+        list of str
+            The current (or new) list of prefixes.
+        """
+        if prefixes:
+            prefixes = sorted(prefixes, reverse=True)
+            await self.bot.db.prefix.set(prefixes)
+        return await self.bot.db.prefix()
+
+    async def _version_info(self):
+        """
+        Version information for Red and discord.py
+
+        Returns
+        -------
+        dict
+            `redbot` and `discordpy` keys containing version information for both.
+        """
+        return {"redbot": __version__, "discordpy": discord.__version__}
+
+    async def _invite_url(self):
+        """
+        Generates the invite URL for the bot.
+
+        Returns
+        -------
+        str
+            Invite URL.
+        """
+        if self.bot.user.bot:
+            app_info = await self.bot.application_info()
+            return discord.utils.oauth_url(app_info.id)
+        return "Not a bot account!"
+
+
 @i18n.cog_i18n(_)
-class Core:
+class Core(CoreLogic):
     """Commands related to core functions"""
 
     def __init__(self, bot):
-        self.bot = bot  # type: Red
+        super().__init__(bot)
 
     @commands.command(hidden=True)
     async def ping(self, ctx):
         """Pong."""
-        if ctx.guild is None or ctx.channel.permissions_for(ctx.guild.me).add_reactions:
-            await ctx.message.add_reaction("\U0001f3d3")  # ping pong paddle
-        else:
-            await ctx.maybe_send_embed("Pong.")
+        await ctx.send("Pong.")
 
     @commands.command()
     async def info(self, ctx: commands.Context):
@@ -101,7 +287,7 @@ class Core:
         embed.add_field(name="About Red", value=about, inline=False)
 
         embed.set_footer(
-            text="Bringing joy since 02 Jan 2016 (over " "{} days ago!)".format(days_since)
+            text="Bringing joy since 02 Jan 2016 (over {} days ago!)".format(days_since)
         )
         try:
             await ctx.send(embed=embed)
@@ -135,7 +321,7 @@ class Core:
 
         return fmt.format(d=days, h=hours, m=minutes, s=seconds)
 
-    @commands.group()
+    @commands.group(autohelp=True)
     async def embedset(self, ctx: commands.Context):
         """
         Commands for toggling embeds on or off.
@@ -155,7 +341,6 @@ class Core:
             user_setting = await self.bot.db.user(ctx.author).embeds()
             text += "User setting: {}".format(user_setting)
             await ctx.send(box(text))
-            await ctx.send_help()
 
     @embedset.command(name="global")
     @checks.is_owner()
@@ -238,8 +423,7 @@ class Core:
     async def invite(self, ctx):
         """Show's Red's invite url"""
         if self.bot.user.bot:
-            app_info = await self.bot.application_info()
-            await ctx.author.send(discord.utils.oauth_url(app_info.id))
+            await ctx.author.send(await self._invite_url())
         else:
             await ctx.send("I'm not a bot account. I have no invite URL.")
 
@@ -251,7 +435,7 @@ class Core:
         author = ctx.author
         guild = ctx.guild
 
-        await ctx.send("Are you sure you want me to leave this server?" " Type yes to confirm.")
+        await ctx.send("Are you sure you want me to leave this server? Type yes to confirm.")
 
         def conf_check(m):
             return m.author == author
@@ -321,149 +505,70 @@ class Core:
     async def load(self, ctx, *, cog_name: str):
         """Loads packages"""
 
-        failed_packages = []
-        loaded_packages = []
-        notfound_packages = []
+        cog_names = [c.strip() for c in cog_name.split(" ")]
+        async with ctx.typing():
+            loaded, failed, not_found = await self._load(cog_names)
 
-        cognames = [c.strip() for c in cog_name.split(" ")]
-        cogspecs = []
-
-        for c in cognames:
-            try:
-                spec = await ctx.bot.cog_mgr.find_cog(c)
-                cogspecs.append((spec, c))
-            except RuntimeError:
-                notfound_packages.append(inline(c))
-                # await ctx.send(_("No module named '{}' was found in any"
-                #                 " cog path.").format(c))
-
-        if len(cogspecs) > 0:
-            for spec, name in cogspecs:
-                try:
-                    await ctx.bot.load_extension(spec)
-                except Exception as e:
-                    log.exception("Package loading failed", exc_info=e)
-
-                    exception_log = "Exception in command '{}'\n" "".format(
-                        ctx.command.qualified_name
-                    )
-                    exception_log += "".join(
-                        traceback.format_exception(type(e), e, e.__traceback__)
-                    )
-                    self.bot._last_exception = exception_log
-                    failed_packages.append(inline(name))
-                else:
-                    await ctx.bot.add_loaded_package(name)
-                    loaded_packages.append(inline(name))
-
-        if loaded_packages:
+        if loaded:
             fmt = "Loaded {packs}"
-            formed = self.get_package_strings(loaded_packages, fmt)
-            await ctx.send(_(formed))
+            formed = self._get_package_strings(loaded, fmt)
+            await ctx.send(formed)
 
-        if failed_packages:
+        if failed:
             fmt = (
                 "Failed to load package{plural} {packs}. Check your console or "
                 "logs for details."
             )
-            formed = self.get_package_strings(failed_packages, fmt)
-            await ctx.send(_(formed))
+            formed = self._get_package_strings(failed, fmt)
+            await ctx.send(formed)
 
-        if notfound_packages:
+        if not_found:
             fmt = "The package{plural} {packs} {other} not found in any cog path."
-            formed = self.get_package_strings(notfound_packages, fmt, ("was", "were"))
-            await ctx.send(_(formed))
+            formed = self._get_package_strings(not_found, fmt, ("was", "were"))
+            await ctx.send(formed)
 
-    @commands.group()
+    @commands.command()
     @checks.is_owner()
     async def unload(self, ctx, *, cog_name: str):
         """Unloads packages"""
-        cognames = [c.strip() for c in cog_name.split(" ")]
-        failed_packages = []
-        unloaded_packages = []
 
-        for c in cognames:
-            if c in ctx.bot.extensions:
-                ctx.bot.unload_extension(c)
-                await ctx.bot.remove_loaded_package(c)
-                unloaded_packages.append(inline(c))
-            else:
-                failed_packages.append(inline(c))
+        cog_names = [c.strip() for c in cog_name.split(" ")]
 
-        if unloaded_packages:
+        unloaded, failed = await self._unload(cog_names)
+
+        if unloaded:
             fmt = "Package{plural} {packs} {other} unloaded."
-            formed = self.get_package_strings(unloaded_packages, fmt, ("was", "were"))
+            formed = self._get_package_strings(unloaded, fmt, ("was", "were"))
             await ctx.send(_(formed))
 
-        if failed_packages:
+        if failed:
             fmt = "The package{plural} {packs} {other} not loaded."
-            formed = self.get_package_strings(failed_packages, fmt, ("is", "are"))
-            await ctx.send(_(formed))
+            formed = self._get_package_strings(failed, fmt, ("is", "are"))
+            await ctx.send(formed)
 
     @commands.command(name="reload")
     @checks.is_owner()
-    async def _reload(self, ctx, *, cog_name: str):
+    async def reload_(self, ctx, *, cog_name: str):
         """Reloads packages"""
 
-        cognames = [c.strip() for c in cog_name.split(" ")]
+        cog_names = [c.strip() for c in cog_name.split(" ")]
+        async with ctx.typing():
+            loaded, failed, not_found = await self._reload(cog_names)
 
-        for c in cognames:
-            ctx.bot.unload_extension(c)
-
-        cogspecs = []
-        failed_packages = []
-        loaded_packages = []
-        notfound_packages = []
-
-        for c in cognames:
-            try:
-                spec = await ctx.bot.cog_mgr.find_cog(c)
-                cogspecs.append((spec, c))
-            except RuntimeError:
-                notfound_packages.append(inline(c))
-
-        for spec, name in cogspecs:
-            try:
-                self.cleanup_and_refresh_modules(spec.name)
-                await ctx.bot.load_extension(spec)
-                loaded_packages.append(inline(name))
-            except Exception as e:
-                log.exception("Package reloading failed", exc_info=e)
-
-                exception_log = "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
-                exception_log += "".join(traceback.format_exception(type(e), e, e.__traceback__))
-                self.bot._last_exception = exception_log
-
-                failed_packages.append(inline(name))
-
-        if loaded_packages:
+        if loaded:
             fmt = "Package{plural} {packs} {other} reloaded."
-            formed = self.get_package_strings(loaded_packages, fmt, ("was", "were"))
-            await ctx.send(_(formed))
+            formed = self._get_package_strings(loaded, fmt, ("was", "were"))
+            await ctx.send(formed)
 
-        if failed_packages:
-            fmt = "Failed to reload package{plural} {packs}. Check your " "logs for details"
-            formed = self.get_package_strings(failed_packages, fmt)
-            await ctx.send(_(formed))
+        if failed:
+            fmt = "Failed to reload package{plural} {packs}. Check your logs for details"
+            formed = self._get_package_strings(failed, fmt)
+            await ctx.send(formed)
 
-        if notfound_packages:
+        if not_found:
             fmt = "The package{plural} {packs} {other} not found in any cog path."
-            formed = self.get_package_strings(notfound_packages, fmt, ("was", "were"))
-            await ctx.send(_(formed))
-
-    def get_package_strings(self, packages: list, fmt: str, other: tuple = None):
-        """
-        Gets the strings needed for the load, unload and reload commands
-        """
-        if other is None:
-            other = ("", "")
-        plural = "s" if len(packages) > 1 else ""
-        use_and, other = ("", other[0]) if len(packages) == 1 else (" and ", other[1])
-        packages_string = ", ".join(packages[:-1]) + use_and + packages[-1]
-
-        form = {"plural": plural, "packs": packages_string, "other": other}
-        final_string = fmt.format(**form)
-        return final_string
+            formed = self._get_package_strings(not_found, fmt, ("was", "were"))
+            await ctx.send(formed)
 
     @commands.command(name="shutdown")
     @checks.is_owner()
@@ -493,55 +598,32 @@ class Core:
             pass
         await ctx.bot.shutdown(restart=True)
 
-    def cleanup_and_refresh_modules(self, module_name: str):
-        """Interally reloads modules so that changes are detected"""
-        splitted = module_name.split(".")
-
-        def maybe_reload(new_name):
-            try:
-                lib = sys.modules[new_name]
-            except KeyError:
-                pass
-            else:
-                importlib._bootstrap._exec(lib.__spec__, lib)
-
-        modules = itertools.accumulate(splitted, "{}.{}".format)
-        for m in modules:
-            maybe_reload(m)
-
-        children = {name: lib for name, lib in sys.modules.items() if name.startswith(module_name)}
-        for child_name, lib in children.items():
-            importlib._bootstrap._exec(lib.__spec__, lib)
-
-    @commands.group(name="set")
+    @commands.group(name="set", autohelp=True)
     async def _set(self, ctx):
         """Changes Red's settings"""
         if ctx.invoked_subcommand is None:
-            admin_role_id = await ctx.bot.db.guild(ctx.guild).admin_role()
-            admin_role = discord.utils.get(ctx.guild.roles, id=admin_role_id)
-            mod_role_id = await ctx.bot.db.guild(ctx.guild).mod_role()
-            mod_role = discord.utils.get(ctx.guild.roles, id=mod_role_id)
-            prefixes = await ctx.bot.db.guild(ctx.guild).prefix()
+            if ctx.guild:
+                admin_role_id = await ctx.bot.db.guild(ctx.guild).admin_role()
+                admin_role = discord.utils.get(ctx.guild.roles, id=admin_role_id) or "Not set"
+                mod_role_id = await ctx.bot.db.guild(ctx.guild).mod_role()
+                mod_role = discord.utils.get(ctx.guild.roles, id=mod_role_id) or "Not set"
+                prefixes = await ctx.bot.db.guild(ctx.guild).prefix()
+                guild_settings = f"Admin role: {admin_role}\nMod role: {mod_role}\n"
+            else:
+                guild_settings = ""
+                prefixes = None  # This is correct. The below can happen in a guild.
             if not prefixes:
                 prefixes = await ctx.bot.db.prefix()
             locale = await ctx.bot.db.locale()
 
+            prefix_string = " ".join(prefixes)
             settings = (
-                "{} Settings:\n\n"
-                "Prefixes: {}\n"
-                "Admin role: {}\n"
-                "Mod role: {}\n"
-                "Locale: {}"
-                "".format(
-                    ctx.bot.user.name,
-                    " ".join(prefixes),
-                    admin_role.name if admin_role else "Not set",
-                    mod_role.name if mod_role else "Not set",
-                    locale,
-                )
+                f"{ctx.bot.user.name} Settings:\n\n"
+                f"Prefixes: {prefix_string}\n"
+                f"{guild_settings}"
+                f"Locale: {locale}"
             )
             await ctx.send(box(settings))
-            await ctx.send_help()
 
     @_set.command()
     @checks.guildowner()
@@ -558,6 +640,75 @@ class Core:
         """Sets the mod role for this server"""
         await ctx.bot.db.guild(ctx.guild).mod_role.set(role.id)
         await ctx.send(_("The mod role for this guild has been set."))
+
+    @_set.command(aliases=["usebotcolor"])
+    @checks.guildowner()
+    @commands.guild_only()
+    async def usebotcolour(self, ctx):
+        """
+        Toggle whether to use the bot owner-configured colour for embeds.
+
+        Default is to not use the bot's configured colour, in which case the
+        colour used will be the colour of the bot's top role.
+        """
+        current_setting = await ctx.bot.db.guild(ctx.guild).use_bot_color()
+        await ctx.bot.db.guild(ctx.guild).use_bot_color.set(not current_setting)
+        await ctx.send(
+            _("The bot {} use its configured color for embeds.").format(
+                _("will not") if current_setting else _("will")
+            )
+        )
+
+    @_set.command()
+    @checks.guildowner()
+    @commands.guild_only()
+    async def serverfuzzy(self, ctx):
+        """
+        Toggle whether to enable fuzzy command search for the server.
+
+        Default is for fuzzy command search to be disabled.
+        """
+        current_setting = await ctx.bot.db.guild(ctx.guild).fuzzy()
+        await ctx.bot.db.guild(ctx.guild).fuzzy.set(not current_setting)
+        await ctx.send(
+            _("Fuzzy command search has been {} for this server.").format(
+                _("disabled") if current_setting else _("enabled")
+            )
+        )
+
+    @_set.command()
+    @checks.is_owner()
+    async def fuzzy(self, ctx):
+        """
+        Toggle whether to enable fuzzy command search in DMs.
+
+        Default is for fuzzy command search to be disabled.
+        """
+        current_setting = await ctx.bot.db.fuzzy()
+        await ctx.bot.db.fuzzy.set(not current_setting)
+        await ctx.send(
+            _("Fuzzy command search has been {} in DMs.").format(
+                _("disabled") if current_setting else _("enabled")
+            )
+        )
+
+    @_set.command(aliases=["color"])
+    @checks.is_owner()
+    async def colour(self, ctx, *, colour: discord.Colour = None):
+        """
+        Sets a default colour to be used for the bot's embeds.
+
+        Acceptable values cor the colour parameter can be found at:
+
+        http://discordpy.readthedocs.io/en/rewrite/ext/commands/api.html#discord.ext.commands.ColourConverter
+        """
+        if colour is None:
+            ctx.bot.color = discord.Color.red()
+            await ctx.bot.db.color.set(discord.Color.red().value)
+            return await ctx.send(_("The color has been reset."))
+        ctx.bot.color = colour
+        await ctx.bot.db.color.set(colour.value)
+        await ctx.send(_("The color has been set."))
 
     @_set.command()
     @checks.is_owner()
@@ -680,7 +831,7 @@ class Core:
     async def _username(self, ctx, *, username: str):
         """Sets Red's username"""
         try:
-            await ctx.bot.user.edit(username=username)
+            await self._name(name=username)
         except discord.HTTPException:
             await ctx.send(
                 _(
@@ -701,7 +852,7 @@ class Core:
         try:
             await ctx.guild.me.edit(nick=nickname)
         except discord.Forbidden:
-            await ctx.send(_("I lack the permissions to change my own " "nickname."))
+            await ctx.send(_("I lack the permissions to change my own nickname."))
         else:
             await ctx.send("Done.")
 
@@ -712,8 +863,7 @@ class Core:
         if not prefixes:
             await ctx.send_help()
             return
-        prefixes = sorted(prefixes, reverse=True)
-        await ctx.bot.db.prefix.set(prefixes)
+        await self._prefixes(prefixes)
         await ctx.send(_("Prefix set."))
 
     @_set.command(aliases=["serverprefixes"])
@@ -745,7 +895,7 @@ class Core:
 
         for i in range(length):
             token += random.choice(chars)
-        log.info("{0} ({0.id}) requested to be set as owner." "".format(ctx.author))
+        log.info("{0} ({0.id}) requested to be set as owner.".format(ctx.author))
         print(_("\nVerification token:"))
         print(token)
 
@@ -831,12 +981,11 @@ class Core:
             ctx.bot.disable_sentry()
             await ctx.send(_("Done. Sentry logging is now disabled."))
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @checks.is_owner()
     async def helpset(self, ctx: commands.Context):
         """Manage settings for the help command."""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @helpset.command(name="pagecharlimit")
     async def helpset_pagecharlimt(self, ctx: commands.Context, limit: int):
@@ -876,6 +1025,30 @@ class Core:
         await ctx.bot.db.help.max_pages_in_guild.set(pages)
         await ctx.send(_("Done. The page limit has been set to {}.").format(pages))
 
+    @helpset.command(name="tagline")
+    async def helpset_tagline(self, ctx: commands.Context, *, tagline: str = None):
+        """
+        Set the tagline to be used.
+
+        This setting only applies to embedded help. If no tagline is
+        specified, the default will be used instead.
+        """
+        if tagline is None:
+            await ctx.bot.db.help.tagline.set("")
+            return await ctx.send(_("The tagline has been reset."))
+
+        if len(tagline) > 2048:
+            await ctx.send(
+                _(
+                    "Your tagline is too long! Please shorten it to be "
+                    "no more than 2048 characters long."
+                )
+            )
+            return
+
+        await ctx.bot.db.help.tagline.set(tagline)
+        await ctx.send(_("The tagline has been set to {}.").format(tagline[:1900]))
+
     @commands.command()
     @checks.is_owner()
     async def listlocales(self, ctx: commands.Context):
@@ -894,7 +1067,7 @@ class Core:
 
     @commands.command()
     @checks.is_owner()
-    async def backup(self, ctx):
+    async def backup(self, ctx, backup_path: str = None):
         """Creates a backup of all data for the instance."""
         from redbot.core.data_manager import basic_config, instance_name
         from redbot.core.drivers.red_json import JSON
@@ -922,14 +1095,57 @@ class Core:
             instance_name, ctx.message.created_at.strftime("%Y-%m-%d %H-%M-%S")
         )
         if data_dir.exists():
-            home = data_dir.home()
-            backup_file = home / backup_filename
-            os.chdir(str(data_dir.parent))
+            if not backup_path:
+                backup_pth = data_dir.home()
+            else:
+                backup_pth = Path(backup_path)
+            backup_file = backup_pth / backup_filename
+
+            to_backup = []
+            exclusions = [
+                "__pycache__",
+                "Lavalink.jar",
+                os.path.join("Downloader", "lib"),
+                os.path.join("CogManager", "cogs"),
+                os.path.join("RepoManager", "repos"),
+            ]
+            downloader_cog = ctx.bot.get_cog("Downloader")
+            if downloader_cog and hasattr(downloader_cog, "_repo_manager"):
+                repo_output = []
+                repo_mgr = downloader_cog._repo_manager
+                for repo in repo_mgr._repos.values():
+                    repo_output.append({"url": repo.url, "name": repo.name, "branch": repo.branch})
+                repo_filename = data_dir / "cogs" / "RepoManager" / "repos.json"
+                with open(str(repo_filename), "w") as f:
+                    f.write(json.dumps(repo_output, indent=4))
+            instance_data = {instance_name: basic_config}
+            instance_file = data_dir / "instance.json"
+            with open(str(instance_file), "w") as instance_out:
+                instance_out.write(json.dumps(instance_data, indent=4))
+            for f in data_dir.glob("**/*"):
+                if not any(ex in str(f) for ex in exclusions):
+                    to_backup.append(f)
             with tarfile.open(str(backup_file), "w:gz") as tar:
-                tar.add(data_dir.stem)
+                for f in to_backup:
+                    tar.add(str(f), recursive=False)
+            print(str(backup_file))
             await ctx.send(
-                _("A backup has been made of this instance. It is at {}.").format(backup_file)
+                _("A backup has been made of this instance. It is at {}.").format((backup_file))
             )
+            await ctx.send(_("Would you like to receive a copy via DM? (y/n)"))
+
+            def same_author_check(m):
+                return m.author == ctx.author and m.channel == ctx.channel
+
+            try:
+                msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=60)
+            except asyncio.TimeoutError:
+                await ctx.send(_("Ok then."))
+            else:
+                if msg.content.lower().strip() == "y":
+                    await ctx.author.send(
+                        _("Here's a copy of the backup"), file=discord.File(str(backup_file))
+                    )
         else:
             await ctx.send(_("That directory doesn't seem to exist..."))
 
@@ -955,7 +1171,7 @@ class Core:
         prefixes = await ctx.bot.command_prefix(ctx.bot, fake_message(guild=None))
         prefix = prefixes[0]
 
-        content = _("Use `{}dm {} <text>` to reply to this user" "").format(prefix, author.id)
+        content = _("Use `{}dm {} <text>` to reply to this user").format(prefix, author.id)
 
         description = _("Sent by {} {}").format(author, source)
 
@@ -976,7 +1192,7 @@ class Core:
                 await owner.send(content, embed=e)
             except discord.InvalidArgument:
                 await ctx.send(
-                    _("I cannot send your message, I'm unable to find " "my owner... *sigh*")
+                    _("I cannot send your message, I'm unable to find my owner... *sigh*")
                 )
             except:
                 await ctx.send(_("I'm unable to deliver your message. Sorry."))
@@ -988,7 +1204,7 @@ class Core:
                 await owner.send("{}\n{}".format(content, box(msg_text)))
             except discord.InvalidArgument:
                 await ctx.send(
-                    _("I cannot send your message, I'm unable to find " "my owner... *sigh*")
+                    _("I cannot send your message, I'm unable to find my owner... *sigh*")
                 )
             except:
                 await ctx.send(_("I'm unable to deliver your message. Sorry."))
@@ -1033,7 +1249,7 @@ class Core:
                 await destination.send(embed=e)
             except:
                 await ctx.send(
-                    _("Sorry, I couldn't deliver your message " "to {}").format(destination)
+                    _("Sorry, I couldn't deliver your message to {}").format(destination)
                 )
             else:
                 await ctx.send(_("Message delivered to {}").format(destination))
@@ -1043,19 +1259,18 @@ class Core:
                 await destination.send("{}\n{}".format(box(response), content))
             except:
                 await ctx.send(
-                    _("Sorry, I couldn't deliver your message " "to {}").format(destination)
+                    _("Sorry, I couldn't deliver your message to {}").format(destination)
                 )
             else:
                 await ctx.send(_("Message delivered to {}").format(destination))
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @checks.is_owner()
     async def whitelist(self, ctx):
         """
         Whitelist management commands.
         """
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @whitelist.command(name="add")
     async def whitelist_add(self, ctx, user: discord.User):
@@ -1077,7 +1292,7 @@ class Core:
 
         msg = _("Whitelisted Users:")
         for user in curr_list:
-            msg.append("\n\t- {}".format(user))
+            msg += "\n\t- {}".format(user)
 
         for page in pagify(msg):
             await ctx.send(box(page))
@@ -1107,14 +1322,13 @@ class Core:
         await ctx.bot.db.whitelist.set([])
         await ctx.send(_("Whitelist has been cleared."))
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @checks.is_owner()
     async def blacklist(self, ctx):
         """
         blacklist management commands.
         """
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @blacklist.command(name="add")
     async def blacklist_add(self, ctx, user: discord.User):
@@ -1140,7 +1354,7 @@ class Core:
 
         msg = _("blacklisted Users:")
         for user in curr_list:
-            msg.append("\n\t- {}".format(user))
+            msg += "\n\t- {}".format(user)
 
         for page in pagify(msg):
             await ctx.send(box(page))
@@ -1170,6 +1384,177 @@ class Core:
         await ctx.bot.db.blacklist.set([])
         await ctx.send(_("blacklist has been cleared."))
 
+    @commands.group()
+    @commands.guild_only()
+    @checks.admin_or_permissions(administrator=True)
+    async def localwhitelist(self, ctx):
+        """
+        Whitelist management commands.
+        """
+        if ctx.invoked_subcommand is None:
+            await ctx.send_help()
+
+    @localwhitelist.command(name="add")
+    async def localwhitelist_add(self, ctx, *, user_or_role: str):
+        """
+        Adds a user or role to the whitelist.
+        """
+        try:
+            obj = await commands.MemberConverter().convert(ctx, user_or_role)
+        except commands.BadArgument:
+            obj = await commands.RoleConverter().convert(ctx, user_or_role)
+            user = False
+        else:
+            user = True
+        async with ctx.bot.db.guild(ctx.guild).whitelist() as curr_list:
+            if obj.id not in curr_list:
+                curr_list.append(obj.id)
+
+        if user:
+            await ctx.send(_("User added to whitelist."))
+        else:
+            await ctx.send(_("Role added to whitelist."))
+
+    @localwhitelist.command(name="list")
+    async def localwhitelist_list(self, ctx):
+        """
+        Lists whitelisted users and roles.
+        """
+        curr_list = await ctx.bot.db.guild(ctx.guild).whitelist()
+
+        msg = _("Whitelisted Users and roles:")
+        for obj in curr_list:
+            msg += "\n\t- {}".format(obj)
+
+        for page in pagify(msg):
+            await ctx.send(box(page))
+
+    @localwhitelist.command(name="remove")
+    async def localwhitelist_remove(self, ctx, *, user_or_role: str):
+        """
+        Removes user or role from whitelist.
+        """
+        try:
+            obj = await commands.MemberConverter().convert(ctx, user_or_role)
+        except commands.BadArgument:
+            obj = await commands.RoleConverter().convert(ctx, user_or_role)
+            user = False
+        else:
+            user = True
+
+        removed = False
+        async with ctx.bot.db.guild(ctx.guild).whitelist() as curr_list:
+            if obj.id in curr_list:
+                removed = True
+                curr_list.remove(obj.id)
+
+        if removed:
+            if user:
+                await ctx.send(_("User has been removed from whitelist."))
+            else:
+                await ctx.send(_("Role has been removed from whitelist."))
+        else:
+            if user:
+                await ctx.send(_("User was not in the whitelist."))
+            else:
+                await ctx.send(_("Role was not in the whitelist."))
+
+    @localwhitelist.command(name="clear")
+    async def localwhitelist_clear(self, ctx):
+        """
+        Clears the whitelist.
+        """
+        await ctx.bot.db.guild(ctx.guild).whitelist.set([])
+        await ctx.send(_("Whitelist has been cleared."))
+
+    @commands.group()
+    @commands.guild_only()
+    @checks.admin_or_permissions(administrator=True)
+    async def localblacklist(self, ctx):
+        """
+        blacklist management commands.
+        """
+        if ctx.invoked_subcommand is None:
+            await ctx.send_help()
+
+    @localblacklist.command(name="add")
+    async def localblacklist_add(self, ctx, *, user_or_role: str):
+        """
+        Adds a user or role to the blacklist.
+        """
+        try:
+            obj = await commands.MemberConverter().convert(ctx, user_or_role)
+        except commands.BadArgument:
+            obj = await commands.RoleConverter().convert(ctx, user_or_role)
+            user = False
+        else:
+            user = True
+
+        if user and await ctx.bot.is_owner(obj):
+            ctx.send(_("You cannot blacklist an owner!"))
+            return
+
+        async with ctx.bot.db.guild(ctx.guild).blacklist() as curr_list:
+            if obj.id not in curr_list:
+                curr_list.append(obj.id)
+
+        if user:
+            await ctx.send(_("User added to blacklist."))
+        else:
+            await ctx.send(_("Role added to blacklist."))
+
+    @localblacklist.command(name="list")
+    async def localblacklist_list(self, ctx):
+        """
+        Lists blacklisted users and roles.
+        """
+        curr_list = await ctx.bot.db.guild(ctx.guild).blacklist()
+
+        msg = _("blacklisted Users and Roles:")
+        for obj in curr_list:
+            msg += "\n\t- {}".format(obj)
+
+        for page in pagify(msg):
+            await ctx.send(box(page))
+
+    @localblacklist.command(name="remove")
+    async def localblacklist_remove(self, ctx, *, user_or_role: str):
+        """
+        Removes user or role from blacklist.
+        """
+        removed = False
+        try:
+            obj = await commands.MemberConverter().convert(ctx, user_or_role)
+        except commands.BadArgument:
+            obj = await commands.RoleConverter().convert(ctx, user_or_role)
+            user = False
+        else:
+            user = True
+
+        async with ctx.bot.db.guild(ctx.guild).blacklist() as curr_list:
+            if obj.id in curr_list:
+                removed = True
+                curr_list.remove(obj.id)
+
+        if removed:
+            if user:
+                await ctx.send(_("User has been removed from blacklist."))
+            else:
+                await ctx.send(_("Role has been removed from blacklist."))
+        else:
+            if user:
+                await ctx.send(_("User was not in the blacklist."))
+            else:
+                await ctx.send(_("Role was not in the blacklist."))
+
+    @localblacklist.command(name="clear")
+    async def localblacklist_clear(self, ctx):
+        """
+        Clears the blacklist.
+        """
+        await ctx.bot.db.guild(ctx.guild).blacklist.set([])
+        await ctx.send(_("blacklist has been cleared."))
+
     # RPC handlers
     async def rpc_load(self, request):
         cog_name = request.params[0]
@@ -1178,7 +1563,7 @@ class Core:
         if spec is None:
             raise LookupError("No such cog found.")
 
-        self.cleanup_and_refresh_modules(spec.name)
+        self._cleanup_and_refresh_modules(spec.name)
 
         self.bot.load_extension(spec)
 
