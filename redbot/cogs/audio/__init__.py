@@ -53,4 +53,5 @@ async def setup(bot: commands.Bot):
         await start_lavalink_server(bot.loop)
 
     bot.add_cog(cog)
+    bot.loop.create_task(cog.disconnect_timer())
     bot.loop.create_task(cog.init_config())
