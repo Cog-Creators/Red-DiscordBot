@@ -1,15 +1,14 @@
 import pytest
 
 from redbot.cogs.alias import Alias
+from redbot.core import Config
 
 
 @pytest.fixture()
-def alias(config):
-    import redbot.cogs.alias.alias
-
-    redbot.cogs.alias.alias.Config.get_conf = lambda *args, **kwargs: config
-
-    return Alias(None)
+def alias(config, monkeypatch):
+    with monkeypatch.context() as m:
+        m.setattr(Config, "get_conf", lambda *args, **kwargs: config)
+        return Alias(None)
 
 
 def test_is_valid_alias_name(alias):
