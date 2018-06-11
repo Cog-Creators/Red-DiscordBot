@@ -59,29 +59,29 @@ class Reports:
     @commands.group(name="reportset", autohelp=True)
     async def reportset(self, ctx: commands.Context):
         """
-        settings for reports
+        Settings for the report system
         """
         pass
 
     @checks.admin_or_permissions(manage_guild=True)
     @reportset.command(name="output")
     async def setoutput(self, ctx: commands.Context, channel: discord.TextChannel):
-        """sets the output channel"""
+        """Set the channel where reports will show up"""
         await self.config.guild(ctx.guild).output_channel.set(channel.id)
-        await ctx.send(_("Report Channel Set."))
+        await ctx.send(_("The report channel has been set."))
 
     @checks.admin_or_permissions(manage_guild=True)
-    @reportset.command(name="toggleactive")
+    @reportset.command(name="toggle")
     async def report_toggle(self, ctx: commands.Context):
-        """Toggles whether the Reporting tool is enabled or not"""
+        """Enables or Disables reporting for the server"""
 
         active = await self.config.guild(ctx.guild).active()
         active = not active
         await self.config.guild(ctx.guild).active.set(active)
         if active:
-            await ctx.send(_("Reporting now enabled"))
+            await ctx.send(_("Reporting is now enabled"))
         else:
-            await ctx.send(_("Reporting disabled."))
+            await ctx.send(_("Reporting is now disabled."))
 
     async def internal_filter(self, m: discord.Member, mod=False, perms=None):
         ret = False
@@ -201,10 +201,8 @@ class Reports:
     @commands.group(name="report", invoke_without_command=True)
     async def report(self, ctx: commands.Context, *, _report: str = ""):
         """
-        Follow the prompts to make a report
-
-        optionally use with a report message
-        to use it non interactively
+        Use [p]report <text> to send a report
+		or alternatively [p]report for DM reporting
         """
         author = ctx.author
         guild = ctx.guild
@@ -224,14 +222,16 @@ class Reports:
         if self.antispam[guild.id][author.id].spammy:
             return await author.send(
                 _(
-                    "You've sent a few too many of these recently. "
-                    "Contact a server admin to resolve this, or try again "
+                    "You've sent too many reports recently. "
+                    "Please contact a server admin if this is important matter, or please wait and try again "
                     "later."
                 )
             )
         if author.id in self.user_cache:
             return await author.send(
-                _("Please finish making your prior report before making an additional one")
+                _(
+                    "Please finish making your prior report before trying to make an additional one!"
+                )
             )
         self.user_cache.append(author.id)
 
@@ -263,7 +263,9 @@ class Reports:
 
         with contextlib.suppress(discord.Forbidden, discord.HTTPException):
             if val is None:
-                await author.send(_("There was an error sending your report."))
+                await author.send(
+                    _("There was an error sending your report, please contact a server admin.")
+                )
             else:
                 await author.send(_("Your report was submitted. (Ticket #{})").format(val))
                 self.antispam[guild.id][author.id].stamp()
@@ -357,8 +359,7 @@ class Reports:
         try:
             m = await tun.communicate(message=ctx.message, topic=topic, skip_message_content=True)
         except discord.Forbidden:
-            await ctx.send(_("User has disabled DMs."))
-            tun.close()
+            await ctx.send(_("That user has DMs disabled."))
         else:
             self.tunnel_store[(guild, ticket_number)] = {"tun": tun, "msgs": m}
             await ctx.send(big_topic.format(who=_("You have"), ticketnum=ticket_number))
