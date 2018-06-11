@@ -9,6 +9,10 @@ from redbot.core.bot import Red
 
 from redbot.core.drivers import red_json
 
+__all__ = ["monkeysession", "override_data_path", "coroutine", "json_driver", "config", "config_fr", "red",
+           "guild_factory", "empty_guild", "empty_channel", "empty_member", "empty_message", "empty_role",
+           "empty_user", "member_factory", "user_factory", "ctx"]
+
 
 @pytest.fixture(scope="session")
 def monkeysession(request):
