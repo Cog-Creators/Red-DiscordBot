@@ -358,7 +358,6 @@ class Reports:
             m = await tun.communicate(message=ctx.message, topic=topic, skip_message_content=True)
         except discord.Forbidden:
             await ctx.send(_("User has disabled DMs."))
-            tun.close()
         else:
             self.tunnel_store[(guild, ticket_number)] = {"tun": tun, "msgs": m}
             await ctx.send(big_topic.format(who=_("You have"), ticketnum=ticket_number))
