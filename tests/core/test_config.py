@@ -403,6 +403,6 @@ async def test_immutable_value(config):
     config.register_global(list1=[])
     await config.list1.set([])
     list1 = await config.list1()
-    list1.append("bar")
+    list1.append("foo")
     list1 = await config.list1()
     assert "foo" not in list1
