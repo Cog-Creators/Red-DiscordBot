@@ -125,9 +125,7 @@ setup(
             "redbot-setup=redbot.setup:main",
             "redbot-launcher=redbot.launcher:main",
         ],
-        "pytest11": [
-            "red-discordbot = redbot.pytest",
-        ]
+        "pytest11": ["red-discordbot = redbot.pytest"],
     },
     python_requires=">=3.6,<3.7",
     setup_requires=get_requirements(),

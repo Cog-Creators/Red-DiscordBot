@@ -7,8 +7,16 @@ import pytest
 from redbot.cogs.downloader.repo_manager import RepoManager, Repo
 from redbot.cogs.downloader.installable import Installable
 
-__all__ = ["patch_relative_to", "repo_manager", "repo", "repo_norun", "bot_repo", "INFO_JSON", "installable",
-           "fake_run_noprint"]
+__all__ = [
+    "patch_relative_to",
+    "repo_manager",
+    "repo",
+    "repo_norun",
+    "bot_repo",
+    "INFO_JSON",
+    "installable",
+    "fake_run_noprint",
+]
 
 
 async def fake_run(*args, **kwargs):
