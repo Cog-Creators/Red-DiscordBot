@@ -37,7 +37,7 @@ class _ValueCtxManager:
 
     async def __aenter__(self):
         self.raw_value = await self
-        self.__original_value = self.raw_value
+        self.__original_value = deepcopy(self.raw_value)
         if not isinstance(self.raw_value, (list, dict)):
             raise TypeError(
                 "Type of retrieved value must be mutable (i.e. "
