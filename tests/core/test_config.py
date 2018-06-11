@@ -399,10 +399,21 @@ async def test_ctxmgr_no_shared_default(config, member_factory):
     assert 1 not in await config.member(m2).foo()
 
 @pytest.mark.asyncio
-async def test_immutable_value(config):
+async def test_immutable_value_getter(config):
+    """Tests that mutating an object after getting it as a value doesn't mutate the data store."""
     config.register_global(list1=[])
     await config.list1.set([])
     list1 = await config.list1()
+    list1.append("foo")
+    list1 = await config.list1()
+    assert "foo" not in list1
+
+@pytest.mark.asyncio
+async def test_immutable_value_setter(config):
+    """Tests that mutating an object after setting it as a value doesn't mutate the data store."""
+    config.register_global(list1=[])
+    list1 = []
+    await config.list1.set(list1)
     list1.append("foo")
     list1 = await config.list1()
     assert "foo" not in list1
