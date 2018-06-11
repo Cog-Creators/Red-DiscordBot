@@ -167,7 +167,7 @@ class Mod:
     async def modset(self, ctx: commands.Context):
         """Manages server administration settings."""
         if ctx.invoked_subcommand is None:
-
+            guild = ctx.guild
             # Display current settings
             delete_repeats = await self.settings.guild(guild).delete_repeats()
             ban_mention_spam = await self.settings.guild(guild).ban_mention_spam()
