@@ -14,7 +14,9 @@ IS_TRAVIS = "TRAVIS" in os.environ
 IS_DEPLOYING = "DEPLOYING" in os.environ
 IS_RTD = "READTHEDOCS" in os.environ
 
-dep_links = ["https://github.com/Rapptz/discord.py/tarball/rewrite#egg=discord.py-1.0"]
+dep_links = [
+    "https://github.com/Rapptz/discord.py/tarball/7eb918b19e3e60b56eb9039eb267f8f3477c5e17#egg=discord.py-1.0"
+]
 if IS_TRAVIS:
     dep_links = []
 
