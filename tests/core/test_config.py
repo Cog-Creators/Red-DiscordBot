@@ -398,6 +398,7 @@ async def test_ctxmgr_no_shared_default(config, member_factory):
 
     assert 1 not in await config.member(m2).foo()
 
+
 @pytest.mark.asyncio
 async def test_get_then_mutate(config):
     """Tests that mutating an object after getting it as a value doesn't mutate the data store."""
@@ -407,6 +408,7 @@ async def test_get_then_mutate(config):
     list1.append("foo")
     list1 = await config.list1()
     assert "foo" not in list1
+
 
 @pytest.mark.asyncio
 async def test_set_then_mutate(config):
