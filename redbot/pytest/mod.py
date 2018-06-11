@@ -1,5 +1,7 @@
 import pytest
 
+__all__ = ["mod"]
+
 
 @pytest.fixture
 def mod(config, monkeypatch):

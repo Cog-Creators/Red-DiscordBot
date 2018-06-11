@@ -1,5 +1,7 @@
 import pytest
 
+__all__ = ["bank"]
+
 
 @pytest.fixture()
 def bank(config, monkeypatch):

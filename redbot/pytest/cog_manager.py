@@ -1,5 +1,7 @@
 import pytest
 
+__all__ = ["cog_mgr", "default_dir"]
+
 
 @pytest.fixture()
 def cog_mgr(red):

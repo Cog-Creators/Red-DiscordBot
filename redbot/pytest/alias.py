@@ -3,6 +3,8 @@ import pytest
 from redbot.cogs.alias import Alias
 from redbot.core import Config
 
+__all__ = ["alias"]
+
 
 @pytest.fixture()
 def alias(config, monkeypatch):
