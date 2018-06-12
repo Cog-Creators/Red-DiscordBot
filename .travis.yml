@@ -2,8 +2,6 @@ dist: trusty
 language: python
 cache:
 - pip
-- directories:
-  - .tox/${TOXENV}_doctree
 notifications:
   email: false
 
