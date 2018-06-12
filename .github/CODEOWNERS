@@ -44,6 +44,7 @@ redbot/cogs/trivia/*                @Tobotimus
 redbot/cogs/dataconverter/*         @mikeshardmind
 redbot/cogs/reports/*               @mikeshardmind
 redbot/cogs/permissions/*           @mikeshardmind
+redbot/cogs/warnings/*              @palmtree5
 
 # Docs
 docs/*                              @tekulvw @palmtree5
