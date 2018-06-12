@@ -628,7 +628,6 @@ class Mod:
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
-    @commands.bot_has_permissions(ban_members=True)
     async def unban(self, ctx: commands.Context, user_id: int, *, reason: str = None):
         """Unbans the target user.
 
@@ -636,6 +635,10 @@ class Mod:
          1. Copy it from the mod log case (if one was created), or
          2. enable developer mode, go to Bans in this server's settings, right-
         click the user and select 'Copy ID'."""
+        channel = ctx.channel
+        if not channel.permissions_for(ctx.guild.me).ban_members:
+            await ctx.send("I need the Ban Members permission to do this.")
+            return
         guild = ctx.guild
         author = ctx.author
         user = await self.bot.get_user_info(user_id)
