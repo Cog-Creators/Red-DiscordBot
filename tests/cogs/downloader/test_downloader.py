@@ -111,6 +111,18 @@ async def test_add_repo(monkeypatch, repo_manager):
 
 
 @pytest.mark.asyncio
+async def test_remove_repo(monkeypatch, repo_manager):
+    monkeypatch.setattr("redbot.cogs.downloader.repo_manager.Repo._run", fake_run_noprint)
+
+    await repo_manager.add_repo(
+        url="https://github.com/tekulvw/Squid-Plugins", name="squid", branch="rewrite_cogs"
+    )
+    assert repo_manager.get_repo("squid") is not None
+    await repo_manager.delete_repo("squid")
+    assert repo_manager.get_repo("squid") is None
+
+
+@pytest.mark.asyncio
 async def test_current_branch(bot_repo):
     branch = await bot_repo.current_branch()
 
