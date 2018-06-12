@@ -81,10 +81,10 @@ async def get_command_for_exceeded_points(ctx: commands.Context):
     the points threshold for the action"""
     await ctx.send(
         _(
-            "Enter the command to be run when the user exceeds the points for "
-            "this action to occur.\nEnter it exactly as you would if you were "
+            "Enter the command to be run when the user **exceeds the points for "
+            "this action to occur.**\nEnter it exactly as you would if you were "
             "actually trying to run the command, except don't put a prefix and "
-            "use {user} in place of any user/member arguments\n\n"
+            "use `{user}` in place of any user/member arguments\n\n"
             "WARNING: The command entered will be run without regard to checks or cooldowns. "
             "Commands requiring bot owner are not allowed for security reasons.\n\n"
             "Please wait 15 seconds before entering your response."
@@ -121,12 +121,12 @@ async def get_command_for_dropping_points(ctx: commands.Context):
     """
     await ctx.send(
         _(
-            "Enter the command to be run when the user returns to a value below "
-            "the points for this action to occur. Please note that this is "
+            "Enter the command to be run when the user **returns to a value below "
+            "the points for this action to occur.** Please note that this is "
             "intended to be used for reversal of the action taken when the user "
             "exceeded the action's point value\nEnter it exactly as you would "
             "if you were actually trying to run the command, except don't put a prefix "
-            "and use {user} in place of any user/member arguments\n\n"
+            "and use `{user}` in place of any user/member arguments\n\n"
             "WARNING: The command entered will be run without regard to checks or cooldowns. "
             "Commands requiring bot owner are not allowed for security reasons.\n\n"
             "Please wait 15 seconds before entering your response."
