@@ -74,27 +74,9 @@ class Warnings:
         """
         guild = ctx.guild
 
-        await ctx.send("Would you like to enter commands to be run? (y/n)")
+        exceed_command = await get_command_for_exceeded_points(ctx)
+        drop_command = await get_command_for_dropping_points(ctx)
 
-        def same_author_check(m):
-            return m.author == ctx.author
-
-        try:
-            msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=30)
-        except asyncio.TimeoutError:
-            await ctx.send(_("Ok then."))
-            return
-
-        if msg.content.lower() == "y":
-            exceed_command = await get_command_for_exceeded_points(ctx)
-            if exceed_command is None:
-                return
-            drop_command = await get_command_for_dropping_points(ctx)
-            if drop_command is None:
-                return
-        else:
-            exceed_command = None
-            drop_command = None
         to_add = {
             "action_name": name,
             "points": points,
@@ -114,7 +96,7 @@ class Warnings:
                 # Sort in descending order by point count for ease in
                 # finding the highest possible action to take
                 registered_actions.sort(key=lambda a: a["points"], reverse=True)
-                await ctx.tick()
+                await ctx.send(_("Action {name} has been added.").format(name=name))
 
     @warnaction.command(name="del")
     @commands.guild_only()
