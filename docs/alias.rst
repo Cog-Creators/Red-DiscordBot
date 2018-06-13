@@ -5,7 +5,7 @@ Alias
 =====
 
 This is the cog guide for the alias cog. You will
-find detailled docs about the usage and the commands.
+find detailed docs about the usage and the commands.
 
 ``[p]`` is considered as your prefix.
 
@@ -112,7 +112,7 @@ alias del
 
 **Description**
 
-Remove an alias from the list.
+Removes an alias from the list.
 
 **Arguments**
 
@@ -132,7 +132,7 @@ alias list
 
 **Description**
 
-Show all of the existing aliases on the current server.
+Shows all of the existing aliases on the current server.
 
 .. _alias-command-alias-show:
 
@@ -148,11 +148,11 @@ alias show
 
 **Description**
 
-Show what command does the alias execute.
+Shows what the command associated to alias does.
 
 **Arguments**
 
-* ``<alias_name>``: The alias to get the information from.
+* ``<alias_name>``: Alias you want information from.
 
 .. _alias-command-alias-help:
 
@@ -168,11 +168,11 @@ alias help
 
 **Description**
 
-Shows the help message for an alias.
+Shows help message for an alias.
 
 **Arguments**
 
-* ``<alias_name>``: The alias to get the help from.
+* ``<alias_name>``: Alias you want to get help from.
 
 .. _alias-command-alias-global:
 

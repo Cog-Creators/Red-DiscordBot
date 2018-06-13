@@ -5,7 +5,7 @@ Bank
 ====
 
 This is the cog guide for the audio cog. You will
-find detailled docs about the usage and the commands.
+find detailed docs about usage and commands.
 
 ``[p]`` is considered as your prefix.
 
@@ -106,7 +106,7 @@ For example, if you switch it to ``dollars``, the :ref:`payday
 
 **Arguments**
 
-* ``<name>``: The new name of the credits.
+* ``<name>``: The new credits name.
 
 .. _bank-command-bankset-bankname:
 
@@ -125,8 +125,8 @@ or an administrator can use this command.
 
 **Description**
 
-Set the name of the bank.
+Set bank's name.
 
 **Arguments**
 
-* ``<name>``: The new name of the bank.
+* ``<name>``: The new bank's name.

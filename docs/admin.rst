@@ -5,7 +5,7 @@ Admin
 =====
 
 This is the cog guide for the admin cog. You will
-find detailled docs about the usage and the commands.
+find detailed docs about usage and commands.
 
 ``[p]`` is considered as your prefix.
 
@@ -19,10 +19,10 @@ find detailled docs about the usage and the commands.
 Usage
 -----
 
-This cog will provide tools for the server admins and the bot owner.
+This cog will provide tools for server admins and bot owner.
 
 It can add or remove a role to a member, edit one, make some available
-for members so they can self-assign them what you want.
+for members so they can self-assign them as they wish.
 
 It also provides tools for bot owner such as server locking (once enabled,
 the bot will instantly leave new servers he joins) and announcements, which
@@ -112,7 +112,7 @@ This command is locked to the ``Manage roles`` permission.
 
 **Description**
 
-Add a role to the list of available selfroles.
+Add a role to the available selfroles list.
 
 .. warning:: Members will be able to assign themselves the role.
     Make sure it doesn't give extra perms or anything that can break
@@ -139,7 +139,7 @@ This command is locked to the ``Manage roles`` permission.
 
 **Description**
 
-Removes a role from the list of available selfroles.
+Removes a role from the available selfroles list.
 
 **Arguments**
 
@@ -172,7 +172,7 @@ as yourself, the command author.
   name has spaces, give it between quotes like this: ``[p]addrole "my
   role with spaces"``
 
-* ``[user=ctx]``: The member to add the role to. Default to the
+* ``[user=ctx]``: Member you want to add the role to. Default to the
   command author.
 
 .. _admin-command-removerole:
@@ -196,7 +196,7 @@ as yourself, the command author.
 
 **Arguments**
 
-* ``<role>``: The role to remove from the member. Please give
+* ``<role>``: The role to remove. Please give
   **the exact role name or ID**, or it won't be detected. If the role
   name has spaces, give it between quotes like this: ``[p]removerole "my
   role with spaces"``
@@ -262,7 +262,7 @@ editrole color
 **Description**
 
 Edit a role color from the guild. You can give an hexadecimal code or a color
-name for the color. For a complete list of the available color name, 
+name for the color. For a complete list of the available color names, 
 check :class:`~discord.Color`.
 
 Examples:
