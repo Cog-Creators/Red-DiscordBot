@@ -319,7 +319,7 @@ class Downloader:
 
         await ctx.send(_("`{}` cog successfully installed.").format(cog_name))
         if cog.install_msg is not None:
-            await ctx.send(cog.install_msg)
+            await ctx.send(cog.install_msg.format(prefix=ctx.prefix))
 
     @cog.command(name="uninstall")
     async def _cog_uninstall(self, ctx, cog_name: InstalledCog):
