@@ -1624,7 +1624,6 @@ class Mod:
                 while len(nick_list) > 20:
                     nick_list.pop(0)
 
-
     @staticmethod
     def are_overwrites_empty(overwrites):
         """There is currently no cleaner way to check if a
