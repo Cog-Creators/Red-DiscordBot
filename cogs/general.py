@@ -154,7 +154,7 @@ class General:
     @commands.command()
     async def lmgtfy(self, *, search_terms : str):
         """Creates a lmgtfy link"""
-        search_terms = escape_mass_mentions(search_terms.replace(" ", "+"))
+        search_terms = escape_mass_mentions(search_terms.replace("+","%2B").replace(" ", "+"))
         await self.bot.say("https://lmgtfy.com/?q={}".format(search_terms))
 
     @commands.command(no_pm=True, hidden=True)
