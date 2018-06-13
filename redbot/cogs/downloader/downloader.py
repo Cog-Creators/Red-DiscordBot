@@ -234,7 +234,7 @@ class Downloader:
         else:
             await ctx.send(_("Repo `{}` successfully added.").format(name))
             if repo.install_msg is not None:
-                await ctx.send(repo.install_msg)
+                await ctx.send(repo.install_msg.format(prefix=ctx.prefix))
 
     @repo.command(name="delete")
     async def _repo_del(self, ctx, repo_name: Repo):
