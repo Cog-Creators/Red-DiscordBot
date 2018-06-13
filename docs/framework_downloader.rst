@@ -22,7 +22,7 @@ Keys common to both repo and cog info.json (case sensitive)
   is installed or a repo is added
   
   .. tip:: You can use the ``{prefix}`` key in your string to use the prefix
-    used for installing.
+      used for installing.
 
 - ``short`` (string) - A short description of the cog or repo. For cogs, this info 
   is displayed when a user executes ``!cog list``
