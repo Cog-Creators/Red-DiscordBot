@@ -13,7 +13,7 @@ find detailed docs about usage and commands.
 
         [p]load bank
 
-.. _bank-usage:
+.. _usage:
 
 -----
 Usage
@@ -26,13 +26,13 @@ money possible.
 You will be able to switch between a global and a server-
 wide bank and choose the bank/currency name.
 
-.. _bank-commands:
+.. _commands:
 
 --------
 Commands
 --------
 
-.. _bank-command-bankset:
+.. _bankset:
 
 ^^^^^^^
 bankset
@@ -50,7 +50,7 @@ bankset
 
 Group command used for setting up the bank.
 
-.. _bank-command-bankset-toggleglobal:
+.. _toggleglobal:
 
 """"""""""""""""""""
 bankset toggleglobal
@@ -130,3 +130,5 @@ Set bank's name.
 **Arguments**
 
 * ``<name>``: The new bank's name.
+
+click :ref:`toggleglobal <bank.commands.bankset.toggleglobal>

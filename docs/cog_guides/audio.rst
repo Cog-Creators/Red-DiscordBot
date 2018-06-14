@@ -86,7 +86,7 @@ have to click on the number to start the song.
 
     Output:
 
-    .. image:: .ressources/audio-search.png
+    .. image:: ../.ressources/audio-search.png
 
 .. _audio-usage-queue-control:
 
@@ -99,7 +99,7 @@ the :ref:`queue <audio-command-queue>` command to see the current queue.
 It will show all of the songs in the queue with an interactive message.
 Once you type the command, something like this should be shown:
 
-.. image:: .ressources/audio-queue.png
+.. image:: ../.ressources/audio-queue.png
 
 You can click on the reactions to scroll through the pages.
 
@@ -400,13 +400,13 @@ to proceed:
 
 #. Find your V2 Redbot folder. This should look like this:
 
-  .. image:: .ressources/redv2-files.png
+  .. image:: ../.ressources/redv2-files.png
 
 #. Let's suppose you want to convert your playlist named ``transitor``.
 
   Follow this path ``data/audio/playlist`` and then find ``transitor.txt``.
 
-  .. image:: .ressources/path-to-playlist-v2.png
+  .. image:: ../.ressources/path-to-playlist-v2.png
 
   Keep the file ready for the next step.
 
