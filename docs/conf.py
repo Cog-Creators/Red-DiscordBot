@@ -198,5 +198,5 @@ intersphinx_mapping = {
 }
 
 # Includes substitutions for all files
-with open('prolog.txt', 'r') as file:
+with open("prolog.txt", "r") as file:
     rst_prolog = file.read()
