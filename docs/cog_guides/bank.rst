@@ -4,7 +4,7 @@
 Bank
 ====
 
-This is the cog guide for the audio cog. You will
+This is the cog guide for the bank cog. You will
 find detailed docs about usage and commands.
 
 ``[p]`` is considered as your prefix.

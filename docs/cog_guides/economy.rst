@@ -4,7 +4,7 @@
 Economy
 =======
 
-This is the cog guide for the audio cog. You will
+This is the cog guide for the economy cog. You will
 find detailled docs about the usage and the commands.
 
 ``[p]`` is considered as your prefix, ``credits`` as
