@@ -45,13 +45,13 @@ Welcome to Red - Discord Bot's documentation!
 
     getting_started
 
-    admin
-    alias
-    audio
-    bank
-    economy
-    downloader
-    permissions
+    cog_guides/admin
+    cog_guides/alias
+    cog_guides/audio
+    cog_guides/bank
+    cog_guides/economy
+    cog_guides/downloader
+    cog_guides/permissions
 
 .. toctree::
     :maxdepth: 2
