@@ -47,7 +47,7 @@ redbot/cogs/permissions/*           @mikeshardmind
 
 # Docs
 docs/*                              @tekulvw @palmtree5
-docs/getting_started.rst             @retke
+docs/getting_started.rst            @retke
 docs/cog_guides/*                   @retke
 
 # Setup, instance setup, and running the bot
