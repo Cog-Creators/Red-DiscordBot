@@ -187,8 +187,8 @@ an other user by specifying it.
 bank set
 """"""""
 
-|owner-lock| However, if the bank is server-wide, the server owner
-or an administrator can use this command.
+.. note:: |owner-lock| However, if the bank is server-wide, the
+    server owner or an administrator can use this command.
 
 **Syntax**
 
@@ -248,8 +248,8 @@ Transfer credits from your balance to an user.
 bank reset
 """"""""""
 
-|owner-lock| However, if the bank is server-wide, the server owner
-or an administrator can use this command.
+.. note:: |owner-lock| However, if the bank is server-wide, the
+    server owner or an administrator can use this command.
 
 **Syntax**
 
@@ -276,8 +276,8 @@ You need to pass a security check before resetting the bank.
 economyset
 ^^^^^^^^^^
 
-|owner-lock| However, if the bank is server-wide, the server owner
-or an administrator can use this command.
+.. note:: |owner-lock| However, if the bank is server-wide, the
+    server owner or an administrator can use this command.
 
 **Syntax**
 

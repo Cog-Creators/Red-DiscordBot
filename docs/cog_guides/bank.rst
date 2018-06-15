@@ -38,7 +38,7 @@ Commands
 bankset
 ^^^^^^^
 
-|guildowner-lock|
+.. note:: |guildowner-lock|
 
 **Syntax**
 
@@ -56,7 +56,7 @@ Group command used for setting up the bank.
 bankset toggleglobal
 """"""""""""""""""""
 
-|owner-lock|
+.. note:: |owner-lock|
 
 **Syntax**
 
@@ -82,8 +82,8 @@ to the server-wide bank.
 bankset creditsname
 """""""""""""""""""
 
-|owner-lock| However, if the bank is server-wide, the server owner
-or an administrator can use this command.
+.. note:: |owner-lock| However, if the bank is server-wide, the
+    server owner or an administrator can use this command.
 
 **Syntax**
 
@@ -114,8 +114,8 @@ For example, if you switch it to ``dollars``, the :ref:`payday
 bankset bankname
 """"""""""""""""
 
-|owner-lock| However, if the bank is server-wide, the server owner
-or an administrator can use this command.
+.. note:: |owner-lock| However, if the bank is server-wide, the
+    server owner or an administrator can use this command.
 
 **Syntax**
 

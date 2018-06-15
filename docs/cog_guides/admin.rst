@@ -102,7 +102,7 @@ List all of the available roles you can assign to yourself.
 selfrole add
 """"""""""""
 
-This command is locked to the ``Manage roles`` permission.
+.. note:: This command is locked to the ``Manage roles`` permission.
 
 **Syntax**
 
@@ -129,7 +129,7 @@ Add a role to the available selfroles list.
 selfrole delete
 """""""""""""""
 
-This command is locked to the ``Manage roles`` permission.
+.. note:: This command is locked to the ``Manage roles`` permission.
 
 **Syntax**
 
@@ -152,7 +152,7 @@ Removes a role from the available selfroles list.
 addrole
 ^^^^^^^
 
-|admin-lock|
+.. note:: |admin-lock|
 
 **Syntax**
 
@@ -181,7 +181,7 @@ as yourself, the command author.
 removerole
 ^^^^^^^^^^
 
-|admin-lock|
+.. note:: |admin-lock|
 
 **Syntax**
 
@@ -210,7 +210,7 @@ as yourself, the command author.
 editrole
 ^^^^^^^^
 
-|admin-lock|
+.. note:: |admin-lock|
 
 **Syntax**
 
@@ -287,7 +287,7 @@ Examples:
 announce
 ^^^^^^^^
 
-|owner-lock|
+.. note:: |owner-lock|
 
 **Syntax**
 
@@ -314,7 +314,7 @@ the bot will use the first one.
 announce channel
 """"""""""""""""
 
-|guildowner-lock|
+.. note:: |guildowner-lock|
 
 **Syntax**
 
@@ -337,7 +337,7 @@ Set the channel where the bot owner announcements will be done.
 announce ignore
 """""""""""""""
 
-|guildowner-lock|
+.. note:: |guildowner-lock|
 
 **Syntax**
 
@@ -362,7 +362,7 @@ Enable or disable the announcements on the selected guild.
 announce cancel
 """""""""""""""
 
-|owner-lock|
+.. note:: |owner-lock|
 
 **Syntax**
 

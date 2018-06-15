@@ -855,7 +855,7 @@ Show the current audio settings on this guild.
 audioset status
 """""""""""""""
 
-|owner-lock|
+.. note:: |owner-lock|
 
 **Syntax**
 
@@ -878,7 +878,7 @@ Type the command again to disable this.
 audioset role
 """""""""""""
 
-|admin-lock|
+.. note:: |admin-lock|
 
 **Syntax**
 
@@ -906,7 +906,7 @@ to queue songs. For more informations, check the :ref:`DJ role section
 audioset dj
 """""""""""
 
-|admin-lock|
+.. note:: |admin-lock|
 
 **Syntax**
 
@@ -926,7 +926,7 @@ role will be able to queue songs. For more informations, check the
 audioset vote
 """""""""""""
 
-|mod-lock|
+.. note:: |mod-lock|
 
 **Syntax**
 
@@ -951,7 +951,7 @@ Give 0 to disable. This restriction doesn't apply on :ref:`moderators
 audioset notify
 """""""""""""""
 
-|mod-lock|
+.. note:: |mod-lock|
 
 **Syntax**
 
@@ -974,7 +974,7 @@ the queue has ended.
 audioset jukebox
 """"""""""""""""
 
-|mod-lock|
+.. note:: |mod-lock|
 
 **Syntax**
 

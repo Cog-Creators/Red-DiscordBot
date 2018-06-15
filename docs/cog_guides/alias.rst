@@ -75,7 +75,7 @@ It will be used for all other commands.
 alias add
 """""""""
 
-|mod-lock|
+.. note:: |mod-lock|
 
 **Syntax**
 
@@ -102,7 +102,7 @@ Click :ref:`here <alias-usage>` for examples.
 alias del
 """""""""
 
-|mod-lock|
+.. note:: |mod-lock|
 
 **Syntax**
 
@@ -180,7 +180,7 @@ Shows help message for an alias.
 alias global
 """"""""""""
 
-|owner-lock|
+.. note:: |owner-lock|
 
 **Syntax**
 
