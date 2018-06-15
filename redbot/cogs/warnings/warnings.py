@@ -41,31 +41,29 @@ class Warnings:
         except RuntimeError:
             pass
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     async def warningset(self, ctx: commands.Context):
         """Warning settings"""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @warningset.command()
     @commands.guild_only()
     async def allowcustomreasons(self, ctx: commands.Context, allowed: bool):
-        """Allow or disallow custom reasons for a warning"""
+        """Enable or Disable custom reasons for a warning"""
         guild = ctx.guild
         await self.config.guild(guild).allow_custom_reasons.set(allowed)
         await ctx.send(
             _("Custom reasons have been {}.").format(_("enabled") if allowed else _("disabled"))
         )
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     async def warnaction(self, ctx: commands.Context):
         """Action management"""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @warnaction.command(name="add")
     @commands.guild_only()
@@ -136,13 +134,12 @@ class Warnings:
             else:
                 await ctx.send(_("No action named {} exists!").format(action_name))
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     async def warnreason(self, ctx: commands.Context):
         """Add reasons for warnings"""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @warnreason.command(name="add")
     @commands.guild_only()

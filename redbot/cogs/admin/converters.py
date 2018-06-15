@@ -1,5 +1,5 @@
 import discord
-from discord.ext import commands
+from redbot.core import commands
 
 
 class MemberDefaultAuthor(commands.Converter):
@@ -28,5 +28,5 @@ class SelfRole(commands.Converter):
         role = await role_converter.convert(ctx, arg)
 
         if role.id not in selfroles:
-            raise commands.BadArgument("The provided role is not a valid" " selfrole.")
+            raise commands.BadArgument("The provided role is not a valid selfrole.")
         return role

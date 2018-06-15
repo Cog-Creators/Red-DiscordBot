@@ -1,5 +1,7 @@
 from .streams import Streams
 
 
-def setup(bot):
-    bot.add_cog(Streams(bot))
+async def setup(bot):
+    cog = Streams(bot)
+    await cog.initialize()
+    bot.add_cog(cog)

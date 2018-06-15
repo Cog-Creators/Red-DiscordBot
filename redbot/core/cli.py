@@ -36,7 +36,7 @@ def interactive_config(red, token_set, prefix_set):
         while not prefix:
             prefix = input("Prefix> ")
             if len(prefix) > 10:
-                print("Your prefix seems overly long. Are you sure it " "is correct? (y/n)")
+                print("Your prefix seems overly long. Are you sure that it's correct? (y/n)")
                 if not confirm("> "):
                     prefix = ""
             if prefix:
@@ -72,7 +72,7 @@ def parse_cli_flags(args):
     parser.add_argument(
         "--list-instances",
         action="store_true",
-        help="List all instance names setup " "with 'redbot-setup'",
+        help="List all instance names setup with 'redbot-setup'",
     )
     parser.add_argument(
         "--owner",
@@ -117,7 +117,7 @@ def parse_cli_flags(args):
     parser.add_argument(
         "--not-bot",
         action="store_true",
-        help="Specifies if the token used belongs to a bot " "account.",
+        help="Specifies if the token used belongs to a bot account.",
     )
     parser.add_argument(
         "--dry-run",
@@ -131,12 +131,12 @@ def parse_cli_flags(args):
     parser.add_argument(
         "--mentionable",
         action="store_true",
-        help="Allows mentioning the bot as an alternative " "to using the bot prefix",
+        help="Allows mentioning the bot as an alternative to using the bot prefix",
     )
     parser.add_argument(
         "--rpc",
         action="store_true",
-        help="Enables the built-in RPC server. Please read the docs" "prior to enabling this!",
+        help="Enables the built-in RPC server. Please read the docs prior to enabling this!",
     )
     parser.add_argument(
         "instance_name", nargs="?", help="Name of the bot instance created during `redbot-setup`."

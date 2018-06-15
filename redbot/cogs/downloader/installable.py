@@ -75,6 +75,7 @@ class Installable(RepoJSONMixin):
         self.bot_version = (3, 0, 0)
         self.min_python_version = (3, 5, 1)
         self.hidden = False
+        self.disabled = False
         self.required_cogs = {}  # Cog name -> repo URL
         self.requirements = ()
         self.tags = ()
@@ -116,7 +117,7 @@ class Installable(RepoJSONMixin):
         try:
             copy_func(src=str(self._location), dst=str(target_dir / self._location.stem))
         except:
-            log.exception("Error occurred when copying path:" " {}".format(self._location))
+            log.exception("Error occurred when copying path: {}".format(self._location))
             return False
         return True
 
@@ -145,9 +146,7 @@ class Installable(RepoJSONMixin):
                 info = json.load(f)
             except json.JSONDecodeError:
                 info = {}
-                log.exception(
-                    "Invalid JSON information file at path:" " {}".format(info_file_path)
-                )
+                log.exception("Invalid JSON information file at path: {}".format(info_file_path))
             else:
                 self._info = info
 
@@ -174,6 +173,12 @@ class Installable(RepoJSONMixin):
         except ValueError:
             hidden = False
         self.hidden = hidden
+
+        try:
+            disabled = bool(info.get("disabled", False))
+        except ValueError:
+            disabled = False
+        self.disabled = disabled
 
         self.required_cogs = info.get("required_cogs", {})
 

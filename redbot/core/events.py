@@ -11,13 +11,13 @@ from pkg_resources import DistributionNotFound
 
 
 import discord
-from discord.ext import commands
 
-from . import __version__
+from . import __version__, commands
 from .data_manager import storage_type
 from .utils.chat_formatting import inline, bordered, pagify, box
 from .utils import fuzzy_command_search
 from colorama import Fore, Style, init
+from . import rpc
 
 log = logging.getLogger("red")
 sentry_log = logging.getLogger("red.sentry")
@@ -83,6 +83,9 @@ def init_events(bot, cli_flags):
                 packages.remove(package)
             if packages:
                 print("Loaded packages: " + ", ".join(packages))
+
+        if bot.rpc_enabled:
+            await bot.rpc.initialize()
 
         guilds = len(bot.guilds)
         users = len(set([m for m in bot.get_all_members()]))
@@ -172,8 +175,6 @@ def init_events(bot, cli_flags):
             print("\nInvite URL: {}\n".format(invite_url))
 
         bot.color = discord.Colour(await bot.db.color())
-        if bot.rpc_enabled:
-            await bot.rpc.initialize()
 
     @bot.event
     async def on_error(event_method, *args, **kwargs):
@@ -183,6 +184,11 @@ def init_events(bot, cli_flags):
     async def on_command_error(ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send_help()
+        elif isinstance(error, commands.ConversionFailure):
+            if error.args:
+                await ctx.send(error.args[0])
+            else:
+                await ctx.send_help()
         elif isinstance(error, commands.BadArgument):
             await ctx.send_help()
         elif isinstance(error, commands.DisabledCommand):
@@ -225,7 +231,9 @@ def init_events(bot, cli_flags):
             term = ctx.invoked_with + " "
             if len(ctx.args) > 1:
                 term += " ".join(ctx.args[1:])
-            await ctx.maybe_send_embed(fuzzy_command_search(ctx, ctx.invoked_with))
+            fuzzy_result = await fuzzy_command_search(ctx, ctx.invoked_with)
+            if fuzzy_result is not None:
+                await ctx.maybe_send_embed(fuzzy_result)
         elif isinstance(error, commands.CheckFailure):
             pass
         elif isinstance(error, commands.NoPrivateMessage):
