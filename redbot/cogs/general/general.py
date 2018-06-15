@@ -221,7 +221,7 @@ class General:
             await ctx.send(embed=data)
         except discord.HTTPException:
             await ctx.send(_("I need the `Embed links` permission to send this."))
-            
+
     @commands.command()
     async def urban(self, ctx, *, word):
         """Searches for urban dictionary entries using the unofficial urbandictionary api"""
@@ -230,29 +230,38 @@ class General:
 
         try:
             url = "https://api.urbandictionary.com/v0/define?term=" + str(word).lower()
-            
-            headers = {'content-type': 'application/json'}
+
+            headers = {"content-type": "application/json"}
 
             async with aiohttp.ClientSession() as session:
                 async with session.get(url, headers=headers) as response:
                     data = await response.json()
-                    
-        except:
-            await ctx.send('No Urban dictionary were found or there was an error in the process')
 
-        if data.get('error') != 404 and data.get('result_type') == 'exact':
+        except:
+            await ctx.send("No Urban dictionary were found or there was an error in the process")
+
+        if data.get("error") != 404 and data.get("result_type") == "exact":
 
             # a list of embeds
             embeds = []
-            for ud in data['list']:
+            for ud in data["list"]:
                 embed = discord.Embed()
-                embed.title = ud['word'].capitalize() + " by " + ud['author']
-                embed.url = ud['permalink']
-                embed.description = ud['definition'] + "\n \n **Example : **" + ud.get('example', "N/A")
-                embed.set_footer(text=str(ud['thumbs_down']) + " Down / " + str(ud['thumbs_up']) + " Up , Powered by urban dictionary")
+                embed.title = ud["word"].capitalize() + " by " + ud["author"]
+                embed.url = ud["permalink"]
+                embed.description = (
+                    ud["definition"] + "\n \n **Example : **" + ud.get("example", "N/A")
+                )
+                embed.set_footer(
+                    text=str(ud["thumbs_down"])
+                    + " Down / "
+                    + str(ud["thumbs_up"])
+                    + " Up , Powered by urban dictionary"
+                )
                 embeds.append(embed)
 
             if embeds is not None and len(embeds) > 0:
-                await menu(ctx, pages=embeds, controls=DEFAULT_CONTROLS, message=None, page=0, timeout=30)
+                await menu(
+                    ctx, pages=embeds, controls=DEFAULT_CONTROLS, message=None, page=0, timeout=30
+                )
         else:
-            await ctx.send('No Urban dictionary were found or there was an error in the process')
+            await ctx.send("No Urban dictionary were found or there was an error in the process")
