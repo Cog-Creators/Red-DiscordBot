@@ -139,7 +139,15 @@ def parse_cli_flags(args):
         help="Enables the built-in RPC server. Please read the docs prior to enabling this!",
     )
     parser.add_argument(
-        "instance_name", nargs="?", help="Name of the bot instance created during `redbot-setup`."
+        "--token",
+        type=str,
+        help=(
+            "Run Red with the given token. The instance name is optional. "
+            "If it is not given, the data won't be saved."
+        ),
+    )
+    parser.add_argument(
+        "instance_name", help="Name of the bot instance created during `redbot-setup`."
     )
 
     args = parser.parse_args(args)

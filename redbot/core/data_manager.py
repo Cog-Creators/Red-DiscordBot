@@ -7,6 +7,7 @@ import shutil
 import logging
 
 import appdirs
+import tempfile
 
 from .json_io import JsonIO
 
@@ -37,6 +38,23 @@ if sys.platform == "linux":
 if not config_dir:
     config_dir = Path(appdir.user_config_dir)
 config_file = config_dir / "config.json"
+
+
+def save_default_config():
+    """
+    Creates a default instance for Red, so it can be ran
+    without creating an instance.
+    """
+    name = "temporary_red"
+
+    default_dirs = deepcopy(basic_config_default)
+    default_dirs["DATA_PATH"] = tempfile.mkdtemp()
+    default_dirs["STORAGE_TYPE"] = "JSON"
+    default_dirs["STORAGE_DETAILS"] = {}
+
+    config = JsonIO(config_file)._load_json()
+    config[name] = default_dirs
+    JsonIO(config_file)._save_json(config)
 
 
 def load_basic_configuration(instance_name_: str):
