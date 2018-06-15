@@ -3,12 +3,11 @@ import time
 from enum import Enum
 from random import randint, choice
 from urllib.parse import quote_plus
-
 import aiohttp
 import discord
 from redbot.core import commands
 from redbot.core.i18n import Translator, cog_i18n
-
+from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 from redbot.core.utils.chat_formatting import escape, italics, pagify
 
 _ = Translator("General", __file__)
@@ -222,51 +221,38 @@ class General:
             await ctx.send(embed=data)
         except discord.HTTPException:
             await ctx.send(_("I need the `Embed links` permission to send this."))
-
+            
     @commands.command()
-    async def urban(self, ctx, *, search_terms: str, definition_number: int = 1):
-        """Urban Dictionary search
+    async def urban(self, ctx, *, word):
+        """Searches for urban dictionary entries using the unofficial urbandictionary api"""
 
-        Definition number must be between 1 and 10"""
+        data = None
 
-        def encode(s):
-            return quote_plus(s, encoding="utf-8", errors="replace")
-
-        # definition_number is just there to show up in the help
-        # all this mess is to avoid forcing double quotes on the user
-
-        search_terms = search_terms.split(" ")
         try:
-            if len(search_terms) > 1:
-                pos = int(search_terms[-1]) - 1
-                search_terms = search_terms[:-1]
-            else:
-                pos = 0
-            if pos not in range(0, 11):  # API only provides the
-                pos = 0  # top 10 definitions
-        except ValueError:
-            pos = 0
+            url = "https://api.urbandictionary.com/v0/define?term=" + str(word).lower()
+            
+            headers = {'content-type': 'application/json'}
 
-        search_terms = {"term": "+".join([s for s in search_terms])}
-        url = "http://api.urbandictionary.com/v0/define"
-        try:
             async with aiohttp.ClientSession() as session:
-                async with session.get(url, params=search_terms) as r:
-                    result = await r.json()
-            item_list = result["list"]
-            if item_list:
-                definition = item_list[pos]["definition"]
-                example = item_list[pos]["example"]
-                defs = len(item_list)
-                msg = "**Definition #{} out of {}:\n**{}\n\n**Example:\n**{}".format(
-                    pos + 1, defs, definition, example
-                )
-                msg = pagify(msg, ["\n"])
-                for page in msg:
-                    await ctx.send(page)
-            else:
-                await ctx.send(_("Your search terms gave no results."))
-        except IndexError:
-            await ctx.send(_("There is no definition #{}").format(pos + 1))
+                async with session.get(url, headers=headers) as response:
+                    data = await response.json()
+                    
         except:
-            await ctx.send(_("Error."))
+            await ctx.send('No Urban dictionary were found or there was an error in the process')
+
+        if data.get('error') != 404 and data.get('result_type') == 'exact':
+
+            # a list of embeds
+            embeds = []
+            for ud in data['list']:
+                embed = discord.Embed()
+                embed.title = ud['word'].capitalize() + " by " + ud['author']
+                embed.url = ud['permalink']
+                embed.description = ud['definition'] + "\n \n **Example : **" + ud.get('example', "N/A")
+                embed.set_footer(text=str(ud['thumbs_down']) + " Down / " + str(ud['thumbs_up']) + " Up , Powered by urban dictionary")
+                embeds.append(embed)
+
+            if embeds is not None and len(embeds) > 0:
+                await menu(ctx, pages=embeds, controls=DEFAULT_CONTROLS, message=None, page=0, timeout=30)
+        else:
+            await ctx.send('No Urban dictionary were found or there was an error in the process')
