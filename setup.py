@@ -1,6 +1,9 @@
 from distutils.core import setup
+from distutils import ccompiler
+from distutils.errors import CCompilerError, DistutilsPlatformError
 from pathlib import Path
 import re
+import tempfile
 
 import os
 import sys
@@ -11,7 +14,9 @@ IS_TRAVIS = "TRAVIS" in os.environ
 IS_DEPLOYING = "DEPLOYING" in os.environ
 IS_RTD = "READTHEDOCS" in os.environ
 
-dep_links = ["https://github.com/Rapptz/discord.py/tarball/rewrite#egg=discord.py-1.0"]
+dep_links = [
+    "https://github.com/Rapptz/discord.py/tarball/7eb918b19e3e60b56eb9039eb267f8f3477c5e17#egg=discord.py-1.0"
+]
 if IS_TRAVIS:
     dep_links = []
 
@@ -19,6 +24,20 @@ if IS_TRAVIS:
 def get_package_list():
     core = find_packages(include=["redbot", "redbot.*"])
     return core
+
+
+def check_compiler_available():
+    m = ccompiler.new_compiler()
+
+    with tempfile.TemporaryDirectory() as tdir:
+        with tempfile.NamedTemporaryFile(prefix="dummy", suffix=".c", dir=tdir) as tfile:
+            tfile.write(b"int main(int argc, char** argv) {return 0;}")
+            tfile.seek(0)
+            try:
+                m.compile([tfile.name])
+            except (CCompilerError, DistutilsPlatformError):
+                return False
+    return True
 
 
 def get_requirements():
@@ -31,6 +50,9 @@ def get_requirements():
     except ValueError:
         pass
 
+    if not check_compiler_available():  # Can't compile python-Levensthein, so drop extra
+        requirements.remove("fuzzywuzzy[speedup]<=0.16.0")
+        requirements.append("fuzzywuzzy<=0.16.0")
     if IS_DEPLOYING or not (IS_TRAVIS or IS_RTD):
         requirements.append("discord.py>=1.0.0a0")
     if sys.platform.startswith("linux"):

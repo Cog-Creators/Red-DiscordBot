@@ -1,6 +1,6 @@
 from .alias import Alias
-from discord.ext import commands
+from redbot.core.bot import Red
 
 
-def setup(bot: commands.Bot):
+def setup(bot: Red):
     bot.add_cog(Alias(bot))

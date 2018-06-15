@@ -223,7 +223,7 @@ class Group(Value):
                 identifiers=new_identifiers, default_value=self._defaults[item], driver=self.driver
             )
         elif self.force_registration:
-            raise AttributeError("'{}' is not a valid registered Group " "or value.".format(item))
+            raise AttributeError("'{}' is not a valid registered Group or value.".format(item))
         else:
             return Value(identifiers=new_identifiers, default_value=None, driver=self.driver)
 
@@ -335,7 +335,7 @@ class Group(Value):
                 default = poss_default
 
         try:
-            return deepcopy(await self.driver.get(*self.identifiers, *path))
+            return await self.driver.get(*self.identifiers, *path)
         except KeyError:
             if default is not ...:
                 return default
@@ -365,7 +365,7 @@ class Group(Value):
 
         """
         if not defaults:
-            defaults = deepcopy(self.defaults)
+            defaults = self.defaults
 
         for key, value in current.items():
             if isinstance(value, collections.Mapping):
@@ -623,9 +623,7 @@ class Config:
                 existing_is_dict = isinstance(_partial[k], dict)
                 if val_is_dict != existing_is_dict:
                     # != is XOR
-                    raise KeyError(
-                        "You cannot register a Group and a Value under" " the same name."
-                    )
+                    raise KeyError("You cannot register a Group and a Value under the same name.")
                 if val_is_dict:
                     Config._update_defaults(v, _partial=_partial[k])
                 else:

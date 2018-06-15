@@ -29,7 +29,9 @@ Keys specific to the cog info.json (case sensitive)
 
 - ``bot_version`` (list of integer) - Min version number of Red in the format ``(MAJOR, MINOR, PATCH)``
 
-- ``hidden`` (bool) - Determines if a cog is available for install.
+- ``hidden`` (bool) - Determines if a cog is visible in the cog list for a repo.
+
+- ``disabled`` (bool) - Determines if a cog is available for install.
 
 - ``required_cogs`` (map of cogname to repo URL) - A map of required cogs that this cog depends on.
   Downloader will not deal with this functionality but it may be useful for other cogs.

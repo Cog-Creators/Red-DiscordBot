@@ -6,6 +6,7 @@ import heapq
 import lavalink
 import math
 import re
+import time
 import redbot.core
 from redbot.core import Config, commands, checks, bank
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS, prev_page, next_page, close_menu
@@ -14,7 +15,7 @@ from .manager import shutdown_lavalink_server
 
 _ = Translator("Audio", __file__)
 
-__version__ = "0.0.6a"
+__version__ = "0.0.6b"
 __author__ = ["aikaterna", "billy/bollo/ati"]
 
 
@@ -37,6 +38,8 @@ class Audio:
         default_guild = {
             "dj_enabled": False,
             "dj_role": None,
+            "emptydc_enabled": False,
+            "emptydc_timer": 0,
             "jukebox": False,
             "jukebox_price": 0,
             "playlists": {},
@@ -163,12 +166,11 @@ class Audio:
                 await message_channel.send(embed=embed)
                 await player.skip()
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @commands.guild_only()
     async def audioset(self, ctx):
         """Music configuration options."""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @audioset.command()
     @checks.admin_or_permissions(manage_roles=True)
@@ -195,6 +197,26 @@ class Audio:
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         await self.config.guild(ctx.guild).dj_enabled.set(not dj_enabled)
         await self._embed_msg(ctx, "DJ role enabled: {}.".format(not dj_enabled))
+
+    @audioset.command()
+    @checks.mod_or_permissions(administrator=True)
+    async def emptydisconnect(self, ctx, seconds: int):
+        """Auto-disconnection after x seconds while stopped. 0 to disable."""
+        if seconds < 0:
+            return await self._embed_msg(ctx, "Can't be less than zero.")
+        if seconds < 10 and seconds > 0:
+            seconds = 10
+        if seconds == 0:
+            enabled = False
+            await self._embed_msg(ctx, "Empty disconnect disabled.")
+        else:
+            enabled = True
+            await self._embed_msg(
+                ctx, "Empty disconnect timer set to {}.".format(self._dynamic_time(seconds))
+            )
+
+        await self.config.guild(ctx.guild).emptydc_timer.set(seconds)
+        await self.config.guild(ctx.guild).emptydc_enabled.set(enabled)
 
     @audioset.command()
     @checks.admin_or_permissions(manage_roles=True)
@@ -241,12 +263,16 @@ class Audio:
         global_data = await self.config.all()
         dj_role_obj = discord.utils.get(ctx.guild.roles, id=data["dj_role"])
         dj_enabled = data["dj_enabled"]
+        emptydc_enabled = data["emptydc_enabled"]
+        emptydc_timer = data["emptydc_timer"]
         jukebox = data["jukebox"]
         jukebox_price = data["jukebox_price"]
         jarbuild = redbot.core.__version__
 
         vote_percent = data["vote_percent"]
         msg = "```ini\n" "----Server Settings----\n"
+        if emptydc_enabled:
+            msg += "Disconnect timer: [{0}]\n".format(self._dynamic_time(emptydc_timer))
         if dj_enabled:
             msg += "DJ Role:          [{}]\n".format(dj_role_obj.name)
         if jukebox:
@@ -593,7 +619,7 @@ class Audio:
 
         queue_duration = await self._queue_duration(ctx)
         queue_total_duration = lavalink.utils.format_time(queue_duration)
-        before_queue_length = len(player.queue) + 1
+        before_queue_length = len(player.queue)
 
         if "list" in query and "ytsearch:" not in query:
             for track in tracks:
@@ -606,7 +632,7 @@ class Audio:
             if not shuffle and queue_duration > 0:
                 embed.set_footer(
                     text="{} until start of playlist playback: starts at #{} in queue".format(
-                        queue_total_duration, before_queue_length
+                        queue_total_duration, before_queue_length + 1
                     )
                 )
             if not player.current:
@@ -622,21 +648,20 @@ class Audio:
             if not shuffle and queue_duration > 0:
                 embed.set_footer(
                     text="{} until track playback: #{} in queue".format(
-                        queue_total_duration, before_queue_length
+                        queue_total_duration, before_queue_length + 1
                     )
                 )
             elif queue_duration > 0:
-                embed.set_footer(text="#{} in queue".format(len(player.queue) + 1))
+                embed.set_footer(text="#{} in queue".format(len(player.queue)))
             if not player.current:
                 await player.play()
         await ctx.send(embed=embed)
 
-    @commands.group()
+    @commands.group(autohelp=True)
     @commands.guild_only()
     async def playlist(self, ctx):
         """Playlist configuration options."""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @playlist.command(name="append")
     async def _playlist_append(self, ctx, playlist_name, *url):
@@ -1198,10 +1223,10 @@ class Audio:
 
         query = query.strip("<>")
         if query.startswith("list "):
-            query = "ytsearch:{}".format(query.lstrip("list "))
+            query = "ytsearch:{}".format(query.replace("list ", ""))
             tracks = await player.get_tracks(query)
             if not tracks:
-                return await self._embed_msg(ctx, "Nothing found 👀")
+                return await self._embed_msg(ctx, "Nothing found.")
             songembed = discord.Embed(
                 colour=ctx.guild.me.top_role.colour,
                 title="Queued {} track(s).".format(len(tracks)),
@@ -1220,12 +1245,12 @@ class Audio:
                     await player.play()
             return await ctx.send(embed=songembed)
         if query.startswith("sc "):
-            query = "scsearch:{}".format(query.lstrip("sc "))
+            query = "scsearch:{}".format(query.replace("sc ", ""))
         elif not query.startswith("http"):
             query = "ytsearch:{}".format(query)
         tracks = await player.get_tracks(query)
         if not tracks:
-            return await self._embed_msg(ctx, "Nothing found 👀")
+            return await self._embed_msg(ctx, "Nothing found.")
 
         len_search_pages = math.ceil(len(tracks) / 5)
         search_page_list = []
@@ -1593,13 +1618,12 @@ class Audio:
             embed.set_footer(text="Nothing playing.")
         await ctx.send(embed=embed)
 
-    @commands.group(aliases=["llset"])
+    @commands.group(aliases=["llset"], autohelp=True)
     @commands.guild_only()
     @checks.is_owner()
     async def llsetup(self, ctx):
         """Lavalink server configuration options."""
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @llsetup.command()
     async def external(self, ctx):
@@ -1715,6 +1739,34 @@ class Audio:
             player.shuffle = shuffle
         if player.volume != volume:
             await player.set_volume(volume)
+
+    async def disconnect_timer(self):
+        stop_times = {}
+
+        while self == self.bot.get_cog("Audio"):
+            for p in lavalink.players:
+                server = p.channel.guild
+
+                if server.id not in stop_times:
+                    stop_times[server.id] = None
+
+                if p.current is None and [self.bot.user] == p.channel.members:
+                    if stop_times[server.id] is None:
+                        stop_times[server.id] = int(time.time())
+
+            for sid in stop_times:
+                server_obj = self.bot.get_guild(sid)
+                emptydc_enabled = await self.config.guild(server_obj).emptydc_enabled()
+                if emptydc_enabled:
+                    if stop_times[sid] is not None and [self.bot.user] == p.channel.members:
+                        emptydc_timer = await self.config.guild(server_obj).emptydc_timer()
+                        if stop_times[sid] and (
+                            int(time.time()) - stop_times[sid] > emptydc_timer
+                        ):
+                            stop_times[sid] = None
+                            await lavalink.get_player(sid).disconnect()
+
+            await asyncio.sleep(5)
 
     @staticmethod
     async def _draw_time(ctx):

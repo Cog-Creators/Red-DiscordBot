@@ -154,7 +154,7 @@ def red(config_fr):
 
     Config.get_core_conf = lambda *args, **kwargs: config_fr
 
-    red = Red(cli_flags, description=description, pm_help=None)
+    red = Red(cli_flags=cli_flags, description=description, pm_help=None)
 
     yield red
 
