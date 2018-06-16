@@ -34,7 +34,7 @@ def check_compiler_available():
             tfile.write(b"int main(int argc, char** argv) {return 0;}")
             tfile.seek(0)
             try:
-                m.compile([tfile.name])
+                m.compile([tfile.name], output_dir=tdir)
             except (CCompilerError, DistutilsPlatformError):
                 return False
     return True
