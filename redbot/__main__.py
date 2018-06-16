@@ -101,22 +101,20 @@ def list_instances():
 def main():
     description = "Red - Version {}".format(__version__)
     cli_flags = parse_cli_flags(sys.argv[1:])
-    token = os.environ.get("RED_TOKEN", tmp_data["token"])
-    if not token and cli_flags.token:
-        token = cli_flags.token
     if cli_flags.list_instances:
         list_instances()
     elif cli_flags.version:
         print(description)
         sys.exit(0)
-    elif not cli_flags.instance_name and not cli_flags.token:
+    elif not cli_flags.instance_name and not cli_flags.no_instance:
         print("Error: No instance name was provided!")
         sys.exit(1)
-    if token and not cli_flags.instance_name:
+    if cli_flags.no_instance:
         print(
-            "Running Red with a custom token. " "Data will be saved under 'temporary_red' folder."
+            "\033[1m"
+            "Warning: The data will be placed in a temporary folder and removed on next reboot."
+            "\033[0m"
         )
-        print("Warning: The data will be placed in a temporary folder and removed on next reboot.")
         cli_flags.instance_name = "temporary_red"
         save_default_config()
     load_basic_configuration(cli_flags.instance_name)
@@ -131,6 +129,9 @@ def main():
     loop = asyncio.get_event_loop()
     tmp_data = {}
     loop.run_until_complete(_get_prefix_and_token(red, tmp_data))
+    token = os.environ.get("RED_TOKEN", tmp_data["token"])
+    if cli_flags.token:
+        token = cli_flags.token
     prefix = cli_flags.prefix or tmp_data["prefix"]
     if not (token and prefix):
         if cli_flags.no_prompt is False:
