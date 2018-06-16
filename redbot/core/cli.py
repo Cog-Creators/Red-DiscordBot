@@ -138,11 +138,7 @@ def parse_cli_flags(args):
         action="store_true",
         help="Enables the built-in RPC server. Please read the docs prior to enabling this!",
     )
-    parser.add_argument(
-        "--token",
-        type=str,
-        help="Run Red with the given token.",
-    )
+    parser.add_argument("--token", type=str, help="Run Red with the given token.")
     parser.add_argument(
         "--no-instance",
         action="store_true",
@@ -150,7 +146,7 @@ def parse_cli_flags(args):
             "Run Red without any existing instance. "
             "The data will be saved under a temporary folder "
             "and deleted on next restart."
-        )
+        ),
     )
     parser.add_argument(
         "instance_name", nargs="?", help="Name of the bot instance created during `redbot-setup`."
