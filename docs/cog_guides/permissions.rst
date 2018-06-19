@@ -377,8 +377,7 @@ command.
 This can be combined with other rules to make cog or commands only available
 in specific destinations.
 
-If you want to remove a default rule, put nothing for the ``[allow_or_deny]``
-argument.
+If you want to remove a default rule, omit the ``[allow_or_deny]`` argument.
 
 **Arguments**
 
@@ -424,8 +423,7 @@ command.
 This can be combined with other rules to make cog or commands only available
 in specific destinations.
 
-If you want to remove a default rule, put nothing for the ``[allow_or_deny]``
-argument.
+If you want to remove a default rule, omit the ``[allow_or_deny]`` argument.
 
 **Arguments**
 

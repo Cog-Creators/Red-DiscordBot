@@ -315,6 +315,10 @@ The cog guides are formatted the same. They're divided into 3 sections:
 
     A line that will show how the command must be invoked, with the arguments.
 
+    .. tip:: If the command show something like ``[permissions|p]``, that means
+        you can invoke the command with ``permissions`` or with ``p``, this is
+        called an alias.
+
   * **Description**
 
     A detailled description of what the command does, with details about how
