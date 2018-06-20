@@ -33,7 +33,7 @@ Usage
 -----
 
 The permissions cog will allow you to define extra custom
-rules for who can use a command. If no applicable rules are
+rules for who can use a command. If no relevant rules are
 found, then command will behave as if the cog was not loaded.
 
 .. _permissions-usage-working:
@@ -42,7 +42,7 @@ found, then command will behave as if the cog was not loaded.
 How it works
 ^^^^^^^^^^^^
 
-You will be able to create "rules" that will overwrites the
+You will be able to create "rules" that will overwrite the
 default command permissions. For example, the ban command will
 work if you have the moderator role, but you can change it so it will
 work with a custom role and only in a specific channel for example.
@@ -195,7 +195,7 @@ permissions addglobalrule
 
 **Description**
 
-Creates a rule that will overwrites the current permissions for the
+Creates a rule that will overwrite the current permissions for the
 command. You can allow or deny the usage of a command or a cog for
 a special member, a voice channel, a text channel, a role or a guild.
 
@@ -242,7 +242,7 @@ permissions addguildrule
 
 **Description**
 
-Creates a rule that will overwrites the current permissions for the
+Creates a rule that will overwrite the current permissions for the
 command. You can allow or deny the usage of a command or a cog for
 a special member, a voice channel, a text channel or a role.
 
@@ -726,7 +726,7 @@ permissions canrun
 
 **Description**
 
-Check if someone can run a command in the current location
+Checks if someone can run a command in the current location
 (refers to text channel, voice channel, roles and server).
 
 **Arguments**
@@ -749,4 +749,4 @@ permissions explain
 
 **Description**
 
-Print a short description of how the cog works.
+Prints a short description of how the cog works.
