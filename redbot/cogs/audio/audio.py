@@ -1903,6 +1903,8 @@ class Audio:
 
     @staticmethod
     def _userlimit(channel):
+        if channel.user_limit == 0:
+            return False
         if channel.user_limit < len(channel.members) + 1:
             return True
         else:
