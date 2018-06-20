@@ -276,6 +276,24 @@ If you want to do it, follow these steps.
   For Raspberry Pi users, just install `Raspbian
   <https://www.raspberrypi.org/downloads/raspbian/>`_ on a micro-SD card.
 
+2.1. **Log in**
+
+  .. note:: This section is for those who have an online server. If you have
+    a local Linux machine, just open the terminal and skip to the next part.
+
+  As we said before, a VPS is controlled through command line. You will have to
+  connect to your VPS through a protocol called SSH.
+
+  .. image:: .ressources/instances-ssh-button.png
+
+  On your host page (here, it is Google Cloud), find the SSH button and click on
+  it. You will be connected to your server with command line. You should see
+  something like this (here, it is Ubuntu 17).
+
+  .. image:: .ressources/ssh-output.png
+
+  .. note:: Don't forget to type the command ``logout`` to close the SSH properly.
+
 3. **Install and set up Red**
 
   Just follow one of the Linux installation guide. We provide guides for the
