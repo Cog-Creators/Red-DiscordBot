@@ -335,7 +335,7 @@ class Group(Value):
                 default = poss_default
 
         try:
-            return deepcopy(await self.driver.get(*self.identifiers, *path))
+            return await self.driver.get(*self.identifiers, *path)
         except KeyError:
             if default is not ...:
                 return default
@@ -365,7 +365,7 @@ class Group(Value):
 
         """
         if not defaults:
-            defaults = deepcopy(self.defaults)
+            defaults = self.defaults
 
         for key, value in current.items():
             if isinstance(value, collections.Mapping):
@@ -392,7 +392,7 @@ class Group(Value):
             # is equivalent to
 
             data = {"foo": {"bar": None}}
-            d["foo"]["bar"] = "baz"
+            data["foo"]["bar"] = "baz"
 
         Parameters
         ----------
