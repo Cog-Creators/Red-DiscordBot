@@ -15,7 +15,7 @@ from .manager import shutdown_lavalink_server
 
 _ = Translator("Audio", __file__)
 
-__version__ = "0.0.6b"
+__version__ = "0.0.6c"
 __author__ = ["aikaterna", "billy/bollo/ati"]
 
 
@@ -586,6 +586,10 @@ class Audio:
         shuffle = await self.config.guild(ctx.guild).shuffle()
         if not self._player_check(ctx):
             try:
+                if not ctx.author.voice.channel.permissions_for(ctx.me).connect == True:
+                    return await self._embed_msg(
+                        ctx, "I don't have permission to connect to your channel."
+                    )
                 await lavalink.connect(ctx.author.voice.channel)
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
@@ -989,6 +993,10 @@ class Audio:
                 return False
         if not self._player_check(ctx):
             try:
+                if not ctx.author.voice.channel.permissions_for(ctx.me).connect == True:
+                    return await self._embed_msg(
+                        ctx, "I don't have permission to connect to your channel."
+                    )
                 await lavalink.connect(ctx.author.voice.channel)
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
@@ -1206,6 +1214,10 @@ class Audio:
         """
         if not self._player_check(ctx):
             try:
+                if not ctx.author.voice.channel.permissions_for(ctx.me).connect == True:
+                    return await self._embed_msg(
+                        ctx, "I don't have permission to connect to your channel."
+                    )
                 await lavalink.connect(ctx.author.voice.channel)
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
