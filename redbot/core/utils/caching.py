@@ -6,7 +6,8 @@ class LRUDict(collections.OrderedDict):
     dict with LRU-eviction and max-size for caching
 
     This may not behave as intended if not used for caching
-    Don't update values in place.
+    Values cannot be updated in place. 
+    pop them, and replace them if needed.
     """
 
     def __init__(self, size):
@@ -15,7 +16,7 @@ class LRUDict(collections.OrderedDict):
 
     def __contains__(self, key):
         if super().__contains__(key):
-            self.move_to_end(key, last=False)
+            self.move_to_end(key, last=True)
             return True
         return False
 
@@ -29,7 +30,7 @@ class LRUDict(collections.OrderedDict):
             return ret
 
     def __setitem__(self, key, value):
-        if not super().__contains__(key):  # PITA avoidance of overriden contains
+        if not super().__contains__(key):  # avoidance of overriden contains
             super().__setitem__(key, value)
             if len(self) > self.size:
                 try:

@@ -35,7 +35,7 @@ class Permissions:
         self.config = Config.get_conf(self, identifier=78631113035100160, force_registration=True)
         self.config.register_global(owner_models={})
         self.config.register_guild(owner_models={})
-        self.cache = LRUDict(10000)  # This can be tuned later
+        self.cache = LRUDict(25000)  # This can be tuned later
 
     async def __global_check(self, ctx):
         """
