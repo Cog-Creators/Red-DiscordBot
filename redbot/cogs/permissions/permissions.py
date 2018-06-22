@@ -8,7 +8,7 @@ from redbot.core import checks
 from redbot.core.config import Config
 from redbot.core.i18n import Translator, cog_i18n
 
-from .resolvers import val_if_check_is_valid, resolve_models
+from .resolvers import val_if_check_is_valid, resolve_models, entries_from_ctx
 from .yaml_handler import yamlset_acl, yamlget_acl
 from .converters import CogOrCommand, RuleType
 
@@ -34,6 +34,7 @@ class Permissions:
         self.config = Config.get_conf(self, identifier=78631113035100160, force_registration=True)
         self.config.register_global(owner_models={})
         self.config.register_guild(owner_models={})
+        self.cache = {}
 
     async def __global_check(self, ctx):
         """
@@ -86,11 +87,22 @@ class Permissions:
             if override is not None:
                 return override
 
-        for model in self.resolution_order[level]:
-            override_model = getattr(self, model + "_model", None)
-            override = await override_model(ctx) if override_model else None
+        # checked ids + configureable to be checked against
+        cache_tup = entries_from_ctx(ctx) + (
+            ctx.cog.__class__.__name__,
+            ctx.command.qualified_name,
+        )
+        if cache_tup in self.cache:
+            override = self.cache[cache_tup]
             if override is not None:
                 return override
+        else:
+            for model in self.resolution_order[level]:
+                override_model = getattr(self, model + "_model", None)
+                override = await override_model(ctx) if override_model else None
+                if override is not None:
+                    self.cache[cache_tup] = override
+                    return override
 
         after = [
             getattr(cog, "_{0.__class__.__name__}__red_permissions_after".format(cog), None)
@@ -223,6 +235,8 @@ class Permissions:
             return await ctx.send(_("Invalid syntax."))
         else:
             await ctx.send(_("Rules set."))
+            # cache invalidation
+            self.cache = {}
 
     @checks.is_owner()
     @permissions.command(name="getglobalacl")
@@ -249,6 +263,8 @@ class Permissions:
             return await ctx.send(_("Invalid syntax."))
         else:
             await ctx.send(_("Rules set."))
+            # partial cache invalidation
+            self.cache = {k: v for k, v in self.cache.items() if ctx.guild.id not in k}
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
@@ -278,6 +294,8 @@ class Permissions:
             return await ctx.send(_("Invalid syntax."))
         else:
             await ctx.send(_("Rules set."))
+            # partial cache invalidation
+            self.cache = {k: v for k, v in self.cache.items() if ctx.guild.id not in k}
 
     @checks.is_owner()
     @permissions.command(name="updateglobalacl")
@@ -297,6 +315,8 @@ class Permissions:
             return await ctx.send(_("Invalid syntax."))
         else:
             await ctx.send(_("Rules set."))
+            # cache invalidation
+            self.cache = {}
 
     @checks.is_owner()
     @permissions.command(name="addglobalrule")
@@ -340,6 +360,8 @@ class Permissions:
             data[model_type][type_name][allow_or_deny].append(obj)
             models.update(data)
         await ctx.send(_("Rule added."))
+        # partial cache invalidation
+        self.cache = {k: v for k, v in self.cache.items() if obj not in k and type_name not in k}
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
@@ -384,6 +406,12 @@ class Permissions:
             data[model_type][type_name][allow_or_deny].append(obj)
             models.update(data)
         await ctx.send(_("Rule added."))
+        # partial cache invalidation
+        self.cache = {
+            k: v
+            for k, v in self.cache.items()
+            if (obj not in k and type_name not in k) or ctx.guild.id not in k
+        }
 
     @checks.is_owner()
     @permissions.command(name="removeglobalrule")
@@ -427,6 +455,7 @@ class Permissions:
             data[model_type][type_name][allow_or_deny].remove(obj)
             models.update(data)
         await ctx.send(_("Rule removed."))
+        self.cache = {k: v for k, v in self.cache.items() if obj not in k and type_name not in k}
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
@@ -471,6 +500,11 @@ class Permissions:
             data[model_type][type_name][allow_or_deny].remove(obj)
             models.update(data)
         await ctx.send(_("Rule removed."))
+        self.cache = {
+            k: v
+            for k, v in self.cache.items()
+            if (obj not in k and type_name not in k) or ctx.guild.id not in k
+        }
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
@@ -501,6 +535,10 @@ class Permissions:
 
             models.update(data)
         await ctx.send(_("Default set."))
+        # partial cache invalidation
+        self.cache = {
+            k: v for k, v in self.cache.items() if type_name not in k or ctx.guild.id not in k
+        }
 
     @checks.is_owner()
     @permissions.command(name="setdefaultglobalrule")
@@ -531,6 +569,8 @@ class Permissions:
 
             models.update(data)
         await ctx.send(_("Default set."))
+        # partial cache invalidation
+        self.cache = {k: v for k, v in self.cache.items() if type_name not in k}
 
     @commands.bot_has_permissions(add_reactions=True)
     @checks.is_owner()
@@ -555,6 +595,8 @@ class Permissions:
             await ctx.send(_("Global settings cleared."))
         else:
             await ctx.send(_("Okay."))
+        # cache invalidation
+        self.cache = {}
 
     @commands.bot_has_permissions(add_reactions=True)
     @commands.guild_only()
@@ -580,6 +622,8 @@ class Permissions:
             await ctx.send(_("Guild settings cleared."))
         else:
             await ctx.send(_("Okay."))
+        # partial cache invalidation
+        self.cache = {k: v for k, v in self.cache.items() if ctx.guild.id not in k}
 
     def find_object_uniquely(self, info: str) -> int:
         """
