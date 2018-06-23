@@ -71,7 +71,7 @@ class Reports:
         await ctx.send(_("The report channel has been set."))
 
     @checks.admin_or_permissions(manage_guild=True)
-    @reportset.command(name="toggle")
+    @reportset.command(name="toggle", aliases=["toggleactive"])
     async def report_toggle(self, ctx: commands.Context):
         """Enables or Disables reporting for the server"""
 
@@ -223,14 +223,15 @@ class Reports:
             return await author.send(
                 _(
                     "You've sent too many reports recently. "
-                    "Please contact a server admin if this is important matter, or please wait and try again "
-                    "later."
+                    "Please contact a server admin if this is important matter, "
+                    "or please wait and try again later."
                 )
             )
         if author.id in self.user_cache:
             return await author.send(
                 _(
-                    "Please finish making your prior report before trying to make an additional one!"
+                    "Please finish making your prior report before trying to make an "
+                    "additional one!"
                 )
             )
         self.user_cache.append(author.id)
