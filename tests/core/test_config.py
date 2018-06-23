@@ -1,3 +1,4 @@
+from unittest.mock import patch
 import pytest
 
 
@@ -379,13 +380,9 @@ async def test_value_ctxmgr_saves(config):
 async def test_value_ctxmgr_immutable(config):
     config.register_global(foo=True)
 
-    try:
+    with pytest.raises(TypeError):
         async with config.foo() as foo:
             foo = False
-    except TypeError:
-        pass
-    else:
-        raise AssertionError
 
     foo = await config.foo()
     assert foo is True
@@ -401,3 +398,35 @@ async def test_ctxmgr_no_shared_default(config, member_factory):
         foo.append(1)
 
     assert 1 not in await config.member(m2).foo()
+
+
+@pytest.mark.asyncio
+async def test_ctxmgr_no_unnecessary_write(config):
+    config.register_global(foo=[])
+    foo_value_obj = config.foo
+    with patch.object(foo_value_obj, "set") as set_method:
+        async with foo_value_obj() as foo:
+            pass
+        set_method.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_get_then_mutate(config):
+    """Tests that mutating an object after getting it as a value doesn't mutate the data store."""
+    config.register_global(list1=[])
+    await config.list1.set([])
+    list1 = await config.list1()
+    list1.append("foo")
+    list1 = await config.list1()
+    assert "foo" not in list1
+
+
+@pytest.mark.asyncio
+async def test_set_then_mutate(config):
+    """Tests that mutating an object after setting it as a value doesn't mutate the data store."""
+    config.register_global(list1=[])
+    list1 = []
+    await config.list1.set(list1)
+    list1.append("foo")
+    list1 = await config.list1()
+    assert "foo" not in list1
