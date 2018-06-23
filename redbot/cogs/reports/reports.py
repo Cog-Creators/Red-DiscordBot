@@ -59,7 +59,7 @@ class Reports:
     @commands.group(name="reportset", autohelp=True)
     async def reportset(self, ctx: commands.Context):
         """
-        Settings for the report system
+        Settings for the report system.
         """
         pass
 
@@ -203,7 +203,8 @@ class Reports:
         """
         Send a report.
 
-        Use without arguments for DM reporting.
+        Use without arguments for interactive reporting, or do
+        [p]report <text> to use it non-interactively.
         """
         author = ctx.author
         guild = ctx.guild
