@@ -201,8 +201,9 @@ class Reports:
     @commands.group(name="report", invoke_without_command=True)
     async def report(self, ctx: commands.Context, *, _report: str = ""):
         """
-        Use [p]report <text> to send a report
-		or alternatively [p]report for DM reporting
+        Send a report.
+
+        Use without arguments for DM reporting.
         """
         author = ctx.author
         guild = ctx.guild
@@ -316,10 +317,12 @@ class Reports:
     @report.command(name="interact")
     async def response(self, ctx, ticket_number: int):
         """
-        opens a message tunnel between things you say in this channel
-        and the ticket opener's direct messages
+        Open a message tunnel.
+        
+        This tunnel will connect forward things you say in this channel
+        to the ticket opener's direct messages.
 
-        tunnels do not persist across bot restarts
+        Tunnels do not persist across bot restarts.
         """
 
         # note, mod_or_permissions is an implicit guild_only
@@ -345,14 +348,15 @@ class Reports:
             )
 
         big_topic = _(
-            "{who} opened a 2-way communication."
+            "{who} opened a 2-way communication "
             "about ticket number {ticketnum}. Anything you say or upload here "
             "(8MB file size limitation on uploads) "
             "will be forwarded to them until the communication is closed.\n"
-            "You can close a communication at any point "
-            "by reacting with the X to the last message recieved. "
-            "\nAny message succesfully forwarded will be marked with a check."
-            "\nTunnels are not persistent across bot restarts."
+            "You can close a communication at any point by reacting with "
+            "the \N{NEGATIVE SQUARED CROSS MARK} to the last message recieved.\n"
+            "Any message succesfully forwarded will be marked with "
+            "\N{WHITE HEAVY CHECK MARK}.\n"
+            "Tunnels are not persistent across bot restarts."
         )
         topic = big_topic.format(
             ticketnum=ticket_number, who=_("A moderator in `{guild.name}` has").format(guild=guild)
