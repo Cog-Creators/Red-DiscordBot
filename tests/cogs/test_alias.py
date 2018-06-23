@@ -1,15 +1,5 @@
 import pytest
-
-from redbot.cogs.alias import Alias
-
-
-@pytest.fixture()
-def alias(config):
-    import redbot.cogs.alias.alias
-
-    redbot.cogs.alias.alias.Config.get_conf = lambda *args, **kwargs: config
-
-    return Alias(None)
+from redbot.pytest.alias import *
 
 
 def test_is_valid_alias_name(alias):

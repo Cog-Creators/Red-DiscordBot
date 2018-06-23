@@ -1,16 +1,6 @@
 import pytest
 
-
-@pytest.fixture
-def mod(config):
-    from redbot.core import Config
-
-    Config.get_conf = lambda *args, **kwargs: config
-
-    from redbot.core import modlog
-
-    modlog._register_defaults()
-    return modlog
+from redbot.pytest.mod import *
 
 
 @pytest.mark.asyncio
