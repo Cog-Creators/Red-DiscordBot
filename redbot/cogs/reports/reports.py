@@ -319,7 +319,7 @@ class Reports:
         """
         Open a message tunnel.
         
-        This tunnel will connect forward things you say in this channel
+        This tunnel will forward things you say in this channel
         to the ticket opener's direct messages.
 
         Tunnels do not persist across bot restarts.
