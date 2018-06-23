@@ -396,7 +396,7 @@ class Group(Value):
             # is equivalent to
 
             data = {"foo": {"bar": None}}
-            d["foo"]["bar"] = "baz"
+            data["foo"]["bar"] = "baz"
 
         Parameters
         ----------
