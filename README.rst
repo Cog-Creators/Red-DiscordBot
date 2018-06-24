@@ -15,7 +15,7 @@
     :target: https://discord.gg/red
     :alt: Discord server
     
-  .. image:: https://api.travis-ci.org/retke/Laggrons-Dumb-Cogs.svg?branch=v3
+  .. image:: https://api.travis-ci.org/Cog-Creators/Red-DiscordBot.svg?branch=V3/develop
     :target: https://travis-ci.org/Cog-Creators/Red-DiscordBot
     :alt: Travis CI status
 
