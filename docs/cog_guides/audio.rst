@@ -45,7 +45,7 @@ Currently, you can stream using these services:
 
 .. * Website audio output
 
-Here's a quick introduction on how it works.
+Here's a quick introduction about how it works.
 
 .. _audio-usage-music:
 
@@ -76,7 +76,7 @@ play the first result. You can also give a link.
 The second command, :ref:`search <audio-command-search>`, will search
 (still on YouTube by default) with the given keywords, then it will
 output an interactive message with the search results. You'll just
-have to click on the number to start the song.
+have to click on the number wanted to start the song.
 
 .. tip:: Example:
 
@@ -101,11 +101,11 @@ Once you type the command, something like this should be shown:
 
 .. image:: ../.ressources/audio-queue.png
 
-You can click on the reactions to scroll through the pages.
+You can click on the reactions to scroll through pages.
 
 You can skip a song and jump to the next one in the queue using the
 :ref:`skip <audio-command-skip>` command. The :ref:`prev <audio-command-prev>`
-command goes one song backward.
+command goes one song backwards.
 
 If you just added a song to the queue but you want to listen it now,
 you can use the :ref:`bump <audio-command-bump>` command that will
@@ -143,7 +143,7 @@ If you need to pause the stream, use the
 
 The volume can be set with the :ref:`volume <audio-command-volume>` command.
 
-You can go forward and backward in the current track using the
+You can go forward and backwards in the current track using the
 :ref:`seek <audio-command-seek>` command.
 
 .. tip:: Examples:
@@ -300,7 +300,7 @@ stop
 
 **Description**
 
-Stop the current song in the voice channel. Hoever, this won't disconnect
+Stop the current song in the voice channel. However, this won't disconnect
 the bot from it. For that, use the :ref:`disconnect <audio-command-disconnect>`
 command.
 
@@ -355,7 +355,7 @@ playlist create
 
 **Description**
 
-Create a new empty playlist.
+Creates a new empty playlist.
 
 **Arguments**
 
@@ -375,7 +375,7 @@ playlist save
 
 **Description**
 
-Save a new playlist from a playlist URL. This won't save tracks already
+Saves a new playlist from a playlist URL. This won't save tracks already
 played, only the current and incoming tracks.
 
 .. warning:: This won't **append** the songs to an existing playlist, it
@@ -649,7 +649,7 @@ bump
 **Description**
 
 Move a track to the top of the queue. You need to provide the index
-of the queue for this to work, get it with the
+of the queue to make this work, get it with the
 :ref:`queue <audio-command-queue>` command.
 
 For example, if you just added a song to the queue and it's at the #12 position
@@ -679,7 +679,7 @@ remove
 **Description**
 
 Remove a track from the queue. You need to provide the index of the queue
-for this to work, get it with the :ref:`queue <audio-command-queue>` command.
+to make this work, get it with the :ref:`queue <audio-command-queue>` command.
 
 For example, if you just added a song to the queue and it's at the #12 position
 in the queue, type ``[p]remove 12`` and it will be removed from the queue.
@@ -722,7 +722,7 @@ now
 
 **Description**
 
-Show the current track being played, with the time code and the requester.
+Shows the current track being played, with the time code and the requester.
 
 There will also be reactions. You can click on them to
 :ref:`go back <audio-command-prev>`, :ref:`stop <audio-command-stop>`,
@@ -765,7 +765,7 @@ volume
 
 **Description**
 
-Set the volume of the stream. The number should be a percent between 1 and 150.
+Sets the volume of the stream. The number should be a percent between 1 and 150.
 If the number isn't given, the current volume level will be shown.
 
 **Arguments**
@@ -815,7 +815,7 @@ audiostats
 
 **Description**
 
-Show a list of guilds where the bot is connected on a voice channel.
+Shows a list of guilds where the bot is connected on a voice channel.
 
 .. _audio-command-audioset:
 
@@ -847,7 +847,7 @@ audioset settings
 
 **Description**
 
-Show the current audio settings on this guild.
+Shows the current audio settings on this guild.
 
 .. _audio-command-audioset-status:
 
@@ -888,7 +888,7 @@ audioset role
 
 **Description**
 
-Set the DJ role. If enabled, only users who have this role will be able
+Sets the DJ role. If enabled, only users who have this role will be able
 to queue songs. For more informations, check the :ref:`DJ role section
 <audio-usage-DJ>`.
 
@@ -984,7 +984,7 @@ audioset jukebox
 
 **Description**
 
-Set a price for queuing songs. This interacts with the bank.
+Sets a price for queuing songs. This interacts with the bank.
 Set 0 to disable
 
 **Arguments**
