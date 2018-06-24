@@ -708,6 +708,28 @@ shuffle
 Toogle the shuffle of the queue. If it's enabled, the tracks won't be played in
 order. Type the command again to disable it.
 
+.. _audio-command-percent:
+
+^^^^^^^
+percent
+^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]percent
+
+**Description**
+
+Show the percentage of the queue. Every user who added a song to the queue will
+be listed, with the percentage of its queued songs. 
+
+For example, if aikaterna#1393 adds 6 songs to the queue and Tobotimus#0001 adds
+11 songs, this is what will be shown:
+
+.. image:: ../.ressources/audio-queue-percent.png
+
 .. _audio-command-now:
 
 ^^^
