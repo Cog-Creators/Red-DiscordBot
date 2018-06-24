@@ -768,6 +768,7 @@ class Audio:
         )
         await ctx.send(embed=embed)
 
+    @commands.cooldown(1, 15, discord.ext.commands.BucketType.guild)
     @playlist.command(name="queue")
     async def _playlist_queue(self, ctx, playlist_name=None):
         """Save the queue to a playlist."""
@@ -794,11 +795,13 @@ class Audio:
             await self._embed_msg(ctx, "Please enter a name for this playlist.")
 
             def check(m):
-                return m.author == ctx.author
+                return m.author == ctx.author and not m.content.startswith(ctx.prefix)
 
             try:
                 playlist_name_msg = await ctx.bot.wait_for("message", timeout=15.0, check=check)
-                playlist_name = str(playlist_name_msg.content)
+                playlist_name = re.sub(
+                    "[^a-zA-Z0-9]", "", str(playlist_name_msg.content.split(" ")[0])
+                )
                 if len(playlist_name) > 20:
                     return await self._embed_msg(ctx, "Try the command again with a shorter name.")
                 if playlist_name in playlists:
