@@ -145,7 +145,7 @@ def parse_cli_flags(args):
         help=(
             "Run Red without any existing instance. "
             "The data will be saved under a temporary folder "
-            "and deleted on next restart."
+            "and deleted on next system restart."
         ),
     )
     parser.add_argument(

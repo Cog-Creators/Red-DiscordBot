@@ -41,10 +41,13 @@ if not config_dir:
 config_file = config_dir / "config.json"
 
 
-def save_default_config():
+def create_temp_config():
     """
     Creates a default instance for Red, so it can be ran
     without creating an instance.
+
+    .. warning:: The data of this instance will be removed
+        on next system restart.
     """
     name = "temporary_red"
 

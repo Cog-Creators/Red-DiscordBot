@@ -112,7 +112,7 @@ def main():
     if cli_flags.no_instance:
         print(
             "\033[1m"
-            "Warning: The data will be placed in a temporary folder and removed on next reboot."
+            "Warning: The data will be placed in a temporary folder and removed on next system reboot."
             "\033[0m"
         )
         cli_flags.instance_name = "temporary_red"
