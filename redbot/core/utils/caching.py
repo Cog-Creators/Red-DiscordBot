@@ -10,9 +10,9 @@ class LRUDict(collections.OrderedDict):
     pop them, and replace them if needed.
     """
 
-    def __init__(self, size):
+    def __init__(self, *keyval_pairs, size):
         self.size = size
-        super(LRUDict, self).__init__()
+        super(LRUDict, self).__init__(*keyval_pairs)
 
     def __contains__(self, key):
         if super().__contains__(key):

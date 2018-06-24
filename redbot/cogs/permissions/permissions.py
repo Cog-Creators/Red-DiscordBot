@@ -35,7 +35,7 @@ class Permissions:
         self.config = Config.get_conf(self, identifier=78631113035100160, force_registration=True)
         self.config.register_global(owner_models={})
         self.config.register_guild(owner_models={})
-        self.cache = LRUDict(25000)  # This can be tuned later
+        self.cache = LRUDict(size=25000)  # This can be tuned later
 
     async def __global_check(self, ctx):
         """
@@ -230,7 +230,7 @@ class Permissions:
             return await ctx.send(_("Invalid syntax."))
         else:
             await ctx.send(_("Rules set."))
-            self.cache.clear()
+            self.invalidate_cache()
 
     @checks.is_owner()
     @permissions.command(name="getglobalacl")
@@ -257,7 +257,7 @@ class Permissions:
             return await ctx.send(_("Invalid syntax."))
         else:
             await ctx.send(_("Rules set."))
-            self.cache.clear()
+            self.invalidate_cache(ctx.guild.id)
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
@@ -287,7 +287,7 @@ class Permissions:
             return await ctx.send(_("Invalid syntax."))
         else:
             await ctx.send(_("Rules set."))
-            self.cache.clear()
+            self.invalidate_cache(ctx.guild.id)
 
     @checks.is_owner()
     @permissions.command(name="updateglobalacl")
@@ -307,7 +307,7 @@ class Permissions:
             return await ctx.send(_("Invalid syntax."))
         else:
             await ctx.send(_("Rules set."))
-            self.cache.clear()
+            self.invalidate_cache()
 
     @checks.is_owner()
     @permissions.command(name="addglobalrule")
@@ -351,7 +351,7 @@ class Permissions:
             data[model_type][type_name][allow_or_deny].append(obj)
             models.update(data)
         await ctx.send(_("Rule added."))
-        self.cache.clear()
+        self.invalidate_cache(type_name, obj)
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
@@ -396,7 +396,7 @@ class Permissions:
             data[model_type][type_name][allow_or_deny].append(obj)
             models.update(data)
         await ctx.send(_("Rule added."))
-        self.cache.clear()
+        self.invalidate_cache(type_name, obj)
 
     @checks.is_owner()
     @permissions.command(name="removeglobalrule")
@@ -440,7 +440,7 @@ class Permissions:
             data[model_type][type_name][allow_or_deny].remove(obj)
             models.update(data)
         await ctx.send(_("Rule removed."))
-        self.cache.clear()
+        self.invalidate_cache(obj, type_name)
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
@@ -485,7 +485,7 @@ class Permissions:
             data[model_type][type_name][allow_or_deny].remove(obj)
             models.update(data)
         await ctx.send(_("Rule removed."))
-        self.cache.clear()
+        self.invalidate_cache(obj, type_name)
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
@@ -516,7 +516,7 @@ class Permissions:
 
             models.update(data)
         await ctx.send(_("Default set."))
-        self.cache.clear()
+        self.invalidate_cache(type_name)
 
     @checks.is_owner()
     @permissions.command(name="setdefaultglobalrule")
@@ -547,7 +547,7 @@ class Permissions:
 
             models.update(data)
         await ctx.send(_("Default set."))
-        self.cache.clear()
+        self.invalidate_cache(type_name)
 
     @commands.bot_has_permissions(add_reactions=True)
     @checks.is_owner()
@@ -572,7 +572,7 @@ class Permissions:
             await ctx.send(_("Global settings cleared."))
         else:
             await ctx.send(_("Okay."))
-        self.cache.clear()
+        self.invalidate_cache()
 
     @commands.bot_has_permissions(add_reactions=True)
     @commands.guild_only()
@@ -598,7 +598,21 @@ class Permissions:
             await ctx.send(_("Guild settings cleared."))
         else:
             await ctx.send(_("Okay."))
-        self.cache.clear()
+        self.invalidate_cache(ctx.guild.id)
+
+    def invalidate_cache(self, *to_invalidate):
+        """
+        Either invalidates the entire cache (if given no objects)
+        or does a partial invalidation based on passed objects
+        """
+        if len(to_invalidate) == 0:
+            self.cache.clear()
+            return
+        # LRUDict inherits from ordered dict, hence the syntax below
+        stil_valid = [
+            (k, v) for k, v in self.cache.items() if not any(obj in k for obj in to_invalidate)
+        ]
+        self.cache = LRUDict(*stil_valid, size=self.cache.size)
 
     def find_object_uniquely(self, info: str) -> int:
         """
