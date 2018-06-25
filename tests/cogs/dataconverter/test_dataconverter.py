@@ -1,8 +1,7 @@
 import pytest
-from pathlib import Path
 from collections import namedtuple
 
-from redbot.cogs.dataconverter import core_specs
+from redbot.pytest.dataconverter import *
 from redbot.core.utils.data_converter import DataConverter
 
 
@@ -14,16 +13,9 @@ def mock_dpy_member(guildid, userid):
     return namedtuple("Member", "id guild")(int(userid), mock_dpy_object(guildid))
 
 
-@pytest.fixture()
-def specresolver():
-    here = Path(__file__)
-
-    resolver = core_specs.SpecResolver(here.parent)
-    return resolver
-
-
 @pytest.mark.asyncio
-async def test_mod_nicknames(red, specresolver: core_specs.SpecResolver):
+async def test_mod_nicknames(red):
+    specresolver = get_specresolver(__file__)
     filepath, converter, cogname, attr, _id = specresolver.get_conversion_info("Past Nicknames")
     conf = specresolver.get_config_object(red, cogname, attr, _id)
 

@@ -29,12 +29,15 @@ class _ValueCtxManager:
     def __init__(self, value_obj, coro):
         self.value_obj = value_obj
         self.coro = coro
+        self.raw_value = None
+        self.__original_value = None
 
     def __await__(self):
         return self.coro.__await__()
 
     async def __aenter__(self):
         self.raw_value = await self
+        self.__original_value = deepcopy(self.raw_value)
         if not isinstance(self.raw_value, (list, dict)):
             raise TypeError(
                 "Type of retrieved value must be mutable (i.e. "
@@ -44,7 +47,8 @@ class _ValueCtxManager:
         return self.raw_value
 
     async def __aexit__(self, *exc_info):
-        await self.value_obj.set(self.raw_value)
+        if self.raw_value != self.__original_value:
+            await self.value_obj.set(self.raw_value)
 
 
 class Value:
@@ -392,7 +396,7 @@ class Group(Value):
             # is equivalent to
 
             data = {"foo": {"bar": None}}
-            d["foo"]["bar"] = "baz"
+            data["foo"]["bar"] = "baz"
 
         Parameters
         ----------
