@@ -15,6 +15,7 @@ _conn = None
 
 class MotorUnavailable(Exception):
     """Required dependencies for Mongo storage are unavailable."""
+
     pass
 
 

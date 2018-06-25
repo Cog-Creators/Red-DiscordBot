@@ -68,6 +68,7 @@ class JSON(BaseDriver):
         self.jsonIO = JsonIO(self.data_path)
 
         self._load_data()
+
     @property
     def data(self):
         return _shared_datastore.get(self.cog_name)
