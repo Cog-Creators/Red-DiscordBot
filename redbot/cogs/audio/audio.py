@@ -709,7 +709,8 @@ class Audio:
                     ctx, "Playlist name already exists, try again with a different name."
                 )
         playlist_list = self._to_json(ctx, None, None)
-        playlists[playlist_name] = playlist_list
+        async with self.config.guild(ctx.guild).playlists() as playlists:
+            playlists[playlist_name] = playlist_list
         await self._embed_msg(ctx, "Empty playlist {} created.".format(playlist_name))
 
     @playlist.command(name="delete")
