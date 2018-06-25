@@ -709,7 +709,8 @@ class Audio:
                     ctx, "Playlist name already exists, try again with a different name."
                 )
         playlist_list = self._to_json(ctx, None, None)
-        playlists[playlist_name] = playlist_list
+        async with self.config.guild(ctx.guild).playlists() as playlists:
+            playlists[playlist_name] = playlist_list
         await self._embed_msg(ctx, "Empty playlist {} created.".format(playlist_name))
 
     @playlist.command(name="delete")
@@ -919,8 +920,11 @@ class Audio:
         file_suffix = file_url.rsplit(".", 1)[1]
         if file_suffix != "txt":
             return await self._embed_msg(ctx, "Only playlist files can be uploaded.")
-        async with self.session.request("GET", file_url) as r:
-            v2_playlist = await r.json(content_type="text/plain")
+        try:
+            async with self.session.request("GET", file_url) as r:
+                v2_playlist = await r.json(content_type="text/plain")
+        except UnicodeDecodeError:
+            return await self._embed_msg(ctx, "Not a valid playlist file.")
         try:
             v2_playlist_url = v2_playlist["link"]
         except KeyError:
