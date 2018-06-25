@@ -111,10 +111,10 @@ setup(
     classifiers=[
         "Development Status :: 4 - Beta",
         "Framework :: AsyncIO",
+        "Framework :: Pytest",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
         "Operating System :: OS Independent",
-        "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Topic :: Communications :: Chat",
         "Topic :: Documentation :: Sphinx",
@@ -124,7 +124,8 @@ setup(
             "redbot=redbot.__main__:main",
             "redbot-setup=redbot.setup:main",
             "redbot-launcher=redbot.launcher:main",
-        ]
+        ],
+        "pytest11": ["red-discordbot = redbot.pytest"],
     },
     python_requires=">=3.6,<3.7",
     setup_requires=get_requirements(),
