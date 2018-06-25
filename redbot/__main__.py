@@ -6,7 +6,7 @@ import sys
 import discord
 from redbot.core.bot import Red, ExitCodes
 from redbot.core.cog_manager import CogManagerUI
-from redbot.core.data_manager import load_basic_configuration, config_file
+from redbot.core.data_manager import create_temp_config, load_basic_configuration, config_file
 from redbot.core.json_io import JsonIO
 from redbot.core.global_checks import init_global_checks
 from redbot.core.events import init_events
@@ -106,9 +106,17 @@ def main():
     elif cli_flags.version:
         print(description)
         sys.exit(0)
-    elif not cli_flags.instance_name:
+    elif not cli_flags.instance_name and not cli_flags.no_instance:
         print("Error: No instance name was provided!")
         sys.exit(1)
+    if cli_flags.no_instance:
+        print(
+            "\033[1m"
+            "Warning: The data will be placed in a temporary folder and removed on next system reboot."
+            "\033[0m"
+        )
+        cli_flags.instance_name = "temporary_red"
+        create_temp_config()
     load_basic_configuration(cli_flags.instance_name)
     log, sentry_log = init_loggers(cli_flags)
     red = Red(cli_flags=cli_flags, description=description, pm_help=None)
@@ -122,6 +130,8 @@ def main():
     tmp_data = {}
     loop.run_until_complete(_get_prefix_and_token(red, tmp_data))
     token = os.environ.get("RED_TOKEN", tmp_data["token"])
+    if cli_flags.token:
+        token = cli_flags.token
     prefix = cli_flags.prefix or tmp_data["prefix"]
     if not (token and prefix):
         if cli_flags.no_prompt is False:
