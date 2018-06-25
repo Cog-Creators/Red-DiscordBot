@@ -6,7 +6,7 @@ import sys
 import discord
 from redbot.core.bot import Red, ExitCodes
 from redbot.core.cog_manager import CogManagerUI
-from redbot.core.data_manager import save_default_config, load_basic_configuration, config_file
+from redbot.core.data_manager import create_temp_config, load_basic_configuration, config_file
 from redbot.core.json_io import JsonIO
 from redbot.core.global_checks import init_global_checks
 from redbot.core.events import init_events

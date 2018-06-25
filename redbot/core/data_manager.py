@@ -13,6 +13,7 @@ import tempfile
 from .json_io import JsonIO
 
 __all__ = [
+    "create_temp_config",
     "load_basic_configuration",
     "cog_data_path",
     "core_data_path",
