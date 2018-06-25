@@ -1170,7 +1170,6 @@ class Mod:
     async def ignore(self, ctx: commands.Context):
         """Adds servers/channels to ignorelist"""
         if ctx.invoked_subcommand is None:
-            await ctx.send_help()
             await ctx.send(await self.count_ignored())
 
     @ignore.command(name="channel")
