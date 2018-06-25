@@ -2,15 +2,18 @@ import sys
 import os
 from pathlib import Path
 from typing import List
+from copy import deepcopy
 import hashlib
 import shutil
 import logging
 
 import appdirs
+import tempfile
 
 from .json_io import JsonIO
 
 __all__ = [
+    "create_temp_config",
     "load_basic_configuration",
     "cog_data_path",
     "core_data_path",
@@ -37,6 +40,26 @@ if sys.platform == "linux":
 if not config_dir:
     config_dir = Path(appdir.user_config_dir)
 config_file = config_dir / "config.json"
+
+
+def create_temp_config():
+    """
+    Creates a default instance for Red, so it can be ran
+    without creating an instance.
+
+    .. warning:: The data of this instance will be removed
+        on next system restart.
+    """
+    name = "temporary_red"
+
+    default_dirs = deepcopy(basic_config_default)
+    default_dirs["DATA_PATH"] = tempfile.mkdtemp()
+    default_dirs["STORAGE_TYPE"] = "JSON"
+    default_dirs["STORAGE_DETAILS"] = {}
+
+    config = JsonIO(config_file)._load_json()
+    config[name] = default_dirs
+    JsonIO(config_file)._save_json(config)
 
 
 def load_basic_configuration(instance_name_: str):
