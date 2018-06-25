@@ -116,7 +116,7 @@ def main():
             "\033[0m"
         )
         cli_flags.instance_name = "temporary_red"
-        save_default_config()
+        create_temp_config()
     load_basic_configuration(cli_flags.instance_name)
     log, sentry_log = init_loggers(cli_flags)
     red = Red(cli_flags=cli_flags, description=description, pm_help=None)
