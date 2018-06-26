@@ -98,6 +98,9 @@ class Permissions:
                 if override is not None:
                     self.cache[cache_tup] = override
                     return override
+            else:
+                # This is a valid cached value to skip rechecking all the above.
+                self.cache[cache_tup] = None
 
         after = [
             getattr(cog, "_{0.__class__.__name__}__red_permissions_after".format(cog), None)
