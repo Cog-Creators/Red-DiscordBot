@@ -116,14 +116,15 @@ class Permissions:
                 return override
         else:
             for model in self.resolution_order[level]:
+                if ctx.guild is None and model != 'owner':
+                    break
                 override_model = getattr(self, model + "_model", None)
                 override = await override_model(ctx) if override_model else None
                 if override is not None:
                     self.cache[cache_tup] = override
                     return override
-            else:
-                # This is a valid cached value to skip rechecking all the above.
-                self.cache[cache_tup] = None
+            # This is intentional not being in an else block
+            self.cache[cache_tup] = None
 
         after = [
             getattr(cog, "_{0.__class__.__name__}__red_permissions_after".format(cog), None)
