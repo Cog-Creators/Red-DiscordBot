@@ -7,6 +7,7 @@ from .resolvers import entries_from_ctx, resolve_lists
 #
 # This is primarily to help with the performance of the help formatter
 
+
 async def mass_resolve(*, ctx: commands.Context, config: Config):
     """
     Get's all the permission cog interactions for all loaded commands
@@ -14,39 +15,67 @@ async def mass_resolve(*, ctx: commands.Context, config: Config):
     """
 
     owner_settings = await config.owner_models()
-    guild_owner_settings = (
-        await config.guild(ctx.guild).owner_models()
-        if ctx.guild else None
-    )
+    guild_owner_settings = await config.guild(ctx.guild).owner_models() if ctx.guild else None
 
-    ret = {'allowed': [], 'denied': [], 'default': []}
+    ret = {"allowed": [], "denied": [], "default": []}
 
     for cogname, cog in ctx.bot.cogs.items():
+
         cog_setting = resolve_cog_or_command(
-            objname=cogname, models=owner_settings, ctx=ctx, typ='cogs'
+            objname=cogname, models=owner_settings, ctx=ctx, typ="cogs"
         )
         if cog_setting is None and guild_owner_settings:
             cog_setting = resolve_cog_or_command(
-                objname=cogname, models=guild_owner_settings, ctx=ctx, typ='cogs'
+                objname=cogname, models=guild_owner_settings, ctx=ctx, typ="cogs"
             )
 
-        for command in ctx.bot.get_cog_commands(cogname):
+        for command in [c for c in ctx.bot.all_commands.values() if c.instance is cog]:
             resolution = recursively_resolve(
                 com_or_group=command,
                 o_models=owner_settings,
                 g_models=guild_owner_settings,
                 ctx=ctx,
-                default=cog_setting,
             )
-            
-            ret['allowed'].extend(resolution['allowed'])
-            ret['denied'].extend(resolution['denied'])
-            ret['default'].extend(resolution['default'])
+
+            for com, resolved in resolution:
+                if resolved is None:
+                    resolved = cog_setting
+                if resolved is True:
+                    ret["allowed"].append(com)
+                elif resolved is False:
+                    ret["denied"].append(com)
+                else:
+                    ret["default"].append(com)
+
+    return ret
 
 
-def recursively_resolve(*, com_or_group, o_models, g_models, ctx, default):
-    return {}
-    # TODO
+def recursively_resolve(*, com_or_group, o_models, g_models, ctx, override=False):
+    ret = []
+    if override:
+        current = False
+    else:
+        current = resolve_cog_or_command(
+            typ="commands", objname=com_or_group.qualified_name, ctx=ctx, models=o_models
+        )
+        if current is None and g_models:
+            current = resolve_cog_or_command(
+                typ="commands", objname=com_or_group.qualified_name, ctx=ctx, models=o_models
+            )
+    ret.append((com_or_group, current))
+    if isinstance(com_or_group, commands.Group):
+        for com in com_or_group.commands:
+            ret.extend(
+                recursively_resolve(
+                    com_or_group=com,
+                    o_models=o_models,
+                    g_models=g_models,
+                    ctx=ctx,
+                    override=(current is False),
+                )
+            )
+    return ret
+
 
 def resolve_cog_or_command(*, typ, ctx, objname, models: dict) -> bool:
     """

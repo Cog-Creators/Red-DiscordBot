@@ -44,13 +44,11 @@ class Permissions:
 
         allowed: list of commands
         denied: list of commands
+        default: list of commands
 
         representing how permissions interacts with the
         user, channel, guild, and (possibly) voice channel
         for all commands on the bot (not just the one in the context object)
-
-        if a command is not in the entries returned,
-        it isn't impacted by permissions
 
         This mainly exists for use by the help formatter,
         but others may find it useful
@@ -116,7 +114,7 @@ class Permissions:
                 return override
         else:
             for model in self.resolution_order[level]:
-                if ctx.guild is None and model != 'owner':
+                if ctx.guild is None and model != "owner":
                     break
                 override_model = getattr(self, model + "_model", None)
                 override = await override_model(ctx) if override_model else None
