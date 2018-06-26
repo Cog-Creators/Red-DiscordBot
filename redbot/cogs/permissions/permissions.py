@@ -12,6 +12,7 @@ from redbot.core.utils.caching import LRUDict
 from .resolvers import val_if_check_is_valid, resolve_models, entries_from_ctx
 from .yaml_handler import yamlset_acl, yamlget_acl
 from .converters import CogOrCommand, RuleType
+from .mass_resolution import mass_resolve
 
 _models = ["owner", "guildowner", "admin", "mod", "all"]
 
@@ -37,28 +38,27 @@ class Permissions:
         self.config.register_guild(owner_models={})
         self.cache = LRUDict(size=25000)  # This can be tuned later
 
-# TODO: This needs implementing for the help formatter's performance later.
-#    async def get_user_ctx_overrides(self, ctx: commands.Context) -> dict:
-#        """
-#        This takes a context object, and returns a dict of
-#
-#        allowed: list of commands
-#        denied: list of commands
-#
-#        representing how permissions interacts with the
-#        user, channel, guild, and (possibly) voice channel
-#        for all commands on the bot (not just the one in the context object)
-#
-#        if a command is not in the entries returned,
-#        it isn't impacted by permissions
-#
-#        This mainly exists for use by the help formatter,
-#        but others may find it useful
-#
-#        Unlike the rest of the permission system, if other models are added later,
-#        due to optimizations made for this, this needs to be adjusted accordingly
-#        """
-#        pass
+    async def get_user_ctx_overrides(self, ctx: commands.Context) -> dict:
+        """
+        This takes a context object, and returns a dict of
+
+        allowed: list of commands
+        denied: list of commands
+
+        representing how permissions interacts with the
+        user, channel, guild, and (possibly) voice channel
+        for all commands on the bot (not just the one in the context object)
+
+        if a command is not in the entries returned,
+        it isn't impacted by permissions
+
+        This mainly exists for use by the help formatter,
+        but others may find it useful
+
+        Unlike the rest of the permission system, if other models are added later,
+        due to optimizations made for this, this needs to be adjusted accordingly
+        """
+        return await mass_resolve(ctx=ctx, config=self.config)
 
     async def __global_check(self, ctx: commands.Context) -> bool:
         """
