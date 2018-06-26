@@ -37,7 +37,30 @@ class Permissions:
         self.config.register_guild(owner_models={})
         self.cache = LRUDict(size=25000)  # This can be tuned later
 
-    async def __global_check(self, ctx):
+# TODO: This needs implementing for the help formatter's performance later.
+#    async def get_user_ctx_overrides(self, ctx: commands.Context) -> dict:
+#        """
+#        This takes a context object, and returns a dict of
+#
+#        allowed: list of commands
+#        denied: list of commands
+#
+#        representing how permissions interacts with the
+#        user, channel, guild, and (possibly) voice channel
+#        for all commands on the bot (not just the one in the context object)
+#
+#        if a command is not in the entries returned,
+#        it isn't impacted by permissions
+#
+#        This mainly exists for use by the help formatter,
+#        but others may find it useful
+#
+#        Unlike the rest of the permission system, if other models are added later,
+#        due to optimizations made for this, this needs to be adjusted accordingly
+#        """
+#        pass
+
+    async def __global_check(self, ctx: commands.Context) -> bool:
         """
         Yes, this is needed on top of hooking into checks.py
         to ensure that unchecked commands can still be managed by permissions
@@ -125,7 +148,8 @@ class Permissions:
         """
         Handles guild level overrides
         """
-
+        if ctx.guild is None:
+            return None
         async with self.config.guild(ctx.guild).owner_models() as models:
             return resolve_models(ctx=ctx, models=models)
 
