@@ -10,6 +10,13 @@ class LRUDict(collections.OrderedDict):
     pop them, and replace them if needed.
     """
 
+    # Note on usage of super in below methods:
+    # because of the interactions of some methods,
+    # using super is needed to avoid some issues
+    # This could have been done more neatly by doing a full implementation
+    # But this is about as efficient as it gets with the minimal amount of code
+    # needed to do it
+
     def __init__(self, *keyval_pairs, size):
         self.size = size
         super(LRUDict, self).__init__(*keyval_pairs)
@@ -21,16 +28,16 @@ class LRUDict(collections.OrderedDict):
         return False
 
     def __getitem__(self, key):
+        # This will end up calling our overwritten contains.
         try:
-            ret = self.pop(key)
+            ret = super().__getitem__(key)
         except KeyError:
             raise
         else:
-            self[key] = ret
             return ret
 
     def __setitem__(self, key, value):
-        if not super().__contains__(key):  # avoidance of overriden contains
+        if not super().__contains__(key):
             super().__setitem__(key, value)
             if len(self) > self.size:
                 try:

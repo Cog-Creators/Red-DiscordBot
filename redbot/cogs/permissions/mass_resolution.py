@@ -7,6 +7,9 @@ from .resolvers import entries_from_ctx, resolve_lists
 #
 # This is primarily to help with the performance of the help formatter
 
+# This is less efficient if only checking one command,
+# but is much faster for checking all of them.
+
 
 async def mass_resolve(*, ctx: commands.Context, config: Config):
     """
@@ -46,6 +49,8 @@ async def mass_resolve(*, ctx: commands.Context, config: Config):
                     ret["denied"].append(com)
                 else:
                     ret["default"].append(com)
+
+    ret = {k: set(v) for k, v in ret.items()}
 
     return ret
 
