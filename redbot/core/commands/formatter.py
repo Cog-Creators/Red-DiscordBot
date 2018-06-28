@@ -95,8 +95,6 @@ class HelpFormatter(formatter.HelpFormatter):
                     break
             skip_perm_model = False
             for check in before:
-                if check is None:
-                    continue
                 try:
                     if asyncio.iscoroutinefunction(check):
                         override = await check(self.context, level=level)
@@ -145,8 +143,6 @@ class HelpFormatter(formatter.HelpFormatter):
             else:
                 if not skip_perm_model:
                     for check in after:
-                        if check is None:
-                            continue
                         try:
                             if asyncio.iscoroutinefunction(check):
                                 override = await check(self.context, level=level)
