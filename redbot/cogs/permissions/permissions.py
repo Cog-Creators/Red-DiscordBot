@@ -55,6 +55,9 @@ class Permissions:
 
         Unlike the rest of the permission system, if other models are added later,
         due to optimizations made for this, this needs to be adjusted accordingly
+
+        This does not account for before and after permission hooks,
+        these need to be checked seperately
         """
         return await mass_resolve(ctx=ctx, config=self.config)
 
