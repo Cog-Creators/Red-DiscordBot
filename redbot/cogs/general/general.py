@@ -248,13 +248,14 @@ class General:
                 embed = discord.Embed()
                 embed.title = _("{} by {}".format(ud["word"].capitalize(), ud["author"]))
                 embed.url = ud["permalink"]
-                embed.description = _(
-                    (
-                        "{} \n \n **Example : ** {}".format(
-                            ud["definition"], ud.get("example", "N/A")
-                        )
-                    )[:2048]
+
+                description = "{} \n \n **Example : ** {}".format(
+                    ud["definition"], ud.get("example", "N/A")
                 )
+                if len(description) > 2048:
+                    description = "{}...".format(description[:2045])
+                embed.description = _(description)
+
                 embed.set_footer(
                     text=_(
                         "{} Down / {} Up , Powered by urban dictionary".format(
