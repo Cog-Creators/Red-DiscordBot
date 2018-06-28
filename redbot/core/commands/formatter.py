@@ -26,7 +26,7 @@ class HelpFormatter(formatter.HelpFormatter):
             a (key, value) :class:`tuple` of the command name and the command itself.
         """
 
-        permissions_cog = self.context.get_cog('Permissions')
+        permissions_cog = self.context.bot.get_cog('Permissions')
         if permissions_cog:
             permissions_dict = await permissions_cog.get_user_ctx_overrides(self.context)
         else:
