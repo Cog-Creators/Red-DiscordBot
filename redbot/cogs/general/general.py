@@ -224,9 +224,7 @@ class General:
 
     @commands.command()
     async def urban(self, ctx, *, word):
-        """Searches for urban dictionary entries using the unofficial urbandictionary api"""
-
-        data = None
+        """Searches urban dictionary entries using the unofficial api"""
 
         try:
             url = "https://api.urbandictionary.com/v0/define?term=" + str(word).lower()
@@ -238,7 +236,9 @@ class General:
                     data = await response.json()
 
         except:
-            await ctx.send("No Urban dictionary were found or there was an error in the process")
+            await ctx.send(
+                _(("No Urban dictionary entries were found or there was an error in the process"))
+            )
 
         if data.get("error") != 404 and data.get("result_type") == "exact":
 
@@ -246,16 +246,21 @@ class General:
             embeds = []
             for ud in data["list"]:
                 embed = discord.Embed()
-                embed.title = ud["word"].capitalize() + " by " + ud["author"]
+                embed.title = _("{} by {}".format(ud["word"].capitalize(), ud["author"]))
                 embed.url = ud["permalink"]
-                embed.description = (
-                    ud["definition"] + "\n \n **Example : **" + ud.get("example", "N/A")
+                embed.description = _(
+                    (
+                        "{} \n \n **Example : ** {}".format(
+                            ud["definition"], ud.get("example", "N/A")
+                        )
+                    )
                 )
                 embed.set_footer(
-                    text=str(ud["thumbs_down"])
-                    + " Down / "
-                    + str(ud["thumbs_up"])
-                    + " Up , Powered by urban dictionary"
+                    text=_(
+                        "{} Down / {} Up , Powered by urban dictionary".format(
+                            ud["thumbs_down"], ud["thumbs_up"]
+                        )
+                    )
                 )
                 embeds.append(embed)
 
@@ -264,4 +269,7 @@ class General:
                     ctx, pages=embeds, controls=DEFAULT_CONTROLS, message=None, page=0, timeout=30
                 )
         else:
-            await ctx.send("No Urban dictionary were found or there was an error in the process")
+            await ctx.send(
+                _(("No Urban dictionary entries were found or there was an error in the process"))
+            )
+            return
