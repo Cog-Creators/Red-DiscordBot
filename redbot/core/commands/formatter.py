@@ -26,16 +26,18 @@ class HelpFormatter(formatter.HelpFormatter):
             a (key, value) :class:`tuple` of the command name and the command itself.
         """
 
-        permissions_cog = self.context.bot.get_cog('Permissions')
+        permissions_cog = self.context.bot.get_cog("Permissions")
         if permissions_cog:
             permissions_dict = await permissions_cog.get_user_ctx_overrides(self.context)
         else:
-            permissions_dict = {'allowed': [], 'denied': []}
+            permissions_dict = {"allowed": [], "denied": []}
 
         is_admin = await checks.is_admin_or_superior(self.context)
         is_mod = await checks.is_mod_or_superior(self.context)
         is_owner = await self.context.bot.is_owner(self.context.author)
-        is_guild_owner = self.context.author == self.context.guild.owner if self.context.guild else is_owner
+        is_guild_owner = (
+            self.context.author == self.context.guild.owner if self.context.guild else is_owner
+        )
 
         def sane_no_suspension_point_predicate(tup):
             cmd = tup[1]
@@ -54,7 +56,7 @@ class HelpFormatter(formatter.HelpFormatter):
             Takes a check object, returns the permission resolution section of it
             """
             to_check = {}
-            if not hasattr(check_obj, '__closure__'):
+            if not hasattr(check_obj, "__closure__"):
                 return False
             for cell_object in check_obj.__closure__:
                 to_check.update(cell_object.cell_contents)
@@ -64,24 +66,24 @@ class HelpFormatter(formatter.HelpFormatter):
             """
             This exists to expedite handling of permissions cog interactions
             """
-            if com in permissions_dict['denied']:
+            if com in permissions_dict["denied"]:
                 return False
             for check in com.checks:
-                if check.__module__ == 'redbot.core.checks' and any(
-                        x in str(check) for x in ('owner', 'admin', 'mod')
+                if check.__module__ == "redbot.core.checks" and any(
+                    x in str(check) for x in ("owner", "admin", "mod")
                 ):
-                    if com in permissions_dict['allowed']:
+                    if com in permissions_dict["allowed"]:
                         continue
-                    if 'owner' in str(check):
+                    if "owner" in str(check):
                         if is_owner:
                             continue
-                    elif 'guildowner' in str(check):
+                    elif "guildowner" in str(check):
                         if is_guild_owner:
                             continue
-                    elif 'admin' in str(check):
+                    elif "admin" in str(check):
                         if is_admin:
                             continue
-                    elif 'mod' in str(check):
+                    elif "mod" in str(check):
                         if is_mod:
                             continue
                     if await process_closure(check):
@@ -96,7 +98,7 @@ class HelpFormatter(formatter.HelpFormatter):
             cog = com.instance
             if cog is not None:
                 try:
-                    local_check = getattr(cog, '_{0.__class__.__name__}__local_check'.format(cog))
+                    local_check = getattr(cog, "_{0.__class__.__name__}__local_check".format(cog))
                 except AttributeError:
                     pass
                 else:
@@ -105,7 +107,7 @@ class HelpFormatter(formatter.HelpFormatter):
                         return False
             # Finally, global check handling
             return await self.context.bot.can_run(self.context)
-                    
+
         async def predicate(tup):
             if sane_no_suspension_point_predicate(tup) is False:
                 return False
@@ -115,7 +117,11 @@ class HelpFormatter(formatter.HelpFormatter):
             except CommandError:
                 return False
 
-        iterator = self.command.all_commands.items() if not self.is_cog() else self.context.bot.all_commands.items()
+        iterator = (
+            self.command.all_commands.items()
+            if not self.is_cog()
+            else self.context.bot.all_commands.items()
+        )
         if self.show_check_failure:
             return filter(sane_no_suspension_point_predicate, iterator)
 
