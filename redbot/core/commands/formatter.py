@@ -1,5 +1,5 @@
 import discord
-from discord.ext.commands import formatter
+from discord.ext.commands import formatter, CommandError
 from . import commands
 from redbot.core import checks
 import asyncio
@@ -57,22 +57,21 @@ class HelpFormatter(formatter.HelpFormatter):
             if not hasattr(check_obj, '__closure__'):
                 return False
             for cell_object in check_obj.__closure__:
-                for contents in cell_object.cell_contents:
-                    to_check.update(contents)
+                to_check.update(cell_object.cell_contents)
             return await checks.check_permissions(self.context, to_check)
 
         async def special_check_handling(com) -> bool:
             """
             This exists to expedite handling of permissions cog interactions
             """
+            if com in permissions_dict['denied']:
+                return False
             for check in com.checks:
                 if check.__module__ == 'redbot.core.checks' and any(
                         x in str(check) for x in ('owner', 'admin', 'mod')
                 ):
                     if com in permissions_dict['allowed']:
                         continue
-                    if com in permissions_dict['denied']:
-                        return False
                     if 'owner' in str(check):
                         if is_owner:
                             continue
@@ -92,6 +91,7 @@ class HelpFormatter(formatter.HelpFormatter):
                     ret = await discord.utils.maybe_coroutine(check, self.context)
                     if not ret:
                         return False
+
             # local checks
             cog = com.instance
             if cog is not None:
@@ -111,8 +111,8 @@ class HelpFormatter(formatter.HelpFormatter):
                 return False
             com = tup[1]
             try:
-                return (await special_check_handling(com))
-            except commands.CommandError:
+                return await special_check_handling(com)
+            except CommandError:
                 return False
 
         iterator = self.command.all_commands.items() if not self.is_cog() else self.context.bot.all_commands.items()

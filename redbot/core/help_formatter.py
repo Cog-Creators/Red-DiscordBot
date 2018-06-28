@@ -28,7 +28,6 @@ from collections import namedtuple
 from typing import List
 
 import discord
-from redbot.core.commands import formatter
 import inspect
 import itertools
 import re
@@ -36,6 +35,7 @@ import sys
 import traceback
 
 from redbot.core import commands
+from redbot.core.commands import formatter
 from redbot.core.utils.chat_formatting import pagify, box
 from redbot.core.utils import fuzzy_command_search
 
@@ -55,7 +55,7 @@ class Help(formatter.HelpFormatter):
     def __init__(self, *args, **kwargs):
         self.context = None
         self.command = None
-        super().__init__(*args, **kwargs)
+        super(Help, self).__init__(*args, **kwargs)
 
     def pm_check(self, ctx):
         return isinstance(ctx.channel, discord.DMChannel)
