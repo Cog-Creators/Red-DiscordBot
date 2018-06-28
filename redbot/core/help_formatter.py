@@ -28,14 +28,14 @@ from collections import namedtuple
 from typing import List
 
 import discord
-from discord.ext.commands import formatter
+from redbot.core.commands import formatter
 import inspect
 import itertools
 import re
 import sys
 import traceback
 
-from . import commands
+from redbot.core import commands
 from redbot.core.utils.chat_formatting import pagify, box
 from redbot.core.utils import fuzzy_command_search
 
