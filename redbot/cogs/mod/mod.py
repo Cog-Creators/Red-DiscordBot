@@ -1170,7 +1170,6 @@ class Mod:
     async def ignore(self, ctx: commands.Context):
         """Adds servers/channels to ignorelist"""
         if ctx.invoked_subcommand is None:
-            await ctx.send_help()
             await ctx.send(await self.count_ignored())
 
     @ignore.command(name="channel")
@@ -1362,9 +1361,9 @@ class Mod:
         names = await self.settings.user(user).past_names()
         nicks = await self.settings.member(user).past_nicks()
         if names:
-            names = [escape(name, mass_mentions=True) for name in names]
+            names = [escape(name, mass_mentions=True) for name in names if name]
         if nicks:
-            nicks = [escape(nick, mass_mentions=True) for nick in nicks]
+            nicks = [escape(nick, mass_mentions=True) for nick in nicks if nick]
         return names, nicks
 
     async def check_tempban_expirations(self):
@@ -1602,18 +1601,22 @@ class Mod:
             if entry.target == target:
                 return entry
 
-    async def on_member_update(self, before, after):
+    async def on_member_update(self, before: discord.Member, after: discord.Member):
         if before.name != after.name:
             async with self.settings.user(before).past_names() as name_list:
-                if after.nick in name_list:
+                while None in name_list:  # clean out null entries from a bug
+                    name_list.remove(None)
+                if after.name in name_list:
                     # Ensure order is maintained without duplicates occuring
-                    name_list.remove(after.nick)
-                name_list.append(after.nick)
+                    name_list.remove(after.name)
+                name_list.append(after.name)
                 while len(name_list) > 20:
                     name_list.pop(0)
 
         if before.nick != after.nick and after.nick is not None:
             async with self.settings.member(before).past_nicks() as nick_list:
+                while None in nick_list:  # clean out null entries from a bug
+                    nick_list.remove(None)
                 if after.nick in nick_list:
                     nick_list.remove(after.nick)
                 nick_list.append(after.nick)
