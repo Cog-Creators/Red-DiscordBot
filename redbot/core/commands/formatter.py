@@ -2,6 +2,7 @@ import discord
 from discord.ext.commands import formatter, CommandError
 from . import commands
 from redbot.core import checks
+from redbot.cogs.permissions.resolvers import val_if_check_is_valid
 import asyncio
 
 
@@ -66,13 +67,40 @@ class HelpFormatter(formatter.HelpFormatter):
             """
             This exists to expedite handling of permissions cog interactions
             """
-            if com in permissions_dict["denied"]:
+            level = "all"
+            lcheck = filter(lambda x: x.__module__ == "redbot.core.checks", com.checks)
+            for check in lcheck:
+                if any(x in str(check) for x in ("admin", "mod", "guildowner")):
+                    level = "guildowner"
+                elif "owner" in str(check):
+                    level = "owner"
+                    break
+            skip_perm_model = False
+            before = [
+                getattr(cog, "_{0.__class__.__name__}__red_permissions_before".format(cog), None)
+                for cog in self.context.bot.cogs.values()
+            ]
+            for check in before:
+                if check is None:
+                    continue
+                override = await val_if_check_is_valid(check=check, ctx=self.context, level=level)
+                if override is False:
+                    return override
+                if override is True:
+                    skip_perm_model = True
+
+            if com in permissions_dict["denied"] and not skip_perm_model:
                 return False
+            # default to True because this can interact with checks without perm reqs
+            has_role_or_perms = True  # for storing for conjunction with after checks
             for check in com.checks:
                 if check.__module__ == "redbot.core.checks" and any(
                     x in str(check) for x in ("owner", "admin", "mod")
                 ):
+                    if skip_perm_model:
+                        continue
                     if com in permissions_dict["allowed"]:
+                        skip_perm_model = True
                         continue
                     if "guildowner" in str(check):
                         if is_guild_owner:
@@ -86,17 +114,34 @@ class HelpFormatter(formatter.HelpFormatter):
                     elif "mod" in str(check):
                         if is_mod:
                             continue
-                    if await process_closure(check):
+                    elif await process_closure(check):
                         continue
-                    return False
+                    else:
+                        has_role_or_perms = False
                 else:  # Still need to process other checks too
                     ret = await discord.utils.maybe_coroutine(check, self.context)
                     if not ret:
                         return False
+            else:
+                if not skip_perm_model:
+                    after = [
+                        getattr(
+                            cog, "_{0.__class__.__name__}__red_permissions_after".format(cog), None
+                        )
+                        for cog in self.context.bot.cogs.values()
+                    ]
+                    for check in after:
+                        override = await val_if_check_is_valid(
+                            check=check, ctx=self.context, level=level
+                        )
+                        if override is False:
+                            return False
+                        if override is None and not has_role_or_perms:
+                            return False
 
-        # Stuff below here in this funtion is mostly taken from 
-        # discord.py with minor tweaks to use the above
-        # https://github.com/Rapptz/discord.py
+            # Stuff below here in this funtion is mostly taken from
+            # discord.py with minor tweaks to use the above
+            # https://github.com/Rapptz/discord.py
             # local checks
             cog = com.instance
             if cog is not None:
