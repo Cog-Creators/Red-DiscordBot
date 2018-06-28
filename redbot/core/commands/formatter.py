@@ -74,11 +74,11 @@ class HelpFormatter(formatter.HelpFormatter):
                 ):
                     if com in permissions_dict["allowed"]:
                         continue
-                    if "owner" in str(check):
-                        if is_owner:
-                            continue
-                    elif "guildowner" in str(check):
+                    if "guildowner" in str(check):
                         if is_guild_owner:
+                            continue
+                    elif "owner" in str(check):
+                        if is_owner:
                             continue
                     elif "admin" in str(check):
                         if is_admin:
