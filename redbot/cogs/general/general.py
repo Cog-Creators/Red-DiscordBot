@@ -253,7 +253,7 @@ class General:
                         "{} \n \n **Example : ** {}".format(
                             ud["definition"], ud.get("example", "N/A")
                         )
-                    )
+                    )[:2048]
                 )
                 embed.set_footer(
                     text=_(
