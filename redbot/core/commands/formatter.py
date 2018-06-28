@@ -2,7 +2,6 @@ import discord
 from discord.ext.commands import formatter, CommandError
 from . import commands
 from redbot.core import checks
-from redbot.cogs.permissions.resolvers import val_if_check_is_valid
 import asyncio
 
 
@@ -83,7 +82,13 @@ class HelpFormatter(formatter.HelpFormatter):
             for check in before:
                 if check is None:
                     continue
-                override = await val_if_check_is_valid(check=check, ctx=self.context, level=level)
+                try:
+                    if asyncio.iscoroutinefunction(check):
+                        override = await check(self.context, level=level)
+                    else:
+                        override = check(self.context, level=level)
+                except:
+                    override = None
                 if override is False:
                     return override
                 if override is True:
@@ -131,9 +136,15 @@ class HelpFormatter(formatter.HelpFormatter):
                         for cog in self.context.bot.cogs.values()
                     ]
                     for check in after:
-                        override = await val_if_check_is_valid(
-                            check=check, ctx=self.context, level=level
-                        )
+                        if check is None:
+                            continue
+                        try:
+                            if asyncio.iscoroutinefunction(check):
+                                override = await check(self.context, level=level)
+                            else:
+                                override = check(self.context, level=level)
+                        except:
+                            override = None
                         if override is False:
                             return False
                         if override is None and not has_role_or_perms:
