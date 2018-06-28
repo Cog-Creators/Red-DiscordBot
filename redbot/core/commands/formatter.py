@@ -94,6 +94,9 @@ class HelpFormatter(formatter.HelpFormatter):
                     if not ret:
                         return False
 
+        # Stuff below here in this funtion is mostly taken from 
+        # discord.py with minor tweaks to use the above
+        # https://github.com/Rapptz/discord.py
             # local checks
             cog = com.instance
             if cog is not None:
