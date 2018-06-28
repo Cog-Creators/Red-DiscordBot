@@ -3,6 +3,7 @@ import contextlib
 import asyncio
 import discord
 from redbot.core import commands
+from redbot.core.bot import Red
 from redbot.core import checks
 from redbot.core.config import Config
 from redbot.core.i18n import Translator, cog_i18n
@@ -28,7 +29,7 @@ class Permissions:
     # but they are explicitly supported
     resolution_order = {k: _models[:i] for i, k in enumerate(_models, 1)}
 
-    def __init__(self, bot: "Red"):
+    def __init__(self, bot: Red):
         self.bot = bot
         self.config = Config.get_conf(self, identifier=78631113035100160, force_registration=True)
         self.config.register_global(owner_models={})
