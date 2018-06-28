@@ -26,6 +26,7 @@ class HelpFormatter(formatter.HelpFormatter):
             a (key, value) :class:`tuple` of the command name and the command itself.
         """
 
+        # prep work for not manually calling the permissions cog individually per command
         permissions_cog = self.context.bot.get_cog("Permissions")
         if permissions_cog:
             permissions_dict = await permissions_cog.get_user_ctx_overrides(self.context)
@@ -38,7 +39,24 @@ class HelpFormatter(formatter.HelpFormatter):
         is_guild_owner = (
             self.context.author == self.context.guild.owner if self.context.guild else is_owner
         )
+        before = [
+            x
+            for x in [
+                getattr(cog, "_{0.__class__.__name__}__red_permissions_before".format(cog), None)
+                for cog in self.context.bot.cogs.values()
+            ]
+            if x
+        ]
+        after = [
+            x
+            for x in [
+                getattr(cog, "_{0.__class__.__name__}__red_permissions_after".format(cog), None)
+                for cog in self.context.bot.cogs.values()
+            ]
+            if x
+        ]
 
+        # reused func from d.py's HelpFormatter
         def sane_no_suspension_point_predicate(tup):
             cmd = tup[1]
             if self.is_cog():
@@ -51,6 +69,7 @@ class HelpFormatter(formatter.HelpFormatter):
 
             return True
 
+        # handle the permission aspect of `checks.mod_or_permissions()` (etc)
         async def process_closure(check_obj) -> bool:
             """
             Takes a check object, returns the permission resolution section of it
@@ -75,10 +94,6 @@ class HelpFormatter(formatter.HelpFormatter):
                     level = "owner"
                     break
             skip_perm_model = False
-            before = [
-                getattr(cog, "_{0.__class__.__name__}__red_permissions_before".format(cog), None)
-                for cog in self.context.bot.cogs.values()
-            ]
             for check in before:
                 if check is None:
                     continue
@@ -129,12 +144,6 @@ class HelpFormatter(formatter.HelpFormatter):
                         return False
             else:
                 if not skip_perm_model:
-                    after = [
-                        getattr(
-                            cog, "_{0.__class__.__name__}__red_permissions_after".format(cog), None
-                        )
-                        for cog in self.context.bot.cogs.values()
-                    ]
                     for check in after:
                         if check is None:
                             continue
