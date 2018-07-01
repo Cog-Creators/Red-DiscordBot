@@ -105,7 +105,7 @@ class Reports:
         *,
         mod: bool = False,
         permissions: Union[discord.Permissions, dict] = None,
-        prompt: str = ""
+        prompt: str = "",
     ):
         """
         discovers which of shared guilds between the bot
@@ -177,7 +177,8 @@ class Reports:
             em.set_author(
                 name=_("Report from {author}{maybe_nick}").format(
                     author=author, maybe_nick=(f" ({author.nick})" if author.nick else "")
-                ), icon_url=author.avatar_url
+                ),
+                icon_url=author.avatar_url,
             )
             em.set_footer(text=_("Report #{}").format(ticket_number))
             send_content = None
