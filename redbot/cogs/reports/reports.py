@@ -175,7 +175,9 @@ class Reports:
         if await self.bot.embed_requested(channel, author):
             em = discord.Embed(description=report)
             em.set_author(
-                name=_("Report from {0.display_name}").format(author), icon_url=author.avatar_url
+                name=_("Report from {author}{maybe_nick}").format(
+                    author=author, maybe_nick=(f" ({author.display_name})" if author.nick else "")
+                ), icon_url=author.avatar_url
             )
             em.set_footer(text=_("Report #{}").format(ticket_number))
             send_content = None
