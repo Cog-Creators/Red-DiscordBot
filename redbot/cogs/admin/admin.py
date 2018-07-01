@@ -127,8 +127,8 @@ class Admin:
         self, ctx: commands.Context, rolename: discord.Role, *, user: MemberDefaultAuthor = None
     ):
         """
-        Adds a role to a user. If user is left blank it defaults to the
-            author of the command.
+        Adds a role to a user.
+        If user is left blank it defaults to the author of the command.
         """
         if user is None:
             user = ctx.author
@@ -145,8 +145,8 @@ class Admin:
         self, ctx: commands.Context, rolename: discord.Role, *, user: MemberDefaultAuthor = None
     ):
         """
-        Removes a role from a user. If user is left blank it defaults to the
-            author of the command.
+        Removes a role from a user.
+        If user is left blank it defaults to the author of the command.
         """
         if user is None:
             user = ctx.author
@@ -294,8 +294,7 @@ class Admin:
     @commands.group(invoke_without_command=True)
     async def selfrole(self, ctx: commands.Context, *, selfrole: SelfRole):
         """
-        Add a role to yourself that server admins have configured as
-            user settable.
+        Add a role to yourself that server admins have configured as user settable.
 
         NOTE: The role is case sensitive!
         """
