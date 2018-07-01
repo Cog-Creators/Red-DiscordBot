@@ -59,21 +59,21 @@ class Reports:
     @commands.group(name="reportset", autohelp=True)
     async def reportset(self, ctx: commands.Context):
         """
-        settings for reports
+        Settings for guild-based reports to display in a set channel.
         """
         pass
 
     @checks.admin_or_permissions(manage_guild=True)
     @reportset.command(name="output")
     async def setoutput(self, ctx: commands.Context, channel: discord.TextChannel):
-        """sets the output channel"""
+        """Sets the output channel for reports."""
         await self.config.guild(ctx.guild).output_channel.set(channel.id)
-        await ctx.send(_("Report Channel Set."))
+        await ctx.send(_("Report channel set."))
 
     @checks.admin_or_permissions(manage_guild=True)
     @reportset.command(name="toggleactive")
     async def report_toggle(self, ctx: commands.Context):
-        """Toggles whether the Reporting tool is enabled or not"""
+        """Toggles whether the reporting tool is enabled or not."""
 
         active = await self.config.guild(ctx.guild).active()
         active = not active
@@ -201,10 +201,9 @@ class Reports:
     @commands.group(name="report", invoke_without_command=True)
     async def report(self, ctx: commands.Context, *, _report: str = ""):
         """
-        Follow the prompts to make a report
+        Follow the prompts to make a report.
 
-        optionally use with a report message
-        to use it non interactively
+        Optionally use with a report message to use it non-interactively.
         """
         author = ctx.author
         guild = ctx.guild
@@ -216,7 +215,7 @@ class Reports:
             return
         g_active = await self.config.guild(guild).active()
         if not g_active:
-            return await author.send(_("Reporting has not been enabled for this server"))
+            return await author.send(_("Reporting has not been enabled for this server."))
         if guild.id not in self.antispam:
             self.antispam[guild.id] = {}
         if author.id not in self.antispam[guild.id]:
@@ -231,7 +230,7 @@ class Reports:
             )
         if author.id in self.user_cache:
             return await author.send(
-                _("Please finish making your prior report before making an additional one")
+                _("Please finish making your prior report before making an additional one.")
             )
         self.user_cache.append(author.id)
 
@@ -244,8 +243,8 @@ class Reports:
             try:
                 dm = await author.send(
                     _(
-                        "Please respond to this message with your Report."
-                        "\nYour report should be a single message"
+                        "Please respond to this message with your report."
+                        "\nYour report should be a single message."
                     )
                 )
             except discord.Forbidden:
@@ -297,7 +296,7 @@ class Reports:
         tun = t[1]["tun"]
         if payload.user_id in [x.id for x in tun.members]:
             await tun.react_close(
-                uid=payload.user_id, message=_("{closer} has closed the correspondence")
+                uid=payload.user_id, message=_("{closer} has closed the correspondence.")
             )
             self.tunnel_store.pop(t[0], None)
 
@@ -313,10 +312,9 @@ class Reports:
     @report.command(name="interact")
     async def response(self, ctx, ticket_number: int):
         """
-        opens a message tunnel between things you say in this channel
-        and the ticket opener's direct messages
+        Opens a message tunnel between a ticket submitter's DMs and this channel.
 
-        tunnels do not persist across bot restarts
+        Tunnels do not persist across bot restarts.
         """
 
         # note, mod_or_permissions is an implicit guild_only
@@ -326,7 +324,7 @@ class Reports:
         try:
             user = guild.get_member(rec.get("user_id"))
         except KeyError:
-            return await ctx.send(_("That ticket doesn't seem to exist"))
+            return await ctx.send(_("That ticket doesn't seem to exist."))
 
         if user is None:
             return await ctx.send(_("That user isn't here anymore."))
