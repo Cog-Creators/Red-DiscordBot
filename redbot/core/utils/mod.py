@@ -135,16 +135,10 @@ async def is_mod_or_superior(bot: Red, obj: Union[discord.Message, discord.Membe
 
     if isinstance(obj, discord.Role):
         return obj.id in [admin_role_id, mod_role_id]
-    mod_roles = [r for r in server.roles if r.id == mod_role_id]
-    mod_role = mod_roles[0] if len(mod_roles) > 0 else None
-    admin_roles = [r for r in server.roles if r.id == admin_role_id]
-    admin_role = admin_roles[0] if len(admin_roles) > 0 else None
 
     if await bot.is_owner(user):
         return True
-    elif admin_role and admin_role in user.roles:
-        return True
-    elif mod_role and mod_role in user.roles:
+    elif discord.utils.find(lambda r: r.id in (admin_role_id, mod_role_id), user.roles):
         return True
     else:
         return False
@@ -220,17 +214,14 @@ async def is_admin_or_superior(
     else:
         raise TypeError("Only messages, members or roles may be passed")
 
-    server = obj.guild
-    admin_role_id = await bot.db.guild(server).admin_role()
+    admin_role_id = await bot.db.guild(obj.guild).admin_role()
 
     if isinstance(obj, discord.Role):
         return obj.id == admin_role_id
-    admin_roles = [r for r in server.roles if r.id == admin_role_id]
-    admin_role = admin_roles[0] if len(admin_roles) > 0 else None
 
     if user and await bot.is_owner(user):
         return True
-    elif admin_roles and admin_role in user.roles:
+    elif discord.utils.get(user.roles, id=admin_role_id)
         return True
     else:
         return False
