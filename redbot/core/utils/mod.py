@@ -140,11 +140,11 @@ async def is_mod_or_superior(bot: Red, obj: Union[discord.Message, discord.Membe
     admin_roles = [r for r in server.roles if r.id == admin_role_id]
     admin_role = admin_roles[0] if len(admin_roles) > 0 else None
 
-    if user and user == await bot.is_owner(user):
+    if await bot.is_owner(user):
         return True
-    elif admin_role and discord.utils.get(user.roles, name=admin_role):
+    elif admin_role and admin_role in user.roles:
         return True
-    elif mod_role and discord.utils.get(user.roles, name=mod_role):
+    elif mod_role and mod_role in user.roles:
         return True
     else:
         return False
@@ -230,7 +230,7 @@ async def is_admin_or_superior(
 
     if user and await bot.is_owner(user):
         return True
-    elif admin_roles and discord.utils.get(user.roles, name=admin_role):
+    elif admin_roles and admin_role in user.roles:
         return True
     else:
         return False
