@@ -221,7 +221,7 @@ async def is_admin_or_superior(
 
     if user and await bot.is_owner(user):
         return True
-    elif discord.utils.get(user.roles, id=admin_role_id)
+    elif discord.utils.get(user.roles, id=admin_role_id):
         return True
     else:
         return False
