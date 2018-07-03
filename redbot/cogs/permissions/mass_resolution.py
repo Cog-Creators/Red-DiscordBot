@@ -3,7 +3,7 @@ from redbot.core.config import Config
 from .resolvers import entries_from_ctx, resolve_lists
 
 # This has optimizations in it that may not hold True if other parts of the permission
-# model are changed from the state they are in currently. 
+# model are changed from the state they are in currently.
 # (commit hash ~ 3bcf375204c22271ad3ed1fc059b598b751aa03f)
 #
 # This is primarily to help with the performance of the help formatter
