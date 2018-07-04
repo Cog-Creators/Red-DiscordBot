@@ -294,9 +294,16 @@ class Streams:
     @streamset.command()
     @checks.is_owner()
     async def twitchtoken(self, token : str):
-        """Sets the Client-ID for Twitch
+        """Sets the Client ID for twitch
 
-        https://blog.twitch.tv/client-id-required-for-kraken-api-calls-afbb8e95f843"""
+        To do this, follow these steps:
+          1. Go to this page: https://dev.twitch.tv/dashboard/apps.
+          2. Click 'Register Your Application'
+          3. Enter a name, set the OAuth Redirect URI to 'http://localhost', and
+             select an Application Category of your choosing.
+          4. Click 'Register', and on the following page, copy the Client ID.
+          5. Paste the Client ID into this command. Done!
+        """
         self.settings["TWITCH_TOKEN"] = token
         dataIO.save_json("data/streams/settings.json", self.settings)
         await self.bot.say('Twitch Client-ID set.')
