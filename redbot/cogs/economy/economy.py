@@ -229,6 +229,7 @@ class Economy:
                 )
             )
 
+    @guild_only_check()
     @commands.command()
     async def payday(self, ctx: commands.Context):
         """Get some free currency"""
