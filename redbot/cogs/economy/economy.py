@@ -84,6 +84,7 @@ def guild_only_check():
 
     return commands.check(pred)
 
+
 class SetParser:
     def __init__(self, argument):
         allowed = ("+", "-")
