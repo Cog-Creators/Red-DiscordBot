@@ -230,7 +230,6 @@ class Economy:
             )
 
     @commands.command()
-
     async def payday(self, ctx: commands.Context):
         """Get some free currency"""
         author = ctx.author
