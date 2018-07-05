@@ -412,7 +412,7 @@ class Cleanup:
         if author == self.bot.user:
             to_delete.append(ctx.message)
 
-        if channel.name:
+        if ctx.guild:
             channel_name = "channel " + channel.name
         else:
             channel_name = str(channel)

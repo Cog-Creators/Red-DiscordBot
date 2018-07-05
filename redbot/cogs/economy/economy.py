@@ -7,7 +7,7 @@ from enum import Enum
 import discord
 
 from redbot.cogs.bank import check_global_setting_guildowner, check_global_setting_admin
-from redbot.core import Config, bank, commands
+from redbot.core import Config, bank, commands, checks
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import pagify, box
 
@@ -73,18 +73,6 @@ SLOT_PAYOUTS_MSG = _(
 ).format(**SMReel.__dict__)
 
 
-def guild_only_check():
-    async def pred(ctx: commands.Context):
-        if await bank.is_global():
-            return True
-        elif not await bank.is_global() and ctx.guild is not None:
-            return True
-        else:
-            return False
-
-    return commands.check(pred)
-
-
 class SetParser:
     def __init__(self, argument):
         allowed = ("+", "-")
@@ -137,6 +125,7 @@ class Economy:
         self.config.register_role(**self.default_role_settings)
         self.slot_register = defaultdict(dict)
 
+    @guild_only_check()
     @commands.group(name="bank", autohelp=True)
     async def _bank(self, ctx: commands.Context):
         """Bank operations"""
@@ -209,7 +198,6 @@ class Economy:
             )
 
     @_bank.command()
-    @guild_only_check()
     @check_global_setting_guildowner()
     async def reset(self, ctx, confirmation: bool = False):
         """Deletes bank accounts"""
@@ -231,7 +219,7 @@ class Economy:
             )
 
     @commands.command()
-    @guild_only_check()
+    @checks.global_bank_or_in_guild()
     async def payday(self, ctx: commands.Context):
         """Get some free currency"""
         author = ctx.author
@@ -304,7 +292,7 @@ class Economy:
                 )
 
     @commands.command()
-    @guild_only_check()
+    @checks.global_bank_or_in_guild()
     async def leaderboard(self, ctx: commands.Context, top: int = 10, show_global: bool = False):
         """Prints out the leaderboard
 
@@ -343,13 +331,13 @@ class Economy:
             await ctx.send(_("There are no accounts in the bank."))
 
     @commands.command()
-    @guild_only_check()
+    @checks.global_bank_or_in_guild()
     async def payouts(self, ctx: commands.Context):
         """Shows slot machine payouts"""
         await ctx.author.send(SLOT_PAYOUTS_MSG)
 
     @commands.command()
-    @guild_only_check()
+    @checks.global_bank_or_in_guild()
     async def slot(self, ctx: commands.Context, bid: int):
         """Play the slot machine"""
         author = ctx.author
@@ -439,7 +427,7 @@ class Economy:
             )
 
     @commands.group(autohelp=True)
-    @guild_only_check()
+    @checks.global_bank_or_in_guild()
     @check_global_setting_admin()
     async def economyset(self, ctx: commands.Context):
         """Changes economy module settings"""
