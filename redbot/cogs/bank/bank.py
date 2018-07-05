@@ -62,7 +62,7 @@ class Bank:
 
     # SECTION commands
 
-    @checks.global_bank_or_in_guild()
+    @check_global_setting_guildowner()
     @checks.guildowner_or_permissions(administrator=True)
     @commands.group(autohelp=True)
     async def bankset(self, ctx: commands.Context):
