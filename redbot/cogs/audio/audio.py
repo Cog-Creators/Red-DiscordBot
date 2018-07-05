@@ -708,7 +708,7 @@ class Audio:
                 return await self._embed_msg(
                     ctx, "Playlist name already exists, try again with a different name."
                 )
-        playlist_name = playlist_name.split(" ")[0].strip("\"")
+        playlist_name = playlist_name.split(" ")[0].strip('"')
         playlist_list = self._to_json(ctx, None, None)
         playlists[playlist_name] = playlist_list
         await self._embed_msg(ctx, "Empty playlist {} created.".format(playlist_name))
@@ -800,7 +800,7 @@ class Audio:
 
             try:
                 playlist_name_msg = await ctx.bot.wait_for("message", timeout=15.0, check=check)
-                playlist_name = playlist_name_msg.content.split(" ")[0].strip("\"")
+                playlist_name = playlist_name_msg.content.split(" ")[0].strip('"')
                 if len(playlist_name) > 20:
                     return await self._embed_msg(ctx, "Try the command again with a shorter name.")
                 if playlist_name in playlists:
@@ -811,12 +811,12 @@ class Audio:
                 return await self._embed_msg(ctx, "No playlist name entered, try again later.")
         playlist_list = self._to_json(ctx, None, tracklist)
         async with self.config.guild(ctx.guild).playlists() as playlists:
-            playlist_name = playlist_name.split(" ")[0].strip("\"")
+            playlist_name = playlist_name.split(" ")[0].strip('"')
             playlists[playlist_name] = playlist_list
         await self._embed_msg(
             ctx,
             "Playlist {} saved from current queue: {} tracks added.".format(
-                playlist_name.split(" ")[0].strip("\""), len(tracklist)
+                playlist_name.split(" ")[0].strip('"'), len(tracklist)
             ),
         )
 
@@ -864,7 +864,7 @@ class Audio:
         playlist_list = self._to_json(ctx, playlist_url, tracklist)
         if tracklist is not None:
             async with self.config.guild(ctx.guild).playlists() as playlists:
-                playlist_name = playlist_name.split(" ")[0].strip("\"")
+                playlist_name = playlist_name.split(" ")[0].strip('"')
                 playlists[playlist_name] = playlist_list
                 return await self._embed_msg(
                     ctx,
