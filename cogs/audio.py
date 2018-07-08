@@ -1491,25 +1491,24 @@ class Audio:
 
         # Checking already connected, will join if not
 
-        try:
-            self.has_connect_perm(author, server)
-        except AuthorNotConnected:
-            await self.bot.say("You must join a voice channel before I can"
-                               " play anything.")
-            return
-        except UnauthorizedConnect:
-            await self.bot.say("I don't have permissions to join your"
-                               " voice channel.")
-            return
-        except UnauthorizedSpeak:
-            await self.bot.say("I don't have permissions to speak in your"
-                               " voice channel.")
-            return
-        except ChannelUserLimit:
-            await self.bot.say("Your voice channel is full.")
-            return
-
         if not self.voice_connected(server):
+            try:
+                self.has_connect_perm(author, server)
+            except AuthorNotConnected:
+                await self.bot.say("You must join a voice channel before I can"
+                                   " play anything.")
+                return
+            except UnauthorizedConnect:
+                await self.bot.say("I don't have permissions to join your"
+                                   " voice channel.")
+                return
+            except UnauthorizedSpeak:
+                await self.bot.say("I don't have permissions to speak in your"
+                                   " voice channel.")
+                return
+            except ChannelUserLimit:
+                await self.bot.say("Your voice channel is full.")
+                return
             await self._join_voice_channel(voice_channel)
         else:  # We are connected but not to the right channel
             if self.voice_client(server).channel != voice_channel:
