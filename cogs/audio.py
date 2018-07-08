@@ -2251,7 +2251,7 @@ class Audio:
             raise UnauthorizedConnect
         elif channel.permissions_for(server.me).speak is False:
             raise UnauthorizedSpeak
-        elif is_full and not is_admin and server.me not in channel.members:
+        elif is_full and not is_admin and server.me not in channel.voice_members:
             raise ChannelUserLimit
         else:
             return True
