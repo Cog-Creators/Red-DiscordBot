@@ -1509,7 +1509,8 @@ class Audio:
             except ChannelUserLimit:
                 await self.bot.say("Your voice channel is full.")
                 return
-            await self._join_voice_channel(voice_channel)
+            else:
+                await self._join_voice_channel(voice_channel)
         else:  # We are connected but not to the right channel
             if self.voice_client(server).channel != voice_channel:
                 await self._stop_and_disconnect(server)
