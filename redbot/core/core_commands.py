@@ -698,7 +698,7 @@ class Core(CoreLogic):
         """
         Sets a default colour to be used for the bot's embeds.
 
-        Acceptable values cor the colour parameter can be found at:
+        Acceptable values for the colour parameter can be found at:
 
         http://discordpy.readthedocs.io/en/rewrite/ext/commands/api.html#discord.ext.commands.ColourConverter
         """
