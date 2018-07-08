@@ -2245,7 +2245,7 @@ class Audio:
                 is_full = False
             else:
                 is_full = len(channel.voice_members) >= channel.user_limit
-	
+
         if channel is None:
             raise AuthorNotConnected
         elif channel.permissions_for(server.me).connect is False and not in_channel:
