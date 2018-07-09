@@ -1754,7 +1754,7 @@ class Audio:
                 if server.id not in stop_times:
                     stop_times[server.id] = None
 
-                if p.current is None and [self.bot.user] == p.channel.members:
+                if [self.bot.user] == p.channel.members:
                     if stop_times[server.id] is None:
                         stop_times[server.id] = int(time.time())
 
