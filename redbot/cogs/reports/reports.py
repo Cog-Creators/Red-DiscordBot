@@ -56,7 +56,7 @@ class Reports:
 
     @checks.admin_or_permissions(manage_guild=True)
     @commands.guild_only()
-    @commands.group(name="reportset", autohelp=True)
+    @commands.group(name="reportset")
     async def reportset(self, ctx: commands.Context):
         """
         Settings for the report system.

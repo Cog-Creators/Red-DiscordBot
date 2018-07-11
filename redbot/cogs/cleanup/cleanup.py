@@ -71,11 +71,11 @@ class Cleanup:
         to_delete = []
         too_old = False
 
-        while not too_old and len(to_delete) - 1 < number:
+        while not too_old and len(to_delete) < number:
             message = None
             async for message in channel.history(limit=limit, before=before, after=after):
                 if (
-                    (not number or len(to_delete) - 1 < number)
+                    (not number or len(to_delete) < number)
                     and check(message)
                     and (ctx.message.created_at - message.created_at).days < 14
                     and (delete_pinned or not message.pinned)
@@ -92,7 +92,7 @@ class Cleanup:
                 before = message
         return to_delete
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @checks.mod_or_permissions(manage_messages=True)
     async def cleanup(self, ctx: commands.Context):
         """Deletes messages."""
