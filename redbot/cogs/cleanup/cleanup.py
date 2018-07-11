@@ -92,7 +92,7 @@ class Cleanup:
                 before = message
         return to_delete
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @checks.mod_or_permissions(manage_messages=True)
     async def cleanup(self, ctx: commands.Context):
         """Deletes messages."""
