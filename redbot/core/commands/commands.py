@@ -141,7 +141,6 @@ class Group(Command, commands.Group):
         super().__init__(*args, **kwargs)
 
     async def invoke(self, ctx):
-
         view = ctx.view
         previous = view.index
         view.skip_ws()
@@ -154,6 +153,7 @@ class Group(Command, commands.Group):
 
         if ctx.invoked_subcommand is None or self == ctx.invoked_subcommand:
             if self.autohelp and not self.invoke_without_command:
+                await self._verify_checks(ctx)
                 await ctx.send_help()
 
         await super().invoke(ctx)

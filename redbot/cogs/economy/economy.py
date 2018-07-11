@@ -251,7 +251,7 @@ class Economy:
                     _(
                         "{0.mention} Here, take some {1}. Enjoy! (+{2} {1}!)\n\n"
                         "You currently have {3} {1}.\n\n"
-                        "You are currently #{4} on the leaderboard!"
+                        "You are currently #{4} on the global leaderboard!"
                     ).format(
                         author,
                         credits_name,
