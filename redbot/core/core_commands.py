@@ -275,7 +275,7 @@ class Core(CoreLogic):
             "".format(red_repo, author_repo, org_repo, support_server_url)
         )
 
-        embed = discord.Embed(color=discord.Color.red())
+        embed = discord.Embed(color=(await ctx.embed_colour()))
         embed.add_field(name="Instance owned by", value=str(owner))
         embed.add_field(name="Python", value=python_version)
         embed.add_field(name="discord.py", value=dpy_version)
