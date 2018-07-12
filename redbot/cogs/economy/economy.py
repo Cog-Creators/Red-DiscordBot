@@ -138,7 +138,7 @@ class Economy:
         self.slot_register = defaultdict(dict)
 
     @guild_only_check()
-    @commands.group(name="bank", autohelp=True)
+    @commands.group(name="bank")
     async def _bank(self, ctx: commands.Context):
         """Bank operations"""
         pass
@@ -438,7 +438,7 @@ class Economy:
                 )
             )
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @guild_only_check()
     @check_global_setting_admin()
     async def economyset(self, ctx: commands.Context):
