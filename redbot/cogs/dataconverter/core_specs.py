@@ -119,11 +119,10 @@ class SpecResolver(object):
     def past_nicknames_conv_spec(self, data: dict):
         flatscoped = self.apply_scope(Config.MEMBER, self.flatten_dict(data))
         ret = {}
-        for k, v in flatscoped.items():
-            outerkey, innerkey = (*k[:-1],), (k[-1],)
-            if outerkey not in ret:
-                ret[outerkey] = {}
-            ret[outerkey].update({innerkey: v})
+        for config_identifiers, v2data in flatscoped.items():
+            if config_identifiers not in ret:
+                ret[config_identifiers] = {}
+            ret[config_identifiers].update({("past_nicks",): v2data})
         return ret
 
     def customcom_conv_spec(self, data: dict):
@@ -144,17 +143,27 @@ class SpecResolver(object):
             ret[outerkey].update({innerkey: ccinfo})
         return ret
 
-    async def convert(self, bot: Red, prettyname: str):
-        if prettyname not in self.available:
-            raise NotImplementedError("No Conversion Specs for this")
-
-        info = self.available_core_conversions[prettyname]
-        filepath, converter = info["file"], info["converter"]
-        (cogname, attr, _id) = info["cfg"]
+    def get_config_object(self, bot, cogname, attr, _id):
         try:
             config = getattr(bot.get_cog(cogname), attr)
         except (TypeError, AttributeError):
             config = Config.get_conf(None, _id, cog_name=cogname)
+
+        return config
+
+    def get_conversion_info(self, prettyname: str):
+        info = self.available_core_conversions[prettyname]
+        filepath, converter = info["file"], info["converter"]
+        (cogname, attr, _id) = info["cfg"]
+        return filepath, converter, cogname, attr, _id
+
+    async def convert(self, bot: Red, prettyname: str, config=None):
+        if prettyname not in self.available:
+            raise NotImplementedError("No Conversion Specs for this")
+
+        filepath, converter, cogname, attr, _id = self.get_conversion_info(prettyname)
+        if config is None:
+            config = self.get_config_object(bot, cogname, attr, _id)
 
         try:
             items = converter(dc.json_load(filepath))
