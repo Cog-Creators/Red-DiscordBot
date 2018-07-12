@@ -152,6 +152,11 @@ class Context(commands.Context):
         else:
             return self.bot.color
 
+    @property
+    def embed_color(self):
+        # Rather than double awaiting.
+        return self.embed_colour
+
     async def embed_requested(self):
         """
         Simple helper to call bot.embed_requested
