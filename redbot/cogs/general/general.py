@@ -191,13 +191,7 @@ class General:
     async def serverinfo(self, ctx):
         """Shows server's informations"""
         guild = ctx.guild
-        online = len(
-            [
-                m.status
-                for m in guild.members
-                if m.status == discord.Status.online or m.status == discord.Status.idle
-            ]
-        )
+        online = len([m.status for m in guild.members if m.status != discord.Status.offline])
         total_users = len(guild.members)
         text_channels = len(guild.text_channels)
         voice_channels = len(guild.voice_channels)

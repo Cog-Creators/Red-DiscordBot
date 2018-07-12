@@ -31,7 +31,7 @@ We love receiving contributions from our community. Any assistance you can provi
 # 2. Ground Rules
 We've made a point to use [ZenHub](https://www.zenhub.com/) (a plugin for GitHub) as our main source of collaboration and coordination. Your experience contributing to Red will be greatly improved if you go get that plugin.
 1. Ensure cross compatibility for Windows, Mac OS and Linux.
-2. Ensure all Python features used in contributions exist and work in Python 3.5 and above.
+2. Ensure all Python features used in contributions exist and work in Python 3.6 and above.
 3. Create new tests for code you add or bugs you fix. It helps us help you by making sure we don't accidentally break anything :grinning:
 4. Create any issues for new features you'd like to implement and explain why this feature is useful to everyone and not just you personally.
 5. Don't add new cogs unless specifically given approval in an issue discussing said cog idea.
@@ -79,7 +79,7 @@ Note: If you haven't used `pipenv` before but are comfortable with virtualenvs, 
 We've recently started using [tox](https://github.com/tox-dev/tox) to run all of our tests. It's extremely simple to use, and if you followed the previous section correctly, it is already installed to your virtual environment.
 
 Currently, tox does the following, creating its own virtual environments for each stage:
-- Runs all of our unit tests with [pytest](https://github.com/pytest-dev/pytest) on both python 3.5 and 3.6 (test environments `py35` and `py36` respectively)
+- Runs all of our unit tests with [pytest](https://github.com/pytest-dev/pytest) on python 3.6 (test environment `py36`)
 - Ensures documentation builds without warnings, and all hyperlinks have a valid destination (test environment `docs`)
 - Ensures that the code meets our style guide with [black](https://github.com/ambv/black) (test environment `style`)
 
@@ -93,8 +93,6 @@ Your PR will not be merged until all of these tests pass.
 Our style checker of choice, [black](https://github.com/ambv/black), actually happens to be an auto-formatter. The checking functionality simply detects whether or not it would try to reformat something in your code, should you run the formatter on it. For this reason, we recommend using this tool as a formatter, regardless of any disagreements you might have with the style it enforces.
 
 Use the command `black --help` to see how to use this tool. The full style guide is explained in detail on [black's GitHub repository](https://github.com/ambv/black). **There is one exception to this**, however, which is that we set the line length to 99, instead of black's default 88. When using `black` on the command line, simply use it like so: `black -l 99 <src>`.
-
-Note: Python 3.6+ is required to install and run black. If you installed your development environment with Python 3.5, black will not be installed.
 
 ### 4.4 Make
 You may have noticed we have a `Makefile` and a `make.bat` in the top-level directory. For now, you can do two things with them:

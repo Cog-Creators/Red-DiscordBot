@@ -41,7 +41,7 @@ class Trivia:
 
         self.conf.register_member(wins=0, games=0, total_score=0)
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @commands.guild_only()
     @checks.mod_or_permissions(administrator=True)
     async def triviaset(self, ctx: commands.Context):
