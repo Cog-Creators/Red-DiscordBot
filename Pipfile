@@ -4,8 +4,8 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-"discord.py" = { git = 'git://github.com/Rapptz/discord.py', ref = '7eb918b19e3e60b56eb9039eb267f8f3477c5e17', editable = true}
-"e1839a8" = {path = ".", editable = true}
+"discord.py" = {git = 'git://github.com/Rapptz/discord.py', ref = '7eb918b19e3e60b56eb9039eb267f8f3477c5e17', editable = true}
+"e1839a8" = {path = ".", editable = true, extras = ['voice', 'mongo']}
 
 [dev-packages]
 tox = "*"
