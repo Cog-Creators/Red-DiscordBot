@@ -15,7 +15,7 @@ from .manager import shutdown_lavalink_server
 
 _ = Translator("Audio", __file__)
 
-__version__ = "0.0.6b"
+__version__ = "0.0.6c"
 __author__ = ["aikaterna", "billy/bollo/ati"]
 
 
@@ -166,7 +166,7 @@ class Audio:
                 await message_channel.send(embed=embed)
                 await player.skip()
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @commands.guild_only()
     async def audioset(self, ctx):
         """Music configuration options."""
@@ -586,6 +586,12 @@ class Audio:
         shuffle = await self.config.guild(ctx.guild).shuffle()
         if not self._player_check(ctx):
             try:
+                if not ctx.author.voice.channel.permissions_for(
+                    ctx.me
+                ).connect == True or self._userlimit(ctx.author.voice.channel):
+                    return await self._embed_msg(
+                        ctx, "I don't have permission to connect to your channel."
+                    )
                 await lavalink.connect(ctx.author.voice.channel)
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
@@ -657,7 +663,7 @@ class Audio:
                 await player.play()
         await ctx.send(embed=embed)
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @commands.guild_only()
     async def playlist(self, ctx):
         """Playlist configuration options."""
@@ -993,6 +999,12 @@ class Audio:
                 return False
         if not self._player_check(ctx):
             try:
+                if not ctx.author.voice.channel.permissions_for(
+                    ctx.me
+                ).connect == True or self._userlimit(ctx.author.voice.channel):
+                    return await self._embed_msg(
+                        ctx, "I don't have permission to connect to your channel."
+                    )
                 await lavalink.connect(ctx.author.voice.channel)
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
@@ -1210,6 +1222,12 @@ class Audio:
         """
         if not self._player_check(ctx):
             try:
+                if not ctx.author.voice.channel.permissions_for(
+                    ctx.me
+                ).connect == True or self._userlimit(ctx.author.voice.channel):
+                    return await self._embed_msg(
+                        ctx, "I don't have permission to connect to your channel."
+                    )
                 await lavalink.connect(ctx.author.voice.channel)
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
@@ -1622,7 +1640,7 @@ class Audio:
             embed.set_footer(text="Nothing playing.")
         await ctx.send(embed=embed)
 
-    @commands.group(aliases=["llset"], autohelp=True)
+    @commands.group(aliases=["llset"])
     @commands.guild_only()
     @checks.is_owner()
     async def llsetup(self, ctx):
@@ -1886,6 +1904,15 @@ class Audio:
         for key, value in zip(keys, values):
             track_obj[key] = value
         return track_obj
+
+    @staticmethod
+    def _userlimit(channel):
+        if channel.user_limit == 0:
+            return False
+        if channel.user_limit < len(channel.members) + 1:
+            return True
+        else:
+            return False
 
     async def on_voice_state_update(self, member, before, after):
         if after.channel != before.channel:
