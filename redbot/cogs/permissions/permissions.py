@@ -17,6 +17,7 @@ _models = ["owner", "guildowner", "admin", "mod", "all"]
 _ = Translator("Permissions", __file__)
 
 REACTS = {"\N{WHITE HEAVY CHECK MARK}": True, "\N{NEGATIVE SQUARED CROSS MARK}": False}
+Y_OR_N = {"y": True, "yes": True, "n": False, "no": False}
 
 
 @cog_i18n(_)
@@ -125,7 +126,7 @@ class Permissions:
     #   async def admin_model(self, ctx: commands.Context) -> bool:
     #   async def mod_model(self, ctx: commands.Context) -> bool:
 
-    @commands.group(aliases=["p"], autohelp=True)
+    @commands.group(aliases=["p"])
     async def permissions(self, ctx: commands.Context):
         """
         Permission management tools
@@ -532,31 +533,14 @@ class Permissions:
             models.update(data)
         await ctx.send(_("Default set."))
 
-    @commands.bot_has_permissions(add_reactions=True)
     @checks.is_owner()
     @permissions.command(name="clearglobalsettings")
     async def clear_globals(self, ctx: commands.Context):
         """
         Clears all global rules.
         """
+        await self._confirm_then_clear_rules(ctx, is_guild=False)
 
-        m = await ctx.send("Are you sure?")
-        for r in REACTS.keys():
-            await m.add_reaction(r)
-        try:
-            reaction, user = await self.bot.wait_for(
-                "reaction_add", check=lambda r, u: u == ctx.author and str(r) in REACTS, timeout=30
-            )
-        except asyncio.TimeoutError:
-            return await ctx.send(_("Ok, try responding with an emoji next time."))
-
-        if REACTS.get(str(reaction)):
-            await self.config.owner_models.clear()
-            await ctx.send(_("Global settings cleared."))
-        else:
-            await ctx.send(_("Okay."))
-
-    @commands.bot_has_permissions(add_reactions=True)
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     @permissions.command(name="clearguildsettings")
@@ -564,20 +548,43 @@ class Permissions:
         """
         Clears all guild rules.
         """
+        await self._confirm_then_clear_rules(ctx, is_guild=True)
 
-        m = await ctx.send("Are you sure?")
-        for r in REACTS.keys():
-            await m.add_reaction(r)
-        try:
-            reaction, user = await self.bot.wait_for(
-                "reaction_add", check=lambda r, u: u == ctx.author and str(r) in REACTS, timeout=30
-            )
-        except asyncio.TimeoutError:
-            return await ctx.send(_("Ok, try responding with an emoji next time."))
+    async def _confirm_then_clear_rules(self, ctx: commands.Context, is_guild: bool):
+        if ctx.guild.me.permissions_in(ctx.channel).add_reactions:
+            m = await ctx.send(_("Are you sure?"))
+            for r in REACTS.keys():
+                await m.add_reaction(r)
+            try:
+                reaction, user = await self.bot.wait_for(
+                    "reaction_add",
+                    check=lambda r, u: u == ctx.author and str(r) in REACTS,
+                    timeout=30,
+                )
+            except asyncio.TimeoutError:
+                return await ctx.send(_("Ok, try responding with an emoji next time."))
 
-        if REACTS.get(str(reaction)):
-            await self.config.guild(ctx.guild).owner_models.clear()
-            await ctx.send(_("Guild settings cleared."))
+            agreed = REACTS.get(str(reaction))
+        else:
+            await ctx.send(_("Are you sure? (y/n)"))
+            try:
+                message = await self.bot.wait_for(
+                    "message",
+                    check=lambda m: m.author == ctx.author and m.content in Y_OR_N,
+                    timeout=30,
+                )
+            except asyncio.TimeoutError:
+                return await ctx.send(_("Ok, try responding with yes or no next time."))
+
+            agreed = Y_OR_N.get(message.content.lower())
+
+        if agreed:
+            if is_guild:
+                await self.config.guild(ctx.guild).owner_models.clear()
+                await ctx.send(_("Guild settings cleared."))
+            else:
+                await self.config.owner_models.clear()
+                await ctx.send(_("Global settings cleared."))
         else:
             await ctx.send(_("Okay."))
 
