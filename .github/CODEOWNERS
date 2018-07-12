@@ -24,6 +24,7 @@ redbot/core/utils/mod.py                 @palmtree5
 redbot/core/utils/data_converter.py      @mikeshardmind
 redbot/core/utils/antispam.py            @mikeshardmind
 redbot/core/utils/tunnel.py              @mikeshardmind
+redbot/core/utils/caching.py             @mikeshardmind
 
 # Cogs
 redbot/cogs/admin/*                 @tekulvw
@@ -44,6 +45,7 @@ redbot/cogs/trivia/*                @Tobotimus
 redbot/cogs/dataconverter/*         @mikeshardmind
 redbot/cogs/reports/*               @mikeshardmind
 redbot/cogs/permissions/*           @mikeshardmind
+redbot/cogs/warnings/*              @palmtree5
 
 # Docs
 docs/*                              @tekulvw @palmtree5
