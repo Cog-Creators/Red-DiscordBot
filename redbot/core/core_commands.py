@@ -321,7 +321,7 @@ class Core(CoreLogic):
 
         return fmt.format(d=days, h=hours, m=minutes, s=seconds)
 
-    @commands.group(autohelp=True)
+    @commands.group()
     async def embedset(self, ctx: commands.Context):
         """
         Commands for toggling embeds on or off.
@@ -360,6 +360,7 @@ class Core(CoreLogic):
 
     @embedset.command(name="guild")
     @checks.guildowner_or_permissions(administrator=True)
+    @commands.guild_only()
     async def embedset_guild(self, ctx: commands.Context, enabled: bool = None):
         """
         Toggle the guild's embed setting.
@@ -598,7 +599,7 @@ class Core(CoreLogic):
             pass
         await ctx.bot.shutdown(restart=True)
 
-    @commands.group(name="set", autohelp=True)
+    @commands.group(name="set")
     async def _set(self, ctx):
         """Changes Red's settings"""
         if ctx.invoked_subcommand is None:
@@ -981,7 +982,7 @@ class Core(CoreLogic):
             ctx.bot.disable_sentry()
             await ctx.send(_("Done. Sentry logging is now disabled."))
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @checks.is_owner()
     async def helpset(self, ctx: commands.Context):
         """Manage settings for the help command."""
@@ -1264,7 +1265,7 @@ class Core(CoreLogic):
             else:
                 await ctx.send(_("Message delivered to {}").format(destination))
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @checks.is_owner()
     async def whitelist(self, ctx):
         """
@@ -1322,7 +1323,7 @@ class Core(CoreLogic):
         await ctx.bot.db.whitelist.set([])
         await ctx.send(_("Whitelist has been cleared."))
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @checks.is_owner()
     async def blacklist(self, ctx):
         """
