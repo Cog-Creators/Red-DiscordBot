@@ -291,6 +291,7 @@ class Admin:
         # noinspection PyTypeChecker
         return valid_roles
 
+    @commands.guild_only()
     @commands.group(invoke_without_command=True)
     async def selfrole(self, ctx: commands.Context, *, selfrole: SelfRole):
         """

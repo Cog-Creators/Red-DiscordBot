@@ -17,13 +17,15 @@ def check_global_setting_guildowner():
 
     async def pred(ctx: commands.Context):
         author = ctx.author
-        if await ctx.bot.is_owner(author):
-            return True
         if not await bank.is_global():
             if not isinstance(ctx.channel, discord.abc.GuildChannel):
                 return False
+            if await ctx.bot.is_owner(author):
+                return True
             permissions = ctx.channel.permissions_for(author)
             return author == ctx.guild.owner or permissions.administrator
+        else:
+            return await ctx.bot.is_owner(author)
 
     return commands.check(pred)
 
@@ -36,15 +38,17 @@ def check_global_setting_admin():
 
     async def pred(ctx: commands.Context):
         author = ctx.author
-        if await ctx.bot.is_owner(author):
-            return True
         if not await bank.is_global():
             if not isinstance(ctx.channel, discord.abc.GuildChannel):
                 return False
+            if await ctx.bot.is_owner(author):
+                return True
             permissions = ctx.channel.permissions_for(author)
             is_guild_owner = author == ctx.guild.owner
             admin_role = await ctx.bot.db.guild(ctx.guild).admin_role()
             return admin_role in author.roles or is_guild_owner or permissions.manage_guild
+        else:
+            return await ctx.bot.is_owner(author)
 
     return commands.check(pred)
 
@@ -58,8 +62,9 @@ class Bank:
 
     # SECTION commands
 
-    @commands.group()
+    @check_global_setting_guildowner()
     @checks.guildowner_or_permissions(administrator=True)
+    @commands.group(autohelp=True)
     async def bankset(self, ctx: commands.Context):
         """Base command for bank settings"""
         if ctx.invoked_subcommand is None:
