@@ -137,7 +137,7 @@ class Group(Command, commands.Group):
     """
 
     def __init__(self, *args, **kwargs):
-        self.autohelp = kwargs.pop("autohelp", False)
+        self.autohelp = kwargs.pop("autohelp", True)
         super().__init__(*args, **kwargs)
 
     async def invoke(self, ctx):
