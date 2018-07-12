@@ -313,7 +313,7 @@ class Admin:
         await self._removerole(ctx, ctx.author, selfrole)
 
     @selfrole.command(name="add")
-    @commands.has_permissions(manage_roles=True)
+    @checks.admin_or_permissions(manage_roles=True)
     async def selfrole_add(self, ctx: commands.Context, *, role: discord.Role):
         """
         Add a role to the list of available selfroles.
@@ -327,7 +327,7 @@ class Admin:
         await ctx.send("The selfroles list has been successfully modified.")
 
     @selfrole.command(name="delete")
-    @commands.has_permissions(manage_roles=True)
+    @checks.admin_or_permissions(manage_roles=True)
     async def selfrole_delete(self, ctx: commands.Context, *, role: SelfRole):
         """
         Removes a role from the list of available selfroles.
