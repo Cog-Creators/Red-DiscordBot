@@ -161,7 +161,7 @@ class Mod:
         except RuntimeError:
             pass
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     async def modset(self, ctx: commands.Context):
@@ -832,7 +832,7 @@ class Mod:
                 _("I cannot do that, I lack the '{}' permission.").format("Manage Nicknames")
             )
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @commands.guild_only()
     @checks.mod_or_permissions(manage_channel=True)
     async def mute(self, ctx: commands.Context):
@@ -998,7 +998,7 @@ class Mod:
             await self.settings.member(user).perms_cache.set(perms_cache)
             return True, None
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @commands.guild_only()
     @checks.mod_or_permissions(manage_channel=True)
     async def unmute(self, ctx: commands.Context):
@@ -1164,13 +1164,12 @@ class Mod:
                 await self.settings.member(user).perms_cache.set(perms_cache)
             return True, None
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @commands.guild_only()
     @checks.admin_or_permissions(manage_channels=True)
     async def ignore(self, ctx: commands.Context):
         """Adds servers/channels to ignorelist"""
         if ctx.invoked_subcommand is None:
-            await ctx.send_help()
             await ctx.send(await self.count_ignored())
 
     @ignore.command(name="channel")
@@ -1197,7 +1196,7 @@ class Mod:
         else:
             await ctx.send(_("This server is already being ignored."))
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @commands.guild_only()
     @checks.admin_or_permissions(manage_channels=True)
     async def unignore(self, ctx: commands.Context):

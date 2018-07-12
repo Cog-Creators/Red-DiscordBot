@@ -82,10 +82,7 @@ class Help(formatter.HelpFormatter):
         if self.pm_check(self.context):
             return self.context.bot.color
         else:
-            if await self.context.bot.db.guild(self.context.guild).use_bot_color():
-                return self.context.bot.color
-            else:
-                return self.me.color
+            return await self.context.embed_colour()
 
     @property
     def destination(self):
