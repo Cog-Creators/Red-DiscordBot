@@ -7,16 +7,19 @@ from redbot.core.bot import Red
 from redbot.core import checks
 from redbot.core.config import Config
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils.caching import LRUDict
 
-from .resolvers import val_if_check_is_valid, resolve_models
+from .resolvers import val_if_check_is_valid, resolve_models, entries_from_ctx
 from .yaml_handler import yamlset_acl, yamlget_acl
 from .converters import CogOrCommand, RuleType, ClearableRuleType
+from .mass_resolution import mass_resolve
 
 _models = ["owner", "guildowner", "admin", "mod", "all"]
 
 _ = Translator("Permissions", __file__)
 
 REACTS = {"\N{WHITE HEAVY CHECK MARK}": True, "\N{NEGATIVE SQUARED CROSS MARK}": False}
+Y_OR_N = {"y": True, "yes": True, "n": False, "no": False}
 
 
 @cog_i18n(_)
@@ -34,8 +37,32 @@ class Permissions:
         self.config = Config.get_conf(self, identifier=78631113035100160, force_registration=True)
         self.config.register_global(owner_models={})
         self.config.register_guild(owner_models={})
+        self.cache = LRUDict(size=25000)  # This can be tuned later
 
-    async def __global_check(self, ctx):
+    async def get_user_ctx_overrides(self, ctx: commands.Context) -> dict:
+        """
+        This takes a context object, and returns a dict of
+
+        allowed: list of commands
+        denied: list of commands
+        default: list of commands
+
+        representing how permissions interacts with the
+        user, channel, guild, and (possibly) voice channel
+        for all commands on the bot (not just the one in the context object)
+
+        This mainly exists for use by the help formatter,
+        but others may find it useful
+
+        Unlike the rest of the permission system, if other models are added later,
+        due to optimizations made for this, this needs to be adjusted accordingly
+
+        This does not account for before and after permission hooks,
+        these need to be checked seperately
+        """
+        return await mass_resolve(ctx=ctx, config=self.config)
+
+    async def __global_check(self, ctx: commands.Context) -> bool:
         """
         Yes, this is needed on top of hooking into checks.py
         to ensure that unchecked commands can still be managed by permissions
@@ -68,12 +95,6 @@ class Permissions:
         """
         if await ctx.bot.is_owner(ctx.author):
             return True
-        voice_channel = None
-        with contextlib.suppress(Exception):
-            voice_channel = ctx.author.voice.voice_channel
-        entries = [x for x in (ctx.author, voice_channel, ctx.channel) if x]
-        roles = sorted(ctx.author.roles, reverse=True) if ctx.guild else []
-        entries.extend([x.id for x in roles])
 
         before = [
             getattr(cog, "_{0.__class__.__name__}__red_permissions_before".format(cog), None)
@@ -86,11 +107,26 @@ class Permissions:
             if override is not None:
                 return override
 
-        for model in self.resolution_order[level]:
-            override_model = getattr(self, model + "_model", None)
-            override = await override_model(ctx) if override_model else None
+        # checked ids + configureable to be checked against
+        cache_tup = entries_from_ctx(ctx) + (
+            ctx.cog.__class__.__name__,
+            ctx.command.qualified_name,
+        )
+        if cache_tup in self.cache:
+            override = self.cache[cache_tup]
             if override is not None:
                 return override
+        else:
+            for model in self.resolution_order[level]:
+                if ctx.guild is None and model != "owner":
+                    break
+                override_model = getattr(self, model + "_model", None)
+                override = await override_model(ctx) if override_model else None
+                if override is not None:
+                    self.cache[cache_tup] = override
+                    return override
+            # This is intentional not being in an else block
+            self.cache[cache_tup] = None
 
         after = [
             getattr(cog, "_{0.__class__.__name__}__red_permissions_after".format(cog), None)
@@ -115,7 +151,8 @@ class Permissions:
         """
         Handles guild level overrides
         """
-
+        if ctx.guild is None:
+            return None
         async with self.config.guild(ctx.guild).owner_models() as models:
             return resolve_models(ctx=ctx, models=models)
 
@@ -125,7 +162,7 @@ class Permissions:
     #   async def admin_model(self, ctx: commands.Context) -> bool:
     #   async def mod_model(self, ctx: commands.Context) -> bool:
 
-    @commands.group(aliases=["p"], autohelp=True)
+    @commands.group(aliases=["p"])
     async def permissions(self, ctx: commands.Context):
         """
         Permission management tools
@@ -223,6 +260,7 @@ class Permissions:
             return await ctx.send(_("Invalid syntax."))
         else:
             await ctx.send(_("Rules set."))
+            self.invalidate_cache()
 
     @checks.is_owner()
     @permissions.command(name="getglobalacl")
@@ -249,6 +287,7 @@ class Permissions:
             return await ctx.send(_("Invalid syntax."))
         else:
             await ctx.send(_("Rules set."))
+            self.invalidate_cache(ctx.guild.id)
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
@@ -278,6 +317,7 @@ class Permissions:
             return await ctx.send(_("Invalid syntax."))
         else:
             await ctx.send(_("Rules set."))
+            self.invalidate_cache(ctx.guild.id)
 
     @checks.is_owner()
     @permissions.command(name="updateglobalacl")
@@ -297,6 +337,7 @@ class Permissions:
             return await ctx.send(_("Invalid syntax."))
         else:
             await ctx.send(_("Rules set."))
+            self.invalidate_cache()
 
     @checks.is_owner()
     @permissions.command(name="addglobalrule")
@@ -340,6 +381,7 @@ class Permissions:
             data[model_type][type_name][allow_or_deny].append(obj)
             models.update(data)
         await ctx.send(_("Rule added."))
+        self.invalidate_cache(type_name, obj)
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
@@ -384,6 +426,7 @@ class Permissions:
             data[model_type][type_name][allow_or_deny].append(obj)
             models.update(data)
         await ctx.send(_("Rule added."))
+        self.invalidate_cache(type_name, obj)
 
     @checks.is_owner()
     @permissions.command(name="removeglobalrule")
@@ -427,6 +470,7 @@ class Permissions:
             data[model_type][type_name][allow_or_deny].remove(obj)
             models.update(data)
         await ctx.send(_("Rule removed."))
+        self.invalidate_cache(obj, type_name)
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
@@ -471,6 +515,7 @@ class Permissions:
             data[model_type][type_name][allow_or_deny].remove(obj)
             models.update(data)
         await ctx.send(_("Rule removed."))
+        self.invalidate_cache(obj, type_name)
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
@@ -495,6 +540,7 @@ class Permissions:
 
             models.update(data)
         await ctx.send(_("Default set."))
+        self.invalidate_cache(type_name)
 
     @checks.is_owner()
     @permissions.command(name="setdefaultglobalrule")
@@ -518,32 +564,17 @@ class Permissions:
 
             models.update(data)
         await ctx.send(_("Default set."))
+        self.invalidate_cache(type_name)
 
-    @commands.bot_has_permissions(add_reactions=True)
     @checks.is_owner()
     @permissions.command(name="clearglobalsettings")
     async def clear_globals(self, ctx: commands.Context):
         """
         Clears all global rules.
         """
+        await self._confirm_then_clear_rules(ctx, is_guild=False)
+        self.invalidate_cache()
 
-        m = await ctx.send("Are you sure?")
-        for r in REACTS.keys():
-            await m.add_reaction(r)
-        try:
-            reaction, user = await self.bot.wait_for(
-                "reaction_add", check=lambda r, u: u == ctx.author and str(r) in REACTS, timeout=30
-            )
-        except asyncio.TimeoutError:
-            return await ctx.send(_("Ok, try responding with an emoji next time."))
-
-        if REACTS.get(str(reaction)):
-            await self.config.owner_models.clear()
-            await ctx.send(_("Global settings cleared."))
-        else:
-            await ctx.send(_("Okay."))
-
-    @commands.bot_has_permissions(add_reactions=True)
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     @permissions.command(name="clearguildsettings")
@@ -551,22 +582,60 @@ class Permissions:
         """
         Clears all guild rules.
         """
+        await self._confirm_then_clear_rules(ctx, is_guild=True)
+        self.invalidate_cache(ctx.guild.id)
 
-        m = await ctx.send("Are you sure?")
-        for r in REACTS.keys():
-            await m.add_reaction(r)
-        try:
-            reaction, user = await self.bot.wait_for(
-                "reaction_add", check=lambda r, u: u == ctx.author and str(r) in REACTS, timeout=30
-            )
-        except asyncio.TimeoutError:
-            return await ctx.send(_("Ok, try responding with an emoji next time."))
+    async def _confirm_then_clear_rules(self, ctx: commands.Context, is_guild: bool):
+        if ctx.guild.me.permissions_in(ctx.channel).add_reactions:
+            m = await ctx.send(_("Are you sure?"))
+            for r in REACTS.keys():
+                await m.add_reaction(r)
+            try:
+                reaction, user = await self.bot.wait_for(
+                    "reaction_add",
+                    check=lambda r, u: u == ctx.author and str(r) in REACTS,
+                    timeout=30,
+                )
+            except asyncio.TimeoutError:
+                return await ctx.send(_("Ok, try responding with an emoji next time."))
 
-        if REACTS.get(str(reaction)):
-            await self.config.guild(ctx.guild).owner_models.clear()
-            await ctx.send(_("Guild settings cleared."))
+            agreed = REACTS.get(str(reaction))
+        else:
+            await ctx.send(_("Are you sure? (y/n)"))
+            try:
+                message = await self.bot.wait_for(
+                    "message",
+                    check=lambda m: m.author == ctx.author and m.content in Y_OR_N,
+                    timeout=30,
+                )
+            except asyncio.TimeoutError:
+                return await ctx.send(_("Ok, try responding with yes or no next time."))
+
+            agreed = Y_OR_N.get(message.content.lower())
+
+        if agreed:
+            if is_guild:
+                await self.config.guild(ctx.guild).owner_models.clear()
+                await ctx.send(_("Guild settings cleared."))
+            else:
+                await self.config.owner_models.clear()
+                await ctx.send(_("Global settings cleared."))
         else:
             await ctx.send(_("Okay."))
+
+    def invalidate_cache(self, *to_invalidate):
+        """
+        Either invalidates the entire cache (if given no objects)
+        or does a partial invalidation based on passed objects
+        """
+        if len(to_invalidate) == 0:
+            self.cache.clear()
+            return
+        # LRUDict inherits from ordered dict, hence the syntax below
+        stil_valid = [
+            (k, v) for k, v in self.cache.items() if not any(obj in k for obj in to_invalidate)
+        ]
+        self.cache = LRUDict(*stil_valid, size=self.cache.size)
 
     def find_object_uniquely(self, info: str) -> int:
         """
