@@ -141,13 +141,13 @@ class CustomCommands:
         self.config.register_guild(commands={})
         self.commandobj = CommandObj(config=self.config, bot=self.bot)
 
-    @commands.group(aliases=["cc"], autohelp=True)
+    @commands.group(aliases=["cc"])
     @commands.guild_only()
     async def customcom(self, ctx: commands.Context):
         """Custom commands management"""
         pass
 
-    @customcom.group(name="add", autohelp=True)
+    @customcom.group(name="add")
     @checks.mod_or_permissions(administrator=True)
     async def cc_add(self, ctx: commands.Context):
         """
