@@ -360,6 +360,7 @@ class Core(CoreLogic):
 
     @embedset.command(name="guild")
     @checks.guildowner_or_permissions(administrator=True)
+    @commands.guild_only()
     async def embedset_guild(self, ctx: commands.Context, enabled: bool = None):
         """
         Toggle the guild's embed setting.
