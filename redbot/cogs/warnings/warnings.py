@@ -41,7 +41,7 @@ class Warnings:
         except RuntimeError:
             pass
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     async def warningset(self, ctx: commands.Context):
@@ -58,7 +58,7 @@ class Warnings:
             _("Custom reasons have been {}.").format(_("enabled") if allowed else _("disabled"))
         )
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     async def warnaction(self, ctx: commands.Context):
@@ -134,7 +134,7 @@ class Warnings:
             else:
                 await ctx.send(_("No action named {} exists!").format(action_name))
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     async def warnreason(self, ctx: commands.Context):

@@ -39,7 +39,7 @@ class Filter:
         except RuntimeError:
             pass
 
-    @commands.group(name="filter", autohelp=True)
+    @commands.group(name="filter")
     @commands.guild_only()
     @checks.mod_or_permissions(manage_messages=True)
     async def _filter(self, ctx: commands.Context):

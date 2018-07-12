@@ -275,7 +275,7 @@ class Core(CoreLogic):
             "".format(red_repo, author_repo, org_repo, support_server_url)
         )
 
-        embed = discord.Embed(color=discord.Color.red())
+        embed = discord.Embed(color=(await ctx.embed_colour()))
         embed.add_field(name="Instance owned by", value=str(owner))
         embed.add_field(name="Python", value=python_version)
         embed.add_field(name="discord.py", value=dpy_version)
@@ -321,7 +321,7 @@ class Core(CoreLogic):
 
         return fmt.format(d=days, h=hours, m=minutes, s=seconds)
 
-    @commands.group(autohelp=True)
+    @commands.group()
     async def embedset(self, ctx: commands.Context):
         """
         Commands for toggling embeds on or off.
@@ -598,7 +598,7 @@ class Core(CoreLogic):
             pass
         await ctx.bot.shutdown(restart=True)
 
-    @commands.group(name="set", autohelp=True)
+    @commands.group(name="set")
     async def _set(self, ctx):
         """Changes Red's settings"""
         if ctx.invoked_subcommand is None:
@@ -698,7 +698,7 @@ class Core(CoreLogic):
         """
         Sets a default colour to be used for the bot's embeds.
 
-        Acceptable values cor the colour parameter can be found at:
+        Acceptable values for the colour parameter can be found at:
 
         http://discordpy.readthedocs.io/en/rewrite/ext/commands/api.html#discord.ext.commands.ColourConverter
         """
@@ -981,7 +981,7 @@ class Core(CoreLogic):
             ctx.bot.disable_sentry()
             await ctx.send(_("Done. Sentry logging is now disabled."))
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @checks.is_owner()
     async def helpset(self, ctx: commands.Context):
         """Manage settings for the help command."""
@@ -1264,7 +1264,7 @@ class Core(CoreLogic):
             else:
                 await ctx.send(_("Message delivered to {}").format(destination))
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @checks.is_owner()
     async def whitelist(self, ctx):
         """
@@ -1322,7 +1322,7 @@ class Core(CoreLogic):
         await ctx.bot.db.whitelist.set([])
         await ctx.send(_("Whitelist has been cleared."))
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @checks.is_owner()
     async def blacklist(self, ctx):
         """

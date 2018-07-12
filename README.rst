@@ -11,9 +11,21 @@
 
 .. class:: center
 
+  .. image:: https://discordapp.com/api/guilds/133049272517001216/embed.png
+    :target: https://discord.gg/red
+    :alt: Discord server
+    
+  .. image:: https://api.travis-ci.org/Cog-Creators/Red-DiscordBot.svg?branch=V3/develop
+    :target: https://travis-ci.org/Cog-Creators/Red-DiscordBot
+    :alt: Travis CI status
+
   .. image:: https://readthedocs.org/projects/red-discordbot/badge/?version=v3-develop
     :target: http://red-discordbot.readthedocs.io/en/v3-develop/?badge=v3-develop
     :alt: Documentation Status
+    
+  .. image:: https://img.shields.io/badge/discord-py-blue.svg
+    :target: https://github.com/Rapptz/discord.py
+    :alt: discord.py
 
   .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/ambv/black
@@ -26,6 +38,10 @@
   .. image:: https://img.shields.io/badge/Support-Red!-orange.svg
     :target: https://www.patreon.com/Red_Devs
     :alt: Patreon
+    
+  .. image:: https://img.shields.io/badge/PRs-welcome-brightgreen.svg
+    :target: http://makeapullrequest.com
+    :alt: PRs open
 
 ==========
 Overview
