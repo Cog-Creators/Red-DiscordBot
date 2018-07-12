@@ -137,7 +137,8 @@ class Economy:
         self.config.register_role(**self.default_role_settings)
         self.slot_register = defaultdict(dict)
 
-    @commands.group(name="bank", autohelp=True)
+    @guild_only_check()
+    @commands.group(name="bank")
     async def _bank(self, ctx: commands.Context):
         """Bank operations"""
         pass
@@ -209,7 +210,6 @@ class Economy:
             )
 
     @_bank.command()
-    @guild_only_check()
     @check_global_setting_guildowner()
     async def reset(self, ctx, confirmation: bool = False):
         """Deletes bank accounts"""
@@ -230,8 +230,8 @@ class Economy:
                 )
             )
 
-    @commands.command()
     @guild_only_check()
+    @commands.command()
     async def payday(self, ctx: commands.Context):
         """Get some free currency"""
         author = ctx.author
@@ -438,7 +438,7 @@ class Economy:
                 )
             )
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @guild_only_check()
     @check_global_setting_admin()
     async def economyset(self, ctx: commands.Context):
