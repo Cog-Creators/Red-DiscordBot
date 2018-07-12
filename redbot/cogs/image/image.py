@@ -26,7 +26,7 @@ class Image:
     def __unload(self):
         self.session.close()
 
-    @commands.group(name="imgur", autohelp=True)
+    @commands.group(name="imgur")
     async def _imgur(self, ctx):
         """Retrieves pictures from imgur
 

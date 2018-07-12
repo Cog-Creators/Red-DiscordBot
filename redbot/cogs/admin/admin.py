@@ -156,7 +156,7 @@ class Admin:
         else:
             await self.complain(ctx, USER_HIERARCHY_ISSUE)
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @commands.guild_only()
     @checks.admin_or_permissions(manage_roles=True)
     async def editrole(self, ctx: commands.Context):
@@ -291,6 +291,7 @@ class Admin:
         # noinspection PyTypeChecker
         return valid_roles
 
+    @commands.guild_only()
     @commands.group(invoke_without_command=True)
     async def selfrole(self, ctx: commands.Context, *, selfrole: SelfRole):
         """
@@ -312,7 +313,7 @@ class Admin:
         await self._removerole(ctx, ctx.author, selfrole)
 
     @selfrole.command(name="add")
-    @commands.has_permissions(manage_roles=True)
+    @checks.admin_or_permissions(manage_roles=True)
     async def selfrole_add(self, ctx: commands.Context, *, role: discord.Role):
         """
         Add a role to the list of available selfroles.
@@ -326,7 +327,7 @@ class Admin:
         await ctx.send("The selfroles list has been successfully modified.")
 
     @selfrole.command(name="delete")
-    @commands.has_permissions(manage_roles=True)
+    @checks.admin_or_permissions(manage_roles=True)
     async def selfrole_delete(self, ctx: commands.Context, *, role: SelfRole):
         """
         Removes a role from the list of available selfroles.

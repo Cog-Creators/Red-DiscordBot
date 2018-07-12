@@ -9,7 +9,8 @@ import discord
 from redbot.cogs.bank import check_global_setting_guildowner, check_global_setting_admin
 from redbot.core import Config, bank, commands
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import pagify, box
+from redbot.core.utils.chat_formatting import box
+from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 
 from redbot.core.bot import Red
 
@@ -137,7 +138,8 @@ class Economy:
         self.config.register_role(**self.default_role_settings)
         self.slot_register = defaultdict(dict)
 
-    @commands.group(name="bank", autohelp=True)
+    @guild_only_check()
+    @commands.group(name="bank")
     async def _bank(self, ctx: commands.Context):
         """Bank operations"""
         pass
@@ -209,7 +211,6 @@ class Economy:
             )
 
     @_bank.command()
-    @guild_only_check()
     @check_global_setting_guildowner()
     async def reset(self, ctx, confirmation: bool = False):
         """Deletes bank accounts"""
@@ -230,8 +231,8 @@ class Economy:
                 )
             )
 
-    @commands.command()
     @guild_only_check()
+    @commands.command()
     async def payday(self, ctx: commands.Context):
         """Get some free currency"""
         author = ctx.author
@@ -309,8 +310,8 @@ class Economy:
         """Prints out the leaderboard
 
         Defaults to top 10"""
-        # Originally coded by Airenkun - edited by irdumb, rewritten by Palm__ for v3
         guild = ctx.guild
+        author = ctx.author
         if top < 1:
             top = 10
         if (
@@ -320,25 +321,25 @@ class Economy:
         bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
         if len(bank_sorted) < top:
             top = len(bank_sorted)
-        highscore = ""
-        for pos, acc in enumerate(bank_sorted, 1):
-            pos = pos
-            poswidth = 2
-            name = acc[1]["name"]
-            namewidth = 35
-            balance = acc[1]["balance"]
-            balwidth = 2
-            highscore += "{pos: <{poswidth}} {name: <{namewidth}s} {balance: >{balwidth}}\n".format(
-                pos=pos,
-                poswidth=poswidth,
-                name=name,
-                namewidth=namewidth,
-                balance=balance,
-                balwidth=balwidth,
+        header = f"{f'#':4}{f'Name':36}{f'Score':2}\n"
+        highscores = [
+            (
+                f"{f'{pos}.': <{3 if pos < 10 else 2}} {acc[1]['name']: <{35}s} "
+                f"{acc[1]['balance']: >{2 if pos < 10 else 1}}\n"
             )
-        if highscore != "":
-            for page in pagify(highscore, shorten_by=12):
-                await ctx.send(box(page, lang="py"))
+            if acc[0] != author.id
+            else (
+                f"{f'{pos}.': <{3 if pos < 10 else 2}} <<{acc[1]['name'] + '>>': <{33}s} "
+                f"{acc[1]['balance']: >{2 if pos < 10 else 1}}\n"
+            )
+            for pos, acc in enumerate(bank_sorted, 1)
+        ]
+        if highscores:
+            pages = [
+                f"```md\n{header}{''.join(''.join(highscores[x:x + 10]))}```"
+                for x in range(0, len(highscores), 10)
+            ]
+            await menu(ctx, pages, DEFAULT_CONTROLS)
         else:
             await ctx.send(_("There are no accounts in the bank."))
 
@@ -438,7 +439,7 @@ class Economy:
                 )
             )
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @guild_only_check()
     @check_global_setting_admin()
     async def economyset(self, ctx: commands.Context):
