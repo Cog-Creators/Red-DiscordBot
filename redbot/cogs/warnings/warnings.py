@@ -14,6 +14,7 @@ from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.mod import is_admin_or_superior
 from redbot.core.utils.chat_formatting import warning, pagify
+from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 
 _ = Translator("Warnings", __file__)
 
@@ -74,27 +75,9 @@ class Warnings:
         """
         guild = ctx.guild
 
-        await ctx.send("Would you like to enter commands to be run? (y/n)")
+        exceed_command = await get_command_for_exceeded_points(ctx)
+        drop_command = await get_command_for_dropping_points(ctx)
 
-        def same_author_check(m):
-            return m.author == ctx.author
-
-        try:
-            msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=30)
-        except asyncio.TimeoutError:
-            await ctx.send(_("Ok then."))
-            return
-
-        if msg.content.lower() == "y":
-            exceed_command = await get_command_for_exceeded_points(ctx)
-            if exceed_command is None:
-                return
-            drop_command = await get_command_for_dropping_points(ctx)
-            if drop_command is None:
-                return
-        else:
-            exceed_command = None
-            drop_command = None
         to_add = {
             "action_name": name,
             "points": points,
@@ -114,7 +97,7 @@ class Warnings:
                 # Sort in descending order by point count for ease in
                 # finding the highest possible action to take
                 registered_actions.sort(key=lambda a: a["points"], reverse=True)
-                await ctx.tick()
+                await ctx.send(_("Action {name} has been added.").format(name=name))
 
     @warnaction.command(name="del")
     @commands.guild_only()
@@ -182,13 +165,20 @@ class Warnings:
         msg_list = []
         async with guild_settings.reasons() as registered_reasons:
             for r, v in registered_reasons.items():
-                msg_list.append(
-                    "Name: {}\nPoints: {}\nDescription: {}".format(
-                        r, v["points"], v["description"]
+                if ctx.embed_requested():
+                    em = discord.Embed(
+                        title=_("Reason: {name}").format(name=r), description=v["description"]
                     )
-                )
+                    em.add_field(name=_("Points"), value=str(v["points"]))
+                    msg_list.append(em)
+                else:
+                    msg_list.append(
+                        "Name: {}\nPoints: {}\nDescription: {}".format(
+                            r, v["points"], v["description"]
+                        )
+                    )
         if msg_list:
-            await ctx.send_interactive(msg_list)
+            await menu(ctx, msg_list, DEFAULT_CONTROLS)
         else:
             await ctx.send(_("There are no reasons configured!"))
 
@@ -202,14 +192,21 @@ class Warnings:
         msg_list = []
         async with guild_settings.actions() as registered_actions:
             for r in registered_actions:
-                msg_list.append(
-                    "Name: {}\nPoints: {}\nExceed command: {}\n"
-                    "Drop command: {}".format(
-                        r["action_name"], r["points"], r["exceed_command"], r["drop_command"]
+                if await ctx.embed_requested():
+                    em = discord.Embed(title=_("Action: {name}").format(name=r["action_name"]))
+                    em.add_field(name=_("Points"), value="{}".format(r["points"]), inline=False)
+                    em.add_field(name=_("Exceed command"), value=r["exceed_command"], inline=False)
+                    em.add_field(name=_("Drop command"), value=r["drop_command"], inline=False)
+                    msg_list.append(em)
+                else:
+                    msg_list.append(
+                        "Name: {}\nPoints: {}\nExceed command: {}\n"
+                        "Drop command: {}".format(
+                            r["action_name"], r["points"], r["exceed_command"], r["drop_command"]
+                        )
                     )
-                )
         if msg_list:
-            await ctx.send_interactive(msg_list)
+            await menu(ctx, msg_list, DEFAULT_CONTROLS)
         else:
             await ctx.send(_("There are no actions configured!"))
 
@@ -221,6 +218,9 @@ class Warnings:
 
         Reason must be a registered reason, or "custom" if custom reasons are allowed
         """
+        if user == ctx.author:
+            await ctx.send(_("You cannot warn yourself."))
+            return
         if reason.lower() == "custom":
             custom_allowed = await self.config.guild(ctx.guild).allow_custom_reasons()
             if not custom_allowed:
@@ -256,7 +256,27 @@ class Warnings:
         await member_settings.total_points.set(current_point_count)
 
         await warning_points_add_check(self.config, ctx, user, current_point_count)
-        await ctx.tick()
+        try:
+            em = discord.Embed(
+                title=_("Warning from {mod_name}#{mod_discrim}").format(
+                    mod_name=ctx.author.display_name, mod_discrim=ctx.author.discriminator
+                ),
+                description=reason_type["description"],
+            )
+            em.add_field(name=_("Points"), value=str(reason_type["points"]))
+            await user.send(
+                _("You have received a warning in {guild_name}.").format(
+                    guild_name=ctx.guild.name
+                ),
+                embed=em,
+            )
+        except discord.HTTPException:
+            pass
+        await ctx.send(
+            _("User {user_name}#{user_discrim} has been warned.").format(
+                user_name=user.display_name, user_discrim=user.discriminator
+            )
+        )
 
     @commands.command()
     @commands.guild_only()
@@ -303,6 +323,9 @@ class Warnings:
     @checks.admin_or_permissions(ban_members=True)
     async def unwarn(self, ctx: commands.Context, user_id: int, warn_id: str):
         """Removes the specified warning from the user specified"""
+        if user_id == ctx.author.id:
+            await ctx.send(_("You cannot remove warnings from yourself."))
+            return
         guild = ctx.guild
         member = guild.get_member(user_id)
         if member is None:  # no longer in guild, but need a "member" object
