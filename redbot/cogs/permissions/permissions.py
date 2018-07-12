@@ -11,7 +11,7 @@ from redbot.core.utils.caching import LRUDict
 
 from .resolvers import val_if_check_is_valid, resolve_models, entries_from_ctx
 from .yaml_handler import yamlset_acl, yamlget_acl
-from .converters import CogOrCommand, RuleType
+from .converters import CogOrCommand, RuleType, ClearableRuleType
 from .mass_resolution import mass_resolve
 
 _models = ["owner", "guildowner", "admin", "mod", "all"]
@@ -521,18 +521,12 @@ class Permissions:
     @checks.guildowner_or_permissions(administrator=True)
     @permissions.command(name="setdefaultguildrule")
     async def set_default_guild_rule(
-        self, ctx: commands.Context, cog_or_command: CogOrCommand, allow_or_deny: RuleType = None
+        self, ctx: commands.Context, allow_or_deny: ClearableRuleType, cog_or_command: CogOrCommand
     ):
         """
         Sets the default behavior for a cog or command if no rule is set
-
-        Use with a cog or command and no setting to clear the default and defer to
-        normal check logic
         """
-        if allow_or_deny:
-            val_to_set = {"allow": True, "deny": False}.get(allow_or_deny)
-        else:
-            val_to_set = None
+        val_to_set = {"allow": True, "deny": False, "clear": None}.get(allow_or_deny)
 
         model_type, type_name = cog_or_command
         async with self.config.guild(ctx.guild).owner_models() as models:
@@ -551,19 +545,12 @@ class Permissions:
     @checks.is_owner()
     @permissions.command(name="setdefaultglobalrule")
     async def set_default_global_rule(
-        self, ctx: commands.Context, cog_or_command: CogOrCommand, allow_or_deny: RuleType = None
+        self, ctx: commands.Context, allow_or_deny: ClearableRuleType, cog_or_command: CogOrCommand
     ):
         """
         Sets the default behavior for a cog or command if no rule is set
-
-        Use with a cog or command and no setting to clear the default and defer to
-        normal check logic
         """
-
-        if allow_or_deny:
-            val_to_set = {"allow": True, "deny": False}.get(allow_or_deny)
-        else:
-            val_to_set = None
+        val_to_set = {"allow": True, "deny": False, "clear": None}.get(allow_or_deny)
 
         model_type, type_name = cog_or_command
         async with self.config.owner_models() as models:

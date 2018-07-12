@@ -89,8 +89,10 @@ Locking Audio to specific voice channel(s) as a serverowner or admin:
 
 .. code-block:: none
 
-    [p]permissions setguilddefault Audio deny
-    [p]permissions addguildrule allow Audio [voice channel ID or name]
+    [p]permissions setguilddefault deny play
+    [p]permissions setguilddefault deny "playlist start"
+    [p]permissions addguildrule allow play [voice channel ID or name]
+    [p]permissions addguildrule allow "playlist start" [voice channel ID or name]
 
 Allowing extra roles to use cleanup
 
