@@ -15,7 +15,7 @@ from .manager import shutdown_lavalink_server
 
 _ = Translator("Audio", __file__)
 
-__version__ = "0.0.6b"
+__version__ = "0.0.6c"
 __author__ = ["aikaterna", "billy/bollo/ati"]
 
 
@@ -166,7 +166,7 @@ class Audio:
                 await message_channel.send(embed=embed)
                 await player.skip()
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @commands.guild_only()
     async def audioset(self, ctx):
         """Music configuration options."""
@@ -586,6 +586,12 @@ class Audio:
         shuffle = await self.config.guild(ctx.guild).shuffle()
         if not self._player_check(ctx):
             try:
+                if not ctx.author.voice.channel.permissions_for(
+                    ctx.me
+                ).connect == True or self._userlimit(ctx.author.voice.channel):
+                    return await self._embed_msg(
+                        ctx, "I don't have permission to connect to your channel."
+                    )
                 await lavalink.connect(ctx.author.voice.channel)
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
@@ -657,7 +663,7 @@ class Audio:
                 await player.play()
         await ctx.send(embed=embed)
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @commands.guild_only()
     async def playlist(self, ctx):
         """Playlist configuration options."""
@@ -708,6 +714,7 @@ class Audio:
                 return await self._embed_msg(
                     ctx, "Playlist name already exists, try again with a different name."
                 )
+        playlist_name = playlist_name.split(" ")[0].strip('"')
         playlist_list = self._to_json(ctx, None, None)
         async with self.config.guild(ctx.guild).playlists() as playlists:
             playlists[playlist_name] = playlist_list
@@ -769,6 +776,7 @@ class Audio:
         )
         await ctx.send(embed=embed)
 
+    @commands.cooldown(1, 15, discord.ext.commands.BucketType.guild)
     @playlist.command(name="queue")
     async def _playlist_queue(self, ctx, playlist_name=None):
         """Save the queue to a playlist."""
@@ -795,11 +803,11 @@ class Audio:
             await self._embed_msg(ctx, "Please enter a name for this playlist.")
 
             def check(m):
-                return m.author == ctx.author
+                return m.author == ctx.author and not m.content.startswith(ctx.prefix)
 
             try:
                 playlist_name_msg = await ctx.bot.wait_for("message", timeout=15.0, check=check)
-                playlist_name = str(playlist_name_msg.content)
+                playlist_name = playlist_name_msg.content.split(" ")[0].strip('"')
                 if len(playlist_name) > 20:
                     return await self._embed_msg(ctx, "Try the command again with a shorter name.")
                 if playlist_name in playlists:
@@ -810,11 +818,12 @@ class Audio:
                 return await self._embed_msg(ctx, "No playlist name entered, try again later.")
         playlist_list = self._to_json(ctx, None, tracklist)
         async with self.config.guild(ctx.guild).playlists() as playlists:
+            playlist_name = playlist_name.split(" ")[0].strip('"')
             playlists[playlist_name] = playlist_list
         await self._embed_msg(
             ctx,
             "Playlist {} saved from current queue: {} tracks added.".format(
-                playlist_name, len(tracklist)
+                playlist_name.split(" ")[0].strip('"'), len(tracklist)
             ),
         )
 
@@ -862,6 +871,7 @@ class Audio:
         playlist_list = self._to_json(ctx, playlist_url, tracklist)
         if tracklist is not None:
             async with self.config.guild(ctx.guild).playlists() as playlists:
+                playlist_name = playlist_name.split(" ")[0].strip('"')
                 playlists[playlist_name] = playlist_list
                 return await self._embed_msg(
                     ctx,
@@ -993,6 +1003,12 @@ class Audio:
                 return False
         if not self._player_check(ctx):
             try:
+                if not ctx.author.voice.channel.permissions_for(
+                    ctx.me
+                ).connect == True or self._userlimit(ctx.author.voice.channel):
+                    return await self._embed_msg(
+                        ctx, "I don't have permission to connect to your channel."
+                    )
                 await lavalink.connect(ctx.author.voice.channel)
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
@@ -1210,6 +1226,12 @@ class Audio:
         """
         if not self._player_check(ctx):
             try:
+                if not ctx.author.voice.channel.permissions_for(
+                    ctx.me
+                ).connect == True or self._userlimit(ctx.author.voice.channel):
+                    return await self._embed_msg(
+                        ctx, "I don't have permission to connect to your channel."
+                    )
                 await lavalink.connect(ctx.author.voice.channel)
                 player = lavalink.get_player(ctx.guild.id)
                 player.store("connect", datetime.datetime.utcnow())
@@ -1622,7 +1644,7 @@ class Audio:
             embed.set_footer(text="Nothing playing.")
         await ctx.send(embed=embed)
 
-    @commands.group(aliases=["llset"], autohelp=True)
+    @commands.group(aliases=["llset"])
     @commands.guild_only()
     @checks.is_owner()
     async def llsetup(self, ctx):
@@ -1754,7 +1776,7 @@ class Audio:
                 if server.id not in stop_times:
                     stop_times[server.id] = None
 
-                if p.current is None and [self.bot.user] == p.channel.members:
+                if [self.bot.user] == p.channel.members:
                     if stop_times[server.id] is None:
                         stop_times[server.id] = int(time.time())
 
@@ -1886,6 +1908,15 @@ class Audio:
         for key, value in zip(keys, values):
             track_obj[key] = value
         return track_obj
+
+    @staticmethod
+    def _userlimit(channel):
+        if channel.user_limit == 0:
+            return False
+        if channel.user_limit < len(channel.members) + 1:
+            return True
+        else:
+            return False
 
     async def on_voice_state_update(self, member, before, after):
         if after.channel != before.channel:
