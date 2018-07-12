@@ -135,13 +135,13 @@ class Streams:
         else:
             await ctx.send(embed=embed)
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @commands.guild_only()
     @checks.mod()
     async def streamalert(self, ctx: commands.Context):
         pass
 
-    @streamalert.group(name="twitch", autohelp=True)
+    @streamalert.group(name="twitch")
     async def _twitch(self, ctx: commands.Context):
         """Twitch stream alerts"""
         pass
@@ -294,7 +294,7 @@ class Streams:
 
         await self.add_or_remove_community(ctx, community)
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @checks.mod()
     async def streamset(self, ctx: commands.Context):
         pass
@@ -333,7 +333,7 @@ class Streams:
         await self.db.tokens.set_raw("YoutubeStream", value=key)
         await ctx.send(_("Youtube key set."))
 
-    @streamset.group(autohelp=True)
+    @streamset.group()
     @commands.guild_only()
     async def mention(self, ctx: commands.Context):
         """Sets mentions for stream alerts."""
