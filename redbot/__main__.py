@@ -19,6 +19,14 @@ import logging.handlers
 import logging
 import os
 
+# Let's not force this dependency, but damn is uvloop fast.
+try:
+    import uvloop
+except ImportError:
+    pass
+else:
+    asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
 
 #
 #               Red - Discord Bot v3
