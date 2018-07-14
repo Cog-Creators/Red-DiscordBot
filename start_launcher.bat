@@ -6,7 +6,7 @@ pushd %~dp0
 ::Attempts to start py launcher without relying on PATH
 %SYSTEMROOT%\py.exe --version > NUL 2>&1
 IF %ERRORLEVEL% NEQ 0 GOTO attempt
-%SYSTEMROOT%\py.exe -3 launcher.py
+%SYSTEMROOT%\py.exe -3.5 launcher.py
 PAUSE
 GOTO end
 
@@ -14,7 +14,7 @@ GOTO end
 :attempt
 py.exe --version > NUL 2>&1
 IF %ERRORLEVEL% NEQ 0 GOTO lastattempt
-py.exe -3 launcher.py
+py.exe -3.5 launcher.py
 PAUSE
 GOTO end
 
