@@ -12,6 +12,8 @@ from .checks import mod_or_voice_permissions, admin_or_voice_permissions, bot_ha
 from redbot.core.utils.mod import is_mod_or_superior, is_allowed_by_hierarchy, get_audit_reason
 from .log import log
 
+from redbot.core.utils.common_filters import filter_invites
+
 _ = Translator("Mod", __file__)
 
 
@@ -1313,9 +1315,11 @@ class Mod:
         data.add_field(name=_("Joined this server on"), value=joined_on)
         data.add_field(name=_("Roles"), value=roles, inline=False)
         if names:
-            data.add_field(name=_("Previous Names"), value=", ".join(names), inline=False)
+            val = filter_invites(", ".join(names))
+            data.add_field(name=_("Previous Names"), value=val, inline=False)
         if nicks:
-            data.add_field(name=_("Previous Nicknames"), value=", ".join(nicks), inline=False)
+            val = filter_invites(", ".join(nicks))
+            data.add_field(name=_("Previous Nicknames"), value=val, inline=False)
         if voice_state and voice_state.channel:
             data.add_field(
                 name=_("Current voice channel"),
@@ -1326,6 +1330,7 @@ class Mod:
 
         name = str(user)
         name = " ~ ".join((name, user.nick)) if user.nick else name
+        name = filter_invites(name)
 
         if user.avatar:
             avatar = user.avatar_url
