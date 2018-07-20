@@ -1012,3 +1012,122 @@ Set 0 to disable
 **Arguments**
 
 * ``<price>``: The price for queuing a new song.
+
+.. _audio-faq:
+
+--------------------------
+Frequently asked questions
+--------------------------
+
+.. _audio-faq-1:
+
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The music doesn't play and stay at 0:00 / Nothing is found when\
+using the audio commands / The commands doesn't exist
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+All of these problems means one thing : the Lavalink server was
+not found and the music cannot be streamed. Lavalink is the system
+that allows the bot to stream sound on Discord and it is needed
+if you want to use the Audio cog.
+
+Red already comes with Lavalink and should be run when loading the
+Audio cog, however, some issues can happen.
+
+.. tip:: You can start the Lavalink server manually to know the
+    issue.
+
+    For that, you can type this command
+
+    .. code-block:: none
+
+        java -Dsun.zip.disableMemoryMapping=true -jar path/to/Red/cogs/Audio/Lavalink.jar
+
+    If you're on macOS, replace ``path/to/Red`` by
+    ``/Users/username/Library/Application Support/Red-DiscordBot``.
+
+    If you're on Linux, replace ``path/to/Red`` by
+    ``/home/username/.local/share/Red-DiscordBot``.
+
+    If you're on Windows, replace ``path/to/Red`` by
+    ``C:\Users\username\AppData\Local\Red-DiscordBot\Red-DiscordBot``/
+
+    Don't forget to replace ``username`` by your system username.
+    If you have a custom data path, provide it instead of the default one.
+
+The most frequent cause of a missing lavalink server is an used port.
+If you ran your server manually with the above tip, you may see something
+like this:
+
+.. code-block:: none
+
+    [21:56:12] [ ERROR] [LoggingFailureAnalysisReporter]
+
+    ***************************
+    APPLICATION FAILED TO START
+    ***************************
+
+    Description:
+
+    The Tomcat connector configured to listen on port 2333 failed to start. The port may already be in use or the connector may be misconfigured.
+
+Lavalink needs a free port to run. It will run by default on the port 2332
+or 2333. You should check for these ports to see what's using them.
+
+*   **Linux**
+
+    Open the console and type this command:
+
+    .. code-block:: none
+
+        netstat -tulpn | grep "LISTEN"
+
+    Search for 2332 and 2333. You may find something like this:
+
+    .. image:: ../.ressources/audio-linux-ports.png
+
+*   **macOS**
+
+    Search for the ``Network utility`` application, open the ``Port scan``
+    tab, type ``localhost`` for the Internet adress and test ports between
+    2332 and 2333.
+
+    You should find something like this:
+
+    .. image:: ../.ressources/audio-macos-ports.png
+
+*   **Windows**
+
+    Search for the ``Resource monitor`` application, open the network tab,
+    then the "listening ports" section.
+
+    Search for ports 2332 and 2333, you should find something like this:
+
+    .. image:: ../.ressouces/audio-windows-ports.png
+
+If the ports are used by something else than Java, find the process and
+close it, or modify its ports.
+
+If the ports are used by Java, then a Lavalink server may already be
+running. Remember that each instance will run and use its own server.
+
+If you have multiple instances, then you should just run one Lavalink
+server and let all of the instances use it. For that, you need to enable
+the external Lavalink server (with the ``[p]llsetup external`` command)
+on all of your bots except one. This means that only one bot will start
+a server and the other bots will connect to it. You can also start a
+server manually and set all bots to external.
+
+To start a Lavalink server manually, download ``Lavalink.jar`` in
+`the release page <https://github.com/Cog-Creators/Red-DiscordBot/releases>`_
+and run it.
+
+*   **Linux and macOS**
+
+    .. code-block:: none
+
+        java -Dsun.zip.disableMemoryMapping=true -jar Downloads/Lavalink.jar
+
+*   **Windows**
+
+    Double-click the file.
