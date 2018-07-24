@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 from cogs.utils import checks
 from cogs.utils.converters import GlobalUser
-from __main__ import set_cog
 from .utils.dataIO import dataIO
 from .utils.chat_formatting import pagify, box
 
@@ -77,7 +76,7 @@ class Owner:
                                'something went wrong. Check your console '
                                'or logs for more information.')
         else:
-            set_cog(module, True)
+            self.bot.set_cog(module, True)
             await self.disable_commands()
             await self.bot.say("The cog has been loaded.")
 
@@ -95,7 +94,7 @@ class Owner:
                                " turn off autoloading at start just in case"
                                " this isn't supposed to happen.")
         else:
-            set_cog(module, False)
+            self.bot.set_cog(module, False)
         try:  # No matter what we should try to unload it
             self._unload_cog(module)
         except OwnerUnloadWithoutReloadError:
@@ -115,7 +114,7 @@ class Owner:
         cogs = self._list_cogs()
         still_loaded = []
         for cog in cogs:
-            set_cog(cog, False)
+            self.bot.set_cog(cog, False)
             try:
                 self._unload_cog(cog)
             except OwnerUnloadWithoutReloadError:
@@ -158,7 +157,7 @@ class Owner:
             await self.bot.say("That cog could not be loaded. Check your"
                                " console or logs for more information.")
         else:
-            set_cog(module, True)
+            self.bot.set_cog(module, True)
             await self.disable_commands()
             await self.bot.say("The cog has been reloaded.")
 

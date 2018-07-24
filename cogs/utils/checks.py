@@ -1,6 +1,5 @@
 from discord.ext import commands
 import discord.utils
-from __main__ import settings
 
 #
 # This is a modified version of checks.py, originally made by Rapptz
@@ -11,7 +10,7 @@ from __main__ import settings
 
 def is_owner_check(ctx):
     _id = ctx.message.author.id
-    return _id == settings.owner or _id in ctx.bot.settings.co_owners
+    return _id == ctx.bot.settings.owner or _id in ctx.bot.settings.co_owners
 
 def is_owner():
     return commands.check(is_owner_check)
@@ -52,8 +51,8 @@ def role_or_permissions(ctx, check, **perms):
 def mod_or_permissions(**perms):
     def predicate(ctx):
         server = ctx.message.server
-        mod_role = settings.get_server_mod(server).lower()
-        admin_role = settings.get_server_admin(server).lower()
+        mod_role = ctx.bot.settings.get_server_mod(server).lower()
+        admin_role = ctx.bot.settings.get_server_admin(server).lower()
         return role_or_permissions(ctx, lambda r: r.name.lower() in (mod_role,admin_role), **perms)
 
     return commands.check(predicate)
@@ -61,7 +60,7 @@ def mod_or_permissions(**perms):
 def admin_or_permissions(**perms):
     def predicate(ctx):
         server = ctx.message.server
-        admin_role = settings.get_server_admin(server)
+        admin_role = ctx.bot.settings.get_server_admin(server)
         return role_or_permissions(ctx, lambda r: r.name.lower() == admin_role.lower(), **perms)
 
     return commands.check(predicate)
