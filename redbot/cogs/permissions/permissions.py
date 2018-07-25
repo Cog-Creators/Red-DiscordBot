@@ -635,7 +635,7 @@ class Permissions:
         stil_valid = [
             (k, v) for k, v in self.cache.items() if not any(obj in k for obj in to_invalidate)
         ]
-        self.cache = LRUDict(*stil_valid, size=self.cache.size)
+        self.cache = LRUDict(stil_valid, size=self.cache.size)
 
     def find_object_uniquely(self, info: str) -> int:
         """
