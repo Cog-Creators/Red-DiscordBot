@@ -84,7 +84,7 @@ class Dev:
             author   - command author's member object
             message  - the command's message object
             discord  - discord.py library
-            commands - discord.py commands extension
+            commands - redbot.core.commands
             _        - The result of the last dev command.
         """
         env = {
@@ -138,7 +138,7 @@ class Dev:
             author   - command author's member object
             message  - the command's message object
             discord  - discord.py library
-            commands - discord.py commands extension
+            commands - redbot.core.commands
             _        - The result of the last dev command.
         """
         env = {
