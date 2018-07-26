@@ -1,4 +1,4 @@
-from redbot.core import commands
+from discord.ext import commands
 from redbot.core.config import Config
 from .resolvers import entries_from_ctx, resolve_lists
 

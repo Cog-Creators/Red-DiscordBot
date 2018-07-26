@@ -1,4 +1,4 @@
-from redbot.core import commands
+from discord.ext import commands
 from typing import Tuple
 
 

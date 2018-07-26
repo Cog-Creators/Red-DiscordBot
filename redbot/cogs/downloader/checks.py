@@ -1,7 +1,7 @@
 import asyncio
 
 import discord
-from redbot.core import commands
+from discord.ext import commands
 
 __all__ = ["do_install_agreement"]
 

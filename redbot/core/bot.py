@@ -188,7 +188,7 @@ class RedBase(BotBase, RPCMixin):
         admin_role = await self.db.guild(member.guild).admin_role()
         return any(role.id in (mod_role, admin_role) for role in member.roles)
 
-    async def get_context(self, message, *, cls=commands.Context):
+    async def get_context(self, message, *, cls=redbot.core.Context):
         return await super().get_context(message, cls=cls)
 
     def list_packages(self):

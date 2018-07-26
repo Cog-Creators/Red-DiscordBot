@@ -2,7 +2,7 @@ from copy import copy
 import contextlib
 import asyncio
 import discord
-from redbot.core import commands
+from discord.ext import commands
 from redbot.core.bot import Red
 from redbot.core import checks
 from redbot.core.config import Config

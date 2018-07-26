@@ -5,7 +5,7 @@ import logging
 
 from .audio import Audio
 from .manager import start_lavalink_server
-from redbot.core import commands
+from discord.ext import commands
 from redbot.core.data_manager import cog_data_path
 import redbot.core
 

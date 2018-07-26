@@ -12,7 +12,7 @@ from redbot.core import checks
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, pagify
-from redbot.core import commands
+from discord.ext import commands
 
 from redbot.core.bot import Red
 from .checks import do_install_agreement
