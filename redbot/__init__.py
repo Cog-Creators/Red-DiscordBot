@@ -5,10 +5,10 @@ from colorama import init, Back
 init()
 # Let's do all the dumb version checking in one place.
 
-if discord.version_info.major < 1:
+if 'Cog Creators' not in discord.__author__:
     print(
-        "You are not running the rewritten version of discord.py.\n\n"
-        "In order to use Red v3 you MUST be running d.py version"
-        " >= 1.0.0."
+        "You are not running our version of discord.py.\n\n"
+        "In order to use Red v3 you MUST be using our fork."
+        "\n\nYou can avoid conflicts with a python virtual environment"
     )
     sys.exit(1)
