@@ -22,7 +22,7 @@ import pkg_resources
 from redbot.core import __version__
 from redbot.core import checks
 from redbot.core import i18n
-from redbot.core import commands
+from discord.ext import commands
 from .utils.chat_formatting import pagify, box, inline
 
 if TYPE_CHECKING:

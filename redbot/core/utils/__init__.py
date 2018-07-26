@@ -4,7 +4,7 @@ from pathlib import Path
 import os
 import shutil
 import logging
-from redbot.core import commands
+from discord.ext import commands
 from fuzzywuzzy import process
 from .chat_formatting import box
 

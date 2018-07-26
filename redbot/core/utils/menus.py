@@ -8,8 +8,7 @@ import asyncio
 import contextlib
 from typing import Union, Iterable
 import discord
-
-from redbot.core import commands
+from discord.ext import commands
 
 _ReactableEmoji = Union[str, discord.Emoji]
 

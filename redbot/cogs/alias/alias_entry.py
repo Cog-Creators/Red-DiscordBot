@@ -1,7 +1,7 @@
 from typing import Tuple
 
 import discord
-from redbot.core import commands
+from discord.ext import commands
 
 
 class AliasEntry:

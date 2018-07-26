@@ -2,7 +2,7 @@ import types
 import contextlib
 import asyncio
 import logging
-from redbot.core import commands
+from discord.ext import commands
 
 log = logging.getLogger("redbot.cogs.permissions.resolvers")
 

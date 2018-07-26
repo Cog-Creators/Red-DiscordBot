@@ -8,3 +8,9 @@ pyyaml==3.12
 fuzzywuzzy[speedup]<=0.16.0
 Red-Trivia>=1.1.1
 async-timeout<3.0.0
+# If accepted, the below should be modified to download a tagged version
+# with tags matching the corresponding red version.
+# We should NOT put this particular one on pypi due to complications with
+# relicensing and pypi unless someone is willing to do a much more in depth
+# look at that.
+git+https://github.com/Cog-Creators/discord.py/archive/rewrite.zip
