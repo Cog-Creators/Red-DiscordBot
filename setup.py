@@ -14,12 +14,6 @@ IS_TRAVIS = "TRAVIS" in os.environ
 IS_DEPLOYING = "DEPLOYING" in os.environ
 IS_RTD = "READTHEDOCS" in os.environ
 
-dep_links = [
-    "https://github.com/Rapptz/discord.py/tarball/7eb918b19e3e60b56eb9039eb267f8f3477c5e17#egg=discord.py-1.0"
-]
-if IS_TRAVIS:
-    dep_links = []
-
 
 def get_package_list():
     core = find_packages(include=["redbot", "redbot.*"])
@@ -43,12 +37,6 @@ def check_compiler_available():
 def get_requirements():
     with open("requirements.txt") as f:
         requirements = f.read().splitlines()
-    try:
-        requirements.remove(
-            "git+https://github.com/Rapptz/discord.py.git@rewrite#egg=discord.py[voice]"
-        )
-    except ValueError:
-        pass
 
     if not check_compiler_available():  # Can't compile python-Levensthein, so drop extra
         requirements.remove("fuzzywuzzy[speedup]<=0.16.0")
