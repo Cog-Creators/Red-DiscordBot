@@ -48,7 +48,7 @@ def resolve_models(*, ctx: commands.Context, models: dict) -> bool:
     Resolves models in order.
     """
 
-    cmd_name = ctx.command.qualified_name
+    cmd_name = ctx._internal_view_use.qualified_name
     cog_name = ctx.cog.__class__.__name__
 
     resolved = None
