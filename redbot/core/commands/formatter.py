@@ -37,8 +37,9 @@ class HelpFormatter(formatter.HelpFormatter):
         is_mod = await checks.is_mod_or_superior(self.context)
         is_owner = await self.context.bot.is_owner(self.context.author)
         is_guild_owner = (
-            self.context.author == self.context.guild.owner if self.context.guild else is_owner
-        )
+            self.context.author == self.context.guild.owner if self.context.guild else False
+        ) or is_owner
+
         before = [
             x
             for x in [
@@ -134,8 +135,7 @@ class HelpFormatter(formatter.HelpFormatter):
                             continue
                     elif await process_closure(check):
                         continue
-                    else:
-                        has_role_or_perms = False
+                    has_role_or_perms = False
                 else:  # Still need to process other checks too
                     ret = await discord.utils.maybe_coroutine(check, self.context)
                     if not ret:
