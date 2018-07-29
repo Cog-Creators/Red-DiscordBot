@@ -289,6 +289,17 @@ class RedBase(BotBase, RPCMixin):
             if pkg_name.startswith("redbot.cogs"):
                 del sys.modules["redbot.cogs"].__dict__[name]
 
+    def add_cog(self, cog):
+        for attr in dir(cog):
+            _attr = getattr(cog, attr)
+            if isinstance(_attr, discord.ext.commands.Command) and not isinstance(
+                _attr, commands.Command
+            ):
+                raise RuntimeError(
+                    f"{cog.__module__} is not using Red's command module, and cannot be added."
+                )
+        super().add_cog(cog)
+
 
 class Red(RedBase, discord.AutoShardedClient):
     """
