@@ -268,7 +268,12 @@ class General:
 
                 if embeds is not None and len(embeds) > 0:
                     await menu(
-                        ctx, pages=embeds, controls=DEFAULT_CONTROLS, message=None, page=0, timeout=30
+                        ctx,
+                        pages=embeds,
+                        controls=DEFAULT_CONTROLS,
+                        message=None,
+                        page=0,
+                        timeout=30,
                     )
             else:
                 messages = []
@@ -280,12 +285,24 @@ class General:
                         description = "{}...".format(description[:2045])
                     description = _(description)
 
-                    message = "<{}> \n {} by {} \n \n {} \n \n {} Down / {} Up , Powered by urban dictionary".format(ud["permalink"], ud["word"].capitalize(), ud["author"], description, ud["thumbs_down"], ud["thumbs_up"])
+                    message = "<{}> \n {} by {} \n \n {} \n \n {} Down / {} Up , Powered by urban dictionary".format(
+                        ud["permalink"],
+                        ud["word"].capitalize(),
+                        ud["author"],
+                        description,
+                        ud["thumbs_down"],
+                        ud["thumbs_up"],
+                    )
                     messages.append(message)
-                
+
                 if messages is not None and len(messages) > 0:
                     await menu(
-                        ctx, pages=messages, controls=DEFAULT_CONTROLS, message=None, page=0, timeout=30
+                        ctx,
+                        pages=messages,
+                        controls=DEFAULT_CONTROLS,
+                        message=None,
+                        page=0,
+                        timeout=30,
                     )
         else:
             await ctx.send(
