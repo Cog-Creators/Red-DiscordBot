@@ -240,35 +240,53 @@ class General:
                 _(("No Urban dictionary entries were found or there was an error in the process"))
             )
 
-        if data.get("error") != 404 and data.get("result_type") == "exact":
+        if data.get("error") != 404:
 
-            # a list of embeds
-            embeds = []
-            for ud in data["list"]:
-                embed = discord.Embed()
-                embed.title = _("{} by {}".format(ud["word"].capitalize(), ud["author"]))
-                embed.url = ud["permalink"]
+            if await ctx.embed_requested():
+                # a list of embeds
+                embeds = []
+                for ud in data["list"]:
+                    embed = discord.Embed()
+                    embed.title = _("{} by {}".format(ud["word"].capitalize(), ud["author"]))
+                    embed.url = ud["permalink"]
 
-                description = "{} \n \n **Example : ** {}".format(
-                    ud["definition"], ud.get("example", "N/A")
-                )
-                if len(description) > 2048:
-                    description = "{}...".format(description[:2045])
-                embed.description = _(description)
+                    description = "{} \n \n **Example : ** {}".format(
+                        ud["definition"], ud.get("example", "N/A")
+                    )
+                    if len(description) > 2048:
+                        description = "{}...".format(description[:2045])
+                    embed.description = _(description)
 
-                embed.set_footer(
-                    text=_(
-                        "{} Down / {} Up , Powered by urban dictionary".format(
-                            ud["thumbs_down"], ud["thumbs_up"]
+                    embed.set_footer(
+                        text=_(
+                            "{} Down / {} Up , Powered by urban dictionary".format(
+                                ud["thumbs_down"], ud["thumbs_up"]
+                            )
                         )
                     )
-                )
-                embeds.append(embed)
+                    embeds.append(embed)
 
-            if embeds is not None and len(embeds) > 0:
-                await menu(
-                    ctx, pages=embeds, controls=DEFAULT_CONTROLS, message=None, page=0, timeout=30
-                )
+                if embeds is not None and len(embeds) > 0:
+                    await menu(
+                        ctx, pages=embeds, controls=DEFAULT_CONTROLS, message=None, page=0, timeout=30
+                    )
+            else:
+                messages = []
+                for ud in data["list"]:
+                    description = "{} \n \n **Example : ** {}".format(
+                        ud["definition"], ud.get("example", "N/A")
+                    )
+                    if len(description) > 2048:
+                        description = "{}...".format(description[:2045])
+                    description = _(description)
+
+                    message = "<{}> \n {} by {} \n \n {} \n \n {} Down / {} Up , Powered by urban dictionary".format(ud["permalink"], ud["word"].capitalize(), ud["author"], description, ud["thumbs_down"], ud["thumbs_up"])
+                    messages.append(message)
+                
+                if messages is not None and len(messages) > 0:
+                    await menu(
+                        ctx, pages=messages, controls=DEFAULT_CONTROLS, message=None, page=0, timeout=30
+                    )
         else:
             await ctx.send(
                 _(("No Urban dictionary entries were found or there was an error in the process"))
