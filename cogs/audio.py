@@ -757,8 +757,24 @@ class Audio:
         return Playlist(**kwargs)
 
     def _local_playlist_songlist(self, name):
+        from pathlib import PurePath
         dirpath = os.path.join(self.local_playlist_path, name)
-        return sorted(os.listdir(dirpath))
+        return [
+            str(PurePath(os.path.join(root, file)).relative_to(dirpath))
+            for root, _, files in os.walk(dirpath)
+            for file in sorted(files)
+        ]
+
+    def _find_local_song(self, filename):
+        filename = filename.lower()
+        for root, _, files in os.walk(self.local_playlist_path):
+            for file in files:
+                if filename in os.path.basename(file).lower():
+                    from pathlib import PurePath
+                    matched_file = PurePath(os.path.join(root, file))
+                    return str(matched_file.relative_to(
+                        self.local_playlist_path
+                    ))
 
     def _make_local_song(self, filename):
         # filename should be playlist_folder/file_name
@@ -1443,6 +1459,57 @@ class Audio:
             return
 
         self._play_local_playlist(server, name, channel)
+
+    @local.command(name="play", pass_context=True, no_pm=True)
+    async def play_single_local(self, ctx, *, name):
+        """Plays a local song"""
+        server = ctx.message.server
+        author = ctx.message.author
+        voice_channel = author.voice_channel
+
+        # Checking already connected, will join if not
+
+        if not self.voice_connected(server):
+            try:
+                self.has_connect_perm(author, server)
+            except AuthorNotConnected:
+                await self.bot.say("You must join a voice channel before I can"
+                                   " play anything.")
+                return
+            except UnauthorizedConnect:
+                await self.bot.say("I don't have permissions to join your"
+                                   " voice channel.")
+                return
+            except UnauthorizedSpeak:
+                await self.bot.say("I don't have permissions to speak in your"
+                                   " voice channel.")
+                return
+            except ChannelUserLimit:
+                await self.bot.say("Your voice channel is full.")
+                return
+            else:
+                await self._join_voice_channel(voice_channel)
+        else:  # We are connected but not to the right channel
+            if self.voice_client(server).channel != voice_channel:
+                pass  # TODO: Perms
+
+        if self.currently_downloading(server):
+            await self.bot.say("I'm already downloading a file!")
+            return
+
+        local_song = self._find_local_song(name)
+        if not local_song:
+            await self.bot.say("Local song not found.")
+            return
+
+        if self.is_playing(server):
+            self._add_to_queue(server, local_song)
+            await self.bot.say("Queued.")
+            return  # Default to queue
+
+        self._stop_player(server)
+        self._clear_queue(server)
+        self._add_to_queue(server, local_song)
 
     @local.command(name="list", no_pm=True)
     async def list_local(self):
