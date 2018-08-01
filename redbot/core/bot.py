@@ -295,6 +295,13 @@ class Red(RedBase, discord.AutoShardedClient):
     You're welcome Caleb.
     """
 
+    async def logout(self):
+        """Logs out of Discord and closes all connections."""
+        if self._sentry_mgr:
+            await self._sentry_mgr.close()
+
+        await super().logout()
+
     async def shutdown(self, *, restart: bool = False):
         """Gracefully quit Red.
 
