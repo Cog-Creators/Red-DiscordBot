@@ -98,9 +98,7 @@ if __name__ == "__main__":
         )
 
     if "READTHEDOCS" in os.environ:
-        requirements.remove(
-            next(r for r in requirements if r.lower().startswith("discord.py"))
-        )
+        requirements.remove(next(r for r in requirements if r.lower().startswith("discord.py")))
 
     setup(
         name="Red-DiscordBot",
@@ -169,10 +167,6 @@ if __name__ == "__main__":
                 "sphinxcontrib-websupport==1.1.0",
             ],
             "voice": ["red-lavalink==0.1.1"],
-            "style": [
-                "black==18.6b4",
-                "click==6.7",
-                "toml==0.9.4",
-            ],
+            "style": ["black==18.6b4", "click==6.7", "toml==0.9.4"],
         },
     )

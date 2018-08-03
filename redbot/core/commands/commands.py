@@ -71,7 +71,9 @@ class Command(commands.Command):
             cmd = cmd.parent
         return sorted(entries, key=lambda x: len(x.qualified_name), reverse=True)
 
-    async def do_conversion(self, ctx: "Context", converter, argument: str, param: inspect.Parameter):
+    async def do_conversion(
+        self, ctx: "Context", converter, argument: str, param: inspect.Parameter
+    ):
         """Convert an argument according to its type annotation.
 
         Raises
