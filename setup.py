@@ -1,4 +1,5 @@
 import distutils.ccompiler as ccompiler
+import os
 import re
 import tempfile
 from distutils.errors import CCompilerError, DistutilsPlatformError
@@ -8,27 +9,29 @@ from setuptools import setup, find_packages
 dep_links = [
     (
         "https://github.com/Rapptz/discord.py/tarball/"
-        "7eb918b19e3e60b56eb9039eb267f8f3477c5e17#egg=discord.py-1.0"
+        "f06563cb3520058c900ba6d4921ce38f2407b729#egg=discord.py-1.0"
     )
 ]
 
 requirements = [
-    "aiohttp-json-rpc==0.8.7",
-    "aiohttp==2.2.5",
+    "aiohttp-json-rpc==0.11",
+    "aiohttp==3.3.2",
     "appdirs==1.4.3",
-    "async-timeout==2.0.1",
+    "async-timeout==3.0.0",
+    "attrs==18.1.0",
     "chardet==3.0.4",
     "colorama==0.3.9",
     "distro==1.3.0; sys_platform == 'linux'",
     "fuzzywuzzy==0.16.0",
+    "idna-ssl==1.1.0",
     "idna==2.7",
     "multidict==4.3.1",
     "python-levenshtein==0.12.0",
-    "pyyaml==3.12",
-    "raven==6.5.0",
+    "pyyaml==3.13",
+    "raven==6.9.0",
     "red-trivia==1.1.1",
-    "websockets==3.4",
-    "yarl==0.18.0",
+    "websockets==6.0",
+    "yarl==1.2.6",
 ]
 
 
@@ -94,6 +97,11 @@ if __name__ == "__main__":
             next(r for r in requirements if r.lower().startswith("python-levenshtein"))
         )
 
+    if "READTHEDOCS" in os.environ:
+        requirements.remove(
+            next(r for r in requirements if r.lower().startswith("discord.py"))
+        )
+
     setup(
         name="Red-DiscordBot",
         version=get_version(),
@@ -123,14 +131,47 @@ if __name__ == "__main__":
                 "redbot-launcher=redbot.launcher:main",
             ]
         },
-        python_requires=">=3.6,<3.7",
+        python_requires=">=3.6,<3.8",
         install_requires=requirements,
         dependency_links=dep_links,
         extras_require={
-            "test": ["pytest>3", "pytest-asyncio"],
-            "mongo": ["motor"],
-            "docs": ["sphinx>=1.7", "sphinxcontrib-asyncio", "sphinx_rtd_theme"],
-            "voice": ["red-lavalink>=0.0.4"],
-            "style": ["black==18.5b1"],
+            "test": [
+                "atomicwrites==1.1.5",
+                "more-itertools==4.3.0",
+                "pluggy==0.7.1",
+                "py==1.5.4",
+                "pytest==3.7.0",
+                "pytest-asyncio==0.9.0",
+                "six==1.11.0",
+            ],
+            "mongo": ["motor==2.0.0", "pymongo==3.7.1"],
+            "docs": [
+                "alablaster==0.7.11",
+                "babel==2.6.0",
+                "certifi==2018.4.16",
+                "docutils==0.14",
+                "imagesize==1.0.0",
+                "Jinja2==2.10",
+                "MarkupSafe==1.0",
+                "packaging==17.1",
+                "pyparsing==2.2.0",
+                "six==1.11.0",
+                "Pygments==2.2.0",
+                "pytz==2018.5",
+                "requests==2.19.1",
+                "urllib3==1.23",
+                "six==1.11.0",
+                "snowballstemmer==1.2.1",
+                "sphinx==1.7.6",
+                "sphinx_rtd_theme==0.4.1",
+                "sphinxcontrib-asyncio==0.2.0",
+                "sphinxcontrib-websupport==1.1.0",
+            ],
+            "voice": ["red-lavalink==0.1.1"],
+            "style": [
+                "black==18.6b4",
+                "click==6.7",
+                "toml==0.9.4",
+            ],
         },
     )
