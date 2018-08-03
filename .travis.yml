@@ -11,9 +11,7 @@ env:
   global:
     PIPENV_IGNORE_VIRTUALENVS=1
   matrix:
-    - TOXENV=py
-    - TOXENV=docs
-    - TOXENV=style
+    TOXENV=py
 
 install:
 - pip install --upgrade pip pipenv
@@ -23,13 +21,12 @@ script:
 - pipenv run tox
 
 jobs:
-  exclude:
-    - python: 3.7.0
-      env: TOXENV=docs
-    - python: 3.7.0
-      env: TOXENV=style
-
   include:
+
+    - python: 3.6.5
+      env: TOXENV=docs
+    - python: 3.6.5
+      env: TOXENV=style
 
     # These jobs only occur on tag creation for V3/develop if the prior ones succeed
     - stage: PyPi Deployment
