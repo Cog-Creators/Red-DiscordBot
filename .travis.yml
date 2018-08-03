@@ -6,6 +6,7 @@ notifications:
 
 python:
 - 3.6.5
+- 3.7.0
 env:
   global:
     PIPENV_IGNORE_VIRTUALENVS=1
@@ -22,6 +23,12 @@ script:
 - pipenv run tox
 
 jobs:
+  exclude:
+    - python: 3.7.0
+      env: TOXENV=docs
+    - python: 3.7.0
+      env: TOXENV=style
+
   include:
 
     # These jobs only occur on tag creation for V3/develop if the prior ones succeed
