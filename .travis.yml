@@ -3,10 +3,11 @@ language: python
 cache: pip
 notifications:
   email: false
+sudo: true
 
 python:
 - 3.6.5
-- 3.7.0
+- 3.7
 env:
   global:
     PIPENV_IGNORE_VIRTUALENVS=1
