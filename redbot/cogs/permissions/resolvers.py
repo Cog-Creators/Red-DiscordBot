@@ -7,6 +7,23 @@ from redbot.core import commands
 log = logging.getLogger("redbot.cogs.permissions.resolvers")
 
 
+def entries_from_ctx(ctx: commands.Context) -> tuple:
+    voice_channel = None
+    with contextlib.suppress(Exception):
+        voice_channel = ctx.author.voice.voice_channel
+    entries = [x.id for x in (ctx.author, voice_channel, ctx.channel) if x]
+    roles = sorted(ctx.author.roles, reverse=True) if ctx.guild else []
+    entries.extend([x.id for x in roles])
+    # entries now contains the following (in order) (if applicable)
+    # author.id
+    # author.voice.voice_channel.id
+    # channel.id
+    # role.id for each role (highest to lowest)
+    # (implicitly) guild.id because
+    #     the @everyone role shares an id with the guild
+    return tuple(entries)
+
+
 async def val_if_check_is_valid(*, ctx: commands.Context, check: object, level: str) -> bool:
     """
     Returns the value from a check if it is valid
@@ -56,23 +73,7 @@ def resolve_lists(*, ctx: commands.Context, whitelist: list, blacklist: list) ->
     """
     resolves specific lists
     """
-
-    voice_channel = None
-    with contextlib.suppress(Exception):
-        voice_channel = ctx.author.voice.voice_channel
-
-    entries = [x.id for x in (ctx.author, voice_channel, ctx.channel) if x]
-    roles = sorted(ctx.author.roles, reverse=True) if ctx.guild else []
-    entries.extend([x.id for x in roles])
-    # entries now contains the following (in order) (if applicable)
-    # author.id
-    # author.voice.voice_channel.id
-    # channel.id
-    # role.id for each role (highest to lowest)
-    # (implicitly) guild.id because
-    #     the @everyone role shares an id with the guild
-
-    for entry in entries:
+    for entry in entries_from_ctx(ctx):
         if entry in whitelist:
             return True
         if entry in blacklist:

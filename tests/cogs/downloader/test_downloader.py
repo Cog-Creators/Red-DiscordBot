@@ -6,67 +6,10 @@ import pytest
 from unittest.mock import MagicMock
 from raven.versioning import fetch_git_sha
 
+from redbot.pytest.downloader import *
+
 from redbot.cogs.downloader.repo_manager import RepoManager, Repo
 from redbot.cogs.downloader.errors import ExistingGitRepo
-
-
-async def fake_run(*args, **kwargs):
-    fake_result_tuple = namedtuple("fake_result", "returncode result")
-    res = fake_result_tuple(0, (args, kwargs))
-    print(args[0])
-    return res
-
-
-async def fake_run_noprint(*args, **kwargs):
-    fake_result_tuple = namedtuple("fake_result", "returncode result")
-    res = fake_result_tuple(0, (args, kwargs))
-    return res
-
-
-@pytest.fixture(scope="module", autouse=True)
-def patch_relative_to(monkeysession):
-    def fake_relative_to(self, some_path: Path):
-        return self
-
-    monkeysession.setattr("pathlib.Path.relative_to", fake_relative_to)
-
-
-@pytest.fixture
-def repo_manager(tmpdir_factory):
-    rm = RepoManager()
-    # rm.repos_folder = Path(str(tmpdir_factory.getbasetemp())) / 'repos'
-    return rm
-
-
-@pytest.fixture
-def repo(tmpdir):
-    repo_folder = Path(str(tmpdir)) / "repos" / "squid"
-    repo_folder.mkdir(parents=True, exist_ok=True)
-
-    return Repo(
-        url="https://github.com/tekulvw/Squid-Plugins",
-        name="squid",
-        branch="rewrite_cogs",
-        folder_path=repo_folder,
-    )
-
-
-@pytest.fixture
-def repo_norun(repo):
-    repo._run = fake_run
-    return repo
-
-
-@pytest.fixture
-def bot_repo(event_loop):
-    cwd = Path.cwd()
-    return Repo(
-        name="Red-DiscordBot",
-        branch="WRONG",
-        url="https://empty.com/something.git",
-        folder_path=cwd,
-        loop=event_loop,
-    )
 
 
 def test_existing_git_repo(tmpdir):

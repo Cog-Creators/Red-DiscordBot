@@ -191,7 +191,7 @@ async def set_balance(member: discord.Member, amount: int) -> int:
 
 
 def _invalid_amount(amount: int) -> bool:
-    return amount <= 0
+    return amount < 0
 
 
 async def withdraw_credits(member: discord.Member, amount: int) -> int:
@@ -217,7 +217,7 @@ async def withdraw_credits(member: discord.Member, amount: int) -> int:
 
     """
     if _invalid_amount(amount):
-        raise ValueError("Invalid withdrawal amount {} <= 0".format(amount))
+        raise ValueError("Invalid withdrawal amount {} < 0".format(amount))
 
     bal = await get_balance(member)
     if amount > bal:
