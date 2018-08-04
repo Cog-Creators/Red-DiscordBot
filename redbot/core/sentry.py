@@ -1,6 +1,8 @@
+import asyncio
 import logging
 from raven import Client
 from raven.handlers.logging import SentryHandler
+from raven_aiohttp import AioHttpTransport
 
 from redbot.core import __version__
 
@@ -19,6 +21,7 @@ class SentryManager:
             release=__version__,
             include_paths=["redbot"],
             enable_breadcrumbs=False,
+            transport=AioHttpTransport,
         )
         self.handler = SentryHandler(self.client)
         self.logger = logger
@@ -30,3 +33,9 @@ class SentryManager:
     def disable(self):
         """Disable error reporting for Sentry."""
         self.logger.removeHandler(self.handler)
+        loop = asyncio.get_event_loop()
+        loop.create_task(self.close())
+
+    async def close(self):
+        """Wait for the Sentry client to send pending messages and shut down."""
+        await self.client.remote.get_transport().close()
