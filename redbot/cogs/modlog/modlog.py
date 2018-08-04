@@ -111,7 +111,7 @@ class ModLog:
         potential_case = reason.split()[0]
         if potential_case.isnumeric():
             case = int(potential_case)
-            reason = reason.replace(potential_case, '')
+            reason = reason.replace(potential_case, "")
         else:
             case = str(int(await modlog.get_next_case_number(guild)) - 1)
             # latest case
