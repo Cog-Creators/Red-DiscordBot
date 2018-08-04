@@ -99,7 +99,7 @@ class ModLog:
 
     @commands.command()
     @commands.guild_only()
-    async def reason(self, ctx: commands.Context, reason: str = ""):
+    async def reason(self, ctx: commands.Context, *, reason: str):
         """Lets you specify a reason for mod-log's cases
         
         Please note that you can only edit cases you are
@@ -111,13 +111,10 @@ class ModLog:
         potential_case = reason.split()[0]
         if potential_case.isnumeric():
             case = int(potential_case)
-            reason.replace(potential_case, '')
+            reason = reason.replace(potential_case, '')
         else:
-            case = await modlog.get_next_case_number(guild) - 1
+            case = str(int(await modlog.get_next_case_number(guild)) - 1)
             # latest case
-        if not reason:
-            await ctx.send_help()
-            return
         try:
             case_before = await modlog.get_case(case, guild, self.bot)
         except RuntimeError:
