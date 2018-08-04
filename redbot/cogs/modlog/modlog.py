@@ -99,12 +99,22 @@ class ModLog:
 
     @commands.command()
     @commands.guild_only()
-    async def reason(self, ctx: commands.Context, case: int, *, reason: str = ""):
+    async def reason(self, ctx: commands.Context, reason: str = ""):
         """Lets you specify a reason for mod-log's cases
+        
         Please note that you can only edit cases you are
-        the owner of unless you are a mod/admin or the server owner"""
+        the owner of unless you are a mod/admin or the server owner.
+        
+        If no number is specified, the latest case will be used."""
         author = ctx.author
         guild = ctx.guild
+        potential_case = reason.split()[0]
+        if potential_case.isnumeric():
+            case = int(potential_case)
+            reason.replace(potential_case, '')
+        else:
+            case = await modlog.get_next_case_number(guild) - 1
+            # latest case
         if not reason:
             await ctx.send_help()
             return
