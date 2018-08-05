@@ -212,9 +212,8 @@ class CogManager:
             When no matching spec can be found.
         """
         resolved_paths = _deduplicate(await self.paths())
-        core_paths = _deduplicate(await self.core_paths())
 
-        real_paths = [str(p) for p in resolved_paths if p not in core_paths]
+        real_paths = [str(p) for p in resolved_paths if p != self.core_path]
 
         for finder, module_name, _ in pkgutil.iter_modules(real_paths):
             if name == module_name:
@@ -227,7 +226,8 @@ class CogManager:
             " in any available path.".format(name)
         )
 
-    async def _find_core_cog(self, name: str) -> ModuleSpec:
+    @staticmethod
+    async def _find_core_cog(name: str) -> ModuleSpec:
         """
         Attempts to find a spec for a core cog.
 
@@ -309,7 +309,8 @@ _ = Translator("CogManagerUI", __file__)
 class CogManagerUI:
     """Commands to interface with Red's cog manager."""
 
-    async def visible_paths(self, ctx):
+    @staticmethod
+    async def visible_paths(ctx):
         install_path = await ctx.bot.cog_mgr.install_path()
         cog_paths = await ctx.bot.cog_mgr.paths()
         cog_paths = [p for p in cog_paths if p != install_path]
@@ -431,16 +432,16 @@ class CogManagerUI:
         """
         loaded = set(ctx.bot.extensions.keys())
 
-        all = set(await ctx.bot.cog_mgr.available_modules())
+        all_cogs = set(await ctx.bot.cog_mgr.available_modules())
 
-        unloaded = all - loaded
+        unloaded = all_cogs - loaded
 
         loaded = sorted(list(loaded), key=str.lower)
         unloaded = sorted(list(unloaded), key=str.lower)
 
         if await ctx.embed_requested():
-            loaded = ("**{} loaded:**\n").format(len(loaded)) + ", ".join(loaded)
-            unloaded = ("**{} unloaded:**\n").format(len(unloaded)) + ", ".join(unloaded)
+            loaded = _("**{} loaded:**\n").format(len(loaded)) + ", ".join(loaded)
+            unloaded = _("**{} unloaded:**\n").format(len(unloaded)) + ", ".join(unloaded)
 
             for page in pagify(loaded, delims=[", ", "\n"], page_length=1800):
                 e = discord.Embed(description=page, colour=discord.Colour.dark_green())
@@ -450,9 +451,9 @@ class CogManagerUI:
                 e = discord.Embed(description=page, colour=discord.Colour.dark_red())
                 await ctx.send(embed=e)
         else:
-            loaded_count = "**{} loaded:**\n".format(len(loaded))
+            loaded_count = _("**{} loaded:**\n").format(len(loaded))
             loaded = ", ".join(loaded)
-            unloaded_count = "**{} unloaded:**\n".format(len(unloaded))
+            unloaded_count = _("**{} unloaded:**\n").format(len(unloaded))
             unloaded = ", ".join(unloaded)
             loaded_count_sent = False
             unloaded_count_sent = False
