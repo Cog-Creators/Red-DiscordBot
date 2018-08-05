@@ -35,12 +35,13 @@ class CogManager:
     bot directory.
     """
 
+    CORE_PATH = Path(redbot.cogs.__path__[0])
+
     def __init__(self, paths: Tuple[str] = ()):
         self.conf = Config.get_conf(self, 2938473984732, True)
         tmp_cog_install_path = cog_data_path(self) / "cogs"
         tmp_cog_install_path.mkdir(parents=True, exist_ok=True)
         self.conf.register_global(paths=(), install_path=str(tmp_cog_install_path))
-        self.core_path = Path(redbot.cogs.__path__[0])
         self._paths = [Path(p) for p in paths]
 
     async def paths(self) -> Tuple[Path, ...]:
@@ -55,7 +56,7 @@ class CogManager:
         conf_paths = [Path(p) for p in await self.conf.paths()]
         other_paths = self._paths
 
-        all_paths = _deduplicate(list(conf_paths) + list(other_paths) + [self.core_path])
+        all_paths = _deduplicate(list(conf_paths) + list(other_paths) + [self.CORE_PATH])
 
         if self.install_path not in all_paths:
             all_paths.insert(0, await self.install_path())
@@ -150,7 +151,7 @@ class CogManager:
 
         if path == await self.install_path():
             raise ValueError("Cannot add the install path as an additional path.")
-        if path == self.core_path:
+        if path == self.CORE_PATH:
             raise ValueError("Cannot add the core path as an additional path.")
 
         async with self.conf.paths() as paths:
@@ -213,7 +214,7 @@ class CogManager:
         """
         resolved_paths = _deduplicate(await self.paths())
 
-        real_paths = [str(p) for p in resolved_paths if p != self.core_path]
+        real_paths = [str(p) for p in resolved_paths if p != self.CORE_PATH]
 
         for finder, module_name, _ in pkgutil.iter_modules(real_paths):
             if name == module_name:
@@ -324,7 +325,7 @@ class CogManagerUI:
         """
         cog_mgr = ctx.bot.cog_mgr
         install_path = await cog_mgr.install_path()
-        core_path = cog_mgr.core_path
+        core_path = cog_mgr.CORE_PATH
         cog_paths = await cog_mgr.paths()
         cog_paths = [p for p in cog_paths if p not in (install_path, core_path)]
 
