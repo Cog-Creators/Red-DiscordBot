@@ -95,7 +95,10 @@ class ModLog:
             await ctx.send(_("That case does not exist for that server"))
             return
         else:
-            await ctx.send(embed=await case.get_case_msg_content())
+            if await ctx.embed_requested():
+                await ctx.send(embed=await case.message_content(embed=True))
+            else:
+                await ctx.send(await case.message_content(embed=False))
 
     @commands.command()
     @commands.guild_only()
