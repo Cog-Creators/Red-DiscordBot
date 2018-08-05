@@ -40,7 +40,7 @@ class CogManager:
         tmp_cog_install_path = cog_data_path(self) / "cogs"
         tmp_cog_install_path.mkdir(parents=True, exist_ok=True)
         self.conf.register_global(paths=(), install_path=str(tmp_cog_install_path))
-
+        self.core_path = Path(redbot.cogs.__path__[0])
         self._paths = [Path(p) for p in paths]
 
     async def paths(self) -> Tuple[Path, ...]:
@@ -54,17 +54,12 @@ class CogManager:
         """
         conf_paths = [Path(p) for p in await self.conf.paths()]
         other_paths = self._paths
-        core_paths = await self.core_paths()
 
-        all_paths = _deduplicate(list(conf_paths) + list(other_paths) + core_paths)
+        all_paths = _deduplicate(list(conf_paths) + list(other_paths) + [self.core_path])
 
         if self.install_path not in all_paths:
             all_paths.insert(0, await self.install_path())
         return tuple(p.resolve() for p in all_paths if p.is_dir())
-
-    async def core_paths(self) -> List[Path]:
-        core_paths = [Path(p) for p in redbot.cogs.__path__]
-        return core_paths
 
     async def install_path(self) -> Path:
         """Get the install path for 3rd party cogs.
@@ -155,10 +150,12 @@ class CogManager:
 
         if path == await self.install_path():
             raise ValueError("Cannot add the install path as an additional path.")
+        if path == self.core_path:
+            raise ValueError("Cannot add the core path as an additional path.")
 
-        all_paths = _deduplicate(await self.paths() + (path,))
-        # noinspection PyTypeChecker
-        await self.set_paths(all_paths)
+        async with self.conf.paths() as paths:
+            if not any(Path(p) == path for p in paths):
+                paths.append(str(path))
 
     async def remove_path(self, path: Union[Path, str]) -> Tuple[Path, ...]:
         """Remove a path from the current paths list.
@@ -174,12 +171,14 @@ class CogManager:
             Tuple of new valid paths.
 
         """
-        path = self._ensure_path_obj(path)
-        all_paths = list(await self.paths())
-        if path in all_paths:
-            all_paths.remove(path)  # Modifies in place
-            await self.set_paths(all_paths)
-        return tuple(all_paths)
+        path = self._ensure_path_obj(path).resolve()
+
+        paths = [Path(p) for p in await self.conf.paths()]
+        if path in paths:
+            paths.remove(path)
+            await self.set_paths(paths)
+
+        return tuple(paths)
 
     async def set_paths(self, paths_: List[Path]):
         """Set the current paths list.
@@ -322,11 +321,15 @@ class CogManagerUI:
         """
         Lists current cog paths in order of priority.
         """
-        install_path = await ctx.bot.cog_mgr.install_path()
-        cog_paths = await ctx.bot.cog_mgr.paths()
-        cog_paths = [p for p in cog_paths if p != install_path]
+        cog_mgr = ctx.bot.cog_mgr
+        install_path = await cog_mgr.install_path()
+        core_path = cog_mgr.core_path
+        cog_paths = await cog_mgr.paths()
+        cog_paths = [p for p in cog_paths if p not in (install_path, core_path)]
 
-        msg = _("Install Path: {}\n\n").format(install_path)
+        msg = _("Install Path: {install_path}\nCore Path: {core_path}\n\n").format(
+            install_path=install_path, core_path=core_path
+        )
 
         partial = []
         for i, p in enumerate(cog_paths, start=1):
