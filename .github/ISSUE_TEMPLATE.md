@@ -1,20 +1,5 @@
-Please be sure to read through other issues as well to make sure what you are suggesting/reporting has not already
-been suggested/reported
-
-### Type:
-
-- [ ] Suggestion
-- [ ] Bug
-
-### Brief description of the problem
-
-### Expected behavior
-
-### Actual behavior
-
-### Steps to reproduce
-
-1. 
-2. 
-3. 
-4. 
+<!-- 
+Please be sure to use the correct template, 
+if your report doesn't have the correct template please open an issue describing your issue in detail
+For support regarding the bot itself please visit the discord server over at https://discord.gg/red
+-->

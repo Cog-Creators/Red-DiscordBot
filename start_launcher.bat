@@ -29,7 +29,7 @@ GOTO end
 :message
 echo Couldn't find a valid Python ^>3.5 installation. Python needs to be installed and available in the PATH environment
 echo variable.
-echo https://twentysix26.github.io/Red-Docs/red_win_requirements/#software
+echo https://twentysix26.github.io/Red-Docs/red_install_windows/#software
 PAUSE
 
 :end

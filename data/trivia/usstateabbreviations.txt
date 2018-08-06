@@ -1,0 +1,100 @@
+What state is AL?`Alabama
+What state is AK?`Alaska
+What state is AZ?`Arizona
+What state is AR?`Arkansas
+What state is CA?`California
+What state is CO?`Colorado
+What state is CT?`Connecticut
+What state is DE?`Delaware
+What state is FL?`Florida
+What state is GA?`Georgia
+What state is HI?`Hawaii
+What state is ID?`Idaho
+What state is IL?`Illinois
+What state is IN?`Indiana
+What state is IA?`Iowa
+What state is KS?`Kansas
+What state is KY?`Kentucky
+What state is LA?`Louisiana
+What state is ME?`Maine
+What state is MD?`Maryland
+What state is MA?`Massachusetts
+What state is MI?`Michigan
+What state is MN?`Minnesota
+What state is MS?`Mississippi
+What state is MO?`Missouri
+What state is MT?`Montana
+What state is NE?`Nebraska
+What state is NV?`Nevada
+What state is NH?`New Hampshire
+What state is NJ?`New Jersey
+What state is NM?`New Mexico
+What state is NY?`New York
+What state is NC?`North Carolina
+What state is ND?`North Dakota
+What state is OH?`Ohio
+What state is OK?`Oklahoma
+What state is OR?`Oregon
+What state is PA?`Pennsylvania
+What state is RI?`Rhode Island
+What state is SC?`South Carolina
+What state is SD?`South Dakota
+What state is TN?`Tennessee
+What state is TX?`Texas
+What state is UT?`Utah
+What state is VT?`Vermont
+What state is VA?`Virginia
+What state is WA?`Washington
+What state is WV?`West Virginia
+What state is WI?`Wisconsin
+What state is WY?`Wyoming
+What is the abbreviation for Alabama?`AL
+What is the abbreviation for Alaska?`AK
+What is the abbreviation for Arizona?`AZ
+What is the abbreviation for Arkansas?`AR
+What is the abbreviation for California?`CA
+What is the abbreviation for Colorado?`CO
+What is the abbreviation for Connecticut?`CT
+What is the abbreviation for Delaware?`DE
+What is the abbreviation for Florida?`FL
+What is the abbreviation for Georgia?`GA
+What is the abbreviation for Hawaii?`HI
+What is the abbreviation for Idaho?`ID
+What is the abbreviation for Illinois?`IL
+What is the abbreviation for Indiana?`IN
+What is the abbreviation for Iowa?`IA
+What is the abbreviation for Kansas?`KS
+What is the abbreviation for Kentucky?`KY
+What is the abbreviation for Louisiana?`LA
+What is the abbreviation for Maine?`ME
+What is the abbreviation for Maryland?`MD
+What is the abbreviation for Massachusetts?`MA
+What is the abbreviation for Michigan?`MI
+What is the abbreviation for Minnesota?`MN
+What is the abbreviation for Mississippi?`MS
+What is the abbreviation for Missouri?`MO
+What is the abbreviation for Montana?`MT
+What is the abbreviation for Nebraska?`NE
+What is the abbreviation for Nevada?`NV
+What is the abbreviation for New Hampshire?`NH
+What is the abbreviation for New Jersey?`NJ
+What is the abbreviation for New Mexico?`NM
+What is the abbreviation for New York?`NY
+What is the abbreviation for North Carolina?`NC
+What is the abbreviation for North Dakota?`ND
+What is the abbreviation for Ohio?`OH
+What is the abbreviation for Oklahoma?`OK
+What is the abbreviation for Oregon?`OR
+What is the abbreviation for Pennsylvania?`PA
+What is the abbreviation for Rhode Island?`RI
+What is the abbreviation for South Carolina?`SC
+What is the abbreviation for South Dakota?`SD
+What is the abbreviation for Tennessee?`TN
+What is the abbreviation for Texas?`TX
+What is the abbreviation for Utah?`UT
+What is the abbreviation for Vermont?`VT
+What is the abbreviation for Virginia?`VA
+What is the abbreviation for Washington?`WA
+What is the abbreviation for West Virginia?`WV
+What is the abbreviation for Wisconsin?`WI
+What is the abbreviation for Wyoming?`WY

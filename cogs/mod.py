@@ -1356,14 +1356,16 @@ class Mod:
         else:
             return mod.top_role.position > user.top_role.position or is_special
 
-    async def new_case(self, server, *, action, mod=None, user, reason=None, until=None, channel=None):
+    async def new_case(self, server, *, action, mod=None, user, reason=None, until=None, channel=None, force_create=False):
         action_type = action.lower() + "_cases"
-        if not self.settings[server.id].get(action_type, default_settings[action_type]):
-            return
+        
+        enabled_case = self.settings.get(server.id, {}).get(action_type, default_settings.get(action_type))
+        if not force_create and not enabled_case:
+            return False
 
         mod_channel = server.get_channel(self.settings[server.id]["mod-log"])
         if mod_channel is None:
-            return
+            return None
 
         if server.id not in self.cases:
             self.cases[server.id] = {}
@@ -1384,7 +1386,7 @@ class Mod:
             "amended_by"   : None,
             "amended_id"   : None,
             "message"      : None,
-            "until"        : None,
+            "until"        : until.timestamp() if until else None,
         }
 
         case_msg = self.format_case_msg(case)
@@ -1401,6 +1403,8 @@ class Mod:
             self.last_case[server.id][mod.id] = case_n
 
         dataIO.save_json("data/mod/modlog.json", self.cases)
+
+        return case_n
 
     async def update_case(self, server, *, case, mod=None, reason=None,
                           until=False):

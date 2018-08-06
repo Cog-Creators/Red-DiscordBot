@@ -30,7 +30,7 @@ What is Kawhi Leonard's career high points as of Jan 23, 2016?`41
 What team had a winning streak of 33 in a regular season?`Los Angeles Lakers`Lakers
 What was the longest losing streak by a team in a regular season?`28
 What franchise has the highest winning percentage in history?`San Antonio Spurs`Spurs 
-Who has won the most MVP awards in NBA history?`Kareem Abdul-Jabbar
+Who has won the most MVP awards in NBA history?`Kareem Abdul-Jabbar`Kareem Abdul Jabbar
 Name one of the 2 players who won the DPOY award 4 times during their career?`Ben Wallace or Dikembe Mutombo`Ben Wallace`Dikembe Mutombo
 What player has won the most sixth man awards?`Jamal Crawford
 When was the Larry O’Brien trophy created?`1977
@@ -84,7 +84,7 @@ How many times did Michael Jordan win All-Star game MVP?`3`three
 In what year did Charles Barkley win All-Star MVP?`1991
 How many times did Shaquille O'Neal win All-Star MVP?`1`one
 How many times has Kobe Bryant won All-Star MVP?`4`four
-Who is the youngest player to win All-Star MVP?LeBron James`LeBron
+Who is the youngest player to win All-Star MVP?`LeBron James`LeBron
 Who is the all-time leader in points scored in the NBA All-Star game?`LeBron James`LeBron
 What year did Kyrie Irving win All-Star MVP?`2014
 Who is the first ever NBA All-Star MVP?`Ed Macauley
@@ -123,11 +123,11 @@ What division are the Denver Nuggets in?`Northwest
 What division are the Milwaukee Bucks in?`Central
 What division are the Washington Wizards in?`Southeast
 What division are the Philadelphia 76ers in?`Atlantic 
-What arena do the San Antonio Spurs play in?`At&t Center
+What arena do the San Antonio Spurs play in?`At&t Center`att center
 What arena do the Dallas Mavericks play in?`American Airlines Center
 What arena do the Houston Rockets play in?`Toyota Center
 What arena do the New Orleans Pelicans play in?`Smoothie King Center 
-What arena do the Memphis Grizzlies play in?`FedExForum
+What arena do the Memphis Grizzlies play in?`FedExForum`FedEx Forum
 What arena do the Golden State Warriors play in?`Oracle Arena
 What arena do the Sacramento Kings play in?`Golden 1 Center 
 What arena do the Los Angeles Lakers/Clippers play in?`Staples Center
@@ -138,7 +138,7 @@ What arena do the Utah Jazz play in?`Vivint Smart Home Arena
 What arena do the Minnesota Timberwolves play in?`Target Center
 What arena do the Oklahoma City Thunder play in?`Chesapeake Energy Arena
 What arena do the Indiana Pacers play in?`Bankers Life Fieldhouse Center
-What arena do the Cleveland Cavaliers play in?`Quicken Loans arena
+What arena do the Cleveland Cavaliers play in?`Quicken Loans arena`The Q
 What arena do the Detroit Pistons play in?`Little Caesars Arena
 What arena do the Milwaukee Bucks play in?`BMO Harris Bradley Center
 What arena do the Chicago Bulls play in?`United Center
@@ -147,10 +147,10 @@ What arena do the Orlando Magic play in?`Amway Center
 What arena do the Charlotte Hornets play in?`Spectrum Center
 What arena do the Washington Wizards play in?`Verizon Center
 What arena do the Atlanta Hawks play in?`Philips Arena
-What arena do the Toronto Raptors play in?`Air Canada Centre
+What arena do the Toronto Raptors play in?`Air Canada Centre`Air Canada Center
 What arena do the Boston Celtics play in?`TD Garden 
 What arena do the Philadelphia 76ers play in?`Wells Fargo Center
-What arena do the New York Knicks play in?`Madison Square Garden
+What arena do the New York Knicks play in?`Madison Square Garden`MSG
 What arena do the Brooklyn Nets play in?`Barclays Center 
 What is the first team to win a championship?`Minneapolis Lakers`Los Angeles Lakers`Lakers
 What team has lost the most NBA Finals series?`Los Angeles Lakers`Lakers
@@ -214,7 +214,7 @@ Which team selected Penny Hardaway 3rd overall in the 1993 draft?`Golden State W
 What team selected Scottie Pippen 5th overall in the 1987 draft?`Seattle Supersonics`Supersonics
 What college did Magic Johnson go to?`Michigan State University`michigan state
 What college did Larry Bird go to?`Indiana State University`Indiana State
-What college did Michael Jordan go to?`University of North Carolina at Chapel Hill`North Carolina
+What college did Michael Jordan go to?`University of North Carolina at Chapel Hill`North Carolina`UNC
 What college did Kareem Abdul-Jabbar go to?`University of California, Los Angeles`UCLA
 What college did Carmelo Anthony go to?`Syracuse University`Syracuse
 What college did Tim Duncan go to?`Wake Forest University`Wake Forest
@@ -234,16 +234,16 @@ What college did Jeremy Lin go to?`Harvard University`Harvard
 What team has the longest NBA Conference Finals appearance drought with 47 seasons?`Los Angeles Clippers`Clippers`LA Clippers
 What team had the longest NBA Playoffs appearance drought with 15 seasons?`Los Angeles Clippers`Clippers`LA Clippers
 In what year were the Vancouver Grizzlies and Toronto Raptors added to the NBA?`1995
-What player's 89 points in his first three starts are the most by any NBA player since the NBA and ABA merged in 1976.`Jeremy Lin`Linsanity
+What player's 89 points in his first three starts are the most by any NBA player since the NBA and ABA merged in 1976?`Jeremy Lin`Linsanity
 What player had an NBA career lasting 3.9 seconds?`JamesOn Curry
 What college has produced the most NBA players?`University of Kentucky`Kentucky
 How many teams are still waiting for their first finals win?`12`Twelve
 What team has the longest NBA Finals drought of 66 seasons?`Sacramento Kings`Kings
 What team drafted Kobe Bryant as the 13th pick in the 1996 Draft?`Charlotte Hornets`Hornets
 Who is the owner of the Charlotte Hornets?`Michael Jordan`Jordan
-During Hurricane Katrina, what city did the New Orleans Hornets move to?`Oklahoma City
+During Hurricane Katrina, what city did the New Orleans Hornets move to?`Oklahoma City`OKC
 What is Ray Allen's first name?`Walter
-What is Stephen Curry's first name?`Wadell
+What is Stephen Curry's first name?`Wardell
 Who is Stephen and Seth Curry's father?`Dell Curry`Dell
 What former NBA player owns 10% of all 'Five Guys Burgers' restaurants in the US?`Dr. Shaquille O'Neal`Shaquille O'Neal`Shaq
 Who has the #1 all time miss count in the NBA?`Kobe Bryant`Kobe
@@ -257,3 +257,10 @@ After what player was diagnosed with HIV, many NBA players claimed he shouldn't 
 The largest confirmed moose was 7'6" (2.33 m) tall at the shoulder, the same height as what Chinese NBA star?`Yao Ming`Ming Yao
 What city is home to the only NBA game to have been forfeited on account of rain?`Seattle
 Which NBA player once beat Michael Phelps in swimming at the age of 10?`Kris Humphries
+What player holds the top spot of all-time career points with 38,387 points?`Kareem Abdul-Jabbar`Kareem Abdul Jabbar
+What player holds the all-time NBA record of 28 field goals in a single game?`Kobe Bryant`Kobe
+What player holds the all-time NBA record of 14 turnovers in a single game?`Jason Kidd
+What current Clipper holds the all-time NBA record of a 63.31% career shooting percentage?`DeAndre Jordan
+What is the most common number worn by players in NBA?`12`twelve
+What NBA franchise has the most retired numbers hanging in the rafters?`Boston Celtics`Celtics
+What player's number was retired by the Miami Heat even though he didn't play for the team?`Michael Jordan`Jordan

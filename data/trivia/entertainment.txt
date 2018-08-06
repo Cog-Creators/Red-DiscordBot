@@ -1,7 +1,7 @@
 Name the actor who played the leading role in "The Good, the Bad, and the Ugly"?`Clint Eastwood
 Who took dictation from Perry Mason?`Della Street
 Where are Rocket J. Squirel and Bullwinkle Moose from?`Frostbite falls
-Charles Boyer inspired a cartoon skunk. Who?`Pepé Le Pew`Pepe le Pew
+Charles Boyer inspired a cartoon skunk. Who?`PepÃ© Le Pew`Pepe le Pew
 What job did Sting have before he was a rock star?`Teacher
 Who hosted the 1997 Grammy Awards?`Ellen DeGeneres
 Who portrayed Han Solo in "Star Wars"?`Harrison Ford
@@ -28,7 +28,7 @@ Who collaborated with John Lennon on 'Whatever Gets You Through The Night'?`Elto
 Where did Clark Kent attend college?`Metropolis University
 What is the address of The Munsters?`1313 Mockingbird Lane
 For which ad campaign was the line 'I can't believe I ate the whole thing' used?`Alka Seltzer
-Tinky-Winky, Dipsy, Laa Laa, and Po are known as what?`The Teletubbies
+Tinky-Winky, Dipsy, Laa Laa, and Po are known as what?`The Teletubbies`Teletubbies
 What famous animal character called "Skull Island" home?`King Kong
 How many flats are in the key of B flat major?`Two`2
 When danger appeared, Quick Draw McGraw became which super hero?`El KaBong
@@ -286,7 +286,7 @@ Who portrayed Moses in "The Ten Commandments"?`Charlton Heston
 What film starred Rosie O'Donnell, Rita Wilson and Meg Ryan?`Sleepless in Seattle
 Richard Strauss' majestic overture "Also Sprach Zarathustra" was the theme music for which Stanley Kubrick film?`2001: A Space Odyessy
 This term means to play smoothly?`Legato
-How many members are in the 'fairfield four'?`Five
+How many members are in the 'fairfield four'?`Five`5
 What film is generally considered the worst film ever made?`Attack of the Killer Tomatoes
 What is a cello's full name?`Violoncello
 What song did Aretha Franklin sing in "The Blues Brothers"?`Think
@@ -294,7 +294,7 @@ Name the band: songs include "Doctor Doctor, Hold Me Now, Don't Mess With Dr Dre
 Who sang 'All Right Now'?`Free
 Country singer Vince ____?`Gill
 What is Hawkeye's full name in M.A.S.H.?`Benjamin Franklin Pierce
-How many symphonies did Beethoven complete?`Eight
+How many symphonies did Beethoven complete?`Eight`8
 What is Peter Parker's secret identity?`Spiderman
 Before being married to Pamela Anderson what other famous actress was Tommy Lee married to?`Heather Locklear
 Who is the autor of the song 'Blue Suede Shoes'?`Carl Perkins
@@ -307,9 +307,9 @@ He directed "The Godfather"?`Francis Ford Coppola
 Who is Steveland Morris better known as?`Stevie Wonder
 In the 1996 version of "Romeo and Juliet", who played Juliet?`Claire Danes
 Who did the music for the 1970's film 'Saturday Night Fever'?`Bee Gees
-Who is the only singer to have no.1 hits in the 50's, 60's, 70's, 80's and 90's?`Cliff Richard
+Who is the only singer to have No. 1 hits in the 50s, 60s, 70s, 80s and 90s in the United Kingdom?`Cliff Richard
 Who was Chief Marshall of the Mickey Mouse Club?`Walt Disney
-What famous classical composer continued to compose great music after becoming deaf?`Ludwig van Beethoven
+What famous classical composer continued to compose great music after becoming deaf?`Ludwig van Beethoven`Beethoven
 His films include: Giant, Written on the Wind, and A Farewell to Arms?`Rock Hudson
 What was Kevin Bacon's first big hit?`Footloose
 Who co-starred with Julie Andrews in "Mary Poppins"?`Dick Van Dyke
@@ -530,7 +530,7 @@ How old was Shirley Temple when she made her last film?`21
 Who is Declan Patrick McManus better known as?`Elvis
 Where did Mighty Mouse get his superpowers?`Supermarket
 Who broke Batman?`Bane
-On what LP Cover can we read the words 'Welcome Rolling Stones'?`Sergeant Pepper´s Lonely Hearts Club Band
+On what LP Cover can we read the words 'Welcome Rolling Stones'?`Sergeant Pepper's Lonely Hearts Club Band
 Who starred with John Travolta in the movie "Broken Arrow"?`Christian Slater
 Whose films include 'Giant', 'Written On The Wind' and 'A Farewell To Arms'?`Rock Hudson
 What is Batman's butler Alfred's last name?`Pennyworth
