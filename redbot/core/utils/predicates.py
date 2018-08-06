@@ -2,7 +2,7 @@ import discord
 from collections import Iterable
 
 
-class Predicate:
+class MessagePredicate:
     """A simple collection of predicates.
 
     These predicates were made to help simplify checks in message events and
@@ -19,8 +19,8 @@ class Predicate:
 
     Attributes
     ----------
-    sender : `discord.Member`
-        Used to verify the message content is coming from the desired sender.
+    ctx
+        Context object.
     collection : `Iterable`
         Optional argument used for checking if the message content is inside the
         declared collection.
@@ -37,50 +37,73 @@ class Predicate:
 
     """
 
-    def __init__(
-        self, sender: discord.Member, collection: Iterable = None, length: int = None, value=None
-    ):
-        self.sender = sender
+    def __init__(self, ctx, collection: Iterable = None, length: int = None, value=None):
+        self.ctx = ctx
         self.collection = collection
         self.length = length
         self.value = value
 
+    def valid_source(self, m):
+        return self.same(m) and self.channel(m)
+
     def same(self, m):
         """Checks if the author of the message is the same as the command issuer."""
-        return self.sender.author == m.author
+        return self.ctx.author == m.author
+
+    def channel(self, m):
+        """Verifies the message was sent from the same channel."""
+        return self.ctx.channel == m.channel
+
+    def cancelled(self, m):
+        if self.valid_source(m) and m.content.lower() == f"{self.ctx.prefix}cancel":
+            raise RuntimeError
 
     def confirm(self, m):
         """Checks if the author of the message is the same as the command issuer."""
-        return self.same(m) and m.content.lower() in ("yes", "no", "y", "n")
+        return self.valid_source(m) and m.content.lower() in ("yes", "no", "y", "n")
 
     def valid_int(self, m):
         """Returns true if the message content is an integer."""
-        return self.same(m) and m.content.isdigit()
+        return self.valid_source(m) and m.content.isdigit()
 
     def valid_float(self, m):
         """Returns true if the message content is a float."""
         try:
-            return self.same(m) and float(m.content) >= 1
+            return self.valid_source(m) and float(m.content) >= 1
         except ValueError:
             return False
 
     def positive(self, m):
         """Returns true if the message content is an integer and is positive"""
-        return self.same(m) and m.content.isdigit() and int(m.content) >= 0
+        return self.valid_source(m) and m.content.isdigit() and int(m.content) >= 0
 
     def valid_role(self, m):
         """Returns true if the message content is an existing role on the server."""
-        return (
-            self.same(m) and discord.utils.get(self.sender.guild.roles, name=m.content) is not None
-        )
+        if self.valid_source(m):
+            if discord.utils.get(self.ctx.guild.roles, name=m.content) is not None:
+                return True
+            elif discord.utils.get(self.ctx.guild.roles, id=m.content) is not None:
+                return True
+            else:
+                return False
+        else:
+            return False
 
     def has_role(self, m):
         """Returns true if the message content is a role the message sender has."""
-        return self.same(m) and discord.utils.get(self.sender.roles, name=m.content) is not None
+        if self.valid_source(m):
+            if discord.utils.get(self.ctx.roles, name=m.content) is not None:
+                return True
+            elif discord.utils.get(self.ctx.roles, id=m.content) is not None:
+                return True
+            else:
+                return False
+        else:
+            return False
 
     def equal(self, m):
         """Returns true if the message content is equal to the value set."""
-        return self.same(m) and m.content.lower() == self.value.lower()
+        return self.valid_source(m) and m.content.lower() == self.value.lower()
 
     def greater(self, m):
         """Returns true if the message content is greater than the value set."""
@@ -99,14 +122,14 @@ class Predicate:
     def member(self, m):
         """Returns true if the message content is the name of a member in the server."""
         return (
-            self.same(m)
-            and discord.utils.get(self.sender.guild.members, name=m.content) is not None
+            self.valid_source(m)
+            and discord.utils.get(self.ctx.guild.members, name=m.content) is not None
         )
 
     def length_less(self, m):
         """Returns true if the message content length is less than the provided length."""
         try:
-            return self.same(m) and len(m.content) <= self.length
+            return self.valid_source(m) and len(m.content) <= self.length
         except TypeError:
             raise ValueError("A length must be specified in Predicate().")
 
@@ -114,13 +137,13 @@ class Predicate:
         """Returns true if the message content length is greater than or equal
            to the provided length."""
         try:
-            return self.same(m) and len(m.content) >= self.length
+            return self.valid_source(m) and len(m.content) >= self.length
         except TypeError:
             raise ValueError("A length must be specified in Predicate().")
 
     def contained(self, m):
         """Returns true if the message content is a member of the provided collection."""
         try:
-            return self.same(m) and m.content in self.collection
+            return self.valid_source(m) and m.content.lower() in self.collection
         except TypeError:
             raise ValueError("An iterable was not specified in Predicate().")
