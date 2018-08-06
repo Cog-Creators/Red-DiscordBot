@@ -6,6 +6,7 @@ from __main__ import send_cmd_help, settings
 from datetime import datetime
 from collections import deque, defaultdict, OrderedDict
 from cogs.utils.chat_formatting import escape_mass_mentions, box, pagify
+import time
 import os
 import re
 import logging
@@ -36,7 +37,8 @@ default_settings = {
     "ban_mention_spam"  : False,
     "delete_repeats"    : False,
     "mod-log"           : None,
-    "respect_hierarchy" : False
+    "respect_hierarchy" : False,
+    "defbandays" : 1
 }
 
 
@@ -128,6 +130,7 @@ class Mod:
                    "Ban mention spam: {ban_mention_spam}\n"
                    "Delete delay: {delete_delay}\n"
                    "Respects hierarchy: {respect_hierarchy}"
+                   "Ban default cleanup: {defbandays}"
                    "".format(**_settings))
             await self.bot.say(box(msg))
 
@@ -159,6 +162,25 @@ class Mod:
                 return
             self.settings[server.id]["mod-log"] = None
             await self.bot.say("Mod log deactivated.")
+        dataIO.save_json("data/mod/settings.json", self.settings)
+        
+    @modset.command(pass_context=True, no_pm=True)
+    async def bandelete(self, ctx, days_to_clean : int=False):
+        """Sets default number of days to delete when issuing a ban
+
+        Accepted values: 0 to 7"""
+        channel = ctx.message.channel
+        server = ctx.message.server
+        
+        if days_to_clean < 0 or days_to_clean > 7:
+            await self.bot.say("Invalid days. Must be between 0 and 7.")
+            return
+        
+        if channel:
+            self.settings[server.id]["defbandays"] = days_to_clean
+            await self.bot.say("Ban will clear last {} day(s) of messages."
+                               "".format(days_to_clean))
+        
         dataIO.save_json("data/mod/settings.json", self.settings)
 
     @modset.command(pass_context=True, no_pm=True)
@@ -358,9 +380,10 @@ class Mod:
                     reason = days + ' ' + reason
                 else:
                     reason = days
-                days = 0
+                days = self.settings[server.id]["defbandays"]
         else:
-            days = 0
+            #if we ban, we want the last messages to be deleted
+            days = self.settings[server.id]["defbandays"]
 
         if days < 0 or days > 7:
             await self.bot.say("Invalid days. Must be between 0 and 7.")
@@ -381,6 +404,33 @@ class Mod:
             await self.bot.say("I'm not allowed to do that.")
         except Exception as e:
             print(e)
+            
+    @commands.command(no_pm=True, pass_context=True)
+    @checks.admin_or_permissions(ban_members=True)
+    async def unban(self, ctx, user_id: int, *, reason: str = None):
+        """Unbans user. Only accepts IDs"""
+        user_id = str(user_id)
+        author = ctx.message.author
+        server = author.server
+        user = await self.bot.get_user_info(user_id)
+        
+
+        try:
+            self.temp_cache.add(user, server, "UNBAN")
+            await self.bot.http.unban(user_id, server.id)
+            await self.new_case(server,
+                                action="UNBAN",
+                                mod=author,
+                                user=user,
+                                reason=reason)
+            logger.info("{}({}) unbanned {}({})".format(author.name, author.id, user.name, user.id))
+            await self.bot.say("Done. Hope you're right.")
+        except discord.errors.Forbidden:
+            await self.bot.say("I'm not allowed to do that.")
+        except discord.errors.NotFound:
+            await self.bot.say("No banned user with this ID.")			
+        except Exception as e:
+            print(e)            
 
     @commands.command(no_pm=True, pass_context=True)
     @checks.admin_or_permissions(ban_members=True)
@@ -401,13 +451,14 @@ class Mod:
             await self.bot.say("User is already banned.")
             return
 
+        days = self.settings[server.id]["defbandays"]
         user = server.get_member(user_id)
         if user is not None:
             await ctx.invoke(self.ban, user=user, reason=reason)
             return
 
         try:
-            await self.bot.http.ban(user_id, server.id, 0)
+            await self.bot.http.ban(user_id, server.id, days)
         except discord.NotFound:
             await self.bot.say("User not found. Have you provided the "
                                "correct user ID?")
@@ -1551,11 +1602,13 @@ class Mod:
                     logger.info("Failed to ban member for mention spam in "
                                 "server {}".format(server.id))
                 else:
+                    #Making sure moderators can see what was the message that got the user banned
+                    full_reason = ("Mention spam (Autoban): {}".format(message.content))
                     await self.new_case(server,
                                         action="BAN",
                                         mod=server.me,
                                         user=author,
-                                        reason="Mention spam (Autoban)")
+                                        reason=full_reason)
                     return True
         return False
 
