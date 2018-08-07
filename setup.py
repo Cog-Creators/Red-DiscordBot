@@ -21,6 +21,7 @@ requirements = [
     "attrs==18.1.0",
     "chardet==3.0.4",
     "colorama==0.3.9",
+    "discord.py>=1.0.0a0",
     "distro==1.3.0; sys_platform == 'linux'",
     "fuzzywuzzy==0.16.0",
     "idna-ssl==1.1.0",
@@ -147,7 +148,7 @@ if __name__ == "__main__":
             ],
             "mongo": ["motor==2.0.0", "pymongo==3.7.1"],
             "docs": [
-                "alablaster==0.7.11",
+                "alabaster==0.7.11",
                 "babel==2.6.0",
                 "certifi==2018.4.16",
                 "docutils==0.14",
