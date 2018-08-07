@@ -219,7 +219,7 @@ async def withdraw_credits(member: discord.Member, amount: int) -> int:
 
     """
     if not isinstance(amount, int):
-        raise TypeError("Withdrawal amount must be of type int, not {}".format(type(amount)))
+        raise TypeError("Withdrawal amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
         raise ValueError("Invalid withdrawal amount {} < 0".format(amount))
 
@@ -254,7 +254,7 @@ async def deposit_credits(member: discord.Member, amount: int) -> int:
 
     """
     if not isinstance(amount, int):
-        raise TypeError("Deposit amount must be of type int, not {}".format(type(amount)))
+        raise TypeError("Deposit amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
         raise ValueError("Invalid deposit amount {} <= 0".format(amount))
 
@@ -288,7 +288,7 @@ async def transfer_credits(from_: discord.Member, to: discord.Member, amount: in
 
     """
     if not isinstance(amount, int):
-        raise TypeError("Transfer amount must be of type int, not {}".format(type(amount)))
+        raise TypeError("Transfer amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
         raise ValueError("Invalid transfer amount {} <= 0".format(amount))
 
