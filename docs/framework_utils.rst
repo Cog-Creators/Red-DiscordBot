@@ -4,6 +4,12 @@
 Utility Functions
 =================
 
+General Utility
+===============
+
+.. automodule:: redbot.core.utils
+    :members: deduplicate_iterables, bounded_gather, bounded_gather_iter
+
 Chat Formatting
 ===============
 
