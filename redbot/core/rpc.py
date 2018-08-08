@@ -111,7 +111,7 @@ class RPCMixin:
         super().__init__(**kwargs)
         self.rpc = RPC()
 
-        self.rpc_handlers = {}  # Lowered cog name to method
+        self.rpc_handlers = {}  # Uppercase cog name to method
 
     def register_rpc_handler(self, method):
         """
@@ -132,6 +132,7 @@ class RPCMixin:
         self.rpc.add_method(method)
 
         cog_name = method.__self__.__class__.__name__.upper()
+
         if cog_name not in self.rpc_handlers:
             self.rpc_handlers[cog_name] = []
 
