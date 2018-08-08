@@ -296,7 +296,8 @@ class RedBase(BotBase, RPCMixin):
                 _attr, commands.Command
             ):
                 raise RuntimeError(
-                    f"{cog.__module__} is not using Red's command module, and cannot be added."
+                    f"{cog.__class__.__name} from {cog.__module__},"
+                    " is not using Red's command module, and cannot be added."
                 )
         super().add_cog(cog)
 
