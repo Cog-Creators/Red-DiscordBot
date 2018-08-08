@@ -97,7 +97,7 @@ class ModLog:
         else:
             await ctx.send(embed=await case.get_case_msg_content())
 
-    @commands.command()
+    @commands.command(usage="[case] <reason>")
     @commands.guild_only()
     async def reason(self, ctx: commands.Context, *, reason: str):
         """Lets you specify a reason for mod-log's cases
