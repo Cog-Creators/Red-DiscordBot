@@ -296,8 +296,11 @@ class RedBase(BotBase, RPCMixin):
                 _attr, commands.Command
             ):
                 raise RuntimeError(
-                    f"{cog.__class__.__name} from {cog.__module__},"
-                    " is not using Red's command module, and cannot be added."
+                    f"The {cog.__class__.__name__} cog in the {cog.__module__} package,"
+                    " is not using Red's command module, and cannot be added. "
+                    "If this is your cog, please use from `redbot.core import commands`"
+                    "in place of `from discord.ext import commands`. For more details on "
+                    "this requirement, see the documentation."
                 )
         super().add_cog(cog)
 
