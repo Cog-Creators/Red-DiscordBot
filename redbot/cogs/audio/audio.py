@@ -777,9 +777,9 @@ class Audio:
         )
         embed.set_footer(text="{} track(s)".format(track_len))
         if await ctx.embed_requested():
-            return await ctx.send(embed=embed)
+            await ctx.send(embed=embed)
         else:
-            return await ctx.send(embed=embed)
+            await ctx.send(embed=embed)
 
     @playlist.command(name="list")
     async def _playlist_list(self, ctx):
@@ -1156,7 +1156,7 @@ class Audio:
             dur = lavalink.utils.format_time(player.current.length)
 
         if player.current.is_stream:
-            queue_list += "**Currently livestreaming:** **[{}]({})**\Requested by: **{}**\n\n{}`{}`/`{}`\n\n".format(
+            queue_list += "**Currently livestreaming:** **[{}]({})**\nRequested by: **{}**\n\n{}`{}`/`{}`\n\n".format(
                 player.current.title, player.current.uri, player.current.requester, arrow, pos, dur
             )
         else:
@@ -1174,7 +1174,7 @@ class Audio:
                 track_title = track.title
             req_user = track.requester
             track_idx = i + 1
-            queue_list += "`{}.` **[{}]({})**, Requested by **{}**\n".format(
+            queue_list += "`{}.` **[{}]({})**, requested by **{}**\n".format(
                 track_idx, track_title, track.uri, req_user
             )
 
