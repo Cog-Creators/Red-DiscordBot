@@ -475,7 +475,7 @@ class Audio:
         elif react == "next":
             await self._clear_react(message)
             await ctx.invoke(self.skip)
-            
+    
     @commands.command(aliases=["resume"])
     @commands.guild_only()
     async def pause(self, ctx):
