@@ -300,7 +300,8 @@ class RedBase(BotBase, RPCMixin):
                     " is not using Red's command module, and cannot be added. "
                     "If this is your cog, please use from `redbot.core import commands`"
                     "in place of `from discord.ext import commands`. For more details on "
-                    "this requirement, see the documentation."
+                    "this requirement, see this page: "
+                    "http://red-discordbot.readthedocs.io/en/v3-develop/framework_commands.html"
                 )
         super().add_cog(cog)
 
