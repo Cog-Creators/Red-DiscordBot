@@ -69,3 +69,15 @@ async def test_set_default_balance(bank, guild_factory):
     await bank.set_default_balance(500, guild)
     default_bal = await bank.get_default_balance(guild)
     assert default_bal == 500
+
+
+@pytest.mark.asyncio
+async def test_nonint_transaction_amount(bank, member_factory):
+    mbr1 = member_factory.get()
+    mbr2 = member_factory.get()
+    with pytest.raises(TypeError):
+        await bank.deposit_credits(mbr1, 1.0)
+    with pytest.raises(TypeError):
+        await bank.withdraw_credits(mbr1, 1.0)
+    with pytest.raises(TypeError):
+        await bank.transfer_credits(mbr1, mbr2, 1.0)
