@@ -131,6 +131,7 @@ class Audio:
                 embed = discord.Embed(
                     title="Queue ended."
                 )
+                await ctx.embed_colour()
                 await notify_channel.send(embed=embed)
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END and status:
