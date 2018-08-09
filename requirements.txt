@@ -8,3 +8,4 @@ pyyaml==3.12
 fuzzywuzzy[speedup]<=0.16.0
 Red-Trivia>=1.1.1
 async-timeout<3.0.0
+raven-aiohttp==0.7.0

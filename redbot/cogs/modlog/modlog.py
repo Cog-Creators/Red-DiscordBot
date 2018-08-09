@@ -15,7 +15,7 @@ class ModLog:
     def __init__(self, bot: Red):
         self.bot = bot
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @checks.guildowner_or_permissions(administrator=True)
     async def modlogset(self, ctx: commands.Context):
         """Settings for the mod log"""
