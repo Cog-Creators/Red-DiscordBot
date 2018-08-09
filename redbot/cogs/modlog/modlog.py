@@ -109,7 +109,7 @@ class ModLog:
         author = ctx.author
         guild = ctx.guild
         potential_case = reason.split()[0]
-        if potential_case.isnumeric():
+        if potential_case.isdigit():
             case = int(potential_case)
             reason = reason.replace(potential_case, "")
         else:
