@@ -15,7 +15,7 @@ from .manager import shutdown_lavalink_server
 
 _ = Translator("Audio", __file__)
 
-__version__ = "0.0.6c"
+__version__ = "0.0.6d"
 __author__ = ["aikaterna", "billy/bollo/ati"]
 
 
@@ -46,6 +46,7 @@ class Audio:
             "notify": False,
             "repeat": False,
             "shuffle": False,
+            "thumbnail": False,
             "volume": 100,
             "vote_enabled": False,
             "vote_percent": 0,
@@ -267,6 +268,7 @@ class Audio:
         emptydc_timer = data["emptydc_timer"]
         jukebox = data["jukebox"]
         jukebox_price = data["jukebox_price"]
+        thumbnail = data["thumbnail"]
         jarbuild = redbot.core.__version__
 
         vote_percent = data["vote_percent"]
@@ -284,6 +286,8 @@ class Audio:
             "Song notify msgs: [{notify}]\n"
             "Songs as status:  [{status}]\n".format(**global_data, **data)
         )
+        if thumbnail:
+            msg += "Thumbnails:       [{0}]\n".format(thumbnail)
         if vote_percent > 0:
             msg += (
                 "Vote skip:        [{vote_enabled}]\n" "Skip percentage:  [{vote_percent}%]\n"
@@ -297,6 +301,14 @@ class Audio:
 
         embed = discord.Embed(colour=ctx.guild.me.top_role.colour, description=msg)
         return await ctx.send(embed=embed)
+
+    @audioset.command()
+    @checks.mod_or_permissions(administrator=True)
+    async def thumbnail(self, ctx):
+        """Toggle displaying a thumbnail on audio messages."""
+        thumbnail = await self.config.guild(ctx.guild).thumbnail()
+        await self.config.guild(ctx.guild).thumbnail.set(not thumbnail)
+        await self._embed_msg(ctx, "Thumbnail display: {}.".format(not thumbnail))
 
     @audioset.command()
     @checks.mod_or_permissions(administrator=True)
@@ -435,6 +447,12 @@ class Audio:
         embed = discord.Embed(
             colour=ctx.guild.me.top_role.colour, title="Now Playing", description=song
         )
+        thumbnail = await self.config.guild(ctx.guild).thumbnail()
+        if thumbnail:
+            thumb = self._thumbnail(player.current)
+            if thumb:
+                embed.set_thumbnail(url=self._thumbnail(player.current))
+
         message = await ctx.send(embed=embed)
         player.store("np_message", message)
 
@@ -1111,6 +1129,7 @@ class Audio:
     async def _build_queue_page(self, ctx, player, page_num):
         shuffle = await self.config.guild(ctx.guild).shuffle()
         repeat = await self.config.guild(ctx.guild).repeat()
+        thumbnail = await self.config.guild(ctx.guild).thumbnail()
         queue_num_pages = math.ceil(len(player.queue) / 10)
         queue_idx_start = (page_num - 1) * 10
         queue_idx_end = queue_idx_start + 10
@@ -1154,6 +1173,10 @@ class Audio:
             title="Queue for " + ctx.guild.name,
             description=queue_list,
         )
+        if thumbnail:
+            thumb = self._thumbnail(player.current)
+            if thumb:
+                embed.set_thumbnail(url=self._thumbnail(player.current))
         queue_duration = await self._queue_duration(ctx)
         queue_total_duration = lavalink.utils.format_time(queue_duration)
         text = "Page {}/{} | {} tracks, {} remaining".format(
@@ -1908,6 +1931,14 @@ class Audio:
         for key, value in zip(keys, values):
             track_obj[key] = value
         return track_obj
+
+    @staticmethod
+    def _thumbnail(track):
+        if "youtube" in track.uri:
+            values = track._info.values()
+            id = list(values)[1]
+            return "https://img.youtube.com/vi/{}/mqdefault.jpg".format(id)
+        return None
 
     @staticmethod
     def _userlimit(channel):
