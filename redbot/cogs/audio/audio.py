@@ -424,17 +424,24 @@ class Audio:
                 player.current.title, player.current.uri, player.current.requester, arrow, pos, dur
             )
         else:
-            song = "Nothing."
+            song = None
 
         if player.fetch("np_message") is not None:
             try:
                 await player.fetch("np_message").delete()
             except discord.errors.NotFound:
                 pass
-
+        
+        if song is None:
+            thumbnail = ""
+            song = "Nothing."
+        else:
+            thumbnail = player.current.uri.replace("https://www.youtube.com/watch?v=", "")
+        
         embed = discord.Embed(
             title="Now Playing", description=song
         )
+        embed.set_thumbnail(url="https://img.youtube.com/vi/{}/mqdefault.jpg".format(thumbnail))
         message = await ctx.send(embed=embed)
         await ctx.embed_colour()
         player.store("np_message", message)
@@ -477,6 +484,17 @@ class Audio:
             await self._clear_react(message)
             await ctx.invoke(self.skip)
     
+    @commands.command()
+    @commands.guild_only()
+    async def thumbnail(self, ctx):
+        """Show the current song's thumbnail."""
+        player = lavalink.get_player(ctx.guild.id)
+        thumbnail = player.current.uri.replace("https://www.youtube.com/watch?v=", "")
+        embed = discord.Embed()
+        embed.set_image(url="https://img.youtube.com/vi/{}/mqdefault.jpg".format(thumbnail))
+        await ctx.embed_colour()
+        await ctx.send(embed=embed)
+
     @commands.command(aliases=["resume"])
     @commands.guild_only()
     async def pause(self, ctx):
@@ -1139,14 +1157,14 @@ class Audio:
         for i, track in enumerate(
             player.queue[queue_idx_start:queue_idx_end], start=queue_idx_start
         ):
-            if len(track.title) > 40:
+            if len(track.title) > 39:
                 track_title = str(track.title).replace("[", "")
-                track_title = "{}...".format((track_title[:40]).rstrip(" "))
+                track_title = "{}...".format((track_title[:39]).rstrip(" "))
             else:
                 track_title = track.title
             req_user = track.requester
             track_idx = i + 1
-            queue_list += "`{}.` **[{}]({})**, requested by **{}**\n".format(
+            queue_list += "`{}.` **[{}]({})**, **{}**\n".format(
                 track_idx, track_title, track.uri, req_user
             )
 
@@ -1154,6 +1172,8 @@ class Audio:
             title="Queue for " + ctx.guild.name,
             description=queue_list,
         )
+        thumbnail = player.current.uri.replace("https://www.youtube.com/watch?v=", "")
+        embed.set_thumbnail(url="https://img.youtube.com/vi/{}/mqdefault.jpg".format(thumbnail))
         queue_duration = await self._queue_duration(ctx)
         queue_total_duration = lavalink.utils.format_time(queue_duration)
         text = "Page {}/{} | {} tracks, {} remaining".format(
