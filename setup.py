@@ -34,7 +34,7 @@ def check_compiler_available():
             tfile.write(b"int main(int argc, char** argv) {return 0;}")
             tfile.seek(0)
             try:
-                m.compile([tfile.name])
+                m.compile([tfile.name], output_dir=tdir)
             except (CCompilerError, DistutilsPlatformError):
                 return False
     return True
@@ -135,7 +135,7 @@ setup(
         "test": ["pytest>3", "pytest-asyncio"],
         "mongo": ["motor"],
         "docs": ["sphinx>=1.7", "sphinxcontrib-asyncio", "sphinx_rtd_theme"],
-        "voice": ["red-lavalink>=0.0.4"],
+        "voice": ["red-lavalink==0.1.0"],
         "style": ["black==18.5b1"],
     },
 )

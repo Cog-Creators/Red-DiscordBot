@@ -5,9 +5,11 @@ import subprocess
 import sys
 import argparse
 import asyncio
+import aiohttp
 
 import pkg_resources
 from pathlib import Path
+from distutils.version import StrictVersion
 from redbot.setup import (
     basic_setup,
     load_existing_config,
@@ -16,13 +18,14 @@ from redbot.setup import (
     create_backup,
     save_config,
 )
+from redbot.core import __version__
 from redbot.core.utils import safe_delete
 from redbot.core.cli import confirm
 
 if sys.platform == "linux":
     import distro
 
-PYTHON_OK = sys.version_info >= (3, 5)
+PYTHON_OK = sys.version_info >= (3, 6)
 INTERACTIVE_MODE = not len(sys.argv) > 1  # CLI flags = non-interactive
 
 INTRO = "==========================\nRed Discord Bot - Launcher\n==========================\n"
@@ -384,12 +387,27 @@ def debug_info():
     sys.exit(0)
 
 
+async def is_outdated():
+    red_pypi = "https://pypi.python.org/pypi/Red-DiscordBot"
+    async with aiohttp.ClientSession() as session:
+        async with session.get("{}/json".format(red_pypi)) as r:
+            data = await r.json()
+            new_version = data["info"]["version"]
+    return StrictVersion(new_version) > StrictVersion(__version__), new_version
+
+
 def main_menu():
     if IS_WINDOWS:
         os.system("TITLE Red - Discord Bot V3 Launcher")
     clear_screen()
+    loop = asyncio.get_event_loop()
+    outdated, new_version = loop.run_until_complete(is_outdated())
     while True:
         print(INTRO)
+        print("\033[4mCurrent version:\033[0m {}".format(__version__))
+        if outdated:
+            print("Red is outdated. {} is available.".format(new_version))
+        print("")
         print("1. Run Red w/ autorestart in case of issues")
         print("2. Run Red")
         print("3. Update Red")
@@ -418,13 +436,12 @@ def main_menu():
             basic_setup()
             wait()
         elif choice == "5":
-            asyncio.get_event_loop().run_until_complete(remove_instance_interaction())
+            loop.run_until_complete(remove_instance_interaction())
             wait()
         elif choice == "6":
             debug_info()
         elif choice == "7":
             while True:
-                loop = asyncio.get_event_loop()
                 clear_screen()
                 print("==== Reinstall Red ====")
                 print(
@@ -455,7 +472,7 @@ def main_menu():
 def main():
     if not PYTHON_OK:
         raise RuntimeError(
-            "Red requires Python 3.5 or greater. Please install the correct version!"
+            "Red requires Python 3.6 or greater. Please install the correct version!"
         )
     if args.debuginfo:  # Check first since the function triggers an exit
         debug_info()

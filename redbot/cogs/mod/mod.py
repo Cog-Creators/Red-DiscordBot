@@ -161,7 +161,7 @@ class Mod:
         except RuntimeError:
             pass
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     async def modset(self, ctx: commands.Context):
@@ -628,7 +628,6 @@ class Mod:
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
-    @commands.bot_has_permissions(ban_members=True)
     async def unban(self, ctx: commands.Context, user_id: int, *, reason: str = None):
         """Unbans the target user.
 
@@ -636,13 +635,17 @@ class Mod:
          1. Copy it from the mod log case (if one was created), or
          2. enable developer mode, go to Bans in this server's settings, right-
         click the user and select 'Copy ID'."""
+        channel = ctx.channel
+        if not channel.permissions_for(ctx.guild.me).ban_members:
+            await ctx.send("I need the Ban Members permission to do this.")
+            return
         guild = ctx.guild
         author = ctx.author
         user = await self.bot.get_user_info(user_id)
         if not user:
             await ctx.send(_("Couldn't find a user with that ID!"))
             return
-        reason = get_audit_reason(ctx.author, reason)
+        audit_reason = get_audit_reason(ctx.author, reason)
         bans = await guild.bans()
         bans = [be.user for be in bans]
         if user not in bans:
@@ -651,7 +654,7 @@ class Mod:
         queue_entry = (guild.id, user.id)
         self.unban_queue.append(queue_entry)
         try:
-            await guild.unban(user, reason=reason)
+            await guild.unban(user, reason=audit_reason)
         except discord.HTTPException:
             self.unban_queue.remove(queue_entry)
             await ctx.send(_("Something went wrong while attempting to unban that user"))
@@ -832,7 +835,7 @@ class Mod:
                 _("I cannot do that, I lack the '{}' permission.").format("Manage Nicknames")
             )
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @commands.guild_only()
     @checks.mod_or_permissions(manage_channel=True)
     async def mute(self, ctx: commands.Context):
@@ -998,7 +1001,7 @@ class Mod:
             await self.settings.member(user).perms_cache.set(perms_cache)
             return True, None
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @commands.guild_only()
     @checks.mod_or_permissions(manage_channel=True)
     async def unmute(self, ctx: commands.Context):
@@ -1164,13 +1167,12 @@ class Mod:
                 await self.settings.member(user).perms_cache.set(perms_cache)
             return True, None
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @commands.guild_only()
     @checks.admin_or_permissions(manage_channels=True)
     async def ignore(self, ctx: commands.Context):
         """Adds servers/channels to ignorelist"""
         if ctx.invoked_subcommand is None:
-            await ctx.send_help()
             await ctx.send(await self.count_ignored())
 
     @ignore.command(name="channel")
@@ -1187,7 +1189,7 @@ class Mod:
             await ctx.send(_("Channel already in ignore list."))
 
     @ignore.command(name="server", aliases=["guild"])
-    @commands.has_permissions(manage_guild=True)
+    @checks.admin_or_permissions(manage_guild=True)
     async def ignore_guild(self, ctx: commands.Context):
         """Ignores current server"""
         guild = ctx.guild
@@ -1197,7 +1199,7 @@ class Mod:
         else:
             await ctx.send(_("This server is already being ignored."))
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @commands.guild_only()
     @checks.admin_or_permissions(manage_channels=True)
     async def unignore(self, ctx: commands.Context):
@@ -1220,7 +1222,7 @@ class Mod:
             await ctx.send(_("That channel is not in the ignore list."))
 
     @unignore.command(name="server", aliases=["guild"])
-    @commands.has_permissions(manage_guild=True)
+    @checks.admin_or_permissions(manage_guild=True)
     async def unignore_guild(self, ctx: commands.Context):
         """Removes current guild from ignore list"""
         guild = ctx.message.guild

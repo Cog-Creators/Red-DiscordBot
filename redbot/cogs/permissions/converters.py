@@ -27,3 +27,18 @@ class RuleType(commands.Converter):
         raise commands.BadArgument(
             '"{arg}" is not a valid rule. Valid rules are "allow" or "deny"'.format(arg=arg)
         )
+
+
+class ClearableRuleType(commands.Converter):
+    async def convert(self, ctx: commands.Context, arg: str) -> str:
+        if arg.lower() in ("allow", "whitelist", "allowed"):
+            return "allow"
+        if arg.lower() in ("deny", "blacklist", "denied"):
+            return "deny"
+        if arg.lower() in ("clear", "reset"):
+            return "clear"
+
+        raise commands.BadArgument(
+            '"{arg}" is not a valid rule. Valid rules are "allow" or "deny", or "clear" to remove the rule'
+            "".format(arg=arg)
+        )
