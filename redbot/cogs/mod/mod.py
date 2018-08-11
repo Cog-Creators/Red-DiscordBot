@@ -1264,7 +1264,14 @@ class Mod:
     @commands.command()
     @commands.guild_only()
     async def userinfo(self, ctx, *, user: discord.Member = None):
-        """Shows users's informations"""
+        """Shows information for a user.
+        
+        This includes fields for status, discord join date, server
+        join date, voice state and previous names/nicknames.
+        
+        If the user has none of roles, previous names or previous
+        nicknames, these fields will be omitted.
+        """
         author = ctx.author
         guild = ctx.guild
 
