@@ -608,16 +608,12 @@ class Streams:
                 chn = self.bot.get_channel(raw_msg["channel"])
                 msg = await chn.get_message(raw_msg["message"])
                 raw_stream["_messages_cache"].append(msg)
-            token = await self.db.tokens.get_raw(_class.__name__)
-            streams.append(_class(token=token, **raw_stream))
+            token = await self.db.tokens.get_raw(_class.__name__, default=None)
+            if token is not None:
+                raw_stream["token"] = token
+            streams.append(_class(**raw_stream))
 
-        # issue 1191 extended resolution: Remove this after suitable period
-        # Fast dedupe below
-        seen = set()
-        seen_add = seen.add
-        return [x for x in streams if not (x.name.lower() in seen or seen_add(x.name.lower()))]
-
-        # return streams
+        return streams
 
     async def load_communities(self):
         communities = []
