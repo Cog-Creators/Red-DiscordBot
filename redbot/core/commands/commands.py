@@ -134,7 +134,7 @@ class GroupMixin(commands.GroupMixin):
         return decorator
 
 
-class Group(Command, GroupMixin, commands.Group):
+class Group(GroupMixin, Command, commands.Group):
     """Group command class for Red.
 
     This class inherits from `Command`, with :class:`GroupMixin` and
