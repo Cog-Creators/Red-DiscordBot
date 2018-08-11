@@ -106,6 +106,8 @@ class Audio:
                     title="Now Playing",
                     description="**[{}]({})**".format(player.current.title, player.current.uri),
                 )
+                if await self.config.guild(notify_channel.guild).thumbnail() and self._thumbnail(player.current):
+                    embed.set_thumbnail(url=self._thumbnail(player.current))
                 notify_message = await notify_channel.send(embed=embed)
                 player.store("notify_message", notify_message)
 
@@ -447,11 +449,8 @@ class Audio:
         embed = discord.Embed(
             colour=ctx.guild.me.top_role.colour, title="Now Playing", description=song
         )
-        thumbnail = await self.config.guild(ctx.guild).thumbnail()
-        if thumbnail:
-            thumb = self._thumbnail(player.current)
-            if thumb:
-                embed.set_thumbnail(url=self._thumbnail(player.current))
+        if await self.config.guild(ctx.guild).thumbnail() and self._thumbnail(player.current):
+            embed.set_thumbnail(url=self._thumbnail(player.current))
 
         message = await ctx.send(embed=embed)
         player.store("np_message", message)
@@ -1129,7 +1128,6 @@ class Audio:
     async def _build_queue_page(self, ctx, player, page_num):
         shuffle = await self.config.guild(ctx.guild).shuffle()
         repeat = await self.config.guild(ctx.guild).repeat()
-        thumbnail = await self.config.guild(ctx.guild).thumbnail()
         queue_num_pages = math.ceil(len(player.queue) / 10)
         queue_idx_start = (page_num - 1) * 10
         queue_idx_end = queue_idx_start + 10
@@ -1173,10 +1171,8 @@ class Audio:
             title="Queue for " + ctx.guild.name,
             description=queue_list,
         )
-        if thumbnail:
-            thumb = self._thumbnail(player.current)
-            if thumb:
-                embed.set_thumbnail(url=self._thumbnail(player.current))
+        if await self.config.guild(ctx.guild).thumbnail() and self._thumbnail(player.current):
+            embed.set_thumbnail(url=self._thumbnail(player.current))
         queue_duration = await self._queue_duration(ctx)
         queue_total_duration = lavalink.utils.format_time(queue_duration)
         text = "Page {}/{} | {} tracks, {} remaining".format(
