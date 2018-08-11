@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Tuple
+import copy
 import weakref
 import logging
 
@@ -97,7 +98,7 @@ class JSON(BaseDriver):
         full_identifiers = (self.unique_cog_identifier, *identifiers)
         for i in full_identifiers:
             partial = partial[i]
-        return partial
+        return copy.deepcopy(partial)
 
     async def set(self, *identifiers: str, value=None):
         partial = self.data
@@ -107,7 +108,7 @@ class JSON(BaseDriver):
                 partial[i] = {}
             partial = partial[i]
 
-        partial[full_identifiers[-1]] = value
+        partial[full_identifiers[-1]] = copy.deepcopy(value)
         await self.jsonIO._threadsafe_save_json(self.data)
 
     async def clear(self, *identifiers: str):
