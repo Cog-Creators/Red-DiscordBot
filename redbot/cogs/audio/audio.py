@@ -1933,9 +1933,9 @@ class Audio:
     @staticmethod
     def _thumbnail(track):
         if "youtube" in track.uri:
-            values = track._info.values()
-            id = list(values)[1]
-            return "https://img.youtube.com/vi/{}/mqdefault.jpg".format(id)
+            for v, k in track._info.items():
+                if v == "identifier":
+                    return "https://img.youtube.com/vi/{}/mqdefault.jpg".format(k)
         return None
 
     @staticmethod
