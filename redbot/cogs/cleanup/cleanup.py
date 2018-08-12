@@ -252,7 +252,7 @@ class Cleanup:
             pinned_msgs = await channel.pins()
             to_exclude = set(m for m in pinned_msgs if m.created_at > message.created_at)
         else:
-            to_exclude = False
+            to_exclude = None
 
         if to_exclude:
             to_delete = await channel.history(limit=None, after=message).flatten()
@@ -260,7 +260,6 @@ class Cleanup:
             await channel.delete_messages(to_delete)
             num_deleted = len(to_delete)
         else:
-            # Never mind the confusing name to_delete, it's a remnant of previous behaviour
             num_deleted = len(await channel.purge(limit=None, after=message))
 
         reason = "{}({}) deleted {} messages in channel {}.".format(
