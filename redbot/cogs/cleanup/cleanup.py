@@ -90,7 +90,7 @@ class Cleanup:
                 break
             if check(message):
                 collected.append(message)
-                if 0 < number <= len(collected):
+                if number and number <= len(collected):
                     break
 
         return collected
