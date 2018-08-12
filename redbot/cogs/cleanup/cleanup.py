@@ -1,5 +1,4 @@
 import re
-import warnings
 from datetime import datetime, timedelta
 from typing import Union, List, Callable
 
@@ -58,7 +57,6 @@ class Cleanup:
         before: Union[discord.Message, datetime] = None,
         after: Union[discord.Message, datetime] = None,
         delete_pinned: bool = False,
-        **_kwargs,
     ) -> List[discord.Message]:
         """
         Gets a list of messages meeting the requirements to be deleted.
@@ -70,15 +68,6 @@ class Cleanup:
         - The message is less than 14 days old
         - The message is not pinned
         """
-
-        if _kwargs.get("ctx", None) or _kwargs.get("limit", None):
-            # Don't know how many, or even if 3rd party cogs are using this
-            warnings.warn(
-                "Function signature for `get_messages_for_deletion`"
-                "was changed in 3.0.0b21, see #1980, #2006 for details."
-                "This will error on b22",
-                DeprecationWarning,
-            )
 
         two_weeks_ago = datetime.utcnow() - timedelta(days=14)
 
@@ -94,32 +83,16 @@ class Cleanup:
                 after = after.created_at
             after = max(after, two_weeks_ago)
 
-        # Special casing required due to quirks with API interaction from discord.py
-        if number and after:
-            warnings.warn(
-                "Supplying both an after and a max quantity of messages"
-                "requires fetching all of the messages between dates for consistent ordering. "
-                "you should consider dropping one of these parameters if possible.\n"
-                "The ability to supply both may be removed from support of this function on "
-                "any version at or beyond 3.0.0b21",
-                DeprecationWarning,
-            )
-            messages = await channel.history(limit=None, after=after, reverse=False).flatten()
-            messages = list(filter(check, messages))
-            if len(messages) > number:
-                messages = sorted(messages, key=lambda m: m.created_at, reverse=True)[:number]
-            return messages
-        else:  # Normal, non deprecation case
-            collected = []
-            async for message in channel.history(limit=None, before=before, reverse=False):
-                if message.created_at < two_weeks_ago:
+        collected = []
+        async for message in channel.history(limit=None, before=before, reverse=False):
+            if message.created_at < two_weeks_ago:
+                break
+            if check(message):
+                collected.append(message)
+                if 0 < number <= len(collected):
                     break
-                if check(message):
-                    collected.append(message)
-                    if 0 < number <= len(collected):
-                        break
 
-            return collected
+        return collected
 
     @commands.group()
     @checks.mod_or_permissions(manage_messages=True)
