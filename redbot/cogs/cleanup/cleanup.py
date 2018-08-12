@@ -52,15 +52,13 @@ class Cleanup:
 
     @staticmethod
     async def get_messages_for_deletion(
-        ctx: commands.Context,  # scheduled removal from signature in b21
         channel: discord.TextChannel,
         number: int = None,
-        limit=None,  # scheduled removal b21, with warning below
         check: Callable[[discord.Message], bool] = lambda x: True,
         before: Union[discord.Message, datetime] = None,
         after: Union[discord.Message, datetime] = None,
         delete_pinned: bool = False,
-        **_kwargs
+        **_kwargs,
     ) -> List[discord.Message]:
         """
         Gets a list of messages meeting the requirements to be deleted.
@@ -73,11 +71,13 @@ class Cleanup:
         - The message is not pinned
         """
 
-        if ctx.cog.__class__.__name__ != "Cleanup":
+        if _kwargs.get("ctx", None) or _kwargs.get("limit", None):
             # Don't know how many, or even if 3rd party cogs are using this
             warnings.warn(
                 "Function signature for `get_messages_for_deletion`"
-                "set to change in 3.0.0b21, see #1980 for details"
+                "was changed in 3.0.0b21, see #1980, #2006 for details."
+                "This will error on b22",
+                DeprecationWarning,
             )
 
         two_weeks_ago = datetime.utcnow() - timedelta(days=14)
@@ -161,7 +161,7 @@ class Cleanup:
                 return False
 
         to_delete = await self.get_messages_for_deletion(
-            ctx, channel, number, check=check, before=ctx.message, delete_pinned=delete_pinned
+            channel, number, check=check, before=ctx.message, delete_pinned=delete_pinned
         )
 
         reason = "{}({}) deleted {} messages containing '{}' in channel {}.".format(
@@ -217,7 +217,7 @@ class Cleanup:
                 return False
 
         to_delete = await self.get_messages_for_deletion(
-            ctx, channel, number, check=check, before=ctx.message, delete_pinned=delete_pinned
+            channel, number, check=check, before=ctx.message, delete_pinned=delete_pinned
         )
         reason = (
             "{}({}) deleted {} messages "
@@ -262,7 +262,7 @@ class Cleanup:
             return
 
         to_delete = await self.get_messages_for_deletion(
-            ctx, channel, 0, limit=None, after=after, delete_pinned=delete_pinned
+            channel, None, after=after, delete_pinned=delete_pinned
         )
 
         reason = "{}({}) deleted {} messages in channel {}.".format(
@@ -294,7 +294,7 @@ class Cleanup:
                 return
 
         to_delete = await self.get_messages_for_deletion(
-            ctx, channel, number, before=ctx.message, delete_pinned=delete_pinned
+            channel, number, before=ctx.message, delete_pinned=delete_pinned
         )
         to_delete.append(ctx.message)
 
@@ -345,7 +345,7 @@ class Cleanup:
             return False
 
         to_delete = await self.get_messages_for_deletion(
-            ctx, channel, number, check=check, before=ctx.message, delete_pinned=delete_pinned
+            channel, number, check=check, before=ctx.message, delete_pinned=delete_pinned
         )
         to_delete.append(ctx.message)
 
@@ -421,7 +421,7 @@ class Cleanup:
             return False
 
         to_delete = await self.get_messages_for_deletion(
-            ctx, channel, number, check=check, before=ctx.message, delete_pinned=delete_pinned
+            channel, number, check=check, before=ctx.message, delete_pinned=delete_pinned
         )
 
         # Selfbot convenience, delete trigger message
