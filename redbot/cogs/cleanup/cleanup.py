@@ -162,7 +162,11 @@ class Cleanup:
                 return False
 
         to_delete = await self.get_messages_for_deletion(
-            channel=channel, number=number, check=check, before=ctx.message, delete_pinned=delete_pinned
+            channel=channel,
+            number=number,
+            check=check,
+            before=ctx.message,
+            delete_pinned=delete_pinned,
         )
 
         reason = "{}({}) deleted {} messages containing '{}' in channel {}.".format(
@@ -218,7 +222,11 @@ class Cleanup:
                 return False
 
         to_delete = await self.get_messages_for_deletion(
-            channel=channel, number=number, check=check, before=ctx.message, delete_pinned=delete_pinned
+            channel=channel,
+            number=number,
+            check=check,
+            before=ctx.message,
+            delete_pinned=delete_pinned,
         )
         reason = (
             "{}({}) deleted {} messages "
@@ -346,7 +354,11 @@ class Cleanup:
             return False
 
         to_delete = await self.get_messages_for_deletion(
-            channel=channel, number=number, check=check, before=ctx.message, delete_pinned=delete_pinned
+            channel=channel,
+            number=number,
+            check=check,
+            before=ctx.message,
+            delete_pinned=delete_pinned,
         )
         to_delete.append(ctx.message)
 
@@ -422,7 +434,11 @@ class Cleanup:
             return False
 
         to_delete = await self.get_messages_for_deletion(
-            channel=channel, number=number, check=check, before=ctx.message, delete_pinned=delete_pinned
+            channel=channel,
+            number=number,
+            check=check,
+            before=ctx.message,
+            delete_pinned=delete_pinned,
         )
 
         # Selfbot convenience, delete trigger message
