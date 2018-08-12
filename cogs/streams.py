@@ -48,6 +48,10 @@ class Streams:
         settings = dataIO.load_json("data/streams/settings.json")
         self.settings = defaultdict(dict, settings)
         self.messages_cache = defaultdict(list)
+        self.session = aiohttp.ClientSession()
+     
+    def __unload(self):
+        self.session.close()        
 
     @commands.command()
     async def hitbox(self, stream: str):
@@ -348,7 +352,7 @@ class Streams:
     async def hitbox_online(self, stream):
         url = "https://api.hitbox.tv/media/live/" + stream
 
-        async with aiohttp.get(url) as r:
+        async with self.session.get(url) as r:
             data = await r.json(encoding='utf-8')
 
         if "livestream" not in data:
@@ -385,7 +389,7 @@ class Streams:
     async def mixer_online(self, stream):
         url = "https://mixer.com/api/v1/channels/" + stream
 
-        async with aiohttp.get(url) as r:
+        async with self.session.get(url) as r:
             data = await r.json(encoding='utf-8')
         if r.status == 200:
             if data["online"] is True:
@@ -400,7 +404,7 @@ class Streams:
     async def picarto_online(self, stream):
         url = "https://api.picarto.tv/v1/channel/name/" + stream
 
-        async with aiohttp.get(url) as r:
+        async with self.session.get(url) as r:
             data = await r.text(encoding='utf-8')
         if r.status == 200:
             data = json.loads(data)

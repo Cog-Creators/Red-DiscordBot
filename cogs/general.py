@@ -43,6 +43,10 @@ class General:
                      "Ask again later", "Better not tell you now", "Cannot predict now", "Concentrate and ask again",
                      "Don't count on it", "My reply is no", "My sources say no", "Outlook not so good", "Very doubtful"]
         self.poll_sessions = []
+        self.session = aiohttp.ClientSession()
+    
+    def __unload(self):
+        self.session.close()
 
     @commands.command(hidden=True)
     async def ping(self):
@@ -303,7 +307,7 @@ class General:
         search_terms = "+".join([encode(s) for s in search_terms])
         url = "http://api.urbandictionary.com/v0/define?term=" + search_terms
         try:
-            async with aiohttp.get(url) as r:
+            async with self.session.get(url) as r:
                 result = await r.json()
             if result["list"]:
                 definition = result['list'][pos]['definition']
