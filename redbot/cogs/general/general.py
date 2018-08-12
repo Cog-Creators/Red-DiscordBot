@@ -163,7 +163,9 @@ class General:
     @commands.command()
     async def lmgtfy(self, ctx, *, search_terms: str):
         """Creates a lmgtfy link"""
-        search_terms = escape(search_terms.replace(" ", "+"), mass_mentions=True)
+        search_terms = escape(
+            search_terms.replace("+", "%2B").replace(" ", "+"), mass_mentions=True
+        )
         await ctx.send("https://lmgtfy.com/?q={}".format(search_terms))
 
     @commands.command(hidden=True)
