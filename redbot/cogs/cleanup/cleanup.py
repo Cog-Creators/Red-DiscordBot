@@ -52,13 +52,14 @@ class Cleanup:
 
     @staticmethod
     async def get_messages_for_deletion(
+        *,
         channel: discord.TextChannel,
         number: int = None,
         check: Callable[[discord.Message], bool] = lambda x: True,
         before: Union[discord.Message, datetime] = None,
         after: Union[discord.Message, datetime] = None,
         delete_pinned: bool = False,
-        **_kwargs,
+        **_kwargs,  # allows previos version as kwargs to not break this.
     ) -> List[discord.Message]:
         """
         Gets a list of messages meeting the requirements to be deleted.
@@ -161,7 +162,7 @@ class Cleanup:
                 return False
 
         to_delete = await self.get_messages_for_deletion(
-            channel, number, check=check, before=ctx.message, delete_pinned=delete_pinned
+            channel=channel, number=number, check=check, before=ctx.message, delete_pinned=delete_pinned
         )
 
         reason = "{}({}) deleted {} messages containing '{}' in channel {}.".format(
@@ -217,7 +218,7 @@ class Cleanup:
                 return False
 
         to_delete = await self.get_messages_for_deletion(
-            channel, number, check=check, before=ctx.message, delete_pinned=delete_pinned
+            channel=channel, number=number, check=check, before=ctx.message, delete_pinned=delete_pinned
         )
         reason = (
             "{}({}) deleted {} messages "
@@ -262,7 +263,7 @@ class Cleanup:
             return
 
         to_delete = await self.get_messages_for_deletion(
-            channel, None, after=after, delete_pinned=delete_pinned
+            channel=channel, number=None, after=after, delete_pinned=delete_pinned
         )
 
         reason = "{}({}) deleted {} messages in channel {}.".format(
@@ -294,7 +295,7 @@ class Cleanup:
                 return
 
         to_delete = await self.get_messages_for_deletion(
-            channel, number, before=ctx.message, delete_pinned=delete_pinned
+            channel=channel, number=number, before=ctx.message, delete_pinned=delete_pinned
         )
         to_delete.append(ctx.message)
 
@@ -345,7 +346,7 @@ class Cleanup:
             return False
 
         to_delete = await self.get_messages_for_deletion(
-            channel, number, check=check, before=ctx.message, delete_pinned=delete_pinned
+            channel=channel, number=number, check=check, before=ctx.message, delete_pinned=delete_pinned
         )
         to_delete.append(ctx.message)
 
@@ -421,7 +422,7 @@ class Cleanup:
             return False
 
         to_delete = await self.get_messages_for_deletion(
-            channel, number, check=check, before=ctx.message, delete_pinned=delete_pinned
+            channel=channel, number=number, check=check, before=ctx.message, delete_pinned=delete_pinned
         )
 
         # Selfbot convenience, delete trigger message
