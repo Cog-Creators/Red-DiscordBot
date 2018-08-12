@@ -68,6 +68,12 @@ class Cleanup:
         - The message is less than 14 days old
         - The message is not pinned
         """
+        if after is not None:
+            log.error(
+                "The `after` parameter for the `Cleanup.get_messages_for_deletion` method is "
+                "currently broken, see PRs #1980 and #2004 for details."
+            )
+
         to_delete = []
         too_old = False
 
