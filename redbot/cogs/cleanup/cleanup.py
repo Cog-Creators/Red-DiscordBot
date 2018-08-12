@@ -77,7 +77,7 @@ class Cleanup:
             # Don't know how many, or even if 3rd party cogs are using this
             warnings.warn(
                 "Function signature for `get_messages_for_deletion`"
-                "set to change in 3.0.0b21, see #1980 for details"
+                "set to become kwarg only in 3.0.0b21, see #1980 for details"
             )
 
         two_weeks_ago = datetime.utcnow() - timedelta(days=14)
