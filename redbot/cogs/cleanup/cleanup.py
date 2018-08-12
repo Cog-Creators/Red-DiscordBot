@@ -107,7 +107,7 @@ class Cleanup:
             )
             messages = await channel.history(limit=None, after=after, reverse=False).flatten()
             messages = list(filter(check, messages))
-            if len(messages) > number:
+            if number and len(messages) > number:
                 messages = sorted(messages, key=lambda m: m.created_at, reverse=True)[:number]
             return messages
         else:  # Normal, non deprecation case
@@ -117,7 +117,7 @@ class Cleanup:
                     break
                 if check(message):
                     collected.append(message)
-                    if 0 < number <= len(collected):
+                    if number and number <= len(collected):
                         break
 
             return collected
