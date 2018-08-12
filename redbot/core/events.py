@@ -94,10 +94,7 @@ def init_events(bot, cli_flags):
             data = await bot.application_info()
             invite_url = discord.utils.oauth_url(data.id)
         except:
-            if bot.user.bot:
-                invite_url = "Could not fetch invite url"
-            else:
-                invite_url = None
+            invite_url = "Could not fetch invite url"
 
         prefixes = cli_flags.prefix or (await bot.db.prefix())
         lang = await bot.db.locale()

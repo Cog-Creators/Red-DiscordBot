@@ -190,19 +190,6 @@ def cli_flag_getter():
         choice = user_choice()
         if choice == "y":
             flags.append("--no-cogs")
-        print("Is this a selfbot? (y/n)")
-        choice = user_choice()
-        if choice == "y":
-            print(
-                "Please note that selfbots are not allowed by Discord. See"
-                "https://support.discordapp.com/hc/en-us/articles/115002192352-Automated-user-accounts-self-bots-"
-                "for more information."
-            )
-            flags.append("--self-bot")
-        print("Does this token belong to a user account rather than a bot account? (y/n)")
-        choice = user_choice()
-        if choice == "y":
-            flags.append("--not-bot")
         print("Do you want to do a dry run? (y/n)")
         choice = user_choice()
         if choice == "y":

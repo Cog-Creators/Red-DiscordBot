@@ -226,10 +226,8 @@ class CoreLogic:
         str
             Invite URL.
         """
-        if self.bot.user.bot:
-            app_info = await self.bot.application_info()
-            return discord.utils.oauth_url(app_info.id)
-        return "Not a bot account!"
+        app_info = await self.bot.application_info()
+        return discord.utils.oauth_url(app_info.id)
 
 
 @i18n.cog_i18n(_)
@@ -423,10 +421,7 @@ class Core(CoreLogic):
     @checks.is_owner()
     async def invite(self, ctx):
         """Show's Red's invite url"""
-        if self.bot.user.bot:
-            await ctx.author.send(await self._invite_url())
-        else:
-            await ctx.send("I'm not a bot account. I have no invite URL.")
+        await ctx.author.send(await self._invite_url())
 
     @commands.command()
     @commands.guild_only()
