@@ -154,6 +154,7 @@ class YoutubeStream(Stream):
     async def is_online(self):
         if not self.id:
             self.id = await self.fetch_id()
+
         url = YOUTUBE_SEARCH_ENDPOINT
         params = {
             "key": self._token,
@@ -162,6 +163,9 @@ class YoutubeStream(Stream):
             "type": "video",
             "eventType": "live",
         }
+        if not all(params.values()):
+            raise APIError()
+            # Temp fix, see issue 1999, needs resolution as to how this occurs
         async with aiohttp.ClientSession() as session:
             async with session.get(url, params=params) as r:
                 data = await r.json()
@@ -189,6 +193,9 @@ class YoutubeStream(Stream):
 
     async def fetch_id(self):
         params = {"key": self._token, "forUsername": self.name, "part": "id"}
+        if not all(params.values()):
+            raise APIError()
+            # Temp fix, see issue 1999, needs resolution as to how this occurs
         async with aiohttp.ClientSession() as session:
             async with session.get(YOUTUBE_CHANNELS_ENDPOINT, params=params) as r:
                 data = await r.json()
@@ -202,7 +209,7 @@ class YoutubeStream(Stream):
         elif "items" in data and len(data["items"]) == 0:
             raise StreamNotFound()
         elif "items" in data:
-            return data["items"][0]["id"]
+            maybe_id = data["items"][0]["id"]
         raise APIError()
 
     def __repr__(self):
