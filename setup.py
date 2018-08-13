@@ -6,13 +6,6 @@ from distutils.errors import CCompilerError, DistutilsPlatformError
 from pathlib import Path
 from setuptools import setup, find_packages
 
-dep_links = [
-    (
-        "https://github.com/Rapptz/discord.py/tarball/"
-        "8ccb98d395537b1c9acc187e1647dfdd07bb831b#egg=discord.py-1.0"
-    )
-]
-
 requirements = [
     "aiohttp-json-rpc==0.11",
     "aiohttp==3.3.2",
@@ -35,6 +28,11 @@ requirements = [
     "websockets==6.0",
     "yarl==1.2.6",
 ]
+
+
+def get_dependency_links():
+    with open("dependency_links.txt") as file:
+        return file.read().splitlines()
 
 
 def get_package_list():
@@ -135,7 +133,7 @@ if __name__ == "__main__":
         },
         python_requires=">=3.6,<3.8",
         install_requires=requirements,
-        dependency_links=dep_links,
+        dependency_links=get_dependency_links(),
         extras_require={
             "test": [
                 "atomicwrites==1.1.5",
