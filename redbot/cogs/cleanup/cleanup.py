@@ -81,7 +81,7 @@ class Cleanup:
                 "see #1980, #2006 for details"
             )
 
-        two_weeks_ago = datetime.utcnow() - timedelta(days=14)
+        two_weeks_ago = datetime.utcnow() - timedelta(days=14, minutes=-5)
 
         def message_filter(message):
             return (
