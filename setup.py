@@ -9,7 +9,7 @@ from setuptools import setup, find_packages
 dep_links = [
     (
         "https://github.com/Rapptz/discord.py/tarball/"
-        "f06563cb3520058c900ba6d4921ce38f2407b729#egg=discord.py-1.0"
+        "8ccb98d395537b1c9acc187e1647dfdd07bb831b#egg=discord.py-1.0"
     )
 ]
 
