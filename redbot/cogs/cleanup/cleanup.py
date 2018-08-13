@@ -90,7 +90,9 @@ class Cleanup:
             after = max(after, two_weeks_ago)
 
         collected = []
-        async for message in channel.history(limit=None, before=before, after=after, reverse=False):
+        async for message in channel.history(
+            limit=None, before=before, after=after, reverse=False
+        ):
             if message.created_at < two_weeks_ago:
                 break
             if check(message):
