@@ -15,11 +15,10 @@ env:
     TOXENV=py
 
 install:
-- pip install --upgrade pip pipenv
-- pipenv install --dev
+- pip install --upgrade pip tox
 
 script:
-- pipenv run tox
+- tox
 
 jobs:
   include:
