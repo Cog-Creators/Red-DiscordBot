@@ -1483,6 +1483,10 @@ class Audio:
         voice_channel = author.voice_channel
         channel = ctx.message.channel
 
+        if "www.youtube.com/playlist" in url:
+            await self.bot.send_message(channel, "Use [p]playlist to manage playlist urls.")
+            return
+
         # Checking if playing in current server
 
         if self.is_playing(server):
