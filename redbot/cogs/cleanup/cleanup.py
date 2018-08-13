@@ -68,12 +68,6 @@ class Cleanup:
         - The message is less than 14 days old
         - The message is not pinned
         """
-        if after is not None:
-            log.error(
-                "The `after` parameter for the `Cleanup.get_messages_for_deletion` method is "
-                "currently broken, see PRs #1980 and #2004 for details."
-            )
-
         to_delete = []
         too_old = False
 
@@ -244,34 +238,22 @@ class Cleanup:
             await ctx.send(_("This command can only be used on bots with bot accounts."))
             return
 
-        try:
-            message = await channel.get_message(message_id)
-        except discord.NotFound:
+        after = await channel.get_message(message_id)
+
+        if not after:
             await ctx.send(_("Message not found."))
             return
 
-        if (ctx.message.created_at - message.created_at).days >= 14:
-            await ctx.send("The specified message must be less than 14 days old.")
-            return
-
-        if not delete_pinned:
-            pinned_msgs = await channel.pins()
-            to_exclude = set(m for m in pinned_msgs if m.created_at > message.created_at)
-        else:
-            to_exclude = None
-
-        if to_exclude:
-            to_delete = await channel.history(limit=None, after=message).flatten()
-            to_delete = set(to_delete) - to_exclude
-            await channel.delete_messages(to_delete)
-            num_deleted = len(to_delete)
-        else:
-            num_deleted = len(await channel.purge(limit=None, after=message))
+        to_delete = await self.get_messages_for_deletion(
+            ctx, channel, 0, limit=None, after=after, delete_pinned=delete_pinned
+        )
 
         reason = "{}({}) deleted {} messages in channel {}.".format(
-            author.name, author.id, num_deleted, channel.name
+            author.name, author.id, len(to_delete), channel.name
         )
         log.info(reason)
+
+        await mass_purge(to_delete, channel)
 
     @cleanup.command()
     @commands.guild_only()
