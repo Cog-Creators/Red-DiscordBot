@@ -995,13 +995,21 @@ class Config:
         ret = {}
         if guild is None:
             group = self._get_base_group(self.MEMBER)
-            dict_ = await group()
-            for guild_id, guild_data in dict_.items():
-                ret[int(guild_id)] = self._all_members_from_guild(group, guild_data)
+            try:
+                dict_ = await self.driver.get(*group.identifiers)
+            except KeyError:
+                pass
+            else:
+                for guild_id, guild_data in dict_.items():
+                    ret[int(guild_id)] = self._all_members_from_guild(group, guild_data)
         else:
             group = self._get_base_group(self.MEMBER, guild.id)
-            guild_data = await group()
-            ret = self._all_members_from_guild(group, guild_data)
+            try:
+                guild_data = await self.driver.get(*group.identifiers)
+            except KeyError:
+                pass
+            else:
+                ret = self._all_members_from_guild(group, guild_data)
         return ret
 
     async def _clear_scope(self, *scopes: str):
