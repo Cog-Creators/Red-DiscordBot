@@ -609,9 +609,9 @@ class Downloader:
                 if "@" in url: # Specific branch
                     url, branch = url.rsplit("@", maxsplit=1)
                 if branch is None:
-                    p = run(["git", "clone", url, folder])
+                    p = run(["git", "clone", "--recursive", url, folder])
                 else:
-                    p = run(["git", "clone", "-b", branch, url, folder])
+                    p = run(["git", "clone", "--recursive", "-b", branch, url, folder])
                 if p.returncode != 0:
                     raise CloningError()
                 self.populate_list(name)
@@ -633,6 +633,9 @@ class Downloader:
                 p = run(["git", "-C", folder, "pull", "-q", "--ff-only"])
                 if p.returncode != 0:
                     raise UpdateError("Error pulling updates")
+                p = run(["git", "submodule", "update", "--recursive", "--remote"])
+                if p.returncode != 0:
+                    raise UpdateError("Unable to recursively update submodules")
                 p = run(rpcmd, stdout=PIPE)
                 if p.returncode != 0:
                     raise UpdateError("Unable to determine new commit hash")
