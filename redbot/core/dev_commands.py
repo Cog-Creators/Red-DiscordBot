@@ -3,6 +3,7 @@ import inspect
 import io
 import textwrap
 import traceback
+import re
 from contextlib import redirect_stdout
 from copy import copy
 
@@ -21,6 +22,8 @@ https://github.com/Rapptz/RoboDanny/blob/master/cogs/repl.py
 
 _ = Translator("Dev", __file__)
 
+START_CODE_BLOCK_RE = re.compile(r"^((```py)(?=\s)|(```))")
+
 
 class Dev:
     """Various development focused utilities."""
@@ -34,7 +37,7 @@ class Dev:
         """Automatically removes code blocks from the code."""
         # remove ```py\n```
         if content.startswith("```") and content.endswith("```"):
-            return "\n".join(content.split("\n")[1:-1])
+            return START_CODE_BLOCK_RE.sub("", content)[:-3]
 
         # remove `foo`
         return content.strip("` \n")
