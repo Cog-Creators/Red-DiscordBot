@@ -380,7 +380,9 @@ class Group(Value):
         """
         return self()
 
-    def nested_update(self, current: collections.Mapping, defaults: Dict[str, Any]=...) -> Dict[str, Any]:
+    def nested_update(
+        self, current: collections.Mapping, defaults: Dict[str, Any] = ...
+    ) -> Dict[str, Any]:
         """Robust updater for nested dictionaries
 
         If no defaults are passed, then the instance attribute 'defaults'
@@ -863,7 +865,7 @@ class Config:
         """
         return self._get_base_group(group_identifier, *identifiers)
 
-    async def _all_from_scope(self, scope: str):
+    async def _all_from_scope(self, scope: str) -> Dict[int, Dict[Any, Any]]:
         """Get a dict of all values from a particular scope of data.
 
         :code:`scope` must be one of the constants attributed to
@@ -875,12 +877,18 @@ class Config:
         overwritten.
         """
         group = self._get_base_group(scope)
-        dict_ = await group()
         ret = {}
-        for k, v in dict_.items():
-            data = group.defaults
-            data.update(v)
-            ret[int(k)] = data
+
+        try:
+            dict_ = await self.driver.get(*group.identifiers)
+        except KeyError:
+            pass
+        else:
+            for k, v in dict_.items():
+                data = group.defaults
+                data.update(v)
+                ret[int(k)] = data
+
         return ret
 
     async def all_guilds(self) -> dict:
