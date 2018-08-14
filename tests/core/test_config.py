@@ -457,3 +457,12 @@ async def test_all_works_as_ctxmgr(config):
 
     subgroup = await config.subgroup()
     assert subgroup == {"foo": True, "bar": False}
+
+
+@pytest.mark.asyncio
+async def test_get_raw_mixes_defaults(config):
+    config.register_global(subgroup={"foo": True})
+    await config.subgroup.set_raw("bar", value=False)
+
+    subgroup = await config.get_raw("subgroup")
+    assert subgroup == {"foo": True, "bar": False}
