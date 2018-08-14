@@ -405,10 +405,7 @@ async def get_account(member: Union[discord.Member, discord.User]) -> Account:
         all_accounts = await _conf.all_members(member.guild)
 
     if member.id not in all_accounts:
-        acc_data = {
-            "name": member.display_name,
-            "created_at": _DEFAULT_MEMBER["created_at"],
-        }
+        acc_data = {"name": member.display_name, "created_at": _DEFAULT_MEMBER["created_at"]}
         try:
             acc_data["balance"] = await get_default_balance(member.guild)
         except AttributeError:
