@@ -430,3 +430,30 @@ async def test_set_then_mutate(config):
     list1.append("foo")
     list1 = await config.list1()
     assert "foo" not in list1
+
+
+@pytest.mark.asyncio
+async def test_call_group_fills_defaults(config):
+    config.register_global(subgroup={"foo": True})
+    subgroup = await config.subgroup()
+    assert "foo" in subgroup
+
+
+@pytest.mark.asyncio
+async def test_group_call_ctxmgr_writes(config):
+    config.register_global(subgroup={"foo": True})
+    async with config.subgroup() as subgroup:
+        subgroup["bar"] = False
+
+    subgroup = await config.subgroup()
+    assert subgroup == {"foo": True, "bar": False}
+
+
+@pytest.mark.asyncio
+async def test_all_works_as_ctxmgr(config):
+    config.register_global(subgroup={"foo": True})
+    async with config.subgroup.all() as subgroup:
+        subgroup["bar"] = False
+
+    subgroup = await config.subgroup()
+    assert subgroup == {"foo": True, "bar": False}
