@@ -178,7 +178,7 @@ def red(config_fr):
 
     yield red
 
-    red.http._session.close()
+    red.http._session.detach()
 
 
 # endregion
