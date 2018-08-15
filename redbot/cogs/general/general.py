@@ -260,9 +260,9 @@ class General:
                     embed.description = description
 
                     embed.set_footer(
-                        text=_(
-                            "{} Down / {} Up , Powered by urban dictionary"
-                        ).format(ud["thumbs_down"], ud["thumbs_up"])
+                        text=_("{} Down / {} Up , Powered by urban dictionary").format(
+                            ud["thumbs_down"], ud["thumbs_up"]
+                        )
                     )
                     embeds.append(embed)
 

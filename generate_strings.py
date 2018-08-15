@@ -5,12 +5,7 @@ import sys
 
 
 def main():
-    args = [
-        "--command-docstrings",
-        "--verbose",
-        "--recursive",
-        "redbot",
-    ]
+    args = ["--command-docstrings", "--verbose", "--recursive", "redbot"]
     print(f"Running command `redgettext {' '.join(args)}`")
     returncode = redgettext.main(args)
     print(f"redgettext exited with code {returncode}")
