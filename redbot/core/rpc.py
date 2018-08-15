@@ -2,7 +2,7 @@ import asyncio
 
 from aiohttp import web
 from aiohttp_json_rpc import JsonRpc
-from aiohttp_json_rpc.rpc import unpack_request_args
+from aiohttp_json_rpc.rpc import JsonRpcMethod
 
 import logging
 
@@ -11,7 +11,7 @@ log = logging.getLogger("red.rpc")
 __all__ = ["RPC", "RPCMixin", "get_name"]
 
 
-def get_name(func, prefix=None):
+def get_name(func, prefix=""):
     class_name = prefix or func.__self__.__class__.__name__.lower()
     func_name = func.__name__.strip("_")
     if class_name == "redrpc":
@@ -24,13 +24,13 @@ class RedRpc(JsonRpc):
         super().__init__(*args, **kwargs)
         self.add_methods(("", self.get_method_info))
 
-    def _add_method(self, method, prefix=""):
+    def _add_method(self, method, name="", prefix=""):
         if not asyncio.iscoroutinefunction(method):
             return
 
-        name = get_name(method, prefix)
+        name = name or get_name(method, prefix)
 
-        self.methods[name] = method
+        self.methods[name] = JsonRpcMethod(method)
 
     def remove_method(self, method):
         meth_name = get_name(method)
@@ -90,7 +90,7 @@ class RPC:
         if not asyncio.iscoroutinefunction(method):
             raise TypeError("RPC methods must be coroutines.")
 
-        self._rpc.add_methods((prefix, unpack_request_args(method)))
+        self._rpc.add_methods((prefix, method))
 
     def add_multi_method(self, *methods, prefix: str = None):
         if not all(asyncio.iscoroutinefunction(m) for m in methods):
@@ -111,7 +111,7 @@ class RPCMixin:
         super().__init__(**kwargs)
         self.rpc = RPC()
 
-        self.rpc_handlers = {}  # Lowered cog name to method
+        self.rpc_handlers = {}  # Uppercase cog name to method
 
     def register_rpc_handler(self, method):
         """
@@ -132,6 +132,7 @@ class RPCMixin:
         self.rpc.add_method(method)
 
         cog_name = method.__self__.__class__.__name__.upper()
+
         if cog_name not in self.rpc_handlers:
             self.rpc_handlers[cog_name] = []
 

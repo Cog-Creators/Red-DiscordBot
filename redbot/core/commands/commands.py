@@ -71,7 +71,9 @@ class Command(commands.Command):
             cmd = cmd.parent
         return sorted(entries, key=lambda x: len(x.qualified_name), reverse=True)
 
-    async def do_conversion(self, ctx: "Context", converter, argument: str):
+    async def do_conversion(
+        self, ctx: "Context", converter, argument: str, param: inspect.Parameter
+    ):
         """Convert an argument according to its type annotation.
 
         Raises
@@ -90,14 +92,14 @@ class Command(commands.Command):
             return argument
 
         try:
-            return await super().do_conversion(ctx, converter, argument)
+            return await super().do_conversion(ctx, converter, argument, param)
         except commands.BadArgument as exc:
-            raise ConversionFailure(converter, argument, *exc.args) from exc
+            raise ConversionFailure(converter, argument, param, *exc.args) from exc
         except ValueError as exc:
             # Some common converters need special treatment...
             if converter in (int, float):
                 message = _('"{argument}" is not a number.').format(argument=argument)
-                raise ConversionFailure(converter, argument, message) from exc
+                raise ConversionFailure(converter, argument, param, message) from exc
 
             # We should expose anything which might be a bug in the converter
             raise exc
@@ -137,11 +139,10 @@ class Group(Command, commands.Group):
     """
 
     def __init__(self, *args, **kwargs):
-        self.autohelp = kwargs.pop("autohelp", False)
+        self.autohelp = kwargs.pop("autohelp", True)
         super().__init__(*args, **kwargs)
 
     async def invoke(self, ctx):
-
         view = ctx.view
         previous = view.index
         view.skip_ws()
@@ -154,6 +155,7 @@ class Group(Command, commands.Group):
 
         if ctx.invoked_subcommand is None or self == ctx.invoked_subcommand:
             if self.autohelp and not self.invoke_without_command:
+                await self._verify_checks(ctx)
                 await ctx.send_help()
 
         await super().invoke(ctx)

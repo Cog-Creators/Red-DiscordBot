@@ -11,8 +11,8 @@ from pathlib import Path
 
 log = logging.getLogger("red")
 
-PRETTY = {"indent": 4, "sort_keys": True, "separators": (",", " : ")}
-MINIFIED = {"sort_keys": True, "separators": (",", ":")}
+PRETTY = {"indent": 4, "sort_keys": False, "separators": (",", " : ")}
+MINIFIED = {"sort_keys": False, "separators": (",", ":")}
 
 
 class JsonIO:

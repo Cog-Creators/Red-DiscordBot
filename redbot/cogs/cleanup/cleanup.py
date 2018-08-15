@@ -68,14 +68,20 @@ class Cleanup:
         - The message is less than 14 days old
         - The message is not pinned
         """
+        if after is not None:
+            log.error(
+                "The `after` parameter for the `Cleanup.get_messages_for_deletion` method is "
+                "currently broken, see PRs #1980 and #2004 for details."
+            )
+
         to_delete = []
         too_old = False
 
-        while not too_old and len(to_delete) - 1 < number:
+        while not too_old and len(to_delete) < number:
             message = None
             async for message in channel.history(limit=limit, before=before, after=after):
                 if (
-                    (not number or len(to_delete) - 1 < number)
+                    (not number or len(to_delete) < number)
                     and check(message)
                     and (ctx.message.created_at - message.created_at).days < 14
                     and (delete_pinned or not message.pinned)
@@ -92,7 +98,7 @@ class Cleanup:
                 before = message
         return to_delete
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @checks.mod_or_permissions(manage_messages=True)
     async def cleanup(self, ctx: commands.Context):
         """Deletes messages."""
@@ -100,7 +106,6 @@ class Cleanup:
 
     @cleanup.command()
     @commands.guild_only()
-    @commands.bot_has_permissions(manage_messages=True)
     async def text(
         self, ctx: commands.Context, text: str, number: int, delete_pinned: bool = False
     ):
@@ -112,6 +117,10 @@ class Cleanup:
         Remember to use double quotes."""
 
         channel = ctx.channel
+        if not channel.permissions_for(ctx.guild.me).manage_messages:
+            await ctx.send("I need the Manage Messages permission to do this.")
+            return
+
         author = ctx.author
         is_bot = self.bot.user.bot
 
@@ -150,7 +159,6 @@ class Cleanup:
 
     @cleanup.command()
     @commands.guild_only()
-    @commands.bot_has_permissions(manage_messages=True)
     async def user(
         self, ctx: commands.Context, user: str, number: int, delete_pinned: bool = False
     ):
@@ -159,6 +167,10 @@ class Cleanup:
         Examples:
         cleanup user @\u200bTwentysix 2
         cleanup user Red 6"""
+        channel = ctx.channel
+        if not channel.permissions_for(ctx.guild.me).manage_messages:
+            await ctx.send("I need the Manage Messages permission to do this.")
+            return
 
         member = None
         try:
@@ -171,7 +183,6 @@ class Cleanup:
         else:
             _id = member.id
 
-        channel = ctx.channel
         author = ctx.author
         is_bot = self.bot.user.bot
 
@@ -212,7 +223,6 @@ class Cleanup:
 
     @cleanup.command()
     @commands.guild_only()
-    @commands.bot_has_permissions(manage_messages=True)
     async def after(self, ctx: commands.Context, message_id: int, delete_pinned: bool = False):
         """Deletes all messages after specified message.
 
@@ -224,6 +234,9 @@ class Cleanup:
         """
 
         channel = ctx.channel
+        if not channel.permissions_for(ctx.guild.me).manage_messages:
+            await ctx.send("I need the Manage Messages permission to do this.")
+            return
         author = ctx.author
         is_bot = self.bot.user.bot
 
@@ -231,26 +244,37 @@ class Cleanup:
             await ctx.send(_("This command can only be used on bots with bot accounts."))
             return
 
-        after = await channel.get_message(message_id)
-
-        if not after:
+        try:
+            message = await channel.get_message(message_id)
+        except discord.NotFound:
             await ctx.send(_("Message not found."))
             return
 
-        to_delete = await self.get_messages_for_deletion(
-            ctx, channel, 0, limit=None, after=after, delete_pinned=delete_pinned
-        )
+        if (ctx.message.created_at - message.created_at).days >= 14:
+            await ctx.send("The specified message must be less than 14 days old.")
+            return
+
+        if not delete_pinned:
+            pinned_msgs = await channel.pins()
+            to_exclude = set(m for m in pinned_msgs if m.created_at > message.created_at)
+        else:
+            to_exclude = None
+
+        if to_exclude:
+            to_delete = await channel.history(limit=None, after=message).flatten()
+            to_delete = set(to_delete) - to_exclude
+            await channel.delete_messages(to_delete)
+            num_deleted = len(to_delete)
+        else:
+            num_deleted = len(await channel.purge(limit=None, after=message))
 
         reason = "{}({}) deleted {} messages in channel {}.".format(
-            author.name, author.id, len(to_delete), channel.name
+            author.name, author.id, num_deleted, channel.name
         )
         log.info(reason)
 
-        await mass_purge(to_delete, channel)
-
     @cleanup.command()
     @commands.guild_only()
-    @commands.bot_has_permissions(manage_messages=True)
     async def messages(self, ctx: commands.Context, number: int, delete_pinned: bool = False):
         """Deletes last X messages.
 
@@ -258,6 +282,9 @@ class Cleanup:
         cleanup messages 26"""
 
         channel = ctx.channel
+        if not channel.permissions_for(ctx.guild.me).manage_messages:
+            await ctx.send("I need the Manage Messages permission to do this.")
+            return
         author = ctx.author
 
         is_bot = self.bot.user.bot
@@ -284,11 +311,13 @@ class Cleanup:
 
     @cleanup.command(name="bot")
     @commands.guild_only()
-    @commands.bot_has_permissions(manage_messages=True)
     async def cleanup_bot(self, ctx: commands.Context, number: int, delete_pinned: bool = False):
         """Cleans up command messages and messages from the bot."""
 
-        channel = ctx.message.channel
+        channel = ctx.channel
+        if not channel.permissions_for(ctx.guild.me).manage_messages:
+            await ctx.send("I need the Manage Messages permission to do this.")
+            return
         author = ctx.message.author
         is_bot = self.bot.user.bot
 
@@ -412,7 +441,7 @@ class Cleanup:
         if author == self.bot.user:
             to_delete.append(ctx.message)
 
-        if channel.name:
+        if ctx.guild:
             channel_name = "channel " + channel.name
         else:
             channel_name = str(channel)
