@@ -55,6 +55,7 @@ jobs:
       - echo "deb https://artifacts.crowdin.com/repo/deb/ /" | sudo tee -a /etc/apt/sources.list
       - sudo apt-get update -qq
       - sudo apt-get install -y crowdin
+      - pip install redgettext==2.0
       deploy:
       - provider: script
         script: python3 ./generate_strings.py

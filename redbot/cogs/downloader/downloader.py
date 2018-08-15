@@ -296,10 +296,8 @@ class Downloader:
         elif cog.min_python_version > sys.version_info:
             await ctx.send(
                 _(
-                    "This cog requires at least python version {}, aborting install.".format(
-                        ".".join([str(n) for n in cog.min_python_version])
-                    )
-                )
+                    "This cog requires at least python version {}, aborting install."
+                ).format(".".join([str(n) for n in cog.min_python_version]))
             )
             return
 
