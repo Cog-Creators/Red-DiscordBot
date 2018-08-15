@@ -1,6 +1,7 @@
 *.json
 *.exe
 *.dll
+*.pot
 .data
 !/tests/cogs/dataconverter/data/**/*.json
 

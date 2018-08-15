@@ -58,7 +58,7 @@ jobs:
       - pip install redgettext==2.0
       deploy:
       - provider: script
-        script: python3 ./generate_strings.py
+        script: make gettext
         skip_cleanup: true
         on:
           repo: Cog-Creators/Red-DiscordBot
