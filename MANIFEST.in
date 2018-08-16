@@ -1,5 +1,5 @@
 include README.rst
 include LICENSE
-include requirements.txt
+include dependency_links.txt
 include discord/bin/*.dll
 include redbot/cogs/audio/application.yml
