@@ -15,15 +15,14 @@ _ = Translator("Alias", __file__)
 
 @cog_i18n(_)
 class Alias(commands.Cog):
-    """
-    Alias
-    
-    Aliases are per server shortcuts for commands. They
-        can act as both a lambda (storing arguments for repeated use)
-        or as simply a shortcut to saying "x y z".
-    
+    """Create aliases for commands.
+
+    Aliases are alternative names shortcuts for commands. They
+    can act as both a lambda (storing arguments for repeated use)
+    or as simply a shortcut to saying "x y z".
+
     When run, aliases will accept any additional arguments
-        and append them to the stored alias
+    and append them to the stored alias.
     """
 
     default_global_settings = {"entries": []}
@@ -114,9 +113,8 @@ class Alias(commands.Cog):
         return False
 
     async def get_prefix(self, message: discord.Message) -> str:
-        """
-        Tries to determine what prefix is used in a message object.
-            Looks to identify from longest prefix to smallest.
+        """Tries to determine what prefix is used in a message object.
+        Looks to identify from longest prefix to smallest.
 
             Will raise ValueError if no prefix is found.
         :param message: Message object
@@ -177,23 +175,19 @@ class Alias(commands.Cog):
     @commands.group()
     @commands.guild_only()
     async def alias(self, ctx: commands.Context):
-        """Manage per-server aliases for commands"""
+        """Manage per-server aliases for commands."""
         pass
 
     @alias.group(name="global")
     async def global_(self, ctx: commands.Context):
-        """
-        Manage global aliases.
-        """
+        """Manage global aliases."""
         pass
 
     @checks.mod_or_permissions(manage_guild=True)
     @alias.command(name="add")
     @commands.guild_only()
     async def _add_alias(self, ctx: commands.Context, alias_name: str, *, command):
-        """
-        Add an alias for a command.
-        """
+        """Add an alias for a command."""
         # region Alias Add Validity Checking
         is_command = self.is_command(alias_name)
         if is_command:
@@ -242,9 +236,7 @@ class Alias(commands.Cog):
     @checks.is_owner()
     @global_.command(name="add")
     async def _add_global_alias(self, ctx: commands.Context, alias_name: str, *, command):
-        """
-        Add a global alias for a command.
-        """
+        """Add a global alias for a command."""
         # region Alias Add Validity Checking
         is_command = self.is_command(alias_name)
         if is_command:
@@ -292,7 +284,7 @@ class Alias(commands.Cog):
     @alias.command(name="help")
     @commands.guild_only()
     async def _help_alias(self, ctx: commands.Context, alias_name: str):
-        """Tries to execute help for the base command of the alias"""
+        """Try to execute help for the base command of the alias."""
         is_alias, alias = await self.is_alias(ctx.guild, alias_name=alias_name)
         if is_alias:
             base_cmd = alias.command[0]
@@ -308,7 +300,7 @@ class Alias(commands.Cog):
     @alias.command(name="show")
     @commands.guild_only()
     async def _show_alias(self, ctx: commands.Context, alias_name: str):
-        """Shows what command the alias executes."""
+        """Show what command the alias executes."""
         is_alias, alias = await self.is_alias(ctx.guild, alias_name)
 
         if is_alias:
@@ -324,14 +316,12 @@ class Alias(commands.Cog):
     @alias.command(name="del")
     @commands.guild_only()
     async def _del_alias(self, ctx: commands.Context, alias_name: str):
-        """
-        Deletes an existing alias on this server.
-        """
+        """Delete an existing alias on this server."""
         aliases = await self.unloaded_aliases(ctx.guild)
         try:
             next(aliases)
         except StopIteration:
-            await ctx.send(_("There are no aliases on this guild."))
+            await ctx.send(_("There are no aliases on this server."))
             return
 
         if await self.delete_alias(ctx, alias_name):
@@ -344,9 +334,7 @@ class Alias(commands.Cog):
     @checks.is_owner()
     @global_.command(name="del")
     async def _del_global_alias(self, ctx: commands.Context, alias_name: str):
-        """
-        Deletes an existing global alias.
-        """
+        """Delete an existing global alias."""
         aliases = await self.unloaded_global_aliases()
         try:
             next(aliases)
@@ -364,9 +352,7 @@ class Alias(commands.Cog):
     @alias.command(name="list")
     @commands.guild_only()
     async def _list_alias(self, ctx: commands.Context):
-        """
-        Lists the available aliases on this server.
-        """
+        """List the available aliases on this server."""
         names = [_("Aliases:")] + sorted(
             ["+ " + a.name for a in (await self.unloaded_aliases(ctx.guild))]
         )
@@ -377,9 +363,7 @@ class Alias(commands.Cog):
 
     @global_.command(name="list")
     async def _list_global_alias(self, ctx: commands.Context):
-        """
-        Lists the available global aliases on this bot.
-        """
+        """List the available global aliases on this bot."""
         names = [_("Aliases:")] + sorted(
             ["+ " + a.name for a in await self.unloaded_global_aliases()]
         )
