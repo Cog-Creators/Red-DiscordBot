@@ -67,7 +67,7 @@ class Bank(commands.Cog):
     @checks.guildowner_or_permissions(administrator=True)
     @commands.group(autohelp=True)
     async def bankset(self, ctx: commands.Context):
-        """Base command for bank settings"""
+        """Base command for bank settings."""
         if ctx.invoked_subcommand is None:
             if await bank.is_global():
                 bank_name = await bank._conf.bank_name()
@@ -91,9 +91,11 @@ class Bank(commands.Cog):
     @bankset.command(name="toggleglobal")
     @checks.is_owner()
     async def bankset_toggleglobal(self, ctx: commands.Context, confirm: bool = False):
-        """Toggles whether the bank is global or not
-        If the bank is global, it will become per-server
-        If the bank is per-server, it will become global"""
+        """Toggle whether the bank is global or not.
+
+        If the bank is global, it will become per-server.
+        If the bank is per-server, it will become global.
+        """
         cur_setting = await bank.is_global()
 
         word = _("per-server") if cur_setting else _("global")
@@ -111,14 +113,14 @@ class Bank(commands.Cog):
     @bankset.command(name="bankname")
     @check_global_setting_guildowner()
     async def bankset_bankname(self, ctx: commands.Context, *, name: str):
-        """Set the bank's name"""
+        """Set the bank's name."""
         await bank.set_bank_name(name, ctx.guild)
         await ctx.send(_("Bank name has been set to: {name}").format(name=name))
 
     @bankset.command(name="creditsname")
     @check_global_setting_guildowner()
     async def bankset_creditsname(self, ctx: commands.Context, *, name: str):
-        """Set the name for the bank's currency"""
+        """Set the name for the bank's currency."""
         await bank.set_currency_name(name, ctx.guild)
         await ctx.send(_("Currency name has been set to: {name}").format(name=name))
 

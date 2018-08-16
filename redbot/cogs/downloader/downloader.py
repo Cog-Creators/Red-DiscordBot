@@ -8,7 +8,7 @@ from sys import path as syspath
 from typing import Tuple, Union, Iterable
 
 import discord
-from redbot.core import checks, commands, Config
+from redbot.core import checks, commands, Config, checks, commands
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
@@ -193,9 +193,7 @@ class Downloader(commands.Cog):
     @commands.command()
     @checks.is_owner()
     async def pipinstall(self, ctx, *deps: str):
-        """
-        Installs a group of dependencies using pip.
-        """
+        """Install a group of dependencies using pip."""
         repo = Repo("", "", "", Path.cwd(), loop=ctx.bot.loop)
         success = await repo.install_raw_requirements(deps, self.LIB_PATH)
 
@@ -212,18 +210,15 @@ class Downloader(commands.Cog):
     @commands.group()
     @checks.is_owner()
     async def repo(self, ctx):
-        """
-        Command group for managing Downloader repos.
-        """
+        """Repo management commands."""
         pass
 
     @repo.command(name="add")
     async def _repo_add(self, ctx, name: str, repo_url: str, branch: str = None):
-        """
-        Add a new repo to Downloader.
+        """Add a new repo.
 
-        Name can only contain characters A-z, numbers and underscore
-        Branch will default to master if not specified
+        The name can only contain characters A-z, numbers and underscores.
+        The branch will default to master if not specified.
         """
         agreed = await do_install_agreement(ctx)
         if not agreed:
@@ -246,11 +241,9 @@ class Downloader(commands.Cog):
             if repo.install_msg is not None:
                 await ctx.send(repo.install_msg.replace("[p]", ctx.prefix))
 
-    @repo.command(name="delete")
+    @repo.command(name="delete", aliases=["remove"])
     async def _repo_del(self, ctx, repo_name: Repo):
-        """
-        Removes a repo from Downloader and its' files.
-        """
+        """Remove a repo and its files."""
         await self._repo_manager.delete_repo(repo_name.name)
 
         await ctx.send(
@@ -259,9 +252,7 @@ class Downloader(commands.Cog):
 
     @repo.command(name="list")
     async def _repo_list(self, ctx):
-        """
-        Lists all installed repos.
-        """
+        """List all installed repos."""
         repos = self._repo_manager.get_all_repo_names()
         repos = sorted(repos, key=str.lower)
         joined = _("Installed Repos:\n\n")
@@ -274,11 +265,9 @@ class Downloader(commands.Cog):
 
     @repo.command(name="info")
     async def _repo_info(self, ctx, repo_name: Repo):
-        """
-        Lists information about a single repo
-        """
+        """Show information about a repo."""
         if repo_name is None:
-            await ctx.send(_("There is no repo `{repo_name}`").format(repo_name=repo_name.name))
+            await ctx.send(_("Repo `{repo_name}` not found.").format(repo_name=repo_name.name))
             return
 
         msg = _("Information on {repo_name}:\n{description}").format(
@@ -289,28 +278,24 @@ class Downloader(commands.Cog):
     @commands.group()
     @checks.is_owner()
     async def cog(self, ctx):
-        """
-        Command group for managing installable Cogs.
-        """
+        """Cog installation management commands."""
         pass
 
     @cog.command(name="install")
     async def _cog_install(self, ctx, repo_name: Repo, cog_name: str):
-        """
-        Installs a cog from the given repo.
-        """
-        cog = discord.utils.get(repo_name.available_cogs, name=cog_name)  # type: Installable
+        """Install a cog from the given repo."""
+        cog: Installable = discord.utils.get(repo_name.available_cogs, name=cog_name)
         if cog is None:
             await ctx.send(
                 _(
-                    "Error, there is no cog by the name of `{cog_name}` in the `{repo_name}` repo."
+                    "Error: there is no cog by the name of `{cog_name}` in the `{repo_name}` repo."
                 ).format(cog_name=cog_name, repo_name=repo_name.name)
             )
             return
         elif cog.min_python_version > sys.version_info:
             await ctx.send(
-                _("This cog requires at least python version {}, aborting install.").format(
-                    ".".join([str(n) for n in cog.min_python_version])
+                _("This cog requires at least python version {version}, aborting install.").format(
+                    version=".".join([str(n) for n in cog.min_python_version])
                 )
             )
             return
@@ -329,15 +314,16 @@ class Downloader(commands.Cog):
 
         await repo_name.install_libraries(self.SHAREDLIB_PATH)
 
-        await ctx.send(_("`{cog_name}` cog successfully installed.").format(cog_name=cog_name))
+        await ctx.send(_("Cog `{cog_name}` successfully installed.").format(cog_name=cog_name))
         if cog.install_msg is not None:
             await ctx.send(cog.install_msg.replace("[p]", ctx.prefix))
 
     @cog.command(name="uninstall")
     async def _cog_uninstall(self, ctx, cog_name: InstalledCog):
-        """
-        Allows you to uninstall cogs that were previously installed
-            through Downloader.
+        """Uninstall a cog.
+
+        You may only uninstall cogs which were previously installed
+        by Downloader.
         """
         # noinspection PyUnresolvedReferences,PyProtectedMember
         real_name = cog_name.name
@@ -348,7 +334,7 @@ class Downloader(commands.Cog):
             # noinspection PyTypeChecker
             await self._remove_from_installed(cog_name)
             await ctx.send(
-                _("`{real_name}` was successfully removed.").format(real_name=real_name)
+                _("Cog `{cog_name}` was successfully uninstalled.").format(cog_name=real_name)
             )
         else:
             await ctx.send(
@@ -356,14 +342,14 @@ class Downloader(commands.Cog):
                     "That cog was installed but can no longer"
                     " be located. You may need to remove it's"
                     " files manually if it is still usable."
-                )
+                    " Also make sure you've unloaded the cog"
+                    " with `{prefix}unload {cog_name}`."
+                ).format(cog_name=real_name)
             )
 
     @cog.command(name="update")
     async def _cog_update(self, ctx, cog_name: InstalledCog = None):
-        """
-        Updates all cogs or one of your choosing.
-        """
+        """Update all cogs, or one of your choosing."""
         installed_cogs = set(await self.installed_cogs())
 
         async with ctx.typing():
@@ -426,9 +412,7 @@ class Downloader(commands.Cog):
 
     @cog.command(name="list")
     async def _cog_list(self, ctx, repo_name: Repo):
-        """
-        Lists all available cogs from a single repo.
-        """
+        """List all available cogs from a single repo."""
         installed = await self.installed_cogs()
         installed_str = ""
         if installed:
@@ -453,9 +437,7 @@ class Downloader(commands.Cog):
 
     @cog.command(name="info")
     async def _cog_info(self, ctx, repo_name: Repo, cog_name: str):
-        """
-        Lists information about a single cog.
-        """
+        """List information about a single cog."""
         cog = discord.utils.get(repo_name.available_cogs, name=cog_name)
         if cog is None:
             await ctx.send(
@@ -549,9 +531,9 @@ class Downloader(commands.Cog):
 
     @commands.command()
     async def findcog(self, ctx: commands.Context, command_name: str):
-        """
-        Figures out which cog a command comes from. Only works with loaded
-            cogs.
+        """Find which cog a command comes from.
+
+        This will only work with loaded cogs.
         """
         command = ctx.bot.all_commands.get(command_name)
 

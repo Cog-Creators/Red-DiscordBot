@@ -54,7 +54,7 @@ class CommandObj:
         intro = _(
             "Welcome to the interactive random {cc} maker!\n"
             "Every message you send will be added as one of the random "
-            "responses to choose from once this {} is "
+            "responses to choose from once this {cc} is "
             "triggered. To exit this interactive menu, type `{quit}`"
         ).format(cc="customcommand", quit="exit()")
         await ctx.send(intro)
@@ -196,30 +196,26 @@ class CustomCommands(commands.Cog):
     @commands.group(aliases=["cc"])
     @commands.guild_only()
     async def customcom(self, ctx: commands.Context):
-        """Custom commands management"""
+        """Custom commands management."""
         pass
 
-    @customcom.group(name="add")
+    @customcom.group(name="create", aliases=["add"])
     @checks.mod_or_permissions(administrator=True)
-    async def cc_add(self, ctx: commands.Context):
-        """
-        Adds a new custom command
+    async def cc_create(self, ctx: commands.Context):
+        """Create custom commands.
 
-        CCs can be enhanced with arguments:
-        https://red-discordbot.readthedocs.io/en/v3-develop/cog_customcom.html
+        CCs can be enhanced with arguments, see the guide
+        [here](https://red-discordbot.readthedocs.io/en/v3-develop/cog_customcom.html).
         """
         pass
 
-    @cc_add.command(name="random")
+    @cc_create.command(name="random")
     @checks.mod_or_permissions(administrator=True)
-    async def cc_add_random(self, ctx: commands.Context, command: str.lower):
-        """
-        Create a CC where it will randomly choose a response!
+    async def cc_create_random(self, ctx: commands.Context, command: str.lower):
+        """Create a CC where it will randomly choose a response!
 
-        Note: This is interactive
+        Note: This command is interactive.
         """
-        responses = []
-
         responses = await self.commandobj.get_responses(ctx=ctx)
         try:
             await self.commandobj.create(ctx=ctx, command=command, response=responses)
@@ -233,16 +229,16 @@ class CustomCommands(commands.Cog):
 
         # await ctx.send(str(responses))
 
-    @cc_add.command(name="simple")
+    @cc_create.command(name="simple")
     @checks.mod_or_permissions(administrator=True)
-    async def cc_add_simple(self, ctx, command: str.lower, *, text: str):
-        """Adds a simple custom command
+    async def cc_create_simple(self, ctx, command: str.lower, *, text: str):
+        """Add a simple custom command.
 
         Example:
-        [p]customcom add simple yourcommand Text you want
+        - `[p]customcom create simple yourcommand Text you want`
         """
         if command in self.bot.all_commands:
-            await ctx.send(_("That command is already a standard command."))
+            await ctx.send(_("There already exists a bot command with the same name."))
             return
         try:
             await self.commandobj.create(ctx=ctx, command=command, response=text)
@@ -261,13 +257,14 @@ class CustomCommands(commands.Cog):
     async def cc_cooldown(
         self, ctx, command: str.lower, cooldown: int = None, *, per: str.lower = "member"
     ):
-        """
-        Sets, edits, or views cooldowns for a custom command
+        """Set, edit, or view the cooldown for a custom command.
 
-        You may set cooldowns per member, channel, or guild.
-        Multiple cooldowns may be set. All cooldowns must be cooled to call the custom command.
+        You may set cooldowns per member, channel, or guild. Multiple
+        cooldowns may be set. All cooldowns must be cooled to call the
+        custom command.
+
         Example:
-        [p]customcom cooldown yourcommand 30
+        - `[p]customcom cooldown yourcommand 30`
         """
         if cooldown is None:
             try:
@@ -294,17 +291,18 @@ class CustomCommands(commands.Cog):
         except NotFound:
             await ctx.send(
                 _("That command doesn't exist. Use `{command}` to add it.").format(
-                    command="{}customcom add".format(ctx.prefix)
+                    command="{}customcom create".format(ctx.prefix)
                 )
             )
 
     @customcom.command(name="delete")
     @checks.mod_or_permissions(administrator=True)
     async def cc_delete(self, ctx, command: str.lower):
-        """Deletes a custom command
-
+        """Delete a custom command
+.
         Example:
-        [p]customcom delete yourcommand"""
+        - `[p]customcom delete yourcommand`
+        """
         try:
             await self.commandobj.delete(ctx=ctx, command=command)
             await ctx.send(_("Custom command successfully deleted."))
@@ -314,18 +312,20 @@ class CustomCommands(commands.Cog):
     @customcom.command(name="edit")
     @checks.mod_or_permissions(administrator=True)
     async def cc_edit(self, ctx, command: str.lower, *, text: str = None):
-        """Edits a custom command's response
+        """Edit a custom command.
 
         Example:
-        [p]customcom edit yourcommand Text you want
+        - `[p]customcom edit yourcommand Text you want`
         """
+        command = command.lower()
+
         try:
             await self.commandobj.edit(ctx=ctx, command=command, response=text)
             await ctx.send(_("Custom command successfully edited."))
         except NotFound:
             await ctx.send(
-                _("That command doesn't exist. Use `{}` to add it.").format(
-                    "{}customcom add".format(ctx.prefix)
+                _("That command doesn't exist. Use `{command}` to add it.").format(
+                    command="{}customcom create".format(ctx.prefix)
                 )
             )
         except ArgParseError as e:
@@ -333,7 +333,7 @@ class CustomCommands(commands.Cog):
 
     @customcom.command(name="list")
     async def cc_list(self, ctx):
-        """Shows custom commands list"""
+        """List all available custom commands."""
 
         response = await CommandObj.get_commands(self.config.guild(ctx.guild))
 
@@ -342,7 +342,7 @@ class CustomCommands(commands.Cog):
                 _(
                     "There are no custom commands in this server."
                     " Use `{command}` to start adding some."
-                ).format(command="{}customcom add".format(ctx.prefix))
+                ).format(command="{}customcom create".format(ctx.prefix))
             )
             return
 
