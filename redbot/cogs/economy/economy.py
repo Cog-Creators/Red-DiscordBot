@@ -447,32 +447,30 @@ class Economy(commands.Cog):
         """Changes economy module settings"""
         guild = ctx.guild
         if ctx.invoked_subcommand is None:
+            fmt = {}
             if await bank.is_global():
-                slot_min = await self.config.SLOT_MIN()
-                slot_max = await self.config.SLOT_MAX()
-                slot_time = await self.config.SLOT_TIME()
-                payday_time = await self.config.PAYDAY_TIME()
-                payday_amount = await self.config.PAYDAY_CREDITS()
+                fmt["slot_min"] = await self.config.SLOT_MIN()
+                fmt["slot_max"] = await self.config.SLOT_MAX()
+                fmt["slot_time"] = await self.config.SLOT_TIME()
+                fmt["payday_time"] = await self.config.PAYDAY_TIME()
+                fmt["payday_amount"] = await self.config.PAYDAY_CREDITS()
             else:
-                slot_min = await self.config.guild(guild).SLOT_MIN()
-                slot_max = await self.config.guild(guild).SLOT_MAX()
-                slot_time = await self.config.guild(guild).SLOT_TIME()
-                payday_time = await self.config.guild(guild).PAYDAY_TIME()
-                payday_amount = await self.config.guild(guild).PAYDAY_CREDITS()
-            register_amount = await bank.get_default_balance(guild)
+                fmt["slot_min"] = await self.config.guild(guild).SLOT_MIN()
+                fmt["slot_max"] = await self.config.guild(guild).SLOT_MAX()
+                fmt["slot_time"] = await self.config.guild(guild).SLOT_TIME()
+                fmt["payday_time"] = await self.config.guild(guild).PAYDAY_TIME()
+                fmt["payday_amount"] = await self.config.guild(guild).PAYDAY_CREDITS()
+            fmt["register_amount"] = await bank.get_default_balance(guild)
             msg = box(
                 _(
-                    "Minimum slot bid: {}\n"
-                    "Maximum slot bid: {}\n"
-                    "Slot cooldown: {}\n"
-                    "Payday amount: {}\n"
-                    "Payday cooldown: {}\n"
-                    "Amount given at account registration: {}"
-                    ""
-                ).format(
-                    slot_min, slot_max, slot_time, payday_amount, payday_time, register_amount
-                ),
-                _("Current Economy settings:"),
+                    "Current Economy settings:"
+                    "Minimum slot bid: {slot_min}\n"
+                    "Maximum slot bid: {slot_max}\n"
+                    "Slot cooldown: {slot_time}\n"
+                    "Payday amount: {payday_amount}\n"
+                    "Payday cooldown: {payday_time}\n"
+                    "Amount given at account registration: {register_amount}"
+                ).format(**fmt)
             )
             await ctx.send(msg)
 
@@ -488,7 +486,9 @@ class Economy(commands.Cog):
         else:
             await self.config.guild(guild).SLOT_MIN.set(bid)
         credits_name = await bank.get_currency_name(guild)
-        await ctx.send(_("Minimum bid is now {} {}.").format(bid, credits_name))
+        await ctx.send(
+            _("Minimum bid is now {bid} {currency}.").format(bid=bid, currency=credits_name)
+        )
 
     @economyset.command()
     async def slotmax(self, ctx: commands.Context, bid: int):
@@ -503,7 +503,9 @@ class Economy(commands.Cog):
             await self.config.SLOT_MAX.set(bid)
         else:
             await self.config.guild(guild).SLOT_MAX.set(bid)
-        await ctx.send(_("Maximum bid is now {} {}.").format(bid, credits_name))
+        await ctx.send(
+            _("Maximum bid is now {bid} {currency}.").format(bid=bid, currency=credits_name)
+        )
 
     @economyset.command()
     async def slottime(self, ctx: commands.Context, seconds: int):
@@ -513,7 +515,7 @@ class Economy(commands.Cog):
             await self.config.SLOT_TIME.set(seconds)
         else:
             await self.config.guild(guild).SLOT_TIME.set(seconds)
-        await ctx.send(_("Cooldown is now {} seconds.").format(seconds))
+        await ctx.send(_("Cooldown is now {num} seconds.").format(num=seconds))
 
     @economyset.command()
     async def paydaytime(self, ctx: commands.Context, seconds: int):
@@ -524,7 +526,9 @@ class Economy(commands.Cog):
         else:
             await self.config.guild(guild).PAYDAY_TIME.set(seconds)
         await ctx.send(
-            _("Value modified. At least {} seconds must pass between each payday.").format(seconds)
+            _("Value modified. At least {num} seconds must pass between each payday.").format(
+                num=seconds
+            )
         )
 
     @economyset.command()
@@ -539,7 +543,11 @@ class Economy(commands.Cog):
             await self.config.PAYDAY_CREDITS.set(creds)
         else:
             await self.config.guild(guild).PAYDAY_CREDITS.set(creds)
-        await ctx.send(_("Every payday will now give {} {}.").format(creds, credits_name))
+        await ctx.send(
+            _("Every payday will now give {num} {currency}.").format(
+                num=creds, currency=credits_name
+            )
+        )
 
     @economyset.command()
     async def rolepaydayamount(self, ctx: commands.Context, role: discord.Role, creds: int):
@@ -551,9 +559,10 @@ class Economy(commands.Cog):
         else:
             await self.config.role(role).PAYDAY_CREDITS.set(creds)
             await ctx.send(
-                _("Every payday will now give {} {} to people with the role {}.").format(
-                    creds, credits_name, role.name
-                )
+                _(
+                    "Every payday will now give {num} {currency} "
+                    "to people with the role {role_name}."
+                ).format(num=creds, currency=credits_name, role_name=role.name)
             )
 
     @economyset.command()
@@ -565,7 +574,9 @@ class Economy(commands.Cog):
         credits_name = await bank.get_currency_name(guild)
         await bank.set_default_balance(creds, guild)
         await ctx.send(
-            _("Registering an account will now give {} {}.").format(creds, credits_name)
+            _("Registering an account will now give {num} {currency}.").format(
+                num=creds, currency=credits_name
+            )
         )
 
     # What would I ever do without stackoverflow?

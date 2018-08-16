@@ -131,11 +131,23 @@ class General(commands.Cog):
             outcome = cond[(player_choice, red_choice)]
 
         if outcome is True:
-            await ctx.send(_("{} You win {}!").format(red_choice.value, author.mention))
+            await ctx.send(
+                _("{choice} You win {author.mention}!").format(
+                    choice=red_choice.value, author=author
+                )
+            )
         elif outcome is False:
-            await ctx.send(_("{} You lose {}!").format(red_choice.value, author.mention))
+            await ctx.send(
+                _("{choice} You lose {author.mention}!").format(
+                    choice=red_choice.value, author=author
+                )
+            )
         else:
-            await ctx.send(_("{} We're square {}!").format(red_choice.value, author.mention))
+            await ctx.send(
+                _("{choice} We're square {author.mention}!").format(
+                    choice=red_choice.value, author=author
+                )
+            )
 
     @commands.command(name="8", aliases=["8ball"])
     async def _8ball(self, ctx, *, question: str):
@@ -198,12 +210,12 @@ class General(commands.Cog):
         text_channels = len(guild.text_channels)
         voice_channels = len(guild.voice_channels)
         passed = (ctx.message.created_at - guild.created_at).days
-        created_at = _("Since {}. That's over {} days ago!").format(
-            guild.created_at.strftime("%d %b %Y %H:%M"), passed
+        created_at = _("Since {date}. That's over {num} days ago!").format(
+            date=guild.created_at.strftime("%d %b %Y %H:%M"), num=passed
         )
         data = discord.Embed(description=created_at, colour=(await ctx.embed_colour()))
         data.add_field(name=_("Region"), value=str(guild.region))
-        data.add_field(name=_("Users"), value="{}/{}".format(online, total_users))
+        data.add_field(name=_("Users"), value=f"{online}/{total_users}")
         data.add_field(name=_("Text Channels"), value=str(text_channels))
         data.add_field(name=_("Voice Channels"), value=str(voice_channels))
         data.add_field(name=_("Roles"), value=str(len(guild.roles)))
@@ -223,7 +235,7 @@ class General(commands.Cog):
 
     @commands.command()
     async def urban(self, ctx, *, word):
-        """Searches urban dictionary entries using the unofficial api"""
+        """Searches urban dictionary entries using the unofficial API."""
 
         try:
             url = "https://api.urbandictionary.com/v0/define?term=" + str(word).lower()
@@ -236,8 +248,9 @@ class General(commands.Cog):
 
         except:
             await ctx.send(
-                _("No Urban dictionary entries were found or there was an error in the process")
+                _("No Urban dictionary entries were found, or there was an error in the process")
             )
+            return
 
         if data.get("error") != 404:
 
@@ -246,20 +259,20 @@ class General(commands.Cog):
                 embeds = []
                 for ud in data["list"]:
                     embed = discord.Embed()
-                    embed.title = _("{} by {}").format(ud["word"].capitalize(), ud["author"])
+                    embed.title = _("{word} by {author}").format(
+                        word=ud["word"].capitalize(), author=ud["author"]
+                    )
                     embed.url = ud["permalink"]
 
-                    description = "{} \n \n **Example : ** {}".format(
-                        ud["definition"], ud.get("example", "N/A")
-                    )
+                    description = _("{definition}\n\n**Example:** {example}").format(**ud)
                     if len(description) > 2048:
                         description = "{}...".format(description[:2045])
                     embed.description = description
 
                     embed.set_footer(
-                        text=_("{} Down / {} Up , Powered by urban dictionary").format(
-                            ud["thumbs_down"], ud["thumbs_up"]
-                        )
+                        text=_(
+                            "{thumbs_down} Down / {thumbs_up} Up, Powered by Urban Dictionary."
+                        ).format(**ud)
                     )
                     embeds.append(embed)
 
@@ -274,25 +287,17 @@ class General(commands.Cog):
                     )
             else:
                 messages = []
+                ud.set_default("example", "N/A")
                 for ud in data["list"]:
-                    description = _("{} \n \n **Example : ** {}").format(
-                        ud["definition"], ud.get("example", "N/A")
-                    )
+                    description = _("{definition}\n\n**Example:** {example}").format(**ud)
                     if len(description) > 2048:
                         description = "{}...".format(description[:2045])
                     description = description
 
                     message = _(
-                        "<{}> \n {} by {} \n \n {} \n \n {} Down / {} Up, Powered by urban "
-                        "dictionary"
-                    ).format(
-                        ud["permalink"],
-                        ud["word"].capitalize(),
-                        ud["author"],
-                        description,
-                        ud["thumbs_down"],
-                        ud["thumbs_up"],
-                    )
+                        "<{permalink}>\n {word} by {author}\n\n{description}\n\n"
+                        "{thumbs_down} Down / {thumbs_up} Up, Powered by urban dictionary"
+                    ).format(word=ud.pop("word").capitalize(), **ud)
                     messages.append(message)
 
                 if messages is not None and len(messages) > 0:
@@ -306,6 +311,6 @@ class General(commands.Cog):
                     )
         else:
             await ctx.send(
-                _("No Urban dictionary entries were found or there was an error in the process")
+                _("No Urban dictionary entries were found, or there was an error in the process.")
             )
             return

@@ -178,17 +178,25 @@ class Mod(commands.Cog):
             delete_delay = await self.settings.guild(guild).delete_delay()
             reinvite_on_unban = await self.settings.guild(guild).reinvite_on_unban()
             msg = ""
-            msg += "Delete repeats: {}\n".format("Yes" if delete_repeats else "No")
-            msg += "Ban mention spam: {}\n".format(
-                "{} mentions".format(ban_mention_spam)
+            msg += _("Delete repeats: {yes_or_no}\n").format(
+                yes_or_no=_("Yes") if delete_repeats else _("No")
+            )
+            msg += _("Ban mention spam: {num_mentions}\n").format(
+                num_mentions=_("{num} mentions").format(num=ban_mention_spam)
                 if isinstance(ban_mention_spam, int)
-                else "No"
+                else _("No")
             )
-            msg += "Respects hierarchy: {}\n".format("Yes" if respect_hierarchy else "No")
-            msg += "Delete delay: {}\n".format(
-                "{} seconds".format(delete_delay) if delete_delay != -1 else "None"
+            msg += _("Respects hierarchy: {yes_or_no}\n").format(
+                yes_or_no=_("Yes") if respect_hierarchy else _("No")
             )
-            msg += "Reinvite on unban: {}".format("Yes" if reinvite_on_unban else "No")
+            msg += _("Delete delay: {num_seconds}\n").format(
+                num_seconds=_("{num} seconds").format(delete_delay)
+                if delete_delay != -1
+                else _("None")
+            )
+            msg += _("Reinvite on unban: {yes_or_no}\n").format(
+                yes_or_no=_("Yes") if respect_hierarchy else _("No")
+            )
             await ctx.send(box(msg))
 
     @modset.command()
@@ -222,9 +230,9 @@ class Mod(commands.Cog):
             await ctx.send(
                 _(
                     "Autoban for mention spam enabled. "
-                    "Anyone mentioning {} or more different people "
+                    "Anyone mentioning {max_mentions} or more different people "
                     "in a single message will be autobanned."
-                ).format(max_mentions)
+                ).format(max_mentions=max_mentions)
             )
         else:
             cur_setting = await self.settings.guild(guild).ban_mention_spam()
@@ -262,16 +270,16 @@ class Mod(commands.Cog):
             if time == -1:
                 await ctx.send(_("Command deleting disabled."))
             else:
-                await ctx.send(_("Delete delay set to {} seconds.").format(time))
+                await ctx.send(_("Delete delay set to {num} seconds.").format(num=time))
         else:
             delay = await self.settings.guild(guild).delete_delay()
             if delay != -1:
                 await ctx.send(
                     _(
                         "Bot will delete command messages after"
-                        " {} seconds. Set this value to -1 to"
+                        " {num} seconds. Set this value to -1 to"
                         " stop deleting messages"
-                    ).format(delay)
+                    ).format(num=delay)
                 )
             else:
                 await ctx.send(_("I will not delete command messages."))
@@ -287,10 +295,16 @@ class Mod(commands.Cog):
         cur_setting = await self.settings.guild(guild).reinvite_on_unban()
         if not cur_setting:
             await self.settings.guild(guild).reinvite_on_unban.set(True)
-            await ctx.send(_("Users unbanned with {} will be reinvited.").format("[p]unban"))
+            await ctx.send(
+                _("Users unbanned with {command} will be reinvited.").format(f"{ctx.prefix}unban")
+            )
         else:
             await self.settings.guild(guild).reinvite_on_unban.set(False)
-            await ctx.send(_("Users unbanned with {} will not be reinvited.").format("[p]unban"))
+            await ctx.send(
+                _("Users unbanned with {command} will not be reinvited.").format(
+                    f"{ctx.prefix}unban"
+                )
+            )
 
     @commands.command()
     @commands.guild_only()
@@ -305,7 +319,9 @@ class Mod(commands.Cog):
 
         if author == user:
             await ctx.send(
-                _("I cannot let you do that. Self-harm is bad {}").format("\N{PENSIVE FACE}")
+                _("I cannot let you do that. Self-harm is bad {emoji}").format(
+                    emoji="\N{PENSIVE FACE}"
+                )
             )
             return
         elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
@@ -515,9 +531,13 @@ class Mod(commands.Cog):
             try:  # We don't want blocked DMs preventing us from banning
                 msg = await user.send(
                     _(
-                        "You have been temporarily banned from {} until {}. "
-                        "Here is an invite for when your ban expires: {}"
-                    ).format(guild.name, unban_time.strftime("%m-%d-%Y %H:%M:%S"), invite)
+                        "You have been temporarily banned from {server_name} until {date}. "
+                        "Here is an invite for when your ban expires: {invite_link}"
+                    ).format(
+                        server_name=guild.name,
+                        date=unban_time.strftime("%m-%d-%Y %H:%M:%S"),
+                        invite_link=invite,
+                    )
                 )
             except discord.HTTPException:
                 msg = None
@@ -557,7 +577,9 @@ class Mod(commands.Cog):
 
         if author == user:
             await ctx.send(
-                _("I cannot let you do that. Self-harm is bad {}").format("\N{PENSIVE FACE}")
+                _("I cannot let you do that. Self-harm is bad {emoji}").format(
+                    emoji="\N{PENSIVE FACE}"
+                )
             )
             return
         elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
@@ -583,8 +605,8 @@ class Mod(commands.Cog):
                     _(
                         "You have been banned and "
                         "then unbanned as a quick way to delete your messages.\n"
-                        "You can now join the server again. {}"
-                    ).format(invite)
+                        "You can now join the server again. {invite_link}"
+                    ).format(invite_link=invite)
                 )
             except discord.HTTPException:
                 msg = None
@@ -687,26 +709,26 @@ class Mod(commands.Cog):
             invite = await self.get_invite_for_reinvite(ctx)
             if invite:
                 try:
-                    user.send(
+                    await user.send(
                         _(
-                            "You've been unbanned from {}.\n"
-                            "Here is an invite for that server: {}"
-                        ).format(guild.name, invite.url)
+                            "You've been unbanned from {server}.\n"
+                            "Here is an invite for that server: {invite_link}"
+                        ).format(server=guild.name, invite_link=invite.url)
                     )
                 except discord.Forbidden:
                     await ctx.send(
                         _(
                             "I failed to send an invite to that user. "
                             "Perhaps you may be able to send it for me?\n"
-                            "Here's the invite link: {}"
-                        ).format(invite.url)
+                            "Here's the invite link: {invite_link}"
+                        ).format(invite_link=invite.url)
                     )
                 except discord.HTTPException:
                     await ctx.send(
                         _(
                             "Something went wrong when attempting to send that user"
-                            "an invite. Here's the link so you can try: {}"
-                        ).format(invite.url)
+                            "an invite. Here's the link so you can try: {invite_link}"
+                        ).format(invite_link=invite.url)
                     )
 
     @staticmethod
@@ -841,7 +863,9 @@ class Mod(commands.Cog):
             await ctx.send("Done.")
         except discord.Forbidden:
             await ctx.send(
-                _("I cannot do that, I lack the '{}' permission.").format("Manage Nicknames")
+                _("I cannot do that, I lack the '{perm}' permission.").format(
+                    perm="Manage Nicknames"
+                )
             )
 
     @commands.group()
@@ -868,9 +892,7 @@ class Mod(commands.Cog):
                 audit_reason = get_audit_reason(ctx.author, reason)
                 await channel.set_permissions(user, overwrite=overwrites, reason=audit_reason)
                 await ctx.send(
-                    _("Muted {}#{} in channel {}").format(
-                        user.name, user.discriminator, channel.name
-                    )
+                    _("Muted {user} in channel {channel.name}").format(user, channel=channel)
                 )
                 try:
                     await modlog.create_case(
@@ -888,7 +910,9 @@ class Mod(commands.Cog):
                     await ctx.send(e)
                 return
             elif channel.permissions_for(user).speak is False:
-                await ctx.send(_("That user is already muted in {}!").format(channel.name))
+                await ctx.send(
+                    _("That user is already muted in {channel}!").format(channel=channel.name)
+                )
                 return
             else:
                 await ctx.send(_("That user is not in a voice channel right now!"))
@@ -908,10 +932,10 @@ class Mod(commands.Cog):
         guild = ctx.guild
 
         if reason is None:
-            audit_reason = "Channel mute requested by {} (ID {})".format(author, author.id)
+            audit_reason = "Channel mute requested by {a} (ID {a.id})".format(a=author)
         else:
-            audit_reason = "Channel mute requested by {} (ID {}). Reason: {}".format(
-                author, author.id, reason
+            audit_reason = "Channel mute requested by {a} (ID {a.id}). Reason: {r}".format(
+                a=author, r=reason
             )
 
         success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
@@ -944,11 +968,13 @@ class Mod(commands.Cog):
         guild = ctx.guild
         user_voice_state = user.voice
         if reason is None:
-            audit_reason = "server mute requested by {} (ID {})".format(author, author.id)
-        else:
-            audit_reason = "server mute requested by {} (ID {}). Reason: {}".format(
-                author, author.id, reason
+            audit_reason = "server mute requested by {author} (ID {author.id})".format(
+                author=author
             )
+        else:
+            audit_reason = (
+                "server mute requested by {author} (ID {author.id}). Reason: {reason}"
+            ).format(author=author, reason=reason)
 
         mute_success = []
         for channel in guild.channels:
