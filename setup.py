@@ -1,24 +1,38 @@
-from distutils.core import setup
-from distutils import ccompiler
-from distutils.errors import CCompilerError, DistutilsPlatformError
-from pathlib import Path
+import distutils.ccompiler as ccompiler
+import os
 import re
 import tempfile
+from distutils.errors import CCompilerError, DistutilsPlatformError
+from pathlib import Path
+from setuptools import setup, find_packages
 
-import os
-import sys
-
-from setuptools import find_packages
-
-IS_TRAVIS = "TRAVIS" in os.environ
-IS_DEPLOYING = "DEPLOYING" in os.environ
-IS_RTD = "READTHEDOCS" in os.environ
-
-dep_links = [
-    "https://github.com/Rapptz/discord.py/tarball/7eb918b19e3e60b56eb9039eb267f8f3477c5e17#egg=discord.py-1.0"
+requirements = [
+    "aiohttp-json-rpc==0.11",
+    "aiohttp==3.3.2",
+    "appdirs==1.4.3",
+    "async-timeout==3.0.0",
+    "attrs==18.1.0",
+    "chardet==3.0.4",
+    "colorama==0.3.9",
+    "discord.py>=1.0.0a0",
+    "distro==1.3.0; sys_platform == 'linux'",
+    "fuzzywuzzy==0.16.0",
+    "idna-ssl==1.1.0",
+    "idna==2.7",
+    "multidict==4.3.1",
+    "python-levenshtein==0.12.0",
+    "pyyaml==3.13",
+    "raven==6.9.0",
+    "raven-aiohttp==0.7.0",
+    "red-trivia==1.1.1",
+    "websockets==6.0",
+    "yarl==1.2.6",
 ]
-if IS_TRAVIS:
-    dep_links = []
+
+
+def get_dependency_links():
+    with open("dependency_links.txt") as file:
+        return file.read().splitlines()
 
 
 def get_package_list():
@@ -38,26 +52,6 @@ def check_compiler_available():
             except (CCompilerError, DistutilsPlatformError):
                 return False
     return True
-
-
-def get_requirements():
-    with open("requirements.txt") as f:
-        requirements = f.read().splitlines()
-    try:
-        requirements.remove(
-            "git+https://github.com/Rapptz/discord.py.git@rewrite#egg=discord.py[voice]"
-        )
-    except ValueError:
-        pass
-
-    if not check_compiler_available():  # Can't compile python-Levensthein, so drop extra
-        requirements.remove("fuzzywuzzy[speedup]<=0.16.0")
-        requirements.append("fuzzywuzzy<=0.16.0")
-    if IS_DEPLOYING or not (IS_TRAVIS or IS_RTD):
-        requirements.append("discord.py>=1.0.0a0")
-    if sys.platform.startswith("linux"):
-        requirements.append("distro")
-    return requirements
 
 
 def get_version():
@@ -97,45 +91,83 @@ def find_locale_folders():
     return ret
 
 
-setup(
-    name="Red-DiscordBot",
-    version=get_version(),
-    packages=get_package_list(),
-    package_data=find_locale_folders(),
-    include_package_data=True,
-    url="https://github.com/Cog-Creators/Red-DiscordBot",
-    license="GPLv3",
-    author="Cog-Creators",
-    author_email="",
-    description="A highly customizable Discord bot",
-    classifiers=[
-        "Development Status :: 4 - Beta",
-        "Framework :: AsyncIO",
-        "Framework :: Pytest",
-        "Intended Audience :: Developers",
-        "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
-        "Operating System :: OS Independent",
-        "Programming Language :: Python :: 3.6",
-        "Topic :: Communications :: Chat",
-        "Topic :: Documentation :: Sphinx",
-    ],
-    entry_points={
-        "console_scripts": [
-            "redbot=redbot.__main__:main",
-            "redbot-setup=redbot.setup:main",
-            "redbot-launcher=redbot.launcher:main",
+if __name__ == "__main__":
+    if not check_compiler_available():
+        requirements.remove(
+            next(r for r in requirements if r.lower().startswith("python-levenshtein"))
+        )
+
+    if "READTHEDOCS" in os.environ:
+        requirements.remove(next(r for r in requirements if r.lower().startswith("discord.py")))
+
+    setup(
+        name="Red-DiscordBot",
+        version=get_version(),
+        packages=get_package_list(),
+        package_data=find_locale_folders(),
+        include_package_data=True,
+        url="https://github.com/Cog-Creators/Red-DiscordBot",
+        license="GPLv3",
+        author="Cog-Creators",
+        author_email="",
+        description="A highly customizable Discord bot",
+        classifiers=[
+            "Development Status :: 4 - Beta",
+            "Framework :: AsyncIO",
+            "Framework :: Pytest",
+            "Intended Audience :: Developers",
+            "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+            "Operating System :: OS Independent",
+            "Programming Language :: Python :: 3.6",
+            "Programming Language :: Python :: 3.7",
+            "Topic :: Communications :: Chat",
+            "Topic :: Documentation :: Sphinx",
         ],
-        "pytest11": ["red-discordbot = redbot.pytest"],
-    },
-    python_requires=">=3.6,<3.7",
-    setup_requires=get_requirements(),
-    install_requires=get_requirements(),
-    dependency_links=dep_links,
-    extras_require={
-        "test": ["pytest>3", "pytest-asyncio"],
-        "mongo": ["motor"],
-        "docs": ["sphinx>=1.7", "sphinxcontrib-asyncio", "sphinx_rtd_theme"],
-        "voice": ["red-lavalink>=0.0.4"],
-        "style": ["black==18.5b1"],
-    },
-)
+        entry_points={
+            "console_scripts": [
+                "redbot=redbot.__main__:main",
+                "redbot-setup=redbot.setup:main",
+                "redbot-launcher=redbot.launcher:main",
+            ],
+            "pytest11": ["red-discordbot = redbot.pytest"],
+        },
+        python_requires=">=3.6,<3.8",
+        install_requires=requirements,
+        dependency_links=get_dependency_links(),
+        extras_require={
+            "test": [
+                "atomicwrites==1.1.5",
+                "more-itertools==4.3.0",
+                "pluggy==0.7.1",
+                "py==1.5.4",
+                "pytest==3.7.0",
+                "pytest-asyncio==0.9.0",
+                "six==1.11.0",
+            ],
+            "mongo": ["motor==2.0.0", "pymongo==3.7.1"],
+            "docs": [
+                "alabaster==0.7.11",
+                "babel==2.6.0",
+                "certifi==2018.4.16",
+                "docutils==0.14",
+                "imagesize==1.0.0",
+                "Jinja2==2.10",
+                "MarkupSafe==1.0",
+                "packaging==17.1",
+                "pyparsing==2.2.0",
+                "six==1.11.0",
+                "Pygments==2.2.0",
+                "pytz==2018.5",
+                "requests==2.19.1",
+                "urllib3==1.23",
+                "six==1.11.0",
+                "snowballstemmer==1.2.1",
+                "sphinx==1.7.6",
+                "sphinx_rtd_theme==0.4.1",
+                "sphinxcontrib-asyncio==0.2.0",
+                "sphinxcontrib-websupport==1.1.0",
+            ],
+            "voice": ["red-lavalink==0.1.1"],
+            "style": ["black==18.6b4", "click==6.7", "toml==0.9.4"],
+        },
+    )

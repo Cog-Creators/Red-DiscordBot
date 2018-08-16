@@ -317,6 +317,7 @@ class Reports:
             if msgs:
                 self.tunnel_store[k]["msgs"] = msgs
 
+    @commands.guild_only()
     @checks.mod_or_permissions(manage_members=True)
     @report.command(name="interact")
     async def response(self, ctx, ticket_number: int):
@@ -329,7 +330,6 @@ class Reports:
         Tunnels do not persist across bot restarts.
         """
 
-        # note, mod_or_permissions is an implicit guild_only
         guild = ctx.guild
         rec = await self.config.custom("REPORT", guild.id, ticket_number).report()
 

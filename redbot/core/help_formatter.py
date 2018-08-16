@@ -407,20 +407,24 @@ async def help(ctx, *cmds: str):
     max_pages_in_guild = await ctx.bot.db.help.max_pages_in_guild()
     if len(embeds) > max_pages_in_guild:
         destination = ctx.author
-
-    for embed in embeds:
-        if use_embeds:
-            try:
-                await destination.send(embed=embed)
-            except discord.HTTPException:
-                destination = ctx.author
-                await destination.send(embed=embed)
-        else:
-            try:
-                await destination.send(embed)
-            except discord.HTTPException:
-                destination = ctx.author
-                await destination.send(embed)
+    try:
+        for embed in embeds:
+            if use_embeds:
+                try:
+                    await destination.send(embed=embed)
+                except discord.HTTPException:
+                    destination = ctx.author
+                    await destination.send(embed=embed)
+            else:
+                try:
+                    await destination.send(embed)
+                except discord.HTTPException:
+                    destination = ctx.author
+                    await destination.send(embed)
+    except discord.Forbidden:
+        await ctx.channel.send(
+            "I couldn't send the help message to you in DM. Either you blocked me or you disabled DMs in this server."
+        )
 
 
 @help.error
