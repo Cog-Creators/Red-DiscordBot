@@ -4,17 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-"discord.py" = { git = 'git://github.com/Rapptz/discord.py', ref = '7eb918b19e3e60b56eb9039eb267f8f3477c5e17', editable = true}
-"e1839a8" = {path = ".", editable = true}
+"discord.py" = { git = 'git://github.com/Rapptz/discord.py', ref = 'rewrite', editable = true }
+"e1839a8" = { path = ".", editable = true, extras = ['mongo', 'voice'] }
 
 [dev-packages]
 tox = "*"
-pytest = "*"
-pytest-asyncio = "*"
-sphinx = ">1.7"
-sphinxcontrib-asyncio = "*"
-sphinx-rtd-theme = "*"
-black = "*"
-
-[pipenv]
-allow_prereleases = true
+"e1839a9" = { path = ".", editable = true, extras = ['docs', 'test', 'style'] }

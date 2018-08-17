@@ -24,7 +24,7 @@ class Image:
         self.imgur_base_url = "https://api.imgur.com/3/"
 
     def __unload(self):
-        self.session.close()
+        self.session.detach()
 
     @commands.group(name="imgur")
     async def _imgur(self, ctx):
