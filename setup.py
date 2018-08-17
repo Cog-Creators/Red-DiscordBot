@@ -24,7 +24,6 @@ requirements = [
     "pyyaml==3.13",
     "raven==6.9.0",
     "raven-aiohttp==0.7.0",
-    "red-trivia==1.1.1",
     "websockets==6.0",
     "yarl==1.2.6",
 ]
