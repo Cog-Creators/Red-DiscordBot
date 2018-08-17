@@ -27,6 +27,9 @@ if sys.platform == "linux":
 
 PYTHON_OK = sys.version_info >= (3, 6)
 INTERACTIVE_MODE = not len(sys.argv) > 1  # CLI flags = non-interactive
+if not INTERACTIVE_MODE and "--user" in sys.argv:
+    # only --user CLI flag
+    INTERACTIVE_MODE = True
 
 INTRO = "==========================\nRed Discord Bot - Launcher\n==========================\n"
 
@@ -55,17 +58,21 @@ def parse_cli_args():
     parser.add_argument(
         "--update-dev", help="Updates Red from the Github repo", action="store_true"
     )
-    parser.add_argument(
-        "--voice", help="Installs extra 'voice' when updating", action="store_true"
-    )
+    parser.add_argument("--voice", help="Installs extra 'voice' when updating", action="store_true")
     parser.add_argument("--docs", help="Installs extra 'docs' when updating", action="store_true")
     parser.add_argument("--test", help="Installs extra 'test' when updating", action="store_true")
-    parser.add_argument(
-        "--mongo", help="Installs extra 'mongo' when updating", action="store_true"
-    )
+    parser.add_argument("--mongo", help="Installs extra 'mongo' when updating", action="store_true")
     parser.add_argument(
         "--debuginfo",
         help="Prints basic debug info that would be useful for support",
+        action="store_true",
+    )
+    parser.add_argument(
+        "--user",
+        help=(
+            "Install packages in ~/.local/ or %APPDATA%\Python on Windows. "
+            "This doesn't require admin permissions when updating."
+        ),
         action="store_true",
     )
     return parser.parse_known_args()
@@ -104,25 +111,13 @@ def update_red(dev=False, reinstall=False, voice=False, mongo=False, docs=False,
         package = "Red-DiscordBot"
         if egg_l:
             package += "[{}]".format(", ".join(egg_l))
+    arguments = [interpreter, "-m", "pip", "install", "-U", "--process-dependency-links"]
     if reinstall:
-        code = subprocess.call(
-            [
-                interpreter,
-                "-m",
-                "pip",
-                "install",
-                "-U",
-                "-I",
-                "--force-reinstall",
-                "--no-cache-dir",
-                "--process-dependency-links",
-                package,
-            ]
-        )
-    else:
-        code = subprocess.call(
-            [interpreter, "-m", "pip", "install", "-U", "--process-dependency-links", package]
-        )
+        arguments.extend(["-I", "--force-reinstall", "--no-cache-dir"])
+    arguments.append(package)
+    if args.user:
+        arguments.append("--user")
+    code = subprocess.call(arguments)
     if code == 0:
         print("Red has been updated")
     else:
@@ -271,8 +266,7 @@ async def reset_red():
         return
     print("WARNING: You are about to remove ALL Red instances on this computer.")
     print(
-        "If you want to reset data of only one instance, "
-        "please select option 5 in the launcher."
+        "If you want to reset data of only one instance, " "please select option 5 in the launcher."
     )
     await asyncio.sleep(2)
     print("\nIf you continue you will remove these instanes.\n")
