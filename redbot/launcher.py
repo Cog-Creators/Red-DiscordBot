@@ -58,10 +58,14 @@ def parse_cli_args():
     parser.add_argument(
         "--update-dev", help="Updates Red from the Github repo", action="store_true"
     )
-    parser.add_argument("--voice", help="Installs extra 'voice' when updating", action="store_true")
+    parser.add_argument(
+        "--voice", help="Installs extra 'voice' when updating", action="store_true"
+    )
     parser.add_argument("--docs", help="Installs extra 'docs' when updating", action="store_true")
     parser.add_argument("--test", help="Installs extra 'test' when updating", action="store_true")
-    parser.add_argument("--mongo", help="Installs extra 'mongo' when updating", action="store_true")
+    parser.add_argument(
+        "--mongo", help="Installs extra 'mongo' when updating", action="store_true"
+    )
     parser.add_argument(
         "--debuginfo",
         help="Prints basic debug info that would be useful for support",
@@ -266,7 +270,8 @@ async def reset_red():
         return
     print("WARNING: You are about to remove ALL Red instances on this computer.")
     print(
-        "If you want to reset data of only one instance, " "please select option 5 in the launcher."
+        "If you want to reset data of only one instance, "
+        "please select option 5 in the launcher."
     )
     await asyncio.sleep(2)
     print("\nIf you continue you will remove these instanes.\n")
