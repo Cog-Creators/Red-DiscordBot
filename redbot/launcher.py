@@ -27,7 +27,7 @@ if sys.platform == "linux":
 
 PYTHON_OK = sys.version_info >= (3, 6)
 INTERACTIVE_MODE = not len(sys.argv) > 1  # CLI flags = non-interactive
-if not INTERACTIVE_MODE and "--user" in sys.argv:
+if not len(sys.argv) > 2 and "--user" in sys.argv:
     # only --user CLI flag
     INTERACTIVE_MODE = True
 
