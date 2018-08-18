@@ -500,7 +500,7 @@ class Trivia:
 
     def _all_lists(self) -> List[pathlib.Path]:
         personal_lists = [p.resolve() for p in cog_data_path(self).glob("*.yaml")]
-        core_lists_path = pathlib.Path(__file__).parent / "lists"
+        core_lists_path = pathlib.Path(__file__).parent / "data/lists"
         core_lists = [p.resolve() for p in core_lists_path.glob("*.yaml")]
 
         return personal_lists + core_lists

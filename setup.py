@@ -5,6 +5,7 @@ import tempfile
 from distutils.errors import CCompilerError, DistutilsPlatformError
 from pathlib import Path
 from setuptools import setup, find_packages
+from collections import defaultdict
 
 requirements = [
     "aiohttp-json-rpc==0.11",
@@ -61,33 +62,66 @@ def get_version():
     return version
 
 
-def find_locale_folders():
+def get_package_data():
+    """Get the data files to include in the distribution.
+
+    This must return a dict in the form of package names mapped to a
+    list of paths (as str) to include with that package. These paths
+    *must be relative* to the package's directory, for example::
+
+        {
+            "redbot.core": [
+                "locales/en-US.po",
+                "locales/jp-JP.po",
+                ...
+            ],
+            "redbot.cogs.trivia": [
+                "locales/en-US.po",
+                ...
+                "data/2015.yaml",
+                ...
+            ]
+        }
+
+    To test changes to this, run the following command, and ensure the output looks like the
+    example above::
+
+        $ python3 -c "print(__import__('json').dumps(__import__('setup').get_package_data(), indent=4))"
+
+    Currently, this will search through all package directories, and include
+    any `.po` files under a `locales/` sub-directory, and all files of any
+    type under a `data/` sub-directory.
     """
-    Ignore this tomfoolery in the desire for automation. It works, that's
-    all you gotta know. Don't fuck with this unless you really know what
-    you're doing, otherwise we lose all translations.
-    """
 
-    def glob_locale_files(path: Path):
-        msgs = path.glob("*.po")
+    def relative_glob(path: Path, pattern: str):
+        """This returns a List[str] of paths relative to `path` which match the glob `pattern`."""
+        msgs = path.glob(pattern)
+        return [str(m.relative_to(path)) for m in msgs]
 
-        parents = path.parents
+    ret = defaultdict(lambda: [])
+    packages = get_package_list()
 
-        return [str(m.relative_to(parents[0])) for m in msgs]
+    for pkg_name in packages:
+        pkg_path = Path(pkg_name.replace(".", "/"))
 
-    ret = {"redbot.core": glob_locale_files(Path("redbot/core/locales"))}
+        # Include all .po files in "locales" sub-directory
+        locales_folder = pkg_path / "locales"
+        if locales_folder.is_dir():
+            ret[pkg_name].extend(relative_glob(pkg_path, "locales/*.po"))
 
-    cogs_path = Path("redbot/cogs")
+        # Include everything in "data" sub-directory
+        data_folder = pkg_path / "data"
+        if data_folder.is_dir():
+            ret[pkg_name].extend(relative_glob(pkg_path, "data/**/*"))
 
-    for cog_folder in cogs_path.iterdir():
-        locales_folder = cog_folder / "locales"
-        if not locales_folder.is_dir():
-            continue
+        # Delete the entry if it resulted in an empty list of files.
+        # This can occur if the package contains an empty "locales" or "data" sub-directory.
+        # It should never happen on Travis deployment but could happen if we ever
+        # deploy from a local machine.
+        if pkg_name in ret and not ret[pkg_name]:
+            del ret[pkg_name]
 
-        pkg_name = str(cog_folder).replace("/", ".")
-        ret[pkg_name] = glob_locale_files(locales_folder)
-
-    return ret
+    return dict(ret)
 
 
 if __name__ == "__main__":
@@ -103,7 +137,7 @@ if __name__ == "__main__":
         name="Red-DiscordBot",
         version=get_version(),
         packages=get_package_list(),
-        package_data=find_locale_folders(),
+        package_data=get_package_data(),
         include_package_data=True,
         url="https://github.com/Cog-Creators/Red-DiscordBot",
         license="GPLv3",
