@@ -12,7 +12,7 @@ from redbot.cogs.bank import check_global_setting_admin
 from .log import LOG
 from .session import TriviaSession
 
-__all__ = ["Trivia", "UNIQUE_ID"]
+__all__ = ["Trivia", "UNIQUE_ID", "get_core_lists"]
 
 UNIQUE_ID = 0xb3c0e453
 
@@ -500,11 +500,15 @@ class Trivia:
 
     def _all_lists(self) -> List[pathlib.Path]:
         personal_lists = [p.resolve() for p in cog_data_path(self).glob("*.yaml")]
-        core_lists_path = pathlib.Path(__file__).parent / "data/lists"
-        core_lists = [p.resolve() for p in core_lists_path.glob("*.yaml")]
 
-        return personal_lists + core_lists
+        return personal_lists + get_core_lists()
 
     def __unload(self):
         for session in self.trivia_sessions:
             session.force_stop()
+
+
+def get_core_lists() -> List[pathlib.Path]:
+    """Return a list of paths for all trivia lists packaged with the bot."""
+    core_lists_path = pathlib.Path(__file__).parent.resolve() / "data/lists"
+    return list(core_lists_path.glob("*.yaml"))
