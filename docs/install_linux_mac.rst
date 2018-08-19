@@ -1,4 +1,4 @@
-.. _linux-install-guide:
+.. _linux-mac-install-guide:
 
 ==============================
 Installing Red on Linux or Mac
@@ -125,15 +125,17 @@ Now, install python, pip, git and java with the following commands:
     sudo python3.6 get-pip.py
 
 ------------------------------
-Creating a virtual environment
+Creating a Virtual Environment
 ------------------------------
 
 We **strongly** recommend installing Red into a virtual environment. See the section
 `installing-in-virtual-environment`.
 
-------------------
-Installing the bot
-------------------
+.. _installing-red-linux-mac:
+
+--------------
+Installing Red
+--------------
 
 Choose one of the following commands to install Red.
 

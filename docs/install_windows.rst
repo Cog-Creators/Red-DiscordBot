@@ -1,4 +1,4 @@
-.. windows installation docs
+.. _windows-install-guide:
 
 =========================
 Installing Red on Windows
@@ -20,6 +20,8 @@ Needed Software
 * `Java <https://java.com/en/download/manual.jsp>`_ - needed for Audio
 
 .. attention:: Please choose the "Windows Online" installer
+
+.. _installing-red-windows:
 
 --------------
 Installing Red

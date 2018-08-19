@@ -9,8 +9,9 @@ for more than just Red.
 
 .. _using-venv:
 
+--------------
 Using ``venv``
-==============
+--------------
 This is the quickest way to get your virtual environment up and running, as `venv` is shipped with
 python.
 
@@ -18,6 +19,7 @@ First, choose a directory where you would like to create your virtual environmen
 to keep it in a location which is easy to type out the path to. From now, we'll call it
 ``path/to/venv/`` (or ``path\to\venv\`` on Windows).
 
+~~~~~~~~~~~~~~~~~~~~~~~~
 ``venv`` on Linux or Mac
 ~~~~~~~~~~~~~~~~~~~~~~~~
 Create your virtual environment with the following command::
@@ -35,6 +37,7 @@ And activate it with the following command::
 
 Continue reading `below <after-activating-virtual-environment>`.
 
+~~~~~~~~~~~~~~~~~~~
 ``venv`` on Windows
 ~~~~~~~~~~~~~~~~~~~
 Create your virtual environment with the following command::
@@ -54,8 +57,9 @@ Continue reading `below <after-activating-virtual-environment>`.
 
 .. _using-pyenv-virtualenv:
 
+--------------------------
 Using ``pyenv virtualenv``
-==========================
+--------------------------
 
 .. note::
 
@@ -95,7 +99,8 @@ Continue reading `below <after-activating-virtual-environment>`.
 Once activated, your ``PATH`` environment variable will be modified to use the virtual
 environment's python executables, as well as other executables like ``pip``.
 
-From here, install Red using the commands listed on your installation guide.
+From here, install Red using the commands listed on your installation guide (`Windows
+<installing-red-windows>` or `Non-Windows <installing-red-linux-mac>`).
 
 .. note::
 
@@ -103,8 +108,9 @@ From here, install Red using the commands listed on your installation guide.
     provide the full path to the executable. This will automatically use the virtual environment's
     python interpreter and installed libraries.
 
+--------------------------------------------
 Virtual Environments with Multiple Instances
-============================================
+--------------------------------------------
 If you are running multiple instances of Red on the same machine, you have the option of either
 using the same virtual environment for all of them, or creating separate ones.
 
