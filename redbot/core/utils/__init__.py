@@ -1,19 +1,20 @@
 __all__ = ["bounded_gather", "safe_delete", "fuzzy_command_search", "deduplicate_iterables"]
 
 import asyncio
-from asyncio import AbstractEventLoop, Semaphore
-from concurrent.futures import FIRST_COMPLETED
+from asyncio import as_completed, AbstractEventLoop, Semaphore
+from asyncio.futures import isfuture
 from itertools import chain
 import logging
 import os
 from pathlib import Path
 import shutil
-from typing import Any, AsyncIterator, List, Optional
+from typing import Any, Awaitable, Iterator, List, Optional
 
 from redbot.core import commands
 from fuzzywuzzy import process
 
 from .chat_formatting import box
+
 
 # Benchmarked to be the fastest method.
 def deduplicate_iterables(*iterables):
@@ -101,15 +102,20 @@ async def fuzzy_command_search(ctx: commands.Context, term: str):
     return box("\n".join(out), lang="Perhaps you wanted one of these?")
 
 
-async def bounded_gather_iter(
+async def _sem_wrapper(sem, task):
+    async with sem:
+        return await task
+
+
+def bounded_gather_iter(
     *coros_or_futures,
     loop: Optional[AbstractEventLoop] = None,
     limit: int = 4,
     semaphore: Optional[Semaphore] = None,
-) -> AsyncIterator[Any]:
+) -> Iterator[Awaitable[Any]]:
     """
-    An async iterator that returns tasks as they are ready, but limits the number of tasks running
-    at a time.
+    An iterator that returns tasks as they are ready, but limits the
+    number of tasks running at a time.
 
     Parameters
     ----------
@@ -131,26 +137,21 @@ async def bounded_gather_iter(
         loop = asyncio.get_event_loop()
 
     if semaphore is None:
-        if type(limit) != int or limit <= 0:
+        if not isinstance(limit, int) or limit <= 0:
             raise TypeError("limit must be an int > 0")
 
         semaphore = Semaphore(limit, loop=loop)
 
-    async def sem_wrapper(sem, task):
-        async with sem:
-            return await task
+    pending = []
 
-    pending = [sem_wrapper(semaphore, task) for task in coros_or_futures]
+    for cof in coros_or_futures:
+        if isfuture(cof) and cof._loop is not loop:
+            raise ValueError("futures are tied to different event loops")
 
-    while pending:
-        async with semaphore:
-            try:
-                done, pending = await asyncio.wait(pending, loop=loop, return_when=FIRST_COMPLETED)
-            except asyncio.CancelledError:
-                []
+        cof = _sem_wrapper(semaphore, cof)
+        pending.append(cof)
 
-            while done:
-                yield done.pop()
+    return as_completed(pending, loop=loop)
 
 
 def bounded_gather(
@@ -159,7 +160,7 @@ def bounded_gather(
     return_exceptions: bool = False,
     limit: int = 4,
     semaphore: Optional[Semaphore] = None,
-) -> List[Any]:
+) -> Awaitable[List[Any]]:
     """
     A semaphore-bounded wrapper to :meth:`asyncio.gather`.
 
@@ -185,15 +186,11 @@ def bounded_gather(
         loop = asyncio.get_event_loop()
 
     if semaphore is None:
-        if type(limit) != int or limit <= 0:
+        if not isinstance(limit, int) or limit <= 0:
             raise TypeError("limit must be an int > 0")
 
         semaphore = Semaphore(limit, loop=loop)
 
-    async def sem_wrapper(sem, task):
-        async with sem:
-            return await task
-
-    tasks = (sem_wrapper(semaphore, task) for task in coros_or_futures)
+    tasks = (_sem_wrapper(semaphore, task) for task in coros_or_futures)
 
     return asyncio.gather(*tasks, loop=loop, return_exceptions=return_exceptions)

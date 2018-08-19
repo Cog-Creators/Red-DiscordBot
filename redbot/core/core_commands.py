@@ -23,7 +23,6 @@ from redbot.core import __version__
 from redbot.core import checks
 from redbot.core import i18n
 from redbot.core import commands
-from redbot.core.cog_manager import NoSuchCog
 from .utils.chat_formatting import pagify, box, inline
 
 if TYPE_CHECKING:

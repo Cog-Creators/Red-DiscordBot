@@ -214,8 +214,7 @@ class CogManager:
         NoSuchCog
             When no cog with the requested name was found.
         """
-        resolved_paths = deduplicate_iterables(await self.paths())
-
+        resolved_paths = await self.paths()
         real_paths = [str(p) for p in resolved_paths if p != self.CORE_PATH]
 
         for finder, module_name, _ in pkgutil.iter_modules(real_paths):
