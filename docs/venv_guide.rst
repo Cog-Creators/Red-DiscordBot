@@ -90,7 +90,7 @@ Now activate your virtualenv with the following command::
 
 Continue reading `below <after-activating-virtual-environment>`.
 
-.. _pyenv-installer: https://github.com/pyenv/pyenv-installer#installation--update--uninstallation
+.. _pyenv-installer: https://github.com/pyenv/pyenv-installer/blob/master/README.rst
 
 ----
 
