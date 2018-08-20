@@ -106,7 +106,10 @@ class Audio:
                     title="Now Playing",
                     description="**[{}]({})**".format(player.current.title, player.current.uri),
                 )
-                if await self.config.guild(player.channel.guild).thumbnail() and player.current.thumbnail:
+                if (
+                    await self.config.guild(player.channel.guild).thumbnail()
+                    and player.current.thumbnail
+                ):
                     embed.set_thumbnail(url=player.current.thumbnail)
                 notify_message = await notify_channel.send(embed=embed)
                 player.store("notify_message", notify_message)
