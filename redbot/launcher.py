@@ -27,9 +27,6 @@ if sys.platform == "linux":
 
 PYTHON_OK = sys.version_info >= (3, 6)
 INTERACTIVE_MODE = not len(sys.argv) > 1  # CLI flags = non-interactive
-if not len(sys.argv) > 2 and "--user" in sys.argv:
-    # only --user CLI flag
-    INTERACTIVE_MODE = True
 
 INTRO = "==========================\nRed Discord Bot - Launcher\n==========================\n"
 
@@ -77,14 +74,6 @@ def parse_cli_args():
     parser.add_argument(
         "--debuginfo",
         help="Prints basic debug info that would be useful for support",
-        action="store_true",
-    )
-    parser.add_argument(
-        "--user",
-        help=(
-            "Install packages in ~/.local/ or %APPDATA%\Python on Windows. "
-            "This doesn't require admin permissions when updating."
-        ),
         action="store_true",
     )
     return parser.parse_known_args()
