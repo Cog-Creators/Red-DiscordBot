@@ -47,7 +47,7 @@ async def has_java(loop) -> Tuple[bool, Optional[_JavaVersion]]:
         return False, None
 
     version = await get_java_version(loop)
-    return version >= (1, 8), version
+    return (2, 0) > version >= (1, 8) or version >= (8, 0), version
 
 
 async def get_java_version(loop) -> _JavaVersion:
