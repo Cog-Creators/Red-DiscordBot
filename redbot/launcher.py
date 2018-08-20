@@ -37,6 +37,14 @@ IS_WINDOWS = os.name == "nt"
 IS_MAC = sys.platform == "darwin"
 
 
+def is_venv():
+    """Return True if the process is in a venv or in a virtualenv."""
+    # credit to @calebj
+    return hasattr(sys, "real_prefix") or (
+        hasattr(sys, "base_prefix") and sys.base_prefix != sys.prefix
+    )
+
+
 def parse_cli_args():
     parser = argparse.ArgumentParser(
         description="Red - Discord Bot's launcher (V3)", allow_abbrev=False
@@ -115,20 +123,21 @@ def update_red(dev=False, voice=False, mongo=False, docs=False, test=False):
         package = "Red-DiscordBot"
         if egg_l:
             package += "[{}]".format(", ".join(egg_l))
-    code = subprocess.call(
-        [
-            interpreter,
-            "-m",
-            "pip",
-            "install",
-            "-U",
-            "-I",
-            "--no-cache-dir",
-            "--force-reinstall",
-            "--process-dependency-links",
-            package,
-        ]
-    )
+    arguments = [
+        interpreter,
+        "-m",
+        "pip",
+        "install",
+        "-U",
+        "-I",
+        "--no-cache-dir",
+        "--force-reinstall",
+        "--process-dependency-links",
+        package,
+    ]
+    if not is_venv():
+        arguments.append("--user")
+    code = subprocess.call(arguments)
     if code == 0:
         print("Red has been updated")
     else:
