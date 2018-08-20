@@ -1952,7 +1952,7 @@ class Audio:
                 pass
 
     def __unload(self):
-        self.session.close()
+        self.session.detach()
         lavalink.unregister_event_listener(self.event_handler)
         self.bot.loop.create_task(lavalink.close())
         shutdown_lavalink_server()

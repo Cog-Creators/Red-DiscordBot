@@ -209,6 +209,7 @@ class Streams:
 
     @streamalert.command(name="list")
     async def streamalert_list(self, ctx: commands.Context):
+        """List all active stream alerts in this server."""
         streams_list = defaultdict(list)
         guild_channels_ids = [c.id for c in ctx.guild.channels]
         msg = _("Active alerts:\n\n")
