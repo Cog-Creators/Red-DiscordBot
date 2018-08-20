@@ -82,7 +82,7 @@ def parse_cli_args():
     return parser.parse_known_args()
 
 
-def update_red(dev=False, reinstall=False, voice=False, mongo=False, docs=False, test=False):
+def update_red(dev=False, voice=False, mongo=False, docs=False, test=False):
     interpreter = sys.executable
     print("Updating Red...")
     # If the user ran redbot-launcher.exe, updating with pip will fail
@@ -115,13 +115,20 @@ def update_red(dev=False, reinstall=False, voice=False, mongo=False, docs=False,
         package = "Red-DiscordBot"
         if egg_l:
             package += "[{}]".format(", ".join(egg_l))
-    arguments = [interpreter, "-m", "pip", "install", "-U", "--process-dependency-links"]
-    if reinstall:
-        arguments.extend(["-I", "--force-reinstall", "--no-cache-dir"])
-    arguments.append(package)
-    if args.user:
-        arguments.append("--user")
-    code = subprocess.call(arguments)
+    code = subprocess.call(
+        [
+            interpreter,
+            "-m",
+            "pip",
+            "install",
+            "-U",
+            "-I",
+            "--no-cache-dir",
+            "--force-reinstall",
+            "--process-dependency-links",
+            package,
+        ]
+    )
     if code == 0:
         print("Red has been updated")
     else:
@@ -319,7 +326,7 @@ def extras_selector():
     return selected
 
 
-def development_choice(reinstall=False, can_go_back=True):
+def development_choice(can_go_back=True):
     while True:
         print("\n")
         print("Do you want to install stable or development version?")
@@ -335,7 +342,6 @@ def development_choice(reinstall=False, can_go_back=True):
             selected = extras_selector()
             update_red(
                 dev=False,
-                reinstall=reinstall,
                 voice=True if "voice" in selected else False,
                 docs=True if "docs" in selected else False,
                 test=True if "test" in selected else False,
@@ -346,7 +352,6 @@ def development_choice(reinstall=False, can_go_back=True):
             selected = extras_selector()
             update_red(
                 dev=True,
-                reinstall=reinstall,
                 voice=True if "voice" in selected else False,
                 docs=True if "docs" in selected else False,
                 test=True if "test" in selected else False,
@@ -452,14 +457,14 @@ def main_menu():
                 print("0. Back")
                 choice = user_choice()
                 if choice == "1":
-                    if development_choice(reinstall=True):
+                    if development_choice():
                         wait()
                 elif choice == "2":
                     loop.run_until_complete(reset_red())
                     wait()
                 elif choice == "3":
                     loop.run_until_complete(reset_red())
-                    development_choice(reinstall=True, can_go_back=False)
+                    development_choice(can_go_back=False)
                     wait()
                 elif choice == "0":
                     break
