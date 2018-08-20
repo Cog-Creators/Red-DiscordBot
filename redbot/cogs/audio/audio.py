@@ -1932,11 +1932,8 @@ class Audio:
 
     @staticmethod
     def _thumbnail(track):
-        if "youtube" in track.uri:
-            for v, k in track._info.items():
-                if v == "identifier":
-                    return "https://img.youtube.com/vi/{}/mqdefault.jpg".format(k)
-        return None
+        if "youtube" in track.uri and "identifier" in track._info:
+            return "https://img.youtube.com/vi/{}/mqdefault.jpg".format(track._info["identifier"])
 
     @staticmethod
     def _userlimit(channel):
