@@ -106,10 +106,8 @@ class Audio:
                     title="Now Playing",
                     description="**[{}]({})**".format(player.current.title, player.current.uri),
                 )
-                if await self.config.guild(notify_channel.guild).thumbnail() and self._thumbnail(
-                    player.current
-                ):
-                    embed.set_thumbnail(url=self._thumbnail(player.current))
+                if await self.config.guild(player.channel.guild).thumbnail() and player.current.thumbnail:
+                    embed.set_thumbnail(url=player.current.thumbnail)
                 notify_message = await notify_channel.send(embed=embed)
                 player.store("notify_message", notify_message)
 
@@ -451,9 +449,8 @@ class Audio:
         embed = discord.Embed(
             colour=ctx.guild.me.top_role.colour, title="Now Playing", description=song
         )
-        if await self.config.guild(ctx.guild).thumbnail() and self._thumbnail(player.current):
-            embed.set_thumbnail(url=self._thumbnail(player.current))
-
+        if await self.config.guild(ctx.guild).thumbnail() and player.current.thumbnail:
+            embed.set_thumbnail(url=player.current.thumbnail)
         message = await ctx.send(embed=embed)
         player.store("np_message", message)
 
@@ -1173,8 +1170,8 @@ class Audio:
             title="Queue for " + ctx.guild.name,
             description=queue_list,
         )
-        if await self.config.guild(ctx.guild).thumbnail() and self._thumbnail(player.current):
-            embed.set_thumbnail(url=self._thumbnail(player.current))
+        if await self.config.guild(ctx.guild).thumbnail() and player.current.thumbnail:
+            embed.set_thumbnail(url=player.current.thumbnail)
         queue_duration = await self._queue_duration(ctx)
         queue_total_duration = lavalink.utils.format_time(queue_duration)
         text = "Page {}/{} | {} tracks, {} remaining".format(
@@ -1929,11 +1926,6 @@ class Audio:
         for key, value in zip(keys, values):
             track_obj[key] = value
         return track_obj
-
-    @staticmethod
-    def _thumbnail(track):
-        if "youtube" in track.uri and "identifier" in track._info:
-            return "https://img.youtube.com/vi/{}/mqdefault.jpg".format(track._info["identifier"])
 
     @staticmethod
     def _userlimit(channel):
