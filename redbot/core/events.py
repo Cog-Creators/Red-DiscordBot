@@ -266,7 +266,7 @@ def init_events(bot, cli_flags):
             if diff > 60:
                 log.warn(
                     "Detected significant difference (%d seconds) in system clock to discord's clock."
-                    "Any time sensitive code many fail",
+                    " Any time sensitive code may fail.",
                     diff,
                 )
             bot.checked_time_accuracy = discord_now
