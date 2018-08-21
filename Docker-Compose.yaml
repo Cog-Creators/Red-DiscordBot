@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+
+  db:
+    image: "mongo:4.0.1-xenial"
+    ports:
+      - "27017:27019"
+    volumes:
+      - data-volume:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=redbot
+
+  bot:
+    build: .
+    depends_on:
+      - db
+    environment:
+      - RED_TOKEN
+    command: redbot docker --mentionable
+    volumes:
+      - cog-volume:/data
+
+volumes:
+  data-volume:
+  cog-volume:

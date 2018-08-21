@@ -1,0 +1,7 @@
+*
+!redbot/*
+!docker/*
+!setup.py
+!setup.cfg
+!MANIFEST.in
+!dependency_links.txt

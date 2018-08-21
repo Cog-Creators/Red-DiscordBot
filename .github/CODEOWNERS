@@ -60,3 +60,7 @@ redbot/setup.py                     @tekulvw
 # Others
 .travis.yml                         @Kowlin
 crowdin.yml                         @Kowlin
+docker/*                            @mikeshardmind
+Dockerfile                          @mikeshardmind
+Docker-Compose.yaml                 @mikeshardmind
+.dockerignore                       @mikeshardmind
