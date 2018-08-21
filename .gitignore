@@ -3,6 +3,7 @@
 *.dll
 .data
 !/tests/cogs/dataconverter/data/**/*.json
+!/docker/base-config.json
 
 ### JetBrains template
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and Webstorm
