@@ -1401,8 +1401,7 @@ class Core(CoreLogic):
         """
         Whitelist management commands.
         """
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @localwhitelist.command(name="add")
     async def localwhitelist_add(self, ctx, *, user_or_role: str):
@@ -1484,8 +1483,7 @@ class Core(CoreLogic):
         """
         blacklist management commands.
         """
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @localblacklist.command(name="add")
     async def localblacklist_add(self, ctx, *, user_or_role: str):
