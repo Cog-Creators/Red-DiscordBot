@@ -17,8 +17,8 @@ __all__ = [
     "load_basic_configuration",
     "cog_data_path",
     "core_data_path",
-    "cog_global_data_path",
-    "core_global_data_path",
+    "global_cog_data_path",
+    "global_core_data_path",
     "load_bundled_data",
     "bundled_data_path",
     "storage_details",
@@ -179,9 +179,9 @@ def create_temp_config():
     default_dirs["STORAGE_TYPE"] = "JSON"
     default_dirs["STORAGE_DETAILS"] = {}
 
-    config = JsonIO(config_file)._load_json()
+    config = JsonIO(global_core_data_path() / "config.json")._load_json()
     config[name] = default_dirs
-    JsonIO(config_file)._save_json(config)
+    JsonIO(global_core_data_path() / "config.json")._save_json(config)
 
 
 def load_basic_configuration(instance_name_: str):
@@ -202,7 +202,7 @@ def load_basic_configuration(instance_name_: str):
     global basic_config
     global instance_name
 
-    jsonio = JsonIO(config_file)
+    jsonio = JsonIO(global_core_data_path() / "config.json")
 
     instance_name = instance_name_
 
@@ -215,6 +215,15 @@ def load_basic_configuration(instance_name_: str):
             " prior to running the bot."
         )
         sys.exit(1)
+
+
+def _convert_base_config():
+    """
+    Move ``./config.json`` to ``./core/config.json``.
+    """
+    old_conf = config_dir / "config.json"
+    if old_conf.exists():
+        shutil.move(str(old_conf.absolute()), str(global_core_data_path.absolute()))
 
 
 def _find_data_files(init_location: str) -> (Path, List[Path]):
