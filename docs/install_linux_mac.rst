@@ -195,7 +195,7 @@ It will walk through the initial setup, asking for your token and a prefix.
 
 You may also run Red via the launcher, which allows you to restart the bot
 from discord, and enable auto-restart. You may also update the bot from the
-launcher menu. Use the following command to run the launcher
+launcher menu. Use the following command to run the launcher:
 
 .. code-block:: none
 
