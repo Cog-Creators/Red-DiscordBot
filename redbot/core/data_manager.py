@@ -41,6 +41,7 @@ if sys.platform == "linux":
         config_dir = Path(appdir.site_data_dir)
 if not config_dir:
     config_dir = Path(appdir.user_config_dir)
+config_file = config_dir / basic_config_default["CORE_PATH_APPEND"] / "config.json"
 
 
 def _base_data_path() -> Path:
@@ -158,7 +159,7 @@ def global_core_data_path() -> Path:
         raise RuntimeError(
             "You must load the basic config before you can get the core data path."
         ) from e
-    global_core_path = base_global_data_path / basic_config["CORE_PATH_APPEND"]
+    global_core_path = base_global_data_path / basic_config_default["CORE_PATH_APPEND"]
     global_core_path.mkdir(exist_ok=True, parents=True)
 
     return global_core_path.resolve()
@@ -179,9 +180,9 @@ def create_temp_config():
     default_dirs["STORAGE_TYPE"] = "JSON"
     default_dirs["STORAGE_DETAILS"] = {}
 
-    config = JsonIO(global_core_data_path() / "config.json")._load_json()
+    config = JsonIO(config_file)._load_json()
     config[name] = default_dirs
-    JsonIO(global_core_data_path() / "config.json")._save_json(config)
+    JsonIO(config_file)._save_json(config)
 
 
 def load_basic_configuration(instance_name_: str):
@@ -202,7 +203,7 @@ def load_basic_configuration(instance_name_: str):
     global basic_config
     global instance_name
 
-    jsonio = JsonIO(global_core_data_path() / "config.json")
+    jsonio = JsonIO(config_file)
 
     instance_name = instance_name_
 
@@ -223,7 +224,7 @@ def _convert_base_config():
     """
     old_conf = config_dir / "config.json"
     if old_conf.exists():
-        shutil.move(str(old_conf.absolute()), str(global_core_data_path.absolute()))
+        shutil.move(str(old_conf.absolute()), str(config_file.absolute()))
 
 
 def _find_data_files(init_location: str) -> (Path, List[Path]):
