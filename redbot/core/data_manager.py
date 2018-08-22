@@ -41,60 +41,6 @@ if sys.platform == "linux":
         config_dir = Path(appdir.site_data_dir)
 if not config_dir:
     config_dir = Path(appdir.user_config_dir)
-config_file = config_dir / "config.json"
-
-
-def create_temp_config():
-    """
-    Creates a default instance for Red, so it can be ran
-    without creating an instance.
-
-    .. warning:: The data of this instance will be removed
-        on next system restart.
-    """
-    name = "temporary_red"
-
-    default_dirs = deepcopy(basic_config_default)
-    default_dirs["DATA_PATH"] = tempfile.mkdtemp()
-    default_dirs["STORAGE_TYPE"] = "JSON"
-    default_dirs["STORAGE_DETAILS"] = {}
-
-    config = JsonIO(config_file)._load_json()
-    config[name] = default_dirs
-    JsonIO(config_file)._save_json(config)
-
-
-def load_basic_configuration(instance_name_: str):
-    """Loads the basic bootstrap configuration necessary for `Config`
-    to know where to store or look for data.
-
-    .. important::
-        It is necessary to call this function BEFORE getting any `Config`
-        objects!
-
-    Parameters
-    ----------
-    instance_name_ : str
-        The instance name given by CLI argument and created during
-        redbot setup.
-    """
-    global jsonio
-    global basic_config
-    global instance_name
-
-    jsonio = JsonIO(config_file)
-
-    instance_name = instance_name_
-
-    try:
-        config = jsonio._load_json()
-        basic_config = config[instance_name]
-    except (FileNotFoundError, KeyError):
-        print(
-            "You need to configure the bot instance using `redbot-setup`"
-            " prior to running the bot."
-        )
-        sys.exit(1)
 
 
 def _base_data_path() -> Path:
@@ -161,19 +107,6 @@ def core_data_path() -> Path:
     return core_path.resolve()
 
 
-def global_core_data_path() -> Path:
-    try:
-        base_global_data_path = Path(_base_global_data_path())
-    except RuntimeError as e:
-        raise RuntimeError(
-            "You must load the basic config before you can get the core data path."
-        ) from e
-    global_core_path = base_global_data_path / basic_config["CORE_PATH_APPEND"]
-    global_core_path.mkdir(exist_ok=True, parents=True)
-
-    return global_core_path.resolve()
-
-
 def global_cog_data_path(cog_instance=None, raw_name: str = None) -> Path:
     """Gets the global cog data path. If you want to get the folder with
     which to store your own cog's data please pass in an instance
@@ -216,6 +149,72 @@ def global_cog_data_path(cog_instance=None, raw_name: str = None) -> Path:
     cog_path.mkdir(exist_ok=True, parents=True)
 
     return cog_path.resolve()
+
+
+def global_core_data_path() -> Path:
+    try:
+        base_global_data_path = Path(_base_global_data_path())
+    except RuntimeError as e:
+        raise RuntimeError(
+            "You must load the basic config before you can get the core data path."
+        ) from e
+    global_core_path = base_global_data_path / basic_config["CORE_PATH_APPEND"]
+    global_core_path.mkdir(exist_ok=True, parents=True)
+
+    return global_core_path.resolve()
+
+
+def create_temp_config():
+    """
+    Creates a default instance for Red, so it can be ran
+    without creating an instance.
+
+    .. warning:: The data of this instance will be removed
+        on next system restart.
+    """
+    name = "temporary_red"
+
+    default_dirs = deepcopy(basic_config_default)
+    default_dirs["DATA_PATH"] = tempfile.mkdtemp()
+    default_dirs["STORAGE_TYPE"] = "JSON"
+    default_dirs["STORAGE_DETAILS"] = {}
+
+    config = JsonIO(config_file)._load_json()
+    config[name] = default_dirs
+    JsonIO(config_file)._save_json(config)
+
+
+def load_basic_configuration(instance_name_: str):
+    """Loads the basic bootstrap configuration necessary for `Config`
+    to know where to store or look for data.
+
+    .. important::
+        It is necessary to call this function BEFORE getting any `Config`
+        objects!
+
+    Parameters
+    ----------
+    instance_name_ : str
+        The instance name given by CLI argument and created during
+        redbot setup.
+    """
+    global jsonio
+    global basic_config
+    global instance_name
+
+    jsonio = JsonIO(config_file)
+
+    instance_name = instance_name_
+
+    try:
+        config = jsonio._load_json()
+        basic_config = config[instance_name]
+    except (FileNotFoundError, KeyError):
+        print(
+            "You need to configure the bot instance using `redbot-setup`"
+            " prior to running the bot."
+        )
+        sys.exit(1)
 
 
 def _find_data_files(init_location: str) -> (Path, List[Path]):
