@@ -183,7 +183,7 @@ After installation, set up your instance with the following command:
 
 This will set the location where data will be stored, as well as your
 storage backend and the name of the instance (which will be used for
-running the bot)
+running the bot).
 
 Once done setting up the instance, run the following command to run Red:
 
@@ -192,3 +192,12 @@ Once done setting up the instance, run the following command to run Red:
     redbot <your instance name>
 
 It will walk through the initial setup, asking for your token and a prefix.
+
+You may also run Red via the launcher, which allows you to restart the bot
+from discord, and enable auto-restart. You may also update the bot from the
+launcher menu. Use the following command to run the launcher
+
+.. code-block:: none
+
+    redbot-launcher
+
