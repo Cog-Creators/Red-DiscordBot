@@ -109,6 +109,7 @@ class RedBase(BotBase, RPCMixin):
 
         self.counter = Counter()
         self.uptime = None
+        self.checked_time_accuracy = None
         self.color = discord.Embed.Empty  # This is needed or color ends up 0x000000
 
         self.main_dir = bot_dir
