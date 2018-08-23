@@ -96,6 +96,36 @@ class Permissions:
         if await ctx.bot.is_owner(ctx.author):
             return True
 
+        # This block below is a work around for d.py behavior
+        # The help formatter needs a work around as well as our checks
+        # rely on things not guaranteed to be in commands.Context
+        # at the time of check.
+        if ctx._internal_view_use is None:
+            # discord.py doesn't give checks access to the actual command
+            # a user attempted to invoke, This sidesteps that somewhat.
+            view = ctx.view
+            previous = view.index
+            ctx._internal_view_use = ctx.command
+
+            while True:
+                view.skip_ws()
+                check_next = view.get_word()
+                try:
+                    possible_command = next(
+                        filter(
+                            lambda c: check_next in c.aliases or c.name == check_next,
+                            ctx._internal_view_use.all_commands.values(),
+                        )
+                    )
+                except (AttributeError, StopIteration):
+                    break
+                else:
+                    ctx._internal_view_use = possible_command
+
+            # restore the view object's state
+            view.index = previous
+            view.previous = previous
+
         before = [
             getattr(cog, "_{0.__class__.__name__}__red_permissions_before".format(cog), None)
             for cog in ctx.bot.cogs.values()
@@ -110,7 +140,7 @@ class Permissions:
         # checked ids + configureable to be checked against
         cache_tup = entries_from_ctx(ctx) + (
             ctx.cog.__class__.__name__,
-            ctx.command.qualified_name,
+            ctx._internal_view_use.qualified_name,
         )
         if cache_tup in self.cache:
             override = self.cache[cache_tup]

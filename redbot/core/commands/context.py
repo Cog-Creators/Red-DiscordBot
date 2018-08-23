@@ -20,6 +20,11 @@ class Context(commands.Context):
     This class inherits from `discord.ext.commands.Context`.
     """
 
+    def __init__(self, *args, **kwargs):
+        # This is used by permissions, avoids dynamic attribute issues
+        self._internal_view_use = None
+        super().__init__(*args, **kwargs)
+
     async def send_help(self) -> List[discord.Message]:
         """Send the command help message.
 
