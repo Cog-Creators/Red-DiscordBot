@@ -106,6 +106,7 @@ class RedBase(BotBase, RPCMixin):
 
         self.counter = Counter()
         self.uptime = None
+        self.checked_time_accuracy = None
         self.color = discord.Embed.Empty  # This is needed or color ends up 0x000000
 
         self.main_dir = bot_dir
@@ -290,6 +291,22 @@ class RedBase(BotBase, RPCMixin):
 
             if pkg_name.startswith("redbot.cogs."):
                 del sys.modules["redbot.cogs"].__dict__[name]
+
+    def add_cog(self, cog):
+        for attr in dir(cog):
+            _attr = getattr(cog, attr)
+            if isinstance(_attr, discord.ext.commands.Command) and not isinstance(
+                _attr, commands.Command
+            ):
+                raise RuntimeError(
+                    f"The {cog.__class__.__name__} cog in the {cog.__module__} package,"
+                    " is not using Red's command module, and cannot be added. "
+                    "If this is your cog, please use `from redbot.core import commands`"
+                    "in place of `from discord.ext import commands`. For more details on "
+                    "this requirement, see this page: "
+                    "http://red-discordbot.readthedocs.io/en/v3-develop/framework_commands.html"
+                )
+        super().add_cog(cog)
 
 
 class Red(RedBase, discord.AutoShardedClient):
