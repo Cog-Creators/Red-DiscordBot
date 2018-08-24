@@ -45,3 +45,9 @@ Tunnel
 
 .. automodule:: redbot.core.utils.tunnel
     :members: Tunnel
+
+Common Filters
+==============
+
+.. automodule:: redbot.core.utils.common_filters
+    :members:
