@@ -1,4 +1,6 @@
 import re
+from datetime import datetime, timedelta
+from typing import Union, List, Callable
 
 import discord
 
@@ -49,54 +51,56 @@ class Cleanup:
 
     @staticmethod
     async def get_messages_for_deletion(
-        ctx: commands.Context,
+        *,
         channel: discord.TextChannel,
-        number,
-        check=lambda x: True,
-        limit=100,
-        before=None,
-        after=None,
-        delete_pinned=False,
-    ) -> list:
+        number: int = None,
+        check: Callable[[discord.Message], bool] = lambda x: True,
+        before: Union[discord.Message, datetime] = None,
+        after: Union[discord.Message, datetime] = None,
+        delete_pinned: bool = False,
+    ) -> List[discord.Message]:
         """
         Gets a list of messages meeting the requirements to be deleted.
-
         Generally, the requirements are:
         - We don't have the number of messages to be deleted already
         - The message passes a provided check (if no check is provided,
           this is automatically true)
         - The message is less than 14 days old
         - The message is not pinned
+
+        Warning: Due to the way the API hands messages back in chunks,
+        passing after and a number together is not advisable.
+        If you need to accomplish this, you should filter messages on
+        the entire applicable range, rather than use this utility.
         """
-        if after is not None:
-            log.error(
-                "The `after` parameter for the `Cleanup.get_messages_for_deletion` method is "
-                "currently broken, see PRs #1980 and #2004 for details."
+
+        # This isn't actually two weeks ago to allow some wiggle room on API limits
+        two_weeks_ago = datetime.utcnow() - timedelta(days=14, minutes=-5)
+
+        def message_filter(message):
+            return (
+                check(message)
+                and message.created_at > two_weeks_ago
+                and (delete_pinned or not message.pinned)
             )
 
-        to_delete = []
-        too_old = False
+        if after:
+            if isinstance(after, discord.Message):
+                after = after.created_at
+            after = max(after, two_weeks_ago)
 
-        while not too_old and len(to_delete) < number:
-            message = None
-            async for message in channel.history(limit=limit, before=before, after=after):
-                if (
-                    (not number or len(to_delete) < number)
-                    and check(message)
-                    and (ctx.message.created_at - message.created_at).days < 14
-                    and (delete_pinned or not message.pinned)
-                ):
-                    to_delete.append(message)
-                elif (ctx.message.created_at - message.created_at).days >= 14:
-                    too_old = True
-                    break
-                elif number and len(to_delete) >= number:
-                    break
-            if message is None:
+        collected = []
+        async for message in channel.history(
+            limit=None, before=before, after=after, reverse=False
+        ):
+            if message.created_at < two_weeks_ago:
                 break
-            else:
-                before = message
-        return to_delete
+            if check(message):
+                collected.append(message)
+                if number and number <= len(collected):
+                    break
+
+        return collected
 
     @commands.group()
     @checks.mod_or_permissions(manage_messages=True)
@@ -138,11 +142,9 @@ class Cleanup:
                 return False
 
         to_delete = await self.get_messages_for_deletion(
-            ctx,
-            channel,
-            number,
+            channel=channel,
+            number=number,
             check=check,
-            limit=1000,
             before=ctx.message,
             delete_pinned=delete_pinned,
         )
@@ -200,11 +202,9 @@ class Cleanup:
                 return False
 
         to_delete = await self.get_messages_for_deletion(
-            ctx,
-            channel,
-            number,
+            channel=channel,
+            number=number,
             check=check,
-            limit=1000,
             before=ctx.message,
             delete_pinned=delete_pinned,
         )
@@ -245,33 +245,20 @@ class Cleanup:
             return
 
         try:
-            message = await channel.get_message(message_id)
+            after = await channel.get_message(message_id)
         except discord.NotFound:
-            await ctx.send(_("Message not found."))
-            return
+            return await ctx.send(_("Message not found."))
 
-        if (ctx.message.created_at - message.created_at).days >= 14:
-            await ctx.send("The specified message must be less than 14 days old.")
-            return
-
-        if not delete_pinned:
-            pinned_msgs = await channel.pins()
-            to_exclude = set(m for m in pinned_msgs if m.created_at > message.created_at)
-        else:
-            to_exclude = None
-
-        if to_exclude:
-            to_delete = await channel.history(limit=None, after=message).flatten()
-            to_delete = set(to_delete) - to_exclude
-            await channel.delete_messages(to_delete)
-            num_deleted = len(to_delete)
-        else:
-            num_deleted = len(await channel.purge(limit=None, after=message))
+        to_delete = await self.get_messages_for_deletion(
+            channel=channel, number=None, after=after, delete_pinned=delete_pinned
+        )
 
         reason = "{}({}) deleted {} messages in channel {}.".format(
-            author.name, author.id, num_deleted, channel.name
+            author.name, author.id, len(to_delete), channel.name
         )
         log.info(reason)
+
+        await mass_purge(to_delete, channel)
 
     @cleanup.command()
     @commands.guild_only()
@@ -295,7 +282,7 @@ class Cleanup:
                 return
 
         to_delete = await self.get_messages_for_deletion(
-            ctx, channel, number, limit=1000, before=ctx.message, delete_pinned=delete_pinned
+            channel=channel, number=number, before=ctx.message, delete_pinned=delete_pinned
         )
         to_delete.append(ctx.message)
 
@@ -346,11 +333,9 @@ class Cleanup:
             return False
 
         to_delete = await self.get_messages_for_deletion(
-            ctx,
-            channel,
-            number,
+            channel=channel,
+            number=number,
             check=check,
-            limit=1000,
             before=ctx.message,
             delete_pinned=delete_pinned,
         )
@@ -428,11 +413,9 @@ class Cleanup:
             return False
 
         to_delete = await self.get_messages_for_deletion(
-            ctx,
-            channel,
-            number,
+            channel=channel,
+            number=number,
             check=check,
-            limit=1000,
             before=ctx.message,
             delete_pinned=delete_pinned,
         )
