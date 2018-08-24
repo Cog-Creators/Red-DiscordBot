@@ -5,7 +5,7 @@ import discord
 from discord.ext import commands
 
 from redbot.core.utils.chat_formatting import box
-
+from redbot.core.utils import common_filters
 
 TICK = "\N{WHITE HEAVY CHECK MARK}"
 
@@ -19,6 +19,32 @@ class Context(commands.Context):
 
     This class inherits from `discord.ext.commands.Context`.
     """
+
+    async def send(self, content=None, **kwargs):
+        """
+        Usage is mostly the same as `discord.abc.Messageable`
+        with an additional keyword only argument
+
+        filter
+
+        which defaults to
+        
+        a regex substitution which nullifies mass mentions
+
+        For more builtin filter options, look at redbot.core.utils.common_filters
+
+        You can also supply your own filter substitute, or use
+        `None` to not filter the message content before sending
+
+        This does not filter out embeds
+        """
+
+        _filter = kwargs.pop("filter", common_filters.filter_mass_mentions)
+
+        if _filter and content:
+            content = _filter(str(content))
+
+        return await super().send(content=content, **kwargs)
 
     async def send_help(self) -> List[discord.Message]:
         """Send the command help message.

@@ -7,6 +7,8 @@ import discord
 from redbot.core import Config
 from redbot.core.bot import Red
 
+from .utils.common_filters import filter_invites, filter_mass_mentions, filter_urls
+
 __all__ = [
     "Case",
     "CaseType",
@@ -141,7 +143,9 @@ class Case:
                 datetime.fromtimestamp(self.modified_at).strftime("%Y-%m-%d %H:%M:%S")
             )
 
-        user = "{}#{} ({})\n".format(self.user.name, self.user.discriminator, self.user.id)
+        user = filter_invites(
+            "{}#{} ({})\n".format(self.user.name, self.user.discriminator, self.user.id)
+        )  # Invites get rendered even in embeds.
         if embed:
             emb = discord.Embed(title=title, description=reason)
 
@@ -160,6 +164,7 @@ class Case:
             emb.timestamp = datetime.fromtimestamp(self.created_at)
             return emb
         else:
+            user = filter_mass_mentions(filter_urls(user))  # Further sanitization outside embeds
             case_text = ""
             case_text += "{}\n".format(title)
             case_text += "**User:** {}\n".format(user)
