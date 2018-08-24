@@ -129,9 +129,7 @@ class Audio:
             notify_channel = player.fetch("channel")
             if notify_channel:
                 notify_channel = self.bot.get_channel(notify_channel)
-                embed = discord.Embed(
-                    colour=(await ctx.embed_colour()), title="Queue ended."
-                )
+                embed = discord.Embed(colour=(await ctx.embed_colour()), title="Queue ended.")
                 await notify_channel.send(embed=embed)
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END and status:
@@ -1254,8 +1252,7 @@ class Audio:
             if not tracks:
                 return await self._embed_msg(ctx, "Nothing found.")
             songembed = discord.Embed(
-                colour=(await ctx.embed_colour()),
-                title="Queued {} track(s).".format(len(tracks)),
+                colour=(await ctx.embed_colour()), title="Queued {} track(s).".format(len(tracks))
             )
             queue_duration = await self._queue_duration(ctx)
             queue_total_duration = lavalink.utils.format_time(queue_duration)
