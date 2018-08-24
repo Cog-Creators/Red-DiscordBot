@@ -126,7 +126,6 @@ class Cleanup:
             return
 
         author = ctx.author
-        is_bot = self.bot.user.bot
 
         if number > 100:
             cont = await self.check_100_plus(ctx, number)
@@ -154,10 +153,7 @@ class Cleanup:
         )
         log.info(reason)
 
-        if is_bot:
-            await mass_purge(to_delete, channel)
-        else:
-            await slow_deletion(to_delete)
+        await mass_purge(to_delete, channel)
 
     @cleanup.command()
     @commands.guild_only()
@@ -186,7 +182,6 @@ class Cleanup:
             _id = member.id
 
         author = ctx.author
-        is_bot = self.bot.user.bot
 
         if number > 100:
             cont = await self.check_100_plus(ctx, number)
@@ -215,11 +210,7 @@ class Cleanup:
         )
         log.info(reason)
 
-        if is_bot:
-            # For whatever reason the purge endpoint requires manage_messages
-            await mass_purge(to_delete, channel)
-        else:
-            await slow_deletion(to_delete)
+        await mass_purge(to_delete, channel)
 
     @cleanup.command()
     @commands.guild_only()
@@ -238,11 +229,6 @@ class Cleanup:
             await ctx.send("I need the Manage Messages permission to do this.")
             return
         author = ctx.author
-        is_bot = self.bot.user.bot
-
-        if not is_bot:
-            await ctx.send(_("This command can only be used on bots with bot accounts."))
-            return
 
         try:
             after = await channel.get_message(message_id)
@@ -274,8 +260,6 @@ class Cleanup:
             return
         author = ctx.author
 
-        is_bot = self.bot.user.bot
-
         if number > 100:
             cont = await self.check_100_plus(ctx, number)
             if not cont:
@@ -291,10 +275,7 @@ class Cleanup:
         )
         log.info(reason)
 
-        if is_bot:
-            await mass_purge(to_delete, channel)
-        else:
-            await slow_deletion(to_delete)
+        await mass_purge(to_delete, channel)
 
     @cleanup.command(name="bot")
     @commands.guild_only()
@@ -306,7 +287,6 @@ class Cleanup:
             await ctx.send("I need the Manage Messages permission to do this.")
             return
         author = ctx.message.author
-        is_bot = self.bot.user.bot
 
         if number > 100:
             cont = await self.check_100_plus(ctx, number)
@@ -348,10 +328,7 @@ class Cleanup:
         )
         log.info(reason)
 
-        if is_bot:
-            await mass_purge(to_delete, channel)
-        else:
-            await slow_deletion(to_delete)
+        await mass_purge(to_delete, channel)
 
     @cleanup.command(name="self")
     async def cleanup_self(
@@ -373,7 +350,6 @@ class Cleanup:
         """
         channel = ctx.channel
         author = ctx.message.author
-        is_bot = self.bot.user.bot
 
         if number > 100:
             cont = await self.check_100_plus(ctx, number)
@@ -420,10 +396,6 @@ class Cleanup:
             delete_pinned=delete_pinned,
         )
 
-        # Selfbot convenience, delete trigger message
-        if author == self.bot.user:
-            to_delete.append(ctx.message)
-
         if ctx.guild:
             channel_name = "channel " + channel.name
         else:
@@ -436,7 +408,7 @@ class Cleanup:
         )
         log.info(reason)
 
-        if is_bot and can_mass_purge:
+        if can_mass_purge:
             await mass_purge(to_delete, channel)
         else:
             await slow_deletion(to_delete)
