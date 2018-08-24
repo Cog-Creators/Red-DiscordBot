@@ -3,9 +3,10 @@ import pkgutil
 from importlib import import_module, invalidate_caches
 from importlib.machinery import ModuleSpec
 from pathlib import Path
-from typing import Tuple, Union, List
+from typing import Tuple, Union, List, Optional
 
 import redbot.cogs
+from redbot.core.utils import deduplicate_iterables
 import discord
 
 from . import checks, commands
@@ -18,12 +19,13 @@ from .utils.chat_formatting import box, pagify
 __all__ = ["CogManager"]
 
 
-def _deduplicate(xs):
-    ret = []
-    for x in xs:
-        if x not in ret:
-            ret.append(x)
-    return ret
+class NoSuchCog(ImportError):
+    """Thrown when a cog is missing.
+
+    Different from ImportError because some ImportErrors can happen inside cogs.
+    """
+
+    pass
 
 
 class CogManager:
@@ -56,7 +58,7 @@ class CogManager:
         conf_paths = [Path(p) for p in await self.conf.paths()]
         other_paths = self._paths
 
-        all_paths = _deduplicate(list(conf_paths) + list(other_paths) + [self.CORE_PATH])
+        all_paths = deduplicate_iterables(conf_paths, other_paths, [self.CORE_PATH])
 
         if self.install_path not in all_paths:
             all_paths.insert(0, await self.install_path())
@@ -209,11 +211,10 @@ class CogManager:
 
         Raises
         ------
-        RuntimeError
-            When no matching spec can be found.
+        NoSuchCog
+            When no cog with the requested name was found.
         """
-        resolved_paths = _deduplicate(await self.paths())
-
+        resolved_paths = await self.paths()
         real_paths = [str(p) for p in resolved_paths if p != self.CORE_PATH]
 
         for finder, module_name, _ in pkgutil.iter_modules(real_paths):
@@ -222,9 +223,11 @@ class CogManager:
                 if spec:
                     return spec
 
-        raise RuntimeError(
-            "No 3rd party module by the name of '{}' was found"
-            " in any available path.".format(name)
+        raise NoSuchCog(
+            "No 3rd party module by the name of '{}' was found in any available path.".format(
+                name
+            ),
+            name=name,
         )
 
     @staticmethod
@@ -246,16 +249,24 @@ class CogManager:
             When no matching spec can be found.
         """
         real_name = ".{}".format(name)
+        package = "redbot.cogs"
+
         try:
-            mod = import_module(real_name, package="redbot.cogs")
+            mod = import_module(real_name, package=package)
         except ImportError as e:
-            raise RuntimeError(
-                "No core cog by the name of '{}' could be found.".format(name)
-            ) from e
+            if e.name == package + real_name:
+                raise NoSuchCog(
+                    "No core cog by the name of '{}' could be found.".format(name),
+                    path=e.path,
+                    name=e.name,
+                ) from e
+
+            raise
+
         return mod.__spec__
 
     # noinspection PyUnreachableCode
-    async def find_cog(self, name: str) -> ModuleSpec:
+    async def find_cog(self, name: str) -> Optional[ModuleSpec]:
         """Find a cog in the list of available paths.
 
         Parameters
@@ -265,22 +276,15 @@ class CogManager:
 
         Returns
         -------
-        importlib.machinery.ModuleSpec
-            A module spec to be used for specialized cog loading.
-
-        Raises
-        ------
-        RuntimeError
-            If there is no cog with the given name.
+        Optional[importlib.machinery.ModuleSpec]
+            A module spec to be used for specialized cog loading, if found.
 
         """
-        with contextlib.suppress(RuntimeError):
+        with contextlib.suppress(NoSuchCog):
             return await self._find_ext_cog(name)
 
-        with contextlib.suppress(RuntimeError):
+        with contextlib.suppress(NoSuchCog):
             return await self._find_core_cog(name)
-
-        raise RuntimeError("No cog with that name could be found.")
 
     async def available_modules(self) -> List[str]:
         """Finds the names of all available modules to load.
