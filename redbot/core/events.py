@@ -2,22 +2,20 @@ import sys
 import codecs
 import datetime
 import logging
+from datetime import timedelta
 from distutils.version import StrictVersion
 
 import aiohttp
+import discord
 import pkg_resources
 import traceback
+from colorama import Fore, Style, init
 from pkg_resources import DistributionNotFound
-
-
-import discord
 
 from . import __version__, commands
 from .data_manager import storage_type
-from .utils.chat_formatting import inline, bordered, pagify, box
+from .utils.chat_formatting import inline, bordered
 from .utils import fuzzy_command_search
-from colorama import Fore, Style, init
-from . import rpc
 
 log = logging.getLogger("red")
 sentry_log = logging.getLogger("red.sentry")
@@ -259,7 +257,7 @@ def init_events(bot, cli_flags):
             or (discord_now - timedelta(minutes=60)) > bot.checked_time_accuracy
         ):
             system_now = datetime.datetime.utcnow()
-            diff = abs((discord_now - system_now).total_seconds)
+            diff = abs((discord_now - system_now).total_seconds())
             if diff > 60:
                 log.warn(
                     "Detected significant difference (%d seconds) in system clock to discord's clock."
