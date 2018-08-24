@@ -262,7 +262,7 @@ def init_events(bot, cli_flags):
             or (discord_now - timedelta(minutes=60)) > bot.checked_time_accuracy
         ):
             system_now = datetime.datetime.utcnow()
-            diff = abs((discord_now - system_now).total_seconds)
+            diff = abs((discord_now - system_now).total_seconds())
             if diff > 60:
                 log.warn(
                     "Detected significant difference (%d seconds) in system clock to discord's clock."
