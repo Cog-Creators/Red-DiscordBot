@@ -21,22 +21,32 @@ class Context(commands.Context):
     """
 
     async def send(self, content=None, **kwargs):
-        """
-        Usage is mostly the same as `discord.abc.Messageable`
-        with an additional keyword only argument
+        """Sends a message to the destination with the content given.
 
-        filter
+        This acts the same as `discord.ext.commands.Context.send`, with
+        one added keyword argument as detailed below in *Other Parameters*.
 
-        which defaults to
-        
-        a regex substitution which nullifies mass mentions
+        Parameters
+        ----------
+        content : str
+            The content of the message to send.
 
-        For more builtin filter options, look at redbot.core.utils.common_filters
+        Other Parameters
+        ----------------
+        filter : Callable[`str`] -> `str`
+            A function which is used to sanitize the ``content`` before
+            it is sent. Defaults to
+            :func:`~redbot.core.utils.common_filters.filter_mass_mentions`.
+            This must take a single `str` as an argument, and return
+            the sanitized `str`.
+        \*\*kwargs
+            See `discord.ext.commands.Context.send`.
 
-        You can also supply your own filter substitute, or use
-        `None` to not filter the message content before sending
+        Returns
+        -------
+        discord.Message
+            The message that was sent.
 
-        This does not filter out embeds
         """
 
         _filter = kwargs.pop("filter", common_filters.filter_mass_mentions)
