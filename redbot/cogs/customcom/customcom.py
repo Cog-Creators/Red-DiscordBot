@@ -331,8 +331,7 @@ class CustomCommands:
         ctx = await self.bot.get_context(message)
         ctx.command = fake_cc
         await self.bot.invoke(ctx)
-        await self.cc_command(*ctx.args, **ctx.kwargs,
-                              raw_response=raw_response)
+        await self.cc_command(*ctx.args, **ctx.kwargs, raw_response=raw_response)
 
     async def cc_callback(self, *args, **kwargs) -> None:
         """
@@ -343,8 +342,7 @@ class CustomCommands:
         # fake command to take advantage of discord.py's parsing and events
         pass
 
-    async def cc_command(self, ctx, *cc_args,
-                         raw_response, **cc_kwargs) -> None:
+    async def cc_command(self, ctx, *cc_args, raw_response, **cc_kwargs) -> None:
         if cc_kwargs:
             cc_args = (*cc_args, *cc_kwargs.values())
         results = re.findall("\{([^}]+)\}", raw_response)
@@ -354,28 +352,25 @@ class CustomCommands:
         results = re.findall("\{((\d+)(\.?[^}:]*)[^}]*)\}", raw_response)
         for result in results:
             index = int(result[1].strip())
-            arg = self.transform_arg(result[0],
-                                     result[2].strip(),
-                                     cc_args[index])
+            arg = self.transform_arg(result[0], result[2].strip(), cc_args[index])
             raw_response = raw_response.replace("{" + result[0] + "}", arg)
         await ctx.send(raw_response)
 
     def prepare_args(self, raw_response) -> Mapping[str, Parameter]:
         args = re.findall("\{(\d+)\.?[^}:]*(:[^}]*)?\}", raw_response)
         if not args:
-            return OrderedDict([
-                (Parameter("ctx", Parameter.POSITIONAL_OR_KEYWORD))])
+            return OrderedDict([["ctx", Parameter("ctx", Parameter.POSITIONAL_OR_KEYWORD)]])
         highest = max(int(a[0].strip()) for a in args)
-        fin = [Parameter("cc_" + str(i), Parameter.POSITIONAL_OR_KEYWORD)
-               for i in range(highest + 1)]
+        fin = [
+            Parameter("cc_" + str(i), Parameter.POSITIONAL_OR_KEYWORD) for i in range(highest + 1)
+        ]
         for arg in args:
             index = int(arg[0].strip())
             anno = arg[1][1:].strip()
             if not anno or anno.startswith("_"):  # public types only
                 continue
             # allow type hinting only for discord.py and builtin types
-            anno = getattr(discord, anno,
-                           getattr(builtins, anno.lower(), Parameter.empty))
+            anno = getattr(discord, anno, getattr(builtins, anno.lower(), Parameter.empty))
             if not isinstance(anno, type):  # types only
                 anno = Parameter.empty
             fin[index] = fin[index].replace(annotation=anno)
