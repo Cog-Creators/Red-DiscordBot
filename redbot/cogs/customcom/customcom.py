@@ -331,7 +331,8 @@ class CustomCommands:
         ctx = await self.bot.get_context(message)
         ctx.command = fake_cc
         await self.bot.invoke(ctx)
-        await self.cc_command(*ctx.args, **ctx.kwargs, raw_response=raw_response)
+        if not ctx.command_failed:
+            await self.cc_command(*ctx.args, **ctx.kwargs, raw_response=raw_response)
 
     async def cc_callback(self, *args, **kwargs) -> None:
         """
