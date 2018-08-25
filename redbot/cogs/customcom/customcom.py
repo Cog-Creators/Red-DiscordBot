@@ -1,7 +1,11 @@
 import os
 import re
 import random
+import builtins
 from datetime import datetime
+from inspect import Parameter
+from collections import OrderedDict
+from typing import Mapping
 
 import discord
 
@@ -164,6 +168,8 @@ class CustomCommands:
         {guild}     message.guild
 
         {server}    message.guild
+
+        {0},{1},... a user-provided argument
         """
         pass
 
@@ -175,7 +181,6 @@ class CustomCommands:
 
         Note: This is interactive
         """
-        channel = ctx.channel
         responses = []
 
         responses = await self.commandobj.get_responses(ctx=ctx)
@@ -199,7 +204,6 @@ class CustomCommands:
         Example:
         [p]customcom add simple yourcommand Text you want
         """
-        guild = ctx.guild
         command = command.lower()
         if command in self.bot.all_commands:
             await ctx.send(_("That command is already a standard command."))
@@ -222,7 +226,6 @@ class CustomCommands:
         Example:
         [p]customcom edit yourcommand Text you want
         """
-        guild = ctx.message.guild
         command = command.lower()
 
         try:
@@ -241,7 +244,6 @@ class CustomCommands:
         """Deletes a custom command
         Example:
         [p]customcom delete yourcommand"""
-        guild = ctx.message.guild
         command = command.lower()
         try:
             await self.commandobj.delete(ctx=ctx, command=command)
@@ -309,26 +311,89 @@ class CustomCommands:
             return
 
         if user_allowed:
-            cmd = message.content[len(prefix) :]
+            command = message.content[len(prefix) :].split()[0]
             try:
-                c = await self.commandobj.get(message=message, command=cmd)
-                if isinstance(c, list):
-                    command = random.choice(c)
-                elif isinstance(c, str):
-                    command = c
+                raw_response = await self.commandobj.get(message=message, command=command)
+                if isinstance(raw_response, list):
+                    raw_response = random.choice(raw_response)
+                elif isinstance(raw_response, str):
+                    pass
                 else:
                     raise NotFound()
             except NotFound:
                 return
-            response = self.format_cc(command, message)
-            await message.channel.send(response)
+            await self.call_cc_command(command, raw_response, message)
 
-    def format_cc(self, command, message) -> str:
-        results = re.findall("\{([^}]+)\}", command)
+    async def call_cc_command(self, command, raw_response, message) -> None:
+        # wrap the command here so it won't register with the bot
+        fake_cc = commands.Command(command, self.cc_callback)
+        fake_cc.params = self.prepare_args(raw_response)
+        ctx = await self.bot.get_context(message)
+        ctx.command = fake_cc
+        await self.bot.invoke(ctx)
+        await self.cc_command(*ctx.args, **ctx.kwargs,
+                              raw_response=raw_response)
+
+    async def cc_callback(self, *args, **kwargs) -> None:
+        """
+        Custom command.
+
+        Created via the CustomCom cog. See `[p]customcom` for more details.
+        """
+        # fake command to take advantage of discord.py's parsing and events
+        pass
+
+    async def cc_command(self, ctx, *cc_args,
+                         raw_response, **cc_kwargs) -> None:
+        if cc_kwargs:
+            cc_args = (*cc_args, *cc_kwargs.values())
+        results = re.findall("\{([^}]+)\}", raw_response)
         for result in results:
-            param = self.transform_parameter(result, message)
-            command = command.replace("{" + result + "}", param)
-        return command
+            param = self.transform_parameter(result, ctx.message)
+            raw_response = raw_response.replace("{" + result + "}", param)
+        results = re.findall("\{((\d+)(\.?[^}:]*)[^}]*)\}", raw_response)
+        for result in results:
+            index = int(result[1].strip())
+            arg = self.transform_arg(result[0],
+                                     result[2].strip(),
+                                     cc_args[index])
+            raw_response = raw_response.replace("{" + result[0] + "}", arg)
+        await ctx.send(raw_response)
+
+    def prepare_args(self, raw_response) -> Mapping[str, Parameter]:
+        args = re.findall("\{(\d+)\.?[^}:]*(:[^}]*)?\}", raw_response)
+        if not args:
+            return OrderedDict([
+                (Parameter("ctx", Parameter.POSITIONAL_OR_KEYWORD))])
+        highest = max(int(a[0].strip()) for a in args)
+        fin = [Parameter("cc_" + str(i), Parameter.POSITIONAL_OR_KEYWORD)
+               for i in range(highest + 1)]
+        for arg in args:
+            index = int(arg[0].strip())
+            anno = arg[1][1:].strip()
+            if not anno or anno.startswith("_"):  # public types only
+                continue
+            # allow type hinting only for discord.py and builtin types
+            anno = getattr(discord, anno,
+                           getattr(builtins, anno.lower(), Parameter.empty))
+            if not isinstance(anno, type):  # types only
+                anno = Parameter.empty
+            fin[index] = fin[index].replace(annotation=anno)
+        # consume rest
+        fin[-1] = fin[-1].replace(name="cc_final", kind=Parameter.KEYWORD_ONLY)
+        # insert ctx parameter for discord.py parsing
+        fin = [Parameter("ctx", Parameter.POSITIONAL_OR_KEYWORD)] + fin
+        return OrderedDict((p.name, p) for p in fin)
+
+    def transform_arg(self, result, attr, obj) -> str:
+        attr = attr[1:]
+        if not attr:
+            return obj
+        raw_result = "{" + result + "}"
+        # forbid private members and nested attr lookups
+        if attr.startswith("_") or "." in attr:
+            return raw_result
+        return str(getattr(obj, attr, raw_result))
 
     def transform_parameter(self, result, message) -> str:
         """
