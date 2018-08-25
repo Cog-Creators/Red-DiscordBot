@@ -466,7 +466,7 @@ class Streams:
                     return stream
                 elif not self.check_name_or_id(name) and stream.id == name:
                     return stream
-            if stream.type == _class.__name__ and stream.name.lower() == name.lower():
+            elif stream.type == _class.__name__ and stream.name.lower() == name.lower():
                 return stream
 
     def get_community(self, _class, name):
