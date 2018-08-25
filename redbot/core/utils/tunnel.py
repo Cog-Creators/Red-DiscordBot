@@ -5,6 +5,7 @@ import io
 import sys
 import weakref
 from typing import List
+from .common_filters import filter_mass_mentions
 
 _instances = weakref.WeakValueDictionary({})
 
@@ -70,10 +71,10 @@ class Tunnel(metaclass=TunnelMeta):
         self.recipient = recipient
         self.last_interaction = datetime.utcnow()
 
-    async def react_close(self, *, uid: int, message: str):
+    async def react_close(self, *, uid: int, message: str = ""):
         send_to = self.origin if uid == self.sender.id else self.sender
         closer = next(filter(lambda x: x.id == uid, (self.sender, self.recipient)), None)
-        await send_to.send(message.format(closer=closer))
+        await send_to.send(filter_mass_mentions(message.format(closer=closer)))
 
     @property
     def members(self):

@@ -20,6 +20,7 @@ from . import Config, i18n, commands
 from .rpc import RPCMixin
 from .help_formatter import Help, help as help_
 from .sentry import SentryManager
+from .utils import common_filters
 
 
 def _is_submodule(parent, child):
@@ -104,6 +105,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
 
         self.counter = Counter()
         self.uptime = None
+        self.checked_time_accuracy = None
         self.color = discord.Embed.Empty  # This is needed or color ends up 0x000000
 
         self.main_dir = bot_dir
@@ -288,6 +290,39 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
 
             if pkg_name.startswith("redbot.cogs."):
                 del sys.modules["redbot.cogs"].__dict__[name]
+
+    async def send_filtered(
+        destination: discord.abc.Messageable,
+        filter_mass_mentions=True,
+        filter_invite_links=True,
+        filter_all_links=False,
+        **kwargs,
+    ):
+        """
+        This is a convienience wrapper around
+
+        discord.abc.Messageable.send
+
+        It takes the destination you'd like to send to, which filters to apply
+        (defaults on mass mentions, and invite links) and any other parameters
+        normally accepted by destination.send
+
+        This should realistically only be used for responding using user provided
+        input. (unfortunately, including usernames)
+        Manually crafted messages which dont take any user input have no need of this
+        """
+
+        content = kwargs.pop("content", None)
+
+        if content:
+            if filter_mass_mentions:
+                content = common_filters.filter_mass_mentions(content)
+            if filter_invite_links:
+                content = common_filters.filter_invites(content)
+            if filter_all_links:
+                content = common_filters.filter_urls(content)
+
+        await destination.send(content=content, **kwargs)
 
     def add_cog(self, cog):
         for attr in dir(cog):
