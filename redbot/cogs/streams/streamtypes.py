@@ -173,6 +173,8 @@ class YoutubeStream(Stream):
             async with aiohttp.ClientSession() as session:
                 async with session.get(YOUTUBE_VIDEOS_ENDPOINT, params=params) as r:
                     data = await r.json()
+            if not self.name:
+                self.name = data["items"][0]["snippet"]["channelTitle"]
             return self.make_embed(data)
 
     def make_embed(self, data):
@@ -188,6 +190,9 @@ class YoutubeStream(Stream):
         return embed
 
     async def fetch_id(self):
+        if not self._token:
+            raise InvalidYoutubeCredentials()
+
         params = {"key": self._token, "forUsername": self.name, "part": "id"}
         async with aiohttp.ClientSession() as session:
             async with session.get(YOUTUBE_CHANNELS_ENDPOINT, params=params) as r:
