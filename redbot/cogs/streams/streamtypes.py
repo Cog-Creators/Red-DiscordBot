@@ -152,6 +152,9 @@ class YoutubeStream(Stream):
         super().__init__(**kwargs)
 
     async def is_online(self):
+        if not self._token:
+            raise InvalidYoutubeCredentials("YouTube API key is not set.")
+
         if not self.id:
             self.id = await self.fetch_id()
         url = YOUTUBE_SEARCH_ENDPOINT
@@ -190,8 +193,6 @@ class YoutubeStream(Stream):
         return embed
 
     async def fetch_id(self):
-        if not self._token:
-            raise InvalidYoutubeCredentials()
 
         params = {"key": self._token, "forUsername": self.name, "part": "id"}
         async with aiohttp.ClientSession() as session:
