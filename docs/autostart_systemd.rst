@@ -10,7 +10,7 @@ Creating the service file
 
 Create the new service file:
 
-:code:`sudo nano /etc/systemd/system/red@.service`
+:code:`sudo -e /etc/systemd/system/red@.service`
 
 Paste the following and replace all instances of :code:`username` with the username your bot is running under (hopefully not root):
 

@@ -1,9 +1,11 @@
 import shlex
 import shutil
 import asyncio
-from subprocess import Popen, DEVNULL, PIPE
+import asyncio.subprocess
 import os
 import logging
+import re
+from subprocess import Popen, DEVNULL
 from typing import Optional, Tuple
 
 _JavaVersion = Tuple[int, int]
@@ -45,23 +47,42 @@ async def has_java(loop) -> Tuple[bool, Optional[_JavaVersion]]:
         return False, None
 
     version = await get_java_version(loop)
-    return version >= (1, 8), version
+    return (2, 0) > version >= (1, 8) or version >= (8, 0), version
 
 
 async def get_java_version(loop) -> _JavaVersion:
     """
     This assumes we've already checked that java exists.
     """
-    proc = Popen(shlex.split("java -version", posix=os.name == "posix"), stdout=PIPE, stderr=PIPE)
-    _, err = proc.communicate()
+    _proc: asyncio.subprocess.Process = await asyncio.create_subprocess_exec(
+        "java",
+        "-version",
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+        loop=loop,
+    )
+    # java -version outputs to stderr
+    _, err = await _proc.communicate()
 
-    version_info = str(err, encoding="utf-8")
+    version_info: str = err.decode("utf-8")
+    # We expect the output to look something like:
+    #     $ java -version
+    #     ...
+    #     ... version "MAJOR.MINOR.PATCH[_BUILD]" ...
+    #     ...
+    # We only care about the major and minor parts though.
+    version_line_re = re.compile(r'version "(?P<major>\d+).(?P<minor>\d+).\d+(?:_\d+)?"')
 
-    version_line = version_info.split("\n")[0]
-    version_start = version_line.find('"')
-    version_string = version_line[version_start + 1 : -1]
-    major, minor = version_string.split(".")[:2]
-    return int(major), int(minor)
+    lines = version_info.splitlines()
+    for line in lines:
+        match = version_line_re.search(line)
+        if match:
+            return int(match["major"]), int(match["minor"])
+
+    raise RuntimeError(
+        "The output of `java -version` was unexpected. Please report this issue on Red's "
+        "issue tracker."
+    )
 
 
 async def start_lavalink_server(loop):
