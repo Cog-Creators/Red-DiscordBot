@@ -376,6 +376,8 @@ class CustomCommands:
         ]
         for arg in args:
             index = int(arg[0])
+            if fin[index].annotation is not Parameter.empty:
+                continue
             anno = arg[1][1:]
             if anno.lower().endswith("converter"):
                 anno = anno[:-9]
