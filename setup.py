@@ -130,7 +130,7 @@ if __name__ == "__main__":
                 "sphinxcontrib-asyncio==0.2.0",
                 "sphinxcontrib-websupport==1.1.0",
             ],
-            "voice": ["red-lavalink==0.1.1"],
+            "voice": ["red-lavalink==0.1.2"],
             "style": ["black==18.6b4", "click==6.7", "toml==0.9.4"],
         },
     )

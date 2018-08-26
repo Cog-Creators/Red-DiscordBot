@@ -216,9 +216,9 @@
         },
         "red-lavalink": {
             "hashes": [
-                "sha256:244a06d65744f063329c73989a866de0fc6787f2d9f61838e97546b3ec76527d"
+                "sha256:6a1a34471ccf4630eee537049568dd87e8e93614f1d1ce355dd74e5b10079782"
             ],
-            "version": "==0.1.1"
+            "version": "==0.1.2"
         },
         "websockets": {
             "hashes": [

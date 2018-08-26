@@ -112,14 +112,6 @@ def parse_cli_flags(args):
         "Can be used with the --no-cogs flag to load these cogs exclusively.",
     )
     parser.add_argument(
-        "--self-bot", action="store_true", help="Specifies if Red should log in as selfbot"
-    )
-    parser.add_argument(
-        "--not-bot",
-        action="store_true",
-        help="Specifies if the token used belongs to a bot account.",
-    )
-    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Makes Red quit with code 0 just before the "

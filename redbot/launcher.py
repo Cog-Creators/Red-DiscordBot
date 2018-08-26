@@ -34,6 +34,14 @@ IS_WINDOWS = os.name == "nt"
 IS_MAC = sys.platform == "darwin"
 
 
+def is_venv():
+    """Return True if the process is in a venv or in a virtualenv."""
+    # credit to @calebj
+    return hasattr(sys, "real_prefix") or (
+        hasattr(sys, "base_prefix") and sys.base_prefix != sys.prefix
+    )
+
+
 def parse_cli_args():
     parser = argparse.ArgumentParser(
         description="Red - Discord Bot's launcher (V3)", allow_abbrev=False
@@ -71,7 +79,7 @@ def parse_cli_args():
     return parser.parse_known_args()
 
 
-def update_red(dev=False, reinstall=False, voice=False, mongo=False, docs=False, test=False):
+def update_red(dev=False, voice=False, mongo=False, docs=False, test=False):
     interpreter = sys.executable
     print("Updating Red...")
     # If the user ran redbot-launcher.exe, updating with pip will fail
@@ -104,25 +112,21 @@ def update_red(dev=False, reinstall=False, voice=False, mongo=False, docs=False,
         package = "Red-DiscordBot"
         if egg_l:
             package += "[{}]".format(", ".join(egg_l))
-    if reinstall:
-        code = subprocess.call(
-            [
-                interpreter,
-                "-m",
-                "pip",
-                "install",
-                "-U",
-                "-I",
-                "--force-reinstall",
-                "--no-cache-dir",
-                "--process-dependency-links",
-                package,
-            ]
-        )
-    else:
-        code = subprocess.call(
-            [interpreter, "-m", "pip", "install", "-U", "--process-dependency-links", package]
-        )
+    arguments = [
+        interpreter,
+        "-m",
+        "pip",
+        "install",
+        "-U",
+        "-I",
+        "--no-cache-dir",
+        "--force-reinstall",
+        "--process-dependency-links",
+        package,
+    ]
+    if not is_venv():
+        arguments.append("--user")
+    code = subprocess.call(arguments)
     if code == 0:
         print("Red has been updated")
     else:
@@ -190,19 +194,6 @@ def cli_flag_getter():
         choice = user_choice()
         if choice == "y":
             flags.append("--no-cogs")
-        print("Is this a selfbot? (y/n)")
-        choice = user_choice()
-        if choice == "y":
-            print(
-                "Please note that selfbots are not allowed by Discord. See"
-                "https://support.discordapp.com/hc/en-us/articles/115002192352-Automated-user-accounts-self-bots-"
-                "for more information."
-            )
-            flags.append("--self-bot")
-        print("Does this token belong to a user account rather than a bot account? (y/n)")
-        choice = user_choice()
-        if choice == "y":
-            flags.append("--not-bot")
         print("Do you want to do a dry run? (y/n)")
         choice = user_choice()
         if choice == "y":
@@ -320,7 +311,7 @@ def extras_selector():
     return selected
 
 
-def development_choice(reinstall=False, can_go_back=True):
+def development_choice(can_go_back=True):
     while True:
         print("\n")
         print("Do you want to install stable or development version?")
@@ -336,7 +327,6 @@ def development_choice(reinstall=False, can_go_back=True):
             selected = extras_selector()
             update_red(
                 dev=False,
-                reinstall=reinstall,
                 voice=True if "voice" in selected else False,
                 docs=True if "docs" in selected else False,
                 test=True if "test" in selected else False,
@@ -347,7 +337,6 @@ def development_choice(reinstall=False, can_go_back=True):
             selected = extras_selector()
             update_red(
                 dev=True,
-                reinstall=reinstall,
                 voice=True if "voice" in selected else False,
                 docs=True if "docs" in selected else False,
                 test=True if "test" in selected else False,
@@ -453,14 +442,14 @@ def main_menu():
                 print("0. Back")
                 choice = user_choice()
                 if choice == "1":
-                    if development_choice(reinstall=True):
+                    if development_choice():
                         wait()
                 elif choice == "2":
                     loop.run_until_complete(reset_red())
                     wait()
                 elif choice == "3":
                     loop.run_until_complete(reset_red())
-                    development_choice(reinstall=True, can_go_back=False)
+                    development_choice(can_go_back=False)
                     wait()
                 elif choice == "0":
                     break

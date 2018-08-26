@@ -77,9 +77,17 @@ class CoreLogic:
         for name in cog_names:
             try:
                 spec = await bot.cog_mgr.find_cog(name)
-                cogspecs.append((spec, name))
-            except RuntimeError:
-                notfound_packages.append(name)
+                if spec:
+                    cogspecs.append((spec, name))
+                else:
+                    notfound_packages.append(name)
+            except Exception as e:
+                log.exception("Package import failed", exc_info=e)
+
+                exception_log = "Exception during import of cog\n"
+                exception_log += "".join(traceback.format_exception(type(e), e, e.__traceback__))
+                bot._last_exception = exception_log
+                failed_packages.append(name)
 
         for spec, name in cogspecs:
             try:
@@ -95,6 +103,7 @@ class CoreLogic:
             else:
                 await bot.add_loaded_package(name)
                 loaded_packages.append(name)
+
         return loaded_packages, failed_packages, notfound_packages
 
     def _cleanup_and_refresh_modules(self, module_name: str):
@@ -226,10 +235,8 @@ class CoreLogic:
         str
             Invite URL.
         """
-        if self.bot.user.bot:
-            app_info = await self.bot.application_info()
-            return discord.utils.oauth_url(app_info.id)
-        return "Not a bot account!"
+        app_info = await self.bot.application_info()
+        return discord.utils.oauth_url(app_info.id)
 
 
 @i18n.cog_i18n(_)
@@ -423,10 +430,7 @@ class Core(CoreLogic):
     @checks.is_owner()
     async def invite(self, ctx):
         """Show's Red's invite url"""
-        if self.bot.user.bot:
-            await ctx.author.send(await self._invite_url())
-        else:
-            await ctx.send("I'm not a bot account. I have no invite URL.")
+        await ctx.author.send(await self._invite_url())
 
     @commands.command()
     @commands.guild_only()
@@ -511,7 +515,7 @@ class Core(CoreLogic):
             loaded, failed, not_found = await self._load(cog_names)
 
         if loaded:
-            fmt = "Loaded {packs}"
+            fmt = "Loaded {packs}."
             formed = self._get_package_strings(loaded, fmt)
             await ctx.send(formed)
 
@@ -540,7 +544,7 @@ class Core(CoreLogic):
         if unloaded:
             fmt = "Package{plural} {packs} {other} unloaded."
             formed = self._get_package_strings(unloaded, fmt, ("was", "were"))
-            await ctx.send(_(formed))
+            await ctx.send(formed)
 
         if failed:
             fmt = "The package{plural} {packs} {other} not loaded."
@@ -1392,8 +1396,7 @@ class Core(CoreLogic):
         """
         Whitelist management commands.
         """
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @localwhitelist.command(name="add")
     async def localwhitelist_add(self, ctx, *, user_or_role: str):
@@ -1475,8 +1478,7 @@ class Core(CoreLogic):
         """
         blacklist management commands.
         """
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @localblacklist.command(name="add")
     async def localblacklist_add(self, ctx, *, user_or_role: str):
