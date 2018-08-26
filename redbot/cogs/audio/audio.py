@@ -15,7 +15,7 @@ from .manager import shutdown_lavalink_server
 
 _ = Translator("Audio", __file__)
 
-__version__ = "0.0.6c"
+__version__ = "0.0.6d"
 __author__ = ["aikaterna", "billy/bollo/ati"]
 
 
@@ -46,6 +46,7 @@ class Audio:
             "notify": False,
             "repeat": False,
             "shuffle": False,
+            "thumbnail": False,
             "volume": 100,
             "vote_enabled": False,
             "vote_percent": 0,
@@ -105,6 +106,11 @@ class Audio:
                     title="Now Playing",
                     description="**[{}]({})**".format(player.current.title, player.current.uri),
                 )
+                if (
+                    await self.config.guild(player.channel.guild).thumbnail()
+                    and player.current.thumbnail
+                ):
+                    embed.set_thumbnail(url=player.current.thumbnail)
                 notify_message = await notify_channel.send(embed=embed)
                 player.store("notify_message", notify_message)
 
@@ -265,6 +271,7 @@ class Audio:
         emptydc_timer = data["emptydc_timer"]
         jukebox = data["jukebox"]
         jukebox_price = data["jukebox_price"]
+        thumbnail = data["thumbnail"]
         jarbuild = redbot.core.__version__
 
         vote_percent = data["vote_percent"]
@@ -282,6 +289,8 @@ class Audio:
             "Song notify msgs: [{notify}]\n"
             "Songs as status:  [{status}]\n".format(**global_data, **data)
         )
+        if thumbnail:
+            msg += "Thumbnails:       [{0}]\n".format(thumbnail)
         if vote_percent > 0:
             msg += (
                 "Vote skip:        [{vote_enabled}]\n" "Skip percentage:  [{vote_percent}%]\n"
@@ -295,6 +304,14 @@ class Audio:
 
         embed = discord.Embed(colour=(await ctx.embed_colour()), description=msg)
         return await ctx.send(embed=embed)
+
+    @audioset.command()
+    @checks.mod_or_permissions(administrator=True)
+    async def thumbnail(self, ctx):
+        """Toggle displaying a thumbnail on audio messages."""
+        thumbnail = await self.config.guild(ctx.guild).thumbnail()
+        await self.config.guild(ctx.guild).thumbnail.set(not thumbnail)
+        await self._embed_msg(ctx, "Thumbnail display: {}.".format(not thumbnail))
 
     @audioset.command()
     @checks.mod_or_permissions(administrator=True)
@@ -433,6 +450,8 @@ class Audio:
         embed = discord.Embed(
             colour=(await ctx.embed_colour()), title="Now Playing", description=song
         )
+        if await self.config.guild(ctx.guild).thumbnail() and player.current.thumbnail:
+            embed.set_thumbnail(url=player.current.thumbnail)
         message = await ctx.send(embed=embed)
         player.store("np_message", message)
 
@@ -1152,6 +1171,8 @@ class Audio:
             title="Queue for " + ctx.guild.name,
             description=queue_list,
         )
+        if await self.config.guild(ctx.guild).thumbnail() and player.current.thumbnail:
+            embed.set_thumbnail(url=player.current.thumbnail)
         queue_duration = await self._queue_duration(ctx)
         queue_total_duration = lavalink.utils.format_time(queue_duration)
         text = "Page {}/{} | {} tracks, {} remaining".format(
