@@ -73,6 +73,13 @@ class Audio:
         )
         lavalink.register_event_listener(self.event_handler)
 
+    async def _get_embed_colour(self, channel: discord.abc.GuildChannel):
+        # Unfortunately we need this for when context is unavailable.
+        if await self.bot.db.guild(channel.guild).use_bot_colour():
+            return channel.guild.me.color
+        else:
+            return self.bot.color
+
     async def event_handler(self, player, event_type, extra):
         notify = await self.config.guild(player.channel.guild).notify()
         status = await self.config.status()
@@ -102,7 +109,7 @@ class Audio:
                     except discord.errors.NotFound:
                         pass
                 embed = discord.Embed(
-                    colour=(await ctx.embed_colour()),
+                    colour=(await self._get_embed_colour(notify_channel)),
                     title="Now Playing",
                     description="**[{}]({})**".format(player.current.title, player.current.uri),
                 )
@@ -135,7 +142,9 @@ class Audio:
             notify_channel = player.fetch("channel")
             if notify_channel:
                 notify_channel = self.bot.get_channel(notify_channel)
-                embed = discord.Embed(colour=(await ctx.embed_colour()), title="Queue ended.")
+                embed = discord.Embed(
+                    colour=(await self._get_embed_colour(notify_channel)), title="Queue ended."
+                )
                 await notify_channel.send(embed=embed)
 
         if event_type == lavalink.LavalinkEvents.QUEUE_END and status:
@@ -160,7 +169,7 @@ class Audio:
             if message_channel:
                 message_channel = self.bot.get_channel(message_channel)
                 embed = discord.Embed(
-                    colour=(await ctx.embed_colour()),
+                    colour=(await self._get_embed_colour(message_channel)),
                     title="Track Error",
                     description="{}\n**[{}]({})**".format(
                         extra, player.current.title, player.current.uri
