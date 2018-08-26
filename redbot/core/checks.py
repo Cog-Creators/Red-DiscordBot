@@ -17,8 +17,7 @@ async def check_overrides(ctx, *, level):
 
 def is_owner(**kwargs):
     async def check(ctx):
-        override = await check_overrides(ctx, level="owner")
-        return override if override is not None else await ctx.bot.is_owner(ctx.author, **kwargs)
+        return await ctx.bot.is_owner(ctx.author, **kwargs)
 
     return commands.check(check)
 

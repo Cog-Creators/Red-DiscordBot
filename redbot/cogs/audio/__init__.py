@@ -19,7 +19,7 @@ LAVALINK_DOWNLOAD_DIR = cog_data_path(raw_name="Audio")
 LAVALINK_JAR_FILE = LAVALINK_DOWNLOAD_DIR / "Lavalink.jar"
 
 APP_YML_FILE = LAVALINK_DOWNLOAD_DIR / "application.yml"
-BUNDLED_APP_YML_FILE = Path(__file__).parent / "application.yml"
+BUNDLED_APP_YML_FILE = Path(__file__).parent / "data/application.yml"
 
 
 async def download_lavalink(session):
