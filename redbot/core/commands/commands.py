@@ -14,7 +14,7 @@ from ..i18n import Translator
 if TYPE_CHECKING:
     from .context import Context
 
-__all__ = ["Command", "Group", "command", "group"]
+__all__ = ["Command", "GroupMixin", "Group", "command", "group"]
 
 _ = Translator("commands.commands", __file__)
 
@@ -104,11 +104,17 @@ class Command(commands.Command):
             # We should expose anything which might be a bug in the converter
             raise exc
 
-    def command(self, cls=None, *args, **kwargs):
+
+class GroupMixin(commands.GroupMixin):
+    """Mixin for `Group` and `Red` classes.
+
+    This class inherits from :class:`discord.ext.commands.GroupMixin`.
+    """
+
+    def command(self, *args, **kwargs):
         """A shortcut decorator that invokes :func:`.command` and adds it to
-        the internal command list via :meth:`~.GroupMixin.add_command`.
+        the internal command list.
         """
-        cls = cls or self.__class__
 
         def decorator(func):
             result = command(*args, **kwargs)(func)
@@ -117,11 +123,10 @@ class Command(commands.Command):
 
         return decorator
 
-    def group(self, cls=None, *args, **kwargs):
+    def group(self, *args, **kwargs):
         """A shortcut decorator that invokes :func:`.group` and adds it to
-        the internal command list via :meth:`~.GroupMixin.add_command`.
+        the internal command list.
         """
-        cls = None or Group
 
         def decorator(func):
             result = group(*args, **kwargs)(func)
@@ -131,11 +136,11 @@ class Command(commands.Command):
         return decorator
 
 
-class Group(Command, commands.Group):
+class Group(GroupMixin, Command, commands.Group):
     """Group command class for Red.
 
-    This class inherits from `discord.ext.commands.Group`, with `Command` mixed
-    in.
+    This class inherits from `Command`, with :class:`GroupMixin` and
+    `discord.ext.commands.Group` mixed in.
     """
 
     def __init__(self, *args, **kwargs):
