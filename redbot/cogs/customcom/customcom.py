@@ -348,7 +348,7 @@ class CustomCommands:
         for result in results:
             param = self.transform_parameter(result, ctx.message)
             raw_response = raw_response.replace("{" + result + "}", param)
-        results = re.findall(r"\{((\d+)(\.?[^}:]*)[^}]*)\}", raw_response)
+        results = re.findall(r"\{((\d+)[^\.}]*(\.[^:}]+)?[^}]*)\}", raw_response)
         for result in results:
             index = int(result[1])
             arg = self.transform_arg(result[0], result[2], cc_args[index])
@@ -356,7 +356,7 @@ class CustomCommands:
         await ctx.send(raw_response)
 
     def prepare_args(self, raw_response) -> Mapping[str, Parameter]:
-        args = re.findall(r"\{(\d+)\.?[^}:]*(:[^}]*)?\}", raw_response)
+        args = re.findall(r"\{(\d+)[^:}]*(:[^\.}]*)?[^}]*\}", raw_response)
         if not args:
             return OrderedDict([["ctx", Parameter("ctx", Parameter.POSITIONAL_OR_KEYWORD)]])
         allowed_builtins = {
