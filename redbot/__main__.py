@@ -158,14 +158,9 @@ def main():
     if tmp_data["enable_sentry"]:
         red.enable_sentry()
     try:
-        loop.run_until_complete(red.start(token, bot=not cli_flags.not_bot))
+        loop.run_until_complete(red.start(token, bot=True))
     except discord.LoginFailure:
-        log.critical(
-            "This token doesn't seem to be valid. If it belongs to "
-            "a user account, remember that the --not-bot flag "
-            "must be used. For self-bot functionalities instead, "
-            "--self-bot"
-        )
+        log.critical("This token doesn't seem to be valid.")
         db_token = loop.run_until_complete(red.db.token())
         if db_token and not cli_flags.no_prompt:
             print("\nDo you want to reset the token? (y/n)")

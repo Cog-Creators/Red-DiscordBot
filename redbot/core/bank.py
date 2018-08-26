@@ -400,19 +400,18 @@ async def get_account(member: Union[discord.Member, discord.User]) -> Account:
 
     """
     if await is_global():
-        acc_data = (await _conf.user(member)()).copy()
-        default = _DEFAULT_USER.copy()
+        all_accounts = await _conf.all_users()
     else:
-        acc_data = (await _conf.member(member)()).copy()
-        default = _DEFAULT_MEMBER.copy()
+        all_accounts = await _conf.all_members(member.guild)
 
-    if acc_data == {}:
-        acc_data = default
-        acc_data["name"] = member.display_name
+    if member.id not in all_accounts:
+        acc_data = {"name": member.display_name, "created_at": _DEFAULT_MEMBER["created_at"]}
         try:
             acc_data["balance"] = await get_default_balance(member.guild)
         except AttributeError:
             acc_data["balance"] = await get_default_balance()
+    else:
+        acc_data = all_accounts[member.id]
 
     acc_data["created_at"] = _decode_time(acc_data["created_at"])
     return Account(**acc_data)
