@@ -3,7 +3,6 @@ import os
 import re
 import tempfile
 from distutils.errors import CCompilerError, DistutilsPlatformError
-from pathlib import Path
 from setuptools import setup, find_packages
 
 requirements = [
@@ -24,7 +23,6 @@ requirements = [
     "pyyaml==3.13",
     "raven==6.9.0",
     "raven-aiohttp==0.7.0",
-    "red-trivia==1.1.1",
     "websockets==6.0",
     "yarl==1.2.6",
 ]
@@ -33,11 +31,6 @@ requirements = [
 def get_dependency_links():
     with open("dependency_links.txt") as file:
         return file.read().splitlines()
-
-
-def get_package_list():
-    core = find_packages(include=["redbot", "redbot.*"])
-    return core
 
 
 def check_compiler_available():
@@ -62,35 +55,6 @@ def get_version():
     return version
 
 
-def find_locale_folders():
-    """
-    Ignore this tomfoolery in the desire for automation. It works, that's
-    all you gotta know. Don't fuck with this unless you really know what
-    you're doing, otherwise we lose all translations.
-    """
-
-    def glob_locale_files(path: Path):
-        msgs = path.glob("*.po")
-
-        parents = path.parents
-
-        return [str(m.relative_to(parents[0])) for m in msgs]
-
-    ret = {"redbot.core": glob_locale_files(Path("redbot/core/locales"))}
-
-    cogs_path = Path("redbot/cogs")
-
-    for cog_folder in cogs_path.iterdir():
-        locales_folder = cog_folder / "locales"
-        if not locales_folder.is_dir():
-            continue
-
-        pkg_name = str(cog_folder).replace("/", ".")
-        ret[pkg_name] = glob_locale_files(locales_folder)
-
-    return ret
-
-
 if __name__ == "__main__":
     if not check_compiler_available():
         requirements.remove(
@@ -103,9 +67,8 @@ if __name__ == "__main__":
     setup(
         name="Red-DiscordBot",
         version=get_version(),
-        packages=get_package_list(),
-        package_data=find_locale_folders(),
-        include_package_data=True,
+        packages=find_packages(include=["redbot", "redbot.*"]),
+        package_data={"": ["locales/*.po", "data/*", "data/**/*"]},
         url="https://github.com/Cog-Creators/Red-DiscordBot",
         license="GPLv3",
         author="Cog-Creators",
@@ -167,7 +130,7 @@ if __name__ == "__main__":
                 "sphinxcontrib-asyncio==0.2.0",
                 "sphinxcontrib-websupport==1.1.0",
             ],
-            "voice": ["red-lavalink==0.1.1"],
+            "voice": ["red-lavalink==0.1.2"],
             "style": ["black==18.6b4", "click==6.7", "toml==0.9.4"],
         },
     )
