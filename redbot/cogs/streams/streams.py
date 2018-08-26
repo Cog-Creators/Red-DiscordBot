@@ -141,14 +141,20 @@ class Streams:
     async def streamalert(self, ctx: commands.Context):
         pass
 
-    @streamalert.group(name="twitch")
-    async def _twitch(self, ctx: commands.Context):
+    @streamalert.group(name="twitch", invoke_without_command=True)
+    async def _twitch(self, ctx: commands.Context, channel_name: str = None):
         """Twitch stream alerts"""
-        pass
+        if channel_name is not None:
+            await ctx.invoke(self.twitch_alert_channel, channel_name)
+        else:
+            await ctx.send_help()
 
     @_twitch.command(name="channel")
     async def twitch_alert_channel(self, ctx: commands.Context, channel_name: str):
         """Sets a Twitch alert notification in the channel"""
+        if re.fullmatch(r"<#\d+>", channel_name):
+            await ctx.send("Please supply the name of a *Twitch* channel, not a Discord channel.")
+            return
         await self.stream_alert(ctx, TwitchStream, channel_name.lower())
 
     @_twitch.command(name="community")
