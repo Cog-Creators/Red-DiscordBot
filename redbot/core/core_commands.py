@@ -544,7 +544,7 @@ class Core(CoreLogic):
         if unloaded:
             fmt = "Package{plural} {packs} {other} unloaded."
             formed = self._get_package_strings(unloaded, fmt, ("was", "were"))
-            await ctx.send(_(formed))
+            await ctx.send(formed)
 
         if failed:
             fmt = "The package{plural} {packs} {other} not loaded."

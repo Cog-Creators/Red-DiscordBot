@@ -1,9 +1,10 @@
 """Module for Trivia cog."""
+import pathlib
 from collections import Counter
+from typing import List
 import yaml
 import discord
 from redbot.core import commands
-from redbot.ext import trivia as ext_trivia
 from redbot.core import Config, checks
 from redbot.core.data_manager import cog_data_path
 from redbot.core.utils.chat_formatting import box, pagify
@@ -11,7 +12,7 @@ from redbot.cogs.bank import check_global_setting_admin
 from .log import LOG
 from .session import TriviaSession
 
-__all__ = ["Trivia", "UNIQUE_ID"]
+__all__ = ["Trivia", "UNIQUE_ID", "get_core_lists"]
 
 UNIQUE_ID = 0xb3c0e453
 
@@ -330,7 +331,8 @@ class Trivia:
                 collated_data[member] = collated_member_data
         await self.send_leaderboard(ctx, collated_data, key, top)
 
-    def _get_sort_key(self, key: str):
+    @staticmethod
+    def _get_sort_key(key: str):
         key = key.lower()
         if key in ("wins", "average_score", "total_score", "games"):
             return key
@@ -370,7 +372,8 @@ class Trivia:
             ret.append(await ctx.send(box(page, lang="py")))
         return ret
 
-    def _get_leaderboard(self, data: dict, key: str, top: int):
+    @staticmethod
+    def _get_leaderboard(data: dict, key: str, top: int):
         # Mix in average score
         for member, stats in data.items():
             if stats["games"] != 0:
@@ -495,11 +498,17 @@ class Trivia:
             (session for session in self.trivia_sessions if session.ctx.channel == channel), None
         )
 
-    def _all_lists(self):
-        personal_lists = tuple(p.resolve() for p in cog_data_path(self).glob("*.yaml"))
+    def _all_lists(self) -> List[pathlib.Path]:
+        personal_lists = [p.resolve() for p in cog_data_path(self).glob("*.yaml")]
 
-        return personal_lists + tuple(ext_trivia.lists())
+        return personal_lists + get_core_lists()
 
     def __unload(self):
         for session in self.trivia_sessions:
             session.force_stop()
+
+
+def get_core_lists() -> List[pathlib.Path]:
+    """Return a list of paths for all trivia lists packaged with the bot."""
+    core_lists_path = pathlib.Path(__file__).parent.resolve() / "data/lists"
+    return list(core_lists_path.glob("*.yaml"))
