@@ -75,7 +75,7 @@ class Audio:
 
     async def _get_embed_colour(self, channel: discord.abc.GuildChannel):
         # Unfortunately we need this for when context is unavailable.
-        if await self.bot.db.guild(channel.guild).use_bot_colour():
+        if await self.bot.db.guild(channel.guild).use_bot_color():
             return channel.guild.me.color
         else:
             return self.bot.color
