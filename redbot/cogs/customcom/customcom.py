@@ -1,7 +1,6 @@
 import os
 import re
 import random
-import builtins
 from datetime import datetime
 from inspect import Parameter
 from collections import OrderedDict
@@ -344,39 +343,60 @@ class CustomCommands:
         pass
 
     async def cc_command(self, ctx, *cc_args, raw_response, **cc_kwargs) -> None:
-        if cc_kwargs:
-            cc_args = (*cc_args, *cc_kwargs.values())
-        results = re.findall("\{([^}]+)\}", raw_response)
+        cc_args = (*cc_args, *cc_kwargs.values())
+        results = re.findall(r"\{([^}]+)\}", raw_response)
         for result in results:
             param = self.transform_parameter(result, ctx.message)
             raw_response = raw_response.replace("{" + result + "}", param)
-        results = re.findall("\{((\d+)(\.?[^}:]*)[^}]*)\}", raw_response)
+        results = re.findall(r"\{((\d+)(\.?[^}:]*)[^}]*)\}", raw_response)
         for result in results:
-            index = int(result[1].strip())
-            arg = self.transform_arg(result[0], result[2].strip(), cc_args[index])
+            index = int(result[1])
+            arg = self.transform_arg(result[0], result[2], cc_args[index])
             raw_response = raw_response.replace("{" + result[0] + "}", arg)
         await ctx.send(raw_response)
 
     def prepare_args(self, raw_response) -> Mapping[str, Parameter]:
-        args = re.findall("\{(\d+)\.?[^}:]*(:[^}]*)?\}", raw_response)
+        args = re.findall(r"\{(\d+)\.?[^}:]*(:[^}]*)?\}", raw_response)
         if not args:
             return OrderedDict([["ctx", Parameter("ctx", Parameter.POSITIONAL_OR_KEYWORD)]])
-        highest = max(int(a[0].strip()) for a in args)
+        allowed_builtins = {
+            "bool": bool,
+            "complex": complex,
+            "float": float,
+            "frozenset": frozenset,
+            "int": int,
+            "list": list,
+            "set": set,
+            "str": str,
+            "tuple": tuple,
+        }
+        highest = max(int(a[0]) for a in args)
         fin = [
-            Parameter("cc_" + str(i), Parameter.POSITIONAL_OR_KEYWORD) for i in range(highest + 1)
+            Parameter("_" + str(i), Parameter.POSITIONAL_OR_KEYWORD) for i in range(highest + 1)
         ]
         for arg in args:
-            index = int(arg[0].strip())
-            anno = arg[1][1:].strip()
+            index = int(arg[0])
+            anno = arg[1][1:]
+            if anno.lower().endswith("converter"):
+                anno = anno[:-9]
             if not anno or anno.startswith("_"):  # public types only
+                name = "{}_{}".format("text", index if index < highest else "final")
+                fin[index] = fin[index].replace(name=name)
                 continue
             # allow type hinting only for discord.py and builtin types
-            anno = getattr(discord, anno, getattr(builtins, anno.lower(), Parameter.empty))
-            if not isinstance(anno, type):  # types only
-                anno = Parameter.empty
-            fin[index] = fin[index].replace(annotation=anno)
+            try:
+                anno = getattr(discord, anno)
+                # force an AttributeError if there's no discord.py converter
+                getattr(commands.converter, anno.__name__ + "Converter")
+            except AttributeError:
+                anno = allowed_builtins.get(anno.lower(), Parameter.empty)
+            name = "{}_{}".format(
+                "text" if anno is Parameter.empty else anno.__name__.lower(),
+                index if index < highest else "final",
+            )
+            fin[index] = fin[index].replace(name=name, annotation=anno)
         # consume rest
-        fin[-1] = fin[-1].replace(name="cc_final", kind=Parameter.KEYWORD_ONLY)
+        fin[-1] = fin[-1].replace(kind=Parameter.KEYWORD_ONLY)
         # insert ctx parameter for discord.py parsing
         fin = [Parameter("ctx", Parameter.POSITIONAL_OR_KEYWORD)] + fin
         return OrderedDict((p.name, p) for p in fin)
@@ -384,7 +404,7 @@ class CustomCommands:
     def transform_arg(self, result, attr, obj) -> str:
         attr = attr[1:]
         if not attr:
-            return obj
+            return str(obj)
         raw_result = "{" + result + "}"
         # forbid private members and nested attr lookups
         if attr.startswith("_") or "." in attr:
