@@ -220,12 +220,6 @@
             ],
             "version": "==0.1.2"
         },
-        "red-trivia": {
-            "hashes": [
-                "sha256:39413b9fb3f9b9362d6de1dcf69a4bf635b0f3518243f7178299b96d26cbb6a7"
-            ],
-            "version": "==1.1.1"
-        },
         "websockets": {
             "hashes": [
                 "sha256:0e2f7d6567838369af074f0ef4d0b802d19fa1fee135d864acc656ceefa33136",
@@ -560,12 +554,6 @@
                 "sha256:6a34b6a9841ad0fd827eeb158edb5826c5c5bd7babe2cde2a3f23eb85313af04"
             ],
             "version": "==0.7.0"
-        },
-        "red-trivia": {
-            "hashes": [
-                "sha256:39413b9fb3f9b9362d6de1dcf69a4bf635b0f3518243f7178299b96d26cbb6a7"
-            ],
-            "version": "==1.1.1"
         },
         "requests": {
             "hashes": [
