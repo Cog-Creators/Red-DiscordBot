@@ -459,8 +459,9 @@ class Audio:
         embed = discord.Embed(
             colour=(await ctx.embed_colour()), title="Now Playing", description=song
         )
-        if await self.config.guild(ctx.guild).thumbnail() and player.current.thumbnail:
-            embed.set_thumbnail(url=player.current.thumbnail)
+        if await self.config.guild(ctx.guild).thumbnail() and player.current:
+            if player.current.thumbnail:
+                embed.set_thumbnail(url=player.current.thumbnail)
         message = await ctx.send(embed=embed)
         player.store("np_message", message)
 
