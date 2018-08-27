@@ -29,7 +29,7 @@ if sys.implementation.name == "cpython":
         asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 if sys.platform == "win32":
-    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+    asyncio.set_event_loop(asyncio.ProactorEventLoop())
 
 
 #
