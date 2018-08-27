@@ -156,19 +156,7 @@ class CustomCommands:
         """
         CCs can be enhanced with arguments:
 
-        Argument    What it will be substituted with
-
-        {message}   message
-
-        {author}    message.author
-
-        {channel}   message.channel
-
-        {guild}     message.guild
-
-        {server}    message.guild
-
-        {0},{1},... a user-provided argument
+        https://red-discordbot.readthedocs.io/en/v3-develop/cog_customcom.html
         """
         pass
 
