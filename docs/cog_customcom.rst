@@ -80,8 +80,8 @@ Repeating the user
 
 .. code-block:: none
 
-    [p]customcom add simple repeat {0}
-    [p]repeat Pete and Repeat
+    [p]customcom add simple say {0}
+    [p]say Pete and Repeat
         Pete and Repeat
 
 Greeting the specified member
