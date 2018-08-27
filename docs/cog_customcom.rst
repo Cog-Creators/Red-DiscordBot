@@ -1,14 +1,14 @@
-.. CustomCom Cog Reference
+.. CustomCommands Cog Reference
 
-=======================
-CustomCom Cog Reference
-=======================
+============================
+CustomCommands Cog Reference
+============================
 
 ------------
 How it works
 ------------
 
-CustomCom allows you to create simple commands for your bot without requiring you to code your own cog for Red.
+CustomCommands allows you to create simple commands for your bot without requiring you to code your own cog for Red.
 
 If the command you attempt to create shares a name with an already loaded command, you cannot overwrite it with this cog.
 
