@@ -290,44 +290,32 @@ class CustomCommands:
         if len(message.content) < 2 or is_private:
             return
 
-        guild = message.guild
-        prefixes = await self.bot.db.guild(guild).get_raw("prefix", default=[])
-
-        if len(prefixes) < 1:
-            def_prefixes = await self.bot.get_prefix(message)
-            for prefix in def_prefixes:
-                prefixes.append(prefix)
+        ctx = await self.bot.get_context(message)
 
         # user_allowed check, will be replaced with self.bot.user_allowed or
         # something similar once it's added
 
         user_allowed = True
 
-        for prefix in prefixes:
-            if message.content.startswith(prefix):
-                break
-        else:
+        if not user_allowed or not ctx.prefix or ctx.valid:
             return
 
-        if user_allowed:
-            command = message.content[len(prefix) :].split()[0]
-            try:
-                raw_response = await self.commandobj.get(message=message, command=command)
-                if isinstance(raw_response, list):
-                    raw_response = random.choice(raw_response)
-                elif isinstance(raw_response, str):
-                    pass
-                else:
-                    raise NotFound()
-            except NotFound:
-                return
-            await self.call_cc_command(command, raw_response, message)
+        try:
+            raw_response = await self.commandobj.get(message=message, command=ctx.invoked_with)
+            if isinstance(raw_response, list):
+                raw_response = random.choice(raw_response)
+            elif isinstance(raw_response, str):
+                pass
+            else:
+                raise NotFound()
+        except NotFound:
+            return
+        await self.call_cc_command(ctx, raw_response, message)
 
-    async def call_cc_command(self, command, raw_response, message) -> None:
+    async def call_cc_command(self, ctx, raw_response, message) -> None:
         # wrap the command here so it won't register with the bot
-        fake_cc = commands.Command(command, self.cc_callback)
+        fake_cc = commands.Command(ctx.invoked_with, self.cc_callback)
         fake_cc.params = self.prepare_args(raw_response)
-        ctx = await self.bot.get_context(message)
         ctx.command = fake_cc
         await self.bot.invoke(ctx)
         if not ctx.command_failed:
