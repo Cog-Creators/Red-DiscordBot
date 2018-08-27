@@ -287,17 +287,17 @@ class CustomCommands:
 
     async def on_message(self, message):
         is_private = isinstance(message.channel, discord.abc.PrivateChannel)
-        if len(message.content) < 2 or is_private:
-            return
-
-        ctx = await self.bot.get_context(message)
 
         # user_allowed check, will be replaced with self.bot.user_allowed or
         # something similar once it's added
 
         user_allowed = True
+        if len(message.content) < 2 or is_private or not user_allowed or message.author.bot:
+            return
 
-        if not user_allowed or not ctx.prefix or ctx.valid:
+        ctx = await self.bot.get_context(message)
+
+        if not ctx.prefix or ctx.valid:
             return
 
         try:
