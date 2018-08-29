@@ -5,6 +5,7 @@ import discord
 import heapq
 import lavalink
 import math
+import random
 import re
 import time
 import redbot.core
@@ -689,6 +690,21 @@ class Audio:
             if not player.current:
                 await player.play()
         await ctx.send(embed=embed)
+
+    @commands.command()
+    @commands.guild_only()
+    async def sing(self, ctx):
+        """Makes Red sing one of her songs"""
+        ids = (
+            "zGTkAVsrfg8",
+            "cGMWL8cOeAU",
+            "vFrjMq4aL-g",
+            "WROI5WYBU_A",
+            "41tIUr_ex3g",
+            "f9O2Rjn1azc",
+        )
+        url = f"https://www.youtube.com/watch?v={random.choice(ids)}"
+        await ctx.invoke(self.play, query=url)
 
     @commands.group()
     @commands.guild_only()
