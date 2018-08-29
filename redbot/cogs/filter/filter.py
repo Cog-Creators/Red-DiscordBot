@@ -27,8 +27,10 @@ class Filter:
             "exempt_roles": [],
         }
         default_member_settings = {"filter_count": 0, "next_reset_time": 0}
+        default_channel_settings = {"filter": []}
         self.settings.register_guild(**default_guild_settings)
         self.settings.register_member(**default_member_settings)
+        self.settings.register_channel(**default_channel_settings)
         self.register_task = self.bot.loop.create_task(self.register_filterban())
 
     def __unload(self):
@@ -356,7 +358,7 @@ class Filter:
     async def check_filter(self, message: discord.Message):
         server = message.guild
         author = message.author
-        word_list = await self.settings.guild(server).filter()
+        word_list = set(await self.settings.guild(server).filter() + self.settings.channel(message.channel).filter())
         filter_count = await self.settings.guild(server).filterban_count()
         filter_time = await self.settings.guild(server).filterban_time()
         user_count = await self.settings.member(author).filter_count()
