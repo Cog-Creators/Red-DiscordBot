@@ -78,13 +78,13 @@ class Filter:
                 word_list.append(word)
             else:
                 if word.startswith('"'):
-                    tmp += word[1:]
+                    tmp += word[1:] + " "
                 elif word.endswith('"'):
                     tmp += word[:-1]
                     word_list.append(tmp)
                     tmp = ""
                 else:
-                    tmp += word
+                    tmp += word + " "
         added = await self.add_to_filter(server, word_list)
         if added:
             await ctx.send(_("Words added to filter."))
@@ -108,13 +108,13 @@ class Filter:
                 word_list.append(word)
             else:
                 if word.startswith('"'):
-                    tmp += word[1:]
+                    tmp += word[1:] + " "
                 elif word.endswith('"'):
                     tmp += word[:-1]
                     word_list.append(tmp)
                     tmp = ""
                 else:
-                    tmp += word
+                    tmp += word + " "
         removed = await self.remove_from_filter(server, word_list)
         if removed:
             await ctx.send(_("Words removed from filter."))
