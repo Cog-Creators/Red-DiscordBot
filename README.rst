@@ -111,5 +111,3 @@ Released under the `GNU GPL v3 <#License>`_.
 Red is named after the main character of "Transistor", a videogame by `Super Giant Games <https://www.supergiantgames.com/games/transistor/>`_
 
 Artwork created by `Sinlaire <https://sinlaire.deviantart.com/>`_ on Deviant Art for the Red Bot Project.
-
-Test, Test
