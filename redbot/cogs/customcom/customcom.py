@@ -285,7 +285,7 @@ class CustomCommands:
 
         ctx = await self.bot.get_context(message)
 
-        if not ctx.prefix or ctx.valid:
+        if ctx.prefix is None or ctx.valid:
             return
 
         try:
