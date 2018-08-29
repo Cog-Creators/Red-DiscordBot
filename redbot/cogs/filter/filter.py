@@ -1,4 +1,5 @@
 import discord
+from typing import Union
 
 from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
@@ -22,6 +23,8 @@ class Filter:
             "filterban_time": 0,
             "filter_names": False,
             "filter_default_name": "John Doe",
+            "exempt_users": [],
+            "exempt_roles": []
         }
         default_member_settings = {"filter_count": 0, "next_reset_time": 0}
         self.settings.register_guild(**default_guild_settings)
@@ -39,6 +42,81 @@ class Filter:
         except RuntimeError:
             pass
 
+    @commands.group()
+    @commands.guild_only()
+    @checks.admin_or_permissions(manage_guild=True)
+    async def filterset(self, ctx: commands.Context):
+        """
+        Filter settings
+        """
+        pass
+
+    @filterset.command(name="defaultname")
+    async def filter_default_name(self, ctx: commands.Context, name: str):
+        """Sets the default name to use if filtering names is enabled
+
+        Note that this has no effect if filtering names is disabled
+
+        The default name used is John Doe
+        """
+        guild = ctx.guild
+        await self.settings.guild(guild).filter_default_name.set(name)
+        await ctx.send(_("The name to use on filtered names has been set."))
+
+    @filterset.command(name="ban")
+    async def filter_ban(self, ctx: commands.Context, count: int, timeframe: int):
+        """Autobans if the specified number of messages are filtered in the timeframe
+
+        The timeframe is represented by seconds.
+        """
+        if (count <= 0) != (timeframe <= 0):
+            await ctx.send(
+                _(
+                    "Count and timeframe either both need to be 0 "
+                    "or both need to be greater than 0!"
+                )
+            )
+            return
+        elif count == 0 and timeframe == 0:
+            await self.settings.guild(ctx.guild).filterban_count.set(0)
+            await self.settings.guild(ctx.guild).filterban_time.set(0)
+            await ctx.send(_("Autoban disabled."))
+        else:
+            await self.settings.guild(ctx.guild).filterban_count.set(count)
+            await self.settings.guild(ctx.guild).filterban_time.set(timeframe)
+            await ctx.send(_("Count and time have been set."))
+    
+    @filterset.command(name="exempt")
+    async def filter_exempt(self, ctx: commands.Context, user_or_role: Union[discord.Member, discord.Role]):
+        """
+        Exempt the specified user or role from filters in this server
+        """
+        mod_role = ctx.bot.db.guild(ctx.guild).mod_role()
+        admin_role = ctx.bot.db.guild(ctx.guild).admin_role()
+
+        if isinstance(user_or_role, discord.Member) and user_or_role == ctx.guild.owner:
+            await ctx.send(_("The specified member is already exempt from the filter by default because they are the server owner!"))
+            return
+        elif isinstance(user_or_role, discord.Role) and user_or_role.id in (mod_role, admin_role):
+            await ctx.send(_("The specified role is already exempt from the filter by default because it is the mod or admin role for this server!"))
+            return
+        if isinstance(user_or_role, discord.Member):
+            async with self.settings.guild(ctx.guild).exempt_users() as exempt_users:
+                if user_or_role.id in exempt_users:
+                    exempt_users.remove(user_or_role.id)
+                    await ctx.send(_("Member {0.name} is no longer exempt from the filter").format(user_or_role))
+                else:
+                    exempt_users.append(user_or_role.id)
+                    await ctx.send(_("Member {0.name} is now exempt from the filter").format(user_or_role))
+        elif isinstance(user_or_role, discord.Role):
+            async with self.settings.guild(ctx.guild).exempt_roles() as exempt_roles:
+                if user_or_role.id in exempt_roles:
+                    exempt_roles.remove(user_or_role.id)
+                    await ctx.send(_("Role {0.name} is no longer exempt from the filter").format(user_or_role))
+                else:
+                    exempt_roles.append(user_or_role.id)
+                    await ctx.send(_("Role {0.name} is now exempt from the filter").format(user_or_role))
+    
     @commands.group(name="filter")
     @commands.guild_only()
     @checks.mod_or_permissions(manage_messages=True)
@@ -135,41 +213,6 @@ class Filter:
         else:
             await ctx.send(_("Names and nicknames will now be checked against the filter."))
 
-    @_filter.command(name="defaultname")
-    async def filter_default_name(self, ctx: commands.Context, name: str):
-        """Sets the default name to use if filtering names is enabled
-
-        Note that this has no effect if filtering names is disabled
-
-        The default name used is John Doe
-        """
-        guild = ctx.guild
-        await self.settings.guild(guild).filter_default_name.set(name)
-        await ctx.send(_("The name to use on filtered names has been set."))
-
-    @_filter.command(name="ban")
-    async def filter_ban(self, ctx: commands.Context, count: int, timeframe: int):
-        """Autobans if the specified number of messages are filtered in the timeframe
-
-        The timeframe is represented by seconds.
-        """
-        if (count <= 0) != (timeframe <= 0):
-            await ctx.send(
-                _(
-                    "Count and timeframe either both need to be 0 "
-                    "or both need to be greater than 0!"
-                )
-            )
-            return
-        elif count == 0 and timeframe == 0:
-            await self.settings.guild(ctx.guild).filterban_count.set(0)
-            await self.settings.guild(ctx.guild).filterban_time.set(0)
-            await ctx.send(_("Autoban disabled."))
-        else:
-            await self.settings.guild(ctx.guild).filterban_count.set(count)
-            await self.settings.guild(ctx.guild).filterban_time.set(timeframe)
-            await ctx.send(_("Count and time have been set."))
-
     async def add_to_filter(self, server: discord.Guild, words: list) -> bool:
         added = False
         async with self.settings.guild(server).filter() as cur_list:
@@ -236,7 +279,23 @@ class Filter:
                                         server.me,
                                         reason,
                                     )
-
+    async def is_exempt(self, user: discord.Member):
+        if await is_mod_or_superior(self.bot, obj=user):
+            return True
+        
+        if user == user.guild.owner:
+            return True
+        
+        user_exemptions_list = await self.settings.guild(user.guild).exempt_users()
+        if user.id in user_exemptions_list:
+            return True
+        
+        role_exemptions_list = await self.settings.guild(user.guild).exempt_roles()
+        for r in user.roles:
+            if r.id in role_exemptions_list:
+                return True
+        return False
+    
     async def on_message(self, message: discord.Message):
         if isinstance(message.channel, discord.abc.PrivateChannel):
             return
@@ -246,8 +305,7 @@ class Filter:
             return
 
         #  Bots and mods or superior are ignored from the filter
-        mod_or_superior = await is_mod_or_superior(self.bot, obj=author)
-        if mod_or_superior:
+        if await self.is_exempt(author):
             return
 
         await self.check_filter(message)
