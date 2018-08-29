@@ -112,4 +112,4 @@ Red is named after the main character of "Transistor", a videogame by `Super Gia
 
 Artwork created by `Sinlaire <https://sinlaire.deviantart.com/>`_ on Deviant Art for the Red Bot Project.
 
-Test
+Test, Test
