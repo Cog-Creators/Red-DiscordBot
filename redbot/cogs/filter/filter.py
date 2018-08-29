@@ -24,7 +24,7 @@ class Filter:
             "filter_names": False,
             "filter_default_name": "John Doe",
             "exempt_users": [],
-            "exempt_roles": []
+            "exempt_roles": [],
         }
         default_member_settings = {"filter_count": 0, "next_reset_time": 0}
         self.settings.register_guild(**default_guild_settings)
@@ -85,9 +85,11 @@ class Filter:
             await self.settings.guild(ctx.guild).filterban_count.set(count)
             await self.settings.guild(ctx.guild).filterban_time.set(timeframe)
             await ctx.send(_("Count and time have been set."))
-    
+
     @filterset.command(name="exempt")
-    async def filter_exempt(self, ctx: commands.Context, user_or_role: Union[discord.Member, discord.Role]):
+    async def filter_exempt(
+        self, ctx: commands.Context, user_or_role: Union[discord.Member, discord.Role]
+    ):
         """
         Exempt the specified user or role from filters in this server
         """
@@ -95,33 +97,51 @@ class Filter:
         admin_role = ctx.bot.db.guild(ctx.guild).admin_role()
 
         if isinstance(user_or_role, discord.Member) and user_or_role == ctx.guild.owner:
-            await ctx.send(_("The specified member is already exempt from the filter by default because they are the server owner!"))
+            await ctx.send(
+                _(
+                    "The specified member is already exempt from the filter by default because they are the server owner!"
+                )
+            )
             return
         elif isinstance(user_or_role, discord.Role) and user_or_role.id in (mod_role, admin_role):
-            await ctx.send(_("The specified role is already exempt from the filter by default because it is the mod or admin role for this server!"))
+            await ctx.send(
+                _(
+                    "The specified role is already exempt from the filter by default because it is the mod or admin role for this server!"
+                )
+            )
             return
         if isinstance(user_or_role, discord.Member):
             async with self.settings.guild(ctx.guild).exempt_users() as exempt_users:
                 if user_or_role.id in exempt_users:
                     exempt_users.remove(user_or_role.id)
-                    await ctx.send(_("Member {0.name} is no longer exempt from the filter").format(user_or_role))
+                    await ctx.send(
+                        _("Member {0.name} is no longer exempt from the filter").format(
+                            user_or_role
+                        )
+                    )
                 else:
                     exempt_users.append(user_or_role.id)
-                    await ctx.send(_("Member {0.name} is now exempt from the filter").format(user_or_role))
+                    await ctx.send(
+                        _("Member {0.name} is now exempt from the filter").format(user_or_role)
+                    )
         elif isinstance(user_or_role, discord.Role):
             async with self.settings.guild(ctx.guild).exempt_roles() as exempt_roles:
                 if user_or_role.id in exempt_roles:
                     exempt_roles.remove(user_or_role.id)
-                    await ctx.send(_("Role {0.name} is no longer exempt from the filter").format(user_or_role))
+                    await ctx.send(
+                        _("Role {0.name} is no longer exempt from the filter").format(user_or_role)
+                    )
                 else:
                     exempt_roles.append(user_or_role.id)
-                    await ctx.send(_("Role {0.name} is now exempt from the filter").format(user_or_role))
-    
+                    await ctx.send(
+                        _("Role {0.name} is now exempt from the filter").format(user_or_role)
+                    )
+
     @commands.group(name="filter")
     @commands.guild_only()
     @checks.mod_or_permissions(manage_messages=True)
     async def _filter(self, ctx: commands.Context):
-        """Adds/removes words from filter
+        """Adds/removes words from server filter
 
         Use double quotes to add/remove sentences
         Using this command with no subcommands will send
@@ -138,6 +158,86 @@ class Filter:
                         await author.send(page)
                 except discord.Forbidden:
                     await ctx.send(_("I can't send direct messages to you."))
+
+    @_filter.group(name="channel")
+    async def _filter_channel(self, ctx: commands.Context):
+        """Adds/removes words from channel filter
+
+        Use double quotes to add/remove sentences
+        Using this command with no subcommands will send
+        the list of the channel's filtered words."""
+        if ctx.invoked_subcommand is None:
+            channel = ctx.channel
+            author = ctx.author
+            word_list = await self.settings.channel(channel).filter()
+            if word_list:
+                words = ", ".join(word_list)
+                words = _("Filtered in this channel:") + "\n\n" + words
+                try:
+                    for page in pagify(words, delims=[" ", "\n"], shorten_by=8):
+                        await author.send(page)
+                except discord.Forbidden:
+                    await ctx.send(_("I can't send direct messages to you."))
+
+    @_filter_channel.command("add")
+    async def filter_channel_add(self, ctx: commands.Context, *, words: str):
+        """Adds words to the filter
+
+        Use double quotes to add sentences
+        Examples:
+        filter add word1 word2 word3
+        filter add \"This is a sentence\""""
+        channel = ctx.channel
+        split_words = words.split()
+        word_list = []
+        tmp = ""
+        for word in split_words:
+            if not word.startswith('"') and not word.endswith('"') and not tmp:
+                word_list.append(word)
+            else:
+                if word.startswith('"'):
+                    tmp += word[1:] + " "
+                elif word.endswith('"'):
+                    tmp += word[:-1]
+                    word_list.append(tmp)
+                    tmp = ""
+                else:
+                    tmp += word + " "
+        added = await self.add_to_filter(channel, word_list)
+        if added:
+            await ctx.send(_("Words added to filter."))
+        else:
+            await ctx.send(_("Words already in the filter."))
+
+    @_filter_channel.command("remove")
+    async def filter_channel_remove(self, ctx: commands.Context, *, words: str):
+        """Remove words from the filter
+
+        Use double quotes to remove sentences
+        Examples:
+        filter remove word1 word2 word3
+        filter remove \"This is a sentence\""""
+        channel = ctx.channel
+        split_words = words.split()
+        word_list = []
+        tmp = ""
+        for word in split_words:
+            if not word.startswith('"') and not word.endswith('"') and not tmp:
+                word_list.append(word)
+            else:
+                if word.startswith('"'):
+                    tmp += word[1:] + " "
+                elif word.endswith('"'):
+                    tmp += word[:-1]
+                    word_list.append(tmp)
+                    tmp = ""
+                else:
+                    tmp += word + " "
+        removed = await self.remove_from_filter(channel, word_list)
+        if removed:
+            await ctx.send(_("Words removed from filter."))
+        else:
+            await ctx.send(_("Those words weren't in the filter."))
 
     @_filter.command(name="add")
     async def filter_add(self, ctx: commands.Context, *, words: str):
@@ -213,23 +313,43 @@ class Filter:
         else:
             await ctx.send(_("Names and nicknames will now be checked against the filter."))
 
-    async def add_to_filter(self, server: discord.Guild, words: list) -> bool:
+    async def add_to_filter(
+        self, server_or_channel: Union[discord.Guild, discord.TextChannel], words: list
+    ) -> bool:
         added = False
-        async with self.settings.guild(server).filter() as cur_list:
-            for w in words:
-                if w.lower() not in cur_list and w:
-                    cur_list.append(w.lower())
-                    added = True
+        if isinstance(server_or_channel, discord.Guild):
+            async with self.settings.guild(server_or_channel).filter() as cur_list:
+                for w in words:
+                    if w.lower() not in cur_list and w:
+                        cur_list.append(w.lower())
+                        added = True
+
+        elif isinstance(server_or_channel, discord.TextChannel):
+            async with self.settings.channel(server_or_channel).filter() as cur_list:
+                for w in words:
+                    if w.lower not in cur_list and w:
+                        cur_list.append(w.lower())
+                        added = True
 
         return added
 
-    async def remove_from_filter(self, server: discord.Guild, words: list) -> bool:
+    async def remove_from_filter(
+        self, server_or_channel: Union[discord.Guild, discord.TextChannel], words: list
+    ) -> bool:
         removed = False
-        async with self.settings.guild(server).filter() as cur_list:
-            for w in words:
-                if w.lower() in cur_list:
-                    cur_list.remove(w.lower())
-                    removed = True
+        if isinstance(server_or_channel, discord.Guild):
+            async with self.settings.guild(server_or_channel).filter() as cur_list:
+                for w in words:
+                    if w.lower() in cur_list:
+                        cur_list.remove(w.lower())
+                        removed = True
+
+        elif isinstance(server_or_channel, discord.TextChannel):
+            async with self.settings.channel(server_or_channel).filter() as cur_list:
+                for w in words:
+                    if w.lower() in cur_list:
+                        cur_list.remove(w.lower())
+                        removed = True
 
         return removed
 
@@ -279,23 +399,24 @@ class Filter:
                                         server.me,
                                         reason,
                                     )
+
     async def is_exempt(self, user: discord.Member):
         if await is_mod_or_superior(self.bot, obj=user):
             return True
-        
+
         if user == user.guild.owner:
             return True
-        
+
         user_exemptions_list = await self.settings.guild(user.guild).exempt_users()
         if user.id in user_exemptions_list:
             return True
-        
+
         role_exemptions_list = await self.settings.guild(user.guild).exempt_roles()
         for r in user.roles:
             if r.id in role_exemptions_list:
                 return True
         return False
-    
+
     async def on_message(self, message: discord.Message):
         if isinstance(message.channel, discord.abc.PrivateChannel):
             return
