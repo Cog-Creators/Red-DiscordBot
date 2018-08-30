@@ -1067,8 +1067,11 @@ class Core(CoreLogic):
             red_path = Path(red_dist.location) / "redbot"
             locale_list = sorted(set([loc.stem for loc in list(red_path.glob("**/*.po"))]))
             pages = pagify("\n".join(locale_list))
-
-        await ctx.send_interactive(pages, box_lang="Available Locales:")
+        
+        if pages == []:
+            await ctx.send("No languages found.")
+        else:
+            await ctx.send_interactive(pages, box_lang="Available Locales:")
 
     @commands.command()
     @checks.is_owner()
