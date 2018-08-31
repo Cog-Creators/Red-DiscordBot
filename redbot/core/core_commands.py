@@ -441,10 +441,7 @@ class Core(CoreLogic):
     @commands.check(CoreLogic._can_get_invite_url)
     async def invite(self, ctx):
         """Show's Red's invite url"""
-        if self.bot.user.bot:
-            await ctx.author.send(await self._invite_url())
-        else:
-            await ctx.send("I'm not a bot account. I have no invite URL.")
+        await ctx.author.send(await self._invite_url())
 
     @commands.group()
     @checks.is_owner()
@@ -636,7 +633,7 @@ class Core(CoreLogic):
         if unloaded:
             fmt = "Package{plural} {packs} {other} unloaded."
             formed = self._get_package_strings(unloaded, fmt, ("was", "were"))
-            await ctx.send(_(formed))
+            await ctx.send(formed)
 
         if failed:
             fmt = "The package{plural} {packs} {other} not loaded."

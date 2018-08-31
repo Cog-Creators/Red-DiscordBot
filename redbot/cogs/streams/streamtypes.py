@@ -152,8 +152,14 @@ class YoutubeStream(Stream):
         super().__init__(**kwargs)
 
     async def is_online(self):
+        if not self._token:
+            raise InvalidYoutubeCredentials("YouTube API key is not set.")
+
         if not self.id:
             self.id = await self.fetch_id()
+        elif not self.name:
+            self.name = await self.fetch_name()
+
         url = YOUTUBE_SEARCH_ENDPOINT
         params = {
             "key": self._token,
@@ -188,7 +194,20 @@ class YoutubeStream(Stream):
         return embed
 
     async def fetch_id(self):
-        params = {"key": self._token, "forUsername": self.name, "part": "id"}
+        return await self._fetch_channel_resource("id")
+
+    async def fetch_name(self):
+        snippet = await self._fetch_channel_resource("snippet")
+        return snippet["title"]
+
+    async def _fetch_channel_resource(self, resource: str):
+
+        params = {"key": self._token, "part": resource}
+        if resource == "id":
+            params["forUsername"] = self.name
+        else:
+            params["id"] = self.id
+
         async with aiohttp.ClientSession() as session:
             async with session.get(YOUTUBE_CHANNELS_ENDPOINT, params=params) as r:
                 data = await r.json()
@@ -202,7 +221,7 @@ class YoutubeStream(Stream):
         elif "items" in data and len(data["items"]) == 0:
             raise StreamNotFound()
         elif "items" in data:
-            return data["items"][0]["id"]
+            return data["items"][0][resource]
         raise APIError()
 
     def __repr__(self):
