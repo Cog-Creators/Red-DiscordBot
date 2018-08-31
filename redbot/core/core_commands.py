@@ -1066,12 +1066,12 @@ class Core(CoreLogic):
             red_dist = pkg_resources.get_distribution("red-discordbot")
             red_path = Path(red_dist.location) / "redbot"
             locale_list = sorted(set([loc.stem for loc in list(red_path.glob("**/*.po"))]))
+            if locale_list == []:
+                await ctx.send("No languages found.")
+                return
             pages = pagify("\n".join(locale_list))
-        
-        if pages == []:
-            await ctx.send("No languages found.")
-        else:
-            await ctx.send_interactive(pages, box_lang="Available Locales:")
+
+        await ctx.send_interactive(pages, box_lang="Available Locales:")
 
     @commands.command()
     @checks.is_owner()
