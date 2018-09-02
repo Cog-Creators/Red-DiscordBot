@@ -101,4 +101,6 @@ def filter_various_mentions(to_filter: str) -> str:
     str
         The sanitized string.
     """
+    # This matches with a negative lookbehind (see above) so this is a safe strategy
+    # for negating the mention, while retaining useful information.
     return OTHER_MENTION_RE.sub(r"\\\0", to_filter)
