@@ -1206,17 +1206,18 @@ class Audio:
 
     async def _queue_search(self, ctx, *, search_words):
         player = lavalink.get_player(ctx.guild.id)
-        search_list = await self._build_queue_search_list(ctx, player, search_words)
+        search_list = await self._build_queue_search_list(player, search_words)
         if not search_list:
             return await self._embed_msg(ctx, "No matches.")
         len_search_pages = math.ceil(len(search_list) / 10)
         search_page_list = []
         for page_num in range(1, len_search_pages + 1):
-            embed = await self._build_queue_search_page(ctx, player, page_num, search_list)
+            embed = await self._build_queue_search_page(ctx, page_num, search_list)
             search_page_list.append(embed)
         await menu(ctx, search_page_list, DEFAULT_CONTROLS)
 
-    async def _build_queue_search_list(self, ctx, player, search_words):
+    @staticmethod
+    async def _build_queue_search_list(player, search_words):
         queue_idx = 0
         track_list = []
         for track in player.queue:
@@ -1231,7 +1232,8 @@ class Audio:
                     search_list.append([queue_position, track_title])
         return search_list
 
-    async def _build_queue_search_page(self, ctx, player, page_num, search_list):
+    @staticmethod
+    async def _build_queue_search_page(ctx, page_num, search_list):
         search_num_pages = math.ceil(len(search_list) / 10)
         search_idx_start = (page_num - 1) * 10
         search_idx_end = search_idx_start + 10
