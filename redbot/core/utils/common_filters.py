@@ -18,7 +18,7 @@ INVITE_URL_RE = re.compile(r"(discord.gg|discordapp.com/invite|discord.me)(\S+)"
 MASS_MENTION_RE = re.compile(r"(@)(?=everyone|here)")  # This only matches the @ for sanitizing
 
 # negative lookbehind used here to avoid canceling our own filter strategy.
-OTHER_MENTION_RE = re.compile(r"(?<!\\)(<@?[!&]\d+>)")
+OTHER_MENTION_RE = re.compile(r"(?<!\\)(<(@?[!&]|#)\d+>)")
 
 # convenience wrappers
 def filter_urls(to_filter: str) -> str:
