@@ -200,11 +200,7 @@ class General:
         created_at = _("Since {}. That's over {} days ago!").format(
             guild.created_at.strftime("%d %b %Y %H:%M"), passed
         )
-
-        colour = "".join([choice("0123456789ABCDEF") for x in range(6)])
-        colour = randint(0, 0xFFFFFF)
-
-        data = discord.Embed(description=created_at, colour=discord.Colour(value=colour))
+        data = discord.Embed(description=created_at, colour=(await ctx.embed_colour()))
         data.add_field(name=_("Region"), value=str(guild.region))
         data.add_field(name=_("Users"), value="{}/{}".format(online, total_users))
         data.add_field(name=_("Text Channels"), value=text_channels)
