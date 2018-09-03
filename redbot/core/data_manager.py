@@ -17,6 +17,8 @@ __all__ = [
     "load_basic_configuration",
     "cog_data_path",
     "core_data_path",
+    "global_cog_data_path",
+    "global_core_data_path",
     "load_bundled_data",
     "bundled_data_path",
     "storage_details",
@@ -39,7 +41,128 @@ if sys.platform == "linux":
         config_dir = Path(appdir.site_data_dir)
 if not config_dir:
     config_dir = Path(appdir.user_config_dir)
-config_file = config_dir / "config.json"
+config_file = config_dir / basic_config_default["CORE_PATH_APPEND"] / "config.json"
+
+
+def _base_data_path() -> Path:
+    if basic_config is None:
+        raise RuntimeError("You must load the basic config before you can get the base data path.")
+    path = basic_config["DATA_PATH"]
+    return Path(path).resolve()
+
+
+def _base_global_data_path() -> Path:
+    if basic_config is None:
+        raise RuntimeError("You must load the basic config before you can get the base data path.")
+    return config_dir.resolve()
+
+
+def cog_data_path(cog_instance=None, raw_name: str = None) -> Path:
+    """Gets the base cog data path. If you want to get the folder with
+    which to store your own cog's data please pass in an instance
+    of your cog class.
+
+    Either ``cog_instance`` or ``raw_name`` will be used, not both.
+
+    Parameters
+    ----------
+    cog_instance
+        The instance of the cog you wish to get a data path for.
+    raw_name : str
+        The name of the cog to get a data path for.
+
+    Returns
+    -------
+    pathlib.Path
+        If ``cog_instance`` is provided it will return a path to a folder
+        dedicated to a given cog. Otherwise it will return a path to the
+        folder that contains data for all cogs.
+    """
+    try:
+        base_data_path = Path(_base_data_path())
+    except RuntimeError as e:
+        raise RuntimeError(
+            "You must load the basic config before you can get the cog data path."
+        ) from e
+    cog_path = base_data_path / basic_config["COG_PATH_APPEND"]
+
+    if raw_name is not None:
+        cog_path = cog_path / raw_name
+    elif cog_instance is not None:
+        cog_path = cog_path / cog_instance.__class__.__name__
+    cog_path.mkdir(exist_ok=True, parents=True)
+
+    return cog_path.resolve()
+
+
+def core_data_path() -> Path:
+    try:
+        base_data_path = Path(_base_data_path())
+    except RuntimeError as e:
+        raise RuntimeError(
+            "You must load the basic config before you can get the core data path."
+        ) from e
+    core_path = base_data_path / basic_config["CORE_PATH_APPEND"]
+    core_path.mkdir(exist_ok=True, parents=True)
+
+    return core_path.resolve()
+
+
+def global_cog_data_path(cog_instance=None, raw_name: str = None) -> Path:
+    """Gets the global cog data path. If you want to get the folder with
+    which to store your own cog's data please pass in an instance
+    of your cog class.
+
+    Instead of :py:func:`cog_data_path` which returns a folder in the
+    instance's files, this function returns a folder in Red's internal
+    files. **This means that the same folder will be returned for all
+    instance**. This can be useful for running a server or storing
+    huge files, but should not be used for values depending on the bot.
+
+    Either ``cog_instance`` or ``raw_name`` will be used, not both.
+
+    Parameters
+    ----------
+    cog_instance
+        The instance of the cog you wish to get a data path for.
+    raw_name : str
+        The name of the cog to get a data path for.
+
+    Returns
+    -------
+    pathlib.Path
+        If ``cog_instance`` is provided it will return a path to a folder
+        dedicated to a given cog. Otherwise it will return a path to the
+        folder that contains data for all cogs.
+    """
+    try:
+        base_global_data_path = Path(_base_global_data_path())
+    except RuntimeError as e:
+        raise RuntimeError(
+            "You must load the basic config before you can get the cog data path."
+        ) from e
+    cog_path = base_global_data_path / basic_config["COG_PATH_APPEND"]
+
+    if raw_name is not None:
+        cog_path = cog_path / raw_name
+    elif cog_instance is not None:
+        cog_path = cog_path / cog_instance.__class__.__name__
+    cog_path.mkdir(exist_ok=True, parents=True)
+
+    return cog_path.resolve()
+
+
+def global_core_data_path() -> Path:
+    try:
+        base_global_data_path = Path(_base_global_data_path())
+    except RuntimeError as e:
+        raise RuntimeError(
+            "You must load the basic config before you can get the core data path."
+        ) from e
+    global_core_path = base_global_data_path / basic_config_default["CORE_PATH_APPEND"]
+    global_core_path.mkdir(exist_ok=True, parents=True)
+
+    return global_core_path.resolve()
 
 
 def create_temp_config():
@@ -95,62 +218,13 @@ def load_basic_configuration(instance_name_: str):
         sys.exit(1)
 
 
-def _base_data_path() -> Path:
-    if basic_config is None:
-        raise RuntimeError("You must load the basic config before you can get the base data path.")
-    path = basic_config["DATA_PATH"]
-    return Path(path).resolve()
-
-
-def cog_data_path(cog_instance=None, raw_name: str = None) -> Path:
-    """Gets the base cog data path. If you want to get the folder with
-    which to store your own cog's data please pass in an instance
-    of your cog class.
-
-    Either ``cog_instance`` or ``raw_name`` will be used, not both.
-
-    Parameters
-    ----------
-    cog_instance
-        The instance of the cog you wish to get a data path for.
-    raw_name : str
-        The name of the cog to get a data path for.
-
-    Returns
-    -------
-    pathlib.Path
-        If ``cog_instance`` is provided it will return a path to a folder
-        dedicated to a given cog. Otherwise it will return a path to the
-        folder that contains data for all cogs.
+def _convert_base_config():
     """
-    try:
-        base_data_path = Path(_base_data_path())
-    except RuntimeError as e:
-        raise RuntimeError(
-            "You must load the basic config before you can get the cog data path."
-        ) from e
-    cog_path = base_data_path / basic_config["COG_PATH_APPEND"]
-
-    if raw_name is not None:
-        cog_path = cog_path / raw_name
-    elif cog_instance is not None:
-        cog_path = cog_path / cog_instance.__class__.__name__
-    cog_path.mkdir(exist_ok=True, parents=True)
-
-    return cog_path.resolve()
-
-
-def core_data_path() -> Path:
-    try:
-        base_data_path = Path(_base_data_path())
-    except RuntimeError as e:
-        raise RuntimeError(
-            "You must load the basic config before you can get the core data path."
-        ) from e
-    core_path = base_data_path / basic_config["CORE_PATH_APPEND"]
-    core_path.mkdir(exist_ok=True, parents=True)
-
-    return core_path.resolve()
+    Move ``./config.json`` to ``./core/config.json``.
+    """
+    old_conf = config_dir / "config.json"
+    if old_conf.exists():
+        shutil.move(str(old_conf.absolute()), str(config_file.absolute()))
 
 
 def _find_data_files(init_location: str) -> (Path, List[Path]):

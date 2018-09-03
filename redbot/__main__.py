@@ -6,7 +6,13 @@ import sys
 import discord
 from redbot.core.bot import Red, ExitCodes
 from redbot.core.cog_manager import CogManagerUI
-from redbot.core.data_manager import create_temp_config, load_basic_configuration, config_file
+from redbot.core.data_manager import (
+    create_temp_config,
+    load_basic_configuration,
+    global_core_data_path,
+    config_file,
+    _convert_base_config,
+)
 from redbot.core.json_io import JsonIO
 from redbot.core.global_checks import init_global_checks
 from redbot.core.events import init_events
@@ -126,6 +132,7 @@ def main():
         )
         cli_flags.instance_name = "temporary_red"
         create_temp_config()
+    _convert_base_config()
     load_basic_configuration(cli_flags.instance_name)
     log, sentry_log = init_loggers(cli_flags)
     red = Red(cli_flags=cli_flags, description=description, pm_help=None)
