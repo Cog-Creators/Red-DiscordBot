@@ -388,8 +388,6 @@ class CustomCommands:
         fin = [Parameter("_" + str(i), Parameter.POSITIONAL_OR_KEYWORD) for i in range(high + 1)]
         for arg in args:
             index = int(arg[0]) - low
-            if fin[index].annotation is not Parameter.empty:
-                continue
             anno = arg[1][1:]  # strip initial colon
             if anno.lower().endswith("converter"):
                 anno = anno[:-9]
@@ -404,6 +402,16 @@ class CustomCommands:
                 getattr(commands.converter, anno.__name__ + "Converter")
             except AttributeError:
                 anno = allowed_builtins.get(anno.lower(), Parameter.empty)
+            if (
+                anno is not Parameter.empty
+                and fin[index].annotation is not Parameter.empty
+                and anno != fin[index].annotation
+            ):
+                raise ArgParseError(
+                    _('Conflicting colon notation for argument {}: "{}" and "{}".').format(
+                        index + low, fin[index].annotation.__name__, anno.__name__
+                    )
+                )
             name = "{}_{}".format(
                 "text" if anno is Parameter.empty else anno.__name__.lower(),
                 index if index < high else "final",
