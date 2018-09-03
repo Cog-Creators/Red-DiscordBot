@@ -286,7 +286,7 @@ class Admin:
         valid_role_ids = set(r.id for r in valid_roles)
 
         if selfrole_ids != valid_role_ids:
-            await self.conf.guild(guild).selfroles.set(valid_role_ids)
+            await self.conf.guild(guild).selfroles.set(list(valid_role_ids))
 
         # noinspection PyTypeChecker
         return valid_roles
