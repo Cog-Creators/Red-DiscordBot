@@ -140,9 +140,10 @@ def update_red(dev=False, voice=False, mongo=False, docs=False, test=False):
 
 
 def run_red(selected_instance, autorestart: bool = False, cliflags=None):
+    interpreter = sys.executable
     while True:
         print("Starting {}...".format(selected_instance))
-        cmd_list = ["redbot", selected_instance]
+        cmd_list = [interpreter, "-m", "redbot", selected_instance]
         if cliflags:
             cmd_list += cliflags
         status = subprocess.call(cmd_list)
