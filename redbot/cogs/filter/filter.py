@@ -358,7 +358,10 @@ class Filter:
     async def check_filter(self, message: discord.Message):
         server = message.guild
         author = message.author
-        word_list = set(await self.settings.guild(server).filter() + self.settings.channel(message.channel).filter())
+        word_list = set(
+            await self.settings.guild(server).filter()
+            + self.settings.channel(message.channel).filter()
+        )
         filter_count = await self.settings.guild(server).filterban_count()
         filter_time = await self.settings.guild(server).filterban_time()
         user_count = await self.settings.member(author).filter_count()
