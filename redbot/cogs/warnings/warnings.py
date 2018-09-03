@@ -221,8 +221,8 @@ class Warnings:
         if user == ctx.author:
             await ctx.send(_("You cannot warn yourself."))
             return
+        custom_allowed = await self.config.guild(ctx.guild).allow_custom_reasons()
         if reason.lower() == "custom":
-            custom_allowed = await self.config.guild(ctx.guild).allow_custom_reasons()
             if not custom_allowed:
                 await ctx.send(
                     _(
@@ -236,7 +236,21 @@ class Warnings:
             guild_settings = self.config.guild(ctx.guild)
             async with guild_settings.reasons() as registered_reasons:
                 if reason.lower() not in registered_reasons:
-                    await ctx.send(_("That is not a registered reason!"))
+                    msg = _("That is not a registered reason!")
+                    if custom_allowed:
+                        msg += " " + _(
+                            "Do `{prefix}warn {user} custom` to specify a custom reason."
+                        ).format(prefix=ctx.prefix, user=ctx.author)
+                    elif (
+                        ctx.guild.owner == ctx.author
+                        or ctx.channel.permissions_for(ctx.author).administrator
+                        or await ctx.bot.is_owner(ctx.author)
+                    ):
+                        msg += " " + _(
+                            "Do `{prefix}warningset allowcustomreasons true` to enable custom "
+                            "reasons."
+                        ).format(prefix=ctx.prefix)
+                    await ctx.send(msg)
                     return
                 else:
                     reason_type = registered_reasons[reason.lower()]
