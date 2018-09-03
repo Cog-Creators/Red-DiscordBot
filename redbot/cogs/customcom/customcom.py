@@ -27,6 +27,10 @@ class AlreadyExists(CCError):
     pass
 
 
+class ArgParseError(CCError):
+    pass
+
+
 class CommandObj:
     def __init__(self, **kwargs):
         config = kwargs.get("config")
@@ -54,6 +58,7 @@ class CommandObj:
             return m.channel == ctx.channel and m.author == ctx.message.author
 
         responses = []
+        args = None
         while True:
             await ctx.send(_("Add a random response:"))
             msg = await self.bot.wait_for("message", check=check)
@@ -61,6 +66,15 @@ class CommandObj:
             if msg.content.lower() == "exit()":
                 break
             else:
+                try:
+                    this_args = ctx.cog.prepare_args(msg.content)
+                except ArgParseError as e:
+                    await ctx.send(e.args[0])
+                    continue
+                if args and args != this_args:
+                    await ctx.send(_("Random responses must take the same arguments!"))
+                    continue
+                args = args or this_args
                 responses.append(msg.content)
         return responses
 
@@ -72,7 +86,7 @@ class CommandObj:
     async def get(self, message: discord.Message, command: str) -> str:
         ccinfo = await self.db(message.guild).commands.get_raw(command, default=None)
         if not ccinfo:
-            raise NotFound
+            raise NotFound()
         else:
             return ccinfo["response"]
 
@@ -81,6 +95,8 @@ class CommandObj:
         # Check if this command is already registered as a customcommand
         if await self.db(ctx.guild).commands.get_raw(command, default=None):
             raise AlreadyExists()
+        # test to raise
+        ctx.cog.prepare_args(response if isinstance(response, str) else response[0])
         author = ctx.message.author
         ccinfo = {
             "author": {"id": author.id, "name": author.name},
@@ -112,6 +128,9 @@ class CommandObj:
             else:
                 await ctx.send(_("What response do you want?"))
                 response = (await self.bot.wait_for("message", check=check)).content
+
+        # test to raise
+        ctx.cog.prepare_args(response if isinstance(response, str) else response[0])
 
         ccinfo["response"] = response
         ccinfo["edited_at"] = self.get_now()
@@ -154,8 +173,9 @@ class CustomCommands:
     @checks.mod_or_permissions(administrator=True)
     async def cc_add(self, ctx: commands.Context):
         """
-        CCs can be enhanced with arguments:
+        Adds a new custom command
 
+        CCs can be enhanced with arguments:
         https://red-discordbot.readthedocs.io/en/v3-develop/cog_customcom.html
         """
         pass
@@ -204,6 +224,8 @@ class CustomCommands:
                     "{}customcom edit".format(ctx.prefix)
                 )
             )
+        except ArgParseError as e:
+            await ctx.send(e.args[0])
 
     @customcom.command(name="edit")
     @checks.mod_or_permissions(administrator=True)
@@ -224,6 +246,8 @@ class CustomCommands:
                     "{}customcom add".format(ctx.prefix)
                 )
             )
+        except ArgParseError as e:
+            await ctx.send(e.args[0])
 
     @customcom.command(name="delete")
     @checks.mod_or_permissions(administrator=True)
@@ -325,16 +349,18 @@ class CustomCommands:
             param = self.transform_parameter(result, ctx.message)
             raw_response = raw_response.replace("{" + result + "}", param)
         results = re.findall(r"\{((\d+)[^\.}]*(\.[^:}]+)?[^}]*)\}", raw_response)
+        low = min(int(result[1]) for result in results)
         for result in results:
-            index = int(result[1])
+            index = int(result[1]) - low
             arg = self.transform_arg(result[0], result[2], cc_args[index])
             raw_response = raw_response.replace("{" + result[0] + "}", arg)
         await ctx.send(raw_response)
 
     def prepare_args(self, raw_response) -> Mapping[str, Parameter]:
         args = re.findall(r"\{(\d+)[^:}]*(:[^\.}]*)?[^}]*\}", raw_response)
+        default = [["ctx", Parameter("ctx", Parameter.POSITIONAL_OR_KEYWORD)]]
         if not args:
-            return OrderedDict([["ctx", Parameter("ctx", Parameter.POSITIONAL_OR_KEYWORD)]])
+            return OrderedDict(default)
         allowed_builtins = {
             "bool": bool,
             "complex": complex,
@@ -346,19 +372,29 @@ class CustomCommands:
             "str": str,
             "tuple": tuple,
         }
-        highest = max(int(a[0]) for a in args)
-        fin = [
-            Parameter("_" + str(i), Parameter.POSITIONAL_OR_KEYWORD) for i in range(highest + 1)
-        ]
+        indices = [int(a[0]) for a in args]
+        low = min(indices)
+        indices = [a - low for a in indices]
+        high = max(indices)
+        if high > 9:
+            raise ArgParseError(_("Too many arguments!"))
+        gaps = set(indices).symmetric_difference(range(high + 1))
+        if gaps:
+            raise ArgParseError(
+                _("Arguments must be sequential. Missing arguments: {}.").format(
+                    ", ".join(str(i + low) for i in gaps)
+                )
+            )
+        fin = [Parameter("_" + str(i), Parameter.POSITIONAL_OR_KEYWORD) for i in range(high + 1)]
         for arg in args:
-            index = int(arg[0])
+            index = int(arg[0]) - low
             if fin[index].annotation is not Parameter.empty:
                 continue
-            anno = arg[1][1:]
+            anno = arg[1][1:]  # strip initial colon
             if anno.lower().endswith("converter"):
                 anno = anno[:-9]
             if not anno or anno.startswith("_"):  # public types only
-                name = "{}_{}".format("text", index if index < highest else "final")
+                name = "{}_{}".format("text", index if index < high else "final")
                 fin[index] = fin[index].replace(name=name)
                 continue
             # allow type hinting only for discord.py and builtin types
@@ -370,17 +406,17 @@ class CustomCommands:
                 anno = allowed_builtins.get(anno.lower(), Parameter.empty)
             name = "{}_{}".format(
                 "text" if anno is Parameter.empty else anno.__name__.lower(),
-                index if index < highest else "final",
+                index if index < high else "final",
             )
             fin[index] = fin[index].replace(name=name, annotation=anno)
         # consume rest
         fin[-1] = fin[-1].replace(kind=Parameter.KEYWORD_ONLY)
         # insert ctx parameter for discord.py parsing
-        fin = [Parameter("ctx", Parameter.POSITIONAL_OR_KEYWORD)] + fin
-        return OrderedDict((p.name, p) for p in fin)
+        fin = default + [(p.name, p) for p in fin]
+        return OrderedDict(fin)
 
     def transform_arg(self, result, attr, obj) -> str:
-        attr = attr[1:]
+        attr = attr[1:]  # strip initial dot
         if not attr:
             return str(obj)
         raw_result = "{" + result + "}"
