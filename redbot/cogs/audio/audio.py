@@ -2,21 +2,25 @@ import aiohttp
 import asyncio
 import datetime
 import discord
+from fuzzywuzzy import process
 import heapq
 import lavalink
 import math
+import os
 import random
 import re
 import time
 import redbot.core
 from redbot.core import Config, commands, checks, bank
+from redbot.core.data_manager import cog_data_path
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS, prev_page, next_page, close_menu
 from redbot.core.i18n import Translator, cog_i18n
+from urllib.parse import urlparse
 from .manager import shutdown_lavalink_server
 
 _ = Translator("Audio", __file__)
 
-__version__ = "0.0.6d"
+__version__ = "0.0.7"
 __author__ = ["aikaterna", "billy/bollo/ati"]
 
 
@@ -74,19 +78,22 @@ class Audio:
         )
         lavalink.register_event_listener(self.event_handler)
 
-    async def _get_embed_colour(self, channel: discord.abc.GuildChannel):
-        # Unfortunately we need this for when context is unavailable.
-        if await self.bot.db.guild(channel.guild).use_bot_color():
-            return channel.guild.me.color
-        else:
-            return self.bot.color
-
     async def event_handler(self, player, event_type, extra):
         notify = await self.config.guild(player.channel.guild).notify()
         status = await self.config.status()
         try:
             get_players = [p for p in lavalink.players if p.current is not None]
             get_single_title = get_players[0].current.title
+            if get_single_title == "Unknown title":
+                get_single_title = get_players[0].current.uri
+                if not get_single_title.startswith("http"):
+                    get_single_title = get_single_title.rsplit("/", 1)[-1]
+            elif "localtracks/" in get_players[0].current.uri:
+                get_single_title = "{} - {}".format(
+                    get_players[0].current.author, get_players[0].current.title
+                )
+            else:
+                get_single_title = get_players[0].current.title
             playing_servers = len(get_players)
         except IndexError:
             playing_servers = 0
@@ -109,10 +116,21 @@ class Audio:
                         await player.fetch("notify_message").delete()
                     except discord.errors.NotFound:
                         pass
+                if "localtracks/" in player.current.uri:
+                    if not player.current.title == "Unknown title":
+                        description = "**{} - {}**\n{}".format(
+                            player.current.author,
+                            player.current.title,
+                            player.current.uri.replace("localtracks/", ""),
+                        )
+                    else:
+                        description = "{}".format(player.current.uri.replace("localtracks/", ""))
+                else:
+                    description = "**[{}]({})**".format(player.current.title, player.current.uri)
                 embed = discord.Embed(
                     colour=(await self._get_embed_colour(notify_channel)),
                     title="Now Playing",
-                    description="**[{}]({})**".format(player.current.title, player.current.uri),
+                    description=description,
                 )
                 if (
                     await self.config.guild(player.channel.guild).thumbnail()
@@ -166,6 +184,8 @@ class Audio:
                 )
 
         if event_type == lavalink.LavalinkEvents.TRACK_EXCEPTION:
+            if "localtracks/" in player.current.uri:
+                return
             message_channel = player.fetch("channel")
             if message_channel:
                 message_channel = self.bot.get_channel(message_channel)
@@ -312,7 +332,7 @@ class Audio:
             "External server:  [{use_external_lavalink}]```"
         ).format(__version__, jarbuild, **global_data)
 
-        embed = discord.Embed(colour=(await ctx.embed_colour()), description=msg)
+        embed = discord.Embed(colour=await ctx.embed_colour(), description=msg)
         return await ctx.send(embed=embed)
 
     @audioset.command()
@@ -364,11 +384,27 @@ class Audio:
                 int((datetime.datetime.utcnow() - connect_start).total_seconds())
             )
             try:
-                server_list.append(
-                    "{} [`{}`]: **[{}]({})**".format(
-                        p.channel.guild.name, connect_dur, p.current.title, p.current.uri
+                if "localtracks/" in p.current.uri:
+                    if p.current.title == "Unknown title":
+                        current_title = p.current.uri.replace("localtracks/", "")
+                        server_list.append(
+                            "{} [`{}`]: **{}**".format(
+                                p.channel.guild.name, connect_dur, current_title
+                            )
+                        )
+                    else:
+                        current_title = p.current.title
+                        server_list.append(
+                            "{} [`{}`]: **{} - {}**".format(
+                                p.channel.guild.name, connect_dur, p.current.author, current_title
+                            )
+                        )
+                else:
+                    server_list.append(
+                        "{} [`{}`]: **[{}]({})**".format(
+                            p.channel.guild.name, connect_dur, p.current.title, p.current.uri
+                        )
                     )
-                )
             except AttributeError:
                 server_list.append(
                     "{} [`{}`]: **{}**".format(
@@ -380,7 +416,7 @@ class Audio:
         else:
             servers = "\n".join(server_list)
         embed = discord.Embed(
-            colour=(await ctx.embed_colour()),
+            colour=await ctx.embed_colour(),
             title="Connected in {} servers:".format(server_num),
             description=servers,
         )
@@ -410,7 +446,14 @@ class Audio:
         bump_song = player.queue[bump_index]
         player.queue.insert(0, bump_song)
         removed = player.queue.pop(index)
-        await self._embed_msg(ctx, "Moved {} to the top of the queue.".format(removed.title))
+        if "localtracks/" in removed.uri:
+            if removed.title == "Unknown title":
+                removed_title = removed.uri.replace("localtracks/", "")
+            else:
+                removed_title = "{} - {}".format(removed.author, removed.title)
+        else:
+            removed_title = removed.title
+        await self._embed_msg(ctx, "Moved {} to the top of the queue.".format(removed_title))
 
     @commands.command(aliases=["dc"])
     @commands.guild_only()
@@ -429,6 +472,166 @@ class Audio:
                 await lavalink.get_player(ctx.guild.id).stop()
                 return await lavalink.get_player(ctx.guild.id).disconnect()
 
+    @commands.group()
+    @commands.guild_only()
+    async def local(self, ctx):
+        """Local playback options."""
+        pass
+
+    @local.command(name="folder")
+    async def local_folder(self, ctx):
+        """Play all songs in a localtracks folder."""
+        if not await self._localtracks_check(ctx):
+            return
+        await ctx.invoke(self.local_play)
+
+    @local.command(name="play")
+    async def local_play(self, ctx):
+        """Play a local track."""
+        if not await self._localtracks_check(ctx):
+            return
+
+        localtracks_folders = [
+            f
+            for f in os.listdir(os.getcwd() + "/localtracks/")
+            if not os.path.isfile(os.getcwd() + "/localtracks/" + f)
+        ]
+
+        len_folder_pages = math.ceil(len(localtracks_folders) / 5)
+        folder_page_list = []
+        for page_num in range(1, len_folder_pages + 1):
+            embed = await self._build_search_page(ctx, localtracks_folders, page_num)
+            folder_page_list.append(embed)
+
+        async def _local_folder_menu(
+            ctx: commands.Context,
+            pages: list,
+            controls: dict,
+            message: discord.Message,
+            page: int,
+            timeout: float,
+            emoji: str,
+        ):
+            if message:
+                await message.delete()
+                await self._search_button_action(ctx, localtracks_folders, emoji, page)
+                return None
+
+        LOCAL_FOLDER_CONTROLS = {
+            "1⃣": _local_folder_menu,
+            "2⃣": _local_folder_menu,
+            "3⃣": _local_folder_menu,
+            "4⃣": _local_folder_menu,
+            "5⃣": _local_folder_menu,
+            "⬅": prev_page,
+            "❌": close_menu,
+            "➡": next_page,
+        }
+
+        dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
+        if dj_enabled:
+            if not await self._can_instaskip(ctx, ctx.author):
+                return await menu(ctx, folder_page_list, DEFAULT_CONTROLS)
+        else:
+            await menu(ctx, folder_page_list, LOCAL_FOLDER_CONTROLS)
+
+    @local.command(name="search")
+    async def local_search(self, ctx, *, search_words):
+        """Search for songs across all localtracks folders."""
+        if not await self._localtracks_check(ctx):
+            return
+        localtracks_folders = [
+            f
+            for f in os.listdir(os.getcwd() + "/localtracks/")
+            if not os.path.isfile(os.getcwd() + "/localtracks/" + f)
+        ]
+        all_tracks = []
+        for local_folder in localtracks_folders:
+            folder_tracks = await self._folder_list(ctx, local_folder)
+            all_tracks = all_tracks + folder_tracks
+        search_list = await self._build_local_search_list(all_tracks, search_words)
+        if not search_list:
+            return await self._embed_msg(ctx, "No matches.")
+        await ctx.invoke(self.search, query=search_list)
+
+    async def _all_folder_tracks(self, ctx, folder):
+        if not await self._localtracks_check(ctx):
+            return
+        allowed_files = (".mp3", ".flac", ".ogg")
+        current_folder = os.getcwd() + "/localtracks/{}/".format(folder)
+        folder_list = [
+            f
+            for f in os.listdir(current_folder)
+            if (f.lower().endswith(allowed_files)) and (os.path.isfile(current_folder + f))
+        ]
+        track_listing = []
+        for localtrack_location in folder_list:
+            track_listing.append(localtrack_location)
+        return track_listing
+
+    @staticmethod
+    async def _build_local_search_list(to_search, search_words):
+        search_results = process.extract(search_words, to_search, limit=50)
+        search_list = []
+        for track_match, percent_match in search_results:
+            if percent_match > 75:
+                search_list.append(track_match)
+        return search_list
+
+    async def _folder_list(self, ctx, folder):
+        if not await self._localtracks_check(ctx):
+            return
+        allowed_files = (".mp3", ".flac", ".ogg")
+        folder_list = [
+            os.getcwd() + "/localtracks/{}/{}".format(folder, f)
+            for f in os.listdir(os.getcwd() + "/localtracks/{}/".format(folder))
+            if (f.lower().endswith(allowed_files))
+            and (os.path.isfile(os.getcwd() + "/localtracks/{}/{}".format(folder, f)))
+        ]
+        track_listing = []
+        if ctx.invoked_with == "search":
+            for localtrack_location in folder_list:
+                track_listing.append(
+                    localtrack_location.replace(
+                        "{}/localtracks/".format(cog_data_path(raw_name="Audio")), ""
+                    )
+                )
+        else:
+            for localtrack_location in folder_list:
+                localtrack_location = "localtrack:{}".format(localtrack_location)
+                track_listing.append(localtrack_location)
+        return track_listing
+
+    async def _folder_tracks(self, ctx, player, folder):
+        if not await self._localtracks_check(ctx):
+            return
+        local_tracks = []
+        for local_file in await self._all_folder_tracks(ctx, folder):
+            track = await player.get_tracks("localtracks/{}/{}".format(folder, local_file))
+            try:
+                local_tracks.append(track[0])
+            except IndexError:
+                pass
+        return local_tracks
+
+    async def _local_play_all(self, ctx, folder):
+        if not await self._localtracks_check(ctx):
+            return
+        await ctx.invoke(self.search, query=("folder:" + folder))
+
+    async def _localtracks_check(self, ctx):
+        audio_data = cog_data_path(raw_name="Audio")
+        if os.getcwd() != audio_data:
+            os.chdir(audio_data)
+        localtracks_folder = any(
+            f for f in os.listdir(os.getcwd()) if not os.path.isfile(f) if f == "localtracks"
+        )
+        if not localtracks_folder:
+            await self._embed_msg(ctx, "No localtracks folder.")
+            return False
+        else:
+            return True
+
     @commands.command(aliases=["np", "n", "song"])
     @commands.guild_only()
     async def now(self, ctx):
@@ -445,9 +648,34 @@ class Audio:
                 dur = "LIVE"
             else:
                 dur = lavalink.utils.format_time(player.current.length)
-            song = "**[{}]({})**\nRequested by: **{}**\n\n{}`{}`/`{}`".format(
-                player.current.title, player.current.uri, player.current.requester, arrow, pos, dur
-            )
+            if "localtracks" in player.current.uri:
+                if not player.current.title == "Unknown title":
+                    song = "**{} - {}**\n{}\nRequested by: **{}**\n\n{}`{}`/`{}`".format(
+                        player.current.author,
+                        player.current.title,
+                        player.current.uri.replace("localtracks/", ""),
+                        player.current.requester,
+                        arrow,
+                        pos,
+                        dur,
+                    )
+                else:
+                    song = "{}\nRequested by: **{}**\n\n{}`{}`/`{}`".format(
+                        player.current.uri.replace("localtracks/", ""),
+                        player.current.requester,
+                        arrow,
+                        pos,
+                        dur,
+                    )
+            else:
+                song = "**[{}]({})**\nRequested by: **{}**\n\n{}`{}`/`{}`".format(
+                    player.current.title,
+                    player.current.uri,
+                    player.current.requester,
+                    arrow,
+                    pos,
+                    dur,
+                )
         else:
             song = "Nothing."
 
@@ -458,7 +686,7 @@ class Audio:
                 pass
 
         embed = discord.Embed(
-            colour=(await ctx.embed_colour()), title="Now Playing", description=song
+            colour=await ctx.embed_colour(), title="Now Playing", description=song
         )
         if await self.config.guild(ctx.guild).thumbnail() and player.current:
             if player.current.thumbnail:
@@ -525,21 +753,23 @@ class Audio:
                 return await self._embed_msg(ctx, "You need the DJ role to pause songs.")
 
         command = ctx.invoked_with
+        if "localtracks/" in player.current.uri:
+            description = "**{}**\n{}".format(
+                player.current.title, player.current.uri.replace("localtracks/", "")
+            )
+        else:
+            description = "**[{}]({})**".format(player.current.title, player.current.uri)
         if player.current and not player.paused and command != "resume":
             await player.pause()
             embed = discord.Embed(
-                colour=(await ctx.embed_colour()),
-                title="Track Paused",
-                description="**[{}]({})**".format(player.current.title, player.current.uri),
+                colour=await ctx.embed_colour(), title="Track Paused", description=description
             )
             return await ctx.send(embed=embed)
 
         if player.paused and command != "pause":
             await player.pause(False)
             embed = discord.Embed(
-                colour=(await ctx.embed_colour()),
-                title="Track Resumed",
-                description="**[{}]({})**".format(player.current.title, player.current.uri),
+                colour=await ctx.embed_colour(), title="Track Resumed", description=description
             )
             return await ctx.send(embed=embed)
 
@@ -599,7 +829,7 @@ class Audio:
         queue_user = ["{}: {:g}%".format(x[0], x[1]) for x in top_queue_users]
         queue_user_list = "\n".join(queue_user)
         embed = discord.Embed(
-            colour=(await ctx.embed_colour()),
+            colour=await ctx.embed_colour(),
             title="Queued and playing songs:",
             description=queue_user_list,
         )
@@ -616,7 +846,7 @@ class Audio:
             try:
                 if not ctx.author.voice.channel.permissions_for(
                     ctx.me
-                ).connect == True or self._userlimit(ctx.author.voice.channel):
+                ).connect or self._userlimit(ctx.author.voice.channel):
                     return await self._embed_msg(
                         ctx, "I don't have permission to connect to your channel."
                     )
@@ -644,7 +874,14 @@ class Audio:
         if not query:
             return await self._embed_msg(ctx, "No songs to play.")
         query = query.strip("<>")
-        if not query.startswith("http"):
+
+        if query.startswith("localtrack:"):
+            await self._localtracks_check(ctx)
+            query = query.replace("localtrack:", "").replace(
+                (str(cog_data_path(raw_name="Audio")) + "/"), ""
+            )
+        allowed_files = (".mp3", ".flac", ".ogg")
+        if not self._match_url(query) and not (query.lower().endswith(allowed_files)):
             query = "ytsearch:{}".format(query)
 
         tracks = await player.get_tracks(query)
@@ -655,11 +892,11 @@ class Audio:
         queue_total_duration = lavalink.utils.format_time(queue_duration)
         before_queue_length = len(player.queue)
 
-        if "list" in query and "ytsearch:" not in query:
+        if ("ytsearch:" or "localtrack") not in query and len(tracks) > 1:
             for track in tracks:
                 player.add(ctx.author, track)
             embed = discord.Embed(
-                colour=(await ctx.embed_colour()),
+                colour=await ctx.embed_colour(),
                 title="Playlist Enqueued",
                 description="Added {} tracks to the queue.".format(len(tracks)),
             )
@@ -674,10 +911,20 @@ class Audio:
         else:
             single_track = tracks[0]
             player.add(ctx.author, single_track)
+
+            if "localtracks" in single_track.uri:
+                if not single_track.title == "Unknown title":
+                    description = "**{} - {}**\n{}".format(
+                        single_track.author,
+                        single_track.title,
+                        single_track.uri.replace("localtracks/", ""),
+                    )
+                else:
+                    description = "{}".format(single_track.uri.replace("localtracks/", ""))
+            else:
+                description = "**[{}]({})**".format(single_track.title, single_track.uri)
             embed = discord.Embed(
-                colour=(await ctx.embed_colour()),
-                title="Track Enqueued",
-                description="**[{}]({})**".format(single_track.title, single_track.uri),
+                colour=await ctx.embed_colour(), title="Track Enqueued", description=description
             )
             if not shuffle and queue_duration > 0:
                 embed.set_footer(
@@ -781,7 +1028,7 @@ class Audio:
         else:
             playlist_url = "URL: <{}>".format(playlist_url)
         embed = discord.Embed(
-            colour=(await ctx.embed_colour()),
+            colour=await ctx.embed_colour(),
             title="Playlist info for {}:".format(playlist_name),
             description="Author: **{}**\n{}".format(author_obj, playlist_url),
         )
@@ -798,7 +1045,7 @@ class Audio:
         abc_names = sorted(playlist_list, key=str.lower)
         all_playlists = ", ".join(abc_names)
         embed = discord.Embed(
-            colour=(await ctx.embed_colour()),
+            colour=await ctx.embed_colour(),
             title="Playlists for {}:".format(ctx.guild.name),
             description=all_playlists,
         )
@@ -920,7 +1167,7 @@ class Audio:
                 player.add(author_obj, lavalink.rest_api.Track(data=track))
                 track_count = track_count + 1
             embed = discord.Embed(
-                colour=(await ctx.embed_colour()),
+                colour=await ctx.embed_colour(),
                 title="Playlist Enqueued",
                 description="Added {} tracks to the queue.".format(track_count),
             )
@@ -983,7 +1230,7 @@ class Audio:
                 except KeyError:
                     pass
             embed1 = discord.Embed(
-                colour=(await ctx.embed_colour()), title="Please wait, adding tracks..."
+                colour=await ctx.embed_colour(), title="Please wait, adding tracks..."
             )
             playlist_msg = await ctx.send(embed=embed1)
             for song_url in v2_playlist["playlist"]:
@@ -996,7 +1243,7 @@ class Audio:
                     pass
                 if track_count % 5 == 0:
                     embed2 = discord.Embed(
-                        colour=(await ctx.embed_colour()),
+                        colour=await ctx.embed_colour(),
                         title="Loading track {}/{}...".format(
                             track_count, len(v2_playlist["playlist"])
                         ),
@@ -1016,7 +1263,7 @@ class Audio:
             else:
                 msg = "Added {} tracks from the {} playlist.".format(track_count, v2_playlist_name)
             embed3 = discord.Embed(
-                colour=(await ctx.embed_colour()), title="Playlist Saved", description=msg
+                colour=await ctx.embed_colour(), title="Playlist Saved", description=msg
             )
             await playlist_msg.edit(embed=embed3)
         else:
@@ -1033,7 +1280,7 @@ class Audio:
             try:
                 if not ctx.author.voice.channel.permissions_for(
                     ctx.me
-                ).connect == True or self._userlimit(ctx.author.voice.channel):
+                ).connect or self._userlimit(ctx.author.voice.channel):
                     return await self._embed_msg(
                         ctx, "I don't have permission to connect to your channel."
                     )
@@ -1111,22 +1358,34 @@ class Audio:
             player.queue.insert(0, bump_song)
             player.queue.pop(queue_len)
             await player.skip()
+            if "localtracks/" in player.current.uri:
+                description = "**{}**\n{}".format(
+                    player.current.title, player.current.uri.replace("localtracks/", "")
+                )
+            else:
+                description = "**[{}]({})**".format(player.current.title, player.current.uri)
             embed = discord.Embed(
-                colour=(await ctx.embed_colour()),
-                title="Replaying Track",
-                description="**[{}]({})**".format(player.current.title, player.current.uri),
+                colour=await ctx.embed_colour(), title="Replaying Track", description=description
             )
             await ctx.send(embed=embed)
 
     @commands.command(aliases=["q"])
     @commands.guild_only()
-    async def queue(self, ctx, page: int = 1):
-        """Lists the queue."""
+    async def queue(self, ctx, *, page="1"):
+        """Lists the queue.
+        Use [p]queue search <search terms> to search the queue."""
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, "There's nothing in the queue.")
         player = lavalink.get_player(ctx.guild.id)
         if not player.queue:
             return await self._embed_msg(ctx, "There's nothing in the queue.")
+        if not page.isdigit():
+            if page.startswith("search "):
+                return await self._queue_search(ctx=ctx, search_words=page.replace("search ", ""))
+            else:
+                return
+        else:
+            page = int(page)
         len_queue_pages = math.ceil(len(player.queue) / 10)
         queue_page_list = []
         for page_num in range(1, len_queue_pages + 1):
@@ -1158,6 +1417,26 @@ class Audio:
             queue_list += "**Currently livestreaming:** **[{}]({})**\nRequested by: **{}**\n\n{}`{}`/`{}`\n\n".format(
                 player.current.title, player.current.uri, player.current.requester, arrow, pos, dur
             )
+
+        elif "localtracks" in player.current.uri:
+            if not player.current.title == "Unknown title":
+                queue_list += "Playing: **{} - {}**\n{}\nRequested by: **{}**\n\n{}`{}`/`{}`\n\n".format(
+                    player.current.author,
+                    player.current.title,
+                    player.current.uri.replace("localtracks/", ""),
+                    player.current.requester,
+                    arrow,
+                    pos,
+                    dur,
+                )
+            else:
+                queue_list += "Playing: {}\nRequested by: **{}**\n\n{}`{}`/`{}`\n\n".format(
+                    player.current.uri.replace("localtracks/", ""),
+                    player.current.requester,
+                    arrow,
+                    pos,
+                    dur,
+                )
         else:
             queue_list += "Playing: **[{}]({})**\nRequested by: **{}**\n\n{}`{}`/`{}`\n\n".format(
                 player.current.title, player.current.uri, player.current.requester, arrow, pos, dur
@@ -1173,12 +1452,22 @@ class Audio:
                 track_title = track.title
             req_user = track.requester
             track_idx = i + 1
-            queue_list += "`{}.` **[{}]({})**, requested by **{}**\n".format(
-                track_idx, track_title, track.uri, req_user
-            )
+            if "localtracks" in track.uri:
+                if track.title == "Unknown title":
+                    queue_list += "`{}.` **{}**, requested by **{}**\n".format(
+                        track_idx, track.uri.replace("localtracks/", ""), req_user
+                    )
+                else:
+                    queue_list += "`{}.` **{} - {}**, requested by **{}**\n".format(
+                        track_idx, track.author, track_title, req_user
+                    )
+            else:
+                queue_list += "`{}.` **[{}]({})**, requested by **{}**\n".format(
+                    track_idx, track_title, track.uri, req_user
+                )
 
         embed = discord.Embed(
-            colour=(await ctx.embed_colour()),
+            colour=await ctx.embed_colour(),
             title="Queue for " + ctx.guild.name,
             description=queue_list,
         )
@@ -1194,6 +1483,66 @@ class Audio:
         if shuffle:
             text += " | Shuffle: \N{WHITE HEAVY CHECK MARK}"
         embed.set_footer(text=text)
+        return embed
+
+    async def _queue_search(self, ctx, *, search_words):
+        player = lavalink.get_player(ctx.guild.id)
+        search_list = await self._build_queue_search_list(player.queue, search_words)
+        if not search_list:
+            return await self._embed_msg(ctx, "No matches.")
+        len_search_pages = math.ceil(len(search_list) / 10)
+        search_page_list = []
+        for page_num in range(1, len_search_pages + 1):
+            embed = await self._build_queue_search_page(ctx, page_num, search_list)
+            search_page_list.append(embed)
+        await menu(ctx, search_page_list, DEFAULT_CONTROLS)
+
+    async def _build_queue_search_list(self, queue_list, search_words):
+        track_list = []
+        queue_idx = 0
+        for track in queue_list:
+            queue_idx = queue_idx + 1
+            if not self._match_url(track.uri):
+                if track.title == "Unknown title":
+                    track_title = track.uri.split("/")[2]
+                else:
+                    track_title = "{} - {}".format(track.author, track.title)
+            else:
+                track_title = track.title
+
+            song_info = {str(queue_idx): track_title}
+            track_list.append(song_info)
+        search_results = process.extract(search_words, track_list, limit=50)
+        search_list = []
+        for search, percent_match in search_results:
+            for queue_position, title in search.items():
+                if percent_match > 89:
+                    search_list.append([queue_position, title])
+        return search_list
+
+    async def _build_queue_search_page(self, ctx, page_num, search_list):
+        search_num_pages = math.ceil(len(search_list) / 10)
+        search_idx_start = (page_num - 1) * 10
+        search_idx_end = search_idx_start + 10
+        track_match = ""
+        command = ctx.invoked_with
+        for i, track in enumerate(
+            search_list[search_idx_start:search_idx_end], start=search_idx_start
+        ):
+            track_idx = i + 1
+            if command == "search":
+                track_location = track.replace(
+                    "localtrack:{}/localtracks/".format(cog_data_path(raw_name="Audio")), ""
+                )
+                track_match += "`{}.` **{}**\n".format(track_idx, track_location)
+            else:
+                track_match += "`{}.` **{}**\n".format(track[0], track[1])
+        embed = discord.Embed(
+            colour=await ctx.embed_colour(), title="Matching Tracks:", description=track_match
+        )
+        embed.set_footer(
+            text="Page {}/{} | {} tracks".format(page_num, search_num_pages, len(search_list))
+        )
         return embed
 
     @commands.command()
@@ -1245,7 +1594,14 @@ class Audio:
             )
         index -= 1
         removed = player.queue.pop(index)
-        await self._embed_msg(ctx, "Removed {} from the queue.".format(removed.title))
+        if "localtracks/" in removed.uri:
+            if removed.title == "Unknown title":
+                removed_title = removed.uri.replace("localtracks/", "")
+            else:
+                removed_title = "{} - {}".format(removed.author, removed.title)
+        else:
+            removed_title = removed.title
+        await self._embed_msg(ctx, "Removed {} from the queue.".format(removed_title))
 
     @commands.command()
     @commands.guild_only()
@@ -1254,11 +1610,37 @@ class Audio:
         Use [p]search list <search term> to queue all songs found on YouTube.
         [p]search sc <search term> will search SoundCloud instead of YouTube.
         """
+
+        async def _search_menu(
+            ctx: commands.Context,
+            pages: list,
+            controls: dict,
+            message: discord.Message,
+            page: int,
+            timeout: float,
+            emoji: str,
+        ):
+            if message:
+                await self._search_button_action(ctx, tracks, emoji, page)
+                await message.delete()
+                return None
+
+        SEARCH_CONTROLS = {
+            "1⃣": _search_menu,
+            "2⃣": _search_menu,
+            "3⃣": _search_menu,
+            "4⃣": _search_menu,
+            "5⃣": _search_menu,
+            "⬅": prev_page,
+            "❌": close_menu,
+            "➡": next_page,
+        }
+
         if not self._player_check(ctx):
             try:
                 if not ctx.author.voice.channel.permissions_for(
                     ctx.me
-                ).connect == True or self._userlimit(ctx.author.voice.channel):
+                ).connect or self._userlimit(ctx.author.voice.channel):
                     return await self._embed_msg(
                         ctx, "I don't have permission to connect to your channel."
                     )
@@ -1277,35 +1659,56 @@ class Audio:
             return await self._embed_msg(ctx, "You must be in the voice channel to enqueue songs.")
         await self._data_check(ctx)
 
-        query = query.strip("<>")
-        if query.startswith("list "):
-            query = "ytsearch:{}".format(query.replace("list ", ""))
-            tracks = await player.get_tracks(query)
+        if not isinstance(query, list):
+            query = query.strip("<>")
+            if query.startswith("list ") or query.startswith("folder:"):
+                if query.startswith("list "):
+                    query = "ytsearch:{}".format(query.replace("list ", ""))
+                    tracks = await player.get_tracks(query)
+                else:
+                    query = query.replace("folder:", "")
+                    tracks = await self._folder_tracks(ctx, player, query)
+                if not tracks:
+                    return await self._embed_msg(ctx, "Nothing found.")
+                songembed = discord.Embed(
+                    colour=await ctx.embed_colour(),
+                    title="Queued {} track(s).".format(len(tracks)),
+                )
+                queue_duration = await self._queue_duration(ctx)
+                queue_total_duration = lavalink.utils.format_time(queue_duration)
+                if not shuffle and queue_duration > 0:
+                    songembed.set_footer(
+                        text="{} until start of search playback: starts at #{} in queue".format(
+                            queue_total_duration, (len(player.queue) + 1)
+                        )
+                    )
+                for track in tracks:
+                    player.add(ctx.author, track)
+                    if not player.current:
+                        await player.play()
+                return await ctx.send(embed=songembed)
+            elif query.startswith("sc "):
+                query = "scsearch:{}".format(query.replace("sc ", ""))
+                tracks = await player.get_tracks(query)
+            elif ":localtrack:" in query:
+                track_location = query.split(":")[2]
+                tracks = await self._folder_list(ctx, track_location)
+            elif query.startswith("localfolder:") and ":localtrack:" not in query:
+                folder = query.split(":")[1]
+                if ctx.invoked_with == "folder":
+                    localfolder = query.replace("localfolder:", "")
+                    return await self._local_play_all(ctx, localfolder)
+                else:
+                    tracks = await self._folder_list(ctx, folder)
+            elif not self._match_url(query):
+                query = "ytsearch:{}".format(query)
+                tracks = await player.get_tracks(query)
+            else:
+                tracks = await player.get_tracks(query)
             if not tracks:
                 return await self._embed_msg(ctx, "Nothing found.")
-            songembed = discord.Embed(
-                colour=(await ctx.embed_colour()), title="Queued {} track(s).".format(len(tracks))
-            )
-            queue_duration = await self._queue_duration(ctx)
-            queue_total_duration = lavalink.utils.format_time(queue_duration)
-            if not shuffle and queue_duration > 0:
-                songembed.set_footer(
-                    text="{} until start of search playback: starts at #{} in queue".format(
-                        queue_total_duration, (len(player.queue) + 1)
-                    )
-                )
-            for track in tracks:
-                player.add(ctx.author, track)
-                if not player.current:
-                    await player.play()
-            return await ctx.send(embed=songembed)
-        if query.startswith("sc "):
-            query = "scsearch:{}".format(query.replace("sc ", ""))
-        elif not query.startswith("http"):
-            query = "ytsearch:{}".format(query)
-        tracks = await player.get_tracks(query)
-        if not tracks:
-            return await self._embed_msg(ctx, "Nothing found.")
+        else:
+            tracks = query
 
         len_search_pages = math.ceil(len(tracks) / 5)
         search_page_list = []
@@ -1318,93 +1721,134 @@ class Audio:
             if not await self._can_instaskip(ctx, ctx.author):
                 return await menu(ctx, search_page_list, DEFAULT_CONTROLS)
 
-        async def _search_menu(
-            ctx: commands.Context,
-            pages: list,
-            controls: dict,
-            message: discord.Message,
-            page: int,
-            timeout: float,
-            emoji: str,
-        ):
-            if message:
-                await _search_button_action(ctx, tracks, emoji, page)
-                await message.delete()
-                return None
-
-        SEARCH_CONTROLS = {
-            "1⃣": _search_menu,
-            "2⃣": _search_menu,
-            "3⃣": _search_menu,
-            "4⃣": _search_menu,
-            "5⃣": _search_menu,
-            "⬅": prev_page,
-            "❌": close_menu,
-            "➡": next_page,
-        }
-
-        async def _search_button_action(ctx, tracks, emoji, page):
-            player = lavalink.get_player(ctx.guild.id)
-            jukebox_price = await self.config.guild(ctx.guild).jukebox_price()
-            shuffle = await self.config.guild(ctx.guild).shuffle()
-            if not await self._currency_check(ctx, jukebox_price):
-                return
-            try:
-                if emoji == "1⃣":
-                    search_choice = tracks[0 + (page * 5)]
-                if emoji == "2⃣":
-                    search_choice = tracks[1 + (page * 5)]
-                if emoji == "3⃣":
-                    search_choice = tracks[2 + (page * 5)]
-                if emoji == "4⃣":
-                    search_choice = tracks[3 + (page * 5)]
-                if emoji == "5⃣":
-                    search_choice = tracks[4 + (page * 5)]
-            except IndexError:
-                search_choice = tracks[-1]
-
-            embed = discord.Embed(
-                colour=(await ctx.embed_colour()),
-                title="Track Enqueued",
-                description="**[{}]({})**".format(search_choice.title, search_choice.uri),
-            )
-            queue_duration = await self._queue_duration(ctx)
-            queue_total_duration = lavalink.utils.format_time(queue_duration)
-            if not shuffle and queue_duration > 0:
-                embed.set_footer(
-                    text="{} until track playback: #{} in queue".format(
-                        queue_total_duration, (len(player.queue) + 1)
-                    )
-                )
-            elif queue_duration > 0:
-                embed.set_footer(text="#{} in queue".format(len(player.queue) + 1))
-
-            player.add(ctx.author, search_choice)
-            if not player.current:
-                await player.play()
-            await ctx.send(embed=embed)
-
         await menu(ctx, search_page_list, SEARCH_CONTROLS)
+
+    async def _search_button_action(self, ctx, tracks, emoji, page):
+        if not self._player_check(ctx):
+            try:
+                await lavalink.connect(ctx.author.voice.channel)
+                player = lavalink.get_player(ctx.guild.id)
+                player.store("connect", datetime.datetime.utcnow())
+            except AttributeError:
+                return await self._embed_msg(ctx, "Connect to a voice channel first.")
+        player = lavalink.get_player(ctx.guild.id)
+        jukebox_price = await self.config.guild(ctx.guild).jukebox_price()
+        shuffle = await self.config.guild(ctx.guild).shuffle()
+        command = ctx.invoked_with
+        if not await self._currency_check(ctx, jukebox_price):
+            return
+        try:
+            if emoji == "1⃣":
+                search_choice = tracks[0 + (page * 5)]
+            if emoji == "2⃣":
+                search_choice = tracks[1 + (page * 5)]
+            if emoji == "3⃣":
+                search_choice = tracks[2 + (page * 5)]
+            if emoji == "4⃣":
+                search_choice = tracks[3 + (page * 5)]
+            if emoji == "5⃣":
+                search_choice = tracks[4 + (page * 5)]
+        except IndexError:
+            search_choice = tracks[-1]
+        try:
+            search_check = search_choice.uri
+            if "localtracks" in search_choice.uri:
+                if search_choice.title == "Unknown title":
+                    description = "**{} - {}**\n{}".format(
+                        search_choice.author,
+                        search_choice.title,
+                        search_choice.uri.replace("localtracks/", ""),
+                    )
+                else:
+                    description = "{}".format(search_choice.uri.replace("localtracks/", ""))
+            else:
+                description = "**[{}]({})**".format(search_choice.title, search_choice.uri)
+
+        except AttributeError:
+            if command == "search":
+                return await ctx.invoke(self.play, query=("localtracks/{}".format(search_choice)))
+            search_choice = search_choice.replace("localtrack:", "")
+            if not search_choice.startswith(str(cog_data_path(raw_name="Audio"))):
+                return await ctx.invoke(
+                    self.search, query=("localfolder:{}".format(search_choice))
+                )
+            else:
+                return await ctx.invoke(self.play, query=("localtrack:{}".format(search_choice)))
+
+        embed = discord.Embed(
+            colour=await ctx.embed_colour(), title="Track Enqueued", description=description
+        )
+        queue_duration = await self._queue_duration(ctx)
+        queue_total_duration = lavalink.utils.format_time(queue_duration)
+        if not shuffle and queue_duration > 0:
+            embed.set_footer(
+                text="{} until track playback: #{} in queue".format(
+                    queue_total_duration, (len(player.queue) + 1)
+                )
+            )
+        elif queue_duration > 0:
+            embed.set_footer(text="#{} in queue".format(len(player.queue) + 1))
+
+        player.add(ctx.author, search_choice)
+        if not player.current:
+            await player.play()
+        await ctx.send(embed=embed)
 
     async def _build_search_page(self, ctx, tracks, page_num):
         search_num_pages = math.ceil(len(tracks) / 5)
         search_idx_start = (page_num - 1) * 5
         search_idx_end = search_idx_start + 5
         search_list = ""
+        command = ctx.invoked_with
         for i, track in enumerate(tracks[search_idx_start:search_idx_end], start=search_idx_start):
             search_track_num = i + 1
             if search_track_num > 5:
                 search_track_num = search_track_num % 5
             if search_track_num == 0:
                 search_track_num = 5
-            search_list += "`{0}.` **[{1}]({2})**\n".format(
-                search_track_num, track.title, track.uri
-            )
+            try:
+                if "localtracks" in track.uri:
+                    search_list += "`{0}.` **{1}**\n[{2}]\n".format(
+                        search_track_num, track.title, track.uri.replace("localtracks/", "")
+                    )
+                else:
+                    search_list += "`{0}.` **[{1}]({2})**\n".format(
+                        search_track_num, track.title, track.uri
+                    )
+            except AttributeError:
+                if "localtrack:" not in track and command != "search":
+                    search_list += "`{}.` **{}**\n".format(search_track_num, track)
+                    folder = True
+                elif command == "search":
+                    search_list += "`{}.` **{}**\n".format(search_track_num, track)
+                    folder = False
+                else:
+                    search_list += "`{}.` **{}**\n".format(
+                        search_track_num,
+                        track.replace(
+                            "localtrack:{}/localtracks/".format(
+                                str(cog_data_path(raw_name="Audio"))
+                            ),
+                            "",
+                        ),
+                    )
+                    folder = False
+        try:
+            title_check = tracks[0].uri
+            title = "Tracks Found:"
+            footer = "search results"
+        except AttributeError:
+            if folder:
+                title = "Folders Found:"
+                footer = "local folders"
+            else:
+                title = "Files Found:"
+                footer = "local tracks"
         embed = discord.Embed(
-            colour=(await ctx.embed_colour()), title="Tracks Found:", description=search_list
+            colour=await ctx.embed_colour(), title=title, description=search_list
         )
         embed.set_footer(
-            text="Page {}/{} | {} search results".format(page_num, search_num_pages, len(tracks))
+            text="Page {}/{} | {} {}".format(page_num, search_num_pages, len(tracks), footer)
         )
         return embed
 
@@ -1593,20 +2037,29 @@ class Audio:
             time_remain = lavalink.utils.format_time(dur - pos)
             if player.current.is_stream:
                 embed = discord.Embed(
-                    colour=(await ctx.embed_colour()), title="There's nothing in the queue."
+                    colour=await ctx.embed_colour(), title="There's nothing in the queue."
                 )
                 embed.set_footer(text="Currently livestreaming {}".format(player.current.title))
             else:
                 embed = discord.Embed(
-                    colour=(await ctx.embed_colour()), title="There's nothing in the queue."
+                    colour=await ctx.embed_colour(), title="There's nothing in the queue."
                 )
                 embed.set_footer(text="{} left on {}".format(time_remain, player.current.title))
             return await ctx.send(embed=embed)
 
+        if "localtracks" in player.current.uri:
+            if not player.current.title == "Unknown title":
+                description = "**{} - {}**\n{}".format(
+                    player.current.author,
+                    player.current.title,
+                    player.current.uri.replace("localtracks/", ""),
+                )
+            else:
+                description = "{}".format(player.current.uri.replace("localtracks/", ""))
+        else:
+            description = "**[{}]({})**".format(player.current.title, player.current.uri)
         embed = discord.Embed(
-            colour=(await ctx.embed_colour()),
-            title="Track Skipped",
-            description="**[{}]({})**".format(player.current.title, player.current.uri),
+            colour=await ctx.embed_colour(), title="Track Skipped", description=description
         )
         await ctx.send(embed=embed)
         await player.skip()
@@ -1652,7 +2105,7 @@ class Audio:
         if not vol:
             vol = await self.config.guild(ctx.guild).volume()
             embed = discord.Embed(
-                colour=(await ctx.embed_colour()),
+                colour=await ctx.embed_colour(),
                 title="Current Volume:",
                 description=str(vol) + "%",
             )
@@ -1682,7 +2135,7 @@ class Audio:
             if self._player_check(ctx):
                 await lavalink.get_player(ctx.guild.id).set_volume(vol)
         embed = discord.Embed(
-            colour=(await ctx.embed_colour()), title="Volume:", description=str(vol) + "%"
+            colour=await ctx.embed_colour(), title="Volume:", description=str(vol) + "%"
         )
         if not self._player_check(ctx):
             embed.set_footer(text="Nothing playing.")
@@ -1706,7 +2159,7 @@ class Audio:
             await self.config.rest_port.set(2333)
             await self.config.ws_port.set(2332)
             embed = discord.Embed(
-                colour=(await ctx.embed_colour()),
+                colour=await ctx.embed_colour(),
                 title="External lavalink server: {}.".format(not external),
             )
             embed.set_footer(text="Defaults reset.")
@@ -1720,7 +2173,7 @@ class Audio:
         await self.config.host.set(host)
         if await self._check_external():
             embed = discord.Embed(
-                colour=(await ctx.embed_colour()), title="Host set to {}.".format(host)
+                colour=await ctx.embed_colour(), title="Host set to {}.".format(host)
             )
             embed.set_footer(text="External lavalink server set to True.")
             await ctx.send(embed=embed)
@@ -1733,7 +2186,7 @@ class Audio:
         await self.config.password.set(str(password))
         if await self._check_external():
             embed = discord.Embed(
-                colour=(await ctx.embed_colour()),
+                colour=await ctx.embed_colour(),
                 title="Server password set to {}.".format(password),
             )
             embed.set_footer(text="External lavalink server set to True.")
@@ -1747,7 +2200,7 @@ class Audio:
         await self.config.rest_port.set(rest_port)
         if await self._check_external():
             embed = discord.Embed(
-                colour=(await ctx.embed_colour()), title="REST port set to {}.".format(rest_port)
+                colour=await ctx.embed_colour(), title="REST port set to {}.".format(rest_port)
             )
             embed.set_footer(text="External lavalink server set to True.")
             await ctx.send(embed=embed)
@@ -1760,8 +2213,7 @@ class Audio:
         await self.config.ws_port.set(ws_port)
         if await self._check_external():
             embed = discord.Embed(
-                colour=(await ctx.embed_colour()),
-                title="Websocket port set to {}.".format(ws_port),
+                colour=await ctx.embed_colour(), title="Websocket port set to {}.".format(ws_port)
             )
             embed.set_footer(text="External lavalink server set to True.")
             await ctx.send(embed=embed)
@@ -1879,8 +2331,15 @@ class Audio:
 
     @staticmethod
     async def _embed_msg(ctx, title):
-        embed = discord.Embed(colour=(await ctx.embed_colour()), title=title)
+        embed = discord.Embed(colour=await ctx.embed_colour(), title=title)
         await ctx.send(embed=embed)
+
+    async def _get_embed_colour(self, channel: discord.abc.GuildChannel):
+        # Unfortunately we need this for when context is unavailable.
+        if await self.bot.db.guild(channel.guild).use_bot_color():
+            return channel.guild.me.color
+        else:
+            return self.bot.color
 
     async def _get_playing(self, ctx):
         if self._player_check(ctx):
@@ -1888,6 +2347,14 @@ class Audio:
             return len([player for p in lavalink.players if p.is_playing])
         else:
             return 0
+
+    @staticmethod
+    def _match_url(url):
+        try:
+            query_url = urlparse(url)
+            return all([query_url.scheme, query_url.netloc, query_url.path])
+        except:
+            return False
 
     @staticmethod
     def _match_yt_playlist(url):
@@ -1898,6 +2365,14 @@ class Audio:
         if yt_list_playlist.match(url):
             return True
         return False
+
+    @staticmethod
+    def _player_check(ctx):
+        try:
+            lavalink.get_player(ctx.guild.id)
+            return True
+        except KeyError:
+            return False
 
     @staticmethod
     async def _queue_duration(ctx):
@@ -1918,14 +2393,6 @@ class Audio:
             remain = 0
         queue_total_duration = remain + queue_duration
         return queue_total_duration
-
-    @staticmethod
-    def _player_check(ctx):
-        try:
-            lavalink.get_player(ctx.guild.id)
-            return True
-        except KeyError:
-            return False
 
     @staticmethod
     def _to_json(ctx, playlist_url, tracklist):
