@@ -274,6 +274,42 @@ def init_events(bot, cli_flags):
     async def on_command(command):
         bot.counter["processed_commands"] += 1
 
+    @bot.event
+    async def on_command_add(command: commands.Command):
+        disabled_commands = await bot.db.disabled_commands()
+        if command.qualified_name in disabled_commands:
+            command.enabled = False
+        for guild in bot.guilds:
+            disabled_commands = await bot.db.guild(guild).disabled_commands()
+            if command.qualified_name in disabled_commands:
+                command.disable_in(guild)
+
+    async def _guild_added(guild: discord.Guild):
+        disabled_commands = await bot.db.guild(guild).disabled_commands()
+        for command_name in disabled_commands:
+            command_obj = bot.get_command(command_name)
+            if command_obj is not None:
+                command_obj.disable_in(guild)
+
+    @bot.event
+    async def on_guild_join(guild: discord.Guild):
+        await _guild_added(guild)
+
+    @bot.event
+    async def on_guild_available(guild: discord.Guild):
+        # We need to check guild-disabled commands here since some cogs
+        # are loaded prior to `on_ready`.
+        await _guild_added(guild)
+
+    @bot.event
+    async def on_guild_leave(guild: discord.Guild):
+        # Clean up any unneeded checks
+        disabled_commands = await bot.db.guild(guild).disabled_commands()
+        for command_name in disabled_commands:
+            command_obj = bot.get_command(command_name)
+            if command_obj is not None:
+                command_obj.enable_in(guild)
+
 
 def _get_startup_screen_specs():
     """Get specs for displaying the startup screen on stdout.
