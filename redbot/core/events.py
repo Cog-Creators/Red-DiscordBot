@@ -187,7 +187,9 @@ def init_events(bot, cli_flags):
         elif isinstance(error, commands.BadArgument):
             await ctx.send_help()
         elif isinstance(error, commands.DisabledCommand):
-            await ctx.send("That command is disabled.")
+            disabled_message = await bot.db.disabled_command_msg()
+            if disabled_message:
+                await ctx.send(disabled_message.replace("{command}", ctx.invoked_with))
         elif isinstance(error, commands.CommandInvokeError):
             # Need to test if the following still works
             """
@@ -235,7 +237,7 @@ def init_events(bot, cli_flags):
             await ctx.send("That command is not available in DMs.")
         elif isinstance(error, commands.CommandOnCooldown):
             await ctx.send(
-                "This command is on cooldown. " "Try again in {:.2f}s" "".format(error.retry_after)
+                "This command is on cooldown. Try again in {:.2f}s".format(error.retry_after)
             )
         else:
             log.exception(type(error).__name__, exc_info=error)

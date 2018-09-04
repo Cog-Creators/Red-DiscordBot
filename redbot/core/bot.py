@@ -59,6 +59,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             help__max_pages_in_guild=2,
             help__tagline="",
             disabled_commands=[],
+            disabled_command_msg="That command is disabled."
         )
 
         self.db.register_guild(

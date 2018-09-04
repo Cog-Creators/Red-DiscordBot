@@ -1681,6 +1681,19 @@ class Core(CoreLogic):
         else:
             await ctx.tick()
 
+    @checks.is_owner()
+    @command_manager.command(name="disabledmsg")
+    async def command_disabledmsg(self, ctx: commands.Context, *, message: str = ""):
+        """Set the bot's response to disabled commands.
+
+        Leave blank to send nothing.
+
+        To include the command name in the message, include the
+        `{command}` placeholder.
+        """
+        await ctx.bot.db.disabled_command_msg.set(message)
+        await ctx.tick()
+
     # RPC handlers
     async def rpc_load(self, request):
         cog_name = request.params[0]
