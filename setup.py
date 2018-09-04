@@ -94,7 +94,7 @@ if __name__ == "__main__":
             ],
             "pytest11": ["red-discordbot = redbot.pytest"],
         },
-        python_requires=">=3.6,<3.8",
+        python_requires=">=3.6.2,<3.8",
         install_requires=requirements,
         dependency_links=get_dependency_links(),
         extras_require={

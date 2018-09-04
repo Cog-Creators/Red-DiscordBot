@@ -53,7 +53,7 @@ Red's repository is configured to follow a particular development workflow, usin
 
 ### 4.1 Setting up your development environment
 The following requirements must be installed prior to setting up:
- - Python 3.6
+ - Python 3.6.2 or greater
  - git
  - pip
  - pipenv
@@ -79,7 +79,7 @@ Note: If you haven't used `pipenv` before but are comfortable with virtualenvs, 
 We've recently started using [tox](https://github.com/tox-dev/tox) to run all of our tests. It's extremely simple to use, and if you followed the previous section correctly, it is already installed to your virtual environment.
 
 Currently, tox does the following, creating its own virtual environments for each stage:
-- Runs all of our unit tests with [pytest](https://github.com/pytest-dev/pytest) on python 3.6 (test environment `py36`)
+- Runs all of our unit tests with [pytest](https://github.com/pytest-dev/pytest) on python 3.6 and 3.7 (test environments `py36` and `py37`)
 - Ensures documentation builds without warnings, and all hyperlinks have a valid destination (test environment `docs`)
 - Ensures that the code meets our style guide with [black](https://github.com/ambv/black) (test environment `style`)
 
