@@ -1,6 +1,7 @@
 import sys
+import warnings
 import discord
-from colorama import init, Back
+from colorama import init
 
 init()
 # Let's do all the dumb version checking in one place.
@@ -12,3 +13,6 @@ if discord.version_info.major < 1:
         " >= 1.0.0."
     )
     sys.exit(1)
+
+# Filter fuzzywuzzy slow sequence matcher warning
+warnings.filterwarnings("ignore", module=r"fuzzywuzzy.*")
