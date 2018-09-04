@@ -165,7 +165,7 @@ class Trivia:
             return
         await ctx.send("Done. Payout multiplier set to {}.".format(multiplier))
 
-    @commands.group(invoke_without_command=True)
+    @commands.group(autohelp=False)
     @commands.guild_only()
     async def trivia(self, ctx: commands.Context, *categories: str):
         """Start trivia session on the specified category.

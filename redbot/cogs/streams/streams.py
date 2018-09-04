@@ -141,7 +141,7 @@ class Streams:
     async def streamalert(self, ctx: commands.Context):
         pass
 
-    @streamalert.group(name="twitch", invoke_without_command=True)
+    @streamalert.group(name="twitch", autohelp=False)
     async def _twitch(self, ctx: commands.Context, channel_name: str = None):
         """Twitch stream alerts"""
         if channel_name is not None:

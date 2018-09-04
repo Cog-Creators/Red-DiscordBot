@@ -201,7 +201,7 @@ class Reports:
         )
         return ticket_number
 
-    @commands.group(name="report", invoke_without_command=True)
+    @commands.group(name="report", autohelp=False)
     async def report(self, ctx: commands.Context, *, _report: str = ""):
         """
         Send a report.

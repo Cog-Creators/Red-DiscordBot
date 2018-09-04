@@ -216,7 +216,7 @@ class Admin:
             log.info(reason)
             await ctx.send("Done.")
 
-    @commands.group(invoke_without_command=True)
+    @commands.group(autohelp=False)
     @checks.is_owner()
     async def announce(self, ctx: commands.Context, *, message: str):
         """
@@ -292,7 +292,7 @@ class Admin:
         return valid_roles
 
     @commands.guild_only()
-    @commands.group(invoke_without_command=True)
+    @commands.group(autohelp=False)
     async def selfrole(self, ctx: commands.Context, *, selfrole: SelfRole):
         """
         Add a role to yourself that server admins have configured as user settable.
