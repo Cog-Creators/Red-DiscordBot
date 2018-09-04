@@ -5,6 +5,7 @@ import discord
 import heapq
 import lavalink
 import math
+import random
 import re
 import time
 import redbot.core
@@ -1461,6 +1462,21 @@ class Audio:
                     ctx, "You must be in the voice channel to toggle shuffle."
                 )
         await self._embed_msg(ctx, "Shuffle songs: {}.".format(shuffle))
+
+    @commands.command()
+    @commands.guild_only()
+    async def sing(self, ctx):
+        """Makes Red sing one of her songs"""
+        ids = (
+            "zGTkAVsrfg8",
+            "cGMWL8cOeAU",
+            "vFrjMq4aL-g",
+            "WROI5WYBU_A",
+            "41tIUr_ex3g",
+            "f9O2Rjn1azc",
+        )
+        url = f"https://www.youtube.com/watch?v={random.choice(ids)}"
+        await ctx.invoke(self.play, query=url)
 
     @commands.command(aliases=["forceskip", "fs"])
     @commands.guild_only()
