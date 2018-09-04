@@ -844,9 +844,9 @@ class Audio:
         shuffle = await self.config.guild(ctx.guild).shuffle()
         if not self._player_check(ctx):
             try:
-                if not ctx.author.voice.channel.permissions_for(
-                    ctx.me
-                ).connect or self._userlimit(ctx.author.voice.channel):
+                if not ctx.author.voice.channel.permissions_for(ctx.me).connect or self._userlimit(
+                    ctx.author.voice.channel
+                ):
                     return await self._embed_msg(
                         ctx, "I don't have permission to connect to your channel."
                     )
@@ -1278,9 +1278,9 @@ class Audio:
                 return False
         if not self._player_check(ctx):
             try:
-                if not ctx.author.voice.channel.permissions_for(
-                    ctx.me
-                ).connect or self._userlimit(ctx.author.voice.channel):
+                if not ctx.author.voice.channel.permissions_for(ctx.me).connect or self._userlimit(
+                    ctx.author.voice.channel
+                ):
                     return await self._embed_msg(
                         ctx, "I don't have permission to connect to your channel."
                     )
@@ -1638,9 +1638,9 @@ class Audio:
 
         if not self._player_check(ctx):
             try:
-                if not ctx.author.voice.channel.permissions_for(
-                    ctx.me
-                ).connect or self._userlimit(ctx.author.voice.channel):
+                if not ctx.author.voice.channel.permissions_for(ctx.me).connect or self._userlimit(
+                    ctx.author.voice.channel
+                ):
                     return await self._embed_msg(
                         ctx, "I don't have permission to connect to your channel."
                     )
