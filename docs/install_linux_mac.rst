@@ -16,7 +16,7 @@ Installing the pre-requirements
 Please install the pre-requirements using the commands listed for your operating system.
 
 The pre-requirements are:
- - Python 3.6 or greater
+ - Python 3.6.2 or greater
  - pip 9.0 or greater
  - git
  - Java Runtime Environment 8 or later (for audio support)
@@ -108,7 +108,7 @@ Ubuntu 18.04 Bionic Beaver
 Ubuntu 16.04 Xenial Xerus
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-We recommend adding the ``deadsnakes`` apt repository to install Python 3.6 or greater:
+We recommend adding the ``deadsnakes`` apt repository to install Python 3.6.2 or greater:
 
 .. code-block:: none
 
