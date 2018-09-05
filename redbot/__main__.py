@@ -28,6 +28,9 @@ if sys.implementation.name == "cpython":
     else:
         asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
+if sys.platform == "win32":
+    asyncio.set_event_loop(asyncio.ProactorEventLoop())
+
 
 #
 #               Red - Discord Bot v3
