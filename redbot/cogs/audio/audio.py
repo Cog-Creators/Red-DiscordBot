@@ -713,6 +713,11 @@ class Audio:
                 if not to_append:
                     return
                 track_list = playlists[playlist_name]["tracks"]
+                if track_list and len(to_append) == 1 and to_append[0] in track_list:
+                    return await self._embed_msg(
+                        ctx,
+                        "{} already in {}.".format(to_append[0]["info"]["title"], playlist_name),
+                    )
                 if track_list:
                     playlists[playlist_name]["tracks"] = track_list + to_append
                 else:
