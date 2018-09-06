@@ -2,6 +2,7 @@ import aiohttp
 import asyncio
 import datetime
 import discord
+from fuzzywuzzy import process
 import heapq
 import lavalink
 import math
@@ -16,7 +17,7 @@ from .manager import shutdown_lavalink_server
 
 _ = Translator("Audio", __file__)
 
-__version__ = "0.0.6d"
+__version__ = "0.0.6e"
 __author__ = ["aikaterna", "billy/bollo/ati"]
 
 
@@ -1125,13 +1126,21 @@ class Audio:
 
     @commands.command(aliases=["q"])
     @commands.guild_only()
-    async def queue(self, ctx, page: int = 1):
-        """Lists the queue."""
+    async def queue(self, ctx, *, page="1"):
+        """Lists the queue.
+        Use [p]queue search <search terms> to search the queue."""
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, "There's nothing in the queue.")
         player = lavalink.get_player(ctx.guild.id)
         if not player.queue:
             return await self._embed_msg(ctx, "There's nothing in the queue.")
+        if not page.isdigit():
+            if page.startswith("search "):
+                return await self._queue_search(ctx=ctx, search_words=page.replace("search ", ""))
+            else:
+                return
+        else:
+            page = int(page)
         len_queue_pages = math.ceil(len(player.queue) / 10)
         queue_page_list = []
         for page_num in range(1, len_queue_pages + 1):
@@ -1199,6 +1208,50 @@ class Audio:
         if shuffle:
             text += " | Shuffle: \N{WHITE HEAVY CHECK MARK}"
         embed.set_footer(text=text)
+        return embed
+
+    async def _queue_search(self, ctx, *, search_words):
+        player = lavalink.get_player(ctx.guild.id)
+        search_list = await self._build_queue_search_list(player, search_words)
+        if not search_list:
+            return await self._embed_msg(ctx, "No matches.")
+        len_search_pages = math.ceil(len(search_list) / 10)
+        search_page_list = []
+        for page_num in range(1, len_search_pages + 1):
+            embed = await self._build_queue_search_page(ctx, page_num, search_list)
+            search_page_list.append(embed)
+        await menu(ctx, search_page_list, DEFAULT_CONTROLS)
+
+    @staticmethod
+    async def _build_queue_search_list(player, search_words):
+        queue_idx = 0
+        track_list = []
+        for track in player.queue:
+            queue_idx = queue_idx + 1
+            song_info = {str(queue_idx): track.title}
+            track_list.append(song_info)
+        search_results = process.extract(search_words, track_list, limit=50)
+        search_list = []
+        for search, percent_match in search_results:
+            for queue_position, track_title in search.items():
+                if percent_match > 89:
+                    search_list.append([queue_position, track_title])
+        return search_list
+
+    @staticmethod
+    async def _build_queue_search_page(ctx, page_num, search_list):
+        search_num_pages = math.ceil(len(search_list) / 10)
+        search_idx_start = (page_num - 1) * 10
+        search_idx_end = search_idx_start + 10
+        track_match = ""
+        for track in search_list[search_idx_start:search_idx_end]:
+            track_match += "`{}.` **{}**\n".format(track[0], track[1])
+        embed = discord.Embed(
+            colour=(await ctx.embed_colour()), title="Matching Tracks:", description=track_match
+        )
+        embed.set_footer(
+            text="Page {}/{} | {} tracks".format(page_num, search_num_pages, len(search_list))
+        )
         return embed
 
     @commands.command()
