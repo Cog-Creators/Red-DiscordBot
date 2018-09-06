@@ -1,3 +1,5 @@
+import contextlib
+
 import aiohttp
 import asyncio
 import datetime
@@ -61,8 +63,10 @@ class Audio:
         self.config.register_global(**default_global)
         self.skip_votes = {}
         self.session = aiohttp.ClientSession()
+        self._disconnect_task = None
+        self._cleaned_up = False
 
-    async def init_config(self):
+    async def initialize(self):
         host = await self.config.host()
         password = await self.config.password()
         rest_port = await self.config.rest_port()
@@ -77,6 +81,8 @@ class Audio:
             timeout=60,
         )
         lavalink.register_event_listener(self.event_handler)
+
+        self._disconnect_task = self.bot.loop.create_task(self.disconnect_timer())
 
     async def event_handler(self, player, event_type, extra):
         notify = await self.config.guild(player.channel.guild).notify()
@@ -2265,7 +2271,7 @@ class Audio:
     async def disconnect_timer(self):
         stop_times = {}
 
-        while self == self.bot.get_cog("Audio"):
+        while True:
             for p in lavalink.players:
                 server = p.channel.guild
 
@@ -2447,7 +2453,13 @@ class Audio:
                 pass
 
     def __unload(self):
-        self.session.detach()
-        lavalink.unregister_event_listener(self.event_handler)
-        self.bot.loop.create_task(lavalink.close())
-        shutdown_lavalink_server()
+        if not self._cleaned_up:
+            self.session.detach()
+            if self._disconnect_task:
+                self._disconnect_task.cancel()
+            lavalink.unregister_event_listener(self.event_handler)
+            self.bot.loop.create_task(lavalink.close())
+            shutdown_lavalink_server()
+            self._cleaned_up = True
+
+    __del__ = __unload
