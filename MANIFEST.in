@@ -1,3 +1,3 @@
-include README.rst
+include README.md
 include LICENSE
 include dependency_links.txt
