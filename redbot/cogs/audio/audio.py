@@ -490,13 +490,9 @@ class Audio:
         """Play a local track."""
         if not await self._localtracks_check(ctx):
             return
-
-        localtracks_folders = [
-            f
-            for f in os.listdir(os.getcwd() + "/localtracks/")
-            if not os.path.isfile(os.getcwd() + "/localtracks/" + f)
-        ]
-
+        localtracks_folders = await self._localtracks_folders(ctx)
+        if not localtracks_folders:
+            return await self._embed_msg(ctx, "No album folders found.")
         len_folder_pages = math.ceil(len(localtracks_folders) / 5)
         folder_page_list = []
         for page_num in range(1, len_folder_pages + 1):
@@ -540,11 +536,9 @@ class Audio:
         """Search for songs across all localtracks folders."""
         if not await self._localtracks_check(ctx):
             return
-        localtracks_folders = [
-            f
-            for f in os.listdir(os.getcwd() + "/localtracks/")
-            if not os.path.isfile(os.getcwd() + "/localtracks/" + f)
-        ]
+        localtracks_folders = await self._localtracks_folders(ctx)
+        if not localtracks_folders:
+            return await self._embed_msg(ctx, "No album folders found.")
         all_tracks = []
         for local_folder in localtracks_folders:
             folder_tracks = await self._folder_list(ctx, local_folder)
@@ -2347,6 +2341,16 @@ class Audio:
             return len([player for p in lavalink.players if p.is_playing])
         else:
             return 0
+
+    async def _localtracks_folders(self, ctx):
+        if not await self._localtracks_check(ctx):
+            return
+        localtracks_folders = [
+            f
+            for f in os.listdir(os.getcwd() + "/localtracks/")
+            if not os.path.isfile(os.getcwd() + "/localtracks/" + f)
+        ]
+        return localtracks_folders
 
     @staticmethod
     def _match_url(url):
