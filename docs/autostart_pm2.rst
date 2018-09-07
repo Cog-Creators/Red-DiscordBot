@@ -15,7 +15,7 @@ Start by installing Node.JS and NPM via your favorite package distributor. From 
 :code:`npm install pm2 -g`
 
 After PM2 is installed, run the following command to enable your Red instance to be managed by PM2. Replace the brackets with the required information.
-You can add additional Red based arguments after the instance, such as `--dev`.
+You can add additional Red based arguments after the instance, such as :code:`--dev`.
 
 :code:`pm2 start redbot --name "<Insert a name here>" --interpreter "<Location to your Python Interpreter>" -- <Red Instance> --no-prompt`
 
