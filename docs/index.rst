@@ -20,6 +20,7 @@ Welcome to Red - Discord Bot's documentation!
     install_raspbian
     cog_dataconverter
     autostart_systemd
+    autostart_pm2
 
 .. toctree::
     :maxdepth: 2
