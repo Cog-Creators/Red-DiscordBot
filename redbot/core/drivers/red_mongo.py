@@ -16,7 +16,9 @@ def _initialize(**kwargs):
     db_name = kwargs.get("DB_NAME", "default_db")
 
     if admin_user is not None and admin_pass is not None:
-        url = "mongodb://{}:{}@{}:{}/{}".format(quote_plus(admin_user), quote_plus(admin_pass), host, port, db_name)
+        url = "mongodb://{}:{}@{}:{}/{}".format(
+            quote_plus(admin_user), quote_plus(admin_pass), host, port, db_name
+        )
     else:
         url = "mongodb://{}:{}/{}".format(host, port, db_name)
 
