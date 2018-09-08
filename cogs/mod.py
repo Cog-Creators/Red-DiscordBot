@@ -1465,6 +1465,9 @@ class Mod:
             channel = self.bot.get_channel(channel)
             tmp["action"] += ' in ' + channel.mention
 
+        if "discord.gg/" in tmp["user"].lower():
+            tmp["user"] = tmp["user"].replace(".", "\u200b.")
+        
         case_msg = (
             "**Case #{case}** | {action}\n"
             "**User:** {user} ({user_id})\n"
