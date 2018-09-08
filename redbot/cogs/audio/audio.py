@@ -1367,6 +1367,7 @@ class Audio:
     @commands.guild_only()
     async def queue(self, ctx, *, page="1"):
         """Lists the queue.
+
         Use [p]queue search <search terms> to search the queue."""
         if not self._player_check(ctx):
             return await self._embed_msg(ctx, "There's nothing in the queue.")
