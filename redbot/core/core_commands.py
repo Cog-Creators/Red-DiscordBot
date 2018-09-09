@@ -70,6 +70,7 @@ class CoreLogic:
         failed_packages = []
         loaded_packages = []
         notfound_packages = []
+        alreadyloaded_packages = []
 
         bot = self.bot
 
@@ -94,6 +95,8 @@ class CoreLogic:
             try:
                 self._cleanup_and_refresh_modules(spec.name)
                 await bot.load_extension(spec)
+            except discord.errors.ClientException:
+                alreadyloaded_packages.append(name)
             except Exception as e:
                 log.exception("Package loading failed", exc_info=e)
 
@@ -105,7 +108,7 @@ class CoreLogic:
                 await bot.add_loaded_package(name)
                 loaded_packages.append(name)
 
-        return loaded_packages, failed_packages, notfound_packages
+        return loaded_packages, failed_packages, notfound_packages, alreadyloaded_packages
 
     def _cleanup_and_refresh_modules(self, module_name: str):
         """Interally reloads modules so that changes are detected"""
@@ -174,9 +177,9 @@ class CoreLogic:
     async def _reload(self, cog_names):
         await self._unload(cog_names)
 
-        loaded, load_failed, not_found = await self._load(cog_names)
+        loaded, load_failed, not_found, already_loaded = await self._load(cog_names)
 
-        return loaded, load_failed, not_found
+        return loaded, load_failed, not_found, already_loaded
 
     async def _name(self, name: str = None):
         """
@@ -513,11 +516,16 @@ class Core(CoreLogic):
 
         cog_names = [c.strip() for c in cog_name.split(" ")]
         async with ctx.typing():
-            loaded, failed, not_found = await self._load(cog_names)
+            loaded, failed, not_found, already_loaded = await self._load(cog_names)
 
         if loaded:
             fmt = "Loaded {packs}."
             formed = self._get_package_strings(loaded, fmt)
+            await ctx.send(formed)
+
+        if already_loaded:
+            fmt = "The package{plural} {packs} {other} already loaded."
+            formed = self._get_package_strings(already_loaded, fmt, ("is", "are"))
             await ctx.send(formed)
 
         if failed:
@@ -559,7 +567,7 @@ class Core(CoreLogic):
 
         cog_names = [c.strip() for c in cog_name.split(" ")]
         async with ctx.typing():
-            loaded, failed, not_found = await self._reload(cog_names)
+            loaded, failed, not_found, already_loaded = await self._reload(cog_names)
 
         if loaded:
             fmt = "Package{plural} {packs} {other} reloaded."
