@@ -412,13 +412,18 @@ class CustomCommands:
                         index + low, fin[index].annotation.__name__, anno.__name__
                     )
                 )
-            name = "{}_{}".format(
-                "text" if anno is Parameter.empty else anno.__name__.lower(),
-                index if index < high else "final",
-            )
-            fin[index] = fin[index].replace(name=name, annotation=anno)
+            if anno is not Parameter.empty:
+                fin[index] = fin[index].replace(annotation=anno)
         # consume rest
         fin[-1] = fin[-1].replace(kind=Parameter.KEYWORD_ONLY)
+        # name the parameters for the help text
+        for i, param in enumerate(fin):
+            anno = param.annotation
+            name = "{}_{}".format(
+                "text" if anno is Parameter.empty else anno.__name__.lower(),
+                i if i < high else "final",
+            )
+            fin[i] = fin[i].replace(name=name)
         # insert ctx parameter for discord.py parsing
         fin = default + [(p.name, p) for p in fin]
         return OrderedDict(fin)
