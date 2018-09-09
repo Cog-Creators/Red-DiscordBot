@@ -14,7 +14,7 @@ lavalink:
       vimeo: true
       mixer: true
       http: true
-      local: false
+      local: true
     sentryDsn: ""
     bufferDurationMs: 400
     youtubePlaylistLoadLimit: 10000

@@ -63,7 +63,7 @@ def init_loggers(cli_flags):
         os.environ["PYTHONASYNCIODEBUG"] = "1"
         logger.setLevel(logging.DEBUG)
     else:
-        logger.setLevel(logging.WARNING)
+        logger.setLevel(logging.INFO)
 
     from redbot.core.data_manager import core_data_path
 

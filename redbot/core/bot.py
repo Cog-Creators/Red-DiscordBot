@@ -58,6 +58,8 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             help__page_char_limit=1000,
             help__max_pages_in_guild=2,
             help__tagline="",
+            disabled_commands=[],
+            disabled_command_msg="That command is disabled.",
         )
 
         self.db.register_guild(
@@ -69,6 +71,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             embeds=None,
             use_bot_color=False,
             fuzzy=False,
+            disabled_commands=[],
         )
 
         self.db.register_user(embeds=None)
@@ -339,6 +342,13 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
                     "http://red-discordbot.readthedocs.io/en/v3-develop/framework_commands.html"
                 )
         super().add_cog(cog)
+
+    def add_command(self, command: commands.Command):
+        if not isinstance(command, commands.Command):
+            raise TypeError("Command objects must derive from redbot.core.commands.Command")
+
+        super().add_command(command)
+        self.dispatch("command_add", command)
 
 
 class Red(RedBase, discord.AutoShardedClient):

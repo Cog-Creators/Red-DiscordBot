@@ -20,6 +20,7 @@ Welcome to Red - Discord Bot's documentation!
     :maxdepth: 2
     :caption: Cog Reference:
 
+    cog_customcom
     cog_downloader
     cog_permissions
 

@@ -4,8 +4,10 @@ This module contains extended classes and functions which are intended to
 replace those from the `discord.ext.commands` module.
 """
 import inspect
-from typing import TYPE_CHECKING
+import weakref
+from typing import Awaitable, Callable, TYPE_CHECKING
 
+import discord
 from discord.ext import commands
 
 from .errors import ConversionFailure
@@ -104,6 +106,49 @@ class Command(commands.Command):
             # We should expose anything which might be a bug in the converter
             raise exc
 
+    def disable_in(self, guild: discord.Guild) -> bool:
+        """Disable this command in the given guild.
+
+        Parameters
+        ----------
+        guild : discord.Guild
+            The guild to disable the command in.
+
+        Returns
+        -------
+        bool
+            ``True`` if the command wasn't already disabled.
+
+        """
+        disabler = get_command_disabler(guild)
+        if disabler in self.checks:
+            return False
+        else:
+            self.checks.append(disabler)
+            return True
+
+    def enable_in(self, guild: discord.Guild) -> bool:
+        """Enable this command in the given guild.
+
+        Parameters
+        ----------
+        guild : discord.Guild
+            The guild to enable the command in.
+
+        Returns
+        -------
+        bool
+            ``True`` if the command wasn't already enabled.
+
+        """
+        disabler = get_command_disabler(guild)
+        try:
+            self.checks.remove(disabler)
+        except ValueError:
+            return False
+        else:
+            return True
+
 
 class GroupMixin(commands.GroupMixin):
     """Mixin for `Group` and `Red` classes.
@@ -162,6 +207,12 @@ class Group(GroupMixin, Command, commands.Group):
             if self.autohelp and not self.invoke_without_command:
                 await self._verify_checks(ctx)
                 await ctx.send_help()
+        elif self.invoke_without_command:
+            # So invoke_without_command when a subcommand of this group is invoked
+            # will skip the the invokation of *this* command. However, because of
+            # how our permissions system works, we don't want it to skip the checks
+            # as well.
+            await self._verify_checks(ctx)
 
         await super().invoke(ctx)
 
@@ -184,3 +235,25 @@ def group(name=None, **attrs):
     Same interface as `discord.ext.commands.group`.
     """
     return command(name, cls=Group, **attrs)
+
+
+__command_disablers = weakref.WeakValueDictionary()
+
+
+def get_command_disabler(guild: discord.Guild) -> Callable[["Context"], Awaitable[bool]]:
+    """Get the command disabler for a guild.
+
+    A command disabler is a simple check predicate which returns
+    ``False`` if the context is within the given guild.
+    """
+    try:
+        return __command_disablers[guild]
+    except KeyError:
+
+        async def disabler(ctx: "Context") -> bool:
+            if ctx.guild == guild:
+                raise commands.DisabledCommand()
+            return True
+
+        __command_disablers[guild] = disabler
+        return disabler
