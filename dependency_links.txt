@@ -1,1 +1,1 @@
-https://github.com/Rapptz/discord.py/tarball/8ccb98d395537b1c9acc187e1647dfdd07bb831b#egg=discord.py-1.0.0a0
+https://github.com/Rapptz/discord.py/tarball/00a659c6526b2445162b52eaf970adbd22c6d35d#egg=discord.py-1.0.0a0
