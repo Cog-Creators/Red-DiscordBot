@@ -44,7 +44,7 @@ In that file, place the following code:
 
 .. code-block:: python
 
-    from discord.ext import commands
+    from redbot.core import commands
 
     class Mycog:
         """My custom cog"""
