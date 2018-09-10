@@ -2,11 +2,12 @@ import asyncio
 import functools
 import os
 import pkgutil
+import re
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from subprocess import run as sp_run, PIPE
 from sys import executable
-from typing import Tuple, MutableMapping, Union
+from typing import Tuple, MutableMapping, Union, Optional
 
 from redbot.core import data_manager, commands
 from redbot.core.utils import safe_delete
@@ -489,8 +490,10 @@ class Repo(RepoJSONMixin):
 
 
 class RepoManager:
-    def __init__(self):
 
+    TREE_URL_RE = re.compile(r"(?P<tree>/tree)/(?P<branch>\S+)$")
+
+    def __init__(self):
         self._repos = {}
 
         loop = asyncio.get_event_loop()
@@ -510,7 +513,7 @@ class RepoManager:
             raise InvalidRepoName("Not a valid Python variable name.")
         return name.lower()
 
-    async def add_repo(self, url: str, name: str, branch: str = "master") -> Repo:
+    async def add_repo(self, url: str, name: str, branch: Optional[str] = None) -> Repo:
         """Add and clone a git repository.
 
         Parameters
@@ -532,6 +535,8 @@ class RepoManager:
             raise ExistingGitRepo(
                 "That repo name you provided already exists. Please choose another."
             )
+
+        url, branch = self._parse_url(url, branch)
 
         # noinspection PyTypeChecker
         r = Repo(url=url, name=name, branch=branch, folder_path=self.repos_folder / name)
@@ -630,3 +635,11 @@ class RepoManager:
         if set:
             self._repos = ret
         return ret
+
+    def _parse_url(self, url: str, branch: Optional[str]) -> Tuple[str, Optional[str]]:
+        tree_url_match = self.TREE_URL_RE.search(url)
+        if tree_url_match:
+            url = url[: tree_url_match.start("tree")]
+            if branch is None:
+                branch = tree_url_match["branch"]
+        return url, branch
