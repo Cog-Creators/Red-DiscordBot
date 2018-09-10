@@ -667,6 +667,4 @@ class Streams:
         if self.task:
             self.task.cancel()
 
-    def __del__(self):
-        if self.task:
-            self.task.cancel()
+    __del__ = __unload
