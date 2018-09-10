@@ -53,7 +53,7 @@ Red's repository is configured to follow a particular development workflow, usin
 
 ### 4.1 Setting up your development environment
 The following requirements must be installed prior to setting up:
- - Python 3.6.2 or greater
+ - Python 3.6.2 or greater (3.6.6 or greater on Windows)
  - git
  - pip
  - pipenv

@@ -25,13 +25,20 @@ from redbot.core.cli import confirm
 if sys.platform == "linux":
     import distro
 
-PYTHON_OK = sys.version_info >= (3, 6, 2)
 INTERACTIVE_MODE = not len(sys.argv) > 1  # CLI flags = non-interactive
 
 INTRO = "==========================\nRed Discord Bot - Launcher\n==========================\n"
 
 IS_WINDOWS = os.name == "nt"
 IS_MAC = sys.platform == "darwin"
+
+if IS_WINDOWS:
+    # Due to issues with ProactorEventLoop prior to 3.6.6 (bpo-26819)
+    MIN_PYTHON_VERSION = (3, 6, 6)
+else:
+    MIN_PYTHON_VERSION = (3, 6, 2)
+
+PYTHON_OK = sys.version_info >= MIN_PYTHON_VERSION
 
 
 def is_venv():
@@ -461,9 +468,11 @@ def main_menu():
 
 def main():
     if not PYTHON_OK:
-        raise RuntimeError(
-            "Red requires Python 3.6.2 or greater. Please install the correct version!"
+        print(
+            f"Python {'.'.join(map(str, MIN_PYTHON_VERSION))} is required to run Red, but you "
+            f"have {sys.version}! Please update Python."
         )
+        sys.exit(1)
     if args.debuginfo:  # Check first since the function triggers an exit
         debug_info()
 
