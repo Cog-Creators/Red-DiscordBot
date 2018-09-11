@@ -1465,6 +1465,11 @@ class Mod:
             channel = self.bot.get_channel(channel)
             tmp["action"] += ' in ' + channel.mention
 
+        contains_invite = any(("discord.gg/"     in tmp["user"].lower(),
+                               "discordapp.com/" in tmp["user"].lower()))
+        if contains_invite:
+            tmp["user"] = tmp["user"].replace(".", "\u200b.")
+        
         case_msg = (
             "**Case #{case}** | {action}\n"
             "**User:** {user} ({user_id})\n"
