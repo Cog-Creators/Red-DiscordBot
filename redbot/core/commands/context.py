@@ -237,3 +237,12 @@ class Context(commands.Context):
             )
         else:
             return await self.send(message)
+
+    @property
+    def clean_prefix(self) -> str:
+        """str: The command prefix, but a mention prefix is displayed nicer."""
+        if self.guild is not None:
+            me = self.guild.me
+        else:
+            me = self.bot.user
+        return self.prefix.replace(me.mention, f"@{me.display_name}")

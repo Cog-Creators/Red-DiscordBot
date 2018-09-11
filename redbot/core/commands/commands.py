@@ -4,6 +4,7 @@ This module contains extended classes and functions which are intended to
 replace those from the `discord.ext.commands` module.
 """
 import inspect
+import itertools
 import weakref
 from typing import Awaitable, Callable, TYPE_CHECKING
 
@@ -105,6 +106,37 @@ class Command(commands.Command):
 
             # We should expose anything which might be a bug in the converter
             raise exc
+
+    async def can_see(self, ctx: "Context"):
+        """Check if this command is visible in the given context.
+
+        In short, this tries to emulate the behaviour of the help formatter
+        to see if this command would be displayed when the help command is
+        invoked in the given context.
+
+        Parameters
+        ----------
+        ctx : `~redbot.core.commands.Context`
+            The invocation context to check with.
+
+        Returns
+        -------
+        bool
+            ``True`` if this command is visible in the given context.
+
+        """
+        for cmd in itertools.chain((self,), self.parents):
+            if cmd.hidden:
+                return False
+            try:
+                can_run = await self.can_run(ctx)
+            except commands.CheckFailure:
+                return False
+            else:
+                if can_run is False:
+                    return False
+
+        return True
 
     def disable_in(self, guild: discord.Guild) -> bool:
         """Disable this command in the given guild.

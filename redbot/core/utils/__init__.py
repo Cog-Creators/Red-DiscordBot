@@ -1,19 +1,41 @@
-__all__ = ["bounded_gather", "safe_delete", "fuzzy_command_search", "deduplicate_iterables"]
-
 import asyncio
-from asyncio import as_completed, AbstractEventLoop, Semaphore
-from asyncio.futures import isfuture
-from itertools import chain
 import logging
 import os
-from pathlib import Path
 import shutil
-from typing import Any, Awaitable, Iterator, List, Optional
+from asyncio import AbstractEventLoop, as_completed, Semaphore
+from asyncio.futures import isfuture
+from itertools import chain
+from pathlib import Path
+from typing import (
+    Any,
+    AsyncIterator,
+    AsyncIterable,
+    Awaitable,
+    Callable,
+    Iterable,
+    Iterator,
+    List,
+    Optional,
+    Tuple,
+    TypeVar,
+    Union,
+)
 
+import discord
+from fuzzywuzzy import fuzz, process
 from redbot.core import commands
-from fuzzywuzzy import process
 
 from .chat_formatting import box
+
+__all__ = [
+    "bounded_gather",
+    "safe_delete",
+    "fuzzy_command_search",
+    "format_fuzzy_results",
+    "deduplicate_iterables",
+]
+
+_T = TypeVar("_T")
 
 
 # Benchmarked to be the fastest method.
@@ -26,11 +48,11 @@ def deduplicate_iterables(*iterables):
     return list(dict.fromkeys(chain.from_iterable(iterables)))
 
 
-def fuzzy_filter(record):
+def _fuzzy_log_filter(record):
     return record.funcName != "extractWithoutOrder"
 
 
-logging.getLogger().addFilter(fuzzy_filter)
+logging.getLogger().addFilter(_fuzzy_log_filter)
 
 
 def safe_delete(pth: Path):
@@ -47,59 +69,222 @@ def safe_delete(pth: Path):
         shutil.rmtree(str(pth), ignore_errors=True)
 
 
-async def filter_commands(ctx: commands.Context, extracted: list):
-    return [
-        i
-        for i in extracted
-        if i[1] >= 90
-        and not i[0].hidden
-        and not any([p.hidden for p in i[0].parents])
-        and await i[0].can_run(ctx)
-        and all([await p.can_run(ctx) for p in i[0].parents])
-    ]
+class AsyncFilter(AsyncIterator[_T], Awaitable[List[_T]]):
+    """Class returned by `async_filter`. See that function for details.
+
+    We don't recommend instantiating this class directly.
+    """
+
+    def __init__(
+        self,
+        func: Callable[[_T], Union[bool, Awaitable[bool]]],
+        iterable: Union[AsyncIterable[_T], Iterable[_T]],
+    ) -> None:
+        self.__func: Callable[[_T], Union[bool, Awaitable[bool]]] = func
+        self.__iterable: Union[AsyncIterable[_T], Iterable[_T]] = iterable
+
+        # We assign the generator strategy based on the arguments' types
+        if isinstance(iterable, AsyncIterable):
+            if asyncio.iscoroutinefunction(func):
+                self.__generator_instance = self.__async_generator_async_pred()
+            else:
+                self.__generator_instance = self.__async_generator_sync_pred()
+        elif asyncio.iscoroutinefunction(func):
+            self.__generator_instance = self.__sync_generator_async_pred()
+        else:
+            raise TypeError("Must be either an async predicate, an async iterable, or both.")
+
+    async def __sync_generator_async_pred(self) -> AsyncIterator[_T]:
+        for item in self.__iterable:
+            if await self.__func(item):
+                yield item
+
+    async def __async_generator_sync_pred(self) -> AsyncIterator[_T]:
+        async for item in self.__iterable:
+            if self.__func(item):
+                yield item
+
+    async def __async_generator_async_pred(self) -> AsyncIterator[_T]:
+        async for item in self.__iterable:
+            if await self.__func(item):
+                yield item
+
+    async def __flatten(self) -> List[_T]:
+        return [item async for item in self]
+
+    def __await__(self):
+        # Simply return the generator filled into a list
+        return self.__flatten().__await__()
+
+    def __anext__(self) -> Awaitable[_T]:
+        # This will use the generator strategy set in __init__
+        return self.__generator_instance.__anext__()
 
 
-async def fuzzy_command_search(ctx: commands.Context, term: str):
-    out = []
+def async_filter(
+    func: Callable[[_T], Union[bool, Awaitable[bool]]],
+    iterable: Union[AsyncIterable[_T], Iterable[_T]],
+) -> AsyncFilter[_T]:
+    """Filter an (optionally async) iterable with an (optionally async) predicate.
 
+    At least one of the arguments must be async.
+
+    Parameters
+    ----------
+    func : Callable[[T], Union[bool, Awaitable[bool]]]
+        A function or coroutine function which takes one item of ``iterable``
+        as an argument, and returns ``True`` or ``False``.
+    iterable : Union[AsyncIterable[_T], Iterable[_T]]
+        An iterable or async iterable which is to be filtered.
+
+    Raises
+    ------
+    TypeError
+        If neither of the arguments are async.
+
+    Returns
+    -------
+    AsyncFilter[T]
+        An object which can either be awaited to yield a list of the filtered
+        items, or can also act as an async iterator to yield items one by one.
+
+    """
+    return AsyncFilter(func, iterable)
+
+
+async def async_enumerate(
+    async_iterable: AsyncIterable[_T], start: int = 0
+) -> AsyncIterator[Tuple[int, _T]]:
+    """Async iterable version of `enumerate`.
+
+    Parameters
+    ----------
+    async_iterable : AsyncIterable[T]
+        The iterable to enumerate.
+    start : int
+        The index to start from. Defaults to 0.
+
+    Returns
+    -------
+    AsyncIterator[Tuple[int, T]]
+        An async iterator of tuples in the form of ``(index, item)``.
+
+    """
+    async for item in async_iterable:
+        yield start, item
+        start += 1
+
+
+async def fuzzy_command_search(
+    ctx: commands.Context, term: Optional[str] = None, *, min_score: int = 80
+) -> Optional[List[commands.Command]]:
+    """Search for commands which are similar in name to the one invoked.
+
+    Returns a maximum of 5 commands which must all be at least matched
+    greater than ``min_score``.
+
+    Parameters
+    ----------
+    ctx : `commands.Context <redbot.core.commands.Context>`
+        The command invocation context.
+    term : Optional[str]
+        The name of the invoked command. If ``None``, `Context.invoked_with`
+        will be used instead.
+    min_score : int
+        The minimum score for matched commands to reach. Defaults to 80.
+
+    Returns
+    -------
+    Optional[List[`commands.Command <redbot.core.commands.Command>`]]
+        A list of commands which were fuzzily matched with the invoked
+        command.
+
+    """
     if ctx.guild is not None:
         enabled = await ctx.bot.db.guild(ctx.guild).fuzzy()
     else:
         enabled = await ctx.bot.db.fuzzy()
 
     if not enabled:
-        return None
+        return
 
+    if term is None:
+        term = ctx.invoked_with
+
+    # If the term is an alias or CC, we don't want to send a supplementary fuzzy search.
     alias_cog = ctx.bot.get_cog("Alias")
     if alias_cog is not None:
         is_alias, alias = await alias_cog.is_alias(ctx.guild, term)
 
         if is_alias:
-            return None
-
+            return
     customcom_cog = ctx.bot.get_cog("CustomCommands")
     if customcom_cog is not None:
         cmd_obj = customcom_cog.commandobj
 
         try:
-            ccinfo = await cmd_obj.get(ctx.message, term)
+            await cmd_obj.get(ctx.message, term)
         except:
             pass
         else:
-            return None
+            return
 
-    extracted_cmds = await filter_commands(
-        ctx, process.extract(term, ctx.bot.walk_commands(), limit=5)
-    )
+    # Do the scoring. `extracted` is a list of tuples in the form `(command, score)`
+    extracted = process.extract(term, ctx.bot.walk_commands(), limit=5, scorer=fuzz.QRatio)
+    if not extracted:
+        return
 
-    if not extracted_cmds:
-        return None
+    # Filter through the fuzzy-matched commands.
+    matched_commands = []
+    for command, score in extracted:
+        if score < min_score:
+            # Since the list is in decreasing order of score, we can exit early.
+            break
+        if await command.can_see(ctx):
+            matched_commands.append(command)
 
-    for pos, extracted in enumerate(extracted_cmds, 1):
-        short = " - {}".format(extracted[0].short_doc) if extracted[0].short_doc else ""
-        out.append("{0}. {1.prefix}{2.qualified_name}{3}".format(pos, ctx, extracted[0], short))
+    return matched_commands
 
-    return box("\n".join(out), lang="Perhaps you wanted one of these?")
+
+async def format_fuzzy_results(
+    ctx: commands.Context,
+    matched_commands: List[commands.Command],
+    *,
+    embed: Optional[bool] = None,
+) -> Union[str, discord.Embed]:
+    """Format the result of a fuzzy command search.
+
+    Parameters
+    ----------
+    ctx : `commands.Context <redbot.core.commands.Context>`
+        The context in which this result is being displayed.
+    matched_commands : List[`commands.Command <redbot.core.commands.Command>`]
+        A list of commands which have been matched by the fuzzy search, sorted
+        in order of decreasing similarity.
+    embed : bool
+        Whether or not the result should be an embed. If set to ``None``, this
+        will default to the result of `ctx.embed_requested`.
+
+    Returns
+    -------
+    Union[str, discord.Embed]
+        The formatted results.
+
+    """
+    if embed is not False and (embed is True or await ctx.embed_requested()):
+        lines = []
+        for cmd in matched_commands:
+            lines.append(f"**{ctx.clean_prefix}{cmd.qualified_name}** {cmd.short_doc}")
+        return discord.Embed(
+            title="Perhaps you wanted one of these?",
+            colour=await ctx.embed_colour(),
+            description="\n".join(lines),
+        )
+    else:
+        lines = []
+        for cmd in matched_commands:
+            lines.append(f"{ctx.clean_prefix}{cmd.qualified_name} -- {cmd.short_doc}")
+        return "Perhaps you wanted one of these? " + box("\n".join(lines), lang="vhdl")
 
 
 async def _sem_wrapper(sem, task):
@@ -124,9 +309,11 @@ def bounded_gather_iter(
     loop : asyncio.AbstractEventLoop
         The event loop to use for the semaphore and :meth:`asyncio.gather`.
     limit : Optional[`int`]
-        The maximum number of concurrent tasks. Used when no ``semaphore`` is passed.
+        The maximum number of concurrent tasks. Used when no ``semaphore``
+        is passed.
     semaphore : Optional[:class:`asyncio.Semaphore`]
-        The semaphore to use for bounding tasks. If `None`, create one using ``loop`` and ``limit``.
+        The semaphore to use for bounding tasks. If `None`, create one
+        using ``loop`` and ``limit``.
 
     Raises
     ------
@@ -173,9 +360,11 @@ def bounded_gather(
     return_exceptions : bool
         If true, gather exceptions in the result list instead of raising.
     limit : Optional[`int`]
-        The maximum number of concurrent tasks. Used when no ``semaphore`` is passed.
+        The maximum number of concurrent tasks. Used when no ``semaphore``
+        is passed.
     semaphore : Optional[:class:`asyncio.Semaphore`]
-        The semaphore to use for bounding tasks. If `None`, create one using ``loop`` and ``limit``.
+        The semaphore to use for bounding tasks. If `None`, create one
+        using ``loop`` and ``limit``.
 
     Raises
     ------
