@@ -165,8 +165,7 @@ class Repo(RepoJSONMixin):
         kwargs["env"] = env
         async with self._repo_lock:
             return await self._loop.run_in_executor(
-                self._executor,
-                functools.partial(sp_run, *args, stdout=PIPE, **kwargs),
+                self._executor, functools.partial(sp_run, *args, stdout=PIPE, **kwargs)
             )
 
     async def clone(self) -> Tuple[str]:
