@@ -1,23 +1,20 @@
 import os
 import shutil
+import sys
 from pathlib import Path
 from sys import path as syspath
 from typing import Tuple, Union
 
 import discord
-import sys
-
-from redbot.core import Config
-from redbot.core import checks
+from redbot.core import checks, commands, Config
+from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box, pagify
-from redbot.core import commands
 
-from redbot.core.bot import Red
+from . import errors
 from .checks import do_install_agreement
 from .converters import InstalledCog
-from .errors import CloningError, ExistingGitRepo
 from .installable import Installable
 from .log import log
 from .repo_manager import RepoManager, Repo
@@ -50,6 +47,9 @@ class Downloader:
             syspath.insert(1, str(self.LIB_PATH))
 
         self._repo_manager = RepoManager()
+
+    async def initialize(self):
+        await self._repo_manager.initialize()
 
     async def cog_install_path(self):
         """Get the current cog install path.
@@ -226,11 +226,16 @@ class Downloader:
         try:
             # noinspection PyTypeChecker
             repo = await self._repo_manager.add_repo(name=name, url=repo_url, branch=branch)
-        except ExistingGitRepo:
+        except errors.ExistingGitRepo:
             await ctx.send(_("That git repo has already been added under another name."))
-        except CloningError:
+        except errors.CloningError as err:
             await ctx.send(_("Something went wrong during the cloning process."))
-            log.exception(_("Something went wrong during the cloning process."))
+            log.exception(
+                "Something went wrong whilst cloning %s (to revision: %s)",
+                repo_url,
+                branch,
+                exc_info=err,
+            )
         else:
             await ctx.send(_("Repo `{}` successfully added.").format(name))
             if repo.install_msg is not None:
