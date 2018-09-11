@@ -116,7 +116,7 @@ class Command(commands.Command):
 
         Parameters
         ----------
-        ctx : `~redbot.core.commands.Context`
+        ctx : `Context`
             The invocation context to check with.
 
         Returns
