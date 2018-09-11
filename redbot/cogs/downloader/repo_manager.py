@@ -491,6 +491,7 @@ class Repo(RepoJSONMixin):
 
 class RepoManager:
 
+    GITHUB_OR_GITLAB_RE = re.compile("https?://git(?:hub)|(?:lab)\.com/")
     TREE_URL_RE = re.compile(r"(?P<tree>/tree)/(?P<branch>\S+)$")
 
     def __init__(self):
@@ -637,9 +638,10 @@ class RepoManager:
         return ret
 
     def _parse_url(self, url: str, branch: Optional[str]) -> Tuple[str, Optional[str]]:
-        tree_url_match = self.TREE_URL_RE.search(url)
-        if tree_url_match:
-            url = url[: tree_url_match.start("tree")]
-            if branch is None:
-                branch = tree_url_match["branch"]
-        return url, branch
+        if self.GITHUB_OR_GITLAB_RE.match(url):
+            tree_url_match = self.TREE_URL_RE.search(url)
+            if tree_url_match:
+                url = url[: tree_url_match.start("tree")]
+                if branch is None:
+                    branch = tree_url_match["branch"]
+            return url, branch
