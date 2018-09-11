@@ -29,20 +29,6 @@ def test_existing_git_repo(tmpdir):
 
 
 @pytest.mark.asyncio
-async def test_clone_repo(repo_norun, capsys):
-    await repo_norun.clone()
-
-    clone_cmd, _ = capsys.readouterr()
-    clone_cmd = clone_cmd.strip("[']\n").split("', '")
-    assert clone_cmd[0] == "git"
-    assert clone_cmd[1] == "clone"
-    assert clone_cmd[2] == "-b"
-    assert clone_cmd[3] == "rewrite_cogs"
-    assert clone_cmd[4] == repo_norun.url
-    assert ("repos", "squid") == pathlib.Path(clone_cmd[5]).parts[-2:]
-
-
-@pytest.mark.asyncio
 async def test_add_repo(monkeypatch, repo_manager):
     monkeypatch.setattr("redbot.cogs.downloader.repo_manager.Repo._run", fake_run_noprint)
 
