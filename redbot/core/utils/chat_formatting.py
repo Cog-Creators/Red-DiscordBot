@@ -1,5 +1,8 @@
 import itertools
-from typing import Sequence, Iterator
+from typing import Sequence, Iterator, List
+from redbot.core.i18n import Translator
+
+_ = Translator("UtilsChatFormatting", __file__)
 
 
 def error(text: str) -> str:
@@ -317,3 +320,24 @@ def escape(text: str, *, mass_mentions: bool = False, formatting: bool = False) 
     if formatting:
         text = text.replace("`", "\\`").replace("*", "\\*").replace("_", "\\_").replace("~", "\\~")
     return text
+
+
+def humanize_list(words: List[str]):
+    """Get comma-separted list, with the last element joined with *and*.
+
+    Examples
+    --------
+    .. doctest::
+
+        >>>humanized_list(["One", "Two", "Three"])
+        "One, Two and Three"
+
+    .. doctest::
+
+        >>>humanized_list(["One"])
+        "One"
+
+    """
+    if len(words) == 1:
+        return words[0]
+    return ", ".join(words[:-1]) + _(" and ") + words[-1]

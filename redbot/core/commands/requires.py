@@ -21,7 +21,7 @@ from .errors import BotMissingPermissions
 if TYPE_CHECKING:
     from .context import Context
 
-__all__ = ["DM_PERMS", "PrivilegeLevel", "Requires"]
+__all__ = ["DM_PERMS", "PrivilegeLevel", "Requires", "has_permissions", "bot_has_permissions"]
 
 _CoroFunc = Callable[..., Awaitable[Any]]
 _CommandOrCoro = TypeVar("_CommandOrCoro", _CoroFunc, "Command")
@@ -134,7 +134,7 @@ class Requires:
     @staticmethod
     def get_decorator(
         privilege_level: PrivilegeLevel, user_perms: Dict[str, bool]
-    ) -> Callable[[_CoroFunc], bool]:
+    ) -> Callable[[_CommandOrCoro], bool]:
         def decorator(func: _CommandOrCoro) -> _CommandOrCoro:
             if asyncio.iscoroutinefunction(func):
                 func.__requires_privilege_level__ = privilege_level
@@ -283,6 +283,33 @@ class Requires:
             # noinspection PyProtectedMember
             return member._user
         return member
+
+
+# check decorators
+
+
+def has_permissions(**perms) -> Callable[[_CommandOrCoro], bool]:
+    """Command decorator for verifying the author has required permissions."""
+    def decorator(func: _CommandOrCoro) -> _CommandOrCoro:
+        if asyncio.iscoroutinefunction(func):
+            func.__requires_user_perms__ = perms
+        else:
+            func.requires.user_perms.update(**perms)
+        return func
+
+    return decorator
+
+
+def bot_has_permissions(**perms) -> Callable[[_CommandOrCoro], bool]:
+    """Command decorator for verifying the bot has required permissions."""
+    def decorator(func: _CommandOrCoro) -> _CommandOrCoro:
+        if asyncio.iscoroutinefunction(func):
+            func.__requires_bot_perms__ = perms
+        else:
+            func.requires.bot_perms.update(**perms)
+        return func
+
+    return decorator
 
 
 class _GlobalRuleDict(defaultdict):

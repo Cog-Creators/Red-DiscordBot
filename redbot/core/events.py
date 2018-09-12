@@ -4,6 +4,7 @@ import datetime
 import logging
 from datetime import timedelta
 from distutils.version import StrictVersion
+from typing import List
 
 import aiohttp
 import discord
@@ -14,7 +15,7 @@ from pkg_resources import DistributionNotFound
 
 from . import __version__, commands
 from .data_manager import storage_type
-from .utils.chat_formatting import inline, bordered
+from .utils.chat_formatting import inline, bordered, humanize_list
 from .utils import fuzzy_command_search
 
 log = logging.getLogger("red")
@@ -237,6 +238,21 @@ def init_events(bot, cli_flags):
             fuzzy_result = await fuzzy_command_search(ctx, ctx.invoked_with)
             if fuzzy_result is not None:
                 await ctx.maybe_send_embed(fuzzy_result)
+        elif isinstance(error, commands.BotMissingPermissions):
+            missing_perms: List[str] = []
+            for perm, value in error.missing:
+                if value is True:
+                    perm_name = '"' + perm.replace("_", " ").title() + '"'
+                    missing_perms.append(perm_name)
+            if len(missing_perms) == 1:
+                plural = ""
+            else:
+                plural = "s"
+            await ctx.send(
+                "I require the {perms} permission{plural} to execute that command.".format(
+                    perms=humanize_list(missing_perms), plural=plural
+                )
+            )
         elif isinstance(error, commands.CheckFailure):
             pass
         elif isinstance(error, commands.NoPrivateMessage):
