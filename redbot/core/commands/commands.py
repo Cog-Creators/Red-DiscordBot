@@ -11,6 +11,7 @@ import discord
 from discord.ext import commands
 
 from .errors import ConversionFailure
+from .requires import Requires, PrivilegeLevel
 from ..i18n import Translator
 
 if TYPE_CHECKING:
@@ -33,6 +34,15 @@ class Command(commands.Command):
         self._help_override = kwargs.pop("help_override", None)
         super().__init__(*args, **kwargs)
         self.translator = kwargs.pop("i18n", None)
+        self.requires: Requires = Requires(
+            privilege_level=getattr(
+                self.callback, "__requires_privilege_level__", PrivilegeLevel.NONE
+            ),
+            user_perms=getattr(self.callback, "__requires_user_perms__", {}),
+            bot_perms=getattr(self.callback, "__requires_bot_perms__", {}),
+        )
+        for check in getattr(self.callback, "__requires_checks__", []):
+            self.requires.checks.append(check)
 
     @property
     def help(self):
@@ -72,6 +82,25 @@ class Command(commands.Command):
             entries.append(cmd)
             cmd = cmd.parent
         return sorted(entries, key=lambda x: len(x.qualified_name), reverse=True)
+
+    async def can_run(self, ctx: "Context") -> bool:
+        """Check if this command can be run in the given context.
+
+        This function first checks if the command can be run using
+        discord.py's method `discord.ext.commands.Command.can_run`,
+        then will return the result of `Requires.verify`.
+        """
+        ret = await super().can_run(ctx)
+        if ret is False:
+            return False
+
+        original = ctx.command
+        ctx.command = self
+
+        try:
+            return await self.requires.verify(ctx)
+        finally:
+            ctx.command = original
 
     async def do_conversion(
         self, ctx: "Context", converter, argument: str, param: inspect.Parameter
