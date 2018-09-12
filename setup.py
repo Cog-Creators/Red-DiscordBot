@@ -29,6 +29,7 @@ requirements = [
 
 python_requires = ">=3.6.2,<3.8"
 if os.name == "nt":
+    # Due to issues with ProactorEventLoop prior to 3.6.6 (bpo-26819)
     python_requires = ">=3.6.6,<3.8"
 
 
