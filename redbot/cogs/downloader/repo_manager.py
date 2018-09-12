@@ -644,4 +644,4 @@ class RepoManager:
                 url = url[: tree_url_match.start("tree")]
                 if branch is None:
                     branch = tree_url_match["branch"]
-            return url, branch
+        return url, branch

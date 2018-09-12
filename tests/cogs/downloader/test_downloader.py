@@ -118,3 +118,19 @@ def test_tree_url_parse(repo_manager):
 
     for test_case in cases:
         assert test_case["expected"] == repo_manager._parse_url(*test_case["input"])
+
+
+def test_tree_url_non_github(repo_manager):
+    cases = [
+        {
+            "input": ("https://gitlab.com/Tobotimus/Tobo-Cogs", None),
+            "expected": ("https://gitlab.com/Tobotimus/Tobo-Cogs", None),
+        },
+        {
+            "input": ("https://my.usgs.gov/bitbucket/scm/Tobotimus/Tobo-Cogs", "V3"),
+            "expected": ("https://my.usgs.gov/bitbucket/scm/Tobotimus/Tobo-Cogs", "V3"),
+        },
+    ]
+
+    for test_case in cases:
+        assert test_case["expected"] == repo_manager._parse_url(*test_case["input"])
