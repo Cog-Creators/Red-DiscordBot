@@ -92,7 +92,7 @@ class CommandObj:
         if not ccinfo:
             raise NotFound()
         else:
-            return ccinfo["response"], ccinfo.get("cooldown", {})
+            return ccinfo["response"], ccinfo.get("cooldowns", {})
 
     async def create(self, ctx: commands.Context, command: str, *, response):
         """Create a custom command"""
@@ -105,14 +105,22 @@ class CommandObj:
         ccinfo = {
             "author": {"id": author.id, "name": author.name},
             "command": command,
-            "cooldown": {},
+            "cooldowns": {},
             "created_at": self.get_now(),
             "editors": [],
             "response": response,
         }
         await self.db(ctx.guild).commands.set_raw(command, value=ccinfo)
 
-    async def edit(self, ctx: commands.Context, command: str, *, response=None, cooldown: Mapping[str, int]=None, ask_for: bool=True):
+    async def edit(
+        self,
+        ctx: commands.Context,
+        command: str,
+        *,
+        response=None,
+        cooldowns: Mapping[str, int] = None,
+        ask_for: bool = True
+    ):
         """Edit an already existing custom command"""
         ccinfo = await self.db(ctx.guild).commands.get_raw(command, default=None)
 
@@ -140,11 +148,11 @@ class CommandObj:
             ctx.cog.prepare_args(response if isinstance(response, str) else response[0])
             ccinfo["response"] = response
 
-        if cooldown is not None:
-            ccinfo.setdefault("cooldown", {}).update(cooldown)
-            for key, value in ccinfo["cooldown"].copy().items():
+        if cooldowns:
+            ccinfo.setdefault("cooldowns", {}).update(cooldowns)
+            for key, value in ccinfo["cooldowns"].copy().items():
                 if value <= 0:
-                    del ccinfo["cooldown"][key]
+                    del ccinfo["cooldowns"][key]
 
         if author.id not in ccinfo["editors"]:
             # Add the person who invoked the `edit` coroutine to the list of
@@ -242,7 +250,9 @@ class CustomCommands:
 
     @customcom.command(name="cooldown")
     @checks.mod_or_permissions(administrator=True)
-    async def cc_cooldown(self, ctx, command: str.lower, cooldown: int=None, *, per: str.lower="member"):
+    async def cc_cooldown(
+        self, ctx, command: str.lower, cooldown: int = None, *, per: str.lower = "member"
+    ):
         """
         Sets, edits, or views cooldowns for a custom command
 
@@ -258,8 +268,10 @@ class CustomCommands:
                 return await ctx.send(_("That command doesn't exist."))
             if cooldowns:
                 cooldown = []
-                for key, value in cooldowns.items():
-                    cooldown.append(_("A {} may call this command every {} seconds").format(key, value))
+                for per, rate in cooldowns.items():
+                    cooldown.append(
+                        _("A {} may call this command every {} seconds").format(per, rate)
+                    )
                 return await ctx.send("\n".join(cooldown))
             else:
                 return await ctx.send(_("This command has no cooldown."))
@@ -269,7 +281,7 @@ class CustomCommands:
             return await ctx.send(_("{} must be one of {}").format("per", ", ".join(allowed)))
         cooldown = {per: cooldown}
         try:
-            await self.commandobj.edit(ctx=ctx, command=command, cooldown=cooldown, ask_for=False)
+            await self.commandobj.edit(ctx=ctx, command=command, cooldowns=cooldown, ask_for=False)
             await ctx.send(_("Custom command cooldown successfully edited."))
         except NotFound:
             await ctx.send(
@@ -293,7 +305,7 @@ class CustomCommands:
 
     @customcom.command(name="edit")
     @checks.mod_or_permissions(administrator=True)
-    async def cc_edit(self, ctx, command: str.lower, *, text: str=None):
+    async def cc_edit(self, ctx, command: str.lower, *, text: str = None):
         """Edits a custom command's response
 
         Example:
@@ -362,7 +374,9 @@ class CustomCommands:
             return
 
         try:
-            raw_response, cooldowns = await self.commandobj.get(message=message, command=ctx.invoked_with)
+            raw_response, cooldowns = await self.commandobj.get(
+                message=message, command=ctx.invoked_with
+            )
             if isinstance(raw_response, list):
                 raw_response = random.choice(raw_response)
             elif isinstance(raw_response, str):
@@ -370,8 +384,8 @@ class CustomCommands:
             else:
                 raise NotFound()
             if cooldowns:
-                self.test_cooldown(ctx, ctx.invoked_with, cooldowns)
-        except (NotFound, OnCooldown):
+                self.test_cooldowns(ctx, ctx.invoked_with, cooldowns)
+        except CCError:
             return
 
         # wrap the command here so it won't register with the bot
@@ -479,7 +493,7 @@ class CustomCommands:
         fin = default + [(p.name, p) for p in fin]
         return OrderedDict(fin)
 
-    def test_cooldown(self, ctx, command, cooldowns):
+    def test_cooldowns(self, ctx, command, cooldowns):
         now = datetime.utcnow()
         new_cooldowns = {}
         for per, rate in cooldowns.items():
