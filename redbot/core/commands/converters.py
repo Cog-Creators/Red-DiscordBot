@@ -16,42 +16,52 @@ class Time(Converter):
 
     .. admonition:: Example
 
-    *   `50s` = `50 seconds` -> :class:`datetime.timedelta(seconds=50)`
-    *   `12m` = `12 minutes` -> :class:`datetime.timedelta(seconds=720)`
-    *   `4h` = `4 hours` -> :class:`datetime.timedelta(seconds=14400)`
-    *   `1d` = `1 day` -> :class:`datetime.timedelta(days=1)`
+        *   ``50s`` = ``50 seconds`` -> :class:`datetime.timedelta(seconds=50)`
+        *   ``12m`` = ``12 minutes`` -> :class:`datetime.timedelta(seconds=720)`
+        *   ``4h`` = ``4 hours`` -> :class:`datetime.timedelta(seconds=14400)`
+        *   ``1d`` = ``1 day`` -> :class:`datetime.timedelta(days=1)`
 
-    Using the converter with a command:
-    .. code-block:: python3
+        Using the converter with a command:
 
-        @commands.command()
-        async def timer(self, ctx, time: commands.Time):
-            await self.start_timer(time)
+        .. code-block:: python3
 
-    Using the converter manually:
-    .. code-block:: python3
+            @commands.command()
+            async def timer(self, ctx, time: commands.Time):
+                await self.start_timer(time)
 
-        async def convert_time(ctx: RedContext, text: str) -> datetime.timedelta:
-            time = await commands.Time.convert(ctx, text)
-            return time
+        Using the converter manually:
 
-    Arguments
-    ---------
-    ctx: Context
-        The context of the command.
-    argument: str
-        The string you want to convert.
+        .. code-block:: python3
 
-    Returns
-    -------
-    datetime.timedelta
-        The :class:`datetime.timedelta` object.
-
-    Raises
-    ------
+            async def convert_time(ctx: Context, text: str) -> datetime.timedelta:
+                time = await commands.Time.convert(ctx, text)
+                return time
     """
 
     async def convert(ctx: Context, argument: str) -> timedelta:
+        """
+        Convert manually a string to a :class:`datetime.timedelta` class.
+        
+        .. warning:: This should not be called as a command function annotation.
+            This is for manual calls.
+
+        Arguments
+        ---------
+        ctx: Context
+            The context of the command.
+        argument: str
+            The string you want to convert.
+
+        Returns
+        -------
+        datetime.timedelta
+            The :class:`datetime.timedelta` object.
+
+        Raises
+        ------
+        ~discord.ext.commands.BadArgument
+            No time was found from the given string.
+        """
         TIME_RE = re.compile(
             r"((?P<days>\d+?)\s?(d(ays?)?))?\s?((?P<hours>\d+?)\s?(hours?|hrs|hr?))?\s?((?P<minutes>\d+?)\s?(minutes?|mins?|m))?\s?((?P<seconds>\d+?)\s?(seconds?|secs?|s))?\s?",
             re.I,
