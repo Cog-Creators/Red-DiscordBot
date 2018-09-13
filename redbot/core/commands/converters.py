@@ -2,10 +2,10 @@ import re
 from datetime import timedelta
 from . import Converter, Context, BadArgument
 
-__all__ = ["Time"]
+__all__ = ["TimeConverter"]
 
 
-class Time(Converter):
+class TimeConverter(Converter):
     """
     Convert to a :class:`datetime.timedelta` class.
 
