@@ -5,21 +5,24 @@ replace those from the `discord.ext.commands` module.
 """
 import inspect
 import weakref
-from typing import Awaitable, Callable, TYPE_CHECKING
+from typing import Awaitable, Callable, NewType, TYPE_CHECKING
 
 import discord
 from discord.ext import commands
 
 from .errors import ConversionFailure
-from .requires import Requires, PrivilegeLevel
+from .requires import Requires, PrivilegeLevel, PermissionModel, PermState
 from ..i18n import Translator
 
 if TYPE_CHECKING:
     from .context import Context
 
-__all__ = ["Command", "GroupMixin", "Group", "command", "group"]
+__all__ = ["Cog", "Command", "GroupMixin", "Group", "command", "group"]
 
 _ = Translator("commands.commands", __file__)
+
+Cog = NewType("Cog", object)
+Cog.__doc__ = "Representation of a cog, purely for type-hints."
 
 
 class Command(commands.Command):
@@ -179,6 +182,24 @@ class Command(commands.Command):
             return False
         else:
             return True
+
+    def allow_for(self, model: PermissionModel) -> None:
+        """Actively allow this command for the given model."""
+        self.requires.set_rule(model, PermState.ACTIVE_ALLOW)
+        for parent in self.parents:
+            cur_rule = parent.requires.get_rule(model)
+            if cur_rule is PermState.NORMAL:
+                parent.requires.set_rule(model, PermState.PASSIVE_ALLOW)
+            elif cur_rule is PermState.ACTIVE_DENY:
+                parent.requires.set_rule(model, PermState.CAUTIOUS_ALLOW)
+
+    def deny_to(self, model: PermissionModel) -> None:
+        """Actively deny this command to the given model."""
+        cur_rule = self.requires.get_rule(model)
+        if cur_rule is PermState.PASSIVE_ALLOW:
+            self.requires.set_rule(model, PermState.CAUTIOUS_ALLOW)
+        else:
+            self.requires.set_rule(model, PermState.ACTIVE_DENY)
 
 
 class GroupMixin(commands.GroupMixin):

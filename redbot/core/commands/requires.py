@@ -1,6 +1,5 @@
 import asyncio
 import enum
-from collections import defaultdict
 from typing import (
     Union,
     Optional,
@@ -26,16 +25,18 @@ if TYPE_CHECKING:
     _CommandOrCoro = TypeVar("_CommandOrCoro", Callable[..., Awaitable[Any]], Command)
 
 __all__ = [
-    "DM_PERMS",
-    "PrivilegeLevel",
-    "PermissionState",
-    "Requires",
-    "has_permissions",
     "bot_has_permissions",
+    "DM_PERMS",
+    "has_permissions",
+    "PermissionModel",
+    "PrivilegeLevel",
+    "PermState",
+    "Requires",
 ]
 
-_GuildModel = Union[discord.Member, discord.Role, discord.abc.GuildChannel]
-_GlobalModel = Union[discord.User, discord.Guild]
+GlobalPermissionModel = Union[discord.User, discord.Guild]
+GuildPermissionModel = Union[discord.Member, discord.Role, discord.abc.GuildChannel]
+PermissionModel = Union[GlobalPermissionModel, GuildPermissionModel]
 
 # Here we are trying to model DM permissions as closely as possible. The only
 # discrepancy I've found is that users can pin messages, but they cannot delete them.
@@ -88,7 +89,7 @@ class PrivilegeLevel(enum.IntEnum):
         return cls.NONE
 
 
-class PermissionState(enum.Enum):
+class PermState(enum.Enum):
     """Enumeration for permission states used by rules."""
 
     ACTIVE_ALLOW = enum.auto()
@@ -119,8 +120,8 @@ class PermissionState(enum.Enum):
     """
 
     def transition_to(
-        self, next_state: "PermissionState"
-    ) -> Tuple[Optional[bool], Union["PermissionState", Dict[bool, "PermissionState"]]]:
+        self, next_state: "PermState"
+    ) -> Tuple[Optional[bool], Union["PermState", Dict[bool, "PermState"]]]:
         return _TRANSITIONS[self][next_state]
 
 
@@ -135,36 +136,33 @@ class PermissionState(enum.Enum):
 # to PASSIVE_ALLOW. In this case "next state" is a dict mapping the
 # permission check results to the actual next state.
 _TRANSITIONS = {
-    PermissionState.ACTIVE_ALLOW: {
-        PermissionState.ACTIVE_ALLOW: (True, PermissionState.ACTIVE_ALLOW),
-        PermissionState.NORMAL: (True, PermissionState.ACTIVE_ALLOW),
-        PermissionState.PASSIVE_ALLOW: (True, PermissionState.ACTIVE_ALLOW),
-        PermissionState.CAUTIOUS_ALLOW: (True, PermissionState.CAUTIOUS_ALLOW),
-        PermissionState.ACTIVE_DENY: (False, PermissionState.ACTIVE_DENY),
+    PermState.ACTIVE_ALLOW: {
+        PermState.ACTIVE_ALLOW: (True, PermState.ACTIVE_ALLOW),
+        PermState.NORMAL: (True, PermState.ACTIVE_ALLOW),
+        PermState.PASSIVE_ALLOW: (True, PermState.ACTIVE_ALLOW),
+        PermState.CAUTIOUS_ALLOW: (True, PermState.CAUTIOUS_ALLOW),
+        PermState.ACTIVE_DENY: (False, PermState.ACTIVE_DENY),
     },
-    PermissionState.NORMAL: {
-        PermissionState.ACTIVE_ALLOW: (True, PermissionState.ACTIVE_ALLOW),
-        PermissionState.NORMAL: (None, PermissionState.NORMAL),
-        PermissionState.PASSIVE_ALLOW: (
-            True,
-            {True: PermissionState.NORMAL, False: PermissionState.PASSIVE_ALLOW},
-        ),
-        PermissionState.CAUTIOUS_ALLOW: (True, PermissionState.CAUTIOUS_ALLOW),
-        PermissionState.ACTIVE_DENY: (False, PermissionState.ACTIVE_DENY),
+    PermState.NORMAL: {
+        PermState.ACTIVE_ALLOW: (True, PermState.ACTIVE_ALLOW),
+        PermState.NORMAL: (None, PermState.NORMAL),
+        PermState.PASSIVE_ALLOW: (True, {True: PermState.NORMAL, False: PermState.PASSIVE_ALLOW}),
+        PermState.CAUTIOUS_ALLOW: (True, PermState.CAUTIOUS_ALLOW),
+        PermState.ACTIVE_DENY: (False, PermState.ACTIVE_DENY),
     },
-    PermissionState.PASSIVE_ALLOW: {
-        PermissionState.ACTIVE_ALLOW: (True, PermissionState.ACTIVE_ALLOW),
-        PermissionState.NORMAL: (False, PermissionState.NORMAL),
-        PermissionState.PASSIVE_ALLOW: (True, PermissionState.PASSIVE_ALLOW),
-        PermissionState.CAUTIOUS_ALLOW: (True, PermissionState.CAUTIOUS_ALLOW),
-        PermissionState.ACTIVE_DENY: (False, PermissionState.ACTIVE_DENY),
+    PermState.PASSIVE_ALLOW: {
+        PermState.ACTIVE_ALLOW: (True, PermState.ACTIVE_ALLOW),
+        PermState.NORMAL: (False, PermState.NORMAL),
+        PermState.PASSIVE_ALLOW: (True, PermState.PASSIVE_ALLOW),
+        PermState.CAUTIOUS_ALLOW: (True, PermState.CAUTIOUS_ALLOW),
+        PermState.ACTIVE_DENY: (False, PermState.ACTIVE_DENY),
     },
-    PermissionState.CAUTIOUS_ALLOW: {
-        PermissionState.ACTIVE_ALLOW: (True, PermissionState.ACTIVE_ALLOW),
-        PermissionState.NORMAL: (False, PermissionState.ACTIVE_DENY),
-        PermissionState.PASSIVE_ALLOW: (True, PermissionState.CAUTIOUS_ALLOW),
-        PermissionState.CAUTIOUS_ALLOW: (True, PermissionState.CAUTIOUS_ALLOW),
-        PermissionState.ACTIVE_DENY: (False, PermissionState.ACTIVE_DENY),
+    PermState.CAUTIOUS_ALLOW: {
+        PermState.ACTIVE_ALLOW: (True, PermState.ACTIVE_ALLOW),
+        PermState.NORMAL: (False, PermState.ACTIVE_DENY),
+        PermState.PASSIVE_ALLOW: (True, PermState.CAUTIOUS_ALLOW),
+        PermState.CAUTIOUS_ALLOW: (True, PermState.CAUTIOUS_ALLOW),
+        PermState.ACTIVE_DENY: (False, PermState.ACTIVE_DENY),
     },
 }
 
@@ -218,10 +216,7 @@ class Requires:
         else:
             self.bot_perms = bot_perms
 
-        self._global_rules: _GlobalRuleDict = _GlobalRuleDict(lambda: None)
-        self._guild_rules: DefaultDict[discord.Guild, _GuildRuleDict] = defaultdict(
-            lambda: _GuildRuleDict(lambda: None)
-        )
+        self._rules: _RuleDict = _RuleDict(lambda: None)
 
     @staticmethod
     def get_decorator(
@@ -244,44 +239,35 @@ class Requires:
 
         return decorator
 
-    def add_global_rule(self, model: _GlobalModel, rule: PermissionState) -> None:
-        """Add a global rule for this command.
-
-        This should be used to explicitly allow or deny the command to
-        specific models globally. These rules take precedence over
-        guild rules.
+    def get_rule(self, model: PermissionModel) -> PermState:
+        """Get the rule for a particular model.
 
         Parameters
         ----------
-        model : Union[discord.User, discord.Guild]
+        model : PermissionModel
+            The model to get the rule for.
+
+        Returns
+        -------
+        PermState
+            The state for this rule. See the `PermissionState` class
+            for an explanation.
+
+        """
+
+    def set_rule(self, model: PermissionModel, rule: PermState) -> None:
+        """Set the rule for a particular model.
+
+        Parameters
+        ----------
+        model : PermissionModel
             The model to add a rule for.
-        rule : PermissionState
+        rule : PermState
             Which state this rule should be set as. See the `PermissionState`
             class for an explanation.
 
         """
-        self._global_rules[self._member_as_user(model)] = rule
-
-    def add_guild_rule(
-        self, guild: discord.Guild, model: _GuildModel, rule: PermissionState
-    ) -> None:
-        """Add a guild-wide rule for this command.
-
-        This should be used to explicitly allow or deny the command to
-        specific models.
-
-        Parameters
-        ----------
-        guild : discord.Guild
-            The guild to add the rule in.
-        model : Union[discord.Member, discord.Role, discord.abc.GuildChannel]
-            The model to add a rule for.
-        rule : PermissionState
-            Which state this rule should be set as. See the `PermissionState`
-            class for an explanation.
-
-        """
-        self._guild_rules[guild][model] = rule
+        self._rules[model] = rule
 
     async def verify(self, ctx: "Context") -> bool:
         """Check if the given context passes the requirements.
@@ -354,25 +340,25 @@ class Requires:
 
         return False
 
-    def _get_rule(self, ctx: "Context") -> PermissionState:
+    def _get_rule(self, ctx: "Context") -> PermState:
+        rules = self._rules
         # Check global rules first
-        rule = self._global_rules[self._member_as_user(ctx.author)]
+        rule = rules[self._member_as_user(ctx.author)]
         if rule is not None:
             return rule
 
         if ctx.guild is not None:
-            rule = self._global_rules[ctx.guild]
+            rule = rules[ctx.guild]
             if rule is not None:
                 return rule
 
             # Check guild rules next
-            rules = self._guild_rules[ctx.guild]
             for model in (ctx.author, *ctx.author.roles, ctx.channel, ctx.channel.category):
                 rule = rules[model]
                 if rule is not None:
                     return rule
 
-        return PermissionState.NORMAL
+        return PermState.NORMAL
 
     async def _verify_checks(self, ctx: "Context") -> bool:
         if not self.checks:
@@ -431,15 +417,8 @@ def bot_has_permissions(**perms) -> Callable[["_CommandOrCoro"], "_CommandOrCoro
     return decorator
 
 
-class _GlobalRuleDict(DefaultDict[_GlobalModel, Optional[PermissionState]]):
+class _RuleDict(DefaultDict[PermissionModel, Optional[PermState]]):
     def __missing__(self, key: Any) -> Any:
-        if not isinstance(key, _GlobalModel.__args__):
-            raise TypeError(f"Invalid type for global model: {type(key)}")
-        return super().__missing__(key)
-
-
-class _GuildRuleDict(DefaultDict[_GuildModel, Optional[PermissionState]]):
-    def __missing__(self, key: Any) -> Any:
-        if not isinstance(key, _GuildModel.__args__):
-            raise TypeError(f"Invalid type for guild model: {type(key)}")
+        if not isinstance(key, PermissionModel.__args__):
+            raise TypeError(f"Invalid permission model: {type(key)}")
         return super().__missing__(key)

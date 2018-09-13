@@ -4,7 +4,7 @@ from typing import Iterable, List
 import discord
 from discord.ext import commands
 
-from .requires import PermissionState
+from .requires import PermState
 from ..utils.chat_formatting import box
 from ..utils import common_filters
 
@@ -23,7 +23,7 @@ class Context(commands.Context):
 
     def __init__(self, **attrs):
         super().__init__(**attrs)
-        self.permission_state: PermissionState = PermissionState.NORMAL
+        self.permission_state: PermState = PermState.NORMAL
 
     async def send(self, content=None, **kwargs):
         """Sends a message to the destination with the content given.
