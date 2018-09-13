@@ -94,13 +94,15 @@ class Command(commands.Command):
         if ret is False:
             return False
 
-        original = ctx.command
+        # This is so contexts invoking other commands can be checked with
+        # this command as well
+        original_command = ctx.command
         ctx.command = self
 
         try:
             return await self.requires.verify(ctx)
         finally:
-            ctx.command = original
+            ctx.command = original_command
 
     async def do_conversion(
         self, ctx: "Context", converter, argument: str, param: inspect.Parameter

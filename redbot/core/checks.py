@@ -1,13 +1,16 @@
-import discord
-from .commands import Requires, PrivilegeLevel, check as check_decorator
+from .commands import Requires, PrivilegeLevel, is_owner, check as check_decorator
 
-
-def owner():
-    return Requires.get_decorator(PrivilegeLevel.BOT_OWNER, {})
-
-
-# Alias for backwards compatibility
-is_owner = owner
+__all__ = [
+    "is_owner",
+    "guildowner_or_permissions",
+    "guildowner",
+    "admin_or_permissions",
+    "admin",
+    "mod_or_permissions",
+    "mod",
+    "bot_in_a_guild",
+    "check_permissions",
+]
 
 
 def guildowner_or_permissions(**perms):
