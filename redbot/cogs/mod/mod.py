@@ -455,8 +455,7 @@ class Mod:
             return await self.ban.callback(
                 self, ctx, user, None, reason=reason
             )  # pylint: disable=E1101
-        if user is None:
-            user = discord.Object(id=user_id)  # User not in the guild, but
+        user = discord.Object(id=user_id)  # User not in the guild, but
 
         audit_reason = get_audit_reason(author, reason)
         queue_entry = (guild.id, user_id)
