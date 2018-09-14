@@ -1724,6 +1724,9 @@ class Core(CoreLogic):
                 output += "\n"
             output += _("Members immune from automated moderation actions:\n")
             output += ", ".join(members)
+
+        if not output:
+            output = _("No immunty settings here.")
         
         for page in pagify(output):
             await ctx.send(page)
@@ -1761,9 +1764,9 @@ class Core(CoreLogic):
         """
 
         if await ctx.bot.is_automod_immune(user_or_role):
-            await ctx.send(_("Immune"))
+            await ctx.send(_("They are immune"))
         else:
-            await ctx.send(_("Not Immune"))
+            await ctx.send(_("They are not Immune"))
 
     # RPC handlers
     async def rpc_load(self, request):
