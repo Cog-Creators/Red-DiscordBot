@@ -287,4 +287,3 @@ class Filter:
                 except discord.HTTPException:
                     pass
                 return
-        

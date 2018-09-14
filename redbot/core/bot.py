@@ -297,8 +297,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
                 del sys.modules["redbot.cogs"].__dict__[name]
 
     async def is_automod_immune(
-        self,
-        to_check: Union[discord.Message, commands.Context, discord.User, discord.Role],
+        self, to_check: Union[discord.Message, commands.Context, discord.User, discord.Role]
     ) -> bool:
         """
         Checks if the user, message, context, of role should be considered immune from automated
@@ -322,7 +321,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
         if isinstance(to_check, discord.Role):
             ids_to_check = [to_check.id]
         else:
-            author = getattr(to_check, 'author', to_check)
+            author = getattr(to_check, "author", to_check)
             ids_to_check = [r.id for r in author.roles]
             ids_to_check.append(author.id)
 

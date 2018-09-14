@@ -1727,7 +1727,7 @@ class Core(CoreLogic):
 
         if not output:
             output = _("No immunty settings here.")
-        
+
         for page in pagify(output):
             await ctx.send(page)
 
@@ -1758,7 +1758,9 @@ class Core(CoreLogic):
         await ctx.tick()
 
     @autoimmune_group.command(name="isimmune")
-    async def autoimmune_checkimmune(self, ctx: commands.Context, user_or_role: Union[discord.Member, discord.Role]):
+    async def autoimmune_checkimmune(
+        self, ctx: commands.Context, user_or_role: Union[discord.Member, discord.Role]
+    ):
         """
         Checks if a user or role would be considered immune from automated actions
         """
@@ -1788,4 +1790,3 @@ class Core(CoreLogic):
     async def rpc_reload(self, request):
         await self.rpc_unload(request)
         await self.rpc_load(request)
-
