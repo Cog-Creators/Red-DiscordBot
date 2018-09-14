@@ -2,10 +2,10 @@ import re
 from datetime import timedelta
 from . import Converter, Context, BadArgument
 
-__all__ = ["TimeConverter"]
+__all__ = ["TimedeltaConverter"]
 
 
-class TimeConverter(Converter):
+class TimedeltaConverter(Converter):
     """
     Convert to a :class:`datetime.timedelta` class.
 
@@ -26,7 +26,7 @@ class TimeConverter(Converter):
         .. code-block:: python3
 
             @commands.command()
-            async def timer(self, ctx, time: commands.Time):
+            async def timer(self, ctx, time: commands.Timedelta):
                 await self.start_timer(time)
 
         Using the converter manually:
@@ -34,7 +34,7 @@ class TimeConverter(Converter):
         .. code-block:: python3
 
             async def convert_time(ctx: Context, text: str) -> datetime.timedelta:
-                time = await commands.Time.convert(ctx, text)
+                time = await commands.Timedelta.convert(ctx, text)
                 return time
     """
 
