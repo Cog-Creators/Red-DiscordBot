@@ -26,5 +26,5 @@ extend functionlities used throughout the bot, as outlined below.
 Converters
 ----------
 
-.. autoclass:: redbot.core.commands.TimeConverter
+.. automodule:: redbot.core.commands.converters
     :members:
