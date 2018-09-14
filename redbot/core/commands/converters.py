@@ -1,8 +1,18 @@
 import re
 from datetime import timedelta
-from . import Converter, Context, BadArgument
+from typing import TYPE_CHECKING
+
+from redbot.core.commands import Converter, BadArgument
+
+if TYPE_CHECKING:
+    from .commands import Context
 
 __all__ = ["TimedeltaConverter"]
+
+TIME_RE = re.compile(
+    r"((?P<days>\d+?)\s?(d(ays?)?))?\s?((?P<hours>\d+?)\s?(hours?|hrs|hr?))?\s?((?P<minutes>\d+?)\s?(minutes?|mins?|m))?\s?((?P<seconds>\d+?)\s?(seconds?|secs?|s))?\s?",
+    re.I,
+)
 
 
 class TimedeltaConverter(Converter):
@@ -38,7 +48,7 @@ class TimedeltaConverter(Converter):
                 return time
     """
 
-    async def convert(ctx: Context, argument: str) -> timedelta:
+    async def convert(self, ctx: "Context", argument: str) -> timedelta:
         """
         Convert manually a string to a :class:`datetime.timedelta` class.
         
@@ -62,13 +72,9 @@ class TimedeltaConverter(Converter):
         ~discord.ext.commands.BadArgument
             No time was found from the given string.
         """
-        TIME_RE = re.compile(
-            r"((?P<days>\d+?)\s?(d(ays?)?))?\s?((?P<hours>\d+?)\s?(hours?|hrs|hr?))?\s?((?P<minutes>\d+?)\s?(minutes?|mins?|m))?\s?((?P<seconds>\d+?)\s?(seconds?|secs?|s))?\s?",
-            re.I,
-        )
         matches = TIME_RE.match(argument)
         params = {k: int(v) for k, v in matches.groupdict().items() if None not in (k, v)}
-        time = timedelta(**params)
-        if str(time) == "0:00:00":
+        if not params:
             raise BadArgument("No time could be found.")
+        time = timedelta(**params)
         return time
