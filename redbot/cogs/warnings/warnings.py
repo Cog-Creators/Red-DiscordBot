@@ -330,7 +330,7 @@ class Warnings:
                     msg += "{} point warning {} issued by {} for {}\n".format(
                         user_warnings[key]["points"], key, mod, user_warnings[key]["description"]
                     )
-                await ctx.send_interactive(pagify(msg), box_lang="Warnings for {}".format(user))
+                await ctx.send_interactive(pagify(msg, shorten_by=58), box_lang="Warnings for {}".format(user))
 
     @commands.command()
     @commands.guild_only()
