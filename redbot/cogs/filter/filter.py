@@ -249,70 +249,42 @@ class Filter:
         mod_or_superior = await is_mod_or_superior(self.bot, obj=author)
         if mod_or_superior:
             return
-
-        await self.check_filter(message)
-
-    async def on_message_edit(self, _, message):
-        author = message.author
-        if message.guild is None or self.bot.user == author:
-            return
-        valid_user = isinstance(author, discord.Member) and not author.bot
-        if not valid_user:
-            return
-
-        #  Bots and mods or superior are ignored from the filter
-        mod_or_superior = await is_mod_or_superior(self.bot, obj=author)
-        if mod_or_superior:
+        # As is anyone configured to be
+        if await self.bot.is_automod_immune(message):
             return
 
         await self.check_filter(message)
+
+    async def on_message_edit(self, _prior, message):
+        # message content has to change for non-bot's currently.
+        # if this changes, we should compare before passing it.
+        await self.on_message(message)
 
     async def on_member_update(self, before: discord.Member, after: discord.Member):
-        if not after.guild.me.guild_permissions.manage_nicknames:
-            return  # No permissions to manage nicknames, so can't do anything
-        word_list = await self.settings.guild(after.guild).filter()
-        filter_names = await self.settings.guild(after.guild).filter_names()
-        name_to_use = await self.settings.guild(after.guild).filter_default_name()
-        if not filter_names:
-            return
-
-        name_filtered = False
-        nick_filtered = False
-
-        for w in word_list:
-            if w in after.name:
-                name_filtered = True
-            if after.nick and w in after.nick:  # since Member.nick can be None
-                nick_filtered = True
-            if name_filtered and nick_filtered:  # Both true, so break from loop
-                break
-
-        if name_filtered and after.nick is None:
-            try:
-                await after.edit(nick=name_to_use, reason="Filtered name")
-            except:
-                pass
-        elif nick_filtered:
-            try:
-                await after.edit(nick=None, reason="Filtered nickname")
-            except:
-                pass
+        if before.display_name != after.display_name:
+            await self.maybe_filter_name(after)
 
     async def on_member_join(self, member: discord.Member):
-        guild = member.guild
-        if not guild.me.guild_permissions.manage_nicknames:
-            return
-        word_list = await self.settings.guild(guild).filter()
-        filter_names = await self.settings.guild(guild).filter_names()
-        name_to_use = await self.settings.guild(guild).filter_default_name()
+        await self.maybe_filter_name(member)
 
-        if not filter_names:
+    async def maybe_filter_name(self, member: discord.Member):
+        if not member.guild.me.guild_permissions.manage_nicknames:
+            return  # No permissions to manage nicknames, so can't do anything
+        if member.top_role >= member.guild.me.top_role:
+            return  # Discord Hierarchy applies to nicks
+        if await self.bot.is_automod_immune(member):
+            return
+        word_list = await self.settings.guild(member.guild).filter()
+        if not await self.settings.guild(member.guild).filter_names():
             return
 
         for w in word_list:
-            if w in member.name:
+            if w in member.display_name.lower():
+                name_to_use = await self.settings.guild(member.guild).filter_default_name()
+                reason = "Filtered nick" if member.nick else "Filtered name"
                 try:
-                    await member.edit(nick=name_to_use, reason="Filtered name")
-                except:
+                    await member.edit(nick=name_to_use, reason=reason)
+                except discord.HTTPException:
                     pass
-                break
+                return
+        
