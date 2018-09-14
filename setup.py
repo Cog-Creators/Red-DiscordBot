@@ -27,6 +27,11 @@ requirements = [
     "yarl==1.2.6",
 ]
 
+python_requires = ">=3.6.2,<3.8"
+if os.name == "nt":
+    # Due to issues with ProactorEventLoop prior to 3.6.6 (bpo-26819)
+    python_requires = ">=3.6.6,<3.8"
+
 
 def get_dependency_links():
     with open("dependency_links.txt") as file:
@@ -94,7 +99,7 @@ if __name__ == "__main__":
             ],
             "pytest11": ["red-discordbot = redbot.pytest"],
         },
-        python_requires=">=3.6.2,<3.8",
+        python_requires=python_requires,
         install_requires=requirements,
         dependency_links=get_dependency_links(),
         extras_require={
