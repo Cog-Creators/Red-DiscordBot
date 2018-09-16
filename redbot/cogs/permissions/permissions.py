@@ -136,9 +136,12 @@ class Permissions(commands.Cog):
         else:
             try:
                 testcontext = await ctx.bot.get_context(message, cls=commands.Context)
-                can = await com.can_run(testcontext) and all(
-                    [await p.can_run(testcontext) for p in com.parents]
-                )
+                to_check = [*reversed(com.parents)] + [com]
+                can = False
+                for cmd in to_check:
+                    can = await cmd.can_run(testcontext)
+                    if can is False:
+                        break
             except commands.CheckFailure:
                 can = False
 
