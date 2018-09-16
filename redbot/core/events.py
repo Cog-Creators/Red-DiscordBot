@@ -68,6 +68,14 @@ def init_events(bot, cli_flags):
             packages.extend(cli_flags.load_cogs)
 
         if packages:
+            # Load permissions first, for security reasons
+            try:
+                packages.remove("permissions")
+            except ValueError:
+                pass
+            else:
+                packages.insert(0, "permissions")
+
             to_remove = []
             print("Loading packages...")
             for package in packages:
