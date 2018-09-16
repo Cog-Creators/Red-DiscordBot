@@ -5,15 +5,11 @@ from collections import Counter
 from enum import Enum
 from importlib.machinery import ModuleSpec
 from pathlib import Path
+from typing import Optional
 
 import discord
 import sys
 from discord.ext.commands import when_mentioned_or
-
-# This supresses the PyNaCl warning that isn't relevant here
-from discord.voice_client import VoiceClient
-
-VoiceClient.warn_nacl = False
 
 from .cog_manager import CogManager
 from . import Config, i18n, commands
@@ -198,7 +194,8 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
     async def get_context(self, message, *, cls=commands.Context):
         return await super().get_context(message, cls=cls)
 
-    def list_packages(self):
+    @staticmethod
+    def list_packages():
         """Lists packages present in the cogs the folder"""
         return os.listdir("cogs")
 
@@ -294,6 +291,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             if pkg_name.startswith("redbot.cogs."):
                 del sys.modules["redbot.cogs"].__dict__[name]
 
+    @staticmethod
     async def send_filtered(
         destination: discord.abc.Messageable,
         filter_mass_mentions=True,
@@ -328,6 +326,19 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
         await destination.send(content=content, **kwargs)
 
     def add_cog(self, cog):
+        if not isinstance(cog, commands.Cog):
+            raise RuntimeError(
+                f"The {cog.__class__.__name__} cog in the {cog.__module__} package does "
+                f"not inherit from the commands.Cog base class. The cog author must update "
+                f"the cog to adhere to this requirement."
+            )
+        if not hasattr(cog, "requires"):
+            raise RuntimeError(
+                f"The {cog.__class__.__name__} cog in the {cog.__module__} package has not "
+                f"initialized itself with the commands.Cog base class. The cog author must "
+                f"update the cog to adhere to this requirement. (Note to cog author: this simply "
+                f"requires adding the line `super().__init__()` in your cog's `__init__` function."
+            )
         for attr in dir(cog):
             _attr = getattr(cog, attr)
             if isinstance(_attr, discord.ext.commands.Command) and not isinstance(
@@ -342,6 +353,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
                     "http://red-discordbot.readthedocs.io/en/v3-develop/framework_commands.html"
                 )
         super().add_cog(cog)
+        self.dispatch("cog_add", cog)
 
     def add_command(self, command: commands.Command):
         if not isinstance(command, commands.Command):
@@ -349,6 +361,22 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
 
         super().add_command(command)
         self.dispatch("command_add", command)
+
+    def clear_permission_rules(self, guild_id: Optional[int]) -> None:
+        """Clear all permission overrides in a scope.
+
+        Parameters
+        ----------
+        guild_id : Optional[int]
+            The guild ID to wipe permission overrides for. If
+            ``None``, this will clear all global rules and leave all
+            guild rules untouched.
+
+        """
+        for cog in self.cogs:
+            cog.requires.clear_all_rules(guild_id)
+        for command in self.walk_commands():
+            command.requires.clear_all_rules(guild_id)
 
 
 class Red(RedBase, discord.AutoShardedClient):

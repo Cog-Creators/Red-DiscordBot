@@ -1,179 +1,82 @@
-from copy import copy
-import contextlib
 import asyncio
-import discord
-from redbot.core import commands
-from redbot.core.bot import Red
-from redbot.core import checks
-from redbot.core.config import Config
-from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.caching import LRUDict
+from copy import copy
+from typing import Union, Optional, Dict, List, Tuple, Any, Iterator, ItemsView
 
-from .resolvers import val_if_check_is_valid, resolve_models, entries_from_ctx
+import discord
+from redbot.core import checks, commands, config
+from redbot.core.bot import Red
+from redbot.core.i18n import Translator, cog_i18n
+
 from .yaml_handler import yamlset_acl, yamlget_acl
 from .converters import CogOrCommand, RuleType, ClearableRuleType
-from .mass_resolution import mass_resolve
-
-_models = ["owner", "guildowner", "admin", "mod", "all"]
 
 _ = Translator("Permissions", __file__)
+
+COG = "COG"
+COMMAND = "COMMAND"
+GLOBAL = 0
 
 REACTS = {"\N{WHITE HEAVY CHECK MARK}": True, "\N{NEGATIVE SQUARED CROSS MARK}": False}
 Y_OR_N = {"y": True, "yes": True, "n": False, "no": False}
 
+__version__ = "1.0.0"
+
 
 @cog_i18n(_)
-class Permissions:
-    """
-    A high level permission model
-    """
-
-    # Not sure if we will use admin or mod models in core red
-    # but they are explicitly supported
-    resolution_order = {k: _models[:i] for i, k in enumerate(_models, 1)}
+class Permissions(commands.Cog):
+    """Customise permissions for commands and cogs."""
 
     def __init__(self, bot: Red):
+        super().__init__()
         self.bot = bot
-        self.config = Config.get_conf(self, identifier=78631113035100160, force_registration=True)
-        self.config.register_global(owner_models={})
-        self.config.register_guild(owner_models={})
-        self.cache = LRUDict(size=25000)  # This can be tuned later
-
-    async def get_user_ctx_overrides(self, ctx: commands.Context) -> dict:
-        """
-        This takes a context object, and returns a dict of
-
-        allowed: list of commands
-        denied: list of commands
-        default: list of commands
-
-        representing how permissions interacts with the
-        user, channel, guild, and (possibly) voice channel
-        for all commands on the bot (not just the one in the context object)
-
-        This mainly exists for use by the help formatter,
-        but others may find it useful
-
-        Unlike the rest of the permission system, if other models are added later,
-        due to optimizations made for this, this needs to be adjusted accordingly
-
-        This does not account for before and after permission hooks,
-        these need to be checked seperately
-        """
-        return await mass_resolve(ctx=ctx, config=self.config)
-
-    async def __global_check(self, ctx: commands.Context) -> bool:
-        """
-        Yes, this is needed on top of hooking into checks.py
-        to ensure that unchecked commands can still be managed by permissions
-        This should return True in the case of no overrides
-        defering to check logic
-        This works since all checks must be True to run
-        """
-        v = await self.check_overrides(ctx, "all")
-
-        if v is False:
-            return False
-        return True
-
-    async def check_overrides(self, ctx: commands.Context, level: str) -> bool:
-        """
-        This checks for any overrides in the permission model
-
-        Parameters
-        ----------
-        ctx: `redbot.core.context.commands.Context`
-            The context of the command
-        level: `str`
-            One of 'owner', 'guildowner', 'admin', 'mod', 'all'
-
-        Returns
-        -------
-        bool
-            a trinary value using None + bool to resolve permissions for
-            checks.py
-        """
-        if await ctx.bot.is_owner(ctx.author):
-            return True
-
-        before = [
-            getattr(cog, "_{0.__class__.__name__}__red_permissions_before".format(cog), None)
-            for cog in ctx.bot.cogs.values()
-        ]
-        for check in before:
-            if check is None:
-                continue
-            override = await val_if_check_is_valid(check=check, ctx=ctx, level=level)
-            if override is not None:
-                return override
-
-        # checked ids + configureable to be checked against
-        cache_tup = entries_from_ctx(ctx) + (
-            ctx.cog.__class__.__name__,
-            ctx.command.qualified_name,
+        # Config Schema:
+        # "COG"
+        # -> Cog names...
+        #   -> Guild IDs...
+        #     -> Model IDs...
+        #       -> True|False
+        #   -> "global"
+        #     -> Model IDs...
+        #       -> True|False
+        # "COMMAND"
+        # -> Command names...
+        #   -> Guild IDs...
+        #     -> Model IDs...
+        #       -> True|False
+        #   -> "global"
+        #     -> Model IDs...
+        #       -> True|False
+        self.config = config.Config.get_conf(
+            self, identifier=78631113035100160, force_registration=True
         )
-        if cache_tup in self.cache:
-            override = self.cache[cache_tup]
-            if override is not None:
-                return override
-        else:
-            for model in self.resolution_order[level]:
-                if ctx.guild is None and model != "owner":
-                    break
-                override_model = getattr(self, model + "_model", None)
-                override = await override_model(ctx) if override_model else None
-                if override is not None:
-                    self.cache[cache_tup] = override
-                    return override
-            # This is intentional not being in an else block
-            self.cache[cache_tup] = None
+        self.config.register_global(version="")
+        self.config.register_custom(COG)
+        self.config.register_custom(COMMAND)
 
-        after = [
-            getattr(cog, "_{0.__class__.__name__}__red_permissions_after".format(cog), None)
-            for cog in ctx.bot.cogs.values()
-        ]
-        for check in after:
-            override = await val_if_check_is_valid(check=check, ctx=ctx, level=level)
-            if override is not None:
-                return override
+    async def initialize(self) -> None:
+        """Initialize this cog.
 
-        return None
-
-    async def owner_model(self, ctx: commands.Context) -> bool:
+        This will load all rules from config onto every currently
+        loaded command.
         """
-        Handles owner level overrides
-        """
+        await self._maybe_update_schema()
 
-        async with self.config.owner_models() as models:
-            return resolve_models(ctx=ctx, models=models)
-
-    async def guildowner_model(self, ctx: commands.Context) -> bool:
-        """
-        Handles guild level overrides
-        """
-        if ctx.guild is None:
-            return None
-        async with self.config.guild(ctx.guild).owner_models() as models:
-            return resolve_models(ctx=ctx, models=models)
-
-    #   Either of the below function signatures could be used
-    #   without any other modifications required at a later date
-    #
-    #   async def admin_model(self, ctx: commands.Context) -> bool:
-    #   async def mod_model(self, ctx: commands.Context) -> bool:
+        for category, getter in ((COG, self.bot.get_cog), (COMMAND, self.bot.get_command)):
+            all_rules = await self.config.custom(category).all()
+            for name, rules in all_rules.items():
+                obj = getter(name)
+                if obj is None:
+                    continue
+                self._load_rules_for(obj, rules)
 
     @commands.group(aliases=["p"])
     async def permissions(self, ctx: commands.Context):
-        """
-        Permission management tools
-        """
+        """Command permission management tools."""
         pass
 
-    @permissions.command()
-    async def explain(self, ctx: commands.Context):
-        """
-        Provides a detailed explanation of how the permission model functions
-        """
+    @permissions.command(name="explain")
+    async def permissions_explain(self, ctx: commands.Context):
+        """Explain how permissions works. """
         # Apologies in advance for the translators out there...
 
         message = _(
@@ -211,11 +114,13 @@ class Permissions:
         await ctx.maybe_send_embed(message)
 
     @permissions.command(name="canrun")
-    async def _test_permission_model(
+    async def permissions_canrun(
         self, ctx: commands.Context, user: discord.Member, *, command: str
     ):
-        """
-        This checks if someone can run a command in the current location
+        """Check if a user can run a command.
+
+        This will take the current context into account, such as the
+        server and text channel.
         """
 
         if not command:
@@ -225,12 +130,12 @@ class Permissions:
         message.author = user
         message.content = "{}{}".format(ctx.prefix, command)
 
-        com = self.bot.get_command(command)
+        com = ctx.bot.get_command(command)
         if com is None:
             out = _("No such command")
         else:
             try:
-                testcontext = await self.bot.get_context(message, cls=commands.Context)
+                testcontext = await ctx.bot.get_context(message, cls=commands.Context)
                 can = await com.can_run(testcontext) and all(
                     [await p.can_run(testcontext) for p in com.parents]
                 )
@@ -246,9 +151,11 @@ class Permissions:
 
     @checks.is_owner()
     @permissions.command(name="setglobalacl")
-    async def owner_set_acl(self, ctx: commands.Context):
-        """
-        Take a YAML file upload to set permissions from
+    async def permissions_setglobalacl(self, ctx: commands.Context):
+        """Set global rules with a YAML file.
+
+        **WARNING**: This will override reset *all* global rules
+        to the rules specified in the uploaded file.
         """
         if not ctx.message.attachments:
             return await ctx.send(_("You must upload a file."))
@@ -264,18 +171,18 @@ class Permissions:
 
     @checks.is_owner()
     @permissions.command(name="getglobalacl")
-    async def owner_get_acl(self, ctx: commands.Context):
-        """
-        Dumps a YAML file with the current owner level permissions
-        """
+    async def permissions_getglobalacl(self, ctx: commands.Context):
+        """Get a YAML file detailing all global rules."""
         await yamlget_acl(ctx, config=self.config.owner_models)
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
-    @permissions.command(name="setguildacl")
-    async def guild_set_acl(self, ctx: commands.Context):
-        """
-        Take a YAML file upload to set permissions from
+    @permissions.command(name="setserveracl", aliases=["setguildacl"])
+    async def permissions_setguildacl(self, ctx: commands.Context):
+        """Set rules for this server with a YAML file.
+
+        **WARNING**: This will override reset *all* rules in this
+        server to the rules specified in the uploaded file.
         """
         if not ctx.message.attachments:
             return await ctx.send(_("You must upload a file."))
@@ -291,21 +198,19 @@ class Permissions:
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
-    @permissions.command(name="getguildacl")
-    async def guild_get_acl(self, ctx: commands.Context):
-        """
-        Dumps a YAML file with the current owner level permissions
-        """
+    @permissions.command(name="getserveracl", aliases=["getguildacl"])
+    async def permissions_getguildacl(self, ctx: commands.Context):
+        """Get a YAML file detailing all rules in this server."""
         await yamlget_acl(ctx, config=self.config.guild(ctx.guild).owner_models)
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
-    @permissions.command(name="updateguildacl")
-    async def guild_update_acl(self, ctx: commands.Context):
-        """
-        Take a YAML file upload to update permissions from
+    @permissions.command(name="updateserveracl", aliases=["updateguildacl"])
+    async def permissions_updateguildacl(self, ctx: commands.Context):
+        """Update rules for this server with a YAML file.
 
-        Use this to not lose existing rules
+        This won't touch any rules not specified in the YAML
+        file.
         """
         if not ctx.message.attachments:
             return await ctx.send(_("You must upload a file."))
@@ -321,11 +226,11 @@ class Permissions:
 
     @checks.is_owner()
     @permissions.command(name="updateglobalacl")
-    async def owner_update_acl(self, ctx: commands.Context):
-        """
-        Take a YAML file upload to update permissions from
+    async def permissions_updateglobalacl(self, ctx: commands.Context):
+        """Update global rules with a YAML file.
 
-        Use this to not lose existing rules
+        This won't touch any rules not specified in the YAML
+        file.
         """
         if not ctx.message.attachments:
             return await ctx.send(_("You must upload a file."))
@@ -341,329 +246,320 @@ class Permissions:
 
     @checks.is_owner()
     @permissions.command(name="addglobalrule")
-    async def add_to_global_rule(
+    async def permissions_addglobalrule(
         self,
         ctx: commands.Context,
         allow_or_deny: RuleType,
         cog_or_command: CogOrCommand,
-        who_or_what: str,
+        who_or_what: commands.GlobalPermissionModel,
     ):
+        """Add a global rule to a command.
+
+        `<allow_or_deny>` should be one of "allow" or "deny".
+
+        `<cog_or_command>` is the cog or command to add the rule to.
+        This is case sensitive.
+
+        `<who_or_what>` is the user, channel, role or server the rule
+        is for.
         """
-        Adds something to the rules
-
-        allow_or_deny: "allow" or "deny", depending on the rule to modify
-
-        cog_or_command: case sensitive cog or command name
-        nested commands should be space seperated, but enclosed in quotes
-
-        who_or_what: what to add to the rule list.
-        For best results, use an ID or mention
-        The bot will try to uniquely match even without,
-        but a failure to do so will raise an error
-        This can be a user, role, channel, or guild
-        """
-        obj = self.find_object_uniquely(who_or_what)
-        if not obj:
-            return await ctx.send(_("No unique matches. Try using an ID or mention."))
-        model_type, type_name = cog_or_command
-        async with self.config.owner_models() as models:
-            data = {k: v for k, v in models.items()}
-            if model_type not in data:
-                data[model_type] = {}
-            if type_name not in data[model_type]:
-                data[model_type][type_name] = {}
-            if allow_or_deny not in data[model_type][type_name]:
-                data[model_type][type_name][allow_or_deny] = []
-
-            if obj in data[model_type][type_name][allow_or_deny]:
-                return await ctx.send(_("That rule already exists."))
-
-            data[model_type][type_name][allow_or_deny].append(obj)
-            models.update(data)
+        # noinspection PyTypeChecker
+        await self._add_rule(
+            rule=allow_or_deny, cog_or_cmd=cog_or_command, model_id=who_or_what.id, guild_id=0
+        )
         await ctx.send(_("Rule added."))
-        self.invalidate_cache(type_name, obj)
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
-    @permissions.command(name="addguildrule")
-    async def add_to_guild_rule(
+    @permissions.command(name="addserverrule", aliases=["addguildrule"])
+    async def permissions_addguildrule(
         self,
         ctx: commands.Context,
         allow_or_deny: RuleType,
         cog_or_command: CogOrCommand,
-        who_or_what: str,
+        who_or_what: commands.GuildPermissionModel,
     ):
+        """Add a rule to a command in this server.
+
+        `<allow_or_deny>` should be one of "allow" or "deny".
+
+        `<cog_or_command>` is the cog or command to add the rule to.
+        This is case sensitive.
+
+        `<who_or_what>` is the user, channel or role the rule is for.
         """
-        Adds something to the rules
-
-        allow_or_deny: "allow" or "deny", depending on the rule to modify
-
-        cog_or_command: case sensitive cog or command name
-        nested commands should be space seperated, but enclosed in quotes
-
-        who_or_what: what to add to the rule list.
-        For best results, use an ID or mention
-        The bot will try to uniquely match even without,
-        but a failure to do so will raise an error
-        This can be a user, role, channel, or guild
-        """
-        obj = self.find_object_uniquely(who_or_what)
-        if not obj:
-            return await ctx.send(_("No unique matches. Try using an ID or mention."))
-        model_type, type_name = cog_or_command
-        async with self.config.guild(ctx.guild).owner_models() as models:
-            data = {k: v for k, v in models.items()}
-            if model_type not in data:
-                data[model_type] = {}
-            if type_name not in data[model_type]:
-                data[model_type][type_name] = {}
-            if allow_or_deny not in data[model_type][type_name]:
-                data[model_type][type_name][allow_or_deny] = []
-
-            if obj in data[model_type][type_name][allow_or_deny]:
-                return await ctx.send(_("That rule already exists."))
-
-            data[model_type][type_name][allow_or_deny].append(obj)
-            models.update(data)
+        # noinspection PyTypeChecker
+        await self._add_rule(
+            rule=allow_or_deny,
+            cog_or_cmd=cog_or_command,
+            model_id=who_or_what.id,
+            guild_id=ctx.guild.id,
+        )
         await ctx.send(_("Rule added."))
-        self.invalidate_cache(type_name, obj)
 
     @checks.is_owner()
     @permissions.command(name="removeglobalrule")
-    async def rem_from_global_rule(
+    async def permissions_removeglobalrule(
         self,
         ctx: commands.Context,
-        allow_or_deny: RuleType,
         cog_or_command: CogOrCommand,
-        who_or_what: str,
+        who_or_what: commands.GlobalPermissionModel,
     ):
+        """Remove a global rule from a command.
+
+        `<cog_or_command>` is the cog or command to remove the rule
+        from. This is case sensitive.
+
+        `<who_or_what>` is the user, channel, role or server the rule
+        is for.
         """
-        removes something from the rules
-
-        allow_or_deny: "allow" or "deny", depending on the rule to modify
-
-        cog_or_command: case sensitive cog or command name
-        nested commands should be space seperated, but enclosed in quotes
-
-        who_or_what: what to add to the rule list.
-        For best results, use an ID or mention
-        The bot will try to uniquely match even without,
-        but a failure to do so will raise an error
-        This can be a user, role, channel, or guild
-        """
-        obj = self.find_object_uniquely(who_or_what)
-        if not obj:
-            return await ctx.send(_("No unique matches. Try using an ID or mention."))
-        model_type, type_name = cog_or_command
-        async with self.config.owner_models() as models:
-            data = {k: v for k, v in models.items()}
-            if model_type not in data:
-                data[model_type] = {}
-            if type_name not in data[model_type]:
-                data[model_type][type_name] = {}
-            if allow_or_deny not in data[model_type][type_name]:
-                data[model_type][type_name][allow_or_deny] = []
-
-            if obj not in data[model_type][type_name][allow_or_deny]:
-                return await ctx.send(_("That rule doesn't exist."))
-
-            data[model_type][type_name][allow_or_deny].remove(obj)
-            models.update(data)
+        await self._remove_rule(
+            cog_or_cmd=cog_or_command, model_id=who_or_what.id, guild_id=GLOBAL
+        )
         await ctx.send(_("Rule removed."))
-        self.invalidate_cache(obj, type_name)
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
-    @permissions.command(name="removeguildrule")
-    async def rem_from_guild_rule(
+    @permissions.command(name="removeserverrule", aliases=["removeguildrule"])
+    async def permissions_removeguildrule(
         self,
         ctx: commands.Context,
-        allow_or_deny: RuleType,
         cog_or_command: CogOrCommand,
-        who_or_what: str,
+        *,
+        who_or_what: commands.GuildPermissionModel,
     ):
+        """Remove a server rule from a command.
+
+        `<cog_or_command>` is the cog or command to remove the rule
+        from. This is case sensitive.
+
+        `<who_or_what>` is the user, channel or role the rule is for.
         """
-        removes something from the rules
-
-        allow_or_deny: "allow" or "deny", depending on the rule to modify
-
-        cog_or_command: case sensitive cog or command name
-        nested commands should be space seperated, but enclosed in quotes
-
-        who_or_what: what to add to the rule list.
-        For best results, use an ID or mention
-        The bot will try to uniquely match even without,
-        but a failure to do so will raise an error
-        This can be a user, role, channel, or guild
-        """
-        obj = self.find_object_uniquely(who_or_what)
-        if not obj:
-            return await ctx.send(_("No unique matches. Try using an ID or mention."))
-        model_type, type_name = cog_or_command
-        async with self.config.guild(ctx.guild).owner_models() as models:
-            data = {k: v for k, v in models.items()}
-            if model_type not in data:
-                data[model_type] = {}
-            if type_name not in data[model_type]:
-                data[model_type][type_name] = {}
-            if allow_or_deny not in data[model_type][type_name]:
-                data[model_type][type_name][allow_or_deny] = []
-
-            if obj not in data[model_type][type_name][allow_or_deny]:
-                return await ctx.send(_("That rule doesn't exist."))
-
-            data[model_type][type_name][allow_or_deny].remove(obj)
-            models.update(data)
+        await self._remove_rule(
+            cog_or_cmd=cog_or_command, model_id=who_or_what.id, guild_id=ctx.guild.id
+        )
         await ctx.send(_("Rule removed."))
-        self.invalidate_cache(obj, type_name)
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
-    @permissions.command(name="setdefaultguildrule")
-    async def set_default_guild_rule(
+    @permissions.command(name="setdefaultserverrule", aliases=["setdefaultguildrule"])
+    async def permissions_setdefaultguildrule(
         self, ctx: commands.Context, allow_or_deny: ClearableRuleType, cog_or_command: CogOrCommand
     ):
+        """Set the default rule for a command in this server.
+
+        This is the rule a command will default to when no other rule
+        is found.
+
+        `<allow_or_deny>` should be one of "allow", "deny" or "clear".
+        "clear" will reset the default rule.
+
+        `<cog_or_command>` is the cog or command to set the default
+        rule for. This is case sensitive.
         """
-        Sets the default behavior for a cog or command if no rule is set
-        """
-        val_to_set = {"allow": True, "deny": False, "clear": None}.get(allow_or_deny)
-
-        model_type, type_name = cog_or_command
-        async with self.config.guild(ctx.guild).owner_models() as models:
-            data = {k: v for k, v in models.items()}
-            if model_type not in data:
-                data[model_type] = {}
-            if type_name not in data[model_type]:
-                data[model_type][type_name] = {}
-
-            data[model_type][type_name]["default"] = val_to_set
-
-            models.update(data)
+        # noinspection PyTypeChecker
+        await self._set_default_rule(
+            rule=allow_or_deny, cog_or_cmd=cog_or_command, guild_id=ctx.guild.id
+        )
         await ctx.send(_("Default set."))
-        self.invalidate_cache(type_name)
 
     @checks.is_owner()
     @permissions.command(name="setdefaultglobalrule")
-    async def set_default_global_rule(
+    async def permissions_setdefaultglobalrule(
         self, ctx: commands.Context, allow_or_deny: ClearableRuleType, cog_or_command: CogOrCommand
     ):
+        """Set the default global rule for a command.
+
+        This is the rule a command will default to when no other rule
+        is found.
+
+        `<allow_or_deny>` should be one of "allow", "deny" or "clear".
+        "clear" will reset the default rule.
+
+        `<cog_or_command>` is the cog or command to set the default
+        rule for. This is case sensitive.
         """
-        Sets the default behavior for a cog or command if no rule is set
-        """
-        val_to_set = {"allow": True, "deny": False, "clear": None}.get(allow_or_deny)
-
-        model_type, type_name = cog_or_command
-        async with self.config.owner_models() as models:
-            data = {k: v for k, v in models.items()}
-            if model_type not in data:
-                data[model_type] = {}
-            if type_name not in data[model_type]:
-                data[model_type][type_name] = {}
-
-            data[model_type][type_name]["default"] = val_to_set
-
-            models.update(data)
+        # noinspection PyTypeChecker
+        await self._set_default_rule(
+            rule=allow_or_deny, cog_or_cmd=cog_or_command, guild_id=GLOBAL
+        )
         await ctx.send(_("Default set."))
-        self.invalidate_cache(type_name)
 
     @checks.is_owner()
-    @permissions.command(name="clearglobalsettings")
-    async def clear_globals(self, ctx: commands.Context):
-        """
-        Clears all global rules.
-        """
-        await self._confirm_then_clear_rules(ctx, is_guild=False)
-        self.invalidate_cache()
+    @permissions.command(name="clearglobalrules")
+    async def permissions_clearglobalrules(self, ctx: commands.Context):
+        """Reset all global rules."""
+        agreed = await self._confirm(ctx)
+        if agreed:
+            await self._clear_rules(bot=ctx.bot, guild_id=GLOBAL)
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
-    @permissions.command(name="clearguildsettings")
-    async def clear_guild_settings(self, ctx: commands.Context):
-        """
-        Clears all guild rules.
-        """
-        await self._confirm_then_clear_rules(ctx, is_guild=True)
-        self.invalidate_cache(ctx.guild.id)
+    @permissions.command(name="clearserverrules", aliases=["clearguildrules"])
+    async def permissions_clearguildrules(self, ctx: commands.Context):
+        """Reset all rules in this server."""
+        agreed = await self._confirm(ctx)
+        if agreed:
+            await self._clear_rules(bot=ctx.bot, guild_id=ctx.guild.id)
 
-    async def _confirm_then_clear_rules(self, ctx: commands.Context, is_guild: bool):
-        if ctx.guild.me.permissions_in(ctx.channel).add_reactions:
-            m = await ctx.send(_("Are you sure?"))
-            for r in REACTS.keys():
-                await m.add_reaction(r)
+    async def cog_added(self, cog: commands.Cog) -> None:
+        """Event listener for `cog_add`.
+
+        This loads rules whenever a new cog is added.
+        """
+        self._load_rules_for(
+            cog_or_command=cog,
+            rule_dict=await self.config.custom(COMMAND, cog.__class__.__name__).all(),
+        )
+
+    async def command_added(self, command: commands.Command) -> None:
+        """Event listener for `command_add`.
+
+        This loads rules whenever a new command is added.
+        """
+        self._load_rules_for(
+            cog_or_command=command,
+            rule_dict=await self.config.custom(COMMAND, command.qualified_name).all(),
+        )
+
+    async def _add_rule(
+        self, rule: bool, cog_or_cmd: CogOrCommand, model_id: int, guild_id: int
+    ) -> None:
+        if rule is True:
+            cog_or_cmd.obj.allow_for(model_id, guild_id=guild_id)
+        else:
+            cog_or_cmd.obj.deny_to(model_id, guild_id=guild_id)
+
+        async with self.config.custom(cog_or_cmd.type, cog_or_cmd.name).all() as rules:
+            rules.setdefault(str(guild_id), {})[str(model_id)] = rule
+
+    async def _remove_rule(self, cog_or_cmd: CogOrCommand, model_id: int, guild_id: int) -> None:
+        cog_or_cmd.obj.clear_rule_for(model_id, guild_id=guild_id)
+        guild_id, model_id = str(guild_id), str(model_id)
+        async with self.config.custom(cog_or_cmd.type, cog_or_cmd.name).all() as rules:
+            if guild_id in rules and rules[guild_id]:
+                del rules[guild_id][model_id]
+
+    async def _set_default_rule(
+        self, rule: Optional[bool], cog_or_cmd: CogOrCommand, guild_id: int
+    ):
+        cog_or_cmd.obj.set_default_rule(rule, guild_id)
+        async with self.config.custom(cog_or_cmd.type, cog_or_cmd.name).all() as rules:
+            rules.setdefault(str(guild_id), {})["default"] = rule
+
+    async def _clear_rules(self, bot: Red, guild_id: int):
+        bot.clear_permission_rules(guild_id)
+        for category in (COG, COMMAND):
+            async with self.config.custom(category).all() as all_rules:
+                for name, rules in all_rules.items():
+                    rules.pop(str(guild_id), None)
+
+    @staticmethod
+    async def _confirm(ctx: commands.Context) -> bool:
+        if ctx.guild is None or ctx.guild.me.permissions_in(ctx.channel).add_reactions:
+            msg = await ctx.send(_("Are you sure?"))
+            for emoji in REACTS.keys():
+                await msg.add_reaction(emoji)
             try:
-                reaction, user = await self.bot.wait_for(
+                reaction, user = await ctx.bot.wait_for(
                     "reaction_add",
-                    check=lambda r, u: u == ctx.author and str(r) in REACTS,
+                    check=lambda r, u: r.message == msg and u == ctx.author and str(r) in REACTS,
                     timeout=30,
                 )
             except asyncio.TimeoutError:
-                return await ctx.send(_("Ok, try responding with an emoji next time."))
-
-            agreed = REACTS.get(str(reaction))
+                agreed = False
+            else:
+                agreed = REACTS.get(str(reaction))
         else:
             await ctx.send(_("Are you sure? (y/n)"))
             try:
-                message = await self.bot.wait_for(
+                message = await ctx.bot.wait_for(
                     "message",
-                    check=lambda m: m.author == ctx.author and m.content in Y_OR_N,
+                    check=lambda m: m.author == ctx.author
+                    and m.channel == ctx.channel
+                    and m.content in Y_OR_N,
                     timeout=30,
                 )
             except asyncio.TimeoutError:
-                return await ctx.send(_("Ok, try responding with yes or no next time."))
-
-            agreed = Y_OR_N.get(message.content.lower())
-
-        if agreed:
-            if is_guild:
-                await self.config.guild(ctx.guild).owner_models.clear()
-                await ctx.send(_("Guild settings cleared."))
+                agreed = False
             else:
-                await self.config.owner_models.clear()
-                await ctx.send(_("Global settings cleared."))
-        else:
-            await ctx.send(_("Okay."))
+                agreed = Y_OR_N.get(message.content.lower())
 
-    def invalidate_cache(self, *to_invalidate):
-        """
-        Either invalidates the entire cache (if given no objects)
-        or does a partial invalidation based on passed objects
-        """
-        if len(to_invalidate) == 0:
-            self.cache.clear()
+        if agreed is False:
+            await ctx.send(_("Action cancelled."))
+        return agreed
+
+    @staticmethod
+    def _load_rules_for(
+        cog_or_command: Union[commands.Command, commands.Cog],
+        rule_dict: Dict[str, Dict[str, bool]],
+    ) -> None:
+        for guild_id, guild_dict in _int_key_map(rule_dict.items()):
+            for model_id, rule in _int_key_map(guild_dict.items()):
+                if rule is True:
+                    cog_or_command.allow_for(model_id, guild_id=guild_id)
+                elif rule is False:
+                    cog_or_command.deny_to(model_id, guild_id=guild_id)
+
+    async def _maybe_update_schema(self) -> None:
+        if await self.config.version():
             return
-        # LRUDict inherits from ordered dict, hence the syntax below
-        stil_valid = [
-            (k, v) for k, v in self.cache.items() if not any(obj in k for obj in to_invalidate)
-        ]
-        self.cache = LRUDict(stil_valid, size=self.cache.size)
+        old_config = await self.config.all_guilds()
+        old_config[GLOBAL] = await self.config.all()
+        new_cog_rules, new_cmd_rules = self._get_updated_schema(old_config)
+        await self.config.custom(COG).set(new_cog_rules)
+        await self.config.custom(COMMAND).set(new_cmd_rules)
+        await self.config.version.set(__version__)
 
-    def find_object_uniquely(self, info: str) -> int:
-        """
-        Finds an object uniquely, returns it's id or returns None
-        """
-        if info is None:
-            return None
-        objs = []
+    _OldConfigSchema = Dict[Optional[int], Dict[str, Dict[str, Dict[str, Dict[str, List[int]]]]]]
+    _NewConfigSchema = Dict[str, Dict[int, Dict[str, Dict[int, bool]]]]
 
-        objs.extend(self.bot.users)
-        for guild in self.bot.guilds:
-            objs.extend(guild.roles)
-            objs.extend(guild.channels)
+    @staticmethod
+    def _get_updated_schema(
+        old_config: _OldConfigSchema
+    ) -> Tuple[_NewConfigSchema, _NewConfigSchema]:
+        # Prior to 1.0.0, the schema was in this form for both global
+        # and guild-based rules:
+        # "cogs"
+        # -> Cog names...
+        #   -> "allow"
+        #     -> [Model IDs...]
+        #   -> "deny"
+        #     -> [Model IDs...]
+        # "commands"
+        # -> Command names...
+        #   -> "allow"
+        #     -> [Model IDs...]
+        #   -> "deny"
+        #     -> [Model IDs...]
 
-        try:
-            _id = int(info)
-        except ValueError:
-            _id = None
+        new_cog_rules = {}
+        new_cmd_rules = {}
+        ret = (new_cog_rules, new_cmd_rules)
+        for guild_id, old_rules in old_config.items():
+            if "owner_models" not in old_config:
+                continue
+            if guild_id is None:
+                guild_id = GLOBAL
+            old_rules = old_rules["owner_models"]
+            for category, new_rules in zip(("cogs", "commands"), ret):
+                if "category" in old_rules:
+                    for name, rules in old_rules[category].items():
+                        these_rules = new_rules.setdefault(name, {})
+                        guild_rules = these_rules.setdefault(guild_id, {})
+                        # Since allow rules would take precedence if the same model ID
+                        # sat in both the allow and deny list, we add the deny entries
+                        # first and let any conflicting allow entries overwrite.
+                        for model_id in rules.get("deny", []):
+                            guild_rules[model_id] = False
+                        for model_id in rules.get("allow", []):
+                            guild_rules[model_id] = True
+        return ret
 
-        for function in (
-            lambda x: x.id == _id,
-            lambda x: x.mention == info,
-            lambda x: str(x) == info,
-            lambda x: x.name == info,
-            lambda x: (x.nick if hasattr(x, "nick") else None) == info,
-        ):
-            canidates = list(filter(function, objs))
-            if len(canidates) == 1:
-                return canidates[0].id
+    def __unload(self) -> None:
+        self.bot.remove_listener(self.cog_added, "on_cog_add")
+        self.bot.remove_listener(self.command_added, "on_command_add")
 
-        return None
+
+def _int_key_map(items_view: ItemsView[str, Any]) -> Iterator[Tuple[int, Any]]:
+    return map(lambda tup: (int(tup[0]), tup[1]), items_view)

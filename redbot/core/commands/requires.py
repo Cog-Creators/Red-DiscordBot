@@ -6,7 +6,6 @@ from typing import (
     List,
     Callable,
     Awaitable,
-    DefaultDict,
     Dict,
     Any,
     TYPE_CHECKING,
@@ -28,15 +27,33 @@ __all__ = [
     "bot_has_permissions",
     "DM_PERMS",
     "has_permissions",
+    "GlobalPermissionModel",
+    "GuildPermissionModel",
     "PermissionModel",
     "PrivilegeLevel",
     "PermState",
     "Requires",
 ]
 
-GlobalPermissionModel = Union[discord.User, discord.Guild]
-GuildPermissionModel = Union[discord.Member, discord.Role, discord.abc.GuildChannel]
+_VT = TypeVar("_VT", covariant=True)
+GlobalPermissionModel = Union[
+    discord.User,
+    discord.VoiceChannel,
+    discord.TextChannel,
+    discord.CategoryChannel,
+    discord.Role,
+    discord.Guild,
+]
+GuildPermissionModel = Union[
+    discord.Member,
+    discord.VoiceChannel,
+    discord.TextChannel,
+    discord.CategoryChannel,
+    discord.Role,
+    discord.Guild,
+]
 PermissionModel = Union[GlobalPermissionModel, GuildPermissionModel]
+_CheckPredicate = Callable[["Context"], Union[bool, Awaitable[bool]]]
 
 # Here we are trying to model DM permissions as closely as possible. The only
 # discrepancy I've found is that users can pin messages, but they cannot delete them.
@@ -88,6 +105,9 @@ class PrivilegeLevel(enum.IntEnum):
 
         return cls.NONE
 
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__}.{self.name}>"
+
 
 class PermState(enum.Enum):
     """Enumeration for permission states used by rules."""
@@ -122,7 +142,20 @@ class PermState(enum.Enum):
     def transition_to(
         self, next_state: "PermState"
     ) -> Tuple[Optional[bool], Union["PermState", Dict[bool, "PermState"]]]:
-        return _TRANSITIONS[self][next_state]
+        return self.TRANSITIONS[self][next_state]
+
+    @classmethod
+    def from_bool(cls, value: Optional[bool]) -> "PermState":
+        """Get a PermState from a bool or ``NoneType``."""
+        if value is True:
+            return cls.ACTIVE_ALLOW
+        elif value is False:
+            return cls.ACTIVE_DENY
+        else:
+            return cls.NORMAL
+
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__}.{self.name}>"
 
 
 # Here we're defining how we transition between states.
@@ -135,7 +168,7 @@ class PermState(enum.Enum):
 # result of the default permission checks - the transition from NORMAL
 # to PASSIVE_ALLOW. In this case "next state" is a dict mapping the
 # permission check results to the actual next state.
-_TRANSITIONS = {
+PermState.TRANSITIONS = {
     PermState.ACTIVE_ALLOW: {
         PermState.ACTIVE_ALLOW: (True, PermState.ACTIVE_ALLOW),
         PermState.NORMAL: (True, PermState.ACTIVE_ALLOW),
@@ -164,7 +197,19 @@ _TRANSITIONS = {
         PermState.CAUTIOUS_ALLOW: (True, PermState.CAUTIOUS_ALLOW),
         PermState.ACTIVE_DENY: (False, PermState.ACTIVE_DENY),
     },
+    PermState.ACTIVE_DENY: {  # We can only start from ACTIVE_DENY if it is set on a cog.
+        PermState.ACTIVE_ALLOW: (True, PermState.ACTIVE_ALLOW),  # Should never happen
+        PermState.NORMAL: (False, PermState.ACTIVE_DENY),
+        PermState.PASSIVE_ALLOW: (False, PermState.ACTIVE_DENY),  # Should never happen
+        PermState.CAUTIOUS_ALLOW: (False, PermState.ACTIVE_DENY),  # Should never happen
+        PermState.ACTIVE_DENY: (False, PermState.ACTIVE_DENY),
+    },
 }
+PermState.ALLOWED_STATES = (
+    PermState.ACTIVE_ALLOW,
+    PermState.PASSIVE_ALLOW,
+    PermState.CAUTIOUS_ALLOW,
+)
 
 
 class Requires:
@@ -200,8 +245,9 @@ class Requires:
         privilege_level: Optional[PrivilegeLevel],
         user_perms: Union[Dict[str, bool], discord.Permissions, None],
         bot_perms: Union[Dict[str, bool], discord.Permissions],
+        checks: List[_CheckPredicate],
     ):
-        self.checks: List[Callable[["Context"], Awaitable[bool]]] = []
+        self.checks: List[_CheckPredicate] = checks
         self.privilege_level: Optional[PrivilegeLevel] = privilege_level
 
         if isinstance(user_perms, dict):
@@ -215,13 +261,15 @@ class Requires:
             self.bot_perms.update(**bot_perms)
         else:
             self.bot_perms = bot_perms
-
-        self._rules: _RuleDict = _RuleDict(lambda: None)
+        self.default_global_rule: PermState = PermState.NORMAL
+        self._global_rules: _IntKeyDict[PermState] = _IntKeyDict()
+        self._default_guild_rules: _IntKeyDict[PermState] = _IntKeyDict()
+        self._guild_rules: _IntKeyDict[_IntKeyDict[PermState]] = _IntKeyDict()
 
     @staticmethod
     def get_decorator(
         privilege_level: Optional[PrivilegeLevel], user_perms: Dict[str, bool]
-    ) -> Callable[["_CommandOrCoro"], bool]:
+    ) -> Callable[["_CommandOrCoro"], "_CommandOrCoro"]:
         if not user_perms:
             user_perms = None
 
@@ -239,35 +287,80 @@ class Requires:
 
         return decorator
 
-    def get_rule(self, model: PermissionModel) -> PermState:
+    def get_rule(self, model: Union[int, PermissionModel], guild_id: int) -> PermState:
         """Get the rule for a particular model.
 
         Parameters
         ----------
         model : PermissionModel
             The model to get the rule for.
+        guild_id : int
+            The ID of the guild for the rule's scope. Set to ``0``
+            for a global rule.
 
         Returns
         -------
         PermState
-            The state for this rule. See the `PermissionState` class
+            The state for this rule. See the `PermState` class
             for an explanation.
 
         """
+        if not isinstance(model, int):
+            model = model.id
+        if guild_id:
+            rules = self._guild_rules.get(guild_id, _IntKeyDict())
+        else:
+            rules = self._global_rules
+        return rules.get(model, PermState.NORMAL)
 
-    def set_rule(self, model: PermissionModel, rule: PermState) -> None:
+    def set_rule(self, model_id: int, rule: PermState, guild_id: int) -> None:
         """Set the rule for a particular model.
 
         Parameters
         ----------
-        model : PermissionModel
+        model_id : PermissionModel
             The model to add a rule for.
         rule : PermState
-            Which state this rule should be set as. See the `PermissionState`
+            Which state this rule should be set as. See the `PermState`
             class for an explanation.
+        guild_id : int
+            The ID of the guild for the rule's scope. Set to ``0``
+            for a global rule.
 
         """
-        self._rules[model] = rule
+        if guild_id:
+            rules = self._guild_rules.setdefault(guild_id, _IntKeyDict())
+        else:
+            rules = self._global_rules
+        if rule is PermState.NORMAL:
+            rules.pop(model_id, None)
+        else:
+            rules[model_id] = rule
+
+    def clear_all_rules(self, guild_id: int) -> None:
+        """Clear all rules of a particular scope.
+
+        Parameters
+        ----------
+        guild_id : int
+            The guild ID to clear rules for. If ``0``, this will
+            clear all global rules and leave all guild rules
+            untouched.
+
+        """
+        if guild_id:
+            rules = self._guild_rules.setdefault(guild_id, _IntKeyDict())
+        else:
+            rules = self._global_rules
+        rules.clear()
+
+    def get_default_guild_rule(self, guild_id: int) -> PermState:
+        """Get the default rule for a guild."""
+        return self._default_guild_rules.get(guild_id, PermState.NORMAL)
+
+    def set_default_guild_rule(self, guild_id: int, rule: PermState) -> None:
+        """Set the default rule for a guild."""
+        self._default_guild_rules[guild_id] = rule
 
     async def verify(self, ctx: "Context") -> bool:
         """Check if the given context passes the requirements.
@@ -293,11 +386,9 @@ class Requires:
 
         """
         await self._verify_bot(ctx)
-
         # Owner-only commands are non-overrideable
         if self.privilege_level is PrivilegeLevel.BOT_OWNER:
             return await ctx.bot.is_owner(ctx.author)
-
         return await self._transition_state(ctx)
 
     async def _verify_bot(self, ctx: "Context") -> None:
@@ -311,7 +402,7 @@ class Requires:
 
     async def _transition_state(self, ctx: "Context") -> bool:
         prev_state = ctx.permission_state
-        cur_state = self._get_rule(ctx)
+        cur_state = self._get_rule_from_ctx(ctx)
         should_invoke, next_state = prev_state.transition_to(cur_state)
         if should_invoke is None:
             # NORMAL invokation, we simply follow standard procedure
@@ -340,25 +431,42 @@ class Requires:
 
         return False
 
-    def _get_rule(self, ctx: "Context") -> PermState:
-        rules = self._rules
-        # Check global rules first
-        rule = rules[self._member_as_user(ctx.author)]
-        if rule is not None:
-            return rule
-
-        if ctx.guild is not None:
-            rule = rules[ctx.guild]
+    def _get_rule_from_ctx(self, ctx: "Context") -> PermState:
+        author = ctx.author
+        guild = ctx.guild
+        if ctx.guild is None:
+            # We only check the user for DM channels
+            rule = self._global_rules.get(author.id)
             if rule is not None:
                 return rule
+            return self.default_global_rule
 
-            # Check guild rules next
-            for model in (ctx.author, *ctx.author.roles, ctx.channel, ctx.channel.category):
-                rule = rules[model]
+        rules_chain = [self._global_rules]
+        guild_rules = self._guild_rules.get(ctx.guild.id)
+        if guild_rules:
+            rules_chain.append(guild_rules)
+
+        channels = []
+        if author.voice is not None:
+            channels.append(author.voice.channel)
+        channels.append(ctx.channel)
+        category = ctx.channel.category
+        if category is not None:
+            channels.append(category)
+
+        model_chain = [author, *channels, *author.roles, guild]
+
+        for rules in rules_chain:
+            for model in model_chain:
+                rule = rules.get(model.id)
                 if rule is not None:
                     return rule
+            del model_chain[-1]  # We don't check for the guild in guild rules
 
-        return PermState.NORMAL
+        default_rule = self.get_default_guild_rule(guild.id)
+        if default_rule is PermState.NORMAL:
+            default_rule = self.default_global_rule
+        return default_rule
 
     async def _verify_checks(self, ctx: "Context") -> bool:
         if not self.checks:
@@ -395,6 +503,12 @@ class Requires:
             return member._user
         return member
 
+    def __repr__(self) -> str:
+        return (
+            f"<Requires privilege_level={self.privilege_level!r} user_perms={self.user_perms!r} "
+            f"bot_perms={self.bot_perms!r}>"
+        )
+
 
 # check decorators
 
@@ -417,8 +531,13 @@ def bot_has_permissions(**perms) -> Callable[["_CommandOrCoro"], "_CommandOrCoro
     return decorator
 
 
-class _RuleDict(DefaultDict[PermissionModel, Optional[PermState]]):
-    def __missing__(self, key: Any) -> Any:
-        if not isinstance(key, PermissionModel.__args__):
-            raise TypeError(f"Invalid permission model: {type(key)}")
-        return super().__missing__(key)
+class _IntKeyDict(Dict[int, _VT]):
+    def __getitem__(self, key: Any) -> _VT:
+        if not isinstance(key, int):
+            raise TypeError("Keys must be of type `int`")
+        return super().__getitem__(key)
+
+    def __setitem__(self, key: Any, value: _VT) -> None:
+        if not isinstance(key, int):
+            raise TypeError("Keys must be of type `int`")
+        return super().__setitem__(key, value)

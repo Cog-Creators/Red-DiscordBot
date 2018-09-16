@@ -5,27 +5,96 @@ replace those from the `discord.ext.commands` module.
 """
 import inspect
 import weakref
-from typing import Awaitable, Callable, NewType, TYPE_CHECKING
+from typing import Awaitable, Callable, Dict, List, Optional, Tuple, TYPE_CHECKING
 
 import discord
 from discord.ext import commands
 
 from .errors import ConversionFailure
-from .requires import Requires, PrivilegeLevel, PermissionModel, PermState
+from .requires import PermState, PrivilegeLevel, Requires
 from ..i18n import Translator
 
 if TYPE_CHECKING:
     from .context import Context
 
-__all__ = ["Cog", "Command", "GroupMixin", "Group", "command", "group"]
+__all__ = [
+    "Cog",
+    "CogCommandMixin",
+    "CogGroupMixin",
+    "Command",
+    "Group",
+    "GroupMixin",
+    "command",
+    "group",
+]
 
 _ = Translator("commands.commands", __file__)
 
-Cog = NewType("Cog", object)
-Cog.__doc__ = "Representation of a cog, purely for type-hints."
+
+class CogCommandMixin:
+    """A mixin for cogs and commands."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if isinstance(self, Command):
+            decorated = self.callback
+        else:
+            decorated = self
+        self.requires: Requires = Requires(
+            privilege_level=getattr(
+                decorated, "__requires_privilege_level__", PrivilegeLevel.NONE
+            ),
+            user_perms=getattr(decorated, "__requires_user_perms__", {}),
+            bot_perms=getattr(decorated, "__requires_bot_perms__", {}),
+            checks=getattr(decorated, "__requires_checks__", []),
+        )
+
+    def allow_for(self, model_id: int, guild_id: int) -> None:
+        """Actively allow this command for the given model."""
+        self.requires.set_rule(model_id, PermState.ACTIVE_ALLOW, guild_id=guild_id)
+
+    def deny_to(self, model_id: int, guild_id: int) -> None:
+        """Actively deny this command to the given model."""
+        cur_rule = self.requires.get_rule(model_id, guild_id=guild_id)
+        if cur_rule is PermState.PASSIVE_ALLOW:
+            self.requires.set_rule(model_id, PermState.CAUTIOUS_ALLOW, guild_id=guild_id)
+        else:
+            self.requires.set_rule(model_id, PermState.ACTIVE_DENY, guild_id=guild_id)
+
+    def clear_rule_for(self, model_id: int, guild_id: int) -> Tuple[PermState, PermState]:
+        """Clear the rule which is currently set for this model."""
+        cur_rule = self.requires.get_rule(model_id, guild_id=guild_id)
+        if cur_rule is PermState.ACTIVE_ALLOW:
+            new_rule = PermState.NORMAL
+        elif cur_rule is PermState.ACTIVE_DENY:
+            new_rule = PermState.NORMAL
+        elif cur_rule is PermState.CAUTIOUS_ALLOW:
+            new_rule = PermState.PASSIVE_ALLOW
+        else:
+            return cur_rule, cur_rule
+        self.requires.set_rule(model_id, new_rule, guild_id=guild_id)
+        return cur_rule, new_rule
+
+    def set_default_rule(self, rule: Optional[bool], guild_id: int) -> None:
+        """Set the default rule for this cog or command.
+
+        Parameters
+        ----------
+        rule : Optional[bool]
+            The rule to set as default. If ``True`` for allow,
+            ``False`` for deny and ``None`` for normal.
+        guild_id : Optional[int]
+            Specify to set the default rule for a specific guild.
+            When ``None``, this will set the global default rule.
+
+        """
+        if guild_id:
+            self.requires.set_default_guild_rule(guild_id, PermState.from_bool(rule))
+        else:
+            self.requires.default_global_rule = PermState.from_bool(rule)
 
 
-class Command(commands.Command):
+class Command(CogCommandMixin, commands.Command):
     """Command class for Red.
 
     This should not be created directly, and instead via the decorator.
@@ -34,18 +103,9 @@ class Command(commands.Command):
     """
 
     def __init__(self, *args, **kwargs):
-        self._help_override = kwargs.pop("help_override", None)
         super().__init__(*args, **kwargs)
+        self._help_override = kwargs.pop("help_override", None)
         self.translator = kwargs.pop("i18n", None)
-        self.requires: Requires = Requires(
-            privilege_level=getattr(
-                self.callback, "__requires_privilege_level__", PrivilegeLevel.NONE
-            ),
-            user_perms=getattr(self.callback, "__requires_user_perms__", {}),
-            bot_perms=getattr(self.callback, "__requires_bot_perms__", {}),
-        )
-        for check in getattr(self.callback, "__requires_checks__", []):
-            self.requires.checks.append(check)
 
     @property
     def help(self):
@@ -72,11 +132,10 @@ class Command(commands.Command):
         pass
 
     @property
-    def parents(self):
-        """
-        Returns all parent commands of this command.
+    def parents(self) -> List["Group"]:
+        """List[Group] : Returns all parent commands of this command.
 
-        This is a list, sorted by the length of :attr:`.qualified_name` from highest to lowest.
+        This is sorted by the length of :attr:`.qualified_name` from highest to lowest.
         If the command has no parents, this will be an empty list.
         """
         cmd = self.parent
@@ -101,6 +160,12 @@ class Command(commands.Command):
         # this command as well
         original_command = ctx.command
         ctx.command = self
+
+        if self.parent is None and self.instance is not None:
+            # For top-level commands, we need to check the cog's requires too
+            ret = await self.instance.requires.verify(ctx)
+            if ret is False:
+                return False
 
         try:
             return await self.requires.verify(ctx)
@@ -183,26 +248,32 @@ class Command(commands.Command):
         else:
             return True
 
-    def allow_for(self, model: PermissionModel) -> None:
-        """Actively allow this command for the given model."""
-        self.requires.set_rule(model, PermState.ACTIVE_ALLOW)
-        for parent in self.parents:
-            cur_rule = parent.requires.get_rule(model)
+    def allow_for(self, model_id: int, guild_id: int) -> None:
+        super().allow_for(model_id, guild_id=guild_id)
+        parents = self.parents
+        if self.instance is not None:
+            parents.append(self.instance)
+        for parent in parents:
+            cur_rule = parent.requires.get_rule(model_id, guild_id=guild_id)
             if cur_rule is PermState.NORMAL:
-                parent.requires.set_rule(model, PermState.PASSIVE_ALLOW)
+                parent.requires.set_rule(model_id, PermState.PASSIVE_ALLOW, guild_id=guild_id)
             elif cur_rule is PermState.ACTIVE_DENY:
-                parent.requires.set_rule(model, PermState.CAUTIOUS_ALLOW)
+                parent.requires.set_rule(model_id, PermState.CAUTIOUS_ALLOW, guild_id=guild_id)
 
-    def deny_to(self, model: PermissionModel) -> None:
-        """Actively deny this command to the given model."""
-        cur_rule = self.requires.get_rule(model)
-        if cur_rule is PermState.PASSIVE_ALLOW:
-            self.requires.set_rule(model, PermState.CAUTIOUS_ALLOW)
-        else:
-            self.requires.set_rule(model, PermState.ACTIVE_DENY)
+    def clear_rule_for(self, model_id: int, guild_id: int) -> Tuple[PermState, PermState]:
+        old_rule, new_rule = super().clear_rule_for(model_id, guild_id=guild_id)
+        if old_rule is PermState.ACTIVE_ALLOW:
+            parents = self.parents
+            if self.instance is not None:
+                parents.append(self.instance)
+            for parent in parents:
+                should_continue = parent.reevaluate_rules_for(model_id, guild_id=guild_id)[1]
+                if not should_continue:
+                    break
+        return old_rule, new_rule
 
 
-class GroupMixin(commands.GroupMixin):
+class GroupMixin(discord.ext.commands.GroupMixin):
     """Mixin for `Group` and `Red` classes.
 
     This class inherits from :class:`discord.ext.commands.GroupMixin`.
@@ -233,7 +304,34 @@ class GroupMixin(commands.GroupMixin):
         return decorator
 
 
-class Group(GroupMixin, Command, commands.Group):
+class CogGroupMixin:
+    requires: Requires
+    all_commands: Dict[str, Command]
+
+    def reevaluate_rules_for(
+        self, model_id: int, guild_id: Optional[int]
+    ) -> Tuple[PermState, bool]:
+        cur_rule = self.requires.get_rule(model_id, guild_id=guild_id)
+        if cur_rule in (PermState.NORMAL, PermState.ACTIVE_ALLOW, PermState.ACTIVE_DENY):
+            # These three states are unaffected by subcommand rules
+            return cur_rule, False
+        else:
+            # Remaining states can be changed if there exists no actively-allowed
+            # subcommand (this includes subcommands multiple levels below)
+            if any(
+                cmd.requires.get_rule(model_id, guild_id=guild_id) in PermState.ALLOWED_STATES
+                for cmd in self.all_commands.values()
+            ):
+                return cur_rule, False
+            elif cur_rule is PermState.PASSIVE_ALLOW:
+                self.requires.set_rule(model_id, PermState.NORMAL, guild_id=guild_id)
+                return PermState.NORMAL, True
+            elif cur_rule is PermState.CAUTIOUS_ALLOW:
+                self.requires.set_rule(model_id, PermState.ACTIVE_DENY, guild_id=guild_id)
+                return PermState.ACTIVE_DENY, True
+
+
+class Group(GroupMixin, Command, CogGroupMixin, commands.Group):
     """Group command class for Red.
 
     This class inherits from `Command`, with :class:`GroupMixin` and
@@ -244,7 +342,7 @@ class Group(GroupMixin, Command, commands.Group):
         self.autohelp = kwargs.pop("autohelp", True)
         super().__init__(*args, **kwargs)
 
-    async def invoke(self, ctx):
+    async def invoke(self, ctx: "Context"):
         view = ctx.view
         previous = view.index
         view.skip_ws()
@@ -269,7 +367,12 @@ class Group(GroupMixin, Command, commands.Group):
         await super().invoke(ctx)
 
 
-# decorators
+class Cog(CogCommandMixin, CogGroupMixin):
+    """Base class for a cog."""
+
+    @property
+    def all_commands(self) -> Dict[str, Command]:
+        return {cmd.name: cmd for cmd in self.__dict__.values() if isinstance(cmd, Command)}
 
 
 def command(name=None, cls=Command, **attrs):

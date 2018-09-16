@@ -241,7 +241,7 @@ class CoreLogic:
 
 
 @i18n.cog_i18n(_)
-class Core(CoreLogic):
+class Core(commands.Cog, CoreLogic):
     """Commands related to core functions"""
 
     def __init__(self, bot):

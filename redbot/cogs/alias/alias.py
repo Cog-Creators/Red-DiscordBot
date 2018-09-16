@@ -14,7 +14,7 @@ _ = Translator("Alias", __file__)
 
 
 @cog_i18n(_)
-class Alias:
+class Alias(commands.Cog):
     """
     Alias
     
@@ -31,6 +31,7 @@ class Alias:
     default_guild_settings = {"enabled": False, "entries": []}  # Going to be a list of dicts
 
     def __init__(self, bot: Red):
+        super().__init__()
         self.bot = bot
         self._aliases = Config.get_conf(self, 8927348724)
 

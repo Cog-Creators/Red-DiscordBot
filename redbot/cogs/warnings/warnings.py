@@ -20,7 +20,7 @@ _ = Translator("Warnings", __file__)
 
 
 @cog_i18n(_)
-class Warnings:
+class Warnings(commands.Cog):
     """A warning system for Red"""
 
     default_guild = {"actions": [], "reasons": {}, "allow_custom_reasons": False}
@@ -28,6 +28,7 @@ class Warnings:
     default_member = {"total_points": 0, "status": "", "warnings": {}}
 
     def __init__(self, bot: Red):
+        super().__init__()
         self.config = Config.get_conf(self, identifier=5757575755)
         self.config.register_guild(**self.default_guild)
         self.config.register_member(**self.default_member)

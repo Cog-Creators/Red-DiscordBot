@@ -105,7 +105,7 @@ class SetParser:
 
 
 @cog_i18n(_)
-class Economy:
+class Economy(commands.Cog):
     """Economy
 
     Get rich and have fun with imaginary currency!"""
@@ -128,6 +128,7 @@ class Economy:
     default_user_settings = default_member_settings
 
     def __init__(self, bot: Red):
+        super().__init__()
         self.bot = bot
         self.file_path = "data/economy/settings.json"
         self.config = Config.get_conf(self, 1256844281)

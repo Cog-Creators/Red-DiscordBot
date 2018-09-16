@@ -16,3 +16,5 @@ if discord.version_info.major < 1:
 
 # Filter fuzzywuzzy slow sequence matcher warning
 warnings.filterwarnings("ignore", module=r"fuzzywuzzy.*")
+# Prevent discord PyNaCl missing warning
+discord.voice_client.VoiceClient.warn_nacl = False
