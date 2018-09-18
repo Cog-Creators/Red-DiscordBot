@@ -35,7 +35,8 @@ class TimedeltaConverter(Converter):
 
             @commands.command()
             async def timer(self, ctx, time: commands.TimedeltaConverter):
-                await self.start_timer(time)
+                await asyncio.sleep(time.total_seconds())
+                await ctx.send("Time's up!")
 
         Using the converter manually:
 
