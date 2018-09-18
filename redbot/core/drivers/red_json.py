@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Tuple
+from typing import Tuple, Optional
 import copy
 import weakref
 import logging
@@ -34,24 +34,43 @@ def finalize_driver(cog_name):
 
 
 class JSON(BaseDriver):
-    """
-    Subclass of :py:class:`.red_base.BaseDriver`.
+    """JSON driver implementation.
 
-    .. py:attribute:: file_name
+    This backend is the easiest to set up, and suitable for most small
+    bots, however one should consider switching to a database backend
+    should their config files start to significantly grow in size
+    (e.g. if a single JSON grows larger than multiple MB), or the
+    access frequency greatly increases.
 
+    Parameters
+    ----------
+    cog_name : str
+        The name of the cog class. This will be the same as the name
+        of the folder containing the JSON file.
+    identifier : str
+        A unique identifier which will be the first key in the JSON
+        dict, to avoid any possible naming conflicts with other cogs.
+    data_path_override : Optional[pathlib.Path]
+        Where the JSON file will be saved.
+    file_name_override : str
+        The name of the JSON file, including the extension. defaults
+        to _settings.json_.
+
+    Attributes
+    ----------
+    file_name : str
         The name of the file in which to store JSON data.
+    data_path : pathlib.Path
+        The path in which to store the file indicated by `file_name`.
 
-    .. py:attribute:: data_path
-
-        The path in which to store the file indicated by :py:attr:`file_name`.
     """
 
     def __init__(
         self,
-        cog_name,
-        identifier,
+        cog_name: str,
+        identifier: str,
         *,
-        data_path_override: Path = None,
+        data_path_override: Optional[Path] = None,
         file_name_override: str = "settings.json"
     ):
         super().__init__(cog_name, identifier)
@@ -76,6 +95,10 @@ class JSON(BaseDriver):
     @data.setter
     def data(self, value):
         _shared_datastore[self.cog_name] = value
+
+    @staticmethod
+    def get_config_details() -> dict:
+        return {}
 
     def _load_data(self):
         if self.cog_name not in _driver_counts:
@@ -122,6 +145,3 @@ class JSON(BaseDriver):
             pass
         else:
             await self.jsonIO._threadsafe_save_json(self.data)
-
-    def get_config_details(self):
-        return

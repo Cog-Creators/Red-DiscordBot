@@ -9,7 +9,7 @@ from .data_manager import cog_data_path, core_data_path
 from .drivers import get_driver
 
 if TYPE_CHECKING:
-    from .drivers.red_base import BaseDriver
+    from .drivers import BaseDriver
 
 log = logging.getLogger("red.config")
 
@@ -63,7 +63,7 @@ class Value:
         element from a json document.
     default
         The default value for the data element that `identifiers` points at.
-    driver : `redbot.core.drivers.red_base.BaseDriver`
+    driver : `redbot.core.drivers.BaseDriver`
         A reference to `Config.driver`.
 
     """
@@ -171,7 +171,7 @@ class Group(Value):
         All registered default values for this Group.
     force_registration : `bool`
         Same as `Config.force_registration`.
-    driver : `redbot.core.drivers.red_base.BaseDriver`
+    driver : `redbot.core.drivers.BaseDriver`
         A reference to `Config.driver`.
 
     """
@@ -452,7 +452,7 @@ class Config:
         Unique identifier provided to differentiate cog data when name
         conflicts occur.
     driver
-        An instance of a driver that implements `redbot.core.drivers.red_base.BaseDriver`.
+        An instance of a driver that implements `redbot.core.drivers.BaseDriver`.
     force_registration : `bool`
         Determines if Config should throw an error if a cog attempts to access
         an attribute which has not been previously registered.

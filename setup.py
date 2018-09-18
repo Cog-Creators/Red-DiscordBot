@@ -95,6 +95,7 @@ if __name__ == "__main__":
                 "redbot=redbot.__main__:main",
                 "redbot-setup=redbot.setup:main",
                 "redbot-launcher=redbot.launcher:main",
+                "redbot-migrate=redbot.migrate:main",
             ],
             "pytest11": ["red-discordbot = redbot.pytest"],
         },
