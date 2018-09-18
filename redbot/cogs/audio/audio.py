@@ -747,6 +747,8 @@ class Audio:
                 return await self._embed_msg(ctx, "You need the DJ role to pause songs.")
 
         command = ctx.invoked_with
+        if not player.current:
+            return await self._embed_msg(ctx, "Nothing playing.")
         if "localtracks/" in player.current.uri:
             description = "**{}**\n{}".format(
                 player.current.title, player.current.uri.replace("localtracks/", "")
