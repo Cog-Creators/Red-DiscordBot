@@ -41,9 +41,7 @@ def _initialize(**kwargs):
 
 
 class Mongo(BaseDriver):
-    """
-    Subclass of :py:class:`.red_base.BaseDriver`.
-    """
+    """MongoDB storage driver."""
 
     def __init__(self, cog_name, identifier, **kwargs):
         super().__init__(cog_name, identifier)
@@ -53,8 +51,7 @@ class Mongo(BaseDriver):
 
     @property
     def db(self) -> "motor.core.Database":
-        """
-        Gets the mongo database for this cog's name.
+        """motor.core.Database : The mongo database for this cog's name.
 
         .. warning::
 
@@ -62,13 +59,11 @@ class Mongo(BaseDriver):
             database is accessed. We will want to create a connection pool down the
             line to limit the number of connections.
 
-        :return:
-            PyMongo Database object.
         """
         return _conn.get_database()
 
     @staticmethod
-    def get_config_details():
+    def get_config_details() -> dict:
         host = input("Enter host address: ")
         port = int(input("Enter host port: "))
 
@@ -96,9 +91,11 @@ class Mongo(BaseDriver):
         Unless you are doing custom stuff ``collection_name`` should be one of the class
         attributes of :py:class:`core.config.Config`.
 
-        :param str collection_name:
-        :return:
-            PyMongo collection object.
+        Returns
+        -------
+        motor.core.Collection
+            The collection for this cog's data.
+
         """
         return self.db[self.cog_name]
 

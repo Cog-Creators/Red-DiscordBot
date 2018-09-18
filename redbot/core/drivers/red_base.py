@@ -7,7 +7,7 @@ class BaseDriver:
         self.unique_cog_identifier = identifier
 
     @staticmethod
-    def get_config_details():
+    def get_config_details() -> dict:
         """
         Asks users for additional configuration information necessary
         to use this config driver.
@@ -16,6 +16,7 @@ class BaseDriver:
         -------
         dict
             Dict of configuration details.
+
         """
         raise NotImplementedError
 
@@ -25,13 +26,14 @@ class BaseDriver:
 
         Parameters
         ----------
-        identifiers
+        *identifiers : str
             A list of identifiers that correspond to nested dict accesses.
 
         Returns
         -------
         Any
             Stored value.
+
         """
         raise NotImplementedError
 
@@ -41,10 +43,11 @@ class BaseDriver:
 
         Parameters
         ----------
-        identifiers
+        *identifiers : str
             A list of identifiers that correspond to nested dict accesses.
         value
             Any JSON serializable python object.
+
         """
         raise NotImplementedError
 
@@ -56,7 +59,8 @@ class BaseDriver:
 
         Parameters
         ----------
-        identifiers
+        *identifiers
             A list of identifiers that correspond to nested dict accesses.
+
         """
         raise NotImplementedError

@@ -155,12 +155,8 @@ def basic_setup():
     storage = get_storage_type()
 
     storage_dict = {1: "JSON", 2: "MongoDB"}
-    default_dirs["STORAGE_TYPE"] = storage_dict.get(storage, 1)
-
-    if storage_dict.get(storage, 1) == "MongoDB":
-        default_dirs["STORAGE_DETAILS"] = Mongo.get_config_details()
-    else:
-        default_dirs["STORAGE_DETAILS"] = {}
+    default_dirs["STORAGE_TYPE"] = storage_type = storage_dict.get(storage, 1)
+    default_dirs["STORAGE_DETAILS"] = Mongo.get_config_details()
 
     name = get_name()
     save_config(name, default_dirs)
