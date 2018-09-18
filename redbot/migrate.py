@@ -91,9 +91,7 @@ class MongoDumper(BaseDumper):
 
 LOADERS: Dict[str, Callable[[], Awaitable[Tuple[Dict, Dict]]]] = {"JSON": load_json_data}
 
-DUMPERS: Dict[str, Callable[[Dict, Dict], Awaitable[None]]] = {
-    "Mongo": MongoDumper,
-}
+DUMPERS: Dict[str, Callable[[Dict, Dict], Awaitable[None]]] = {"Mongo": MongoDumper}
 
 AVAILABLE_LOADERS_STR = ", ".join(LOADERS)
 AVAILABLE_DUMPERS_STR = ", ".join(DUMPERS)
@@ -120,7 +118,7 @@ def _parse_cli_args(args: Sequence[str]) -> argparse.Namespace:
         help=(
             "The name of the storage backend to migrate to. Valid backends: "
             + AVAILABLE_DUMPERS_STR
-        )
+        ),
     )
     return parser.parse_args(args)
 
