@@ -7,8 +7,6 @@ from redbot.core.commands import Converter, BadArgument
 if TYPE_CHECKING:
     from .commands import Context
 
-__all__ = ["TimedeltaConverter"]
-
 TIME_RE = re.compile(
     r"((?P<days>\d+?)\s?(d(ays?)?))?\s?((?P<hours>\d+?)\s?(hours?|hrs|hr?))?\s?((?P<minutes>\d+?)\s?(minutes?|mins?|m))?\s?((?P<seconds>\d+?)\s?(seconds?|secs?|s))?\s?",
     re.I,
