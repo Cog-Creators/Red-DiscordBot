@@ -42,13 +42,12 @@ def check_compiler_available():
     m = ccompiler.new_compiler()
 
     with tempfile.TemporaryDirectory() as tdir:
-        with tempfile.NamedTemporaryFile(prefix="dummy", suffix=".c", dir=tdir) as tfile:
-            tfile.write(b"int main(int argc, char** argv) {return 0;}")
-            tfile.seek(0)
-            try:
-                m.compile([tfile.name], output_dir=tdir)
-            except (CCompilerError, DistutilsPlatformError):
-                return False
+        with open(os.path.join(tdir, "dummy.c"), "w") as tfile:
+            tfile.write("int main(int argc, char** argv) {return 0;}")
+        try:
+            m.compile([tfile.name], output_dir=tdir)
+        except (CCompilerError, DistutilsPlatformError):
+            return False
     return True
 
 
