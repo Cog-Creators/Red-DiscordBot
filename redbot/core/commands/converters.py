@@ -48,7 +48,7 @@ class TimedeltaConverter(Converter):
 
     async def convert(self, ctx: "Context", argument: str) -> timedelta:
         """
-        Convert manually a string to a :class:`datetime.timedelta` class.
+        Manually convert a string to a :class:`datetime.timedelta` class.
 
         .. warning:: This should not be called as a command function annotation.
             This is for manual calls.
