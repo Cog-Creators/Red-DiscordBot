@@ -1,8 +1,16 @@
+from typing import Any
+
 __all__ = ["BaseDriver"]
 
 
 class BaseDriver:
-    def __init__(self, cog_name, identifier):
+    """Abstract base class for drivers.
+
+    Storage backend drivers must implement all of this class's
+    methods.
+    """
+
+    def __init__(self, cog_name: str, identifier: str):
         self.cog_name = cog_name
         self.unique_cog_identifier = identifier
 
@@ -20,7 +28,7 @@ class BaseDriver:
         """
         raise NotImplementedError
 
-    async def get(self, *identifiers: str):
+    async def get(self, *identifiers: str) -> Any:
         """
         Finds the value indicate by the given identifiers.
 
@@ -37,7 +45,7 @@ class BaseDriver:
         """
         raise NotImplementedError
 
-    async def set(self, *identifiers: str, value=None):
+    async def set(self, *identifiers: str, value=None) -> None:
         """
         Sets the value of the key indicated by the given identifiers.
 
@@ -51,7 +59,7 @@ class BaseDriver:
         """
         raise NotImplementedError
 
-    async def clear(self, *identifiers: str):
+    async def clear(self, *identifiers: str) -> None:
         """
         Clears out the value specified by the given identifiers.
 
