@@ -135,7 +135,8 @@ class Image:
         await self.settings.imgur_client_id.set(imgur_client_id)
         await ctx.send(_("Set the imgur client id!"))
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.guild_only()
+    @commands.command()
     async def gif(self, ctx, *keywords):
         """Retrieves first search result from giphy"""
         if keywords:
@@ -158,7 +159,8 @@ class Image:
             else:
                 await ctx.send(_("Error contacting the API."))
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.guild_only()
+    @commands.command()
     async def gifr(self, ctx, *keywords):
         """Retrieves a random gif from a giphy search"""
         if keywords:
