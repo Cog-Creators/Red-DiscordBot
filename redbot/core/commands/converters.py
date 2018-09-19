@@ -13,7 +13,7 @@ TIME_RE = re.compile(
 )
 
 
-class TimedeltaConverter(Converter):
+def timedelta_converter(argument: str) -> timedelta:
     """
     Convert to a :class:`datetime.timedelta` class.
 
@@ -45,35 +45,26 @@ class TimedeltaConverter(Converter):
             async def convert_time(ctx: Context, text: str) -> datetime.timedelta:
                 time = await commands.TimedeltaConverter().convert(ctx, text)
                 return time
+
+    Arguments
+    ---------
+    argument: str
+        The string you want to convert.
+
+    Returns
+    -------
+    datetime.timedelta
+        The :class:`datetime.timedelta` object.
+
+    Raises
+    ------
+    ~discord.ext.commands.BadArgument
+        No time was found from the given string.
     """
 
-    async def convert(self, ctx: "Context", argument: str) -> timedelta:
-        """
-        Manually convert a string to a :class:`datetime.timedelta` class.
-
-        .. warning:: This should not be called as a command function annotation.
-            This is for manual calls.
-
-        Arguments
-        ---------
-        ctx: Context
-            The context of the command.
-        argument: str
-            The string you want to convert.
-
-        Returns
-        -------
-        datetime.timedelta
-            The :class:`datetime.timedelta` object.
-
-        Raises
-        ------
-        ~discord.ext.commands.BadArgument
-            No time was found from the given string.
-        """
-        matches = TIME_RE.match(argument)
-        params = {k: int(v) for k, v in matches.groupdict().items() if None not in (k, v)}
-        if not params:
-            raise BadArgument("No time could be found.")
-        time = timedelta(**params)
-        return time
+    matches = TIME_RE.match(argument)
+    params = {k: int(v) for k, v in matches.groupdict().items() if None not in (k, v)}
+    if not params:
+        raise BadArgument("No time could be found.")
+    time = timedelta(**params)
+    return time
