@@ -134,8 +134,10 @@ Example confirgurations
 
     .. code-block:: none
 
-        [p]permissions setguilddefault Audio deny
-        [p]permissions addguildrule allow Cleanup [role ID]
+        [p]permissions setguilddefault deny play
+        [p]permissions setguilddefault deny "playlist start"
+        [p]permissions addguildrule allow play [voice channel ID or name]
+        [p]permissions addguildrule allow "playlist start" [voice channel ID or name]
 
 *   Allowing extra roles to use cleanup
 
