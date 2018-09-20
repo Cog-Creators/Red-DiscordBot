@@ -39,7 +39,7 @@ def timedelta_converter(argument: str) -> timedelta:
         .. code-block:: python3
 
             async def convert_time(ctx: Context, text: str) -> datetime.timedelta:
-                time = await commands.timedelta_converter(text)
+                time = commands.timedelta_converter(text)
                 return time
 
     Arguments
