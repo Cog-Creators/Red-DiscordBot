@@ -21,3 +21,9 @@ extend functionlities used throughout the bot, as outlined below.
 
 .. autoclass:: redbot.core.commands.Context
     :members:
+
+----------
+Converters
+----------
+.. automodule:: redbot.core.commands.converters
+    :members:
