@@ -30,7 +30,7 @@ def timedelta_converter(argument: str) -> timedelta:
         .. code-block:: python3
 
             @commands.command()
-            async def timer(self, ctx, time: commands.TimedeltaConverter):
+            async def timer(self, ctx, time: commands.timedelta_converter):
                 await asyncio.sleep(time.total_seconds())
                 await ctx.send("Time's up!")
 
@@ -39,7 +39,7 @@ def timedelta_converter(argument: str) -> timedelta:
         .. code-block:: python3
 
             async def convert_time(ctx: Context, text: str) -> datetime.timedelta:
-                time = commands.TimedeltaConverter().convert(ctx, text)
+                time = await commands.timedelta_converter(text)
                 return time
 
     Arguments
