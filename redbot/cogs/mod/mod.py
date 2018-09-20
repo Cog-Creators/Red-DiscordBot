@@ -54,13 +54,17 @@ class Mod:
 
         self.registration_task = self.bot.loop.create_task(self._casetype_registration())
         self.tban_expiry_task = self.bot.loop.create_task(self.check_tempban_expirations())
-        self.tmute_expiry_task = self.bot.loop.create_task(self.check_tempmute_expirations())
         self.last_case = defaultdict(dict)
+        self.tmute_expiry_task = self.bot.loop.create_task(self.check_tempmute_expirations())
+        self.scheduled_unmute_tasks = {}
 
     def __unload(self):
         self.registration_task.cancel()
         self.tban_expiry_task.cancel()
         self.tmute_expiry_task.cancel()
+        for task in self.scheduled_unmute_tasks.values():
+            if not task.done():
+                task.cancel()
 
     async def _casetype_registration(self):
         casetypes_to_register = [
@@ -907,7 +911,7 @@ class Mod:
             guild_wide=True,
         )
 
-    async def mass_unmute(self, mute_dict):
+    async def process_mute_expiry(self, mute_dict):
         guild = self.bot.get_guild(mute_dict["guild"])
         member = guild.get_member(mute_dict["user"])
         channels = [c for c in guild.channels if c.id in mute_dict["channels"]]
@@ -941,27 +945,30 @@ class Mod:
 
         if successful:
             expiry = None if expires is None else (ctx.message.created_at + expires).timestamp()
+            eid = str(ctx.message.id)
             entry = {
                 "guild": ctx.guild.id,
                 "user": target.id,
                 "expiry": expiry,
                 "channels": [c.id for c in successful],
             }
-            await self.settings.custom("TEMPMUTE", str(ctx.message.id)).set(entry)
+            await self.settings.custom("TEMPMUTE", eid).set(entry)
+            if expiry and expires.total_seconds() < 600:
+                task = self.bot.loop.create_task(
+                    self._scheduled_tempexpire(eid, entry, int(expires.total_seconds()))
+                )
+                self.scheduled_unmute_tasks[eid] = task
             await ctx.tick()
         else:
-            already_muted = {
-                k for k, m in messages.items() if m == mute_unmute_issues["already_muted"]
-            }
             others = {k for k, m in messages.items() if m != mute_unmute_issues["already_muted"]}
             if not others:
                 await ctx.send("User already muted everywhere")
             else:
-                output = "I tried to mute them everywhere but failed. Ways failed below:\n"
+                output = "I tried to mute them everywhere but failed. Ways failed below:"
                 for channel, message in messages.items():
-                    output += f"{channel.name}: {message}"
+                    output += f"\n{channel.name}: {message}"
                 for page in pagify(output):
-                    await ctx.send(output)
+                    await ctx.send(page)
 
     @commands.group()
     @commands.guild_only()
@@ -1389,30 +1396,38 @@ class Mod:
             nicks = [escape(nick, mass_mentions=True) for nick in nicks if nick]
         return names, nicks
 
+    async def _scheduled_tempexpire(self, eid, entry, delay):
+        await asyncio.sleep(delay)
+        try:
+            if await self.process_mute_expiry(entry):
+                data = await self.settings._get_base_group("TEMPMUTE").all()
+                data.pop(eid, None)
+                await self.settings._get_base_group("TEMPMUTE").set(data)
+            else:
+                log.info("Failed to revoke a tempban in guild with id: %d", entry["guild"])
+        except (AttributeError, KeyError):
+            pass
+            # Can't find guild or member anymore,
+            # not safe to remove, possible API unavailable
+
     async def check_tempmute_expirations(self):
         _tmutes = self.settings._get_base_group("TEMPMUTE")
         while self == self.bot.get_cog("Mod"):
-            cleanups = []
             temp_mutes = await _tmutes.all()
-
             for eid, entry in temp_mutes.items():
-                if not entry:  # needed due to behavior with .all() on a custom group.
+                if not entry or not entry["expiry"]:
+                    # needed due to behavior with .all() on a custom group.
                     continue
-                if entry["expiry"] > datetime.utcnow().timestamp():
-                    continue
-                try:
-                    if await self.mass_unmute(entry):
-                        cleanups.append(eid)
-                    else:
-                        log.info("Failed to revoke a tempban in guild with id: %d", entry["guild"])
-                except (AttributeError, KeyError):
-                    pass
-                    # Can't find guild or member anymore,
-                    # not safe to remove, possible API unavailable
-
-            temp_mutes = {k: v for k, v in temp_mutes.items() if k not in cleanups}
-            await _tmutes.set(temp_mutes)
-            await asyncio.sleep(60)
+                delay = max(0, (entry["expiry"] - datetime.utcnow().timestamp()))
+                if delay < 200 and eid not in self.scheduled_unmute_tasks:
+                    eid_unmute = self.bot.loop.create_task(
+                        self._scheduled_tempexpire(eid, entry, delay)
+                    )
+                    self.scheduled_unmute_tasks[eid] = eid_unmute
+            await asyncio.sleep(300)
+            self.scheduled_unmute_tasks = {
+                k: v for k, v in self.scheduled_unmute_tasks.items() if not v.done()
+            }
 
     async def check_tempban_expirations(self):
         member = namedtuple("Member", "id guild")
