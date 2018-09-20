@@ -8,15 +8,10 @@ from redbot.core.commands import MemberConverter, timedelta_converter, Context, 
 
 __all__ = ["mute_converter"]
 
-mute_parser = argparse.ArgumentParser(
-    description="Mute Parser",
-    add_help=False,
-    allow_abbrev=True,
-    usage="redbot <member> [arguments]",
-)
-mute_parser.add_argument("--reason", nargs="*", dest="reason", default="")
-mute_parser.add_argument("--timed", nargs="*", dest="timed", default="")
-mute_parser.add_argument("--for", nargs="*", dest="timed", default="")
+
+class NoExitArgparse(argparse.ArgumentParser):
+    def error(self, message):
+        raise BadArgument(None, None)
 
 
 def mute_converter(argument: str) -> Tuple[Optional[str], Optional[timedelta]]:
@@ -26,9 +21,11 @@ def mute_converter(argument: str) -> Tuple[Optional[str], Optional[timedelta]]:
         -t [timedelta]
         --reason being an ass
         -r timeout --timed 1hr
-        --reason needs to cool off --for 3 hours
     """
+    mute_parser = NoExitArgparse(description="Mute Parser", add_help=False, allow_abbrev=True)
+    mute_parser.add_argument("--reason", "-r", nargs="*", dest="reason", default="")
+    mute_parser.add_argument("--timed", "-t", nargs="*", dest="timed", default="")
     vals = mute_parser.parse_args(shlex.split(argument))
-    reason = vals.reason or None
-    time_interval = timedelta_converter(vals.timed) if vals.timed else None
+    reason = " ".join(vals.reason) or None
+    time_interval = timedelta_converter((" ".join(vals.timed))) if vals.timed else None
     return reason, time_interval

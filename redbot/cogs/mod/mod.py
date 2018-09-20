@@ -8,7 +8,7 @@ import discord
 from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import box, escape
+from redbot.core.utils.chat_formatting import box, escape, pagify
 from .checks import mod_or_voice_permissions, admin_or_voice_permissions, bot_has_voice_permissions
 from redbot.core.utils.mod import is_mod_or_superior, is_allowed_by_hierarchy, get_audit_reason
 from .log import log
@@ -904,7 +904,7 @@ class Mod:
             target=user,
             reason=reason,
             expires=time_interval,
-            guild_wise=True,
+            guild_wide=True,
         )
 
     async def mass_unmute(self, mute_dict):
@@ -913,9 +913,10 @@ class Mod:
         channels = [c for c in guild.channels if c.id in mute_dict["channels"]]
 
         exit_codes = [
-            (await self.unmute_user(guild, channel, guild.me, member))[0] for channel in channels
+            (await self.unmute_user(guild, channel, guild.me, member)) for channel in channels
         ]
-        return all(exit_codes)
+
+        return all(e[0] or e[1] == mute_unmute_issues["already_unmuted"] for e in exit_codes)
 
     async def process_mute(
         self,
@@ -934,9 +935,7 @@ class Mod:
             loc: (await self.mute_user(channel=loc, author=ctx.author, user=target, reason=reason))
             for loc in locations
         }
-        messages = {v[1] for k, v in results.items() if v[0] is False and v[1] is not None}
-        for message in messages:
-            await ctx.send(message)
+        messages = {k: v[1] for k, v in results.items() if v[0] is False and v[1] is not None}
 
         successful = {k for k, v in results.items() if v[0]}
 
@@ -950,6 +949,19 @@ class Mod:
             }
             await self.settings.custom("TEMPMUTE", str(ctx.message.id)).set(entry)
             await ctx.tick()
+        else:
+            already_muted = {
+                k for k, m in messages.items() if m == mute_unmute_issues["already_muted"]
+            }
+            others = {k for k, m in messages.items() if m != mute_unmute_issues["already_muted"]}
+            if not others:
+                await ctx.send("User already muted everywhere")
+            else:
+                output = "I tried to mute them everywhere but failed. Ways failed below:\n"
+                for channel, message in messages.items():
+                    output += f"{channel.name}: {message}"
+                for page in pagify(output):
+                    await ctx.send(output)
 
     @commands.group()
     @commands.guild_only()
@@ -1128,13 +1140,11 @@ class Mod:
 
         if isinstance(channel, discord.TextChannel):
             default_old_values = {"send_messages": None, "add_reactions": None}
-            if (overwrites.send_messages or permissions.send_messages) and (
-                overwrites.add_reactions or permissions.add_reactions
-            ):
+            if overwrites.send_messages or permissions.send_messages:
                 return False, mute_unmute_issues["already_unmuted"]
         else:
             default_old_values = {"speak": None}
-            if overwrites.speak is False or permissions.speak is False:
+            if overwrites.speak or permissions.speak:
                 return False, mute_unmute_issues["already_unmuted"]
 
         if not await is_allowed_by_hierarchy(self.bot, self.settings, channel.guild, author, user):
@@ -1386,6 +1396,8 @@ class Mod:
             temp_mutes = await _tmutes.all()
 
             for eid, entry in temp_mutes.items():
+                if not entry:  # needed due to behavior with .all() on a custom group.
+                    continue
                 if entry["expiry"] > datetime.utcnow().timestamp():
                     continue
                 try:
