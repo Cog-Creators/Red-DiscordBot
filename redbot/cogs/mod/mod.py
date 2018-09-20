@@ -31,17 +31,11 @@ class Mod:
         "delete_delay": -1,
         "reinvite_on_unban": False,
         "current_tempbans": [],
-        "current_tempmutes": [],
     }
 
     default_channel_settings = {"ignored": False}
 
-    default_member_settings = {
-        "past_nicks": [],
-        "perms_cache": {},
-        "banned_until": False,
-        "temp_mutes": {},
-    }
+    default_member_settings = {"past_nicks": [], "perms_cache": {}, "banned_until": False}
 
     default_user_settings = {"past_names": []}
 
@@ -53,6 +47,7 @@ class Mod:
         self.settings.register_channel(**self.default_channel_settings)
         self.settings.register_member(**self.default_member_settings)
         self.settings.register_user(**self.default_user_settings)
+        self.settings.register_custom("TEMPMUTE", user=None, channels=[], expiry=None, guild=None)
         self.ban_queue = []
         self.unban_queue = []
         self.cache = defaultdict(lambda: deque(maxlen=3))
@@ -912,6 +907,16 @@ class Mod:
             guild_wise=True,
         )
 
+    async def mass_unmute(self, mute_dict):
+        guild = self.bot.get_guild(mute_dict["guild"])
+        member = guild.get_member(mute_dict["user"])
+        channels = [c for c in guild.channels if c.id in mute_dict["channels"]]
+
+        exit_codes = [
+            (await self.unmute_user(guild, channel, guild.me, member))[0] for channel in channels
+        ]
+        return all(exit_codes)
+
     async def process_mute(
         self,
         *locations: Union[discord.TextChannel, discord.VoiceChannel],
@@ -929,8 +934,22 @@ class Mod:
             loc: (await self.mute_user(channel=loc, author=ctx.author, user=target, reason=reason))
             for loc in locations
         }
-        # schedule unmutes based on above results
-        # TODO: UX feedback based on above results
+        messages = {v[1] for k, v in results.items() if v[0] is False and v[1] is not None}
+        for message in messages:
+            await ctx.send(message)
+
+        successful = {k for k, v in results.items() if v[0]}
+
+        if successful:
+            expiry = None if expires is None else (ctx.message.created_at + expires).timestamp()
+            entry = {
+                "guild": ctx.guild.id,
+                "user": target.id,
+                "expiry": expiry,
+                "channels": [c.id for c in successful],
+            }
+            await self.settings.custom("TEMPMUTE", str(ctx.message.id)).set(entry)
+            await ctx.tick()
 
     @commands.group()
     @commands.guild_only()
@@ -1361,8 +1380,27 @@ class Mod:
         return names, nicks
 
     async def check_tempmute_expirations(self):
-        pass
-        # TODO
+        _tmutes = self.settings._get_base_group("TEMPMUTE")
+        while self == self.bot.get_cog("Mod"):
+            cleanups = []
+            temp_mutes = await _tmutes.all()
+
+            for eid, entry in temp_mutes.items():
+                if entry["expiry"] > datetime.utcnow().timestamp():
+                    continue
+                try:
+                    if await self.mass_unmute(entry):
+                        cleanups.append(eid)
+                    else:
+                        log.info("Failed to revoke a tempban in guild with id: %d", entry["guild"])
+                except (AttributeError, KeyError):
+                    pass
+                    # Can't find guild or member anymore,
+                    # not safe to remove, possible API unavailable
+
+            temp_mutes = {k: v for k, v in temp_mutes.items() if k not in cleanups}
+            await _tmutes.set(temp_mutes)
+            await asyncio.sleep(60)
 
     async def check_tempban_expirations(self):
         member = namedtuple("Member", "id guild")
