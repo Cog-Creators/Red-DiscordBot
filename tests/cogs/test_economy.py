@@ -1,16 +1,5 @@
 import pytest
-
-
-@pytest.fixture()
-def bank(config, monkeypatch):
-    from redbot.core import Config
-
-    with monkeypatch.context() as m:
-        m.setattr(Config, "get_conf", lambda *args, **kwargs: config)
-        from redbot.core import bank
-
-        bank._register_defaults()
-        return bank
+from redbot.pytest.economy import *
 
 
 @pytest.mark.asyncio
@@ -80,3 +69,15 @@ async def test_set_default_balance(bank, guild_factory):
     await bank.set_default_balance(500, guild)
     default_bal = await bank.get_default_balance(guild)
     assert default_bal == 500
+
+
+@pytest.mark.asyncio
+async def test_nonint_transaction_amount(bank, member_factory):
+    mbr1 = member_factory.get()
+    mbr2 = member_factory.get()
+    with pytest.raises(TypeError):
+        await bank.deposit_credits(mbr1, 1.0)
+    with pytest.raises(TypeError):
+        await bank.withdraw_credits(mbr1, 1.0)
+    with pytest.raises(TypeError):
+        await bank.transfer_credits(mbr1, mbr2, 1.0)

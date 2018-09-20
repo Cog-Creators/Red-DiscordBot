@@ -127,8 +127,8 @@ class Admin:
         self, ctx: commands.Context, rolename: discord.Role, *, user: MemberDefaultAuthor = None
     ):
         """
-        Adds a role to a user. If user is left blank it defaults to the
-            author of the command.
+        Adds a role to a user.
+        If user is left blank it defaults to the author of the command.
         """
         if user is None:
             user = ctx.author
@@ -136,7 +136,7 @@ class Admin:
             # noinspection PyTypeChecker
             await self._addrole(ctx, user, rolename)
         else:
-            await self.complain(ctx, USER_HIERARCHY_ISSUE, member=ctx.author)
+            await self.complain(ctx, USER_HIERARCHY_ISSUE, member=ctx.author, role=rolename)
 
     @commands.command()
     @commands.guild_only()
@@ -145,8 +145,8 @@ class Admin:
         self, ctx: commands.Context, rolename: discord.Role, *, user: MemberDefaultAuthor = None
     ):
         """
-        Removes a role from a user. If user is left blank it defaults to the
-            author of the command.
+        Removes a role from a user.
+        If user is left blank it defaults to the author of the command.
         """
         if user is None:
             user = ctx.author
@@ -156,7 +156,7 @@ class Admin:
         else:
             await self.complain(ctx, USER_HIERARCHY_ISSUE)
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @commands.guild_only()
     @checks.admin_or_permissions(manage_roles=True)
     async def editrole(self, ctx: commands.Context):
@@ -291,11 +291,11 @@ class Admin:
         # noinspection PyTypeChecker
         return valid_roles
 
+    @commands.guild_only()
     @commands.group(invoke_without_command=True)
     async def selfrole(self, ctx: commands.Context, *, selfrole: SelfRole):
         """
-        Add a role to yourself that server admins have configured as
-            user settable.
+        Add a role to yourself that server admins have configured as user settable.
 
         NOTE: The role is case sensitive!
         """
@@ -313,7 +313,7 @@ class Admin:
         await self._removerole(ctx, ctx.author, selfrole)
 
     @selfrole.command(name="add")
-    @commands.has_permissions(manage_roles=True)
+    @checks.admin_or_permissions(manage_roles=True)
     async def selfrole_add(self, ctx: commands.Context, *, role: discord.Role):
         """
         Add a role to the list of available selfroles.
@@ -327,7 +327,7 @@ class Admin:
         await ctx.send("The selfroles list has been successfully modified.")
 
     @selfrole.command(name="delete")
-    @commands.has_permissions(manage_roles=True)
+    @checks.admin_or_permissions(manage_roles=True)
     async def selfrole_delete(self, ctx: commands.Context, *, role: SelfRole):
         """
         Removes a role from the list of available selfroles.

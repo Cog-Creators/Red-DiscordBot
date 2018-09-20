@@ -2,22 +2,20 @@ import sys
 import codecs
 import datetime
 import logging
+from datetime import timedelta
 from distutils.version import StrictVersion
 
 import aiohttp
+import discord
 import pkg_resources
 import traceback
+from colorama import Fore, Style, init
 from pkg_resources import DistributionNotFound
-
-
-import discord
 
 from . import __version__, commands
 from .data_manager import storage_type
-from .utils.chat_formatting import inline, bordered, pagify, box
+from .utils.chat_formatting import inline, bordered
 from .utils import fuzzy_command_search
-from colorama import Fore, Style, init
-from . import rpc
 
 log = logging.getLogger("red")
 sentry_log = logging.getLogger("red.sentry")
@@ -94,10 +92,7 @@ def init_events(bot, cli_flags):
             data = await bot.application_info()
             invite_url = discord.utils.oauth_url(data.id)
         except:
-            if bot.user.bot:
-                invite_url = "Could not fetch invite url"
-            else:
-                invite_url = None
+            invite_url = "Could not fetch invite url"
 
         prefixes = cli_flags.prefix or (await bot.db.prefix())
         lang = await bot.db.locale()
@@ -175,6 +170,12 @@ def init_events(bot, cli_flags):
             print("\nInvite URL: {}\n".format(invite_url))
 
         bot.color = discord.Colour(await bot.db.color())
+        try:
+            import Levenshtein
+        except ImportError:
+            log.info(
+                "python-Levenshtein is not installed, fuzzy string matching will be a bit slower."
+            )
 
     @bot.event
     async def on_error(event_method, *args, **kwargs):
@@ -192,7 +193,9 @@ def init_events(bot, cli_flags):
         elif isinstance(error, commands.BadArgument):
             await ctx.send_help()
         elif isinstance(error, commands.DisabledCommand):
-            await ctx.send("That command is disabled.")
+            disabled_message = await bot.db.disabled_command_msg()
+            if disabled_message:
+                await ctx.send(disabled_message.replace("{command}", ctx.invoked_with))
         elif isinstance(error, commands.CommandInvokeError):
             # Need to test if the following still works
             """
@@ -240,7 +243,7 @@ def init_events(bot, cli_flags):
             await ctx.send("That command is not available in DMs.")
         elif isinstance(error, commands.CommandOnCooldown):
             await ctx.send(
-                "This command is on cooldown. " "Try again in {:.2f}s" "".format(error.retry_after)
+                "This command is on cooldown. Try again in {:.2f}s".format(error.retry_after)
             )
         else:
             log.exception(type(error).__name__, exc_info=error)
@@ -256,6 +259,20 @@ def init_events(bot, cli_flags):
     async def on_message(message):
         bot.counter["messages_read"] += 1
         await bot.process_commands(message)
+        discord_now = message.created_at
+        if (
+            not bot.checked_time_accuracy
+            or (discord_now - timedelta(minutes=60)) > bot.checked_time_accuracy
+        ):
+            system_now = datetime.datetime.utcnow()
+            diff = abs((discord_now - system_now).total_seconds())
+            if diff > 60:
+                log.warn(
+                    "Detected significant difference (%d seconds) in system clock to discord's clock."
+                    " Any time sensitive code may fail.",
+                    diff,
+                )
+            bot.checked_time_accuracy = discord_now
 
     @bot.event
     async def on_resumed():
@@ -264,6 +281,42 @@ def init_events(bot, cli_flags):
     @bot.event
     async def on_command(command):
         bot.counter["processed_commands"] += 1
+
+    @bot.event
+    async def on_command_add(command: commands.Command):
+        disabled_commands = await bot.db.disabled_commands()
+        if command.qualified_name in disabled_commands:
+            command.enabled = False
+        for guild in bot.guilds:
+            disabled_commands = await bot.db.guild(guild).disabled_commands()
+            if command.qualified_name in disabled_commands:
+                command.disable_in(guild)
+
+    async def _guild_added(guild: discord.Guild):
+        disabled_commands = await bot.db.guild(guild).disabled_commands()
+        for command_name in disabled_commands:
+            command_obj = bot.get_command(command_name)
+            if command_obj is not None:
+                command_obj.disable_in(guild)
+
+    @bot.event
+    async def on_guild_join(guild: discord.Guild):
+        await _guild_added(guild)
+
+    @bot.event
+    async def on_guild_available(guild: discord.Guild):
+        # We need to check guild-disabled commands here since some cogs
+        # are loaded prior to `on_ready`.
+        await _guild_added(guild)
+
+    @bot.event
+    async def on_guild_leave(guild: discord.Guild):
+        # Clean up any unneeded checks
+        disabled_commands = await bot.db.guild(guild).disabled_commands()
+        for command_name in disabled_commands:
+            command_obj = bot.get_command(command_name)
+            if command_obj is not None:
+                command_obj.enable_in(guild)
 
 
 def _get_startup_screen_specs():

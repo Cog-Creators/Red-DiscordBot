@@ -3,9 +3,10 @@ import pkgutil
 from importlib import import_module, invalidate_caches
 from importlib.machinery import ModuleSpec
 from pathlib import Path
-from typing import Tuple, Union, List
+from typing import Tuple, Union, List, Optional
 
 import redbot.cogs
+from redbot.core.utils import deduplicate_iterables
 import discord
 
 from . import checks, commands
@@ -18,12 +19,13 @@ from .utils.chat_formatting import box, pagify
 __all__ = ["CogManager"]
 
 
-def _deduplicate(xs):
-    ret = []
-    for x in xs:
-        if x not in ret:
-            ret.append(x)
-    return ret
+class NoSuchCog(ImportError):
+    """Thrown when a cog is missing.
+
+    Different from ImportError because some ImportErrors can happen inside cogs.
+    """
+
+    pass
 
 
 class CogManager:
@@ -35,12 +37,13 @@ class CogManager:
     bot directory.
     """
 
+    CORE_PATH = Path(redbot.cogs.__path__[0])
+
     def __init__(self, paths: Tuple[str] = ()):
         self.conf = Config.get_conf(self, 2938473984732, True)
         tmp_cog_install_path = cog_data_path(self) / "cogs"
         tmp_cog_install_path.mkdir(parents=True, exist_ok=True)
-        self.conf.register_global(paths=(), install_path=str(tmp_cog_install_path))
-
+        self.conf.register_global(paths=[], install_path=str(tmp_cog_install_path))
         self._paths = [Path(p) for p in paths]
 
     async def paths(self) -> Tuple[Path, ...]:
@@ -54,17 +57,12 @@ class CogManager:
         """
         conf_paths = [Path(p) for p in await self.conf.paths()]
         other_paths = self._paths
-        core_paths = await self.core_paths()
 
-        all_paths = _deduplicate(list(conf_paths) + list(other_paths) + core_paths)
+        all_paths = deduplicate_iterables(conf_paths, other_paths, [self.CORE_PATH])
 
         if self.install_path not in all_paths:
             all_paths.insert(0, await self.install_path())
         return tuple(p.resolve() for p in all_paths if p.is_dir())
-
-    async def core_paths(self) -> List[Path]:
-        core_paths = [Path(p) for p in redbot.cogs.__path__]
-        return core_paths
 
     async def install_path(self) -> Path:
         """Get the install path for 3rd party cogs.
@@ -155,10 +153,12 @@ class CogManager:
 
         if path == await self.install_path():
             raise ValueError("Cannot add the install path as an additional path.")
+        if path == self.CORE_PATH:
+            raise ValueError("Cannot add the core path as an additional path.")
 
-        all_paths = _deduplicate(await self.paths() + (path,))
-        # noinspection PyTypeChecker
-        await self.set_paths(all_paths)
+        async with self.conf.paths() as paths:
+            if not any(Path(p) == path for p in paths):
+                paths.append(str(path))
 
     async def remove_path(self, path: Union[Path, str]) -> Tuple[Path, ...]:
         """Remove a path from the current paths list.
@@ -174,12 +174,14 @@ class CogManager:
             Tuple of new valid paths.
 
         """
-        path = self._ensure_path_obj(path)
-        all_paths = list(await self.paths())
-        if path in all_paths:
-            all_paths.remove(path)  # Modifies in place
-            await self.set_paths(all_paths)
-        return tuple(all_paths)
+        path = self._ensure_path_obj(path).resolve()
+
+        paths = [Path(p) for p in await self.conf.paths()]
+        if path in paths:
+            paths.remove(path)
+            await self.set_paths(paths)
+
+        return tuple(paths)
 
     async def set_paths(self, paths_: List[Path]):
         """Set the current paths list.
@@ -209,13 +211,11 @@ class CogManager:
 
         Raises
         ------
-        RuntimeError
-            When no matching spec can be found.
+        NoSuchCog
+            When no cog with the requested name was found.
         """
-        resolved_paths = _deduplicate(await self.paths())
-        core_paths = _deduplicate(await self.core_paths())
-
-        real_paths = [str(p) for p in resolved_paths if p not in core_paths]
+        resolved_paths = await self.paths()
+        real_paths = [str(p) for p in resolved_paths if p != self.CORE_PATH]
 
         for finder, module_name, _ in pkgutil.iter_modules(real_paths):
             if name == module_name:
@@ -223,12 +223,15 @@ class CogManager:
                 if spec:
                     return spec
 
-        raise RuntimeError(
-            "No 3rd party module by the name of '{}' was found"
-            " in any available path.".format(name)
+        raise NoSuchCog(
+            "No 3rd party module by the name of '{}' was found in any available path.".format(
+                name
+            ),
+            name=name,
         )
 
-    async def _find_core_cog(self, name: str) -> ModuleSpec:
+    @staticmethod
+    async def _find_core_cog(name: str) -> ModuleSpec:
         """
         Attempts to find a spec for a core cog.
 
@@ -246,16 +249,24 @@ class CogManager:
             When no matching spec can be found.
         """
         real_name = ".{}".format(name)
+        package = "redbot.cogs"
+
         try:
-            mod = import_module(real_name, package="redbot.cogs")
+            mod = import_module(real_name, package=package)
         except ImportError as e:
-            raise RuntimeError(
-                "No core cog by the name of '{}' could be found.".format(name)
-            ) from e
+            if e.name == package + real_name:
+                raise NoSuchCog(
+                    "No core cog by the name of '{}' could be found.".format(name),
+                    path=e.path,
+                    name=e.name,
+                ) from e
+
+            raise
+
         return mod.__spec__
 
     # noinspection PyUnreachableCode
-    async def find_cog(self, name: str) -> ModuleSpec:
+    async def find_cog(self, name: str) -> Optional[ModuleSpec]:
         """Find a cog in the list of available paths.
 
         Parameters
@@ -265,22 +276,15 @@ class CogManager:
 
         Returns
         -------
-        importlib.machinery.ModuleSpec
-            A module spec to be used for specialized cog loading.
-
-        Raises
-        ------
-        RuntimeError
-            If there is no cog with the given name.
+        Optional[importlib.machinery.ModuleSpec]
+            A module spec to be used for specialized cog loading, if found.
 
         """
-        with contextlib.suppress(RuntimeError):
+        with contextlib.suppress(NoSuchCog):
             return await self._find_ext_cog(name)
 
-        with contextlib.suppress(RuntimeError):
+        with contextlib.suppress(NoSuchCog):
             return await self._find_core_cog(name)
-
-        raise RuntimeError("No cog with that name could be found.")
 
     async def available_modules(self) -> List[str]:
         """Finds the names of all available modules to load.
@@ -310,7 +314,8 @@ _ = Translator("CogManagerUI", __file__)
 class CogManagerUI:
     """Commands to interface with Red's cog manager."""
 
-    async def visible_paths(self, ctx):
+    @staticmethod
+    async def visible_paths(ctx):
         install_path = await ctx.bot.cog_mgr.install_path()
         cog_paths = await ctx.bot.cog_mgr.paths()
         cog_paths = [p for p in cog_paths if p != install_path]
@@ -322,11 +327,15 @@ class CogManagerUI:
         """
         Lists current cog paths in order of priority.
         """
-        install_path = await ctx.bot.cog_mgr.install_path()
-        cog_paths = await ctx.bot.cog_mgr.paths()
-        cog_paths = [p for p in cog_paths if p != install_path]
+        cog_mgr = ctx.bot.cog_mgr
+        install_path = await cog_mgr.install_path()
+        core_path = cog_mgr.CORE_PATH
+        cog_paths = await cog_mgr.paths()
+        cog_paths = [p for p in cog_paths if p not in (install_path, core_path)]
 
-        msg = _("Install Path: {}\n\n").format(install_path)
+        msg = _("Install Path: {install_path}\nCore Path: {core_path}\n\n").format(
+            install_path=install_path, core_path=core_path
+        )
 
         partial = []
         for i, p in enumerate(cog_paths, start=1):
@@ -428,16 +437,16 @@ class CogManagerUI:
         """
         loaded = set(ctx.bot.extensions.keys())
 
-        all = set(await ctx.bot.cog_mgr.available_modules())
+        all_cogs = set(await ctx.bot.cog_mgr.available_modules())
 
-        unloaded = all - loaded
+        unloaded = all_cogs - loaded
 
         loaded = sorted(list(loaded), key=str.lower)
         unloaded = sorted(list(unloaded), key=str.lower)
 
         if await ctx.embed_requested():
-            loaded = ("**{} loaded:**\n").format(len(loaded)) + ", ".join(loaded)
-            unloaded = ("**{} unloaded:**\n").format(len(unloaded)) + ", ".join(unloaded)
+            loaded = _("**{} loaded:**\n").format(len(loaded)) + ", ".join(loaded)
+            unloaded = _("**{} unloaded:**\n").format(len(unloaded)) + ", ".join(unloaded)
 
             for page in pagify(loaded, delims=[", ", "\n"], page_length=1800):
                 e = discord.Embed(description=page, colour=discord.Colour.dark_green())
@@ -447,9 +456,9 @@ class CogManagerUI:
                 e = discord.Embed(description=page, colour=discord.Colour.dark_red())
                 await ctx.send(embed=e)
         else:
-            loaded_count = "**{} loaded:**\n".format(len(loaded))
+            loaded_count = _("**{} loaded:**\n").format(len(loaded))
             loaded = ", ".join(loaded)
-            unloaded_count = "**{} unloaded:**\n".format(len(unloaded))
+            unloaded_count = _("**{} unloaded:**\n").format(len(unloaded))
             unloaded = ", ".join(unloaded)
             loaded_count_sent = False
             unloaded_count_sent = False

@@ -1,7 +1,7 @@
 import logging
 import collections
 from copy import deepcopy
-from typing import Union, Tuple, TYPE_CHECKING
+from typing import Any, Union, Tuple, Dict, Awaitable, AsyncContextManager, TypeVar, TYPE_CHECKING
 
 import discord
 
@@ -13,8 +13,10 @@ if TYPE_CHECKING:
 
 log = logging.getLogger("red.config")
 
+_T = TypeVar("_T")
 
-class _ValueCtxManager:
+
+class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):
     """Context manager implementation of config values.
 
     This class allows mutable config values to be both "get" and "set" from
@@ -29,12 +31,15 @@ class _ValueCtxManager:
     def __init__(self, value_obj, coro):
         self.value_obj = value_obj
         self.coro = coro
+        self.raw_value = None
+        self.__original_value = None
 
     def __await__(self):
         return self.coro.__await__()
 
     async def __aenter__(self):
         self.raw_value = await self
+        self.__original_value = deepcopy(self.raw_value)
         if not isinstance(self.raw_value, (list, dict)):
             raise TypeError(
                 "Type of retrieved value must be mutable (i.e. "
@@ -43,8 +48,9 @@ class _ValueCtxManager:
             )
         return self.raw_value
 
-    async def __aexit__(self, *exc_info):
-        await self.value_obj.set(self.raw_value)
+    async def __aexit__(self, exc_type, exc, tb):
+        if self.raw_value != self.__original_value:
+            await self.value_obj.set(self.raw_value)
 
 
 class Value:
@@ -72,14 +78,14 @@ class Value:
     def identifiers(self):
         return tuple(str(i) for i in self._identifiers)
 
-    async def _get(self, default):
+    async def _get(self, default=...):
         try:
             ret = await self.driver.get(*self.identifiers)
         except KeyError:
-            return default if default is not None else self.default
+            return default if default is not ... else self.default
         return ret
 
-    def __call__(self, default=None):
+    def __call__(self, default=...) -> _ValueCtxManager[Any]:
         """Get the literal value of this data element.
 
         Each `Value` object is created by the `Group.__getattr__` method. The
@@ -182,6 +188,11 @@ class Group(Value):
     @property
     def defaults(self):
         return deepcopy(self._defaults)
+
+    async def _get(self, default: Dict[str, Any] = ...) -> Dict[str, Any]:
+        default = default if default is not ... else self.defaults
+        raw = await super()._get(default)
+        return self.nested_update(raw, default)
 
     # noinspection PyTypeChecker
     def __getattr__(self, item: str) -> Union["Group", Value]:
@@ -302,6 +313,11 @@ class Group(Value):
             data = {"foo": {"bar": "baz"}}
             d = data["foo"]["bar"]
 
+        Note
+        ----
+        If retreiving a sub-group, the return value of this method will
+        include registered defaults for values which have not yet been set.
+
         Parameters
         ----------
         nested_path : str
@@ -335,14 +351,21 @@ class Group(Value):
                 default = poss_default
 
         try:
-            return await self.driver.get(*self.identifiers, *path)
+            raw = await self.driver.get(*self.identifiers, *path)
         except KeyError:
             if default is not ...:
                 return default
             raise
+        else:
+            if isinstance(default, dict):
+                return self.nested_update(raw, default)
+            return raw
 
-    async def all(self) -> dict:
+    def all(self) -> _ValueCtxManager[Dict[str, Any]]:
         """Get a dictionary representation of this group's data.
+
+        The return value of this method can also be used as an asynchronous
+        context manager, i.e. with :code:`async with` syntax.
 
         Note
         ----
@@ -355,16 +378,18 @@ class Group(Value):
             All of this Group's attributes, resolved as raw data values.
 
         """
-        return self.nested_update(await self())
+        return self()
 
-    def nested_update(self, current, defaults=None):
+    def nested_update(
+        self, current: collections.Mapping, defaults: Dict[str, Any] = ...
+    ) -> Dict[str, Any]:
         """Robust updater for nested dictionaries
 
         If no defaults are passed, then the instance attribute 'defaults'
         will be used.
 
         """
-        if not defaults:
+        if defaults is ...:
             defaults = self.defaults
 
         for key, value in current.items():
@@ -392,7 +417,7 @@ class Group(Value):
             # is equivalent to
 
             data = {"foo": {"bar": None}}
-            d["foo"]["bar"] = "baz"
+            data["foo"]["bar"] = "baz"
 
         Parameters
         ----------
@@ -840,7 +865,7 @@ class Config:
         """
         return self._get_base_group(group_identifier, *identifiers)
 
-    async def _all_from_scope(self, scope: str):
+    async def _all_from_scope(self, scope: str) -> Dict[int, Dict[Any, Any]]:
         """Get a dict of all values from a particular scope of data.
 
         :code:`scope` must be one of the constants attributed to
@@ -852,12 +877,18 @@ class Config:
         overwritten.
         """
         group = self._get_base_group(scope)
-        dict_ = await group()
         ret = {}
-        for k, v in dict_.items():
-            data = group.defaults
-            data.update(v)
-            ret[int(k)] = data
+
+        try:
+            dict_ = await self.driver.get(*group.identifiers)
+        except KeyError:
+            pass
+        else:
+            for k, v in dict_.items():
+                data = group.defaults
+                data.update(v)
+                ret[int(k)] = data
+
         return ret
 
     async def all_guilds(self) -> dict:
@@ -964,13 +995,21 @@ class Config:
         ret = {}
         if guild is None:
             group = self._get_base_group(self.MEMBER)
-            dict_ = await group()
-            for guild_id, guild_data in dict_.items():
-                ret[int(guild_id)] = self._all_members_from_guild(group, guild_data)
+            try:
+                dict_ = await self.driver.get(*group.identifiers)
+            except KeyError:
+                pass
+            else:
+                for guild_id, guild_data in dict_.items():
+                    ret[int(guild_id)] = self._all_members_from_guild(group, guild_data)
         else:
             group = self._get_base_group(self.MEMBER, guild.id)
-            guild_data = await group()
-            ret = self._all_members_from_guild(group, guild_data)
+            try:
+                guild_data = await self.driver.get(*group.identifiers)
+            except KeyError:
+                pass
+            else:
+                ret = self._all_members_from_guild(group, guild_data)
         return ret
 
     async def _clear_scope(self, *scopes: str):

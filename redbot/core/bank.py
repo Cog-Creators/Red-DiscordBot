@@ -191,7 +191,7 @@ async def set_balance(member: discord.Member, amount: int) -> int:
 
 
 def _invalid_amount(amount: int) -> bool:
-    return amount <= 0
+    return amount < 0
 
 
 async def withdraw_credits(member: discord.Member, amount: int) -> int:
@@ -214,10 +214,14 @@ async def withdraw_credits(member: discord.Member, amount: int) -> int:
     ValueError
         If the withdrawal amount is invalid or if the account has insufficient
         funds.
+    TypeError
+        If the withdrawal amount is not an `int`.
 
     """
+    if not isinstance(amount, int):
+        raise TypeError("Withdrawal amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
-        raise ValueError("Invalid withdrawal amount {} <= 0".format(amount))
+        raise ValueError("Invalid withdrawal amount {} < 0".format(amount))
 
     bal = await get_balance(member)
     if amount > bal:
@@ -245,8 +249,12 @@ async def deposit_credits(member: discord.Member, amount: int) -> int:
     ------
     ValueError
         If the deposit amount is invalid.
+    TypeError
+        If the deposit amount is not an `int`.
 
     """
+    if not isinstance(amount, int):
+        raise TypeError("Deposit amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
         raise ValueError("Invalid deposit amount {} <= 0".format(amount))
 
@@ -269,14 +277,18 @@ async def transfer_credits(from_: discord.Member, to: discord.Member, amount: in
     Returns
     -------
     int
-        The new balance.
+        The new balance of the member gaining credits.
 
     Raises
     ------
     ValueError
         If the amount is invalid or if ``from_`` has insufficient funds.
+    TypeError
+        If the amount is not an `int`.
 
     """
+    if not isinstance(amount, int):
+        raise TypeError("Transfer amount must be of type int, not {}.".format(type(amount)))
     if _invalid_amount(amount):
         raise ValueError("Invalid transfer amount {} <= 0".format(amount))
 
@@ -388,19 +400,18 @@ async def get_account(member: Union[discord.Member, discord.User]) -> Account:
 
     """
     if await is_global():
-        acc_data = (await _conf.user(member)()).copy()
-        default = _DEFAULT_USER.copy()
+        all_accounts = await _conf.all_users()
     else:
-        acc_data = (await _conf.member(member)()).copy()
-        default = _DEFAULT_MEMBER.copy()
+        all_accounts = await _conf.all_members(member.guild)
 
-    if acc_data == {}:
-        acc_data = default
-        acc_data["name"] = member.display_name
+    if member.id not in all_accounts:
+        acc_data = {"name": member.display_name, "created_at": _DEFAULT_MEMBER["created_at"]}
         try:
             acc_data["balance"] = await get_default_balance(member.guild)
         except AttributeError:
             acc_data["balance"] = await get_default_balance()
+    else:
+        acc_data = all_accounts[member.id]
 
     acc_data["created_at"] = _decode_time(acc_data["created_at"])
     return Account(**acc_data)

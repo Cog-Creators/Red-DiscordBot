@@ -6,7 +6,7 @@ import sys
 import discord
 from redbot.core.bot import Red, ExitCodes
 from redbot.core.cog_manager import CogManagerUI
-from redbot.core.data_manager import load_basic_configuration, config_file
+from redbot.core.data_manager import create_temp_config, load_basic_configuration, config_file
 from redbot.core.json_io import JsonIO
 from redbot.core.global_checks import init_global_checks
 from redbot.core.events import init_events
@@ -18,6 +18,18 @@ import asyncio
 import logging.handlers
 import logging
 import os
+
+# Let's not force this dependency, uvloop is much faster on cpython
+if sys.implementation.name == "cpython":
+    try:
+        import uvloop
+    except ImportError:
+        pass
+    else:
+        asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
+
+if sys.platform == "win32":
+    asyncio.set_event_loop(asyncio.ProactorEventLoop())
 
 
 #
@@ -51,7 +63,7 @@ def init_loggers(cli_flags):
         os.environ["PYTHONASYNCIODEBUG"] = "1"
         logger.setLevel(logging.DEBUG)
     else:
-        logger.setLevel(logging.WARNING)
+        logger.setLevel(logging.INFO)
 
     from redbot.core.data_manager import core_data_path
 
@@ -106,9 +118,17 @@ def main():
     elif cli_flags.version:
         print(description)
         sys.exit(0)
-    elif not cli_flags.instance_name:
+    elif not cli_flags.instance_name and not cli_flags.no_instance:
         print("Error: No instance name was provided!")
         sys.exit(1)
+    if cli_flags.no_instance:
+        print(
+            "\033[1m"
+            "Warning: The data will be placed in a temporary folder and removed on next system reboot."
+            "\033[0m"
+        )
+        cli_flags.instance_name = "temporary_red"
+        create_temp_config()
     load_basic_configuration(cli_flags.instance_name)
     log, sentry_log = init_loggers(cli_flags)
     red = Red(cli_flags=cli_flags, description=description, pm_help=None)
@@ -122,6 +142,8 @@ def main():
     tmp_data = {}
     loop.run_until_complete(_get_prefix_and_token(red, tmp_data))
     token = os.environ.get("RED_TOKEN", tmp_data["token"])
+    if cli_flags.token:
+        token = cli_flags.token
     prefix = cli_flags.prefix or tmp_data["prefix"]
     if not (token and prefix):
         if cli_flags.no_prompt is False:
@@ -139,14 +161,9 @@ def main():
     if tmp_data["enable_sentry"]:
         red.enable_sentry()
     try:
-        loop.run_until_complete(red.start(token, bot=not cli_flags.not_bot))
+        loop.run_until_complete(red.start(token, bot=True))
     except discord.LoginFailure:
-        log.critical(
-            "This token doesn't seem to be valid. If it belongs to "
-            "a user account, remember that the --not-bot flag "
-            "must be used. For self-bot functionalities instead, "
-            "--self-bot"
-        )
+        log.critical("This token doesn't seem to be valid.")
         db_token = loop.run_until_complete(red.db.token())
         if db_token and not cli_flags.no_prompt:
             print("\nDo you want to reset the token? (y/n)")

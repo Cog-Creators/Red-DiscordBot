@@ -29,13 +29,8 @@ Welcome to Red - Discord Bot's documentation!
     :caption: Installation Guides:
 
     install_windows
-    install_mac
-    install_ubuntu_xenial
-    install_ubuntu_bionic
-    install_debian
-    install_centos
-    install_arch
-    install_raspbian
+    install_linux_mac
+    venv_guide
     cog_dataconverter
     autostart_systemd
 
@@ -57,6 +52,7 @@ Welcome to Red - Discord Bot's documentation!
     :maxdepth: 2
     :caption: Cog Reference:
 
+    cog_customcom
     cog_downloader
 
 .. toctree::

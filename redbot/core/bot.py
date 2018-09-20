@@ -8,8 +8,6 @@ from pathlib import Path
 
 import discord
 import sys
-from discord.ext.commands.bot import BotBase
-from discord.ext.commands import GroupMixin
 from discord.ext.commands import when_mentioned_or
 
 # This supresses the PyNaCl warning that isn't relevant here
@@ -22,9 +20,14 @@ from . import Config, i18n, commands
 from .rpc import RPCMixin
 from .help_formatter import Help, help as help_
 from .sentry import SentryManager
+from .utils import common_filters
 
 
-class RedBase(BotBase, RPCMixin):
+def _is_submodule(parent, child):
+    return parent == child or child.startswith(parent + ".")
+
+
+class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
     """Mixin for the main bot class.
 
     This exists because `Red` inherits from `discord.AutoShardedClient`, which
@@ -55,6 +58,8 @@ class RedBase(BotBase, RPCMixin):
             help__page_char_limit=1000,
             help__max_pages_in_guild=2,
             help__tagline="",
+            disabled_commands=[],
+            disabled_command_msg="That command is disabled.",
         )
 
         self.db.register_guild(
@@ -66,6 +71,7 @@ class RedBase(BotBase, RPCMixin):
             embeds=None,
             use_bot_color=False,
             fuzzy=False,
+            disabled_commands=[],
         )
 
         self.db.register_user(embeds=None)
@@ -102,6 +108,7 @@ class RedBase(BotBase, RPCMixin):
 
         self.counter = Counter()
         self.uptime = None
+        self.checked_time_accuracy = None
         self.color = discord.Embed.Empty  # This is needed or color ends up 0x000000
 
         self.main_dir = bot_dir
@@ -211,12 +218,12 @@ class RedBase(BotBase, RPCMixin):
     async def load_extension(self, spec: ModuleSpec):
         name = spec.name.split(".")[-1]
         if name in self.extensions:
-            return
+            raise discord.ClientException(f"there is already a package named {name} loaded")
 
         lib = spec.loader.load_module()
         if not hasattr(lib, "setup"):
             del lib
-            raise discord.ClientException("extension does not have a setup function")
+            raise discord.ClientException(f"extension {name} does not have a setup function")
 
         if asyncio.iscoroutinefunction(lib.setup):
             await lib.setup(self)
@@ -225,44 +232,41 @@ class RedBase(BotBase, RPCMixin):
 
         self.extensions[name] = lib
 
+    def remove_cog(self, cogname):
+        super().remove_cog(cogname)
+
+        for meth in self.rpc_handlers.pop(cogname.upper(), ()):
+            self.unregister_rpc_handler(meth)
+
     def unload_extension(self, name):
         lib = self.extensions.get(name)
+
         if lib is None:
             return
 
         lib_name = lib.__name__  # Thank you
 
         # find all references to the module
-        cog_names = []
 
         # remove the cogs registered from the module
         for cogname, cog in self.cogs.copy().items():
-            if cog.__module__.startswith(lib_name):
+            if cog.__module__ and _is_submodule(lib_name, cog.__module__):
                 self.remove_cog(cogname)
-
-                cog_names.append(cogname)
-
-        # remove all rpc handlers
-        for cogname in cog_names:
-            if cogname.upper() in self.rpc_handlers:
-                methods = self.rpc_handlers[cogname]
-                for meth in methods:
-                    self.unregister_rpc_handler(meth)
-
-                del self.rpc_handlers[cogname]
 
         # first remove all the commands from the module
         for cmd in self.all_commands.copy().values():
-            if cmd.module.startswith(lib_name):
-                if isinstance(cmd, GroupMixin):
+            if cmd.module and _is_submodule(lib_name, cmd.module):
+                if isinstance(cmd, discord.ext.commands.GroupMixin):
                     cmd.recursively_remove_all_commands()
+
                 self.remove_command(cmd.name)
 
         # then remove all the listeners from the module
         for event_list in self.extra_events.copy().values():
             remove = []
+
             for index, event in enumerate(event_list):
-                if event.__module__.startswith(lib_name):
+                if event.__module__ and _is_submodule(lib_name, event.__module__):
                     remove.append(index)
 
             for index in reversed(remove):
@@ -282,18 +286,82 @@ class RedBase(BotBase, RPCMixin):
             pkg_name = lib.__package__
             del lib
             del self.extensions[name]
-            for m, _ in sys.modules.copy().items():
-                if m.startswith(pkg_name):
-                    del sys.modules[m]
 
-            if pkg_name.startswith("redbot.cogs"):
+            for module in list(sys.modules):
+                if _is_submodule(lib_name, module):
+                    del sys.modules[module]
+
+            if pkg_name.startswith("redbot.cogs."):
                 del sys.modules["redbot.cogs"].__dict__[name]
+
+    async def send_filtered(
+        destination: discord.abc.Messageable,
+        filter_mass_mentions=True,
+        filter_invite_links=True,
+        filter_all_links=False,
+        **kwargs,
+    ):
+        """
+        This is a convienience wrapper around
+
+        discord.abc.Messageable.send
+
+        It takes the destination you'd like to send to, which filters to apply
+        (defaults on mass mentions, and invite links) and any other parameters
+        normally accepted by destination.send
+
+        This should realistically only be used for responding using user provided
+        input. (unfortunately, including usernames)
+        Manually crafted messages which dont take any user input have no need of this
+        """
+
+        content = kwargs.pop("content", None)
+
+        if content:
+            if filter_mass_mentions:
+                content = common_filters.filter_mass_mentions(content)
+            if filter_invite_links:
+                content = common_filters.filter_invites(content)
+            if filter_all_links:
+                content = common_filters.filter_urls(content)
+
+        await destination.send(content=content, **kwargs)
+
+    def add_cog(self, cog):
+        for attr in dir(cog):
+            _attr = getattr(cog, attr)
+            if isinstance(_attr, discord.ext.commands.Command) and not isinstance(
+                _attr, commands.Command
+            ):
+                raise RuntimeError(
+                    f"The {cog.__class__.__name__} cog in the {cog.__module__} package,"
+                    " is not using Red's command module, and cannot be added. "
+                    "If this is your cog, please use `from redbot.core import commands`"
+                    "in place of `from discord.ext import commands`. For more details on "
+                    "this requirement, see this page: "
+                    "http://red-discordbot.readthedocs.io/en/v3-develop/framework_commands.html"
+                )
+        super().add_cog(cog)
+
+    def add_command(self, command: commands.Command):
+        if not isinstance(command, commands.Command):
+            raise TypeError("Command objects must derive from redbot.core.commands.Command")
+
+        super().add_command(command)
+        self.dispatch("command_add", command)
 
 
 class Red(RedBase, discord.AutoShardedClient):
     """
     You're welcome Caleb.
     """
+
+    async def logout(self):
+        """Logs out of Discord and closes all connections."""
+        if self._sentry_mgr:
+            await self._sentry_mgr.close()
+
+        await super().logout()
 
     async def shutdown(self, *, restart: bool = False):
         """Gracefully quit Red.

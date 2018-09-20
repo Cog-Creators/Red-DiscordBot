@@ -1,33 +1,37 @@
-dist: trusty
+dist: xenial
 language: python
 cache: pip
 notifications:
   email: false
+sudo: true
 
 python:
-- 3.6.5
+- 3.6.6
+- 3.7
 env:
   global:
     PIPENV_IGNORE_VIRTUALENVS=1
   matrix:
-    - TOXENV=py
-    - TOXENV=docs
-    - TOXENV=style
+    TOXENV=py
 
 install:
-- pip install --upgrade pip pipenv
-- pipenv install --dev
+- pip install --upgrade pip tox
 
 script:
-- pipenv run tox
+- tox
 
 jobs:
   include:
 
+    - python: 3.6.6
+      env: TOXENV=docs
+    - python: 3.6.6
+      env: TOXENV=style
+
     # These jobs only occur on tag creation for V3/develop if the prior ones succeed
     - stage: PyPi Deployment
       if: tag IS present
-      python: 3.6.5
+      python: 3.6.6
       env:
         - DEPLOYING=true
       deploy:
@@ -39,11 +43,11 @@ jobs:
           on:
             repo: Cog-Creators/Red-DiscordBot
             branch: V3/develop
-            python: 3.6.5
+            python: 3.6.6
             tags: true
     - stage: Crowdin Deployment
       if: tag IS present
-      python: 3.6.5
+      python: 3.6.6
       env:
         - DEPLOYING=true
       before_deploy:
@@ -51,12 +55,13 @@ jobs:
       - echo "deb https://artifacts.crowdin.com/repo/deb/ /" | sudo tee -a /etc/apt/sources.list
       - sudo apt-get update -qq
       - sudo apt-get install -y crowdin
+      - pip install redgettext==2.1
       deploy:
       - provider: script
-        script: python3 ./generate_strings.py
+        script: make gettext
         skip_cleanup: true
         on:
           repo: Cog-Creators/Red-DiscordBot
           branch: V3/develop
-          python: 3.6.5
+          python: 3.6.6
           tags: true

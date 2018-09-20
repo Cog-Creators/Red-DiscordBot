@@ -22,7 +22,7 @@ async def warning_points_add_check(
                 act = a
             else:
                 break
-    if act:  # some action needs to be taken
+    if act and act["exceed_command"] is not None:  # some action needs to be taken
         await create_and_invoke_context(ctx, act["exceed_command"], user)
 
 
@@ -38,7 +38,7 @@ async def warning_points_remove_check(
                 act = a
             else:
                 break
-    if act:  # some action needs to be taken
+    if act and act["drop_command"] is not None:  # some action needs to be taken
         await create_and_invoke_context(ctx, act["drop_command"], user)
 
 
@@ -81,10 +81,11 @@ async def get_command_for_exceeded_points(ctx: commands.Context):
     the points threshold for the action"""
     await ctx.send(
         _(
-            "Enter the command to be run when the user exceeds the points for "
-            "this action to occur.\nEnter it exactly as you would if you were "
+            "Enter the command to be run when the user **exceeds the points for "
+            "this action to occur.**\n**If you do not wish to have a command run, enter** "
+            "`none`.\n\nEnter it exactly as you would if you were "
             "actually trying to run the command, except don't put a prefix and "
-            "use {user} in place of any user/member arguments\n\n"
+            "use `{user}` in place of any user/member arguments\n\n"
             "WARNING: The command entered will be run without regard to checks or cooldowns. "
             "Commands requiring bot owner are not allowed for security reasons.\n\n"
             "Please wait 15 seconds before entering your response."
@@ -100,8 +101,10 @@ async def get_command_for_exceeded_points(ctx: commands.Context):
     try:
         msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=30)
     except asyncio.TimeoutError:
-        await ctx.send(_("Ok then."))
         return None
+    else:
+        if msg.content == "none":
+            return None
 
     command, m = get_command_from_input(ctx.bot, msg.content)
     if command is None:
@@ -121,12 +124,13 @@ async def get_command_for_dropping_points(ctx: commands.Context):
     """
     await ctx.send(
         _(
-            "Enter the command to be run when the user returns to a value below "
-            "the points for this action to occur. Please note that this is "
+            "Enter the command to be run when the user **returns to a value below "
+            "the points for this action to occur.** Please note that this is "
             "intended to be used for reversal of the action taken when the user "
-            "exceeded the action's point value\nEnter it exactly as you would "
+            "exceeded the action's point value.\n**If you do not wish to have a command run "
+            "on dropping points, enter** `none`.\n\nEnter it exactly as you would "
             "if you were actually trying to run the command, except don't put a prefix "
-            "and use {user} in place of any user/member arguments\n\n"
+            "and use `{user}` in place of any user/member arguments\n\n"
             "WARNING: The command entered will be run without regard to checks or cooldowns. "
             "Commands requiring bot owner are not allowed for security reasons.\n\n"
             "Please wait 15 seconds before entering your response."
@@ -142,9 +146,10 @@ async def get_command_for_dropping_points(ctx: commands.Context):
     try:
         msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=30)
     except asyncio.TimeoutError:
-        await ctx.send(_("Ok then."))
         return None
-
+    else:
+        if msg.content == "none":
+            return None
     command, m = get_command_from_input(ctx.bot, msg.content)
     if command is None:
         await ctx.send(m)

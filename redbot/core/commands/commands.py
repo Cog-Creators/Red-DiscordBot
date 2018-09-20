@@ -4,8 +4,10 @@ This module contains extended classes and functions which are intended to
 replace those from the `discord.ext.commands` module.
 """
 import inspect
-from typing import TYPE_CHECKING
+import weakref
+from typing import Awaitable, Callable, TYPE_CHECKING
 
+import discord
 from discord.ext import commands
 
 from .errors import ConversionFailure
@@ -14,7 +16,7 @@ from ..i18n import Translator
 if TYPE_CHECKING:
     from .context import Context
 
-__all__ = ["Command", "Group", "command", "group"]
+__all__ = ["Command", "GroupMixin", "Group", "command", "group"]
 
 _ = Translator("commands.commands", __file__)
 
@@ -71,7 +73,9 @@ class Command(commands.Command):
             cmd = cmd.parent
         return sorted(entries, key=lambda x: len(x.qualified_name), reverse=True)
 
-    async def do_conversion(self, ctx: "Context", converter, argument: str):
+    async def do_conversion(
+        self, ctx: "Context", converter, argument: str, param: inspect.Parameter
+    ):
         """Convert an argument according to its type annotation.
 
         Raises
@@ -90,23 +94,72 @@ class Command(commands.Command):
             return argument
 
         try:
-            return await super().do_conversion(ctx, converter, argument)
+            return await super().do_conversion(ctx, converter, argument, param)
         except commands.BadArgument as exc:
-            raise ConversionFailure(converter, argument, *exc.args) from exc
+            raise ConversionFailure(converter, argument, param, *exc.args) from exc
         except ValueError as exc:
             # Some common converters need special treatment...
             if converter in (int, float):
                 message = _('"{argument}" is not a number.').format(argument=argument)
-                raise ConversionFailure(converter, argument, message) from exc
+                raise ConversionFailure(converter, argument, param, message) from exc
 
             # We should expose anything which might be a bug in the converter
             raise exc
 
-    def command(self, cls=None, *args, **kwargs):
-        """A shortcut decorator that invokes :func:`.command` and adds it to
-        the internal command list via :meth:`~.GroupMixin.add_command`.
+    def disable_in(self, guild: discord.Guild) -> bool:
+        """Disable this command in the given guild.
+
+        Parameters
+        ----------
+        guild : discord.Guild
+            The guild to disable the command in.
+
+        Returns
+        -------
+        bool
+            ``True`` if the command wasn't already disabled.
+
         """
-        cls = cls or self.__class__
+        disabler = get_command_disabler(guild)
+        if disabler in self.checks:
+            return False
+        else:
+            self.checks.append(disabler)
+            return True
+
+    def enable_in(self, guild: discord.Guild) -> bool:
+        """Enable this command in the given guild.
+
+        Parameters
+        ----------
+        guild : discord.Guild
+            The guild to enable the command in.
+
+        Returns
+        -------
+        bool
+            ``True`` if the command wasn't already enabled.
+
+        """
+        disabler = get_command_disabler(guild)
+        try:
+            self.checks.remove(disabler)
+        except ValueError:
+            return False
+        else:
+            return True
+
+
+class GroupMixin(commands.GroupMixin):
+    """Mixin for `Group` and `Red` classes.
+
+    This class inherits from :class:`discord.ext.commands.GroupMixin`.
+    """
+
+    def command(self, *args, **kwargs):
+        """A shortcut decorator that invokes :func:`.command` and adds it to
+        the internal command list.
+        """
 
         def decorator(func):
             result = command(*args, **kwargs)(func)
@@ -115,11 +168,10 @@ class Command(commands.Command):
 
         return decorator
 
-    def group(self, cls=None, *args, **kwargs):
+    def group(self, *args, **kwargs):
         """A shortcut decorator that invokes :func:`.group` and adds it to
-        the internal command list via :meth:`~.GroupMixin.add_command`.
+        the internal command list.
         """
-        cls = None or Group
 
         def decorator(func):
             result = group(*args, **kwargs)(func)
@@ -129,19 +181,18 @@ class Command(commands.Command):
         return decorator
 
 
-class Group(Command, commands.Group):
+class Group(GroupMixin, Command, commands.Group):
     """Group command class for Red.
 
-    This class inherits from `discord.ext.commands.Group`, with `Command` mixed
-    in.
+    This class inherits from `Command`, with :class:`GroupMixin` and
+    `discord.ext.commands.Group` mixed in.
     """
 
     def __init__(self, *args, **kwargs):
-        self.autohelp = kwargs.pop("autohelp", False)
+        self.autohelp = kwargs.pop("autohelp", True)
         super().__init__(*args, **kwargs)
 
     async def invoke(self, ctx):
-
         view = ctx.view
         previous = view.index
         view.skip_ws()
@@ -154,7 +205,14 @@ class Group(Command, commands.Group):
 
         if ctx.invoked_subcommand is None or self == ctx.invoked_subcommand:
             if self.autohelp and not self.invoke_without_command:
+                await self._verify_checks(ctx)
                 await ctx.send_help()
+        elif self.invoke_without_command:
+            # So invoke_without_command when a subcommand of this group is invoked
+            # will skip the the invokation of *this* command. However, because of
+            # how our permissions system works, we don't want it to skip the checks
+            # as well.
+            await self._verify_checks(ctx)
 
         await super().invoke(ctx)
 
@@ -177,3 +235,25 @@ def group(name=None, **attrs):
     Same interface as `discord.ext.commands.group`.
     """
     return command(name, cls=Group, **attrs)
+
+
+__command_disablers = weakref.WeakValueDictionary()
+
+
+def get_command_disabler(guild: discord.Guild) -> Callable[["Context"], Awaitable[bool]]:
+    """Get the command disabler for a guild.
+
+    A command disabler is a simple check predicate which returns
+    ``False`` if the context is within the given guild.
+    """
+    try:
+        return __command_disablers[guild]
+    except KeyError:
+
+        async def disabler(ctx: "Context") -> bool:
+            if ctx.guild == guild:
+                raise commands.DisabledCommand()
+            return True
+
+        __command_disablers[guild] = disabler
+        return disabler

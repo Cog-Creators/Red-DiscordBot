@@ -5,7 +5,7 @@ import discord
 from discord.ext import commands
 
 from redbot.core.utils.chat_formatting import box
-
+from redbot.core.utils import common_filters
 
 TICK = "\N{WHITE HEAVY CHECK MARK}"
 
@@ -19,6 +19,42 @@ class Context(commands.Context):
 
     This class inherits from `discord.ext.commands.Context`.
     """
+
+    async def send(self, content=None, **kwargs):
+        """Sends a message to the destination with the content given.
+
+        This acts the same as `discord.ext.commands.Context.send`, with
+        one added keyword argument as detailed below in *Other Parameters*.
+
+        Parameters
+        ----------
+        content : str
+            The content of the message to send.
+
+        Other Parameters
+        ----------------
+        filter : Callable[`str`] -> `str`
+            A function which is used to sanitize the ``content`` before
+            it is sent. Defaults to
+            :func:`~redbot.core.utils.common_filters.filter_mass_mentions`.
+            This must take a single `str` as an argument, and return
+            the sanitized `str`.
+        \*\*kwargs
+            See `discord.ext.commands.Context.send`.
+
+        Returns
+        -------
+        discord.Message
+            The message that was sent.
+
+        """
+
+        _filter = kwargs.pop("filter", common_filters.filter_mass_mentions)
+
+        if _filter and content:
+            content = _filter(str(content))
+
+        return await super().send(content=content, **kwargs)
 
     async def send_help(self) -> List[discord.Message]:
         """Send the command help message.
@@ -151,6 +187,11 @@ class Context(commands.Context):
             return self.guild.me.color
         else:
             return self.bot.color
+
+    @property
+    def embed_color(self):
+        # Rather than double awaiting.
+        return self.embed_colour
 
     async def embed_requested(self):
         """

@@ -6,67 +6,10 @@ import pytest
 from unittest.mock import MagicMock
 from raven.versioning import fetch_git_sha
 
+from redbot.pytest.downloader import *
+
 from redbot.cogs.downloader.repo_manager import RepoManager, Repo
 from redbot.cogs.downloader.errors import ExistingGitRepo
-
-
-async def fake_run(*args, **kwargs):
-    fake_result_tuple = namedtuple("fake_result", "returncode result")
-    res = fake_result_tuple(0, (args, kwargs))
-    print(args[0])
-    return res
-
-
-async def fake_run_noprint(*args, **kwargs):
-    fake_result_tuple = namedtuple("fake_result", "returncode result")
-    res = fake_result_tuple(0, (args, kwargs))
-    return res
-
-
-@pytest.fixture(scope="module", autouse=True)
-def patch_relative_to(monkeysession):
-    def fake_relative_to(self, some_path: Path):
-        return self
-
-    monkeysession.setattr("pathlib.Path.relative_to", fake_relative_to)
-
-
-@pytest.fixture
-def repo_manager(tmpdir_factory):
-    rm = RepoManager()
-    # rm.repos_folder = Path(str(tmpdir_factory.getbasetemp())) / 'repos'
-    return rm
-
-
-@pytest.fixture
-def repo(tmpdir):
-    repo_folder = Path(str(tmpdir)) / "repos" / "squid"
-    repo_folder.mkdir(parents=True, exist_ok=True)
-
-    return Repo(
-        url="https://github.com/tekulvw/Squid-Plugins",
-        name="squid",
-        branch="rewrite_cogs",
-        folder_path=repo_folder,
-    )
-
-
-@pytest.fixture
-def repo_norun(repo):
-    repo._run = fake_run
-    return repo
-
-
-@pytest.fixture
-def bot_repo(event_loop):
-    cwd = Path.cwd()
-    return Repo(
-        name="Red-DiscordBot",
-        branch="WRONG",
-        url="https://empty.com/something.git",
-        folder_path=cwd,
-        loop=event_loop,
-    )
 
 
 def test_existing_git_repo(tmpdir):
@@ -151,3 +94,43 @@ async def test_existing_repo(repo_manager):
         await repo_manager.add_repo("http://test.com", "test")
 
     repo_manager.does_repo_exist.assert_called_once_with("test")
+
+
+def test_tree_url_parse(repo_manager):
+    cases = [
+        {
+            "input": ("https://github.com/Tobotimus/Tobo-Cogs", None),
+            "expected": ("https://github.com/Tobotimus/Tobo-Cogs", None),
+        },
+        {
+            "input": ("https://github.com/Tobotimus/Tobo-Cogs", "V3"),
+            "expected": ("https://github.com/Tobotimus/Tobo-Cogs", "V3"),
+        },
+        {
+            "input": ("https://github.com/Tobotimus/Tobo-Cogs/tree/V3", None),
+            "expected": ("https://github.com/Tobotimus/Tobo-Cogs", "V3"),
+        },
+        {
+            "input": ("https://github.com/Tobotimus/Tobo-Cogs/tree/V3", "V4"),
+            "expected": ("https://github.com/Tobotimus/Tobo-Cogs", "V4"),
+        },
+    ]
+
+    for test_case in cases:
+        assert test_case["expected"] == repo_manager._parse_url(*test_case["input"])
+
+
+def test_tree_url_non_github(repo_manager):
+    cases = [
+        {
+            "input": ("https://gitlab.com/Tobotimus/Tobo-Cogs", None),
+            "expected": ("https://gitlab.com/Tobotimus/Tobo-Cogs", None),
+        },
+        {
+            "input": ("https://my.usgs.gov/bitbucket/scm/Tobotimus/Tobo-Cogs", "V3"),
+            "expected": ("https://my.usgs.gov/bitbucket/scm/Tobotimus/Tobo-Cogs", "V3"),
+        },
+    ]
+
+    for test_case in cases:
+        assert test_case["expected"] == repo_manager._parse_url(*test_case["input"])

@@ -112,14 +112,6 @@ def parse_cli_flags(args):
         "Can be used with the --no-cogs flag to load these cogs exclusively.",
     )
     parser.add_argument(
-        "--self-bot", action="store_true", help="Specifies if Red should log in as selfbot"
-    )
-    parser.add_argument(
-        "--not-bot",
-        action="store_true",
-        help="Specifies if the token used belongs to a bot account.",
-    )
-    parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Makes Red quit with code 0 just before the "
@@ -137,6 +129,16 @@ def parse_cli_flags(args):
         "--rpc",
         action="store_true",
         help="Enables the built-in RPC server. Please read the docs prior to enabling this!",
+    )
+    parser.add_argument("--token", type=str, help="Run Red with the given token.")
+    parser.add_argument(
+        "--no-instance",
+        action="store_true",
+        help=(
+            "Run Red without any existing instance. "
+            "The data will be saved under a temporary folder "
+            "and deleted on next system restart."
+        ),
     )
     parser.add_argument(
         "instance_name", nargs="?", help="Name of the bot instance created during `redbot-setup`."

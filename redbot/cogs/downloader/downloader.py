@@ -204,7 +204,7 @@ class Downloader:
                 )
             )
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @checks.is_owner()
     async def repo(self, ctx):
         """
@@ -234,7 +234,7 @@ class Downloader:
         else:
             await ctx.send(_("Repo `{}` successfully added.").format(name))
             if repo.install_msg is not None:
-                await ctx.send(repo.install_msg)
+                await ctx.send(repo.install_msg.replace("[p]", ctx.prefix))
 
     @repo.command(name="delete")
     async def _repo_del(self, ctx, repo_name: Repo):
@@ -272,7 +272,7 @@ class Downloader:
         msg = _("Information on {}:\n{}").format(repo_name.name, repo_name.description or "")
         await ctx.send(box(msg))
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @checks.is_owner()
     async def cog(self, ctx):
         """
@@ -295,10 +295,8 @@ class Downloader:
             return
         elif cog.min_python_version > sys.version_info:
             await ctx.send(
-                _(
-                    "This cog requires at least python version {}, aborting install.".format(
-                        ".".join([str(n) for n in cog.min_python_version])
-                    )
+                _("This cog requires at least python version {}, aborting install.").format(
+                    ".".join([str(n) for n in cog.min_python_version])
                 )
             )
             return
@@ -319,7 +317,7 @@ class Downloader:
 
         await ctx.send(_("`{}` cog successfully installed.").format(cog_name))
         if cog.install_msg is not None:
-            await ctx.send(cog.install_msg)
+            await ctx.send(cog.install_msg.replace("[p]", ctx.prefix))
 
     @cog.command(name="uninstall")
     async def _cog_uninstall(self, ctx, cog_name: InstalledCog):

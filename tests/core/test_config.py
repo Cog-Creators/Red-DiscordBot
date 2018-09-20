@@ -1,3 +1,4 @@
+from unittest.mock import patch
 import pytest
 
 
@@ -400,6 +401,16 @@ async def test_ctxmgr_no_shared_default(config, member_factory):
 
 
 @pytest.mark.asyncio
+async def test_ctxmgr_no_unnecessary_write(config):
+    config.register_global(foo=[])
+    foo_value_obj = config.foo
+    with patch.object(foo_value_obj, "set") as set_method:
+        async with foo_value_obj() as foo:
+            pass
+        set_method.assert_not_called()
+
+
+@pytest.mark.asyncio
 async def test_get_then_mutate(config):
     """Tests that mutating an object after getting it as a value doesn't mutate the data store."""
     config.register_global(list1=[])
@@ -419,3 +430,39 @@ async def test_set_then_mutate(config):
     list1.append("foo")
     list1 = await config.list1()
     assert "foo" not in list1
+
+
+@pytest.mark.asyncio
+async def test_call_group_fills_defaults(config):
+    config.register_global(subgroup={"foo": True})
+    subgroup = await config.subgroup()
+    assert "foo" in subgroup
+
+
+@pytest.mark.asyncio
+async def test_group_call_ctxmgr_writes(config):
+    config.register_global(subgroup={"foo": True})
+    async with config.subgroup() as subgroup:
+        subgroup["bar"] = False
+
+    subgroup = await config.subgroup()
+    assert subgroup == {"foo": True, "bar": False}
+
+
+@pytest.mark.asyncio
+async def test_all_works_as_ctxmgr(config):
+    config.register_global(subgroup={"foo": True})
+    async with config.subgroup.all() as subgroup:
+        subgroup["bar"] = False
+
+    subgroup = await config.subgroup()
+    assert subgroup == {"foo": True, "bar": False}
+
+
+@pytest.mark.asyncio
+async def test_get_raw_mixes_defaults(config):
+    config.register_global(subgroup={"foo": True})
+    await config.subgroup.set_raw("bar", value=False)
+
+    subgroup = await config.get_raw("subgroup")
+    assert subgroup == {"foo": True, "bar": False}

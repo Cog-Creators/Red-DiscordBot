@@ -3,12 +3,11 @@ import time
 from enum import Enum
 from random import randint, choice
 from urllib.parse import quote_plus
-
 import aiohttp
 import discord
 from redbot.core import commands
 from redbot.core.i18n import Translator, cog_i18n
-
+from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 from redbot.core.utils.chat_formatting import escape, italics, pagify
 
 _ = Translator("General", __file__)
@@ -164,7 +163,9 @@ class General:
     @commands.command()
     async def lmgtfy(self, ctx, *, search_terms: str):
         """Creates a lmgtfy link"""
-        search_terms = escape(search_terms.replace(" ", "+"), mass_mentions=True)
+        search_terms = escape(
+            search_terms.replace("+", "%2B").replace(" ", "+"), mass_mentions=True
+        )
         await ctx.send("https://lmgtfy.com/?q={}".format(search_terms))
 
     @commands.command(hidden=True)
@@ -199,11 +200,7 @@ class General:
         created_at = _("Since {}. That's over {} days ago!").format(
             guild.created_at.strftime("%d %b %Y %H:%M"), passed
         )
-
-        colour = "".join([choice("0123456789ABCDEF") for x in range(6)])
-        colour = randint(0, 0xFFFFFF)
-
-        data = discord.Embed(description=created_at, colour=discord.Colour(value=colour))
+        data = discord.Embed(description=created_at, colour=(await ctx.embed_colour()))
         data.add_field(name=_("Region"), value=str(guild.region))
         data.add_field(name=_("Users"), value="{}/{}".format(online, total_users))
         data.add_field(name=_("Text Channels"), value=text_channels)
@@ -224,49 +221,90 @@ class General:
             await ctx.send(_("I need the `Embed links` permission to send this."))
 
     @commands.command()
-    async def urban(self, ctx, *, search_terms: str, definition_number: int = 1):
-        """Urban Dictionary search
+    async def urban(self, ctx, *, word):
+        """Searches urban dictionary entries using the unofficial api"""
 
-        Definition number must be between 1 and 10"""
-
-        def encode(s):
-            return quote_plus(s, encoding="utf-8", errors="replace")
-
-        # definition_number is just there to show up in the help
-        # all this mess is to avoid forcing double quotes on the user
-
-        search_terms = search_terms.split(" ")
         try:
-            if len(search_terms) > 1:
-                pos = int(search_terms[-1]) - 1
-                search_terms = search_terms[:-1]
-            else:
-                pos = 0
-            if pos not in range(0, 11):  # API only provides the
-                pos = 0  # top 10 definitions
-        except ValueError:
-            pos = 0
+            url = "https://api.urbandictionary.com/v0/define?term=" + str(word).lower()
 
-        search_terms = {"term": "+".join([s for s in search_terms])}
-        url = "http://api.urbandictionary.com/v0/define"
-        try:
+            headers = {"content-type": "application/json"}
+
             async with aiohttp.ClientSession() as session:
-                async with session.get(url, params=search_terms) as r:
-                    result = await r.json()
-            item_list = result["list"]
-            if item_list:
-                definition = item_list[pos]["definition"]
-                example = item_list[pos]["example"]
-                defs = len(item_list)
-                msg = "**Definition #{} out of {}:\n**{}\n\n**Example:\n**{}".format(
-                    pos + 1, defs, definition, example
-                )
-                msg = pagify(msg, ["\n"])
-                for page in msg:
-                    await ctx.send(page)
-            else:
-                await ctx.send(_("Your search terms gave no results."))
-        except IndexError:
-            await ctx.send(_("There is no definition #{}").format(pos + 1))
+                async with session.get(url, headers=headers) as response:
+                    data = await response.json()
+
         except:
-            await ctx.send(_("Error."))
+            await ctx.send(
+                _("No Urban dictionary entries were found or there was an error in the process")
+            )
+
+        if data.get("error") != 404:
+
+            if await ctx.embed_requested():
+                # a list of embeds
+                embeds = []
+                for ud in data["list"]:
+                    embed = discord.Embed()
+                    embed.title = _("{} by {}").format(ud["word"].capitalize(), ud["author"])
+                    embed.url = ud["permalink"]
+
+                    description = "{} \n \n **Example : ** {}".format(
+                        ud["definition"], ud.get("example", "N/A")
+                    )
+                    if len(description) > 2048:
+                        description = "{}...".format(description[:2045])
+                    embed.description = description
+
+                    embed.set_footer(
+                        text=_("{} Down / {} Up , Powered by urban dictionary").format(
+                            ud["thumbs_down"], ud["thumbs_up"]
+                        )
+                    )
+                    embeds.append(embed)
+
+                if embeds is not None and len(embeds) > 0:
+                    await menu(
+                        ctx,
+                        pages=embeds,
+                        controls=DEFAULT_CONTROLS,
+                        message=None,
+                        page=0,
+                        timeout=30,
+                    )
+            else:
+                messages = []
+                for ud in data["list"]:
+                    description = _("{} \n \n **Example : ** {}").format(
+                        ud["definition"], ud.get("example", "N/A")
+                    )
+                    if len(description) > 2048:
+                        description = "{}...".format(description[:2045])
+                    description = description
+
+                    message = _(
+                        "<{}> \n {} by {} \n \n {} \n \n {} Down / {} Up, Powered by urban "
+                        "dictionary"
+                    ).format(
+                        ud["permalink"],
+                        ud["word"].capitalize(),
+                        ud["author"],
+                        description,
+                        ud["thumbs_down"],
+                        ud["thumbs_up"],
+                    )
+                    messages.append(message)
+
+                if messages is not None and len(messages) > 0:
+                    await menu(
+                        ctx,
+                        pages=messages,
+                        controls=DEFAULT_CONTROLS,
+                        message=None,
+                        page=0,
+                        timeout=30,
+                    )
+        else:
+            await ctx.send(
+                _("No Urban dictionary entries were found or there was an error in the process")
+            )
+            return

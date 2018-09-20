@@ -190,6 +190,13 @@ texinfo_documents = [
 ]
 
 
+# -- Options for linkcheck builder ----------------------------------------
+
+# A list of regular expressions that match URIs that should not be
+# checked when doing a linkcheck build.
+linkcheck_ignore = [r"https://java.com*"]
+
+
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3.6", None),

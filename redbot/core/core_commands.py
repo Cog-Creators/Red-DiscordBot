@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import datetime
 import importlib
 import itertools
@@ -77,9 +78,17 @@ class CoreLogic:
         for name in cog_names:
             try:
                 spec = await bot.cog_mgr.find_cog(name)
-                cogspecs.append((spec, name))
-            except RuntimeError:
-                notfound_packages.append(name)
+                if spec:
+                    cogspecs.append((spec, name))
+                else:
+                    notfound_packages.append(name)
+            except Exception as e:
+                log.exception("Package import failed", exc_info=e)
+
+                exception_log = "Exception during import of cog\n"
+                exception_log += "".join(traceback.format_exception(type(e), e, e.__traceback__))
+                bot._last_exception = exception_log
+                failed_packages.append(name)
 
         for spec, name in cogspecs:
             try:
@@ -95,6 +104,7 @@ class CoreLogic:
             else:
                 await bot.add_loaded_package(name)
                 loaded_packages.append(name)
+
         return loaded_packages, failed_packages, notfound_packages
 
     def _cleanup_and_refresh_modules(self, module_name: str):
@@ -226,10 +236,8 @@ class CoreLogic:
         str
             Invite URL.
         """
-        if self.bot.user.bot:
-            app_info = await self.bot.application_info()
-            return discord.utils.oauth_url(app_info.id)
-        return "Not a bot account!"
+        app_info = await self.bot.application_info()
+        return discord.utils.oauth_url(app_info.id)
 
 
 @i18n.cog_i18n(_)
@@ -275,7 +283,7 @@ class Core(CoreLogic):
             "".format(red_repo, author_repo, org_repo, support_server_url)
         )
 
-        embed = discord.Embed(color=discord.Color.red())
+        embed = discord.Embed(color=(await ctx.embed_colour()))
         embed.add_field(name="Instance owned by", value=str(owner))
         embed.add_field(name="Python", value=python_version)
         embed.add_field(name="discord.py", value=dpy_version)
@@ -321,7 +329,7 @@ class Core(CoreLogic):
 
         return fmt.format(d=days, h=hours, m=minutes, s=seconds)
 
-    @commands.group(autohelp=True)
+    @commands.group()
     async def embedset(self, ctx: commands.Context):
         """
         Commands for toggling embeds on or off.
@@ -360,6 +368,7 @@ class Core(CoreLogic):
 
     @embedset.command(name="guild")
     @checks.guildowner_or_permissions(administrator=True)
+    @commands.guild_only()
     async def embedset_guild(self, ctx: commands.Context, enabled: bool = None):
         """
         Toggle the guild's embed setting.
@@ -413,7 +422,7 @@ class Core(CoreLogic):
             destination = ctx.channel
 
         if self.bot._last_exception:
-            for page in pagify(self.bot._last_exception):
+            for page in pagify(self.bot._last_exception, shorten_by=10):
                 await destination.send(box(page, lang="py"))
         else:
             await ctx.send("No exception has occurred yet")
@@ -422,10 +431,7 @@ class Core(CoreLogic):
     @checks.is_owner()
     async def invite(self, ctx):
         """Show's Red's invite url"""
-        if self.bot.user.bot:
-            await ctx.author.send(await self._invite_url())
-        else:
-            await ctx.send("I'm not a bot account. I have no invite URL.")
+        await ctx.author.send(await self._invite_url())
 
     @commands.command()
     @commands.guild_only()
@@ -510,7 +516,7 @@ class Core(CoreLogic):
             loaded, failed, not_found = await self._load(cog_names)
 
         if loaded:
-            fmt = "Loaded {packs}"
+            fmt = "Loaded {packs}."
             formed = self._get_package_strings(loaded, fmt)
             await ctx.send(formed)
 
@@ -539,7 +545,7 @@ class Core(CoreLogic):
         if unloaded:
             fmt = "Package{plural} {packs} {other} unloaded."
             formed = self._get_package_strings(unloaded, fmt, ("was", "were"))
-            await ctx.send(_(formed))
+            await ctx.send(formed)
 
         if failed:
             fmt = "The package{plural} {packs} {other} not loaded."
@@ -598,7 +604,7 @@ class Core(CoreLogic):
             pass
         await ctx.bot.shutdown(restart=True)
 
-    @commands.group(name="set", autohelp=True)
+    @commands.group(name="set")
     async def _set(self, ctx):
         """Changes Red's settings"""
         if ctx.invoked_subcommand is None:
@@ -698,7 +704,7 @@ class Core(CoreLogic):
         """
         Sets a default colour to be used for the bot's embeds.
 
-        Acceptable values cor the colour parameter can be found at:
+        Acceptable values for the colour parameter can be found at:
 
         http://discordpy.readthedocs.io/en/rewrite/ext/commands/api.html#discord.ext.commands.ColourConverter
         """
@@ -981,7 +987,7 @@ class Core(CoreLogic):
             ctx.bot.disable_sentry()
             await ctx.send(_("Done. Sentry logging is now disabled."))
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @checks.is_owner()
     async def helpset(self, ctx: commands.Context):
         """Manage settings for the help command."""
@@ -1061,7 +1067,10 @@ class Core(CoreLogic):
             red_dist = pkg_resources.get_distribution("red-discordbot")
             red_path = Path(red_dist.location) / "redbot"
             locale_list = sorted(set([loc.stem for loc in list(red_path.glob("**/*.po"))]))
-            pages = pagify("\n".join(locale_list))
+            if not locale_list:
+                await ctx.send("No languages found.")
+                return
+            pages = pagify("\n".join(locale_list), shorten_by=26)
 
         await ctx.send_interactive(pages, box_lang="Available Locales:")
 
@@ -1264,7 +1273,7 @@ class Core(CoreLogic):
             else:
                 await ctx.send(_("Message delivered to {}").format(destination))
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @checks.is_owner()
     async def whitelist(self, ctx):
         """
@@ -1322,7 +1331,7 @@ class Core(CoreLogic):
         await ctx.bot.db.whitelist.set([])
         await ctx.send(_("Whitelist has been cleared."))
 
-    @commands.group(autohelp=True)
+    @commands.group()
     @checks.is_owner()
     async def blacklist(self, ctx):
         """
@@ -1391,8 +1400,7 @@ class Core(CoreLogic):
         """
         Whitelist management commands.
         """
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @localwhitelist.command(name="add")
     async def localwhitelist_add(self, ctx, *, user_or_role: str):
@@ -1474,8 +1482,7 @@ class Core(CoreLogic):
         """
         blacklist management commands.
         """
-        if ctx.invoked_subcommand is None:
-            await ctx.send_help()
+        pass
 
     @localblacklist.command(name="add")
     async def localblacklist_add(self, ctx, *, user_or_role: str):
@@ -1554,6 +1561,138 @@ class Core(CoreLogic):
         """
         await ctx.bot.db.guild(ctx.guild).blacklist.set([])
         await ctx.send(_("blacklist has been cleared."))
+
+    @checks.guildowner_or_permissions(administrator=True)
+    @commands.group(name="command")
+    async def command_manager(self, ctx: commands.Context):
+        """Manage the bot's commands."""
+        pass
+
+    @command_manager.group(name="disable", invoke_without_command=True)
+    async def command_disable(self, ctx: commands.Context, *, command: str):
+        """Disable a command.
+
+        If you're the bot owner, this will disable commands
+        globally by default.
+        """
+        # Select the scope based on the author's privileges
+        if await ctx.bot.is_owner(ctx.author):
+            await ctx.invoke(self.command_disable_global, command=command)
+        else:
+            await ctx.invoke(self.command_disable_guild, command=command)
+
+    @checks.is_owner()
+    @command_disable.command(name="global")
+    async def command_disable_global(self, ctx: commands.Context, *, command: str):
+        """Disable a command globally."""
+        command_obj: commands.Command = ctx.bot.get_command(command)
+        if command_obj is None:
+            await ctx.send(
+                _("I couldn't find that command. Please note that it is case sensitive.")
+            )
+            return
+
+        async with ctx.bot.db.disabled_commands() as disabled_commands:
+            if command not in disabled_commands:
+                disabled_commands.append(command_obj.qualified_name)
+
+        if not command_obj.enabled:
+            await ctx.send(_("That command is already disabled globally."))
+            return
+        command_obj.enabled = False
+
+        await ctx.tick()
+
+    @commands.guild_only()
+    @command_disable.command(name="server", aliases=["guild"])
+    async def command_disable_guild(self, ctx: commands.Context, *, command: str):
+        """Disable a command in this server only."""
+        command_obj: commands.Command = ctx.bot.get_command(command)
+        if command_obj is None:
+            await ctx.send(
+                _("I couldn't find that command. Please note that it is case sensitive.")
+            )
+            return
+
+        async with ctx.bot.db.guild(ctx.guild).disabled_commands() as disabled_commands:
+            if command not in disabled_commands:
+                disabled_commands.append(command_obj.qualified_name)
+
+        done = command_obj.disable_in(ctx.guild)
+
+        if not done:
+            await ctx.send(_("That command is already disabled in this server."))
+        else:
+            await ctx.tick()
+
+    @command_manager.group(name="enable", invoke_without_command=True)
+    async def command_enable(self, ctx: commands.Context, *, command: str):
+        """Enable a command.
+
+        If you're a bot owner, this will try to enable a globally
+        disabled command by default.
+        """
+        if await ctx.bot.is_owner(ctx.author):
+            await ctx.invoke(self.command_enable_global, command=command)
+        else:
+            await ctx.invoke(self.command_enable_guild, command=command)
+
+    @commands.is_owner()
+    @command_enable.command(name="global")
+    async def command_enable_global(self, ctx: commands.Context, *, command: str):
+        """Enable a command globally."""
+        command_obj: commands.Command = ctx.bot.get_command(command)
+        if command_obj is None:
+            await ctx.send(
+                _("I couldn't find that command. Please note that it is case sensitive.")
+            )
+            return
+
+        async with ctx.bot.db.disabled_commands() as disabled_commands:
+            with contextlib.suppress(ValueError):
+                disabled_commands.remove(command_obj.qualified_name)
+
+        if command_obj.enabled:
+            await ctx.send(_("That command is already enabled globally."))
+            return
+
+        command_obj.enabled = True
+        await ctx.tick()
+
+    @commands.guild_only()
+    @command_enable.command(name="server", aliases=["guild"])
+    async def command_enable_guild(self, ctx: commands.Context, *, command: str):
+        """Enable a command in this server."""
+        command_obj: commands.Command = ctx.bot.get_command(command)
+        if command_obj is None:
+            await ctx.send(
+                _("I couldn't find that command. Please note that it is case sensitive.")
+            )
+            return
+
+        async with ctx.bot.db.guild(ctx.guild).disabled_commands() as disabled_commands:
+            with contextlib.suppress(ValueError):
+                disabled_commands.remove(command_obj.qualified_name)
+
+        done = command_obj.enable_in(ctx.guild)
+
+        if not done:
+            await ctx.send(_("That command is already enabled in this server."))
+        else:
+            await ctx.tick()
+
+    @checks.is_owner()
+    @command_manager.command(name="disabledmsg")
+    async def command_disabledmsg(self, ctx: commands.Context, *, message: str = ""):
+        """Set the bot's response to disabled commands.
+
+        Leave blank to send nothing.
+
+        To include the command name in the message, include the
+        `{command}` placeholder.
+        """
+        await ctx.bot.db.disabled_command_msg.set(message)
+        await ctx.tick()
 
     # RPC handlers
     async def rpc_load(self, request):

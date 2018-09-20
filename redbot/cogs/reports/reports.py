@@ -56,32 +56,32 @@ class Reports:
 
     @checks.admin_or_permissions(manage_guild=True)
     @commands.guild_only()
-    @commands.group(name="reportset", autohelp=True)
+    @commands.group(name="reportset")
     async def reportset(self, ctx: commands.Context):
         """
-        settings for reports
+        Settings for the report system.
         """
         pass
 
     @checks.admin_or_permissions(manage_guild=True)
     @reportset.command(name="output")
     async def setoutput(self, ctx: commands.Context, channel: discord.TextChannel):
-        """sets the output channel"""
+        """Set the channel where reports will show up"""
         await self.config.guild(ctx.guild).output_channel.set(channel.id)
-        await ctx.send(_("Report Channel Set."))
+        await ctx.send(_("The report channel has been set."))
 
     @checks.admin_or_permissions(manage_guild=True)
-    @reportset.command(name="toggleactive")
+    @reportset.command(name="toggle", aliases=["toggleactive"])
     async def report_toggle(self, ctx: commands.Context):
-        """Toggles whether the Reporting tool is enabled or not"""
+        """Enables or Disables reporting for the server"""
 
         active = await self.config.guild(ctx.guild).active()
         active = not active
         await self.config.guild(ctx.guild).active.set(active)
         if active:
-            await ctx.send(_("Reporting now enabled"))
+            await ctx.send(_("Reporting is now enabled"))
         else:
-            await ctx.send(_("Reporting disabled."))
+            await ctx.send(_("Reporting is now disabled."))
 
     async def internal_filter(self, m: discord.Member, mod=False, perms=None):
         ret = False
@@ -105,7 +105,7 @@ class Reports:
         *,
         mod: bool = False,
         permissions: Union[discord.Permissions, dict] = None,
-        prompt: str = ""
+        prompt: str = "",
     ):
         """
         discovers which of shared guilds between the bot
@@ -175,7 +175,10 @@ class Reports:
         if await self.bot.embed_requested(channel, author):
             em = discord.Embed(description=report)
             em.set_author(
-                name=_("Report from {0.display_name}").format(author), icon_url=author.avatar_url
+                name=_("Report from {author}{maybe_nick}").format(
+                    author=author, maybe_nick=(f" ({author.nick})" if author.nick else "")
+                ),
+                icon_url=author.avatar_url,
             )
             em.set_footer(text=_("Report #{}").format(ticket_number))
             send_content = None
@@ -201,10 +204,10 @@ class Reports:
     @commands.group(name="report", invoke_without_command=True)
     async def report(self, ctx: commands.Context, *, _report: str = ""):
         """
-        Follow the prompts to make a report
+        Send a report.
 
-        optionally use with a report message
-        to use it non interactively
+        Use without arguments for interactive reporting, or do
+        [p]report <text> to use it non-interactively.
         """
         author = ctx.author
         guild = ctx.guild
@@ -224,14 +227,17 @@ class Reports:
         if self.antispam[guild.id][author.id].spammy:
             return await author.send(
                 _(
-                    "You've sent a few too many of these recently. "
-                    "Contact a server admin to resolve this, or try again "
-                    "later."
+                    "You've sent too many reports recently. "
+                    "Please contact a server admin if this is important matter, "
+                    "or please wait and try again later."
                 )
             )
         if author.id in self.user_cache:
             return await author.send(
-                _("Please finish making your prior report before making an additional one")
+                _(
+                    "Please finish making your prior report before trying to make an "
+                    "additional one!"
+                )
             )
         self.user_cache.append(author.id)
 
@@ -263,7 +269,9 @@ class Reports:
 
         with contextlib.suppress(discord.Forbidden, discord.HTTPException):
             if val is None:
-                await author.send(_("There was an error sending your report."))
+                await author.send(
+                    _("There was an error sending your report, please contact a server admin.")
+                )
             else:
                 await author.send(_("Your report was submitted. (Ticket #{})").format(val))
                 self.antispam[guild.id][author.id].stamp()
@@ -309,17 +317,19 @@ class Reports:
             if msgs:
                 self.tunnel_store[k]["msgs"] = msgs
 
+    @commands.guild_only()
     @checks.mod_or_permissions(manage_members=True)
     @report.command(name="interact")
     async def response(self, ctx, ticket_number: int):
         """
-        opens a message tunnel between things you say in this channel
-        and the ticket opener's direct messages
+        Open a message tunnel.
+        
+        This tunnel will forward things you say in this channel
+        to the ticket opener's direct messages.
 
-        tunnels do not persist across bot restarts
+        Tunnels do not persist across bot restarts.
         """
 
-        # note, mod_or_permissions is an implicit guild_only
         guild = ctx.guild
         rec = await self.config.custom("REPORT", guild.id, ticket_number).report()
 
@@ -342,14 +352,15 @@ class Reports:
             )
 
         big_topic = _(
-            "{who} opened a 2-way communication."
+            "{who} opened a 2-way communication "
             "about ticket number {ticketnum}. Anything you say or upload here "
             "(8MB file size limitation on uploads) "
             "will be forwarded to them until the communication is closed.\n"
-            "You can close a communication at any point "
-            "by reacting with the X to the last message recieved. "
-            "\nAny message succesfully forwarded will be marked with a check."
-            "\nTunnels are not persistent across bot restarts."
+            "You can close a communication at any point by reacting with "
+            "the \N{NEGATIVE SQUARED CROSS MARK} to the last message recieved.\n"
+            "Any message succesfully forwarded will be marked with "
+            "\N{WHITE HEAVY CHECK MARK}.\n"
+            "Tunnels are not persistent across bot restarts."
         )
         topic = big_topic.format(
             ticketnum=ticket_number, who=_("A moderator in `{guild.name}` has").format(guild=guild)
@@ -357,7 +368,7 @@ class Reports:
         try:
             m = await tun.communicate(message=ctx.message, topic=topic, skip_message_content=True)
         except discord.Forbidden:
-            await ctx.send(_("User has disabled DMs."))
+            await ctx.send(_("That user has DMs disabled."))
         else:
             self.tunnel_store[(guild, ticket_number)] = {"tun": tun, "msgs": m}
             await ctx.send(big_topic.format(who=_("You have"), ticketnum=ticket_number))
