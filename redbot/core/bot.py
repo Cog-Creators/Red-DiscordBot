@@ -295,6 +295,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
                 del sys.modules["redbot.cogs"].__dict__[name]
 
     async def send_filtered(
+        self,
         destination: discord.abc.Messageable,
         filter_mass_mentions=True,
         filter_invite_links=True,
