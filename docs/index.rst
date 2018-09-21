@@ -47,6 +47,7 @@ Welcome to Red - Discord Bot's documentation!
     cog_guides/economy
     cog_guides/downloader
     cog_guides/permissions
+    cog_guides/core
 
 .. toctree::
     :maxdepth: 2

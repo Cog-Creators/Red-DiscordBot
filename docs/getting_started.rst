@@ -215,7 +215,7 @@ Administrator
 ~~~~~~~~~~~~~
 
 The administrator is defined by its roles. You can set an admin role
-with ``[p]set adminrole``. 
+with the :ref:`set adminrole <core-command-set-adminrole>` command.
 
 For example, in the mod cog, an admin can use the ``[p]modset`` command
 which defines the cog settings.
@@ -225,7 +225,7 @@ Moderator
 ~~~~~~~~~
 
 A moderator is a step above the average users. You can set a moderator
-role with ``[p]set modrole``.
+role with the :ref:`set modrole <core-command-set-modrole>` command.
 
 For example, in the mod cog (again), a mod will be able to mute, kick and ban;
 but he won't be able to modify the cog settings with the ``[p]modset`` command.
