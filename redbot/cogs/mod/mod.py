@@ -860,7 +860,14 @@ class Mod:
     async def voice_mute(
         self, ctx: commands.Context, user: discord.Member, *, args: mute_converter = (None, None)
     ):
-        """Mutes the user in a voice channel"""
+        """Mutes the user in a voice channel
+        
+        You can add a reason, or make the mute temporary using arguments:
+
+        [-t number of days, hours, minutes, seconds] [-r reason]
+
+        [p]mute voice @AirhornSolutions -r We love the audio shitposts, but need some quiet -t 1 hour
+        """
         reason, time_interval = args
 
         try:
@@ -883,7 +890,14 @@ class Mod:
     async def channel_mute(
         self, ctx: commands.Context, user: discord.Member, *, args: mute_converter = (None, None)
     ):
-        """Mutes user in the current channel"""
+        """Mutes user in the current channel
+        
+        You can add a reason, or make the mute temporary using arguments:
+
+        [-t number of days, hours, minutes, seconds] [-r reason]
+
+        [p]mute channel @AngryGamer -t 10 minutes -r need them on ice for a moment to mediate.
+        """
         reason, time_interval = args
         await self.process_mute(
             ctx.message.channel,
@@ -900,8 +914,20 @@ class Mod:
     async def guild_mute(
         self, ctx: commands.Context, user: discord.Member, *, args: mute_converter = (None, None)
     ):
-        """Mutes user in the server"""
+        """Mutes user in the server
+        
+        You can add a reason, or make the mute temporary using arguments:
+
+        [-t number of days, hours, minutes, seconds] [-r reason]
+
+        [p]mute channel @Blaze -t 4h20m -r Won't stop talking about weed in every channel. 
+        Giving them a fitting tempmute to rethink this.
+        """
         reason, time_interval = args
+        if time_interval is not None and time_interval.total_seconds() < 60:
+            return await ctx.send(
+                _("A mute this short applied server-wide will likely get me ratelimited.")
+            )  # Modify handling of this to account for role based when added.
         await self.process_mute(
             *ctx.guild.channels,
             ctx=ctx,
@@ -944,12 +970,12 @@ class Mod:
         successful = {k for k, v in results.items() if v[0]}
 
         if successful:
-            expiry = None if expires is None else (ctx.message.created_at + expires).timestamp()
+            expiry = None if expires is None else (ctx.message.created_at + expires)
             eid = str(ctx.message.id)
             entry = {
                 "guild": ctx.guild.id,
                 "user": target.id,
-                "expiry": expiry,
+                "expiry": expiry.timestamp(),
                 "channels": [c.id for c in successful],
             }
             await self.settings.custom("TEMPMUTE", eid).set(entry)
@@ -959,6 +985,25 @@ class Mod:
                 )
                 self.scheduled_unmute_tasks[eid] = task
             await ctx.tick()
+
+            if text_mute:
+                action_type = "cmute"
+            elif guild_wide:
+                action_type = "smute"
+            else:
+                action_type = "vmute"
+            await modlog.create_case(
+                self.bot,
+                ctx.guild,
+                ctx.message.created_at,
+                action_type,
+                target,
+                ctx.author,
+                reason,
+                until=expiry,
+                channel=ctx.channel,
+            )
+
         else:
             others = {k for k, m in messages.items() if m != mute_unmute_issues["already_muted"]}
             if not others:
@@ -1007,7 +1052,7 @@ class Mod:
                         self.bot,
                         guild,
                         ctx.message.created_at,
-                        "voiceunmute",
+                        "vunmute",
                         user,
                         author,
                         reason,
