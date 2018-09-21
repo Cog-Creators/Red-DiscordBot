@@ -294,8 +294,8 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             if pkg_name.startswith("redbot.cogs."):
                 del sys.modules["redbot.cogs"].__dict__[name]
 
+    @staticmethod
     async def send_filtered(
-        self,
         destination: discord.abc.Messageable,
         filter_mass_mentions=True,
         filter_invite_links=True,
