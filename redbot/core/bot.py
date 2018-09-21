@@ -1,10 +1,11 @@
 import asyncio
 import os
 import logging
-from collections import Counter
+from collections import ChainMap, Counter
 from enum import Enum
 from importlib.machinery import ModuleSpec
 from pathlib import Path
+from typing import Any, Callable, Mapping, Optional
 
 import discord
 import sys
@@ -123,6 +124,15 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
 
         self._sentry_mgr = None
 
+        # support "soft" commands for some cogs, like Alias or CustomCommands
+        self.all_commands = ChainMap(self.all_commands)
+        self._cmd_maps = []
+
+    @property
+    def core_map(self):
+        """Returns the bot's commands map with only any normally-defined commands."""
+        return self.all_commands.maps[0]
+
     def enable_sentry(self):
         """Enable Sentry logging for Red."""
         if self._sentry_mgr is None:
@@ -195,6 +205,30 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
         admin_role = await self.db.guild(member.guild).admin_role()
         return any(role.id in (mod_role, admin_role) for role in member.roles)
 
+    def get_cog_map(
+        self, cog: Any, factory: Optional[Callable[[], Mapping[str, commands.Command]]] = None
+    ) -> Mapping[str, commands.Command]:
+        """
+        Returns a map of commands for this cog.
+
+        Allows the cog to create commands without overriding the bot's own commands.
+        If the map doesn't exist, an empty mapping is created and returned.
+        The returned map is valid for the lifetime of the cog.
+
+        The map will be automatically removed when the cog is removed.
+        """
+        ident = id(cog)
+        try:
+            index = self._cmd_maps.index(ident) + 1
+            return self.all_commands.maps[index]
+        except ValueError:
+            # support non-dict mappings, like d.py's case-insensitive dict
+            factory = factory or type(self.core_map)
+            new_map = factory()
+            self.all_commands.maps.append(new_map)
+            self._cmd_maps.append(ident)
+            return new_map
+
     async def get_context(self, message, *, cls=commands.Context):
         return await super().get_context(message, cls=cls)
 
@@ -233,6 +267,15 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
         self.extensions[name] = lib
 
     def remove_cog(self, cogname):
+        # remove cog's command map, if any
+        ident = id(self.get_cog(cogname))
+        try:
+            index = self._cmd_maps.index(ident)
+            self.all_commands.map.pop(index + 1, None)
+            self._cmd_maps.pop(index, None)
+        except ValueError:
+            pass
+
         super().remove_cog(cogname)
 
         for meth in self.rpc_handlers.pop(cogname.upper(), ()):
