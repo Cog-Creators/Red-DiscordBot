@@ -297,7 +297,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
                 self.remove_cog(cogname)
 
         # first remove all the commands from the module
-        for cmd in self.all_commands.copy().values():
+        for cmd in self.core_map.copy().values():
             if cmd.module and _is_submodule(lib_name, cmd.module):
                 if isinstance(cmd, discord.ext.commands.GroupMixin):
                     cmd.recursively_remove_all_commands()
