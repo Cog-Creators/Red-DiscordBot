@@ -271,7 +271,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
         ident = id(self.get_cog(cogname))
         try:
             index = self._cmd_maps.index(ident)
-            self.all_commands.map.pop(index + 1, None)
+            self.all_commands.maps.pop(index + 1, None)
             self._cmd_maps.pop(index, None)
         except ValueError:
             pass
