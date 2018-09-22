@@ -5,7 +5,7 @@ from collections import ChainMap, Counter
 from enum import Enum
 from importlib.machinery import ModuleSpec
 from pathlib import Path
-from typing import Any, Callable, Mapping, Optional
+from typing import Any, Mapping, Optional
 
 import discord
 import sys
@@ -212,7 +212,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
         Returns a map of commands for this cog.
 
         Allows the cog to create commands without overriding the bot's own commands.
-        If the map doesn't exist, the default or an empty mapping is created and returned.
+        If the map doesn't exist, the default or an empty mapping is added and returned.
         The returned map is valid for the lifetime of the cog.
 
         The map will be automatically removed when the cog is removed.
