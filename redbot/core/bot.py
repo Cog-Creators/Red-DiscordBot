@@ -206,13 +206,13 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
         return any(role.id in (mod_role, admin_role) for role in member.roles)
 
     def get_cog_map(
-        self, cog: Any, factory: Optional[Callable[[], Mapping[str, commands.Command]]] = None
+        self, cog: Any, *, default: Optional[Mapping[str, commands.Command]] = None
     ) -> Mapping[str, commands.Command]:
         """
         Returns a map of commands for this cog.
 
         Allows the cog to create commands without overriding the bot's own commands.
-        If the map doesn't exist, an empty mapping is created and returned.
+        If the map doesn't exist, the default or an empty mapping is created and returned.
         The returned map is valid for the lifetime of the cog.
 
         The map will be automatically removed when the cog is removed.
@@ -223,11 +223,11 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             return self.all_commands.maps[index]
         except ValueError:
             # support non-dict mappings, like d.py's case-insensitive dict
-            factory = factory or type(self.core_map)
-            new_map = factory()
-            self.all_commands.maps.append(new_map)
+            if default is None:
+                default = type(self.core_map)()
+            self.all_commands.maps.append(default)
             self._cmd_maps.append(ident)
-            return new_map
+            return default
 
     async def get_context(self, message, *, cls=commands.Context):
         return await super().get_context(message, cls=cls)
