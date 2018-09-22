@@ -126,7 +126,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
 
         # support "soft" commands for some cogs, like Alias or CustomCommands
         self.all_commands = ChainMap(self.all_commands)
-        self._cmd_maps = []
+        self._cog_maps = []
 
     @property
     def core_map(self):
@@ -219,14 +219,14 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
         """
         ident = id(cog)
         try:
-            index = self._cmd_maps.index(ident) + 1
+            index = self._cog_maps.index(ident) + 1
             return self.all_commands.maps[index]
         except ValueError:
             # support non-dict mappings, like d.py's case-insensitive dict
             if default is None:
                 default = type(self.core_map)()
             self.all_commands.maps.append(default)
-            self._cmd_maps.append(ident)
+            self._cog_maps.append(ident)
             return default
 
     async def get_context(self, message, *, cls=commands.Context):
@@ -270,9 +270,9 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
         # remove cog's command map, if any
         ident = id(self.get_cog(cogname))
         try:
-            index = self._cmd_maps.index(ident)
-            self.all_commands.maps.pop(index + 1, None)
-            self._cmd_maps.pop(index, None)
+            index = self._cog_maps.index(ident)
+            del self.all_commands.maps[index + 1]
+            del self._cog_maps[index]
         except ValueError:
             pass
 
