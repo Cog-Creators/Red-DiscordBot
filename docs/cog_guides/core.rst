@@ -237,360 +237,6 @@ Unloads and cog with its commands.
 
     .. tip:: You can unload multiple cogs at one like this: ``[p]unload cog1 cog2 ..``
 
-.. _core-command-command:
-
-^^^^^^^
-command
-^^^^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]command
-
-**Description**
-
-Disable or enable commands.
-
-.. _core-command-command-disable:
-
-"""""""""""""""
-command disable
-"""""""""""""""
-
-.. note:: This command can be locked to the
-    :ref:`bot owner <getting-started-permissions>` or the :ref:`server owner
-    <getting-started-permissions>`, depending on what you're doing.
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]command disable <command>
-
-**Description**
-
-Disable a command on all servers. This will affect everyone, including the bot
-owner, unlike :ref:`permissions`.
-
-This command has two subcommmands: ``global`` and ``server``. If you use ``[p]
-command disable server``, you will disable the command in the current server
-only. ``[p]command disable global`` will disable the command globally.
-
-Using ``[p]command disable`` without a subcommand will be default to a global
-disable if you're the bot owner, else on the current server.
-
-**Arguments**
-
-*   ``<command>``: The command to disable. The cog of the command must be
-    loaded.
-
-.. _core-command-command-enable:
-
-"""""""""""""""
-command enable
-"""""""""""""""
-
-.. note:: This command can be locked to the
-    :ref:`bot owner <getting-started-permissions>` or the :ref:`server owner
-    <getting-started-permissions>`, depending on what you're doing.
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]command enable <command>
-
-**Description**
-
-Enable a command that was previously disabled.
-
-The subcommands works the same as for the :ref:`command disable
-<core-command-command-disable>` command.
-
-**Arguments**
-
-*   ``<command>``: The command to enable. The cog of the command must
-    be loaded.
-
-.. _core-command-command-disablemdg:
-
-""""""""""""""""""
-command disablemsg
-""""""""""""""""""
-
-.. note:: |owner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]command disabledmsg [message]
-
-**Description**
-
-Modify the message posted when a disabed command is used. You can remove that
-message by using the command without argument.
-
-.. tip:: You can place ``{command}`` in your message to represent the command
-    that was invoked.
-
-**Arguments**
-
-*   ``[message]``: The message to post. Omit this to remove the message.
-
-.. _core-command-blacklist:
-
-^^^^^^^^^
-blacklist
-^^^^^^^^^
-
-.. note:: |owner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]blacklist
-
-**Description**
-
-Manage the global list of users who are banned from the bot. Any user in that
-list will be completly ignored by all commands and listeners.
-
-This applies on **all** servers and in private message.
-
-.. important:: The blacklist/whitelist management is the same for all types.
-    The description for this group command will be the same for the others.
-
-.. _core-command-blacklist-add:
-
-"""""""""""""
-blacklist add
-"""""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]blacklist add <user>
-
-**Description**
-
-Add a user to the blacklist. He will be completly ignored by the bot, for
-commands, messages, reactions and other types of listeners.
-
-**Arguments**
-
-*   ``<user>``: The user to add to the blacklist.
-
-.. _core-command-blacklist-remove:
-
-""""""""""""""""
-blacklist remove
-""""""""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]blacklist add <user>
-
-**Description**
-
-Remove a user from the blacklist. He won't be ignored anymore by the bot.
-
-**Arguments**
-
-*   ``<user>``: The user to add to the blacklist.
-
-.. _core-command-blacklist-list:
-
-""""""""""""""
-blacklist list
-""""""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]blacklist list
-
-**Description**
-
-List all of the blackliste users on the bot.
-
-.. _core-command-blacklist-clear:
-
-"""""""""""""""
-blacklist clear
-"""""""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]blacklist clear
-
-**Description**
-
-Completly clear the blacklist by removing all users registered.
-
-.. warning:: This action cannot be reversed.
-
-.. _core-command-whitelist:
-
-^^^^^^^^^
-whitelist
-^^^^^^^^^
-
-.. note:: |owner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]whitelist
-
-**Description**
-
-Manage the global list of users who are allowed to use the bot.
-
-.. warning:: Everyone have access to the bot by default. If you add one user
-    user to that list, everyone else will be automatically "blacklisted" and
-    you will have to whitelist users that should have access to the bot.
-
-This applies on **all** servers and in private message.
-
-For more informations about this group command's subcommands, please take a
-look at the :ref:`blacklist <core-command-blacklist>` command, since the
-subcommands are the same.
-
-.. _core-command-localblacklist:
-
-^^^^^^^^^^^^^^
-localblacklist
-^^^^^^^^^^^^^^
-
-.. note:: |admin-lock| It will also work if you have the ``Administrator``
-    permission.
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]localblacklist
-
-**Description**
-
-Manage the server list of users who are banned from the bot. Any user in that
-list will be completly ignored by all commands and listeners.
-
-This only applies on your server.
-
-For more informations about this group command's subcommands, please take a
-look at the :ref:`blacklist <core-command-blacklist>` command, since the
-subcommands are the same.
-
-.. _core-command-localwhitelist:
-
-^^^^^^^^^^^^^^
-localblacklist
-^^^^^^^^^^^^^^
-
-.. note:: |admin-lock| It will also work if you have the ``Administrator``
-    permission.
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]localblacklist
-
-**Description**
-
-Manage the global list of users who are allowed to use the bot.
-
-.. warning:: Everyone have access to the bot by default. If you add one user
-    user to that list, everyone else will be automatically "blacklisted" and
-    you will have to whitelist users that should have access to the bot.
-
-This only applies on your server.
-
-For more informations about this group command's subcommands, please take a
-look at the :ref:`blacklist <core-command-blacklist>` command, since the
-subcommands are the same.
-
-.. _core-command-servers:
-
-^^^^^^^
-servers
-^^^^^^^
-
-.. note:: |owner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]servers
-
-**Description**
-
-List all of the servers the bot is on. This also allows you to make the bot
-leave a server.
-
-If you want to do so, type the command once, find the server and type its
-number in the chat. Then the bot will leave that server.
-
-.. _core-command-leave:
-
-^^^^^
-leave
-^^^^^
-
-.. note:: |owner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]leave
-
-**Description**
-
-Leave the server where the message was typed. You will need to confirm by
-typing ``yes`` in the chat.
-
-.. note:: Data of the server is still stored and ready if the bot comes back.
-
-.. _core-command-invite:
-
-^^^^^^
-invite
-^^^^^^
-
-.. note:: |owner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]invite
-
-**Description**
-
-Send you the bot's invite URL in private message.
-
-.. tip:: You can use the `Discord permissions calculator <https://discordapi.com/permissions.html>`_
-    for generating your own invite link, with a redirect URI and a permissions
-    model (this is how you create a special role for the bot).
-
-    Set ``scope`` to ``bot``, ``Require Code Grant`` must stay unticked and
-    you need to paste the bot's ID in ``Client ID``. Get your bot's ID with
-.. the :ref:`userinfo <mod-command-userinfo>` command.
-
 .. _core-command-listlocales:
 
 ^^^^^^^^^^^
@@ -706,98 +352,6 @@ what will be shown at the bottom of every embed:
 
 *   ``[tagline]``: The text you want to set. Omit the argument to reset the
     tagline.
-
-.. _core-command-embedset:
-
-^^^^^^^^
-embedset
-^^^^^^^^
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]embedset
-
-**Description**
-
-Group command used for setting up the embed system. You can enable or disable
-the embed usage for some commands, like help.
-
-This setting can be global, server-wide or user-only.
-
-.. _core-command-embedset-global:
-
-"""""""""""""""
-embedset global
-"""""""""""""""
-
-.. note:: |owner-lock|
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]embedset global [enabled]
-
-**Description**
-
-Enable or disable the usage of embeds with compatible commands. The setting
-will be global and applied on everyone by default, but it can be modified for
-specific servers/users.
-
-**Arguments**
-
-*   ``[enabled]``: If specified, the embeds will be enabled, else they will
-    be disabled.
-
-.. _core-command-embedset-guild:
-
-""""""""""""""
-embedset guild
-""""""""""""""
-
-.. note:: |guildowner-lock| It will also work if you have the ``Administrator``
-    permission.
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]embedset guild [enabled]
-
-**Description**
-
-Enable or disable the usage of embeds with compatible commands. The setting
-will be server-wide and applied in the server, but it can be modified for
-specific users.
-
-**Arguments**
-
-*   ``[enabled]``: If specified, the embeds will be enabled, else they will
-    be disabled.
-
-.. _core-command-embedset-user:
-
-"""""""""""""
-embedset user
-"""""""""""""
-
-**Syntax**
-
-.. code-block:: none
-
-    [p]embedset user [enabled]
-
-**Description**
-
-Enable or disable the usage of embeds with compatible commands. The setting
-will only be applied with you.
-
-**Arguments**
-
-*   ``[enabled]``: If specified, the embeds will be enabled, else they will
-    be disabled.
 
 .. _core-command-set:
 
@@ -1413,29 +967,455 @@ Sentry status can be checked on the bot's console, first line in the right box.
 
 .. image:: ../.ressources/red-console.png
 
+.. _core-command-servers:
+
+^^^^^^^
+servers
+^^^^^^^
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]servers
+
+**Description**
+
+List all of the servers the bot is on. This also allows you to make the bot
+leave a server.
+
+If you want to do so, type the command once, find the server and type its
+number in the chat. Then the bot will leave that server.
+
+.. _core-command-leave:
+
+^^^^^
+leave
+^^^^^
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]leave
+
+**Description**
+
+Leave the server where the message was typed. You will need to confirm by
+typing ``yes`` in the chat.
+
+.. note:: Data of the server is still stored and ready if the bot comes back.
+
+.. _core-command-invite:
+
+^^^^^^
+invite
+^^^^^^
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]invite
+
+**Description**
+
+Send you the bot's invite URL in private message.
+
+.. tip:: You can use the `Discord permissions calculator <https://discordapi.com/permissions.html>`_
+    for generating your own invite link, with a redirect URI and a permissions
+    model (this is how you create a special role for the bot).
+
+    Set ``scope`` to ``bot``, ``Require Code Grant`` must stay unticked and
+    you need to paste the bot's ID in ``Client ID``. Get your bot's ID with
+.. the :ref:`userinfo <mod-command-userinfo>` command.
+
+.. _core-command-blacklist:
+
+^^^^^^^^^
+blacklist
+^^^^^^^^^
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]blacklist
+
+**Description**
+
+Manage the global list of users who are banned from the bot. Any user in that
+list will be completly ignored by all commands and listeners.
+
+This applies on **all** servers and in private message.
+
+.. important:: The blacklist/whitelist management is the same for all types.
+    The description for this group command will be the same for the others.
+
+.. _core-command-blacklist-add:
+
+"""""""""""""
+blacklist add
+"""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]blacklist add <user>
+
+**Description**
+
+Add a user to the blacklist. He will be completly ignored by the bot, for
+commands, messages, reactions and other types of listeners.
+
+**Arguments**
+
+*   ``<user>``: The user to add to the blacklist.
+
+.. _core-command-blacklist-remove:
+
+""""""""""""""""
+blacklist remove
+""""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]blacklist add <user>
+
+**Description**
+
+Remove a user from the blacklist. He won't be ignored anymore by the bot.
+
+**Arguments**
+
+*   ``<user>``: The user to add to the blacklist.
+
+.. _core-command-blacklist-list:
+
+""""""""""""""
+blacklist list
+""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]blacklist list
+
+**Description**
+
+List all of the blackliste users on the bot.
+
+.. _core-command-blacklist-clear:
+
+"""""""""""""""
+blacklist clear
+"""""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]blacklist clear
+
+**Description**
+
+Completly clear the blacklist by removing all users registered.
+
+.. warning:: This action cannot be reversed.
+
+.. _core-command-whitelist:
+
+^^^^^^^^^
+whitelist
+^^^^^^^^^
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]whitelist
+
+**Description**
+
+Manage the global list of users who are allowed to use the bot.
+
+.. warning:: Everyone have access to the bot by default. If you add one user
+    user to that list, everyone else will be automatically "blacklisted" and
+    you will have to whitelist users that should have access to the bot.
+
+This applies on **all** servers and in private message.
+
+For more informations about this group command's subcommands, please take a
+look at the :ref:`blacklist <core-command-blacklist>` command, since the
+subcommands are the same.
+
+.. _core-command-localblacklist:
+
+^^^^^^^^^^^^^^
+localblacklist
+^^^^^^^^^^^^^^
+
+.. note:: |admin-lock| It will also work if you have the ``Administrator``
+    permission.
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]localblacklist
+
+**Description**
+
+Manage the server list of users who are banned from the bot. Any user in that
+list will be completly ignored by all commands and listeners.
+
+This only applies on your server.
+
+For more informations about this group command's subcommands, please take a
+look at the :ref:`blacklist <core-command-blacklist>` command, since the
+subcommands are the same.
+
+.. _core-command-localwhitelist:
+
+^^^^^^^^^^^^^^
+localblacklist
+^^^^^^^^^^^^^^
+
+.. note:: |admin-lock| It will also work if you have the ``Administrator``
+    permission.
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]localblacklist
+
+**Description**
+
+Manage the global list of users who are allowed to use the bot.
+
+.. warning:: Everyone have access to the bot by default. If you add one user
+    user to that list, everyone else will be automatically "blacklisted" and
+    you will have to whitelist users that should have access to the bot.
+
+This only applies on your server.
+
+For more informations about this group command's subcommands, please take a
+look at the :ref:`blacklist <core-command-blacklist>` command, since the
+subcommands are the same.
+
 **Arguments**
 
 *   ``<on_or_off>``: ``on`` if you want to enable Sentry, else ``off``.
 
-.. _core-command-contact:
+.. _core-command-command:
 
 ^^^^^^^
-contact
+command
 ^^^^^^^
 
 **Syntax**
 
 .. code-block:: none
 
-    [p]contact <message>
+    [p]command
 
 **Description**
 
-Send a message to the owner of the bot. He can answer you through the bot.
+Disable or enable commands.
+
+.. _core-command-command-disable:
+
+"""""""""""""""
+command disable
+"""""""""""""""
+
+.. note:: This command can be locked to the
+    :ref:`bot owner <getting-started-permissions>` or the :ref:`server owner
+    <getting-started-permissions>`, depending on what you're doing.
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]command disable <command>
+
+**Description**
+
+Disable a command on all servers. This will affect everyone, including the bot
+owner, unlike :ref:`permissions`.
+
+This command has two subcommmands: ``global`` and ``server``. If you use ``[p]
+command disable server``, you will disable the command in the current server
+only. ``[p]command disable global`` will disable the command globally.
+
+Using ``[p]command disable`` without a subcommand will be default to a global
+disable if you're the bot owner, else on the current server.
 
 **Arguments**
 
-*   ``<message>``: The message you want to send.
+*   ``<command>``: The command to disable. The cog of the command must be
+    loaded.
+
+.. _core-command-command-enable:
+
+"""""""""""""""
+command enable
+"""""""""""""""
+
+.. note:: This command can be locked to the
+    :ref:`bot owner <getting-started-permissions>` or the :ref:`server owner
+    <getting-started-permissions>`, depending on what you're doing.
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]command enable <command>
+
+**Description**
+
+Enable a command that was previously disabled.
+
+The subcommands works the same as for the :ref:`command disable
+<core-command-command-disable>` command.
+
+**Arguments**
+
+*   ``<command>``: The command to enable. The cog of the command must
+    be loaded.
+
+.. _core-command-command-disablemdg:
+
+""""""""""""""""""
+command disablemsg
+""""""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]command disabledmsg [message]
+
+**Description**
+
+Modify the message posted when a disabed command is used. You can remove that
+message by using the command without argument.
+
+.. tip:: You can place ``{command}`` in your message to represent the command
+    that was invoked.
+
+**Arguments**
+
+*   ``[message]``: The message to post. Omit this to remove the message.
+
+.. _core-command-embedset:
+
+^^^^^^^^
+embedset
+^^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]embedset
+
+**Description**
+
+Group command used for setting up the embed system. You can enable or disable
+the embed usage for some commands, like help.
+
+This setting can be global, server-wide or user-only.
+
+.. _core-command-embedset-global:
+
+"""""""""""""""
+embedset global
+"""""""""""""""
+
+.. note:: |owner-lock|
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]embedset global [enabled]
+
+**Description**
+
+Enable or disable the usage of embeds with compatible commands. The setting
+will be global and applied on everyone by default, but it can be modified for
+specific servers/users.
+
+**Arguments**
+
+*   ``[enabled]``: If specified, the embeds will be enabled, else they will
+    be disabled.
+
+.. _core-command-embedset-guild:
+
+""""""""""""""
+embedset guild
+""""""""""""""
+
+.. note:: |guildowner-lock| It will also work if you have the ``Administrator``
+    permission.
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]embedset guild [enabled]
+
+**Description**
+
+Enable or disable the usage of embeds with compatible commands. The setting
+will be server-wide and applied in the server, but it can be modified for
+specific users.
+
+**Arguments**
+
+*   ``[enabled]``: If specified, the embeds will be enabled, else they will
+    be disabled.
+
+.. _core-command-embedset-user:
+
+"""""""""""""
+embedset user
+"""""""""""""
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]embedset user [enabled]
+
+**Description**
+
+Enable or disable the usage of embeds with compatible commands. The setting
+will only be applied with you.
+
+**Arguments**
+
+*   ``[enabled]``: If specified, the embeds will be enabled, else they will
+    be disabled.
 
 .. _core-command-dm:
 
@@ -1463,6 +1443,26 @@ tab. Then you can right-click on a user and copy its ID by clicking "Copy ID".
 *   ``<user_id>``: The ID of the user. This cannot be a mention or a name.
 
 *   ``<message>``: The message you want to send to that user.
+
+.. _core-command-contact:
+
+^^^^^^^
+contact
+^^^^^^^
+
+**Syntax**
+
+.. code-block:: none
+
+    [p]contact <message>
+
+**Description**
+
+Send a message to the owner of the bot. He can answer you through the bot.
+
+**Arguments**
+
+*   ``<message>``: The message you want to send.
 
 .. _core-command-info:
 
