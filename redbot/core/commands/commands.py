@@ -4,7 +4,6 @@ This module contains extended classes and functions which are intended to
 replace those from the `discord.ext.commands` module.
 """
 import inspect
-import itertools
 import weakref
 from typing import Awaitable, Callable, TYPE_CHECKING
 
@@ -110,9 +109,8 @@ class Command(commands.Command):
     async def can_see(self, ctx: "Context"):
         """Check if this command is visible in the given context.
 
-        In short, this tries to emulate the behaviour of the help formatter
-        to see if this command would be displayed when the help command is
-        invoked in the given context.
+        In short, this will verify whether the user can run the
+        command, and also whether the command is hidden or not.
 
         Parameters
         ----------
@@ -125,7 +123,7 @@ class Command(commands.Command):
             ``True`` if this command is visible in the given context.
 
         """
-        for cmd in itertools.chain((self,), self.parents):
+        for cmd in (self, *self.parents):
             if cmd.hidden:
                 return False
             try:

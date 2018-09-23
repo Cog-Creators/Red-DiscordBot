@@ -21,8 +21,8 @@ e.g. format_help_for(ctx, ctx.command, "Missing required arguments")
 
 discord.py 1.0.0a
 
-Copyrights to logic of code belong to Rapptz (Danny)
-Everything else credit to SirThane#1780"""
+This help formatter contains work by Rapptz (Danny) and SirThane#1780.
+"""
 from collections import namedtuple
 from typing import List, Optional, Union
 
