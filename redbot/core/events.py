@@ -43,7 +43,7 @@ def should_log_sentry(exception) -> bool:
         tb = tb.tb_next
 
     module = tb_frame.f_globals.get("__name__")
-    return module.startswith("redbot")
+    return module is not None and module.startswith("redbot")
 
 
 def init_events(bot, cli_flags):
