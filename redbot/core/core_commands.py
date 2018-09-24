@@ -422,7 +422,7 @@ class Core(CoreLogic):
             destination = ctx.channel
 
         if self.bot._last_exception:
-            for page in pagify(self.bot._last_exception):
+            for page in pagify(self.bot._last_exception, shorten_by=10):
                 await destination.send(box(page, lang="py"))
         else:
             await ctx.send("No exception has occurred yet")
@@ -1070,7 +1070,7 @@ class Core(CoreLogic):
             if not locale_list:
                 await ctx.send("No languages found.")
                 return
-            pages = pagify("\n".join(locale_list))
+            pages = pagify("\n".join(locale_list), shorten_by=26)
 
         await ctx.send_interactive(pages, box_lang="Available Locales:")
 

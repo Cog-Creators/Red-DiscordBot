@@ -27,6 +27,11 @@ requirements = [
     "yarl==1.2.6",
 ]
 
+python_requires = ">=3.6.2,<3.8"
+if os.name == "nt":
+    # Due to issues with ProactorEventLoop prior to 3.6.6 (bpo-26819)
+    python_requires = ">=3.6.6,<3.8"
+
 
 def get_dependency_links():
     with open("dependency_links.txt") as file:
@@ -37,13 +42,12 @@ def check_compiler_available():
     m = ccompiler.new_compiler()
 
     with tempfile.TemporaryDirectory() as tdir:
-        with tempfile.NamedTemporaryFile(prefix="dummy", suffix=".c", dir=tdir) as tfile:
-            tfile.write(b"int main(int argc, char** argv) {return 0;}")
-            tfile.seek(0)
-            try:
-                m.compile([tfile.name], output_dir=tdir)
-            except (CCompilerError, DistutilsPlatformError):
-                return False
+        with open(os.path.join(tdir, "dummy.c"), "w") as tfile:
+            tfile.write("int main(int argc, char** argv) {return 0;}")
+        try:
+            m.compile([tfile.name], output_dir=tdir)
+        except (CCompilerError, DistutilsPlatformError):
+            return False
     return True
 
 
@@ -94,7 +98,7 @@ if __name__ == "__main__":
             ],
             "pytest11": ["red-discordbot = redbot.pytest"],
         },
-        python_requires=">=3.6.2,<3.8",
+        python_requires=python_requires,
         install_requires=requirements,
         dependency_links=get_dependency_links(),
         extras_require={

@@ -368,7 +368,7 @@ class Trivia:
             return
         leaderboard = self._get_leaderboard(data, key, top)
         ret = []
-        for page in pagify(leaderboard):
+        for page in pagify(leaderboard, shorten_by=10):
             ret.append(await ctx.send(box(page, lang="py")))
         return ret
 
