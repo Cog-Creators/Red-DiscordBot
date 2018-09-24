@@ -5,7 +5,7 @@ from collections import Counter
 from enum import Enum
 from importlib.machinery import ModuleSpec
 from pathlib import Path
-from typing import Union
+from typing import Unionis
 
 import discord
 import sys
@@ -297,22 +297,24 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
                 del sys.modules["redbot.cogs"].__dict__[name]
 
     async def is_automod_immune(
-        self, to_check: Union[discord.Message, commands.Context, discord.User, discord.Role]
+        self, to_check: Union[discord.Message, commands.Context, discord.abc.User, discord.Role]
     ) -> bool:
         """
-        Checks if the user, message, context, of role should be considered immune from automated
+        Checks if the user, message, context, or role should be considered immune from automated
         moderation actions.
 
-        This will return `False` in direct messages.
+        This will return ``False`` in direct messages.
 
         Parameters
         ----------
-        to_check : `discord.Message` or `commands.Context` or `discord.User` or `discord.Role`
+        to_check : `discord.Message` or `commands.Context` or `discord.abc.User` or `discord.Role`
             Something to check if it would be immune
+
         Returns
         -------
         bool
-            :code:`True` if immune
+            ``True`` if immune
+
         """
         guild = to_check.guild
         if not guild:
