@@ -452,8 +452,7 @@ class Mod:
         user = guild.get_member(user_id)
         if user is not None:
             # Instead of replicating all that handling... gets attr from decorator
-            # pylint: disable=E1101
-            return await self.ban.callback(self, ctx, user, None, reason=reason)
+            return await ctx.invoke(self.ban, user, None, reason=reason)
         user = discord.Object(id=user_id)  # User not in the guild, but
 
         audit_reason = get_audit_reason(author, reason)
