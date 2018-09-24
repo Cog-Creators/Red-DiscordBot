@@ -25,11 +25,11 @@ class Repo(RepoJSONMixin):
     GIT_LATEST_COMMIT = "git -C {path} rev-parse {branch}"
     GIT_HARD_RESET = "git -C {path} reset --hard origin/{branch} -q"
     GIT_PULL = "git -C {path} pull --recurse-submodules -q --ff-only"
-    GIT_SUBMODULE_INIT = "git -C {path} submodule update --init --recursive"
-    GIT_SUBMODULE_UPDATE = "git -C {path} submodule update --recursive --remote"
     GIT_DIFF_FILE_STATUS = "git -C {path} diff --no-commit-id --name-status {old_hash} {new_hash}"
     GIT_LOG = "git -C {path} log --relative-date --reverse {old_hash}.. {relative_file_path}"
     GIT_DISCOVER_REMOTE_URL = "git -C {path} config --get remote.origin.url"
+    # For future use.
+    GIT_SUBMODULE_INIT = "git -C {path} submodule update --init --recursive"
 
     PIP_INSTALL = "{python} -m pip install -U -t {target_dir} {reqs}"
 
@@ -200,7 +200,6 @@ class Repo(RepoJSONMixin):
             shutil.rmtree(str(self.folder_path), ignore_errors=True)
             raise errors.CloningError("Error when running git clone.")
 
-        await self._run(self.GIT_SUBMODULE_INIT.format(path=self.folder_path).split())
         if self.branch is None:
             self.branch = await self.current_branch()
 
@@ -338,7 +337,6 @@ class Repo(RepoJSONMixin):
         await self.hard_reset(branch=curr_branch)
 
         p = await self._run(self.GIT_PULL.format(path=self.folder_path).split())
-        
 
         if p.returncode != 0:
             raise errors.UpdateError(
@@ -346,8 +344,6 @@ class Repo(RepoJSONMixin):
                 " for the repo located at path: {}".format(self.folder_path)
             )
 
-        p = await self._run(self.GIT_SUBMODULE_INIT.format(path=self.folder_path).split())
-        p = await self._run(self.GIT_SUBMODULE_UPDATE.format(path=self.folder_path).split())
         new_commit = await self.current_commit(branch=curr_branch)
 
         self._update_available_modules()
