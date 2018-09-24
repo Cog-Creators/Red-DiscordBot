@@ -2,20 +2,20 @@ import sys
 import codecs
 import datetime
 import logging
+import traceback
 from datetime import timedelta
 from distutils.version import StrictVersion
 
 import aiohttp
 import discord
 import pkg_resources
-import traceback
 from colorama import Fore, Style, init
 from pkg_resources import DistributionNotFound
 
 from . import __version__, commands
 from .data_manager import storage_type
 from .utils.chat_formatting import inline, bordered
-from .utils import fuzzy_command_search
+from .utils import fuzzy_command_search, format_fuzzy_results
 
 log = logging.getLogger("red")
 sentry_log = logging.getLogger("red.sentry")
@@ -197,17 +197,6 @@ def init_events(bot, cli_flags):
             if disabled_message:
                 await ctx.send(disabled_message.replace("{command}", ctx.invoked_with))
         elif isinstance(error, commands.CommandInvokeError):
-            # Need to test if the following still works
-            """
-            no_dms = "Cannot send messages to this user"
-            is_help_cmd = ctx.command.qualified_name == "help"
-            is_forbidden = isinstance(error.original, discord.Forbidden)
-            if is_help_cmd and is_forbidden and error.original.text == no_dms:
-                msg = ("I couldn't send the help message to you in DM. Either"
-                       " you blocked me or you disabled DMs in this server.")
-                await ctx.send(msg)
-                return
-            """
             log.exception(
                 "Exception in command '{}'" "".format(ctx.command.qualified_name),
                 exc_info=error.original,
@@ -231,12 +220,13 @@ def init_events(bot, cli_flags):
             if not hasattr(ctx.cog, "_{0.command.cog_name}__error".format(ctx)):
                 await ctx.send(inline(message))
         elif isinstance(error, commands.CommandNotFound):
-            term = ctx.invoked_with + " "
-            if len(ctx.args) > 1:
-                term += " ".join(ctx.args[1:])
-            fuzzy_result = await fuzzy_command_search(ctx, ctx.invoked_with)
-            if fuzzy_result is not None:
-                await ctx.maybe_send_embed(fuzzy_result)
+            fuzzy_commands = await fuzzy_command_search(ctx)
+            if not fuzzy_commands:
+                pass
+            elif await ctx.embed_requested():
+                await ctx.send(embed=await format_fuzzy_results(ctx, fuzzy_commands, embed=True))
+            else:
+                await ctx.send(await format_fuzzy_results(ctx, fuzzy_commands, embed=False))
         elif isinstance(error, commands.CheckFailure):
             pass
         elif isinstance(error, commands.NoPrivateMessage):
