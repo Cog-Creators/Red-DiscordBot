@@ -5,7 +5,7 @@ from collections import Counter
 from enum import Enum
 from importlib.machinery import ModuleSpec
 from pathlib import Path
-from typing import Unionis
+from typing import Union
 
 import discord
 import sys
