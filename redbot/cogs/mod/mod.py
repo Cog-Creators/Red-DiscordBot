@@ -12,7 +12,7 @@ from .checks import mod_or_voice_permissions, admin_or_voice_permissions, bot_ha
 from redbot.core.utils.mod import is_mod_or_superior, is_allowed_by_hierarchy, get_audit_reason
 from .log import log
 
-from redbot.core.utils.common_filters import filter_invites
+from redbot.core.utils.common_filters import filter_invites, filter_various_mentions
 
 _ = Translator("Mod", __file__)
 
@@ -436,7 +436,8 @@ class Mod:
         using this command"""
         author = ctx.author
         guild = ctx.guild
-
+        if not guild.me.guild_permissions.ban_members:
+            return await ctx.send(_("I lack the permissions to do this."))
         is_banned = False
         ban_list = await guild.bans()
         for entry in ban_list:
@@ -449,8 +450,10 @@ class Mod:
             return
 
         user = guild.get_member(user_id)
-        if user is None:
-            user = discord.Object(id=user_id)  # User not in the guild, but
+        if user is not None:
+            # Instead of replicating all that handling... gets attr from decorator
+            return await ctx.invoke(self.ban, user, None, reason=reason)
+        user = discord.Object(id=user_id)  # User not in the guild, but
 
         audit_reason = get_audit_reason(author, reason)
         queue_entry = (guild.id, user_id)
@@ -1323,9 +1326,11 @@ class Mod:
         if roles is not None:
             data.add_field(name=_("Roles"), value=roles, inline=False)
         if names:
+            # May need sanitizing later, but mentions do not ping in embeds currently
             val = filter_invites(", ".join(names))
             data.add_field(name=_("Previous Names"), value=val, inline=False)
         if nicks:
+            # May need sanitizing later, but mentions do not ping in embeds currently
             val = filter_invites(", ".join(nicks))
             data.add_field(name=_("Previous Nicknames"), value=val, inline=False)
         if voice_state and voice_state.channel:
@@ -1369,6 +1374,7 @@ class Mod:
             msg += "\n"
             msg += ", ".join(nicks)
         if msg:
+            msg = filter_various_mentions(msg)
             await ctx.send(msg)
         else:
             await ctx.send(_("That user doesn't have any recorded name or nickname change."))
@@ -1494,6 +1500,9 @@ class Mod:
         #  Bots and mods or superior are ignored from the filter
         mod_or_superior = await is_mod_or_superior(self.bot, obj=author)
         if mod_or_superior:
+            return
+        # As are anyone configured to be
+        if await self.bot.is_automod_immune(message):
             return
         deleted = await self.check_duplicates(message)
         if not deleted:

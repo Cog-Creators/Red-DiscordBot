@@ -2,27 +2,29 @@ import asyncio
 import functools
 import os
 import pkgutil
+import shutil
+import re
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from subprocess import run as sp_run, PIPE
 from sys import executable
-from typing import Tuple, MutableMapping, Union
+from typing import Tuple, MutableMapping, Union, Optional
 
 from redbot.core import data_manager, commands
 from redbot.core.utils import safe_delete
-from .errors import *
+from . import errors
 from .installable import Installable, InstallableType
 from .json_mixins import RepoJSONMixin
 from .log import log
 
 
 class Repo(RepoJSONMixin):
-    GIT_CLONE = "git clone -b {branch} {url} {folder}"
-    GIT_CLONE_NO_BRANCH = "git clone {url} {folder}"
+    GIT_CLONE = "git clone --recurse-submodules -b {branch} {url} {folder}"
+    GIT_CLONE_NO_BRANCH = "git clone --recurse-submodules {url} {folder}"
     GIT_CURRENT_BRANCH = "git -C {path} rev-parse --abbrev-ref HEAD"
     GIT_LATEST_COMMIT = "git -C {path} rev-parse {branch}"
     GIT_HARD_RESET = "git -C {path} reset --hard origin/{branch} -q"
-    GIT_PULL = "git -C {path} pull -q --ff-only"
+    GIT_PULL = "git -C {path} pull --recurse-submodules -q --ff-only"
     GIT_DIFF_FILE_STATUS = "git -C {path} diff --no-commit-id --name-status {old_hash} {new_hash}"
     GIT_LOG = "git -C {path} log --relative-date --reverse {old_hash}.. {relative_file_path}"
     GIT_DISCOVER_REMOTE_URL = "git -C {path} config --get remote.origin.url"
@@ -92,7 +94,9 @@ class Repo(RepoJSONMixin):
         )
 
         if p.returncode != 0:
-            raise GitDiffError("Git diff failed for repo at path: {}".format(self.folder_path))
+            raise errors.GitDiffError(
+                "Git diff failed for repo at path: {}".format(self.folder_path)
+            )
 
         stdout = p.stdout.strip().decode().split("\n")
 
@@ -122,7 +126,7 @@ class Repo(RepoJSONMixin):
         )
 
         if p.returncode != 0:
-            raise GitException(
+            raise errors.GitException(
                 "An exception occurred while executing git log on"
                 " this repo: {}".format(self.folder_path)
             )
@@ -176,7 +180,7 @@ class Repo(RepoJSONMixin):
         """
         exists, path = self._existing_git_repo()
         if exists:
-            raise ExistingGitRepo("A git repo already exists at path: {}".format(path))
+            raise errors.ExistingGitRepo("A git repo already exists at path: {}".format(path))
 
         if self.branch is not None:
             p = await self._run(
@@ -189,8 +193,10 @@ class Repo(RepoJSONMixin):
                 self.GIT_CLONE_NO_BRANCH.format(url=self.url, folder=self.folder_path).split()
             )
 
-        if p.returncode != 0:
-            raise CloningError("Error when running git clone.")
+        if p.returncode:
+            # Try cleaning up folder
+            shutil.rmtree(str(self.folder_path), ignore_errors=True)
+            raise errors.CloningError("Error when running git clone.")
 
         if self.branch is None:
             self.branch = await self.current_branch()
@@ -210,12 +216,14 @@ class Repo(RepoJSONMixin):
         """
         exists, _ = self._existing_git_repo()
         if not exists:
-            raise MissingGitRepo("A git repo does not exist at path: {}".format(self.folder_path))
+            raise errors.MissingGitRepo(
+                "A git repo does not exist at path: {}".format(self.folder_path)
+            )
 
         p = await self._run(self.GIT_CURRENT_BRANCH.format(path=self.folder_path).split())
 
         if p.returncode != 0:
-            raise GitException(
+            raise errors.GitException(
                 "Could not determine current branch at path: {}".format(self.folder_path)
             )
 
@@ -240,14 +248,16 @@ class Repo(RepoJSONMixin):
 
         exists, _ = self._existing_git_repo()
         if not exists:
-            raise MissingGitRepo("A git repo does not exist at path: {}".format(self.folder_path))
+            raise errors.MissingGitRepo(
+                "A git repo does not exist at path: {}".format(self.folder_path)
+            )
 
         p = await self._run(
             self.GIT_LATEST_COMMIT.format(path=self.folder_path, branch=branch).split()
         )
 
         if p.returncode != 0:
-            raise CurrentHashError("Unable to determine old commit hash.")
+            raise errors.CurrentHashError("Unable to determine old commit hash.")
 
         return p.stdout.decode().strip()
 
@@ -267,8 +277,9 @@ class Repo(RepoJSONMixin):
 
         Raises
         ------
-        RuntimeError
+        .NoRemoteURL
             When the folder does not contain a git repo with a FETCH URL.
+
         """
         if folder is None:
             folder = self.folder_path
@@ -276,7 +287,7 @@ class Repo(RepoJSONMixin):
         p = await self._run(Repo.GIT_DISCOVER_REMOTE_URL.format(path=folder).split())
 
         if p.returncode != 0:
-            raise RuntimeError("Unable to discover a repo URL.")
+            raise errors.NoRemoteURL("Unable to discover a repo URL.")
 
         return p.stdout.decode().strip()
 
@@ -294,14 +305,16 @@ class Repo(RepoJSONMixin):
 
         exists, _ = self._existing_git_repo()
         if not exists:
-            raise MissingGitRepo("A git repo does not exist at path: {}".format(self.folder_path))
+            raise errors.MissingGitRepo(
+                "A git repo does not exist at path: {}".format(self.folder_path)
+            )
 
         p = await self._run(
             self.GIT_HARD_RESET.format(path=self.folder_path, branch=branch).split()
         )
 
         if p.returncode != 0:
-            raise HardResetError(
+            raise errors.HardResetError(
                 "Some error occurred when trying to"
                 " execute a hard reset on the repo at"
                 " the following path: {}".format(self.folder_path)
@@ -324,7 +337,7 @@ class Repo(RepoJSONMixin):
         p = await self._run(self.GIT_PULL.format(path=self.folder_path).split())
 
         if p.returncode != 0:
-            raise UpdateError(
+            raise errors.UpdateError(
                 "Git pull returned a non zero exit code"
                 " for the repo located at path: {}".format(self.folder_path)
             )
@@ -353,7 +366,7 @@ class Repo(RepoJSONMixin):
 
         """
         if cog not in self.available_cogs:
-            raise DownloaderException("That cog does not exist in this repo")
+            raise errors.DownloaderException("That cog does not exist in this repo")
 
         if not target_dir.is_dir():
             raise ValueError("That target directory is not actually a directory.")
@@ -489,12 +502,18 @@ class Repo(RepoJSONMixin):
 
 
 class RepoManager:
-    def __init__(self):
 
+    GITHUB_OR_GITLAB_RE = re.compile("https?://git(?:hub)|(?:lab)\.com/")
+    TREE_URL_RE = re.compile(r"(?P<tree>/tree)/(?P<branch>\S+)$")
+
+    def __init__(self):
         self._repos = {}
 
         loop = asyncio.get_event_loop()
         loop.create_task(self._load_repos(set=True))  # str_name: Repo
+
+    async def initialize(self):
+        await self._load_repos(set=True)
 
     @property
     def repos_folder(self) -> Path:
@@ -507,10 +526,10 @@ class RepoManager:
     @staticmethod
     def validate_and_normalize_repo_name(name: str) -> str:
         if not name.isidentifier():
-            raise InvalidRepoName("Not a valid Python variable name.")
+            raise errors.InvalidRepoName("Not a valid Python variable name.")
         return name.lower()
 
-    async def add_repo(self, url: str, name: str, branch: str = "master") -> Repo:
+    async def add_repo(self, url: str, name: str, branch: Optional[str] = None) -> Repo:
         """Add and clone a git repository.
 
         Parameters
@@ -529,9 +548,11 @@ class RepoManager:
 
         """
         if self.does_repo_exist(name):
-            raise ExistingGitRepo(
+            raise errors.ExistingGitRepo(
                 "That repo name you provided already exists. Please choose another."
             )
+
+        url, branch = self._parse_url(url, branch)
 
         # noinspection PyTypeChecker
         r = Repo(url=url, name=name, branch=branch, folder_path=self.repos_folder / name)
@@ -578,13 +599,13 @@ class RepoManager:
 
         Raises
         ------
-        MissingGitRepo
+        .MissingGitRepo
             If the repo does not exist.
 
         """
         repo = self.get_repo(name)
         if repo is None:
-            raise MissingGitRepo("There is no repo with the name {}".format(name))
+            raise errors.MissingGitRepo("There is no repo with the name {}".format(name))
 
         safe_delete(repo.folder_path)
 
@@ -623,10 +644,26 @@ class RepoManager:
                 continue
             try:
                 ret[folder.stem] = await Repo.from_folder(folder)
-            except RuntimeError:
-                # Thrown when there's no findable git remote URL
-                pass
+            except errors.NoRemoteURL:
+                log.warning("A remote URL does not exist for repo %s", folder.stem)
+            except errors.DownloaderException as err:
+                log.error("Discarding repo %s due to error.", folder.stem, exc_info=err)
+                shutil.rmtree(
+                    str(folder),
+                    onerror=lambda func, path, exc: log.error(
+                        "Failed to remove folder %s", path, exc_info=exc
+                    ),
+                )
 
         if set:
             self._repos = ret
         return ret
+
+    def _parse_url(self, url: str, branch: Optional[str]) -> Tuple[str, Optional[str]]:
+        if self.GITHUB_OR_GITLAB_RE.match(url):
+            tree_url_match = self.TREE_URL_RE.search(url)
+            if tree_url_match:
+                url = url[: tree_url_match.start("tree")]
+                if branch is None:
+                    branch = tree_url_match["branch"]
+        return url, branch

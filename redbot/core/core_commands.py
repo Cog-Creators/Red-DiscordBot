@@ -1,4 +1,5 @@
 import asyncio
+import contextlib
 import datetime
 import importlib
 import itertools
@@ -13,7 +14,7 @@ from pathlib import Path
 from random import SystemRandom
 from string import ascii_letters, digits
 from distutils.version import StrictVersion
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 import aiohttp
 import discord
@@ -421,7 +422,7 @@ class Core(CoreLogic):
             destination = ctx.channel
 
         if self.bot._last_exception:
-            for page in pagify(self.bot._last_exception):
+            for page in pagify(self.bot._last_exception, shorten_by=10):
                 await destination.send(box(page, lang="py"))
         else:
             await ctx.send("No exception has occurred yet")
@@ -608,10 +609,13 @@ class Core(CoreLogic):
         """Changes Red's settings"""
         if ctx.invoked_subcommand is None:
             if ctx.guild:
-                admin_role_id = await ctx.bot.db.guild(ctx.guild).admin_role()
-                admin_role = discord.utils.get(ctx.guild.roles, id=admin_role_id) or "Not set"
-                mod_role_id = await ctx.bot.db.guild(ctx.guild).mod_role()
-                mod_role = discord.utils.get(ctx.guild.roles, id=mod_role_id) or "Not set"
+                guild = ctx.guild
+                admin_role = (
+                    guild.get_role(await ctx.bot.db.guild(ctx.guild).admin_role()) or "Not set"
+                )
+                mod_role = (
+                    guild.get_role(await ctx.bot.db.guild(ctx.guild).mod_role()) or "Not set"
+                )
                 prefixes = await ctx.bot.db.guild(ctx.guild).prefix()
                 guild_settings = f"Admin role: {admin_role}\nMod role: {mod_role}\n"
             else:
@@ -1066,7 +1070,10 @@ class Core(CoreLogic):
             red_dist = pkg_resources.get_distribution("red-discordbot")
             red_path = Path(red_dist.location) / "redbot"
             locale_list = sorted(set([loc.stem for loc in list(red_path.glob("**/*.po"))]))
-            pages = pagify("\n".join(locale_list))
+            if not locale_list:
+                await ctx.send("No languages found.")
+                return
+            pages = pagify("\n".join(locale_list), shorten_by=26)
 
         await ctx.send_interactive(pages, box_lang="Available Locales:")
 
@@ -1557,6 +1564,214 @@ class Core(CoreLogic):
         """
         await ctx.bot.db.guild(ctx.guild).blacklist.set([])
         await ctx.send(_("blacklist has been cleared."))
+
+    @checks.guildowner_or_permissions(administrator=True)
+    @commands.group(name="command")
+    async def command_manager(self, ctx: commands.Context):
+        """Manage the bot's commands."""
+        pass
+
+    @command_manager.group(name="disable", invoke_without_command=True)
+    async def command_disable(self, ctx: commands.Context, *, command: str):
+        """Disable a command.
+
+        If you're the bot owner, this will disable commands
+        globally by default.
+        """
+        # Select the scope based on the author's privileges
+        if await ctx.bot.is_owner(ctx.author):
+            await ctx.invoke(self.command_disable_global, command=command)
+        else:
+            await ctx.invoke(self.command_disable_guild, command=command)
+
+    @checks.is_owner()
+    @command_disable.command(name="global")
+    async def command_disable_global(self, ctx: commands.Context, *, command: str):
+        """Disable a command globally."""
+        command_obj: commands.Command = ctx.bot.get_command(command)
+        if command_obj is None:
+            await ctx.send(
+                _("I couldn't find that command. Please note that it is case sensitive.")
+            )
+            return
+
+        async with ctx.bot.db.disabled_commands() as disabled_commands:
+            if command not in disabled_commands:
+                disabled_commands.append(command_obj.qualified_name)
+
+        if not command_obj.enabled:
+            await ctx.send(_("That command is already disabled globally."))
+            return
+        command_obj.enabled = False
+
+        await ctx.tick()
+
+    @commands.guild_only()
+    @command_disable.command(name="server", aliases=["guild"])
+    async def command_disable_guild(self, ctx: commands.Context, *, command: str):
+        """Disable a command in this server only."""
+        command_obj: commands.Command = ctx.bot.get_command(command)
+        if command_obj is None:
+            await ctx.send(
+                _("I couldn't find that command. Please note that it is case sensitive.")
+            )
+            return
+
+        async with ctx.bot.db.guild(ctx.guild).disabled_commands() as disabled_commands:
+            if command not in disabled_commands:
+                disabled_commands.append(command_obj.qualified_name)
+
+        done = command_obj.disable_in(ctx.guild)
+
+        if not done:
+            await ctx.send(_("That command is already disabled in this server."))
+        else:
+            await ctx.tick()
+
+    @command_manager.group(name="enable", invoke_without_command=True)
+    async def command_enable(self, ctx: commands.Context, *, command: str):
+        """Enable a command.
+
+        If you're a bot owner, this will try to enable a globally
+        disabled command by default.
+        """
+        if await ctx.bot.is_owner(ctx.author):
+            await ctx.invoke(self.command_enable_global, command=command)
+        else:
+            await ctx.invoke(self.command_enable_guild, command=command)
+
+    @commands.is_owner()
+    @command_enable.command(name="global")
+    async def command_enable_global(self, ctx: commands.Context, *, command: str):
+        """Enable a command globally."""
+        command_obj: commands.Command = ctx.bot.get_command(command)
+        if command_obj is None:
+            await ctx.send(
+                _("I couldn't find that command. Please note that it is case sensitive.")
+            )
+            return
+
+        async with ctx.bot.db.disabled_commands() as disabled_commands:
+            with contextlib.suppress(ValueError):
+                disabled_commands.remove(command_obj.qualified_name)
+
+        if command_obj.enabled:
+            await ctx.send(_("That command is already enabled globally."))
+            return
+
+        command_obj.enabled = True
+        await ctx.tick()
+
+    @commands.guild_only()
+    @command_enable.command(name="server", aliases=["guild"])
+    async def command_enable_guild(self, ctx: commands.Context, *, command: str):
+        """Enable a command in this server."""
+        command_obj: commands.Command = ctx.bot.get_command(command)
+        if command_obj is None:
+            await ctx.send(
+                _("I couldn't find that command. Please note that it is case sensitive.")
+            )
+            return
+
+        async with ctx.bot.db.guild(ctx.guild).disabled_commands() as disabled_commands:
+            with contextlib.suppress(ValueError):
+                disabled_commands.remove(command_obj.qualified_name)
+
+        done = command_obj.enable_in(ctx.guild)
+
+        if not done:
+            await ctx.send(_("That command is already enabled in this server."))
+        else:
+            await ctx.tick()
+
+    @checks.is_owner()
+    @command_manager.command(name="disabledmsg")
+    async def command_disabledmsg(self, ctx: commands.Context, *, message: str = ""):
+        """Set the bot's response to disabled commands.
+
+        Leave blank to send nothing.
+
+        To include the command name in the message, include the
+        `{command}` placeholder.
+        """
+        await ctx.bot.db.disabled_command_msg.set(message)
+        await ctx.tick()
+
+    @commands.guild_only()
+    @checks.guildowner_or_permissions(manage_server=True)
+    @commands.group(name="autoimmune")
+    async def autoimmune_group(self, ctx: commands.Context):
+        """
+        Server settings for immunity from automated actions
+        """
+        pass
+
+    @autoimmune_group.command(name="list")
+    async def autoimmune_list(self, ctx: commands.Context):
+        """
+        Get's the current members and roles 
+        
+        configured for automatic moderation action immunity
+        """
+        ai_ids = await ctx.bot.db.guild(ctx.guild).autoimmune_ids()
+
+        roles = {r.name for r in ctx.guild.roles if r.id in ai_ids}
+        members = {str(m) for m in ctx.guild.members if m.id in ai_ids}
+
+        output = ""
+        if roles:
+            output += _("Roles immune from automated moderation actions:\n")
+            output += ", ".join(roles)
+        if members:
+            if roles:
+                output += "\n"
+            output += _("Members immune from automated moderation actions:\n")
+            output += ", ".join(members)
+
+        if not output:
+            output = _("No immunty settings here.")
+
+        for page in pagify(output):
+            await ctx.send(page)
+
+    @autoimmune_group.command(name="add")
+    async def autoimmune_add(
+        self, ctx: commands.Context, user_or_role: Union[discord.Member, discord.Role]
+    ):
+        """
+        Makes a user or roles immune from automated moderation actions
+        """
+        async with ctx.bot.db.guild(ctx.guild).autoimmune_ids() as ai_ids:
+            if user_or_role.id in ai_ids:
+                return await ctx.send(_("Already added."))
+            ai_ids.append(user_or_role.id)
+        await ctx.tick()
+
+    @autoimmune_group.command(name="remove")
+    async def autoimmune_remove(
+        self, ctx: commands.Context, user_or_role: Union[discord.Member, discord.Role]
+    ):
+        """
+        Makes a user or roles immune from automated moderation actions
+        """
+        async with ctx.bot.db.guild(ctx.guild).autoimmune_ids() as ai_ids:
+            if user_or_role.id not in ai_ids:
+                return await ctx.send(_("Not in list."))
+            ai_ids.remove(user_or_role.id)
+        await ctx.tick()
+
+    @autoimmune_group.command(name="isimmune")
+    async def autoimmune_checkimmune(
+        self, ctx: commands.Context, user_or_role: Union[discord.Member, discord.Role]
+    ):
+        """
+        Checks if a user or role would be considered immune from automated actions
+        """
+
+        if await ctx.bot.is_automod_immune(user_or_role):
+            await ctx.send(_("They are immune"))
+        else:
+            await ctx.send(_("They are not Immune"))
 
     # RPC handlers
     async def rpc_load(self, request):

@@ -508,6 +508,8 @@ class Streams:
             try:
                 embed = await stream.is_online()
             except OfflineStream:
+                if not stream._messages_cache:
+                    continue
                 for message in stream._messages_cache:
                     try:
                         autodelete = await self.db.guild(message.guild).autodelete()
@@ -558,6 +560,8 @@ class Streams:
                 print(_("The Community {} was not found!").format(community.name))
                 continue
             except OfflineCommunity:
+                if not community._messages_cache:
+                    continue
                 for message in community._messages_cache:
                     try:
                         autodelete = await self.db.guild(message.guild).autodelete()
@@ -662,3 +666,5 @@ class Streams:
     def __unload(self):
         if self.task:
             self.task.cancel()
+
+    __del__ = __unload

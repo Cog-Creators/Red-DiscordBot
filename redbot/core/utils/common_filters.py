@@ -7,6 +7,7 @@ __all__ = [
     "filter_urls",
     "filter_invites",
     "filter_mass_mentions",
+    "filter_various_mentions",
 ]
 
 # regexes
@@ -16,6 +17,7 @@ INVITE_URL_RE = re.compile(r"(discord.gg|discordapp.com/invite|discord.me)(\S+)"
 
 MASS_MENTION_RE = re.compile(r"(@)(?=everyone|here)")  # This only matches the @ for sanitizing
 
+OTHER_MENTION_RE = re.compile(r"(<)(@[!&]?|#)(\d+>)")
 
 # convenience wrappers
 def filter_urls(to_filter: str) -> str:
@@ -79,3 +81,23 @@ def filter_mass_mentions(to_filter: str) -> str:
 
     """
     return MASS_MENTION_RE.sub("@\u200b", to_filter)
+
+
+def filter_various_mentions(to_filter: str) -> str:
+    """
+    Get a string with role, user, and channel mentions sanitized.
+
+    This is mainly for use on user display names, not message content,
+    and should be applied sparingly.
+
+    Parameters
+    ----------
+    to_filter : str
+        The string to filter.
+
+    Returns
+    -------
+    str
+        The sanitized string.
+    """
+    return OTHER_MENTION_RE.sub(r"\1\\\2\3", to_filter)

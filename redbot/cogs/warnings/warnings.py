@@ -70,7 +70,6 @@ class Warnings:
     @commands.guild_only()
     async def action_add(self, ctx: commands.Context, name: str, points: int):
         """Create an action to be taken at a specified point count
-
         Duplicate action names are not allowed
         """
         guild = ctx.guild
@@ -215,14 +214,13 @@ class Warnings:
     @checks.admin_or_permissions(ban_members=True)
     async def warn(self, ctx: commands.Context, user: discord.Member, reason: str):
         """Warn the user for the specified reason
-
         Reason must be a registered reason, or "custom" if custom reasons are allowed
         """
         if user == ctx.author:
             await ctx.send(_("You cannot warn yourself."))
             return
+        custom_allowed = await self.config.guild(ctx.guild).allow_custom_reasons()
         if reason.lower() == "custom":
-            custom_allowed = await self.config.guild(ctx.guild).allow_custom_reasons()
             if not custom_allowed:
                 await ctx.send(
                     _(
@@ -236,7 +234,21 @@ class Warnings:
             guild_settings = self.config.guild(ctx.guild)
             async with guild_settings.reasons() as registered_reasons:
                 if reason.lower() not in registered_reasons:
-                    await ctx.send(_("That is not a registered reason!"))
+                    msg = _("That is not a registered reason!")
+                    if custom_allowed:
+                        msg += " " + _(
+                            "Do `{prefix}warn {user} custom` to specify a custom reason."
+                        ).format(prefix=ctx.prefix, user=ctx.author)
+                    elif (
+                        ctx.guild.owner == ctx.author
+                        or ctx.channel.permissions_for(ctx.author).administrator
+                        or await ctx.bot.is_owner(ctx.author)
+                    ):
+                        msg += " " + _(
+                            "Do `{prefix}warningset allowcustomreasons true` to enable custom "
+                            "reasons."
+                        ).format(prefix=ctx.prefix)
+                    await ctx.send(msg)
                     return
                 else:
                     reason_type = registered_reasons[reason.lower()]
@@ -282,7 +294,6 @@ class Warnings:
     @commands.guild_only()
     async def warnings(self, ctx: commands.Context, userid: int = None):
         """Show warnings for the specified user.
-
         If userid is None, show warnings for the person running the command
         Note that showing warnings for users other than yourself requires
         appropriate permissions
@@ -316,7 +327,9 @@ class Warnings:
                     msg += "{} point warning {} issued by {} for {}\n".format(
                         user_warnings[key]["points"], key, mod, user_warnings[key]["description"]
                     )
-                await ctx.send_interactive(pagify(msg), box_lang="Warnings for {}".format(user))
+                await ctx.send_interactive(
+                    pagify(msg, shorten_by=58), box_lang="Warnings for {}".format(user)
+                )
 
     @commands.command()
     @commands.guild_only()

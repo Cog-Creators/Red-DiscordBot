@@ -87,10 +87,8 @@ class Reports:
         ret = False
         if mod:
             guild = m.guild
-            admin_role = discord.utils.get(
-                guild.roles, id=await self.bot.db.guild(guild).admin_role()
-            )
-            mod_role = discord.utils.get(guild.roles, id=await self.bot.db.guild(guild).mod_role())
+            admin_role = guild.get_role(await self.bot.db.guild(guild).admin_role())
+            mod_role = guild.get_role(await self.bot.db.guild(guild).mod_role())
             ret |= any(r in m.roles for r in (mod_role, admin_role))
         if perms:
             ret |= m.guild_permissions >= perms

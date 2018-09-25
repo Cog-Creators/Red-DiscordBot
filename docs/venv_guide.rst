@@ -68,7 +68,7 @@ Using ``pyenv virtualenv``
 Using ``pyenv virtualenv`` saves you the headache of remembering where you installed your virtual
 environments. If you haven't already, install pyenv with `pyenv-installer`_.
 
-First, ensure your pyenv interpreter is set to python 3.6 or later with the following command::
+First, ensure your pyenv interpreter is set to python 3.6.2 or greater with the following command::
 
     pyenv version
 

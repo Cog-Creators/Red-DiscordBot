@@ -29,20 +29,6 @@ def test_existing_git_repo(tmpdir):
 
 
 @pytest.mark.asyncio
-async def test_clone_repo(repo_norun, capsys):
-    await repo_norun.clone()
-
-    clone_cmd, _ = capsys.readouterr()
-    clone_cmd = clone_cmd.strip("[']\n").split("', '")
-    assert clone_cmd[0] == "git"
-    assert clone_cmd[1] == "clone"
-    assert clone_cmd[2] == "-b"
-    assert clone_cmd[3] == "rewrite_cogs"
-    assert clone_cmd[4] == repo_norun.url
-    assert ("repos", "squid") == pathlib.Path(clone_cmd[5]).parts[-2:]
-
-
-@pytest.mark.asyncio
 async def test_add_repo(monkeypatch, repo_manager):
     monkeypatch.setattr("redbot.cogs.downloader.repo_manager.Repo._run", fake_run_noprint)
 
@@ -94,3 +80,43 @@ async def test_existing_repo(repo_manager):
         await repo_manager.add_repo("http://test.com", "test")
 
     repo_manager.does_repo_exist.assert_called_once_with("test")
+
+
+def test_tree_url_parse(repo_manager):
+    cases = [
+        {
+            "input": ("https://github.com/Tobotimus/Tobo-Cogs", None),
+            "expected": ("https://github.com/Tobotimus/Tobo-Cogs", None),
+        },
+        {
+            "input": ("https://github.com/Tobotimus/Tobo-Cogs", "V3"),
+            "expected": ("https://github.com/Tobotimus/Tobo-Cogs", "V3"),
+        },
+        {
+            "input": ("https://github.com/Tobotimus/Tobo-Cogs/tree/V3", None),
+            "expected": ("https://github.com/Tobotimus/Tobo-Cogs", "V3"),
+        },
+        {
+            "input": ("https://github.com/Tobotimus/Tobo-Cogs/tree/V3", "V4"),
+            "expected": ("https://github.com/Tobotimus/Tobo-Cogs", "V4"),
+        },
+    ]
+
+    for test_case in cases:
+        assert test_case["expected"] == repo_manager._parse_url(*test_case["input"])
+
+
+def test_tree_url_non_github(repo_manager):
+    cases = [
+        {
+            "input": ("https://gitlab.com/Tobotimus/Tobo-Cogs", None),
+            "expected": ("https://gitlab.com/Tobotimus/Tobo-Cogs", None),
+        },
+        {
+            "input": ("https://my.usgs.gov/bitbucket/scm/Tobotimus/Tobo-Cogs", "V3"),
+            "expected": ("https://my.usgs.gov/bitbucket/scm/Tobotimus/Tobo-Cogs", "V3"),
+        },
+    ]
+
+    for test_case in cases:
+        assert test_case["expected"] == repo_manager._parse_url(*test_case["input"])
