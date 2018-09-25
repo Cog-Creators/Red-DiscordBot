@@ -1,13 +1,17 @@
 import asyncio
+import io
+import textwrap
 from copy import copy
 from typing import Union, Optional, Dict, List, Tuple, Any, Iterator, ItemsView
 
 import discord
+import yaml
+from schema import Or, Use, Schema, SchemaError
 from redbot.core import checks, commands, config
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils.chat_formatting import box
 
-from .yaml_handler import yamlset_acl, yamlget_acl
 from .converters import CogOrCommand, RuleType, ClearableRuleType
 
 _ = Translator("Permissions", __file__)
@@ -16,8 +20,20 @@ COG = "COG"
 COMMAND = "COMMAND"
 GLOBAL = 0
 
+# noinspection PyDictDuplicateKeys
 REACTS = {"\N{WHITE HEAVY CHECK MARK}": True, "\N{NEGATIVE SQUARED CROSS MARK}": False}
 Y_OR_N = {"y": True, "yes": True, "n": False, "no": False}
+YAML_SCHEMA = Schema(
+    {
+        Or(COG, COMMAND, error=_('Top-level key must be "COG" or "COMMAND"')): {
+            Use(str, error=_("2nd-level keys must be command or cog names")): {
+                Or(int, "default", error=_('3rd-level keys must be IDs or "default"')): Use(
+                    bool, error=_('Rules must be "true" or "false"')
+                )
+            }
+        }
+    }
+)
 
 __version__ = "1.0.0"
 
@@ -35,17 +51,17 @@ class Permissions(commands.Cog):
         #   -> Guild IDs...
         #     -> Model IDs...
         #       -> True|False
-        #   -> "global"
-        #     -> Model IDs...
+        #     -> "default"
         #       -> True|False
         # "COMMAND"
         # -> Command names...
         #   -> Guild IDs...
         #     -> Model IDs...
         #       -> True|False
-        #   -> "global"
-        #     -> Model IDs...
+        #     -> "default"
         #       -> True|False
+
+        # Note that GLOBAL rules are denoted by an ID of 0.
         self.config = config.Config.get_conf(
             self, identifier=78631113035100160, force_registration=True
         )
@@ -76,7 +92,7 @@ class Permissions(commands.Cog):
 
     @permissions.command(name="explain")
     async def permissions_explain(self, ctx: commands.Context):
-        """Explain how permissions works. """
+        """Explain how permissions works."""
         # Apologies in advance for the translators out there...
 
         message = _(
@@ -152,100 +168,89 @@ class Permissions(commands.Cog):
             )
         await ctx.send(out)
 
+    @checks.guildowner_or_permissions(administrator=True)
+    @permissions.group(name="acl", aliases=["yaml"])
+    async def permissions_acl(self, ctx: commands.Context):
+        """Manage permissions with YAML files."""
+        if ctx.invoked_subcommand is None or ctx.invoked_subcommand == self.permissions_acl:
+            # Send a little guide on YAML formatting
+            await ctx.send(
+                _("Example YAML for setting rules:\n")
+                + box(
+                    textwrap.dedent(
+                        """\
+                    COMMAND:
+                        ping:
+                            12345678901234567: true
+                            56789012345671234: false
+                    COG:
+                        General:
+                            56789012345671234: true
+                            12345678901234567: false
+                            default: false
+                    """
+                    ),
+                    lang="yaml",
+                )
+            )
+
     @checks.is_owner()
-    @permissions.command(name="setglobalacl")
-    async def permissions_setglobalacl(self, ctx: commands.Context):
+    @permissions_acl.command(name="setglobal")
+    async def permissions_acl_setglobal(self, ctx: commands.Context):
         """Set global rules with a YAML file.
 
         **WARNING**: This will override reset *all* global rules
         to the rules specified in the uploaded file.
+
+        This does not validate the names of commands and cogs before
+        setting the new rules.
         """
-        if not ctx.message.attachments:
-            return await ctx.send(_("You must upload a file."))
-
-        try:
-            await yamlset_acl(ctx, config=self.config.owner_models, update=False)
-        except Exception as e:
-            print(e)
-            return await ctx.send(_("Invalid syntax."))
-        else:
-            await ctx.send(_("Rules set."))
-            self.invalidate_cache()
-
-    @checks.is_owner()
-    @permissions.command(name="getglobalacl")
-    async def permissions_getglobalacl(self, ctx: commands.Context):
-        """Get a YAML file detailing all global rules."""
-        await yamlget_acl(ctx, config=self.config.owner_models)
+        await self._permissions_acl_set(ctx, guild_id=GLOBAL, update=False)
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
-    @permissions.command(name="setserveracl", aliases=["setguildacl"])
-    async def permissions_setguildacl(self, ctx: commands.Context):
+    @permissions_acl.command(name="setserver", aliases=["setguild"])
+    async def permissions_acl_setguild(self, ctx: commands.Context):
         """Set rules for this server with a YAML file.
 
         **WARNING**: This will override reset *all* rules in this
         server to the rules specified in the uploaded file.
         """
-        if not ctx.message.attachments:
-            return await ctx.send(_("You must upload a file."))
-
-        try:
-            await yamlset_acl(ctx, config=self.config.guild(ctx.guild).owner_models, update=False)
-        except Exception as e:
-            print(e)
-            return await ctx.send(_("Invalid syntax."))
-        else:
-            await ctx.send(_("Rules set."))
-            self.invalidate_cache(ctx.guild.id)
-
-    @commands.guild_only()
-    @checks.guildowner_or_permissions(administrator=True)
-    @permissions.command(name="getserveracl", aliases=["getguildacl"])
-    async def permissions_getguildacl(self, ctx: commands.Context):
-        """Get a YAML file detailing all rules in this server."""
-        await yamlget_acl(ctx, config=self.config.guild(ctx.guild).owner_models)
-
-    @commands.guild_only()
-    @checks.guildowner_or_permissions(administrator=True)
-    @permissions.command(name="updateserveracl", aliases=["updateguildacl"])
-    async def permissions_updateguildacl(self, ctx: commands.Context):
-        """Update rules for this server with a YAML file.
-
-        This won't touch any rules not specified in the YAML
-        file.
-        """
-        if not ctx.message.attachments:
-            return await ctx.send(_("You must upload a file."))
-
-        try:
-            await yamlset_acl(ctx, config=self.config.guild(ctx.guild).owner_models, update=True)
-        except Exception as e:
-            print(e)
-            return await ctx.send(_("Invalid syntax."))
-        else:
-            await ctx.send(_("Rules set."))
-            self.invalidate_cache(ctx.guild.id)
+        await self._permissions_acl_set(ctx, guild_id=ctx.guild.id, update=False)
 
     @checks.is_owner()
-    @permissions.command(name="updateglobalacl")
-    async def permissions_updateglobalacl(self, ctx: commands.Context):
+    @permissions_acl.command(name="getglobal")
+    async def permissions_acl_getglobal(self, ctx: commands.Context):
+        """Get a YAML file detailing all global rules."""
+        await ctx.author.send(file=await self._yaml_get_acl(guild_id=GLOBAL))
+
+    @commands.guild_only()
+    @checks.guildowner_or_permissions(administrator=True)
+    @permissions_acl.command(name="getserver", aliases=["getguild"])
+    async def permissions_acl_getguild(self, ctx: commands.Context):
+        """Get a YAML file detailing all rules in this server."""
+        await ctx.author.send(file=await self._yaml_get_acl(guild_id=ctx.guild.id))
+
+    @checks.is_owner()
+    @permissions.command(name="updateglobal")
+    async def permissions_acl_updateglobal(self, ctx: commands.Context):
         """Update global rules with a YAML file.
 
         This won't touch any rules not specified in the YAML
         file.
         """
-        if not ctx.message.attachments:
-            return await ctx.send(_("You must upload a file."))
+        await self._permissions_acl_set(ctx, guild_id=GLOBAL, update=True)
 
-        try:
-            await yamlset_acl(ctx, config=self.config.owner_models, update=True)
-        except Exception as e:
-            print(e)
-            return await ctx.send(_("Invalid syntax."))
-        else:
-            await ctx.send(_("Rules set."))
-            self.invalidate_cache()
+    @commands.guild_only()
+    @checks.guildowner_or_permissions(administrator=True)
+    @permissions.command(name="updateserver", aliases=["updateguild"])
+    async def permissions_acl_updateguild(self, ctx: commands.Context):
+        """Update rules for this server with a YAML file.
+
+        This won't touch any rules not specified in the YAML
+        file.
+        """
+        await self._permissions_acl_set(ctx, guild_id=ctx.guild.id, update=True)
 
     @checks.is_owner()
     @permissions.command(name="addglobalrule")
@@ -394,7 +399,7 @@ class Permissions(commands.Cog):
         """Reset all global rules."""
         agreed = await self._confirm(ctx)
         if agreed:
-            await self._clear_rules(bot=ctx.bot, guild_id=GLOBAL)
+            await self._clear_rules(guild_id=GLOBAL)
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
@@ -403,7 +408,7 @@ class Permissions(commands.Cog):
         """Reset all rules in this server."""
         agreed = await self._confirm(ctx)
         if agreed:
-            await self._clear_rules(bot=ctx.bot, guild_id=ctx.guild.id)
+            await self._clear_rules(guild_id=ctx.guild.id)
 
     async def cog_added(self, cog: commands.Cog) -> None:
         """Event listener for `cog_add`.
@@ -445,17 +450,67 @@ class Permissions(commands.Cog):
 
     async def _set_default_rule(
         self, rule: Optional[bool], cog_or_cmd: CogOrCommand, guild_id: int
-    ):
+    ) -> None:
         cog_or_cmd.obj.set_default_rule(rule, guild_id)
         async with self.config.custom(cog_or_cmd.type, cog_or_cmd.name).all() as rules:
             rules.setdefault(str(guild_id), {})["default"] = rule
 
-    async def _clear_rules(self, bot: Red, guild_id: int):
-        bot.clear_permission_rules(guild_id)
+    async def _clear_rules(self, guild_id: int) -> None:
+        self.bot.clear_permission_rules(guild_id)
         for category in (COG, COMMAND):
             async with self.config.custom(category).all() as all_rules:
                 for name, rules in all_rules.items():
                     rules.pop(str(guild_id), None)
+
+    async def _permissions_acl_set(
+        self, ctx: commands.Context, guild_id: int, update: bool
+    ) -> None:
+        if not ctx.message.attachments:
+            await ctx.send(_("You must upload a file."))
+            return
+
+        try:
+            await self._yaml_set_acl(ctx.message.attachments[0], guild_id=guild_id, update=update)
+        except yaml.MarkedYAMLError as e:
+            await ctx.send(_("Invalid syntax: ") + str(e))
+        except SchemaError as e:
+            await ctx.send(_("Your YAML file did not match the schema: ") + ", ".join(e.errors))
+        else:
+            await ctx.send(_("Rules set."))
+
+    async def _yaml_set_acl(self, source: discord.Attachment, guild_id: int, update: bool) -> None:
+        with io.BytesIO() as fp:
+            await source.save(fp)
+            rules = yaml.safe_load(fp)
+
+        YAML_SCHEMA.validate(rules)
+        if update is False:
+            await self._clear_rules(guild_id)
+
+        for category, getter in ((COG, self.bot.get_cog), (COMMAND, self.bot.get_command)):
+            rules_dict = rules.get(category)
+            if not rules_dict:
+                continue
+            conf = self.config.custom(category)
+            for cmd_name, cmd_rules in rules_dict.items():
+                await conf.get_attr(cmd_name).set_raw(guild_id, value=cmd_rules)
+                cmd_obj = getter(cmd_name)
+                if cmd_obj is not None:
+                    self._load_rules_for(cmd_obj, {guild_id: cmd_rules})
+
+    async def _yaml_get_acl(self, guild_id: int) -> discord.File:
+        guild_rules = {}
+        for category in (COG, COMMAND):
+            guild_rules.setdefault(category, {})
+            rules_dict = self.config.custom(category)
+            for cmd_name, cmd_rules in rules_dict.items():
+                model_rules = cmd_rules.get(str(guild_id))
+                if model_rules is not None:
+                    guild_rules[category][cmd_name] = model_rules
+
+        with io.BytesIO() as fp:
+            yaml.dump(guild_rules, stream=fp)
+            return discord.File(fp, filename="acl.yaml")
 
     @staticmethod
     async def _confirm(ctx: commands.Context) -> bool:
@@ -495,7 +550,7 @@ class Permissions(commands.Cog):
     @staticmethod
     def _load_rules_for(
         cog_or_command: Union[commands.Command, commands.Cog],
-        rule_dict: Dict[str, Dict[str, bool]],
+        rule_dict: Dict[Union[int, str], Dict[Union[int, str], bool]],
     ) -> None:
         for guild_id, guild_dict in _int_key_map(rule_dict.items()):
             for model_id, rule in _int_key_map(guild_dict.items()):
@@ -514,7 +569,7 @@ class Permissions(commands.Cog):
         await self.config.custom(COMMAND).set(new_cmd_rules)
         await self.config.version.set(__version__)
 
-    _OldConfigSchema = Dict[Optional[int], Dict[str, Dict[str, Dict[str, Dict[str, List[int]]]]]]
+    _OldConfigSchema = Dict[int, Dict[str, Dict[str, Dict[str, Dict[str, List[int]]]]]]
     _NewConfigSchema = Dict[str, Dict[int, Dict[str, Dict[int, bool]]]]
 
     @staticmethod
@@ -523,30 +578,32 @@ class Permissions(commands.Cog):
     ) -> Tuple[_NewConfigSchema, _NewConfigSchema]:
         # Prior to 1.0.0, the schema was in this form for both global
         # and guild-based rules:
-        # "cogs"
-        # -> Cog names...
-        #   -> "allow"
-        #     -> [Model IDs...]
-        #   -> "deny"
-        #     -> [Model IDs...]
-        # "commands"
-        # -> Command names...
-        #   -> "allow"
-        #     -> [Model IDs...]
-        #   -> "deny"
-        #     -> [Model IDs...]
+        # "owner_models"
+        # -> "cogs"
+        #   -> Cog names...
+        #     -> "allow"
+        #       -> [Model IDs...]
+        #     -> "deny"
+        #       -> [Model IDs...]
+        #     -> "default"
+        #       -> "allow"|"deny"
+        # -> "commands"
+        #   -> Command names...
+        #     -> "allow"
+        #       -> [Model IDs...]
+        #     -> "deny"
+        #       -> [Model IDs...]
+        #     -> "default"
+        #       -> "allow"|"deny"
 
         new_cog_rules = {}
         new_cmd_rules = {}
-        ret = (new_cog_rules, new_cmd_rules)
         for guild_id, old_rules in old_config.items():
-            if "owner_models" not in old_config:
+            if "owner_models" not in old_rules:
                 continue
-            if guild_id is None:
-                guild_id = GLOBAL
             old_rules = old_rules["owner_models"]
-            for category, new_rules in zip(("cogs", "commands"), ret):
-                if "category" in old_rules:
+            for category, new_rules in zip(("cogs", "commands"), (new_cog_rules, new_cmd_rules)):
+                if category in old_rules:
                     for name, rules in old_rules[category].items():
                         these_rules = new_rules.setdefault(name, {})
                         guild_rules = these_rules.setdefault(guild_id, {})
@@ -557,7 +614,13 @@ class Permissions(commands.Cog):
                             guild_rules[model_id] = False
                         for model_id in rules.get("allow", []):
                             guild_rules[model_id] = True
-        return ret
+                        if "default" in rules:
+                            default = rules["default"]
+                            if default == "allow":
+                                guild_rules["default"] = True
+                            elif default == "deny":
+                                guild_rules["default"] = False
+        return new_cog_rules, new_cmd_rules
 
     def __unload(self) -> None:
         self.bot.remove_listener(self.cog_added, "on_cog_add")

@@ -369,12 +369,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
                 f"the cog to adhere to this requirement."
             )
         if not hasattr(cog, "requires"):
-            raise RuntimeError(
-                f"The {cog.__class__.__name__} cog in the {cog.__module__} package has not "
-                f"initialized itself with the commands.Cog base class. The cog author must "
-                f"update the cog to adhere to this requirement. (Note to cog author: this simply "
-                f"requires adding the line `super().__init__()` in your cog's `__init__` function."
-            )
+            commands.Cog.__init__(cog)
         for attr in dir(cog):
             _attr = getattr(cog, attr)
             if isinstance(_attr, discord.ext.commands.Command) and not isinstance(

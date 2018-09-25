@@ -23,6 +23,7 @@ requirements = [
     "pyyaml==3.13",
     "raven==6.9.0",
     "raven-aiohttp==0.7.0",
+    "schema==0.6.8",
     "websockets==6.0",
     "yarl==1.2.6",
 ]
