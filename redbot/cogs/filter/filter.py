@@ -23,8 +23,6 @@ class Filter:
             "filterban_time": 0,
             "filter_names": False,
             "filter_default_name": "John Doe",
-            "exempt_users": [],
-            "exempt_roles": [],
         }
         default_member_settings = {"filter_count": 0, "next_reset_time": 0}
         default_channel_settings = {"filter": []}
@@ -87,57 +85,6 @@ class Filter:
             await self.settings.guild(ctx.guild).filterban_count.set(count)
             await self.settings.guild(ctx.guild).filterban_time.set(timeframe)
             await ctx.send(_("Count and time have been set."))
-
-    @filterset.command(name="exempt")
-    async def filter_exempt(
-        self, ctx: commands.Context, user_or_role: Union[discord.Member, discord.Role]
-    ):
-        """
-        Exempt the specified user or role from filters in this server
-        """
-        mod_role = ctx.bot.db.guild(ctx.guild).mod_role()
-        admin_role = ctx.bot.db.guild(ctx.guild).admin_role()
-
-        if isinstance(user_or_role, discord.Member) and user_or_role == ctx.guild.owner:
-            await ctx.send(
-                _(
-                    "The specified member is already exempt from the filter by default because they are the server owner!"
-                )
-            )
-            return
-        elif isinstance(user_or_role, discord.Role) and user_or_role.id in (mod_role, admin_role):
-            await ctx.send(
-                _(
-                    "The specified role is already exempt from the filter by default because it is the mod or admin role for this server!"
-                )
-            )
-            return
-        if isinstance(user_or_role, discord.Member):
-            async with self.settings.guild(ctx.guild).exempt_users() as exempt_users:
-                if user_or_role.id in exempt_users:
-                    exempt_users.remove(user_or_role.id)
-                    await ctx.send(
-                        _("Member {0.name} is no longer exempt from the filter").format(
-                            user_or_role
-                        )
-                    )
-                else:
-                    exempt_users.append(user_or_role.id)
-                    await ctx.send(
-                        _("Member {0.name} is now exempt from the filter").format(user_or_role)
-                    )
-        elif isinstance(user_or_role, discord.Role):
-            async with self.settings.guild(ctx.guild).exempt_roles() as exempt_roles:
-                if user_or_role.id in exempt_roles:
-                    exempt_roles.remove(user_or_role.id)
-                    await ctx.send(
-                        _("Role {0.name} is no longer exempt from the filter").format(user_or_role)
-                    )
-                else:
-                    exempt_roles.append(user_or_role.id)
-                    await ctx.send(
-                        _("Role {0.name} is now exempt from the filter").format(user_or_role)
-                    )
 
     @commands.group(name="filter")
     @commands.guild_only()
@@ -405,23 +352,6 @@ class Filter:
                                         reason,
                                     )
 
-    async def is_exempt(self, user: discord.Member):
-        if await is_mod_or_superior(self.bot, obj=user):
-            return True
-
-        if user == user.guild.owner:
-            return True
-
-        user_exemptions_list = await self.settings.guild(user.guild).exempt_users()
-        if user.id in user_exemptions_list:
-            return True
-
-        role_exemptions_list = await self.settings.guild(user.guild).exempt_roles()
-        for r in user.roles:
-            if r.id in role_exemptions_list:
-                return True
-        return False
-
     async def on_message(self, message: discord.Message):
         if isinstance(message.channel, discord.abc.PrivateChannel):
             return
@@ -430,8 +360,7 @@ class Filter:
         if not valid_user:
             return
 
-        #  Bots and mods or superior are ignored from the filter
-        if await self.is_exempt(author):
+        if await self.bot.is_automod_immune(message):
             return
 
         await self.check_filter(message)
@@ -444,9 +373,7 @@ class Filter:
         if not valid_user:
             return
 
-        #  Bots and mods or superior are ignored from the filter
-        mod_or_superior = await is_mod_or_superior(self.bot, obj=author)
-        if mod_or_superior:
+        if await self.bot.is_automod_immune(message):
             return
 
         await self.check_filter(message)
