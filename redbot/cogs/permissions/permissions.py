@@ -222,17 +222,29 @@ class Permissions(commands.Cog):
     @permissions_acl.command(name="getglobal")
     async def permissions_acl_getglobal(self, ctx: commands.Context):
         """Get a YAML file detailing all global rules."""
-        await ctx.author.send(file=await self._yaml_get_acl(guild_id=GLOBAL))
+        file = await self._yaml_get_acl(guild_id=GLOBAL)
+        try:
+            await ctx.author.send(file=file)
+        except discord.Forbidden:
+            await ctx.send(_("I'm not allowed DM you."))
+        finally:
+            file.close()
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     @permissions_acl.command(name="getserver", aliases=["getguild"])
     async def permissions_acl_getguild(self, ctx: commands.Context):
         """Get a YAML file detailing all rules in this server."""
-        await ctx.author.send(file=await self._yaml_get_acl(guild_id=ctx.guild.id))
+        file = await self._yaml_get_acl(guild_id=ctx.guild.id)
+        try:
+            await ctx.author.send(file=file)
+        except discord.Forbidden:
+            await ctx.send(_("I'm not allowed DM you."))
+        finally:
+            file.close()
 
     @checks.is_owner()
-    @permissions.command(name="updateglobal")
+    @permissions_acl.command(name="updateglobal")
     async def permissions_acl_updateglobal(self, ctx: commands.Context):
         """Update global rules with a YAML file.
 
@@ -243,7 +255,7 @@ class Permissions(commands.Cog):
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
-    @permissions.command(name="updateserver", aliases=["updateguild"])
+    @permissions_acl.command(name="updateserver", aliases=["updateguild"])
     async def permissions_acl_updateguild(self, ctx: commands.Context):
         """Update rules for this server with a YAML file.
 
@@ -502,15 +514,14 @@ class Permissions(commands.Cog):
         guild_rules = {}
         for category in (COG, COMMAND):
             guild_rules.setdefault(category, {})
-            rules_dict = self.config.custom(category)
+            rules_dict = await self.config.custom(category).all()
             for cmd_name, cmd_rules in rules_dict.items():
                 model_rules = cmd_rules.get(str(guild_id))
                 if model_rules is not None:
                     guild_rules[category][cmd_name] = model_rules
 
-        with io.BytesIO() as fp:
-            yaml.dump(guild_rules, stream=fp)
-            return discord.File(fp, filename="acl.yaml")
+        fp = io.BytesIO(yaml.dump(guild_rules).encode("utf-8"))
+        return discord.File(fp, filename="acl.yaml")
 
     @staticmethod
     async def _confirm(ctx: commands.Context) -> bool:
