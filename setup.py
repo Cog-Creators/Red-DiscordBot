@@ -129,7 +129,7 @@ if __name__ == "__main__":
                 "urllib3==1.23",
                 "six==1.11.0",
                 "snowballstemmer==1.2.1",
-                "sphinx==1.8.1",
+                "sphinx==1.7.9",
                 "sphinx_rtd_theme==0.4.1",
                 "sphinxcontrib-asyncio==0.2.0",
                 "sphinxcontrib-websupport==1.1.0",
