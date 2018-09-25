@@ -263,8 +263,7 @@ class Audio:
     async def role(self, ctx, role_name: discord.Role):
         """Sets the role to use for DJ mode."""
         await self.config.guild(ctx.guild).dj_role.set(role_name.id)
-        dj_role_id = await self.config.guild(ctx.guild).dj_role()
-        dj_role_obj = discord.utils.get(ctx.guild.roles, id=dj_role_id)
+        dj_role_obj = ctx.guild.get_role(await self.config.guild(ctx.guild).dj_role())
         await self._embed_msg(ctx, "DJ role set to: {}.".format(dj_role_obj.name))
 
     @audioset.command()
@@ -301,7 +300,7 @@ class Audio:
         """Show the current settings."""
         data = await self.config.guild(ctx.guild).all()
         global_data = await self.config.all()
-        dj_role_obj = discord.utils.get(ctx.guild.roles, id=data["dj_role"])
+        dj_role_obj = ctx.guild.get_role(data["dj_role"])
         dj_enabled = data["dj_enabled"]
         emptydc_enabled = data["emptydc_enabled"]
         emptydc_timer = data["emptydc_timer"]
@@ -2028,8 +2027,7 @@ class Audio:
         return nonbots <= 1
 
     async def _has_dj_role(self, ctx, member):
-        dj_role_id = await self.config.guild(ctx.guild).dj_role()
-        dj_role_obj = discord.utils.get(ctx.guild.roles, id=dj_role_id)
+        dj_role_obj = ctx.guild.get_role(await self.config.guild(ctx.guild).dj_role())
         if dj_role_obj in ctx.guild.get_member(member.id).roles:
             return True
         else:
