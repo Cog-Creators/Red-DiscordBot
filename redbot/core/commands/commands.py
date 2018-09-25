@@ -99,7 +99,18 @@ class Command(CogCommandMixin, commands.Command):
 
     This should not be created directly, and instead via the decorator.
 
-    This class inherits from `discord.ext.commands.Command`.
+    This class inherits from `discord.ext.commands.Command`. The
+    attributes listed below are simply additions to the ones listed
+    with that class.
+
+    Attributes
+    ----------
+    checks : List[`coroutine function`]
+        A list of check predicates which cannot be overridden, unlike
+        `Requires.checks`.
+    translator : Translator
+        A translator for this command's help docstring.
+
     """
 
     def __init__(self, *args, **kwargs):
@@ -405,7 +416,7 @@ def permissions_check(predicate: Callable[["Context"], Union[Awaitable[bool], bo
         if isinstance(func, Command):
             func.requires.checks.append(predicate)
         else:
-            if not hasattr(func, '__requires_checks__'):
+            if not hasattr(func, "__requires_checks__"):
                 func.__requires_checks__ = []
             # noinspection PyUnresolvedReferences
             func.__requires_checks__.append(predicate)
