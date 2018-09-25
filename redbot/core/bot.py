@@ -5,6 +5,7 @@ from collections import Counter
 from enum import Enum
 from importlib.machinery import ModuleSpec
 from pathlib import Path
+from typing import Union
 
 import discord
 import sys
@@ -72,6 +73,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             use_bot_color=False,
             fuzzy=False,
             disabled_commands=[],
+            autoimmune_ids=[],
         )
 
         self.db.register_user(embeds=None)
@@ -293,6 +295,41 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
 
             if pkg_name.startswith("redbot.cogs."):
                 del sys.modules["redbot.cogs"].__dict__[name]
+
+    async def is_automod_immune(
+        self, to_check: Union[discord.Message, commands.Context, discord.abc.User, discord.Role]
+    ) -> bool:
+        """
+        Checks if the user, message, context, or role should be considered immune from automated
+        moderation actions.
+
+        This will return ``False`` in direct messages.
+
+        Parameters
+        ----------
+        to_check : `discord.Message` or `commands.Context` or `discord.abc.User` or `discord.Role`
+            Something to check if it would be immune
+
+        Returns
+        -------
+        bool
+            ``True`` if immune
+
+        """
+        guild = to_check.guild
+        if not guild:
+            return False
+
+        if isinstance(to_check, discord.Role):
+            ids_to_check = [to_check.id]
+        else:
+            author = getattr(to_check, "author", to_check)
+            ids_to_check = [r.id for r in author.roles]
+            ids_to_check.append(author.id)
+
+        immune_ids = await self.db.guild(guild).autoimmune_ids()
+
+        return any(i in immune_ids for i in ids_to_check)
 
     @staticmethod
     async def send_filtered(

@@ -1501,6 +1501,9 @@ class Mod:
         mod_or_superior = await is_mod_or_superior(self.bot, obj=author)
         if mod_or_superior:
             return
+        # As are anyone configured to be
+        if await self.bot.is_automod_immune(message):
+            return
         deleted = await self.check_duplicates(message)
         if not deleted:
             deleted = await self.check_mention_spam(message)

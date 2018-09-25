@@ -14,7 +14,7 @@ from pathlib import Path
 from random import SystemRandom
 from string import ascii_letters, digits
 from distutils.version import StrictVersion
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 import aiohttp
 import discord
@@ -1693,6 +1693,82 @@ class Core(CoreLogic):
         """
         await ctx.bot.db.disabled_command_msg.set(message)
         await ctx.tick()
+
+    @commands.guild_only()
+    @checks.guildowner_or_permissions(manage_server=True)
+    @commands.group(name="autoimmune")
+    async def autoimmune_group(self, ctx: commands.Context):
+        """
+        Server settings for immunity from automated actions
+        """
+        pass
+
+    @autoimmune_group.command(name="list")
+    async def autoimmune_list(self, ctx: commands.Context):
+        """
+        Get's the current members and roles 
+        
+        configured for automatic moderation action immunity
+        """
+        ai_ids = await ctx.bot.db.guild(ctx.guild).autoimmune_ids()
+
+        roles = {r.name for r in ctx.guild.roles if r.id in ai_ids}
+        members = {str(m) for m in ctx.guild.members if m.id in ai_ids}
+
+        output = ""
+        if roles:
+            output += _("Roles immune from automated moderation actions:\n")
+            output += ", ".join(roles)
+        if members:
+            if roles:
+                output += "\n"
+            output += _("Members immune from automated moderation actions:\n")
+            output += ", ".join(members)
+
+        if not output:
+            output = _("No immunty settings here.")
+
+        for page in pagify(output):
+            await ctx.send(page)
+
+    @autoimmune_group.command(name="add")
+    async def autoimmune_add(
+        self, ctx: commands.Context, user_or_role: Union[discord.Member, discord.Role]
+    ):
+        """
+        Makes a user or roles immune from automated moderation actions
+        """
+        async with ctx.bot.db.guild(ctx.guild).autoimmune_ids() as ai_ids:
+            if user_or_role.id in ai_ids:
+                return await ctx.send(_("Already added."))
+            ai_ids.append(user_or_role.id)
+        await ctx.tick()
+
+    @autoimmune_group.command(name="remove")
+    async def autoimmune_remove(
+        self, ctx: commands.Context, user_or_role: Union[discord.Member, discord.Role]
+    ):
+        """
+        Makes a user or roles immune from automated moderation actions
+        """
+        async with ctx.bot.db.guild(ctx.guild).autoimmune_ids() as ai_ids:
+            if user_or_role.id not in ai_ids:
+                return await ctx.send(_("Not in list."))
+            ai_ids.remove(user_or_role.id)
+        await ctx.tick()
+
+    @autoimmune_group.command(name="isimmune")
+    async def autoimmune_checkimmune(
+        self, ctx: commands.Context, user_or_role: Union[discord.Member, discord.Role]
+    ):
+        """
+        Checks if a user or role would be considered immune from automated actions
+        """
+
+        if await ctx.bot.is_automod_immune(user_or_role):
+            await ctx.send(_("They are immune"))
+        else:
+            await ctx.send(_("They are not Immune"))
 
     # RPC handlers
     async def rpc_load(self, request):
