@@ -360,7 +360,7 @@ class Filter:
         author = message.author
         word_list = set(
             await self.settings.guild(server).filter()
-            + self.settings.channel(message.channel).filter()
+            + await self.settings.channel(message.channel).filter()
         )
         filter_count = await self.settings.guild(server).filterban_count()
         filter_time = await self.settings.guild(server).filterban_time()
