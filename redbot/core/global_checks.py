@@ -26,7 +26,7 @@ def init_global_checks(bot):
         local_blacklist = await guild_settings.blacklist()
         local_whitelist = await guild_settings.whitelist()
 
-        _ids = [r.id for r in ctx.author.roles if not r.is_default]
+        _ids = [r.id for r in ctx.author.roles if not r.is_default()]
         _ids.append(ctx.author.id)
         if local_whitelist:
             return any(i in local_whitelist for i in _ids)

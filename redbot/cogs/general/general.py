@@ -204,9 +204,9 @@ class General(commands.Cog):
         data = discord.Embed(description=created_at, colour=(await ctx.embed_colour()))
         data.add_field(name=_("Region"), value=str(guild.region))
         data.add_field(name=_("Users"), value="{}/{}".format(online, total_users))
-        data.add_field(name=_("Text Channels"), value=text_channels)
-        data.add_field(name=_("Voice Channels"), value=voice_channels)
-        data.add_field(name=_("Roles"), value=len(guild.roles))
+        data.add_field(name=_("Text Channels"), value=str(text_channels))
+        data.add_field(name=_("Voice Channels"), value=str(voice_channels))
+        data.add_field(name=_("Roles"), value=str(len(guild.roles)))
         data.add_field(name=_("Owner"), value=str(guild.owner))
         data.set_footer(text=_("Server ID: ") + str(guild.id))
 

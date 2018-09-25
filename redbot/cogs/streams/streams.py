@@ -667,3 +667,5 @@ class Streams(commands.Cog):
     def __unload(self):
         if self.task:
             self.task.cancel()
+
+    __del__ = __unload

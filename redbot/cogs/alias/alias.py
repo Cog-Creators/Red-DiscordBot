@@ -1,6 +1,6 @@
 from copy import copy
 from re import search
-from typing import Generator, Tuple, Iterable
+from typing import Generator, Tuple, Iterable, Optional
 
 import discord
 from redbot.core import Config, commands, checks
@@ -54,10 +54,13 @@ class Alias(commands.Cog):
         return (AliasEntry.from_json(d, bot=self.bot) for d in (await self._aliases.entries()))
 
     async def is_alias(
-        self, guild: discord.Guild, alias_name: str, server_aliases: Iterable[AliasEntry] = ()
-    ) -> (bool, AliasEntry):
+        self,
+        guild: Optional[discord.Guild],
+        alias_name: str,
+        server_aliases: Iterable[AliasEntry] = (),
+    ) -> Tuple[bool, Optional[AliasEntry]]:
 
-        if not server_aliases:
+        if not server_aliases and guild is not None:
             server_aliases = await self.unloaded_aliases(guild)
 
         global_aliases = await self.unloaded_global_aliases()

@@ -18,7 +18,7 @@ requirements = [
     "fuzzywuzzy==0.17.0",
     "idna-ssl==1.1.0",
     "idna==2.7",
-    "multidict==4.4.0",
+    "multidict==4.4.2",
     "python-levenshtein==0.12.0",
     "pyyaml==3.13",
     "raven==6.9.0",
@@ -26,6 +26,11 @@ requirements = [
     "websockets==6.0",
     "yarl==1.2.6",
 ]
+
+python_requires = ">=3.6.2,<3.8"
+if os.name == "nt":
+    # Due to issues with ProactorEventLoop prior to 3.6.6 (bpo-26819)
+    python_requires = ">=3.6.6,<3.8"
 
 
 def get_dependency_links():
@@ -37,13 +42,12 @@ def check_compiler_available():
     m = ccompiler.new_compiler()
 
     with tempfile.TemporaryDirectory() as tdir:
-        with tempfile.NamedTemporaryFile(prefix="dummy", suffix=".c", dir=tdir) as tfile:
-            tfile.write(b"int main(int argc, char** argv) {return 0;}")
-            tfile.seek(0)
-            try:
-                m.compile([tfile.name], output_dir=tdir)
-            except (CCompilerError, DistutilsPlatformError):
-                return False
+        with open(os.path.join(tdir, "dummy.c"), "w") as tfile:
+            tfile.write("int main(int argc, char** argv) {return 0;}")
+        try:
+            m.compile([tfile.name], output_dir=tdir)
+        except (CCompilerError, DistutilsPlatformError):
+            return False
     return True
 
 
@@ -94,7 +98,7 @@ if __name__ == "__main__":
             ],
             "pytest11": ["red-discordbot = redbot.pytest"],
         },
-        python_requires=">=3.6.2,<3.8",
+        python_requires=python_requires,
         install_requires=requirements,
         dependency_links=get_dependency_links(),
         extras_require={
@@ -103,7 +107,7 @@ if __name__ == "__main__":
                 "more-itertools==4.3.0",
                 "pluggy==0.7.1",
                 "py==1.6.0",
-                "pytest==3.7.4",
+                "pytest==3.8.1",
                 "pytest-asyncio==0.9.0",
                 "six==1.11.0",
             ],
@@ -117,7 +121,7 @@ if __name__ == "__main__":
                 "Jinja2==2.10",
                 "MarkupSafe==1.0",
                 "packaging==17.1",
-                "pyparsing==2.2.0",
+                "pyparsing==2.2.1",
                 "six==1.11.0",
                 "Pygments==2.2.0",
                 "pytz==2018.5",
@@ -125,12 +129,12 @@ if __name__ == "__main__":
                 "urllib3==1.23",
                 "six==1.11.0",
                 "snowballstemmer==1.2.1",
-                "sphinx==1.7.8",
+                "sphinx==1.7.9",
                 "sphinx_rtd_theme==0.4.1",
                 "sphinxcontrib-asyncio==0.2.0",
                 "sphinxcontrib-websupport==1.1.0",
             ],
             "voice": ["red-lavalink==0.1.2"],
-            "style": ["black==18.6b4", "click==6.7", "toml==0.9.4"],
+            "style": ["black==18.6b4", "click==6.7", "toml==0.9.6"],
         },
     )

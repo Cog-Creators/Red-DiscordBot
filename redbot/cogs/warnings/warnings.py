@@ -71,7 +71,6 @@ class Warnings(commands.Cog):
     @commands.guild_only()
     async def action_add(self, ctx: commands.Context, name: str, points: int):
         """Create an action to be taken at a specified point count
-
         Duplicate action names are not allowed
         """
         guild = ctx.guild
@@ -216,7 +215,6 @@ class Warnings(commands.Cog):
     @checks.admin_or_permissions(ban_members=True)
     async def warn(self, ctx: commands.Context, user: discord.Member, reason: str):
         """Warn the user for the specified reason
-
         Reason must be a registered reason, or "custom" if custom reasons are allowed
         """
         if user == ctx.author:
@@ -297,7 +295,6 @@ class Warnings(commands.Cog):
     @commands.guild_only()
     async def warnings(self, ctx: commands.Context, userid: int = None):
         """Show warnings for the specified user.
-
         If userid is None, show warnings for the person running the command
         Note that showing warnings for users other than yourself requires
         appropriate permissions
@@ -331,7 +328,9 @@ class Warnings(commands.Cog):
                     msg += "{} point warning {} issued by {} for {}\n".format(
                         user_warnings[key]["points"], key, mod, user_warnings[key]["description"]
                     )
-                await ctx.send_interactive(pagify(msg), box_lang="Warnings for {}".format(user))
+                await ctx.send_interactive(
+                    pagify(msg, shorten_by=58), box_lang="Warnings for {}".format(user)
+                )
 
     @commands.command()
     @commands.guild_only()

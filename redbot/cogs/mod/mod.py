@@ -437,7 +437,8 @@ class Mod(commands.Cog):
         using this command"""
         author = ctx.author
         guild = ctx.guild
-
+        if not guild.me.guild_permissions.ban_members:
+            return await ctx.send(_("I lack the permissions to do this."))
         is_banned = False
         ban_list = await guild.bans()
         for entry in ban_list:
@@ -450,8 +451,10 @@ class Mod(commands.Cog):
             return
 
         user = guild.get_member(user_id)
-        if user is None:
-            user = discord.Object(id=user_id)  # User not in the guild, but
+        if user is not None:
+            # Instead of replicating all that handling... gets attr from decorator
+            return await ctx.invoke(self.ban, user, None, reason=reason)
+        user = discord.Object(id=user_id)  # User not in the guild, but
 
         audit_reason = get_audit_reason(author, reason)
         queue_entry = (guild.id, user_id)
@@ -1498,6 +1501,9 @@ class Mod(commands.Cog):
         #  Bots and mods or superior are ignored from the filter
         mod_or_superior = await is_mod_or_superior(self.bot, obj=author)
         if mod_or_superior:
+            return
+        # As are anyone configured to be
+        if await self.bot.is_automod_immune(message):
             return
         deleted = await self.check_duplicates(message)
         if not deleted:

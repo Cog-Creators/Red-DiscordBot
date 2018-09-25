@@ -242,3 +242,20 @@ class Context(commands.Context):
             )
         else:
             return await self.send(message)
+
+    @property
+    def clean_prefix(self) -> str:
+        """str: The command prefix, but a mention prefix is displayed nicer."""
+        me = self.me
+        return self.prefix.replace(me.mention, f"@{me.display_name}")
+
+    @property
+    def me(self) -> discord.abc.User:
+        """discord.abc.User: The bot member or user object.
+
+        If the context is DM, this will be a `discord.User` object.
+        """
+        if self.guild is not None:
+            return self.guild.me
+        else:
+            return self.bot.user
