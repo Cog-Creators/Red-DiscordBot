@@ -1,5 +1,8 @@
 from .customcom import CustomCommands
 
 
-def setup(bot):
-    bot.add_cog(CustomCommands(bot))
+async def setup(bot):
+    cog = CustomCommands(bot)
+    await cog.initialize()
+    bot.add_cog(cog)
+    bot.remove_command("_CustomCommands__cc_command")

@@ -12,6 +12,8 @@ from redbot.core import Config, checks, commands
 from redbot.core.utils.chat_formatting import box, pagify
 from redbot.core.i18n import Translator, cog_i18n
 
+from .customcommand import custom_command
+
 _ = Translator("CustomCommands", __file__)
 
 
@@ -37,9 +39,9 @@ class OnCooldown(CCError):
 
 class CommandObj:
     def __init__(self, **kwargs):
-        config = kwargs.get("config")
+        self.cog = kwargs.get("cog")
         self.bot = kwargs.get("bot")
-        self.db = config.guild
+        self.db = self.cog.config.guild
 
     @staticmethod
     async def get_commands(config) -> dict:
@@ -111,6 +113,7 @@ class CommandObj:
             "response": response,
         }
         await self.db(ctx.guild).commands.set_raw(command, value=ccinfo)
+        self.cog.register_cc(command)
 
     async def edit(
         self,
@@ -169,6 +172,7 @@ class CommandObj:
         if not await self.db(ctx.guild).commands.get_raw(command, default=None):
             raise NotFound()
         await self.db(ctx.guild).commands.set_raw(command, value=None)
+        ctx.cog.unregister_cc(command)
 
 
 @cog_i18n(_)
@@ -179,11 +183,24 @@ class CustomCommands:
 
     def __init__(self, bot):
         self.bot = bot
+        self.cc_map = bot.get_cog_map(self)
         self.key = 414589031223512
         self.config = Config.get_conf(self, self.key)
         self.config.register_guild(commands={})
-        self.commandobj = CommandObj(config=self.config, bot=self.bot)
+        self.commandobj = CommandObj(cog=self, bot=self.bot)
         self.cooldowns = {}
+
+    async def initialize(self):
+        all_cc = await self.config.all_guilds()
+        for commands in all_cc.values():
+            for name in commands["commands"].keys():
+                self.register_cc(name)
+
+    def register_cc(self, name: str) -> None:
+        self.cc_map.setdefault(name, self.__cc_command)
+
+    def unregister_cc(self, name: str) -> None:
+        self.cc_map.pop(name, None)
 
     @commands.group(aliases=["cc"])
     @commands.guild_only()
@@ -210,6 +227,9 @@ class CustomCommands:
 
         Note: This is interactive
         """
+        if command in self.bot.core_map:
+            return await ctx.send(_("That command is already a standard command."))
+
         responses = []
 
         responses = await self.commandobj.get_responses(ctx=ctx)
@@ -233,7 +253,7 @@ class CustomCommands:
         Example:
         [p]customcom add simple yourcommand Text you want
         """
-        if command in self.bot.all_commands:
+        if command in self.bot.core_map:
             await ctx.send(_("That command is already a standard command."))
             return
         try:
@@ -358,56 +378,16 @@ class CustomCommands:
             for page in pagify(commands, delims=[" ", "\n"]):
                 await ctx.author.send(box(page))
 
-    async def on_message(self, message):
-        is_private = isinstance(message.channel, discord.abc.PrivateChannel)
-
-        # user_allowed check, will be replaced with self.bot.user_allowed or
-        # something similar once it's added
-        user_allowed = True
-
-        if len(message.content) < 2 or is_private or not user_allowed or message.author.bot:
-            return
-
-        ctx = await self.bot.get_context(message)
-
-        if ctx.prefix is None or ctx.valid:
-            return
-
-        try:
-            raw_response, cooldowns = await self.commandobj.get(
-                message=message, command=ctx.invoked_with
-            )
-            if isinstance(raw_response, list):
-                raw_response = random.choice(raw_response)
-            elif isinstance(raw_response, str):
-                pass
-            else:
-                raise NotFound()
-            if cooldowns:
-                self.test_cooldowns(ctx, ctx.invoked_with, cooldowns)
-        except CCError:
-            return
-
-        # wrap the command here so it won't register with the bot
-        fake_cc = commands.Command(ctx.invoked_with, self.cc_callback)
-        fake_cc.params = self.prepare_args(raw_response)
-        ctx.command = fake_cc
-
-        await self.bot.invoke(ctx)
-        if not ctx.command_failed:
-            await self.cc_command(*ctx.args, **ctx.kwargs, raw_response=raw_response)
-
-    async def cc_callback(self, *args, **kwargs) -> None:
+    # This is the only CC instance, but it is copied as needed
+    @custom_command
+    async def __cc_command(self, ctx, *args, **kwargs) -> None:
         """
         Custom command.
 
         Created via the CustomCom cog. See `[p]customcom` for more details.
         """
-        # fake command to take advantage of discord.py's parsing and events
-        pass
-
-    async def cc_command(self, ctx, *cc_args, raw_response, **cc_kwargs) -> None:
-        cc_args = (*cc_args, *cc_kwargs.values())
+        raw_response = kwargs.pop("raw_response")
+        args = (*args, *kwargs.values())
         results = re.findall(r"\{([^}]+)\}", raw_response)
         for result in results:
             param = self.transform_parameter(result, ctx.message)
@@ -417,13 +397,34 @@ class CustomCommands:
             low = min(int(result[1]) for result in results)
             for result in results:
                 index = int(result[1]) - low
-                arg = self.transform_arg(result[0], result[2], cc_args[index])
+                arg = self.transform_arg(result[0], result[2], args[index])
                 raw_response = raw_response.replace("{" + result[0] + "}", arg)
         await ctx.send(raw_response)
 
+    async def cc_prepare(self, ctx) -> str:
+        try:
+            raw_response, cooldowns = await self.commandobj.get(
+                message=ctx.message, command=ctx.invoked_with
+            )
+            if isinstance(raw_response, list):
+                raw_response = random.choice(raw_response)
+            elif isinstance(raw_response, str):
+                pass
+            else:
+                raise NotFound()
+            if cooldowns:
+                self.test_cooldowns(ctx, ctx.invoked_with, cooldowns)
+        except CCError as e:
+            raise commands.CheckFailure() from e
+        ctx.command.params = self.prepare_args(raw_response)
+        return raw_response
+
     def prepare_args(self, raw_response) -> Mapping[str, Parameter]:
         args = re.findall(r"\{(\d+)[^:}]*(:[^\.}]*)?[^}]*\}", raw_response)
-        default = [["ctx", Parameter("ctx", Parameter.POSITIONAL_OR_KEYWORD)]]
+        default = [
+            ["self", Parameter("self", Parameter.POSITIONAL_OR_KEYWORD)],
+            ["ctx", Parameter("ctx", Parameter.POSITIONAL_OR_KEYWORD)],
+        ]
         if not args:
             return OrderedDict(default)
         allowed_builtins = {
