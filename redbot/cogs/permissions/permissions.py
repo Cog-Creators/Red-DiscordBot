@@ -417,6 +417,7 @@ class Permissions(commands.Cog):
         agreed = await self._confirm(ctx)
         if agreed:
             await self._clear_rules(guild_id=GLOBAL)
+            await ctx.tick()
 
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
@@ -426,6 +427,7 @@ class Permissions(commands.Cog):
         agreed = await self._confirm(ctx)
         if agreed:
             await self._clear_rules(guild_id=ctx.guild.id)
+            await ctx.tick()
 
     async def cog_added(self, cog: commands.Cog) -> None:
         """Event listener for `cog_add`.
@@ -569,13 +571,16 @@ class Permissions(commands.Cog):
             try:
                 reaction, user = await ctx.bot.wait_for(
                     "reaction_add",
-                    check=lambda r, u: r.message == msg and u == ctx.author and str(r) in REACTS,
+                    check=lambda r, u: (
+                        r.message.id == msg.id and u == ctx.author and r.emoji in REACTS
+                    ),
                     timeout=30,
                 )
             except asyncio.TimeoutError:
                 agreed = False
             else:
-                agreed = REACTS.get(str(reaction))
+                agreed = REACTS.get(reaction.emoji)
+                await msg.delete()
         else:
             await ctx.send(_("Are you sure? (y/n)"))
             try:

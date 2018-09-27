@@ -28,6 +28,7 @@ Core cog except for ``[p]set token``.
 In terms of scope, global rules will be checked first, then server rules.
 
 For each of those, the first rule pertaining to one of the following models will be used:
+
 1. User
 2. Voice channel
 3. Text channel
