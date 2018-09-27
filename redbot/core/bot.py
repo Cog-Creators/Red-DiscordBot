@@ -404,7 +404,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             guild rules untouched.
 
         """
-        for cog in self.cogs:
+        for cog in self.cogs.values():
             cog.requires.clear_all_rules(guild_id)
         for command in self.walk_commands():
             command.requires.clear_all_rules(guild_id)
