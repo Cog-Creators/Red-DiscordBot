@@ -322,22 +322,31 @@ def escape(text: str, *, mass_mentions: bool = False, formatting: bool = False) 
     return text
 
 
-def humanize_list(words: List[str]):
+def humanize_list(items: Sequence[str]):
     """Get comma-separted list, with the last element joined with *and*.
+
+    This uses an Oxford comma, because without one, items containing
+    the word *and* would make the output difficult to interpret.
+
+    Parameters
+    ----------
+    items : Sequence[str]
+        The items of the list to join together.
 
     Examples
     --------
+    .. testsetup::
+
+        from redbot.core.utils.chat_formatting import humanize_list
+
     .. doctest::
 
-        >>>humanized_list(["One", "Two", "Three"])
-        "One, Two and Three"
-
-    .. doctest::
-
-        >>>humanized_list(["One"])
-        "One"
+        >>> humanize_list(['One', 'Two', 'Three'])
+        'One, Two, and Three'
+        >>> humanize_list(['One'])
+        'One'
 
     """
-    if len(words) == 1:
-        return words[0]
-    return ", ".join(words[:-1]) + _(" and ") + words[-1]
+    if len(items) == 1:
+        return items[0]
+    return ", ".join(items[:-1]) + _(", and ") + items[-1]

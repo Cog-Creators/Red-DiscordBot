@@ -96,35 +96,23 @@ class Permissions(commands.Cog):
         # Apologies in advance for the translators out there...
 
         message = _(
-            "This cog extends the default permission model of the bot. "
-            "By default, many commands are restricted based on what "
-            "the command can do."
-            "\n"
-            "Any command that could impact the host machine, "
-            "is generally owner only."
-            "\n"
-            "Commands that take administrative or moderator "
-            "actions in servers generally require a mod or an admin."
-            "\n"
-            "This cog allows you to refine some of those settings. "
-            "You can allow wider or narrower "
-            "access to most commands using it."
-            "\n\n"
-            "When additional rules are set using this cog, "
-            "those rules will be checked prior to "
-            "checking for the default restrictions of the command. "
-            "\n"
-            "Rules set globally (by the owner) are checked first, "
-            "then rules set for guilds. If multiple global or guild "
-            "rules apply to the case, the order they are checked is:"
-            "\n"
-            "1. Rules about a user.\n"
-            "2. Rules about the voice channel a user is in.\n"
-            "3. Rules about the text channel a command was issued in.\n"
-            "4. Rules about a role the user has "
-            "(The highest role they have with a rule will be used).\n"
-            "5. Rules about the guild a user is in (Owner level only)."
-            "\n\nFor more details, please read the official documentation."
+            "This cog extends the default permission model of the bot. By default, many commands "
+            "are restricted based on what the command can do.\n"
+            "This cog allows you to refine some of those restrictions. You can allow wider or "
+            "narrower access to most commands using it. You cannot, however, change the "
+            "restrictions on owner-only commands.\n\n"
+            "When additional rules are set using this cog, those rules will be checked prior to "
+            "checking for the default restrictions of the command.\n"
+            "Global rules (set by the owner) are checked first, then rules set for servers. If "
+            "multiple global or server rules apply to the case, the order they are checked is:\n"
+            "  1. Rules about a user.\n"
+            "  2. Rules about the voice channel a user is in.\n"
+            "  3. Rules about the text channel a command was issued in.\n"
+            "  4. Rules about a role the user has (The highest role they have with a rule will be "
+            "used).\n"
+            "  5. Rules about the server a user is in (Global rules only).\n\n"
+            "For more details, please read the [official documentation]"
+            "(https://red-discordbot.readthedocs.io/en/v3-develop/cog_permissions.html)."
         )
 
         await ctx.maybe_send_embed(message)
@@ -226,7 +214,7 @@ class Permissions(commands.Cog):
         try:
             await ctx.author.send(file=file)
         except discord.Forbidden:
-            await ctx.send(_("I'm not allowed DM you."))
+            await ctx.send(_("I'm not allowed to DM you."))
         finally:
             file.close()
 
@@ -239,7 +227,7 @@ class Permissions(commands.Cog):
         try:
             await ctx.author.send(file=file)
         except discord.Forbidden:
-            await ctx.send(_("I'm not allowed DM you."))
+            await ctx.send(_("I'm not allowed to DM you."))
         finally:
             file.close()
 
