@@ -30,4 +30,8 @@ def get_driver(type, *args, **kwargs):
         from .red_mongo import Mongo
 
         return Mongo(*args, **kwargs)
+    elif type == "SQLite":
+        from .red_sqlite import Sqlite
+
+        return Sqlite(*args, **kwargs)
     raise RuntimeError("Invalid driver type: '{}'".format(type))
