@@ -97,7 +97,9 @@ async def is_allowed_by_hierarchy(
     return mod.top_role.position > user.top_role.position or is_special
 
 
-async def is_mod_or_superior(bot: "Red", obj: Union[discord.Message, discord.Member, discord.Role]):
+async def is_mod_or_superior(
+    bot: "Red", obj: Union[discord.Message, discord.Member, discord.Role]
+):
     """Check if an object has mod or superior permissions.
 
     If a message is passed, its author's permissions are checked. If a role is

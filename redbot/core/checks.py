@@ -44,6 +44,7 @@ __all__ = [
 
 def bot_in_a_guild():
     """Deny the command if the bot is not in a guild."""
+
     async def predicate(ctx):
         return len(ctx.bot.guilds) > 0
 
