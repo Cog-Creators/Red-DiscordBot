@@ -1,3 +1,11 @@
+"""
+commands.requires
+=================
+This module manages the logic of resolving command permissions and
+requirements. This includes rules which override those requirements,
+as well as custom checks which can be overriden, and some special
+checks like bot permissions checks.
+"""
 import asyncio
 import enum
 from typing import (
@@ -24,18 +32,26 @@ if TYPE_CHECKING:
     _CommandOrCoro = TypeVar("_CommandOrCoro", Callable[..., Awaitable[Any]], Command)
 
 __all__ = [
-    "bot_has_permissions",
     "DM_PERMS",
-    "has_permissions",
     "GlobalPermissionModel",
     "GuildPermissionModel",
     "PermissionModel",
     "PrivilegeLevel",
     "PermState",
     "Requires",
+    "permissions_check",
+    "bot_has_permissions",
+    "has_permissions",
+    "is_owner",
+    "guildowner",
+    "guildowner_or_permissions",
+    "admin",
+    "admin_or_permissions",
+    "mod",
+    "mod_or_permissions",
 ]
 
-_VT = TypeVar("_VT", covariant=True)
+_T = TypeVar("_T")
 GlobalPermissionModel = Union[
     discord.User,
     discord.VoiceChannel,
@@ -74,10 +90,19 @@ class PrivilegeLevel(enum.IntEnum):
     """Enumeration for special privileges."""
 
     NONE = enum.auto()
+    """No special privilege level."""
+
     MOD = enum.auto()
+    """User has the mod role."""
+
     ADMIN = enum.auto()
+    """User has the admin role."""
+
     GUILD_OWNER = enum.auto()
+    """User is the guild level."""
+
     BOT_OWNER = enum.auto()
+    """User is a bot owner."""
 
     @classmethod
     async def from_ctx(cls, ctx: "Context") -> "PrivilegeLevel":
@@ -220,7 +245,7 @@ class Requires:
 
     Attributes
     ----------
-    checks : List[`coroutine function`]
+    checks : List[Callable[[Context], Union[bool, Awaitable[bool]]]]
         A list of checks which can be overridden by rules. Use
         `Command.checks` if you would like them to never be overridden.
     privilege_level : PrivilegeLevel
@@ -383,6 +408,8 @@ class Requires:
         BotMissingPermissions
             If the bot is missing required permissions to run the
             command.
+        CommandError
+            Propogated from any permissions checks.
 
         """
         await self._verify_bot(ctx)
@@ -513,13 +540,36 @@ class Requires:
 # check decorators
 
 
-def has_permissions(**perms) -> Callable[["_CommandOrCoro"], "_CommandOrCoro"]:
-    """Command decorator for verifying the author has required permissions."""
-    return Requires.get_decorator(None, perms)
+def permissions_check(predicate: Callable[["Context"], Union[Awaitable[bool], bool]]):
+    """An overwriteable version of `discord.ext.commands.check`.
+
+    This has the same behaviour as `discord.ext.commands.check`,
+    however this check can be ignored if the command is allowed
+    through a permissions cog.
+    """
+
+    def decorator(func: Union[Command, Callable[..., Awaitable[Any]]]):
+        if isinstance(func, Command):
+            func.requires.checks.append(predicate)
+        else:
+            if not hasattr(func, "__requires_checks__"):
+                func.__requires_checks__ = []
+            # noinspection PyUnresolvedReferences
+            func.__requires_checks__.append(predicate)
+        return func
+
+    return decorator
 
 
-def bot_has_permissions(**perms) -> Callable[["_CommandOrCoro"], "_CommandOrCoro"]:
-    """Command decorator for verifying the bot has required permissions."""
+def bot_has_permissions(**perms):
+    """Complain if the bot is missing permissions.
+
+    If the user tries to run the command, but the bot is missing the
+    permissions, it will send a message describing which permissions
+    are missing.
+
+    This check cannot be overridden by rules.
+    """
 
     def decorator(func: "_CommandOrCoro") -> "_CommandOrCoro":
         if asyncio.iscoroutinefunction(func):
@@ -531,13 +581,79 @@ def bot_has_permissions(**perms) -> Callable[["_CommandOrCoro"], "_CommandOrCoro
     return decorator
 
 
-class _IntKeyDict(Dict[int, _VT]):
-    def __getitem__(self, key: Any) -> _VT:
+def has_permissions(**perms):
+    """Restrict the command to users with these permissions.
+
+    This check can be overridden by rules.
+    """
+    return Requires.get_decorator(None, perms)
+
+
+def is_owner():
+    """Restrict the command to bot owners.
+
+    This check cannot be overridden by rules.
+    """
+    return Requires.get_decorator(PrivilegeLevel.BOT_OWNER, {})
+
+
+def guildowner_or_permissions(**perms):
+    """Restrict the command to the guild owner or users with these permissions.
+
+    This check can be overridden by rules.
+    """
+    return Requires.get_decorator(PrivilegeLevel.GUILD_OWNER, perms)
+
+
+def guildowner():
+    """Restrict the command to the guild owner.
+
+    This check can be overridden by rules.
+    """
+    return guildowner_or_permissions()
+
+
+def admin_or_permissions(**perms):
+    """Restrict the command to users with the admin role or these permissions.
+
+    This check can be overridden by rules.
+    """
+    return Requires.get_decorator(PrivilegeLevel.ADMIN, perms)
+
+
+def admin():
+    """Restrict the command to users with the admin role.
+
+    This check can be overridden by rules.
+    """
+    return admin_or_permissions()
+
+
+def mod_or_permissions(**perms):
+    """Restrict the command to users with the mod role or these permissions.
+
+    This check can be overridden by rules.
+    """
+    return Requires.get_decorator(PrivilegeLevel.MOD, perms)
+
+
+def mod():
+    """Restrict the command to users with the mod role.
+
+    This check can be overridden by rules.
+    """
+    return mod_or_permissions()
+
+
+class _IntKeyDict(Dict[int, _T]):
+    """Dict subclass which throws KeyError when a non-int key is used."""
+
+    def __getitem__(self, key: Any) -> _T:
         if not isinstance(key, int):
             raise TypeError("Keys must be of type `int`")
         return super().__getitem__(key)
 
-    def __setitem__(self, key: Any, value: _VT) -> None:
+    def __setitem__(self, key: Any, value: _T) -> None:
         if not isinstance(key, int):
             raise TypeError("Keys must be of type `int`")
         return super().__setitem__(key, value)

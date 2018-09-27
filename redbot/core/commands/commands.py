@@ -433,28 +433,6 @@ def group(name=None, **attrs):
     return command(name, cls=Group, **attrs)
 
 
-def permissions_check(predicate: Callable[["Context"], Union[Awaitable[bool], bool]]):
-    """An overwriteable version of `discord.ext.commands.check`.
-
-    This has the same behaviour as `discord.ext.commands.check`,
-    however this check can be ignored if the command is allowed
-    through a permissions cog.
-
-    """
-
-    def decorator(func: Union[Command, Callable[..., Awaitable[Any]]]):
-        if isinstance(func, Command):
-            func.requires.checks.append(predicate)
-        else:
-            if not hasattr(func, "__requires_checks__"):
-                func.__requires_checks__ = []
-            # noinspection PyUnresolvedReferences
-            func.__requires_checks__.append(predicate)
-        return func
-
-    return decorator
-
-
 __command_disablers = weakref.WeakValueDictionary()
 
 

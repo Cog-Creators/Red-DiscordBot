@@ -1,56 +1,76 @@
-from .commands import Requires, PrivilegeLevel, is_owner, check as check_decorator
+import warnings
+from typing import Awaitable, TYPE_CHECKING, Dict
+
+import discord
+
+from .commands import (
+    bot_has_permissions,
+    has_permissions,
+    is_owner,
+    guildowner,
+    guildowner_or_permissions,
+    admin,
+    admin_or_permissions,
+    mod,
+    mod_or_permissions,
+    check as _check_decorator,
+)
+from .utils.mod import (
+    is_mod_or_superior as _is_mod_or_superior,
+    is_admin_or_superior as _is_admin_or_superior,
+    check_permissions as _check_permissions,
+)
+
+if TYPE_CHECKING:
+    from .bot import Red
+    from .commands import Context
 
 __all__ = [
+    "bot_has_permissions",
+    "has_permissions",
     "is_owner",
-    "guildowner_or_permissions",
     "guildowner",
-    "admin_or_permissions",
+    "guildowner_or_permissions",
     "admin",
-    "mod_or_permissions",
+    "admin_or_permissions",
     "mod",
+    "mod_or_permissions",
+    "is_mod_or_superior",
+    "is_admin_or_superior",
     "bot_in_a_guild",
     "check_permissions",
 ]
 
 
-def guildowner_or_permissions(**perms):
-    return Requires.get_decorator(PrivilegeLevel.GUILD_OWNER, perms)
-
-
-def guildowner():
-    return guildowner_or_permissions()
-
-
-def admin_or_permissions(**perms):
-    return Requires.get_decorator(PrivilegeLevel.ADMIN, perms)
-
-
-def admin():
-    return admin_or_permissions()
-
-
-def mod_or_permissions(**perms):
-    return Requires.get_decorator(PrivilegeLevel.MOD, perms)
-
-
-def mod():
-    return mod_or_permissions()
-
-
 def bot_in_a_guild():
+    """Deny the command if the bot is not in a guild."""
     async def predicate(ctx):
         return len(ctx.bot.guilds) > 0
 
-    return check_decorator(predicate)
+    return _check_decorator(predicate)
 
 
-async def check_permissions(ctx, perms):
-    if await ctx.bot.is_owner(ctx.author):
-        return True
-    elif not perms:
-        return False
-    resolved = ctx.channel.permissions_for(ctx.author)
-
-    return resolved.administrator or all(
-        getattr(resolved, name, None) == value for name, value in perms.items()
+def is_mod_or_superior(bot: "Red", member: discord.Member) -> Awaitable[bool]:
+    warnings.warn(
+        "`redbot.core.checks.is_mod_or_superior` is deprecated and will be removed in a future "
+        "release, please use `redbot.core.utils.mod.is_mod_or_superior` instead.",
+        category=DeprecationWarning,
     )
+    return _is_mod_or_superior(bot, member)
+
+
+def is_admin_or_superior(bot: "Red", member: discord.Member) -> Awaitable[bool]:
+    warnings.warn(
+        "`redbot.core.checks.is_admin_or_superior` is deprecated and will be removed in a future "
+        "release, please use `redbot.core.utils.mod.is_admin_or_superior` instead.",
+        category=DeprecationWarning,
+    )
+    return _is_admin_or_superior(bot, member)
+
+
+def check_permissions(ctx: "Context", perms: Dict[str, bool]) -> Awaitable[bool]:
+    warnings.warn(
+        "`redbot.core.checks.check_permissions` is deprecated and will be removed in a future "
+        "release, please use `redbot.core.utils.mod.check_permissions`."
+    )
+    return _check_permissions(ctx, perms)

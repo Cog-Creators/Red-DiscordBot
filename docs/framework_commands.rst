@@ -23,4 +23,4 @@ extend functionlities used throughout the bot, as outlined below.
     :members:
 
 .. automodule:: redbot.core.commands.requires
-    :members:
+    :members: PrivilegeLevel, PermState, Requires
