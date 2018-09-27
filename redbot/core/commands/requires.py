@@ -548,8 +548,8 @@ def permissions_check(predicate: Callable[["Context"], Union[Awaitable[bool], bo
     through a permissions cog.
     """
 
-    def decorator(func: Union[Command, Callable[..., Awaitable[Any]]]):
-        if isinstance(func, Command):
+    def decorator(func: Union["Command", Callable[..., Awaitable[Any]]]):
+        if hasattr(func, "requires"):
             func.requires.checks.append(predicate)
         else:
             if not hasattr(func, "__requires_checks__"):
