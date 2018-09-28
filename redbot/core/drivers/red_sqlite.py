@@ -5,6 +5,7 @@ import weakref
 import logging
 import sqlite3
 import json
+import asyncio
 
 SQL_INIT = (
     "CREATE TABLE IF NOT EXISTS data ("
@@ -27,6 +28,8 @@ __all__ = ["SQLite"]
 _shared_datastore = {}
 _driver_counts = {}
 _finalizers = []
+
+loop = asyncio.get_event_loop()
 
 log = logging.getLogger("redbot.sqlite_driver")
 
@@ -60,29 +63,11 @@ class Sqlite(BaseDriver):
     """
 
     _conn: sqlite3.Connection = None
+    _lock = asyncio.Lock()
 
     def __init__(self, cog_name, identifier, **kwargs):
         super().__init__(cog_name, identifier)
-
-        if self._conn is None:
-            self._conn = self._initialize(kwargs)
-
-        self._load_data()
-
-    def _initialize(self, kwargs):
-        db_name = kwargs.get("DB_NAME", "database.db")
-
-        if db_name != ":memory:":
-            db_path = Path.cwd() / "cogs" / ".data"
-            db_path.mkdir(parents=True, exist_ok=True)
-            db_path = db_path / db_name
-        else:
-            db_path = db_name
-
-        conn = sqlite3.connect(str(db_path))
-        cur = conn.cursor()
-        cur.execute(SQL_INIT)
-        return conn
+        self._config_details = kwargs
 
     @property
     def data(self):
@@ -91,6 +76,21 @@ class Sqlite(BaseDriver):
     @data.setter
     def data(self, value):
         _shared_datastore[self.cog_name] = value
+
+    def _connect(self):
+        db_name = self._config_details.get("DB_NAME", "database.db")
+
+        if db_name != ":memory:":
+            db_path = Path.cwd() / "cogs" / ".data"
+            db_path.mkdir(parents=True, exist_ok=True)
+            db_path = db_path / db_name
+        else:
+            db_path = db_name
+
+        conn = sqlite3.connect(str(db_path), check_same_thread=False)
+        cur = conn.cursor()
+        cur.execute(SQL_INIT)
+        return conn
 
     def _load_data(self):
         if self.cog_name not in _driver_counts:
@@ -104,7 +104,19 @@ class Sqlite(BaseDriver):
 
         self.data = self._load_from_db()
 
+    async def _initialize(self):
+        # the connection is driver wide. This only gets called once
+        if self._conn is None:
+            async with self._lock:
+                self._conn = await loop.run_in_executor(None, self._connect)
+
+        async with self._lock:
+            await loop.run_in_executor(None, self._load_data)
+
     async def get(self, *identifiers: Tuple[str]):
+        if self.data is None:
+            await self._initialize()
+
         partial = self.data
         full_identifiers = (*identifiers,)
         for i in full_identifiers:
@@ -112,6 +124,9 @@ class Sqlite(BaseDriver):
         return copy.deepcopy(partial)
 
     async def set(self, *identifiers: str, value=None):
+        if self.data is None:
+            await self._initialize()
+
         partial = self.data
         full_identifiers = (*identifiers,)
         for i in full_identifiers[:-1]:
@@ -120,9 +135,13 @@ class Sqlite(BaseDriver):
             partial = partial[i]
 
         partial[full_identifiers[-1]] = copy.deepcopy(value)
-        self._update_db()
+        async with self._lock:
+            await loop.run_in_executor(None, self._update_db)
 
     async def clear(self, *identifiers: str):
+        if self.data is None:
+            await self._initialize()
+
         partial = self.data
         full_identifiers = (*identifiers,)
         try:
@@ -132,7 +151,8 @@ class Sqlite(BaseDriver):
         except KeyError:
             pass
         else:
-            self._update_db()
+            async with self._lock:
+                await loop.run_in_executor(None, self._update_db)
 
     def _update_db(self):
         data = json.dumps(self.data, **MINIFIED_JSON)
