@@ -434,10 +434,10 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
     def add_permissions_hook(self, hook: commands.CheckPredicate) -> None:
         """Add a permissions hook.
 
-        Permissions hooks are called before or after validating
-        `Command.requires`, and they can optionally return an
-        override: ``True`` to allow, ``False`` to deny, and ``None``
-        to default to normal behaviour.
+        Permissions hooks are check predicates which are called before
+        calling `Requires.verify`, and they can optionally return an
+        override: ``True`` to allow, ``False`` to deny, and ``None`` to
+        default to normal behaviour.
 
         Parameters
         ----------
