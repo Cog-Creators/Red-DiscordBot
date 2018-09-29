@@ -168,14 +168,10 @@ class Sqlite(BaseDriver):
         data = json.dumps(self.data, **MINIFIED_JSON)
 
         cur = Sqlite._conn.cursor()
-        result = cur.execute(
-            SQL_UPDATE, (data, self.cog_name, self.unique_cog_identifier)
-        )
+        result = cur.execute(SQL_UPDATE, (data, self.cog_name, self.unique_cog_identifier))
 
         if result.rowcount == 0:
-            result = cur.execute(
-                SQL_INSERT, (self.cog_name, self.unique_cog_identifier, data)
-            )
+            result = cur.execute(SQL_INSERT, (self.cog_name, self.unique_cog_identifier, data))
 
         Sqlite._conn.commit()
 
