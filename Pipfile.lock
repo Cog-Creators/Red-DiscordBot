@@ -89,6 +89,12 @@
             ],
             "version": "==1.3.0"
         },
+        "dnspython": {
+            "hashes": [
+                "sha256:861e6e58faa730f9845aaaa9c6c832851fbf89382ac52915a51f89c71accdd31"
+            ],
+            "version": "==1.15.0"
+        },
         "e1839a8": {
             "editable": true,
             "extras": [

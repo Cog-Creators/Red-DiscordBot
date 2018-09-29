@@ -9,18 +9,24 @@ _conn = None
 
 
 def _initialize(**kwargs):
+    uri = kwargs["URI"]
     host = kwargs["HOST"]
     port = kwargs["PORT"]
     admin_user = kwargs["USERNAME"]
     admin_pass = kwargs["PASSWORD"]
     db_name = kwargs.get("DB_NAME", "default_db")
 
+    if port is 0:
+        ports = ""
+    else:
+        ports = ":{}".format(port)
+
     if admin_user is not None and admin_pass is not None:
-        url = "mongodb://{}:{}@{}:{}/{}".format(
-            quote_plus(admin_user), quote_plus(admin_pass), host, port, db_name
+        url = "{}://{}:{}@{}{}/{}".format(
+            uri, quote_plus(admin_user), quote_plus(admin_pass), host, ports, db_name
         )
     else:
-        url = "mongodb://{}:{}/{}".format(host, port, db_name)
+        url = "{}://{}{}/{}".format(uri, host, ports, db_name)
 
     global _conn
     _conn = motor.motor_asyncio.AsyncIOMotorClient(url)
@@ -111,8 +117,22 @@ class Mongo(BaseDriver):
 
 
 def get_config_details():
+    uri = None
+    while True:
+        uri = input("Enter URI scheme (mongodb or mongodb+srv): ")
+        if uri is "":
+            uri = "mongodb"
+
+        if uri in ["mongodb", "mongodb+srv"]:
+            break
+        else:
+            print("Invalid URI scheme")
+
     host = input("Enter host address: ")
-    port = int(input("Enter host port: "))
+    if uri is "mongodb":
+        port = int(input("Enter host port: "))
+    else:
+        port = 0
 
     admin_uname = input("Enter login username: ")
     admin_password = input("Enter login password: ")
@@ -128,5 +148,6 @@ def get_config_details():
         "USERNAME": admin_uname,
         "PASSWORD": admin_password,
         "DB_NAME": db_name,
+        "URI": uri,
     }
     return ret
