@@ -79,15 +79,24 @@ class Sqlite(BaseDriver):
 
     def _connect(self):
         db_name = self._config_details.get("DB_NAME", "database.db")
+        path = self._config_details.get("data_path_override")
+
+        if path:
+            # Here I'm assuming that the data_path_override is always
+            # going to be <user_chosen_folder>/core.
+            # I'm getting the parent folder, which would be the root of
+            # the user chosen folder, to open the db there
+            path = path.parents[0]
+        else:
+            path = Path.cwd()
 
         if db_name != ":memory:":
-            db_path = Path.cwd() / "cogs" / ".data"
-            db_path.mkdir(parents=True, exist_ok=True)
-            db_path = db_path / db_name
+            path.mkdir(parents=True, exist_ok=True)
+            path = path / db_name
         else:
-            db_path = db_name
+            path = db_name
 
-        conn = sqlite3.connect(str(db_path), check_same_thread=False)
+        conn = sqlite3.connect(str(path), check_same_thread=False)
         cur = conn.cursor()
         cur.execute(SQL_INIT)
         return conn
@@ -105,12 +114,13 @@ class Sqlite(BaseDriver):
         self.data = self._load_from_db()
 
     async def _initialize(self):
-        # the connection is driver wide. This only gets called once
-        if self._conn is None:
-            async with self._lock:
-                self._conn = await loop.run_in_executor(None, self._connect)
+        # The connection is shared by every config instance.
+        # This only gets called once
+        if Sqlite._conn is None:
+            async with Sqlite._lock:
+                Sqlite._conn = self._connect()
 
-        async with self._lock:
+        async with Sqlite._lock:
             await loop.run_in_executor(None, self._load_data)
 
     async def get(self, *identifiers: Tuple[str]):
@@ -135,7 +145,7 @@ class Sqlite(BaseDriver):
             partial = partial[i]
 
         partial[full_identifiers[-1]] = copy.deepcopy(value)
-        async with self._lock:
+        async with Sqlite._lock:
             await loop.run_in_executor(None, self._update_db)
 
     async def clear(self, *identifiers: str):
@@ -151,13 +161,13 @@ class Sqlite(BaseDriver):
         except KeyError:
             pass
         else:
-            async with self._lock:
+            async with Sqlite._lock:
                 await loop.run_in_executor(None, self._update_db)
 
     def _update_db(self):
         data = json.dumps(self.data, **MINIFIED_JSON)
 
-        cur = self._conn.cursor()
+        cur = Sqlite._conn.cursor()
         result = cur.execute(
             SQL_UPDATE, (data, self.cog_name, self.unique_cog_identifier)
         )
@@ -167,10 +177,10 @@ class Sqlite(BaseDriver):
                 SQL_INSERT, (self.cog_name, self.unique_cog_identifier, data)
             )
 
-        self._conn.commit()
+        Sqlite._conn.commit()
 
     def _load_from_db(self):
-        cur = self._conn.cursor()
+        cur = Sqlite._conn.cursor()
 
         result = cur.execute(SQL_SELECT, (self.cog_name, self.unique_cog_identifier))
         row = cur.fetchone()
