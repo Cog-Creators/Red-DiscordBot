@@ -32,6 +32,7 @@ if TYPE_CHECKING:
     _CommandOrCoro = TypeVar("_CommandOrCoro", Callable[..., Awaitable[Any]], Command)
 
 __all__ = [
+    "CheckPredicate",
     "DM_PERMS",
     "GlobalPermissionModel",
     "GuildPermissionModel",
@@ -69,20 +70,22 @@ GuildPermissionModel = Union[
     discord.Guild,
 ]
 PermissionModel = Union[GlobalPermissionModel, GuildPermissionModel]
-_CheckPredicate = Callable[["Context"], Union[bool, Awaitable[bool]]]
+CheckPredicate = Callable[["Context"], Union[Optional[bool], Awaitable[Optional[bool]]]]
 
 # Here we are trying to model DM permissions as closely as possible. The only
 # discrepancy I've found is that users can pin messages, but they cannot delete them.
-# This means manage_messages is only half True, so I've left it as False.
+# This means manage_messages is only half True, so it's left as False.
+# This is also the same as the permissions returned when `permissions_for` is used in DM.
 DM_PERMS = discord.Permissions.none()
 DM_PERMS.update(
     add_reactions=True,
+    attach_files=True,
+    embed_links=True,
+    external_emojis=True,
+    mention_everyone=True,
+    read_message_history=True,
     read_messages=True,
     send_messages=True,
-    embed_links=True,
-    attach_files=True,
-    read_message_history=True,
-    external_emojis=True,
 )
 
 
@@ -270,9 +273,9 @@ class Requires:
         privilege_level: Optional[PrivilegeLevel],
         user_perms: Union[Dict[str, bool], discord.Permissions, None],
         bot_perms: Union[Dict[str, bool], discord.Permissions],
-        checks: List[_CheckPredicate],
+        checks: List[CheckPredicate],
     ):
-        self.checks: List[_CheckPredicate] = checks
+        self.checks: List[CheckPredicate] = checks
         self.privilege_level: Optional[PrivilegeLevel] = privilege_level
 
         if isinstance(user_perms, dict):
@@ -416,6 +419,11 @@ class Requires:
         # Owner-only commands are non-overrideable
         if self.privilege_level is PrivilegeLevel.BOT_OWNER:
             return await ctx.bot.is_owner(ctx.author)
+
+        hook_result = await ctx.bot.verify_permissions_hooks(ctx)
+        if hook_result is not None:
+            return hook_result
+
         return await self._transition_state(ctx)
 
     async def _verify_bot(self, ctx: "Context") -> None:
@@ -540,7 +548,7 @@ class Requires:
 # check decorators
 
 
-def permissions_check(predicate: Callable[["Context"], Union[Awaitable[bool], bool]]):
+def permissions_check(predicate: CheckPredicate):
     """An overwriteable version of `discord.ext.commands.check`.
 
     This has the same behaviour as `discord.ext.commands.check`,
@@ -548,7 +556,7 @@ def permissions_check(predicate: Callable[["Context"], Union[Awaitable[bool], bo
     through a permissions cog.
     """
 
-    def decorator(func: Union["Command", Callable[..., Awaitable[Any]]]):
+    def decorator(func: "_CommandOrCoro") -> "_CommandOrCoro":
         if hasattr(func, "requires"):
             func.requires.checks.append(predicate)
         else:
@@ -561,7 +569,7 @@ def permissions_check(predicate: Callable[["Context"], Union[Awaitable[bool], bo
     return decorator
 
 
-def bot_has_permissions(**perms):
+def bot_has_permissions(**perms: bool):
     """Complain if the bot is missing permissions.
 
     If the user tries to run the command, but the bot is missing the
@@ -581,7 +589,7 @@ def bot_has_permissions(**perms):
     return decorator
 
 
-def has_permissions(**perms):
+def has_permissions(**perms: bool):
     """Restrict the command to users with these permissions.
 
     This check can be overridden by rules.
@@ -597,7 +605,7 @@ def is_owner():
     return Requires.get_decorator(PrivilegeLevel.BOT_OWNER, {})
 
 
-def guildowner_or_permissions(**perms):
+def guildowner_or_permissions(**perms: bool):
     """Restrict the command to the guild owner or users with these permissions.
 
     This check can be overridden by rules.
@@ -613,7 +621,7 @@ def guildowner():
     return guildowner_or_permissions()
 
 
-def admin_or_permissions(**perms):
+def admin_or_permissions(**perms: bool):
     """Restrict the command to users with the admin role or these permissions.
 
     This check can be overridden by rules.
@@ -629,7 +637,7 @@ def admin():
     return admin_or_permissions()
 
 
-def mod_or_permissions(**perms):
+def mod_or_permissions(**perms: bool):
     """Restrict the command to users with the mod role or these permissions.
 
     This check can be overridden by rules.
