@@ -12,6 +12,7 @@ Welcome to Red - Discord Bot's documentation!
 
     install_windows
     install_linux_mac
+    install_docker
     venv_guide
     cog_dataconverter
     autostart_systemd

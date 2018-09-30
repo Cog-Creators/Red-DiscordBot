@@ -49,6 +49,7 @@ redbot/cogs/permissions/*           @mikeshardmind
 redbot/cogs/warnings/*              @palmtree5
 
 # Docs
+docs/install_docker.rst             @supersandro2000
 docs/*                              @tekulvw @palmtree5
 
 # Setup, instance setup, and running the bot

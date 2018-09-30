@@ -90,6 +90,7 @@ community of cog repositories.**
 - [CentOS 7](https://red-discordbot.readthedocs.io/en/v3-develop/install_linux_mac.html)
 - [Arch Linux](https://red-discordbot.readthedocs.io/en/v3-develop/install_linux_mac.html)
 - [Raspbian Stretch](https://red-discordbot.readthedocs.io/en/v3-develop/install_linux_mac.html)
+- [Docker](https://red-discordbot.readthedocs.io/en/v3-develop/install_docker.html)
 
 Already using **Red** V2? Take a look at the [Data Converter](https://red-discordbot.readthedocs.io/en/v3-develop/cog_dataconverter.html)
 to import your data to V3.

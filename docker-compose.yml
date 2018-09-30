@@ -2,9 +2,7 @@
 version: "3"
 services:
   red-discordbot:
-    image: supersandro2000/red-discordbot
-    environment:
-      - RED_TOKEN
+    image: Cog-Creators/Red-DiscordBot:latest
     volumes:
       - red-discordbot:/data
     restart: unless-stopped
