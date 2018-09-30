@@ -9,7 +9,7 @@ _conn = None
 
 
 def _initialize(**kwargs):
-    uri = kwargs["URI"]
+    kwargs.get("URI", "mongodb")
     host = kwargs["HOST"]
     port = kwargs["PORT"]
     admin_user = kwargs["USERNAME"]
