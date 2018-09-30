@@ -121,7 +121,7 @@ class Sqlite(BaseDriver):
                 Sqlite._conn = self._connect()
 
         async with Sqlite._lock:
-            await loop.run_in_executor(None, self._load_data)
+            await asyncio.wait([loop.run_in_executor(None, self._load_data)])
 
     async def get(self, *identifiers: Tuple[str]):
         if self.data is None:
@@ -146,7 +146,7 @@ class Sqlite(BaseDriver):
 
         partial[full_identifiers[-1]] = copy.deepcopy(value)
         async with Sqlite._lock:
-            await loop.run_in_executor(None, self._update_db)
+            await asyncio.wait([loop.run_in_executor(None, self._update_db)])
 
     async def clear(self, *identifiers: str):
         if self.data is None:
@@ -162,7 +162,7 @@ class Sqlite(BaseDriver):
             pass
         else:
             async with Sqlite._lock:
-                await loop.run_in_executor(None, self._update_db)
+                await asyncio.wait([loop.run_in_executor(None, self._update_db)])
 
     def _update_db(self):
         data = json.dumps(self.data, **MINIFIED_JSON)
