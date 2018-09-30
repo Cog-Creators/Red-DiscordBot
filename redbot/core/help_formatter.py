@@ -313,7 +313,10 @@ async def help(ctx: commands.Context, *, command_name: str = ""):
         # help by itself just lists our own commands.
         pages = await formatter.format_help_for(ctx, bot)
     else:
-        command: commands.Command = bot.get_command(command_name)
+        # First check if it's a cog
+        command = bot.get_cog(command_name)
+        if command is None:
+            command = bot.get_command(command_name)
         if command is None:
             if hasattr(formatter, "format_command_not_found"):
                 msg = await formatter.format_command_not_found(ctx, command_name)
