@@ -1396,7 +1396,7 @@ class Mod:
         while self == self.bot.get_cog("Mod"):
             for guild in self.bot.guilds:
                 async with self.settings.guild(guild).current_tempbans() as guild_tempbans:
-                    for uid in guild_tempbans.copy():
+                    for i, uid in enumerate(guild_tempbans.copy()):
                         unban_time = datetime.utcfromtimestamp(
                             await self.settings.member(member(uid, guild)).banned_until()
                         )
@@ -1407,7 +1407,7 @@ class Mod:
                             self.unban_queue.append(queue_entry)
                             try:
                                 await guild.unban(user, reason="Tempban finished")
-                                guild_tempbans.pop(uid)
+                                guild_tempbans.pop(i)
                             except discord.Forbidden:
                                 self.unban_queue.remove(queue_entry)
                                 log.info("Failed to unban member due to permissions")
