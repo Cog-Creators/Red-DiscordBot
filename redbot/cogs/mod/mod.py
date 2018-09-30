@@ -948,6 +948,37 @@ class Mod:
 
         return all(e[0] or e[1] == mute_unmute_issues["already_unmuted"] for e in exit_codes)
 
+    async def cancel_tempmute_expires(
+        self, target: discord.Member, *locations: Union[discord.TextChannel, discord.VoiceChannel]
+    ):
+        _tmutes = self.settings._get_base_group("TEMPMUTE")
+        loc_ids = [l.id for l in locations]
+        discards = set()
+        async with _tmutes() as mutes:
+            for eid, entry in mutes.items():
+                if not entry or not entry["expiry"]:
+                    # needed due to behavior with .all() on a custom group.
+                    continue
+                update = False
+                for cid in loc_ids:
+                    if cid in entry["channels"]:
+                        update = bool(eid in self.scheduled_unmute_tasks)
+                        entry["channels"].remove(cid)
+                if update:
+                    self.scheduled_unmute_tasks[eid].cancel()
+                    if entry["channels"]:
+                        task = self.bot.loop.create_task(
+                            self._scheduled_tempexpire(
+                                eid, entry, (entry["expiry"] - datetime.utcnow().timestamp())
+                            )
+                        )
+                        self.scheduled_unmute_tasks[eid] = task
+                if not entry["channels"]:
+                    discards.add(eid)
+
+            for eid in discards:
+                mutes.pop(eid, None)
+
     async def process_mute(
         self,
         *locations: Union[discord.TextChannel, discord.VoiceChannel],
@@ -971,19 +1002,22 @@ class Mod:
 
         if successful:
             expiry = None if expires is None else (ctx.message.created_at + expires)
-            eid = str(ctx.message.id)
-            entry = {
-                "guild": ctx.guild.id,
-                "user": target.id,
-                "expiry": expiry.timestamp(),
-                "channels": [c.id for c in successful],
-            }
-            await self.settings.custom("TEMPMUTE", eid).set(entry)
-            if expiry and expires.total_seconds() < 600:
-                task = self.bot.loop.create_task(
-                    self._scheduled_tempexpire(eid, entry, int(expires.total_seconds()))
-                )
-                self.scheduled_unmute_tasks[eid] = task
+            if expiry:
+                eid = str(ctx.message.id)
+                entry = {
+                    "guild": ctx.guild.id,
+                    "user": target.id,
+                    "expiry": expiry.timestamp(),
+                    "channels": [c.id for c in successful],
+                }
+                await self.settings.custom("TEMPMUTE", eid).set(entry)
+                if expires.total_seconds() < 600:
+                    task = self.bot.loop.create_task(
+                        self._scheduled_tempexpire(eid, entry, int(expires.total_seconds()))
+                    )
+                    self.scheduled_unmute_tasks[eid] = task
+            else:
+                await self.cancel_tempmute_expires(target, *successful.keys())
             await ctx.tick()
 
             if text_mute:
