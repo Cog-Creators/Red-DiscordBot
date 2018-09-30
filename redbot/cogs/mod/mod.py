@@ -714,10 +714,13 @@ class Mod:
         to send the newly unbanned user
         :returns: :class:`Invite`"""
         guild = ctx.guild
-        if "VANITY_URL" in guild.features and guild.me.permissions.manage_guild:
-            # guild has a vanity url so use it as the one to send
-            return await guild.vanity_invite()
-        invites = await guild.invites()
+        if guild.me.permissions.manage_guild:
+            if "VANITY_URL" in guild.features:
+                # guild has a vanity url so use it as the one to send
+                return await guild.vanity_invite()
+            invites = await guild.invites()
+        else:
+            invites = []
         for inv in invites:  # Loop through the invites for the guild
             if not (inv.max_uses or inv.max_age or inv.temporary):
                 # Invite is for the guild's default channel,
