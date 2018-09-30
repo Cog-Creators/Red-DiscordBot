@@ -1,0 +1,13 @@
+---
+version: "3"
+services:
+  red-discordbot:
+    image: supersandro2000/red-discordbot
+    environment:
+      - RED_TOKEN
+    volumes:
+      - red-discordbot:/data
+    restart: unless-stopped
+
+volumes:
+  red-discordbot:
