@@ -2,8 +2,6 @@ FROM debian:buster
 
 MAINTAINER Sandro Jäckel <sandro.jaeckel@gmail.com>
 
-RUN [ "cross-build-start" ]
-
 WORKDIR /app
 
 COPY ["docker/config.json", "/root/.config/Red-DiscordBot/"]
@@ -15,7 +13,5 @@ RUN apt-get update \
 && apt-get remove -y build-essential \
 && apt-get autoremove \
 && rm -rf /var/lib/apt/lists/*
-
-RUN [ "cross-build-end" ]
 
 CMD [ "redbot", "docker" ]
