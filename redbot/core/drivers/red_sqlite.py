@@ -98,6 +98,7 @@ class Sqlite(BaseDriver):
 
         conn = sqlite3.connect(str(path), check_same_thread=False)
         cur = conn.cursor()
+        cur.execute("PRAGMA journal_mode=wal")
         cur.execute(SQL_INIT)
         return conn
 
