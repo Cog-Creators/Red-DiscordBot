@@ -1,13 +1,16 @@
 import asyncio
 from datetime import datetime, timedelta
 from collections import deque, defaultdict, namedtuple
+from typing import Optional
 
 import discord
 
+from discord.ext.commands.converter import Converter, Greedy
+from discord.ext.commands.errors import BadArgument
 from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import box, escape
+from redbot.core.utils.chat_formatting import box, escape, pagify
 from .checks import mod_or_voice_permissions, admin_or_voice_permissions, bot_has_voice_permissions
 from redbot.core.utils.mod import is_mod_or_superior, is_allowed_by_hierarchy, get_audit_reason
 from .log import log
@@ -15,6 +18,30 @@ from .log import log
 from redbot.core.utils.common_filters import filter_invites, filter_various_mentions
 
 _ = Translator("Mod", __file__)
+
+
+class DeletionDays(Converter):
+    async def convert(self, ctx, argument):
+        if argument.isnumeric():
+            argument = int(argument)
+            if argument >= 0 and argument <= 7:
+                return argument
+
+        raise BadArgument("Received {}. Ban message deletion days should be between 0 and 7.".format(argument))
+
+class RawUserIds(Converter):
+    async def convert(self, ctx, argument):
+        # This is for the hackban command, where we receive IDs that
+        # are most likely not in the guild.
+        # As long as it's numeric and is not a "DeletionDays", it's good enough
+        # to attempt a ban on it
+        if argument.isnumeric() and len(argument) >= 17:
+            argument = int(argument)
+            if argument > 7:
+                return argument
+
+        raise BadArgument("{} doesn't look like a valid user ID.".format(argument))
+
 
 
 @cog_i18n(_)
@@ -349,7 +376,7 @@ class Mod:
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
     async def ban(
-        self, ctx: commands.Context, user: discord.Member, days: str = None, *, reason: str = None
+        self, ctx: commands.Context, user: discord.Member, days: Optional[DeletionDays] = 0, *, reason: str = None
     ):
         """Bans user and deletes last X days worth of messages.
 
@@ -376,23 +403,8 @@ class Mod:
             await ctx.send(_("I cannot do that due to discord hierarchy rules"))
             return
 
-        if days:
-            if days.isdigit():
-                days = int(days)
-            else:
-                if reason:
-                    reason = "{} {}".format(days, reason)
-                else:
-                    reason = days
-                days = 0
-        else:
-            days = 0
-
         audit_reason = get_audit_reason(author, reason)
 
-        if days < 0 or days > 7:
-            await ctx.send(_("Invalid days. Must be between 0 and 7."))
-            return
         queue_entry = (guild.id, user.id)
         self.ban_queue.append(queue_entry)
         try:
@@ -429,62 +441,101 @@ class Mod:
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
-    async def hackban(self, ctx: commands.Context, user_id: int, *, reason: str = None):
-        """Preemptively bans user from the server
+    async def hackban(self, ctx: commands.Context, user_ids: Greedy[RawUserIds], days: Optional[DeletionDays] = 0, *, reason: str = None):
+        """Preemptively bans user(s) from the server
 
-        A user ID needs to be provided in order to ban
+        User IDs need to be provided in order to ban
         using this command"""
+
+        banned = []
+        errors = {}
+
+        async def show_results():
+            text = f"Banned {len(banned)} users from the server."
+            if errors:
+                text += "\nErrors:\n"
+                text += "\n".join(errors.values())
+            
+            for p in pagify(text):
+                await ctx.send(p)
+
+        def remove_processed(ids):
+            return [_id for _id in ids
+                    if _id not in banned and
+                       _id not in errors]
+
+        user_ids = list(set(user_ids)) # No dupes
+
         author = ctx.author
         guild = ctx.guild
         if not guild.me.guild_permissions.ban_members:
             return await ctx.send(_("I lack the permissions to do this."))
-        is_banned = False
+        
         ban_list = await guild.bans()
         for entry in ban_list:
-            if entry.user.id == user_id:
-                is_banned = True
-                break
-
-        if is_banned:
-            await ctx.send(_("User is already banned."))
+            for user_id in user_ids:
+                if entry.user.id == user_id:
+                    errors[user_id] = f"User {user_id} is already banned."
+        
+        user_ids = remove_processed(user_ids)
+        
+        if not user_ids:
+            await show_results()
             return
 
-        user = guild.get_member(user_id)
-        if user is not None:
-            # Instead of replicating all that handling... gets attr from decorator
-            return await ctx.invoke(self.ban, user, None, reason=reason)
-        user = discord.Object(id=user_id)  # User not in the guild, but
+        for user_id in user_ids:
+            user = guild.get_member(user_id)
+            if user is not None:
+                # Instead of replicating all that handling... gets attr from decorator
+                try:
+                    await ctx.invoke(self.ban, user, days, reason=reason)
+                    banned.append(user_id)
+                except Exception as e: # Not sure if this will work...
+                    errors[user_id] = f"Failed to ban user {user_id}: {e}"
+        
+        user_ids = remove_processed(user_ids)
 
-        audit_reason = get_audit_reason(author, reason)
-        queue_entry = (guild.id, user_id)
-        self.ban_queue.append(queue_entry)
-        try:
-            await guild.ban(user, reason=audit_reason)
-            log.info("{}({}) hackbanned {}".format(author.name, author.id, user_id))
-        except discord.NotFound:
-            self.ban_queue.remove(queue_entry)
-            await ctx.send(_("User not found. Have you provided the correct user ID?"))
-        except discord.Forbidden:
-            self.ban_queue.remove(queue_entry)
-            await ctx.send(_("I lack the permissions to do this."))
-        else:
-            await ctx.send(_("Done. The user will not be able to join this server."))
+        if not user_ids:
+            await show_results()
+            return
 
-        user_info = await self.bot.get_user_info(user_id)
-        try:
-            await modlog.create_case(
-                self.bot,
-                guild,
-                ctx.message.created_at,
-                "hackban",
-                user_info,
-                author,
-                reason,
-                until=None,
-                channel=None,
-            )
-        except RuntimeError as e:
-            await ctx.send(e)
+        for user_id in user_ids:
+            user = discord.Object(id=user_id)
+            audit_reason = get_audit_reason(author, reason)
+            queue_entry = (guild.id, user_id)
+            self.ban_queue.append(queue_entry)
+            try:
+                await guild.ban(user, reason=audit_reason, delete_message_days=days)
+                log.info("{}({}) hackbanned {}".format(author.name, author.id, user_id))
+            except discord.NotFound:
+                self.ban_queue.remove(queue_entry)
+                errors[user_id] = f"User {user_id} does not exist."
+                continue
+            except discord.Forbidden:
+                self.ban_queue.remove(queue_entry)
+                errors[user_id] = f"Could not ban {user_id}: missing permissions."
+                continue
+            else:
+                banned.append(user_id)
+
+            user_info = await self.bot.get_user_info(user_id)
+
+            try:
+                await modlog.create_case(
+                    self.bot,
+                    guild,
+                    ctx.message.created_at,
+                    "hackban",
+                    user_info,
+                    author,
+                    reason,
+                    until=None,
+                    channel=None,
+                )
+            except RuntimeError as e:
+                pass # ?
+        
+        await show_results()
 
     @commands.command()
     @commands.guild_only()
