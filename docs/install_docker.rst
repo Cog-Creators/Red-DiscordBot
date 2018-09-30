@@ -1,4 +1,4 @@
-.. _linux-mac-install-guide:
+.. _linux-docker-install-guide:
 
 ========================
 Installing Red on Docker
