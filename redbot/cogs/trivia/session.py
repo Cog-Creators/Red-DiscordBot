@@ -6,7 +6,7 @@ from collections import Counter
 import discord
 from redbot.core.bank import deposit_credits
 from redbot.core.utils.chat_formatting import box
-from redbot.core.utils.common_filters import un_smartquote
+from redbot.core.utils.common_filters import normalize_smartquotes
 from .log import LOG
 
 __all__ = ["TriviaSession"]
@@ -223,7 +223,7 @@ class TriviaSession:
 
             self._last_response = time.time()
             guess = message.content.lower()
-            guess = un_smartquote(guess)
+            guess = normalize_smartquotes(guess)
             for answer in answers:
                 if " " in answer and answer in guess:
                     # Exact matching, issue #331

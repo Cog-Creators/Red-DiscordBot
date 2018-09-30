@@ -8,7 +8,7 @@ __all__ = [
     "filter_invites",
     "filter_mass_mentions",
     "filter_various_mentions",
-    "un_smartquote",
+    "normalize_smartquotes",
 ]
 
 # regexes
@@ -114,22 +114,22 @@ def filter_various_mentions(to_filter: str) -> str:
     return OTHER_MENTION_RE.sub(r"\1\\\2\3", to_filter)
 
 
-def un_smartquote(to_filter: str) -> str:
+def normalize_smartquotes(to_normalize: str) -> str:
     """
     Get a string with smart quotes replaced with normal ones
 
     Parameters
     ----------
-    to_filter : str
-        The string to filter.
+    to_normalize : str
+        The string to normalize.
 
     Returns
     -------
     str
-        The sanitized string.
+        The normalized string.
     """
 
     def replacement_for(obj):
         return SMART_QUOTE_REPLACEMENT_DICT.get(obj.group(0), "")
 
-    return SMART_QUOTE_REPLACE_RE.sub(replacement_for, to_filter)
+    return SMART_QUOTE_REPLACE_RE.sub(replacement_for, to_normalize)
