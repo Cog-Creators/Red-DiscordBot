@@ -1392,23 +1392,24 @@ class Mod:
         member = namedtuple("Member", "id guild")
         while self == self.bot.get_cog("Mod"):
             for guild in self.bot.guilds:
-                guild_tempbans = await self.settings.guild(guild).current_tempbans()
-                for uid in guild_tempbans:
-                    unban_time = datetime.utcfromtimestamp(
-                        await self.settings.member(member(uid, guild)).banned_until()
-                    )
-                    now = datetime.utcnow()
-                    if now > unban_time:  # Time to unban the user
-                        user = await self.bot.get_user_info(uid)
-                        queue_entry = (guild.id, user.id)
-                        self.unban_queue.append(queue_entry)
-                        try:
-                            await guild.unban(user, reason="Tempban finished")
-                        except discord.Forbidden:
-                            self.unban_queue.remove(queue_entry)
-                            log.info("Failed to unban member due to permissions")
-                        except discord.HTTPException:
-                            self.unban_queue.remove(queue_entry)
+                async with self.settings.guild(guild).current_tempbans() as guild_tempbans:
+                    for uid in guild_tempbans.copy():
+                        unban_time = datetime.utcfromtimestamp(
+                            await self.settings.member(member(uid, guild)).banned_until()
+                        )
+                        now = datetime.utcnow()
+                        if now > unban_time:  # Time to unban the user
+                            user = await self.bot.get_user_info(uid)
+                            queue_entry = (guild.id, user.id)
+                            self.unban_queue.append(queue_entry)
+                            try:
+                                await guild.unban(user, reason="Tempban finished")
+                                guild_tempbans.pop(uid)
+                            except discord.Forbidden:
+                                self.unban_queue.remove(queue_entry)
+                                log.info("Failed to unban member due to permissions")
+                            except discord.HTTPException:
+                                self.unban_queue.remove(queue_entry)
             await asyncio.sleep(60)
 
     async def check_duplicates(self, message):
