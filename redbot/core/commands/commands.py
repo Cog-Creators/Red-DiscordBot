@@ -5,11 +5,12 @@ replace those from the `discord.ext.commands` module.
 """
 import inspect
 import weakref
-from typing import Any, Awaitable, Callable, Dict, List, Optional, Tuple, TYPE_CHECKING, Union
+from typing import Awaitable, Callable, Dict, List, Optional, Tuple, TYPE_CHECKING
 
 import discord
 from discord.ext import commands
 
+from . import converter as converters
 from .errors import ConversionFailure
 from .requires import PermState, PrivilegeLevel, Requires
 from ..i18n import Translator
@@ -215,6 +216,18 @@ class Command(CogCommandMixin, commands.Command):
 
             # We should expose anything which might be a bug in the converter
             raise exc
+
+    async def _actual_conversion(
+        self, ctx: commands.Context, converter, argument: str, param: inspect.Parameter
+    ):
+        try:
+            return await super()._actual_conversion(ctx, converter, argument, param)
+        except AttributeError as exc:
+            # Use our converters if discord.py has not defined one
+            if "discord.ext.commands.converter" not in exc.args[0]:
+                raise
+            conv = getattr(converters, converter.__name__ + "Converter")()
+            return await conv.convert(ctx, argument)
 
     async def can_see(self, ctx: "Context"):
         """Check if this command is visible in the given context.
