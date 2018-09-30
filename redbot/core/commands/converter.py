@@ -1,8 +1,7 @@
+import re
 from typing import TYPE_CHECKING
 
 import discord
-import discord.ext.commands
-from discord.ext.commands.converter import *
 
 from . import BadArgument
 from ..i18n import Translator
@@ -10,12 +9,14 @@ from ..i18n import Translator
 if TYPE_CHECKING:
     from .context import Context
 
-__all__ = discord.ext.commands.converter.__all__ + ["GuildConverter"]
+__all__ = ["GuildConverter"]
 
 _ = Translator("commands.converter", __file__)
 
+ID_REGEX = re.compile(r"([0-9]{15,21})")
 
-class GuildConverter(IDConverter):
+
+class GuildConverter(discord.Guild):
     """Converts to a `discord.Guild` object.
 
     The lookup strategy is as follows (in order):
@@ -24,8 +25,9 @@ class GuildConverter(IDConverter):
     2. Lookup by name.
     """
 
-    async def convert(self, ctx: "Context", argument: str) -> discord.Guild:
-        match = self._get_id_match(argument)
+    @classmethod
+    async def convert(cls, ctx: "Context", argument: str) -> discord.Guild:
+        match = ID_REGEX.fullmatch(argument)
 
         if match is None:
             ret = discord.utils.get(ctx.bot.guilds, name=argument)

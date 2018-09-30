@@ -23,6 +23,7 @@ from typing import (
 
 import discord
 
+from .converter import GuildConverter
 from .errors import BotMissingPermissions
 
 if TYPE_CHECKING:
@@ -59,7 +60,7 @@ GlobalPermissionModel = Union[
     discord.TextChannel,
     discord.CategoryChannel,
     discord.Role,
-    discord.Guild,
+    GuildConverter,  # Unfortunately this will have to do for now
 ]
 GuildPermissionModel = Union[
     discord.Member,
@@ -67,7 +68,7 @@ GuildPermissionModel = Union[
     discord.TextChannel,
     discord.CategoryChannel,
     discord.Role,
-    discord.Guild,
+    GuildConverter,
 ]
 PermissionModel = Union[GlobalPermissionModel, GuildPermissionModel]
 CheckPredicate = Callable[["Context"], Union[Optional[bool], Awaitable[Optional[bool]]]]
