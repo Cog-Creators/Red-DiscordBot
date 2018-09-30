@@ -1396,7 +1396,7 @@ class Mod:
         while self == self.bot.get_cog("Mod"):
             for guild in self.bot.guilds:
                 async with self.settings.guild(guild).current_tempbans() as guild_tempbans:
-                    for uid in guild_tempbans.copy():
+                    for uid in guild_tempbans:
                         unban_time = datetime.utcfromtimestamp(
                             await self.settings.member(member(uid, guild)).banned_until()
                         )
