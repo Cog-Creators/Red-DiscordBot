@@ -11,12 +11,13 @@ _ = Translator("DataConverter", __file__)
 
 
 @cog_i18n(_)
-class DataConverter:
+class DataConverter(commands.Cog):
     """
     Cog for importing Red v2 Data
     """
 
     def __init__(self, bot: Red):
+        super().__init__()
         self.bot = bot
 
     @checks.is_owner()

@@ -20,7 +20,7 @@ _ = Translator("Mod", __file__)
 
 
 @cog_i18n(_)
-class Mod:
+class Mod(commands.Cog):
     """Moderation tools."""
 
     default_guild_settings = {
@@ -40,6 +40,7 @@ class Mod:
     default_user_settings = {"past_names": []}
 
     def __init__(self, bot: Red):
+        super().__init__()
         self.bot = bot
         self.settings = Config.get_conf(self, 4961522000, force_registration=True)
 
@@ -445,7 +446,8 @@ class Mod:
         using this command"""
         author = ctx.author
         guild = ctx.guild
-
+        if not guild.me.guild_permissions.ban_members:
+            return await ctx.send(_("I lack the permissions to do this."))
         is_banned = False
         ban_list = await guild.bans()
         for entry in ban_list:
@@ -458,8 +460,10 @@ class Mod:
             return
 
         user = guild.get_member(user_id)
-        if user is None:
-            user = discord.Object(id=user_id)  # User not in the guild, but
+        if user is not None:
+            # Instead of replicating all that handling... gets attr from decorator
+            return await ctx.invoke(self.ban, user, None, reason=reason)
+        user = discord.Object(id=user_id)  # User not in the guild, but
 
         audit_reason = get_audit_reason(author, reason)
         queue_entry = (guild.id, user_id)
@@ -720,10 +724,13 @@ class Mod:
         to send the newly unbanned user
         :returns: :class:`Invite`"""
         guild = ctx.guild
-        if "VANITY_URL" in guild.features and guild.me.permissions.manage_guild:
-            # guild has a vanity url so use it as the one to send
-            return await guild.vanity_invite()
-        invites = await guild.invites()
+        if guild.me.permissions.manage_guild:
+            if "VANITY_URL" in guild.features:
+                # guild has a vanity url so use it as the one to send
+                return await guild.vanity_invite()
+            invites = await guild.invites()
+        else:
+            invites = []
         for inv in invites:  # Loop through the invites for the guild
             if not (inv.max_uses or inv.max_age or inv.temporary):
                 # Invite is for the guild's default channel,
@@ -1512,23 +1519,24 @@ class Mod:
         member = namedtuple("Member", "id guild")
         while self == self.bot.get_cog("Mod"):
             for guild in self.bot.guilds:
-                guild_tempbans = await self.settings.guild(guild).current_tempbans()
-                for uid in guild_tempbans:
-                    unban_time = datetime.utcfromtimestamp(
-                        await self.settings.member(member(uid, guild)).banned_until()
-                    )
-                    now = datetime.utcnow()
-                    if now > unban_time:  # Time to unban the user
-                        user = await self.bot.get_user_info(uid)
-                        queue_entry = (guild.id, user.id)
-                        self.unban_queue.append(queue_entry)
-                        try:
-                            await guild.unban(user, reason="Tempban finished")
-                        except discord.Forbidden:
-                            self.unban_queue.remove(queue_entry)
-                            log.info("Failed to unban member due to permissions")
-                        except discord.HTTPException:
-                            self.unban_queue.remove(queue_entry)
+                async with self.settings.guild(guild).current_tempbans() as guild_tempbans:
+                    for uid in guild_tempbans:
+                        unban_time = datetime.utcfromtimestamp(
+                            await self.settings.member(member(uid, guild)).banned_until()
+                        )
+                        now = datetime.utcnow()
+                        if now > unban_time:  # Time to unban the user
+                            user = await self.bot.get_user_info(uid)
+                            queue_entry = (guild.id, user.id)
+                            self.unban_queue.append(queue_entry)
+                            try:
+                                await guild.unban(user, reason="Tempban finished")
+                                guild_tempbans.remove(uid)
+                            except discord.Forbidden:
+                                self.unban_queue.remove(queue_entry)
+                                log.info("Failed to unban member due to permissions")
+                            except discord.HTTPException:
+                                self.unban_queue.remove(queue_entry)
             await asyncio.sleep(60)
 
     async def check_duplicates(self, message):
@@ -1620,6 +1628,9 @@ class Mod:
         #  Bots and mods or superior are ignored from the filter
         mod_or_superior = await is_mod_or_superior(self.bot, obj=author)
         if mod_or_superior:
+            return
+        # As are anyone configured to be
+        if await self.bot.is_automod_immune(message):
             return
         deleted = await self.check_duplicates(message)
         if not deleted:

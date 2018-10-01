@@ -416,14 +416,14 @@ def main_menu():
         choice = user_choice()
         if choice == "1":
             instance = instance_menu()
-            cli_flags = cli_flag_getter()
             if instance:
+                cli_flags = cli_flag_getter()
                 run_red(instance, autorestart=True, cliflags=cli_flags)
             wait()
         elif choice == "2":
             instance = instance_menu()
-            cli_flags = cli_flag_getter()
             if instance:
+                cli_flags = cli_flag_getter()
                 run_red(instance, autorestart=False, cliflags=cli_flags)
             wait()
         elif choice == "3":

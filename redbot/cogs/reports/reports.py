@@ -20,7 +20,7 @@ log = logging.getLogger("red.reports")
 
 
 @cog_i18n(_)
-class Reports:
+class Reports(commands.Cog):
 
     default_guild_settings = {"output_channel": None, "active": False, "next_ticket": 1}
 
@@ -40,6 +40,7 @@ class Reports:
     ]
 
     def __init__(self, bot: Red):
+        super().__init__()
         self.bot = bot
         self.config = Config.get_conf(self, 78631113035100160, force_registration=True)
         self.config.register_guild(**self.default_guild_settings)
@@ -87,10 +88,8 @@ class Reports:
         ret = False
         if mod:
             guild = m.guild
-            admin_role = discord.utils.get(
-                guild.roles, id=await self.bot.db.guild(guild).admin_role()
-            )
-            mod_role = discord.utils.get(guild.roles, id=await self.bot.db.guild(guild).mod_role())
+            admin_role = guild.get_role(await self.bot.db.guild(guild).admin_role())
+            mod_role = guild.get_role(await self.bot.db.guild(guild).mod_role())
             ret |= any(r in m.roles for r in (mod_role, admin_role))
         if perms:
             ret |= m.guild_permissions >= perms

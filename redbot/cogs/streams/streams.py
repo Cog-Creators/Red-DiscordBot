@@ -35,7 +35,7 @@ _ = Translator("Streams", __file__)
 
 
 @cog_i18n(_)
-class Streams:
+class Streams(commands.Cog):
 
     global_defaults = {"tokens": {}, "streams": [], "communities": []}
 
@@ -44,6 +44,7 @@ class Streams:
     role_defaults = {"mention": False}
 
     def __init__(self, bot: Red):
+        super().__init__()
         self.db = Config.get_conf(self, 26262626)
 
         self.db.register_global(**self.global_defaults)
@@ -666,3 +667,5 @@ class Streams:
     def __unload(self):
         if self.task:
             self.task.cancel()
+
+    __del__ = __unload
