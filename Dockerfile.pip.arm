@@ -26,7 +26,7 @@ RUN apt-get update \
   && rm -r natives/ \
   && rm ~/.cache/pip -rf \
   && apt-get remove -y build-essential unzip wget zip \
-  && apt-get autoremove \
+  && apt-get autoremove -y \
   && rm -rf /var/lib/apt/lists/* \
   && chmod +x /files/run.sh
 
