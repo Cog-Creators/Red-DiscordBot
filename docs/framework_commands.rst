@@ -25,6 +25,6 @@ extend functionlities used throughout the bot, as outlined below.
 .. automodule:: redbot.core.commands.requires
     :members: PrivilegeLevel, PermState, Requires
 
-.. automodule:: redbot.core.commands.converters
+.. automodule:: redbot.core.commands.converter
     :members:
 
