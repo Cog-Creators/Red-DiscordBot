@@ -27,7 +27,10 @@ class DeletionDays(Converter):
             if argument >= 0 and argument <= 7:
                 return argument
 
-        raise BadArgument("Received {}. Ban message deletion days should be between 0 and 7.".format(argument))
+        raise BadArgument(
+            "Received {}. Ban message deletion days should be between 0 and 7.".format(argument)
+        )
+
 
 class RawUserIds(Converter):
     async def convert(self, ctx, argument):
@@ -41,7 +44,6 @@ class RawUserIds(Converter):
                 return argument
 
         raise BadArgument("{} doesn't look like a valid user ID.".format(argument))
-
 
 
 @cog_i18n(_)
@@ -66,7 +68,7 @@ class Mod:
 
     def __init__(self, bot: Red):
         self.bot = bot
-        self.settings = Config.get_conf(self, 4961522000, force_registration=True)
+        self.settings = Config.get_conf(self, 4_961_522_000, force_registration=True)
 
         self.settings.register_guild(**self.default_guild_settings)
         self.settings.register_channel(**self.default_channel_settings)
@@ -376,7 +378,12 @@ class Mod:
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
     async def ban(
-        self, ctx: commands.Context, user: discord.Member, days: Optional[DeletionDays] = 0, *, reason: str = None
+        self,
+        ctx: commands.Context,
+        user: discord.Member,
+        days: Optional[DeletionDays] = 0,
+        *,
+        reason: str = None,
     ):
         """Bans user and deletes last X days worth of messages.
 
@@ -441,7 +448,14 @@ class Mod:
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
-    async def hackban(self, ctx: commands.Context, user_ids: Greedy[RawUserIds], days: Optional[DeletionDays] = 0, *, reason: str = None):
+    async def hackban(
+        self,
+        ctx: commands.Context,
+        user_ids: Greedy[RawUserIds],
+        days: Optional[DeletionDays] = 0,
+        *,
+        reason: str = None,
+    ):
         """Preemptively bans user(s) from the server
 
         User IDs need to be provided in order to ban
@@ -455,30 +469,28 @@ class Mod:
             if errors:
                 text += "\nErrors:\n"
                 text += "\n".join(errors.values())
-            
+
             for p in pagify(text):
                 await ctx.send(p)
 
         def remove_processed(ids):
-            return [_id for _id in ids
-                    if _id not in banned and
-                       _id not in errors]
+            return [_id for _id in ids if _id not in banned and _id not in errors]
 
-        user_ids = list(set(user_ids)) # No dupes
+        user_ids = list(set(user_ids))  # No dupes
 
         author = ctx.author
         guild = ctx.guild
         if not guild.me.guild_permissions.ban_members:
             return await ctx.send(_("I lack the permissions to do this."))
-        
+
         ban_list = await guild.bans()
         for entry in ban_list:
             for user_id in user_ids:
                 if entry.user.id == user_id:
                     errors[user_id] = f"User {user_id} is already banned."
-        
+
         user_ids = remove_processed(user_ids)
-        
+
         if not user_ids:
             await show_results()
             return
@@ -490,9 +502,9 @@ class Mod:
                 try:
                     await ctx.invoke(self.ban, user, days, reason=reason)
                     banned.append(user_id)
-                except Exception as e: # Not sure if this will work...
+                except Exception as e:  # Not sure if this will work...
                     errors[user_id] = f"Failed to ban user {user_id}: {e}"
-        
+
         user_ids = remove_processed(user_ids)
 
         if not user_ids:
@@ -533,8 +545,8 @@ class Mod:
                     channel=None,
                 )
             except RuntimeError as e:
-                pass # ?
-        
+                pass  # Handle this? TODO
+
         await show_results()
 
     @commands.command()
@@ -1337,8 +1349,8 @@ class Mod:
             user = author
 
         #  A special case for a special someone :^)
-        special_date = datetime(2016, 1, 10, 6, 8, 4, 443000)
-        is_special = user.id == 96130341705637888 and guild.id == 133049272517001216
+        special_date = datetime(2016, 1, 10, 6, 8, 4, 443_000)
+        is_special = user.id == 96_130_341_705_637_888 and guild.id == 133_049_272_517_001_216
 
         roles = sorted(user.roles)[1:]
         names, nicks = await self.get_names_and_nicks(user)
