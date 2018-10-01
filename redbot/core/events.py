@@ -5,6 +5,7 @@ import logging
 import traceback
 from datetime import timedelta
 from distutils.version import StrictVersion
+from typing import List
 
 import aiohttp
 import discord
@@ -14,7 +15,7 @@ from pkg_resources import DistributionNotFound
 
 from . import __version__, commands
 from .data_manager import storage_type
-from .utils.chat_formatting import inline, bordered
+from .utils.chat_formatting import inline, bordered, humanize_list
 from .utils import fuzzy_command_search, format_fuzzy_results
 
 log = logging.getLogger("red")
@@ -67,6 +68,14 @@ def init_events(bot, cli_flags):
             packages.extend(cli_flags.load_cogs)
 
         if packages:
+            # Load permissions first, for security reasons
+            try:
+                packages.remove("permissions")
+            except ValueError:
+                pass
+            else:
+                packages.insert(0, "permissions")
+
             to_remove = []
             print("Loading packages...")
             for package in packages:
@@ -227,6 +236,21 @@ def init_events(bot, cli_flags):
                 await ctx.send(embed=await format_fuzzy_results(ctx, fuzzy_commands, embed=True))
             else:
                 await ctx.send(await format_fuzzy_results(ctx, fuzzy_commands, embed=False))
+        elif isinstance(error, commands.BotMissingPermissions):
+            missing_perms: List[str] = []
+            for perm, value in error.missing:
+                if value is True:
+                    perm_name = '"' + perm.replace("_", " ").title() + '"'
+                    missing_perms.append(perm_name)
+            if len(missing_perms) == 1:
+                plural = ""
+            else:
+                plural = "s"
+            await ctx.send(
+                "I require the {perms} permission{plural} to execute that command.".format(
+                    perms=humanize_list(missing_perms), plural=plural
+                )
+            )
         elif isinstance(error, commands.CheckFailure):
             pass
         elif isinstance(error, commands.NoPrivateMessage):

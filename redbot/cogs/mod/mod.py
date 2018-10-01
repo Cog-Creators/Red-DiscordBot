@@ -18,7 +18,7 @@ _ = Translator("Mod", __file__)
 
 
 @cog_i18n(_)
-class Mod:
+class Mod(commands.Cog):
     """Moderation tools."""
 
     default_guild_settings = {
@@ -38,6 +38,7 @@ class Mod:
     default_user_settings = {"past_names": []}
 
     def __init__(self, bot: Red):
+        super().__init__()
         self.bot = bot
         self.settings = Config.get_conf(self, 4961522000, force_registration=True)
 

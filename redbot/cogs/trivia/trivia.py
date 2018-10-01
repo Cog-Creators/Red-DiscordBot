@@ -23,10 +23,11 @@ class InvalidListError(Exception):
     pass
 
 
-class Trivia:
+class Trivia(commands.Cog):
     """Play trivia with friends!"""
 
     def __init__(self):
+        super().__init__()
         self.trivia_sessions = []
         self.conf = Config.get_conf(self, identifier=UNIQUE_ID, force_registration=True)
 

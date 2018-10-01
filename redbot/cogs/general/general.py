@@ -33,10 +33,11 @@ class RPSParser:
 
 
 @cog_i18n(_)
-class General:
+class General(commands.Cog):
     """General commands."""
 
     def __init__(self):
+        super().__init__()
         self.stopwatches = {}
         self.ball = [
             _("As I see it, yes"),

@@ -26,7 +26,7 @@ def mod_or_voice_permissions(**perms):
         else:
             return True
 
-    return commands.check(pred)
+    return commands.permissions_check(pred)
 
 
 def admin_or_voice_permissions(**perms):
@@ -48,7 +48,7 @@ def admin_or_voice_permissions(**perms):
         else:
             return True
 
-    return commands.check(pred)
+    return commands.permissions_check(pred)
 
 
 def bot_has_voice_permissions(**perms):

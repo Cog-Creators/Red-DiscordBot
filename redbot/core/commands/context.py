@@ -4,8 +4,9 @@ from typing import Iterable, List
 import discord
 from discord.ext import commands
 
-from redbot.core.utils.chat_formatting import box
-from redbot.core.utils import common_filters
+from .requires import PermState
+from ..utils.chat_formatting import box
+from ..utils import common_filters
 
 TICK = "\N{WHITE HEAVY CHECK MARK}"
 
@@ -19,6 +20,10 @@ class Context(commands.Context):
 
     This class inherits from `discord.ext.commands.Context`.
     """
+
+    def __init__(self, **attrs):
+        super().__init__(**attrs)
+        self.permission_state: PermState = PermState.NORMAL
 
     async def send(self, content=None, **kwargs):
         """Sends a message to the destination with the content given.
