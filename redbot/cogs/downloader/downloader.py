@@ -1,6 +1,7 @@
 import os
 import shutil
 import sys
+import asyncio
 from pathlib import Path
 from sys import path as syspath
 from typing import Tuple, Union
@@ -10,7 +11,7 @@ from redbot.core import checks, commands, Config
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import box, pagify
+from redbot.core.utils.chat_formatting import box, pagify, humanize_list
 
 from . import errors
 from .checks import do_install_agreement
@@ -20,6 +21,7 @@ from .log import log
 from .repo_manager import RepoManager, Repo
 
 _ = Translator("Downloader", __file__)
+Y_OR_N = {"y": True, "yes": True, "n": False, "no": False}
 
 
 @cog_i18n(_)
@@ -377,7 +379,38 @@ class Downloader(commands.Cog):
 
         # noinspection PyTypeChecker
         await self._reinstall_libraries(installed_and_updated)
-        await ctx.send(_("Cog update completed successfully."))
+        message = _("Cog update completed successfully.")
+        if installed_and_updated:
+            cognames = [c.name for c in installed_and_updated]
+            message += _("Updated:\n")
+            message += humanize_list(cognames)
+            message += _("\n\nWould you like to reload the updated cogs? (Y/N)")
+            await ctx.send(message)
+            try:
+                message = await ctx.bot.wait_for(
+                    "message",
+                    check=lambda m: m.author == ctx.author
+                    and m.channel == ctx.channel
+                    and m.content in Y_OR_N,
+                    timeout=30,
+                )
+            except asyncio.TimeoutError:
+                agreed = False
+            else:
+                agreed = Y_OR_N.get(message.content.lower())
+
+            if agreed:
+                loaded, load_failed, _not_found = await ctx.bot.get_cog("Core")._reload(cognames)
+                msg = ""
+                if loaded:
+                    msg += _("These cogs were reloaded: ") + humanize_list(loaded)
+                if load_failed:
+                    if loaded:
+                        msg += "\n"
+                    msg += _("These cogs failed to load: ") + humanize_list(load_failed)
+                await ctx.send(msg)
+        else:
+            await ctx.send(_("No updates available for installed cogs"))
 
     @cog.command(name="list")
     async def _cog_list(self, ctx, repo_name: Repo):
