@@ -176,12 +176,13 @@ class CommandObj:
 
 
 @cog_i18n(_)
-class CustomCommands:
+class CustomCommands(commands.Cog):
     """Custom commands
 
     Creates commands used to display text"""
 
     def __init__(self, bot):
+        super().__init__()
         self.bot = bot
         self.cc_map = bot.get_cog_map(self)
         self.key = 414589031223512

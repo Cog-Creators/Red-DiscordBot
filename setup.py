@@ -23,6 +23,7 @@ requirements = [
     "pyyaml==3.13",
     "raven==6.9.0",
     "raven-aiohttp==0.7.0",
+    "schema==0.6.8",
     "websockets==6.0",
     "yarl==1.2.6",
 ]
@@ -111,7 +112,7 @@ if __name__ == "__main__":
                 "pytest-asyncio==0.9.0",
                 "six==1.11.0",
             ],
-            "mongo": ["motor==2.0.0", "pymongo==3.7.1"],
+            "mongo": ["motor==2.0.0", "pymongo==3.7.1", "dnspython==1.15.0"],
             "docs": [
                 "alabaster==0.7.11",
                 "babel==2.6.0",

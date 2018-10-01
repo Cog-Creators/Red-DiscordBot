@@ -1,5 +1,8 @@
 import itertools
-from typing import Sequence, Iterator
+from typing import Sequence, Iterator, List
+from redbot.core.i18n import Translator
+
+_ = Translator("UtilsChatFormatting", __file__)
 
 
 def error(text: str) -> str:
@@ -317,3 +320,33 @@ def escape(text: str, *, mass_mentions: bool = False, formatting: bool = False) 
     if formatting:
         text = text.replace("`", "\\`").replace("*", "\\*").replace("_", "\\_").replace("~", "\\~")
     return text
+
+
+def humanize_list(items: Sequence[str]):
+    """Get comma-separted list, with the last element joined with *and*.
+
+    This uses an Oxford comma, because without one, items containing
+    the word *and* would make the output difficult to interpret.
+
+    Parameters
+    ----------
+    items : Sequence[str]
+        The items of the list to join together.
+
+    Examples
+    --------
+    .. testsetup::
+
+        from redbot.core.utils.chat_formatting import humanize_list
+
+    .. doctest::
+
+        >>> humanize_list(['One', 'Two', 'Three'])
+        'One, Two, and Three'
+        >>> humanize_list(['One'])
+        'One'
+
+    """
+    if len(items) == 1:
+        return items[0]
+    return ", ".join(items[:-1]) + _(", and ") + items[-1]

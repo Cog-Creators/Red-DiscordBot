@@ -23,8 +23,9 @@ _ = Translator("Downloader", __file__)
 
 
 @cog_i18n(_)
-class Downloader:
+class Downloader(commands.Cog):
     def __init__(self, bot: Red):
+        super().__init__()
         self.bot = bot
 
         self.conf = Config.get_conf(self, identifier=998240343, force_registration=True)

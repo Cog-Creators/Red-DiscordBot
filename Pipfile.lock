@@ -89,6 +89,12 @@
             ],
             "version": "==1.3.0"
         },
+        "dnspython": {
+            "hashes": [
+                "sha256:861e6e58faa730f9845aaaa9c6c832851fbf89382ac52915a51f89c71accdd31"
+            ],
+            "version": "==1.15.0"
+        },
         "e1839a8": {
             "editable": true,
             "extras": [
@@ -235,6 +241,13 @@
                 "sha256:6a1a34471ccf4630eee537049568dd87e8e93614f1d1ce355dd74e5b10079782"
             ],
             "version": "==0.1.2"
+        },
+        "schema": {
+            "hashes": [
+                "sha256:d994b0dc4966000037b26898df638e3e2a694cc73636cb2050e652614a350687",
+                "sha256:fa1a53fe5f3b6929725a4e81688c250f46838e25d8c1885a10a590c8c01a7b74"
+            ],
+            "version": "==0.6.8"
         },
         "websockets": {
             "hashes": [
@@ -596,6 +609,13 @@
             ],
             "markers": "python_version != '3.0.*' and python_version != '3.3.*' and python_version < '4' and python_version != '3.1.*' and python_version != '3.2.*' and python_version >= '2.6'",
             "version": "==2.19.1"
+        },
+        "schema": {
+            "hashes": [
+                "sha256:d994b0dc4966000037b26898df638e3e2a694cc73636cb2050e652614a350687",
+                "sha256:fa1a53fe5f3b6929725a4e81688c250f46838e25d8c1885a10a590c8c01a7b74"
+            ],
+            "version": "==0.6.8"
         },
         "six": {
             "hashes": [

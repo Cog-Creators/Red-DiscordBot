@@ -14,10 +14,11 @@ _ = Translator("Cleanup", __file__)
 
 
 @cog_i18n(_)
-class Cleanup:
+class Cleanup(commands.Cog):
     """Commands for cleaning messages"""
 
     def __init__(self, bot: Red):
+        super().__init__()
         self.bot = bot
 
     @staticmethod

@@ -11,12 +11,13 @@ GIPHY_API_KEY = "dc6zaTOxFJmzC"
 
 
 @cog_i18n(_)
-class Image:
+class Image(commands.Cog):
     """Image related commands."""
 
     default_global = {"imgur_client_id": None}
 
     def __init__(self, bot):
+        super().__init__()
         self.bot = bot
         self.settings = Config.get_conf(self, identifier=2652104208, force_registration=True)
         self.settings.register_global(**self.default_global)

@@ -33,14 +33,15 @@ Welcome to Red - Discord Bot's documentation!
     guide_data_conversion
     framework_bank
     framework_bot
+    framework_checks
     framework_cogmanager
+    framework_commands
     framework_config
     framework_datamanager
     framework_downloader
     framework_events
     framework_i18n
     framework_modlog
-    framework_commands
     framework_rpc
     framework_utils
 

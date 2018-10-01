@@ -10,10 +10,11 @@ _ = Translator("Filter", __file__)
 
 
 @cog_i18n(_)
-class Filter:
+class Filter(commands.Cog):
     """Filter-related commands"""
 
     def __init__(self, bot: Red):
+        super().__init__()
         self.bot = bot
         self.settings = Config.get_conf(self, 4766951341)
         default_guild_settings = {

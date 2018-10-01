@@ -5,16 +5,11 @@ from collections import ChainMap, Counter
 from enum import Enum
 from importlib.machinery import ModuleSpec
 from pathlib import Path
-from typing import Any, Mapping, Optional, Union
+from typing import Any, Mapping, Optional, Union, List
 
 import discord
 import sys
 from discord.ext.commands import when_mentioned_or
-
-# This supresses the PyNaCl warning that isn't relevant here
-from discord.voice_client import VoiceClient
-
-VoiceClient.warn_nacl = False
 
 from .cog_manager import CogManager
 from . import Config, i18n, commands
@@ -124,6 +119,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
         self.add_command(help_)
 
         self._sentry_mgr = None
+        self._permissions_hooks: List[commands.CheckPredicate] = []
 
         # support "soft" commands for some cogs, like Alias or CustomCommands
         self.all_commands = ChainMap(self.all_commands)
@@ -233,7 +229,8 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
     async def get_context(self, message, *, cls=commands.Context):
         return await super().get_context(message, cls=cls)
 
-    def list_packages(self):
+    @staticmethod
+    def list_packages():
         """Lists packages present in the cogs the folder"""
         return os.listdir("cogs")
 
@@ -267,15 +264,34 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
 
         self.extensions[name] = lib
 
-    def remove_cog(self, cogname):
+    def remove_cog(self, cogname: str):
+        cog = self.get_cog(cogname)
+        if cog is None:
+            return
+
         # remove cog's command map, if any
-        ident = id(self.get_cog(cogname))
+        ident = id(cog)
         try:
             index = self._cog_maps.index(ident)
             del self.all_commands.maps[index + 1]
             del self._cog_maps[index]
         except ValueError:
             pass
+
+        for when in ("before", "after"):
+            try:
+                hook = getattr(cog, f"_{cog.__class__.__name__}__red_permissions_{when}")
+            except AttributeError:
+                pass
+            else:
+                self.remove_permissions_hook(hook, when)
+
+        try:
+            hook = getattr(cog, f"_{cog.__class__.__name__}__red_permissions_before")
+        except AttributeError:
+            pass
+        else:
+            self.remove_permissions_hook(hook)
 
         super().remove_cog(cogname)
 
@@ -407,9 +423,19 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
 
         await destination.send(content=content, **kwargs)
 
-    def add_cog(self, cog):
+    def add_cog(self, cog: commands.Cog):
+        if not isinstance(cog, commands.Cog):
+            raise RuntimeError(
+                f"The {cog.__class__.__name__} cog in the {cog.__module__} package does "
+                f"not inherit from the commands.Cog base class. The cog author must update "
+                f"the cog to adhere to this requirement."
+            )
+        if not hasattr(cog, "requires"):
+            commands.Cog.__init__(cog)
         for attr in dir(cog):
             _attr = getattr(cog, attr)
+            if attr == f"_{cog.__class__.__name__}__permissions_hook":
+                self.add_permissions_hook(_attr)
             if isinstance(_attr, discord.ext.commands.Command) and not isinstance(
                 _attr, commands.Command
             ):
@@ -422,6 +448,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
                     "http://red-discordbot.readthedocs.io/en/v3-develop/framework_commands.html"
                 )
         super().add_cog(cog)
+        self.dispatch("cog_add", cog)
 
     def add_command(self, command: commands.Command):
         if not isinstance(command, commands.Command):
@@ -429,6 +456,76 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
 
         super().add_command(command)
         self.dispatch("command_add", command)
+
+    def clear_permission_rules(self, guild_id: Optional[int]) -> None:
+        """Clear all permission overrides in a scope.
+
+        Parameters
+        ----------
+        guild_id : Optional[int]
+            The guild ID to wipe permission overrides for. If
+            ``None``, this will clear all global rules and leave all
+            guild rules untouched.
+
+        """
+        for cog in self.cogs.values():
+            cog.requires.clear_all_rules(guild_id)
+        for command in self.walk_commands():
+            command.requires.clear_all_rules(guild_id)
+
+    def add_permissions_hook(self, hook: commands.CheckPredicate) -> None:
+        """Add a permissions hook.
+
+        Permissions hooks are check predicates which are called before
+        calling `Requires.verify`, and they can optionally return an
+        override: ``True`` to allow, ``False`` to deny, and ``None`` to
+        default to normal behaviour.
+
+        Parameters
+        ----------
+        hook
+            A command check predicate which returns ``True``, ``False``
+            or ``None``.
+
+        """
+        self._permissions_hooks.append(hook)
+
+    def remove_permissions_hook(self, hook: commands.CheckPredicate) -> None:
+        """Remove a permissions hook.
+
+        Parameters are the same as those in `add_permissions_hook`.
+
+        Raises
+        ------
+        ValueError
+            If the permissions hook has not been added.
+
+        """
+        self._permissions_hooks.remove(hook)
+
+    async def verify_permissions_hooks(self, ctx: commands.Context) -> Optional[bool]:
+        """Run permissions hooks.
+
+        Parameters
+        ----------
+        ctx : commands.Context
+            The context for the command being invoked.
+
+        Returns
+        -------
+        Optional[bool]
+            ``False`` if any hooks returned ``False``, ``True`` if any
+            hooks return ``True`` and none returned ``False``, ``None``
+            otherwise.
+
+        """
+        hook_results = []
+        for hook in self._permissions_hooks:
+            result = await discord.utils.maybe_coroutine(hook, ctx)
+            if result is not None:
+                hook_results.append(result)
+        if hook_results:
+            return all(hook_results)
 
 
 class Red(RedBase, discord.AutoShardedClient):
