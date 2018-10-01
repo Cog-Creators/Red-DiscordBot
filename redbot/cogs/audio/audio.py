@@ -1,5 +1,3 @@
-import contextlib
-
 import aiohttp
 import asyncio
 import datetime
@@ -134,10 +132,19 @@ class Audio(commands.Cog):
                         description = "{}".format(player.current.uri.replace("localtracks/", ""))
                 else:
                     description = "**[{}]({})**".format(player.current.title, player.current.uri)
+                if player.current.is_stream:
+                    dur = "LIVE"
+                else:
+                    dur = lavalink.utils.format_time(player.current.length)
                 embed = discord.Embed(
                     colour=(await self._get_embed_colour(notify_channel)),
                     title="Now Playing",
                     description=description,
+                )
+                embed.set_footer(
+                    text="Track length: {} | Requested by: {}".format(
+                        dur, player.current.requester
+                    )
                 )
                 if (
                     await self.config.guild(player.channel.guild).thumbnail()
@@ -1046,17 +1053,51 @@ class Audio(commands.Cog):
     async def _playlist_list(self, ctx):
         """List saved playlists."""
         playlists = await self.config.guild(ctx.guild).playlists.get_raw()
+        if not playlists:
+            return await self._embed_msg(ctx, "No saved playlists.")
         playlist_list = []
+        space = "\N{EN SPACE}"
         for playlist_name in playlists:
-            playlist_list.append(playlist_name)
+            tracks = playlists[playlist_name]["tracks"]
+            if not tracks:
+                tracks = []
+            author = playlists[playlist_name]["author"]
+            playlist_list.append(
+                "**{}**\n{}Tracks: {}\n{}Author: {}\n".format(
+                    playlist_name,
+                    (space * 4),
+                    str(len(tracks)),
+                    (space * 4),
+                    self.bot.get_user(author),
+                )
+            )
         abc_names = sorted(playlist_list, key=str.lower)
-        all_playlists = ", ".join(abc_names)
+        len_playlist_list_pages = math.ceil(len(abc_names) / 5)
+        playlist_embeds = []
+        for page_num in range(1, len_playlist_list_pages + 1):
+            embed = await self._build_playlist_list_page(ctx, page_num, abc_names)
+            playlist_embeds.append(embed)
+        await menu(ctx, playlist_embeds, DEFAULT_CONTROLS)
+
+    async def _build_playlist_list_page(self, ctx, page_num, abc_names):
+        plist_num_pages = math.ceil(len(abc_names) / 5)
+        plist_idx_start = (page_num - 1) * 5
+        plist_idx_end = plist_idx_start + 5
+        plist = ""
+        for i, playlist_info in enumerate(
+            abc_names[plist_idx_start:plist_idx_end], start=plist_idx_start
+        ):
+            item_idx = i + 1
+            plist += "`{}.` {}".format(item_idx, playlist_info)
         embed = discord.Embed(
             colour=await ctx.embed_colour(),
             title="Playlists for {}:".format(ctx.guild.name),
-            description=all_playlists,
+            description=plist,
         )
-        await ctx.send(embed=embed)
+        embed.set_footer(
+            text="Page {}/{} | {} playlists".format(page_num, plist_num_pages, len(abc_names))
+        )
+        return embed
 
     @commands.cooldown(1, 15, discord.ext.commands.BucketType.guild)
     @playlist.command(name="queue")
@@ -2132,6 +2173,8 @@ class Audio(commands.Cog):
                 ctx, ctx.author
             ):
                 return await self._embed_msg(ctx, "You need the DJ role to change the volume.")
+        if vol < 0:
+            vol = 0
         if vol > 150:
             vol = 150
             await self.config.guild(ctx.guild).volume.set(vol)
