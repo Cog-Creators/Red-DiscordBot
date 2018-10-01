@@ -382,7 +382,7 @@ class Downloader(commands.Cog):
         message = _("Cog update completed successfully.")
         if installed_and_updated:
             cognames = [c.name for c in installed_and_updated]
-            message += _("Updated:\n")
+            message += _("\nUpdated: ")
             message += humanize_list(cognames)
             message += _("\n\nWould you like to reload the updated cogs? (Y/N)")
             await ctx.send(message)
