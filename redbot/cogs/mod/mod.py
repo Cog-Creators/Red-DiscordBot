@@ -20,28 +20,14 @@ from redbot.core.utils.common_filters import filter_invites, filter_various_ment
 _ = Translator("Mod", __file__)
 
 
-class DeletionDays(Converter):
-    async def convert(self, ctx, argument):
-        if argument.isnumeric():
-            argument = int(argument)
-            if argument >= 0 and argument <= 7:
-                return argument
-
-        raise BadArgument(
-            "Received {}. Ban message deletion days should be between 0 and 7.".format(argument)
-        )
-
-
 class RawUserIds(Converter):
     async def convert(self, ctx, argument):
         # This is for the hackban command, where we receive IDs that
         # are most likely not in the guild.
-        # As long as it's numeric and is not a "DeletionDays", it's good enough
-        # to attempt a ban on it
+        # As long as it's numeric and long enough, it makes a good candidate
+        # to attempt a ban on
         if argument.isnumeric() and len(argument) >= 17:
-            argument = int(argument)
-            if argument > 7:
-                return argument
+            return int(argument)
 
         raise BadArgument("{} doesn't look like a valid user ID.".format(argument))
 
@@ -381,7 +367,7 @@ class Mod:
         self,
         ctx: commands.Context,
         user: discord.Member,
-        days: Optional[DeletionDays] = 0,
+        days: Optional[int] = 0,
         *,
         reason: str = None,
     ):
@@ -408,6 +394,9 @@ class Mod:
             return
         elif ctx.guild.me.top_role <= user.top_role or user == ctx.guild.owner:
             await ctx.send(_("I cannot do that due to discord hierarchy rules"))
+            return
+        elif not (days >= 0 and days <= 7):
+            await ctx.send(_("Invalid days. Must be between 0 and 7."))
             return
 
         audit_reason = get_audit_reason(author, reason)
@@ -454,7 +443,7 @@ class Mod:
         self,
         ctx: commands.Context,
         user_ids: Greedy[RawUserIds],
-        days: Optional[DeletionDays] = 0,
+        days: Optional[int] = 0,
         *,
         reason: str = None,
     ):
@@ -485,6 +474,10 @@ class Mod:
 
         if not user_ids:
             await ctx.send_help()
+            return
+
+        if not (days >= 0 and days <= 7):
+            await ctx.send(_("Invalid days. Must be between 0 and 7."))
             return
 
         if not guild.me.guild_permissions.ban_members:
