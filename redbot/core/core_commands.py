@@ -242,7 +242,6 @@ class CoreLogic:
             redirect = await self.bot.db.invite_redirect()
             permissions = discord.Permissions(perms_int)
             return discord.utils.oauth_url(app_info.id, permissions, redirect_uri=redirect)
-        return "Not a bot account!"
 
     async def _can_get_invite_url(ctx):
         is_owner = await ctx.bot.is_owner(ctx.author)
