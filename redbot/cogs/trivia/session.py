@@ -1,5 +1,6 @@
 """Module to manage trivia sessions."""
 import asyncio
+import re
 import time
 import random
 from collections import Counter
@@ -43,6 +44,7 @@ class TriviaSession:
          - ``bot_plays`` (`bool`)
          - ``allow_override`` (`bool`)
          - ``payout_multiplier`` (`float`)
+         - ``ignore_special`` (`bool`)
     scores : `collections.Counter`
         A counter with the players as keys, and their scores as values. The
         players are of type `discord.Member`.
@@ -222,7 +224,12 @@ class TriviaSession:
 
             self._last_response = time.time()
             guess = message.content.lower()
+            if self.settings["ignore_special"]:
+                guess = re.sub("[,;:']+", "", guess)
+
             for answer in answers:
+                if self.settings["ignore_special"]:
+                    answer = re.sub("[,;:']+", "", answer)
                 if " " in answer and answer in guess:
                     # Exact matching, issue #331
                     return True
