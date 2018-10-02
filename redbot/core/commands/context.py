@@ -1,4 +1,3 @@
-
 import asyncio
 from typing import Iterable, List
 import discord
