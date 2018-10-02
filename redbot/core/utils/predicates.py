@@ -543,11 +543,7 @@ class MessagePredicate(Callable[[discord.Message], bool]):
 
         """
         same_context = cls.same_context(ctx, channel, user)
-        return cls(
-            lambda self, m: same_context(m)
-            and m.content is not None
-            and m.content.lower() == value
-        )
+        return cls(lambda self, m: same_context(m) and m.content.lower() == value)
 
     @classmethod
     def less(
