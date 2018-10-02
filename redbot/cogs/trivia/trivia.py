@@ -14,7 +14,7 @@ from .session import TriviaSession
 
 __all__ = ["Trivia", "UNIQUE_ID", "get_core_lists"]
 
-UNIQUE_ID = 0xb3c0e453
+UNIQUE_ID = 0xB3C0E453
 
 
 class InvalidListError(Exception):
