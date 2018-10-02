@@ -221,8 +221,6 @@ class Cleanup(commands.Cog):
         To get a message id, enable developer mode in Discord's
         settings, 'appearance' tab. Then right click a message
         and copy its id.
-
-        This command only works on bots running as bot accounts.
         """
 
         channel = ctx.channel
@@ -238,6 +236,40 @@ class Cleanup(commands.Cog):
 
         to_delete = await self.get_messages_for_deletion(
             channel=channel, number=None, after=after, delete_pinned=delete_pinned
+        )
+
+        reason = "{}({}) deleted {} messages in channel {}.".format(
+            author.name, author.id, len(to_delete), channel.name
+        )
+        log.info(reason)
+
+        await mass_purge(to_delete, channel)
+
+    @cleanup.command()
+    @commands.guild_only()
+    async def before(
+        self, ctx: commands.Context, message_id: int, number: int, delete_pinned: bool = False
+    ):
+        """Deletes X messages before specified message.
+
+        To get a message id, enable developer mode in Discord's
+        settings, 'appearance' tab. Then right click a message
+        and copy its id.
+        """
+
+        channel = ctx.channel
+        if not channel.permissions_for(ctx.guild.me).manage_messages:
+            await ctx.send("I need the Manage Messages permission to do this.")
+            return
+        author = ctx.author
+
+        try:
+            before = await channel.get_message(message_id)
+        except discord.NotFound:
+            return await ctx.send(_("Message not found."))
+
+        to_delete = await self.get_messages_for_deletion(
+            channel=channel, number=number, before=before, delete_pinned=delete_pinned
         )
 
         reason = "{}({}) deleted {} messages in channel {}.".format(
