@@ -1783,7 +1783,7 @@ class Core(commands.Cog, CoreLogic):
 
         self._cleanup_and_refresh_modules(spec.name)
 
-        self.bot.load_extension(spec)
+        await self.bot.load_extension(spec)
 
     async def rpc_unload(self, request):
         cog_name = request.params[0]
