@@ -445,6 +445,8 @@ class Mod:
         except RuntimeError as e:
             await ctx.send(e)
 
+        return True
+
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
@@ -465,9 +467,9 @@ class Mod:
         errors = {}
 
         async def show_results():
-            text = f"Banned {len(banned)} users from the server."
+            text = _("Banned {} users from the server.".format(len(banned)))
             if errors:
-                text += "\nErrors:\n"
+                text += _("\nErrors:\n")
                 text += "\n".join(errors.values())
 
             for p in pagify(text):
@@ -492,7 +494,7 @@ class Mod:
         for entry in ban_list:
             for user_id in user_ids:
                 if entry.user.id == user_id:
-                    errors[user_id] = f"User {user_id} is already banned."
+                    errors[user_id] = _("User {} is already banned.".format(user_id))
 
         user_ids = remove_processed(user_ids)
 
@@ -505,10 +507,13 @@ class Mod:
             if user is not None:
                 # Instead of replicating all that handling... gets attr from decorator
                 try:
-                    await ctx.invoke(self.ban, user, days, reason=reason)
-                    banned.append(user_id)
-                except Exception as e:  # Not sure if this will work...
-                    errors[user_id] = f"Failed to ban user {user_id}: {e}"
+                    has_been_banned = await ctx.invoke(self.ban, user, days, reason=reason)
+                    if has_been_banned is True:
+                        banned.append(user_id)
+                    else:
+                        errors[user_id] = _("Failed to ban user {}.".format(user_id))
+                except Exception as e:
+                    errors[user_id] = _("Failed to ban user {}: {}".format(user_id, e))
 
         user_ids = remove_processed(user_ids)
 
@@ -526,11 +531,11 @@ class Mod:
                 log.info("{}({}) hackbanned {}".format(author.name, author.id, user_id))
             except discord.NotFound:
                 self.ban_queue.remove(queue_entry)
-                errors[user_id] = f"User {user_id} does not exist."
+                errors[user_id] = _("User {} does not exist.".format(user_id))
                 continue
             except discord.Forbidden:
                 self.ban_queue.remove(queue_entry)
-                errors[user_id] = f"Could not ban {user_id}: missing permissions."
+                errors[user_id] = _("Could not ban {}: missing permissions.".format(user_id))
                 continue
             else:
                 banned.append(user_id)
@@ -550,7 +555,7 @@ class Mod:
                     channel=None,
                 )
             except RuntimeError as e:
-                pass  # Handle this? TODO
+                errors["0"] = _("Failed to create modlog case: {}".format(e))
 
         await show_results()
 
