@@ -220,8 +220,6 @@ class Cleanup:
         To get a message id, enable developer mode in Discord's
         settings, 'appearance' tab. Then right click a message
         and copy its id.
-
-        This command only works on bots running as bot accounts.
         """
 
         channel = ctx.channel
@@ -256,8 +254,6 @@ class Cleanup:
         To get a message id, enable developer mode in Discord's
         settings, 'appearance' tab. Then right click a message
         and copy its id.
-
-        This command only works on bots running as bot accounts.
         """
 
         channel = ctx.channel
