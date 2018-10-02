@@ -1,7 +1,7 @@
 import asyncio
 
-import discord
 from redbot.core import commands
+from redbot.core.utils.predicates import MessagePredicate
 
 __all__ = ["do_install_agreement"]
 
@@ -21,13 +21,12 @@ async def do_install_agreement(ctx: commands.Context):
     if downloader is None or downloader.already_agreed:
         return True
 
-    def does_agree(msg: discord.Message):
-        return ctx.author == msg.author and ctx.channel == msg.channel and msg.content == "I agree"
-
     await ctx.send(REPO_INSTALL_MSG)
 
     try:
-        await ctx.bot.wait_for("message", check=does_agree, timeout=30)
+        await ctx.bot.wait_for(
+            "message", check=MessagePredicate.equal_to("I agree", ctx), timeout=30
+        )
     except asyncio.TimeoutError:
         await ctx.send("Your response has timed out, please try again.")
         return False
