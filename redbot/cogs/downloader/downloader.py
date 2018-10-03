@@ -387,37 +387,36 @@ class Downloader(commands.Cog):
                 return
         await ctx.send(message)
 
-        if installed_and_updated:
-            message = _("Would you like to reload the updated cogs?")
-            can_react = ctx.channel.permissions_for(ctx.me).add_reactions
-            if not can_react:
-                message += " (y/n)"
-            query: discord.Message = await ctx.send(message)
+        message = _("Would you like to reload the updated cogs?")
+        can_react = ctx.channel.permissions_for(ctx.me).add_reactions
+        if not can_react:
+            message += " (y/n)"
+        query: discord.Message = await ctx.send(message)
+        if can_react:
+            # noinspection PyAsyncCall
+            start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS, ctx.bot.loop)
+            pred = ReactionPredicate.yes_or_no(query, ctx.author)
+            event = "reaction_add"
+        else:
+            pred = MessagePredicate.yes_or_no(ctx)
+            event = "message"
+        try:
+            await ctx.bot.wait_for(event, check=pred, timeout=30)
+        except asyncio.TimeoutError:
+            await query.delete()
+            return
+
+        if pred.result is True:
             if can_react:
-                # noinspection PyAsyncCall
-                start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS, ctx.bot.loop)
-                pred = ReactionPredicate.yes_or_no(query, ctx.author)
-                event = "reaction_add"
-            else:
-                pred = MessagePredicate.yes_or_no(ctx)
-                event = "message"
-            try:
-                await ctx.bot.wait_for(event, check=pred, timeout=30)
-            except asyncio.TimeoutError:
+                with contextlib.suppress(discord.Forbidden):
+                    await query.clear_reactions()
+
+            await ctx.invoke(ctx.bot.get_cog("Core").reload, *cognames)
+        else:
+            if can_react:
                 await query.delete()
-                return
-
-            if pred.result is True:
-                if can_react:
-                    with contextlib.suppress(discord.Forbidden):
-                        await query.clear_reactions()
-
-                await ctx.invoke(ctx.bot.get_cog("Core").reload, *cognames)
             else:
-                if can_react:
-                    await query.delete()
-                else:
-                    await ctx.send(_("OK then."))
+                await ctx.send(_("OK then."))
 
     @cog.command(name="list")
     async def _cog_list(self, ctx, repo_name: Repo):

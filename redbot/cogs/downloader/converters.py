@@ -4,7 +4,6 @@ from .installable import Installable
 
 
 class InstalledCog(Installable):
-
     @classmethod
     async def convert(cls, ctx: commands.Context, arg: str) -> Installable:
         downloader = ctx.bot.get_cog("Downloader")
