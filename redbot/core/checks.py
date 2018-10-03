@@ -57,7 +57,7 @@ def is_mod_or_superior(ctx: "Context") -> Awaitable[bool]:
         "release, please use `redbot.core.utils.mod.is_mod_or_superior` instead.",
         category=DeprecationWarning,
     )
-    return _is_mod_or_superior(ctx.bot, ctx.member)
+    return _is_mod_or_superior(ctx.bot, ctx.author)
 
 
 def is_admin_or_superior(ctx: "Context") -> Awaitable[bool]:
@@ -66,7 +66,7 @@ def is_admin_or_superior(ctx: "Context") -> Awaitable[bool]:
         "release, please use `redbot.core.utils.mod.is_admin_or_superior` instead.",
         category=DeprecationWarning,
     )
-    return _is_admin_or_superior(ctx.bot, ctx.member)
+    return _is_admin_or_superior(ctx.bot, ctx.author)
 
 
 def check_permissions(ctx: "Context", perms: Dict[str, bool]) -> Awaitable[bool]:
