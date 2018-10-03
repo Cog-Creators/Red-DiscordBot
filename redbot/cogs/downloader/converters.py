@@ -3,8 +3,10 @@ from redbot.core import commands
 from .installable import Installable
 
 
-class InstalledCog(commands.Converter):
-    async def convert(self, ctx: commands.Context, arg: str) -> Installable:
+class InstalledCog(Installable):
+
+    @classmethod
+    async def convert(cls, ctx: commands.Context, arg: str) -> Installable:
         downloader = ctx.bot.get_cog("Downloader")
         if downloader is None:
             raise commands.CommandError("Downloader not loaded.")

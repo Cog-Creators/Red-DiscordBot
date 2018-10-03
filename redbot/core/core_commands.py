@@ -554,12 +554,10 @@ class Core(commands.Cog, CoreLogic):
 
     @commands.command(name="reload")
     @checks.is_owner()
-    async def reload_(self, ctx, *, cog_name: str):
+    async def reload(self, ctx, *cogs: str):
         """Reloads packages"""
-
-        cog_names = [c.strip() for c in cog_name.split(" ")]
         async with ctx.typing():
-            loaded, failed, not_found = await self._reload(cog_names)
+            loaded, failed, not_found = await self._reload(cogs)
 
         if loaded:
             fmt = "Package{plural} {packs} {other} reloaded."
