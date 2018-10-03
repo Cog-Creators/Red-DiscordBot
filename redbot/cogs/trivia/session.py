@@ -311,9 +311,9 @@ def _parse_answers(answers):
     for answer in answers:
         if isinstance(answer, bool):
             if answer is True:
-                ret.extend(["True", "Yes"])
+                ret.extend(["True", "Yes", "On"])
             else:
-                ret.extend(["False", "No"])
+                ret.extend(["False", "No", "Off"])
         else:
             ret.append(str(answer))
     # Uniquify list
