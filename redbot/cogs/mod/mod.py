@@ -876,7 +876,7 @@ class Mod(commands.Cog):
         user: discord.Member,
         channel: Optional[discord.VoiceChannel] = None,
         *,
-        reason: str = None
+        reason: str = None,
     ):
         """Mutes the user in a voice channel"""
         if not channel:
@@ -925,19 +925,13 @@ class Mod(commands.Cog):
         user: discord.Member,
         channel: Optional[discord.TextChannel] = None,
         *,
-        reason: str = None
+        reason: str = None,
     ):
         """Mutes user in the specified channel"""
         author = ctx.author
         channel = channel or ctx.channel
         guild = ctx.guild
-
-        if reason is None:
-            audit_reason = "Channel mute requested by {} (ID {})".format(author, author.id)
-        else:
-            audit_reason = "Channel mute requested by {} (ID {}). Reason: {}".format(
-                author, author.id, reason
-            )
+        audit_reason = get_audit_reason(author, reason)
 
         success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
 
@@ -969,7 +963,7 @@ class Mod(commands.Cog):
         user: discord.Member,
         category: Optional[discord.CategoryChannel] = None,
         *,
-        reason: str = None
+        reason: str = None,
     ):
         """Mutes user in the specified category"""
         author = ctx.message.author
@@ -989,14 +983,19 @@ class Mod(commands.Cog):
         guild = ctx.guild
         audit_reason = get_audit_reason(author, reason)
 
-        mute_success = []
+        mute_success = {}
         for channel in channels:
-            mute_success.append(await self.mute_user(guild, channel, author, user, audit_reason))
+            mute_success[channel] = await self.mute_user(
+                guild, channel, author, user, audit_reason
+            )
             await asyncio.sleep(0.1)
         await ctx.send(
             _("User has been muted in {} / {} channels in this category.").format(
-                len([a for a in mute_success if a[0]]), len(mute_success)
+                len([v for v in mute_success.values() if v[0]]), len(mute_success)
             )
+        )
+        log.info(
+            "\n".join(f"{k.name} ({k.id}): {v[1]}" for k, v in mute_success.items() if not v[0])
         )
         try:
             await modlog.create_case(
@@ -1022,14 +1021,19 @@ class Mod(commands.Cog):
         guild = ctx.guild
         audit_reason = get_audit_reason(author, reason)
 
-        mute_success = []
+        mute_success = {}
         for channel in guild.channels:
-            mute_success.append(await self.mute_user(guild, channel, author, user, audit_reason))
+            mute_success[channel] = await self.mute_user(
+                guild, channel, author, user, audit_reason
+            )
             await asyncio.sleep(0.1)
         await ctx.send(
             _("User has been muted in {} / {} channels in this server.").format(
-                len([a for a in mute_success if a[0]]), len(mute_success)
+                len([v for v in mute_success.values() if v[0]]), len(mute_success)
             )
+        )
+        log.info(
+            "\n".join(f"{k.name} ({k.id}): {v[1]}" for k, v in mute_success.items() if not v[0])
         )
         try:
             await modlog.create_case(
@@ -1057,15 +1061,15 @@ class Mod(commands.Cog):
         """Mutes the specified user in the specified channel"""
         overwrites = channel.overwrites_for(user)
         permissions = channel.permissions_for(user)
-        new_overs = {}
 
+        if permissions.administrator:
+            return False, mute_unmute_issues["is_admin"]
+
+        new_overs = {}
         if not isinstance(channel, discord.TextChannel):
             new_overs.update(speak=False)
         if not isinstance(channel, discord.VoiceChannel):
             new_overs.update(send_messages=False, add_reactions=False)
-
-        if permissions.administrator:
-            return False, mute_unmute_issues["is_admin"]
 
         if all(getattr(permissions, p) is False for p in new_overs.keys()):
             return False, mute_unmute_issues["already_muted"]
@@ -1104,7 +1108,7 @@ class Mod(commands.Cog):
         user: discord.Member,
         channel: Optional[discord.VoiceChannel] = None,
         *,
-        reason: str = None
+        reason: str = None,
     ):
         """Unmutes the user in a voice channel"""
         if not channel:
@@ -1155,7 +1159,7 @@ class Mod(commands.Cog):
         user: discord.Member,
         channel: Optional[discord.TextChannel] = None,
         *,
-        reason: str = None
+        reason: str = None,
     ):
         """Unmutes user in the current channel"""
         channel = channel or ctx.channel
@@ -1193,7 +1197,7 @@ class Mod(commands.Cog):
         user: discord.Member,
         category: Optional[discord.CategoryChannel] = None,
         *,
-        reason: str = None
+        reason: str = None,
     ):
         """Unmutes user in the category"""
         guild = ctx.guild
@@ -1213,16 +1217,19 @@ class Mod(commands.Cog):
         author = ctx.author
         audit_reason = get_audit_reason(author, reason)
 
-        unmute_success = []
+        unmute_success = {}
         for channel in channels:
-            unmute_success.append(
-                await self.unmute_user(guild, channel, author, user, audit_reason)
+            unmute_success[channel] = await self.unmute_user(
+                guild, channel, author, user, audit_reason
             )
             await asyncio.sleep(0.1)
         await ctx.send(
             _("User has been unmuted in {} / {} channels in this category.").format(
-                len([a for a in unmute_success if a[0]]), len(unmute_success)
+                len([v for v in unmute_success.values() if v[0]]), len(unmute_success)
             )
+        )
+        log.info(
+            "\n".join(f"{k.name} ({k.id}): {v[1]}" for k, v in unmute_success.items() if not v[0])
         )
         try:
             await modlog.create_case(
@@ -1250,16 +1257,19 @@ class Mod(commands.Cog):
         author = ctx.author
         audit_reason = get_audit_reason(author, reason)
 
-        unmute_success = []
+        unmute_success = {}
         for channel in guild.channels:
-            unmute_success.append(
-                await self.unmute_user(guild, channel, author, user, audit_reason)
+            unmute_success[channel] = await self.unmute_user(
+                guild, channel, author, user, audit_reason
             )
             await asyncio.sleep(0.1)
         await ctx.send(
             _("User has been unmuted in {} / {} channels in this server.").format(
-                len([a for a in unmute_success if a[0]]), len(unmute_success)
+                len([v for v in unmute_success.values() if v[0]]), len(unmute_success)
             )
+        )
+        log.info(
+            "\n".join(f"{k.name} ({k.id}): {v[1]}" for k, v in unmute_success.items() if not v[0])
         )
         try:
             await modlog.create_case(
@@ -1790,7 +1800,7 @@ class Mod(commands.Cog):
 
 
 mute_unmute_issues = {
-    "already_muted": "That user can't send messages in this channel.",
+    "already_muted": "That user is already muted in this channel.",
     "already_unmuted": "That user isn't muted in this channel!",
     "hierarchy_problem": "I cannot let you do that. You are not higher than "
     "the user in the role hierarchy.",
