@@ -845,12 +845,22 @@ class Mod(commands.Cog):
                 _("I cannot do that, I lack the '{}' permission.").format("Manage Nicknames")
             )
 
-    @commands.group()
+    @checks.mod_or_permissions(administrator=True)
+    @commands.group(invoke_without_command=True)
     @commands.guild_only()
-    @checks.mod_or_permissions(manage_channel=True)
-    async def mute(self, ctx: commands.Context):
-        """Mutes user in the channel/server"""
-        pass
+    async def mute(
+        self,
+        ctx: commands.Context,
+        user: discord.Member,
+        channel: Optional[discord.TextChannel] = None,
+        *,
+        reason: str = None,
+    ):
+        """Mutes user in the channel/server
+        
+        Defaults to channel"""
+        if not ctx.invoked_subcommand:
+            await ctx.invoke(self.channel_mute, user=user, channel=channel, reason=reason)
 
     @checks.mod_or_permissions(administrator=True)
     @mute.command(name="channel")
@@ -1027,14 +1037,22 @@ class Mod(commands.Cog):
             )
             return True, None
 
-    @commands.group()
+    @checks.mod_or_permissions(administrator=True)
+    @commands.group(invoke_without_command=True)
     @commands.guild_only()
-    @checks.mod_or_permissions(manage_channel=True)
-    async def unmute(self, ctx: commands.Context):
+    async def unmute(
+        self,
+        ctx: commands.Context,
+        user: discord.Member,
+        channel: Optional[discord.TextChannel] = None,
+        *,
+        reason: str = None,
+    ):
         """Unmutes user in the channel/server
 
         Defaults to channel"""
-        pass
+        if not ctx.invoked_subcommand:
+            await ctx.invoke(self.channel_unmute, user=user, channel=channel, reason=reason)
 
     @checks.mod_or_permissions(administrator=True)
     @unmute.command(name="channel")
