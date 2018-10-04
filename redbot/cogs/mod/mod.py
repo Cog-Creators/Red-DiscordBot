@@ -946,9 +946,13 @@ class Mod(commands.Cog):
                 len([v for v in mute_success.values() if v[0]]), len(mute_success), category
             )
         )
-        log.info(
-            "\n".join(f"{k.name} ({k.id}): {v[1]}" for k, v in mute_success.items() if not v[0])
+
+        to_log = "\n".join(
+            f"{k.name} ({k.id}): {v[1]}" for k, v in mute_success.items() if not v[0]
         )
+        if to_log:
+            log.info(to_log)
+
         try:
             await modlog.create_case(
                 self.bot,
@@ -984,9 +988,13 @@ class Mod(commands.Cog):
                 len([v for v in mute_success.values() if v[0]]), len(mute_success)
             )
         )
-        log.info(
-            "\n".join(f"{k.name} ({k.id}): {v[1]}" for k, v in mute_success.items() if not v[0])
+
+        to_log = "\n".join(
+            f"{k.name} ({k.id}): {v[1]}" for k, v in mute_success.items() if not v[0]
         )
+        if to_log:
+            log.info(to_log)
+
         try:
             await modlog.create_case(
                 self.bot,
@@ -1144,9 +1152,13 @@ class Mod(commands.Cog):
                 len([v for v in unmute_success.values() if v[0]]), len(unmute_success), category
             )
         )
-        log.info(
-            "\n".join(f"{k.name} ({k.id}): {v[1]}" for k, v in unmute_success.items() if not v[0])
+
+        to_log = "\n".join(
+            f"{k.name} ({k.id}): {v[1]}" for k, v in unmute_success.items() if not v[0]
         )
+        if to_log:
+            log.info(to_log)
+
         try:
             await modlog.create_case(
                 self.bot,
@@ -1184,9 +1196,13 @@ class Mod(commands.Cog):
                 len([v for v in unmute_success.values() if v[0]]), len(unmute_success)
             )
         )
-        log.info(
-            "\n".join(f"{k.name} ({k.id}): {v[1]}" for k, v in unmute_success.items() if not v[0])
+
+        to_log = "\n".join(
+            f"{k.name} ({k.id}): {v[1]}" for k, v in unmute_success.items() if not v[0]
         )
+        if to_log:
+            log.info(to_log)
+
         try:
             await modlog.create_case(
                 self.bot,
