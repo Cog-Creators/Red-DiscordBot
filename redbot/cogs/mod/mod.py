@@ -1,7 +1,7 @@
 import asyncio
 from datetime import datetime, timedelta
 from collections import deque, defaultdict, namedtuple
-from typing import Optional
+from typing import Optional, Union
 
 import discord
 
@@ -852,7 +852,7 @@ class Mod(commands.Cog):
         self,
         ctx: commands.Context,
         user: discord.Member,
-        channel: Optional[discord.TextChannel] = None,
+        channel: Union[discord.TextChannel, discord.CategoryChannel, None] = None,
         *,
         reason: str = None,
     ):
@@ -860,7 +860,11 @@ class Mod(commands.Cog):
         
         Defaults to channel"""
         if not ctx.invoked_subcommand:
-            await ctx.invoke(self.channel_mute, user=user, channel=channel, reason=reason)
+            if isinstance(channel, discord.CategoryChannel):
+                command = self.category_mute
+            else:
+                command = self.channel_mute
+            await ctx.invoke(command, user=user, channel=channel, reason=reason)
 
     @checks.mod_or_permissions(administrator=True)
     @mute.command(name="channel")
@@ -1044,7 +1048,7 @@ class Mod(commands.Cog):
         self,
         ctx: commands.Context,
         user: discord.Member,
-        channel: Optional[discord.TextChannel] = None,
+        channel: Union[discord.TextChannel, discord.CategoryChannel, None] = None,
         *,
         reason: str = None,
     ):
@@ -1052,7 +1056,11 @@ class Mod(commands.Cog):
 
         Defaults to channel"""
         if not ctx.invoked_subcommand:
-            await ctx.invoke(self.channel_unmute, user=user, channel=channel, reason=reason)
+            if isinstance(channel, discord.CategoryChannel):
+                command = self.category_unmute
+            else:
+                command = self.channel_unmute
+            await ctx.invoke(command, user=user, channel=channel, reason=reason)
 
     @checks.mod_or_permissions(administrator=True)
     @unmute.command(name="channel")
