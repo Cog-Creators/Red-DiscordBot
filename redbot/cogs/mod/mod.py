@@ -870,14 +870,21 @@ class Mod(commands.Cog):
     @commands.guild_only()
     @mod_or_voice_permissions(mute_members=True)
     @bot_has_voice_permissions(mute_members=True)
-    async def voice_mute(self, ctx: commands.Context, user: discord.Member, channel: Optional[discord.VoiceChannel] = None, *, reason: str = None):
+    async def voice_mute(
+        self,
+        ctx: commands.Context,
+        user: discord.Member,
+        channel: Optional[discord.VoiceChannel] = None,
+        *,
+        reason: str = None
+    ):
         """Mutes the user in a voice channel"""
         if not channel:
             user_voice_state = user.voice
             if not user_voice_state:
                 await ctx.send(_("No voice state for the target!"))
                 return
-        
+
             channel = user_voice_state.channel
             if not channel:
                 await ctx.send(_("That user is not in a voice channel right now!"))
@@ -889,7 +896,9 @@ class Mod(commands.Cog):
         success, message = await self.mute_user(guild, channel, author, user, audit_reason)
 
         if success:
-            await ctx.send(_("Muted {}#{} in channel {}").format(user.name, user.discriminator, channel.name))
+            await ctx.send(
+                _("Muted {}#{} in channel {}").format(user.name, user.discriminator, channel.name)
+            )
             try:
                 await modlog.create_case(
                     self.bot,
@@ -911,7 +920,12 @@ class Mod(commands.Cog):
     @mute.command(name="channel")
     @commands.guild_only()
     async def channel_mute(
-        self, ctx: commands.Context, user: discord.Member, channel: Optional[discord.TextChannel] = None, *, reason: str = None
+        self,
+        ctx: commands.Context,
+        user: discord.Member,
+        channel: Optional[discord.TextChannel] = None,
+        *,
+        reason: str = None
     ):
         """Mutes user in the specified channel"""
         author = ctx.author
@@ -949,7 +963,14 @@ class Mod(commands.Cog):
     @checks.mod_or_permissions(administrator=True)
     @mute.command(name="category")
     @commands.guild_only()
-    async def category_mute(self, ctx: commands.Context, user: discord.Member, category: Optional[discord.CategoryChannel] = None, *, reason: str = None):
+    async def category_mute(
+        self,
+        ctx: commands.Context,
+        user: discord.Member,
+        category: Optional[discord.CategoryChannel] = None,
+        *,
+        reason: str = None
+    ):
         """Mutes user in the specified category"""
         author = ctx.message.author
         guild = ctx.guild
@@ -957,7 +978,11 @@ class Mod(commands.Cog):
 
         category = category or ctx.channel.category
         if not category:
-            channels = [c for c in guild.channels if not c.category and not isinstance(c, discord.CategoryChannel)]
+            channels = [
+                c
+                for c in guild.channels
+                if not c.category and not isinstance(c, discord.CategoryChannel)
+            ]
         else:
             channels = [category, *category.channels]
         author = ctx.message.author
@@ -968,7 +993,11 @@ class Mod(commands.Cog):
         for channel in channels:
             mute_success.append(await self.mute_user(guild, channel, author, user, audit_reason))
             await asyncio.sleep(0.1)
-        await ctx.send(_("User has been muted in {} / {} channels in this category.").format(len([a for a in mute_success if a[0]]), len(mute_success)))
+        await ctx.send(
+            _("User has been muted in {} / {} channels in this category.").format(
+                len([a for a in mute_success if a[0]]), len(mute_success)
+            )
+        )
         try:
             await modlog.create_case(
                 self.bot,
@@ -997,7 +1026,11 @@ class Mod(commands.Cog):
         for channel in guild.channels:
             mute_success.append(await self.mute_user(guild, channel, author, user, audit_reason))
             await asyncio.sleep(0.1)
-        await ctx.send(_("User has been muted in {} / {} channels in this server.").format(len([a for a in mute_success if a[0]]), len(mute_success)))
+        await ctx.send(
+            _("User has been muted in {} / {} channels in this server.").format(
+                len([a for a in mute_success if a[0]]), len(mute_success)
+            )
+        )
         try:
             await modlog.create_case(
                 self.bot,
@@ -1047,7 +1080,9 @@ class Mod(commands.Cog):
         except discord.Forbidden:
             return False, mute_unmute_issues["permissions_issue"]
         else:
-            await self.settings.member(user).set_raw("perms_cache", str(channel.id), value=old_overs)
+            await self.settings.member(user).set_raw(
+                "perms_cache", str(channel.id), value=old_overs
+            )
             return True, None
 
     @commands.group()
@@ -1064,7 +1099,12 @@ class Mod(commands.Cog):
     @mod_or_voice_permissions(mute_members=True)
     @bot_has_voice_permissions(mute_members=True)
     async def voice_unmute(
-        self, ctx: commands.Context, user: discord.Member, channel: Optional[discord.VoiceChannel] = None, *, reason: str = None
+        self,
+        ctx: commands.Context,
+        user: discord.Member,
+        channel: Optional[discord.VoiceChannel] = None,
+        *,
+        reason: str = None
     ):
         """Unmutes the user in a voice channel"""
         if not channel:
@@ -1072,7 +1112,7 @@ class Mod(commands.Cog):
             if not user_voice_state:
                 await ctx.send(_("No voice state for the target!"))
                 return
-        
+
             channel = user_voice_state.channel
             if not channel:
                 await ctx.send(_("That user is not in a voice channel right now!"))
@@ -1084,7 +1124,11 @@ class Mod(commands.Cog):
         success, message = await self.unmute_user(guild, channel, author, user, audit_reason)
 
         if success:
-            await ctx.send(_("Unmuted {}#{} in channel {}").format(user.name, user.discriminator, channel.name))
+            await ctx.send(
+                _("Unmuted {}#{} in channel {}").format(
+                    user.name, user.discriminator, channel.name
+                )
+            )
             try:
                 await modlog.create_case(
                     self.bot,
@@ -1106,7 +1150,12 @@ class Mod(commands.Cog):
     @unmute.command(name="channel")
     @commands.guild_only()
     async def channel_unmute(
-        self, ctx: commands.Context, user: discord.Member, channel: Optional[discord.TextChannel] = None, *, reason: str = None
+        self,
+        ctx: commands.Context,
+        user: discord.Member,
+        channel: Optional[discord.TextChannel] = None,
+        *,
+        reason: str = None
     ):
         """Unmutes user in the current channel"""
         channel = channel or ctx.channel
@@ -1139,7 +1188,12 @@ class Mod(commands.Cog):
     @unmute.command(name="category")
     @commands.guild_only()
     async def category_unmute(
-        self, ctx: commands.Context, user: discord.Member, category: Optional[discord.CategoryChannel] = None, *, reason: str = None
+        self,
+        ctx: commands.Context,
+        user: discord.Member,
+        category: Optional[discord.CategoryChannel] = None,
+        *,
+        reason: str = None
     ):
         """Unmutes user in the category"""
         guild = ctx.guild
@@ -1148,7 +1202,11 @@ class Mod(commands.Cog):
 
         category = category or ctx.channel.category
         if not category:
-            channels = [c for c in guild.channels if not c.category and not isinstance(c, discord.CategoryChannel)]
+            channels = [
+                c
+                for c in guild.channels
+                if not c.category and not isinstance(c, discord.CategoryChannel)
+            ]
         else:
             channels = [category, *category.channels]
         guild = ctx.guild
@@ -1157,9 +1215,15 @@ class Mod(commands.Cog):
 
         unmute_success = []
         for channel in channels:
-            unmute_success.append(await self.unmute_user(guild, channel, author, user, audit_reason))
+            unmute_success.append(
+                await self.unmute_user(guild, channel, author, user, audit_reason)
+            )
             await asyncio.sleep(0.1)
-        await ctx.send(_("User has been unmuted in {} / {} channels in this category.").format(len([a for a in unmute_success if a[0]]), len(unmute_success)))
+        await ctx.send(
+            _("User has been unmuted in {} / {} channels in this category.").format(
+                len([a for a in unmute_success if a[0]]), len(unmute_success)
+            )
+        )
         try:
             await modlog.create_case(
                 self.bot,
@@ -1188,9 +1252,15 @@ class Mod(commands.Cog):
 
         unmute_success = []
         for channel in guild.channels:
-            unmute_success.append(await self.unmute_user(guild, channel, author, user, audit_reason))
+            unmute_success.append(
+                await self.unmute_user(guild, channel, author, user, audit_reason)
+            )
             await asyncio.sleep(0.1)
-        await ctx.send(_("User has been unmuted in {} / {} channels in this server.").format(len([a for a in unmute_success if a[0]]), len(unmute_success)))
+        await ctx.send(
+            _("User has been unmuted in {} / {} channels in this server.").format(
+                len([a for a in unmute_success if a[0]]), len(unmute_success)
+            )
+        )
         try:
             await modlog.create_case(
                 self.bot,
