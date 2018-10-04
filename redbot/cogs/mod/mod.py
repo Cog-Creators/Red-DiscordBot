@@ -872,7 +872,9 @@ class Mod(commands.Cog):
         success, issue = await self.mute_user(guild, channel, author, user, audit_reason)
 
         if success:
-            await ctx.send(_("User has been muted in this channel."))
+            await ctx.send(
+                _("Muted {}#{} in channel {}").format(user.name, user.discriminator, channel.name)
+            )
             try:
                 await modlog.create_case(
                     self.bot,
@@ -926,8 +928,8 @@ class Mod(commands.Cog):
             )
             await asyncio.sleep(0.1)
         await ctx.send(
-            _("User has been muted in {} / {} channels in this category.").format(
-                len([v for v in mute_success.values() if v[0]]), len(mute_success)
+            _("User has been muted in {} / {} channels in category {}.").format(
+                len([v for v in mute_success.values() if v[0]]), len(mute_success), category
             )
         )
         log.info(
@@ -1054,7 +1056,11 @@ class Mod(commands.Cog):
         success, message = await self.unmute_user(guild, channel, author, user, audit_reason)
 
         if success:
-            await ctx.send(_("User unmuted in this channel."))
+            await ctx.send(
+                _("Unmuted {}#{} in channel {}").format(
+                    user.name, user.discriminator, channel.name
+                )
+            )
             try:
                 await modlog.create_case(
                     self.bot,
@@ -1108,8 +1114,8 @@ class Mod(commands.Cog):
             )
             await asyncio.sleep(0.1)
         await ctx.send(
-            _("User has been unmuted in {} / {} channels in this category.").format(
-                len([v for v in unmute_success.values() if v[0]]), len(unmute_success)
+            _("User has been unmuted in {} / {} channels in category {}.").format(
+                len([v for v in unmute_success.values() if v[0]]), len(unmute_success), category
             )
         )
         log.info(
