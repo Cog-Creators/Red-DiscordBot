@@ -25,7 +25,7 @@ async def do_install_agreement(ctx: commands.Context):
 
     try:
         await ctx.bot.wait_for(
-            "message", check=MessagePredicate.equal_to("I agree", ctx), timeout=30
+            "message", check=MessagePredicate.lower_equal_to("i agree", ctx), timeout=30
         )
     except asyncio.TimeoutError:
         await ctx.send("Your response has timed out, please try again.")
