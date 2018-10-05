@@ -11,41 +11,40 @@ from .converters import MemberDefaultAuthor, SelfRole
 
 log = logging.getLogger("red.admin")
 
-_ = Translator("Admin", __file__)
+T_ = Translator("Admin", __file__)
 
-# The following are all lambdas to allow us to fetch the translation
-# during runtime, without having to copy the large strings everywhere
-# in the code.
-
-generic_forbidden = lambda: _(
+_ = lambda s: s
+GENERIC_FORBIDDEN = _(
     "I attempted to do something that Discord denied me permissions for."
     " Your command failed to successfully complete."
 )
 
-hierarchy_issue = lambda: _(
+HIERARCHY_ISSUE = _(
     "I tried to add {role.name} to {member.display_name} but that role"
     " is higher than my highest role in the Discord hierarchy so I was"
     " unable to successfully add it. Please give me a higher role and "
     "try again."
 )
 
-user_hierarchy_issue = lambda: _(
+USER_HIERARCHY_ISSUE = _(
     "I tried to add {role.name} to {member.display_name} but that role"
     " is higher than your highest role in the Discord hierarchy so I was"
     " unable to successfully add it. Please get a higher role and "
     "try again."
 )
 
-running_announcement = lambda: _(
+RUNNING_ANNOUNCEMENT = _(
     "I am already announcing something. If you would like to make a"
     " different announcement please use `{prefix}announce cancel`"
     " first."
 )
+_ = T_
 
 
 @cog_i18n(_)
 class Admin(commands.Cog):
     """A collection of server administration utilities."""
+
     def __init__(self, config=Config):
         super().__init__()
         self.conf = config.get_conf(self, 8237492837454039, force_registration=True)
@@ -105,9 +104,9 @@ class Admin(commands.Cog):
             await member.add_roles(role)
         except discord.Forbidden:
             if not self.pass_hierarchy_check(ctx, role):
-                await self.complain(ctx, hierarchy_issue(), role=role, member=member)
+                await self.complain(ctx, T_(HIERARCHY_ISSUE), role=role, member=member)
             else:
-                await self.complain(ctx, generic_forbidden())
+                await self.complain(ctx, T_(GENERIC_FORBIDDEN))
         else:
             await ctx.send(
                 _("I successfully added {role.name} to {member.display_name}").format(
@@ -120,9 +119,9 @@ class Admin(commands.Cog):
             await member.remove_roles(role)
         except discord.Forbidden:
             if not self.pass_hierarchy_check(ctx, role):
-                await self.complain(ctx, hierarchy_issue(), role=role, member=member)
+                await self.complain(ctx, T_(HIERARCHY_ISSUE), role=role, member=member)
             else:
-                await self.complain(ctx, generic_forbidden())
+                await self.complain(ctx, T_(GENERIC_FORBIDDEN))
         else:
             await ctx.send(
                 _("I successfully removed {role.name} from {member.display_name}").format(
@@ -146,7 +145,7 @@ class Admin(commands.Cog):
             # noinspection PyTypeChecker
             await self._addrole(ctx, user, rolename)
         else:
-            await self.complain(ctx, user_hierarchy_issue(), member=ctx.author, role=rolename)
+            await self.complain(ctx, T_(USER_HIERARCHY_ISSUE), member=ctx.author, role=rolename)
 
     @commands.command()
     @commands.guild_only()
@@ -164,7 +163,7 @@ class Admin(commands.Cog):
             # noinspection PyTypeChecker
             await self._removerole(ctx, user, rolename)
         else:
-            await self.complain(ctx, user_hierarchy_issue())
+            await self.complain(ctx, T_(USER_HIERARCHY_ISSUE))
 
     @commands.group()
     @commands.guild_only()
@@ -191,13 +190,13 @@ class Admin(commands.Cog):
         reason = "{}({}) changed the colour of role '{}'".format(author.name, author.id, role.name)
 
         if not self.pass_user_hierarchy_check(ctx, role):
-            await self.complain(ctx, user_hierarchy_issue())
+            await self.complain(ctx, T_(USER_HIERARCHY_ISSUE))
             return
 
         try:
             await role.edit(reason=reason, color=value)
         except discord.Forbidden:
-            await self.complain(ctx, generic_forbidden())
+            await self.complain(ctx, T_(GENERIC_FORBIDDEN))
         else:
             log.info(reason)
             await ctx.send(_("Done."))
@@ -219,13 +218,13 @@ class Admin(commands.Cog):
         )
 
         if not self.pass_user_hierarchy_check(ctx, role):
-            await self.complain(ctx, user_hierarchy_issue())
+            await self.complain(ctx, T_(USER_HIERARCHY_ISSUE))
             return
 
         try:
             await role.edit(reason=reason, name=name)
         except discord.Forbidden:
-            await self.complain(ctx, generic_forbidden())
+            await self.complain(ctx, T_(GENERIC_FORBIDDEN))
         else:
             log.info(reason)
             await ctx.send(_("Done."))
@@ -243,7 +242,7 @@ class Admin(commands.Cog):
             await ctx.send(_("The announcement has begun."))
         else:
             prefix = ctx.prefix
-            await self.complain(ctx, running_announcement(), prefix=prefix)
+            await self.complain(ctx, T_(RUNNING_ANNOUNCEMENT), prefix=prefix)
 
     @announce.command(name="cancel")
     @checks.is_owner()
@@ -381,7 +380,7 @@ class Admin(commands.Cog):
         serverlocked = await self.conf.serverlocked()
         await self.conf.serverlocked.set(not serverlocked)
 
-        if serverlocked:  # again with original logic I'm not sure of
+        if serverlocked:
             await ctx.send(_("The bot is no longer serverlocked."))
         else:
             await ctx.send(_("The bot is now serverlocked."))

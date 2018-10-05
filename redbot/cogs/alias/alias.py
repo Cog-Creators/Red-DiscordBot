@@ -113,8 +113,9 @@ class Alias(commands.Cog):
         return False
 
     async def get_prefix(self, message: discord.Message) -> str:
-        """Tries to determine what prefix is used in a message object.
-        Looks to identify from longest prefix to smallest.
+        """
+        Tries to determine what prefix is used in a message object.
+            Looks to identify from longest prefix to smallest.
 
             Will raise ValueError if no prefix is found.
         :param message: Message object
@@ -175,7 +176,7 @@ class Alias(commands.Cog):
     @commands.group()
     @commands.guild_only()
     async def alias(self, ctx: commands.Context):
-        """Manage per-server aliases for commands."""
+        """Manage command aliases."""
         pass
 
     @alias.group(name="global")

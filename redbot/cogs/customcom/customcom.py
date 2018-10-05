@@ -1,10 +1,9 @@
-import os
 import re
 import random
 from datetime import datetime, timedelta
 from inspect import Parameter
 from collections import OrderedDict
-from typing import Mapping
+from typing import Mapping, Tuple, Dict
 
 import discord
 
@@ -85,7 +84,7 @@ class CommandObj:
         # in the ccinfo dict
         return "{:%d/%m/%Y %H:%M:%S}".format(datetime.utcnow())
 
-    async def get(self, message: discord.Message, command: str) -> str:
+    async def get(self, message: discord.Message, command: str) -> Tuple[str, Dict]:
         ccinfo = await self.db(message.guild).commands.get_raw(command, default=None)
         if not ccinfo:
             raise NotFound()
@@ -180,9 +179,7 @@ class CommandObj:
 
 @cog_i18n(_)
 class CustomCommands(commands.Cog):
-    """Custom commands
-
-    Creates commands used to display text"""
+    """Creates commands used to display text."""
 
     def __init__(self, bot):
         super().__init__()
@@ -226,8 +223,6 @@ class CustomCommands(commands.Cog):
                     command="{}customcom edit".format(ctx.prefix)
                 )
             )
-
-        # await ctx.send(str(responses))
 
     @cc_create.command(name="simple")
     @checks.mod_or_permissions(administrator=True)
@@ -454,9 +449,8 @@ class CustomCommands(commands.Cog):
         gaps = set(indices).symmetric_difference(range(high + 1))
         if gaps:
             raise ArgParseError(
-                _("Arguments must be sequential. Missing arguments: {}.").format(
-                    ", ".join(str(i + low) for i in gaps)
-                )
+                _("Arguments must be sequential. Missing arguments: ")
+                + ", ".join(str(i + low) for i in gaps)
             )
         fin = [Parameter("_" + str(i), Parameter.POSITIONAL_OR_KEYWORD) for i in range(high + 1)]
         for arg in args:
@@ -481,8 +475,12 @@ class CustomCommands(commands.Cog):
                 and anno != fin[index].annotation
             ):
                 raise ArgParseError(
-                    _('Conflicting colon notation for argument {}: "{}" and "{}".').format(
-                        index + low, fin[index].annotation.__name__, anno.__name__
+                    _(
+                        'Conflicting colon notation for argument {index}: "{name1}" and "{name2}".'
+                    ).format(
+                        index=index + low,
+                        name1=fin[index].annotation.__name__,
+                        name2=anno.__name__,
                     )
                 )
             if anno is not Parameter.empty:
@@ -511,6 +509,8 @@ class CustomCommands(commands.Cog):
                 key = (command, ctx.guild, ctx.channel)
             elif per == "member":
                 key = (command, ctx.guild, ctx.author)
+            else:
+                raise ValueError(per)
             cooldown = self.cooldowns.get(key)
             if cooldown:
                 cooldown += timedelta(seconds=rate)

@@ -16,7 +16,7 @@ _ = Translator("Cleanup", __file__)
 
 @cog_i18n(_)
 class Cleanup(commands.Cog):
-    """Commands for cleaning messages."""
+    """Commands for cleaning up messages."""
 
     def __init__(self, bot: Red):
         super().__init__()
@@ -41,7 +41,7 @@ class Cleanup(commands.Cog):
             await prompt.delete()
             try:
                 await response.delete()
-            except:
+            except discord.HTTPException:
                 pass
             return True
         else:
@@ -109,6 +109,7 @@ class Cleanup(commands.Cog):
 
     @cleanup.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(manage_messages=True)
     async def text(
         self, ctx: commands.Context, text: str, number: int, delete_pinned: bool = False
     ):
@@ -121,9 +122,6 @@ class Cleanup(commands.Cog):
         """
 
         channel = ctx.channel
-        if not channel.permissions_for(ctx.guild.me).manage_messages:
-            await ctx.send(_("I need the Manage Messages permission to do this."))
-            return
 
         author = ctx.author
 
@@ -157,6 +155,7 @@ class Cleanup(commands.Cog):
 
     @cleanup.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(manage_messages=True)
     async def user(
         self, ctx: commands.Context, user: str, number: int, delete_pinned: bool = False
     ):
@@ -167,9 +166,6 @@ class Cleanup(commands.Cog):
             `[p]cleanup user Red 6`
         """
         channel = ctx.channel
-        if not channel.permissions_for(ctx.guild.me).manage_messages:
-            await ctx.send(_("I need the Manage Messages permission to do this."))
-            return
 
         member = None
         try:
@@ -215,6 +211,7 @@ class Cleanup(commands.Cog):
 
     @cleanup.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(manage_messages=True)
     async def after(self, ctx: commands.Context, message_id: int, delete_pinned: bool = False):
         """Delete all messages after a specified message.
 
@@ -224,9 +221,6 @@ class Cleanup(commands.Cog):
         """
 
         channel = ctx.channel
-        if not channel.permissions_for(ctx.guild.me).manage_messages:
-            await ctx.send(_("I need the Manage Messages permission to do this."))
-            return
         author = ctx.author
 
         try:
@@ -247,6 +241,7 @@ class Cleanup(commands.Cog):
 
     @cleanup.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(manage_messages=True)
     async def before(
         self, ctx: commands.Context, message_id: int, number: int, delete_pinned: bool = False
     ):
@@ -258,9 +253,6 @@ class Cleanup(commands.Cog):
         """
 
         channel = ctx.channel
-        if not channel.permissions_for(ctx.guild.me).manage_messages:
-            await ctx.send("I need the Manage Messages permission to do this.")
-            return
         author = ctx.author
 
         try:
@@ -281,6 +273,7 @@ class Cleanup(commands.Cog):
 
     @cleanup.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(manage_messages=True)
     async def messages(self, ctx: commands.Context, number: int, delete_pinned: bool = False):
         """Delete the last X messages.
 
@@ -289,9 +282,6 @@ class Cleanup(commands.Cog):
         """
 
         channel = ctx.channel
-        if not channel.permissions_for(ctx.guild.me).manage_messages:
-            await ctx.send(_("I need the Manage Messages permission to do this."))
-            return
         author = ctx.author
 
         if number > 100:
@@ -313,13 +303,11 @@ class Cleanup(commands.Cog):
 
     @cleanup.command(name="bot")
     @commands.guild_only()
+    @commands.bot_has_permissions(manage_messages=True)
     async def cleanup_bot(self, ctx: commands.Context, number: int, delete_pinned: bool = False):
         """Clean up command messages and messages from the bot."""
 
         channel = ctx.channel
-        if not channel.permissions_for(ctx.guild.me).manage_messages:
-            await ctx.send(_("I need the Manage Messages permission to do this."))
-            return
         author = ctx.message.author
 
         if number > 100:
