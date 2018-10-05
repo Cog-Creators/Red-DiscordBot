@@ -8,9 +8,11 @@ from contextlib import redirect_stdout
 from copy import copy
 
 import discord
+
 from . import checks, commands
 from .i18n import Translator
 from .utils.chat_formatting import box, pagify
+from .utils.predicates import MessagePredicate
 
 """
 Notice:
@@ -218,12 +220,8 @@ class Dev(commands.Cog):
         self.sessions.add(ctx.channel.id)
         await ctx.send(_("Enter code to execute or evaluate. `exit()` or `quit` to exit."))
 
-        msg_check = lambda m: (
-            m.author == ctx.author and m.channel == ctx.channel and m.content.startswith("`")
-        )
-
         while True:
-            response = await ctx.bot.wait_for("message", check=msg_check)
+            response = await ctx.bot.wait_for("message", check=MessagePredicate.regex(r"^`", ctx))
 
             cleaned = self.cleanup_code(response.content)
 

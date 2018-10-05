@@ -13,8 +13,16 @@ import time
 import redbot.core
 from redbot.core import Config, commands, checks, bank
 from redbot.core.data_manager import cog_data_path
-from redbot.core.utils.menus import menu, DEFAULT_CONTROLS, prev_page, next_page, close_menu
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils.menus import (
+    menu,
+    DEFAULT_CONTROLS,
+    prev_page,
+    next_page,
+    close_menu,
+    start_adding_reactions,
+)
+from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 from urllib.parse import urlparse
 from .manager import shutdown_lavalink_server
 
@@ -225,22 +233,17 @@ class Audio(commands.Cog):
     async def dj(self, ctx):
         """Toggle DJ mode (users need a role to use audio commands)."""
         dj_role_id = await self.config.guild(ctx.guild).dj_role()
-        if dj_role_id is None:
+        if dj_role_id is None and ctx.guild.get_role(dj_role_id):
             await self._embed_msg(
-                ctx, "Please set a role to use with DJ mode. Enter the role name now."
+                ctx, "Please set a role to use with DJ mode. Enter the role name or ID now."
             )
 
-            def check(m):
-                return m.author == ctx.author
-
             try:
-                dj_role = await ctx.bot.wait_for("message", timeout=15.0, check=check)
-                dj_role_obj = discord.utils.get(ctx.guild.roles, name=dj_role.content)
-                if dj_role_obj is None:
-                    return await self._embed_msg(ctx, "No role with that name.")
-                await ctx.invoke(self.role, dj_role_obj)
+                pred = MessagePredicate.valid_role(ctx)
+                await ctx.bot.wait_for("message", timeout=15.0, check=pred)
+                await ctx.invoke(self.role, pred.result)
             except asyncio.TimeoutError:
-                return await self._embed_msg(ctx, "No role entered, try again later.")
+                return await self._embed_msg(ctx, "Response timed out, try again later.")
 
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         await self.config.guild(ctx.guild).dj_enabled.set(not dj_enabled)
@@ -710,20 +713,21 @@ class Audio(commands.Cog):
                 return
 
         if player.current:
-            for i in range(4):
-                await message.add_reaction(expected[i])
-
-        def check(r, u):
-            return (
-                r.message.id == message.id
-                and u == ctx.message.author
-                and any(e in str(r.emoji) for e in expected)
-            )
+            task = start_adding_reactions(message, expected[:4], ctx.bot.loop)
+        else:
+            task = None
 
         try:
-            (r, u) = await self.bot.wait_for("reaction_add", check=check, timeout=10.0)
+            (r, u) = await self.bot.wait_for(
+                "reaction_add",
+                check=ReactionPredicate.with_emojis(expected, message, ctx.author),
+                timeout=10.0,
+            )
         except asyncio.TimeoutError:
             return await self._clear_react(message)
+        else:
+            if task is not None:
+                task.cancel()
         reacts = {v: k for k, v in emoji.items()}
         react = reacts[r.emoji]
         if react == "prev":
@@ -1125,11 +1129,12 @@ class Audio(commands.Cog):
         if not playlist_name:
             await self._embed_msg(ctx, "Please enter a name for this playlist.")
 
-            def check(m):
-                return m.author == ctx.author and not m.content.startswith(ctx.prefix)
-
             try:
-                playlist_name_msg = await ctx.bot.wait_for("message", timeout=15.0, check=check)
+                playlist_name_msg = await ctx.bot.wait_for(
+                    "message",
+                    timeout=15.0,
+                    check=MessagePredicate.regex(fr"^(?!{ctx.prefix})", ctx),
+                )
                 playlist_name = playlist_name_msg.content.split(" ")[0].strip('"')
                 if len(playlist_name) > 20:
                     return await self._embed_msg(ctx, "Try the command again with a shorter name.")
@@ -1238,11 +1243,10 @@ class Audio(commands.Cog):
             ctx, "Please upload the playlist file. Any other message will cancel this operation."
         )
 
-        def check(m):
-            return m.author == ctx.author
-
         try:
-            file_message = await ctx.bot.wait_for("message", timeout=30.0, check=check)
+            file_message = await ctx.bot.wait_for(
+                "message", timeout=30.0, check=MessagePredicate.same_context(ctx)
+            )
         except asyncio.TimeoutError:
             return await self._embed_msg(ctx, "No file detected, try again later.")
         try:

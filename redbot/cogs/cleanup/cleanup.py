@@ -9,6 +9,7 @@ from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.mod import slow_deletion, mass_purge
 from redbot.cogs.mod.log import log
+from redbot.core.utils.predicates import MessagePredicate
 
 _ = Translator("Cleanup", __file__)
 
@@ -31,13 +32,10 @@ class Cleanup(commands.Cog):
         Tries its best to cleanup after itself if the response is positive.
         """
 
-        def author_check(message):
-            return message.author == ctx.author
-
         prompt = await ctx.send(
             _("Are you sure you want to delete {} messages? (y/n)").format(number)
         )
-        response = await ctx.bot.wait_for("message", check=author_check)
+        response = await ctx.bot.wait_for("message", check=MessagePredicate.same_context(ctx))
 
         if response.content.lower().startswith("y"):
             await prompt.delete()
