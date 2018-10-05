@@ -3,6 +3,7 @@ import logging
 import random
 from collections import defaultdict, deque
 from enum import Enum
+from typing import cast, Iterable
 
 import discord
 
@@ -14,7 +15,7 @@ from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 
 from redbot.core.bot import Red
 
-_ = Translator("Economy", __file__)
+T_ = Translator("Economy", __file__)
 
 logger = logging.getLogger("red.economy")
 
@@ -34,6 +35,7 @@ class SMReel(Enum):
     snowflake = "\N{SNOWFLAKE}"
 
 
+_ = lambda s: s
 PAYOUTS = {
     (SMReel.two, SMReel.two, SMReel.six): {
         "payout": lambda x: x * 2500 + x,
@@ -72,6 +74,7 @@ SLOT_PAYOUTS_MSG = _(
     "Three symbols: +500\n"
     "Two symbols: Bet * 2"
 ).format(**SMReel.__dict__)
+_ = T_
 
 
 def guild_only_check():
@@ -106,9 +109,7 @@ class SetParser:
 
 @cog_i18n(_)
 class Economy(commands.Cog):
-    """Economy
-
-    Get rich and have fun with imaginary currency!"""
+    """Get rich and have fun with imaginary currency!"""
 
     default_guild_settings = {
         "PAYDAY_TIME": 300,
@@ -142,12 +143,12 @@ class Economy(commands.Cog):
     @guild_only_check()
     @commands.group(name="bank")
     async def _bank(self, ctx: commands.Context):
-        """Bank operations"""
+        """Manage the bank."""
         pass
 
     @_bank.command()
     async def balance(self, ctx: commands.Context, user: discord.Member = None):
-        """Shows balance of user.
+        """Show the user's account balance.
 
         Defaults to yours."""
         if user is None:
@@ -156,11 +157,15 @@ class Economy(commands.Cog):
         bal = await bank.get_balance(user)
         currency = await bank.get_currency_name(ctx.guild)
 
-        await ctx.send(_("{}'s balance is {} {}").format(user.display_name, bal, currency))
+        await ctx.send(
+            _("{user}'s balance is {num} {currency}").format(
+                user=user.display_name, num=bal, currency=currency
+            )
+        )
 
     @_bank.command()
     async def transfer(self, ctx: commands.Context, to: discord.Member, amount: int):
-        """Transfer currency to other users"""
+        """Transfer currency to other users."""
         from_ = ctx.author
         currency = await bank.get_currency_name(ctx.guild)
 
@@ -170,72 +175,83 @@ class Economy(commands.Cog):
             return await ctx.send(str(e))
 
         await ctx.send(
-            _("{} transferred {} {} to {}").format(
-                from_.display_name, amount, currency, to.display_name
+            _("{user} transferred {num} {currency} to {other_user}").format(
+                user=from_.display_name, num=amount, currency=currency, other_user=to.display_name
             )
         )
 
     @_bank.command(name="set")
     @check_global_setting_admin()
     async def _set(self, ctx: commands.Context, to: discord.Member, creds: SetParser):
-        """Sets balance of user's bank account. See help for more operations
+        """Set the balance of user's bank account.
 
-        Passing positive and negative values will add/remove currency instead
+        Passing positive and negative values will add/remove currency instead.
 
         Examples:
-            bank set @Twentysix 26 - Sets balance to 26
-            bank set @Twentysix +2 - Increases balance by 2
-            bank set @Twentysix -6 - Decreases balance by 6"""
+        - `[p]bank set @Twentysix 26` - Sets balance to 26
+        - `[p]bank set @Twentysix +2` - Increases balance by 2
+        - `[p]bank set @Twentysix -6` - Decreases balance by 6
+        """
         author = ctx.author
         currency = await bank.get_currency_name(ctx.guild)
 
         if creds.operation == "deposit":
             await bank.deposit_credits(to, creds.sum)
             await ctx.send(
-                _("{} added {} {} to {}'s account.").format(
-                    author.display_name, creds.sum, currency, to.display_name
+                _("{author} added {num} {currency} to {user}'s account.").format(
+                    author=author.display_name,
+                    num=creds.sum,
+                    currency=currency,
+                    user=to.display_name,
                 )
             )
         elif creds.operation == "withdraw":
             await bank.withdraw_credits(to, creds.sum)
             await ctx.send(
-                _("{} removed {} {} from {}'s account.").format(
-                    author.display_name, creds.sum, currency, to.display_name
+                _("{author} removed {num} {currency} from {user}'s account.").format(
+                    author=author.display_name,
+                    num=creds.sum,
+                    currency=currency,
+                    user=to.display_name,
                 )
             )
         else:
             await bank.set_balance(to, creds.sum)
             await ctx.send(
-                _("{} set {}'s account to {} {}.").format(
-                    author.display_name, to.display_name, creds.sum, currency
+                _("{author} set {users}'s account balance to {num} {currency}.").format(
+                    author=author.display_name,
+                    num=creds.sum,
+                    currency=currency,
+                    user=to.display_name,
                 )
             )
 
     @_bank.command()
     @check_global_setting_guildowner()
     async def reset(self, ctx, confirmation: bool = False):
-        """Deletes bank accounts"""
+        """Delete all bank accounts."""
         if confirmation is False:
             await ctx.send(
                 _(
-                    "This will delete all bank accounts for {}.\nIf you're sure, type "
-                    "`{}bank reset yes`"
+                    "This will delete all bank accounts for {scope}.\nIf you're sure, type "
+                    "`{prefix}bank reset yes`"
                 ).format(
-                    self.bot.user.name if await bank.is_global() else "this server", ctx.prefix
+                    scope=self.bot.user.name if await bank.is_global() else _("this server"),
+                    prefix=ctx.prefix,
                 )
             )
         else:
-            await bank.wipe_bank()
+            await bank.wipe_bank(guild=ctx.guild)
             await ctx.send(
-                _("All bank accounts for {} have been deleted.").format(
-                    self.bot.user.name if await bank.is_global() else "this server"
+                _("All bank accounts for {scope} have been deleted.").format(
+                    scope=self.bot.user.name if await bank.is_global() else _("this server")
                 )
             )
 
     @guild_only_check()
     @commands.command()
     async def payday(self, ctx: commands.Context):
-        """Get some free currency"""
+        """Get some free currency."""
         author = ctx.author
         guild = ctx.guild
 
@@ -251,24 +267,25 @@ class Economy(commands.Cog):
                 pos = await bank.get_leaderboard_position(author)
                 await ctx.send(
                     _(
-                        "{0.mention} Here, take some {1}. Enjoy! (+{2} {1}!)\n\n"
-                        "You currently have {3} {1}.\n\n"
-                        "You are currently #{4} on the global leaderboard!"
+                        "{author.mention} Here, take some {currency}. "
+                        "Enjoy! (+{amount} {new_balance}!)\n\n"
+                        "You currently have {new_balance} {currency}.\n\n"
+                        "You are currently #{pos} on the global leaderboard!"
                     ).format(
-                        author,
-                        credits_name,
-                        str(await self.config.PAYDAY_CREDITS()),
-                        str(await bank.get_balance(author)),
-                        pos,
+                        author=author,
+                        currency=credits_name,
+                        amount=await self.config.PAYDAY_CREDITS(),
+                        new_balance=await bank.get_balance(author),
+                        pos=pos,
                     )
                 )
 
             else:
                 dtime = self.display_time(next_payday - cur_time)
                 await ctx.send(
-                    _("{} Too soon. For your next payday you have to wait {}.").format(
-                        author.mention, dtime
-                    )
+                    _(
+                        "{author.mention} Too soon. For your next payday you have to wait {time}."
+                    ).format(author=author, time=dtime)
                 )
         else:
             next_payday = await self.config.member(author).next_payday()
@@ -286,31 +303,33 @@ class Economy(commands.Cog):
                 pos = await bank.get_leaderboard_position(author)
                 await ctx.send(
                     _(
-                        "{0.mention} Here, take some {1}. Enjoy! (+{2} {1}!)\n\n"
-                        "You currently have {3} {1}.\n\n"
-                        "You are currently #{4} on the leaderboard!"
+                        "{author.mention} Here, take some {currency}. "
+                        "Enjoy! (+{amount} {new_balance}!)\n\n"
+                        "You currently have {new_balance} {currency}.\n\n"
+                        "You are currently #{pos} on the global leaderboard!"
                     ).format(
-                        author,
-                        credits_name,
-                        credit_amount,
-                        str(await bank.get_balance(author)),
-                        pos,
+                        author=author,
+                        currency=credits_name,
+                        amount=credit_amount,
+                        new_balance=await bank.get_balance(author),
+                        pos=pos,
                     )
                 )
             else:
                 dtime = self.display_time(next_payday - cur_time)
                 await ctx.send(
-                    _("{} Too soon. For your next payday you have to wait {}.").format(
-                        author.mention, dtime
-                    )
+                    _(
+                        "{author.mention} Too soon. For your next payday you have to wait {time}."
+                    ).format(author=author, time=dtime)
                 )
 
     @commands.command()
     @guild_only_check()
     async def leaderboard(self, ctx: commands.Context, top: int = 10, show_global: bool = False):
-        """Prints out the leaderboard
+        """Print the leaderboard.
 
-        Defaults to top 10"""
+        Defaults to top 10.
+        """
         guild = ctx.guild
         author = ctx.author
         if top < 1:
@@ -320,9 +339,9 @@ class Economy(commands.Cog):
         ):  # show_global is only applicable if bank is global
             guild = None
         bank_sorted = await bank.get_leaderboard(positions=top, guild=guild)
-        if len(bank_sorted) < top:
-            top = len(bank_sorted)
-        header = f"{f'#':4}{f'Name':36}{f'Score':2}\n"
+        header = "{pound:4}{name:36}{score:2}\n".format(
+            pound="#", name=_("Name"), score=_("Score")
+        )
         highscores = [
             (
                 f"{f'{pos}.': <{3 if pos < 10 else 2}} {acc[1]['name']: <{35}s} "
@@ -347,13 +366,13 @@ class Economy(commands.Cog):
     @commands.command()
     @guild_only_check()
     async def payouts(self, ctx: commands.Context):
-        """Shows slot machine payouts"""
-        await ctx.author.send(SLOT_PAYOUTS_MSG)
+        """Show the payouts for the slot machine."""
+        await ctx.author.send(SLOT_PAYOUTS_MSG())
 
     @commands.command()
     @guild_only_check()
     async def slot(self, ctx: commands.Context, bid: int):
-        """Play the slot machine"""
+        """Use the slot machine."""
         author = ctx.author
         guild = ctx.guild
         channel = ctx.channel
@@ -386,8 +405,9 @@ class Economy(commands.Cog):
             await self.config.member(author).last_slot.set(now)
         await self.slot_machine(author, channel, bid)
 
-    async def slot_machine(self, author, channel, bid):
-        default_reel = deque(SMReel)
+    @staticmethod
+    async def slot_machine(author, channel, bid):
+        default_reel = deque(cast(Iterable, SMReel))
         reels = []
         for i in range(3):
             default_reel.rotate(random.randint(-999, 999))  # weeeeee
@@ -425,60 +445,62 @@ class Economy(commands.Cog):
             pay = payout["payout"](bid)
             now = then - bid + pay
             await bank.set_balance(author, now)
-            await channel.send(
-                _("{}\n{} {}\n\nYour bid: {}\n{} → {}!").format(
-                    slot, author.mention, payout["phrase"], bid, then, now
-                )
-            )
+            phrase = T_(payout["phrase"])
         else:
             then = await bank.get_balance(author)
             await bank.withdraw_credits(author, bid)
             now = then - bid
-            await channel.send(
-                _("{}\n{} Nothing!\nYour bid: {}\n{} → {}!").format(
-                    slot, author.mention, bid, then, now
-                )
+            phrase = _("Nothing!")
+        await channel.send(
+            (
+                "{slot}\n{author.mention} {phrase}\n\n"
+                + _("Your bid: {amount}")
+                + "\n{old_balance} → {new_balance}!"
+            ).format(
+                slot=slot,
+                author=author,
+                phrase=phrase,
+                amount=bid,
+                old_balance=then,
+                new_balance=now,
             )
+        )
 
     @commands.group()
     @guild_only_check()
     @check_global_setting_admin()
     async def economyset(self, ctx: commands.Context):
-        """Changes economy module settings"""
+        """Manage Economy settings."""
         guild = ctx.guild
         if ctx.invoked_subcommand is None:
             if await bank.is_global():
-                slot_min = await self.config.SLOT_MIN()
-                slot_max = await self.config.SLOT_MAX()
-                slot_time = await self.config.SLOT_TIME()
-                payday_time = await self.config.PAYDAY_TIME()
-                payday_amount = await self.config.PAYDAY_CREDITS()
+                conf = self.config
             else:
-                slot_min = await self.config.guild(guild).SLOT_MIN()
-                slot_max = await self.config.guild(guild).SLOT_MAX()
-                slot_time = await self.config.guild(guild).SLOT_TIME()
-                payday_time = await self.config.guild(guild).PAYDAY_TIME()
-                payday_amount = await self.config.guild(guild).PAYDAY_CREDITS()
-            register_amount = await bank.get_default_balance(guild)
-            msg = box(
-                _(
-                    "Minimum slot bid: {}\n"
-                    "Maximum slot bid: {}\n"
-                    "Slot cooldown: {}\n"
-                    "Payday amount: {}\n"
-                    "Payday cooldown: {}\n"
-                    "Amount given at account registration: {}"
-                    ""
-                ).format(
-                    slot_min, slot_max, slot_time, payday_amount, payday_time, register_amount
-                ),
-                _("Current Economy settings:"),
+                conf = self.config.guild(ctx.guild)
+            await ctx.send(
+                box(
+                    _(
+                        "----Economy Settings---\n"
+                        "Minimum slot bid: {slot_min}\n"
+                        "Maximum slot bid: {slot_max}\n"
+                        "Slot cooldown: {slot_time}\n"
+                        "Payday amount: {payday_amount}\n"
+                        "Payday cooldown: {payday_time}\n"
+                        "Amount given at account registration: {register_amount}"
+                    ).format(
+                        slot_min=await conf.SLOT_MIN(),
+                        slot_max=await conf.SLOT_MAX(),
+                        slot_time=await conf.SLOT_TIME(),
+                        payday_time=await conf.PAYDAY_TIME(),
+                        payday_amount=await conf.PAYDAY_CREDITS(),
+                        register_amount=await bank.get_default_balance(guild),
+                    )
+                )
             )
-            await ctx.send(msg)
 
     @economyset.command()
     async def slotmin(self, ctx: commands.Context, bid: int):
-        """Minimum slot machine bid"""
+        """Set the minimum slot machine bid."""
         if bid < 1:
             await ctx.send(_("Invalid min bid amount."))
             return
@@ -488,14 +510,18 @@ class Economy(commands.Cog):
         else:
             await self.config.guild(guild).SLOT_MIN.set(bid)
         credits_name = await bank.get_currency_name(guild)
-        await ctx.send(_("Minimum bid is now {} {}.").format(bid, credits_name))
+        await ctx.send(
+            _("Minimum bid is now {bid} {currency}.").format(bid=bid, currency=credits_name)
+        )
 
     @economyset.command()
     async def slotmax(self, ctx: commands.Context, bid: int):
-        """Maximum slot machine bid"""
+        """Set the maximum slot machine bid."""
         slot_min = await self.config.SLOT_MIN()
         if bid < 1 or bid < slot_min:
-            await ctx.send(_("Invalid slotmax bid amount. Must be greater than slotmin."))
+            await ctx.send(
+                _("Invalid maximum bid amount. Must be greater than the minimum amount.")
+            )
             return
         guild = ctx.guild
         credits_name = await bank.get_currency_name(guild)
@@ -503,33 +529,37 @@ class Economy(commands.Cog):
             await self.config.SLOT_MAX.set(bid)
         else:
             await self.config.guild(guild).SLOT_MAX.set(bid)
-        await ctx.send(_("Maximum bid is now {} {}.").format(bid, credits_name))
+        await ctx.send(
+            _("Maximum bid is now {bid} {currency}.").format(bid=bid, currency=credits_name)
+        )
 
     @economyset.command()
     async def slottime(self, ctx: commands.Context, seconds: int):
-        """Seconds between each slots use"""
+        """Set the cooldown for the slot machine."""
         guild = ctx.guild
         if await bank.is_global():
             await self.config.SLOT_TIME.set(seconds)
         else:
             await self.config.guild(guild).SLOT_TIME.set(seconds)
-        await ctx.send(_("Cooldown is now {} seconds.").format(seconds))
+        await ctx.send(_("Cooldown is now {num} seconds.").format(num=seconds))
 
     @economyset.command()
     async def paydaytime(self, ctx: commands.Context, seconds: int):
-        """Seconds between each payday"""
+        """Set the cooldown for payday."""
         guild = ctx.guild
         if await bank.is_global():
             await self.config.PAYDAY_TIME.set(seconds)
         else:
             await self.config.guild(guild).PAYDAY_TIME.set(seconds)
         await ctx.send(
-            _("Value modified. At least {} seconds must pass between each payday.").format(seconds)
+            _("Value modified. At least {num} seconds must pass between each payday.").format(
+                num=seconds
+            )
         )
 
     @economyset.command()
     async def paydayamount(self, ctx: commands.Context, creds: int):
-        """Amount earned each payday"""
+        """Set the amount earned each payday."""
         guild = ctx.guild
         credits_name = await bank.get_currency_name(guild)
         if creds <= 0:
@@ -539,37 +569,45 @@ class Economy(commands.Cog):
             await self.config.PAYDAY_CREDITS.set(creds)
         else:
             await self.config.guild(guild).PAYDAY_CREDITS.set(creds)
-        await ctx.send(_("Every payday will now give {} {}.").format(creds, credits_name))
+        await ctx.send(
+            _("Every payday will now give {num} {currency}.").format(
+                num=creds, currency=credits_name
+            )
+        )
 
     @economyset.command()
     async def rolepaydayamount(self, ctx: commands.Context, role: discord.Role, creds: int):
-        """Amount earned each payday for a role"""
+        """Set the amount earned each payday for a role."""
         guild = ctx.guild
         credits_name = await bank.get_currency_name(guild)
         if await bank.is_global():
-            await ctx.send("The bank must be per-server for per-role paydays to work.")
+            await ctx.send(_("The bank must be per-server for per-role paydays to work."))
         else:
             await self.config.role(role).PAYDAY_CREDITS.set(creds)
             await ctx.send(
-                _("Every payday will now give {} {} to people with the role {}.").format(
-                    creds, credits_name, role.name
-                )
+                _(
+                    "Every payday will now give {num} {currency} "
+                    "to people with the role {role_name}."
+                ).format(num=creds, currency=credits_name, role_name=role.name)
             )
 
     @economyset.command()
     async def registeramount(self, ctx: commands.Context, creds: int):
-        """Amount given on registering an account"""
+        """Set the initial balance for new bank accounts."""
         guild = ctx.guild
         if creds < 0:
             creds = 0
         credits_name = await bank.get_currency_name(guild)
         await bank.set_default_balance(creds, guild)
         await ctx.send(
-            _("Registering an account will now give {} {}.").format(creds, credits_name)
+            _("Registering an account will now give {num} {currency}.").format(
+                num=creds, currency=credits_name
+            )
         )
 
     # What would I ever do without stackoverflow?
-    def display_time(self, seconds, granularity=2):
+    @staticmethod
+    def display_time(seconds, granularity=2):
         intervals = (  # Source: http://stackoverflow.com/a/24542445
             (_("weeks"), 604800),  # 60 * 60 * 24 * 7
             (_("days"), 86400),  # 60 * 60 * 24

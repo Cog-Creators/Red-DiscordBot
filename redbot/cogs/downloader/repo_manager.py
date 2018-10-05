@@ -12,10 +12,14 @@ from typing import Tuple, MutableMapping, Union, Optional
 
 from redbot.core import data_manager, commands
 from redbot.core.utils import safe_delete
+from redbot.core.i18n import Translator
+
 from . import errors
 from .installable import Installable, InstallableType
 from .json_mixins import RepoJSONMixin
 from .log import log
+
+_ = Translator("RepoManager", __file__)
 
 
 class Repo(RepoJSONMixin):
@@ -64,13 +68,15 @@ class Repo(RepoJSONMixin):
     async def convert(cls, ctx: commands.Context, argument: str):
         downloader_cog = ctx.bot.get_cog("Downloader")
         if downloader_cog is None:
-            raise commands.CommandError("No Downloader cog found.")
+            raise commands.CommandError(_("No Downloader cog found."))
 
         # noinspection PyProtectedMember
         repo_manager = downloader_cog._repo_manager
         poss_repo = repo_manager.get_repo(argument)
         if poss_repo is None:
-            raise commands.BadArgument("Repo by the name {} does not exist.".format(argument))
+            raise commands.BadArgument(
+                _('Repo by the name "{repo_name}" does not exist.').format(repo_name=argument)
+            )
         return poss_repo
 
     def _existing_git_repo(self) -> (bool, Path):

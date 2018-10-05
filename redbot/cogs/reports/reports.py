@@ -1,6 +1,6 @@
 import logging
 import asyncio
-from typing import Union
+from typing import Union, List
 from datetime import timedelta
 from copy import copy
 import contextlib
@@ -60,23 +60,20 @@ class Reports(commands.Cog):
     @commands.guild_only()
     @commands.group(name="reportset")
     async def reportset(self, ctx: commands.Context):
-        """
-        Settings for the report system.
-        """
+        """Manage Reports."""
         pass
 
     @checks.admin_or_permissions(manage_guild=True)
     @reportset.command(name="output")
-    async def setoutput(self, ctx: commands.Context, channel: discord.TextChannel):
-        """Set the channel where reports will show up"""
+    async def reportset_output(self, ctx: commands.Context, channel: discord.TextChannel):
+        """Set the channel where reports will be sent."""
         await self.config.guild(ctx.guild).output_channel.set(channel.id)
         await ctx.send(_("The report channel has been set."))
 
     @checks.admin_or_permissions(manage_guild=True)
     @reportset.command(name="toggle", aliases=["toggleactive"])
-    async def report_toggle(self, ctx: commands.Context):
-        """Enables or Disables reporting for the server"""
-
+    async def reportset_toggle(self, ctx: commands.Context):
+        """Enable or Disable reporting for this server."""
         active = await self.config.guild(ctx.guild).active()
         active = not active
         await self.config.guild(ctx.guild).active.set(active)
@@ -168,7 +165,7 @@ class Reports(commands.Cog):
         if channel is None:
             return None
 
-        files = await Tunnel.files_from_attatch(msg)
+        files: List[discord.File] = await Tunnel.files_from_attatch(msg)
 
         ticket_number = await self.config.guild(guild).next_ticket()
         await self.config.guild(guild).next_ticket.set(ticket_number + 1)
@@ -204,11 +201,10 @@ class Reports(commands.Cog):
 
     @commands.group(name="report", invoke_without_command=True)
     async def report(self, ctx: commands.Context, *, _report: str = ""):
-        """
-        Send a report.
+        """Send a report.
 
         Use without arguments for interactive reporting, or do
-        [p]report <text> to use it non-interactively.
+        `[p]report <text>` to use it non-interactively.
         """
         author = ctx.author
         guild = ctx.guild
@@ -323,9 +319,8 @@ class Reports(commands.Cog):
     @checks.mod_or_permissions(manage_members=True)
     @report.command(name="interact")
     async def response(self, ctx, ticket_number: int):
-        """
-        Open a message tunnel.
-        
+        """Open a message tunnel.
+
         This tunnel will forward things you say in this channel
         to the ticket opener's direct messages.
 
@@ -354,8 +349,7 @@ class Reports(commands.Cog):
             )
 
         big_topic = _(
-            "{who} opened a 2-way communication "
-            "about ticket number {ticketnum}. Anything you say or upload here "
+            " Anything you say or upload here "
             "(8MB file size limitation on uploads) "
             "will be forwarded to them until the communication is closed.\n"
             "You can close a communication at any point by reacting with "
@@ -364,8 +358,12 @@ class Reports(commands.Cog):
             "\N{WHITE HEAVY CHECK MARK}.\n"
             "Tunnels are not persistent across bot restarts."
         )
-        topic = big_topic.format(
-            ticketnum=ticket_number, who=_("A moderator in `{guild.name}` has").format(guild=guild)
+        topic = (
+            _(
+                "A moderator in the server `{guild.name}` has opened a 2-way communication about "
+                "ticket number {ticket_number}."
+            ).format(guild=guild, ticket_number=ticket_number)
+            + big_topic
         )
         try:
             m = await tun.communicate(message=ctx.message, topic=topic, skip_message_content=True)
@@ -373,4 +371,9 @@ class Reports(commands.Cog):
             await ctx.send(_("That user has DMs disabled."))
         else:
             self.tunnel_store[(guild, ticket_number)] = {"tun": tun, "msgs": m}
-            await ctx.send(big_topic.format(who=_("You have"), ticketnum=ticket_number))
+            await ctx.send(
+                _(
+                    "You have opened a 2-way communication about ticket number {ticket_number}."
+                ).format(ticket_number=ticket_number)
+                + big_topic
+            )

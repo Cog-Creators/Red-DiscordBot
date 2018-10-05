@@ -2,7 +2,7 @@ import asyncio
 import io
 import textwrap
 from copy import copy
-from typing import Union, Optional, Dict, List, Tuple, Any, Iterator, ItemsView
+from typing import Union, Optional, Dict, List, Tuple, Any, Iterator, ItemsView, cast
 
 import discord
 import yaml
@@ -287,9 +287,11 @@ class Permissions(commands.Cog):
         `<who_or_what>` is the user, channel, role or server the rule
         is for.
         """
-        # noinspection PyTypeChecker
         await self._add_rule(
-            rule=allow_or_deny, cog_or_cmd=cog_or_command, model_id=who_or_what.id, guild_id=0
+            rule=cast(bool, allow_or_deny),
+            cog_or_cmd=cog_or_command,
+            model_id=who_or_what.id,
+            guild_id=0,
         )
         await ctx.send(_("Rule added."))
 
@@ -312,9 +314,8 @@ class Permissions(commands.Cog):
 
         `<who_or_what>` is the user, channel or role the rule is for.
         """
-        # noinspection PyTypeChecker
         await self._add_rule(
-            rule=allow_or_deny,
+            rule=cast(bool, allow_or_deny),
             cog_or_cmd=cog_or_command,
             model_id=who_or_what.id,
             guild_id=ctx.guild.id,
@@ -381,9 +382,10 @@ class Permissions(commands.Cog):
         `<cog_or_command>` is the cog or command to set the default
         rule for. This is case sensitive.
         """
-        # noinspection PyTypeChecker
         await self._set_default_rule(
-            rule=allow_or_deny, cog_or_cmd=cog_or_command, guild_id=ctx.guild.id
+            rule=cast(Optional[bool], allow_or_deny),
+            cog_or_cmd=cog_or_command,
+            guild_id=ctx.guild.id,
         )
         await ctx.send(_("Default set."))
 
@@ -403,9 +405,8 @@ class Permissions(commands.Cog):
         `<cog_or_command>` is the cog or command to set the default
         rule for. This is case sensitive.
         """
-        # noinspection PyTypeChecker
         await self._set_default_rule(
-            rule=allow_or_deny, cog_or_cmd=cog_or_command, guild_id=GLOBAL
+            rule=cast(Optional[bool], allow_or_deny), cog_or_cmd=cog_or_command, guild_id=GLOBAL
         )
         await ctx.send(_("Default set."))
 

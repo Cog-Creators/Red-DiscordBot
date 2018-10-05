@@ -838,7 +838,7 @@ class Config:
         """
         return self._get_base_group(self.ROLE, role.id)
 
-    def user(self, user: discord.User) -> Group:
+    def user(self, user: discord.abc.User) -> Group:
         """Returns a `Group` for the given user.
 
         Parameters
