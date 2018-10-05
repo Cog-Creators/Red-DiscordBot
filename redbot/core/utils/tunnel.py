@@ -4,7 +4,7 @@ from redbot.core.utils.chat_formatting import pagify
 import io
 import sys
 import weakref
-from typing import List
+from typing import List, Optional
 from .common_filters import filter_mass_mentions
 
 _instances = weakref.WeakValueDictionary({})
@@ -86,7 +86,11 @@ class Tunnel(metaclass=TunnelMeta):
 
     @staticmethod
     async def message_forwarder(
-        *, destination: discord.abc.Messageable, content: str = None, embed=None, files=[]
+        *,
+        destination: discord.abc.Messageable,
+        content: str = None,
+        embed=None,
+        files: Optional[List[discord.File]] = None
     ) -> List[discord.Message]:
         """
         This does the actual sending, use this instead of a full tunnel
@@ -95,19 +99,19 @@ class Tunnel(metaclass=TunnelMeta):
 
         Parameters
         ----------
-        destination: `discord.abc.Messageable`
+        destination: discord.abc.Messageable
             Where to send
-        content: `str`
+        content: str
             The message content
-        embed: `discord.Embed`
+        embed: discord.Embed
             The embed to send
-        files: `list` of `discord.File`
+        files: Optional[List[discord.File]]
             A list of files to send.
 
         Returns
         -------
-        list of `discord.Message`
-            The `discord.Message`\ (s) sent as a result
+        List[discord.Message]
+            The messages sent as a result.
 
         Raises
         ------
@@ -117,7 +121,6 @@ class Tunnel(metaclass=TunnelMeta):
             see `discord.abc.Messageable.send`
         """
         rets = []
-        files = files if files else None
         if content:
             for page in pagify(content):
                 rets.append(await destination.send(page, files=files, embed=embed))

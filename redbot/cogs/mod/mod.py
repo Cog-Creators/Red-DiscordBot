@@ -386,7 +386,7 @@ class Mod(commands.Cog):
     async def ban(
         self, ctx: commands.Context, user: discord.Member, days: str = None, *, reason: str = None
     ):
-        """Ban a user from the current server.
+        """Ban a user from this server.
 
         Deletes `<days>` worth of messages.
 
@@ -469,7 +469,7 @@ class Mod(commands.Cog):
     @commands.bot_has_permissions(ban_members=True)
     @checks.admin_or_permissions(ban_members=True)
     async def hackban(self, ctx: commands.Context, user_id: int, *, reason: str = None):
-        """Pre-emptively ban a user from the current server.
+        """Pre-emptively ban a user from this server.
 
         A user ID needs to be provided in order to ban
         using this command.
@@ -531,7 +531,7 @@ class Mod(commands.Cog):
     async def tempban(
         self, ctx: commands.Context, user: discord.Member, days: int = 1, *, reason: str = None
     ):
-        """Temporarily ban a user from the current server."""
+        """Temporarily ban a user from this server."""
         guild = ctx.guild
         author = ctx.author
         days_delta = timedelta(days=int(days))
@@ -672,7 +672,7 @@ class Mod(commands.Cog):
     @commands.bot_has_permissions(ban_members=True)
     @checks.admin_or_permissions(ban_members=True)
     async def unban(self, ctx: commands.Context, user_id: int, *, reason: str = None):
-        """Unban a user from the current server.
+        """Unban a user from this server.
 
         Requires specifying the target user's ID. To find this, you may either:
          1. Copy it from the mod log case (if one was created), or
@@ -1104,7 +1104,7 @@ class Mod(commands.Cog):
     async def unmute_channel(
         self, ctx: commands.Context, user: discord.Member, *, reason: str = None
     ):
-        """Unmute a user in the current channel."""
+        """Unmute a user in this channel."""
         channel = ctx.channel
         author = ctx.author
         guild = ctx.guild
@@ -1137,7 +1137,7 @@ class Mod(commands.Cog):
     async def unmute_guild(
         self, ctx: commands.Context, user: discord.Member, *, reason: str = None
     ):
-        """Unmute a user in the current server."""
+        """Unmute a user in this server."""
         guild = ctx.guild
         author = ctx.author
 
@@ -1236,7 +1236,7 @@ class Mod(commands.Cog):
     @ignore.command(name="server", aliases=["guild"])
     @checks.admin_or_permissions(manage_guild=True)
     async def ignore_guild(self, ctx: commands.Context):
-        """Ignore commands in the current server."""
+        """Ignore commands in this server."""
         guild = ctx.guild
         if not await self.settings.guild(guild).ignored():
             await self.settings.guild(guild).ignored.set(True)
@@ -1270,7 +1270,7 @@ class Mod(commands.Cog):
     @unignore.command(name="server", aliases=["guild"])
     @checks.admin_or_permissions(manage_guild=True)
     async def unignore_guild(self, ctx: commands.Context):
-        """Remove the current server from the ignore list."""
+        """Remove this server from the ignore list."""
         guild = ctx.message.guild
         if await self.settings.guild(guild).ignored():
             await self.settings.guild(guild).ignored.set(False)
