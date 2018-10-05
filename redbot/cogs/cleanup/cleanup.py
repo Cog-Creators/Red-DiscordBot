@@ -9,6 +9,7 @@ from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.mod import slow_deletion, mass_purge
 from redbot.cogs.mod.log import log
+from redbot.core.utils.predicates import MessagePredicate
 
 _ = Translator("Cleanup", __file__)
 
@@ -31,13 +32,10 @@ class Cleanup(commands.Cog):
         Tries its best to cleanup after itself if the response is positive.
         """
 
-        def author_check(message):
-            return message.author == ctx.author
-
         prompt = await ctx.send(
             _("Are you sure you want to delete {} messages? (y/n)").format(number)
         )
-        response = await ctx.bot.wait_for("message", check=author_check)
+        response = await ctx.bot.wait_for("message", check=MessagePredicate.same_context(ctx))
 
         if response.content.lower().startswith("y"):
             await prompt.delete()
@@ -221,8 +219,6 @@ class Cleanup(commands.Cog):
         To get a message id, enable developer mode in Discord's
         settings, 'appearance' tab. Then right click a message
         and copy its id.
-
-        This command only works on bots running as bot accounts.
         """
 
         channel = ctx.channel
@@ -238,6 +234,40 @@ class Cleanup(commands.Cog):
 
         to_delete = await self.get_messages_for_deletion(
             channel=channel, number=None, after=after, delete_pinned=delete_pinned
+        )
+
+        reason = "{}({}) deleted {} messages in channel {}.".format(
+            author.name, author.id, len(to_delete), channel.name
+        )
+        log.info(reason)
+
+        await mass_purge(to_delete, channel)
+
+    @cleanup.command()
+    @commands.guild_only()
+    async def before(
+        self, ctx: commands.Context, message_id: int, number: int, delete_pinned: bool = False
+    ):
+        """Deletes X messages before specified message.
+
+        To get a message id, enable developer mode in Discord's
+        settings, 'appearance' tab. Then right click a message
+        and copy its id.
+        """
+
+        channel = ctx.channel
+        if not channel.permissions_for(ctx.guild.me).manage_messages:
+            await ctx.send("I need the Manage Messages permission to do this.")
+            return
+        author = ctx.author
+
+        try:
+            before = await channel.get_message(message_id)
+        except discord.NotFound:
+            return await ctx.send(_("Message not found."))
+
+        to_delete = await self.get_messages_for_deletion(
+            channel=channel, number=number, before=before, delete_pinned=delete_pinned
         )
 
         reason = "{}({}) deleted {} messages in channel {}.".format(

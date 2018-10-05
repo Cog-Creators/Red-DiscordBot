@@ -51,22 +51,22 @@ def bot_in_a_guild():
     return _check_decorator(predicate)
 
 
-def is_mod_or_superior(bot: "Red", member: discord.Member) -> Awaitable[bool]:
+def is_mod_or_superior(ctx: "Context") -> Awaitable[bool]:
     warnings.warn(
         "`redbot.core.checks.is_mod_or_superior` is deprecated and will be removed in a future "
         "release, please use `redbot.core.utils.mod.is_mod_or_superior` instead.",
         category=DeprecationWarning,
     )
-    return _is_mod_or_superior(bot, member)
+    return _is_mod_or_superior(ctx.bot, ctx.author)
 
 
-def is_admin_or_superior(bot: "Red", member: discord.Member) -> Awaitable[bool]:
+def is_admin_or_superior(ctx: "Context") -> Awaitable[bool]:
     warnings.warn(
         "`redbot.core.checks.is_admin_or_superior` is deprecated and will be removed in a future "
         "release, please use `redbot.core.utils.mod.is_admin_or_superior` instead.",
         category=DeprecationWarning,
     )
-    return _is_admin_or_superior(bot, member)
+    return _is_admin_or_superior(ctx.bot, ctx.author)
 
 
 def check_permissions(ctx: "Context", perms: Dict[str, bool]) -> Awaitable[bool]:

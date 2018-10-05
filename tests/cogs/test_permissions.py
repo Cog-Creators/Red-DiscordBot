@@ -1,4 +1,3 @@
-
 from redbot.cogs.permissions.permissions import Permissions, GLOBAL
 
 

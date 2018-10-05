@@ -24,6 +24,7 @@ from redbot.core import __version__
 from redbot.core import checks
 from redbot.core import i18n
 from redbot.core import commands
+from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import pagify, box, inline
 
 if TYPE_CHECKING:
@@ -438,73 +439,63 @@ class Core(commands.Cog, CoreLogic):
     @checks.is_owner()
     async def leave(self, ctx):
         """Leaves server"""
-        author = ctx.author
-        guild = ctx.guild
+        await ctx.send("Are you sure you want me to leave this server? (y/n)")
 
-        await ctx.send("Are you sure you want me to leave this server? Type yes to confirm.")
-
-        def conf_check(m):
-            return m.author == author
-
-        response = await self.bot.wait_for("message", check=conf_check)
-
-        if response.content.lower().strip() == "yes":
-            await ctx.send("Alright. Bye :wave:")
-            log.debug("Leaving '{}'".format(guild.name))
-            await guild.leave()
+        pred = MessagePredicate.yes_or_no(ctx)
+        try:
+            await self.bot.wait_for("message", check=MessagePredicate.yes_or_no(ctx))
+        except asyncio.TimeoutError:
+            await ctx.send("Response timed out.")
+            return
+        else:
+            if pred.result is True:
+                await ctx.send("Alright. Bye :wave:")
+                log.debug("Leaving guild '{}'".format(ctx.guild.name))
+                await ctx.guild.leave()
+            else:
+                await ctx.send("Alright, I'll stay then :)")
 
     @commands.command()
     @checks.is_owner()
     async def servers(self, ctx):
         """Lists and allows to leave servers"""
-        owner = ctx.author
         guilds = sorted(list(self.bot.guilds), key=lambda s: s.name.lower())
         msg = ""
+        responses = []
         for i, server in enumerate(guilds, 1):
             msg += "{}: {}\n".format(i, server.name)
-
-        msg += "\nTo leave a server, just type its number."
+            responses.append(str(i))
 
         for page in pagify(msg, ["\n"]):
             await ctx.send(page)
 
-        def msg_check(m):
-            return m.author == owner
+        query = await ctx.send("To leave a server, just type its number.")
 
-        while msg is not None:
-            try:
-                msg = await self.bot.wait_for("message", check=msg_check, timeout=15)
-            except asyncio.TimeoutError:
-                await ctx.send("I guess not.")
-                break
-            try:
-                msg = int(msg.content) - 1
-                if msg < 0:
-                    break
-                await self.leave_confirmation(guilds[msg], owner, ctx)
-                break
-            except (IndexError, ValueError, AttributeError):
-                pass
-
-    async def leave_confirmation(self, server, owner, ctx):
-        await ctx.send("Are you sure you want me to leave {}? (yes/no)".format(server.name))
-
-        def conf_check(m):
-            return m.author == owner
-
+        pred = MessagePredicate.contained_in(responses, ctx)
         try:
-            msg = await self.bot.wait_for("message", check=conf_check, timeout=15)
-            if msg.content.lower().strip() in ("yes", "y"):
-                if server.owner == ctx.bot.user:
-                    await ctx.send("I cannot leave a guild I am the owner of.")
-                    return
-                await server.leave()
-                if server != ctx.guild:
+            await self.bot.wait_for("message", check=pred, timeout=15)
+        except asyncio.TimeoutError:
+            await query.delete()
+        else:
+            await self.leave_confirmation(guilds[pred.result], ctx)
+
+    async def leave_confirmation(self, guild, ctx):
+        if guild.owner.id == ctx.bot.user.id:
+            await ctx.send("I cannot leave a guild I am the owner of.")
+            return
+
+        await ctx.send("Are you sure you want me to leave {}? (yes/no)".format(guild.name))
+        pred = MessagePredicate.yes_or_no(ctx)
+        try:
+            await self.bot.wait_for("message", check=pred, timeout=15)
+            if pred.result is True:
+                await guild.leave()
+                if guild != ctx.guild:
                     await ctx.send("Done.")
             else:
                 await ctx.send("Alright then.")
         except asyncio.TimeoutError:
-            await ctx.send("I guess not.")
+            await ctx.send("Response timed out.")
 
     @commands.command()
     @checks.is_owner()
@@ -890,10 +881,6 @@ class Core(commands.Cog, CoreLogic):
     @commands.cooldown(1, 60 * 10, commands.BucketType.default)
     async def owner(self, ctx):
         """Sets Red's main owner"""
-
-        def check(m):
-            return m.author == ctx.author and m.channel == ctx.channel
-
         # According to the Python docs this is suitable for cryptographic use
         random = SystemRandom()
         length = random.randint(25, 35)
@@ -917,10 +904,14 @@ class Core(commands.Cog, CoreLogic):
         )
 
         try:
-            message = await ctx.bot.wait_for("message", check=check, timeout=60)
+            message = await ctx.bot.wait_for(
+                "message", check=MessagePredicate.same_context(ctx), timeout=60
+            )
         except asyncio.TimeoutError:
             self.owner.reset_cooldown(ctx)
-            await ctx.send(_("The set owner request has timed out."))
+            await ctx.send(
+                _("The `{prefix}set owner` request has timed out.").format(prefix=ctx.prefix)
+            )
         else:
             if message.content.strip() == token:
                 self.owner.reset_cooldown(ctx)
@@ -1144,18 +1135,20 @@ class Core(commands.Cog, CoreLogic):
             )
             await ctx.send(_("Would you like to receive a copy via DM? (y/n)"))
 
-            def same_author_check(m):
-                return m.author == ctx.author and m.channel == ctx.channel
-
+            pred = MessagePredicate.yes_or_no(ctx)
             try:
-                msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=60)
+                await ctx.bot.wait_for("message", check=pred, timeout=60)
             except asyncio.TimeoutError:
-                await ctx.send(_("Ok then."))
+                await ctx.send(_("Response timed out."))
             else:
-                if msg.content.lower().strip() == "y":
-                    await ctx.author.send(
-                        _("Here's a copy of the backup"), file=discord.File(str(backup_file))
-                    )
+                if pred.result is True:
+                    await ctx.send(_("OK, it's on its way!"))
+                    async with ctx.author.typing():
+                        await ctx.author.send(
+                            _("Here's a copy of the backup"), file=discord.File(str(backup_file))
+                        )
+                else:
+                    await ctx.send(_("OK then."))
         else:
             await ctx.send(_("That directory doesn't seem to exist..."))
 
@@ -1781,7 +1774,7 @@ class Core(commands.Cog, CoreLogic):
 
         self._cleanup_and_refresh_modules(spec.name)
 
-        self.bot.load_extension(spec)
+        await self.bot.load_extension(spec)
 
     async def rpc_unload(self, request):
         cog_name = request.params[0]
