@@ -1249,8 +1249,7 @@ class Mod(commands.Cog):
         except discord.Forbidden:
             return False, mute_unmute_issues["permissions_issue"]
         else:
-            ids = (*self.settings.member(user).perms_cache.identifiers, str(channel.id))
-            await self.settings.driver.clear(*ids)
+            await self.settings.member(user).clear_raw("perms_cache", str(channel.id))
             return True, None
 
     @commands.group()
