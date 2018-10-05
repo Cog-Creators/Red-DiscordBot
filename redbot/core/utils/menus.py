@@ -103,7 +103,7 @@ async def next_page(
     timeout: float,
     emoji: str,
 ):
-    perms = message.channel.permissions_for(ctx.guild.me)
+    perms = message.channel.permissions_for(ctx.me)
     if perms.manage_messages:  # Can manage messages, so remove react
         try:
             await message.remove_reaction(emoji, ctx.author)
@@ -125,7 +125,7 @@ async def prev_page(
     timeout: float,
     emoji: str,
 ):
-    perms = message.channel.permissions_for(ctx.guild.me)
+    perms = message.channel.permissions_for(ctx.me)
     if perms.manage_messages:  # Can manage messages, so remove react
         try:
             await message.remove_reaction(emoji, ctx.author)
