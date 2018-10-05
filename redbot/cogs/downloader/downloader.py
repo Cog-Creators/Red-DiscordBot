@@ -1,16 +1,20 @@
+import asyncio
+import contextlib
 import os
 import shutil
 import sys
 from pathlib import Path
 from sys import path as syspath
-from typing import Tuple, Union
+from typing import Tuple, Union, Iterable
 
 import discord
 from redbot.core import checks, commands, Config
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import box, pagify
+from redbot.core.utils.chat_formatting import box, pagify, humanize_list, inline
+from redbot.core.utils.menus import start_adding_reactions
+from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 
 from . import errors
 from .checks import do_install_agreement
@@ -23,8 +27,9 @@ _ = Translator("Downloader", __file__)
 
 
 @cog_i18n(_)
-class Downloader:
+class Downloader(commands.Cog):
     def __init__(self, bot: Red):
+        super().__init__()
         self.bot = bot
 
         self.conf = Config.get_conf(self, identifier=998240343, force_registration=True)
@@ -107,7 +112,7 @@ class Downloader:
             installed.remove(cog_json)
             await self.conf.installed.set(installed)
 
-    async def _reinstall_cogs(self, cogs: Tuple[Installable]) -> Tuple[Installable]:
+    async def _reinstall_cogs(self, cogs: Iterable[Installable]) -> Tuple[Installable]:
         """
         Installs a list of cogs, used when updating.
         :param cogs:
@@ -121,7 +126,7 @@ class Downloader:
         # noinspection PyTypeChecker
         return tuple(failed)
 
-    async def _reinstall_libraries(self, cogs: Tuple[Installable]) -> Tuple[Installable]:
+    async def _reinstall_libraries(self, cogs: Iterable[Installable]) -> Tuple[Installable]:
         """
         Reinstalls any shared libraries from the repos of cogs that
             were updated.
@@ -141,7 +146,7 @@ class Downloader:
         # noinspection PyTypeChecker
         return tuple(failed)
 
-    async def _reinstall_requirements(self, cogs: Tuple[Installable]) -> bool:
+    async def _reinstall_requirements(self, cogs: Iterable[Installable]) -> bool:
         """
         Reinstalls requirements for given cogs that have been updated.
             Returns a bool that indicates if all requirement installations
@@ -355,28 +360,63 @@ class Downloader:
         """
         installed_cogs = set(await self.installed_cogs())
 
-        if cog_name is None:
-            updated = await self._repo_manager.update_all_repos()
+        async with ctx.typing():
+            if cog_name is None:
+                updated = await self._repo_manager.update_all_repos()
 
+            else:
+                try:
+                    updated = await self._repo_manager.update_repo(cog_name.repo_name)
+                except KeyError:
+                    # Thrown if the repo no longer exists
+                    updated = {}
+
+            updated_cogs = set(cog for repo in updated for cog in repo.available_cogs)
+            installed_and_updated = updated_cogs & installed_cogs
+
+            if installed_and_updated:
+                await self._reinstall_requirements(installed_and_updated)
+                await self._reinstall_cogs(installed_and_updated)
+                await self._reinstall_libraries(installed_and_updated)
+                message = _("Cog update completed successfully.")
+
+                cognames = [c.name for c in installed_and_updated]
+                message += _("\nUpdated: ") + humanize_list(tuple(map(inline, cognames)))
+            else:
+                await ctx.send(_("All installed cogs are already up to date."))
+                return
+        await ctx.send(message)
+
+        message = _("Would you like to reload the updated cogs?")
+        can_react = ctx.channel.permissions_for(ctx.me).add_reactions
+        if not can_react:
+            message += " (y/n)"
+        query: discord.Message = await ctx.send(message)
+        if can_react:
+            # noinspection PyAsyncCall
+            start_adding_reactions(query, ReactionPredicate.YES_OR_NO_EMOJIS, ctx.bot.loop)
+            pred = ReactionPredicate.yes_or_no(query, ctx.author)
+            event = "reaction_add"
         else:
-            try:
-                updated = await self._repo_manager.update_repo(cog_name.repo_name)
-            except KeyError:
-                # Thrown if the repo no longer exists
-                updated = {}
+            pred = MessagePredicate.yes_or_no(ctx)
+            event = "message"
+        try:
+            await ctx.bot.wait_for(event, check=pred, timeout=30)
+        except asyncio.TimeoutError:
+            await query.delete()
+            return
 
-        updated_cogs = set(cog for repo in updated.keys() for cog in repo.available_cogs)
-        installed_and_updated = updated_cogs & installed_cogs
+        if pred.result is True:
+            if can_react:
+                with contextlib.suppress(discord.Forbidden):
+                    await query.clear_reactions()
 
-        # noinspection PyTypeChecker
-        await self._reinstall_requirements(installed_and_updated)
-
-        # noinspection PyTypeChecker
-        await self._reinstall_cogs(installed_and_updated)
-
-        # noinspection PyTypeChecker
-        await self._reinstall_libraries(installed_and_updated)
-        await ctx.send(_("Cog update completed successfully."))
+            await ctx.invoke(ctx.bot.get_cog("Core").reload, *cognames)
+        else:
+            if can_react:
+                await query.delete()
+            else:
+                await ctx.send(_("OK then."))
 
     @cog.command(name="list")
     async def _cog_list(self, ctx, repo_name: Repo):

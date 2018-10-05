@@ -9,10 +9,11 @@ _ = Translator("ModLog", __file__)
 
 
 @cog_i18n(_)
-class ModLog:
+class ModLog(commands.Cog):
     """Log for mod actions"""
 
     def __init__(self, bot: Red):
+        super().__init__()
         self.bot = bot
 
     @commands.group()

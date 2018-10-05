@@ -15,12 +15,13 @@ from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.mod import is_admin_or_superior
 from redbot.core.utils.chat_formatting import warning, pagify
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
+from redbot.core.utils.predicates import MessagePredicate
 
 _ = Translator("Warnings", __file__)
 
 
 @cog_i18n(_)
-class Warnings:
+class Warnings(commands.Cog):
     """A warning system for Red"""
 
     default_guild = {"actions": [], "reasons": {}, "allow_custom_reasons": False}
@@ -28,6 +29,7 @@ class Warnings:
     default_member = {"total_points": 0, "status": "", "warnings": {}}
 
     def __init__(self, bot: Red):
+        super().__init__()
         self.config = Config.get_conf(self, identifier=5757575755)
         self.config.register_guild(**self.default_guild)
         self.config.register_member(**self.default_member)
@@ -362,12 +364,11 @@ class Warnings:
         """Handles getting description and points for custom reasons"""
         to_add = {"points": 0, "description": ""}
 
-        def same_author_check(m):
-            return m.author == ctx.author
-
         await ctx.send(_("How many points should be given for this reason?"))
         try:
-            msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=30)
+            msg = await ctx.bot.wait_for(
+                "message", check=MessagePredicate.same_context(ctx), timeout=30
+            )
         except asyncio.TimeoutError:
             await ctx.send(_("Ok then."))
             return
@@ -384,7 +385,9 @@ class Warnings:
 
         await ctx.send(_("Enter a description for this reason."))
         try:
-            msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=30)
+            msg = await ctx.bot.wait_for(
+                "message", check=MessagePredicate.same_context(ctx), timeout=30
+            )
         except asyncio.TimeoutError:
             await ctx.send(_("Ok then."))
             return

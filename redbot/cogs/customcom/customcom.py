@@ -11,6 +11,7 @@ import discord
 from redbot.core import Config, checks, commands
 from redbot.core.utils.chat_formatting import box, pagify
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils.predicates import MessagePredicate
 
 _ = Translator("CustomCommands", __file__)
 
@@ -58,14 +59,11 @@ class CommandObj:
         ).format("customcommand", "customcommand", "exit()")
         await ctx.send(intro)
 
-        def check(m):
-            return m.channel == ctx.channel and m.author == ctx.message.author
-
         responses = []
         args = None
         while True:
             await ctx.send(_("Add a random response:"))
-            msg = await self.bot.wait_for("message", check=check)
+            msg = await self.bot.wait_for("message", check=MessagePredicate.same_context(ctx))
 
             if msg.content.lower() == "exit()":
                 break
@@ -130,18 +128,27 @@ class CommandObj:
 
         author = ctx.message.author
 
-        def check(m):
-            return m.channel == ctx.channel and m.author == ctx.author
-
         if ask_for and not response:
-            await ctx.send(_("Do you want to create a 'randomized' cc? {}").format("y/n"))
+            await ctx.send(_("Do you want to create a 'randomized' custom command? (y/n)"))
 
-            msg = await self.bot.wait_for("message", check=check)
-            if msg.content.lower() == "y":
+            pred = MessagePredicate.yes_or_no(ctx)
+            try:
+                await self.bot.wait_for("message", check=pred, timeout=30)
+            except TimeoutError:
+                await ctx.send(_("Response timed out, please try again later."))
+                return
+            if pred.result is True:
                 response = await self.get_responses(ctx=ctx)
             else:
                 await ctx.send(_("What response do you want?"))
-                response = (await self.bot.wait_for("message", check=check)).content
+                try:
+                    resp = await self.bot.wait_for(
+                        "message", check=MessagePredicate.same_context(ctx), timeout=180
+                    )
+                except TimeoutError:
+                    await ctx.send(_("Response timed out, please try again later."))
+                    return
+                response = resp.content
 
         if response:
             # test to raise
@@ -172,12 +179,13 @@ class CommandObj:
 
 
 @cog_i18n(_)
-class CustomCommands:
+class CustomCommands(commands.Cog):
     """Custom commands
 
     Creates commands used to display text"""
 
     def __init__(self, bot):
+        super().__init__()
         self.bot = bot
         self.key = 414589031223512
         self.config = Config.get_conf(self, self.key)

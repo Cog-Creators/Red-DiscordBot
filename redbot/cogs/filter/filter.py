@@ -1,4 +1,5 @@
 import discord
+from typing import Union
 
 from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
@@ -10,10 +11,11 @@ _ = Translator("Filter", __file__)
 
 
 @cog_i18n(_)
-class Filter:
+class Filter(commands.Cog):
     """Filter-related commands"""
 
     def __init__(self, bot: Red):
+        super().__init__()
         self.bot = bot
         self.settings = Config.get_conf(self, 4766951341)
         default_guild_settings = {
@@ -24,8 +26,10 @@ class Filter:
             "filter_default_name": "John Doe",
         }
         default_member_settings = {"filter_count": 0, "next_reset_time": 0}
+        default_channel_settings = {"filter": []}
         self.settings.register_guild(**default_guild_settings)
         self.settings.register_member(**default_member_settings)
+        self.settings.register_channel(**default_channel_settings)
         self.register_task = self.bot.loop.create_task(self.register_filterban())
 
     def __unload(self):
@@ -39,11 +43,55 @@ class Filter:
         except RuntimeError:
             pass
 
+    @commands.group()
+    @commands.guild_only()
+    @checks.admin_or_permissions(manage_guild=True)
+    async def filterset(self, ctx: commands.Context):
+        """
+        Filter settings
+        """
+        pass
+
+    @filterset.command(name="defaultname")
+    async def filter_default_name(self, ctx: commands.Context, name: str):
+        """Sets the default name to use if filtering names is enabled
+
+        Note that this has no effect if filtering names is disabled
+
+        The default name used is John Doe
+        """
+        guild = ctx.guild
+        await self.settings.guild(guild).filter_default_name.set(name)
+        await ctx.send(_("The name to use on filtered names has been set."))
+
+    @filterset.command(name="ban")
+    async def filter_ban(self, ctx: commands.Context, count: int, timeframe: int):
+        """Autobans if the specified number of messages are filtered in the timeframe
+
+        The timeframe is represented by seconds.
+        """
+        if (count <= 0) != (timeframe <= 0):
+            await ctx.send(
+                _(
+                    "Count and timeframe either both need to be 0 "
+                    "or both need to be greater than 0!"
+                )
+            )
+            return
+        elif count == 0 and timeframe == 0:
+            await self.settings.guild(ctx.guild).filterban_count.set(0)
+            await self.settings.guild(ctx.guild).filterban_time.set(0)
+            await ctx.send(_("Autoban disabled."))
+        else:
+            await self.settings.guild(ctx.guild).filterban_count.set(count)
+            await self.settings.guild(ctx.guild).filterban_time.set(timeframe)
+            await ctx.send(_("Count and time have been set."))
+
     @commands.group(name="filter")
     @commands.guild_only()
     @checks.mod_or_permissions(manage_messages=True)
     async def _filter(self, ctx: commands.Context):
-        """Adds/removes words from filter
+        """Adds/removes words from server filter
 
         Use double quotes to add/remove sentences
         Using this command with no subcommands will send
@@ -60,6 +108,86 @@ class Filter:
                         await author.send(page)
                 except discord.Forbidden:
                     await ctx.send(_("I can't send direct messages to you."))
+
+    @_filter.group(name="channel")
+    async def _filter_channel(self, ctx: commands.Context):
+        """Adds/removes words from channel filter
+
+        Use double quotes to add/remove sentences
+        Using this command with no subcommands will send
+        the list of the channel's filtered words."""
+        if ctx.invoked_subcommand is None:
+            channel = ctx.channel
+            author = ctx.author
+            word_list = await self.settings.channel(channel).filter()
+            if word_list:
+                words = ", ".join(word_list)
+                words = _("Filtered in this channel:") + "\n\n" + words
+                try:
+                    for page in pagify(words, delims=[" ", "\n"], shorten_by=8):
+                        await author.send(page)
+                except discord.Forbidden:
+                    await ctx.send(_("I can't send direct messages to you."))
+
+    @_filter_channel.command("add")
+    async def filter_channel_add(self, ctx: commands.Context, *, words: str):
+        """Adds words to the filter
+
+        Use double quotes to add sentences
+        Examples:
+        filter add word1 word2 word3
+        filter add \"This is a sentence\""""
+        channel = ctx.channel
+        split_words = words.split()
+        word_list = []
+        tmp = ""
+        for word in split_words:
+            if not word.startswith('"') and not word.endswith('"') and not tmp:
+                word_list.append(word)
+            else:
+                if word.startswith('"'):
+                    tmp += word[1:] + " "
+                elif word.endswith('"'):
+                    tmp += word[:-1]
+                    word_list.append(tmp)
+                    tmp = ""
+                else:
+                    tmp += word + " "
+        added = await self.add_to_filter(channel, word_list)
+        if added:
+            await ctx.send(_("Words added to filter."))
+        else:
+            await ctx.send(_("Words already in the filter."))
+
+    @_filter_channel.command("remove")
+    async def filter_channel_remove(self, ctx: commands.Context, *, words: str):
+        """Remove words from the filter
+
+        Use double quotes to remove sentences
+        Examples:
+        filter remove word1 word2 word3
+        filter remove \"This is a sentence\""""
+        channel = ctx.channel
+        split_words = words.split()
+        word_list = []
+        tmp = ""
+        for word in split_words:
+            if not word.startswith('"') and not word.endswith('"') and not tmp:
+                word_list.append(word)
+            else:
+                if word.startswith('"'):
+                    tmp += word[1:] + " "
+                elif word.endswith('"'):
+                    tmp += word[:-1]
+                    word_list.append(tmp)
+                    tmp = ""
+                else:
+                    tmp += word + " "
+        removed = await self.remove_from_filter(channel, word_list)
+        if removed:
+            await ctx.send(_("Words removed from filter."))
+        else:
+            await ctx.send(_("Those words weren't in the filter."))
 
     @_filter.command(name="add")
     async def filter_add(self, ctx: commands.Context, *, words: str):
@@ -135,65 +263,53 @@ class Filter:
         else:
             await ctx.send(_("Names and nicknames will now be checked against the filter."))
 
-    @_filter.command(name="defaultname")
-    async def filter_default_name(self, ctx: commands.Context, name: str):
-        """Sets the default name to use if filtering names is enabled
-
-        Note that this has no effect if filtering names is disabled
-
-        The default name used is John Doe
-        """
-        guild = ctx.guild
-        await self.settings.guild(guild).filter_default_name.set(name)
-        await ctx.send(_("The name to use on filtered names has been set."))
-
-    @_filter.command(name="ban")
-    async def filter_ban(self, ctx: commands.Context, count: int, timeframe: int):
-        """Autobans if the specified number of messages are filtered in the timeframe
-
-        The timeframe is represented by seconds.
-        """
-        if (count <= 0) != (timeframe <= 0):
-            await ctx.send(
-                _(
-                    "Count and timeframe either both need to be 0 "
-                    "or both need to be greater than 0!"
-                )
-            )
-            return
-        elif count == 0 and timeframe == 0:
-            await self.settings.guild(ctx.guild).filterban_count.set(0)
-            await self.settings.guild(ctx.guild).filterban_time.set(0)
-            await ctx.send(_("Autoban disabled."))
-        else:
-            await self.settings.guild(ctx.guild).filterban_count.set(count)
-            await self.settings.guild(ctx.guild).filterban_time.set(timeframe)
-            await ctx.send(_("Count and time have been set."))
-
-    async def add_to_filter(self, server: discord.Guild, words: list) -> bool:
+    async def add_to_filter(
+        self, server_or_channel: Union[discord.Guild, discord.TextChannel], words: list
+    ) -> bool:
         added = False
-        async with self.settings.guild(server).filter() as cur_list:
-            for w in words:
-                if w.lower() not in cur_list and w:
-                    cur_list.append(w.lower())
-                    added = True
+        if isinstance(server_or_channel, discord.Guild):
+            async with self.settings.guild(server_or_channel).filter() as cur_list:
+                for w in words:
+                    if w.lower() not in cur_list and w:
+                        cur_list.append(w.lower())
+                        added = True
+
+        elif isinstance(server_or_channel, discord.TextChannel):
+            async with self.settings.channel(server_or_channel).filter() as cur_list:
+                for w in words:
+                    if w.lower not in cur_list and w:
+                        cur_list.append(w.lower())
+                        added = True
 
         return added
 
-    async def remove_from_filter(self, server: discord.Guild, words: list) -> bool:
+    async def remove_from_filter(
+        self, server_or_channel: Union[discord.Guild, discord.TextChannel], words: list
+    ) -> bool:
         removed = False
-        async with self.settings.guild(server).filter() as cur_list:
-            for w in words:
-                if w.lower() in cur_list:
-                    cur_list.remove(w.lower())
-                    removed = True
+        if isinstance(server_or_channel, discord.Guild):
+            async with self.settings.guild(server_or_channel).filter() as cur_list:
+                for w in words:
+                    if w.lower() in cur_list:
+                        cur_list.remove(w.lower())
+                        removed = True
+
+        elif isinstance(server_or_channel, discord.TextChannel):
+            async with self.settings.channel(server_or_channel).filter() as cur_list:
+                for w in words:
+                    if w.lower() in cur_list:
+                        cur_list.remove(w.lower())
+                        removed = True
 
         return removed
 
     async def check_filter(self, message: discord.Message):
         server = message.guild
         author = message.author
-        word_list = await self.settings.guild(server).filter()
+        word_list = set(
+            await self.settings.guild(server).filter()
+            + await self.settings.channel(message.channel).filter()
+        )
         filter_count = await self.settings.guild(server).filterban_count()
         filter_time = await self.settings.guild(server).filterban_time()
         user_count = await self.settings.member(author).filter_count()
@@ -245,10 +361,19 @@ class Filter:
         if not valid_user:
             return
 
-        #  Bots and mods or superior are ignored from the filter
-        mod_or_superior = await is_mod_or_superior(self.bot, obj=author)
-        if mod_or_superior:
+        if await self.bot.is_automod_immune(message):
             return
+
+        await self.check_filter(message)
+
+    async def on_message_edit(self, _, message):
+        author = message.author
+        if message.guild is None or self.bot.user == author:
+            return
+        valid_user = isinstance(author, discord.Member) and not author.bot
+        if not valid_user:
+            return
+
         # As is anyone configured to be
         if await self.bot.is_automod_immune(message):
             return

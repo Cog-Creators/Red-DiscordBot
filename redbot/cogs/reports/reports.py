@@ -11,6 +11,7 @@ from redbot.core.utils.chat_formatting import pagify, box
 from redbot.core.utils.antispam import AntiSpam
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils.predicates import MessagePredicate
 from redbot.core.utils.tunnel import Tunnel
 
 
@@ -20,7 +21,7 @@ log = logging.getLogger("red.reports")
 
 
 @cog_i18n(_)
-class Reports:
+class Reports(commands.Cog):
 
     default_guild_settings = {"output_channel": None, "active": False, "next_ticket": 1}
 
@@ -40,6 +41,7 @@ class Reports:
     ]
 
     def __init__(self, bot: Red):
+        super().__init__()
         self.bot = bot
         self.config = Config.get_conf(self, 78631113035100160, force_registration=True)
         self.config.register_guild(**self.default_guild_settings)
@@ -135,13 +137,14 @@ class Reports:
         output += "\n{}".format(prompt)
 
         for page in pagify(output, delims=["\n"]):
-            dm = await author.send(box(page))
-
-        def pred(m):
-            return m.author == author and m.channel == dm.channel
+            await author.send(box(page))
 
         try:
-            message = await self.bot.wait_for("message", check=pred, timeout=45)
+            message = await self.bot.wait_for(
+                "message",
+                check=MessagePredicate.same_context(channel=author.dm_channel, user=author),
+                timeout=45,
+            )
         except asyncio.TimeoutError:
             await author.send(_("You took too long to select. Try again later."))
             return None
@@ -246,7 +249,7 @@ class Reports:
             val = await self.send_report(_m, guild)
         else:
             try:
-                dm = await author.send(
+                await author.send(
                     _(
                         "Please respond to this message with your Report."
                         "\nYour report should be a single message"
@@ -255,11 +258,12 @@ class Reports:
             except discord.Forbidden:
                 return await ctx.send(_("This requires DMs enabled."))
 
-            def pred(m):
-                return m.author == author and m.channel == dm.channel
-
             try:
-                message = await self.bot.wait_for("message", check=pred, timeout=180)
+                message = await self.bot.wait_for(
+                    "message",
+                    check=MessagePredicate.same_context(ctx, channel=author.dm_channel),
+                    timeout=180,
+                )
             except asyncio.TimeoutError:
                 return await author.send(_("You took too long. Try again later."))
             else:

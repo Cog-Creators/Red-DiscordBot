@@ -54,10 +54,11 @@ def check_global_setting_admin():
 
 
 @cog_i18n(_)
-class Bank:
+class Bank(commands.Cog):
     """Bank"""
 
     def __init__(self, bot: Red):
+        super().__init__()
         self.bot = bot
 
     # SECTION commands

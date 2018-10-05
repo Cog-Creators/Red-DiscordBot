@@ -238,6 +238,29 @@ class Group(Value):
         else:
             return Value(identifiers=new_identifiers, default_value=None, driver=self.driver)
 
+    async def clear_raw(self, *nested_path: str):
+        """
+        Allows a developer to clear data as if it was stored in a standard
+        Python dictionary.
+
+        For example::
+
+            await conf.clear_raw("foo", "bar")
+
+            # is equivalent to
+
+            data = {"foo": {"bar": None}}
+            del data["foo"]["bar"]
+
+        Parameters
+        ----------
+        nested_path : str
+            Multiple arguments that mirror the arguments passed in for nested
+            dict access.
+        """
+        path = [str(p) for p in nested_path]
+        await self.driver.clear(*self.identifiers, *path)
+
     def is_group(self, item: str) -> bool:
         """A helper method for `__getattr__`. Most developers will have no need
         to use this.

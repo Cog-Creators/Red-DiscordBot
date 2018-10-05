@@ -6,17 +6,19 @@ from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.cogs.dataconverter.core_specs import SpecResolver
 from redbot.core.utils.chat_formatting import box
+from redbot.core.utils.predicates import MessagePredicate
 
 _ = Translator("DataConverter", __file__)
 
 
 @cog_i18n(_)
-class DataConverter:
+class DataConverter(commands.Cog):
     """
     Cog for importing Red v2 Data
     """
 
     def __init__(self, bot: Red):
+        super().__init__()
         self.bot = bot
 
     @checks.is_owner()
@@ -47,11 +49,10 @@ class DataConverter:
 
             menu_message = await ctx.send(box(menu))
 
-            def pred(m):
-                return m.channel == ctx.channel and m.author == ctx.author
-
             try:
-                message = await self.bot.wait_for("message", check=pred, timeout=60)
+                message = await self.bot.wait_for(
+                    "message", check=MessagePredicate.same_context(ctx), timeout=60
+                )
             except asyncio.TimeoutError:
                 return await ctx.send(_("Try this again when you are more ready"))
             else:
