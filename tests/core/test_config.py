@@ -388,7 +388,7 @@ async def test_value_ctxmgr_saves(config):
 @pytest.mark.asyncio
 async def test_toggle(config):
     config.register_global(foo=True)
-    value = await config.list1.toggle()
+    value = await config.foo.toggle()
     assert value is False
 
 
@@ -396,8 +396,8 @@ async def test_toggle(config):
 async def test_inc_values(config):
     defaults = {"bar": 0, "baz": {"subgroup": 10}}
     config.register_global(foo=defaults)
-    negative = await config.bar.inc(-5)
-    nested = await config.baz.subgroup.inc(10)
+    negative = await config.foo.bar.inc(-5)
+    nested = await config.foo.baz.subgroup.inc(10)
     assert negative == -5
     assert nested == 20
 
