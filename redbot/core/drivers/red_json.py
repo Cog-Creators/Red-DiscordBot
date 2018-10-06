@@ -101,15 +101,42 @@ class JSON(BaseDriver):
         return copy.deepcopy(partial)
 
     async def set(self, *identifiers: str, value=None):
+        partial, full_identifiers = self._build_from_partial(identifiers)
+        partial[full_identifiers[-1]] = copy.deepcopy(value)
+        await self.jsonIO._threadsafe_save_json(self.data)
+
+    async def inc(self, *identifiers: str, value: int = None, default):
+        partial, full_identifiers = self._build_from_partial(identifiers)
+
+        try:
+            partial[full_identifiers[-1]] += value
+        except KeyError:
+            partial[full_identifiers[-1]] = default + value
+
+        new_value = partial[full_identifiers[-1]]
+        await self.jsonIO._threadsafe_save_json(self.data)
+        return new_value
+
+    async def toggle(self, *identifiers: str, default):
+        partial, full_identifiers = self._build_from_partial(identifiers)
+
+        try:
+            partial[full_identifiers[-1]] ^= True
+        except KeyError:
+            partial[full_identifiers[-1]] = not default
+
+        new_value = partial[full_identifiers[-1]]
+        await self.jsonIO._threadsafe_save_json(self.data)
+        return new_value
+
+    def _build_from_partial(self, identifiers):
         partial = self.data
         full_identifiers = (self.unique_cog_identifier, *identifiers)
         for i in full_identifiers[:-1]:
             if i not in partial:
                 partial[i] = {}
             partial = partial[i]
-
-        partial[full_identifiers[-1]] = copy.deepcopy(value)
-        await self.jsonIO._threadsafe_save_json(self.data)
+        return partial, full_identifiers
 
     async def clear(self, *identifiers: str):
         partial = self.data
