@@ -386,6 +386,39 @@ async def test_value_ctxmgr_saves(config):
 
 
 @pytest.mark.asyncio
+async def test_toggle(config):
+    config.register_global(foo=True)
+    value = await config.list1.toggle()
+    assert value is False
+
+
+@pytest.mark.asyncio
+async def test_inc_values(config):
+    defaults = {"bar": 0, "baz": {"subgroup": 10}}
+    config.register_global(foo=defaults)
+    negative = await config.bar.inc(-5)
+    nested = await config.baz.subgroup.inc(10)
+    assert negative == -5
+    assert nested == 20
+
+
+@pytest.mark.asyncio
+async def test_toggle_bad_values(config):
+    config.register_global(foo=5)
+    with pytest.raises(TypeError):
+        await config.foo.toggle()
+
+
+@pytest.mark.asyncio
+async def test_inc_bad_values(config):
+    defaults = {"foo": "bar", "baz": True}
+    config.register_global(defaults)
+    with pytest.raises(TypeError):
+        await config.foo.inc(10)
+        await config.baz.inc(10)
+
+
+@pytest.mark.asyncio
 async def test_value_ctxmgr_immutable(config):
     config.register_global(foo=True)
 
