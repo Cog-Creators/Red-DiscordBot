@@ -9,7 +9,7 @@ _conn = None
 
 
 def _initialize(**kwargs):
-    kwargs.get("URI", "mongodb")
+    uri = kwargs.get("URI", "mongodb")
     host = kwargs["HOST"]
     port = kwargs["PORT"]
     admin_user = kwargs["USERNAME"]
@@ -103,6 +103,43 @@ class Mongo(BaseDriver):
             update={"$set": {dot_identifiers: value}},
             upsert=True,
         )
+
+    async def inc(self, *identifiers: str, value: int, default):
+        dot_identifiers = ".".join(identifiers)
+
+        mongo_collection = self.get_collection()
+
+        try:
+            await self.get(*identifiers)
+        except KeyError:
+            value = default + value
+
+        await mongo_collection.update_one(
+            {"_id": self.unique_cog_identifier},
+            update={"$inc": {dot_identifiers: value}},
+            upsert=True,
+        )
+        return await self.get(*identifiers)
+
+    async def toggle(self, *identifiers: str, default):
+        mongo_collection = self.get_collection()
+        dot_identifiers = ".".join(identifiers)
+
+        try:
+            current = await self.get(*identifiers)
+        except KeyError:
+            await self.set(*identifiers, value=(not default))
+            return not default
+        # If the target is not a boolean value
+        if not isinstance(current, bool):
+            raise TypeError("Target value must be a Boolean to use toggle.")
+
+        await mongo_collection.update_one(
+            {"_id": self.unique_cog_identifier},
+            update={"$bit": {dot_identifiers: {"xor": True}}},
+            upsert=True,
+        )
+        return await self.get(*identifiers)
 
     async def clear(self, *identifiers: str):
         dot_identifiers = ".".join(identifiers)
