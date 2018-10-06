@@ -13,17 +13,20 @@ from collections import namedtuple
 from pathlib import Path
 from random import SystemRandom
 from string import ascii_letters, digits
-from distutils.version import StrictVersion
 from typing import TYPE_CHECKING, Union
 
 import aiohttp
 import discord
 import pkg_resources
 
-from redbot.core import __version__
-from redbot.core import checks
-from redbot.core import i18n
-from redbot.core import commands
+from redbot.core import (
+    __version__,
+    version_info as red_version_info,
+    VersionInfo,
+    checks,
+    commands,
+    i18n,
+)
 from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import pagify, box, inline
 
@@ -274,7 +277,7 @@ class Core(commands.Cog, CoreLogic):
         async with aiohttp.ClientSession() as session:
             async with session.get("{}/json".format(red_pypi)) as r:
                 data = await r.json()
-        outdated = StrictVersion(data["info"]["version"]) > StrictVersion(__version__)
+        outdated = VersionInfo.from_str(data["info"]["version"]) > red_version_info
         about = (
             "This is an instance of [Red, an open source Discord bot]({}) "
             "created by [Twentysix]({}) and [improved by many]({}).\n\n"
