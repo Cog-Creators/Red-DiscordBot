@@ -151,6 +151,64 @@ class Value:
         """
         await self.driver.set(*self.identifiers, value=value)
 
+    async def inc(self, value: int) -> int:
+        """Increment and return the value of the data element pointed to by `identifiers`.
+
+        Example
+        -------
+        ::
+
+            # Increments and returns a global value "foo" by 3.
+            new = await conf.foo.inc(3)
+
+            # You can also decrement a value using by negative numbers
+            new = await conf.foo.inc(-3)
+
+            # Floats are also supported
+            new = await conf.foo.inc(3.834)
+
+        Parameters
+        ----------
+        value : int
+            Integer that will be used to increment a value.
+
+        Returns
+        -------
+        `int` or `float`
+            The stored value plus the value given as a integer or float.
+
+        """
+        if isinstance(self.default, bool) or not isinstance(self.default, (int, float)):
+            raise TypeError("Config inc method only supports integer or float values.")
+        try:
+            new_value = await self.driver.inc(*self.identifiers, value=value, default=self.default)
+        except TypeError as e:
+            raise TypeError("Config inc method requires an integer or float for value.") from e
+        return new_value
+
+    async def toggle(self) -> bool:
+        """Toggles a Boolean value between True and False as pointed to by `identifiers`.
+
+        Example
+        -------
+        ::
+
+            # Assume the global value "foo" is currently True.
+            # The following will change it to False, and return the result.
+            new = await conf.foo.toggle()
+
+        Returns
+        -------
+        `bool`
+            The opposite of the originally stored value.
+
+        """
+        if not isinstance(self.default, bool):
+            raise TypeError("Config toggle method can only toggle Boolean values.")
+
+        new_value = await self.driver.toggle(*self.identifiers, default=self.default)
+        return new_value
+
     async def clear(self):
         """
         Clears the value from record for the data element pointed to by `identifiers`.
