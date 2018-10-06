@@ -116,3 +116,24 @@ What is the element symbol of "Fermium"?`Fm
 What is the element symbol of "Mendelevium"?`Md
 What is the element symbol of "Nobelium"?`No
 What is the element symbol of "Lawrencium"?`Lr
+What element is the heaviest of the naturally-occurring Noble gases?`Radon
+What is the atomic number of Hydrogen?`1`One
+What is the atomic number of Boron?`5`Five
+The name of heaviest element with a one letter atomic symbol is`Uranium
+Which of these 4 elements (Nitrogen, Boron, Helium, Chlorine) is the most reactive?`Chlorine
+What is the lightest element with an atomic symbol that is not related to its English name?`Sodium
+What was the first element to be produced artificially?`Technetium
+What element is the most electronegative and reactive of all elements?`Fluorine
+What is the least reactive element of these four? (Fluorine, Carbon, Magnesium, Neon)`Neon
+What element's three isotopes have different names?`Hydrogen
+What element is found in diamonds?`Carbon
+What element is named after Copenhagen, Denmark?`Hafnium
+Which element has close to 10,000,000 known compounds?`Carbon
+The most abundant element in the human body (by weight) is`Oxygen
+Mendeleev's periodic table organized the elements in order of`increasing atomic weight
+Although heavier elements exist in stars, the heaviest element that may be produced by fusion in a star is`Iron
+The color of molten sulfur is`Red
+What color does white phosphorus glow when oxidizing in air?`Green
+What is the lightest metallic element which floats on water?`Lithium
+The only element in the halide family that is a liquid at room temperature and pressure is`Bromine
+The most common isotope of hydrogen has no neutrons. True or False?`True

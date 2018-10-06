@@ -588,7 +588,7 @@ Who is the smallest champion in the game itself?`Teemo
 Who is rumored to be Teemo's girlfriend?`Tristana
 Who stopped Veigar during his evil plan in Bandle City?`Teemo
 What type of poison does Teemo use in his blowgun?`Arjunta
-Who has a Badger skin?`
+Who has a Badger skin?`Teemo
 Who was the original member of the Omega Squad?`Teemo
 Who has a skill called "The Box"?`Thresh
 Who has a skill that says "You have opened the box. Your prize: death." in the Death Recap?`Thresh
