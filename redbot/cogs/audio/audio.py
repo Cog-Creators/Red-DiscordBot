@@ -253,7 +253,9 @@ class Audio(commands.Cog):
 
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         await self.config.guild(ctx.guild).dj_enabled.set(not dj_enabled)
-        await self._embed_msg(ctx, "DJ role enabled: {}.".format(not dj_enabled))
+        await self._embed_msg(
+            ctx, _("DJ role enabled: {true_or_false}.".format(true_or_false=not dj_enabled))
+        )
 
     @audioset.command()
     @checks.mod_or_permissions(administrator=True)
@@ -332,7 +334,7 @@ class Audio(commands.Cog):
         jarbuild = redbot.core.__version__
 
         vote_percent = data["vote_percent"]
-        msg = "----" + _("Server Settings") + "----"
+        msg = "----" + _("Server Settings") + "----\n"
         if emptydc_enabled:
             msg += _("Disconnect timer: [{num_seconds}]\n").format(
                 num_seconds=self._dynamic_time(emptydc_timer)
@@ -370,7 +372,9 @@ class Audio(commands.Cog):
         """Toggle displaying a thumbnail on audio messages."""
         thumbnail = await self.config.guild(ctx.guild).thumbnail()
         await self.config.guild(ctx.guild).thumbnail.set(not thumbnail)
-        await self._embed_msg(ctx, _("Thumbnail display: {}.").format(not thumbnail))
+        await self._embed_msg(
+            ctx, _("Thumbnail display: {true_or_false}.").format(true_or_false=not thumbnail)
+        )
 
     @audioset.command()
     @checks.mod_or_permissions(administrator=True)
@@ -565,6 +569,8 @@ class Audio(commands.Cog):
         if dj_enabled:
             if not await self._can_instaskip(ctx, ctx.author):
                 return await menu(ctx, folder_page_list, DEFAULT_CONTROLS)
+            else:
+                await menu(ctx, folder_page_list, LOCAL_FOLDER_CONTROLS)
         else:
             await menu(ctx, folder_page_list, LOCAL_FOLDER_CONTROLS)
 
@@ -1097,7 +1103,7 @@ class Audio(commands.Cog):
                     (
                         bold(playlist_name),
                         _("Tracks: {num}").format(num=len(tracks)),
-                        _("Author: {name}").format(self.bot.get_user(author)),
+                        _("Author: {name}\n").format(name=self.bot.get_user(author)),
                     )
                 )
             )
@@ -1533,9 +1539,9 @@ class Audio(commands.Cog):
                 )
         else:
             queue_list += _("Playing: ")
-        queue_list += "**[{current.title}]({current.uri})**\n".format(current=player.current)
-        queue_list += _("Requested by: **{user}**").format(user=player.current.requester)
-        queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
+            queue_list += "**[{current.title}]({current.uri})**\n".format(current=player.current)
+            queue_list += _("Requested by: **{user}**").format(user=player.current.requester)
+            queue_list += f"\n\n{arrow}`{pos}`/`{dur}`\n\n"
 
         for i, track in enumerate(
             player.queue[queue_idx_start:queue_idx_end], start=queue_idx_start
@@ -2360,7 +2366,7 @@ class Audio(commands.Cog):
         if await self._check_external():
             embed = discord.Embed(
                 colour=await ctx.embed_colour(),
-                title=_("Websocket port set to {}.").format(ws_port),
+                title=_("Websocket port set to {port}.").format(port=ws_port),
             )
             embed.set_footer(text=_("External lavalink server set to True."))
             await ctx.send(embed=embed)
