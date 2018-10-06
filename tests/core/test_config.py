@@ -412,7 +412,7 @@ async def test_toggle_bad_values(config):
 @pytest.mark.asyncio
 async def test_inc_bad_values(config):
     defaults = {"foo": "bar", "baz": True}
-    config.register_global(defaults)
+    config.register_global(foo=defaults)
     with pytest.raises(TypeError):
         await config.foo.inc(10)
         await config.baz.inc(10)
