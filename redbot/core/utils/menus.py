@@ -104,7 +104,7 @@ async def next_page(
     timeout: float,
     emoji: str,
 ):
-    perms = message.channel.permissions_for(ctx.guild.me)
+    perms = message.channel.permissions_for(ctx.me)
     if perms.manage_messages:  # Can manage messages, so remove react
         try:
             await message.remove_reaction(emoji, ctx.author)
@@ -126,17 +126,17 @@ async def prev_page(
     timeout: float,
     emoji: str,
 ):
-    perms = message.channel.permissions_for(ctx.guild.me)
+    perms = message.channel.permissions_for(ctx.me)
     if perms.manage_messages:  # Can manage messages, so remove react
         try:
             await message.remove_reaction(emoji, ctx.author)
         except discord.NotFound:
             pass
     if page == 0:
-        next_page = len(pages) - 1  # Loop around to the last item
+        page = len(pages) - 1  # Loop around to the last item
     else:
-        next_page = page - 1
-    return await menu(ctx, pages, controls, message=message, page=next_page, timeout=timeout)
+        page = page - 1
+    return await menu(ctx, pages, controls, message=message, page=page, timeout=timeout)
 
 
 async def close_menu(
