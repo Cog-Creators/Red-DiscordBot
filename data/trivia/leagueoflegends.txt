@@ -730,7 +730,7 @@ Who does Zilean have an antagonistic relationship with?`Volibear
 Name a champion from the Void destroyed city of Icathia?`Jax or Zilean`Jax`Zilean
 Who joined the league to find a cure for chrono-displasia?`Zilean
 Who has a Groovy skin?`Zilean
-How long does Zilean's ultimate ability's resurrection stasis last?`3 seconds 
+How long does Zilean's ultimate ability's resurrection stasis last?`3 seconds
 Name a champion with a non-ultimate ability that cannot be taken at level 1?`Azir or Zilean`Azir`Zilean
 Who woke up Skarner?`Zilean
 Which character's walk cycles can be toggled in game?`Zoe
