@@ -359,7 +359,7 @@ class Admin(commands.Cog):
         selfroles = await self._valid_selfroles(ctx.guild)
         fmt_selfroles = "\n".join(["+ " + r.name for r in selfroles])
 
-        msg = _("Available Selfroles: {selfroles}").format(selfroles=fmt_selfroles)
+        msg = _("Available Selfroles:\n{selfroles}").format(selfroles=fmt_selfroles)
         await ctx.send(box(msg, "diff"))
 
     async def _serverlock_check(self, guild: discord.Guild) -> bool:
