@@ -13,7 +13,6 @@ from collections import namedtuple
 from pathlib import Path
 from random import SystemRandom
 from string import ascii_letters, digits
-from distutils.version import StrictVersion
 from typing import TYPE_CHECKING, Union
 
 import aiohttp
@@ -259,7 +258,7 @@ class Core(commands.Cog, CoreLogic):
         author_repo = "https://github.com/Twentysix26"
         org_repo = "https://github.com/Cog-Creators"
         red_repo = org_repo + "/Red-DiscordBot"
-        red_pypi = "https://pypi.python.org/pypi/Red-DiscordBot"
+        red_pypi = "https://pypi.org/pypi/Red-DiscordBot"
         support_server_url = "https://discord.gg/red"
         dpy_repo = "https://github.com/Rapptz/discord.py"
         python_url = "https://www.python.org/"
@@ -274,7 +273,13 @@ class Core(commands.Cog, CoreLogic):
         async with aiohttp.ClientSession() as session:
             async with session.get("{}/json".format(red_pypi)) as r:
                 data = await r.json()
-        outdated = StrictVersion(data["info"]["version"]) > StrictVersion(__version__)
+        newest_version_released_at = datetime.datetime.strptime(
+            data["releases"][data["info"]["version"], "%Y-%m-%dT%H:%M:%S"
+        )
+        installed_version_released_at = datetime.datetime.strptime(
+            data["releases"][__version__], "%Y-%m-%dT%H:%M:%S"
+        )
+        outdated = newest_version_released_at > installed_version_released_at
         about = (
             "This is an instance of [Red, an open source Discord bot]({}) "
             "created by [Twentysix]({}) and [improved by many]({}).\n\n"

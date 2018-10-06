@@ -3,8 +3,7 @@ import codecs
 import datetime
 import logging
 import traceback
-from datetime import timedelta
-from distutils.version import StrictVersion
+from datetime import timedelta, datetime
 from typing import List
 
 import aiohttp
@@ -127,9 +126,16 @@ def init_events(bot, cli_flags):
 
         try:
             async with aiohttp.ClientSession() as session:
-                async with session.get("https://pypi.python.org/pypi/red-discordbot/json") as r:
+                async with session.get("{}/json".format(red_pypi)) as r:
                     data = await r.json()
-            if StrictVersion(data["info"]["version"]) > StrictVersion(red_version):
+            newest_version_released_at = datetime.strptime(
+                data["releases"][data["info"]["version"], "%Y-%m-%dT%H:%M:%S"
+            )
+            installed_version_released_at = datetime.strptime(
+                data["releases"][__version__], "%Y-%m-%dT%H:%M:%S"
+            )
+            outdated = newest_version_released_at > installed_version_released_at
+            if outdated:
                 INFO.append(
                     "Outdated version! {} is available "
                     "but you're using {}".format(data["info"]["version"], red_version)
