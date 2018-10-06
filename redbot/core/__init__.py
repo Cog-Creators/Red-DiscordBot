@@ -5,7 +5,7 @@ __all__ = ["Config", "__version__"]
 
 class VersionInfo:
     def __init__(self, major, minor, micro, releaselevel, serial):
-        self._levels = ["alpha", "beta", "final"]
+        self._levels = ["alpha", "beta", "rc", "final"]
         self.major = major
         self.minor = minor
         self.micro = micro
@@ -36,5 +36,5 @@ class VersionInfo:
         return [self.major, self.minor, self.micro, self.releaselevel, self.serial]
 
 
-__version__ = "3.0.0b21"
-version_info = VersionInfo(3, 0, 0, "beta", 21)
+__version__ = "3.0.0rc1"
+version_info = VersionInfo(3, 0, 0, "rc", 1)
