@@ -30,7 +30,7 @@ As of 2015, among all the 17 long anime movies Hayao Miyazaki participated in, h
 (Attack on Titan) What color flare is used when the mission is over whether or nor it was a success?`Yellow
 (Attack on Titan) Who killed Rod Reiss?`Historia
 (Attack on Titan) What was the name of Levi's mother?`Kuchel
-(Attack on Titan) Who taught Annie how to fight?`Her father`Father
+(Attack on Titan) Who taught Annie how to fight?`Her father`Father`Mr. Leonhart`mr leonhart
 (Attack on Titan) What was the name of Historia's mother?`Alma
 (Attack on Titan) What protects the Colossal titan?`Steam
 (Attack on Titan) What is the name of the wall in Wall Sina's northern district?`Orvud
@@ -52,12 +52,12 @@ English name of Kuroshitsuji?`Black Butler
 Which series features a location called the Soul Society?`Bleach
 (Bleach) How many times have Ichigo and Renji battled?`2`two
 (Bleach) What squad is Toushiro Hitsugaya the captain of?`10`10th`tenth`ten
-(Bleach) Human mediums, having the ability to detect the existence of Hollows?`Quincy
+(Bleach) What are human mediums who have the ability to detect the existence of Hollows called?`Quincy
 (Bleach) What is a Hollow that has removed its mask and has gained Shinigami-like powers?`Arrancar
 (Bleach) What is the name of Hitsugaya Toshirou's Zanpakutou?`Hyourinmaru
 (Bleach) Who does Orikasa Fumiko voice?`Rukia
 (Bleach) Who are Shinigami who have obtained Hollow powers?`Visored
-(Bleach) Who are the top ranked Arrancar?`Espada
+(Bleach) What are the top ranked Arrancar called?`Espada
 (Bleach) What is the name of Orihime's power which is manifested through her hairpins?`Shun Shun Rikka
 (Bleach) What is the name of Urahara's Zanpakutou?`Benihime
 (Bleach) What is the name of Ichigo's Zanpakutou?`Zangetsu
@@ -309,7 +309,7 @@ Sakura, Sasuke, Rock Lee, and Kakashi are all characters from which anime?`Narut
 (Naruto) Where did the Uzumaki clan originate from?`Uzushiogakure`Land of Whirlpools`Hidden Eddy Village
 (Naruto) Who used the Six Red Yang Formation?`Obito
 (Naruto) Who is officially the Sixth Hokage at the end of the manga series?`Kakashi
-(Neon Genesis Evangelion)Who is the pilot of Unit-02?`asuka langley-soryu`asuka langley soryu
+(Neon Genesis Evangelion) Who is the pilot of Unit-02?`asuka langley-soryu`asuka langley soryu
 (Neon Genesis Evangelion) In what year did the show start airing?`1995
 (No Game No Life) How many races exist in Disboard?`16`sixteen
 (One Piece) Luffy ate what Devil Fruit?`Gomu Gomu`gum gum
