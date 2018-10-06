@@ -218,7 +218,7 @@ class Economy(commands.Cog):
         else:
             await bank.set_balance(to, creds.sum)
             await ctx.send(
-                _("{author} set {users}'s account balance to {num} {currency}.").format(
+                _("{author} set {user}'s account balance to {num} {currency}.").format(
                     author=author.display_name,
                     num=creds.sum,
                     currency=currency,
