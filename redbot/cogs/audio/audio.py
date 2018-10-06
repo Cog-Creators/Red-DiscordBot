@@ -253,7 +253,9 @@ class Audio(commands.Cog):
 
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         await self.config.guild(ctx.guild).dj_enabled.set(not dj_enabled)
-        await self._embed_msg(ctx, _("DJ role enabled: {true_or_false}.".format(true_or_false=not dj_enabled)))
+        await self._embed_msg(
+            ctx, _("DJ role enabled: {true_or_false}.".format(true_or_false=not dj_enabled))
+        )
 
     @audioset.command()
     @checks.mod_or_permissions(administrator=True)
@@ -370,7 +372,9 @@ class Audio(commands.Cog):
         """Toggle displaying a thumbnail on audio messages."""
         thumbnail = await self.config.guild(ctx.guild).thumbnail()
         await self.config.guild(ctx.guild).thumbnail.set(not thumbnail)
-        await self._embed_msg(ctx, _("Thumbnail display: {true_or_false}.").format(true_or_false=not thumbnail))
+        await self._embed_msg(
+            ctx, _("Thumbnail display: {true_or_false}.").format(true_or_false=not thumbnail)
+        )
 
     @audioset.command()
     @checks.mod_or_permissions(administrator=True)
