@@ -5,14 +5,13 @@ from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import pagify
-from redbot.core.utils.mod import is_mod_or_superior
 
 _ = Translator("Filter", __file__)
 
 
 @cog_i18n(_)
 class Filter(commands.Cog):
-    """Filter-related commands"""
+    """Filter unwanted words and phrases from text channels."""
 
     def __init__(self, bot: Red):
         super().__init__()
@@ -35,7 +34,8 @@ class Filter(commands.Cog):
     def __unload(self):
         self.register_task.cancel()
 
-    async def register_filterban(self):
+    @staticmethod
+    async def register_filterban():
         try:
             await modlog.register_casetype(
                 "filterban", False, ":filing_cabinet: :hammer:", "Filter ban", "ban"
@@ -47,18 +47,17 @@ class Filter(commands.Cog):
     @commands.guild_only()
     @checks.admin_or_permissions(manage_guild=True)
     async def filterset(self, ctx: commands.Context):
-        """
-        Filter settings
-        """
+        """Manage filter settings."""
         pass
 
     @filterset.command(name="defaultname")
     async def filter_default_name(self, ctx: commands.Context, name: str):
-        """Sets the default name to use if filtering names is enabled
+        """Set the nickname for users with a filtered name.
 
         Note that this has no effect if filtering names is disabled
+        (to toggle, run `[p]filter names`).
 
-        The default name used is John Doe
+        The default name used is *John Doe*.
         """
         guild = ctx.guild
         await self.settings.guild(guild).filter_default_name.set(name)
@@ -66,9 +65,12 @@ class Filter(commands.Cog):
 
     @filterset.command(name="ban")
     async def filter_ban(self, ctx: commands.Context, count: int, timeframe: int):
-        """Autobans if the specified number of messages are filtered in the timeframe
+        """Set the filter's autoban conditions.
 
-        The timeframe is represented by seconds.
+        Users will be banned if they send `<count>` filtered words in
+        `<timeframe>` seconds.
+
+        Set both to zero to disable autoban.
         """
         if (count <= 0) != (timeframe <= 0):
             await ctx.send(
@@ -91,11 +93,13 @@ class Filter(commands.Cog):
     @commands.guild_only()
     @checks.mod_or_permissions(manage_messages=True)
     async def _filter(self, ctx: commands.Context):
-        """Adds/removes words from server filter
+        """Add or remove words from server filter.
 
-        Use double quotes to add/remove sentences
-        Using this command with no subcommands will send
-        the list of the server's filtered words."""
+        Use double quotes to add or remove sentences.
+
+        Using this command with no subcommands will send the list of
+        the server's filtered words.
+        """
         if ctx.invoked_subcommand is None:
             server = ctx.guild
             author = ctx.author
@@ -111,11 +115,13 @@ class Filter(commands.Cog):
 
     @_filter.group(name="channel")
     async def _filter_channel(self, ctx: commands.Context):
-        """Adds/removes words from channel filter
+        """Add or remove words from channel filter.
 
-        Use double quotes to add/remove sentences
-        Using this command with no subcommands will send
-        the list of the channel's filtered words."""
+        Use double quotes to add or remove sentences.
+
+        Using this command with no subcommands will send the list of
+        the channel's filtered words.
+        """
         if ctx.invoked_subcommand is None:
             channel = ctx.channel
             author = ctx.author
@@ -131,12 +137,14 @@ class Filter(commands.Cog):
 
     @_filter_channel.command("add")
     async def filter_channel_add(self, ctx: commands.Context, *, words: str):
-        """Adds words to the filter
+        """Add words to the filter.
 
-        Use double quotes to add sentences
+        Use double quotes to add sentences.
+
         Examples:
-        filter add word1 word2 word3
-        filter add \"This is a sentence\""""
+        - `[p]filter channel add word1 word2 word3`
+        - `[p]filter channel add "This is a sentence"`
+        """
         channel = ctx.channel
         split_words = words.split()
         word_list = []
@@ -161,12 +169,14 @@ class Filter(commands.Cog):
 
     @_filter_channel.command("remove")
     async def filter_channel_remove(self, ctx: commands.Context, *, words: str):
-        """Remove words from the filter
+        """Remove words from the filter.
 
-        Use double quotes to remove sentences
+        Use double quotes to remove sentences.
+
         Examples:
-        filter remove word1 word2 word3
-        filter remove \"This is a sentence\""""
+        - `[p]filter channel remove word1 word2 word3`
+        - `[p]filter channel remove "This is a sentence"`
+        """
         channel = ctx.channel
         split_words = words.split()
         word_list = []
@@ -191,12 +201,14 @@ class Filter(commands.Cog):
 
     @_filter.command(name="add")
     async def filter_add(self, ctx: commands.Context, *, words: str):
-        """Adds words to the filter
+        """Add words to the filter.
 
-        Use double quotes to add sentences
+        Use double quotes to add sentences.
+
         Examples:
-        filter add word1 word2 word3
-        filter add \"This is a sentence\""""
+        - `[p]filter add word1 word2 word3`
+        - `[p]filter add "This is a sentence"`
+        """
         server = ctx.guild
         split_words = words.split()
         word_list = []
@@ -215,18 +227,20 @@ class Filter(commands.Cog):
                     tmp += word + " "
         added = await self.add_to_filter(server, word_list)
         if added:
-            await ctx.send(_("Words added to filter."))
+            await ctx.send(_("Words successfully added to filter."))
         else:
-            await ctx.send(_("Words already in the filter."))
+            await ctx.send(_("Those words were already in the filter."))
 
     @_filter.command(name="remove")
     async def filter_remove(self, ctx: commands.Context, *, words: str):
-        """Remove words from the filter
+        """Remove words from the filter.
 
-        Use double quotes to remove sentences
+        Use double quotes to remove sentences.
+
         Examples:
-        filter remove word1 word2 word3
-        filter remove \"This is a sentence\""""
+        - `[p]filter remove word1 word2 word3`
+        - `[p]filter remove "This is a sentence"`
+        """
         server = ctx.guild
         split_words = words.split()
         word_list = []
@@ -245,23 +259,23 @@ class Filter(commands.Cog):
                     tmp += word + " "
         removed = await self.remove_from_filter(server, word_list)
         if removed:
-            await ctx.send(_("Words removed from filter."))
+            await ctx.send(_("Words successfully removed from filter."))
         else:
             await ctx.send(_("Those words weren't in the filter."))
 
     @_filter.command(name="names")
     async def filter_names(self, ctx: commands.Context):
-        """Toggles whether or not to check names and nicknames against the filter
+        """Toggle name and nickname filtering.
 
-        This is disabled by default
+        This is disabled by default.
         """
         guild = ctx.guild
         current_setting = await self.settings.guild(guild).filter_names()
         await self.settings.guild(guild).filter_names.set(not current_setting)
         if current_setting:
-            await ctx.send(_("Names and nicknames will no longer be checked against the filter."))
+            await ctx.send(_("Names and nicknames will no longer be filtered."))
         else:
-            await ctx.send(_("Names and nicknames will now be checked against the filter."))
+            await ctx.send(_("Names and nicknames will now be filtered."))
 
     async def add_to_filter(
         self, server_or_channel: Union[discord.Guild, discord.TextChannel], words: list
@@ -327,7 +341,7 @@ class Filter(commands.Cog):
                 if w in message.content.lower():
                     try:
                         await message.delete()
-                    except:
+                    except discord.HTTPException:
                         pass
                     else:
                         if filter_count > 0 and filter_time > 0:
@@ -337,10 +351,10 @@ class Filter(commands.Cog):
                                 user_count >= filter_count
                                 and message.created_at.timestamp() < next_reset_time
                             ):
-                                reason = "Autoban (too many filtered messages.)"
+                                reason = _("Autoban (too many filtered messages.)")
                                 try:
                                     await server.ban(author, reason=reason)
-                                except:
+                                except discord.HTTPException:
                                     pass
                                 else:
                                     await modlog.create_case(
@@ -366,20 +380,6 @@ class Filter(commands.Cog):
 
         await self.check_filter(message)
 
-    async def on_message_edit(self, _, message):
-        author = message.author
-        if message.guild is None or self.bot.user == author:
-            return
-        valid_user = isinstance(author, discord.Member) and not author.bot
-        if not valid_user:
-            return
-
-        # As is anyone configured to be
-        if await self.bot.is_automod_immune(message):
-            return
-
-        await self.check_filter(message)
-
     async def on_message_edit(self, _prior, message):
         # message content has to change for non-bot's currently.
         # if this changes, we should compare before passing it.
@@ -399,14 +399,14 @@ class Filter(commands.Cog):
             return  # Discord Hierarchy applies to nicks
         if await self.bot.is_automod_immune(member):
             return
-        word_list = await self.settings.guild(member.guild).filter()
         if not await self.settings.guild(member.guild).filter_names():
             return
 
+        word_list = await self.settings.guild(member.guild).filter()
         for w in word_list:
             if w in member.display_name.lower():
                 name_to_use = await self.settings.guild(member.guild).filter_default_name()
-                reason = "Filtered nick" if member.nick else "Filtered name"
+                reason = _("Filtered nickname") if member.nick else _("Filtered name")
                 try:
                     await member.edit(nick=name_to_use, reason=reason)
                 except discord.HTTPException:

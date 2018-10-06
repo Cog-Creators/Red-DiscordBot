@@ -67,6 +67,7 @@ def bold(text: str) -> str:
         The marked up text.
 
     """
+    text = escape(text, formatting=True)
     return "**{}**".format(text)
 
 
@@ -104,7 +105,10 @@ def inline(text: str) -> str:
         The marked up text.
 
     """
-    return "`{}`".format(text)
+    if "`" in text:
+        return "``{}``".format(text)
+    else:
+        return "`{}`".format(text)
 
 
 def italics(text: str) -> str:
@@ -121,6 +125,7 @@ def italics(text: str) -> str:
         The marked up text.
 
     """
+    text = escape(text, formatting=True)
     return "*{}*".format(text)
 
 
@@ -276,6 +281,7 @@ def strikethrough(text: str) -> str:
         The marked up text.
 
     """
+    text = escape(text, formatting=True)
     return "~~{}~~".format(text)
 
 
@@ -293,6 +299,7 @@ def underline(text: str) -> str:
         The marked up text.
 
     """
+    text = escape(text, formatting=True)
     return "__{}__".format(text)
 
 

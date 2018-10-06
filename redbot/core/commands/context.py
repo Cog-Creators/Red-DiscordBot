@@ -5,6 +5,7 @@ from discord.ext import commands
 
 from .requires import PermState
 from ..utils.chat_formatting import box
+from ..utils.predicates import MessagePredicate
 from ..utils import common_filters
 
 TICK = "\N{WHITE HEAVY CHECK MARK}"
@@ -140,10 +141,6 @@ class Context(commands.Context):
         messages = tuple(messages)
         ret = []
 
-        more_check = lambda m: (
-            m.author == self.author and m.channel == self.channel and m.content.lower() == "more"
-        )
-
         for idx, page in enumerate(messages, 1):
             if box_lang is None:
                 msg = await self.send(page)
@@ -164,7 +161,11 @@ class Context(commands.Context):
                     "".format(is_are, n_remaining, plural)
                 )
                 try:
-                    resp = await self.bot.wait_for("message", check=more_check, timeout=timeout)
+                    resp = await self.bot.wait_for(
+                        "message",
+                        check=MessagePredicate.lower_equal_to("more", self),
+                        timeout=timeout,
+                    )
                 except asyncio.TimeoutError:
                     await query.delete()
                     break
@@ -174,7 +175,7 @@ class Context(commands.Context):
                     except (discord.HTTPException, AttributeError):
                         # In case the bot can't delete other users' messages,
                         # or is not a bot account
-                        # or chanel is a DM
+                        # or channel is a DM
                         await query.delete()
         return ret
 
