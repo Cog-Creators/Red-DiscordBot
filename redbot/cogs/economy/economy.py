@@ -268,7 +268,7 @@ class Economy(commands.Cog):
                 await ctx.send(
                     _(
                         "{author.mention} Here, take some {currency}. "
-                        "Enjoy! (+{amount} {new_balance}!)\n\n"
+                        "Enjoy! (+{amount} {currency}!)\n\n"
                         "You currently have {new_balance} {currency}.\n\n"
                         "You are currently #{pos} on the global leaderboard!"
                     ).format(
