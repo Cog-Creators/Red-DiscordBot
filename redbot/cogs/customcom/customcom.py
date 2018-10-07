@@ -8,7 +8,7 @@ from typing import Mapping, Tuple, Dict
 import discord
 
 from redbot.core import Config, checks, commands
-from redbot.core.utils.chat_formatting import box, pagify
+from redbot.core.utils.chat_formatting import box, pagify, escape
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.predicates import MessagePredicate
 
@@ -91,6 +91,13 @@ class CommandObj:
         else:
             return ccinfo["response"], ccinfo.get("cooldowns", {})
 
+    async def get_full(self, message: discord.Message, command: str) -> Dict:
+        ccinfo = await self.db(message.guild).commands.get_raw(command, default=None)
+        if ccinfo:
+            return ccinfo
+        else:
+            raise NotFound()
+
     async def create(self, ctx: commands.Context, command: str, *, response):
         """Create a custom command"""
         # Check if this command is already registered as a customcommand
@@ -100,7 +107,7 @@ class CommandObj:
         ctx.cog.prepare_args(response if isinstance(response, str) else response[0])
         author = ctx.message.author
         ccinfo = {
-            "author": {"id": author.id, "name": author.name},
+            "author": {"id": author.id, "name": str(author)},
             "command": command,
             "cooldowns": {},
             "created_at": self.get_now(),
@@ -293,8 +300,8 @@ class CustomCommands(commands.Cog):
     @customcom.command(name="delete")
     @checks.mod_or_permissions(administrator=True)
     async def cc_delete(self, ctx, command: str.lower):
-        """Delete a custom command
-.
+        """Delete a custom command.
+
         Example:
         - `[p]customcom delete yourcommand`
         """
@@ -360,6 +367,52 @@ class CustomCommands(commands.Cog):
         else:
             for page in pagify(commands, delims=[" ", "\n"]):
                 await ctx.author.send(box(page))
+
+    @customcom.command(name="show")
+    async def cc_show(self, ctx, command_name: str):
+        """Shows a custom command's reponses and its settings."""
+
+        try:
+            cmd = await self.commandobj.get_full(ctx.message, command_name)
+        except NotFound:
+            ctx.send(_("I could not not find that custom command."))
+            return
+
+        responses = cmd["response"]
+
+        if isinstance(responses, str):
+            responses = [responses]
+
+        author = ctx.guild.get_member(cmd["author"]["id"])
+        # If the author is still in the server, show their current name
+        if author:
+            author = "{} ({})".format(author, cmd["author"]["id"])
+        else:
+            author = "{} ({})".format(cmd["author"]["name"], cmd["author"]["id"])
+
+        _type = _("Random") if len(responses) > 1 else _("Normal")
+
+        text = _(
+            "Command: {}\n"
+            "Author: {}\n"
+            "Created: {}\n"
+            "Type: {}\n".format(command_name, author, cmd["created_at"], _type)
+        )
+
+        cooldowns = cmd["cooldowns"]
+
+        if cooldowns:
+            cooldown_text = _("Cooldowns:\n")
+            for rate, per in cooldowns.items():
+                cooldown_text += _("{} seconds per {}\n".format(per, rate))
+            text += cooldown_text
+
+        text += _("Responses:\n")
+        responses = ["- " + r for r in responses]
+        text += "\n".join(responses)
+
+        for p in pagify(text):
+            await ctx.send(box(p, lang="yaml"))
 
     async def on_message(self, message):
         is_private = isinstance(message.channel, discord.abc.PrivateChannel)
