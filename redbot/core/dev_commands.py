@@ -116,7 +116,7 @@ class Dev(commands.Cog):
             await ctx.send(box("{}: {!s}".format(type(e).__name__, e), lang="py"))
             return
 
-        if asyncio.iscoroutine(result):
+        if inspect.isawaitable(result):
             result = await result
 
         self._last_result = result
