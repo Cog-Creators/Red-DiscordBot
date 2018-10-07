@@ -43,11 +43,8 @@ class CommandObj:
 
     @staticmethod
     async def get_commands(config) -> dict:
-        commands = await config.commands()
-        customcommands = {k: v for k, v in commands.items() if commands[k]}
-        if len(customcommands) == 0:
-            return None
-        return customcommands
+        _commands = await config.commands()
+        return {k: v for k, v in _commands.items() if _commands[k]}
 
     async def get_responses(self, ctx):
         intro = _(
@@ -79,7 +76,8 @@ class CommandObj:
                 responses.append(msg.content)
         return responses
 
-    def get_now(self) -> str:
+    @staticmethod
+    def get_now() -> str:
         # Get current time as a string, for 'created_at' and 'edited_at' fields
         # in the ccinfo dict
         return "{:%d/%m/%Y %H:%M:%S}".format(datetime.utcnow())
@@ -312,8 +310,6 @@ class CustomCommands(commands.Cog):
         Example:
         - `[p]customcom edit yourcommand Text you want`
         """
-        command = command.lower()
-
         try:
             await self.commandobj.edit(ctx=ctx, command=command, response=text)
             await ctx.send(_("Custom command successfully edited."))
@@ -353,12 +349,12 @@ class CustomCommands(commands.Cog):
                 continue
             results.append("{command:<15} : {result}".format(command=command, result=result))
 
-        commands = "\n".join(results)
+        _commands = "\n".join(results)
 
-        if len(commands) < 1500:
-            await ctx.send(box(commands))
+        if len(_commands) < 1500:
+            await ctx.send(box(_commands))
         else:
-            for page in pagify(commands, delims=[" ", "\n"]):
+            for page in pagify(_commands, delims=[" ", "\n"]):
                 await ctx.author.send(box(page))
 
     async def on_message(self, message):
@@ -411,11 +407,11 @@ class CustomCommands(commands.Cog):
 
     async def cc_command(self, ctx, *cc_args, raw_response, **cc_kwargs) -> None:
         cc_args = (*cc_args, *cc_kwargs.values())
-        results = re.findall(r"\{([^}]+)\}", raw_response)
+        results = re.findall(r"{([^}]+)\}", raw_response)
         for result in results:
             param = self.transform_parameter(result, ctx.message)
             raw_response = raw_response.replace("{" + result + "}", param)
-        results = re.findall(r"\{((\d+)[^\.}]*(\.[^:}]+)?[^}]*)\}", raw_response)
+        results = re.findall(r"{((\d+)[^.}]*(\.[^:}]+)?[^}]*)\}", raw_response)
         if results:
             low = min(int(result[1]) for result in results)
             for result in results:
@@ -424,9 +420,10 @@ class CustomCommands(commands.Cog):
                 raw_response = raw_response.replace("{" + result[0] + "}", arg)
         await ctx.send(raw_response)
 
-    def prepare_args(self, raw_response) -> Mapping[str, Parameter]:
-        args = re.findall(r"\{(\d+)[^:}]*(:[^\.}]*)?[^}]*\}", raw_response)
-        default = [["ctx", Parameter("ctx", Parameter.POSITIONAL_OR_KEYWORD)]]
+    @staticmethod
+    def prepare_args(raw_response) -> Mapping[str, Parameter]:
+        args = re.findall(r"{(\d+)[^:}]*(:[^.}]*)?[^}]*\}", raw_response)
+        default = [("ctx", Parameter("ctx", Parameter.POSITIONAL_OR_KEYWORD))]
         if not args:
             return OrderedDict(default)
         allowed_builtins = {
@@ -466,7 +463,7 @@ class CustomCommands(commands.Cog):
             try:
                 anno = getattr(discord, anno)
                 # force an AttributeError if there's no discord.py converter
-                getattr(commands.converter, anno.__name__ + "Converter")
+                getattr(commands, anno.__name__ + "Converter")
             except AttributeError:
                 anno = allowed_builtins.get(anno.lower(), Parameter.empty)
             if (
@@ -520,7 +517,8 @@ class CustomCommands(commands.Cog):
         # only update cooldowns if the command isn't on cooldown
         self.cooldowns.update(new_cooldowns)
 
-    def transform_arg(self, result, attr, obj) -> str:
+    @staticmethod
+    def transform_arg(result, attr, obj) -> str:
         attr = attr[1:]  # strip initial dot
         if not attr:
             return str(obj)
@@ -530,7 +528,8 @@ class CustomCommands(commands.Cog):
             return raw_result
         return str(getattr(obj, attr, raw_result))
 
-    def transform_parameter(self, result, message) -> str:
+    @staticmethod
+    def transform_parameter(result, message) -> str:
         """
         For security reasons only specific objects are allowed
         Internals are ignored
