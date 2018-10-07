@@ -748,7 +748,8 @@ class Mod(commands.Cog):
         to send the newly unbanned user
         :returns: :class:`Invite`"""
         guild = ctx.guild
-        if guild.me.permissions.manage_guild:
+        my_perms: discord.Permissions = guild.me.guild_permissions
+        if my_perms.manage_guild or my_perms.administrator:
             if "VANITY_URL" in guild.features:
                 # guild has a vanity url so use it as the one to send
                 return await guild.vanity_invite()

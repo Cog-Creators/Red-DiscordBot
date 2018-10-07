@@ -8,18 +8,14 @@ import asyncio
 import aiohttp
 
 import pkg_resources
-from pathlib import Path
-from distutils.version import StrictVersion
 from redbot.setup import (
     basic_setup,
     load_existing_config,
     remove_instance,
     remove_instance_interaction,
     create_backup,
-    save_config,
 )
-from redbot.core import __version__
-from redbot.core.utils import safe_delete
+from redbot.core import __version__, version_info as red_version_info, VersionInfo
 from redbot.core.cli import confirm
 
 if sys.platform == "linux":
@@ -390,7 +386,7 @@ async def is_outdated():
         async with session.get("{}/json".format(red_pypi)) as r:
             data = await r.json()
             new_version = data["info"]["version"]
-    return StrictVersion(new_version) > StrictVersion(__version__), new_version
+    return VersionInfo.from_str(new_version) > red_version_info, new_version
 
 
 def main_menu():

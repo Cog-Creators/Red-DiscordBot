@@ -94,7 +94,7 @@ class Cleanup(commands.Cog):
         ):
             if message.created_at < two_weeks_ago:
                 break
-            if check(message):
+            if message_filter(message):
                 collected.append(message)
                 if number and number <= len(collected):
                     break
