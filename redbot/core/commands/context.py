@@ -1,11 +1,12 @@
-
 import asyncio
 from typing import Iterable, List
 import discord
 from discord.ext import commands
 
-from redbot.core.utils.chat_formatting import box
-from redbot.core.utils import common_filters
+from .requires import PermState
+from ..utils.chat_formatting import box
+from ..utils.predicates import MessagePredicate
+from ..utils import common_filters
 
 TICK = "\N{WHITE HEAVY CHECK MARK}"
 
@@ -19,6 +20,10 @@ class Context(commands.Context):
 
     This class inherits from `discord.ext.commands.Context`.
     """
+
+    def __init__(self, **attrs):
+        super().__init__(**attrs)
+        self.permission_state: PermState = PermState.NORMAL
 
     async def send(self, content=None, **kwargs):
         """Sends a message to the destination with the content given.
@@ -136,10 +141,6 @@ class Context(commands.Context):
         messages = tuple(messages)
         ret = []
 
-        more_check = lambda m: (
-            m.author == self.author and m.channel == self.channel and m.content.lower() == "more"
-        )
-
         for idx, page in enumerate(messages, 1):
             if box_lang is None:
                 msg = await self.send(page)
@@ -160,7 +161,11 @@ class Context(commands.Context):
                     "".format(is_are, n_remaining, plural)
                 )
                 try:
-                    resp = await self.bot.wait_for("message", check=more_check, timeout=timeout)
+                    resp = await self.bot.wait_for(
+                        "message",
+                        check=MessagePredicate.lower_equal_to("more", self),
+                        timeout=timeout,
+                    )
                 except asyncio.TimeoutError:
                     await query.delete()
                     break
@@ -170,7 +175,7 @@ class Context(commands.Context):
                     except (discord.HTTPException, AttributeError):
                         # In case the bot can't delete other users' messages,
                         # or is not a bot account
-                        # or chanel is a DM
+                        # or channel is a DM
                         await query.delete()
         return ret
 
@@ -237,3 +242,20 @@ class Context(commands.Context):
             )
         else:
             return await self.send(message)
+
+    @property
+    def clean_prefix(self) -> str:
+        """str: The command prefix, but a mention prefix is displayed nicer."""
+        me = self.me
+        return self.prefix.replace(me.mention, f"@{me.display_name}")
+
+    @property
+    def me(self) -> discord.abc.User:
+        """discord.abc.User: The bot member or user object.
+
+        If the context is DM, this will be a `discord.User` object.
+        """
+        if self.guild is not None:
+            return self.guild.me
+        else:
+            return self.bot.user

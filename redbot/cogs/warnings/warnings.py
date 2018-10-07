@@ -15,19 +15,21 @@ from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.mod import is_admin_or_superior
 from redbot.core.utils.chat_formatting import warning, pagify
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
+from redbot.core.utils.predicates import MessagePredicate
 
 _ = Translator("Warnings", __file__)
 
 
 @cog_i18n(_)
-class Warnings:
-    """A warning system for Red"""
+class Warnings(commands.Cog):
+    """Warn misbehaving users and take automated actions."""
 
     default_guild = {"actions": [], "reasons": {}, "allow_custom_reasons": False}
 
     default_member = {"total_points": 0, "status": "", "warnings": {}}
 
     def __init__(self, bot: Red):
+        super().__init__()
         self.config = Config.get_conf(self, identifier=5757575755)
         self.config.register_guild(**self.default_guild)
         self.config.register_member(**self.default_member)
@@ -46,32 +48,42 @@ class Warnings:
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     async def warningset(self, ctx: commands.Context):
-        """Warning settings"""
+        """Manage settings for Warnings."""
         pass
 
     @warningset.command()
     @commands.guild_only()
     async def allowcustomreasons(self, ctx: commands.Context, allowed: bool):
-        """Enable or Disable custom reasons for a warning"""
+        """Enable or disable custom reasons for a warning."""
         guild = ctx.guild
         await self.config.guild(guild).allow_custom_reasons.set(allowed)
-        await ctx.send(
-            _("Custom reasons have been {}.").format(_("enabled") if allowed else _("disabled"))
-        )
+        if allowed:
+            await ctx.send(_("Custom reasons have been enabled."))
+        else:
+            await ctx.send(_("Custom reasons have been disabled."))
 
     @commands.group()
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     async def warnaction(self, ctx: commands.Context):
-        """Action management"""
+        """Manage automated actions for Warnings.
+
+        Actions are essentially command macros. Any command can be run
+        when the action is initially triggered, and/or when the action
+        is lifted.
+
+        Actions must be given a name and a points threshold. When a
+        user is warned enough so that their points go over this
+        threshold, the action will be executed.
+        """
         pass
 
     @warnaction.command(name="add")
     @commands.guild_only()
     async def action_add(self, ctx: commands.Context, name: str, points: int):
-        """Create an action to be taken at a specified point count
+        """Create an automated action.
 
-        Duplicate action names are not allowed
+        Duplicate action names are not allowed.
         """
         guild = ctx.guild
 
@@ -102,7 +114,7 @@ class Warnings:
     @warnaction.command(name="del")
     @commands.guild_only()
     async def action_del(self, ctx: commands.Context, action_name: str):
-        """Delete the point count action with the specified name"""
+        """Delete the action with the specified name."""
         guild = ctx.guild
         guild_settings = self.config.guild(guild)
         async with guild_settings.actions() as registered_actions:
@@ -115,23 +127,29 @@ class Warnings:
                 registered_actions.remove(to_remove)
                 await ctx.tick()
             else:
-                await ctx.send(_("No action named {} exists!").format(action_name))
+                await ctx.send(_("No action named {name} exists!").format(name=action_name))
 
     @commands.group()
     @commands.guild_only()
     @checks.guildowner_or_permissions(administrator=True)
     async def warnreason(self, ctx: commands.Context):
-        """Add reasons for warnings"""
+        """Manage warning reasons.
+
+        Reasons must be given a name, description and points value. The
+        name of the reason must be given when a user is warned.
+        """
         pass
 
-    @warnreason.command(name="add")
+    @warnreason.command(name="create", aliases=["add"])
     @commands.guild_only()
-    async def reason_add(self, ctx: commands.Context, name: str, points: int, *, description: str):
-        """Add a reason to be available for warnings"""
+    async def reason_create(
+        self, ctx: commands.Context, name: str, points: int, *, description: str
+    ):
+        """Create a warning reason."""
         guild = ctx.guild
 
         if name.lower() == "custom":
-            await ctx.send("That cannot be used as a reason name!")
+            await ctx.send(_("*Custom* cannot be used as a reason name!"))
             return
         to_add = {"points": points, "description": description}
         completed = {name.lower(): to_add}
@@ -141,12 +159,12 @@ class Warnings:
         async with guild_settings.reasons() as registered_reasons:
             registered_reasons.update(completed)
 
-        await ctx.send(_("That reason has been registered."))
+        await ctx.send(_("The new reason has been registered."))
 
-    @warnreason.command(name="del")
+    @warnreason.command(name="del", aliases=["remove"])
     @commands.guild_only()
     async def reason_del(self, ctx: commands.Context, reason_name: str):
-        """Delete the reason with the specified name"""
+        """Delete a warning reason."""
         guild = ctx.guild
         guild_settings = self.config.guild(guild)
         async with guild_settings.reasons() as registered_reasons:
@@ -159,7 +177,7 @@ class Warnings:
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
     async def reasonlist(self, ctx: commands.Context):
-        """List all configured reasons for warnings"""
+        """List all configured reasons for Warnings."""
         guild = ctx.guild
         guild_settings = self.config.guild(guild)
         msg_list = []
@@ -173,9 +191,9 @@ class Warnings:
                     msg_list.append(em)
                 else:
                     msg_list.append(
-                        "Name: {}\nPoints: {}\nDescription: {}".format(
-                            r, v["points"], v["description"]
-                        )
+                        _(
+                            "Name: {reason_name}\nPoints: {points}\nDescription: {description}"
+                        ).format(reason_name=r, **v)
                     )
         if msg_list:
             await menu(ctx, msg_list, DEFAULT_CONTROLS)
@@ -186,7 +204,7 @@ class Warnings:
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
     async def actionlist(self, ctx: commands.Context):
-        """List the actions to be taken at specific point values"""
+        """List all configured automated actions for Warnings."""
         guild = ctx.guild
         guild_settings = self.config.guild(guild)
         msg_list = []
@@ -200,10 +218,10 @@ class Warnings:
                     msg_list.append(em)
                 else:
                     msg_list.append(
-                        "Name: {}\nPoints: {}\nExceed command: {}\n"
-                        "Drop command: {}".format(
-                            r["action_name"], r["points"], r["exceed_command"], r["drop_command"]
-                        )
+                        _(
+                            "Name: {action_name}\nPoints: {points}\n"
+                            "Exceed command: {exceed_command}\nDrop command: {drop_command}"
+                        ).format(**r)
                     )
         if msg_list:
             await menu(ctx, msg_list, DEFAULT_CONTROLS)
@@ -214,9 +232,10 @@ class Warnings:
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
     async def warn(self, ctx: commands.Context, user: discord.Member, reason: str):
-        """Warn the user for the specified reason
+        """Warn the user for the specified reason.
 
-        Reason must be a registered reason, or "custom" if custom reasons are allowed
+        `<reason>` must be a registered reason name, or *custom* if
+        custom reasons are enabled.
         """
         if user == ctx.author:
             await ctx.send(_("You cannot warn yourself."))
@@ -226,9 +245,9 @@ class Warnings:
             if not custom_allowed:
                 await ctx.send(
                     _(
-                        "Custom reasons are not allowed! Please see {} for "
+                        "Custom reasons are not allowed! Please see `{prefix}reasonlist` for "
                         "a complete list of valid reasons."
-                    ).format("`{}reasonlist`".format(ctx.prefix))
+                    ).format(prefix=ctx.prefix)
                 )
                 return
             reason_type = await self.custom_warning_reason(ctx)
@@ -272,9 +291,7 @@ class Warnings:
         await warning_points_add_check(self.config, ctx, user, current_point_count)
         try:
             em = discord.Embed(
-                title=_("Warning from {mod_name}#{mod_discrim}").format(
-                    mod_name=ctx.author.display_name, mod_discrim=ctx.author.discriminator
-                ),
+                title=_("Warning from {user}").format(user=ctx.author),
                 description=reason_type["description"],
             )
             em.add_field(name=_("Points"), value=str(reason_type["points"]))
@@ -286,20 +303,17 @@ class Warnings:
             )
         except discord.HTTPException:
             pass
-        await ctx.send(
-            _("User {user_name}#{user_discrim} has been warned.").format(
-                user_name=user.display_name, user_discrim=user.discriminator
-            )
-        )
+        await ctx.send(_("User {user} has been warned.").format(user=user))
 
     @commands.command()
     @commands.guild_only()
     async def warnings(self, ctx: commands.Context, userid: int = None):
-        """Show warnings for the specified user.
+        """List the warnings for the specified user.
 
-        If userid is None, show warnings for the person running the command
+        Emit `<userid>` to see your own warnings.
+
         Note that showing warnings for users other than yourself requires
-        appropriate permissions
+        appropriate permissions.
         """
         if userid is None:
             user = ctx.author
@@ -327,16 +341,24 @@ class Warnings:
                         )
                         if mod is None:
                             mod = await self.bot.get_user_info(user_warnings[key]["mod"])
-                    msg += "{} point warning {} issued by {} for {}\n".format(
-                        user_warnings[key]["points"], key, mod, user_warnings[key]["description"]
+                    msg += _(
+                        "{num_points} point warning {reason_name} issued by {user} for "
+                        "{description}\n"
+                    ).format(
+                        num_points=user_warnings[key]["points"],
+                        reason_name=key,
+                        user=mod,
+                        description=user_warnings[key]["description"],
                     )
-                await ctx.send_interactive(pagify(msg), box_lang="Warnings for {}".format(user))
+                await ctx.send_interactive(
+                    pagify(msg, shorten_by=58), box_lang=_("Warnings for {user}").format(user=user)
+                )
 
     @commands.command()
     @commands.guild_only()
     @checks.admin_or_permissions(ban_members=True)
     async def unwarn(self, ctx: commands.Context, user_id: int, warn_id: str):
-        """Removes the specified warning from the user specified"""
+        """Remove a warning from a user."""
         if user_id == ctx.author.id:
             await ctx.send(_("You cannot remove warnings from yourself."))
             return
@@ -350,7 +372,7 @@ class Warnings:
         await warning_points_remove_check(self.config, ctx, member, current_point_count)
         async with member_settings.warnings() as user_warnings:
             if warn_id not in user_warnings.keys():
-                await ctx.send("That warning doesn't exist!")
+                await ctx.send(_("That warning doesn't exist!"))
                 return
             else:
                 current_point_count -= user_warnings[warn_id]["points"]
@@ -363,12 +385,11 @@ class Warnings:
         """Handles getting description and points for custom reasons"""
         to_add = {"points": 0, "description": ""}
 
-        def same_author_check(m):
-            return m.author == ctx.author
-
         await ctx.send(_("How many points should be given for this reason?"))
         try:
-            msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=30)
+            msg = await ctx.bot.wait_for(
+                "message", check=MessagePredicate.same_context(ctx), timeout=30
+            )
         except asyncio.TimeoutError:
             await ctx.send(_("Ok then."))
             return
@@ -385,7 +406,9 @@ class Warnings:
 
         await ctx.send(_("Enter a description for this reason."))
         try:
-            msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=30)
+            msg = await ctx.bot.wait_for(
+                "message", check=MessagePredicate.same_context(ctx), timeout=30
+            )
         except asyncio.TimeoutError:
             await ctx.send(_("Ok then."))
             return

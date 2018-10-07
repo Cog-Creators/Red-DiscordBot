@@ -13,17 +13,21 @@ from collections import namedtuple
 from pathlib import Path
 from random import SystemRandom
 from string import ascii_letters, digits
-from distutils.version import StrictVersion
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 
 import aiohttp
 import discord
 import pkg_resources
 
-from redbot.core import __version__
-from redbot.core import checks
-from redbot.core import i18n
-from redbot.core import commands
+from redbot.core import (
+    __version__,
+    version_info as red_version_info,
+    VersionInfo,
+    checks,
+    commands,
+    i18n,
+)
+from .utils.predicates import MessagePredicate
 from .utils.chat_formatting import pagify, box, inline
 
 if TYPE_CHECKING:
@@ -244,7 +248,7 @@ class CoreLogic:
 
 
 @i18n.cog_i18n(_)
-class Core(CoreLogic):
+class Core(commands.Cog, CoreLogic):
     """Commands related to core functions"""
 
     def __init__(self, bot):
@@ -276,7 +280,7 @@ class Core(CoreLogic):
         async with aiohttp.ClientSession() as session:
             async with session.get("{}/json".format(red_pypi)) as r:
                 data = await r.json()
-        outdated = StrictVersion(data["info"]["version"]) > StrictVersion(__version__)
+        outdated = VersionInfo.from_str(data["info"]["version"]) > red_version_info
         about = (
             "This is an instance of [Red, an open source Discord bot]({}) "
             "created by [Twentysix]({}) and [improved by many]({}).\n\n"
@@ -425,7 +429,7 @@ class Core(CoreLogic):
             destination = ctx.channel
 
         if self.bot._last_exception:
-            for page in pagify(self.bot._last_exception):
+            for page in pagify(self.bot._last_exception, shorten_by=10):
                 await destination.send(box(page, lang="py"))
         else:
             await ctx.send("No exception has occurred yet")
@@ -441,73 +445,63 @@ class Core(CoreLogic):
     @checks.is_owner()
     async def leave(self, ctx):
         """Leaves server"""
-        author = ctx.author
-        guild = ctx.guild
+        await ctx.send("Are you sure you want me to leave this server? (y/n)")
 
-        await ctx.send("Are you sure you want me to leave this server? Type yes to confirm.")
-
-        def conf_check(m):
-            return m.author == author
-
-        response = await self.bot.wait_for("message", check=conf_check)
-
-        if response.content.lower().strip() == "yes":
-            await ctx.send("Alright. Bye :wave:")
-            log.debug("Leaving '{}'".format(guild.name))
-            await guild.leave()
+        pred = MessagePredicate.yes_or_no(ctx)
+        try:
+            await self.bot.wait_for("message", check=MessagePredicate.yes_or_no(ctx))
+        except asyncio.TimeoutError:
+            await ctx.send("Response timed out.")
+            return
+        else:
+            if pred.result is True:
+                await ctx.send("Alright. Bye :wave:")
+                log.debug("Leaving guild '{}'".format(ctx.guild.name))
+                await ctx.guild.leave()
+            else:
+                await ctx.send("Alright, I'll stay then :)")
 
     @commands.command()
     @checks.is_owner()
     async def servers(self, ctx):
         """Lists and allows to leave servers"""
-        owner = ctx.author
         guilds = sorted(list(self.bot.guilds), key=lambda s: s.name.lower())
         msg = ""
+        responses = []
         for i, server in enumerate(guilds, 1):
             msg += "{}: {}\n".format(i, server.name)
-
-        msg += "\nTo leave a server, just type its number."
+            responses.append(str(i))
 
         for page in pagify(msg, ["\n"]):
             await ctx.send(page)
 
-        def msg_check(m):
-            return m.author == owner
+        query = await ctx.send("To leave a server, just type its number.")
 
-        while msg is not None:
-            try:
-                msg = await self.bot.wait_for("message", check=msg_check, timeout=15)
-            except asyncio.TimeoutError:
-                await ctx.send("I guess not.")
-                break
-            try:
-                msg = int(msg.content) - 1
-                if msg < 0:
-                    break
-                await self.leave_confirmation(guilds[msg], owner, ctx)
-                break
-            except (IndexError, ValueError, AttributeError):
-                pass
-
-    async def leave_confirmation(self, server, owner, ctx):
-        await ctx.send("Are you sure you want me to leave {}? (yes/no)".format(server.name))
-
-        def conf_check(m):
-            return m.author == owner
-
+        pred = MessagePredicate.contained_in(responses, ctx)
         try:
-            msg = await self.bot.wait_for("message", check=conf_check, timeout=15)
-            if msg.content.lower().strip() in ("yes", "y"):
-                if server.owner == ctx.bot.user:
-                    await ctx.send("I cannot leave a guild I am the owner of.")
-                    return
-                await server.leave()
-                if server != ctx.guild:
+            await self.bot.wait_for("message", check=pred, timeout=15)
+        except asyncio.TimeoutError:
+            await query.delete()
+        else:
+            await self.leave_confirmation(guilds[pred.result], ctx)
+
+    async def leave_confirmation(self, guild, ctx):
+        if guild.owner.id == ctx.bot.user.id:
+            await ctx.send("I cannot leave a guild I am the owner of.")
+            return
+
+        await ctx.send("Are you sure you want me to leave {}? (yes/no)".format(guild.name))
+        pred = MessagePredicate.yes_or_no(ctx)
+        try:
+            await self.bot.wait_for("message", check=pred, timeout=15)
+            if pred.result is True:
+                await guild.leave()
+                if guild != ctx.guild:
                     await ctx.send("Done.")
             else:
                 await ctx.send("Alright then.")
         except asyncio.TimeoutError:
-            await ctx.send("I guess not.")
+            await ctx.send("Response timed out.")
 
     @commands.command()
     @checks.is_owner()
@@ -562,12 +556,10 @@ class Core(CoreLogic):
 
     @commands.command(name="reload")
     @checks.is_owner()
-    async def reload_(self, ctx, *, cog_name: str):
+    async def reload(self, ctx, *cogs: str):
         """Reloads packages"""
-
-        cog_names = [c.strip() for c in cog_name.split(" ")]
         async with ctx.typing():
-            loaded, failed, not_found, already_loaded = await self._reload(cog_names)
+            loaded, failed, not_found, already_loaded = await self._reload(cogs)
 
         if loaded:
             fmt = "Package{plural} {packs} {other} reloaded."
@@ -617,10 +609,13 @@ class Core(CoreLogic):
         """Changes Red's settings"""
         if ctx.invoked_subcommand is None:
             if ctx.guild:
-                admin_role_id = await ctx.bot.db.guild(ctx.guild).admin_role()
-                admin_role = discord.utils.get(ctx.guild.roles, id=admin_role_id) or "Not set"
-                mod_role_id = await ctx.bot.db.guild(ctx.guild).mod_role()
-                mod_role = discord.utils.get(ctx.guild.roles, id=mod_role_id) or "Not set"
+                guild = ctx.guild
+                admin_role = (
+                    guild.get_role(await ctx.bot.db.guild(ctx.guild).admin_role()) or "Not set"
+                )
+                mod_role = (
+                    guild.get_role(await ctx.bot.db.guild(ctx.guild).mod_role()) or "Not set"
+                )
                 prefixes = await ctx.bot.db.guild(ctx.guild).prefix()
                 guild_settings = f"Admin role: {admin_role}\nMod role: {mod_role}\n"
             else:
@@ -897,10 +892,6 @@ class Core(CoreLogic):
     @commands.cooldown(1, 60 * 10, commands.BucketType.default)
     async def owner(self, ctx):
         """Sets Red's main owner"""
-
-        def check(m):
-            return m.author == ctx.author and m.channel == ctx.channel
-
         # According to the Python docs this is suitable for cryptographic use
         random = SystemRandom()
         length = random.randint(25, 35)
@@ -924,10 +915,14 @@ class Core(CoreLogic):
         )
 
         try:
-            message = await ctx.bot.wait_for("message", check=check, timeout=60)
+            message = await ctx.bot.wait_for(
+                "message", check=MessagePredicate.same_context(ctx), timeout=60
+            )
         except asyncio.TimeoutError:
             self.owner.reset_cooldown(ctx)
-            await ctx.send(_("The set owner request has timed out."))
+            await ctx.send(
+                _("The `{prefix}set owner` request has timed out.").format(prefix=ctx.prefix)
+            )
         else:
             if message.content.strip() == token:
                 self.owner.reset_cooldown(ctx)
@@ -1078,7 +1073,7 @@ class Core(CoreLogic):
             if not locale_list:
                 await ctx.send("No languages found.")
                 return
-            pages = pagify("\n".join(locale_list))
+            pages = pagify("\n".join(locale_list), shorten_by=26)
 
         await ctx.send_interactive(pages, box_lang="Available Locales:")
 
@@ -1151,18 +1146,20 @@ class Core(CoreLogic):
             )
             await ctx.send(_("Would you like to receive a copy via DM? (y/n)"))
 
-            def same_author_check(m):
-                return m.author == ctx.author and m.channel == ctx.channel
-
+            pred = MessagePredicate.yes_or_no(ctx)
             try:
-                msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=60)
+                await ctx.bot.wait_for("message", check=pred, timeout=60)
             except asyncio.TimeoutError:
-                await ctx.send(_("Ok then."))
+                await ctx.send(_("Response timed out."))
             else:
-                if msg.content.lower().strip() == "y":
-                    await ctx.author.send(
-                        _("Here's a copy of the backup"), file=discord.File(str(backup_file))
-                    )
+                if pred.result is True:
+                    await ctx.send(_("OK, it's on its way!"))
+                    async with ctx.author.typing():
+                        await ctx.author.send(
+                            _("Here's a copy of the backup"), file=discord.File(str(backup_file))
+                        )
+                else:
+                    await ctx.send(_("OK then."))
         else:
             await ctx.send(_("That directory doesn't seem to exist..."))
 
@@ -1702,6 +1699,82 @@ class Core(CoreLogic):
         await ctx.bot.db.disabled_command_msg.set(message)
         await ctx.tick()
 
+    @commands.guild_only()
+    @checks.guildowner_or_permissions(manage_server=True)
+    @commands.group(name="autoimmune")
+    async def autoimmune_group(self, ctx: commands.Context):
+        """
+        Server settings for immunity from automated actions
+        """
+        pass
+
+    @autoimmune_group.command(name="list")
+    async def autoimmune_list(self, ctx: commands.Context):
+        """
+        Get's the current members and roles
+
+        configured for automatic moderation action immunity
+        """
+        ai_ids = await ctx.bot.db.guild(ctx.guild).autoimmune_ids()
+
+        roles = {r.name for r in ctx.guild.roles if r.id in ai_ids}
+        members = {str(m) for m in ctx.guild.members if m.id in ai_ids}
+
+        output = ""
+        if roles:
+            output += _("Roles immune from automated moderation actions:\n")
+            output += ", ".join(roles)
+        if members:
+            if roles:
+                output += "\n"
+            output += _("Members immune from automated moderation actions:\n")
+            output += ", ".join(members)
+
+        if not output:
+            output = _("No immunty settings here.")
+
+        for page in pagify(output):
+            await ctx.send(page)
+
+    @autoimmune_group.command(name="add")
+    async def autoimmune_add(
+        self, ctx: commands.Context, user_or_role: Union[discord.Member, discord.Role]
+    ):
+        """
+        Makes a user or roles immune from automated moderation actions
+        """
+        async with ctx.bot.db.guild(ctx.guild).autoimmune_ids() as ai_ids:
+            if user_or_role.id in ai_ids:
+                return await ctx.send(_("Already added."))
+            ai_ids.append(user_or_role.id)
+        await ctx.tick()
+
+    @autoimmune_group.command(name="remove")
+    async def autoimmune_remove(
+        self, ctx: commands.Context, user_or_role: Union[discord.Member, discord.Role]
+    ):
+        """
+        Makes a user or roles immune from automated moderation actions
+        """
+        async with ctx.bot.db.guild(ctx.guild).autoimmune_ids() as ai_ids:
+            if user_or_role.id not in ai_ids:
+                return await ctx.send(_("Not in list."))
+            ai_ids.remove(user_or_role.id)
+        await ctx.tick()
+
+    @autoimmune_group.command(name="isimmune")
+    async def autoimmune_checkimmune(
+        self, ctx: commands.Context, user_or_role: Union[discord.Member, discord.Role]
+    ):
+        """
+        Checks if a user or role would be considered immune from automated actions
+        """
+
+        if await ctx.bot.is_automod_immune(user_or_role):
+            await ctx.send(_("They are immune"))
+        else:
+            await ctx.send(_("They are not Immune"))
+
     # RPC handlers
     async def rpc_load(self, request):
         cog_name = request.params[0]
@@ -1712,7 +1785,7 @@ class Core(CoreLogic):
 
         self._cleanup_and_refresh_modules(spec.name)
 
-        self.bot.load_extension(spec)
+        await self.bot.load_extension(spec)
 
     async def rpc_unload(self, request):
         cog_name = request.params[0]

@@ -225,6 +225,15 @@ async def test_set_dynamic_attr(config):
 
 
 @pytest.mark.asyncio
+async def test_clear_dynamic_attr(config):
+    await config.foo.set(True)
+    await config.clear_raw("foo")
+
+    with pytest.raises(KeyError):
+        await config.get_raw("foo")
+
+
+@pytest.mark.asyncio
 async def test_get_dynamic_attr(config):
     assert await config.get_raw("foobaz", default=True) is True
 

@@ -9,6 +9,7 @@ __all__ = [
     "HardResetError",
     "UpdateError",
     "GitDiffError",
+    "NoRemoteURL",
     "PipError",
 ]
 
@@ -91,6 +92,14 @@ class UpdateError(GitException):
 class GitDiffError(GitException):
     """
     Thrown when a git diff fails.
+    """
+
+    pass
+
+
+class NoRemoteURL(GitException):
+    """
+    Thrown when no remote URL exists for a repo.
     """
 
     pass

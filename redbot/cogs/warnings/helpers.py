@@ -5,6 +5,7 @@ import discord
 
 from redbot.core import Config, checks, commands
 from redbot.core.i18n import Translator
+from redbot.core.utils.predicates import MessagePredicate
 
 _ = Translator("Warnings", __file__)
 
@@ -95,11 +96,10 @@ async def get_command_for_exceeded_points(ctx: commands.Context):
 
     await ctx.send(_("You may enter your response now."))
 
-    def same_author_check(m):
-        return m.author == ctx.author
-
     try:
-        msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=30)
+        msg = await ctx.bot.wait_for(
+            "message", check=MessagePredicate.same_context(ctx), timeout=30
+        )
     except asyncio.TimeoutError:
         return None
     else:
@@ -140,11 +140,10 @@ async def get_command_for_dropping_points(ctx: commands.Context):
 
     await ctx.send(_("You may enter your response now."))
 
-    def same_author_check(m):
-        return m.author == ctx.author
-
     try:
-        msg = await ctx.bot.wait_for("message", check=same_author_check, timeout=30)
+        msg = await ctx.bot.wait_for(
+            "message", check=MessagePredicate.same_context(ctx), timeout=30
+        )
     except asyncio.TimeoutError:
         return None
     else:

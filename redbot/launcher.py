@@ -8,30 +8,33 @@ import asyncio
 import aiohttp
 
 import pkg_resources
-from pathlib import Path
-from distutils.version import StrictVersion
 from redbot.setup import (
     basic_setup,
     load_existing_config,
     remove_instance,
     remove_instance_interaction,
     create_backup,
-    save_config,
 )
-from redbot.core import __version__
-from redbot.core.utils import safe_delete
+from redbot.core import __version__, version_info as red_version_info, VersionInfo
 from redbot.core.cli import confirm
 
 if sys.platform == "linux":
     import distro
 
-PYTHON_OK = sys.version_info >= (3, 6, 2)
 INTERACTIVE_MODE = not len(sys.argv) > 1  # CLI flags = non-interactive
 
 INTRO = "==========================\nRed Discord Bot - Launcher\n==========================\n"
 
 IS_WINDOWS = os.name == "nt"
 IS_MAC = sys.platform == "darwin"
+
+if IS_WINDOWS:
+    # Due to issues with ProactorEventLoop prior to 3.6.6 (bpo-26819)
+    MIN_PYTHON_VERSION = (3, 6, 6)
+else:
+    MIN_PYTHON_VERSION = (3, 6, 2)
+
+PYTHON_OK = sys.version_info >= MIN_PYTHON_VERSION
 
 
 def is_venv():
@@ -383,7 +386,7 @@ async def is_outdated():
         async with session.get("{}/json".format(red_pypi)) as r:
             data = await r.json()
             new_version = data["info"]["version"]
-    return StrictVersion(new_version) > StrictVersion(__version__), new_version
+    return VersionInfo.from_str(new_version) > red_version_info, new_version
 
 
 def main_menu():
@@ -409,14 +412,14 @@ def main_menu():
         choice = user_choice()
         if choice == "1":
             instance = instance_menu()
-            cli_flags = cli_flag_getter()
             if instance:
+                cli_flags = cli_flag_getter()
                 run_red(instance, autorestart=True, cliflags=cli_flags)
             wait()
         elif choice == "2":
             instance = instance_menu()
-            cli_flags = cli_flag_getter()
             if instance:
+                cli_flags = cli_flag_getter()
                 run_red(instance, autorestart=False, cliflags=cli_flags)
             wait()
         elif choice == "3":
@@ -461,9 +464,11 @@ def main_menu():
 
 def main():
     if not PYTHON_OK:
-        raise RuntimeError(
-            "Red requires Python 3.6.2 or greater. Please install the correct version!"
+        print(
+            f"Python {'.'.join(map(str, MIN_PYTHON_VERSION))} is required to run Red, but you "
+            f"have {sys.version}! Please update Python."
         )
+        sys.exit(1)
     if args.debuginfo:  # Check first since the function triggers an exit
         debug_info()
 

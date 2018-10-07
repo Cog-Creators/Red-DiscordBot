@@ -12,6 +12,14 @@ CustomCommands allows you to create simple commands for your bot without requiri
 
 If the command you attempt to create shares a name with an already loaded command, you cannot overwrite it with this cog.
 
+---------
+Cooldowns
+---------
+
+You can set cooldowns for your custom commands. If a command is on cooldown, it will not be triggered.
+
+You can set cooldowns per member or per channel, or set a cooldown guild-wide. You can also set multiple types of cooldown on a single custom command. All cooldowns must pass before the command will trigger.
+
 ------------------
 Context Parameters
 ------------------

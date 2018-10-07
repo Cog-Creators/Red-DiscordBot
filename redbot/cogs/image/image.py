@@ -11,12 +11,13 @@ GIPHY_API_KEY = "dc6zaTOxFJmzC"
 
 
 @cog_i18n(_)
-class Image:
+class Image(commands.Cog):
     """Image related commands."""
 
     default_global = {"imgur_client_id": None}
 
     def __init__(self, bot):
+        super().__init__()
         self.bot = bot
         self.settings = Config.get_conf(self, identifier=2652104208, force_registration=True)
         self.settings.register_global(**self.default_global)
@@ -28,23 +29,26 @@ class Image:
 
     @commands.group(name="imgur")
     async def _imgur(self, ctx):
-        """Retrieves pictures from imgur
+        """Retrieve pictures from Imgur.
 
-        Make sure to set the client ID using
-        [p]imgurcreds"""
+        Make sure to set the Client ID using `[p]imgurcreds`.
+        """
         pass
 
     @_imgur.command(name="search")
     async def imgur_search(self, ctx, *, term: str):
-        """Searches Imgur for the specified term and returns up to 3 results"""
+        """Search Imgur for the specified term.
+
+        Returns up to 3 results.
+        """
         url = self.imgur_base_url + "gallery/search/time/all/0"
         params = {"q": term}
         imgur_client_id = await self.settings.imgur_client_id()
         if not imgur_client_id:
             await ctx.send(
-                _("A client ID has not been set! Please set one with {}.").format(
-                    "`{}imgurcreds`".format(ctx.prefix)
-                )
+                _(
+                    "A Client ID has not been set! Please set one with `{prefix}imgurcreds`."
+                ).format(prefix=ctx.prefix)
             )
             return
         headers = {"Authorization": "Client-ID {}".format(imgur_client_id)}
@@ -63,37 +67,41 @@ class Image:
                 msg += "\n"
             await ctx.send(msg)
         else:
-            await ctx.send(_("Something went wrong. Error code is {}.").format(data["status"]))
+            await ctx.send(
+                _("Something went wrong. Error code is {code}.").format(code=data["status"])
+            )
 
     @_imgur.command(name="subreddit")
     async def imgur_subreddit(
         self, ctx, subreddit: str, sort_type: str = "top", window: str = "day"
     ):
-        """Gets images from the specified subreddit section
+        """Get images from a subreddit.
 
-        Sort types: new, top
-        Time windows: day, week, month, year, all"""
+        You can customize the search with the following options:
+        - `<sort_type>`: new, top
+        - `<window>`: day, week, month, year, all
+        """
         sort_type = sort_type.lower()
         window = window.lower()
-
-        if sort_type not in ("new", "top"):
-            await ctx.send(_("Only 'new' and 'top' are a valid sort type."))
-            return
-        elif window not in ("day", "week", "month", "year", "all"):
-            await ctx.send_help()
-            return
 
         if sort_type == "new":
             sort = "time"
         elif sort_type == "top":
             sort = "top"
+        else:
+            await ctx.send(_("Only 'new' and 'top' are a valid sort type."))
+            return
+
+        if window not in ("day", "week", "month", "year", "all"):
+            await ctx.send_help()
+            return
 
         imgur_client_id = await self.settings.imgur_client_id()
         if not imgur_client_id:
             await ctx.send(
-                _("A client ID has not been set! Please set one with {}.").format(
-                    "`{}imgurcreds`".format(ctx.prefix)
-                )
+                _(
+                    "A Client ID has not been set! Please set one with `{prefix}imgurcreds`."
+                ).format(prefix=ctx.prefix)
             )
             return
 
@@ -116,28 +124,33 @@ class Image:
             else:
                 await ctx.send(_("No results found."))
         else:
-            await ctx.send(_("Something went wrong. Error code is {}.").format(data["status"]))
+            await ctx.send(
+                _("Something went wrong. Error code is {code}.").format(code=data["status"])
+            )
 
     @checks.is_owner()
     @commands.command()
     async def imgurcreds(self, ctx, imgur_client_id: str):
-        """Sets the imgur client id
+        """Set the Imgur Client ID.
 
-        You will need an account on Imgur to get this
-
-        You can get these by visiting https://api.imgur.com/oauth2/addclient
-        and filling out the form. Enter a name for the application, select
-        'Anonymous usage without user authorization' for the auth type,
-        set the authorization callback url to 'https://localhost'
-        leave the app website blank, enter a valid email address, and
-        enter a description. Check the box for the captcha, then click Next.
-        Your client ID will be on the page that loads."""
+        To get an Imgur Client ID:
+        1. Login to an Imgur account.
+        2. Visit [this](https://api.imgur.com/oauth2/addclient) page
+        3. Enter a name for your application
+        4. Select *Anonymous usage without user authorization* for the auth type
+        5. Set the authorization callback URL to `https://localhost`
+        6. Leave the app website blank
+        7. Enter a valid email address and a description
+        8. Check the captcha box and click next
+        9. Your Client ID will be on the next page.
+        """
         await self.settings.imgur_client_id.set(imgur_client_id)
-        await ctx.send(_("Set the imgur client id!"))
+        await ctx.send(_("The Imgur Client ID has been set!"))
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.guild_only()
+    @commands.command()
     async def gif(self, ctx, *keywords):
-        """Retrieves first search result from giphy"""
+        """Retrieve the first search result from Giphy."""
         if keywords:
             keywords = "+".join(keywords)
         else:
@@ -156,11 +169,12 @@ class Image:
                 else:
                     await ctx.send(_("No results found."))
             else:
-                await ctx.send(_("Error contacting the API."))
+                await ctx.send(_("Error contacting the Giphy API."))
 
-    @commands.command(pass_context=True, no_pm=True)
+    @commands.guild_only()
+    @commands.command()
     async def gifr(self, ctx, *keywords):
-        """Retrieves a random gif from a giphy search"""
+        """Retrieve a random GIF from a Giphy search."""
         if keywords:
             keywords = "+".join(keywords)
         else:

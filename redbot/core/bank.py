@@ -1,6 +1,6 @@
 import datetime
 import os
-from typing import Union, List
+from typing import Union, List, Optional
 
 import discord
 
@@ -296,12 +296,20 @@ async def transfer_credits(from_: discord.Member, to: discord.Member, amount: in
     return await deposit_credits(to, amount)
 
 
-async def wipe_bank():
-    """Delete all accounts from the bank."""
+async def wipe_bank(guild: Optional[discord.Guild] = None) -> None:
+    """Delete all accounts from the bank.
+
+    Parameters
+    ----------
+    guild : discord.Guild
+        The guild to clear accounts for. If unsupplied and the bank is
+        per-server, all accounts in every guild will be wiped.
+
+    """
     if await is_global():
         await _conf.clear_all_users()
     else:
-        await _conf.clear_all_members()
+        await _conf.clear_all_members(guild)
 
 
 async def get_leaderboard(positions: int = None, guild: discord.Guild = None) -> List[tuple]:
