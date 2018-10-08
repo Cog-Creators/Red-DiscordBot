@@ -542,7 +542,8 @@ class Permissions(commands.Cog):
                 continue
             conf = self.config.custom(category)
             for cmd_name, cmd_rules in rules_dict.items():
-                await conf.set_raw(cmd_name, guild_id, value=cmd_rules)
+                cmd_rules = {str(model_id): rule for model_id, rule in cmd_rules.items()}
+                await conf.set_raw(cmd_name, str(guild_id), value=cmd_rules)
                 cmd_obj = getter(cmd_name)
                 if cmd_obj is not None:
                     self._load_rules_for(cmd_obj, {guild_id: cmd_rules})
@@ -651,14 +652,14 @@ class Permissions(commands.Cog):
                 if category in old_rules:
                     for name, rules in old_rules[category].items():
                         these_rules = new_rules.setdefault(name, {})
-                        guild_rules = these_rules.setdefault(guild_id, {})
+                        guild_rules = these_rules.setdefault(str(guild_id), {})
                         # Since allow rules would take precedence if the same model ID
                         # sat in both the allow and deny list, we add the deny entries
                         # first and let any conflicting allow entries overwrite.
                         for model_id in rules.get("deny", []):
-                            guild_rules[model_id] = False
+                            guild_rules[str(model_id)] = False
                         for model_id in rules.get("allow", []):
-                            guild_rules[model_id] = True
+                            guild_rules[str(model_id)] = True
                         if "default" in rules:
                             default = rules["default"]
                             if default == "allow":
