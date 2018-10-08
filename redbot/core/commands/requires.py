@@ -7,6 +7,7 @@ as well as custom checks which can be overriden, and some special
 checks like bot permissions checks.
 """
 import asyncio
+import contextlib
 import enum
 from typing import (
     Union,
@@ -27,10 +28,12 @@ from .converter import GuildConverter
 from .errors import BotMissingPermissions
 
 if TYPE_CHECKING:
-    from .commands import Command
+    from .commands import CogCommandMixin
     from .context import Context
 
-    _CommandOrCoro = TypeVar("_CommandOrCoro", Callable[..., Awaitable[Any]], Command)
+    _CheckDecoratable = TypeVar(
+        "_CheckDecoratable", Callable[..., Awaitable[Any]], CogCommandMixin
+    )
 
 __all__ = [
     "CheckPredicate",
@@ -298,11 +301,11 @@ class Requires:
     @staticmethod
     def get_decorator(
         privilege_level: Optional[PrivilegeLevel], user_perms: Dict[str, bool]
-    ) -> Callable[["_CommandOrCoro"], "_CommandOrCoro"]:
+    ) -> Callable[["_CheckDecoratable"], "_CheckDecoratable"]:
         if not user_perms:
             user_perms = None
 
-        def decorator(func: "_CommandOrCoro") -> "_CommandOrCoro":
+        def decorator(func: "_CheckDecoratable") -> "_CheckDecoratable":
             if asyncio.iscoroutinefunction(func):
                 func.__requires_privilege_level__ = privilege_level
                 func.__requires_user_perms__ = user_perms
@@ -366,22 +369,26 @@ class Requires:
         else:
             rules[model_id] = rule
 
-    def clear_all_rules(self, guild_id: int) -> None:
-        """Clear all rules of a particular scope.
+    def clear_all_rules(self, guild_id: Optional[int] = None) -> None:
+        """Clear all rules, or rules of a particular scope.
 
         Parameters
         ----------
-        guild_id : int
+        guild_id : Optional[int]
             The guild ID to clear rules for. If ``0``, this will
             clear all global rules and leave all guild rules
-            untouched.
+            untouched. If ``None``, this will clear rules from
+            all guilds, as well as all global rules.
 
         """
         if guild_id:
-            rules = self._guild_rules.setdefault(guild_id, _IntKeyDict())
-        else:
-            rules = self._global_rules
-        rules.clear()
+            with contextlib.suppress(KeyError):
+                self._guild_rules[guild_id].clear()
+        elif guild_id is 0:
+            self._global_rules.clear()
+        elif guild_id is None:
+            self._guild_rules.clear()
+            self._global_rules.clear()
 
     def get_default_guild_rule(self, guild_id: int) -> PermState:
         """Get the default rule for a guild."""
@@ -557,7 +564,7 @@ def permissions_check(predicate: CheckPredicate):
     through a permissions cog.
     """
 
-    def decorator(func: "_CommandOrCoro") -> "_CommandOrCoro":
+    def decorator(func: "_CheckDecoratable") -> "_CheckDecoratable":
         if hasattr(func, "requires"):
             func.requires.checks.append(predicate)
         else:
@@ -580,7 +587,7 @@ def bot_has_permissions(**perms: bool):
     This check cannot be overridden by rules.
     """
 
-    def decorator(func: "_CommandOrCoro") -> "_CommandOrCoro":
+    def decorator(func: "_CheckDecoratable") -> "_CheckDecoratable":
         if asyncio.iscoroutinefunction(func):
             func.__requires_bot_perms__ = perms
         else:

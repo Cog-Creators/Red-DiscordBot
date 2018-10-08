@@ -3,14 +3,14 @@
 This module contains extended classes and functions which are intended to
 replace those from the `discord.ext.commands` module.
 """
+import contextlib
 import inspect
 import weakref
-from typing import Awaitable, Callable, Dict, List, Optional, Tuple, TYPE_CHECKING
+from typing import Awaitable, Callable, Dict, List, Optional, Tuple, TYPE_CHECKING, Union
 
 import discord
 from discord.ext import commands
 
-from . import converter as converters
 from .errors import ConversionFailure
 from .requires import PermState, PrivilegeLevel, Requires
 from ..i18n import Translator
@@ -19,7 +19,6 @@ if TYPE_CHECKING:
     from .context import Context
 
 __all__ = [
-    "Cog",
     "CogCommandMixin",
     "CogGroupMixin",
     "Command",
@@ -35,8 +34,11 @@ _ = Translator("commands.commands", __file__)
 class CogCommandMixin:
     """A mixin for cogs and commands."""
 
+    checks: List[Callable[["Context"], Union[bool, Awaitable[bool]]]]
+
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        with contextlib.suppress(TypeError):
+            super().__init__(*args, **kwargs)
         if isinstance(self, Command):
             decorated = self.callback
         else:
@@ -93,6 +95,49 @@ class CogCommandMixin:
             self.requires.set_default_guild_rule(guild_id, PermState.from_bool(rule))
         else:
             self.requires.default_global_rule = PermState.from_bool(rule)
+
+    def disable_in(self, guild: discord.Guild) -> bool:
+        """Disable this command or cog in the given guild.
+
+        Parameters
+        ----------
+        guild : discord.Guild
+            The guild to disable the command in.
+
+        Returns
+        -------
+        bool
+            ``True`` if the command wasn't already disabled.
+
+        """
+        disabler = get_disabler(guild)
+        if disabler in self.checks:
+            return False
+        else:
+            self.checks.append(disabler)
+            return True
+
+    def enable_in(self, guild: discord.Guild) -> bool:
+        """Enable this command or cog in the given guild.
+
+        Parameters
+        ----------
+        guild : discord.Guild
+            The guild to enable the command in.
+
+        Returns
+        -------
+        bool
+            ``True`` if the command wasn't already enabled.
+
+        """
+        disabler = get_disabler(guild)
+        try:
+            self.checks.remove(disabler)
+        except ValueError:
+            return False
+        else:
+            return True
 
 
 class Command(CogCommandMixin, commands.Command):
@@ -174,8 +219,8 @@ class Command(CogCommandMixin, commands.Command):
         ctx.command = self
 
         if self.parent is None and self.instance is not None:
-            # For top-level commands, we need to check the cog's requires too
-            ret = await self.instance.requires.verify(ctx)
+            # For top-level commands, we need to check the cog's can_run too
+            ret = await type(self.instance).can_run(ctx)
             if ret is False:
                 return False
 
@@ -247,49 +292,6 @@ class Command(CogCommandMixin, commands.Command):
 
         return True
 
-    def disable_in(self, guild: discord.Guild) -> bool:
-        """Disable this command in the given guild.
-
-        Parameters
-        ----------
-        guild : discord.Guild
-            The guild to disable the command in.
-
-        Returns
-        -------
-        bool
-            ``True`` if the command wasn't already disabled.
-
-        """
-        disabler = get_command_disabler(guild)
-        if disabler in self.checks:
-            return False
-        else:
-            self.checks.append(disabler)
-            return True
-
-    def enable_in(self, guild: discord.Guild) -> bool:
-        """Enable this command in the given guild.
-
-        Parameters
-        ----------
-        guild : discord.Guild
-            The guild to enable the command in.
-
-        Returns
-        -------
-        bool
-            ``True`` if the command wasn't already enabled.
-
-        """
-        disabler = get_command_disabler(guild)
-        try:
-            self.checks.remove(disabler)
-        except ValueError:
-            return False
-        else:
-            return True
-
     def allow_for(self, model_id: int, guild_id: int) -> None:
         super().allow_for(model_id, guild_id=guild_id)
         parents = self.parents
@@ -307,12 +309,19 @@ class Command(CogCommandMixin, commands.Command):
         if old_rule is PermState.ACTIVE_ALLOW:
             parents = self.parents
             if self.instance is not None:
-                parents.append(self.instance)
+                parents.append(type(self.instance))
             for parent in parents:
                 should_continue = parent.reevaluate_rules_for(model_id, guild_id=guild_id)[1]
                 if not should_continue:
                     break
         return old_rule, new_rule
+
+    @classmethod
+    async def convert(cls, ctx: "Context", argument: str) -> "Command":
+        ret = ctx.bot.get_command(argument)
+        if ret is None:
+            raise commands.BadArgument(_("Command `argument` not found."))
+        return ret
 
 
 class GroupMixin(discord.ext.commands.GroupMixin):
@@ -409,14 +418,6 @@ class Group(GroupMixin, Command, CogGroupMixin, commands.Group):
         await super().invoke(ctx)
 
 
-class Cog(CogCommandMixin, CogGroupMixin):
-    """Base class for a cog."""
-
-    @property
-    def all_commands(self) -> Dict[str, Command]:
-        return {cmd.name: cmd for cmd in self.__dict__.values() if isinstance(cmd, Command)}
-
-
 def command(name=None, cls=Command, **attrs):
     """A decorator which transforms an async function into a `Command`.
 
@@ -434,23 +435,23 @@ def group(name=None, **attrs):
     return command(name, cls=Group, **attrs)
 
 
-__command_disablers = weakref.WeakValueDictionary()
+__disablers = weakref.WeakValueDictionary()
 
 
-def get_command_disabler(guild: discord.Guild) -> Callable[["Context"], Awaitable[bool]]:
-    """Get the command disabler for a guild.
+def get_disabler(guild: discord.Guild) -> Callable[["Context"], bool]:
+    """Get the cog or command disabler for a guild.
 
-    A command disabler is a simple check predicate which returns
-    ``False`` if the context is within the given guild.
+    A disabler is a simple check predicate which returns ``False`` if
+    the context is within the given guild.
     """
     try:
-        return __command_disablers[guild]
+        return __disablers[guild]
     except KeyError:
 
-        async def disabler(ctx: "Context") -> bool:
+        def disabler(ctx: "Context") -> bool:
             if ctx.guild == guild:
                 raise commands.DisabledCommand()
             return True
 
-        __command_disablers[guild] = disabler
+        __disablers[guild] = disabler
         return disabler

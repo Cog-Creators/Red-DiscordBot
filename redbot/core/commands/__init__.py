@@ -1,4 +1,5 @@
 from discord.ext.commands import *
+from .cog import *
 from .commands import *
 from .context import *
 from .converter import *
