@@ -193,7 +193,7 @@ class Mod(commands.Cog):
                 yes_or_no=_("Yes") if respect_hierarchy else _("No")
             )
             msg += _("Delete delay: {num_seconds}\n").format(
-                num_seconds=_("{num} seconds").format(delete_delay)
+                num_seconds=_("{num} seconds").format(num=delete_delay)
                 if delete_delay != -1
                 else _("None")
             )
