@@ -583,7 +583,9 @@ class Core(commands.Cog, CoreLogic):
     async def reload(self, ctx: commands.Context, *cogs: str):
         """Reloads packages"""
         async with ctx.typing():
-            loaded, failed, not_found, already_loaded = await self._reload(cogs)
+            loaded, failed, not_found, already_loaded, failed_with_reason = await self._reload(
+                cogs
+            )
 
         if loaded:
             fmt = "Package{plural} {packs} {other} reloaded."
@@ -599,6 +601,14 @@ class Core(commands.Cog, CoreLogic):
             fmt = "The package{plural} {packs} {other} not found in any cog path."
             formed = self._get_package_strings(not_found, fmt, ("was", "were"))
             await ctx.send(formed)
+
+        if failed_with_reason:
+            fmt = "{other} package{plural} could not be reloaded for the following reason{plural}:\n\n"
+            reasons = "\n".join([f"`{x}`: {y}" for x, y in failed_with_reason])
+            formed = self._get_package_strings(
+                [x for x, y in failed_with_reason], fmt, ("This", "These")
+            )
+            await ctx.send(formed + reasons)
 
     @commands.command(name="shutdown")
     @checks.is_owner()
