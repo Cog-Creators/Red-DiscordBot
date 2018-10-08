@@ -1027,8 +1027,6 @@ class Audio(commands.Cog):
     @playlist.command(name="copy")
     async def _playlist_copy(self, ctx, playlist_name, from_server_id: int, to_server_id: int):
         """Copy a playlist from one server to another."""
-        if not from_server_id:
-            from_server_id = ctx.guild.id
         from_guild = self.bot.get_guild(from_server_id)
         to_guild = self.bot.get_guild(to_server_id)
         if not from_guild:
