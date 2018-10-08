@@ -9,13 +9,14 @@ from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.mod import slow_deletion, mass_purge
 from redbot.cogs.mod.log import log
+from redbot.core.utils.predicates import MessagePredicate
 
 _ = Translator("Cleanup", __file__)
 
 
 @cog_i18n(_)
 class Cleanup(commands.Cog):
-    """Commands for cleaning messages"""
+    """Commands for cleaning up messages."""
 
     def __init__(self, bot: Red):
         super().__init__()
@@ -31,19 +32,16 @@ class Cleanup(commands.Cog):
         Tries its best to cleanup after itself if the response is positive.
         """
 
-        def author_check(message):
-            return message.author == ctx.author
-
         prompt = await ctx.send(
-            _("Are you sure you want to delete {} messages? (y/n)").format(number)
+            _("Are you sure you want to delete {number} messages? (y/n)").format(number=number)
         )
-        response = await ctx.bot.wait_for("message", check=author_check)
+        response = await ctx.bot.wait_for("message", check=MessagePredicate.same_context(ctx))
 
         if response.content.lower().startswith("y"):
             await prompt.delete()
             try:
                 await response.delete()
-            except:
+            except discord.HTTPException:
                 pass
             return True
         else:
@@ -96,7 +94,7 @@ class Cleanup(commands.Cog):
         ):
             if message.created_at < two_weeks_ago:
                 break
-            if check(message):
+            if message_filter(message):
                 collected.append(message)
                 if number and number <= len(collected):
                     break
@@ -106,25 +104,24 @@ class Cleanup(commands.Cog):
     @commands.group()
     @checks.mod_or_permissions(manage_messages=True)
     async def cleanup(self, ctx: commands.Context):
-        """Deletes messages."""
+        """Delete messages."""
         pass
 
     @cleanup.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(manage_messages=True)
     async def text(
         self, ctx: commands.Context, text: str, number: int, delete_pinned: bool = False
     ):
-        """Deletes last X messages matching the specified text.
+        """Delete the last X messages matching the specified text.
 
         Example:
-        cleanup text \"test\" 5
+            `[p]cleanup text "test" 5`
 
-        Remember to use double quotes."""
+        Remember to use double quotes.
+        """
 
         channel = ctx.channel
-        if not channel.permissions_for(ctx.guild.me).manage_messages:
-            await ctx.send("I need the Manage Messages permission to do this.")
-            return
 
         author = ctx.author
 
@@ -158,18 +155,17 @@ class Cleanup(commands.Cog):
 
     @cleanup.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(manage_messages=True)
     async def user(
         self, ctx: commands.Context, user: str, number: int, delete_pinned: bool = False
     ):
-        """Deletes last X messages from specified user.
+        """Delete the last X messages from a specified user.
 
         Examples:
-        cleanup user @\u200bTwentysix 2
-        cleanup user Red 6"""
+            `[p]cleanup user @\u200bTwentysix 2`
+            `[p]cleanup user Red 6`
+        """
         channel = ctx.channel
-        if not channel.permissions_for(ctx.guild.me).manage_messages:
-            await ctx.send("I need the Manage Messages permission to do this.")
-            return
 
         member = None
         try:
@@ -215,20 +211,16 @@ class Cleanup(commands.Cog):
 
     @cleanup.command()
     @commands.guild_only()
+    @commands.bot_has_permissions(manage_messages=True)
     async def after(self, ctx: commands.Context, message_id: int, delete_pinned: bool = False):
-        """Deletes all messages after specified message.
+        """Delete all messages after a specified message.
 
         To get a message id, enable developer mode in Discord's
         settings, 'appearance' tab. Then right click a message
         and copy its id.
-
-        This command only works on bots running as bot accounts.
         """
 
         channel = ctx.channel
-        if not channel.permissions_for(ctx.guild.me).manage_messages:
-            await ctx.send("I need the Manage Messages permission to do this.")
-            return
         author = ctx.author
 
         try:
@@ -249,16 +241,47 @@ class Cleanup(commands.Cog):
 
     @cleanup.command()
     @commands.guild_only()
-    async def messages(self, ctx: commands.Context, number: int, delete_pinned: bool = False):
-        """Deletes last X messages.
+    @commands.bot_has_permissions(manage_messages=True)
+    async def before(
+        self, ctx: commands.Context, message_id: int, number: int, delete_pinned: bool = False
+    ):
+        """Deletes X messages before specified message.
 
-        Example:
-        cleanup messages 26"""
+        To get a message id, enable developer mode in Discord's
+        settings, 'appearance' tab. Then right click a message
+        and copy its id.
+        """
 
         channel = ctx.channel
-        if not channel.permissions_for(ctx.guild.me).manage_messages:
-            await ctx.send("I need the Manage Messages permission to do this.")
-            return
+        author = ctx.author
+
+        try:
+            before = await channel.get_message(message_id)
+        except discord.NotFound:
+            return await ctx.send(_("Message not found."))
+
+        to_delete = await self.get_messages_for_deletion(
+            channel=channel, number=number, before=before, delete_pinned=delete_pinned
+        )
+
+        reason = "{}({}) deleted {} messages in channel {}.".format(
+            author.name, author.id, len(to_delete), channel.name
+        )
+        log.info(reason)
+
+        await mass_purge(to_delete, channel)
+
+    @cleanup.command()
+    @commands.guild_only()
+    @commands.bot_has_permissions(manage_messages=True)
+    async def messages(self, ctx: commands.Context, number: int, delete_pinned: bool = False):
+        """Delete the last X messages.
+
+        Example:
+            `[p]cleanup messages 26`
+        """
+
+        channel = ctx.channel
         author = ctx.author
 
         if number > 100:
@@ -280,13 +303,11 @@ class Cleanup(commands.Cog):
 
     @cleanup.command(name="bot")
     @commands.guild_only()
+    @commands.bot_has_permissions(manage_messages=True)
     async def cleanup_bot(self, ctx: commands.Context, number: int, delete_pinned: bool = False):
-        """Cleans up command messages and messages from the bot."""
+        """Clean up command messages and messages from the bot."""
 
         channel = ctx.channel
-        if not channel.permissions_for(ctx.guild.me).manage_messages:
-            await ctx.send("I need the Manage Messages permission to do this.")
-            return
         author = ctx.message.author
 
         if number > 100:
@@ -339,7 +360,7 @@ class Cleanup(commands.Cog):
         match_pattern: str = None,
         delete_pinned: bool = False,
     ):
-        """Cleans up messages owned by the bot.
+        """Clean up messages owned by the bot.
 
         By default, all messages are cleaned. If a third argument is specified,
         it is used for pattern matching: If it begins with r( and ends with ),
