@@ -415,6 +415,7 @@ async def test_inc_bad_values(config):
     config.register_global(foo=defaults)
     with pytest.raises(TypeError):
         await config.foo.inc(10)
+    with pytest.raises(TypeError):
         await config.baz.inc(10)
 
 
