@@ -1614,56 +1614,53 @@ class Core(commands.Cog, CoreLogic):
         pass
 
     @command_manager.group(name="disable", invoke_without_command=True)
-    async def command_disable(self, ctx: commands.Context, *, command: str):
-        """Disable a command.
+    async def command_disable(
+        self, ctx: commands.Context, *, command_or_cog: Union[commands.Command, commands.CogMeta]
+    ):
+        """Disable a command or cog.
 
-        If you're the bot owner, this will disable commands
-        globally by default.
+        If you're the bot owner and you supply a command, this will
+        disable globally by default.
         """
-        # Select the scope based on the author's privileges
-        if await ctx.bot.is_owner(ctx.author):
-            await ctx.invoke(self.command_disable_global, command=command)
+        if ctx.guild is None:
+            if not await ctx.bot.is_owner(ctx.author):
+                raise commands.NotOwner()
+            elif isinstance(command_or_cog, commands.CogMeta):
+                await ctx.send("You cannot disable cogs globally. Please unload the cog instead.")
+            else:
+                await ctx.invoke(self.command_disable_global, command=command_or_cog)
         else:
-            await ctx.invoke(self.command_disable_guild, command=command)
+            if isinstance(command_or_cog, commands.Command) and await ctx.bot.is_owner(ctx.author):
+                await ctx.invoke(self.command_disable_global, command=command_or_cog)
+            else:
+                await ctx.invoke(self.command_disable_guild, command_or_cog=command_or_cog)
 
     @checks.is_owner()
     @command_disable.command(name="global")
-    async def command_disable_global(self, ctx: commands.Context, *, command: str):
+    async def command_disable_global(self, ctx: commands.Context, *, command: commands.Command):
         """Disable a command globally."""
-        command_obj: commands.Command = ctx.bot.get_command(command)
-        if command_obj is None:
-            await ctx.send(
-                _("I couldn't find that command. Please note that it is case sensitive.")
-            )
-            return
-
         async with ctx.bot.db.disabled_commands() as disabled_commands:
-            if command not in disabled_commands:
-                disabled_commands.append(command_obj.qualified_name)
+            if command.qualified_name not in disabled_commands:
+                disabled_commands.append(command.qualified_name)
 
-        if not command_obj.enabled:
+        if not command.enabled:
             await ctx.send(_("That command is already disabled globally."))
             return
-        command_obj.enabled = False
+        command.enabled = False
 
         await ctx.tick()
 
     @commands.guild_only()
     @command_disable.command(name="server", aliases=["guild"])
-    async def command_disable_guild(self, ctx: commands.Context, *, command: str):
-        """Disable a command in this server only."""
-        command_obj: commands.Command = ctx.bot.get_command(command)
-        if command_obj is None:
-            await ctx.send(
-                _("I couldn't find that command. Please note that it is case sensitive.")
-            )
-            return
-
+    async def command_disable_guild(
+        self, ctx: commands.Context, *, command_or_cog: Union[commands.Command, commands.CogMeta]
+    ):
+        """Disable a command or cog in this server."""
         async with ctx.bot.db.guild(ctx.guild).disabled_commands() as disabled_commands:
-            if command not in disabled_commands:
-                disabled_commands.append(command_obj.qualified_name)
+            if command_or_cog.qualified_name not in disabled_commands:
+                disabled_commands.append(command_or_cog.qualified_name)
 
-        done = command_obj.disable_in(ctx.guild)
+        done = command_or_cog.disable_in(ctx.guild)
 
         if not done:
             await ctx.send(_("That command is already disabled in this server."))
@@ -1671,55 +1668,53 @@ class Core(commands.Cog, CoreLogic):
             await ctx.tick()
 
     @command_manager.group(name="enable", invoke_without_command=True)
-    async def command_enable(self, ctx: commands.Context, *, command: str):
-        """Enable a command.
+    async def command_enable(
+        self, ctx: commands.Context, *, command_or_cog: Union[commands.Command, commands.CogMeta]
+    ):
+        """Enable a command or cog.
 
-        If you're a bot owner, this will try to enable a globally
-        disabled command by default.
+        If you're the bot owner and you supply a command, this will
+        enable globally by default.
         """
-        if await ctx.bot.is_owner(ctx.author):
-            await ctx.invoke(self.command_enable_global, command=command)
+        if ctx.guild is None:
+            if not await ctx.bot.is_owner(ctx.author):
+                raise commands.NotOwner()
+            elif isinstance(command_or_cog, commands.CogMeta):
+                await ctx.send("You cannot enable cogs globally.")
+            else:
+                await ctx.invoke(self.command_enable_global, command=command_or_cog)
         else:
-            await ctx.invoke(self.command_enable_guild, command=command)
+            if isinstance(command_or_cog, commands.Command) and await ctx.bot.is_owner(ctx.author):
+                await ctx.invoke(self.command_enable_global, command=command_or_cog)
+            else:
+                await ctx.invoke(self.command_enable_guild, command_or_cog=command_or_cog)
 
     @commands.is_owner()
     @command_enable.command(name="global")
-    async def command_enable_global(self, ctx: commands.Context, *, command: str):
+    async def command_enable_global(self, ctx: commands.Context, *, command: commands.Command):
         """Enable a command globally."""
-        command_obj: commands.Command = ctx.bot.get_command(command)
-        if command_obj is None:
-            await ctx.send(
-                _("I couldn't find that command. Please note that it is case sensitive.")
-            )
-            return
-
         async with ctx.bot.db.disabled_commands() as disabled_commands:
             with contextlib.suppress(ValueError):
-                disabled_commands.remove(command_obj.qualified_name)
+                disabled_commands.remove(command.qualified_name)
 
-        if command_obj.enabled:
+        if command.enabled:
             await ctx.send(_("That command is already enabled globally."))
             return
 
-        command_obj.enabled = True
+        command.enabled = True
         await ctx.tick()
 
     @commands.guild_only()
     @command_enable.command(name="server", aliases=["guild"])
-    async def command_enable_guild(self, ctx: commands.Context, *, command: str):
-        """Enable a command in this server."""
-        command_obj: commands.Command = ctx.bot.get_command(command)
-        if command_obj is None:
-            await ctx.send(
-                _("I couldn't find that command. Please note that it is case sensitive.")
-            )
-            return
-
+    async def command_enable_guild(
+        self, ctx: commands.Context, *, command_or_cog: Union[commands.Command, commands.CogMeta]
+    ):
+        """Enable a command or cog in this server."""
         async with ctx.bot.db.guild(ctx.guild).disabled_commands() as disabled_commands:
             with contextlib.suppress(ValueError):
-                disabled_commands.remove(command_obj.qualified_name)
+                disabled_commands.remove(command_or_cog.qualified_name)
 
-        done = command_obj.enable_in(ctx.guild)
+        done = command_or_cog.enable_in(ctx.guild)
 
         if not done:
             await ctx.send(_("That command is already enabled in this server."))

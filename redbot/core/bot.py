@@ -243,7 +243,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
         self.extensions[name] = lib
 
     def remove_cog(self, cogname: str):
-        cog = self.get_cog(cogname)
+        cog: commands.Cog = self.get_cog(cogname)
         if cog is None:
             return
 
@@ -254,6 +254,8 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
                 pass
             else:
                 self.remove_permissions_hook(hook)
+
+        cog.__class__.requires.clear_all_rules()
 
         super().remove_cog(cogname)
 
@@ -398,8 +400,6 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
                 f"not inherit from the commands.Cog base class. The cog author must update "
                 f"the cog to adhere to this requirement."
             )
-        if not hasattr(cog, "requires"):
-            commands.Cog.__init__(cog)
 
         for cls in inspect.getmro(cog.__class__):
             try:
@@ -431,6 +431,14 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
 
         super().add_command(command)
         self.dispatch("command_add", command)
+
+    def remove_command(self, name: str) -> Optional[commands.Command]:
+        cmd: Optional[commands.Command] = super().remove_command(name)
+        if cmd is not None:
+            # We need to clear all rules, as we don't want them to hang around if  rules are
+            # changed or permissions is unloaded between now and the command being added again.
+            cmd.requires.clear_all_rules()
+        return cmd
 
     def clear_permission_rules(self, guild_id: Optional[int]) -> None:
         """Clear all permission overrides in a scope.

@@ -539,7 +539,10 @@ class Permissions(commands.Cog):
         if update is False:
             await self._clear_rules(guild_id)
 
-        for category, getter in ((COG, self.bot.get_cog), (COMMAND, self.bot.get_command)):
+        for category, getter in (
+            (COG, lambda s: type(self.bot.get_cog(s))),
+            (COMMAND, self.bot.get_command),
+        ):
             rules_dict = rules.get(category)
             if not rules_dict:
                 continue
@@ -673,7 +676,10 @@ class Permissions(commands.Cog):
 
     async def _load_all_rules(self):
         """Load all of this cog's rules into loaded commands and cogs."""
-        for category, getter in ((COG, self.bot.get_cog), (COMMAND, self.bot.get_command)):
+        for category, getter in (
+            (COG, lambda s: type(self.bot.get_cog(s))),
+            (COMMAND, self.bot.get_command),
+        ):
             all_rules = await self.config.custom(category).all()
             for name, rules in all_rules.items():
                 obj = getter(name)
@@ -711,7 +717,10 @@ class Permissions(commands.Cog):
         This is done instead of just clearing all rules, which could
         clear rules set by other cogs.
         """
-        for category, getter in ((COG, self.bot.get_cog), (COMMAND, self.bot.get_command)):
+        for category, getter in (
+            (COG, lambda s: type(self.bot.get_cog(s))),
+            (COMMAND, self.bot.get_command),
+        ):
             all_rules = await self.config.custom(category).all()
             for name, rules in all_rules.items():
                 obj = getter(name)
