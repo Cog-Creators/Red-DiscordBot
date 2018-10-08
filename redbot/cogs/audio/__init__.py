@@ -34,7 +34,7 @@ async def download_lavalink(session):
 
 async def maybe_download_lavalink(loop, cog):
     jar_exists = LAVALINK_JAR_FILE.exists()
-    current_build = redbot.core.VersionInfo(*await cog.config.current_build())
+    current_build = redbot.core.VersionInfo.from_json(await cog.config.current_build())
 
     if not jar_exists or current_build < redbot.core.version_info:
         log.info("Downloading Lavalink.jar")
@@ -52,6 +52,6 @@ async def setup(bot: commands.Bot):
         await maybe_download_lavalink(bot.loop, cog)
         await start_lavalink_server(bot.loop)
 
+    await cog.initialize()
+
     bot.add_cog(cog)
-    bot.loop.create_task(cog.disconnect_timer())
-    bot.loop.create_task(cog.init_config())

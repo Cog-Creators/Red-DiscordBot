@@ -20,25 +20,24 @@ message to help page.
 e.g. format_help_for(ctx, ctx.command, "Missing required arguments")
 
 discord.py 1.0.0a
-Experimental: compatibility with 0.16.8
 
-Copyrights to logic of code belong to Rapptz (Danny)
-Everything else credit to SirThane#1780"""
+This help formatter contains work by Rapptz (Danny) and SirThane#1780.
+"""
 from collections import namedtuple
-from typing import List
+from typing import List, Optional, Union
 
 import discord
-from discord.ext.commands import formatter
+from discord.ext.commands import formatter as dpy_formatter
 import inspect
 import itertools
 import re
-import sys
-import traceback
 
 from . import commands
-from redbot.core.utils.chat_formatting import pagify, box
-from redbot.core.utils import fuzzy_command_search
+from .i18n import Translator
+from .utils.chat_formatting import pagify
+from .utils import fuzzy_command_search, format_fuzzy_results
 
+_ = Translator("Help", __file__)
 
 EMPTY_STRING = "\u200b"
 
@@ -49,7 +48,7 @@ _mention_pattern = re.compile("|".join(_mentions_transforms.keys()))
 EmbedField = namedtuple("EmbedField", "name value inline")
 
 
-class Help(formatter.HelpFormatter):
+class Help(dpy_formatter.HelpFormatter):
     """Formats help for commands."""
 
     def __init__(self, *args, **kwargs):
@@ -57,14 +56,9 @@ class Help(formatter.HelpFormatter):
         self.command = None
         super().__init__(*args, **kwargs)
 
-    def pm_check(self, ctx):
+    @staticmethod
+    def pm_check(ctx):
         return isinstance(ctx.channel, discord.DMChannel)
-
-    @property
-    def clean_prefix(self):
-        maybe_member = self.context.guild.me if self.context.guild else self.context.bot.user
-        pretty = f"@{maybe_member.display_name}"
-        return self.context.prefix.replace(maybe_member.mention, pretty)
 
     @property
     def me(self):
@@ -83,6 +77,8 @@ class Help(formatter.HelpFormatter):
             return self.context.bot.color
         else:
             return await self.context.embed_colour()
+
+    colour = color
 
     @property
     def destination(self):
@@ -110,7 +106,7 @@ class Help(formatter.HelpFormatter):
                 continue
 
             if self.is_cog() or self.is_bot():
-                name = "{0}{1}".format(self.clean_prefix, name)
+                name = "{0}{1}".format(self.context.clean_prefix, name)
 
             entries += "**{0}**   {1}\n".format(name, command.short_doc)
         return entries
@@ -120,7 +116,7 @@ class Help(formatter.HelpFormatter):
         return (
             "Type {0}help <command> for more info on a command.\n"
             "You can also type {0}help <category> for more info on a category.".format(
-                self.clean_prefix
+                self.context.clean_prefix
             )
         )
 
@@ -163,7 +159,7 @@ class Help(formatter.HelpFormatter):
             if self.command.help:
                 splitted = self.command.help.split("\n\n")
                 name = "__{0}__".format(splitted[0])
-                value = "\n\n".join(splitted[1:]).replace("[p]", self.clean_prefix)
+                value = "\n\n".join(splitted[1:]).replace("[p]", self.context.clean_prefix)
                 if value == "":
                     value = EMPTY_STRING
                 field = EmbedField(name[:252], value[:1024], False)
@@ -213,7 +209,8 @@ class Help(formatter.HelpFormatter):
 
         return emb
 
-    def group_fields(self, fields: List[EmbedField], max_chars=1000):
+    @staticmethod
+    def group_fields(fields: List[EmbedField], max_chars=1000):
         curr_group = []
         ret = []
         for f in fields:
@@ -277,158 +274,115 @@ class Help(formatter.HelpFormatter):
 
         return ret
 
-    async def simple_embed(self, ctx, title=None, description=None, color=None):
-        # Shortcut
+    async def format_command_not_found(
+        self, ctx: commands.Context, command_name: str
+    ) -> Optional[Union[str, discord.Message]]:
+        """Get the response for a user calling help on a missing command."""
         self.context = ctx
-        if color is None:
-            color = await self.color()
-        embed = discord.Embed(title=title, description=description, color=color)
-        embed.set_footer(text=ctx.bot.formatter.get_ending_note())
-        embed.set_author(**self.author)
-        return embed
-
-    async def cmd_not_found(self, ctx, cmd, description=None, color=None):
-        # Shortcut for a shortcut. Sue me
-        embed = await self.simple_embed(
-            ctx, title="Command {} not found.".format(cmd), description=description, color=color
+        return await default_command_not_found(
+            ctx,
+            command_name,
+            use_embeds=True,
+            colour=await self.colour(),
+            author=self.author,
+            footer={"text": self.get_ending_note()},
         )
-        return embed
-
-    async def cmd_has_no_subcommands(self, ctx, cmd, color=None):
-        embed = await self.simple_embed(
-            ctx, title=ctx.bot.command_has_no_subcommands.format(cmd), color=color
-        )
-        return embed
 
 
 @commands.command(hidden=True)
-async def help(ctx, *cmds: str):
-    """Shows help documentation.
+async def help(ctx: commands.Context, *, command_name: str = ""):
+    """Show help documentation.
 
-    [p]**help**: Shows the help manual.
-    [p]**help** command: Show help for a command
-    [p]**help** Category: Show commands and description for a category"""
-    destination = ctx.author if ctx.bot.pm_help else ctx
-
-    def repl(obj):
-        return _mentions_transforms.get(obj.group(0), "")
+    - `[p]help`: Show the help manual.
+    - `[p]help command`: Show help for a command.
+    - `[p]help Category`: Show commands and description for a category,
+    """
+    bot = ctx.bot
+    if bot.pm_help:
+        destination = ctx.author
+    else:
+        destination = ctx.channel
 
     use_embeds = await ctx.embed_requested()
-    f = formatter.HelpFormatter()
-    # help by itself just lists our own commands.
-    if len(cmds) == 0:
-        if use_embeds:
-            embeds = await ctx.bot.formatter.format_help_for(ctx, ctx.bot)
-        else:
-            embeds = await f.format_help_for(ctx, ctx.bot)
-    elif len(cmds) == 1:
-        # try to see if it is a cog name
-        name = _mention_pattern.sub(repl, cmds[0])
-        command = None
-        if name in ctx.bot.cogs:
-            command = ctx.bot.cogs[name]
-        else:
-            command = ctx.bot.all_commands.get(name)
-            if command is None:
-                if use_embeds:
-                    fuzzy_result = await fuzzy_command_search(ctx, name)
-                    if fuzzy_result is not None:
-                        await destination.send(
-                            embed=await ctx.bot.formatter.cmd_not_found(
-                                ctx, name, description=fuzzy_result
-                            )
-                        )
-                else:
-                    fuzzy_result = await fuzzy_command_search(ctx, name)
-                    if fuzzy_result is not None:
-                        await destination.send(
-                            ctx.bot.command_not_found.format(name, fuzzy_result)
-                        )
-                return
-        if use_embeds:
-            embeds = await ctx.bot.formatter.format_help_for(ctx, command)
-        else:
-            embeds = await f.format_help_for(ctx, command)
+    if use_embeds:
+        formatter = bot.formatter
     else:
-        name = _mention_pattern.sub(repl, cmds[0])
-        command = ctx.bot.all_commands.get(name)
-        if command is None:
-            if use_embeds:
-                fuzzy_result = await fuzzy_command_search(ctx, name)
-                if fuzzy_result is not None:
-                    await destination.send(
-                        embed=await ctx.bot.formatter.cmd_not_found(
-                            ctx, name, description=fuzzy_result
-                        )
-                    )
-            else:
-                fuzzy_result = await fuzzy_command_search(ctx, name)
-                if fuzzy_result is not None:
-                    await destination.send(ctx.bot.command_not_found.format(name, fuzzy_result))
-            return
+        formatter = dpy_formatter.HelpFormatter()
 
-        for key in cmds[1:]:
-            try:
-                key = _mention_pattern.sub(repl, key)
-                command = command.all_commands.get(key)
-                if command is None:
-                    if use_embeds:
-                        fuzzy_result = await fuzzy_command_search(ctx, name)
-                        if fuzzy_result is not None:
-                            await destination.send(
-                                embed=await ctx.bot.formatter.cmd_not_found(
-                                    ctx, name, description=fuzzy_result
-                                )
-                            )
-                    else:
-                        fuzzy_result = await fuzzy_command_search(ctx, name)
-                        if fuzzy_result is not None:
-                            await destination.send(
-                                ctx.bot.command_not_found.format(name, fuzzy_result)
-                            )
-                    return
-            except AttributeError:
-                if use_embeds:
-                    await destination.send(
-                        embed=await ctx.bot.formatter.simple_embed(
-                            ctx,
-                            title='Command "{0.name}" has no subcommands.'.format(command),
-                            color=await ctx.bot.formatter.color(),
-                        )
-                    )
-                else:
-                    await destination.send(ctx.bot.command_has_no_subcommands.format(command))
-                return
-        if use_embeds:
-            embeds = await ctx.bot.formatter.format_help_for(ctx, command)
+    if not command_name:
+        # help by itself just lists our own commands.
+        pages = await formatter.format_help_for(ctx, bot)
+    else:
+        # First check if it's a cog
+        command = bot.get_cog(command_name)
+        if command is None:
+            command = bot.get_command(command_name)
+        if command is None:
+            if hasattr(formatter, "format_command_not_found"):
+                msg = await formatter.format_command_not_found(ctx, command_name)
+            else:
+                msg = await default_command_not_found(ctx, command_name, use_embeds=use_embeds)
+            pages = [msg]
         else:
-            embeds = await f.format_help_for(ctx, command)
+            pages = await formatter.format_help_for(ctx, command)
 
     max_pages_in_guild = await ctx.bot.db.help.max_pages_in_guild()
-    if len(embeds) > max_pages_in_guild:
+    if len(pages) > max_pages_in_guild:
+        destination = ctx.author
+    if ctx.guild and not ctx.guild.me.permissions_in(ctx.channel).send_messages:
         destination = ctx.author
     try:
-        for embed in embeds:
-            if use_embeds:
-                try:
-                    await destination.send(embed=embed)
-                except discord.HTTPException:
-                    destination = ctx.author
-                    await destination.send(embed=embed)
+        for page in pages:
+            if isinstance(page, discord.Embed):
+                await destination.send(embed=page)
             else:
-                try:
-                    await destination.send(embed)
-                except discord.HTTPException:
-                    destination = ctx.author
-                    await destination.send(embed)
+                await destination.send(page)
     except discord.Forbidden:
         await ctx.channel.send(
-            "I couldn't send the help message to you in DM. Either you blocked me or you disabled DMs in this server."
+            _(
+                "I couldn't send the help message to you in DM. Either you blocked me or you "
+                "disabled DMs in this server."
+            )
         )
 
 
-@help.error
-async def help_error(ctx, error):
-    destination = ctx.author if ctx.bot.pm_help else ctx
-    await destination.send("{0.__name__}: {1}".format(type(error), error))
-    traceback.print_tb(error.original.__traceback__, file=sys.stderr)
+async def default_command_not_found(
+    ctx: commands.Context, command_name: str, *, use_embeds: bool, **embed_options
+) -> Optional[Union[str, discord.Embed]]:
+    """Default function for formatting the response to a missing command."""
+    ret = None
+    cmds = command_name.split()
+    prev_command = None
+    for invoked in itertools.accumulate(cmds, lambda *args: " ".join(args)):
+        command = ctx.bot.get_command(invoked)
+        if command is None:
+            if prev_command is not None and not isinstance(prev_command, commands.Group):
+                ret = _("Command *{command_name}* has no subcommands.").format(
+                    command_name=prev_command.qualified_name
+                )
+            break
+        elif not await command.can_see(ctx):
+            return
+        prev_command = command
+
+    if ret is None:
+        fuzzy_commands = await fuzzy_command_search(ctx, command_name, min_score=75)
+        if fuzzy_commands:
+            ret = await format_fuzzy_results(ctx, fuzzy_commands, embed=use_embeds)
+        else:
+            ret = _("Command *{command_name}* not found.").format(command_name=command_name)
+
+    if use_embeds:
+        if isinstance(ret, str):
+            ret = discord.Embed(title=ret)
+        if "colour" in embed_options:
+            ret.colour = embed_options.pop("colour")
+        elif "color" in embed_options:
+            ret.colour = embed_options.pop("color")
+
+        if "author" in embed_options:
+            ret.set_author(**embed_options.pop("author"))
+        if "footer" in embed_options:
+            ret.set_footer(**embed_options.pop("footer"))
+
+    return ret

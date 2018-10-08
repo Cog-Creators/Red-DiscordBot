@@ -1,5 +1,4 @@
 from redbot.core import commands
-import discord
 
 
 def mod_or_voice_permissions(**perms):
@@ -10,8 +9,8 @@ def mod_or_voice_permissions(**perms):
             # Author is bot owner or guild owner
             return True
 
-        admin_role = discord.utils.get(guild.roles, id=await ctx.bot.db.guild(guild).admin_role())
-        mod_role = discord.utils.get(guild.roles, id=await ctx.bot.db.guild(guild).mod_role())
+        admin_role = guild.get_role(await ctx.bot.db.guild(guild).admin_role())
+        mod_role = guild.get_role(await ctx.bot.db.guild(guild).mod_role())
 
         if admin_role in author.roles or mod_role in author.roles:
             return True
@@ -26,7 +25,7 @@ def mod_or_voice_permissions(**perms):
         else:
             return True
 
-    return commands.check(pred)
+    return commands.permissions_check(pred)
 
 
 def admin_or_voice_permissions(**perms):
@@ -35,7 +34,7 @@ def admin_or_voice_permissions(**perms):
         guild = ctx.guild
         if await ctx.bot.is_owner(author) or guild.owner == author:
             return True
-        admin_role = discord.utils.get(guild.roles, id=await ctx.bot.db.guild(guild).admin_role())
+        admin_role = guild.get_role(await ctx.bot.db.guild(guild).admin_role())
         if admin_role in author.roles:
             return True
         for vc in guild.voice_channels:
@@ -48,7 +47,7 @@ def admin_or_voice_permissions(**perms):
         else:
             return True
 
-    return commands.check(pred)
+    return commands.permissions_check(pred)
 
 
 def bot_has_voice_permissions(**perms):

@@ -311,7 +311,7 @@ _ = Translator("CogManagerUI", __file__)
 
 
 @cog_i18n(_)
-class CogManagerUI:
+class CogManagerUI(commands.Cog):
     """Commands to interface with Red's cog manager."""
 
     @staticmethod

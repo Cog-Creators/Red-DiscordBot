@@ -53,7 +53,7 @@ Red's repository is configured to follow a particular development workflow, usin
 
 ### 4.1 Setting up your development environment
 The following requirements must be installed prior to setting up:
- - Python 3.6
+ - Python 3.6.2 or greater (3.6.6 or greater on Windows)
  - git
  - pip
  - pipenv
@@ -79,7 +79,7 @@ Note: If you haven't used `pipenv` before but are comfortable with virtualenvs, 
 We've recently started using [tox](https://github.com/tox-dev/tox) to run all of our tests. It's extremely simple to use, and if you followed the previous section correctly, it is already installed to your virtual environment.
 
 Currently, tox does the following, creating its own virtual environments for each stage:
-- Runs all of our unit tests with [pytest](https://github.com/pytest-dev/pytest) on python 3.6 (test environment `py36`)
+- Runs all of our unit tests with [pytest](https://github.com/pytest-dev/pytest) on python 3.6 and 3.7 (test environments `py36` and `py37`)
 - Ensures documentation builds without warnings, and all hyperlinks have a valid destination (test environment `docs`)
 - Ensures that the code meets our style guide with [black](https://github.com/ambv/black) (test environment `style`)
 
@@ -92,7 +92,7 @@ Your PR will not be merged until all of these tests pass.
 ### 4.3 Style
 Our style checker of choice, [black](https://github.com/ambv/black), actually happens to be an auto-formatter. The checking functionality simply detects whether or not it would try to reformat something in your code, should you run the formatter on it. For this reason, we recommend using this tool as a formatter, regardless of any disagreements you might have with the style it enforces.
 
-Use the command `black --help` to see how to use this tool. The full style guide is explained in detail on [black's GitHub repository](https://github.com/ambv/black). **There is one exception to this**, however, which is that we set the line length to 99, instead of black's default 88. When using `black` on the command line, simply use it like so: `black -l 99 <src>`.
+Use the command `black --help` to see how to use this tool. The full style guide is explained in detail on [black's GitHub repository](https://github.com/ambv/black). **There is one exception to this**, however, which is that we set the line length to 99, instead of black's default 88. When using `black` on the command line, simply use it like so: `black -l 99 -N <src>`.
 
 ### 4.4 Make
 You may have noticed we have a `Makefile` and a `make.bat` in the top-level directory. For now, you can do two things with them:

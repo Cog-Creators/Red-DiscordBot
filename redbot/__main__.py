@@ -28,6 +28,9 @@ if sys.implementation.name == "cpython":
     else:
         asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
+if sys.platform == "win32":
+    asyncio.set_event_loop(asyncio.ProactorEventLoop())
+
 
 #
 #               Red - Discord Bot v3
@@ -60,7 +63,7 @@ def init_loggers(cli_flags):
         os.environ["PYTHONASYNCIODEBUG"] = "1"
         logger.setLevel(logging.DEBUG)
     else:
-        logger.setLevel(logging.WARNING)
+        logger.setLevel(logging.INFO)
 
     from redbot.core.data_manager import core_data_path
 
