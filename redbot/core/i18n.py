@@ -3,8 +3,6 @@ import re
 from pathlib import Path
 from typing import Callable, Union
 
-from . import commands
-
 __all__ = ["get_locale", "set_locale", "reload_locales", "cog_i18n", "Translator"]
 
 _current_locale = "en_us"
@@ -217,6 +215,12 @@ class Translator(Callable[[str], str]):
         translated = _normalize(translated)
         if translated:
             self.translations.update({untranslated: translated})
+
+
+# This import to be down here to avoid circular import issues.
+# This will be cleaned up at a later date
+# noinspection PyPep8
+from . import commands
 
 
 def cog_i18n(translator: Translator):

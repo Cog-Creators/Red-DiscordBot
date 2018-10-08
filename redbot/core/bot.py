@@ -11,10 +11,10 @@ import discord
 import sys
 from discord.ext.commands import when_mentioned_or
 
+from . import Config, i18n, commands, errors
 from .cog_manager import CogManager
-from . import Config, i18n, commands
-from .rpc import RPCMixin
 from .help_formatter import Help, help as help_
+from .rpc import RPCMixin
 from .sentry import SentryManager
 from .utils import common_filters
 
@@ -217,7 +217,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
     async def load_extension(self, spec: ModuleSpec):
         name = spec.name.split(".")[-1]
         if name in self.extensions:
-            raise discord.ClientException(f"there is already a package named {name} loaded")
+            raise errors.PackageAlreadyLoaded(spec)
 
         lib = spec.loader.load_module()
         if not hasattr(lib, "setup"):
