@@ -553,7 +553,9 @@ class Core(commands.Cog, CoreLogic):
             await ctx.send(formed)
 
         if failed_with_reason:
-            fmt = "{other} package{plural} couldn't load for the following reason{plural}:\n\n"
+            fmt = (
+                "{other} package{plural} could not be loaded for the following reason{plural}:\n\n"
+            )
             reasons = "\n".join([f"`{x}`: {y}" for x, y in failed_with_reason])
             formed = self._get_package_strings(
                 [x for x, y in failed_with_reason], fmt, ("This", "These")
