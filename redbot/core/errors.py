@@ -31,12 +31,7 @@ class BalanceTooHigh(BankError, ValueError):
     """Raised when trying to set a user's balance to higher than the maximum."""
 
     def __init__(
-        self,
-        user: discord.abc.User,
-        max_balance: int,
-        currency_name: str,
-        *args,
-        **kwargs,
+        self, user: discord.abc.User, max_balance: int, currency_name: str, *args, **kwargs
     ):
         super().__init__(*args, **kwargs)
         self.user = user
