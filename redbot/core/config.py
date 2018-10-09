@@ -49,7 +49,11 @@ class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):
         return self.raw_value
 
     async def __aexit__(self, exc_type, exc, tb):
-        if _str_key_dict(self.raw_value) != self.__original_value:
+        if isinstance(self.raw_value, dict):
+            raw_value = _str_key_dict(self.raw_value)
+        else:
+            raw_value = self.raw_value
+        if raw_value != self.__original_value:
             await self.value_obj.set(self.raw_value)
 
 
