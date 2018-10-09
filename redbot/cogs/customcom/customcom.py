@@ -10,6 +10,7 @@ import discord
 from redbot.core import Config, checks, commands
 from redbot.core.utils.chat_formatting import box, pagify
 from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.utils import menus
 from redbot.core.utils.predicates import MessagePredicate
 
 _ = Translator("CustomCommands", __file__)
@@ -114,7 +115,7 @@ class CommandObj:
         *,
         response=None,
         cooldowns: Mapping[str, int] = None,
-        ask_for: bool = True
+        ask_for: bool = True,
     ):
         """Edit an already existing custom command"""
         ccinfo = await self.db(ctx.guild).commands.get_raw(command, default=None)
@@ -323,12 +324,12 @@ class CustomCommands(commands.Cog):
             await ctx.send(e.args[0])
 
     @customcom.command(name="list")
-    async def cc_list(self, ctx):
+    @checks.bot_has_permissions(add_reactions=True)
+    async def cc_list(self, ctx: commands.Context):
         """List all available custom commands."""
+        cc_dict = await CommandObj.get_commands(self.config.guild(ctx.guild))
 
-        response = await CommandObj.get_commands(self.config.guild(ctx.guild))
-
-        if not response:
+        if not cc_dict:
             await ctx.send(
                 _(
                     "There are no custom commands in this server."
@@ -338,8 +339,7 @@ class CustomCommands(commands.Cog):
             return
 
         results = []
-
-        for command, body in response.items():
+        for command, body in cc_dict.items():
             responses = body["response"]
             if isinstance(responses, list):
                 result = ", ".join(responses)
@@ -347,15 +347,30 @@ class CustomCommands(commands.Cog):
                 result = responses
             else:
                 continue
-            results.append("{command:<15} : {result}".format(command=command, result=result))
+            if len(result) > 52:
+                result = result[:49] + "..."
+            newline_pos = result.find("\n")
+            if newline_pos != -1:
+                result = result[:newline_pos]
+            results.append((f"{ctx.clean_prefix}{command}", result))
 
-        _commands = "\n".join(results)
-
-        if len(_commands) < 1500:
-            await ctx.send(box(_commands))
+        if await ctx.embed_requested():
+            content = "\n".join(map("**{0[0]}** {0[1]}".format, results))
+            pages = list(pagify(content, page_length=1024))
+            embed_pages = []
+            for idx, page in enumerate(pages, start=1):
+                embed = discord.Embed(
+                    title=_("Custom Command List"),
+                    description=page,
+                    colour=await ctx.embed_colour(),
+                )
+                embed.set_footer(text=_("Page {num}/{total}").format(num=idx, total=len(pages)))
+                embed_pages.append(embed)
+            await menus.menu(ctx, embed_pages, menus.DEFAULT_CONTROLS)
         else:
-            for page in pagify(_commands, delims=[" ", "\n"]):
-                await ctx.author.send(box(page))
+            content = "\n".join(map("{0[0]:<12} : {0[1]}".format, results))
+            pages = list(map(box, pagify(content, page_length=2000, shorten_by=10)))
+            await menus.menu(ctx, pages, menus.DEFAULT_CONTROLS)
 
     async def on_message(self, message):
         is_private = isinstance(message.channel, discord.abc.PrivateChannel)

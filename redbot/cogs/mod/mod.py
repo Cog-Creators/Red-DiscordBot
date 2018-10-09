@@ -825,7 +825,7 @@ class Mod(commands.Cog):
     @admin_or_voice_permissions(mute_members=True, deafen_members=True)
     @bot_has_voice_permissions(mute_members=True, deafen_members=True)
     async def voiceunban(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
-        """Unban a the user from speaking and listening in the server's voice channels."""
+        """Unban a user from speaking and listening in the server's voice channels."""
         user_voice_state = user.voice
         if user_voice_state is None:
             await ctx.send(_("No voice state for that user!"))
