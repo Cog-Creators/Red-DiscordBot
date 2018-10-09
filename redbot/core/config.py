@@ -39,17 +39,17 @@ class _ValueCtxManager(Awaitable[_T], AsyncContextManager[_T]):
 
     async def __aenter__(self):
         self.raw_value = await self
-        self.__original_value = deepcopy(self.raw_value)
         if not isinstance(self.raw_value, (list, dict)):
             raise TypeError(
                 "Type of retrieved value must be mutable (i.e. "
                 "list or dict) in order to use a config value as "
                 "a context manager."
             )
+        self.__original_value = deepcopy(self.raw_value)
         return self.raw_value
 
     async def __aexit__(self, exc_type, exc, tb):
-        if self.raw_value != self.__original_value:
+        if _str_key_dict(self.raw_value) != self.__original_value:
             await self.value_obj.set(self.raw_value)
 
 
