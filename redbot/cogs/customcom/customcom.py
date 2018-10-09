@@ -8,9 +8,9 @@ from typing import Mapping, Tuple, Dict
 import discord
 
 from redbot.core import Config, checks, commands
-from redbot.core.utils.chat_formatting import box, pagify
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils import menus
+from redbot.core.utils.chat_formatting import box, pagify, escape
 from redbot.core.utils.predicates import MessagePredicate
 
 _ = Translator("CustomCommands", __file__)
@@ -347,12 +347,15 @@ class CustomCommands(commands.Cog):
                 result = responses
             else:
                 continue
-            if len(result) > 52:
-                result = result[:49] + "..."
             # Don't put a line-break in preview
             newline_pos = result.find("\n")
             if newline_pos != -1:
                 result = result[:newline_pos] + "..."
+            # Cut preview to 52 characters max
+            if len(result) > 52:
+                result = result[:49] + "..."
+            # Escape markdown and mass mentions
+            result = escape(result, formatting=True, mass_mentions=True)
             results.append((f"{ctx.clean_prefix}{command}", result))
 
         if await ctx.embed_requested():
