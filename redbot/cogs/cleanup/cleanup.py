@@ -1,6 +1,6 @@
 import re
 from datetime import datetime, timedelta
-from typing import Union, List, Callable
+from typing import Union, List, Callable, Set
 
 import discord
 
@@ -323,15 +323,35 @@ class Cleanup(commands.Cog):
         if "" in prefixes:
             prefixes.remove("")
 
+        cc_cog = self.bot.get_cog("CustomCommands")
+        if cc_cog is not None:
+            command_names: Set[str] = await cc_cog.get_command_names(ctx.guild)
+            is_cc = lambda name: name in command_names
+        else:
+            is_cc = lambda name: False
+        alias_cog = self.bot.get_cog("Alias")
+        if alias_cog is not None:
+            alias_names: Set[str] = (
+                set((a.name for a in await alias_cog.unloaded_global_aliases()))
+                | set(a.name for a in await alias_cog.unloaded_aliases(ctx.guild))
+            )
+            is_alias = lambda name: name in alias_names
+        else:
+            is_alias = lambda name: False
+
+        bot_id = self.bot.user.id
+
         def check(m):
-            if m.author.id == self.bot.user.id:
+            if m.author.id == bot_id:
                 return True
             elif m == ctx.message:
                 return True
             p = discord.utils.find(m.content.startswith, prefixes)
             if p and len(p) > 0:
                 cmd_name = m.content[len(p) :].split(" ")[0]
-                return bool(self.bot.get_command(cmd_name))
+                return (
+                    bool(self.bot.get_command(cmd_name)) or is_alias(cmd_name) or is_cc(cmd_name)
+                )
             return False
 
         to_delete = await self.get_messages_for_deletion(
