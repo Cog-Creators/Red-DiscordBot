@@ -349,9 +349,10 @@ class CustomCommands(commands.Cog):
                 continue
             if len(result) > 52:
                 result = result[:49] + "..."
+            # Don't put a line-break in preview
             newline_pos = result.find("\n")
             if newline_pos != -1:
-                result = result[:newline_pos]
+                result = result[:newline_pos] + "..."
             results.append((f"{ctx.clean_prefix}{command}", result))
 
         if await ctx.embed_requested():
