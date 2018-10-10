@@ -9,7 +9,7 @@ import yaml
 from schema import And, Or, Schema, SchemaError, Optional as UseOptional
 from redbot.core import checks, commands, config
 from redbot.core.bot import Red
-from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import ReactionPredicate, MessagePredicate
@@ -22,7 +22,7 @@ from .converters import (
     GlobalUniqueObjectFinder,
 )
 
-_ = Translator("Permissions", __file__)
+_ = Translator(__file__)
 
 COG = "COG"
 COMMAND = "COMMAND"
@@ -74,8 +74,7 @@ _ = translate
 __version__ = "1.0.0"
 
 
-@cog_i18n(_)
-class Permissions(commands.Cog):
+class Permissions(commands.Cog, translator=_):
     """Customise permissions for commands and cogs."""
 
     def __init__(self, bot: Red):

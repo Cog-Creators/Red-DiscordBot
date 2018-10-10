@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 __all__ = ["GuildConverter"]
 
-_ = Translator("commands.converter", __file__)
+_ = Translator(__file__)
 
 ID_REGEX = re.compile(r"([0-9]{15,21})")
 

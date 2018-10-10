@@ -2,11 +2,11 @@ import discord
 from redbot.core.utils.chat_formatting import box
 
 from redbot.core import checks, bank, commands
-from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.i18n import Translator
 
 from redbot.core.bot import Red  # Only used for type hints
 
-_ = Translator("Bank", __file__)
+_ = Translator(__file__)
 
 
 def check_global_setting_guildowner():
@@ -53,8 +53,7 @@ def check_global_setting_admin():
     return commands.check(pred)
 
 
-@cog_i18n(_)
-class Bank(commands.Cog):
+class Bank(commands.Cog, translator=_):
     """Bank"""
 
     def __init__(self, bot: Red):

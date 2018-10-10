@@ -11,17 +11,16 @@ from redbot.cogs.warnings.helpers import (
 )
 from redbot.core import Config, checks, commands
 from redbot.core.bot import Red
-from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.i18n import Translator
 from redbot.core.utils.mod import is_admin_or_superior
 from redbot.core.utils.chat_formatting import warning, pagify
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 from redbot.core.utils.predicates import MessagePredicate
 
-_ = Translator("Warnings", __file__)
+_ = Translator(__file__)
 
 
-@cog_i18n(_)
-class Warnings(commands.Cog):
+class Warnings(commands.Cog, translator=_):
     """Warn misbehaving users and take automated actions."""
 
     default_guild = {"actions": [], "reasons": {}, "allow_custom_reasons": False}

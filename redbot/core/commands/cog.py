@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 __all__ = ["CogMeta", "Cog"]
 
-_ = Translator("commands.cog", __file__)
+_ = Translator(__file__)
 
 
 class CogMeta(CogCommandMixin, CogGroupMixin, type):
@@ -64,9 +64,16 @@ class CogMeta(CogCommandMixin, CogGroupMixin, type):
             raise discord.ext.commands.BadArgument(_('Cog "argument" not found.'))
         return type(cog_instance)
 
+    def translate(cls, untranslated: str) -> str:
+        return cls.__translator(untranslated)
+
 
 class Cog(metaclass=CogMeta):
     """Base class for a cog."""
+
+    def __init_subclass__(cls, **kwargs):
+        cls.__translator = kwargs.pop("translator", lambda s, t: t)
+        super().__init_subclass__(**kwargs)
 
     @classmethod
     async def convert(cls, ctx: "Context", argument: str) -> "Cog":

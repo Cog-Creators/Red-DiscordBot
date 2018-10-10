@@ -38,7 +38,7 @@ from .i18n import Translator
 from .utils.chat_formatting import pagify
 from .utils import fuzzy_command_search, format_fuzzy_results
 
-_ = Translator("Help", __file__)
+_ = Translator(__file__)
 
 EMPTY_STRING = "\u200b"
 

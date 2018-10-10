@@ -12,7 +12,7 @@ from .log import LOG
 
 __all__ = ["TriviaSession"]
 
-T_ = Translator("TriviaSession", __file__)
+T_ = Translator(__file__)
 
 
 _ = lambda s: s

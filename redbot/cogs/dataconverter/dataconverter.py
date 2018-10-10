@@ -3,16 +3,15 @@ import asyncio
 
 from redbot.core import checks, commands
 from redbot.core.bot import Red
-from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.i18n import Translator
 from redbot.cogs.dataconverter.core_specs import SpecResolver
 from redbot.core.utils.chat_formatting import box
 from redbot.core.utils.predicates import MessagePredicate
 
-_ = Translator("DataConverter", __file__)
+_ = Translator(__file__)
 
 
-@cog_i18n(_)
-class DataConverter(commands.Cog):
+class DataConverter(commands.Cog, translator=_):
     """Import Red V2 data to your V3 instance."""
 
     def __init__(self, bot: Red):

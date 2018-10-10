@@ -6,16 +6,15 @@ import discord
 
 from redbot.core import checks, commands
 from redbot.core.bot import Red
-from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.i18n import Translator
 from redbot.core.utils.mod import slow_deletion, mass_purge
 from redbot.cogs.mod.log import log
 from redbot.core.utils.predicates import MessagePredicate
 
-_ = Translator("Cleanup", __file__)
+_ = Translator(__file__)
 
 
-@cog_i18n(_)
-class Cleanup(commands.Cog):
+class Cleanup(commands.Cog, translator=_):
     """Commands for cleaning up messages."""
 
     def __init__(self, bot: Red):

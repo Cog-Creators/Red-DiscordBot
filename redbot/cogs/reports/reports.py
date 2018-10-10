@@ -10,18 +10,17 @@ from redbot.core import Config, checks, commands
 from redbot.core.utils.chat_formatting import pagify, box
 from redbot.core.utils.antispam import AntiSpam
 from redbot.core.bot import Red
-from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.i18n import Translator
 from redbot.core.utils.predicates import MessagePredicate
 from redbot.core.utils.tunnel import Tunnel
 
 
-_ = Translator("Reports", __file__)
+_ = Translator(__file__)
 
 log = logging.getLogger("red.reports")
 
 
-@cog_i18n(_)
-class Reports(commands.Cog):
+class Reports(commands.Cog, translator=_):
 
     default_guild_settings = {"output_channel": None, "active": False, "next_ticket": 1}
 

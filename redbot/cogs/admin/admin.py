@@ -4,14 +4,14 @@ from typing import Tuple
 import discord
 
 from redbot.core import Config, checks, commands
-from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box
 from .announcer import Announcer
 from .converters import MemberDefaultAuthor, SelfRole
 
 log = logging.getLogger("red.admin")
 
-T_ = Translator("Admin", __file__)
+T_ = Translator(__file__)
 
 _ = lambda s: s
 GENERIC_FORBIDDEN = _(
@@ -41,8 +41,7 @@ RUNNING_ANNOUNCEMENT = _(
 _ = T_
 
 
-@cog_i18n(_)
-class Admin(commands.Cog):
+class Admin(commands.Cog, translator=_):
     """A collection of server administration utilities."""
 
     def __init__(self, config=Config):

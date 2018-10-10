@@ -8,12 +8,12 @@ from typing import Mapping, Tuple, Dict, Set
 import discord
 
 from redbot.core import Config, checks, commands
-from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.i18n import Translator
 from redbot.core.utils import menus
 from redbot.core.utils.chat_formatting import box, pagify, escape
 from redbot.core.utils.predicates import MessagePredicate
 
-_ = Translator("CustomCommands", __file__)
+_ = Translator(__file__)
 
 
 class CCError(Exception):
@@ -183,8 +183,7 @@ class CommandObj:
         await self.db(ctx.guild).commands.set_raw(command, value=None)
 
 
-@cog_i18n(_)
-class CustomCommands(commands.Cog):
+class CustomCommands(commands.Cog, translator=_):
     """Creates commands used to display text."""
 
     def __init__(self, bot):

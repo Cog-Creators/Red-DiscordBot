@@ -46,7 +46,7 @@ OWNER_DISCLAIMER = (
 )
 
 
-_ = i18n.Translator("Core", __file__)
+_ = Translator(__file__)
 
 
 class CoreLogic:
@@ -269,8 +269,7 @@ class CoreLogic:
         return discord.utils.oauth_url(app_info.id)
 
 
-@i18n.cog_i18n(_)
-class Core(commands.Cog, CoreLogic):
+class Core(commands.Cog, CoreLogic, translator=_):
     """Commands related to core functions"""
 
     @commands.command(hidden=True)

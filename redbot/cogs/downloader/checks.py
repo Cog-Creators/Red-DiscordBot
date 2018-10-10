@@ -6,7 +6,7 @@ from redbot.core.utils.predicates import MessagePredicate
 
 __all__ = ["do_install_agreement"]
 
-T_ = Translator("DownloaderChecks", __file__)
+T_ = Translator(__file__)
 
 _ = lambda s: s
 REPO_INSTALL_MSG = _(

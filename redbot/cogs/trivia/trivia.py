@@ -7,7 +7,7 @@ import discord
 from redbot.core import commands
 from redbot.core import Config, checks
 from redbot.core.data_manager import cog_data_path
-from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box, pagify, bold
 from redbot.cogs.bank import check_global_setting_admin
 from .log import LOG
@@ -17,7 +17,7 @@ __all__ = ["Trivia", "UNIQUE_ID", "get_core_lists"]
 
 UNIQUE_ID = 0xB3C0E453
 
-_ = Translator("Trivia", __file__)
+_ = Translator(__file__)
 
 
 class InvalidListError(Exception):
@@ -26,8 +26,7 @@ class InvalidListError(Exception):
     pass
 
 
-@cog_i18n(_)
-class Trivia(commands.Cog):
+class Trivia(commands.Cog, translator=_):
     """Play trivia with friends!"""
 
     def __init__(self):

@@ -5,11 +5,11 @@ from random import randint, choice
 import aiohttp
 import discord
 from redbot.core import commands
-from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.i18n import Translator
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 from redbot.core.utils.chat_formatting import escape, italics
 
-_ = T_ = Translator("General", __file__)
+_ = T_ = Translator(__file__)
 
 
 class RPS(Enum):
@@ -31,8 +31,7 @@ class RPSParser:
             self.choice = None
 
 
-@cog_i18n(_)
-class General(commands.Cog):
+class General(commands.Cog, translator=_):
     """General commands."""
 
     global _

@@ -4,14 +4,13 @@ import discord
 
 from redbot.core import checks, modlog, commands
 from redbot.core.bot import Red
-from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box
 
-_ = Translator("ModLog", __file__)
+_ = Translator(__file__)
 
 
-@cog_i18n(_)
-class ModLog(commands.Cog):
+class ModLog(commands.Cog, translator=_):
     """Manage log channels for moderation actions."""
 
     def __init__(self, bot: Red):

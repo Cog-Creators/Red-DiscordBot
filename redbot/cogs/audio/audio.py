@@ -13,7 +13,7 @@ import time
 import redbot.core
 from redbot.core import Config, commands, checks, bank
 from redbot.core.data_manager import cog_data_path
-from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import bold, box
 from redbot.core.utils.menus import (
     menu,
@@ -27,14 +27,13 @@ from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
 from urllib.parse import urlparse
 from .manager import shutdown_lavalink_server
 
-_ = Translator("Audio", __file__)
+_ = Translator(__file__)
 
 __version__ = "0.0.8"
 __author__ = ["aikaterna", "billy/bollo/ati"]
 
 
-@cog_i18n(_)
-class Audio(commands.Cog):
+class Audio(commands.Cog, translator=_):
     """Play audio through voice channels."""
 
     def __init__(self, bot):

@@ -4,7 +4,7 @@ import discord
 from redbot.core import commands
 from redbot.core.i18n import Translator
 
-_ = Translator("Announcer", __file__)
+_ = Translator(__file__)
 
 
 class Announcer:

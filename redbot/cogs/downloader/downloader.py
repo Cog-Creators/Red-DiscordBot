@@ -11,7 +11,7 @@ import discord
 from redbot.core import checks, commands, Config
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
-from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box, pagify, humanize_list, inline
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import MessagePredicate, ReactionPredicate
@@ -23,11 +23,10 @@ from .installable import Installable
 from .log import log
 from .repo_manager import RepoManager, Repo
 
-_ = Translator("Downloader", __file__)
+_ = Translator(__file__)
 
 
-@cog_i18n(_)
-class Downloader(commands.Cog):
+class Downloader(commands.Cog, translator=_):
     def __init__(self, bot: Red):
         super().__init__()
         self.bot = bot

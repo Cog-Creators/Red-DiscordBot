@@ -7,7 +7,7 @@ from redbot.core import Config, checks, commands
 from redbot.core.i18n import Translator
 from redbot.core.utils.predicates import MessagePredicate
 
-_ = Translator("Warnings", __file__)
+_ = Translator(__file__)
 
 
 async def warning_points_add_check(

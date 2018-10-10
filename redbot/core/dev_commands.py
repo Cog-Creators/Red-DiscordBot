@@ -22,12 +22,12 @@ Notice:
 https://github.com/Rapptz/RoboDanny/blob/master/cogs/repl.py
 """
 
-_ = Translator("Dev", __file__)
+_ = Translator(__file__)
 
 START_CODE_BLOCK_RE = re.compile(r"^((```py)(?=\s)|(```))")
 
 
-class Dev(commands.Cog):
+class Dev(commands.Cog, translator=_):
     """Various development focused utilities."""
 
     def __init__(self):

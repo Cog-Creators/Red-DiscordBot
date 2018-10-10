@@ -28,7 +28,7 @@ __all__ = [
     "group",
 ]
 
-_ = Translator("commands.commands", __file__)
+_ = Translator(__file__)
 
 
 class CogCommandMixin:
@@ -154,15 +154,14 @@ class Command(CogCommandMixin, commands.Command):
     checks : List[`coroutine function`]
         A list of check predicates which cannot be overridden, unlike
         `Requires.checks`.
-    translator : Translator
+    translator : Callable[[str], str]
         A translator for this command's help docstring.
 
     """
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._help_override = kwargs.pop("help_override", None)
-        self.translator = kwargs.pop("i18n", None)
+        self._help_override: Optional[str] = kwargs.pop("help_override", None)
 
     @property
     def help(self):
@@ -174,14 +173,13 @@ class Command(CogCommandMixin, commands.Command):
         """
         if self._help_override is not None:
             return self._help_override
-        if self.translator is None:
-            translator = lambda s: s
-        else:
-            translator = self.translator
         command_doc = self.callback.__doc__
         if command_doc is None:
             return ""
-        return inspect.cleandoc(translator(command_doc))
+        if self.instance is None:
+            return inspect.cleandoc(command_doc)
+        else:
+            return inspect.cleandoc(type(self.instance).translate(command_doc))
 
     @help.setter
     def help(self, value):

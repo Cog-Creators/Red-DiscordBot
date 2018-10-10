@@ -3,14 +3,13 @@ from typing import Union
 
 from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
-from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import pagify
 
-_ = Translator("Filter", __file__)
+_ = Translator(__file__)
 
 
-@cog_i18n(_)
-class Filter(commands.Cog):
+class Filter(commands.Cog, translator=_):
     """Filter unwanted words and phrases from text channels."""
 
     def __init__(self, bot: Red):

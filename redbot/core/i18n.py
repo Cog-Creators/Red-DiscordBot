@@ -3,7 +3,7 @@ import re
 from pathlib import Path
 from typing import Callable, Union
 
-__all__ = ["get_locale", "set_locale", "reload_locales", "cog_i18n", "Translator"]
+__all__ = ["get_locale", "set_locale", "reload_locales", "Translator"]
 
 _current_locale = "en_us"
 
@@ -152,21 +152,18 @@ def get_locale_path(cog_folder: Path, extension: str) -> Path:
 class Translator(Callable[[str], str]):
     """Function to get translated strings at runtime."""
 
-    def __init__(self, name: str, file_location: Union[str, Path, os.PathLike]):
+    def __init__(self, file_location: Union[str, Path, os.PathLike]):
         """
         Initializes an internationalization object.
 
         Parameters
         ----------
-        name : str
-            Your cog name.
         file_location : `str` or `pathlib.Path`
             This should always be ``__file__`` otherwise your localizations
             will not load.
 
         """
         self.cog_folder = Path(file_location).resolve().parent
-        self.cog_name = name
         self.translations = {}
 
         _translators.append(self)
@@ -185,7 +182,7 @@ class Translator(Callable[[str], str]):
         except KeyError:
             return untranslated
 
-    def load_translations(self):
+    def load_translations(self) -> None:
         """
         Loads the current translations.
         """
@@ -205,7 +202,7 @@ class Translator(Callable[[str], str]):
             if translation_file is not None:
                 translation_file.close()
 
-    def _parse(self, translation_file):
+    def _parse(self, translation_file) -> None:
         self.translations = {}
         for translation in _parse(translation_file):
             self._add_translation(*translation)
@@ -215,23 +212,3 @@ class Translator(Callable[[str], str]):
         translated = _normalize(translated)
         if translated:
             self.translations.update({untranslated: translated})
-
-
-# This import to be down here to avoid circular import issues.
-# This will be cleaned up at a later date
-# noinspection PyPep8
-from . import commands
-
-
-def cog_i18n(translator: Translator):
-    """Get a class decorator to link the translator to this cog."""
-
-    def decorator(cog_class: type):
-        cog_class.__translator__ = translator
-        for name, attr in cog_class.__dict__.items():
-            if isinstance(attr, (commands.Group, commands.Command)):
-                attr.translator = translator
-                setattr(cog_class, name, attr)
-        return cog_class
-
-    return decorator

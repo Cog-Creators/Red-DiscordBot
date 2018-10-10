@@ -19,7 +19,7 @@ from .installable import Installable, InstallableType
 from .json_mixins import RepoJSONMixin
 from .log import log
 
-_ = Translator("RepoManager", __file__)
+_ = Translator(__file__)
 
 
 class Repo(RepoJSONMixin):

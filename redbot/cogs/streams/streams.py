@@ -4,7 +4,7 @@ import discord
 from redbot.core import Config, checks, commands
 from redbot.core.utils.chat_formatting import pagify
 from redbot.core.bot import Red
-from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.i18n import Translator
 from .streamtypes import (
     Stream,
     TwitchStream,
@@ -33,11 +33,10 @@ from typing import Optional, List, Tuple
 CHECK_DELAY = 60
 
 
-_ = Translator("Streams", __file__)
+_ = Translator(__file__)
 
 
-@cog_i18n(_)
-class Streams(commands.Cog):
+class Streams(commands.Cog, translator=_):
 
     global_defaults = {"tokens": {}, "streams": [], "communities": []}
 

@@ -9,13 +9,13 @@ import discord
 
 from redbot.cogs.bank import check_global_setting_guildowner, check_global_setting_admin
 from redbot.core import Config, bank, commands, errors
-from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
 
 from redbot.core.bot import Red
 
-T_ = Translator("Economy", __file__)
+T_ = Translator(__file__)
 
 logger = logging.getLogger("red.economy")
 
@@ -107,8 +107,7 @@ class SetParser:
             raise RuntimeError
 
 
-@cog_i18n(_)
-class Economy(commands.Cog):
+class Economy(commands.Cog, translator=_):
     """Get rich and have fun with imaginary currency!"""
 
     default_guild_settings = {

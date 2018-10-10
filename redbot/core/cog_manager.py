@@ -11,7 +11,7 @@ import discord
 
 from . import checks, commands
 from .config import Config
-from .i18n import Translator, cog_i18n
+from .i18n import Translator
 from .data_manager import cog_data_path
 
 from .utils.chat_formatting import box, pagify
@@ -304,11 +304,10 @@ class CogManager:
         invalidate_caches()
 
 
-_ = Translator("CogManagerUI", __file__)
+_ = Translator(__file__)
 
 
-@cog_i18n(_)
-class CogManagerUI(commands.Cog):
+class CogManagerUI(commands.Cog, translator=_):
     """Commands to interface with Red's cog manager."""
 
     @commands.command()

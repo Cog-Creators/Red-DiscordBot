@@ -7,7 +7,7 @@ import discord
 from redbot.core import commands
 from redbot.core.i18n import Translator
 
-_ = Translator("PermissionsConverters", __file__)
+_ = Translator(__file__)
 
 MENTION_RE = re.compile(r"^<?(?:(?:@[!&]?)?|#)(\d{15,21})>?$")
 
@@ -139,7 +139,7 @@ class CogOrCommand(NamedTuple):
     async def convert(cls, ctx: commands.Context, arg: str) -> "CogOrCommand":
         cog = ctx.bot.get_cog(arg)
         if cog:
-            return cls(type="COG", name=cog.__class__.__name__, obj=cog)
+            return cls(type="COG", name=type(cog).__name__, obj=type(cog))
         cmd = ctx.bot.get_command(arg)
         if cmd:
             return cls(type="COMMAND", name=cmd.qualified_name, obj=cmd)

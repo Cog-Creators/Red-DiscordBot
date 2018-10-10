@@ -10,14 +10,14 @@ from discord.ext.commands.converter import Converter, Greedy
 from discord.ext.commands.errors import BadArgument
 from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
-from redbot.core.i18n import Translator, cog_i18n
+from redbot.core.i18n import Translator
 from redbot.core.utils.chat_formatting import box, escape, pagify, format_perms_list
 from redbot.core.utils.common_filters import filter_invites, filter_various_mentions
 from redbot.core.utils.mod import is_mod_or_superior, is_allowed_by_hierarchy, get_audit_reason
 from .log import log
 
 
-_ = T_ = Translator("Mod", __file__)
+_ = T_ = Translator(__file__)
 
 
 class RawUserIds(Converter):
@@ -32,8 +32,7 @@ class RawUserIds(Converter):
         raise BadArgument("{} doesn't look like a valid user ID.".format(argument))
 
 
-@cog_i18n(_)
-class Mod(commands.Cog):
+class Mod(commands.Cog, translator=_):
     """Moderation tools."""
 
     default_guild_settings = {
