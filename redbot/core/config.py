@@ -192,7 +192,10 @@ class Group(Value):
     async def _get(self, default: Dict[str, Any] = ...) -> Dict[str, Any]:
         default = default if default is not ... else self.defaults
         raw = await super()._get(default)
-        return self.nested_update(raw, default)
+        if isinstance(raw, dict):
+            return self.nested_update(raw, default)
+        else:
+            return raw
 
     # noinspection PyTypeChecker
     def __getattr__(self, item: str) -> Union["Group", Value]:
