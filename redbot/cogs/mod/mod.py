@@ -891,7 +891,7 @@ class Mod(commands.Cog):
         """Mute users."""
         pass
 
-    @mute.command(name="voice", usage="<user> [-t time] [-r reason]")
+    @mute.command(name="voice", usage="<user> [time] [reason]")
     @commands.guild_only()
     @mod_or_voice_permissions(mute_members=True)
     @bot_has_voice_permissions(mute_members=True)
@@ -900,11 +900,11 @@ class Mod(commands.Cog):
     ):
         """Mutes the user in a voice channel
         
-        You can add a reason, or make the mute temporary using arguments:
+        You can add a reason, and/or make the mute temporary using arguments:
 
-        [-t number of days, hours, minutes, seconds] [-r reason]
+        [number of days, hours, minutes, seconds] [reason]
 
-        [p]mute voice @AirhornSolutions -r We love the audio shitposts, but need some quiet -t 1 hour
+        [p]mute voice @AirhornSolutions 1 hour We love the audio shitposts, but need some quiet
         """
         reason, time_interval = args
 
@@ -923,7 +923,7 @@ class Mod(commands.Cog):
         )
 
     @checks.mod_or_permissions(administrator=True)
-    @mute.command(name="channel", usage="<user> [-t time] [-r reason]")
+    @mute.command(name="channel", usage="<user> [time] [reason]")
     @commands.guild_only()
     @commands.bot_has_permissions(manage_roles=True)
     @checks.mod_or_permissions(administrator=True)
@@ -934,9 +934,9 @@ class Mod(commands.Cog):
         
         You can add a reason, or make the mute temporary using arguments:
 
-        [-t number of days, hours, minutes, seconds] [-r reason]
+        [number of days, hours, minutes, seconds] [reason]
 
-        [p]mute channel @AngryGamer -t 10 minutes -r need them on ice for a moment to mediate.
+        [p]mute channel @AngryGamer 10 minutes so a mod can explain something.
         """
         reason, time_interval = args
         await self.process_mute(
@@ -949,7 +949,7 @@ class Mod(commands.Cog):
         )
 
     @checks.mod_or_permissions(administrator=True)
-    @mute.command(name="server", aliases=["guild"], usage="<user> [-t time] [-r reason]")
+    @mute.command(name="server", aliases=["guild"], usage="<user> [time] [reason]")
     @commands.guild_only()
     async def guild_mute(
         self, ctx: commands.Context, user: discord.Member, *, args: mute_converter = (None, None)
@@ -960,7 +960,7 @@ class Mod(commands.Cog):
 
         [-t number of days, hours, minutes, seconds] [-r reason]
 
-        [p]mute channel @Blaze -t 4h20m -r Won't stop talking about weed in every channel. 
+        [p]mute server @Blaze 4hours 20 minutes Won't stop talking about weed in every channel. 
         Giving them a fitting tempmute to rethink this.
         """
         reason, time_interval = args
