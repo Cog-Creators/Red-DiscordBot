@@ -22,10 +22,16 @@ Embed Helpers
 .. automodule:: redbot.core.utils.embed
     :members:
 
-Menu Helpers
-============
+Reaction Menus
+==============
 
 .. automodule:: redbot.core.utils.menus
+    :members:
+
+Event Predicates
+================
+
+.. automodule:: redbot.core.utils.predicates
     :members:
 
 Mod Helpers

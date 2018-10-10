@@ -1,10 +1,10 @@
+import contextlib
 import sys
 import codecs
 import datetime
 import logging
 import traceback
 from datetime import timedelta
-from distutils.version import StrictVersion
 from typing import List
 
 import aiohttp
@@ -13,7 +13,7 @@ import pkg_resources
 from colorama import Fore, Style, init
 from pkg_resources import DistributionNotFound
 
-from . import __version__, commands
+from . import __version__ as red_version, version_info as red_version_info, VersionInfo, commands
 from .data_manager import storage_type
 from .utils.chat_formatting import inline, bordered, humanize_list
 from .utils import fuzzy_command_search, format_fuzzy_results
@@ -105,7 +105,6 @@ def init_events(bot, cli_flags):
 
         prefixes = cli_flags.prefix or (await bot.db.prefix())
         lang = await bot.db.locale()
-        red_version = __version__
         red_pkg = pkg_resources.get_distribution("Red-DiscordBot")
         dpy_version = discord.__version__
 
@@ -125,24 +124,22 @@ def init_events(bot, cli_flags):
 
         INFO.append("{} cogs with {} commands".format(len(bot.cogs), len(bot.commands)))
 
-        try:
+        with contextlib.suppress(aiohttp.ClientError, discord.HTTPException):
             async with aiohttp.ClientSession() as session:
                 async with session.get("https://pypi.python.org/pypi/red-discordbot/json") as r:
                     data = await r.json()
-            if StrictVersion(data["info"]["version"]) > StrictVersion(red_version):
+            if VersionInfo.from_str(data["info"]["version"]) > red_version_info:
                 INFO.append(
                     "Outdated version! {} is available "
                     "but you're using {}".format(data["info"]["version"], red_version)
                 )
-                owner = discord.utils.get(bot.get_all_members(), id=bot.owner_id)
+                owner = await bot.get_user_info(bot.owner_id)
                 await owner.send(
                     "Your Red instance is out of date! {} is the current "
                     "version, however you are using {}!".format(
                         data["info"]["version"], red_version
                     )
                 )
-        except:
-            pass
         INFO2 = []
 
         sentry = await bot.db.enable_sentry()

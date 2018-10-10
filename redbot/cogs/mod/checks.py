@@ -1,5 +1,4 @@
 from redbot.core import commands
-import discord
 
 
 def mod_or_voice_permissions(**perms):

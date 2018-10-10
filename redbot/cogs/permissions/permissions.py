@@ -2,7 +2,7 @@ import asyncio
 import io
 import textwrap
 from copy import copy
-from typing import Union, Optional, Dict, List, Tuple, Any, Iterator, ItemsView
+from typing import Union, Optional, Dict, List, Tuple, Any, Iterator, ItemsView, cast
 
 import discord
 import yaml
@@ -11,6 +11,8 @@ from redbot.core import checks, commands, config
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
+from redbot.core.utils.menus import start_adding_reactions
+from redbot.core.utils.predicates import ReactionPredicate, MessagePredicate
 
 from .converters import CogOrCommand, RuleType, ClearableRuleType
 
@@ -20,9 +22,6 @@ COG = "COG"
 COMMAND = "COMMAND"
 GLOBAL = 0
 
-# noinspection PyDictDuplicateKeys
-REACTS = {"\N{WHITE HEAVY CHECK MARK}": True, "\N{NEGATIVE SQUARED CROSS MARK}": False}
-Y_OR_N = {"y": True, "yes": True, "n": False, "no": False}
 # The strings in the schema are constants and should get extracted, but not translated until
 # runtime.
 translate = _
@@ -288,9 +287,11 @@ class Permissions(commands.Cog):
         `<who_or_what>` is the user, channel, role or server the rule
         is for.
         """
-        # noinspection PyTypeChecker
         await self._add_rule(
-            rule=allow_or_deny, cog_or_cmd=cog_or_command, model_id=who_or_what.id, guild_id=0
+            rule=cast(bool, allow_or_deny),
+            cog_or_cmd=cog_or_command,
+            model_id=who_or_what.id,
+            guild_id=0,
         )
         await ctx.send(_("Rule added."))
 
@@ -313,9 +314,8 @@ class Permissions(commands.Cog):
 
         `<who_or_what>` is the user, channel or role the rule is for.
         """
-        # noinspection PyTypeChecker
         await self._add_rule(
-            rule=allow_or_deny,
+            rule=cast(bool, allow_or_deny),
             cog_or_cmd=cog_or_command,
             model_id=who_or_what.id,
             guild_id=ctx.guild.id,
@@ -382,9 +382,10 @@ class Permissions(commands.Cog):
         `<cog_or_command>` is the cog or command to set the default
         rule for. This is case sensitive.
         """
-        # noinspection PyTypeChecker
         await self._set_default_rule(
-            rule=allow_or_deny, cog_or_cmd=cog_or_command, guild_id=ctx.guild.id
+            rule=cast(Optional[bool], allow_or_deny),
+            cog_or_cmd=cog_or_command,
+            guild_id=ctx.guild.id,
         )
         await ctx.send(_("Default set."))
 
@@ -404,9 +405,8 @@ class Permissions(commands.Cog):
         `<cog_or_command>` is the cog or command to set the default
         rule for. This is case sensitive.
         """
-        # noinspection PyTypeChecker
         await self._set_default_rule(
-            rule=allow_or_deny, cog_or_cmd=cog_or_command, guild_id=GLOBAL
+            rule=cast(Optional[bool], allow_or_deny), cog_or_cmd=cog_or_command, guild_id=GLOBAL
         )
         await ctx.send(_("Default set."))
 
@@ -566,35 +566,29 @@ class Permissions(commands.Cog):
         """Ask "Are you sure?" and get the response as a bool."""
         if ctx.guild is None or ctx.guild.me.permissions_in(ctx.channel).add_reactions:
             msg = await ctx.send(_("Are you sure?"))
-            for emoji in REACTS.keys():
-                await msg.add_reaction(emoji)
+            # noinspection PyAsyncCall
+            task = start_adding_reactions(msg, ReactionPredicate.YES_OR_NO_EMOJIS, ctx.bot.loop)
+            pred = ReactionPredicate.yes_or_no(msg, ctx.author)
             try:
-                reaction, user = await ctx.bot.wait_for(
-                    "reaction_add",
-                    check=lambda r, u: (
-                        r.message.id == msg.id and u == ctx.author and r.emoji in REACTS
-                    ),
-                    timeout=30,
-                )
+                await ctx.bot.wait_for("reaction_add", check=pred, timeout=30)
             except asyncio.TimeoutError:
-                agreed = False
+                await ctx.send(_("Response timed out."))
+                return False
             else:
-                agreed = REACTS.get(reaction.emoji)
+                task.cancel()
+                agreed = pred.result
+            finally:
                 await msg.delete()
         else:
             await ctx.send(_("Are you sure? (y/n)"))
+            pred = MessagePredicate.yes_or_no(ctx)
             try:
-                message = await ctx.bot.wait_for(
-                    "message",
-                    check=lambda m: m.author == ctx.author
-                    and m.channel == ctx.channel
-                    and m.content in Y_OR_N,
-                    timeout=30,
-                )
+                await ctx.bot.wait_for("message", check=pred, timeout=30)
             except asyncio.TimeoutError:
-                agreed = False
+                await ctx.send(_("Response timed out."))
+                return False
             else:
-                agreed = Y_OR_N.get(message.content.lower())
+                agreed = pred.result
 
         if agreed is False:
             await ctx.send(_("Action cancelled."))

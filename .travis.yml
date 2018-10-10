@@ -28,7 +28,7 @@ jobs:
     - python: 3.6.6
       env: TOXENV=style
 
-    # These jobs only occur on tag creation for V3/develop if the prior ones succeed
+    # These jobs only occur on tag creation if the prior ones succeed
     - stage: PyPi Deployment
       if: tag IS present
       python: 3.6.6
@@ -42,7 +42,6 @@ jobs:
           skip_cleanup: true
           on:
             repo: Cog-Creators/Red-DiscordBot
-            branch: V3/develop
             python: 3.6.6
             tags: true
     - stage: Crowdin Deployment
@@ -62,6 +61,5 @@ jobs:
         skip_cleanup: true
         on:
           repo: Cog-Creators/Red-DiscordBot
-          branch: V3/develop
           python: 3.6.6
           tags: true
