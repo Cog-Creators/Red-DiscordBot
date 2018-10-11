@@ -78,6 +78,7 @@ class CoreLogic:
         loaded_packages = []
         notfound_packages = []
         alreadyloaded_packages = []
+        failed_with_reason_packages = []
 
         bot = self.bot
 
@@ -104,6 +105,8 @@ class CoreLogic:
                 await bot.load_extension(spec)
             except errors.PackageAlreadyLoaded:
                 alreadyloaded_packages.append(name)
+            except errors.CogLoadError as e:
+                failed_with_reason_packages.append((name, str(e)))
             except Exception as e:
                 log.exception("Package loading failed", exc_info=e)
 
@@ -115,7 +118,13 @@ class CoreLogic:
                 await bot.add_loaded_package(name)
                 loaded_packages.append(name)
 
-        return loaded_packages, failed_packages, notfound_packages, alreadyloaded_packages
+        return (
+            loaded_packages,
+            failed_packages,
+            notfound_packages,
+            alreadyloaded_packages,
+            failed_with_reason_packages,
+        )
 
     @staticmethod
     def _cleanup_and_refresh_modules(module_name: str) -> None:
@@ -191,7 +200,9 @@ class CoreLogic:
     ) -> Tuple[List[str], List[str], List[str], List[str]]:
         await self._unload(cog_names)
 
-        loaded, load_failed, not_found, already_loaded = await self._load(cog_names)
+        loaded, load_failed, not_found, already_loaded, load_failed_with_reason = await self._load(
+            cog_names
+        )
 
         return loaded, load_failed, not_found, already_loaded
 
@@ -516,7 +527,7 @@ class Core(commands.Cog, CoreLogic):
     async def load(self, ctx: commands.Context, *cogs: str):
         """Loads packages"""
         async with ctx.typing():
-            loaded, failed, not_found, already_loaded = await self._load(cogs)
+            loaded, failed, not_found, already_loaded, failed_with_reason = await self._load(cogs)
 
         if loaded:
             fmt = "Loaded {packs}."
@@ -541,6 +552,16 @@ class Core(commands.Cog, CoreLogic):
             formed = self._get_package_strings(not_found, fmt, ("was", "were"))
             await ctx.send(formed)
 
+        if failed_with_reason:
+            fmt = (
+                "{other} package{plural} could not be loaded for the following reason{plural}:\n\n"
+            )
+            reasons = "\n".join([f"`{x}`: {y}" for x, y in failed_with_reason])
+            formed = self._get_package_strings(
+                [x for x, y in failed_with_reason], fmt, ("This", "These")
+            )
+            await ctx.send(formed + reasons)
+
     @commands.command()
     @checks.is_owner()
     async def unload(self, ctx: commands.Context, *cogs: str):
@@ -562,7 +583,9 @@ class Core(commands.Cog, CoreLogic):
     async def reload(self, ctx: commands.Context, *cogs: str):
         """Reloads packages"""
         async with ctx.typing():
-            loaded, failed, not_found, already_loaded = await self._reload(cogs)
+            loaded, failed, not_found, already_loaded, failed_with_reason = await self._reload(
+                cogs
+            )
 
         if loaded:
             fmt = "Package{plural} {packs} {other} reloaded."
@@ -578,6 +601,14 @@ class Core(commands.Cog, CoreLogic):
             fmt = "The package{plural} {packs} {other} not found in any cog path."
             formed = self._get_package_strings(not_found, fmt, ("was", "were"))
             await ctx.send(formed)
+
+        if failed_with_reason:
+            fmt = "{other} package{plural} could not be reloaded for the following reason{plural}:\n\n"
+            reasons = "\n".join([f"`{x}`: {y}" for x, y in failed_with_reason])
+            formed = self._get_package_strings(
+                [x for x, y in failed_with_reason], fmt, ("This", "These")
+            )
+            await ctx.send(formed + reasons)
 
     @commands.command(name="shutdown")
     @checks.is_owner()
