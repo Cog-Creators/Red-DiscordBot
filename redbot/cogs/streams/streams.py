@@ -333,9 +333,7 @@ class Streams(commands.Cog):
             await ctx.send(_("`@\u200beveryone` will no longer be mentioned for stream alerts."))
         else:
             await self.db.guild(guild).mention_everyone.set(True)
-            await ctx.send(
-                _("When a stream is live, `@\u200beveryone` will be mentioned.")
-            )
+            await ctx.send(_("When a stream is live, `@\u200beveryone` will be mentioned."))
 
     @mention.command(aliases=["here"])
     @commands.guild_only()
@@ -348,9 +346,7 @@ class Streams(commands.Cog):
             await ctx.send(_("`@\u200bhere` will no longer be mentioned for stream alerts."))
         else:
             await self.db.guild(guild).mention_here.set(True)
-            await ctx.send(
-                _("When a stream is live, `@\u200bhere` will be mentioned.")
-            )
+            await ctx.send(_("When a stream is live, `@\u200bhere` will be mentioned."))
 
     @mention.command()
     @commands.guild_only()
@@ -370,9 +366,9 @@ class Streams(commands.Cog):
         else:
             await self.db.role(role).mention.set(True)
             await ctx.send(
-                _(
-                    "When a stream is live, `@\u200b{role.name}` will be mentioned."
-                ).format(role=role)
+                _("When a stream is live, `@\u200b{role.name}` will be mentioned.").format(
+                    role=role
+                )
             )
 
     @streamset.command()
