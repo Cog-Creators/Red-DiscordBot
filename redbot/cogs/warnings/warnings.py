@@ -9,7 +9,7 @@ from redbot.cogs.warnings.helpers import (
     get_command_for_dropping_points,
     warning_points_remove_check,
 )
-from redbot.core import Config, modlog, checks, commands
+from redbot.core import Config, checks, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.mod import is_admin_or_superior
@@ -34,15 +34,14 @@ class Warnings(commands.Cog):
         self.config.register_guild(**self.default_guild)
         self.config.register_member(**self.default_member)
         self.bot = bot
-        loop = asyncio.get_event_loop()
-        loop.create_task(self.register_warningtype())
 
-    @staticmethod
-    async def register_warningtype():
-        try:
-            await modlog.register_casetype("warning", True, "\N{WARNING SIGN}", "Warning", None)
-        except RuntimeError:
-            pass
+    # We're not utilising modlog yet - no need to register a casetype
+    # @staticmethod
+    # async def register_warningtype():
+    #     try:
+    #         await modlog.register_casetype("warning", True, "\N{WARNING SIGN}", "Warning", None)
+    #     except RuntimeError:
+    #         pass
 
     @commands.group()
     @commands.guild_only()
