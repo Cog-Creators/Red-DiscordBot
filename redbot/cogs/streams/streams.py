@@ -39,7 +39,7 @@ _ = Translator("Streams", __file__)
 @cog_i18n(_)
 class Streams(commands.Cog):
 
-    global_defaults = {"tokens": {}, "streams": [], "communities": []}
+    global_defaults = {"tokens": {}, "streams": []}
 
     guild_defaults = {"autodelete": False, "mention_everyone": False, "mention_here": False}
 
