@@ -169,7 +169,7 @@ class Cleanup(commands.Cog):
 
         member = None
         try:
-            member = await commands.converter.MemberConverter().convert(ctx, user)
+            member = await commands.MemberConverter().convert(ctx, user)
         except commands.BadArgument:
             try:
                 _id = int(user)
