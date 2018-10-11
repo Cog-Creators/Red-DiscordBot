@@ -68,7 +68,6 @@ class Streams(commands.Cog):
     async def initialize(self) -> None:
         """Should be called straight after cog instantiation."""
         self.streams = await self.load_streams()
-        self.communities = await self.load_communities()
 
         self.task = self.bot.loop.create_task(self._stream_alerts())
 
@@ -441,10 +440,6 @@ class Streams(commands.Cog):
         while True:
             try:
                 await self.check_streams()
-            except asyncio.CancelledError:
-                pass
-            try:
-                await self.check_communities()
             except asyncio.CancelledError:
                 pass
             await asyncio.sleep(CHECK_DELAY)
