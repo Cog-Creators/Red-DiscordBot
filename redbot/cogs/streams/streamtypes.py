@@ -2,8 +2,6 @@ from .errors import (
     StreamNotFound,
     APIError,
     OfflineStream,
-    CommunityNotFound,
-    OfflineCommunity,
     InvalidYoutubeCredentials,
     InvalidTwitchCredentials,
 )
@@ -27,94 +25,6 @@ YOUTUBE_VIDEOS_ENDPOINT = YOUTUBE_BASE_URL + "/videos"
 def rnd(url):
     """Appends a random parameter to the url to avoid Discord's caching"""
     return url + "?rnd=" + "".join([choice(ascii_letters) for i in range(6)])
-
-
-class TwitchCommunity:
-    def __init__(self, **kwargs):
-        self.name = kwargs.pop("name")
-        self.id = kwargs.pop("id", None)
-        self.channels = kwargs.pop("channels", [])
-        self._messages_cache = kwargs.pop("_messages_cache", [])
-        self._token = kwargs.pop("token", None)
-        self.type = self.__class__.__name__
-
-    async def get_community_id(self):
-        headers = {"Accept": "application/vnd.twitchtv.v5+json", "Client-ID": str(self._token)}
-        params = {"name": self.name}
-        async with aiohttp.ClientSession() as session:
-            async with session.get(
-                TWITCH_COMMUNITIES_ENDPOINT, headers=headers, params=params
-            ) as r:
-                data = await r.json()
-        if r.status == 200:
-            return data["_id"]
-        elif r.status == 400:
-            raise InvalidTwitchCredentials()
-        elif r.status == 404:
-            raise CommunityNotFound()
-        else:
-            raise APIError()
-
-    async def get_community_streams(self):
-        if not self.id:
-            try:
-                self.id = await self.get_community_id()
-            except CommunityNotFound:
-                raise
-        headers = {"Accept": "application/vnd.twitchtv.v5+json", "Client-ID": str(self._token)}
-        params = {"community_id": self.id, "limit": 100}
-        url = TWITCH_BASE_URL + "/kraken/streams"
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url, headers=headers, params=params) as r:
-                data = await r.json()
-        if r.status == 200:
-            if data["_total"] == 0:
-                raise OfflineCommunity()
-            else:
-                return data["streams"]
-        elif r.status == 400:
-            raise InvalidTwitchCredentials()
-        elif r.status == 404:
-            raise CommunityNotFound()
-        else:
-            raise APIError()
-
-    async def make_embed(self, streams: list) -> discord.Embed:
-        headers = {"Accept": "application/vnd.twitchtv.v5+json", "Client-ID": str(self._token)}
-        async with aiohttp.ClientSession() as session:
-            async with session.get(
-                "{}/{}".format(TWITCH_COMMUNITIES_ENDPOINT, self.id), headers=headers
-            ) as r:
-                data = await r.json()
-
-        avatar = data["avatar_image_url"]
-        title = "Channels currently streaming to {}".format(data["display_name"])
-        url = "https://www.twitch.tv/communities/{}".format(self.name)
-        embed = discord.Embed(title=title, url=url)
-        embed.set_image(url=avatar)
-        if len(streams) >= 10:
-            stream_list = sample(streams, 10)
-        else:
-            stream_list = streams
-        for stream in stream_list:
-            name = "[{}]({})".format(stream["channel"]["display_name"], stream["channel"]["url"])
-            embed.add_field(name=stream["channel"]["status"], value=name, inline=False)
-        embed.color = 0x6441A4
-
-        return embed
-
-    def export(self):
-        data = {}
-        for k, v in self.__dict__.items():
-            if not k.startswith("_"):
-                data[k] = v
-        data["messages"] = []
-        for m in self._messages_cache:
-            data["messages"].append({"channel": m.channel.id, "message": m.id})
-        return data
-
-    def __repr__(self):
-        return "<{0.__class__.__name__}: {0.name}>".format(self)
 
 
 class Stream:

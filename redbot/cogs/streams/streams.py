@@ -11,7 +11,6 @@ from .streamtypes import (
     HitboxStream,
     MixerStream,
     PicartoStream,
-    TwitchCommunity,
     YoutubeStream,
 )
 from .errors import (
@@ -19,8 +18,6 @@ from .errors import (
     StreamNotFound,
     APIError,
     InvalidYoutubeCredentials,
-    CommunityNotFound,
-    OfflineCommunity,
     StreamsError,
     InvalidTwitchCredentials,
 )
@@ -58,7 +55,6 @@ class Streams(commands.Cog):
         self.bot: Red = bot
 
         self.streams: List[Stream] = []
-        self.communities: List[TwitchCommunity] = []
         self.task: Optional[asyncio.Task] = None
 
         self.yt_cid_pattern = re.compile("^UC[-_A-Za-z0-9]{21}[AQgw]$")
@@ -163,11 +159,6 @@ class Streams(commands.Cog):
             await ctx.send("Please supply the name of a *Twitch* channel, not a Discord channel.")
             return
         await self.stream_alert(ctx, TwitchStream, channel_name.lower())
-
-    @_twitch.command(name="community")
-    async def twitch_alert_community(self, ctx: commands.Context, community: str):
-        """Toggle alerts in this channel for a Twitch community."""
-        await self.community_alert(ctx, TwitchCommunity, community.lower())
 
     @streamalert.command(name="youtube")
     async def youtube_alert(self, ctx: commands.Context, channel_name_or_id: str):
@@ -289,34 +280,6 @@ class Streams(commands.Cog):
 
         await self.add_or_remove(ctx, stream)
 
-    async def community_alert(self, ctx: commands.Context, _class, community_name):
-        community = self.get_community(_class, community_name)
-        if not community:
-            token = await self.db.tokens.get_raw(_class.__name__, default=None)
-            community = _class(name=community_name, token=token)
-            try:
-                await community.get_community_streams()
-            except InvalidTwitchCredentials:
-                await ctx.send(
-                    _(
-                        "The Twitch token is either invalid or has not been set. See "
-                        "`{prefix}streamset twitchtoken`."
-                    ).format(prefix=ctx.prefix)
-                )
-                return
-            except CommunityNotFound:
-                await ctx.send(_("That community doesn't seem to exist."))
-                return
-            except APIError:
-                await ctx.send(
-                    _("Something went wrong whilst trying to contact the stream service's API.")
-                )
-                return
-            except OfflineCommunity:
-                pass
-
-        await self.add_or_remove_community(ctx, community)
-
     @commands.group()
     @checks.mod()
     async def streamset(self, ctx: commands.Context):
@@ -336,7 +299,6 @@ class Streams(commands.Cog):
         5. Paste the Client ID into this command. Done!
         """
         await self.db.tokens.set_raw("TwitchStream", value=token)
-        await self.db.tokens.set_raw("TwitchCommunity", value=token)
         await ctx.send(_("Twitch token set."))
 
     @streamset.command()
@@ -373,7 +335,7 @@ class Streams(commands.Cog):
         else:
             await self.db.guild(guild).mention_everyone.set(True)
             await ctx.send(
-                _("When a stream or community is live, `@\u200beveryone` will be mentioned.")
+                _("When a stream is live, `@\u200beveryone` will be mentioned.")
             )
 
     @mention.command(aliases=["here"])
@@ -388,7 +350,7 @@ class Streams(commands.Cog):
         else:
             await self.db.guild(guild).mention_here.set(True)
             await ctx.send(
-                _("When a stream or community is live, `@\u200bhere` will be mentioned.")
+                _("When a stream is live, `@\u200bhere` will be mentioned.")
             )
 
     @mention.command()
@@ -410,7 +372,7 @@ class Streams(commands.Cog):
             await self.db.role(role).mention.set(True)
             await ctx.send(
                 _(
-                    "When a stream or community is live, `@\u200b{role.name}` will be mentioned."
+                    "When a stream is live, `@\u200b{role.name}` will be mentioned."
                 ).format(role=role)
             )
 
@@ -446,29 +408,6 @@ class Streams(commands.Cog):
 
         await self.save_streams()
 
-    async def add_or_remove_community(self, ctx: commands.Context, community):
-        if ctx.channel.id not in community.channels:
-            community.channels.append(ctx.channel.id)
-            if community not in self.communities:
-                self.communities.append(community)
-            await ctx.send(
-                _(
-                    "I'll send a notification in this channel when a "
-                    "channel is live in the {community.name} community."
-                ).format(community=community)
-            )
-        else:
-            community.channels.remove(ctx.channel.id)
-            if not community.channels:
-                self.communities.remove(community)
-            await ctx.send(
-                _(
-                    "I won't send notifications about channels streaming "
-                    "in the {community.name} community in this channel anymore."
-                ).format(community=community)
-            )
-        await self.save_communities()
-
     def get_stream(self, _class, name):
         for stream in self.streams:
             # if isinstance(stream, _class) and stream.name == name:
@@ -485,11 +424,6 @@ class Streams(commands.Cog):
                     return stream
             elif stream.type == _class.__name__ and stream.name.lower() == name.lower():
                 return stream
-
-    def get_community(self, _class, name):
-        for community in self.communities:
-            if community.type == _class.__name__ and community.name.lower() == name.lower():
-                return community
 
     @staticmethod
     async def check_exists(stream):
@@ -560,49 +494,6 @@ class Streams(commands.Cog):
                 mentions.append(role.mention)
         return " ".join(mentions)
 
-    async def check_communities(self):
-        for community in self.communities:
-            with contextlib.suppress(Exception):
-                try:
-                    stream_list = await community.get_community_streams()
-                except CommunityNotFound:
-                    print(
-                        _("The Community {community.name} was not found!").format(
-                            community=community
-                        )
-                    )
-                    continue
-                except OfflineCommunity:
-                    if not community._messages_cache:
-                        continue
-                    for message in community._messages_cache:
-                        with contextlib.suppress(Exception):
-                            autodelete = await self.db.guild(message.guild).autodelete()
-                            if autodelete:
-                                await message.delete()
-                    community._messages_cache.clear()
-                    await self.save_communities()
-                else:
-                    for channel in community.channels:
-                        chn = self.bot.get_channel(channel)
-                        streams = await self.filter_streams(stream_list, chn)
-                        emb = await community.make_embed(streams)
-                        chn_msg = [m for m in community._messages_cache if m.channel == chn]
-                        if not chn_msg:
-                            mentions = await self._get_mention_str(chn.guild)
-                            if mentions:
-                                msg = await chn.send(mentions, embed=emb)
-                            else:
-                                msg = await chn.send(embed=emb)
-                            community._messages_cache.append(msg)
-                            await self.save_communities()
-                        else:
-                            chn_msg = sorted(chn_msg, key=lambda x: x.created_at, reverse=True)[0]
-                            community._messages_cache.remove(chn_msg)
-                            await chn_msg.edit(embed=emb)
-                            community._messages_cache.append(chn_msg)
-                            await self.save_communities()
-
     async def filter_streams(self, streams: list, channel: discord.TextChannel) -> list:
         filtered = []
         for stream in streams:
@@ -635,42 +526,12 @@ class Streams(commands.Cog):
 
         return streams
 
-    async def load_communities(self):
-        communities = []
-
-        for raw_community in await self.db.communities():
-            _class = getattr(_streamtypes, raw_community["type"], None)
-            if not _class:
-                continue
-            raw_msg_cache = raw_community["messages"]
-            raw_community["_messages_cache"] = []
-            for raw_msg in raw_msg_cache:
-                chn = self.bot.get_channel(raw_msg["channel"])
-                msg = await chn.get_message(raw_msg["message"])
-                raw_community["_messages_cache"].append(msg)
-            token = await self.db.tokens.get_raw(_class.__name__, default=None)
-            communities.append(_class(token=token, **raw_community))
-
-        # issue 1191 extended resolution: Remove this after suitable period
-        # Fast dedupe below
-        seen = set()
-        seen_add = seen.add
-        return [x for x in communities if not (x.name.lower() in seen or seen_add(x.name.lower()))]
-        # return communities
-
     async def save_streams(self):
         raw_streams = []
         for stream in self.streams:
             raw_streams.append(stream.export())
 
         await self.db.streams.set(raw_streams)
-
-    async def save_communities(self):
-        raw_communities = []
-        for community in self.communities:
-            raw_communities.append(community.export())
-
-        await self.db.communities.set(raw_communities)
 
     def __unload(self):
         if self.task:
