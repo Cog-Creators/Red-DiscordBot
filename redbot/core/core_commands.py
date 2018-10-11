@@ -197,14 +197,14 @@ class CoreLogic:
 
     async def _reload(
         self, cog_names: Sequence[str]
-    ) -> Tuple[List[str], List[str], List[str], List[str]]:
+    ) -> Tuple[List[str], List[str], List[str], List[str], List[str]]:
         await self._unload(cog_names)
 
         loaded, load_failed, not_found, already_loaded, load_failed_with_reason = await self._load(
             cog_names
         )
 
-        return loaded, load_failed, not_found, already_loaded
+        return loaded, load_failed, not_found, already_loaded, load_failed_with_reason
 
     async def _name(self, name: Optional[str] = None) -> str:
         """
