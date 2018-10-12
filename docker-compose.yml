@@ -2,7 +2,7 @@
 version: "3"
 services:
   red-discordbot:
-    image: Cog-Creators/Red-DiscordBot:latest
+    image: cog-creators/red-discordbot:latest
     volumes:
       - red-discordbot:/data
     restart: unless-stopped
