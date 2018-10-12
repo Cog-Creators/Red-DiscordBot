@@ -5,6 +5,7 @@ from redbot.core.utils.chat_formatting import box, escape
 from redbot.core.utils.common_filters import filter_invites, filter_various_mentions
 from redbot.core import commands, checks
 from redbot.core.i18n import Translator
+
 _ = T_ = Translator("Mod", __file__)
 
 
@@ -12,7 +13,7 @@ class MiscMixin:
     """
     Micelaneous mod commands with no clear relation to other parts
     """
-    
+
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_nicknames=True)

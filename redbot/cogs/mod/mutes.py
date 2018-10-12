@@ -6,13 +6,15 @@ from typing import cast
 from redbot.core import commands, checks, modlog
 from .checks import mod_or_voice_permissions, bot_has_voice_permissions
 from redbot.core.i18n import Translator
+
 _ = T_ = Translator("Mod", __file__)
+
 
 class MuteMixin:
     """
     Handles mute related things for mod cog
     """
-    
+
     @commands.group()
     @commands.guild_only()
     @checks.mod_or_permissions(manage_channel=True)
@@ -325,6 +327,7 @@ class MuteMixin:
         else:
             await self.settings.member(user).clear_raw("perms_cache", str(channel.id))
             return True, None
+
 
 _ = lambda s: s
 mute_unmute_issues = {

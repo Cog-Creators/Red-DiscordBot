@@ -653,6 +653,3 @@ class Mod(MuteMixin, KickBanMixin, MiscMixin, UtilsMixin, commands.Cog):
                 nick_list.append(after.nick)
                 while len(nick_list) > 20:
                     nick_list.pop(0)
-
-
-

@@ -1,5 +1,10 @@
-from redbot.core.utils.mod import is_mod_or_superior as ims, is_allowed_by_hierarchy as iah , get_audit_reason as gar
+from redbot.core.utils.mod import (
+    is_mod_or_superior as ims,
+    is_allowed_by_hierarchy as iah,
+    get_audit_reason as gar,
+)
 from .log import log as mlog
+
 
 class UtilsMixin:
     """
@@ -17,7 +22,7 @@ class UtilsMixin:
     @property
     def get_audit_reason(self):
         return gar
-    
+
     @property
     def log(self):
         return mlog

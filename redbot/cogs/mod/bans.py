@@ -16,7 +16,7 @@ class KickBanMixin:
     """
     Handles Ban related actions for Mod cog
     """
-    
+
     def __init__(self):
         self.ban_queue = []
         self.unban_queue = []
@@ -86,7 +86,7 @@ class KickBanMixin:
                 return await channel.create_invite(max_age=max_age)
             except discord.HTTPException:
                 return
-    
+
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(kick_members=True)
@@ -122,7 +122,9 @@ class KickBanMixin:
         audit_reason = self.get_audit_reason(author, reason)
         try:
             await guild.kick(user, reason=audit_reason)
-            self.log.info("{}({}) kicked {}({})".format(author.name, author.id, user.name, user.id))
+            self.log.info(
+                "{}({}) kicked {}({})".format(author.name, author.id, user.name, user.id)
+            )
         except discord.errors.Forbidden:
             await ctx.send(_("I'm not allowed to do that."))
         except Exception as e:
