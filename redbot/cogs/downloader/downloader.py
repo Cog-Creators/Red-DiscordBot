@@ -379,6 +379,11 @@ class Downloader(commands.Cog):
                 return
         await ctx.send(message)
 
+        cognames &= set(await ctx.bot.db.packages())  # only reload loaded cogs
+        if not cognames:
+            return await ctx.send(
+                _("None of the updated cogs were previously loaded. Update complete.")
+            )
         message = _("Would you like to reload the updated cogs?")
         can_react = ctx.channel.permissions_for(ctx.me).add_reactions
         if not can_react:
@@ -402,7 +407,6 @@ class Downloader(commands.Cog):
             if can_react:
                 with contextlib.suppress(discord.Forbidden):
                     await query.clear_reactions()
-            cognames &= set(ctx.bot.cogs.keys())  # only reload loaded cogs
             await ctx.invoke(ctx.bot.get_cog("Core").reload, *cognames)
         else:
             if can_react:
