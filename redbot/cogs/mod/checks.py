@@ -1,3 +1,4 @@
+# These should be gotten rid of
 from redbot.core import commands
 
 
