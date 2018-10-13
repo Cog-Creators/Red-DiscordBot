@@ -1,7 +1,7 @@
 import asyncio
 from datetime import datetime, timedelta
 from collections import deque, defaultdict, namedtuple
-from typing import Optional
+from typing import Optional, Union
 
 import discord
 
@@ -375,66 +375,14 @@ class Mod:
 
         If days is not a number, it's treated as the first word of the reason.
         Minimum 0 days, maximum 7. Defaults to 0."""
-        author = ctx.author
-        guild = ctx.guild
+        result = await self.ban_user(
+            user=user, ctx=ctx, days=days, reason=reason, create_modlog_case=True
+        )
 
-        if author == user:
-            await ctx.send(
-                _("I cannot let you do that. Self-harm is bad {}").format("\N{PENSIVE FACE}")
-            )
-            return
-        elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
-            await ctx.send(
-                _(
-                    "I cannot let you do that. You are "
-                    "not higher than the user in the role "
-                    "hierarchy."
-                )
-            )
-            return
-        elif ctx.guild.me.top_role <= user.top_role or user == ctx.guild.owner:
-            await ctx.send(_("I cannot do that due to discord hierarchy rules"))
-            return
-        elif not (days >= 0 and days <= 7):
-            await ctx.send(_("Invalid days. Must be between 0 and 7."))
-            return
-
-        audit_reason = get_audit_reason(author, reason)
-
-        queue_entry = (guild.id, user.id)
-        self.ban_queue.append(queue_entry)
-        try:
-            await guild.ban(user, reason=audit_reason, delete_message_days=days)
-            log.info(
-                "{}({}) banned {}({}), deleting {} days worth of messages".format(
-                    author.name, author.id, user.name, user.id, str(days)
-                )
-            )
-        except discord.Forbidden:
-            self.ban_queue.remove(queue_entry)
-            await ctx.send(_("I'm not allowed to do that."))
-        except Exception as e:
-            self.ban_queue.remove(queue_entry)
-            print(e)
-        else:
+        if result is True:
             await ctx.send(_("Done. It was about time."))
-
-        try:
-            await modlog.create_case(
-                self.bot,
-                guild,
-                ctx.message.created_at,
-                "ban",
-                user,
-                author,
-                reason,
-                until=None,
-                channel=None,
-            )
-        except RuntimeError as e:
-            await ctx.send(e)
-
-        return True
+        elif isinstance(result, str):
+            await ctx.send(result)
 
     @commands.command()
     @commands.guild_only()
@@ -500,11 +448,13 @@ class Mod:
             if user is not None:
                 # Instead of replicating all that handling... gets attr from decorator
                 try:
-                    has_been_banned = await ctx.invoke(self.ban, user, days, reason=reason)
-                    if has_been_banned is True:
+                    result = await self.ban_user(
+                        user=user, ctx=ctx, days=days, reason=reason, create_modlog_case=True
+                    )
+                    if result is True:
                         banned.append(user_id)
                     else:
-                        errors[user_id] = _("Failed to ban user {}.".format(user_id))
+                        errors[user_id] = _("Failed to ban user {}: {}".format(user_id, result))
                 except Exception as e:
                     errors[user_id] = _("Failed to ban user {}: {}".format(user_id, e))
 
@@ -1444,6 +1394,69 @@ class Mod:
             await ctx.send(msg)
         else:
             await ctx.send(_("That user doesn't have any recorded name or nickname change."))
+
+    async def ban_user(
+        self,
+        user: discord.Member,
+        ctx: commands.Context,
+        days: Optional[int] = 0,
+        reason: str = None,
+        create_modlog_case=False,
+    ) -> Union[str, bool]:
+        author = ctx.author
+        guild = ctx.guild
+
+        if author == user:
+            return _("I cannot let you do that. Self-harm is bad {}").format("\N{PENSIVE FACE}")
+        elif not await is_allowed_by_hierarchy(self.bot, self.settings, guild, author, user):
+            return _(
+                "I cannot let you do that. You are "
+                "not higher than the user in the role "
+                "hierarchy."
+            )
+        elif guild.me.top_role <= user.top_role or user == guild.owner:
+            return _("I cannot do that due to discord hierarchy rules")
+        elif not (days >= 0 and days <= 7):
+            return _("Invalid days. Must be between 0 and 7.")
+
+        audit_reason = get_audit_reason(author, reason)
+
+        queue_entry = (guild.id, user.id)
+        self.ban_queue.append(queue_entry)
+        try:
+            await guild.ban(user, reason=audit_reason, delete_message_days=days)
+            log.info(
+                "{}({}) banned {}({}), deleting {} days worth of messages".format(
+                    author.name, author.id, user.name, user.id, str(days)
+                )
+            )
+        except discord.Forbidden:
+            self.ban_queue.remove(queue_entry)
+            return _("I'm not allowed to do that.")
+        except Exception as e:
+            self.ban_queue.remove(queue_entry)
+            return e
+
+        if create_modlog_case:
+            try:
+                await modlog.create_case(
+                    self.bot,
+                    guild,
+                    ctx.message.created_at,
+                    "ban",
+                    user,
+                    author,
+                    reason,
+                    until=None,
+                    channel=None,
+                )
+            except RuntimeError as e:
+                return _(
+                    "The user was banned but an error occurred when trying to "
+                    "create the modlog entry: {}".format(e)
+                )
+
+        return True
 
     async def get_names_and_nicks(self, user):
         names = await self.settings.user(user).past_names()
