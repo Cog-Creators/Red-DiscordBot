@@ -379,7 +379,7 @@ class Downloader(commands.Cog):
                 return
         await ctx.send(message)
 
-        cognames &= set(await ctx.bot.db.packages())  # only reload loaded cogs
+        cognames &= set(ctx.bot.extensions.keys())  # only reload loaded cogs
         if not cognames:
             return await ctx.send(
                 _("None of the updated cogs were previously loaded. Update complete.")
