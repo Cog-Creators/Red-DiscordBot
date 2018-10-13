@@ -14,3 +14,10 @@ class PackageAlreadyLoaded(RedError):
 
     def __str__(self) -> str:
         return f"There is already a package named {self.spec.name.split('.')[-1]} loaded"
+
+
+class CogLoadError(RedError):
+    """Raised by a cog when it cannot load itself.
+    The message will be send to the user."""
+
+    pass

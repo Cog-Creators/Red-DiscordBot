@@ -542,7 +542,8 @@ class Permissions(commands.Cog):
                 continue
             conf = self.config.custom(category)
             for cmd_name, cmd_rules in rules_dict.items():
-                await conf.set_raw(cmd_name, guild_id, value=cmd_rules)
+                cmd_rules = {str(model_id): rule for model_id, rule in cmd_rules.items()}
+                await conf.set_raw(cmd_name, str(guild_id), value=cmd_rules)
                 cmd_obj = getter(cmd_name)
                 if cmd_obj is not None:
                     self._load_rules_for(cmd_obj, {guild_id: cmd_rules})
@@ -651,14 +652,14 @@ class Permissions(commands.Cog):
                 if category in old_rules:
                     for name, rules in old_rules[category].items():
                         these_rules = new_rules.setdefault(name, {})
-                        guild_rules = these_rules.setdefault(guild_id, {})
+                        guild_rules = these_rules.setdefault(str(guild_id), {})
                         # Since allow rules would take precedence if the same model ID
                         # sat in both the allow and deny list, we add the deny entries
                         # first and let any conflicting allow entries overwrite.
                         for model_id in rules.get("deny", []):
-                            guild_rules[model_id] = False
+                            guild_rules[str(model_id)] = False
                         for model_id in rules.get("allow", []):
-                            guild_rules[model_id] = True
+                            guild_rules[str(model_id)] = True
                         if "default" in rules:
                             default = rules["default"]
                             if default == "allow":
@@ -689,7 +690,9 @@ class Permissions(commands.Cog):
         """
         for guild_id, guild_dict in _int_key_map(rule_dict.items()):
             for model_id, rule in _int_key_map(guild_dict.items()):
-                if rule is True:
+                if model_id == "default":
+                    cog_or_command.set_default_rule(rule, guild_id=guild_id)
+                elif rule is True:
                     cog_or_command.allow_for(model_id, guild_id=guild_id)
                 elif rule is False:
                     cog_or_command.deny_to(model_id, guild_id=guild_id)
@@ -724,9 +727,16 @@ class Permissions(commands.Cog):
         rules.
         """
         for guild_id, guild_dict in _int_key_map(rule_dict.items()):
-            for model_id in map(int, guild_dict.keys()):
-                cog_or_command.clear_rule_for(model_id, guild_id)
+            for model_id in guild_dict.keys():
+                if model_id == "default":
+                    cog_or_command.set_default_rule(None, guild_id=guild_id)
+                else:
+                    cog_or_command.clear_rule_for(int(model_id), guild_id=guild_id)
 
 
-def _int_key_map(items_view: ItemsView[str, Any]) -> Iterator[Tuple[int, Any]]:
-    return map(lambda tup: (int(tup[0]), tup[1]), items_view)
+def _int_key_map(items_view: ItemsView[str, Any]) -> Iterator[Tuple[Union[str, int], Any]]:
+    for k, v in items_view:
+        if k == "default":
+            yield k, v
+        else:
+            yield int(k), v

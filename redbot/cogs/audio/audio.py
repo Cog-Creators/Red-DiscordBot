@@ -48,7 +48,7 @@ class Audio(commands.Cog):
             "ws_port": "2332",
             "password": "youshallnotpass",
             "status": False,
-            "current_build": redbot.core.VersionInfo.from_str("3.0.0a0").to_json(),
+            "current_version": redbot.core.VersionInfo.from_str("3.0.0a0").to_json(),
             "use_external_lavalink": False,
         }
 
