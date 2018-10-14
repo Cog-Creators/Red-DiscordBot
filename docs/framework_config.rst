@@ -175,8 +175,8 @@ example, :py:meth:`Config.clear_all_guilds` resets all guild data. For member
 data, you can clear on both a per-guild and guild-independent basis, see
 :py:meth:`Config.clear_all_members` for more info.
 
-.. warning:: You cannot use these words as values in your Config dictionnary
-    since it can break the classes:
+.. warning:: If you use the dot notation (``config.foo.bar()``), you cannot use these
+    words as values in your Config dictionnary since it can break the classes:
 
     ``_defaults`` ; ``_get`` ; ``all`` ; ``clear`` ``clear_raw`` ; ``default``
     ``defaults`` ; ``driver`` ; ``force_registration`` ; ``get_attr`` ;
@@ -185,6 +185,9 @@ data, you can clear on both a per-guild and guild-independent basis, see
 
     All Python reserved keywords, such as ``global`` or ``from``, should be
     avoided too.
+    
+    However, you can still use these keywords if you use the
+    ``get_attr``/``get_raw``/``set_raw``/``clear_raw`` methods.
 
 **************
 Advanced Usage
