@@ -344,7 +344,7 @@ class Downloader(commands.Cog):
                     " files manually if it is still usable."
                     " Also make sure you've unloaded the cog"
                     " with `{prefix}unload {cog_name}`."
-                ).format(cog_name=real_name)
+                ).format(prefix=ctx.prefix, cog_name=real_name)
             )
 
     @cog.command(name="update")
