@@ -1,5 +1,5 @@
 import inspect
-from typing import Callable, TYPE_CHECKING, Dict, List, Union, Awaitable
+from typing import Callable, TYPE_CHECKING, Dict, List, Union, Awaitable, Optional
 
 import discord
 import discord.ext.commands
@@ -21,6 +21,7 @@ class CogMeta(CogCommandMixin, CogGroupMixin, type):
     """Metaclass for cog base class."""
 
     __checks: List[Callable[["Context"], Union[bool, Awaitable[bool]]]]
+    __translator: Optional[Callable[[str], str]]
 
     def __init__(cls, *args, **kwargs) -> None:
         try:
@@ -65,14 +66,15 @@ class CogMeta(CogCommandMixin, CogGroupMixin, type):
         return type(cog_instance)
 
     def translate(cls, untranslated: str) -> str:
-        return cls.__translator(untranslated)
+        if cls.__translator is not None:
+            return cls.__translator(untranslated)
 
 
 class Cog(metaclass=CogMeta):
     """Base class for a cog."""
 
-    def __init_subclass__(cls, **kwargs):
-        cls.__translator = kwargs.pop("translator", lambda s, t: t)
+    def __init_subclass__(cls, **kwargs) -> None:
+        cls.__translator = kwargs.pop("translator", None)
         super().__init_subclass__(**kwargs)
 
     @classmethod
