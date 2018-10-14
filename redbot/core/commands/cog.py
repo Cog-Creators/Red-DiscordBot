@@ -19,11 +19,7 @@ _ = Translator("commands.cog", __file__)
 class CogMeta(CogCommandMixin, CogGroupMixin, type):
     """Metaclass for cog base class."""
 
-    checks: List[Callable[["Context"], Union[bool, Awaitable[bool]]]]
-
-    def __init__(cls, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-        cls.checks = getattr(cls, "__commands_checks__", [])
+    __checks: List[Callable[["Context"], Union[bool, Awaitable[bool]]]]
 
     @property
     def all_commands(cls) -> Dict[str, Command]:
@@ -32,6 +28,10 @@ class CogMeta(CogCommandMixin, CogGroupMixin, type):
     @property
     def qualified_name(cls) -> str:
         return cls.__name__
+
+    @property
+    def checks(cls) -> List[Callable[["Context"], Union[bool, Awaitable[bool]]]]:
+        return cls.__checks
 
     async def can_run(cls, ctx: "Context") -> bool:
         """Check if the given context passes this cog class's requirements.
@@ -57,6 +57,14 @@ class CogMeta(CogCommandMixin, CogGroupMixin, type):
 
 class Cog(metaclass=CogMeta):
     """Base class for a cog."""
+
+    def __init_subclass__(cls, **kwargs):
+        try:
+            cls.__checks = getattr(cls, "__commands_checks__")
+        except AttributeError:
+            cls.__checks = []
+        else:
+            delattr(cls, "__commands_checks__")
 
     @classmethod
     async def convert(cls, ctx: "Context", argument: str) -> "Cog":
