@@ -1,7 +1,7 @@
 import discord
 from redbot.core import commands
-from .installable import Installable
 from redbot.core.i18n import Translator
+from .installable import Installable
 
 _ = Translator("Koala", __file__)
 
