@@ -5,6 +5,7 @@ from redbot.core.i18n import Translator
 
 _ = Translator("Koala", __file__) 
 
+
 class InstalledCog(Installable):
     @classmethod
     async def convert(cls, ctx: commands.Context, arg: str) -> Installable:
