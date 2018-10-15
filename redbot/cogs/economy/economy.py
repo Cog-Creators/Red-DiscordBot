@@ -171,7 +171,7 @@ class Economy(commands.Cog):
 
         try:
             await bank.transfer_credits(from_, to, amount)
-        except ValueError as e:
+        except (ValueError, errors.BalanceTooHigh) as e:
             return await ctx.send(str(e))
 
         await ctx.send(
@@ -220,7 +220,7 @@ class Economy(commands.Cog):
                     currency=currency,
                     user=to.display_name,
                 )
-        except ValueError as e:
+        except (ValueError, errors.BalanceTooHigh) as e:
             await ctx.send(str(e))
         else:
             await ctx.send(msg)

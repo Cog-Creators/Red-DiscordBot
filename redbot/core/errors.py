@@ -27,7 +27,7 @@ class BankError(RedError):
     """Base error class for bank-related errors."""
 
 
-class BalanceTooHigh(BankError, ValueError):
+class BalanceTooHigh(BankError, OverflowError):
     """Raised when trying to set a user's balance to higher than the maximum."""
 
     def __init__(
