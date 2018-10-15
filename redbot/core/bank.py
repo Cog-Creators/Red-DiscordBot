@@ -173,6 +173,9 @@ async def set_balance(member: discord.Member, amount: int) -> int:
     ------
     ValueError
         If attempting to set the balance to a negative number.
+    BalanceTooHigh
+        If attempting to set the balance to a value greater than
+        ``bank.MAX_BALANCE``
 
     """
     if amount < 0:
