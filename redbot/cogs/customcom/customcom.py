@@ -339,7 +339,7 @@ class CustomCommands(commands.Cog):
             return
 
         results = []
-        for command, body in cc_dict.items():
+        for command, body in sorted(cc_dict.items(), key=lambda t: t[0]):
             responses = body["response"]
             if isinstance(responses, list):
                 result = ", ".join(responses)
