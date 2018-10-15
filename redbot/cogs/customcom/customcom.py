@@ -3,7 +3,7 @@ import random
 from datetime import datetime, timedelta
 from inspect import Parameter
 from collections import OrderedDict
-from typing import Mapping, Tuple, Dict
+from typing import Mapping, Tuple, Dict, Set
 
 import discord
 
@@ -553,3 +553,14 @@ class CustomCommands(commands.Cog):
         else:
             return raw_result
         return str(getattr(first, second, raw_result))
+
+    async def get_command_names(self, guild: discord.Guild) -> Set[str]:
+        """Get all custom command names in a guild.
+
+        Returns
+        --------
+        Set[str]
+            A set of all custom command names.
+
+        """
+        return set(await CommandObj.get_commands(self.config.guild(guild)))
