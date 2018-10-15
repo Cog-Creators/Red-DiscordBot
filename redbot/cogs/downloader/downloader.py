@@ -325,13 +325,12 @@ class Downloader(commands.Cog):
         You may only uninstall cogs which were previously installed
         by Downloader.
         """
-        # noinspection PyUnresolvedReferences,PyProtectedMember
         real_name = cog.name
 
         poss_installed_path = (await self.cog_install_path()) / real_name
         if poss_installed_path.exists():
+            ctx.bot.unload_extension(real_name)
             await self._delete_cog(poss_installed_path)
-            # noinspection PyTypeChecker
             await self._remove_from_installed(cog)
             await ctx.send(
                 _("Cog `{cog_name}` was successfully uninstalled.").format(cog_name=real_name)
