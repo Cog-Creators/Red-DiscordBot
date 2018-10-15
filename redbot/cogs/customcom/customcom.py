@@ -326,7 +326,11 @@ class CustomCommands(commands.Cog):
     @customcom.command(name="list")
     @checks.bot_has_permissions(add_reactions=True)
     async def cc_list(self, ctx: commands.Context):
-        """List all available custom commands."""
+        """List all available custom commands.
+
+        The list displays a preview of each command's response, with
+        markdown escaped and newlines replaced with spaces.
+        """
         cc_dict = await CommandObj.get_commands(self.config.guild(ctx.guild))
 
         if not cc_dict:
@@ -347,13 +351,12 @@ class CustomCommands(commands.Cog):
                 result = responses
             else:
                 continue
-            # Don't put a line-break in preview
-            newline_pos = result.find("\n")
-            if newline_pos != -1:
-                result = result[:newline_pos] + "..."
+            # Replace newlines with spaces
             # Cut preview to 52 characters max
             if len(result) > 52:
                 result = result[:49] + "..."
+            # Replace newlines with spaces
+            result = result.replace("\n", " ")
             # Escape markdown and mass mentions
             result = escape(result, formatting=True, mass_mentions=True)
             results.append((f"{ctx.clean_prefix}{command}", result))
