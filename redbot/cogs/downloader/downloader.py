@@ -329,7 +329,7 @@ class Downloader(commands.Cog):
 
         poss_installed_path = (await self.cog_install_path()) / real_name
         if poss_installed_path.exists():
-            await ctx.bot.unload_extension(real_name)
+            ctx.bot.unload_extension(real_name)
             await self._delete_cog(poss_installed_path)
             await self._remove_from_installed(cog)
             await ctx.send(
