@@ -626,8 +626,13 @@ class Streams(commands.Cog):
             raw_stream["_messages_cache"] = []
             for raw_msg in raw_msg_cache:
                 chn = self.bot.get_channel(raw_msg["channel"])
-                msg = await chn.get_message(raw_msg["message"])
-                raw_stream["_messages_cache"].append(msg)
+                if chn is not None:
+                    try:
+                        msg = await chn.get_message(raw_msg["message"])
+                    except discord.HTTPException:
+                        pass
+                    else:
+                        raw_stream["_messages_cache"].append(msg)
             token = await self.db.tokens.get_raw(_class.__name__, default=None)
             if token is not None:
                 raw_stream["token"] = token
@@ -646,8 +651,13 @@ class Streams(commands.Cog):
             raw_community["_messages_cache"] = []
             for raw_msg in raw_msg_cache:
                 chn = self.bot.get_channel(raw_msg["channel"])
-                msg = await chn.get_message(raw_msg["message"])
-                raw_community["_messages_cache"].append(msg)
+                if chn is not None:
+                    try:
+                        msg = await chn.get_message(raw_msg["message"])
+                    except discord.HTTPException:
+                        pass
+                    else:
+                        raw_community["_messages_cache"].append(msg)
             token = await self.db.tokens.get_raw(_class.__name__, default=None)
             communities.append(_class(token=token, **raw_community))
 
