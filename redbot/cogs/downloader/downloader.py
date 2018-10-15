@@ -372,13 +372,18 @@ class Downloader(commands.Cog):
                 await self._reinstall_libraries(installed_and_updated)
                 message = _("Cog update completed successfully.")
 
-                cognames = [c.name for c in installed_and_updated]
+                cognames = {c.name for c in installed_and_updated}
                 message += _("\nUpdated: ") + humanize_list(tuple(map(inline, cognames)))
             else:
                 await ctx.send(_("All installed cogs are already up to date."))
                 return
         await ctx.send(message)
 
+        cognames &= set(ctx.bot.extensions.keys())  # only reload loaded cogs
+        if not cognames:
+            return await ctx.send(
+                _("None of the updated cogs were previously loaded. Update complete.")
+            )
         message = _("Would you like to reload the updated cogs?")
         can_react = ctx.channel.permissions_for(ctx.me).add_reactions
         if not can_react:
@@ -402,7 +407,6 @@ class Downloader(commands.Cog):
             if can_react:
                 with contextlib.suppress(discord.Forbidden):
                     await query.clear_reactions()
-
             await ctx.invoke(ctx.bot.get_cog("Core").reload, *cognames)
         else:
             if can_react:
