@@ -32,6 +32,7 @@ import inspect
 import itertools
 import re
 
+from redbot.core.utils import menus
 from . import commands
 from .i18n import Translator
 from .utils.chat_formatting import pagify
@@ -299,9 +300,9 @@ async def help(ctx: commands.Context, *, command_name: str = ""):
     """
     bot = ctx.bot
     if bot.pm_help:
-        destination = ctx.author
+        pm_destination = True
     else:
-        destination = ctx.channel
+        pm_destination = False
 
     use_embeds = await ctx.embed_requested()
     if use_embeds:
@@ -328,15 +329,19 @@ async def help(ctx: commands.Context, *, command_name: str = ""):
 
     max_pages_in_guild = await ctx.bot.db.help.max_pages_in_guild()
     if len(pages) > max_pages_in_guild:
-        destination = ctx.author
+        pm_destination = True
     if ctx.guild and not ctx.guild.me.permissions_in(ctx.channel).send_messages:
-        destination = ctx.author
+        pm_destination = True
     try:
-        for page in pages:
-            if isinstance(page, discord.Embed):
-                await destination.send(embed=page)
-            else:
-                await destination.send(page)
+        if pm_destination:
+            for page in pages:
+                if isinstance(page, discord.Embed):
+                    await ctx.author.send(embed=page)
+                else:
+                    await ctx.author.send(page)
+        else:
+            await menus.menu(ctx, pages, menus.DEFAULT_CONTROLS)
+
     except discord.Forbidden:
         await ctx.channel.send(
             _(

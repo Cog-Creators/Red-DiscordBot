@@ -89,7 +89,7 @@ async def menu(
             await message.clear_reactions()
         except discord.Forbidden:  # cannot remove all reactions
             for key in controls.keys():
-                await message.remove_reaction(key, ctx.bot.user)
+                await message.remove_reaction(key, ctx.me)
         return None
 
     return await controls[react.emoji](ctx, pages, controls, message, page, timeout, react.emoji)
