@@ -5,7 +5,7 @@ import discord
 
 from .i18n import Translator
 
-_ = Translator(__name__, __file__)
+_ = Translator(__name__)
 
 
 class RedError(Exception):
