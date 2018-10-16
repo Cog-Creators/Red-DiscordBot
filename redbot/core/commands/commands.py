@@ -418,6 +418,24 @@ class Group(GroupMixin, Command, CogGroupMixin, commands.Group):
         await super().invoke(ctx)
 
 
+class ScheduledMethod:
+    def __init__(self, name, callback, delay, args=[], kwargs={}, call_at_shutdown=False):
+        self.name = name
+        self.callback = callback
+        self.delay = delay
+        self.args = args
+        self.kwargs = kwargs
+        self.call_at_shutdown = call_at_shutdown
+
+        self.parent = None
+
+
+class LoopedMethod(ScheduledMethod):
+    def __init__(self, name, callback, period, args=[], kwargs={}, call_at_shutdown=False):
+        super().__init__(name, callback, -1, args=args, kwargs=kwargs, call_at_shutdown=call_at_shutdown)
+        self.period = period
+
+
 def command(name=None, cls=Command, **attrs):
     """A decorator which transforms an async function into a `Command`.
 
