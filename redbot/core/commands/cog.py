@@ -115,7 +115,11 @@ class Cog(metaclass=CogMeta):
                     self.__scheduled_shutdown_methods.append(scheduled_name)
 
     def remove_scheduled_methods(self, bot):
-        pass
+        for name in self.__scheduled_methods:
+            bot.scheduler.remove(name)
+
+        for name in self.__scheduled_shutdown_methods:
+            bot.scheduler.remove(name)
 
     @classmethod
     async def convert(cls, ctx: "Context", argument: str) -> "Cog":

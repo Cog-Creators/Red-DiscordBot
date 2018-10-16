@@ -254,6 +254,8 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
         for meth in self.rpc_handlers.pop(cogname.upper(), ()):
             self.unregister_rpc_handler(meth)
 
+        cog.remove_scheduled_methods(self)
+
     def unload_extension(self, name):
         lib = self.extensions.get(name)
 
@@ -409,6 +411,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
                     "http://red-discordbot.readthedocs.io/en/v3-develop/framework_commands.html"
                 )
         super().add_cog(cog)
+        cog.add_scheduled_methods(self)
         self.dispatch("cog_add", cog)
 
     def add_command(self, command: commands.Command):
