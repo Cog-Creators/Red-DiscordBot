@@ -76,7 +76,8 @@ class CogMeta(CogCommandMixin, CogGroupMixin, type):
 class Cog(metaclass=CogMeta):
     """Base class for a cog."""
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.__scheduled_methods = []
         self.__scheduled_shutdown_methods = []
 
