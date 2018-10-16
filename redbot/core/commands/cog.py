@@ -5,6 +5,7 @@ import discord
 import discord.ext.commands
 
 from .commands import CogCommandMixin, CogGroupMixin, Command
+from .errors import OverrideNotAllowed
 from ..i18n import Translator
 
 if TYPE_CHECKING:
@@ -20,6 +21,15 @@ class CogMeta(CogCommandMixin, CogGroupMixin, type):
     """Metaclass for cog base class."""
 
     __checks: List[Callable[["Context"], Union[bool, Awaitable[bool]]]]
+
+    def __init__(cls, *args, **kwargs) -> None:
+        try:
+            cls.__checks = getattr(cls, "__commands_checks__")
+        except AttributeError:
+            cls.__checks = []
+        else:
+            delattr(cls, "__commands_checks__")
+        super().__init__(*args, **kwargs)
 
     @property
     def all_commands(cls) -> Dict[str, Command]:
@@ -57,14 +67,6 @@ class CogMeta(CogCommandMixin, CogGroupMixin, type):
 
 class Cog(metaclass=CogMeta):
     """Base class for a cog."""
-
-    def __init_subclass__(cls, **kwargs):
-        try:
-            cls.__checks = getattr(cls, "__commands_checks__")
-        except AttributeError:
-            cls.__checks = []
-        else:
-            delattr(cls, "__commands_checks__")
 
     @classmethod
     async def convert(cls, ctx: "Context", argument: str) -> "Cog":
