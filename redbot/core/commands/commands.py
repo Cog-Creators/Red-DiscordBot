@@ -3,6 +3,7 @@
 This module contains extended classes and functions which are intended to
 replace those from the `discord.ext.commands` module.
 """
+import asyncio
 import contextlib
 import inspect
 import weakref
@@ -457,6 +458,30 @@ def group(name=None, **attrs):
     Same interface as `discord.ext.commands.group`.
     """
     return command(name, cls=Group, **attrs)
+
+
+def call_once(delay, *, args=[], kwargs={}, call_now=False, call_at_shutdown=False):
+    def deco(func):
+        if not asyncio.iscoroutinefunction(func):
+            raise TypeError('Callback must be a coroutine.')
+        return ScheduledMethod(func, delay, args=args, kwargs=kwargs, call_now=call_now, call_at_shutdown=call_at_shutdown)
+    return deco
+
+
+def call_at_shutdown(*, args=[], kwargs={}):
+    def deco(func):
+        if not asyncio.iscoroutinefunction(func):
+            raise TypeError('Callback must be a coroutine.')
+        return ScheduledMethod(func, args=args, kwargs=kwargs)
+    return deco
+
+
+def loop(period, *, args=[], kwargs={}, call_now=False, call_at_shutdown=False):
+    def deco(func):
+        if not asyncio.iscoroutinefunction(func):
+            raise TypeError('Callback must be a coroutine.')
+        return ScheduledMethod(func, period, args=args, kwargs=kwargs, call_now=call_now, call_at_shutdown=call_at_shutdown)
+    return deco
 
 
 __disablers = weakref.WeakValueDictionary()
