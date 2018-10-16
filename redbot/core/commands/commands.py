@@ -420,7 +420,9 @@ class Group(GroupMixin, Command, CogGroupMixin, commands.Group):
 
 
 class ScheduledMethod:
-    def __init__(self, callback, delay, *, args=[], kwargs={}, call_now=False, call_at_shutdown=False):
+    def __init__(
+        self, callback, delay, *, args=[], kwargs={}, call_now=False, call_at_shutdown=False
+    ):
         self.callback = callback
         self.delay = delay
         self.args = args
@@ -437,8 +439,17 @@ class ShutdownMethod(ScheduledMethod):
 
 
 class LoopedMethod(ScheduledMethod):
-    def __init__(self, callback, period, *, args=[], kwargs={}, call_now=False, call_at_shutdown=False):
-        super().__init__(callback, -1, args=args, kwargs=kwargs, call_now=call_now, call_at_shutdown=call_at_shutdown)
+    def __init__(
+        self, callback, period, *, args=[], kwargs={}, call_now=False, call_at_shutdown=False
+    ):
+        super().__init__(
+            callback,
+            -1,
+            args=args,
+            kwargs=kwargs,
+            call_now=call_now,
+            call_at_shutdown=call_at_shutdown,
+        )
         self.looped = True
         self.period = period
 
@@ -463,24 +474,41 @@ def group(name=None, **attrs):
 def call_once(delay, *, args=[], kwargs={}, call_now=False, call_at_shutdown=False):
     def deco(func):
         if not asyncio.iscoroutinefunction(func):
-            raise TypeError('Callback must be a coroutine.')
-        return ScheduledMethod(func, delay, args=args, kwargs=kwargs, call_now=call_now, call_at_shutdown=call_at_shutdown)
+            raise TypeError("Callback must be a coroutine.")
+        return ScheduledMethod(
+            func,
+            delay,
+            args=args,
+            kwargs=kwargs,
+            call_now=call_now,
+            call_at_shutdown=call_at_shutdown,
+        )
+
     return deco
 
 
 def call_at_shutdown(*, args=[], kwargs={}):
     def deco(func):
         if not asyncio.iscoroutinefunction(func):
-            raise TypeError('Callback must be a coroutine.')
+            raise TypeError("Callback must be a coroutine.")
         return ScheduledMethod(func, args=args, kwargs=kwargs)
+
     return deco
 
 
 def loop(period, *, args=[], kwargs={}, call_now=False, call_at_shutdown=False):
     def deco(func):
         if not asyncio.iscoroutinefunction(func):
-            raise TypeError('Callback must be a coroutine.')
-        return ScheduledMethod(func, period, args=args, kwargs=kwargs, call_now=call_now, call_at_shutdown=call_at_shutdown)
+            raise TypeError("Callback must be a coroutine.")
+        return ScheduledMethod(
+            func,
+            period,
+            args=args,
+            kwargs=kwargs,
+            call_now=call_now,
+            call_at_shutdown=call_at_shutdown,
+        )
+
     return deco
 
 
