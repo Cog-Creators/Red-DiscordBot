@@ -376,6 +376,7 @@ class Alias(commands.Cog, translator=_):
             await ctx.send(box("\n".join(names), "diff"))
 
     async def on_message(self, message: discord.Message):
+        await self.bot.load_context(message)
         aliases = list(await self.unloaded_global_aliases())
         if message.guild is not None:
             aliases = aliases + list(await self.unloaded_aliases(message.guild))

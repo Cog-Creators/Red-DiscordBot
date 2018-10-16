@@ -1,7 +1,8 @@
 import asyncio
 import inspect
-import os
 import logging
+import os
+import sys
 from collections import Counter
 from enum import Enum
 from importlib.machinery import ModuleSpec
@@ -9,7 +10,6 @@ from pathlib import Path
 from typing import Optional, Union, List
 
 import discord
-import sys
 from discord.ext.commands import when_mentioned_or
 
 from . import Config, i18n, commands, errors
@@ -18,6 +18,8 @@ from .help_formatter import Help, help as help_
 from .rpc import RPCMixin
 from .sentry import SentryManager
 from .utils import common_filters
+
+PY_36 = sys.version_info < (3, 7, 0)
 
 
 def _is_submodule(parent, child):
@@ -48,7 +50,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             whitelist=[],
             blacklist=[],
             enable_sentry=None,
-            locale="en",
+            locale="en-US",
             embeds=True,
             color=15158332,
             fuzzy=False,
@@ -58,6 +60,8 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             disabled_commands=[],
             disabled_command_msg="That command is disabled.",
         )
+        if not PY_36:
+            self.db.register_custom("LOCALE")
 
         self.db.register_guild(
             prefix=[],
@@ -514,6 +518,62 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             else:
                 ctx.permission_state = commands.PermState.DENIED_BY_HOOK
                 return False
+
+    async def get_locale(
+        self,
+        context: Union[
+            commands.Context,
+            discord.Message,
+            discord.abc.User,
+            discord.abc.GuildChannel,
+            discord.DMChannel,
+            discord.Guild,
+        ],
+    ) -> str:
+        """Get the locale based on some context.
+
+        Parameters
+        ----------
+        context
+            Some object to describe the context. Can be any of
+            `commands.Context`, `discord.Message`, `discord.abc.User`,
+            `discord.abc.GuildChannel`, `discord.DMChannel` or
+            `discord.Guild`.
+
+        """
+        if isinstance(context, (discord.Message, commands.Context)):
+            to_check = (context.author, context.channel, context.guild)
+        elif isinstance(context, (discord.Member, discord.abc.GuildChannel)):
+            to_check = (context, context.guild)
+        elif isinstance(context, (discord.User, discord.DMChannel, discord.Guild)):
+            to_check = (context,)
+        else:
+            raise TypeError(f"Invalid context object of type {type(context)}")
+        for obj in to_check:
+            try:
+                return await self.db.custom("LOCALE").get_raw(str(obj.id))
+            except KeyError:
+                continue
+        return await self.db.locale()
+
+    async def load_context(
+        self,
+        context: Union[
+            commands.Context, discord.Message, discord.abc.User, discord.TextChannel, discord.Guild
+        ],
+    ) -> None:
+        """Load the given context to be used in the current task.
+
+        Parameters
+        ----------
+        context
+            Some object to describe the context. Can be any of
+            `commands.Context`, `discord.Message`, `discord.abc.User`,
+            `discord.abc.GuildChannel`, `discord.DMChannel` or
+            `discord.Guild`.
+
+        """
+        i18n.set_locale(await self.get_locale(context))
 
 
 class Red(RedBase, discord.AutoShardedClient):

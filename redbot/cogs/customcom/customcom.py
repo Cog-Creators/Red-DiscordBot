@@ -432,6 +432,7 @@ class CustomCommands(commands.Cog, translator=_):
             await ctx.send(box(p, lang="yaml"))
 
     async def on_message(self, message):
+        await self.bot.load_context(message)
         is_private = isinstance(message.channel, discord.abc.PrivateChannel)
 
         # user_allowed check, will be replaced with self.bot.user_allowed or

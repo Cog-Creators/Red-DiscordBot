@@ -1,11 +1,15 @@
+import contextlib
 import os
 import re
+import weakref
+import sys
 from pathlib import Path
-from typing import Callable, Union
+from typing import Callable, Union, Set, Optional, TextIO
 
-__all__ = ["get_locale", "set_locale", "reload_locales", "Translator"]
+__all__ = ["get_locale", "set_locale", "Translator"]
 
-_current_locale = "en_us"
+PY_36 = sys.version_info < (3, 7, 0)
+
 
 WAITING_FOR_MSGID = 1
 IN_MSGID = 2
@@ -15,22 +19,46 @@ IN_MSGSTR = 4
 MSGID = 'msgid "'
 MSGSTR = 'msgstr "'
 
-_translators = []
+
+_translators: Set["Translator"] = weakref.WeakSet()
 
 
-def get_locale():
-    return _current_locale
+if PY_36:
+    _current_locale = "en-US"
+
+    def get_locale():
+        return _current_locale
+
+    def set_locale(locale):
+        global _current_locale
+        _current_locale = locale
+        _reload_locales()
+
+    def _reload_locales():
+        for translator in _translators:
+            translator.load_translations()
 
 
-def set_locale(locale):
-    global _current_locale
-    _current_locale = locale
-    reload_locales()
+else:
+    import contextvars
 
+    _current_locales: Set[str] = set()
+    _locale_var: contextvars.ContextVar[str] = contextvars.ContextVar(
+        "Locale", default="en-US"
+    )
 
-def reload_locales():
-    for translator in _translators:
-        translator.load_translations()
+    def get_locale() -> str:
+        return _locale_var.get()
+
+    def set_locale(locale: str) -> None:
+        if locale not in _current_locales:
+            _load_locale(locale)
+        _locale_var.set(locale)
+
+    def _load_locale(locale: str) -> None:
+        _current_locales.add(locale)
+        for translator in _translators:
+            translator.load_translations(locale)
 
 
 def _parse(translation_file):
@@ -47,6 +75,8 @@ def _parse(translation_file):
     """
     step = WAITING_FOR_MSGID
     translations = set()
+    untranslated = ""
+    translated = ""
     for line in translation_file:
         line = line[0:-1]  # Remove the ending \n
         line = line
@@ -135,40 +165,31 @@ def _normalize(string, remove_newline=False):
     return string
 
 
-def get_locale_path(cog_folder: Path, extension: str) -> Path:
-    """
-    Gets the folder path containing localization files.
-
-    :param Path cog_folder:
-        The cog folder that we want localizations for.
-    :param str extension:
-        Extension of localization files.
-    :return:
-        Path of possible localization file, it may not exist.
-    """
-    return cog_folder / "locales" / "{}.{}".format(get_locale(), extension)
-
-
 class Translator(Callable[[str], str]):
-    """Function to get translated strings at runtime."""
+    """Class for Red's custom gettext function.
+
+    Parameters
+    ----------
+    file_location : `str` or `pathlib.Path`
+        This should always be ``__file__`` otherwise your localizations
+        will not load.
+
+    """
 
     def __init__(self, file_location: Union[str, Path, os.PathLike]):
-        """
-        Initializes an internationalization object.
-
-        Parameters
-        ----------
-        file_location : `str` or `pathlib.Path`
-            This should always be ``__file__`` otherwise your localizations
-            will not load.
-
-        """
         self.cog_folder = Path(file_location).resolve().parent
         self.translations = {}
 
-        _translators.append(self)
+        _translators.add(self)
 
         self.load_translations()
+
+    @property
+    def locale_folder(self) -> Path:
+        return self.cog_folder / "locales"
+
+    def get_catalog_path(self, locale: str) -> Path:
+        return self.locale_folder / f"{locale}.po"
 
     def __call__(self, untranslated: str) -> str:
         """Translate the given string.
@@ -176,39 +197,36 @@ class Translator(Callable[[str], str]):
         This will look for the string in the translator's :code:`.pot` file,
         with respect to the current locale.
         """
-        normalized_untranslated = _normalize(untranslated, True)
         try:
-            return self.translations[normalized_untranslated]
+            return self.translations[get_locale()][_normalize(untranslated, True)]
         except KeyError:
             return untranslated
 
-    def load_translations(self) -> None:
+    def load_translations(self, locale: Optional[str] = None) -> None:
         """
         Loads the current translations.
         """
-        self.translations = {}
-        translation_file = None
-        locale_path = get_locale_path(self.cog_folder, "po")
-        try:
+        if locale is not None or PY_36:
+            self._load_locale(locale)
+        else:
+            for _locale in _current_locales:
+                self._load_locale(_locale)
 
-            try:
-                translation_file = locale_path.open("ru", encoding="utf-8")
-            except ValueError:  # We are using Windows
-                translation_file = locale_path.open("r", encoding="utf-8")
-            self._parse(translation_file)
-        except (IOError, FileNotFoundError):  # The translation is unavailable
-            pass
-        finally:
-            if translation_file is not None:
-                translation_file.close()
+    def _load_locale(self, locale: str) -> None:
+        if PY_36:
+            # There can only be one locale at a time on 3.6
+            self.translations = {}
+        self.translations[locale] = {}
+        path = self.get_catalog_path(locale)
+        with contextlib.suppress(FileNotFoundError), path.open(encoding="utf-8") as file:
+            self._parse(file, locale=locale)
 
-    def _parse(self, translation_file) -> None:
-        self.translations = {}
+    def _parse(self, translation_file: TextIO, locale: str) -> None:
         for translation in _parse(translation_file):
-            self._add_translation(*translation)
+            self._add_translation(locale, *translation)
 
-    def _add_translation(self, untranslated, translated):
+    def _add_translation(self, locale: str, untranslated: str, translated: str):
         untranslated = _normalize(untranslated, True)
         translated = _normalize(translated)
         if translated:
-            self.translations.update({untranslated: translated})
+            self.translations[locale][untranslated] = translated

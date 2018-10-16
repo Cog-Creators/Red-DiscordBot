@@ -189,6 +189,7 @@ def init_events(bot, cli_flags):
 
     @bot.event
     async def on_command_error(ctx, error):
+        await bot.load_context(ctx)
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.send_help()
         elif isinstance(error, commands.ConversionFailure):
@@ -204,21 +205,20 @@ def init_events(bot, cli_flags):
                 await ctx.send(disabled_message.replace("{command}", ctx.invoked_with))
         elif isinstance(error, commands.CommandInvokeError):
             log.exception(
-                "Exception in command '{}'" "".format(ctx.command.qualified_name),
+                "Exception in command '{}'".format(ctx.command.qualified_name),
                 exc_info=error.original,
             )
             if should_log_sentry(error):
                 sentry_log.exception(
-                    "Exception in command '{}'" "".format(ctx.command.qualified_name),
+                    "Exception in command '{}'".format(ctx.command.qualified_name),
                     exc_info=error.original,
                 )
 
             message = (
                 "Error in command '{}'. Check your console or "
-                "logs for details."
-                "".format(ctx.command.qualified_name)
+                "logs for details.".format(ctx.command.qualified_name)
             )
-            exception_log = "Exception in command '{}'\n" "".format(ctx.command.qualified_name)
+            exception_log = "Exception in command '{}'\n".format(ctx.command.qualified_name)
             exception_log += "".join(
                 traceback.format_exception(type(error), error, error.__traceback__)
             )
@@ -264,6 +264,7 @@ def init_events(bot, cli_flags):
     @bot.event
     async def on_message(message):
         bot.counter["messages_read"] += 1
+        await bot.load_context(message)
         await bot.process_commands(message)
         discord_now = message.created_at
         if (
@@ -274,8 +275,8 @@ def init_events(bot, cli_flags):
             diff = abs((discord_now - system_now).total_seconds())
             if diff > 60:
                 log.warn(
-                    "Detected significant difference (%d seconds) in system clock to discord's clock."
-                    " Any time sensitive code may fail.",
+                    "Detected significant difference (%d seconds) in system clock to discord's "
+                    "clock. Any time sensitive code may fail.",
                     diff,
                 )
             bot.checked_time_accuracy = discord_now

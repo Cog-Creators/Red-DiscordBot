@@ -8,6 +8,7 @@ import logging
 import os
 import sys
 import tarfile
+import textwrap
 import traceback
 from collections import namedtuple
 from pathlib import Path
@@ -35,6 +36,8 @@ if TYPE_CHECKING:
     from redbot.core.bot import Red
 
 __all__ = ["Core"]
+
+PY_36 = sys.version_info < (3, 7, 0)
 
 log = logging.getLogger("red")
 
@@ -267,6 +270,36 @@ class CoreLogic:
         """
         app_info = await self.bot.application_info()
         return discord.utils.oauth_url(app_info.id)
+
+    if PY_36:
+
+        async def _get_locale(self) -> str:
+            return await self.bot.db.locale()
+
+        async def _set_locale(self, locale: str) -> None:
+            i18n.set_locale(locale)
+            await self.bot.db.locale.set(locale)
+
+    else:
+
+        async def _get_locale(self, id_: int = 0) -> str:
+            if id_:
+                return await self.bot.db.custom("LOCALE").get_raw(str(id_))
+            else:
+                return await self.bot.db.locale()
+
+        async def _set_locale(self, locale: Optional[str], id_: int = 0) -> None:
+            if locale is None:
+                if id_:
+                    await self.bot.db.custom("LOCALE").clear_raw(str(id_))
+                else:
+                    await self.bot.db.locale.clear()
+            else:
+                if id_:
+                    await self.bot.db.custom("LOCALE").set_raw(str(id_), value=locale)
+                else:
+                    await self.bot.db.locale.set(locale)
+                i18n.set_locale(locale)
 
 
 class Core(commands.Cog, CoreLogic, translator=_):
@@ -652,14 +685,12 @@ class Core(commands.Cog, CoreLogic, translator=_):
                 prefixes = None  # This is correct. The below can happen in a guild.
             if not prefixes:
                 prefixes = await ctx.bot.db.prefix()
-            locale = await ctx.bot.db.locale()
 
             prefix_string = " ".join(prefixes)
             settings = (
                 f"{ctx.bot.user.name} Settings:\n\n"
                 f"Prefixes: {prefix_string}\n"
                 f"{guild_settings}"
-                f"Locale: {locale}"
             )
             await ctx.send(box(settings))
 
@@ -986,21 +1017,101 @@ class Core(commands.Cog, CoreLogic, translator=_):
         await ctx.bot.db.token.set(token)
         await ctx.send("Token set. Restart me.")
 
-    @_set.command()
+    if PY_36:
+
+        @_set.command()
+        @checks.is_owner()
+        async def locale(self, ctx: commands.Context, locale_name: str):
+            """
+            Changes bot locale.
+
+            Use [p]listlocales to get a list of available locales.
+
+            To reset to English, use "en-US".
+            """
+            await self._set_locale(locale_name)
+            await ctx.send(_("Locale has been set."))
+
+    else:
+
+        @commands.group()
+        async def localeset(self, ctx: commands.Context) -> None:
+            """Manage language and locale."""
+            if ctx.invoked_subcommand is None:
+                await ctx.send(
+                    box(
+                        textwrap.dedent(
+                            _(
+                                """\
+                                Personal locale: [{personal_locale}]
+                                Channel locale:  [{channel_locale}]
+                                Server locale:   [{server_locale}]
+                                Global locale:   [{global_locale}]
+                                """
+                            ).format(
+                                personal_locale=await self._get_locale(id_=ctx.author.id),
+                                channel_locale=await self._get_locale(id_=ctx.channel.id),
+                                server_locale=await self._get_locale(id_=ctx.guild.id),
+                                global_locale=await self._get_locale(),
+                            )
+                        ),
+                        lang="ini",
+                    )
+                )
+
+        @localeset.command(name="user", aliases=["personal"])
+        async def localeset_user(self, ctx: commands.Context, locale: str = None) -> None:
+            """Set your personal locale."""
+            await self._set_locale(id_=ctx.author.id, locale=locale)
+            if locale is None:
+                await ctx.send(_("Your locale has been reset to the default."))
+            else:
+                await ctx.send(_("Your locale has been set."))
+
+        @checks.admin_or_permissions(manage_channel=True)
+        @localeset.command(name="channel")
+        async def localeset_channel(self, ctx: commands.Context, locale: str = None) -> None:
+            """Set the locale for this channel."""
+            await self._set_locale(id_=ctx.channel.id, locale=locale)
+            if locale is None:
+                await ctx.send(_("This channel's locale has been reset to the default."))
+            else:
+                await ctx.send(_("This channel's locale has been set."))
+
+        @checks.admin_or_permissions(manage_server=True)
+        @localeset.command(name="server", aliases=["guild"])
+        async def localeset_server(self, ctx: commands.Context, locale: str = None) -> None:
+            """Set the locale for this server."""
+            await self._set_locale(id_=ctx.guild.id, locale=locale)
+            if locale is None:
+                await ctx.send(_("This server's locale has been reset to the default."))
+            else:
+                await ctx.send(_("This server's locale has been set."))
+
+        @checks.is_owner()
+        @localeset.command(name="global")
+        async def localeset_global(self, ctx: commands.Context, locale: str = None) -> None:
+            """Set the global locale."""
+            await self._set_locale(locale=locale)
+            if locale is None:
+                await ctx.send(_("The global locale has been reset to the default."))
+            else:
+                await ctx.send(_("The global locale has been set."))
+
+    @commands.command()
     @checks.is_owner()
-    async def locale(self, ctx: commands.Context, locale_name: str):
-        """
-        Changes bot locale.
+    async def listlocales(self, ctx: commands.Context):
+        """List all available locales."""
+        async with ctx.channel.typing():
+            red_dist = pkg_resources.get_distribution("red-discordbot")
+            red_path = Path(red_dist.location) / "redbot"
+            locale_list = sorted(set([loc.stem for loc in list(red_path.glob("**/*.po"))]))
+            if not locale_list:
+                await ctx.send(_("No languages found."))
+                return
+            pages = pagify("\n".join(locale_list), shorten_by=26)
 
-        Use [p]listlocales to get a list of available locales.
-
-        To reset to English, use "en-US".
-        """
-        i18n.set_locale(locale_name)
-
-        await ctx.bot.db.locale.set(locale_name)
-
-        await ctx.send(_("Locale has been set."))
+        await ctx.send_interactive(pages, box_lang=_("Available Locales:"))
 
     @_set.command()
     @checks.is_owner()
@@ -1086,25 +1197,6 @@ class Core(commands.Cog, CoreLogic, translator=_):
 
         await ctx.bot.db.help.tagline.set(tagline)
         await ctx.send(_("The tagline has been set to {}.").format(tagline[:1900]))
-
-    @commands.command()
-    @checks.is_owner()
-    async def listlocales(self, ctx: commands.Context):
-        """
-        Lists all available locales
-
-        Use `[p]set locale` to set a locale
-        """
-        async with ctx.channel.typing():
-            red_dist = pkg_resources.get_distribution("red-discordbot")
-            red_path = Path(red_dist.location) / "redbot"
-            locale_list = sorted(set([loc.stem for loc in list(red_path.glob("**/*.po"))]))
-            if not locale_list:
-                await ctx.send("No languages found.")
-                return
-            pages = pagify("\n".join(locale_list), shorten_by=26)
-
-        await ctx.send_interactive(pages, box_lang="Available Locales:")
 
     @commands.command()
     @checks.is_owner()

@@ -95,6 +95,7 @@ class Audio(commands.Cog, translator=_):
         self._disconnect_task = self.bot.loop.create_task(self.disconnect_timer())
 
     async def event_handler(self, player, event_type, extra):
+        await self.bot.set_context(player.channel)
         notify = await self.config.guild(player.channel.guild).notify()
         status = await self.config.status()
         try:
