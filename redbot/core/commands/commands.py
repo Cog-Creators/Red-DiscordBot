@@ -419,20 +419,26 @@ class Group(GroupMixin, Command, CogGroupMixin, commands.Group):
 
 
 class ScheduledMethod:
-    def __init__(self, name, callback, delay, args=[], kwargs={}, call_at_shutdown=False):
-        self.name = name
+    def __init__(self, callback, delay, *, args=[], kwargs={}, call_now=False, call_at_shutdown=False):
         self.callback = callback
         self.delay = delay
         self.args = args
         self.kwargs = kwargs
         self.call_at_shutdown = call_at_shutdown
+        self.call_now = call_now
+        self.looped = False
 
-        self.parent = None
+
+class ShutdownMethod(ScheduledMethod):
+    def __init__(self, callback, *, args=[], kwargs={}):
+        super().__init__(callback, -1, args=args, kwargs=kwargs)
+        self.call_at_shutdown = True
 
 
 class LoopedMethod(ScheduledMethod):
-    def __init__(self, name, callback, period, args=[], kwargs={}, call_at_shutdown=False):
-        super().__init__(name, callback, -1, args=args, kwargs=kwargs, call_at_shutdown=call_at_shutdown)
+    def __init__(self, callback, period, *, args=[], kwargs={}, call_now=False, call_at_shutdown=False):
+        super().__init__(callback, -1, args=args, kwargs=kwargs, call_now=call_now, call_at_shutdown=call_at_shutdown)
+        self.looped = True
         self.period = period
 
 

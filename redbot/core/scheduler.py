@@ -1,11 +1,11 @@
-from asyncio import PriorityQueue, AbstractEventLoop
+from asyncio import PriorityQueue, AbstractEventLoop, get_event_loop
 import time
 from contextlib import suppress
 
 
 class Scheduler:
-    def __init__(self, loop: AbstractEventLoop):
-        self._loop = loop
+    def __init__(self, loop: AbstractEventLoop=None):
+        self._loop = get_event_loop() if loop is None else loop
         self._scheduled_funcs = PriorityQueue(loop=self._loop)
         self.counter = 0
         self.events = {}

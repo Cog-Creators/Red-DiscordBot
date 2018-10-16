@@ -4,11 +4,12 @@ from typing import Callable, TYPE_CHECKING, Dict, List, Union, Awaitable
 import discord
 import discord.ext.commands
 
-from .commands import CogCommandMixin, CogGroupMixin, Command
+from .commands import CogCommandMixin, CogGroupMixin, Command, ScheduledMethod, LoopedMethod, ShutdownMethod
 from .errors import OverrideNotAllowed
 from ..i18n import Translator
 
 if TYPE_CHECKING:
+    from ..bot import Red
     from .context import Context
 
 
@@ -67,6 +68,54 @@ class CogMeta(CogCommandMixin, CogGroupMixin, type):
 
 class Cog(metaclass=CogMeta):
     """Base class for a cog."""
+    def __init__(self):
+        self.__scheduled_methods = []
+        self.__scheduled_shutdown_methods = []
+
+    def add_scheduled_methods(self, bot: "Red"):
+        members = inspect.getmembers(self)
+
+        for name, member in members:
+            scheduled_name = None
+            full_name = None
+            if isinstance(member, ShutdownMethod):
+                full_name = f"{self.__class__.__name__}.{name}"
+                scheduled_name = bot.scheduler.call_at_shutdown(
+                    member.callback,
+                    name=full_name,
+                    args=member.args,
+                    kwargs=member.kwargs
+                )
+            elif isinstance(member, LoopedMethod):
+                full_name = f"{self.__class__.__name__}.{name}"
+                scheduled_name = bot.scheduler.loop(
+                    member.callback,
+                    period=member.period,
+                    name=full_name,
+                    args=member.args,
+                    kwargs=member.kwargs,
+                    now=member.call_now,
+                    call_at_shutdown=member.call_at_shutdown
+                )
+            elif isinstance(member, ScheduledMethod):
+                full_name = f"{self.__class__.__name__}.{name}"
+                scheduled_name = bot.scheduler.call_once(
+                    member.callback,
+                    delay=member.delay,
+                    name=full_name,
+                    args=member.args,
+                    kwargs=member.kwargs,
+                    call_at_shutdown=member.call_at_shutdown
+                )
+
+            if scheduled_name is not None:
+                assert full_name == scheduled_name, "This shouldn't happen...report it now."
+                self.__scheduled_methods.append(scheduled_name)
+                if member.call_at_shutdown:
+                    self.__scheduled_shutdown_methods.append(scheduled_name)
+
+    def remove_scheduled_methods(self, bot):
+        pass
 
     @classmethod
     async def convert(cls, ctx: "Context", argument: str) -> "Cog":

@@ -16,6 +16,7 @@ from . import Config, i18n, commands, errors
 from .cog_manager import CogManager
 from .help_formatter import Help, help as help_
 from .rpc import RPCMixin
+from .scheduler import Scheduler
 from .sentry import SentryManager
 from .utils import common_filters
 
@@ -119,6 +120,7 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
 
         self.add_command(help_)
 
+        self.scheduler = Scheduler()
         self._sentry_mgr = None
         self._permissions_hooks: List[commands.CheckPredicate] = []
 
