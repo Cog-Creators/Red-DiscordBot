@@ -140,3 +140,9 @@ ENV/
 
 # Pre-commit hooks
 /.pre-commit-config.yaml
+
+# docker-compose data
+docker/*/data
+docker/lavalink/*.jar
+docker/lavalink/*.so
+!docker/red-*/config.json

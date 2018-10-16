@@ -1,0 +1,21 @@
+server:
+  port: 2333 # REST server
+  address: 0.0.0.0
+lavalink:
+  server:
+    password: "youshallnotpass"
+    ws:
+      host: 0.0.0.0
+      port: 2332
+    sources:
+      youtube: true
+      bandcamp: true
+      soundcloud: true
+      twitch: true
+      vimeo: true
+      mixer: true
+      http: true
+      local: false
+    sentryDsn: ""
+    bufferDurationMs: 400
+    youtubePlaylistLoadLimit: 10000

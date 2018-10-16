@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  lavalink:
+    # Comment image and uncomment build to use a custom .jar
+    image: fredboat/lavalink:master-v3
+    # build: ../lavalink
+    restart: always
+    volumes:
+      - ../lavalink/application.yml:/opt/Lavalink/application.yml:ro
+    expose:
+     - "2332"
+     - "2333"
+
+  red:
+    build:
+      context: ../..
+      dockerfile: docker/red-json/Dockerfile
+    restart: always
+    command: "--token ${BOT_TOKEN} --prefix ${BOT_PREFIX}"
+    environment:
+      - LAVALINK_DEFAULT_HOST=lavalink
+    volumes:
+      - ./data/red:/data
+    links:
+      - lavalink

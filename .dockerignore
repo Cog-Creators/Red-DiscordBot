@@ -1,0 +1,11 @@
+**
+!docker
+docker/*/data
+!redbot
+!discord
+!Pipfile
+!Pipfile.lock
+!setup.cfg
+!setup.py
+!MANIFEST.in
+!dependency_links.txt
