@@ -46,7 +46,7 @@ OWNER_DISCLAIMER = (
 )
 
 
-_ = Translator(__file__)
+_ = i18n.Translator(__file__)
 
 
 class CoreLogic:

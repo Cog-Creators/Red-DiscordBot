@@ -30,6 +30,12 @@ class CogMeta(CogCommandMixin, CogGroupMixin, type):
             cls.__checks = []
         else:
             delattr(cls, "__commands_checks__")
+        try:
+            # Assign translator object if Cog.__init_subclass__ wasn't called.
+            # Not using hasattr() because it's a mangled name
+            cls.__translator
+        except AttributeError:
+            cls.__translator = None
         super().__init__(*args, **kwargs)
 
     @property
@@ -74,7 +80,7 @@ class Cog(metaclass=CogMeta):
     """Base class for a cog."""
 
     def __init_subclass__(cls, **kwargs) -> None:
-        cls.__translator = kwargs.pop("translator", None)
+        setattr(cls, f"_{CogMeta.__name__}__translator", kwargs.pop("translator", None))
         super().__init_subclass__(**kwargs)
 
     @classmethod
