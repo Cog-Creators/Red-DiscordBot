@@ -32,7 +32,7 @@ import inspect
 import itertools
 import re
 
-from redbot.core.utils import menus
+from .utils import menus
 from . import commands
 from .i18n import Translator
 from .utils.chat_formatting import pagify
