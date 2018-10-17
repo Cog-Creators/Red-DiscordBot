@@ -6,6 +6,58 @@ from redbot.core.i18n import Translator
 _ = Translator("PermissionsConverters", __file__)
 
 
+class GlobalUniqueObjectFinder(commands.Converter):
+    @staticmethod
+    async def convert(ctx: commands.Context, arg: str):
+        objects = set(ctx.bot.get_all_channels())
+        objects += set(ctx.bot.users)
+        for guild in ctx.bot.guilds:
+            objects += {r for r in guild.roles if not r.is_default}
+            objects.add(guild)
+
+        for func in (
+            lambda obj: str(obj.id) == arg,
+            lambda obj: getattr(obj, "mention", False) == arg,
+            lambda obj: str(obj) == arg,
+            lambda obj: obj.name == arg,
+        ):
+            maybe_matches = list(filter(func, objects))
+            if len(maybe_matches) == 1:
+                return maybe_matches[0]
+            if len(maybe_matches) > 0:
+                raise commands.BadArgument(
+                    "Could not uniquely match that, please use an id or mention for this", arg
+                )
+        raise commands.BadArgument(
+            "Could not uniquely match that, please use an id or mention for this", arg
+        )
+
+
+class GuildUniqueObjectFinder(commands.Converter):
+    @staticmethod
+    async def convert(ctx: commands.Context, arg: str):
+        objects = set(ctx.guild.channels)
+        objects += set(ctx.guild.members)
+        objects += set(ctx.guild.roles)
+
+        for func in (
+            lambda obj: str(obj.id) == arg,
+            lambda obj: getattr(obj, "mention", False) == arg,
+            lambda obj: str(obj) == arg,
+            lambda obj: obj.name == arg,
+        ):
+            maybe_matches = list(filter(func, objects))
+            if len(maybe_matches) == 1:
+                return maybe_matches[0]
+            if len(maybe_matches) > 0:
+                raise commands.BadArgument(
+                    "Could not uniquely match that, please use an id or mention for this", arg
+                )
+        raise commands.BadArgument(
+            "Could not uniquely match that, please use an id or mention for this", arg
+        )
+
+
 class CogOrCommand(NamedTuple):
     type: str
     name: str

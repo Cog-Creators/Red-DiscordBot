@@ -14,7 +14,13 @@ from redbot.core.utils.chat_formatting import box
 from redbot.core.utils.menus import start_adding_reactions
 from redbot.core.utils.predicates import ReactionPredicate, MessagePredicate
 
-from .converters import CogOrCommand, RuleType, ClearableRuleType
+from .converters import (
+    CogOrCommand,
+    RuleType,
+    ClearableRuleType,
+    GuildUniqueObjectFinder,
+    GlobalUniqueObjectFinder,
+)
 
 _ = Translator("Permissions", __file__)
 
@@ -275,7 +281,7 @@ class Permissions(commands.Cog):
         ctx: commands.Context,
         allow_or_deny: RuleType,
         cog_or_command: CogOrCommand,
-        who_or_what: commands.GlobalPermissionModel,
+        who_or_what: GlobalUniqueObjectFinder,
     ):
         """Add a global rule to a command.
 
@@ -303,7 +309,7 @@ class Permissions(commands.Cog):
         ctx: commands.Context,
         allow_or_deny: RuleType,
         cog_or_command: CogOrCommand,
-        who_or_what: commands.GuildPermissionModel,
+        who_or_what: GuildUniqueObjectFinder,
     ):
         """Add a rule to a command in this server.
 
@@ -328,7 +334,7 @@ class Permissions(commands.Cog):
         self,
         ctx: commands.Context,
         cog_or_command: CogOrCommand,
-        who_or_what: commands.GlobalPermissionModel,
+        who_or_what: GlobalUniqueObjectFinder,
     ):
         """Remove a global rule from a command.
 
@@ -351,7 +357,7 @@ class Permissions(commands.Cog):
         ctx: commands.Context,
         cog_or_command: CogOrCommand,
         *,
-        who_or_what: commands.GuildPermissionModel,
+        who_or_what: GuildUniqueObjectFinder,
     ):
         """Remove a server rule from a command.
 
