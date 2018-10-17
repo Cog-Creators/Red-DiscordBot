@@ -1,4 +1,4 @@
-import reports
+import re
 from typing import NamedTuple, Union, Optional, cast, Type
 
 from redbot.core import commands
@@ -31,16 +31,16 @@ class GlobalUniqueObjectFinder(commands.Converter):
                 return maybe_matches[0]
             if len(maybe_matches) > 0:
                 raise commands.BadArgument(
-                    "Could not uniquely match that, please use an id or mention for this", arg
+                    _("Could not uniquely match that, please use an id or mention for this"), arg
                 )
         raise commands.BadArgument(
-            "Could not uniquely match that, please use an id or mention for this", arg
+            _("Could not uniquely match that, please use an id or mention for this"), arg
         )
 
 
 class GuildUniqueObjectFinder(commands.Converter):
     async def convert(self, ctx: commands.Context, arg: str):
-        objects = {str(c.id): c for c in guild.channels}
+        objects = {str(c.id): c for c in ctx.guild.channels}
         objects.update({str(u.id): u for u in ctx.guild.members})
         objects.update({str(r.id): r for r in ctx.guild.roles})
 
@@ -57,10 +57,10 @@ class GuildUniqueObjectFinder(commands.Converter):
                 return maybe_matches[0]
             if len(maybe_matches) > 0:
                 raise commands.BadArgument(
-                    "Could not uniquely match that, please use an id or mention for this", arg
+                    _("Could not uniquely match that, please use an id or mention for this"), arg
                 )
         raise commands.BadArgument(
-            "Could not uniquely match that, please use an id or mention for this", arg
+            _("Could not uniquely match that, please use an id or mention for this"), arg
         )
 
 
