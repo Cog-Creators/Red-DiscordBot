@@ -2611,7 +2611,8 @@ class Audio(commands.Cog):
             track_obj[key] = value
         return track_obj
 
-    def _url_check(self, url):
+    @staticmethod
+    def _url_check(url):
         valid_tld = [
             "youtube.com",
             "youtu.be",
