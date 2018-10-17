@@ -1,3 +1,4 @@
+import reports
 from typing import NamedTuple, Union, Optional, cast, Type
 
 from redbot.core import commands
@@ -5,22 +6,26 @@ from redbot.core.i18n import Translator
 
 _ = Translator("PermissionsConverters", __file__)
 
+MENETION_RE = re.compile(r"^<(@[!&]?)|#([0-9]{15,21})>$")
+
 
 class GlobalUniqueObjectFinder(commands.Converter):
-    @staticmethod
-    async def convert(ctx: commands.Context, arg: str):
-        objects = set(ctx.bot.get_all_channels())
-        objects += set(ctx.bot.users)
-        for guild in ctx.bot.guilds:
-            objects += {r for r in guild.roles if not r.is_default()}
-            objects.add(guild)
+    async def convert(self, ctx: commands.Context, arg: str):
 
-        for func in (
-            lambda obj: str(obj.id) == arg,
-            lambda obj: getattr(obj, "mention", False) == arg,
-            lambda obj: str(obj) == arg,
-            lambda obj: obj.name == arg,
-        ):
+        objects = {str(c.id): c for c in ctx.bot.get_all_channels()}
+        objects.update({str(u.id): u for u in ctx.bot.users})
+        for guild in ctx.bot.guilds:
+            objects.update({str(r.id): r for r in guild.roles if not r.is_default()})
+            objects.update({str(guild.id): guild})
+
+        if arg in objects:
+            return objects[arg]
+
+        m = MENETION_RE.match(arg)
+        if m:
+            return objects[m.group(2)]
+
+        for func in (lambda obj: str(obj) == arg, lambda obj: obj.name == arg):
             maybe_matches = list(filter(func, objects))
             if len(maybe_matches) == 1:
                 return maybe_matches[0]
@@ -34,18 +39,19 @@ class GlobalUniqueObjectFinder(commands.Converter):
 
 
 class GuildUniqueObjectFinder(commands.Converter):
-    @staticmethod
-    async def convert(ctx: commands.Context, arg: str):
-        objects = set(ctx.guild.channels)
-        objects += set(ctx.guild.members)
-        objects += set(ctx.guild.roles)
+    async def convert(self, ctx: commands.Context, arg: str):
+        objects = {str(c.id): c for c in guild.channels}
+        objects.update({str(u.id): u for u in ctx.guild.members})
+        objects.update({str(r.id): r for r in ctx.guild.roles})
 
-        for func in (
-            lambda obj: str(obj.id) == arg,
-            lambda obj: getattr(obj, "mention", False) == arg,
-            lambda obj: str(obj) == arg,
-            lambda obj: obj.name == arg,
-        ):
+        if arg in objects:
+            return objects[arg]
+
+        m = MENETION_RE.match(arg)
+        if m:
+            return objects[m.group(2)]
+
+        for func in (lambda obj: str(obj) == arg, lambda obj: obj.name == arg):
             maybe_matches = list(filter(func, objects))
             if len(maybe_matches) == 1:
                 return maybe_matches[0]
