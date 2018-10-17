@@ -23,7 +23,9 @@ class GlobalUniqueObjectFinder(commands.Converter):
 
         m = MENETION_RE.match(arg)
         if m:
-            return objects[m.group(2)]
+            ret = objects.get(m.group(2), None)
+            if ret:
+                return ret
 
         for func in (lambda obj: str(obj) == arg, lambda obj: obj.name == arg):
             maybe_matches = list(filter(func, objects))
@@ -49,7 +51,9 @@ class GuildUniqueObjectFinder(commands.Converter):
 
         m = MENETION_RE.match(arg)
         if m:
-            return objects[m.group(2)]
+            ret = objects.get(m.group(2), None)
+            if ret:
+                return ret
 
         for func in (lambda obj: str(obj) == arg, lambda obj: obj.name == arg):
             maybe_matches = list(filter(func, objects))
