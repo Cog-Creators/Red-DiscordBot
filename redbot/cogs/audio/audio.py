@@ -2620,6 +2620,7 @@ class Audio(commands.Cog):
             "vimeo.com",
             "mixer.com",
             "twitch.com",
+            "localtracks",
         ]
         query_url = urlparse(url)
         url_domain = ".".join(query_url.netloc.split(".")[-2:])
