@@ -12,7 +12,7 @@ class GlobalUniqueObjectFinder(commands.Converter):
         objects = set(ctx.bot.get_all_channels())
         objects += set(ctx.bot.users)
         for guild in ctx.bot.guilds:
-            objects += {r for r in guild.roles if not r.is_default}
+            objects += {r for r in guild.roles if not r.is_default()}
             objects.add(guild)
 
         for func in (
