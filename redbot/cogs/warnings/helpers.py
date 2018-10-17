@@ -19,9 +19,11 @@ async def warning_points_add_check(
     act = {}
     async with guild_settings.actions() as registered_actions:
         for a in registered_actions:
+            # Actions are sorted in decreasing order of points.
+            # The first action we find where the user is above the threshold will be the
+            # highest action we can take.
             if points >= a["points"]:
                 act = a
-            else:
                 break
     if act and act["exceed_command"] is not None:  # some action needs to be taken
         await create_and_invoke_context(ctx, act["exceed_command"], user)

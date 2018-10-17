@@ -1,4 +1,5 @@
 import asyncio
+import inspect
 import os
 import logging
 from collections import Counter
@@ -235,20 +236,13 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
         if cog is None:
             return
 
-        for when in ("before", "after"):
+        for cls in inspect.getmro(cog.__class__):
             try:
-                hook = getattr(cog, f"_{cog.__class__.__name__}__red_permissions_{when}")
+                hook = getattr(cog, f"_{cls.__name__}__permissions_hook")
             except AttributeError:
                 pass
             else:
-                self.remove_permissions_hook(hook, when)
-
-        try:
-            hook = getattr(cog, f"_{cog.__class__.__name__}__red_permissions_before")
-        except AttributeError:
-            pass
-        else:
-            self.remove_permissions_hook(hook)
+                self.remove_permissions_hook(hook)
 
         super().remove_cog(cogname)
 
@@ -389,10 +383,17 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             )
         if not hasattr(cog, "requires"):
             commands.Cog.__init__(cog)
+
+        for cls in inspect.getmro(cog.__class__):
+            try:
+                hook = getattr(cog, f"_{cls.__name__}__permissions_hook")
+            except AttributeError:
+                pass
+            else:
+                self.add_permissions_hook(hook)
+
         for attr in dir(cog):
             _attr = getattr(cog, attr)
-            if attr == f"_{cog.__class__.__name__}__permissions_hook":
-                self.add_permissions_hook(_attr)
             if isinstance(_attr, discord.ext.commands.Command) and not isinstance(
                 _attr, commands.Command
             ):

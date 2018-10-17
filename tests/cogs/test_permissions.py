@@ -3,7 +3,7 @@ from redbot.cogs.permissions.permissions import Permissions, GLOBAL
 
 def test_schema_update():
     old = {
-        GLOBAL: {
+        str(GLOBAL): {
             "owner_models": {
                 "cogs": {
                     "Admin": {"allow": [78631113035100160], "deny": [96733288462286848]},
@@ -19,7 +19,7 @@ def test_schema_update():
                 },
             }
         },
-        43733288462286848: {
+        "43733288462286848": {
             "owner_models": {
                 "cogs": {
                     "Admin": {
@@ -43,22 +43,22 @@ def test_schema_update():
     assert new == (
         {
             "Admin": {
-                GLOBAL: {78631113035100160: True, 96733288462286848: False},
-                43733288462286848: {24231113035100160: True, 35533288462286848: False},
+                str(GLOBAL): {"78631113035100160": True, "96733288462286848": False},
+                "43733288462286848": {"24231113035100160": True, "35533288462286848": False},
             },
-            "Audio": {GLOBAL: {133049272517001216: True, "default": False}},
-            "General": {43733288462286848: {133049272517001216: True, "default": False}},
+            "Audio": {str(GLOBAL): {"133049272517001216": True, "default": False}},
+            "General": {"43733288462286848": {"133049272517001216": True, "default": False}},
         },
         {
             "cleanup bot": {
-                GLOBAL: {78631113035100160: True, "default": False},
-                43733288462286848: {17831113035100160: True, "default": True},
+                str(GLOBAL): {"78631113035100160": True, "default": False},
+                "43733288462286848": {"17831113035100160": True, "default": True},
             },
-            "ping": {GLOBAL: {96733288462286848: True, "default": True}},
+            "ping": {str(GLOBAL): {"96733288462286848": True, "default": True}},
             "set adminrole": {
-                43733288462286848: {
-                    87733288462286848: True,
-                    95433288462286848: False,
+                "43733288462286848": {
+                    "87733288462286848": True,
+                    "95433288462286848": False,
                     "default": True,
                 }
             },
