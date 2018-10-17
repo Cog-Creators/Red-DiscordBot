@@ -535,7 +535,7 @@ class Streams(commands.Cog):
                         continue
                     for channel_id in stream.channels:
                         channel = self.bot.get_channel(channel_id)
-                        mention_str = await self._get_mention_str(channel.guild)
+                        mention_str, roles = await self._get_mention_str(channel.guild)
 
                         if mention_str:
                             content = _("{mention}, {stream.name} is live!").format(
@@ -546,19 +546,26 @@ class Streams(commands.Cog):
 
                         m = await channel.send(content, embed=embed)
                         stream._messages_cache.append(m)
+                        if roles:
+                            for role in roles:
+                                await role.edit(mentionable=False)
                         await self.save_streams()
 
     async def _get_mention_str(self, guild: discord.Guild):
         settings = self.db.guild(guild)
         mentions = []
+        roles = []
         if await settings.mention_everyone():
             mentions.append("@everyone")
         if await settings.mention_here():
             mentions.append("@here")
         for role in guild.roles:
             if await self.db.role(role).mention():
+                if not role.mentionable:
+                    await role.edit(mentionable=True)
+                    roles.append(role)
                 mentions.append(role.mention)
-        return " ".join(mentions)
+        return " ".join(mentions), roles
 
     async def check_communities(self):
         for community in self.communities:
@@ -589,12 +596,15 @@ class Streams(commands.Cog):
                         emb = await community.make_embed(streams)
                         chn_msg = [m for m in community._messages_cache if m.channel == chn]
                         if not chn_msg:
-                            mentions = await self._get_mention_str(chn.guild)
+                            mentions, roles = await self._get_mention_str(chn.guild)
                             if mentions:
                                 msg = await chn.send(mentions, embed=emb)
                             else:
                                 msg = await chn.send(embed=emb)
                             community._messages_cache.append(msg)
+                            if roles:
+                                for role in roles:
+                                    await role.edit(mentionable=False)
                             await self.save_communities()
                         else:
                             chn_msg = sorted(chn_msg, key=lambda x: x.created_at, reverse=True)[0]
