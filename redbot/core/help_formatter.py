@@ -23,20 +23,19 @@ discord.py 1.0.0a
 
 This help formatter contains work by Rapptz (Danny) and SirThane#1780.
 """
+import inspect
+import itertools
+import re
 from collections import namedtuple
 from typing import List, Optional, Union
 
 import discord
 from discord.ext.commands import formatter as dpy_formatter
-import inspect
-import itertools
-import re
 
-from .utils import menus
 from . import commands
 from .i18n import Translator
+from .utils import fuzzy_command_search, format_fuzzy_results, menus
 from .utils.chat_formatting import pagify
-from .utils import fuzzy_command_search, format_fuzzy_results
 
 _ = Translator("Help", __file__)
 
