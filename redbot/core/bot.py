@@ -52,7 +52,6 @@ class RedBase(commands.GroupMixin, commands.bot.BotBase, RPCMixin):
             color=15158332,
             fuzzy=False,
             help__page_char_limit=1000,
-            help__max_pages_in_guild=2,
             help__tagline="",
             disabled_commands=[],
             disabled_command_msg="That command is disabled.",

@@ -1014,25 +1014,6 @@ class Core(commands.Cog, CoreLogic):
         await ctx.bot.db.help.page_char_limit.set(limit)
         await ctx.send(_("Done. The character limit per page has been set to {}.").format(limit))
 
-    @helpset.command(name="maxpages")
-    async def helpset_maxpages(self, ctx: commands.Context, pages: int):
-        """Set the maximum number of help pages sent in a server channel.
-
-        This setting only applies to embedded help.
-
-        If a help message contains more pages than this value, the help message will
-        be sent to the command author via DM. This is to help reduce spam in server
-        text channels.
-
-        The default value is 2 pages.
-        """
-        if pages < 0:
-            await ctx.send(_("You must give a value of zero or greater!"))
-            return
-
-        await ctx.bot.db.help.max_pages_in_guild.set(pages)
-        await ctx.send(_("Done. The page limit has been set to {}.").format(pages))
-
     @helpset.command(name="tagline")
     async def helpset_tagline(self, ctx: commands.Context, *, tagline: str = None):
         """

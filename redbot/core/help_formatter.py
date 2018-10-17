@@ -327,9 +327,6 @@ async def help(ctx: commands.Context, *, command_name: str = ""):
         else:
             pages = await formatter.format_help_for(ctx, command)
 
-    max_pages_in_guild = await ctx.bot.db.help.max_pages_in_guild()
-    if len(pages) > max_pages_in_guild:
-        pm_destination = True
     if ctx.guild and not ctx.guild.me.permissions_in(ctx.channel).send_messages:
         pm_destination = True
     try:
