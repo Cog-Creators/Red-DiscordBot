@@ -2621,13 +2621,11 @@ class Audio(commands.Cog):
             "mixer.com",
             "twitch.com",
         ]
-        site_check = []
-        for site in valid_tld:
-            if site in url.lower():
-                site_check.append(True)
-            else:
-                site_check.append(False)
-        return any(site_check)
+        query_url = urlparse(url)
+        url_domain = ".".join(query_url.netloc.split(".")[-2:])
+        if not query_url.netloc:
+            url_domain = ".".join(query_url.path.split("/")[0].split(".")[-2:])
+        return True if url_domain in valid_tld else False
 
     @staticmethod
     def _userlimit(channel):
