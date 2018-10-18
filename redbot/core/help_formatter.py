@@ -298,7 +298,13 @@ async def help(ctx: commands.Context, *, command_name: str = ""):
     - `[p]help Category`: Show commands and description for a category,
     """
     bot = ctx.bot
-    use_embeds = await ctx.embed_requested()
+    if pm_check(ctx) or not ctx.guild.me.permissions_in(ctx.channel).send_messages:
+        pm_destination = True
+        use_embeds = await ctx.bot.embed_requested(ctx.author.dm_channel, ctx.author, ctx.command)
+    else:
+        pm_destination = False
+        use_embeds = await ctx.embed_requested()
+
     if use_embeds:
         formatter = bot.formatter
     else:
@@ -321,18 +327,18 @@ async def help(ctx: commands.Context, *, command_name: str = ""):
         else:
             pages = await formatter.format_help_for(ctx, command)
 
-    if pm_check(ctx) or not ctx.guild.me.permissions_in(ctx.channel).send_messages:
-        pm_destination = True
+    if pm_destination:
+        destination = ctx.author
     else:
-        pm_destination = False
+        destination = ctx
 
     try:
-        if pm_destination:
+        if pm_destination or len(pages) <= 1:
             for page in pages:
                 if isinstance(page, discord.Embed):
-                    await ctx.author.send(embed=page)
+                    await destination.send(embed=page)
                 else:
-                    await ctx.author.send(page)
+                    await destination.send(page)
         else:
             await menus.menu(ctx, pages, menus.DEFAULT_CONTROLS)
 
