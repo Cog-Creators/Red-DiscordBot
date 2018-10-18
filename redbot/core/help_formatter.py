@@ -56,10 +56,6 @@ class Help(dpy_formatter.HelpFormatter):
         self.command = None
         super().__init__(*args, **kwargs)
 
-    @staticmethod
-    def pm_check(ctx):
-        return isinstance(ctx.channel, discord.DMChannel)
-
     @property
     def me(self):
         return self.context.me
@@ -73,7 +69,7 @@ class Help(dpy_formatter.HelpFormatter):
         return self.context.bot.user.avatar_url_as(format="png")
 
     async def color(self):
-        if self.pm_check(self.context):
+        if pm_check(self.context):
             return self.context.bot.color
         else:
             return await self.context.embed_colour()
@@ -91,7 +87,7 @@ class Help(dpy_formatter.HelpFormatter):
     @property
     def author(self):
         # Get author dict with username if PM and display name in guild
-        if self.pm_check(self.context):
+        if pm_check(self.context):
             name = self.context.bot.user.name
         else:
             name = self.me.display_name if not "" else self.context.bot.user.name
@@ -289,6 +285,10 @@ class Help(dpy_formatter.HelpFormatter):
         )
 
 
+def pm_check(ctx):
+    return isinstance(ctx.channel, discord.DMChannel) or ctx.bot.pm_help
+
+
 @commands.command(hidden=True)
 async def help(ctx: commands.Context, *, command_name: str = ""):
     """Show help documentation.
@@ -298,11 +298,6 @@ async def help(ctx: commands.Context, *, command_name: str = ""):
     - `[p]help Category`: Show commands and description for a category,
     """
     bot = ctx.bot
-    if bot.pm_help:
-        pm_destination = True
-    else:
-        pm_destination = False
-
     use_embeds = await ctx.embed_requested()
     if use_embeds:
         formatter = bot.formatter
@@ -326,8 +321,11 @@ async def help(ctx: commands.Context, *, command_name: str = ""):
         else:
             pages = await formatter.format_help_for(ctx, command)
 
-    if ctx.guild and not ctx.guild.me.permissions_in(ctx.channel).send_messages:
+    if pm_check(ctx) or not ctx.guild.me.permissions_in(ctx.channel).send_messages:
         pm_destination = True
+    else:
+        pm_destination = False
+
     try:
         if pm_destination:
             for page in pages:
