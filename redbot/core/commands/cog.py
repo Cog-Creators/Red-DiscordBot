@@ -81,7 +81,7 @@ class Cog(metaclass=CogMeta):
         self.__scheduled_methods = []
         self.__scheduled_shutdown_methods = []
 
-    def add_scheduled_methods(self, bot: "Red"):
+    def _add_scheduled_methods(self, bot: "Red"):
         members = inspect.getmembers(self)
 
         for name, member in members:
@@ -123,7 +123,7 @@ class Cog(metaclass=CogMeta):
                 if member.call_at_shutdown:
                     self.__scheduled_shutdown_methods.append(scheduled_name)
 
-    def remove_scheduled_methods(self, bot):
+    def _remove_scheduled_methods(self, bot):
         for name in self.__scheduled_methods:
             bot.scheduler.remove(name)
 
