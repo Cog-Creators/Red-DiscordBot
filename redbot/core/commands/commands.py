@@ -27,6 +27,9 @@ __all__ = [
     "GroupMixin",
     "command",
     "group",
+    "call_once",
+    "call_at_shutdown",
+    "loop"
 ]
 
 _ = Translator("commands.commands", __file__)
@@ -491,7 +494,7 @@ def call_at_shutdown(*, args=[], kwargs={}):
     def deco(func):
         if not asyncio.iscoroutinefunction(func):
             raise TypeError("Callback must be a coroutine.")
-        return ScheduledMethod(func, args=args, kwargs=kwargs)
+        return ShutdownMethod(func, args=args, kwargs=kwargs)
 
     return deco
 
@@ -500,7 +503,7 @@ def loop(period, *, args=[], kwargs={}, call_now=False, call_at_shutdown=False):
     def deco(func):
         if not asyncio.iscoroutinefunction(func):
             raise TypeError("Callback must be a coroutine.")
-        return ScheduledMethod(
+        return LoopedMethod(
             func,
             period,
             args=args,

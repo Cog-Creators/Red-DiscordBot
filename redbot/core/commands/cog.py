@@ -89,27 +89,30 @@ class Cog(metaclass=CogMeta):
             full_name = None
             if isinstance(member, ShutdownMethod):
                 full_name = f"{self.__class__.__name__}.{name}"
+                args = [self] + member.args
                 scheduled_name = bot.scheduler.call_at_shutdown(
-                    member.callback, name=full_name, args=member.args, kwargs=member.kwargs
+                    member.callback, name=full_name, args=args, kwargs=member.kwargs
                 )
             elif isinstance(member, LoopedMethod):
                 full_name = f"{self.__class__.__name__}.{name}"
+                args = [self] + member.args
                 scheduled_name = bot.scheduler.loop(
                     member.callback,
                     period=member.period,
                     name=full_name,
-                    args=member.args,
+                    args=args,
                     kwargs=member.kwargs,
                     now=member.call_now,
                     call_at_shutdown=member.call_at_shutdown,
                 )
             elif isinstance(member, ScheduledMethod):
                 full_name = f"{self.__class__.__name__}.{name}"
+                args = [self] + member.args
                 scheduled_name = bot.scheduler.call_once(
                     member.callback,
                     delay=member.delay,
                     name=full_name,
-                    args=member.args,
+                    args=args,
                     kwargs=member.kwargs,
                     call_at_shutdown=member.call_at_shutdown,
                 )

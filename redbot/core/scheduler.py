@@ -1,6 +1,10 @@
+import asyncio
 from asyncio import PriorityQueue, AbstractEventLoop, get_event_loop
 import time
 from contextlib import suppress
+import logging
+
+log = logging.getLogger("red.scheduler")
 
 
 class Scheduler:
@@ -27,7 +31,7 @@ class Scheduler:
         async def wrapper():
             try:
                 await func(*args, **kwargs)
-            except Exception as e:
+            except:
                 pass
             finally:
                 if not self.shutting_down:
@@ -35,8 +39,10 @@ class Scheduler:
                         wrapper, delay=period, name=name, call_at_shutdown=call_at_shutdown
                     )
 
+        delay = period
         if now is True:
-            return self.call_once(wrapper, delay=0, name=name, call_at_shutdown=call_at_shutdown)
+            delay = 0
+        return self.call_once(wrapper, delay=delay, name=name, call_at_shutdown=call_at_shutdown)
 
     def call_once(
         self, func, delay: int = 0, name=None, args=[], kwargs={}, call_at_shutdown: bool = False
@@ -73,19 +79,29 @@ class Scheduler:
         with suppress(KeyError):
             del self.events_at_shutdown[name]
 
+        all_events = []
+        while not self._scheduled_funcs.empty():
+            t, (name_, args, kwargs) = self._scheduled_funcs.get_nowait()
+            if name != name_:
+                all_events.append((t, (name_, args, kwargs)))
+
+        for event in all_events:
+            self._scheduled_funcs.put_nowait(event)
+
     async def _runner(self):
         while not self.shutting_down:
             t, (name, args, kwargs) = await self._scheduled_funcs.get()
             if name not in self.events:
                 continue
             if t < time.time():
-                func = self.events[name]
+                func = self.events.pop(name)
                 await func(*args, **kwargs)
             else:
                 await self._scheduled_funcs.put((t, (name, args, kwargs)))
+            await asyncio.sleep(0.1)
 
         while not self._scheduled_funcs.empty():
-            _, (name, args, kwargs) = await self._scheduled_funcs.get()
+            _, (instance, name, args, kwargs) = await self._scheduled_funcs.get()
             if name in self.events_at_shutdown:
-                func = self.events_at_shutdown[name]
+                func = self.events_at_shutdown.pop(name)
                 await func(*args, **kwargs)
