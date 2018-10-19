@@ -95,7 +95,7 @@ class Scheduler:
                 continue
             if t < time.time():
                 func = self.events.pop(name)
-                await func(*args, **kwargs)
+                self._loop.create_task(func(*args, **kwargs))
             else:
                 await self._scheduled_funcs.put((t, (name, args, kwargs)))
             await asyncio.sleep(0.1)
