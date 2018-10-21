@@ -2620,7 +2620,7 @@ class Audio(commands.Cog):
             "bandcamp.com",
             "vimeo.com",
             "mixer.com",
-            "twitch.com",
+            "twitch.tv",
             "localtracks",
         ]
         query_url = urlparse(url)
