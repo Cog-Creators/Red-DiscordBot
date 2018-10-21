@@ -1,4 +1,5 @@
 import discord
+import re
 from typing import Union
 
 from redbot.core import checks, Config, modlog, commands
@@ -6,6 +7,7 @@ from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import pagify
 
+RE_WORD_SPLIT = re.compile(r'[^\w]')
 _ = Translator("Filter", __file__)
 
 
@@ -328,6 +330,7 @@ class Filter(commands.Cog):
         filter_time = await self.settings.guild(server).filterban_time()
         user_count = await self.settings.member(author).filter_count()
         next_reset_time = await self.settings.member(author).next_reset_time()
+
         if filter_count > 0 and filter_time > 0:
             if message.created_at.timestamp() >= next_reset_time:
                 next_reset_time = message.created_at.timestamp() + filter_time
@@ -336,36 +339,43 @@ class Filter(commands.Cog):
                     user_count = 0
                     await self.settings.member(author).filter_count.set(user_count)
 
-        if word_list:
-            for w in word_list:
-                if w in message.content.lower():
-                    try:
-                        await message.delete()
-                    except discord.HTTPException:
-                        pass
-                    else:
-                        if filter_count > 0 and filter_time > 0:
-                            user_count += 1
-                            await self.settings.member(author).filter_count.set(user_count)
-                            if (
-                                user_count >= filter_count
-                                and message.created_at.timestamp() < next_reset_time
-                            ):
-                                reason = _("Autoban (too many filtered messages.)")
-                                try:
-                                    await server.ban(author, reason=reason)
-                                except discord.HTTPException:
-                                    pass
-                                else:
-                                    await modlog.create_case(
-                                        self.bot,
-                                        server,
-                                        message.created_at,
-                                        "filterban",
-                                        author,
-                                        server.me,
-                                        reason,
-                                    )
+        content = message.content.lower()
+        msg_words = set(RE_WORD_SPLIT.split(content))
+
+        filtered_phrases = {x for x in word_list if len(RE_WORD_SPLIT.split(x)) > 1}
+        filtered_words = word_list - filtered_phrases
+
+        hits = {p for p in filtered_phrases if p in content}
+        hits |= (filtered_words & msg_words)
+
+        if hits:
+            try:
+                await message.delete()
+            except discord.HTTPException:
+                pass
+            else:
+                if filter_count > 0 and filter_time > 0:
+                    user_count += 1
+                    await self.settings.member(author).filter_count.set(user_count)
+                    if (
+                        user_count >= filter_count
+                        and message.created_at.timestamp() < next_reset_time
+                    ):
+                        reason = _("Autoban (too many filtered messages.)")
+                        try:
+                            await server.ban(author, reason=reason)
+                        except discord.HTTPException:
+                            pass
+                        else:
+                            await modlog.create_case(
+                                self.bot,
+                                server,
+                                message.created_at,
+                                "filterban",
+                                author,
+                                server.me,
+                                reason,
+                            )
 
     async def on_message(self, message: discord.Message):
         if isinstance(message.channel, discord.abc.PrivateChannel):
