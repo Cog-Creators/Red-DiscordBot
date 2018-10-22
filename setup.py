@@ -60,7 +60,7 @@ extras_require = {
         "sphinxcontrib-websupport==1.1.0",
         "urllib3==1.24.1",
     ],
-    "voice": ["red-lavalink==0.1.2"],
+    "voice": ["red-lavalink==0.2.0"],
     "style": ["black==18.9b0", "click==7.0", "toml==0.10.0"],
 }
 
