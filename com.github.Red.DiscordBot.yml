@@ -4,7 +4,7 @@ branch: stable
 runtime: org.freedesktop.Sdk
 runtime-version: 18.08
 sdk: org.freedesktop.Sdk
-sdk-extensions: [org.freedesktop.Sdk.Extension.openjdk10]
+sdk-extensions: [org.freedesktop.Sdk.Extension.openjdk11]
 
 command: redbot-launcher
     
@@ -19,7 +19,7 @@ modules:
     buildsystem: simple
     build-commands:
       - install -d /app/bin
-      - /usr/lib/sdk/openjdk10/install.sh
+      - /usr/lib/sdk/openjdk11/install.sh
       - install redbot-install /app/bin
       - install redbot-launcher /app/bin
     sources:
