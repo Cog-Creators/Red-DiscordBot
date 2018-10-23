@@ -64,10 +64,7 @@ extras_require = {
     "style": ["black==18.9b0", "click==7.0", "toml==0.10.0"],
 }
 
-python_requires = ">=3.6.2,<3.8"
-if os.name == "nt":
-    # Due to issues with ProactorEventLoop prior to 3.6.6 (bpo-26819)
-    python_requires = ">=3.6.6,<3.8"
+python_requires = ">=3.7,<3.8"
 
 
 def check_compiler_available():
@@ -116,7 +113,6 @@ if __name__ == "__main__":
             "Intended Audience :: Developers",
             "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
             "Operating System :: OS Independent",
-            "Programming Language :: Python :: 3.6",
             "Programming Language :: Python :: 3.7",
             "Topic :: Communications :: Chat",
             "Topic :: Documentation :: Sphinx",

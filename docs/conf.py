@@ -202,7 +202,7 @@ linkcheck_ignore = [r"https://java.com*", r"https://chocolatey.org*"]
 
 # Intersphinx
 intersphinx_mapping = {
-    "python": ("https://docs.python.org/3.6", None),
+    "python": ("https://docs.python.org/3", None),
     "dpy": ("https://discordpy.readthedocs.io/en/rewrite/", None),
     "motor": ("https://motor.readthedocs.io/en/stable/", None),
 }

@@ -6,7 +6,6 @@ notifications:
 sudo: true
 
 python:
-- 3.6.6
 - 3.7
 env:
   global:
@@ -23,15 +22,15 @@ script:
 jobs:
   include:
 
-    - python: 3.6.6
+    - python: 3.7
       env: TOXENV=docs
-    - python: 3.6.6
+    - python: 3.7
       env: TOXENV=style
 
     # These jobs only occur on tag creation if the prior ones succeed
     - stage: PyPi Deployment
       if: tag IS present
-      python: 3.6.6
+      python: 3.7
       env:
         - DEPLOYING=true
         - TOXENV=py36
@@ -43,11 +42,11 @@ jobs:
           skip_cleanup: true
           on:
             repo: Cog-Creators/Red-DiscordBot
-            python: 3.6.6
+            python: 3.7
             tags: true
     - stage: Crowdin Deployment
       if: tag IS present
-      python: 3.6.6
+      python: 3.7
       env:
         - DEPLOYING=true
         - TOXENV=py36
@@ -63,5 +62,5 @@ jobs:
         skip_cleanup: true
         on:
           repo: Cog-Creators/Red-DiscordBot
-          python: 3.6.6
+          python: 3.7
           tags: true
