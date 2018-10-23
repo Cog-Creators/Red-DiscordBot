@@ -301,7 +301,7 @@ class TriviaSession():
                     if word == answer:
                         has_guessed = True
             else:  # The answer has spaces, we can't be as strict
-                if answer in guess:
+                if answer in guess and answer != "":
                     has_guessed = True
 
         if has_guessed:
