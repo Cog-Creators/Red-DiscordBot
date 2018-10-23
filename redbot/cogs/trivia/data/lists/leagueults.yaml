@@ -63,6 +63,8 @@ AUTHOR: JennJenn
 - Katarina
 "Which champion's ultimate is named: Death Mark?":
 - Zed
+"Which champion's ultimate is named: Death from Below?":
+- Pyke
 "Which champion's ultimate is named: Demacian Justice?":
 - Garen
 "Which champion's ultimate is named: Demonic Ascension?":
@@ -164,8 +166,6 @@ AUTHOR: JennJenn
 - Diana
 "Which champion's ultimate is named: Mantra?":
 - Karma
-"Which champion's ultimate is named: Massacre?":
-- Aatrox
 "Which champion's ultimate is named: Mega Inferno Bomb?":
 - Ziggs
 "Which champion's ultimate is named: Mercury Cannon/Mercury Hammer?":
@@ -176,6 +176,8 @@ AUTHOR: JennJenn
 - Corki
 "Which champion's ultimate is named: Monsoon?":
 - Janna
+"Which champion's ultimate is named: Nature's Grasp?":
+- Maokai
 "Which champion's ultimate is named: Nether Grasp?":
 - Malzahar
 "Which champion's ultimate is named: Noxian Guillotine?":
@@ -188,6 +190,8 @@ AUTHOR: JennJenn
 - Hecarim
 "Which champion's ultimate is named: Paranoia?":
 - Nocturne
+"Which champion's ultimate is named: Perfect Execution?":
+- Akali
 "Which champion's ultimate is named: Petrifying Gaze?":
 - Cassiopeia
 "Which champion's ultimate is named: Pheonix Stance?":
@@ -217,8 +221,6 @@ AUTHOR: JennJenn
 - drmundo
 "Which champion's ultimate is named: Shadow Assault?":
 - Talon
-"Which champion's ultimate is named: Shadow Dance?":
-- Akali
 "Which champion's ultimate is named: Slicing Maelstrom?":
 - Kennen
 "Which champion's ultimate is named: Solar Flare?":
@@ -277,8 +279,6 @@ AUTHOR: JennJenn
 - Sion
 "Which champion's ultimate is named: Vanguard's Edge?":
 - Irelia
-"Which champion's ultimate is named: Vengeful Maelstrom?":
-- Maokai
 "Which champion's ultimate is named: Voice of Light?":
 - Aurelion Sol
 - aurelionsol
@@ -298,3 +298,5 @@ AUTHOR: JennJenn
 - Lulu
 "Which champion's ultimate is named: Wish?":
 - Soraka
+"Which champion's ultimate is named: World Ender?":
+- Aatrox
