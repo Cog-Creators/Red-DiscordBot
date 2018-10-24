@@ -49,3 +49,44 @@ class BalanceTooHigh(BankError, OverflowError):
         return _("{user}'s balance cannot rise above {max:,} {currency}.").format(
             user=self.user, max=self.max_balance, currency=self.currency_name
         )
+
+
+class FilterError(RedError):
+    """Base error class for filter-related errors."""
+
+
+class InvalidTarget(FilterError, TypeError):
+    """Raised when trying to create a filter for something other than a guild or text channel."""
+
+    def __init__(self, target, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.target = target
+
+    def __str__(self) -> str:
+        return _(
+            "Filter target must be either `discord.Guild` or `discord.TextChannel, not {target}"
+        ).format(target=self.target)
+    
+
+class FilterAlreadyExists(FilterError):
+    def __init__(self, text, target, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.text = text
+        self.target = target
+    
+    def __str__(self) -> str:
+        return _("Filter `{filter}` already exists for {target}").format(
+            filter=self.text, target=self.target
+        )
+
+
+class NonExistentFilter(FilterError):
+    def __init__(self, text, target, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.text = text
+        self.target = target
+    
+    def __str__(self) -> str:
+        return _("Filter `{filter}` doesn't exist for {target}").format(
+            filter=self.text, target=self.target
+        )
