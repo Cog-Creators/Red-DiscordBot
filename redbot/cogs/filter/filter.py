@@ -1,13 +1,13 @@
 import discord
 import re
-from typing import Union
+from typing import Union, Set
 
 from redbot.core import checks, Config, modlog, commands
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import pagify
 
-RE_WORD_SPLIT = re.compile(r'[^\w]')
+RE_WORD_SPLIT = re.compile(r"[^\w]")
 _ = Translator("Filter", __file__)
 
 
@@ -319,13 +319,33 @@ class Filter(commands.Cog):
 
         return removed
 
+    async def filter_hits(
+        self, text: str, server_or_channel: Union[discord.Guild, discord.TextChannel]
+    ) -> Set[str]:
+        if isinstance(server_or_channel, discord.Guild):
+            word_list = set(await self.settings.guild(server_or_channel).filter())
+        elif isinstance(server_or_channel, discord.TextChannel):
+            word_list = set(
+                await self.settings.guild(server_or_channel.guild).filter()
+                + await self.settings.channel(server_or_channel).filter()
+            )
+        else:
+            raise TypeError("%r should be Guild or TextChannel" % server_or_channel)
+
+        content = text.lower()
+        msg_words = set(RE_WORD_SPLIT.split(content))
+
+        filtered_phrases = {x for x in word_list if len(RE_WORD_SPLIT.split(x)) > 1}
+        filtered_words = word_list - filtered_phrases
+
+        hits = {p for p in filtered_phrases if p in content}
+        hits |= filtered_words & msg_words
+        return hits
+
     async def check_filter(self, message: discord.Message):
         server = message.guild
         author = message.author
-        word_list = set(
-            await self.settings.guild(server).filter()
-            + await self.settings.channel(message.channel).filter()
-        )
+
         filter_count = await self.settings.guild(server).filterban_count()
         filter_time = await self.settings.guild(server).filterban_time()
         user_count = await self.settings.member(author).filter_count()
@@ -339,14 +359,7 @@ class Filter(commands.Cog):
                     user_count = 0
                     await self.settings.member(author).filter_count.set(user_count)
 
-        content = message.content.lower()
-        msg_words = set(RE_WORD_SPLIT.split(content))
-
-        filtered_phrases = {x for x in word_list if len(RE_WORD_SPLIT.split(x)) > 1}
-        filtered_words = word_list - filtered_phrases
-
-        hits = {p for p in filtered_phrases if p in content}
-        hits |= (filtered_words & msg_words)
+        hits = await self.filter_hits(message.content, message.channel)
 
         if hits:
             try:
