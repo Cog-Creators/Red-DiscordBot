@@ -111,16 +111,14 @@ class Trivia(commands.Cog):
         await settings.allow_override.set(enabled)
         if enabled:
             await ctx.send(
-                _(
-                    "Done. Trivia lists can now override the trivia settings for this server."
-                ).format(now=enabled)
+                _("Done. Trivia lists can now override the trivia settings for this server.")
             )
         else:
             await ctx.send(
                 _(
                     "Done. Trivia lists can no longer override the trivia settings for this "
                     "server."
-                ).format(now=enabled)
+                )
             )
 
     @triviaset.command(name="botplays", usage="<true_or_false>")
