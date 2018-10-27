@@ -29,7 +29,7 @@ __all__ = [
     "group",
     "call_once",
     "call_at_shutdown",
-    "loop"
+    "loop",
 ]
 
 _ = Translator("commands.commands", __file__)
