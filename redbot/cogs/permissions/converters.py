@@ -1,44 +1,55 @@
+from typing import NamedTuple, Union, Optional, cast, Type
+
 from redbot.core import commands
-from typing import Tuple
+from redbot.core.i18n import Translator
+
+_ = Translator("PermissionsConverters", __file__)
 
 
-class CogOrCommand(commands.Converter):
-    async def convert(self, ctx: commands.Context, arg: str) -> Tuple[str]:
-        ret = ctx.bot.get_cog(arg)
-        if ret:
-            return "cogs", ret.__class__.__name__
-        ret = ctx.bot.get_command(arg)
-        if ret:
-            return "commands", ret.qualified_name
+class CogOrCommand(NamedTuple):
+    type: str
+    name: str
+    obj: Union[commands.Command, commands.Cog]
+
+    # noinspection PyArgumentList
+    @classmethod
+    async def convert(cls, ctx: commands.Context, arg: str) -> "CogOrCommand":
+        cog = ctx.bot.get_cog(arg)
+        if cog:
+            return cls(type="COG", name=cog.__class__.__name__, obj=cog)
+        cmd = ctx.bot.get_command(arg)
+        if cmd:
+            return cls(type="COMMAND", name=cmd.qualified_name, obj=cmd)
 
         raise commands.BadArgument(
-            'Cog or command "{arg}" not found. Please note that this is case sensitive.'
-            "".format(arg=arg)
+            _(
+                'Cog or command "{name}" not found. Please note that this is case sensitive.'
+            ).format(name=arg)
         )
 
 
-class RuleType(commands.Converter):
-    async def convert(self, ctx: commands.Context, arg: str) -> str:
-        if arg.lower() in ("allow", "whitelist", "allowed"):
-            return "allow"
-        if arg.lower() in ("deny", "blacklist", "denied"):
-            return "deny"
+def RuleType(arg: str) -> bool:
+    if arg.lower() in ("allow", "whitelist", "allowed"):
+        return True
+    if arg.lower() in ("deny", "blacklist", "denied"):
+        return False
 
-        raise commands.BadArgument(
-            '"{arg}" is not a valid rule. Valid rules are "allow" or "deny"'.format(arg=arg)
-        )
+    raise commands.BadArgument(
+        _('"{arg}" is not a valid rule. Valid rules are "allow" or "deny"').format(arg=arg)
+    )
 
 
-class ClearableRuleType(commands.Converter):
-    async def convert(self, ctx: commands.Context, arg: str) -> str:
-        if arg.lower() in ("allow", "whitelist", "allowed"):
-            return "allow"
-        if arg.lower() in ("deny", "blacklist", "denied"):
-            return "deny"
-        if arg.lower() in ("clear", "reset"):
-            return "clear"
+def ClearableRuleType(arg: str) -> Optional[bool]:
+    if arg.lower() in ("allow", "whitelist", "allowed"):
+        return True
+    if arg.lower() in ("deny", "blacklist", "denied"):
+        return False
+    if arg.lower() in ("clear", "reset"):
+        return None
 
-        raise commands.BadArgument(
-            '"{arg}" is not a valid rule. Valid rules are "allow" or "deny", or "clear" to remove the rule'
-            "".format(arg=arg)
-        )
+    raise commands.BadArgument(
+        _(
+            '"{arg}" is not a valid rule. Valid rules are "allow" or "deny", or "clear" to '
+            "remove the rule"
+        ).format(arg=arg)
+    )

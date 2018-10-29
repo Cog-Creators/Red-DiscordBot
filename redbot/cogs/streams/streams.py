@@ -1,3 +1,5 @@
+import contextlib
+
 import discord
 from redbot.core import Config, checks, commands
 from redbot.core.utils.chat_formatting import pagify
@@ -22,7 +24,7 @@ from .errors import (
     StreamsError,
     InvalidTwitchCredentials,
 )
-from . import streamtypes as StreamClasses
+from . import streamtypes as _streamtypes
 from collections import defaultdict
 import asyncio
 import re
@@ -35,7 +37,7 @@ _ = Translator("Streams", __file__)
 
 
 @cog_i18n(_)
-class Streams:
+class Streams(commands.Cog):
 
     global_defaults = {"tokens": {}, "streams": [], "communities": []}
 
@@ -44,6 +46,7 @@ class Streams:
     role_defaults = {"mention": False}
 
     def __init__(self, bot: Red):
+        super().__init__()
         self.db = Config.get_conf(self, 26262626)
 
         self.db.register_global(**self.global_defaults)
@@ -75,14 +78,14 @@ class Streams:
 
     @commands.command()
     async def twitch(self, ctx: commands.Context, channel_name: str):
-        """Checks if a Twitch channel is live"""
+        """Check if a Twitch channel is live."""
         token = await self.db.tokens.get_raw(TwitchStream.__name__, default=None)
         stream = TwitchStream(name=channel_name, token=token)
         await self.check_online(ctx, stream)
 
     @commands.command()
     async def youtube(self, ctx: commands.Context, channel_id_or_name: str):
-        """Checks if a Youtube channel is live"""
+        """Check if a YouTube channel is live."""
         apikey = await self.db.tokens.get_raw(YoutubeStream.__name__, default=None)
         is_name = self.check_name_or_id(channel_id_or_name)
         if is_name:
@@ -93,23 +96,24 @@ class Streams:
 
     @commands.command()
     async def hitbox(self, ctx: commands.Context, channel_name: str):
-        """Checks if a Hitbox channel is live"""
+        """Check if a Hitbox channel is live."""
         stream = HitboxStream(name=channel_name)
         await self.check_online(ctx, stream)
 
     @commands.command()
     async def mixer(self, ctx: commands.Context, channel_name: str):
-        """Checks if a Mixer channel is live"""
+        """Check if a Mixer channel is live."""
         stream = MixerStream(name=channel_name)
         await self.check_online(ctx, stream)
 
     @commands.command()
     async def picarto(self, ctx: commands.Context, channel_name: str):
-        """Checks if a Picarto channel is live"""
+        """Check if a Picarto channel is live."""
         stream = PicartoStream(name=channel_name)
         await self.check_online(ctx, stream)
 
-    async def check_online(self, ctx: commands.Context, stream):
+    @staticmethod
+    async def check_online(ctx: commands.Context, stream):
         try:
             embed = await stream.is_online()
         except OfflineStream:
@@ -118,15 +122,17 @@ class Streams:
             await ctx.send(_("That channel doesn't seem to exist."))
         except InvalidTwitchCredentials:
             await ctx.send(
-                _("The twitch token is either invalid or has not been set. See `{}`.").format(
-                    "{}streamset twitchtoken".format(ctx.prefix)
-                )
+                _(
+                    "The Twitch token is either invalid or has not been set. See "
+                    "`{prefix}streamset twitchtoken`."
+                ).format(prefix=ctx.prefix)
             )
         except InvalidYoutubeCredentials:
             await ctx.send(
-                _("Your Youtube API key is either invalid or has not been set. See {}.").format(
-                    "`{}streamset youtubekey`".format(ctx.prefix)
-                )
+                _(
+                    "The YouTube API key is either invalid or has not been set. See "
+                    "`{prefix}streamset youtubekey`."
+                ).format(prefix=ctx.prefix)
             )
         except APIError:
             await ctx.send(
@@ -139,11 +145,12 @@ class Streams:
     @commands.guild_only()
     @checks.mod()
     async def streamalert(self, ctx: commands.Context):
+        """Manage automated stream alerts."""
         pass
 
     @streamalert.group(name="twitch", invoke_without_command=True)
     async def _twitch(self, ctx: commands.Context, channel_name: str = None):
-        """Twitch stream alerts"""
+        """Manage Twitch stream notifications."""
         if channel_name is not None:
             await ctx.invoke(self.twitch_alert_channel, channel_name)
         else:
@@ -151,7 +158,7 @@ class Streams:
 
     @_twitch.command(name="channel")
     async def twitch_alert_channel(self, ctx: commands.Context, channel_name: str):
-        """Sets a Twitch alert notification in the channel"""
+        """Toggle alerts in this channel for a Twitch stream."""
         if re.fullmatch(r"<#\d+>", channel_name):
             await ctx.send("Please supply the name of a *Twitch* channel, not a Discord channel.")
             return
@@ -159,33 +166,39 @@ class Streams:
 
     @_twitch.command(name="community")
     async def twitch_alert_community(self, ctx: commands.Context, community: str):
-        """Sets an alert notification in the channel for the specified twitch community."""
+        """Toggle alerts in this channel for a Twitch community."""
         await self.community_alert(ctx, TwitchCommunity, community.lower())
 
     @streamalert.command(name="youtube")
     async def youtube_alert(self, ctx: commands.Context, channel_name_or_id: str):
-        """Sets a Youtube alert notification in the channel"""
+        """Toggle alerts in this channel for a YouTube stream."""
         await self.stream_alert(ctx, YoutubeStream, channel_name_or_id)
 
     @streamalert.command(name="hitbox")
     async def hitbox_alert(self, ctx: commands.Context, channel_name: str):
-        """Sets a Hitbox alert notification in the channel"""
+        """Toggle alerts in this channel for a Hitbox stream."""
         await self.stream_alert(ctx, HitboxStream, channel_name)
 
     @streamalert.command(name="mixer")
     async def mixer_alert(self, ctx: commands.Context, channel_name: str):
-        """Sets a Mixer alert notification in the channel"""
+        """Toggle alerts in this channel for a Mixer stream."""
         await self.stream_alert(ctx, MixerStream, channel_name)
 
     @streamalert.command(name="picarto")
     async def picarto_alert(self, ctx: commands.Context, channel_name: str):
-        """Sets a Picarto alert notification in the channel"""
+        """Toggle alerts in this channel for a Picarto stream."""
         await self.stream_alert(ctx, PicartoStream, channel_name)
 
-    @streamalert.command(name="stop")
+    @streamalert.command(name="stop", usage="[disable_all=No]")
     async def streamalert_stop(self, ctx: commands.Context, _all: bool = False):
-        """Stops all stream notifications in the channel
-        Adding 'yes' will disable all notifications in the server"""
+        """Disable all stream alerts in this channel or server.
+
+        `[p]streamalert stop` will disable this channel's stream
+        alerts.
+
+        Do `[p]streamalert stop yes` to disable all stream alerts in
+        this server.
+        """
         streams = self.streams.copy()
         local_channel_ids = [c.id for c in ctx.guild.channels]
         to_remove = []
@@ -207,9 +220,10 @@ class Streams:
         self.streams = streams
         await self.save_streams()
 
-        msg = _("All the alerts in the {} have been disabled.").format(
-            "server" if _all else "channel"
-        )
+        if _all:
+            msg = _("All the stream alerts in this server have been disabled.")
+        else:
+            msg = _("All the stream alerts in this channel have been disabled.")
 
         await ctx.send(msg)
 
@@ -249,16 +263,18 @@ class Streams:
                 exists = await self.check_exists(stream)
             except InvalidTwitchCredentials:
                 await ctx.send(
-                    _("Your twitch token is either invalid or has not been set. See {}.").format(
-                        "`{}streamset twitchtoken`".format(ctx.prefix)
-                    )
+                    _(
+                        "The Twitch token is either invalid or has not been set. See "
+                        "`{prefix}streamset twitchtoken`."
+                    ).format(prefix=ctx.prefix)
                 )
                 return
             except InvalidYoutubeCredentials:
                 await ctx.send(
                     _(
-                        "Your Youtube API key is either invalid or has not been set. See {}."
-                    ).format("`{}streamset youtubekey`".format(ctx.prefix))
+                        "The YouTube API key is either invalid or has not been set. See "
+                        "`{prefix}streamset youtubekey`."
+                    ).format(prefix=ctx.prefix)
                 )
                 return
             except APIError:
@@ -282,9 +298,10 @@ class Streams:
                 await community.get_community_streams()
             except InvalidTwitchCredentials:
                 await ctx.send(
-                    _("The twitch token is either invalid or has not been set. See {}.").format(
-                        "`{}streamset twitchtoken`".format(ctx.prefix)
-                    )
+                    _(
+                        "The Twitch token is either invalid or has not been set. See "
+                        "`{prefix}streamset twitchtoken`."
+                    ).format(prefix=ctx.prefix)
                 )
                 return
             except CommunityNotFound:
@@ -308,14 +325,15 @@ class Streams:
     @streamset.command()
     @checks.is_owner()
     async def twitchtoken(self, ctx: commands.Context, token: str):
-        """Set the Client ID for twitch.
+        """Set the Client ID for Twitch.
+
         To do this, follow these steps:
-          1. Go to this page: https://dev.twitch.tv/dashboard/apps.
-          2. Click *Register Your Application*
-          3. Enter a name, set the OAuth Redirect URI to `http://localhost`, and
-             select an Application Category of your choosing.
-          4. Click *Register*, and on the following page, copy the Client ID.
-          5. Paste the Client ID into this command. Done!
+        1. Go to this page: https://dev.twitch.tv/dashboard/apps.
+        2. Click *Register Your Application*
+        3. Enter a name, set the OAuth Redirect URI to `http://localhost`, and
+           select an Application Category of your choosing.
+        4. Click *Register*, and on the following page, copy the Client ID.
+        5. Paste the Client ID into this command. Done!
         """
         await self.db.tokens.set_raw("TwitchStream", value=token)
         await self.db.tokens.set_raw("TwitchCommunity", value=token)
@@ -324,64 +342,59 @@ class Streams:
     @streamset.command()
     @checks.is_owner()
     async def youtubekey(self, ctx: commands.Context, key: str):
-        """Sets the API key for Youtube.
+        """Set the API key for YouTube.
+
         To get one, do the following:
         1. Create a project (see https://support.google.com/googleapi/answer/6251787 for details)
-        2. Enable the Youtube Data API v3 (see https://support.google.com/googleapi/answer/6158841 for instructions)
-        3. Set up your API key (see https://support.google.com/googleapi/answer/6158862 for instructions)
+        2. Enable the YouTube Data API v3 (see https://support.google.com/googleapi/answer/6158841
+        for instructions)
+        3. Set up your API key (see https://support.google.com/googleapi/answer/6158862 for
+        instructions)
         4. Copy your API key and paste it into this command. Done!
         """
         await self.db.tokens.set_raw("YoutubeStream", value=key)
-        await ctx.send(_("Youtube key set."))
+        await ctx.send(_("YouTube key set."))
 
     @streamset.group()
     @commands.guild_only()
     async def mention(self, ctx: commands.Context):
-        """Sets mentions for alerts."""
+        """Manage mention settings for stream alerts."""
         pass
 
     @mention.command(aliases=["everyone"])
     @commands.guild_only()
     async def all(self, ctx: commands.Context):
-        """Toggles everyone mention"""
+        """Toggle the `@\u200beveryone` mention."""
         guild = ctx.guild
         current_setting = await self.db.guild(guild).mention_everyone()
         if current_setting:
             await self.db.guild(guild).mention_everyone.set(False)
-            await ctx.send(
-                _("{} will no longer be mentioned when a stream or community is live").format(
-                    "@\u200beveryone"
-                )
-            )
+            await ctx.send(_("`@\u200beveryone` will no longer be mentioned for stream alerts."))
         else:
             await self.db.guild(guild).mention_everyone.set(True)
             await ctx.send(
-                _("When a stream or community " "is live, {} will be mentioned.").format(
-                    "@\u200beveryone"
-                )
+                _("When a stream or community is live, `@\u200beveryone` will be mentioned.")
             )
 
     @mention.command(aliases=["here"])
     @commands.guild_only()
     async def online(self, ctx: commands.Context):
-        """Toggles here mention"""
+        """Toggle the `@\u200bhere` mention."""
         guild = ctx.guild
         current_setting = await self.db.guild(guild).mention_here()
         if current_setting:
             await self.db.guild(guild).mention_here.set(False)
-            await ctx.send(_("{} will no longer be mentioned for an alert.").format("@\u200bhere"))
+            await ctx.send(_("`@\u200bhere` will no longer be mentioned for stream alerts."))
         else:
             await self.db.guild(guild).mention_here.set(True)
             await ctx.send(
-                _("When a stream or community " "is live, {} will be mentioned.").format(
-                    "@\u200bhere"
-                )
+                _("When a stream or community is live, `@\u200bhere` will be mentioned.")
             )
 
     @mention.command()
     @commands.guild_only()
     async def role(self, ctx: commands.Context, *, role: discord.Role):
-        """Toggles role mention"""
+        """Toggle a role mention."""
         current_setting = await self.db.role(role).mention()
         if not role.mentionable:
             await ctx.send("That role is not mentionable!")
@@ -389,27 +402,27 @@ class Streams:
         if current_setting:
             await self.db.role(role).mention.set(False)
             await ctx.send(
-                _("{} will no longer be mentioned for an alert.").format(
-                    "@\u200b{}".format(role.name)
+                _("`@\u200b{role.name}` will no longer be mentioned for stream alerts.").format(
+                    role=role
                 )
             )
         else:
             await self.db.role(role).mention.set(True)
             await ctx.send(
-                _("When a stream or community " "is live, {} will be mentioned." "").format(
-                    "@\u200b{}".format(role.name)
-                )
+                _(
+                    "When a stream or community is live, `@\u200b{role.name}` will be mentioned."
+                ).format(role=role)
             )
 
     @streamset.command()
     @commands.guild_only()
     async def autodelete(self, ctx: commands.Context, on_off: bool):
-        """Toggles automatic deletion of notifications for streams that go offline"""
+        """Toggle alert deletion for when streams go offline."""
         await self.db.guild(ctx.guild).autodelete.set(on_off)
         if on_off:
-            await ctx.send("The notifications will be deleted once streams go offline.")
+            await ctx.send(_("The notifications will be deleted once streams go offline."))
         else:
-            await ctx.send("Notifications will never be deleted.")
+            await ctx.send(_("Notifications will no longer be deleted."))
 
     async def add_or_remove(self, ctx: commands.Context, stream):
         if ctx.channel.id not in stream.channels:
@@ -417,18 +430,18 @@ class Streams:
             if stream not in self.streams:
                 self.streams.append(stream)
             await ctx.send(
-                _("I'll now send a notification in this channel when {} is live.").format(
-                    stream.name
-                )
+                _(
+                    "I'll now send a notification in this channel when {stream.name} is live."
+                ).format(stream=stream)
             )
         else:
             stream.channels.remove(ctx.channel.id)
             if not stream.channels:
                 self.streams.remove(stream)
             await ctx.send(
-                _("I won't send notifications about {} in this channel anymore.").format(
-                    stream.name
-                )
+                _(
+                    "I won't send notifications about {stream.name} in this channel anymore."
+                ).format(stream=stream)
             )
 
         await self.save_streams()
@@ -441,9 +454,8 @@ class Streams:
             await ctx.send(
                 _(
                     "I'll send a notification in this channel when a "
-                    "channel is live in the {} community."
-                    ""
-                ).format(community.name)
+                    "channel is live in the {community.name} community."
+                ).format(community=community)
             )
         else:
             community.channels.remove(ctx.channel.id)
@@ -452,9 +464,8 @@ class Streams:
             await ctx.send(
                 _(
                     "I won't send notifications about channels streaming "
-                    "in the {} community in this channel anymore."
-                    ""
-                ).format(community.name)
+                    "in the {community.name} community in this channel anymore."
+                ).format(community=community)
             )
         await self.save_communities()
 
@@ -480,7 +491,8 @@ class Streams:
             if community.type == _class.__name__ and community.name.lower() == name.lower():
                 return community
 
-    async def check_exists(self, stream):
+    @staticmethod
+    async def check_exists(stream):
         try:
             await stream.is_online()
         except OfflineStream:
@@ -505,40 +517,36 @@ class Streams:
 
     async def check_streams(self):
         for stream in self.streams:
-            try:
-                embed = await stream.is_online()
-            except OfflineStream:
-                if not stream._messages_cache:
-                    continue
-                for message in stream._messages_cache:
-                    try:
-                        autodelete = await self.db.guild(message.guild).autodelete()
-                        if autodelete:
-                            await message.delete()
-                    except:
-                        pass
-                stream._messages_cache.clear()
-                await self.save_streams()
-            except:
-                pass
-            else:
-                if stream._messages_cache:
-                    continue
-                for channel_id in stream.channels:
-                    channel = self.bot.get_channel(channel_id)
-                    mention_str = await self._get_mention_str(channel.guild)
+            with contextlib.suppress(Exception):
+                try:
+                    embed = await stream.is_online()
+                except OfflineStream:
+                    if not stream._messages_cache:
+                        continue
+                    for message in stream._messages_cache:
+                        with contextlib.suppress(Exception):
+                            autodelete = await self.db.guild(message.guild).autodelete()
+                            if autodelete:
+                                await message.delete()
+                    stream._messages_cache.clear()
+                    await self.save_streams()
+                else:
+                    if stream._messages_cache:
+                        continue
+                    for channel_id in stream.channels:
+                        channel = self.bot.get_channel(channel_id)
+                        mention_str = await self._get_mention_str(channel.guild)
 
-                    if mention_str:
-                        content = "{}, {} is live!".format(mention_str, stream.name)
-                    else:
-                        content = "{} is live!".format(stream.name)
+                        if mention_str:
+                            content = _("{mention}, {stream.name} is live!").format(
+                                mention=mention_str, stream=stream
+                            )
+                        else:
+                            content = _("{stream.name} is live!").format(stream=stream.name)
 
-                    try:
                         m = await channel.send(content, embed=embed)
                         stream._messages_cache.append(m)
                         await self.save_streams()
-                    except:
-                        pass
 
     async def _get_mention_str(self, guild: discord.Guild):
         settings = self.db.guild(guild)
@@ -554,45 +562,46 @@ class Streams:
 
     async def check_communities(self):
         for community in self.communities:
-            try:
-                stream_list = await community.get_community_streams()
-            except CommunityNotFound:
-                print(_("The Community {} was not found!").format(community.name))
-                continue
-            except OfflineCommunity:
-                if not community._messages_cache:
+            with contextlib.suppress(Exception):
+                try:
+                    stream_list = await community.get_community_streams()
+                except CommunityNotFound:
+                    print(
+                        _("The Community {community.name} was not found!").format(
+                            community=community
+                        )
+                    )
                     continue
-                for message in community._messages_cache:
-                    try:
-                        autodelete = await self.db.guild(message.guild).autodelete()
-                        if autodelete:
-                            await message.delete()
-                    except:
-                        pass
-                community._messages_cache.clear()
-                await self.save_communities()
-            except:
-                pass
-            else:
-                for channel in community.channels:
-                    chn = self.bot.get_channel(channel)
-                    streams = await self.filter_streams(stream_list, chn)
-                    emb = await community.make_embed(streams)
-                    chn_msg = [m for m in community._messages_cache if m.channel == chn]
-                    if not chn_msg:
-                        mentions = await self._get_mention_str(chn.guild)
-                        if mentions:
-                            msg = await chn.send(mentions, embed=emb)
+                except OfflineCommunity:
+                    if not community._messages_cache:
+                        continue
+                    for message in community._messages_cache:
+                        with contextlib.suppress(Exception):
+                            autodelete = await self.db.guild(message.guild).autodelete()
+                            if autodelete:
+                                await message.delete()
+                    community._messages_cache.clear()
+                    await self.save_communities()
+                else:
+                    for channel in community.channels:
+                        chn = self.bot.get_channel(channel)
+                        streams = await self.filter_streams(stream_list, chn)
+                        emb = await community.make_embed(streams)
+                        chn_msg = [m for m in community._messages_cache if m.channel == chn]
+                        if not chn_msg:
+                            mentions = await self._get_mention_str(chn.guild)
+                            if mentions:
+                                msg = await chn.send(mentions, embed=emb)
+                            else:
+                                msg = await chn.send(embed=emb)
+                            community._messages_cache.append(msg)
+                            await self.save_communities()
                         else:
-                            msg = await chn.send(embed=emb)
-                        community._messages_cache.append(msg)
-                        await self.save_communities()
-                    else:
-                        chn_msg = sorted(chn_msg, key=lambda x: x.created_at, reverse=True)[0]
-                        community._messages_cache.remove(chn_msg)
-                        await chn_msg.edit(embed=emb)
-                        community._messages_cache.append(chn_msg)
-                        await self.save_communities()
+                            chn_msg = sorted(chn_msg, key=lambda x: x.created_at, reverse=True)[0]
+                            community._messages_cache.remove(chn_msg)
+                            await chn_msg.edit(embed=emb)
+                            community._messages_cache.append(chn_msg)
+                            await self.save_communities()
 
     async def filter_streams(self, streams: list, channel: discord.TextChannel) -> list:
         filtered = []
@@ -610,15 +619,20 @@ class Streams:
         streams = []
 
         for raw_stream in await self.db.streams():
-            _class = getattr(StreamClasses, raw_stream["type"], None)
+            _class = getattr(_streamtypes, raw_stream["type"], None)
             if not _class:
                 continue
             raw_msg_cache = raw_stream["messages"]
             raw_stream["_messages_cache"] = []
             for raw_msg in raw_msg_cache:
                 chn = self.bot.get_channel(raw_msg["channel"])
-                msg = await chn.get_message(raw_msg["message"])
-                raw_stream["_messages_cache"].append(msg)
+                if chn is not None:
+                    try:
+                        msg = await chn.get_message(raw_msg["message"])
+                    except discord.HTTPException:
+                        pass
+                    else:
+                        raw_stream["_messages_cache"].append(msg)
             token = await self.db.tokens.get_raw(_class.__name__, default=None)
             if token is not None:
                 raw_stream["token"] = token
@@ -630,15 +644,20 @@ class Streams:
         communities = []
 
         for raw_community in await self.db.communities():
-            _class = getattr(StreamClasses, raw_community["type"], None)
+            _class = getattr(_streamtypes, raw_community["type"], None)
             if not _class:
                 continue
             raw_msg_cache = raw_community["messages"]
             raw_community["_messages_cache"] = []
             for raw_msg in raw_msg_cache:
                 chn = self.bot.get_channel(raw_msg["channel"])
-                msg = await chn.get_message(raw_msg["message"])
-                raw_community["_messages_cache"].append(msg)
+                if chn is not None:
+                    try:
+                        msg = await chn.get_message(raw_msg["message"])
+                    except discord.HTTPException:
+                        pass
+                    else:
+                        raw_community["_messages_cache"].append(msg)
             token = await self.db.tokens.get_raw(_class.__name__, default=None)
             communities.append(_class(token=token, **raw_community))
 

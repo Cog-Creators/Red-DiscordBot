@@ -1,7 +1,7 @@
+import os
 import re
 from pathlib import Path
-
-from . import commands
+from typing import Callable, Union
 
 __all__ = ["get_locale", "set_locale", "reload_locales", "cog_i18n", "Translator"]
 
@@ -113,9 +113,9 @@ def _normalize(string, remove_newline=False):
         ends_with_space = s[-1] in " \n\t\r"
         if remove_newline:
             newline_re = re.compile("[\r\n]+")
-            s = " ".join(filter(bool, newline_re.split(s)))
-        s = " ".join(filter(bool, s.split("\t")))
-        s = " ".join(filter(bool, s.split(" ")))
+            s = " ".join(filter(None, newline_re.split(s)))
+        s = " ".join(filter(None, s.split("\t")))
+        s = " ".join(filter(None, s.split(" ")))
         if starts_with_space:
             s = " " + s
         if ends_with_space:
@@ -149,10 +149,10 @@ def get_locale_path(cog_folder: Path, extension: str) -> Path:
     return cog_folder / "locales" / "{}.{}".format(get_locale(), extension)
 
 
-class Translator:
+class Translator(Callable[[str], str]):
     """Function to get translated strings at runtime."""
 
-    def __init__(self, name, file_location):
+    def __init__(self, name: str, file_location: Union[str, Path, os.PathLike]):
         """
         Initializes an internationalization object.
 
@@ -173,7 +173,7 @@ class Translator:
 
         self.load_translations()
 
-    def __call__(self, untranslated: str):
+    def __call__(self, untranslated: str) -> str:
         """Translate the given string.
 
         This will look for the string in the translator's :code:`.pot` file,
@@ -215,6 +215,12 @@ class Translator:
         translated = _normalize(translated)
         if translated:
             self.translations.update({untranslated: translated})
+
+
+# This import to be down here to avoid circular import issues.
+# This will be cleaned up at a later date
+# noinspection PyPep8
+from . import commands
 
 
 def cog_i18n(translator: Translator):

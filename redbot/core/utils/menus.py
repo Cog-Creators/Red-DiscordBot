@@ -1,15 +1,14 @@
-"""
-Original source of reaction-based menu idea from
-https://github.com/Lunar-Dust/Dusty-Cogs/blob/master/menu/menu.py
-
-Ported to Red V3 by Palm\_\_ (https://github.com/palmtree5)
-"""
+# Original source of reaction-based menu idea from
+# https://github.com/Lunar-Dust/Dusty-Cogs/blob/master/menu/menu.py
+#
+# Ported to Red V3 by Palm\_\_ (https://github.com/palmtree5)
 import asyncio
 import contextlib
-from typing import Union, Iterable
+from typing import Union, Iterable, Optional
 import discord
 
-from redbot.core import commands
+from .. import commands
+from .predicates import ReactionPredicate
 
 _ReactableEmoji = Union[str, discord.Emoji]
 
@@ -71,18 +70,20 @@ async def menu(
         else:
             message = await ctx.send(current_page)
         # Don't wait for reactions to be added (GH-1797)
-        ctx.bot.loop.create_task(_add_menu_reactions(message, controls.keys()))
+        # noinspection PyAsyncCall
+        start_adding_reactions(message, controls.keys(), ctx.bot.loop)
     else:
         if isinstance(current_page, discord.Embed):
             await message.edit(embed=current_page)
         else:
             await message.edit(content=current_page)
 
-    def react_check(r, u):
-        return u == ctx.author and r.message.id == message.id and str(r.emoji) in controls.keys()
-
     try:
-        react, user = await ctx.bot.wait_for("reaction_add", check=react_check, timeout=timeout)
+        react, user = await ctx.bot.wait_for(
+            "reaction_add",
+            check=ReactionPredicate.with_emojis(tuple(controls.keys()), message, ctx.author),
+            timeout=timeout,
+        )
     except asyncio.TimeoutError:
         try:
             await message.clear_reactions()
@@ -103,7 +104,7 @@ async def next_page(
     timeout: float,
     emoji: str,
 ):
-    perms = message.channel.permissions_for(ctx.guild.me)
+    perms = message.channel.permissions_for(ctx.me)
     if perms.manage_messages:  # Can manage messages, so remove react
         try:
             await message.remove_reaction(emoji, ctx.author)
@@ -125,17 +126,17 @@ async def prev_page(
     timeout: float,
     emoji: str,
 ):
-    perms = message.channel.permissions_for(ctx.guild.me)
+    perms = message.channel.permissions_for(ctx.me)
     if perms.manage_messages:  # Can manage messages, so remove react
         try:
             await message.remove_reaction(emoji, ctx.author)
         except discord.NotFound:
             pass
     if page == 0:
-        next_page = len(pages) - 1  # Loop around to the last item
+        page = len(pages) - 1  # Loop around to the last item
     else:
-        next_page = page - 1
-    return await menu(ctx, pages, controls, message=message, page=next_page, timeout=timeout)
+        page = page - 1
+    return await menu(ctx, pages, controls, message=message, page=page, timeout=timeout)
 
 
 async def close_menu(
@@ -152,12 +153,51 @@ async def close_menu(
     return None
 
 
-async def _add_menu_reactions(message: discord.Message, emojis: Iterable[_ReactableEmoji]):
-    """Add the reactions"""
-    # The task should exit silently if the message is deleted
-    with contextlib.suppress(discord.NotFound):
-        for emoji in emojis:
-            await message.add_reaction(emoji)
+def start_adding_reactions(
+    message: discord.Message,
+    emojis: Iterable[_ReactableEmoji],
+    loop: Optional[asyncio.AbstractEventLoop] = None,
+) -> asyncio.Task:
+    """Start adding reactions to a message.
+
+    This is a non-blocking operation - calling this will schedule the
+    reactions being added, but will the calling code will continue to
+    execute asynchronously. There is no need to await this function.
+
+    This is particularly useful if you wish to start waiting for a
+    reaction whilst the reactions are still being added - in fact,
+    this is exactly what `menu` uses to do that.
+
+    This spawns a `asyncio.Task` object and schedules it on ``loop``.
+    If ``loop`` omitted, the loop will be retreived with
+    `asyncio.get_event_loop`.
+
+    Parameters
+    ----------
+    message: discord.Message
+        The message to add reactions to.
+    emojis : Iterable[Union[str, discord.Emoji]]
+        The emojis to react to the message with.
+    loop : Optional[asyncio.AbstractEventLoop]
+        The event loop.
+
+    Returns
+    -------
+    asyncio.Task
+        The task for the coroutine adding the reactions.
+
+    """
+
+    async def task():
+        # The task should exit silently if the message is deleted
+        with contextlib.suppress(discord.NotFound):
+            for emoji in emojis:
+                await message.add_reaction(emoji)
+
+    if loop is None:
+        loop = asyncio.get_event_loop()
+
+    return loop.create_task(task())
 
 
 DEFAULT_CONTROLS = {"⬅": prev_page, "❌": close_menu, "➡": next_page}
