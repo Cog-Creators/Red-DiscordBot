@@ -1066,24 +1066,49 @@ class Audio(commands.Cog):
         except KeyError:
             return await self._embed_msg(ctx, _("No playlist with that name."))
         author_obj = self.bot.get_user(author_id)
-        playlist_url = playlists[playlist_name]["playlist_url"]
         try:
             track_len = len(playlists[playlist_name]["tracks"])
         except TypeError:
             track_len = 0
-        if playlist_url is None:
-            playlist_url = _("**Custom playlist.**")
+
+        space = "\N{EN SPACE}"
+        msg = ""
+        track_idx = 0
+        if track_len > 0:
+            for track in playlists[playlist_name]["tracks"]:
+                track_idx = track_idx + 1
+                spaces = abs(len(str(track_idx)) - 5)
+                msg += "{}.{}{}\n{}{}\n\n".format(
+                    track_idx,
+                    space * spaces,
+                    track["info"]["title"],
+                    space * 6,
+                    track["info"]["uri"],
+                )
         else:
-            playlist_url = _("URL: <{url}>").format(url=playlist_url)
-        embed = discord.Embed(
-            colour=await ctx.embed_colour(),
-            title=_("Playlist info for {playlist_name}:").format(playlist_name=playlist_name),
-            description=_("Author: **{author_name}**\n{url}").format(
-                author_name=author_obj, url=playlist_url
-            ),
-        )
-        embed.set_footer(text=_("{num} track(s)").format(num=track_len))
-        await ctx.send(embed=embed)
+            msg = "No tracks."
+        playlist_url = playlists[playlist_name]["playlist_url"]
+        if not playlist_url:
+            embed_title = _("Playlist info for {playlist_name}:\n").format(
+                playlist_name=playlist_name
+            )
+        else:
+            embed_title = _("Playlist info for {playlist_name}:\nURL: {url}").format(
+                playlist_name=playlist_name, url=playlist_url
+            )
+
+        page_list = []
+        for page in pagify(msg, delims=["\n\n"], page_length=700):
+            embed = discord.Embed(
+                colour=await ctx.embed_colour(), title=embed_title, description=(box(page, lang="glsl"))
+            )
+            embed.set_footer(
+                text=_("Author: {author_name} | {num} track(s)").format(
+                    author_name=author_obj, num=track_len
+                )
+            )
+            page_list.append(embed)
+        await menu(ctx, page_list, DEFAULT_CONTROLS)
 
     @playlist.command(name="list")
     async def _playlist_list(self, ctx):
