@@ -14,7 +14,7 @@ import redbot.core
 from redbot.core import Config, commands, checks, bank
 from redbot.core.data_manager import cog_data_path
 from redbot.core.i18n import Translator, cog_i18n
-from redbot.core.utils.chat_formatting import bold, box
+from redbot.core.utils.chat_formatting import bold, box, pagify
 from redbot.core.utils.menus import (
     menu,
     DEFAULT_CONTROLS,
@@ -1100,7 +1100,9 @@ class Audio(commands.Cog):
         page_list = []
         for page in pagify(msg, delims=["\n\n"], page_length=700):
             embed = discord.Embed(
-                colour=await ctx.embed_colour(), title=embed_title, description=(box(page, lang="glsl"))
+                colour=await ctx.embed_colour(),
+                title=embed_title,
+                description=(box(page, lang="glsl")),
             )
             embed.set_footer(
                 text=_("Author: {author_name} | {num} track(s)").format(
