@@ -221,6 +221,8 @@ class Help(dpy_formatter.HelpFormatter):
                 ret.append(curr_group)
                 curr_group = []
             curr_group.append(f)
+        else:
+            ret.append(curr_group)
 
         if len(curr_group) > 0:
             ret.append(curr_group)
