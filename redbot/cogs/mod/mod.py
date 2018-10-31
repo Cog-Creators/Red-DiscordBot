@@ -2,7 +2,7 @@ import asyncio
 import contextlib
 from datetime import datetime, timedelta
 from collections import deque, defaultdict, namedtuple
-from typing import cast
+from typing import cast, Union
 
 import discord
 
@@ -42,7 +42,7 @@ class Mod(commands.Cog):
     def __init__(self, bot: Red):
         super().__init__()
         self.bot = bot
-        self.settings = Config.get_conf(self, 4961522000, force_registration=True)
+        self.settings = Config.get_conf(self, 4_961_522_000, force_registration=True)
 
         self.settings.register_guild(**self.default_guild_settings)
         self.settings.register_channel(**self.default_channel_settings)
@@ -1315,8 +1315,8 @@ class Mod(commands.Cog):
             is_member = True
 
         #  A special case for a special someone :^)
-        special_date = datetime(2016, 1, 10, 6, 8, 4, 443000)
-        is_special = user.id == 96130341705637888 and guild.id == 133049272517001216
+        special_date = datetime(2016, 1, 10, 6, 8, 4, 443_000)
+        is_special = user.id == 96_130_341_705_637_888 and guild.id == 133_049_272_517_001_216
 
         since_created = (ctx.message.created_at - user.created_at).days
         user_created = user.created_at.strftime("%d %b %Y %H:%M")
@@ -1330,21 +1330,24 @@ class Mod(commands.Cog):
             joined_on = _("{}\n({} days ago)").format(user_joined, since_joined)
             voice_state = user.voice
             member_number = sorted(guild.members, key=lambda m: m.joined_at).index(user) + 1
+            activity = _("Chilling in {} status").format(user.status)
+            if user.activity is None:  # Default status
+                pass
+            elif user.activity.type == discord.ActivityType.playing:
+                activity = _("Playing {}").format(user.activity.name)
+            elif user.activity.type == discord.ActivityType.streaming:
+                activity = _("Streaming [{}]({})").format(user.activity.name, user.activity.url)
+            elif user.activity.type == discord.ActivityType.listening:
+                activity = _("Listening to {}").format(user.activity.name)
+            elif user.activity.type == discord.ActivityType.watching:
+                activity = _("Watching {}").format(user.activity.name)
         else:
+            activity = _("This member is not on the current server.")
+            names = None
+            nicks = None
             roles = None
-            member_numer = None
-
-        activity = _("Chilling in {} status").format(user.status)
-        if user.activity is None:  # Default status
-            pass
-        elif user.activity.type == discord.ActivityType.playing:
-            activity = _("Playing {}").format(user.activity.name)
-        elif user.activity.type == discord.ActivityType.streaming:
-            activity = _("Streaming [{}]({})").format(user.activity.name, user.activity.url)
-        elif user.activity.type == discord.ActivityType.listening:
-            activity = _("Listening to {}").format(user.activity.name)
-        elif user.activity.type == discord.ActivityType.watching:
-            activity = _("Watching {}").format(user.activity.name)
+            voice_state = None
+            member_number = None
 
         if roles:
             roles = ", ".join([x.name for x in roles])
@@ -1371,7 +1374,10 @@ class Mod(commands.Cog):
                 value="{0.name} (ID {0.id})".format(voice_state.channel),
                 inline=False,
             )
-        data.set_footer(text=(_("Member #{} | ").format(member_numer) if is_member else "") + _("User ID: {}").format(member_number, user.id))
+        data.set_footer(
+            text=(_("Member #{} | ").format(member_number) if is_member else "")
+            + _("User ID: {}").format(user.id)
+        )
 
         name = str(user)
         if is_member:
