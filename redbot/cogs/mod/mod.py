@@ -1290,7 +1290,7 @@ class Mod(commands.Cog):
     @commands.command()
     @commands.guild_only()
     @commands.bot_has_permissions(embed_links=True)
-    async def userinfo(self, ctx, *, user: discord.Member = None):
+    async def userinfo(self, ctx, *, user: Union[discord.Member, int] = None):
         """Show information about a user.
         
         This includes fields for status, discord join date, server
@@ -1304,24 +1304,35 @@ class Mod(commands.Cog):
 
         if not user:
             user = author
+        if isinstance(user, int):
+            user_id = user
+            user = await self.bot.get_user_info(user_id)
+            if not user:
+                await ctx.send(_("User {id} not found.").format(id=user_id))
+                return
+            is_member = False
+        else:
+            is_member = True
 
         #  A special case for a special someone :^)
         special_date = datetime(2016, 1, 10, 6, 8, 4, 443000)
         is_special = user.id == 96130341705637888 and guild.id == 133049272517001216
 
-        roles = sorted(user.roles)[1:]
-        names, nicks = await self.get_names_and_nicks(user)
-
-        joined_at = user.joined_at if not is_special else special_date
         since_created = (ctx.message.created_at - user.created_at).days
-        since_joined = (ctx.message.created_at - joined_at).days
-        user_joined = joined_at.strftime("%d %b %Y %H:%M")
         user_created = user.created_at.strftime("%d %b %Y %H:%M")
-        voice_state = user.voice
-        member_number = sorted(guild.members, key=lambda m: m.joined_at).index(user) + 1
-
         created_on = _("{}\n({} days ago)").format(user_created, since_created)
-        joined_on = _("{}\n({} days ago)").format(user_joined, since_joined)
+        if is_member:
+            roles = sorted(user.roles)[1:]
+            names, nicks = await self.get_names_and_nicks(user)
+            joined_at = user.joined_at if not is_special else special_date
+            since_joined = (ctx.message.created_at - joined_at).days
+            user_joined = joined_at.strftime("%d %b %Y %H:%M")
+            joined_on = _("{}\n({} days ago)").format(user_joined, since_joined)
+            voice_state = user.voice
+            member_number = sorted(guild.members, key=lambda m: m.joined_at).index(user) + 1
+        else:
+            roles = None
+            member_numer = None
 
         activity = _("Chilling in {} status").format(user.status)
         if user.activity is None:  # Default status
@@ -1342,7 +1353,8 @@ class Mod(commands.Cog):
 
         data = discord.Embed(description=activity, colour=user.colour)
         data.add_field(name=_("Joined Discord on"), value=created_on)
-        data.add_field(name=_("Joined this server on"), value=joined_on)
+        if is_member:
+            data.add_field(name=_("Joined this server on"), value=joined_on)
         if roles is not None:
             data.add_field(name=_("Roles"), value=roles, inline=False)
         if names:
@@ -1359,10 +1371,11 @@ class Mod(commands.Cog):
                 value="{0.name} (ID {0.id})".format(voice_state.channel),
                 inline=False,
             )
-        data.set_footer(text=_("Member #{} | User ID: {}").format(member_number, user.id))
+        data.set_footer(text=(_("Member #{} | ").format(member_numer) if is_member else "") + _("User ID: {}").format(member_number, user.id))
 
         name = str(user)
-        name = " ~ ".join((name, user.nick)) if user.nick else name
+        if is_member:
+            name = " ~ ".join((name, user.nick)) if user.nick else name
         name = filter_invites(name)
 
         if user.avatar:
