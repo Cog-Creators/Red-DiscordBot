@@ -42,7 +42,7 @@ class Mod(commands.Cog):
     def __init__(self, bot: Red):
         super().__init__()
         self.bot = bot
-        self.settings = Config.get_conf(self, 4_961_522_000, force_registration=True)
+        self.settings = Config.get_conf(self, 4961522000, force_registration=True)
 
         self.settings.register_guild(**self.default_guild_settings)
         self.settings.register_channel(**self.default_channel_settings)
@@ -1315,8 +1315,8 @@ class Mod(commands.Cog):
             is_member = True
 
         #  A special case for a special someone :^)
-        special_date = datetime(2016, 1, 10, 6, 8, 4, 443_000)
-        is_special = user.id == 96_130_341_705_637_888 and guild.id == 133_049_272_517_001_216
+        special_date = datetime(2016, 1, 10, 6, 8, 4, 443000)
+        is_special = user.id == 96130341705637888 and guild.id == 133049272517001216
 
         since_created = (ctx.message.created_at - user.created_at).days
         user_created = user.created_at.strftime("%d %b %Y %H:%M")
