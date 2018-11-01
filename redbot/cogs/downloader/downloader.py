@@ -325,13 +325,12 @@ class Downloader(commands.Cog):
         You may only uninstall cogs which were previously installed
         by Downloader.
         """
-        # noinspection PyUnresolvedReferences,PyProtectedMember
         real_name = cog.name
 
         poss_installed_path = (await self.cog_install_path()) / real_name
         if poss_installed_path.exists():
+            ctx.bot.unload_extension(real_name)
             await self._delete_cog(poss_installed_path)
-            # noinspection PyTypeChecker
             await self._remove_from_installed(cog)
             await ctx.send(
                 _("Cog `{cog_name}` was successfully uninstalled.").format(cog_name=real_name)
@@ -344,7 +343,7 @@ class Downloader(commands.Cog):
                     " files manually if it is still usable."
                     " Also make sure you've unloaded the cog"
                     " with `{prefix}unload {cog_name}`."
-                ).format(cog_name=real_name)
+                ).format(prefix=ctx.prefix, cog_name=real_name)
             )
 
     @cog.command(name="update")
@@ -372,13 +371,18 @@ class Downloader(commands.Cog):
                 await self._reinstall_libraries(installed_and_updated)
                 message = _("Cog update completed successfully.")
 
-                cognames = [c.name for c in installed_and_updated]
+                cognames = {c.name for c in installed_and_updated}
                 message += _("\nUpdated: ") + humanize_list(tuple(map(inline, cognames)))
             else:
                 await ctx.send(_("All installed cogs are already up to date."))
                 return
         await ctx.send(message)
 
+        cognames &= set(ctx.bot.extensions.keys())  # only reload loaded cogs
+        if not cognames:
+            return await ctx.send(
+                _("None of the updated cogs were previously loaded. Update complete.")
+            )
         message = _("Would you like to reload the updated cogs?")
         can_react = ctx.channel.permissions_for(ctx.me).add_reactions
         if not can_react:
@@ -402,7 +406,6 @@ class Downloader(commands.Cog):
             if can_react:
                 with contextlib.suppress(discord.Forbidden):
                     await query.clear_reactions()
-
             await ctx.invoke(ctx.bot.get_cog("Core").reload, *cognames)
         else:
             if can_react:
