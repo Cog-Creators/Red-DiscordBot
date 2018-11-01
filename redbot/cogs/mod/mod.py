@@ -1306,10 +1306,13 @@ class Mod(commands.Cog):
             user = author
         if isinstance(user, int):
             user_id = user
-            user = await self.bot.get_user_info(user_id)
+            user = self.bot.get_user(user_id)
             if not user:
-                await ctx.send(_("User {id} not found.").format(id=user_id))
-                return
+                try:
+                    user = await self.bot.get_user_info(user_id)
+                except discord.errors.Forbidden:
+                    await ctx.send(_("User {id} not found.").format(id=user_id))
+                    return
             is_member = False
         else:
             is_member = True
