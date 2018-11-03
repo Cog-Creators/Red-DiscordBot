@@ -1310,7 +1310,7 @@ class Mod(commands.Cog):
             if not user:
                 try:
                     user = await self.bot.get_user_info(user_id)
-                except discord.errors.Forbidden:
+                except (discord.errors.Forbidden, discord.errors.NotFound):
                     await ctx.send(_("User {id} not found.").format(id=user_id))
                     return
             is_member = False
