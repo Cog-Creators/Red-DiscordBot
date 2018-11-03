@@ -8,7 +8,7 @@ from typing import cast, Iterable
 import discord
 
 from redbot.cogs.bank import check_global_setting_guildowner, check_global_setting_admin
-from redbot.core import Config, bank, commands
+from redbot.core import Config, bank, commands, errors
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import box
 from redbot.core.utils.menus import menu, DEFAULT_CONTROLS
@@ -171,7 +171,7 @@ class Economy(commands.Cog):
 
         try:
             await bank.transfer_credits(from_, to, amount)
-        except ValueError as e:
+        except (ValueError, errors.BalanceTooHigh) as e:
             return await ctx.send(str(e))
 
         await ctx.send(
@@ -195,36 +195,35 @@ class Economy(commands.Cog):
         author = ctx.author
         currency = await bank.get_currency_name(ctx.guild)
 
-        if creds.operation == "deposit":
-            await bank.deposit_credits(to, creds.sum)
-            await ctx.send(
-                _("{author} added {num} {currency} to {user}'s account.").format(
+        try:
+            if creds.operation == "deposit":
+                await bank.deposit_credits(to, creds.sum)
+                msg = _("{author} added {num} {currency} to {user}'s account.").format(
                     author=author.display_name,
                     num=creds.sum,
                     currency=currency,
                     user=to.display_name,
                 )
-            )
-        elif creds.operation == "withdraw":
-            await bank.withdraw_credits(to, creds.sum)
-            await ctx.send(
-                _("{author} removed {num} {currency} from {user}'s account.").format(
+            elif creds.operation == "withdraw":
+                await bank.withdraw_credits(to, creds.sum)
+                msg = _("{author} removed {num} {currency} from {user}'s account.").format(
                     author=author.display_name,
                     num=creds.sum,
                     currency=currency,
                     user=to.display_name,
                 )
-            )
+            else:
+                await bank.set_balance(to, creds.sum)
+                msg = _("{author} set {user}'s account balance to {num} {currency}.").format(
+                    author=author.display_name,
+                    num=creds.sum,
+                    currency=currency,
+                    user=to.display_name,
+                )
+        except (ValueError, errors.BalanceTooHigh) as e:
+            await ctx.send(str(e))
         else:
-            await bank.set_balance(to, creds.sum)
-            await ctx.send(
-                _("{author} set {user}'s account balance to {num} {currency}.").format(
-                    author=author.display_name,
-                    num=creds.sum,
-                    currency=currency,
-                    user=to.display_name,
-                )
-            )
+            await ctx.send(msg)
 
     @_bank.command()
     @check_global_setting_guildowner()
@@ -260,7 +259,18 @@ class Economy(commands.Cog):
         if await bank.is_global():  # Role payouts will not be used
             next_payday = await self.config.user(author).next_payday()
             if cur_time >= next_payday:
-                await bank.deposit_credits(author, await self.config.PAYDAY_CREDITS())
+                try:
+                    await bank.deposit_credits(author, await self.config.PAYDAY_CREDITS())
+                except errors.BalanceTooHigh as exc:
+                    await bank.set_balance(author, exc.max_balance)
+                    await ctx.send(
+                        _(
+                            "You've reached the maximum amount of {currency}! (**{balance:,}**) "
+                            "Please spend some more \N{GRIMACING FACE}\n\n"
+                            "You currently have {new_balance} {currency}."
+                        ).format(currency=credits_name, new_balance=exc.max_balance)
+                    )
+                    return
                 next_payday = cur_time + await self.config.PAYDAY_TIME()
                 await self.config.user(author).next_payday.set(next_payday)
 
@@ -297,14 +307,25 @@ class Economy(commands.Cog):
                     ).PAYDAY_CREDITS()  # Nice variable name
                     if role_credits > credit_amount:
                         credit_amount = role_credits
-                await bank.deposit_credits(author, credit_amount)
+                try:
+                    await bank.deposit_credits(author, credit_amount)
+                except errors.BalanceTooHigh as exc:
+                    await bank.set_balance(author, exc.max_balance)
+                    await ctx.send(
+                        _(
+                            "You've reached the maximum amount of {currency}! "
+                            "Please spend some more \N{GRIMACING FACE}\n\n"
+                            "You currently have {new_balance} {currency}."
+                        ).format(currency=credits_name, new_balance=exc.max_balance)
+                    )
+                    return
                 next_payday = cur_time + await self.config.guild(guild).PAYDAY_TIME()
                 await self.config.member(author).next_payday.set(next_payday)
                 pos = await bank.get_leaderboard_position(author)
                 await ctx.send(
                     _(
                         "{author.mention} Here, take some {currency}. "
-                        "Enjoy! (+{amount} {new_balance}!)\n\n"
+                        "Enjoy! (+{amount} {currency}!)\n\n"
                         "You currently have {new_balance} {currency}.\n\n"
                         "You are currently #{pos} on the global leaderboard!"
                     ).format(
@@ -444,7 +465,21 @@ class Economy(commands.Cog):
             then = await bank.get_balance(author)
             pay = payout["payout"](bid)
             now = then - bid + pay
-            await bank.set_balance(author, now)
+            try:
+                await bank.set_balance(author, now)
+            except errors.BalanceTooHigh as exc:
+                await bank.set_balance(author, exc.max_balance)
+                await channel.send(
+                    _(
+                        "You've reached the maximum amount of {currency}! "
+                        "Please spend some more \N{GRIMACING FACE}\n{old_balance} -> {new_balance}!"
+                    ).format(
+                        currency=await bank.get_currency_name(getattr(channel, "guild", None)),
+                        old_balance=then,
+                        new_balance=exc.max_balance,
+                    )
+                )
+                return
             phrase = T_(payout["phrase"])
         else:
             then = await bank.get_balance(author)
@@ -561,10 +596,10 @@ class Economy(commands.Cog):
     async def paydayamount(self, ctx: commands.Context, creds: int):
         """Set the amount earned each payday."""
         guild = ctx.guild
-        credits_name = await bank.get_currency_name(guild)
-        if creds <= 0:
+        if creds <= 0 or creds > bank.MAX_BALANCE:
             await ctx.send(_("Har har so funny."))
             return
+        credits_name = await bank.get_currency_name(guild)
         if await bank.is_global():
             await self.config.PAYDAY_CREDITS.set(creds)
         else:
@@ -579,6 +614,9 @@ class Economy(commands.Cog):
     async def rolepaydayamount(self, ctx: commands.Context, role: discord.Role, creds: int):
         """Set the amount earned each payday for a role."""
         guild = ctx.guild
+        if creds <= 0 or creds > bank.MAX_BALANCE:
+            await ctx.send(_("Har har so funny."))
+            return
         credits_name = await bank.get_currency_name(guild)
         if await bank.is_global():
             await ctx.send(_("The bank must be per-server for per-role paydays to work."))

@@ -825,7 +825,7 @@ class Mod(commands.Cog):
     @admin_or_voice_permissions(mute_members=True, deafen_members=True)
     @bot_has_voice_permissions(mute_members=True, deafen_members=True)
     async def voiceunban(self, ctx: commands.Context, user: discord.Member, *, reason: str = None):
-        """Unban a the user from speaking and listening in the server's voice channels."""
+        """Unban a user from speaking and listening in the server's voice channels."""
         user_voice_state = user.voice
         if user_voice_state is None:
             await ctx.send(_("No voice state for that user!"))
@@ -1771,13 +1771,15 @@ class Mod(commands.Cog):
                 while len(nick_list) > 20:
                     nick_list.pop(0)
 
-
+_ = lambda s: s
 mute_unmute_issues = {
-    "already_muted": "That user is already muted in this channel.",
-    "already_unmuted": "That user isn't muted in this channel.",
-    "hierarchy_problem": "I cannot let you do that. You are not higher than the user in the role hierarchy.",
-    "is_admin": "That user cannot be muted, as they have the Administrator permission.",
-    "permissions_issue": (
+    "already_muted": _("That user can't send messages in this channel."),
+    "already_unmuted": _("That user isn't muted in this channel."),
+    "hierarchy_problem": _(
+        "I cannot let you do that. You are not higher than the user in the role hierarchy."
+    ),
+    "is_admin": _("That user cannot be muted, as they have the Administrator permission."),
+    "permissions_issue": _(
         "Failed to mute user. I need the manage roles "
         "permission and the user I'm muting must be "
         "lower than myself in the role hierarchy."

@@ -4,9 +4,10 @@ from typing import Union, List, Optional
 
 import discord
 
-from redbot.core import Config
+from . import Config, errors
 
 __all__ = [
+    "MAX_BALANCE",
     "Account",
     "get_balance",
     "set_balance",
@@ -25,6 +26,8 @@ __all__ = [
     "get_default_balance",
     "set_default_balance",
 ]
+
+MAX_BALANCE = 2 ** 63 - 1
 
 _DEFAULT_GLOBAL = {
     "is_global": False,
@@ -170,10 +173,22 @@ async def set_balance(member: discord.Member, amount: int) -> int:
     ------
     ValueError
         If attempting to set the balance to a negative number.
+    BalanceTooHigh
+        If attempting to set the balance to a value greater than
+        ``bank.MAX_BALANCE``
 
     """
     if amount < 0:
         raise ValueError("Not allowed to have negative balance.")
+    if amount > MAX_BALANCE:
+        currency = (
+            await get_currency_name()
+            if await is_global()
+            else await get_currency_name(member.guild)
+        )
+        raise errors.BalanceTooHigh(
+            user=member.display_name, max_balance=MAX_BALANCE, currency_name=currency
+        )
     if await is_global():
         group = _conf.user(member)
     else:
