@@ -50,7 +50,7 @@ To set the bot to start on boot, you must enable the service, again adding the i
 :code:`sudo systemctl enable red@instancename`
 
 If you need to shutdown the bot, you can use the ``[p]shutdown`` command or
-you can stop the service, still by adding the instance name after the **a**:
+you can stop the service, still by adding the instance name after the **@**:
 
 :code:`sudo systemctl stop red@instancename`
 
