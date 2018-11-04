@@ -28,6 +28,7 @@ Paste the following and replace all instances of :code:`username` with the usern
     Restart=always
     RestartSec=15
     RestartPreventExitStatus=0
+    TimeoutStopSec=10
 
     [Install]
     WantedBy=multi-user.target
