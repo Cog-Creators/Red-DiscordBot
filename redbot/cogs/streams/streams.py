@@ -320,6 +320,7 @@ class Streams(commands.Cog):
     @commands.group()
     @checks.mod()
     async def streamset(self, ctx: commands.Context):
+        """Set tokens for accessing streams."""
         pass
 
     @streamset.command()
