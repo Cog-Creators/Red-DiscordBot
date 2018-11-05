@@ -80,7 +80,7 @@ async def get_java_version(loop) -> _JavaVersion:
         short_match = short_version_re.search(line)
         if match:
             return int(match["major"]), int(match["minor"])
-        if short_match:
+        elif short_match:
             return int(short_match["major"]), 0
 
     raise RuntimeError(
