@@ -1698,7 +1698,7 @@ class Core(commands.Cog, CoreLogic):
         await ctx.tick()
 
     @commands.guild_only()
-    @checks.guildowner_or_permissions(manage_server=True)
+    @checks.guildowner_or_permissions(manage_guild=True)
     @commands.group(name="autoimmune")
     async def autoimmune_group(self, ctx: commands.Context):
         """
