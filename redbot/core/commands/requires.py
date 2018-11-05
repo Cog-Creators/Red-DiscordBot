@@ -281,12 +281,14 @@ class Requires:
 
         if isinstance(user_perms, dict):
             self.user_perms: Optional[discord.Permissions] = discord.Permissions.none()
+            _validate_perms_dict(user_perms)
             self.user_perms.update(**user_perms)
         else:
             self.user_perms = user_perms
 
         if isinstance(bot_perms, dict):
             self.bot_perms: discord.Permissions = discord.Permissions.none()
+            _validate_perms_dict(bot_perms)
             self.bot_perms.update(**bot_perms)
         else:
             self.bot_perms = bot_perms
@@ -311,6 +313,7 @@ class Requires:
                 if user_perms is None:
                     func.requires.user_perms = None
                 else:
+                    _validate_perms_dict(user_perms)
                     func.requires.user_perms.update(**user_perms)
             return func
 
@@ -666,3 +669,20 @@ class _IntKeyDict(Dict[int, _T]):
         if not isinstance(key, int):
             raise TypeError("Keys must be of type `int`")
         return super().__setitem__(key, value)
+
+
+def _validate_perms_dict(perms: Dict[str, bool]) -> None:
+    for perm, value in perms.items():
+        try:
+            attr = getattr(discord.Permissions, perm)
+        except AttributeError:
+            attr = None
+
+        if attr is None or not isinstance(attr, property):
+            # We reject invalid permissions
+            raise TypeError(f"Unknown permission name '{perm}'")
+
+        if value is not True:
+            # We reject any permission not specified as 'True', since this is the only value which
+            # makes practical sense.
+            raise TypeError(f"Permission {perm} may only be specified as 'True', not {value}")

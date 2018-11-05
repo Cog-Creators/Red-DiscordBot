@@ -316,7 +316,7 @@ class Reports(commands.Cog):
                 self.tunnel_store[k]["msgs"] = msgs
 
     @commands.guild_only()
-    @checks.mod_or_permissions(manage_members=True)
+    @checks.mod_or_permissions(manage_roles=True)
     @report.command(name="interact")
     async def response(self, ctx, ticket_number: int):
         """Open a message tunnel.
