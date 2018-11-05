@@ -535,7 +535,7 @@ class Streams(commands.Cog):
                         continue
                     for channel_id in stream.channels:
                         channel = self.bot.get_channel(channel_id)
-                        mention_str, roles = await self._get_mention_str(channel.guild)
+                        mention_str, edited_roles = await self._get_mention_str(channel.guild)
 
                         if mention_str:
                             content = _("{mention}, {stream.name} is live!").format(
@@ -546,8 +546,8 @@ class Streams(commands.Cog):
 
                         m = await channel.send(content, embed=embed)
                         stream._messages_cache.append(m)
-                        if roles:
-                            for role in roles:
+                        if edited_roles:
+                            for role in edited_roles:
                                 await role.edit(mentionable=False)
                         await self.save_streams()
 
@@ -557,18 +557,24 @@ class Streams(commands.Cog):
         """
         settings = self.db.guild(guild)
         mentions = []
-        roles = []
+        edited_roles = []
         if await settings.mention_everyone():
             mentions.append("@everyone")
         if await settings.mention_here():
             mentions.append("@here")
+        can_manage_roles = guild.me.guild_permissions.manage_roles
         for role in guild.roles:
             if await self.db.role(role).mention():
-                if not role.mentionable:
-                    await role.edit(mentionable=True)
-                    roles.append(role)
+                if can_manage_roles and not role.mentionable:
+                    try:
+                        await role.edit(mentionable=True)
+                    except discord.Forbidden:
+                        # Might still be unable to edit role based on hierarchy
+                        pass
+                    else:
+                        edited_roles.append(role)
                 mentions.append(role.mention)
-        return " ".join(mentions), roles
+        return " ".join(mentions), edited_roles
 
     async def check_communities(self):
         for community in self.communities:
