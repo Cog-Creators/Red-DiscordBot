@@ -28,7 +28,7 @@ from . import streamtypes as _streamtypes
 from collections import defaultdict
 import asyncio
 import re
-from typing import Optional, List
+from typing import Optional, List, Tuple
 
 CHECK_DELAY = 60
 
@@ -551,7 +551,10 @@ class Streams(commands.Cog):
                                 await role.edit(mentionable=False)
                         await self.save_streams()
 
-    async def _get_mention_str(self, guild: discord.Guild):
+    async def _get_mention_str(self, guild: discord.Guild) -> Tuple[str, List[discord.Role]]:
+        """Returns a 2-tuple with the string containing the mentions, and a list of
+        all roles which need to have their `mentionable` property set back to False.
+        """
         settings = self.db.guild(guild)
         mentions = []
         roles = []
