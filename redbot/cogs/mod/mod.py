@@ -877,7 +877,7 @@ class Mod(commands.Cog):
 
     @commands.group()
     @commands.guild_only()
-    @checks.mod_or_permissions(manage_channel=True)
+    @checks.mod_or_permissions(manage_channels=True)
     async def mute(self, ctx: commands.Context):
         """Mute users."""
         pass
@@ -1033,7 +1033,7 @@ class Mod(commands.Cog):
     @commands.group()
     @commands.guild_only()
     @commands.bot_has_permissions(manage_roles=True)
-    @checks.mod_or_permissions(manage_channel=True)
+    @checks.mod_or_permissions(manage_channels=True)
     async def unmute(self, ctx: commands.Context):
         """Unmute users."""
         pass
