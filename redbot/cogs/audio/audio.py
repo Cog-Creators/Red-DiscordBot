@@ -1260,6 +1260,9 @@ class Audio(commands.Cog):
         try:
             player = lavalink.get_player(ctx.guild.id)
             for track in playlists[playlist_name]["tracks"]:
+                if track["info"]["uri"].startswith("localtracks/"):
+                    if not os.path.isfile(track["info"]["uri"]):
+                        continue
                 player.add(author_obj, lavalink.rest_api.Track(data=track))
                 track_count = track_count + 1
             embed = discord.Embed(
