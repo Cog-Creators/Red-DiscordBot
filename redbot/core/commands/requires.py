@@ -587,6 +587,7 @@ def bot_has_permissions(**perms: bool):
         if asyncio.iscoroutinefunction(func):
             func.__requires_bot_perms__ = perms
         else:
+            _validate_perms_dict(perms)
             func.requires.bot_perms.update(**perms)
         return func
 
@@ -598,6 +599,8 @@ def has_permissions(**perms: bool):
 
     This check can be overridden by rules.
     """
+    if perms is None:
+        raise TypeError("Must provide at least one keyword argument to has_permissions")
     return Requires.get_decorator(None, perms)
 
 
