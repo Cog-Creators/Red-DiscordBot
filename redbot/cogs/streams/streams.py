@@ -396,9 +396,6 @@ class Streams(commands.Cog):
     async def role(self, ctx: commands.Context, *, role: discord.Role):
         """Toggle a role mention."""
         current_setting = await self.db.role(role).mention()
-        if not role.mentionable:
-            await ctx.send("That role is not mentionable!")
-            return
         if current_setting:
             await self.db.role(role).mention.set(False)
             await ctx.send(
@@ -408,11 +405,17 @@ class Streams(commands.Cog):
             )
         else:
             await self.db.role(role).mention.set(True)
-            await ctx.send(
-                _(
-                    "When a stream or community is live, `@\u200b{role.name}` will be mentioned."
-                ).format(role=role)
-            )
+            msg = _(
+                "When a stream or community is live, `@\u200b{role.name}` will be mentioned."
+            ).format(role=role)
+            if not role.mentionable:
+                msg += " " + _(
+                    "Since the role is not mentionable, it will be momentarily made mentionable "
+                    "when announcing a streamalert. Please make sure I have the correct "
+                    "permissions to manage this role, or else members of this role won't receive "
+                    "a notification."
+                )
+            await ctx.send(msg)
 
     @streamset.command()
     @commands.guild_only()
