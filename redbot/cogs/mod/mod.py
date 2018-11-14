@@ -311,13 +311,15 @@ class Mod(commands.Cog):
         if not cur_setting:
             await self.settings.guild(guild).reinvite_on_unban.set(True)
             await ctx.send(
-                _("Users unbanned with {command} will be reinvited.").format(f"{ctx.prefix}unban")
+                _("Users unbanned with {command} will be reinvited.").format(
+                    command=f"{ctx.prefix}unban"
+                )
             )
         else:
             await self.settings.guild(guild).reinvite_on_unban.set(False)
             await ctx.send(
                 _("Users unbanned with {command} will not be reinvited.").format(
-                    f"{ctx.prefix}unban"
+                    command=f"{ctx.prefix}unban"
                 )
             )
 
