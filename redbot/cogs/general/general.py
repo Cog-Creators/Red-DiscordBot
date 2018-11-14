@@ -263,7 +263,7 @@ class General(commands.Cog):
 
         except aiohttp.ClientError:
             await ctx.send(
-                _("No Urban dictionary entries were found, or there was an error in the process.")
+                _("No Urban Dictionary entries were found, or there was an error in the process.")
             )
             return
 
