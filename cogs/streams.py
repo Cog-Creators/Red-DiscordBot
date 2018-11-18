@@ -48,6 +48,13 @@ class Streams:
         settings = dataIO.load_json("data/streams/settings.json")
         self.settings = defaultdict(dict, settings)
         self.messages_cache = defaultdict(list)
+        self.check_task = self.bot.loop.create_task(self.stream_checker())
+    
+    def __unload(self):
+        if self.check_task is not None:
+            self.check_task.cancel()
+            self.check_task = None
+        dataIO.save_json("data/streams/settings.json", self.settings)
 
     @commands.command()
     async def hitbox(self, stream: str):
@@ -620,8 +627,11 @@ class Streams:
                 dataIO.save_json("data/streams/hitbox.json", self.hitbox_streams)
                 dataIO.save_json("data/streams/beam.json", self.mixer_streams)
                 dataIO.save_json("data/streams/picarto.json", self.picarto_streams)
-
-            await asyncio.sleep(CHECK_DELAY)
+            
+            try:
+                await asyncio.sleep(CHECK_DELAY)
+            except asyncio.CancelledError:
+                return
 
     async def delete_old_notifications(self, key):
         for message in self.messages_cache[key]:
@@ -693,7 +703,4 @@ def setup(bot):
     logger.setLevel(50)  # Stops warning spam
     check_folders()
     check_files()
-    n = Streams(bot)
-    loop = asyncio.get_event_loop()
-    loop.create_task(n.stream_checker())
-    bot.add_cog(n)
+    bot.add_cog(Streams(bot))
