@@ -1366,8 +1366,7 @@ class Mod(commands.Cog):
         name = filter_invites(name)
 
         if user.avatar:
-            avatar = user.avatar_url
-            avatar = avatar.replace("webp", "png")
+            avatar = user.avatar_url_as(static_format="png")
             data.set_author(name=name, url=avatar)
             data.set_thumbnail(url=avatar)
         else:

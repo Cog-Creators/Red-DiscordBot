@@ -46,7 +46,7 @@ In that file, place the following code:
 
     from redbot.core import commands
 
-    class Mycog:
+    class Mycog(commands.Cog):
         """My custom cog"""
 
         @commands.command()
