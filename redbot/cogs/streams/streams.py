@@ -543,7 +543,7 @@ class Streams(commands.Cog):
                                 mention=mention_str, stream=stream
                             )
                         else:
-                            content = _("{stream.name} is live!").format(stream=stream.name)
+                            content = _("{stream.name} is live!").format(stream=stream)
 
                         m = await channel.send(content, embed=embed)
                         stream._messages_cache.append(m)
