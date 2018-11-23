@@ -70,7 +70,7 @@ class JsonIO:
 
     async def _threadsafe_save_json(self, data, settings=PRETTY):
         loop = asyncio.get_event_loop()
-        # the deepcopy is needed here. otherwise, 
+        # the deepcopy is needed here. otherwise,
         # the dict can change during serialization
         # and this will break the encoder.
         data_copy = deepcopy(data)
