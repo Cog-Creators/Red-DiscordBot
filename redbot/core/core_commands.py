@@ -457,7 +457,7 @@ class Core(commands.Cog, CoreLogic):
 
         pred = MessagePredicate.yes_or_no(ctx)
         try:
-            await self.bot.wait_for("message", check=MessagePredicate.yes_or_no(ctx))
+            await self.bot.wait_for("message", check=pred)
         except asyncio.TimeoutError:
             await ctx.send("Response timed out.")
             return
