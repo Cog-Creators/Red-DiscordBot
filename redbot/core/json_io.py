@@ -3,6 +3,7 @@ import json
 import os
 import asyncio
 import logging
+from copy import deepcopy
 from uuid import uuid4
 
 # This is basically our old DataIO and just a base for much more elaborate classes
@@ -69,7 +70,11 @@ class JsonIO:
 
     async def _threadsafe_save_json(self, data, settings=PRETTY):
         loop = asyncio.get_event_loop()
-        func = functools.partial(self._save_json, data, settings)
+        # the deepcopy is needed here. otherwise,
+        # the dict can change during serialization
+        # and this will break the encoder.
+        data_copy = deepcopy(data)
+        func = functools.partial(self._save_json, data_copy, settings)
         async with self._lock:
             await loop.run_in_executor(None, func)
 
