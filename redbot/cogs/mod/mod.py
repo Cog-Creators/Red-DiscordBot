@@ -874,8 +874,11 @@ class Mod(commands.Cog):
         nickname = nickname.strip()
         if nickname == "":
             nickname = None
-        await user.edit(reason=get_audit_reason(ctx.author, None), nick=nickname)
-        await ctx.send("Done.")
+        if len(nickname) > 32:
+            await ctx.send("The nickname you have provided is too long.")
+        else:
+            await user.edit(reason=get_audit_reason(ctx.author, None), nick=nickname)
+            await ctx.send("Done.")
 
     @commands.group()
     @commands.guild_only()
