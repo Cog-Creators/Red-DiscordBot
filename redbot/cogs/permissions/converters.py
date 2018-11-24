@@ -9,16 +9,13 @@ from redbot.core.i18n import Translator
 
 _ = Translator("PermissionsConverters", __file__)
 
-MENTION_RE = re.compile(r"^<(?:(?:@[!&]?)|#)(\d{15,21})>$")
+MENTION_RE = re.compile(r"^<?(?:(?:@[!&]?)?|#)(\d{15,21})>?$")
 
 
 def _match_id(arg: str) -> Optional[int]:
-    if arg.isdigit() and 15 <= len(arg) <= 21:
-        return int(arg)
-    else:
-        m = MENTION_RE.match(arg)
-        if m:
-            return int(m.group(1))
+    m = MENTION_RE.match(arg)
+    if m:
+        return int(m.group(1))
 
 
 class GlobalUniqueObjectFinder(commands.Converter):
@@ -54,7 +51,7 @@ class GlobalUniqueObjectFinder(commands.Converter):
 
         maybe_matches = []
         for obj in objects:
-            if str(obj) == arg or obj.name == arg:
+            if obj.name == arg or str(obj) == arg:
                 maybe_matches.append(obj)
 
         if ctx.guild is not None:
@@ -106,10 +103,13 @@ class GuildUniqueObjectFinder(commands.Converter):
 
         maybe_matches = []
         for obj in objects:
-            if str(obj) == arg or obj.name == arg:
+            if obj.name == arg or str(obj) == arg:
                 maybe_matches.append(obj)
-            elif isinstance(obj, discord.Member) and obj.nick == arg:
-                maybe_matches.append(obj)
+            try:
+                if obj.nick == arg:
+                    maybe_matches.append(obj)
+            except AttributeError:
+                pass
 
         if not maybe_matches:
             raise commands.BadArgument(
