@@ -1,71 +1,132 @@
+import itertools
 import re
-from typing import NamedTuple, Union, Optional, cast, Type
+from typing import NamedTuple, Union, Optional
+
+import discord
 
 from redbot.core import commands
 from redbot.core.i18n import Translator
 
 _ = Translator("PermissionsConverters", __file__)
 
-MENETION_RE = re.compile(r"^<(@[!&]?)|#([0-9]{15,21})>$")
+MENTION_RE = re.compile(r"^<(?:(?:@[!&]?)|#)(\d{15,21})>$")
+
+
+def _match_id(arg: str) -> Optional[int]:
+    if arg.isdigit() and 15 <= len(arg) <= 21:
+        return int(arg)
+    else:
+        m = MENTION_RE.match(arg)
+        if m:
+            return int(m.group(1))
 
 
 class GlobalUniqueObjectFinder(commands.Converter):
-    async def convert(self, ctx: commands.Context, arg: str):
+    async def convert(
+        self, ctx: commands.Context, arg: str
+    ) -> Union[discord.Guild, discord.abc.GuildChannel, discord.abc.User, discord.Role]:
+        bot: commands.Bot = ctx.bot
+        _id = _match_id(arg)
 
-        objects = {str(c.id): c for c in ctx.bot.get_all_channels()}
-        objects.update({str(u.id): u for u in ctx.bot.users})
-        for guild in ctx.bot.guilds:
-            objects.update({str(r.id): r for r in guild.roles if not r.is_default()})
-            objects.update({str(guild.id): guild})
+        if _id is not None:
+            guild: discord.Guild = bot.get_guild(_id)
+            if guild is not None:
+                return guild
+            channel: discord.abc.GuildChannel = bot.get_channel(_id)
+            if channel is not None:
+                return channel
 
-        if arg in objects:
-            return objects[arg]
+            user: discord.User = bot.get_user(_id)
+            if user is not None:
+                return user
 
-        m = MENETION_RE.match(arg)
-        if m:
-            ret = objects.get(m.group(2), None)
-            if ret:
-                return ret
+            for guild in bot.guilds:
+                role: discord.Role = guild.get_role(_id)
+                if role is not None:
+                    return role
 
-        for func in (lambda obj: str(obj) == arg, lambda obj: obj.name == arg):
-            maybe_matches = list(filter(func, objects))
-            if len(maybe_matches) == 1:
-                return maybe_matches[0]
-            if len(maybe_matches) > 0:
-                raise commands.BadArgument(
-                    _("Could not uniquely match that, please use an id or mention for this"), arg
-                )
-        raise commands.BadArgument(
-            _("Could not uniquely match that, please use an id or mention for this"), arg
+        objects = itertools.chain(
+            bot.get_all_channels(),
+            bot.users,
+            bot.guilds,
+            *(filter(lambda r: not r.is_default(), guild.roles) for guild in bot.guilds),
         )
+
+        maybe_matches = []
+        for obj in objects:
+            if str(obj) == arg or obj.name == arg:
+                maybe_matches.append(obj)
+
+        if ctx.guild is not None:
+            for member in ctx.guild.members:
+                if member.nick == arg and not any(obj.id == member.id for obj in maybe_matches):
+                    maybe_matches.append(member)
+
+        if not maybe_matches:
+            raise commands.BadArgument(
+                _(
+                    '"{arg}" was not found. It must be the ID, mention, or name of a server, '
+                    "channel, user or role which the bot can see."
+                ).format(arg=arg)
+            )
+        elif len(maybe_matches) == 1:
+            return maybe_matches[0]
+        else:
+            raise commands.BadArgument(
+                _(
+                    '"{arg}" does not refer to a unique server, channel, user or role. Please use '
+                    "the ID for whatever/whoever you're trying to specify, or mention it/them."
+                ).format(arg=arg)
+            )
 
 
 class GuildUniqueObjectFinder(commands.Converter):
-    async def convert(self, ctx: commands.Context, arg: str):
-        objects = {str(c.id): c for c in ctx.guild.channels}
-        objects.update({str(u.id): u for u in ctx.guild.members})
-        objects.update({str(r.id): r for r in ctx.guild.roles})
+    async def convert(
+        self, ctx: commands.Context, arg: str
+    ) -> Union[discord.abc.GuildChannel, discord.Member, discord.Role]:
+        guild: discord.Guild = ctx.guild
+        _id = _match_id(arg)
 
-        if arg in objects:
-            return objects[arg]
+        if _id is not None:
+            channel: discord.abc.GuildChannel = guild.get_channel(_id)
+            if channel is not None:
+                return channel
 
-        m = MENETION_RE.match(arg)
-        if m:
-            ret = objects.get(m.group(2), None)
-            if ret:
-                return ret
+            member: discord.Member = guild.get_member(_id)
+            if member is not None:
+                return member
 
-        for func in (lambda obj: str(obj) == arg, lambda obj: obj.name == arg):
-            maybe_matches = list(filter(func, objects))
-            if len(maybe_matches) == 1:
-                return maybe_matches[0]
-            if len(maybe_matches) > 0:
-                raise commands.BadArgument(
-                    _("Could not uniquely match that, please use an id or mention for this"), arg
-                )
-        raise commands.BadArgument(
-            _("Could not uniquely match that, please use an id or mention for this"), arg
+            role: discord.Role = guild.get_role(_id)
+            if role is not None and not role.is_default():
+                return role
+
+        objects = itertools.chain(
+            guild.channels, guild.members, filter(lambda r: not r.is_default(), guild.roles)
         )
+
+        maybe_matches = []
+        for obj in objects:
+            if str(obj) == arg or obj.name == arg:
+                maybe_matches.append(obj)
+            elif isinstance(obj, discord.Member) and obj.nick == arg:
+                maybe_matches.append(obj)
+
+        if not maybe_matches:
+            raise commands.BadArgument(
+                _(
+                    '"{arg}" was not found. It must be the ID, mention, or name of a channel, '
+                    "user or role in this server."
+                ).format(arg=arg)
+            )
+        elif len(maybe_matches) == 1:
+            return maybe_matches[0]
+        else:
+            raise commands.BadArgument(
+                _(
+                    '"{arg}" does not refer to a unique channel, user or role. Please use the ID '
+                    "for whatever/whoever you're trying to specify, or mention it/them."
+                ).format(arg=arg)
+            )
 
 
 class CogOrCommand(NamedTuple):
