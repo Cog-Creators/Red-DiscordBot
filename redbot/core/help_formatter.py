@@ -179,41 +179,49 @@ class Help(dpy_formatter.HelpFormatter):
             for category, commands_ in itertools.groupby(data, key=category):
                 commands_ = sorted(commands_)
                 if len(commands_) > 0:
-                    for i, page in enumerate(
-                        pagify(self._add_subcommands(commands_), page_length=1000)
-                    ):
-                        title = category if i < 1 else f"{category} (continued)"
-                        field = EmbedField(title, page, False)
-                        emb["fields"].append(field)
-
+                    title = category
+                    field = EmbedField(title, self._add_subcommands(commands_), False)
+                    emb["fields"].append(field)
         else:
             # Get list of commands for category
             filtered = sorted(filtered)
             if filtered:
-                for i, page in enumerate(
-                    pagify(self._add_subcommands(filtered), page_length=1000)
-                ):
-                    title = (
-                        "**__Commands:__**"
-                        if not self.is_bot() and self.is_cog()
-                        else "**__Subcommands:__**"
-                    )
-                    if i > 0:
-                        title += " (continued)"
-                    field = EmbedField(title, page, False)
-                    emb["fields"].append(field)
+                title = (
+                    "**__Commands:__**"
+                    if not self.is_bot() and self.is_cog()
+                    else "**__Subcommands:__**"
+                )
+                field = EmbedField(title, self._add_subcommands(filtered), False)
+                emb["fields"].append(field)
 
         return emb
 
     @staticmethod
     def group_fields(fields: List[EmbedField], max_chars=1000):
+        if max_chars > 1000:
+            max_chars = 1000
         curr_group = []
         ret = []
         for f in fields:
-            curr_group.append(f)
-            if sum(len(f.value) for f in curr_group) > max_chars:
-                ret.append(curr_group)
-                curr_group = []
+            # Check if adding the field would go over the limit
+            #   If so, clear the curr_group if it's not empty
+            #   If it still is over the limit, pagify it and don't do regular appends
+
+            while sum(len(f2.value) for f2 in curr_group) + len(f.value) > max_chars:
+                if curr_group:
+                    ret.append(curr_group)
+                    curr_group = []
+                else:
+                    pagify_me_captain = []
+                    for i, page in enumerate(pagify(f.value, page_length=max_chars)):
+                        title = f.name if i < 1 else f"{f.name} (continued)"
+                        field = EmbedField(title, page, False)
+                        pagify_me_captain.append([field])
+                    curr_group = pagify_me_captain.pop()
+                    ret.extend(pagify_me_captain)
+                    break
+            else:
+                curr_group.append(f)
 
         if len(curr_group) > 0:
             ret.append(curr_group)
