@@ -1074,7 +1074,6 @@ class Core(commands.Cog, CoreLogic):
         """Toggle whether help will be sent in a DM or not.
          If this is enabled, the help message will be sent to the
         command author via DM.
-        I
          The default value is None
         """
         current_setting = ctx.bot.pm_help
