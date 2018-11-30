@@ -1069,6 +1069,22 @@ class Core(commands.Cog, CoreLogic):
         await ctx.bot.db.help.tagline.set(tagline)
         await ctx.send(_("The tagline has been set to {}.").format(tagline[:1900]))
 
+    @helpset.command(name="dm")
+    async def helpset_toggle_dm(self, ctx: commands.Context):
+        """Toggle whether help will be sent in a DM or not.
+         If this is enabled, the help message will be sent to the
+        command author via DM.
+        I
+         The default value is None
+        """
+        current_setting = ctx.bot.pm_help
+        ctx.bot.pm_help = not current_setting
+        await ctx.send(
+            _("Done. Help will now be sent in {}.").format(
+                _("DMs") if not current_setting else _("the channel")
+            )
+        )
+
     @commands.command()
     @checks.is_owner()
     async def listlocales(self, ctx: commands.Context):
