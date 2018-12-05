@@ -1,7 +1,8 @@
 import discord
 from typing import Union, Optional
 
-from redbot.core import checks, Config, modlog, commands
+from redbot.core import checks, Config, modlog, commands, filter
+from redbot.core.errors import FilterAlreadyExists, NonExistentFilter, InvalidTarget
 from redbot.core.bot import Red
 from redbot.core.i18n import Translator, cog_i18n
 from redbot.core.utils.chat_formatting import pagify
@@ -23,6 +24,10 @@ class Filter(commands.Cog):
             "filterban_time": 0,
             "filter_names": False,
             "filter_default_name": "John Doe",
+            "filter_urls": False,
+            "filter_invites": False,
+            "filter_massmentions": False,
+            "filter_othermentions": 0,
         }
         default_member_settings = {"filter_count": 0, "next_reset_time": 0}
         default_channel_settings = {"filter": []}
@@ -49,6 +54,46 @@ class Filter(commands.Cog):
     async def filterset(self, ctx: commands.Context):
         """Manage filter settings."""
         pass
+
+    @filterset.command(name="urls")
+    async def filterset_urls(self, ctx: commands.Context):
+        current = await self.settings.guild(ctx.guild).filter_urls()
+        await self.settings.guild(ctx.guild).filter_urls.set(not current)
+        if current:
+            await ctx.send(_("URLs will not be matched when checking the filter."))
+        else:
+            await ctx.send(_("URLs will be matched when checking the filter."))
+
+    @filterset.command(name="invites")
+    async def filterset_invites(self, ctx: commands.Context):
+        current = await self.settings.guild(ctx.guild).filter_invites()
+        await self.settings.guild(ctx.guild).filter_invites.set(not current)
+        if current:
+            await ctx.send(_("Invites will not be matched when checking the filter."))
+        else:
+            await ctx.send(_("Invites will be matched when checking the filter."))
+
+    @filterset.command(name="massmentions")
+    async def filterset_massmentions(self, ctx: commands.Context):
+        current = await self.settings.guild(ctx.guild).filter_massmentions()
+        await self.settings.guild(ctx.guild).filter_massmentions.set(not current)
+        if current:
+            await ctx.send(_("Mass mentions will not be matched when checking the filter."))
+        else:
+            await ctx.send(_("Mass mentions will be matched when checking the filter."))
+
+    @filterset.command(name="mentions")
+    async def filterset_mentions(self, ctx: commands.Context, number: int):
+        if number < 0:
+            await ctx.send(_("Number must be 0 or greater!"))
+            return
+        await self.settings.guild(ctx.guild).filter_othermentions.set(current)
+        if number > 0:
+            await ctx.send(
+                _("Messages with {number} or more mentions will be filtered").format(number)
+            )
+        else:
+            await ctx.send(_("Mentions will not be matched when checking the filter."))
 
     @filterset.command(name="defaultname")
     async def filter_default_name(self, ctx: commands.Context, name: str):
@@ -136,46 +181,50 @@ class Filter(commands.Cog):
                     await ctx.send(_("I can't send direct messages to you."))
 
     @_filter_channel.command("add")
-    async def filter_channel_add(self, ctx: commands.Context, is_sentence: Optional[bool]=False, *, words: str):
+    async def filter_channel_add(
+        self, ctx: commands.Context, is_sentence: Optional[bool] = False, *, words: str
+    ):
         """Add words to the filter.
 
-        Use double quotes to add sentences.
+        Put `yes` before the text to be added to add a sentence.
 
         Examples:
         - `[p]filter channel add word1 word2 word3`
-        - `[p]filter channel add "This is a sentence"`
+        - `[p]filter channel add yes This is a sentence`
         """
         channel = ctx.channel
-        split_words = words.split()
-        word_list = []
-        tmp = ""
-        for word in split_words:
-            if not word.startswith('"') and not word.endswith('"') and not tmp:
-                word_list.append(word)
-            else:
-                if word.startswith('"'):
-                    tmp += word[1:] + " "
-                elif word.endswith('"'):
-                    tmp += word[:-1]
-                    word_list.append(tmp)
-                    tmp = ""
-                else:
-                    tmp += word + " "
-        added = await self.add_to_filter(channel, word_list)
-        if added:
-            await ctx.send(_("Words added to filter."))
+        if is_sentence:
+            try:
+                await filter.add(words, ctx.channel)
+            except InvalidTarget as e:
+                await ctx.send(str(e))
+                return
+            except FilterAlreadyExists as e:
+                await ctx.send(str(e))
+                return
         else:
-            await ctx.send(_("Words already in the filter."))
+            for word in words.split():
+                try:
+                await filter.add(words, ctx.channel)
+            except InvalidTarget as e:
+                await ctx.send(str(e))
+                return
+            except FilterAlreadyExists as e:
+                await ctx.send(str(e))
+                return
+        await ctx.send(_("Words added to filter."))
 
     @_filter_channel.command("remove")
-    async def filter_channel_remove(self, ctx: commands.Context, is_sentence: Optional[bool]=False, *, words: str):
+    async def filter_channel_remove(
+        self, ctx: commands.Context, is_sentence: Optional[bool] = False, *, words: str
+    ):
         """Remove words from the filter.
 
-        Use double quotes to remove sentences.
+        Put `yes` before the text to be removed to remove a sentence.
 
         Examples:
         - `[p]filter channel remove word1 word2 word3`
-        - `[p]filter channel remove "This is a sentence"`
+        - `[p]filter channel remove yes This is a sentence`
         """
         channel = ctx.channel
         split_words = words.split()
@@ -200,14 +249,16 @@ class Filter(commands.Cog):
             await ctx.send(_("Those words weren't in the filter."))
 
     @_filter.command(name="add")
-    async def filter_add(self, ctx: commands.Context, is_sentence: Optional[bool]=False, *, words: str):
+    async def filter_add(
+        self, ctx: commands.Context, is_sentence: Optional[bool] = False, *, words: str
+    ):
         """Add words to the filter.
 
-        Use double quotes to add sentences.
+        Put `yes` before the text to be added to add a sentence.
 
         Examples:
         - `[p]filter add word1 word2 word3`
-        - `[p]filter add "This is a sentence"`
+        - `[p]filter add yes This is a sentence`
         """
         server = ctx.guild
         split_words = words.split()
@@ -232,14 +283,16 @@ class Filter(commands.Cog):
             await ctx.send(_("Those words were already in the filter."))
 
     @_filter.command(name="remove")
-    async def filter_remove(self, ctx: commands.Context, is_sentence: Optional[bool]=False, *, words: str):
+    async def filter_remove(
+        self, ctx: commands.Context, is_sentence: Optional[bool] = False, *, words: str
+    ):
         """Remove words from the filter.
 
-        Use double quotes to remove sentences.
+        Put `yes` before the text to be removed to remove a sentence.
 
         Examples:
         - `[p]filter remove word1 word2 word3`
-        - `[p]filter remove "This is a sentence"`
+        - `[p]filter remove yes This is a sentence`
         """
         server = ctx.guild
         split_words = words.split()

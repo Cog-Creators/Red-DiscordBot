@@ -66,14 +66,14 @@ class InvalidTarget(FilterError, TypeError):
         return _(
             "Filter target must be either `discord.Guild` or `discord.TextChannel, not {target}"
         ).format(target=self.target)
-    
+
 
 class FilterAlreadyExists(FilterError):
     def __init__(self, text, target, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.text = text
         self.target = target
-    
+
     def __str__(self) -> str:
         return _("Filter `{filter}` already exists for {target}").format(
             filter=self.text, target=self.target
@@ -85,7 +85,7 @@ class NonExistentFilter(FilterError):
         super().__init__(*args, **kwargs)
         self.text = text
         self.target = target
-    
+
     def __str__(self) -> str:
         return _("Filter `{filter}` doesn't exist for {target}").format(
             filter=self.text, target=self.target
