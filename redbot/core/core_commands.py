@@ -197,14 +197,14 @@ class CoreLogic:
 
     async def _reload(
         self, cog_names: Sequence[str]
-    ) -> Tuple[List[str], List[str], List[str], List[str]]:
+    ) -> Tuple[List[str], List[str], List[str], List[str], List[Tuple[str, str]]]:
         await self._unload(cog_names)
 
         loaded, load_failed, not_found, already_loaded, load_failed_with_reason = await self._load(
             cog_names
         )
 
-        return loaded, load_failed, not_found, already_loaded
+        return loaded, load_failed, not_found, already_loaded, load_failed_with_reason
 
     async def _name(self, name: Optional[str] = None) -> str:
         """
@@ -1118,21 +1118,20 @@ class Core(commands.Cog, CoreLogic):
         if basic_config["STORAGE_TYPE"] == "MongoDB":
             from redbot.core.drivers.red_mongo import Mongo
 
-            m = Mongo("Core", **basic_config["STORAGE_DETAILS"])
+            m = Mongo("Core", "0", **basic_config["STORAGE_DETAILS"])
             db = m.db
-            collection_names = await db.collection_names(include_system_collections=False)
+            collection_names = await db.list_collection_names()
             for c_name in collection_names:
                 if c_name == "Core":
                     c_data_path = data_dir / basic_config["CORE_PATH_APPEND"]
                 else:
-                    c_data_path = data_dir / basic_config["COG_PATH_APPEND"]
-                output = {}
+                    c_data_path = data_dir / basic_config["COG_PATH_APPEND"] / c_name
                 docs = await db[c_name].find().to_list(None)
                 for item in docs:
                     item_id = str(item.pop("_id"))
-                    output[item_id] = item
-                target = JSON(c_name, data_path_override=c_data_path)
-                await target.jsonIO._threadsafe_save_json(output)
+                    output = item
+                    target = JSON(c_name, item_id, data_path_override=c_data_path)
+                    await target.jsonIO._threadsafe_save_json(output)
         backup_filename = "redv3-{}-{}.tar.gz".format(
             instance_name, ctx.message.created_at.strftime("%Y-%m-%d %H-%M-%S")
         )
