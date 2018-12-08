@@ -1,4 +1,4 @@
-import discord
+`import discord
 from typing import Union, Optional
 
 from redbot.core import checks, Config, modlog, commands, filter
@@ -227,26 +227,26 @@ class Filter(commands.Cog):
         - `[p]filter channel remove yes This is a sentence`
         """
         channel = ctx.channel
-        split_words = words.split()
-        word_list = []
-        tmp = ""
-        for word in split_words:
-            if not word.startswith('"') and not word.endswith('"') and not tmp:
-                word_list.append(word)
-            else:
-                if word.startswith('"'):
-                    tmp += word[1:] + " "
-                elif word.endswith('"'):
-                    tmp += word[:-1]
-                    word_list.append(tmp)
-                    tmp = ""
-                else:
-                    tmp += word + " "
-        removed = await self.remove_from_filter(channel, word_list)
-        if removed:
-            await ctx.send(_("Words removed from filter."))
+        if is_sentence:
+            try:
+                await filter.remove(words, ctx.channel)
+            except InvalidTarget as e:
+                await ctx.send(str(e))
+                return
+            except NonExistentFilter as e:
+                await ctx.send(str(e))
+                return
         else:
-            await ctx.send(_("Those words weren't in the filter."))
+            for word in words.split():
+                try:
+                await filter.remove(words, ctx.channel)
+            except InvalidTarget as e:
+                await ctx.send(str(e))
+                return
+            except NonExistentFilter as e:
+                await ctx.send(str(e))
+                return
+        await ctx.send(_("Words removed from the filter."))
 
     @_filter.command(name="add")
     async def filter_add(
@@ -260,27 +260,26 @@ class Filter(commands.Cog):
         - `[p]filter add word1 word2 word3`
         - `[p]filter add yes This is a sentence`
         """
-        server = ctx.guild
-        split_words = words.split()
-        word_list = []
-        tmp = ""
-        for word in split_words:
-            if not word.startswith('"') and not word.endswith('"') and not tmp:
-                word_list.append(word)
-            else:
-                if word.startswith('"'):
-                    tmp += word[1:] + " "
-                elif word.endswith('"'):
-                    tmp += word[:-1]
-                    word_list.append(tmp)
-                    tmp = ""
-                else:
-                    tmp += word + " "
-        added = await self.add_to_filter(server, word_list)
-        if added:
-            await ctx.send(_("Words successfully added to filter."))
+        if is_sentence:
+            try:
+                await filter.add(words, ctx.guild)
+            except InvalidTarget as e:
+                await ctx.send(str(e))
+                return
+            except FilterAlreadyExists as e:
+                await ctx.send(str(e))
+                return
         else:
-            await ctx.send(_("Those words were already in the filter."))
+            for word in words.split():
+                try:
+                await filter.add(words, ctx.guild)
+            except InvalidTarget as e:
+                await ctx.send(str(e))
+                return
+            except FilterAlreadyExists as e:
+                await ctx.send(str(e))
+                return
+        await ctx.send(_("Words added to filter."))
 
     @_filter.command(name="remove")
     async def filter_remove(
@@ -294,27 +293,26 @@ class Filter(commands.Cog):
         - `[p]filter remove word1 word2 word3`
         - `[p]filter remove yes This is a sentence`
         """
-        server = ctx.guild
-        split_words = words.split()
-        word_list = []
-        tmp = ""
-        for word in split_words:
-            if not word.startswith('"') and not word.endswith('"') and not tmp:
-                word_list.append(word)
-            else:
-                if word.startswith('"'):
-                    tmp += word[1:] + " "
-                elif word.endswith('"'):
-                    tmp += word[:-1]
-                    word_list.append(tmp)
-                    tmp = ""
-                else:
-                    tmp += word + " "
-        removed = await self.remove_from_filter(server, word_list)
-        if removed:
-            await ctx.send(_("Words successfully removed from filter."))
+        if is_sentence:
+            try:
+                await filter.remove(words, ctx.guild)
+            except InvalidTarget as e:
+                await ctx.send(str(e))
+                return
+            except NonExistentFilter as e:
+                await ctx.send(str(e))
+                return
         else:
-            await ctx.send(_("Those words weren't in the filter."))
+            for word in words.split():
+                try:
+                await filter.remove(words, ctx.guild)
+            except InvalidTarget as e:
+                await ctx.send(str(e))
+                return
+            except NonExistentFilter as e:
+                await ctx.send(str(e))
+                return
+        await ctx.send(_("Words removed from the filter."))
 
     @_filter.command(name="names")
     async def filter_names(self, ctx: commands.Context):
@@ -329,46 +327,6 @@ class Filter(commands.Cog):
             await ctx.send(_("Names and nicknames will no longer be filtered."))
         else:
             await ctx.send(_("Names and nicknames will now be filtered."))
-
-    async def add_to_filter(
-        self, server_or_channel: Union[discord.Guild, discord.TextChannel], words: list
-    ) -> bool:
-        added = False
-        if isinstance(server_or_channel, discord.Guild):
-            async with self.settings.guild(server_or_channel).filter() as cur_list:
-                for w in words:
-                    if w.lower() not in cur_list and w:
-                        cur_list.append(w.lower())
-                        added = True
-
-        elif isinstance(server_or_channel, discord.TextChannel):
-            async with self.settings.channel(server_or_channel).filter() as cur_list:
-                for w in words:
-                    if w.lower not in cur_list and w:
-                        cur_list.append(w.lower())
-                        added = True
-
-        return added
-
-    async def remove_from_filter(
-        self, server_or_channel: Union[discord.Guild, discord.TextChannel], words: list
-    ) -> bool:
-        removed = False
-        if isinstance(server_or_channel, discord.Guild):
-            async with self.settings.guild(server_or_channel).filter() as cur_list:
-                for w in words:
-                    if w.lower() in cur_list:
-                        cur_list.remove(w.lower())
-                        removed = True
-
-        elif isinstance(server_or_channel, discord.TextChannel):
-            async with self.settings.channel(server_or_channel).filter() as cur_list:
-                for w in words:
-                    if w.lower() in cur_list:
-                        cur_list.remove(w.lower())
-                        removed = True
-
-        return removed
 
     async def check_filter(self, message: discord.Message):
         server = message.guild
@@ -419,6 +377,14 @@ class Filter(commands.Cog):
                                         server.me,
                                         reason,
                                     )
+    async def _check_settings(self):
+        s = self.settings.guild(ctx.guild)
+        ret = {}
+        ret["check_urls"] = await s.filter_urls()
+        ret["check_invites"] = await s.filter_invites()
+        ret["check_mass_mentions"] = await s.filter_massmentions()
+        ret["check_other_mentions"] = await s.filter_othermentions()
+        return ret
 
     async def on_message(self, message: discord.Message):
         if isinstance(message.channel, discord.abc.PrivateChannel):
@@ -430,8 +396,9 @@ class Filter(commands.Cog):
 
         if await self.bot.is_automod_immune(message):
             return
-
-        await self.check_filter(message)
+        
+        s = await self._check_settings()
+        await filter.check(message, **s)
 
     async def on_message_edit(self, _prior, message):
         # message content has to change for non-bot's currently.
@@ -455,13 +422,13 @@ class Filter(commands.Cog):
         if not await self.settings.guild(member.guild).filter_names():
             return
 
-        word_list = await self.settings.guild(member.guild).filter()
-        for w in word_list:
-            if w in member.display_name.lower():
-                name_to_use = await self.settings.guild(member.guild).filter_default_name()
-                reason = _("Filtered nickname") if member.nick else _("Filtered name")
-                try:
-                    await member.edit(nick=name_to_use, reason=reason)
-                except discord.HTTPException:
-                    pass
-                return
+        name_filtered = await filter.check_name(member)
+        if name_filtered:
+            name_to_use = await self.settings.guild(member.guild).filter_default_name()
+            reason = _("Filtered nickname") if member.nick else _("Filtered name")
+            try:
+                await member.edit(nick=name_to_use, reason=reason)
+            except discord.HTTPException:
+                pass
+            return
+`

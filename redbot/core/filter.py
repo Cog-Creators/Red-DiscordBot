@@ -92,3 +92,15 @@ async def check(
         if term in msg.content.lower():
             return True, term
     return False, None
+
+
+async def check_name(member: discord.Member) -> bool:
+    guild = member.guild
+    guild_filter = await _conf.guild(guild).filter()
+
+    for term in guild_filter:
+        if member.nick and term in member.nick:
+            return True
+        elif not member.nick and term in member.name:
+            return True
+    return False
