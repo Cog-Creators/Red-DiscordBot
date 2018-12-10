@@ -431,4 +431,3 @@ class Filter(commands.Cog):
             except discord.HTTPException:
                 pass
             return
-`
