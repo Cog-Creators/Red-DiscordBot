@@ -2,6 +2,9 @@ import sys
 import warnings
 import discord
 import colorama
+import yaml
+
+from .safety import warn_unsafe
 
 # Let's do all the dumb version checking in one place.
 if sys.platform == "win32":
@@ -32,3 +35,6 @@ colorama.init()
 warnings.filterwarnings("ignore", module=r"fuzzywuzzy.*")
 # Prevent discord PyNaCl missing warning
 discord.voice_client.VoiceClient.warn_nacl = False
+
+# Warn on known unsafe usage of dependencies
+yaml.load = warn_unsafe(yaml.load, "Use yaml.safe_load instead. See CVE-2017-18342")
