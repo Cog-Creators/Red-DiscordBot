@@ -22,6 +22,16 @@ if not os.environ.get("BUILDING_DOCS"):
 
 
 async def add(text: str, destination: Union[discord.Guild, discord.TextChannel]):
+    """
+    Adds text to the filter
+
+    Parameters
+    ----------
+    text: str
+        The text to add to the filter
+    destination: discord.Guild or discord.TextChannel
+        The target of the filter to be added
+    """
     if isinstance(destination, discord.Guild):
         async with _conf.guild(destination).filter() as guild_filter:
             if text.lower() in guild_filter:
@@ -39,6 +49,16 @@ async def add(text: str, destination: Union[discord.Guild, discord.TextChannel])
 
 
 async def remove(text: str, destination: Union[discord.Guild, discord.TextChannel]):
+    """
+    Removes text from the filter
+
+    Parameters
+    ----------
+    text: str
+        The text to remove from the filter
+    destination: discord.Guild or discord.TextChannel
+        The target of the filter to be removed
+    """
     if isinstance(destination, discord.Guild):
         async with _conf.guild(destination).filter() as guild_filter:
             if text.lower() not in guild_filter:
@@ -62,6 +82,30 @@ async def check(
     check_mass_mentions: bool = False,
     check_other_mentions: int = 0,
 ) -> Tuple[bool, Union[str, List[re.Match], None]]:
+    """
+    Checks the message for filtered content.
+
+    Parameters
+    ----------
+    msg: discord.Message
+        The message to check
+    check_urls: bool, optional
+        Whether to check for urls in the message
+    check_invites: bool, optional
+        Whether to check for invites in the message
+    check_mass_mentions: bool, optional:
+        Whether to check for mass mentions (e.g. everyone or here) in the message
+    check_other_mentions: int, optional:
+        If greater than 0, the number of other mentions (e.g. user, role, channel) that 
+        indicate the message should be filtered
+    
+    Returns
+    -------
+    Tuple[bool, Union[str, List[re.Match], None]]
+        A tuple with the first value representing whether the message should be filtered
+        and the second being the match or list of matches, or None if the message is not
+        filtered
+    """
     channel = msg.channel
     guild = msg.guild
 
@@ -95,6 +139,20 @@ async def check(
 
 
 async def check_name(member: discord.Member) -> bool:
+    """
+    Checks if the member's name or nick match anything in the filter
+
+    Parameters
+    ----------
+    member: discord.Member
+        The member to check
+    
+    Returns
+    -------
+    bool
+        True if the user's nickname (or name, if the user doesn't have a nickname in the guild) 
+        contains any filtered content, otherwise False
+    """
     guild = member.guild
     guild_filter = await _conf.guild(guild).filter()
 
