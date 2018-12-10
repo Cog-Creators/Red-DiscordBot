@@ -205,13 +205,13 @@ class Filter(commands.Cog):
         else:
             for word in words.split():
                 try:
-                await filter.add(words, ctx.channel)
-            except InvalidTarget as e:
-                await ctx.send(str(e))
-                return
-            except FilterAlreadyExists as e:
-                await ctx.send(str(e))
-                return
+                    await filter.add(words, ctx.channel)
+                except InvalidTarget as e:
+                    await ctx.send(str(e))
+                    return
+                except FilterAlreadyExists as e:
+                    await ctx.send(str(e))
+                    return
         await ctx.send(_("Words added to filter."))
 
     @_filter_channel.command("remove")
@@ -239,13 +239,13 @@ class Filter(commands.Cog):
         else:
             for word in words.split():
                 try:
-                await filter.remove(words, ctx.channel)
-            except InvalidTarget as e:
-                await ctx.send(str(e))
-                return
-            except NonExistentFilter as e:
-                await ctx.send(str(e))
-                return
+                    await filter.remove(words, ctx.channel)
+                except InvalidTarget as e:
+                    await ctx.send(str(e))
+                    return
+                except NonExistentFilter as e:
+                    await ctx.send(str(e))
+                    return
         await ctx.send(_("Words removed from the filter."))
 
     @_filter.command(name="add")
@@ -272,13 +272,13 @@ class Filter(commands.Cog):
         else:
             for word in words.split():
                 try:
-                await filter.add(words, ctx.guild)
-            except InvalidTarget as e:
-                await ctx.send(str(e))
-                return
-            except FilterAlreadyExists as e:
-                await ctx.send(str(e))
-                return
+                    await filter.add(words, ctx.guild)
+                except InvalidTarget as e:
+                    await ctx.send(str(e))
+                    return
+                except FilterAlreadyExists as e:
+                    await ctx.send(str(e))
+                    return
         await ctx.send(_("Words added to filter."))
 
     @_filter.command(name="remove")
@@ -305,13 +305,13 @@ class Filter(commands.Cog):
         else:
             for word in words.split():
                 try:
-                await filter.remove(words, ctx.guild)
-            except InvalidTarget as e:
-                await ctx.send(str(e))
-                return
-            except NonExistentFilter as e:
-                await ctx.send(str(e))
-                return
+                    await filter.remove(words, ctx.guild)
+                except InvalidTarget as e:
+                    await ctx.send(str(e))
+                    return
+                except NonExistentFilter as e:
+                    await ctx.send(str(e))
+                    return
         await ctx.send(_("Words removed from the filter."))
 
     @_filter.command(name="names")
