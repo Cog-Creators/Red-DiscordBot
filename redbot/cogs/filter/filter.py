@@ -1,4 +1,4 @@
-`import discord
+import discord
 from typing import Union, Optional
 
 from redbot.core import checks, Config, modlog, commands, filter
