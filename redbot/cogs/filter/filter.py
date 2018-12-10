@@ -377,6 +377,7 @@ class Filter(commands.Cog):
                                         server.me,
                                         reason,
                                     )
+
     async def _check_settings(self):
         s = self.settings.guild(ctx.guild)
         ret = {}
@@ -396,7 +397,7 @@ class Filter(commands.Cog):
 
         if await self.bot.is_automod_immune(message):
             return
-        
+
         s = await self._check_settings()
         await filter.check(message, **s)
 
