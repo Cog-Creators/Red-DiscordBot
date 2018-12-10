@@ -1,6 +1,6 @@
 import discord
 import os
-from typing import Union, Tuple, List
+from typing import Union, Tuple, List, Match
 import re
 
 from . import Config, errors
@@ -81,7 +81,7 @@ async def check(
     check_invites: bool = False,
     check_mass_mentions: bool = False,
     check_other_mentions: int = 0,
-) -> Tuple[bool, Union[str, List[re.Match], None]]:
+) -> Tuple[bool, Union[str, List[Match], None]]:
     """
     Checks the message for filtered content.
 
@@ -101,7 +101,7 @@ async def check(
     
     Returns
     -------
-    Tuple[bool, Union[str, List[re.Match], None]]
+    Tuple[bool, Union[str, List[Match], None]]
         A tuple with the first value representing whether the message should be filtered
         and the second being the match or list of matches, or None if the message is not
         filtered
