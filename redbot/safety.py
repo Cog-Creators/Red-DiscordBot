@@ -46,4 +46,4 @@ def warn_unsafe(f, message=None):
 
         return get_wrapped
 
-    return wrapper
+    return wrapper(f)
