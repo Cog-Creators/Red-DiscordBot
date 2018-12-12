@@ -16,8 +16,8 @@ def unsafe(f, message=None):
     def wrapper(func):
         @functools.wraps(func)
         def get_wrapped(*args, **kwargs):
-            message = message or f"{func.__name__} is unsafe for use"
-            warnings.warn(message, stacklevel=3, category=RuntimeWarning)
+            actual_message = message or f"{func.__name__} is unsafe for use"
+            warnings.warn(actual_message, stacklevel=3, category=RuntimeWarning)
             return func(*args, **kwargs)
 
         return get_wrapped
@@ -40,8 +40,8 @@ def warn_unsafe(f, message=None):
     def wrapper(func):
         @functools.wraps(func)
         def get_wrapped(*args, **kwargs):
-            message = message or f"{func.__name__} is unsafe for use"
-            warnings.warn(message, stacklevel=3, category=RuntimeWarning)
+            actual_message = message or f"{func.__name__} is unsafe for use"
+            warnings.warn(actual_message, stacklevel=3, category=RuntimeWarning)
             return func(*args, **kwargs)
 
         return get_wrapped
