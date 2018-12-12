@@ -675,8 +675,8 @@ Public License instead of this License.  But first, please read
 
 The Red-DiscordBot project contains subcomponents in audio.py that have a 
 separate copyright notice and license terms. Your use of the source code for 
-the these subcomponents is subject to the terms and conditions of the 
-following licenses.
+these subcomponents is subject to the terms and conditions of the following 
+licenses.
 
 This product bundles methods from https://github.com/Just-Some-Bots/MusicBot/
 blob/master/musicbot/spotify.py which are available under an MIT license.
