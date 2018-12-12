@@ -1,10 +1,12 @@
 import aiohttp
 import asyncio
+import base64
 import datetime
 import discord
 from fuzzywuzzy import process
 import heapq
 import lavalink
+import logging
 import math
 import os
 import random
@@ -29,8 +31,13 @@ from .manager import shutdown_lavalink_server
 
 _ = Translator("Audio", __file__)
 
-__version__ = "0.0.7"
-__author__ = ["aikaterna", "billy/bollo/ati"]
+__version__ = "0.0.8b"
+__author__ = ["aikaterna"]
+
+log = logging.getLogger("red.audio")
+
+class YouTubeAPIError(Exception):
+    pass
 
 
 @cog_i18n(_)
@@ -50,6 +57,9 @@ class Audio(commands.Cog):
             "status": False,
             "current_version": redbot.core.VersionInfo.from_str("3.0.0a0").to_json(),
             "use_external_lavalink": False,
+            "spotify_client_id": None,
+            "spotify_client_secret": None,
+            "youtube_api": None,
         }
 
         default_guild = {
@@ -75,6 +85,8 @@ class Audio(commands.Cog):
         self.session = aiohttp.ClientSession()
         self._disconnect_task = None
         self._cleaned_up = False
+        self.spotify_token = None
+        self.play_lock = {}
 
     async def initialize(self):
         host = await self.config.host()
@@ -226,12 +238,12 @@ class Audio(commands.Cog):
                 await player.skip()
 
     @commands.group()
-    @commands.guild_only()
     async def audioset(self, ctx):
         """Music configuration options."""
         pass
 
     @audioset.command()
+    @commands.guild_only()
     @checks.admin_or_permissions(manage_roles=True)
     async def dj(self, ctx):
         """Toggle DJ mode.
@@ -258,6 +270,7 @@ class Audio(commands.Cog):
         )
 
     @audioset.command()
+    @commands.guild_only()
     @checks.mod_or_permissions(administrator=True)
     async def emptydisconnect(self, ctx, seconds: int):
         """Auto-disconnection after x seconds while stopped. 0 to disable."""
@@ -281,14 +294,7 @@ class Audio(commands.Cog):
         await self.config.guild(ctx.guild).emptydc_enabled.set(enabled)
 
     @audioset.command()
-    @checks.admin_or_permissions(manage_roles=True)
-    async def role(self, ctx, role_name: discord.Role):
-        """Set the role to use for DJ mode."""
-        await self.config.guild(ctx.guild).dj_role.set(role_name.id)
-        dj_role_obj = ctx.guild.get_role(await self.config.guild(ctx.guild).dj_role())
-        await self._embed_msg(ctx, _("DJ role set to: {role.name}.").format(role=dj_role_obj))
-
-    @audioset.command()
+    @commands.guild_only()
     @checks.mod_or_permissions(administrator=True)
     async def jukebox(self, ctx, price: int):
         """Set a price for queueing tracks for non-mods. 0 to disable."""
@@ -310,6 +316,7 @@ class Audio(commands.Cog):
         await self.config.guild(ctx.guild).jukebox.set(jukebox)
 
     @audioset.command()
+    @commands.guild_only()
     @checks.mod_or_permissions(manage_messages=True)
     async def notify(self, ctx):
         """Toggle track announcement and other bot messages."""
@@ -320,6 +327,16 @@ class Audio(commands.Cog):
         )
 
     @audioset.command()
+    @commands.guild_only()
+    @checks.admin_or_permissions(manage_roles=True)
+    async def role(self, ctx, role_name: discord.Role):
+        """Set the role to use for DJ mode."""
+        await self.config.guild(ctx.guild).dj_role.set(role_name.id)
+        dj_role_obj = ctx.guild.get_role(await self.config.guild(ctx.guild).dj_role())
+        await self._embed_msg(ctx, _("DJ role set to: {role.name}.").format(role=dj_role_obj))
+
+    @audioset.command()
+    @commands.guild_only()
     async def settings(self, ctx):
         """Show the current settings."""
         data = await self.config.guild(ctx.guild).all()
@@ -367,6 +384,50 @@ class Audio(commands.Cog):
         return await ctx.send(embed=embed)
 
     @audioset.command()
+    @checks.is_owner()
+    async def spotifyid(self, ctx, id_key=None):
+        """Set the Spotify API client ID.
+
+           Use this command with no key to reset the saved value."""
+        if not id_key:
+            await self.config.spotify_client_id.set(None)
+            return await self._embed_msg(ctx, _("Spotify API ID has been cleared."))
+        await self.config.spotify_client_id.set(str(id_key))
+        try:
+            await ctx.message.delete()
+        except discord.Forbidden:
+            pass
+        await self._embed_msg(ctx, _("Spotify API client ID set."))
+
+    @audioset.command()
+    @checks.is_owner()
+    async def spotifysecret(self, ctx, secret_key=None):
+        """Set the Spotify API client secret.
+
+           Use this command with no key to reset the saved value."""
+        if not secret_key:
+            await self.config.spotify_client_secret.set(None)
+            return await self._embed_msg(ctx, _("Spotify API secret has been cleared."))
+        await self.config.spotify_client_secret.set(str(secret_key))
+        try:
+            await ctx.message.delete()
+        except discord.Forbidden:
+            pass
+        await self._embed_msg(ctx, _("Spotify API client secret set."))
+
+    @checks.is_owner()
+    @commands.guild_only()
+    @audioset.command()
+    async def status(self, ctx):
+        """Enable/disable tracks' titles as status."""
+        status = await self.config.status()
+        await self.config.status.set(not status)
+        await self._embed_msg(
+            ctx, _("Song titles as status: {true_or_false}.").format(true_or_false=not status)
+        )
+
+    @audioset.command()
+    @commands.guild_only()
     @checks.mod_or_permissions(administrator=True)
     async def thumbnail(self, ctx):
         """Toggle displaying a thumbnail on audio messages."""
@@ -377,6 +438,7 @@ class Audio(commands.Cog):
         )
 
     @audioset.command()
+    @commands.guild_only()
     @checks.mod_or_permissions(administrator=True)
     async def vote(self, ctx, percent: int):
         """Percentage needed for non-mods to skip tracks. 0 to disable."""
@@ -398,21 +460,28 @@ class Audio(commands.Cog):
         await self.config.guild(ctx.guild).vote_percent.set(percent)
         await self.config.guild(ctx.guild).vote_enabled.set(enabled)
 
-    @checks.is_owner()
     @audioset.command()
-    async def status(self, ctx):
-        """Enable/disable tracks' titles as status."""
-        status = await self.config.status()
-        await self.config.status.set(not status)
-        await self._embed_msg(
-            ctx, _("Song titles as status: {true_or_false}.").format(true_or_false=not status)
-        )
+    @checks.is_owner()
+    async def youtubeapi(self, ctx, yt_key=None):
+        """Set the YouTube API key.
+
+           Use this command with no key to reset the saved value."""
+        if not yt_key:
+            await self.config.youtube_api.set(None)
+            return await self._embed_msg(ctx, _("YouTube API key has been cleared."))
+        await self.config.youtube_api.set(str(yt_key))
+        try:
+            await ctx.message.delete()
+        except discord.Forbidden:
+            pass
+        await self._embed_msg(ctx, _("YouTube API key set."))
 
     @commands.command()
     @commands.guild_only()
     async def audiostats(self, ctx):
         """Audio stats."""
         server_num = len([p for p in lavalink.players if p.current is not None])
+        total_num = len([p for p in lavalink.players])
         server_list = []
 
         for p in lavalink.players:
@@ -454,7 +523,7 @@ class Audio(commands.Cog):
             servers = "\n".join(server_list)
         embed = discord.Embed(
             colour=await ctx.embed_colour(),
-            title=_("Connected in {num} servers:").format(num=server_num),
+            title=_("Playing in {num}/{total} servers:").format(num=server_num, total=total_num),
             description=servers,
         )
         await ctx.send(embed=embed)
@@ -869,7 +938,7 @@ class Audio(commands.Cog):
         """Play a URL or search for a track."""
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         jukebox_price = await self.config.guild(ctx.guild).jukebox_price()
-        shuffle = await self.config.guild(ctx.guild).shuffle()
+        global_data = await self.config.all()
         if not self._player_check(ctx):
             try:
                 if not ctx.author.voice.channel.permissions_for(ctx.me).connect or self._userlimit(
@@ -903,6 +972,66 @@ class Audio(commands.Cog):
             return await self._embed_msg(ctx, _("No tracks to play."))
         query = query.strip("<>")
 
+        if "open.spotify.com" in query:
+            query = "spotify:{}".format(
+                re.sub("(http[s]?:\/\/)?(open.spotify.com)\/", "", query).replace("/", ":")
+            )
+        if query.startswith("spotify:"):
+            parts = query.split(":")
+            if (
+                not global_data["spotify_client_id"]
+                or not global_data["spotify_client_secret"]
+                or not global_data["youtube_api"]
+            ):
+                return await self._embed_msg(
+                    ctx,
+                    _(
+                        "The owner needs to set the Spotify client ID, Spotify client secret, and YouTube API key before Spotify URLs or codes can be used."
+                    ),
+                )
+
+            try:
+                if self.play_lock[ctx.message.guild.id]:
+                    return await self._embed_msg(
+                        ctx, _("Wait until the playlist has finished loading.")
+                    )
+            except KeyError:
+                pass
+
+            if "track" in parts:
+                res = await self._make_spotify_req(
+                    "https://api.spotify.com/v1/tracks/{0}".format(parts[-1])
+                )
+                query = "{} {}".format(res["artists"][0]["name"], res["name"])
+            elif "album" in parts:
+                query = parts[-1]
+                self._play_lock(ctx, True)
+                track_list = await self._spotify_playlist(
+                    ctx, "album", global_data["youtube_api"], query
+                )
+                if not track_list:
+                    return
+                return await self._enqueue_tracks(ctx, track_list)
+            elif "playlist" in parts:
+                query = parts[-1]
+                self._play_lock(ctx, True)
+                if "user" in parts:
+                    track_list = await self._spotify_playlist(
+                        ctx, "user_playlist", global_data["youtube_api"], query
+                    )
+                else:
+                    track_list = await self._spotify_playlist(
+                        ctx, "playlist", global_data["youtube_api"], query
+                    )
+                if not track_list:
+                    return
+                return await self._enqueue_tracks(ctx, track_list)
+
+            else:
+                return await self._embed_msg(
+                    ctx, _("This doesn't seem to be a valid Spotify URL or code.")
+                )
+
         if query.startswith("localtrack:"):
             await self._localtracks_check(ctx)
             query = query.replace("localtrack:", "").replace(
@@ -912,9 +1041,17 @@ class Audio(commands.Cog):
         if not self._match_url(query) and not (query.lower().endswith(allowed_files)):
             query = "ytsearch:{}".format(query)
 
-        tracks = await player.get_tracks(query)
-        if not tracks:
-            return await self._embed_msg(ctx, _("Nothing found."))
+        await self._enqueue_tracks(ctx, query)
+
+    async def _enqueue_tracks(self, ctx, query):
+        player = lavalink.get_player(ctx.guild.id)
+        shuffle = await self.config.guild(ctx.guild).shuffle()
+        if type(query) is not list:
+            tracks = await player.get_tracks(query)
+            if not tracks:
+                return await self._embed_msg(ctx, _("Nothing found."))
+        else:
+            tracks = query
 
         queue_duration = await self._queue_duration(ctx)
         queue_total_duration = lavalink.utils.format_time(queue_duration)
@@ -937,8 +1074,11 @@ class Audio(commands.Cog):
             if not player.current:
                 await player.play()
         else:
-            single_track = tracks[0]
-            player.add(ctx.author, single_track)
+            try:
+                single_track = tracks[0]
+                player.add(ctx.author, single_track)
+            except IndexError:
+                return await ctx.send("Nothing found. Check your Lavalink logs for details.")
 
             if "localtracks" in single_track.uri:
                 if not single_track.title == "Unknown title":
@@ -965,6 +1105,97 @@ class Audio(commands.Cog):
             if not player.current:
                 await player.play()
         await ctx.send(embed=embed)
+        if type(query) is list:
+            self._play_lock(ctx, False)
+
+    async def _spotify_playlist(self, ctx, stype, yt_key, query):
+        player = lavalink.get_player(ctx.guild.id)
+        spotify_info = []
+        if stype == "album":
+            r = await self._make_spotify_req("https://api.spotify.com/v1/albums/{0}".format(query))
+        else:
+            r = await self._make_spotify_req(
+                "https://api.spotify.com/v1/playlists/{0}/tracks".format(query)
+            )
+
+        while True:
+            try:
+                spotify_info.extend(r["tracks"]["items"])
+            except KeyError:
+                spotify_info.extend(r["items"])
+
+            try:
+                if r["next"] is not None:
+                    r = await self._make_spotify_req(r["next"])
+                    continue
+                else:
+                    break
+            except KeyError:
+                if r["tracks"]["next"] is not None:
+                    r = await self._make_spotify_req(r["tracks"]["next"])
+                    continue
+                else:
+                    break
+
+        embed1 = discord.Embed(
+            colour=await ctx.embed_colour(), title=_("Please wait, adding tracks...")
+        )
+        playlist_msg = await ctx.send(embed=embed1)
+        track_list = []
+        track_count = 0
+        now = int(time.time())
+        for i in spotify_info:
+            if stype == "album":
+                song_info = "{} {}".format(i["name"], i["artists"][0]["name"])
+            else:
+                song_info = "{} {}".format(i["track"]["name"], i["track"]["artists"][0]["name"])
+            try:
+                track_url = await self._youtube_api_search(yt_key, song_info)
+            except YouTubeAPIError as e:
+                log.debug(_("YouTube search encountered an error: {0}".format(e)))
+                pass
+            yt_track = await player.get_tracks(track_url)
+            try:
+                track_list.append(yt_track[0])
+            except IndexError:
+                pass
+            track_count += 1
+            if (track_count % 5 == 0) or (track_count == len(spotify_info)):
+                embed2 = discord.Embed(
+                    colour=await ctx.embed_colour(),
+                    title=_("Loading track {num}/{total}...").format(
+                        num=track_count, total=len(spotify_info)
+                    ),
+                )
+                if track_count == 5:
+                    five_time = int(time.time()) - now
+                if track_count >= 5:
+                    remain_tracks = len(spotify_info) - track_count
+                    time_remain = (remain_tracks / 5) * five_time
+                    if track_count < len(spotify_info):
+                        seconds = self._dynamic_time(int(time_remain))
+                    if track_count == len(spotify_info):
+                        seconds = "0s"
+                    embed2.set_footer(
+                        text=_("Approximate time remaining: {seconds}").format(seconds=seconds)
+                    )
+                try:
+                    await playlist_msg.edit(embed=embed2)
+                except discord.errors.NotFound:
+                    pass
+
+        if len(track_list) == 0:
+            embed3 = discord.Embed(
+                colour=await ctx.embed_colour(),
+                title=_(
+                    "Nothing found. You may be rate limited on YouTube's search service. Wait an hour and try again."
+                ),
+            )
+            try:
+                return await playlist_msg.edit(embed=embed3)
+            except discord.errors.NotFound:
+                pass
+        return track_list
 
     @commands.group()
     @commands.guild_only()
@@ -2532,6 +2763,12 @@ class Audio(commands.Cog):
             return True
         return False
 
+    def _play_lock(self, ctx, tf):
+        if tf:
+            self.play_lock[ctx.message.guild.id] = True
+        else:
+            self.play_lock[ctx.message.guild.id] = False
+
     @staticmethod
     def _player_check(ctx):
         try:
@@ -2594,6 +2831,73 @@ class Audio(commands.Cog):
             return True
         else:
             return False
+
+    async def _youtube_api_search(self, yt_key, query):
+        params = {"q": query, "part": "id", "key": yt_key, "maxResults": 1, "type": "video"}
+        yt_url = "https://www.googleapis.com/youtube/v3/search"
+        async with self.session.request("GET", yt_url, params=params) as r:
+            if r.status == 400:
+                raise YouTubeAPIError
+            else:
+                search_response = await r.json()
+        for search_result in search_response.get("items", []):
+            if search_result["id"]["kind"] == "youtube#video":
+                return "https://www.youtube.com/watch?v={}".format(search_result["id"]["videoId"])
+
+    # Spotify-related methods below are originally from: https://github.com/Just-Some-Bots/MusicBot/blob/master/musicbot/spotify.py
+
+    async def _check_token(self, token):
+        now = int(time.time())
+        return token["expires_at"] - now < 60
+
+    async def _get_spotify_token(self):
+        if self.spotify_token and not await self._check_token(self.spotify_token):
+            return self.spotify_token["access_token"]
+        token = await self._request_token()
+        if token is None:
+            log.debug("Requested a token from Spotify, did not end up getting one.")
+        token["expires_at"] = int(time.time()) + token["expires_in"]
+        self.spotify_token = token
+        log.debug("Created a new access token for Spotify: {0}".format(token))
+        return self.spotify_token["access_token"]
+
+    async def _make_get(self, url, headers=None):
+        async with self.session.request("GET", url, headers=headers) as r:
+            if r.status != 200:
+                log.debug(
+                    "Issue making GET request to {0}: [{1.status}] {2}".format(
+                        url, r, await r.json()
+                    )
+                )
+            return await r.json()
+
+    async def _make_post(self, url, payload, headers=None):
+        async with self.session.post(url, data=payload, headers=headers) as r:
+            if r.status != 200:
+                log.debug(
+                    "Issue making POST request to {0}: [{1.status}] {2}".format(
+                        url, r, await r.json()
+                    )
+                )
+            return await r.json()
+
+    async def _make_spotify_req(self, url):
+        token = await self._get_spotify_token()
+        return await self._make_get(url, headers={"Authorization": "Bearer {0}".format(token)})
+
+    def _make_token_auth(self, client_id, client_secret):
+        auth_header = base64.b64encode((client_id + ":" + client_secret).encode("ascii"))
+        return {"Authorization": "Basic %s" % auth_header.decode("ascii")}
+
+    async def _request_token(self):
+        self.client_id = await self.config.spotify_client_id()
+        self.client_secret = await self.config.spotify_client_secret()
+        payload = {"grant_type": "client_credentials"}
+        headers = self._make_token_auth(self.client_id, self.client_secret)
+        r = await self._make_post(
+            "https://accounts.spotify.com/api/token", payload=payload, headers=headers
+        )
+        return r
 
     async def on_voice_state_update(self, member, before, after):
         if after.channel != before.channel:
