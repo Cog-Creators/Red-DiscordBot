@@ -36,6 +36,7 @@ __author__ = ["aikaterna"]
 
 log = logging.getLogger("red.audio")
 
+
 class YouTubeAPIError(Exception):
     pass
 
