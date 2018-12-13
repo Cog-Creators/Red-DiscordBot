@@ -1570,7 +1570,6 @@ class Mod(commands.Cog):
         """
         An event for modlog case creation
         """
-        mod_channel = await modlog.get_modlog_channel(case.guild)
         try:
             mod_channel = await modlog.get_modlog_channel(case.guild)
         except RuntimeError:
