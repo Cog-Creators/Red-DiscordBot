@@ -1574,7 +1574,7 @@ class Mod(commands.Cog):
         try:
             mod_channel = await modlog.get_modlog_channel(case.guild)
         except RuntimeError:
-            return # We're expecting None here, since None is raised in get_modlog
+            return  # We're expecting None here, since None is raised in get_modlog
         use_embeds = await case.bot.embed_requested(mod_channel, case.guild.me)
         case_content = await case.message_content(use_embeds)
         if use_embeds:
