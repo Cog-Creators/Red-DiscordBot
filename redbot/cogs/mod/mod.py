@@ -877,7 +877,15 @@ class Mod(commands.Cog):
         if len(nickname) > 32:
             await ctx.send("The nickname you have provided is too long.")
         else:
-            await user.edit(reason=get_audit_reason(ctx.author, None), nick=nickname)
+            try:
+                await user.edit(reason=get_audit_reason(ctx.author, None), nick=nickname)
+            except discord.Forbidden:
+                return await ctx.send(
+                    "I do not have permission to rename that member.\n"
+                    "The member is probably higher than me in the server hierarchy."
+                )
+            except discord.HTTPException:
+                return await ctx.send("An unexpected error has occured.")
             await ctx.send("Done.")
 
     @commands.group()
