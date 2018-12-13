@@ -29,7 +29,7 @@ from .manager import shutdown_lavalink_server
 
 _ = Translator("Audio", __file__)
 
-__version__ = "0.0.7"
+__version__ = "0.0.8"
 __author__ = ["aikaterna", "billy/bollo/ati"]
 
 
@@ -50,6 +50,7 @@ class Audio(commands.Cog):
             "status": False,
             "current_version": redbot.core.VersionInfo.from_str("3.0.0a0").to_json(),
             "use_external_lavalink": False,
+            "restrict": True,
         }
 
         default_guild = {
@@ -317,6 +318,19 @@ class Audio(commands.Cog):
         await self.config.guild(ctx.guild).notify.set(not notify)
         await self._embed_msg(
             ctx, _("Verbose mode on: {true_or_false}.").format(true_or_false=not notify)
+        )
+
+    @audioset.command()
+    @checks.is_owner()
+    async def restrict(self, ctx):
+        """Toggle the domain restriction on Audio.
+
+        When toggled off, users will be able to play songs from non-commercial websites and links.
+        When toggled on, users are restricted to YouTube, SoundCloud, Mixer, Vimeo, Twitch, and Bandcamp links."""
+        restrict = await self.config.restrict()
+        await self.config.restrict.set(not restrict)
+        await self._embed_msg(
+            ctx, _("Commercial links only: {true_or_false}.").format(true_or_false=not restrict)
         )
 
     @audioset.command()
@@ -870,6 +884,12 @@ class Audio(commands.Cog):
         dj_enabled = await self.config.guild(ctx.guild).dj_enabled()
         jukebox_price = await self.config.guild(ctx.guild).jukebox_price()
         shuffle = await self.config.guild(ctx.guild).shuffle()
+        restrict = await self.config.restrict()
+        if restrict:
+            if self._match_url(query):
+                url_check = self._url_check(query)
+                if not url_check:
+                    return await self._embed_msg(ctx, _("That URL is not allowed."))
         if not self._player_check(ctx):
             try:
                 if not ctx.author.voice.channel.permissions_for(ctx.me).connect or self._userlimit(
@@ -1252,6 +1272,7 @@ class Audio(commands.Cog):
     @playlist.command(name="start")
     async def _playlist_start(self, ctx, playlist_name=None):
         """Load a playlist into the queue."""
+        restrict = await self.config.restrict()
         if not await self._playlist_check(ctx):
             return
         playlists = await self.config.guild(ctx.guild).playlists.get_raw()
@@ -1260,6 +1281,10 @@ class Audio(commands.Cog):
         try:
             player = lavalink.get_player(ctx.guild.id)
             for track in playlists[playlist_name]["tracks"]:
+                if restrict:
+                    url_check = self._url_check(track["info"]["uri"])
+                    if not url_check:
+                        continue
                 player.add(author_obj, lavalink.rest_api.Track(data=track))
                 track_count = track_count + 1
             embed = discord.Embed(
@@ -2585,6 +2610,24 @@ class Audio(commands.Cog):
         for key, value in zip(keys, values):
             track_obj[key] = value
         return track_obj
+
+    @staticmethod
+    def _url_check(url):
+        valid_tld = [
+            "youtube.com",
+            "youtu.be",
+            "soundcloud.com",
+            "bandcamp.com",
+            "vimeo.com",
+            "mixer.com",
+            "twitch.tv",
+            "localtracks",
+        ]
+        query_url = urlparse(url)
+        url_domain = ".".join(query_url.netloc.split(".")[-2:])
+        if not query_url.netloc:
+            url_domain = ".".join(query_url.path.split("/")[0].split(".")[-2:])
+        return True if url_domain in valid_tld else False
 
     @staticmethod
     def _userlimit(channel):
