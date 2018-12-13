@@ -420,9 +420,13 @@ class Requires:
 
         """
         await self._verify_bot(ctx)
-        # Owner-only commands are non-overrideable
+
+        # Owner should never be locked out of commands for user permissions.
+        if await ctx.bot.is_owner(ctx.author):
+            return True
+        # Owner-only commands are non-overrideable, and we already checked for owner.
         if self.privilege_level is PrivilegeLevel.BOT_OWNER:
-            return await ctx.bot.is_owner(ctx.author)
+            return False
 
         hook_result = await ctx.bot.verify_permissions_hooks(ctx)
         if hook_result is not None:
