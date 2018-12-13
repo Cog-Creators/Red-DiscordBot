@@ -504,7 +504,7 @@ class Trivia(commands.Cog):
 
         with path.open(encoding="utf-8") as file:
             try:
-                dict_ = yaml.load(file)
+                dict_ = yaml.safe_load(file)
             except yaml.error.YAMLError as exc:
                 raise InvalidListError("YAML parsing failed.") from exc
             else:
